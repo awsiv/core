@@ -38,6 +38,9 @@ occurrences:
 special_topics_guides::
  "/docs/st-opennebula.html"
   represents => { "Using CFEngine with Open Nebula" };
+Using_CFEngine_with_Open_Nebula::
+ "/docs/st-opennebula.html"
+  represents => { "special topics guide" };
 Open_Nebula::
  "/docs/st-opennebula.html#Top"
   represents => { "Text section" };

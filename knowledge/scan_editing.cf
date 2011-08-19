@@ -36,6 +36,9 @@ occurrences:
 special_topics_guides::
  "/docs/st-editing.html"
   represents => { "Promising and Editing File Content" };
+Promising_and_Editing_File_Content::
+ "/docs/st-editing.html"
+  represents => { "special topics guide" };
 Editing::
  "/docs/st-editing.html#Top"
   represents => { "Text section" };

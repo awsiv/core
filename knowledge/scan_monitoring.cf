@@ -34,6 +34,9 @@ occurrences:
 special_topics_guides::
  "/docs/st-monitoring.html"
   represents => { "Reporting" };
+Reporting::
+ "/docs/st-monitoring.html"
+  represents => { "special topics guide" };
 Measurement_and_Monitoring::
  "/docs/st-monitoring.html#Top"
   represents => { "Text section" };

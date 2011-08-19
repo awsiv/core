@@ -31,6 +31,9 @@ special_topics_guides::
  "/docs/st-hierarchy.html"
   represents => { "Hierarchies" };
 Hierarchies::
+ "/docs/st-hierarchy.html"
+  represents => { "special topics guide" };
+Hierarchies::
  "/docs/st-hierarchy.html#Top"
   represents => { "Text section" };
 What_is_a_hierarchy_::

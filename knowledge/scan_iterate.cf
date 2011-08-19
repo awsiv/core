@@ -32,6 +32,9 @@ occurrences:
 special_topics_guides::
  "/docs/st-iterate.html"
   represents => { "Iteration in CFEngine" };
+Iteration_in_CFEngine::
+ "/docs/st-iterate.html"
+  represents => { "special topics guide" };
 Iteration::
  "/docs/st-iterate.html#Top"
   represents => { "Text section" };

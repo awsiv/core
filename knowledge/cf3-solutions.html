@@ -17,54 +17,95 @@
   span.sc    { font-variant:small-caps }
   span.roman { font-family:serif; font-weight:normal; } 
   span.sansserif { font-family:sans-serif; font-weight:normal; } 
+@font-face {
+    font-family: 'CFE_FONT';
+    src: url('fonts/eot/opensans-regular-webfont.eot');
+    src: local('☺'),  url('fonts/ttf/opensans-regular-webfont.ttf') format('truetype'), url('fonts/svg/opensans-regular-webfont.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}    
+pre {
+    background-color: #EEFFDD;
+    border: 1px solid #CCCCCC;
+    font-family: courier;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    padding: 5px;
+    font-size: 90%;
+    }
+pre.display { font-family:inherit }
+pre.format  { font-family:inherit }
+pre.smallexample
+pre.smalllisp,
+pre.smallformat,
+pre.smalldisplay {
+  font-size: 90%;
+} 
+
+span.sc    { font-variant:small-caps }
+span.roman { font-family:serif; font-weight:normal; } 
+span.sansserif { font-family:sans-serif; font-weight:normal; } 
+
 body {
-	font-family: Verdana, DejaVu, Vera, Geneva, sans-serif;
-	padding: 10px;
+    font:  90%  'CFE_FONT', arial, Helvetica,sans-serif; 
+    color: #646464;
+    padding: 10px 20px;
+    width: 960px;
+    margin: 0 auto;
 }
 .node
 {
-	text-align: right;
-	padding: 2px;
-	font-size: smaller;
+    text-align: right;
+    padding: 2px;
+    font-size: smaller;
 }
 .node hr {
-	border: 0;
-	width: 100%;
-	color: #CCC;
-	background-color: #CCC;
-	height: 5px;
+    border: 0;
+    width: 100%;
+    color: #CCC;
+    background-color: #CCC;
+    height: 5px;
 }
 .section {
-	padding-right: 0px;
-	padding-bottom: 0px;
-	padding-left: 0px;
-}
-h1 {
-	font-weight: bold;
-	color: #666;
-}
-h2 {
-	font-weight: bold;
-	color: #666;
-}
-h3 {
-	margin-top: 3px;
-	margin-right: 0px;
-	margin-bottom: 10px;
-	margin-left: 0px;
+    padding-right: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
 }
 
-.menu
-{
+h1 {
+    font-size: 26px;
+    font-weight: normal;
+    line-height: 32px;
+    margin: 32px 0 16px;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+h2 {
+    color: #9E9981 !important;
+    font-size: 16px;
+    line-height: 18px;
+    font-weight: normal;
+    margin: 16px 0 26px;
+    text-align: left;
+}
+h3 {
+    margin-top: 3px;
+    margin-right: 0px;
+    margin-bottom: 10px;
+    margin-left: 0px;
+    line-height: 20px;
+    font-size: 16px;
+    font-weight: normal;
 }
 
 .contents
 {
-	background-color: #CCC;
-	padding-top: 2px;
-	padding-right: 2px;
-	padding-bottom: 2px;
-	padding-left: 10px;
+    background-color: #CCC;
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 10px;
 }
 
 .index-cp
@@ -88,34 +129,69 @@ table.border
 	border-width: 0px;
 }
 
-FONT.liten {font-size: 70%; }
+FONT.liten {font-size: 80%; }
  
 .tynn {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: smaller;
-        font-style: normal;
-        font-weight: lighter;
-        margin-bottom: 0em;
-     font-size: 11pt;
-        }
-
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: smaller;
+    font-style: normal;
+    font-weight: lighter;
+    margin-bottom: 0em;
+    font-size: 11pt;
+}
 .verbatim {
-	font-family: "Lucida Console", Monaco, monospace;
-	color: #000;
-	padding-top: 30px;
-	padding-right: 30px;
-	padding-bottom: 3px;
-	padding-left: 30px;
-	background-color: #FEFFCA;
-	border-left-width: medium;
-	border-left-style: outset;
-	border-left-color: #FDFFD5;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 20px;
-	margin-left: 0px;
+    color: #000;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 20px;
+    margin-left: 0px;
+}
+.example {
+    color: #000;
+    width: 100%;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 20px;
+    margin-left: 0px;
+}
+.smallexample {
+    color: #000;
+    padding-top: 10px;
+    padding-right: 30px;
+    padding-bottom: 5px;
+    padding-left: 30px;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+}
+.cartouche {
+    padding: 5px;
+    font-style: italic;
+    font-size: 85%;
 }
 
+table.cartouche {
+    border: none !important;
+}
+
+ .cartouche td  {
+    background-color: #ddd;
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+
+A:link { color: #2c2e70 }
+A:visited { color: black }
+A:active { color: #600041 }
+dt em {font-weight: bold}
+/* don't change this rule */    
+pre.sp {
+    background: none !important;   
+    border:none !important
+}
+/* --- */
+/*code hightlight*/
 .red { color: #b80047; font-weight: bold; }
 
 .blue { color: blue;  /*font-weight: bold;*/ }
@@ -123,55 +199,7 @@ FONT.liten {font-size: 70%; }
 .green { color: darkgreen; }
 
 .comment { font-style: italic; }
-
-.example {
-	font-family: "Lucida Console", Monaco, monospace;
-	color: #000;
-	width: 100%;
-	padding-top: 30px;
-	padding-right: 30px;
-	padding-bottom: 3px;
-	padding-left: 30px;
-	background-color: #FEFFCA;
-	border-left-width: medium;
-	border-left-style: outset;
-	border-left-color: #FDFFD5;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 20px;
-	margin-left: 0px;
-}
-.smallexample {
-	font-family: "Lucida Console", Monaco, monospace;
-	color: #000;
-	width: 100%;
-	padding-top: 30px;
-	padding-right: 30px;
-	padding-bottom: 3px;
-	padding-left: 30px;
-	background-color: #FEFFCA;
-	border-left-width: medium;
-	border-left-style: outset;
-	border-left-color: #FDFFD5;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 20px;
-	margin-left: 0px;
-}
-.cartouche {
-	background-color: #CCC;
-	border-top-style: none;
-	border-right-style: none;
-	border-bottom-style: none;
-	border-left-style: none;
-	padding: 5px;
-	font-style: italic;
-        width: 100%;
-}
-
-A:link { color: #2c2e70 }
-A:visited { color: black }
-A:active { color: #600041 }--></style>
+--></style>
 </head>
 <body>
 <h1 class="settitle">CFEngine Solutions</h1>
@@ -199,14 +227,15 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <li><a href="#Copy-single-files">1.1.2 Copy single files</a>
 <li><a href="#Copy-directory-trees">1.1.3 Copy directory trees</a>
 <li><a href="#Editing-password-or-group-files">1.1.4 Editing password or group files</a>
-<li><a href="#Disabling-and-rotating-files">1.1.5 Disabling and rotating files</a>
-<li><a href="#Hashing-for-change-detection-_002d-tripwire">1.1.6 Hashing for change detection (tripwire)</a>
-<li><a href="#Command-or-script-execution">1.1.7 Command or script execution</a>
-<li><a href="#Kill-process">1.1.8 Kill process</a>
-<li><a href="#Restart-process">1.1.9 Restart process</a>
-<li><a href="#Check-filesystem-space">1.1.10 Check filesystem space</a>
-<li><a href="#Mount-a-filesystem">1.1.11 Mount a filesystem</a>
-<li><a href="#Software-and-patch-installation">1.1.12 Software and patch installation</a>
+<li><a href="#Editing-password-or-group-files-custom">1.1.5 Editing password or group files custom</a>
+<li><a href="#Disabling-and-rotating-files">1.1.6 Disabling and rotating files</a>
+<li><a href="#Hashing-for-change-detection-_002d-tripwire">1.1.7 Hashing for change detection (tripwire)</a>
+<li><a href="#Command-or-script-execution">1.1.8 Command or script execution</a>
+<li><a href="#Kill-process">1.1.9 Kill process</a>
+<li><a href="#Restart-process">1.1.10 Restart process</a>
+<li><a href="#Check-filesystem-space">1.1.11 Check filesystem space</a>
+<li><a href="#Mount-a-filesystem">1.1.12 Mount a filesystem</a>
+<li><a href="#Software-and-patch-installation">1.1.13 Software and patch installation</a>
 </li></ul>
 </li></ul>
 <li><a name="toc_Common-high-level-issues" href="#Common-high-level-issues">2 Common high level issues</a>
@@ -327,7 +356,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 <h3 class="section">1.1 Begin - Get Started</h3>
 
-<p>To get started with CFEngine, you can use the following template for entering examples.
+<p>To get started with CFEngine, you can imagine the following template for entering examples. 
+This part of the code is common to all the examples. We include below for completeness,
+but you might also like to hide is in yours.
 
 <pre class="verbatim">
 <span class="red">body common control
@@ -372,11 +403,12 @@ of the syntax is like this (red: CFEngine word, blue: user-defined word):
 <li><a accesskey="2" href="#Copy-single-files">Copy single files</a>
 <li><a accesskey="3" href="#Copy-directory-trees">Copy directory trees</a>
 <li><a accesskey="4" href="#Editing-password-or-group-files">Editing password or group files</a>
-<li><a accesskey="5" href="#Disabling-and-rotating-files">Disabling and rotating files</a>
-<li><a accesskey="6" href="#Hashing-for-change-detection-_002d-tripwire">Hashing for change detection - tripwire</a>
-<li><a accesskey="7" href="#Command-or-script-execution">Command or script execution</a>
-<li><a accesskey="8" href="#Kill-process">Kill process</a>
-<li><a accesskey="9" href="#Restart-process">Restart process</a>
+<li><a accesskey="5" href="#Editing-password-or-group-files-custom">Editing password or group files custom</a>
+<li><a accesskey="6" href="#Disabling-and-rotating-files">Disabling and rotating files</a>
+<li><a accesskey="7" href="#Hashing-for-change-detection-_002d-tripwire">Hashing for change detection - tripwire</a>
+<li><a accesskey="8" href="#Command-or-script-execution">Command or script execution</a>
+<li><a accesskey="9" href="#Kill-process">Kill process</a>
+<li><a href="#Restart-process">Restart process</a>
 <li><a href="#Check-filesystem-space">Check filesystem space</a>
 <li><a href="#Mount-a-filesystem">Mount a filesystem</a>
 <li><a href="#Software-and-patch-installation">Software and patch installation</a>
@@ -394,18 +426,61 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 <h4 class="subsection">1.1.1 Creating files and directories</h4>
 
 <pre class="verbatim">
+<span class="comment">########################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Simple test create files
+</span>
+<span class="comment">#
+</span>
+<span class="comment">########################################################
+</span>
+
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence  </span>=> { "testbundle"  };
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+
+{
 <span class="red">files:
 </span>
-  "/home/mark/tmp/test_plain"
-<span class="red">     perms </span>=><span class="blue"> mog("644", "root", "wheel"),</span>
-<span class="red">     create </span>=><span class="green"> "true";</span>
+  "/home/mark/tmp/test_plain" 
 
+<span class="red">       perms </span>=><span class="blue"> system,</span>
+<span class="red">       create </span>=><span class="green"> "true";</span>
 
-  "/home/mark/tmp/test_dir/."
-<span class="red">     perms </span>=><span class="blue"> mog("644", "root", "wheel"),  </span>
-<span class="comment">     # will add +x for dirs, see also rxdirs
+  "/home/mark/tmp/test_dir/." 
+
+<span class="red">       perms </span>=><span class="blue"> system,</span>
+<span class="red">       create </span>=><span class="green"> "true";</span>
+
+}
+
+<span class="comment">#########################################################
 </span>
-<span class="red">     create </span>=><span class="green"> "true";</span>
+
+<span class="red">body perms</span> <span class="blue">system</span>
+
+{
+<span class="red">mode  </span>=><span class="green"> "0640";</span>
+}
+
+<span class="comment">#########################################################
+</span>
+
+<span class="red">body depth_search</span> <span class="blue">recurse(d)</span>
+
+{
+<span class="red">depth </span>=><span class="green"> "$(d)";</span>
+}
+
 </pre>
 
 <!-- ...................................... -->
@@ -421,16 +496,25 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 <h4 class="subsection">1.1.2 Copy single files</h4>
 
 <pre class="verbatim">
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence  </span>=> { "mycopy" };
+<span class="red">inputs </span>=> { "cfengine_stdlib.cf" };
+}
+
+<span class="red">bundle agent</span> <span class="blue">mycopy</span>
+{
 <span class="red">files:
 </span>
   "/home/mark/tmp/test_plain"
 
-<span class="red">    copy_from </span>=><span class="blue"> local_cp("$(sys.workdir)\bin\file");</span>
+<span class="red">    copy_from </span>=><span class="blue"> local_cp("$(sys.workdir)/bin/file");</span>
 
-  "/home/mark/tmp/test_dir"
+  "/home/mark/tmp/test_remote_plain"
 
-<span class="red">    copy_from </span>=><span class="blue"> </span>
-        secure_cp("$(sys.workdir)/bin","serverhost");
+<span class="red">    copy_from </span>=><span class="blue"> secure_cp("$(sys.workdir)/bin/file","serverhost");</span>
+}
+
 
 </pre>
 
@@ -447,18 +531,28 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 <h4 class="subsection">1.1.3 Copy directory trees</h4>
 
 <pre class="verbatim">
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence  </span>=> { "my_recursive_copy" };
+<span class="red">inputs </span>=> { "cfengine_stdlib.cf" };
+}
+
+<span class="red">bundle agent</span> <span class="blue">my_recursive_copy</span>
+{
 <span class="red">files:
 </span>
   "/home/mark/tmp/test_dir"
 
-<span class="red">    copy_from </span>=><span class="blue"> local_cp("$(sys.workdir)\bin\."),</span>
-<span class="red"> depth_search </span>=><span class="blue"> recurse("inf");</span>
-
+<span class="red">      copy_from </span>=><span class="blue"> local_cp("$(sys.workdir)/bin/."),</span>
+<span class="red">   depth_search </span>=><span class="blue"> recurse("inf");</span>
 
   "/home/mark/tmp/test_dir"
 
-<span class="red">  copy_from </span>=><span class="blue"> secure_cp("$(sys.workdir)/bin","serverhost"),</span>
-<span class="red"> depth_search </span>=><span class="blue"> recurse("inf");</span>
+<span class="red">      copy_from </span>=><span class="blue"> secure_cp("$(sys.workdir)/bin","serverhost"),</span>
+<span class="red">   depth_search </span>=><span class="blue"> recurse("inf");</span>
+
+}
+
 
 </pre>
 
@@ -466,7 +560,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 <div class="node">
 <a name="Editing-password-or-group-files"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Disabling-and-rotating-files">Disabling and rotating files</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Editing-password-or-group-files-custom">Editing password or group files custom</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Copy-directory-trees">Copy directory trees</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get started</a>
 
@@ -475,20 +569,121 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 <h4 class="subsection">1.1.4 Editing password or group files</h4>
 
 <pre class="verbatim">
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "edit_passwd" };
+}
+
+<span class="red">bundle agent</span> <span class="blue">edit_passwd</span>
+{
+
 <span class="red">vars:
 </span>
  "userset"<span class="red"> slist </span>=> { "user1", "user2", "user3" };
 
 <span class="red">files:
 </span>
-  "/home/mark/tmp/passwd"
+  "/etc/passwd"
 <span class="red">     edit_line </span>=><span class="blue"> </span>
         set_user_field("mark","7","/set/this/shell");
 
-  "/home/mark/tmp/group"
+
+  "/etc/group"
 <span class="red">     edit_line </span>=><span class="blue"> </span>
         append_user_field("root","4","@(main.userset)");
 
+}
+
+</pre>
+
+<!-- ...................................... -->
+<div class="node">
+<a name="Editing-password-or-group-files-custom"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Disabling-and-rotating-files">Disabling and rotating files</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Editing-password-or-group-files">Editing password or group files</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get started</a>
+
+</div>
+
+<h4 class="subsection">1.1.5 Editing password or group files custom</h4>
+
+<pre class="verbatim">
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "addpasswd" };
+}
+
+<span class="red">bundle agent</span> <span class="blue">addpasswd</span>
+{
+<span class="red">vars:
+</span>
+<span class="comment">  # want to set these values by the names of their array keys
+</span>
+
+  "pwd[mark]"<span class="red"> string </span>=><span class="green"> "mark:x:1000:100:Mark Burgess:/home/mark:/bin/bash";</span>
+  "pwd[fred]"<span class="red"> string </span>=><span class="green"> "fred:x:1001:100:Right Said:/home/fred:/bin/bash";</span>
+  "pwd[jane]"<span class="red"> string </span>=><span class="green"> "jane:x:1002:100:Jane Doe:/home/jane:/bin/bash";</span>
+
+<span class="red">files:
+</span>
+
+  "/tmp/passwd"
+
+<span class="red">        create </span>=><span class="green"> "true",</span>
+<span class="red">     edit_line </span>=><span class="blue"> append_users_starting("addpasswd.pwd");</span>
+
+}
+
+<span class="comment">############################################################
+</span>
+<span class="comment"># Library stuff
+</span>
+<span class="comment">############################################################
+</span>
+
+<span class="red">bundle edit_line</span> <span class="blue">append_users_starting(v)</span>
+
+{
+<span class="red">vars:
+</span>
+  "index"<span class="red">        slist </span>=> getindices("$(v)");
+
+<span class="red">classes:
+</span>
+  "add_$(index)"<span class="red"> not </span>=> userexists("$(index)");
+
+<span class="red">insert_lines:
+</span>
+  "$($(v)[$(index)])",
+
+<span class="red">      ifvarclass </span>=><span class="green"> "add_$(index)";</span>
+
+}
+
+<span class="comment">############################################################
+</span>
+
+<span class="red">bundle edit_line</span> <span class="blue">append_groups_starting(v)</span>
+
+{
+<span class="red">vars:
+</span>
+  "index"<span class="red">        slist </span>=> getindices("$(v)");
+
+<span class="red">classes:
+</span>
+  "add_$(index)"<span class="red"> not </span>=> groupexists("$(index)");
+
+<span class="red">insert_lines:
+</span>
+  "$($(v)[$(index)])",
+
+<span class="red">      ifvarclass </span>=><span class="green"> "add_$(index)";</span>
+
+}
 </pre>
 
 <!-- ...................................... -->
@@ -496,21 +691,33 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 <a name="Disabling-and-rotating-files"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Hashing-for-change-detection-_002d-tripwire">Hashing for change detection - tripwire</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Editing-password-or-group-files">Editing password or group files</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Editing-password-or-group-files-custom">Editing password or group files custom</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get started</a>
 
 </div>
 
-<h4 class="subsection">1.1.5 Disabling and rotating files</h4>
+<h4 class="subsection">1.1.6 Disabling and rotating files</h4>
 
 <pre class="verbatim">
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence  </span>=> { "my_disable" };
+<span class="red">inputs </span>=> { "cfengine_stdlib.cf" };
+}
+
+<span class="red">bundle agent</span> <span class="blue">my_disable</span>
+{
+
 <span class="red">files:
 </span>
   "/home/mark/tmp/test_create"
 <span class="red">      rename </span>=><span class="blue"> disable;</span>
  
- "/home/mark/tmp/rotateme"
+ "/home/mark/tmp/rotate_my_log"
 <span class="red">      rename </span>=><span class="blue"> rotate("4");</span>
+
+}
+
 
 </pre>
 
@@ -525,20 +732,58 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 
 </div>
 
-<h4 class="subsection">1.1.6 Hashing for change detection (tripwire)</h4>
+<h4 class="subsection">1.1.7 Hashing for change detection (tripwire)</h4>
 
 <pre class="verbatim">
+<span class="comment">########################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Change detect
+</span>
+<span class="comment">#
+</span>
+<span class="comment">########################################################
+</span>
+
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence  </span>=> { "testbundle"  };
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+
+{
 <span class="red">files:
 </span>
-  "/home/mark/tmp" -> "me"
-<span class="red">       changes      </span>=><span class="blue"> detect_all_change,</span>
-<span class="red">       depth_search </span>=><span class="blue"> recurse("inf"),</span>
-<span class="red">       action       </span>=><span class="blue"> background;</span>
+  "/home/mark/tmp/web" -> "me"
 
-  "/home/mark/LapTop/words" -> "you"
-<span class="red">       changes      </span>=><span class="blue"> detect_all_change,</span>
-<span class="red">       depth_search </span>=><span class="blue"> recurse("inf");</span>
+<span class="red">   changes      </span>=><span class="blue"> detect_all_change,</span>
+<span class="red">   depth_search </span>=><span class="blue"> recurse("inf");</span>
+}
 
+<span class="comment">#########################################################
+</span>
+
+<span class="red">body changes</span> <span class="blue">detect_all_change</span>
+
+{
+<span class="red">report_changes </span>=><span class="green"> "all";  </span>
+<span class="red">update_hashes  </span>=><span class="green"> "true";</span>
+}
+
+<span class="comment">#########################################################
+</span>
+
+<span class="red">body depth_search</span> <span class="blue">recurse(d)</span>
+
+{
+<span class="red">depth        </span>=><span class="green"> "$(d)";</span>
+}
 </pre>
 
 <!-- ...................................... -->
@@ -551,9 +796,19 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 
 </div>
 
-<h4 class="subsection">1.1.7 Command or script execution</h4>
+<h4 class="subsection">1.1.8 Command or script execution</h4>
 
 <pre class="verbatim">
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence  </span>=> { "my_commands" };
+<span class="red">inputs </span>=> { "cfengine_stdlib.cf" };
+}
+
+
+<span class="red">bundle agent</span> <span class="blue">my_commands</span>
+{
 <span class="red">commands:
 </span>
  Sunday.Hr04.Min05_10.myhost::
@@ -565,6 +820,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
   "/etc/mysql/start"
 
 <span class="red">      contain </span>=><span class="blue"> setuid("mysql");</span>
+
+}
+
 
 </pre>
 
@@ -578,15 +836,25 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 
 </div>
 
-<h4 class="subsection">1.1.8 Kill process</h4>
+<h4 class="subsection">1.1.9 Kill process</h4>
 
 <pre class="verbatim">
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "test" };
+}
+
+
+
+<span class="red">bundle agent</span> <span class="blue">test</span>
+{
 <span class="red">processes:
 </span>
-  "snmpd"
+ "sleep"
 
-<span class="red">     signals </span>=> { "term", "kill" };
+<span class="red">   signals </span>=> { "term", "kill" };
 
+}
 </pre>
 
 <!-- ...................................... -->
@@ -599,24 +867,14 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 
 </div>
 
-<h4 class="subsection">1.1.9 Restart process</h4>
+<h4 class="subsection">1.1.10 Restart process</h4>
 
-<pre class="verbatim">
-<span class="red">processes:
-</span>
-  "httpd"
+<p>A basic pattern for restarting processes:
+<pre class="verbatim"></pre>
+<span class="red">This can be made more sophisticated to handle generic lists:
+</span><pre class="verbatim"></pre>
 
-<span class="red">     restart_class </span>=><span class="green"> "lift_off";</span>
-
-<span class="red">commands:
-</span>
- lift_off::
-
-    "/etc/init.d/apache2 restart";
-
-</pre>
-
-<p>Why? Separating this into two parts gives a high level of control
+   <p>Why? Separating this into two parts gives a high level of control
 and conistency to CFEngine. There are many options for command execution, like
 the ability to run commands in a sandbox or as `setuid'. These should not be
 reproduced in <code>processes</code>.
@@ -625,18 +883,39 @@ reproduced in <code>processes</code>.
 <div class="node">
 <a name="Check-filesystem-space"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Mount-a-filesystem">Mount a filesystem</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Restart-process">Restart process</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get started</a>
-
+<span class="red">Next:&nbsp;<a rel="next" accesskey="n" href="#Mount-a-filesystem">Mount a filesystem</a>,
+</span><span class="red">Previous:&nbsp;<a rel="previous" accesskey="p" href="#Restart-process">Restart process</a>,
+</span><span class="red">Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get started</a>
+</span>
 </div>
 
-<h4 class="subsection">1.1.10 Check filesystem space</h4>
+<h4 class="subsection">1.1.11 Check filesystem space</h4>
 
 <pre class="verbatim">
-<span class="red">storage:
+
+<span class="red">body common control
 </span>
-  "/usr"<span class="red"> volume  </span>=><span class="blue"> mycheck("10%");</span>
+{
+<span class="red">bundlesequence  </span>=> { "example" };
+}
+
+<span class="comment">###########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">example</span>
+
+{     
+<span class="red">vars:
+</span>
+  "free"<span class="red"> int </span>=> diskfree("/tmp"); 
+
+<span class="red">reports:
+</span>
+  cfengine_3::
+
+    "Freedisk $(free)";
+
+}
 
 </pre>
 
@@ -650,15 +929,53 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 
 </div>
 
-<h4 class="subsection">1.1.11 Mount a filesystem</h4>
+<h4 class="subsection">1.1.12 Mount a filesystem</h4>
 
 <pre class="verbatim">
+
+<span class="comment">#
+</span>
+<span class="comment"># cfengine 3
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># cf-agent -f ./cftest.cf -K
+</span>
+<span class="comment">#
+</span>
+
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence </span>=> { "mounts" };
+}
+
+<span class="comment">#
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">mounts</span>
+
+{
 <span class="red">storage:
 </span>
- "/home/mark/server_home" 
+  "/mnt"<span class="red"> mount  </span>=><span class="blue"> nfs("slogans.iu.hio.no","/home");</span>
 
-<span class="red">  mount </span>=><span class="blue"> nfs("myserver","/home/mark");</span>
+}
 
+<span class="comment">######################################################################
+</span>
+
+<span class="red">body mount</span> <span class="blue">nfs(server,source)</span>
+
+{
+<span class="red">mount_type </span>=><span class="green"> "nfs";</span>
+<span class="red">mount_source </span>=><span class="green"> "$(source)";</span>
+<span class="red">mount_server </span>=><span class="green"> "$(server)";</span>
+<span class="comment">#mount_options => { "rw" };
+</span>
+<span class="red">edit_fstab </span>=><span class="green"> "true";</span>
+<span class="red">unmount </span>=><span class="green"> "true";</span>
+}
 </pre>
 
 <!-- ...................................... -->
@@ -670,15 +987,233 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 
 </div>
 
-<h4 class="subsection">1.1.12 Software and patch installation</h4>
+<h4 class="subsection">1.1.13 Software and patch installation</h4>
 
+<p>Example for Debian:
 <pre class="verbatim">
+<span class="comment"># to see list of packages type "apt-cache pkgnames"
+</span>
+<span class="comment"># to see list of installed packages type "dpkg --get-selections"
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Package managment
+</span>
+<span class="comment">#
+</span>
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "packages" };
+}
+
+<span class="red">body agent</span> <span class="blue">control</span>
+{
+<span class="red">environment </span>=> { "DEBIAN_FRONTEND=noninteractive" };
+}
+
+<span class="comment">#############################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">packages</span>
+{
+<span class="red">vars:
+</span>
+<span class="comment"> # Test the simplest case -- leave everything to the yum smart manager
+</span>
+
+ "match_package"<span class="red"> slist </span>=> { 
+                          "apache2" 
+<span class="comment">#                          "apache2-mod_php5",
+</span>
+<span class="comment">#                          "apache2-prefork",
+</span>
+<span class="comment">#                          "php5" 
+</span>
+                          };
 <span class="red">packages:
 </span>
-  "apache2"
+  "$(match_package)"
 
 <span class="red">     package_policy </span>=><span class="green"> "add",</span>
-<span class="red">     package_method </span>=><span class="blue"> generic;</span>
+<span class="red">     package_method </span>=><span class="blue"> apt;</span>
+
+}
+
+<span class="comment">#############################################
+</span>
+
+<span class="red">body package_method</span> <span class="blue">apt</span>
+
+{
+any::
+
+<span class="comment"># ii  acpi      0.09-3ubuntu1     
+</span>
+
+<span class="red"> package_changes </span>=><span class="green"> "bulk";</span>
+<span class="red"> package_list_command </span>=><span class="green"> "/usr/bin/dpkg -l";</span>
+
+<span class="red"> package_list_name_regex    </span>=><span class="green"> "ii\s+([^\s]+).*";</span>
+<span class="red"> package_list_version_regex </span>=><span class="green"> "ii\s+[^\s]+\s+([^\s]+).*";</span>
+
+<span class="comment"># package_list_arch_regex    => "none";
+</span>
+
+<span class="red"> package_installed_regex </span>=><span class="green"> ".*"; # all reported are installed</span>
+
+<span class="comment"> #package_name_convention => "$(name)_$(version)_$(arch)";
+</span>
+<span class="red"> package_name_convention </span>=><span class="green"> "$(name)";</span>
+
+<span class="comment"> # Use these only if not using a separate version/arch string
+</span>
+<span class="comment"> # package_version_regex => "";
+</span>
+<span class="comment"> # package_name_regex => "";
+</span>
+<span class="comment"> # package_arch_regex => "";
+</span>
+
+<span class="red">package_add_command </span>=><span class="green"> "/usr/bin/apt-get --yes install";</span>
+<span class="red">package_delete_command </span>=><span class="green"> "/usr/bin/apt-get --yes remove";</span>
+<span class="red">package_update_command </span>=><span class="green">  "/usr/bin/apt-get --yes dist-upgrade";</span>
+<span class="comment">#package_verify_command => "/bin/rpm -V";
+</span>
+}
+
+</pre>
+Examples MSI for Windows, by name:
+<pre class="verbatim"></pre>
+<span class="red">Windows MSI by version:
+</span><pre class="verbatim"></pre>
+<span class="red">Examples for solaris are more complex:
+</span><pre class="verbatim">
+
+<span class="comment">#
+</span>
+<span class="comment"># Package managment
+</span>
+<span class="comment">#
+</span>
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "packages" };
+<span class="red">inputs </span>=> { "cfengine_stdlb.cf" };
+}
+
+<span class="comment">#############################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">packages</span>
+{
+<span class="red">vars:
+</span>
+  "solaris_packages[SMCzlib]"<span class="red"> string </span>=><span class="green"> "zlib-1.2.3-sol10-sparc-local";</span>
+  "admin_file"<span class="red">                string </span>=><span class="green"> "cfengine_admin_file";</span>
+
+  "package_names"<span class="red">              slist </span>=> getindices("solaris_packages");
+
+<span class="red">files:
+</span>
+  "/tmp/$(admin_file)"
+<span class="red">	create </span>=><span class="green"> "true",</span>
+<span class="red">	edit_defaults </span>=><span class="blue"> empty_file,</span>
+<span class="red">	edit_line </span>=><span class="blue"> create_solaris_admin_file;</span>
+
+<span class="red">packages:
+</span>
+  "$(package_names)"
+
+<span class="red">     package_policy </span>=><span class="green"> "add",</span>
+<span class="red">     package_method </span>=><span class="blue"> solaris("$(package_names)", "$(solaris_packages[$(package_names)])", "$(admin_file)");</span>
+
+}
+
+</pre>
+Examples for yum based systems:
+<pre class="verbatim">
+
+<span class="comment">#
+</span>
+<span class="comment"># Package managment
+</span>
+<span class="comment">#
+</span>
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "packages" };
+<span class="red">inputs </span>=> { "cfengine_stdlib.cf" }
+}
+
+<span class="comment">#############################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">packages</span>
+{
+<span class="red">vars:
+</span>
+<span class="comment"> # Test the simplest case -- leave everything to the yum smart manager
+</span>
+
+ "match_package"<span class="red"> slist </span>=> { 
+                          "apache2", 
+                          "apache2-mod_php5",
+                          "apache2-prefork",
+                          "php5" 
+                          };
+<span class="red">packages:
+</span>
+  "$(match_package)"
+
+<span class="red">     package_policy </span>=><span class="green"> "add",</span>
+<span class="red">     package_method </span>=><span class="blue"> yum;</span>
+
+}
+
+</pre>
+SuSE Linux's package manager zypper is the most powerful alternative:
+<pre class="verbatim">
+
+<span class="comment">#
+</span>
+<span class="comment"># Package managment
+</span>
+<span class="comment">#
+</span>
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "packages" };
+<span class="red">inputs </span>=> { "cfengine_stdlib.cf" }
+}
+
+<span class="comment">#############################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">packages</span>
+{
+<span class="red">vars:
+</span>
+<span class="comment"> # Test the simplest case -- leave everything to the zypper smart manager
+</span>
+
+ "match_package"<span class="red"> slist </span>=> { 
+                          "apache2", 
+                          "apache2-mod_php5",
+                          "apache2-prefork",
+                          "php5" 
+                          };
+<span class="red">packages:
+</span>
+  "$(match_package)"
+
+<span class="red">     package_policy </span>=><span class="green"> "add",</span>
+<span class="red">     package_method </span>=><span class="blue"> zypper;</span>
+
+}
 
 </pre>
 
@@ -1075,6 +1610,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 <h3 class="section">2.3 Garbage collection</h3>
 
 <pre class="verbatim">
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "garbage_collection" };
+<span class="red">inputs </span>=> { "cfengine_stdlib.cf" };
+}
+
+
 <span class="red">bundle agent</span> <span class="blue">garbage_collection</span>
 {
 <span class="red">files:

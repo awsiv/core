@@ -40,6 +40,9 @@ occurrences:
 special_topics_guides::
  "/docs/st-federation.html"
   represents => { "Orchestration" };
+Orchestration::
+ "/docs/st-federation.html"
+  represents => { "special topics guide" };
 Federation::
  "/docs/st-federation.html#Top"
   represents => { "Text section" };

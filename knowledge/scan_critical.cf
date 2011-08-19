@@ -41,6 +41,9 @@ special_topics_guides::
  "/docs/st-critical.html"
   represents => { "CFEngine for Mission Critical Operations" };
 CFEngine_for_Mission_Critical_Operations::
+ "/docs/st-critical.html"
+  represents => { "special topics guide" };
+CFEngine_for_Mission_Critical_Operations::
  "/docs/st-critical.html#Top"
   represents => { "Text section" };
 What_are_Mission_Critical_Operations_::

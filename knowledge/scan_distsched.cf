@@ -38,6 +38,9 @@ occurrences:
 special_topics_guides::
  "/docs/st-distsched.html"
   represents => { "Distributed Scheduling" };
+Distributed_Scheduling::
+ "/docs/st-distsched.html"
+  represents => { "special topics guide" };
 CFEngine_Tutorial::
  "/docs/st-distsched.html#Top"
   represents => { "Text section" };

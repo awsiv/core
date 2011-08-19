@@ -47,6 +47,9 @@ special_topics_guides::
  "/docs/st-reporting.html"
   represents => { "Reporting" };
 Reporting::
+ "/docs/st-reporting.html"
+  represents => { "special topics guide" };
+Reporting::
  "/docs/st-reporting.html#Top"
   represents => { "Text section" };
 What_are_monitoring_and_reporting_::

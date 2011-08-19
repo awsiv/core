@@ -145,6 +145,9 @@ special_topics_guides::
  "/docs/st-itil.html"
   represents => { "ITIL" };
 ITIL::
+ "/docs/st-itil.html"
+  represents => { "special topics guide" };
+ITIL::
  "/docs/st-itil.html#Top"
   represents => { "Text section" };
 What_it_ITIL_::

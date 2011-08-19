@@ -40,6 +40,9 @@ occurrences:
 special_topics_guides::
  "/docs/st-orchestrate.html"
   represents => { "Modularizing and Orchestrating System Policy" };
+Modularizing_and_Orchestrating_System_Policy::
+ "/docs/st-orchestrate.html"
+  represents => { "special topics guide" };
 Orchestration::
  "/docs/st-orchestrate.html#Top"
   represents => { "Text section" };

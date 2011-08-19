@@ -23,6 +23,9 @@ special_topics_guides::
  "/docs/st-cdp.html"
   represents => { "Content-Driven Policies" };
 Content_Driven_Policies::
+ "/docs/st-cdp.html"
+  represents => { "special topics guide" };
+Content_Driven_Policies::
  "/docs/st-cdp.html#Top"
   represents => { "Text section" };
 What_is_a_Content_Driven_Policy_::

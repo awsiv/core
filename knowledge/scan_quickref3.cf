@@ -14,6 +14,9 @@ occurrences:
 manuals::
  "/docs/cf-QuickRef3.html"
   represents => { "Quick Reference Guide for CFEngine 3" };
+Quick_Reference_Guide_for_CFEngine_3::
+ "/docs/cf-QuickRef3.html"
+  represents => { "special topics guide" };
 CFEngine_Reference::
  "/docs/cf-QuickRef3.html#Top"
   represents => { "Text section" };

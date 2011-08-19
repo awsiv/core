@@ -39,6 +39,9 @@ special_topics_guides::
  "/docs/st-appmgt.html"
   represents => { "Application Management" };
 Application_Management::
+ "/docs/st-appmgt.html"
+  represents => { "special topics guide" };
+Application_Management::
  "/docs/st-appmgt.html#Top"
   represents => { "Text section" };
 What_is_Application_Management_::

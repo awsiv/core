@@ -34,6 +34,9 @@ occurrences:
 special_topics_guides::
  "/docs/st-rollback.html"
   represents => { "Rollout and Rollback" };
+Rollout_and_Rollback::
+ "/docs/st-rollback.html"
+  represents => { "special topics guide" };
 CFEngine_Tutorial::
  "/docs/st-rollback.html#Top"
   represents => { "Text section" };

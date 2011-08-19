@@ -14,6 +14,9 @@ occurrences:
 manuals::
  "/docs/cf3-upgrade.html"
   represents => { "Upgrading from CFEngine 2 to 3" };
+Upgrading_from_CFEngine_2_to_3::
+ "/docs/cf3-upgrade.html"
+  represents => { "special topics guide" };
 CFEngine_Best_Practices::
  "/docs/cf3-upgrade.html#Top"
   represents => { "Text section" };

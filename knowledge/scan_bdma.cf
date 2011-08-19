@@ -29,6 +29,9 @@ special_topics_guides::
  "/docs/st-bdma.html"
   represents => { "BDMA" };
 BDMA::
+ "/docs/st-bdma.html"
+  represents => { "special topics guide" };
+BDMA::
  "/docs/st-bdma.html#Top"
   represents => { "Text section" };
 What_is_BDMA_::

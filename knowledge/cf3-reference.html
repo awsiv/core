@@ -17,54 +17,95 @@
   span.sc    { font-variant:small-caps }
   span.roman { font-family:serif; font-weight:normal; } 
   span.sansserif { font-family:sans-serif; font-weight:normal; } 
+@font-face {
+    font-family: 'CFE_FONT';
+    src: url('fonts/eot/opensans-regular-webfont.eot');
+    src: local('☺'),  url('fonts/ttf/opensans-regular-webfont.ttf') format('truetype'), url('fonts/svg/opensans-regular-webfont.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}    
+pre {
+    background-color: #EEFFDD;
+    border: 1px solid #CCCCCC;
+    font-family: courier;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    padding: 5px;
+    font-size: 90%;
+    }
+pre.display { font-family:inherit }
+pre.format  { font-family:inherit }
+pre.smallexample
+pre.smalllisp,
+pre.smallformat,
+pre.smalldisplay {
+  font-size: 90%;
+} 
+
+span.sc    { font-variant:small-caps }
+span.roman { font-family:serif; font-weight:normal; } 
+span.sansserif { font-family:sans-serif; font-weight:normal; } 
+
 body {
-	font-family: Verdana, DejaVu, Vera, Geneva, sans-serif;
-	padding: 10px;
+    font:  90%  'CFE_FONT', arial, Helvetica,sans-serif; 
+    color: #646464;
+    padding: 10px 20px;
+    width: 960px;
+    margin: 0 auto;
 }
 .node
 {
-	text-align: right;
-	padding: 2px;
-	font-size: smaller;
+    text-align: right;
+    padding: 2px;
+    font-size: smaller;
 }
 .node hr {
-	border: 0;
-	width: 100%;
-	color: #CCC;
-	background-color: #CCC;
-	height: 5px;
+    border: 0;
+    width: 100%;
+    color: #CCC;
+    background-color: #CCC;
+    height: 5px;
 }
 .section {
-	padding-right: 0px;
-	padding-bottom: 0px;
-	padding-left: 0px;
-}
-h1 {
-	font-weight: bold;
-	color: #666;
-}
-h2 {
-	font-weight: bold;
-	color: #666;
-}
-h3 {
-	margin-top: 3px;
-	margin-right: 0px;
-	margin-bottom: 10px;
-	margin-left: 0px;
+    padding-right: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
 }
 
-.menu
-{
+h1 {
+    font-size: 26px;
+    font-weight: normal;
+    line-height: 32px;
+    margin: 32px 0 16px;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+h2 {
+    color: #9E9981 !important;
+    font-size: 16px;
+    line-height: 18px;
+    font-weight: normal;
+    margin: 16px 0 26px;
+    text-align: left;
+}
+h3 {
+    margin-top: 3px;
+    margin-right: 0px;
+    margin-bottom: 10px;
+    margin-left: 0px;
+    line-height: 20px;
+    font-size: 16px;
+    font-weight: normal;
 }
 
 .contents
 {
-	background-color: #CCC;
-	padding-top: 2px;
-	padding-right: 2px;
-	padding-bottom: 2px;
-	padding-left: 10px;
+    background-color: #CCC;
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 10px;
 }
 
 .index-cp
@@ -88,34 +129,69 @@ table.border
 	border-width: 0px;
 }
 
-FONT.liten {font-size: 70%; }
+FONT.liten {font-size: 80%; }
  
 .tynn {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: smaller;
-        font-style: normal;
-        font-weight: lighter;
-        margin-bottom: 0em;
-     font-size: 11pt;
-        }
-
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: smaller;
+    font-style: normal;
+    font-weight: lighter;
+    margin-bottom: 0em;
+    font-size: 11pt;
+}
 .verbatim {
-	font-family: "Lucida Console", Monaco, monospace;
-	color: #000;
-	padding-top: 30px;
-	padding-right: 30px;
-	padding-bottom: 3px;
-	padding-left: 30px;
-	background-color: #FEFFCA;
-	border-left-width: medium;
-	border-left-style: outset;
-	border-left-color: #FDFFD5;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 20px;
-	margin-left: 0px;
+    color: #000;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 20px;
+    margin-left: 0px;
+}
+.example {
+    color: #000;
+    width: 100%;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 20px;
+    margin-left: 0px;
+}
+.smallexample {
+    color: #000;
+    padding-top: 10px;
+    padding-right: 30px;
+    padding-bottom: 5px;
+    padding-left: 30px;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+}
+.cartouche {
+    padding: 5px;
+    font-style: italic;
+    font-size: 85%;
 }
 
+table.cartouche {
+    border: none !important;
+}
+
+ .cartouche td  {
+    background-color: #ddd;
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+
+A:link { color: #2c2e70 }
+A:visited { color: black }
+A:active { color: #600041 }
+dt em {font-weight: bold}
+/* don't change this rule */    
+pre.sp {
+    background: none !important;   
+    border:none !important
+}
+/* --- */
+/*code hightlight*/
 .red { color: #b80047; font-weight: bold; }
 
 .blue { color: blue;  /*font-weight: bold;*/ }
@@ -123,55 +199,7 @@ FONT.liten {font-size: 70%; }
 .green { color: darkgreen; }
 
 .comment { font-style: italic; }
-
-.example {
-	font-family: "Lucida Console", Monaco, monospace;
-	color: #000;
-	width: 100%;
-	padding-top: 30px;
-	padding-right: 30px;
-	padding-bottom: 3px;
-	padding-left: 30px;
-	background-color: #FEFFCA;
-	border-left-width: medium;
-	border-left-style: outset;
-	border-left-color: #FDFFD5;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 20px;
-	margin-left: 0px;
-}
-.smallexample {
-	font-family: "Lucida Console", Monaco, monospace;
-	color: #000;
-	width: 100%;
-	padding-top: 30px;
-	padding-right: 30px;
-	padding-bottom: 3px;
-	padding-left: 30px;
-	background-color: #FEFFCA;
-	border-left-width: medium;
-	border-left-style: outset;
-	border-left-color: #FDFFD5;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 20px;
-	margin-left: 0px;
-}
-.cartouche {
-	background-color: #CCC;
-	border-top-style: none;
-	border-right-style: none;
-	border-bottom-style: none;
-	border-left-style: none;
-	padding: 5px;
-	font-style: italic;
-        width: 100%;
-}
-
-A:link { color: #2c2e70 }
-A:visited { color: black }
-A:active { color: #600041 }--></style>
+--></style>
 </head>
 <body>
 <h1 class="settitle">CFEngine reference manual</h1>
@@ -216,7 +244,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h2 class="chapter">1 CFEngine 3.3.0a1.r2879 &ndash; Getting started</h2>
+<h2 class="chapter">1 CFEngine 3.3.0a1.r2900 &ndash; Getting started</h2>
 
 <p><br>
 
@@ -25428,6 +25456,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <li><a href="#Function-ldaparray">Function ldaparray</a>
 <li><a href="#Function-ldaplist">Function ldaplist</a>
 <li><a href="#Function-ldapvalue">Function ldapvalue</a>
+<li><a href="#Function-lsdir">Function lsdir</a>
 <li><a href="#Function-not">Function not</a>
 <li><a href="#Function-now">Function now</a>
 <li><a href="#Function-on">Function on</a>
@@ -26413,7 +26442,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Example</b>:<br>
 <br>
 
-   <p><i>History</i>: Was introduced in 3.3.0a1.r2879, Nova 2.1.0a3.r2634, Constellation 1.0.0a1.r108 (2011)
+   <p><i>History</i>: Was introduced in 3.3.0a1.r2900, Nova 2.1.0a3.r2602:2663M, Constellation 1.0.0a1.r104:106 (2011)
 
 <pre class="verbatim">
 Fill me in (./function_dirname_example.texinfo)
@@ -26423,7 +26452,7 @@ Fill me in (./function_dirname_example.texinfo)
 <p class="noindent"><b>Notes</b>:<br>
 <br>
 
-   <p><i>History</i>: Was introduced in 3.3.0a1.r2879, Nova 2.1.0a3.r2634, Constellation 1.0.0a1.r108 (2011)
+   <p><i>History</i>: Was introduced in 3.3.0a1.r2900, Nova 2.1.0a3.r2602:2663M, Constellation 1.0.0a1.r104:106 (2011)
 
 <pre class="verbatim">
 Fill me in (./function_dirname_notes.texinfo)
@@ -28543,7 +28572,7 @@ to machine and server capabilites.
 <div class="node">
 <a name="Function-ldapvalue"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Function-not">Function not</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Function-lsdir">Function lsdir</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Function-ldaplist">Function ldaplist</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</a>
 
@@ -28617,15 +28646,58 @@ parameters. The first matching value it taken.
      </dl>
 
 <div class="node">
-<a name="Function-not"></a>
+<a name="Function-lsdir"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Function-now">Function now</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Function-not">Function not</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Function-ldapvalue">Function ldapvalue</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</a>
 
 </div>
 
-<h3 class="section">11.53 Function not</h3>
+<h3 class="section">11.53 Function lsdir</h3>
+
+<p class="noindent"><b>Synopsis</b>: lsdir(arg0,arg1,arg2) returns type <b>slist</b>
+
+   <p><br>
+   <i>arg0</i> : Path to base directory, <i>in the range</i> .+
+<br>
+   <i>arg1</i> : Regular expression to match files or blank, <i>in the range</i> .*
+<br>
+   <i>arg2</i> : Include the base path in the list, <i>in the range</i> true,false,yes,no,on,off
+<br>
+
+<p class="noindent">Return a list of files in a directory matching a regular expression
+
+<p class="noindent"><b>Example</b>:<br>
+<br>
+
+   <p><i>History</i>: Was introduced in 3.3.0a1.r2900, Nova 2.1.0a3.r2602:2663M, Constellation 1.0.0a1.r104:106 (2011)
+
+<pre class="verbatim">
+Fill me in (./function_lsdir_example.texinfo)
+""
+</pre>
+
+<p class="noindent"><b>Notes</b>:<br>
+<br>
+
+   <p><i>History</i>: Was introduced in 3.3.0a1.r2900, Nova 2.1.0a3.r2602:2663M, Constellation 1.0.0a1.r104:106 (2011)
+
+<pre class="verbatim">
+Fill me in (./function_lsdir_notes.texinfo)
+""
+</pre>
+
+<div class="node">
+<a name="Function-not"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Function-now">Function now</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Function-lsdir">Function lsdir</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</a>
+
+</div>
+
+<h3 class="section">11.54 Function not</h3>
 
 <p class="noindent"><b>Synopsis</b>: not(arg0) returns type <b>string</b>
 
@@ -28657,7 +28729,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.54 Function now</h3>
+<h3 class="section">11.55 Function now</h3>
 
 <p class="noindent"><b>Synopsis</b>: now() returns type <b>int</b>
 
@@ -28689,7 +28761,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.55 Function on</h3>
+<h3 class="section">11.56 Function on</h3>
 
 <p class="noindent"><b>Synopsis</b>: on(arg0,arg1,arg2,arg3,arg4,arg5) returns type <b>int</b>
 
@@ -28749,7 +28821,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.56 Function or</h3>
+<h3 class="section">11.57 Function or</h3>
 
 <p class="noindent"><b>Synopsis</b>: or(...) returns type <b>string</b>
 
@@ -28779,7 +28851,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.57 Function parseintarray</h3>
+<h3 class="section">11.58 Function parseintarray</h3>
 
 <p class="noindent"><b>Synopsis</b>: parseintarray(arg0,arg1,arg2,arg3,arg4,arg5) returns type <b>int</b>
 
@@ -28862,7 +28934,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.58 Function parserealarray</h3>
+<h3 class="section">11.59 Function parserealarray</h3>
 
 <p class="noindent"><b>Synopsis</b>: parserealarray(arg0,arg1,arg2,arg3,arg4,arg5) returns type <b>int</b>
 
@@ -28945,7 +29017,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.59 Function parsestringarray</h3>
+<h3 class="section">11.60 Function parsestringarray</h3>
 
 <p class="noindent"><b>Synopsis</b>: parsestringarray(arg0,arg1,arg2,arg3,arg4,arg5) returns type <b>int</b>
 
@@ -29028,7 +29100,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.60 Function parsestringarrayidx</h3>
+<h3 class="section">11.61 Function parsestringarrayidx</h3>
 
 <p class="noindent"><b>Synopsis</b>: parsestringarrayidx(arg0,arg1,arg2,arg3,arg4,arg5) returns type <b>int</b>
 
@@ -29110,7 +29182,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.61 Function peers</h3>
+<h3 class="section">11.62 Function peers</h3>
 
 <p class="noindent"><b>Synopsis</b>: peers(arg0,arg1,arg2) returns type <b>slist</b>
 
@@ -29212,7 +29284,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.62 Function peerleader</h3>
+<h3 class="section">11.63 Function peerleader</h3>
 
 <p class="noindent"><b>Synopsis</b>: peerleader(arg0,arg1,arg2) returns type <b>string</b>
 
@@ -29312,7 +29384,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.63 Function peerleaders</h3>
+<h3 class="section">11.64 Function peerleaders</h3>
 
 <p class="noindent"><b>Synopsis</b>: peerleaders(arg0,arg1,arg2) returns type <b>slist</b>
 
@@ -29413,7 +29485,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.64 Function product</h3>
+<h3 class="section">11.65 Function product</h3>
 
 <p class="noindent"><b>Synopsis</b>: product(arg0) returns type <b>real</b>
 
@@ -29462,7 +29534,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.65 Function randomint</h3>
+<h3 class="section">11.66 Function randomint</h3>
 
 <p class="noindent"><b>Synopsis</b>: randomint(arg0,arg1) returns type <b>int</b>
 
@@ -29499,7 +29571,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.66 Function readfile</h3>
+<h3 class="section">11.67 Function readfile</h3>
 
 <p class="noindent"><b>Synopsis</b>: readfile(arg0,arg1) returns type <b>string</b>
 
@@ -29537,7 +29609,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.67 Function readintarray</h3>
+<h3 class="section">11.68 Function readintarray</h3>
 
 <p class="noindent"><b>Synopsis</b>: readintarray(arg0,arg1,arg2,arg3,arg4,arg5) returns type <b>int</b>
 
@@ -29634,7 +29706,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.68 Function readintlist</h3>
+<h3 class="section">11.69 Function readintlist</h3>
 
 <p class="noindent"><b>Synopsis</b>: readintlist(arg0,arg1,arg2,arg3,arg4) returns type <b>ilist</b>
 
@@ -29714,7 +29786,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.69 Function readrealarray</h3>
+<h3 class="section">11.70 Function readrealarray</h3>
 
 <p class="noindent"><b>Synopsis</b>: readrealarray(arg0,arg1,arg2,arg3,arg4,arg5) returns type <b>int</b>
 
@@ -29780,7 +29852,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.70 Function readreallist</h3>
+<h3 class="section">11.71 Function readreallist</h3>
 
 <p class="noindent"><b>Synopsis</b>: readreallist(arg0,arg1,arg2,arg3,arg4) returns type <b>rlist</b>
 
@@ -29860,7 +29932,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.71 Function readstringarray</h3>
+<h3 class="section">11.72 Function readstringarray</h3>
 
 <p class="noindent"><b>Synopsis</b>: readstringarray(arg0,arg1,arg2,arg3,arg4,arg5) returns type <b>int</b>
 
@@ -29966,7 +30038,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.72 Function readstringarrayidx</h3>
+<h3 class="section">11.73 Function readstringarrayidx</h3>
 
 <p class="noindent"><b>Synopsis</b>: readstringarrayidx(arg0,arg1,arg2,arg3,arg4,arg5) returns type <b>int</b>
 
@@ -30070,7 +30142,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.73 Function readstringlist</h3>
+<h3 class="section">11.74 Function readstringlist</h3>
 
 <p class="noindent"><b>Synopsis</b>: readstringlist(arg0,arg1,arg2,arg3,arg4) returns type <b>slist</b>
 
@@ -30168,7 +30240,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.74 Function readtcp</h3>
+<h3 class="section">11.75 Function readtcp</h3>
 
 <p class="noindent"><b>Synopsis</b>: readtcp(arg0,arg1,arg2,arg3) returns type <b>string</b>
 
@@ -30241,7 +30313,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.75 Function regarray</h3>
+<h3 class="section">11.76 Function regarray</h3>
 
 <p class="noindent"><b>Synopsis</b>: regarray(arg0,arg1) returns type <b>class</b>
 
@@ -30318,7 +30390,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.76 Function regcmp</h3>
+<h3 class="section">11.77 Function regcmp</h3>
 
 <p class="noindent"><b>Synopsis</b>: regcmp(arg0,arg1) returns type <b>class</b>
 
@@ -30427,7 +30499,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.77 Function regextract</h3>
+<h3 class="section">11.78 Function regextract</h3>
 
 <p class="noindent"><b>Synopsis</b>: regextract(arg0,arg1,arg2) returns type <b>class</b>
 
@@ -30495,7 +30567,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.78 Function registryvalue</h3>
+<h3 class="section">11.79 Function registryvalue</h3>
 
 <p class="noindent"><b>Synopsis</b>: registryvalue(arg0,arg1) returns type <b>string</b>
 
@@ -30542,7 +30614,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.79 Function regline</h3>
+<h3 class="section">11.80 Function regline</h3>
 
 <p class="noindent"><b>Synopsis</b>: regline(arg0,arg1) returns type <b>class</b>
 
@@ -30630,7 +30702,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.80 Function reglist</h3>
+<h3 class="section">11.81 Function reglist</h3>
 
 <p class="noindent"><b>Synopsis</b>: reglist(arg0,arg1) returns type <b>class</b>
 
@@ -30685,7 +30757,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.81 Function regldap</h3>
+<h3 class="section">11.82 Function regldap</h3>
 
 <p class="noindent"><b>Synopsis</b>: regldap(arg0,arg1,arg2,arg3,arg4,arg5,arg6) returns type <b>class</b>
 
@@ -30774,7 +30846,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.82 Function remotescalar</h3>
+<h3 class="section">11.83 Function remotescalar</h3>
 
 <p class="noindent"><b>Synopsis</b>: remotescalar(arg0,arg1,arg2) returns type <b>string</b>
 
@@ -30845,7 +30917,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.83 Function remoteclassesmatching</h3>
+<h3 class="section">11.84 Function remoteclassesmatching</h3>
 
 <p class="noindent"><b>Synopsis</b>: remoteclassesmatching(arg0,arg1,arg2,arg3) returns type <b>class</b>
 
@@ -30907,7 +30979,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.84 Function returnszero</h3>
+<h3 class="section">11.85 Function returnszero</h3>
 
 <p class="noindent"><b>Synopsis</b>: returnszero(arg0,arg1) returns type <b>class</b>
 
@@ -30964,7 +31036,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.85 Function rrange</h3>
+<h3 class="section">11.86 Function rrange</h3>
 
 <p class="noindent"><b>Synopsis</b>: rrange(arg0,arg1) returns type <b>rrange [real,real]</b>
 
@@ -30998,7 +31070,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.86 Function selectservers</h3>
+<h3 class="section">11.87 Function selectservers</h3>
 
 <p class="noindent"><b>Synopsis</b>: selectservers(arg0,arg1,arg2,arg3,arg4,arg5) returns type <b>int</b>
 
@@ -31110,7 +31182,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.87 Function splayclass</h3>
+<h3 class="section">11.88 Function splayclass</h3>
 
 <p class="noindent"><b>Synopsis</b>: splayclass(arg0,arg1) returns type <b>class</b>
 
@@ -31199,7 +31271,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.88 Function splitstring</h3>
+<h3 class="section">11.89 Function splitstring</h3>
 
 <p class="noindent"><b>Synopsis</b>: splitstring(arg0,arg1,arg2) returns type <b>slist</b>
 
@@ -31267,7 +31339,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.89 Function strcmp</h3>
+<h3 class="section">11.90 Function strcmp</h3>
 
 <p class="noindent"><b>Synopsis</b>: strcmp(arg0,arg1) returns type <b>class</b>
 
@@ -31324,7 +31396,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.90 Function sum</h3>
+<h3 class="section">11.91 Function sum</h3>
 
 <p class="noindent"><b>Synopsis</b>: sum(arg0) returns type <b>real</b>
 
@@ -31385,7 +31457,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.91 Function translatepath</h3>
+<h3 class="section">11.92 Function translatepath</h3>
 
 <p class="noindent"><b>Synopsis</b>: translatepath(arg0) returns type <b>string</b>
 
@@ -31446,7 +31518,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.92 Function usemodule</h3>
+<h3 class="section">11.93 Function usemodule</h3>
 
 <p class="noindent"><b>Synopsis</b>: usemodule(arg0,arg1) returns type <b>class</b>
 
@@ -31515,7 +31587,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.93 Function userexists</h3>
+<h3 class="section">11.94 Function userexists</h3>
 
 <p class="noindent"><b>Synopsis</b>: userexists(arg0) returns type <b>class</b>
 
@@ -35707,7 +35779,7 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <h2>Table of Contents</h2>
 <ul>
 <li><a name="toc_Top" href="#Top">CFEngine-AutoReference</a>
-<li><a name="toc_Getting-started" href="#Getting-started">1 CFEngine 3.3.0a1.r2879 &ndash; Getting started</a>
+<li><a name="toc_Getting-started" href="#Getting-started">1 CFEngine 3.3.0a1.r2900 &ndash; Getting started</a>
 <ul>
 <li><a href="#Software-components">1.1 Software components</a>
 <ul>
@@ -36261,47 +36333,48 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <li><a href="#Function-ldaparray">11.50 Function ldaparray</a>
 <li><a href="#Function-ldaplist">11.51 Function ldaplist</a>
 <li><a href="#Function-ldapvalue">11.52 Function ldapvalue</a>
-<li><a href="#Function-not">11.53 Function not</a>
-<li><a href="#Function-now">11.54 Function now</a>
-<li><a href="#Function-on">11.55 Function on</a>
-<li><a href="#Function-or">11.56 Function or</a>
-<li><a href="#Function-parseintarray">11.57 Function parseintarray</a>
-<li><a href="#Function-parserealarray">11.58 Function parserealarray</a>
-<li><a href="#Function-parsestringarray">11.59 Function parsestringarray</a>
-<li><a href="#Function-parsestringarrayidx">11.60 Function parsestringarrayidx</a>
-<li><a href="#Function-peers">11.61 Function peers</a>
-<li><a href="#Function-peerleader">11.62 Function peerleader</a>
-<li><a href="#Function-peerleaders">11.63 Function peerleaders</a>
-<li><a href="#Function-product">11.64 Function product</a>
-<li><a href="#Function-randomint">11.65 Function randomint</a>
-<li><a href="#Function-readfile">11.66 Function readfile</a>
-<li><a href="#Function-readintarray">11.67 Function readintarray</a>
-<li><a href="#Function-readintlist">11.68 Function readintlist</a>
-<li><a href="#Function-readrealarray">11.69 Function readrealarray</a>
-<li><a href="#Function-readreallist">11.70 Function readreallist</a>
-<li><a href="#Function-readstringarray">11.71 Function readstringarray</a>
-<li><a href="#Function-readstringarrayidx">11.72 Function readstringarrayidx</a>
-<li><a href="#Function-readstringlist">11.73 Function readstringlist</a>
-<li><a href="#Function-readtcp">11.74 Function readtcp</a>
-<li><a href="#Function-regarray">11.75 Function regarray</a>
-<li><a href="#Function-regcmp">11.76 Function regcmp</a>
-<li><a href="#Function-regextract">11.77 Function regextract</a>
-<li><a href="#Function-registryvalue">11.78 Function registryvalue</a>
-<li><a href="#Function-regline">11.79 Function regline</a>
-<li><a href="#Function-reglist">11.80 Function reglist</a>
-<li><a href="#Function-regldap">11.81 Function regldap</a>
-<li><a href="#Function-remotescalar">11.82 Function remotescalar</a>
-<li><a href="#Function-remoteclassesmatching">11.83 Function remoteclassesmatching</a>
-<li><a href="#Function-returnszero">11.84 Function returnszero</a>
-<li><a href="#Function-rrange">11.85 Function rrange</a>
-<li><a href="#Function-selectservers">11.86 Function selectservers</a>
-<li><a href="#Function-splayclass">11.87 Function splayclass</a>
-<li><a href="#Function-splitstring">11.88 Function splitstring</a>
-<li><a href="#Function-strcmp">11.89 Function strcmp</a>
-<li><a href="#Function-sum">11.90 Function sum</a>
-<li><a href="#Function-translatepath">11.91 Function translatepath</a>
-<li><a href="#Function-usemodule">11.92 Function usemodule</a>
-<li><a href="#Function-userexists">11.93 Function userexists</a>
+<li><a href="#Function-lsdir">11.53 Function lsdir</a>
+<li><a href="#Function-not">11.54 Function not</a>
+<li><a href="#Function-now">11.55 Function now</a>
+<li><a href="#Function-on">11.56 Function on</a>
+<li><a href="#Function-or">11.57 Function or</a>
+<li><a href="#Function-parseintarray">11.58 Function parseintarray</a>
+<li><a href="#Function-parserealarray">11.59 Function parserealarray</a>
+<li><a href="#Function-parsestringarray">11.60 Function parsestringarray</a>
+<li><a href="#Function-parsestringarrayidx">11.61 Function parsestringarrayidx</a>
+<li><a href="#Function-peers">11.62 Function peers</a>
+<li><a href="#Function-peerleader">11.63 Function peerleader</a>
+<li><a href="#Function-peerleaders">11.64 Function peerleaders</a>
+<li><a href="#Function-product">11.65 Function product</a>
+<li><a href="#Function-randomint">11.66 Function randomint</a>
+<li><a href="#Function-readfile">11.67 Function readfile</a>
+<li><a href="#Function-readintarray">11.68 Function readintarray</a>
+<li><a href="#Function-readintlist">11.69 Function readintlist</a>
+<li><a href="#Function-readrealarray">11.70 Function readrealarray</a>
+<li><a href="#Function-readreallist">11.71 Function readreallist</a>
+<li><a href="#Function-readstringarray">11.72 Function readstringarray</a>
+<li><a href="#Function-readstringarrayidx">11.73 Function readstringarrayidx</a>
+<li><a href="#Function-readstringlist">11.74 Function readstringlist</a>
+<li><a href="#Function-readtcp">11.75 Function readtcp</a>
+<li><a href="#Function-regarray">11.76 Function regarray</a>
+<li><a href="#Function-regcmp">11.77 Function regcmp</a>
+<li><a href="#Function-regextract">11.78 Function regextract</a>
+<li><a href="#Function-registryvalue">11.79 Function registryvalue</a>
+<li><a href="#Function-regline">11.80 Function regline</a>
+<li><a href="#Function-reglist">11.81 Function reglist</a>
+<li><a href="#Function-regldap">11.82 Function regldap</a>
+<li><a href="#Function-remotescalar">11.83 Function remotescalar</a>
+<li><a href="#Function-remoteclassesmatching">11.84 Function remoteclassesmatching</a>
+<li><a href="#Function-returnszero">11.85 Function returnszero</a>
+<li><a href="#Function-rrange">11.86 Function rrange</a>
+<li><a href="#Function-selectservers">11.87 Function selectservers</a>
+<li><a href="#Function-splayclass">11.88 Function splayclass</a>
+<li><a href="#Function-splitstring">11.89 Function splitstring</a>
+<li><a href="#Function-strcmp">11.90 Function strcmp</a>
+<li><a href="#Function-sum">11.91 Function sum</a>
+<li><a href="#Function-translatepath">11.92 Function translatepath</a>
+<li><a href="#Function-usemodule">11.93 Function usemodule</a>
+<li><a href="#Function-userexists">11.94 Function userexists</a>
 </li></ul>
 <li><a name="toc_Special-Variables" href="#Special-Variables">12 Special Variables</a>
 <ul>

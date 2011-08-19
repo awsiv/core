@@ -17,54 +17,95 @@
   span.sc    { font-variant:small-caps }
   span.roman { font-family:serif; font-weight:normal; } 
   span.sansserif { font-family:sans-serif; font-weight:normal; } 
+@font-face {
+    font-family: 'CFE_FONT';
+    src: url('fonts/eot/opensans-regular-webfont.eot');
+    src: local('☺'),  url('fonts/ttf/opensans-regular-webfont.ttf') format('truetype'), url('fonts/svg/opensans-regular-webfont.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}    
+pre {
+    background-color: #EEFFDD;
+    border: 1px solid #CCCCCC;
+    font-family: courier;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    padding: 5px;
+    font-size: 90%;
+    }
+pre.display { font-family:inherit }
+pre.format  { font-family:inherit }
+pre.smallexample
+pre.smalllisp,
+pre.smallformat,
+pre.smalldisplay {
+  font-size: 90%;
+} 
+
+span.sc    { font-variant:small-caps }
+span.roman { font-family:serif; font-weight:normal; } 
+span.sansserif { font-family:sans-serif; font-weight:normal; } 
+
 body {
-	font-family: Verdana, DejaVu, Vera, Geneva, sans-serif;
-	padding: 10px;
+    font:  90%  'CFE_FONT', arial, Helvetica,sans-serif; 
+    color: #646464;
+    padding: 10px 20px;
+    width: 960px;
+    margin: 0 auto;
 }
 .node
 {
-	text-align: right;
-	padding: 2px;
-	font-size: smaller;
+    text-align: right;
+    padding: 2px;
+    font-size: smaller;
 }
 .node hr {
-	border: 0;
-	width: 100%;
-	color: #CCC;
-	background-color: #CCC;
-	height: 5px;
+    border: 0;
+    width: 100%;
+    color: #CCC;
+    background-color: #CCC;
+    height: 5px;
 }
 .section {
-	padding-right: 0px;
-	padding-bottom: 0px;
-	padding-left: 0px;
-}
-h1 {
-	font-weight: bold;
-	color: #666;
-}
-h2 {
-	font-weight: bold;
-	color: #666;
-}
-h3 {
-	margin-top: 3px;
-	margin-right: 0px;
-	margin-bottom: 10px;
-	margin-left: 0px;
+    padding-right: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
 }
 
-.menu
-{
+h1 {
+    font-size: 26px;
+    font-weight: normal;
+    line-height: 32px;
+    margin: 32px 0 16px;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+h2 {
+    color: #9E9981 !important;
+    font-size: 16px;
+    line-height: 18px;
+    font-weight: normal;
+    margin: 16px 0 26px;
+    text-align: left;
+}
+h3 {
+    margin-top: 3px;
+    margin-right: 0px;
+    margin-bottom: 10px;
+    margin-left: 0px;
+    line-height: 20px;
+    font-size: 16px;
+    font-weight: normal;
 }
 
 .contents
 {
-	background-color: #CCC;
-	padding-top: 2px;
-	padding-right: 2px;
-	padding-bottom: 2px;
-	padding-left: 10px;
+    background-color: #CCC;
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 10px;
 }
 
 .index-cp
@@ -88,34 +129,69 @@ table.border
 	border-width: 0px;
 }
 
-FONT.liten {font-size: 70%; }
+FONT.liten {font-size: 80%; }
  
 .tynn {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: smaller;
-        font-style: normal;
-        font-weight: lighter;
-        margin-bottom: 0em;
-     font-size: 11pt;
-        }
-
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: smaller;
+    font-style: normal;
+    font-weight: lighter;
+    margin-bottom: 0em;
+    font-size: 11pt;
+}
 .verbatim {
-	font-family: "Lucida Console", Monaco, monospace;
-	color: #000;
-	padding-top: 30px;
-	padding-right: 30px;
-	padding-bottom: 3px;
-	padding-left: 30px;
-	background-color: #FEFFCA;
-	border-left-width: medium;
-	border-left-style: outset;
-	border-left-color: #FDFFD5;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 20px;
-	margin-left: 0px;
+    color: #000;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 20px;
+    margin-left: 0px;
+}
+.example {
+    color: #000;
+    width: 100%;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 20px;
+    margin-left: 0px;
+}
+.smallexample {
+    color: #000;
+    padding-top: 10px;
+    padding-right: 30px;
+    padding-bottom: 5px;
+    padding-left: 30px;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+}
+.cartouche {
+    padding: 5px;
+    font-style: italic;
+    font-size: 85%;
 }
 
+table.cartouche {
+    border: none !important;
+}
+
+ .cartouche td  {
+    background-color: #ddd;
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+
+A:link { color: #2c2e70 }
+A:visited { color: black }
+A:active { color: #600041 }
+dt em {font-weight: bold}
+/* don't change this rule */    
+pre.sp {
+    background: none !important;   
+    border:none !important
+}
+/* --- */
+/*code hightlight*/
 .red { color: #b80047; font-weight: bold; }
 
 .blue { color: blue;  /*font-weight: bold;*/ }
@@ -123,55 +199,7 @@ FONT.liten {font-size: 70%; }
 .green { color: darkgreen; }
 
 .comment { font-style: italic; }
-
-.example {
-	font-family: "Lucida Console", Monaco, monospace;
-	color: #000;
-	width: 100%;
-	padding-top: 30px;
-	padding-right: 30px;
-	padding-bottom: 3px;
-	padding-left: 30px;
-	background-color: #FEFFCA;
-	border-left-width: medium;
-	border-left-style: outset;
-	border-left-color: #FDFFD5;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 20px;
-	margin-left: 0px;
-}
-.smallexample {
-	font-family: "Lucida Console", Monaco, monospace;
-	color: #000;
-	width: 100%;
-	padding-top: 30px;
-	padding-right: 30px;
-	padding-bottom: 3px;
-	padding-left: 30px;
-	background-color: #FEFFCA;
-	border-left-width: medium;
-	border-left-style: outset;
-	border-left-color: #FDFFD5;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 20px;
-	margin-left: 0px;
-}
-.cartouche {
-	background-color: #CCC;
-	border-top-style: none;
-	border-right-style: none;
-	border-bottom-style: none;
-	border-left-style: none;
-	padding: 5px;
-	font-style: italic;
-        width: 100%;
-}
-
-A:link { color: #2c2e70 }
-A:visited { color: black }
-A:active { color: #600041 }--></style>
+--></style>
 </head>
 <body>
 <h1 class="settitle">Distributed Scheduling</h1>
@@ -311,14 +339,14 @@ promises afterwards.
    <p>The simplest case is to schedule the exact times.
 <pre class="verbatim">bundle agent workflow_one
 {
-methods:
-
+<span class="red">methods:
+</span>
   Host2.Day24.January.Year2012.Hr16.Min50_55::
 
-    "any" usebundle => do_my_job_bundle;
+    "any"<span class="red"> usebundle </span>=><span class="blue"> do_my_job_bundle;</span>
 
-commands:
-
+<span class="red">commands:
+</span>
   Host1.Day24.January.Year2012.Hr16.Min45_50::
 
     "/usr/local/bin/my_job";
@@ -340,29 +368,29 @@ of control by asking the predecessor or upstream host for confirmation of succes
 if the job was carried out.
 <pre class="verbatim">bundle agent workflow_one
 {
-classes:
-
+<span class="red">classes:
+</span>
   Host2::
 
-     "succeeded"     expression => remoteclassesmatching
+     "succeeded"<span class="red">     expression </span>=><span class="blue"> remoteclassesmatching</span>
                                            (
                                            "did.*",    # get classes matching
                                            "Host1",    # from this server
                                            "no",       # encrypt comms?
                                            "hostX"     # prefix
                                            );
-methods:
-
+<span class="red">methods:
+</span>
   Host2.hostX_did_my_job
 
-    "any" usebundle => do_my_job_bundle;
+    "any"<span class="red"> usebundle </span>=><span class="blue"> do_my_job_bundle;</span>
 
-commands:
-
+<span class="red">commands:
+</span>
   Host1.Day24.January.Year2012.Hr16.Min45_50::
 
     "/usr/local/bin/my_job",
-        classes => state_repaired("did_my_job");
+<span class="red">        classes </span>=><span class="blue"> state_repaired("did_my_job");</span>
 }
 </pre>
 In this example, the methods promise runs on Host2 and the commands promise runs
@@ -379,12 +407,12 @@ some extra configuration on the server side to grant access to this context info
 
 <pre class="verbatim">bundle server access_rules
 {
-access:
-
+<span class="red">access:
+</span>
   "did_my_job"
 
-  resource_type => "context",
-        admit   => { "Host2" };
+<span class="red">  resource_type </span>=><span class="green"> "context",</span>
+<span class="red">        admit   </span>=> { "Host2" };
 }
 
 </pre>
@@ -426,29 +454,29 @@ that starts at 16:00 hours each day and runs only once each day.
 
 <pre class="verbatim">bundle agent workflow_one
 {
-classes:
-
+<span class="red">classes:
+</span>
   Host2::
 
-     "succeeded"     expression => remoteclassesmatching(
+     "succeeded"<span class="red">     expression </span>=><span class="blue"> remoteclassesmatching(</span>
                                                         "did.*",
                                                         "Host1",
                                                         "no",   
                                                         "hostX" 
                                                         );
-methods:
-
+<span class="red">methods:
+</span>
   Host2.hostX_did_my_job
 
-    "any" usebundle => do_my_job_bundle;
+    "any"<span class="red"> usebundle </span>=><span class="blue"> do_my_job_bundle;</span>
 
-commands:
-
+<span class="red">commands:
+</span>
   Host1.Hr16::
 
     "/usr/local/bin/my_job",
-         action => if_elapsed("100"),
-        classes => state_repaired("did_my_job");
+<span class="red">         action </span>=><span class="blue"> if_elapsed("100"),</span>
+<span class="red">        classes </span>=><span class="blue"> state_repaired("did_my_job");</span>
 
 
 </pre>
@@ -470,108 +498,119 @@ on your aesthetics. The following example, from the community unit tests,
 shows how we might proceed.
 
 <pre class="verbatim">
-body common control
-
+<span class="red">body common control
+</span>
 {
-bundlesequence  => { job_chain("Hr16.Min10_15") };
+<span class="red">bundlesequence  </span>=> { job_chain("Hr16.Min10_15") };
 }
 
-########################################################
+<span class="comment">########################################################
+</span>
 
-bundle common g
-{
-vars:
+<span class="red">bundle common g
+</span>{
+<span class="red">vars:
+</span>
+<span class="comment"> # Define the name of the signal passed between hosts
+</span>
 
- # Define the name of the signal passed between hosts
-
- "signal"   string => "pack_a_name";
+ "signal"<span class="red">   string </span>=><span class="green"> "pack_a_name";</span>
 }
 
-########################################################
+<span class="comment">########################################################
+</span>
 
-bundle agent job_chain(time)
+<span class="red">bundle agent</span> <span class="blue">job_chain(time)</span>
 {
-vars:
+<span class="red">vars:
+</span>
+<span class="comment">    # Define the names of the two parties
+</span>
 
-    # Define the names of the two parties
+    "client"<span class="red">   string </span>=><span class="green"> "downstream.exampe.org";</span>
+    "server"<span class="red">   string </span>=><span class="green"> "upstream.example.org";</span>
 
-    "client"   string => "downstream.exampe.org";
-    "server"   string => "upstream.example.org";
+<span class="red">classes:
+</span>
+<span class="comment">    # derive some classes from the names defined in variables
+</span>
 
-classes:
+    "client_primed"<span class="red"> expression </span>=> classmatch(canonify("$(client)")),
+<span class="red">                    ifvarclass </span>=><span class="green"> "$(time)";</span>
 
-    # derive some classes from the names defined in variables
-
-    "client_primed" expression => classmatch(canonify("$(client)")),
-                    ifvarclass => "$(time)";
-
-    "server_primed" expression => classmatch(canonify("$(server)")),
-                    ifvarclass => "$(time)";
+    "server_primed"<span class="red"> expression </span>=> classmatch(canonify("$(server)")),
+<span class="red">                    ifvarclass </span>=><span class="green"> "$(time)";</span>
 
  client_primed::
 
-     "succeeded"     expression => remoteclassesmatching(
+     "succeeded"<span class="red">     expression </span>=><span class="blue"> remoteclassesmatching(</span>
                                                         "$(g.signal)",
                                                         "$(server)",
                                                         "yes",
                                                         "hostX"
                                                         );
-methods:
-
+<span class="red">methods:
+</span>
  client_primed::
 
-    "downstream" usebundle => do_job("Starting local follow-up job"),
-                    action => if_elapsed("5"),
-                ifvarclass => "hostX_$(g.signal)";
+    "downstream"<span class="red"> usebundle </span>=><span class="blue"> do_job("Starting local follow-up job"),</span>
+<span class="red">                    action </span>=><span class="blue"> if_elapsed("5"),</span>
+<span class="red">                ifvarclass </span>=><span class="green"> "hostX_$(g.signal)";</span>
 
  server_primed::
 
-    "upstream"   usebundle => do_job("Starting remote job"),
-                    action => if_elapsed("5"),
-                   classes => state_repaired("$(g.signal)");
+    "upstream"<span class="red">   usebundle </span>=><span class="blue"> do_job("Starting remote job"),</span>
+<span class="red">                    action </span>=><span class="blue"> if_elapsed("5"),</span>
+<span class="red">                   classes </span>=><span class="blue"> state_repaired("$(g.signal)");</span>
 
-reports:
-
+<span class="red">reports:
+</span>
   !succeeded::
 
     "Server communication failed",
  
-                 ifvarclass => "$(time)";
+<span class="red">                 ifvarclass </span>=><span class="green"> "$(time)";</span>
 }
 
-#########################################################
+<span class="comment">#########################################################
+</span>
 
-bundle agent do_job(job)
+<span class="red">bundle agent</span> <span class="blue">do_job(job)</span>
 {
-commands:
-
-   # do whatever...
+<span class="red">commands:
+</span>
+<span class="comment">   # do whatever...
+</span>
 
    "/bin/echo $(job)";
 }
 
-#########################################################
-# Server config
-#########################################################
+<span class="comment">#########################################################
+</span>
+<span class="comment"># Server config
+</span>
+<span class="comment">#########################################################
+</span>
 
-body server control 
+<span class="red">body server</span> <span class="blue">control</span>
 {
-allowconnects         => { "127.0.0.1" , "::1" };
-allowallconnects      => { "127.0.0.1" , "::1" };
-trustkeysfrom         => { "127.0.0.1" , "::1" };
-allowusers            => { "mark" };
+<span class="red">allowconnects         </span>=> { "127.0.0.1" , "::1" };
+<span class="red">allowallconnects      </span>=> { "127.0.0.1" , "::1" };
+<span class="red">trustkeysfrom         </span>=> { "127.0.0.1" , "::1" };
+<span class="red">allowusers            </span>=> { "mark" };
 }
 
-#########################################################
+<span class="comment">#########################################################
+</span>
 
-bundle server access_rules()
+<span class="red">bundle server</span> <span class="blue">access_rules()</span>
 {
-access:
-
+<span class="red">access:
+</span>
   "$(g.signal)"
 
-  resource_type => "context",
-        admit   => { "127.0.0.1" };
+<span class="red">  resource_type </span>=><span class="green"> "context",</span>
+<span class="red">        admit   </span>=> { "127.0.0.1" };
 }
 
 </pre>
@@ -631,32 +670,32 @@ generate the final result, i.e. trigger the followup only if all of the prerequi
 succeeded.
 <pre class="verbatim">bundle agent workflow_one
 {
-vars:
+<span class="red">vars:
+</span>
+  "n"<span class="red"> slist </span>=> { "2", "3", "4" };
 
-  "n" slist => { "2", "3", "4" };
-
-classes:
-
-     "succeeded$(n)"     expression => remoteclassesmatching(
+<span class="red">classes:
+</span>
+     "succeeded$(n)"<span class="red">     expression </span>=><span class="blue"> remoteclassesmatching(</span>
                                                         "did.*",
                                                         "Host$(n)",
                                                         "no",   
                                                         "hostX" 
                                                         ),
-                         ifvarclass => "Host$(n)";
-methods:
-
+<span class="red">                         ifvarclass </span>=><span class="green"> "Host$(n)";</span>
+<span class="red">methods:
+</span>
   Host2.Host3.Host4.hostX_did_my_job
 
-    "any" usebundle => do_my_job_bundle;
+    "any"<span class="red"> usebundle </span>=><span class="blue"> do_my_job_bundle;</span>
 
-commands:
-
+<span class="red">commands:
+</span>
   Host1.Hr16::
 
     "/usr/local/bin/my_job",
-         action => if_elapsed("100"),
-        classes => state_repaired("did_my_job");
+<span class="red">         action </span>=><span class="blue"> if_elapsed("100"),</span>
+<span class="red">        classes </span>=><span class="blue"> state_repaired("did_my_job");</span>
 </pre>
 This example shows an all-or-nothing result. The follow-up job
 will only be executed if all three jobs finish within the same 5
@@ -667,11 +706,11 @@ thing again.
 we just have to change the class expression:
 <pre class="verbatim">...
 
-methods:
-
+<span class="red">methods:
+</span>
   (Host2|Host3|Host4).hostX_did_my_job
 
-    "any" usebundle => do_my_job_bundle;
+    "any"<span class="red"> usebundle </span>=><span class="blue"> do_my_job_bundle;</span>
 
 ...
 </pre>
@@ -691,31 +730,31 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#More-links-in-the-chain">More links in
 This is simply a case of listing the jobs under the trigger classes.
 <pre class="verbatim">bundle agent workflow_one
 {
-classes:
-
+<span class="red">classes:
+</span>
   Host2::
 
-     "succeeded"     expression => remoteclassesmatching(
+     "succeeded"<span class="red">     expression </span>=><span class="blue"> remoteclassesmatching(</span>
                                                         "did.*",
                                                         "Host1",
                                                         "no",   
                                                         "hostX" 
                                                         );
-methods:
-
+<span class="red">methods:
+</span>
   Host2.hostX_did_my_job
 
-    "any" usebundle => do_my_job_bundle1;
-    "any" usebundle => do_my_job_bundle2;
-    "any" usebundle => do_my_job_bundle3;
+    "any"<span class="red"> usebundle </span>=><span class="blue"> do_my_job_bundle1;</span>
+    "any"<span class="red"> usebundle </span>=><span class="blue"> do_my_job_bundle2;</span>
+    "any"<span class="red"> usebundle </span>=><span class="blue"> do_my_job_bundle3;</span>
 
-commands:
-
+<span class="red">commands:
+</span>
   Host1.Hr16::
 
     "/usr/local/bin/my_job",
-         action => if_elapsed("100"),
-        classes => state_repaired("did_my_job");
+<span class="red">         action </span>=><span class="blue"> if_elapsed("100"),</span>
+<span class="red">        classes </span>=><span class="blue"> state_repaired("did_my_job");</span>
 
 </pre>
 
@@ -822,4 +861,5 @@ pageTracker._trackPageview();
 </script>
 
 </body></html>
+
 

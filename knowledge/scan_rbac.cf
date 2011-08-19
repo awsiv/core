@@ -36,6 +36,9 @@ occurrences:
 special_topics_guides::
  "/docs/st-rbac.html"
   represents => { "Role Based Access Control and CFEngine" };
+Role_Based_Access_Control_and_CFEngine::
+ "/docs/st-rbac.html"
+  represents => { "special topics guide" };
 RBAC::
  "/docs/st-rbac.html#Top"
   represents => { "Text section" };

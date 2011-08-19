@@ -38,6 +38,9 @@ occurrences:
 special_topics_guides::
  "/docs/st-devops.html"
   represents => { "CFEngine for `DevOps'" };
+CFEngine_for__DevOps_::
+ "/docs/st-devops.html"
+  represents => { "special topics guide" };
 Cfengine_for_Devops::
  "/docs/st-devops.html#Top"
   represents => { "Text section" };

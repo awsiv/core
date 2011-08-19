@@ -31,6 +31,9 @@ special_topics_guides::
  "/docs/st-menus.html"
   represents => { "Menu Driven Configuration" };
 Menu_Driven_Configuration::
+ "/docs/st-menus.html"
+  represents => { "special topics guide" };
+Menu_Driven_Configuration::
  "/docs/st-menus.html#Top"
   represents => { "Text section" };
 What_is_menu_driven_configuration_::

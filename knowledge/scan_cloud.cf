@@ -32,6 +32,9 @@ occurrences:
 special_topics_guides::
  "/docs/st-cloud.html"
   represents => { "Cloud" };
+Cloud::
+ "/docs/st-cloud.html"
+  represents => { "special topics guide" };
 Cloud_Computing::
  "/docs/st-cloud.html#Top"
   represents => { "Text section" };

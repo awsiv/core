@@ -38,6 +38,9 @@ Copy_directory_trees::
 Editing_password_or_group_files::
  "/docs/cf3-solutions.html#Editing-password-or-group-files"
   represents => { "manual subsection" };
+Editing_password_or_group_files_custom::
+ "/docs/cf3-solutions.html#Editing-password-or-group-files-custom"
+  represents => { "manual subsection" };
 Disabling_and_rotating_files::
  "/docs/cf3-solutions.html#Disabling-and-rotating-files"
   represents => { "manual subsection" };

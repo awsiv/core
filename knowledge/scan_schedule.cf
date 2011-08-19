@@ -38,6 +38,9 @@ occurrences:
 special_topics_guides::
  "/docs/st-schedule.html"
   represents => { "Scheduling and Event Management" };
+Scheduling_and_Event_Management::
+ "/docs/st-schedule.html"
+  represents => { "special topics guide" };
 Scheduling::
  "/docs/st-schedule.html#Top"
   represents => { "Text section" };

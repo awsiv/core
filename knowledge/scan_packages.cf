@@ -34,6 +34,9 @@ occurrences:
 special_topics_guides::
  "/docs/st-packages.html"
   represents => { "Package Management" };
+Package_Management::
+ "/docs/st-packages.html"
+  represents => { "special topics guide" };
 Package_management::
  "/docs/st-packages.html#Top"
   represents => { "Text section" };

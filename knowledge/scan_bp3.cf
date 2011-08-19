@@ -14,6 +14,9 @@ occurrences:
 manuals::
  "/docs/cf3-bestpractice.html"
   represents => { "CFEngine 3 Best Practices" };
+CFEngine_3_Best_Practices::
+ "/docs/cf3-bestpractice.html"
+  represents => { "special topics guide" };
 CFEngine_Best_Practices::
  "/docs/cf3-bestpractice.html#Top"
   represents => { "Text section" };

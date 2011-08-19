@@ -20,6 +20,9 @@ occurrences:
 special_topics_guides::
  "/docs/st-teams.html"
   represents => { "Teamwork" };
+Teamwork::
+ "/docs/st-teams.html"
+  represents => { "special topics guide" };
 Teams::
  "/docs/st-teams.html#Top"
   represents => { "Text section" };

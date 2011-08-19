@@ -17,54 +17,95 @@
   span.sc    { font-variant:small-caps }
   span.roman { font-family:serif; font-weight:normal; } 
   span.sansserif { font-family:sans-serif; font-weight:normal; } 
+@font-face {
+    font-family: 'CFE_FONT';
+    src: url('fonts/eot/opensans-regular-webfont.eot');
+    src: local('☺'),  url('fonts/ttf/opensans-regular-webfont.ttf') format('truetype'), url('fonts/svg/opensans-regular-webfont.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}    
+pre {
+    background-color: #EEFFDD;
+    border: 1px solid #CCCCCC;
+    font-family: courier;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    padding: 5px;
+    font-size: 90%;
+    }
+pre.display { font-family:inherit }
+pre.format  { font-family:inherit }
+pre.smallexample
+pre.smalllisp,
+pre.smallformat,
+pre.smalldisplay {
+  font-size: 90%;
+} 
+
+span.sc    { font-variant:small-caps }
+span.roman { font-family:serif; font-weight:normal; } 
+span.sansserif { font-family:sans-serif; font-weight:normal; } 
+
 body {
-	font-family: Verdana, DejaVu, Vera, Geneva, sans-serif;
-	padding: 10px;
+    font:  90%  'CFE_FONT', arial, Helvetica,sans-serif; 
+    color: #646464;
+    padding: 10px 20px;
+    width: 960px;
+    margin: 0 auto;
 }
 .node
 {
-	text-align: right;
-	padding: 2px;
-	font-size: smaller;
+    text-align: right;
+    padding: 2px;
+    font-size: smaller;
 }
 .node hr {
-	border: 0;
-	width: 100%;
-	color: #CCC;
-	background-color: #CCC;
-	height: 5px;
+    border: 0;
+    width: 100%;
+    color: #CCC;
+    background-color: #CCC;
+    height: 5px;
 }
 .section {
-	padding-right: 0px;
-	padding-bottom: 0px;
-	padding-left: 0px;
-}
-h1 {
-	font-weight: bold;
-	color: #666;
-}
-h2 {
-	font-weight: bold;
-	color: #666;
-}
-h3 {
-	margin-top: 3px;
-	margin-right: 0px;
-	margin-bottom: 10px;
-	margin-left: 0px;
+    padding-right: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
 }
 
-.menu
-{
+h1 {
+    font-size: 26px;
+    font-weight: normal;
+    line-height: 32px;
+    margin: 32px 0 16px;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+h2 {
+    color: #9E9981 !important;
+    font-size: 16px;
+    line-height: 18px;
+    font-weight: normal;
+    margin: 16px 0 26px;
+    text-align: left;
+}
+h3 {
+    margin-top: 3px;
+    margin-right: 0px;
+    margin-bottom: 10px;
+    margin-left: 0px;
+    line-height: 20px;
+    font-size: 16px;
+    font-weight: normal;
 }
 
 .contents
 {
-	background-color: #CCC;
-	padding-top: 2px;
-	padding-right: 2px;
-	padding-bottom: 2px;
-	padding-left: 10px;
+    background-color: #CCC;
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 10px;
 }
 
 .index-cp
@@ -88,34 +129,69 @@ table.border
 	border-width: 0px;
 }
 
-FONT.liten {font-size: 70%; }
+FONT.liten {font-size: 80%; }
  
 .tynn {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: smaller;
-        font-style: normal;
-        font-weight: lighter;
-        margin-bottom: 0em;
-     font-size: 11pt;
-        }
-
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: smaller;
+    font-style: normal;
+    font-weight: lighter;
+    margin-bottom: 0em;
+    font-size: 11pt;
+}
 .verbatim {
-	font-family: "Lucida Console", Monaco, monospace;
-	color: #000;
-	padding-top: 30px;
-	padding-right: 30px;
-	padding-bottom: 3px;
-	padding-left: 30px;
-	background-color: #FEFFCA;
-	border-left-width: medium;
-	border-left-style: outset;
-	border-left-color: #FDFFD5;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 20px;
-	margin-left: 0px;
+    color: #000;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 20px;
+    margin-left: 0px;
+}
+.example {
+    color: #000;
+    width: 100%;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 20px;
+    margin-left: 0px;
+}
+.smallexample {
+    color: #000;
+    padding-top: 10px;
+    padding-right: 30px;
+    padding-bottom: 5px;
+    padding-left: 30px;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+}
+.cartouche {
+    padding: 5px;
+    font-style: italic;
+    font-size: 85%;
 }
 
+table.cartouche {
+    border: none !important;
+}
+
+ .cartouche td  {
+    background-color: #ddd;
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+
+A:link { color: #2c2e70 }
+A:visited { color: black }
+A:active { color: #600041 }
+dt em {font-weight: bold}
+/* don't change this rule */    
+pre.sp {
+    background: none !important;   
+    border:none !important
+}
+/* --- */
+/*code hightlight*/
 .red { color: #b80047; font-weight: bold; }
 
 .blue { color: blue;  /*font-weight: bold;*/ }
@@ -123,55 +199,7 @@ FONT.liten {font-size: 70%; }
 .green { color: darkgreen; }
 
 .comment { font-style: italic; }
-
-.example {
-	font-family: "Lucida Console", Monaco, monospace;
-	color: #000;
-	width: 100%;
-	padding-top: 30px;
-	padding-right: 30px;
-	padding-bottom: 3px;
-	padding-left: 30px;
-	background-color: #FEFFCA;
-	border-left-width: medium;
-	border-left-style: outset;
-	border-left-color: #FDFFD5;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 20px;
-	margin-left: 0px;
-}
-.smallexample {
-	font-family: "Lucida Console", Monaco, monospace;
-	color: #000;
-	width: 100%;
-	padding-top: 30px;
-	padding-right: 30px;
-	padding-bottom: 3px;
-	padding-left: 30px;
-	background-color: #FEFFCA;
-	border-left-width: medium;
-	border-left-style: outset;
-	border-left-color: #FDFFD5;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 20px;
-	margin-left: 0px;
-}
-.cartouche {
-	background-color: #CCC;
-	border-top-style: none;
-	border-right-style: none;
-	border-bottom-style: none;
-	border-left-style: none;
-	padding: 5px;
-	font-style: italic;
-        width: 100%;
-}
-
-A:link { color: #2c2e70 }
-A:visited { color: black }
-A:active { color: #600041 }--></style>
+--></style>
 </head>
 <body>
 <h1 class="settitle">Reporting</h1>
@@ -687,12 +715,12 @@ before expiring.
 
 <pre class="verbatim">body classes example
      {
-     persist_time => "10";
+<span class="red">     persist_time </span>=><span class="green"> "10";</span>
      }
 
-body classes example
+<span class="red">body classes</span> <span class="blue">example</span>
      {
-     timer_policy => "reset";
+<span class="red">     timer_policy </span>=><span class="green"> "reset";</span>
      }
 
 </pre>
@@ -795,33 +823,34 @@ but it is possible to write promises that have the opposite effect.  Check
 your work!
 
 <pre class="verbatim">
-bundle monitor watch
+<span class="red">bundle monitor</span> <span class="blue">watch</span>
 {
-measurements:
-
+<span class="red">measurements:
+</span>
    "/home/mark/tmp/file"
 
-         handle => "line_counter",
-    stream_type => "file",
-      data_type => "counter",
-    match_value => scan_log("MYLINE.*"),
-   history_type => "log",
-         action => sample_rate("0");
+<span class="red">         handle </span>=><span class="green"> "line_counter",</span>
+<span class="red">    stream_type </span>=><span class="green"> "file",</span>
+<span class="red">      data_type </span>=><span class="green"> "counter",</span>
+<span class="red">    match_value </span>=><span class="blue"> scan_log("MYLINE.*"),</span>
+<span class="red">   history_type </span>=><span class="green"> "log",</span>
+<span class="red">         action </span>=><span class="blue"> sample_rate("0");</span>
 
 }
 
-##########################################################
+<span class="comment">##########################################################
+</span>
 
-body match_value scan_log(line)
+<span class="red">body match_value</span> <span class="blue">scan_log(line)</span>
 {
-select_line_matching => "$(line)";
-track_growing_file => "true";
+<span class="red">select_line_matching </span>=><span class="green"> "$(line)";</span>
+<span class="red">track_growing_file </span>=><span class="green"> "true";</span>
 }
 
-body action sample_rate(x)
+<span class="red">body action</span> <span class="blue">sample_rate(x)</span>
 {
-ifelapsed => "$(x)";
-expireafter => "10";
+<span class="red">ifelapsed </span>=><span class="green"> "$(x)";</span>
+<span class="red">expireafter </span>=><span class="green"> "10";</span>
 }
 </pre>
 
@@ -854,61 +883,62 @@ configuration may specify otherwise.  Likewise, your operating systems's
 version of ftp may issue messages with a slightly different format than ours
 
 <pre class="verbatim">
-bundle monitor watch_ftp
+<span class="red">bundle monitor</span> <span class="blue">watch_ftp</span>
 {
-vars:
-   "dir" slist => { "get", "put" };
+<span class="red">vars:
+</span>   "dir"<span class="red"> slist </span>=> { "get", "put" };
 
-measurements:
+<span class="red">measurements:
+</span>
+   "/var/log/messages"
+
+<span class="red">	handle </span>=><span class="green"> "ftp_bytes_${dir}",</span>
+<span class="red">   stream_type </span>=><span class="green"> "file",</span>
+<span class="red">     data_type </span>=><span class="green"> "int",</span>
+<span class="red">   match_value </span>=> extract_log(".*ftpd\[.*", ".*${dir} .* = (\d+) bytes.*"),
+<span class="red">  history_type </span>=><span class="green"> "log",</span>
+<span class="red">	action </span>=><span class="blue"> sample_rate("0");</span>
 
    "/var/log/messages"
 
-	handle => "ftp_bytes_${dir}",
-   stream_type => "file",
-     data_type => "int",
-   match_value => extract_log(".*ftpd\[.*", ".*${dir} .* = (\d+) bytes.*"),
-  history_type => "log",
-	action => sample_rate("0");
+<span class="red">	handle </span>=><span class="green"> "ftp_failed_login",</span>
+<span class="red">   stream_type </span>=><span class="green"> "file",</span>
+<span class="red">     data_type </span>=><span class="green"> "counter",</span>
+<span class="red">   match_value </span>=><span class="blue"> scan_log(".*ftpd\[.*", ".*FTP LOGIN FAILED.*"),</span>
+<span class="red">  history_type </span>=><span class="green"> "log",</span>
+<span class="red">	action </span>=><span class="blue"> sample_rate("0");</span>
 
    "/var/log/messages"
 
-	handle => "ftp_failed_login",
-   stream_type => "file",
-     data_type => "counter",
-   match_value => scan_log(".*ftpd\[.*", ".*FTP LOGIN FAILED.*"),
-  history_type => "log",
-	action => sample_rate("0");
-
-   "/var/log/messages"
-
-	handle => "ftp_failed_anonymous_login",
-   stream_type => "file",
-     data_type => "counter",
-   match_value => scan_log(".*ftpd\[.*", ".*ANONYMOUS FTP LOGIN REFUSED.*"),
-  history_type => "log",
-	action => sample_rate("0");
+<span class="red">	handle </span>=><span class="green"> "ftp_failed_anonymous_login",</span>
+<span class="red">   stream_type </span>=><span class="green"> "file",</span>
+<span class="red">     data_type </span>=><span class="green"> "counter",</span>
+<span class="red">   match_value </span>=><span class="blue"> scan_log(".*ftpd\[.*", ".*ANONYMOUS FTP LOGIN REFUSED.*"),</span>
+<span class="red">  history_type </span>=><span class="green"> "log",</span>
+<span class="red">	action </span>=><span class="blue"> sample_rate("0");</span>
 
 }
 
-##########################################################
+<span class="comment">##########################################################
+</span>
 
-body match_value scan_log(line)
+<span class="red">body match_value</span> <span class="blue">scan_log(line)</span>
 {
-select_line_matching => "$(line)";
-track_growing_file => "true";
+<span class="red">select_line_matching </span>=><span class="green"> "$(line)";</span>
+<span class="red">track_growing_file </span>=><span class="green"> "true";</span>
 }
 
-body match_value extract_log(line, extract)
+<span class="red">body match_value</span> <span class="blue">extract_log(line,</span>
 {
-select_line_matching => "$(line)";
-extraction_regex => "$(extract)";
-track_growing_file => "true";
+<span class="red">select_line_matching </span>=><span class="green"> "$(line)";</span>
+<span class="red">extraction_regex </span>=><span class="green"> "$(extract)";</span>
+<span class="red">track_growing_file </span>=><span class="green"> "true";</span>
 }
 
-body action sample_rate(x)
+<span class="red">body action</span> <span class="blue">sample_rate(x)</span>
 {
-ifelapsed => "$(x)";
-expireafter => "10";
+<span class="red">ifelapsed </span>=><span class="green"> "$(x)";</span>
+<span class="red">expireafter </span>=><span class="green"> "10";</span>
 }
 </pre>
 
@@ -941,33 +971,34 @@ need to configure DNS to log query requests to the appropriate log file.  In
 our case, we use <samp><span class="file">/var/log/named/queries</span></samp>.
 
 <pre class="verbatim">
-bundle monitor watch_dns
+<span class="red">bundle monitor</span> <span class="blue">watch_dns</span>
 {
-vars:
-    "query_type" slist => { "A", "AAAA", "A6", "CNAME", "MX", "NS",
+<span class="red">vars:
+</span>    "query_type"<span class="red"> slist </span>=> { "A", "AAAA", "A6", "CNAME", "MX", "NS",
                             "PTR", "SOA", "TXT", "SRV", "ANY" };
-measurements:
-    "/var/log/named/queries"
-        handle => "DNS_$(query_type)_counter",
-        stream_type => "file",
-        data_type => "counter",
-        match_value => scan_log(".* IN $(query_type).*"),
-        history_type => "log",
-        action => sample_rate("0");
+<span class="red">measurements:
+</span>    "/var/log/named/queries"
+<span class="red">        handle </span>=><span class="green"> "DNS_$(query_type)_counter",</span>
+<span class="red">        stream_type </span>=><span class="green"> "file",</span>
+<span class="red">        data_type </span>=><span class="green"> "counter",</span>
+<span class="red">        match_value </span>=><span class="blue"> scan_log(".* IN $(query_type).*"),</span>
+<span class="red">        history_type </span>=><span class="green"> "log",</span>
+<span class="red">        action </span>=><span class="blue"> sample_rate("0");</span>
 }
 
-##########################################################
+<span class="comment">##########################################################
+</span>
 
-body match_value scan_log(line)
+<span class="red">body match_value</span> <span class="blue">scan_log(line)</span>
 {
-select_line_matching => "$(line)";
-track_growing_file => "true";
+<span class="red">select_line_matching </span>=><span class="green"> "$(line)";</span>
+<span class="red">track_growing_file </span>=><span class="green"> "true";</span>
 }
 
-body action sample_rate(x)
+<span class="red">body action</span> <span class="blue">sample_rate(x)</span>
 {
-ifelapsed => "$(x)";
-expireafter => "10";
+<span class="red">ifelapsed </span>=><span class="green"> "$(x)";</span>
+<span class="red">expireafter </span>=><span class="green"> "10";</span>
 }
 </pre>
 
@@ -1007,49 +1038,52 @@ their own syslog messages, and you may choose to track the volume of
 rejections on a per-filter basis.
 
 <pre class="verbatim">
-bundle monitor watch_email
+<span class="red">bundle monitor</span> <span class="blue">watch_email</span>
 {
-vars:
-    "sendmail" string => ".*(sendmail|sm-mta)\[.*";
+<span class="red">vars:
+</span>    "sendmail"<span class="red"> string </span>=><span class="green"> ".*(sendmail|sm-mta)\[.*";</span>
 
-    "action" slist => { "Sent", "Deferred" };
+    "action"<span class="red"> slist </span>=> { "Sent", "Deferred" };
 
-measurements:
+<span class="red">measurements:
+</span>
+   "/var/log/maillog"
+
+<span class="red">         handle </span>=><span class="green"> "spam_rejected",</span>
+<span class="red">    stream_type </span>=><span class="green"> "file",</span>
+<span class="red">      data_type </span>=><span class="green"> "counter",</span>
+<span class="comment">                   # This matches 3 kinds of rulesets: check_mail,
+</span>
+<span class="comment">		   # check_rcpt, and check_relay
+</span>
+<span class="red">    match_value </span>=><span class="blue"> scan_log("$(sendmail)ruleset=check_(mail|rcpt|relay).*"),</span>
+<span class="red">   history_type </span>=><span class="green"> "log",</span>
+<span class="red">         action </span>=><span class="blue"> sample_rate("0");</span>
 
    "/var/log/maillog"
 
-         handle => "spam_rejected",
-    stream_type => "file",
-      data_type => "counter",
-                   # This matches 3 kinds of rulesets: check_mail,
-		   # check_rcpt, and check_relay
-    match_value => scan_log("$(sendmail)ruleset=check_(mail|rcpt|relay).*"),
-   history_type => "log",
-         action => sample_rate("0");
-
-   "/var/log/maillog"
-
-         handle => canonify("mail_$(action)",
-    stream_type => "file",
-      data_type => "counter",
-    match_value => scan_log("$(sendmail)stat=$(action) .*"),
-   history_type => "log",
-         action => sample_rate("0");
+<span class="red">         handle </span>=> canonify("mail_$(action)",
+<span class="red">    stream_type </span>=><span class="green"> "file",</span>
+<span class="red">      data_type </span>=><span class="green"> "counter",</span>
+<span class="red">    match_value </span>=> scan_log("$(sendmail)stat=$(action) .*"),
+<span class="red">   history_type </span>=><span class="green"> "log",</span>
+<span class="red">         action </span>=><span class="blue"> sample_rate("0");</span>
 
 }
 
-##########################################################
+<span class="comment">##########################################################
+</span>
 
-body match_value scan_log(line)
+<span class="red">body match_value</span> <span class="blue">scan_log(line)</span>
 {
-select_line_matching => "$(line)";
-track_growing_file => "true";
+<span class="red">select_line_matching </span>=><span class="green"> "$(line)";</span>
+<span class="red">track_growing_file </span>=><span class="green"> "true";</span>
 }
 
-body action sample_rate(x)
+<span class="red">body action</span> <span class="blue">sample_rate(x)</span>
 {
-ifelapsed => "$(x)";
-expireafter => "10";
+<span class="red">ifelapsed </span>=><span class="green"> "$(x)";</span>
+<span class="red">expireafter </span>=><span class="green"> "10";</span>
 }
 </pre>
 
@@ -1089,31 +1123,31 @@ which is showing a high number of failure-mode messages:
 
 <pre class="verbatim">bundle monitor watch_milter
 {
-vars:
-   "milter" slist => { "dcc", "bogom", "greylist" };
+<span class="red">vars:
+</span>   "milter"<span class="red"> slist </span>=> { "dcc", "bogom", "greylist" };
 
-measurements:
-
+<span class="red">measurements:
+</span>
    "/var/log/maillog"
 
-         handle => "${milter}_errors",
-    stream_type => "file",
-      data_type => "counter",
-    match_value => scan_log(".*Milter (${milter}): to error state"),
-   history_type => "log",
-         action => sample_rate("0");
+<span class="red">         handle </span>=><span class="green"> "${milter}_errors",</span>
+<span class="red">    stream_type </span>=><span class="green"> "file",</span>
+<span class="red">      data_type </span>=><span class="green"> "counter",</span>
+<span class="red">    match_value </span>=> scan_log(".*Milter (${milter}): to error state"),
+<span class="red">   history_type </span>=><span class="green"> "log",</span>
+<span class="red">         action </span>=><span class="blue"> sample_rate("0");</span>
 }
 
-bundle agent fix_milter
+<span class="red">bundle agent</span> <span class="blue">fix_milter</span>
 {
-vars:
-    "m[dcc]" string      => "/var/dcc/libexec/start-dccm";
-    "m[bogom]" string    => "/usr/local/etc/rc.d/milter-bogom.sh restart";
-    "m[greylist]" string => "/usr/local/etc/rc.d/milter-greylist restart";
+<span class="red">vars:
+</span>    "m[dcc]"<span class="red"> string      </span>=><span class="green"> "/var/dcc/libexec/start-dccm";</span>
+    "m[bogom]"<span class="red"> string    </span>=><span class="green"> "/usr/local/etc/rc.d/milter-bogom.sh restart";</span>
+    "m[greylist]"<span class="red"> string </span>=><span class="green"> "/usr/local/etc/rc.d/milter-greylist restart";</span>
 
-commands:
-    "$(m[$(watch_milter.milter)])"
-	ifvarclass => "$(watch_milter.milter)_high";
+<span class="red">commands:
+</span>    "$(m[$(watch_milter.milter)])"
+<span class="red">	ifvarclass </span>=><span class="green"> "$(watch_milter.milter)_high";</span>
 }
 </pre>
 
@@ -1146,73 +1180,86 @@ and we would monitor it like this:
 
 <pre class="verbatim">bundle monitor watch_breakin_attempts
 {
-measurements:
-    "/var/log/auth.log"
-	 # This is likely what you'll see when a script kiddie probes
-	 # your system
+<span class="red">measurements:
+</span>    "/var/log/auth.log"
+<span class="comment">	 # This is likely what you'll see when a script kiddie probes
+</span>
+<span class="comment">	 # your system
+</span>
 
-         handle => "ssh_username_probe",
-    stream_type => "file",
-      data_type => "counter",
-    match_value => scan_log(".*sshd\[.*Invalid user.*"),
-   history_type => "log",
-         action => sample_rate("0");
-
-    "/var/log/auth.log"
-	 # As scary as this looks, it may just be because someone's DNS
-	 # records are misconfigured - but you should double check!
-
-         handle => "ssh_reverse_map_problem",
-    stream_type => "file",
-      data_type => "counter",
-    match_value => scan_log(".*sshd\[.*POSSIBLE BREAK-IN ATTEMPT!.*"),
-   history_type => "log",
-         action => sample_rate("0");
+<span class="red">         handle </span>=><span class="green"> "ssh_username_probe",</span>
+<span class="red">    stream_type </span>=><span class="green"> "file",</span>
+<span class="red">      data_type </span>=><span class="green"> "counter",</span>
+<span class="red">    match_value </span>=><span class="blue"> scan_log(".*sshd\[.*Invalid user.*"),</span>
+<span class="red">   history_type </span>=><span class="green"> "log",</span>
+<span class="red">         action </span>=><span class="blue"> sample_rate("0");</span>
 
     "/var/log/auth.log"
-	 # Someone is trying to log in to an account that is locked
-	 # out in the sshd config file
+<span class="comment">	 # As scary as this looks, it may just be because someone's DNS
+</span>
+<span class="comment">	 # records are misconfigured - but you should double check!
+</span>
 
-         handle => "ssh_denygroups",
-    stream_type => "file",
-      data_type => "counter",
-    match_value => scan_log(".*sshd\[.*group is listed in DenyGroups.*"),
-   history_type => "log",
-         action => sample_rate("0");
-
-    "/var/log/auth.log"
-	 # This is more a configuration error in /etc/passwd than a
-	 # breakin attempt...
-
-         handle => "ssh_no_shell",
-    stream_type => "file",
-      data_type => "counter",
-    match_value => scan_log(".*sshd\[.*because shell \S+ does not exist.*"),
-   history_type => "log",
-         action => sample_rate("0");
+<span class="red">         handle </span>=><span class="green"> "ssh_reverse_map_problem",</span>
+<span class="red">    stream_type </span>=><span class="green"> "file",</span>
+<span class="red">      data_type </span>=><span class="green"> "counter",</span>
+<span class="red">    match_value </span>=><span class="blue"> scan_log(".*sshd\[.*POSSIBLE BREAK-IN ATTEMPT!.*"),</span>
+<span class="red">   history_type </span>=><span class="green"> "log",</span>
+<span class="red">         action </span>=><span class="blue"> sample_rate("0");</span>
 
     "/var/log/auth.log"
-	 # These errors usually indicate a problem authenticating to your
-	 # IMAP or POP3 server
+<span class="comment">	 # Someone is trying to log in to an account that is locked
+</span>
+<span class="comment">	 # out in the sshd config file
+</span>
 
-         handle => "ssh_pam_error",
-    stream_type => "file",
-      data_type => "counter",
-    match_value => scan_log(".*sshd\[.*error: PAM: authentication error.*"),
-   history_type => "log",
-         action => sample_rate("0");
+<span class="red">         handle </span>=><span class="green"> "ssh_denygroups",</span>
+<span class="red">    stream_type </span>=><span class="green"> "file",</span>
+<span class="red">      data_type </span>=><span class="green"> "counter",</span>
+<span class="red">    match_value </span>=><span class="blue"> scan_log(".*sshd\[.*group is listed in DenyGroups.*"),</span>
+<span class="red">   history_type </span>=><span class="green"> "log",</span>
+<span class="red">         action </span>=><span class="blue"> sample_rate("0");</span>
 
     "/var/log/auth.log"
-	 # These errors usually indicate that you haven't rebuilt your
-	 # database after changing /etc/login.conf - maybe you should
-	 # include a rule to do this command: cap_mkdb /etc/login.conf
+<span class="comment">	 # This is more a configuration error in /etc/passwd than a
+</span>
+<span class="comment">	 # breakin attempt...
+</span>
 
-         handle => "ssh_pam_error",
-    stream_type => "file",
-      data_type => "counter",
-    match_value => scan_log(".*sshd\[.*login_getclass: unknown class.*"),
-   history_type => "log",
-         action => sample_rate("0");
+<span class="red">         handle </span>=><span class="green"> "ssh_no_shell",</span>
+<span class="red">    stream_type </span>=><span class="green"> "file",</span>
+<span class="red">      data_type </span>=><span class="green"> "counter",</span>
+<span class="red">    match_value </span>=><span class="blue"> scan_log(".*sshd\[.*because shell \S+ does not exist.*"),</span>
+<span class="red">   history_type </span>=><span class="green"> "log",</span>
+<span class="red">         action </span>=><span class="blue"> sample_rate("0");</span>
+
+    "/var/log/auth.log"
+<span class="comment">	 # These errors usually indicate a problem authenticating to your
+</span>
+<span class="comment">	 # IMAP or POP3 server
+</span>
+
+<span class="red">         handle </span>=><span class="green"> "ssh_pam_error",</span>
+<span class="red">    stream_type </span>=><span class="green"> "file",</span>
+<span class="red">      data_type </span>=><span class="green"> "counter",</span>
+<span class="red">    match_value </span>=> scan_log(".*sshd\[.*error: PAM: authentication error.*"),
+<span class="red">   history_type </span>=><span class="green"> "log",</span>
+<span class="red">         action </span>=><span class="blue"> sample_rate("0");</span>
+
+    "/var/log/auth.log"
+<span class="comment">	 # These errors usually indicate that you haven't rebuilt your
+</span>
+<span class="comment">	 # database after changing /etc/login.conf - maybe you should
+</span>
+<span class="comment">	 # include a rule to do this command: cap_mkdb /etc/login.conf
+</span>
+
+<span class="red">         handle </span>=><span class="green"> "ssh_pam_error",</span>
+<span class="red">    stream_type </span>=><span class="green"> "file",</span>
+<span class="red">      data_type </span>=><span class="green"> "counter",</span>
+<span class="red">    match_value </span>=> scan_log(".*sshd\[.*login_getclass: unknown class.*"),
+<span class="red">   history_type </span>=><span class="green"> "log",</span>
+<span class="red">         action </span>=><span class="blue"> sample_rate("0");</span>
 }
 
 </pre>
@@ -1233,15 +1280,15 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Monitoring-customization">Monitoring c
 
 <pre class="verbatim">vars:
 
- "probes" slist => { "www", "smtp", "ssh" };
+ "probes"<span class="red"> slist </span>=> { "www", "smtp", "ssh" };
 
-classes:
+<span class="red">classes:
+</span>
+ "$(probes)_threshold"<span class="red"> expression </span>=> isgreaterthan("$(mon.$(probes))","50");
 
- "$(probes)_threshold" expression => isgreaterthan("$(mon.$(probes))","50");
-
-reports:
-
-  "Help $(probes)!" ifvarclass => "$(probes)_threshold";
+<span class="red">reports:
+</span>
+  "Help $(probes)!"<span class="red"> ifvarclass </span>=><span class="green"> "$(probes)_threshold";</span>
 
 </pre>
 
@@ -1307,4 +1354,5 @@ pageTracker._trackPageview();
 </script>
 
 </body></html>
+
 

@@ -494,10 +494,13 @@ occurrences:
 manuals::
  "/docs/cf3-reference.html"
   represents => { "CFEngine reference manual" };
+CFEngine_reference_manual::
+ "/docs/cf3-reference.html"
+  represents => { "special topics guide" };
 CFEngine_AutoReference::
  "/docs/cf3-reference.html#Top"
   represents => { "Text section" };
-CFEngine_3_3_0a1_r2879__Getting_started::
+CFEngine_3_3_0a1_r2900__Getting_started::
  "/docs/cf3-reference.html#Getting-started"
   represents => { "manual chapter" };
 Software_components::
@@ -2756,6 +2759,9 @@ Function_ldapvalue::
 Function_ldapvalue::
  "/docs/cf3-reference.html#Function-ldapvalue"
   represents => { "code example" };
+Function_lsdir::
+ "/docs/cf3-reference.html#Function-lsdir"
+  represents => { "manual section Function lsdir" };
 Function_not::
  "/docs/cf3-reference.html#Function-not"
   represents => { "manual section Function not" };

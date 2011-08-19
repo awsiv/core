@@ -17,54 +17,95 @@
   span.sc    { font-variant:small-caps }
   span.roman { font-family:serif; font-weight:normal; } 
   span.sansserif { font-family:sans-serif; font-weight:normal; } 
+@font-face {
+    font-family: 'CFE_FONT';
+    src: url('fonts/eot/opensans-regular-webfont.eot');
+    src: local('☺'),  url('fonts/ttf/opensans-regular-webfont.ttf') format('truetype'), url('fonts/svg/opensans-regular-webfont.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}    
+pre {
+    background-color: #EEFFDD;
+    border: 1px solid #CCCCCC;
+    font-family: courier;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    padding: 5px;
+    font-size: 90%;
+    }
+pre.display { font-family:inherit }
+pre.format  { font-family:inherit }
+pre.smallexample
+pre.smalllisp,
+pre.smallformat,
+pre.smalldisplay {
+  font-size: 90%;
+} 
+
+span.sc    { font-variant:small-caps }
+span.roman { font-family:serif; font-weight:normal; } 
+span.sansserif { font-family:sans-serif; font-weight:normal; } 
+
 body {
-	font-family: Verdana, DejaVu, Vera, Geneva, sans-serif;
-	padding: 10px;
+    font:  90%  'CFE_FONT', arial, Helvetica,sans-serif; 
+    color: #646464;
+    padding: 10px 20px;
+    width: 960px;
+    margin: 0 auto;
 }
 .node
 {
-	text-align: right;
-	padding: 2px;
-	font-size: smaller;
+    text-align: right;
+    padding: 2px;
+    font-size: smaller;
 }
 .node hr {
-	border: 0;
-	width: 100%;
-	color: #CCC;
-	background-color: #CCC;
-	height: 5px;
+    border: 0;
+    width: 100%;
+    color: #CCC;
+    background-color: #CCC;
+    height: 5px;
 }
 .section {
-	padding-right: 0px;
-	padding-bottom: 0px;
-	padding-left: 0px;
-}
-h1 {
-	font-weight: bold;
-	color: #666;
-}
-h2 {
-	font-weight: bold;
-	color: #666;
-}
-h3 {
-	margin-top: 3px;
-	margin-right: 0px;
-	margin-bottom: 10px;
-	margin-left: 0px;
+    padding-right: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
 }
 
-.menu
-{
+h1 {
+    font-size: 26px;
+    font-weight: normal;
+    line-height: 32px;
+    margin: 32px 0 16px;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+h2 {
+    color: #9E9981 !important;
+    font-size: 16px;
+    line-height: 18px;
+    font-weight: normal;
+    margin: 16px 0 26px;
+    text-align: left;
+}
+h3 {
+    margin-top: 3px;
+    margin-right: 0px;
+    margin-bottom: 10px;
+    margin-left: 0px;
+    line-height: 20px;
+    font-size: 16px;
+    font-weight: normal;
 }
 
 .contents
 {
-	background-color: #CCC;
-	padding-top: 2px;
-	padding-right: 2px;
-	padding-bottom: 2px;
-	padding-left: 10px;
+    background-color: #CCC;
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 10px;
 }
 
 .index-cp
@@ -88,34 +129,69 @@ table.border
 	border-width: 0px;
 }
 
-FONT.liten {font-size: 70%; }
+FONT.liten {font-size: 80%; }
  
 .tynn {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: smaller;
-        font-style: normal;
-        font-weight: lighter;
-        margin-bottom: 0em;
-     font-size: 11pt;
-        }
-
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: smaller;
+    font-style: normal;
+    font-weight: lighter;
+    margin-bottom: 0em;
+    font-size: 11pt;
+}
 .verbatim {
-	font-family: "Lucida Console", Monaco, monospace;
-	color: #000;
-	padding-top: 30px;
-	padding-right: 30px;
-	padding-bottom: 3px;
-	padding-left: 30px;
-	background-color: #FEFFCA;
-	border-left-width: medium;
-	border-left-style: outset;
-	border-left-color: #FDFFD5;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 20px;
-	margin-left: 0px;
+    color: #000;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 20px;
+    margin-left: 0px;
+}
+.example {
+    color: #000;
+    width: 100%;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 20px;
+    margin-left: 0px;
+}
+.smallexample {
+    color: #000;
+    padding-top: 10px;
+    padding-right: 30px;
+    padding-bottom: 5px;
+    padding-left: 30px;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+}
+.cartouche {
+    padding: 5px;
+    font-style: italic;
+    font-size: 85%;
 }
 
+table.cartouche {
+    border: none !important;
+}
+
+ .cartouche td  {
+    background-color: #ddd;
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+
+A:link { color: #2c2e70 }
+A:visited { color: black }
+A:active { color: #600041 }
+dt em {font-weight: bold}
+/* don't change this rule */    
+pre.sp {
+    background: none !important;   
+    border:none !important
+}
+/* --- */
+/*code hightlight*/
 .red { color: #b80047; font-weight: bold; }
 
 .blue { color: blue;  /*font-weight: bold;*/ }
@@ -123,55 +199,7 @@ FONT.liten {font-size: 70%; }
 .green { color: darkgreen; }
 
 .comment { font-style: italic; }
-
-.example {
-	font-family: "Lucida Console", Monaco, monospace;
-	color: #000;
-	width: 100%;
-	padding-top: 30px;
-	padding-right: 30px;
-	padding-bottom: 3px;
-	padding-left: 30px;
-	background-color: #FEFFCA;
-	border-left-width: medium;
-	border-left-style: outset;
-	border-left-color: #FDFFD5;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 20px;
-	margin-left: 0px;
-}
-.smallexample {
-	font-family: "Lucida Console", Monaco, monospace;
-	color: #000;
-	width: 100%;
-	padding-top: 30px;
-	padding-right: 30px;
-	padding-bottom: 3px;
-	padding-left: 30px;
-	background-color: #FEFFCA;
-	border-left-width: medium;
-	border-left-style: outset;
-	border-left-color: #FDFFD5;
-	margin-top: 0px;
-	margin-right: 0px;
-	margin-bottom: 20px;
-	margin-left: 0px;
-}
-.cartouche {
-	background-color: #CCC;
-	border-top-style: none;
-	border-right-style: none;
-	border-bottom-style: none;
-	border-left-style: none;
-	padding: 5px;
-	font-style: italic;
-        width: 100%;
-}
-
-A:link { color: #2c2e70 }
-A:visited { color: black }
-A:active { color: #600041 }--></style>
+--></style>
 </head>
 <body>
 <h1 class="settitle">Hierarchies</h1>
@@ -293,11 +321,12 @@ autonomy if that is what you want. CFEngine does not push a model onto you.
 structure.
 <pre class="verbatim">classes:
 
- # Conceptual hierarchy
+<span class="comment"> # Conceptual hierarchy
+</span>
 
- "top"      or => { "middle_1", "middle_2", "middle_3" }; 
- "middle_1" or => { "slave_1",  "slave_2",  "slave_3"  }; 
- "middle_2" or => { "slave_4",  "slave_5",  "slave_6"  }; 
+ "top"<span class="red">      or </span>=> { "middle_1", "middle_2", "middle_3" }; 
+ "middle_1"<span class="red"> or </span>=> { "slave_1",  "slave_2",  "slave_3"  }; 
+ "middle_2"<span class="red"> or </span>=> { "slave_4",  "slave_5",  "slave_6"  }; 
 
 </pre>
 This example is contrived. The core classes that CFEngine cares about
@@ -309,8 +338,8 @@ basic member attributes.
 with finance, engineering and legal departments in three countries.
 <pre class="verbatim"># Hierarchy
 
- "headquarters"  or => { "usa",      "uk",           "norway" }; 
- "department"    or => { "finance",  "engineering",  "legal"  }; 
+ "headquarters"<span class="red">  or </span>=> { "usa",      "uk",           "norway" }; 
+ "department"<span class="red">    or </span>=> { "finance",  "engineering",  "legal"  }; 
 
 </pre>
 We can express the full hierarchy like this:
@@ -395,10 +424,10 @@ speaking entities from the definitions about our organization, by adding a
 defintion of set <i>union</i> (OR or &lsquo;<samp><span class="samp">|</span></samp>&rsquo;) and <i>intersection</i> (AND or &lsquo;<samp><span class="samp">.</span></samp>&rsquo;):
 <pre class="verbatim"># Hierarchy
 
- "headquarters"  or => { "usa",      "uk",           "norway" }; 
- "department"    or => { "finance",  "engineering",  "legal"  }; 
+ "headquarters"<span class="red">  or </span>=> { "usa",      "uk",           "norway" }; 
+ "department"<span class="red">    or </span>=> { "finance",  "engineering",  "legal"  }; 
 
- "english_speaking" expression => "(usa|uk).!legal"; 
+ "english_speaking"<span class="red"> expression </span>=><span class="green"> "(usa|uk).!legal"; </span>
 
 </pre>
 Thus the English speakers are those entities belonging to
@@ -501,7 +530,7 @@ These are a matter of using the global scope with bundle names.
 inheritance of class attributes):
 <pre class="verbatim">     classes:
      
-       "group_name" or => { 
+       "group_name"<span class="red"> or </span>=> { 
                           "base_class_1", 
                           "base_class_2", 
                           "base_class_3" 
@@ -522,13 +551,13 @@ that the variable is in the current bundle.
 
      <pre class="verbatim">     bundle agent child_bundle(parameter)
      {
-     vars:
+<span class="red">     vars:
+</span>     
+       "extend_list"<span class="red"> slist </span>=> { "extension", @(foreign.list) },
+<span class="red">                    policy </span>=><span class="green"> "ifdefined";</span>
      
-       "extend_list" slist => { "extension", @(foreign.list) },
-                    policy => "ifdefined";
-     
-     reports:
-     
+<span class="red">     reports:
+</span>     
        "Inherit parameter value $(parameter)";
        "Inherit foreign scalar value $(foreign.scalar)";
      
@@ -544,9 +573,9 @@ make promises you can <i>use</i> them.
 
      <pre class="verbatim">     bundle agent child_bundle
      {
-     methods:
-     
-       "extend_method" use => base_bundle(parameter1,parameter2);
+<span class="red">     methods:
+</span>     
+       "extend_method"<span class="red"> use </span>=><span class="blue"> base_bundle(parameter1,parameter2);</span>
      
      }
 </pre>
@@ -610,10 +639,10 @@ in the set of servers:
 
 <pre class="verbatim">classes:
 
-  "servers"  or => { "host1", "host2" };
+  "servers"<span class="red">  or </span>=> { "host1", "host2" };
 
-processes:
-
+<span class="red">processes:
+</span>
   servers::  # the next rules `extend' or add to the class servers
 
     "..."
@@ -678,23 +707,23 @@ can simply express configuration options based on "has-a" or "is-a" options.
 
 <pre class="verbatim">bundle agent maintain_servers
 { 
-classes:
-        "has_dhcpd"	or	=> { classmatch("ipv4_10_\d+_\d+_1") };
-	"has_httpd"	or	=> { "www_example_com" };
-	"has_sshd"	or	=> { "any" };
+<span class="red">classes:
+</span>        "has_dhcpd"<span class="red">	or	</span>=> { classmatch("ipv4_10_\d+_\d+_1") };
+	"has_httpd"<span class="red">	or	</span>=> { "www_example_com" };
+	"has_sshd"<span class="red">	or	</span>=> { "any" };
 
-processes:
-    has_dhcpd::
-	"dhcpd"		restart_class => "start_dhcpd";
+<span class="red">processes:
+</span>    has_dhcpd::
+	"dhcpd"<span class="red">		restart_class </span>=><span class="green"> "start_dhcpd";</span>
 
     has_httpd::
-	"httpd"		restart_class => "start_httpd";
+	"httpd"<span class="red">		restart_class </span>=><span class="green"> "start_httpd";</span>
 
     has_sshd::
-	"sshd"		restart_class => "start_sshd";
+	"sshd"<span class="red">		restart_class </span>=><span class="green"> "start_sshd";</span>
 
-commands:
-    freebsd.start_dhcpd::
+<span class="red">commands:
+</span>    freebsd.start_dhcpd::
 	"/usr/local/etc/rc.d/isc-dhcpd.sh start";
 
     start_httpd::
@@ -721,22 +750,28 @@ something like this:
 
 <pre class="verbatim">files:
     internal.has_httpd.nyc::
-	# Files maintained for internal webserver in New York
+<span class="comment">	# Files maintained for internal webserver in New York
+</span>
 
     external.has_httpd.nyc::
-	# Files maintained for external webserver in New York
+<span class="comment">	# Files maintained for external webserver in New York
+</span>
 
     internal.has_httpd.london::
-	# Files maintained for internal webserver in London
+<span class="comment">	# Files maintained for internal webserver in London
+</span>
 
     external.has_httpd.london::
-	# Files maintained for external webserver in London
+<span class="comment">	# Files maintained for external webserver in London
+</span>
 
     internal.has_httpd.tokyo::
-	# Files maintained for internal webserver in Tokyo
+<span class="comment">	# Files maintained for internal webserver in Tokyo
+</span>
 
     external.has_httpd.tokyo::
-	# Files maintained for external webserver in Tokyo
+<span class="comment">	# Files maintained for external webserver in Tokyo
+</span>
 </pre>
 
 <p class="noindent">When you compound this by ading more services, locations, and finer
@@ -797,4 +832,5 @@ to write both <code>usa.finance</code> and <code>finance.usa</code>.</p>
    <hr></div>
 
 </body></html>
+
 

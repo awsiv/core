@@ -14,6 +14,9 @@ occurrences:
 manuals::
  "/docs/CfengineStdLibrary.html"
   represents => { "Community Open Promise Body Library" };
+Community_Open_Promise_Body_Library::
+ "/docs/CfengineStdLibrary.html"
+  represents => { "special topics guide" };
 Cfengine_Open_Promise_Body_Library::
  "/docs/CfengineStdLibrary.html#Top"
   represents => { "Text section" };

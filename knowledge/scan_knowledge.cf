@@ -40,6 +40,9 @@ occurrences:
 special_topics_guides::
  "/docs/st-knowledge.html"
   represents => { "Implementing Knowledge Management" };
+Implementing_Knowledge_Management::
+ "/docs/st-knowledge.html"
+  represents => { "special topics guide" };
 Knowledge::
  "/docs/st-knowledge.html#Top"
   represents => { "Text section" };

@@ -40,6 +40,9 @@ occurrences:
 special_topics_guides::
  "/docs/st-change.html"
   represents => { "Change Management and Incident Repair" };
+Change_Management_and_Incident_Repair::
+ "/docs/st-change.html"
+  represents => { "special topics guide" };
 Change_Management::
  "/docs/st-change.html#Top"
   represents => { "Text section" };

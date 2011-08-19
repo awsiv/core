@@ -14,6 +14,9 @@ occurrences:
 manuals::
  "/docs/cf3-tutorial.html"
   represents => { "CFEngine 3 Concept Guide" };
+CFEngine_3_Concept_Guide::
+ "/docs/cf3-tutorial.html"
+  represents => { "special topics guide" };
 CFEngine_Tutorial::
  "/docs/cf3-tutorial.html#Top"
   represents => { "Text section" };

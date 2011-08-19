@@ -32,6 +32,9 @@ occurrences:
 special_topics_guides::
  "/docs/st-adopt.html"
   represents => { "Adopting Cfengine in Your Organization" };
+Adopting_Cfengine_in_Your_Organization::
+ "/docs/st-adopt.html"
+  represents => { "special topics guide" };
 Adoption::
  "/docs/st-adopt.html#Top"
   represents => { "Text section" };

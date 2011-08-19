@@ -32,6 +32,9 @@ occurrences:
 special_topics_guides::
  "/docs/st-virt.html"
   represents => { "Virtualization and Cloud Support in CFEngine" };
+Virtualization_and_Cloud_Support_in_CFEngine::
+ "/docs/st-virt.html"
+  represents => { "special topics guide" };
 Virtualization::
  "/docs/st-virt.html#Top"
   represents => { "Text section" };
