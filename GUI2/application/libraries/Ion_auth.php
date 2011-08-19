@@ -561,6 +561,14 @@ class Ion_auth
         {
             return $this->ci->ion_auth_model_mongo->get_users_group($id);
         }
+        
+        public function get_user_grouplist($id){
+            $groups= $this->ci->ion_auth_model_mongo->get_users_group($id);
+            if(!empty ($groups)&&$groups!==False){
+                return $groups[0]['group'];
+            }
+            return array();
+        }
 
 	/**
 	 * Get Users Array
@@ -568,16 +576,15 @@ class Ion_auth
 	 * @return array Users
 	 * @author Ben Edmunds
 	 **/
-	public function get_users_array($group_name=false, $limit=NULL, $offset=NULL)
-	{
-            if(strtolower($this->mode)!='database'){
-               if(!$this->ci->session->userdata('pwd')){
-                     $this->set_error('login_mode_changed');
-                }
-                return $this->ci->auth_ldap->get_all_ldap_users( $this->ci->session->userdata('username'), $this->ci->session->userdata('pwd'));
+       public function get_users_array($group_name=false, $limit=NULL, $offset=NULL) {
+        if (strtolower($this->mode) != 'database') {
+            if (!$this->ci->session->userdata('pwd')) {
+                $this->set_error('login_mode_changed');
             }
-		return $this->ci->ion_auth_model_mongo->get_users_by_group($group_name, $limit, $offset);
-	}
+            return $this->ci->auth_ldap->get_all_ldap_users($this->ci->session->userdata('username'), $this->ci->session->userdata('pwd'));
+        }
+        return $this->ci->ion_auth_model_mongo->get_users_by_group($group_name, $limit, $offset);
+    }
 
 	/**
 	 * Get Newest Users
@@ -687,7 +694,14 @@ class Ion_auth
 	 **/
 	public function update_user($id, $data)
 	{
-		if ($this->ci->ion_auth_model_mongo->update_user($id, $data))
+	$groups=$this->get_user_grouplist($id);
+                $admin_group=$this->ci->settings_model->app_settings_get_item('admin_group');
+                $count=$this->ci->ion_auth_model_mongo->count_users_in_group($admin_group);
+                if($count <= 1 && in_array($admin_group,$groups)&& !in_array($admin_group,$data['group'])){
+                    $this->set_error('one_admin_required');
+                    return FALSE;
+                }
+                if ($this->ci->ion_auth_model_mongo->update_user($id, $data))
 		{
 			$this->set_message('update_successful');
 			return TRUE;
@@ -706,7 +720,14 @@ class Ion_auth
 	 **/
 	public function delete_user($id)
 	{
-		if ($this->ci->ion_auth_model_mongo->delete_user($id))
+	$groups=$this->get_user_grouplist($id);
+                $admin_group=$this->ci->settings_model->app_settings_get_item('admin_group');
+                $count=$this->ci->ion_auth_model_mongo->count_users_in_group($admin_group);
+                if($count <= 1 && in_array($admin_group,$groups)){
+                    $this->set_error('one_admin_required');
+                    return FALSE;
+                }
+                if ($this->ci->ion_auth_model_mongo->delete_user($id))
 		{
 			$this->set_message('user_delete_successful');
 			return TRUE;

@@ -46,6 +46,7 @@ $lang['update_successful'] 		 	 = 'Account Information Successfully Updated';
 $lang['update_unsuccessful'] 		 	 = 'Unable to Update Account Information';
 $lang['user_delete_successful'] 		 	 = 'User Deleted';
 $lang['user_delete_unsuccessful'] 		 	 = 'Unable to Delete User';
+$lang['one_admin_required']                                         ="Atleast one admin is required by mission portal";
 
 //Group createion
 $lang['group_creation_successful']              ="Group Sucessfully Created";

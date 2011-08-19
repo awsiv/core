@@ -714,7 +714,7 @@ class Ion_auth_model_mongo extends CI_Model
 	{
 	    if (array_key_exists($this->identity_column, $data) && $this->identity_check($data[$this->identity_column]))
 	    {
-                $user=$this->get_user_by_col($this->identity_column, $data[$this->identity_column]);
+                 $user=$this->get_user_by_col($this->identity_column, $data[$this->identity_column]);
                 if($user->_id->__toString() != $id)
                 {
 		$this->ion_auth->set_error('account_creation_duplicate_'.$this->identity_column);
@@ -731,7 +731,7 @@ class Ion_auth_model_mongo extends CI_Model
 
 		$this->mongo_db->where(array('_id' => new MongoId($id)));
 		$this->mongo_db->update('users', $data);
-                $this->mongo_db->clear();
+                               $this->mongo_db->clear();
 	    }
 	    return TRUE;
 	}
@@ -951,5 +951,9 @@ class Ion_auth_model_mongo extends CI_Model
 	for($code_length, $newcode = ''; strlen($newcode) < $code_length; $newcode .= chr(!rand(0, 2) ? rand(48, 57) : (!rand(0, 1) ? rand(65, 90) : rand(97, 122))));
 	return $newcode;
 }
+
+       function count_users_in_group($groupname){
+           return $this->mongo_db->where(array('group'=>$groupname))->count('users');
+       }
 
 }

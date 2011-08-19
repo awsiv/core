@@ -4,7 +4,7 @@
             <p class="title">User Settings and Preferences</p>
             <ul>
                 <li><?php echo anchor('/savedsearch/listSavedSearches/'," List of saved searches",array('class' => 'savedsearch'))?></li>
-                <li><?php echo anchor('/settings/manage/'," Mission portal setting",array('class' => 'portalsettings')) ?></li>
+                <?php if($is_displayable){?><li><?php echo anchor('/settings/manage/'," Mission portal setting",array('class' => 'portalsettings')) ?></li><?php }?>
                 <li><?php echo anchor('/settings/preferences/'," My preferences",array('class' => 'preference')) ?></li>
                 <p class="clearleft"></p>
             </ul>

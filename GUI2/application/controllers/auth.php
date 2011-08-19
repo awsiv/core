@@ -637,6 +637,7 @@ class Auth extends Controller {
         $data = array(
             'title' => "Cfengine Mission Portal - authentication",
             'breadcrumbs' => $this->breadcrumblist->display(),
+            "is_displayable"=>$this->ion_auth->is_accessable()
         );
         $this->template->load('template', 'auth/usersettings', $data);
     }
