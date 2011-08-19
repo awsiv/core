@@ -663,12 +663,13 @@ bundle agent cfengine_policysrv
 
  files:
 
-  (ubuntu_8|ubuntu_10|debian_5|debian_6).no_backup_apache2_default::
+  (ubuntu_8|ubuntu_10|debian_5|debian_6).am_policy_hub::
 
    "$(sys.workdir)/software_updates/apache2-default"
-        comment => "Back up a apache2 default config before editing",
-         handle => "cfengine_policysrv_files_backup_apache2_default",
-      copy_from => local_cp("/etc/apache2/sites-available/default");
+         comment => "Back up a apache2 default config before editing",
+          handle => "cfengine_policysrv_files_backup_apache2_default",
+       copy_from => local_cp("/etc/apache2/sites-available/default"),
+      ifvarclass => "no_backup_apache2_default";
 
   debian.am_policy_hub::
 
