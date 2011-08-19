@@ -523,6 +523,7 @@ bundle agent cfengine_policysrv
                               "php5-cli",
                               "php5-json",
                               "php-pear",
+                              "subversion",
                               "php5-mcrypt"
                             },
                   comment => "Define a list of packages to be installed on Debian/Ubuntu",
@@ -663,22 +664,20 @@ bundle agent cfengine_policysrv
 
  files:
 
-  (ubuntu_8|ubuntu_10|debian_5|debian_6).am_policy_hub::
+  debian.am_policy_hub::
+
+   "/var/www/."
+           comment => "Clear up index.html page if there is",
+            handle => "cfengine_policysrv_files_tidy_index_html",
+            delete => tidy,
+       file_select => by_name("index.html"),
+      depth_search => recurse("1");
 
    "$(sys.workdir)/software_updates/apache2-default"
          comment => "Back up a apache2 default config before editing",
           handle => "cfengine_policysrv_files_backup_apache2_default",
        copy_from => local_cp("/etc/apache2/sites-available/default"),
-      ifvarclass => "no_backup_apache2_default";
-
-  debian.am_policy_hub::
-
-   "/var/www/."
-          comment => "Clear up index.html page if there is",
-           handle => "cfengine_policysrv_files_tidy_index_html",
-           delete => tidy,
-       file_select => by_name("index.html"),
-      depth_search => recurse("1");
+      ifvarclass => "no_backup_apache2_default.have_apache2_default";
 
    "/etc/apache2/sites-available/default"
             comment => "Manage apache2 default config for Nova to be running nicely",
