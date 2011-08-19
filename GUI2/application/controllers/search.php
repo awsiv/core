@@ -11,7 +11,6 @@ class Search extends Cf_Controller {
         //$this->carabiner->js('jquery.tablesorter.pager.js');
         $this->carabiner->js('widgets/hostfinder.js');
         $this->carabiner->js('widgets/reportfinder.js');
-        
     }
 
     /**
@@ -60,14 +59,12 @@ class Search extends Cf_Controller {
         $state = isset($getparams['state']) ? $getparams['state'] : $this->input->post('state');
         $longterm_data = isset($getparams['long_term']) ? $getparams['long_term'] : $this->input->post('long_term');
 
-       
+
         $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : $this->setting_lib->get_no_of_rows());
-        if(is_numeric($rows))
-        {
-            $rows=(int)$rows;
-        }
-        else{
-             $rows=20;
+        if (is_numeric($rows)) {
+            $rows = (int) $rows;
+        } else {
+            $rows = 20;
         }
         $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
         //necessary for search result view
@@ -124,7 +121,7 @@ class Search extends Cf_Controller {
             );
             $this->breadcrumb->setBreadCrumb($bc);
         }
-      
+
         $data = array(
             'report_type' => $report_type,
             'title' => "Cfengine Mission Portal - search results",
@@ -137,12 +134,13 @@ class Search extends Cf_Controller {
             'classregex' => $class_regex,
             'hostfinderparams' => $hostfinderparams,
             'breadCrumbUrl' => isset($breadcrumbs_url) ? $breadcrumbs_url : '',
-            'hostname'=>$hostname,
-            'hostkey'=>$hostkey
+            'hostname' => $hostname,
+            'hostkey' => $hostkey,
+            'resultView' => 'default_result_view'
         );
-        
-     
-        
+
+
+
         if (isset($getparams['name'])) {
             $data['name'] = urldecode($getparams['name']);
         } elseif ($this->input->post('name')) {
@@ -157,8 +155,8 @@ class Search extends Cf_Controller {
             case "Bundle profile":
 
                 if ($many) {
-                  
-                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
+
+                    $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     if ($hosts_only) {// when host only field is checked  to geat a group pf hosts
                         $data['report_result'] = cfpr_hosts_with_bundlesseen(NULL, $name, true, $class_regex);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
@@ -192,9 +190,9 @@ class Search extends Cf_Controller {
                 break;
             case "Business value report":
                 if ($many) {
-                     $days = isset($getparams['days']) ? urldecode($getparams['days']) : urldecode($this->input->post('days'));
-                     $months = isset($getparams['months']) ? urldecode($getparams['months']) : urldecode($this->input->post('months'));
-                     $years = isset($getparams['years']) ? urldecode($getparams['years']) : urldecode($this->input->post('years'));                    
+                    $days = isset($getparams['days']) ? urldecode($getparams['days']) : urldecode($this->input->post('days'));
+                    $months = isset($getparams['months']) ? urldecode($getparams['months']) : urldecode($this->input->post('months'));
+                    $years = isset($getparams['years']) ? urldecode($getparams['years']) : urldecode($this->input->post('years'));
                     if ($hosts_only) {
                         $data['report_title'] = $report_type . " Days: $days<br>Months: $months<br>Years: $years";
                         $data['report_result'] = cfpr_hosts_with_value(NULL, $days, $months, $years, $class_regex);
@@ -263,7 +261,7 @@ class Search extends Cf_Controller {
                 if ($many) {
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     $state = isset($getparams['state']) ? urldecode($getparams['state']) : urldecode($this->input->post('state'));
-                  
+
                     if ($hosts_only) {
                         $data['report_result'] = cfpr_hosts_with_compliance_promises(NULL, $name, $state, true, $class_regex);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
@@ -328,7 +326,7 @@ class Search extends Cf_Controller {
                 break;
             case "File change log":
                 if ($many) {
-                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
+                    $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     if ($hosts_only) {
                         $data['report_result'] = cfpr_hosts_with_filechanges(NULL, $name, true, -1, ">", $class_regex);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
@@ -361,6 +359,7 @@ class Search extends Cf_Controller {
                 }
                 break;
             case "File change diffs":
+                $data['resultView'] = 'filechangediff_result';
                 $cal = -1;
                 if ($many) {
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
@@ -382,7 +381,7 @@ class Search extends Cf_Controller {
                         } else {
                             $data['report_result'] = cfpr_report_filediffs(NULL, $name, $diff, true, $cal, ">", $class_regex, $rows, $page_number);
                         }
-                        $this->template->load('template', 'searchpages/filechangediff_result', $data);
+                        $this->template->load('template', 'searchpages/businessresult', $data);
                     }
                 } elseif ($hostkey != "") {
                     $pdfurlParams = array('type' => $report_type,
@@ -394,7 +393,7 @@ class Search extends Cf_Controller {
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $data['report_result'] = cfpr_report_filediffs($hostkey, $search, NULL, true, $cal, ">", $class_regex, $rows, $page_number);
-                    $this->template->load('template', 'searchpages/filechangediff_result', $data);
+                    $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
                     is_ajax() ? $this->load->view('searchpages/file_change_diffs', $data) : $this->template->load('template', 'searchpages/file_change_diffs', $data);
                 }
@@ -402,10 +401,10 @@ class Search extends Cf_Controller {
             case "Last saw hosts":
                 if ($many) {
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
-                     $address = isset($getparams['address']) ? urldecode($getparams['address']) : urldecode($this->input->post('address'));
-                     $key = isset($getparams['key']) ? urldecode($getparams['key']) : urldecode($this->input->post('key'));
+                    $address = isset($getparams['address']) ? urldecode($getparams['address']) : urldecode($this->input->post('address'));
+                    $key = isset($getparams['key']) ? urldecode($getparams['key']) : urldecode($this->input->post('key'));
                     $ago = isset($getparams['ago']) ? urldecode($getparams['ago']) : urldecode($this->input->post('ago'));
-                   
+
                     $ago = $ago == 0 ? -1 : $ago;
                     if ($hosts_only) {// when host only field is checked  to geat a group pf hosts
                         $data['report_result'] = cfpr_hosts_with_lastseen(NULL, $key, $name, $address, $ago, true, $class_regex);
@@ -445,10 +444,10 @@ class Search extends Cf_Controller {
                 break;
             case "Patches available":
                 if ($many) {
-                   
-                   $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
-                   $version = isset($getparams['version']) ? urldecode($getparams['version']) : urldecode($this->input->post('version'));
-                   $arch = isset($getparams['arch']) ? urldecode($getparams['arch']) : urldecode($this->input->post('arch'));
+
+                    $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
+                    $version = isset($getparams['version']) ? urldecode($getparams['version']) : urldecode($this->input->post('version'));
+                    $arch = isset($getparams['arch']) ? urldecode($getparams['arch']) : urldecode($this->input->post('arch'));
                     if ($hosts_only) {
                         $data['report_result'] = cfpr_hosts_with_patch_avail(NULL, $name, $version, $arch, true, $class_regex);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
@@ -486,9 +485,9 @@ class Search extends Cf_Controller {
             case "Patch status":
                 if ($many) {
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
-                   $version = isset($getparams['version']) ? urldecode($getparams['version']) : urldecode($this->input->post('version'));
-                   $arch = isset($getparams['arch']) ? urldecode($getparams['arch']) : urldecode($this->input->post('arch'));
-                   
+                    $version = isset($getparams['version']) ? urldecode($getparams['version']) : urldecode($this->input->post('version'));
+                    $arch = isset($getparams['arch']) ? urldecode($getparams['arch']) : urldecode($this->input->post('arch'));
+
                     if ($hosts_only) {
                         $data['report_result'] = cfpr_hosts_with_patch_in(NULL, $name, $version, $arch, true, $class_regex);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
@@ -525,7 +524,7 @@ class Search extends Cf_Controller {
                 break;
             case "Performance":
                 if ($many) {
-                    
+
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     if ($hosts_only) {
                         $data['report_result'] = cfpr_hosts_with_performance(NULL, $name, true, $class_regex);
@@ -559,7 +558,7 @@ class Search extends Cf_Controller {
             case "Promises repaired log":
             case "Promises repaired summary":
                 if ($many) {
-                   
+
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     if ($hosts_only) {
                         $data['report_result'] = cfpr_hosts_with_repaired(NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex);
@@ -603,7 +602,7 @@ class Search extends Cf_Controller {
             case "Promises not kept summary":
             case "Promises not kept log":
                 if ($many) {
-                   
+
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     if ($hosts_only) {
                         $data['report_result'] = cfpr_hosts_with_notkept(NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex);
@@ -651,7 +650,7 @@ class Search extends Cf_Controller {
                 break;
             case "Setuid/gid root programs":
                 if ($many) {
-                   
+
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     if ($hosts_only) {
                         $data['report_result'] = cfpr_hosts_with_setuid(NULL, $name, true, $class_regex);
@@ -678,17 +677,17 @@ class Search extends Cf_Controller {
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $data['report_result'] = cfpr_report_setuid($hostkey, $search, true, $class_regex, $rows, $page_number);
-                    $this->template->load('template', 'searchpages/searchresult', $data);
+                    $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
                     is_ajax() ? $this->load->view('searchpages/uid_gid_root_programs', $data) : $this->template->load('template', 'searchpages/uid_gid_root_programs', $data);
                 }
                 break;
             case "Software installed":
                 if ($many) {
-                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
-                     $version = isset($getparams['version']) ? urldecode($getparams['version']) : urldecode($this->input->post('version'));
+                    $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
+                    $version = isset($getparams['version']) ? urldecode($getparams['version']) : urldecode($this->input->post('version'));
                     $arch = isset($getparams['arch']) ? urldecode($getparams['arch']) : urldecode($this->input->post('arch'));
-                   
+
                     if ($hosts_only) {
                         $data['report_result'] = cfpr_hosts_with_software_in(NULL, $name, $version, $arch, true, $class_regex);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
@@ -727,6 +726,8 @@ class Search extends Cf_Controller {
                 }
                 break;
             case "Variables":
+                $data['resultView'] = 'variable_result';
+
                 if ($many) {
                     $scope = isset($getparams['scope']) ? urldecode($getparams['scope']) : urldecode($this->input->post('scope'));
                     $lval = isset($getparams['lval']) ? urldecode($getparams['lval']) : urldecode($this->input->post('lval'));
@@ -748,7 +749,7 @@ class Search extends Cf_Controller {
                         $data['report_result'] = cfpr_report_vars(NULL, $scope, $lval, $rval, $type, true, $class_regex, $rows, $page_number);
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                        $this->template->load('template', 'searchpages/variable_result', $data);
+                        $this->template->load('template', 'searchpages/businessresult', $data);
                     }
                 } elseif ($hostkey != "") {
 
@@ -762,7 +763,7 @@ class Search extends Cf_Controller {
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $data['report_result'] = cfpr_report_vars($hostkey, NULL, $search, NULL, NULL, true, $class_regex, $rows, $page_number);
-                    $this->template->load('template', 'searchpages/variable_result', $data);
+                    $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
                     is_ajax() ? $this->load->view('searchpages/variables', $data) : $this->template->load('template', 'searchpages/variables', $data);
                 }
