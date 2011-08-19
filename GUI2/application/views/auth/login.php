@@ -137,15 +137,17 @@ margin: 0px;
 input[type="submit"], a.submit {
 background: url('../../themes/default/images/login_button.png') no-repeat transparent center center;
 border:none;
-width: 61px;
-height: 25px;
+width: 62px;
+height: 26px;
 cursor: pointer;
 display:block;
 }
 
 
 input[type="submit"]:hover, a.submit:hover {
-
+background: url('../../themes/default/images/login_button_hover.png') no-repeat transparent center center;
+width: 62px;
+height: 26px;
 }
 
 #login p.error{

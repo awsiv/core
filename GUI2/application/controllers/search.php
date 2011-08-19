@@ -135,7 +135,8 @@ class Search extends Cf_Controller {
             'params' => $params,
             'classregex' => $class_regex,
             'hostfinderparams' => $hostfinderparams,
-            'breadCrumbUrl' => isset($breadcrumbs_url) ? $breadcrumbs_url : ''
+            'breadCrumbUrl' => isset($breadcrumbs_url) ? $breadcrumbs_url : '',
+            'hostname'=>$hostname
         );
         
      

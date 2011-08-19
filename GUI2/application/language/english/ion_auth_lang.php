@@ -67,6 +67,6 @@ $lang['login_mode_changed']          =  'The mode of authentication is changed ,
 //ldap related
 $lang['error_loading_application_setting']    = "Error loading Application settings from database";
 $lang['no_entries_found']                            ="Cannot find any entry in database";
-$lang['unsucessful_active_directory_bind']   ="Cannot perform a sucessful bind with the supplied credentials and the configuration";
+$lang['unsucessful_active_directory_bind']   ="Invalid credential or Configuration, Unable to authenticate using Active directory as backend.";
 $lang['Internal_Ldap_module_error']            ="Please check credentials and Configuration for the ldap, Ldap module error";
-$lang['unsucessful_ldap_bind']                    ="Unable to perform LDAP bind with supplied credentials";
+$lang['unsucessful_ldap_bind']                    ="Invalid credential or Configuration, Unable to authenticate using Open LDAP as backend";

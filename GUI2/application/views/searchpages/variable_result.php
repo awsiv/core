@@ -1,11 +1,12 @@
 
 <div id="bodyreport" class="outerdiv">
     <div id="reportpanel" class="innerdiv">
-        <p class="title"><?php echo $report_title ?></p>
+        <p class="title"><?php echo $report_title;echo (isset($hostname)&&($hostname!=""))?" for ".$hostname:""; ?></p>
         <div class="reporthead">
             <div class="grid_8">
                 <a href="<?php echo $report_link ?>" class="icons pdf"></a>
                 <a href="<?php echo $email_link ?>" id="send_mail" class="icons email"></a>
+                <?php echo anchor('#', 'Select Host', array('id' => 'findhost', 'title' => 'Report for another host','class'=>'showqtip')) ?>
             </div>
             <div class="grid_4" style="text-align: right;">
                 <div><a href="#" id="savesearch" class="showqtip" title="save this search for future use"><span class="ui-icon-triangle-1-s"></span>Save this search</a></div>
@@ -98,6 +99,16 @@
             //);
             //$('.tables table').tableFilter();
             $('.tables table').tablesorter({widgets: ['zebra']});
+            
+            $('#findhost').hostfinder({
+            'defaultbehaviour':false,
+            'report':'<?php echo $hostfinderparams ?>',
+            complete:function(event,data){
+                //console.log('/search/index/host/'+data.selectedhost+'/report/'+data.report)
+                location.replace('/search/index/host/'+data.selectedhost+'/'+data.report);
+            }
+
+            });
            
             $('#modifySearch').click(function(e) {
                 e.preventDefault();  

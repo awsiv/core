@@ -2,7 +2,7 @@
 <div id="bodyreport" class="outerdiv grid_12">
 
     <div id="reportpanel" class="innerdiv">
-        <p class="title"><?php echo $report_title; ?></p>
+        <p class="title"><?php echo $report_title; echo (isset($hostname)&&($hostname!=""))?" for ".$hostname:"";?></p>
         <div class="reporthead">
             <div class="grid_8">
                 <a href="<?php echo $report_link ?>" class="icons pdf showqtip" title="Generate pdf report"></a>
@@ -128,7 +128,6 @@
             }
         }
     );
-        
         
         
         $('#findhost').hostfinder({
