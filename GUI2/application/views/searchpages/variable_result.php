@@ -1,12 +1,13 @@
 
 <div id="bodyreport" class="outerdiv">
     <div id="reportpanel" class="innerdiv">
-        <p class="title"><?php echo $report_title;echo (isset($hostname)&&($hostname!=""))?" for ".$hostname:""; ?></p>
+        <p class="title"><?php echo $report_title;
+echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : ""; ?></p>
         <div class="reporthead">
             <div class="grid_8">
                 <a href="<?php echo $report_link ?>" class="icons pdf"></a>
                 <a href="<?php echo $email_link ?>" id="send_mail" class="icons email"></a>
-                <?php echo anchor('#', 'Select Host', array('id' => 'findhost', 'title' => 'Report for another host','class'=>'showqtip')) ?>
+<?php echo anchor('#', 'Select Host', array('id' => 'findhost', 'title' => 'Report for another host', 'class' => 'showqtip')) ?>
             </div>
             <div class="grid_4" style="text-align: right;">
                 <div><a href="#" id="savesearch" class="showqtip" title="save this search for future use"><span class="ui-icon-triangle-1-s"></span>Save this search</a></div>
@@ -101,12 +102,12 @@
             $('.tables table').tablesorter({widgets: ['zebra']});
             
             $('#findhost').hostfinder({
-            'defaultbehaviour':false,
-            'report':'<?php echo $hostfinderparams ?>',
-            complete:function(event,data){
-                //console.log('/search/index/host/'+data.selectedhost+'/report/'+data.report)
-                location.replace('/search/index/host/'+data.selectedhost+'/'+data.report);
-            }
+                'defaultbehaviour':false,
+                'report':'<?php echo $hostfinderparams ?>',
+                complete:function(event,data){
+                    //console.log('/search/index/host/'+data.selectedhost+'/report/'+data.report)
+                    location.replace('/search/index/host/'+data.selectedhost+'/'+data.report);
+                }
 
             });
            
@@ -169,7 +170,7 @@
                 width: 'auto',
                 buttons: {
                     'Send': function() {
-                    
+                        $('#tempdiv',$dialog).remove(); 
                         $dialog.append("<div id='tempdiv' class='info'><img src='<?php echo get_imagedir(); ?>ajax-loader.gif' /> sending mail please wait a while...</div>");
                         $.ajax({
                             type: "POST",
@@ -179,6 +180,9 @@
                             async: false,
                             success: function(data){
                                 $('form',$dialog).hide();
+                                $('#tempdiv',$dialog).removeClass('error');
+                                $('#tempdiv',$dialog).addClass('info');
+                                $('#tempdiv',$dialog).html(''); 
                                 $('#tempdiv',$dialog).html(data.message); 
                                 $(":button:contains('Send')").hide();
                                 $(":button:contains('Cancel')").hide();

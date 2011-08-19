@@ -186,7 +186,7 @@
             width: 'auto',
             buttons: {
                 'Send': function() {
-                    
+                    $('#tempdiv',$dialog).remove(); 
                     $dialog.append("<div id='tempdiv' class='info'><img src='<?php echo get_imagedir(); ?>ajax-loader.gif' /> sending mail please wait a while...</div>");
                     $.ajax({
                         type: "POST",
@@ -196,6 +196,9 @@
                         async: false,
                         success: function(data){
                             $('form',$dialog).hide();
+                            $('#tempdiv',$dialog).removeClass('error');
+                            $('#tempdiv',$dialog).addClass('info');
+                            $('#tempdiv',$dialog).html(''); 
                             $('#tempdiv',$dialog).html(data.message); 
                             $(":button:contains('Send')").hide();
                             $(":button:contains('Cancel')").hide();
