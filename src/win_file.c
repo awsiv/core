@@ -461,6 +461,97 @@ int NovaWin_GetNumHardlinks(char *path, int *numHardLinks)
   return true;
 }
 
+/*****************************************************************************/
 
+CFDIR *OpenDirLocal(const char *dirname)
+{
+CFDIR *ret;
+HANDLE searchHandle;
+WIN32_FIND_DATA data;
+char pattern[MAX_PATH];
+snprintf(pattern, MAX_PATH, "%s\\*", dirname);
+
+if ((ret = calloc(1, sizeof(CFDIR))) == NULL)
+   {
+   FatalError("Unable to allocate memory for CFDIR");
+   }
+
+if ((ret->entrybuf = calloc(1, sizeof(struct dirent))) == NULL)
+   {
+   FatalError("Unable to allocate memory for dirent structure");
+   }
+
+ret->dirh = searchHandle = FindFirstFile(pattern, &data);
+
+if (searchHandle == INVALID_HANDLE_VALUE && GetLastError() != ERROR_FILE_NOT_FOUND)
+   {
+   free(ret);
+   return NULL;
+   }
+
+/*
+ * Hack: we store 1 in dirent->d_ino to mark "this has not been displayed" after
+ * FindFirstFile. Better have it encapsulated somewhere in subtype of CFDIR.
+ */
+ret->entrybuf->d_ino = 1;
+ret->entrybuf->d_namlen = strlen(data.cFileName);
+strlcpy(ret->entrybuf->d_name, data.cFileName, sizeof(ret->entrybuf->d_name));
+
+return ret;
+}
+
+/*****************************************************************************/
+
+const struct dirent *ReadDirLocal(CFDIR *dir)
+{
+if ((HANDLE)dir->dirh == INVALID_HANDLE_VALUE)
+   {
+   return NULL;
+   }
+
+/* See comment in OpenDirLocal */
+if (dir->entrybuf->d_ino == 0)
+   {
+   WIN32_FIND_DATA data;
+   if (FindNextFile((HANDLE)dir->dirh, &data))
+      {
+      dir->entrybuf->d_namlen = strlen(data.cFileName);
+      strlcpy(dir->entrybuf->d_name, data.cFileName, sizeof(dir->entrybuf->d_name));
+      return dir->entrybuf;
+      }
+   else
+      {
+      FindClose((HANDLE)dir->dirh);
+      dir->dirh = INVALID_HANDLE_VALUE;
+      return NULL;
+      }
+   }
+else
+   {
+   dir->entrybuf->d_ino = 0;
+   return dir->entrybuf;
+   }
+}
+
+/*****************************************************************************/
+
+void CloseDirLocal(CFDIR *dir)
+{
+if ((HANDLE)dir->dirh != INVALID_HANDLE_VALUE)
+   {
+   FindClose((HANDLE)dir->dirh);
+   }
+free(dir->entrybuf);
+free(dir);
+}
+
+/*****************************************************************************/
+
+struct dirent *AllocateDirentForFilename(const char *filename)
+{
+struct dirent *entry = calloc(1, sizeof(struct dirent));
+strcpy(entry->d_name, filename);
+return entry;
+}
 
 #endif  /* MINGW */
