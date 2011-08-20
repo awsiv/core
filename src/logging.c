@@ -16,7 +16,7 @@
 /*                                                                           */
 /*****************************************************************************/
 
-static int FACILITY;
+int FACILITY;
 
 /* Delete this function once we build Nova against Core trunk/3.3 */
 void Nova_RemoteSyslog(struct Attributes a, struct Promise *pp)
