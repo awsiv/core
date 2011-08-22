@@ -1533,7 +1533,7 @@ div.ui-dialog .ui-dialog-buttonpane{
     font-weight: normal;
 }
 
-.tables tr td
+.tables tr td, .bundlelist-table td
 {
     border-left: 1px solid #757575;
     border-right: 1px solid #757575;
@@ -2222,7 +2222,7 @@ div.ui-dialog .ui-dialog-buttonpane{
 {
     padding: 0;
     margin: 8px;  
-    border:1px solid #666 ;
+    /*border:1px solid #666 ;*/
     border-collapse: collapse;
     color: #000;
     background: #FFF;
@@ -2245,7 +2245,6 @@ div.ui-dialog .ui-dialog-buttonpane{
 .bundlelist-table th, .bundlelist-table td
 {
     border:0px;
-    border-right: 1px solid #666;
     border-bottom: 1px dashed #cccccc;  
     text-align: left;  
 }

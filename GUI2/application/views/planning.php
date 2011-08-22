@@ -125,8 +125,8 @@
         $('#trackrecord').ajaxyDialog({
             title:'Track Record',
             dontOverrideTitle:true,
-           width:'95%',
-           height:'400'
+           width:'1051',
+           height:'600'
         });
      
 $('#users').css('max-height', '190px')

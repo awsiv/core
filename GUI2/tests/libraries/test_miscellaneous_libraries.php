@@ -26,6 +26,14 @@ class test_miscellaneous_libraries extends CodeIgniterUnitTestCase {
         $this->dump($data);
         $this->assertNotEqual("",trim($jsondata['data'][0]['id']) , "must have some value");
     }
+    
+     public function test_cfpr_show_yellow_hosts(){
+        $data=cfpr_show_yellow_hosts(10, 1);
+        $jsondata=json_decode($data,true);
+        $this->assertTrue(isset($jsondata),"should return a valid array");
+        $this->dump($data);
+        $this->assertNotEqual("",trim($jsondata['data'][0]['id']) , "must have some value");
+    }
 
     public function test_cfpr_show_green_hosts(){
         $data=cfpr_show_green_hosts(10, 1);
@@ -44,11 +52,12 @@ class test_miscellaneous_libraries extends CodeIgniterUnitTestCase {
     }
     
      public function test_cfpr_show_top_n_hosts(){
-        $data= $gdata = cfpr_top_n_hosts(NULL, 50, 20, 1);
+        $data = cfpr_top_n_hosts(NULL, 50, 20, 1);
         $jsondata=json_decode($data,True);
         $this->assertTrue(isset($jsondata),"should return a valid array");
-        $this->dump($data);;
-        $this->assertEqual(count($data['data']), 0,"should not be empty");
+        $this->dump($data);
+        $this->assertNotEqual(count($jsondata['data']),0,"should not be empty");
+        $this->dump(count($jsondata['data']));
     }
 
 }

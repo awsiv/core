@@ -137,7 +137,7 @@ class test_finder_libraries extends CodeIgniterUnitTestCase {
     }
 
     public function test_cfpr_show_hosts_name_using_regx() {
-        $data = cfpr_show_hosts_name('^1', NULL, 10, 1);
+        $data = cfpr_show_hosts_name('^u', NULL, 10, 1);
         $array = json_decode(utf8_encode($data), true);
         $retValue = json_last_error();
         $this->dump($data);
@@ -147,7 +147,7 @@ class test_finder_libraries extends CodeIgniterUnitTestCase {
     }
 
     public function test_cfpr_show_hosts_name_using_someval() {
-        $data = cfpr_show_hosts_name('35', NULL, 10, 1);
+        $data = cfpr_show_hosts_name('ubuntu', NULL, 10, 1);
         $array = json_decode(utf8_encode($data), true);
         $retValue = json_last_error();
         $this->dump($data);
