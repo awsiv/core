@@ -6,15 +6,15 @@ topics:
 
 "cf3-tutorial";
 Special_Topics_Guide::
-    "CFEngine-Tutorial"  association => a("discusses","CFEngine 3 Concept Guide","is discussed in");
+    "CFEngine-Tutorial"  association => a("discusses","CFEngine 3 Tutorial","is discussed in");
 
 
 occurrences:
 
 manuals::
  "/docs/cf3-tutorial.html"
-  represents => { "CFEngine 3 Concept Guide" };
-CFEngine_3_Concept_Guide::
+  represents => { "CFEngine 3 Tutorial" };
+CFEngine_3_Tutorial::
  "/docs/cf3-tutorial.html"
   represents => { "special topics guide" };
 CFEngine_Tutorial::
