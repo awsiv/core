@@ -60,6 +60,17 @@ if (!CFDB_Close(&dbconn))
    }
 }
 
+/****************************************************************************/
+
+void Nova2Txt_getlicense(char *buffer,int bufsize)
+
+{ time_t then;
+  mongo_connection dbconn;
+
+NewClass("am_policy_hub");
+CFDB_GetValue("license_report",buffer,bufsize);
+}
+
 /*****************************************************************************/
 
 int Nova2Txt_summary_report(char *hostkey,char *handle,char *status,int regex,char *classreg)

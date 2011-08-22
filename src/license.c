@@ -544,7 +544,7 @@ snprintf(work,sizeof(work),"}");
 Join(buffer,work,sizeof(buffer));
 
 #ifdef HAVE_LIBMONGOC
-if(CFDB_QueryIsMaster())
+if (CFDB_QueryIsMaster())
    {
    CFDB_PutValue("license_report",buffer);
    }

@@ -2432,6 +2432,13 @@ else if (strcmp(lsdata,"setuid") == 0)
    Nova2Txt_setuid_report(hostkey,name,true,classregex);
    return;
    }
+else if (strcmp(lsdata,"license") == 0)
+   {
+   char buffer[CF_BUFSIZE];
+   Nova2Txt_getlicense(buffer,CF_BUFSIZE);
+   printf("%s\n",buffer);
+   return;
+   }
 
 
 printf("Unknown report\n");
