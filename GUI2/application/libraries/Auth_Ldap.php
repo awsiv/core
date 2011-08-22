@@ -82,7 +82,7 @@ class Auth_Ldap {
         $this->member_attribute = trim($appsettings->member_attribute);
 
         if ($this->use_ad && $this->login_attribute == '') {
-            $this->login_attribute = 'samaccountname';
+            $this->login_attribute = 'sAMAccountname';
         } elseif (!$this->use_ad && $this->login_attribute == '') {
             $this->login_attribute = 'uid';
         }

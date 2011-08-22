@@ -471,7 +471,6 @@ class Welcome extends Cf_Controller {
         $requiredjs = array(
             array('jit/jit-yc.js'),
             array('jquery.form.js'),
-            array('reportscontrol.js'),
             array('widgets/notes.js'),
             array('widgets/reportfinder.js')
         );
@@ -646,7 +645,8 @@ class Welcome extends Cf_Controller {
             'title_header' => "classes",
             'title' => "Cfengine Mission Portal - classes ",
             'ret' => json_decode(cfpr_report_classes($hostkey, $name, $regex, NULL, 1000, 1), true),
-             'breadcrumbs' => $this->breadcrumblist->display()
+             'breadcrumbs' => $this->breadcrumblist->display(),
+            'hostname'=> cfpr_hostname($hostkey)
         );
         $this->template->load('template', 'classes', $data);
     }

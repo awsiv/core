@@ -1,7 +1,7 @@
 <div id="body" class="outerdiv grid_12">
     <div id="tabpane" class="innerdiv">
         <div class="pagepanel">
-            <div class="panelhead"><p class="title">Promises</p></div>
+            <div class="panelhead"><p class="title">Classes for <strong><?php echo $hostname ;?></strong></p></div>
             <div class="panelcontent">
                 <div class="tables">
                     <?php if (!empty($ret['data'])) {
