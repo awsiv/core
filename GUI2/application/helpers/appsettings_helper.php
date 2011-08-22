@@ -12,16 +12,21 @@ if (!defined('BASEPATH'))
 function initializeHub() {
 
     $ishubmaster = cfpr_get_hub_master();
-    $is_hub_master = true;
-    if ($ishubmaster == 'am_hub_master') {
-        define('HUB_MASTER', 'localhost');
-    } elseif (preg_match('/(\d+).(\d+).(\d+).(\d+)/', $ishubmaster)) {
-        //define('HUB_MASTER', $ishubmaster);
-        show_error('The mongo db in this hub is not a hub master','please click on the <a href="http://$ishubmaster">Link</a> to navigate to the mission potrtal having its mongo db as hubmaster');
-    } else {
+
+    if (!trim($ishubmaster)) {
         show_error('Could not connect to the MongoDB database in hub master. Please ensure that CFEngine Nova is running correctly, by issuing the following command on the hub.
                 <br/>
                 # /var/cfengine/bin/cf-twin -Kf failsafe.cf');
+    } elseif ($ishubmaster == 'am_hub_master') {
+        define('HUB_MASTER', 'localhost');
+    } else {
+        // if it does not say am_hub_master , it must be a host name or IP
+        //define('HUB_MASTER', $ishubmaster);
+        //preg_match('/(\d+).(\d+).(\d+).(\d+)/', $ishubmaster)
+        $errorMessage = sprintf("The mongo db in this hub is not a hub master, please click on the link below to navigate to the mission potrtal having its mongo db as hubmaster<br />
+                        Link :: <a href='http://%s/'>%s</a>", $ishubmaster, $ishubmaster);
+
+        show_error($errorMessage);
     }
 }
 

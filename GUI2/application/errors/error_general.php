@@ -14,9 +14,18 @@
                 clear: both;
             }
             
+             .message .heading {
+                 font-size: 1.2em;
+                }
+            
+            
             .message h1 {
                 font-weight: bold;
                 color:red;
+            }
+            a {
+                font-weight: normal;
+                text-decoration: underline;
             }
             
         </style>
@@ -25,12 +34,12 @@
         <div  class="container_12" style="margin-top:10%">
 
             <div id="centeredDiv">
-                <div class="grid_7">
+                <div class="grid_10">
                     <a href="/" title="Go to home page."><img src="/themes/default/images/error_cf.png" /></a> 
                     <img src="/themes/default/images/error_agent.png" alt="error" style="float: right;" />
                     <div style="color:#4d466b;font-size: 14px;font-weight: bold;" class="message">
-                        <p><?php echo $heading; ?></p>
-                        <p><?php echo $message; ?></p>                       
+                        <p class="heading"><?php echo $heading; ?></p>
+                        <p class="sub-message"><?php echo $message; ?></p>                       
                     </div>
 
                 </div>
