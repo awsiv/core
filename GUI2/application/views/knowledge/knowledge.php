@@ -121,6 +121,7 @@
             if (!this.elem)
                 this.elem = document.getElementById('log');
             this.elem.innerHTML = text;
+            if (text == 'done') this.elem.innerHTML = ''; // dont show the done label 
             this.elem.style.left = (500 - this.elem.offsetWidth / 2) + 'px';
         }
     };
