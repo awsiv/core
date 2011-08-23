@@ -5,6 +5,7 @@ August 2011
 - Added a prefix CFE_ to cfengine.cf, knowledge.cf and hub_specific.cf
 - Removed *-devel packages from package-to-install list
 - Removed all mysql-related promises from CFE_hub_specific.cf
+- Fixed redhat_6 json, svn php modules in CFE_hub_specific.cf
 
 July 2011
 *All*

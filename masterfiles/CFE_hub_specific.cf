@@ -81,10 +81,11 @@ bundle agent cfengine_php_mod
           perms => mo("644","root");
 
    "/etc/php.d/json.ini"
-        comment => "Put json.ini to its place",
-         handle => "cfengine_php_mod_files_json_ini_redhat5",
-      copy_from => local_cp("$(sys.workdir)/software_updates/json/json.ini"),
-          perms => mo("644","root");
+         comment => "Put json.ini to its place",
+          handle => "cfengine_php_mod_files_json_ini_redhat5",
+       copy_from => local_cp("$(sys.workdir)/software_updates/json/json.ini"),
+           perms => mo("644","root"),
+      ifvarclass => "redhat_5|centos_5";
 
    "/etc/php.d/mongo.ini"
         comment => "Put mongo.ini to its place",
@@ -97,14 +98,14 @@ bundle agent cfengine_php_mod
          handle => "cfengine_php_mod_files_json_so_redhat5_32",
        copy_from => local_cp("$(sys.workdir)/software_updates/json/32/json.so"),
            perms => mo("755","root"),
-      ifvarclass => "i686";
+      ifvarclass => "(redhat_5|centos_5).i686";
 
    "/usr/lib64/php/modules/json.so"
          comment => "Prepare cfmod.so for 64-bit system",
          handle => "cfengine_php_mod_files_json_so_redhat5_64",
        copy_from => local_cp("$(sys.workdir)/software_updates/json/64/json.so"),
            perms => mo("755","root"),
-      ifvarclass => "x86_64";
+      ifvarclass => "(redhat_5|centos_5).x86_64";
 
    "/usr/lib/php/modules/cfmod.so"
          comment => "Prepare cfmod.so for 32-bit system",
@@ -478,7 +479,8 @@ bundle agent cfengine_policysrv
                              "php5-json",
                              "php5-pear",
                              "subversion",
-                             "php5-mcrypt"
+                             "php5-mcrypt",
+                             "subversion",
                             },
                  comment => "Define a list of packages to be installed on SuSE",
                   handle => "cfengine_policysrv_vars_match_package_suse";
