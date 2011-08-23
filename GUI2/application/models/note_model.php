@@ -20,7 +20,7 @@ class Note_model extends CI_Model {
         
         
         $commentsJson = cfpr_query_note($hostFilter, $noteId, $userId, $dateFrom, $dateTo,$noOfRows,$pageNo);
-        $commentsJson = str_replace(array("\r\n", "\n", "\r"), '<br />', utf8_encode(trim($commentsJson)));
+        $commentsJson = str_replace(array("\r\n", "\n", "\r"), '<br />', (trim($commentsJson)));
         $comments = json_decode($commentsJson, TRUE);
         $note = array();
         foreach ((array)$comments['data'] as $comment) {

@@ -127,7 +127,7 @@ $(document).ready(function() {
                 // change the url
                $(element).attr('href', '/notes/index/action/show/nid/' + nid);
                // console.log(nid,element);
-        }});
+        },title:'Add note about this host',dontOverrideTitle:true});
     
     $('#findreport').reportfinder({allhost:false,hostkey:"<?php echo $hostkey;?>"});
 
