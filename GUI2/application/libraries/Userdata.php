@@ -32,16 +32,14 @@ class Userdata{
         }
     }
 
-    public function get_personal_working_notes($username='',$limit=7)
+    public function get_personal_working_notes($username='',$limit=7,$docs=0)
     {
-        if($username==''){
-            $username=$this->user
-           ;}
-    
+        if($username==''){$username=$this->user; }
         $worklog=$this->ci->mongo_db->select()
                            ->where(array('username' => $username))
                            ->order_by(array('date'=>'desc'))
                            ->limit($limit)
+                           ->offset($docs)
                            ->get('work_logs');
         if(is_array($worklog))
         {
@@ -51,6 +49,15 @@ class Userdata{
         {
             return "";
         }
+    }
+    
+    public function count_personal_working_notes($username=NUll)
+    {
+        if(is_null($username)){$username=$this->user; }
+        $worklog=$this->ci->mongo_db->select()
+                           ->where(array('username' => $username))
+                           ->count('work_logs');
+        return $worklog;
     }
     
 }

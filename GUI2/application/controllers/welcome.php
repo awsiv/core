@@ -40,16 +40,6 @@ class Welcome extends Cf_Controller {
             'pbarvalue' => $pbarvalue,
             'daysleft' => $totaldays - $dayspassed,
         );
-
-        $gdata = cfpr_compliance_summary_graph(null);
-        if ($gdata) {
-            $graphData = $this->_convert_summary_compliance_graph($gdata);
-            $data = array_merge($data, $graphData);
-        }
-
-
-
-
         $this->template->load('template', 'index', $data);
     }
 
@@ -338,11 +328,25 @@ class Welcome extends Cf_Controller {
 
     function workingNotes() {
         $this->load->library('userdata');
+        $params = $this->uri->uri_to_assoc(3);
+        $rows = isset($params['rows']) ? $params['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : $this->setting_lib->get_no_of_rows());
+        if(is_numeric($rows)) {
+            $rows=(int)$rows;
+        }else{
+             $rows=20;
+        }
+        $page = isset($params['page']) ? intval($params['page'], 10) : 1;
+        $totalnotes=$this->userdata->count_personal_working_notes();
+        $skip = (int)($rows * ($page - 1));
+        var_dump($skip);
         $data = array(
             'title' => "Cfengine Mission Portal - planning",
             'breadcrumbs' => $this->breadcrumblist->display(),
             'users' => getonlineusernames(),
-            'table' => $this->userdata->get_personal_working_notes('', 9999)
+            'table' => $this->userdata->get_personal_working_notes('',$rows,$skip),
+            'rows_per_page'=>$rows,
+            'current_page'=>$page,
+            'total'=>$totalnotes,
         );
         $this->template->load('template', 'notes/view_working_on_notes', $data);
     }

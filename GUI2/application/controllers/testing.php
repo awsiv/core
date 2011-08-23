@@ -648,8 +648,12 @@ class Testing extends CI_Controller {
     }
 
     function test_cfpr_ldap_single_attr() {
-
         $result = cfpr_ldap_get_single_attribute_list("ldap://10.0.0.152", "uid=sudhir,ou=people,dc=cfengine,dc=com", "ou=people,dc=cfengine,dc=com", "(uid=sudhir)", "mail", "subtree", "sasl", "password", 1, 100);
+        var_dump($result);
+    }
+    
+    function test_cfpr_ldap_single_attr_ssl() {
+        $result = cfpr_ldap_get_single_attribute_list("ldaps://10.0.0.100:636", "uid=sudhir,cn=users,dc=cf022osx,dc=cfengine,dc=com", "cn=users,dc=cf022osx,dc=cfengine,dc=com", "(uid=sudhir)", "cn", "subtree", "sasl", "q1w2e3r4t5", 1, 100);
         var_dump($result);
     }
 

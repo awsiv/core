@@ -476,9 +476,10 @@ class Ion_auth
                  if($admin_group===False){
                      $admin_group = $this->ci->config->item('admin_group', 'ion_auth');
                  }
-		$user_group  = $this->ci->session->userdata('group');
-		//return $user_group == $admin_group;
-               // var_dump(in_array(strtolower($admin_group),$user_group));
+                   $user_group  = $this->ci->session->userdata('group');
+                       if($user_group===False){
+                        return false;
+                      }
                 return in_array($admin_group, $user_group);
 	}
 
@@ -495,9 +496,10 @@ class Ion_auth
                  if($admin_group===False){
                      $admin_group = $this->ci->config->item('admin_group', 'ion_auth');
                  }
-		$user_group  = $this->ci->session->userdata('group');
-		//return $user_group == $admin_group;
-               // var_dump(in_array(strtolower($admin_group),$user_group));
+                 $user_group  = $this->ci->session->userdata('group');
+                     if($user_group===False){
+                        return false;
+                    }
                 return in_array($admin_group, $user_group);
 	}
 

@@ -59,6 +59,13 @@ class test_miscellaneous_libraries extends CodeIgniterUnitTestCase {
         $this->assertNotEqual(count($jsondata['data']),0,"should not be empty");
         $this->dump(count($jsondata['data']));
     }
+    
+    public function test_count_personal_working_logs(){
+        $this->_ci->load->library('userdata');
+        $count=$this->_ci->userdata->count_personal_working_notes('sudhir');
+        $this->assertTrue(is_int($count), "the value must be a munber");
+         $this->dump($count);
+    }
 
 }
 

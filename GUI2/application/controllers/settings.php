@@ -200,9 +200,13 @@ class Settings extends Cf_Controller {
         $result = $this->auth_ldap->login($this->input->post('username'), $this->input->post('password'));
 //print_r($result);
         if ($result) {
-            echo "<div id=\"infoMessage\" style=\"margin-top:20px\"><span class=\"success\">ldap_authentication_Sucessful</span></div>";
+            echo "<div id=\"infoMessage\" style=\"margin-top:20px\"><p class=\"success\">".$this->lang->line('successful_bind')."</p></div>";
         } else {
-            echo "<div id=\"infoMessage\" style=\"margin-top:20px\"><span class=\"error\">ldap_authentication_unsucessful</span></div>";
+            if($this->auth_ldap->get_mode()=="ldap"){
+            echo "<div id=\"infoMessage\" style=\"margin-top:20px\"><p class=\"error\">".$this->lang->line('unsucessful_ldap_bind')."</p></div>";
+            }else{
+              echo "<div id=\"infoMessage\" style=\"margin-top:20px\"><p class=\"error\">".$this->lang->line('unsucessful_active_directory_bind')."</p></div>"; 
+            }
         }
     }
     

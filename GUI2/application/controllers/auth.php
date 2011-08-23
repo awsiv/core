@@ -627,6 +627,10 @@ class Auth extends Controller {
     }
 
     function setting() {
+          if (!$this->ion_auth->logged_in()) {
+            //redirect them to the login page
+            redirect('auth/login', 'refresh');
+        }
         $bc = array(
             'title' => 'Admin',
             'url' => 'auth/setting',

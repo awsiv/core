@@ -71,3 +71,5 @@ $lang['no_entries_found']                            ="Cannot find any entry in 
 $lang['unsucessful_active_directory_bind']   ="Invalid credential or Configuration, Unable to authenticate using Active directory as backend.";
 $lang['Internal_Ldap_module_error']            ="Please check credentials and Configuration for the ldap, Ldap module error";
 $lang['unsucessful_ldap_bind']                    ="Invalid credential or Configuration, Unable to authenticate using Open LDAP as backend";
+$lang['successful_bind']                             ="Sucessfully Authenticated against the desired directory server";
+
