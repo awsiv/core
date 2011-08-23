@@ -222,79 +222,119 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <li><a name="toc_Introduction" href="#Introduction">1 Introduction</a>
 <ul>
 <li><a href="#Begin-_002d-Get-started">1.1 Begin - Get Started</a>
-<ul>
-<li><a href="#Creating-files-and-directories">1.1.1 Creating files and directories</a>
-<li><a href="#Copy-single-files">1.1.2 Copy single files</a>
-<li><a href="#Copy-directory-trees">1.1.3 Copy directory trees</a>
-<li><a href="#Editing-password-or-group-files">1.1.4 Editing password or group files</a>
-<li><a href="#Editing-password-or-group-files-custom">1.1.5 Editing password or group files custom</a>
-<li><a href="#Disabling-and-rotating-files">1.1.6 Disabling and rotating files</a>
-<li><a href="#Hashing-for-change-detection-_002d-tripwire">1.1.7 Hashing for change detection (tripwire)</a>
-<li><a href="#Command-or-script-execution">1.1.8 Command or script execution</a>
-<li><a href="#Kill-process">1.1.9 Kill process</a>
-<li><a href="#Restart-process">1.1.10 Restart process</a>
-<li><a href="#Check-filesystem-space">1.1.11 Check filesystem space</a>
-<li><a href="#Mount-a-filesystem">1.1.12 Mount a filesystem</a>
-<li><a href="#Software-and-patch-installation">1.1.13 Software and patch installation</a>
+<li><a href="#Create-files-and-directories">1.2 Create files and directories</a>
+<li><a href="#Copy-single-files">1.3 Copy single files</a>
+<li><a href="#Copy-directory-trees">1.4 Copy directory trees</a>
+<li><a href="#Editing-password-or-group-files">1.5 Editing password or group files</a>
+<li><a href="#Editing-password-or-group-files-custom">1.6 Editing password or group files custom</a>
+<li><a href="#Disabling-and-rotating-files">1.7 Disabling and rotating files</a>
+<li><a href="#unit_005fdisable_005fand_005frotate_005ffiles_002ecf">1.8 unit_disable_and_rotate_files.cf</a>
+<li><a href="#unit_005fdisable_002ecf">1.9 unit_disable.cf</a>
+<li><a href="#Hashing-for-change-detection-_002d-tripwire">1.10 Hashing for change detection (tripwire)</a>
+<li><a href="#Command-or-script-execution">1.11 Command or script execution</a>
+<li><a href="#Kill-process">1.12 Kill process</a>
+<li><a href="#Restart-process">1.13 Restart process</a>
+<li><a href="#Check-filesystem-space">1.14 Check filesystem space</a>
+<li><a href="#Mount-a-filesystem">1.15 Mount a filesystem</a>
+<li><a href="#Software-and-patch-installation">1.16 Software and patch installation</a>
 </li></ul>
-</li></ul>
-<li><a name="toc_Common-high-level-issues" href="#Common-high-level-issues">2 Common high level issues</a>
+<li><a name="toc_High-level" href="#High-level">2 High level</a>
 <ul>
 <li><a href="#Centralized-Management">2.1 Centralized Management</a>
-<ul>
-<li><a href="#All-hosts-the-same">2.1.1 All hosts the same</a>
-<li><a href="#Variation-in-hosts">2.1.2 Variation in hosts</a>
-<li><a href="#Updating-from-a-central-hub">2.1.3 Updating from a central hub</a>
+<li><a href="#All-hosts-the-same">2.2 All hosts the same</a>
+<li><a href="#Variation-in-hosts">2.3 Variation in hosts</a>
+<li><a href="#Updating-from-a-central-hub">2.4 Updating from a central hub</a>
+<li><a href="#Change-detection">2.5 Change detection</a>
+<li><a href="#Garbage-collection">2.6 Garbage collection</a>
+<li><a href="#Distribute-root-passwords">2.7 Distribute root passwords</a>
+<li><a href="#Distribute-ssh-keys">2.8 Distribute ssh keys</a>
+<li><a href="#Laptop-support-configuration">2.9 Laptop support configuration</a>
+<li><a href="#Find-MAC-address">2.10 Find the MAC address</a>
+<li><a href="#Log-rotation">2.11 Log rotation</a>
+<li><a href="#Manage-a-system-file">2.12 Manage a system file</a>
+<li><a href="#Simple-template">2.13 Simple template</a>
+<li><a href="#Simple-versioned-template">2.14 Simple versioned template</a>
+<li><a href="#Macro-template">2.15 Macro template</a>
+<li><a href="#Custom-editing">2.16 Custom editing</a>
+<li><a href="#Manage-a-system-process">2.17 Manage a system process</a>
+<li><a href="#Ensure-running">2.18 Ensure running</a>
+<li><a href="#Ensure-not-running">2.19 Ensure not running</a>
+<li><a href="#Prune-processes">2.20 Prune processes</a>
+<li><a href="#Manage-users">2.21 Manage users</a>
+<li><a href="#Add-users">2.22 Add users</a>
+<li><a href="#Remove-users">2.23 Remove users</a>
+<li><a href="#Postfix-mail-configuration">2.24 Postfix mail configuration</a>
+<li><a href="#Set-up-HPC-clusters">2.25 Set up HPC clusters</a>
+<li><a href="#Set-up-name-resolution">2.26 Set up name resolution</a>
+<li><a href="#Set-up-sudo">2.27 Set up sudo</a>
+<li><a href="#Set-up-a-web-server">2.28 Set up a web server</a>
+<li><a href="#Templating">2.29 Templating</a>
 </li></ul>
-<li><a href="#Change-detection">2.2 Change detection</a>
-<li><a href="#Garbage-collection">2.3 Garbage collection</a>
-<li><a href="#Distribute-root-passwords">2.4 Distribute root passwords</a>
-<li><a href="#Distribute-ssh-keys">2.5 Distribute ssh keys</a>
-<li><a href="#Laptop-support-configuration">2.6 Laptop support configuration</a>
-<li><a href="#Find-MAC-address">2.7 Find the MAC address</a>
-<li><a href="#Log-rotation">2.8 Log rotation</a>
-<li><a href="#Manage-a-system-file">2.9 Manage a system file</a>
+<li><a name="toc_Low-level" href="#Low-level">3 Low level</a>
 <ul>
-<li><a href="#Simple-template">2.9.1 Simple template</a>
-<li><a href="#Simple-versioned-template">2.9.2 Simple versioned template</a>
-<li><a href="#Macro-template">2.9.3 Macro template</a>
-<li><a href="#Custom-editing">2.9.4 Custom editing</a>
-</li></ul>
-<li><a href="#Manage-a-system-process">2.10 Manage a system process</a>
-<ul>
-<li><a href="#Ensure-running">2.10.1 Ensure running</a>
-<li><a href="#Ensure-not-running">2.10.2 Ensure not running</a>
-<li><a href="#Prune-processes">2.10.3 Prune processes</a>
-</li></ul>
-<li><a href="#Manage-users">2.11 Manage users</a>
-<ul>
-<li><a href="#Add-users">2.11.1 Add users</a>
-<li><a href="#Remove-users">2.11.2 Remove users</a>
-</li></ul>
-<li><a href="#Postfix-mail-configuration">2.12 Postfix mail configuration</a>
-<li><a href="#Set-up-HPC-clusters">2.13 Set up HPC clusters</a>
-<li><a href="#Set-up-name-resolution">2.14 Set up name resolution</a>
-<li><a href="#Set-up-sudo">2.15 Set up sudo</a>
-<li><a href="#Set-up-a-web-server">2.16 Set up a web server</a>
-<li><a href="#Templating">2.17 Templating</a>
-</li></ul>
-<li><a name="toc_Common-low-level-issues" href="#Common-low-level-issues">3 Common low level issues</a>
-<ul>
-<li><a href="#Add-lines-to-a-file">3.1 Add lines to a file</a>
-<li><a href="#Add-users-to-passwd-and-group">3.2 Add users to passwd and group</a>
-<li><a href="#Add-software-packages-to-the-system">3.3 Add software packages to the system</a>
-<li><a href="#Add-variable-definitions-to-a-file">3.4 Add variable definitions to a file e.g. <samp><span class="file">/etc/system</span></samp></a>
-<li><a href="#Check-file-or-directory-permissions">3.5 Check file or directory permissions</a>
-<li><a href="#Copy-files">3.6 Copy files</a>
-<li><a href="#Copy-then-edit">3.7 Copy then edit a file convergently</a>
-<li><a href="#Editing-files">3.8 Editing files</a>
-<li><a href="#Editing-tabular-files">3.9 Editing tabular files</a>
-<li><a href="#Mount-NFS-filesystem">3.10 Mount NFS filesystem</a>
-<li><a href="#Ordering-promises">3.11 Ordering promises</a>
-<li><a href="#Set-up-a-PXE-boot-server">3.12 Set up a PXE boot server</a>
-<li><a href="#Tidying-garbage-files">3.13 Tidying garbage files</a>
-<li><a href="#Unmount-NFS-filesystem">3.14 Unmount NFS filesystem</a>
-<li><a href="#Web-server-modules">3.15 Web server modules</a>
+<li><a href="#Aborting-execution">3.1 Aborting execution</a>
+<li><a href="#ACL-file-example">3.2 ACL file example</a>
+<li><a href="#ACL-generic-example">3.3 ACL generic example</a>
+<li><a href="#ACL-secret-example">3.4 ACL secret example</a>
+<li><a href="#Active-directory-example">3.5 Active directory example</a>
+<li><a href="#Active-list-users-directory-example">3.6 Active list users directory example</a>
+<li><a href="#Active-directory-show-users-example">3.7 Active directory show users example</a>
+<li><a href="#Add-lines-to-a-file">3.8 Add lines to a file</a>
+<li><a href="#Add-users-to-passwd-and-group">3.9 Add users to passwd and group</a>
+<li><a href="#Add-software-packages-to-the-system">3.10 Add software packages to the system</a>
+<li><a href="#Add-variable-definitions-to-a-file">3.11 Add variable definitions to a file e.g. <samp><span class="file">/etc/system</span></samp></a>
+<li><a href="#Application-baseline">3.12 Application baseline</a>
+<li><a href="#Array-example">3.13 Array example</a>
+<li><a href="#Back-references-in-filenames">3.14 Backreferences in filenames</a>
+<li><a href="#BSD-flags">3.15 BSD flags</a>
+<li><a href="#Change-directory-for-command">3.16 Change directory for command</a>
+<li><a href="#Check-file-or-directory-permissions">3.17 Check file or directory permissions</a>
+<li><a href="#Class-match-example">3.18 Class match example</a>
+<li><a href="#Client_002dserver-example">3.19 Client-server example</a>
+<li><a href="#Commands-example">3.20 Commands example</a>
+<li><a href="#Commenting-lines-in-a-file">3.21 Commenting lines in a file</a>
+<li><a href="#Copy-files">3.22 Copy files</a>
+<li><a href="#Copy-and-flatten-directory">3.23 Copy and flatten directory</a>
+<li><a href="#Copy-then-edit">3.24 Copy then edit a file convergently</a>
+<li><a href="#Creating-files-and-directories">3.25 Creating files and directories</a>
+<li><a href="#Database-creation">3.26 Database creation</a>
+<li><a href="#Deleting-lines-from-a-file">3.27 Deleting lines from a file</a>
+<li><a href="#Deleting-lines-exception">3.28 Deleting lines exception</a>
+<li><a href="#Editing-files">3.29 Editing files</a>
+<li><a href="#Editing-tabular-files">3.30 Editing tabular files</a>
+<li><a href="#Environment-_0028virtual_0029">3.31 Environments (virtual)</a>
+<li><a href="#Environment-variables">3.32 Environment variables</a>
+<li><a href="#Execresult-example">3.33 Execresult example</a>
+<li><a href="#Inserting-lines-in-a-file">3.34 Inserting lines in a file</a>
+<li><a href="#Get-a-list-of-users">3.35 Get a list of users</a>
+<li><a href="#Global-classes">3.36 Global classes</a>
+<li><a href="#Hello-world">3.37 Hello world</a>
+<li><a href="#LDAP-interactions">3.38 LDAP interactions</a>
+<li><a href="#Linking-files">3.39 Linking files</a>
+<li><a href="#Listing-files_002dpattern-in-a-directory">3.40 Listing files-pattern in a directory</a>
+<li><a href="#Locate-and-transform-files">3.41 Locate and transform files</a>
+<li><a href="#Logging">3.42 Logging</a>
+<li><a href="#Measurements">3.43 Measurements</a>
+<li><a href="#Methods">3.44 Methods</a>
+<li><a href="#Method-validation">3.45 Method validation</a>
+<li><a href="#Mount-NFS-filesystem">3.46 Mount NFS filesystem</a>
+<li><a href="#Ordering-promises">3.47 Ordering promises</a>
+<li><a href="#Process-management">3.48 Process management</a>
+<li><a href="#Read-from-a-TCP-socket">3.49 Read from a TCP socket</a>
+<li><a href="#Resolver-management">3.50 Resolver management</a>
+<li><a href="#Search-and-replace-text">3.51 Search and replace text</a>
+<li><a href="#Selecting-a-region-in-a-file">3.52 Selecting a region in a file</a>
+<li><a href="#Service-management-_0028windows_0029">3.53 Service management (windows)</a>
+<li><a href="#Set-up-a-PXE-boot-server">3.54 Set up a PXE boot server</a>
+<li><a href="#Tidying-garbage-files">3.55 Tidying garbage files</a>
+<li><a href="#Software-distribution">3.56 Software distribution</a>
+<li><a href="#Trigger-classes">3.57 Trigger classes</a>
+<li><a href="#Unmount-NFS-filesystem">3.58 Unmount NFS filesystem</a>
+<li><a href="#Web-server-modules">3.59 Web server modules</a>
+<li><a href="#Warn-if-matching-line-in-file">3.60 Warn if matching line in file</a>
+<li><a href="#Windows-registry">3.61 Windows registry</a>
+<li><a href="#unit_005fregistry_005fcache_002ecf">3.62 unit_registry_cache.cf</a>
+<li><a href="#unit_005fregistry_002ecf">3.63 unit_registry.cf</a>
 </li></ul>
 </li></ul>
 </div>
@@ -303,8 +343,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 
 <ul class="menu">
 <li><a accesskey="1" href="#Introduction">Introduction </a>
-<li><a accesskey="2" href="#Common-high-level-issues">Common high level issues</a>
-<li><a accesskey="3" href="#Common-low-level-issues">Common low level issues</a>
+<li><a accesskey="2" href="#High-level">High level</a>
+<li><a accesskey="3" href="#Low-level">Low level</a>
 </ul>
 
 <!-- ********************************************************************** -->
@@ -313,7 +353,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <div class="node">
 <a name="Introduction"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Common-high-level-issues">Common high level issues</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#High-level">High level</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Top">Top</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
@@ -343,12 +383,28 @@ system environment, contact CFEngine's Professional Services at
 
 <ul class="menu">
 <li><a accesskey="1" href="#Begin-_002d-Get-started">Begin - Get started</a>
+<li><a accesskey="2" href="#Create-files-and-directories">Create files and directories</a>
+<li><a accesskey="3" href="#Copy-single-files">Copy single files</a>
+<li><a accesskey="4" href="#Copy-directory-trees">Copy directory trees</a>
+<li><a accesskey="5" href="#Editing-password-or-group-files">Editing password or group files</a>
+<li><a accesskey="6" href="#Editing-password-or-group-files-custom">Editing password or group files custom</a>
+<li><a accesskey="7" href="#Disabling-and-rotating-files">Disabling and rotating files</a>
+<li><a accesskey="8" href="#unit_005fdisable_005fand_005frotate_005ffiles_002ecf">unit_disable_and_rotate_files.cf</a>
+<li><a accesskey="9" href="#unit_005fdisable_002ecf">unit_disable.cf</a>
+<li><a href="#Hashing-for-change-detection-_002d-tripwire">Hashing for change detection - tripwire</a>
+<li><a href="#Command-or-script-execution">Command or script execution</a>
+<li><a href="#Kill-process">Kill process</a>
+<li><a href="#Restart-process">Restart process</a>
+<li><a href="#Check-filesystem-space">Check filesystem space</a>
+<li><a href="#Mount-a-filesystem">Mount a filesystem</a>
+<li><a href="#Software-and-patch-installation">Software and patch installation</a>
 </ul>
 
 <div class="node">
 <a name="Begin---Get-started"></a>
 <a name="Begin-_002d-Get-started"></a>
 <p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Create-files-and-directories">Create files and directories</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Introduction">Introduction</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
@@ -399,15 +455,17 @@ of the syntax is like this (red: CFEngine word, blue: user-defined word):
 
 <!-- ...................................... -->
 <ul class="menu">
-<li><a accesskey="1" href="#Creating-files-and-directories">Creating files and directories</a>
+<li><a accesskey="1" href="#Create-files-and-directories">Create files and directories</a>
 <li><a accesskey="2" href="#Copy-single-files">Copy single files</a>
 <li><a accesskey="3" href="#Copy-directory-trees">Copy directory trees</a>
 <li><a accesskey="4" href="#Editing-password-or-group-files">Editing password or group files</a>
 <li><a accesskey="5" href="#Editing-password-or-group-files-custom">Editing password or group files custom</a>
 <li><a accesskey="6" href="#Disabling-and-rotating-files">Disabling and rotating files</a>
-<li><a accesskey="7" href="#Hashing-for-change-detection-_002d-tripwire">Hashing for change detection - tripwire</a>
-<li><a accesskey="8" href="#Command-or-script-execution">Command or script execution</a>
-<li><a accesskey="9" href="#Kill-process">Kill process</a>
+<li><a accesskey="7" href="#unit_005fdisable_005fand_005frotate_005ffiles_002ecf">unit_disable_and_rotate_files.cf</a>
+<li><a accesskey="8" href="#unit_005fdisable_002ecf">unit_disable.cf</a>
+<li><a accesskey="9" href="#Hashing-for-change-detection-_002d-tripwire">Hashing for change detection - tripwire</a>
+<li><a href="#Command-or-script-execution">Command or script execution</a>
+<li><a href="#Kill-process">Kill process</a>
 <li><a href="#Restart-process">Restart process</a>
 <li><a href="#Check-filesystem-space">Check filesystem space</a>
 <li><a href="#Mount-a-filesystem">Mount a filesystem</a>
@@ -415,15 +473,15 @@ of the syntax is like this (red: CFEngine word, blue: user-defined word):
 </ul>
 
 <div class="node">
-<a name="Creating-files-and-directories"></a>
+<a name="Create-files-and-directories"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Copy-single-files">Copy single files</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Begin-_002d-Get-started">Begin - Get started</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get started</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 </div>
 
-<h4 class="subsection">1.1.1 Creating files and directories</h4>
+<h3 class="section">1.2 Create files and directories</h3>
 
 <pre class="verbatim">
 <span class="comment">########################################################
@@ -488,12 +546,12 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 <a name="Copy-single-files"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Copy-directory-trees">Copy directory trees</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Creating-files-and-directories">Creating files and directories</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get started</a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Create-files-and-directories">Create files and directories</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 </div>
 
-<h4 class="subsection">1.1.2 Copy single files</h4>
+<h3 class="section">1.3 Copy single files</h3>
 
 <pre class="verbatim">
 <span class="red">body common control
@@ -524,11 +582,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Editing-password-or-group-files">Editing password or group files</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Copy-single-files">Copy single files</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get started</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 </div>
 
-<h4 class="subsection">1.1.3 Copy directory trees</h4>
+<h3 class="section">1.4 Copy directory trees</h3>
 
 <pre class="verbatim">
 <span class="red">body common control
@@ -562,11 +620,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Editing-password-or-group-files-custom">Editing password or group files custom</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Copy-directory-trees">Copy directory trees</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get started</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 </div>
 
-<h4 class="subsection">1.1.4 Editing password or group files</h4>
+<h3 class="section">1.5 Editing password or group files</h3>
 
 <pre class="verbatim">
 
@@ -603,11 +661,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Disabling-and-rotating-files">Disabling and rotating files</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Editing-password-or-group-files">Editing password or group files</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get started</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 </div>
 
-<h4 class="subsection">1.1.5 Editing password or group files custom</h4>
+<h3 class="section">1.6 Editing password or group files custom</h3>
 
 <pre class="verbatim">
 
@@ -690,13 +748,97 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 <div class="node">
 <a name="Disabling-and-rotating-files"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Hashing-for-change-detection-_002d-tripwire">Hashing for change detection - tripwire</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#unit_005fdisable_005fand_005frotate_005ffiles_002ecf">unit_disable_and_rotate_files.cf</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Editing-password-or-group-files-custom">Editing password or group files custom</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get started</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 </div>
 
-<h4 class="subsection">1.1.6 Disabling and rotating files</h4>
+<h3 class="section">1.7 Disabling and rotating files</h3>
+
+<div class="node">
+<a name="unit_disable_and_rotate_files.cf"></a>
+<a name="unit_005fdisable_005fand_005frotate_005ffiles_002ecf"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#unit_005fdisable_002ecf">unit_disable.cf</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Disabling-and-rotating-files">Disabling and rotating files</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
+
+</div>
+
+<h3 class="section">1.8 unit_disable_and_rotate_files.cf</h3>
+
+<pre class="verbatim">
+<span class="comment">#######################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Disabling / rotating files
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body common control
+</span>   {
+   any::
+
+<span class="red">      bundlesequence  </span>=> { 
+<span class="red">"testbundle" </span> <span class="blue"></span>
+                         };
+   }
+
+
+<span class="comment">############################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+
+{
+<span class="red">files:
+</span>
+  "/home/mark/tmp/test_create" 
+
+<span class="red">      comment </span>=><span class="green"> "this rule does something",</span>
+<span class="red">      rename </span>=><span class="blue"> disable;</span>
+
+  "/home/mark/tmp/rotateme"
+
+<span class="red">      rename </span>=><span class="blue"> rotate("4");</span>
+}
+
+<span class="comment">############################################
+</span>
+
+<span class="red">body rename</span> <span class="blue">disable</span>
+
+{
+<span class="red">disable </span>=><span class="green"> "true";</span>
+<span class="red">disable_suffix </span>=><span class="green"> "_blownaway";</span>
+}
+
+<span class="comment">############################################
+</span>
+
+<span class="red">body rename</span> <span class="blue">rotate(level)</span>
+
+{
+<span class="red">rotate </span>=><span class="green"> "$(level)";</span>
+}
+</pre>
+
+<div class="node">
+<a name="unit_disable.cf"></a>
+<a name="unit_005fdisable_002ecf"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Hashing-for-change-detection-_002d-tripwire">Hashing for change detection - tripwire</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#unit_005fdisable_005fand_005frotate_005ffiles_002ecf">unit_disable_and_rotate_files.cf</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
+
+</div>
+
+<h3 class="section">1.9 unit_disable.cf</h3>
 
 <pre class="verbatim">
 <span class="red">body common control
@@ -727,12 +869,12 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 <a name="Hashing-for-change-detection-_002d-tripwire"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Command-or-script-execution">Command or script execution</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Disabling-and-rotating-files">Disabling and rotating files</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get started</a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#unit_005fdisable_002ecf">unit_disable.cf</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 </div>
 
-<h4 class="subsection">1.1.7 Hashing for change detection (tripwire)</h4>
+<h3 class="section">1.10 Hashing for change detection (tripwire)</h3>
 
 <pre class="verbatim">
 <span class="comment">########################################################
@@ -792,11 +934,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Kill-process">Kill process</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Hashing-for-change-detection-_002d-tripwire">Hashing for change detection - tripwire</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get started</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 </div>
 
-<h4 class="subsection">1.1.8 Command or script execution</h4>
+<h3 class="section">1.11 Command or script execution</h3>
 
 <pre class="verbatim">
 
@@ -832,11 +974,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Restart-process">Restart process</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Command-or-script-execution">Command or script execution</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get started</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 </div>
 
-<h4 class="subsection">1.1.9 Kill process</h4>
+<h3 class="section">1.12 Kill process</h3>
 
 <pre class="verbatim">
 <span class="red">body common control
@@ -863,11 +1005,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Check-filesystem-space">Check filesystem space</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Kill-process">Kill process</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get started</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 </div>
 
-<h4 class="subsection">1.1.10 Restart process</h4>
+<h3 class="section">1.13 Restart process</h3>
 
 <p>A basic pattern for restarting processes:
 <pre class="verbatim"></pre>
@@ -885,11 +1027,11 @@ reproduced in <code>processes</code>.
 <p><hr>
 <span class="red">Next:&nbsp;<a rel="next" accesskey="n" href="#Mount-a-filesystem">Mount a filesystem</a>,
 </span><span class="red">Previous:&nbsp;<a rel="previous" accesskey="p" href="#Restart-process">Restart process</a>,
-</span><span class="red">Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get started</a>
+</span><span class="red">Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 </span>
 </div>
 
-<h4 class="subsection">1.1.11 Check filesystem space</h4>
+<h3 class="section">1.14 Check filesystem space</h3>
 
 <pre class="verbatim">
 
@@ -925,11 +1067,11 @@ reproduced in <code>processes</code>.
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Software-and-patch-installation">Software and patch installation</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Check-filesystem-space">Check filesystem space</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get started</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 </div>
 
-<h4 class="subsection">1.1.12 Mount a filesystem</h4>
+<h3 class="section">1.15 Mount a filesystem</h3>
 
 <pre class="verbatim">
 
@@ -983,11 +1125,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get s
 <a name="Software-and-patch-installation"></a>
 <p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Mount-a-filesystem">Mount a filesystem</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Begin-_002d-Get-started">Begin - Get started</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 </div>
 
-<h4 class="subsection">1.1.13 Software and patch installation</h4>
+<h3 class="section">1.16 Software and patch installation</h3>
 
 <p>Example for Debian:
 <pre class="verbatim">
@@ -1221,29 +1363,41 @@ SuSE Linux's package manager zypper is the most powerful alternative:
 <!-- CHAPTER -->
 <!-- ********************************************************************** -->
 <div class="node">
-<a name="Common-high-level-issues"></a>
+<a name="High-level"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Common-low-level-issues">Common low level issues</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Low-level">Low level</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Introduction">Introduction</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h2 class="chapter">2 Common high level issues</h2>
+<h2 class="chapter">2 High level</h2>
 
 <!--  -->
 <ul class="menu">
 <li><a accesskey="1" href="#Centralized-Management">Centralized Management</a>
-<li><a accesskey="2" href="#Change-detection">Change detection</a>
-<li><a accesskey="3" href="#Garbage-collection">Garbage collection</a>
-<li><a accesskey="4" href="#Distribute-root-passwords">Distribute root passwords</a>
-<li><a accesskey="5" href="#Distribute-ssh-keys">Distribute ssh keys</a>
-<li><a accesskey="6" href="#Laptop-support-configuration">Laptop support configuration</a>
-<li><a accesskey="7" href="#Find-MAC-address">Find MAC address</a>
-<li><a accesskey="8" href="#Log-rotation">Log rotation</a>
-<li><a accesskey="9" href="#Manage-a-system-file">Manage a system file</a>
+<li><a accesskey="2" href="#All-hosts-the-same">All hosts the same</a>
+<li><a accesskey="3" href="#Variation-in-hosts">Variation in hosts</a>
+<li><a accesskey="4" href="#Updating-from-a-central-hub">Updating from a central hub</a>
+<li><a accesskey="5" href="#Change-detection">Change detection</a>
+<li><a accesskey="6" href="#Garbage-collection">Garbage collection</a>
+<li><a accesskey="7" href="#Distribute-root-passwords">Distribute root passwords</a>
+<li><a accesskey="8" href="#Distribute-ssh-keys">Distribute ssh keys</a>
+<li><a accesskey="9" href="#Laptop-support-configuration">Laptop support configuration</a>
+<li><a href="#Find-MAC-address">Find MAC address</a>
+<li><a href="#Log-rotation">Log rotation</a>
+<li><a href="#Manage-a-system-file">Manage a system file</a>
+<li><a href="#Simple-template">Simple template</a>
+<li><a href="#Simple-versioned-template">Simple versioned template</a>
+<li><a href="#Macro-template">Macro template</a>
+<li><a href="#Custom-editing">Custom editing</a>
 <li><a href="#Manage-a-system-process">Manage a system process</a>
+<li><a href="#Ensure-running">Ensure running</a>
+<li><a href="#Ensure-not-running">Ensure not running</a>
+<li><a href="#Prune-processes">Prune processes</a>
 <li><a href="#Manage-users">Manage users</a>
+<li><a href="#Add-users">Add users</a>
+<li><a href="#Remove-users">Remove users</a>
 <li><a href="#Postfix-mail-configuration">Postfix mail configuration</a>
 <li><a href="#Set-up-HPC-clusters">Set up HPC clusters</a>
 <li><a href="#Set-up-name-resolution">Set up name resolution</a>
@@ -1255,9 +1409,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <div class="node">
 <a name="Centralized-Management"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Change-detection">Change detection</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Common-high-level-issues">Common high level issues</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high level issues</a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#All-hosts-the-same">All hosts the same</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#High-level">High level</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
@@ -1279,11 +1433,11 @@ with few requirements. It is useful for clusters where systems are all alike.
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Variation-in-hosts">Variation in hosts</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Centralized-Management">Centralized Management</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Centralized-Management">Centralized Management</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h4 class="subsection">2.1.1 All hosts the same</h4>
+<h3 class="section">2.2 All hosts the same</h3>
 
 <p>This shows the simplest approach in which all hosts are the same. It is too simple
 for most environments, but it serves as a starting point. Compare it to the next
@@ -1381,11 +1535,11 @@ section that includes variation.
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Updating-from-a-central-hub">Updating from a central hub</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#All-hosts-the-same">All hosts the same</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Centralized-Management">Centralized Management</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h4 class="subsection">2.1.2 Variation in hosts</h4>
+<h3 class="section">2.3 Variation in hosts</h3>
 
 <pre class="verbatim">
 <span class="red">body common control
@@ -1493,12 +1647,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Centralized-Management">Centralized Ma
 <div class="node">
 <a name="Updating-from-a-central-hub"></a>
 <p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Change-detection">Change detection</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variation-in-hosts">Variation in hosts</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Centralized-Management">Centralized Management</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h4 class="subsection">2.1.3 Updating from a central hub</h4>
+<h3 class="section">2.4 Updating from a central hub</h3>
 
 <p>The configuration bundled with the CFEngine source code contains an
 example of centralized updating of policy that covers more subtleties
@@ -1564,12 +1719,12 @@ behind it. For simplicity, we assume that all hosts are on network
 <a name="Change-detection"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Garbage-collection">Garbage collection</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Centralized-Management">Centralized Management</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high level issues</a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Updating-from-a-central-hub">Updating from a central hub</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h3 class="section">2.2 Change detection</h3>
+<h3 class="section">2.5 Change detection</h3>
 
 <pre class="verbatim">
 <span class="red">body common control
@@ -1603,11 +1758,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Distribute-root-passwords">Distribute root passwords</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Change-detection">Change detection</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high level issues</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h3 class="section">2.3 Garbage collection</h3>
+<h3 class="section">2.6 Garbage collection</h3>
 
 <pre class="verbatim">
 <span class="red">body common control
@@ -1698,11 +1853,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Distribute-ssh-keys">Distribute ssh keys</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Garbage-collection">Garbage collection</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high level issues</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h3 class="section">2.4 Distribute root passwords</h3>
+<h3 class="section">2.7 Distribute root passwords</h3>
 
 <pre class="verbatim">######################################################################
 <span class="comment">#
@@ -1822,11 +1977,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Laptop-support-configuration">Laptop support configuration</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Distribute-root-passwords">Distribute root passwords</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high level issues</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h3 class="section">2.5 Distribute ssh keys</h3>
+<h3 class="section">2.8 Distribute ssh keys</h3>
 
 <pre class="verbatim"># Assume that we have collected all users' public keys into a single source area
 <span class="comment"># on the server. First copy the ones we need to localhost, and then edit them into
@@ -1928,11 +2083,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Find-MAC-address">Find MAC address</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Distribute-ssh-keys">Distribute ssh keys</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high level issues</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h3 class="section">2.6 Laptop support configuration</h3>
+<h3 class="section">2.9 Laptop support configuration</h3>
 
 <p>Laptops do not need a lot of confguration support. IP addresses are
 set by DHCP and conditions are changeable. But you want to set your
@@ -2091,11 +2246,11 @@ deletes files while travelling or offline.
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Log-rotation">Log rotation</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Laptop-support-configuration">Laptop support configuration</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high level issues</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h3 class="section">2.7 Find the MAC address</h3>
+<h3 class="section">2.10 Find the MAC address</h3>
 
 <p>Finding the ethernet address can be hard, but on Linux it is straightforward.
 
@@ -2165,11 +2320,11 @@ ok::
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Manage-a-system-file">Manage a system file</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Find-MAC-address">Find MAC address</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high level issues</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h3 class="section">2.8 Log rotation</h3>
+<h3 class="section">2.11 Log rotation</h3>
 
 <pre class="verbatim">
 <span class="red">body common control
@@ -2206,13 +2361,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 <div class="node">
 <a name="Manage-a-system-file"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Manage-a-system-process">Manage a system process</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Simple-template">Simple template</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Log-rotation">Log rotation</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high level issues</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h3 class="section">2.9 Manage a system file</h3>
+<h3 class="section">2.12 Manage a system file</h3>
 
 <ul class="menu">
 <li><a accesskey="1" href="#Simple-template">Simple template</a>
@@ -2226,11 +2381,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Simple-versioned-template">Simple versioned template</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Manage-a-system-file">Manage a system file</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Manage-a-system-file">Manage a system file</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h4 class="subsection">2.9.1 Simple template</h4>
+<h3 class="section">2.13 Simple template</h3>
 
 <pre class="verbatim">bundle agent hand_edited_config_file
 {
@@ -2283,11 +2438,11 @@ ff02::3         ipv6-allhosts
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Macro-template">Macro template</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Simple-template">Simple template</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Manage-a-system-file">Manage a system file</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h4 class="subsection">2.9.2 Simple versioned template</h4>
+<h3 class="section">2.14 Simple versioned template</h3>
 
 <p>The simplest approach to managing a file is to maintain a master copy by hand, keeping it
 in a version controlled repository (e.g. svn), and installing this version on the end machine.
@@ -2328,11 +2483,11 @@ checked out manually once (with authentication) in <samp><span class="file">/mys
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Custom-editing">Custom editing</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Simple-versioned-template">Simple versioned template</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Manage-a-system-file">Manage a system file</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h4 class="subsection">2.9.3 Macro template</h4>
+<h3 class="section">2.15 Macro template</h3>
 
 <p>The next simplest approach to file management is to add variables to
 the template that will be expanded into local values at the end
@@ -2397,12 +2552,13 @@ that get expanded by CFEngine.
    <div class="node">
 <a name="Custom-editing"></a>
 <p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Manage-a-system-process">Manage a system process</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Macro-template">Macro template</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Manage-a-system-file">Manage a system file</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h4 class="subsection">2.9.4 Custom editing</h4>
+<h3 class="section">2.16 Custom editing</h3>
 
 <p>If you do not control the starting state of the file, because it is distributed by
 an operating system vendor for instance, then editing the final state is the best approach. 
@@ -2473,13 +2629,13 @@ standard library.
 <div class="node">
 <a name="Manage-a-system-process"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Manage-users">Manage users</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Manage-a-system-file">Manage a system file</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high level issues</a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Ensure-running">Ensure running</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Custom-editing">Custom editing</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h3 class="section">2.10 Manage a system process</h3>
+<h3 class="section">2.17 Manage a system process</h3>
 
 <ul class="menu">
 <li><a accesskey="1" href="#Ensure-running">Ensure running</a>
@@ -2492,11 +2648,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high 
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Ensure-not-running">Ensure not running</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Manage-a-system-process">Manage a system process</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Manage-a-system-process">Manage a system process</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h4 class="subsection">2.10.1 Ensure running</h4>
+<h3 class="section">2.18 Ensure running</h3>
 
 <p>The simplest example might look like this:
 
@@ -2551,11 +2707,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Manage-a-system-process">Manage a syst
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Prune-processes">Prune processes</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Ensure-running">Ensure running</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Manage-a-system-process">Manage a system process</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h4 class="subsection">2.10.2 Ensure not running</h4>
+<h3 class="section">2.19 Ensure not running</h3>
 
 <pre class="verbatim">
 <span class="red">bundle agent</span> <span class="blue">restart_process</span>
@@ -2578,12 +2734,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Manage-a-system-process">Manage a syst
 <div class="node">
 <a name="Prune-processes"></a>
 <p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Manage-users">Manage users</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Ensure-not-running">Ensure not running</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Manage-a-system-process">Manage a system process</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h4 class="subsection">2.10.3 Prune processes</h4>
+<h3 class="section">2.20 Prune processes</h3>
 
 <p>This example kills processes owned by a particular user that have exceeded 100000 bytes of
 resident memory.
@@ -2625,13 +2782,13 @@ resident memory.
 <div class="node">
 <a name="Manage-users"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Postfix-mail-configuration">Postfix mail configuration</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Manage-a-system-process">Manage a system process</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high level issues</a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Add-users">Add users</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Prune-processes">Prune processes</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h3 class="section">2.11 Manage users</h3>
+<h3 class="section">2.21 Manage users</h3>
 
 <p>There are many approaches to managing users. You can edit system files like <samp><span class="file">/etc/passwd</span></samp>
 directly, or you can use commands on some systems like &lsquo;<samp><span class="samp">useradd</span></samp>&rsquo; or &lsquo;<samp><span class="samp">adduser</span></samp>&rsquo;. 
@@ -2647,11 +2804,11 @@ In all cases it is desirable to make this a data-driven process.
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Remove-users">Remove users</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Manage-users">Manage users</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Manage-users">Manage users</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h4 class="subsection">2.11.1 Add users</h4>
+<h3 class="section">2.22 Add users</h3>
 
 <p>A simple approach which adds new users to the password file, and to a
 group called &lsquo;<samp><span class="samp">users</span></samp>&rsquo; in the group file. Is shown below. This example
@@ -2760,24 +2917,25 @@ must edit the files multiple times.
 <div class="node">
 <a name="Remove-users"></a>
 <p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Postfix-mail-configuration">Postfix mail configuration</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Add-users">Add users</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Manage-users">Manage users</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h4 class="subsection">2.11.2 Remove users</h4>
+<h3 class="section">2.23 Remove users</h3>
 
 <!--  -->
 <div class="node">
 <a name="Postfix-mail-configuration"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Set-up-HPC-clusters">Set up HPC clusters</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Manage-users">Manage users</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high level issues</a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Remove-users">Remove users</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h3 class="section">2.12 Postfix mail configuration</h3>
+<h3 class="section">2.24 Postfix mail configuration</h3>
 
 <pre class="verbatim">#######################################################
 <span class="comment">#
@@ -2879,11 +3037,11 @@ any::
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Set-up-name-resolution">Set up name resolution</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Postfix-mail-configuration">Postfix mail configuration</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high level issues</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h3 class="section">2.13 Set up HPC clusters</h3>
+<h3 class="section">2.25 Set up HPC clusters</h3>
 
 <p>HPC cluster machines are usually all identical, so the CFEngine
 configuration is very simple. HPC clients value CPU and memory
@@ -2976,11 +3134,11 @@ and save a little:
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Set-up-sudo">Set up sudo</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Set-up-HPC-clusters">Set up HPC clusters</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high level issues</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h3 class="section">2.14 Set up name resolution</h3>
+<h3 class="section">2.26 Set up name resolution</h3>
 
 <p>There are many ways to do name resolution setup<a rel="footnote" href="#fn-1" name="fnd-1"><sup>1</sup></a> We write a reusable
 bundle using the editing features.
@@ -3137,11 +3295,11 @@ be managed using file editing. We simply append this to the
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Set-up-a-web-server">Set up a web server</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Set-up-name-resolution">Set up name resolution</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high level issues</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h3 class="section">2.15 Set up sudo</h3>
+<h3 class="section">2.27 Set up sudo</h3>
 
 <p>Setting up <code>sudo</code> is straightforward, and is best managed by copying trusted
 files from a repository.
@@ -3172,11 +3330,11 @@ files from a repository.
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Templating">Templating</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Set-up-sudo">Set up sudo</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high level issues</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h3 class="section">2.16 Set up a web server</h3>
+<h3 class="section">2.28 Set up a web server</h3>
 
 <p>Adapt this template to your operating system by adding multiple
 classes.  Each web server runs something like the present module,
@@ -3355,11 +3513,11 @@ which is entered into the bundlesequence like this:
 <a name="Templating"></a>
 <p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Set-up-a-web-server">Set up a web server</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-high-level-issues">Common high level issues</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#High-level">High level</a>
 
 </div>
 
-<h3 class="section">2.17 Templating</h3>
+<h3 class="section">2.29 Templating</h3>
 
 <p>With CFEngine you have a choice between editing `deltas' into files
 or distributing more-or-less finished templates. Which method you
@@ -3442,45 +3600,330 @@ locations:
 <!-- CHAPTER -->
 <!-- ********************************************************************** -->
 <div class="node">
-<a name="Common-low-level-issues"></a>
+<a name="Low-level"></a>
 <p><hr>
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Common-high-level-issues">Common high level issues</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#High-level">High level</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h2 class="chapter">3 Common low level issues</h2>
+<h2 class="chapter">3 Low level</h2>
 
 <!--  -->
 <!--  -->
 <ul class="menu">
-<li><a accesskey="1" href="#Add-lines-to-a-file">Add lines to a file</a>
-<li><a accesskey="2" href="#Add-users-to-passwd-and-group">Add users to passwd and group</a>
-<li><a accesskey="3" href="#Add-software-packages-to-the-system">Add software packages to the system</a>
-<li><a accesskey="4" href="#Add-variable-definitions-to-a-file">Add variable definitions to a file</a>
-<li><a accesskey="5" href="#Check-file-or-directory-permissions">Check file or directory permissions</a>
-<li><a accesskey="6" href="#Copy-files">Copy files</a>
-<li><a accesskey="7" href="#Copy-then-edit">Copy then edit</a>
-<li><a accesskey="8" href="#Editing-files">Editing files</a>
-<li><a accesskey="9" href="#Editing-tabular-files">Editing tabular files</a>
+<li><a accesskey="1" href="#Aborting-execution">Aborting execution</a>
+<li><a accesskey="2" href="#ACL-file-example">ACL file example</a>
+<li><a accesskey="3" href="#ACL-generic-example">ACL generic example</a>
+<li><a accesskey="4" href="#ACL-secret-example">ACL secret example</a>
+<li><a accesskey="5" href="#Active-directory-example">Active directory example</a>
+<li><a accesskey="6" href="#Active-list-users-directory-example">Active list users directory example</a>
+<li><a accesskey="7" href="#Active-directory-show-users-example">Active directory show users example</a>
+<li><a accesskey="8" href="#Add-lines-to-a-file">Add lines to a file</a>
+<li><a accesskey="9" href="#Add-users-to-passwd-and-group">Add users to passwd and group</a>
+<li><a href="#Add-software-packages-to-the-system">Add software packages to the system</a>
+<li><a href="#Add-variable-definitions-to-a-file">Add variable definitions to a file</a>
+<li><a href="#Application-baseline">Application baseline</a>
+<li><a href="#Array-example">Array example</a>
+<li><a href="#Back-references-in-filenames">Back references in filenames</a>
+<li><a href="#BSD-flags">BSD flags</a>
+<li><a href="#Change-directory-for-command">Change directory for command</a>
+<li><a href="#Check-file-or-directory-permissions">Check file or directory permissions</a>
+<li><a href="#Class-match-example">Class match example</a>
+<li><a href="#Client_002dserver-example">Client-server example</a>
+<li><a href="#Commands-example">Commands example</a>
+<li><a href="#Commenting-lines-in-a-file">Commenting lines in a file</a>
+<li><a href="#Copy-files">Copy files</a>
+<li><a href="#Copy-and-flatten-directory">Copy and flatten directory</a>
+<li><a href="#Copy-then-edit">Copy then edit</a>
+<li><a href="#Creating-files-and-directories">Creating files and directories</a>
+<li><a href="#Database-creation">Database creation</a>
+<li><a href="#Deleting-lines-from-a-file">Deleting lines from a file</a>
+<li><a href="#Deleting-lines-exception">Deleting lines exception</a>
+<li><a href="#Editing-files">Editing files</a>
+<li><a href="#Editing-tabular-files">Editing tabular files</a>
+<li><a href="#Environment-_0028virtual_0029">Environment (virtual)</a>
+<li><a href="#Environment-variables">Environment variables</a>
+<li><a href="#Execresult-example">Execresult example</a>
+<li><a href="#Inserting-lines-in-a-file">Inserting lines in a file</a>
+<li><a href="#Get-a-list-of-users">Get a list of users</a>
+<li><a href="#Global-classes">Global classes</a>
+<li><a href="#Hello-world">Hello world</a>
+<li><a href="#LDAP-interactions">LDAP interactions</a>
+<li><a href="#Linking-files">Linking files</a>
+<li><a href="#Listing-files_002dpattern-in-a-directory">Listing files-pattern in a directory</a>
+<li><a href="#Locate-and-transform-files">Locate and transform files</a>
+<li><a href="#Logging">Logging</a>
+<li><a href="#Measurements">Measurements</a>
+<li><a href="#Methods">Methods</a>
+<li><a href="#Method-validation">Method validation</a>
 <li><a href="#Mount-NFS-filesystem">Mount NFS filesystem</a>
 <li><a href="#Ordering-promises">Ordering promises</a>
+<li><a href="#Process-management">Process management</a>
+<li><a href="#Read-from-a-TCP-socket">Read from a TCP socket</a>
+<li><a href="#Resolver-management">Resolver management</a>
+<li><a href="#Search-and-replace-text">Search and replace text</a>
+<li><a href="#Selecting-a-region-in-a-file">Selecting a region in a file</a>
+<li><a href="#Service-management-_0028windows_0029">Service management (windows)</a>
 <li><a href="#Set-up-a-PXE-boot-server">Set up a PXE boot server</a>
 <li><a href="#Tidying-garbage-files">Tidying garbage files</a>
+<li><a href="#Software-distribution">Software distribution</a>
+<li><a href="#Trigger-classes">Trigger classes</a>
 <li><a href="#Unmount-NFS-filesystem">Unmount NFS filesystem</a>
 <li><a href="#Web-server-modules">Web server modules</a>
+<li><a href="#Warn-if-matching-line-in-file">Warn if matching line in file</a>
+<li><a href="#Windows-registry">Windows registry</a>
+<li><a href="#unit_005fregistry_005fcache_002ecf">unit_registry_cache.cf</a>
+<li><a href="#unit_005fregistry_002ecf">unit_registry.cf</a>
 </ul>
+
+<div class="node">
+<a name="Aborting-execution"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#ACL-file-example">ACL file example</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Low-level">Low level</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.1 Aborting execution</h3>
+
+<pre class="verbatim">
+
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence  </span>=> { "testbundle"  };
+
+<span class="red">version </span>=><span class="green"> "1.2.3";</span>
+}
+
+<span class="comment">###########################################
+</span>
+
+<span class="red">body agent</span> <span class="blue">control</span>
+
+{
+<span class="red">abortbundleclasses </span>=> { "invalid.Hr16" };
+}
+
+<span class="comment">###########################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+{
+<span class="red">vars:
+</span>
+ "userlist"<span class="red"> slist </span>=> { "xyz", "mark", "jeang", "jonhenrik", "thomas", "eben" };
+
+<span class="red">methods:
+</span>
+ "any"<span class="red"> usebundle </span>=><span class="blue"> subtest("$(userlist)");</span>
+
+}
+
+<span class="comment">###########################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">subtest(user)</span>
+
+{
+<span class="red">classes:
+</span>
+  "invalid"<span class="red"> not </span>=> regcmp("[a-z][a-z][a-z][a-z]","$(user)");
+
+<span class="red">reports:
+</span>
+ !invalid::
+
+  "User name $(user) is valid at 4 letters";
+
+ invalid::
+
+  "User name $(user) is invalid";
+}
+</pre>
+
+<div class="node">
+<a name="ACL-file-example"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#ACL-generic-example">ACL generic example</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Aborting-execution">Aborting execution</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.2 ACL file example</h3>
+
+<pre class="verbatim">
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "acls" };
+}
+
+<span class="comment">#########################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">acls</span>
+
+{
+<span class="red">files:
+</span>
+  "/media/flash/acl/test_dir"
+ 
+<span class="red">    depth_search </span>=><span class="blue"> include_base,</span>
+<span class="red">    acl </span>=><span class="blue"> template;</span>
+}
+
+<span class="comment">#########################################
+</span>
+
+<span class="red">body acl</span> <span class="blue">template</span>
+
+{
+<span class="red">acl_method </span>=><span class="green"> "overwrite";</span>
+<span class="red">acl_type </span>=><span class="green"> "posix";</span>
+<span class="red">acl_directory_inherit </span>=><span class="green"> "parent";</span>
+<span class="red">aces </span>=> { "user:*:r(wwx),-r:allow", "group:*:+rw:allow", "mask:x:allow", "all:r"};
+}
+
+<span class="comment">#########################################
+</span>
+
+<span class="red">body acl</span> <span class="blue">win</span>
+
+{
+<span class="red">acl_method </span>=><span class="green"> "overwrite";</span>
+<span class="red">acl_type </span>=><span class="green"> "ntfs";</span>
+<span class="red">acl_directory_inherit </span>=><span class="green"> "nochange";</span>
+<span class="red">aces </span>=> { "user:Administrator:rw", "group:Bad:rwx(Dpo):deny" };
+}
+
+<span class="comment">#########################################
+</span>
+
+<span class="red">body depth_search</span> <span class="blue">include_base</span>
+
+{
+<span class="red">include_basedir </span>=><span class="green"> "true";</span>
+}
+</pre>
+
+<div class="node">
+<a name="ACL-generic-example"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#ACL-secret-example">ACL secret example</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#ACL-file-example">ACL file example</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.3 ACL generic example</h3>
+
+<pre class="verbatim">
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "acls" };
+}
+
+<span class="comment">#########################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">acls</span>
+
+{
+<span class="red">files:
+</span>
+  "/media/flash/acl/test_dir"
+   
+<span class="red">    depth_search </span>=><span class="blue"> include_base,</span>
+<span class="red">    acl </span>=><span class="blue"> test;</span>
+}
+
+<span class="comment">#########################################
+</span>
+
+<span class="red">body acl</span> <span class="blue">test</span>
+
+{
+<span class="red">acl_type </span>=><span class="green"> "generic";</span>
+<span class="red">aces </span>=> {"user:bob:rwx", "group:staff:rx", "all:r"};
+}
+
+<span class="comment">#########################################
+</span>
+
+<span class="red">body depth_search</span> <span class="blue">include_base</span>
+
+{
+<span class="red">include_basedir </span>=><span class="green"> "true";</span>
+}
+</pre>
+
+<div class="node">
+<a name="ACL-secret-example"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Active-directory-example">Active directory example</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#ACL-generic-example">ACL generic example</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.4 ACL secret example</h3>
+
+<pre class="verbatim"></pre>
+
+<div class="node">
+<a name="Active-directory-example"></a>
+<p><hr>
+<span class="red">Next:&nbsp;<a rel="next" accesskey="n" href="#Active-list-users-directory-example">Active list users directory example</a>,
+</span><span class="red">Previous:&nbsp;<a rel="previous" accesskey="p" href="#ACL-secret-example">ACL secret example</a>,
+</span><span class="red">Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+</span>
+</div>
+
+<h3 class="section">3.5 Active directory example</h3>
+
+<pre class="verbatim"></pre>
+
+<div class="node">
+<a name="Active-list-users-directory-example"></a>
+<p><hr>
+<span class="red">Next:&nbsp;<a rel="next" accesskey="n" href="#Active-directory-show-users-example">Active directory show users example</a>,
+</span><span class="red">Previous:&nbsp;<a rel="previous" accesskey="p" href="#Active-directory-example">Active directory example</a>,
+</span><span class="red">Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+</span>
+</div>
+
+<h3 class="section">3.6 Active list users directory example</h3>
+
+<pre class="verbatim"></pre>
+
+<div class="node">
+<a name="Active-directory-show-users-example"></a>
+<p><hr>
+<span class="red">Next:&nbsp;<a rel="next" accesskey="n" href="#Add-lines-to-a-file">Add lines to a file</a>,
+</span><span class="red">Previous:&nbsp;<a rel="previous" accesskey="p" href="#Active-list-users-directory-example">Active list users directory example</a>,
+</span><span class="red">Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+</span>
+</div>
+
+<h3 class="section">3.7 Active directory show users example</h3>
+
+<pre class="verbatim"></pre>
 
 <div class="node">
 <a name="Add-lines-to-a-file"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Add-users-to-passwd-and-group">Add users to passwd and group</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Common-low-level-issues">Common low level issues</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low level issues</a>
-
+<span class="red">Next:&nbsp;<a rel="next" accesskey="n" href="#Add-users-to-passwd-and-group">Add users to passwd and group</a>,
+</span><span class="red">Previous:&nbsp;<a rel="previous" accesskey="p" href="#Active-directory-show-users-example">Active directory show users example</a>,
+</span><span class="red">Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+</span>
 </div>
 
-<h3 class="section">3.1 Add lines to a file</h3>
+<h3 class="section">3.8 Add lines to a file</h3>
 
 <p>There are  numerous approaches to adding lines to a file. 
 Often the order of a configuration file is unimportant, we just need to ensure
@@ -3557,11 +4000,11 @@ any::
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Add-software-packages-to-the-system">Add software packages to the system</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Add-lines-to-a-file">Add lines to a file</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low level issues</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.2 Add users to passwd and group</h3>
+<h3 class="section">3.9 Add users to passwd and group</h3>
 
 <p>Add lines to the password file, and users to group if they are not already there.
 <pre class="verbatim">
@@ -3605,11 +4048,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Add-variable-definitions-to-a-file">Add variable definitions to a file</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Add-users-to-passwd-and-group">Add users to passwd and group</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low level issues</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.3 Add software packages to the system</h3>
+<h3 class="section">3.10 Add software packages to the system</h3>
 
 <pre class="verbatim">#
 <span class="comment"># Package managment
@@ -3662,13 +4105,13 @@ be 100 percent correct.
 <div class="node">
 <a name="Add-variable-definitions-to-a-file"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Check-file-or-directory-permissions">Check file or directory permissions</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Application-baseline">Application baseline</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Add-software-packages-to-the-system">Add software packages to the system</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low level issues</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.4 Add variable definitions to a file e.g. <samp><span class="file">/etc/system</span></samp></h3>
+<h3 class="section">3.11 Add variable definitions to a file e.g. <samp><span class="file">/etc/system</span></samp></h3>
 
 <pre class="verbatim">
 <span class="red">body common control
@@ -3745,17 +4188,239 @@ lhs3=And everywhere that Mary went
 
 </pre>
 
-<!--  -->
+<ul class="menu">
+<li><a accesskey="1" href="#Application-baseline">Application baseline</a>
+<li><a accesskey="2" href="#Array-example">Array example</a>
+<li><a accesskey="3" href="#Back-references-in-filenames">Back references in filenames</a>
+<li><a accesskey="4" href="#BSD-flags">BSD flags</a>
+<li><a accesskey="5" href="#Change-directory-for-command">Change directory for command</a>
+</ul>
+
 <div class="node">
-<a name="Check-file-or-directory-permissions"></a>
+<a name="Application-baseline"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Copy-files">Copy files</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Array-example">Array example</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Add-variable-definitions-to-a-file">Add variable definitions to a file</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low level issues</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.5 Check file or directory permissions</h3>
+<h3 class="section">3.12 Application baseline</h3>
+
+<pre class="verbatim"></pre>
+
+<div class="node">
+<a name="Array-example"></a>
+<p><hr>
+<span class="red">Next:&nbsp;<a rel="next" accesskey="n" href="#Back-references-in-filenames">Back references in filenames</a>,
+</span><span class="red">Previous:&nbsp;<a rel="previous" accesskey="p" href="#Application-baseline">Application baseline</a>,
+</span><span class="red">Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+</span>
+</div>
+
+<h3 class="section">3.13 Array example</h3>
+
+<pre class="verbatim">
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "array" };
+}
+
+
+<span class="red">bundle common g
+</span>{
+<span class="red">vars:
+</span>
+  "array[1]"<span class="red"> string </span>=><span class="green"> "one"; </span>
+  "array[2]"<span class="red"> string </span>=><span class="green"> "two"; </span>
+}
+
+<span class="red">bundle agent</span> <span class="blue">array</span>
+{
+<span class="red">vars:
+</span>
+  "localarray[1]"<span class="red"> string </span>=><span class="green"> "one"; </span>
+  "localarray[2]"<span class="red"> string </span>=><span class="green"> "two"; </span>
+
+<span class="red">reports:
+</span>
+ linux::
+
+   "Global $(g.array[1]) and $(localarray[2])";
+}
+
+</pre>
+
+<!--  -->
+<div class="node">
+<a name="Back-references-in-filenames"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#BSD-flags">BSD flags</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Array-example">Array example</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.14 Backreferences in filenames</h3>
+
+<pre class="verbatim">
+<span class="comment">######################################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># File editing - back reference
+</span>
+<span class="comment">#
+</span>
+<span class="comment">######################################################################
+</span>
+
+
+<span class="red">body common control
+</span>
+{
+<span class="red">version </span>=><span class="green"> "1.2.3";</span>
+<span class="red">bundlesequence  </span>=> { "testbundle"  };
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+
+{
+<span class="red">files:
+</span>
+<span class="comment">  # The back reference in a path only applies to the last link
+</span>
+<span class="comment">  # of the pathname, so the (tmp) gets ignored
+</span>
+
+  "/tmp/(cf3)_(.*)"
+
+<span class="red">       edit_line </span>=> myedit("second $(match.2)");
+
+
+<span class="comment">  # but ...
+</span>
+
+<span class="comment">#  "/tmp/cf3_test"
+</span>
+<span class="comment">#       create    => "true",
+</span>
+<span class="comment">#       edit_line => myedit("second $(match.1)");
+</span>
+
+
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle edit_line</span> <span class="blue">myedit(parameter)</span>
+  {
+<span class="red">  vars:
+</span>
+   "edit_variable"<span class="red"> string </span>=><span class="green"> "private edit variable is $(parameter)"; </span>
+
+<span class="red">  insert_lines:
+</span>
+     "$(edit_variable)";
+  
+  }
+
+</pre>
+
+<div class="node">
+<a name="BSD-flags"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Change-directory-for-command">Change directory for command</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Back-references-in-filenames">Back references in filenames</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.15 BSD flags</h3>
+
+<pre class="verbatim">
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "test" };
+}
+
+<span class="red">bundle agent</span> <span class="blue">test</span>
+{
+<span class="red">files:
+</span>
+ freebsd::
+
+   "/tmp/newfile"
+
+<span class="red">       create </span>=><span class="green"> "true",</span>
+<span class="red">       perms </span>=><span class="blue"> setbsd;</span>
+
+}
+
+
+<span class="red">body perms</span> <span class="blue">setbsd</span>
+{
+<span class="red">bsdflags </span>=> { "+uappnd","+uchg", "+uunlnk", "-nodump" };
+}
+
+</pre>
+
+<!--  -->
+<div class="node">
+<a name="Change-directory-for-command"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Check-file-or-directory-permissions">Check file or directory permissions</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#BSD-flags">BSD flags</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.16 Change directory for command</h3>
+
+<pre class="verbatim">
+
+
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence  </span>=> { "example" };
+}
+
+<span class="comment">###########################################################
+</span>
+
+<span class="red">body contain</span> <span class="blue">cd(dir)</span>
+{
+<span class="red">chdir </span>=><span class="green"> "${dir}";</span>
+<span class="red">useshell </span>=><span class="green"> "true";</span>
+}
+
+<span class="red">bundle agent</span> <span class="blue">example</span>
+{
+<span class="red">commands:
+</span>
+   "/bin/pwd"
+<span class="red">       contain </span>=><span class="blue"> cd("/tmp");</span>
+}
+
+</pre>
+
+<div class="node">
+<a name="Check-file-or-directory-permissions"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Class-match-example">Class match example</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Change-directory-for-command">Change directory for command</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.17 Check file or directory permissions</h3>
 
 <pre class="verbatim">
 <span class="red">bundle agent</span> <span class="blue">check_perms</span>
@@ -3803,17 +4468,492 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 }
 </pre>
 
-<!--  -->
+<ul class="menu">
+<li><a accesskey="1" href="#Class-match-example">Class match example</a>
+<li><a accesskey="2" href="#Client_002dserver-example">Client-server example</a>
+<li><a accesskey="3" href="#Commands-example">Commands example</a>
+<li><a accesskey="4" href="#Commenting-lines-in-a-file">Commenting lines in a file</a>
+</ul>
+
 <div class="node">
-<a name="Copy-files"></a>
+<a name="Class-match-example"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Copy-then-edit">Copy then edit</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Client_002dserver-example">Client-server example</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Check-file-or-directory-permissions">Check file or directory permissions</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low level issues</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.6 Copy files</h3>
+<h3 class="section">3.18 Class match example</h3>
+
+<pre class="verbatim">
+
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence  </span>=> { "example" };
+}
+
+<span class="comment">###########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">example</span>
+
+{     
+<span class="red">classes:
+</span>
+  "do_it"<span class="red"> and </span>=> { classmatch(".*_3"), "linux" }; 
+
+<span class="red">reports:
+</span>
+  do_it::
+
+    "Host matches pattern";
+
+}
+
+</pre>
+
+<div class="node">
+<a name="Client-server-example"></a>
+<a name="Client_002dserver-example"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Commands-example">Commands example</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Class-match-example">Class match example</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.19 Client-server example</h3>
+
+<pre class="verbatim">
+<span class="comment">########################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Simple test copy from server connection to cfServer
+</span>
+<span class="comment">#
+</span>
+<span class="comment">########################################################
+</span>
+
+<span class="comment"> #
+</span>
+<span class="comment"> # run this as follows:
+</span>
+<span class="comment"> #
+</span>
+<span class="comment"> # cf-serverd -f runtest_1.cf [-v]
+</span>
+<span class="comment"> # cf-agent   -f runtest_2.cf
+</span>
+<span class="comment"> #
+</span>
+<span class="comment"> # Notice that the same file configures all parts of cfengine
+</span>
+
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence  </span>=> { "testbundle" };
+<span class="red">version </span>=><span class="green"> "1.2.3";</span>
+<span class="comment">#fips_mode => "true";
+</span>
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+{
+<span class="red">files: 
+</span>
+  "/home/mark/tmp/testcopy" 
+<span class="red">        comment  </span>=><span class="green"> "test copy promise",</span>
+<span class="red">    copy_from    </span>=><span class="blue"> mycopy("/home/mark/LapTop/words","127.0.0.1"),</span>
+<span class="red">    perms        </span>=><span class="blue"> system,</span>
+<span class="red">    depth_search </span>=><span class="blue"> recurse("inf"),</span>
+<span class="red">    classes      </span>=><span class="blue"> satisfied("copy_ok");</span>
+
+  "/home/mark/tmp/testcopy/single_file" 
+
+<span class="red">        comment  </span>=><span class="green"> "test copy promise",</span>
+<span class="red">    copy_from    </span>=><span class="blue"> mycopy("/home/mark/LapTop/Cfengine3/trunk/README","127.0.0.1"),</span>
+<span class="red">    perms        </span>=><span class="blue"> system;</span>
+
+<span class="red">reports:
+</span>
+  copy_ok::
+
+    "Files were copied..";
+}
+
+<span class="comment">#########################################################
+</span>
+
+<span class="red">body perms</span> <span class="blue">system</span>
+
+{
+<span class="red">mode  </span>=><span class="green"> "0644";</span>
+}
+
+<span class="comment">#########################################################
+</span>
+
+<span class="red">body depth_search</span> <span class="blue">recurse(d)</span>
+
+{
+<span class="red">depth </span>=><span class="green"> "$(d)";</span>
+}
+
+<span class="comment">#########################################################
+</span>
+
+<span class="red">body copy_from</span> <span class="blue">mycopy(from,server)</span>
+
+{
+<span class="red">source      </span>=><span class="green"> "$(from)";</span>
+<span class="red">servers     </span>=> { "$(server)" };
+<span class="red">compare     </span>=><span class="green"> "digest";</span>
+<span class="red">encrypt     </span>=><span class="green"> "true";</span>
+<span class="red">verify      </span>=><span class="green"> "true";</span>
+<span class="red">copy_backup </span>=><span class="green"> "true";                  #/false/timestamp</span>
+<span class="red">purge       </span>=><span class="green"> "false";</span>
+<span class="red">type_check  </span>=><span class="green"> "true";</span>
+<span class="red">force_ipv4  </span>=><span class="green"> "true";</span>
+<span class="red">trustkey </span>=><span class="green"> "true";</span>
+}
+
+<span class="comment">#########################################################
+</span>
+
+<span class="red">body classes</span> <span class="blue">satisfied(x)</span>
+{
+<span class="red">promise_repaired </span>=> { "$(x)" };
+<span class="red">persist_time </span>=><span class="green"> "0";</span>
+}
+
+<span class="comment">#########################################################
+</span>
+<span class="comment"># Server config
+</span>
+<span class="comment">#########################################################
+</span>
+
+<span class="red">body server</span> <span class="blue">control</span>
+
+{
+<span class="red">allowconnects         </span>=> { "127.0.0.1" , "::1" };
+<span class="red">allowallconnects      </span>=> { "127.0.0.1" , "::1" };
+<span class="red">trustkeysfrom         </span>=> { "127.0.0.1" , "::1" };
+<span class="comment"># allowusers
+</span>
+}
+
+<span class="comment">#########################################################
+</span>
+
+<span class="red">bundle server</span> <span class="blue">access_rules()</span>
+
+{
+
+<span class="red">access:
+</span>
+  "/home/mark/LapTop"
+
+<span class="red">    admit   </span>=> { "127.0.0.1" };
+}
+
+
+
+</pre>
+
+<div class="node">
+<a name="Commands-example"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Commenting-lines-in-a-file">Commenting lines in a file</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Client_002dserver-example">Client-server example</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.20 Commands example</h3>
+
+<pre class="verbatim">
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence  </span>=> { "my_commands" };
+<span class="red">inputs </span>=> { "cfengine_stdlib.cf" };
+}
+
+
+<span class="red">bundle agent</span> <span class="blue">my_commands</span>
+{
+<span class="red">commands:
+</span>
+ Sunday.Hr04.Min05_10.myhost::
+
+  "/usr/bin/update_db";
+
+ any::
+
+  "/etc/mysql/start"
+
+<span class="red">      contain </span>=><span class="blue"> setuid("mysql");</span>
+
+}
+
+
+</pre>
+
+<div class="node">
+<a name="Commenting-lines-in-a-file"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Copy-files">Copy files</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Commands-example">Commands example</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.21 Commenting lines in a file</h3>
+
+<pre class="verbatim">
+<span class="comment">######################################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># File editing
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Normal ordering:
+</span>
+<span class="comment"># - delete
+</span>
+<span class="comment"># - replace | colum_edit
+</span>
+<span class="comment"># - insert
+</span>
+<span class="comment"># 
+</span>
+<span class="comment">######################################################################
+</span>
+
+
+<span class="red">body common control
+</span>
+{
+<span class="red">version </span>=><span class="green"> "1.2.3";</span>
+<span class="red">bundlesequence  </span>=> { "testbundle"  };
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+
+{
+
+<span class="red">files:
+</span>
+  "/home/mark/tmp/cf3_test"
+
+<span class="red">       create    </span>=><span class="green"> "true",</span>
+<span class="red">       edit_line </span>=> myedit("second");
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle edit_line</span> <span class="blue">myedit(parameter)</span>
+  {
+<span class="red">  vars:
+</span>
+   "edit_variable"<span class="red"> string </span>=><span class="green"> "private edit variable is $(parameter)"; </span>
+
+  
+<span class="red">  replace_patterns:
+</span>
+<span class="comment">  # replace shell comments with C comments
+</span>
+
+   "#(.*)"
+
+<span class="red">      replace_with </span>=><span class="blue"> C_comment,</span>
+<span class="red">     select_region </span>=> MySection("New section");
+
+  }
+
+<span class="comment">########################################
+</span>
+<span class="comment"># Bodies
+</span>
+<span class="comment">########################################
+</span>
+
+<span class="red">body replace_with</span> <span class="blue">C_comment</span>
+
+{
+<span class="red">replace_value </span>=><span class="green"> "/* $(match.1) */"; # backreference 0</span>
+<span class="red">occurrences </span>=><span class="green"> "all";  # first, last all</span>
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">body select_region</span> <span class="blue">MySection(x)</span>
+
+{
+<span class="red">select_start </span>=><span class="green"> "\[$(x)\]";</span>
+<span class="red">select_end </span>=><span class="green"> "\[.*\]";</span>
+}
+</pre>
+
+<pre class="verbatim">
+<span class="comment">######################################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Comment lines
+</span>
+<span class="comment">#
+</span>
+<span class="comment">######################################################################
+</span>
+
+<span class="red">body common control
+</span>
+{
+<span class="red">version </span>=><span class="green"> "1.2.3";</span>
+<span class="red">bundlesequence  </span>=> { "testbundle"  };
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+
+{
+<span class="red">files:
+</span>
+  "/home/mark/tmp/comment_test"
+
+<span class="red">       create    </span>=><span class="green"> "true",</span>
+<span class="red">       edit_line </span>=><span class="blue"> comment_lines_matching;</span>
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle edit_line</span> <span class="blue">comment_lines_matching</span>
+  {
+<span class="red">  vars:
+</span>
+    "regexes"<span class="red"> slist </span>=> { "one.*", "two.*", "four.*" };
+
+<span class="red">  replace_patterns:
+</span>
+   "^($(regexes))$"
+<span class="red">      replace_with </span>=><span class="blue"> comment("# ");</span>
+  }
+
+<span class="comment">########################################
+</span>
+<span class="comment"># Bodies
+</span>
+<span class="comment">########################################
+</span>
+
+<span class="red">body replace_with</span> <span class="blue">comment(c)</span>
+
+{
+<span class="red">replace_value </span>=><span class="green"> "$(c) $(match.1)";</span>
+<span class="red">occurrences </span>=><span class="green"> "all";</span>
+}
+
+</pre>
+
+<pre class="verbatim">
+<span class="comment">######################################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Uncomment lines
+</span>
+<span class="comment">#
+</span>
+<span class="comment">######################################################################
+</span>
+
+<span class="red">body common control
+</span>
+{
+<span class="red">version </span>=><span class="green"> "1.2.3";</span>
+<span class="red">bundlesequence  </span>=> { "testbundle"  };
+}
+
+<span class="comment"># try this on some test data like
+</span>
+
+<span class="comment"># one
+</span>
+<span class="comment"># two
+</span>
+<span class="comment"># mark one
+</span>
+<span class="comment">#mark two
+</span>
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+
+{
+<span class="red">files:
+</span>
+  "/home/mark/tmp/comment_test"
+
+<span class="red">       create    </span>=><span class="green"> "true",</span>
+<span class="red">       edit_line </span>=><span class="blue"> uncomment_lines_matching("\s*mark.*","#");</span>
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle edit_line</span> <span class="blue">uncomment_lines_matching(regex,comment)</span>
+{
+<span class="red">replace_patterns:
+</span>
+ "#($(regex))$"<span class="red"> replace_with </span>=><span class="blue"> uncomment;</span>
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">body replace_with</span> <span class="blue">uncomment</span>
+{
+<span class="red">replace_value </span>=><span class="green"> "$(match.1)";</span>
+<span class="red">occurrences </span>=><span class="green"> "all";</span>
+}
+
+</pre>
+
+<div class="node">
+<a name="Copy-files"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Copy-and-flatten-directory">Copy and flatten directory</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Commenting-lines-in-a-file">Commenting lines in a file</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.22 Copy files</h3>
 
 <pre class="verbatim">files:
 
@@ -3837,17 +4977,173 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 
 </pre>
 
-<!--  -->
+<ul class="menu">
+<li><a accesskey="1" href="#Copy-and-flatten-directory">Copy and flatten directory</a>
+</ul>
+
 <div class="node">
-<a name="Copy-then-edit"></a>
+<a name="Copy-and-flatten-directory"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Editing-files">Editing files</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Copy-then-edit">Copy then edit</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Copy-files">Copy files</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low level issues</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.7 Copy then edit a file convergently</h3>
+<h3 class="section">3.23 Copy and flatten directory</h3>
+
+<pre class="verbatim">
+<span class="comment">########################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Simple test copy from server connection to cfServer
+</span>
+<span class="comment">#
+</span>
+<span class="comment">########################################################
+</span>
+
+<span class="comment"> #
+</span>
+<span class="comment"> # run this as follows:
+</span>
+<span class="comment"> #
+</span>
+<span class="comment"> # cf-serverd -f runtest_1.cf [-d2]
+</span>
+<span class="comment"> # cf-agent   -f runtest_2.cf
+</span>
+<span class="comment"> #
+</span>
+<span class="comment"> # Notice that the same file configures all parts of cfengine
+</span>
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence  </span>=> { "testbundle" };
+<span class="red">version </span>=><span class="green"> "1.2.3";</span>
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+
+{
+<span class="red">files:
+</span>
+  "/home/mark/tmp/testflatcopy" 
+
+<span class="red">        comment  </span>=><span class="green"> "test copy promise",</span>
+<span class="red">    copy_from    </span>=><span class="blue"> mycopy("/home/mark/LapTop/words","127.0.0.1"),</span>
+<span class="red">    perms        </span>=><span class="blue"> system,</span>
+<span class="red">    depth_search </span>=><span class="blue"> recurse("inf"),</span>
+<span class="red">    classes      </span>=><span class="blue"> satisfied("copy_ok");</span>
+
+
+  "/home/mark/tmp/testcopy/single_file" 
+
+<span class="red">        comment  </span>=><span class="green"> "test copy promise",</span>
+<span class="red">    copy_from    </span>=><span class="blue"> mycopy("/home/mark/LapTop/Cfengine3/trunk/README","127.0.0.1"),</span>
+<span class="red">    perms        </span>=><span class="blue"> system;</span>
+
+<span class="red">reports:
+</span>
+  copy_ok::
+
+    "Files were copied..";
+}
+
+<span class="comment">#########################################################
+</span>
+
+<span class="red">body perms</span> <span class="blue">system</span>
+
+{
+<span class="red">mode  </span>=><span class="green"> "0644";</span>
+}
+
+<span class="comment">#########################################################
+</span>
+
+<span class="red">body depth_search</span> <span class="blue">recurse(d)</span>
+
+{
+<span class="red">depth </span>=><span class="green"> "$(d)";</span>
+}
+
+<span class="comment">#########################################################
+</span>
+
+<span class="red">body copy_from</span> <span class="blue">mycopy(from,server)</span>
+
+{
+<span class="red">source      </span>=><span class="green"> "$(from)";</span>
+<span class="red">servers     </span>=> { "$(server)" };
+<span class="red">compare     </span>=><span class="green"> "digest";</span>
+<span class="red">verify      </span>=><span class="green"> "true";</span>
+<span class="red">copy_backup </span>=><span class="green"> "true";                  #/false/timestamp</span>
+<span class="red">purge       </span>=><span class="green"> "false";</span>
+<span class="red">type_check  </span>=><span class="green"> "true";</span>
+<span class="red">force_ipv4  </span>=><span class="green"> "true";</span>
+<span class="red">trustkey </span>=><span class="green"> "true";</span>
+<span class="red">collapse_destination_dir </span>=><span class="green"> "true";</span>
+}
+
+<span class="comment">#########################################################
+</span>
+
+<span class="red">body classes</span> <span class="blue">satisfied(x)</span>
+{
+<span class="red">promise_repaired </span>=> { "$(x)" };
+<span class="red">persist_time </span>=><span class="green"> "0";</span>
+}
+
+<span class="comment">#########################################################
+</span>
+<span class="comment"># Server config
+</span>
+<span class="comment">#########################################################
+</span>
+
+<span class="red">body server</span> <span class="blue">control</span>
+
+{
+<span class="red">allowconnects         </span>=> { "127.0.0.1" , "::1" };
+<span class="red">allowallconnects      </span>=> { "127.0.0.1" , "::1" };
+<span class="red">trustkeysfrom         </span>=> { "127.0.0.1" , "::1" };
+}
+
+<span class="comment">#########################################################
+</span>
+
+<span class="red">bundle server</span> <span class="blue">access_rules()</span>
+
+{
+<span class="red">access:
+</span>
+  "/home/mark/LapTop"
+
+<span class="red">    admit   </span>=> { "127.0.0.1" };
+}
+
+</pre>
+
+<div class="node">
+<a name="Copy-then-edit"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Creating-files-and-directories">Creating files and directories</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Copy-and-flatten-directory">Copy and flatten directory</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.24 Copy then edit a file convergently</h3>
 
 <p>To convergently chain a copy followed by edit, you need a staging file. 
 First you copy to the staging file. Then you edit the final file and
@@ -3891,17 +5187,359 @@ with respect to both stages of the process.
 
 </pre>
 
+<ul class="menu">
+<li><a accesskey="1" href="#Creating-files-and-directories">Creating files and directories</a>
+<li><a accesskey="2" href="#Database-creation">Database creation</a>
+<li><a accesskey="3" href="#Deleting-lines-from-a-file">Deleting lines from a file</a>
+<li><a accesskey="4" href="#Deleting-lines-exception">Deleting lines exception</a>
+</ul>
+
+<div class="node">
+<a name="Creating-files-and-directories"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Database-creation">Database creation</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Copy-then-edit">Copy then edit</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.25 Creating files and directories</h3>
+
+<pre class="verbatim">
+<span class="comment">########################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Simple test create files
+</span>
+<span class="comment">#
+</span>
+<span class="comment">########################################################
+</span>
+
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence  </span>=> { "testbundle"  };
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+
+{
+<span class="red">files:
+</span>
+  "/home/mark/tmp/test_plain" 
+
+<span class="red">       perms </span>=><span class="blue"> system,</span>
+<span class="red">       create </span>=><span class="green"> "true";</span>
+
+  "/home/mark/tmp/test_dir/." 
+
+<span class="red">       perms </span>=><span class="blue"> system,</span>
+<span class="red">       create </span>=><span class="green"> "true";</span>
+
+}
+
+<span class="comment">#########################################################
+</span>
+
+<span class="red">body perms</span> <span class="blue">system</span>
+
+{
+<span class="red">mode  </span>=><span class="green"> "0640";</span>
+}
+
+<span class="comment">#########################################################
+</span>
+
+<span class="red">body depth_search</span> <span class="blue">recurse(d)</span>
+
+{
+<span class="red">depth </span>=><span class="green"> "$(d)";</span>
+}
+
+</pre>
+
+<!--  -->
+<div class="node">
+<a name="Database-creation"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Deleting-lines-from-a-file">Deleting lines from a file</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Creating-files-and-directories">Creating files and directories</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.26 Database creation</h3>
+
+<pre class="verbatim">
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "dummy" };
+}
+
+<span class="red">body knowledge</span> <span class="blue">control</span>
+
+{
+<span class="comment">#sql_database => "postgres";
+</span>
+<span class="red">sql_owner </span>=><span class="green"> "postgres";</span>
+<span class="red">sql_passwd </span>=><span class="green"> ""; # No passwd</span>
+<span class="red">sql_type </span>=><span class="green"> "postgres";</span>
+}
+
+<span class="red">bundle knowledge</span> <span class="blue">dummy</span>
+{
+<span class="red">topics:
+</span>}
+</pre>
+
+<pre class="verbatim">
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "databases" };
+}
+
+<span class="red">bundle agent</span> <span class="blue">databases</span>
+
+{
+<span class="comment">#commands:
+</span>
+
+<span class="comment">#  "/usr/bin/createdb cf_topic_maps",
+</span>
+
+<span class="comment">#        contain => as_user("mysql");
+</span>
+
+<span class="red">databases:
+</span>
+  "knowledge_bank/topics"
+
+<span class="red">    database_operation </span>=><span class="green"> "create",</span>
+<span class="red">    database_type </span>=><span class="green"> "sql",</span>
+<span class="red">    database_columns </span>=> { 
+                        "topic_name,varchar,256",
+                        "topic_comment,varchar,1024",
+                        "topic_id,varchar,256",
+                        "topic_type,varchar,256",
+                        "topic_extra,varchar,26" 
+                        },
+
+<span class="red">    database_server </span>=><span class="blue"> myserver;</span>
+
+
+
+}
+
+<span class="comment">################################################
+</span>
+
+<span class="red">body database_server</span> <span class="blue">myserver</span>
+{
+none::
+<span class="red"> db_server_owner </span>=><span class="green"> "postgres";</span>
+<span class="red"> db_server_password </span>=><span class="green"> "";</span>
+<span class="red"> db_server_host </span>=><span class="green"> "localhost";</span>
+<span class="red"> db_server_type </span>=><span class="green"> "postgres";</span>
+<span class="red"> db_server_connection_db </span>=><span class="green"> "postgres";</span>
+any::
+<span class="red"> db_server_owner </span>=><span class="green"> "root";</span>
+<span class="red"> db_server_password </span>=><span class="green"> "";</span>
+<span class="red"> db_server_host </span>=><span class="green"> "localhost";</span>
+<span class="red"> db_server_type </span>=><span class="green"> "mysql";</span>
+<span class="red"> db_server_connection_db </span>=><span class="green"> "mysql";</span>
+}
+
+<span class="red">body contain</span> <span class="blue">as_user(x)</span>
+{
+<span class="red">exec_owner </span>=><span class="green"> "$(x)";</span>
+}
+</pre>
+
+<div class="node">
+<a name="Deleting-lines-from-a-file"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Deleting-lines-exception">Deleting lines exception</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Database-creation">Database creation</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.27 Deleting lines from a file</h3>
+
+<pre class="verbatim">
+
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "test" };
+}
+
+
+
+<span class="red">bundle agent</span> <span class="blue">test</span>
+{
+<span class="red">files:
+</span>
+  "/tmp/resolv.conf"  # test on "/tmp/resolv.conf" #
+
+<span class="red">     create        </span>=><span class="green"> "true",</span>
+<span class="red">     edit_line     </span>=><span class="blue"> resolver,</span>
+<span class="red">     edit_defaults </span>=><span class="blue"> def;</span>
+
+}
+
+
+<span class="comment">#######################################################
+</span>
+<span class="comment"># For the library
+</span>
+<span class="comment">#######################################################
+</span>
+
+<span class="red">bundle edit_line</span> <span class="blue">resolver</span>
+
+{
+<span class="red">vars:
+</span>
+ "search"<span class="red"> slist </span>=> { "search iu.hio.no cfengine.com", "nameserver 128.39.89.10" };
+
+<span class="red">delete_lines:
+</span>
+  "search.*";
+
+<span class="red">insert_lines:
+</span>
+  "$(search)"<span class="red"> location </span>=><span class="blue"> end;</span>
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body edit_defaults</span> <span class="blue">def</span>
+{
+<span class="red">empty_file_before_editing </span>=><span class="green"> "false";</span>
+<span class="red">edit_backup </span>=><span class="green"> "false";</span>
+<span class="red">max_file_size </span>=><span class="green"> "100000";</span>
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">body location</span> <span class="blue">start</span>
+
+{
+<span class="comment"># If not line to match, applies to whole text body
+</span>
+<span class="red">before_after </span>=><span class="green"> "before";</span>
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">body location</span> <span class="blue">end</span>
+
+{
+<span class="comment"># If not line to match, applies to whole text body
+</span>
+<span class="red">before_after </span>=><span class="green"> "after";</span>
+}
+</pre>
+
+<div class="node">
+<a name="Deleting-lines-exception"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Editing-files">Editing files</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Deleting-lines-from-a-file">Deleting lines from a file</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.28 Deleting lines exception</h3>
+
+<pre class="verbatim">
+<span class="comment">########################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Simple test editfile
+</span>
+<span class="comment">#
+</span>
+<span class="comment">########################################################
+</span>
+
+<span class="comment">#
+</span>
+<span class="comment"># This assumes a file format like:
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># [section 1]
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># lines....
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># [section 2]
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># lines... etc
+</span>
+
+
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence  </span>=> { "testbundle" };
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+
+{
+<span class="red">files:
+</span>
+  "/tmp/passwd_excerpt"
+
+<span class="red">       create    </span>=><span class="green"> "true",</span>
+<span class="red">       edit_line </span>=><span class="blue"> MarkNRoot;</span>
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle edit_line</span> <span class="blue">MarkNRoot</span>
+  {
+<span class="red">  delete_lines:
+</span>
+       "mark.*|root.*"<span class="red"> not_matching </span>=><span class="green"> "true";</span>
+
+  }
+
+</pre>
+
 <!--  -->
 <div class="node">
 <a name="Editing-files"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Editing-tabular-files">Editing tabular files</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Copy-then-edit">Copy then edit</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low level issues</a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Deleting-lines-exception">Deleting lines exception</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.8 Editing files</h3>
+<h3 class="section">3.29 Editing files</h3>
 
 <p>This is a huge topic. See also See <a href="#Add-lines-to-a-file">Add lines to a file</a>, See <a href="#Editing-tabular-files">Editing tabular files</a>, etc. 
 Editing a file can be complex or simple, depending on needs.
@@ -3949,13 +5587,13 @@ Editing a file can be complex or simple, depending on needs.
 <div class="node">
 <a name="Editing-tabular-files"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Mount-NFS-filesystem">Mount NFS filesystem</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Environment-_0028virtual_0029">Environment (virtual)</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Editing-files">Editing files</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low level issues</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.9 Editing tabular files</h3>
+<h3 class="section">3.30 Editing tabular files</h3>
 
 <pre class="verbatim">
 <span class="comment">######################################################################
@@ -4074,22 +5712,1338 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 
 </pre>
 
+<ul class="menu">
+<li><a accesskey="1" href="#Environment-_0028virtual_0029">Environment (virtual)</a>
+<li><a accesskey="2" href="#Environment-variables">Environment variables</a>
+<li><a accesskey="3" href="#Execresult-example">Execresult example</a>
+<li><a accesskey="4" href="#Inserting-lines-in-a-file">Inserting lines in a file</a>
+<li><a accesskey="5" href="#Get-a-list-of-users">Get a list of users</a>
+<li><a accesskey="6" href="#Global-classes">Global classes</a>
+<li><a accesskey="7" href="#Hello-world">Hello world</a>
+<li><a accesskey="8" href="#LDAP-interactions">LDAP interactions</a>
+<li><a accesskey="9" href="#Linking-files">Linking files</a>
+<li><a href="#Listing-files_002dpattern-in-a-directory">Listing files-pattern in a directory</a>
+<li><a href="#Locate-and-transform-files">Locate and transform files</a>
+<li><a href="#Logging">Logging</a>
+<li><a href="#Measurements">Measurements</a>
+<li><a href="#Methods">Methods</a>
+<li><a href="#Method-validation">Method validation</a>
+<li><a href="#Mount-NFS-filesystem">Mount NFS filesystem</a>
+</ul>
+
+<div class="node">
+<a name="Environment-(virtual)"></a>
+<a name="Environment-_0028virtual_0029"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Environment-variables">Environment variables</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Editing-tabular-files">Editing tabular files</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.31 Environments (virtual)</h3>
+
+<pre class="verbatim">
+<span class="comment">#######################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Virtual environments
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence  </span>=> { "my_vm_cloud" };   
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">my_vm_cloud</span>
+
+{
+<span class="red">vars:
+</span>
+  "vms[atlas]"<span class="red"> slist </span>=> { "guest1", "guest2", "guest3" };
+
+<span class="red">environments:
+</span>
+ scope||any::  # These should probably be in class "any" to ensure uniqueness
+
+   "$(vms[$(sys.host)])"
+
+<span class="red">       environment_resources </span>=><span class="blue"> virt_xml("$(xmlfile[$(this.promiser)])"),</span>
+<span class="red">       environment_interface </span>=><span class="blue"> vnet("eth0,192.168.1.100/24"),</span>
+<span class="red">       environment_type      </span>=><span class="green"> "test",</span>
+<span class="red">       environment_host      </span>=><span class="green"> "atlas";</span>
+
+<span class="comment">      # default environment_state => "create" on host, and "suspended elsewhere"
+</span>
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body environment_resources</span> <span class="blue">virt_xml(specfile)</span>
+{
+<span class="red">env_spec_file </span>=><span class="green"> "$(specfile)";</span>
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body environment_interface</span> <span class="blue">vnet(primary)</span>
+{
+<span class="red">env_name      </span>=><span class="green"> "$(this.promiser)";</span>
+<span class="red">env_addresses </span>=> { "$(primary)" };
+
+host1::
+
+<span class="red">  env_network </span>=><span class="green"> "default_vnet1";</span>
+
+host2::
+
+<span class="red">  env_network </span>=><span class="green"> "default_vnet2";</span>
+
+}
+</pre>
+
+<div class="node">
+<a name="Environment-variables"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Execresult-example">Execresult example</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Environment-_0028virtual_0029">Environment (virtual)</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.32 Environment variables</h3>
+
+<pre class="verbatim"></pre>
+
+<pre class="verbatim">
+<span class="comment">#######################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Virtual environments
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence  </span>=> { "my_vm_cloud" };   
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">my_vm_cloud</span>
+
+{
+<span class="red">environments:
+</span>
+   "centos5"
+
+<span class="red">       environment_resources </span>=><span class="blue"> virt_xml,</span>
+<span class="red">       environment_type      </span>=><span class="green"> "xen",</span>
+<span class="red">       environment_host      </span>=><span class="green"> "ursa-minor";</span>
+
+<span class="comment">      # default environment_state => "create" on host, and "suspended elsewhere"
+</span>
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body environment_resources</span> <span class="blue">virt_xml</span>
+{
+<span class="red">env_spec_file </span>=><span class="green"> "/srv/xen/centos5-libvirt-create.xml";</span>
+}
+
+</pre>
+
+<div class="node">
+<a name="Execresult-example"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Inserting-lines-in-a-file">Inserting lines in a file</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Environment-variables">Environment variables</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.33 Execresult example</h3>
+
+<pre class="verbatim">
+
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence  </span>=> { "example" };
+}
+
+<span class="comment">###########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">example</span>
+
+{     
+<span class="red">vars:
+</span>
+  "my_result"<span class="red"> string </span>=> execresult("/bin/ls /tmp","noshell");
+
+<span class="red">reports:
+</span>
+  linux::
+
+    "Variable is $(my_result)";
+
+}
+
+</pre>
+
 <!--  -->
+<div class="node">
+<a name="Inserting-lines-in-a-file"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Get-a-list-of-users">Get a list of users</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Execresult-example">Execresult example</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.34 Inserting lines in a file</h3>
+
+<pre class="verbatim">
+
+<span class="comment">#######################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Insert a number of lines with vague whitespace
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body common control
+</span>
+{
+any::
+
+<span class="red">  bundlesequence  </span>=> { "insert" };   
+}
+
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">insert</span>
+
+{
+<span class="red">vars:
+</span>
+  "v"<span class="red"> string </span>=><span class="green"> "  One potato";</span>
+ 
+<span class="red">files:
+</span>
+  "/tmp/test_insert"
+
+<span class="red">            create </span>=><span class="green"> "true",</span>
+<span class="red">         edit_line </span>=><span class="blue"> Insert("$(insert.v)");</span>
+
+}
+
+<span class="comment">#######################################################
+</span>
+<span class="comment"># For the library
+</span>
+<span class="comment">#######################################################
+</span>
+
+<span class="red">bundle edit_line</span> <span class="blue">Insert(name)</span>
+
+{
+<span class="red">insert_lines:
+</span>
+  "  $(name)"
+
+<span class="red">      whitespace_policy </span>=> { "ignore_leading", "ignore_embedded" };
+
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body edit_defaults</span> <span class="blue">empty</span>
+
+{
+<span class="red">empty_file_before_editing </span>=><span class="green"> "true";</span>
+}
+</pre>
+
+<pre class="verbatim">
+
+<span class="comment">#######################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Insert a number of lines
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body common control
+</span>
+{
+any::
+
+<span class="red">  bundlesequence  </span>=> { "insert" };   
+}
+
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">insert</span>
+
+{
+<span class="red">vars:
+</span>
+  "v"<span class="red"> string </span>=><span class="green"> "</span>
+                One potato
+                Two potato
+                Three potatoe
+                Four
+                ";
+ 
+<span class="red">files:
+</span>
+  "/tmp/test_insert"
+
+<span class="red">            create </span>=><span class="green"> "true",</span>
+<span class="red">         edit_line </span>=><span class="blue"> Insert("$(insert.v)"),</span>
+<span class="red">     edit_defaults </span>=><span class="blue"> empty;</span>
+
+}
+
+<span class="comment">#######################################################
+</span>
+<span class="comment"># For the library
+</span>
+<span class="comment">#######################################################
+</span>
+
+<span class="red">bundle edit_line</span> <span class="blue">Insert(name)</span>
+
+{
+<span class="red">insert_lines:
+</span>
+  "Begin$(const.n)$(name)$(const.n)End";
+
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body edit_defaults</span> <span class="blue">empty</span>
+
+{
+<span class="red">empty_file_before_editing </span>=><span class="green"> "false";</span>
+}
+</pre>
+
+<pre class="verbatim">
+
+<span class="comment">#######################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Insert a number of lines
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body common control
+</span>
+{
+any::
+
+<span class="red">  bundlesequence  </span>=> { "insert" };   
+}
+
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">insert</span>
+
+{
+<span class="red">vars:
+</span>
+  "v"<span class="red"> slist </span>=> {
+                "One potato",
+                "Two potato",
+                "Three potatoe",
+                "Four"    
+               };
+ 
+<span class="red">files:
+</span>
+  "/tmp/test_insert"
+
+<span class="red">            create </span>=><span class="green"> "true",</span>
+<span class="red">         edit_line </span>=><span class="blue"> Insert("@(insert.v)");</span>
+<span class="comment">   #  edit_defaults => empty;
+</span>
+
+}
+
+<span class="comment">#######################################################
+</span>
+<span class="comment"># For the library
+</span>
+<span class="comment">#######################################################
+</span>
+
+<span class="red">bundle edit_line</span> <span class="blue">Insert(name)</span>
+
+{
+<span class="red">insert_lines:
+</span>
+  "$(name)";
+
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body edit_defaults</span> <span class="blue">empty</span>
+
+{
+<span class="red">empty_file_before_editing </span>=><span class="green"> "true";</span>
+}
+</pre>
+
+<!--  -->
+<div class="node">
+<a name="Get-a-list-of-users"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Global-classes">Global classes</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Inserting-lines-in-a-file">Inserting lines in a file</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.35 Get a list of users</h3>
+
+<pre class="verbatim">
+<span class="comment">#######################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># GetUsers
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body common control
+</span>
+{
+any::
+
+<span class="red">  bundlesequence  </span>=> {
+                     test
+                     };   
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">test</span>
+
+{
+<span class="red">vars:
+</span>
+  "allusers"<span class="red"> slist </span>=> getusers("zenoss,mysql,at","12,0");
+
+<span class="red">reports:
+</span>
+ linux::
+
+  "Found user $(allusers)";
+
+}
+</pre>
+
+<div class="node">
+<a name="Global-classes"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Hello-world">Hello world</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Get-a-list-of-users">Get a list of users</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.36 Global classes</h3>
+
+<pre class="verbatim">
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "g","tryclasses_1", "tryclasses_2" };
+
+}
+
+<span class="comment">#################################
+</span>
+
+<span class="red">bundle common g
+</span>{
+<span class="red">classes:
+</span>
+  "one"<span class="red"> expression </span>=><span class="green"> "any";</span>
+
+  "client_network"<span class="red"> expression </span>=> iprange("128.39.89.0/24");
+}
+
+<span class="comment">#################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">tryclasses_1</span>
+{
+<span class="red">classes:
+</span>
+  "two"<span class="red"> expression </span>=><span class="green"> "any";</span>
+}
+
+<span class="comment">#################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">tryclasses_2</span>
+{
+<span class="red">classes:
+</span>
+  "three"<span class="red"> expression </span>=><span class="green"> "any";</span>
+
+<span class="red">reports:
+</span>
+  one.three.!two::
+
+    "Success";
+}
+
+
+<span class="comment">#################################
+</span>
+</pre>
+
+<!--  -->
+<div class="node">
+<a name="Hello-world"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#LDAP-interactions">LDAP interactions</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Global-classes">Global classes</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.37 Hello world</h3>
+
+<pre class="verbatim">
+<span class="comment"># Hard promises
+</span>
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "hello" };
+}
+
+<span class="comment"># soft promises
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">hello</span>
+{
+<span class="red">reports:
+</span>
+ linux::
+
+   "Hello world!";
+}
+</pre>
+
+<!--  -->
+<div class="node">
+<a name="LDAP-interactions"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Linking-files">Linking files</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Hello-world">Hello world</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.38 LDAP interactions</h3>
+
+<pre class="verbatim">
+
+<span class="comment">#
+</span>
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "ldap" , "followup"};
+}
+
+<span class="comment">###################################################################################################
+</span>
+<span class="comment">#  NOTE!! relying on LDAP or other network data without validation is EXTREMELY dangerous. 
+</span>
+<span class="comment">#         You could destroy a system by assuming that the service will respond with a 
+</span>
+<span class="comment">#         sensible result. Cfengine does not recommend reliance on network services in configuration.
+</span>
+<span class="comment">###################################################################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">ldap</span>
+{
+<span class="red">vars:
+</span>
+<span class="comment">   # Get the first matching value for "uid"
+</span>
+
+  "value"<span class="red"> string </span>=> ldapvalue("ldap://eternity.iu.hio.no","dc=cfengine,dc=com","(sn=User)","uid","subtree","none");
+
+<span class="comment">   # Geta all matching values for "uid" - should be a single record match
+</span>
+
+  "list"<span class="red"> slist </span>=>  ldaplist("ldap://eternity.iu.hio.no","dc=cfengine,dc=com","(sn=User)","uid","subtree","none");
+
+<span class="red">classes:
+</span>
+   "gotdata"<span class="red"> expression </span>=> ldaparray("myarray","ldap://eternity.iu.hio.no","dc=cfengine,dc=com","(uid=mark)","subtree","none");
+
+   "found"<span class="red"> expression </span>=> regldap("ldap://eternity.iu.hio.no","dc=cfengine,dc=com","(sn=User)","uid","subtree","jon.*","none");
+
+<span class="red">reports:
+</span>
+ linux::
+
+   "LDAP VALUE $(value) found";
+   "LDAP LIST VALUE $(list)";
+
+ gotdata::
+
+   "Found specific entry data  ...$(ldap.myarray[uid]),$(ldap.myarray[gecos]), etc";
+
+  found::
+
+    "Matched regex";
+
+}
+
+<span class="red">bundle agent</span> <span class="blue">followup</span>
+
+{
+<span class="red">reports:
+</span>
+ linux::
+
+<span class="red">"Different bundle</span> <span class="blue">...$(ldap.myarray[uid]),$(ldap.myarray[gecos]),</span>
+
+}
+</pre>
+
+<div class="node">
+<a name="Linking-files"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Listing-files_002dpattern-in-a-directory">Listing files-pattern in a directory</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#LDAP-interactions">LDAP interactions</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.39 Linking files</h3>
+
+<pre class="verbatim">
+<span class="comment">######################################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># File editing
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Normal ordering:
+</span>
+<span class="comment"># - delete
+</span>
+<span class="comment"># - replace | colum_edit
+</span>
+<span class="comment"># - insert
+</span>
+<span class="comment"># 
+</span>
+<span class="comment">######################################################################
+</span>
+
+
+<span class="red">body common control
+</span>
+{
+<span class="red">version </span>=><span class="green"> "1.2.3";</span>
+<span class="red">bundlesequence  </span>=> { "testbundle"  };
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+
+{
+<span class="red">files:
+</span>
+<span class="comment">  # Make a copy of the password file
+</span>
+
+  "/home/mark/tmp/passwd"
+
+<span class="red">       link_from     </span>=><span class="blue"> linkdetails("/etc/passwd"),</span>
+<span class="red">       move_obstructions </span>=><span class="green"> "true";</span>
+
+
+  "/home/mark/tmp/linktest"
+
+<span class="red">       link_from     </span>=><span class="blue"> linkchildren("/usr/local/sbin");</span>
+
+
+<span class="comment">#child links
+</span>
+}
+
+<span class="comment">#########################################################
+</span>
+
+<span class="red">body link_from</span> <span class="blue">linkdetails(tofile)</span>
+
+{
+<span class="red">source        </span>=><span class="green"> "$(tofile)";</span>
+<span class="red">link_type     </span>=><span class="green"> "symlink";</span>
+<span class="red">when_no_source  </span>=><span class="green"> "force";      # kill</span>
+}
+
+<span class="comment">#########################################################
+</span>
+
+<span class="red">body link_from</span> <span class="blue">linkchildren(tofile)</span>
+
+{
+<span class="red">source        </span>=><span class="green"> "$(tofile)";</span>
+<span class="red">link_type     </span>=><span class="green"> "symlink";</span>
+<span class="red">when_no_source  </span>=><span class="green"> "force";      # kill</span>
+<span class="red">link_children </span>=><span class="green"> "true";</span>
+<span class="red">when_linking_children </span>=><span class="green"> "if_no_such_file"; # "override_file";</span>
+}
+
+
+</pre>
+
+<p>Removing deadlinks from a directory:
+<pre class="verbatim">
+<span class="comment">#######################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Test dead link removal
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body common control
+</span>   {
+   any::
+
+<span class="red">      bundlesequence  </span>=> { 
+<span class="red">"testbundle" </span> <span class="blue"></span>
+                         };
+   }
+
+
+<span class="comment">############################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+
+{
+<span class="red">files:
+</span>
+  "/home/mark/tmp/test_to" -> "someone"
+
+<span class="red">      depth_search </span>=><span class="blue"> recurse("inf"),</span>
+<span class="red">      perms </span>=><span class="blue"> modestuff,</span>
+<span class="red">      action </span>=><span class="blue"> tell_me;</span>
+
+}
+
+<span class="comment">############################################
+</span>
+
+<span class="red">body depth_search</span> <span class="blue">recurse(d)</span>
+
+{
+<span class="red">rmdeadlinks </span>=><span class="green"> "true";</span>
+<span class="red">depth </span>=><span class="green"> "$(d)";</span>
+}
+
+<span class="comment">############################################
+</span>
+
+<span class="red">body perms</span> <span class="blue">modestuff</span>
+
+{
+<span class="red">mode </span>=><span class="green"> "o-w";</span>
+}
+
+<span class="comment">############################################
+</span>
+
+<span class="red">body action</span> <span class="blue">tell_me</span>
+
+{
+<span class="red">report_level </span>=><span class="green"> "inform";</span>
+}
+</pre>
+
+<div class="node">
+<a name="Listing-files-pattern-in-a-directory"></a>
+<a name="Listing-files_002dpattern-in-a-directory"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Locate-and-transform-files">Locate and transform files</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Linking-files">Linking files</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.40 Listing files-pattern in a directory</h3>
+
+<pre class="verbatim">
+
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence  </span>=> { "example" };
+}
+
+<span class="comment">###########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">example</span>
+
+{     
+<span class="red">vars:
+</span>
+  "ls"<span class="red"> slist </span>=><span class="blue"> lsdir("/etc","p.*","true");</span>
+
+<span class="red">reports:
+</span>
+  !sdfkjh::
+
+<span class="red">    "ls: $(ls)";
+</span>
+}
+
+
+</pre>
+
+<div class="node">
+<a name="Locate-and-transform-files"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Logging">Logging</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Listing-files_002dpattern-in-a-directory">Listing files-pattern in a directory</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.41 Locate and transform files</h3>
+
+<pre class="verbatim">
+<span class="comment">#######################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Compressing files
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body common control
+</span>   {
+   any::
+
+<span class="red">      bundlesequence  </span>=> { 
+<span class="red">"testbundle" </span> <span class="blue"></span>
+                         };
+
+<span class="red">   version </span>=><span class="green"> "1.2.3";</span>
+   }
+
+<span class="comment">############################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+
+{
+<span class="red">files:
+</span>
+  "/home/mark/tmp/testcopy" 
+
+<span class="red">    file_select </span>=><span class="blue"> pdf_files,</span>
+<span class="red">    transformer </span>=><span class="green"> "/usr/bin/gzip $(this.promiser)",</span>
+<span class="red">    depth_search </span>=><span class="blue"> recurse("inf");</span>
+
+}
+
+<span class="comment">############################################
+</span>
+
+<span class="red">body file_select</span> <span class="blue">pdf_files</span>
+
+{
+<span class="red">leaf_name </span>=> { ".*.pdf" , ".*.fdf" };
+<span class="red">file_result </span>=><span class="green"> "leaf_name";</span>
+}
+
+<span class="comment">############################################
+</span>
+
+<span class="red">body depth_search</span> <span class="blue">recurse(d)</span>
+
+{
+<span class="red">depth </span>=><span class="green"> "$(d)";</span>
+}
+
+</pre>
+
+<div class="node">
+<a name="Logging"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Measurements">Measurements</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Locate-and-transform-files">Locate and transform files</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.42 Logging</h3>
+
+<pre class="verbatim">
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "test" };
+}
+
+<span class="red">bundle agent</span> <span class="blue">test</span>
+{
+<span class="red">vars:
+</span>
+  "software"<span class="red"> slist </span>=> { "/root/xyz", "/tmp/xyz" };
+
+<span class="red">files:
+</span>
+  "$(software)"
+
+<span class="red">    create </span>=><span class="green"> "true",</span>
+<span class="red">     action </span>=><span class="blue"> logme("$(software)");</span>
+
+}
+
+<span class="comment">#
+</span>
+
+<span class="red">body action</span> <span class="blue">logme(x)</span>
+{
+<span class="red">log_kept </span>=><span class="green"> "/tmp/private_keptlog.log";</span>
+<span class="red">log_failed </span>=><span class="green"> "/tmp/private_faillog.log";</span>
+<span class="red">log_repaired </span>=><span class="green"> "/tmp/private_replog.log";</span>
+<span class="red">log_string </span>=><span class="green"> "$(sys.date) $(x) promise status";</span>
+}
+</pre>
+
+<pre class="verbatim"></pre>
+
+<pre class="verbatim">
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "one" };
+}
+
+
+
+<span class="red">bundle agent</span> <span class="blue">one</span>
+{
+<span class="red">files:
+</span>
+  "/tmp/xyz"
+
+<span class="red">       create </span>=><span class="green"> "true",</span>
+<span class="red">       action </span>=><span class="blue"> log;</span>
+
+}
+
+<span class="red">body action</span> <span class="blue">log</span>
+{
+<span class="red">log_level </span>=><span class="green"> "inform";</span>
+}
+
+
+</pre>
+
+<!--  -->
+<div class="node">
+<a name="Measurements"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Methods">Methods</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Logging">Logging</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.43 Measurements</h3>
+
+<pre class="verbatim"></pre>
+
+<pre class="verbatim">
+<span class="comment">#cop measurements,example
+</span>
+
+<span class="comment">#######################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Test file:
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># First line
+</span>
+<span class="comment"># Blonk blonk bnklkygsuilnm
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "report" };
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body monitor</span> <span class="blue">control</span>
+{
+<span class="red">forgetrate </span>=><span class="green"> "0.7";</span>
+<span class="red">histograms </span>=><span class="green"> "true";</span>
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">report</span>
+{
+<span class="red">reports:
+</span>
+ cfengine_3::
+
+   "
+   Free memory read at $(mon.av_free_memory_watch)
+   cf_monitord read $(mon.value_monitor_self_watch)   
+   ";
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">bundle monitor</span> <span class="blue">watch</span>
+{
+<span class="red">measurements:
+</span>
+<span class="comment">  # Test 1 - extract string matching
+</span>
+
+  "/home/mark/tmp/testmeasure"
+
+<span class="red">      handle </span>=><span class="green"> "blonk_watch",</span>
+<span class="red">      stream_type </span>=><span class="green"> "file",</span>
+<span class="red">      data_type </span>=><span class="green"> "string",</span>
+<span class="red">      history_type </span>=><span class="green"> "weekly",</span>
+<span class="red">      units </span>=><span class="green"> "blonks",</span>
+<span class="red">      match_value </span>=> find_blonks,
+<span class="red">      action </span>=><span class="blue"> sample_min("10");</span>
+
+<span class="comment">  # Test 2 - follow a special process over time
+</span>
+<span class="comment">  # using cfengine's process cache to avoid resampling
+</span>
+
+   "/var/cfengine/state/cf_rootprocs"
+
+<span class="red">      handle </span>=><span class="green"> "monitor_self_watch",</span>
+<span class="red">      stream_type </span>=><span class="green"> "file",</span>
+<span class="red">      data_type </span>=><span class="green"> "int",</span>
+<span class="red">      history_type </span>=><span class="green"> "static",</span>
+<span class="red">      units </span>=><span class="green"> "kB",</span>
+<span class="red">      match_value </span>=> proc_value(".*cf-monitord.*",
+                                "root\s+[0-9.]+\s+[0-9.]+\s+[0-9.]+\s+[0-9.]+\s+([0-9]+).*");
+
+<span class="comment">  # Test 3, discover disk device information
+</span>
+
+  "/bin/df"
+
+<span class="red">      handle </span>=><span class="green"> "free_disk_watch",</span>
+<span class="red">      stream_type </span>=><span class="green"> "pipe",</span>
+<span class="red">      data_type </span>=><span class="green"> "slist",</span>
+<span class="red">      history_type </span>=><span class="green"> "static",</span>
+<span class="red">      units </span>=><span class="green"> "device",</span>
+<span class="red">      match_value </span>=><span class="blue"> file_system;</span>
+<span class="comment">      # Update this as often as possible
+</span>
+
+<span class="comment">  # Test 4
+</span>
+
+   "/tmp/file"
+
+<span class="red">         handle </span>=><span class="green"> "line_counter",</span>
+<span class="red">    stream_type </span>=><span class="green"> "file",</span>
+<span class="red">      data_type </span>=><span class="green"> "counter",</span>
+<span class="red">    match_value </span>=><span class="blue"> scanlines("MYLINE.*"),</span>
+<span class="red">   history_type </span>=><span class="green"> "log";</span>
+
+}
+
+<span class="comment">##########################################################
+</span>
+
+<span class="red">body match_value</span> <span class="blue">scanlines(x)</span>
+{
+<span class="red">select_line_matching </span>=><span class="green"> "^$(x)$";</span>
+}
+
+<span class="comment">##########################################################
+</span>
+
+<span class="red">body action</span> <span class="blue">sample_min(x)</span>
+{
+<span class="red">ifelapsed </span>=><span class="green"> "$(x)";</span>
+<span class="red">expireafter </span>=><span class="green"> "$(x)";</span>
+}
+
+<span class="comment">##########################################################
+</span>
+
+<span class="red">body match_value</span> <span class="blue">find_blonks</span>
+{
+<span class="red">select_line_number </span>=><span class="green"> "2";</span>
+<span class="red">extraction_regex </span>=><span class="green"> "Blonk blonk ([blonk]+).*";</span>
+}
+
+<span class="comment">##########################################################
+</span>
+
+<span class="red">body match_value</span> <span class="blue">free_memory</span>
+{
+<span class="red">select_line_matching </span>=><span class="green"> "MemFree:.*";</span>
+<span class="red">extraction_regex </span>=><span class="green"> "MemFree:\s+([0-9]+).*";</span>
+}
+
+<span class="comment">##########################################################
+</span>
+
+<span class="red">body match_value</span> <span class="blue">proc_value(x,y)</span>
+{
+<span class="red">select_line_matching </span>=><span class="green"> "$(x)";</span>
+<span class="red">extraction_regex </span>=><span class="green"> "$(y)";</span>
+}
+
+<span class="comment">##########################################################
+</span>
+
+<span class="red">body match_value</span> <span class="blue">file_system</span>
+{
+<span class="red">select_line_matching </span>=><span class="green"> "/.*";</span>
+<span class="red">extraction_regex </span>=><span class="green"> "(.*)";</span>
+}
+
+</pre>
+
+<div class="node">
+<a name="Methods"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Method-validation">Method validation</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Measurements">Measurements</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.44 Methods</h3>
+
+<pre class="verbatim">
+
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence  </span>=> { "testbundle"  };
+
+<span class="red">version </span>=><span class="green"> "1.2.3";</span>
+}
+
+<span class="comment">###########################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+{
+<span class="red">vars:
+</span>
+ "userlist"<span class="red"> slist </span>=> { "mark", "jeang", "jonhenrik", "thomas", "eben" };
+
+<span class="red">methods:
+</span>
+ "any"<span class="red"> usebundle </span>=><span class="blue"> subtest("$(userlist)");</span>
+
+}
+
+<span class="comment">###########################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">subtest(user)</span>
+
+{
+<span class="red">commands:
+</span>
+ "/bin/echo Fix $(user)";
+
+<span class="red">reports:
+</span>
+ linux::
+
+  "Finished doing stuff for $(user)";
+}
+
+</pre>
+
+<div class="node">
+<a name="Method-validation"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Mount-NFS-filesystem">Mount NFS filesystem</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Methods">Methods</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.45 Method validation</h3>
+
+<pre class="verbatim">
+
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence  </span>=> { "testbundle"  };
+
+<span class="red">version </span>=><span class="green"> "1.2.3";</span>
+}
+
+<span class="comment">###########################################
+</span>
+
+<span class="red">body agent</span> <span class="blue">control</span>
+
+{
+<span class="red">abortbundleclasses </span>=> { "invalid" };
+}
+
+<span class="comment">###########################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+{
+<span class="red">vars:
+</span>
+ "userlist"<span class="red"> slist </span>=> { "xyz", "mark", "jeang", "jonhenrik", "thomas", "eben" };
+
+<span class="red">methods:
+</span>
+ "any"<span class="red"> usebundle </span>=><span class="blue"> subtest("$(userlist)");</span>
+
+}
+
+<span class="comment">###########################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">subtest(user)</span>
+
+{
+<span class="red">classes:
+</span>
+  "invalid"<span class="red"> not </span>=> regcmp("[a-z][a-z][a-z][a-z]","$(user)");
+
+<span class="red">reports:
+</span>
+ !invalid::
+
+  "User name $(user) is valid at 4 letters";
+
+ invalid::
+
+  "User name $(user) is invalid";
+}
+</pre>
+
 <div class="node">
 <a name="Mount-NFS-filesystem"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Ordering-promises">Ordering promises</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Editing-tabular-files">Editing tabular files</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low level issues</a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Method-validation">Method validation</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.10 Mount NFS filesystem</h3>
+<h3 class="section">3.46 Mount NFS filesystem</h3>
 
-<pre class="verbatim">#####################################################################
-<span class="comment"># Mount NFS
+<pre class="verbatim">
+
+<span class="comment">#
 </span>
-<span class="comment">#####################################################################
+<span class="comment"># cfengine 3
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># cf-agent -f ./cftest.cf -K
+</span>
+<span class="comment">#
 </span>
 
 <span class="red">body common control
@@ -4098,7 +7052,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 <span class="red">bundlesequence </span>=> { "mounts" };
 }
 
-<span class="comment">#####################################################################
+<span class="comment">#
 </span>
 
 <span class="red">bundle agent</span> <span class="blue">mounts</span>
@@ -4106,10 +7060,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 {
 <span class="red">storage:
 </span>
-<span class="comment">  # Assumes the filesystem has been exported
-</span>
+  "/mnt"<span class="red"> mount  </span>=><span class="blue"> nfs("slogans.iu.hio.no","/home");</span>
 
-  "/mnt"<span class="red"> mount  </span>=><span class="blue"> nfs("server.example.org","/home");</span>
 }
 
 <span class="comment">######################################################################
@@ -4121,20 +7073,23 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 <span class="red">mount_type </span>=><span class="green"> "nfs";</span>
 <span class="red">mount_source </span>=><span class="green"> "$(source)";</span>
 <span class="red">mount_server </span>=><span class="green"> "$(server)";</span>
+<span class="comment">#mount_options => { "rw" };
+</span>
 <span class="red">edit_fstab </span>=><span class="green"> "true";</span>
+<span class="red">unmount </span>=><span class="green"> "true";</span>
 }
 </pre>
 
 <div class="node">
 <a name="Ordering-promises"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Set-up-a-PXE-boot-server">Set up a PXE boot server</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Process-management">Process management</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Mount-NFS-filesystem">Mount NFS filesystem</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low level issues</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.11 Ordering promises</h3>
+<h3 class="section">3.47 Ordering promises</h3>
 
 <p>This counts to five by default. If we change &lsquo;<samp><span class="samp">/bin/echo one</span></samp>&rsquo;
 to &lsquo;<samp><span class="samp">/bin/echox one</span></samp>&rsquo;, then the command will fail, causing us
@@ -4147,14 +7102,24 @@ order of promises in the bundle.
 promise type, and the types are ordered according to <i>normal
 ordering</i>.
 
-<pre class="verbatim">####################################################
-<span class="comment">#
-</span>
-<span class="comment"># Counting by the numbers...
+<pre class="verbatim">
+<span class="comment">##################################################################
 </span>
 <span class="comment">#
 </span>
-<span class="comment">####################################################
+<span class="comment"># cfengine 3 - ordering promises into dependent chains
+</span>
+<span class="comment">#
+</span>
+<span class="comment">##
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># cf-agent -f ./cftest.cf -K
+</span>
+<span class="comment">#
+</span>
+<span class="comment">##################################################################
 </span>
 
 <span class="red">body common control
@@ -4163,7 +7128,7 @@ ordering</i>.
 <span class="red">bundlesequence </span>=> { "order" };
 }
 
-<span class="comment">####################################################
+<span class="comment">##################################################################
 </span>
 
 <span class="red">bundle agent</span> <span class="blue">order</span>
@@ -4185,7 +7150,8 @@ ordering</i>.
 
  any::
 
-  "/bin/echo one"<span class="red">    classes </span>=><span class="blue"> d("ok_later","otherthing");</span>
+
+  "/bin/echo one"<span class="red">     classes </span>=><span class="blue"> d("ok_later","otherthing");</span>
   "/bin/echo two";
   "/bin/echo $(list)";
 
@@ -4205,21 +7171,654 @@ ordering</i>.
 <span class="red">repair_failed </span>=> { "$(else)" };
 <span class="red">persist_time </span>=><span class="green"> "0";</span>
 }
+</pre>
+
+<!--  -->
+<ul class="menu">
+<li><a accesskey="1" href="#Process-management">Process management</a>
+<li><a accesskey="2" href="#Read-from-a-TCP-socket">Read from a TCP socket</a>
+<li><a accesskey="3" href="#Resolver-management">Resolver management</a>
+<li><a accesskey="4" href="#Search-and-replace-text">Search and replace text</a>
+<li><a accesskey="5" href="#Selecting-a-region-in-a-file">Selecting a region in a file</a>
+<li><a accesskey="6" href="#Service-management-_0028windows_0029">Service management (windows)</a>
+</ul>
+
+<div class="node">
+<a name="Process-management"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Read-from-a-TCP-socket">Read from a TCP socket</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Ordering-promises">Ordering promises</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.48 Process management</h3>
+
+<pre class="verbatim">
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "test" };
+}
+
+
+
+<span class="red">bundle agent</span> <span class="blue">test</span>
+{
+<span class="red">processes:
+</span>
+ "sleep"
+
+<span class="red">   signals </span>=> { "term", "kill" };
+
+}
+</pre>
+
+<pre class="verbatim">
+<span class="comment">########################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Simple test processes 
+</span>
+<span class="comment">#
+</span>
+<span class="comment">########################################################
+</span>
+
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence  </span>=> { "testbundle"  };
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+
+{
+<span class="red">processes:
+</span>
+ "sleep"
+
+<span class="red">    process_count   </span>=><span class="blue"> up("sleep");</span>
+
+<span class="red">reports:
+</span>
+ sleep_out_of_control::
+
+   "Out of control";
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">body process_count</span> <span class="blue">up(s)</span>
+
+{
+<span class="red">match_range </span>=><span class="green"> "5,10"; # or irange("1","10");</span>
+<span class="red">out_of_range_define </span>=> { "$(s)_out_of_control" };
+}
+
+</pre>
+
+<pre class="verbatim">
+<span class="comment">########################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Simple test processes 
+</span>
+<span class="comment">#
+</span>
+<span class="comment">########################################################
+</span>
+
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence  </span>=> { "testbundle"  };
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+
+{
+<span class="red">processes:
+</span>
+ ".*"
+
+<span class="red">    process_select  </span>=><span class="blue"> proc_finder("a.*"),</span>
+<span class="red">    process_count   </span>=><span class="blue"> up("cfservd");</span>
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">body process_count</span> <span class="blue">up(s)</span>
+
+{
+<span class="red">match_range </span>=><span class="green"> "1,10"; # or irange("1","10");</span>
+<span class="red">out_of_range_define </span>=> { "$(s)_out_of_control" };
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">body process_select</span> <span class="blue">proc_finder(p)</span>
+
+{
+<span class="red">stime_range </span>=> irange(ago("0","0","0","2","0","0"),now);
+<span class="red">process_result </span>=><span class="green"> "stime";</span>
+}
+
+
+</pre>
+
+<pre class="verbatim">
+<span class="comment">########################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Simple test processes 
+</span>
+<span class="comment">#
+</span>
+<span class="comment">########################################################
+</span>
+
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence  </span>=> { "testbundle"  };
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+
+{
+<span class="red">processes:
+</span>
+ ".*"
+
+<span class="red">    process_select  </span>=><span class="blue"> proc_finder("a.*"),</span>
+<span class="red">    process_count   </span>=><span class="blue"> up("cfservd");</span>
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">body process_count</span> <span class="blue">up(s)</span>
+
+{
+<span class="red">match_range </span>=><span class="green"> "1,10"; # or irange("1","10");</span>
+<span class="red">out_of_range_define </span>=> { "$(s)_out_of_control" };
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">body process_select</span> <span class="blue">proc_finder(p)</span>
+
+{
+<span class="red">process_owner  </span>=> { "avahi", "bin" };
+<span class="red">command        </span>=><span class="green"> "$(p)";</span>
+<span class="red">pid            </span>=><span class="green"> "100,199";</span>
+<span class="red">vsize          </span>=><span class="green"> "0,1000";</span>
+<span class="red">process_result </span>=><span class="green"> "command.(process_owner|vsize)";</span>
+}
+
+
+</pre>
+
+<pre class="verbatim"></pre>
+
+<pre class="verbatim"></pre>
+
+<pre class="verbatim">
+<span class="comment">########################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Simple test process restart
+</span>
+<span class="comment">#
+</span>
+<span class="comment">########################################################
+</span>
+
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence  </span>=> { "testbundle"  };
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+
+{
+<span class="red">processes:
+</span>
+ "cfservd"
+
+<span class="red">        process_count   </span>=><span class="blue"> up("cfservd");</span>
+
+ cfservd_out_of_control::
+
+   "cfservd"
+
+<span class="red">        signals         </span>=> { "stop" , "term" },
+<span class="red">        restart_class   </span>=><span class="green"> "start_cfserv";</span>
+
+
+<span class="red">commands:
+</span>
+  start_cfserv::
+
+    "/usr/local/sbin/cfservd";
+
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">body process_count</span> <span class="blue">up(s)</span>
+
+{
+<span class="red">match_range </span>=><span class="green"> "1,10"; # or irange("1","10");</span>
+<span class="red">out_of_range_define </span>=> { "$(s)_out_of_control" };
+}
+</pre>
+
+<!--  -->
+<div class="node">
+<a name="Read-from-a-TCP-socket"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Resolver-management">Resolver management</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Process-management">Process management</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.49 Read from a TCP socket</h3>
+
+<pre class="verbatim">
+
+
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence  </span>=> { "example" };
+}
+
+<span class="comment">###########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">example</span>
+
+{     
+<span class="red">vars:
+</span>
+  "my80"<span class="red"> string </span>=> readtcp("research.iu.hio.no","80","GET /index.php HTTP/1.1$(const.r)$(const.n)Host: research.iu.hio.no$(const.r)$(const.n)$(const.r)$(const.n)",20);
+
+<span class="red">classes:
+</span>
+  "server_ok"<span class="red"> expression </span>=> regcmp(".*200 OK.*\n.*","$(my80)");
+
+<span class="red">reports:
+</span>
+  server_ok::
+
+    "Server is alive";
+
+  !server_ok::
+
+    "Server is not responding - got $(my80)";
+}
+
+
+</pre>
+
+<div class="node">
+<a name="Resolver-management"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Search-and-replace-text">Search and replace text</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Read-from-a-TCP-socket">Read from a TCP socket</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.50 Resolver management</h3>
+
+<pre class="verbatim">
+<span class="comment">#######################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Resolve conf
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#######################################################
+</span>
+
+<span class="red">bundle common g # globals
+</span>{
+<span class="red">vars:
+</span>
+ "searchlist"<span class="red">  slist </span>=> { 
+                        "search iu.hio.no", 
+                        "search cfengine.com" 
+                        };
+
+ "nameservers"<span class="red"> slist </span>=> { 
+                        "128.39.89.10", 
+                        "128.39.74.16",
+                        "192.168.1.103"
+                        };
+<span class="red">classes:
+</span>
+  "am_name_server"<span class="red"> expression </span>=> reglist("@(nameservers)","$(sys.ipv4[eth1])");
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body common control
+</span>
+{
+any::
+
+<span class="red">  bundlesequence  </span>=> {
+                     "g",
+                     resolver(@(g.searchlist),@(g.nameservers))
+                     };   
+
+<span class="red">  domain </span>=><span class="green"> "iu.hio.no";</span>
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">resolver(s,n)</span>
+
+{
+<span class="red">files:
+</span>
+<span class="comment">  # When passing parameters down, we have to refer to
+</span>
+<span class="comment">  # a source context
+</span>
+
+  "$(sys.resolv)"  # test on "/tmp/resolv.conf" #
+
+<span class="red">      create        </span>=><span class="green"> "true",</span>
+<span class="red">      edit_line     </span>=><span class="blue"> doresolv("@(this.s)","@(this.n)"),</span>
+<span class="red">      edit_defaults </span>=> reconstruct;
+<span class="comment"> # or edit_defaults => modify
+</span>
+}
+
+<span class="comment">#######################################################
+</span>
+<span class="comment"># For the library
+</span>
+<span class="comment">#######################################################
+</span>
+
+<span class="red">bundle edit_line</span> <span class="blue">doresolv(s,n)</span>
+
+{
+<span class="red">vars:
+</span>
+ "line"<span class="red"> slist </span>=> { @(s), @(n) };
+
+<span class="red">insert_lines:
+</span>
+  "$(line)";
+
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body edit_defaults</span> <span class="blue">reconstruct</span>
+{
+<span class="red">empty_file_before_editing </span>=><span class="green"> "true";</span>
+<span class="red">edit_backup </span>=><span class="green"> "false";</span>
+<span class="red">max_file_size </span>=><span class="green"> "100000";</span>
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body edit_defaults</span> <span class="blue">modify</span>
+{
+<span class="red">empty_file_before_editing </span>=><span class="green"> "false";</span>
+<span class="red">edit_backup </span>=><span class="green"> "false";</span>
+<span class="red">max_file_size </span>=><span class="green"> "100000";</span>
+}
 
 
 </pre>
 
 <!--  -->
 <div class="node">
-<a name="Set-up-a-PXE-boot-server"></a>
+<a name="Search-and-replace-text"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Tidying-garbage-files">Tidying garbage files</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Ordering-promises">Ordering promises</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low level issues</a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Selecting-a-region-in-a-file">Selecting a region in a file</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Resolver-management">Resolver management</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.12 Set up a PXE boot server</h3>
+<h3 class="section">3.51 Search and replace text</h3>
+
+<pre class="verbatim">
+<span class="comment">######################################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># File editing
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Normal ordering:
+</span>
+<span class="comment"># - delete
+</span>
+<span class="comment"># - replace | colum_edit
+</span>
+<span class="comment"># - insert
+</span>
+<span class="comment"># 
+</span>
+<span class="comment">######################################################################
+</span>
+
+
+<span class="red">body common control
+</span>
+{
+<span class="red">version </span>=><span class="green"> "1.2.3";</span>
+<span class="red">bundlesequence  </span>=> { "testbundle"  };
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+
+{
+
+<span class="red">files:
+</span>
+  "/tmp/replacestring"
+
+<span class="red">       create    </span>=><span class="green"> "true",</span>
+<span class="red">       edit_line </span>=> myedit("second");
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle edit_line</span> <span class="blue">myedit(parameter)</span>
+  {
+<span class="red">  vars:
+</span>
+   "edit_variable"<span class="red"> string </span>=><span class="green"> "private edit variable is $(parameter)"; </span>
+
+  
+<span class="red">  replace_patterns:
+</span>
+<span class="comment">  # replace shell comments with C comments
+</span>
+
+   "puppet"
+
+<span class="red">      replace_with </span>=><span class="blue"> With("cfengine 3");</span>
+
+  }
+
+<span class="comment">########################################
+</span>
+<span class="comment"># Bodies
+</span>
+<span class="comment">########################################
+</span>
+
+<span class="red">body replace_with</span> <span class="blue">With(x)</span>
+
+{
+<span class="red">replace_value </span>=><span class="green"> "$(x)";</span>
+<span class="red">occurrences </span>=><span class="green"> "first";</span>
+}
+
+<span class="comment">########################################
+</span>
+
+<span class="red">body select_region</span> <span class="blue">MySection(x)</span>
+
+{
+<span class="red">select_start </span>=><span class="green"> "\[$(x)\]";</span>
+<span class="red">select_end </span>=><span class="green"> "\[.*\]";</span>
+}
+
+</pre>
+
+<div class="node">
+<a name="Selecting-a-region-in-a-file"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Service-management-_0028windows_0029">Service management (windows)</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Search-and-replace-text">Search and replace text</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.52 Selecting a region in a file</h3>
+
+<pre class="verbatim">
+
+<span class="red">body common control
+</span>
+{
+<span class="red">version </span>=><span class="green"> "1.2.3";</span>
+<span class="red">bundlesequence  </span>=> { "testbundle"  };
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+
+{
+
+<span class="red">files:
+</span>
+  "/tmp/testfile"
+
+<span class="red">       create    </span>=><span class="green"> "true",</span>
+<span class="red">       edit_line </span>=> myedit("second");
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle edit_line</span> <span class="blue">myedit(parameter)</span>
+  {
+<span class="red">  vars:
+</span>
+   "edit_variable"<span class="red"> string </span>=><span class="green"> "private edit variable is $(parameter)"; </span>
+
+  
+<span class="red">  replace_patterns:
+</span>
+<span class="comment">  # comment out lines after start
+</span>
+
+   "([^#].*)"
+
+<span class="red">      replace_with </span>=><span class="blue"> comment,</span>
+<span class="red">     select_region </span>=><span class="blue"> ToEnd("Start.*");</span>
+
+  }
+
+<span class="comment">########################################
+</span>
+<span class="comment"># Bodies
+</span>
+<span class="comment">########################################
+</span>
+
+<span class="red">body replace_with</span> <span class="blue">comment</span>
+
+{
+<span class="red">replace_value </span>=><span class="green"> "# $(match.1)"; # backreference 0</span>
+<span class="red">occurrences </span>=><span class="green"> "all";  # first, last all</span>
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">body select_region</span> <span class="blue">ToEnd(x)</span>
+
+{
+<span class="red">select_start </span>=><span class="green"> "$(x)";</span>
+}
+</pre>
+
+<div class="node">
+<a name="Service-management-(windows)"></a>
+<a name="Service-management-_0028windows_0029"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Set-up-a-PXE-boot-server">Set up a PXE boot server</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Selecting-a-region-in-a-file">Selecting a region in a file</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.53 Service management (windows)</h3>
+
+<pre class="verbatim"></pre>
+
+<pre class="verbatim"></pre>
+
+<div class="node">
+<a name="Set-up-a-PXE-boot-server"></a>
+<p><hr>
+<span class="red">Next:&nbsp;<a rel="next" accesskey="n" href="#Tidying-garbage-files">Tidying garbage files</a>,
+</span><span class="red">Previous:&nbsp;<a rel="previous" accesskey="p" href="#Service-management-_0028windows_0029">Service management (windows)</a>,
+</span><span class="red">Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+</span>
+</div>
+
+<h3 class="section">3.54 Set up a PXE boot server</h3>
 
 <p>Use CFEngine to set up a PXE boot server.
 
@@ -4794,13 +8393,13 @@ name=Cluster Storage
 <div class="node">
 <a name="Tidying-garbage-files"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Unmount-NFS-filesystem">Unmount NFS filesystem</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Software-distribution">Software distribution</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Set-up-a-PXE-boot-server">Set up a PXE boot server</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low level issues</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.13 Tidying garbage files</h3>
+<h3 class="section">3.55 Tidying garbage files</h3>
 
 <p>Emulating the `tidy' feature of CFEngine 2.
 
@@ -4882,16 +8481,141 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 </pre>
 
 <!--  -->
+<ul class="menu">
+<li><a accesskey="1" href="#Software-distribution">Software distribution</a>
+<li><a accesskey="2" href="#Trigger-classes">Trigger classes</a>
+</ul>
+
+<div class="node">
+<a name="Software-distribution"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Trigger-classes">Trigger classes</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Tidying-garbage-files">Tidying garbage files</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.56 Software distribution</h3>
+
+<pre class="verbatim"></pre>
+
+<!--  -->
+<div class="node">
+<a name="Trigger-classes"></a>
+<p><hr>
+<span class="red">Next:&nbsp;<a rel="next" accesskey="n" href="#Unmount-NFS-filesystem">Unmount NFS filesystem</a>,
+</span><span class="red">Previous:&nbsp;<a rel="previous" accesskey="p" href="#Software-distribution">Software distribution</a>,
+</span><span class="red">Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+</span>
+</div>
+
+<h3 class="section">3.57 Trigger classes</h3>
+
+<pre class="verbatim">
+
+<span class="comment">#######################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Insert a number of lines and trigger a followup if edited
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body common control
+</span>
+{
+any::
+
+<span class="red">  bundlesequence  </span>=> { "insert" };   
+}
+
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">insert</span>
+
+{
+<span class="red">vars:
+</span>
+  "v"<span class="red"> string </span>=><span class="green"> "</span>
+                One potato
+                Two potato
+                Three potahto
+                Four
+                ";
+ 
+<span class="red">files:
+</span>
+  "/tmp/test_insert"
+
+<span class="red">     edit_line </span>=><span class="blue"> Insert("$(insert.v)"),</span>
+<span class="red">     edit_defaults </span>=><span class="blue"> empty,</span>
+<span class="red">     classes </span>=><span class="blue"> trigger("edited");</span>
+
+<span class="red">commands:
+</span>
+ edited::
+
+  "/bin/echo make bananas";
+
+<span class="red">reports:
+</span>
+  edited::
+
+    "The potatoes are bananas";
+
+}
+
+<span class="comment">#######################################################
+</span>
+<span class="comment"># For the library
+</span>
+<span class="comment">#######################################################
+</span>
+
+<span class="red">bundle edit_line</span> <span class="blue">Insert(name)</span>
+
+{
+<span class="red">insert_lines:
+</span>
+  "Begin$(const.n) $(name)$(const.n)End";
+
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body edit_defaults</span> <span class="blue">empty</span>
+
+{
+<span class="red">empty_file_before_editing </span>=><span class="green"> "true";</span>
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body classes</span> <span class="blue">trigger(x)</span>
+
+{
+<span class="red">promise_repaired </span>=> { "$(x)" };
+}
+</pre>
+
+<!--  -->
 <div class="node">
 <a name="Unmount-NFS-filesystem"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Web-server-modules">Web server modules</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Tidying-garbage-files">Tidying garbage files</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low level issues</a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Trigger-classes">Trigger classes</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.14 Unmount NFS filesystem</h3>
+<h3 class="section">3.58 Unmount NFS filesystem</h3>
 
 <pre class="verbatim">#####################################################################
 <span class="comment"># Mount NFS
@@ -4937,12 +8661,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low le
 <div class="node">
 <a name="Web-server-modules"></a>
 <p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Warn-if-matching-line-in-file">Warn if matching line in file</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Unmount-NFS-filesystem">Unmount NFS filesystem</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Common-low-level-issues">Common low level issues</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.15 Web server modules</h3>
+<h3 class="section">3.59 Web server modules</h3>
 
 <p>The problem of editing the correct modules into the list of standard
 modules for the Apache web server. This example is based on the
@@ -5055,12 +8780,208 @@ any::
 
 </pre>
 
+<!--  -->
+<ul class="menu">
+<li><a accesskey="1" href="#Warn-if-matching-line-in-file">Warn if matching line in file</a>
+<li><a accesskey="2" href="#Windows-registry">Windows registry</a>
+<li><a accesskey="3" href="#unit_005fregistry_005fcache_002ecf">unit_registry_cache.cf</a>
+<li><a accesskey="4" href="#unit_005fregistry_002ecf">unit_registry.cf</a>
+</ul>
+
+<div class="node">
+<a name="Warn-if-matching-line-in-file"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Windows-registry">Windows registry</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Web-server-modules">Web server modules</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.60 Warn if matching line in file</h3>
+
+<pre class="verbatim">
+<span class="comment">########################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Warn if line matched
+</span>
+<span class="comment">#
+</span>
+<span class="comment">########################################################
+</span>
+
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence  </span>=> { "testbundle" };
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">testbundle</span>
+
+{
+<span class="red">files:
+</span>
+  "/var/cfengine/inputs/.*"
+
+<span class="red">       edit_line </span>=><span class="blue"> DeleteLinesMatching(".*cfenvd.*"),</span>
+<span class="red">       action </span>=><span class="blue"> WarnOnly;</span>
+}
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">bundle edit_line</span> <span class="blue">DeleteLinesMatching(regex)</span>
+  {
+<span class="red">  delete_lines:
+</span>
+    "$(regex)"<span class="red"> action </span>=><span class="blue"> WarnOnly;</span>
+
+  }
+
+<span class="comment">########################################################
+</span>
+
+<span class="red">body action</span> <span class="blue">WarnOnly</span>
+{
+<span class="red">action_policy </span>=><span class="green"> "warn";</span>
+}
+</pre>
+
+<div class="node">
+<a name="Windows-registry"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#unit_005fregistry_005fcache_002ecf">unit_registry_cache.cf</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Warn-if-matching-line-in-file">Warn if matching line in file</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.61 Windows registry</h3>
+
+<pre class="verbatim">
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "reg" };
+}
+
+<span class="red">bundle agent</span> <span class="blue">reg</span>
+{
+<span class="red">vars:
+</span>
+  "value"<span class="red"> string </span>=> registryvalue("HKEY_LOCAL_MACHINE\SOFTWARE\Cfengine AS\Cfengine","value3");
+
+<span class="red">reports:
+</span>
+  windows::
+
+<span class="red">   "Value extracted: $(value)";
+</span>
+}
+</pre>
+
+<div class="node">
+<a name="unit_registry_cache.cf"></a>
+<a name="unit_005fregistry_005fcache_002ecf"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#unit_005fregistry_002ecf">unit_registry.cf</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Windows-registry">Windows registry</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.62 unit_registry_cache.cf</h3>
+
+<pre class="verbatim"></pre>
+
+<div class="node">
+<a name="unit_registry.cf"></a>
+<a name="unit_005fregistry_002ecf"></a>
+<p><hr>
+<span class="red">Previous:&nbsp;<a rel="previous" accesskey="p" href="#unit_005fregistry_005fcache_002ecf">unit_registry_cache.cf</a>,
+</span><span class="red">Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+</span>
+</div>
+
+<h3 class="section">3.63 unit_registry.cf</h3>
+
+<pre class="verbatim">
+
+
+
+<span class="red">body common control
+</span>{
+ 
+<span class="red">bundlesequence </span>=> { "databases" };
+}
+
+
+<span class="red">bundle agent</span> <span class="blue">databases</span>
+
+{
+<span class="red">databases:
+</span>
+ windows::
+
+<span class="comment">  # Regsitry has (value,data) pairs in "keys" which are directories
+</span>
+
+<span class="comment">#  "HKEY_LOCAL_MACHINE\SOFTWARE\Cfengine AS"
+</span>
+
+<span class="comment">#    database_operation => "create", 
+</span>
+<span class="comment">#    database_type     => "ms_registry";
+</span>
+
+<span class="comment">#  "HKEY_LOCAL_MACHINE\SOFTWARE\Cfengine AS\Cfengine"
+</span>
+
+<span class="comment">#    database_operation => "create", 
+</span>
+<span class="comment">#    database_rows => { "value1,REG_SZ,new value 1", "value2,REG_SZ,new val 2"} ,
+</span>
+<span class="comment">#    database_type     => "ms_registry";
+</span>
+
+
+  "HKEY_LOCAL_MACHINE\SOFTWARE\Cfengine AS\Cfengine"
+
+<span class="red">    database_operation </span>=><span class="green"> "delete", </span>
+<span class="red">    database_columns </span>=> { "value1", "value2" } ,
+<span class="red">    database_type </span>=><span class="green"> "ms_registry";</span>
+
+
+<span class="comment"># "HKEY_LOCAL_MACHINE\SOFTWARE\Cfengine AS\Cfengine"
+</span>
+
+<span class="comment">#    database_operation => "cache",   # cache,restore
+</span>
+
+<span class="comment">#    registry_exclude => { ".*Windows.*CurrentVersion.*", ".*Touchpad.*", ".*Capabilities.FileAssociations.*", ".*Rfc1766.*" , ".*Synaptics.SynTP.*", ".*SupportedDevices.*8086", ".*Microsoft.*ErrorThresholds" },
+</span>
+
+<span class="comment">#    database_type     => "ms_registry";
+</span>
+
+"HKEY_LOCAL_MACHINE\SOFTWARE\Cfengine AS"
+
+<span class="red">   database_operation </span>=><span class="green"> "restore",</span>
+<span class="red">   database_type      </span>=><span class="green"> "ms_registry";</span>
+
+}
+</pre>
+
 <!-- ========================================================================= -->
 <!-- @node Index,  , CFEngine Methods, Top -->
 <!-- @unnumbered Concept Index -->
 <!-- @printindex cp -->
 <!-- ========================================================================= -->
-   <p><script type="text/javascript">
+<p><script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
 </script>
@@ -5070,7 +8991,7 @@ pageTracker._initData();
 pageTracker._trackPageview();
 </script>
 
-   <div class="footnote">
+<div class="footnote">
 <hr>
 <a name="texinfo-footnotes-in-document"></a><h4>Footnotes</h4><p class="footnote"><small>[<a name="fn-1" href="#fnd-1">1</a>]</small> In CFEngine 2
 there is a separate action type for configuring the system
