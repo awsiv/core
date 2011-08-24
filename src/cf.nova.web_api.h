@@ -19,11 +19,15 @@
 
 // Separation needed because it is included by php extension
 
-int Nova2PHP_LDAPAuthenticate(char *uri,char *basedn,char *passwd);
+/*
+ * Returned error strings are statically allocated and do not need freeing.
+ * NULL is placed to errstr if no error occured.
+ */
+int Nova2PHP_LDAPAuthenticate(char *uri,char *basedn,char *passwd, const char **const errstr);
 void *CfLDAPValue(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec);
 
-int Nova2PHP_LDAPGetSeveralAttributes(char *uri,char *user,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize);
-int Nova2PHP_LDAPGetSingleAttributeList(char *uri,char *user,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize);
+int Nova2PHP_LDAPGetSeveralAttributes(char *uri,char *user,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize, const char **const errstr);
+int Nova2PHP_LDAPGetSingleAttributeList(char *uri,char *user,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize, const char **const errstr);
 
 bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize);
 bool Nova2PHP_vitals_view_magnified(char *keyHash, char *vitalId, char *buffer, int bufsize);

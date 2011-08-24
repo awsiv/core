@@ -18,8 +18,7 @@
 #ifdef HAVE_LIBLDAP
 
 /* Prototypes */
-int CfLDAPAuthenticate(char *uri,char *basedn,char *passwd);
-LDAP *NovaQueryLDAP(char *uri,char *basedn,char *sec,char *pwd);
+LDAP *NovaQueryLDAP(char *uri,char *basedn,char *sec,char *pwd, int *errcode);
 void *CfLDAPValue(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec);
 void *CfLDAPList(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec);
 void *CfLDAPArray(char *array,char *uri,char *basedn,char *filter,char *scopes,char *sec);
@@ -51,7 +50,7 @@ if (LICENSES == 0)
    return NULL;
    }
 
-if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL)) == NULL)
+if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL,NULL)) == NULL)
    {
    return NULL;
    }
@@ -231,7 +230,7 @@ if (LICENSES == 0)
    return NULL;
    }
 
-if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL)) == NULL)
+if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL,NULL)) == NULL)
    {
    return NULL;
    }
@@ -403,7 +402,7 @@ if (LICENSES == 0)
    return NULL;
    }
 
-if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL)) == NULL)
+if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL,NULL)) == NULL)
    {
    return NULL;
    }
@@ -592,7 +591,7 @@ if (LICENSES == 0)
    return NULL;
    }
 
-if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL)) == NULL)
+if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL,NULL)) == NULL)
    {
    return NULL;
    }
@@ -758,22 +757,30 @@ return NULL;
 
 #ifdef HAVE_LIBLDAP
 
-int CfLDAPAuthenticate(char *uri,char *basedn,char *passwd)
+bool CfLDAPAuthenticate(char *uri,char *basedn,char *passwd, const char **const errstr)
 
-{ LDAP *ld;
+{
+LDAP *ld;
+int errcode;
 
-if (LICENSES == 0)
+if ((ld = NovaQueryLDAP(uri, basedn, "sasl", passwd, &errcode)) != NULL)
    {
-   CfOut(cf_error,""," !! The commercial license has expired, this function is not available");
-   return false;
+   *errstr = NULL;
+   return true;
    }
-
-if ((ld = NovaQueryLDAP(uri,basedn,"sasl",passwd)) == NULL)
+else
    {
-   return false;
+   if (errcode == LDAP_INVALID_CREDENTIALS)
+      {
+      *errstr = NULL;
+      return false;
+      }
+   else
+      {
+      *errstr = ldap_err2string(errcode);
+      return false;
+      }
    }
-
-return true;
 }
 
 /*****************************************************************************/
@@ -820,7 +827,7 @@ void test(void)
 
 /*****************************************************************************/
 
-int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *authdn,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize)
+int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *authdn,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize, const char **const errstr)
 
 { LDAP *ld;
   LDAPMessage *res, *msg;
@@ -835,6 +842,7 @@ int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *authdn,char *basedn,char *f
   struct Item *ip;
   struct CfAssoc *ap;
   char work[CF_BUFSIZE];
+  int errcode;
 
 
 if (page == 0)
@@ -847,8 +855,9 @@ if (linesperpage == 0)
    linesperpage = 1000;
    }
   
-if ((ld = NovaQueryLDAP(uri,authdn,sec,passwd)) == NULL)
+if ((ld = NovaQueryLDAP(uri,authdn,sec,passwd,&errcode)) == NULL)
    {
+   *errstr = ldap_err2string(errcode);
    return -1;
    }
 
@@ -856,6 +865,7 @@ if ((ret = ldap_search_ext_s(ld,basedn,scope,filter,NULL,0,NULL,NULL,NULL,LDAP_N
    {
    CfOut(cf_error,""," !! LDAP search failed: %s\n",ldap_err2string(ret));
    ldap_unbind(ld);
+   *errstr = ldap_err2string(ret);
    return -1;
    }
 
@@ -950,6 +960,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
              {
              CfOut(cf_error,"","Unable to parse LDAP references: %s\n",ldap_err2string(parse_ret));
              ldap_unbind(ld);
+             *errstr = ldap_err2string(parse_ret);
              return -1;
              }
 
@@ -976,7 +987,8 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
           if (parse_ret != LDAP_SUCCESS)
              {             
              CfOut(cf_error,""," !! LDAP Error parsed: %s\n",ldap_err2string(parse_ret));
-             ldap_unbind(ld);             
+             ldap_unbind(ld);
+             *errstr = ldap_err2string(parse_ret);
              return -1;
              }
 
@@ -1087,14 +1099,16 @@ DeleteRlist(master);
 
 Join(buffer,"]}",bufsize);
 
+*errstr = NULL;
 return 0;
 }
 
 #else /* HAVE_LIBLDAP */
 
-int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *user,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize)
+int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *user,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize, const char **const errstr)
 
 {
+*errstr = "LDAP support is disabled";
 CfOut(cf_error, "", "LDAP support is disabled");
 return -1;
 }
@@ -1105,7 +1119,7 @@ return -1;
 
 #ifdef HAVE_LIBLDAP
 
-int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *authdn,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize)
+int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *authdn,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize, const char **const errstr)
 
 { LDAP *ld;
   LDAPMessage *res, *msg;
@@ -1118,6 +1132,7 @@ int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *authdn,char *basedn,char 
   int scope = NovaStr2Scope(scopes),count = 0;
   struct Rlist *return_value = NULL,*rp;
   char work[CF_BUFSIZE];
+  int errcode;
 
 if (page == 0)
    {
@@ -1129,8 +1144,9 @@ if (linesperpage == 0)
    linesperpage = 1000;
    }
     
-if ((ld = NovaQueryLDAP(uri,authdn,sec,passwd)) == NULL)
+if ((ld = NovaQueryLDAP(uri,authdn,sec,passwd,&errcode)) == NULL)
    {
+   *errstr = ldap_err2string(errcode);
    return -1;
    }
 
@@ -1138,6 +1154,7 @@ if ((ret = ldap_search_ext_s(ld,basedn,scope,filter,NULL,0,NULL,NULL,NULL,LDAP_N
    {
    CfOut(cf_error,""," !! LDAP search failed: %s\n",ldap_err2string(ret));
    ldap_unbind(ld);
+   *errstr = ldap_err2string(errcode);
    return -1;
    }
 
@@ -1216,6 +1233,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
              {
              CfOut(cf_error,"","Unable to parse LDAP references: %s\n",ldap_err2string(parse_ret));
              ldap_unbind(ld);
+             *errstr = ldap_err2string(parse_ret);
              return -1;
              }
 
@@ -1242,7 +1260,8 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
           if (parse_ret != LDAP_SUCCESS)
              {             
              CfOut(cf_error,""," !! LDAP Error parsed: %s\n",ldap_err2string(parse_ret));             
-             ldap_unbind(ld);             
+             ldap_unbind(ld);
+             *errstr = ldap_err2string(parse_ret);
              return -1;
              }
 
@@ -1295,14 +1314,16 @@ buffer[strlen(buffer)-1] = ']';
 
 /* Disconnect when done. */
 ldap_unbind(ld);
+*errstr = NULL;
 return 0;
 }
 
 #else /* HAVE_LIBLDAP */
 
-int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *user,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize)
+int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *user,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize, const char **errstr)
 {
 CfOut(cf_error, "", "LDAP support is disabled");
+*errstr = "LDAP support is disabled";
 return 0;
 }
 
@@ -1315,7 +1336,7 @@ return 0;
 
 #ifdef HAVE_LIBLDAP
 
-LDAP *NovaQueryLDAP(char *uri,char *basedn,char *sec,char *password)
+LDAP *NovaQueryLDAP(char *uri,char *basedn,char *sec,char *password, int *errcode)
 
 { LDAP *ld;
   char *matched_msg = NULL, *error_msg = NULL;
@@ -1326,7 +1347,11 @@ LDAP *NovaQueryLDAP(char *uri,char *basedn,char *sec,char *password)
 
 if ((ret = ldap_initialize(&ld,uri)) != LDAP_SUCCESS)
    {
-   CfOut(cf_error,"","LDAP connection failed: %s",ldap_err2string(ret));   
+   if (errcode)
+      {
+      *errcode = ret;
+      }
+   CfOut(cf_error,"","LDAP connection failed: %s", ldap_err2string(ret));
    return NULL;
    }
 
@@ -1334,7 +1359,11 @@ version = LDAP_VERSION3;
 
 if ((ret = ldap_set_option(ld,LDAP_OPT_PROTOCOL_VERSION,&version)) != LDAP_SUCCESS)
    {
-   CfOut(cf_error,"","Trouble setting LDAP option %s",ldap_err2string(ret));   
+   if (errcode)
+      {
+      *errcode = ret;
+      }
+   CfOut(cf_error,"","Trouble setting LDAP option %s", ldap_err2string(ret));
    return NULL;
    }
 
@@ -1353,11 +1382,19 @@ else
 
 if (ret != LDAP_SUCCESS)
    {
-   CfOut(cf_inform,"","Trouble binding to LDAP: %s",ldap_err2string(ret));   
+   if (errcode)
+      {
+      *errcode = ret;
+      }
+   CfOut(cf_inform,"","Trouble binding to LDAP: %s", ldap_err2string(ret));
    ldap_unbind(ld);
    return NULL;
    }
 
+if (errcode)
+   {
+   *errcode = 0;
+   }
 return ld;
 }
 

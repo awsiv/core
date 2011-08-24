@@ -84,7 +84,7 @@ if (false)
    
    Nova2PHP_get_knowledge_view(0,NULL,NULL,999);
 
-   CfLDAPAuthenticate("x","x","x");
+   CfLDAPAuthenticate(NULL,NULL,NULL,NULL);
    Nova2PHP_cdp_report(NULL, NULL, NULL, NULL, 10000);
    }
 #endif
@@ -491,30 +491,33 @@ return "";
 
 /*****************************************************************************/
 
-int Nova2PHP_LDAPAuthenticate(char *uri,char *basedn,char *passwd)
+int Nova2PHP_LDAPAuthenticate(char *uri, char *basedn, char *passwd, const char **const errstr)
 {
 #ifdef HAVE_LIBLDAP
-return CfLDAPAuthenticate(uri,basedn,passwd);
+return CfLDAPAuthenticate(uri, basedn, passwd, errstr);
 #else
+*errstr = "LDAP support is disabled";
 return false;
 #endif
 }
 /*****************************************************************************/
-int Nova2PHP_LDAPGetSeveralAttributes(char *uri,char *user,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize)
+int Nova2PHP_LDAPGetSeveralAttributes(char *uri,char *user,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize, const char **const errstr)
 {
 #ifdef HAVE_LIBLDAP
- return CfLDAP_JSON_GetSeveralAttributes(uri,user,basedn,filter,names,scopes,sec,passwd,page,linesperpage,buffer,bufsize);
+return CfLDAP_JSON_GetSeveralAttributes(uri,user,basedn,filter,names,scopes,sec,passwd,page,linesperpage,buffer,bufsize, errstr);
 #else
- return false;
+*errstr = "LDAP support is disabled";
+return false;
 #endif
 }
 /*****************************************************************************/
-int Nova2PHP_LDAPGetSingleAttributeList(char *uri,char *user,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize)
+int Nova2PHP_LDAPGetSingleAttributeList(char *uri,char *user,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize, const char **const errstr)
 {
 #ifdef HAVE_LIBLDAP
- return CfLDAP_JSON_GetSingleAttributeList(uri,user,basedn,filter,name,scopes,sec,passwd,page,linesperpage,buffer,bufsize);
+return CfLDAP_JSON_GetSingleAttributeList(uri,user,basedn,filter,name,scopes,sec,passwd,page,linesperpage,buffer,bufsize, errstr);
 #else
- return false;
+*errstr = "LDAP support is not enabled in Nova";
+return false;
 #endif
 }
 /*****************************************************************************/
