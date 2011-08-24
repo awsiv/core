@@ -494,7 +494,6 @@ return "";
 int Nova2PHP_LDAPAuthenticate(char *uri,char *basedn,char *passwd)
 {
 #ifdef HAVE_LIBLDAP
-LICENSES = 1;
 return CfLDAPAuthenticate(uri,basedn,passwd);
 #else
 return false;
@@ -504,7 +503,6 @@ return false;
 int Nova2PHP_LDAPGetSeveralAttributes(char *uri,char *user,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize)
 {
 #ifdef HAVE_LIBLDAP
- LICENSES = 1;
  return CfLDAP_JSON_GetSeveralAttributes(uri,user,basedn,filter,names,scopes,sec,passwd,page,linesperpage,buffer,bufsize);
 #else
  return false;
@@ -514,7 +512,6 @@ int Nova2PHP_LDAPGetSeveralAttributes(char *uri,char *user,char *basedn,char *fi
 int Nova2PHP_LDAPGetSingleAttributeList(char *uri,char *user,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize)
 {
 #ifdef HAVE_LIBLDAP
- LICENSES = 1;
  return CfLDAP_JSON_GetSingleAttributeList(uri,user,basedn,filter,name,scopes,sec,passwd,page,linesperpage,buffer,bufsize);
 #else
  return false;

@@ -1324,12 +1324,6 @@ LDAP *NovaQueryLDAP(char *uri,char *basedn,char *sec,char *password)
 
 /* Get a handle to an LDAP connection. */
 
-if (LICENSES == 0)
-   {
-   CfOut(cf_error,""," !! The commercial license has expired, this function is not available");   
-   return NULL;
-   }
-
 if ((ret = ldap_initialize(&ld,uri)) != LDAP_SUCCESS)
    {
    CfOut(cf_error,"","LDAP connection failed: %s",ldap_err2string(ret));   
