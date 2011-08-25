@@ -136,6 +136,13 @@ class Auth extends Controller {
                 'id' => 'password',
                 'type' => 'password',
             );
+            $mode=$this->setting_lib->get_backend_mode();
+            if($mode!='' || $mode !==false){
+            $this->data['mode']=$this->lang->line('login_'.$mode);
+            }
+            else{
+               $this->data['mode']="No backend mentioned";
+            }
 
             $this->load->view('auth/login', $this->data);
         }

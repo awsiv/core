@@ -73,3 +73,7 @@ $lang['Internal_Ldap_module_error']            ="Please check credentials and Co
 $lang['unsucessful_ldap_bind']                    ="Invalid credential or Configuration, Unable to authenticate using Open LDAP as backend";
 $lang['successful_bind']                             ="Sucessfully Authenticated against the desired directory server";
 
+//login page message
+$lang['login_database'] ='Using Internal database as backend for authentication';
+$lang['login_ldap']='Using LDAP as backend for Authentication';
+$lang['login_active_directory']='Using Active directory as backend for Authentication';
