@@ -2114,17 +2114,12 @@ for (ptr = VSCOPE; ptr != NULL; ptr=ptr->next)
       var.rtype = assoc->rtype;
       var.rval[0] = '\0';
 
-      if (strlen(assoc->rval) > 1000) // MAXVARSIZE == 1024
+      if(!PrintRval(var.rval, sizeof(var.rval) - 15, assoc->rval, assoc->rtype))
          {
-         char limit_rval[CF_MAXVARSIZE];
-         snprintf(limit_rval,CF_MAXVARSIZE-1,"%1000s ... (truncated)",assoc->rval);
-         PrintRval(var.rval, sizeof(var.rval),limit_rval, assoc->rtype);
+         CfOut(cf_verbose, "", "!! Truncated variable %s in var db -- larger than %d", key, sizeof(var.rval));
+         EndJoin(var.rval, "...(TRUNCATED)", sizeof(var.rval));
          }
-      else
-         {
-         PrintRval(var.rval, sizeof(var.rval), assoc->rval, assoc->rtype);
-         }
-
+      
       WriteDB(dbp,key,&var,VARSTRUCTUSAGE(var));
       }
    }
