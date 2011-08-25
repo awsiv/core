@@ -316,7 +316,7 @@ function array_msort($array, $cols, $natsort=false) {
  * @param	string	the id of the form element
  * @return	string
  */
-function tooltip($line, $id = '') {
+function tooltip($line, $id = '',$forinput=false) {
     $CI = & get_instance();
     // if tooltip is disabled in preferences return blank
     if (!$CI->setting_lib->get_tooltips_status())
@@ -325,9 +325,11 @@ function tooltip($line, $id = '') {
     $line = $CI->lang->line($line);
 
     if ($id != '') {
-        $line = '<label for="' . $id . '">' . $line . "</label>";
+            $line = '<label for="' . $id . '">' . $line . "</label>";
+    }elseif($forinput){
+            $line ='<span class="hint">'. $line.'</span>';
     }
-
+   
     return $line;
 }
 

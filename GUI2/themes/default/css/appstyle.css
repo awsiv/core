@@ -2566,3 +2566,8 @@ ul.admin_menu li.current a{
     margin:10px;
     padding:10px;
 }
+
+/* for the tool tips text for the input box in span elements*/
+.hint{
+    display:none;
+}

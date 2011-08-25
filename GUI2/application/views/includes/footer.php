@@ -4,8 +4,6 @@
     <p class="clear"></p>
 </div>
 </div>
-</body>
-</html>
 <script type="text/javascript">
     // q tip initialization 
     $(document).ready(function() {
@@ -17,7 +15,8 @@
             $(this).qtip({
                 overwrite: false, // Make sure the tooltip won't be overridden once created
                 position: {
-                    at:'Bottom Middle'
+                    my:'top left',
+                    at:'bottom  center'
                 },
                 show: {
                     event: event.type, // Use the same show event as the one that triggered the event handler
@@ -40,3 +39,5 @@
         });
     });
 </script>
+</body>
+</html>

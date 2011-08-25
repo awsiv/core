@@ -37,6 +37,17 @@ $lang['tooltip_docs'] = 'documentation dump for all official CFEngine documents.
 $lang['tooltip_find_topics'] = 'look up keywords or phrases in the knowledge map.';
 $lang['tooltip_notes_archive'] = 'browse public notes added manually by CFEngine users.';
 $lang['tooltip_community'] = 'link to the community help-forum.';
+$lang['tooltip_application_email']='The email to be used by mission portal while sending mails';
+$lang['tooltip_host_name']= "The full domain name of the directory server  e.g test.cfengine.com";
+$lang['tooltip_base_dn']="Base domain name of the directory server  e.g dc=test,dc=cfengine,dc=com";
+$lang['tooltip_login_attr']="The attribute used by directory server to match the username e.g uid, sAMAccountName";
+$lang['tooltip_user_dir']="The directory used by the server to store users information  e.g cn=users, ou=people";
+$lang['tooltip_member_attr']="The attribute used to connect a user with group e.g memberUid";
+$lang['tooltip_ad_domain_name']="The domain named used by the active directory e.g test.cfengine.com";
+
+$lang['tooltip_fall_back']="Users falling in the selected group will be able to login if directory server is down";
+$lang['tooltip_admin_grp']="User belonging to this role will act as admin in mission portal"
+
 
 
 
