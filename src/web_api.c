@@ -6157,7 +6157,7 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
         level = 2;
         snprintf(row_name, sizeof(row_name), "%s",cfr_ip_array); // taking the IP addresses
         snprintf(db, sizeof(db), "%s",MONGO_DATABASE);
-        getrow = CFDB_GetRow(&dbconn, db, &query, row_name, row, sizeof(row), level);
+        getrow = CFDB_GetRow(&dbconn, db, reportType, &query, row_name, row, sizeof(row), level);
         snprintf(row_add, sizeof(row_add),"%s",cfn_nid);
         break;
 
@@ -6168,7 +6168,7 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
         bson_buffer_init(&bb);
         bson_append_oid(&bb,"_id",&oid);
         bson_from_buffer(&query,&bb);
-        getrow = CFDB_GetRow(&dbconn, db, &query, "*", row, sizeof(row), level);
+        getrow = CFDB_GetRow(&dbconn, db, reportType, &query, "*", row, sizeof(row), level);
         snprintf(row_add, sizeof(row_add), "%s",cfn_nid); 
         break;
 
@@ -6176,7 +6176,7 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
         level = 3;
         snprintf(row_name, sizeof(row_name), "%s.%s",cfr_performance,repid);
         snprintf(db, sizeof(db), "%s",MONGO_DATABASE);
-        getrow = CFDB_GetRow(&dbconn, db, &query, row_name, row, sizeof(row), level);
+        getrow = CFDB_GetRow(&dbconn, db, reportType, &query, row_name, row, sizeof(row), level);
         snprintf(row_add, sizeof(row_add), "%s.%s",row_name,cfn_nid);
         break;
 
@@ -6184,14 +6184,14 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
         level = 3;
         snprintf(row_name, sizeof(row_name), "%s.%s",cfr_valuereport,repid);
         snprintf(db, sizeof(db), "%s",MONGO_DATABASE);
-        getrow = CFDB_GetRow(&dbconn, db, &query, row_name, row, sizeof(row), level);
+        getrow = CFDB_GetRow(&dbconn, db, reportType, &query, row_name, row, sizeof(row), level);
         snprintf(row_add, sizeof(row_add), "%s.%s",row_name,cfn_nid);
         break;
     case CFREPORT_FILECHANGES:  
         level = 3;
         snprintf(row_name, sizeof(row_name), "%s.%s",cfr_filechanges,repid);
         snprintf(db, sizeof(db), "%s",MONGO_DATABASE);
-        getrow = CFDB_GetRow(&dbconn,db, &query, row_name, row, sizeof(row), level);
+        getrow = CFDB_GetRow(&dbconn,db, reportType, &query, row_name, row, sizeof(row), level);
         snprintf(row_add, sizeof(row_add), "%s.%s",row_name,cfn_nid);
         break;
 /*
@@ -6206,7 +6206,7 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
         level = 3;
         snprintf(row_name, sizeof(row_name), "%s.%s",cfr_bundles,repid);
         snprintf(db, sizeof(db), "%s",MONGO_DATABASE);
-        getrow = CFDB_GetRow(&dbconn,db, &query, row_name, row, sizeof(row), level);
+        getrow = CFDB_GetRow(&dbconn,db, reportType, &query, row_name, row, sizeof(row), level);
         snprintf(row_add, sizeof(row_add), "%s.%s",row_name,cfn_nid);
         break;
 
@@ -6218,7 +6218,7 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
         bson_buffer_init(&bb);
         bson_append_oid(&bb,"_id",&oid);
         bson_from_buffer(&query,&bb);
-        getrow = CFDB_GetRow(&dbconn, db, &query, "*", row, sizeof(row), level);
+        getrow = CFDB_GetRow(&dbconn, db, reportType, &query, "*", row, sizeof(row), level);
         snprintf(row_add, sizeof(row_add), "%s",cfn_nid);
         break;
     }

@@ -456,10 +456,11 @@ int CFDB_AddNote(mongo_connection *conn, char *keyhash, int reportType, char *ni
 struct Rlist *CFDB_QueryNotes(mongo_connection *conn,char *keyhash, char *nid, struct Item *data);
 struct Rlist *CFDB_QueryNoteId(mongo_connection *conn,bson *query);
 void CFDBRef_AddToRow(mongo_connection *conn, char *coll,bson *query, char *row_name, char *cid);
-int CFDB_GetRow(mongo_connection *conn, char *db, bson *query, char *rowname, char *row, int rowSz, int level);
+int CFDB_GetRow(mongo_connection *conn, char *db, int reportType, bson *query, char *rowname, char *row, int rowSz, int level);
 struct Item *CFDB_QueryDistinctStr(mongo_connection *conn, char *database, char *collection, char *dKey, char *qKey, char *qVal);
 struct Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collection, char *dKey, bson *queryBson);
-void BsonIteratorToString(char *retBuf, int retBufSz, bson_iterator *i, int depth);
+void BsonIteratorToString(char *retBuf, int retBufSz, bson_iterator *i, int depth, int reportType);
+void GetReportKeyMapping(int reportType, char *key, char *retBuf, int retBufSz);
 #endif  /* HAVE_LIBMONGOC */
 
 /* db_maintain.c */
