@@ -71,9 +71,6 @@ Getting_started_with_the_Community_Edition::
 Getting_started_with_the_Community_Edition::
  "/docs/cf3-tutorial.html#Getting-started-with-the-Community-Edition"
   represents => { "code example" };
-Getting_started_with_the_Community_Edition::
- "/docs/cf3-tutorial.html#Getting-started-with-the-Community-Edition"
-  represents => { "code example" };
 Bodies_and_bundles::
  "/docs/cf3-tutorial.html#Bodies-and-bundles"
   represents => { "manual chapter" };
