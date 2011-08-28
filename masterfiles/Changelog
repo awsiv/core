@@ -6,6 +6,8 @@ August 2011
 - Removed *-devel packages from package-to-install list
 - Removed all mysql-related promises from CFE_hub_specific.cf
 - Fixed redhat_6 json, svn php modules in CFE_hub_specific.cf
+- Set ifelapsed to 1 both promises.cf and failsafe.cf
+- Changed detect_all_change to diff in file_change.cf
 
 July 2011
 *All*

@@ -43,7 +43,7 @@ files:
    "$(watch_files)"
       comment => "Change detection on important files",
        handle => "change_management_files_watch_files",
-      changes => detect_all_change;
+      changes => diff;
 	
   
 #   "$(watch_dirs)" 
