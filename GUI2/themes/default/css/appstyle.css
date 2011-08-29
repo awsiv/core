@@ -1846,11 +1846,12 @@ div.ui-dialog .ui-dialog-buttonpane{
     /* we instead underline first letter on each label element and accesskey */
     /* each input. doing only legends would  lessens cognitive load */
     /* opera breaks after first letter underlined legends but not labels */
-}
+}s
 
 .stylized form input, form textarea, form select {
     /* display: inline; inline display must not be set or will hide submit buttons in IE 5x mac */
     width:auto;      /* set width of form elements to auto-size, otherwise watch for wrap on resize */
+    max-width: 400px;
     margin:5px 0 0 10px; /* set margin on left of form elements rather than right of
                           label aligns textarea better in IE */
         border: 1px solid #D4D5D0;
