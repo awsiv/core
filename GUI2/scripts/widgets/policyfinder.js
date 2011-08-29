@@ -54,9 +54,9 @@
 
             
             if (!self.options.onlyShowHandle) {
-                self.searchbar=$('<form id="policyfindersearch" action="'+self.options.baseUrl+'/widget/search_by_bundle"><span class="search"><input type="text" name="search" value="search by bundle"/></span></form>')
+                self.searchbar=$('<form id="policyfindersearch" action="'+self.options.baseUrl+'/widget/search_by_bundle"><span class="search"><input type="text" name="search" value="Search by bundle"/></span></form>')
             } else {
-                self.searchbar=$('<form id="policyfindersearch" action="'+self.options.baseUrl+'/widget/search_by_handle"><span class="search"><input type="text" name="search" value="search by handle"/></span></form>')
+                self.searchbar=$('<form id="policyfindersearch" action="'+self.options.baseUrl+'/widget/search_by_handle"><span class="search"><input type="text" name="search" value="Search by handle"/></span></form>')
                 
             }
             
@@ -102,7 +102,7 @@
             var self=this;
             var sender=$(event.target);
             var selected_category=sender.text().toLowerCase();
-            self.searchbar.find('input[type="text"]').val('search '+sender.text().toLowerCase()).data('default','search '+sender.text().toLowerCase())
+            self.searchbar.find('input[type="text"]').val('Search '+sender.text().toLowerCase()).data('default','Search '+sender.text().toLowerCase())
             self.searchbar.attr("action",self.options.baseUrl+"/widget/search_"+selected_category.replace(/\s+/g, "_").toLowerCase());
             self.dialogcontent.html(self.ajaxloader);
             self.loadpagebody(self.searchbar.attr('action'),"",false) ;

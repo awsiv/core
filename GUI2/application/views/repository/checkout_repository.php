@@ -5,7 +5,7 @@
             <form action="<?php echo site_url() ?>/repository/checkOutUrl" target="_self" method="POST">
                 <fieldset>
                     <legend>Checkout</legend>
-                    <label for="repourl">url :: </label>
+                    <label for="repourl">url: </label>
                     <select name="repourl"> <?php if (!empty($repoData)) {
                 ?>
                             <?php foreach ($repoData as $repository) {

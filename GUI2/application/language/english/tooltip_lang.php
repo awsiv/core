@@ -27,16 +27,16 @@ $lang['tooltip_engineeringroom'] = 'Engineering shows technical status of hosts 
 $lang['tooltip_planningroom'] = 'The mission planning room allows you to see how the current goals and policies are performing, approve a change of course and communicate with co-workers.';
 $lang['tooltip_libraryroom'] = 'A place where users can learn about the software and the system.';
 
-$lang['tooltip_edit_policies'] = 'choose an SVN repository to edit the policies.';
-$lang['tooltip_track_records'] = 'review successes and failures of the current version.';
-$lang['tooltip_approve_policies'] = 'add your approval to adopt a named policy revision.';
-$lang['tooltip_service_catalogue'] = 'list technical services (promise bundles) and the business goals they address.';
+$lang['tooltip_edit_policies'] = 'Choose an SVN repository to edit the policies.';
+$lang['tooltip_track_records'] = 'Review successes and failures of the current version.';
+$lang['tooltip_approve_policies'] = 'Add your approval to adopt a named policy revision.';
+$lang['tooltip_service_catalogue'] = 'List technical services (promise bundles) and the business goals they address.';
 
 
-$lang['tooltip_docs'] = 'documentation dump for all official CFEngine documents.';
-$lang['tooltip_find_topics'] = 'look up keywords or phrases in the knowledge map.';
-$lang['tooltip_notes_archive'] = 'browse public notes added manually by CFEngine users.';
-$lang['tooltip_community'] = 'link to the community help-forum.';
+$lang['tooltip_docs'] = 'Documentation dump for all official CFEngine documents.';
+$lang['tooltip_find_topics'] = 'Look up keywords or phrases in the knowledge map.';
+$lang['tooltip_notes_archive'] = 'Browse public notes added manually by CFEngine users.';
+$lang['tooltip_community'] = 'Link to the community help-forum.';
 $lang['tooltip_application_email']='The email to be used by mission portal while sending mails';
 $lang['tooltip_host_name']= "The full domain name of the directory server  e.g test.cfengine.com";
 $lang['tooltip_base_dn']="Base domain name of the directory server  e.g dc=test,dc=cfengine,dc=com";

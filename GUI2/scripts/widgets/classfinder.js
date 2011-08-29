@@ -45,7 +45,7 @@ addsearchbar:function(){
   //self.menuhandler=$('<span id="handle" class="operation">Options</span>');
   //self.titlebar.append(self.menuhandler).delegate('#handle','click',function(){self.menu.slideToggle();});
 
-  self.searchbar=$('<form id="classfindersearch"><span class="search"><input type="text" name="search" value="search on all classes"/></span></form>')
+  self.searchbar=$('<form id="classfindersearch"><span class="search"><input type="text" name="search" value="Search by class (context)"/></span></form>')
   self.titlebar.append(self.searchbar).delegate('form','submit',{ui:self},function(event){event.preventDefault();});
   self.searchbar.delegate('input[type="text"]','click',function(){$(this).focus().select()});
   self.searchbar.delegate('input[type="text"]','focusin',$.proxy(self.searchboxevent,self));
@@ -76,7 +76,7 @@ addsearchbar:function(){
 menuitemclicked:function(event){
   var self=this;
   var sender=$(event.target);
-  self.searchbar.find('input[type="text"]').val('search on '+sender.text().toLowerCase()).data('default','search on '+sender.text().toLowerCase())
+  self.searchbar.find('input[type="text"]').val('Search on '+sender.text().toLowerCase()).data('default','Search on '+sender.text().toLowerCase())
   self.dialogcontent.html(self.ajaxloader);
   sender.addClass('selected').siblings().removeClass('selected');
            $.ajax({
@@ -91,7 +91,7 @@ menuitemclicked:function(event){
                                         $("<a>").text(val).attr({title:val, href:self.options.baseUrl+"/search/index/host/All/report/Class+profile/name/"+val}).addClass('name').appendTo(li);
                                         if(self.options.defaultbehaviour){
                                         $("<a>").text('view hosts').attr('href',self.options.baseUrl+"/search/index/host/All/report/Class+profile/hosts_only/true/name/"+val).addClass('action').addClass('btn').appendTo(li);
-                                         $("<a>").text('add to list').data('val',val).addClass('classadd').addClass('btn').appendTo(li);
+                                         $("<a>").text('Add to list').data('val',val).addClass('classadd').addClass('btn').appendTo(li);
                                         }
                                         li.appendTo("#classList");
                                   });

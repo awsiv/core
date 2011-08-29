@@ -1,10 +1,10 @@
 <div id="body">
     <div class="outerdiv">
         <div id="hoststatus" class="minwidth30 innerdiv">
-            <p class="title">Host Status (Last hour) </p>
+            <p class="title">Host status (last hour) </p>
             <ul>
                 <li> <a href="<?php echo site_url('welcome/hosts/red') ?>" title="<?php echo tooltip('tooltip_redhost'); ?>" class="redhost showqtip hoststatuslist"><?php echo $r ?> hosts ( > 20% not compliant)</a> </li>
-                <li> <a href="<?php echo site_url('welcome/hosts/yellow') ?>" title="<?php echo tooltip('tooltip_yellowhost'); ?>"  class="yellowhost showqtip hoststatuslist"><?php echo $y ?> hosts ( > 20% repaired now compliant) </a> </li>
+                <li> <a href="<?php echo site_url('welcome/hosts/yellow') ?>" title="<?php echo tooltip('tooltip_yellowhost'); ?>"  class="yellowhost showqtip hoststatuslist"><?php echo $y ?> hosts ( > 20% repaired, now compliant) </a> </li>
                 <li> <a href="<?php echo site_url('welcome/hosts/green') ?>" title="<?php echo tooltip('tooltip_greenhost'); ?>" class="greenhost showqtip hoststatuslist"><?php echo $g ?> hosts ( > 80% compliant) </a> </li>
                 <li> <a href="<?php echo site_url('welcome/hosts/blue') ?>" title="<?php echo tooltip('tooltip_bluehost'); ?>" class="bluehost showqtip hoststatuslist"><?php echo $b ?> hosts unreachable</a> </li>
             </ul>
@@ -27,11 +27,11 @@
         <div id="finder" class="dash innerdiv">
             <p class="title">Finders</p>
             <ul>
-                <li><?php echo anchor('#', 'host', array('class' => 'host showqtip', 'title' => tooltip('tooltip_host_finder'), 'id' => 'findhost')); ?></li>
-                <li><?php echo anchor('widget/allclasses', 'class', array('class' => 'classes showqtip', 'title' => tooltip('tooltip_class_finder'), 'id' => 'findclass')); ?></li>
-                <li><?php echo anchor('widget/allpolicies', 'promises', array('class' => 'policies showqtip', 'title' => tooltip('tooltip_promise_finder'), 'id' => 'findpolicy')); ?></li>
-                <li><?php echo anchor('widget/allreports', 'reports', array('class' => 'report showqtip', 'id' => 'findreport', 'title' => tooltip('tooltip_reports_finder'))); ?></li>
-                <li><?php echo anchor('summaryreports/search', 'summary reports', array('class' => 'summary_report showqtip', 'id' => 'summaryreport', 'title' => tooltip('tooltip_summary_finder'))); ?></li>
+                <li><?php echo anchor('#', 'Host', array('class' => 'host showqtip', 'title' => tooltip('tooltip_host_finder'), 'id' => 'findhost')); ?></li>
+                <li><?php echo anchor('widget/allclasses', 'Class', array('class' => 'classes showqtip', 'title' => tooltip('tooltip_class_finder'), 'id' => 'findclass')); ?></li>
+                <li><?php echo anchor('widget/allpolicies', 'Promises', array('class' => 'policies showqtip', 'title' => tooltip('tooltip_promise_finder'), 'id' => 'findpolicy')); ?></li>
+                <li><?php echo anchor('widget/allreports', 'Reports', array('class' => 'report showqtip', 'id' => 'findreport', 'title' => tooltip('tooltip_reports_finder'))); ?></li>
+                <li><?php echo anchor('summaryreports/search', 'Summary reports', array('class' => 'summary_report showqtip', 'id' => 'summaryreport', 'title' => tooltip('tooltip_summary_finder'))); ?></li>
                 <li><?php echo anchor('widget/cdpreports', 'CDP reports', array('class' => 'cdpreport showqtip', 'id' => 'findcdpreport', 'title' => tooltip('tooltip_reports_finder'))); ?></li>
 
                 <p class="clearleft"></p>

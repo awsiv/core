@@ -3,7 +3,7 @@
    <div class="panelcontent">
           <form method="post" action="<?php echo site_url('search')?>">
           <p>Package name: (.*+[])<input class="searchfield" type="text" name="name"></p>
-          <p>package version: (.*+[])<input class="searchfield" type="text" name="version"></p>
+          <p>Package version: (.*+[])<input class="searchfield" type="text" name="version"></p>
           <p>Package architecture:<p><input class="searchfield" type="text" name="arch"></p>
           <p>Host group: (.*+[])
            <a href="<?php echo site_url('widget/allclasses')?>" id="bphghelp" class="help"

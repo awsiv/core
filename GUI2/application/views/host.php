@@ -26,7 +26,7 @@
                          }
                       ?>
                 <li><a href="<?php echo $noteUrl ?>" class="note showqtip" id="add_cmt" title="Add note about this host">Notes</a></li>
-                <li> <?php echo anchor('visual/vital/'.$hostkey,'Vitals',array('id'=>'pulseNvitals','class'=>'pulseNvitals showqtip','title'=>'View probes regarding cpu,memory,network etc')) ?></li>
+                <li> <?php echo anchor('visual/vital/'.$hostkey,'Vitals',array('id'=>'pulseNvitals','class'=>'pulseNvitals showqtip','title'=>'View probes regarding cpu, memory, network etc')) ?></li>
                 <li><a href="#" id="notkeptlnk" title="Promises not kept in the past week" class="problems showqtip">Problems</a></li>
                 <p class="clearleft"></p>
             </ul>
@@ -39,14 +39,14 @@
                 $nlist =json_decode(cfpr_report_class_frequency($hostkey,"mXC.*"),true) ;
               //  echo cfpr_report_class_frequency($hostkey,"mXC.*");
                 ?>
-                <p>Total number under surveillance:<?php echo $number?><p>
+                <p>Total number under surveillance: <?php echo $number?><p>
                 <p>On this host: <?php
                 if(!empty($nlist)){
                 foreach((array)$nlist as $list)
                 {
                    if($list['count']>0)
                    {
-                   echo "<p>".$list['name'].":".$list['count']."</p>";
+                   echo "<p>".$list['name'].": ".$list['count']."</p>";
                    }
                    else
                    {
@@ -63,9 +63,9 @@
          <div id="statusmeasured" class="innerdiv ">
                    <p class="title"> <img src= "<?php echo get_imagedir().$colour?>_square_little.png" class="hoststatcolorsquare"/>Status (measured)</p>
               
-               <p><label class="width_20">Average Load:</label><label ><?php echo $load?>%</label></p>
-               <p> <label class="width_20">Average Free Disk:</label><label><?php echo $free?>%</label></p>
-               <p><label class="width_20">Average network speed:</label><label><?php echo  $speed?></label></p>
+               <p><label class="width_20">Average Load: </label><label ><?php echo $load?>%</label></p>
+               <p> <label class="width_20">Average Free Disk: </label><label><?php echo $free?>%</label></p>
+               <p><label class="width_20">Average network speed: </label><label><?php echo  $speed?></label></p>
                     
            </div>
     </div>
@@ -78,7 +78,7 @@
             <div id="hostinformation" class="innerdiv">
                 
                
-                    <p class="title"> <img src= "<?php echo get_imagedir().$colour?>_square_little.png" class="hoststatcolorsquare"/>Host Details (discovered)</p>
+                    <p class="title"> <img src= "<?php echo get_imagedir().$colour?>_square_little.png" class="hoststatcolorsquare"/>Host details (discovered)</p>
                      <form  id="delform"method="post" action="/welcome/host">
                      <input type="hidden" name="delhost" id="delhost" value="<?php echo $hostkey?>"/>
                      <input class="btn"  type="submit" id="btnsubmit"  value="Delete this host"/>

@@ -4,12 +4,12 @@
             <div id="pie-charts">
 
                 <div id="business-value-pie-chart-container" class="grid_4">
-                    <p class="title">Business Value</p>
+                    <p class="title">Business value</p>
                     <div id="business-value-pie-chart" style="height: 120px;width:300px;">
                     </div>
                 </div>
                 <div id="compliance-value-pie-chart-container" class="grid_4 push_1" style="margin-bottom: 15px">
-                    <p class="title">Host Status</p>
+                    <p class="title">Host status</p>
                     <div id="compliance-now-pie-chart" style="height: 120px; width:300px;">
                     </div>
                 </div>
@@ -17,7 +17,7 @@
 
         </div>
         <div id="compliance" class="innerdiv">
-            <p class="title">Compliance Summary</p>
+            <p class="title">Compliance summary</p>
             <div id="environment-list">
                 <ul>
                     <li><!-- chrome fix --></li>

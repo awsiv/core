@@ -41,20 +41,16 @@
                       
                         <tr>
                             <td>
-                                <span style="width:15px;display: inline-block;text-align: left;" class="greenhost">&nbsp;</span>
-                              <span style="float: right; clear: both;">            
-                                <?php echo $result['kept']; ?>
-                                </span>
-                               
+                                <span style="width:15px;display: inline-block;text-align: left;height: 15px;" class="greenhost"></span><span style="float: right;"><?php echo $result['kept']; ?></span>                               
                             </td>
                             <td>
-                                <span style="width:15px;display: inline-block" class="yellowhost">&nbsp;</span><span style="float: right; clear: both;"><?php echo $result['repaired']; ?></span></td>
+                                <span style="width:15px;display: inline-block;height: 15px;" class="yellowhost"></span><span style="float: right; clear: both;"><?php echo $result['repaired']; ?></span></td>
                             <td>
-                                <span style="width:15px;display: inline-block" class="redhost">&nbsp;</span><span style="float: right; clear: both;"><?php echo $result['not_kept']; ?></span></td>
+                                <span style="width:15px;display: inline-block" class="redhost"></span><span style="float: right; clear: both;"><?php echo $result['not_kept']; ?></span></td>
                              <td style="text-align: right; ">
                                 <?php echo $result['host_count']; ?></td>
                             <td>
-                                <span style="width:15px;display: inline-block" class="bluehost">&nbsp;</span><span style="float: right; clear: both;"> <?php echo $result['code_blue']; ?></span></td>
+                                <span style="width:15px;display: inline-block" class="bluehost"></span><span style="float: right; clear: both;"> <?php echo $result['code_blue']; ?></span></td>
                            
                             <td style="text-align: center; ">
                                  <?php echo getDateStatus($result['start'],true); ?> -  <?php echo getDateStatus($result['end'],true); ?></td>

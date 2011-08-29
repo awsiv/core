@@ -6,7 +6,7 @@
 
 <div id="body" class="outerdiv grid_12">
             <div id="topn" class="innerdiv tables">
-                <p class="title">Weakest Hosts</p>
+                <p class="title">Weakest hosts</p>
                 <table>
                     <thead></thead>
                     <?php foreach ((array)$ret['data'] as $index=>$val) {

@@ -24,7 +24,7 @@
                                 <a href="<?php echo site_url() . "/search/index/" . $search->getUrl(); ?>" target="_self"> Run this search</a>
                             </td>
                             <td>
-                                <a class="jDelete" href="<?php echo site_url() . "/savedsearch/delete/" . $search->getId(); ?>" target="_self">delete this search</a>
+                                <a class="jDelete" href="<?php echo site_url() . "/savedsearch/delete/" . $search->getId(); ?>" target="_self">Delete this search</a>
                             </td>
                         </tr>
                     <?php } ?>
