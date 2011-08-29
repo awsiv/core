@@ -210,21 +210,28 @@ class Auth_Ldap {
 
             // Now actually try to bind as the user using default binddn if anom bind possible grab the dn form ldap
             $binddn = $this->login_attribute . '=' . $username . ',' . $this->users_directory . ',' . $this->basedn;
+            try{
             $bind = cfpr_ldap_authenticate($this->ldap_url, $binddn, $password);
-            if (!$bind) {
-                $this->_audit("Failed login attempt: " . $username . " from " . $_SERVER['REMOTE_ADDR']);
-                 $this->set_error('unsucessful_ldap_bind');
-                return FALSE;
-            } else {
-                $details = $this->get_details_for_user($username, $password);
-                if (count($details) == 0) {
-                    $this->set_error('no_entries_found');
-                    return False;
-                }
             }
-            $cn = $details[0]['displayname'];
+            catch(Exception $e){
+              log_message('error', 'Unable to perform LDAP bind, '.$e->getMessage());
+              $this->set_error('ldap_conf_error');
+              return FALSE;
+            }
+                if (!$bind) {
+                    log_message('error', 'Unable to perform LDAP bind, Invalid credentials');
+                    $this->set_error('ldap_login_error');
+                    return FALSE;
+                } else {
+                    $details = $this->get_details_for_user($username, $password);
+                    if (count($details) == 0) {
+                        $this->set_error('no_entries_found');
+                        return False;
+                    }
+                }
+            $cn = key_exists('displayname', $details[0])?$details[0]['displayname']:"";
             $dn = $this->login_attribute . '=' . $username . ',' . $this->users_directory . ',' . $this->basedn;
-            $id = $details[0]['name'];
+            $id = key_exists('name', $details[0])?$details[0]['name']:"";
         }
 
         $roles = array();
@@ -340,11 +347,20 @@ class Auth_Ldap {
         } else {
             $binddn = $this->ad_domain . '\\' . $username;
         }
-        $bind = cfpr_ldap_authenticate($this->ldap_url, $binddn, $password);
+        
+        try{
+            $bind = cfpr_ldap_authenticate($this->ldap_url, $binddn, $password);
+            }
+            catch(Exception $e){
+              //$this->_audit($e->getMessage().": Failed login attempt: " . $username . " from " . $_SERVER['REMOTE_ADDR']);
+              $this->set_error('active_dir_conf_error');
+              log_message('error', 'Unable to perform Active directory bind, '.$e->getMessage(). $e->getLine());
+              return FALSE;
+          }
         //$bind = @ldap_bind($this->ldapconn, $binddn, $password);
         if (!$bind) {
-            log_message('error', 'Unable to perform Active directory bind');
-            $this->set_error("unsucessful_active_directory_bind");
+             $this->set_error('active_dir_login_error');
+            log_message('error', 'Unable to perform Active directory bind, Invalid credentials');
             return FALSE;
         }
         return TRUE;
@@ -532,7 +548,8 @@ class Auth_Ldap {
       } */
 
     function cfpr_ldap_search($user_dn, $password, $filter, $fields, $dn) {
-        $result = cfpr_ldap_get_several_attributes($this->ldap_url,
+        try{
+             $result = cfpr_ldap_get_several_attributes($this->ldap_url,
                         $user_dn,
                         $dn,
                         $filter,
@@ -540,6 +557,11 @@ class Auth_Ldap {
                         "subtree",
                         "sasl",
                         $password, 1, 100);
+           }catch(Exception $e){
+           $this->set_error('ldap_value_grabbing_error');
+           log_message('error', 'Error grapping value from directory service '.$e->getMessage().'  '.$e->getLine() );
+           return;
+         }
         $temp_array = explode(',', $fields);
         foreach($temp_array as $val){
             $fields_array[]=strtolower($val);
@@ -565,7 +587,8 @@ class Auth_Ldap {
     }
 
     function cfpr_ldap_single_search($user_dn, $password, $filter, $field, $dn) {
-        $result = cfpr_ldap_get_single_attribute_list(
+        try{
+              $result = cfpr_ldap_get_single_attribute_list(
                         $this->ldap_url,
                         $user_dn,
                         $dn,
@@ -574,6 +597,13 @@ class Auth_Ldap {
                         "subtree",
                         "sasl",
                         $password, 1, 100);
+            
+       }catch(Exception $e){
+            $this->set_error('ldap_value_grabbing_error');
+            log_message('error', 'Error grapping value from directory service '.$e->getMessage().'  '. $e->getLine());
+             //$this->set_error($e->getMessage());
+             return array();
+       }
         $ret = json_decode($result);
         if (is_array($ret)) {
             return $ret;

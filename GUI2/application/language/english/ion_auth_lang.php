@@ -67,11 +67,14 @@ $lang['login_mode_changed']          =  'The mode of authentication is changed ,
 
 //ldap related
 $lang['error_loading_application_setting']    = "Error loading Application settings from database";
-$lang['no_entries_found']                            ="Cannot find any entry in database";
-$lang['unsucessful_active_directory_bind']   ="Invalid credential or Configuration, Unable to authenticate using Active directory as backend.";
+$lang['no_entries_found']                            ="Cannot find any entry, please adjust the parameters value";
+$lang['active_dir_conf_error']                    ="Invalid values detected in the configuration ,please check the log file" ;
+$lang['active_dir_login_error']                   ="Invalid Active Directory credentials supplied";
+$lang['ldap_conf_error']                             ="Invalid values detected in the configuration ,please check the log file ";
+$lang['ldap_login_error']                            ="Invalid LDAP credentials supplied";
 $lang['Internal_Ldap_module_error']            ="Please check credentials and Configuration for the ldap, Ldap module error";
-$lang['unsucessful_ldap_bind']                    ="Invalid credential or Configuration, Unable to authenticate using Open LDAP as backend";
 $lang['successful_bind']                             ="Sucessfully Authenticated against the desired directory server";
+$lang['ldap_value_grabbing_error']             =" Cannot fetch some attributes value , please correct the attribute names";
 
 //login page message
 $lang['login_database'] ='Using Internal database as backend for authentication';

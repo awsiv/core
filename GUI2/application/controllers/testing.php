@@ -666,17 +666,26 @@ class Testing extends CI_Controller {
     }
 
     function test_get_details_ldap_users() {
-        $result = cfpr_ldap_get_several_attributes("ldap://10.0.0.35", "sudhir@windows1.test.cfengine.com", "cn=users,dc=windows1,dc=test,dc=cfengine,dc=com", "(samaccountname=sudhir)", "sAMAccountName,cn,distinguishedName", "subtree", "sasl", "Cf3ng1n3", 1, 100);
+        $result = cfpr_ldap_get_several_attributes("ldap://10.0.0.35", 
+                    "sudhir@windows1.test.cfengine.com", 
+                    "cn=users,dc=windows1,dc=test,dc=cfengine,dc=com", 
+                    "(samaccountname=sudhir)", 
+                   "sAMAccountName,cn,distinguishedName",
+                   "subtree", "sasl", "Cf3ng1n3", 
+                 1, 100);
         /* $this->load->library('Auth_Ldap');
           $result=$this->auth_ldap->get_details_for_user('sudhir','Cf3ng1n3'); */
         var_dump($result);
     }
 
     function test_get_all_adgroups() {
-        $result = cfpr_ldap_get_several_attributes("ldap://10.0.0.35", "sudhir@windows1.test.cfengine.com", "ou=groups,dc=windows1,dc=test,dc=cfengine,dc=com", "(objectCategory=Group)", "sAMAccountName", "subtree", "sasl", "Cf3ng1n3", 1, 100);
-        /* $this->load->library('Auth_Ldap');
-          $result=$this->auth_ldap->get_details_for_user('sudhir','Cf3ng1n3'); */
+        try{
+        $result = cfpr_ldap_get_several_attributes("ldap://10.0.0.37", "sudhir@windows1.test.cfengine.com", "ou=groups,dc=windows1,dc=test,dc=cfengine,dc=com", "(objectCategory=Group)", "sAMAccountName", "subtree", "sasl", "Cf3ng1n3", 1, 100);
         var_dump($result);
+        }
+        catch(Exception $e){
+            echo $e->getMessage();
+        }
     }
 
     function test_get_users_by_group() {
@@ -699,5 +708,7 @@ class Testing extends CI_Controller {
         );
         $this->load->view('auth/loginnew', $data);
     }
+    
+
 
 }

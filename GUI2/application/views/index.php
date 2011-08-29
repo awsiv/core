@@ -9,10 +9,10 @@
                   <div class="clear"></div>
                   <div class ="grid_8 push_2 dash">
                       <ul>
-                          <li><?php echo anchor('welcome/status','status',array('class'=>'status showqtip','title'=>tooltip('tooltip_statusroom')));?></li>
-                          <li><?php echo anchor('welcome/engg','engineering',array('class'=>'engineering showqtip','title'=>tooltip('tooltip_engineeringroom')));?></li>
-                          <li><?php echo anchor('welcome/planning','planning',array('class'=>'planning showqtip','title'=>tooltip('tooltip_planningroom')));?></li>
-                          <li><?php echo anchor('knowledge/index','library',array('class'=>'library showqtip','title'=>tooltip('tooltip_libraryroom')));?></li>
+                          <li><?php echo anchor('welcome/status','Status',array('class'=>'status showqtip','title'=>tooltip('tooltip_statusroom')));?></li>
+                          <li><?php echo anchor('welcome/engg','Engineering',array('class'=>'engineering showqtip','title'=>tooltip('tooltip_engineeringroom')));?></li>
+                          <li><?php echo anchor('welcome/planning','Planning',array('class'=>'planning showqtip','title'=>tooltip('tooltip_planningroom')));?></li>
+                          <li><?php echo anchor('knowledge/index','Library',array('class'=>'library showqtip','title'=>tooltip('tooltip_libraryroom')));?></li>
                           <p class="clearleft"></p>
                       </ul>
                   </div>                  
