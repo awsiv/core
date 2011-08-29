@@ -835,7 +835,7 @@ int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *authdn,char *basedn,char *f
   BerElement *ber;
   struct berval **vals;
   char **referrals;
-  int version,i,ret,parse_ret,num_entries = 0,num_refs = 0,notdone=true;
+  int version,i,ret,parse_ret,num_entries = 0,num_refs = 0,notdone=false;
   char *a, *dn, *matched_msg = NULL, *error_msg = NULL;
   int scope = NovaStr2Scope(scopes), count;
   struct Rlist *master = NULL,*rp,*dn_rp;
@@ -1047,6 +1047,8 @@ for (rp = master; rp != NULL; rp=rp->next,count++)
       snprintf(work,CF_BUFSIZE,"\"%s\" : %d",(char *)ap->lval,count);
       }
    Join(buffer,work,bufsize);
+   
+   notdone = true;
    }
 snprintf(work,CF_BUFSIZE,"}, \"data\" : [");
 Join(buffer,work,bufsize);
