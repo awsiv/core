@@ -151,9 +151,7 @@ for (op = occurrences; op != NULL; op=op->next)
       }
    }
 
-//
-
-// Occurrences
+// Inferences
 
 mongo_remove(&dbconn,MONGO_KM_INFERENCES,bson_empty(&b));
 
