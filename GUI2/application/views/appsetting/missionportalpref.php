@@ -37,48 +37,63 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
 </p>
 
 <p>
-        <label for="base_dn">base dn <span class="required"></span></label>
+        <label for="base_dn">Base dn <span class="required"></span></label>
         <?php echo tooltip('tooltip_base_dn','',true) ; // echo form_error('base_dn'); ?>
         <input id="base_dn" type="text" name="base_dn" maxlength="50" value="<?php echo $base_dn; ?>"  />
 </p>
 
 <p>
-        <label for="login_attribute">login attribute <span class="required"></span></label>
+        <label for="login_attribute">Login attribute <span class="required"></span></label>
         <?php echo tooltip('tooltip_login_attr','',true) ;// echo form_error('login_attribute'); ?>
         <input id="login_attribute" type="text" name="login_attribute"  value="<?php echo $login_attribute; ?>"  />
 </p>
 
 <p>
-        <label for="users_directory">user directory <span class="required"></span></label>
+        <label for="users_directory">User directory <span class="required"></span></label>
         <?php echo tooltip('tooltip_user_dir','',true) ;// echo form_error('login_attribute'); ?>
         <input id="users_directory" type="text" name="users_directory"  value="<?php echo $users_directory ?>"  />
 </p>
 
 <p id="member_attribute_related">
-        <label for="member_attribute">member attribute <span class="required"></span></label>
+        <label for="member_attribute">Member attribute <span class="required"></span></label>
         <?php echo tooltip('tooltip_member_attr','',true) ;//echo form_error('member_attribute'); ?>
         <input id="member_attribute" type="text" name="member_attribute"  value="<?php echo $member_attribute ?>"  />
 </p>
 
 
 <p id="adrelated">
-        <label for="active_directory_domain">active directory domain <span class="required"></span></label>
+        <label for="active_directory_domain">Active directory domain <span class="required"></span></label>
         <?php echo tooltip('tooltip_ad_domain_name','',true) ;// echo form_error('active_directory_domain'); ?>
         <input id="active_directory_domain" type="text" name="active_directory_domain"  value="<?php echo $active_directory_domain  ?>"  />
+</p>
+
+<p>
+   <label for="encryption">Encryption<span class="required"></span></label>
+        <?php  // echo form_error('mode'); ?>
+      
+                <?php // Change or Add the radio values/labels/css classes to suit your needs ?>
+                     <input id="sec1" name="encryption" type="radio" class="" value="plain" <?php echo (isset($plain))?$plain:$this->form_validation->set_radio('encryption', 'plain') ; ?>/>
+                     <label for="encryption" class="">plain</label>
+
+                   <input id="sec2" name="encryption" type="radio" class="" value="ssl" <?php echo (isset($ssl))?$ssl:$this->form_validation->set_radio('encryption', 'ssl'); ?> />
+        	  <label for="encryption" class="">ssl</label>
+
+                   <input id="sec3" name="encryption" type="radio" class="" value="start_tls" <?php echo (isset($start_tls))?$start_tls:$this->form_validation->set_radio('encryption', 'start_tls') ; ?> />
+                  <label for="encryption" class="">start TLS</label>
 </p>
 
 <p><label></label> <a class="btn" id="testsettings" href="<?php echo site_url('settings/ldaptest')?>">Test it </a></p>
 </fieldset>
 <p>
     
-    <label for="fall back for">Fall back for group ( if Authentication Server Down)<span class="required"></span></label>
+    <label for="fall back for">Fall back for group ( if authentication server down)<span class="required"></span></label>
     <?php echo tooltip('tooltip_fall_back','',true) ;// echo form_error('active_directory_domain'); ?>
     <?php echo form_dropdown('fall_back_for', $groups, $fall_back_for?$fall_back_for:'select');?>
 </p>
 
  <?php if(isset( $groupsacc)){?>
 <p>
-    <label for="fall back for">Admin Group<span class="required"></span></label>
+    <label for="fall back for">Admin group<span class="required"></span></label>
    <?php echo tooltip('tooltip_admin_grp','',true) ;// echo form_error('active_directory_domain'); ?>
    <?php  echo form_dropdown('admin_group', $groupsacc, $admin_group?$admin_group:'select');?>
 </p>
@@ -125,15 +140,16 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
       $('#testsettings').bind('click',function(event){
           event.preventDefault();
           $(this).ajaxyDialog({title:'LDAP Test',clickData:{
-             'mode':$("input[@name='mode']:checked").val(),
+             'mode':$("input:radio[name=mode]:checked").val(),
              'host':$("#host").val(),
              'basedn':$("#base_dn").val(),
              'login_attr':$("#login_attribute").val(),
              'user_dir':$("#users_directory").val(),
              'member_attr':$("#member_attribute").val(),
-             'addomain':$("#active_directory_domain").val()
+             'addomain':$("#active_directory_domain").val(),
+             'encryption':$("input:radio[name=encryption]:checked").val()
          }}).ajaxyDialog('open');
-
+       
       });
     <?php if ($this->setting_lib->get_tooltips_status()) { ?>   
     $('span.hint').each(function() // Find all inputs with formtip spans next to them

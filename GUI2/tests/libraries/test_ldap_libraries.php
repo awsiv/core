@@ -47,6 +47,7 @@ private $dn='CN=Sudhir Pandey,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com';
                                 'member_attr'=>$this->_ci->auth_ldap->get_member_attr(),
                                'ad_domian'=>$this->_ci->auth_ldap->get_ad_domain() ,
                                'mode'=>$this->_ci->auth_ldap->get_mode(),
+                               'encryption'=>$this->_ci->auth_ldap->get_encryption()
                         );
         $this->dump($settings);
     }

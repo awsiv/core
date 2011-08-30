@@ -19,6 +19,8 @@ class Auth_Ldap {
     protected $users_directory;
     protected $member_attribute;
     protected $ad_domain;
+    protected $encryption;
+    protected $cause= array();
 
     function __construct() {
         $this->ci = & get_instance();
@@ -64,7 +66,7 @@ class Auth_Ldap {
             $this->set_error("error_loading_application_setting");
             return false;
         }
-
+       
         $this->hosts = $appsettings->host;
         $this->basedn = trim($appsettings->base_dn);
         $this->login_attribute = trim($appsettings->login_attribute);
@@ -89,7 +91,27 @@ class Auth_Ldap {
         
         $this->users_directory = $appsettings->users_directory;
         $this->renamedfields = array(strtolower($this->login_attribute) => 'name', 'mail' => 'email', 'cn' => 'displayname', 'givenname' => 'name');
-        $this->ldap_url = "ldap://" . $this->hosts;
+       
+        /**
+         * Deciding what encryption method is used
+         */
+         $this->use_ssl=false;
+         $this->use_starttls=false;
+        (isset($appsettings->encryption))?$this->encryption=$appsettings->encryption:$this->encryption='plain'; 
+         if($this->encryption=='ssl'){
+                $this->use_ssl=true;
+            }elseif($this->encryption=='start_tls'){
+               $this->use_starttls=true;
+            }
+       
+        /**
+         * for creating ldap connection string depending on the value
+         */
+        if($this->use_ssl){
+            $this->ldap_url = "ldaps://" . $this->hosts;
+        }else{
+           $this->ldap_url = "ldap://" . $this->hosts;
+        }
 
         //$this//->proxy_user = property_exists($appsettings, 'proxy_user') ? $appsettings->proxy_user : "";
         // $this->proxy_pass = $this->ci->config->item('proxy_pass');
@@ -198,6 +220,7 @@ class Auth_Ldap {
                 $details = $this->get_details_for_user($username, $password);
                 if (empty($details)) {
                     $this->set_error('no_entries_found');
+                    log_message('error', 'Unable to find any entry may be due to in correct user directory or login attribute value');
                     return False;
                 }
             } else {
@@ -211,11 +234,17 @@ class Auth_Ldap {
             // Now actually try to bind as the user using default binddn if anom bind possible grab the dn form ldap
             $binddn = $this->login_attribute . '=' . $username . ',' . $this->users_directory . ',' . $this->basedn;
             try{
-            $bind = cfpr_ldap_authenticate($this->ldap_url, $binddn, $password);
-            }
+                     $bind = cfpr_ldap_authenticate($this->ldap_url, $binddn, $password,$this->use_starttls);
+              }
             catch(Exception $e){
-              log_message('error', 'Unable to perform LDAP bind, '.$e->getMessage());
-              $this->set_error('ldap_conf_error');
+              $this->set_error('ldap_conf_error', $e->getMessage());
+              if($e->getMessage()=='Invalid credentials'){
+                 log_message('error', 'Unable to perform LDAP bind due to invalid values either in user directory field or username and password, '.$e->getMessage().'  ' .$e->getLine());
+              }elseif($e->getMessage()=='Server is unavailable'){
+                 log_message('error', 'Unable to perform LDAP bind ,make sure the correct encryption is set and valid values supplied in hostname, '.$e->getMessage().'  ' .$e->getLine());
+              }else{
+                   log_message('error', 'Unable to perform LDAP bind, '.$e->getMessage().'  ' .$e->getLine());
+              }
               return FALSE;
             }
                 if (!$bind) {
@@ -225,6 +254,7 @@ class Auth_Ldap {
                 } else {
                     $details = $this->get_details_for_user($username, $password);
                     if (count($details) == 0) {
+                        log_message('error', 'Unable to find any entry may be due to in correct user directory or login attribute value');
                         $this->set_error('no_entries_found');
                         return False;
                     }
@@ -342,19 +372,24 @@ class Auth_Ldap {
       } */
 
     private function _set_up_ADconnection($username, $password) {
-        if (preg_match('/^(\w+\.)+\w{2,4}$/', $this->ad_domain)) {
+        if (preg_match('/^(\w+\.)+\w{2,5}$/', $this->ad_domain)) {
             $binddn = $username . '@' . $this->ad_domain;
         } else {
             $binddn = $this->ad_domain . '\\' . $username;
         }
         
         try{
-            $bind = cfpr_ldap_authenticate($this->ldap_url, $binddn, $password);
+                $bind = cfpr_ldap_authenticate($this->ldap_url, $binddn, $password,$this->use_starttls);
             }
             catch(Exception $e){
-              //$this->_audit($e->getMessage().": Failed login attempt: " . $username . " from " . $_SERVER['REMOTE_ADDR']);
-              $this->set_error('active_dir_conf_error');
-              log_message('error', 'Unable to perform Active directory bind, '.$e->getMessage(). $e->getLine());
+              $this->set_error('active_dir_conf_error',$e->getMessage());
+              if($e->getMessage()=='Invalid credentials'){
+                 log_message('error', 'Unable to perform Active directory bind due to invalid values either in user directory field or username and password, '.$e->getMessage().'  ' .$e->getLine());
+              }elseif($e->getMessage()=='Server is unavailable'){
+                 log_message('error', 'Unable to perform Active directory bind ,make sure the correct encryption is set and valid values supplied in hostname, '.$e->getMessage().'  ' .$e->getLine());
+              }else{
+                   log_message('error', 'Unable to perform Active directory bind, '.$e->getMessage().'  ' .$e->getLine());
+              }
               return FALSE;
           }
         //$bind = @ldap_bind($this->ldapconn, $binddn, $password);
@@ -399,8 +434,8 @@ class Auth_Ldap {
         if ($this->use_ad) {
             $filter = "(&(objectCategory=person)(objectClass=user)(cn=*)(sAMAccountName=*))";
             $fields = "$this->login_attribute,cn,mail";
-            $dn = 'cn=users,' . $this->basedn;
-            if (preg_match('/^(\w+\.)+\w{2,4}$/', $this->ad_domain)) {
+            $dn = $this->users_directory . ',' . $this->basedn;
+            if (preg_match('/^(\w+\.)+\w{2,5}$/', $this->ad_domain)) {
                 $binddn = $username . '@' . $this->ad_domain;
             } else {
                 $binddn = $this->ad_domain . '\\' . $username;
@@ -429,7 +464,7 @@ class Auth_Ldap {
             $filter = '(&(objectCategory=group))';
             $fields = "sAMAccountName";
             $dn = "ou=groups," . $this->basedn;
-            if (preg_match('/^(\w+\.)+\w{2,4}$/', $this->ad_domain)) {
+            if (preg_match('/^(\w+\.)+\w{2,5}$/', $this->ad_domain)) {
                 $binddn = $username . '@' . $this->ad_domain;
             } else {
                 $binddn = $this->ad_domain . '\\' . $username;
@@ -452,7 +487,7 @@ class Auth_Ldap {
             $filter = '(member=' . $escaped . ')';
             $field = "cn";
             $dn = "ou=groups," . $this->basedn;
-            if (preg_match('/^(\w+\.)+\w{2,4}$/', $this->ad_domain)) {
+            if (preg_match('/^(\w+\.)+\w{2,5}$/', $this->ad_domain)) {
                 $binddn = $username . '@' . $this->ad_domain;
             } else {
                 $binddn = $this->ad_domain . '\\' . $username;
@@ -465,6 +500,10 @@ class Auth_Ldap {
             $field = "cn";
             $dn = $this->basedn;
             $result = $this->cfpr_ldap_single_search($userdn, $password, $filter, $field, $dn);
+            if(empty($result)){
+                $this->set_error('error_fetching_group', 'invalid member attribute or user attribute');
+                log_message('error', 'Error fetching groups from directory service  possibly due to invalid member attribute or user directory  value');
+            }
             return $result;
         }
     }
@@ -473,8 +512,8 @@ class Auth_Ldap {
         $filter = '(' . $this->login_attribute . '=' . $username . ')';
         if ($this->use_ad) {
             $fields = "givenName,cn,distinguishedName";
-            $dn = 'cn=users,' . $this->basedn;
-            if (preg_match('/^(\w+\.)+\w{2,4}$/', $this->ad_domain)) {
+            $dn = $this->users_directory . ',' . $this->basedn;
+            if (preg_match('/^(\w+\.)+\w{2,5}$/', $this->ad_domain)) {
                 $binddn = $username . '@' . $this->ad_domain;
             } else {
                 $binddn = $this->ad_domain . '\\' . $username;
@@ -556,10 +595,10 @@ class Auth_Ldap {
                         $fields,
                         "subtree",
                         "sasl",
-                        $password, 1, 100);
+                        $password, 1, 100,$this->use_starttls);
            }catch(Exception $e){
-           $this->set_error('ldap_value_grabbing_error');
-           log_message('error', 'Error grapping value from directory service '.$e->getMessage().'  '.$e->getLine() );
+           $this->set_error('ldap_value_grabbing_error',$e->getMessage());
+           log_message('error', 'Error grapping value from directory service, '.$e->getMessage().'  '.$e->getLine() );
            return;
          }
         $temp_array = explode(',', $fields);
@@ -596,11 +635,11 @@ class Auth_Ldap {
                         $field,
                         "subtree",
                         "sasl",
-                        $password, 1, 100);
+                        $password, 1, 100,$this->use_starttls);
             
        }catch(Exception $e){
-            $this->set_error('ldap_value_grabbing_error');
-            log_message('error', 'Error grapping value from directory service '.$e->getMessage().'  '. $e->getLine());
+            $this->set_error('ldap_value_grabbing_error',$e->getMessage());
+            log_message('error', 'Error grapping value from directory service, '.$e->getMessage().'  '. $e->getLine());
              //$this->set_error($e->getMessage());
              return array();
        }
@@ -617,8 +656,9 @@ class Auth_Ldap {
         return TRUE;
     }
 
-    public function set_error($error) {
+    public function set_error($error,$cause="") {
         $this->errors[] = $error;
+        $this->cause[]=$cause;
         return $error;
     }
 
@@ -628,8 +668,10 @@ class Auth_Ldap {
 
     public function errors() {
         $_output = '';
+        $i=0;
         foreach ($this->errors as $error) {
-            $_output .= $this->error_start_delimiter . $this->ci->lang->line($error) . $this->error_end_delimiter;
+            $_output .= $this->error_start_delimiter . $this->cause[$i] .', '.$this->ci->lang->line($error) .$this->error_end_delimiter;
+            $i++;
         }
         return $_output;
     }
@@ -698,6 +740,23 @@ class Auth_Ldap {
     public function get_mode() {
         return $this->mode;
     }
+    
+    public function get_encryption(){
+        return $this->encryption;
+    }
+    
+    public function set_encryption($mode){
+        $this->encryption=$mode;
+         if($this->encryption=='ssl'){
+            $this->use_ssl=true;
+            $this->ldap_url = "ldaps://" . $this->hosts;
+        }elseif($this->encryption=='start_tls'){
+           $this->use_starttls=true;
+        }else{
+           $this->encryption='plain' ;
+        }
+    }
+    
 
 }
 

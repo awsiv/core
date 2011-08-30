@@ -40,6 +40,7 @@ class Settings extends Cf_Controller {
         $this->form_validation->set_rules('member_attribute', 'memberof attribute', 'xss_clean|trim' . $required_if_ldap);
         $this->form_validation->set_rules('fall_back_for', 'valid group', 'callback_required_valid_group');
         $this->form_validation->set_rules('admin_group', 'valid group', 'callback_required_valid_group');
+        $this->form_validation->set_rules('encryption', 'Encryption mode', 'xss_clean|trim'. $required_if_ldap . $required_if_ad);
         $this->form_validation->set_error_delimiters('<span>', '</span><br/>');
 
         if ($this->form_validation->run() == FALSE) { // validation hasn't been passed
@@ -67,7 +68,7 @@ class Settings extends Cf_Controller {
             $settings = $this->settings_model->get_app_settings();
             if (is_object($settings)) {// the information has therefore been successfully saved in the db
                 foreach ($settings as $property => $value) {
-                    if ($property == 'mode' || $property == 'active_directory') {
+                    if ($property == 'mode' || $property == 'active_directory'||$property=='encryption') {
                         $data[$value] = ' checked="checked"';
                         continue;
                     }
@@ -88,6 +89,7 @@ class Settings extends Cf_Controller {
                     //'active_directory' => set_value('active_directory'),
                     'active_directory_domain' => set_value('active_directory_domain'),
                     'member_attribute' => set_value('member_attribute'),
+                    'encryption' => set_value('encryption'),
                 );
                 $data=array_merge($form_data,$data);
             }
@@ -104,7 +106,8 @@ class Settings extends Cf_Controller {
                 'active_directory_domain' => set_value('active_directory_domain'),
                 'member_attribute' => set_value('member_attribute'),
                 'fall_back_for'=>$this->input->post('fall_back_for'),
-                'admin_group'=>$this->input->post('admin_group')
+                'admin_group'=>$this->input->post('admin_group'),
+                'encryption' => set_value('encryption')
             );
 
 // run insert model to write data to db
@@ -125,7 +128,7 @@ class Settings extends Cf_Controller {
                     'message' => '<p class="success"> Settings configured sucessfully</p>'
                 );
                 foreach ($form_data as $property => $value) {
-                    if ($property == 'mode') {
+                    if ($property == 'mode'||$property=='encryption') {
                         $data[$value] = ' checked="checked"';
                         continue;
                     }
@@ -196,6 +199,7 @@ class Settings extends Cf_Controller {
         $this->auth_ldap->set_user_dir($this->input->post('user_dir'));
         $this->auth_ldap->set_member_attr($this->input->post('member_attr'));
         $this->auth_ldap->set_ad_domain($this->input->post('addomain'));
+        $this->auth_ldap->set_encryption($this->input->post('encryption'));
 
         $result = $this->auth_ldap->login($this->input->post('username'), $this->input->post('password'));
 //print_r($result);
@@ -204,13 +208,8 @@ class Settings extends Cf_Controller {
            $message.=" <p class=\"success\">".$this->lang->line('successful_bind')."</p>";
         } 
         
-        if(count($this->auth_ldap->get_unformatted_error())>0) {
-             $message.="<p class=\"error\">";
-             foreach((array)$this->auth_ldap->get_unformatted_error() as $error){
-                      $message.=$this->lang->line($error);
-            }
-            $message.="</p>"; 
-        }
+        $this->auth_ldap->set_error_delimiters('<p class="error">','</p>');
+        $message.=$this->auth_ldap->errors();
         
         $message.="</div>";
         echo $message;

@@ -25,7 +25,7 @@
                                         if($no_of_elements==0)
                                             echo $group;
                                         else
-                                             echo $group.",";
+                                             echo $group.", ";
                                     }
                                 }
                                 else
