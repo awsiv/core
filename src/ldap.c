@@ -18,7 +18,7 @@
 #ifdef HAVE_LIBLDAP
 
 /* Prototypes */
-LDAP *NovaQueryLDAP(char *uri,char *basedn,char *sec,char *pwd, int *errcode);
+LDAP *NovaQueryLDAP(char *uri,char *basedn,char *sec,char *pwd, bool starttls, const char **errstr);
 void *CfLDAPValue(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec);
 void *CfLDAPList(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec);
 void *CfLDAPArray(char *array,char *uri,char *basedn,char *filter,char *scopes,char *sec);
@@ -50,7 +50,7 @@ if (LICENSES == 0)
    return NULL;
    }
 
-if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL,NULL)) == NULL)
+if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL,false,NULL)) == NULL)
    {
    return NULL;
    }
@@ -230,7 +230,7 @@ if (LICENSES == 0)
    return NULL;
    }
 
-if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL,NULL)) == NULL)
+if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL,false,NULL)) == NULL)
    {
    return NULL;
    }
@@ -402,7 +402,7 @@ if (LICENSES == 0)
    return NULL;
    }
 
-if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL,NULL)) == NULL)
+if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL,false,NULL)) == NULL)
    {
    return NULL;
    }
@@ -591,7 +591,7 @@ if (LICENSES == 0)
    return NULL;
    }
 
-if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL,NULL)) == NULL)
+if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL,false,NULL)) == NULL)
    {
    return NULL;
    }
@@ -757,30 +757,10 @@ return NULL;
 
 #ifdef HAVE_LIBLDAP
 
-bool CfLDAPAuthenticate(char *uri,char *basedn,char *passwd, const char **const errstr)
+bool CfLDAPAuthenticate(char *uri,char *basedn,char *passwd, bool starttls, const char **const errstr)
 
 {
-LDAP *ld;
-int errcode;
-
-if ((ld = NovaQueryLDAP(uri, basedn, "sasl", passwd, &errcode)) != NULL)
-   {
-   *errstr = NULL;
-   return true;
-   }
-else
-   {
-   if (errcode == LDAP_INVALID_CREDENTIALS)
-      {
-      *errstr = NULL;
-      return false;
-      }
-   else
-      {
-      *errstr = ldap_err2string(errcode);
-      return false;
-      }
-   }
+return NovaQueryLDAP(uri, basedn, "sasl", passwd, starttls, errstr) != NULL;
 }
 
 /*****************************************************************************/
@@ -827,7 +807,7 @@ void test(void)
 
 /*****************************************************************************/
 
-int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *authdn,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize, const char **const errstr)
+int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *authdn,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,bool starttls,int page,int linesperpage,char *buffer, int bufsize, const char **const errstr)
 
 { LDAP *ld;
   LDAPMessage *res, *msg;
@@ -842,8 +822,6 @@ int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *authdn,char *basedn,char *f
   struct Item *ip;
   struct CfAssoc *ap;
   char work[CF_BUFSIZE];
-  int errcode;
-
 
 if (page == 0)
    {
@@ -855,9 +833,8 @@ if (linesperpage == 0)
    linesperpage = 1000;
    }
   
-if ((ld = NovaQueryLDAP(uri,authdn,sec,passwd,&errcode)) == NULL)
+if ((ld = NovaQueryLDAP(uri,authdn,sec,passwd,starttls,errstr)) == NULL)
    {
-   *errstr = ldap_err2string(errcode);
    return -1;
    }
 
@@ -1107,7 +1084,7 @@ return 0;
 
 #else /* HAVE_LIBLDAP */
 
-int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *user,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize, const char **const errstr)
+int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *user,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,bool starttls,int page,int linesperpage,char *buffer, int bufsize, const char **const errstr)
 
 {
 *errstr = "LDAP support is disabled";
@@ -1121,7 +1098,7 @@ return -1;
 
 #ifdef HAVE_LIBLDAP
 
-int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *authdn,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize, const char **const errstr)
+int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *authdn,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,bool starttls,int page,int linesperpage,char *buffer, int bufsize, const char **const errstr)
 
 { LDAP *ld;
   LDAPMessage *res, *msg;
@@ -1134,7 +1111,6 @@ int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *authdn,char *basedn,char 
   int scope = NovaStr2Scope(scopes),count = 0;
   struct Rlist *return_value = NULL,*rp;
   char work[CF_BUFSIZE];
-  int errcode;
 
 if (page == 0)
    {
@@ -1146,9 +1122,8 @@ if (linesperpage == 0)
    linesperpage = 1000;
    }
     
-if ((ld = NovaQueryLDAP(uri,authdn,sec,passwd,&errcode)) == NULL)
+if ((ld = NovaQueryLDAP(uri,authdn,sec,passwd,starttls,errstr)) == NULL)
    {
-   *errstr = ldap_err2string(errcode);
    return -1;
    }
 
@@ -1156,7 +1131,7 @@ if ((ret = ldap_search_ext_s(ld,basedn,scope,filter,NULL,0,NULL,NULL,NULL,LDAP_N
    {
    CfOut(cf_error,""," !! LDAP search failed: %s\n",ldap_err2string(ret));
    ldap_unbind(ld);
-   *errstr = ldap_err2string(errcode);
+   *errstr = ldap_err2string(ret);
    return -1;
    }
 
@@ -1338,20 +1313,39 @@ return 0;
 
 #ifdef HAVE_LIBLDAP
 
-LDAP *NovaQueryLDAP(char *uri,char *basedn,char *sec,char *password, int *errcode)
+LDAP *NovaQueryLDAP(char *uri,char *basedn,char *sec,char *password, bool starttls, const char **const errstr)
 
-{ LDAP *ld;
-  char *matched_msg = NULL, *error_msg = NULL;
-  int ret,version;
-  struct berval passwd = { strlen(password), password };
+{
+LDAP *ld;
+char *matched_msg = NULL, *error_msg = NULL;
+int ret,version;
+struct berval passwd = { strlen(password), password };
+
+int zz = 0xffff;
+ldap_set_option(NULL, LDAP_OPT_DEBUG_LEVEL, &zz);
+
+/* TLS options need to be set up before opening a connection */
+
+/* Do not check supplied certificate -- we don't have CA certificate storage */
+int never = LDAP_OPT_X_TLS_NEVER;
+if ((ret = ldap_set_option(NULL, LDAP_OPT_X_TLS_REQUIRE_CERT, &never)) != LDAP_SUCCESS)
+   {
+   if (errstr)
+      {
+      *errstr = ldap_err2string(ret);
+      }
+   CfOut(cf_error, "", "Unable to set global LDAP TLS options: %s",
+         ldap_err2string(ret));
+   return NULL;
+   }
 
 /* Get a handle to an LDAP connection. */
 
 if ((ret = ldap_initialize(&ld,uri)) != LDAP_SUCCESS)
    {
-   if (errcode)
+   if (errstr)
       {
-      *errcode = ret;
+      *errstr = ldap_err2string(ret);
       }
    CfOut(cf_error,"","LDAP connection failed: %s", ldap_err2string(ret));
    return NULL;
@@ -1361,12 +1355,38 @@ version = LDAP_VERSION3;
 
 if ((ret = ldap_set_option(ld,LDAP_OPT_PROTOCOL_VERSION,&version)) != LDAP_SUCCESS)
    {
-   if (errcode)
+   if (errstr)
       {
-      *errcode = ret;
+      *errstr = ldap_err2string(ret);
       }
    CfOut(cf_error,"","Trouble setting LDAP option %s", ldap_err2string(ret));
    return NULL;
+   }
+
+if (starttls)
+   {
+   if ((ret = ldap_start_tls_s(ld, NULL, NULL)) != LDAP_SUCCESS)
+      {
+      if (errstr)
+         {
+         if (ret == LDAP_CONNECT_ERROR)
+            {
+            char *msg=NULL;
+            ldap_get_option( ld, LDAP_OPT_DIAGNOSTIC_MESSAGE, (void*)&msg);
+            //tool_perror( "ldap_start_tls", rc, NULL, NULL, msg, NULL );
+            *errstr = strdup(msg);
+            ldap_memfree(msg);
+            }
+         else
+            {
+            *errstr = ldap_err2string(ret);
+            }
+         }
+
+      CfOut(cf_error, "", "Unable to negotiate TLS encryption with LDAP server: %s",
+            ldap_err2string(ret));
+      return NULL;
+      }
    }
 
 /* Bind to the server anonymously. */
@@ -1384,18 +1404,18 @@ else
 
 if (ret != LDAP_SUCCESS)
    {
-   if (errcode)
+   if (errstr)
       {
-      *errcode = ret;
+      *errstr = ldap_err2string(ret);
       }
    CfOut(cf_inform,"","Trouble binding to LDAP: %s", ldap_err2string(ret));
    ldap_unbind(ld);
    return NULL;
    }
 
-if (errcode)
+if (errstr)
    {
-   *errcode = 0;
+   *errstr = ldap_err2string(ret);
    }
 return ld;
 }
