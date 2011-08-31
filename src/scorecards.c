@@ -445,19 +445,19 @@ struct Item *Nova_GreenHosts()
 
 { struct Item *ip,*hosts = NULL,*sorted = NULL;
 
- hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,0);
+hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,0);
 
- for (ip = hosts; ip != NULL; ip=ip->next)
-    {
-    if (Nova_IsGreen(ip->counter))
-       {
-       AppendItem(&sorted,ip->name,ip->classes);
-       }
-    }
+for (ip = hosts; ip != NULL; ip=ip->next)
+   {
+   if (Nova_IsGreen(ip->counter))
+      {
+      AppendItem(&sorted,ip->name,ip->classes);
+      }
+   }
 
- DeleteItemList(hosts);
- sorted = SortItemListNames(sorted);
- return sorted;
+DeleteItemList(hosts);
+sorted = SortItemListNames(sorted);
+return sorted;
 }
 
 /*****************************************************************************/
@@ -466,19 +466,19 @@ struct Item *Nova_YellowHosts()
 
 { struct Item *ip,*hosts = NULL,*sorted = NULL;
 
- hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,0);
+hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,0);
 
- for (ip = hosts; ip != NULL; ip=ip->next)
-    {
-    if (Nova_IsYellow(ip->counter))
-       {
-       AppendItem(&sorted,ip->name,ip->classes);
-       }
-    }
+for (ip = hosts; ip != NULL; ip=ip->next)
+   {
+   if (Nova_IsYellow(ip->counter))
+      {
+      AppendItem(&sorted,ip->name,ip->classes);
+      }
+   }
 
- DeleteItemList(hosts);
- sorted = SortItemListNames(sorted);
- return sorted;
+DeleteItemList(hosts);
+sorted = SortItemListNames(sorted);
+return sorted;
 }
 
 /*****************************************************************************/

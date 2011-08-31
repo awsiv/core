@@ -783,6 +783,7 @@ for (ip = worklist; ip !=  NULL; ip=ip->next)
    {
    Nova_FillInGoalComment(ip);
    }
+
 worklist = SortItemListNames(worklist);
 return worklist;
 }
@@ -928,13 +929,13 @@ for (rp = GOALCATEGORIES; rp != NULL; rp=rp->next)
    strcat(searchstring,work);
    }
 
-if(strlen(searchstring) > 1)
+if (strlen(searchstring) > 1)
    {
    searchstring[strlen(searchstring)-1] = '\0';
    }
 else
    {
-   snprintf(searchstring,CF_MAXVARSIZE-1,"%s",ip->name);
+   snprintf(searchstring,CF_MAXVARSIZE-1,"%s",CanonifyName(ip->name));
    }
 
 if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
