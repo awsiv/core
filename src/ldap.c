@@ -1315,12 +1315,17 @@ return 0;
 
 LDAP *NovaQueryLDAP(char *uri,char *basedn,char *sec,char *password, bool starttls, const char **const errstr)
 
-{
-LDAP *ld;
-char *matched_msg = NULL, *error_msg = NULL;
-int ret,version;
-struct berval passwd = { strlen(password), password };
+{ LDAP *ld;
+  char *matched_msg = NULL, *error_msg = NULL;
+  int ret,version;
+  int pwdLen = 0;
 
+if(password)
+  {
+  pwdLen = strlen(password);
+  }
+
+struct berval passwd = { pwdLen, password };
 int zz = 0xffff;
 ldap_set_option(NULL, LDAP_OPT_DEBUG_LEVEL, &zz);
 
