@@ -125,7 +125,7 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
   bson_append_int(&bb,cfr_valuereport,1);
   bson_from_buffer(&field, &bb);
 
-  cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,0);
+  cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
   bson_destroy(&field);
 
   now = time(NULL);
@@ -227,7 +227,7 @@ void CFDB_PurgeTimestampedLongtermReports(mongo_connection *conn)
   bson_append_int(&bb,cfr_filediffs,1);
   bson_from_buffer(&field, &bb);
 
-  cursor = mongo_find(conn,MONGO_ARCHIVE,&query,&field,0,0,0);
+  cursor = mongo_find(conn,MONGO_ARCHIVE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
   bson_destroy(&field);
 
   now = time(NULL);

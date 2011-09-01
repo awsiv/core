@@ -326,7 +326,7 @@ bson_buffer_init(&bb);
 bson_append_int(&bb,cfr_netmeasure,1);
 bson_from_buffer(&field,&bb);
 
-cursor = mongo_find(&dbconn,MONGO_DATABASE,&query,&field,0,0,0);
+cursor = mongo_find(&dbconn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
 if (mongo_cursor_next(cursor))  // not more than one record
    {

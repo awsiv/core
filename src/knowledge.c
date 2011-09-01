@@ -1528,7 +1528,7 @@ if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
    return NULL;
    }
   
-cursor = mongo_find(&conn,MONGO_DATABASE,bson_empty(&query),0,0,0,0);
+cursor = mongo_find(&conn,MONGO_DATABASE,bson_empty(&query),0,0,0,CF_MONGO_SLAVE_OK);
 
 while(mongo_cursor_next(cursor))  // loops over documents  
    {
@@ -1631,7 +1631,7 @@ if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
    return;
    }
   
-cursor = mongo_find(&conn,MONGO_DATABASE,bson_empty(&query),0,0,0,0);
+cursor = mongo_find(&conn,MONGO_DATABASE,bson_empty(&query),0,0,0,CF_MONGO_SLAVE_OK);
 
 while(mongo_cursor_next(cursor))  // loops over documents   
    {

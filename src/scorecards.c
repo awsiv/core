@@ -282,7 +282,7 @@ bson_from_buffer(&field, &bb);
 hostnames[0] = '\0';
 addresses[0] = '\0';
 
-cursor = mongo_find(&conn,MONGO_DATABASE,&query,&field,0,0,0);
+cursor = mongo_find(&conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 bson_destroy(&query);
 bson_destroy(&field);
 
@@ -564,7 +564,7 @@ bson_from_buffer(&field, &bb);
 hostnames[0] = '\0';
 addresses[0] = '\0';
 
-cursor = mongo_find(&conn,MONGO_DATABASE,bson_empty(&qe),&field,0,0,0);
+cursor = mongo_find(&conn,MONGO_DATABASE,bson_empty(&qe),&field,0,0,CF_MONGO_SLAVE_OK);
 bson_destroy(&field);
 
 

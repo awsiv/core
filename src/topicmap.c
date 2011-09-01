@@ -75,7 +75,7 @@ bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,0);
+cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 bson_destroy(&field);
 
 while (mongo_cursor_next(cursor))  // loops over documents
@@ -167,7 +167,7 @@ bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,0);
+cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 bson_destroy(&field);
 
 while (mongo_cursor_next(cursor))  // loops over documents
@@ -225,7 +225,7 @@ bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,0);
+cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 bson_destroy(&field);
 
 while (mongo_cursor_next(cursor))  // loops over documents
@@ -313,7 +313,7 @@ bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,0);
+cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 bson_destroy(&field);
 
 strcpy(buffer,"[ ");
@@ -481,7 +481,7 @@ bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,0);
+cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 bson_destroy(&field);
 
 while (mongo_cursor_next(cursor))  // loops over documents
@@ -603,7 +603,7 @@ bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-cursor = mongo_find(&conn,MONGO_KM_OCCURRENCES,&query,&field,0,0,0);
+cursor = mongo_find(&conn,MONGO_KM_OCCURRENCES,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 bson_destroy(&field);
 
 strcpy(buffer,"[ ");
@@ -745,7 +745,7 @@ bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-cursor = mongo_find(&conn,MONGO_KM_OCCURRENCES,&query,&field,0,0,0);
+cursor = mongo_find(&conn,MONGO_KM_OCCURRENCES,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 bson_destroy(&field);
 
 while (mongo_cursor_next(cursor))  // loops over documents
@@ -846,7 +846,7 @@ bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-cursor = mongo_find(&conn,MONGO_KM_OCCURRENCES,&query,&field,0,0,0);
+cursor = mongo_find(&conn,MONGO_KM_OCCURRENCES,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 bson_destroy(&field);
 
 strcpy(buffer,"[");
@@ -959,7 +959,7 @@ bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-cursor = mongo_find(&conn,MONGO_KM_OCCURRENCES,&query,&field,0,0,0);
+cursor = mongo_find(&conn,MONGO_KM_OCCURRENCES,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 bson_destroy(&field);
 
 while (mongo_cursor_next(cursor))  // loops over documents
@@ -1016,7 +1016,7 @@ bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-cursor = mongo_find(&conn,MONGO_KM_OCCURRENCES,&query,&field,0,0,0);
+cursor = mongo_find(&conn,MONGO_KM_OCCURRENCES,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 bson_destroy(&field);
 
 while (mongo_cursor_next(cursor))  // loops over documents
@@ -1483,7 +1483,7 @@ bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,0);
+cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 bson_destroy(&field);
 
 while (mongo_cursor_next(cursor))  // loops over documents
@@ -1597,7 +1597,7 @@ bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,0);
+cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 bson_destroy(&field);
 
 while (mongo_cursor_next(cursor))  // loops over documents

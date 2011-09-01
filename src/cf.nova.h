@@ -61,6 +61,7 @@
 # define MONGO_LOGS_NOTKEPT MONGO_BASE ".logs_nk"
 # define MONGO_NOTEBOOK MONGO_BASE ".notebook"
 #define MONGO_ARCHIVE MONGO_BASE ".archive"
+#define CF_MONGO_SLAVE_OK 4
 # include <mongo.h>
 #else
 # define mongo_connection char

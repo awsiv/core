@@ -2973,7 +2973,7 @@ void Nova2Txt_get_network_speed(char *hostkey,char *buffer, int bufsize)
  bson_append_int(&bb,cfr_netmeasure,1);
  bson_from_buffer(&field,&bb);
 
- cursor = mongo_find(&dbconn,MONGO_DATABASE,&query,&field,0,0,0);
+ cursor = mongo_find(&dbconn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
  bson_destroy(&query);
  bson_destroy(&field);
 

@@ -1789,7 +1789,7 @@ int CFDB_AddNote(mongo_connection *conn, char *keyhash, int reportType, char *ni
        bson_append_int(&bb,"_id",1);
        bson_from_buffer(&field, &bb);
        
-       cursor = mongo_find(conn, MONGO_NOTEBOOK, &host_key, &field,0,0,0);
+       cursor = mongo_find(conn, MONGO_NOTEBOOK, &host_key, &field,0,0,CF_MONGO_SLAVE_OK);
        MongoCheckForError(conn,"GetNoteID",keyhash,NULL);
        bson_destroy(&field);
        

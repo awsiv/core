@@ -4527,7 +4527,7 @@ void Nova2PHP_get_network_speed(char *hostkey,char *buffer, int bufsize)
  bson_append_int(&bb,cfr_netmeasure,1);
  bson_from_buffer(&field,&bb);
 
- cursor = mongo_find(&dbconn,MONGO_DATABASE,&query,&field,0,0,0);
+ cursor = mongo_find(&dbconn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
  bson_destroy(&query);
  bson_destroy(&field);
 
@@ -5969,7 +5969,7 @@ bson_buffer_init(&bb);
 bson_append_int(&bb, "kH", 1);
 bson_from_buffer(&fields, &bb);
 
-cursor = mongo_find(&dbconn, MONGO_DATABASE, &query, &fields, 0, 0, 0);
+cursor = mongo_find(&dbconn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
 bson_destroy(&query);
 bson_destroy(&fields);
