@@ -747,7 +747,6 @@ bundle agent cfengine_policysrv
 bundle edit_line apache_nova_conf(folder)
 {
  insert_lines:
-  am_hub_master::
 "<Directory \"$(folder)\">
   Options Indexes FollowSymLinks
   AllowOverride All
@@ -757,16 +756,6 @@ bundle edit_line apache_nova_conf(folder)
 AllowEncodedSlashes On",
    comment => "Create apache2 contents for a Master HUB",
     handle => "apache_nova_conf_insert_lines_am_hub_master";
-
-  !am_hub_master::
-"<Directory \"$(folder)\">
-  Options FollowSymLinks
-  AllowOverride None
-  RewriteEngine on
-  RewriteRule ^(.*)$(const.dollar) http://$(sys.hub_master)/$(const.dollar)1 [R=307,L,QSA]
-</Directory>",
-   comment => "Create apache2 contents for Slave HUBs",
-    handle => "apache_nova_conf_insert_lines_not_am_hub_master";
 }
 
 #
