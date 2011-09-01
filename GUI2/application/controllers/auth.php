@@ -141,7 +141,7 @@ class Auth extends Controller {
             $this->data['mode']=$this->lang->line('login_'.$mode);
             }
             else{
-               $this->data['mode']="No backend mentioned";
+               $this->data['mode']=$this->lang->line('login_mode_not_found');
             }
 
             $this->load->view('auth/login', $this->data);
