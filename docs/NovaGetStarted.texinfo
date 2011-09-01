@@ -20,7 +20,7 @@
 @setfilename novagetstarted.info
 @settitle Igniting CFEngine Nova
 @setchapternewpage odd
-@c %** end of header
+@c %** end of headerf
 
 @titlepage
 @title Igniting CFEngine Nova!
@@ -229,13 +229,11 @@ copy of the @file{license.dat} file in @file{/var/cfengine/inputs}
 created, and should contain data.
 
 @item  Finally, try to connect to the web server at port 80 on the hub / policy host.
-You should see a summary page like the one shown in the figure
-below. There should be at least 1 host registered, since the hub will
-pull reports from itself also.
+You should see a login screen, default user adn password is "admin" and "admin". See also separate document on the CFE Nova Mission Portal.
 @end enumerate
 
 @sp 1
-@center @image{summary,15cm,,The front page}
+@center @image{img-login,5cm,,The front page}
 @center The opening page of the CFEngine Nova Mission Portal.
 @sp 1
 

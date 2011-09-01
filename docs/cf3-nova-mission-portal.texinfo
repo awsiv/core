@@ -11,7 +11,7 @@
 @titlepage
 @title CFEngine Nova Mission Portal
 @subtitle CFEngine Enterprise Documentation
-@subtitle for version 2.1 alpha3, 8. Aug 2011
+@subtitle for version 2.1 beta1, 18. Aug 2011
 @author CFEngine
 @c @smallbook
 @fonttextsize 10
@@ -66,12 +66,11 @@ document is a supplement describing the graphical user interphase used in CFEngi
 
 Knowledge management has become a new focus in IT management, and it is a core focus at CFEngine.
 Comprehending the growing complexity of IT operations is one of the main challenges in IT today.
-CFEngine Nova has a number of key features for knowledge management, including automated docu-
-mentation, report generation and associative inference. The CFEngine Mission Portal is the centerpiece
+CFEngine Nova has a number of key features for knowledge management, including automated documentation, report generation and associative inference. The CFEngine Mission Portal is the centerpiece
 of user interaction with CFEngine Nova and can be accessed after the successful installation of the software on your hub server (policy host). Connect to the server (port 80) with your web browser (for example at http://123.456.789.123), you should see a login screen:
 
 @sp 1
-@center @image{img-mission-portal-login,5cm,,Mission Portal login}
+@center @image{img-login,5cm,,Mission Portal login}
 @center Figure: Mission Portal login screen
 @sp 1
 
@@ -121,7 +120,7 @@ through information.
 @node 
 @subsection Mission Status
 
-Mission status is a high level summary of how well the entire system is behaving. Note that the charts will show blank (black) after a fresh install. The Host Status will be populated first, followed by the Business Value and Compliance Summary charts after approximately 6 hours.
+Mission status is a high level summary of how well the entire system is behaving. 
 
 @sp 1
 @image{img-status,15cm,,Mission Status}
@@ -129,7 +128,7 @@ Mission status is a high level summary of how well the entire system is behaving
 @sp 1
 
 Business Value and Host Status:
-Pie charts show the business value of the promises kept/not kept as well as host status. Business value is associated with the value of promises as defined in user policy files. In the Host Status chart, each host represents a slice of the pie and is classified into red, yellow, green and blue according to the level of their compliance. A host is red if less than 80% of its promises are kept, yellow if less than 80% of its promises were initially kept, but CFEngine was able to repair to above 80% promises kept during a run, green if more than 80% of its promises are kept, and blue if there is no contact between the hub and the client host.
+The two pie charts show the business value of the promises kept/not kept and well as host status, respectively. Business value is associated with the value of promises as defined in policy files. In the Host Status chart, each host represents a slice of the pie and is classified into red, yellow, green and blue according to the level of their compliance. A host is red if less than 80% of its promises are kept, yellow if 20% or more of its promises were repaired and host is now compliant, green if more than 80% of its promises are kept, and blue if there is no contact between the hub and the client host.
 
 Compliance Summary:
 The row of bar meters shows the compliance of all registered hosts @footnote{Blue hosts will not appear here} in blocks of 6 hours for the past week. It summarizes performance and anomalous behavior in a simple red (prommises not kept), yellow (promises repaired) and green (promises kept) scale. Click on a bar to see which promises were kept/not kept.
@@ -149,17 +148,20 @@ Mission engineering illustrates the state of the system in relation to the desir
 @center Figure: Mission Engineering
 @sp 1
 
-Host Status:
-The hosts are classified into red, yellow, green and blue according to the status of their compliance. A host is red if less than 80% of its promises are kept, yellow if less than 80% of its promises were initially kept, but CFEngine was able to repair to above 80% promises kept during a run, green if more than 80% of its promises are kept, and blue if there is no contact between the hub and the client. Clicking on the colored links produces a list of the
-hosts in that category.
+@noindent Host Status:
+@itemize -
+@item The hosts are classified into red, yellow, green and blue according to the status of their compliance. A host is red if less than 80% of its promises are kept, yellow if 20% or more of its promises were repaired and host is now compliant, green if more than 80% of its promises are kept, and blue if there is no contact between the hub and the client. Clicking a link produces a list of the hosts in that category. 
+@item Worst available host rank: Display the weakest hosts (that have been in contact with the hub) over the last hour.
+@item Hub replication status: Display status of redundant monitoring hubs (if activated).
+@end itemize
 
-Averages summarizing all hosts:
+Promise compliance summary for all host(s):
 The row of bar meters shows the compliance of all registered hosts over the past
 week, the past day and the past hour. It also summarizes performance
 and anomalous behavior in a simple red (promises not kept), yellow (promises repaired), and green (promises kept) scale.
 
 Finders:
-The Mission Engineering room comes with five finder functions: host, class, promises, reports and summary reports (see section on Finders).
+The Mission Engineering room comes with six finder functions (modules that make it simple and intuitive to browse and search for objects of a particular type, see section on Finders): host, class, promises, reports, summary reports, and CDP (Content Driven Policies) reports.
 
 
 @page
@@ -174,7 +176,7 @@ Make changes to policies, goals determined by promises and implement specific ta
 @sp 1
 
 @noindent Policy Goals:
-List of policy goals as defined in user policy files; these examples are from @file{company_knowledge.cf}. Edit the file in the policy editor (Planning room -> repository) or edit the file in your own text editor. The "More..." button links  to the Service Catalogue, click to see which bundles contribute to these policy goals.
+List of policy goals as defined in policy files; these examples are from @file{company_knowledge.cf}. Edit the file in the policy editor (Planning room -> repository) or edit the file in your own text editor. The "More..." button links  to the Service Catalogue, click to see which bundles contribute to these policy goals.
 
 @noindent Action buttons:
 @itemize -
@@ -419,14 +421,23 @@ managed network must be running @code{cf-monitord} and @code{cf-serverd}.
 This is the default behavior for a Nova installation.
 
 @sp 1
-@center @image{img-vitalsviewer,15cm,,Host viewer}
-@center Figure: Host viewer
+@center @image{img-vitalsviewer,15cm,,Vital signs viewer}
+@center Figure: Vital signs viewer
 @sp 1
 
 @node
 @subsection Topics viewer (Knowledge map)
 
-The Topics viewer, or Knowledge map, is a sematic web of subject references and document pointers. It can be found by searching for a topic in the top right corner or through the topic finder in the Mission Library (this will sometimes also lead directly to a document or web page instead of the topic viewer).
+The Topics viewer, or Knowledge map, is a @i{sematic web} of subject references and document pointers. In a semantic web, you are presented with links to
+documents about your chosen topic, as usual; in addition you are
+offered @i{leads} and possible pathways to topics that are known to be
+related. These leads don't just point you to more documents, but
+explain @i{how} neighboring issues are related.  The aim is to help
+the user learn from the experience of browsing, by conveying the
+meaning of the current topic in relation to other issues in the
+system. This is how @i{knowledge transfer} occurs.
+
+The Knowledge Map can be found by searching for a topic in the top right corner or through the topic finder in the Mission Library (this will sometimes also lead directly to a document or web page instead).
 
 @sp 1
 @center @image{img-topicsviewer,15cm,,Topics viewer}
@@ -456,26 +467,26 @@ attributes and qualities of managed hosts and can be filtered through the text b
 @center Figure: Report viewer
 @sp 1
 
-@noindent Standard reports include:
+Reports are updated at different intervals, the default values are every 5 minutes or 6 every hours (this can be changed by the user). Below is a list of standard reports, updated every 5 minutes unless otherwise noted:
 @itemize -
-    @item Bundle profile: Status of promise bundles and when they were last verified
-    @item Business value report: Accumulated value of promises kept
-    @item Class profile: User defined classes observed on the system
-    @item Compliance by promise: Compliance of each promise individually
-    @item Compliance summary: Total summary of host compliance
-    @item File change log: Log of all detected changes to files from changes promises
-    @item File change diffs: Delta/difference comparison showing file changes
-    @item Last saw hosts: Log of when neighbouring hosts were last observed online
-    @item Patches available: A list of patches currently claimed to be available by the local package manager
-    @item Patch status: A list of (un)applied patches according to the local package manager
-    @item Performance: Execution time used to verify selected promises
-    @item Promises repaired log: Log of actual repairs made to the system
-    @item Promises repaired summary: Cumulative (histogram) summary of promises repaired
-    @item Promises not kept log: Log of promises that could not or would not be kept
-    @item Promises not kept summary: Cumulative (histogram) summary of promises not kept
-    @item Setuid/gid root programs: Current list of observed setuid/setgid root programs
-    @item Software installed: List of software packages claimed to be installed according to the local package manager
-    @item Variables: Table of variable values last observed
+     @item Bundle profile: Status of promise bundles and when they were last verified
+     @item Business value report: Accumulated value of promises kept (6 hrs)
+     @item Class profile: User defined classes observed on the system
+     @item Compliance by promise: Compliance of each promise individually
+     @item Compliance summary: Total summary of host compliance
+     @item File change log: Log of all detected changes to files from changes promises
+     @item File change diffs: Delta/difference comparison showing file changes
+     @item Last saw hosts: Log of when neighbouring hosts were last observed online
+     @item Patches available: A list of patches currently claimed to be available by the local package  manager (6 hrs)
+     @item Patch status: A list of (un)applied patches according to the local package manager (6 hrs)
+     @item Performance: Execution time used to verify selected promises
+     @item Promises repaired log: Log of actual repairs made to the system
+     @item Promises repaired summary: Cumulative (histogram) summary of promises repaired
+     @item Promises not kept log: Log of promises that could not or would not be kept
+     @item Promises not kept summary: Cumulative (histogram) summary of promises not kept
+     @item Setuid/gid root programs: Current list of observed setuid/setgid root programs (6 hrs)
+     @item Software installed: List of software packages claimed to be installed according to the local package manager (6 hrs)
+     @item Variables: Table of variable values last observed (6 hrs)
 @end itemize
 
 
@@ -485,6 +496,8 @@ attributes and qualities of managed hosts and can be filtered through the text b
 @menu
 * Policy editor::
 @end menu
+
+The policy editor works with a subversion repository, the Mission Portal will prompt you for the path and login credentials. Setup of a subversion repository has to be done separately.
 
 @node
 @subsection Policy editor
@@ -550,15 +563,13 @@ Configure and view various settings for the Mission Portal.
 @item List of saved searches: View saved searches (e.g. searches saved from reports viewer/finder)
 @item Mission Portal settings: Configure access authentication mode (database, LDAP, Active Directory)
 @item My preferences: Turn tooltips on/off and enter default number of rows to be shown in reports
-@item Report settings: To be developed
-@item Machine settings: To be developed
 @end itemize
 
 
 @node 
 @subsection Mission Portal User Admin
 
-Manage users and groups for the Mission Portal (to be developed).
+Manage users and groups for the Mission Portal.
 
 @sp 1
 @image{img-useradmin,15cm,,Mission Portal User Admin}
@@ -572,10 +583,6 @@ LDAP authentication is available for CFEngine Nova 2.1 and up, but by default th
 
 To enable LDAP on a fresh install, log on to the Mission Portal with the default user and password and go to "Settings". Click "Mission Portal Settings" and enter the appropriate configuration for LDAP or Active Directory as described below.
 
-@sp 1
-@center @image{img-settings,15cm,,The settings page}
-@center Figure: The settings page
-@sp 1
 
 @node
 @section Configure LDAP
