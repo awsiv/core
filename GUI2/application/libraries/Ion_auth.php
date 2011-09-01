@@ -112,6 +112,7 @@ class Ion_auth
                 $this->mode=$this->ci->settings_model->app_settings_get_item('mode');
                 if(!$this->mode){
                     $this->set_error('backend_error');
+                    log_message('info', 'cannot find any mode switching to internal database');
                     $this->mode='database';	    
                    //return FALSE;
                 }
@@ -399,6 +400,7 @@ class Ion_auth
                        $this->set_error($error);
                    }
                    //fall back to database and store the mode for latter use in application
+                   log_message('error', 'Error authenticationg to '.$this->mode.' server falling back to internal database');
                    if ($this->ci->ion_auth_model_mongo->login($identity, $password, $remember,true))
 		     {
                        $this->set_mode('database');

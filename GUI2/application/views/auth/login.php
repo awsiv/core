@@ -8,7 +8,7 @@
     font-family: "CFE_FONT";
     font-style: normal;
     font-weight: normal;
-    src: local('☺'), url("../fonts/ttf/opensans-regular-webfont.ttf") format("truetype"), url("../fonts/svg/opensans-regular-webfont.svg") format("svg");
+    src: local('☺'), url("../../themes/default/fonts/ttf/opensans-regular-webfont.ttf") format("truetype"), url("../../themes/default/fonts/svg/opensans-regular-webfont.svg") format("svg");
 }
 html {
   height:100%  
