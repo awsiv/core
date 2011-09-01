@@ -1417,6 +1417,7 @@ void Nova_GenerateTestData(int count)
  int countLen =0;
  int hostCount = 0;
  int startFrom = 0,len = 0;
+ mongo_connection conn;
 
  LICENSES=1;
  snprintf(CFWORKDIR,sizeof(CFWORKDIR),"/var/cfengine");
@@ -1477,6 +1478,14 @@ void Nova_GenerateTestData(int count)
     snprintf(VIPADDRESS,CF_MAXVARSIZE-1,"%s",newaddresses);
     snprintf(VFQNAME,CF_MAXVARSIZE-1,"%s",newhostnames);
     UnpackReportBook(newkeyhash,newaddresses,newhostnames,reports);
+    
+    if(CFDB_Open(&conn,"127.0.0.1",CFDB_PORT))
+      {
+      CFDB_SaveHostID(&conn,MONGO_DATABASE,newkeyhash,newaddresses,newhostnames);
+      CFDB_SaveHostID(&conn,MONGO_ARCHIVE,newkeyhash,newaddresses,newhostnames);
+      CFDB_Close(&conn);
+      }
+
     }
  DeleteReportBook(reports);
 
