@@ -1297,7 +1297,8 @@ return 0;
 
 #else /* HAVE_LIBLDAP */
 
-int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *user,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,int page,int linesperpage,char *buffer, int bufsize, const char **errstr)
+int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *user,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,bool starttls,int page,int linesperpage,char *buffer, int bufsize, const char **const errstr);
+
 {
 CfOut(cf_error, "", "LDAP support is disabled");
 *errstr = "LDAP support is disabled";
