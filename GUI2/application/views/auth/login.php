@@ -159,16 +159,10 @@ text-shadow:none;
 margin:0 0 10px 0;
 }
 
-#login .modeinfo{
-    background: #383838;
+#login h3 .modeinfo{
     font-size: 11px;
-    color:#fff;
-    padding:1px 10px;
-    border-bottom-left-radius: 3px 3px;
-border-bottom-right-radius: 3px 3px;
-border-top-left-radius: 3px 3px;
-border-top-right-radius: 3px 3px;
-display:block;
+    padding:0px 2px;
+   text-transform: none;
 }
 </style>
 </head>
@@ -183,8 +177,7 @@ display:block;
                  ?>
                 <?php echo form_open("auth/login");?>
                 <input type="hidden" id="type_form" name="type_form" value="login"></input>
-                    <h3>Login</h3>
-                    <span class="modeinfo"><?php echo $mode?></span>
+                    <h3>Login <span class="modeinfo">(<?php echo $mode?>)</span></h3>
                      <hr></hr>
                     <p>
                       <label for="<?php echo strtolower($lbl_identifier);?>"><?php echo $lbl_identifier;?></label>

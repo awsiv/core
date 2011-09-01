@@ -23,9 +23,9 @@ private $dn='CN=Sudhir Pandey,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com';
        $this->_ci->auth_ldap->set_login_attr('uid');
        $this->_ci->auth_ldap->set_user_dir('cn=users');
        $this->_ci->auth_ldap->set_member_attr('memberUid');
-       $this->_ci->auth_ldap->set_mode('active_directory');
        $this->_ci->auth_ldap->set_mode('ldap');
        $this->password='q1w2e3r4t5';
+       $this->_ci->auth_ldap->set_encryption('ssl');
    }
    
    public function setup_ad(){

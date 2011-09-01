@@ -112,8 +112,8 @@ class Ion_auth
                 $this->mode=$this->ci->settings_model->app_settings_get_item('mode');
                 if(!$this->mode){
                     $this->set_error('backend_error');
-                    $this->mode='database';
-		    //return FALSE;
+                    $this->mode='database';	    
+                   //return FALSE;
                 }
                 if($this->ci->config->item('auth_mode') &&$this->ci->config->item('auth_mode') !=''){
                    $this->mode=strtolower($this->ci->config->item('auth_mode'));

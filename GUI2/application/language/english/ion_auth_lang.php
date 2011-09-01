@@ -78,6 +78,7 @@ $lang['ldap_value_grabbing_error']             =" Cannot fetch some attributes v
 $lang['error_fetching_group']                    ="cannot query for available group names";
 
 //login page message
-$lang['login_database'] ='Using Internal database as backend for authentication';
-$lang['login_ldap']='Using LDAP as backend for Authentication';
-$lang['login_active_directory']='Using Active directory as backend for Authentication';
+$lang['login_database'] ='Internal authentication';
+$lang['login_ldap']='Open Ldap';
+$lang['login_active_directory']='Active Directory';
+$lang['login_mode_not_found']='Cannot find backend';
