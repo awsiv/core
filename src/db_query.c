@@ -7226,7 +7226,7 @@ void GetReportKeyMapping(int reportType, char *key, char *retBuf, int retBufSz)
     case CFREPORT_FILECHANGES:
       if(strcmp(key,cfr_time) == 0)
 	{
-	  snprintf(retBuf,retBufSz,"Change Detected At"); 
+	  snprintf(retBuf,retBufSz,"Time"); 
 	}   
       else if(strcmp(key,cfr_name) == 0)
 	{

@@ -6305,7 +6305,7 @@ for (rp = result; rp != NULL; rp=rp->next)
          EscapeJson(hn->msg,jsonEscapedMsg,sizeof(jsonEscapedMsg));
          ReplaceTrailingChar(jsonEscapedMsg, '\n', '\0');
 
-         snprintf(buffer,sizeof(buffer),"{\"user\":\"%s\",\"date\":%ld,\"message\":\"%s\",\"report\":\"%s\",\"report_type\":%d, \"host\":{\"name\":\"%s\",\"ip\":\"%s\",\"kh\":\"%s\"}},",
+         snprintf(buffer,sizeof(buffer),"{\"user\":\"%s\",\"date\":%ld,\"message\":\"%s\",\"report\":{%s},\"report_type\":%d, \"host\":{\"name\":\"%s\",\"ip\":\"%s\",\"kh\":\"%s\"}},",
                   hn->user, hn->t, jsonEscapedMsg, jsonEscapedReport, hni->reportType,hni->hh->hostname, hni->hh->ipaddr, hni->hh->keyhash);
          if(!Join(returnval,buffer,bufsize))
             {
