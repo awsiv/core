@@ -7,8 +7,13 @@ class Widget extends Cf_Controller {
     }
 
     function hostfinder() {
-        $result = json_decode(cfpr_select_hosts("none", ".*", NULL),true);
+        $data= cfpr_select_hosts("none", ".*", NULL);
+        $result=sanitycheckjson($data,true);
+        if(is_array($result)){
         $this->data['hostlist']= array_msort($result,array('id'=>SORT_ASC),true);
+        }else{
+         $this->data['error'] ="Host list cannot be  generated due to invalid json data";
+        }
         $this->load->view('widgets/hostfinder', $this->data);
     }
 

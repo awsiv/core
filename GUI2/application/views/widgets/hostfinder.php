@@ -28,9 +28,13 @@
         <div id="searchresult">
             <ul class="result">
                 <?php
-                foreach($hostlist as $host)
-                {
-                   echo "<li><a href=".site_url('welcome/host')."/".$host['key']." title=".$host['key'].">".$host['id']."</a></li>";
+                if(isset($hostlist)){
+                    foreach($hostlist as $host)
+                    {
+                       echo "<li><a href=".site_url('welcome/host')."/".$host['key']." title=".$host['key'].">".$host['id']."</a></li>";
+                    }
+                }else{
+                     echo "<li>$error</li>";
                 }
                ?>
             </ul>

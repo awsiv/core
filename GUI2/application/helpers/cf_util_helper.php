@@ -249,11 +249,11 @@ function sanitycheckjson($data, $noecho=false) {
                 $CI->output->set_status_header('400', 'No data Found');
             }
         } else {
-            $CI->output->set_status_header('500', 'Valid Json Data cannot be generated from Promises');
+            $CI->output->set_status_header('500', 'Valid Json Data cannot be generated');
         }
     } else {
         if ($data_check == NULL) {
-            $CI->output->set_status_header('500', 'Valid Json Data cannot be generated from Promises');
+            $CI->output->set_status_header('500', 'Valid Json Data cannot be generated');
         } else {
             if (is_array($data_check) && !empty($data_check)) {
                 if ($noecho) {

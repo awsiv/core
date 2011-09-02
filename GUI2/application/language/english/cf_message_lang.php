@@ -16,4 +16,6 @@ $lang['green']='Compliant';
 $lang['blue']='Unreachable';
 $lang['yellow']='Repaired';
 $lang['red']='Non compliant';
+$lang['not_hub_master_msg']='The mongo db in this hub is not a hub master, please click on the link below to navigate to the mission potrtal having its mongo db as hubmaster<br />
+                                             Link :: '
 ?>

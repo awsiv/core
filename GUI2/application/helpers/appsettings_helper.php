@@ -23,8 +23,7 @@ function initializeHub() {
         // if it does not say am_hub_master , it must be a host name or IP
         //define('HUB_MASTER', $ishubmaster);
         //preg_match('/(\d+).(\d+).(\d+).(\d+)/', $ishubmaster)
-        $errorMessage = sprintf("The mongo db in this hub is not a hub master, please click on the link below to navigate to the mission potrtal having its mongo db as hubmaster<br />
-                        Link :: <a href='http://%s/'>%s</a>", $ishubmaster, $ishubmaster);
+        $errorMessage = sprintf($CI->lang->line('not_hub_master_msg')."<a href='http://%s/'>%s</a>", $ishubmaster, $ishubmaster);
 
         show_error($errorMessage);
     }
