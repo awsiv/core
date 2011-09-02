@@ -449,6 +449,7 @@ void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash);
 struct HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *policy, time_t minGenTime);
 void CFDB_SaveCachedTotalCompliance(mongo_connection *conn, char *policy, int slot, double kept, double repaired, double notkept, int count, time_t genTime);
 int CFDB_SaveLastseenCache(char *keyhash,char *ip);
+void CFDB_SaveGoalsCache(char *goal_patterns, char *goal_categories);
 
 /*
  * commenting
@@ -827,6 +828,7 @@ void Nova_AnalyzePromiseConflicts(void);
 void Nova_NewPromiser(struct Promise *pp);
 int Nova_ClassesIntersect(struct Rlist *contexts1,struct Rlist *contexts2);
 void Nova_DefineHubMaster(void);
+void Nova_AddGoalsToDB(char *goal_patterns, char *goal_categories);
 /* pscalar.c */
 
 int Nova_GetPersistentScalar(char *lval,char *rval,int size,time_t timeout);

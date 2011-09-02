@@ -579,3 +579,13 @@ for (rp1 = contexts1; rp1 != NULL; rp1=rp1->next)
 
 return false;
 }
+/*****************************************************************************/
+
+void Nova_AddGoalsToDB(char *goal_patterns, char *goal_categories)
+
+{ struct Rlist *rp1, *rp2;
+
+  CFDB_SaveGoalsCache(goal_patterns,goal_categories);
+}
+
+/*****************************************************************************/

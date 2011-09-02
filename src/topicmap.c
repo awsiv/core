@@ -805,10 +805,23 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
  char work[CF_BUFSIZE] = {0};
  char goals[CF_MAXVARSIZE] = {0};
  char searchstring[CF_BUFSIZE] = {0};
+ struct Rlist *goal_categories = NULL, *goal_patterns = NULL;
+ char db_goal_patterns[CF_BUFSIZE] = {0}; 
+ char db_goal_categories[CF_BUFSIZE] = {0}; 
+
+ if(CFDB_GetValue("goal_patterns",db_goal_patterns,sizeof(db_goal_patterns)))
+   {
+   goal_patterns = SplitStringAsRList(db_goal_patterns,',');
+   }
+
+ if(CFDB_GetValue("goal_categories",db_goal_categories,sizeof(db_goal_categories)))
+   {
+     goal_categories = SplitStringAsRList(db_goal_categories,',');
+   }
  
-for (rp = GOALCATEGORIES; rp != NULL; rp=rp->next)
+for (rp = goal_categories; rp != NULL; rp=rp->next)
      {
-     for (rp2 = GOALS; rp2 != NULL; rp2=rp2->next)
+     for (rp2 = goal_patterns; rp2 != NULL; rp2=rp2->next)
         {
         snprintf(work,CF_MAXVARSIZE-1,"%s.%s|",(char*)rp->item,CanonifyName(rp2->item));
         strcat(searchstring,work);
@@ -918,12 +931,19 @@ void Nova_FillInGoalComment(struct Item *ip)
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
   mongo_connection conn;
+  struct Rlist *goal_categories = NULL;
+  char db_goal_categories[CF_BUFSIZE] = {0}; 
 
 // Get comment goals.* or targets.%s etc
 
 searchstring[0] = '\0';
 
-for (rp = GOALCATEGORIES; rp != NULL; rp=rp->next)
+if(CFDB_GetValue("goal_categories",db_goal_categories,sizeof(db_goal_categories)))
+  {
+  goal_categories = SplitStringAsRList(db_goal_categories,',');
+  }
+
+for (rp = goal_categories; rp != NULL; rp=rp->next)
    {
    snprintf(work,CF_MAXVARSIZE-1,"%s.%s|",(char*)rp->item,CanonifyName(ip->name));
    strcat(searchstring,work);

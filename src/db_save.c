@@ -143,6 +143,42 @@ CFDB_Close(&dbconn);
 
 return true;
 }
+
+/*****************************************************************************/
+
+void CFDB_SaveGoalsCache(char *goal_patterns, char *goal_categories)
+
+{ bson_buffer bb;
+ bson_buffer *setObj,*sub;
+ bson setOp,empty, setOp1;
+  mongo_connection dbconn;
+ struct Rlist *rp1, *rp2;
+ int i = 0;
+ char pos[CF_SMALLBUF] = {0};
+
+if (!IsDefinedClass("am_policy_hub"))
+   {
+   CfOut(cf_verbose,"","Ignoring caching of lastseen hosts into database - we are not a policy server");
+   return;
+   }
+  
+if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
+   {
+   CfOut(cf_verbose,"","!! Could not open connection to report database to put value");
+   return;
+   }
+
+bson_buffer_init(&bb);
+setObj = bson_append_start_object(&bb, "$set");
+bson_append_string(setObj,"goal_patterns",goal_patterns);
+bson_append_string(setObj,"goal_categories",goal_patterns);
+bson_append_finish_object(setObj);
+
+bson_from_buffer(&setOp,&bb);
+mongo_update(&dbconn,MONGO_SCRATCH,bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT);
+bson_destroy(&setOp);
+CFDB_Close(&dbconn);
+}
 /*****************************************************************************/
 
 void CFDB_SaveHostID(mongo_connection *conn, char *database, char *keyhash,char *ipaddr, char *hostname)
