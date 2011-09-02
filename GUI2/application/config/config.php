@@ -197,6 +197,13 @@ $config['log_path'] = '';
 */
 $config['log_date_format'] = 'Y-m-d H:i:s';
 
+
+/*
+ * Number of days to keep a certain log file for .
+ * 
+ */
+$config['log_days_to_keep'] = 15;
+
 /*
 |--------------------------------------------------------------------------
 | Cache Directory Path

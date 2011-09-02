@@ -14,7 +14,7 @@ class Cf_Controller extends CI_Controller {
         initializeHub();
 
 
-        $this->load->library(array('session', 'ion_auth', 'breadcrumb', 'breadcrumblist', 'onlineUsers', 'carabiner', 'user_agent', 'setting_lib'));
+        $this->load->library(array('session', 'ion_auth', 'breadcrumb', 'breadcrumblist', 'onlineUsers', 'carabiner', 'user_agent', 'setting_lib','log_maintenance'));
         $this->lang->load('tooltip');
         $this->load->helper(array('url', 'html', 'language'));
         $this->lang->load('cf_message');
