@@ -3874,20 +3874,15 @@ void Nova2PHP_select_hosts(char *match,char *selected,int n,char *buffer,int buf
 
  for (ip = clist; ip !=  NULL; ip=ip->next)
     {
-    snprintf(work,CF_MAXVARSIZE,"{ \"key\": \"%s\" , \"id\": \"%s\"}",ip->name,ip->classes);
+    snprintf(work,CF_MAXVARSIZE,"{ \"key\": \"%s\" , \"id\": \"%s\"},",ip->name,ip->classes);
 
-    if (ip && ip->next != NULL)
-       {
-       strcat(work,",");
-       }
-   
     if (!Join(buffer,work,bufsize))
        {
        break;
        }
     }
 
- EndJoin(buffer,"]",bufsize);
+ ReplaceTrailingChar(buffer, ',', ']');
  DeleteItemList(clist);
 }
 
