@@ -669,7 +669,7 @@ bool Nova2PHP_vitals_view_year(char *keyHash, char *vitalId, char *buffer, int b
  
 if (haveData)
    {
-   for (i = 0; i < CF_MAGDATA; i++)
+   for (i = 0; i < CF_YEAR_SLOTS; i++)
       {
       snprintf(work,sizeof(work)," [%d,%lf,%lf,%lf],",i, cfv.data_q[i], cfv.data_E[i],cfv.bars[i]);
       Join(buffer, work, bufsize);
