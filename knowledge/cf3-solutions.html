@@ -228,15 +228,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <li><a href="#Editing-password-or-group-files">1.5 Editing password or group files</a>
 <li><a href="#Editing-password-or-group-files-custom">1.6 Editing password or group files custom</a>
 <li><a href="#Disabling-and-rotating-files">1.7 Disabling and rotating files</a>
-<li><a href="#unit_005fdisable_005fand_005frotate_005ffiles_002ecf">1.8 unit_disable_and_rotate_files.cf</a>
-<li><a href="#unit_005fdisable_002ecf">1.9 unit_disable.cf</a>
-<li><a href="#Hashing-for-change-detection-_002d-tripwire">1.10 Hashing for change detection (tripwire)</a>
-<li><a href="#Command-or-script-execution">1.11 Command or script execution</a>
-<li><a href="#Kill-process">1.12 Kill process</a>
-<li><a href="#Restart-process">1.13 Restart process</a>
-<li><a href="#Check-filesystem-space">1.14 Check filesystem space</a>
-<li><a href="#Mount-a-filesystem">1.15 Mount a filesystem</a>
-<li><a href="#Software-and-patch-installation">1.16 Software and patch installation</a>
+<li><a href="#Hashing-for-change-detection-_002d-tripwire">1.8 Hashing for change detection (tripwire)</a>
+<li><a href="#Command-or-script-execution">1.9 Command or script execution</a>
+<li><a href="#Kill-process">1.10 Kill process</a>
+<li><a href="#Restart-process">1.11 Restart process</a>
+<li><a href="#Check-filesystem-space">1.12 Check filesystem space</a>
+<li><a href="#Mount-a-filesystem">1.13 Mount a filesystem</a>
+<li><a href="#Software-and-patch-installation">1.14 Software and patch installation</a>
 </li></ul>
 <li><a name="toc_High-level" href="#High-level">2 High level</a>
 <ul>
@@ -389,10 +387,8 @@ system environment, contact CFEngine's Professional Services at
 <li><a accesskey="5" href="#Editing-password-or-group-files">Editing password or group files</a>
 <li><a accesskey="6" href="#Editing-password-or-group-files-custom">Editing password or group files custom</a>
 <li><a accesskey="7" href="#Disabling-and-rotating-files">Disabling and rotating files</a>
-<li><a accesskey="8" href="#unit_005fdisable_005fand_005frotate_005ffiles_002ecf">unit_disable_and_rotate_files.cf</a>
-<li><a accesskey="9" href="#unit_005fdisable_002ecf">unit_disable.cf</a>
-<li><a href="#Hashing-for-change-detection-_002d-tripwire">Hashing for change detection - tripwire</a>
-<li><a href="#Command-or-script-execution">Command or script execution</a>
+<li><a accesskey="8" href="#Hashing-for-change-detection-_002d-tripwire">Hashing for change detection - tripwire</a>
+<li><a accesskey="9" href="#Command-or-script-execution">Command or script execution</a>
 <li><a href="#Kill-process">Kill process</a>
 <li><a href="#Restart-process">Restart process</a>
 <li><a href="#Check-filesystem-space">Check filesystem space</a>
@@ -461,11 +457,9 @@ of the syntax is like this (red: CFEngine word, blue: user-defined word):
 <li><a accesskey="4" href="#Editing-password-or-group-files">Editing password or group files</a>
 <li><a accesskey="5" href="#Editing-password-or-group-files-custom">Editing password or group files custom</a>
 <li><a accesskey="6" href="#Disabling-and-rotating-files">Disabling and rotating files</a>
-<li><a accesskey="7" href="#unit_005fdisable_005fand_005frotate_005ffiles_002ecf">unit_disable_and_rotate_files.cf</a>
-<li><a accesskey="8" href="#unit_005fdisable_002ecf">unit_disable.cf</a>
-<li><a accesskey="9" href="#Hashing-for-change-detection-_002d-tripwire">Hashing for change detection - tripwire</a>
-<li><a href="#Command-or-script-execution">Command or script execution</a>
-<li><a href="#Kill-process">Kill process</a>
+<li><a accesskey="7" href="#Hashing-for-change-detection-_002d-tripwire">Hashing for change detection - tripwire</a>
+<li><a accesskey="8" href="#Command-or-script-execution">Command or script execution</a>
+<li><a accesskey="9" href="#Kill-process">Kill process</a>
 <li><a href="#Restart-process">Restart process</a>
 <li><a href="#Check-filesystem-space">Check filesystem space</a>
 <li><a href="#Mount-a-filesystem">Mount a filesystem</a>
@@ -555,6 +549,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 <h3 class="section">1.3 Copy single files</h3>
 
+<p>Copy single files, locally (<code>local_cp</code>) or from a remote site (<code>secure_cp</code>). The Community Open Promise-Body Library (COPBL; <samp><span class="file">cfengine_stdlib.cf</span></samp>) should be included in the <samp><span class="file">/var/cfengine/inputs/</span></samp> directory and input as below.
+
 <pre class="verbatim">
 <span class="red">body common control
 </span>{
@@ -589,6 +585,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 </div>
 
 <h3 class="section">1.4 Copy directory trees</h3>
+
+<p>Copy directory trees, locally (<code>local_cp</code>) or from a remote site (<code>secure_cp</code>). (<code>depth_search =&gt; recurse("")</code>) defines the number of sublevels to include, (<code>"inf"</code>) gets entire tree.
 
 <pre class="verbatim">
 <span class="red">body common control
@@ -627,6 +625,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 </div>
 
 <h3 class="section">1.5 Editing password or group files</h3>
+
+<p>To change the password of a system, we need to edit a file. A file is
+a complex object &ndash; once open there is a new world of possible
+promises to make about its contents.  CFEngine has bundles of promises
+that are specially for editing.
 
 <pre class="verbatim">
 
@@ -668,6 +671,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 </div>
 
 <h3 class="section">1.6 Editing password or group files custom</h3>
+
+<p>In this example the bundles from the Community Open Promise-Body Library are included directly in the policy instead of being input as a separate file.
 
 <pre class="verbatim">
 
@@ -750,7 +755,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 <div class="node">
 <a name="Disabling-and-rotating-files"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#unit_005fdisable_005fand_005frotate_005ffiles_002ecf">unit_disable_and_rotate_files.cf</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Hashing-for-change-detection-_002d-tripwire">Hashing for change detection - tripwire</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Editing-password-or-group-files-custom">Editing password or group files custom</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
@@ -758,89 +763,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 <h3 class="section">1.7 Disabling and rotating files</h3>
 
-<div class="node">
-<a name="unit_disable_and_rotate_files.cf"></a>
-<a name="unit_005fdisable_005fand_005frotate_005ffiles_002ecf"></a>
-<p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#unit_005fdisable_002ecf">unit_disable.cf</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Disabling-and-rotating-files">Disabling and rotating files</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
-
-</div>
-
-<h3 class="section">1.8 unit_disable_and_rotate_files.cf</h3>
-
-<pre class="verbatim">
-<span class="comment">#######################################################
-</span>
-<span class="comment">#
-</span>
-<span class="comment"># Disabling / rotating files
-</span>
-<span class="comment">#
-</span>
-<span class="comment">#######################################################
-</span>
-
-<span class="red">body common control
-</span>   {
-   any::
-
-<span class="red">      bundlesequence  </span>=> { 
-<span class="red">"testbundle" </span> <span class="blue"></span>
-                         };
-   }
-
-
-<span class="comment">############################################
-</span>
-
-<span class="red">bundle agent</span> <span class="blue">testbundle</span>
-
-{
-<span class="red">files:
-</span>
-  "/home/mark/tmp/test_create" 
-
-<span class="red">      comment </span>=><span class="green"> "this rule does something",</span>
-<span class="red">      rename </span>=><span class="blue"> disable;</span>
-
-  "/home/mark/tmp/rotateme"
-
-<span class="red">      rename </span>=><span class="blue"> rotate("4");</span>
-}
-
-<span class="comment">############################################
-</span>
-
-<span class="red">body rename</span> <span class="blue">disable</span>
-
-{
-<span class="red">disable </span>=><span class="green"> "true";</span>
-<span class="red">disable_suffix </span>=><span class="green"> "_blownaway";</span>
-}
-
-<span class="comment">############################################
-</span>
-
-<span class="red">body rename</span> <span class="blue">rotate(level)</span>
-
-{
-<span class="red">rotate </span>=><span class="green"> "$(level)";</span>
-}
-</pre>
-
-<div class="node">
-<a name="unit_disable.cf"></a>
-<a name="unit_005fdisable_002ecf"></a>
-<p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Hashing-for-change-detection-_002d-tripwire">Hashing for change detection - tripwire</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#unit_005fdisable_005fand_005frotate_005ffiles_002ecf">unit_disable_and_rotate_files.cf</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
-
-</div>
-
-<h3 class="section">1.9 unit_disable.cf</h3>
+<p>Use the following simple steps to disable and rotate files. See the Community Open Promise-Body Library if you wish more details on what <code>disable</code> and <code>rotate</code> does.
 
 <pre class="verbatim">
 <span class="red">body common control
@@ -871,12 +794,14 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 <a name="Hashing-for-change-detection-_002d-tripwire"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Command-or-script-execution">Command or script execution</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#unit_005fdisable_002ecf">unit_disable.cf</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Disabling-and-rotating-files">Disabling and rotating files</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 </div>
 
-<h3 class="section">1.10 Hashing for change detection (tripwire)</h3>
+<h3 class="section">1.8 Hashing for change detection (tripwire)</h3>
+
+<p>Change detection is a powerful and easy way to monitor your environment, increase awareness and harden your system against security breaches.
 
 <pre class="verbatim">
 <span class="comment">########################################################
@@ -940,7 +865,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 </div>
 
-<h3 class="section">1.11 Command or script execution</h3>
+<h3 class="section">1.9 Command or script execution</h3>
+
+<p>Execute a command, for instance to start a MySQL service. Note that executing commands takes control away from CFEngine and may disrupt the convergent nature of well written policies.
 
 <pre class="verbatim">
 
@@ -980,7 +907,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 </div>
 
-<h3 class="section">1.12 Kill process</h3>
+<h3 class="section">1.10 Kill process</h3>
 
 <pre class="verbatim">
 <span class="red">body common control
@@ -1011,7 +938,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 </div>
 
-<h3 class="section">1.13 Restart process</h3>
+<h3 class="section">1.11 Restart process</h3>
 
 <p>A basic pattern for restarting processes:
 <pre class="verbatim"></pre>
@@ -1033,7 +960,7 @@ reproduced in <code>processes</code>.
 </span>
 </div>
 
-<h3 class="section">1.14 Check filesystem space</h3>
+<h3 class="section">1.12 Check filesystem space</h3>
 
 <pre class="verbatim">
 
@@ -1073,7 +1000,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 </div>
 
-<h3 class="section">1.15 Mount a filesystem</h3>
+<h3 class="section">1.13 Mount a filesystem</h3>
 
 <pre class="verbatim">
 
@@ -1131,7 +1058,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction">Introduction</a>
 
 </div>
 
-<h3 class="section">1.16 Software and patch installation</h3>
+<h3 class="section">1.14 Software and patch installation</h3>
 
 <p>Example for Debian:
 <pre class="verbatim">
@@ -4250,7 +4177,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
  linux::
 
    "Global $(g.array[1]) and $(localarray[2])";
-}</pre>
+}
+
+</pre>
 
 <!--  -->
 <div class="node">
@@ -4407,7 +4336,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 </span>
    "/bin/pwd"
 <span class="red">       contain </span>=><span class="blue"> cd("/tmp");</span>
-}</pre>
+}
+
+</pre>
 
 <div class="node">
 <a name="Check-file-or-directory-permissions"></a>

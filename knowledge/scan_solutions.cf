@@ -44,12 +44,6 @@ Editing_password_or_group_files_custom::
 Disabling_and_rotating_files::
  "/docs/cf3-solutions.html#Disabling-and-rotating-files"
   represents => { "manual section Disabling and rotating files" };
-unit_disable_and_rotate_files_cf::
- "/docs/cf3-solutions.html#unit_005fdisable_005fand_005frotate_005ffiles_002ecf"
-  represents => { "manual section unit_disable_and_rotate_files.cf" };
-unit_disable_cf::
- "/docs/cf3-solutions.html#unit_005fdisable_002ecf"
-  represents => { "manual section unit_disable.cf" };
 Hashing_for_change_detection::
  "/docs/cf3-solutions.html#Hashing-for-change-detection-_002d-tripwire"
   represents => { "manual section Hashing for change detection" };
