@@ -28,8 +28,8 @@ CFDB_QueryMonView(conn,keyhash,monId,mon_rep_yr,q,e,d);
 
 max = 0;
 min = 99999;
-cfv->error_scale = 0;      
-  
+cfv->error_scale = 0;
+
 for (i = 0; i < CF_YEAR_SLOTS; i++)
    {
    ry = e[i];
