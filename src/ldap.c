@@ -43,7 +43,7 @@ void *CfLDAPValue(char *uri,char *basedn,char *filter,char *name,char *scopes,ch
   int version,i,ret,parse_ret,msgtype,num_entries = 0,num_refs = 0;
   char *a, *dn, *matched_msg = NULL, *error_msg = NULL,*return_value = NULL;
   int scope = NovaStr2Scope(scopes);
-  
+
 if (LICENSES == 0)
    {
    CfOut(cf_error,""," !! The commercial license has expired, this function is not available");
@@ -68,11 +68,11 @@ num_refs = ldap_count_references(ld,res);
 for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,msg))
    {
    msgtype = ldap_msgtype(msg);
-   
+
    switch(msgtype)
       {
       case LDAP_RES_SEARCH_ENTRY:
-          
+
           if ((dn = ldap_get_dn(ld,msg)) != NULL)
              {
              CfOut(cf_verbose,""," -> LDAP query found dn: %s\n",dn);
@@ -81,16 +81,16 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
              {
              CfOut(cf_verbose,""," !! No LDAP query result found\n");
              break;
-             }          
-          
+             }
+
           /* Iterate through each attribute in the entry. */
-          
+
           for (a = ldap_first_attribute(ld,msg,&ber); a != NULL; a = ldap_next_attribute(ld,msg,ber))
              {
              /* Get and print all values for each attribute. */
 
              if ((vals = ldap_get_values_len(ld,msg,a)) != NULL)
-                {                
+                {
                 for (i = 0; vals[i] != NULL; i++)
                    {
                    if (cf_strcmp(a,name) == 0)
@@ -100,10 +100,10 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                       break;
                       }
                    }
-                
+
                 ldap_value_free_len(vals);
                 }
-             
+
              ldap_memfree(a);
 
              if (return_value)
@@ -111,23 +111,23 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                 break;
                 }
              }
-          
+
           if (ber != NULL)
-             {             
-             ber_free(ber,0);             
+             {
+             ber_free(ber,0);
              }
 
           ldap_memfree(dn);
           break;
-          
+
       case LDAP_RES_SEARCH_REFERENCE:
-          
+
        /* The server sent a search reference encountered during the search operation. */
        /* Parse the result and print the search references.
           Ideally, rather than print them out, you would follow the references....what does this mean? */
-          
+
           parse_ret = ldap_parse_reference(ld,msg,&referrals,NULL,0);
-          
+
           if (parse_ret != LDAP_SUCCESS)
              {
              CfOut(cf_error,"","Unable to parse LDAP references: %s\n",ldap_err2string(parse_ret));
@@ -138,15 +138,15 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
           if (referrals != (char **)NULL)
              {
              for (i = 0; referrals[i] != NULL; i++)
-                {                
+                {
                 CfOut(cf_verbose,"","Search reference: %s\n\n",referrals[i]);
                 }
-             
+
              ldap_value_free(referrals);
              }
-          
+
           break;
-          
+
       case LDAP_RES_SEARCH_RESULT:
 
           /* At the end, a result status is sent */
@@ -154,39 +154,39 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
           CfOut(cf_verbose,""," -> LDAP Query result received\n");
 
           parse_ret = ldap_parse_result(ld,msg,&ret,&matched_msg,&error_msg,NULL,&serverctrls,0);
-          
+
           if (parse_ret != LDAP_SUCCESS)
-             {             
-             CfOut(cf_error,""," !! LDAP Error parsed: %s\n",ldap_err2string(parse_ret));             
-             ldap_unbind(ld);             
+             {
+             CfOut(cf_error,""," !! LDAP Error parsed: %s\n",ldap_err2string(parse_ret));
+             ldap_unbind(ld);
              return NULL;
              }
 
           /* Then check the results of the LDAP search operation. */
 
           if (ret != LDAP_SUCCESS)
-             {             
+             {
              CfOut(cf_error,""," !! LDAP search failed: %s\n",ldap_err2string(ret));
-             
+
              if (error_msg != NULL & *error_msg != '\0')
-                {                
-                CfOut(cf_error,"","%s", error_msg);                
+                {
+                CfOut(cf_error,"","%s", error_msg);
                 }
-             
+
              if (matched_msg != NULL && *matched_msg != '\0')
-                {                
+                {
                 CfOut(cf_verbose,"","Part of the DN that matches an existing entry: %s\n", matched_msg);
                 }
              }
           else
-             {          
+             {
              CfOut(cf_verbose,""," -> LDAP search successful, %d entries, %d references",num_entries,num_refs);
-             }          
+             }
           break;
-          
-      default:          
+
+      default:
           break;
-          
+
       }
 
    if (return_value)
@@ -250,7 +250,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
    switch(ldap_msgtype(msg))
       {
       case LDAP_RES_SEARCH_ENTRY:
-          
+
           if ((dn = ldap_get_dn(ld,msg)) != NULL)
              {
              CfOut(cf_verbose,""," -> LDAP query found dn: %s\n",dn);
@@ -259,17 +259,17 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
              {
              CfOut(cf_verbose,""," !! No LDAP query found\n");
              }
-          
+
           /* Iterate through each attribute in the entry. */
-          
+
           for (a = ldap_first_attribute(ld,res,&ber); a != NULL; a = ldap_next_attribute(ld,res,ber))
              {
              /* Get and print all values for each attribute. */
 
              Debug(" ->   LDAP query found attribute %s",a);
-             
+
              if ((vals = ldap_get_values_len(ld,msg,a)) != NULL)
-                {                
+                {
                 for (i = 0; vals[i] != NULL; i++)
                    {
                    if (cf_strcmp(a,name) == 0)
@@ -278,29 +278,29 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                       AppendRScalar(&return_value,(char *)vals[i]->bv_val,CF_SCALAR);
                       }
                    }
-                
+
                 ldap_value_free_len(vals);
                 }
-             
+
              ldap_memfree(a);
              }
-          
+
           if (ber != NULL)
-             {             
-             ber_free(ber,0);             
+             {
+             ber_free(ber,0);
              }
 
           ldap_memfree(dn);
           break;
-          
+
       case LDAP_RES_SEARCH_REFERENCE:
-          
+
        /* The server sent a search reference encountered during the search operation. */
        /* Parse the result and print the search references.
           Ideally, rather than print them out, you would follow the references....what does this mean? */
-          
+
           parse_ret = ldap_parse_reference(ld,msg,&referrals,NULL,0);
-          
+
           if (parse_ret != LDAP_SUCCESS)
              {
              CfOut(cf_error,"","Unable to parse LDAP references: %s\n",ldap_err2string(parse_ret));
@@ -311,15 +311,15 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
           if (referrals != (char **)NULL)
              {
              for (i = 0; referrals[i] != NULL; i++)
-                {                
+                {
                 CfOut(cf_verbose,"","Search reference: %s\n\n",referrals[i]);
                 }
-             
+
              ldap_value_free(referrals);
              }
-          
+
           break;
-          
+
       case LDAP_RES_SEARCH_RESULT:
 
           /* At the end, a result status is sent */
@@ -327,39 +327,39 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
           CfOut(cf_verbose,""," -> LDAP Query result received\n");
 
           parse_ret = ldap_parse_result(ld,msg,&ret,&matched_msg,&error_msg,NULL,&serverctrls,0);
-          
+
           if (parse_ret != LDAP_SUCCESS)
-             {             
-             CfOut(cf_error,""," !! LDAP Error parsed: %s\n",ldap_err2string(parse_ret));             
-             ldap_unbind(ld);             
+             {
+             CfOut(cf_error,""," !! LDAP Error parsed: %s\n",ldap_err2string(parse_ret));
+             ldap_unbind(ld);
              return NULL;
              }
 
           /* Then check the results of the LDAP search operation. */
 
           if (ret != LDAP_SUCCESS)
-             {             
+             {
              CfOut(cf_error,""," !! LDAP search failed: %s\n",ldap_err2string(ret));
-             
+
              if (error_msg != NULL & *error_msg != '\0')
-                {                
-                CfOut(cf_error,"","%s", error_msg);                
+                {
+                CfOut(cf_error,"","%s", error_msg);
                 }
-             
+
              if (matched_msg != NULL && *matched_msg != '\0')
-                {                
+                {
                 CfOut(cf_verbose,"","Part of the DN that matches an existing entry: %s\n", matched_msg);
                 }
              }
           else
-             {          
+             {
              CfOut(cf_verbose,""," -> LDAP search was successful, %d entries, %d references",num_entries,num_refs);
-             }          
+             }
           break;
-          
-      default:          
+
+      default:
           break;
-          
+
       }
    }
 
@@ -420,25 +420,25 @@ num_refs = ldap_count_references(ld,res);
 for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,msg))
    {
    msgtype = ldap_msgtype(msg);
-   
+
    switch(msgtype)
       {
       case LDAP_RES_SEARCH_ENTRY:
-          
+
           if ((dn = ldap_get_dn(ld,msg)) != NULL)
              {
              CfOut(cf_verbose,""," -> LDAP query found dn: %s\n",dn);
              ldap_memfree(dn);
              }
-          
+
           /* Iterate through each attribute in the entry. */
-          
+
           for (a = ldap_first_attribute(ld,msg,&ber); a != NULL; a = ldap_next_attribute(ld,msg,ber))
              {
              /* Get and print all values for each attribute. */
 
              if ((vals = ldap_get_values_len(ld,msg,a)) != NULL)
-                {                
+                {
                 for (i = 0; vals[i] != NULL; i++)
                    {
                    if (cf_strcmp(a,"objectClass") != 0) // This is non-unique
@@ -451,36 +451,36 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                       if (return_value)
                          {
                          break;
-                         }                      
-                      }                   
+                         }
+                      }
                    }
-                
+
                 ldap_value_free_len(vals);
                 }
-             
+
              ldap_memfree(a);
              }
-          
+
           if (ber != NULL)
-             {             
-             ber_free(ber,0);             
+             {
+             ber_free(ber,0);
              }
-          
+
           if (return_value)
              {
              break;
              }
-          
+
           break;
-          
+
       case LDAP_RES_SEARCH_REFERENCE:
-          
+
        /* The server sent a search reference encountered during the search operation. */
        /* Parse the result and print the search references.
           Ideally, rather than print them out, you would follow the references....what does this mean? */
-          
+
           parse_ret = ldap_parse_reference(ld,msg,&referrals,NULL,0);
-          
+
           if (parse_ret != LDAP_SUCCESS)
              {
              CfOut(cf_error,"","Unable to parse LDAP references: %s\n",ldap_err2string(parse_ret));
@@ -491,15 +491,15 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
           if (referrals != (char **)NULL)
              {
              for (i = 0; referrals[i] != NULL; i++)
-                {                
+                {
                 CfOut(cf_verbose,"","Search reference: %s\n\n",referrals[i]);
                 }
-             
+
              ldap_value_free(referrals);
              }
-          
+
           break;
-          
+
       case LDAP_RES_SEARCH_RESULT:
 
           /* At the end, a result status is sent */
@@ -507,39 +507,39 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
           CfOut(cf_verbose,""," -> LDAP Query result received\n");
 
           parse_ret = ldap_parse_result(ld,msg,&ret,&matched_msg,&error_msg,NULL,&serverctrls,0);
-          
+
           if (parse_ret != LDAP_SUCCESS)
-             {             
-             CfOut(cf_error,""," !! LDAP Error parsed: %s\n",ldap_err2string(parse_ret));             
-             ldap_unbind(ld);             
+             {
+             CfOut(cf_error,""," !! LDAP Error parsed: %s\n",ldap_err2string(parse_ret));
+             ldap_unbind(ld);
              return NULL;
              }
 
           /* Then check the results of the LDAP search operation. */
 
           if (ret != LDAP_SUCCESS)
-             {             
+             {
              CfOut(cf_error,""," !! LDAP search failed: %s\n",ldap_err2string(ret));
-             
+
              if (error_msg != NULL & *error_msg != '\0')
-                {                
-                CfOut(cf_error,"","%s", error_msg);                
+                {
+                CfOut(cf_error,"","%s", error_msg);
                 }
-             
+
              if (matched_msg != NULL && *matched_msg != '\0')
-                {                
+                {
                 CfOut(cf_verbose,"","Part of the DN that matches an existing entry: %s\n", matched_msg);
                 }
              }
           else
-             {          
+             {
              CfOut(cf_verbose,""," -> LDAP search successful, %d entries, %d references",num_entries,num_refs);
-             }          
+             }
           break;
-          
-      default:          
+
+      default:
           break;
-          
+
       }
 
    if (return_value)
@@ -611,21 +611,21 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
    switch(ldap_msgtype(msg))
       {
       case LDAP_RES_SEARCH_ENTRY:
-          
+
           if ((dn = ldap_get_dn(ld,msg)) != NULL)
              {
              CfOut(cf_verbose,""," -> LDAP query found dn: %s\n",dn);
              ldap_memfree(dn);
              }
-          
+
           /* Iterate through each attribute in the entry. */
-          
+
           for (a = ldap_first_attribute(ld,msg,&ber); a != NULL; a = ldap_next_attribute(ld,msg,ber))
              {
              /* Get and print all values for each attribute. */
 
              if ((vals = ldap_get_values_len(ld,msg,a)) != NULL)
-                {                
+                {
                 for (i = 0; vals[i] != NULL; i++)
                    {
                    if (cf_strcmp(a,name) == 0 && FullTextMatch(regex,(char *)vals[i]->bv_val))
@@ -635,10 +635,10 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                       break;
                       }
                    }
-                
+
                 ldap_value_free_len(vals);
                 }
-             
+
              ldap_memfree(a);
 
              if (return_value)
@@ -646,22 +646,22 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                 break;
                 }
              }
-          
+
           if (ber != NULL)
-             {             
-             ber_free(ber,0);             
+             {
+             ber_free(ber,0);
              }
 
           break;
-          
+
       case LDAP_RES_SEARCH_REFERENCE:
-          
+
        /* The server sent a search reference encountered during the search operation. */
        /* Parse the result and print the search references.
           Ideally, rather than print them out, you would follow the references....what does this mean? */
-          
+
           parse_ret = ldap_parse_reference(ld,msg,&referrals,NULL,0);
-          
+
           if (parse_ret != LDAP_SUCCESS)
              {
              CfOut(cf_error,"","Unable to parse LDAP references: %s\n",ldap_err2string(parse_ret));
@@ -672,15 +672,15 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
           if (referrals != (char **)NULL)
              {
              for (i = 0; referrals[i] != NULL; i++)
-                {                
+                {
                 CfOut(cf_verbose,"","Search reference: %s\n\n",referrals[i]);
                 }
-             
+
              ldap_value_free(referrals);
              }
-          
+
           break;
-          
+
       case LDAP_RES_SEARCH_RESULT:
 
           /* At the end, a result status is sent */
@@ -688,40 +688,40 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
           CfOut(cf_verbose,""," -> LDAP Query result received\n");
 
           parse_ret = ldap_parse_result(ld,msg,&ret,&matched_msg,&error_msg,NULL,&serverctrls,0);
-          
+
           if (parse_ret != LDAP_SUCCESS)
-             {             
-             CfOut(cf_error,""," !! LDAP Error parsed: %s\n",ldap_err2string(parse_ret));             
-             ldap_unbind(ld);             
+             {
+             CfOut(cf_error,""," !! LDAP Error parsed: %s\n",ldap_err2string(parse_ret));
+             ldap_unbind(ld);
              return NULL;
              }
 
           /* Then check the results of the LDAP search operation. */
 
           if (ret != LDAP_SUCCESS)
-             {             
+             {
              CfOut(cf_error,""," !! LDAP search failed: %s\n",ldap_err2string(ret));
-             
+
              if (error_msg != NULL & *error_msg != '\0')
-                {                
-                CfOut(cf_error,"","%s", error_msg);                
+                {
+                CfOut(cf_error,"","%s", error_msg);
                 }
-             
+
              if (matched_msg != NULL && *matched_msg != '\0')
-                {                
+                {
                 CfOut(cf_verbose,"","Part of the DN that matches an existing entry: %s\n", matched_msg);
                 }
              }
           else
-             {          
+             {
              CfOut(cf_verbose,""," -> LDAP search successful, %d entries, %d references",num_entries,num_refs);
-             }          
+             }
           break;
-          
+
       default:
           CfOut(cf_verbose,"","Unknown message received\n");
           break;
-          
+
       }
 
    if (return_value)
@@ -775,7 +775,7 @@ void test(void)
        if (Nova2PHP_LDAPAuthenticate("ldap://10.0.0.100","uid=sudhir,cn=users,dc=cf022osx,dc=cfengine,dc=com","q1w2e3r4t5"))
              {
              char buffer[1000000] = {0};
-             
+
              printf("Authenticated\n");
 
              struct Rlist *names = SplitStringAsRList("uid,mail,sn,altSecurityIdentities",',');
@@ -832,7 +832,7 @@ if (linesperpage == 0)
    {
    linesperpage = 1000;
    }
-  
+
 if ((ld = NovaQueryLDAP(uri,authdn,sec,passwd,starttls,errstr)) == NULL)
    {
    return -1;
@@ -867,7 +867,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
    switch(ldap_msgtype(msg))
       {
       case LDAP_RES_SEARCH_ENTRY:
-          
+
           if ((dn = ldap_get_dn(ld,msg)) != NULL)
              {
              CfOut(cf_verbose,""," -> LDAP query found dn: %s\n",dn);
@@ -876,13 +876,13 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
              {
              CfOut(cf_verbose,""," !! No LDAP query found\n");
              }
-          
+
           /* Iterate through each attribute in the entry. */
           for (a = ldap_first_attribute(ld,res,&ber); a != NULL; a = ldap_next_attribute(ld,res,ber))
              {
              /* Get and print all values for each attribute. */
              if ((vals = ldap_get_values_len(ld,msg,a)) != NULL)
-                {                
+                {
                 for (i = 0; vals[i] != NULL; i++)
                    {
                    for (rp = names; rp != NULL; rp=rp->next)
@@ -910,29 +910,29 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                          }
                       }
                    }
-                
+
                 ldap_value_free_len(vals);
                 }
-             
+
              ldap_memfree(a);
              }
-          
+
           if (ber != NULL)
-             {             
-             ber_free(ber,0);             
+             {
+             ber_free(ber,0);
              }
 
           ldap_memfree(dn);
           break;
-          
+
       case LDAP_RES_SEARCH_REFERENCE:
-          
+
        /* The server sent a search reference encountered during the search operation. */
        /* Parse the result and print the search references.
           Ideally, rather than print them out, you would follow the references....what does this mean? */
-          
+
           parse_ret = ldap_parse_reference(ld,msg,&referrals,NULL,0);
-          
+
           if (parse_ret != LDAP_SUCCESS)
              {
              CfOut(cf_error,"","Unable to parse LDAP references: %s\n",ldap_err2string(parse_ret));
@@ -944,15 +944,15 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
           if (referrals != (char **)NULL)
              {
              for (i = 0; referrals[i] != NULL; i++)
-                {                
+                {
                 CfOut(cf_verbose,"","Search reference: %s\n\n",referrals[i]);
                 }
-             
+
              ldap_value_free(referrals);
              }
-          
+
           break;
-          
+
       case LDAP_RES_SEARCH_RESULT:
 
           /* At the end, a result status is sent */
@@ -960,9 +960,9 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
           CfOut(cf_verbose,""," -> LDAP Query result received\n");
 
           parse_ret = ldap_parse_result(ld,msg,&ret,&matched_msg,&error_msg,NULL,&serverctrls,0);
-          
+
           if (parse_ret != LDAP_SUCCESS)
-             {             
+             {
              CfOut(cf_error,""," !! LDAP Error parsed: %s\n",ldap_err2string(parse_ret));
              ldap_unbind(ld);
              *errstr = ldap_err2string(parse_ret);
@@ -972,28 +972,28 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
           /* Then check the results of the LDAP search operation. */
 
           if (ret != LDAP_SUCCESS)
-             {             
+             {
              CfOut(cf_error,""," !! LDAP search failed: %s\n",ldap_err2string(ret));
-             
+
              if (error_msg != NULL & *error_msg != '\0')
-                {                
+                {
                 CfOut(cf_error,"","%s", error_msg);
                 }
-             
+
              if (matched_msg != NULL && *matched_msg != '\0')
-                {                
+                {
                 CfOut(cf_verbose,"","Part of the DN that matches an existing entry: %s\n", matched_msg);
                 }
              }
           else
-             {          
+             {
              CfOut(cf_verbose,""," -> LDAP search was successful, %d entries, %d references",num_entries,num_refs);
-             }          
+             }
           break;
-          
-      default:          
+
+      default:
           break;
-          
+
       }
    }
 
@@ -1024,7 +1024,7 @@ for (rp = master; rp != NULL; rp=rp->next,count++)
       snprintf(work,CF_BUFSIZE,"\"%s\" : %d",(char *)ap->lval,count);
       }
    Join(buffer,work,bufsize);
-   
+
    notdone = true;
    }
 snprintf(work,CF_BUFSIZE,"}, \"data\" : [");
@@ -1037,11 +1037,11 @@ while(notdone)
    for (rp = master; rp != NULL; rp=rp->next)
       {
       struct Item *list;
-      
+
       ap = rp->item;
 
       ip = (struct Item *)rp->state_ptr;
-      
+
       snprintf(work,CF_BUFSIZE,"\"%s\"",ip->name);
       Join(buffer,work,bufsize);
 
@@ -1049,7 +1049,7 @@ while(notdone)
          {
          Join(buffer,",",bufsize);
          }
-      
+
       ap = (struct CfAssoc *)rp->item;
       DeleteAssoc(ap);
       rp->item = NULL;
@@ -1121,7 +1121,7 @@ if (linesperpage == 0)
    {
    linesperpage = 1000;
    }
-    
+
 if ((ld = NovaQueryLDAP(uri,authdn,sec,passwd,starttls,errstr)) == NULL)
    {
    return -1;
@@ -1141,7 +1141,7 @@ num_refs = ldap_count_references(ld,res);
 for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,msg))
    {
    count++;
-   
+
    if (count > page*linesperpage)
       {
       break;
@@ -1155,7 +1155,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
    switch(ldap_msgtype(msg))
       {
       case LDAP_RES_SEARCH_ENTRY:
-          
+
           if ((dn = ldap_get_dn(ld,msg)) != NULL)
              {
              CfOut(cf_verbose,""," -> LDAP query found dn: %s\n",dn);
@@ -1164,17 +1164,17 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
              {
              CfOut(cf_verbose,""," !! No LDAP query found\n");
              }
-          
+
           /* Iterate through each attribute in the entry. */
-          
+
           for (a = ldap_first_attribute(ld,res,&ber); a != NULL; a = ldap_next_attribute(ld,res,ber))
              {
              /* Get and print all values for each attribute. */
 
              Debug(" ->   LDAP query found attribute %s\n",a);
-             
+
              if ((vals = ldap_get_values_len(ld,msg,a)) != NULL)
-                {                
+                {
                 for (i = 0; vals[i] != NULL; i++)
                    {
                    if (cf_strcmp(a,name) == 0)
@@ -1183,29 +1183,29 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                       AppendRScalar(&return_value,(char *)vals[i]->bv_val,CF_SCALAR);
                       }
                    }
-                
+
                 ldap_value_free_len(vals);
                 }
-             
+
              ldap_memfree(a);
              }
-          
+
           if (ber != NULL)
-             {             
-             ber_free(ber,0);             
+             {
+             ber_free(ber,0);
              }
 
           ldap_memfree(dn);
           break;
-          
+
       case LDAP_RES_SEARCH_REFERENCE:
-          
+
        /* The server sent a search reference encountered during the search operation. */
        /* Parse the result and print the search references.
           Ideally, rather than print them out, you would follow the references....what does this mean? */
-          
+
           parse_ret = ldap_parse_reference(ld,msg,&referrals,NULL,0);
-          
+
           if (parse_ret != LDAP_SUCCESS)
              {
              CfOut(cf_error,"","Unable to parse LDAP references: %s\n",ldap_err2string(parse_ret));
@@ -1217,15 +1217,15 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
           if (referrals != (char **)NULL)
              {
              for (i = 0; referrals[i] != NULL; i++)
-                {                
+                {
                 CfOut(cf_verbose,"","Search reference: %s\n\n",referrals[i]);
                 }
-             
+
              ldap_value_free(referrals);
              }
-          
+
           break;
-          
+
       case LDAP_RES_SEARCH_RESULT:
 
           /* At the end, a result status is sent */
@@ -1233,10 +1233,10 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
           CfOut(cf_verbose,""," -> LDAP Query result received\n");
 
           parse_ret = ldap_parse_result(ld,msg,&ret,&matched_msg,&error_msg,NULL,&serverctrls,0);
-          
+
           if (parse_ret != LDAP_SUCCESS)
-             {             
-             CfOut(cf_error,""," !! LDAP Error parsed: %s\n",ldap_err2string(parse_ret));             
+             {
+             CfOut(cf_error,""," !! LDAP Error parsed: %s\n",ldap_err2string(parse_ret));
              ldap_unbind(ld);
              *errstr = ldap_err2string(parse_ret);
              return -1;
@@ -1245,28 +1245,28 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
           /* Then check the results of the LDAP search operation. */
 
           if (ret != LDAP_SUCCESS)
-             {             
+             {
              CfOut(cf_error,""," !! LDAP search failed: %s\n",ldap_err2string(ret));
-             
+
              if (error_msg != NULL & *error_msg != '\0')
-                {                
-                CfOut(cf_error,"","%s", error_msg);                
+                {
+                CfOut(cf_error,"","%s", error_msg);
                 }
-             
+
              if (matched_msg != NULL && *matched_msg != '\0')
-                {                
+                {
                 CfOut(cf_verbose,"","Part of the DN that matches an existing entry: %s\n", matched_msg);
                 }
              }
           else
-             {          
+             {
              CfOut(cf_verbose,""," -> LDAP search was successful, %d entries, %d references",num_entries,num_refs);
-             }          
+             }
           break;
-          
-      default:          
+
+      default:
           break;
-          
+
       }
    }
 
@@ -1464,7 +1464,7 @@ for (rp = list; rp != NULL; rp = rp->next)
       }
 
    ap = (struct CfAssoc *)rp->item;
-   
+
    if (strcmp((char *)ap->lval,key) == 0)
       {
       return rp;
