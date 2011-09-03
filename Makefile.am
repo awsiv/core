@@ -60,3 +60,4 @@ install-data-hook:
 	mkdir -p $(DESTDIR)$(prefix)/outputs
 	mkdir -p $(DESTDIR)$(prefix)/ppkeys
 	cp -R misc/software_updates $(DESTDIR)$(prefix)
+	find $(DESTDIR)$(prefix)/software_updates -name .svn | xargs rm -rf
