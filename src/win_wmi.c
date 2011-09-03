@@ -34,7 +34,7 @@ DISPATCH_OBJ(wmiSvc);
 int NovaWin_GetInstalledPkgs(struct CfPackageItem **pkgList, struct Attributes a, struct Promise *pp)
 {
   int res;
-  
+
   if(!NovaWin_WmiInitialize())  // deinitialized before agents exit
     {
       CfOut(cf_error, "", "!! Could not initialize WMI to get installed packages");
@@ -101,7 +101,7 @@ static int NovaWin_WmiGetInstalledPkgsNew(struct CfPackageItem **pkgList, struct
 if (!RUN_QUERY(colSoftware, "SELECT PackageName FROM Win32_Product"))
    {
    NovaWin_PrintWmiError("Could not execute query 'SELECT PackageName FROM Win32_Product' in 'NovaWin_WmiGetInstalledPkgsNew'");
-   
+
    SAFE_RELEASE(colSoftware);
    return false;
    }
@@ -110,8 +110,8 @@ if (!RUN_QUERY(colSoftware, "SELECT PackageName FROM Win32_Product"))
  FOR_EACH(softwareItem, colSoftware, NULL)
   {
    dhGetValue(L"%s", &pkgName, softwareItem, L".PackageName");
-   
-   
+
+
    if(pkgName == NULL)
       {
       CfOut(cf_error, "", "!! Empty package name for installed package");
@@ -119,22 +119,22 @@ if (!RUN_QUERY(colSoftware, "SELECT PackageName FROM Win32_Product"))
    else
       {
 	Debug("pkgname=\"%s\"\n", pkgName);
-	
+
 	snprintf(name, sizeof(name), "%s", ExtractFirstReference(nameRegex, pkgName));
         snprintf(version, sizeof(version), "%s", ExtractFirstReference(versionRegex, pkgName));
-          
+
         Debug("regex_pkgname=\"%s\", regex_pkgver=\"%s\"\n", name, version);
-      
+
       if (!PrependPackageItem(pkgList, name, version, VSYSNAME.machine, a, pp))
          {
          CfOut(cf_error, "", "!! Could not prepend package name to list");
          }
-      
+
       dhFreeString(pkgName);
       pkgName = NULL;
       }
-   
-   
+
+
    } NEXT(softwareItem);
 
 
@@ -163,7 +163,7 @@ static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, struct
   if(!RUN_QUERY(colSoftware, "SELECT Caption, Version FROM Win32_Product"))
     {
       NovaWin_PrintWmiError("Could not execute query 'SELECT Caption, Version FROM Win32_Product' in 'NovaWin_WmiGetInstalledPkgsOld'");
-      
+
       SAFE_RELEASE(colSoftware);
       return false;
     }
@@ -172,7 +172,7 @@ static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, struct
     {
       dhGetValue(L"%s", &caption, softwareItem, L".Caption");
       dhGetValue(L"%s", &version, softwareItem, L".Version");
-	    
+
 
       if(caption == NULL || strlen(caption) == 0)
 	{
@@ -204,7 +204,7 @@ static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, struct
 	    {
 	      CfOut(cf_error, "", "!! Could not prepend package name to list");
 	    }
-	  
+
 	}
 
       if(caption != NULL)
@@ -212,7 +212,7 @@ static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, struct
 	  dhFreeString(caption);
 	  caption = NULL;
         }
-      
+
       if(version != NULL)
         {
 	  dhFreeString(version);
@@ -267,10 +267,10 @@ int NovaWin_WmiInitialize(void)
       CfOut(cf_error, "dhInitialize", "!! Could not initialize disphelper");
       return false;
     }
-	
+
   // Debug: call with TRUE to enable dialog box error messages
   if(FAILED(dhToggleExceptions(FALSE)))
-    {  
+    {
       CfOut(cf_error, "dhToggleExceptions", "!! Could not control disphelper exception messages");
     }
 
@@ -279,7 +279,7 @@ int NovaWin_WmiInitialize(void)
       CfOut(cf_error, "dhGetObject", "!! Could not obtain WMI object");
       return false;
     }
-	
+
   return true;
 }
 
