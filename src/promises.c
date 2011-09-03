@@ -584,8 +584,9 @@ return false;
 void Nova_AddGoalsToDB(char *goal_patterns, char *goal_categories)
 
 { struct Rlist *rp1, *rp2;
-
-  CFDB_SaveGoalsCache(goal_patterns,goal_categories);
+#ifdef HAVE_LIBMONGOC
+CFDB_SaveGoalsCache(goal_patterns,goal_categories);
+#endif
 }
 
 /*****************************************************************************/
