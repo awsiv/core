@@ -1403,7 +1403,9 @@ void ThisHashString(char *str,char *buffer,int len,unsigned char digest[EVP_MAX_
 /*********************************************************************/
 void Nova_GenerateTestData(int count)
 
-{ struct Rlist *testmachines = NULL,*rp=NULL,*total=NULL;
+{
+#ifdef HAVE_LIBMONGOC
+ struct Rlist *testmachines = NULL,*rp=NULL,*total=NULL;
  struct Item *ip;
  time_t from;
  char newkeyhash[CF_BUFSIZE]={0},newaddresses[CF_MAXVARSIZE]={0},newhostnames[CF_BUFSIZE]={0},noDot[CF_BUFSIZE]={0};
@@ -1498,6 +1500,9 @@ void Nova_GenerateTestData(int count)
     }
  DeleteRlist(total);
  printf("%d test machines added\n",hostCount-startFrom);
+#else
+ printf(stderr, "Test data generation requires MongoDB support\n");
+#endif
 }
 /*********************************************************************/
 struct Rlist* Nova_GetTestMachines(void)
