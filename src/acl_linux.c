@@ -213,26 +213,26 @@ for (rp = aces; rp != NULL; rp=rp->next)
          acl_free((void*)acl_new);
          return false;
          }
-		 
-	   // clear ace_current's permissions to avoid ace_parsed from last 
-	   // loop iteration to be taken into account when applying mode below
-	   if((acl_get_permset(ace_current, &perms) != 0))
-	     {  
+
+      // clear ace_current's permissions to avoid ace_parsed from last
+      // loop iteration to be taken into account when applying mode below
+      if((acl_get_permset(ace_current, &perms) != 0))
+         {
          CfOut(cf_error,"acl_get_permset","!! Error obtaining permset for 'ace_current'");
          acl_free((void*)acl_existing);
          acl_free((void*)acl_tmp);
          acl_free((void*)acl_new);
-         return false;		   
-		 }
-	   
-	   if(acl_clear_perms(perms) != 0)
-	     {
+         return false;
+         }
+
+      if(acl_clear_perms(perms) != 0)
+         {
          CfOut(cf_error,"acl_clear_perms","!! Error clearing permset for 'ace_current'");
          acl_free((void*)acl_existing);
          acl_free((void*)acl_tmp);
          acl_free((void*)acl_new);
-         return false;		   	   
-	     }
+         return false;
+         }
       }
 
    // mode string should be prefixed with an entry seperator
@@ -470,33 +470,33 @@ switch (retv)
           }
 
        switch (a.transaction.action)
-	 {
-	 case cfa_warn:
-          
-	   cfPS(cf_error,CF_WARN,"",pp,a," !! Default ACL on \"%s\" needs to be cleared", file_path);
-	   break;
-          
-	 case cfa_fix:
+          {
+          case cfa_warn:
 
-	   if(!DONTDO)
-	     {
-	       if (acl_set_file(file_path, ACL_TYPE_DEFAULT, acl_empty) != 0)
-		 {
+             cfPS(cf_error,CF_WARN,"",pp,a," !! Default ACL on \"%s\" needs to be cleared", file_path);
+             break;
+
+          case cfa_fix:
+
+             if(!DONTDO)
+                {
+                if (acl_set_file(file_path, ACL_TYPE_DEFAULT, acl_empty) != 0)
+                   {
 		   CfOut(cf_error,"","Could not reset ACL for %s",file_path);
 		   result = false;
 		   break;
-		 }
-	     }
+                   }
+                }
 
-	   cfPS(cf_inform,CF_CHG,"",pp,a,"-> Default ACL on \"%s\" successfully cleared", file_path);
-	   result = true;
-          
-	   break;
-          
-	 default:
-	   FatalError("Cfengine: internal error: illegal file action\n");
-	   result = false;
-	 }
+             cfPS(cf_inform,CF_CHG,"",pp,a,"-> Default ACL on \"%s\" successfully cleared", file_path);
+             result = true;
+
+             break;
+
+          default:
+             FatalError("Cfengine: internal error: illegal file action\n");
+             result = false;
+          }
 
        break;
 
