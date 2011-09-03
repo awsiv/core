@@ -22,52 +22,52 @@ struct Item *NOVA_BUNDLEDEPENDENCE = NULL;
 /*****************************************************************************/
 
 static char *CF_VALUETYPES[18][3] =
- {
- {"hup,int,trap,kill,pipe,cont,abrt,stop,quit,term,child,usr1,usr2,bus,segv","system signals","a unix signal name"},
- {"true,false,yes,no,on,off","boolean","a positive or a negative"},
- {"symlink,hardlink,relative,absolute,none","link type","a support link type"},
- {"0,2147483648","a time range","a value from zero to a maximum system time -- but you should use time functions to convert this"},
- {"0,99999999999","a positive integer","a number between zero and the maximum value"},
- {"-99999999999,9999999999","integer","a number between the minus and positive maximum values"},
- {"-9.99999E100,9.99999E100","real number","a number between the minus and positive maximum values"},
- {"^.$","a single character","one symbol"},
- {"[0-7augorwxst,+-]+","posix file mode or permission","something that you would give as an argument to chmod"},
- {"[a-zA-Z0-9_!&|.()]+","a cfengine class expression","an alphanumeric string with option underscores and logical operators"},
- {"[a-zA-Z0-9_$.]+","a cfengine identifier","an alphanumeric string with option underscores"},
- {"[a-zA-Z0-9_$.-]+","a user/group id","an alphanumeric string with option underscores and hyphens"},
- {"[cC]:\\\\.*|/.*","a file path","a system file path suitable for the target system"},
- {"LOG_USER,LOG_DAEMON,LOG_LOCAL0,LOG_LOCAL1,LOG_LOCAL2,LOG_LOCAL3,LOG_LOCAL4,LOG_LOCAL5,LOG_LOCAL6,LOG_LOCAL7","a syslog level","a syslog constant"},
- {"","an arbitrary string","unspecified characters"},
- {".*","an arbitrary string","unspecified characters"},
- {NULL,NULL,NULL}
- };
+   {
+   {"hup,int,trap,kill,pipe,cont,abrt,stop,quit,term,child,usr1,usr2,bus,segv","system signals","a unix signal name"},
+   {"true,false,yes,no,on,off","boolean","a positive or a negative"},
+   {"symlink,hardlink,relative,absolute,none","link type","a support link type"},
+   {"0,2147483648","a time range","a value from zero to a maximum system time -- but you should use time functions to convert this"},
+   {"0,99999999999","a positive integer","a number between zero and the maximum value"},
+   {"-99999999999,9999999999","integer","a number between the minus and positive maximum values"},
+   {"-9.99999E100,9.99999E100","real number","a number between the minus and positive maximum values"},
+   {"^.$","a single character","one symbol"},
+   {"[0-7augorwxst,+-]+","posix file mode or permission","something that you would give as an argument to chmod"},
+   {"[a-zA-Z0-9_!&|.()]+","a cfengine class expression","an alphanumeric string with option underscores and logical operators"},
+   {"[a-zA-Z0-9_$.]+","a cfengine identifier","an alphanumeric string with option underscores"},
+   {"[a-zA-Z0-9_$.-]+","a user/group id","an alphanumeric string with option underscores and hyphens"},
+   {"[cC]:\\\\.*|/.*","a file path","a system file path suitable for the target system"},
+   {"LOG_USER,LOG_DAEMON,LOG_LOCAL0,LOG_LOCAL1,LOG_LOCAL2,LOG_LOCAL3,LOG_LOCAL4,LOG_LOCAL5,LOG_LOCAL6,LOG_LOCAL7","a syslog level","a syslog constant"},
+   {"","an arbitrary string","unspecified characters"},
+   {".*","an arbitrary string","unspecified characters"},
+   {NULL,NULL,NULL}
+   };
 
 /*****************************************************************************/
 /* Level                                                                     */
 /*****************************************************************************/
 
 void Nova_StoreKMDB(struct Topic **topichash,struct Occurrence *occurrences,struct Inference *inferences)
-    
+
 {
 #ifdef HAVE_LIBMONGOC
 
-  struct Topic *tp;
-  struct TopicAssociation *ta;
-  struct Occurrence *op;
-  struct Inference *ip;
-  struct Item *itp;
-  char packNumStr[CF_MAXVARSIZE];
-  mongo_connection dbconn = {0};
-  bson_buffer bb,bbuf,*sub,*assocs,*setObj;
-  bson b;
-  int slot,assoc_id = 0;
+struct Topic *tp;
+struct TopicAssociation *ta;
+struct Occurrence *op;
+struct Inference *ip;
+struct Item *itp;
+char packNumStr[CF_MAXVARSIZE];
+mongo_connection dbconn = {0};
+bson_buffer bb,bbuf,*sub,*assocs,*setObj;
+bson b;
+int slot,assoc_id = 0;
 
 if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    {
    CfOut(cf_error, "", "!! Could not open connection to database to store Knowledge Map");
    return;
    }
- 
+
 // remove existing data first
 
 mongo_remove(&dbconn,MONGO_KM_TOPICS, bson_empty(&b));
@@ -86,7 +86,7 @@ for (slot = 0; slot < CF_HASHTABLESIZE; slot++)
       bson_append_int(&bbuf,cfk_topicid,tp->id);
 
       Debug("Add Topic(topic_name,topic_context,pid) values ('%s','%s','%d')\n",tp->topic_name,tp->topic_context,tp->id);
-      
+
       // Associations
 
       bson_buffer_init(&bb);
@@ -117,9 +117,9 @@ for (slot = 0; slot < CF_HASHTABLESIZE; slot++)
             bson_append_finish_object(sub);
             }
          }
-      
+
       bson_append_finish_object(assocs);
-      
+
       bson_from_buffer(&b,&bbuf);
       mongo_insert(&dbconn,MONGO_KM_TOPICS,&b);
       bson_destroy(&b);
@@ -133,7 +133,7 @@ mongo_remove(&dbconn,MONGO_KM_OCCURRENCES,bson_empty(&b));
 for (op = occurrences; op != NULL; op=op->next)
    {
    struct Rlist *rp;
-   
+
    for (rp = op->represents; rp != NULL; rp=rp->next)
       {
       Debug("Add occurrence (context,locator,locator_type,subtype) values ('%s','%s','%d','%s')\n",op->occurrence_context,op->locator,op->rep_type,rp->item);
@@ -164,7 +164,7 @@ for (ip = inferences; ip != NULL; ip=ip->next)
    bson_append_string(&bbuf,cfk_precedent,ip->precedent);
    bson_append_string(&bbuf,cfk_qualifier,ip->qualifier);
    bson_append_string(&bbuf,cfk_inference,ip->inference);
-   
+
    bson_from_buffer(&b,&bbuf);
    mongo_insert(&dbconn,MONGO_KM_INFERENCES,&b);
    bson_destroy(&b);
