@@ -66,6 +66,7 @@
                         <th scope="col">Date</th>
                         <th scope="col">Message</th>
                         <th scope="col">Report Type</th>
+                        <th scope="col"></th>
                     </tr>
 
                     <tbody>
@@ -76,6 +77,38 @@
                                     <td><?php echo $notes->getDate(); ?></td>
                                     <td><?php echo $notes->getMessage(); ?></td>
                                     <td><?php echo $notes->getReportType(); ?></td>
+                                    <td>
+                                        <a class="details" href="#">Details</a>
+                                        <div class="detailsTables" style="display: none;">
+                                            <table class="bundlelist-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Hostname</th>
+                                                        <th scope="col">IP</th>
+                                                        <?php if ($notes->getReportType() != 'Hosts') { ?>
+                                                        <?php foreach ($notes->getReport() as $repKey => $rep) { ?>
+                                                            <th scope="col">
+                                                                <?php echo $repKey ?>
+                                                            </th>
+                                                        <?php }} ?>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr> 
+                                                        <?php $hostArray = $notes->getHost(); ?>
+                                                        <td><a href="<?php echo site_url();?>/welcome/host/<?php echo $hostArray['kh'];?>"><?php echo $hostArray['name']; ?></a></td>
+                                                        <td><?php echo $hostArray['ip']; ?></td>
+                                                         <?php if ($notes->getReportType() != 'Hosts') { ?>
+                                                        <?php foreach ($notes->getReport() as $repKey => $rep) { ?>
+                                                            <td>
+                                                                <?php echo $rep ?>
+                                                            </td>
+                                                        <?php }} ?>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </td>
                                 </tr>
                             <?php } ?>
                         <?php } else { ?>
@@ -108,7 +141,7 @@
                         for ($i = $pg['start']; $i <= $pg['end']; $i++) {
                             if ($i == $pg['page'])
                                 $current = 'current'; else
-                                $current="";
+                                $current = "";
                             ?>
 
                             <a href="<?php echo site_url("notes/shownotes/" . "page/$i") ?>" title="Go to Page <?php echo $i; ?>" class="page <?php echo $current; ?>"><span><?php echo $i; ?></span></a>
@@ -123,6 +156,7 @@
             </div>
         </div>
     </div>
+    <div id="detailsDialog"></div>
 </div>
 <script type="text/javascript">
     $(function() {
@@ -165,6 +199,31 @@
         .find("h3 a")
         .focus(function() { $(this).parent().toggleClass("ui-state-hover"); })
         .focusout(function() { $(this).parent().toggleClass("ui-state-hover"); })
+        
+        
+        
+            var $detailsDialog = $('#detailsDialog').dialog({
+		 autoOpen: false,
+		 modal: true,
+                 width: 'auto',
+                 title: 'Note details',
+		 buttons: {
+		 'Ok': function() {
+	         $(this).dialog('close');
+	         }
+		 },
+		 open: function() {
+		 }
+	 });
+         
+         $('.details').bind('click',function(event){
+             event.preventDefault();
+             var content = $(this).next().html();
+             $('#detailsDialog').html(content);
+             $detailsDialog.dialog('open');
+         
+         });
+        
         
         
         

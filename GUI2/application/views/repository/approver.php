@@ -11,7 +11,7 @@
             </p>
 
             <p>
-                <label for="revisions"> Revisions :: </label>
+                <label for="revisions"> Revisions: </label>
                 <span id="revisions">
                     <?php
                     if (is_array($revs) && count($revs) > 0) {
@@ -25,7 +25,7 @@
             </p>
 
             <p>
-                <label for="comments"> Comments :: </label>
+                <label for="comments"> Comments: </label>
                 <textarea  id="comments" name="comments" placeholder="comments" cols="40" rows="5"> </textarea>
                 <br />
             </p>

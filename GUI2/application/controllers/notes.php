@@ -126,9 +126,16 @@ class Notes extends Cf_Controller {
         // if we have valid insert get that notes else leave it blank 
         if ($ret) {
             $this->data['form_url'] = site_url() . '/notes/addnote';
+            $this->data['nid'] = $ret;
             $this->data['data'] = $this->note_model->getAllNotes($filter);
         } else {
-            $this->data['data'] = array();
+            //$this->data['data'] = array();
+        $this->data['nid'] = $ret;
+        $this->data['rid'] = $rid;
+        $this->data['hostkey'] = $keyhash;
+        $this->data['reporttype'] = $report_type;
+            
+            
         }
 
         $this->load->view('/notes/view_notes', $this->data);
