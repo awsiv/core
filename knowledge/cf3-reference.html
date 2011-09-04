@@ -244,7 +244,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h2 class="chapter">1 CFEngine 3.3.0a1.r2973M &ndash; Getting started</h2>
+<h2 class="chapter">1 CFEngine 3.3.0a1.r3033M &ndash; Getting started</h2>
 
 <p><br>
 
@@ -264,8 +264,8 @@ exist in four versions, each of which adds to the following
      <ul>
 <li><b>Community Edition</b> - a free and gratis core of the software (available now). 
 <li><b>Nova</b> - a commercial enhanced version for basic enterprise needs (available now). 
-<li><b>Constellation</b> - a commercial enhancement for larger enterprises (coming 2011). 
-<li><b>Galaxy</b> - the ultimate commerical enhancement for global enterprises (coming soon). 
+<li><b>Constellation</b> - a commercial enhancement for larger enterprises (coming 2010). 
+<li><b>Galaxy</b> - the ultimate commerical enhancement for global enterprises (coming 2011). 
 </ul>
 
    <p>This document is valid for <b>all versions</b> of CFEngine.  Whenever a feature is only
@@ -304,7 +304,7 @@ management and diagnosis into the processes.
 <li><a accesskey="9" href="#Upgrading-from-CFEngine-2">Upgrading from CFEngine 2</a>
 <li><a href="#Testing-as-a-non_002dprivilieged-user">Testing as a non-privilieged user</a>
 <li><a href="#The-bare-necessities-of-a-CFEngine-3">The bare necessities of a CFEngine 3</a>
-<li><a href="#Familiarizing-yourself">Familiarizing yourself</a>
+<li><a href="#Familiiarizing-yourself">Familiiarizing yourself</a>
 <li><a href="#Remote-access-troubleshooting">Remote access troubleshooting</a>
 </ul>
 
@@ -540,13 +540,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Getting-started">Getting started</a>
 
 <h3 class="section">1.2 Core concepts</h3>
 
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine
-Unlike previous versions of cfengine, which had no consistent model
+<p>Unlike previous versions of CFEngine, which had no consistent model
 For its features, you can recognize <i>everything</i> in CFEngine 3
-=======
-Unlike previous versions of CFEngine, which had no consistent model
-For its features, you can recognize <i>everything</i> in CFEngine 3
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; .r2909
 from just a few concepts.
 
      <dl>
@@ -566,15 +561,9 @@ CFEngine 3 will be its new language interface.  Although it has been
 clear for a long time that the organically grown language used in
 CFEngine 1 and 2 developed many problems, it was not immediately
 clear exactly what would be better. It has taken years of research to
-&lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine
-simplify the successful features of cfengine to a single overarching
-model. To understand the new cfengine, it is best to set aside any
-preconceptions about what cfengine is today. CFEngine 3 is a genuine
-=======
 simplify the successful features of CFEngine to a single overarching
 model. To understand the new CFEngine, it is best to set aside any
 preconceptions about what CFEngine is today. CFEngine 3 is a genuine
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; .r2909
 "next generation" effort, which will be a springboard into the
 future of system management.
 
@@ -589,13 +578,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Getting-started">Getting started</a>
 
 <h3 class="section">1.3 A renewed CFEngine</h3>
 
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine
-CFEngine 3 is a significant rewrite of underlying cfengine technology
-which preserves the core principles and methodology of cfengine's
-=======
-CFEngine 3 is a significant rewrite of underlying CFEngine technology
+<p>CFEngine 3 is a significant rewrite of underlying CFEngine technology
 which preserves the core principles and methodology of CFEngine's
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; .r2909
 tried and tested approach.  It comes with a new, improved language,
 with a consistent syntax and powerful pattern expression features that
 display the intent behind CFEngine code more clearly. The main goal in
@@ -738,13 +722,8 @@ in the form:
 of the form
 &lsquo;<samp><span class="samp">constraint_type =&gt; template_identifier</span></samp>&rsquo;.
 
-     <p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine
-<li>CFEngine uses many `constraint expressions'
-as part of the body of a promise. These take the form: left-hand-side (cfengine word)
-=======
-<li>CFEngine uses many `constraint expressions'
+     <li>CFEngine uses many `constraint expressions'
 as part of the body of a promise. These take the form: left-hand-side (CFEngine word)
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; .r2909
 &lsquo;<samp><span class="samp">=&gt;</span></samp>&rsquo; right-hand-side (user defined data). This can take several forms:
 
      <pre class="verbatim">     cfengine_word => user_defined_template(parameters)
@@ -1144,11 +1123,7 @@ CFEngine 2 and CFEngine 3, so it does not matter whether you run
 <code>cf-serverd</code> (cf3) together with <code>cfagent</code> (cf2). You can
 change the servers at your own pace.
 
-   <p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine
-CFEngine 3's <code>cf-execd</code> replaces cfengine 2's <code>cfexecd</code> and
-=======
-CFEngine 3's <code>cf-execd</code> replaces CFEngine 2's <code>cfexecd</code> and
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; .r2909
+   <p>CFEngine 3's <code>cf-execd</code> replaces CFEngine 2's <code>cfexecd</code> and
 it is designed to work optimally with <code>cf-agent</code> (cf3). Running
 this daemon has no consequences for access control, only for
 scheduling <code>cf-agent</code>. You can (indeed should) replace
@@ -1171,15 +1146,9 @@ running <code>cfservd</code> and <code>cfenvd</code> as daemons.
 files to your master update repository, i.e.  where you will publish
 policies for distribution.
 
-     <p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine
-<li>Remove any self-healing rules to reinstall cfengine 2, especially
+     <li>Remove any self-healing rules to reinstall CFEngine 2, especially
 rules to add <code>cfexecd</code> or <code>cfagent</code> to <samp><span class="file">crontabs</span></samp> etc. CFEngine 3
-will handle this from now on and encapsulate old cfengine 2 scripts. 
-=======
-<li>Remove any self-healing rules to reinstall CFEngine 2, especially
-rules to add <code>cfexecd</code> or <code>cfagent</code> to <samp><span class="file">crontabs</span></samp> etc. CFEngine 3
-will handle this from now on and encapsulate old CFEngine 2 scripts. 
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; .r2909
+will handle this from now on and encapsulate old CFEngine 2 scripts.
 
      <li>Move to this inputs directory: <code>cd </code><var>your-path</var><code>/inputs</code>.
 
@@ -1265,7 +1234,7 @@ allowed to use it, and <samp><span class="file">cf-agent</span></samp> will look
 <div class="node">
 <a name="The-bare-necessities-of-a-CFEngine-3"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Familiarizing-yourself">Familiarizing yourself</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Familiiarizing-yourself">Familiiarizing yourself</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Testing-as-a-non_002dprivilieged-user">Testing as a non-privilieged user</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Getting-started">Getting started</a>
 
@@ -1310,7 +1279,7 @@ with an expanded view.
 
 <!--  -->
 <div class="node">
-<a name="Familiarizing-yourself"></a>
+<a name="Familiiarizing-yourself"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Remote-access-troubleshooting">Remote access troubleshooting</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#The-bare-necessities-of-a-CFEngine-3">The bare necessities of a CFEngine 3</a>,
@@ -1492,7 +1461,7 @@ atlas$
 <div class="node">
 <a name="Remote-access-troubleshooting"></a>
 <p><hr>
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Familiarizing-yourself">Familiarizing yourself</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Familiiarizing-yourself">Familiiarizing yourself</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Getting-started">Getting started</a>
 
 </div>
@@ -3640,15 +3609,9 @@ writing <code>$(bundle_name.variable_name)</code>.
    <p>The CFEngine bundle below detects whether CFEngine 2 is already
 running on the host or not, and if so attempts to kill off old daemon
 processes and encapsulate the agent. It also looks for rules in the
-&lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine
-old cfengine configuration that would potentially spoil cfengine 3's
-control of the system: the last thing we want is for cfengine 2 and
-cfengine 3 to fight each other for control of the system.  CFEngine 3
-=======
 old CFEngine configuration that would potentially spoil CFEngine 3's
 control of the system: the last thing we want is for CFEngine 2 and
 CFEngine 3 to fight each other for control of the system.  CFEngine 3
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; .r2909
 tries to edit an existing crontab entry to replace any references to
 <code>cfexecd</code> with <code>cf-execd</code>; if none are found it will add a 5
 minute run schedule.  You should never put <code>cf-agent</code>or
@@ -4945,7 +4908,8 @@ common::
    <p>This may be used as a policy Quality Assurance measure, to remind
 policy makers to properly document their promises. When true,
 <code>cf-promises</code> will report loudly on promises that do not have
-comments.
+comments. Variables promises are exempted from this
+rule, since they may be considered self-documenting.
 
 <div class="node">
 <a name="host_licenses_paid-in-common"></a>
@@ -5951,9 +5915,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-agent">control agent</a>
 
    <p>The global setting for the file-editing safety-net (this value may be
 overridden on a per-promise basis with <code>max_file_size</code>,
-See <a href="#edit_005fdefaults-in-files">edit_defaults in files</a>. The default value for <code>editfilesize</code> is
-<code>100k</code>.  Note the use of special units is allowed,
-See <a href="#Datatypes-in-CFEngine-3">Datatypes in CFEngine 3</a>, for a list of permissible suffixes.
+See <a href="#edit_005fdefaults-in-files">edit_defaults in files</a>. Note the use of special units is
+allowed, See <a href="#Datatypes-in-CFEngine-3">Datatypes in CFEngine 3</a>, for a list of permissible
+suffixes.
 
 <div class="node">
 <a name="environment-in-agent"></a>
@@ -12397,7 +12361,7 @@ canonified, so it is unecessary to call a canonify function on such inputs.
 <br>
 
      <p>This class is set if no action was necessary by <code>cf-agent</code>
-because the promise concerned was aready kept without further action
+because the promise concerned was already kept without further action
 required.
 
      <p>Note that any strings passed to this list are automatically
@@ -34303,6 +34267,7 @@ variable itself is class-specific.
 <li><a href="#Variable-sys_002ecf_005ftwin">Variable sys.cf_twin</a>
 <li><a href="#Variable-sys_002ecf_005fversion">Variable sys.cf_version</a>
 <li><a href="#Variable-sys_002eclass">Variable sys.class</a>
+<li><a href="#Variable-sys_002econstellation_005fversion">Variable sys.constellation_version</a>
 <li><a href="#Variable-sys_002edate">Variable sys.date</a>
 <li><a href="#Variable-sys_002edomain">Variable sys.domain</a>
 <li><a href="#Variable-sys_002eexpires">Variable sys.expires</a>
@@ -34310,12 +34275,17 @@ variable itself is class-specific.
 <li><a href="#Variable-sys_002efqhost">Variable sys.fqhost</a>
 <li><a href="#Variable-sys_002efstab">Variable sys.fstab</a>
 <li><a href="#Variable-sys_002ehost">Variable sys.host</a>
+<li><a href="#Variable-sys_002ehub_005fmaster">Variable sys.hub_master</a>
 <li><a href="#Variable-sys_002einterface">Variable sys.interface</a>
 <li><a href="#Variable-sys_002eipv4">Variable sys.ipv4</a>
 <li><a href="#Variable-sys_002eipv4_005binterface_005fname_005d">Variable sys.ipv4[interface_name]</a>
 <li><a href="#Variable-sys_002eipv4_005f1_005binterface_005fname_005d">Variable sys.ipv4_1[interface_name]</a>
 <li><a href="#Variable-sys_002eipv4_005f2_005binterface_005fname_005d">Variable sys.ipv4_2[interface_name]</a>
 <li><a href="#Variable-sys_002eipv4_005f3_005binterface_005fname_005d">Variable sys.ipv4_3[interface_name]</a>
+<li><a href="#Variable-sys_002ekey_005fdigest">Variable sys.key_digest</a>
+<li><a href="#Variable-sys_002elicense_005fowner">Variable sys.license_owner</a>
+<li><a href="#Variable-sys_002elicenses_005fgranted">Variable sys.licenses_granted</a>
+<li><a href="#Variable-sys_002elicenses_005finstalltime">Variable sys.licenses_installtime</a>
 <li><a href="#Variable-sys_002elong_005farch">Variable sys.long_arch</a>
 <li><a href="#Variable-sys_002emaildir">Variable sys.maildir</a>
 <li><a href="#Variable-sys_002enova_005fversion">Variable sys.nova_version</a>
@@ -34669,7 +34639,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 <a name="Variable-sys.class"></a>
 <a name="Variable-sys_002eclass"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002edate">Variable sys.date</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002econstellation_005fversion">Variable sys.constellation_version</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002ecf_005fversion">Variable sys.cf_version</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
@@ -34689,16 +34659,39 @@ top level operating system type classification.
 </pre>
 
 <div class="node">
-<a name="Variable-sys.date"></a>
-<a name="Variable-sys_002edate"></a>
+<a name="Variable-sys.constellation_version"></a>
+<a name="Variable-sys_002econstellation_005fversion"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002edomain">Variable sys.domain</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002edate">Variable sys.date</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002eclass">Variable sys.class</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
 </div>
 
-<h4 class="subsection">12.5.16 Variable sys.date</h4>
+<h4 class="subsection">12.5.16 Variable sys.constellation_version</h4>
+
+<p><br>
+This variable contains the version of running CFEngine Constellation
+
+   <p><i>History</i>: Was introduced in 3.2.0, Nova 2.1.0, Constellation 1.0.0 (2011)
+
+<pre class="verbatim">
+<span class="comment"># constellation_version = 1.0.0
+</span>
+
+</pre>
+
+<div class="node">
+<a name="Variable-sys.date"></a>
+<a name="Variable-sys_002edate"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002edomain">Variable sys.domain</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002econstellation_005fversion">Variable sys.constellation_version</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
+
+</div>
+
+<h4 class="subsection">12.5.17 Variable sys.date</h4>
 
 <p><br>
 
@@ -34720,7 +34713,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.17 Variable sys.domain</h4>
+<h4 class="subsection">12.5.18 Variable sys.domain</h4>
 
 <p><br>
 
@@ -34746,7 +34739,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.18 Variable sys.expires</h4>
+<h4 class="subsection">12.5.19 Variable sys.expires</h4>
 
 <p><br>
 
@@ -34767,7 +34760,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.19 Variable sys.exports</h4>
+<h4 class="subsection">12.5.20 Variable sys.exports</h4>
 
 <p><br>
 
@@ -34791,7 +34784,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.20 Variable sys.fqhost</h4>
+<h4 class="subsection">12.5.21 Variable sys.fqhost</h4>
 
 <p><br>
 
@@ -34814,7 +34807,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.21 Variable sys.fstab</h4>
+<h4 class="subsection">12.5.22 Variable sys.fstab</h4>
 
 <p><br>
 
@@ -34830,13 +34823,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 <a name="Variable-sys.host"></a>
 <a name="Variable-sys_002ehost"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002einterface">Variable sys.interface</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ehub_005fmaster">Variable sys.hub_master</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002efstab">Variable sys.fstab</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
 </div>
 
-<h4 class="subsection">12.5.22 Variable sys.host</h4>
+<h4 class="subsection">12.5.23 Variable sys.host</h4>
 
 <p><br>
 
@@ -34850,16 +34843,41 @@ is qualified or unqualified with a domain name.
 </pre>
 
 <div class="node">
-<a name="Variable-sys.interface"></a>
-<a name="Variable-sys_002einterface"></a>
+<a name="Variable-sys.hub_master"></a>
+<a name="Variable-sys_002ehub_005fmaster"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002eipv4">Variable sys.ipv4</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002einterface">Variable sys.interface</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002ehost">Variable sys.host</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
 </div>
 
-<h4 class="subsection">12.5.23 Variable sys.interface</h4>
+<h4 class="subsection">12.5.24 Variable sys.hub_master</h4>
+
+<p><br>
+
+   <p><i>History</i>: Was introduced in 3.2.0, Nova 2.1.0, Constellation 1.0.0 (2011)
+
+<pre class="verbatim">
+<span class="red">reports:
+</span>  am_hub_master::
+    "This hub is a primary hub for other replicas";
+  !am_hub_master::
+    "This hub is replicated from $(sys.hub_master)";
+
+</pre>
+
+<div class="node">
+<a name="Variable-sys.interface"></a>
+<a name="Variable-sys_002einterface"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002eipv4">Variable sys.ipv4</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002ehub_005fmaster">Variable sys.hub_master</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
+
+</div>
+
+<h4 class="subsection">12.5.25 Variable sys.interface</h4>
 
 <p><br>
 
@@ -34881,7 +34899,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.24 Variable sys.ipv4</h4>
+<h4 class="subsection">12.5.26 Variable sys.ipv4</h4>
 
 <p><br>
 
@@ -34905,7 +34923,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.25 Variable sys.ipv4[interface_name]</h4>
+<h4 class="subsection">12.5.27 Variable sys.ipv4[interface_name]</h4>
 
 <p><br>
 
@@ -34959,7 +34977,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.26 Variable sys.ipv4_1[interface_name]</h4>
+<h4 class="subsection">12.5.28 Variable sys.ipv4_1[interface_name]</h4>
 
 <p><br>
 
@@ -34977,7 +34995,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.27 Variable sys.ipv4_2[interface_name]</h4>
+<h4 class="subsection">12.5.29 Variable sys.ipv4_2[interface_name]</h4>
 
 <p><br>
 
@@ -34989,13 +35007,13 @@ as the associative array index, e.g.
 <a name="Variable-sys.ipv4_3%5binterface_name%5d"></a>
 <a name="Variable-sys_002eipv4_005f3_005binterface_005fname_005d"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002elong_005farch">Variable sys.long_arch</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ekey_005fdigest">Variable sys.key_digest</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002eipv4_005f2_005binterface_005fname_005d">Variable sys.ipv4_2[interface_name]</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
 </div>
 
-<h4 class="subsection">12.5.28 Variable sys.ipv4_3[interface_name]</h4>
+<h4 class="subsection">12.5.30 Variable sys.ipv4_3[interface_name]</h4>
 
 <p><br>
 
@@ -35004,16 +35022,116 @@ as the associative array index, e.g.
 &lsquo;<samp><span class="samp">$(ipv4_3[le0])</span></samp>&rsquo; or &lsquo;<samp><span class="samp">$(ipv4_3[xr1])</span></samp>&rsquo;, See <a href="#Variable-sys_002eipv4_005binterface_005fname_005d">Variable sys.ipv4[interface_name]</a>.
 
 <div class="node">
-<a name="Variable-sys.long_arch"></a>
-<a name="Variable-sys_002elong_005farch"></a>
+<a name="Variable-sys.key_digest"></a>
+<a name="Variable-sys_002ekey_005fdigest"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002emaildir">Variable sys.maildir</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002elicense_005fowner">Variable sys.license_owner</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002eipv4_005f3_005binterface_005fname_005d">Variable sys.ipv4_3[interface_name]</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
 </div>
 
-<h4 class="subsection">12.5.29 Variable sys.long_arch</h4>
+<h4 class="subsection">12.5.31 Variable sys.key_digest</h4>
+
+<p><br>
+
+   <p>Contains the unique identifier of the current host.
+
+<pre class="verbatim">reports:
+
+ cfengine_3_1::
+
+ "My digest is $(sys.key_digest)";
+
+</pre>
+
+<div class="node">
+<a name="Variable-sys.license_owner"></a>
+<a name="Variable-sys_002elicense_005fowner"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002elicenses_005fgranted">Variable sys.licenses_granted</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002ekey_005fdigest">Variable sys.key_digest</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
+
+</div>
+
+<h4 class="subsection">12.5.32 Variable sys.license_owner</h4>
+
+<p><br>
+
+   <p><i>History</i>: Was introduced in version 3.1.4,Nova 2.0.2 (2011)
+
+<pre class="verbatim">
+<span class="red">reports:
+</span>
+ nova::
+
+  "This version of CFEngine is licensed to $(sys.license_owner)";
+
+</pre>
+
+<div class="node">
+<a name="Variable-sys.licenses_granted"></a>
+<a name="Variable-sys_002elicenses_005fgranted"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002elicenses_005finstalltime">Variable sys.licenses_installtime</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002elicense_005fowner">Variable sys.license_owner</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
+
+</div>
+
+<h4 class="subsection">12.5.33 Variable sys.licenses_granted</h4>
+
+<p><br>
+
+   <p><i>History</i>: Was introduced in version 3.1.4,Nova 2.0.2 (2011)
+
+<pre class="verbatim">
+<span class="red">reports:
+</span>
+ nova::
+
+  "There are $(sys.licenses_granted) licenses granted for use";
+
+</pre>
+
+<div class="node">
+<a name="Variable-sys.licenses_installtime"></a>
+<a name="Variable-sys_002elicenses_005finstalltime"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002elong_005farch">Variable sys.long_arch</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002elicenses_005fgranted">Variable sys.licenses_granted</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
+
+</div>
+
+<h4 class="subsection">12.5.34 Variable sys.licenses_installtime</h4>
+
+<p><br>
+
+   <p><i>History</i>: Was introduced in version 3.1.5, Nova 2.1, Constellation 1.0(2011)
+
+<pre class="verbatim">
+<span class="red">reports:
+</span>
+ nova::
+
+  "The license was installed on $(sys.licenses_installtime)";
+
+
+</pre>
+
+<div class="node">
+<a name="Variable-sys.long_arch"></a>
+<a name="Variable-sys_002elong_005farch"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002emaildir">Variable sys.maildir</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002elicenses_005finstalltime">Variable sys.licenses_installtime</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
+
+</div>
+
+<h4 class="subsection">12.5.35 Variable sys.long_arch</h4>
 
 <p><br>
 
@@ -35036,7 +35154,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.30 Variable sys.maildir</h4>
+<h4 class="subsection">12.5.36 Variable sys.maildir</h4>
 
 <p><br>
 
@@ -35058,7 +35176,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.31 Variable sys.nova_version</h4>
+<h4 class="subsection">12.5.37 Variable sys.nova_version</h4>
 
 <p><br>
 
@@ -35080,7 +35198,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.32 Variable sys.os</h4>
+<h4 class="subsection">12.5.38 Variable sys.os</h4>
 
 <p><br>
 
@@ -35102,7 +35220,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.33 Variable sys.ostype</h4>
+<h4 class="subsection">12.5.39 Variable sys.ostype</h4>
 
 <p><br>
 
@@ -35124,7 +35242,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.34 Variable sys.policy_hub</h4>
+<h4 class="subsection">12.5.40 Variable sys.policy_hub</h4>
 
 <p><br>
 Hostname of the machine acting as a policy hub. This value is set
@@ -35149,7 +35267,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.35 Variable sys.release</h4>
+<h4 class="subsection">12.5.41 Variable sys.release</h4>
 
 <p><br>
 
@@ -35171,7 +35289,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.36 Variable sys.resolv</h4>
+<h4 class="subsection">12.5.42 Variable sys.resolv</h4>
 
 <p><br>
 
@@ -35193,7 +35311,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.37 Variable sys.uqhost</h4>
+<h4 class="subsection">12.5.43 Variable sys.uqhost</h4>
 
 <p><br>
 
@@ -35215,7 +35333,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.38 Variable sys.version</h4>
+<h4 class="subsection">12.5.44 Variable sys.version</h4>
 
 <p><br>
 
@@ -35240,7 +35358,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.39 Variable sys.windir</h4>
+<h4 class="subsection">12.5.45 Variable sys.windir</h4>
 
 <p><br>
 
@@ -35263,7 +35381,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.40 Variable sys.winprogdir</h4>
+<h4 class="subsection">12.5.46 Variable sys.winprogdir</h4>
 
 <p><br>
 
@@ -35286,7 +35404,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.41 Variable sys.winprogdir86</h4>
+<h4 class="subsection">12.5.47 Variable sys.winprogdir86</h4>
 
 <p><br>
 
@@ -35309,7 +35427,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.42 Variable sys.winsysdir</h4>
+<h4 class="subsection">12.5.48 Variable sys.winsysdir</h4>
 
 <p><br>
 
@@ -35331,7 +35449,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.43 Variable sys.workdir</h4>
+<h4 class="subsection">12.5.49 Variable sys.workdir</h4>
 
 <p><br>
 
@@ -35651,7 +35769,7 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <h2>Table of Contents</h2>
 <ul>
 <li><a name="toc_Top" href="#Top">CFEngine-AutoReference</a>
-<li><a name="toc_Getting-started" href="#Getting-started">1 CFEngine 3.3.0a1.r2973M &ndash; Getting started</a>
+<li><a name="toc_Getting-started" href="#Getting-started">1 CFEngine 3.3.0a1.r3033M &ndash; Getting started</a>
 <ul>
 <li><a href="#Software-components">1.1 Software components</a>
 <ul>
@@ -35681,7 +35799,7 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <li><a href="#Upgrading-from-CFEngine-2">1.9 Upgrading from CFEngine 2</a>
 <li><a href="#Testing-as-a-non_002dprivilieged-user">1.10 Testing as a non-privilieged user</a>
 <li><a href="#The-bare-necessities-of-a-CFEngine-3">1.11 The `bare necessities' of a CFEngine 3</a>
-<li><a href="#Familiarizing-yourself">1.12 Familiarizing yourself</a>
+<li><a href="#Familiiarizing-yourself">1.12 Familiarizing yourself</a>
 <li><a href="#Remote-access-troubleshooting">1.13 Remote access troubleshooting</a>
 <ul>
 <li><a href="#Server-connection">1.13.1 Server connection</a>
@@ -36448,34 +36566,40 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <li><a href="#Variable-sys_002ecf_005ftwin">12.5.13 Variable sys.cf_twin</a>
 <li><a href="#Variable-sys_002ecf_005fversion">12.5.14 Variable sys.cf_version</a>
 <li><a href="#Variable-sys_002eclass">12.5.15 Variable sys.class</a>
-<li><a href="#Variable-sys_002edate">12.5.16 Variable sys.date</a>
-<li><a href="#Variable-sys_002edomain">12.5.17 Variable sys.domain</a>
-<li><a href="#Variable-sys_002eexpires">12.5.18 Variable sys.expires</a>
-<li><a href="#Variable-sys_002eexports">12.5.19 Variable sys.exports</a>
-<li><a href="#Variable-sys_002efqhost">12.5.20 Variable sys.fqhost</a>
-<li><a href="#Variable-sys_002efstab">12.5.21 Variable sys.fstab</a>
-<li><a href="#Variable-sys_002ehost">12.5.22 Variable sys.host</a>
-<li><a href="#Variable-sys_002einterface">12.5.23 Variable sys.interface</a>
-<li><a href="#Variable-sys_002eipv4">12.5.24 Variable sys.ipv4</a>
-<li><a href="#Variable-sys_002eipv4_005binterface_005fname_005d">12.5.25 Variable sys.ipv4[interface_name]</a>
-<li><a href="#Variable-sys_002eipv4_005f1_005binterface_005fname_005d">12.5.26 Variable sys.ipv4_1[interface_name]</a>
-<li><a href="#Variable-sys_002eipv4_005f2_005binterface_005fname_005d">12.5.27 Variable sys.ipv4_2[interface_name]</a>
-<li><a href="#Variable-sys_002eipv4_005f3_005binterface_005fname_005d">12.5.28 Variable sys.ipv4_3[interface_name]</a>
-<li><a href="#Variable-sys_002elong_005farch">12.5.29 Variable sys.long_arch</a>
-<li><a href="#Variable-sys_002emaildir">12.5.30 Variable sys.maildir</a>
-<li><a href="#Variable-sys_002enova_005fversion">12.5.31 Variable sys.nova_version</a>
-<li><a href="#Variable-sys_002eos">12.5.32 Variable sys.os</a>
-<li><a href="#Variable-sys_002eostype">12.5.33 Variable sys.ostype</a>
-<li><a href="#Variable-sys_002epolicy_005fhub">12.5.34 Variable sys.policy_hub</a>
-<li><a href="#Variable-sys_002erelease">12.5.35 Variable sys.release</a>
-<li><a href="#Variable-sys_002eresolv">12.5.36 Variable sys.resolv</a>
-<li><a href="#Variable-sys_002euqhost">12.5.37 Variable sys.uqhost</a>
-<li><a href="#Variable-sys_002eversion">12.5.38 Variable sys.version</a>
-<li><a href="#Variable-sys_002ewindir">12.5.39 Variable sys.windir</a>
-<li><a href="#Variable-sys_002ewinprogdir">12.5.40 Variable sys.winprogdir</a>
-<li><a href="#Variable-sys_002ewinprogdir86">12.5.41 Variable sys.winprogdir86</a>
-<li><a href="#Variable-sys_002ewinsysdir">12.5.42 Variable sys.winsysdir</a>
-<li><a href="#Variable-sys_002eworkdir">12.5.43 Variable sys.workdir</a>
+<li><a href="#Variable-sys_002econstellation_005fversion">12.5.16 Variable sys.constellation_version</a>
+<li><a href="#Variable-sys_002edate">12.5.17 Variable sys.date</a>
+<li><a href="#Variable-sys_002edomain">12.5.18 Variable sys.domain</a>
+<li><a href="#Variable-sys_002eexpires">12.5.19 Variable sys.expires</a>
+<li><a href="#Variable-sys_002eexports">12.5.20 Variable sys.exports</a>
+<li><a href="#Variable-sys_002efqhost">12.5.21 Variable sys.fqhost</a>
+<li><a href="#Variable-sys_002efstab">12.5.22 Variable sys.fstab</a>
+<li><a href="#Variable-sys_002ehost">12.5.23 Variable sys.host</a>
+<li><a href="#Variable-sys_002ehub_005fmaster">12.5.24 Variable sys.hub_master</a>
+<li><a href="#Variable-sys_002einterface">12.5.25 Variable sys.interface</a>
+<li><a href="#Variable-sys_002eipv4">12.5.26 Variable sys.ipv4</a>
+<li><a href="#Variable-sys_002eipv4_005binterface_005fname_005d">12.5.27 Variable sys.ipv4[interface_name]</a>
+<li><a href="#Variable-sys_002eipv4_005f1_005binterface_005fname_005d">12.5.28 Variable sys.ipv4_1[interface_name]</a>
+<li><a href="#Variable-sys_002eipv4_005f2_005binterface_005fname_005d">12.5.29 Variable sys.ipv4_2[interface_name]</a>
+<li><a href="#Variable-sys_002eipv4_005f3_005binterface_005fname_005d">12.5.30 Variable sys.ipv4_3[interface_name]</a>
+<li><a href="#Variable-sys_002ekey_005fdigest">12.5.31 Variable sys.key_digest</a>
+<li><a href="#Variable-sys_002elicense_005fowner">12.5.32 Variable sys.license_owner</a>
+<li><a href="#Variable-sys_002elicenses_005fgranted">12.5.33 Variable sys.licenses_granted</a>
+<li><a href="#Variable-sys_002elicenses_005finstalltime">12.5.34 Variable sys.licenses_installtime</a>
+<li><a href="#Variable-sys_002elong_005farch">12.5.35 Variable sys.long_arch</a>
+<li><a href="#Variable-sys_002emaildir">12.5.36 Variable sys.maildir</a>
+<li><a href="#Variable-sys_002enova_005fversion">12.5.37 Variable sys.nova_version</a>
+<li><a href="#Variable-sys_002eos">12.5.38 Variable sys.os</a>
+<li><a href="#Variable-sys_002eostype">12.5.39 Variable sys.ostype</a>
+<li><a href="#Variable-sys_002epolicy_005fhub">12.5.40 Variable sys.policy_hub</a>
+<li><a href="#Variable-sys_002erelease">12.5.41 Variable sys.release</a>
+<li><a href="#Variable-sys_002eresolv">12.5.42 Variable sys.resolv</a>
+<li><a href="#Variable-sys_002euqhost">12.5.43 Variable sys.uqhost</a>
+<li><a href="#Variable-sys_002eversion">12.5.44 Variable sys.version</a>
+<li><a href="#Variable-sys_002ewindir">12.5.45 Variable sys.windir</a>
+<li><a href="#Variable-sys_002ewinprogdir">12.5.46 Variable sys.winprogdir</a>
+<li><a href="#Variable-sys_002ewinprogdir86">12.5.47 Variable sys.winprogdir86</a>
+<li><a href="#Variable-sys_002ewinsysdir">12.5.48 Variable sys.winsysdir</a>
+<li><a href="#Variable-sys_002eworkdir">12.5.49 Variable sys.workdir</a>
 </li></ul>
 <li><a href="#Variable-context-this">12.6 Variable context <code>this</code></a>
 <ul>
