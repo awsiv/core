@@ -914,7 +914,7 @@ this:
    <pre class="sp">
 
 </pre>
-CFEngine should be up and running on your system after the bootstrap. It will copy its default policy files into <samp><span class="file">masterfiles</span></samp> and <samp><span class="file">inputs</span></samp> on the hub (policy server) provided that the directory is empty (fresh install). When the clients are bootstrapped, they will contact the hub and copy these files to their <samp><span class="file">inputs</span></samp> directory. You should browse the files in <samp><span class="file">/var/cfengine/masterfiles</span></samp> to see what they contain, and perhaps make some alterations to adapt to your environment.
+CFEngine should be up and running on your system after the bootstrap. It will copy its default policy files into <samp><span class="file">/var/cfengine/masterfiles</span></samp> on the hub (policy server) provided that the directory is empty (fresh install). This directory is the definition point for your policy, meaning that clients will contact the hub and copy these files to their <samp><span class="file">/var/cfengine/inputs</span></samp> directory. Note that the policy hub also works as a client against itself, so it too will copy from <samp><span class="file">/var/cfengine/masterfiles</span></samp> to <samp><span class="file">/var/cfengine/inputs</span></samp>. You should browse the files in <samp><span class="file">/var/cfengine/masterfiles</span></samp> to see what they contain, and perhaps make some alterations to adapt to your environment.
 
    <p>To see which CFEngine processes are running:
 
