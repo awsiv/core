@@ -933,11 +933,12 @@ void Nova_FillInGoalComment(struct Item *ip)
   mongo_connection conn;
   struct Rlist *goal_categories = NULL;
   char db_goal_categories[CF_BUFSIZE] = {0}; 
+  char canonified_goal[CF_BUFSIZE] = {0}; 
 
 // Get comment goals.* or targets.%s etc
 
 searchstring[0] = '\0';
-
+ReplaceChar(ip->name,canonified_goal,CF_BUFSIZE,' ','_');
 if(CFDB_GetValue("goal_categories",db_goal_categories,sizeof(db_goal_categories)))
   {
   goal_categories = SplitStringAsRList(db_goal_categories,',');
@@ -945,7 +946,7 @@ if(CFDB_GetValue("goal_categories",db_goal_categories,sizeof(db_goal_categories)
 
 for (rp = goal_categories; rp != NULL; rp=rp->next)
    {
-   snprintf(work,CF_MAXVARSIZE-1,"%s\\.%s|",(char*)rp->item,CanonifyName(ip->name));
+   snprintf(work,CF_MAXVARSIZE-1,"%s\\.%s|",(char*)rp->item,canonified_goal);
    strcat(searchstring,work);
    }
 
@@ -955,7 +956,7 @@ if (strlen(searchstring) > 1)
    }
 else
    {
-   snprintf(searchstring,CF_MAXVARSIZE-1,"%s",CanonifyName(ip->name));
+   snprintf(searchstring,CF_MAXVARSIZE-1,"%s",canonified_goal);
    }
 
 if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
