@@ -171,7 +171,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
 bson_buffer_init(&bb);
 setObj = bson_append_start_object(&bb, "$set");
 bson_append_string(setObj,"goal_patterns",goal_patterns);
-bson_append_string(setObj,"goal_categories",goal_patterns);
+bson_append_string(setObj,"goal_categories",goal_categories);
 bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
