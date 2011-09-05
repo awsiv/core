@@ -67,8 +67,8 @@ body common control
 
    host_licenses_paid => "1";
 
-   goal_categories => { "goals", "targets", "milestones" };
-   goal_patterns   => { "goal_.*", "target.*","milestone.*" };
+#   goal_categories => { "goals", "targets", "milestones" };
+#   goal_patterns   => { "goal_.*", "target.*","milestone.*" };
 
 }
 
