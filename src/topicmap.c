@@ -823,7 +823,7 @@ for (rp = goal_categories; rp != NULL; rp=rp->next)
    {
    for (rp2 = goal_patterns; rp2 != NULL; rp2=rp2->next)
       {
-      snprintf(work,CF_MAXVARSIZE-1,"%s\\.%s|",(char*)rp->item,CanonifyName(rp2->item));
+      snprintf(work,CF_MAXVARSIZE-1,"%s\\.%s|",(char*)rp->item,rp2->item);
       strcat(searchstring,work);
       }
    }
@@ -836,8 +836,7 @@ else
    {
    snprintf(searchstring,CF_MAXVARSIZE-1,"goals\\.goal_.*");
    }
-// temporary fix for beta 2. TODO: fix goals
-snprintf(searchstring,CF_MAXVARSIZE-1,"goals\\.goal_.*");
+
 if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to knowledge map");
