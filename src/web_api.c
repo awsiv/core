@@ -6088,7 +6088,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    }
 
 snprintf(nid, CF_MAXVARSIZE, "%s",noteid);
-snprintf(msg, CF_BUFSIZE, "%s,%s,%ld\n",username,note,datetime);
+snprintf(msg, CF_BUFSIZE, "%s,%ld,%s",username,datetime,note);
 AppendItem(&data, msg, NULL);
 
 ret = CFDB_AddNote(&dbconn,NULL,0,nid,NULL,data);
@@ -6123,7 +6123,7 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
  bson_iterator it1,it2;
  int level = 0, getrow=false, ret;
   
- snprintf(msg, CF_BUFSIZE, "%s,%s,%ld\n",username,note,datetime);
+ snprintf(msg, CF_BUFSIZE, "%s,%ld,%s",username,datetime,note);
  AppendItem(&data, msg, NULL);
 
  if (!keyhash || strlen(keyhash) == 0 || !repid || strlen(repid)==0)

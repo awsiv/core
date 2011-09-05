@@ -1799,7 +1799,7 @@ int CFDB_AddNote(mongo_connection *conn, char *keyhash, int reportType, char *ni
       }   
    bson_from_buffer(&host_key, &bb);
   
-   sscanf(data->name,"%255[^,],%255[^,],%ld\n",username,msg,&datetime);
+   sscanf(data->name,"%255[^,],%ld,%[^\\0]",username,&datetime,msg);
    
    EscapeChar(msg, sizeof(msg),'\\');
    EscapeChar(msg, sizeof(msg),'\"');
