@@ -21,7 +21,7 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp)
 
 { struct Rlist *rp;
   int retval = true,commas = 0;
- 
+
 if (a.database.type && cf_strcmp(a.database.type,"ms_registry") == 0)
    {
 #ifdef NT
@@ -52,7 +52,7 @@ if (a.database.type && cf_strcmp(a.database.type,"ms_registry") == 0)
          CfOut(cf_error,"","Rows cannot be deleted in the MS registry database, only entire columns");
          }
       }
-   
+
    for (rp = a.database.rows; rp != NULL; rp=rp->next)
       {
       commas = 0;
@@ -89,7 +89,7 @@ else if (a.database.type && cf_strcmp(a.database.type,"sql") == 0)
          retval = false;
          }
       }
-   
+
    if (a.database.db_server_host == NULL)
       {
       CfOut(cf_error,"","No server host is promised for connecting to the SQL server");
@@ -111,7 +111,7 @@ else if (a.database.type && cf_strcmp(a.database.type,"sql") == 0)
    for (rp = a.database.columns; rp != NULL; rp=rp->next)
       {
       commas = CountChar(rp->item,',');
-      
+
       if (commas > 2 && commas < 1)
          {
          CfOut(cf_error,"","SQL Column format should be NAME,TYPE[,SIZE]");
@@ -177,7 +177,7 @@ if (!Nova_TableExists(cfdb,table))
          CfOut(cf_error,""," -> Database.table %s doesn't seem to exist, but only a warning was promised\n",table_path);
          }
       }
-   
+
    return false;
    }
 
@@ -221,9 +221,9 @@ while(CfFetchRow(cfdb))
       {
       size = Str2Int(sizestr);
       }
-   
+
    CfOut(cf_verbose,"","    ... discovered column (%s,%s,%d)",name,type,size);
-   
+
    if (sizestr && size == CF_NOINT)
       {
       cfPS(cf_verbose,CF_NOP,"",pp,a," !! Integer size of SQL datatype could not be determined or was not specified - invalid promise.");
@@ -233,7 +233,7 @@ while(CfFetchRow(cfdb))
       }
 
    identified = false;
-   
+
    for (i = 0; i < no_of_cols; i++)
       {
       if (done[i])
@@ -253,7 +253,7 @@ while(CfFetchRow(cfdb))
             {
             CfOut(cf_verbose,""," -> Promised column \"%s\" in database.table \"%s\" is as promised",name,table_path);
             }
-         
+
          count++;
          done[i] = true;
          identified = true;
@@ -270,7 +270,7 @@ while(CfFetchRow(cfdb))
          cfPS(cf_error,CF_FAIL,"",pp,a,"Cfengine will not promise to repair this, as the operation is potentially too destructive.");
          // Future allow deletion?
          }
-      
+
       retval = false;
       }
    }
@@ -291,7 +291,7 @@ if (count != no_of_cols)
       if (!done[i])
          {
          CfOut(cf_error,""," !! Promised column \"%s\" missing from database table %s",name_table[i],pp->promiser);
-         
+
          if (!DONTDO && a.transaction.action != cfa_warn)
             {
             if (size_table[i] > 0)
@@ -302,7 +302,7 @@ if (count != no_of_cols)
                {
                snprintf(query,CF_MAXVARSIZE-1,"ALTER TABLE %s ADD %s %s",table,name_table[i],type_table[i]);
                }
-            
+
             CfVoidQueryDB(cfdb,query);
             cfPS(cf_error,CF_CHG,"",pp,a," !! Adding promised column \"%s\" to database table %s",name_table[i],table);
             retval = true;
@@ -329,7 +329,7 @@ int Nova_TableExists(CfdbConn *cfdb,char *name)
   int match = false;
 
 list = Nova_GetSQLTables(cfdb);
- 
+
 for (rp = list; rp != NULL; rp=rp->next)
    {
    if (strcmp(name,rp->item) == 0)
@@ -353,7 +353,7 @@ int Nova_CreateTableColumns(CfdbConn *cfdb,char *table,struct Rlist *columns,str
   int no_of_cols = RlistLen(columns);
 
 CfOut(cf_error,""," -> Trying to create table %s\n",table);
-  
+
 if (!Nova_NewSQLColumns(table,columns,&name_table,&type_table,&size_table,&done))
    {
    return false;
@@ -362,11 +362,11 @@ if (!Nova_NewSQLColumns(table,columns,&name_table,&type_table,&size_table,&done)
 if (no_of_cols > 0)
    {
    snprintf(query,CF_BUFSIZE-1,"create table %s(",table);
-   
+
    for (i = 0; i < no_of_cols; i++)
       {
       CfOut(cf_verbose,""," -> Forming column template %s %s %d\n",name_table[i],type_table[i],size_table[i]);;
-      
+
       if (size_table[i] > 0)
          {
          snprintf(entry,CF_MAXVARSIZE-1,"%s %s(%d)",name_table[i],type_table[i],size_table[i]);
