@@ -1,6 +1,6 @@
 <div id="footer">
     <p class="grid_7"><?php echo cfpr_enterprise_version(); ?> running on <?php echo cfpr_community_version(); ?> </p>
-    <p class="grid_5 alignright">Copyright &copy; 2011 CFEngine AS - All rights reserved</p>
+    <p class="grid_5 alignright">Copyright &copy; 2011 CFEngine AS - All rights reserved. (<a href="http://cfengine.com/3rdpartylicenses" target="_blank">License information</a>)</p>
     <p class="clear"></p>
 </div>
 </div>
@@ -28,13 +28,16 @@
          <?php } ?> 
         
         
-        var dateFormat = 'F d, Y H:i:s P'; 
+        var dateFormat = 'F d, Y H:i:s'; 
         $('.localtime').each(function(){
             var dateString = $(this).html();
             var localDate = Date.parse(dateString);
             if (localDate) {
                 var d = new Date(localDate);
-                 $(this).html(d.format(dateFormat));
+                var offset = -d.getTimezoneOffset()/60;
+                if (offset > 0) offset = '+'+offset;
+                var dateDisplay = d.format(dateFormat) + ' (GMT' + offset+')';
+                 $(this).html(dateDisplay);
             }
         });
     });

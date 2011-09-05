@@ -3,8 +3,6 @@
     <div class="panelhead"><?php echo $report_type ?> query</div><div class="panelcontent">
         <form method="post" action="<?php echo site_url('search') ?>">
             <p>Date:<input class="searchfield" type="text" name="days" ></p>
-            <p>Months:<input class="searchfield" type="text" name="months" ></p>
-            <p>Years:<input class="searchfield" type="text" name="years" ></p>
             <p>Host group: (.*+[])
                 <a href="<?php echo site_url('widget/allclasses') ?>" id="bphghelp" class="help" 
                    title="<strong>SOFT CLASSES</strong> or <strong> HARD CLASSES</strong> 

@@ -7,13 +7,13 @@
                     <div class="stylized">
                         <form action="<?php echo site_url(); ?>/notes/shownotes" method="POST">
                             <fieldset>                           
-                                <label id="Username" for="username">User Name :: </label>
+                                <label id="Username" for="username">User name: </label>
                                 <input type="text" name="username" value="<?php echo set_value('username'); ?>" size="50" />
 
-                                <label for="date_from">Date From :: </label>
+                                <label for="date_from">Date from: </label>
                                 <input autocomplete="off" id="date_from" type="text" name="date_from" value="<?php echo set_value('date_from'); ?>" size="50" />
 
-                                <label for="date_to">Date To :: </label>
+                                <label for="date_to">Date to: </label>
                                 <input autocomplete="off" id="date_to" type="text" name="date_to" value="<?php echo set_value('date_to'); ?>" size="50" />
                                 <label for="submit"></label>
                                 <input type="submit" value="search" name="submit" />

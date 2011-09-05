@@ -28,7 +28,7 @@ $lang['tooltip_planningroom'] = 'The mission planning room allows you to see how
 $lang['tooltip_libraryroom'] = 'A place where users can learn about the software and the system.';
 
 $lang['tooltip_edit_policies'] = 'Choose an SVN repository to edit the policies.';
-$lang['tooltip_track_records'] = 'Review successes and failures of the current version.';
+$lang['tooltip_track_records'] = 'Review successes and failures of the current policy version.';
 $lang['tooltip_approve_policies'] = 'Add your approval to adopt a named policy revision.';
 $lang['tooltip_service_catalogue'] = 'List technical services (promise bundles) and the business goals they address.';
 
