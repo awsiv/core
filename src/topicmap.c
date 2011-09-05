@@ -809,24 +809,24 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
  char db_goal_patterns[CF_BUFSIZE] = {0}; 
  char db_goal_categories[CF_BUFSIZE] = {0}; 
 
- if(CFDB_GetValue("goal_patterns",db_goal_patterns,sizeof(db_goal_patterns)))
-   {
-   goal_patterns = SplitStringAsRList(db_goal_patterns,',');
-   }
+if(CFDB_GetValue("goal_patterns",db_goal_patterns,sizeof(db_goal_patterns)))
+  {
+  goal_patterns = SplitStringAsRList(db_goal_patterns,',');
+  }
 
- if(CFDB_GetValue("goal_categories",db_goal_categories,sizeof(db_goal_categories)))
-   {
-     goal_categories = SplitStringAsRList(db_goal_categories,',');
-   }
+if(CFDB_GetValue("goal_categories",db_goal_categories,sizeof(db_goal_categories)))
+  {
+  goal_categories = SplitStringAsRList(db_goal_categories,',');
+  }
  
 for (rp = goal_categories; rp != NULL; rp=rp->next)
-     {
-     for (rp2 = goal_patterns; rp2 != NULL; rp2=rp2->next)
-        {
-        snprintf(work,CF_MAXVARSIZE-1,"%s.%s|",(char*)rp->item,CanonifyName(rp2->item));
-        strcat(searchstring,work);
-        }
-     }
+   {
+   for (rp2 = goal_patterns; rp2 != NULL; rp2=rp2->next)
+      {
+      snprintf(work,CF_MAXVARSIZE-1,"%s.%s|",(char*)rp->item,CanonifyName(rp2->item));
+      strcat(searchstring,work);
+      }
+   }
 
 if(strlen(searchstring) > 1)
    {
@@ -836,7 +836,8 @@ else
    {
    snprintf(searchstring,CF_MAXVARSIZE-1,"goals\\.goal_.*");
    }
-
+// temporary fix for beta 2. TODO: fix goals
+snprintf(searchstring,CF_MAXVARSIZE-1,"goals\\.goal_.*");
 if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to knowledge map");
