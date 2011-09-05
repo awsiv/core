@@ -945,7 +945,7 @@ if(CFDB_GetValue("goal_categories",db_goal_categories,sizeof(db_goal_categories)
 
 for (rp = goal_categories; rp != NULL; rp=rp->next)
    {
-   snprintf(work,CF_MAXVARSIZE-1,"%s.%s|",(char*)rp->item,CanonifyName(ip->name));
+   snprintf(work,CF_MAXVARSIZE-1,"%s\\.%s|",(char*)rp->item,CanonifyName(ip->name));
    strcat(searchstring,work);
    }
 
