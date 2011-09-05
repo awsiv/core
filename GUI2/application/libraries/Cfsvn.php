@@ -56,6 +56,7 @@ class Cfsvn {
        deleteAll($this->working_dir);
         $status = svn_checkout($this->repository, $this->working_dir);
         } catch(Exception $e){
+            log_message('error','checkout error, '.$e->getMessage());
          throw $e;   
         }
         $rev = 0;
@@ -88,6 +89,7 @@ class Cfsvn {
             $cdetails = svn_commit($comment, array($this->working_dir));
             return $cdetails;
             } catch (Exception $e) {
+             log_message('error','commit  error, '.$e->getMessage());
             throw $e;
         }
     }

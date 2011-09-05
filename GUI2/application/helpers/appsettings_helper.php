@@ -24,7 +24,7 @@ function initializeHub() {
         //define('HUB_MASTER', $ishubmaster);
         //preg_match('/(\d+).(\d+).(\d+).(\d+)/', $ishubmaster)
         $errorMessage = sprintf("The is not a hub master, please click on the link below to navigate to 
-                                             the CFEngine Nova mission potral <br />
+                                             the CFEngine Nova Mission Portal <br />
                                              Link ::<a href=\"http://%s/\">%s</a>", $ishubmaster, $ishubmaster);
 
         show_error($errorMessage);
