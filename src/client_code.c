@@ -191,7 +191,7 @@ if (reports == NULL)
    return false;
    }
 
-UnpackReportBook(HashPrintSafe(CF_DEFAULT_DIGEST,conn->digest,keyHash),conn->remoteip,NULL,reports);
+UnpackReportBook(HashPrintSafe(CF_DEFAULT_DIGEST,conn->digest,keyHash),reports);
 DeleteReportBook(reports);
 return true;
 }
@@ -237,7 +237,7 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
 
 /*********************************************************************/
 
-void UnpackReportBook(char *id,char *ipaddr,char *hostname,struct Item **reports)
+void UnpackReportBook(char *id,struct Item **reports)
 
 { int i;
   mongo_connection dbconn = {0};

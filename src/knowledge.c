@@ -1479,7 +1479,7 @@ void Nova_GenerateTestData(int count)
     snprintf(PUBKEY_DIGEST, sizeof(PUBKEY_DIGEST), "%s", newkeyhash);
     snprintf(VIPADDRESS,CF_MAXVARSIZE-1,"%s",newaddresses);
     snprintf(VFQNAME,CF_MAXVARSIZE-1,"%s",newhostnames);
-    UnpackReportBook(newkeyhash,newaddresses,newhostnames,reports);
+    UnpackReportBook(newkeyhash,reports);
     
     if(CFDB_Open(&conn,"127.0.0.1",CFDB_PORT))
       {

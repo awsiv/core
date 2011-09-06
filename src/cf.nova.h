@@ -282,7 +282,7 @@ int Nova_StoreIncomingReports(char *reply,struct Item **reports,int current_repo
 void NewReportBook(struct Item **reports);
 void DeleteReportBook(struct Item **reports);
 
-void UnpackReportBook(char *id,char *ipaddr,char *hostname,struct Item **reports);
+void UnpackReportBook(char *id,struct Item **reports);
 void Nova_RecordNetwork(time_t now, double datarate,struct cfagent_connection *conn);
 
 /* cmd_api.c */

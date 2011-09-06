@@ -2330,7 +2330,20 @@ if (LICENSES == 0)
     return false;
     }
 
- UnpackReportBook(keyHash,ipAddr,hostName,reports);
+ mongo_connection dbconn;
+
+ if(CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+     {
+     CFDB_SaveHostID(&dbconn,MONGO_DATABASE,keyHash,ipAddr,hostName);
+     CFDB_SaveHostID(&dbconn,MONGO_ARCHIVE,keyHash,ipAddr,hostName);
+     CFDB_Close(&dbconn);
+     }
+ else
+    {
+    CfOut(cf_error, "", "!! Could not open connection to CFDB on save host ID");
+    }
+     
+ UnpackReportBook(keyHash,reports);
  DeleteReportBook(reports);
  
  return true;
