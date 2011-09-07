@@ -215,8 +215,8 @@ bundle agent garbage_collection
       depth_search => recurse("inf");
 
   # Other resources
-
-   "/tmp" 
+!darwin::
+   "/tmp"  # this is a symlink on Macs 
            comment => "Garbage collection of any temporary files",
             handle => "garbage_collection_files_tidy_tmp",
             delete => tidy,
