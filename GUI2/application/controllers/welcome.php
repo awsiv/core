@@ -541,7 +541,7 @@ class Welcome extends Cf_Controller {
         $this->carabiner->group('iefix', array('js' => $jsIE));
 
         $getparams = $this->uri->uri_to_assoc(3);
-        $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : 5);
+        $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : $this->setting_lib->get_no_of_rows());
         $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
         $bc = array(
             'title' => 'Weakest Host',
