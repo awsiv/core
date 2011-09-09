@@ -72,7 +72,7 @@
                                  <?php } ?>
                             </tr>
                         <?php } }else{
-                            echo "<tr><td colspan=\"2\">Body defination was not found</td></tr>";
+                            echo "<tr><td colspan=\"2\">Body definition was not found</td></tr>";
                         }?>
                     </table>                 
                 </div>
