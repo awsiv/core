@@ -2330,6 +2330,7 @@ if (LICENSES == 0)
     return false;
     }
 
+#ifdef HAVE_LIBMONGOC
  mongo_connection dbconn;
 
  if(CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
@@ -2342,6 +2343,7 @@ if (LICENSES == 0)
     {
     CfOut(cf_error, "", "!! Could not open connection to CFDB on save host ID");
     }
+#endif
      
  UnpackReportBook(keyHash,reports);
  DeleteReportBook(reports);
