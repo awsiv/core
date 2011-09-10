@@ -290,6 +290,8 @@ body agent control
 
  # Switch on tracking of promise valuation
 
+ any::
+
   track_value => "true";
 
 }
