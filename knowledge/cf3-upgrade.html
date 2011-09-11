@@ -222,14 +222,16 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <!-- ********************************************************************** -->
 <ul class="menu">
 <li><a accesskey="1" href="#General-remarks-and-expectations">General remarks and expectations</a>
-<li><a accesskey="2" href="#Automated-translation-with-cfconvert">Automated translation with cfconvert</a>
+<!-- * Automated translation with cfconvert:: -->
+<li><a accesskey="2" href="#Conversion-Strategy">Conversion Strategy</a>
 <li><a accesskey="3" href="#Translation-Codebook">Translation Codebook</a>
 </ul>
 
+<!-- @node General remarks and expectations, Automated translation with cfconvert, Top, Top -->
 <div class="node">
 <a name="General-remarks-and-expectations"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Automated-translation-with-cfconvert">Automated translation with cfconvert</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Conversion-Strategy">Conversion Strategy</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Top">Top</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
@@ -275,7 +277,7 @@ you to trivialize this translation, as there are new mechanisms in
 CFEngine 3 that bring new benefits, and this means that simple and
 direct translation can be a poor choice that misses the opportunity
 for improvement.  In this guide the principles for translation are
-simplyas follows:
+simply as follows:
 
      <ul>
 <li>We make as direct a translation as possible,
@@ -310,7 +312,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#General-remarks-and-expectations">Gene
 use. Perhaps the most useful practice is to make use of the standard
 library of template parts for promise bodies and bundles, called te
 <i>CFEngine Community Open Promise-Body Library</i>. This is available
-from the CFEngine community website. By standardizing simple template
+from the CFEngine website. By standardizing simple template
 names, you will be able to communicate more effectively with others,
 and facilitate knowledge efficiency in your organization.
 
@@ -433,8 +435,10 @@ technology.
    </ul>
 
 <!-- ################################################################# -->
+<!-- @node Automated translation with cfconvert, Translation Codebook, General remarks and expectations, Top -->
+<!-- @chapter Automated translation with @code{cfconvert} -->
 <div class="node">
-<a name="Automated-translation-with-cfconvert"></a>
+<a name="Conversion-Strategy"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Translation-Codebook">Translation Codebook</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#General-remarks-and-expectations">General remarks and expectations</a>,
@@ -442,163 +446,100 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h2 class="chapter">2 Automated translation with <code>cfconvert</code></h2>
+<h2 class="chapter">2 Conversion Strategy</h2>
 
-<p>CFEngine offers a commercial core transformation program, <code>cfconvert</code>, that
-performs a reasonable translation of CFEngine 2 code into CFEngine 3
-code. The output of this program should work with either the Community
-Edition or Enterprise level editions of the software.
-
-   <p>The software may be obtained with a one-time closed-source license,
-that includes maintainence in case of problems. This can be combined
-with Professional Services from CFEngine if necessary to provide a
-`best effort' conversion.
-
+<!-- CFEngine offers a commercial core transformation program, @code{cfconvert}, that performs a reasonable translation of CFEngine 2 code into CFEngine 3 code. The output of this program should work with either the Community Edition or Enterprise level editions of the software. -->
+<!-- The software may be obtained with a one-time closed-source license, that includes maintainence in case of problems. This can be combined with Professional Services from CFEngine if necessary to provide a `best effort' conversion. -->
+<!-- * Automatic Conversion Strategy:: -->
 <ul class="menu">
-<li><a accesskey="1" href="#Automatic-Conversion-Strategy">Automatic Conversion Strategy</a>
-<li><a accesskey="2" href="#Converting-by-module">Converting by module</a>
-<li><a accesskey="3" href="#Assembling-a-compilable-file-set">Assembling a compilable file set</a>
-<li><a accesskey="4" href="#Validating-the-conversion">Validating the conversion</a>
-<li><a accesskey="5" href="#Optimizing-the-configuration">Optimizing the configuration</a>
+<li><a accesskey="1" href="#Converting-by-module">Converting by module</a>
+<li><a accesskey="2" href="#Assembling-a-compilable-file-set">Assembling a compilable file set</a>
+<li><a accesskey="3" href="#Validating-the-conversion">Validating the conversion</a>
+<li><a accesskey="4" href="#Optimizing-the-configuration">Optimizing the configuration</a>
 </ul>
 
+<!-- @node Automatic Conversion Strategy, Converting by module, Automated translation with cfconvert, Automated translation with cfconvert -->
+<!-- @section Automatic Conversion Strategy -->
+<!-- No software can make a complete, `ready to go' translation of a configuration policy, as there are several decisions to be made when converting, as well as knowledge management features to be added. Below we offer recommendations for conversion using the @code{cfconvert} program. -->
+<!-- To begin conversion, we assume that you have a @file{cfagent.conf} master file that possibly includes a number of imported files, and that there are variables and classes defined throughout these. -->
+<!-- @menu -->
+<!-- * How long will it take to convert?:: -->
+<!-- * One chunk at a time:: -->
+<!-- @end menu -->
+<!-- @node How long will it take to convert?, One chunk at a time, Automatic Conversion Strategy, Automatic Conversion Strategy -->
+<!-- @subsection How long will it take to convert? -->
+<!-- If you are focused on the task, and you do not intend to re-organize the configuration dramatically, you can expect to be able to create a compilable version of a CFEngine configuration in the space of an hour. -->
+<!-- Filling in blanks, checking the correctness of the result and documenting it fully will take longer. It could take hours or days, depending on how many lines of code you have to convert. This is a tedious process, but one that will be a one-off burden and will bring great value to your operations. The conversion utility can shave off hundred of hours of manual labour from a hand-coded conversion. -->
+<!-- @node One chunk at a time,  , How long will it take to convert?, Automatic Conversion Strategy -->
+<!-- @subsection One chunk at a time -->
+<!-- You can convert as much or as little of a configuration as you like in one go. The simplest conversion approach is to feed the whole configuration to @code{cfconvert} in one bite. -->
+<!-- @sp 1 -->
+<!-- @verbatim -->
+<!-- host# export CFINPUTS=`pwd` -->
+<!-- host# cfconvert -->
+<!-- @end verbatim -->
+<!-- @sp 1 -->
+<!-- The converted output is written to a sub-directory @file{cf_conversion}. -->
+<!-- @smallexample -->
+<!-- CFEngine Conversion Utility (beta) -->
+<!-- > Matrix from /usr/local/sbin/cfconvert -->
+<!-- > INPUTS from . /CFEngineProjects/Test_Client/CFEngine_2_config/ -->
+<!-- > OUTPUTS at /tmp/cf_conversion_output -->
+<!-- > Commencing pre-scan for common environment -->
+<!-- > Pre-scan complete -->
+<!-- > Scanning for recognizable control settings -->
+<!-- > > convert control setting EmailMaxLines -->
+<!-- > > convert control setting cfinputs_version -->
+<!-- > > convert control setting smtpserver -->
+<!-- > > convert control setting Inform -->
+<!-- > > convert control setting AddInstallables -->
+<!-- > > convert control setting workdir -->
+<!-- > > convert control setting Syslog -->
+<!-- > > convert control setting moduledirectory -->
+<!-- > > convert control setting moduledirectory -->
+<!-- > Start main promise bundle -->
+<!-- > Import files detected -->
+<!-- > delta-Transformation of "cfagent.global.conf" -->
+<!-- > delta-Transformation of "cfagent.freebsd.conf" -->
+<!-- > delta-Transformation of "cfagent.ntp.conf" -->
+<!-- > delta-Transformation of "cfagent.named.conf" -->
+<!-- > delta-Transformation of "cfagent.perfsonarServers.conf" -->
+<!-- > delta-Transformation of "cfagent.perfsonar.conf" -->
+<!-- > delta-Transformation of "cfagent.owmesh.conf" -->
+<!-- > delta-Transformation of "cfagent.owamp.conf" -->
+<!-- > delta-Transformation of "cfagent.perfsonarBUOY.conf" -->
+<!-- > delta-Transformation of "cfagent.syslog.conf" -->
+<!-- > delta-Transformation of "cfagent.bwctl.conf" -->
+<!-- > delta-Transformation of "cfagent.perfsonarBUOY.conf" -->
+<!-- > delta-Transformation of "cfagent.syslog.conf" -->
+<!-- > delta-Transformation of "cfagent.pinger.conf" -->
+<!-- > delta-Transformation of "cfagent.perfsonarBUOY.conf" -->
+<!-- > delta-Transformation of "cfagent.owmesh.conf" -->
+<!-- > delta-Transformation of "cfagent.perfsonarBUOY.conf" -->
+<!-- > delta-Transformation of "cfagent.owmesh.conf" -->
+<!-- > delta-Transformation of "cfagent.LSRegistration.conf" -->
+<!-- > delta-Transformation of "cfagent.freebsd.i386.packages" -->
+<!-- > Converting cfservd.cf -->
+<!-- > Writing promises.cf -->
+<!-- > 11238 lines of core transformed -->
+<!-- @end smallexample -->
 <div class="node">
-<a name="Automatic-Conversion-Strategy"></a>
-<p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Converting-by-module">Converting by module</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Automated-translation-with-cfconvert">Automated translation with cfconvert</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Automated-translation-with-cfconvert">Automated translation with cfconvert</a>
-
-</div>
-
-<h3 class="section">2.1 Automatic Conversion Strategy</h3>
-
-<p>No software can make a complete, `ready to go' translation of a
-configuration policy, as there are several decisions to be made when
-converting, as well as knowledge management features to be
-added. Below we offer recommendations for conversion using the
-<code>cfconvert</code> program.
-
-   <p>To begin conversion, we assume that you have a <samp><span class="file">cfagent.conf</span></samp>
-master file that possibly includes a number of imported files, and
-that there are variables and classes defined throughout these.
-
-<ul class="menu">
-<li><a accesskey="1" href="#How-long-will-it-take-to-convert_003f">How long will it take to convert?</a>
-<li><a accesskey="2" href="#One-chunk-at-a-time">One chunk at a time</a>
-</ul>
-
-<div class="node">
-<a name="How-long-will-it-take-to-convert%3f"></a>
-<a name="How-long-will-it-take-to-convert_003f"></a>
-<p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#One-chunk-at-a-time">One chunk at a time</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Automatic-Conversion-Strategy">Automatic Conversion Strategy</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Automatic-Conversion-Strategy">Automatic Conversion Strategy</a>
-
-</div>
-
-<h4 class="subsection">2.1.1 How long will it take to convert?</h4>
-
-<p>If you are focused on the task, and you do not intend to re-organize the
-configuration dramatically, you can expect to be able to create a
-compilable version of a CFEngine configuration in the space of an
-hour.
-
-   <p>Filling in blanks, checking the correctness of the result and
-documenting it fully will take longer. It could take hours or days,
-depending on how many lines of code you have to convert. This is a
-tedious process, but one that will be a one-off burden and will bring
-great value to your operations. The conversion utility can shave off
-hundred of hours of manual labour from a hand-coded conversion.
-
-<div class="node">
-<a name="One-chunk-at-a-time"></a>
-<p><hr>
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#How-long-will-it-take-to-convert_003f">How long will it take to convert?</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Automatic-Conversion-Strategy">Automatic Conversion Strategy</a>
-
-</div>
-
-<h4 class="subsection">2.1.2 One chunk at a time</h4>
-
-<p>You can convert as much or as little of a configuration as you like in
-one go. The simplest conversion approach is to feed the whole
-configuration to <code>cfconvert</code> in one bite.
-
-   <pre class="sp">
-
-</pre>
-<pre class="verbatim">host# export CFINPUTS=`pwd`
-host# cfconvert
-</pre>
-   <pre class="sp">
-
-</pre>
-The converted output is written to a sub-directory <samp><span class="file">cf_conversion</span></samp>.
-
-<pre class="smallexample">     
-     CFEngine Conversion Utility (beta)
-     
-      -&gt; Matrix from /usr/local/sbin/cfconvert
-      -&gt; INPUTS from . /CFEngineProjects/Test_Client/CFEngine_2_config/
-      -&gt; OUTPUTS at /tmp/cf_conversion_output
-      -&gt; Commencing pre-scan for common environment
-      -&gt; Pre-scan complete
-      -&gt; Scanning for recognizable control settings
-      -&gt; &gt; convert control setting EmailMaxLines
-      -&gt; &gt; convert control setting cfinputs_version
-      -&gt; &gt; convert control setting smtpserver
-      -&gt; &gt; convert control setting Inform
-      -&gt; &gt; convert control setting AddInstallables
-      -&gt; &gt; convert control setting workdir
-      -&gt; &gt; convert control setting Syslog
-      -&gt; &gt; convert control setting moduledirectory
-      -&gt; &gt; convert control setting moduledirectory
-      -&gt; Start main promise bundle
-      -&gt; Import files detected
-      -&gt; delta-Transformation of "cfagent.global.conf"
-      -&gt; delta-Transformation of "cfagent.freebsd.conf"
-      -&gt; delta-Transformation of "cfagent.ntp.conf"
-      -&gt; delta-Transformation of "cfagent.named.conf"
-      -&gt; delta-Transformation of "cfagent.perfsonarServers.conf"
-      -&gt; delta-Transformation of "cfagent.perfsonar.conf"
-      -&gt; delta-Transformation of "cfagent.owmesh.conf"
-      -&gt; delta-Transformation of "cfagent.owamp.conf"
-      -&gt; delta-Transformation of "cfagent.perfsonarBUOY.conf"
-      -&gt; delta-Transformation of "cfagent.syslog.conf"
-      -&gt; delta-Transformation of "cfagent.bwctl.conf"
-      -&gt; delta-Transformation of "cfagent.perfsonarBUOY.conf"
-      -&gt; delta-Transformation of "cfagent.syslog.conf"
-      -&gt; delta-Transformation of "cfagent.pinger.conf"
-      -&gt; delta-Transformation of "cfagent.perfsonarBUOY.conf"
-      -&gt; delta-Transformation of "cfagent.owmesh.conf"
-      -&gt; delta-Transformation of "cfagent.perfsonarBUOY.conf"
-      -&gt; delta-Transformation of "cfagent.owmesh.conf"
-      -&gt; delta-Transformation of "cfagent.LSRegistration.conf"
-      -&gt; delta-Transformation of "cfagent.freebsd.i386.packages"
-      -&gt; Converting cfservd.cf
-      -&gt; Writing promises.cf
-      -&gt; 11238 lines of core transformed
-     
-</pre>
-   <div class="node">
 <a name="Converting-by-module"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Assembling-a-compilable-file-set">Assembling a compilable file set</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Automatic-Conversion-Strategy">Automatic Conversion Strategy</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Automated-translation-with-cfconvert">Automated translation with cfconvert</a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Conversion-Strategy">Conversion Strategy</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Conversion-Strategy">Conversion Strategy</a>
 
 </div>
 
-<h3 class="section">2.2 Converting by module</h3>
+<h3 class="section">2.1 Converting by module</h3>
 
 <p>To optimize the translation, you should think about the modularity of
 your code.  First, look at how your CFEngine 2 configuration is
 modularized and consider how you want your final CFEngine 3
 configuration to be modularized.  CFEngine 3 has `promise bundles' as
 modular entities (like subroutines or methods in other languages). 
-The default behaviour is to take each file and convert it into
+The typical procedure is to take each file and convert it into
 a separate bundle. This makes each module into a separate entity
 in the integrated knowledge management.
 
@@ -613,18 +554,18 @@ etc.  We recommend that you make separate bundles for each `issue',
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Validating-the-conversion">Validating the conversion</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Converting-by-module">Converting by module</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Automated-translation-with-cfconvert">Automated translation with cfconvert</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Conversion-Strategy">Conversion Strategy</a>
 
 </div>
 
-<h3 class="section">2.3 Assembling a compilable file set</h3>
+<h3 class="section">2.2 Assembling a compilable file set</h3>
 
 <p>The next step is to move as quickly as possible to a compilable
 CFEngine 3 configuration. You will be tweaking and perfecting this
 basic file set for ever more, but the sooner you have a syntactically
 valid file, the sooner you will benefit from the CFEngine tools.
 
-     <ol type=1 start=6>
+     <ol type=1 start=1>
 <li>Start by copying the Community Open Promise Body Library from the www.CFEngine.org
 website into the <samp><span class="file">CFEngine3</span></samp> directory. We will base the converted
 configuration on these industry standard templates.
@@ -670,7 +611,7 @@ as in the example below,
      <pre class="sp">
      
      </pre>
-     This file will be converted to something of the following form.
+     This file is typically converted to something of the following form.
      <pre class="sp">
      
      </pre>
@@ -754,57 +695,39 @@ and CFEngine will do the rest.
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Optimizing-the-configuration">Optimizing the configuration</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Assembling-a-compilable-file-set">Assembling a compilable file set</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Automated-translation-with-cfconvert">Automated translation with cfconvert</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Conversion-Strategy">Conversion Strategy</a>
 
 </div>
 
-<h3 class="section">2.4 Validating the conversion</h3>
+<h3 class="section">2.3 Validating the conversion</h3>
 
 <p>Validating the conversion is potentially an arduous process and
 the work is not over yet. Because CFEngine 3 uses body templates to
 simplify the appearence of promises, and promote the reusability of
-code, the conversion requires us to create these. The <code>cfconvert</code>
-utility attempts to construct best-effort proposal for these. If it is
-possible to convert using standard body templates, nothing more is
-needed. However, some translations require custom templates; the
-conversion utility creates a proposal and leaves the custom body or
-bundle in-line (in comment form) to allow you to compare the CFEngine
-2 and CFEngine 3 versions of the promises more easily. For example:
+code, the conversion requires us to create these. <!-- The @code{cfconvert} utility attempts to construct best-effort proposal for these. If it is possible to convert using standard body templates, nothing more is needed. However, some translations require custom templates; the conversion utility creates a proposal and leaves the custom body or bundle in-line (in comment form) to allow you to compare the CFEngine 2 and CFEngine 3 versions of the promises more easily. For example: -->
 
-<pre class="verbatim">   "/etc/somefile"            # -> { "optional_promisee_list" },
-
-       comment => "...",
-     # handle => "...",
-     # depends_on => { "..." ...},
-
-       perms => mog("0440","root","wheel"),
-       copy_from => remote_cp("$(master)/etc/somefile","$(cfsrvhost)"),
-
-     # More accurate translation requires custom coding..
-     # body copy_from custom_body
-     # {
-     # servers => { "$(master)/etc/somefile"},
-     # trustkey => "false";
-     # compare => "digest";
-     # }
-
-       action => if_elapsed("60");
-
-</pre>
-It is up to you to decide whether you want to use the commented proposal. In some cases there
-is no solution in terms of standard bodies, and you must use the commented proposal or some
-version of it. In that case, you should copy the commented text to a location outside the
-current promise bundle, e.g. by pasting it into a separate library file, and there uncomment it. 
-Don't forget to ensure that the file is included in the <code>inputs</code> lists.
-
-   <p>Any items that the conversion program does not know how to convert will also
-be commented out for manual attention.
-
+<!-- @verbatim -->
+<!-- "/etc/somefile"            # -> { "optional_promisee_list" }, -->
+<!-- comment => "...", -->
+<!-- # handle => "...", -->
+<!-- # depends_on => { "..." ...}, -->
+<!-- perms => mog("0440","root","wheel"), -->
+<!-- copy_from => remote_cp("$(master)/etc/somefile","$(cfsrvhost)"), -->
+<!-- # More accurate translation requires custom coding.. -->
+<!-- # body copy_from custom_body -->
+<!-- # { -->
+<!-- # servers => { "$(master)/etc/somefile"}, -->
+<!-- # trustkey => "false"; -->
+<!-- # compare => "digest"; -->
+<!-- # } -->
+<!-- action => if_elapsed("60"); -->
+<!-- @end verbatim -->
+<!-- It is up to you to decide whether you want to use the commented proposal. In some cases there is no solution in terms of standard bodies, and you must use the commented proposal or some version of it. In that case, you should copy the commented text to a location outside the current promise bundle, e.g. by pasting it into a separate library file, and there uncomment it. Don't forget to ensure that the file is included in the @code{inputs} lists. -->
+<!-- Any items that the conversion program does not know how to convert will also be commented out for manual attention. -->
    <p>To complete the conversion, you will need to:
 
-     <ol type=1 start=9>
-
-     <li>Check that the intention of the converted promise matches the orginal. 
+     <ol type=1 start=1>
+<li>Check that the intention of the converted promise matches the orginal. 
 <li>Check that variable references are ok - you will need to rename them g.name
 <li>Insert comments
 <li>Simplifying repeated patterns using lists. 
@@ -815,11 +738,11 @@ be commented out for manual attention.
 <a name="Optimizing-the-configuration"></a>
 <p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Validating-the-conversion">Validating the conversion</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Automated-translation-with-cfconvert">Automated translation with cfconvert</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Conversion-Strategy">Conversion Strategy</a>
 
 </div>
 
-<h3 class="section">2.5 Optimizing the configuration</h3>
+<h3 class="section">2.4 Optimizing the configuration</h3>
 
 <p>You could optimize by not importing files that you don't need on all systems. 
 This reduces memory and processing time. To do this, you can adapt the
@@ -831,7 +754,7 @@ This reduces memory and processing time. To do this, you can adapt the
 <div class="node">
 <a name="Translation-Codebook"></a>
 <p><hr>
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Automated-translation-with-cfconvert">Automated translation with cfconvert</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Conversion-Strategy">Conversion Strategy</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
@@ -2760,17 +2683,12 @@ storage:
 <li><a href="#On-best-practices">1.2 On `best practices'</a>
 <li><a href="#Completely-new-features">1.3 Completely new features</a>
 </li></ul>
-<li><a name="toc_Automated-translation-with-cfconvert" href="#Automated-translation-with-cfconvert">2 Automated translation with <code>cfconvert</code></a>
+<li><a name="toc_Conversion-Strategy" href="#Conversion-Strategy">2 Conversion Strategy</a>
 <ul>
-<li><a href="#Automatic-Conversion-Strategy">2.1 Automatic Conversion Strategy</a>
-<ul>
-<li><a href="#How-long-will-it-take-to-convert_003f">2.1.1 How long will it take to convert?</a>
-<li><a href="#One-chunk-at-a-time">2.1.2 One chunk at a time</a>
-</li></ul>
-<li><a href="#Converting-by-module">2.2 Converting by module</a>
-<li><a href="#Assembling-a-compilable-file-set">2.3 Assembling a compilable file set</a>
-<li><a href="#Validating-the-conversion">2.4 Validating the conversion</a>
-<li><a href="#Optimizing-the-configuration">2.5 Optimizing the configuration</a>
+<li><a href="#Converting-by-module">2.1 Converting by module</a>
+<li><a href="#Assembling-a-compilable-file-set">2.2 Assembling a compilable file set</a>
+<li><a href="#Validating-the-conversion">2.3 Validating the conversion</a>
+<li><a href="#Optimizing-the-configuration">2.4 Optimizing the configuration</a>
 </li></ul>
 <li><a name="toc_Translation-Codebook" href="#Translation-Codebook">3 Translation Codebook</a>
 <ul>
