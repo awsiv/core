@@ -23,13 +23,13 @@
             <?php } ?>
 
             <legend>Add a new repository</legend>
-            <label id="repoPath" for="repoPath">Path :: </label>
+            <label id="repoPath" for="repoPath">Path: </label>
             <input type="text" name="repoPath" value="<?php echo set_value('repoPath'); ?>" size="50" />
 
-            <label for="username"> Username :: </label>
+            <label for="username"> Username: </label>
             <input autocomplete="off" id="username" type="text" name="username" value="<?php echo set_value('username'); ?>" size="50" />
 
-            <label for="password">Password :: </label>
+            <label for="password">Password: </label>
             <input autocomplete="off" id="vis-password" type="password" name="vis-password" value="<?php echo set_value('vis-password'); ?>" size="50" />
             <input autocomplete="off" id="password" type="hidden" name="password" value="<?php echo set_value('password'); ?>" size="50" />
 

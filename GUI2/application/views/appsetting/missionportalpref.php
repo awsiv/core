@@ -1,6 +1,6 @@
 <div class="outerdiv">
 <div class=" innerdiv ">
-    <div class="panelhead">Mission portal settings</div>
+    <div class="panelhead">Mission Portal settings</div>
     <div id="infoMessage"><?php echo $message;?></div>
     <div class="form">
    <?php // Change the css classes to suit your needs
@@ -8,13 +8,13 @@
 $attributes = array('class' => '', 'id' => '');
 echo form_open('settings/manage/'.$op, $attributes); ?>
  <p>
-        <label for="appemail">Application email <span class="required"></span></label>
+        <label for="appemail">Administrative email <span class="required"></span></label>
         <?php echo tooltip('tooltip_application_email','',true) ; //echo form_error('appemail'); ?>
         <input id="appemail" type="text" name="appemail" maxlength="50" value="<?php echo $appemail; ?>"  />
 </p>
 
 <p>
-   <label for="authentication">Authentication mode <span class="required"></span></label>
+   <label for="authentication">Authentication method <span class="required"></span></label>
         <?php  // echo form_error('mode'); ?>
       
                 <?php // Change or Add the radio values/labels/css classes to suit your needs ?>
@@ -73,27 +73,27 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
       
                 <?php // Change or Add the radio values/labels/css classes to suit your needs ?>
                      <input id="sec1" name="encryption" type="radio" class="" value="plain" <?php echo (isset($plain))?$plain:$this->form_validation->set_radio('encryption', 'plain') ; ?>/>
-                     <label for="encryption" class="">plain</label>
+                     <label for="encryption" class="">None</label>
 
                    <input id="sec2" name="encryption" type="radio" class="" value="ssl" <?php echo (isset($ssl))?$ssl:$this->form_validation->set_radio('encryption', 'ssl'); ?> />
-        	  <label for="encryption" class="">ssl</label>
+        	  <label for="encryption" class="">SSL</label>
 
                    <input id="sec3" name="encryption" type="radio" class="" value="start_tls" <?php echo (isset($start_tls))?$start_tls:$this->form_validation->set_radio('encryption', 'start_tls') ; ?> />
-                  <label for="encryption" class="">start TLS</label>
+                  <label for="encryption" class="">STARTTLS</label>
 </p>
 
-<p><label></label> <a class="btn" id="testsettings" href="<?php echo site_url('settings/ldaptest')?>">Test it </a></p>
+<p><label></label> <a class="btn" id="testsettings" href="<?php echo site_url('settings/ldaptest')?>">Test settings</a></p>
 </fieldset>
 <p>
     
-    <label for="fall back for">Fall back for group ( if authentication server down)<span class="required"></span></label>
+    <label for="fall back for">Fall-back group ( if authentication server down)<span class="required"></span></label>
     <?php echo tooltip('tooltip_fall_back','',true) ;// echo form_error('active_directory_domain'); ?>
     <?php echo form_dropdown('fall_back_for', $groups, $fall_back_for?$fall_back_for:'select');?>
 </p>
 
  <?php if(isset( $groupsacc)){?>
 <p>
-    <label for="fall back for">Admin group<span class="required"></span></label>
+    <label for="fall back for">Administrative group<span class="required"></span></label>
    <?php echo tooltip('tooltip_admin_grp','',true) ;// echo form_error('active_directory_domain'); ?>
    <?php  echo form_dropdown('admin_group', $groupsacc, $admin_group?$admin_group:'select');?>
 </p>
@@ -165,8 +165,8 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
                     target:$(this).next('input,select').eq(0),
                     viewport:$(window)
             },
-            show: 'focus',
-            hide: 'blur',
+            show:{ event: 'foucs mouseenter'},
+            hide: { event: 'mouseout'},
             style:{
               tip: false
             }

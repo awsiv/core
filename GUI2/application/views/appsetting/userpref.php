@@ -1,13 +1,13 @@
 <div class="outerdiv">
 <div class=" innerdiv ">
-    <div class="panelhead">MY Preferences</div>
+    <div class="panelhead">MY preferences</div>
     <div id="infoMessage"><?php echo $message;?></div>
     <div class="form">
     <?php
             $attributes = array('class' => '', 'id' => '');
             echo form_open('settings/preferences/'.$op, $attributes); ?>
      <p>
-      <label for="tooltips">Show Tooltips <span class="required">*</span></label>
+      <label for="tooltips">Show tooltips <span class="required">*</span></label>
         <?php // echo form_error('mode'); ?>
 
                 <?php // Change or Add the radio values/labels/css classes to suit your needs ?>
@@ -15,10 +15,10 @@
         		<label for="tooltips" class="">On</label>
 
         		<input id="opt2" name="tooltips" type="radio" class="" value="tips_off" <?php echo (isset($tips_off))?$tips_off:$this->form_validation->set_radio('tooltips', 'tips_off'); ?> />
-        		<label for="tooltips" class="">off</label>
+        		<label for="tooltips" class="">Off</label>
      </p>
       <p>
-        <label for="num_rows">Number of rows shown in table <span class="required">*</span></label>
+        <label for="num_rows">Default number of rows shown in reports table <span class="required">*</span></label>
         <input id="num_rows" type="text" name="num_rows" maxlength="50" value="<?php echo $num_rows; ?>"  />
      </p>
 
