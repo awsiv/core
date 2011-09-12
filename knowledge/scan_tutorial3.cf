@@ -326,8 +326,8 @@ Example_of_topics_promises::
 Example_of_topics_promises::
  "/docs/cf3-tutorial.html#Example-of-topics-promises"
   represents => { "code example" };
-Analysing_and_indexing_the_policy::
- "/docs/cf3-tutorial.html#Analysing-and-indexing-the-policy"
+Analyzing_and_indexing_the_policy::
+ "/docs/cf3-tutorial.html#Analyzing-and-indexing-the-policy"
   represents => { "manual subsection" };
 cf_know::
  "/docs/cf3-tutorial.html#cf_002dknow"
@@ -335,11 +335,11 @@ cf_know::
 cf_know::
  "/docs/cf3-tutorial.html#cf_002dknow"
   represents => { "code example" };
-Modelling_configuration_promises_as_topic_maps::
- "/docs/cf3-tutorial.html#Modelling-configuration-promises-as-topic-maps"
-  represents => { "manual section Modelling configuration promises as topic maps" };
+Modeling_configuration_promises_as_topic_maps::
+ "/docs/cf3-tutorial.html#Modeling-configuration-promises-as-topic-maps"
+  represents => { "manual section Modeling configuration promises as topic maps" };
 More___::
- "/docs/cf3-tutorial.html#Modelling-configuration-promises-as-topic-maps"
+ "/docs/cf3-tutorial.html#Modeling-configuration-promises-as-topic-maps"
   represents => { "manual chapter" };
 }
 

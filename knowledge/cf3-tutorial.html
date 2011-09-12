@@ -278,7 +278,7 @@ indistinguishable from it."</i>
    <p>Today many are talking about Cloud Computing as another manifestation
 of this dream, in which computing service is not only everywhere, but
 nowhere &ndash; or more correctly, spread out across the planet in
-datacentres, instead of our offices and homes. This is one aspect of
+data centers, instead of our offices and homes. This is one aspect of
 making computing into something we take for granted. At the
 foundations of any such technology are the tools required to implement
 mass configuration with surgical precision. CFEngine is such a tool.
@@ -974,7 +974,7 @@ components. The structure of a promise is this:
 
      <dl>
 <dt><i>Promiser</i><dd>This is the object that formally makes the promise. It is always the <i>affected object</i>,
-since objects can only make promises about their own state or behaviour in CFEngine.
+since objects can only make promises about their own state or behavior in CFEngine.
 
      <br><dt><i>Promisee (optional)</i><dd>This is a possible stakeholder, someone who is interested in the outcome of the
 promise. It is used as documentation, and it is used for reasoning in the commercial
@@ -1101,7 +1101,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Bodies">Bodies</a>
 <p>Some promises in CFEngine are implicit. They are hard-coded into the program. 
 For example, the fact that CFEngine looks for a number of files to read and
 will execute them in a sequence is hard coded. You cannot change this. 
-However, you can change the behaviour of such promises by setting control
+However, you can change the behavior of such promises by setting control
 parameters. These are formally parts of the `promise body' for these hard-coded
 promises, so we use the body structure to set them. Each agent has a special
 body whose name is <code>control</code>; e.g.
@@ -1645,7 +1645,7 @@ this you would add a control body to the <samp><span class="file">promises.cf</s
 }
 
 </pre>
-These other lines change different aspects of the hard-wired behaviour
+These other lines change different aspects of the hard-wired behavior
 of the
 executor, e.g. a load-balancing time delay before execution of the
 agent, a mail address,
@@ -1723,7 +1723,7 @@ affected by the promise.
 </td></tr></table>
 
    <p>Not all of these elements are necessary every time. Some promises
-contain a lot of implicit behaviour. In other cases we might want to
+contain a lot of implicit behavior. In other cases we might want to
 be much more explicit.  For example, the simplest reports promise
 looks like this:
 
@@ -1750,7 +1750,7 @@ A more complex promise contains many attributes:
      # Promise type
      files:
      
-     # promisor                  -&gt; promisee (no curly braces needed if only one)
+     # promiser                  -&gt; promisee (no curly braces needed if only one)
      "/home/mark/tmp/test_plain" -&gt; "system blue team",
      
       # attribute =&gt; value
@@ -1770,7 +1770,7 @@ and auditing.
 (e.g. <code>"true"</code>) in CFEngine 3 must be quoted. This provides
 absolute consistency and makes type-checking easy and error-correction
 powerful. All function-like objects (e.g. <code>users("..")</code>) are
-either builtin
+either built-in
 special functions or parameterized templates which contain the `meat'
 of the right hand
 side.
@@ -1790,9 +1790,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#A-simple-crash-course-in-concepts">A s
 code. For example, the promise to email output to an appropriate
 address, or the promise to wait until a certain time has elapsed before
 checking a promise again (<code>ifelapsed</code>). Although these promises are
-hard-wired, their behaviour can be changed. In CFEngine, behaviour is
+hard-wired, their behavior can be changed. In CFEngine, behavior is
 always
-constrained by the promise body. Thus hard-wired behaviour is altered by
+constrained by the promise body. Thus hard-wired behavior is altered by
 changing the control body for each. You can find these alterable
 parameters
 in the reference manual.
@@ -2899,7 +2899,7 @@ filesystem as the destination-file. This file has the suffix
    <p>Only when the file has been successfully collected will <code>cf-
 agent</code> make a
 copy of the old file, (see <code>repository</code> in the Reference manual),
-and rename the new file into place. This behaviour is designed to avoid
+and rename the new file into place. This behavior is designed to avoid
 race-conditions which can occur during network connections and indeed
 any operations which take some time. If files were simply copied
 directly to their new destinations it is conceivable that a network
@@ -3328,7 +3328,7 @@ sophisticated index-databases of documents.
 <li><a accesskey="5" href="#What-topic-maps-offer">What topic maps offer</a>
 <li><a accesskey="6" href="#The-nuts-and-bolts-of-topic-maps">The nuts and bolts of topic maps</a>
 <li><a accesskey="7" href="#Example-of-topics-promises">Example of topics promises</a>
-<li><a accesskey="8" href="#Modelling-configuration-promises-as-topic-maps">Modelling configuration promises as topic maps</a>
+<li><a accesskey="8" href="#Modeling-configuration-promises-as-topic-maps">Modeling configuration promises as topic maps</a>
 </ul>
 
 <div class="node">
@@ -3353,7 +3353,7 @@ information complexity is therefore fundamental to IT management
 order to flatten out this learning curve. It can lead to
 simplifications in use, because a lot of the thinking has been done
 already and is encapsulated into the model. One of its special
-properties is that it is both a model for system behaviour and a model
+properties is that it is both a model for system behavior and a model
 for knowledge representation (this is what declarative languages seek
 to be, of course). More specifically, it incorporated a subset of the
 ISO standard for `Topic Maps', an open technology for semantic
@@ -3692,7 +3692,7 @@ represent a set of topics that might be relevant, which in turn encompass a set 
 occurrences of resources that contain actual information about the topics in that context. The primacy of topics in this
 stems from their ability to form networks by <em>association</em>.
 
-   <p>The classic approach to information modelling is to build a
+   <p>The classic approach to information modeling is to build a
 hierarchical decomposition of non-overlapping objects. Data are
 manipulated into non-overlapping containers which often prove
 to be overly restrictive. Topic maps allow us to avoid the kinds of
@@ -3707,7 +3707,7 @@ the topic somehow.
 <div class="node">
 <a name="Example-of-topics-promises"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Modelling-configuration-promises-as-topic-maps">Modelling configuration promises as topic maps</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Modeling-configuration-promises-as-topic-maps">Modeling configuration promises as topic maps</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#The-nuts-and-bolts-of-topic-maps">The nuts and bolts of topic maps</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Knowledge-Management">Knowledge Management</a>
 
@@ -3751,7 +3751,7 @@ infrastructure. You will just need a database.
                             "programs::httpd",
                             "implements");
      
-      # if we don't specificy a context, it is "any"
+      # if we don't specify a context, it is "any"
      
      "WWW" association =&gt; a("looks up addresses with",
                             "named",
@@ -3806,12 +3806,12 @@ infrastructure. You will just need a database.
 </pre>
 
 <ul class="menu">
-<li><a accesskey="1" href="#Analysing-and-indexing-the-policy">Analysing and indexing the policy</a>
+<li><a accesskey="1" href="#Analyzing-and-indexing-the-policy">Analyzing and indexing the policy</a>
 <li><a accesskey="2" href="#cf_002dknow">cf-know</a>
 </ul>
 
 <div class="node">
-<a name="Analysing-and-indexing-the-policy"></a>
+<a name="Analyzing-and-indexing-the-policy"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#cf_002dknow">cf-know</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Example-of-topics-promises">Example of topics promises</a>,
@@ -3819,7 +3819,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Example-of-topics-promises">Example of
 
 </div>
 
-<h4 class="subsection">8.7.1 Analysing and indexing the policy</h4>
+<h4 class="subsection">8.7.1 Analyzing and indexing the policy</h4>
 
 <p>CFEngine can analyze the promises you have made, index and cross
 reference them using the command:
@@ -3833,7 +3833,7 @@ command each time the policy is changed.
 <a name="cf-know"></a>
 <a name="cf_002dknow"></a>
 <p><hr>
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Analysing-and-indexing-the-policy">Analysing and indexing the policy</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Analyzing-and-indexing-the-policy">Analyzing and indexing the policy</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Example-of-topics-promises">Example of topics promises</a>
 
 </div>
@@ -3903,14 +3903,14 @@ lead to poor knowledge maps.
    </td></tr></table>
 
 <div class="node">
-<a name="Modelling-configuration-promises-as-topic-maps"></a>
+<a name="Modeling-configuration-promises-as-topic-maps"></a>
 <p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Example-of-topics-promises">Example of topics promises</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Knowledge-Management">Knowledge Management</a>
 
 </div>
 
-<h3 class="section">8.8 Modelling configuration promises as topic maps</h3>
+<h3 class="section">8.8 Modeling configuration promises as topic maps</h3>
 
 <p>We can model topic maps as promises within CFEngine; the
 question then remains as to how to use topic maps to model
@@ -3978,7 +3978,7 @@ _var_CFEngine_inputs::
 Note that in this mapping, the actual promise (viewed as a real world
 entity) is an occurrence of the topic `promise'; at the same time each
 promise could be discussed as a different topic allowing
-meta-modelling of the entity-relation model in the real-world
+meta-modeling of the entity-relation model in the real-world
 data. Conversely the topics themselves become configuration items or
 `promisers' in the promise model. The effect is to create a navigable
 semantic web for traversing the policy; this documents the structure
@@ -4099,12 +4099,12 @@ details.
 </li></ul>
 <li><a href="#Example-of-topics-promises">8.7 Example of topics promises</a>
 <ul>
-<li><a href="#Analysing-and-indexing-the-policy">8.7.1 Analysing and indexing the policy</a>
+<li><a href="#Analyzing-and-indexing-the-policy">8.7.1 Analyzing and indexing the policy</a>
 <li><a href="#cf_002dknow">8.7.2 <code>cf-know</code></a>
 </li></ul>
-<li><a href="#Modelling-configuration-promises-as-topic-maps">8.8 Modelling configuration promises as topic maps</a>
+<li><a href="#Modeling-configuration-promises-as-topic-maps">8.8 Modeling configuration promises as topic maps</a>
 </li></ul>
-<li><a name="toc_Modelling-configuration-promises-as-topic-maps" href="#Modelling-configuration-promises-as-topic-maps">9 More...</a>
+<li><a name="toc_Modeling-configuration-promises-as-topic-maps" href="#Modeling-configuration-promises-as-topic-maps">9 More...</a>
 </li></ul>
 </div>
 
@@ -4127,7 +4127,7 @@ pageTracker._trackPageview();
 <a name="texinfo-footnotes-in-document"></a><h4>Footnotes</h4><p class="footnote"><small>[<a name="fn-1" href="#fnd-1">1</a>]</small> Here, CFEngine differs from the topic map standard in allowing contexts
 to be overlapping sets, rather than mutually exclusive `types'. 
 CFEngine is guided by Promise Theory in this respect in order to enable
-distribtued cooperation and the development of a free and emergent ontology.</p>
+distributed cooperation and the development of a free and emergent ontology.</p>
 
    <hr></div>
 
