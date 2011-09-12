@@ -158,6 +158,9 @@ function getonlineusernames() {
 function getDateStatus($timestamp, $noColor=false) {
 
     $timestamp = intval($timestamp, 10);
+    // check for 0 val 
+    if ($timestamp === 0)  return '<span class="red">(never)</span>';
+    
     $colorClass = '';
     $now = time();
     // 6 hours
