@@ -1475,6 +1475,19 @@ int PageRecords(struct Rlist **records_p, struct PageInfo *page,void (*fnptr)())
       
     }
 
+ if(count <= endIdx ) // the page number is greater than the last one 
+    {
+    for(rp = *records_p; rp != NULL; rp = rp->next)
+       {
+       (*fnptr)(rp->item);
+       rp->item = NULL;
+       }
+    
+    DeleteRlist(*records_p);
+    *records_p = NULL;    
+    page->totalResultCount = count;
+    return false; 
+    }
  // now unlink uneccessary elements at start and end
  if(prevStartEl)
     {
