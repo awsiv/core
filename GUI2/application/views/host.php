@@ -84,11 +84,11 @@
                      <input class="btn"  type="submit" id="btnsubmit"  value="Delete this host"/>
                     </form>
                     <br class="clear">
-                       <p><label>Alias: </label><label ><?php echo $hostname?></label></p>
-                       <p><label>OS class: </label><label><?php echo $class?></label></p>
-                       <p><label>Release: </label><label><?php echo $rel?></label></p>
-                       <p><label>Flavour: </label><label><?php echo $flavour?></label></p>
-                       <p><label>Last IP-address: </label><label><?php echo $ipaddr?></label></p>
+                       <p><label>Alias: </label><label ><?php echo ($hostname=="")?'(not discovered yet)':$hostname?></label></p>
+                       <p><label>OS class: </label><label><?php echo ($class=="")?'(not discovered yet)':$class?></label></p>
+                       <p><label>Release: </label><label><?php echo ($rel=="")?'(not discovered yet)':$rel?></label></p>
+                       <p><label>Flavour: </label><label><?php echo ($flavour=="")?'(not discovered yet)':$flavour?></label></p>
+                       <p><label>Last IP-address: </label><label><?php echo ($ipaddr=="")?'(not discovered yet)':$ipaddr?></label></p>
                        <p><label>Last data: </label><label><?php echo getDateStatus($last);?></label></p>
                        <p><label>ID: </label><label><small><?php echo $hostkey?></small></label></p>
              </div>

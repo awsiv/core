@@ -19,7 +19,7 @@
      </p>
       <p>
         <label for="num_rows">Default number of rows shown in reports table <span class="required">*</span></label>
-        <input id="num_rows" type="text" name="num_rows" maxlength="50" value="<?php echo is_null($num_rows)?$num_rows:20; ?>"  />
+        <input id="num_rows" type="text" name="num_rows" maxlength="50" value="<?php echo empty($num_rows)?20:$num_rows; ?>"  />
      </p>
 
      <p  id="btnholder">
