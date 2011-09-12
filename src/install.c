@@ -1475,7 +1475,7 @@ int PageRecords(struct Rlist **records_p, struct PageInfo *page,void (*fnptr)())
       
     }
 
- if(count < endIdx ) // the page number is greater than the last one
+ if(count <= startIdx ) // the page number is greater than the last one
     {
     for(rp = *records_p; rp != NULL; rp = rp->next)
        {
