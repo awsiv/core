@@ -252,7 +252,7 @@ class Repository extends Cf_Controller {
             $this->load->view('repository/approver', $data);
         } else {
             echo "<span class=\"info maxwidth400\">" . $this->lang->line('no_repos') . " Use <strong class=\"underline\">" .
-            anchor('repository/manageRepository/', 'Manage Repository', 'target=_self') . '</strong> to add a repository</span> ';
+            anchor('repository/manageRepository/', 'Manage Repository', 'target=_self') . '</strong> to add a repository</span>.';
         }
     }
 
