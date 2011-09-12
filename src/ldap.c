@@ -1321,19 +1321,22 @@ LDAP *NovaQueryLDAP(char *uri,char *basedn,char *sec,char *password, bool startt
   int ret,version;
   int pwdLen = 0;
 
-if(password)
-  {
-  pwdLen = strlen(password);
-  }
+if (password)
+   {
+   pwdLen = strlen(password);
+   }
 
 struct berval passwd = { pwdLen, password };
 int zz = 0xffff;
+
 ldap_set_option(NULL, LDAP_OPT_DEBUG_LEVEL, &zz);
 
 /* TLS options need to be set up before opening a connection */
 
 /* Do not check supplied certificate -- we don't have CA certificate storage */
+
 int never = LDAP_OPT_X_TLS_NEVER;
+
 if ((ret = ldap_set_option(NULL, LDAP_OPT_X_TLS_REQUIRE_CERT, &never)) != LDAP_SUCCESS)
    {
    if (errstr)

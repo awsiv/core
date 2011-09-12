@@ -734,17 +734,25 @@ int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *r)
     case cfrank_anomaly:
 
         notkept = 100 - k[meter_anomalies_day] - r[meter_anomalies_day];
-                
+
+        // If red or yellow, add the "badness" to the base threshold
+        // to ensure the worst host is ranked on top. We also add
+        // 100 in case k[meter_anomalies_day] pulls us back under the
+        // threshold
+        
         if (notkept > 20)
            {
-           result = CF_RED_THRESHOLD + 100;
+           result = CF_RED_THRESHOLD + 100 + notkept;
            }
        
         if (r[meter_anomalies_day] > 20)
            {
-           result = CF_AMBER_THRESHOLD + r[meter_anomalies_day];
+           result = CF_AMBER_THRESHOLD + 100 + r[meter_anomalies_day];
            }
 
+        // We want worse hosts to have higher scores so they appear on top
+        // so subtract what is "good" about kept promises
+        
         result -= k[meter_anomalies_day];
         break;
        
