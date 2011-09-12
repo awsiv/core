@@ -1511,8 +1511,9 @@ div.ui-dialog .ui-dialog-buttonpane{
 }
 
 /**************/
-#footer p{
-    
+#footer a{
+ text-decoration: underline;
+ font-size: 9px;
 }
 .tablesfixed table
 {
