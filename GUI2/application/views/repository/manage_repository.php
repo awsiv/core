@@ -24,7 +24,7 @@
                     <?php } else {
                     ?>
                             <tr id="no-data-row">
-                                <td colspan="3">No entries defined</td>
+                                <td colspan="3">No repositories are defined.</td>
                             </tr>
                     <?php } ?>
                         </tbody>

@@ -21,7 +21,9 @@
         <?php } else { ?>
 
             <div class="innerdiv">
-                You don't have any repository defined.  Manage you repositories. <a target="_self" href ="<?php echo site_url() ?>/repository/manageRepository/">Go</a>
+                No repositories are defined.
+                Use <a target="_self" href ="<?php echo site_url() ?>/repository/manageRepository/">Manage Repository</a>
+                to add a repository.
             </div>
 
         <?php } ?>

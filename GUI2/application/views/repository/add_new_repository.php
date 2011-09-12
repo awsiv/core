@@ -22,7 +22,7 @@
 
             <?php } ?>
 
-            <legend>Add new repository information</legend>
+            <legend>Add a new repository</legend>
             <label id="repoPath" for="repoPath">Path :: </label>
             <input type="text" name="repoPath" value="<?php echo set_value('repoPath'); ?>" size="50" />
 
