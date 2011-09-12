@@ -1775,12 +1775,6 @@ special functions or parameterized templates which contain the `meat'
 of the right hand
 side.
 
-<ul class="menu">
-<li><a accesskey="1" href="#Scalar-variable-expansion">Scalar variable expansion</a>
-<li><a accesskey="2" href="#List-variables">List variables</a>
-<li><a accesskey="3" href="#List-variable-substitution-and-expansion">List variable substitution and expansion</a>
-</ul>
-
 <div class="node">
 <a name="Control-promises"></a>
 <p><hr>
@@ -2880,11 +2874,11 @@ in a <samp><span class="file">files</span></samp> promise:
 <span class="comment"># Library template
 </span>
 
-<span class="red">body copy_from</span> <span class="blue">rcp(file,server)</span>
-
+<span class="red">body copy_from</span> <span class="blue">remote_cp(from,server)</span>
 {
-<span class="red">servers     </span>=> { "$(server)", "failover.example.org"};
-<span class="red">source      </span>=><span class="green"> "$(file)";</span>
+<span class="red">servers     </span>=> { "$(server)" };
+<span class="red">source      </span>=><span class="green"> "$(from)";</span>
+<span class="red">compare     </span>=><span class="green"> "mtime";</span>
 }
 
 </pre>

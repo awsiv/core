@@ -32,21 +32,9 @@ On_best_practices::
 Completely_new_features::
  "/docs/cf3-upgrade.html#Completely-new-features"
   represents => { "manual section Completely new features" };
-Automated_translation_with_cfconvert::
- "/docs/cf3-upgrade.html#Automated-translation-with-cfconvert"
+Conversion_Strategy::
+ "/docs/cf3-upgrade.html#Conversion-Strategy"
   represents => { "manual chapter" };
-Automatic_Conversion_Strategy::
- "/docs/cf3-upgrade.html#Automatic-Conversion-Strategy"
-  represents => { "manual section Automatic Conversion Strategy" };
-How_long_will_it_take_to_convert_::
- "/docs/cf3-upgrade.html#How-long-will-it-take-to-convert_003f"
-  represents => { "manual subsection" };
-One_chunk_at_a_time::
- "/docs/cf3-upgrade.html#One-chunk-at-a-time"
-  represents => { "manual subsection" };
-One_chunk_at_a_time::
- "/docs/cf3-upgrade.html#One-chunk-at-a-time"
-  represents => { "code example" };
 Converting_by_module::
  "/docs/cf3-upgrade.html#Converting-by-module"
   represents => { "manual section Converting by module" };

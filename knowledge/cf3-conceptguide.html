@@ -364,9 +364,9 @@ the job that they are good at.
 
    <p>The main problem in managing systems is a loss of self-discipline. 
 Discipline
-does not imply that order have to be barked from a central command. It
+does not imply that orders have to be barked from a central command. It
 only requires that every part of the system knows its job and carries
-is out seamlessly and flawlessly.
+it out seamlessly and flawlessly.
 
    <p>Skilled workers tend to think that it is enough to be smart. In fact
 this is wrong: smart people tend to be problem solvers and will
@@ -487,8 +487,9 @@ its
 own copy of the music and knows what to play. It might or might not have
 a conductor to help coordinate the individual parts &ndash; that's up to you.
 
-   <p>CFEngine's software agents run on each individual computer but can
-communicate if they need to, as depicted the figure below. This means
+   <p>An agent is piece of software that runs independently and automatically to carry out a
+task. CFEngine's software agents run on each individual computer but can
+communicate if they need to, as depicted in the figure below. This means
 you don't have to arrange risky login credentials to run your network
 &ndash; and if something goes wrong with the communications network,
 CFEngine is where it needs to be to repair or protect the system
@@ -603,7 +604,7 @@ automatically.
 
      <br><dt><em>Audit</em><dd>In traditional configuration systems, the outcome is far from clear
 after a one-shot transaction, so one audits the system
-to determine to discover what actually happened. In CFEngine, changes
+to determine what actually happened. In CFEngine, changes
 are not just initiated once, but locally audited and maintained. 
 Decision outcomes are assured by design in CFEngine and maintained
 automatically, so the main worry is managing conflicting
@@ -618,7 +619,7 @@ for new `roll out' transactions.
 roll-out system, i.e. one that attempts to force out absolute changes
 and perhaps reverse them in case of error. Roll-out and roll-back are
 theoretically flawed concepts that only sometimes work in practice. 
-With CFEngine, you publish a sequences of policy revisions, always
+With CFEngine, you publish a sequence of policy revisions, always
 moving forward (because like it or not, time only goes in one
 direction).  All of the desired-state changes are managed locally by
 each individual computer, and continuously repaired to ensure on-going
@@ -1006,18 +1007,21 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <ul class="menu">
 <li><a accesskey="1" href="#Rules-are-promises">Rules are promises</a>
-<li><a accesskey="2" href="#Control-promises">Control promises</a>
-<li><a accesskey="3" href="#Variables">Variables</a>
+<li><a accesskey="2" href="#Best-practice-for-writing-promises">Best practice for writing promises</a>
+<li><a accesskey="3" href="#Containers">Containers</a>
 <li><a accesskey="4" href="#Decisions">Decisions</a>
-<li><a accesskey="5" href="#Loops">Loops</a>
-<li><a accesskey="6" href="#The-main-promise-types">The main promise types</a>
-<li><a accesskey="7" href="#Test-a-promise_003f">Test a promise?</a>
+<li><a accesskey="5" href="#Types-in-CFEngine-3">Types in CFEngine 3</a>
+<li><a accesskey="6" href="#Datatypes-in-CFEngine-3">Datatypes in CFEngine 3</a>
+<li><a accesskey="7" href="#Variables">Variables</a>
+<li><a accesskey="8" href="#Loops">Loops</a>
+<li><a accesskey="9" href="#The-main-promise-types">The main promise types</a>
+<li><a href="#Test-a-promise_003f">Test a promise?</a>
 </ul>
 
 <div class="node">
 <a name="Rules-are-promises"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Control-promises">Control promises</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Best-practice-for-writing-promises">Best practice for writing promises</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#A-simple-crash-course-in-concepts">A simple crash course in concepts</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#A-simple-crash-course-in-concepts">A simple crash course in concepts</a>
 
@@ -1111,304 +1115,188 @@ special functions or parameterized templates which contain the `meat'
 of the right hand
 side.
 
-<ul class="menu">
-<li><a accesskey="1" href="#Scalar-variable-expansion">Scalar variable expansion</a>
-<li><a accesskey="2" href="#List-variables">List variables</a>
-<li><a accesskey="3" href="#List-variable-substitution-and-expansion">List variable substitution and expansion</a>
-</ul>
+   <p>The words <code>commands</code>, and <code>files</code> are built-in promise
+types. Promise types generally belong each to a particular component
+of CFEngine, as the components are designed to keep different kinds of
+promises.  A few types, such as <code>vars</code>, <code>classes</code> and
+<code>reports</code> are common to all the different component bundles. You
+will find a full list of the promise types that can be made by the
+different components in the reference manual.
 
 <!--  -->
 <div class="node">
-<a name="Control-promises"></a>
+<a name="Best-practice-for-writing-promises"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variables">Variables</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Containers">Containers</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Rules-are-promises">Rules are promises</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#A-simple-crash-course-in-concepts">A simple crash course in concepts</a>
 
 </div>
 
-<h3 class="section">4.2 Control promises</h3>
+<h3 class="section">4.2 Best practice for writing promises</h3>
 
-<p>Certain promises that CFEngine components make are hard-wired into their
-code. For example, the promise to email output to an appropriate
-address, or the promise to wait until a certain time has elapsed before
-checking a promise again (<code>ifelapsed</code>). Although these promises are
-hard-wired, their behaviour can be changed. In CFEngine, behaviour is
-always
-constrained by the promise body. Thus hard-wired behaviour is altered by
-changing the control body for each. You can find these alterable
-parameters
-in the reference manual.
+<p>When writing promises, get into the habit of giving every promise a comment
+that explains its intention.
 
-   <p>The most important bundle is the <code>common</code> bundle, that is read by
-all components of CFEngine. It contains the list of promise bundles
-that should be read in and examined for promise suggestions.  From the
-<samp><span class="file">promises.cf</span></samp> file:
+   <p>Also, give related promises <i>handles</i>, or labels that can be used to
+refer to them by.
 
 <pre class="verbatim">
-<span class="red">body common control
-</span>{
-<span class="red">bundlesequence  </span>=> {
-                 "update",
-                 "garbage_collection",
-                 "main",
-                 "cfengine"
-                 };
-
-<span class="red">inputs          </span>=> {
-                 "update.cf",
-                 "site.cf",
-                 "library.cf"
-                 };
-}
-
-<span class="comment">#######################################################
+<span class="red">files:
 </span>
+  "/var/cfengine/inputs"
 
-<span class="red">body agent</span> <span class="blue">control</span>
-{
-<span class="comment"># if default runtime is 5 mins we need this for long jobs
+<span class="red">    handle </span>=><span class="green"> "update_policy",</span>
+<span class="red">    comment </span>=><span class="green"> "Update the configuration from a master server",</span>
+
+<span class="red">    perms </span>=><span class="blue"> system("600"),</span>
+<span class="red">    copy_from </span>=> mycopy("$(master_location)","$(policy_server)"),
+<span class="red">    depth_search </span>=><span class="blue"> recurse("inf"),</span>
+<span class="red">    file_select </span>=><span class="blue"> input_files,</span>
+<span class="red">    action </span>=><span class="blue"> immediate;</span>
+
+</pre>
+If a promise affects another promise in some way, you can make the affected
+promise one of the promisees, like this:
+
+<pre class="verbatim">
+<span class="red">access:
 </span>
-<span class="red">ifelapsed </span>=><span class="green"> "15";</span>
-}
+  "/master/cfengine/inputs" -> { "update_policy", "other_promisee" },
 
-<span class="comment">#######################################################
-</span>
+<span class="red">    comment </span>=><span class="green"> "Grant access to policy to our clients",</span>
+<span class="red">    handle  </span>=><span class="green"> "serve_updates",</span>
 
-<span class="red">body monitor</span> <span class="blue">control</span>
-{
-<span class="red">forgetrate </span>=><span class="green"> "0.7";</span>
-<span class="red">histograms </span>=><span class="green"> "true";</span>
-}
-
-<span class="comment">#######################################################
-</span>
-
-<span class="red">body executor</span> <span class="blue">control</span>
-
-{
-<span class="red">splaytime </span>=><span class="green"> "1";</span>
-<span class="red">mailto </span>=><span class="green"> "cfengine_mail@example.org";</span>
-<span class="red">smtpserver </span>=><span class="green"> "localhost";</span>
-<span class="red">mailmaxlines </span>=><span class="green"> "30";</span>
-}
-
-<span class="comment">#######################################################
-</span>
-
-<span class="red">body reporter</span> <span class="blue">control</span>
-
-{
-<span class="red">reports </span>=> { "performance", "last_seen", "monitor_history" };
-<span class="red">build_directory </span>=><span class="green"> "/tmp/nerves";</span>
-<span class="red">report_output </span>=><span class="green"> "html";</span>
-}
-
-<span class="comment">#######################################################
-</span>
-
-<span class="red">body runagent</span> <span class="blue">control</span>
-{
-<span class="red">hosts </span>=> {
-        "127.0.0.1"
-<span class="comment">        # , "myhost.example.com:5308", ...
-</span>
-       };
-
-}
-
-<span class="comment">#######################################################
-</span>
-
-<span class="red">body server</span> <span class="blue">control</span>
-
-{
-<span class="red">allowconnects         </span>=> { "127.0.0.1" , "::1" };
-<span class="red">allowallconnects      </span>=> { "127.0.0.1" , "::1" };
-<span class="red">trustkeysfrom         </span>=> { "127.0.0.1" , "::1" };
-
-<span class="comment"># Make updates and runs happen in one
-</span>
-
-<span class="red">cfruncommand          </span>=><span class="green"> "$(sys.workdir)/bin/cf-agent -f failsafe.cf &amp;&amp;</span>
-$(sys.workdir)/bin/cf-agent";
-<span class="red">allowusers            </span>=> { "root" };
-}
+<span class="red">    admit   </span>=> { "217.77.34.*" };
 
 </pre>
 
+   <p>Conversely, if a promise might depend on another in some (even indirect) way, document this too.
+
+<pre class="verbatim">
+<span class="red">files:
+</span>
+  "/var/cfengine/inputs"
+
+<span class="red">    comment </span>=><span class="green"> "Update the configuration from a master server",</span>
+<span class="red">    handle     </span>=><span class="green"> "update_policy",</span>
+
+<span class="red">    depends_on </span>=><span class="green"> "serve_updates",</span>
+
+<span class="red">    perms </span>=><span class="blue"> system("600"),</span>
+<span class="red">    copy_from </span>=> mycopy("$(master_location)","$(policy_server)"),
+<span class="red">    depth_search </span>=><span class="blue"> recurse("inf"),</span>
+<span class="red">    file_select </span>=><span class="blue"> input_files,</span>
+<span class="red">    action </span>=><span class="blue"> immediate;</span>
+
+
+</pre>
+
+   <p>Get into the habit of adding the cause-effect lines of influence. 
+Enterprise editions of CFEngine will track the dependencies between these
+promises and map out impact analyses.
+
 <!--  -->
 <div class="node">
-<a name="Variables"></a>
+<a name="Containers"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Decisions">Decisions</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Control-promises">Control promises</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Best-practice-for-writing-promises">Best practice for writing promises</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#A-simple-crash-course-in-concepts">A simple crash course in concepts</a>
 
 </div>
 
-<h3 class="section">4.3 Variables</h3>
+<h3 class="section">4.3 Containers</h3>
 
-<p>Variables (or "variable definitions") are also promises &ndash; the promise to
-represent their values.  We can write these in
-any promise bundle. CFEngine recognizes two object types: scalars and
-lists (lists contain 0 or more objects), as well as
-three data-types (string, integer and real). Typing in CFEngine is
-dynamic, as in
-Perl and other scripting languages. Thus variables of any data-type
-may be used as strings.
-
-<ul class="menu">
-<li><a accesskey="1" href="#Scalar-variable-expansion">Scalar variable expansion</a>
-<li><a accesskey="2" href="#List-variables">List variables</a>
-<li><a accesskey="3" href="#List-variable-substitution-and-expansion">List variable substitution and expansion</a>
-</ul>
-
-<div class="node">
-<a name="Scalar-variable-expansion"></a>
-<p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#List-variables">List variables</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variables">Variables</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Variables">Variables</a>
-
-</div>
-
-<h4 class="subsection">4.3.1 Scalar variables</h4>
-
-<p>Scalar variables hold a single value. The are declared as follows:
-
-<pre class="smallexample">     bundle <i>&lt;type&gt;</i> name
-     {
-     vars:
-     
-     "my_scalar" string =&gt; "String contents...";
-         "my_int" int    =&gt; "1234";
-        "my_real" real   =&gt; "567.89";
-     
-     }
-     
-</pre>
-   <p>The &lsquo;<samp><i>&lt;type&gt;</i></samp>&rsquo; indicates that any kind of bundle applies here. 
-Scalar variables are referenced by &lsquo;<samp><span class="samp">$(name)</span></samp>&rsquo; (or
-&lsquo;<samp><span class="samp">${name}</span></samp>&rsquo;) and they represent
-a single value at a time.
-
-     <ul>
-<li>Scalars that are written without a context, e.g. &lsquo;<samp><span class="samp">$(myvar)</span></samp>&rsquo;
-are local to the current bundle.
-
-     <li>Scalars are globally available everywhere provided one
-uses the context to verify them e.g. &lsquo;<samp><span class="samp">$(context.myvar)</span></samp>&rsquo;
-may be written to access the variable `myvar' in bundle `context'. 
-</ul>
-
-<!--  -->
-<div class="node">
-<a name="List-variables"></a>
-<p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#List-variable-substitution-and-expansion">List variable substitution and expansion</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Scalar-variable-expansion">Scalar variable expansion</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Variables">Variables</a>
-
-</div>
-
-<h4 class="subsection">4.3.2 List variables</h4>
-
-<p>List variables hold several values. The are declared as follows:
-
-<pre class="smallexample">     bundle <i>&lt;type&gt;</i> name
-     {
-     vars:
-     
-        "my_slist" slist =&gt; { "list", "of", "strings" };
-        "my_ilist" ilist =&gt; { "1234", "5678" };
-        "my_rlist" rlist =&gt; { "567.89" };
-     
-     }
-     
-</pre>
-   <p>An entire list is referred to with the at symbol &lsquo;<samp><span class="samp">@</span></samp>&rsquo;, but it does
-not usually make sense to use this reference in a string. For instance
+<p>CFEngine allows you to group multiple promise statements
+    into containers called bundles.
 <pre class="smallexample">     
-     reports:
+     bundle agent identifier
      
-       cfengine_3::
-     
-          "My list is @(my_slist)";
-     
-</pre>
-   <p class="noindent">means nothing and cannot be expanded (it does not generate an
-error, but instead inserts the text @(my_slist) into the string); but if
-we use the scalar reference to a list variable, CFEngine will iterate over
-the  values in
-the list essentially making this into a list of promises.
-
-<p class="noindent">To summarize:
-     <ul>
-<li>Scalar references to <i>local</i> list variables imply iteration,
-e.g. 
-suppose we have local list variable &lsquo;<samp><span class="samp">@(list)</span></samp>&rsquo;, then the
-scalar &lsquo;<samp><span class="samp">$(list)</span></samp>&rsquo; implies an iteration over every value of the
-list.
-
-     <li>Lists can be passed in their entirety in any context
-where a list is expected as &lsquo;<samp><span class="samp">@(list)</span></samp>&rsquo;., e.g.
-
-     <pre class="verbatim">     
-<span class="red">     vars:
-</span>     
-     "longlist"<span class="red"> slist </span>=> { @(shortlist), "plus", "plus" };
-     
-     "shortlist"<span class="red"> slist </span>=> { "you", "me" };
-     
-</pre>
-
-     <p>The declaration order does not matter &ndash; CFEngine will execute the promise
-to assign the variable &lsquo;<samp><span class="samp">@(shortlist)</span></samp>&rsquo; before the promise to assign the
-variable &lsquo;<samp><span class="samp">@(longlist)</span></samp>&rsquo;.
-
-     <li>Only local lists can be expanded directly. Thus &lsquo;<samp><span class="samp">$(list)</span></samp>&rsquo;
-can be expanded but not &lsquo;<samp><span class="samp">$(context.list)</span></samp>&rsquo;.  Global
-list references have to be mapped into a local context if you want to
-use them for iteration. See the reference manual for more information.
-
-   </ul>
-
-<!--  -->
-<div class="node">
-<a name="List-variable-substitution-and-expansion"></a>
-<p><hr>
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#List-variables">List variables</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Variables">Variables</a>
-
-</div>
-
-<h4 class="subsection">4.3.3 Associative arrays</h4>
-
-<p>Associative array variables also hold several values. The are declared
-as follows:
-
-<pre class="smallexample">     bundle <i>&lt;type&gt;</i> name
      {
-     vars:
+     commands:
      
-        "switches[mellow]" int =&gt; "1";
-        "switches[relaxed]" int =&gt; "1";
-        "off_keys" slist =&gt; { "red", "grouchy", "coarse", "febrile" };
-        "switches[$(off_keys)]" int =&gt; "0";
+       "/bin/echo These commands are a silly way to use CFEngine";
+       "/bin/ls -l";
+       "/bin/echo But they illustrate a point";
      
      }
      
 </pre>
-   <p>See the reference manual for information on the &lsquo;<samp><span class="samp">getindices</span></samp>&rsquo; function
-and other details of associative arrays.
+   <p>Bundles serve two purposes: they allow us to collect related promises under a
+single heading, like a subroutine, and they allow us to mix configuration for different
+parts of CFEngine in the same file. The type of a bundle is the name of the component
+of CFEngine for which it is intended.
+
+   <p>For instance, we can make a self-contained example agent-server
+configuration by labelling the bundles:
+
+<pre class="smallexample">     
+     #
+     # Not a complete example
+     #
+     
+     bundle agent testbundle
+     
+     {
+     files:
+     
+       "/home/mark/tmp/testcopy"
+     
+         comment      =&gt; "Throwaway example...",
+         copy_from    =&gt; mycopy("/home/mark/LapTop/words","127.0.0.1"),
+         perms        =&gt; system,
+         depth_search =&gt; recurse("inf");
+     
+     }
+     
+     #
+     
+     bundle server access_rules
+     
+     {
+     access:
+     
+       "/home/mark/LapTop"
+     
+         admit   =&gt; { "127.0.0.1" };
+     }
+     
+</pre>
+   <p>Another type of container in CFEngine 3 is a `body' part. Body parts
+exist to hide complex parameter information in reusable containers. 
+The right hand side of some attribute assignments use body containers
+to reduce the amount of in-line information and preserve readability. 
+You cannot choose where to use bodies: either they are used or they
+are not used for a particular kind of attribute. What you can choose, however, is
+the name and number of parameters for the body; and you can make as many of them as you like:
+For example:
+
+<pre class="smallexample">     
+     body copy_from mycopy(from,server)
+     
+     {
+     source      =&gt; "$(from)";
+     servers     =&gt; { "$(server)" };
+     copy_backup =&gt; "true";
+     
+     special_class::
+     
+       purge       =&gt; "true";
+     }
+     
+</pre>
+   <p>Notice also that classes can be used in bodies as well as parameters so that
+you can hide environmental adaptations in these bodies also. The classes used
+here are effectively ANDed with the classes under which the calling promise
+is defined.
 
 <!--  -->
 <div class="node">
 <a name="Decisions"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Loops">Loops</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variables">Variables</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Types-in-CFEngine-3">Types in CFEngine 3</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Containers">Containers</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#A-simple-crash-course-in-concepts">A simple crash course in concepts</a>
 
 </div>
@@ -1612,17 +1500,477 @@ and &lsquo;<samp><span class="samp">two</span></samp>&rsquo; are in scope in the
 expression for bundle &lsquo;<samp><span class="samp">ls_2</span></samp>&rsquo; requires that both &lsquo;<samp><span class="samp">zero</span></samp>&rsquo; and
 &lsquo;<samp><span class="samp">two</span></samp>&rsquo; be true and that &lsquo;<samp><span class="samp">one</span></samp>&rsquo; not be true).
 
+   <p>CFEngine is controlled by a series of locks which prevent it from
+checking promises too often, and which prevent it from spending too
+long trying to verify promises it already verified recently. The locks
+work in such a way that you can start several CFEngine processes
+simultaneously without them interfering with each other. You can
+control two things about each kind of action in the action sequence:
+
+     <dl>
+<dt>&lsquo;<samp><span class="samp">ifelapsed</span></samp>&rsquo;<dd>The minimum time (in minutes) which should have passed since the last time
+that promise was verified. It will not be executed again until
+this amount of time has elapsed. 
+(Default time is 1 minute.)
+
+     <br><dt>&lsquo;<samp><span class="samp">expireafter</span></samp>&rsquo;<dd>The maximum amount (in minutes) of time cf-agent should wait for an old
+instantiation to finish before killing it
+and starting again. (Default time is 120 minutes.)
+
+   </dl>
+
+<p class="noindent">You can set these values either globally (for all
+actions) or for each action separately. If you
+set global and local values, the local values override
+the global ones. All times are written in units
+of <em>minutes</em>. Global setting is in the control body:
+
+<pre class="verbatim">
+<span class="red">body agent</span> <span class="blue">control</span>
+{
+<span class="red">ifelapsed </span>=><span class="green"> "60";	# one hour</span>
+}
+
+</pre>
+
+<p class="noindent">or locally in the transaction bodies:
+
+<pre class="verbatim">
+<span class="red">body action</span> <span class="blue">example</span>
+{
+<span class="red">ifelapsed </span>=><span class="green"> "90";	# 1.5 hours</span>
+}
+
+</pre>
+
+   <p>These locks do not prevent the whole of cf-agent from running, only
+atomic promise checks. Several different atoms can be run concurrently
+by different cf-agents.  The locks ensure that atoms will never be
+started by two cf-agents at the same time, or too soon after a
+verification, causing contention and wasting CPU cycles.
+
 <!--  -->
 <div class="node">
-<a name="Loops"></a>
+<a name="Types-in-CFEngine-3"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#The-main-promise-types">The main promise types</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Datatypes-in-CFEngine-3">Datatypes in CFEngine 3</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Decisions">Decisions</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#A-simple-crash-course-in-concepts">A simple crash course in concepts</a>
 
 </div>
 
-<h3 class="section">4.5 Loops</h3>
+<h3 class="section">4.5 Types in CFEngine 3</h3>
+
+<p>A key difference in CFEngine 3 compared to earlier versions is the
+presence of types. Types are a mechanism for associating
+values and checking consistency in a language. Once again, there is a
+simple pattern to types in CFEngine.
+
+   <p>The principle is very simple: types exist in order to match like a
+plug-socket relationship. In the examples above, you can see two places
+where types are used to match templates:
+
+     <ul>
+<li>Matching bundles to components:
+     <pre class="smallexample">          
+          bundle TYPE name  # matches TYPE to running agent
+          {
+          }
+          
+</pre>
+     <li>Match bodies templates to lvalues in <code>lvalues =&gt; rvalue</code> constraints:
+
+     <pre class="smallexample">          
+          body TYPE name    # matches TYPE =&gt; name in promise
+          {
+          }
+          
+</pre>
+     </ul>
+
+<!--  -->
+<div class="node">
+<a name="Datatypes-in-CFEngine-3"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variables">Variables</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Types-in-CFEngine-3">Types in CFEngine 3</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#A-simple-crash-course-in-concepts">A simple crash course in concepts</a>
+
+</div>
+
+<h3 class="section">4.6 Datatypes in CFEngine 3</h3>
+
+<p>CFEngine variables have two meta-types: scalars and lists. A scalar is a single value,
+a list is a collection of scalars. Each scalar may have one of three types:
+<code>string</code>, <code>int</code> or <code>real</code>. Typing is dynamic, so these are
+interchangable in many instances. However arguments to special functions check legal
+type for consistency.
+
+   <p>Integer constants may use suffixes to represent large numbers.
+
+     <ul>
+  <li>'k'
+          = value times 1000.
+
+     <li>'K'
+          = value times 1024.
+
+     <li>'m'
+          = value times 1000^2
+  <li>'M'
+          = value times 1024^2
+  <li>'g'
+          = value times 1000^3
+  <li>'G'
+          = value times 1024^3
+
+     <li>'%'
+	  meaning percent, in limited contexts
+
+     <li>'inf'
+	  = a constant representing an unlimited value. 
+</ul>
+
+<!--  -->
+<div class="node">
+<a name="Variables"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Loops">Loops</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Datatypes-in-CFEngine-3">Datatypes in CFEngine 3</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#A-simple-crash-course-in-concepts">A simple crash course in concepts</a>
+
+</div>
+
+<h3 class="section">4.7 Variables</h3>
+
+<p>Variables (or "variable definitions") are also promises &ndash; the promise to
+represent their values.  We can write these in
+any promise bundle. CFEngine recognizes two variable object types: scalars and
+lists (lists contain 0 or more objects)<a rel="footnote" href="#fn-1" name="fnd-1"><sup>1</sup></a>, as well as
+three data-types (string, integer and real). Typing in CFEngine is
+dynamic, as in
+Perl and other scripting languages. Thus variables of any data-type
+may be used as strings.
+
+<ul class="menu">
+<li><a accesskey="1" href="#Scalar-variable-expansion">Scalar variable expansion</a>
+<li><a accesskey="2" href="#List-variable-substitution-and-expansion">List variable substitution and expansion</a>
+<li><a accesskey="3" href="#Special-list-value-cf_005fnull">Special list value cf_null</a>
+<li><a accesskey="4" href="#Arrays-in-CFEngine-3">Arrays in CFEngine 3</a>
+</ul>
+
+<div class="node">
+<a name="Scalar-variable-expansion"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#List-variable-substitution-and-expansion">List variable substitution and expansion</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variables">Variables</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variables">Variables</a>
+
+</div>
+
+<h4 class="subsection">4.7.1 Scalar variable expansion</h4>
+
+<p>Scalar variables hold a single value. The are declared as follows:
+
+<pre class="smallexample">     bundle <i>&lt;type&gt;</i> name
+     {
+     vars:
+     
+     "my_scalar" string =&gt; "String contents...";
+         "my_int" int    =&gt; "1234";
+        "my_real" real   =&gt; "567.89";
+     
+     }
+     
+</pre>
+   <p>The &lsquo;<samp><i>&lt;type&gt;</i></samp>&rsquo; indicates that any kind of bundle applies here. 
+Scalar variables are referenced by &lsquo;<samp><span class="samp">$(name)</span></samp>&rsquo; (or
+&lsquo;<samp><span class="samp">${name}</span></samp>&rsquo;) and they represent
+a single value at a time.
+
+     <ul>
+<li>Scalars that are written without a context, e.g. &lsquo;<samp><span class="samp">$(myvar)</span></samp>&rsquo;
+are local to the current bundle.
+
+     <li>Scalars are globally available everywhere provided one
+uses the context to verify them e.g. &lsquo;<samp><span class="samp">$(context.myvar)</span></samp>&rsquo;
+may be written to access the variable `myvar' in bundle `context'. 
+</ul>
+
+<!--  -->
+<div class="node">
+<a name="List-variable-substitution-and-expansion"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Special-list-value-cf_005fnull">Special list value cf_null</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Scalar-variable-expansion">Scalar variable expansion</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variables">Variables</a>
+
+</div>
+
+<h4 class="subsection">4.7.2 List variable substitution and expansion</h4>
+
+<p>List variables hold several values. The are declared as follows:
+
+<pre class="smallexample">     bundle <i>&lt;type&gt;</i> name
+     {
+     vars:
+     
+        "my_slist" slist =&gt; { "list", "of", "strings" };
+        "my_ilist" ilist =&gt; { "1234", "5678" };
+        "my_rlist" rlist =&gt; { "567.89" };
+     
+     }
+     
+</pre>
+   <p>An entire list is referred to with the at symbol &lsquo;<samp><span class="samp">@</span></samp>&rsquo;, but it does
+not usually make sense to use this reference in a string. For instance
+<pre class="smallexample">     
+     reports:
+     
+       cfengine_3::
+     
+          "My list is @(my_slist)";
+     
+</pre>
+   <p class="noindent">means nothing and cannot be expanded (it does not generate an
+error, but instead inserts the text @(my_slist) into the string); but if
+we use the scalar reference to a list variable, CFEngine will iterate over
+the  values in
+the list essentially making this into a list of promises.
+
+<p class="noindent">To summarize:
+     <ul>
+<li>Scalar references to <i>local</i> list variables imply iteration,
+e.g. 
+suppose we have local list variable &lsquo;<samp><span class="samp">@(list)</span></samp>&rsquo;, then the
+scalar &lsquo;<samp><span class="samp">$(list)</span></samp>&rsquo; implies an iteration over every value of the
+list.
+
+     <li>Lists can be passed in their entirety in any context
+where a list is expected as &lsquo;<samp><span class="samp">@(list)</span></samp>&rsquo;., e.g.
+
+     <pre class="verbatim">     
+<span class="red">     vars:
+</span>     
+     "longlist"<span class="red"> slist </span>=> { @(shortlist), "plus", "plus" };
+     
+     "shortlist"<span class="red"> slist </span>=> { "you", "me" };
+     
+</pre>
+
+     <p>The declaration order does not matter &ndash; CFEngine will execute the promise
+to assign the variable &lsquo;<samp><span class="samp">@(shortlist)</span></samp>&rsquo; before the promise to assign the
+variable &lsquo;<samp><span class="samp">@(longlist)</span></samp>&rsquo;.
+
+     <li>Only local lists can be expanded directly. Thus &lsquo;<samp><span class="samp">$(list)</span></samp>&rsquo;
+can be expanded but not &lsquo;<samp><span class="samp">$(context.list)</span></samp>&rsquo;.  Global
+list references have to be mapped into a local context if you want to
+use them for iteration. 
+</ul>
+
+   <p>Instead of doing this in some
+arbitrary way, with possibility of name collisions, CFEngine
+asks you to make this explicit. There are two possible approaches.
+
+   <p>The first uses parameterization to map a global list into a local
+context.
+<pre class="verbatim">
+<span class="comment">#
+</span>
+<span class="comment"># Show access of external lists.
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># - to pass lists globally, use a parameter to dereference them
+</span>
+<span class="comment">#
+</span>
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { hardening(@(va.tmpdirs)) };
+}
+
+<span class="comment">#########################################################
+</span>
+
+<span class="red">bundle common va
+</span>{
+<span class="red">vars:
+</span>
+ "tmpdirs"<span class="red">  slist </span>=> { "/tmp", "/var/tmp", "/usr/tmp"  };
+
+}
+
+<span class="comment">##########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">hardening(x)</span>
+{
+<span class="red">classes:
+</span>
+  "ok"<span class="red"> expression </span>=><span class="green"> "any";</span>
+
+<span class="red">vars:
+</span>
+ "other"<span class="red">    slist </span>=> { "/tmp", "/var/tmp" };
+
+<span class="red">reports:
+</span>
+  ok::
+
+    "Do $(x)";
+<span class="red">    "Other: $(other)";
+</span>}
+
+</pre>
+
+   <p>This alternative uses a direct `short-circuit' approach to map the global
+list into the local context.
+
+<pre class="verbatim">#
+<span class="comment"># Show access of external lists.
+</span>
+<span class="comment">#
+</span>
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { hardening };
+}
+
+<span class="comment">#########################################################
+</span>
+
+<span class="red">bundle common va
+</span>{
+<span class="red">vars:
+</span>
+ "tmpdirs"<span class="red">  slist </span>=> { "/tmp", "/var/tmp", "/usr/tmp"  };
+
+}
+
+<span class="comment">##########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">hardening</span>
+{
+<span class="red">classes:
+</span>
+  "ok"<span class="red"> expression </span>=><span class="green"> "any";</span>
+
+<span class="red">vars:
+</span>
+ "other"<span class="red">    slist </span>=> { "/tmp", "/var/tmp" };
+ "x"<span class="red">        slist </span>=> { @(va.tmpdirs) };
+
+<span class="red">reports:
+</span>
+  ok::
+
+    "Do $(x)";
+<span class="red">    "Other: $(other)";
+</span>}
+</pre>
+
+<!--  -->
+<div class="node">
+<a name="Special-list-value-cf_null"></a>
+<a name="Special-list-value-cf_005fnull"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Arrays-in-CFEngine-3">Arrays in CFEngine 3</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#List-variable-substitution-and-expansion">List variable substitution and expansion</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variables">Variables</a>
+
+</div>
+
+<h4 class="subsection">4.7.3 Special list value <code>cf_null</code></h4>
+
+<p>As of CFEngine core version 3.1.0, the value &lsquo;<samp><span class="samp">cf_null</span></samp>&rsquo; may be used as a NULL
+value within lists. This value is ignored in list variable expansion.
+
+<pre class="verbatim">
+<span class="red">vars:
+</span>
+  "empty_list"<span class="red"> slist </span>=> { "cf_null" };
+
+</pre>
+
+<!--  -->
+<div class="node">
+<a name="Arrays-in-CFEngine-3"></a>
+<p><hr>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Special-list-value-cf_005fnull">Special list value cf_null</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variables">Variables</a>
+
+</div>
+
+<h4 class="subsection">4.7.4 Arrays in CFEngine 3</h4>
+
+<p>Array variables are written with &lsquo;<samp><span class="samp">[</span></samp>&rsquo; and &lsquo;<samp><span class="samp">]</span></samp>&rsquo; brackets, e.g.
+
+<pre class="verbatim">
+<span class="red">bundle agent</span> <span class="blue">example</span>
+
+{
+<span class="red">vars:
+</span>
+  "component"<span class="red"> slist </span>=> { "cf-monitord", "cf-serverd", "cf-execd" };
+
+  "array[cf-monitord]"<span class="red"> string </span>=><span class="green"> "The monitor";</span>
+  "array[cf-serverd]"<span class="red"> string </span>=><span class="green"> "The server";</span>
+  "array[cf-execd]"<span class="red"> string </span>=><span class="green"> "The executor, not executioner";</span>
+
+<span class="red">commands:
+</span>
+   "/bin/echo $(component) is"
+
+<span class="red">            args </span>=><span class="green"> "$(array[$(component)])";</span>
+
+}
+
+</pre>
+
+   <p>Arrays are associative and may be of type scalar or list. Enumerated
+arrays are simply treated as a special case of associative arrays, since
+there are no numerical loops in CFEngine. Special functions exist to
+extract lists of keys from array variables for iteration purposes.
+
+   <p>Thus one could have written the example above in the form of the
+following example:
+
+<pre class="verbatim">
+<span class="red">bundle agent</span> <span class="blue">array</span>
+
+{
+<span class="red">vars:
+</span>
+  "v[index_1]"<span class="red"> string </span>=><span class="green"> "value_1";</span>
+  "v[index_2]"<span class="red"> string </span>=><span class="green"> "value_2";</span>
+
+  "parameter_name"<span class="red"> slist </span>=> getindices("v");
+
+<span class="red">reports:
+</span>
+  Yr2008::
+
+<span class="red">   "Found index: $(parameter_name)";
+</span>
+}
+
+</pre>
+
+<!--  -->
+<div class="node">
+<a name="Loops"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#The-main-promise-types">The main promise types</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variables">Variables</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#A-simple-crash-course-in-concepts">A simple crash course in concepts</a>
+
+</div>
+
+<h3 class="section">4.8 Loops</h3>
 
 <p>If you are looking for loops in CFEngine then we need to reprogram you
 a little, as you are thinking like a programmer!  CFEngine is not a
@@ -1700,7 +2048,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#A-simple-crash-course-in-concepts">A s
 
 </div>
 
-<h3 class="section">4.6 The main promise types</h3>
+<h3 class="section">4.9 The main promise types</h3>
 
 <p class="noindent">The following promise types may be used in any bundle:
      <dl>
@@ -1743,9 +2091,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#A-simple-crash-course-in-concepts">A s
 
 </div>
 
-<h3 class="section">4.7 Test a promise?</h3>
+<h3 class="section">4.10 Test a promise?</h3>
 
-<p>If you are impatient to get hands-on experience, now might be a good time to take a break from Concepts and have a look at the getting started guide (<a href="http://cfengine.com/manuals/cf3-getstarted.html">http://cfengine.com/manuals/cf3-getstarted.html</a>. Still, since knowledge management is an integral part of CFEngine, we strongly recommend to read the following section on this very issue sooner rather than later.
+<p>If you are impatient to get hands-on experience, now might be a good time to take a break from Concepts and try out your first promises (<a href="http://cfengine.com/manuals/cf3-tutorial#First-promises.html">http://cfengine.com/manuals/cf3-tutorial#First-promises.html</a>. Still, since knowledge management is an integral part of CFEngine, we strongly recommend to read the following section on this very issue sooner rather than later.
 
 <!-- ***************************************************** -->
 <!-- * CHAPTER -->
@@ -1885,7 +2233,7 @@ Remember that the point of a promise is to convey an <i>intention</i>.
 When writing promises, get into the habit of giving every promise a
 comment that explains its intention.  Also, expect to give special
 promises
-<i>handles</i>, or helpful labels that can be used to refer to them by in
+<i>handles</i>, or helpful labels that can be used to refer to them in
 other
 promise statements. A handle could be something dumb like `xyz', but
 you should
@@ -1944,7 +2292,7 @@ in CFEngine.
 The annotations are used internally by CFEngine to provide meaningful
 error messages with context and to compute dependencies that reveal
 the existence of process chains. These can be turned into a topic map
-for browsing the policy relationships is a web browser, using
+for browsing the policy relationships in a web browser, using
 <code>cf-know</code>.
 
    <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
@@ -2123,7 +2471,7 @@ For instance,
 
      <dl>
 <dt><em>Contexts</em><dd>The box into which we classify a topic to disambiguate different
-topics with the same name (`in the context of')<a rel="footnote" href="#fn-1" name="fnd-1"><sup>1</sup></a>.
+topics with the same name (`in the context of')<a rel="footnote" href="#fn-2" name="fnd-2"><sup>2</sup></a>.
 
      <br><dt><em>Topics/Things</em><dd>The representation of a subject (an index term).
 
@@ -2450,8 +2798,8 @@ details.
 
 <p class="noindent">Need help getting started?
      <ul>
-<li>CFEngine Concepts: <a href="http://cfengine.com/manuals/cf3-installation.html">http://cfengine.com/manuals/cf3-installation.html</a>
-<li>Get started, first promises: <a href="http://cfengine.com/manuals/cf3-getstarted.html">http://cfengine.com/manuals/cf3-getstarted.html</a>
+<li>CFEngine Installation: <a href="http://cfengine.com/manuals/cf3-installation.html">http://cfengine.com/manuals/cf3-installation.html</a>
+<li>Get started, first promises: <a href="http://cfengine.com/manuals/cf3-tutorial.html#First-promises">http://cfengine.com/manuals/cf3-tutorial.html#First-promises</a>
 </ul>
 
 <p class="noindent">For a complete overview:
@@ -2494,17 +2842,21 @@ details.
 <li><a name="toc_A-simple-crash-course-in-concepts" href="#A-simple-crash-course-in-concepts">4 A simple crash course in concepts</a>
 <ul>
 <li><a href="#Rules-are-promises">4.1 Rules are promises</a>
-<li><a href="#Control-promises">4.2 Control promises</a>
-<li><a href="#Variables">4.3 Variables</a>
-<ul>
-<li><a href="#Scalar-variable-expansion">4.3.1 Scalar variables</a>
-<li><a href="#List-variables">4.3.2 List variables</a>
-<li><a href="#List-variable-substitution-and-expansion">4.3.3 Associative arrays</a>
-</li></ul>
+<li><a href="#Best-practice-for-writing-promises">4.2 Best practice for writing promises</a>
+<li><a href="#Containers">4.3 Containers</a>
 <li><a href="#Decisions">4.4 Decisions</a>
-<li><a href="#Loops">4.5 Loops</a>
-<li><a href="#The-main-promise-types">4.6 The main promise types</a>
-<li><a href="#Test-a-promise_003f">4.7 Test a promise?</a>
+<li><a href="#Types-in-CFEngine-3">4.5 Types in CFEngine 3</a>
+<li><a href="#Datatypes-in-CFEngine-3">4.6 Datatypes in CFEngine 3</a>
+<li><a href="#Variables">4.7 Variables</a>
+<ul>
+<li><a href="#Scalar-variable-expansion">4.7.1 Scalar variable expansion</a>
+<li><a href="#List-variable-substitution-and-expansion">4.7.2 List variable substitution and expansion</a>
+<li><a href="#Special-list-value-cf_005fnull">4.7.3 Special list value <code>cf_null</code></a>
+<li><a href="#Arrays-in-CFEngine-3">4.7.4 Arrays in CFEngine 3</a>
+</li></ul>
+<li><a href="#Loops">4.8 Loops</a>
+<li><a href="#The-main-promise-types">4.9 The main promise types</a>
+<li><a href="#Test-a-promise_003f">4.10 Test a promise?</a>
 </li></ul>
 <li><a name="toc_Knowledge-Management" href="#Knowledge-Management">5 Knowledge Management</a>
 <ul>
@@ -2544,7 +2896,9 @@ pageTracker._trackPageview();
 
    <div class="footnote">
 <hr>
-<a name="texinfo-footnotes-in-document"></a><h4>Footnotes</h4><p class="footnote"><small>[<a name="fn-1" href="#fnd-1">1</a>]</small> Here, CFEngine differs from the topic map standard in allowing contexts
+<a name="texinfo-footnotes-in-document"></a><h4>Footnotes</h4><p class="footnote"><small>[<a name="fn-1" href="#fnd-1">1</a>]</small> Arrays can be scalars or lists of the RHS (rvalues). An array is really just a pattern in the names of the LHS (lvalues), not a separate type.</p>
+
+   <p class="footnote"><small>[<a name="fn-2" href="#fnd-2">2</a>]</small> Here, CFEngine differs from the topic map standard in allowing contexts
 to be overlapping sets, rather than mutually exclusive `types'. 
 CFEngine is guided by Promise Theory in this respect in order to enable
 distribtued cooperation and the development of a free and emergent ontology.</p>
