@@ -87,21 +87,21 @@ class Ion_auth
 	 **/
 	public function __construct()
 	{
-		$this->ci =& get_instance();
-		$this->ci->load->config('ion_auth', TRUE);
+                $this->ci = & get_instance();
+                $this->ci->load->config('ion_auth', TRUE);
                 $this->ci->load->config('appsettings', TRUE);
-		$this->ci->load->library('email');
-		$this->ci->load->library('session');
+                $this->ci->load->library('email');
+                $this->ci->load->library('session');
                 $this->ci->load->library('Auth_Ldap');
                 $this->ci->load->library('encrypt');
-		$this->ci->lang->load('ion_auth');
-		$this->ci->load->model('ion_auth_model_mongo');
+                $this->ci->lang->load('ion_auth');
+                $this->ci->load->model('ion_auth_model_mongo');
                 $this->ci->load->model('settings_model');
-		$this->ci->load->helper('cookie');
+                $this->ci->load->helper('cookie');
 
-		$this->messages = array();
-		$this->errors = array();
-                $this->infos=array();
+                $this->messages = array();
+                $this->errors = array();
+                $this->infos = array();
 		$this->message_start_delimiter = $this->ci->config->item('message_start_delimiter', 'ion_auth');
 		$this->message_end_delimiter   = $this->ci->config->item('message_end_delimiter', 'ion_auth');
 		$this->error_start_delimiter   = $this->ci->config->item('error_start_delimiter', 'ion_auth');
@@ -110,6 +110,7 @@ class Ion_auth
                 $this->info_end_delimiter =$this->ci->config->item('info_end_delimiter', 'ion_auth');
                 //load the mode of authentication
                 $this->mode=$this->ci->settings_model->app_settings_get_item('mode');
+                
                 if(!$this->mode){
                     $this->set_error('backend_error');
                     log_message('info', 'cannot find any mode switching to internal database');
@@ -131,6 +132,10 @@ class Ion_auth
 		{
 			$this->ci->ion_auth_model_mongo->login_remembered_user();
 		}
+                $this->email=$this->ci->settings_model->app_settings_get_item('appemail');
+                if(!($this->email || empty($this->email))){
+                    $this->email=$this->ci->config->item('admin_email', 'ion_auth');
+                  }
 	}
 
 	/**
@@ -226,7 +231,7 @@ class Ion_auth
 			$config['mailtype'] = $this->ci->config->item('email_type', 'ion_auth');
 			$this->ci->email->initialize($config);
 			$this->ci->email->set_newline("\r\n");
-			$this->ci->email->from($this->ci->config->item('admin_email', 'ion_auth'), $this->ci->config->item('site_title', 'ion_auth'));
+			$this->ci->email->from($this->email, $this->ci->config->item('site_title', 'ion_auth'));
 			$this->ci->email->to($user->email);
 			$this->ci->email->subject($this->ci->config->item('site_title', 'ion_auth') . ' - Forgotten Password Verification');
 			$this->ci->email->message($message);
@@ -282,7 +287,7 @@ class Ion_auth
 			$config['mailtype'] = $this->ci->config->item('email_type', 'ion_auth');
 			$this->ci->email->initialize($config);
 			$this->ci->email->set_newline("\r\n");
-			$this->ci->email->from($this->ci->config->item('admin_email', 'ion_auth'), $this->ci->config->item('site_title', 'ion_auth'));
+			$this->ci->email->from($this->email, $this->ci->config->item('site_title', 'ion_auth'));
 			$this->ci->email->to($profile->email);
 			$this->ci->email->subject($this->ci->config->item('site_title', 'ion_auth') . ' - New Password');
 			$this->ci->email->message($message);
@@ -362,7 +367,7 @@ class Ion_auth
 			$config['mailtype'] = $this->ci->config->item('email_type', 'ion_auth');
 			$this->ci->email->initialize($config);
 			$this->ci->email->set_newline("\r\n");
-			$this->ci->email->from($this->ci->config->item('admin_email', 'ion_auth'), $this->ci->config->item('site_title', 'ion_auth'));
+			$this->ci->email->from($this->email, $this->ci->config->item('site_title', 'ion_auth'));
 			$this->ci->email->to($email);
 			$this->ci->email->subject($this->ci->config->item('site_title', 'ion_auth') . ' - Account Activation');
 			$this->ci->email->message($message);

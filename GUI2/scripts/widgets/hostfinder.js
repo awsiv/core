@@ -122,7 +122,7 @@
             var self=event.data.ui;
             $(this).addClass('selected').siblings().removeClass('selected');
             self.filtermethod=selected_category;
-            self.cfui.searchform.attr("action","/widget/search_by_"+selected_category.replace(/\s+/g, "").toLowerCase());
+            self.cfui.searchform.attr("action",self.options.baseUrl+"/widget/search_by_"+selected_category.replace(/\s+/g, "").toLowerCase());
             self.cfui.searchform.find('input[type="text"]').val('search by '+selected_category).data('default','search by '+selected_category);
             if( $(this).attr('id')=='search_class')
             {
@@ -283,7 +283,7 @@
             self.$filter.find('li').each(function(index) {
                 filters.push($(this).data('filter'));
             });
-            self.cfui.resultpane.load('/widget/ajaxlisthost/',{
+            self.cfui.resultpane.load(self.options.baseUrl+'/widget/ajaxlisthost/',{
                 'filter':filters
             },function(){});
             self.$filter.find('li').delegate('a','click',{
@@ -301,7 +301,7 @@
             self.$filter.find('li').each(function(index) {
                 filters.push($(this).data('filter'));
             });
-            self.cfui.resultpane.load('/widget/ajaxlisthost/',{
+            self.cfui.resultpane.load(self.options.baseUrl+'/widget/ajaxlisthost/',{
                 'filter':filters
             },function(){});
         },
@@ -325,7 +325,7 @@
             var self=event.data.ui
             //alert($(this).text());
             $(this).addClass('selected').siblings().removeClass('selected');
-            self.cfui.resultpane.load('/widget/search_by_hostname',{
+            self.cfui.resultpane.load(self.options.baseUrl+'/widget/search_by_hostname',{
                 'value':$(this).text()
             },function(){});
             self.cfui.categories.slideUp();

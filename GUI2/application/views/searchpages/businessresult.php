@@ -118,6 +118,7 @@
         
         $('#findhost').hostfinder({
             'defaultbehaviour':false,
+            'baseUrl':'<?php echo site_url() ?>',
             'report':'<?php echo $hostfinderparams ?>',
             complete:function(event,data){
                 //console.log('/search/index/host/'+data.selectedhost+'/report/'+data.report)
