@@ -17,7 +17,7 @@
 static void GetTotalMemory(double *cf_this)
 {
 int total_slot = NovaRegisterSlot(MON_MEM_TOTAL, "Total system memory", "megabytes",
-                                  512.0lf, 4096.0lf, true);
+                                  512.0l, 4096.0l, true);
 
 if (total_slot != -1)
    {
@@ -33,7 +33,7 @@ static void GetKstatInfo(double *cf_this)
 kstat_ctl_t *kstat = GetKstatHandle();
 kstat_t *k;
 int free_slot = NovaRegisterSlot(MON_MEM_FREE, "Free system memory", "megabytes",
-                                 0.0lf, 4096.0lf, true);
+                                 0.0l, 4096.0l, true);
 vminfo_t vminfo;
 sysinfo_t sysinfo;
 
@@ -82,9 +82,9 @@ uint64_t swap_avail = GetInstantUint64Value("swap", "avail", vminfo.swap_avail, 
 if (swap_resv != (uint64_t)-1 && swap_avail != (uint64_t)-1)
    {
    int swap_slot = NovaRegisterSlot(MON_MEM_SWAP, "Total swap size", "megabytes",
-                                    0.0lf, 4096.0lf, true);
+                                    0.0l, 4096.0l, true);
    int free_swap_slot = NovaRegisterSlot(MON_MEM_FREE_SWAP, "Free swap size", "megabytes",
-                                         0.0lf, 4096.0lf, true);
+                                         0.0l, 4096.0l, true);
 
    if (swap_slot != -1)
       {
