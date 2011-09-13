@@ -22,10 +22,10 @@ $lang['tooltip_yellowhost'] = 'More than 20% of promises needed repair at last m
 $lang['tooltip_greenhost'] = 'More than 80% of promises are stable and kept.';
 $lang['tooltip_bluehost'] = 'Hosts that have not been reachable for more than the time horizon.';
 
-$lang['tooltip_statusroom'] = 'The mission status room shows how close you are an ideal state. The average compliance of hosts is graphed for the present and over the past week. If business values have been configured, the monetary value of the promises is also represented. A reminder of the documented goals is shown in the panel.';
-$lang['tooltip_engineeringroom'] = 'Engineering shows technical status of hosts.';
-$lang['tooltip_planningroom'] = 'The mission planning room allows you to see how the current goals and policies are performing, approve a change of course and communicate with co-workers.';
-$lang['tooltip_libraryroom'] = 'A place where users can learn about the software and the system.';
+$lang['tooltip_statusroom'] = 'The status room shows how close you are to an ideal state.';
+$lang['tooltip_engineeringroom'] = 'The engineering room shows the technical status of the managed hosts.';
+$lang['tooltip_planningroom'] = 'The planning room contains tools for collaboration, planning and policy changes.';
+$lang['tooltip_libraryroom'] = 'The library room contains knowledge and documentation about CFEngine and your policy.';
 
 $lang['tooltip_edit_policies'] = 'Choose an SVN repository to edit the policies.';
 $lang['tooltip_track_records'] = 'Review successes and failures of the current policy version.';
