@@ -6701,7 +6701,7 @@ return false;
 
 /*****************************************************************************/
 
-int Con2PHP_summarize_promiselog(char *hubKeyHash, enum promiselog_rep log_type, enum time_window tw, char *buf, int bufsize)
+int Con2PHP_aggr_promiselog(char *hubKeyHash, enum promiselog_rep log_type, char *buf, int bufsize)
 
 {
 #ifdef HAVE_CONSTELLATION
@@ -6717,7 +6717,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-hq = CFDBCon_QueryPromiseLog(&dbconn,hubKeyHash,NULL,log_type,tw);
+hq = CFDBCon_QueryPromiseLog(&dbconn,hubKeyHash,NULL,log_type);
 
 CFDB_Close(&dbconn);
 
@@ -6750,7 +6750,7 @@ return true;
 
 #else  /* NOT HAVE_CONSTELLATION */
 
-snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_summarize_promiselog() in Nova-only environment\n");
+snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_aggr_promiselog() in Nova-only environment\n");
 CfOut(cf_error, "", buf);
 return false;
 
@@ -6759,7 +6759,7 @@ return false;
 
 /*****************************************************************************/
 
-int Con2PHP_count_promiselog(char *hubKeyHash, char *promiseHandle, enum promiselog_rep log_type, enum time_window tw, char *buf, int bufsize)
+int Con2PHP_count_promiselog(char *hubKeyHash, char *promiseHandle, enum promiselog_rep log_type, char *buf, int bufsize)
 
 {
 #ifdef HAVE_CONSTELLATION
@@ -6777,7 +6777,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-hq = CFDBCon_QueryPromiseLog(&dbconn,hubKeyHash,promiseHandle,log_type,tw);
+hq = CFDBCon_QueryPromiseLog(&dbconn,hubKeyHash,promiseHandle,log_type);
 
 CFDB_Close(&dbconn);
 
@@ -6814,7 +6814,7 @@ return false;
 
 /*****************************************************************************/
 
-int Con2PHP_reasons_promiselog(char *hubKeyHash, char *promiseHandle, enum promiselog_rep log_type, enum time_window tw, char *buf, int bufsize)
+int Con2PHP_reasons_promiselog(char *hubKeyHash, char *promiseHandle, enum promiselog_rep log_type, char *buf, int bufsize)
 
 {
 #ifdef HAVE_CONSTELLATION
@@ -6830,7 +6830,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-hq = CFDBCon_QueryReasonsPromiseLog(&dbconn,hubKeyHash,promiseHandle,log_type,tw);
+hq = CFDBCon_QueryReasonsPromiseLog(&dbconn,hubKeyHash,promiseHandle,log_type);
 
 StartJoin(buf,"<table>\n",bufsize);
 
@@ -7039,7 +7039,7 @@ int Con2PHP_rank_promise_popularity(bool sortAscending, char *buf, int bufsize)
 
 /*****************************************************************************/
 
-int Con2PHP_summarise_filechange(char *hubKeyHash, char *filePath, char *buf, int bufsize)
+int Con2PHP_aggr_filechange(char *hubKeyHash, char *filePath, char *buf, int bufsize)
 
 {
 #ifdef HAVE_CONSTELLATION
@@ -7091,7 +7091,7 @@ return true;
 
 #else  /* NOT HAVE_CONSTELLATION */
 
-snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_summarise_filechange() in Nova-only environment\n");
+snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_aggr_filechange() in Nova-only environment\n");
 CfOut(cf_error, "", buf);
 return false;
 

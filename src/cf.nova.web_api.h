@@ -146,16 +146,16 @@ void Con2PHP_ComplianceSummaryGraph(char *hubKeyHash, char *policy, char *buffer
 int Con2PHP_compliance_virtualbundle_graph(char *hubKeyHash, char *bundleName, char *buf, int bufsize);;
 int Con2PHP_count_hubs(char *classification, char *buf, int bufsize);
 int Con2PHP_show_hubs(char *classification, char *buf, int bufsize);
-int Con2PHP_summarize_promiselog(char *hubKeyHash, enum promiselog_rep log_type, enum time_window tw, char *buf, int bufsize);
-int Con2PHP_count_promiselog(char *hubKeyHash, char *promiseHandle, enum promiselog_rep log_type, enum time_window tw, char *buf, int bufsize);
-int Con2PHP_reasons_promiselog(char *hubKeyHash, char *promiseHandle, enum promiselog_rep log_type, enum time_window tw, char *buf, int bufsize);
+int Con2PHP_aggr_promiselog(char *hubKeyHash, enum promiselog_rep log_type, char *buf, int bufsize);
+int Con2PHP_count_promiselog(char *hubKeyHash, char *promiseHandle, enum promiselog_rep log_type, char *buf, int bufsize);
+int Con2PHP_reasons_promiselog(char *hubKeyHash, char *promiseHandle, enum promiselog_rep log_type, char *buf, int bufsize);
 
 int Con2PHP_environments_list(char *hubKeyHash, char *buf, int bufsize);
 
 int Con2PHP_promise_popularity(char *promiseHandle, char *buf, int bufsize);
 int Con2PHP_rank_promise_popularity(bool sortAscending, char *buf, int bufsize);
 
-int Con2PHP_summarise_filechange(char *hubKeyHash, char *filePath, char *buf, int bufsize);
+int Con2PHP_aggr_filechange(char *hubKeyHash, char *filePath, char *buf, int bufsize);
 
 
 /* pdf report */
