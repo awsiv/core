@@ -50,6 +50,7 @@
         };
         
         var hostFinderOption =   {
+            baseUrl:'<?php echo site_url() ?>',
             url: "<?php echo site_url() ?>/widget/hostfinder",
             classhandler:"<?php echo site_url() ?>/widget/cfclasses"};
     

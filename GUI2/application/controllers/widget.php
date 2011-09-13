@@ -6,11 +6,17 @@ class Widget extends Cf_Controller {
         parent::__construct();
     }
 
-    function hostfinder() {
-        $data= cfpr_select_hosts("none", ".*", NULL);
+    function hostfinder($page=1) {
+        //$data= cfpr_select_hosts("none", ".*", NULL);
+        $data= cfpr_show_hosts_name('.*', NULL, 15, $page);
+         if($page>1){
+           echo sanitycheckjson($data);
+           return;
+        }
         $result=sanitycheckjson($data,true);
         if(is_array($result)){
-        $this->data['hostlist']= array_msort($result,array('id'=>SORT_ASC),true);
+       // $this->data['hostlist']= array_msort($result,array('id'=>SORT_ASC),true);
+           $this->data['hostlist']= array_msort($result['data'],array('0'=>SORT_ASC),true);
         }else{
          $this->data['error'] ="Host list cannot be  generated due to invalid json data";
         }

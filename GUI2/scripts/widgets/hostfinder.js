@@ -8,18 +8,19 @@
                 self.elementtext=$(this).text();
                 $(this).text('').append('<span class="loadinggif"> </span>');
                 self.createhostfinder();
-                 self.cfui.categories.hide();
-                 self.temp.dialog('open');
-            });
-            
+                self.cfui.categories.hide();
+                self.temp.dialog('open');
+            })
             $.ui.hostfinder.instances.push(this.element);
         },
         cfui:{
             categories:"",
             resultpane:"",
-            searchform:""
+            searchform:"",
+            page:2
         },
         options: {
+            baseUrl:'',
             url: "/widget/hostfinder",
             classhandler:"/widget/cfclasses",
             defaultbehaviour:true,
@@ -55,9 +56,11 @@
                         height: self.options.height,
                         width: self.options.width,
                         autoOpen: false,
-                        modal: true
+                        modal: true,
+                        resizable: false
                     });
                    self.element.text(self.elementtext) ;
+                    self.cfui.page=2;
                 }
             });
 
@@ -97,9 +100,23 @@
             self.cfui.searchform.find('input[type="text"]').data('default',self.cfui.searchform.find('input[type="text"]').val());
 
             self.cfui.resultpane.delegate('a','click',$.proxy(self.hostselected,self));
+            
+            self.temp.bind('scroll',$.proxy(self.hostlistscrolled,self));
         },
-
-        categoryselected:function(event)
+       hostlistscrolled:function(event){
+            var listpane=event.currentTarget;
+            var self=this;
+            if ($(listpane)[0].scrollHeight - $(listpane).scrollTop() == $(listpane).outerHeight()) {
+                    $.getJSON(self.options.url+'/'+self.cfui.page,function(data) {
+                                   $.each(data['data'], function(i, post) {
+                                        //console.log(post);
+                                       self.cfui.resultpane.find('ul').append('<li><a href="'+self.options.baseUrl+'/welcome/host/'+post[2]+'" >'+post[0]+'</a></li>');
+                              });
+                              self.cfui.page++;
+                          });
+                  }
+       },
+      categoryselected:function(event)
         {
             var selected_category=$(this).text().toLowerCase();
             var self=event.data.ui;
@@ -115,6 +132,7 @@
                 self.cfui.searchform.find('input[type="text"]').trigger('blur');
                 self.cfui.searchform.find('input[type="text"]').trigger('focus');
             }
+          self.temp.unbind('scroll',$.proxy(self.hostlistscrolled,self));
         },
 
         hostselected:function(event)
@@ -154,7 +172,7 @@
                     }
                 });
             }
-       
+           self.temp.unbind('scroll',$.proxy(self.hostlistscrolled,self));
         },
    
         updatesearchresult:function(data){
@@ -311,6 +329,7 @@
                 'value':$(this).text()
             },function(){});
             self.cfui.categories.slideUp();
+            self.temp.unbind('scroll',$.proxy(self.hostlistscrolled,self));
         },
 
         searchboxkeyup:function(event)
