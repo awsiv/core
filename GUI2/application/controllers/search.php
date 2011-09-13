@@ -30,7 +30,7 @@ class Search extends Cf_Controller {
 
     function index() {
 
-
+        $this->load->model('settings_model');
         $requiredjs = array(
             array('widgets/notes.js'),
             array('jquery.form.js'),
@@ -40,7 +40,8 @@ class Search extends Cf_Controller {
         $this->carabiner->js($requiredjs);
 
 
-
+        $fromEmail = trim($this->settings_model->app_settings_get_item('appemail'));
+        $fromEmail = ($fromEmail) ? $fromEmail : '';        
 
         $getparams = $this->uri->uri_to_assoc(3);
         $search = isset($getparams['search']) ? $getparams['search'] : $this->input->post('search');
@@ -136,7 +137,8 @@ class Search extends Cf_Controller {
             'breadCrumbUrl' => isset($breadcrumbs_url) ? $breadcrumbs_url : '',
             'hostname' => $hostname,
             'hostkey' => $hostkey,
-            'resultView' => 'default_result_view'
+            'resultView' => 'default_result_view',
+            'fromEmail' => $fromEmail
         );
 
 
