@@ -720,12 +720,12 @@ int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *r)
         
         if (notkept > 20)                   // 20% of promises are not kept => RED!
            {
-           result = CF_RED_THRESHOLD + 100; // Make red override all variations in amber/green
+           result = CF_RED_THRESHOLD + 100 + notkept; // Make red override all variations in amber/green
            }
        
         if (r[meter_compliance_hour] > 20)  // If more than 20% of promises were repaired => AMBER
            {
-           result = CF_AMBER_THRESHOLD + r[meter_compliance_hour];
+           result = CF_AMBER_THRESHOLD + 100 + r[meter_compliance_hour];
            }
 
         result -= k[meter_compliance_hour]; // Adjust the Green Value relative
