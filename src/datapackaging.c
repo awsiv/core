@@ -1685,21 +1685,24 @@ for (ip = file; ip != NULL; ip = ip->next)
    sscanf(strstr(ip->name,"Outcome of version")+strlen("Outcome of version"),"%64[^:]",version);
    sscanf(strstr(ip->name,"to be kept")+strlen("to be kept"), "%d%*[^0-9]%d%*[^0-9]%d",&kept,&repaired,&notrepaired);
 
-   if (now - end < CF_DAY)
+   if (now - end < SECONDS_PER_DAY)
       {
       av_day_kept = GAverage((double)kept,av_day_kept,0.5);
       av_day_repaired = GAverage((double)repaired,av_day_repaired,0.5);
       }
 
-   if (now - end < CF_HOUR)
+   if (now - end < SECONDS_PER_HOUR)
       {
       av_hour_kept = GAverage((double)kept,av_hour_kept,0.5);
       av_hour_repaired = GAverage((double)repaired,av_hour_repaired,0.5);
       }
 
-   av_week_kept = GAverage((double)kept,av_week_kept,0.5);
-   av_week_repaired = GAverage((double)repaired,av_week_repaired,0.5);
-
+   if (now - end < SECONDS_PER_WEEK)
+      {
+      av_week_kept = GAverage((double)kept,av_week_kept,0.5);
+      av_week_repaired = GAverage((double)repaired,av_week_repaired,0.5);
+      }
+      
    // Check for two entries
    
    if (ip->classes && strlen(ip->classes) > 0)
@@ -1711,21 +1714,24 @@ for (ip = file; ip != NULL; ip = ip->next)
       sscanf(ip->classes,"%ld,%ld",&start,&end);
       sscanf(strstr(ip->classes,"Outcome of version")+strlen("Outcome of version"),"%64[^:]",sversion);
       sscanf(strstr(ip->classes,"to be kept")+strlen("to be kept"), "%d%*[^0-9]%d%*[^0-9]%d",&skept,&srepaired,&snotrepaired);
-      
-      if (i < 12*24)
+
+      if (now - end < SECONDS_PER_DAY)
          {
          av_day_kept = GAverage((double)skept,av_day_kept,0.5);
          av_day_repaired = GAverage((double)srepaired,av_day_repaired,0.5);
          }
       
-      if (i < 12*2)
+      if (now - end < SECONDS_PER_HOUR)
          {
          av_hour_kept = GAverage((double)skept,av_hour_kept,0.5);
          av_hour_repaired = GAverage((double)srepaired,av_hour_repaired,0.5);
          }
-      
-      av_week_kept = GAverage((double)skept,av_week_kept,0.1);
-      av_week_repaired = GAverage((double)srepaired,av_week_repaired,0.1);
+   
+      if (now - end < SECONDS_PER_WEEK)
+         {
+         av_week_kept = GAverage((double)skept,av_week_kept,0.1);
+         av_week_repaired = GAverage((double)srepaired,av_week_repaired,0.1);
+         }
 
       if (strlen(version)+strlen(sversion)+4 < CF_MAXVARSIZE)
          {
