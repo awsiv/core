@@ -762,12 +762,12 @@ int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *r)
         
         if (notkept > 20)
            {
-           result = CF_RED_THRESHOLD + 100;
+           result = CF_RED_THRESHOLD + 100 + notkept;
            }
        
         if (r[meter_perf_day] > 20)
            {
-           result = CF_AMBER_THRESHOLD + r[meter_perf_day];
+           result = CF_AMBER_THRESHOLD + 100 + r[meter_perf_day];
            }
 
         result -= k[meter_perf_day];
@@ -779,12 +779,12 @@ int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *r)
             
         if (notkept > 20)
            {
-           result = CF_RED_THRESHOLD + 100;
+           result = CF_RED_THRESHOLD + 100 + notkept;
            }
        
         if (r[meter_comms_hour] > 20)
            {
-           result = CF_AMBER_THRESHOLD + r[meter_comms_hour];
+           result = CF_AMBER_THRESHOLD + 100 + r[meter_comms_hour];
            }
 
         result -= k[meter_comms_hour];
@@ -798,12 +798,12 @@ int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *r)
             
         if (notkept > 20)
            {
-           result = CF_RED_THRESHOLD + 100;
+           result = CF_RED_THRESHOLD + 100 + notkept;
            }
        
         if (rav > 20)
            {
-           result = CF_AMBER_THRESHOLD + rav;
+           result = CF_AMBER_THRESHOLD + 100 + rav;
            }
 
         result -= kav;
