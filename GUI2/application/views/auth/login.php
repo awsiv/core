@@ -190,7 +190,7 @@ margin:0 0 10px 0;
                     <p>
                        <span class="agentlogo"></span>
                            <?php echo form_submit('submit', '');?>
-                           <label for="remember" class="remember">Remember Me</label>
+                           <label for="remember" class="remember">Remember me</label>
                             <?php echo form_checkbox('remember', '1', FALSE);?>
                     </p>
                     
