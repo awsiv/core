@@ -1922,7 +1922,7 @@ if (METER_KEPT[meter_compliance_day] > 0 || METER_REPAIRED[meter_compliance_day]
    AppendItem(reply,line,NULL);
    }
 
-if (METER_KEPT[meter_compliance_hour] > 0 && METER_REPAIRED[meter_compliance_hour] > 0)
+if (METER_KEPT[meter_compliance_hour] > 0 || METER_REPAIRED[meter_compliance_hour] > 0)
    {
    snprintf(line,sizeof(line),"H: %.4lf %.4lf\n",METER_KEPT[meter_compliance_hour],METER_REPAIRED[meter_compliance_hour]);
    AppendItem(reply,line,NULL);
