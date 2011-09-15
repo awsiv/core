@@ -183,7 +183,7 @@ class Notes extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
 
         $data = array(
-            'title' => "Cfengine Mission Portal - overview",
+            'title' => "CFEngine Mission Portal - Notes",
             'title_header' => "Notes overview",
             'breadcrumbs' => $this->breadcrumblist->display()
         );

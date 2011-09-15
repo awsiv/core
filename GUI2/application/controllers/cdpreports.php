@@ -30,7 +30,7 @@ class Cdpreports extends Cf_Controller {
          $this->breadcrumb->setBreadCrumb($bc);
          
          $data = array(
-            'title' => "Cfengine Mission Portal - cdp reports ",
+            'title' => "CFEngine Mission Portal - Cdp Reports ",
              'breadcrumbs' => $this->breadcrumblist->display(),
             'tabledata' =>$tabledata,
             'report'=>$report,

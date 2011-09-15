@@ -22,7 +22,7 @@ class Promise extends Cf_Controller {
         $regex = 1;
         $handle = NULL;
         $data = array(
-            'title' => "Cfengine Mission Portal - compliance",
+            'title' => "CFEngine Mission Portal - Compliance",
             'title_header' => "Compliance",
             'promise_list' => json_decode(cfpr_report_compliance_promises($hostkey, $handle, NULL, false, NULL,1000,1), true),
             'breadcrumbs' => $this->breadcrumblist->display()
@@ -54,7 +54,7 @@ class Promise extends Cf_Controller {
        
         $data = array(
             'handle' => $handle,
-            'title' => "Cfengine Mission Portal - promise $handle",
+            'title' => "CFEngine Mission Portal - Promise $handle",
             'pid' => $pid,
             'mybundle' => cfpr_get_promise_bundle($handle),
             'allhandles' => json_decode(utf8_encode(cfpr_list_handles_for_bundle($mybundle, cfpr_get_bundle_type($mybundle), false)),TRUE),

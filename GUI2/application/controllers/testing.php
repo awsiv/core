@@ -633,8 +633,8 @@ class Testing extends CI_Controller {
     }
 
     function test_cfpr_ldap_attr() {
-        //$result=cfpr_ldap_get_several_attributes("ldap://10.0.0.100","uid=sudhir","cn=users,dc=cf022osx,dc=cfengine,dc=com","(|(objectClass=organizationalPerson)(objectClass=inetOrgPerson))","uid,mail,sn,altSecurityIdentities","subtree","sasl","q1w2e3r4t5","2",100);
-        $result = cfpr_ldap_get_several_attributes("ldap://10.0.0.152", "uid=sudhir", "ou=people,dc=cfengine,dc=com", "(|(objectClass=organizationalPerson)(objectClass=inetOrgPerson))", "uid,cn,mail", "subtree", "sasl", "password", 1, 100);
+        $result=cfpr_ldap_get_several_attributes("ldap://10.0.0.100","uid=sudhir,cn=users,dc=cf022osx,dc=cfengine,dc=com","cn=users,dc=cf022osx,dc=cfengine,dc=com","(|(objectClass=organizationalPerson)(objectClass=inetOrgPerson))","uid,mail,sn,altSecurityIdentities","subtree","sasl","q1w2e3r4t5","2",100);
+        //$result = cfpr_ldap_get_several_attributes("ldap://10.0.0.152", "uid=sudhir", "ou=people,dc=cfengine,dc=com", "(|(objectClass=organizationalPerson)(objectClass=inetOrgPerson))", "uid,cn,mail", "subtree", "sasl", "password", 1, 100);
         $users = json_decode($result, true);
         $ret = array();
         foreach ($users['data'] as $user) {
@@ -680,7 +680,12 @@ class Testing extends CI_Controller {
 
     function test_get_all_adgroups() {
         try{
-        $result = cfpr_ldap_get_several_attributes("ldap://10.0.0.37", "sudhir@windows1.test.cfengine.com", "ou=groups,dc=windows1,dc=test,dc=cfengine,dc=com", "(objectCategory=Group)", "sAMAccountName", "subtree", "sasl", "Cf3ng1n3", 1, 100);
+        $result = cfpr_ldap_get_several_attributes("ldap://10.0.0.35", 
+                //"jon@windows1.test.cfengine.com", 
+                "CN=jon henrik,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com",
+                "dc=windows1,dc=test,dc=cfengine,dc=com", 
+                "(objectCategory=Group)", 
+                "sAMAccountName", "subtree", "sasl", "Cf3ng1n3", 1, 100);
         var_dump($result);
         }
         catch(Exception $e){
@@ -688,6 +693,19 @@ class Testing extends CI_Controller {
         }
     }
 
+    function test_get_all_ldapusers(){
+        try{
+            $result=cfpr_ldap_get_several_attributes("ldap://10.0.0.100",
+                     "uid=sudhir,cn=users,dc=cf022osx,dc=cfengine,dc=com",
+                     "dc=cf022osx,dc=cfengine,dc=com",
+                     "(|(objectClass=organizationalPerson)(objectClass=inetOrgPerson))",
+                     "uid,cn","subtree", "sasl", "q1w2e3r4t5", 1, 100);
+            var_dump($result);
+             }catch(Exception $e){
+                  echo $e->getMessage();
+        }
+    }
+    
     function test_get_users_by_group() {
         $this->load->model('ion_auth_model_mongo');
         $result = $this->ion_auth_model_mongo->get_users_by_group('manager');

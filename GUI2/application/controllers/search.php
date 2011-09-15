@@ -125,7 +125,7 @@ class Search extends Cf_Controller {
 
         $data = array(
             'report_type' => $report_type,
-            'title' => "Cfengine Mission Portal - search results",
+            'title' => "CFEngine Mission Portal - Report",
             //'title_header' => "search results",
             'report_title' => $report_type,
             'breadcrumbs' => $this->breadcrumblist->display(),

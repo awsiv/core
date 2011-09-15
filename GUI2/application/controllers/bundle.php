@@ -25,7 +25,7 @@ class Bundle extends Cf_Controller {
         );
         $this->breadcrumb->setBreadCrumb($bc);
         $data = array(
-            'title' => "Cfengine Mission Portal - Bundles",
+            'title' => "CFEngine Mission Portal - Bundles",
             'title_header' => "search results",
             'bundle_list' => json_decode(cfpr_report_bundlesseen($hostkey, $name, $regex, NULL, 10000, 1), true),
             'breadcrumbs' => $this->breadcrumblist->display()
@@ -48,7 +48,7 @@ class Bundle extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
 
         $data = array(
-            'title' => "Cfengine Mission Portal - Bundles",
+            'title' => "CFEngine Mission Portal - Bundles",
             'title_header' => "search results",
             'nav_text' => "Show : Bundle definition",
             'status' => "current",

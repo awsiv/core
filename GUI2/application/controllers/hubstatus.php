@@ -29,7 +29,7 @@ class Hubstatus extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
 
         $data = array(
-            'title' => "Cfengine Mission Portal - overview",
+            'title' => "CFEngine Mission Portal - Hub Status",
             'title_header' => "Hub replication status",
             'breadcrumbs' => $this->breadcrumblist->display()
         );
@@ -124,7 +124,7 @@ class Hubstatus extends Cf_Controller {
             'isRoot' => false
         );
         $data = array(
-            'title' => "Cfengine Mission Portal - approved policies",
+            'title' => "CFEngine Mission Portal - Approved Policies",
             'title_header' => "policies approved",
             'table' => $rev_table,
             'breadcrumbs' => $this->breadcrumblist->display(),

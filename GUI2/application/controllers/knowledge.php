@@ -18,7 +18,7 @@ class Knowledge extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
 
         $data = array(
-            'title' => "Cfengine Mission Portal - overview",
+            'title' => "CFEngine Mission Portal - Library",
             'title_header' => "Library",
             'breadcrumbs' => $this->breadcrumblist->display()
         );
@@ -48,7 +48,7 @@ class Knowledge extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
 
         $data = array(
-            'title' => "Cfengine Mission Portal - overview",
+            'title' => "CFEngine Mission Portal - Documents",
             'title_header' => "Docs",
             'breadcrumbs' => $this->breadcrumblist->display()
         );
@@ -115,7 +115,7 @@ class Knowledge extends Cf_Controller {
             'search' => $search,
             'topic' => $topic,
             'pid' => $pid,
-            'title' => "Cfengine Mission Portal - Knowledge bank",
+            'title' => "CFEngine Mission Portal - Knowledge Bank",
             'title_header' => "Knowledge bank",
             'breadcrumbs' => $this->breadcrumblist->display(),
         );
@@ -165,7 +165,7 @@ class Knowledge extends Cf_Controller {
         $data = array(
             'search' => htmlspecialchars($search),
             'topic' => $topic,
-            'title' => "Cfengine Mission Portal - Knowledge bank",
+            'title' => "CFEngine Mission Portal - Knowledge bank",
             'title_header' => "Knowledge bank search",
             'breadcrumbs' => $this->breadcrumblist->display(),
         );

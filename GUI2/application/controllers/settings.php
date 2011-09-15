@@ -45,7 +45,7 @@ class Settings extends Cf_Controller {
 
         if ($this->form_validation->run() == FALSE) { // validation hasn't been passed
             $data = array(
-                'title' => "Cfengine Mission Portal - authentication",
+                'title' => "CFEngine Mission Portal - Settings",
                 'breadcrumbs' => $this->breadcrumblist->display(),
                 'message' => validation_errors(),
                 'op' => 'create'
@@ -122,7 +122,7 @@ class Settings extends Cf_Controller {
             if ($inserted) {// the information has therefore been successfully saved in the db
 //redirect('settings/success');   
                 $data = array(
-                    'title' => "Cfengine Mission Portal - Settings",
+                    'title' => "CFEngine Mission Portal - Settings",
                     'breadcrumbs' => $this->breadcrumblist->display(),
                     'op' => 'edit',
                     'message' => '<p class="success"> Settings configured sucessfully</p>'
@@ -238,7 +238,7 @@ class Settings extends Cf_Controller {
 
          if ($this->form_validation->run() == FALSE) { // validation hasn't been passed
             $data = array(
-                'title' => "Cfengine Mission Portal - authentication",
+                'title' => "CFEngine Mission Portal - Preferences",
                 'breadcrumbs' => $this->breadcrumblist->display(),
                 'message' => validation_errors(),
                 'op' => 'create'
@@ -279,7 +279,7 @@ class Settings extends Cf_Controller {
                 }
                  if ($inserted) {
                             $data = array(
-                                'title' => "Cfengine Mission Portal - Settings",
+                                'title' => "CFEngine Mission Portal - Preferences",
                                 'breadcrumbs' => $this->breadcrumblist->display(),
                                 'op' => 'edit',
                                 'message' => '<p class="success"> Preferences Saved </p>'

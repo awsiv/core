@@ -12,7 +12,7 @@ class Cdp extends Cf_Controller
 	$hostkey = "";
 	$data=array(
 				 'report_type'=>$report_type,
-				 'title'=>"Cfengine Mission Portal - Content-Driven Policy Reports",
+				 'title'=>"CFEngine Mission Portal - Content-Driven Policy Reports",
 				 'title_header'=>"Content-Driven Policy Reports",
 				 'nav_text'=>"Status : hosts",
 				 'status'=>"current",

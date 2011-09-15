@@ -23,14 +23,14 @@ class Cfeditor extends Cf_Controller {
             $current_repo = $this->cfsvn->get_current_repository();
             $total_approvals = $this->repository_model->get_total_approval_count($current_repo);
             $data = array(
-                'title' => "Cfengine Mission Portal - Policy editor",
+                'title' => "CFEngine Mission Portal - Policy Editor",
                 'revision' => $rev,
                 'total_approvals' => $total_approvals,
                 'curreny_repo' => $current_repo
             );
         } catch (Exception $e) {
             $data = array(
-                'title' => "Cfengine Mission Portal - Policy editor",
+                'title' => "CFEngine Mission Portal - Policy Editor",
                 'revision' => 'Unknown',
                 'total_approvals' => "Unknown",
                 'curreny_repo' => 'Empty Working Directory'

@@ -26,7 +26,7 @@ class Visual extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
 
         $data = array(
-            'title' => "Cfengine Mission Portal - vital signs",
+            'title' => "CFEngine Mission Portal - Vital Signs",
             'breadcrumbs' => $this->breadcrumblist->display(),
             'hostKey' => $hostkey
         );

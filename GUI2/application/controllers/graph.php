@@ -41,7 +41,7 @@ class Graph extends CF_Controller {
         $this->template->set('injected_item', implode('', $this->scripts));
 
         $this->data = array(
-            'title' => "Cfengine Mission Portal - overview",
+            'title' => "CFEngine Mission Portal - Summary",
             'title_header' => "overview",
             'nav_text' => "Home : overview",
             'summary' => "current"
