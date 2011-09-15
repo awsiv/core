@@ -26,7 +26,7 @@ void NovaWin_GetInterfaceInfo()
  * Creates classes from a host's IP addresses, e.g.  192_168_2_1,
  * ipv4_192_168_2_1, ipv4_192_168_2, ipv4_192_168, ipv4_192 for all
  * the addresses, also variables sys.ipv4[IFNAME] = ipaddr, etc.
- */    
+ */
 {
  DWORD retVal = 0;
  PIP_ADAPTER_ADDRESSES pAddresses = NULL;
@@ -52,7 +52,7 @@ void NovaWin_GetInterfaceInfo()
 
 
  outBufLen = WORKING_BUFFER_SIZE;
- 
+
  do
     {
     pAddresses = (IP_ADAPTER_ADDRESSES *)malloc(outBufLen);
@@ -91,28 +91,28 @@ void NovaWin_GetInterfaceInfo()
        {
        CfOut(cf_error, "GetAdaptersAddresses", "!! Could not get network interface information");
        }
-    
+
     if (pAddresses)
        {
        free(pAddresses);
        }
-    
+
     return;
     }
- 
+
  pCurrAddresses = pAddresses;
-    
+
  while (pCurrAddresses)
     {
-       
+
     // we only care about ethernet interfaces that are up
     if(pCurrAddresses->IfType == IF_TYPE_ETHERNET_CSMACD &&
        pCurrAddresses->OperStatus == IfOperStatusUp)
       {
-          
+
        stored_ipv4 = false;
        stored_ipv6 = false;
-          
+
        pUnicast = pCurrAddresses->FirstUnicastAddress;
        if (pUnicast == NULL)
           {
@@ -122,7 +122,7 @@ void NovaWin_GetInterfaceInfo()
        // get at most one unicast address for each ipv4 and ipv6
        for(;(pUnicast != NULL) && !(stored_ipv4 && stored_ipv6); pUnicast = pUnicast->Next)
           {
-          
+
           memset(ifNameBuf, 0, sizeof(ifNameBuf));
           wcstombs(ifNameBuf, pCurrAddresses->FriendlyName, sizeof(ifNameBuf) - 1);
 
@@ -155,7 +155,7 @@ void NovaWin_GetInterfaceInfo()
 	    stored_ipv6 = true;
 	    }
 
-	  
+
 	  // set the interface name and ipv4 & ipv6 address of first
 	  // interface only
           if(firstIfaceIp4 && firstIfaceIp6)
@@ -174,18 +174,18 @@ void NovaWin_GetInterfaceInfo()
 	    NewScalar("sys", "ipv6", addrBuf, cf_str);
             firstIfaceIp6 = false;
 	    }
-	  
+
 	  AppendItem(&IPADDRESSES,addrBuf,"");
 
           // e.g. sys.ipv4[Local_Area_Connection] = 192.168.2.5
           snprintf(buf, sizeof(buf), "%s[%s]", ifType, CanonifyName(ifNameBuf));
-          NewScalar("sys", buf, addrBuf, cf_str);	  
+          NewScalar("sys", buf, addrBuf, cf_str);
 
           // class e.g. ipv4_192_168_2_5
           snprintf(buf, sizeof(buf), "%s_%s", ifType, addrBuf);
 
           NewClass(buf);
-             
+
           // add address part-clasess and vars, if ipv4
           if(strcmp(ifType, "ipv4") == 0)
              {
@@ -200,17 +200,17 @@ void NovaWin_GetInterfaceInfo()
 
 		   snprintf(buf, sizeof(buf), "ipv4_%s", bufVal);
                    NewClass(buf);
-		   
+
                    snprintf(buf, sizeof(buf), "ipv4_%d[%s]", tup, CanonifyName(ifNameBuf));
                    NewScalar("sys", buf, bufVal, cf_str);
 
 		   tup++;
 		   }
 	       }
-                
+
              }
           }
-       
+
         }
 
     pCurrAddresses = pCurrAddresses->Next;
@@ -219,11 +219,11 @@ void NovaWin_GetInterfaceInfo()
  if (pAddresses)
     {
     free(pAddresses);
-    } 
+    }
 }
 
 int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, struct sockaddr *cinp, int cinpSz)
-/** 
+/**
  * Tries a nonblocking connect and then restores blocking if
  * successful. Returns true on success, false otherwise.
  * NB! Do not use recv() timeout - see note below.
@@ -239,7 +239,7 @@ int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, str
       cinp = &emptyCin;
       cinpSz = sizeof(emptyCin);
     }
-  
+
    /* set non-blocking socket */
 
    nonBlock= true;
@@ -252,19 +252,19 @@ int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, str
 
    if (res != 0)
       {
-	
+
 	if(WSAGetLastError() == WSAEWOULDBLOCK)
 	  {
 	    fd_set wrset;
 	    fd_set exset;
 	    int valopt;
 	    socklen_t lon = sizeof(int);
-	    
+
 	    FD_ZERO(&wrset);
 	    FD_ZERO(&exset);
 	    FD_SET(conn->sd,&wrset);
 	    FD_SET(conn->sd,&exset);
-	    
+
 	    /* now wait for connect, but no more than tvp.sec */
 	    res = select(0, NULL, &wrset, &exset, tvp);
 
@@ -285,7 +285,7 @@ int NovaWin_TryConnect(struct cfagent_connection *conn, struct timeval *tvp, str
 		CfOut(cf_error,"getsockopt","!! Could not check connection status");
 		return false;
 	      }
-	    
+
 	    if (valopt != 0)
 	      {
 		CfOut(cf_error,"connect"," !! Error connecting to server (timeout)");
