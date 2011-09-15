@@ -1729,8 +1729,8 @@ for (ip = file; ip != NULL; ip = ip->next)
    
       if (now - end < SECONDS_PER_WEEK)
          {
-         av_week_kept = GAverage((double)skept,av_week_kept,0.1);
-         av_week_repaired = GAverage((double)srepaired,av_week_repaired,0.1);
+         av_week_kept = GAverage((double)skept,av_week_kept,0.5);
+         av_week_repaired = GAverage((double)srepaired,av_week_repaired,0.5);
          }
 
       if (strlen(version)+strlen(sversion)+4 < CF_MAXVARSIZE)
