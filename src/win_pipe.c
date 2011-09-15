@@ -52,7 +52,7 @@ FILE *NovaWin_cf_popen_sh(char *command,char *type)
     {
     return NULL;
     }
- 
+
   return OpenProcessPipe(command, true, NULL, type, false);
 }
 
@@ -72,18 +72,18 @@ FILE *NovaWin_cf_popensetuid(char *command,char *type,uid_t uid,gid_t gid,char *
     {
       CfOut(cf_verbose, "", "NovaWin_cf_popensetuid: uid is ignored on NT");
     }
-    
+
   if(gid != CF_UNDEFINED)
     {
       CfOut(cf_verbose, "", "NovaWin_cf_popensetuid: gid is ignored on NT");
     }
-  
+
   if(chrootv != NULL)
     {
       CfOut(cf_verbose, "", "NovaWin_cf_popensetuid: chrootv is ignored on NT");
     }
 
-  return OpenProcessPipe(command, false, chdirv, type, background); 
+  return OpenProcessPipe(command, false, chdirv, type, background);
 }
 
 
@@ -95,7 +95,7 @@ FILE *NovaWin_cf_popen_shsetuid(char *command,char *type,uid_t uid,gid_t gid,cha
     {
     return false;
     }
- 
+
   // we can only run in the current user environment (assumed to be root)
   if((uid == -1 || uid == 0) && (gid == -1 || gid == 0) && chrootv == NULL)
     {
@@ -113,7 +113,7 @@ int NovaWin_cf_pclose(FILE *pp)
 {
   HANDLE procHandle;
   int closeRes;
-  
+
   if(!PopDescriptorPair(pp, &procHandle))
     {
       CfOut(cf_error,"","!! Could not find process corresponding to pipe");
@@ -124,9 +124,9 @@ int NovaWin_cf_pclose(FILE *pp)
     {
       CfOut(cf_error,"CloseHandle","!! Could not close process handle");
     }
-  
+
   closeRes = fclose(pp);
-  
+
   if(closeRes != 0)
     {
     CfOut(cf_error, "fclose", "!! Could not close pipe stream");
@@ -140,7 +140,7 @@ int NovaWin_cf_pclose_def(FILE *pfp, struct Attributes a, struct Promise *pp)
 {
   HANDLE procHandle;
   DWORD exitCode;
-  
+
   if(!PopDescriptorPair(pfp, &procHandle))
     {
       CfOut(cf_error,"","!! Could not find process corresponding to pipe");
@@ -180,13 +180,13 @@ static FILE *OpenProcessPipe(char *comm, int useshell, char *startDir, char *typ
 {
   HANDLE childOutWrite; // child's stdout & stderr writes to this
   HANDLE childOutRead;  // .. and appears here for parent to read
-  HANDLE childInWrite;  // parent writes to this  
+  HANDLE childInWrite;  // parent writes to this
   HANDLE childInRead;   // .. and it appears here - child's stdin
   HANDLE childProcess;  // process handle of child
   HANDLE retPipe = NULL;
   STARTUPINFO si;
   FILE *streamPipe;
-  
+
   if((*type != 'r' && *type != 'w') || (type[1] != '\0'))
     {
       CfOut(cf_error,"","!! Pipe type is not 'r' or 'w' - shouldn't happen");
@@ -198,7 +198,7 @@ static FILE *OpenProcessPipe(char *comm, int useshell, char *startDir, char *typ
       CfOut(cf_error,"","!! Could not create pipes");
       return NULL;
     }
-   
+
   // redirect stdin, stdout and stderr into our pipes
   memset(&si, 0, sizeof(si));
   si.cb = sizeof(si);
@@ -237,7 +237,7 @@ static FILE *OpenProcessPipe(char *comm, int useshell, char *startDir, char *typ
 	      CfOut(cf_error,"WaitForSingleObject","!! Error waiting for process to finish");
 	      return NULL;
 	    }
-	  
+
 	}
     }
   else  // *type == 'w'
@@ -255,7 +255,7 @@ static FILE *OpenProcessPipe(char *comm, int useshell, char *startDir, char *typ
   else
     {
       streamPipe = NovaWin_FileHandleToStream(retPipe, type);
-   
+
       if(streamPipe == NULL)
 	{
 	  CfOut(cf_error,"","!! Error converting file handle");
@@ -274,7 +274,7 @@ static FILE *OpenProcessPipe(char *comm, int useshell, char *startDir, char *typ
 
 
 /* Sets up two pipes; one for input to the child process,
- * and one for output from it (stdout + stderr). 
+ * and one for output from it (stdout + stderr).
  * Returns true on success, false otherwise*/
 static int InitializePipes(HANDLE *childInWrite, HANDLE *childInRead, HANDLE *childOutWrite, HANDLE *childOutRead)
 {
@@ -282,9 +282,9 @@ static int InitializePipes(HANDLE *childInWrite, HANDLE *childInRead, HANDLE *ch
   //  DWORD pipeMode = PIPE_NOWAIT;  TODO: Remove?
 
   // make pipe handles inheritable
-  saAttr.nLength = sizeof(SECURITY_ATTRIBUTES); 
-  saAttr.bInheritHandle = TRUE; 
-  saAttr.lpSecurityDescriptor = NULL; 
+  saAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
+  saAttr.bInheritHandle = TRUE;
+  saAttr.lpSecurityDescriptor = NULL;
 
   // pipe for child's stdout and stderr
   if (!CreatePipe(childOutRead, childOutWrite, &saAttr, 0))
@@ -312,7 +312,7 @@ static int InitializePipes(HANDLE *childInWrite, HANDLE *childInRead, HANDLE *ch
       CfOut(cf_error,"SetHandleInformation","!! Could not set handle information");
       return false;
     }
-   
+
   return true;
 }
 
@@ -375,7 +375,7 @@ static int PopDescriptorPair(FILE *pipe, HANDLE *procHandle)
     }
 
   *procHandle = PIPES[i].procHandle;
-  
+
   // free slot
   PIPES[i].pipe = NULL;
   PIPES[i].procHandle = NULL;
