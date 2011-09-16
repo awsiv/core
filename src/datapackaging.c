@@ -1644,11 +1644,6 @@ while (!feof(fin))
    sscanf(line,"%ld",&t);
    then = (time_t)t;
 
-   if (then < from)
-      {
-      continue;
-      }
-
    strncpy(key,GenTimeKey(then),CF_SMALLBUF);
 
    if (strcmp(ref,key) == 0)
@@ -1745,6 +1740,15 @@ for (ip = file; ip != NULL; ip = ip->next)
       }
 
    // Now store
+
+   // NOTE: we must compute the meters above (av_*),
+   //       even though we are not sending each entry - so don't continue earlier than this
+   i++;
+   
+   if (start < from)
+      {
+      continue;
+      }
    
    snprintf(buffer,sizeof(buffer),"%ld,%s,%d,%d,%d\n",start,version,kept,repaired,notrepaired);
    
@@ -1756,7 +1760,7 @@ for (ip = file; ip != NULL; ip = ip->next)
    
    AppendItem(reply,buffer,NULL);
    
-   if (++i > 12*24*7)
+   if (i > 12*24*7)
       {
       break;
       }
@@ -1903,7 +1907,10 @@ DeleteItemList(file);
 /*****************************************************************************/
 
 void Nova_PackMeter(struct Item **reply,char *header,time_t from,enum cfd_menu type)
-
+/**
+ * NOTE: This function depends on the meters being computed correctly first,
+ *       see e.g. Nova_PackTotalCompliance().
+ **/
 { char line[CF_MAXTRANSSIZE];
 
 CfOut(cf_verbose,""," -> Packing meter");
