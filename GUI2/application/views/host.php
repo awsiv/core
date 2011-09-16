@@ -129,7 +129,7 @@ $(document).ready(function() {
                // console.log(nid,element);
         },title:'Add note about this host',dontOverrideTitle:true});
     
-    $('#findreport').reportfinder({allhost:false,hostkey:"<?php echo $hostkey;?>"});
+    $('#findreport').reportfinder({allhost:false,hostkey:"<?php echo $hostkey;?>",baseUrl: '<?php echo site_url() ?>'});
 
      var $notkeptbox = $('#notkepttable').dialog({
 		 autoOpen: false,
