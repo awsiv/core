@@ -1,7 +1,7 @@
 <div style="width:98%;margin:0 auto">
     <table>
     <tr>
-     <th scope="red">Promise Not Kept</th>
+     <th scope="red">Promises not kept</th>
     </tr>
     <tr>       
         <td id="promise-not-kept" class="bundlelist-table">
@@ -14,7 +14,7 @@
         </td>
     </tr>
 
-    <tr> <th scope="yellow">Promise Repaired</th></tr>
+    <tr> <th scope="yellow">Promises repaired</th></tr>
     <tr>
         <td id ="promise-repaired" class="bundlelist-table">
             <?php
