@@ -18,7 +18,6 @@
 # include <zone.h>
 #endif
 
-char POLICY_SERVER[CF_BUFSIZE];
 struct PromiseIdent *PROMISER_LIST[CF_HASHTABLESIZE] = { NULL };
 struct PromiseIdent *PROMISER_REGEXES = NULL;
 
