@@ -52,6 +52,7 @@ if test "x$with_ldap" != xno; then
    CF3_WITH_LIBRARY(ldap, [
       AC_CHECK_HEADERS(ldap.h, [], [if test "x$with_ldap" != xcheck; then AC_MSG_ERROR(Cannot find OpenLDAP library headers); fi])
       AC_CHECK_LIB(ldap, ldap_get_values_len, [], [if test "x$with_ldap" != xcheck; then AC_MSG_ERROR(Cannot find OpenLDAP library); fi])
+      AC_CHECK_LIB(lber, ber_free, [], [if test "x$with_ldap" != xcheck; then AC_MSG_ERROR(Cannot find OpenLDAP lber library); fi])
    ])
 fi
 
