@@ -70,3 +70,25 @@ fi
 AC_SEARCH_LIBS(kstat_open,kstat,[
         AC_DEFINE(HAVE_KSTAT,1,[We have Solaris kstat library])
         LDFLAGS="-lkstat $LDFLAGS"])
+
+#
+# AC_SEARCH_LIBS does not work for Win32 platform, as it does not include any
+# headers in test programs, and compiler needs function prototypes to generate
+# apropriate mangling for __stdcall calling convention.
+#
+case "$target_os" in
+   mingw*)
+      # WSAStartup
+      LIBS="$LIBS -lws2_32"
+      # GetProcessMemoryInfo
+      LIBS="$LIBS -lpsapi"
+      # CoInitialize
+      LIBS="$LIBS -lole32"
+      # GetActiveObject
+      LIBS="$LIBS -loleaut32"
+      # GetAdaptersAddresses
+      LIBS="$LIBS -liphlpapi"
+      # IID_IDispatch
+      LIBS="$LIBS -luuid"
+      ;;
+esac
