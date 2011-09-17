@@ -15,67 +15,66 @@
 */
 
 // Account Creation
-$lang['account_creation_successful'] 	  	 = 'Account Successfully Created';
-$lang['account_creation_unsuccessful'] 	 	 = 'Unable to Create Account';
-$lang['account_creation_duplicate_email'] 	 = 'Email Already Used or Invalid';
-$lang['account_creation_duplicate_username'] 	 = 'Username Already Used or Invalid';
+$lang['account_creation_successful'] 	  	 = 'Account successfully created';
+$lang['account_creation_unsuccessful'] 	 	 = 'Unable to create account';
+$lang['account_creation_duplicate_email'] 	 = 'Email already used or invalid';
+$lang['account_creation_duplicate_username'] 	 = 'Username already taken or invalid';
 
 
 // Password
-$lang['password_change_successful'] 	 	 = 'Password Successfully Changed.';
-$lang['password_change_unsuccessful'] 	  	 = 'Unable to Change Password';
-$lang['forgot_password_successful'] 	 	 = 'Password Reset Email Sent';
-$lang['forgot_password_unsuccessful'] 	 	 = 'Unable to Reset Password';
+$lang['password_change_successful'] 	 	 = 'Password changed successfully.';
+$lang['password_change_unsuccessful'] 	  	 = 'Unable to change password';
+$lang['forgot_password_successful'] 	 	 = 'Password reset email sent';
+$lang['forgot_password_unsuccessful'] 	 	 = 'Unable to reset password';
 $lang['org_passwd_valid']                             ="Please make sure original password is valid";
 
 // Activation
-$lang['activate_successful'] 		  	 = 'Account Activated';
-$lang['activate_unsuccessful'] 		 	 = 'Unable to Activate Account';
-$lang['deactivate_successful'] 		  	 = 'Account De-Activated';
-$lang['deactivate_unsuccessful'] 	  	 = 'Unable to De-Activate Account';
-$lang['activation_email_successful'] 	  	 = 'Activation Email Sent';
-$lang['activation_email_unsuccessful']   	 = 'Unable to Send Activation Email';
+$lang['activate_successful'] 		  	 = 'Account activated';
+$lang['activate_unsuccessful'] 		 	 = 'Unable to activate account';
+$lang['deactivate_successful'] 		  	 = 'Account de-activated';
+$lang['deactivate_unsuccessful'] 	  	 = 'Unable to de-activate account';
+$lang['activation_email_successful'] 	  	 = 'Activation email sent';
+$lang['activation_email_unsuccessful']   	 = 'Unable to send activation email';
 
 // Login / Logout
-$lang['login_successful'] 		  	 = 'Logged In Successfully';
+$lang['login_successful'] 		  	 = 'Logged in successfully';
 $lang['login_unsuccessful'] 		  	 = 'The username or password you entered is incorrect.';
-$lang['logout_successful'] 		 	 = 'Logged Out Successfully';
+$lang['logout_successful'] 		 	 = 'Logged out successfully';
   
 // Account Changes
-$lang['update_successful'] 		 	 = 'Account Information Successfully Updated';
-$lang['update_unsuccessful'] 		 	 = 'Unable to Update Account Information';
-$lang['user_delete_successful'] 		 	 = 'User Deleted';
-$lang['user_delete_unsuccessful'] 		 	 = 'Unable to Delete User';
-$lang['one_admin_required']                                         ="Atleast one admin is required by mission portal";
+$lang['update_successful'] 		 	 = 'Account information updated successfully';
+$lang['update_unsuccessful'] 		 	 = 'Unable to update account information';
+$lang['user_delete_successful'] 		 	 = 'User deleted';
+$lang['user_delete_unsuccessful'] 		 	 = 'Unable to delete user';
+$lang['one_admin_required']                                        ="At least one admin account is required by CFEngine Nova Mission Portal";
 
 //Group createion
-$lang['group_creation_successful']              ="Group Sucessfully Created";
-$lang['group_creation_unsuccessful']            ="Unable to Create Group";
-$lang['group_creation_duplicate']               ="Group name already Exists";
+$lang['group_creation_successful']              ="Group sucessfully created";
+$lang['group_creation_unsuccessful']            ="Unable to create group";
+$lang['group_creation_duplicate']               ="Group name already exists";
 
 //Group changes
-$lang['group_delete_successful'] 		= 'Group Deleted';
-$lang['group_delete_unsuccessful'] 		= 'Unable to Delete Group';
-$lang['group_update_successful']                = 'Group Information Sucessfully Updated';
-$lang['group_update_unsuccessful']              = 'Unable to Update group';
-$lang['backend_error']                          = "Cannot connect to the database. Make sure it exists.";
-$lang['admin_group_deletion']= "Cannot delete the admin group";
-$lang['no_admin_group']="No Admin group selected yet in app config";
+$lang['group_delete_successful'] 		= 'Group deleted';
+$lang['group_delete_unsuccessful'] 		= 'Unable to delete group';
+$lang['group_update_successful']                = 'Group information sucessfully updated';
+$lang['group_update_unsuccessful']              = 'Unable to update group';
+$lang['backend_error']                          = "Cannot connect to the database. Please make sure it exists.";
+$lang['admin_group_deletion']= "Can not delete the admin group";
+$lang['no_admin_group']="Admin group not selected yet in app config";
 //modes of login
-$lang['login_mode_changed']          =  'The mode of authentication is changed , it might be due to config changes or system fall back to use database in case of unsucessful ldap login
-                                                       Please relogin';
+$lang['login_mode_changed']          =  'The mode of authentication is changed, it might be due to config changes or system fall back to use database in case of unsucessful ldap login. Please relogin';
 
 //ldap related
-$lang['error_loading_application_setting']    = "Error loading Application settings from database";
+$lang['error_loading_application_setting']    = "Error loading application settings from database";
 $lang['no_entries_found']                            ="Cannot find any entry, please adjust the parameters value";
-$lang['active_dir_conf_error']                    ="Invalid values supplied for active directory" ;
+$lang['active_dir_conf_error']                    ="Invalid values supplied for Active Directory" ;
 //$lang['active_dir_login_error']                   ="Invalid Active Directory credentials supplied";
 $lang['ldap_conf_error']                             ="Invalid values supplied for ldap ";
 //$lang['ldap_login_error']                            ="invalid values supplied for ldap";
-$lang['Internal_Ldap_module_error']            ="Please check credentials and Configuration for the ldap, Ldap module error";
-$lang['successful_bind']                             ="Sucessfully Authenticated against the desired directory server";
-$lang['ldap_value_grabbing_error']             =" Cannot fetch some attributes value , please correct the attribute names";
-$lang['error_fetching_group']                    ="cannot query for available group names";
+$lang['Internal_Ldap_module_error']            ="Ldap module error: Please check credentials and configuration for the ldap.";
+$lang['successful_bind']                             ="Sucessfully authenticated against the desired directory server";
+$lang['ldap_value_grabbing_error']             =" Cannot fetch some attributes values, please correct the attribute names";
+$lang['error_fetching_group']                    ="Cannot query for available group names";
 
 //login page message
 $lang['login_database'] ='Internal authentication';
