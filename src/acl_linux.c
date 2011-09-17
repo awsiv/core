@@ -299,12 +299,12 @@ if (retv == 1)  // existing and new acl differ, update existing
      switch (a.transaction.action)
        {
        case cfa_warn:
-          
+
 	 cfPS(cf_error,CF_WARN,"",pp,a," !! %s ACL on file '%s' needs to be updated", acl_type_str, file_path);
 	 break;
-          
+
        case cfa_fix:
-          
+
 	 if(!DONTDO)
 	   {
 	     if ((retv = acl_set_file(file_path, acl_type, acl_new)) != 0)
@@ -317,10 +317,10 @@ if (retv == 1)  // existing and new acl differ, update existing
 	       }
 	   }
 
-	 cfPS(cf_inform,CF_CHG,"",pp,a,"-> %s ACL on \"%s\" successfully changed.", acl_type_str, file_path);	
+	 cfPS(cf_inform,CF_CHG,"",pp,a,"-> %s ACL on \"%s\" successfully changed.", acl_type_str, file_path);
 
 	 break;
-          
+
        default:
 	 FatalError("Cfengine: internal error: illegal file action\n");
        }
@@ -384,10 +384,10 @@ switch (equals)
      switch (a.transaction.action)
        {
        case cfa_warn:
-          
+
 	 cfPS(cf_error,CF_WARN,"",pp,a," !! Default ACL on \"%s\" needs to be copied from access ACL.", file_path);
 	 break;
-          
+
        case cfa_fix:
 
 	 if(!DONTDO)
@@ -402,10 +402,10 @@ switch (equals)
 	   }
 
 	 cfPS(cf_inform,CF_CHG,"",pp,a,"-> Default ACL on \"%s\" successfully copied from access ACL.", file_path);
-	 result = true;          
-          
+	 result = true;
+
 	 break;
-          
+
        default:
 	 FatalError("Cfengine: internal error: illegal file action\n");
 	 result = false;
