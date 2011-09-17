@@ -24,7 +24,7 @@ char *CF_CODEBOOK[CF_CODEBOOK_SIZE] =
    CFR_MONITOR_HIST,
    CFR_MONITOR_MG,
    CFR_MONITOR_WK,
-   CFR_MONITOR_YR,   
+   CFR_MONITOR_YR,
    CFR_MONITOR_HG,
    CFR_PCOMPLIANCE,
    CFR_TCOMPLIANCE,
@@ -57,7 +57,7 @@ void *CF_CODEBOOK_HANDLER[CF_CODEBOOK_SIZE] =
    Nova_UnPackMonitorMg,
    Nova_UnPackMonitorWk,
    Nova_UnPackMonitorYr,
-   Nova_UnPackMonitorHg,  // DBOK   
+   Nova_UnPackMonitorHg,  // DBOK
    Nova_UnPackCompliance,   // DBOK
    Nova_UnPackTotalCompliance, // DBOK
    Nova_UnPackSoftware,     // DBOK
@@ -88,7 +88,7 @@ int Nova_QueryForKnowledgeMap(struct cfagent_connection *conn,char *menu,time_t 
   double datarate;
 
 NewReportBook(reports);
-  
+
 snprintf(cfchangedstr,255,"%s%s",CF_CHANGEDSTR1,CF_CHANGEDSTR2);
 
 workbuf[0] = '\0';
@@ -99,7 +99,7 @@ snprintf(in,CF_BUFSIZE-CF_PROTO_OFFSET,"QUERY %s %ld %ld",menu,(long)since,now);
 cipherlen = EncryptString(conn->encryption_type,in,out,conn->session_key,strlen(in)+1);
 snprintf(workbuf,CF_BUFSIZE,"SQUERY %4d",cipherlen);
 memcpy(workbuf+CF_PROTO_OFFSET,out,cipherlen);
-tosend=cipherlen+CF_PROTO_OFFSET;   
+tosend=cipherlen+CF_PROTO_OFFSET;
 
 /* Send proposition C0 - query */
 
@@ -127,19 +127,19 @@ while (more)
       {
       CfOut(cf_error,""," !! Abort transmission: got \"%s\" from %s",in+4,conn->remoteip);
       break;;
-      }   
+      }
 
    plainlen = DecryptString(conn->encryption_type,in,out,conn->session_key,cipherlen);
 
 
     // Check the header for timing of response - we can eventually use this to
     // measure the network performance
-   
+
    if (header)
       {
       char validate[5];
       char timebuffer[26];
-      
+
       header = false; // First one is special
       sscanf(out,"%4s %ld %ld %ld",validate,&delta1,&time2,&length);
 
@@ -152,7 +152,7 @@ while (more)
       then = now;
       now = time(NULL);
       delta2 = now - time2;
-      
+
       CfOut(cf_verbose,""," -> Received reply of %d bytes at %s -> Xfer time %d seconds (processing time %d seconds)",
             length, cf_strtimestamp_local(now,timebuffer), delta2, now-then);
 
@@ -293,7 +293,7 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
 
 void Nova_RecordNetwork(time_t now, double datarate,struct cfagent_connection *conn)
 // NOTE: NOT Thread-safe (use of HashPrint())
-{ 
+{
 #ifdef HAVE_LIBMONGOC
 
   mongo_connection dbconn;
@@ -332,7 +332,7 @@ if (mongo_cursor_next(cursor))  // not more than one record
    {
    bson_iterator it;
    bson_iterator_init(&it, cursor->current.data);
-   
+
    while(bson_iterator_next(&it))
       {
       if (strcmp(bson_iterator_key(&it),cfr_netmeasure) == 0)
@@ -352,7 +352,7 @@ if (mongo_cursor_next(cursor))  // not more than one record
             }
 	 }
       }
-   
+
    }
 
 mongo_cursor_destroy(cursor);
