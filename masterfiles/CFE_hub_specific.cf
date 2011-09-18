@@ -712,7 +712,7 @@ bundle agent cfengine_policysrv
             classes => if_repaired("restart_apache2");
 
    "/etc/php5/apache2/php.ini"
-        comment => "Ensure that date.timezone in php.ini has the same valuae as the machine",
+        comment => "Ensure that date.timezone in php.ini has the same value as the machine",
          handle => "cfengine_policysrv_files_apache_php_ini",
       edit_line => add_php_timezone("$(timezone[1])");
 
