@@ -315,6 +315,8 @@ body server control
 
  allowusers            => { "root" };
 
+ maxconnections        => "100";
+
 # Uncomment the line below to allow remote users to run 
 # cf-agent through cf-runagent
 
