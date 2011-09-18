@@ -122,7 +122,7 @@
             'report':'<?php echo $hostfinderparams ?>',
             complete:function(event,data){
                 //console.log('/search/index/host/'+data.selectedhost+'/report/'+data.report)
-                location.replace('/search/index/host/'+data.selectedhost+'/'+data.report);
+                location.replace('<?php echo site_url() ?>/search/index/host/'+data.selectedhost+'/'+data.report);
             }
         });
         
