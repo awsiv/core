@@ -4,12 +4,12 @@
             <div id="pie-charts">
 
                 <div id="business-value-pie-chart-container" class="grid_4">
-                    <p class="title">Business value</p>
+                    <p class="title"><?php echo $this->lang->line('business-value-pie-chart-container_title'); ?></p>
                     <div id="business-value-pie-chart" style="height: 120px;width:300px;">
                     </div>
                 </div>
                 <div id="compliance-value-pie-chart-container" class="grid_4 push_1" style="margin-bottom: 15px">
-                    <p class="title">Host status</p>
+                    <p class="title"><?php echo $this->lang->line('compliance-value-pie-chart-container_title'); ?></p>
                     <div id="compliance-now-pie-chart" style="height: 120px; width:300px;">
                     </div>
                 </div>
@@ -17,7 +17,7 @@
 
         </div>
         <div id="compliance" class="innerdiv">
-            <p class="title">Compliance summary</p>
+            <p class="title"><?php echo $this->lang->line('compliance_summary_graph_title')?></p>
             <div id="environment-list">
                 <ul>
                     <li><!-- chrome fix --></li>

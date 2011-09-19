@@ -17,5 +17,13 @@ $lang['blue']='Unreachable';
 $lang['yellow']='Repaired';
 $lang['red']='Non compliant';
 $lang['not_hub_master_msg']='The mongo db in this hub is not a hub master, please click on the link below to navigate to the mission portal having its mongo db as hubmaster<br />
-                                             Link :: '
+                                             Link :: ';
+/**
+ * Text diaplayed in the status page
+ */
+
+$lang['business-value-pie-chart-container_title']="Business value";
+$lang['compliance-value-pie-chart-container_title']="Host status";
+$lang['compliance_summary_graph_title']='Compliance summary';
+$lang['services_goals']='Services/goals';
 ?>
