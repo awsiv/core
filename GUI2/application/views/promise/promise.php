@@ -61,7 +61,7 @@
                         </tr>
 
                         <?php 
-                        if(key_exists('body', $promise)){
+                        if($promise && key_exists('body', $promise)){
                         foreach ((array) $promise['body'] as $body) { ?>
                             <tr>
                                 <td><a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo urlencode($body['type']); ?>"><?php echo $body['type'] ?></a> =></td>

@@ -2,7 +2,7 @@
 
 $result = json_decode($report_result, true);
 //$this->table->set_heading(array_keys($result['meta']['header']))
-if (key_exists('truncated', $result['meta'])) {
+if (is_array($result['meta']) && key_exists('truncated', $result['meta'])) {
     $message = $result['meta']['truncated'];
     echo "<p class=\"info\">$message</p>";
 }
