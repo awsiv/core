@@ -157,6 +157,8 @@ int Con2PHP_rank_promise_popularity(bool sortAscending, char *buf, int bufsize);
 
 int Con2PHP_aggr_filechange(char *hubKeyHash, char *filePath, char *buf, int bufsize);
 
+int Con2PHP_list_subscriptions(char *user, char *buf, int bufsize);
+int Con2PHP_subscribe_software(char *user, char *subscrHandle, char *hubClassRegex, char *pkgName, int pkgRegex, char *hostClassRegex, char *buf, int bufsize);
 
 /* pdf report */
 int Nova2PHP_compliance_report_pdf(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg,char *returnval,int bufsize); 

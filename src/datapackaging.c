@@ -351,7 +351,7 @@ while (!feof(fin))
    sscanf(line,"%ld",&lthen);
    then = (time_t)lthen;
 
-   if (now - then < 3600*24)
+   if (now - then < SECONDS_PER_DAY)
       {
       repaired++;
       }

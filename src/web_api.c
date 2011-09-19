@@ -7098,3 +7098,92 @@ return false;
 #endif
 }
 
+/*****************************************************************************/
+
+int Con2PHP_list_subscriptions(char *user, char *buf, int bufsize)
+{
+#ifdef HAVE_CONSTELLATION
+
+ mongo_connection dbconn;
+ subscription_t *sub;
+
+ buf[0] = '\0';
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+struct HubQuery *hq = CFDBCon_ListSubscriptions(&dbconn, user, buf, bufsize);
+
+snprintf(buf, bufsize, "{\"meta\":{\"count\" : %d,"
+         "\"header\": {\"User subscribed\":0,\"Handle\":1,\"Hub class expression\":2,\"Host class expression\":3,\"Report type\":4,\"Creation time\":5}"
+         "},\"data\":[", 999);
+
+struct Rlist *rp;
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   subscription_t *sub = (subscription_t *)rp->item;
+   char work[CF_BUFSIZE];
+
+   snprintf(work, sizeof(work), "[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%ld],\n",
+            sub->user, sub->handle, sub->hubClassRegex, sub->hostClassRegex, sub->type, sub->creationTime);
+   
+   if (!Join(buf,work,bufsize))
+      {
+      break;
+      }
+   }
+
+ReplaceTrailingStr(buf, ",\n", '\0');
+EndJoin(buf,"]}\n",bufsize);
+
+DeleteHubQuery(hq,DeleteSubscription);
+
+CFDB_Close(&dbconn);
+
+return true;
+
+#else  /* NOT HAVE_CONSTELLATION */
+
+snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_list_subscriptions() in Nova-only environment\n");
+CfOut(cf_error, "", buf);
+return false;
+
+#endif
+
+}
+
+/*****************************************************************************/
+
+int Con2PHP_subscribe_software(char *user, char *subscrHandle, char *hubClassRegex, char *pkgName, int pkgRegex, char *hostClassRegex, char *buf, int bufsize)
+
+{
+#ifdef HAVE_CONSTELLATION
+ mongo_connection dbconn;
+
+ buf[0] = '\0'; // put error messages here?
+
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+bool res = CFDBCon_SubscribeSoftware(&dbconn,user,subscrHandle,hubClassRegex,pkgName,pkgRegex,hostClassRegex);
+
+CFDB_Close(&dbconn);
+
+return res;
+
+#else  /* NOT HAVE_CONSTELLATION */
+
+snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_subscribe_software() in Nova-only environment\n");
+CfOut(cf_error, "", buf);
+return false;
+
+#endif
+}
+
