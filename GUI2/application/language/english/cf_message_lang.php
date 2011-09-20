@@ -1,4 +1,24 @@
 <?php
+/**
+ * page title mission portal
+ */
+$lang['mission_portal_title']='CFEngine Mission Portal';
+
+
+
+/**
+ * Bread crumbs text
+ */
+$lang['breadcrumb_status']='Status';
+$lang['breadcrumb_engineering']='Engineering';
+$lang['breadcrumb_planning']='Planning';
+$lang['breadcrumb_goals']='Company goals';
+$lang['breadcrumb_weakest_host']='Weakest Host';
+$lang['breadcrumb_service_catalogue']='Services';
+$lang['breadcrumb_license']='License';
+$lang['breadcrumb_classes']='Classes';
+$lang['breadcrumb_admin']='Admin';
+
 /* 
  * To change this template, choose Tools | Templates
  * and open the template in the editor.

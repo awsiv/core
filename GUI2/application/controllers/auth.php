@@ -16,6 +16,7 @@ class Auth extends Controller {
         parent::__construct();
         initializeHub();
         $this->load->library(array('ion_auth', 'ion_auth', 'form_validation', 'breadcrumb', 'breadcrumblist', 'carabiner', 'onlineUsers','user_agent','setting_lib'));
+        $this->lang->load('cf_message');        
         //list of errors wrapped in <p> class of errors
         $this->form_validation->set_error_delimiters('<span class="errorlist">', '</span>');
         //$this->load->database();
@@ -36,7 +37,7 @@ class Auth extends Controller {
           } */ else {
             //set the flash data error message if there is one
             //$identifier=$this->config->item('identity','ion_auth');
-            $this->data['title'] = "CFEngine Mission Portal - Admin";
+            $this->data['title'] = $this->lang->line('mission_portal_title')." - Admin";
             $this->data['username'] = $this->session->userdata('username');
             //list the users
             $this->data['users'] = $this->ion_auth->get_users_array();
@@ -60,13 +61,13 @@ class Auth extends Controller {
             redirect('auth/login', 'refresh');
         }
         $bc = array(
-            'title' => 'Admin',
+            'title' => $this->lang->line('breadcrumb_admin'),
             'url' => 'auth/admin_page',
             'isRoot' => false,
            'replace_existing'=>true
         );
         $this->breadcrumb->setBreadCrumb($bc);
-        $this->data['title'] = "CFEngine Mission Portal - Admin";
+        $this->data['title'] = $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_admin');
         $this->data['title_header'] = "Admin";
         $this->data['username'] = $this->session->userdata('username');
         $this->data['message'] = (validation_errors()) ? '<p class="error">' . validation_errors() . '</p>' : $this->session->flashdata('message');
@@ -638,14 +639,14 @@ class Auth extends Controller {
             redirect('auth/login', 'refresh');
         }
         $bc = array(
-            'title' => 'Admin',
+            'title' => $this->lang->line('breadcrumb_admin'),
             'url' => 'auth/setting',
             'isRoot' => false,
             'replace_existing'=>true
         );
         $this->breadcrumb->setBreadCrumb($bc);
         $data = array(
-            'title' => "CFEngine Mission Portal - Authentication",
+            'title' => $this->lang->line('mission_portal_title')." - Settings",
             'breadcrumbs' => $this->breadcrumblist->display(),
             "is_displayable"=>$this->ion_auth->is_accessable()
         );

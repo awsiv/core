@@ -11,7 +11,7 @@ class Welcome extends Cf_Controller {
 
     function index() {
         $bc = array(
-            'title' => 'CFEngine Mission Portal',
+            'title' => $this->lang->line('mission_portal_title'),
             'url' => 'welcome/index',
             'isRoot' => true
         );
@@ -25,17 +25,15 @@ class Welcome extends Cf_Controller {
             $totaldays = floor($datediff / (60 * 60 * 24));
             $dayspassed = floor((time() - $startDate) / (60 * 60 * 24));
             $pbarvalue = "";
-           if($totaldays > 0)
-           { 
-               $pbarvalue=floor(($dayspassed / $totaldays) * 100);
-           }
+            if ($totaldays > 0) {
+                $pbarvalue = floor(($dayspassed / $totaldays) * 100);
+            }
         } catch (Exception $e) {
             log_message('license error:' . $e->getMessage());
         }
 
         $data = array(
-            'title' => "CFEngine Mission Portal",
-            'title_header' => "overview",
+            'title' => $this->lang->line('mission_portal_title'),
             'breadcrumbs' => $this->breadcrumblist->display(),
             'pbarvalue' => $pbarvalue,
             'daysleft' => $totaldays - $dayspassed,
@@ -45,7 +43,7 @@ class Welcome extends Cf_Controller {
 
     function status() {
         $bc = array(
-            'title' => 'Status',
+            'title' => $this->lang->line('breadcrumb_status'),
             'url' => 'welcome/status',
             'isRoot' => false
         );
@@ -68,9 +66,9 @@ class Welcome extends Cf_Controller {
         $reports = json_decode(cfpr_select_reports(".*", 100));
 
         $data = array(
-            'title' => "CFEngine Mission Portal- Status",
+            'title' => $this->lang->line('mission_portal_title') . "-" . $this->lang->line('breadcrumb_status'),
             'breadcrumbs' => $this->breadcrumblist->display(),
-            'goals' => json_decode(cfpr_list_business_goals(),true)
+            'goals' => json_decode(cfpr_list_business_goals(), true)
         );
 
         // Summary meter for host
@@ -303,13 +301,13 @@ class Welcome extends Cf_Controller {
         $this->carabiner->js($requiredjs);
 
         $bc = array(
-            'title' => 'Engineering',
+            'title' => $this->lang->line('breadcrumb_engineering'),
             'url' => 'welcome/engg',
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);
         $data = array(
-            'title' => "CFEngine Mission Portal - Engineering",
+            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_engineering'),
             'breadcrumbs' => $this->breadcrumblist->display(),
             'all' => cfpr_count_all_hosts(),
             'r' => cfpr_count_red_hosts(),
@@ -330,23 +328,23 @@ class Welcome extends Cf_Controller {
         $this->load->library('userdata');
         $params = $this->uri->uri_to_assoc(3);
         $rows = isset($params['rows']) ? $params['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : $this->setting_lib->get_no_of_rows());
-        if(is_numeric($rows)) {
-            $rows=(int)$rows;
-        }else{
-             $rows=20;
+        if (is_numeric($rows)) {
+            $rows = (int) $rows;
+        } else {
+            $rows = 20;
         }
         $page = isset($params['page']) ? intval($params['page'], 10) : 1;
-        $totalnotes=$this->userdata->count_personal_working_notes();
-        $skip = (int)($rows * ($page - 1));
+        $totalnotes = $this->userdata->count_personal_working_notes();
+        $skip = (int) ($rows * ($page - 1));
         var_dump($skip);
         $data = array(
             'title' => "CFEngine Mission Portal - Planning",
             'breadcrumbs' => $this->breadcrumblist->display(),
             'users' => getonlineusernames(),
-            'table' => $this->userdata->get_personal_working_notes('',$rows,$skip),
-            'rows_per_page'=>$rows,
-            'current_page'=>$page,
-            'total'=>$totalnotes,
+            'table' => $this->userdata->get_personal_working_notes('', $rows, $skip),
+            'rows_per_page' => $rows,
+            'current_page' => $page,
+            'total' => $totalnotes,
         );
         $this->template->load('template', 'notes/view_working_on_notes', $data);
     }
@@ -354,7 +352,7 @@ class Welcome extends Cf_Controller {
     function planning() {
 
         $bc = array(
-            'title' => 'Planning',
+            'title' => $this->lang->line('breadcrumb_planning'),
             'url' => 'welcome/planning',
             'isRoot' => false
         );
@@ -368,26 +366,26 @@ class Welcome extends Cf_Controller {
         $this->carabiner->js($requiredjs);
         $this->carabiner->css('tabs-custom.css');
         $data = array(
-            'title' => "CFEngine Mission Portal - Planning",
+            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_planning'),
             'breadcrumbs' => $this->breadcrumblist->display(),
             'users' => getonlineusernames(),
             'working_notes' => $this->userdata->get_personal_working_notes(),
-            'goals' => json_decode(cfpr_list_business_goals(),true)
+            'goals' => json_decode(cfpr_list_business_goals(), true)
         );
         $this->template->load('template', 'planning', $data);
     }
-    
-    function goals(){
-         $bc = array(
-            'title' => 'Goals',
+
+    function goals() {
+        $bc = array(
+            'title' => $this->lang->line('breadcrumb_goals'),
             'url' => 'welcome/goals',
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);
         $data = array(
-            'title' => "CFEngine Mission Portal - Company Goals",
+            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_goals'),
             'breadcrumbs' => $this->breadcrumblist->display(),
-            'goals' => json_decode(cfpr_list_business_goals(),true)
+            'goals' => json_decode(cfpr_list_business_goals(), true)
         );
         $this->template->load('template', 'goals', $data);
     }
@@ -431,9 +429,9 @@ class Welcome extends Cf_Controller {
             $list = array_msort($result['data'], array('id' => SORT_ASC), true);
             $table = $this->cf_table->generateSingleColourHostTable($list, $type);
         }
-       
+
         $bc = array(
-            'title' => $this->lang->line($type )." hosts",
+            'title' => $this->lang->line($type) . " hosts",
             'url' => 'welcome/hosts/' . $type,
             'isRoot' => false
         );
@@ -441,7 +439,7 @@ class Welcome extends Cf_Controller {
 
         $data = array(
             'type' => $type,
-            'title' => "CFEngine Mission Portal - " . $this->lang->line($type ) . " hosts",
+            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line($type) . " hosts",
             'tabledata' => $table,
             'breadcrumbs' => $this->breadcrumblist->display(),
             'current' => $page_number,
@@ -508,7 +506,7 @@ class Welcome extends Cf_Controller {
 
         $data = array(
             'hostkey' => $hostkey,
-            'title' => "CFEngine Mission Portal - host " . $ipaddr,
+            'title' => $this->lang->line('mission_portal_title') . " - host " . $ipaddr,
             'hostname' => $hostname,
             'ipaddr' => $ipaddr,
             'is_commented' => $is_commented,
@@ -549,7 +547,7 @@ class Welcome extends Cf_Controller {
         }
         $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
         $bc = array(
-            'title' => 'Weakest Host',
+            'title' => $this->lang->line('breadcrumb_weakest_host'),
             'url' => 'welcome/weakest_host',
             'isRoot' => false,
         );
@@ -568,7 +566,7 @@ class Welcome extends Cf_Controller {
         }
 
         $data = array(
-            'title' => "CFEngine Mission Portal - Weakest Hosts ",
+            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_weakest_host'),
             'ret' => $ret,
             'breadcrumbs' => $this->breadcrumblist->display(),
             'current' => $page_number,
@@ -579,7 +577,7 @@ class Welcome extends Cf_Controller {
 
     function services() {
         $bc = array(
-            'title' => 'Services',
+            'title' => $this->lang->line('breadcrumb_service_catalogue'),
             'url' => 'welcome/services',
             'isRoot' => false
         );
@@ -587,8 +585,7 @@ class Welcome extends Cf_Controller {
         $this->load->library('cf_table');
         $this->breadcrumb->setBreadCrumb($bc);
         $data = array(
-            'title_header' => "service catalogue",
-            'title' => "CFEngine Mission Portal - Service Catalogue ",
+            'title' => $this->lang->line('mission_portal_title') . " - Service Catalogue",
             'services' => cfpr_list_all_bundles("agent"),
             'breadcrumbs' => $this->breadcrumblist->display()
         );
@@ -598,7 +595,7 @@ class Welcome extends Cf_Controller {
     function license() {
         $this->carabiner->js('/widgets/licensemeter.js');
         $bc = array(
-            'title' => 'License',
+            'title' => $this->lang->line('breadcrumb_license'),
             'url' => 'welcome/license',
             'isRoot' => false
         );
@@ -611,21 +608,19 @@ class Welcome extends Cf_Controller {
             $datediff = $expirydate - $startDate;
             $totaldays = floor($datediff / (60 * 60 * 24));
             $dayspassed = floor((time() - $startDate) / (60 * 60 * 24));
-            $pbarvalue ="";
-            if(!($totaldays < 0))
-            { 
-               $pbarvalue=floor(($dayspassed / $totaldays) * 100);
+            $pbarvalue = "";
+            if (!($totaldays < 0)) {
+                $pbarvalue = floor(($dayspassed / $totaldays) * 100);
             }
-            
         } catch (Exception $e) {
             log_message('license error:' . $e->getMessage());
         }
-       
+
         $data = array(
-            'title' => "CFEngine Mission Portal - License Usage Status ",
+            'title' => $this->lang->line('mission_portal_title') . " - License Usage Status ",
             'ret2' => cfpr_getlicenses_promised(),
             'ret3' => cfpr_getlicenses_granted(),
-            'started' =>date('D F d h:m:s Y',$startDate),
+            'started' => date('D F d h:m:s Y', $startDate),
             'expiry' => cfpr_getlicense_expiry(),
             'txt' => cfpr_getlicense_summary(),
             'breadcrumbs' => $this->breadcrumblist->display(),
@@ -638,8 +633,8 @@ class Welcome extends Cf_Controller {
     function classes($key = NULL) {
         $this->carabiner->js('jquery.tablesorter.min.js');
         $bc = array(
-            'title' => 'Classes',
-            'url' => 'welcome/classes/'.$key,
+            'title' => $this->lang->line('breadcrumb_classes'),
+            'url' => 'welcome/classes/' . $key,
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);
@@ -652,10 +647,10 @@ class Welcome extends Cf_Controller {
         $tago = 0;
         $data = array(
             'title_header' => "classes",
-            'title' => "CFEngine Mission Portal - Classes ",
+            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_classes'),
             'ret' => json_decode(cfpr_report_classes($hostkey, $name, $regex, NULL, 1000, 1), true),
-             'breadcrumbs' => $this->breadcrumblist->display(),
-            'hostname'=> cfpr_hostname($hostkey)
+            'breadcrumbs' => $this->breadcrumblist->display(),
+            'hostname' => cfpr_hostname($hostkey)
         );
         $this->template->load('template', 'classes', $data);
     }
@@ -664,30 +659,23 @@ class Welcome extends Cf_Controller {
         redirect('/cfeditor/');
     }
 
+    
     function search() {
         $params = $this->uri->uri_to_assoc(3);
         redirect('/search/' . $this->uri->assoc_to_uri($params));
     }
 
+    
     function body() {
-
-
-
         $this->carabiner->css('tabs-custom.css');
         $getparams = $this->uri->uri_to_assoc(3);
         $body = isset($getparams['body']) ? $getparams['body'] : $this->input->post('search');
         $type = isset($getparams['type']) ? $getparams['type'] : $this->input->post('type');
 
-
-
         $this->load->library('cf_table');
 
-
-
         $data = array(
-            'title_header' => "body " . $body,
-            'title' => "CFEngine Mission Portal - Classes ",
-            'nav_text' => "show : body",
+            'title' => $this->lang->line('mission_portal_title') . " - Promise Body ",
             'status' => "current",
             'allbodies' => json_decode(utf8_encode(cfpr_list_bodies(".*", $type)), TRUE),
             'def' => json_decode(utf8_encode(cfpr_get_promise_body($body, $type)), TRUE),
@@ -695,92 +683,6 @@ class Welcome extends Cf_Controller {
             'breadcrumbs' => $this->breadcrumblist->display()
         );
         $this->template->load('template', 'body', $data);
-    }
-
-    /**
-     *
-     * @param <type> $currentclass
-     * @return <type>
-     * for listing a host calls the hostlist view at the end
-     */
-    function listhost() {
-
-        $requiredjs = array(
-            array('jquery.form.js'),
-            array('widgets/classtags.js'),
-            array('widgets/hostfinder.js'),
-            array('widgets/classfinder.js'),
-            array('widgets/policyfinder.js'),
-            array('widgets/reportfinder.js')
-        );
-        $this->carabiner->js($requiredjs);
-
-        // $this->template->set('injected_item', implode("", $scripts));
-
-        $bc = array(
-            'title' => 'Host List',
-            'url' => 'welcome/listhost',
-            'isRoot' => false
-        );
-        $this->breadcrumb->setBreadCrumb($bc);
-        $res = cfpr_class_cloud(NUll);
-        $arr = json_decode($res);
-
-        //for creating the initial table of hosts as cfpr_select_hosts return the json data
-        //$result = json_decode(cfpr_select_hosts("none", ".*", 100), true);
-        $classes = cfpr_report_classes(NULL, NULL, true, NULL, NULL, NULL);
-        $data = array(
-            'title' => "CFEngine Mission Portal - Filter",
-            'title_header' => "Filter Host",
-            'breadcrumbs' => $this->breadcrumblist->display(),
-            'classes' => autocomplete($classes, "Class Context"),
-            'hoststable' => host_only_table($arr->hosts)
-        );
-        $this->template->load('template', 'hostlist', $data);
-    }
-
-    function ajaxlisthost($currentclass=NULL) {
-        $filters = $this->input->post('filter');
-        if ($filters) {
-            $classlist = implode(",", $filters);
-            $arr = json_decode(cfpr_class_cloud($classlist));
-            $this->session->set_userdata('lastclasslist', $classlist);
-            echo host_only_table($arr->hosts);
-        } else {
-            $arr = json_decode(cfpr_class_cloud(NULL));
-            $this->session->set_userdata('lastclasslist', NULL);
-            echo host_only_table($arr->hosts);
-        }
-    }
-
-    function pulse_vitals() {
-        $scripts = array('<script language="javascript" type="text/javascript" src="' . get_scriptdir() . 'jquery.form.js"> </script>');
-
-        $this->template->set('injected_item', implode("", $scripts));
-
-        $bc = array(
-            'title' => 'Host List',
-            'url' => 'welcome/listhost',
-            'isRoot' => false
-        );
-        $this->breadcrumb->setBreadCrumb($bc);
-
-        //for creating the initial table of hosts as cfpr_select_hosts return the json data
-        $cells = array();
-        $result = json_decode(cfpr_select_hosts("none", ".*", 100), true);
-        if (count($result) > 0) {
-            foreach ($result as $cols) {
-                array_push($cells, anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'));
-            }
-        }
-
-        $data = array(
-            'title' => "CFEngine Mission Portal - Filter",
-            'title_header' => "Filter Host",
-            'tabledata' => $cells,
-            'breadcrumbs' => $this->breadcrumblist->display()
-        );
-        $this->template->load('template', 'hostlist', $data);
     }
 
 }
