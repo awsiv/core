@@ -24,7 +24,7 @@ Special_Topics_Guide::
 Special_Topics_Guide::
     "Pitfalls to avoid"  association => a("discusses","Implementing Knowledge Management","is discussed in");
 Special_Topics_Guide::
-    "The Copernicus Knowledge Map in CFEngine"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+    "The CFEngine Knowledge map"  association => a("discusses","Implementing Knowledge Management","is discussed in");
 Special_Topics_Guide::
     "How should you begin?"  association => a("discusses","Implementing Knowledge Management","is discussed in");
 Special_Topics_Guide::
@@ -55,8 +55,8 @@ Risk_and_uncertainty::
 How_should_you_begin_::
  "/docs/st-knowledge.html#How-should-you-begin_003f"
   represents => { "Text section" };
-The_Copernicus_Knowledge_Map_in_CFEngine::
- "/docs/st-knowledge.html#The-Copernicus-Knowledge-map"
+The_CFEngine_Knowledge_map::
+ "/docs/st-knowledge.html#The-CFEngine-Knowledge-map"
   represents => { "Text section" };
 Pitfalls_to_avoid::
  "/docs/st-knowledge.html#Pitfalls-to-avoid"
