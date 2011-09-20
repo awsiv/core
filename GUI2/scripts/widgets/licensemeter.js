@@ -20,7 +20,12 @@ displaytext:function(){
    //var startdate=$('<span class="startdate">');
    //var expirydate=$('<span class="enddate">');
    //this.element.addClass('textalignright');
+   console.log(this.options.daysleft);
+   if(this.options.daysleft > 0){
    value.text(this.options.daysleft+" Days remaining").appendTo(this.element.parent());
+   }else{
+   value.html("Your license has expired. Please contact <a href=\"mailto:contact@cfengine.com\">CFEngine</a> for renewal").appendTo(this.element.parent());   
+   }
    
    //startdate.text("dec 27").appendTo(this.element);
    //expirydate.text("jan 27").appendTo(this.element);

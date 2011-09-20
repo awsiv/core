@@ -22,11 +22,17 @@ class Welcome extends Cf_Controller {
             $startDate = cfpr_getlicense_installtime();
             //echo date('D F d h:m:s Y',cfpr_getlicense_installtime())."\n";
             $datediff = $expirydate - $startDate;
-            $totaldays = floor($datediff / (60 * 60 * 24));
-            $dayspassed = floor((time() - $startDate) / (60 * 60 * 24));
-            $pbarvalue = "";
-            if ($totaldays > 0) {
-                $pbarvalue = floor(($dayspassed / $totaldays) * 100);
+            if($datediff>0){
+                $totaldays = floor($datediff / (60 * 60 * 24));
+                $dayspassed = floor((time() - $startDate) / (60 * 60 * 24));
+                $pbarvalue = "";
+                if ($totaldays > 0) {
+                    $pbarvalue = floor(($dayspassed / $totaldays) * 100);
+                }
+                $daysleft= $totaldays - $dayspassed;
+            }else{
+                $pbarvalue=100;
+                $daysleft=0;
             }
         } catch (Exception $e) {
             log_message('license error:' . $e->getMessage());
@@ -36,7 +42,7 @@ class Welcome extends Cf_Controller {
             'title' => $this->lang->line('mission_portal_title'),
             'breadcrumbs' => $this->breadcrumblist->display(),
             'pbarvalue' => $pbarvalue,
-            'daysleft' => $totaldays - $dayspassed,
+            'daysleft' =>$daysleft,
         );
         $this->template->load('template', 'index', $data);
     }
@@ -606,11 +612,17 @@ class Welcome extends Cf_Controller {
             $startDate = cfpr_getlicense_installtime();
             //echo date('D F d h:m:s Y',cfpr_getlicense_installtime())."\n";
             $datediff = $expirydate - $startDate;
+            if($datediff>0){
             $totaldays = floor($datediff / (60 * 60 * 24));
             $dayspassed = floor((time() - $startDate) / (60 * 60 * 24));
             $pbarvalue = "";
-            if (!($totaldays < 0)) {
-                $pbarvalue = floor(($dayspassed / $totaldays) * 100);
+                if (!($totaldays < 0)) {
+                    $pbarvalue = floor(($dayspassed / $totaldays) * 100);
+                }
+            $daysleft= $totaldays - $dayspassed;
+            }else{
+                $pbarvalue=100;
+                $daysleft=0;
             }
         } catch (Exception $e) {
             log_message('license error:' . $e->getMessage());
@@ -625,7 +637,7 @@ class Welcome extends Cf_Controller {
             'txt' => cfpr_getlicense_summary(),
             'breadcrumbs' => $this->breadcrumblist->display(),
             'pbarvalue' => $pbarvalue,
-            'daysleft' => $totaldays - $dayspassed,
+            'daysleft' => $daysleft
         );
         $this->template->load('template', 'license', $data);
     }
