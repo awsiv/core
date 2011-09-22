@@ -91,6 +91,7 @@
 #define NOVA_EXPORT_HEADER "NOVA_EXPORT"
 #define CF_CODEBOOK_SIZE 28
 #define NOVA_MAXDIFFSIZE (80 * 1024 * 1024)
+#define HOSTKEY_SIZE 100 // length of SHA=....
 
 // for pdf reports
 #define CF_NOTICE_TRUNCATED "Data truncated due to internal buffer limit"
@@ -606,7 +607,7 @@ struct Item *Nova_GetMongoLastSeen(void);
 void PrependPromiserList(struct PromiseIdent **list,char *s,struct Promise *pp);
 struct HubQuery *NewHubQuery(struct Rlist *hosts,struct Rlist *records);
 void DeleteHubQuery(struct HubQuery *hq,void (*fnptr)());
-struct HubHost *NewHubHost(char *keyhash,char *host,char *ipaddr);
+struct HubHost *NewHubHost(char *hubkey, char *keyhash,char *ipaddr,char *hostname);
 struct HubHost *GetHubHostIn(struct Rlist *host_list, char *keyhash);
 void DeleteHubHost(struct HubHost *hp);
 struct HubSoftware *NewHubSoftware(struct HubHost *hh,char *name,char *version,char *arch);
@@ -1413,6 +1414,7 @@ struct cf_pscalar
 struct HubHost
    {
    char *keyhash;
+   char *hubkey;
    char *ipaddr;
    char *hostname;
    };

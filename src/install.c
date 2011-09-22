@@ -100,7 +100,7 @@ void DeleteHubQuery(struct HubQuery *hq,void (*fnptr)())
 
 /*****************************************************************************/
 
-struct HubHost *NewHubHost(char *keyhash,char *ipaddr,char *hostname)
+struct HubHost *NewHubHost(char *hubkey, char *keyhash,char *ipaddr,char *hostname)
 
 { struct HubHost *hp;
 
@@ -109,6 +109,15 @@ struct HubHost *NewHubHost(char *keyhash,char *ipaddr,char *hostname)
     FatalError("Memory exhausted NewHubHost");
     }
 
+ if (hubkey)
+    {
+    hp->hubkey = strdup(hubkey);
+    }
+ else
+    {
+    hp->hubkey = NULL;
+    }
+ 
  if (keyhash)
     {
     hp->keyhash = strdup(keyhash);
@@ -170,6 +179,11 @@ struct HubHost *GetHubHostIn(struct Rlist *host_list, char *keyhash)
 
 void DeleteHubHost(struct HubHost *hp)
 {
+  if (hp->hubkey)
+    {
+    free(hp->hubkey);
+    }
+
  if (hp->keyhash)
     {
     free(hp->keyhash);
@@ -533,7 +547,7 @@ struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rho
 
  hp->hh = hh;
  hp->io = io;  // '+' or '-'
- hp->rhost = NewHubHost(kh,ip,rhost);
+ hp->rhost = NewHubHost(NULL,kh,ip,rhost);
  hp->hrsago = ago;
  hp->hrsavg = avg;
  hp->hrsdev = dev;

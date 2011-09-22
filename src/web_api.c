@@ -7158,7 +7158,7 @@ return false;
 
 /*****************************************************************************/
 
-int Con2PHP_subscribe_software(char *user, char *subscrHandle, char *hubClassRegex, char *pkgName, int pkgRegex, char *hostClassRegex, char *buf, int bufsize)
+int Con2PHP_subscribe_software(char *user, char *subHandle, char *hubClassRegex, char *pkgName, int pkgRegex, char *hostClassRegex, char *buf, int bufsize)
 
 {
 #ifdef HAVE_CONSTELLATION
@@ -7172,7 +7172,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-bool res = CFDBCon_SubscribeSoftware(&dbconn,user,subscrHandle,hubClassRegex,pkgName,pkgRegex,hostClassRegex);
+bool res = CFDBCon_SubscribeSoftware(&dbconn,user,subHandle,hubClassRegex,pkgName,pkgRegex,hostClassRegex);
 
 CFDB_Close(&dbconn);
 
@@ -7181,6 +7181,81 @@ return res;
 #else  /* NOT HAVE_CONSTELLATION */
 
 snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_subscribe_software() in Nova-only environment\n");
+CfOut(cf_error, "", buf);
+return false;
+
+#endif
+}
+
+/*****************************************************************************/
+
+int Con2PHP_report_software(char *user, char *subHandle, char *hubClassRegex, struct PageInfo *page, char *buf, int bufsize)
+
+{
+#ifdef HAVE_CONSTELLATION
+ mongo_connection dbconn;
+ char work[CF_BUFSIZE];
+
+ buf[0] = '\0';
+ 
+if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database");
+   return false;
+   }
+
+struct HubQuery *hq = CFDBCon_QuerySubSoftware(&dbconn,user,subHandle,hubClassRegex);
+PageRecords(&(hq->records),page,DeleteHubSoftware);
+
+char header[CF_BUFSIZE];
+
+snprintf(header,sizeof(header),
+         "\"meta\":{\"count\" : %d,"
+         "\"header\": {\"Hub key\":0,\"Host key\":1,\"Name\":2,\"Version\":3,\"Architecture\":4"
+         "}", page->totalResultCount);
+
+int headerLen = strlen(header);
+int noticeLen = strlen(CF_NOTICE_TRUNCATED);
+
+StartJoin(buf,"{\"data\":[",bufsize);
+
+struct Rlist *rp;
+int truncated = false;
+
+for (rp = hq->records; rp != NULL; rp=rp->next)
+   {
+   struct HubSoftware *hs = (struct HubSoftware *)rp->item;
+   
+   snprintf(work,sizeof(work),"[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"],",
+            hs->hh->hubkey,hs->hh->keyhash,hs->name,hs->version,Nova_LongArch(hs->arch));
+   
+   int margin = headerLen + noticeLen + strlen(work);
+   if(!JoinMargin(buf,work,NULL,bufsize,margin))
+      {
+      truncated = true;
+      break;
+      }
+   }
+
+DeleteHubQuery(hq,DeleteHubSoftware);
+
+ReplaceTrailingChar(buf, ',', '\0');
+EndJoin(buf,"]",bufsize);
+
+Nova_AddReportHeader(header,truncated,work,sizeof(work)-1);
+Join(buf,work,bufsize);
+
+EndJoin(buf,"}}\n",bufsize);
+
+
+
+CFDB_Close(&dbconn);
+
+return true;
+
+#else  /* NOT HAVE_CONSTELLATION */
+
+snprintf(buf,bufsize,"!! Error: Use of Constellation function Con2PHP_report_software() in Nova-only environment\n");
 CfOut(cf_error, "", buf);
 return false;
 

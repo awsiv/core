@@ -210,7 +210,7 @@ struct HubQuery *CFDB_QueryHosts(mongo_connection *conn,bson *query)
        CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
        }      
 
-    hh = NewHubHost(keyhash,addresses,hostnames);
+    hh = NewHubHost(NULL,keyhash,addresses,hostnames);
     PrependRlistAlien(&host_list,hh);
     }
 
@@ -305,7 +305,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
       if (IsDefinedClass(expression))
          {
-         PrependRlistAlien(&host_list,NewHubHost(keyhash,addresses,hostnames));
+         PrependRlistAlien(&host_list,NewHubHost(NULL,keyhash,addresses,hostnames));
          }
       
       DeleteEntireHeap();      
@@ -530,7 +530,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    
    if (found)
       {
-      hh = NewHubHost(keyhash,addresses,hostnames);
+      hh = NewHubHost(NULL,keyhash,addresses,hostnames);
       PrependRlistAlien(&host_list,hh);
       
       // Now cache the host reference in all of the records to flatten the 2d list
@@ -703,7 +703,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    
    if (found)
       {
-      hh = NewHubHost(keyhash,addresses,hostnames);
+      hh = NewHubHost(NULL,keyhash,addresses,hostnames);
       PrependRlistAlien(&host_list,hh);
       
       // Now cache the host reference in all of the records to flatten the 2d list
@@ -1076,7 +1076,7 @@ struct HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes)
     
     if(!EMPTY(keyhash))
         {
-        PrependRlistAlien(&hostList,NewHubHost(keyhash,addresses,hostnames));
+        PrependRlistAlien(&hostList,NewHubHost(NULL,keyhash,addresses,hostnames));
         Debug("matched host %s,%s\n", keyhash, addresses);
         }
     }
@@ -1321,7 +1321,7 @@ struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,
 
     if (found)
        {
-       hh = NewHubHost(keyhash,addresses,hostnames);
+       hh = NewHubHost(NULL,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
       
        // Now cache the host reference in all of the records to flatten the 2d list
@@ -1577,7 +1577,7 @@ struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *
 
     if (found)
        {
-       hh = NewHubHost(keyhash,addresses,hostnames);
+       hh = NewHubHost(NULL,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
       
        // Now cache the host reference in all of the records to flatten the 2d list
@@ -1754,7 +1754,7 @@ struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHas
 
     if (found)
        {
-       hh = NewHubHost(keyHashDb,addresses,hostnames);
+       hh = NewHubHost(NULL,keyHashDb,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
 
        for (rp = record_list; rp != NULL; rp=rp->next)
@@ -1969,7 +1969,7 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *l
 
     if (found)
        {
-       hh = NewHubHost(keyhash,addresses,hostnames);
+       hh = NewHubHost(NULL,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
 
        // Now cache the host reference in all of the records to flatten the 2d list
@@ -2095,7 +2095,7 @@ struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,char *lkeyhash)
 
     if (found)
        {
-       hh = NewHubHost(keyhash,addresses,hostnames);
+       hh = NewHubHost(NULL,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
 
        for (rp = record_list; rp != NULL; rp=rp->next)
@@ -2275,7 +2275,7 @@ struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char
 
     if (found)
        {
-       hh = NewHubHost(keyhash,addresses,hostnames);
+       hh = NewHubHost(NULL,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
 
        // Now cache the host reference in all of the records to flatten the 2d list
@@ -2418,7 +2418,7 @@ struct HubQuery *CFDB_QuerySetuid(mongo_connection *conn,char *keyHash,char *lna
 
     if (found)
        {
-       hh = NewHubHost(keyhash,addresses,hostnames);
+       hh = NewHubHost(NULL,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
 
        // Now cache the host reference in all of the records to flatten the 2d list
@@ -2606,7 +2606,7 @@ struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char
 
     if (found)
        {
-       hh = NewHubHost(keyhash,addresses,hostnames);
+       hh = NewHubHost(NULL,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
 
        // Now cache the host reference in all of the records to flatten the 2d list
@@ -2806,7 +2806,7 @@ struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *l
 
     if (found)
        {
-       hh = NewHubHost(keyhash,addresses,hostnames);
+       hh = NewHubHost(NULL,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
 
        // Now cache the host reference in all of the records to flatten the 2d list
@@ -3002,7 +3002,7 @@ struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum 
      
     if(!hh)
        {
-       hh = NewHubHost(keyhash,NULL,NULL);  // we get more host info later
+       hh = NewHubHost(NULL,keyhash,NULL,NULL);  // we get more host info later
        PrependRlistAlien(&host_list,hh);
        }
      
@@ -3183,7 +3183,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    
    if (found)
       {
-      hh = NewHubHost(keyhash,addresses,hostnames);
+      hh = NewHubHost(NULL,keyhash,addresses,hostnames);
       PrependRlistAlien(&host_list,hh);
       
       // Now cache the host reference in all of the records to flatten the 2d list
@@ -3376,7 +3376,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    
    if (found)
       {
-      hh = NewHubHost(keyhash,addresses,hostnames);
+      hh = NewHubHost(NULL,keyhash,addresses,hostnames);
       PrependRlistAlien(&host_list,hh);
       
       // Now cache the host reference in all of the records to flatten the 2d list
@@ -3558,7 +3558,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    
    if (found)
       {
-      hh = NewHubHost(keyhash,addresses,hostnames);
+      hh = NewHubHost(NULL,keyhash,addresses,hostnames);
       PrependRlistAlien(&host_list,hh);
       
       // Now cache the host reference in all of the records to flatten the 2d list
@@ -6867,7 +6867,7 @@ struct Rlist *CFDB_QueryNotes(mongo_connection *conn,char *keyhash, char *nid,  
 		  
                  if (hci == NULL)
 		    {	
-                    hh = NewHubHost(kh,NULL,NULL);
+                    hh = NewHubHost(NULL,kh,NULL,NULL);
                     PrependRlistAlien(&host_list,hh);		      
                     QueryInsertHostInfo(conn,host_list);
                     hci = NewHubNoteInfo(hh,noteId,username,note,datetime,rptData,reportType);
@@ -7262,7 +7262,7 @@ void BsonIteratorToString(char *retBuf, int retBufSz, bson_iterator *i, int dept
  key = bson_iterator_key( i );
 
  header[0]='\0';
- GetReportKeyMapping(reportType, key, header, sizeof(header));
+ GetReportKeyMapping(reportType, (char *)key, header, sizeof(header));
  
  if(strlen(header)<1)
    {
