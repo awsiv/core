@@ -15,7 +15,7 @@ class Hubstatus extends Cf_Controller {
         $this->load->library('form_validation');
 
         $bc = array(
-            'title' => 'Hub replication status',
+            'title' => $this->lang->line('hub_status'),
             'url' => '/hubstatus/status',
             'isRoot' => false,
             'replace_existing' => true
@@ -29,8 +29,7 @@ class Hubstatus extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
 
         $data = array(
-            'title' => "CFEngine Mission Portal - Hub Status",
-            'title_header' => "Hub replication status",
+            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('hub_status'),
             'breadcrumbs' => $this->breadcrumblist->display()
         );
 

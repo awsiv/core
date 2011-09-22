@@ -130,7 +130,7 @@ $(document).ready(function() {
     {
         $('#container_policies_id').fileTree({
             root: '',
-            script: '/cfeditor/get_list',
+            script: 'cfeditor/get_list',
             expandSpeed: 1000,
             collapseSpeed: 1000,
             multiFolder: false

@@ -23,17 +23,17 @@ class Cfeditor extends Cf_Controller {
             $current_repo = $this->cfsvn->get_current_repository();
             $total_approvals = $this->repository_model->get_total_approval_count($current_repo);
             $data = array(
-                'title' => "CFEngine Mission Portal - Policy Editor",
+                'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('policy_editor'),
                 'revision' => $rev,
                 'total_approvals' => $total_approvals,
                 'curreny_repo' => $current_repo
             );
         } catch (Exception $e) {
             $data = array(
-                'title' => "CFEngine Mission Portal - Policy Editor",
-                'revision' => 'Unknown',
-                'total_approvals' => "Unknown",
-                'curreny_repo' => 'Empty Working Directory'
+                'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('policy_editor'),
+                'revision' => $this->lang->line('revision_not_knowne'),
+                'total_approvals' => $this->lang->line('approvals_not_known'),
+                'curreny_repo' => $this->lang->line('repo_not_known')
             );
         }
 
@@ -159,7 +159,7 @@ class Cfeditor extends Cf_Controller {
                     $this->repository_model->insert_svn_log($this->session->userdata('username'), $current_repo, $cdetails[0], 'commit');
                     $data = array('status' => true, 'rev' => $cdetails[0]);
                 } else {
-                    $data = array('status' => false, 'message' => "Not Committed as no changes detected");
+                    $data = array('status' => false, 'message' => $this->lang->line('not_comitted_no_changes'));
                 }
             }
         } catch (Exception $e) {
@@ -168,7 +168,7 @@ class Cfeditor extends Cf_Controller {
         //$password=$this->jcryption->decrypt($this->input->post('passwd'),$_SESSION["d"]["int"],$_SESSION["n"]["int"]);
         // echo json_encode ($cdetails);
         if ($data == "") {
-            $data = array('status' => false, 'message' => $this->input->post('file') . " Was not comitted");
+            $data = array('status' => false, 'message' => $this->input->post('file') . $this->lang->line('single_file_commit_fail'));
         }
         echo json_encode($data);
     }
@@ -306,21 +306,21 @@ class Cfeditor extends Cf_Controller {
             try {
                 $this->load->helper('directory');
                 $written = write_savefile($filetobesaved, $this->input->post('content'));
-                $msg = "success writing to file";
+                $msg = $this->lang->line('write_file_success');
             } catch (Exception $e) {
                 $written = false;
-                $msg = "Error writing to file";
+                $msg = $this->lang->line('write_file_error');
             }
         } elseif (file_exists($filetobesaved) && $this->input->post('filestats') == 'new') {
-            $msg = "couldn't write file <i>$filetobesaved</i>,File with same name exist in repository";
+            $msg = $this->lang->line('same_file_exist')." <i>$filetobesaved</i>,";
         } else {
             try {
                 $this->load->helper('directory');
                 $written = write_savefile($filetobesaved, $this->input->post('content'));
-                $msg = "success creating and writing to file";
+                $msg = $this->lang->line('write_file_success');;
             } catch (Exception $e) {
                 $written = false;
-                $msg = "Error writing to file";
+                $msg =  $this->lang->line('write_file_error');
             }
         }
         $details = array(
@@ -338,7 +338,7 @@ class Cfeditor extends Cf_Controller {
         if (file_exists($path))
             $result = cfpr_validate_policy($path);
         else
-            $result = "Failed to find promises.cf";
+            $result = $this->lang-line('promise_file_not_exist');
         $details = array(
             'result' => $result
         );

@@ -77,7 +77,7 @@ class Repository extends Cf_Controller {
             if (!empty($errorArray)) {
 
                 $bc = array(
-                    'title' => 'Manage Repository',
+                    'title' => $this->lang->line('breadcrumb_repo_manage'),
                     'url' => site_url().'/repository/manageRepository',
                     'isRoot' => false,
                     'replace_existing' => true
@@ -86,8 +86,8 @@ class Repository extends Cf_Controller {
                 $this->breadcrumb->setBreadCrumb($bc);
 
                 $data = array(
-                    'title' => "CFEngine Mission Portal - Svn Checkout",
-                    'title_header' => "Repository overview",
+                    'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_repo_manage'),
+                    
                     'breadcrumbs' => $this->breadcrumblist->display()
                 );
                 $data['url'] = $url;
@@ -145,7 +145,7 @@ class Repository extends Cf_Controller {
                 if (!$return) {
                     $this->form_validation->_error_array = array_merge($this->form_validation->_error_array, $this->repository_model->get_errors());
                 } else {
-                    $successMessage = sprintf('Repository added sucessfully. <a href="%s/repository/checkOutUrl/%s" target="_self">Go to policy editor</a>',site_url(), urlencode($this->input->post('repoPath')));
+                    $successMessage = sprintf('%s. <a href="%s/repository/checkOutUrl/%s" target="_self">%s</a>',$this->lang->line('repo_add_sucess'),site_url(), urlencode($this->input->post('repoPath')),$this->lang->line('proceed_to_editor'));
                     $this->session->set_flashdata(array('success' => $successMessage));
                     redirect(current_url());
                     exit();
@@ -186,7 +186,7 @@ class Repository extends Cf_Controller {
         $this->load->library('form_validation');
 
         $bc = array(
-            'title' => 'Manage Repository',
+            'title' => $this->lang->line('breadcrumb_repo_manage'),
             'url' => '/repository/manageRepository',
             'isRoot' => false,
             'replace_existing' => true
@@ -201,7 +201,7 @@ class Repository extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
 
         $data = array(
-            'title' => "CFEngine Mission Portal - Manage Repository",
+            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_repo_manage'),
             'title_header' => "Repository overview",
             'breadcrumbs' => $this->breadcrumblist->display()
         );
@@ -313,12 +313,13 @@ class Repository extends Cf_Controller {
        
         //$rev_table = $this->repository_model->get_all_approved_policies();
         $bc = array(
-            'title' => 'Approved Policies',
+            'title' =>$this->lang->line('breadcrumb_approved_policies'),
             'url' =>  '/repository/approvedPolicies',
             'isRoot' => false
         );
+        $this->breadcrumb->setBreadCrumb($bc);
         $data = array(
-            'title' => "CFEngine Mission Portal - Approved Policies",
+            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_approved_policies'),
             'title_header' => "policies approved",
             'table' => $rev_table,
             'breadcrumbs' => $this->breadcrumblist->display(),

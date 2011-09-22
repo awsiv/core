@@ -115,7 +115,7 @@ class Search extends Cf_Controller {
 
             //$modified=$this->breadcrumblist-> replace_last_with_current("search/index",site_url("$breadcrumbs_url"));
             $bc = array(
-                'title' => 'Reports',
+                'title' => $this->lang->line('breadcrumb_report'),
                 'url' => site_url("$breadcrumbs_url"),
                 'isRoot' => false,
                 'replace_existing' => true
@@ -125,8 +125,7 @@ class Search extends Cf_Controller {
 
         $data = array(
             'report_type' => $report_type,
-            'title' => "CFEngine Mission Portal - Report",
-            //'title_header' => "search results",
+            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_report'),
             'report_title' => $report_type,
             'breadcrumbs' => $this->breadcrumblist->display(),
             'current' => $page_number,

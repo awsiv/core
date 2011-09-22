@@ -681,10 +681,10 @@ class Testing extends CI_Controller {
     function test_get_all_adgroups() {
         try{
         $result = cfpr_ldap_get_several_attributes("ldap://10.0.0.35", 
-                //"jon@windows1.test.cfengine.com", 
-                "CN=jon henrik,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com",
+                "sudhir@windows1.test.cfengine.com", 
+               // "CN=jon henrik,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com",
                 "dc=windows1,dc=test,dc=cfengine,dc=com", 
-                "(objectCategory=Group)", 
+                "(&(objectClass=user)(!(objectClass=crossRef)))", 
                 "sAMAccountName", "subtree", "sasl", "Cf3ng1n3", 1, 100);
         var_dump($result);
         }

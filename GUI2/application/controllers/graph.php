@@ -41,9 +41,7 @@ class Graph extends CF_Controller {
         $this->template->set('injected_item', implode('', $this->scripts));
 
         $this->data = array(
-            'title' => "CFEngine Mission Portal - Summary",
-            'title_header' => "overview",
-            'nav_text' => "Home : overview",
+            'title' => $this->lang->line('mission_portal_title')." - Summary",
             'summary' => "current"
         );
 
@@ -131,7 +129,7 @@ class Graph extends CF_Controller {
             
             $this->load->view('graph/magnifiedView', $this->data);
         } else
-            echo "No data available.";
+            echo $this->lang->line('graph_data_not_available');
 //        $this->template->load('template', 'graph/magnifiedView', $this->data);
     }
 
@@ -188,8 +186,8 @@ class Graph extends CF_Controller {
            
             $this->load->view('graph/weekly', $this->data);
         } else
-            echo "No data available.";
-//$this->template->load('template', 'graph/weekly', $this->data);
+            echo $this->lang->line('graph_data_not_available');
+         //$this->template->load('template', 'graph/weekly', $this->data);
     }
 
     function yearView() {
@@ -242,7 +240,7 @@ class Graph extends CF_Controller {
            
             $this->load->view('graph/yearview', $this->data);
         } else
-            echo "No data available.";
+            echo $this->lang->line('graph_data_not_available');
     }
 
     function histogramView() {
@@ -273,7 +271,7 @@ class Graph extends CF_Controller {
            
             $this->load->view('graph/histogram', $this->data);
         } else
-            echo "No data available";
+            echo $this->lang->line('graph_data_not_available');
         //$this->template->load('template', 'graph/histogram', $this->data);
     }
 

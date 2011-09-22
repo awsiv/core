@@ -7,10 +7,10 @@ class Promise extends Cf_Controller {
     }
 
     function index() {
-        $this->plist();
+        $this->details();
     }
-
-    function plist($key = NULL) {
+    
+    /*function plist($key = NULL) {
         $bc = array(
             'title' => 'Promises',
             'url' => 'promise',
@@ -22,14 +22,13 @@ class Promise extends Cf_Controller {
         $regex = 1;
         $handle = NULL;
         $data = array(
-            'title' => "CFEngine Mission Portal - Compliance",
-            'title_header' => "Compliance",
+            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_promise'),
             'promise_list' => json_decode(cfpr_report_compliance_promises($hostkey, $handle, NULL, false, NULL,1000,1), true),
             'breadcrumbs' => $this->breadcrumblist->display()
         );
         $this->template->load('template', 'promise/promises', $data);
-    }
-
+    }*/
+    
     function details($handle=NULL) {
          $this->carabiner->css('tabs-custom.css');
 
@@ -45,7 +44,7 @@ class Promise extends Cf_Controller {
         $topicDetail = cfpr_show_topic($pid);
 
             $bc = array(
-            'title' => 'Promise',
+            'title' => $this->lang->line('breadcrumb_promise'),
             'url' => 'promise/details/'.$handle,
             'isRoot' => false,
              'replace_existing'=>true
@@ -54,7 +53,7 @@ class Promise extends Cf_Controller {
        
         $data = array(
             'handle' => $handle,
-            'title' => "CFEngine Mission Portal - Promise $handle",
+            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_promise')." " .$handle,
             'pid' => $pid,
             'mybundle' => cfpr_get_promise_bundle($handle),
             'allhandles' => json_decode(utf8_encode(cfpr_list_handles_for_bundle($mybundle, cfpr_get_bundle_type($mybundle), false)),TRUE),

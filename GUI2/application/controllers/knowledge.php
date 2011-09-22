@@ -10,7 +10,7 @@ class Knowledge extends Cf_Controller {
 
     function index() {
         $bc = array(
-            'title' => 'Library',
+            'title' => $this->lang->line('breadcrumb_library'),
             'url' => 'knowledge/index',
             'isRoot' => false
         );
@@ -18,7 +18,7 @@ class Knowledge extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
 
         $data = array(
-            'title' => "CFEngine Mission Portal - Library",
+            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_library'),
             'title_header' => "Library",
             'breadcrumbs' => $this->breadcrumblist->display()
         );
@@ -40,7 +40,7 @@ class Knowledge extends Cf_Controller {
 
 
         $bc = array(
-            'title' => 'Docs',
+            'title' => $this->lang->line('breadcrumb_docs'),
             'url' => 'knowledge/docs',
             'isRoot' => false
         );
@@ -48,7 +48,7 @@ class Knowledge extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
 
         $data = array(
-            'title' => "CFEngine Mission Portal - Documents",
+            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_docs'),
             'title_header' => "Docs",
             'breadcrumbs' => $this->breadcrumblist->display()
         );
@@ -104,7 +104,7 @@ class Knowledge extends Cf_Controller {
 
         $breadcrumbs_url = "knowledge/knowledgemap/pid/$pid";
         $bc = array(
-            'title' => 'Knowledge Map',
+            'title' => $this->lang->line('breadcrumb_kw_bank'),
             'url' => $breadcrumbs_url,
             'isRoot' => false,
             'replace_existing' => true
@@ -115,8 +115,7 @@ class Knowledge extends Cf_Controller {
             'search' => $search,
             'topic' => $topic,
             'pid' => $pid,
-            'title' => "CFEngine Mission Portal - Knowledge Bank",
-            'title_header' => "Knowledge bank",
+            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_kw_bank'),
             'breadcrumbs' => $this->breadcrumblist->display(),
         );
 
@@ -165,8 +164,7 @@ class Knowledge extends Cf_Controller {
         $data = array(
             'search' => htmlspecialchars($search),
             'topic' => $topic,
-            'title' => "CFEngine Mission Portal - Knowledge bank",
-            'title_header' => "Knowledge bank search",
+            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_kw_bank'),
             'breadcrumbs' => $this->breadcrumblist->display(),
         );
 

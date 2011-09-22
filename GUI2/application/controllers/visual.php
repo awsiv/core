@@ -19,14 +19,14 @@ class Visual extends Cf_Controller {
         $hostkey = isset($_POST['hostkey']) ? $_POST['hostkey'] : $hostkey;
 
         $bc = array(
-            'title' => 'Vitals',
+            'title' => $this->lang->line('breadcrumb_vital'),
             'url' => 'visual/vital/' . $hostkey,
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);
 
         $data = array(
-            'title' => "CFEngine Mission Portal - Vital Signs",
+            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_vital')." Signs",
             'breadcrumbs' => $this->breadcrumblist->display(),
             'hostKey' => $hostkey
         );

@@ -67,7 +67,7 @@ class Notes extends Cf_Controller {
                 exit;
             }
         } else {
-            $this->data['updateMessage'] = "Cannot insert empty message.";
+            $this->data['updateMessage'] = $this->lang->line('note_empty_insert');
         }
 
         $filter = array('hostname' => NULL,
@@ -103,7 +103,7 @@ class Notes extends Cf_Controller {
             if (!$ret) {
                 // SOMETHING WENT WRONG WHILE ADDITION
                 $this->data['data'] = array();
-                $this->data['updateMessage'] = "Some error occured while inserting note.";
+                $this->data['updateMessage'] = $this->lang->line('note_insert_error');
                 $this->load->view('/notes/view_notes', $this->data);
                 return;
             }
@@ -175,7 +175,7 @@ class Notes extends Cf_Controller {
 
 
         $bc = array(
-            'title' => 'Notes',
+            'title' => $this->lang->line('notes'),
             'url' => 'notes/shownotes',
             'isRoot' => false
         );
@@ -183,8 +183,7 @@ class Notes extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
 
         $data = array(
-            'title' => "CFEngine Mission Portal - Notes",
-            'title_header' => "Notes overview",
+            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('notes'),
             'breadcrumbs' => $this->breadcrumblist->display()
         );
 

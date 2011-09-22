@@ -12,9 +12,7 @@ class Cdp extends Cf_Controller
 	$hostkey = "";
 	$data=array(
 				 'report_type'=>$report_type,
-				 'title'=>"CFEngine Mission Portal - Content-Driven Policy Reports",
-				 'title_header'=>"Content-Driven Policy Reports",
-				 'nav_text'=>"Status : hosts",
+				 'title'=>$this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_cdpreport'),
 				 'status'=>"current",
 				 'report_title'=>$report_type
 				);
@@ -50,7 +48,7 @@ class Cdp extends Cf_Controller
 		   
 	   }
         $data['reporttable'] = cfpr_cdp_report(NULL,$report_type);
-		$this->template->load('template','cdp/index',$data);
+        $this->template->load('template','cdp/index',$data);
   }
 
 }

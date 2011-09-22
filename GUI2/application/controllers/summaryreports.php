@@ -53,14 +53,14 @@ class Summaryreports extends Cf_Controller {
                 }
          }
         $bc = array(
-            'title' => 'Summary reports',
+            'title' => $this->lang->line('breadcrumb_summary_report'),
             'url' => '/summaryreports/show'.$breadcrumbs_url,
             'isRoot' => false,
             'replace_existing' => true
         );
         $this->breadcrumb->setBreadCrumb($bc);
         $data = array(
-            'title' => "CFEngine Mission Portal - Summary Report ",
+            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_summary_report'),
             'title_header' => "Summary Report",
             'breadcrumbs' => $this->breadcrumblist->display()
         );

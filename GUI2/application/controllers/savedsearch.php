@@ -33,7 +33,7 @@ class savedsearch extends Cf_Controller {
             return;
         } else {
             $this->output->set_status_header('404', 'Cannot save the search');
-            $output = 'Error while saving the search.<br />';
+            $output = $this->lang->line('search_save_error').'<br />';
             $errors = $this->search_save_model->getErrors();
             foreach ($errors as $e) {
                 $output .= $e . '<br />';
@@ -74,7 +74,7 @@ class savedsearch extends Cf_Controller {
         }
         
           $bc = array(
-            'title' => 'Saved search',
+            'title' => $this->lang->line('breadcrumb_saved_search'),
             'url' => 'savedsearch/listSavedSearches/',
             'isRoot' => false
         );
@@ -82,22 +82,18 @@ class savedsearch extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
 
         $data = array(
-            'title' => "CFEngine Mission Portal - Saved Search",
+            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_saved_search'),
             'title_header' => "Saved search overview",
             'breadcrumbs' => $this->breadcrumblist->display()
         );
         
         $viewdata = array_merge($viewdata,$data);
-        
-        
         $this->template->load('template', '/savesearch/show_saved_search', $viewdata);
     }
     
     function delete($id='') {
         
-        $filter = array ('_id'=>new MongoId($id)) ;
-      
-        
+       $filter = array ('_id'=>new MongoId($id)) ;
        $result =  $this->search_save_model->delete($filter);
        if (!$result) {
            $this->output->set_status_header('404','cannot delete the record');

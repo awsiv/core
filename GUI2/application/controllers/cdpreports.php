@@ -22,7 +22,7 @@ class Cdpreports extends Cf_Controller {
         $data = cfpr_cdp_report(NULL,$report,$rows,$page_number);
         $tabledata = json_decode(utf8_encode($data), true);
         $bc = array(
-                'title' => 'CDP Reports',
+                'title' => $this->lang->line('breadcrumb_cdpreport'),
                 'url' => '/cdpreports/get_report/'.urlencode($report),
                 'isRoot' => false,
                 'replace_existing' => true
@@ -30,7 +30,7 @@ class Cdpreports extends Cf_Controller {
          $this->breadcrumb->setBreadCrumb($bc);
          
          $data = array(
-            'title' => "CFEngine Mission Portal - Cdp Reports ",
+            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_cdpreport'),
              'breadcrumbs' => $this->breadcrumblist->display(),
             'tabledata' =>$tabledata,
             'report'=>$report,

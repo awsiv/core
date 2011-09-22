@@ -19,14 +19,13 @@ class Bundle extends Cf_Controller {
         $addr = NULL;
         $tago = 0;
         $bc = array(
-            'title' => 'Bundle',
+            'title' => $this->lang->line('breadcrumb_bundle'),
             'url' => 'bundle',
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);
         $data = array(
-            'title' => "CFEngine Mission Portal - Bundles",
-            'title_header' => "search results",
+            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_bundle'),
             'bundle_list' => json_decode(cfpr_report_bundlesseen($hostkey, $name, $regex, NULL, 10000, 1), true),
             'breadcrumbs' => $this->breadcrumblist->display()
         );
@@ -40,7 +39,7 @@ class Bundle extends Cf_Controller {
         $bundle = isset($params['bundle']) ? urldecode($params['bundle']) : "";
         $type = isset($params['type']) ? $params['type'] : cfpr_get_bundle_type($bundle);
         $bc = array(
-            'title' => 'Bundle',
+            'title' => $this->lang->line('breadcrumb_bundle'),
             'url' => 'bundle/details/bundle/'.urlencode($bundle).'/type/'.urlencode($type) ,
             'isRoot' => false,
              'replace_existing'=>true
@@ -48,9 +47,7 @@ class Bundle extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
 
         $data = array(
-            'title' => "CFEngine Mission Portal - Bundles",
-            'title_header' => "search results",
-            'nav_text' => "Show : Bundle definition",
+            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_bundle'),
             'status' => "current",
             'bundle' => $bundle,
             'allbundles' => json_decode(utf8_encode(cfpr_list_all_bundles(NULL)), TRUE),
