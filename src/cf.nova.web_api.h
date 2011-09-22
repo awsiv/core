@@ -140,27 +140,6 @@ int Nova2PHP_community_version(char *buf, int bufsize);
 void Nova2PHP_GetLibraryDocuments(char *pth,char *buffer,int bufsize);
 int Nova_AddReportHeader(char *header,int truncated,char *buffer,int bufsize);
 
-// constellation function stubs
-
-void Con2PHP_ComplianceSummaryGraph(char *hubKeyHash, char *policy, char *buffer,int bufsize);
-int Con2PHP_compliance_virtualbundle_graph(char *hubKeyHash, char *bundleName, char *buf, int bufsize);;
-int Con2PHP_count_hubs(char *classification, char *buf, int bufsize);
-int Con2PHP_show_hubs(char *classification, char *buf, int bufsize);
-int Con2PHP_aggr_promiselog(char *hubKeyHash, enum promiselog_rep log_type, char *buf, int bufsize);
-int Con2PHP_count_promiselog(char *hubKeyHash, char *promiseHandle, enum promiselog_rep log_type, char *buf, int bufsize);
-int Con2PHP_reasons_promiselog(char *hubKeyHash, char *promiseHandle, enum promiselog_rep log_type, char *buf, int bufsize);
-
-int Con2PHP_environments_list(char *hubKeyHash, char *buf, int bufsize);
-
-int Con2PHP_promise_popularity(char *promiseHandle, char *buf, int bufsize);
-int Con2PHP_rank_promise_popularity(bool sortAscending, char *buf, int bufsize);
-
-int Con2PHP_aggr_filechange(char *hubKeyHash, char *filePath, char *buf, int bufsize);
-
-int Con2PHP_list_subscriptions(char *user, char *buf, int bufsize);
-int Con2PHP_subscribe_software(char *user, char *subHandle, char *hubClassRegex, char *pkgName, int pkgRegex, char *hostClassRegex, char *buf, int bufsize);
-int Con2PHP_report_software(char *user, char *subHandle, char *hubClassRegex, struct PageInfo *page, char *buf, int bufsize);
-
 
 /* pdf report */
 int Nova2PHP_compliance_report_pdf(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg,char *returnval,int bufsize); 
