@@ -6523,3 +6523,4 @@ int Nova2PHP_GetHubMaster(char *buffer,int bufsize)
  return false;
 }
 
+#endif  /* HAVE_LIBMONGOC */
