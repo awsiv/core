@@ -24,7 +24,7 @@ void ThisHashString(char *fna,char *buffer,int len,unsigned char digest[EVP_MAX_
 int main()
 
 { char name[CF_MAXVARSIZE],hash[CF_MAXVARSIZE],filename[2048];
-  char company[2048];
+ char company[2048],edition[CF_MAXVARSIZE];
   FILE *fp;
   struct stat sb;
   int m_now,m_expire,d_now,d_expire;
@@ -32,7 +32,20 @@ int main()
   int number = 1;
   char u_day[8],u_month[32],u_year[8];
   unsigned char digest[EVP_MAX_MD_SIZE+1];
+  char ed_type = 'x';
 
+printf("Enter edition of CFENgine: (c)onstellation or (n)ova:");
+
+fflush(stdin);
+fgets(edition,CF_MAXVARSIZE-1,stdin);
+Chop(company);
+ed_type = *edition;
+
+if (ed_type != 'c' && ed_type != 'n')
+   {
+   printf("That is not a recognised edition of CFEngine\n",filename);
+   exit(1);   
+   }
 
 printf("Enter unique company string: ");
 
@@ -70,19 +83,30 @@ scanf("%d",&number);
 
 printf("\nDate confirmed as: %s %s %s\n",f_day,f_month,f_year);
 printf("\nNumber of licenses granted: %d\n",number);
-  
+
 // if license file exists, set the date from that, else write one for 30 days?
 
 snprintf(name,CF_MAXVARSIZE-1,"license.dat");
 
 if ((fp = fopen(name,"w")) != NULL)
    {
-   snprintf(name,CF_MAXVARSIZE-1,"%s-%o.%s Nova %s %s",f_month,number,f_day,f_year,company);
+   if (ed_type == 'c') // if constellation
+      {
+      snprintf(name,CF_MAXVARSIZE-1,"%s-%o.%s Constellation %s %s",f_month,number,f_day,f_year,company);
+      ThisHashString(filename,name,strlen(name),digest);
+      fprintf(fp,"%2s %x %2s %4s %s %s\n",f_day,number,f_month,f_year,ThisHashPrint(digest),company);
+      fprintf(fp,"CN");
+      fclose(fp);
+      }
+   else
+      {
+      snprintf(name,CF_MAXVARSIZE-1,"%s-%o.%s Nova %s %s",f_month,number,f_day,f_year,company);
+      ThisHashString(filename,name,strlen(name),digest);
+      fprintf(fp,"%2s %x %2s %4s %s %s",f_day,number,f_month,f_year,ThisHashPrint(digest),company);
+      fclose(fp);
+      }
 
-   ThisHashString(filename,name,strlen(name),digest);
    
-   fprintf(fp,"%2s %x %2s %4s %s %s",f_day,number,f_month,f_year,ThisHashPrint(digest),company);
-   fclose(fp);
    printf("\nWrote license.dat - install this in WORKDIR/masterfiles on the policy server\n");
    }
 }

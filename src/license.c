@@ -39,6 +39,7 @@ int Nova_EnterpriseExpiry(void)
   int m_now,m_expire,d_now,d_expire,number = 1,am_policy_server = false;
   char f_day[16],f_month[16],f_year[16];
   char u_day[16],u_month[16],u_year[16];
+  char edition = 'x';
   unsigned char digest[EVP_MAX_MD_SIZE+1] = {0};
   char serverdig[CF_MAXVARSIZE] = "";
   FILE *fp;
@@ -92,18 +93,26 @@ if ((fp = fopen(name,"r")) != NULL)
    {
    CfOut(cf_verbose,""," -> Reading license expiry from %s",name);
    fscanf(fp,"%15s %x %15s %15s %100s %[^\n]",f_day,&number,f_month,f_year,hash,company);
+   fscanf(fp,"\n%c",&edition);
    fclose(fp);
-   
+
    // This is the simple password hash to obfuscate license fixing
    // Nothing top security here - this is a helper file to track licenses
 
-   if (strlen(company) > 0)
+   if (edition == 'C')
       {
-      snprintf(name,sizeof(name),"%s-%o.%s Nova %s %s",f_month,number,f_day,f_year,company);
+      snprintf(name,sizeof(name),"%s-%o.%s Constellation %s %s",f_month,number,f_day,f_year,company);
       }
    else
       {
-      snprintf(name,sizeof(name),"%s-%o.%s Nova %s",f_month,number,f_day,f_year);
+      if (strlen(company) > 0)
+         {
+         snprintf(name,sizeof(name),"%s-%o.%s Nova %s %s",f_month,number,f_day,f_year,company);
+         }
+      else
+         {
+         snprintf(name,sizeof(name),"%s-%o.%s Nova %s",f_month,number,f_day,f_year);
+         }
       }
 
    // This next step requires a pre-existing binding
@@ -204,8 +213,7 @@ if (am_policy_server && THIS_AGENT_TYPE == cf_agent && CFDB_QueryIsMaster())
 
 if ((cf_strcmp(VYEAR,u_year) > 0) || ((cf_strcmp(VYEAR,u_year) == 0) && (m_now > m_expire))
     || ((cf_strcmp(VYEAR,u_year) == 0) && (m_now == m_expire) && (d_now > d_expire)))
-   {
-   
+   {   
    if(!IsDefinedClass("bootstrap_mode"))  // avoid cf-promises complaints while bootstrapping
       {
       CfOut(cf_error,""," !! %d licenses expired on %s %s %s -- reverting to Community Edition",LICENSES,u_day,u_month,u_year);
@@ -216,7 +224,16 @@ if ((cf_strcmp(VYEAR,u_year) > 0) || ((cf_strcmp(VYEAR,u_year) == 0) && (m_now >
    }
 else
    {
-   CfOut(cf_verbose,""," -> Found %d licenses, expiring on %s %s %s for %s",LICENSES,u_day,u_month,u_year,company);
+   if (edition == 'C')
+      {
+      CfOut(cf_verbose,""," -> Found %d CFE Constellation licenses, expiring on %s %s %s for %s",LICENSES,u_day,u_month,u_year,company);
+      AM_CONSTELLATION = true;
+      }
+   else
+      {
+      CfOut(cf_verbose,""," -> Found %d CFE Nova licenses, expiring on %s %s %s for %s",LICENSES,u_day,u_month,u_year,company);
+      AM_NOVA = true;
+      }
    return false;
    }
 }

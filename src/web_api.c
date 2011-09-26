@@ -6423,8 +6423,8 @@ int Nova2PHP_list_handles_policy_finder(char *handle,char *promiser,char *bundle
 
   if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
-      CfOut(cf_verbose,"", "!! Could not open connection to report database");
-      return false;
+    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+    return false;
     }
 
   hq = CFDB_QueryPolicyFinderData(&dbconn,handle,promiser,bundle,escRegex);
