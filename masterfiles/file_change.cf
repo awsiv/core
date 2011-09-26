@@ -11,7 +11,7 @@ bundle agent change_management
 {
 vars:
 
- windows::
+# windows::
 
 #  "watch_files" slist =>  {
 #                          "$(sys.windir)\important.txt",
@@ -23,7 +23,7 @@ vars:
 #                          };						  
 
 						  
-
+ linux::
 
   "watch_files" slist =>  {
                           "/etc/passwd", 
