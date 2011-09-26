@@ -175,7 +175,7 @@ class Notes extends Cf_Controller {
 
 
         $bc = array(
-            'title' => $this->lang->line('notes'),
+            'title' => $this->lang->line('breadcrumb_notes'),
             'url' => 'notes/shownotes',
             'isRoot' => false
         );

@@ -33,6 +33,7 @@ $lang['breadcrumb_saved_search']     ='Saved Search';
 $lang['breadcrumb_report']           ='Report';
 $lang['breadcrumb_summary_report']   ='Summary Report';
 $lang['breadcrumb_vital']            ='Vitals';
+$lang['breadcrumb_notes']            ='Notes';
 /**
  * Policy editor related things
  * 
@@ -59,6 +60,7 @@ $lang['graph_data_not_available']='No data available.';
  */
 $lang['note_empty_insert']="Cannot insert empty message.";
 $lang['note_insert_error']="Some error occured while inserting note.";
+$lang['notes'] = 'Notes';
 
 /**
  * Repository controller related text
