@@ -478,7 +478,6 @@ bundle agent cfengine_policysrv
                              "php5",
                              "php5-json",
                              "php5-pear",
-                             "subversion",
                              "php5-mcrypt",
                              "subversion",
                             },
