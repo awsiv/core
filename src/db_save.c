@@ -1458,8 +1458,8 @@ void CFDB_SaveFileChanges(mongo_connection *conn, char *keyhash, struct Item *da
   bson host_key;  // host description
   bson setOp;
   struct Item *ip;
-  char name[CF_SMALLBUF],nameNoDot[CF_SMALLBUF];
-  char varName[128];
+  char name[CF_MAXVARSIZE]={0},nameNoDot[CF_MAXVARSIZE]={0};
+  char varName[128] = {0};
   bson_buffer *sub;
   time_t then;
   long date;
