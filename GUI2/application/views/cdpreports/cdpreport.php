@@ -9,7 +9,7 @@
            echo $report_table;
            include 'paging_footer.php';
          }else{
-               echo"<table><tr><td>" . $this->lang->line("no_data") . "</td></tr></table>";
+               echo"<div class='info' style='margin:10px;'>" . $this->lang->line("no_data") . "</div>";
          }
           ?>
           </div>

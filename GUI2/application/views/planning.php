@@ -1,7 +1,7 @@
 
     <div class="outerdiv grid_12">
         <div id="goals" class="grid_7 innerdiv">
-            <p class="title">Policy goals</p>
+            <p class="title"><?php echo $this->lang->line('header_policy_goals'); ?></p>
             <ul>
                 <?php
                 $val=0;
@@ -18,7 +18,7 @@
             <p class="morebtnpane"><span class="morebtn"><?php echo anchor('welcome/goals', 'More...') ?></span></p>
         </div>
         <div id="loggedon" class="grid_5 innerdiv">
-            <p class="title">Logged on </p>
+            <p class="title"><?php echo $this->lang->line('header_logged_on'); ?></p>
             <ul id="users">
                 <?php
                $totalusersonline=count($users);
@@ -35,15 +35,15 @@
 
         <div id="plandash" class="grid_7 dash innerdiv">
             <ul>
-                <li><?php echo anchor('/repository/checkout', 'Edit policies', array('class' => 'repolink showqtip','id' => 'repobrowser','title'=> tooltip('tooltip_edit_policies'))); ?></li>
-                <li><?php echo anchor('/widget/tracker', 'Track records', array('class' => 'trackrecord showqtip', 'id' => 'trackrecord','title'=> tooltip('tooltip_track_records'))); ?></li>
-                <li><?php echo anchor('/repository/policyApprover', 'Approve policies', array('class' => 'approve showqtip', 'id' => 'aprvpolicy','title'=> tooltip('tooltip_approve_policies'))); ?></li>
-                 <li><?php echo anchor('/welcome/services', 'Service catalogue', array('class' => 'service showqtip ', 'id' => 'aprvpolicy','title'=> tooltip('tooltip_service_catalogue'))); ?></li>
+                <li><?php echo anchor('/repository/checkout', $this->lang->line('edit_policies') , array('class' => 'repolink showqtip','id' => 'repobrowser','title'=> tooltip('tooltip_edit_policies'))); ?></li>
+                <li><?php echo anchor('/widget/tracker', $this->lang->line('track_record'), array('class' => 'trackrecord showqtip', 'id' => 'trackrecord','title'=> tooltip('tooltip_track_records'))); ?></li>
+                <li><?php echo anchor('/repository/policyApprover', $this->lang->line('approved_policies'), array('class' => 'approve showqtip', 'id' => 'aprvpolicy','title'=> tooltip('tooltip_approve_policies'))); ?></li>
+                 <li><?php echo anchor('/welcome/services', $this->lang->line('service catalogue'), array('class' => 'service showqtip ', 'id' => 'aprvpolicy','title'=> tooltip('tooltip_service_catalogue'))); ?></li>
                 <p class="clearleft"></p>
             </ul>
         </div>
         <div id="personallog" class="grid_5 innerdiv">
-            <p class="title">My activity log</p>
+            <p class="title"><?php echo $this->lang->line('header_activity_log'); ?></p>
             <div id="messageinput_container">
                 <form method="post" action="<?php echo site_url(); ?>/widget/insertworkinglogs">
                     <textarea  id="message" name="message" placeholder="Working on...."></textarea>

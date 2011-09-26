@@ -1016,7 +1016,7 @@ div.ui-dialog .ui-widget-header .ui-icon, .customdlg .ui-widget-header .ui-icon{
 
 div.ui-dialog .ui-widget-header .ui-dialog-title, .customdlg .ui-widget-header .ui-dialog-title{
     font-size: 21px;
-    text-transform: uppercase;
+    /* text-transform: uppercase; */
     font-weight: normal;
     padding:12px 0;
 }

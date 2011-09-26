@@ -109,4 +109,141 @@ $lang['business-value-pie-chart-container_title']="Business value";
 $lang['compliance-value-pie-chart-container_title']="Host status";
 $lang['compliance_summary_graph_title']='Compliance summary';
 $lang['services_goals']='Services/goals';
+
+
+/*
+ * Text displayed in the engineering page
+ */
+$lang['header_host_status'] = "Host status (last hour)";
+$lang['header_promise_compliance'] = "Promise compliance summary for reachable hosts";
+$lang['header_finders'] = "Finders";
+$lang['host_known'] = "Hosts Known";
+$lang['worst_host'] = "Worst available host rank";
+$lang['hub_replication_status'] = "Hub replication status";
+$lang['host'] = "Host";
+$lang['class'] = "Class";
+$lang['promises'] = "Promises";
+$lang['reports'] = "Reports";
+$lang['summary_reports'] = "Summary reports";
+$lang['cdp_reports'] = "CDP reports";
+
+$lang['not_compliant'] = "hosts ( > 20% not compliant)";
+$lang['now_compliant'] = "hosts ( > 20% repaired, now compliant)";
+$lang['compliant'] = "hosts ( > 80% compliant)";
+$lang['unreachable'] = "hosts unreachable";
+
+/*
+ * Planning page
+ */
+$lang['header_policy_goals'] = "Policy goals";
+$lang['header_logged_on'] = "Logged on";
+$lang['header_activity_log'] = "My activity log";
+
+
+$lang['edit_policies'] = "Edit policies";
+$lang['track_record'] = "Track records";
+$lang['approved_policies'] = "Approve policies";
+$lang['service catalogue'] = "Service catalogue";
+
+/*
+ * Library page
+ */
+$lang['docs'] = "Docs";
+$lang['find_topic'] = "Find topic";
+$lang['notes_archive'] = "Notes archive";
+$lang['community'] = "Community";
+
+
+/*
+ * Host page 
+ */
+
+$lang['header_action'] = "Actions";
+$lang['header_analysis'] = "Analysis";
+$lang['header_monitor_job'] = "Monitored jobs";
+$lang['header_status'] = "Status (measured)";
+$lang['header_host_details'] = "Host details (discovered)";
+$lang['header_host_delete'] = "Proceed host deletion";
+
+$lang['host_reports'] = "Reports";
+$lang['host_notes'] = "Notes";
+$lang['host_vitals'] = "Vitals";
+$lang['host_problems'] = "Problems";
+
+$lang['host_total_surveillance'] = "Total number under surveillance";
+$lang['host_on_host'] = "On this host";
+
+$lang['host_average_load'] = "Average load";
+$lang['host_free_disk'] = "Average free disk";
+$lang['host_network_speed'] = "Average network speed";
+$lang['host_alias'] = "Alias";
+$lang['host_os_class'] = "OS class";
+$lang['host_release'] = "Release";
+$lang['host_flavour'] = "Flavour";
+$lang['host_ip'] = "Last IP-address";
+$lang['host_last_data'] = "Last data";
+$lang['host_id'] = "ID";
+$lang['host_not_discovered'] = '(Not discovered yet)';
+$lang['host_delete'] = 'Delete this host';
+$lang['host_delete_confirm'] = ' The host will be deleted from the report database of the hub.
+        The hub will still try to pull it for reports, and it may thus <strong>Reappear</strong>.Are you sure you want to delete this host?';
+
+$lang['host_promise_not_kept'] = 'Promises not kept in the past week';
+
+/*
+ * Promise page
+ */
+$lang['header_promise_definition'] = 'Promise definition';
+$lang['header_body_promise'] = 'Body of the promise';
+
+$lang['promise_tab_definition'] = 'Definition';
+$lang['promise_tab_leads'] = 'Leads';
+$lang['promise_tab_same_bundle'] = 'Same bundle';
+$lang['promise_tab_same_promiser'] = 'Same promiser';
+$lang['promise_tab_same_type'] = 'Same type';
+
+$lang['promise_belong_to_bundle'] = 'Belonging to agent bundle';
+$lang['promise_reference_handle'] = 'Reference handle';
+$lang['promise_affected_object'] = 'Affected object (promiser)';
+$lang['promise_stakeholder'] = 'Stakeholders (promisees)';
+$lang['promise_comment_intention'] = 'Comment on original intention';
+$lang['promise_about'] = 'Promise is about';
+$lang['promise_class_context'] = 'Applies in the class context';
+$lang['promise_defined_file'] = 'Defined in file';
+$lang['promise_body_not_found'] = 'Body definition was not found';
+$lang['promise_other_promise'] = 'Other promises in bundle';
+$lang['promise_other_promiser'] = 'Other promises by promiser'; 
+$lang['promise_other_promiser_type'] = 'Other promises of type'; 
+
+
+/*
+ * Bundle page
+ */
+$lang['bundle_tab_details'] = 'Bundle Details';
+$lang['bundle_tab_bundle_using'] = 'Bundles using this bundle';
+$lang['bundle_tab_all_bundle'] = 'All Bundle';
+
+$lang['bundle_definition_of'] = 'Bundle definition of';
+$lang['bundle_name'] = 'Name';
+$lang['bundle_arguments'] = 'Arguments';
+$lang['bundle_handle'] = 'Handle';
+$lang['bundle_comment'] = 'Comment';
+$lang['bundle_host_class'] = 'Host classes using this bundle';
+$lang['bundle_promise'] = 'Promises in this bundle';
+$lang['bundle_bundle'] = 'Bundles';
+
+
+/*
+ * Knowledge map
+ */
+$lang['knowledge_tab_map'] = 'Map';
+$lang['knowledge_tab_leads'] = 'Leads';
+$lang['knowledge_tab_references'] = 'References';
+$lang['knowledge_tab_same_context'] = 'Same context';
+$lang['knowledge_tab_subtopic'] = 'Sub topic';
+$lang['knowledge_copernicus'] = 'Copernicus local cluster view for topic';
+$lang['knowledge_insight_leads'] = 'Insight, leads and perspectives';
+
+
+
 ?>

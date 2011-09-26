@@ -2,16 +2,16 @@
     <div class="outerdiv">
         <div id="custom-tabs" style="margin:15px;">
             <ul>
-                <li><a href="#tabs-1">Map</a></li>
-                <?php if ($showLeads) { ?><li><a href="#tabs-2">Leads</a></li><?php } ?>
-                <?php if ($showTopicHits) { ?><li><a href="#tabs-3">References</a></li><?php } ?>
-                <?php if ($showSameContext) { ?><li><a href="#tabs-4">Same context</a></li> <?php } ?>
-                <?php if ($showSubTopics) { ?><li><a href="#tabs-5">Sub topic</a></li> <?php } ?>
+                <li><a href="#tabs-1"><?php echo $this->lang->line('knowledge_tab_map'); ?></a></li>
+                <?php if ($showLeads) { ?><li><a href="#tabs-2"><?php echo $this->lang->line('knowledge_tab_leads'); ?></a></li><?php } ?>
+                <?php if ($showTopicHits) { ?><li><a href="#tabs-3"><?php echo $this->lang->line('knowledge_tab_references'); ?></a></li><?php } ?>
+                <?php if ($showSameContext) { ?><li><a href="#tabs-4"><?php echo $this->lang->line('knowledge_tab_same_context'); ?></a></li> <?php } ?>
+                <?php if ($showSubTopics) { ?><li><a href="#tabs-5"><?php echo $this->lang->line('knowledge_tab_subtopic'); ?></a></li> <?php } ?>
             </ul>
 
             <div id="tabs-1" class="ui-corner-all">
                 <div class="panel">
-                    <div class="panelhead">Copernicus local cluster view for topic:: <b><?php echo $topicDetail['topic']; ?></b> in the context of <b><?php echo $topicDetail['context']; ?></b></div>
+                    <div class="panelhead"><?php echo $this->lang->line('knowledge_copernicus'); ?>: <b><?php echo $topicDetail['topic']; ?></b> in the context of <b><?php echo $topicDetail['context']; ?></b></div>
                     <div class="panelcontent"  style="height:100%;min-height: 400px;">
                         <div id="infovis" style="width:95%;height:100%"></div>
                         <div id="log"></div>

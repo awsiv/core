@@ -18,7 +18,7 @@ if ($result['meta']['count'] > 0) {
                 foreach ($variables['header'] as $key => $value) {
                     if (!is_array($value)) {
                         if (strtolower($key) == "lastseen" || strtolower($key) == "time")
-                            array_push($temp, date('D F d h:m:s Y', $row[$value]));
+                            array_push($temp, getDateStatus($row[$value]));
                         else
                             array_push($temp, $row[$value]);
                     }

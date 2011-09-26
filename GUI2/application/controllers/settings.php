@@ -258,7 +258,7 @@ class Settings extends Cf_Controller {
             } else {
                 $form_data = array(
                     'tooltips' => set_value('tooltips'),
-                     'num_rows' => set_value('num_rows')
+                     'num_rows' => set_value('num_rows',50)
                 );
                 $data = array_merge($form_data, $data);
             }
@@ -266,7 +266,7 @@ class Settings extends Cf_Controller {
          }else{
                $form_data = array(
                     'tooltips' => set_value('tooltips'),
-                   'num_rows' => set_value('num_rows'),
+                   'num_rows' => set_value('num_rows',50),
                    'username'=>$user
                    );
                // run insert model to write data to db

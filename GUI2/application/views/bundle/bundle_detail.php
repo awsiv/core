@@ -2,19 +2,19 @@
     <div class="outerdiv">
         <div id="custom-tabs" style="margin:15px;">
             <ul>
-                <li><a href="#tabs-1">Bundle Details</a></li>
-                <li><a href="#tabs-2">Bundles using this bundle</a></li>
-                <li><a href="#tabs-3">All Bundles</a></li>
+                <li><a href="#tabs-1"><?php echo $this->lang->line('bundle_tab_details'); ?></a></li>
+                <li><a href="#tabs-2"><?php echo $this->lang->line('bundle_tab_bundle_using'); ?></a></li>
+                <li><a href="#tabs-3"><?php echo $this->lang->line('bundle_tab_all_bundle'); ?></a></li>
             </ul>
             <div id="tabs-1" class="ui-corner-all">
                 <div class="panel">
 
                     <div class="panelcontent">
 
-                        <p class="title">Bundle definition of <?php echo $bundle ?></p>
+                        <p class="title"><?php echo $this->lang->line('bundle_definition_of'); ?> <?php echo $bundle ?></p>
 
-                        <p><b>Name:</b> <span id="bundle"><?php echo $bundle ?></span></p>
-                        <p><b>Arguments:</b> 
+                        <p><b><?php echo $this->lang->line('bundle_name'); ?>:</b> <span id="bundle"><?php echo $bundle ?></span></p>
+                        <p><b><?php echo $this->lang->line('bundle_arguments'); ?>:</b> 
                             <?php echo implode(', ', (array)$args) ?>
                         </p>
 
@@ -22,11 +22,11 @@
 
                             <table class="bundlelist-table">
                                 <tr>
-                                    <th scope="col">HANDLE</th>
-                                    <th scope="col">COMMENT</th>
+                                    <th scope="col"><?php echo $this->lang->line('bundle_handle'); ?></th>
+                                    <th scope="col"><?php echo $this->lang->line('bundle_comment'); ?></th>
                                 </tr>
                                 <tr>
-                                    <th scope="host-class" colspan="2">Host classes using this bundle </th>
+                                    <th scope="host-class" colspan="2"><?php echo $this->lang->line('bundle_host_class'); ?> </th>
                                 </tr>
 
                                 <?php if (is_array($classes) && !empty($classes)) {
@@ -44,7 +44,7 @@
                                 <?php } ?>
 
                                 <tr>
-                                    <th scope="promise" colspan="2">Promises in this bundle </th>
+                                    <th scope="promise" colspan="2"><?php echo $this->lang->line('bundle_promise'); ?></th>
                                 </tr>
 
                                 <?php if (is_array($list) && !empty($list)) {
@@ -62,12 +62,6 @@
                                 <?php } ?>
 
                             </table>
-
-
-
-
-
-
                         </div>
 
                     </div>
@@ -77,7 +71,7 @@
             <div id="tabs-2" class="ui-corner-all">      
                 <table class="bundlelist-table">
                     <tr>
-                        <th scope="col">Bundles</th>
+                        <th scope="col"><?php echo $this->lang->line('bundle_bundle'); ?></th>
                     </tr>
 
                     <?php if (is_array($others) && !empty($others)) {
@@ -98,7 +92,7 @@
 
                 <table class="bundlelist-table">
                     <tr>
-                        <th scope="col">ALL BUNDLE</th>
+                        <th scope="col"><?php echo $this->lang->line('bundle_tab_all_bundle'); ?></th>
                     </tr>
 
 

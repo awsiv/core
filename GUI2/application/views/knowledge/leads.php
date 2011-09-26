@@ -1,5 +1,5 @@
 <div>
-    <h1><b>Insight, leads and perspectives:</b></h1>
+    <h1><b><?php echo $this->lang->line('knowledge_insight_leads'); ?>:</b></h1>
     <div style="margin-left: 12px;">
         <ul>
             <?php foreach ((array) $topicLeads as $lead) {

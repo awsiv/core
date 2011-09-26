@@ -2,11 +2,11 @@
     <div class="outerdiv">
         <div id="custom-tabs" style="margin:15px;">
             <ul>
-                <li><a href="#tabs-1">Definition</a></li>
-                <li><a href="#tabs-2">Leads</a></li>
-                <li><a href="#tabs-3">Same Bundle</a></li>
-                <li><a href="#tabs-4">Same Promiser</a></li>
-                <li><a href="#tabs-5">Same Type</a></li>
+                <li><a href="#tabs-1"><?php echo $this->lang->line('promise_tab_definition'); ?></a></li>
+                <li><a href="#tabs-2"><?php echo $this->lang->line('promise_tab_leads'); ?></a></li>
+                <li><a href="#tabs-3"><?php echo $this->lang->line('promise_tab_same_bundle'); ?></a></li>
+                <li><a href="#tabs-4"><?php echo $this->lang->line('promise_tab_same_promiser'); ?></a></li>
+                <li><a href="#tabs-5"><?php echo $this->lang->line('promise_tab_same_type'); ?></a></li>
 
             </ul>
             <div id="tabs-1" class="ui-corner-all">
@@ -14,50 +14,50 @@
                 <div class="panelcontent">
                     <table class="bundlelist-table">
                         <tr>
-                            <th scope="col" colspan="2">Promise definition</th>
+                            <th scope="col" colspan="2"><?php echo $this->lang->line('header_promise_definition'); ?></th>
                         </tr>
                         <tr>
-                            <td>Belonging to agent bundle</td>
+                            <td><?php echo $this->lang->line('promise_belong_to_bundle'); ?></td>
                             <td><a href="<?php echo site_url(); ?>/bundle/details/bundle/<?php echo urlencode($promise['bundlename']); ?>/type/<?php echo urlencode($promise['bundletype']); ?>"><?php echo $promise['bundlename']; ?></a></td>
                         </tr>
 
                         <tr>
-                            <td>Reference handle</td>
+                            <td><?php echo $this->lang->line('promise_reference_handle'); ?></td>
                             <td><a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo urlencode($promise['handle']); ?>"><?php echo $promise['handle']; ?></a></td>
                         </tr>
 
                         <tr>
-                            <td>Affected object (promiser)</td>
+                            <td><?php echo $this->lang->line('promise_affected_object'); ?></td>
                             <td><a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo urlencode($promise['promiser']); ?>"><?php echo $promise['promiser']; ?></a></td>
                         </tr>
 
                         <tr>
-                            <td>Stakeholders (promisees)</td>
+                            <td><?php echo $this->lang->line('promise_stakeholder'); ?></td>
                             <td><?php echo $promise['promisee']; ?></td>
                         </tr>
 
                         <tr>
-                            <td>Comment on original intention</td>
+                            <td><?php echo $this->lang->line('promise_comment_intention'); ?></td>
                             <td><?php echo $promise['comment']; ?></td>
                         </tr>
 
                         <tr>
-                            <td>Promise is about</td>
+                            <td><?php echo $this->lang->line('promise_about'); ?></td>
                             <td><a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo urlencode($promise['promise_type']); ?>"><?php echo $promise['promise_type']; ?></a></td>
                         </tr>
 
                         <tr>
-                            <td>Applies in the class context</td>
+                            <td><?php echo $this->lang->line('promise_class_context'); ?></td>
                             <td><a href="<?php echo site_url(); ?>/knowledge/knowledgeSearch/topic/<?php echo urlencode($promise['class_context']); ?>"><?php echo $promise['class_context']; ?></a></td>
                         </tr>
 
                         <tr>
-                            <td>Defined in file</td>
+                            <td><?php echo $this->lang->line('promise_defined_file'); ?></td>
                             <td><?php echo $promise['file']; ?></td>
                         </tr>
 
                         <tr >
-                            <th scope="blue" colspan="2">Body of the promise</th>
+                            <th scope="blue" colspan="2"><?php echo $this->lang->line('header_body_promise'); ?></th>
                         </tr>
 
                         <?php 
@@ -72,7 +72,7 @@
                                  <?php } ?>
                             </tr>
                         <?php } }else{
-                            echo "<tr><td colspan=\"2\">Body definition was not found</td></tr>";
+                            echo "<tr><td colspan=\"2\">". $this->lang->line('promise_body_not_found')."</td></tr>";
                         }?>
                     </table>                 
                 </div>
@@ -89,7 +89,7 @@
 
                 <table class="bundlelist-table">
                     <tr>
-                        <th scope="col">Other promises in bundle <a href="<?php echo site_url(); ?>/bundle/details/bundle/<?php echo urlencode($mybundle); ?>"><span id="bundle"><?php echo $mybundle; ?></span></a></th>
+                        <th scope="col"><?php echo $this->lang->line('promise_other_promise'); ?> <a href="<?php echo site_url(); ?>/bundle/details/bundle/<?php echo urlencode($mybundle); ?>"><span id="bundle"><?php echo $mybundle; ?></span></a></th>
                     </tr>
 
 
@@ -105,7 +105,7 @@
 
                 <table class="bundlelist-table">
                     <tr>
-                        <th scope="col">Other promises by promiser</th>
+                        <th scope="col"><?php echo $this->lang->line('promise_other_promiser'); ?></th>
                     </tr>
 
 
@@ -120,7 +120,7 @@
 
                 <table class="bundlelist-table">
                     <tr>
-                        <th scope="col">Other promises of type <?php echo $type ?></th>
+                        <th scope="col"><?php echo $this->lang->line('promise_other_promiser_type'); ?> <?php echo $type ?></th>
                     </tr>
 
 
