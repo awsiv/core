@@ -30,7 +30,7 @@
         elementtext:"",
         _init: function() {
             var self=this;
-            //self.cfui.searchform.find('input[type="text"]').focusout();
+            self.options.url  = self.options.baseUrl + self.options.url;
            
         },
         createhostfinder:function()

@@ -1,15 +1,16 @@
-<?php //echo $breadCrumbUrl;              ?>
+<?php //echo $breadCrumbUrl;               ?>
 <div id="bodyreport" class="outerdiv grid_12">
 
     <div id="reportpanel" class="innerdiv">
-        <p class="title"><?php echo $report_title; echo (isset($hostname)&&($hostname!=""))?" for ".$hostname:""?></p>
+        <p class="title"><?php echo $report_title;
+echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : "" ?></p>
         <div class="reporthead">
             <div class="grid_8">
                 <a href="<?php echo $report_link ?>" class="icons pdf showqtip" title="Generate pdf report"></a>
                 <a href="<?php echo $email_link ?>" id="send_mail" class="icons email showqtip" title="Send this report as email"></a>
                 <!--<a href="<?php echo site_url('search/index/report/' . $report_title) ?>" id="advsearch">Advance search</a>-->
-                <?php echo anchor('#', 'Select host', array('id' => 'findhost', 'title' => 'Report for another host', 'class' => 'showqtip')) ?>
-                &nbsp;&nbsp; &nbsp;&nbsp;<?php echo anchor('widget/allreports', 'Select report', array('id' => 'findreport', 'title' => 'Other Reports','class'=>'showqtip')) ?>
+<?php echo anchor('#', 'Select host', array('id' => 'findhost', 'title' => 'Report for another host', 'class' => 'showqtip')) ?>
+                &nbsp;&nbsp; &nbsp;&nbsp;<?php echo anchor('widget/allreports', 'Select report', array('id' => 'findreport', 'title' => 'Other Reports', 'class' => 'showqtip')) ?>
             </div>
             <div class="grid_4" style="text-align: right;">
                 <div><a href="#" id="savesearch" class="showqtip" title="save this search for future use"><span class="ui-icon-triangle-1-s"></span>Save this search</a></div>
@@ -39,7 +40,7 @@
             <div id="filterdialog" class="hidden"></div>
             <div class="tables tablesfixed">
                 <?php
-                 include_once ($resultView.'.php');
+                include_once ($resultView . '.php');
                 ?> 
             </div>
         </div>
@@ -121,12 +122,11 @@
             'baseUrl':'<?php echo site_url() ?>',
             'report':'<?php echo $hostfinderparams ?>',
             complete:function(event,data){
-                //console.log('/search/index/host/'+data.selectedhost+'/report/'+data.report)
                 location.replace('<?php echo site_url() ?>/search/index/host/'+data.selectedhost+'/'+data.report);
             }
         });
         
-        $('#findreport').reportfinder(<?php echo (isset($hostkey)&&($hostkey!=""))?"{ allhost:false,hostkey:\"$hostkey\"}":"{baseUrl: '" .site_url()."'}" ?>);
+        $('#findreport').reportfinder(<?php echo (isset($hostkey) && ($hostkey != "")) ? "{baseUrl:'" . site_url() . "',allhost:false,hostkey:\"$hostkey\"}" : "{baseUrl: '" . site_url() . "'}" ?>);
         
         var $dialog = $('#dialog');
         

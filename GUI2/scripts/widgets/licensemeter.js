@@ -20,7 +20,6 @@ displaytext:function(){
    //var startdate=$('<span class="startdate">');
    //var expirydate=$('<span class="enddate">');
    //this.element.addClass('textalignright');
-   console.log(this.options.daysleft);
    if(this.options.daysleft > 0){
    value.text(this.options.daysleft+" Days remaining").appendTo(this.element.parent());
    }else{
