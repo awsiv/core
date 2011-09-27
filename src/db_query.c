@@ -49,6 +49,7 @@ return true;
 }
 
 /*****************************************************************************/
+
 struct Item *CFDB_GetLastseenCache(void)
 
 { bson query,field;
