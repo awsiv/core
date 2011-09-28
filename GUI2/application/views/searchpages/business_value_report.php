@@ -3,7 +3,7 @@
     <div class="panelhead"><?php echo $report_type ?> query</div><div class="panelcontent">
         <form method="post" action="<?php echo site_url('search') ?>">
             <p>Date:<input class="searchfield" type="text" name="days" ></p>
-            <p>Host group: (.*+[])
+            <p>Host class: (.*+[])
                 <a href="<?php echo site_url('widget/allclasses') ?>" id="bphghelp" class="help" 
                    title="<strong>SOFT CLASSES</strong> or <strong> HARD CLASSES</strong> 
                    with combination of regular expression as input, To open <strong>classfinder</strong> click me!">Help ?</a>

@@ -5,7 +5,7 @@
           <p>Remote IP address: (.*+[])<input class="searchfield" type="text" name="address"></p>
           <p>Remote host key:<input class="searchfield" type="text" name="key"></p>
           <p>Minimum hours ago:<p><input class="searchfield" type="text" name="ago"></p>
-          <p>Host group: (.*+[])
+          <p>Host class: (.*+[])
             <a href="<?php echo site_url('widget/allclasses')?>" id="bphghelp" class="help"
              title="<?php echo $this->lang->line('report_hostgp_help');?>">Help ?</a>
           <input class="searchfield" type="text" name="class_regex" size="80" id="hg"></p>

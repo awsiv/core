@@ -7,7 +7,7 @@
             <p>Rvalue or content: (.*+[])<input class="searchfield" type="text" name="rval"></p>
             <p>Type:<p>
                 <select name="type"><option value="s">String</option><option value="sl">String list</option><option value="i">Integer</option><option value="il">Integer list</option><option value="r">Real</option><option value="rl">Real list</option></select>
-            <p>Host group: (.*+[])
+            <p>Host class: (.*+[])
                 <a href="<?php echo site_url('widget/allclasses') ?>" id="bphghelp" class="help"
                    title="<?php echo $this->lang->line('report_hostgp_help'); ?>">Help ?</a>
                 <input class="searchfield" type="text" name="class_regex" size="80" id="hg"></p>

@@ -3,7 +3,7 @@
      <div class="panelcontent">
           <form method="post" action="<?php echo site_url('search')?>">
           <p>Job name: (.*+[])<input class="searchfield" type="text" name="name"></p>
-          <p>Host group: (.*+[])
+          <p>Host class: (.*+[])
             <a href="<?php echo site_url('widget/allclasses')?>" id="bphghelp" class="help"
              title="<?php echo $this->lang->line('report_hostgp_help');?>">Help ?</a>
           <input class="searchfield" type="text" name="class_regex" size="80" id="hg"></p>

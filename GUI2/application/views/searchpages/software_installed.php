@@ -5,7 +5,7 @@
           <p>Name: <input class="searchfield" type="text" name="name" id="packagename"></p>
           <p>Version:<input class="searchfield" type="text" name="version" size="80" id="version"></p>
           <p>Architecture:<input class="searchfield" type="text" name="arch" size="80" id="arc"></p>
-          <p>Host group: (.*+[])
+          <p>Host class: (.*+[])
                <a href="<?php echo site_url('widget/allclasses')?>" id="bphghelp" class="help"
              title="<?php echo $this->lang->line('report_hostgp_help');?>">Help ?</a>
               <input class="searchfield" type="text" id="hg" name="class_regex" size="80"></p>
