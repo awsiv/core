@@ -1998,7 +1998,7 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *l
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,char *lkeyhash)
+struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,char *lkeyhash, char *db)
 
 { bson_buffer b,bb,*sub1,*sub2,*sub3;
  bson qe,field,query;
@@ -2035,11 +2035,11 @@ struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,char *lkeyhash)
 
  if (lkeyhash == NULL || strlen(lkeyhash) == 0)
     {
-    cursor = mongo_find(conn,MONGO_DATABASE,bson_empty(&qe),&field,0,0,CF_MONGO_SLAVE_OK);
+    cursor = mongo_find(conn,db,bson_empty(&qe),&field,0,0,CF_MONGO_SLAVE_OK);
     }
  else
     {
-    cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+    cursor = mongo_find(conn,db,&query,&field,0,0,CF_MONGO_SLAVE_OK);
     bson_destroy(&query);
     }
 

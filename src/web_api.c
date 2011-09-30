@@ -295,7 +295,7 @@ if (!CFDB_Close(&dbconn))
 void Nova2PHP_summary_meter(char *buffer,int bufsize)
 
 {
- Nova_Meter(NULL,buffer,bufsize);
+ Nova_Meter(NULL,MONGO_DATABASE,buffer,bufsize);
 }
 
 /*****************************************************************************/
@@ -427,7 +427,7 @@ return true;
 void Nova2PHP_meter(char *hostkey,char *buffer,int bufsize)
 
 {
-Nova_Meter(hostkey,buffer,bufsize);
+ Nova_Meter(hostkey,MONGO_DATABASE,buffer,bufsize);
 }
 
 /*****************************************************************************/
