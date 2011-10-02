@@ -73,5 +73,26 @@ int NovaWin_GetEnv(char *varName, char *varContents, int varContentsSz)
   return true;
 }
 
+/*****************************************************************************/
+
+const char *GetWorkdir(void)
+{
+static char workdir[CF_BUFSIZE];
+
+if (!*workdir)
+   {
+   if (NovaWin_GetProgDir(workdir, CF_BUFSIZE - sizeof("Cfengine")))
+      {
+      strcat(workdir, "\\Cfengine");
+      }
+   else
+      {
+      CfOut(cf_error, "", "!! Could not get CFWORKDIR from Windows environment variable, falling b'ack to compile time dir (%s)", WORKDIR);
+      strcpy(workdir, WORKDIR);
+      }
+   }
+
+return workdir;
+}
 
 #endif  /* MINGW */
