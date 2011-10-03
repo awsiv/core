@@ -1345,6 +1345,22 @@ if ((ret = ldap_set_option(NULL, LDAP_OPT_X_TLS_REQUIRE_CERT, &never)) != LDAP_S
    return NULL;
    }
 
+/* Do not chase referrals, it is unlikely that they all use the same
+ * credentials */
+
+int referrals_off = LDAP_OPT_OFF;
+
+if ((ret = ldap_set_option(NULL, LDAP_OPT_REFERRALS, &referrals_off)) != LDAP_SUCCESS)
+   {
+   if (errstr)
+      {
+      *errstr = ldap_err2string(ret);
+      }
+   CfOut(cf_error, "", "Unable to disable LDAP referrals chasing: %s",
+         ldap_err2string(ret));
+   return NULL;
+   }
+
 /* Get a handle to an LDAP connection. */
 
 if ((ret = ldap_initialize(&ld,uri)) != LDAP_SUCCESS)
