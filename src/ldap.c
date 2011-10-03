@@ -1327,9 +1327,6 @@ if (password)
    }
 
 struct berval passwd = { pwdLen, password };
-int zz = 0xffff;
-
-ldap_set_option(NULL, LDAP_OPT_DEBUG_LEVEL, &zz);
 
 /* TLS options need to be set up before opening a connection */
 
