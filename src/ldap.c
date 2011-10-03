@@ -1348,9 +1348,7 @@ if ((ret = ldap_set_option(NULL, LDAP_OPT_X_TLS_REQUIRE_CERT, &never)) != LDAP_S
 /* Do not chase referrals, it is unlikely that they all use the same
  * credentials */
 
-int referrals_off = LDAP_OPT_OFF;
-
-if ((ret = ldap_set_option(NULL, LDAP_OPT_REFERRALS, &referrals_off)) != LDAP_SUCCESS)
+if ((ret = ldap_set_option(NULL, LDAP_OPT_REFERRALS, LDAP_OPT_OFF)) != LDAP_SUCCESS)
    {
    if (errstr)
       {
