@@ -108,7 +108,7 @@ DeleteHubQuery(hq,DeleteHubCacheTotalCompliance);
 
 /*****************************************************************************/
 
-void Nova_Meter(char *search_string,char *db,char *buffer,int bufsize)
+void Nova_Meter(bson *query,char *db,char *buffer,int bufsize)
 
 { double kept = 0,repaired = 0;
  double kept_week = 0,kept_day = 0,kept_hour = 0,kept_comms = 0,kept_anom = 0,kept_perf = 0,kept_other = 0;
@@ -128,7 +128,7 @@ void Nova_Meter(char *search_string,char *db,char *buffer,int bufsize)
     return;
     }
 
- hq = CFDB_QueryMeter(&dbconn,search_string,db);
+ hq = CFDB_QueryMeter(&dbconn,query,db);
 
  CFDB_Close(&dbconn);
 

@@ -294,8 +294,12 @@ if (!CFDB_Close(&dbconn))
 
 void Nova2PHP_summary_meter(char *buffer,int bufsize)
 
-{
- Nova_Meter(NULL,MONGO_DATABASE,buffer,bufsize);
+{ bson query[1];
+
+ bson_empty(query);
+
+ Nova_Meter(query,MONGO_DATABASE,buffer,bufsize);
+ bson_destroy(query);
 }
 
 /*****************************************************************************/
@@ -426,8 +430,22 @@ return true;
 
 void Nova2PHP_meter(char *hostkey,char *buffer,int bufsize)
 
-{
- Nova_Meter(hostkey,MONGO_DATABASE,buffer,bufsize);
+{ bson_buffer bb[1];
+ bson query[1];
+  
+if (hostkey && strlen(hostkey) != 0)
+   {
+   bson_buffer_init(bb);
+   bson_append_string(bb,cfr_keyhash,hostkey);
+   bson_from_buffer(query,bb);
+   }
+else
+   {
+   bson_empty(query);
+   }
+
+Nova_Meter(query,MONGO_DATABASE,buffer,bufsize);
+bson_destroy(query);
 }
 
 /*****************************************************************************/

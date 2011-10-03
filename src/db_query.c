@@ -1998,10 +1998,10 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *l
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,char *lkeyhash, char *db)
+struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query,char *db)
 
 { bson_buffer b,bb,*sub1,*sub2,*sub3;
- bson qe,field,query;
+ bson qe,field;
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3;
  struct HubHost *hh;
@@ -2010,15 +2010,6 @@ struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,char *lkeyhash, char *db
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rcolumn[CF_SMALLBUF];
  int found = false;
   
-/* BEGIN query document */
-
- if (lkeyhash && strlen(lkeyhash) != 0)
-    {
-    bson_buffer_init(&b);
-    bson_append_string(&b,cfr_keyhash,lkeyhash);
-    bson_from_buffer(&query,&b);
-    }
-
 /* BEGIN RESULT DOCUMENT */
 
  bson_buffer_init(&bb);
@@ -2033,16 +2024,8 @@ struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,char *lkeyhash, char *db
  hostnames[0] = '\0';
  addresses[0] = '\0';
 
- if (lkeyhash == NULL || strlen(lkeyhash) == 0)
-    {
-    cursor = mongo_find(conn,db,bson_empty(&qe),&field,0,0,CF_MONGO_SLAVE_OK);
-    }
- else
-    {
-    cursor = mongo_find(conn,db,&query,&field,0,0,CF_MONGO_SLAVE_OK);
-    bson_destroy(&query);
-    }
-
+ cursor = mongo_find(conn,db,query,&field,0,0,CF_MONGO_SLAVE_OK);
+ 
  while (mongo_cursor_next(cursor))  // loops over documents
     {
     bson_iterator_init(&it1,cursor->current.data);

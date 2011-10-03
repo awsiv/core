@@ -347,7 +347,7 @@ struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,
 struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *lscope,char *llval,char *lrval,char *ltype,int reg, char *classRegex);
 struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHash,char *lhandle,char lstatus,int regex, int sort, char *classRegex);
 struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *lhash,char *lhost,char *laddr,time_t lago,int regex,int sort,char *classRegex);
-struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,char *lkeyhash, char *db);
+struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query,char *db);
 struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char *lname,int regex,int sort,char *classRegex);
 struct HubQuery *CFDB_QuerySetuid(mongo_connection *conn,char *keyHash,char *lname,int regex, char *classRegex);
 struct HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lname,int regex, char *classRegex, int sort);
@@ -872,7 +872,7 @@ void Nova_CommandAPI(char *lsdata,char *name,char *handle,char *hostkey,char *cl
 /* scorecards.c */
 
 void Nova_BarMeter(int pos,double kept,double rep,char *name,char *buffer,int bufsize);
-void Nova_Meter(char *hostkey,char *db,char *buffer,int bufsize);
+void Nova_Meter(bson *query,char *db,char *buffer,int bufsize);
 void Nova_GetHourlyData(char *search_string,char *buffer,int bufsize);
 struct Item *Nova_RankHosts(char *search_string,int regex,enum cf_rank_method method,int max_return);
 struct Item *Nova_GreenHosts(void);
@@ -1292,7 +1292,6 @@ struct cf_pscalar
 #define cfr_environment   "env"
 
 #define cfr_netmeasure    "ne"
-
 
 /* Promise DB */
 #define cfp_bundlename    "bn"
