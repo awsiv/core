@@ -14,9 +14,10 @@
 #  include "conf.h"
 #endif
 
-# ifdef HAVE_LIBLDAP
+#ifdef HAVE_LIBLDAP
+#  define LDAP_DEPRECATED 1
 #  include <ldap.h>
-# endif
+#endif
 
 #ifdef HAVE_ACL_H
 # include <acl.h>
