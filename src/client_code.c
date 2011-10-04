@@ -264,7 +264,7 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
 
 #ifdef HAVE_LIBMONGOC
 
-CFDB_SaveLastUpdate(&dbconn,id);
+CFDB_SaveLastUpdate(&dbconn,MONGO_DATABASE,cfr_keyhash,id);
 
 if (dbconnp)
    {

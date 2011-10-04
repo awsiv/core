@@ -181,7 +181,7 @@ CFDB_Close(&dbconn);
 }
 /*****************************************************************************/
 
-void CFDB_SaveHostID(mongo_connection *conn, char *database, char *keyhash,char *ipaddr, char *hostname)
+void CFDB_SaveHostID(mongo_connection *conn, char *database, char *keyField, char *keyhash,char *ipaddr, char *hostname)
 /**
  *  hostname is optional, reverse lookup if not specified
  **/
@@ -203,7 +203,7 @@ void CFDB_SaveHostID(mongo_connection *conn, char *database, char *keyhash,char 
 // locate right host key
 
 bson_buffer_init(&bb);
-bson_append_string(&bb,cfr_keyhash,keyhash);
+bson_append_string(&bb,keyField,keyhash);
 bson_from_buffer(&host_key,&bb);
 
 // ip address - replace array with one el (more later - aging..)
@@ -1712,7 +1712,7 @@ bson_destroy(&cacheType);
 
 /*****************************************************************************/
 
-void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash)
+void CFDB_SaveLastUpdate(mongo_connection *conn, char *database, char *keyField, char *keyhash)
 
 { bson_buffer bb;
   bson_buffer *setObj;
@@ -1721,7 +1721,7 @@ void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash)
 
 // find right host
 bson_buffer_init(&bb);
-bson_append_string(&bb,cfr_keyhash,keyhash);
+bson_append_string(&bb,keyField,keyhash);
 bson_from_buffer(&host_key, &bb);
 
 bson_buffer_init(&bb);
@@ -1733,7 +1733,7 @@ bson_append_int(setObj,cfr_day,(long)time(NULL));
 bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
-mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+mongo_update(conn, database, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 MongoCheckForError(conn,"SaveLastUpdate",keyhash,NULL);
 
 bson_destroy(&setOp);

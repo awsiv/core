@@ -2335,8 +2335,8 @@ if (LICENSES == 0)
 
  if(CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
      {
-     CFDB_SaveHostID(&dbconn,MONGO_DATABASE,keyHash,ipAddr,hostName);
-     CFDB_SaveHostID(&dbconn,MONGO_ARCHIVE,keyHash,ipAddr,hostName);
+     CFDB_SaveHostID(&dbconn,MONGO_DATABASE,cfr_keyhash,keyHash,ipAddr,hostName);
+     CFDB_SaveHostID(&dbconn,MONGO_ARCHIVE,cfr_keyhash,keyHash,ipAddr,hostName);
      CFDB_Close(&dbconn);
      }
  else

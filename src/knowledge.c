@@ -1483,8 +1483,8 @@ void Nova_GenerateTestData(int count)
     
     if(CFDB_Open(&conn,"127.0.0.1",CFDB_PORT))
       {
-      CFDB_SaveHostID(&conn,MONGO_DATABASE,newkeyhash,newaddresses,newhostnames);
-      CFDB_SaveHostID(&conn,MONGO_ARCHIVE,newkeyhash,newaddresses,newhostnames);
+      CFDB_SaveHostID(&conn,MONGO_DATABASE,cfr_keyhash,newkeyhash,newaddresses,newhostnames);
+      CFDB_SaveHostID(&conn,MONGO_ARCHIVE,cfr_keyhash,newkeyhash,newaddresses,newhostnames);
       CFDB_Close(&conn);
       }
 

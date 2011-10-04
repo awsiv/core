@@ -442,11 +442,11 @@ void CFDB_SaveFileChanges(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveFileDiffs(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveBundles(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveValueReport(mongo_connection *conn, char *kH, struct Item *data);
-void CFDB_SaveHostID(mongo_connection *conn, char *database, char *keyhash,char *ipaddr, char *hostname);
+void CFDB_SaveHostID(mongo_connection *conn, char *database, char *keyField, char *keyhash,char *ipaddr, char *hostname);
 void Nova_CheckGlobalKnowledgeClass(char *name,char *key);
 bool GetBsonBool(char *data, char *boolKey, bool *val);
 void BsonToString(char *retBuf, int retBufSz, char *data);
-void CFDB_SaveLastUpdate(mongo_connection *conn, char *keyhash);
+void CFDB_SaveLastUpdate(mongo_connection *conn, char *database, char *keyField, char *keyhash);
 
 struct HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *policy, time_t minGenTime);
 void CFDB_SaveCachedTotalCompliance(mongo_connection *conn, char *policy, int slot, double kept, double repaired, double notkept, int count, time_t genTime);

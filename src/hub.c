@@ -270,6 +270,7 @@ CfOut(cf_inform,"","............................................................
 
 // record client host id (from lastseen) immideatley so we can track failed connection attempts
 // the timestamp is updated when we get response - see UnpackReportBook
+
 Nova_CreateHostID(hostID,peer);
 
 /* Check trust interaction*/
@@ -997,8 +998,8 @@ mongo_connection dbconn;
 
  if (CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
-    CFDB_SaveHostID(&dbconn,MONGO_DATABASE,hostID,ipaddr,NULL);
-    CFDB_SaveHostID(&dbconn,MONGO_ARCHIVE,hostID,ipaddr,NULL);
+    CFDB_SaveHostID(&dbconn,MONGO_DATABASE,cfr_keyhash,hostID,ipaddr,NULL);
+    CFDB_SaveHostID(&dbconn,MONGO_ARCHIVE,cfr_keyhash,hostID,ipaddr,NULL);
     CFDB_Close(&dbconn);
     }
  else
