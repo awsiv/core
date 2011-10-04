@@ -291,7 +291,7 @@ if (!CFDB_Close(&dbconn))
 }
 
 /*****************************************************************************/
-
+#ifdef HAVE_LIBMONGOC
 void Nova2PHP_summary_meter(char *buffer,int bufsize)
 
 { bson query[1];
@@ -301,7 +301,7 @@ void Nova2PHP_summary_meter(char *buffer,int bufsize)
  Nova_Meter(query,MONGO_DATABASE,buffer,bufsize);
  bson_destroy(query);
 }
-
+#endif
 /*****************************************************************************/
 
 int Nova2PHP_summary_report(char *hostkey,char *handle,char *status,int regex,char *classreg,char *returnval,int bufsize)
@@ -427,7 +427,7 @@ return true;
 }
 
 /*****************************************************************************/
-
+#ifdef HAVE_LIBMONGOC
 void Nova2PHP_meter(char *hostkey,char *buffer,int bufsize)
 
 { bson_buffer bb[1];
@@ -447,7 +447,7 @@ else
 Nova_Meter(query,MONGO_DATABASE,buffer,bufsize);
 bson_destroy(query);
 }
-
+#endif
 /*****************************************************************************/
 
 char *Nova2PHP_get_help_text(char *key)

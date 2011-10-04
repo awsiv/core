@@ -872,7 +872,9 @@ void Nova_CommandAPI(char *lsdata,char *name,char *handle,char *hostkey,char *cl
 /* scorecards.c */
 
 void Nova_BarMeter(int pos,double kept,double rep,char *name,char *buffer,int bufsize);
+#ifdef HAVE_LIBMONGOC
 void Nova_Meter(bson *query,char *db,char *buffer,int bufsize);
+#endif
 void Nova_GetHourlyData(char *search_string,char *buffer,int bufsize);
 struct Item *Nova_RankHosts(char *search_string,int regex,enum cf_rank_method method,int max_return);
 struct Item *Nova_GreenHosts(void);
