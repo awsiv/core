@@ -1,4 +1,5 @@
 abs_srcdir=@abs_srcdir@
+MKDIR_P=@mkdir_p@
 
 top_srcdir = $(abs_srcdir)/../../../core
 top_builddir = $(abs_srcdir)/../../../core
