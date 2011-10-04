@@ -107,7 +107,7 @@ DeleteHubQuery(hq,DeleteHubCacheTotalCompliance);
 }
 
 /*****************************************************************************/
-#ifdef HAVE_LIBMONGOC
+
 void Nova_Meter(bson *query,char *db,char *buffer,int bufsize)
 
 { double kept = 0,repaired = 0;
@@ -234,7 +234,7 @@ void Nova_Meter(bson *query,char *db,char *buffer,int bufsize)
  DeleteHubQuery(hq,DeleteHubMeter);
  Join(buffer,"]",bufsize);
 }
-#endif
+
 /*****************************************************************************/
 
 int Nova_GetHostColour(char *lkeyhash)
