@@ -44,6 +44,17 @@ body agent control
 
  track_value => "true";
 
+### Unset LD_LIBRARY_PATH for all distribuitions ###
+
+ hpux::
+  environment => { "SHLIB_PATH=" };
+
+ aix::
+  environment => { "LIBPATH=" };
+
+ !(windows|hpux|aix)::
+  environment => { "LD_LIBRARY_PATH=" };
+
 }
 
 #########################################################
