@@ -39,14 +39,28 @@ if (hostkey && strlen(hostkey) > 0)
    {
    then = 0;
    CFDB_QueryLastUpdate(&dbconn,hostkey,&then);
-   
-   if (then > 0)
+
+   if (CSV)
       {
-      printf("Data from %s last updated %s",hostkey,cf_ctime(&then));
+      if (then > 0)
+         {
+         printf("%s,%s",hostkey,cf_ctime(&then));
+         }
+      else
+         {
+         printf("%s,never",hostkey);
+         }
       }
    else
       {
-      printf("Data from %s have never been collected",hostkey);
+      if (then > 0)
+         {
+         printf("Data from %s last updated %s",hostkey,cf_ctime(&then));
+         }
+      else
+         {
+         printf("Data from %s have never been collected",hostkey);
+         }
       }
    }
 else
@@ -182,17 +196,34 @@ if (tot_hosts == 0)
    }
 // Return current best-knowledge of average compliance for the class of hosts and promises selected
 
-printf("Hosts with promises kept: %.2lf\n"
-       "HOsts with promises not kept: %.2lf\n"
-       "Hosts with promises repaired %.2lf\n"
-       "Total number of hosts: %d\n"
-       "Hosts that didn't report status: %d\n"
-       "Search class: %s\n"
-       "First reports at: %s\n"
-       "Last reports at: %s\n",
-       k_av,n_av,r_av,tot_hosts,code_blue,classreg,
-       cf_strtimestamp_local(from,buf1),
-       cf_strtimestamp_local(to,buf2));
+if (CSV)
+   {
+   printf("%.2lf,"
+          "%.2lf,"
+          "%.2lf,"
+          "%d,"
+          "%d,"
+          "%s,"
+          "%s,"
+          "%s\n",
+          k_av,n_av,r_av,tot_hosts,code_blue,classreg,
+          cf_strtimestamp_local(from,buf1),
+          cf_strtimestamp_local(to,buf2));
+   }
+else
+   {
+   printf("Hosts with promises kept: %.2lf\n"
+          "Hosts with promises not kept: %.2lf\n"
+          "Hosts with promises repaired %.2lf\n"
+          "Total number of hosts: %d\n"
+          "Hosts that didn't report status: %d\n"
+          "Search class: %s\n"
+          "First reports at: %s\n"
+          "Last reports at: %s\n",
+          k_av,n_av,r_av,tot_hosts,code_blue,classreg,
+          cf_strtimestamp_local(from,buf1),
+          cf_strtimestamp_local(to,buf2));
+   }
 
 DeleteHubQuery(hq,DeleteHubPromiseCompliance);
 
@@ -413,12 +444,22 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,classreg,true);
 
-printf("%25s %30s %20s %s\n","Hostname","Package","Version","Arch");
+if (!CSV)
+   {
+   printf("%25s %30s %20s %s\n","Hostname","Package","Version","Arch");
+   }
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hs = (struct HubSoftware *)rp->item;
-   printf("%25s %30s %20s %s\n",hs->hh->hostname,hs->name,hs->version,Nova_LongArch(hs->arch));
+   if (CSV)
+      {
+      printf("%s,%s,%s,%s\n",hs->hh->hostname,hs->name,hs->version,Nova_LongArch(hs->arch));
+      }
+   else
+      {
+      printf("%25s %30s %20s %s\n",hs->hh->hostname,hs->name,hs->version,Nova_LongArch(hs->arch));
+      }
    }
 
 DeleteHubQuery(hq,DeleteHubSoftware);
@@ -453,13 +494,23 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
 
-printf("Host  Class/Context  Probability  Uncertainty Last-Defined\n");
+if (!CSV)
+   {
+   printf("Host  Class/Context  Probability  Uncertainty Last-Defined\n");
+   }
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hc = (struct HubClass *)rp->item;
-   
-   printf("%s %s %lf %lf %ld\n",hc->hh->hostname,hc->class,hc->prob,hc->dev,hc->t);
+
+   if (CSV)
+      {
+      printf("%s,%s,%lf,%lf,%ld\n",hc->hh->hostname,hc->class,hc->prob,hc->dev,hc->t);
+      }
+   else
+      {
+      printf("%s %s %lf %lf %ld\n",hc->hh->hostname,hc->class,hc->prob,hc->dev,hc->t);
+      }
    }
 
 DeleteHubQuery(hq,DeleteHubClass);
@@ -493,7 +544,10 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,classreg);
 
-printf("%25s %14s %17s %s\n","Host","Type","lval","rval");
+if (!CSV)
+   {
+   printf("%25s %14s %17s %s\n","Host","Type","lval","rval");
+   }
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
@@ -530,8 +584,15 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       {
       snprintf(rvalBuf,sizeof(rvalBuf),"%s",(char *)hv->rval);
       }
-   
-   printf("%25s %14s %17s %s\n",hv->hh->hostname,typestr,hv->lval,rvalBuf);   
+
+   if (CSV)
+      {
+      printf("%s,%s,%s,%s\n",hv->hh->hostname,typestr,hv->lval,rvalBuf);
+      }
+   else
+      {
+      printf("%25s %14s %17s %s\n",hv->hh->hostname,typestr,hv->lval,rvalBuf);
+      }
    }
 
 DeleteHubQuery(hq,DeleteHubVariable);
@@ -574,12 +635,23 @@ int Nova2Txt_compliance_report(char *hostkey,char *version,time_t t,int k,int nk
 
 hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,true,classreg);
 
-printf("%25s %7s %10s %10s %s\n","Host","%Kept", "%Repaired", "%Not-Kept","Last-verified");
+if (!CSV)
+   {
+   printf("%25s %7s %10s %10s %s\n","Host","%Kept", "%Repaired", "%Not-Kept","Last-verified");
+   }
  
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    ht = (struct HubTotalCompliance *)rp->item;
-   printf("%25s %6d%% %9d%% %9d%% %s\n",ht->hh->hostname,ht->kept,ht->repaired,ht->notkept,cf_strtimestamp_local(ht->t,buffer));
+
+   if (CSV)
+      {
+      printf("%s,%d%%,%d%%,%d%%,%s\n",ht->hh->hostname,ht->kept,ht->repaired,ht->notkept,cf_strtimestamp_local(ht->t,buffer));
+      }
+   else
+      {
+      printf("%25s %6d%% %9d%% %9d%% %s\n",ht->hh->hostname,ht->kept,ht->repaired,ht->notkept,cf_strtimestamp_local(ht->t,buffer));
+      }
    }
 
  DeleteHubQuery(hq,DeleteHubTotalCompliance);
@@ -618,13 +690,23 @@ if (!status)  // any
 
 hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,true,classreg);
 
-printf("%25s %50s %10s %s %s %s\n","Host","Promise-handle","Last state","E(Q)", "Sigma","Last-data");
+if (!CSV)
+   {
+   printf("%25s %50s %10s %s %s %s\n","Host","Promise-handle","Last state","E(Q)", "Sigma","Last-data");
+   }
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hp = (struct HubPromiseCompliance *)rp->item;
-   
-   printf("%25s %50s %10s %.2lf %.2lf %s\n",hp->hh->hostname,hp->handle,Nova_LongState(hp->status),hp->e,hp->d,cf_strtimestamp_local(hp->t,buffer));
+
+   if (CSV)
+      {
+      printf("%s,%s,%s,%.2lf,%.2lf,%s\n",hp->hh->hostname,hp->handle,Nova_LongState(hp->status),hp->e,hp->d,cf_strtimestamp_local(hp->t,buffer));
+      }
+   else
+      {
+      printf("%25s %50s %10s %.2lf %.2lf %s\n",hp->hh->hostname,hp->handle,Nova_LongState(hp->status),hp->e,hp->d,cf_strtimestamp_local(hp->t,buffer));
+      }
    }
  
  DeleteHubQuery(hq,DeleteHubPromiseCompliance);
@@ -662,8 +744,10 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     }
 hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,true,classreg);
 
-printf("%25s %11s %25s %10s %7s %12s %10s %s\n","Seen-on-host","Direction","Remote-host", "Remote-IP", "Hrs-ago", "Avg-interval", "Uncertainty", "Remote-key");
-
+if (!CSV)
+   {
+   printf("%25s %11s %25s %10s %7s %12s %10s %s\n","Seen-on-host","Direction","Remote-host", "Remote-IP", "Hrs-ago", "Avg-interval", "Uncertainty", "Remote-key");
+   }
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
@@ -680,11 +764,22 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
       }
    
    then = hl->t;
-   
-   printf("%25s %11s %25s %10s %7.2lf %12.2lf %10.2lf %s\n",
+
+   if (CSV)
+      {
+      printf("%s,%s,%s,%s,%.2lf,%.2lf,%.2lf,%s\n",
             hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->ipaddr,
             hl->hrsago,hl->hrsavg,hl->hrsdev,
             hl->rhost->keyhash);
+
+      }
+   else
+      {
+      printf("%25s %11s %25s %10s %7.2lf %12.2lf %10.2lf %s\n",
+            hl->hh->hostname,inout,hl->rhost->hostname,hl->rhost->ipaddr,
+            hl->hrsago,hl->hrsavg,hl->hrsdev,
+            hl->rhost->keyhash);
+      }
    }
 
 DeleteHubQuery(hq,DeleteHubLastSeen);
@@ -718,8 +813,10 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     }
 hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,true,classreg);
 
-printf("%25s %25s %10s %7s %12s %10s %s\n","Seen-on-host","Remote-host", "Remote-IP", "Hrs-ago", "Avg-interval", "Uncertainty", "Remote-key");
-
+if (!CSV)
+   {
+   printf("%25s %25s %10s %7s %12s %10s %s\n","Seen-on-host","Remote-host", "Remote-IP", "Hrs-ago", "Avg-interval", "Uncertainty", "Remote-key");
+   }
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
@@ -735,10 +832,21 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
    if (then < now - CF_HUB_HORIZON)
       {
-      printf("%25s %25s %10s %7.2lf %12.2lf %10.2lf %s\n",
+      if (CSV)
+         {
+         printf("%s,%s,%s,%.2lf,%.2lf,%.2lf,%s\n",
              hl->hh->hostname,hl->rhost->hostname,hl->rhost->ipaddr,
              hl->hrsago,hl->hrsavg,hl->hrsdev,
              hl->rhost->keyhash);
+
+         }
+      else
+         {
+         printf("%25s %25s %10s %7.2lf %12.2lf %10.2lf %s\n",
+             hl->hh->hostname,hl->rhost->hostname,hl->rhost->ipaddr,
+             hl->hrsago,hl->hrsavg,hl->hrsdev,
+             hl->rhost->keyhash);
+         }
       }
    }
 
@@ -768,13 +876,23 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,classreg);
 
-printf("%25s %s\n","Host","File");
+if (!CSV)
+   {
+   printf("%25s %s\n","Host","File");
+   }
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hS = ( struct HubSetUid *)rp->item;
-   
-   printf("%25s %s\n",hS->hh->hostname,hS->path);
+
+   if (CSV)
+      {
+      printf("%s,%s\n",hS->hh->hostname,hS->path);
+      }
+   else
+      {
+      printf("%25s %s\n",hS->hh->hostname,hS->path);
+      }
    }
 
 DeleteHubQuery(hq,DeleteHubSetUid);
@@ -901,19 +1019,36 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 
 hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,true,classreg,false);
 
-printf("%25s %40s, %20s\n","Host","File", "Changed-on", "Note");
+if (!CSV)
+   {
+   printf("%s,%s,%s\n","Host","File", "Changed-on", "Note");
+   }
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hC = (struct HubFileChanges *)rp->item;
-   
-   if (strcmp(hC->nid,CF_NONOTE) == 0)
+
+   if (CSV)
       {
-      printf("%25s %40s  %20s\n",hC->hh->hostname,hC->path,cf_strtimestamp_local(hC->t,buffer));
+      if (strcmp(hC->nid,CF_NONOTE) == 0)
+         {
+         printf("%s,%s,%s\n",hC->hh->hostname,hC->path,cf_strtimestamp_local(hC->t,buffer));
+         }
+      else
+         {
+         printf("%s,%s,%s,%s\n",hC->hh->hostname,hC->path,cf_strtimestamp_local(hC->t,buffer),hC->nid);
+         }
       }
    else
       {
-      printf("%25s %40s %20s %s\n",hC->hh->hostname,hC->path,cf_strtimestamp_local(hC->t,buffer),hC->nid);
+      if (strcmp(hC->nid,CF_NONOTE) == 0)
+         {
+         printf("%25s %40s  %20s\n",hC->hh->hostname,hC->path,cf_strtimestamp_local(hC->t,buffer));
+         }
+      else
+         {
+         printf("%25s %40s %20s %s\n",hC->hh->hostname,hC->path,cf_strtimestamp_local(hC->t,buffer),hC->nid);
+         }
       }
    }
 
@@ -955,8 +1090,26 @@ hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,true,classreg,fa
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hd = (struct HubFileDiff *)rp->item;
-   
-   printf("%s file %s changed on %ld\n%s\n",hd->hh->hostname,hd->path,hd->t,Nova_FormatDiff(hd->diff));
+
+   if (CSV)
+      {
+      char *sp;
+      // If the formatted difference contains new lines, we will break csv formatting, so purge
+
+      for (sp = hd->diff; *sp != '\0'; sp++)
+         {
+         if (*sp == '\n')
+            {
+            *sp = ';';
+            }
+         }
+      
+      printf("%s,%s,%ld,%s\n",hd->hh->hostname,hd->path,hd->t,Nova_FormatDiff(hd->diff));
+      }
+   else
+      {
+      printf("%s file %s changed on %ld\n%s\n",hd->hh->hostname,hd->path,hd->t,Nova_FormatDiff(hd->diff));
+      }
    }
 
 DeleteHubQuery(hq,DeleteHubFileDiff);
