@@ -34,8 +34,8 @@ class Settings extends Cf_Controller {
         $this->form_validation->set_rules('mode', 'Authentication mode', 'xss_clean|trim|required');
         $this->form_validation->set_rules('host', 'host', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
         $this->form_validation->set_rules('base_dn', 'base dn', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
-        $this->form_validation->set_rules('login_attribute', 'login attribute', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
-        $this->form_validation->set_rules('users_directory', 'users directory', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
+        $this->form_validation->set_rules('login_attribute', 'login attribute', 'xss_clean|trim' . $required_if_ldap);
+        $this->form_validation->set_rules('users_directory', 'users directory', 'xss_clean|trim' . $required_if_ldap);
         $this->form_validation->set_rules('active_directory_domain', 'active directory domain', 'xss_clean|trim' . $required_if_ad);
         $this->form_validation->set_rules('member_attribute', 'memberof attribute', 'xss_clean|trim' . $required_if_ldap);
         $this->form_validation->set_rules('fall_back_for', 'valid group', 'callback_required_valid_group');
@@ -95,13 +95,14 @@ class Settings extends Cf_Controller {
             }
             $this->template->load('template', 'appsetting/missionportalpref', $data);
         } else {
+           
             $form_data = array(
                 'appemail' => set_value('appemail'),
                 'mode' => set_value('mode'),
                 'host' => set_value('host'),
                 'base_dn' => set_value('base_dn'),
-                'login_attribute' => set_value('login_attribute'),
-                'users_directory' => set_value('users_directory'),
+                'login_attribute' => $this->input->post('mode')=='active_directory'?'':set_value('login_attribute'),
+                'users_directory' => $this->input->post('mode')=='active_directory'?'':set_value('users_directory'),
                 //  	'active_directory' => set_value('active_directory'),
                 'active_directory_domain' => set_value('active_directory_domain'),
                 'member_attribute' => set_value('member_attribute'),
@@ -195,7 +196,11 @@ class Settings extends Cf_Controller {
         $this->auth_ldap->set_host($this->input->post('host'));
         $this->auth_ldap->set_basedn($this->input->post('basedn'));
         $this->auth_ldap->set_mode($this->input->post('mode'));
-        $this->auth_ldap->set_login_attr($this->input->post('login_attr'));
+        if($this->auth_ldap->get_mode()=='active_directory'&&$this->input->post('login_attr')==''){
+            $this->auth_ldap->set_login_attr('sAMAccountName');
+        }else{
+            $this->auth_ldap->set_login_attr($this->input->post('login_attr'));
+        }
         $this->auth_ldap->set_user_dir($this->input->post('user_dir'));
         $this->auth_ldap->set_member_attr($this->input->post('member_attr'));
         $this->auth_ldap->set_ad_domain($this->input->post('addomain'));
@@ -210,6 +215,7 @@ class Settings extends Cf_Controller {
         
         $this->auth_ldap->set_error_delimiters('<p class="error">','</p>');
         $message.=$this->auth_ldap->errors();
+        $message.=$this->auth_ldap->warnings();
         
         $message.="</div>";
         echo $message;

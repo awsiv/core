@@ -1,8 +1,8 @@
 <?php
 
 class test_ldap_libraries extends CodeIgniterUnitTestCase {
-private $username='sudhir';
-private $password='q1w2e3r4t5';//'q1w2e3r4t5'//password//Cf3ng1n3;
+private $username='sudhir';//'sudhir';
+private $password='Cf3ng1n3';//'q1w2e3r4t5';//'q1w2e3r4t5'//password//Cf3ng1n3;
 private $dn='CN=Sudhir Pandey,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com';
     public function __construct() {
         parent::__construct();
@@ -34,18 +34,18 @@ private $dn='CN=Sudhir Pandey,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com';
        $this->_ci->auth_ldap->set_basedn('dc=windows1,dc=test,dc=cfengine,dc=com');
        $this->_ci->auth_ldap->set_login_attr('sAMAccountName');
        $this->_ci->auth_ldap->set_ad_domain('windows1.test.cfengine.com');
+       $this->_ci->auth_ldap->set_user_dir('');
        $this->_ci->auth_ldap->set_mode('active_directory');
        $this->password='Cf3ng1n3';
    }
    
      public function test_ldap_settings(){
         $this->setup_ldap();
-        //$this->setup_ldap();
         $settings=array('host'=>$this->_ci->auth_ldap->get_host(),
                               'base_dn'=>$this->_ci->auth_ldap->get_basedn(),
                               'login_attr'=>$this->_ci->auth_ldap->get_login_attr(),
                                'user_dir'=>$this->_ci->auth_ldap->get_user_dir(),
-                                'member_attr'=>$this->_ci->auth_ldap->get_member_attr(),
+                               'member_attr'=>$this->_ci->auth_ldap->get_member_attr(),
                                'ad_domian'=>$this->_ci->auth_ldap->get_ad_domain() ,
                                'mode'=>$this->_ci->auth_ldap->get_mode(),
                                'encryption'=>$this->_ci->auth_ldap->get_encryption()

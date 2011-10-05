@@ -163,6 +163,8 @@ $config['email_type'] = 'html';
 	 * Info End Delimiter
 	 **/
 	$config['info_end_delimiter'] = '</p>';
+        
+        
 	
 /* End of file ion_auth.php */
 /* Location: ./system/application/config/ion_auth.php */

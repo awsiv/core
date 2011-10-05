@@ -21,6 +21,8 @@ class Auth_Ldap {
     protected $ad_domain;
     protected $encryption;
     protected $cause= array();
+    protected $warnings=array();
+    protected $warning_cause=array();
 
     function __construct() {
         $this->ci = & get_instance();
@@ -34,7 +36,8 @@ class Auth_Ldap {
         //$this->ci->load->config('auth_ldap');
         $this->error_start_delimiter = $this->ci->config->item('error_start_delimiter', 'ion_auth');
         $this->error_end_delimiter = $this->ci->config->item('error_end_delimiter', 'ion_auth');
-
+        $this->warning_start_delimiter='<p class="warning">';
+        $this->warning_end_delimiter='</p>';
         // Load the language file
          $this->ci->lang->load('ion_auth');
 
@@ -84,12 +87,13 @@ class Auth_Ldap {
         $this->member_attribute = trim($appsettings->member_attribute);
 
         if ($this->use_ad && $this->login_attribute == '') {
-            $this->login_attribute = 'sAMAccountname';
+            $this->login_attribute = 'sAMAccountName';
         } elseif (!$this->use_ad && $this->login_attribute == '') {
             $this->login_attribute = 'uid';
         }
         
         $this->users_directory = $appsettings->users_directory;
+       
         $this->renamedfields = array(strtolower($this->login_attribute) => 'name', 'mail' => 'email', 'cn' => 'displayname', 'givenname' => 'name');
        
         /**
@@ -266,9 +270,9 @@ class Auth_Ldap {
 
         $roles = array();
         if ($this->use_ad) {
-            $roles = $this->get_role_for_user($username, $password, $dn);
+            $roles = $this->get_role_for_user($username, $password, $dn,true);
         } else {
-            $roles = $this->get_role_for_user($id, $password);
+            $roles = $this->get_role_for_user($id, $password,null,true);
         }
 
         return array('cn' => $cn, 'dn' => $dn, 'id' => $id,
@@ -434,7 +438,7 @@ class Auth_Ldap {
         if ($this->use_ad) {
             $filter = "(&(objectCategory=person)(objectClass=user)(cn=*)(sAMAccountName=*))";
             $fields = "$this->login_attribute,cn,mail";
-            $dn = $this->users_directory . ',' . $this->basedn;
+            $dn = $this->users_directory==''?$this->basedn:$this->users_directory . ',' . $this->basedn;;
             if (preg_match('/^(\w+\.)+\w{2,5}$/', $this->ad_domain)) {
                 $binddn = $username . '@' . $this->ad_domain;
             } else {
@@ -463,7 +467,7 @@ class Auth_Ldap {
         if ($this->use_ad) {
             $filter = '(&(objectCategory=group))';
             $fields = "sAMAccountName";
-            $dn = "ou=groups," . $this->basedn;
+            $dn = $this->basedn;
             if (preg_match('/^(\w+\.)+\w{2,5}$/', $this->ad_domain)) {
                 $binddn = $username . '@' . $this->ad_domain;
             } else {
@@ -481,44 +485,51 @@ class Auth_Ldap {
         }
     }
 
-    function get_role_for_user($username, $password, $get_role_arg=null) {
+    function get_role_for_user($username, $password, $get_role_arg=null,$already_authenticated=false) {
+        $result=array();
         if ($this->use_ad) {
             $escaped = $this->ldap_escape($get_role_arg, false);
             $filter = '(member=' . $escaped . ')';
             $field = "cn";
-            $dn = "ou=groups," . $this->basedn;
+            $dn = $this->basedn;
             if (preg_match('/^(\w+\.)+\w{2,5}$/', $this->ad_domain)) {
                 $binddn = $username . '@' . $this->ad_domain;
             } else {
                 $binddn = $this->ad_domain . '\\' . $username;
             }
             $result = $this->cfpr_ldap_single_search($binddn, $password, $filter, $field, $dn);
-            return $result;
         } else {
             $userdn = $this->login_attribute . '=' . $username . ',' . $this->users_directory . ',' . $this->basedn;
             $filter = '(' . $this->member_attribute . '=' . $username . ')';
             $field = "cn";
             $dn = $this->basedn;
             $result = $this->cfpr_ldap_single_search($userdn, $password, $filter, $field, $dn);
-            if(empty($result)){
-                $this->set_error('error_fetching_group', 'invalid member attribute or user attribute');
-                log_message('error', 'Error fetching groups from directory service  possibly due to invalid member attribute or user directory  value');
-            }
-            return $result;
         }
+         if(empty($result)){
+                $available_groups=$this->get_all_ldap_groups($username,$password);
+                if(!empty($available_groups) && $already_authenticated){
+                   $this->set_warning('no_groups_for_user'); 
+                   log_message('error', 'User does not belong to any group, But can login into mission portal with limited access');
+                }else{
+                $this->set_warning('error_fetching_group', 'invalid member attribute or user attribute');
+                log_message('error', 'Error fetching groups from directory service  possibly due to invalid member attribute or user directory  value');
+                } 
+            }
+        return $result;
     }
 
     function get_details_for_user($username, $password) {
+        $result=array();
         $filter = '(' . $this->login_attribute . '=' . $username . ')';
         if ($this->use_ad) {
             $fields = "givenName,cn,distinguishedName";
-            $dn = $this->users_directory . ',' . $this->basedn;
+            $dn = $this->users_directory==''?$this->basedn:$this->users_directory . ',' . $this->basedn;
             if (preg_match('/^(\w+\.)+\w{2,5}$/', $this->ad_domain)) {
                 $binddn = $username . '@' . $this->ad_domain;
             } else {
                 $binddn = $this->ad_domain . '\\' . $username;
             }
-            $result = $this->cfpr_ldap_search($binddn, $password, $filter, $fields, $dn);      
+            $result = $this->cfpr_ldap_search($binddn, $password, $filter, $fields, $dn); 
         } else {
             $fields = "cn,dn,uid";
             $userdn = $this->login_attribute . '=' . $username . ',' . $this->users_directory . ',' . $this->basedn;
@@ -650,6 +661,13 @@ class Auth_Ldap {
         return array();
     }
 
+    public function set_warning($warning,$cause=""){
+        $this->warnings[]=$warning;
+        $this->warning_cause[]=$cause;
+        return $warning;
+    }
+    
+    
     public function set_error_delimiters($start_delimiter, $end_delimiter) {
         $this->error_start_delimiter = $start_delimiter;
         $this->error_end_delimiter = $end_delimiter;
@@ -671,6 +689,16 @@ class Auth_Ldap {
         $i=0;
         foreach ($this->errors as $error) {
             $_output .= $this->error_start_delimiter . $this->cause[$i] .', '.$this->ci->lang->line($error) .$this->error_end_delimiter;
+            $i++;
+        }
+        return $_output;
+    }
+    
+    public function warnings() {
+        $_output = '';
+        $i=0;
+        foreach ($this->warnings as $warning) {
+            $_output .= $this->warning_start_delimiter . $this->warning_cause[$i] .', '.$this->ci->lang->line($warning) .$this->warning_end_delimiter;
             $i++;
         }
         return $_output;

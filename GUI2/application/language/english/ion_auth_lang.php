@@ -58,6 +58,7 @@ $lang['group_delete_successful'] 		= 'Group deleted';
 $lang['group_delete_unsuccessful'] 		= 'Unable to delete group';
 $lang['group_update_successful']                = 'Group information sucessfully updated';
 $lang['group_update_unsuccessful']              = 'Unable to update group';
+$lang['no_groups_for_user']                     = "User does not belong to any group. But user can login into misssion portal with limited access";
 $lang['backend_error']                          = "Cannot connect to the database. Please make sure it exists.";
 $lang['admin_group_deletion']= "Can not delete the admin group";
 $lang['no_admin_group']="Admin group not selected yet in app config";
@@ -74,7 +75,7 @@ $lang['ldap_conf_error']                             ="Invalid values supplied f
 $lang['Internal_Ldap_module_error']            ="Ldap module error: Please check credentials and configuration for the ldap.";
 $lang['successful_bind']                             ="Sucessfully authenticated against the desired directory server";
 $lang['ldap_value_grabbing_error']             =" Cannot fetch some attributes values, please correct the attribute names";
-$lang['error_fetching_group']                    ="Cannot query for available group names";
+$lang['error_fetching_group']                    ="Cannot query for available group names, but user can login into mission portal with limited access";
 
 //login page message
 $lang['login_database'] ='Internal authentication';
