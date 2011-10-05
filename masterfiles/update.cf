@@ -41,20 +41,12 @@ bundle agent update_bins
 
   solarisx86|solaris::
 
-   "communitypkg"            string => "CFEcfengine-community",
-                            comment => "Name convention of Community package on Solaris",
-                             handle => "update_bins_vars_communitypkg_solaris";
-
    "novapkg"                 string => "CFEcfengine-nova",
                             comment => "Name convention of Nova package on Solaris",
                              handle => "update_bins_vars_novapkg_solaris",
                          ifvarclass => "nova_edition";
  
   !(solarisx86|solaris)::
-
-   "communitypkg"            string => "cfengine-community",
-                            comment => "Name convention of Community package for all but not Solaris",
-                             handle => "update_bins_vars_communitypkg_not_solaris";
 
    "novapkg"                 string => "cfengine-nova",
                             comment => "Name convention of Nova package for all but not Solaris",
@@ -67,13 +59,19 @@ bundle agent update_bins
                             comment => "Name convention of package arch on Solaris",
                              handle => "update_bins_vars_pkgarch_solaris";
 
+  solarisx86::
+
+   "pkgarch"                 string => "i386",
+                            comment => "Name convention of package arch on Solaris",
+                             handle => "update_bins_vars_pkgarch_solarisx86";
+
   freebsd|netbsd|debian::
 
    "pkgarch"                 string => "*",
                             comment => "Name convention of package arch on *BSD/Debian",
                              handle => "update_bins_vars_pkgarch_bsd";
 
-  !(solaris|freebsd|netbsd|debian)::
+  !(solarisx86|solaris|freebsd|netbsd|debian)::
 
    "pkgarch"                 string => "$(sys.arch)",
                             comment => "Name convention of package arch for other system except Solaris and *BSD",
@@ -104,17 +102,6 @@ bundle agent update_bins
   # update packages after all Cfengine have been killed
 
   stopped_cfprocs::
-
-   "$(communitypkg)"
-                    comment => "Update Community package to a newer version",
-                     handle => "update_bins_packages_community_update_all",
-             package_policy => "update",
-             package_select => ">=",                 # picks the newest Nova available
-      package_architectures => { "$(pkgarch)" },
-            package_version => "3.0.0",              # at least Community version 3.0.0
-             package_method => u_generic( "$(local_software_dir)" ),
-                 ifvarclass => "!(nova_edition|constellation_edition)",
-                    classes => u_if_else("bin_update_success", "bin_update_fail");
 
    "$(novapkg)"
                     comment => "Update Nova package to a newer version",
@@ -645,9 +632,10 @@ solarisx86|solaris::
  package_changes => "individual";
  package_list_command => "/usr/bin/pkginfo -l";
  package_list_update_ifelapsed => "0";  # avoid caching of list during upgrade
- package_multiline_start    =>  "\s*PKGINST:\s+[^\s]+";
+ package_multiline_start    => "\s*PKGINST:\s+[^\s]+";
  package_list_name_regex    => "\s*PKGINST:\s+([^\s]+)";
  package_list_version_regex => "\s*VERSION:\s+([^\s]+)";
+ package_list_arch_regex    => "\s*ARCH:\s+([^\s]+)";
  
  package_file_repositories => { "$(repo)" };
  

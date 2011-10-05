@@ -1,6 +1,9 @@
 October 2011
 *failsafe.cf*
 - unset LD_LIBRARY_PATH for all distributions
+*update.cf*
+- fixed Solaris/Solarisx86 self-upgrade
+- removed community-related promises as we decided to separate Nova and CFE default policy
 
 August 2011
 *All*
