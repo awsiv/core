@@ -6,7 +6,7 @@ topics:
 
 "cf3-glossary";
 Special_Topics_Guide::
-    "CFEngine-Best-Practices"  association => a("discusses","CFEngine Glossary","is discussed in");
+    "CFEngine Glossary"  association => a("discusses","CFEngine Glossary","is discussed in");
 
 
 occurrences:
@@ -17,7 +17,7 @@ manuals::
 CFEngine_Glossary::
  "/docs/cf3-glossary.html"
   represents => { "special topics guide" };
-CFEngine_Best_Practices::
+CFEngine_Glossary::
  "/docs/cf3-glossary.html#Top"
   represents => { "Text section" };
 }

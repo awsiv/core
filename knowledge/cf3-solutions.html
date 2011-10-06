@@ -1213,11 +1213,117 @@ any::
 
 </pre>
 Examples MSI for Windows, by name:
-<pre class="verbatim"></pre>
-<span class="red">Windows MSI by version:
-</span><pre class="verbatim"></pre>
-<span class="red">Examples for solaris are more complex:
-</span><pre class="verbatim">
+<pre class="verbatim">
+<span class="comment">#
+</span>
+<span class="comment"># MSI package managment using file name
+</span>
+<span class="comment">#
+</span>
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "packages" };
+}
+
+<span class="comment">#############################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">packages</span>
+{
+<span class="red">vars:
+</span>
+ "match_package"<span class="red"> slist </span>=> { 
+                          "7zip-4.65-x86_64.msi"
+                          };
+<span class="red">packages:
+</span>
+  "$(match_package)"
+
+<span class="red">     package_policy </span>=><span class="green"> "add",</span>
+<span class="red">     package_method </span>=><span class="blue"> msi_fmatch;</span>
+
+}
+
+<span class="comment">#############################################
+</span>
+
+<span class="red">body package_method</span> <span class="blue">msi_fmatch</span>
+
+{
+<span class="red"> package_changes </span>=><span class="green"> "individual";</span>
+<span class="red"> package_file_repositories </span>=> { "$(sys.workdir)\software_updates\windows", "s:\su" };
+
+<span class="red"> package_installed_regex </span>=><span class="green"> ".*";</span>
+
+<span class="red"> package_name_regex    </span>=><span class="green"> "^(\S+)-(\d+\.?)+";</span>
+<span class="red"> package_version_regex </span>=><span class="green"> "^\S+-((\d+\.?)+)";</span>
+<span class="red"> package_arch_regex    </span>=><span class="green"> "^\S+-(\d+\.?)+(^.+)";</span>
+ 
+<span class="red"> package_name_convention </span>=><span class="green"> "$(name)-$(version)-$(arch).msi";</span>
+
+<span class="red"> package_add_command </span>=><span class="green"> "\"$(sys.winsysdir)\msiexec.exe\" /qn /i";</span>
+<span class="red"> package_update_command </span>=><span class="green"> "\"$(sys.winsysdir)\msiexec.exe\" /qn /i";</span>
+<span class="red"> package_delete_command </span>=><span class="green"> "\"$(sys.winsysdir)\msiexec.exe\" /qn /x";</span>
+ }
+</pre>
+Windows MSI by version:
+<pre class="verbatim">
+<span class="comment">#
+</span>
+<span class="comment"># MSI package managment using version criteria
+</span>
+<span class="comment">#
+</span>
+
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "packages" };
+}
+
+<span class="comment">#############################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">packages</span>
+{
+<span class="red">vars:
+</span>
+ "match_package"<span class="red"> slist </span>=> { 
+                          "7zip"
+                          };
+<span class="red">packages:
+</span>
+  "$(match_package)"
+
+<span class="red">     package_policy </span>=><span class="green"> "update",</span>
+<span class="red">     package_select </span>=><span class="green"> ">=",</span>
+<span class="red">     package_architectures </span>=> { "x86_64" },
+<span class="red">     package_version </span>=><span class="green"> "3.00",</span>
+<span class="red">     package_method </span>=><span class="blue"> msi_vmatch;</span>
+
+}
+
+<span class="comment">#############################################
+</span>
+
+<span class="red">body package_method</span> <span class="blue">msi_vmatch</span>
+
+{
+<span class="red"> package_changes </span>=><span class="green"> "individual";</span>
+<span class="red"> package_file_repositories </span>=> { "$(sys.workdir)\software_updates\windows", "s:\su" };
+
+<span class="red"> package_installed_regex </span>=><span class="green"> ".*";</span>
+ 
+<span class="red"> package_name_convention </span>=><span class="green"> "$(name)-$(version)-$(arch).msi";</span>
+
+<span class="red"> package_add_command </span>=><span class="green"> "\"$(sys.winsysdir)\msiexec.exe\" /qn /i";</span>
+<span class="red"> package_update_command </span>=><span class="green"> "\"$(sys.winsysdir)\msiexec.exe\" /qn /i";</span>
+<span class="red"> package_delete_command </span>=><span class="green"> "\"$(sys.winsysdir)\msiexec.exe\" /qn /x";</span>
+}
+
+</pre>
+Examples for solaris are more complex:
+<pre class="verbatim">
 
 <span class="comment">#
 </span>
@@ -3860,54 +3966,208 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 <h3 class="section">3.4 ACL secret example</h3>
 
-<pre class="verbatim"></pre>
+<pre class="verbatim">
+<span class="red">body common control
+</span>{
+<span class="red">bundlesequence </span>=> { "acls" };
+}
+
+<span class="comment">#########################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">acls</span>
+
+{
+<span class="red">files:
+</span>
+ windows::
+
+<span class="red">  "c:\Secret"
+</span><span class="red">    acl </span>=><span class="blue"> win,</span>
+<span class="red">    depth_search </span>=><span class="blue"> include_base,</span>
+<span class="red">    comment </span>=><span class="green"> "Secure the secret directory from unauthorized access";</span>
+}
+
+<span class="comment">#########################################
+</span>
+
+<span class="red">body acl</span> <span class="blue">win</span>
+
+{
+<span class="red">acl_method </span>=><span class="green"> "overwrite";</span>
+<span class="red">aces </span>=> { "user:Administrator:rwx" };
+}
+
+<span class="comment">#########################################
+</span>
+
+<span class="red">body depth_search</span> <span class="blue">include_base</span>
+
+{
+<span class="red">include_basedir </span>=><span class="green"> "true";</span>
+}
+</pre>
 
 <div class="node">
 <a name="Active-directory-example"></a>
 <p><hr>
-<span class="red">Next:&nbsp;<a rel="next" accesskey="n" href="#Active-list-users-directory-example">Active list users directory example</a>,
-</span><span class="red">Previous:&nbsp;<a rel="previous" accesskey="p" href="#ACL-secret-example">ACL secret example</a>,
-</span><span class="red">Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
-</span>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Active-list-users-directory-example">Active list users directory example</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#ACL-secret-example">ACL secret example</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
 </div>
 
 <h3 class="section">3.5 Active directory example</h3>
 
-<pre class="verbatim"></pre>
+<pre class="verbatim">
+<span class="comment">#########################################################################
+</span>
+<span class="comment">#   active_directory.cf - Extract Data From Windows Domain Controllers
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#   NOTE: Since we don't supply any credentials in this policy file,
+</span>
+<span class="comment">#         the Domain Controller must allow anonymous bind. Also,
+</span>
+<span class="comment">#         the user "NT AUTHORITY\ANONYMOUS LOGON" must be granted access
+</span>
+<span class="comment">#         to the resources we want to read.
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#########################################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">active_directory</span>
+{
+<span class="red">vars:
+</span><span class="comment"># NOTE: Edit this to your domain, e.g. "corp", may also need more DC's after it
+</span>
+  "domain_name"<span class="red"> string </span>=><span class="green"> "cftesting";</span>
+  "user_name"<span class="red">    string </span>=><span class="green"> "Guest";</span>
+
+  
+<span class="comment"># NOTE: We can also extract data from remote Domain Controllers
+</span>
+
+dummy.DomainController::
+  "domain_controller"<span class="red">  string </span>=><span class="green"> "localhost";</span>
+
+  "userlist"<span class="red">    slist </span>=> ldaplist(
+<span class="red">                                  "ldap://$(domain_controller)",
+</span>                                  "CN=Users,DC=$(domain_name),DC=com",
+                                  "(objectClass=user)",
+                                  "sAMAccountName",
+                                  "subtree",
+                                  "none");
+
+<span class="red">classes:
+</span>
+dummy.DomainController::
+
+   "gotuser"<span class="red"> expression </span>=> ldaparray(
+                                    "userinfo",
+<span class="red">                                    "ldap://$(domain_controller)",
+</span>                                    "CN=$(user_name),CN=Users,DC=$(domain_name),DC=com",
+                                    "(name=*)",
+                                    "subtree",
+                                    "none");
+
+								  
+<span class="red">reports:
+</span>dummy.DomainController::
+  "Username is \"$(userlist)\"";
+
+dummy.gotuser::
+  "Got user data; $(userinfo[name]) has logged on $(userinfo[logonCount]) times";
+
+}
+
+</pre>
 
 <div class="node">
 <a name="Active-list-users-directory-example"></a>
 <p><hr>
-<span class="red">Next:&nbsp;<a rel="next" accesskey="n" href="#Active-directory-show-users-example">Active directory show users example</a>,
-</span><span class="red">Previous:&nbsp;<a rel="previous" accesskey="p" href="#Active-directory-example">Active directory example</a>,
-</span><span class="red">Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
-</span>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Active-directory-show-users-example">Active directory show users example</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Active-directory-example">Active directory example</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
 </div>
 
 <h3 class="section">3.6 Active list users directory example</h3>
 
-<pre class="verbatim"></pre>
+<pre class="verbatim">
+<span class="comment"># List users from Active Directory through LDAP
+</span>
+<span class="comment"># Note: Anonymous LDAP binding must be allowed, and the Anonymous user
+</span>
+<span class="comment"># must have read access to CN=Users
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">ldap</span>
+{
+<span class="red">vars:
+</span>   "userlist"<span class="red"> slist </span>=> ldaplist(
+<span class="red">                                    "ldap://cf-win2003",
+</span>                                    "CN=Users,DC=domain,DC=cf-win2003",
+                                    "(objectClass=user)",
+                                    "sAMAccountName",
+                                    "subtree",
+                                    "none");
+<span class="red">reports:
+</span>Yr2010::
+<span class="red">  "Username: \"$(userlist)\"";
+</span>}
+
+</pre>
 
 <div class="node">
 <a name="Active-directory-show-users-example"></a>
 <p><hr>
-<span class="red">Next:&nbsp;<a rel="next" accesskey="n" href="#Add-lines-to-a-file">Add lines to a file</a>,
-</span><span class="red">Previous:&nbsp;<a rel="previous" accesskey="p" href="#Active-list-users-directory-example">Active list users directory example</a>,
-</span><span class="red">Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
-</span>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Add-lines-to-a-file">Add lines to a file</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Active-list-users-directory-example">Active list users directory example</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
 </div>
 
 <h3 class="section">3.7 Active directory show users example</h3>
 
-<pre class="verbatim"></pre>
+<pre class="verbatim">
+<span class="comment"># List users from Active Directory through LDAP
+</span>
+<span class="comment"># Note: Anonymous LDAP binding must be allowed, and the Anonymous user
+</span>
+<span class="comment"># must have read access to CN=Users and CN=theusername
+</span>
+<span class="comment"># Run the agent in verbose mode to see the data
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">ldap</span>
+{
+<span class="red">classes:
+</span>   "gotdata"<span class="red"> expression </span>=> ldaparray(
+                                    "myarray",
+<span class="red">                                    "ldap://cf-win2003",
+</span>                                    "CN=Test Pilot,CN=Users,DC=domain,DC=cf-win2003",
+                                    "(name=*)",
+                                    "subtree",
+                                    "none");
+<span class="red">reports:
+</span>gotdata::
+  "Got user data";
+!gotdata::
+  "Did not get user data";
+}
+</pre>
 
 <div class="node">
 <a name="Add-lines-to-a-file"></a>
 <p><hr>
-<span class="red">Next:&nbsp;<a rel="next" accesskey="n" href="#Add-users-to-passwd-and-group">Add users to passwd and group</a>,
-</span><span class="red">Previous:&nbsp;<a rel="previous" accesskey="p" href="#Active-directory-show-users-example">Active directory show users example</a>,
-</span><span class="red">Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
-</span>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Add-users-to-passwd-and-group">Add users to passwd and group</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Active-directory-show-users-example">Active directory show users example</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
 </div>
 
 <h3 class="section">3.8 Add lines to a file</h3>
@@ -4194,15 +4454,73 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 <h3 class="section">3.12 Application baseline</h3>
 
-<pre class="verbatim"></pre>
+<pre class="verbatim">
+<span class="comment">#########################################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#   app_baseline.cf - Verify Existence of Applications
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#   NOTE: Sometimes applications are not correctly installed even
+</span>
+<span class="comment">#         though the native package manager reports them to be.
+</span>
+<span class="comment">#         Cfengine can check for application-specific configuration
+</span>
+<span class="comment">#         and act upon or report any anomalies.
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#########################################################################
+</span>
+
+
+<span class="red">bundle agent</span> <span class="blue">app_baseline</span>
+{
+
+<span class="red">methods:
+</span>windows::
+"any"<span class="red"> usebundle </span>=><span class="blue"> detect_adobereader;</span>
+
+}
+
+<span class="comment">###
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">detect_adobereader</span>
+{
+<span class="red">vars:
+</span>
+windows::
+  "value1"<span class="red"> string </span>=> registryvalue("HKEY_LOCAL_MACHINE\SOFTWARE\Adobe\Acrobat Reader\9.0\Installer", "ENU_GUID");
+  "value2"<span class="red"> string </span>=> registryvalue("HKEY_LOCAL_MACHINE\SOFTWARE\Adobe\Acrobat Reader\9.0\Installer", "VersionMax");
+  "value3"<span class="red"> string </span>=> registryvalue("HKEY_LOCAL_MACHINE\SOFTWARE\Adobe\Acrobat Reader\9.0\Installer", "VersionMin");
+ 
+<span class="red">classes:
+</span>
+windows::
+  "is_correct"<span class="red"> and </span>=> { 
+                       strcmp("$(value1)", "{AC76BA86-7AD7-1033-7B44-A93000000001}"),
+                       strcmp("$(value2)", "90003"),
+                       islessthan("$(value3)", "10001" )
+                      };
+ 
+<span class="red"> reports:
+</span>
+windows.!is_correct::
+ "Adobe Reader is not correctly deployed - got \"$(value1)\", \"$(value2)\", \"$(value3)\"";
+}
+</pre>
 
 <div class="node">
 <a name="Array-example"></a>
 <p><hr>
-<span class="red">Next:&nbsp;<a rel="next" accesskey="n" href="#Back-references-in-filenames">Back references in filenames</a>,
-</span><span class="red">Previous:&nbsp;<a rel="previous" accesskey="p" href="#Application-baseline">Application baseline</a>,
-</span><span class="red">Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
-</span>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Back-references-in-filenames">Back references in filenames</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Application-baseline">Application baseline</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
 </div>
 
 <h3 class="section">3.13 Array example</h3>
@@ -7838,7 +8156,33 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 <h3 class="section">3.53 Service management (windows)</h3>
 
-<pre class="verbatim"></pre>
+<pre class="verbatim">
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence  </span>=> { "winservice" };
+}
+
+<span class="comment">###########################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">winservice</span>
+
+{
+<span class="red">vars:
+</span>
+  "bad_services"<span class="red"> slist </span>=> { "Alerter",  "ClipSrv" };
+
+<span class="red">services:
+</span>
+ windows::
+
+  "$(bad_services)"
+
+<span class="red">       service_policy </span>=><span class="green"> "disable",</span>
+<span class="red">       comment </span>=><span class="green"> "Disable services that create security issues";</span>
+}
+</pre>
 
 <pre class="verbatim"></pre>
 
@@ -8530,16 +8874,206 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 <h3 class="section">3.56 Software distribution</h3>
 
-<pre class="verbatim"></pre>
+<pre class="verbatim">
+<span class="comment">#########################################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#   software_local.cf - Application Deployment From Directory Repository
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#   NOTE: Windows needs to support WMI queries about installed msi files
+</span>
+<span class="comment">#         in order for Cfengine to detect them. On Windows 2003,
+</span>
+<span class="comment">#         go to Control Panel -> Add/Remove Programs -> 
+</span>
+<span class="comment">#         Windows Components -> Mgmnt and Monitoring Tools and check
+</span>
+<span class="comment">#         WMI Windows Installer Provider.
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#   NOTE: Naming conventions are important when updating packages.
+</span>
+<span class="comment">#         By default, Cfengine expects "name-version-arch.msi" 
+</span>
+<span class="comment">#         on Windows, where name is lowercase, and arch is 
+</span>
+<span class="comment">#         i686 or x86_64. No spaces should be included in the filename.
+</span>
+<span class="comment">#         The Caption and Version fields inside the msi package
+</span>
+<span class="comment">#         are important. They must correspond to the file name as 
+</span>
+<span class="comment">#         follows: name = lowercase(spacetodash(Caption)), 
+</span>
+<span class="comment">#         version = Version. For any msi-file, use InstEd 
+</span>
+<span class="comment">#         (www.instedit.com) to check/modify the 
+</span>
+<span class="comment">#         Caption and Version fields 
+</span>
+<span class="comment">#         (Tables->Property->ProductName/ProductVersion).
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#         For example, ProductName "Cfengine Nova" with ProductVersion
+</span>
+<span class="comment">#         "1.1.2" for 32-bit Windows will correspond to the filename
+</span>
+<span class="comment">#         "cfengine-nova-1.1.2-i686.msi".
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#########################################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">check_software</span>
+{
+<span class="red">vars:
+</span>
+<span class="comment"># software to install if not installed
+</span>
+ "include_software"<span class="red"> slist </span>=> {
+                             "7-zip-4.50-$(sys.arch).msi"
+                             };
+
+<span class="comment"># this software gets updated if it is installed
+</span>
+ "autoupdate_software"<span class="red"> slist </span>=> { 
+                               "7-zip"
+                               };							 
+
+<span class="comment"># software to uninstall if it is installed
+</span>
+ "exclude_software"<span class="red"> slist </span>=> {
+                             "7-zip-4.65-$(sys.arch).msi"
+                             };
+
+<span class="red">methods:
+</span><span class="comment">#  "any" usebundle => add_software( "@(check_software.include_software)", "$(sys.policy_hub)" );
+</span>
+<span class="comment">#  "any" usebundle => update_software( "@(check_software.autoupdate_software)", "$(sys.policy_hub)" );
+</span>
+<span class="comment">#  "any" usebundle => remove_software( "@(check_software.exclude_software)", "$(sys.policy_hub)" );
+</span>
+}
+
+<span class="comment">#########################################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">add_software(pkg_name,</span>
+{
+<span class="red">vars:
+</span><span class="comment"># dir to install from locally - can also check multiple directories
+</span>
+ "local_software_dir"<span class="red"> string </span>=><span class="green"> "C:\Program Files\Cfengine\software\add";</span>
+ 
+<span class="red">files:
+</span>
+  "$(local_software_dir)"
+<span class="red">       copy_from </span>=><span class="blue"> remote_cp("/var/cfengine/master_software_updates/$(sys.flavour)_$(sys.arch)/add", "$(srv)"),</span>
+<span class="red">    depth_search </span>=><span class="blue"> recurse("1"),</span>
+<span class="red">         classes </span>=><span class="blue"> if_repaired("got_newpkg"),</span>
+<span class="red">		 comment </span>=><span class="green"> "Copy software from remote repository";</span>
+
+
+<span class="red">packages:
+</span>
+<span class="comment"># When to check if the package is installed ?
+</span>
+ got_newpkg|any::
+  "$(pkg_name)"
+<span class="red">    package_policy           </span>=><span class="green"> "add",</span>
+<span class="red">    package_method           </span>=><span class="blue"> msi_implicit( "$(local_software_dir)" ),</span>
+<span class="red">    classes                  </span>=><span class="blue"> if_else("add_success", "add_fail" ),</span>
+<span class="red">    comment                  </span>=><span class="green"> "Install new software, if not already present";</span>
+
+reports::
+ add_fail::
+   "Failed to install one or more packages";
+}
+
+<span class="comment">#########################################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">update_software(sw_names,</span>
+{
+<span class="red">vars:
+</span><span class="comment"># dir to install from locally - can also check multiple directories
+</span>
+ "local_software_dir"<span class="red"> string </span>=><span class="green"> "C:\Program Files\Cfengine\software\update";</span>
+ 
+<span class="red">files:
+</span>
+  "$(local_software_dir)"
+<span class="red">       copy_from </span>=><span class="blue"> remote_cp("/var/cfengine/master_software_updates/$(sys.flavour)_$(sys.arch)/update", "$(srv)"),</span>
+<span class="red">    depth_search </span>=><span class="blue"> recurse("1"),</span>
+<span class="red">         classes </span>=><span class="blue"> if_repaired("got_newpkg"),</span>
+<span class="red">		 comment </span>=><span class="green"> "Copy software updates from remote repository";</span>
+ 
+ 
+<span class="red">packages:
+</span>
+<span class="comment"># When to check if the package is updated ?
+</span>
+ got_newpkg|any::
+  "$(sw_names)"
+<span class="red">    package_policy           </span>=><span class="green"> "update",</span>
+<span class="red">    package_select           </span>=><span class="green"> ">=",                 # picks the newest update available</span>
+<span class="red">    package_architectures    </span>=> { "$(sys.arch)" },    # install 32 or 64 bit package ?
+<span class="red">    package_version          </span>=><span class="green"> "1.0",                # at least version 1.0</span>
+<span class="red">    package_method           </span>=><span class="blue"> msi_explicit( "$(local_software_dir)" ),</span>
+<span class="red">    classes                  </span>=><span class="blue"> if_else("update_success", "update_fail");</span>
+
+	
+reports::
+ update_fail::
+   "Failed to update one or more packages";
+}
+
+<span class="comment">#########################################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">remove_software(pkg_name,</span>
+{
+<span class="red">vars:
+</span><span class="comment"># dir to install from locally - can also check multiple directories
+</span>
+ "local_software_dir"<span class="red"> string </span>=><span class="green"> "C:\Program Files\Cfengine\software\remove";</span>
+ 
+<span class="red">files:
+</span>
+  "$(local_software_dir)"
+<span class="red">       copy_from </span>=><span class="blue"> remote_cp("/var/cfengine/master_software_updates/$(sys.flavour)_$(sys.arch)/remove", "$(srv)"),</span>
+<span class="red">    depth_search </span>=><span class="blue"> recurse("1"),</span>
+<span class="red">         classes </span>=><span class="blue"> if_repaired("got_newpkg"),</span>
+<span class="red">         comment </span>=><span class="green"> "Copy removable software from remote repository";</span>
+
+<span class="red">packages:
+</span>got_newpkg::
+  "$(pkg_name)"
+<span class="red">    package_policy           </span>=><span class="green"> "delete",</span>
+<span class="red">    package_method           </span>=><span class="blue"> msi_implicit( "$(local_software_dir)" ),</span>
+<span class="red">    classes                  </span>=><span class="blue"> if_else("remove_success", "remove_fail" ),</span>
+<span class="red">    comment                  </span>=><span class="green"> "Remove software, if present";</span>
+
+reports::
+ remove_fail::
+   "Failed to remove one or more packages";
+}
+</pre>
 
 <!--  -->
 <div class="node">
 <a name="Trigger-classes"></a>
 <p><hr>
-<span class="red">Next:&nbsp;<a rel="next" accesskey="n" href="#Unmount-NFS-filesystem">Unmount NFS filesystem</a>,
-</span><span class="red">Previous:&nbsp;<a rel="previous" accesskey="p" href="#Software-distribution">Software distribution</a>,
-</span><span class="red">Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
-</span>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Unmount-NFS-filesystem">Unmount NFS filesystem</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Software-distribution">Software distribution</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
 </div>
 
 <h3 class="section">3.57 Trigger classes</h3>
@@ -8929,15 +9463,53 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 <h3 class="section">3.62 unit_registry_cache.cf</h3>
 
-<pre class="verbatim"></pre>
+<pre class="verbatim">
+<span class="red">body common control
+</span>{
+<span class="red"> bundlesequence </span>=> {
+<span class="comment">#                   "registry_cache"
+</span>
+<span class="comment">#                   "registry_restore"
+</span>
+                   };
+}
+
+<span class="comment">#########################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">registry_cache</span>
+{
+<span class="red"> databases:
+</span>  windows::
+
+     "HKEY_LOCAL_MACHINE\SOFTWARE\Adobe"
+<span class="red">        database_operation </span>=><span class="green"> "cache",</span>
+<span class="red">        database_type      </span>=><span class="green"> "ms_registry",</span>
+<span class="red">        comment </span>=><span class="green"> "Save correct registry settings for Adobe products";</span>
+}
+
+<span class="comment">#########################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">registry_restore</span>
+{
+<span class="red"> databases:
+</span>  windows::
+
+     "HKEY_LOCAL_MACHINE\SOFTWARE\Adobe"
+<span class="red">        database_operation </span>=><span class="green"> "restore",</span>
+<span class="red">        database_type      </span>=><span class="green"> "ms_registry",</span>
+<span class="red">        comment </span>=><span class="green"> "Make sure Adobe products have correct registry settings";</span>
+}
+</pre>
 
 <div class="node">
 <a name="unit_registry.cf"></a>
 <a name="unit_005fregistry_002ecf"></a>
 <p><hr>
-<span class="red">Previous:&nbsp;<a rel="previous" accesskey="p" href="#unit_005fregistry_005fcache_002ecf">unit_registry_cache.cf</a>,
-</span><span class="red">Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
-</span>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#unit_005fregistry_005fcache_002ecf">unit_registry_cache.cf</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
 </div>
 
 <h3 class="section">3.63 unit_registry.cf</h3>
