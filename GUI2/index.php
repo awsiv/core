@@ -180,6 +180,9 @@ if (defined('ENVIRONMENT'))
 
 	// The PHP file extension
 	define('EXT', '.php');
+        
+        //The extension of log file
+        define('LOGEXT','.log');
 
 	// Path to the system folder
 	define('BASEPATH', str_replace("\\", "/", $system_path));
