@@ -47,6 +47,7 @@ extern struct BodySyntax CFEX_CONTROLBODY[];
 /* Prototypes */
 
 void StartHub(int argc,char **argv);
+void Nova_CollectReports(struct Attributes a, struct Promise *pp);
 int ScheduleRun(void);
 static void Nova_CreateHostID(char *hostID, char *ipaddr);
 
@@ -105,51 +106,21 @@ while (true)
       {
       CfOut(cf_verbose,""," -> Wake up");
 
-#ifdef HAVE_LIBMONGOC
-      if(CFDB_QueryIsMaster())  // relevant if we are part of mongo replica set
+
+      if(!FEDERATION)  // FEDERATION is for Constellation Mission Observatory
          {
-         struct Item *masterhostlist = Nova_ScanClients();
-      
-         Nova_ParallelizeScan(masterhostlist,a,pp);      
-         DeleteItemList(masterhostlist);
-
-#ifdef HAVE_CONSTELLATION
-         Constellation_ScanHubs(FEDERATION);  // query reports from hubs
-#endif
-
-         if (Nova_ShiftChange())
-            {
-            CfOut(cf_verbose,""," -> Scanning all total compliance cache");
-            NewClass("am_policy_hub");
-            Nova_CacheTotalCompliance(true);
-            CFDB_Maintenance(false);
-      
-#ifdef HAVE_CONSTELLATION
-            CFDBCon_CacheVirtualBundleCompliance();
-#endif
-            }
-
-         // Longterm reports cleanup everyday
-         if(IsDefinedClass("Hr10.Min00_05"))
-            {
-            CFDB_Maintenance(true);
-            }
-   
-         if (CFH_ZENOSS && IsDefinedClass("Min00_05"))
-            {
-            Nova_ZenossSummary(DOCROOT);
-            }
-   
-         Nova_CountMonitoredClasses();
+         Nova_CollectReports(a,pp);
          }
-      else
+      
+#ifdef HAVE_CONSTELLATION
+      if(FEDERATION)
          {
-         CfOut(cf_verbose,"","We are part of report repliaca set, but not master - not collecting reports...\n");
+         Constellation_CollectFederatedReports(FEDERATION);
          }
 #endif
       }
    
-   CfOut(cf_verbose,"","Sleeping...\n");
+   CfOut(cf_verbose,"","Sleeping...");
    sleep(CFPULSETIME);
    }
 
@@ -158,6 +129,48 @@ YieldCurrentLock(thislock); // Never get here
 
 /********************************************************************/
 /* level                                                            */
+/********************************************************************/
+
+void Nova_CollectReports(struct Attributes a, struct Promise *pp)
+{
+#ifdef HAVE_LIBMONGOC 
+ 
+ if(CFDB_QueryIsMaster())  // relevant if we are part of mongo replica set
+    {
+    struct Item *masterhostlist = Nova_ScanClients();
+    
+    Nova_ParallelizeScan(masterhostlist,a,pp);      
+    DeleteItemList(masterhostlist);
+    
+    if (ShiftChange())
+       {
+       CfOut(cf_verbose,""," -> Scanning all total compliance cache");
+       NewClass("am_policy_hub");
+       Nova_CacheTotalCompliance(true);
+       CFDB_Maintenance(false);
+       }
+
+    // Longterm reports cleanup everyday
+    if(IsDefinedClass("Hr10.Min00_05"))
+       {
+       CFDB_Maintenance(true);
+       }
+   
+    if (CFH_ZENOSS && IsDefinedClass("Min00_05"))
+       {
+       Nova_ZenossSummary(DOCROOT);
+       }
+   
+    Nova_CountMonitoredClasses();
+    }
+ else
+    {
+    CfOut(cf_verbose,"","We are part of report repliaca set, but not master - not collecting reports...\n");
+    }
+
+#endif
+}
+
 /********************************************************************/
 
 void Nova_ParallelizeScan(struct Item *masterlist,struct Attributes a,struct Promise *pp)
@@ -603,18 +616,6 @@ fclose(fout);
 
 /*********************************************************************/
 
-int Nova_ShiftChange()
-
-{
- if (IsDefinedClass("(Hr00|Hr06|Hr12|Hr16|Hr18).Min00_05"))
-   {
-   return true;
-   }
-else
-   {
-   return false;
-   }
-}
 
 /*******************************************************************/
 /* Command line options                                            */
