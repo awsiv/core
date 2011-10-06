@@ -43,15 +43,16 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
 </p>
 
 <p>
-        <label for="login_attribute">Login attribute <span class="required loginrelated">*</span></label>
+        <label for="login_attribute">Login attribute <span class="required ldaprelated">*</span></label>
         <?php echo tooltip('tooltip_login_aloginrelatedttr','',true) ;// echo form_error('login_attribute'); ?>
         <input id="login_attribute" type="text" name="login_attribute"  value="<?php echo $login_attribute; ?>"  />
 </p>
 
 <p>
-        <label for="users_directory">User directory <span class="required loginrelated">*</span></label>
+        <label for="users_directory">User directory <span class="required ldaprelated">*</span></label>
         <?php echo tooltip('tooltip_user_dir','',true) ;// echo form_error('login_attribute'); ?>
         <input id="users_directory" type="text" name="users_directory"  value="<?php echo $users_directory ?>"  />
+        <span id="effective_dir"></span>
 </p>
 
 <p id="member_attribute_related">
@@ -61,7 +62,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
 </p>
 
 
-<p id="adrelated">
+<p class="adrelated">
         <label for="active_directory_domain">Active directory domain <span class="required">*</span></label>
         <?php echo tooltip('tooltip_ad_domain_name','',true) ;// echo form_error('active_directory_domain'); ?>
         <input id="active_directory_domain" type="text" name="active_directory_domain"  value="<?php echo $active_directory_domain  ?>"  />
@@ -121,22 +122,38 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
             else if ($("input[@name='mode']:checked").val() == 'ldap')
             {
                 $('#ldapsettings').show();
-                $('#adrelated').hide();
+                $('.adrelated').hide();
                 $('#member_attribute_related').show();
-                $('.loginrelated').show();
+                $('.ldaprelated').show();
                 
             }
             else if($("input[@name='mode']:checked").val() == 'active_directory'){
                 $('#ldapsettings').show()
-                $('#adrelated').show();
+                $('.adrelated').show();
                 $('#member_attribute_related').hide();
-                $('.loginrelated').hide();
+                $('.ldaprelated').hide();
             }
+            if($("#base_dn").val()!='')
+                {
+                set_bind_dn();
+                }
      }
      
-     $("input[name='mode']").change(function(){
-      settings_toggle();
-      $("select[name='admin_group']").find('option') .remove().end()
+     function set_bind_dn(){
+            if($('#users_directory').val()!=''){
+              $('#effective_dir').text('bind dn: '+$("#users_directory").val()+','+$("#base_dn").val())
+               }else{
+              $('#effective_dir').text('bind dn: '+$("#base_dn").val())
+                }  
+     }
+     
+     
+     $("input[name='users_directory']").keyup(function(){
+        set_bind_dn();
+     });
+     
+     $("input[name='base_dn']").keyup(function(){
+        set_bind_dn();
      });
 
       $('#testsettings').bind('click',function(event){
@@ -156,6 +173,11 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
          }}).ajaxyDialog('open');
        
       });
+      
+      $("input[name='mode']").change(function(){
+      settings_toggle();
+      $("select[name='admin_group']").find('option') .remove().end()
+     });
     <?php if ($this->setting_lib->get_tooltips_status()) { ?>   
     $('span.hint').each(function() // Find all inputs with formtip spans next to them
     {

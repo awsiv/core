@@ -2573,3 +2573,7 @@ ul.admin_menu li.current a{
 .hint{
     display:none;
 }
+#effective_dir{
+    margin-left: 21%;
+    display:block;
+}

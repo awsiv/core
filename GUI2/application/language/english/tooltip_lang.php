@@ -41,7 +41,7 @@ $lang['tooltip_application_email']='Notifications from the Mission Portal will b
 $lang['tooltip_host_name']= "The full domain name of the directory server  e.g test.cfengine.com";
 $lang['tooltip_base_dn']="Base domain name of the directory server  e.g dc=test,dc=cfengine,dc=com";
 $lang['tooltip_login_attr']="The attribute used by directory server to match the username e.g uid, sAMAccountName";
-$lang['tooltip_user_dir']="The directory used by the server to store users information  e.g cn=users or ou=people if not under rootdn sepcify the dn as well eg cn=users,ou=administartion";
+$lang['tooltip_user_dir']="The directory used by the server to store users information  e.g cn=users or ou=people, If this directory is unnder sub directory specify its name as well eg cn=users,ou=sales";
 $lang['tooltip_member_attr']="The attribute used to connect a user with group e.g memberUid";
 $lang['tooltip_ad_domain_name']="The domain named used by the active directory e.g test.cfengine.com";
 
