@@ -16,16 +16,17 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
 <p>
    <label for="authentication">Authentication method <span class="required">*</span></label>
         <?php  // echo form_error('mode'); ?>
-      
                 <?php // Change or Add the radio values/labels/css classes to suit your needs ?>
                      <input id="mode1" name="mode" type="radio" class="" value="database" <?php echo (isset($database))?$database:$this->form_validation->set_radio('mode', 'database') ; ?> checked="checked"/>
         		<label for="mode" class="">Internal</label>
-
-        		<input id="mode2" name="mode" type="radio" class="" value="ldap" <?php echo (isset($ldap))?$ldap:$this->form_validation->set_radio('mode', 'ldap'); ?> />
+                        
+                        <input id="mode2" name="mode" type="radio" class="" value="ldap" <?php echo (isset($ldap))?$ldap:$this->form_validation->set_radio('mode', 'ldap'); ?> />
         		<label for="mode" class="">LDAP</label>
-
-                       <input id="mode3" name="mode" type="radio" class="" value="active_directory" <?php echo (isset($active_directory))?$active_directory:$this->form_validation->set_radio('mode', 'active_directory') ; ?> />
+                        
+                        <input id="mode3" name="mode" type="radio" class="" value="active_directory" <?php echo (isset($active_directory))?$active_directory:$this->form_validation->set_radio('mode', 'active_directory') ; ?> />
         		<label for="mode" class="">Active Directory</label>
+
+                       
 </p>
 
 <fieldset id="ldapsettings">

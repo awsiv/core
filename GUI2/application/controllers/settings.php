@@ -37,9 +37,9 @@ class Settings extends Cf_Controller {
         $this->form_validation->set_rules('login_attribute', 'login attribute', 'xss_clean|trim' . $required_if_ldap);
         $this->form_validation->set_rules('users_directory', 'users directory', 'xss_clean|trim' . $required_if_ldap);
         $this->form_validation->set_rules('active_directory_domain', 'active directory domain', 'xss_clean|trim' . $required_if_ad);
-        $this->form_validation->set_rules('member_attribute', 'memberof attribute', 'xss_clean|trim' . $required_if_ldap);
+        $this->form_validation->set_rules('member_attribute', 'memberof attribute', 'xss_clean|trim');
         $this->form_validation->set_rules('fall_back_for', 'valid group', 'callback_required_valid_group');
-        $this->form_validation->set_rules('admin_group', 'valid group', 'callback_required_valid_group');
+        $this->form_validation->set_rules('admin_group', 'valid group');
         $this->form_validation->set_rules('encryption', 'Encryption mode', 'xss_clean|trim'. $required_if_ldap . $required_if_ad);
         $this->form_validation->set_error_delimiters('<span>', '</span><br/>');
 
@@ -66,11 +66,14 @@ class Settings extends Cf_Controller {
             $data['groupsacc']['select']="--select-one--";
             //if previous settings exist load it and display
             $settings = $this->settings_model->get_app_settings();
+            
             if (is_object($settings)) {// the information has therefore been successfully saved in the db
                 foreach ($settings as $property => $value) {
                     if ($property == 'mode' || $property == 'active_directory'||$property=='encryption') {
-                        $data[$value] = ' checked="checked"';
-                        continue;
+                         if(!$this->input->post('mode')){
+                             $data[$value] = 'checked="checked"';
+                            continue;
+                         }
                     }
                     if ($property != '_id') {
                         $data[$property] = $this->form_validation->set_value($property, $value);

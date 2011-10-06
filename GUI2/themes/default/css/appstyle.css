@@ -2369,7 +2369,7 @@ background-image:url(../images/success.png);
 .warning {
 color: #9F6000;
 background-color: #FEEFB3;
-background-image: url('warning.png');
+background-image: url('../images/warning.png');
 }
 
 

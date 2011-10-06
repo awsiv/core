@@ -23,6 +23,7 @@ class Auth_Ldap {
     protected $cause= array();
     protected $warnings=array();
     protected $warning_cause=array();
+    protected $authenticated=false;
 
     function __construct() {
         $this->ci = & get_instance();
@@ -268,6 +269,7 @@ class Auth_Ldap {
             $id = key_exists('name', $details[0])?$details[0]['name']:"";
         }
 
+        $this->authenticated=true;
         $roles = array();
         if ($this->use_ad) {
             $roles = $this->get_role_for_user($username, $password, $dn,true);
@@ -675,8 +677,10 @@ class Auth_Ldap {
     }
 
     public function set_error($error,$cause="") {
+        if(!$this->authenticated){
         $this->errors[] = $error;
         $this->cause[]=$cause;
+        }
         return $error;
     }
 
