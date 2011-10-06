@@ -22,7 +22,7 @@ Class Log_maintenance {
         $deleted = 0;
         $kept = 0;
         
-        $files = glob($dir . 'log*.php'); // all files in the directory that starts with 'log' and ends with '.php'
+        $files = glob($dir . 'log*'.LOGEXT); // all files in the directory that starts with 'log' and ends with log extension
 
         foreach($files as $file){ // loop over all matched files
             // check how old they are
