@@ -109,14 +109,14 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
 
       if (PURGE == 'y')
          {
-         if (now - then > CF_WEEK)
+         if (now - then > SECONDS_PER_WEEK)
             {
             DeleteDB(dbp,key);
             }
 
          CfOut(cf_inform,"","Deleting expired entry for %s\n",eventname);
 
-         if (measure < 0 || average < 0 || measure > 4*CF_WEEK)
+         if (measure < 0 || average < 0 || measure > 4*SECONDS_PER_WEEK)
             {
             DeleteDB(dbp,key);
             }
@@ -216,7 +216,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       average = entry.Q.expect;
       var     = entry.Q.var;
 
-      if (now - then > (time_t)CF_WEEK)
+      if (now - then > (time_t)SECONDS_PER_WEEK)
          {
          DeleteDB(dbp,key);
          CfOut(cf_inform,""," -> Deleting expired entry for %s\n",eventname);
@@ -626,7 +626,7 @@ void Nova_PackMonitorWk(struct Item **reply,char *header,time_t from,enum cfd_me
 
  now = CF_MONDAY_MORNING;
 
- for (slot = 0; now < CF_MONDAY_MORNING + CF_WEEK; slot++)  // one-hour slots
+ for (slot = 0; now < CF_MONDAY_MORNING + SECONDS_PER_WEEK; slot++)  // one-hour slots
     {
     memset(&entry,0,sizeof(entry));
 
@@ -938,7 +938,7 @@ void Nova_PackCompliance(struct Item **reply,char *header,time_t from,enum cfd_m
 
 {
   char name[CF_MAXTRANSSIZE];
-  double lsea = CF_WEEK; /* expire after a week */
+  double lsea = SECONDS_PER_WEEK; /* expire after a week */
   struct Event entry;
   int ksize,vsize,first = true;
   CF_DB *dbp;

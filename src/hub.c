@@ -311,7 +311,7 @@ if (conn == NULL)
 
 if (long_time_no_see)
    {
-   time_t last_week = time(0) - (time_t)CF_WEEK;
+   time_t last_week = time(0) - (time_t)SECONDS_PER_WEEK;
    CfOut(cf_verbose,""," -> Running FULL sensor sweep of %s",HashPrint(CF_DEFAULT_DIGEST,conn->digest));
    Nova_QueryForKnowledgeMap(conn,"full",last_week);
 

@@ -312,7 +312,7 @@ int Nova2PHP_summary_report(char *hostkey,char *handle,char *status,int regex,ch
   struct HubQuery *hq;
   struct Rlist *rp;
   mongo_connection dbconn;
-  time_t now = time(NULL),from=now,to=now-CF_WEEK, interval;
+  time_t now = time(NULL),from=now,to=now-SECONDS_PER_WEEK, interval;
   int total,code_blue = 0,tot_hosts;
   double n,r,k,n_av,k_av,r_av,tot_promises;
   char *current_host = "x";
@@ -1343,7 +1343,7 @@ int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *classreg,st
     return false;
     }
 
- hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
+ hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)SECONDS_PER_WEEK,classreg,true);
  PageRecords(&(hq->records),page,DeleteHubClass);
 
  snprintf(header,sizeof(header),
@@ -1398,7 +1398,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     return false;
     }
 
-rp = CFDB_QueryDateTimeClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
+rp = CFDB_QueryDateTimeClasses(&dbconn,hostkey,name,regex,(time_t)SECONDS_PER_WEEK,classreg,true);
 
 StartJoin(returnval,"[",bufsize);
 
@@ -1441,7 +1441,7 @@ int Nova2PHP_listclasses_soft(char *hostkey,char *name,int regex,char *classreg,
     return false;
     }
 
-rp = CFDB_QuerySoftClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
+rp = CFDB_QuerySoftClasses(&dbconn,hostkey,name,regex,(time_t)SECONDS_PER_WEEK,classreg,true);
 
 StartJoin(returnval,"[",bufsize);
 
@@ -1485,7 +1485,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    }
 
 
-rp = CFDB_QueryIpClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
+rp = CFDB_QueryIpClasses(&dbconn,hostkey,name,regex,(time_t)SECONDS_PER_WEEK,classreg,true);
  
 StartJoin(returnval,"[",bufsize);
 
@@ -1526,7 +1526,7 @@ int Nova2PHP_listclasses_host(char *hostkey,char *name,int regex,char *classreg,
       return false;
     }
 
-  rp = (void*)CFDB_QueryHostClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
+  rp = (void*)CFDB_QueryHostClasses(&dbconn,hostkey,name,regex,(time_t)SECONDS_PER_WEEK,classreg,true);
   StartJoin(returnval,"[",bufsize);
   for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
     {
@@ -1561,7 +1561,7 @@ int Nova2PHP_listclasses_all(char *hostkey,char *name,int regex,char *classreg,c
       return false;
     }
   
-  rp = CFDB_QueryAllClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
+  rp = CFDB_QueryAllClasses(&dbconn,hostkey,name,regex,(time_t)SECONDS_PER_WEEK,classreg,true);
   
   StartJoin(returnval,"[",bufsize);
   
@@ -2604,7 +2604,7 @@ int Nova2PHP_classes_hosts(char *hostkey,char *name,int regex,char *classreg,cha
     return false;
     }
 
- hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,false);
+ hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)SECONDS_PER_WEEK,classreg,false);
 
  StartJoin(returnval,"[",bufsize);
 
@@ -4961,7 +4961,7 @@ int Nova2PHP_classes_report_pdf(char *hostkey,char *name,int regex,char *classre
     return false;
     }
 
- hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
+ hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)SECONDS_PER_WEEK,classreg,true);
 
  returnval[0] = '\0';
 
@@ -4973,7 +4973,7 @@ int Nova2PHP_classes_report_pdf(char *hostkey,char *name,int regex,char *classre
        {
        snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%lf<nc>%lf<nc>%s<nova_nl>",hc->hh->hostname,hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
        }
-    else if (now - hc->t > (time_t)CF_WEEK)
+    else if (now - hc->t > (time_t)SECONDS_PER_WEEK)
        {
        snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%lf<nc>%lf<nc>%s<nova_nl>",hc->hh->hostname,hc->class,hc->prob,hc->dev,cf_ctime(&(hc->t)));
        }

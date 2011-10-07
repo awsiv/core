@@ -96,7 +96,7 @@ int Nova2Txt_summary_report(char *hostkey,char *handle,char *status,int regex,ch
   struct HubQuery *hq;
   struct Rlist *rp;
   mongo_connection dbconn;
-  time_t now = time(NULL),from=now,to=now-CF_WEEK, interval;
+  time_t now = time(NULL),from=now,to=now-SECONDS_PER_WEEK, interval;
   int total,code_blue = 0,tot_hosts;
   double n,r,k,n_av,k_av,r_av,tot_promises;
   char *current_host = "x";
@@ -492,7 +492,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
    return false;
    }
 
-hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,true);
+hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)SECONDS_PER_WEEK,classreg,true);
 
 if (!CSV)
    {
@@ -1322,7 +1322,7 @@ int Nova2Txt_classes_hosts(char *hostkey,char *name,int regex,char *classreg,cha
     return false;
     }
 
- hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)CF_WEEK,classreg,false);
+ hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)SECONDS_PER_WEEK,classreg,false);
 
  StartJoin(returnval,"[",bufsize);
 

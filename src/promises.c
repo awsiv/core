@@ -430,7 +430,7 @@ time_t Nova_GetPromiseCompliance(struct Promise *pp,double *value,double *averag
 { CF_DB *dbp;
   char name[CF_MAXVARSIZE];
   struct Event e;
-  double lsea = CF_WEEK * 52; /* expire after a year */
+  double lsea = SECONDS_PER_WEEK * 52; /* expire after a year */
   time_t now = time(NULL);
 
 snprintf(name,CF_MAXVARSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_COMPLIANCE);

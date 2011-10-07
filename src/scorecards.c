@@ -25,7 +25,7 @@ void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, 
   struct HubCacheTotalCompliance *tc;
   struct HubQuery *hq;
   double kept, repaired, notkept, nodata;
-  time_t now = time(NULL),start,one_week = (time_t)CF_WEEK;
+  time_t now = time(NULL),start,one_week = (time_t)SECONDS_PER_WEEK;
   int i,slot,count;
   char buf[CF_MAXVARSIZE];
 
@@ -39,7 +39,7 @@ if (constellation)
    {
 #ifdef HAVE_CONSTELLATION
    
-   hq = CFDBCon_QueryComp(&dbconn, hubKeyHash, policy, now - CF_WEEK);
+   hq = CFDBCon_QueryComp(&dbconn, hubKeyHash, policy, now - SECONDS_PER_WEEK);
    
 #else
    CfOut(cf_error, "", "!! Trying to get constellation data from data ComplianceSummaryGraph() without libcfconstellation");
@@ -50,7 +50,7 @@ if (constellation)
    }
 else  // Nova
    {
-   hq = CFDB_QueryCachedTotalCompliance(&dbconn, policy, now - CF_WEEK);
+   hq = CFDB_QueryCachedTotalCompliance(&dbconn, policy, now - SECONDS_PER_WEEK);
    }
 
 CFDB_Close(&dbconn);

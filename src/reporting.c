@@ -410,7 +410,7 @@ void Nova_SummarizePerPromiseCompliance(int xml,int html,int csv,int embed,char 
 
 { FILE *fout;
   char name[CF_BUFSIZE];
-  double lsea = CF_WEEK * 52; /* expire after a year */
+  double lsea = SECONDS_PER_WEEK * 52; /* expire after a year */
   struct Event entry;
   struct Item *ip,*htmlreport = NULL;
   int ksize,vsize;
@@ -2076,7 +2076,7 @@ void Nova_NoteVarUsageDB(void)
   void *val;
   struct Variable var = {{0}}, *varDb;
   int i, keyDbSize, valSize;
-  time_t varExpireAge = CF_MONTH;  // remove vars from DB after one month
+  time_t varExpireAge = SECONDS_PER_WEEK * 4;  // remove vars from DB after about one month
   time_t now = time(NULL);
 
 if (MINUSF) /* Only do this for the default policy */
@@ -2222,7 +2222,7 @@ int Nova_ExportReports(char *reportName)
         from = time(NULL) - 60*10; // delta = last 10 minutes
         break;
     case cfd_menu_full:
-        from = time(NULL) - CF_WEEK; // full = last week
+        from = time(NULL) - SECONDS_PER_WEEK; // full = last week
         break;
     default:
         CfOut(cf_error, "", "!! Nova_ExportReports: reportType is not delta or full but %d", reportType);

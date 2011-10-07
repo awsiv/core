@@ -1423,7 +1423,7 @@ void Nova_GenerateTestData(int count)
 
  LICENSES=1;
  snprintf(CFWORKDIR,sizeof(CFWORKDIR),"/var/cfengine");
- from = time(NULL) - CF_WEEK;
+ from = time(NULL) - SECONDS_PER_WEEK;
  Nova_PackAllReports(&packedReports,from,0,cfd_menu_full);
  
  for(ip = packedReports; ip != NULL; ip = ip->next)
