@@ -25,7 +25,6 @@ NewClass("am_php_module");
 #ifdef HAVE_LIBMONGOC 
 CFDB_GetValue("document_root",retval,CF_MAXVARSIZE);
 strncpy(DOCROOT,retval,CF_MAXVARSIZE);
-snprintf(GRAPHDIR,CF_MAXVARSIZE,"%s/graphs",DOCROOT);
 
 Debug("Loaded values: docroot=%s\n",DOCROOT);
 #endif
