@@ -18,7 +18,8 @@
 #ifdef HAVE_LIBLDAP
 
 /* Prototypes */
-LDAP *NovaQueryLDAP(char *uri,char *basedn,char *sec,char *pwd, bool starttls, const char **errstr);
+LDAP *NovaLDAPConnect(char *uri, bool starttls, const char **errstr);
+int NovaLDAPAuthenticate(LDAP *ldap, const char *basedn, const char *sec, const char *pwd);
 void *CfLDAPValue(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec);
 void *CfLDAPList(char *uri,char *basedn,char *filter,char *name,char *scopes,char *sec);
 void *CfLDAPArray(char *array,char *uri,char *basedn,char *filter,char *scopes,char *sec);
@@ -50,7 +51,12 @@ if (LICENSES == 0)
    return NULL;
    }
 
-if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL,false,NULL)) == NULL)
+if ((ld = NovaLDAPConnect(uri, false, NULL)) == NULL)
+   {
+   return NULL;
+   }
+
+if (NovaLDAPAuthenticate(ld, basedn, sec, NULL) != LDAP_SUCCESS)
    {
    return NULL;
    }
@@ -230,7 +236,12 @@ if (LICENSES == 0)
    return NULL;
    }
 
-if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL,false,NULL)) == NULL)
+if ((ld = NovaLDAPConnect(uri, false, NULL)) == NULL)
+   {
+   return NULL;
+   }
+
+if (NovaLDAPAuthenticate(ld, basedn, sec, NULL) != LDAP_SUCCESS)
    {
    return NULL;
    }
@@ -402,7 +413,12 @@ if (LICENSES == 0)
    return NULL;
    }
 
-if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL,false,NULL)) == NULL)
+if ((ld = NovaLDAPConnect(uri, false, NULL)) == NULL)
+   {
+   return NULL;
+   }
+
+if (NovaLDAPAuthenticate(ld, basedn, sec, NULL) != LDAP_SUCCESS)
    {
    return NULL;
    }
@@ -591,7 +607,12 @@ if (LICENSES == 0)
    return NULL;
    }
 
-if ((ld = NovaQueryLDAP(uri,basedn,sec,NULL,false,NULL)) == NULL)
+if ((ld = NovaLDAPConnect(uri, false, NULL)) == NULL)
+   {
+   return NULL;
+   }
+
+if (NovaLDAPAuthenticate(ld, basedn, sec, NULL) != LDAP_SUCCESS)
    {
    return NULL;
    }
@@ -760,7 +781,25 @@ return NULL;
 bool CfLDAPAuthenticate(char *uri,char *basedn,char *passwd, bool starttls, const char **const errstr)
 
 {
-return NovaQueryLDAP(uri, basedn, "sasl", passwd, starttls, errstr) != NULL;
+LDAP *ld = NovaLDAPConnect(uri, starttls, errstr);
+if (ld == NULL)
+   {
+   return false;
+   }
+
+int ret = NovaLDAPAuthenticate(ld, basedn, "sasl", passwd);
+
+if (ret == LDAP_SUCCESS)
+   {
+   return true;
+   }
+
+if (errstr)
+   {
+   *errstr = (ret == LDAP_INVALID_CREDENTIALS) ? NULL : ldap_err2string(ret);
+   }
+
+return false;
 }
 
 /*****************************************************************************/
@@ -833,9 +872,15 @@ if (linesperpage == 0)
    linesperpage = 1000;
    }
 
-if ((ld = NovaQueryLDAP(uri,authdn,sec,passwd,starttls,errstr)) == NULL)
+if ((ld = NovaLDAPConnect(uri, starttls, errstr)) == NULL)
    {
    return -1;
+   }
+
+if ((ret = NovaLDAPAuthenticate(ld, authdn, sec, passwd)) != LDAP_SUCCESS)
+   {
+   *errstr = ldap_err2string(ret);
+   return NULL;
    }
 
 if ((ret = ldap_search_ext_s(ld,basedn,scope,filter,NULL,0,NULL,NULL,NULL,LDAP_NO_LIMIT,&res)) != LDAP_SUCCESS)
@@ -1122,7 +1167,12 @@ if (linesperpage == 0)
    linesperpage = 1000;
    }
 
-if ((ld = NovaQueryLDAP(uri,authdn,sec,passwd,starttls,errstr)) == NULL)
+if ((ld = NovaLDAPConnect(uri, starttls, errstr)) == NULL)
+   {
+   return -1;
+   }
+
+if (NovaLDAPAuthenticate(ld, authdn, sec, passwd) != LDAP_SUCCESS)
    {
    return -1;
    }
@@ -1314,19 +1364,11 @@ return 0;
 
 #ifdef HAVE_LIBLDAP
 
-LDAP *NovaQueryLDAP(char *uri,char *basedn,char *sec,char *password, bool starttls, const char **const errstr)
+LDAP *NovaLDAPConnect(char *uri, bool starttls, const char **const errstr)
 
 { LDAP *ld;
   char *matched_msg = NULL, *error_msg = NULL;
   int ret,version;
-  int pwdLen = 0;
-
-if (password)
-   {
-   pwdLen = strlen(password);
-   }
-
-struct berval passwd = { pwdLen, password };
 
 /* TLS options need to be set up before opening a connection */
 
@@ -1409,6 +1451,23 @@ if (starttls)
       }
    }
 
+return ld;
+}
+
+/*****************************************************************************/
+
+int NovaLDAPAuthenticate(LDAP *ld, const char *basedn, const char *sec, const char *password)
+{
+int pwdLen = 0;
+int ret;
+
+if (password)
+   {
+   pwdLen = strlen(password);
+   }
+
+const struct berval passwd = { pwdLen, password };
+
 /* Bind to the server anonymously. */
 
 if (cf_strcmp(sec,"sasl") == 0)
@@ -1422,22 +1481,7 @@ else
    ret = ldap_simple_bind_s(ld,NULL,NULL);
    }
 
-if (ret != LDAP_SUCCESS)
-   {
-   if (errstr)
-      {
-      *errstr = ldap_err2string(ret);
-      }
-   CfOut(cf_inform,"","Trouble binding to LDAP: %s", ldap_err2string(ret));
-   ldap_unbind(ld);
-   return NULL;
-   }
-
-if (errstr)
-   {
-   *errstr = ldap_err2string(ret);
-   }
-return ld;
+return ret;
 }
 
 /*****************************************************************************/
