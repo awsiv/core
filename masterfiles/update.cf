@@ -45,12 +45,19 @@ bundle agent update_bins
                             comment => "Name convention of Nova package on Solaris",
                              handle => "update_bins_vars_novapkg_solaris",
                          ifvarclass => "nova_edition";
+
+  aix::
+
+   "novapkg"                 string => "cfengine.cfengine-nova",
+                            comment => "Name convention of Nova package on AIX",
+                             handle => "update_bins_vars_novapkg_aix",
+                         ifvarclass => "nova_edition";
  
-  !(solarisx86|solaris)::
+  !(solarisx86|solaris|aix)::
 
    "novapkg"                 string => "cfengine-nova",
                             comment => "Name convention of Nova package for all but not Solaris",
-                             handle => "update_bins_vars_novapkg_not_solaris",
+                             handle => "update_bins_vars_novapkg_not_solaris_aix",
                          ifvarclass => "nova_edition";
 
   solaris::
@@ -65,17 +72,17 @@ bundle agent update_bins
                             comment => "Name convention of package arch on Solaris",
                              handle => "update_bins_vars_pkgarch_solarisx86";
 
-  freebsd|netbsd|debian::
+  freebsd|netbsd|debian|aix::
 
    "pkgarch"                 string => "*",
                             comment => "Name convention of package arch on *BSD/Debian",
-                             handle => "update_bins_vars_pkgarch_bsd";
+                             handle => "update_bins_vars_pkgarch_bsd_debian_aix";
 
-  !(solarisx86|solaris|freebsd|netbsd|debian)::
+  !(solarisx86|solaris|freebsd|netbsd|debian|aix)::
 
    "pkgarch"                 string => "$(sys.arch)",
                             comment => "Name convention of package arch for other system except Solaris and *BSD",
-                             handle => "update_bins_vars_pkgarch_not_solaris_bsd";
+                             handle => "update_bins_vars_pkgarch_not_solaris_bsd_debian_aix";
 
 #
 
@@ -529,20 +536,20 @@ debian::
  package_list_name_regex    => "ii\s+([^\s]+).*";
  package_list_version_regex => "ii\s+[^\s]+\s+([^\s]+).*";
 
- package_installed_regex => ".*"; # all reported are installed
+ package_installed_regex    => ".*"; # all reported are installed
 
- package_file_repositories => { "$(repo)" };
+ package_file_repositories  => { "$(repo)" };
 
 debian.x86_64::
- package_name_convention => "$(name)_$(version)_x86_64.deb";
+ package_name_convention    => "$(name)_$(version)_x86_64.deb";
 
 debian.i686::
- package_name_convention => "$(name)_$(version)_i686.deb";
+ package_name_convention    => "$(name)_$(version)_i686.deb";
 
 debian::
- package_add_command => "/usr/bin/dpkg --install";
- package_delete_command => "/usr/bin/dpkg --purge";
- package_update_command =>  "/usr/bin/dpkg --install";
+ package_add_command        => "/usr/bin/dpkg --install";
+ package_delete_command     => "/usr/bin/dpkg --purge";
+ package_update_command     => "/usr/bin/dpkg --install";
 
 
 redhat|SuSE::
@@ -557,32 +564,32 @@ redhat|SuSE::
  package_list_version_regex => "[^|]+\|[^|]+\|[^|]+\|\s+([^\s|]+).*";
  package_list_arch_regex    => "[^|]+\|[^|]+\|[^|]+\|[^|]+\|\s+([^\s]+).*";
 
- package_installed_regex => "i.*";
+ package_installed_regex    => "i.*";
 
- package_file_repositories => { "$(repo)" };
+ package_file_repositories  => { "$(repo)" };
 
- package_name_convention => "$(name)-$(version).$(arch).rpm";
+ package_name_convention    => "$(name)-$(version).$(arch).rpm";
 
- package_add_command => "/bin/rpm -ivh ";
- package_delete_command => "/bin/rpm -e --nodeps";
- package_verify_command => "/bin/rpm -V";
- package_update_command => "/bin/rpm -Uvh ";
- package_noverify_regex => ".*[^\s].*";
+ package_add_command        => "/bin/rpm -ivh ";
+ package_delete_command     => "/bin/rpm -e --nodeps";
+ package_verify_command     => "/bin/rpm -V";
+ package_update_command     => "/bin/rpm -Uvh ";
+ package_noverify_regex     => ".*[^\s].*";
 
 
 windows::
 
  package_changes => "individual";
  package_list_update_ifelapsed => "0";  # avoid caching of list during upgrade
- package_file_repositories => { "$(repo)" };
+ package_file_repositories  => { "$(repo)" };
 
- package_installed_regex => ".*";
+ package_installed_regex    => ".*";
  
- package_name_convention => "$(name)-$(version)-$(arch).msi";
+ package_name_convention    => "$(name)-$(version)-$(arch).msi";
 
- package_add_command => "\"$(sys.winsysdir)\msiexec.exe\" /qn /i";
- package_update_command => "\"$(sys.winsysdir)\msiexec.exe\" /qn /i";
- package_delete_command => "\"$(sys.winsysdir)\msiexec.exe\" /qn /x";
+ package_add_command        => "\"$(sys.winsysdir)\msiexec.exe\" /qn /i";
+ package_update_command     => "\"$(sys.winsysdir)\msiexec.exe\" /qn /i";
+ package_delete_command     => "\"$(sys.winsysdir)\msiexec.exe\" /qn /x";
 
 
 freebsd::
@@ -596,15 +603,15 @@ freebsd::
  package_list_name_regex    => "^(\S+)-(\d+\.?)+";
  package_list_version_regex => "^\S+-((\d+\.?)+\_\d)";
 
- package_file_repositories => { "$(repo)" };
+ package_file_repositories  => { "$(repo)" };
 
- package_installed_regex => ".*";
+ package_installed_regex    => ".*";
 
- package_name_convention => "$(name)-$(version).tbz";
- package_delete_convention => "$(name)-$(version)";
+ package_name_convention    => "$(name)-$(version).tbz";
+ package_delete_convention  => "$(name)-$(version)";
 
- package_add_command => "/usr/sbin/pkg_add";
- package_delete_command => "/usr/sbin/pkg_delete";
+ package_add_command        => "/usr/sbin/pkg_add";
+ package_delete_command     => "/usr/sbin/pkg_delete";
 
 netbsd::
 
@@ -614,18 +621,18 @@ netbsd::
  package_list_update_ifelapsed => "0"; # avoid caching of list during upgrade
 
 
- package_list_name_regex => "^(\S+)-(\d+\.?)+";
+ package_list_name_regex    => "^(\S+)-(\d+\.?)+";
  package_list_version_regex => "^\S+-((\d+\.?)+\nb\d)";
 
- package_file_repositories => { "$(repo)" };
+ package_file_repositories  => { "$(repo)" };
 
- package_installed_regex => ".*";
+ package_installed_regex    => ".*";
 
- package_name_convention => "$(name)-$(version).tgz";
- package_delete_convention => "$(name)-$(version)";
+ package_name_convention    => "$(name)-$(version).tgz";
+ package_delete_convention  => "$(name)-$(version)";
 
- package_add_command => "/usr/sbin/pkg_add";
- package_delete_command => "/usr/sbin/pkg_delete";
+ package_add_command        => "/usr/sbin/pkg_add";
+ package_delete_command     => "/usr/sbin/pkg_delete";
 
 solarisx86|solaris::
  
@@ -637,14 +644,35 @@ solarisx86|solaris::
  package_list_version_regex => "\s*VERSION:\s+([^\s]+)";
  package_list_arch_regex    => "\s*ARCH:\s+([^\s]+)";
  
- package_file_repositories => { "$(repo)" };
+ package_file_repositories  => { "$(repo)" };
  
- package_installed_regex => "\s*STATUS:\s*(completely|partially)\s+installed.*";
- package_name_convention => "$(name)-$(version)-$(arch).pkg";
- package_delete_convention => "$(name)";
+ package_installed_regex    => "\s*STATUS:\s*(completely|partially)\s+installed.*";
+ package_name_convention    => "$(name)-$(version)-$(arch).pkg";
+ package_delete_convention  => "$(name)";
 
  # Cfengine appends path to package and package name below, respectively
- package_add_command => "/bin/sh $(repo)/add_scr $(repo)/admin_file";
- package_delete_command => "/usr/sbin/pkgrm -n -a $(repo)/admin_file";
+ package_add_command        => "/bin/sh $(repo)/add_scr $(repo)/admin_file";
+ package_delete_command     => "/usr/sbin/pkgrm -n -a $(repo)/admin_file";
+
+aix::
+
+ package_changes => "individual";
+
+ package_list_update_ifelapsed => "0";  # avoid caching of list during upgrade
+
+ package_list_command       => "/usr/bin/lslpp -lc";
+ package_list_name_regex    => "[^:]+:([^:]+):[^:]+:.*";
+ package_list_version_regex => "[^:]+:[^:]+:([^:]+):.*";
+
+ package_file_repositories  => { "$(repo)" };
+
+ package_installed_regex    => "[^:]+:[^:]+:[^:]+:[^:]*:(COMMITTED|APPLIED):.*";
+
+ package_name_convention    => "$(name)-$(version).bff";
+ package_delete_convention  => "$(name)";
+
+ package_add_command        => "/bin/sh -c /usr/sbin/inutoc $(repo) && /usr/sbin/installp -qacgXNYd $(repo) cfengine.cfengine-nova$";
+ package_update_command     => "/bin/sh -c /usr/sbin/inutoc $(repo) && /usr/sbin/installp -qacgXNYd $(repo) cfengine.cfengine-nova$";
+ package_delete_command     => "/usr/sbin/installp -ug cfengine.cfengine-nova$";
 
 }

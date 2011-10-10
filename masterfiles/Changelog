@@ -4,6 +4,7 @@ October 2011
 *update.cf*
 - fixed Solaris/Solarisx86 self-upgrade
 - removed community-related promises as we decided to separate Nova and CFE default policy
+- added aix self-upgrade (certified by Matt)
 
 August 2011
 *All*
