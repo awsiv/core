@@ -22,6 +22,7 @@ libcfnova_la_LDFLAGS = -no-undefined
 
 libcfnova_la_SOURCES =						\
 	cfnova.c						\
+	conversion.c						\
 	logging.c						\
 	acl.c							\
 	acl_linux.c						\
