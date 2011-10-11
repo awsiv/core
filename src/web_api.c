@@ -923,9 +923,9 @@ for (sx = 1; sx < CF_GRAINS; sx++)
 
 sigma2 = sum / (double)CF_GRAINS;
 
-snprintf(work,CF_BUFSIZE-1,"\"Maximum observed %s = %.2lf\",",vitalId,cfv.max);
+snprintf(work,CF_BUFSIZE-1,"\"Maximum frequency %s = %.2lf\",",vitalId,cfv.max);
 Join(buffer,work,bufsize);
-snprintf(work,CF_BUFSIZE-1,"\"Minimum observed %s = %.2lf\",",vitalId,cfv.min);
+snprintf(work,CF_BUFSIZE-1,"\"Minimum frequency %s = %.2lf\",",vitalId,cfv.min);
 Join(buffer,work,bufsize);
 
 for (sx = 1; sx < CF_GRAINS; sx++)
