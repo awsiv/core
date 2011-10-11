@@ -14,6 +14,7 @@ define('SIMPLETEST', MAIN_PATH . 'tests/simpletest/'); // Directory of simpletes
 define('ROOT', MAIN_PATH); // Directory of codeigniter index.php
 define('TESTS_DIR', MAIN_PATH . 'tests/'); // Directory of your tests.
 define('APP_DIR', MAIN_PATH . 'application/'); // CodeIgniter Application directory
+define('LOGEXT','log');
 
 
 

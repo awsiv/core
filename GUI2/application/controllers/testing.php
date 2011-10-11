@@ -626,15 +626,15 @@ class Testing extends CI_Controller {
     function test_cfpr_ldap() {
         if (function_exists("cfpr_ldap_authenticate")) {
             //$result=cfpr_ldap_authenticate('ldaps://cf022osx.cfengine.com:636','uid=sudhir,cn=users,dc=cf022osx,dc=cfengine,dc=com','q1w2e3r4t5');
-            //$result=cfpr_ldap_authenticate('ldap://10.0.0.152','uid=sudhir,ou=people,dc=cfengine,dc=com','password');
-            $result = cfpr_ldap_authenticate('ldap://10.0.0.35', 'sudhir@windows1.test.cfengine.com', 'Cf3ng1n3');
+            $result=cfpr_ldap_authenticate('ldap://10.0.0.152','uid=njoshi,ou=sales,dc=cfengine,dc=com','password');
+            //$result = cfpr_ldap_authenticate('ldap://10.0.0.35', 'sudhir@windows1.test.cfengine.com', 'Cf3ng1n3');
             var_dump($result);
         }
     }
 
     function test_cfpr_ldap_attr() {
-        $result=cfpr_ldap_get_several_attributes("ldap://10.0.0.100","uid=sudhir,cn=users,dc=cf022osx,dc=cfengine,dc=com","cn=users,dc=cf022osx,dc=cfengine,dc=com","(|(objectClass=organizationalPerson)(objectClass=inetOrgPerson))","uid,mail,sn,altSecurityIdentities","subtree","sasl","q1w2e3r4t5","2",100);
-        //$result = cfpr_ldap_get_several_attributes("ldap://10.0.0.152", "uid=sudhir", "ou=people,dc=cfengine,dc=com", "(|(objectClass=organizationalPerson)(objectClass=inetOrgPerson))", "uid,cn,mail", "subtree", "sasl", "password", 1, 100);
+        //$result=cfpr_ldap_get_several_attributes("ldap://10.0.0.100","uid=sudhir,cn=users,dc=cf022osx,dc=cfengine,dc=com","cn=users,dc=cf022osx,dc=cfengine,dc=com","(|(objectClass=organizationalPerson)(objectClass=inetOrgPerson))","uid,mail,sn,altSecurityIdentities","subtree","sasl","q1w2e3r4t5","2",100);
+        $result = cfpr_ldap_get_several_attributes("ldap://10.0.0.152", "uid=sudhir", "ou=people,dc=cfengine,dc=com", "(|(objectClass=organizationalPerson)(objectClass=inetOrgPerson))", "uid,cn,mail", "subtree", "sasl", "password", 1, 100);
         $users = json_decode($result, true);
         $ret = array();
         foreach ($users['data'] as $user) {

@@ -49,19 +49,47 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
         <input id="login_attribute" type="text" name="login_attribute"  value="<?php echo $login_attribute; ?>"  />
 </p>
 
+
+<div id="userdirs">
 <p>
         <label for="users_directory">User directory <span class="required ldaprelated">*</span></label>
         <?php echo tooltip('tooltip_user_dir','',true) ;// echo form_error('login_attribute'); ?>
-        <input id="users_directory" type="text" name="users_directory"  value="<?php echo $users_directory ?>"  />
+        <input id="users_directory" type="text" name="users_directory[]"  value="<?php echo $users_directory ?>" class="usrdir"/>
+        <?php if(!isset($user_dirs)){ ?>
+        <button id="addmore">add</button>
+        <?php } ?> 
         <span id="effective_dir"></span>
 </p>
+ <?php 
+       if(isset($user_dirs)){
+         $number_of_dirs=count($user_dirs);
+         $i=1;
+         foreach($user_dirs as $dirs) {
+              echo "<p>";
+              echo form_label();
+              echo form_input($dirs);
+              $data = array(
+                    'name' => 'button',
+                    'content' => 'remove',
+                    'type'=>'button',
+                    'class'=>'rmbtns'
+                    );
+              echo form_button($data);
+               if($i==$number_of_dirs){
+                  echo form_button(array('id'=>'addmore','content'=>'add')); 
+              }
+              echo "</p>";
+              $i++;
+            }
+       }
+   ?>
+</div>
 
-<p id="member_attribute_related">
-        <label for="member_attribute">Member attribute <span class="required"></span></label>
+<p class="member_attribute_related">
+        <label for="member_attribute">Member attribute (secondary)<span class="required"></span></label>
         <?php echo tooltip('tooltip_member_attr','',true) ;//echo form_error('member_attribute'); ?>
         <input id="member_attribute" type="text" name="member_attribute"  value="<?php echo $member_attribute ?>"  />
 </p>
-
 
 <p class="adrelated">
         <label for="active_directory_domain">Active directory domain <span class="required">*</span></label>
@@ -124,15 +152,17 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
             {
                 $('#ldapsettings').show();
                 $('.adrelated').hide();
-                $('#member_attribute_related').show();
+                $('.member_attribute_related').show();
                 $('.ldaprelated').show();
+                $("#addmore").show();
                 
             }
             else if($("input[@name='mode']:checked").val() == 'active_directory'){
                 $('#ldapsettings').show()
                 $('.adrelated').show();
-                $('#member_attribute_related').hide();
+                $('.member_attribute_related').hide();
                 $('.ldaprelated').hide();
+                $("#addmore").hide();
             }
             if($("#base_dn").val()!='')
                 {
@@ -149,25 +179,46 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
      }
      
      
-     $("input[name='users_directory']").keyup(function(){
+     $("input[name='users_directory[]']").keyup(function(){
         set_bind_dn();
      });
      
      $("input[name='base_dn']").keyup(function(){
         set_bind_dn();
      });
+     
+    $("#addmore").bind('click', function(event){
+        event.preventDefault();
+        var num=$('.usrdir').length;
+        var newElem = $('#users_directory').clone().attr('id', 'users_directory_'+num).val('');
+        var rmNewElem=$('<button>').attr('class','rmbtns').text('remove');
+        var container=$("<p>").append('<label>').append(newElem).append(rmNewElem).append($(this));
+        $('#userdirs').append(container);    
+    });
+    
+    $(".rmbtns").live('click',function(event){
+       var addmorebtn=$('#addmore');
+       if($(this).parent().prev().find('#effective_dir').length>0){
+           $('#effective_dir').before(addmorebtn);
+       }else{
+          $(this).parent().prev().append(addmorebtn); 
+       }
+       $(this).parent().remove();
+    });
 
       $('#testsettings').bind('click',function(event){
           event.preventDefault();
-          if($("input:radio[name=mode]:checked").val()=='active_directory'){
-              
-          }
+          var no_dirs=new Array();
+          $("#userdirs").find("input:text[name=users_directory[]]").each(function(index, value) {
+                  no_dirs.push($(this).val());
+          })
+           
           $(this).ajaxyDialog({title:'LDAP Test',clickData:{
              'mode':$("input:radio[name=mode]:checked").val(),
              'host':$("#host").val(),
              'basedn':$("#base_dn").val(),
              'login_attr':$("#login_attribute").val(),
-             'user_dir':$("#users_directory").val(),
+             'user_dir':no_dirs.join(';'),
              'member_attr':$("#member_attribute").val(),
              'addomain':$("#active_directory_domain").val(),
              'encryption':$("input:radio[name=encryption]:checked").val()

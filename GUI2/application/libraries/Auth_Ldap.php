@@ -24,6 +24,8 @@ class Auth_Ldap {
     protected $warnings=array();
     protected $warning_cause=array();
     protected $authenticated=false;
+    protected $user_directories=array();
+    protected $user_dn;
 
     function __construct() {
         $this->ci = & get_instance();
@@ -93,7 +95,10 @@ class Auth_Ldap {
             $this->login_attribute = 'uid';
         }
         
-        $this->users_directory = $appsettings->users_directory;
+        $this->user_directories=explode(';',$appsettings->users_directory);
+        if(count($this->user_directories)==1){
+            $this->users_directory= $this->user_directories[0];
+        }
        
         $this->renamedfields = array(strtolower($this->login_attribute) => 'name', 'mail' => 'email', 'cn' => 'displayname', 'givenname' => 'name');
        
@@ -149,6 +154,7 @@ class Auth_Ldap {
                 'username' => $username,
                 'cn' => $user_info['cn'],
                 'group' => $user_info['role'],
+                'dn'=>$user_info['dn']
             );
             return $customdata;
         }
@@ -237,9 +243,17 @@ class Auth_Ldap {
         } else {
 
             // Now actually try to bind as the user using default binddn if anom bind possible grab the dn form ldap
-            $binddn = $this->login_attribute . '=' . $username . ',' . $this->users_directory . ',' . $this->basedn;
             try{
+                $bind=false;
+                foreach($this->user_directories as $directory){
+                     $binddn = $this->login_attribute . '=' . $username . ',' . $directory . ',' . $this->basedn;
                      $bind = cfpr_ldap_authenticate($this->ldap_url, $binddn, $password,$this->use_starttls);
+                     if($bind){
+                         $this->users_directory=$directory;
+                         break;
+                     }    
+                }
+                
               }
             catch(Exception $e){
               $this->set_error('ldap_conf_error', $e->getMessage());
@@ -253,8 +267,8 @@ class Auth_Ldap {
               return FALSE;
             }
                 if (!$bind) {
-                    log_message('error', 'Unable to perform LDAP bind, Invalid credentials');
-                    $this->set_error('ldap_login_error');
+                    log_message('error', 'Unable to perform LDAP bind, Invalid credentials or wrong user directory name');
+                    $this->set_error('ldap_login_error','Invalid credentials or wrong user directory name');
                     return FALSE;
                 } else {
                     $details = $this->get_details_for_user($username, $password);
@@ -264,19 +278,21 @@ class Auth_Ldap {
                         return False;
                     }
                 }
+            $gid=null;    
             $cn = key_exists('displayname', $details[0])?$details[0]['displayname']:"";
             $dn = $this->login_attribute . '=' . $username . ',' . $this->users_directory . ',' . $this->basedn;
             $id = key_exists('name', $details[0])?$details[0]['name']:"";
+            //$grp_attr=explode(',',$this->member_attribute);
+            $gid=$details[0][strtolower('gidNumber')];  
         }
-
+      
         $this->authenticated=true;
         $roles = array();
         if ($this->use_ad) {
-            $roles = $this->get_role_for_user($username, $password, $dn,true);
+            $roles = $this->get_role_for_user($username, $password, $dn);
         } else {
-            $roles = $this->get_role_for_user($id, $password,null,true);
+            $roles = $this->get_role_for_user($id, $password,null,$gid);
         }
-
         return array('cn' => $cn, 'dn' => $dn, 'id' => $id,
             'role' => $roles);
     }
@@ -394,7 +410,7 @@ class Auth_Ldap {
               }elseif($e->getMessage()=='Server is unavailable'){
                  log_message('error', 'Unable to perform Active directory bind ,make sure the correct encryption is set and valid values supplied in hostname, '.$e->getMessage().'  ' .$e->getLine());
               }else{
-                   log_message('error', 'Unable to perform Active directory bind, '.$e->getMessage().'  ' .$e->getLine());
+                 log_message('error', 'Unable to perform Active directory bind, '.$e->getMessage().'  ' .$e->getLine());
               }
               return FALSE;
           }
@@ -436,7 +452,7 @@ class Auth_Ldap {
      * @return <type> The array of associative arrays having keys username display name and email
      */
     function get_all_ldap_users($username=false, $password=false) {
-
+        
         if ($this->use_ad) {
             $filter = "(&(objectCategory=person)(objectClass=user)(cn=*)(sAMAccountName=*))";
             $fields = "$this->login_attribute,cn,mail";
@@ -452,10 +468,19 @@ class Auth_Ldap {
         } else {
             $filter = "(|(objectClass=organizationalPerson)(objectClass=inetOrgPerson)(mail=*))";
             $fields = $this->login_attribute . ",cn,mail";
-            $dn = $this->users_directory . ',' . $this->basedn;
-            $userdn = $this->login_attribute . '=' . $username . ',' . $dn;
-            $result = $this->cfpr_ldap_search($userdn, $password, $filter, $fields, $dn);
-            return $result;
+            $collectedusers=array();
+            foreach($this->user_directories as $directory){
+                $dn = $directory . ',' . $this->basedn;
+                if($this->user_dn!=''){
+                  $userdn = $this->user_dn;   
+                }else{
+                  $userdn = $this->login_attribute . '=' . $username . ',' . $this->users_directory . ',' . $this->basedn;   
+                }
+                $result = $this->cfpr_ldap_search($userdn, $password, $filter, $fields, $dn);
+                $collectedusers=array_merge($collectedusers,$result);
+            }
+            
+            return $collectedusers;
         }
     }
 
@@ -478,16 +503,24 @@ class Auth_Ldap {
             $result = $this->cfpr_ldap_search($binddn, $password, $filter, $fields, $dn);
             return $result;
         } else {
-            $filter = '(' . $this->member_attribute . '=*)';
+            if($this->member_attribute!=''){
+            $filter = '(|(objectClass=posixGroup)(' . $this->member_attribute . '=*))';
+            }else{
+            $filter = '(|(objectClass=posixGroup))';   
+            }
             $fields = "cn";
             $dn = $this->basedn;
-            $userdn = $this->login_attribute . '=' . $username . ',' . $this->users_directory . ',' . $this->basedn;
+              if($this->user_dn!=''){
+                  $userdn = $this->user_dn;   
+                }else{
+                  $userdn = $this->login_attribute . '=' . $username . ',' . $this->users_directory . ',' . $this->basedn;   
+                }
             $result = $this->cfpr_ldap_search($userdn, $password, $filter, $fields, $dn);
             return $result;
         }
     }
 
-    function get_role_for_user($username, $password, $get_role_arg=null,$already_authenticated=false) {
+    function get_role_for_user($username, $password, $get_role_arg=null,$gid=null) {
         $result=array();
         if ($this->use_ad) {
             $escaped = $this->ldap_escape($get_role_arg, false);
@@ -502,14 +535,18 @@ class Auth_Ldap {
             $result = $this->cfpr_ldap_single_search($binddn, $password, $filter, $field, $dn);
         } else {
             $userdn = $this->login_attribute . '=' . $username . ',' . $this->users_directory . ',' . $this->basedn;
-            $filter = '(' . $this->member_attribute . '=' . $username . ')';
+            if($this->member_attribute!=''){
+            $filter = '(|(&(gidNumber='.$gid.')(objectClass=posixGroup))(' .$this->member_attribute. '=' . $username . '))';
+            }else{
+            $filter = '(&(gidNumber='.$gid.')(objectClass=posixGroup))';   
+            }
             $field = "cn";
             $dn = $this->basedn;
             $result = $this->cfpr_ldap_single_search($userdn, $password, $filter, $field, $dn);
         }
          if(empty($result)){
                 $available_groups=$this->get_all_ldap_groups($username,$password);
-                if(!empty($available_groups) && $already_authenticated){
+                if(!empty($available_groups) && $this->authenticated){
                    $this->set_warning('no_groups_for_user'); 
                    log_message('error', 'User does not belong to any group, But can login into mission portal with limited access');
                 }else{
@@ -526,6 +563,7 @@ class Auth_Ldap {
         if ($this->use_ad) {
             $fields = "givenName,cn,distinguishedName";
             $dn = $this->users_directory==''?$this->basedn:$this->users_directory . ',' . $this->basedn;
+            
             if (preg_match('/^(\w+\.)+\w{2,5}$/', $this->ad_domain)) {
                 $binddn = $username . '@' . $this->ad_domain;
             } else {
@@ -533,13 +571,15 @@ class Auth_Ldap {
             }
             $result = $this->cfpr_ldap_search($binddn, $password, $filter, $fields, $dn); 
         } else {
-            $fields = "cn,dn,uid";
+            $groups=explode(',',  $this->member_attribute);
+            $fields = "cn,dn,uid,gidNumber";
             $userdn = $this->login_attribute . '=' . $username . ',' . $this->users_directory . ',' . $this->basedn;
             $dn = $this->users_directory . ',' . $this->basedn;
             $result = $this->cfpr_ldap_search($userdn, $password, $filter, $fields, $dn);
         }
         return $result;
     }
+    
 
     /* function search_ldap($username, $password, $filter, $fields, $dn=Null) {
       foreach ($this->hosts as $host) {
@@ -735,11 +775,14 @@ class Auth_Ldap {
     }
 
     public function set_user_dir($user_dir) {
-        $this->users_directory = $user_dir;
+        $this->user_directories = explode(';',$user_dir);
+        if(count($this->user_directories)==1){
+            $this->users_directory= $this->user_directories[0];
+        }
     }
 
     public function get_user_dir() {
-        return $this->users_directory;
+        return implode(';',$this->user_directories);
     }
 
     public function set_member_attr($mem_attr) {
@@ -787,6 +830,14 @@ class Auth_Ldap {
         }else{
            $this->encryption='plain' ;
         }
+    }
+    
+    public function set_user_dn($user_dn) {
+        $this->user_dn = $user_dn;
+    }
+
+    public function get_user_dn() {
+        return $this->user_dn;
     }
     
 

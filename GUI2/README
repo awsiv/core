@@ -2,7 +2,6 @@ Required PHP modules
 ---------------------------------
 1) mongo
 2) mcrypt
-3) curl
 4) phpsvn module ver 1.6.6
 5) cfmod
 

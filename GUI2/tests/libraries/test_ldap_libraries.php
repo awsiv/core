@@ -1,7 +1,7 @@
 <?php
 
 class test_ldap_libraries extends CodeIgniterUnitTestCase {
-private $username='sudhir';//'sudhir';
+private $username='njoshi';//'sudhir';
 private $password='Cf3ng1n3';//'q1w2e3r4t5';//'q1w2e3r4t5'//password//Cf3ng1n3;
 private $dn='CN=Sudhir Pandey,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com';
     public function __construct() {
@@ -19,14 +19,15 @@ private $dn='CN=Sudhir Pandey,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com';
 
 
    public function setup_ldap(){
-       $this->_ci->auth_ldap->set_host('cf022osx.cfengine.com');
-       $this->_ci->auth_ldap->set_basedn('dc=cf022osx,dc=cfengine,dc=com');
+       $this->_ci->auth_ldap->set_host('10.0.0.152');
+       $this->_ci->auth_ldap->set_basedn('dc=cfengine,dc=com');
        $this->_ci->auth_ldap->set_login_attr('uid');
-       $this->_ci->auth_ldap->set_user_dir('cn=users');
+       $this->_ci->auth_ldap->set_user_dir('ou=people;ou=sales');
        $this->_ci->auth_ldap->set_member_attr('memberUid');
        $this->_ci->auth_ldap->set_mode('ldap');
-       $this->password='q1w2e3r4t5';
-       $this->_ci->auth_ldap->set_encryption('ssl');
+       $this->password='password';
+       $this->_ci->auth_ldap->set_encryption('none'); //ssl
+       $this->dn = 'uid=njoshi,ou=sales,dc=cfengine,dc=com';
    }
    
    public function setup_ad(){
@@ -36,7 +37,9 @@ private $dn='CN=Sudhir Pandey,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com';
        $this->_ci->auth_ldap->set_ad_domain('windows1.test.cfengine.com');
        $this->_ci->auth_ldap->set_user_dir('');
        $this->_ci->auth_ldap->set_mode('active_directory');
+       $this->username='sudhir';
        $this->password='Cf3ng1n3';
+       $this->dn='CN=Sudhir Pandey,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com';
    }
    
      public function test_ldap_settings(){

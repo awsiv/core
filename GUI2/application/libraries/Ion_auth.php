@@ -415,7 +415,7 @@ class Ion_auth
 		    }
                 //$this->set_error('login_unsuccessful');
 		return FALSE;
-               }
+             }
                
 		if ($this->ci->ion_auth_model_mongo->login($identity, $password, $remember))
 		{
@@ -589,6 +589,9 @@ class Ion_auth
         if (strtolower($this->mode) != 'database') {
             if (!$this->ci->session->userdata('pwd')) {
                 $this->set_error('login_mode_changed');
+            }
+            if($this->ci->session->userdata('dn')){
+                $this->ci->auth_ldap->set_user_dn($this->ci->session->userdata('dn'));
             }
             return $this->ci->auth_ldap->get_all_ldap_users($this->ci->session->userdata('username'), $this->ci->session->userdata('pwd'));
         }
@@ -938,6 +941,9 @@ class Ion_auth
                 if(!$this->ci->session->userdata('pwd')){
                      $this->set_error('login_mode_changed');
                 }
+                 if($this->ci->session->userdata('dn')){
+                 $this->ci->auth_ldap->set_user_dn($this->ci->session->userdata('dn'));
+            }
                return $this->ci->auth_ldap->get_all_ldap_groups( $this->ci->session->userdata('username'), $this->ci->session->userdata('pwd'));
             }
 		 return $this->ci->ion_auth_model_mongo->get_groups();

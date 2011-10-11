@@ -2577,3 +2577,7 @@ ul.admin_menu li.current a{
     margin-left: 21%;
     display:block;
 }
+
+div#userdirs p button{
+   margin-left:4px;
+}
