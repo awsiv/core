@@ -90,7 +90,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
          {
          not_kept++;
          }
-      else if (now - then > (int)(average))
+      else if (now - then > (int)(average+sqrt(var)+0.5))
          {
          repaired++;
          }
@@ -152,8 +152,8 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
 DeleteDBCursor(dbp,dbcp);
 CloseDB(dbp);
 
-METER_KEPT[meter_perf_day] = kept;
-METER_REPAIRED[meter_perf_day] = repaired;
+METER_KEPT[meter_perf_day] = 100 * (kept / (kept + not_kept + repaired));
+METER_REPAIRED[meter_perf_day] = 100 * (repaired / (kept + not_kept + repaired));
 }
 
 /*****************************************************************************/
