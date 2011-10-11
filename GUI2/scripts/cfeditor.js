@@ -59,6 +59,7 @@ $(document).ready(function() {
         }
     });
 
+    $.jnotify.setup({delay:15000,showClose:true});
     //var default_dialog_width = 400;
     $('#buttonpanel-resizer').css('width', '5px');
     var tab_counter = 2;
@@ -369,7 +370,7 @@ $(document).ready(function() {
         var tabtype=$("input[name='tabtype']",current_tab_id).val();
         if(tabtype==undefined)
         {
-            $.jnotify('Current tab cannot be saved',"error",5000);
+            $.jnotify('Current tab cannot be saved',"error");
             return;
         }
         var file_type=$("input[name='link']",current_tab_id).val();
@@ -507,7 +508,7 @@ $(document).ready(function() {
         event.preventDefault();
         if(code_editor_counter > 1)
         {
-            $.jnotify("Please close all open tabs first","error",5000);
+            $.jnotify("Please close all open tabs first","error");
             return;
         }
         else
@@ -533,7 +534,7 @@ $(document).ready(function() {
     $('#update').click(function() {
         if(code_editor_counter > 1)
         {
-            $.jnotify("Please close all open tabs first","error",5000);
+            $.jnotify("Please close all open tabs first","error");
             return;
         }
         else
@@ -551,7 +552,7 @@ $(document).ready(function() {
                     }
                     else
                     {
-                        $.jnotify("Update Failed : "+data.message,"error",5000);
+                        $.jnotify("Update Failed : "+data.message,"error");
                     }
                 },
                 error:function(data){
@@ -573,7 +574,7 @@ $(document).ready(function() {
     .click(function() {
          if(code_editor_counter > 1)
           {
-            $.jnotify("Make sure all the tabs are  saved in server for up to date syntax checking ","warning",10000);
+            $.jnotify("Make sure all the tabs are  saved in server for up to date syntax checking ","warning");
             //return;
           }
         $.ajax({
@@ -644,7 +645,7 @@ $(document).ready(function() {
                             }
                             else
                             {
-                                $.jnotify(data.message,"error",5000);
+                                $.jnotify(data.message,"error");
                             }
                         }
                         $('#cmtfile').val('');
