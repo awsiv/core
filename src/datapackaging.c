@@ -152,8 +152,8 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
 DeleteDBCursor(dbp,dbcp);
 CloseDB(dbp);
 
-METER_KEPT[meter_perf_day] = 100.0;
-METER_REPAIRED[meter_perf_day] = 0;
+METER_KEPT[meter_perf_day] = kept;
+METER_REPAIRED[meter_perf_day] = repaired;
 }
 
 /*****************************************************************************/
