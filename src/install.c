@@ -247,7 +247,8 @@ struct HubSoftware *NewHubSoftware(struct HubHost *hh,char *name,char *version,c
     hp->arch = NULL;
     }
 
-
+ hp->t = 0;
+ 
  return hp;
 }
 

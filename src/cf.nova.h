@@ -1469,6 +1469,7 @@ struct HubSoftware
    char *name;
    char *version;
    char *arch;
+   time_t t;
    };
 
 struct HubClass
