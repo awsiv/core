@@ -62,6 +62,9 @@ div.ui-accordion .ui-accordion-header a{
     color: #FFFFFF;
 }
 
+#header{
+    margin-top:10px;
+}
 
 #header p,ul
 {
@@ -69,12 +72,18 @@ div.ui-accordion .ui-accordion-header a{
 }
 
 #header_left .sitetitle
-{
-    font-size: 21px;
+{ 
     text-transform: uppercase;
-    margin-top: 10px;
-     color: #fff;
+    margin-top: 5px;
+    padding: 8px 0px 12px 0px;
 }
+#header_left .sitetitle a{
+     background: url("../images/head_agent.png") no-repeat;
+     font-size: 21px;
+     color:#f8f8f8;
+     padding: 3px 0px 5px 30px;
+}
+
 #header_left .sitetitle .version
 {
     font-size: 14px;
@@ -82,6 +91,7 @@ div.ui-accordion .ui-accordion-header a{
     font-weight: bold;
     color:#CEAC0F;
 }
+
 #header_left ul li
 {
     list-style: none
@@ -114,7 +124,7 @@ p#userbox a{
 
 #breadcrumb
 {
-    margin-top: 25px;
+    margin-top: 10px;
     margin-bottom:10px;
     font-family: "Trebuchet MS",Helvetica, Arial, sans-serif;
     font-size: 11px;
@@ -284,10 +294,11 @@ label#searchbox input
 }
 #work .header h1
 {
-    font-size: 42px;
+    font-size: 40px;
     font-weight: normal;
     margin: 0;
     text-align: center;
+    color:#b2b2af
 }
 
 #work .header p{
