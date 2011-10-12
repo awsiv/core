@@ -80,6 +80,11 @@ void DeleteHubQuery(struct HubQuery *hq,void (*fnptr)())
 
 { struct Rlist *rp;
 
+ if(!hq)
+    {
+    return;
+    }
+
  for (rp = hq->hosts; rp != NULL; rp=rp->next)
     {
     DeleteHubHost(rp->item);
