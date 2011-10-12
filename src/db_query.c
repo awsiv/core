@@ -440,13 +440,13 @@ while (mongo_cursor_next(cursor))  // loops over documents
    keyhash[0] = '\0';
    hostnames[0] = '\0';
    addresses[0] = '\0';
+   found = false;
    
    while (bson_iterator_next(&it1))
       {
       /* Extract the common HubHost data */
       
       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
-      found = false;
       
       /* Query specific search/marshalling */
       
