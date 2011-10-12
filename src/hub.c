@@ -32,6 +32,7 @@ char EXECCOMMAND[CF_BUFSIZE];
 char VMAILSERVER[CF_BUFSIZE];
 struct Item *SCHEDULE = NULL;
 struct Item *FEDERATION = NULL;
+struct Item *EXCLUDE_HOSTS = NULL;
 
 pid_t MYTWIN = 0;
 int MAXLINES = 30;
@@ -50,6 +51,7 @@ void StartHub(int argc,char **argv);
 void Nova_CollectReports(struct Attributes a, struct Promise *pp);
 int ScheduleRun(void);
 static void Nova_CreateHostID(char *hostID, char *ipaddr);
+static void Nova_RemoveExcludedHosts(struct Item **list, struct Item *hosts_exclude);
 
 /*****************************************************************************/
 
@@ -97,6 +99,8 @@ signal(SIGUSR1,HandleSignals);
 signal(SIGUSR2,HandleSignals);
 
 umask(077);
+
+struct Item *ip;
 
 while (true)
    {
@@ -525,6 +529,7 @@ struct Item *Nova_ScanClients()
   struct CfKeyHostSeen entry;
   int ksize,vsize;
   struct Item *list = NULL,*listm;
+  time_t now = time(NULL);
 
   
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_LASTDB_FILE);
@@ -558,30 +563,46 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
          }
       
       memcpy(&entry,value,sizeof(entry));
-      IdempPrependItem(&list,key+1,entry.address);
+      //IdempPrependItem(&list,key+1,entry.address);
+      struct Item *ip = ReturnItemIn(list,key+1);
+
+      if(!ip)
+         {
+         ip = PrependItem(&list,key+1,entry.address);
+         }
+      
+      time_t lastseen = now - (time_t)entry.Q.q;
+
+      if(ip->time < lastseen)
+         {
+         ip->time = lastseen;
+         }
       }
    }
 
 DeleteDBCursor(dbp,dbcp);
 CloseDB(dbp);
 
+Nova_RemoveExcludedHosts(&list,EXCLUDE_HOSTS);
+
 #ifdef HAVE_LIBMONGOC
 /* Now we need to do some magic for hubs so that only one hub collects reports at a time */
 NewClass("am_policy_hub");
-CfOut(cf_inform,"","Checking for Hub master\n");
+CfOut(cf_inform,"","Checking for Hub master");
 if (CFDB_QueryIsMaster())
    {
-   CfOut(cf_inform,"","I am Hub master\n");
+   CfOut(cf_inform,"","I am the hub master");
 
    Nova_UpdateMongoHostList(list);
    DeleteItemList(list);
 
    // If there is a list in Mongo, this takes precedence, else populate one
    list = Nova_GetMongoLastSeen();
+   Nova_RemoveExcludedHosts(&list,EXCLUDE_HOSTS);
    }
 else
    {
-   CfOut(cf_inform,"","I am not the hub master\n");
+   CfOut(cf_inform,"","I am not the hub master");
    DeleteItemList(list);
    list = NULL;   
    }
@@ -866,6 +887,23 @@ for (cp = ControlBodyConstraints(cf_hub); cp != NULL; cp=cp->next)
          }
       }
 
+   if (strcmp(cp->lval,CFH_CONTROLBODY[cfh_exclude_hosts].lval) == 0)
+      {
+      struct Rlist *rp;
+      Debug("exclude_hosts ...\n");
+      DeleteItemList(EXCLUDE_HOSTS);
+      EXCLUDE_HOSTS = NULL;
+      
+      for (rp  = (struct Rlist *) retval; rp != NULL; rp = rp->next)
+         {
+         if (!IsItemIn(EXCLUDE_HOSTS,rp->item))
+            {
+            AppendItem(&EXCLUDE_HOSTS,rp->item,NULL);
+            }
+         }
+      }
+
+   
    if (strcmp(cp->lval,CFH_CONTROLBODY[cfh_export_zenoss].lval) == 0)
       {
       CFH_ZENOSS = GetBoolean(retval);
@@ -1008,6 +1046,29 @@ mongo_connection dbconn;
     CfOut(cf_verbose,"", "!! Could not open connection to report database on save host id");
     }
 #endif  /* HAVE_LIBMONGOC */
+}
+
+/*****************************************************************************/
+
+static void Nova_RemoveExcludedHosts(struct Item **listp, struct Item *hosts_exclude)
+{
+ struct Item *ip;
+ struct Item *include = NULL;
+
+ for(ip = *listp; ip != NULL; ip = ip->next)
+    {
+    if(IsMatchItemIn(hosts_exclude, ip->classes))
+       {
+       Debug("Excluding host %s from hub report query\n", ip->classes);
+       }
+    else
+       {
+       IdempPrependItem(&include, ip->name, ip->classes);
+       }
+    }
+
+ DeleteItemList(*listp);
+ *listp = include;
 }
 
 /* EOF */
