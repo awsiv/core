@@ -57,8 +57,9 @@ struct Item *CFDB_GetLastseenCache(void)
   mongo_cursor *cursor;
  mongo_connection conn;
  bson_buffer bb;
- char keyhash[CF_BUFSIZE]={0},ip[CF_MAXVARSIZE]={0};
- struct Item *list = {0};
+ char keyhash[CF_BUFSIZE]={0},ipAddr[CF_MAXVARSIZE]={0};
+ time_t t = time(NULL);
+ struct Item *ip,*list = NULL;
 
 
 if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
@@ -68,7 +69,7 @@ if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
    }
 
 bson_buffer_init(&bb);
-bson_append_int(&bb,"lastseen_hosts",1);
+bson_append_int(&bb,cfr_lastseen_hosts,1);
 bson_from_buffer(&field, &bb);
 
 cursor = mongo_find(&conn,MONGO_SCRATCH,bson_empty(&query),&field,0,0,CF_MONGO_SLAVE_OK);
@@ -82,7 +83,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    
    while(bson_iterator_next(&it1))
       {
-      if (strcmp(bson_iterator_key(&it1),"lastseen_hosts") == 0)
+      if (strcmp(bson_iterator_key(&it1),cfr_lastseen_hosts) == 0)
          {
          bson_iterator_init(&it2,bson_iterator_value(&it1));
            
@@ -91,18 +92,23 @@ while (mongo_cursor_next(cursor))  // loops over documents
             bson_iterator_init(&it3, bson_iterator_value(&it2));
             while (bson_iterator_next(&it3))
                {
-               if(strcmp(bson_iterator_key(&it3),"kH")==0)
+               if(strcmp(bson_iterator_key(&it3),cfr_keyhash)==0)
                   {
                   snprintf(keyhash,sizeof(keyhash),"%s",bson_iterator_string(&it3));
                   }
-               else if(strcmp(bson_iterator_key(&it3),"ip")==0)
+               else if(strcmp(bson_iterator_key(&it3),cfr_ipaddr)==0)
                   {
-                  snprintf(ip,sizeof(ip),"%s",bson_iterator_string(&it3));
+                  snprintf(ipAddr,sizeof(ipAddr),"%s",bson_iterator_string(&it3));
+                  }
+               else if(strcmp(bson_iterator_key(&it3),cfr_time)==0)
+                  {
+                  t = bson_iterator_int(&it3);
                   }
                }
-            if(keyhash && ip)
+            if(keyhash && ipAddr)
                {
-               IdempPrependItem(&list,keyhash,ip);
+               ip = IdempPrependItem(&list,keyhash,ipAddr);
+               ip->time = t;
                }
             }
          }

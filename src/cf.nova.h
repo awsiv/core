@@ -477,7 +477,7 @@ void CFDB_SaveLastUpdate(mongo_connection *conn, char *database, char *keyField,
 
 struct HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *policy, time_t minGenTime);
 void CFDB_SaveCachedTotalCompliance(mongo_connection *conn, char *policy, int slot, double kept, double repaired, double notkept, int count, time_t genTime);
-int CFDB_SaveLastseenCache(char *keyhash,char *ip);
+int CFDB_SaveLastseenCache(struct Item *lastseen);
 void CFDB_SaveGoalsCache(char *goal_patterns, char *goal_categories);
 
 /*
@@ -511,7 +511,7 @@ void CFDB_PurgeHost(mongo_connection *conn, char *keyHash);
 void CFDB_PurgeDeprecatedVitals(mongo_connection *conn);
 
 void CFDB_RemoveTestData(char *db, char *keyhash);
-int CFDB_PurgeLastseenCache(struct Item *list);
+
 #endif /* HAVE_LIBMONGOC */
 
 
@@ -1320,6 +1320,7 @@ struct cf_pscalar
 #define cfr_environment   "env"
 
 #define cfr_netmeasure    "ne"
+#define cfr_lastseen_hosts "lastseen_hosts"
 
 /* Promise DB */
 #define cfp_bundlename    "bn"

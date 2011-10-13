@@ -285,11 +285,6 @@ CfOut(cf_inform,"","............................................................
 CfOut(cf_inform,""," * Hailing %s : %u\n",peer,(int)aa.copy.portnumber);
 CfOut(cf_inform,"","...........................................................................\n");
 
-// record client host id (from lastseen) immideatley so we can track failed connection attempts
-// the timestamp is updated when we get response - see UnpackReportBook
-
-Nova_CreateHostID(hostID,peer);
-
 /* Check trust interaction*/
 
 aa.copy.trustkey = true;
@@ -310,6 +305,11 @@ if (conn == NULL)
    
    return false;
    }
+
+// record client host id (from lastseen) immideatley so we can track failed connection attempts
+// the timestamp is updated when we get response - see UnpackReportBook
+
+Nova_CreateHostID(hostID,peer);
 
 // Choose full / delta
 
@@ -999,18 +999,50 @@ void Nova_UpdateMongoHostList(struct Item *list)
 
 {
 #ifdef HAVE_LIBMONGOC
- struct Item *ip = NULL;
-  int count = 0;
+ struct Item *ip = NULL, *lastseen = NULL, *ip2 = NULL, *new_lastseen=NULL;
+ int count = 0;
+ bool ignore = false;
 
-  CFDB_PurgeLastseenCache(list); 
-  
+//CFDB_PurgeLastseenCache(list);
+
+// add everything from the new list
 for(ip=list;ip!=NULL;ip=ip->next)
-   {
-   CFDB_SaveLastseenCache(ip->name,ip->classes);
+   {   
+   PrependFullItem(&new_lastseen,ip->name,ip->classes,0,time(NULL));
    count++;
    }
+
+lastseen = CFDB_GetLastseenCache();
+
+// now add items from the prev lastseen db
+
+for(ip2=lastseen; ip2!=NULL;ip2=ip2->next)
+   {
+   ignore = false;
+   
+   for(ip=list;ip!=NULL;ip=ip->next)
+      {
+      if((strcmp(ip->name, ip2->name) == 0 && strcmp(ip->classes,ip2->classes) == 0) || (time(NULL) - ip2->time) > CF_HUB_HORIZON)
+         {
+         ignore = true;
+         break;
+         }
+      }
+      
+   if(!ignore)
+      {
+      PrependFullItem(&new_lastseen,ip2->name,ip2->classes,0,ip2->time);
+      count++;
+      }
+   }
+
+CFDB_SaveLastseenCache(new_lastseen);
+
+DeleteItemList(lastseen);
+// TODO: return new_lastseen;
 CfOut(cf_inform,"","%d hosts added to the lastseen cache\n",count);
  #endif
+//TODO: return NULL;
 }
 
 /*****************************************************************************/

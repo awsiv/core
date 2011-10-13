@@ -107,12 +107,16 @@ return true;
 
 /*****************************************************************************/
 
-int CFDB_SaveLastseenCache(char *keyhash,char *ip)
+int CFDB_SaveLastseenCache(struct Item *lastseen)
 
 { bson_buffer bb;
- bson_buffer *setObj,*sub;
-  bson setOp,empty;
-  mongo_connection dbconn;
+ bson_buffer *setObj,*sub,*arr;
+ bson setOp,empty;
+ mongo_connection dbconn;
+ time_t now = time(NULL);
+ struct Item *ip;
+ char arrIndex[CF_BUFSIZE] = {0};
+ int i=0;
 
 if (!IsDefinedClass("am_policy_hub"))
    {
@@ -122,20 +126,33 @@ if (!IsDefinedClass("am_policy_hub"))
   
 if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
    {
-   CfOut(cf_verbose,"","!! Could not open connection to report database to put value %s",keyhash);
+   CfOut(cf_verbose,"","!! Could not open connection to report database");
    return false;
    }
-
   
 bson_buffer_init(&bb);
-setObj = bson_append_start_object(&bb, "$addToSet");
-sub = bson_append_start_object(setObj, "lastseen_hosts");
-bson_append_string(sub,"kH",keyhash);
-bson_append_string(sub,"ip",ip);
-bson_append_finish_object(sub);
+
+setObj = bson_append_start_object(&bb, "$set");
+arr = bson_append_start_array(setObj,cfr_lastseen_hosts);
+
+for(ip=lastseen, i=0; ip != NULL; ip = ip->next, i++)
+   {
+   snprintf(arrIndex,sizeof(arrIndex),"%d",i);
+   sub = bson_append_start_object(arr,arrIndex);
+   
+   bson_append_string(sub,cfr_keyhash,ip->name);
+   bson_append_string(sub,cfr_ipaddr,ip->classes);
+   bson_append_int(sub,cfr_time,ip->time);
+   
+   bson_append_finish_object(sub);
+   }
+
+bson_append_finish_object(arr);
 bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
+
+bson_print(&setOp);
 mongo_update(&dbconn,MONGO_SCRATCH,bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT);
 
 bson_destroy(&setOp);
@@ -933,9 +950,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    sscanf(ip->name,"%ld,%127[^,],%d,%d,%d\n",&t,version,&kept,&repaired,&notrepaired);
    then = (time_t)t;
 
-
    snprintf(varName,sizeof(varName),"%s.%s",cfr_total_compliance,GenTimeKey(then));
-
 
    // check for duplicate keys
    addedKey = ReturnItemIn(keys,varName);
@@ -949,7 +964,6 @@ for (ip = data; ip != NULL; ip=ip->next)
      PrependItem(&keys,varName,cf_ctime(&then));
      }
 
-   
    sub = bson_append_start_object(setObj, varName);
    bson_append_int(sub,cfr_time, then);
    bson_append_string(sub,cfr_version,version);
@@ -968,7 +982,6 @@ mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
 bson_destroy(&setOp);
 bson_destroy(&host_key);  
-
 }
 
 /*****************************************************************************/
@@ -985,8 +998,7 @@ void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, enum promiselog_
   char *dbOp = NULL;
   long then;
   time_t tthen;
-  
-  
+    
 switch(rep_type)
    {
    case plog_repaired:
