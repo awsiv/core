@@ -20,13 +20,8 @@
 /*****************************************************************************/
 
 #define MAX_KEY_LENGTH 255
-#define MAX_VALUE_NAME 16383
-
-enum reg_data_type
-   {
-   cf_reg_sz,
-   cf_reg_notype
-   };
+#define REGDTYPE_UNKNOWN 1239999  // must not match any windows REG_* defines
+#define MAX_VALUE_SIZE 16384
 
 /*****************************************************************************/
 
@@ -34,17 +29,18 @@ void Nova_VerifyRegistryPromise(struct Attributes a,struct Promise *pp);
 int Nova_OpenRegistryKey(char *key, HKEY *key_h, int create);
 int Nova_PrintAllValues(HKEY key_h);
 int Nova_VerifyRegistryValueAssocs(HKEY key_h,struct Attributes a,struct Promise *pp);
-int Nova_GetRegistryValue(HKEY key_h, char *value, void *data_p, unsigned long *data_sz);
-enum reg_data_type Str2RegDtype(char *datatype);
+int Nova_GetRegistryValue(HKEY key_h, char *name, void *data_p, unsigned long *data_sz);
+DWORD Str2RegDtype(char *datatypeStr);
 void Nova_RecursiveQueryKey(CF_DB *dbp,HKEY *key_h,char *name,struct Attributes a,struct Promise *pp, int level);
 int Nova_RegistryKeyIntegrity(CF_DB *dbp,char *key,struct Attributes a,struct Promise *pp);
 void Nova_RegistryValueIntegrity(CF_DB *dbp,char *key,char *value,char *data,int size,int type,struct Attributes a,struct Promise *pp);
 int Nova_ReadCmpPseudoRegistry(CF_DB *dbp,char *dbkey,void *ptr,int size,int *cmp);
-enum reg_data_type Str2RegDtype(char *datatype);
 HKEY Str2HKey(char *root_key);
 void Nova_RecursiveRestoreKey(CF_DB *dbp,char *keyname,struct Attributes a,struct Promise *pp);
 int Nova_CopyRegistryValue(char *key,char *value,char *buffer);
 void Nova_DeleteRegistryKey(struct Attributes a,struct Promise *pp);
+static bool Nova_CompareRegistryValue(HKEY key_h, DWORD dataType, char *name, char *valueStr, bool *outCmp);
+
 
 /*****************************************************************************/
 
@@ -147,7 +143,6 @@ int Nova_CopyRegistryValue(char *key,char *value,char *buffer)
 
 { unsigned long reg_data_sz = CF_BUFSIZE;
   void *reg_data_p = calloc(1,CF_BUFSIZE);
-  enum reg_data_type reg_dtype;
   int len;
   HKEY key_h;
 
@@ -368,24 +363,30 @@ int Nova_VerifyRegistryValueAssocs(HKEY key_h,struct Attributes a,struct Promise
 
 { int ret = ERROR_SUCCESS;
   struct Rlist *rp,*rpr,*assign;
-  char *name,*value,*datatype;
   unsigned long reg_data_sz = CF_BUFSIZE;
   void *reg_data_p = calloc(1,CF_BUFSIZE);
-  enum reg_data_type reg_dtype;
+  DWORD reg_dtype;
   int regCmpSize;
  
 for (rp = a.database.rows; rp != NULL; rp=rp->next)
    {
    assign = SplitStringAsRList((char *)(rp->item),',');
-   name = assign->item;
-   datatype = assign->next->item;
-   value = assign->next->next->item;
-   reg_dtype = Str2RegDtype(datatype);
-   
+   char *name = assign->item;
+   char *datatypeStr = assign->next->item;
+   char *valueStr = assign->next->next->item;
+   reg_dtype = Str2RegDtype(datatypeStr);
+
+
+   /*
    if (Nova_GetRegistryValue(key_h,name,reg_data_p,&reg_data_sz))
       {
 
-      regCmpSize = (reg_data_sz > strlen(value)) ? reg_data_sz : strlen(value);
+      if(!Nova_CompareRegistryValue(key_h, reg_dtype, name, valueStr))
+         {
+         
+         }
+
+      regCmpSize = (reg_data_sz > strlen(valueStr)) ? reg_data_sz : strlen(valueStr);
       
       if(regCmpSize > CF_BUFSIZE)
 	{
@@ -395,34 +396,63 @@ for (rp = a.database.rows; rp != NULL; rp=rp->next)
 
       if (memcmp(reg_data_p,value,regCmpSize) == 0)
          {
-         cfPS(cf_inform,CF_NOP,"",pp,a," -> verified value (%s,%s) correct for %s",name,value,pp->promiser);
+         cfPS(cf_inform,CF_NOP,"",pp,a," -> Verified value (%s,%s) correct for %s",name,valueStr,pp->promiser);
          continue;         
          }
       else
          {
-         CfOut(cf_inform,"", " -> value (%s,%s) incorrect for %s",name,value,pp->promiser);
+         CfOut(cf_inform,"", " -> Value (%s,%s) incorrect for %s",name,valueStr,pp->promiser);
          }
       }
+
+   */
+   bool match = false;
    
-   switch (reg_dtype)
+   if(!Nova_CompareRegistryValue(key_h, reg_dtype, name, valueStr, &match))
       {
-      case cf_reg_sz:
-          
-          if (!DONTDO && a.transaction.action != cfa_warn)
-             {
-             cfPS(cf_inform,CF_CHG,"",pp,a," -> Repairing registry value as (%s,%s)",name,value);
-             ret = RegSetValueEx(key_h,name,0,REG_SZ,value,strlen(value)+1);
-             }
-          else
-             {
-             cfPS(cf_error,CF_WARN,"",pp,a," !! Registry value incorrect, but only a warning was promised");
-             CfOut(cf_inform,""," -> (%s,%s) incorrect for %s",name,value,pp->promiser);
-             }
-          break;
-          
-      default:
-          cfPS(cf_error,CF_INTERPT,"",pp,a,"Unknown data type for registry value for \"%s\" - ignored",name);
-          ret = 0;
+      // Error
+      continue;
+      }
+
+   if(match)
+      {
+      cfPS(cf_inform,CF_NOP,"",pp,a," -> Verified value (%s,%s) correct for %s",name,valueStr,pp->promiser);
+      continue;         
+      }
+   
+   DWORD dValue;
+   DWORD dataSize;
+   
+   if (!DONTDO && a.transaction.action != cfa_warn)
+      {
+      switch (reg_dtype)
+         {
+         case REG_SZ:
+         case REG_EXPAND_SZ:
+             dataSize = strlen(valueStr)+1;
+             
+             cfPS(cf_inform,CF_CHG,"",pp,a," -> Repairing registry %s value as (%s,%s)",datatypeStr,name,valueStr);
+             ret = RegSetValueEx(key_h, name, 0, reg_dtype, valueStr, dataSize);
+             break;
+             
+         case REG_DWORD:
+             dValue = atoi(valueStr);
+             dataSize = sizeof(dValue);
+             
+             cfPS(cf_inform,CF_CHG,"",pp,a," -> Repairing registry %s value as (%s,%s)",datatypeStr,name,valueStr);
+             ret = RegSetValueEx(key_h, name, 0, REG_DWORD, (char *)&dValue, dataSize);
+             break;
+             
+         default:
+             cfPS(cf_error,CF_INTERPT,"",pp,a,"Unknown data type for registry value for \"%s\" - ignored",name);
+             ret = ERROR_SUCCESS;
+         }
+      }
+   else
+      {
+      cfPS(cf_error,CF_WARN,"",pp,a," !! Registry value incorrect, but only a warning was promised");
+      CfOut(cf_inform,""," -> (%s,%s) incorrect for %s",name,valueStr,pp->promiser);
+      ret = ERROR_SUCCESS;
       }
 
    DeleteRlist(assign);
@@ -440,11 +470,11 @@ return 0;
 
 /*****************************************************************************/
 
-int Nova_GetRegistryValue(HKEY key_h, char *value, void *data_p, unsigned long *data_sz)
+int Nova_GetRegistryValue(HKEY key_h, char *name, void *data_p, unsigned long *data_sz)
 
 { int ret;
 
-ret = RegQueryValueEx(key_h,value,NULL,NULL,data_p,data_sz);
+ret = RegQueryValueEx(key_h,name,NULL,NULL,data_p,data_sz);
 
 if (ret == ERROR_SUCCESS)
    {
@@ -452,27 +482,31 @@ if (ret == ERROR_SUCCESS)
    }
 else
    {
-   CfOut(cf_verbose,"","Could not read existing registry data value for '%s'.\n", value);
+   CfOut(cf_verbose,"","Could not read existing registry data for '%s'.\n", name);
    return false;
    } 
 }
 
 /*****************************************************************************/
 
-enum reg_data_type Str2RegDtype(char *datatype)
+DWORD Str2RegDtype(char *datatypeStr)
 
-{ int i;
-  static char *types[] = { "REG_SZ", NULL };
+{
+ if(strcmp(datatypeStr, "REG_SZ") == 0)
+    {
+    return REG_SZ;
+    }
+ else if(strcmp(datatypeStr, "REG_DWORD") == 0)
+    {
+    return REG_DWORD;
+    }
+ else if(strcmp(datatypeStr, "REG_EXPAND_SZ") == 0)
+    {
+    return REG_EXPAND_SZ;
+    }
 
-for (i = 0; types[i] != NULL; i++)
-   {
-   if (cf_strcmp(types[i],datatype) == 0)
-      {
-      return (enum reg_data_type)i;
-      }
-   }
-
-return cf_reg_notype;
+ CfOut(cf_error, "", "!! Str2RegDtype: Unknown data type %s", datatypeStr);
+ return REGDTYPE_UNKNOWN;
 }
 
 /*****************************************************************************/
@@ -863,6 +897,78 @@ else
    }
 }
 
+/*****************************************************************************/
+
+static bool Nova_CompareRegistryValue(HKEY key_h, DWORD dataType, char *name, char *valueStr, bool *outMatch)
+/**
+ * Stores compared result in outMatch.
+ * Returns true on successful check, false otherwise.
+ **/
+{
+ DWORD currDtype;
+ char currValue[MAX_VALUE_SIZE];
+ DWORD valueSz = sizeof(currValue);
+
+ *outMatch = false;
+
+ DWORD dwRet = RegQueryValueEx(key_h, name, NULL, &currDtype, currValue, &valueSz);
+
+ switch(dwRet)
+    {
+    case ERROR_SUCCESS:
+        break;
+    case ERROR_FILE_NOT_FOUND:
+        return true;
+    default:
+        CfOut(cf_error, "RegQueryValueEx", "!! Nova_CompareRegistryValue: Could not read existing value (got %d)", dwRet);
+        return false;
+    }
+ 
+ if(currDtype != dataType)
+    {
+    return true;
+    }
+
+ DWORD *dwordCurrValuep;
+ 
+ switch(dataType)
+    {
+    case REG_SZ:
+    case REG_EXPAND_SZ:
+        
+        if(strcmp(currValue, valueStr) != 0)
+           {
+           return true;
+           }
+        
+        break;
+        
+    case REG_DWORD:
+
+        if(valueSz != sizeof(DWORD))
+           {
+           CfOut(cf_error, "", "!! Nova_CompareRegistryValue: Existing DWORD-value did not have DWORD size");
+           return false;
+           }
+        
+        dwordCurrValuep = (DWORD *)currValue;
+        
+        if((*dwordCurrValuep != atoi(valueStr)))
+           {
+           return true;
+           }
+        
+        break;
+        
+    default:
+        CfOut(cf_error, "", "!! Nova_CompareRegistryValue: Unknown registry value type %d", dataType);
+        return false;
+    }
+
+ 
+ *outMatch = true;  // match
+ return true;
+}
 
 #endif
 
