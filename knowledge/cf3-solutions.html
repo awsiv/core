@@ -8199,11 +8199,20 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 <p>Use CFEngine to set up a PXE boot server.
 
-<pre class="verbatim">#
+<pre class="verbatim">body common control
+{
+<span class="red"> bundlesequence </span>=> { "pxe" };
+<span class="red"> inputs </span>=> { "/var/cfengine/inputs/cfengine_stdlib.cf" };
+}
+
+
+<span class="comment">#
+</span>
 <span class="comment"># PXE boot server
 </span>
 <span class="comment">#
 </span>
+
 
 <span class="red">bundle agent</span> <span class="blue">pxe</span>
 {
@@ -8231,24 +8240,31 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 <span class="comment">   # Distros that we can install
 </span>
 
+
    "rh_distros"<span class="red"> slist </span>=> { "4.7", "5.2" };
    "centos_distros"<span class="red"> slist </span>=> { "5.2" }; 
 
 <span class="comment">   # File contents of atftp configuration
 </span>
 
+
    "atftpd_conf"<span class="red"> string </span>=><span class="blue"></span>
        "
 <span class="comment">###########################################
 </span>
+
 <span class="comment">### This file is protected by CFEngine. ###
 </span>
+
 <span class="comment">### Whatever you do, it will be changed ###
 </span>
+
 <span class="comment">###     back to a promising state.      ###
 </span>
+
 <span class="comment">###########################################
 </span>
+
 
 ATFTPD_OPTIONS=\"--daemon \"
 ATFTPD_USE_INETD=\"no\"
@@ -8259,18 +8275,24 @@ ATFTPD_BIND_ADDRESSES=\"\"
 <span class="comment">   # File contents of DHCP configuration
 </span>
 
+
    "dhcpd"<span class="red"> string </span>=><span class="blue"></span>
        "
 <span class="comment">###########################################
 </span>
+
 <span class="comment">### This file is protected by CFEngine. ###
 </span>
+
 <span class="comment">### Whatever you do, it will be changed ###
 </span>
+
 <span class="comment">###     back to a promising state.      ###
 </span>
+
 <span class="comment">###########################################
 </span>
+
 
 DHCPD_INTERFACE=\"eth0\"
 DHCPD_RUN_CHROOTED=\"yes\"
@@ -8284,14 +8306,19 @@ DHCPD_BINARY=\"\"
        "
 <span class="comment">###########################################
 </span>
+
 <span class="comment">### This file is protected by CFEngine. ###
 </span>
+
 <span class="comment">### Whatever you do, it will be changed ###
 </span>
+
 <span class="comment">###     back to a promising state.      ###
 </span>
+
 <span class="comment">###########################################
 </span>
+
 
 allow booting;
 allow bootp;
@@ -8310,6 +8337,7 @@ ddns-update-style none; ddns-updates off;
    host node1 {
 <span class="comment">     # Dummy machine
 </span>
+
 <span class="red">     hardware ethernet 00:0F:1F:94:FE:07;
 </span>     fixed-address 192.168.0.11;
      option host-name \"node1\";
@@ -8317,6 +8345,7 @@ ddns-update-style none; ddns-updates off;
    host node2 {
 <span class="comment">     # Dell Inspiron 1150
 </span>
+
 <span class="red">     hardware ethernet 00:0F:1F:0E:70:E7;
 </span>     fixed-address 192.168.0.12;
      option host-name \"node2\";
@@ -8327,10 +8356,12 @@ ddns-update-style none; ddns-updates off;
 <span class="comment">   # File contains of Apache2 HTTP configuration
 </span>
 
+
    "httpd_conf"<span class="red"> string </span>=><span class="blue"></span>
         "
 <span class="comment"># Repository for RHEL5
 </span>
+
 &lt;Directory /srv/www/repos>
 Options Indexes 
 AllowOverride None 
@@ -8339,6 +8370,7 @@ Alias /repos /srv/www/repos
 
 <span class="comment"># PXE boot server
 </span>
+
 &lt;Directory /tftpboot/distro/RHEL/5.2>
 Options Indexes  
 AllowOverride None  
@@ -8373,18 +8405,24 @@ Alias /CFEngine /tftpboot/CFEngine
 <span class="comment">   # File contains of Kickstart for RHEL5 configuration
 </span>
 
+
    "kickstart_rhel5_conf"<span class="red"> string </span>=><span class="blue"></span>
         "
 <span class="comment">###########################################
 </span>
+
 <span class="comment">### This file is protected by CFEngine. ###
 </span>
+
 <span class="comment">### Whatever you do, it will be changed ###
 </span>
+
 <span class="comment">###     back to a promissing state.     ###
 </span>
+
 <span class="comment">###########################################
 </span>
+
 	
 auth  --useshadow  --enablemd5 
 bootloader --location=mbr
@@ -8419,6 +8457,7 @@ libselinux-devel
 pcre-devel
 <span class="comment">#httpd
 </span>
+
 device-mapper-multipath
 -sysreport
 
@@ -8427,6 +8466,7 @@ cd /root
 <span class="red">rpm -i http://192.168.0.1/CFEngine/rpm/CFEngine-3.0.1b1-1.el5.i386.rpm
 </span><span class="comment">#/sbin/chkconfig httpd on
 </span>
+
 cd /etc/yum.repos.d
 <span class="red">wget http://192.168.0.1/repos/RHEL5.Base.repo
 </span>rpm --import /etc/pki/rpm-gpg/*
@@ -8442,18 +8482,24 @@ cd /root/CFEngine_init
 <span class="comment">   # File contains of PXElinux boot menu
 </span>
 
+
    "pxelinux_boot_menu"<span class="red"> string </span>=><span class="blue"></span>
         "
 <span class="comment">###########################################
 </span>
+
 <span class="comment">### This file is protected by CFEngine. ###
 </span>
+
 <span class="comment">### Whatever you do, it will be changed ###
 </span>
+
 <span class="comment">###     back to a promissing state.     ###
 </span>
+
 <span class="comment">###########################################
 </span>
+
 
 <span class="red">boot options:
 </span>     rhel5   - install 32 bit i386 RHEL 5.2             (MANUAL)
@@ -8464,18 +8510,24 @@ cd /root/CFEngine_init
 <span class="comment">   # File contains of PXElinux default configuration
 </span>
 
+
    "pxelinux_default"<span class="red"> string </span>=><span class="blue"></span>
         "
 <span class="comment">###########################################
 </span>
+
 <span class="comment">### This file is protected by CFEngine. ###
 </span>
+
 <span class="comment">### Whatever you do, it will be changed ###
 </span>
+
 <span class="comment">###     back to a promissing state.     ###
 </span>
+
 <span class="comment">###########################################
 </span>
+
 	
 default rhel5
 timeout 300
@@ -8485,24 +8537,28 @@ F1 pxelinux.cfg/boot.msg
 
 <span class="comment"># install i386 RHEL 5.2
 </span>
+
 label rhel5
    kernel vmlinuz-RHEL5U2
 <span class="red">   append initrd=initrd-RHEL5U2 load_ramdisk=1 ramdisk_size=16384 install=http://192.168.0.1/distro/rhel/5.2
 </span>
 <span class="comment"># install i386 RHEL 5.2 using Kickstart
 </span>
+
 label rhel5w
    kernel vmlinuz-RHEL5U2
 <span class="red">   append initrd=initrd-RHEL5U2 load_ramdisk=1 ramdisk_size=16384 ks=http://192.168.0.1/kickstart/kickstart-RHEL5U2.cfg
 </span>
 <span class="comment"># install i386 RHEL 4.7
 </span>
+
 label rhel4
    kernel vmlinuz-RHEL4U7
 <span class="red">   append initrd=initrd-RHEL4U7 load_ramdisk=1 ramdisk_size=16384 install=http://192.168.0.1/distro/rhel/4.7
 </span>
 <span class="comment"># install i386 CentOS 5.2
 </span>
+
 label centos5
    kernel vmlinuz-CentOS5.2
 <span class="red">   append initrd=initrd-CentOS5.2 load_ramdisk=1 ramdisk_size=16384 install=http://192.168.0.1/distro/centos/5.2
@@ -8511,21 +8567,28 @@ label centos5
 <span class="comment">   # File contains of specified PXElinux default to be a RHEL5 webserver
 </span>
 
+
    "pxelinux_rhel5_webserver"<span class="red"> string </span>=><span class="blue"></span>
         "
 <span class="comment">###########################################
 </span>
+
 <span class="comment">### This file is protected by CFEngine. ###
 </span>
+
 <span class="comment">### Whatever you do, it will be changed ###
 </span>
+
 <span class="comment">###     back to a promissing state.     ###
 </span>
+
 <span class="comment">###########################################
 </span>
 
+
 <span class="comment"># install i386 RHEL 5.2 using Kickstart
 </span>
+
 default rhel5w
 label rhel5w
    kernel vmlinuz-RHEL5U2
@@ -8535,21 +8598,28 @@ label rhel5w
 <span class="comment">   # File contains of a local repository for RHEL5
 </span>
 
+
    "rhel5_base_repo"<span class="red"> string </span>=><span class="blue"></span>
         "
 <span class="comment">###########################################
 </span>
+
 <span class="comment">### This file is protected by CFEngine. ###
 </span>
+
 <span class="comment">### Whatever you do, it will be changed ###
 </span>
+
 <span class="comment">###     back to a promissing state.     ###
 </span>
+
 <span class="comment">###########################################
 </span>
 
+
 <span class="comment"># Local Repository
 </span>
+
 [Server]
 name=Server
 <span class="red">baseurl=http://192.168.0.1/repos/rhel5/Server/
@@ -8571,12 +8641,14 @@ name=Cluster Storage
 </span>
 
 
+
 <span class="red">files:
 </span>
  packages_ok::
 
 <span class="comment">  # Create files/dirs and edit the new files
 </span>
+
 
   "/tftpboot/distro/RHEL/$(rh_distros)/."
 <span class="red">       create </span>=><span class="green"> "true";</span>
@@ -8601,28 +8673,29 @@ name=Cluster Storage
 
   "/tftpboot/pxelinux.cfg/default.RHEL5.webserver"
 <span class="red">       create </span>=><span class="green"> "true",</span>
-<span class="red">       perms </span>=><span class="blue"> m("644","root"),</span>
+<span class="red">       perms </span>=><span class="blue"> mo("644","root"),</span>
 <span class="red">       edit_line </span>=><span class="blue"> append_if_no_line("$(pxelinux_rhel5_webserver)"),</span>
 <span class="red">       edit_defaults </span>=><span class="blue"> empty;</span>
   
   "/tftpboot/kickstart/kickstart-RHEL5U2.cfg"
 <span class="red">       create </span>=><span class="green"> "true",</span>
-<span class="red">       perms </span>=><span class="blue"> m("644","root"),</span>
+<span class="red">       perms </span>=><span class="blue"> mo("644","root"),</span>
 <span class="red">       edit_line </span>=> append_if_no_line("$(kickstart_rhel5_conf)"),
 <span class="red">       edit_defaults </span>=><span class="blue"> empty;</span>
 
   "/srv/www/repos/RHEL5.Base.repo"
 <span class="red">       create </span>=><span class="green"> "true",</span>
-<span class="red">       perms </span>=><span class="blue"> m("644","root"),</span>
+<span class="red">       perms </span>=><span class="blue"> mo("644","root"),</span>
 <span class="red">       edit_line </span>=><span class="blue"> append_if_no_line("$(rhel5_base_repo)"),</span>
 <span class="red">       edit_defaults </span>=><span class="blue"> empty;</span>
 
 <span class="comment">  # Copy files
 </span>
 
+
   "/tftpboot"
 
-<span class="red">    copy_from </span>=><span class="blue"> mycopy_local("/usr/share/syslinux","localhost"),</span>
+<span class="red">    copy_from </span>=><span class="blue"> local_cp("/usr/share/syslinux"),</span>
 <span class="red">    depth_search </span>=><span class="blue"> recurse("inf"),</span>
 <span class="red">    file_select </span>=><span class="blue"> pxelinux_files,</span>
 <span class="red">    action </span>=><span class="blue"> immediate;</span>
@@ -8630,13 +8703,14 @@ name=Cluster Storage
   "$(tmp_location)"
 
 <span class="red">    perms </span>=><span class="blue"> m("644"),</span>
-<span class="red">    copy_from </span>=><span class="blue"> mycopy("/var/cfengine/inputs","localhost"),</span>
+<span class="red">    copy_from </span>=><span class="blue"> local_cp("/var/cfengine/inputs"),</span>
 <span class="red">    depth_search </span>=><span class="blue"> recurse("inf"),</span>
 <span class="red">    file_select </span>=><span class="blue"> input_files,</span>
 <span class="red">    action </span>=><span class="blue"> immediate;</span>
 
 <span class="comment">  # Edit atftp, dhcp and apache2 configurations
 </span>
+
 
   "/etc/sysconfig/atftpd"
 <span class="red">     edit_line </span>=> append_if_no_line("$(atftpd_conf)"),
@@ -8654,17 +8728,19 @@ name=Cluster Storage
 
   "/etc/apache2/httpd.conf"
 <span class="red">     edit_line </span>=> append_if_no_line("$(httpd_conf)"),
-<span class="red">     edit_defaults </span>=><span class="blue"> def,</span>
+<span class="red">     edit_defaults </span>=><span class="blue"> std_defs,</span>
 <span class="red">     classes </span>=><span class="blue"> satisfied("apache2_ok");</span>
 
 <span class="comment">  # Make a static link
 </span>
+
 
   "/tftpboot/pxelinux.cfg/C0A8000C"
 <span class="red">     link_from </span>=><span class="blue"> mylink("/tftpboot/pxelinux.cfg/default.RHEL5.webserver");</span>
 
 <span class="comment">  # Hash comment some lines for apaches
 </span>
+
 
   apache2_ok::
   "/etc/apache2/httpd.conf"
@@ -8675,6 +8751,7 @@ name=Cluster Storage
 </span>
 <span class="comment">  # Restart services
 </span>
+
   atftpd_ready::
   "/etc/init.d/atftpd restart";
 
@@ -8688,11 +8765,13 @@ name=Cluster Storage
 <span class="comment">#####################################################
 </span>
 
+
 <span class="red">packages:
 </span>  
  ipv4_192_168_0_1::
 <span class="comment"> # Only the PXE boot server
 </span>
+
 
  "$(software)"
 
@@ -8704,10 +8783,13 @@ name=Cluster Storage
 
 <span class="comment">#####################################################
 </span>
+
 <span class="comment">########### *** Bodies are here *** #################
 </span>
+
 <span class="comment">#####################################################
 </span>
+
 
 <span class="red">body file_select</span> <span class="blue">pxelinux_files</span>
 
@@ -8720,6 +8802,7 @@ name=Cluster Storage
 <span class="comment">#####################################################
 </span>
 
+
 <span class="red">body copy_from</span> <span class="blue">mycopy_local(from,server)</span>
 
 {
@@ -8730,6 +8813,7 @@ name=Cluster Storage
 <span class="comment">#########################################################
 </span>
 
+
 <span class="red">body link_from</span> <span class="blue">mylink(x)</span>
 {
 <span class="red">source </span>=><span class="green"> "$(x)";</span>
@@ -8738,6 +8822,7 @@ name=Cluster Storage
 
 <span class="comment">#######################################################
 </span>
+
 
 <span class="red">body classes</span> <span class="blue">satisfied(new_class)</span>
 
@@ -8748,6 +8833,7 @@ name=Cluster Storage
 
 <span class="comment">#######################################################
 </span>
+
 
 <span class="red">bundle edit_line</span> <span class="blue">comment_lines_matching_apache2(comment)</span>
   {
@@ -8760,6 +8846,15 @@ name=Cluster Storage
    "^($(regex))$"
 <span class="red">      replace_with </span>=><span class="blue"> comment("$(comment)");</span>
   }
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body file_select</span> <span class="blue">input_files</span>
+{
+<span class="red"> leaf_name </span>=> { ".*.cf",".*.dat",".*.txt" };
+<span class="red"> file_result </span>=><span class="green"> "leaf_name";</span>
+}
 
 <span class="comment">#######################################################
 </span>
