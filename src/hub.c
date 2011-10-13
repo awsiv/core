@@ -1021,7 +1021,6 @@ if(*list)
 for(ip=*list; ip!=NULL;ip=ip->next)
    {
    PrependFullItem(&new_lastseen,ip->name,ip->classes,0,time(NULL));
-   printf("[bishwa]new kh = %s\n",ip->name);
    count++;
    }
 
@@ -1036,7 +1035,6 @@ for(ip2=lastseen; ip2!=NULL;ip2=ip2->next)
            || ((time(NULL) - ip2->time) > CF_HUB_HORIZON) )                                // entry passed horizon
          {
          ignore = true;
-         printf("[bishwa]ignoring = %s\n",ip2->name);
          break;
          }
       }
@@ -1045,7 +1043,6 @@ for(ip2=lastseen; ip2!=NULL;ip2=ip2->next)
       {
       PrependFullItem(&new_lastseen,ip2->name,ip2->classes,0,ip2->time);
       count++;
-      printf("[bishwa]old kh = %s\n", ip2->name);
       }
    }
 
