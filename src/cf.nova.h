@@ -867,7 +867,7 @@ void Nova_SetPersistentScalar(char *lval,char *rval);
 /* registry.c */
 
 int Nova_ValidateRegistryPromiser(char *s,struct Attributes a,struct Promise *pp);
-int Nova_CopyRegistryValue(char *key,char *value,char *buffer);
+int Nova_GetRegistryValueAsString(char *key, char *name, char *buf, int bufSz);
 
 
 /* reporting.c */

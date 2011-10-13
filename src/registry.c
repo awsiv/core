@@ -376,36 +376,6 @@ for (rp = a.database.rows; rp != NULL; rp=rp->next)
    char *valueStr = assign->next->next->item;
    reg_dtype = Str2RegDtype(datatypeStr);
 
-
-   /*
-   if (Nova_GetRegistryValue(key_h,name,reg_data_p,&reg_data_sz))
-      {
-
-      if(!Nova_CompareRegistryValue(key_h, reg_dtype, name, valueStr))
-         {
-         
-         }
-
-      regCmpSize = (reg_data_sz > strlen(valueStr)) ? reg_data_sz : strlen(valueStr);
-      
-      if(regCmpSize > CF_BUFSIZE)
-	{
-	cfPS(cf_error,CF_NOP,"",pp,a," !! Buffer too small to hold registry value");
-	continue;
-	}
-
-      if (memcmp(reg_data_p,value,regCmpSize) == 0)
-         {
-         cfPS(cf_inform,CF_NOP,"",pp,a," -> Verified value (%s,%s) correct for %s",name,valueStr,pp->promiser);
-         continue;         
-         }
-      else
-         {
-         CfOut(cf_inform,"", " -> Value (%s,%s) incorrect for %s",name,valueStr,pp->promiser);
-         }
-      }
-
-   */
    bool match = false;
    
    if(!Nova_CompareRegistryValue(key_h, reg_dtype, name, valueStr, &match))
@@ -485,6 +455,54 @@ else
    CfOut(cf_verbose,"","Could not read existing registry data for '%s'.\n", name);
    return false;
    } 
+}
+
+/*****************************************************************************/
+
+int Nova_GetRegistryValueAsString(char *key, char *name, char *buf, int bufSz)
+
+{
+ unsigned long reg_data_sz = CF_BUFSIZE;
+ void *reg_data_p = calloc(1,CF_BUFSIZE);
+ int len;
+ HKEY key_h;
+ 
+ if (!Nova_OpenRegistryKey(key,&key_h,false))
+    {
+    CfOut(cf_verbose,"RegQueryValueEx","Could not read existing registry data for '%s'.\n", name);
+    return false;
+    }
+
+ DWORD dType;
+ char work[MAX_VALUE_SIZE];
+ DWORD workSz = sizeof(work);
+ 
+ if(RegQueryValueEx(key_h,name,NULL,&dType,work,&workSz) != ERROR_SUCCESS)
+    {
+    CfOut(cf_verbose,"RegQueryValueEx","Could not read existing registry data for '%s'.\n", name);
+    return false;
+    }
+
+ DWORD *dwordValuep;
+ 
+ switch(dType)
+    {
+    case REG_SZ:
+    case REG_EXPAND_SZ:
+        strlcpy(buf,work,bufSz);
+        break;
+        
+    case REG_DWORD:
+        dwordValuep = (DWORD *)work;
+        snprintf(buf, bufSz, "%d", *dwordValuep);
+        break;
+        
+    default:
+        CfOut(cf_error, "", "!! Nova_GetRegistryValueAsString: Unknown value type %d for %s", dType, name);
+        return false;
+    }
+
+ return true;
 }
 
 /*****************************************************************************/
