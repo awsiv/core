@@ -1056,10 +1056,10 @@ if(deleted_hosts)
       // remove from the local lastseen db
       // TODO: remove the public keys also?
       
-      removed = (removed || RemoveHostFromLastSeen(NULL,ip->name));
+      removed = (removed && RemoveHostFromLastSeen(NULL,ip->name));
       }
    
-   // if all hosts were removed from cf_lastseen.tcdb
+   // if all hosts marked as "deleted" were removed from cf_lastseen.tcdb
    // purge the list of deleted host
    // otherwise keep it for the next run of cf-hub
    
