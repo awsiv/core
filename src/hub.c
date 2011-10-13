@@ -285,6 +285,11 @@ CfOut(cf_inform,"","............................................................
 CfOut(cf_inform,""," * Hailing %s : %u\n",peer,(int)aa.copy.portnumber);
 CfOut(cf_inform,"","...........................................................................\n");
 
+// record client host id (from lastseen) immideatley so we can track failed connection attempts
+// the timestamp is updated when we get response - see UnpackReportBook
+
+Nova_CreateHostID(hostID,peer);
+
 /* Check trust interaction*/
 
 aa.copy.trustkey = true;
@@ -305,11 +310,6 @@ if (conn == NULL)
    
    return false;
    }
-
-// record client host id (from lastseen) immideatley so we can track failed connection attempts
-// the timestamp is updated when we get response - see UnpackReportBook
-
-Nova_CreateHostID(hostID,peer);
 
 // Choose full / delta
 
@@ -593,7 +593,7 @@ if (CFDB_QueryIsMaster())
    {
    CfOut(cf_inform,"","I am the hub master");
 
-   Nova_UpdateMongoHostList(list);
+   Nova_UpdateMongoHostList(&list);
    DeleteItemList(list);
 
    // If there is a list in Mongo, this takes precedence, else populate one
@@ -995,36 +995,48 @@ return false;
 
 /*****************************************************************************/
 
-void Nova_UpdateMongoHostList(struct Item *list)
+void Nova_UpdateMongoHostList(struct Item **list)
 
 {
 #ifdef HAVE_LIBMONGOC
- struct Item *ip = NULL, *lastseen = NULL, *ip2 = NULL, *new_lastseen=NULL;
+ struct Item *ip = NULL, *lastseen = NULL, *ip2 = NULL, *new_lastseen=NULL; 
+ struct Item *deleted_hosts=NULL;
  int count = 0;
  bool ignore = false;
 
-//CFDB_PurgeLastseenCache(list);
+deleted_hosts = CFDB_GetDeletedHosts();
+lastseen = CFDB_GetLastseenCache();
 
-// add everything from the new list
-for(ip=list;ip!=NULL;ip=ip->next)
-   {   
+if(lastseen)
+   {
+   Nova_RemoveExcludedHosts(&lastseen, deleted_hosts);
+   }
+
+if(*list)
+   {
+   Nova_RemoveExcludedHosts(list, deleted_hosts);
+   }
+
+// add from the new list
+for(ip=*list; ip!=NULL;ip=ip->next)
+   {
    PrependFullItem(&new_lastseen,ip->name,ip->classes,0,time(NULL));
+   printf("[bishwa]new kh = %s\n",ip->name);
    count++;
    }
 
-lastseen = CFDB_GetLastseenCache();
-
 // now add items from the prev lastseen db
-
 for(ip2=lastseen; ip2!=NULL;ip2=ip2->next)
    {
    ignore = false;
    
-   for(ip=list;ip!=NULL;ip=ip->next)
+   for(ip=*list; ip!=NULL;ip=ip->next)
       {
-      if((strcmp(ip->name, ip2->name) == 0 && strcmp(ip->classes,ip2->classes) == 0) || (time(NULL) - ip2->time) > CF_HUB_HORIZON)
+      if((strcmp(ip->name, ip2->name) == 0 && strcmp(ip->classes,ip2->classes) == 0)   // new entry, already added
+           || ((time(NULL) - ip2->time) > CF_HUB_HORIZON) )                                // entry passed horizon
          {
          ignore = true;
+         printf("[bishwa]ignoring = %s\n",ip2->name);
          break;
          }
       }
@@ -1033,12 +1045,40 @@ for(ip2=lastseen; ip2!=NULL;ip2=ip2->next)
       {
       PrependFullItem(&new_lastseen,ip2->name,ip2->classes,0,ip2->time);
       count++;
+      printf("[bishwa]old kh = %s\n", ip2->name);
       }
    }
 
 CFDB_SaveLastseenCache(new_lastseen);
 
-DeleteItemList(lastseen);
+if(deleted_hosts)
+   {
+   bool removed=true;
+   for(ip=deleted_hosts; ip!=NULL;ip=ip->next)
+      {
+      // remove from the local lastseen db
+      // TODO: remove the public keys also?
+      
+      removed = (removed || RemoveHostFromLastSeen(NULL,ip->name));
+      }
+   
+   // if all hosts were removed from cf_lastseen.tcdb
+   // purge the list of deleted host
+   // otherwise keep it for the next run of cf-hub
+   
+   if(removed)
+      {
+      CFDB_PurgeDeletedHosts();
+      }
+   
+   DeleteItemList(deleted_hosts);
+   }
+
+if(lastseen)
+   {
+   DeleteItemList(lastseen);
+   }
+
 // TODO: return new_lastseen;
 CfOut(cf_inform,"","%d hosts added to the lastseen cache\n",count);
  #endif
@@ -1089,9 +1129,9 @@ static void Nova_RemoveExcludedHosts(struct Item **listp, struct Item *hosts_exc
 
  for(ip = *listp; ip != NULL; ip = ip->next)
     {
-    if(IsMatchItemIn(hosts_exclude, ip->classes))
+    if(IsMatchItemIn(hosts_exclude, ip->classes) || IsMatchItemIn(hosts_exclude, ip->name))
        {
-       Debug("Excluding host %s from hub report query\n", ip->classes);
+       Debug("Excluding host %s(%s) from hub report query\n", ip->classes, ip->name);
        }
     else
        {

@@ -119,6 +119,59 @@ mongo_cursor_destroy(cursor);
 CFDB_Close(&conn);
 return list;
 }
+
+/*****************************************************************************/
+
+struct Item * CFDB_GetDeletedHosts(void)
+    
+{ bson query,field;
+  bson_iterator it1,it2,it3;
+  mongo_cursor *cursor;
+ mongo_connection conn;
+ bson_buffer bb;
+ char keyhash[CF_BUFSIZE]={0},ipAddr[CF_MAXVARSIZE]={0};
+ time_t t = time(NULL);
+ struct Item *ip,*list = NULL;
+
+
+if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+   {
+   CfOut(cf_verbose,"", "!! Could not open connection to report database to get list of deleted hosts");
+   return false;
+   }
+
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfr_deleted_hosts,1);
+bson_from_buffer(&field, &bb);
+
+cursor = mongo_find(&conn,MONGO_SCRATCH,bson_empty(&query),&field,0,0,CF_MONGO_SLAVE_OK);
+
+bson_destroy(&field);
+bson_destroy(&query);
+
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
+   
+   while(bson_iterator_next(&it1))
+      {
+      if (strcmp(bson_iterator_key(&it1),cfr_deleted_hosts) == 0)
+         {
+         bson_iterator_init(&it2,bson_iterator_value(&it1));
+           
+         while (bson_iterator_next(&it2))
+            {
+            IdempPrependItem(&list,(char *)bson_iterator_string(&it2),NULL);
+            }
+         }
+      }
+   }
+           
+mongo_cursor_destroy(cursor);
+CFDB_Close(&conn);
+return list;
+} 
+
 /*****************************************************************************/
 
 void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn)
@@ -7687,7 +7740,7 @@ int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
  bson_destroy(&result);
  return ret;
 }
-
+/*************************************************/
 
 #endif  /* HAVE LIBMONGOC */
 

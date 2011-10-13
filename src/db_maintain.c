@@ -656,6 +656,36 @@ if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
 }
 
 /*****************************************************************************/
+int CFDB_PurgeDeletedHosts(void)
 
+{ bson_buffer bb, *unset;
+ bson op,empty;
+ mongo_connection conn;
+
+if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_verbose,"", "!! Could not open connection to report database");
+    return false;
+    }
+
+bson_buffer_init(&bb);
+  
+unset = bson_append_start_object(&bb, "$unset");
+bson_append_int(unset, cfr_deleted_hosts, 1);
+bson_append_finish_object(unset);
+bson_from_buffer(&op,&bb);
+
+mongo_update(&conn,MONGO_SCRATCH,bson_empty(&empty), &op, 0);
+
+bson_destroy(&empty);
+bson_destroy(&op);
+
+if (!CFDB_Close(&conn))
+   {
+   CfOut(cf_verbose,"", "!! Could not close connection to report database");
+   }
+
+return true;
+}
 #endif  /* HAVE_LIBMONGOC */
 

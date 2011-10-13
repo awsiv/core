@@ -152,7 +152,6 @@ bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
 
-bson_print(&setOp);
 mongo_update(&dbconn,MONGO_SCRATCH,bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT);
 
 bson_destroy(&setOp);
@@ -1756,7 +1755,41 @@ void CFDBRef_AddToRow(mongo_connection *conn, char *coll,bson *query, char *row_
   mongo_update(conn, coll, query, &setOp, 0);
   bson_destroy(&setOp);
 }
+/*****************************************************************************/
+int CFDB_MarkAsDeleted(char *keyhash)
 
+{ bson_buffer bb;
+  bson_buffer *setObj;
+  bson setOp,empty;
+  char varName[CF_MAXVARSIZE];
+  mongo_connection dbconn;
+
+if (!IsDefinedClass("am_policy_hub"))
+   {
+   CfOut(cf_verbose,"","Ignoring caching of deleted hosts - not called by php module");
+   return false;
+   }
+  
+if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
+   {
+   CfOut(cf_verbose,"","!! Could not open connection to report database");
+   return false;
+   }
+  
+bson_buffer_init(&bb);
+setObj = bson_append_start_object(&bb, "$addToSet");
+bson_append_string(setObj,cfr_deleted_hosts,keyhash);
+bson_append_finish_object(setObj);
+bson_from_buffer(&setOp,&bb);
+
+mongo_update(&dbconn, MONGO_SCRATCH, bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT);
+MongoCheckForError(&dbconn,"MarkHostAsDeleted",keyhash,NULL);
+bson_destroy(&setOp);
+
+CFDB_Close(&dbconn);
+
+return true;
+}
 /*****************************************************************************/
 
 #endif  /* HAVE_LIBMONGOC */

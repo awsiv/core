@@ -439,6 +439,7 @@ struct Item * CFDB_GetLastseenCache(void);
 int CFDB_QueryIsMaster(void);
 int CFDB_QueryMasterIP(char *buffer,int bufsize);
 int CFDB_QueryReplStatus(mongo_connection *conn, char *buffer,int bufsize);
+struct Item *CFDB_GetDeletedHosts(void);
 #endif
 
 /* db_save.c */
@@ -479,7 +480,7 @@ struct HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *p
 void CFDB_SaveCachedTotalCompliance(mongo_connection *conn, char *policy, int slot, double kept, double repaired, double notkept, int count, time_t genTime);
 int CFDB_SaveLastseenCache(struct Item *lastseen);
 void CFDB_SaveGoalsCache(char *goal_patterns, char *goal_categories);
-
+int CFDB_MarkAsDeleted(char *keyhash);
 /*
  * commenting
  */
@@ -511,7 +512,7 @@ void CFDB_PurgeHost(mongo_connection *conn, char *keyHash);
 void CFDB_PurgeDeprecatedVitals(mongo_connection *conn);
 
 void CFDB_RemoveTestData(char *db, char *keyhash);
-
+int CFDB_PurgeDeletedHosts(void);
 #endif /* HAVE_LIBMONGOC */
 
 
@@ -627,7 +628,7 @@ void Nova_CountMonitoredClasses(void);
 void Nova_CacheTotalCompliance(bool allSlots);
 void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, char *envClass, int slot, time_t start, time_t now);
 int Nova_ShiftChange(void);
-void Nova_UpdateMongoHostList(struct Item *list);
+void Nova_UpdateMongoHostList(struct Item **list);
 struct Item *Nova_GetMongoLastSeen(void);
 
 /* install.c */
@@ -1321,6 +1322,7 @@ struct cf_pscalar
 
 #define cfr_netmeasure    "ne"
 #define cfr_lastseen_hosts "lastseen_hosts"
+#define cfr_deleted_hosts  "deleted_hosts"
 
 /* Promise DB */
 #define cfp_bundlename    "bn"
