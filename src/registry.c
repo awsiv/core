@@ -141,10 +141,11 @@ YieldCurrentLock(thislock);
 
 int Nova_CopyRegistryValue(char *key,char *value,char *buffer)
 
-{ unsigned long reg_data_sz = CF_BUFSIZE;
-  void *reg_data_p = calloc(1,CF_BUFSIZE);
-  int len;
-  HKEY key_h;
+{
+ char reg_data_p[CF_BUFSIZE] = {0};
+ unsigned long reg_data_sz = sizeof(reg_data_p);
+ int len;
+ HKEY key_h;
 
 buffer[0] = '\0';
 
@@ -364,7 +365,6 @@ int Nova_VerifyRegistryValueAssocs(HKEY key_h,struct Attributes a,struct Promise
 { int ret = ERROR_SUCCESS;
   struct Rlist *rp,*rpr,*assign;
   unsigned long reg_data_sz = CF_BUFSIZE;
-  void *reg_data_p = calloc(1,CF_BUFSIZE);
   DWORD reg_dtype;
   int regCmpSize;
  
@@ -429,12 +429,10 @@ for (rp = a.database.rows; rp != NULL; rp=rp->next)
    
    if (ret != ERROR_SUCCESS)
       {
-      free(reg_data_p);
       return -1;
       }
    }
 
-free(reg_data_p);
 return 0;
 }
 
@@ -463,7 +461,6 @@ int Nova_GetRegistryValueAsString(char *key, char *name, char *buf, int bufSz)
 
 {
  unsigned long reg_data_sz = CF_BUFSIZE;
- void *reg_data_p = calloc(1,CF_BUFSIZE);
  int len;
  HKEY key_h;
  
