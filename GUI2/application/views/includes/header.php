@@ -61,7 +61,7 @@ if($this->agent->is_browser('Safari')){
 
               <div id="header_right"class="grid_4">
                        <p id="userbox">
-	                Hello  <strong><?php echo $this->session->userdata('username');?></strong>
+	                Hello  <?php echo $this->session->userdata('username');?>
                         &nbsp;| &nbsp;
                         <a href="<?php echo site_url('auth/logout'); ?>" title="logout">logout</a>
                         <span class="online_users"> Online users: <strong id="ttlonlinenum"><?php echo $this->onlineusers->total_users()?></strong></span>

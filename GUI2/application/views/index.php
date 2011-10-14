@@ -3,7 +3,7 @@
               <div id="work" class="outerdiv">
                   <div class="grid_8 push_2 header">
                       <h1>
-                          <?php echo  $this->lang->line('front_greeting');?>
+                          <?php //echo  $this->lang->line('front_greeting');?>
                       </h1>
                   </div>
                   <div class="clear"></div>

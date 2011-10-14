@@ -472,12 +472,14 @@ class Auth_Ldap {
             foreach($this->user_directories as $directory){
                 $dn = $directory . ',' . $this->basedn;
                 if($this->user_dn!=''){
-                  $userdn = $this->user_dn;   
+                  $userdn = $this->user_dn;
                 }else{
                   $userdn = $this->login_attribute . '=' . $username . ',' . $this->users_directory . ',' . $this->basedn;   
                 }
                 $result = $this->cfpr_ldap_search($userdn, $password, $filter, $fields, $dn);
+                if(!is_null($result)){
                 $collectedusers=array_merge($collectedusers,$result);
+                }
             }
             
             return $collectedusers;

@@ -290,15 +290,16 @@ label#searchbox input
 }
 
 #work .header{
-    margin-top: 50px;
+    margin-top: 75px;
 }
 #work .header h1
 {
-    font-size: 40px;
-    font-weight: normal;
-    margin: 0;
-    text-align: center;
-    color:#b2b2af
+    margin: 0 auto;
+    background: url("../images/mp_title.png") no-repeat center;
+    width:296px;
+    height:36px;
+    padding: 2px 0;
+    
 }
 
 #work .header p{
@@ -308,7 +309,7 @@ label#searchbox input
 }
 
 #work .dash{
-    margin-top: 85px;
+    margin-top: 55px;
 }
 
 #work .dash ul{
@@ -1030,6 +1031,8 @@ div.ui-dialog .ui-widget-header .ui-dialog-title, .customdlg .ui-widget-header .
     /* text-transform: uppercase; */
     font-weight: normal;
     padding:12px 0;
+    background:url("../images/head_agent.png") no-repeat ;
+    padding:8px 0px 10px 28px;
 }
 
 div.ui-dialog .ui-dialog-content{
@@ -2463,6 +2466,7 @@ background-image: url(../images/error.png);
 {
     border:solid 1px #CECECE;
     padding:3px;
+    margin:0
 }
 
 .form textarea

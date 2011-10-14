@@ -56,14 +56,14 @@ class Settings extends Cf_Controller {
             foreach ((array) $groups as $group) {
                 $data['groups'][$group['name']] = $group['name'];
             }
-            $data['groups']['select'] = "--select-one--";
+            //$data['groups']['select'] = "--select-one--";
 
             //for selecting admin_group from list, populated list depends on the mode selected and saved
             $groups_acc_mode = $this->ion_auth->get_groups();
             foreach ((array) $groups_acc_mode as $group) {
                 key_exists('name', $group) ? $data['groupsacc'][$group['name']] = $group['name'] : $data['groupsacc'][$group['displayname']] = $group['displayname'];
             }
-            $data['groupsacc']['select'] = "--select-one--";
+            //$data['groupsacc']['select'] = "--select-one--";
             //if previous settings exist load it and display
             $settings = $this->settings_model->get_app_settings();
 
@@ -179,12 +179,12 @@ class Settings extends Cf_Controller {
                 foreach ((array) $groups as $group) {
                     $data['groups'][$group['name']] = $group['name'];
                 }
-                $data['groups']['select'] = "--select-one--";
+                //$data['groups']['select'] = "--select-one--";
                 $groups_acc_mode = $this->ion_auth->get_groups();
                 foreach ((array) $groups_acc_mode as $group) {
                     key_exists('name', $group) ? $data['groupsacc'][$group['name']] = $group['name'] : $data['groupsacc'][$group['displayname']] = $group['displayname'];
                 }
-                $data['groupsacc']['select'] = "--select-one--";
+                //$data['groupsacc']['select'] = "--select-one--";
                 $this->template->load('template', 'appsetting/missionportalpref', $data);
             } else {
                 echo 'An error occurred saving your information. Please try again later';

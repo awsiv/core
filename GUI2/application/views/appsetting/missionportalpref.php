@@ -5,13 +5,21 @@
     <div class="form">
    <?php // Change the css classes to suit your needs
 
-$attributes = array('class' => '', 'id' => '');
+$attributes = array('class' => '', 'id' => 'mpsettings');
 echo form_open('settings/manage/'.$op, $attributes); ?>
  <p>
         <label for="appemail">Administrative email <span class="required">*</span></label>
         <?php echo tooltip('tooltip_application_email','',true) ; //echo form_error('appemail'); ?>
         <input id="appemail" type="text" name="appemail" maxlength="50" value="<?php echo $appemail; ?>"  />
 </p>
+
+ <?php if(isset( $groupsacc)){?>
+<p id='admingrpsec'>
+    <label for="fall back for">Administrative group<span class="required"></span></label>
+   <?php echo tooltip('tooltip_admin_grp','',true) ;// echo form_error('active_directory_domain'); ?>
+   <?php  echo form_dropdown('admin_group', $groupsacc, $admin_group?$admin_group:'select');?>
+</p>
+<?php }?>
 
 <p>
    <label for="authentication">Authentication method <span class="required">*</span></label>
@@ -121,15 +129,6 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
     <?php echo form_dropdown('fall_back_for', $groups, $fall_back_for?$fall_back_for:'select');?>
 </p>
 
- <?php if(isset( $groupsacc)){?>
-<p>
-    <label for="fall back for">Administrative group<span class="required"></span></label>
-   <?php echo tooltip('tooltip_admin_grp','',true) ;// echo form_error('active_directory_domain'); ?>
-   <?php  echo form_dropdown('admin_group', $groupsacc, $admin_group?$admin_group:'select');?>
-</p>
-<?php }?>
-
-
 <p  id="btnholder">
         <?php echo form_submit( array('name'=>'submit','class'=>'btn','value'=>'Submit')); ?>
 </p>
@@ -142,6 +141,8 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
 <script type="text/javascript">
  $(document).ready(function(){
      $('#ldapsettings').hide();
+     var mode= $("input[name='mode']:checked").val();
+     var elem=$("select[name='admin_group']").clone();
       settings_toggle();
         function settings_toggle(){
             if ($("input[@name='mode']:checked").val() == 'database')
@@ -222,13 +223,26 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
              'member_attr':$("#member_attribute").val(),
              'addomain':$("#active_directory_domain").val(),
              'encryption':$("input:radio[name=encryption]:checked").val()
-         }}).ajaxyDialog('open');
+         }
+     }).ajaxyDialog('open');
        
       });
       
-      $("input[name='mode']").change(function(){
+      $("input[name='mode']").change(function(){  
       settings_toggle();
-      $("select[name='admin_group']").find('option') .remove().end()
+      var selbox=$("select[name='admin_group']");
+      var message=$("<span id='grpmsg'> Authentication method change.Please login later to select group as admin for mission portal</span>");
+      if($(this).val()==mode && selbox.length==0){
+          $('#admingrpsec').append(elem)
+          $('#grpmsg').remove();
+      }else{
+          selbox.remove();
+          if($('#grpmsg').length==0){
+           $('#admingrpsec').append(message);    
+          }
+          
+      }
+          
      });
     <?php if ($this->setting_lib->get_tooltips_status()) { ?>   
     $('span.hint').each(function() // Find all inputs with formtip spans next to them

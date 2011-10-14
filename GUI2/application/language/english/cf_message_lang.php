@@ -2,7 +2,7 @@
 /**
  * page title mission portal
  */
-$lang['mission_portal_title']='CFEngine Mission Portal';
+$lang['mission_portal_title']='Mission Portal';
 $lang['policy_editor']='Policy Editor';
 
 
