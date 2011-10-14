@@ -4707,6 +4707,7 @@ char *Nova_FormatDiff(char *s)
  static char returnval[CF_BUFSIZE];
  char pm;
  int line = 0;
+ char jsonEscapedStr[CF_BUFSIZE] = {0};
 
  strcpy(returnval,"[");
 
@@ -4715,7 +4716,8 @@ char *Nova_FormatDiff(char *s)
     sscanf(sp,"%c,%d,%2047[^\n]",&pm,&line,diff);
     sscanf(sp,"%2047[^\n]",tline);
 
-    snprintf(work,sizeof(work),"[\"%c\",%d,\"%s\"],",pm,line,diff);
+    EscapeJson(diff,jsonEscapedStr,sizeof(jsonEscapedStr));
+    snprintf(work,sizeof(work),"[\"%c\",%d,\"%s\"],",pm,line,jsonEscapedStr);
     if(!Join(returnval,work,sizeof(returnval)))
        {
        break;
