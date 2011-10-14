@@ -80,6 +80,7 @@ else if (a.database.operation && cf_strcmp(a.database.operation,"create") == 0)
    if (Nova_OpenRegistryKey(pp->promiser,&key_h,false))
       {
       CfOut(cf_verbose,""," -> Registry key exists");
+      RegCloseKey(key_h);
       }
    else if (!Nova_OpenRegistryKey(pp->promiser,&key_h,true))
       {
@@ -103,14 +104,16 @@ if (Nova_OpenRegistryKey(pp->promiser,&key_h,create))
    
    if (!OpenDB(name,&dbp))
       {
+      RegCloseKey(key_h);
       YieldCurrentLock(thislock);
       return;
       }
    
    if (a.database.operation && cf_strcmp(a.database.operation,"restore") == 0)
       {
-      Nova_RecursiveRestoreKey(dbp,pp->promiser,a,pp) ;
+      Nova_RecursiveRestoreKey(dbp,pp->promiser,a,pp);
       YieldCurrentLock(thislock);
+      RegCloseKey(key_h);
       CloseDB(dbp);
       return;
       }
@@ -125,7 +128,8 @@ if (Nova_OpenRegistryKey(pp->promiser,&key_h,create))
       CfOut(cf_verbose,"","Recursive cache of registry from here...\n");
       Nova_RecursiveQueryKey(dbp,&key_h,pp->promiser,a,pp,0) ;
       }
-
+   
+   RegCloseKey(key_h);
    CloseDB(dbp);
    }
 else
@@ -133,7 +137,6 @@ else
    cfPS(cf_error,CF_FAIL,"",pp,a," !! Registry key \"%s\" failed to open\n",pp->promiser);
    }
 
-RegCloseKey(key_h);
 YieldCurrentLock(thislock);
 }
 
@@ -153,6 +156,8 @@ if (Nova_OpenRegistryKey(key,&key_h,false))
    {
    if (Nova_GetRegistryValue(key_h,value,reg_data_p,&reg_data_sz))
       {
+      RegCloseKey(key_h);
+      
       if (reg_data_sz > CF_BUFSIZE-1)
          {
          CfOut(cf_error,"","Registry value too large to be sensibly maniupulated");
@@ -334,7 +339,9 @@ if (a.database.columns)
              break;
          }
       }
-   
+
+   RegCloseKey(key_h);
+
    return;
    }
 else
@@ -477,8 +484,11 @@ int Nova_GetRegistryValueAsString(char *key, char *name, char *buf, int bufSz)
  if(RegQueryValueEx(key_h,name,NULL,&dType,work,&workSz) != ERROR_SUCCESS)
     {
     CfOut(cf_verbose,"RegQueryValueEx","Could not read existing registry data for '%s'.\n", name);
+    RegCloseKey(key_h);
     return false;
     }
+ 
+ RegCloseKey(key_h);
 
  DWORD *dwordValuep;
  
@@ -644,7 +654,11 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
             {
             cfPS(cf_error,CF_CHG,"",pp,a," !! Repairing registry key %s",key);
 
-            if (!Nova_OpenRegistryKey(key,&skey_h,true))
+            if (Nova_OpenRegistryKey(key,&skey_h,true))
+               {
+               RegCloseKey(skey_h);
+               }
+            else
                {
                cfPS(cf_error,CF_FAIL,"",pp,a," !! Registry key could not be created.\n");
                }
@@ -708,6 +722,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       if (memcmp(reg_data,value,vsize) == 0)
          {
          cfPS(cf_inform,CF_NOP,"",pp,a," -> verified value (%s,%s) correct",dbvalue,reg_data);
+         RegCloseKey(skey_h);
          continue;         
          }
       else
