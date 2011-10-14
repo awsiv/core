@@ -517,7 +517,7 @@ void Nova_LastSawBundle(char *name)
   struct QPoint q,newq;
   time_t now = time(NULL);
   CF_DB *dbp;
- 
+
 snprintf(filename,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,NOVA_BUNDLE_LOG);
 MapName(filename);
 
@@ -551,7 +551,11 @@ else
    {
    char timebuffer[26];
    CfOut(cf_verbose,""," -> Bundle \"%s\" promise kept at %s\n",name,cf_strtimestamp_local(now,timebuffer));
-   WriteDB(dbp,name,&newq,sizeof(newq));
+
+   if (THIS_AGENT_TYPE == cf_agent)
+      {  
+      WriteDB(dbp,name,&newq,sizeof(newq));
+      }
    }
 
 CloseDB(dbp);
