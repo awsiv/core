@@ -391,7 +391,7 @@ class Ion_auth
 	 **/
 	public function login($identity, $password, $remember=false)
 	{
-          
+           $this->ci->session->set_userdata('mode',$this->mode);
               if($this->mode!='database')
               {
                  $ret=$this->ci->auth_ldap->login($identity,$password);

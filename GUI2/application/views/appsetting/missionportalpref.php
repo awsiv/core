@@ -13,13 +13,15 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
         <input id="appemail" type="text" name="appemail" maxlength="50" value="<?php echo $appemail; ?>"  />
 </p>
 
- <?php if(isset( $groupsacc)){?>
+ 
 <p id='admingrpsec'>
-    <label for="fall back for">Administrative group<span class="required"></span></label>
+    <label for="admin_group">Administrative group<span class="required"></span></label>
+   <?php if(isset( $groupsacc)){?>
    <?php echo tooltip('tooltip_admin_grp','',true) ;// echo form_error('active_directory_domain'); ?>
    <?php  echo form_dropdown('admin_group', $groupsacc, $admin_group?$admin_group:'select');?>
+   <?php }?>
 </p>
-<?php }?>
+
 
 <p>
    <label for="authentication">Authentication method <span class="required">*</span></label>
@@ -143,11 +145,17 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
      $('#ldapsettings').hide();
      var mode= $("input[name='mode']:checked").val();
      var elem=$("select[name='admin_group']").clone();
+     var grpcontainer=$('#admingrpsec');
       settings_toggle();
         function settings_toggle(){
             if ($("input[@name='mode']:checked").val() == 'database')
             {
                 $('#ldapsettings').hide();
+                if(mode!='database'){
+                $.get("<?php echo site_url('settings/get_native_groups')?>", function(result){
+                     grpcontainer.append(result);
+                  });
+                }
             }
             else if ($("input[@name='mode']:checked").val() == 'ldap')
             {
@@ -223,6 +231,12 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
              'member_attr':$("#member_attribute").val(),
              'addomain':$("#active_directory_domain").val(),
              'encryption':$("input:radio[name=encryption]:checked").val()
+         },
+         submitDatatype:'json',
+         change:function(response){
+             $('#infoMessage').html(response.message);
+              $("select[name='admin_group']").remove();
+             grpcontainer.append(response.groups);
          }
      }).ajaxyDialog('open');
        
@@ -231,16 +245,11 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
       $("input[name='mode']").change(function(){  
       settings_toggle();
       var selbox=$("select[name='admin_group']");
-      var message=$("<span id='grpmsg'> Authentication method change.Please login later to select group as admin for mission portal</span>");
       if($(this).val()==mode && selbox.length==0){
-          $('#admingrpsec').append(elem)
-          $('#grpmsg').remove();
+          grpcontainer.append(elem)
+          //$('#grpmsg').remove();
       }else{
-          selbox.remove();
-          if($('#grpmsg').length==0){
-           $('#admingrpsec').append(message);    
-          }
-          
+          selbox.remove();  
       }
           
      });

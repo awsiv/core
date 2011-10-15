@@ -12,7 +12,8 @@
             originalElement: null, // store a refrence to the originally called element
             dontOverrideTitle : false,
             clickData:[],
-            customstyle:true
+            customstyle:true,
+            submitDatatype:'html'
             
         },
         
@@ -100,13 +101,19 @@
                 url: actionUri,
                 data: serialized,
                 type: form.attr("method").toUpperCase(),
-                dataType: "html",
+                dataType: self.options.submitDatatype,
                 success: function(resp, status, xhr) {
                     if (xhr.status != 0) {
                         var callback = self.options.change;
                         var nid = $(resp).find('input[name=nid]').val();
                         if ($.isFunction(callback) && nid) callback(nid,self.options.originalElement);
+                        if($.isFunction(callback) && self._checkJson) {
+                            callback(resp);
+                            self.dialogContainer().dialog('close');
+                            return
+                        }
                         self._loadToDialog(resp);
+                        
                     } else {
                         //stupid jquery calling this 'success', it's
                         //network unavailable.
@@ -117,6 +124,15 @@
                     self._displayFailure(actionUri, xhr, msg);
                 }
             });
+        },
+        
+        _checkJson:function(data){
+            try{
+              $.parseJSON(data);
+              return true;
+            }catch(e){
+              return false;  
+            }
         },
 
         _loadToDialog: function(html_content) {

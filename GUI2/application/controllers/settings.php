@@ -59,9 +59,12 @@ class Settings extends Cf_Controller {
             //$data['groups']['select'] = "--select-one--";
 
             //for selecting admin_group from list, populated list depends on the mode selected and saved
+            var_dump($this->session->userdata('mode'));
+            if($this->settings_model->app_settings_get_item('mode')==$this->session->userdata('mode')){
             $groups_acc_mode = $this->ion_auth->get_groups();
             foreach ((array) $groups_acc_mode as $group) {
                 key_exists('name', $group) ? $data['groupsacc'][$group['name']] = $group['name'] : $data['groupsacc'][$group['displayname']] = $group['displayname'];
+            }
             }
             //$data['groupsacc']['select'] = "--select-one--";
             //if previous settings exist load it and display
@@ -244,8 +247,19 @@ class Settings extends Cf_Controller {
         $this->auth_ldap->set_encryption($this->input->post('encryption'));
 
         $result = $this->auth_ldap->login($this->input->post('username'), $this->input->post('password'));
+        $groups = $this->auth_ldap->get_all_ldap_groups($this->input->post('username'), $this->input->post('password'));
+        $groupsarry=array();
+        foreach ((array)$groups as $group){
+            if(key_exists('name', $group)){
+             $groupsarry[$group['name']]=$group['name'];    
+            }
+            if(key_exists('displayname', $group)){
+             $groupsarry[$group['displayname']]=$group['displayname'];    
+            }
+           
+        }
 //print_r($result);
-        $message = "<div id=\"infoMessage\" style=\"margin-top:20px\">";
+        $message = "<div>";
         if ($result) {
             $message.=" <p class=\"success\">" . $this->lang->line('successful_bind') . "</p>";
         }
@@ -255,7 +269,9 @@ class Settings extends Cf_Controller {
         $message.=$this->auth_ldap->warnings();
 
         $message.="</div>";
-        echo $message;
+        //echo $message;
+        $ret=array('message'=>$message,'groups'=>form_dropdown('admin_group',$groupsarry));
+        echo json_encode($ret);
     }
 
     function ldaptest() {
@@ -264,6 +280,15 @@ class Settings extends Cf_Controller {
             $data['configsettings'][$key] = $this->input->post($key);
         }
         $this->load->view('appsetting/ldaplogintest', $data);
+    }
+    
+    function get_native_groups(){
+        $groups=$this->ion_auth->get_groups_fromdb();
+        $groupsarr=array();
+        foreach($groups as $group){
+            $groupsarr[$group['name']]=$group['name'];
+        }
+        echo form_dropdown('admin_group',$groupsarr);
     }
 
     function preferences($op=false, $id=false) {
