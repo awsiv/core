@@ -77,8 +77,8 @@ if(showCloseButton)
                         _icoclose.style.position="absolute";
                         _icoclose.style.bottom = "15px";
                         _icoclose.style.right = "25px";
-                        _icoclose.style.width = "100px";
-                        _icoclose.innerHTML= "Continue";
+                        _icoclose.style.width = "130px";
+                        _icoclose.innerHTML= "Continue Anyway";
                         _contmsg.innerHTML="<strong>Warning: </strong>"+msg4;
                         _d.appendChild(_contmsg);
                         _d.appendChild(_icoclose);

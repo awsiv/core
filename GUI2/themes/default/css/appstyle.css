@@ -267,7 +267,7 @@ label#searchbox input
  /*CSS Statements that only apply on webkit-based browsers (Chrome, Safari, etc.) */  
     label#searchbox input
     {
-        padding: 9px 0 0 10px;
+        padding: 5px 0 0 10px;
     }
 }
 
@@ -668,7 +668,7 @@ label#searchbox input
     color: #666666;
     outline: medium none;
     padding: 4px;
-    width:220px;
+    width:170px;
 }
 /*
 styles for status page may be mergerd in the future
@@ -984,7 +984,7 @@ span.search input
     color: #666666;
     outline: medium none;
     padding: 4px;
-    width:220px;
+    width:170px;
 }
 
 div.ui-dialog, .customdlg
