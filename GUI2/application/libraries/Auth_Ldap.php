@@ -505,7 +505,7 @@ class Auth_Ldap {
             $result = $this->cfpr_ldap_search($binddn, $password, $filter, $fields, $dn);
             return $result;
         } else {
-            if($this->member_attribute!=''){
+            if($this->member_attribute!='' && strtolower($this->member_attribute) !='gidnumber'){
             $filter = '(|(objectClass=posixGroup)(' . $this->member_attribute . '=*))';
             }else{
             $filter = '(|(objectClass=posixGroup))';   

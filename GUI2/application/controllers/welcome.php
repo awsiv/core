@@ -342,7 +342,7 @@ class Welcome extends Cf_Controller {
         $page = isset($params['page']) ? intval($params['page'], 10) : 1;
         $totalnotes = $this->userdata->count_personal_working_notes();
         $skip = (int) ($rows * ($page - 1));
-        var_dump($skip);
+        //var_dump($skip);
         $data = array(
             'title' => "CFEngine Mission Portal - Planning",
             'breadcrumbs' => $this->breadcrumblist->display(),

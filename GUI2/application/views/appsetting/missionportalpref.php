@@ -16,11 +16,17 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
  
 <p id='admingrpsec'>
     <label for="admin_group">Administrative group<span class="required"></span></label>
-   <?php if(isset( $groupsacc)){?>
-   <?php echo tooltip('tooltip_admin_grp','',true) ;// echo form_error('active_directory_domain'); ?>
-   <?php  echo form_dropdown('admin_group', $groupsacc, $admin_group?$admin_group:'select');?>
-   <?php }?>
+   <?php if(isset( $groupsacc)){
+    echo tooltip('tooltip_admin_grp','',true) ;// echo form_error('active_directory_domain'); 
+    echo form_dropdown('admin_group', $groupsacc, $admin_group?$admin_group:'select');
+    }?>
+    
+   <?php if(isset($selected_group)){
+      echo  form_label($selected_group,'',array('id'=>'selected_grplbl'));
+   }?>
+ <a class="btn testldap" id="getgrpsbtn" href="<?php echo site_url('settings/ldaptest')?>">Get groups</a>
 </p>
+
 
 
 <p>
@@ -122,7 +128,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
                   <label for="encryption" class="">STARTTLS</label>
 </p>
 
-<p><label></label> <a class="btn" id="testsettings" href="<?php echo site_url('settings/ldaptest')?>">Test settings</a></p>
+<p><label></label> <a class="btn testldap" id="testsettings" href="<?php echo site_url('settings/ldaptest')?>">Test settings</a></p>
 </fieldset>
 <p>
     
@@ -145,15 +151,19 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
      $('#ldapsettings').hide();
      var mode= $("input[name='mode']:checked").val();
      var elem=$("select[name='admin_group']").clone();
+     var grplbl=$('#selected_grplbl').clone();
+     var getgrpbtn=$('#getgrpsbtn').clone();
      var grpcontainer=$('#admingrpsec');
       settings_toggle();
         function settings_toggle(){
             if ($("input[@name='mode']:checked").val() == 'database')
             {
                 $('#ldapsettings').hide();
+                $('#getgrpsbtn').hide();
                 if(mode!='database'){
                 $.get("<?php echo site_url('settings/get_native_groups')?>", function(result){
                      grpcontainer.append(result);
+                     $('#getgrpsbtn').hide();
                   });
                 }
             }
@@ -164,6 +174,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
                 $('.member_attribute_related').show();
                 $('.ldaprelated').show();
                 $("#addmore").show();
+                $('#getgrpsbtn').show()
                 
             }
             else if($("input[@name='mode']:checked").val() == 'active_directory'){
@@ -172,6 +183,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
                 $('.member_attribute_related').hide();
                 $('.ldaprelated').hide();
                 $("#addmore").hide();
+                $('#getgrpsbtn').show()
             }
             if($("#base_dn").val()!='')
                 {
@@ -215,14 +227,18 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
        $(this).parent().remove();
     });
 
-      $('#testsettings').bind('click',function(event){
+      $('.testldap').bind('click',function(event){
           event.preventDefault();
           var no_dirs=new Array();
           $("#userdirs").find("input:text[name=users_directory[]]").each(function(index, value) {
                   no_dirs.push($(this).val());
           })
+          var dlgtitle='LDAP Test'
+          if($(this).attr('id')=='getgrpsbtn'){
+             dlgtitle='Get groups' ;
+          }
            
-          $(this).ajaxyDialog({title:'LDAP Test',clickData:{
+          $(this).ajaxyDialog({title:dlgtitle,clickData:{
              'mode':$("input:radio[name=mode]:checked").val(),
              'host':$("#host").val(),
              'basedn':$("#base_dn").val(),
@@ -236,20 +252,25 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
          change:function(response){
              $('#infoMessage').html(response.message);
               $("select[name='admin_group']").remove();
-             grpcontainer.append(response.groups);
+              $('#selected_grplbl').remove();  
+              //grpcontainer.append(response.groups);
+              $('#getgrpsbtn').before(response.groups)
          }
-     }).ajaxyDialog('open');
+       }).ajaxyDialog('open');
        
       });
       
       $("input[name='mode']").change(function(){  
       settings_toggle();
       var selbox=$("select[name='admin_group']");
-      if($(this).val()==mode && selbox.length==0){
-          grpcontainer.append(elem)
-          //$('#grpmsg').remove();
-      }else{
-          selbox.remove();  
+      if($(this).val()==mode){
+          selbox.remove();
+          $('#selected_grplbl').remove();
+          $('#getgrpsbtn').before(elem).before(grplbl);
+      }
+     else{
+          selbox.remove();
+          $('#selected_grplbl').remove();      
       }
           
      });

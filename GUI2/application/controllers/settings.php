@@ -59,12 +59,15 @@ class Settings extends Cf_Controller {
             //$data['groups']['select'] = "--select-one--";
 
             //for selecting admin_group from list, populated list depends on the mode selected and saved
-            var_dump($this->session->userdata('mode'));
+           
             if($this->settings_model->app_settings_get_item('mode')==$this->session->userdata('mode')){
             $groups_acc_mode = $this->ion_auth->get_groups();
-            foreach ((array) $groups_acc_mode as $group) {
-                key_exists('name', $group) ? $data['groupsacc'][$group['name']] = $group['name'] : $data['groupsacc'][$group['displayname']] = $group['displayname'];
-            }
+                foreach ((array) $groups_acc_mode as $group) {
+                    key_exists('name', $group) ? $data['groupsacc'][$group['name']] = $group['name'] : $data['groupsacc'][$group['displayname']] = $group['displayname'];
+                }
+            } else
+            {
+                $data['selected_group']=$this->settings_model->app_settings_get_item('admin_group');
             }
             //$data['groupsacc']['select'] = "--select-one--";
             //if previous settings exist load it and display
@@ -183,9 +186,15 @@ class Settings extends Cf_Controller {
                     $data['groups'][$group['name']] = $group['name'];
                 }
                 //$data['groups']['select'] = "--select-one--";
+                if($this->input->post('mode')==$this->session->userdata('mode')||$this->input->post('mode')=='database'){
                 $groups_acc_mode = $this->ion_auth->get_groups();
-                foreach ((array) $groups_acc_mode as $group) {
-                    key_exists('name', $group) ? $data['groupsacc'][$group['name']] = $group['name'] : $data['groupsacc'][$group['displayname']] = $group['displayname'];
+                    foreach ((array) $groups_acc_mode as $group) {
+                        key_exists('name', $group) ? $data['groupsacc'][$group['name']] = $group['name'] : $data['groupsacc'][$group['displayname']] = $group['displayname'];
+                    }
+                }
+                else
+                {
+                    $data['selected_group']=$this->input->post('admin_group');
                 }
                 //$data['groupsacc']['select'] = "--select-one--";
                 $this->template->load('template', 'appsetting/missionportalpref', $data);
