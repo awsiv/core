@@ -256,6 +256,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
               //grpcontainer.append(response.groups);
               $('#getgrpsbtn').before(response.groups)
          }
+        
        }).ajaxyDialog('open');
        
       });

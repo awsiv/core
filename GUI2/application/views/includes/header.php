@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <noscript>
-  <META HTTP-EQUIV="Refresh" CONTENT="0;URL=/disabled.html">
+  <META HTTP-EQUIV="Refresh" CONTENT="0;URL=<?php echo base_url()?>/disabled.html">
 </noscript>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=9" />

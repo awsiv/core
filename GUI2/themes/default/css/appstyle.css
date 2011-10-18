@@ -278,7 +278,6 @@ label#searchbox input
     margin-bottom: 10px;
 
 }
-
 .outerdiv a.licenseinfo{
       background: none repeat scroll 0 0 #009193 /*#3D4439*/;
      border-radius: 3px 3px 3px 3px;
@@ -1514,8 +1513,8 @@ div.ui-dialog .ui-dialog-buttonpane{
     -khtml-border-radius:5px;
     -webkit-border-radius:5px;
     border-radius:5px;
-    margin: 5px 15px 20px;
-    padding: 15px 40px;
+    margin: 40px 15px 47px;
+    padding: 25px 40px;
 }
 
 /**********************/
