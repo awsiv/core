@@ -1464,6 +1464,7 @@ div.ui-dialog .ui-dialog-buttonpane{
     margin: 15px 8px 5px 15px;
     float:left;
     padding: 0;
+    min-height: 300px;
 }
 
 #hoststatus ul{
@@ -1480,6 +1481,7 @@ div.ui-dialog .ui-dialog-buttonpane{
     margin:15px 4px 5px 0px;
     float:left;
     padding:0px;
+    min-height: 300px;
 }
 
 .redhost
