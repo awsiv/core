@@ -110,7 +110,7 @@
                         else if($.isFunction(callback) && self._checkJson(resp)) {
                            self.dialogContainer().dialog('close');
                            callback(resp);
-                          
+                           $("body").css("cursor", "auto");
                         }
                        else self._loadToDialog(resp);
                         

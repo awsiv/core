@@ -254,7 +254,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
               $("select[name='admin_group']").remove();
               $('#selected_grplbl').remove();  
               //grpcontainer.append(response.groups);
-              $('#getgrpsbtn').before(response.groups)
+              $('#getgrpsbtn').before(response.groups);
          }
         
        }).ajaxyDialog('open');
