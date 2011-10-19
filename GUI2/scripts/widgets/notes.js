@@ -106,13 +106,16 @@
                     if (xhr.status != 0) {
                         var callback = self.options.change;
                         var nid = $(resp).find('input[name=nid]').val();
-                        if ($.isFunction(callback) && nid) callback(nid,self.options.originalElement);
+                        if ($.isFunction(callback) && nid) {
+                            callback(nid,self.options.originalElement);
+                        }
                         else if($.isFunction(callback) && self._checkJson(resp)) {
                            self.dialogContainer().dialog('close');
                            callback(resp);
                            $("body").css("cursor", "auto");
                         }
-                       else self._loadToDialog(resp);
+                        
+                       self._loadToDialog(resp);
                         
                     } else {
                         //stupid jquery calling this 'success', it's
