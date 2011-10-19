@@ -58,27 +58,27 @@ $lang['group_delete_successful'] 		= 'Group deleted';
 $lang['group_delete_unsuccessful'] 		= 'Unable to delete group';
 $lang['group_update_successful']                = 'Group information sucessfully updated';
 $lang['group_update_unsuccessful']              = 'Unable to update group';
-$lang['no_groups_for_user']                     = "User does not belong to any group. But user can login into misssion portal with limited access";
+$lang['no_groups_for_user']                     = "User does not belong to any group but user can login to the Nova Mission Portal with limited access";
 $lang['backend_error']                          = "Cannot connect to the database. Please make sure it exists.";
-$lang['admin_group_deletion']= "Can not delete the admin group";
-$lang['no_admin_group']="Admin group not selected yet in app config";
+$lang['admin_group_deletion']= "Cannot delete the admin group";
+$lang['no_admin_group']="No admin group selected yet";
 //modes of login
-$lang['login_mode_changed']          =  'The mode of authentication is changed, it might be due to config changes or system fall back to use database in case of unsucessful ldap login. Please relogin';
+$lang['login_mode_changed']          =  'The mode of authentication has changed, it might be due to config changes or system fallback to use database in case of unsucessful LDAP login. Please relogin';
 
-//ldap related
+//LDAP related
 $lang['error_loading_application_setting']    = "Error loading application settings from database";
 $lang['no_entries_found']                            ="Cannot find any entry, please adjust the parameters value";
 $lang['active_dir_conf_error']                    ="Invalid values supplied for Active Directory" ;
 $lang['active_dir_login_error']                   ="Invalid Active Directory credentials supplied";
-$lang['ldap_conf_error']                             ="Invalid values supplied for ldap ";
-$lang['ldap_login_error']                            ="failed to bind with Ldap";
-$lang['Internal_Ldap_module_error']            ="Ldap module error: Please check credentials and configuration for the ldap.";
-$lang['successful_bind']                             ="Sucessfully authenticated against the desired directory server";
+$lang['ldap_conf_error']                             ="Invalid values supplied for LDAP ";
+$lang['ldap_login_error']                            ="failed to bind with LDAP";
+$lang['Internal_Ldap_module_error']            ="Error: Please check credentials and configuration for the LDAP.";
+$lang['successful_bind']                             ="Authentication sucessful";
 $lang['ldap_value_grabbing_error']             =" Cannot fetch some attributes values, please correct the attribute names";
 $lang['error_fetching_group']                    ="Cannot query for available group names, but user can login into mission portal with limited access";
 
 //login page message
 $lang['login_database'] ='Internal authentication';
-$lang['login_ldap']='Open Ldap';
+$lang['login_ldap']='Open LDAP';
 $lang['login_active_directory']='Active Directory';
 $lang['login_mode_not_found']='Cannot find backend';
