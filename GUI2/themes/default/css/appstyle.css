@@ -175,13 +175,13 @@ p#userbox a{
     width:25px;
     height:25px;
     display:block;
-    margin: 0 10px 10px 10px;
+    margin: 0 10px 10px 0px;
     float:right;
 }
 
 .adminbtn:hover{
     background: url("../images/admin_hover.png") no-repeat;
-    margin: 0 10px 9px 9px;
+    margin: 0 9px 9px 0px;
     width:26px;
     height:26px;
 }
@@ -192,10 +192,12 @@ p#userbox a{
     height:25px;
     display:block;
     float:right;
+    margin: 0 10px 10px 0px;
 }
 
 .settingbtn:hover{
     background: url("../images/settings_hover.png") no-repeat;
+    margin: 0 9px 9px 0px;
     width:26px;
     height:26px;
 }
@@ -1945,7 +1947,7 @@ div.ui-dialog .ui-dialog-buttonpane{
     border-right:none;
 }
 
-#admin_content th,td
+#admincontent th,td
 {
     border:none;
 }
