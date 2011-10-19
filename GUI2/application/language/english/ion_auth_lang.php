@@ -15,14 +15,14 @@
 */
 
 // Account Creation
-$lang['account_creation_successful'] 	  	 = 'Account successfully created';
+$lang['account_creation_successful'] 	  	 = 'Account created successfully';
 $lang['account_creation_unsuccessful'] 	 	 = 'Unable to create account';
 $lang['account_creation_duplicate_email'] 	 = 'Email already used or invalid';
 $lang['account_creation_duplicate_username'] 	 = 'Username already taken or invalid';
 
 
 // Password
-$lang['password_change_successful'] 	 	 = 'Password changed successfully.';
+$lang['password_change_successful'] 	 	 = 'Password changed successfully';
 $lang['password_change_unsuccessful'] 	  	 = 'Unable to change password';
 $lang['forgot_password_successful'] 	 	 = 'Password reset email sent';
 $lang['forgot_password_unsuccessful'] 	 	 = 'Unable to reset password';
@@ -49,25 +49,25 @@ $lang['user_delete_unsuccessful'] 		 	 = 'Unable to delete user';
 $lang['one_admin_required']                                        ="At least one admin account is required by CFEngine Nova Mission Portal";
 
 //Group createion
-$lang['group_creation_successful']              ="Group sucessfully created";
+$lang['group_creation_successful']              ="Group created successfully";
 $lang['group_creation_unsuccessful']            ="Unable to create group";
 $lang['group_creation_duplicate']               ="Group name already exists";
 
 //Group changes
 $lang['group_delete_successful'] 		= 'Group deleted';
 $lang['group_delete_unsuccessful'] 		= 'Unable to delete group';
-$lang['group_update_successful']                = 'Group information sucessfully updated';
+$lang['group_update_successful']                = 'Group information updated successfully';
 $lang['group_update_unsuccessful']              = 'Unable to update group';
-$lang['no_groups_for_user']                     = "User does not belong to any group but user can login to the Nova Mission Portal with limited access";
-$lang['backend_error']                          = "Cannot connect to the database. Please make sure it exists.";
+$lang['no_groups_for_user']                     = "User does not belong to any group, but can login to the Nova Mission Portal with limited access";
+$lang['backend_error']                          = "Cannot connect to the user database. Please make sure it exists.";
 $lang['admin_group_deletion']= "Cannot delete the admin group";
 $lang['no_admin_group']="No admin group selected yet";
 //modes of login
-$lang['login_mode_changed']          =  'The mode of authentication has changed, it might be due to config changes or system fallback to use database in case of unsucessful LDAP login. Please relogin';
+$lang['login_mode_changed']          =  'The mode of authentication has changed, it might be due to config changes or a system fallback to a local database due to failed LDAP login. Please retry login.';
 
 //LDAP related
 $lang['error_loading_application_setting']    = "Error loading application settings from database";
-$lang['no_entries_found']                            ="Cannot find any entry, please adjust the parameters value";
+$lang['no_entries_found']                            ="Cannot find a match, please try again with new parameter values";
 $lang['active_dir_conf_error']                    ="Invalid values supplied for Active Directory" ;
 $lang['active_dir_login_error']                   ="Invalid Active Directory credentials supplied";
 $lang['ldap_conf_error']                             ="Invalid values supplied for LDAP ";

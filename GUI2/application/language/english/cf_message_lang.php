@@ -40,12 +40,12 @@ $lang['breadcrumb_notes']            ='Notes';
  */
 $lang['revision_not_known']='unknown';
 $lang['approvals_not_known']='unknown';
-$lang['repo_not_known']='Empty Working Director';
-$lang['not_comitted_no_changes']='Not Committed as no changes was detected';
+$lang['repo_not_known']='Empty working directory';
+$lang['not_comitted_no_changes']='Not committed: no changes was detected';
 $lang['single_file_commit_fail']=' Was not committed';
-$lang['write_file_success']='Success writing to file';
+$lang['write_file_success']='Write to file succeeded';
 $lang['write_file_error']='Error writing to file';
-$lang['same_file_exist']="File with same name exist in repository.Couldn't write file";
+$lang['same_file_exist']="A file with the same name exists in repository. Couldn't write file";
 $lang['promise_file_not_exist']='Failed to find promises.cf';
 
 
@@ -58,8 +58,8 @@ $lang['graph_data_not_available']='No data available.';
 /**
  * notescontroller text
  */
-$lang['note_empty_insert']="Cannot insert empty message.";
-$lang['note_insert_error']="Some error occured while inserting note.";
+$lang['note_empty_insert']="Cannot insert empty message";
+$lang['note_insert_error']="An error occured while inserting the note";
 $lang['notes'] = 'Notes';
 
 /**
@@ -76,7 +76,7 @@ $lang['notes'] = 'Notes';
  /**
   * Saved search related text
   */
- $lang['search_save_error']='Error while saving the search.';
+ $lang['search_save_error']='Error while saving the search';
  
  /**
   * Vital pulse and sign related test
@@ -92,8 +92,8 @@ $lang['no_data'] 	         = 'Sorry, this report is empty.';
 $lang['license_to']               ='This edition is licensed to ';
 $lang['front_greeting']          ='CFEngine 3 Nova';
 $lang['report_hostgp_help']    ='SOFT CLASSES or  HARD CLASSES with combination of regular expression as input, To open <strong>classfinder</strong> click me!';
-$lang['no_revisions'] ='No revisions exist for the selected repository ,operation was halted,
-                                   Please checkout/update or commit using the system for selected repository';
+$lang['no_revisions'] ='No revisions exist for the selected repository. Operation halted,
+                                   Please checkout, update or commit using the system for selected repository';
 $lang['no_repos'] = "No repositories are defined.";
 
 $lang['already_approved']= 'You  have already approved this version of policiy. See approved log for more details';
@@ -101,7 +101,7 @@ $lang['green']='Compliant';
 $lang['blue']='Unreachable';
 $lang['yellow']='Repaired';
 $lang['red']='Non compliant';
-$lang['not_hub_master_msg']='The mongo db in this hub is not a hub master, please click on the link below to navigate to the mission portal having its mongo db as hubmaster<br />
+$lang['not_hub_master_msg']='This is not a hub master, please click on the link below to navigate to the Mission Portal hosting the hubmaster<br />
                                              Link :: ';
 /**
  * Text diaplayed in the status page
@@ -165,7 +165,7 @@ $lang['header_analysis'] = "Analysis";
 $lang['header_monitor_job'] = "Monitored jobs";
 $lang['header_status'] = "Status (measured)";
 $lang['header_host_details'] = "Host details (discovered)";
-$lang['header_host_delete'] = "Proceed host deletion";
+$lang['header_host_delete'] = "Proceed with host deletion";
 
 $lang['host_reports'] = "Reports";
 $lang['host_notes'] = "Notes";
@@ -187,7 +187,7 @@ $lang['host_last_data'] = "Last data";
 $lang['host_id'] = "ID";
 $lang['host_not_discovered'] = '(Not discovered yet)';
 $lang['host_delete'] = 'Delete this host';
-$lang['host_delete_confirm'] = ' The host will be deleted from the report database of the hub.
+$lang['host_delete_confirm'] = ' The host will be deleted from the report database on the hub.
         The hub will still try to pull it for reports, and it may thus <strong>Reappear</strong>.Are you sure you want to delete this host?';
 
 $lang['host_promise_not_kept'] = 'Promises not kept in the past week';
