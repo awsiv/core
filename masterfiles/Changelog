@@ -5,6 +5,8 @@ October 2011
 - fixed Solaris/Solarisx86 self-upgrade
 - removed community-related promises as we decided to separate Nova and CFE default policy
 - added aix self-upgrade (certified by Matt)
+- fixed 32-bit RHEL4 self-upgrade
+- fixed cf-serverd get killed when upgrade
 
 August 2011
 *All*
