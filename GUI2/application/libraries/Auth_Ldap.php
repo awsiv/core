@@ -666,7 +666,8 @@ class Auth_Ldap {
         $ret = array();
         $users = json_decode($result, true);
         if (!is_array($users)) {
-            $this->set_error("Internal_Ldap_module_error");
+            log_message('error', 'Wrong data format returned by ldap module');
+            //$this->set_error("Internal_Ldap_module_error");
             return array();
         }
         foreach ($users['data'] as $user) {
