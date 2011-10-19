@@ -30,28 +30,25 @@ class Auth extends Controller {
             //redirect them to the login page
             redirect('auth/login', 'refresh');
         }
-        /* elseif (!$this->ion_auth->is_admin())
-          {
-          //redirect them to the home page because they must be an administrator to view this
-          redirect($this->config->item('base_url'), 'refresh');
-          } */ else {
-            //set the flash data error message if there is one
-            //$identifier=$this->config->item('identity','ion_auth');
+        else {
+           
             $this->data['title'] = $this->lang->line('mission_portal_title')." - Admin";
             $this->data['username'] = $this->session->userdata('username');
             //list the users
-            $this->data['users'] = $this->ion_auth->get_users_array();
+            //
             $this->data['usergroup'] = $this->session->userdata('group');
             $this->data['is_admin'] = $this->ion_auth->is_admin();
             $this->data['message'] = (validation_errors()) ? '<p class="error">' . validation_errors() . '</p>' : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message'));
             $_data = array('event_loggedin' => true, 'ttlusr' => $this->onlineusers->total_users());
             //notifier( get_nodehost_from_server().'/userloggedin', $_data );
             if (is_ajax ()) {
+                $this->data['users'] = $this->ion_auth->get_users_array();
                 $this->load->view('auth/user_list', $this->data);
             } else {
                 // $this->template->load('template', 'auth/index',$this->data);
                 redirect($this->config->item('base_url'), 'refresh');
             }
+           
         }
     }
 
@@ -105,7 +102,6 @@ class Auth extends Controller {
                 //redirect them back to the home page
                 $this->session->set_flashdata('message', $this->ion_auth->messages());
                 //redirect($this->config->item('base_url'), 'refresh');
-               
                 redirect('auth/index', 'refresh');
             } else { //if the login was un-successful
                 //redirect them back to the login page

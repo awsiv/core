@@ -283,7 +283,7 @@ class Auth_Ldap {
             $dn = $this->login_attribute . '=' . $username . ',' . $this->users_directory . ',' . $this->basedn;
             $id = key_exists('name', $details[0])?$details[0]['name']:"";
             //$grp_attr=explode(',',$this->member_attribute);
-            $gid=$details[0][strtolower('gidNumber')];  
+            $gid= key_exists('gidNumber', $details[0])?$details[0][strtolower('gidNumber')]:""; 
         }
       
         $this->authenticated=true;
@@ -294,7 +294,7 @@ class Auth_Ldap {
             $roles = $this->get_role_for_user($id, $password,null,$gid);
         }
         return array('cn' => $cn, 'dn' => $dn, 'id' => $id,
-            'role' => $roles);
+            'role' => $roles); 
     }
 
     /**
@@ -478,7 +478,7 @@ class Auth_Ldap {
                 }
                 $result = $this->cfpr_ldap_search($userdn, $password, $filter, $fields, $dn);
                 if(!is_null($result)){
-                $collectedusers=array_merge($collectedusers,$result);
+                 $collectedusers=array_merge($collectedusers,$result);
                 }
             }
             
@@ -537,11 +537,11 @@ class Auth_Ldap {
             $result = $this->cfpr_ldap_single_search($binddn, $password, $filter, $field, $dn);
         } else {
             $userdn = $this->login_attribute . '=' . $username . ',' . $this->users_directory . ',' . $this->basedn;
-            if($this->member_attribute!=''){
-            $filter = '(|(&(gidNumber='.$gid.')(objectClass=posixGroup))(' .$this->member_attribute. '=' . $username . '))';
-            }else{
-            $filter = '(&(gidNumber='.$gid.')(objectClass=posixGroup))';   
-            }
+                if($this->member_attribute!=''){
+                $filter = '(|(&(gidNumber='.$gid.')(objectClass=posixGroup))(' .$this->member_attribute. '=' . $username . '))';
+                }else{
+                $filter = '(&(gidNumber='.$gid.')(objectClass=posixGroup))';   
+                }
             $field = "cn";
             $dn = $this->basedn;
             $result = $this->cfpr_ldap_single_search($userdn, $password, $filter, $field, $dn);
@@ -551,6 +551,9 @@ class Auth_Ldap {
                 if(!empty($available_groups) && $this->authenticated){
                    $this->set_warning('no_groups_for_user'); 
                    log_message('error', 'User does not belong to any group, But can login into mission portal with limited access');
+                }elseif($this->authenticated){
+                   $this->set_warning('no groups fetched'); 
+                   log_message('error', 'No groups could be fetched from ldap'); 
                 }else{
                 $this->set_warning('error_fetching_group', 'invalid member attribute or user attribute');
                 log_message('error', 'Error fetching groups from directory service  possibly due to invalid member attribute or user directory  value');
@@ -654,7 +657,7 @@ class Auth_Ldap {
            }catch(Exception $e){
            $this->set_error('ldap_value_grabbing_error',$e->getMessage());
            log_message('error', 'Error grapping value from directory service, '.$e->getMessage().'  '.$e->getLine() );
-           return;
+           return array();
          }
         $temp_array = explode(',', $fields);
         foreach($temp_array as $val){
@@ -664,7 +667,7 @@ class Auth_Ldap {
         $users = json_decode($result, true);
         if (!is_array($users)) {
             $this->set_error("Internal_Ldap_module_error");
-            return;
+            return array();
         }
         foreach ($users['data'] as $user) {
             $row = array();
@@ -694,7 +697,7 @@ class Auth_Ldap {
             
        }catch(Exception $e){
             $this->set_error('ldap_value_grabbing_error',$e->getMessage());
-            log_message('error', 'Error grapping value from directory service, '.$e->getMessage().'  '. $e->getLine());
+            log_message('error', 'Error grapping value from directory service single search, '.$e->getMessage().'  '. $e->getLine());
              //$this->set_error($e->getMessage());
              return array();
        }

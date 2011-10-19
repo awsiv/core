@@ -403,15 +403,15 @@ class Ion_auth
                      }
                       foreach((array)$this->ci->auth_ldap->get_unformatted_error() as $error){
                        $this->set_error($error);
-                   }
+                     }
                    //fall back to database and store the mode for latter use in application
                    log_message('error', 'Error authenticationg to '.$this->mode.' server falling back to internal database');
                    if ($this->ci->ion_auth_model_mongo->login($identity, $password, $remember,true))
 		     {
                        $this->set_mode('database');
                        $this->ci->session->set_userdata('mode','database');
-			$this->set_message('login_successful');
-			return TRUE;
+		       $this->set_message('login_successful');
+		       return TRUE;
 		    }
                 //$this->set_error('login_unsuccessful');
 		return FALSE;
@@ -483,8 +483,8 @@ class Ion_auth
                  if($admin_group===False){
                      $admin_group = $this->ci->config->item('admin_group', 'ion_auth');
                  }
-                   $user_group  = $this->ci->session->userdata('group');
-                       if($user_group===False){
+                 $user_group  = $this->ci->session->userdata('group');
+                       if($user_group===False ||empty($user_group)){
                         return false;
                       }
                 return in_array($admin_group, $user_group);
@@ -592,7 +592,7 @@ class Ion_auth
             }
             if($this->ci->session->userdata('dn')){
                 $this->ci->auth_ldap->set_user_dn($this->ci->session->userdata('dn'));
-            }
+            }           
             return $this->ci->auth_ldap->get_all_ldap_users($this->ci->session->userdata('username'), $this->ci->session->userdata('pwd'));
         }
         return $this->ci->ion_auth_model_mongo->get_users_by_group($group_name, $limit, $offset);
