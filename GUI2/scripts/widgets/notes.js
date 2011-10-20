@@ -113,6 +113,7 @@
                            self.dialogContainer().dialog('close');
                            callback(resp);
                            $("body").css("cursor", "auto");
+                           return;
                         }
                         
                        self._loadToDialog(resp);

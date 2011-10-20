@@ -1,7 +1,7 @@
 var msg1 = "Did you know that your Internet Explorer is out of date?";
 var msg2 = "To get the best possible experience using mission portal we recommend that you upgrade to a newer version or other web browser. A list of the most popular web browsers can be found below.";
 var msg3 = "Just click on the icons to get to the download page";
-var msg4= "Some feature might not work if you continue with current browser version"
+var msg4= "Some features might not work if you continue with current browser version"
 var br1 = "Internet Explorer 7+";
 var br2 = "Firefox 3+";
 var br3 = "Safari 3+";

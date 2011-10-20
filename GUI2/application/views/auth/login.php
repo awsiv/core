@@ -25,7 +25,7 @@ font:13px/21px 'CFE_FONT',arial,Helvetica,sans-serif;
 
 h1.logo{
 	background: url('../../themes/default/images/cf_heading.png') no-repeat;
-                width:214px;
+                width:247px;
                 height: 31px;
                 margin: 25px 0 21px;
 }
