@@ -1,6 +1,6 @@
 <?php
 $result = json_decode($report_result, true);
-if (key_exists('truncated', $result['meta'])) {
+if (is_array($result) && key_exists('truncated', $result['meta'])) {
     $message = $result['meta']['truncated'];
     $displayed_rows = count($result['data']);
     echo "<p class=\"info\">$message. Queried for <strong>$number_of_rows rows</strong>, displayed: <strong>$displayed_rows rows</strong>. Please go to next page for more results.</p>";

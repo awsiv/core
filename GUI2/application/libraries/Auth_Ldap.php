@@ -205,23 +205,6 @@ class Auth_Ldap {
      */
     private function _authenticate($username, $password) {
         $needed_attrs = array('dn', 'cn', $this->login_attribute);
-
-        /* foreach ($this->hosts as $host) {
-          $this->ldapconn = ldap_connect($host);
-          if ($this->ldapconn) {
-          break;
-          } else {
-          log_message('info', 'Error connecting to ' . $uri);
-          }
-          }
-          // At this point, $this->ldapconn should be set.  If not... DOOM!
-          if (!$this->ldapconn) {
-          log_message('error', "Couldn't connect to any LDAP servers.  Bailing...");
-          //show_error('Error connecting to your LDAP server(s).  Please check the connection and try again.');
-          $this->set_error('Error connecting to your LDAP server(s).  Please check the connection and try again.');
-          return false;
-          } */
-
         // We've connected, now we can attempt the login.
         if ($this->use_ad) {
             $entries = "";
@@ -326,73 +309,7 @@ class Auth_Ldap {
         return ($str);
     }
 
-    /**
-     * @access private
-     * @param string $username
-     * @return array if login is valid
-     */
-    /* private function _get_role($username) {
-      if ($this->use_ad) {
-      $escaped = $this->ldap_escape($username, false);
-      //show_error(stripslashes($username));
-      //show_error($escaped);
-      $filter = '(member=' . $escaped . ')';
-      $search = ldap_search($this->ldapconn, $this->basedn, $filter, array('cn'));
-      if (!$search) {
-      log_message('error', "Error searching for group:" . ldap_error($this->ldapconn));
-      show_error('Couldn\'t find groups: ' . ldap_error($this->ldapconn));
-      }
-      $results = ldap_get_entries($this->ldapconn, $search);
-      //show_error(nl2br(var_export($results,true)));
-      //print_r($results);
-      $role = FALSE;
-      $roles = array();
-      if ($results['count'] != 0) {
-      //show_error(nl2br(var_export($results,true)));
-      $rolefound = false;
-      for ($i = 0; $i < $results['count']; $i++) {
-      $role = array_search($results[$i]['cn'][0], $this->roles);
-      $roles[$i] = $results[$i]['cn'][0];
-      if ($role !== FALSE) {
-      //return $role;
-      ($rolefound)? : $rolefound = true;
-      }
-      }
-      if ($rolefound) {
-      return $roles;
-      }
-      }
-      } else {
-      $filter = '(' . $this->member_attribute . '=' . $username . ')';
-      $search = ldap_search($this->ldapconn, $this->basedn, $filter, array('cn'));
-      if (!$search) {
-      log_message('error', "Error searching for group:" . ldap_error($this->ldapconn));
-      show_error('Couldn\'t find groups: ' . ldap_error($this->ldapconn));
-      }
-      $results = ldap_get_entries($this->ldapconn, $search);
-
-      //            show_error(nl2br(var_export($results,true)));
-      // print_r($results);
-
-      $roles = array();
-      if ($results['count'] != 0) {
-      $rolefound = false;
-      for ($i = 0; $i < $results['count']; $i++) {
-      $role = array_search($results[$i]['cn'][0], $this->roles);
-      $roles[$i] = $results[$i]['cn'][0];
-      if ($role !== FALSE) {
-      // return $role;
-      ($rolefound)? : $rolefound = true;
-      }
-      }
-      if ($rolefound) {
-      return $roles;
-      }
-      }
-      }
-      return false;
-      } */
-
+   
     private function _set_up_ADconnection($username, $password) {
         if (preg_match('/^(\w+\.)+\w{2,5}$/', $this->ad_domain)) {
             $binddn = $username . '@' . $this->ad_domain;
@@ -422,28 +339,6 @@ class Auth_Ldap {
         }
         return TRUE;
     }
-
-    /* private function _set_up_Openldap() {
-      // Find the DN of the user we are binding as
-      // If proxy_user and proxy_pass are set, use those, else bind anonymously
-      if ($this->proxy_user) {
-      $bind = ldap_bind($this->ldapconn, $this->proxy_user, $this->proxy_pass);
-      } else {
-
-      //some version of ldap starts ldap in version 3 and php expects it to be in version 3
-      ldap_set_option($this->ldapconn, LDAP_OPT_PROTOCOL_VERSION, 3);
-      $bind = @ldap_bind($this->ldapconn);
-      }
-
-      if (!$bind) {
-      log_message('error', 'Unable to perform anonymous/proxy bind');
-      show_error('Unable to bind for user id lookup');
-      return false;
-      }
-
-      log_message('debug', 'Successfully bound to directory Anomously.  Performing dn lookup for ');
-      return true;
-      } */
 
     /**
      *
@@ -585,65 +480,7 @@ class Auth_Ldap {
         return $result;
     }
     
-
-    /* function search_ldap($username, $password, $filter, $fields, $dn=Null) {
-      foreach ($this->hosts as $host) {
-      $this->ldapconn = ldap_connect($host);
-      if ($this->ldapconn) {
-      break;
-      } else {
-      log_message('info', 'Error connecting to ' . $uri);
-      }
-      }
-      if (is_null($dn)) {
-      $dn = $this->basedn;
-      }
-      $entries = '';
-      if ($this->use_ad) {
-
-      if ($this->_set_up_ADconnection($username, $password)) {
-      $ldapsearch = ldap_search($this->ldapconn, $dn, $filter, $fields);
-      $entries = ldap_get_entries($this->ldapconn, $ldapsearch);
-      }
-      if (!is_array($entries) || $entries['count'] == 0) {
-      //show_error('General ldap_search error: ' . ldap_err2str(ldap_errno($this->ldapconn)));
-      $this->set_error('General ldap_search error: ' . ldap_err2str(ldap_errno($this->ldapconn)));
-      return FALSE;
-      }
-      //print_r($entries);
-      } else {
-      $anombind = $this->_set_up_Openldap();
-      if (!$anombind) {
-      $binddn = $this->login_attribute . '=' . $username . 'ou=people' . $this->basedn;
-      $bind = @ldap_bind($this->ldapconn, $binddn, $password);
-      if (!$bind) {
-      $this->_audit("Failed login attempt: " . $username . " from " . $_SERVER['REMOTE_ADDR']);
-      return FALSE;
-      }
-      }
-      $ldapsearch = ldap_search($this->ldapconn, $dn, $filter, $fields);
-      $entries = ldap_get_entries($this->ldapconn, $ldapsearch);
-      if ($entries['count'] == 0) {
-      //show_error('General ldap_search error: ' . ldap_err2str(ldap_errno($this->ldapconn)));
-      $this->set_error('General ldap_search error: ' . ldap_err2str(ldap_errno($this->ldapconn)));
-      return FALSE;
-      }
-      }
-      $results = array();
-      for ($i = 0; $i < $entries['count']; $i++) {
-      $row = array();
-      foreach ($fields as $attrib) {
-      if (key_exists($attrib, $this->renamedfields)) {
-      $row[$this->renamedfields[$attrib]] = (key_exists($attrib, $entries[$i])) ? $entries[$i][$attrib][0] : "";
-      } else {
-      $row[$attrib] = (key_exists($attrib, $entries[$i])) ? $entries[$i][$attrib][0] : "";
-      }
-      }
-      array_push($results, $row);
-      }
-      return $results;
-      } */
-
+    
     function cfpr_ldap_search($user_dn, $password, $filter, $fields, $dn) {
         try{
              $result = cfpr_ldap_get_several_attributes($this->ldap_url,
