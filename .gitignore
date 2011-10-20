@@ -5,3 +5,7 @@
 .libs
 Makefile
 Makefile.in
+
+# Tags
+
+TAGS
