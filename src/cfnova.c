@@ -85,3 +85,14 @@ printf("\t->FIPS OpenSSL canister not found!!\n");
 printf("\t->LIBVIRT not found!!\n");
 #endif
 }
+
+/*****************************************************************************/
+
+#if defined(__MINGW32__)
+
+bool BootstrapAllowed(void)
+{
+return true;
+}
+
+#endif

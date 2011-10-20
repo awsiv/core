@@ -300,6 +300,10 @@ void Nova_Initialize(void);
 void Nova_CheckInstalledLibraries(void);
 void Nova_SaveDocumentRoot(void);
 
+#if defined(__MINGW32__)
+bool BoostrapAllowed(void);
+#endif
+
 /* client_code.c */
 
 int Nova_QueryForKnowledgeMap(struct cfagent_connection *conn,char *menu,time_t since);
