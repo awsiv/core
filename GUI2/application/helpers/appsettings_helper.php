@@ -14,7 +14,7 @@ function initializeHub() {
     $ishubmaster = cfpr_get_hub_master();
      $CI = &get_instance();
     if (!trim($ishubmaster)) {
-        show_error('Could not connect to the MongoDB database in hub master. Please ensure that CFEngine Nova is running correctly, by issuing the following command on the hub.
+        show_error('Database connection failure. Please ensure that CFEngine Nova is running correctly, by issuing the following command on the hub.
                 <br/>
                 # /var/cfengine/bin/cf-twin -Kf failsafe.cf');
     } elseif ($ishubmaster == 'am_hub_master') {
@@ -23,8 +23,8 @@ function initializeHub() {
         // if it does not say am_hub_master , it must be a host name or IP
         //define('HUB_MASTER', $ishubmaster);
         //preg_match('/(\d+).(\d+).(\d+).(\d+)/', $ishubmaster)
-        $errorMessage = sprintf("The is not a hub master, please click on the link below to navigate to 
-                                             the CFEngine Nova Mission Portal <br />
+        $errorMessage = sprintf("Not a hub master, please click on the link below to navigate to 
+                                             the CFEngine 3 Nova Mission Portal <br />
                                              Link ::<a href=\"http://%s/\">%s</a>", $ishubmaster, $ishubmaster);
 
         show_error($errorMessage);
