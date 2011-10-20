@@ -1964,6 +1964,35 @@ if (METER_KEPT[meter_anomalies_day] > 0 || METER_REPAIRED[meter_anomalies_day] >
 
 /*****************************************************************************/
 
+void Nova_PackSoftwareDates(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+/**
+ * What time the list of installed packages got updated.
+ * TODO: Inlcude time for NOVA_PATCHES_INSTALLED and NOVA_PATCHES_AVAIL?
+ */
+{ char line[CF_MAXTRANSSIZE];
+ char path[CF_MAXVARSIZE];
+ struct stat sb;
+
+ CfOut(cf_verbose,""," -> Packing software dates");
+
+ GetSoftwareCacheFilename(path);
+ 
+ if(cfstat(path, &sb) != 0)
+    {
+    CfOut(cf_verbose, "", "Nova_PackSoftwareDates: Could not stat %s", path);
+    }
+
+ AppendItem(reply,header,NULL);
+
+ time_t lastSeenSw = sb.st_mtime;
+
+ snprintf(line,sizeof(line),"S:%ld\n",lastSeenSw);
+ AppendItem(reply,line,NULL);
+
+}
+
+/*****************************************************************************/
+
 void Nova_PackBundles(struct Item **reply,char *header,time_t from,enum cfd_menu type)
 
 {

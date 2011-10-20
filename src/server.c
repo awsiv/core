@@ -269,6 +269,7 @@ switch (type)
        Nova_PackNotKeptLog(reply,CFR_NOTKEPTLOG,from,type);
        Nova_PackMeter(reply,CFR_METER,from,type);
        Nova_PackBundles(reply,CFR_BUNDLES,from,type);
+       Nova_PackSoftwareDates(reply,CFR_SWDATES,from,type);
        break;
    }
 

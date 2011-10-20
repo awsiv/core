@@ -22,6 +22,33 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 
 #ifdef HAVE_LIBMONGOC
 
+char *FormatErrorJson(char *out, int outSz, cfapi_errid_t errid)
+{
+ if(errid >= ERRID_MAX)
+    {
+    CfOut(cf_error, "", "!! FormatErrorJson: errid out of bounds");
+    errid = ERRID_MAX;
+    }
+ 
+ snprintf(out, outSz, "\"error\":{\"errid\":%d,\"msg\":\"%s\"}", errid, ERRID_DESCRIPTION[errid]);
+
+ return out;
+}
+
+/*****************************************************************************/
+
+void EndJsonBuffer(char *buf, int bufsize, cfapi_errid_t errid)
+{
+ char work[CF_MAXVARSIZE];
+ 
+ ReplaceTrailingChar(buf, ',', '\0');
+ strlcat(buf, "], ", bufsize);
+ 
+ FormatErrorJson(work, sizeof(work), errid);
+ EndJoin(buf, work, bufsize);
+ EndJoin(buf, "}", bufsize);
+}
+
 /*****************************************************************************/
 
 int CFDB_GetValue(char *lval,char *rval,int size)
@@ -480,6 +507,8 @@ bson_append_int(&bb,cfr_keyhash,1);
 bson_append_int(&bb,cfr_ip_array,1);
 bson_append_int(&bb,cfr_host_array,1);
 bson_append_int(&bb,type,1);
+bson_append_int(&bb,cfr_software_t,1);
+// TODO: Add support for time of NOVA_PATCHES_INSTALLED and NOVA_PATCHES_AVAIL?
 bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
@@ -499,13 +528,20 @@ while (mongo_cursor_next(cursor))  // loops over documents
    keyhash[0] = '\0';
    hostnames[0] = '\0';
    addresses[0] = '\0';
+   time_t lastSeen = 0;
    found = false;
    
    while (bson_iterator_next(&it1))
       {
       /* Extract the common HubHost data */
-      
+
       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+
+      if(strcmp(type, cfr_software) == 0 && strcmp(bson_iterator_key(&it1),cfr_software_t) == 0)
+         {
+         // TODO: Add support for time of NOVA_PATCHES_INSTALLED and NOVA_PATCHES_AVAIL?
+         lastSeen = bson_iterator_int(&it1);
+         }
       
       /* Query specific search/marshalling */
       
@@ -594,6 +630,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       PrependRlistAlien(&host_list,hh);
       
       // Now cache the host reference in all of the records to flatten the 2d list
+      // also add the timestamp to all reports
       
       for (rp = record_list; rp != NULL; rp=rp->next)
          {
@@ -602,6 +639,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
             {
             hs->hh = hh;
             }
+         hs->t = lastSeen;
          }
       }
    }
@@ -1658,7 +1696,7 @@ struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHash,char *lhandle,char lstatus,int regex, int sort, char *classRegex)
+struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHash,char *lhandle,char lstatus,int regex, time_t minTime, int sort, char *classRegex)
 // status = c (compliant), r (repaired) or n (not kept), x (any)
 { bson_buffer bb;
  bson query,field;
@@ -1781,7 +1819,8 @@ struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHas
                    }
                 }
 
-             match_handle = match_status = true;
+             bool match_time;
+             match_handle = match_status = match_time = true;
             
              if (regex)
                 {
@@ -1802,8 +1841,13 @@ struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHas
                 {
                 match_status = false;
                 }
+
+             if(minTime != 0 && rtime < minTime)
+                {
+                match_time = false;
+                }
             
-             if (match_handle && match_status)
+             if (match_handle && match_status && match_time)
                 {
                 found = true;
                 rp = PrependRlistAlien(&record_list,NewHubCompliance(CF_THIS_HH,rhandle,rstatus,rex,rsigma,rtime));

@@ -90,12 +90,34 @@
 #define MONITOR_CLASS_PREFIX "mXC_"
 #define CF_CHANGE_HORIZON 10
 #define NOVA_EXPORT_HEADER "NOVA_EXPORT"
-#define CF_CODEBOOK_SIZE 28
+#define CF_CODEBOOK_SIZE 29
 #define NOVA_MAXDIFFSIZE (80 * 1024 * 1024)
 #define HOSTKEY_SIZE 100 // length of SHA=....
 
 // for pdf reports
 #define CF_NOTICE_TRUNCATED "Data truncated due to internal buffer limit"
+
+
+/* error handling and description*/
+
+typedef enum cfapi_errid
+{
+    ERRID_SUCCESS,
+    ERRID_DBCONNECT,
+    ERRID_BUFFER_FULL,
+    ERRID_SUBSCRIPTION_EXISTS,
+    ERRID_MAX
+}cfapi_errid_t;
+
+static char *ERRID_DESCRIPTION[ERRID_MAX+2] =
+{
+    "Success",
+    "Could not open connection to reporting database",
+    "The JSON-buffer is too small to hold the report data",
+    "The given subscription handle already exists",
+    "Unknown error - description out of bounds",
+    NULL
+};
 
 /*****************************************************************************/
 
@@ -179,12 +201,12 @@ struct CfFileLine
 
 /*****************************************************************************/
 
-struct PageInfo
+typedef struct PageInfo
 {
   int resultsPerPage;
   int pageNum;
   int totalResultCount;
-};
+}PageInfo_t;
 
 /*****************************************************************************/
 
@@ -364,6 +386,8 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 /* db_query.c */
 
 #ifdef HAVE_LIBMONGOC
+char *FormatErrorJson(char *out, int outSz, cfapi_errid_t errid);
+void EndJsonBuffer(char *buf, int bufsize, cfapi_errid_t errid);
 int CFDB_GetValue(char *lval,char *rval,int size);
 void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn);
 int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int bufsize);
@@ -378,7 +402,7 @@ struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lc
 struct HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes);
 struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,char *lversion,time_t lt,int lkept,int lnotkept,int lrepaired,int cmp, int sort, char *classRegex);
 struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *lscope,char *llval,char *lrval,char *ltype,int reg, char *classRegex);
-struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHash,char *lhandle,char lstatus,int regex, int sort, char *classRegex);
+struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHash,char *lhandle,char lstatus,int regex, time_t minTime, int sort, char *classRegex);
 struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *lhash,char *lhost,char *laddr,time_t lago,int regex,int sort,char *classRegex);
 struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query,char *db);
 struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char *lname,int regex,int sort,char *classRegex);
@@ -468,6 +492,7 @@ void CFDB_SaveTotalCompliance(mongo_connection *conn, char *kH, struct Item *dat
 void CFDB_SavePromiseLog(mongo_connection *conn, char *kH, enum promiselog_rep rep_type, struct Item *data);
 void CFDB_SaveLastSeen(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveMeter(mongo_connection *conn, char *kH, struct Item *data);
+void CFDB_SaveSoftwareDates(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SavePerformance(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveSetUid(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SavePromiseCompliance(mongo_connection *conn, char *kH, struct Item *data);
@@ -546,6 +571,7 @@ void Nova_PackTotalCompliance(struct Item **reply,char *header,time_t date,enum 
 void Nova_PackRepairLog(struct Item **reply,char *header,time_t date,enum cfd_menu type);
 void Nova_PackNotKeptLog(struct Item **reply,char *header,time_t date,enum cfd_menu type);
 void Nova_PackMeter(struct Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackSoftwareDates(struct Item **reply,char *header,time_t from,enum cfd_menu type);
 void Nova_PackBundles(struct Item **reply,char *header,time_t date,enum cfd_menu type);
 int Nova_CoarseLaterThan(char *key,char *from);
 int Nova_YearSlot(char *day,char *month, char *lifecycle);
@@ -580,6 +606,7 @@ void Nova_UnPackTotalCompliance(mongo_connection *dbconn, char *id, struct Item 
 void Nova_UnPackRepairLog(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackNotKeptLog(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackMeter(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackSoftwareDates(mongo_connection *dbconn, char *id, struct Item *data);
 void Nova_UnPackBundles(mongo_connection *dbconn, char *id, struct Item *data);
 char *Nova_LongArch(char *arch);
 
@@ -1270,6 +1297,7 @@ struct cf_pscalar
 #define CFR_REPAIRLOG "PRL"
 #define CFR_NOTKEPTLOG "NKL"
 #define CFR_METER "MET"
+#define CFR_SWDATES "SWD"
 #define CFR_BUNDLES "BUN"
 
 /* Keynames */
@@ -1280,6 +1308,7 @@ struct cf_pscalar
 #define cfr_histo        "hs"
 #define cfr_perf_event    "P"
 #define cfr_software     "sw"
+#define cfr_software_t   "swt"
 #define cfr_patch_avail  "pa"
 #define cfr_patch_installed "pi"
 #define cfr_cause        "ca"
@@ -1620,6 +1649,7 @@ struct HubQuery
    {
    struct Rlist *hosts;
    struct Rlist *records;
+   cfapi_errid_t errid;
    };
 
 

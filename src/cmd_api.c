@@ -112,7 +112,7 @@ if (!status)  // any
    status = "x";
    }
 
-hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,false,classreg);
+hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,0,false,classreg);
 
 n = k = r = 0;
 n_av = k_av = r_av = 0;
@@ -688,7 +688,7 @@ if (!status)  // any
    status = "x";
    }
 
-hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,true,classreg);
+hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,0,true,classreg);
 
 if (!CSV)
    {
@@ -1491,7 +1491,7 @@ if (!status)  // any
    }
 
 
-hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,false,classreg);
+hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,0,false,classreg);
 
 StartJoin(returnval,"[",bufsize);
 

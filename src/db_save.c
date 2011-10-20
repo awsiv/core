@@ -1145,6 +1145,48 @@ bson_destroy(&host_key);
 
 /*****************************************************************************/
 
+void CFDB_SaveSoftwareDates(mongo_connection *conn, char *keyhash, struct Item *data)
+
+{ bson_buffer bb;
+  bson_buffer *setObj;
+  bson host_key;  // host description
+  bson setOp;
+  struct Item *ip;
+  char type;
+  time_t t;
+
+// find right host
+bson_buffer_init(&bb);
+bson_append_string(&bb,cfr_keyhash,keyhash);
+bson_from_buffer(&host_key, &bb);
+
+bson_buffer_init(&bb);
+
+setObj = bson_append_start_object(&bb, "$set");
+
+for (ip = data; ip != NULL; ip=ip->next)
+   {
+   sscanf(ip->name,"%c:%ld",&type,&t);
+
+   switch (type)
+      {
+      case 'S':
+          bson_append_int(setObj, cfr_software_t, t);
+          break;
+      }
+   }
+
+bson_append_finish_object(setObj);
+
+bson_from_buffer(&setOp,&bb);
+mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+
+bson_destroy(&setOp);
+bson_destroy(&host_key);
+}
+
+/*****************************************************************************/
+
 void CFDB_SavePerformance(mongo_connection *conn, char *keyhash, struct Item *data)
 
 { bson_buffer bb;

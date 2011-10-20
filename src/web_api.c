@@ -328,7 +328,7 @@ if (!status)  // any
    status = "x";
    }
 
-hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,false,classreg);
+hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,0,false,classreg);
 
 n = k = r = 0;
 n_av = k_av = r_av = 0;
@@ -1887,7 +1887,7 @@ int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int reg
     status = "x";
     }
 
- hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,true,classreg);
+ hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,0,true,classreg);
  PageRecords(&(hq->records),page,DeleteHubPromiseCompliance);
 
  snprintf(header,sizeof(header),
@@ -2773,7 +2773,7 @@ if (!status)  // any
    }
 
 
-hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,false,classreg);
+hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,0,false,classreg);
 
 StartJoin(returnval,"[",bufsize);
 
@@ -5024,7 +5024,7 @@ int Nova2PHP_compliance_promises_pdf(char *hostkey,char *handle,char *status,int
     {
     status = "x";
     }
- hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,true,classreg);
+ hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,0,true,classreg);
  returnval[0] = '\0';
 
  for (rp = hq->records; rp != NULL; rp=rp->next)

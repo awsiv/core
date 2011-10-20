@@ -790,6 +790,38 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
+void Nova_UnPackSoftwareDates(mongo_connection *dbconn, char *id, struct Item *data)
+
+{ struct Item *ip;
+  char type;
+  double kept,repaired;
+  
+CfOut(cf_verbose,""," -> Software dates data...........................");
+
+#ifdef HAVE_LIBMONGOC
+if (dbconn)
+   {
+   CFDB_SaveSoftwareDates(dbconn, id, data);
+   }
+#endif
+
+time_t t;
+
+for (ip = data; ip != NULL; ip=ip->next)
+   {
+   sscanf(ip->name,"%c:%ld",&type,&t);
+
+   switch (type)
+      {
+      case 'S':
+          Debug("Software installed date: %ld",t);
+          break;
+      }
+   }
+}
+
+/*****************************************************************************/
+
 void Nova_UnPackBundles(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
