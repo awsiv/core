@@ -11,6 +11,6 @@ AM_CPPFLAGS = -I$(srcdir)/../../core/src $(CONSTELLATION_CFLAGS)
 cfmod_la_SOURCES = cfmod.c
 
 lib_LTLIBRARIES = cfmod.la
-cfmod_la_LDFLAGS = -module -avoid-version
+cfmod_la_LDFLAGS = -module -avoid-version -R$(workdir)/lib
 
 cfmod_la_LIBADD = $(top_srcdir)/src/libpromises.la
