@@ -266,13 +266,18 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfcon_rank_promise_popularity, NULL)
 
     PHP_FE(cfcon_list_subscriptions, NULL)
+    PHP_FE(cfcon_local_show_subscription_virtualbundle, NULL)
+    
     PHP_FE(cfcon_subscribe_software, NULL)
     PHP_FE(cfcon_local_subscribe_virtualbundle, NULL)
+    PHP_FE(cfcon_local_delete_subscription_virtualbundle, NULL)
 
+    
+    
     PHP_FE(cfcon_subscribe_repairlog, NULL)
 //    PHP_FE(cfcon_subscribe_notkeptlog, NULL)
-
-
+    
+    
     
     PHP_FE(cfcon_report_software, NULL)
     PHP_FE(cfcon_local_report_virtualbundle, NULL)
@@ -5038,22 +5043,51 @@ PHP_FUNCTION(cfcon_aggr_classes)
 /******************************************************************************/
 
 PHP_FUNCTION(cfcon_list_subscriptions)
-
+/**
+ * Generic "show all subscritions" function
+ **/
 { const int bufsize = 4096;
  char buffer[bufsize];
- char *user;
- char *fUser;
- int usLen;
+ char *user, *subHandleRx;
+ int usLen, shLen;
+ PageInfo_t page = {0};
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&user, &usLen) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll",&user, &usLen, &subHandleRx, &shLen,
+                           &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     RETURN_NULL();
     }
 
- fUser = (usLen == 0) ? NULL : user;
+ char *fUser = (usLen == 0) ? NULL : user;
+ char *fSubHandleRx = (shLen == 0) ? NULL : subHandleRx;
 
  buffer[0]='\0';
- Con2PHP_list_subscriptions(fUser, buffer, sizeof(buffer));
+ Con2PHP_list_subscriptions(fUser, NULL, fSubHandleRx, &page, buffer, sizeof(buffer));
+ 
+ RETURN_STRING(buffer,1);
+}
+
+/******************************************************************************/
+
+PHP_FUNCTION(cfcon_local_show_subscription_virtualbundle)
+
+{ const int bufsize = 4096;
+ char buffer[bufsize];
+ char *user, *subHandleRx;
+ int usLen, shLen;
+ PageInfo_t page = {0};
+
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll",&user, &usLen, &subHandleRx, &shLen,
+                           &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
+    {
+    RETURN_NULL();
+    }
+
+ char *fUser = (usLen == 0) ? NULL : user;
+ char *fSubHandleRx = (shLen == 0) ? NULL : subHandleRx;
+
+ buffer[0]='\0';
+ Con2PHP_list_subscriptions(fUser, cfl_subtype_local_virtualbundle, fSubHandleRx, &page, buffer, sizeof(buffer));
  
  RETURN_STRING(buffer,1);
 }
@@ -5224,6 +5258,32 @@ PHP_FUNCTION(cfcon_local_subscribe_virtualbundle)
   FreeStringArray(promises);
   
   RETURN_STRING(buffer,1);
+}
+
+/******************************************************************************/
+
+PHP_FUNCTION(cfcon_local_delete_subscription_virtualbundle)
+{
+ char buffer[CF_WEBBUFFER] = {0};
+ char *user, *subHandle;
+ int usLen, shLen;
+ 
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss", &user, &usLen, &subHandle, &shLen) == FAILURE)
+    {
+    RETURN_NULL();
+    }
+
+ if(shLen == 0)
+    {
+    php_printf("cfcon_local_delete_subscription_virtualbundle: Parameter error: subscription handle must be specified\n");
+    RETURN_NULL();
+    }
+ 
+ char *fUser = (usLen == 0) ? NULL : user;
+
+ Con2PHP_delete_subscription(fUser, cfl_subtype_local_virtualbundle, subHandle, buffer, sizeof(buffer));
+ 
+ RETURN_STRING(buffer,1);
 }
 
 /******************************************************************************/

@@ -259,8 +259,12 @@ PHP_FUNCTION(cfcon_rank_promise_popularity);
 
 
 PHP_FUNCTION(cfcon_list_subscriptions);
+PHP_FUNCTION(cfcon_local_show_subscription_virtualbundle);
+
 PHP_FUNCTION(cfcon_subscribe_software);
 PHP_FUNCTION(cfcon_local_subscribe_virtualbundle);
+PHP_FUNCTION(cfcon_local_delete_subscription_virtualbundle);
+
 
 PHP_FUNCTION(cfcon_subscribe_repairlog);
 
