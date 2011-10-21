@@ -9,3 +9,9 @@ Makefile.in
 # Tags
 
 TAGS
+
+# gcov/lcov
+
+*.gcno
+*.gcda
+*.trace
