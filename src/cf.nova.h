@@ -105,7 +105,9 @@ typedef enum cfapi_errid
     ERRID_SUCCESS,
     ERRID_DBCONNECT,
     ERRID_BUFFER_FULL,
+    ERRID_SUBSCRIPTION_NONEXISTING,
     ERRID_SUBSCRIPTION_EXISTS,
+    ERRID_SUBSCRIPTION_MULTIPLE,
     ERRID_MAX
 }cfapi_errid_t;
 
@@ -114,7 +116,9 @@ static char *ERRID_DESCRIPTION[ERRID_MAX+2] =
     "Success",
     "Could not open connection to reporting database",
     "The JSON-buffer is too small to hold the report data",
+    "The given subscription handle does not exist",
     "The given subscription handle already exists",
+    "There are multiple subscriptions matching the request",
     "Unknown error - description out of bounds",
     NULL
 };
