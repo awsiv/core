@@ -19,7 +19,7 @@
 /* $Id: header 252479 2008-02-07 19:39:50Z iliaa $ */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include "conf.h"
 #endif
 
 #include "php.h"
