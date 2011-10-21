@@ -67,6 +67,31 @@ if test "x$with_libvirt" != xno; then
    ])
 fi
 
+AC_ARG_WITH([cfmod],
+    [AS_HELP_STRING([--with-cfmod[[=PATH]]], [enable cfmod using path to locate php-config])],
+    [], [with_cfmod=check])
+
+if test "x$with_cfmod" != xno; then
+   if test "x$with_cfmod" != xyes && test "x$with_cfmod" != xcheck; then
+      PHP_CONFIG=$with_cfmod
+   else
+      PHP_CONFIG=php-config
+   fi
+
+   if test x`which $PHP_CONFIG` != x ; then
+      CPPFLAGS="$CPPFLAGS `$PHP_CONFIG --includes`"
+   else
+      if test "x$with_cfmod" != xcheck; then
+         AC_MSG_ERROR([Unable to find php-dev])
+      fi
+      with_cfmod=no
+   fi
+
+   CFMOD_SUBDIR=nova/cfmod
+fi
+AC_SUBST([CFMOD_SUBDIR])
+
+
 AC_SEARCH_LIBS(kstat_open,kstat,[
         AC_DEFINE(HAVE_KSTAT,1,[We have Solaris kstat library])
         LDFLAGS="-lkstat $LDFLAGS"])

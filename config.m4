@@ -20,6 +20,13 @@ if test "x$NOVA_SUBDIR" != "x"; then
   else
     AC_MSG_RESULT([ -> libvirt: disabled])
   fi
+
+  if test "x$with_cfmod" != xno; then
+    AC_MSG_RESULT([ -> cfmod: enabled, using $PHP_CONFIG])
+  else
+    AC_MSG_RESULT([ -> cfmod: disabled])
+  fi
+
 else
   AC_MSG_RESULT([ Nova: disabled])
 fi
