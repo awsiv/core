@@ -329,13 +329,13 @@ if (a.database.columns)
       switch (ret)
          {
          case ERROR_SUCCESS:
-             cfPS(cf_inform,CF_CHG,"",pp,a," -> Registry value \"%s\" in %s deleted...\n",rp->item,pp->promiser);
+             cfPS(cf_inform,CF_CHG,"",pp,a," -> Deleted registry value \"%s\" in %s",rp->item,pp->promiser);
              break;
          case ERROR_FILE_NOT_FOUND:
-	     cfPS(cf_inform,CF_NOP,"",pp,a," -> Registry value \"%s\" in \"%s\" already gone", rp->item, pp->promiser);
+	     cfPS(cf_inform,CF_NOP,"",pp,a," -> Registry value \"%s\" in \"%s\" was not present, as promised", rp->item, pp->promiser);
              break;
          default:
-             CfOut(cf_error,""," !! Unable to delete key value with name \"%s\" - code %d",rp->item,ret);
+             CfOut(cf_error,"RegDeleteValue"," !! Unable to delete key value with name \"%s\" - code %d",rp->item,ret);
              break;
          }
       }
