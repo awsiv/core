@@ -3432,21 +3432,22 @@ else
    return false;
    }
 }
+
 /*****************************************************************************/
+
 int Nova2PHP_list_all_goals(char *buffer,int bufsize)
 
 { char work[CF_BUFSIZE];
- struct Item *ip2,*glist;
+  struct Item *ip2,*glist;
 
- if (Nova_GetUniqueBusinessGoals(buffer,bufsize))
-    {
-         return true;
-    }
- else
-    {
-    return false;
-    }
-
+if (Nova_GetUniqueBusinessGoals(buffer,bufsize))
+   {
+   return true;
+   }
+else
+   {
+   return false;
+   }
 }
 
 /*****************************************************************************/

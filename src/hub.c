@@ -139,38 +139,38 @@ void Nova_CollectReports(struct Attributes a, struct Promise *pp)
 {
 #ifdef HAVE_LIBMONGOC 
  
- if(CFDB_QueryIsMaster())  // relevant if we are part of mongo replica set
-    {
-    struct Item *masterhostlist = Nova_ScanClients();
-    
-    Nova_ParallelizeScan(masterhostlist,a,pp);      
-    DeleteItemList(masterhostlist);
-    
-    if (ShiftChange())
-       {
-       CfOut(cf_verbose,""," -> Scanning all total compliance cache");
-       NewClass("am_policy_hub");
-       Nova_CacheTotalCompliance(true);
-       CFDB_Maintenance(false);
-       }
-
-    // Longterm reports cleanup everyday
-    if(IsDefinedClass("Hr10.Min00_05"))
-       {
-       CFDB_Maintenance(true);
-       }
+if (CFDB_QueryIsMaster())  // relevant if we are part of mongo replica set
+   {
+   struct Item *masterhostlist = Nova_ScanClients();
    
-    if (CFH_ZENOSS && IsDefinedClass("Min00_05"))
-       {
-       Nova_ZenossSummary(DOCROOT);
-       }
+   Nova_ParallelizeScan(masterhostlist,a,pp);      
+   DeleteItemList(masterhostlist);
    
-    Nova_CountMonitoredClasses();
-    }
- else
-    {
-    CfOut(cf_verbose,"","We are part of report repliaca set, but not master - not collecting reports...\n");
-    }
+   if (ShiftChange())
+      {
+      CfOut(cf_verbose,""," -> Scanning all total compliance cache");
+      NewClass("am_policy_hub");
+      Nova_CacheTotalCompliance(true);
+      CFDB_Maintenance(false);
+      }
+   
+   // Longterm reports cleanup everyday
+   if (IsDefinedClass("Hr10.Min00_05"))
+      {
+      CFDB_Maintenance(true);
+      }
+   
+   if (CFH_ZENOSS && IsDefinedClass("Min00_05"))
+      {
+      Nova_ZenossSummary(DOCROOT);
+      }
+   
+   Nova_CountMonitoredClasses();
+   }
+else
+   {
+   CfOut(cf_verbose,"","We are part of report repliaca set, but not master - not collecting reports...\n");
+   }
 
 #endif
 }
@@ -203,6 +203,7 @@ for (i = 0; i < scans; i++)
    if (list[i])
       {
       Nova_ScanList(list[i],a,pp);
+      DeleteItemList(list[i]);
       }
    }
 }
@@ -531,7 +532,6 @@ struct Item *Nova_ScanClients()
   struct Item *list = NULL,*listm;
   time_t now = time(NULL);
 
-  
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_LASTDB_FILE);
 MapName(name);
 
@@ -586,9 +586,12 @@ CloseDB(dbp);
 Nova_RemoveExcludedHosts(&list,EXCLUDE_HOSTS);
 
 #ifdef HAVE_LIBMONGOC
+
 /* Now we need to do some magic for hubs so that only one hub collects reports at a time */
+
 NewClass("am_policy_hub");
 CfOut(cf_inform,"","Checking for Hub master");
+
 if (CFDB_QueryIsMaster())
    {
    CfOut(cf_inform,"","I am the hub master");
@@ -1007,39 +1010,39 @@ void Nova_UpdateMongoHostList(struct Item **list)
 deleted_hosts = CFDB_GetDeletedHosts();
 lastseen = CFDB_GetLastseenCache();
 
-if(lastseen)
+if (lastseen)
    {
    Nova_RemoveExcludedHosts(&lastseen, deleted_hosts);
    }
 
-if(*list)
+if (*list)
    {
    Nova_RemoveExcludedHosts(list, deleted_hosts);
    }
 
 // add from the new list
-for(ip=*list; ip!=NULL;ip=ip->next)
+for (ip=*list; ip!=NULL;ip=ip->next)
    {
    PrependFullItem(&new_lastseen,ip->name,ip->classes,0,time(NULL));
    count++;
    }
 
 // now add items from the prev lastseen db
-for(ip2=lastseen; ip2!=NULL;ip2=ip2->next)
+for (ip2=lastseen; ip2!=NULL;ip2=ip2->next)
    {
    ignore = false;
    
    for(ip=*list; ip!=NULL;ip=ip->next)
       {
       if((strcmp(ip->name, ip2->name) == 0 && strcmp(ip->classes,ip2->classes) == 0)   // new entry, already added
-           || ((time(NULL) - ip2->time) > CF_HUB_HORIZON) )                                // entry passed horizon
+         || ((time(NULL) - ip2->time) > CF_HUB_HORIZON) )                                // entry passed horizon
          {
          ignore = true;
          break;
          }
       }
-      
-   if(!ignore)
+   
+   if (!ignore)
       {
       PrependFullItem(&new_lastseen,ip2->name,ip2->classes,0,ip2->time);
       count++;
@@ -1048,10 +1051,10 @@ for(ip2=lastseen; ip2!=NULL;ip2=ip2->next)
 
 CFDB_SaveLastseenCache(new_lastseen);
 
-if(deleted_hosts)
+if (deleted_hosts)
    {
    bool removed=true;
-   for(ip=deleted_hosts; ip!=NULL;ip=ip->next)
+   for (ip=deleted_hosts; ip!=NULL;ip=ip->next)
       {
       // remove from the local lastseen db
       // TODO: remove the public keys also?
@@ -1063,7 +1066,7 @@ if(deleted_hosts)
    // purge the list of deleted host
    // otherwise keep it for the next run of cf-hub
    
-   if(removed)
+   if (removed)
       {
       CFDB_PurgeDeletedHosts();
       }
@@ -1071,7 +1074,7 @@ if(deleted_hosts)
    DeleteItemList(deleted_hosts);
    }
 
-if(lastseen)
+if (lastseen)
    {
    DeleteItemList(lastseen);
    }
@@ -1087,18 +1090,20 @@ CfOut(cf_inform,"","%d hosts added to the lastseen cache\n",count);
 struct Item *Nova_GetMongoLastSeen()
 
 {
- #ifdef HAVE_LIBMONGOC
+#ifdef HAVE_LIBMONGOC
  // Read back the full list from Mongo
- return CFDB_GetLastseenCache();
- #else
- return NULL;
- #endif
+return CFDB_GetLastseenCache();
+#else
+return NULL;
+#endif
 }
 
 /*****************************************************************************/
 
 static void Nova_CreateHostID(char *hostID, char *ipaddr)
+
 /* Make sure an entry for the given keyhash,ip exists */
+
 {
 #ifdef HAVE_LIBMONGOC
 
@@ -1120,24 +1125,24 @@ mongo_connection dbconn;
 /*****************************************************************************/
 
 static void Nova_RemoveExcludedHosts(struct Item **listp, struct Item *hosts_exclude)
-{
- struct Item *ip;
- struct Item *include = NULL;
 
- for(ip = *listp; ip != NULL; ip = ip->next)
-    {
-    if(IsMatchItemIn(hosts_exclude, ip->classes) || IsMatchItemIn(hosts_exclude, ip->name))
-       {
-       Debug("Excluding host %s(%s) from hub report query\n", ip->classes, ip->name);
-       }
-    else
-       {
-       IdempPrependItem(&include, ip->name, ip->classes);
-       }
-    }
+{ struct Item *ip;
+  struct Item *include = NULL;
 
- DeleteItemList(*listp);
- *listp = include;
+for (ip = *listp; ip != NULL; ip = ip->next)
+   {
+   if(IsMatchItemIn(hosts_exclude, ip->classes) || IsMatchItemIn(hosts_exclude, ip->name))
+      {
+      Debug("Excluding host %s(%s) from hub report query\n", ip->classes, ip->name);
+      }
+   else
+      {
+      IdempPrependItem(&include, ip->name, ip->classes);
+      }
+   }
+
+DeleteItemList(*listp);
+*listp = include;
 }
 
 /* EOF */
