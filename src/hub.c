@@ -53,6 +53,11 @@ int ScheduleRun(void);
 static void Nova_CreateHostID(char *hostID, char *ipaddr);
 static void Nova_RemoveExcludedHosts(struct Item **list, struct Item *hosts_exclude);
 
+static void Nova_Scan(struct Item *masterlist, struct Attributes a, struct Promise *pp);
+static pid_t Nova_ScanList(struct Item *list,struct Attributes a,struct Promise *pp);
+static void Nova_SequentialScan(struct Item *masterlist, struct Attributes a, struct Promise *pp);
+static void Nova_ParallelizeScan(struct Item *masterlist,struct Attributes a,struct Promise *pp);
+
 /*****************************************************************************/
 
 #ifndef MINGW
@@ -142,8 +147,8 @@ void Nova_CollectReports(struct Attributes a, struct Promise *pp)
 if (CFDB_QueryIsMaster())  // relevant if we are part of mongo replica set
    {
    struct Item *masterhostlist = Nova_ScanClients();
-   
-   Nova_ParallelizeScan(masterhostlist,a,pp);      
+
+   Nova_Scan(masterhostlist,a,pp);
    DeleteItemList(masterhostlist);
    
    if (ShiftChange())
@@ -177,44 +182,144 @@ else
 
 /********************************************************************/
 
-void Nova_ParallelizeScan(struct Item *masterlist,struct Attributes a,struct Promise *pp)
-
-{ const int cf_max_slots = 1024;
-  struct Item *ip, *list[cf_max_slots];
-  int i,scans = 50;
-
-for (i = 0; i < cf_max_slots; i++)
+static void Nova_Scan(struct Item *masterlist, struct Attributes a, struct Promise *pp)
+{
+if (NO_FORK)
    {
-   list[i] = NULL;
+   Nova_SequentialScan(masterlist, a, pp);
    }
-
-// Divide ...
-
-for (ip = masterlist, i = 0; ip != NULL; ip=ip->next)
+else
    {
-   PrependItem(&(list[i]),ip->name,ip->classes);
-   i = (i + 1) % scans;
-   }
-
-// Conquer ...
-
-for (i = 0; i < scans; i++)
-   {
-   if (list[i])
-      {
-      Nova_ScanList(list[i],a,pp);
-      DeleteItemList(list[i]);
-      }
+   Nova_ParallelizeScan(masterlist, a, pp);
    }
 }
 
 /********************************************************************/
 
-void Nova_ScanList(struct Item *list,struct Attributes a,struct Promise *pp)
+static void Nova_SequentialScan(struct Item *masterlist, struct Attributes a, struct Promise *pp)
+{
+struct Item *ip;
 
-{ struct Item *ip;
-  pid_t child_id = 1;
-  
+for (ip = masterlist; ip != NULL; ip = ip->next)
+   {
+   Nova_HailPeer(ip->name,ip->classes,a,pp);
+   }
+}
+
+/********************************************************************/
+
+static bool RemoveFinishedPid(pid_t finished, pid_t *children, int *nchildren)
+{
+int i;
+for (i = 0; i < *nchildren; ++i)
+   {
+   if (children[i] == finished)
+      {
+      CfOut(cf_verbose, "", "Reaped finished hostscan subprocess, pid %d", finished);
+      memmove(children + i, children + i + 1, sizeof(pid_t) * (*nchildren - i - 1));
+      (*nchildren)--;
+      return true;
+      }
+   }
+return false;
+}
+
+/********************************************************************/
+
+static void DistributeScanTasks(struct Item* scanhosts, struct Item** queues, int nqueues)
+{
+/*
+ * In order to avoid large number of processes to be started just to get the
+ * information from a single child each, we distribute tasks in chunks of CHUNKSIZE
+ * clients each.
+ */
+#define CHUNKSIZE 10
+
+for (;;)
+   {
+   int i, j;
+   for (i = 0; i < nqueues; ++i)
+      {
+      for (j = 0; j < CHUNKSIZE; ++j)
+         {
+         struct Item *host = scanhosts;
+         if (host == NULL)
+            {
+            return;
+            }
+         PrependItem(&(queues[i]), host->name, host->classes);
+
+         scanhosts = scanhosts->next;
+         }
+      }
+   }
+}
+
+
+/********************************************************************/
+
+static void Nova_ParallelizeScan(struct Item *masterlist,struct Attributes a,struct Promise *pp)
+
+{
+#define SCAN_CHILDREN 50
+
+struct Item *list[SCAN_CHILDREN] = { NULL };
+int i = 0;
+pid_t children[SCAN_CHILDREN] = { 0 };
+int nchildren = 0;
+
+// Divide ...
+
+DistributeScanTasks(masterlist, list, SCAN_CHILDREN);
+
+// Conquer ...
+
+for (i = 0; i < SCAN_CHILDREN; i++)
+   {
+   if (list[i])
+      {
+      pid_t child = Nova_ScanList(list[i],a,pp);
+      children[nchildren++] = child;
+      CfOut(cf_verbose, "", "Started new hostscan subprocess, %d/%d, pid %d",
+            nchildren, SCAN_CHILDREN, child);
+      DeleteItemList(list[i]);
+      }
+   }
+
+while (nchildren)
+   {
+   CfOut(cf_verbose, "", "Awaiting %d hostscan processes to finish", nchildren);
+
+   int status;
+   pid_t finished = wait(&status);
+
+   if (finished == -1)
+      {
+      if (errno == EINTR)
+         {
+         continue;
+         }
+      CfOut(cf_error, "wait", "Error waiting hostscan processes to finish");
+      return;
+      }
+
+   if (!RemoveFinishedPid(finished, children, &nchildren))
+      {
+      CfOut(cf_error, "", "Unexpected child reaped! pid %d.", finished);
+      }
+   }
+
+CfOut(cf_verbose, "", "All hostscan processes finished execution");
+}
+
+/********************************************************************/
+
+static pid_t Nova_ScanList(struct Item *list,struct Attributes a,struct Promise *pp)
+
+{
+struct Item *ip;
+pid_t child_id;
+
 CfOut(cf_verbose,"","----------------------------------------------------------------\n");
 CfOut(cf_verbose,""," Initiating scan on: ");
 
@@ -225,36 +330,20 @@ for (ip = list; ip != NULL; ip=ip->next)
 
 CfOut(cf_verbose,"","----------------------------------------------------------------\n");
 
-if (NO_FORK)
+child_id = fork();
+
+if (child_id == 0)
    {
-   for (ip = list; ip != NULL; ip=ip->next)
-      {
-      Nova_HailPeer(ip->name,ip->classes,a,pp);
-      }
+   // Am child
+   ALARM_PID = -1;
+
+   Nova_SequentialScan(list, a, pp);
+
+   exit(0);
    }
 else
    {
-   CfOut(cf_verbose,"","Spawning new process...\n");
-   child_id = fork();
-
-   if (child_id == 0)
-      {
-      // Am child
-      ALARM_PID = -1;
-      
-      for (ip = list; ip != NULL; ip=ip->next)
-         {
-         Nova_HailPeer(ip->name,ip->classes,a,pp);
-         }
-
-      exit(0);
-      }
-   else
-      {
-      // Parent returns to spawn again
-      cf_pwait(child_id);
-      return;
-      }
+   return child_id;
    }
 }
 
