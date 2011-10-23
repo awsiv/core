@@ -256,6 +256,13 @@ bundle agent update
                         handle => "update_processes_cf_hub",
                     ifvarclass => "nova_edition|constellation_edition";
 
+  !am_policy_hub.files_ok.!windows::
+
+   "cf-hub"            signals => { "term", "kill" },
+                       comment => "Kill cf-hub process on all client hosts",
+                        handle => "update_processes_kill_cf_hub_on_clients",
+                    ifvarclass => "nova_edition|constellation_edition";
+
 #
 
  commands:
