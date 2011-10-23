@@ -354,12 +354,6 @@ bundle server access_rules()
       resource_type => "query",
             admit   => { "$(sys.policy_hub)" };
 
-   "relay"
-             handle => "server_access_grant_relay",
-            comment => "Grant relay reporting query to everybody",
-      resource_type => "query",
-            admit   => { @(def.acl) };
-
 # Uncomment the promise below to allow cf-runagent to
 # access cf-agent on Windows machines
 #	
@@ -392,7 +386,7 @@ body executor control
 {
  any::
 
-  splaytime  => "1";
+  splaytime  => "4";
   mailto     => "cfengine@example.org";
   mailfrom   => "cfengine@$(sys.host).example.org";
   smtpserver => "localhost";
