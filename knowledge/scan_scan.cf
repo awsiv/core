@@ -1,0 +1,93 @@
+
+bundle knowledge st_scan
+
+{
+topics:
+
+"st-scan";
+Special_Topics_Guide::
+    "Security scanning and tripwires with CFEngine"  association => a("discusses","Security Scanning and Tripwires with CFEngine","is discussed in");
+
+
+occurrences:
+
+special_topics_guides::
+ "/docs/st-scan.html"
+  represents => { "Security Scanning and Tripwires with CFEngine" };
+Security_Scanning_and_Tripwires_with_CFEngine::
+ "/docs/st-scan.html"
+  represents => { "special topics guide" };
+Security_scanning_and_tripwires_with_CFEngine::
+ "/docs/st-scan.html#Top"
+  represents => { "Text section" };
+File_scanning::
+ "/docs/st-scan.html#File-scanning"
+  represents => { "manual chapter" };
+File_change_detection__tripwires::
+ "/docs/st-scan.html#File-change-detection-and-tripwires"
+  represents => { "manual section File change detection: tripwires" };
+Example_change_management::
+ "/docs/st-scan.html#Example-change-management"
+  represents => { "manual section Example change management" };
+Example_change_management::
+ "/docs/st-scan.html#Example-change-management"
+  represents => { "code example" };
+Example_change_management::
+ "/docs/st-scan.html#Example-change-management"
+  represents => { "code example" };
+Example_change_management::
+ "/docs/st-scan.html#Example-change-management"
+  represents => { "code example" };
+file_change_log::
+ "/docs/st-scan.html#file_005fchange_002elog"
+  represents => { "manual section file_change.log" };
+File_change_reports_in_Nova_and_Constellation::
+ "/docs/st-scan.html#File-change-reports-in-Nova-and-Constellation"
+  represents => { "manual section File change reports in Nova and Constellation" };
+Tamperproof_data::
+ "/docs/st-scan.html#Tamperproof-data"
+  represents => { "manual section Tamperproof data" };
+Change_detection_bundle_summary::
+ "/docs/st-scan.html#Change-detection-bundle-summary"
+  represents => { "manual section Change detection bundle summary" };
+Reversion_of_file_changes_from_a_trusted_source::
+ "/docs/st-scan.html#Reversion-of-file-changes-from-a-trusted-source"
+  represents => { "manual section Reversion of file changes from a trusted source" };
+Process_and_network_scanning::
+ "/docs/st-scan.html#Process-and-network-scanning"
+  represents => { "manual chapter" };
+Watching_processes::
+ "/docs/st-scan.html#Watching-processes"
+  represents => { "manual section Watching processes" };
+Watching_other_system_variables::
+ "/docs/st-scan.html#Watching-other-system-variables"
+  represents => { "manual section Watching other system variables" };
+Threshold_monitoring::
+ "/docs/st-scan.html#Threshold-monitoring"
+  represents => { "manual section Threshold monitoring" };
+Log_scanning::
+ "/docs/st-scan.html#Log-scanning"
+  represents => { "manual chapter" };
+Scanning_log_files_for_patterns::
+ "/docs/st-scan.html#Scanning-log-files-for-patterns"
+  represents => { "manual section Scanning log files for patterns" };
+Scanning_syslog_for_FTP_statistics::
+ "/docs/st-scan.html#FTP"
+  represents => { "manual section Scanning syslog for FTP statistics" };
+Scanning_DNS_logs_for_query_statistics::
+ "/docs/st-scan.html#DNS"
+  represents => { "manual section Scanning DNS logs for query statistics" };
+Scanning_syslog_for_email_statistics::
+ "/docs/st-scan.html#Email"
+  represents => { "manual section Scanning syslog for email statistics" };
+Scanning_syslog_for_email_milter_failures::
+ "/docs/st-scan.html#Milter"
+  represents => { "manual section Scanning syslog for email milter failures" };
+Scanning_syslog_for_breakin_attempts::
+ "/docs/st-scan.html#Breakin"
+  represents => { "manual section Scanning syslog for breakin attempts" };
+Intrusion_detection::
+ "/docs/st-scan.html#Intrusion-detection"
+  represents => { "manual chapter" };
+}
+

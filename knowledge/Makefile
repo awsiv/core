@@ -1,5 +1,5 @@
 
-all: highlight_syntax check_km_substrings scan_texinfo scan_examples cf-QuickRef3.html scan_quickref3.cf scan_cf3ref.cf cf3-solutions.html scan_solutions.cf cf-copernicus.html scan_copernicus.cf cfnova.html scan_cfnova.cf examples.cf cf3-tutorial.html scan_tutorial3.cf unit_peers.html cf3-bestpractice.html scan_bp3.cf cf3-upgrade.html scan_upgrade.cf st-rollback.html scan_rollback.cf  st-adopt.html scan_adopt.cf  st-bdma.html scan_bdma.cf st-itil.html scan_itil.cf st-knowledge.html scan_knowledge.cf st-orchestrate.html scan_orchestrate.cf st-reporting.html scan_reporting.cf st-schedule.html scan_schedule.cf st-teams.html scan_teams.cf scan_stdlib.cf st-distsched.html scan_distsched.cf st-iterate.html scan_iterate.cf scan_glossary.cf cf3-glossary.html st-hierarchy.html st-appmgt.html scan_appl.cf scan_hierarchy.cf scan_virt.cf st-security.html scan_security.cf st-federation.html scan_federation.cf st-cdp.html scan_cdp.cf scan_cloud.cf st-cloud.html st-opennebula.html scan_opennebula.cf st-scale.html scan_scale.cf st-rbac.html scan_rbac.cf st-change.html scan_change.cf st-menus.html scan_menus.cf st-monitoring.html scan_monitoring.cf st-editing.html scan_editing.cf st-packages.html scan_packages.cf st-devops.html scan_devops.cf st-critical.html scan_critical.cf scan_substrings.cf cf3-conceptguide.html cf3-quickstart.html st-windows.html
+all: highlight_syntax check_km_substrings scan_texinfo scan_examples cf-QuickRef3.html scan_quickref3.cf scan_cf3ref.cf cf3-solutions.html scan_solutions.cf cf-copernicus.html scan_copernicus.cf cfnova.html scan_cfnova.cf examples.cf cf3-tutorial.html scan_tutorial3.cf unit_peers.html cf3-bestpractice.html scan_bp3.cf cf3-upgrade.html scan_upgrade.cf st-rollback.html scan_rollback.cf  st-adopt.html scan_adopt.cf  st-bdma.html scan_bdma.cf st-itil.html scan_itil.cf st-knowledge.html scan_knowledge.cf st-orchestrate.html scan_orchestrate.cf st-reporting.html scan_reporting.cf st-schedule.html scan_schedule.cf st-teams.html scan_teams.cf scan_stdlib.cf st-distsched.html scan_distsched.cf st-iterate.html scan_iterate.cf scan_glossary.cf cf3-glossary.html st-hierarchy.html st-appmgt.html scan_appl.cf scan_hierarchy.cf scan_virt.cf st-security.html scan_security.cf st-federation.html scan_federation.cf st-cdp.html scan_cdp.cf scan_cloud.cf st-cloud.html st-opennebula.html scan_opennebula.cf st-scale.html scan_scale.cf st-rbac.html scan_rbac.cf st-change.html scan_change.cf st-menus.html scan_menus.cf st-monitoring.html scan_monitoring.cf st-editing.html scan_editing.cf st-packages.html scan_packages.cf st-devops.html scan_devops.cf st-critical.html scan_critical.cf scan_substrings.cf cf3-conceptguide.html cf3-quickstart.html st-windows.html st-scan.html scan_scan.cf
 
 clean:
 	rm scan*cf
@@ -43,6 +43,13 @@ st-monitoring.html: ../../core/docs/guides/SpecialTopic_Monitoring.texinfo
 	mv st-monitoring.trans st-monitoring.html
 scan_monitoring.cf: st-monitoring.html
 	./scan_texinfo "special topic" $< > scan_monitoring.cf
+
+st-scan.html: ../../core/docs/guides/SpecialTopic_Scan.texinfo
+	makeinfo  --html --no-split --css-include=cfcomdoc.css $<
+	./highlight_syntax st-scan.html
+	mv st-scan.trans st-scan.html
+scan_scan.cf: st-scan.html
+	./scan_texinfo "special topic" $< > scan_scan.cf
 
 st-packages.html: ../../core/docs/guides/SpecialTopic_Packages.texinfo
 	makeinfo  --html --no-split --css-include=cfcomdoc.css $<
