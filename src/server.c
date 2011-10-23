@@ -68,9 +68,7 @@ switch (c)
    {
    case 'c':
        /* This part should only occur on the server side */
-       CfOut(cf_verbose,""," -> Community level client connection");
-       CfOut(cf_log,""," !! Community level client connection to enterprise server");
-       CfOut(cf_log,""," !! Note that full enterprise functionality requires all hosts to run at enterprise level");
+       CfOut(cf_verbose,""," !! Community level client connection to enterprise server");
        return CF_BLOWFISHSIZE;
        
    case 'N':
