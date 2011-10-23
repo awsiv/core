@@ -420,12 +420,6 @@ if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&ret
 
 snprintf(name,CF_MAXVARSIZE-1,"%s%c%s",CFWORKDIR,FILE_SEPARATOR,CF_LASTDB_FILE);
 
-if (!ThreadLock(cft_db_lastseen))
-   {
-   CfOut(cf_error, "", "!! Could not lock last-seen DB");
-   return;
-   }
-
 if (OpenDB(name,&dbp))
    {
    memset(&entry,0,sizeof(entry)); 
@@ -447,8 +441,6 @@ if (OpenDB(name,&dbp))
 
    CloseDB(dbp);
    }
-
-ThreadUnlock(cft_db_lastseen);
 
 count = RlistLen(counter);
 DeleteRlist(counter);
