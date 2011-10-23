@@ -1091,7 +1091,7 @@ void Nova_UpdateMongoHostList(struct Item **list)
 
 {
 #ifdef HAVE_LIBMONGOC
- struct Item *ip = NULL, *lastseen = NULL, *ip2 = NULL, *new_lastseen=NULL; 
+ struct Item *ip = NULL, *lastseen = NULL, *ip2 = NULL, *new_lastseen=NULL;
  struct Item *deleted_hosts=NULL;
  int count = 0;
  bool ignore = false;
@@ -1099,19 +1099,14 @@ void Nova_UpdateMongoHostList(struct Item **list)
 deleted_hosts = CFDB_GetDeletedHosts();
 lastseen = CFDB_GetLastseenCache();
 
-if (lastseen)
-   {
-   Nova_RemoveExcludedHosts(&lastseen, deleted_hosts);
-   }
-
-if (*list)
-   {
-   Nova_RemoveExcludedHosts(list, deleted_hosts);
-   }
-
 // add from the new list
 for (ip=*list; ip!=NULL;ip=ip->next)
    {
+   if(deleted_hosts && IsItemIn(deleted_hosts,ip->name))
+      {
+      continue;
+      }      
+
    PrependFullItem(&new_lastseen,ip->name,ip->classes,0,time(NULL));
    count++;
    }
@@ -1119,23 +1114,15 @@ for (ip=*list; ip!=NULL;ip=ip->next)
 // now add items from the prev lastseen db
 for (ip2=lastseen; ip2!=NULL;ip2=ip2->next)
    {
-   ignore = false;
-   
-   for(ip=*list; ip!=NULL;ip=ip->next)
-      {
-      if((strcmp(ip->name, ip2->name) == 0 && strcmp(ip->classes,ip2->classes) == 0)   // new entry, already added
-         || ((time(NULL) - ip2->time) > CF_HUB_HORIZON) )                                // entry passed horizon
-         {
-         ignore = true;
-         break;
-         }
+   if( IsItemIn(new_lastseen,ip2->name)                       //already added from list
+       || ((time(NULL) - ip2->time) > CF_HUB_HORIZON)           // entry passed horizon)
+       || IsItemIn(deleted_hosts,ip2->name))                     //deleted
+      {      
+      continue;
       }
-   
-   if (!ignore)
-      {
-      PrependFullItem(&new_lastseen,ip2->name,ip2->classes,0,ip2->time);
-      count++;
-      }
+
+   PrependFullItem(&new_lastseen,ip2->name,ip2->classes,0,ip2->time);
+   count++;
    }
 
 CFDB_SaveLastseenCache(new_lastseen);
@@ -1168,10 +1155,8 @@ if (lastseen)
    DeleteItemList(lastseen);
    }
 
-// TODO: return new_lastseen;
 CfOut(cf_inform,"","%d hosts added to the lastseen cache\n",count);
  #endif
-//TODO: return NULL;
 }
 
 /*****************************************************************************/
@@ -1218,9 +1203,10 @@ static void Nova_RemoveExcludedHosts(struct Item **listp, struct Item *hosts_exc
 { struct Item *ip;
   struct Item *include = NULL;
 
+  
 for (ip = *listp; ip != NULL; ip = ip->next)
    {
-   if(IsMatchItemIn(hosts_exclude, ip->classes) || IsMatchItemIn(hosts_exclude, ip->name))
+   if(IsMatchItemIn(hosts_exclude, ip->classes))
       {
       Debug("Excluding host %s(%s) from hub report query\n", ip->classes, ip->name);
       }
