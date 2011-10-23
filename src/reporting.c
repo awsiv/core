@@ -1800,8 +1800,15 @@ void Nova_SummarizeComms()
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_LASTDB_FILE);
 MapName(name);
 
+if (!ThreadLock(cft_db_lastseen))
+   {
+   CfOut(cf_error, "", "!! Could not lock last-seen DB");
+   return;
+   }
+
 if (!OpenDB(name,&dbp))
    {
+   ThreadUnlock(cft_db_lastseen);
    return;
    }
 
@@ -1810,6 +1817,8 @@ if (!OpenDB(name,&dbp))
 if (!NewDBCursor(dbp,&dbcp))
    {
    CfOut(cf_inform,""," !! Unable to scan class db");
+   CloseDB(dbp);
+   ThreadUnlock(cft_db_lastseen);
    return;
    }
 
@@ -1849,6 +1858,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
 
 DeleteDBCursor(dbp,dbcp);
 CloseDB(dbp);
+ThreadUnlock(cft_db_lastseen);
 
 METER_KEPT[meter_comms_hour] = 100.0*kept/(kept+repaired+not_kept);
 METER_REPAIRED[meter_comms_hour] = 100.0*repaired/(kept+repaired+not_kept);
