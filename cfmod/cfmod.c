@@ -172,6 +172,9 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_hostname,NULL)
     PHP_FE(cfpr_ipaddr,NULL)
 
+    PHP_FE(cfpr_get_story_by_name,NULL)
+    PHP_FE(cfpr_get_story_by_id,NULL)
+
     PHP_FE(cfpr_show_topic,NULL)
     PHP_FE(cfpr_search_topics,NULL)
     PHP_FE(cfpr_show_topic_leads,NULL)
@@ -2828,6 +2831,54 @@ PHP_FUNCTION(cfpr_show_topic_category)
  Nova2PHP_show_topic_category((int)id,buffer,bufsize);
 
  RETURN_STRING(buffer,1);
+}
+
+/******************************************************************************/
+
+PHP_FUNCTION(cfpr_get_story_by_id)
+
+{ const int bufsize = 100000; 
+ char buffer[bufsize];
+ long id;
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l",&id) == FAILURE)
+   {
+   php_printf("Error is cfpr_get_story_by_name function args");
+   RETURN_NULL();
+   }
+
+buffer[0] = '\0';
+Con2PHP_get_story_by_id((int)id,buffer,bufsize);
+
+RETURN_STRING(buffer,1);
+}
+
+/******************************************************************************/
+
+PHP_FUNCTION(cfpr_get_story_by_name)
+
+{ const int bufsize = 100000; 
+  char buffer[bufsize];
+  char *search;
+  int s_len;
+  
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&search,&s_len) == FAILURE)
+   {
+   php_printf("Error is cfpr_get_story_by_name function args");
+   RETURN_NULL();
+   }
+
+if (strlen(search) == 0)
+   {
+   snprintf(buffer,1000,"Can't tell any stories about an empty topic");
+   }
+else
+   {
+   buffer[0] = '\0';
+   Con2PHP_get_story_by_name(search,buffer,bufsize);
+   }
+
+RETURN_STRING(buffer,1);
 }
 
 /******************************************************************************/
