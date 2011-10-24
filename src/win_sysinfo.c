@@ -75,7 +75,7 @@ int NovaWin_GetEnv(char *varName, char *varContents, int varContentsSz)
 
 /*****************************************************************************/
 
-const char *GetWorkdir(void)
+const char *GetDefaultWorkDir(void)
 {
 static char workdir[CF_BUFSIZE];
 
