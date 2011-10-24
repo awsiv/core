@@ -120,7 +120,7 @@ if ((dirh = opendir(namedir)) == NULL)
 
 for (dirp = readdir(dirh); dirp != NULL; dirp = readdir(dirh))
    {
-   if (strcmp("cf3-reference.html",dirp->d_name) == 0 || strcmp("cfnova.html",dirp->d_name) == 0)
+   if (strcmp("cf3-reference.html",dirp->d_name) == 0 || strcmp("NovaOwnersManual.html",dirp->d_name) == 0)
       {
       Nova_RegisterDoc(&refs,namedir,dirp->d_name);
       }
