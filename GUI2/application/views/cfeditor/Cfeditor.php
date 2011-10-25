@@ -57,7 +57,7 @@ $this->carabiner->display('both');
 			   </li>
 		  </ul>
 		  <div id="news">
-                  Welcome to the Cfengine Nova policy editor. Please click an existing policy file on the left, or "New" to start editing.
+                  Welcome to the CFEngine Nova policy editor. Please click an existing policy file on the left, or "New" to start editing.
                   To know about the shortcuts available press <strong>ctrl+h (help)</strong>.
 		  </div>
 	 </div>

@@ -116,7 +116,7 @@ occurrences:
 
     "This cfengine software license expires <b>$(sys.expires)</b>"
    representation => "literal",
-       represents => { "Cfengine Nova" };
+       represents => { "CFEngine Nova" };
 
  faults::
 
