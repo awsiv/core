@@ -2,7 +2,6 @@
 #
 # Do not forget to change this item after branching!
 #
-core branch 3.2.x
+core branch trunk
 
-phpmodule branch trunk
 autobuild branch trunk
