@@ -26,7 +26,7 @@ NewClass("am_php_module");
 CFDB_GetValue("document_root",retval,CF_MAXVARSIZE);
 strncpy(DOCROOT,retval,CF_MAXVARSIZE);
 
-Debug("Loaded values: docroot=%s\n",DOCROOT);
+CfDebug("Loaded values: docroot=%s\n",DOCROOT);
 #endif
 }
 
@@ -1184,7 +1184,7 @@ for (ip = nn; ip != NULL; ip = ip->next)
       tribe_counter++;
       }
 
-   Debug("NEAREST NEIGHOUR (%d): %s::%s at %d\n",tribe_counter,a_context,a_name,a_pid);
+   CfDebug("NEAREST NEIGHOUR (%d): %s::%s at %d\n",tribe_counter,a_context,a_name,a_pid);
 
    if (tribe_counter >= CF_TRIBE_SIZE-1)
       {
@@ -1218,7 +1218,7 @@ if (tribe_counter < CF_TRIBE_SIZE-1 && secondary_boundary > 0)
             continue;
             }
          
-         Debug("  2nd NEIGHOUR (%d): %s::%s at %d\n",tribe_counter,a_context,a_name,a_pid);
+         CfDebug("  2nd NEIGHOUR (%d): %s::%s at %d\n",tribe_counter,a_context,a_name,a_pid);
 
          if (Nova_NewVertex(tribe_nodes,tribe_counter,2,a_pid,a_name,a_context))
             {            
@@ -1275,7 +1275,7 @@ if (tribe_counter < CF_TRIBE_SIZE-1 && tertiary_boundary > 0)
                continue;
                }            
 
-            Debug("     3rd NEIGHBOUR (%d): %s::%s at %d\n",tribe_counter,a_context,a_name,a_pid);
+            CfDebug("     3rd NEIGHBOUR (%d): %s::%s at %d\n",tribe_counter,a_context,a_name,a_pid);
             
             if (Nova_NewVertex(tribe_nodes,tribe_counter,3,a_pid,a_name,a_context))
                {            
@@ -1421,7 +1421,7 @@ int Nova_NewVertex(struct CfGraphNode *tribe,int node,int distance,int real,char
   char topic_id[CF_BUFSIZE];
   int j;
 
-Debug("NEWVERT(%d,%d,%s:%s)\n",distance,real,topic_context,topic_name);
+CfDebug("NEWVERT(%d,%d,%s:%s)\n",distance,real,topic_context,topic_name);
 
 /* If more than a few nodes, don't waste visual space on repeated topics */
 
@@ -1443,7 +1443,7 @@ if (node > 5)
       {
       if (strcmp(tribe[j].shortname,sshort) == 0)
          {
-         Debug("A similar topic already exists, so don't waste the space: %s\n",sshort);
+         CfDebug("A similar topic already exists, so don't waste the space: %s\n",sshort);
          return false;
          }
       }
@@ -1558,7 +1558,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                    }   
                 }
              
-             Debug(" - NEIGH topic %d has association %s %s::%s (%d)\n",topic_id,afwd,assoc_context,assoc_name,assoc_id);
+             CfDebug(" - NEIGH topic %d has association %s %s::%s (%d)\n",topic_id,afwd,assoc_context,assoc_name,assoc_id);
 
              if (assoc_mask == NULL || FullTextMatch(assoc_mask,afwd))
                 {

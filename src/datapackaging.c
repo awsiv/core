@@ -547,7 +547,7 @@ void Nova_PackMonitorMg(struct Item **reply,char *header,time_t from,enum cfd_me
     havedata = 0;   
     memset(&entry,0,sizeof(entry));
     
-    Debug("timekey=%s\n", timekey);
+    CfDebug("timekey=%s\n", timekey);
 
     if (from > here_and_now)  // skip if client wants newer data
        {
@@ -914,7 +914,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
       {
       if(!NovaHasSlot(i))
          {
-         Debug("Could not find slot %d when packing monitoring histograms - skipping\n", i);
+         CfDebug("Could not find slot %d when packing monitoring histograms - skipping\n", i);
          continue;
          }
       

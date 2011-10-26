@@ -261,7 +261,7 @@ static char *GetProcessInfo(DWORD pid, char *execName, ULARGE_INTEGER lastTimeSt
 
  if(pid == 0 || pid == 4)
     {
-    Debug("Skipped process info query from special process (pid=%d)", pid);
+    CfDebug("Skipped process info query from special process (pid=%d)", pid);
     return NULL;
     }
 
@@ -474,7 +474,7 @@ static void GetProcessCpuTime(DWORD pid, ULARGE_INTEGER *timeCpuInt)
  // skip "idle process" and nt kernel process
  if(pid == 0 || pid == 4)
     {
-    Debug("Skipped cpu time query from special process (pid=%d)", pid);
+    CfDebug("Skipped cpu time query from special process (pid=%d)", pid);
     timeCpuInt->QuadPart = 0;
     return;
     }

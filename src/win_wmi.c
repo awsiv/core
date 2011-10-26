@@ -74,7 +74,7 @@ static int NovaWin_WmiGetInstalledPkgsNew(struct CfPackageItem **pkgList, struct
 
   DISPATCH_OBJ(colSoftware);
 
- Debug("NovaWin_WmiGetInstalledPkgsNew()\n");
+ CfDebug("NovaWin_WmiGetInstalledPkgsNew()\n");
 
 
  // default to user-defined name and version regex
@@ -118,12 +118,12 @@ if (!RUN_QUERY(colSoftware, "SELECT PackageName FROM Win32_Product"))
       }
    else
       {
-	Debug("pkgname=\"%s\"\n", pkgName);
+	CfDebug("pkgname=\"%s\"\n", pkgName);
 
 	snprintf(name, sizeof(name), "%s", ExtractFirstReference(nameRegex, pkgName));
         snprintf(version, sizeof(version), "%s", ExtractFirstReference(versionRegex, pkgName));
 
-        Debug("regex_pkgname=\"%s\", regex_pkgver=\"%s\"\n", name, version);
+        CfDebug("regex_pkgname=\"%s\", regex_pkgver=\"%s\"\n", name, version);
 
       if (!PrependPackageItem(pkgList, name, version, VSYSNAME.machine, a, pp))
          {
@@ -158,7 +158,7 @@ static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, struct
 
   DISPATCH_OBJ(colSoftware);
 
- Debug("NovaWin_WmiGetInstalledPkgsOld()\n");
+ CfDebug("NovaWin_WmiGetInstalledPkgsOld()\n");
 
   if(!RUN_QUERY(colSoftware, "SELECT Caption, Version FROM Win32_Product"))
     {
@@ -185,7 +185,7 @@ static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, struct
       else
 	{
 
-	  Debug("pkgname=\"%s\", pkgver=\"%s\"\n", caption, version);
+	  CfDebug("pkgname=\"%s\", pkgver=\"%s\"\n", caption, version);
 
 	  for(sp = caption; *sp != '\0'; sp++)
 	    {
@@ -254,11 +254,11 @@ int NovaWin_WmiInitialize(void)
  * Initialize WMI for this thread, safe to call when already initialized.
  */
 {
-  Debug("NovaWin_WmiInitialize()\n");
+  CfDebug("NovaWin_WmiInitialize()\n");
 
   if(wmiSvc != NULL)
     {
-      Debug("WMI already initialized\n");
+      CfDebug("WMI already initialized\n");
       return true;
     }
 
@@ -288,7 +288,7 @@ int NovaWin_WmiInitialize(void)
 int NovaWin_WmiDeInitialize(void)
 /* Safe to call even when not initialized */
 {
-  Debug("NovaWin_WmiDeInitialize()\n");
+  CfDebug("NovaWin_WmiDeInitialize()\n");
 
   if(wmiSvc != NULL)
     {

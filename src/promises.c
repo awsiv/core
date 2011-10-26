@@ -321,7 +321,7 @@ void Nova_NotePromiseCompliance(struct Promise *pp,double val,enum cf_status sta
   double lastseen,delta2;
   double vstatus;      /* end with a rough probability */
   
-Debug("Note Promise Compliance\n");
+CfDebug("Note Promise Compliance\n");
 
 cf_strncpy(promiseHandle,Nova_PromiseID(pp),sizeof(promiseHandle)-1);
 snprintf(newNoRepeatId, sizeof(newNoRepeatId), "%s:%s", promiseHandle, reason);

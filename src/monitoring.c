@@ -418,7 +418,7 @@ static void NovaOpenNewLifeCycle(int age, FILE **fp)
 int i;
 char filename[CF_MAXVARSIZE];
 
-Debug("OPEN YEAR %d\n",age);
+CfDebug("OPEN YEAR %d\n",age);
 
 for (i = 0; i < CF_OBSERVABLES; i++)
    {
@@ -438,7 +438,7 @@ static void NovaCloseLifeCycle(int age, FILE **fp)
 {
 int i;
 
-Debug("CLOSE YEAR %d\n",age);
+CfDebug("CLOSE YEAR %d\n",age);
 
 for (i = 0; i < CF_OBSERVABLES; i++)
    {

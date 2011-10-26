@@ -24,7 +24,7 @@ int Nova_GetInstalledPkgsRpath(struct CfPackageItem **pkgList, struct Attributes
   char line[CF_BUFSIZE] = {0};
   FILE *fin;
 
-  Debug("Nova_GetInstalledPkgsRpath()\n");
+  CfDebug("Nova_GetInstalledPkgsRpath()\n");
 
   if ((fin = cf_popen(a.packages.package_list_command,"r")) == NULL)
     {
@@ -45,7 +45,7 @@ int Nova_GetInstalledPkgsRpath(struct CfPackageItem **pkgList, struct Attributes
       
       if(FullTextMatch(a.packages.package_installed_regex,line))
 	{
-	Debug("READPKGINST(rpath)=%s\n",line);
+	CfDebug("READPKGINST(rpath)=%s\n",line);
 	PrependListPackageItem(pkgList,line,a,pp);
 	}
     }

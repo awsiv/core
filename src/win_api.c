@@ -76,7 +76,7 @@ int chown(const char *path, uid_t owner, gid_t group)
        return -1;
        }
       
-    Debug("Owner of \"%s\" is set to the owner of the current process", path);
+    CfDebug("Owner of \"%s\" is set to the owner of the current process", path);
 
     return 0;
     }
@@ -193,7 +193,7 @@ void NovaWin_CloseNetwork()
 
  if(res == 0)
     {
-    Debug("Windows sockets successfully deinitialized.\n");
+    CfDebug("Windows sockets successfully deinitialized.\n");
     }
  else
     {

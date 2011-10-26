@@ -187,8 +187,8 @@ d_now = Str2Int(VDAY);
 m_expire = Month2Int(u_month);
 d_expire = Str2Int(u_day);
 
-Debug("Y. %s > %s\nM. %s > %s\nD: %s > %s\n",VYEAR,LIC_YEAR,VMONTH,LIC_MONTH,VDAY,LIC_DAY);
-Debug("Y. %s > %s\nM. %d > %d\nD: %d > %d\n",VYEAR,LIC_YEAR,m_now,m_expire,d_now,d_expire);
+CfDebug("Y. %s > %s\nM. %s > %s\nD: %s > %s\n",VYEAR,LIC_YEAR,VMONTH,LIC_MONTH,VDAY,LIC_DAY);
+CfDebug("Y. %s > %s\nM. %d > %d\nD: %d > %d\n",VYEAR,LIC_YEAR,m_now,m_expire,d_now,d_expire);
 
 snprintf(EXPIRY,sizeof(EXPIRY),"%s %s %s",u_day,u_month,u_year);
 strncpy(LICENSE_COMPANY,company,CF_SMALLBUF-1);

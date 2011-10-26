@@ -116,7 +116,7 @@ void NovaWin_GetInterfaceInfo()
        pUnicast = pCurrAddresses->FirstUnicastAddress;
        if (pUnicast == NULL)
           {
-          Debug("No unicast address found for the current interface - skipping\n");
+          CfDebug("No unicast address found for the current interface - skipping\n");
           }
 
        // get at most one unicast address for each ipv4 and ipv6

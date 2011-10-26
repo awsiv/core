@@ -456,7 +456,7 @@ int CFDB_CheckAge(char *var, char *key, bson_iterator *it, time_t now, time_t ol
 	      PrependItem(purgeNamesPtr,key,NULL);
 	    }
 		      
-	  Debug("Report key \"%s\" needs to be purged (%lu seconds old)\n", var, now - then);
+	  CfDebug("Report key \"%s\" needs to be purged (%lu seconds old)\n", var, now - then);
 	}
 
     }
@@ -510,7 +510,7 @@ void CFDB_PurgeScanStrTime(mongo_connection *conn, bson_iterator *itp, char *rep
 		  snprintf(purgeKey,sizeof(purgeKey),"%s.%s",reportKey,bson_iterator_key(&it1));
 		  PrependItem(purgeKeysPtr,purgeKey,NULL);
 		  
-		  Debug("Report key \"%s\" needs to be purged (date is %s)\n", purgeKey, thenStr);
+		  CfDebug("Report key \"%s\" needs to be purged (date is %s)\n", purgeKey, thenStr);
 		}
 	    }
 	}

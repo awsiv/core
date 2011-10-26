@@ -98,7 +98,7 @@ int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, char *a
  DWORD startTime = SERVICE_DEMAND_START;
  int startTimeRes = 0;
 
- Debug("NovaWin_CheckServiceStatus(%s, %d, %d, %d)\n", srvName, policy, onlyCheckDeps, isDependency);
+ CfDebug("NovaWin_CheckServiceStatus(%s, %d, %d, %d)\n", srvName, policy, onlyCheckDeps, isDependency);
  
  managerHandle = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
  
@@ -259,7 +259,7 @@ int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int 
     return false;
     }
 
- Debug("Service has currently state %lu, we want it to run (state %d)\n", srvStatus.dwCurrentState, SERVICE_RUNNING);
+ CfDebug("Service has currently state %lu, we want it to run (state %d)\n", srvStatus.dwCurrentState, SERVICE_RUNNING);
 
  switch(srvStatus.dwCurrentState)
     {
@@ -281,7 +281,7 @@ int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int 
            }
         else
            {
-           Debug("Service started running after waiting from pending continue or start state (state=%lu)\n", srvStatus.dwCurrentState);
+           CfDebug("Service started running after waiting from pending continue or start state (state=%lu)\n", srvStatus.dwCurrentState);
            if(setCfPs)
               {
               cfPS(cf_inform,CF_NOP,"",pp,a,"-> Service is already running");
@@ -396,7 +396,7 @@ int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int o
     return false;
     }
 
- Debug("Service has currently state %lu, we want it to stop (state %d)\n", srvStatus.dwCurrentState, SERVICE_STOPPED);
+ CfDebug("Service has currently state %lu, we want it to stop (state %d)\n", srvStatus.dwCurrentState, SERVICE_STOPPED);
 
  switch(srvStatus.dwCurrentState)
     {
@@ -409,7 +409,7 @@ int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int o
            }
         else
            {
-           Debug("Service went to stop state while waiting in pending stop\n");
+           CfDebug("Service went to stop state while waiting in pending stop\n");
 
            // fallthrough
            }
@@ -452,7 +452,7 @@ int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int o
            }
         else
            {
-           Debug("Service started running after waiting from pending continue or start state (state=%lu), trying to stop\n", srvStatus.dwCurrentState);
+           CfDebug("Service started running after waiting from pending continue or start state (state=%lu), trying to stop\n", srvStatus.dwCurrentState);
            }
         break;
 
@@ -622,7 +622,7 @@ int NovaWin_ServiceDepsRunning(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int
 
  for(depName = srvConfig->lpDependencies; depName != NULL && *depName != '\0'; depName += (strlen(depName) + 1))
     {
-    Debug("Checking if dependecy \"%s\" is running or paused\n", depName);
+    CfDebug("Checking if dependecy \"%s\" is running or paused\n", depName);
         
     depHandle = OpenService(managerHandle, depName, SERVICE_ALL_ACCESS);
     
@@ -748,7 +748,7 @@ int NovaWin_StopDependentServices(SC_HANDLE managerHandle, SC_HANDLE srvHandle, 
 
  if (EnumDependentServices(srvHandle, SERVICE_ACTIVE, deps, 0, &bytesNeeded, &depCount)) 
     {
-    Debug("No other running services depend on this service\n");
+    CfDebug("No other running services depend on this service\n");
     return true;
     } 
  else 
@@ -779,13 +779,13 @@ int NovaWin_StopDependentServices(SC_HANDLE managerHandle, SC_HANDLE srvHandle, 
        return false;
        }
 
-    Debug("Stopping %lu dependant services...\n", depCount);
+    CfDebug("Stopping %lu dependant services...\n", depCount);
 
     for(i = 0; i < depCount; i++) 
        {
        ess = *(deps + i);
 
-       Debug("Trying to stop dependant service \"%s\"\n", ess.lpServiceName);
+       CfDebug("Trying to stop dependant service \"%s\"\n", ess.lpServiceName);
        
        depSrvHandle = OpenService(managerHandle, ess.lpServiceName, SERVICE_STOP | SERVICE_QUERY_STATUS);
 
@@ -855,7 +855,7 @@ int NovaWin_SetServiceStartTime(SC_HANDLE srvHandle, DWORD setState, int onlyFro
           }
        else
           {
-          Debug("Successfully changed startup time of service from %lu to %lu\n", srvConfig->dwStartType, setState);
+          CfDebug("Successfully changed startup time of service from %lu to %lu\n", srvConfig->dwStartType, setState);
           
           if(changeRes)
              {
@@ -865,7 +865,7 @@ int NovaWin_SetServiceStartTime(SC_HANDLE srvHandle, DWORD setState, int onlyFro
        }
     else
        {
-       Debug("No change in service startup time (onlyFrom=%d, fromState=%lu, currState=%lu)\n", onlyFrom, fromState, srvConfig->dwStartType);
+       CfDebug("No change in service startup time (onlyFrom=%d, fromState=%lu, currState=%lu)\n", onlyFrom, fromState, srvConfig->dwStartType);
 
        if(changeRes)
           {
@@ -875,7 +875,7 @@ int NovaWin_SetServiceStartTime(SC_HANDLE srvHandle, DWORD setState, int onlyFro
     }
  else
     {
-    Debug("Service startup time is already correct (is %lu)\n", srvConfig->dwStartType);
+    CfDebug("Service startup time is already correct (is %lu)\n", srvConfig->dwStartType);
 
     if(changeRes)
        {
@@ -906,7 +906,7 @@ int NovaWin_SetSrvDepsStartTime(SC_HANDLE managerHandle, SC_HANDLE srvHandle, DW
 
  for(depName = srvConfig->lpDependencies; depName != NULL && *depName != '\0'; depName += (strlen(depName) + 1))
     {
-    Debug("Dependency: \"%s\"\n", depName);
+    CfDebug("Dependency: \"%s\"\n", depName);
     
     depHandle = OpenService(managerHandle, depName, SERVICE_ALL_ACCESS);
     
@@ -924,7 +924,7 @@ int NovaWin_SetSrvDepsStartTime(SC_HANDLE managerHandle, SC_HANDLE srvHandle, DW
        continue;
        }
 
-    Debug("Un-disabling dependencies of service \"%s\", if needed\n", depName);
+    CfDebug("Un-disabling dependencies of service \"%s\", if needed\n", depName);
 
     if(!NovaWin_SetSrvDepsStartTime(managerHandle, depHandle, setState, onlyFrom, fromState))
         {

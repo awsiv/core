@@ -25,7 +25,7 @@ void NovaWin_CreateEmptyFile(char *name)
 
   if (unlink(name) == -1)
     {
-      Debug("Pre-existing object %s could not be removed or was not there\n",name);
+      CfDebug("Pre-existing object %s could not be removed or was not there\n",name);
     }
 
   fileHandle = CreateFile(name, GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -334,7 +334,7 @@ int NovaWin_GetOwnerName(char *path, char *owner, int ownerSz)
 void NovaWin_VerifyFileAttributes(char *file,struct stat *dstat,struct Attributes attr,struct Promise *pp)
 
 {
-Debug("NovaWin_VerifyFileAttributes()\n");
+CfDebug("NovaWin_VerifyFileAttributes()\n");
 
 if(!BOOTSTRAP && !Nova_CheckLicenseWin("NovaWin_VerifyFileAttributes"))
    {
@@ -373,7 +373,7 @@ if (attr.touch)
       }
    }
 
-Debug("NovaWin_VerifyFileAttributes(Done)\n"); 
+CfDebug("NovaWin_VerifyFileAttributes(Done)\n"); 
 }
 
 /*****************************************************************************/

@@ -950,7 +950,7 @@ for (cp = ControlBodyConstraints(cf_hub); cp != NULL; cp=cp->next)
    if (strcmp(cp->lval,CFH_CONTROLBODY[cfh_schedule].lval) == 0)
       {
       struct Rlist *rp;
-      Debug("schedule ...\n");
+      CfDebug("schedule ...\n");
       DeleteItemList(SCHEDULE);
       SCHEDULE = NULL;
       
@@ -966,7 +966,7 @@ for (cp = ControlBodyConstraints(cf_hub); cp != NULL; cp=cp->next)
    if (strcmp(cp->lval,CFH_CONTROLBODY[cfh_federation].lval) == 0)
       {
       struct Rlist *rp;
-      Debug("federation ...\n");
+      CfDebug("federation ...\n");
       DeleteItemList(FEDERATION);
       FEDERATION = NULL;
       
@@ -982,7 +982,7 @@ for (cp = ControlBodyConstraints(cf_hub); cp != NULL; cp=cp->next)
    if (strcmp(cp->lval,CFH_CONTROLBODY[cfh_exclude_hosts].lval) == 0)
       {
       struct Rlist *rp;
-      Debug("exclude_hosts ...\n");
+      CfDebug("exclude_hosts ...\n");
       DeleteItemList(EXCLUDE_HOSTS);
       EXCLUDE_HOSTS = NULL;
       
@@ -1071,7 +1071,7 @@ ThreadUnlock(cft_system);
 
 for (ip = SCHEDULE; ip != NULL; ip = ip->next)
    {
-   Debug("Checking schedule %s...\n",ip->name);
+   CfDebug("Checking schedule %s...\n",ip->name);
 
    if (IsDefinedClass(ip->name))
       {
@@ -1208,7 +1208,7 @@ for (ip = *listp; ip != NULL; ip = ip->next)
    {
    if(IsMatchItemIn(hosts_exclude, ip->classes))
       {
-      Debug("Excluding host %s(%s) from hub report query\n", ip->classes, ip->name);
+      CfDebug("Excluding host %s(%s) from hub report query\n", ip->classes, ip->name);
       }
    else
       {

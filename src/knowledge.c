@@ -85,7 +85,7 @@ for (slot = 0; slot < CF_HASHTABLESIZE; slot++)
       bson_append_string(&bbuf,cfk_topiccontext,tp->topic_context);
       bson_append_int(&bbuf,cfk_topicid,tp->id);
 
-      Debug("Add Topic(topic_name,topic_context,pid) values ('%s','%s','%d')\n",tp->topic_name,tp->topic_context,tp->id);
+      CfDebug("Add Topic(topic_name,topic_context,pid) values ('%s','%s','%d')\n",tp->topic_name,tp->topic_context,tp->id);
 
       // Associations
 
@@ -102,8 +102,8 @@ for (slot = 0; slot < CF_HASHTABLESIZE; slot++)
 
             DeClassifyTopic(itp->name,to_topic,to_context);
 
-            Debug(" - Association: '%s::%s' (%d) %s '%s:%s' (%d)\n",tp->topic_context,tp->topic_name,tp->id,ta->fwd_name,to_context,to_topic,to_id);
-            Debug(" - Hence  by implication : '%s::%s' (%d) %s '%s::%s' (%d)\n",to_context,to_topic,to_id,ta->bwd_name,tp->topic_context,tp->topic_name,tp->id);
+            CfDebug(" - Association: '%s::%s' (%d) %s '%s:%s' (%d)\n",tp->topic_context,tp->topic_name,tp->id,ta->fwd_name,to_context,to_topic,to_id);
+            CfDebug(" - Hence  by implication : '%s::%s' (%d) %s '%s::%s' (%d)\n",to_context,to_topic,to_id,ta->bwd_name,tp->topic_context,tp->topic_name,tp->id);
 
             // Append variable list item to assocs
 
@@ -136,7 +136,7 @@ for (op = occurrences; op != NULL; op=op->next)
 
    for (rp = op->represents; rp != NULL; rp=rp->next)
       {
-      Debug("Add occurrence (context,locator,locator_type,subtype) values ('%s','%s','%d','%s')\n",op->occurrence_context,op->locator,op->rep_type,rp->item);
+      CfDebug("Add occurrence (context,locator,locator_type,subtype) values ('%s','%s','%d','%s')\n",op->occurrence_context,op->locator,op->rep_type,rp->item);
 
       bson_buffer_init(&bbuf);
       bson_append_new_oid(&bbuf, "_id" );
@@ -157,7 +157,7 @@ mongo_remove(&dbconn,MONGO_KM_INFERENCES,bson_empty(&b));
 
 for (ip = inferences; ip != NULL; ip=ip->next)
    {
-   Debug("Add inferences (precedent,qualifier,inference) values ('%s','%s','%s')\n",ip->precedent,ip->qualifier,ip->inference);
+   CfDebug("Add inferences (precedent,qualifier,inference) values ('%s','%s','%s')\n",ip->precedent,ip->qualifier,ip->inference);
 
    bson_buffer_init(&bbuf);
    bson_append_new_oid(&bbuf, "_id" );

@@ -216,7 +216,7 @@ void NovaWin_CloseLog(void)
        }
     else
        {
-       Debug("Windows log successfully closed.\n");
+       CfDebug("Windows log successfully closed.\n");
        }
       
     logHandle = NULL;

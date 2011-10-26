@@ -135,8 +135,8 @@ void Nova_Meter(bson *query,char *db,char *buffer,int bufsize)
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
     hm = (struct HubMeter *)rp->item;
-    Debug("Meter result: (%c) %lf,%lf,%lf\n",hm->type,hm->kept,hm->repaired,hm->notkept);
-    Debug("found on (%s=%s=%s)\n",hm->hh->keyhash,hm->hh->hostname,hm->hh->ipaddr);
+    CfDebug("Meter result: (%c) %lf,%lf,%lf\n",hm->type,hm->kept,hm->repaired,hm->notkept);
+    CfDebug("found on (%s=%s=%s)\n",hm->hh->keyhash,hm->hh->hostname,hm->hh->ipaddr);
 
     kept = hm->kept;
     repaired = hm->repaired;

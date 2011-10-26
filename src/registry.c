@@ -687,7 +687,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       
       sscanf(key,"%255[^:]:%255[^:]:%u",dbkey,dbvalue,&dbtype);
       
-      Debug("CACHED: %s\nVAL: %s\n",dbkey,dbvalue);
+      CfDebug("CACHED: %s\nVAL: %s\n",dbkey,dbvalue);
       
       HKEY skey_h;
       
@@ -701,7 +701,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       
       if (ret == ERROR_SUCCESS)
          {
-         Debug("READ value %s\n",reg_data);
+         CfDebug("READ value %s\n",reg_data);
          }
       else
          {

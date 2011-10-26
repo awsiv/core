@@ -39,7 +39,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    {
    eventname[0] = '\0';
    sscanf(ip->name,"%ld,%lf,%lf,%lf,%255[^\n]\n",&t,&measure,&average,&dev,eventname);
-   Debug("Performance of \"%s\" is %.4lf (av %.4lf +/- %.4lf) measured at %s\n",eventname,measure,average,dev,cf_ctime(&t));
+   CfDebug("Performance of \"%s\" is %.4lf (av %.4lf +/- %.4lf) measured at %s\n",eventname,measure,average,dev,cf_ctime(&t));
    }
 }
 
@@ -65,7 +65,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    {
    // Extract records
    sscanf(ip->name,"%[^,],%ld,%lf,%lf\n",name,&t,&q,&dev);
-   Debug("Class: \"%s\" seen with probability %.4lf +- %.4lf last seen at %s\n",name,q,dev,cf_ctime(&t));
+   CfDebug("Class: \"%s\" seen with probability %.4lf +- %.4lf last seen at %s\n",name,q,dev,cf_ctime(&t));
    }
 }
 
@@ -86,7 +86,7 @@ if (dbconn)
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   Debug("Set-uid program: %s",ip->name);
+   CfDebug("Set-uid program: %s",ip->name);
    }
 }
 
@@ -113,7 +113,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    // Extract records
    sscanf(ip->name,"%ld,%255[^\n]",&date,name);
    then = (time_t)date;
-   Debug("File-change event: in \"%s\" at %ld\n",name,then);
+   CfDebug("File-change event: in \"%s\" at %ld\n",name,then);
    }
 }
 
@@ -149,7 +149,7 @@ for (ip = data; ip != NULL; ip=ip->next)
          }
       }
    
-   Debug("Change-diff: in file %s at %ld \nbegin\n%s\nend\n",name,t,change);
+   CfDebug("Change-diff: in file %s at %ld \nbegin\n%s\nend\n",name,t,change);
    }
 }
 
@@ -187,7 +187,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    
    q = e = dev = 0;
    sscanf(ip->name,"%d %lf %lf %lf\n",&observable,&q,&e,&dev);
-   Debug("Week-obs %d in slot %d: %.2lf,%.2lf,%.2lf\n",observable,slot,q,e,dev);
+   CfDebug("Week-obs %d in slot %d: %.2lf,%.2lf,%.2lf\n",observable,slot,q,e,dev);
    }
 
 }
@@ -223,7 +223,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    // Extract records
    q = e = dev = 0;
    sscanf(ip->name,"%d %lf %lf %lf",&observable,&q,&e,&dev);
-   Debug("Mag-obs %d: %.2lf,%.2lf,%.2lf measured for slot %d\n",observable,q,e,dev,slot);
+   CfDebug("Mag-obs %d: %.2lf,%.2lf,%.2lf measured for slot %d\n",observable,q,e,dev,slot);
    }
 }
 
@@ -258,7 +258,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    // Extract records
    q = e = dev = 0;
    sscanf(ip->name,"%d %lf %lf %lf\n",&observable,&q,&e,&dev);
-   Debug("Year-obs %d: %.2lf,%.2lf,%.2lf measured at slot %d\n",observable,q,e,dev,slot);
+   CfDebug("Year-obs %d: %.2lf,%.2lf,%.2lf measured at slot %d\n",observable,q,e,dev,slot);
    }
 }
 
@@ -283,7 +283,7 @@ if (dbconn)
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   Debug("OLDHist-obs %s\n",ip->name);
+   CfDebug("OLDHist-obs %s\n",ip->name);
    }
 }
 
@@ -307,7 +307,7 @@ if (dbconn)
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   Debug("Hist-obs %s\n",ip->name);
+   CfDebug("Hist-obs %s\n",ip->name);
    }
 }
 
@@ -331,7 +331,7 @@ if (dbconn)
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   Debug("Mag-obs %s\n",ip->name);
+   CfDebug("Mag-obs %s\n",ip->name);
    }
 }
 
@@ -355,7 +355,7 @@ if (dbconn)
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   Debug("Week-obs %s\n",ip->name);
+   CfDebug("Week-obs %s\n",ip->name);
    }
 
 }
@@ -380,7 +380,7 @@ if (dbconn)
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   Debug("Year-obs %s\n",ip->name);
+   CfDebug("Year-obs %s\n",ip->name);
    }
 }
 
@@ -409,16 +409,16 @@ for (ip = data; ip != NULL; ip=ip->next)
    switch (type)
       {
       case 'c':
-          Debug("Promise \"%s\" was compliant, av %.2lf +/- %.2lf at %s\n",eventname,av,dev,cf_ctime(&then));
+          CfDebug("Promise \"%s\" was compliant, av %.2lf +/- %.2lf at %s\n",eventname,av,dev,cf_ctime(&then));
           break;
       case 'r':
-          Debug("Promise \"%s\" was repaired, av %.2lf +/- %.2lf at %s\n",eventname,av,dev,cf_ctime(&then));
+          CfDebug("Promise \"%s\" was repaired, av %.2lf +/- %.2lf at %s\n",eventname,av,dev,cf_ctime(&then));
           break;
       case 'n':
-          Debug("Promise \"%s\" was non-compliant, av %.2lf +/- %.2lf at %s\n",eventname,av,dev,cf_ctime(&then));
+          CfDebug("Promise \"%s\" was non-compliant, av %.2lf +/- %.2lf at %s\n",eventname,av,dev,cf_ctime(&then));
           break;
       default:
-	Debug("Unknown state '%c' (eventname=%s,%.2lf +/- %.2lf at %s)\n",type,eventname,av,dev,cf_ctime(&then));
+          CfDebug("Unknown state '%c' (eventname=%s,%.2lf +/- %.2lf at %s)\n",type,eventname,av,dev,cf_ctime(&then));
       }
    }
 }
@@ -445,7 +445,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
    // architcure coding, see Nova_ShortArch
    
-   Debug("Installed software: %s version (%s on %c)\n",name,version,arch);
+   CfDebug("Installed software: %s version (%s on %c)\n",name,version,arch);
    }
 }
 
@@ -471,7 +471,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
    // architcure coding, see Nova_ShortArch
    
-   Debug("Patch available: %s version (%s on %c)\n",name,version,arch);
+   CfDebug("Patch available: %s version (%s on %c)\n",name,version,arch);
    }
 }
 
@@ -497,7 +497,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 
    // architcure coding, see Nova_ShortArch
    
-   Debug("Patch applied: %s version (%s on %c)\n",name,version,arch);
+   CfDebug("Patch applied: %s version (%s on %c)\n",name,version,arch);
    }
 }
 
@@ -511,7 +511,7 @@ CfOut(cf_verbose,""," -> Expanded private promise data.............");
 
 for (ip = data; ip != NULL; ip=ip->next)
    {
-   Debug("POLICY: %s",ip->name);
+   CfDebug("POLICY: %s",ip->name);
    }
 }
 
@@ -536,7 +536,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    {
    sscanf(ip->name,"%[^,],%lf,%lf,%lf\n",date,&kept,&repaired,&notkept);
 
-   Debug("Business value: (%.0lf,%.0lf,%.0lf) from %s\n",kept,repaired,notkept,date);
+   CfDebug("Business value: (%.0lf,%.0lf,%.0lf) from %s\n",kept,repaired,notkept,date);
    }
 }
 
@@ -566,14 +566,14 @@ for (ip = data; ip != NULL; ip=ip->next)
       {
       scope[0] = '\0';
       sscanf(ip->name+3,"%254[^\n]",scope);
-      Debug("SCOPE: %s\n",scope);
+      CfDebug("SCOPE: %s\n",scope);
       continue;
       }
 
    sscanf(ip->name,"%4[^,], %255[^,], %2040[^\n]",type,name,value);
    
-   Debug("line is \"%s\"\n", ip->name);
-   Debug("var: (%s) \"%s\"=\"%s\"\n",type,name,value);
+   CfDebug("line is \"%s\"\n", ip->name);
+   CfDebug("var: (%s) \"%s\"=\"%s\"\n",type,name,value);
    }
 
 }
@@ -601,13 +601,13 @@ for (ip = data; ip != NULL; ip=ip->next)
       {
       scope[0] = '\0';
       sscanf(ip->name+2,"%254[^\n]",scope);
-      Debug("SCOPE: %s\n",scope);
+      CfDebug("SCOPE: %s\n",scope);
       continue;
       }
 
    sscanf(ip->name,"%4[^,],%ld,%255[^,],%2040[^\n]",type,&t,name,value);
    
-   Debug("var: (%s) at %s \"%s\"=\"%s\"\n",type,cf_ctime(&t),name,value);
+   CfDebug("var: (%s) at %s \"%s\"=\"%s\"\n",type,cf_ctime(&t),name,value);
    }
 
 }
@@ -652,7 +652,7 @@ for (ip = data; ip != NULL; ip=ip->next)
      }
 
    
-   Debug("Saw: %c%s (alias %s/%s) seen %.2lf hrs ago, av %.2lf +/- %.2lf at %s",inout,hash,asserted,dns,ago,average,dev,cf_ctime(&fthen));
+   CfDebug("Saw: %c%s (alias %s/%s) seen %.2lf hrs ago, av %.2lf +/- %.2lf at %s",inout,hash,asserted,dns,ago,average,dev,cf_ctime(&fthen));
    }
 
 }
@@ -681,7 +681,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    sscanf(ip->name,"%ld,%127[^,],%d,%d,%d\n",&date,version,&kept,&repaired,&notrepaired);
    then = (time_t)date;
    
-   Debug("Tcompliance: (%d,%d,%d) for version %s at %ld\n",kept,repaired,notrepaired,version,then);
+   CfDebug("Tcompliance: (%d,%d,%d) for version %s at %ld\n",kept,repaired,notrepaired,version,then);
    }
 
 }
@@ -709,7 +709,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    sscanf(ip->name,"%ld,%127[^\n]",&then,handle);
    tthen = (time_t)then;
 
-   Debug("Repair: of promise \"%s\" at %lu\n",handle,tthen);
+   CfDebug("Repair: of promise \"%s\" at %lu\n",handle,tthen);
    }
 }
 
@@ -735,7 +735,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    {
    sscanf(ip->name,"%ld,%127[^\n]",&then,handle);
    tthen = (time_t)then;
-   Debug("Failure: of promise \"%s\" at %lu\n",handle,tthen);
+   CfDebug("Failure: of promise \"%s\" at %lu\n",handle,tthen);
    }
 
 }
@@ -764,25 +764,25 @@ for (ip = data; ip != NULL; ip=ip->next)
    switch (type)
       {
       case 'W':
-          Debug("Meter week compliance: %lf, %lf\n",kept,repaired);
+          CfDebug("Meter week compliance: %lf, %lf\n",kept,repaired);
           break;
       case 'D':
-          Debug("Meter daily compliance: %lf, %lf\n",kept,repaired);
+          CfDebug("Meter daily compliance: %lf, %lf\n",kept,repaired);
           break;
       case 'H':
-          Debug("Meter hourly compliance: %lf, %lf\n",kept,repaired);
+          CfDebug("Meter hourly compliance: %lf, %lf\n",kept,repaired);
           break;
       case 'P':
-          Debug("Meter performance: %lf, %lf\n",kept,repaired);
+          CfDebug("Meter performance: %lf, %lf\n",kept,repaired);
           break;
       case 'S':
-          Debug("Meter licenses: %lf, %lf\n",kept,repaired);
+          CfDebug("Meter licenses: %lf, %lf\n",kept,repaired);
           break;
       case 'C':
-          Debug("Meter comms: %lf, %lf\n",kept,repaired);
+          CfDebug("Meter comms: %lf, %lf\n",kept,repaired);
           break;          
       case 'A':
-          Debug("Meter anomalies: %lf, %lf\n",kept,repaired);
+          CfDebug("Meter anomalies: %lf, %lf\n",kept,repaired);
           break;
       }
    }
@@ -814,7 +814,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    switch (type)
       {
       case 'S':
-          Debug("Software installed date: %ld",t);
+          CfDebug("Software installed date: %ld",t);
           break;
       }
    }
@@ -849,7 +849,7 @@ for (ip = data; ip != NULL; ip=ip->next)
           &dev);
 
    then = (time_t)fthen;
-   Debug("Bundle: %s done %.2lf hrs ago, av %.2lf +/- %.2lf at %s",bundle,ago,average,dev,cf_ctime(&fthen));
+   CfDebug("Bundle: %s done %.2lf hrs ago, av %.2lf +/- %.2lf at %s",bundle,ago,average,dev,cf_ctime(&fthen));
    }
 }
 

@@ -1114,7 +1114,7 @@ struct HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes)
  bool emptyQuery = true;
  int i;
 
- Debug("CFDB_QueryClassSum()\n");
+ CfDebug("CFDB_QueryClassSum()\n");
 
   // query
  bson_buffer_init(&bb);
@@ -1175,7 +1175,7 @@ struct HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes)
     if(!EMPTY(keyhash))
         {
         PrependRlistAlien(&hostList,NewHubHost(NULL,keyhash,addresses,hostnames));
-        Debug("matched host %s,%s\n", keyhash, addresses);
+        CfDebug("matched host %s,%s\n", keyhash, addresses);
         }
     }
 
@@ -1215,7 +1215,7 @@ struct HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes)
 
      classFrequency = (int)mongo_count(conn, MONGO_BASE, "hosts", &query);
 
-     Debug("class (%s,%d)\n", ip->name, classFrequency);
+     CfDebug("class (%s,%d)\n", ip->name, classFrequency);
 
      PrependRlistAlien(&recordList,NewHubClassSum(CF_THIS_HH, ip->name, classFrequency));
 
@@ -4659,7 +4659,7 @@ else if(!fileLineSearch)  // if not found in unexpanded promise DB, try expanded
       }
    else  // not found in expanded promise DB either
       {
-      Debug("Promise handle \"%s\" not found in expanded promise DB", handle);
+      CfDebug("Promise handle \"%s\" not found in expanded promise DB", handle);
       return NULL;
       }
    

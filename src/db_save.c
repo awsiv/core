@@ -390,7 +390,7 @@ void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_
           haveAllMeta = true;
           }
 
-       Debug("Found new monitoring probe \"%s\" \"%s\" \"%s\" %d %lf %lf\n", monId, monDesc, monUnits, monGlobal, monExpMin, monExpMax);
+       CfDebug("Found new monitoring probe \"%s\" \"%s\" \"%s\" %d %lf %lf\n", monId, monDesc, monUnits, monGlobal, monExpMin, monExpMax);
        ip = ip->next;
        continue;
        }
@@ -955,7 +955,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    addedKey = ReturnItemIn(keys,varName);
    if(addedKey)
      {
-     Debug("!! Duplicate key \"%s\" in SaveTotalCompliance - ignoring second time=%s - stored=%s", varName, cf_ctime(&then), addedKey->classes);
+     CfDebug("!! Duplicate key \"%s\" in SaveTotalCompliance - ignoring second time=%s - stored=%s", varName, cf_ctime(&then), addedKey->classes);
      continue; // avoids DB update failure
      }
    else
@@ -1320,7 +1320,7 @@ for (ip = data; ip != NULL; ip=ip->next)
    addedKey = ReturnItemIn(keys,handle);
    if(addedKey)
      {
-     Debug("!! Duplicate key \"%s\" in SavePromiseCompliance - ignoring second time=%s - stored=%s", varName, cf_ctime(&then), addedKey->classes);
+     CfDebug("!! Duplicate key \"%s\" in SavePromiseCompliance - ignoring second time=%s - stored=%s", varName, cf_ctime(&then), addedKey->classes);
      continue; // avoids DB update failure
      }
    else

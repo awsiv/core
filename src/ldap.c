@@ -277,7 +277,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
              {
              /* Get and print all values for each attribute. */
 
-             Debug(" ->   LDAP query found attribute %s",a);
+             CfDebug(" ->   LDAP query found attribute %s",a);
 
              if ((vals = ldap_get_values_len(ld,msg,a)) != NULL)
                 {
@@ -1221,7 +1221,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
              {
              /* Get and print all values for each attribute. */
 
-             Debug(" ->   LDAP query found attribute %s\n",a);
+             CfDebug(" ->   LDAP query found attribute %s\n",a);
 
              if ((vals = ldap_get_values_len(ld,msg,a)) != NULL)
                 {

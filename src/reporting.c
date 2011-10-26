@@ -2141,7 +2141,7 @@ while(NextDB(dbp,dbcp,&keyDb,&keyDbSize,&val,&valSize))
       
       if (varDb->e.t < now - varExpireAge)
          {
-         Debug("Variable record %s expired\n",keyDb);
+         CfDebug("Variable record %s expired\n",keyDb);
          DeleteDB(dbp,keyDb);
          }
       }
@@ -2320,7 +2320,7 @@ if (LICENSES == 0)
 
  while (CfReadLine(buf, sizeof(buf), fin))
     {
-    Debug("%s\n", buf);
+    CfDebug("%s\n", buf);
     currReport = Nova_StoreIncomingReports(buf,reports,currReport);
     }
 

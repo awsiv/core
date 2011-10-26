@@ -57,26 +57,26 @@ if (firstCall)
 bson_buffer_init(&bbuf);
 bson_append_new_oid(&bbuf, "_id" );
 
-Debug("PROMISE: \n");
-Debug("\nPromise type is %s, ",pp->agentsubtype);
-Debug("class context %s \n",pp->classes);
+CfDebug("PROMISE: \n");
+CfDebug("\nPromise type is %s, ",pp->agentsubtype);
+CfDebug("class context %s \n",pp->classes);
 
 bson_append_string(&bbuf,cfp_promisetype,pp->agentsubtype);
 bson_append_string(&bbuf,cfp_classcontext,pp->classes);
 
-Debug("promiser is %s\n",pp->promiser);
+CfDebug("promiser is %s\n",pp->promiser);
 
 bson_append_string(&bbuf,cfp_promiser_exp,pp->promiser);
 
-Debug("Bundle %s\n",pp->bundle);
-Debug("Bundle of type %s\n",pp->bundletype);
+CfDebug("Bundle %s\n",pp->bundle);
+CfDebug("Bundle of type %s\n",pp->bundletype);
 
 bson_append_string(&bbuf,cfp_bundlename,pp->bundle);
 bson_append_string(&bbuf,cfp_bundletype,pp->bundletype);
 
 if (pp->audit)
    {
-   Debug("In file %s near line %d\n",pp->audit->filename,pp->lineno);
+   CfDebug("In file %s near line %d\n",pp->audit->filename,pp->lineno);
    bson_append_string(&bbuf,cfp_file,pp->audit->filename);
    bson_append_int(&bbuf, cfp_lineno, pp->lineno);
    }
@@ -87,13 +87,13 @@ if (pp->promisee)
    {
    memset(rval_buffer, 0, sizeof(rval_buffer));
    PrintRval(rval_buffer,CF_BUFSIZE,pp->promisee,pp->petype);
-   Debug(" -> %s\n",rval_buffer);
+   CfDebug(" -> %s\n",rval_buffer);
    bson_append_string(&bbuf,cfp_promisee_exp,rval_buffer);
    }
 
 if (pp->ref)
    {
-   Debug("Comment: %s\n",pp->ref);
+   CfDebug("Comment: %s\n",pp->ref);
    bson_append_string(&bbuf,cfp_comment_exp,pp->ref);
    }
  
@@ -114,7 +114,7 @@ for (cp = pp->conlist, j = 0; cp != NULL; cp = cp->next)
 
    memset(rval_buffer, 0, sizeof(rval_buffer));
    PrintRval(rval_buffer,CF_BUFSIZE,cp->rval,cp->type);
-   Debug("  %s => %s\n",cp->lval,rval_buffer);
+   CfDebug("  %s => %s\n",cp->lval,rval_buffer);
    snprintf(con, sizeof(con), "%s => %s", cp->lval, rval_buffer);
    snprintf(jStr, sizeof(jStr), "%d", j);
    bson_append_string(cstr, jStr, con);
@@ -168,15 +168,15 @@ for (bp = bundles; bp != NULL; bp=bp->next)
    {   
    for (st = bp->subtypes; st != NULL; st = st->next)
       {
-      Debug("PROMISE-TYPE: %s\n",st->name);
+      CfDebug("PROMISE-TYPE: %s\n",st->name);
       
       for (pp = st->promiselist, i = 0; pp != NULL; pp = pp->next, i++)
          {	          
          bson_buffer_init(&bbuf);
 	 bson_append_new_oid(&bbuf, "_id" );
          
-         Debug("\nBundle %s of type %s\n\n",bp->name,bp->type);
-         Debug("BUNDLE ARGS:\n");
+         CfDebug("\nBundle %s of type %s\n\n",bp->name,bp->type);
+         CfDebug("BUNDLE ARGS:\n");
          
 	 bson_append_string(&bbuf,cfp_bundlename,bp->name);
 	 bson_append_string(&bbuf,cfp_bundletype,bp->type);         
@@ -185,7 +185,7 @@ for (bp = bundles; bp != NULL; bp=bp->next)
 
          for (rp = bp->args, i = 0; rp != NULL; rp=rp->next, i++)
             {   
-            Debug("   scalar arg %s\n",(char *)rp->item);            
+            CfDebug("   scalar arg %s\n",(char *)rp->item);            
             snprintf(iStr, sizeof(iStr), "%d", i);
             bson_append_string(args, iStr, (char *)rp->item);
             }
@@ -236,7 +236,7 @@ for (bp = bundles; bp != NULL; bp=bp->next)
             
             memset(rval_buffer, 0, sizeof(rval_buffer));
             PrintRval(rval_buffer,CF_BUFSIZE,cp->rval,cp->type);
-            Debug("  %s => %s\n",cp->lval,rval_buffer);
+            CfDebug("  %s => %s\n",cp->lval,rval_buffer);
             
             snprintf(con, sizeof(con), "%s => %s", cp->lval, rval_buffer);	    
             snprintf(jStr, sizeof(jStr), "%d", j);
@@ -281,7 +281,7 @@ void Nova_StoreBody(mongo_connection *dbconn, struct Body *body)
 bson_buffer_init(&bbuf);
 bson_append_new_oid(&bbuf, "_id" );
 
-Debug("body %s type %s\n",body->name,body->type);
+CfDebug("body %s type %s\n",body->name,body->type);
 
 bson_append_string(&bbuf, cfb_bodyname, body->name);
 bson_append_string(&bbuf, cfb_bodytype, body->type);
@@ -290,7 +290,7 @@ args = bson_append_start_array(&bbuf, cfb_bodyargs);
 
 for (rp = body->args, i = 0; rp != NULL; rp=rp->next,i++)
    {   
-   Debug("%s\n",(char *)rp->item);
+   CfDebug("%s\n",(char *)rp->item);
    snprintf(iStr, sizeof(iStr), "%d", i);
    bson_append_string(args, iStr, (char *)rp->item);
    }
@@ -317,7 +317,7 @@ for (cp = body->conlist; cp != NULL; cp=cp->next)
       {
       // replace illegal key char '.' with  '&'
       ReplaceChar(cp->classes,classContext,sizeof(classContext),'.','&');
-      Debug(" if class context %s\n",cp->classes);
+      CfDebug(" if class context %s\n",cp->classes);
       }
    else
       {
@@ -326,7 +326,7 @@ for (cp = body->conlist; cp != NULL; cp=cp->next)
    
    memset(rval_buffer,0,sizeof(rval_buffer));
    PrintRval(rval_buffer,sizeof(rval_buffer),cp->rval,cp->type);
-   Debug("  %s => %s\n",cp->lval,rval_buffer);
+   CfDebug("  %s => %s\n",cp->lval,rval_buffer);
    
    snprintf(varName,sizeof(varName),"%s.%s.%s",cfb_classcontext,classContext,cp->lval);
    bson_append_string(&bbuf,varName,rval_buffer);   
