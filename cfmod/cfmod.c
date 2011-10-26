@@ -446,10 +446,10 @@ typedef enum cdp_report
 struct Rlist *SplitStringAsRList(char *string,char sep);
 
 
-#include "../nova/src/cf.nova.web_api.h"
+#include "cf.nova.web_api.h"
 
 #ifdef HAVE_CONSTELLATION
-# include "../constellation/src/cf.constellation.web_api.h"
+# include "cf.constellation.web_api.h"
 #endif
 
 static time_t DeltaHrsConvert(long hrsAgo);
