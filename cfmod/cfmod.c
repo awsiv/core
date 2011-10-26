@@ -22,6 +22,8 @@
 #include "conf.h"
 #endif
 
+#include "rlist.h"
+
 #include "php.h"
 #include "php_ini.h"
 #include "ext/standard/info.h"
@@ -404,15 +406,6 @@ return;
 
 /******************************************************************************/
 
-
-struct Rlist
-   {
-   void *item;
-   char type;
-   struct Rlist *state_ptr; /* Points to "current" state/element of sub-list */
-   struct Rlist *next;
-   };
-
 enum promiselog_rep
    {
    plog_repaired,
@@ -442,9 +435,6 @@ typedef enum cdp_report
    cdp_unknown
    }
   cdp_t;
-
-struct Rlist *SplitStringAsRList(char *string,char sep);
-
 
 #include "cf.nova.web_api.h"
 
