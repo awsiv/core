@@ -27,6 +27,7 @@ libcfnova_la_SOURCES =						\
 	acl.c							\
 	acl_linux.c						\
 	acl_nt.c                                                \
+	bson_lib.c						\
 	database.c						\
 	db_save.c                                               \
         db_query.c                                              \
@@ -107,7 +108,7 @@ libcfhub_la_SOURCES =	                                        \
 #
 
 noinst_HEADERS =							\
-        win_disphelper.h cf.nova.h cf.nova.web_api.h cf.nova.cmd_api.h
+        win_disphelper.h cf.nova.h cf.nova.web_api.h cf.nova.cmd_api.h bson_lib.h
 
 #
 # Some basic clean ups
