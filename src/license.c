@@ -31,15 +31,13 @@ return false;
 
 int Nova_EnterpriseExpiry(void)
 
-/* This function is a convenience to commerical clients during testing */
-    
 { struct stat sb;
   char name[CF_MAXVARSIZE],hash[CF_MAXVARSIZE],serverkey[CF_MAXVARSIZE],policy_server[CF_MAXVARSIZE], installed_time[CF_MAXVARSIZE];
   char company[CF_BUFSIZE],snumber[CF_SMALLBUF];
   int m_now,m_expire,d_now,d_expire,number = 1,am_policy_server = false;
   char f_day[16],f_month[16],f_year[16];
   char u_day[16],u_month[16],u_year[16];
-  char edition = 'x';
+  char edition = 'N';
   unsigned char digest[EVP_MAX_MD_SIZE+1] = {0};
   char serverdig[CF_MAXVARSIZE] = "";
   FILE *fp;
@@ -95,6 +93,11 @@ if ((fp = fopen(name,"r")) != NULL)
    fscanf(fp,"%15s %x %15s %15s %100s %[^\n]",f_day,&number,f_month,f_year,hash,company);
    fscanf(fp,"\n%c",&edition);
    fclose(fp);
+
+   if(edition != 'C')
+      {
+      edition = 'N';
+      }
 
    // This is the simple password hash to obfuscate license fixing
    // Nothing top security here - this is a helper file to track licenses
@@ -204,10 +207,15 @@ NewScalar("sys","licenses_installtime",installed_time,cf_str);
 #ifdef HAVE_LIBMONGOC
 if (am_policy_server && THIS_AGENT_TYPE == cf_agent && CFDB_QueryIsMaster())
    {
+   char editionStr[8];
+
+   snprintf(editionStr, sizeof(editionStr), "%c", edition);
+   
    CFDB_PutValue("license_owner",company);
    CFDB_PutValue("licenses_granted",snumber);
    CFDB_PutValue("license_expires",EXPIRY);
-   CFDB_PutValue("license_installtime",installed_time);   
+   CFDB_PutValue("license_installtime",installed_time);
+   CFDB_PutValue("license_edition", editionStr);
    }
 #endif
 
@@ -529,8 +537,6 @@ now = time(NULL);
 snprintf(buffer,sizeof(buffer),"{");
 snprintf(work,sizeof(work),"\"Last measured on\":\"%s\", \"Samples\":%d,",cf_strtimestamp_local(now,timebuffer),i);
 Join(buffer,work,sizeof(buffer));
-//snprintf(work,sizeof(work),"<table class=\"border\">\n");
-//Join(buffer,work,sizeof(buffer));
 
 if (sum_t > 0)
    {
@@ -551,11 +557,13 @@ else
    Join(buffer,work,sizeof(buffer));
    snprintf(work,sizeof(work),"\"Maximum observed level\":%d,",max);
    Join(buffer,work,sizeof(buffer));
-   snprintf(work,sizeof(work),"\"Mean usage\":\"unknown\"");
+   snprintf(work,sizeof(work),"\"Mean usage\":\"unknown\",");
    Join(buffer,work,sizeof(buffer));
    snprintf(work,sizeof(work),"\"Actual licenses used today\": %d",count);
    Join(buffer,work,sizeof(buffer));
    }
+
+
 
 snprintf(work,sizeof(work),"}");
 Join(buffer,work,sizeof(buffer));

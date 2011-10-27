@@ -108,6 +108,7 @@ typedef enum cfapi_errid
     ERRID_SUBSCRIPTION_NONEXISTING,
     ERRID_SUBSCRIPTION_EXISTS,
     ERRID_SUBSCRIPTION_MULTIPLE,
+    ERRID_CONSTELLATION_LICENSE,
     ERRID_MAX
 }cfapi_errid_t;
 
@@ -119,6 +120,7 @@ static char *ERRID_DESCRIPTION[ERRID_MAX+2] =
     "The given subscription handle does not exist",
     "The given subscription handle already exists",
     "There are multiple subscriptions matching the request",
+    "This functionality requires a Constellation license",
     "Unknown error - description out of bounds",
     NULL
 };
