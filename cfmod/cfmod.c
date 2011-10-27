@@ -4655,6 +4655,12 @@ PHP_FUNCTION(cfcon_compliance_summary_graph)
     {
     RETURN_NULL();
     }
+
+  if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+    {
+    RETURN_STRING(buffer,1);
+    }
+
   
 // "any" is keyword for all policies
 
@@ -4709,6 +4715,12 @@ PHP_FUNCTION(cfcon_count_hubs)
     {
     RETURN_NULL();
     }
+
+  if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+    {
+    RETURN_STRING(buffer,1);
+    }
+
   
  fclassification = (cl_len == 0) ? NULL : classification;
 
@@ -4730,6 +4742,12 @@ PHP_FUNCTION(cfcon_show_hubs)
     {
     RETURN_NULL();
     }
+
+  if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+    {
+    RETURN_STRING(buffer,1);
+    }
+
   
  fclassification = (cl_len == 0) ? NULL : classification;
 
@@ -4793,6 +4811,11 @@ static char *cfcon_aggr_promiselog(int argc, enum promiselog_rep log_type)
  if (zend_parse_parameters(argc, "ss",&hubKeyHash,&hkh_len,&promiseHandle,&ph_len) == FAILURE)
     {
     return NULL;
+    }
+
+  if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+    {
+    return buffer;
     }
 
  fhubKeyHash = (hkh_len == 0) ? NULL : hubKeyHash; 
@@ -4978,6 +5001,12 @@ PHP_FUNCTION(cfcon_promise_popularity)
     php_printf("Error: Promise handle is undefined in cfcon_promise_popularity()\n");
     RETURN_NULL();
     }
+
+  if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+    {
+    RETURN_STRING(buffer,1);
+    }
+
  
  buffer[0]='\0';
  Con2PHP_promise_popularity(promiseHandle,buffer,sizeof(buffer));
@@ -5001,6 +5030,12 @@ PHP_FUNCTION(cfcon_rank_promise_popularity)
     RETURN_NULL();
     }
 
+  if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+    {
+    RETURN_STRING(buffer,1);
+    }
+
+
  buffer[0]='\0';
  Con2PHP_rank_promise_popularity(sortAscending,buffer,sizeof(buffer));
 
@@ -5021,6 +5056,12 @@ PHP_FUNCTION(cfcon_aggr_filechange)
     {
     RETURN_NULL();
     }
+
+  if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+    {
+    RETURN_STRING(buffer,1);
+    }
+
   
  fHubHostKey = (hkLen == 0) ? NULL : hubHostKey;
  fFilePath = (fpLen == 0) ? NULL : filePath;
@@ -5045,6 +5086,12 @@ PHP_FUNCTION(cfcon_aggr_software)
     {
     RETURN_NULL();
     }
+
+  if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+    {
+    RETURN_STRING(buffer,1);
+    }
+
   
  fHubHostKey = (hkLen == 0) ? NULL : hubHostKey;
  fPackageName = (pnLen == 0) ? NULL : pkgname;
@@ -5069,6 +5116,12 @@ PHP_FUNCTION(cfcon_aggr_classes)
     {
     RETURN_NULL();
     }
+
+  if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+    {
+    RETURN_STRING(buffer,1);
+    }
+
   
  fHubHostKey = (hkLen == 0) ? NULL : hubHostKey;
  fClassName = (cnLen == 0) ? NULL : classname;
@@ -5099,6 +5152,12 @@ PHP_FUNCTION(cfcon_list_subscriptions)
     RETURN_NULL();
     }
 
+  if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+    {
+    RETURN_STRING(buffer,1);
+    }
+
+
  char *fUser = (usLen == 0) ? NULL : user;
  char *fSubHandleRx = (shLen == 0) ? NULL : subHandleRx;
 
@@ -5123,6 +5182,12 @@ PHP_FUNCTION(cfcon_local_show_subscription_virtualbundle)
     {
     RETURN_NULL();
     }
+
+  if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+    {
+    RETURN_STRING(buffer,1);
+    }
+
 
  char *fUser = (usLen == 0) ? NULL : user;
  char *fSubHandleRx = (shLen == 0) ? NULL : subHandleRx;
@@ -5173,6 +5238,12 @@ PHP_FUNCTION(cfcon_subscribe_software)
     RETURN_NULL();
     }
 
+   if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+    {
+    RETURN_STRING(buffer,1);
+    }
+
+
   if(hcLen == 0)
      {
      hubClassRegex = "any";
@@ -5211,6 +5282,11 @@ PHP_FUNCTION(cfcon_report_software)
     RETURN_NULL();
     }
 
+  if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+    {
+    RETURN_STRING(buffer,1);
+    }
+
 
  if(hcLen == 0)
     {
@@ -5238,6 +5314,12 @@ PHP_FUNCTION(cfcon_local_report_virtualbundle)
     {
     RETURN_NULL();
     }
+
+ if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+    {
+    RETURN_STRING(buffer,1);
+    }
+
 
  char *fUser = (usLen == 0) ? NULL : user;
  char *fSubHandleRx = (shLen == 0) ? NULL : subHandleRx;
@@ -5289,6 +5371,11 @@ PHP_FUNCTION(cfcon_local_subscribe_virtualbundle)
     RETURN_NULL();
     }
 
+  if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+   {
+   RETURN_STRING(buffer,1);
+   }
+
   char **promises = String2StringArray(promiseListStr, ',');
 
   char *fHostClassRx = (ocLen == 0) ? NULL : hostClassRegex;
@@ -5319,6 +5406,12 @@ PHP_FUNCTION(cfcon_local_delete_subscription_virtualbundle)
     php_printf("cfcon_local_delete_subscription_virtualbundle: Parameter error: subscription handle must be specified\n");
     RETURN_NULL();
     }
+ 
+ if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+    {
+    RETURN_STRING(buffer,1);
+    }
+
  
  char *fUser = (usLen == 0) ? NULL : user;
 
@@ -5405,6 +5498,12 @@ PHP_FUNCTION(cfcon_hub_meter)
     php_printf("Error in cfcon_hub_meter function args");
     RETURN_NULL();
     }
+ 
+ if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+    {
+    RETURN_STRING(buffer,1);
+    }
+
 
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
 
@@ -5444,6 +5543,12 @@ if(*colour!='R' && *colour!='G' && *colour!='B' && *colour!='Y' && *colour!='A')
    RETURN_STRING("{\"error\":{\"errid\":\"-1\",\"msg\":\"Unrecognized parameters supplied\"}}",1);
    }
 
+ if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+    {
+    RETURN_STRING(buffer,1);
+    }
+
+
 buffer[0]='\0';
 colour[1]='\0';
 Con2PHP_count_hubs_colour(colour,buffer,bufsize);
@@ -5477,6 +5582,12 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hostkey,&hk_len) == FA
    php_printf("Error in cfcon_get_hub_colour needs a host key");
    RETURN_NULL();
    }
+
+ if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+    {
+    RETURN_STRING(buffer,1);
+    }
+
 
 buffer[0] = '\0';
 Con2PHP_get_hub_colour(hostkey,buffer,bufsize);
@@ -5518,6 +5629,12 @@ if(*colour!='R' && *colour!='G' && *colour!='B' && *colour!='Y' && *colour!='A')
    {
    RETURN_STRING("{\"error\":{\"errid\":\"-1\",\"msg\":\"Unrecognized parameters supplied\"}}",1);
    }
+
+ if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+    {
+    RETURN_STRING(buffer,1);
+    }
+
 
 fhostkey =  (hk_len == 0) ? NULL : hostkey;
 
@@ -5561,6 +5678,12 @@ if(*colour!='R' && *colour!='G' && *colour!='B' && *colour!='Y' && *colour!='A')
    RETURN_STRING("{\"error\":{\"errid\":\"-1\",\"msg\":\"Unrecognized parameters supplied\"}}",1);
    }
 
+ if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+    {
+    RETURN_STRING(buffer,1);
+    }
+
+
 buffer[0] = '\0';
 colour[1]='\0';
 Con2PHP_list_hub_colour(colour,buffer,bufsize);
@@ -5583,6 +5706,11 @@ PHP_FUNCTION(cfcon_value_graph)
 
 { const int bufsize = 100000;
  char buffer[bufsize];
+
+ if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+    {
+    RETURN_STRING(buffer,1);
+    }
 
 buffer[0] = '\0'; 
 Con2PHP_get_value_graph(buffer,bufsize);
