@@ -20,8 +20,6 @@ void Nova_WebTopicMap_Initialize()
 
 { char retval[CF_MAXVARSIZE];
 
-NewClass("am_php_module");
-
 #ifdef HAVE_LIBMONGOC 
 CFDB_GetValue("document_root",retval,CF_MAXVARSIZE);
 strncpy(DOCROOT,retval,CF_MAXVARSIZE);

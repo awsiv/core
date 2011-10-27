@@ -17,6 +17,8 @@
 
 #include <stdbool.h>
 
+extern int AM_PHP_MODULE;
+
 // Separation needed because it is included by php extension
 
 /*

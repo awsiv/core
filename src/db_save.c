@@ -78,7 +78,7 @@ int CFDB_PutValue(char *lval,char *rval)
   bson setOp,empty;
   mongo_connection dbconn;
 
-if (!IsDefinedClass("am_policy_hub") && !IsDefinedClass("am_php_module"))
+if (!IsDefinedClass("am_policy_hub") && !AM_PHP_MODULE)
    {
    CfOut(cf_verbose,"","Ignoring DB put of (%s=%s) - we are not a policy server",lval,rval);
    return false;
