@@ -328,6 +328,8 @@ zend_module_entry cfmod_module_entry =
 ZEND_GET_MODULE(cfmod)
 #endif
 
+extern int AM_PHP_MODULE;  // TODO: Defined in cf.nova.web.api.h, but apparently need to redifine here??
+
 PHP_MINIT_FUNCTION(cfmod)
 {
 zend_class_entry cfmod_ldap_exception_class_entry;
@@ -339,6 +341,8 @@ cfmod_ldap_exception_ce = zend_register_internal_class_ex(
     &cfmod_ldap_exception_class_entry,
     exception_class_entry,
     NULL TSRMLS_CC);
+
+AM_PHP_MODULE = true;
 
 return SUCCESS;
 }
@@ -690,7 +694,6 @@ PHP_FUNCTION(cfpr_getlicense_summary)
 
  s[0] = '\0';
 
- NewClass("am_policy_hub");
  CFDB_GetValue("license_report",s,sizeof(s));
 
  if (strlen(s) < 2)
@@ -707,7 +710,6 @@ PHP_FUNCTION(cfpr_hub_key)
  char buffer[bufsize];
 
  buffer[0] = '\0';
- NewClass("am_policy_hub");
  if( Nova2PHP_GetHubKey(buffer,bufsize))
     {
       RETURN_STRING(buffer,1);
@@ -738,7 +740,6 @@ PHP_FUNCTION(cfpr_getlicense_expiry)
 
  s[0] = '\0';
 
- NewClass("am_policy_hub");
  CFDB_GetValue("license_expires",s,sizeof(s));
 
  if (strlen(s) < 2)
@@ -757,7 +758,6 @@ PHP_FUNCTION(cfpr_getlicense_installtime)
 
  s[0] = '\0';
 
- NewClass("am_policy_hub");
  CFDB_GetValue("license_installtime",s,sizeof(s));
 
  if (strlen(s) < 2)
@@ -775,7 +775,6 @@ PHP_FUNCTION(cfpr_getlicense_owner)
 { char s[4096];
 
  s[0] = '\0';
- NewClass("am_policy_hub");
  CFDB_GetValue("license_owner",s,sizeof(s));
 
  if (strlen(s) < 3)
@@ -794,7 +793,6 @@ PHP_FUNCTION(cfpr_getlicenses_promised)
  int i = -1;
  
  s[0] = '\0';
- NewClass("am_policy_hub");
  CFDB_GetValue("licenses_promised",s,sizeof(s));
 
  sscanf(s,"%d",&i);
@@ -813,7 +811,6 @@ PHP_FUNCTION(cfpr_getlicenses_granted)
 { char s[4096];
  int i = -1;
 
- NewClass("am_policy_hub");
  CFDB_GetValue("licenses_granted",s,sizeof(s));
  sscanf(s,"%d",&i);
  if (i == -1)
@@ -4344,7 +4341,6 @@ PHP_FUNCTION(cfpr_delete_host)
     {
     return;
     }
- NewClass("am_policy_hub");
  Nova2PHP_delete_host(hostkey);
 }
 
