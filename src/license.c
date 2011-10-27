@@ -582,3 +582,17 @@ if (LICENSES == 0)
 
 return true;
 }
+
+
+/*****************************************************************************/
+
+bool Constellation_HasLicense(void)
+{
+ if (!LICENSES || !AM_CONSTELLATION)
+    {
+    CfOut(cf_error, "", "!! Constellation license error -- skipping");
+    return false;
+    }
+
+ return true;
+}

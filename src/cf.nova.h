@@ -788,6 +788,7 @@ void Nova_CheckLicensePromise(void);
 void Nova_LogLicenseStatus(void);
 int Nova_CheckLicenseWin(char *pos);
 char *Nova_LicenseOwner(void);
+bool Constellation_HasLicense(void);
 
 /* logging.c */
 
