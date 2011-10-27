@@ -103,6 +103,7 @@ void Nova2PHP_GetLibraryDocuments(char *path, char *buffer,int bufsize)
   struct Item *refs = NULL, *guides = NULL, *others = NULL, *pics = NULL,*ip;
   DIR *dirh;
 
+
 if (path)
    {
    snprintf(namedir,CF_MAXVARSIZE,"%s",path);
