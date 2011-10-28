@@ -244,7 +244,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h2 class="chapter">1 CFEngine 3.3.0a1.r3033M &ndash; Getting started</h2>
+<h2 class="chapter">1 CFEngine 3.3.0a1.r3278 &ndash; Getting started</h2>
 
 <p><br>
 
@@ -1017,6 +1017,11 @@ their respective bundles).
 The report result `Success' is therefore true because only &lsquo;<samp><span class="samp">one</span></samp>&rsquo; and
 &lsquo;<samp><span class="samp">three</span></samp>&rsquo; are in scope (and &lsquo;<samp><span class="samp">two</span></samp>&rsquo; is <i>not</i> in scope) inside of the
 third bundle.
+
+   <p>Note that any class promise must have one - and only one - value
+constraint. That is, you might not leave &lsquo;<samp><span class="samp">expression</span></samp>&rsquo; in the
+example above or add both &lsquo;<samp><span class="samp">and</span></samp>&rsquo; and &lsquo;<samp><span class="samp">xor</span></samp>&rsquo; constraints to the
+single promise.
 
    <p>Another type of class definition happens when you define classes based on the
 outcome of a promise, e.g. to set a class if a promise is repaired, one might write:
@@ -8614,10 +8619,12 @@ specific amount of delay for &ldquo;this&rdquo; host is based on a hash of the
 hostname.  Thus a collection of hosts will all execute at different
 times, and surges in network traffic can be avoided.
 
-<p class="noindent">A rough rule of thumb for scaling of small updates is set the splay
-time by:
-
-   <p>splaytime = 1 + Number of clients / 50
+<p class="noindent">A rough rule of thumb for scaling of small
+updates is set the splay
+time between 1-5 minutes for up a few thousand hosts. 
+The splaytime should not be set to a value larger than the
+<code>cf-execd</code> scheduling interval, else multiple clients might
+contend for data.
 
 <p class="noindent"><b>Default value</b>:<br>
 <br>
@@ -8994,7 +9001,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</
 <p class="noindent"><b>Notes</b>:<br>
 <br>
 
-   <p>The directory where all auto-generated textual output is placed by <code>cf-know</code>. 
+   <p>The directory where all auto-generated textual output is placed by <code>cf-report</code>. 
 This includes manual generation, ontology and topic map data.
 
 <div class="node">
@@ -9855,7 +9862,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-reporter">control reporter</a>
 <p class="noindent"><b>Notes</b>:<br>
 <br>
 
-   <p>The directory where all auto-generated textual output is placed by <code>cf-know</code>. 
+   <p>The directory where all auto-generated textual output is placed by <code>cf-report</code>. 
 This includes manual generation, ontology and topic map data.
 
 <div class="node">
@@ -10320,8 +10327,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Control-Promises">Control Promises</a>
 <ul class="menu">
 <li><a accesskey="1" href="#export_005fzenoss-in-hub">export_zenoss in hub</a>
 <li><a accesskey="2" href="#federation-in-hub">federation in hub</a>
-<li><a accesskey="3" href="#hub_005fschedule-in-hub">hub_schedule in hub</a>
-<li><a accesskey="4" href="#port-in-hub">port in hub</a>
+<li><a accesskey="3" href="#exclude_005fhosts-in-hub">exclude_hosts in hub</a>
+<li><a accesskey="4" href="#hub_005fschedule-in-hub">hub_schedule in hub</a>
+<li><a accesskey="5" href="#port-in-hub">port in hub</a>
 </ul>
 
 <div class="node">
@@ -10371,7 +10379,7 @@ am_policy_hub::
 <div class="node">
 <a name="federation-in-hub"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#hub_005fschedule-in-hub">hub_schedule in hub</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#exclude_005fhosts-in-hub">exclude_hosts in hub</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#export_005fzenoss-in-hub">export_zenoss in hub</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#control-hub">control hub</a>
 
@@ -10383,7 +10391,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-hub">control hub</a>
 
 <p class="noindent"><b>Allowed input range</b>: (arbitrary string)
 
-<p class="noindent"><b>Synopsis</b>: The list of cfengine servers supporting constellation integration with this hub
+<p class="noindent"><b>Synopsis</b>: The list of CFEngine servers supporting constellation integration with this hub
 
 <p class="noindent"><b>Example</b>:<br>
 <br>
@@ -10399,16 +10407,56 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-hub">control hub</a>
    <p><i>History</i>: Was introduced in Constellation 1.0 (2011)
 
 <div class="node">
-<a name="hub_schedule-in-hub"></a>
-<a name="hub_005fschedule-in-hub"></a>
+<a name="exclude_hosts-in-hub"></a>
+<a name="exclude_005fhosts-in-hub"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#port-in-hub">port in hub</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#hub_005fschedule-in-hub">hub_schedule in hub</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#federation-in-hub">federation in hub</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#control-hub">control hub</a>
 
 </div>
 
-<h4 class="subsection">5.9.3 <code>hub_schedule</code></h4>
+<h4 class="subsection">5.9.3 <code>exclude_hosts</code></h4>
+
+<p class="noindent"><b>Type</b>: slist
+
+<p class="noindent"><b>Allowed input range</b>: (arbitrary string)
+
+<p class="noindent"><b>Synopsis</b>: A list of IP addresses of hosts to exclude from report collection
+
+<p class="noindent"><b>Example</b>:<br>
+<br>
+
+<pre class="verbatim">body hub control
+{
+<span class="red">exclude_hosts </span>=> { "192.168.12.21", "10.10", "10.12.*" };
+}
+</pre>
+
+<p class="noindent"><b>Notes</b>:<br>
+<br>
+
+   <p><i>History</i>: Was introduced in 3.3.0, Nova 2.1.1, Constellation 1.0.0 (2011)
+
+   <p>In commercial CFEngine editions, this list of IP addresses will not be
+queried for reports by <code>cf-hub</code>, even though they are in the
+last-seen database.
+
+   <p>The lists may contain network addresses in CIDR notation or regular
+expressions to match the IP address. However, host names are currently
+not supported.
+
+<div class="node">
+<a name="hub_schedule-in-hub"></a>
+<a name="hub_005fschedule-in-hub"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#port-in-hub">port in hub</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#exclude_005fhosts-in-hub">exclude_hosts in hub</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#control-hub">control hub</a>
+
+</div>
+
+<h4 class="subsection">5.9.4 <code>hub_schedule</code></h4>
 
 <p class="noindent"><b>Type</b>: slist
 
@@ -10440,7 +10488,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-hub">control hub</a>
 
 </div>
 
-<h4 class="subsection">5.9.4 <code>port</code></h4>
+<h4 class="subsection">5.9.5 <code>port</code></h4>
 
 <p class="noindent"><b>Type</b>: int
 
@@ -13901,7 +13949,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#databases-in-agent-promises">databases
 <br>
 
 <pre class="verbatim">
-<span class="red">database_type </span>=><span class="green"> "@var{ms_registry}";</span>
+<span class="red">database_type </span>=><span class="green"> "ms_registry";</span>
 
 </pre>
 
@@ -14021,7 +14069,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#databases-in-agent-promises">databases
   "HKEY_LOCAL_MACHINE\SOFTWARE\CFEngine AS\CFEngine"
 
 <span class="red">    database_operation </span>=><span class="green"> "create",</span>
-<span class="red">    database_rows </span>=> { "value1,REG_SZ,new value 1", "value2,REG_SZ,new val 2"} ,
+<span class="red">    database_rows </span>=> { "value1,REG_SZ,new value 1", "value2,REG_DWORD,12345"} ,
 <span class="red">    database_type     </span>=><span class="green"> "ms_registry";</span>
 }
 
@@ -14031,8 +14079,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#databases-in-agent-promises">databases
 <br>
 
    <p>This constraint is used only in adding data to database columns. Rows are considered to be
-instances of individual columns. In the case of the system registry on Windows, the rows
-represent data on data-value pairs.
+instances of individual columns.
+
+   <p>In the case of the system registry on Windows, the rows represent data on data-value pairs. 
+The currently supported types (the middle field) for the Windows registry are <code>REG_SZ</code> (string),
+<code>REG_EXPAND_SZ</code> (expandable string) and <code>REG_DWORD</code> (double word).
 
 <div class="node">
 <a name="registry_exclude-in-databases"></a>
@@ -21562,21 +21613,14 @@ CFEngine 2 and earlier.
 
    <p><br>
 
-   <p>In CFEngine 2, one has two separate actions:
-
-<pre class="smallexample">      processes
-      shellcommands
-</pre>
-   <p class="noindent">In CFEngine 3 we have
+   <p>In CFEngine 3 we have
 
 <pre class="smallexample">      processes
       commands
 </pre>
-   <p>CFEngine 2 got this ontology about right intuitively, but not
-quite. It allowed a &lsquo;<samp><span class="samp">restart</span></samp>&rsquo; command to appear in a process
-promise, which is really a command execution. This has been
-changed in CFEngine 3 so that there is a cleaner separation. Let's see
-why.
+   <p class="noindent">so that there is a clean separation between detection (promises
+about the process table) and certain repairs (promises to execute
+commands that start processes). Let's see why.
 
    <p>Executions are about jobs, services, scripts etc. They are properties
 of an executable file. The referring `promiser' is a file
@@ -21647,8 +21691,7 @@ or
 </pre>
 
    <p>The bundle for this can look like this:
-<pre class="verbatim">bundle agent Service("$(service)")
-
+<pre class="verbatim">bundle agent Service(service")
 {
 <span class="red">processes:
 </span>
@@ -21669,7 +21712,6 @@ or
    <p>An alternative would be self-contained:
 
 <pre class="verbatim">bundle agent Service
-
 {
 <span class="red">vars:
 </span>
@@ -21705,27 +21747,6 @@ or
 }
 
 </pre>
-
-   <p>Is this a step backwards? 
-The CFEngine 3 approach might seem like a step backwards from the simple CFEngine 2 statement:
-<pre class="verbatim">processes:
-
-  "httpd" restart "/etc/init.d/apache restart"
-</pre>
-
-   <p>However, it allows several improvements.
-
-   <p>You can do other things in between stopping and starting the service,
-like file editing, or security sweeps.  You can use templates to
-simplify the syntax in bulk for several process checks or restarts.
-
-<pre class="verbatim">processes:
-
-  "$(service.list)"
-
-</pre>
-If you don't want any delay in stopping and starting the service, then
-place these promises in a private bundle with nothing in between them.
 
 <ul class="menu">
 <li><a accesskey="1" href="#process_005fcount-in-processes">process_count in processes</a>
@@ -30592,8 +30613,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 <p class="noindent"><b>Notes</b>:<br>
 <br>
 
-   <p>This function applies only to Windows based systems. it reads a data field for the value named
+   <p>This function applies only to Windows-based systems. It reads a data field for the value named
 in the second argument, which lies within the registry key given by the first argument.
+
+   <p>The value is parsed as a string. Currently values of type <code>REG_SZ</code> (string),
+<code>REG_EXPAND_SZ</code> (expandable string) and <code>REG_DWORD</code> (double word) are supported.
 
 <div class="node">
 <a name="Function-regline"></a>
@@ -35689,8 +35713,6 @@ outputting reports.
 since the last observation, as determined by the hashing algorithms in
 CFEngine.
 
-     <br><dt><samp><span class="file">state/nova_*.tcdb</span></samp><dd>Enterprise level CFEngine's use these data for storing custom system measurements.
-
      <br><dt><samp><span class="file">state/vars.out</span></samp><dd>Enterprise level versions of CFEngine use this log to communicate variable
 data.
 
@@ -35769,7 +35791,7 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <h2>Table of Contents</h2>
 <ul>
 <li><a name="toc_Top" href="#Top">CFEngine-AutoReference</a>
-<li><a name="toc_Getting-started" href="#Getting-started">1 CFEngine 3.3.0a1.r3033M &ndash; Getting started</a>
+<li><a name="toc_Getting-started" href="#Getting-started">1 CFEngine 3.3.0a1.r3278 &ndash; Getting started</a>
 <ul>
 <li><a href="#Software-components">1.1 Software components</a>
 <ul>
@@ -36016,8 +36038,9 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <ul>
 <li><a href="#export_005fzenoss-in-hub">5.9.1 <code>export_zenoss</code></a>
 <li><a href="#federation-in-hub">5.9.2 <code>federation</code></a>
-<li><a href="#hub_005fschedule-in-hub">5.9.3 <code>hub_schedule</code></a>
-<li><a href="#port-in-hub">5.9.4 <code>port</code></a>
+<li><a href="#exclude_005fhosts-in-hub">5.9.3 <code>exclude_hosts</code></a>
+<li><a href="#hub_005fschedule-in-hub">5.9.4 <code>hub_schedule</code></a>
+<li><a href="#port-in-hub">5.9.5 <code>port</code></a>
 </li></ul>
 </li></ul>
 <li><a name="toc_Bundles-for-common" href="#Bundles-for-common">6 Bundles of <code>common</code></a>

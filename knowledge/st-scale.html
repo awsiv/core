@@ -1025,10 +1025,17 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Internal-and-external-scalability-of-t
 
 </pre>
 
-To understand the external scalability of CFEngine management, we
+CFEngine 3 Nova is designed around the concept of a simple star network,
+i.e.  a number of `client' machines bound together by a central hub. 
+This is a commonly used architecture that is easy to understand. 
+The hub architecture introduces a bottleneck, so we expect this to
+have a limited scalability as long as we cannot increase the power and
+the speed of the hub without limit.
+
+   <p>To understand the external scalability of CFEngine management, we
 shall estimate how large a CFEngine system can grow using simple
-centralized management, in the so-called `star network' pattern. This
-will force us to confront low level performance characteristics, where we try to
+centralized management, in this star network pattern. This will force
+us to confront low level performance characteristics, where we try to
 extract the most from limited resources.
 
    <p>In a star network, all agents connect to a central hub to obtain
@@ -1067,6 +1074,11 @@ with certain limitations, how many clients can it support? Conversely,
 given a number of hosts to support with a single hub, what capacity
 is required in system infrastructure to support it at a certain level?
 
+   <p>There are actually two independent issues here. There is the scaling
+of the policy updates (served by the hub) and the scaling of the
+reporting updates (collected by the hub). Both of these processes compete
+for resources.
+
 <ul class="menu">
 <li><a accesskey="1" href="#Typical-CFEngine-scales">Typical CFEngine scales</a>
 <li><a accesskey="2" href="#Scaling-of-updates">Scaling of updates</a>
@@ -1089,7 +1101,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#A-simple-worst-case-approach-to-scalab
 
      <ul>
 <li>The interval at which policy and reporting updates are checked (\Delta t = 5 mins or 300s). 
-<li>The expected worst size of an update (U \le 1-2 MB per host). 
+<li>The expected worst size of an update (U \le 5 MB per host). 
 <li>The amount of RAM available on the server (M = 1 GB).. 
 <li>The resident size of a thread or server process (s \le 12 MB). 
 <li>The maximum available network capacity for management processes (C \ge 1 MB/s). 
@@ -1128,13 +1140,13 @@ and yields a value for t, given fixed values for the hub's RAM
 and software build size. 
 For a server with 1GB of memory, we have t \le 1024/12 \sim 80 threads. 
 This will consume U \le 1MB of data per agent for a community host, and
-U\le 2MB for Nova to account for reporting.
+U\le 5MB for Nova to account for reporting.
 
    <p>The expected time-to-update \tau_\rm round satisfies:
    <pre class="sp">
 
 </pre>
-<pre class="display">                                        U_\rm min/C \le \tau_\rm round\le U_\rm min/C
+<pre class="display">                                        U_\rm min/C \le \tau_\rm round\le U_\rm max/C
 </pre>
    <pre class="sp">
 
@@ -1203,6 +1215,7 @@ machines is a challenge unless the system is extremely uniform.
 almost to capacity. Increasing its resources will naturally lead to improvements
 in performance.
 
+<!-- ******************************************************************** -->
 <div class="node">
 <a name="Limitations-on-the-CFDB-hub-database"></a>
 <p><hr>
@@ -1214,18 +1227,49 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#A-simple-worst-case-approach-to-scalab
 
 <h4 class="subsection">3.3.3 Limitations on the CFDB hub database</h4>
 
-<p>The time estimates for host updating used above include the latency of this database, but it is possible
-that there might be additional delays once the amount of data passes a certain limits. 
-We currently have no data to support this assumption and await customer experiences
+<p>A `star network' architecture has a single concentration
+of processing, centred around registration of incoming and outgoing hosts on the hub. 
+Read/write activity is focused on two databases:
+
+     <ul>
+<li>The last-seen database that records the current IP addresses of known clients
+to the hub, accessed every time a host connects or is connected to the hub. 
+<li>The document database where reports are stored (using MongoDB), accessed each time
+an update is stored,  or when a user makes a query. 
+</ul>
+
+   <p>The scalablity of the hub depends on how efficiently reads and writes
+can be parallelized to these databases. Even with aggressive cachine,
+databases are disk-intensive and since disk access is typically the
+slowest or weakest link in the data flow chain, disk accesses will
+throttle the scalability of the hub the most.
+
+   <p>CFEngine tries to support efficient parallelization by using
+multiple threads to serve and collect data, however access to a
+shared resource must always be serialized, so ultimately serial access to the
+disk will be the limiting factor. The CFEngine hub supports Linux
+systems. Simple SATA disks, USB and Firewire have very limited performance. 
+To achieve the maximum scaling limit of a few thousand hosts per hub,
+users can invest in faster interfaces and disk speeds, or even solid state
+disk devices.
+
+   <p>Because of the serialization, a heavily loaded MongoDB will eat up most of the
+resources on the hub, dominating the performance. Some performance tuning option
+strategies are discussed below. Clearly maximizing the amount of RAM on the
+hub is a way to improve the performance.
+
+   <p>The time estimates for host updating used above include the latency of
+this database, but it is possible that there might be additional
+delays once the amount of data passes a certain limits.  We currently
+have no data to support this assumption and await customer experiences
 either way.
 
    <p>Lookup times for data in the reports database increase with the number
 of host-keys, so the time required to generate certain reports
-(especially when searching through logs) must increase as the number of
-hosts increases.  We have only indicative data to support the scaling
-of this. We are currently unable to place any limits on the number of
-hosts from this criterion.
+(especially when searching through logs) must increase as the number
+of hosts increases.
 
+<!-- ******************************************************************** -->
 <div class="node">
 <a name="Update-storms"></a>
 <p><hr>
@@ -1236,11 +1280,24 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#A-simple-worst-case-approach-to-scalab
 
 <h4 class="subsection">3.3.4 Update storms</h4>
 
-<p>When changes are made, many hosts will start downloading updated files. This can have a sudden impact on the network,
-as a lot of unexpected traffic is suddenly concentrated over a short interval of time. The contention from these
-multiple downloads can therefore make each download longer than it otherwise might have been, and this in turn
-makes the problem worse. The situation is analogous to disk thrashing.
+<p>When changes are made, many hosts will start downloading updated
+files. This can have a sudden impact on the network, as a lot of
+unexpected traffic is suddenly concentrated over a short interval of
+time. The contention from these multiple downloads can therefore make
+each download longer than it otherwise might have been, and this in
+turn makes the problem worse. The situation is analogous to disk
+thrashing.
 
+   <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+Once thrashing has started, it can cause greatly reduced performance
+and hosts might pass their `blue horizon threshold', appearing to
+disappear from the CFEngine Mission Portal. This does not mean the
+hosts are dead or even `out of control'. It only means that updates
+are taking too long according the tuning parameters. The default
+update horizon is. 
+</td></tr></table>
+
+<!-- ******************************************************************** -->
 <div class="node">
 <a name="Optimizations-affecting-scalability"></a>
 <p><hr>
@@ -1257,23 +1314,86 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Internal-and-external-scalability-of-t
 </pre>
 
 <ul class="menu">
-<li><a accesskey="1" href="#The-role-of-caching-and-indexing">The role of caching and indexing</a>
-<li><a accesskey="2" href="#Deterministic-queue">Deterministic queue</a>
-<li><a accesskey="3" href="#Push-versus-pull">Push versus pull</a>
+<li><a accesskey="1" href="#Tuning-the-MongoDB-for-thousands-of-hosts">Tuning the MongoDB for thousands of hosts</a>
+<li><a accesskey="2" href="#The-role-of-caching-and-indexing">The role of caching and indexing</a>
+<li><a accesskey="3" href="#Deterministic-queue">Deterministic queue</a>
+<li><a accesskey="4" href="#Push-versus-pull">Push versus pull</a>
 </ul>
 
 <div class="node">
-<a name="The-role-of-caching-and-indexing"></a>
+<a name="Tuning-the-MongoDB-for-thousands-of-hosts"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Deterministic-queue">Deterministic queue</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#The-role-of-caching-and-indexing">The role of caching and indexing</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Optimizations-affecting-scalability">Optimizations affecting scalability</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Optimizations-affecting-scalability">Optimizations affecting scalability</a>
 
 </div>
 
-<h4 class="subsection">3.4.1 The role of caching and indexing</h4>
+<h4 class="subsection">3.4.1 Tuning the MongoDB for thousands of hosts</h4>
 
-<p>Choose class names evenly throughout the alphabet to make searching easier.
+<p>Some points to consider when scaling the MongoDB:
+     <ul>
+<li>For installations of one or two thousand hosts per hub, one approaches
+the throughput limitations of x86 hardware and the Mongo database. One
+can expect to see MongoDB writes dominating the system
+resources. MongoDB does extensive caching'in RAM, so maximizing
+installed RAM is an important strategy &ndash; however disk access priorities
+will also play a role.
+
+     <p>To make sure that server connection performance does not suffer as a result
+of aggressive database writing, we can lower the priority of the MongoDB
+process
+<pre class="verbatim">     ionice -c2 -n0 /var/cfengine/bin/mongod 
+</pre>
+     or, using the PID
+<pre class="verbatim">     ionice -c2 -n0 -p PID
+</pre>
+
+     <li>If the MongoDB database is located on the same disk as the last-seen
+database (as is default under <samp><span class="file">/var/cfengine</span></samp>, there will be
+contention between last-seen and mongodb updates, which can slow down
+both processes unnecessarily. Ideally, these
+should be separate disks with independent queues, even independent
+controllers. RAID configurations can also slow down performance, so
+only hardware RAID should be considered.
+
+     <li>According to Mongo developers, Non-Uniform Memory Access (NUMA) hardware
+works poorly with MongoDB. If your server uses such hardware,  you should try to
+switch off this feature to improve write stability.
+
+     <pre class="verbatim">     numactl --interleave=all /var/cfengine/bin/mongod # (other args)
+     echo 0 > /proc/sys/vm/zone_reclaim_mode
+</pre>
+
+     <li>Finally, <code>splaytime</code> on the client nodes will help to spread out
+the incoming connections over the update interval of the hub. The hub
+defaults to 5 minute updates, so a complete update of policy should be
+spread over less than or equal to the same scheduled cycle time. Alternatively the cycle
+for policy updates can be extended and the splaying can be even longer.
+
+     <pre class="verbatim">     
+     body executor control
+     {
+     splaytime => "4";
+     }
+     
+</pre>
+
+   </ul>
+
+<div class="node">
+<a name="The-role-of-caching-and-indexing"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Deterministic-queue">Deterministic queue</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Tuning-the-MongoDB-for-thousands-of-hosts">Tuning the MongoDB for thousands of hosts</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Optimizations-affecting-scalability">Optimizations affecting scalability</a>
+
+</div>
+
+<h4 class="subsection">3.4.2 The role of caching and indexing</h4>
+
+<p>To assist the speed of policy processing by <code>cf-agent</code>, choose
+class names evenly throughout the alphabet to make searching easier.
 
 <div class="node">
 <a name="Deterministic-queue"></a>
@@ -1284,7 +1404,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Optimizations-affecting-scalability">O
 
 </div>
 
-<h4 class="subsection">3.4.2 Deterministic queue</h4>
+<h4 class="subsection">3.4.3 Deterministic queue</h4>
 
 <div class="node">
 <a name="Push-versus-pull"></a>
@@ -1294,7 +1414,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Optimizations-affecting-scalability">O
 
 </div>
 
-<h4 class="subsection">3.4.3 Push versus pull</h4>
+<h4 class="subsection">3.4.4 Push versus pull</h4>
 
 <div class="node">
 <a name="Redundancy-and-load-balancing-in-the-Nova-hub"></a>
@@ -1435,7 +1555,8 @@ this database also.
 
 The procedure for backing up the ephemeral data is:
      <ul>
-<li>Mongo collections should be dumped to an intermediary format:
+<li>Mongo collections can be dumped to an intermediary format, though this is impractical
+for large installations.
 
      <li>For embedded databases, it is sufficient to copy the binary object:
 <pre class="verbatim">     cp /var/cfengine/cf_lastseen.db  /backup
@@ -1486,9 +1607,10 @@ The procedure for backing up the ephemeral data is:
 </li></ul>
 <li><a href="#Optimizations-affecting-scalability">3.4 Optimizations affecting scalability</a>
 <ul>
-<li><a href="#The-role-of-caching-and-indexing">3.4.1 The role of caching and indexing</a>
-<li><a href="#Deterministic-queue">3.4.2 Deterministic queue</a>
-<li><a href="#Push-versus-pull">3.4.3 Push versus pull</a>
+<li><a href="#Tuning-the-MongoDB-for-thousands-of-hosts">3.4.1 Tuning the MongoDB for thousands of hosts</a>
+<li><a href="#The-role-of-caching-and-indexing">3.4.2 The role of caching and indexing</a>
+<li><a href="#Deterministic-queue">3.4.3 Deterministic queue</a>
+<li><a href="#Push-versus-pull">3.4.4 Push versus pull</a>
 </li></ul>
 <li><a href="#Redundancy-and-load-balancing-in-the-Nova-hub">3.5 Redundancy and load balancing in the Nova hub</a>
 <ul>

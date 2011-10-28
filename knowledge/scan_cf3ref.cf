@@ -500,7 +500,7 @@ CFEngine_reference_manual::
 CFEngine_AutoReference::
  "/docs/cf3-reference.html#Top"
   represents => { "Text section" };
-CFEngine_3_3_0a1_r3033M__Getting_started::
+CFEngine_3_3_0a1_r3278__Getting_started::
  "/docs/cf3-reference.html#Getting-started"
   represents => { "manual chapter" };
 Software_components::
@@ -1249,6 +1249,9 @@ export_zenoss::
   represents => { "manual subsection" };
 federation::
  "/docs/cf3-reference.html#federation-in-hub"
+  represents => { "manual subsection" };
+exclude_hosts::
+ "/docs/cf3-reference.html#exclude_005fhosts-in-hub"
   represents => { "manual subsection" };
 hub_schedule::
  "/docs/cf3-reference.html#hub_005fschedule-in-hub"
@@ -2174,9 +2177,6 @@ package_version::
 processes_promises_in_agent::
  "/docs/cf3-reference.html#processes-in-agent-promises"
   represents => { "manual section processes promises in agent" };
-processes_promises_in_agent::
- "/docs/cf3-reference.html#processes-in-agent-promises"
-  represents => { "code example" };
 processes_promises_in_agent::
  "/docs/cf3-reference.html#processes-in-agent-promises"
   represents => { "code example" };

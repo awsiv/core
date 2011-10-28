@@ -101,6 +101,9 @@ Update_storms::
 Optimizations_affecting_scalability::
  "/docs/st-scale.html#Optimizations-affecting-scalability"
   represents => { "manual section Optimizations affecting scalability" };
+Tuning_the_MongoDB_for_thousands_of_hosts::
+ "/docs/st-scale.html#Tuning-the-MongoDB-for-thousands-of-hosts"
+  represents => { "manual subsection" };
 The_role_of_caching_and_indexing::
  "/docs/st-scale.html#The-role-of-caching-and-indexing"
   represents => { "manual subsection" };
