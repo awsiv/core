@@ -17,6 +17,34 @@
 
 #include <stdbool.h>
 
+/* error handling and description*/
+
+typedef enum cfapi_errid
+{
+    ERRID_SUCCESS,
+    ERRID_DBCONNECT,
+    ERRID_BUFFER_FULL,
+    ERRID_SUBSCRIPTION_NONEXISTING,
+    ERRID_SUBSCRIPTION_EXISTS,
+    ERRID_SUBSCRIPTION_MULTIPLE,
+    ERRID_CONSTELLATION_LICENSE,
+    ERRID_MAX
+}cfapi_errid_t;
+
+static char *ERRID_DESCRIPTION[ERRID_MAX+2] =
+{
+    "Success",
+    "Could not open connection to reporting database",
+    "The JSON-buffer is too small to hold the report data",
+    "The given subscription handle does not exist",
+    "The given subscription handle already exists",
+    "There are multiple subscriptions matching the request",
+    "This functionality requires a Constellation license",
+    "Unknown error - description out of bounds",
+    NULL
+};
+
+
 extern int AM_PHP_MODULE;
 
 // Separation needed because it is included by php extension
@@ -211,5 +239,9 @@ char *Nova2PHP_get_host_environment(const char *keyhash);
 
 void FreeEnvironmentsList(struct EnvironmentsList *list);
 void FreeHostsList(struct HostsList *list);
+
+
+char *FormatErrorJson(char *out, int outSz, cfapi_errid_t errid);
+void EndJsonBuffer(char *buf, int bufsize, cfapi_errid_t errid);
 
 #endif // CFENGINE_NOVA_WEB_API_H

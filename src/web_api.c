@@ -6543,4 +6543,33 @@ int Nova2PHP_GetHubMaster(char *buffer,int bufsize)
  return false;
 }
 
+/*****************************************************************************/
+
+char *FormatErrorJson(char *out, int outSz, cfapi_errid_t errid)
+{
+ if(errid >= ERRID_MAX)
+    {
+    CfOut(cf_error, "", "!! FormatErrorJson: errid out of bounds");
+    errid = ERRID_MAX;
+    }
+ 
+ snprintf(out, outSz, "\"error\":{\"errid\":%d,\"msg\":\"%s\"}", errid, ERRID_DESCRIPTION[errid]);
+
+ return out;
+}
+
+/*****************************************************************************/
+
+void EndJsonBuffer(char *buf, int bufsize, cfapi_errid_t errid)
+{
+ char work[CF_MAXVARSIZE];
+ 
+ ReplaceTrailingChar(buf, ',', '\0');
+ strlcat(buf, "], ", bufsize);
+ 
+ FormatErrorJson(work, sizeof(work), errid);
+ EndJoin(buf, work, bufsize);
+ EndJoin(buf, "}", bufsize);
+}
+
 #endif  /* HAVE_LIBMONGOC */

@@ -98,33 +98,6 @@
 #define CF_NOTICE_TRUNCATED "Data truncated due to internal buffer limit"
 
 
-/* error handling and description*/
-
-typedef enum cfapi_errid
-{
-    ERRID_SUCCESS,
-    ERRID_DBCONNECT,
-    ERRID_BUFFER_FULL,
-    ERRID_SUBSCRIPTION_NONEXISTING,
-    ERRID_SUBSCRIPTION_EXISTS,
-    ERRID_SUBSCRIPTION_MULTIPLE,
-    ERRID_CONSTELLATION_LICENSE,
-    ERRID_MAX
-}cfapi_errid_t;
-
-static char *ERRID_DESCRIPTION[ERRID_MAX+2] =
-{
-    "Success",
-    "Could not open connection to reporting database",
-    "The JSON-buffer is too small to hold the report data",
-    "The given subscription handle does not exist",
-    "The given subscription handle already exists",
-    "There are multiple subscriptions matching the request",
-    "This functionality requires a Constellation license",
-    "Unknown error - description out of bounds",
-    NULL
-};
-
 /*****************************************************************************/
 
 enum cfl_view
@@ -392,8 +365,6 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 /* db_query.c */
 
 #ifdef HAVE_LIBMONGOC
-char *FormatErrorJson(char *out, int outSz, cfapi_errid_t errid);
-void EndJsonBuffer(char *buf, int bufsize, cfapi_errid_t errid);
 int CFDB_GetValue(char *lval,char *rval,int size);
 void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn);
 int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int bufsize);
