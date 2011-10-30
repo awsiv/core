@@ -1314,22 +1314,44 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Internal-and-external-scalability-of-t
 </pre>
 
 <ul class="menu">
-<li><a accesskey="1" href="#Tuning-the-MongoDB-for-thousands-of-hosts">Tuning the MongoDB for thousands of hosts</a>
-<li><a accesskey="2" href="#The-role-of-caching-and-indexing">The role of caching and indexing</a>
-<li><a accesskey="3" href="#Deterministic-queue">Deterministic queue</a>
-<li><a accesskey="4" href="#Push-versus-pull">Push versus pull</a>
+<li><a accesskey="1" href="#Tuning-the-linux-kernel-for-thousands-of-hosts">Tuning the linux kernel for thousands of hosts</a>
+<li><a accesskey="2" href="#Tuning-the-MongoDB-for-thousands-of-hosts">Tuning the MongoDB for thousands of hosts</a>
+<li><a accesskey="3" href="#The-role-of-caching-and-indexing">The role of caching and indexing</a>
+<li><a accesskey="4" href="#Deterministic-queue">Deterministic queue</a>
+<li><a accesskey="5" href="#Push-versus-pull">Push versus pull</a>
 </ul>
 
 <div class="node">
-<a name="Tuning-the-MongoDB-for-thousands-of-hosts"></a>
+<a name="Tuning-the-linux-kernel-for-thousands-of-hosts"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#The-role-of-caching-and-indexing">The role of caching and indexing</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Tuning-the-MongoDB-for-thousands-of-hosts">Tuning the MongoDB for thousands of hosts</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Optimizations-affecting-scalability">Optimizations affecting scalability</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Optimizations-affecting-scalability">Optimizations affecting scalability</a>
 
 </div>
 
-<h4 class="subsection">3.4.1 Tuning the MongoDB for thousands of hosts</h4>
+<h4 class="subsection">3.4.1 Tuning the linux kernel for thousands of hosts</h4>
+
+<p>Every write and read connection to the Mongo database makes a kernel TCP connection. With the
+extreme density of connections, this is somewhat like a high volume webserver. The standard
+`play safe' kernel settings are too conservative for this kind of performance. The main bottleneck
+eventually becomes the FIN_WAIT timeout. We recommend reducing this:
+
+<pre class="verbatim">echo "1024 61000" > /proc/sys/net/ipv4/ip_local_port_range
+echo "5" > /proc/sys/net/ipv4/tcp_fin_timeout
+</pre>
+This will clear old connections faster, allowing new ones be created and old threads to terminate faster.
+
+<div class="node">
+<a name="Tuning-the-MongoDB-for-thousands-of-hosts"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#The-role-of-caching-and-indexing">The role of caching and indexing</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Tuning-the-linux-kernel-for-thousands-of-hosts">Tuning the linux kernel for thousands of hosts</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Optimizations-affecting-scalability">Optimizations affecting scalability</a>
+
+</div>
+
+<h4 class="subsection">3.4.2 Tuning the MongoDB for thousands of hosts</h4>
 
 <p>Some points to consider when scaling the MongoDB:
      <ul>
@@ -1390,7 +1412,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Optimizations-affecting-scalability">O
 
 </div>
 
-<h4 class="subsection">3.4.2 The role of caching and indexing</h4>
+<h4 class="subsection">3.4.3 The role of caching and indexing</h4>
 
 <p>To assist the speed of policy processing by <code>cf-agent</code>, choose
 class names evenly throughout the alphabet to make searching easier.
@@ -1404,7 +1426,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Optimizations-affecting-scalability">O
 
 </div>
 
-<h4 class="subsection">3.4.3 Deterministic queue</h4>
+<h4 class="subsection">3.4.4 Deterministic queue</h4>
 
 <div class="node">
 <a name="Push-versus-pull"></a>
@@ -1414,7 +1436,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Optimizations-affecting-scalability">O
 
 </div>
 
-<h4 class="subsection">3.4.4 Push versus pull</h4>
+<h4 class="subsection">3.4.5 Push versus pull</h4>
 
 <div class="node">
 <a name="Redundancy-and-load-balancing-in-the-Nova-hub"></a>
@@ -1607,10 +1629,11 @@ for large installations.
 </li></ul>
 <li><a href="#Optimizations-affecting-scalability">3.4 Optimizations affecting scalability</a>
 <ul>
-<li><a href="#Tuning-the-MongoDB-for-thousands-of-hosts">3.4.1 Tuning the MongoDB for thousands of hosts</a>
-<li><a href="#The-role-of-caching-and-indexing">3.4.2 The role of caching and indexing</a>
-<li><a href="#Deterministic-queue">3.4.3 Deterministic queue</a>
-<li><a href="#Push-versus-pull">3.4.4 Push versus pull</a>
+<li><a href="#Tuning-the-linux-kernel-for-thousands-of-hosts">3.4.1 Tuning the linux kernel for thousands of hosts</a>
+<li><a href="#Tuning-the-MongoDB-for-thousands-of-hosts">3.4.2 Tuning the MongoDB for thousands of hosts</a>
+<li><a href="#The-role-of-caching-and-indexing">3.4.3 The role of caching and indexing</a>
+<li><a href="#Deterministic-queue">3.4.4 Deterministic queue</a>
+<li><a href="#Push-versus-pull">3.4.5 Push versus pull</a>
 </li></ul>
 <li><a href="#Redundancy-and-load-balancing-in-the-Nova-hub">3.5 Redundancy and load balancing in the Nova hub</a>
 <ul>
