@@ -339,7 +339,7 @@ if (child_id == 0)
 
    Nova_SequentialScan(list, a, pp);
 
-   exit(0);
+   exit(0); // Should be _exit(0)? MB
    }
 else
    {
