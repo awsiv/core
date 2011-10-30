@@ -74,6 +74,18 @@ Defining_classes::
 Using_the_Copernicus_Knowledge_Map::
  "/docs/st-scale.html#Copernicus-Knowledge-Map"
   represents => { "manual section Using the Copernicus Knowledge Map" };
+System_Tuning_and_Hub_Optimization::
+ "/docs/st-scale.html#System-Tuning-and-Hub-Optimization"
+  represents => { "manual section System Tuning and Hub Optimization" };
+Tuning_the_linux_kernel_for_thousands_of_hosts::
+ "/docs/st-scale.html#Tuning-the-linux-kernel-for-thousands-of-hosts"
+  represents => { "manual subsection" };
+Tuning_the_MongoDB_for_thousands_of_hosts::
+ "/docs/st-scale.html#Tuning-the-MongoDB-for-thousands-of-hosts"
+  represents => { "manual subsection" };
+Tuning_the_MongoDB_for_thousands_of_hosts::
+ "/docs/st-scale.html#Tuning-the-MongoDB-for-thousands-of-hosts"
+  represents => { "code example" };
 Internal_and_external_scalability_of_the_software::
  "/docs/st-scale.html#Internal-and-external-scalability-of-the-software"
   represents => { "manual chapter" };
@@ -101,12 +113,6 @@ Update_storms::
 Optimizations_affecting_scalability::
  "/docs/st-scale.html#Optimizations-affecting-scalability"
   represents => { "manual section Optimizations affecting scalability" };
-Tuning_the_linux_kernel_for_thousands_of_hosts::
- "/docs/st-scale.html#Tuning-the-linux-kernel-for-thousands-of-hosts"
-  represents => { "manual subsection" };
-Tuning_the_MongoDB_for_thousands_of_hosts::
- "/docs/st-scale.html#Tuning-the-MongoDB-for-thousands-of-hosts"
-  represents => { "manual subsection" };
 The_role_of_caching_and_indexing::
  "/docs/st-scale.html#The-role-of-caching-and-indexing"
   represents => { "manual subsection" };
