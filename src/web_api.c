@@ -19,6 +19,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 
 /*****************************************************************************/
 
+static char *FormatTwoDimensionalArrayAsJson(char *buf, int bufsize, char *array[][2]);
 void Nova_EnterpriseModuleTrick()
 {
 #ifdef HAVE_LIBMONGOC
@@ -4263,29 +4264,52 @@ int Nova2PHP_get_variable(char *hostkey,char *scope,char *lval,char *returnval,i
 /*****************************************************************************/
 /* Reports                                                                   */
 /*****************************************************************************/
+
+char *CONSTELLATION_REPORTS[2][2] =
+{
+    {"Virtual bundles","Custom collections of promises and their compliance"},
+    {NULL,NULL}
+};
+
 void Nova2PHP_select_reports(char *buffer,int bufsize)
 
-{ char work[CF_MAXVARSIZE];
-  int i;
+{
+buffer[0] = '[';
 
-buffer[0] = '\0';
-strcat(buffer,"[");
+FormatTwoDimensionalArrayAsJson(buffer,bufsize,BASIC_REPORTS);
 
-for (i = 0; BASIC_REPORTS[i][0] != NULL; i++)
+#ifdef HAVE_CONSTELLATION
+char errBuf[CF_MAXVARSIZE] = {0};  // TODO: ignored for now (needs to be handled by GUI)
+if(Con2PHP_CheckLicenseAndFormatError(errBuf, sizeof(errBuf)))
    {
-   snprintf(work,CF_MAXVARSIZE,"[\"%s\",\"%s\"]",BASIC_REPORTS[i][0],BASIC_REPORTS[i][1]);
-   if (BASIC_REPORTS[i+1] != NULL)
-      {
-      strcat(work,",");
-      }
-   Join(buffer,work,bufsize);
+   Join(buffer, ",", bufsize);
+   FormatTwoDimensionalArrayAsJson(buffer,bufsize,CONSTELLATION_REPORTS);
    }
+#endif
 
-ReplaceTrailingChar(buffer, ',', '\0');
 EndJoin(buffer,"]",bufsize);
 }
 
 /*****************************************************************************/
+
+static char *FormatTwoDimensionalArrayAsJson(char *buf, int bufsize, char *array[][2])
+{
+ char work[CF_MAXVARSIZE];
+ int i;
+
+ for (i = 0; array[i][0] != NULL; i++)
+    {
+    snprintf(work, sizeof(work), "[\"%s\",\"%s\"],", array[i][0], array[i][1]);
+    Join(buf,work,bufsize);
+    }
+
+ ReplaceTrailingChar(buf, ',', '\0');
+ 
+ return buf;
+}
+
+/*****************************************************************************/
+
 
 int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
 
