@@ -6569,16 +6569,27 @@ int Nova2PHP_GetHubMaster(char *buffer,int bufsize)
 
 /*****************************************************************************/
 
-char *FormatErrorJson(char *out, int outSz, cfapi_errid_t errid)
+char *FormatErrorJsonAttribute(char *out, int outSz, cfapi_errid_t errid)
 {
  if(errid >= ERRID_MAX)
     {
-    CfOut(cf_error, "", "!! FormatErrorJson: errid out of bounds");
+    CfOut(cf_error, "", "!! FormatErrorJsonAttribute: errid out of bounds");
     errid = ERRID_MAX;
     }
  
  snprintf(out, outSz, "\"error\":{\"errid\":%d,\"msg\":\"%s\"}", errid, ERRID_DESCRIPTION[errid]);
 
+ return out;
+}
+
+/*****************************************************************************/
+
+char *FormatSingletonErrorJson(char *out, int outSz, cfapi_errid_t errid)
+{
+ out[0] = '{';
+ FormatErrorJsonAttribute(out+1, outSz-1, errid);
+ EndJoin(out, "}", outSz);
+ 
  return out;
 }
 
@@ -6591,7 +6602,7 @@ void EndJsonBuffer(char *buf, int bufsize, cfapi_errid_t errid)
  ReplaceTrailingChar(buf, ',', '\0');
  strlcat(buf, "], ", bufsize);
  
- FormatErrorJson(work, sizeof(work), errid);
+ FormatErrorJsonAttribute(work, sizeof(work), errid);
  EndJoin(buf, work, bufsize);
  EndJoin(buf, "}", bufsize);
 }

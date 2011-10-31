@@ -23,6 +23,8 @@ typedef enum cfapi_errid
 {
     ERRID_SUCCESS,
     ERRID_DBCONNECT,
+    ERRID_ARGUMENT_MISSING,
+    ERRID_ARGUMENT_WRONG,
     ERRID_BUFFER_FULL,
     ERRID_SUBSCRIPTION_NONEXISTING,
     ERRID_SUBSCRIPTION_EXISTS,
@@ -35,6 +37,8 @@ static char *ERRID_DESCRIPTION[ERRID_MAX+2] =
 {
     "Success",
     "Could not open connection to reporting database",
+    "A mandatory argument is missing",
+    "An argument is incorrect",
     "The JSON-buffer is too small to hold the report data",
     "The given subscription handle does not exist",
     "The given subscription handle already exists",
@@ -241,7 +245,8 @@ void FreeEnvironmentsList(struct EnvironmentsList *list);
 void FreeHostsList(struct HostsList *list);
 
 
-char *FormatErrorJson(char *out, int outSz, cfapi_errid_t errid);
+char *FormatErrorJsonAttribute(char *out, int outSz, cfapi_errid_t errid);
+char *FormatSingletonErrorJson(char *out, int outSz, cfapi_errid_t errid);
 void EndJsonBuffer(char *buf, int bufsize, cfapi_errid_t errid);
 
 #endif // CFENGINE_NOVA_WEB_API_H
