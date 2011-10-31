@@ -5536,7 +5536,8 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&colour,&c_len) == FAIL
 
 if(*colour!='R' && *colour!='G' && *colour!='B' && *colour!='Y' && *colour!='A')
    {
-   RETURN_STRING("{\"error\":{\"errid\":\"-1\",\"msg\":\"Unrecognized parameters supplied\"}}",1);
+   FormatSingletonErrorJson(buffer, sizeof(buffer), ERRID_ARGUMENT_WRONG);
+   RETURN_STRING(buffer,1);
    }
 
  if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
