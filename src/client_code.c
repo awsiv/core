@@ -10,6 +10,9 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#ifdef HAVE_LIBMONGOC 
+static void Nova_RecordNetwork(mongo_connection *dbconnp, time_t now, double datarate,struct cfagent_connection *conn);
+#endif 
 
 char *CF_CODEBOOK[CF_CODEBOOK_SIZE] =
    {
@@ -78,7 +81,9 @@ void *CF_CODEBOOK_HANDLER[CF_CODEBOOK_SIZE] =
 
 /*********************************************************************/
 
-int Nova_QueryForKnowledgeMap(struct cfagent_connection *conn,char *menu,time_t since)
+#ifdef HAVE_LIBMONGOC
+
+int Nova_QueryForKnowledgeMap(mongo_connection *dbconn, struct cfagent_connection *conn,char *menu,time_t since)
 
 { int tosend,cipherlen=0;
  char in[CF_BUFSIZE],out[CF_BUFSIZE],workbuf[CF_BUFSIZE],cfchangedstr[265];
@@ -179,7 +184,7 @@ while (more)
 
       // Promise to record data rate per host-digest and per IP
 
-      Nova_RecordNetwork(now,datarate,conn);
+      Nova_RecordNetwork(dbconn,now,datarate,conn);
       }
    else
       {
@@ -193,10 +198,13 @@ if (reports == NULL)
    return false;
    }
 
-UnpackReportBook(HashPrintSafe(CF_DEFAULT_DIGEST,conn->digest,keyHash),reports);
+UnpackReportBook(dbconn,HashPrintSafe(CF_DEFAULT_DIGEST,conn->digest,keyHash),reports);
 DeleteReportBook(reports);
 return true;
 }
+
+#endif  /* HAVE_LIBMONGOC */
+
 
 /*********************************************************************/
 
@@ -239,42 +247,26 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
 
 /*********************************************************************/
 
-void UnpackReportBook(char *id,struct Item **reports)
-
-{ int i;
-  mongo_connection dbconn = {0};
-  mongo_connection *dbconnp = &dbconn;
-
 #ifdef HAVE_LIBMONGOC
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-   {
-   CfOut(cf_error, "", "!! Could not open connection to report database for saving");
-   dbconnp = NULL;
-   }
+void UnpackReportBook(mongo_connection *dbconn, char *id,struct Item **reports)
 
-#endif
+{ int i;
 
 for (i = 0; CF_CODEBOOK[i] != NULL; i++)
    {
    if (reports[i] != NULL)
       {
       void (*fnptr)() = CF_CODEBOOK_HANDLER[i];
-      (*fnptr)(dbconnp,id,reports[i]);
+      (*fnptr)(dbconn,id,reports[i]);
       }
    }
 
-#ifdef HAVE_LIBMONGOC
+CFDB_SaveLastUpdate(dbconn,MONGO_DATABASE,cfr_keyhash,id);
 
-CFDB_SaveLastUpdate(&dbconn,MONGO_DATABASE,cfr_keyhash,id);
-
-if (dbconnp)
-   {
-   CFDB_Close(&dbconn);
-   }
+}
 
 #endif
-}
 
 /*********************************************************************/
 
@@ -293,12 +285,11 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
 
 /*********************************************************************/
 
-void Nova_RecordNetwork(time_t now, double datarate,struct cfagent_connection *conn)
-// NOTE: NOT Thread-safe (use of HashPrint())
-{
 #ifdef HAVE_LIBMONGOC
 
-  mongo_connection dbconn;
+static void Nova_RecordNetwork(mongo_connection *dbconnp, time_t now, double datarate,struct cfagent_connection *conn)
+// NOTE: NOT Thread-safe (use of HashPrint())
+{
   mongo_cursor *cursor;
   bson_buffer bb, *setObj;
   bson query,field,update;
@@ -309,12 +300,6 @@ void Nova_RecordNetwork(time_t now, double datarate,struct cfagent_connection *c
   newe.Q.q = 0;
   newe.Q.expect = 0;
   newe.Q.var = 0;
-
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-   {
-   CfOut(cf_error,"", "!! Could not open connection to database (update network measurements)");
-   return;
-   }
 
 // query
 
@@ -328,7 +313,7 @@ bson_buffer_init(&bb);
 bson_append_int(&bb,cfr_netmeasure,1);
 bson_from_buffer(&field,&bb);
 
-cursor = mongo_find(&dbconn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+cursor = mongo_find(dbconnp,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
 if (mongo_cursor_next(cursor))  // not more than one record
    {
@@ -369,13 +354,11 @@ bson_append_finish_object(setObj);
 
 bson_from_buffer(&update,&bb);
 
-mongo_update(&dbconn,MONGO_DATABASE,&query,&update,MONGO_UPDATE_UPSERT);
+mongo_update(dbconnp,MONGO_DATABASE,&query,&update,MONGO_UPDATE_UPSERT);
 
 bson_destroy(&query);
 bson_destroy(&field);
 bson_destroy(&update);
-
-CFDB_Close(&dbconn);
+}
 
 #endif  /* HAVE_LIBMONGOC */
-}

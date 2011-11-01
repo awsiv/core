@@ -2259,7 +2259,9 @@ int Nova_ExportReports(char *reportName)
 
 /*********************************************************************/
 
-int Nova_ImportHostReports(char *filePath)
+#ifdef HAVE_LIBMONGOC
+
+int Nova_ImportHostReports(mongo_connection *dbconnp, char *filePath)
 /*
  * Import from text file to Mongo database.
  * NOTE: Should only be called on Nova hub.
@@ -2331,26 +2333,16 @@ if (LICENSES == 0)
     return false;
     }
 
-#ifdef HAVE_LIBMONGOC
- mongo_connection dbconn;
+ CFDB_SaveHostID(dbconnp,MONGO_DATABASE,cfr_keyhash,keyHash,ipAddr,hostName);
+ CFDB_SaveHostID(dbconnp,MONGO_ARCHIVE,cfr_keyhash,keyHash,ipAddr,hostName);
 
- if(CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-     {
-     CFDB_SaveHostID(&dbconn,MONGO_DATABASE,cfr_keyhash,keyHash,ipAddr,hostName);
-     CFDB_SaveHostID(&dbconn,MONGO_ARCHIVE,cfr_keyhash,keyHash,ipAddr,hostName);
-     CFDB_Close(&dbconn);
-     }
- else
-    {
-    CfOut(cf_error, "", "!! Could not open connection to CFDB on save host ID");
-    }
-#endif
-     
- UnpackReportBook(keyHash,reports);
+ UnpackReportBook(dbconnp,keyHash,reports);
  DeleteReportBook(reports);
  
  return true;
 }
+
+#endif  /*  HAVE_LIBMONGOC */
 
 /*********************************************************************/
 

@@ -50,13 +50,17 @@ extern struct BodySyntax CFEX_CONTROLBODY[];
 void StartHub(int argc,char **argv);
 void Nova_CollectReports(struct Attributes a, struct Promise *pp);
 int ScheduleRun(void);
-static void Nova_CreateHostID(char *hostID, char *ipaddr);
 static void Nova_RemoveExcludedHosts(struct Item **list, struct Item *hosts_exclude);
 
 static void Nova_Scan(struct Item *masterlist, struct Attributes a, struct Promise *pp);
 static pid_t Nova_ScanList(struct Item *list,struct Attributes a,struct Promise *pp);
 static void Nova_SequentialScan(struct Item *masterlist, struct Attributes a, struct Promise *pp);
 static void Nova_ParallelizeScan(struct Item *masterlist,struct Attributes a,struct Promise *pp);
+
+#ifdef HAVE_LIBMONGOC
+static void Nova_CreateHostID(mongo_connection *dbconnp, char *hostID, char *ipaddr);
+static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer,struct Attributes a, struct Promise *pp);
+#endif
 
 /*****************************************************************************/
 
@@ -198,12 +202,25 @@ else
 
 static void Nova_SequentialScan(struct Item *masterlist, struct Attributes a, struct Promise *pp)
 {
-struct Item *ip;
+#ifdef HAVE_LIBMONGOC
+
+ mongo_connection dbconn;
+ struct Item *ip;
+
+ if(!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+   {
+   CfOut(cf_error, "", "!! Could not open connection to mongod to store reports");
+   return;
+   }
 
 for (ip = masterlist; ip != NULL; ip = ip->next)
    {
-   Nova_HailPeer(ip->name,ip->classes,a,pp);
+   Nova_HailPeer(&dbconn,ip->name,ip->classes,a,pp);
    }
+
+CFDB_Close(&dbconn);
+
+#endif  /*  HAVE_LIBMONGOC */
 }
 
 /********************************************************************/
@@ -349,7 +366,9 @@ else
 
 /********************************************************************/
 
-int Nova_HailPeer(char *hostID,char *peer,struct Attributes a,struct Promise *pp)
+#ifdef HAVE_LIBMONGOC
+
+static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer,struct Attributes a, struct Promise *pp)
 
 { struct cfagent_connection *conn;
   time_t average_time = 600, now = time(NULL);
@@ -378,7 +397,7 @@ CfOut(cf_inform,"","............................................................
 // record client host id (from lastseen) immideatley so we can track failed connection attempts
 // the timestamp is updated when we get response - see UnpackReportBook
 
-Nova_CreateHostID(hostID,peer);
+Nova_CreateHostID(dbconn,hostID,peer);
 
 /* Check trust interaction*/
 
@@ -407,7 +426,7 @@ if (long_time_no_see)
    {
    time_t last_week = time(0) - (time_t)SECONDS_PER_WEEK;
    CfOut(cf_verbose,""," -> Running FULL sensor sweep of %s",HashPrint(CF_DEFAULT_DIGEST,conn->digest));
-   Nova_QueryForKnowledgeMap(conn,"full",last_week);
+   Nova_QueryForKnowledgeMap(dbconn,conn,"full",last_week);
 
    if (LOGGING)
       {
@@ -421,7 +440,7 @@ if (long_time_no_see)
 else
    {
    CfOut(cf_verbose,""," -> Running differential sensor sweep of %s",HashPrint(CF_DEFAULT_DIGEST,conn->digest));
-   Nova_QueryForKnowledgeMap(conn,"delta",now - average_time);
+   Nova_QueryForKnowledgeMap(dbconn,conn,"delta",now - average_time);
 
    if (LOGGING)
       {
@@ -436,6 +455,8 @@ ServerDisconnection(conn);
 DeleteRlist(aa.copy.servers);
 return true;
 }
+
+#endif /* HAVE_LIBMONGOC */
 
 /*********************************************************************/
 
@@ -1181,27 +1202,18 @@ return NULL;
 
 /*****************************************************************************/
 
-static void Nova_CreateHostID(char *hostID, char *ipaddr)
+#ifdef HAVE_LIBMONGOC
+
+static void Nova_CreateHostID(mongo_connection *dbconn, char *hostID, char *ipaddr)
 
 /* Make sure an entry for the given keyhash,ip exists */
 
 {
-#ifdef HAVE_LIBMONGOC
-
-mongo_connection dbconn;
-
- if (CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CFDB_SaveHostID(&dbconn,MONGO_DATABASE,cfr_keyhash,hostID,ipaddr,NULL);
-    CFDB_SaveHostID(&dbconn,MONGO_ARCHIVE,cfr_keyhash,hostID,ipaddr,NULL);
-    CFDB_Close(&dbconn);
-    }
- else
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database on save host id");
-    }
-#endif  /* HAVE_LIBMONGOC */
+ CFDB_SaveHostID(dbconn,MONGO_DATABASE,cfr_keyhash,hostID,ipaddr,NULL);
+ CFDB_SaveHostID(dbconn,MONGO_ARCHIVE,cfr_keyhash,hostID,ipaddr,NULL);
 }
+
+#endif  /* HAVE_LIBMONGOC */
 
 /*****************************************************************************/
 

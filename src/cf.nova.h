@@ -310,14 +310,15 @@ bool BoostrapAllowed(void);
 #endif
 
 /* client_code.c */
+#ifdef HAVE_LIBMONGOC
+int Nova_QueryForKnowledgeMap(mongo_connection *dbconn, struct cfagent_connection *conn,char *menu,time_t since);
+void UnpackReportBook(mongo_connection *dbconn, char *id,struct Item **reports);
+#endif
 
-int Nova_QueryForKnowledgeMap(struct cfagent_connection *conn,char *menu,time_t since);
 int Nova_StoreIncomingReports(char *reply,struct Item **reports,int current_report);
 void NewReportBook(struct Item **reports);
 void DeleteReportBook(struct Item **reports);
 
-void UnpackReportBook(char *id,struct Item **reports);
-void Nova_RecordNetwork(time_t now, double datarate,struct cfagent_connection *conn);
 
 /* cmd_api.c */
 
@@ -632,7 +633,6 @@ void Nova_IncludeFile(char *name,char *buffer,int bufsize);
 /* hub.c */
 
 void Nova_StartHub(int argc,char **argv);
-int Nova_HailPeer(char *hostID,char *host,struct Attributes a,struct Promise *pp);
 struct Item *Nova_ScanClients(void);
 void Nova_HubLog(char *s);
 void Nova_CountMonitoredClasses(void);
@@ -907,8 +907,11 @@ void Nova_OpenCompilationReportFiles(const char *fname);
 void Nova_ShowPromises(struct Bundle *bundles, struct Body *bodies);
 void Nova_ShowPromise(const char *version, struct Promise *pp, int indent);
 int Nova_ExportReports(char *reportName);
-int Nova_ImportHostReports(char *filePath);
 void Nova_CommandAPI(char *lsdata,char *name,char *handle,char *hostkey,char *classregex);
+
+#ifdef HAVE_LIBMONGOC
+int Nova_ImportHostReports(mongo_connection *dbconnp, char *filePath);
+#endif
 
 /* scorecards.c */
 #ifdef HAVE_LIBMONGOC

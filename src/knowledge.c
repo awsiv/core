@@ -1467,6 +1467,13 @@ void Nova_GenerateTestData(int count)
     startFrom++;
     }
  DeleteRlist(testmachines);
+
+ mongo_connection dbconn;
+ if(!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_error, "", "!! Could not open connection to report database");
+    return;
+    }
    
  for(hostCount=0;hostCount<count;hostCount++)
     {
@@ -1479,7 +1486,7 @@ void Nova_GenerateTestData(int count)
     snprintf(PUBKEY_DIGEST, sizeof(PUBKEY_DIGEST), "%s", newkeyhash);
     snprintf(VIPADDRESS,CF_MAXVARSIZE-1,"%s",newaddresses);
     snprintf(VFQNAME,CF_MAXVARSIZE-1,"%s",newhostnames);
-    UnpackReportBook(newkeyhash,reports);
+    UnpackReportBook(&dbconn,newkeyhash,reports);
     
     if(CFDB_Open(&conn,"127.0.0.1",CFDB_PORT))
       {
@@ -1489,6 +1496,7 @@ void Nova_GenerateTestData(int count)
       }
 
     }
+ CFDB_Close(&dbconn);
  DeleteReportBook(reports);
 
  hostCount=0;
