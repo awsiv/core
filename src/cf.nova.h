@@ -44,8 +44,11 @@
 # define MONGO_KMBASE "cfknow"
 # define MONGO_DATABASE MONGO_BASE ".hosts"
 # define MONGO_HOSTS_COLLECTION "hosts"
+# define MONGO_MON_MG_COLLECTION "monitoring_mg"
 # define MONGO_DATABASE_MON_MG MONGO_BASE ".monitoring_mg"
+# define MONGO_MON_WK_COLLECTION "monitoring_wk"
 # define MONGO_DATABASE_MON_WK MONGO_BASE ".monitoring_wk"
+# define MONGO_MON_YR_COLLECTION "monitoring_yr"
 # define MONGO_DATABASE_MON_YR MONGO_BASE ".monitoring_yr"
 # define MONGO_PROMISES_EXP MONGO_BASE ".promises_exp"
 # define MONGO_PROMISES_UNEXP_COLLECTION "promises_unexp"
@@ -61,6 +64,7 @@
 # define MONGO_LOGS_NOTKEPT_COLL "logs_nk"
 # define MONGO_LOGS_NOTKEPT MONGO_BASE ".logs_nk"
 # define MONGO_NOTEBOOK MONGO_BASE ".notebook"
+#define MONGO_ARCHIVE_COLLECTION "archive"
 #define MONGO_ARCHIVE MONGO_BASE ".archive"
 #define CF_MONGO_SLAVE_OK 4
 # include <mongo.h>
@@ -505,8 +509,8 @@ void GetReportKeyMapping(int reportType, char *key, char *retBuf, int retBufSz);
 /* db_maintain.c */
 
 void CFDB_Maintenance(int purgeArchive);
+void CFDB_ReIndexAll(void);
 #ifdef HAVE_LIBMONGOC
-void CFDB_EnsureIndeces(mongo_connection *conn);
 void CFDB_PurgeDropReports(mongo_connection *conn);
 void CFDB_PurgeTimestampedReports(mongo_connection *conn);
 void CFDB_PurgeTimestampedLongtermReports(mongo_connection *conn);

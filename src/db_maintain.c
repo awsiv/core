@@ -12,7 +12,10 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-/*****************************************************************************/
+#ifdef HAVE_LIBMONGOC
+static void CFDB_EnsureIndices(mongo_connection *conn);
+static void CFDB_DropAllIndices(mongo_connection *conn);
+#endif 
 
 void CFDB_Maintenance(int purgeArchive)
 {
@@ -33,7 +36,7 @@ void CFDB_Maintenance(int purgeArchive)
      }
   else
      {
-     CFDB_EnsureIndeces(&dbconn);
+     CFDB_EnsureIndices(&dbconn);
      CFDB_PurgeTimestampedReports(&dbconn);
      CFDB_PurgePromiseLogs(&dbconn,CF_HUB_PURGESECS,time(NULL));
      }
@@ -44,10 +47,37 @@ void CFDB_Maintenance(int purgeArchive)
 
 /*****************************************************************************/
 
+void CFDB_ReIndexAll(void)
+/**
+ *  WARNING: May take a long time if there is much data.
+ *           Should only be called when indices have changed,
+ *           e.g. due to Nova upgrade.
+ */
+{
+#ifdef HAVE_LIBMONGOC
+
+ mongo_connection dbconn;
+ 
+ if(!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_error, "", "!! Could not open connection to drop indices");
+    return;
+    }
+ 
+ CFDB_DropAllIndices(&dbconn);
+ CFDB_EnsureIndices(&dbconn);
+
+ CFDB_Close(&dbconn);
+ 
+#endif  /* HAVE_LIBMONGOC */
+}
+
+/*****************************************************************************/
+
 #ifdef HAVE_LIBMONGOC
 
 
-void CFDB_EnsureIndeces(mongo_connection *conn)
+static void CFDB_EnsureIndices(mongo_connection *conn)
 /**
  *  Makes sure certain keys have an index to optimize querying and updating.
  **/
@@ -115,6 +145,45 @@ void CFDB_EnsureIndeces(mongo_connection *conn)
 
   bson_destroy(&b);
 }
+
+/*****************************************************************************/
+
+static void CFDB_DropAllIndices(mongo_connection *conn)
+{
+ char *indexedCollections[] = { MONGO_HOSTS_COLLECTION,
+                                MONGO_LOGS_REPAIRED_COLL,
+                                MONGO_LOGS_NOTKEPT_COLL,
+                                MONGO_MON_MG_COLLECTION,
+                                MONGO_MON_WK_COLLECTION,
+                                MONGO_MON_YR_COLLECTION,
+                                MONGO_ARCHIVE_COLLECTION,
+                                NULL };
+ bson_buffer bb;
+ int i;
+
+ for(i = 0; indexedCollections[i] != NULL; i++)
+    {
+    char *collection = indexedCollections[i];
+    
+    bson_buffer_init(&bb);
+    bson_append_string(&bb, "dropIndexes", collection);
+    bson_append_string(&bb, "index", "*");
+ 
+    bson dropAllCommand;
+    bson_from_buffer(&dropAllCommand, &bb);
+
+    bson result;
+    if(!mongo_run_command(conn, MONGO_BASE, &dropAllCommand, &result))
+       {
+       CfOut(cf_error, "", "mongo_run_command: Could not drop index on collection %s", collection);
+       }
+    
+    bson_destroy(&dropAllCommand);
+    bson_destroy(&result);
+    }
+ 
+}
+
 
 /*****************************************************************************/
 

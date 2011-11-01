@@ -739,7 +739,7 @@ const char *ID = "The hub is a scheduler and aggregator for the CFDB knowledge\n
                  "that have registered by previous connection.";
 
  
-const struct option OPTIONS[15] =
+const struct option OPTIONS[16] =
       {
       { "help",no_argument,0,'h' },
       { "debug",optional_argument,0,'d' },
@@ -752,10 +752,11 @@ const struct option OPTIONS[15] =
       { "continuous",no_argument,0,'c' },
       { "cache",no_argument,0,'a' },
       { "logging",no_argument,0,'l' },
+      { "index",no_argument,0,'i' },
       { NULL,0,0,'\0' }
       };
 
-const char *HINTS[15] =
+const char *HINTS[16] =
       {
       "Print the help message",
       "Set debugging level 0,1,2,3",
@@ -768,6 +769,7 @@ const char *HINTS[15] =
       "Continuous update mode of operation",
       "Rebuild database caches used for efficient query handling (e.g. compliance graphs)",
       "Enable logging of updates to the promise log",
+      "Reindex all collections in the CFEngine report database",
       NULL
       };
 
@@ -809,7 +811,7 @@ void CheckOpts(int argc,char **argv)
   int optindex = 0;
   int c;
 
-while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMa",OPTIONS,&optindex)) != EOF)
+while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMai",OPTIONS,&optindex)) != EOF)
   {
   switch ((char) c)
       {
@@ -875,6 +877,11 @@ while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMa",OPTIONS,&optindex)) != EOF)
           
       case 'F':
           NO_FORK = true;
+          break;
+
+      case 'i':
+          CFDB_ReIndexAll();
+          exit(0);
           break;
 
       case 'V': PrintVersionBanner("cf-hub");
