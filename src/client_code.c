@@ -83,7 +83,7 @@ void *CF_CODEBOOK_HANDLER[CF_CODEBOOK_SIZE] =
 
 #ifdef HAVE_LIBMONGOC
 
-int Nova_QueryForKnowledgeMap(mongo_connection *dbconn, struct cfagent_connection *conn,char *menu,time_t since)
+int Nova_QueryClientForReports(mongo_connection *dbconn, struct cfagent_connection *conn,char *menu,time_t since)
 
 { int tosend,cipherlen=0;
  char in[CF_BUFSIZE],out[CF_BUFSIZE],workbuf[CF_BUFSIZE],cfchangedstr[265];

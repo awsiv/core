@@ -426,7 +426,7 @@ if (long_time_no_see)
    {
    time_t last_week = time(0) - (time_t)SECONDS_PER_WEEK;
    CfOut(cf_verbose,""," -> Running FULL sensor sweep of %s",HashPrint(CF_DEFAULT_DIGEST,conn->digest));
-   Nova_QueryForKnowledgeMap(dbconn,conn,"full",last_week);
+   Nova_QueryClientForReports(dbconn,conn,"full",last_week);
 
    if (LOGGING)
       {
@@ -440,7 +440,7 @@ if (long_time_no_see)
 else
    {
    CfOut(cf_verbose,""," -> Running differential sensor sweep of %s",HashPrint(CF_DEFAULT_DIGEST,conn->digest));
-   Nova_QueryForKnowledgeMap(dbconn,conn,"delta",now - average_time);
+   Nova_QueryClientForReports(dbconn,conn,"delta",now - average_time);
 
    if (LOGGING)
       {

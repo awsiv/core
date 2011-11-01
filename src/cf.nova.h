@@ -311,7 +311,7 @@ bool BoostrapAllowed(void);
 
 /* client_code.c */
 #ifdef HAVE_LIBMONGOC
-int Nova_QueryForKnowledgeMap(mongo_connection *dbconn, struct cfagent_connection *conn,char *menu,time_t since);
+int Nova_QueryClientForReports(mongo_connection *dbconn, struct cfagent_connection *conn,char *menu,time_t since);
 void UnpackReportBook(mongo_connection *dbconn, char *id,struct Item **reports);
 #endif
 
