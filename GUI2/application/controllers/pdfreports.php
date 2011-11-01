@@ -199,6 +199,14 @@ class pdfreports extends Cf_Controller {
                 $pdf->PDFSetDescription($desc);
                 $this->rpt_filediffs($params['hostkey'], $params['search'], $params['diff'], $params['cal'], $pdf, $params['class_regex']);
                 break;
+            
+            case "Virtual bundles":
+                $desc = cfpr_report_description('Virtual bundles');
+                $pdf->PDFSetDescription($desc);
+                $name = isset($params['name']) ? $params['name'] : null;
+                $allUser = isset($params['all_user']) ? $params['all_user'] : null;
+                $this->rpt_virtualBundles($name,$allUser,$pdf);
+                break;
         }
 
         $pdf_action = $params['pdfaction'];
@@ -349,8 +357,7 @@ class pdfreports extends Cf_Controller {
         $header = array('Host', 'Promise Handle', 'Report', 'Time');
 
         $ret = cfpr_report_notkept_pdf($hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex);
-        $data1 = $pdf->ParseData($ret);
-
+        $data1 = $pdf->ParseData($ret);        
         $pdf->ReportTitle();
         $pdf->ReportDescription();
         $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
@@ -583,6 +590,28 @@ function rpt_promise_repaired_summary($hostkey, $search, &$pdf, $hours_deltafrom
         $pdf->SetFont('Arial', '', 9);
         $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
     }
+    
+    function rpt_virtualBundles($name,$allUser,&$pdf) {
+        
+        $this->load->model('virtual_bundle_model');
+        
+        $cols = 4;
+        $col_len = array(19, 19, 43, 19);
+        $header = array('Virtual bundle', 'Promises', 'Hosts', 'Compliance');
+
+        $ret = $this->virtual_bundle_model->getVirtualBundleData($name,$allUser);
+        $dataArray  = json_decode($ret,true);
+        $data1 = $dataArray['data'];
+        $pdf->ReportTitle();
+        $pdf->ReportDescription();
+        $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
+        $pdf->Ln(8);
+        $pdf->SetFont('Arial', '', 9);
+        $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
+        
+    }
+    
+    
 
     function rpt_variables($hostkey, $search, $scope, $lval, $rval, $type, &$pdf, $class_regex) {
         $cols = 4;

@@ -772,7 +772,8 @@ class Search extends Cf_Controller {
                     
 
                     $pdfurlParams = array('type' => $report_type,
-                        'search' => $name                        
+                        'name' => $name,
+                        'all_user' => $username
                     );
 
                     $data['report_result'] = $this->virtual_bundle_model->getVirtualBundleData($name,$username,$rows, $page_number);
