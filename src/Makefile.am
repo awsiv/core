@@ -21,6 +21,7 @@ libcfnova_la_LDFLAGS = -no-undefined
 # Separate out a library
 
 libcfnova_la_SOURCES =						\
+	benchmark.c						\
 	cfnova.c						\
 	conversion.c						\
 	logging.c						\
@@ -108,7 +109,7 @@ libcfhub_la_SOURCES =	                                        \
 #
 
 noinst_HEADERS =							\
-        win_disphelper.h cf.nova.h cf.nova.web_api.h cf.nova.cmd_api.h bson_lib.h
+        win_disphelper.h cf.nova.h cf.nova.web_api.h cf.nova.cmd_api.h bson_lib.h benchmark.h
 
 #
 # Some basic clean ups
