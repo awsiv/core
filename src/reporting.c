@@ -2267,14 +2267,8 @@ int Nova_ImportHostReports(mongo_connection *dbconnp, char *filePath)
  * NOTE: Should only be called on Nova hub.
  */
 {
- char keyHash[CF_MAXVARSIZE] = {0}, ipAddr[CF_MAXVARSIZE] = {0}, hostName[CF_MAXVARSIZE] = {0};
- char buf[CF_BUFSIZE];
- char headerText[CF_SMALLBUF], reportType[CF_SMALLBUF];
- struct Item *reports[CF_CODEBOOK_SIZE] = {0};
- char validate[5];
- time_t delta1, genTime;
- long length;
- int currReport = -1;
+ mongo_connection dbconn;
+ char header[CF_MAXVARSIZE];
  FILE *fin;
  
 if (LICENSES == 0)
@@ -2283,19 +2277,45 @@ if (LICENSES == 0)
    return false;
    }
 
- if ((fin = fopen(filePath,"r")) == NULL)
+if(!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
     {
-    CfOut(cf_error,"fopen","!! Cannot open import file %s", filePath);
     return false;
     }
+    
+if ((fin = fopen(filePath,"r")) == NULL)
+   {
+   CfOut(cf_error,"fopen","!! Cannot open import file %s", filePath);
+   CFDB_Close(&dbconn);
+   return false;
+   }
 
- CfReadLine(buf, sizeof(buf), fin);
+ CfReadLine(header, sizeof(header), fin);
 
+ Nova_ImportHostReportsFromStream(&dbconn, header, fin);
+
+ fclose(fin);
+ CFDB_Close(&dbconn);
+ 
+ return true;
+}
+
+/*********************************************************************/
+
+int Nova_ImportHostReportsFromStream(mongo_connection *dbconn, char *header, FILE *fin)
+{
+ char keyHash[CF_MAXVARSIZE] = {0}, ipAddr[CF_MAXVARSIZE] = {0}, hostName[CF_MAXVARSIZE] = {0};
+ char buf[CF_BUFSIZE];
+ char headerText[CF_SMALLBUF], reportType[CF_SMALLBUF];
+ struct Item *reports[CF_CODEBOOK_SIZE] = {0};
+ char validate[5];
+ time_t delta1, genTime;
+ long length;
+ int currReport = -1;
+ 
  // OK to leave hostname blank - reverse lookup later
- if(sscanf(buf,"%32s %32s %255s %255s %255s",headerText, reportType, keyHash, ipAddr, hostName) < 4)
+ if(sscanf(header,"%32s %32s %255s %255s %255s",headerText, reportType, keyHash, ipAddr, hostName) < 4)
     {
     CfOut(cf_error, "", "!! Error parsing first line of report header");
-    fclose(fin);
     return false;
     }
 
@@ -2303,14 +2323,12 @@ if (LICENSES == 0)
  if(sscanf(buf,"%4s %ld %ld %ld",validate,&delta1,&genTime,&length) != 4)
     {
     CfOut(cf_error, "", "!! Error parsing second line of report header");
-    fclose(fin);
     return false;    
     }
  
  if (strcmp(validate,"CFR:") != 0)
     {
-    CfOut(cf_error,""," !! Invalid report format in %s - second line is %s not CFR:", filePath, validate);
-    fclose(fin);
+    CfOut(cf_error,""," !! Invalid report format in - second line is %s not CFR:", validate);
     return false;
     }
 
@@ -2326,17 +2344,15 @@ if (LICENSES == 0)
     currReport = Nova_StoreIncomingReports(buf,reports,currReport);
     }
 
- fclose(fin);
-
  if (reports == NULL)
     {
     return false;
     }
 
- CFDB_SaveHostID(dbconnp,MONGO_DATABASE,cfr_keyhash,keyHash,ipAddr,hostName);
- CFDB_SaveHostID(dbconnp,MONGO_ARCHIVE,cfr_keyhash,keyHash,ipAddr,hostName);
-
- UnpackReportBook(dbconnp,keyHash,reports);
+ CFDB_SaveHostID(dbconn,MONGO_DATABASE,cfr_keyhash,keyHash,ipAddr,hostName);
+ CFDB_SaveHostID(dbconn,MONGO_ARCHIVE,cfr_keyhash,keyHash,ipAddr,hostName);
+     
+ UnpackReportBook(dbconn,keyHash,reports);
  DeleteReportBook(reports);
  
  return true;

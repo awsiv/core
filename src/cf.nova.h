@@ -911,6 +911,7 @@ void Nova_CommandAPI(char *lsdata,char *name,char *handle,char *hostkey,char *cl
 
 #ifdef HAVE_LIBMONGOC
 int Nova_ImportHostReports(mongo_connection *dbconnp, char *filePath);
+int Nova_ImportHostReportsFromStream(mongo_connection *dbconn, char *header, FILE *fin);
 #endif
 
 /* scorecards.c */
