@@ -36,7 +36,7 @@ class Virtualbundle extends Cf_controller{
             'title' => $this->lang->line('mission_portal_title'),
             'breadcrumbs' => $this->breadcrumblist->display(),
         );
-        $this->template->load('template', 'virtualbundles/managebundles', $data);
+        $this->template->load('template', 'virtualbundle/managebundles', $data);
         
     }
     
