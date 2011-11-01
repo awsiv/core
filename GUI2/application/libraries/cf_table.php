@@ -7,6 +7,26 @@ class cf_table {
 
     var $dateTimeFields = array();
     var $ignoreDateColor = array();
+     var $template = array(
+            'table_open' => '<table border="0" style="width:100%;" cellpadding="0" cellspacing="0">',
+            'thead_open' => '<thead>',
+            'thead_close' => '</thead>',
+            'heading_row_start' => '<tr>',
+            'heading_row_end' => '</tr>',
+            'heading_cell_start' => '<th>',
+            'heading_cell_end' => '</th>',
+            'tbody_open' => '<tbody>',
+            'tbody_close' => '</tbody>',
+            'row_start' => '<tr>',
+            'row_end' => '</tr>',
+            'cell_start' => '<td>',
+            'cell_end' => '</td>',
+            'row_alt_start' => '<tr>',
+            'row_alt_end' => '</tr>',
+            'cell_alt_start' => '<td>',
+            'cell_alt_end' => '</td>',
+            'table_close' => '</table>'
+        );
 
     public function __construct() {
         $this->CI = &get_instance();
@@ -28,28 +48,7 @@ class cf_table {
         $return = '';
         $this->CI->table->clear();
 
-        $template = array(
-            'table_open' => '<table border="0" style="width:100%;" cellpadding="0" cellspacing="0">',
-            'thead_open' => '<thead>',
-            'thead_close' => '</thead>',
-            'heading_row_start' => '<tr>',
-            'heading_row_end' => '</tr>',
-            'heading_cell_start' => '<th>',
-            'heading_cell_end' => '</th>',
-            'tbody_open' => '<tbody>',
-            'tbody_close' => '</tbody>',
-            'row_start' => '<tr>',
-            'row_end' => '</tr>',
-            'cell_start' => '<td>',
-            'cell_end' => '</td>',
-            'row_alt_start' => '<tr>',
-            'row_alt_end' => '</tr>',
-            'cell_alt_start' => '<td>',
-            'cell_alt_end' => '</td>',
-            'table_close' => '</table>'
-        );
-
-        $this->CI->table->set_template($template);
+        $this->CI->table->set_template($this->template);
 
 
         if (is_array($result)) {
@@ -70,9 +69,13 @@ class cf_table {
                                 if (strtolower($key) == 'promise handle') {
                                     $tempValue = sprintf('<a target="_self" href="%s/promise/details/%s">%s</a>', site_url(), urlencode($tempValue), $tempValue);
                                 }
-                                if (strtolower($key) == 'bundle') {
+                                else if (strtolower($key) == 'bundle') {
                                     $tempValue = sprintf('<a target="_self" href="%s/bundle/details/bundle/%s">%s</a>', site_url(), urlencode($tempValue), $tempValue);
                                 }
+                                 else if (strtolower($key) == 'virtual bundle') {
+                                    $tempValue = sprintf('<a target="_self" href="%s/virtualbundle/details/%s">%s</a>', site_url(), trim(urlencode($tempValue)), $tempValue);
+                                }
+                                
 
                                 array_push($temp, $tempValue);
                             }
@@ -112,6 +115,9 @@ class cf_table {
         return $return;
     }
 
+    
+    
+    
     function generate_nested_table($result, $title='') {
         foreach ((array) $result['data'] as $row) {
             //$this->table->add_row($row);

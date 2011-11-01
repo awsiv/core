@@ -7,8 +7,6 @@ class Search extends Cf_Controller {
         $this->load->library(array('table', 'cf_table', 'pagination'));
         $this->load->helper('form');
         $this->carabiner->js('jquery.tablesorter.min.js');
-        //$this->carabiner->js('picnet.jquery.tablefilter.js');
-        //$this->carabiner->js('jquery.tablesorter.pager.js');
         $this->carabiner->js('widgets/hostfinder.js');
         $this->carabiner->js('widgets/reportfinder.js');
     }
@@ -38,18 +36,17 @@ class Search extends Cf_Controller {
             array('widgets/classfinder.js')
         );
         $this->carabiner->js($requiredjs);
+        $virtualBundleModel = $this->load->model('virtual_bundle_model');
 
 
         $fromEmail = trim($this->settings_model->app_settings_get_item('appemail'));
-        $fromEmail = ($fromEmail) ? $fromEmail : '';        
+        $fromEmail = ($fromEmail) ? $fromEmail : '';
 
         $getparams = $this->uri->uri_to_assoc(3);
         $search = isset($getparams['search']) ? $getparams['search'] : $this->input->post('search');
         $hostkey = "";
         $many = "";
-        // $hostkey = isset($getparams['hostkey']) ? $getparams['hostkey'] : $this->input->post('hostkey'); //shoud be read from param
         $report_type = isset($getparams['report']) ? urldecode($getparams['report']) : urldecode($this->input->post('report'));
-        //$many = isset($getparams['manyhosts']) ? $getparams['manyhosts'] : $this->input->post('manyhosts'); //shoud be read from param
 
 
         $host = isset($getparams['host']) ? urldecode($getparams['host']) : $this->input->post('host');
@@ -85,7 +82,6 @@ class Search extends Cf_Controller {
         if (!is_ajax()) {
 
             if (count($getparams) > 0) {
-                //$params=$this->uri->assoc_to_uri($getparams);
                 foreach ($getparams as $key => $value) {
                     if (!empty($value)) {
 
@@ -102,10 +98,8 @@ class Search extends Cf_Controller {
 
                 foreach ($_POST as $key => $value) {
                     if (!empty($value)) {
-                        //$params.=$key.'/';
                         $params.=$key . '/' . urlencode($value) . '/';
                         $breadcrumbs_url .= $key . '/' . urlencode($value) . '/';
-                        /* $key == "host" || $key == "report" old condition */
                         if ($key <> "page" && $key <> "rows" && $key <> "host") {
                             $hostfinderparams.=$key . '/' . urlencode($value) . '/';
                         }
@@ -125,7 +119,7 @@ class Search extends Cf_Controller {
 
         $data = array(
             'report_type' => $report_type,
-            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_report'),
+            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
             'report_title' => $report_type,
             'breadcrumbs' => $this->breadcrumblist->display(),
             'current' => $page_number,
@@ -769,6 +763,29 @@ class Search extends Cf_Controller {
                     is_ajax() ? $this->load->view('searchpages/variables', $data) : $this->template->load('template', 'searchpages/variables', $data);
                 }
                 break;
+
+            case "Virtual bundles":
+                $allUsers = isset($getparams['all_user']) ? urldecode($getparams['all_user']) : urldecode($this->input->post('all_user'));
+                if ($many) {
+                    $username = (trim($allUsers) == '') ? $this->session->userdata('username') : null;
+                    $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
+                    
+
+                    $pdfurlParams = array('type' => $report_type,
+                        'search' => $name                        
+                    );
+
+                    $data['report_result'] = $this->virtual_bundle_model->getVirtualBundleData($name,$username,$rows, $page_number);
+                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $this->template->load('template', 'searchpages/businessresult', $data);
+                } else {
+                    // not nothing else is satisfied display extra form for more search paramaters
+                    is_ajax() ? $this->load->view('searchpages/virtualbundles', $data) : $this->template->load('template', 'searchpages/virtualbundles', $data);
+                }
+                break;
+
+
             default:
                 $this->template->load('template', 'searchpages/nodata', $data);
         }
