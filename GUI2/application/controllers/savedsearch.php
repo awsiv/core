@@ -21,12 +21,15 @@ class savedsearch extends Cf_Controller {
         $report_title = $this->input->post('report_title', true);
         $label = $this->input->post('search_name', true);
         $searchUrl = $this->input->post('search_url', false);
+        $searchParams=$this->input->post('search_params',false);
         
         $data = array('username' => $username,
             'url' => $searchUrl,
             'reportType' => $report_title,
             'label' => $label,
-            'date' => time());
+            'date' => time(),
+            'params'=>$searchParams
+            );
         $obj = $this->search_save_model->insert($data);
         if ($obj) {
             echo 'Search successfully saved.';

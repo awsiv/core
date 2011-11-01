@@ -33,7 +33,6 @@
                 <li><?php echo anchor('widget/allreports', $this->lang->line('reports'), array('class' => 'report showqtip', 'id' => 'findreport', 'title' => tooltip('tooltip_reports_finder'))); ?></li>
                 <li><?php echo anchor('summaryreports/search', $this->lang->line('summary_reports'), array('class' => 'summary_report showqtip', 'id' => 'summaryreport', 'title' => tooltip('tooltip_summary_finder'))); ?></li>
                 <li><?php echo anchor('widget/cdpreports', $this->lang->line('cdp_reports'), array('class' => 'cdpreport showqtip', 'id' => 'findcdpreport', 'title' => tooltip('tooltip_reports_finder'))); ?></li>
-
                 <p class="clearleft"></p>
             </ul>
 
@@ -60,7 +59,9 @@
         $('#summaryreport').ajaxyDialog({'title':'Summary report',dontOverrideTitle:true,
             'width':'50%'});
         $('#findcdpreport').cdpreportfinder(genericOption);
-        
+        //for constellation
+        $('#findvbundle').ajaxyDialog({'title':'Virtual bundle',dontOverrideTitle:true,
+            'width':'50%'});
         //fix for manintaining the layout of the page when window is resized.
         $('#compliance_summary').css('width','50px');
         

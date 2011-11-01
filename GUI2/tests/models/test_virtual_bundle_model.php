@@ -45,11 +45,19 @@ class test_virtual_bundle_model extends CodeIgniterUnitTestCase {
        // $this->assertTrue(is_array($data));
     }
     
+    public function test_createVirtualBundle(){
+        $inputs=array(
+                  "username"=>"sudhir",
+                  "name"=>'test',
+                  "hostclass"=>'test.*',
+                  "promises"=>'hello,hehd,lasdl',
+                  "description"=>"this is test comment"
+                  );
+        $data = $this->_ci->virtual_bundle_model->createVirtualBundle($inputs);
+        $this->assertTrue($data);
+        $this->dump($data);
+    }
    
-    
-    
-    
-
 }
 
 /* End of file test_123_bug.php */

@@ -8,7 +8,7 @@ class CF_Search {
     var $label;
     var $date;
     var $id;
-
+    var $params;
     function __construct($params=array()) {
         $this->id = isset($params['_id']) ? $params['_id']->__toString() : null;
         $this->username = isset($params['username']) ? $params['username'] : null;
@@ -16,6 +16,7 @@ class CF_Search {
         $this->reportType = isset($params['reportType']) ? $params['reportType'] : null;
         $this->label = isset($params['label']) ? $params['label'] : null;
         $this->date = isset($params['date']) ? $params['date'] : null;
+        $this->params=isset($params['params']) ? $params['params'] : null;
     }
 
     function getUsername() {
@@ -46,10 +47,8 @@ class CF_Search {
      * return @array with key as parameter and value as the searched value, if nothing returns empty array 
      */
     function getParameters() {
-        
-        if (!$this->getUrl()) return array();
-        
-        $params = urldecode($this->getUrl());
+       
+        $params = $this->params;
         return $params;
         
     }

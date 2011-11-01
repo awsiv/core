@@ -128,6 +128,9 @@ $lang['promises'] = "Promises";
 $lang['reports'] = "Reports";
 $lang['summary_reports'] = "Summary reports";
 $lang['cdp_reports'] = "CDP reports";
+ 
+
+
 
 $lang['not_compliant'] = "hosts ( > 20% not compliant)";
 $lang['now_compliant'] = "hosts ( > 20% repaired, now compliant)";

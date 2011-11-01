@@ -1,3 +1,4 @@
+<div class="tables tablesfixed">
 <?php
 $result = json_decode($report_result, true);
 if (is_array($result) && key_exists('truncated', $result['meta'])) {
@@ -15,3 +16,4 @@ if (count($result['data']) > 0) {
     echo"<div class='info'>" . $this->lang->line("no_data") . "</div>";
 }
 ?> 
+</div>

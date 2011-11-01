@@ -776,7 +776,9 @@ class Search extends Cf_Controller {
                         'all_user' => $username
                     );
 
+                    
                     $data['report_result'] = $this->virtual_bundle_model->getVirtualBundleData($name,$username,$rows, $page_number);
+                    
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $this->template->load('template', 'searchpages/businessresult', $data);

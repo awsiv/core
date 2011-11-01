@@ -1148,6 +1148,10 @@ div.ui-dialog .ui-dialog-buttonpane{
     display:inline-block;
     margin: 0;
     padding: 6px;
+    width:75%;
+}
+#addpromises-policyList li p{
+    width:55%;
 }
 
 #classList a.name
@@ -1161,7 +1165,7 @@ div.ui-dialog .ui-dialog-buttonpane{
     margin: 0 10px; 
 }
 
-#classList .btn
+#policyList .btn,#classList .btn
 {
     background: none repeat scroll 0 0 #E7EED9;
     border-radius: 10px 10px 10px 10px;
@@ -1172,12 +1176,12 @@ div.ui-dialog .ui-dialog-buttonpane{
     color:#222222;
 }
 
-#classList li:hover .btn
+#policyList li:hover .btn,#classList li:hover .btn
 {
   border:  1px solid #3D453A
 }
 
-#classList  .btn:hover
+#classList  .btn:hover,#policyList .btn:hover
 {
   color:#ff9900;
 }
@@ -1403,6 +1407,12 @@ div.ui-dialog .ui-dialog-buttonpane{
 
 #policyList .bundle{
     background: none repeat scroll 0 0 #F7BB3F;
+}
+
+#policyList .vblistadd{
+    float: right;
+    margin-right: 10px;
+    margin-top: 14px;
 }
 
 /*reportdialog*/
@@ -2465,6 +2475,8 @@ background-image: url(../images/error.png);
 {
     margin:4px 0;
 }
+
+
 .form select
 {
     border:solid 1px #CECECE;
@@ -2599,3 +2611,39 @@ ul.admin_menu li.current a{
 div#userdirs p button{
    margin-left:4px;
 }
+
+/* for virtual bundle creation page */
+ul#promisesContainer{
+    margin-left:20%;
+    width:350px;
+}
+
+ul#promisesContainer li
+{
+    padding:3px;
+}
+
+ul#promisesContainer li:hover
+{
+}
+ul#promisesContainer .removePromise
+{
+    background: #E7EED9;
+    color:#222222;
+    padding:2px 4px;
+}
+
+ul#promisesContainer .promisetext{
+    padding:2px 10px 2px 3px;
+}
+ul#promisesContainer .promisetext:hover{
+    background: #E7EED9;
+}
+
+ul#promisesContainer .removePromise:hover{
+    border:solid 1px #222222;
+    padding:1px 3px;
+    cursor:pointer
+}
+
+

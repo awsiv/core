@@ -46,7 +46,9 @@ $lang['tooltip_member_attr']="The attribute used to connect a user with group e.
 $lang['tooltip_ad_domain_name']="The domain named used by the active directory e.g test.cfengine.com";
 
 $lang['tooltip_fall_back']="Members of the selected group will be able to log in if the directory server is down";
-$lang['tooltip_admin_grp']="Members of the selected group will be administrators of the Mission Portal"
+$lang['tooltip_admin_grp']="Members of the selected group will be administrators of the Mission Portal";
+
+
 
 
 

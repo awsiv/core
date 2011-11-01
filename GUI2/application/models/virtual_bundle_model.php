@@ -70,7 +70,28 @@ class virtual_bundle_model extends Cf_Model {
             throw $e;
         }
     }
-
+    
+    /**
+     * function to create a virtual bundle
+     * @return  array
+     */
+  
+    function createVirtualBundle($inputs){
+        try{
+            $result=cfcon_local_subscribe_virtualbundle($inputs['username'], $inputs['name'], $inputs['description'], $inputs['promises'], $inputs['hostclass']);
+            if($result){
+                return true;
+            }else{
+                $this->setError('Cannot create virtual bundle'); 
+                return false;
+            }   
+        }
+        catch(Exception $e){
+            log_message('error',$e->getMessage());
+            throw $e;
+        }
+      
+    }
 }
 
 ?>

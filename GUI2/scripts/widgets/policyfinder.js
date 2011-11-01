@@ -7,7 +7,8 @@
             width:700,
             height:600,
             defaultbehaviour:true,
-            onlyShowHandle:false
+            onlyShowHandle:false,
+            showAddButton:false
         },
         elementtext:"",
         _init: function(){
@@ -41,12 +42,14 @@
             var self =this;
             self.ajaxloader=$('<div class="loading"></div>');
             self.dialogcontent = self.dialogContainer();
-            self.dialogcontent.dialog({
-                height: self.options.height,
-                width: self.options.width,
-                autoOpen: false,
-                modal: true
-            });
+             self.dialogcontent.dialog($.extend({}, 
+                $.ui.dialog.prototype.options, 
+                self.options, 
+                {
+                    autoOpen:false, 
+                    modal:true
+                }
+                ));
             self.dialogcontent.parent().addClass('customdlg').removeClass('ui-widget-content');
             self.titlebar=self.dialogcontent.siblings('div.ui-dialog-titlebar');
             //self.menuhandler=$('<span id="handle" class="operation">Options</span>');
@@ -132,9 +135,8 @@
                     var li = '';
                     $.each(data, function(i, val) {
                         li += '<li>';
-                        
-                           li += '<span class="type">'+val[3]+'</span>'; 
-                        
+                          li += '<span class="type">'+val[3]+'</span>'; 
+                          li +='<p>';
                         if (!self.options.onlyShowHandle) {                
                         
                             li += '<a href="'+ self.options.baseUrl+ '/promise/details/' + escape(val[0])+'" title="'+
@@ -150,13 +152,16 @@
                             'bundle'+'"><span class="bundle">'+val[2]+'</span></a>';
                         }
                         li +='</p>';
-                        li += "<br style='clear:both;'>";
+                        if(self.options.showAddButton){
+                        li +='<span class="vblistadd btn" style="display:inline-block">add to list</span>'    
+                        }
                         li +='</li>';
                             
                                
                     });
                     $('#'+self.containerID()).append(li);
                     $('#'+self.containerID()).delegate('a','click',$.proxy(self.handleSelected,self));
+                    $('#'+self.containerID()).delegate('.vblistadd','click',$.proxy(self.addSelected,self));
                     self.element.text(self. elementtext);
                 },
                 error:function(jqXHR, textStatus, errorThrown){
@@ -174,13 +179,26 @@
             if(!self.options.defaultbehaviour)
             {
                 event.preventDefault();
-                self._trigger("handleClicked",event,{
-                    selectedHandleName:sender.html()
-                })   
+                if(self.options.showAddButton){
+                     self._trigger("handleClicked",event,{
+                        selectedHandleName:sender.parent().parent().find('span.handle').html()
+                    })   
+                }else{
+                    self._trigger("handleClicked",event,{
+                        selectedHandleName:sender.html()
+                    })
+                }
             }            
         },
         
-
+        addSelected:function(event){
+            var self=this,
+            sender=$(event.target);
+            self._trigger("handleClicked",event,{
+                    selectedHandleName:sender.parent().find('span.handle').html()
+                })  
+        },
+        
         searchboxevent:function(event)
         {
             var self=this;
