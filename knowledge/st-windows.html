@@ -579,6 +579,27 @@ type. The Nova event logs can be found under the &ldquo;System&rdquo; logs.
 
 <div align="center"><img src="winevent-notkept-storage.png" alt="Promise not kept in Event Viewer"></div>
 
+   <p>By default, only promise not repaired and generic error events are
+logged to avoid flooding the Event Log. You can turn on verbose
+logging to log all messages, like the following example.
+
+<pre class="verbatim">
+<span class="red">body common control
+</span>{
+<span class="red">inputs </span>=> { "cfengine_stdlib.cf" };
+<span class="red">bundlesequence  </span>=> { "main" };
+}
+
+<span class="red">bundle agent</span> <span class="blue">main</span>
+{
+<span class="red">files:
+</span><span class="red">"C:\test.txt"
+</span><span class="red">  create </span>=><span class="green"> "true",</span>
+<span class="red">  action </span>=><span class="blue"> log_verbose;</span>
+}
+
+</pre>
+
 <div class="node">
 <a name="Windows-special-variables"></a>
 <p><hr>
@@ -692,7 +713,7 @@ use the background attribute in the action body-part.
 <span class="red">commands:
 </span>
 <span class="red">"\"C:\Program Files\Some Dir\program name.bat\" --silent --batch"
-</span><span class="red">  action </span>=><span class="blue"> ifwin_bg;</span>
+</span><span class="red">  action </span>=><span class="blue"> in_shell_bg;</span>
 }
 
 </pre>

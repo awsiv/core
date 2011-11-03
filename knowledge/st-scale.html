@@ -923,7 +923,25 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#System-Tuning-and-Hub-Optimization">Sy
 
 <p>Some points to consider when scaling the MongoDB:
      <ul>
-<li>For installations of one or two thousand hosts per hub, one approaches
+<li>Indexing is a very important factor for scaling any database. 
+CFEngine Nova automatically checks and the creates indices needed for
+scale as part of the schedule of <code>cf-hub</code>. The incices are
+checked every six hours.
+
+     <p>However, if the database schema changes, which may happen during
+upgrades of CFEngine Nova, the indices may have been changed as
+well. In large-scale environment we may not have time to wait up to
+six hours for the indices to get repaired, so this can be done
+manually by running the following command on the hub.
+
+     <pre class="verbatim">     /var/cfengine/bin/cf-hub --index
+</pre>
+
+     <p>Please make sure <code>cf-hub</code> is not running in the background while
+indices are being created, as this may slow the system down
+considerably under high load.
+
+     <li>For installations of one or two thousand hosts per hub, one approaches
 the throughput limitations of x86 hardware and the Mongo database. One
 can expect to see MongoDB writes dominating the system
 resources. MongoDB does extensive caching'in RAM, so maximizing
