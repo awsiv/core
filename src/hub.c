@@ -64,6 +64,496 @@ static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer,stru
 
 /*****************************************************************************/
 
+
+
+/*******************************************************************/
+/* Command line options                                            */
+/*******************************************************************/
+
+const char *ID = "The hub is a scheduler and aggregator for the CFDB knowledge\n"
+                 "repository. It automatically schedules updates from clients\n"
+                 "that have registered by previous connection.";
+
+ 
+const struct option OPTIONS[16] =
+      {
+      { "help",no_argument,0,'h' },
+      { "debug",optional_argument,0,'d' },
+      { "verbose",no_argument,0,'v' },
+      { "dry-run",no_argument,0,'n'},
+      { "version",no_argument,0,'V' },
+      { "file",required_argument,0,'f'},
+      { "no-lock",no_argument,0,'K'},
+      { "no-fork",no_argument,0,'F' },
+      { "continuous",no_argument,0,'c' },
+      { "cache",no_argument,0,'a' },
+      { "logging",no_argument,0,'l' },
+      { "index",no_argument,0,'i' },
+      { NULL,0,0,'\0' }
+      };
+
+const char *HINTS[16] =
+      {
+      "Print the help message",
+      "Set debugging level 0,1,2,3",
+      "Output verbose information about the behaviour of the agent",
+      "All talk and no action mode - make no changes, only inform of promises not kept",
+      "Output the version of the software",
+      "Specify an alternative input file than the default",
+      "Ignore locking constraints during execution (ifelapsed/expireafter) if \"too soon\" to run",
+      "Run as a foreground processes (do not fork)",
+      "Continuous update mode of operation",
+      "Rebuild database caches used for efficient query handling (e.g. compliance graphs)",
+      "Enable logging of updates to the promise log",
+      "Reindex all collections in the CFEngine report database",
+      NULL
+      };
+
+/*****************************************************************************/
+
+int main(int argc,char *argv[])
+
+{
+#ifdef MINGW
+
+CfOut(cf_error,"","This service is not available on Windows.");
+return 1;
+
+#else
+
+CheckOpts(argc,argv);
+GenericInitialize(argc,argv,"hub");
+ThisAgentInit();
+KeepPromises();
+StartHub(argc,argv);
+
+#endif
+
+return 0;
+}
+
+#ifndef MINGW
+
+/*****************************************************************************/
+/* Level 1                                                                   */
+/*****************************************************************************/
+
+void CheckOpts(int argc,char **argv)
+
+{ extern char *optarg;
+  char arg[CF_BUFSIZE];
+  int optindex = 0;
+  int c;
+
+while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMai",OPTIONS,&optindex)) != EOF)
+  {
+  switch ((char) c)
+      {
+      case 'f':
+
+          if (optarg && strlen(optarg) < 5)
+             {
+             snprintf(arg,CF_MAXVARSIZE," -f used but argument \"%s\" incorrect",optarg);
+             FatalError(arg);
+             }
+
+          strncpy(VINPUTFILE,optarg,CF_BUFSIZE-1);
+          VINPUTFILE[CF_BUFSIZE-1] = '\0';
+          MINUSF = true;
+          break;
+
+      case 'l':
+          LOGGING = true;
+          break;
+          
+      case 'd': 
+          NewClass("opt_debug");
+          switch ((optarg==NULL) ? '3' : *optarg)
+             {
+             case '1':
+                 D1 = true;
+                 DEBUG = true;
+                 break;
+             case '2':
+                 D2 = true;
+                 DEBUG = true;
+                 break;
+             default:
+                 DEBUG = true;
+                 break;
+             }
+          break;
+          
+      case 'K': IGNORELOCK = true;
+          break;
+                    
+      case 'I': INFORM = true;
+          break;
+          
+      case 'v':
+          VERBOSE = true;
+          NO_FORK = true;
+          break;
+	            
+      case 'n': DONTDO = true;
+          IGNORELOCK = true;
+          NewClass("opt_dry_run");
+          break;
+
+      case 'c':
+          CONTINUOUS = true;
+          break;
+
+      case 'a':
+          Nova_CacheTotalCompliance(true);
+          exit(0);
+          break;          
+          
+      case 'F':
+          NO_FORK = true;
+          break;
+
+      case 'i':
+          CFDB_ReIndexAll();
+          exit(0);
+          break;
+
+      case 'V': PrintVersionBanner("cf-hub");
+          exit(0);
+          
+      case 'h': Syntax("cf-hub - cfengine's report aggregator",OPTIONS,HINTS,ID);
+          exit(0);
+
+      case 'M': ManPage("cf-hub - cfengine's report aggregator",OPTIONS,HINTS,ID);
+          exit(0);
+          
+      default: Syntax("cf-hub - cfengine's report aggregator",OPTIONS,HINTS,ID);
+          exit(1);
+          
+      }
+   }
+
+if (argv[optind] != NULL)
+   {
+   CfOut(cf_error,"","Unexpected argument with no preceding option: %s\n",argv[optind]);
+   }
+}
+
+/*****************************************************************************/
+
+void ThisAgentInit()
+
+{
+umask(077);
+
+if (CONTINUOUS)
+   {
+   AppendItem(&SCHEDULE,"any",NULL);
+   }
+else if (SCHEDULE == NULL)
+   {
+   AppendItem(&SCHEDULE,"Min00",NULL);
+   AppendItem(&SCHEDULE,"Min05",NULL);
+   AppendItem(&SCHEDULE,"Min10",NULL);
+   AppendItem(&SCHEDULE,"Min15",NULL);
+   AppendItem(&SCHEDULE,"Min20",NULL);
+   AppendItem(&SCHEDULE,"Min25",NULL);   
+   AppendItem(&SCHEDULE,"Min30",NULL);
+   AppendItem(&SCHEDULE,"Min35",NULL);
+   AppendItem(&SCHEDULE,"Min40",NULL);
+   AppendItem(&SCHEDULE,"Min45",NULL);
+   AppendItem(&SCHEDULE,"Min50",NULL);
+   AppendItem(&SCHEDULE,"Min55",NULL);
+   }
+}
+
+/*****************************************************************************/
+
+void KeepPromises()
+
+{ struct Constraint *cp;
+  char rettype;
+  void *retval;
+
+for (cp = ControlBodyConstraints(cf_hub); cp != NULL; cp=cp->next)
+   {
+   if (IsExcluded(cp->classes))
+      {
+      continue;
+      }
+   
+   if (GetVariable("control_hub",cp->lval,&retval,&rettype) == cf_notype)
+      {
+      CfOut(cf_error,"","Unknown lval %s in hub control body",cp->lval);
+      continue;
+      }
+   
+   if (strcmp(cp->lval,CFH_CONTROLBODY[cfh_schedule].lval) == 0)
+      {
+      struct Rlist *rp;
+      CfDebug("schedule ...\n");
+      DeleteItemList(SCHEDULE);
+      SCHEDULE = NULL;
+      
+      for (rp  = (struct Rlist *) retval; rp != NULL; rp = rp->next)
+         {
+         if (!IsItemIn(SCHEDULE,rp->item))
+            {
+            AppendItem(&SCHEDULE,rp->item,NULL);
+            }
+         }
+      }
+   
+   if (strcmp(cp->lval,CFH_CONTROLBODY[cfh_federation].lval) == 0)
+      {
+      struct Rlist *rp;
+      CfDebug("federation ...\n");
+      DeleteItemList(FEDERATION);
+      FEDERATION = NULL;
+      
+      for (rp  = (struct Rlist *) retval; rp != NULL; rp = rp->next)
+         {
+         if (!IsItemIn(FEDERATION,rp->item))
+            {
+            AppendItem(&FEDERATION,rp->item,NULL);
+            }
+         }
+      }
+
+   if (strcmp(cp->lval,CFH_CONTROLBODY[cfh_exclude_hosts].lval) == 0)
+      {
+      struct Rlist *rp;
+      CfDebug("exclude_hosts ...\n");
+      DeleteItemList(EXCLUDE_HOSTS);
+      EXCLUDE_HOSTS = NULL;
+      
+      for (rp  = (struct Rlist *) retval; rp != NULL; rp = rp->next)
+         {
+         if (!IsItemIn(EXCLUDE_HOSTS,rp->item))
+            {
+            AppendItem(&EXCLUDE_HOSTS,rp->item,NULL);
+            }
+         }
+      }
+
+   
+   if (strcmp(cp->lval,CFH_CONTROLBODY[cfh_export_zenoss].lval) == 0)
+      {
+      CFH_ZENOSS = GetBoolean(retval);
+      CfOut(cf_verbose,"","SET export_zenoss = %d\n",CFH_ZENOSS);
+      continue;
+      }
+   
+   if (strcmp(cp->lval,CFH_CONTROLBODY[cfh_port].lval) == 0)
+      {
+      SHORT_CFENGINEPORT = htons((short)Str2Int(retval));
+      strncpy(STR_CFENGINEPORT,retval,15);
+      CfOut(cf_verbose,"","SET default portnumber = %u = %s = %s\n",(int)SHORT_CFENGINEPORT,STR_CFENGINEPORT,retval);
+      continue;
+      }
+
+
+   }
+}
+
+/*****************************************************************************/
+
+#ifndef MINGW
+
+void StartHub(int argc,char **argv)
+
+{
+#ifdef HAVE_NOVA
+Nova_StartHub(argc,argv);
+#else
+CfOut(cf_error,"","This component is only used in commercial editions of the Cfengine software");
+#endif
+}
+
+#endif  /* NOT MINGW */
+
+/*****************************************************************************/
+/* Level                                                                     */
+/*****************************************************************************/
+
+int ScheduleRun()
+
+{
+struct Item *ip;
+
+if (EnterpriseExpiry())
+  {
+  CfOut(cf_error,"","Cfengine - autonomous configuration engine. This enterprise license is invalid.\n");
+  exit(1);
+  }
+
+ThreadLock(cft_system);
+DeleteAlphaList(&VHEAP);
+InitAlphaList(&VHEAP);
+DeleteAlphaList(&VADDCLASSES);
+InitAlphaList(&VADDCLASSES);
+DeleteItemList(IPADDRESSES);
+IPADDRESSES = NULL;
+
+DeleteScope("this");
+DeleteScope("mon");
+DeleteScope("sys");
+DeleteScope("match");
+NewScope("this");
+NewScope("mon");
+NewScope("sys");
+NewScope("match");
+
+CfGetInterfaceInfo(cf_executor);
+Get3Environment();
+OSClasses();
+SetReferenceTime(true);
+ThreadUnlock(cft_system);
+
+for (ip = SCHEDULE; ip != NULL; ip = ip->next)
+   {
+   CfDebug("Checking schedule %s...\n",ip->name);
+
+   if (IsDefinedClass(ip->name))
+      {
+      CfOut(cf_verbose,"","Waking up the agent at %s ~ %s \n",cf_ctime(&CFSTARTTIME),ip->name);
+      return true;
+      }
+   }
+
+return false;
+}
+
+#endif /* !MINGW */
+
+/*****************************************************************************/
+
+void Nova_UpdateMongoHostList(struct Item **list)
+
+{
+#ifdef HAVE_LIBMONGOC
+ struct Item *ip = NULL, *lastseen = NULL, *ip2 = NULL, *new_lastseen=NULL;
+ struct Item *deleted_hosts=NULL;
+ int count = 0;
+ bool ignore = false;
+
+deleted_hosts = CFDB_GetDeletedHosts();
+lastseen = CFDB_GetLastseenCache();
+
+// add from the new list
+for (ip=*list; ip!=NULL;ip=ip->next)
+   {
+   if(deleted_hosts && IsItemIn(deleted_hosts,ip->name))
+      {
+      continue;
+      }      
+
+   PrependFullItem(&new_lastseen,ip->name,ip->classes,0,time(NULL));
+   count++;
+   }
+
+// now add items from the prev lastseen db
+for (ip2=lastseen; ip2!=NULL;ip2=ip2->next)
+   {
+   if( IsItemIn(new_lastseen,ip2->name)                       //already added from list
+       || ((time(NULL) - ip2->time) > CF_HUB_HORIZON)           // entry passed horizon)
+       || IsItemIn(deleted_hosts,ip2->name))                     //deleted
+      {      
+      continue;
+      }
+
+   PrependFullItem(&new_lastseen,ip2->name,ip2->classes,0,ip2->time);
+   count++;
+   }
+
+CFDB_SaveLastseenCache(new_lastseen);
+
+if (deleted_hosts)
+   {
+   bool removed=true;
+   for (ip=deleted_hosts; ip!=NULL;ip=ip->next)
+      {
+      // remove from the local lastseen db
+      // TODO: remove the public keys also?
+      
+      removed = (removed && RemoveHostFromLastSeen(NULL,ip->name));
+      }
+   
+   // if all hosts marked as "deleted" were removed from cf_lastseen.tcdb
+   // purge the list of deleted host
+   // otherwise keep it for the next run of cf-hub
+   
+   if (removed)
+      {
+      CFDB_PurgeDeletedHosts();
+      }
+   
+   DeleteItemList(deleted_hosts);
+   }
+
+if (lastseen)
+   {
+   DeleteItemList(lastseen);
+   }
+
+CfOut(cf_inform,"","%d hosts added to the lastseen cache\n",count);
+ #endif
+}
+
+/*****************************************************************************/
+
+struct Item *Nova_GetMongoLastSeen()
+
+{
+#ifdef HAVE_LIBMONGOC
+ // Read back the full list from Mongo
+return CFDB_GetLastseenCache();
+#else
+return NULL;
+#endif
+}
+
+/*****************************************************************************/
+
+#ifdef HAVE_LIBMONGOC
+
+static void Nova_CreateHostID(mongo_connection *dbconn, char *hostID, char *ipaddr)
+
+/* Make sure an entry for the given keyhash,ip exists */
+
+{
+ CFDB_SaveHostID(dbconn,MONGO_DATABASE,cfr_keyhash,hostID,ipaddr,NULL);
+ CFDB_SaveHostID(dbconn,MONGO_ARCHIVE,cfr_keyhash,hostID,ipaddr,NULL);
+}
+
+#endif  /* HAVE_LIBMONGOC */
+
+/*****************************************************************************/
+
+static void Nova_RemoveExcludedHosts(struct Item **listp, struct Item *hosts_exclude)
+
+{ struct Item *ip;
+  struct Item *include = NULL;
+
+  
+for (ip = *listp; ip != NULL; ip = ip->next)
+   {
+   if(IsMatchItemIn(hosts_exclude, ip->classes))
+      {
+      CfDebug("Excluding host %s(%s) from hub report query\n", ip->classes, ip->name);
+      }
+   else
+      {
+      IdempPrependItem(&include, ip->name, ip->classes);
+      }
+   }
+
+DeleteItemList(*listp);
+*listp = include;
+}
+
+/***************************************************************************/
+
 #ifndef MINGW
 
 void Nova_StartHub(int argc,char **argv)
@@ -750,493 +1240,6 @@ fclose(fout);
 
 /*********************************************************************/
 
-
-/*******************************************************************/
-/* Command line options                                            */
-/*******************************************************************/
-
-const char *ID = "The hub is a scheduler and aggregator for the CFDB knowledge\n"
-                 "repository. It automatically schedules updates from clients\n"
-                 "that have registered by previous connection.";
-
- 
-const struct option OPTIONS[16] =
-      {
-      { "help",no_argument,0,'h' },
-      { "debug",optional_argument,0,'d' },
-      { "verbose",no_argument,0,'v' },
-      { "dry-run",no_argument,0,'n'},
-      { "version",no_argument,0,'V' },
-      { "file",required_argument,0,'f'},
-      { "no-lock",no_argument,0,'K'},
-      { "no-fork",no_argument,0,'F' },
-      { "continuous",no_argument,0,'c' },
-      { "cache",no_argument,0,'a' },
-      { "logging",no_argument,0,'l' },
-      { "index",no_argument,0,'i' },
-      { NULL,0,0,'\0' }
-      };
-
-const char *HINTS[16] =
-      {
-      "Print the help message",
-      "Set debugging level 0,1,2,3",
-      "Output verbose information about the behaviour of the agent",
-      "All talk and no action mode - make no changes, only inform of promises not kept",
-      "Output the version of the software",
-      "Specify an alternative input file than the default",
-      "Ignore locking constraints during execution (ifelapsed/expireafter) if \"too soon\" to run",
-      "Run as a foreground processes (do not fork)",
-      "Continuous update mode of operation",
-      "Rebuild database caches used for efficient query handling (e.g. compliance graphs)",
-      "Enable logging of updates to the promise log",
-      "Reindex all collections in the CFEngine report database",
-      NULL
-      };
-
-/*****************************************************************************/
-
 #endif  /* NOT MINGW */
-
-int main(int argc,char *argv[])
-
-{
-#ifdef MINGW
-
-CfOut(cf_error,"","This service is not available on Windows.");
-return 1;
-
-#else
-
-CheckOpts(argc,argv);
-GenericInitialize(argc,argv,"hub");
-ThisAgentInit();
-KeepPromises();
-StartHub(argc,argv);
-
-#endif
-
-return 0;
-}
-
-#ifndef MINGW
-
-/*****************************************************************************/
-/* Level 1                                                                   */
-/*****************************************************************************/
-
-void CheckOpts(int argc,char **argv)
-
-{ extern char *optarg;
-  char arg[CF_BUFSIZE];
-  int optindex = 0;
-  int c;
-
-while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMai",OPTIONS,&optindex)) != EOF)
-  {
-  switch ((char) c)
-      {
-      case 'f':
-
-          if (optarg && strlen(optarg) < 5)
-             {
-             snprintf(arg,CF_MAXVARSIZE," -f used but argument \"%s\" incorrect",optarg);
-             FatalError(arg);
-             }
-
-          strncpy(VINPUTFILE,optarg,CF_BUFSIZE-1);
-          VINPUTFILE[CF_BUFSIZE-1] = '\0';
-          MINUSF = true;
-          break;
-
-      case 'l':
-          LOGGING = true;
-          break;
-          
-      case 'd': 
-          NewClass("opt_debug");
-          switch ((optarg==NULL) ? '3' : *optarg)
-             {
-             case '1':
-                 D1 = true;
-                 DEBUG = true;
-                 break;
-             case '2':
-                 D2 = true;
-                 DEBUG = true;
-                 break;
-             default:
-                 DEBUG = true;
-                 break;
-             }
-          break;
-          
-      case 'K': IGNORELOCK = true;
-          break;
-                    
-      case 'I': INFORM = true;
-          break;
-          
-      case 'v':
-          VERBOSE = true;
-          NO_FORK = true;
-          break;
-	            
-      case 'n': DONTDO = true;
-          IGNORELOCK = true;
-          NewClass("opt_dry_run");
-          break;
-
-      case 'c':
-          CONTINUOUS = true;
-          break;
-
-      case 'a':
-          Nova_CacheTotalCompliance(true);
-          exit(0);
-          break;          
-          
-      case 'F':
-          NO_FORK = true;
-          break;
-
-      case 'i':
-          CFDB_ReIndexAll();
-          exit(0);
-          break;
-
-      case 'V': PrintVersionBanner("cf-hub");
-          exit(0);
-          
-      case 'h': Syntax("cf-hub - cfengine's report aggregator",OPTIONS,HINTS,ID);
-          exit(0);
-
-      case 'M': ManPage("cf-hub - cfengine's report aggregator",OPTIONS,HINTS,ID);
-          exit(0);
-          
-      default: Syntax("cf-hub - cfengine's report aggregator",OPTIONS,HINTS,ID);
-          exit(1);
-          
-      }
-   }
-
-if (argv[optind] != NULL)
-   {
-   CfOut(cf_error,"","Unexpected argument with no preceding option: %s\n",argv[optind]);
-   }
-}
-
-/*****************************************************************************/
-
-void ThisAgentInit()
-
-{
-umask(077);
-
-if (CONTINUOUS)
-   {
-   AppendItem(&SCHEDULE,"any",NULL);
-   }
-else if (SCHEDULE == NULL)
-   {
-   AppendItem(&SCHEDULE,"Min00",NULL);
-   AppendItem(&SCHEDULE,"Min05",NULL);
-   AppendItem(&SCHEDULE,"Min10",NULL);
-   AppendItem(&SCHEDULE,"Min15",NULL);
-   AppendItem(&SCHEDULE,"Min20",NULL);
-   AppendItem(&SCHEDULE,"Min25",NULL);   
-   AppendItem(&SCHEDULE,"Min30",NULL);
-   AppendItem(&SCHEDULE,"Min35",NULL);
-   AppendItem(&SCHEDULE,"Min40",NULL);
-   AppendItem(&SCHEDULE,"Min45",NULL);
-   AppendItem(&SCHEDULE,"Min50",NULL);
-   AppendItem(&SCHEDULE,"Min55",NULL);
-   }
-}
-
-/*****************************************************************************/
-
-void KeepPromises()
-
-{ struct Constraint *cp;
-  char rettype;
-  void *retval;
-
-for (cp = ControlBodyConstraints(cf_hub); cp != NULL; cp=cp->next)
-   {
-   if (IsExcluded(cp->classes))
-      {
-      continue;
-      }
-   
-   if (GetVariable("control_hub",cp->lval,&retval,&rettype) == cf_notype)
-      {
-      CfOut(cf_error,"","Unknown lval %s in hub control body",cp->lval);
-      continue;
-      }
-   
-   if (strcmp(cp->lval,CFH_CONTROLBODY[cfh_schedule].lval) == 0)
-      {
-      struct Rlist *rp;
-      CfDebug("schedule ...\n");
-      DeleteItemList(SCHEDULE);
-      SCHEDULE = NULL;
-      
-      for (rp  = (struct Rlist *) retval; rp != NULL; rp = rp->next)
-         {
-         if (!IsItemIn(SCHEDULE,rp->item))
-            {
-            AppendItem(&SCHEDULE,rp->item,NULL);
-            }
-         }
-      }
-   
-   if (strcmp(cp->lval,CFH_CONTROLBODY[cfh_federation].lval) == 0)
-      {
-      struct Rlist *rp;
-      CfDebug("federation ...\n");
-      DeleteItemList(FEDERATION);
-      FEDERATION = NULL;
-      
-      for (rp  = (struct Rlist *) retval; rp != NULL; rp = rp->next)
-         {
-         if (!IsItemIn(FEDERATION,rp->item))
-            {
-            AppendItem(&FEDERATION,rp->item,NULL);
-            }
-         }
-      }
-
-   if (strcmp(cp->lval,CFH_CONTROLBODY[cfh_exclude_hosts].lval) == 0)
-      {
-      struct Rlist *rp;
-      CfDebug("exclude_hosts ...\n");
-      DeleteItemList(EXCLUDE_HOSTS);
-      EXCLUDE_HOSTS = NULL;
-      
-      for (rp  = (struct Rlist *) retval; rp != NULL; rp = rp->next)
-         {
-         if (!IsItemIn(EXCLUDE_HOSTS,rp->item))
-            {
-            AppendItem(&EXCLUDE_HOSTS,rp->item,NULL);
-            }
-         }
-      }
-
-   
-   if (strcmp(cp->lval,CFH_CONTROLBODY[cfh_export_zenoss].lval) == 0)
-      {
-      CFH_ZENOSS = GetBoolean(retval);
-      CfOut(cf_verbose,"","SET export_zenoss = %d\n",CFH_ZENOSS);
-      continue;
-      }
-   
-   if (strcmp(cp->lval,CFH_CONTROLBODY[cfh_port].lval) == 0)
-      {
-      SHORT_CFENGINEPORT = htons((short)Str2Int(retval));
-      strncpy(STR_CFENGINEPORT,retval,15);
-      CfOut(cf_verbose,"","SET default portnumber = %u = %s = %s\n",(int)SHORT_CFENGINEPORT,STR_CFENGINEPORT,retval);
-      continue;
-      }
-
-
-   }
-}
-
-/*****************************************************************************/
-
-#ifndef MINGW
-
-void StartHub(int argc,char **argv)
-
-{
-#ifdef HAVE_NOVA
-Nova_StartHub(argc,argv);
-#else
-CfOut(cf_error,"","This component is only used in commercial editions of the Cfengine software");
-#endif
-}
-
-#endif  /* NOT MINGW */
-
-/*****************************************************************************/
-/* Level                                                                     */
-/*****************************************************************************/
-
-int ScheduleRun()
-
-{
-struct Item *ip;
-
-if (EnterpriseExpiry())
-  {
-  CfOut(cf_error,"","Cfengine - autonomous configuration engine. This enterprise license is invalid.\n");
-  exit(1);
-  }
-
-ThreadLock(cft_system);
-DeleteAlphaList(&VHEAP);
-InitAlphaList(&VHEAP);
-DeleteAlphaList(&VADDCLASSES);
-InitAlphaList(&VADDCLASSES);
-DeleteItemList(IPADDRESSES);
-IPADDRESSES = NULL;
-
-DeleteScope("this");
-DeleteScope("mon");
-DeleteScope("sys");
-DeleteScope("match");
-NewScope("this");
-NewScope("mon");
-NewScope("sys");
-NewScope("match");
-
-CfGetInterfaceInfo(cf_executor);
-Get3Environment();
-OSClasses();
-SetReferenceTime(true);
-ThreadUnlock(cft_system);
-
-for (ip = SCHEDULE; ip != NULL; ip = ip->next)
-   {
-   CfDebug("Checking schedule %s...\n",ip->name);
-
-   if (IsDefinedClass(ip->name))
-      {
-      CfOut(cf_verbose,"","Waking up the agent at %s ~ %s \n",cf_ctime(&CFSTARTTIME),ip->name);
-      return true;
-      }
-   }
-
-return false;
-}
-
-#endif /* !MINGW */
-
-/*****************************************************************************/
-
-void Nova_UpdateMongoHostList(struct Item **list)
-
-{
-#ifdef HAVE_LIBMONGOC
- struct Item *ip = NULL, *lastseen = NULL, *ip2 = NULL, *new_lastseen=NULL;
- struct Item *deleted_hosts=NULL;
- int count = 0;
- bool ignore = false;
-
-deleted_hosts = CFDB_GetDeletedHosts();
-lastseen = CFDB_GetLastseenCache();
-
-// add from the new list
-for (ip=*list; ip!=NULL;ip=ip->next)
-   {
-   if(deleted_hosts && IsItemIn(deleted_hosts,ip->name))
-      {
-      continue;
-      }      
-
-   PrependFullItem(&new_lastseen,ip->name,ip->classes,0,time(NULL));
-   count++;
-   }
-
-// now add items from the prev lastseen db
-for (ip2=lastseen; ip2!=NULL;ip2=ip2->next)
-   {
-   if( IsItemIn(new_lastseen,ip2->name)                       //already added from list
-       || ((time(NULL) - ip2->time) > CF_HUB_HORIZON)           // entry passed horizon)
-       || IsItemIn(deleted_hosts,ip2->name))                     //deleted
-      {      
-      continue;
-      }
-
-   PrependFullItem(&new_lastseen,ip2->name,ip2->classes,0,ip2->time);
-   count++;
-   }
-
-CFDB_SaveLastseenCache(new_lastseen);
-
-if (deleted_hosts)
-   {
-   bool removed=true;
-   for (ip=deleted_hosts; ip!=NULL;ip=ip->next)
-      {
-      // remove from the local lastseen db
-      // TODO: remove the public keys also?
-      
-      removed = (removed && RemoveHostFromLastSeen(NULL,ip->name));
-      }
-   
-   // if all hosts marked as "deleted" were removed from cf_lastseen.tcdb
-   // purge the list of deleted host
-   // otherwise keep it for the next run of cf-hub
-   
-   if (removed)
-      {
-      CFDB_PurgeDeletedHosts();
-      }
-   
-   DeleteItemList(deleted_hosts);
-   }
-
-if (lastseen)
-   {
-   DeleteItemList(lastseen);
-   }
-
-CfOut(cf_inform,"","%d hosts added to the lastseen cache\n",count);
- #endif
-}
-
-/*****************************************************************************/
-
-struct Item *Nova_GetMongoLastSeen()
-
-{
-#ifdef HAVE_LIBMONGOC
- // Read back the full list from Mongo
-return CFDB_GetLastseenCache();
-#else
-return NULL;
-#endif
-}
-
-/*****************************************************************************/
-
-#ifdef HAVE_LIBMONGOC
-
-static void Nova_CreateHostID(mongo_connection *dbconn, char *hostID, char *ipaddr)
-
-/* Make sure an entry for the given keyhash,ip exists */
-
-{
- CFDB_SaveHostID(dbconn,MONGO_DATABASE,cfr_keyhash,hostID,ipaddr,NULL);
- CFDB_SaveHostID(dbconn,MONGO_ARCHIVE,cfr_keyhash,hostID,ipaddr,NULL);
-}
-
-#endif  /* HAVE_LIBMONGOC */
-
-/*****************************************************************************/
-
-static void Nova_RemoveExcludedHosts(struct Item **listp, struct Item *hosts_exclude)
-
-{ struct Item *ip;
-  struct Item *include = NULL;
-
-  
-for (ip = *listp; ip != NULL; ip = ip->next)
-   {
-   if(IsMatchItemIn(hosts_exclude, ip->classes))
-      {
-      CfDebug("Excluding host %s(%s) from hub report query\n", ip->classes, ip->name);
-      }
-   else
-      {
-      IdempPrependItem(&include, ip->name, ip->classes);
-      }
-   }
-
-DeleteItemList(*listp);
-*listp = include;
-}
 
 /* EOF */
