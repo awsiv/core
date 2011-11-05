@@ -417,8 +417,10 @@ while(NextDB(dbp,dbcp,&key,&ksize,(void *)&entry,&vsize))
       }
    
    // Just look at the hail promise locks
+
+   printf("KEY %s\n",key);
    
-   if (strncmp(key,"last.internal_bundle.hail.",strlen("last.internal_bundle.hail.")) != 0)
+   if (strncmp(key,"lock.internal_bundle.hail.",strlen("lock.internal_bundle.hail.")) != 0)
       {
       continue;
       }
