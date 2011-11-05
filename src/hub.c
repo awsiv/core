@@ -24,6 +24,8 @@
 /* GLOBAL VARIABLES                                                */
 /*******************************************************************/
 
+int BIG_UPDATES = 6;
+
 int  NO_FORK = false;
 int  CONTINUOUS = false;
 char MAILTO[CF_BUFSIZE];
@@ -56,6 +58,7 @@ static void Nova_Scan(struct Item *masterlist, struct Attributes a, struct Promi
 static pid_t Nova_ScanList(struct Item *list,struct Attributes a,struct Promise *pp);
 static void Nova_SequentialScan(struct Item *masterlist, struct Attributes a, struct Promise *pp);
 static void Nova_ParallelizeScan(struct Item *masterlist,struct Attributes a,struct Promise *pp);
+void SplayLongUpdates(void);
 
 #ifdef HAVE_LIBMONGOC
 static void Nova_CreateHostID(mongo_connection *dbconnp, char *hostID, char *ipaddr);
@@ -89,6 +92,7 @@ const struct option OPTIONS[16] =
       { "cache",no_argument,0,'a' },
       { "logging",no_argument,0,'l' },
       { "index",no_argument,0,'i' },
+      { "splay_updates",no_argument,0,'s' },
       { NULL,0,0,'\0' }
       };
 
@@ -106,6 +110,7 @@ const char *HINTS[16] =
       "Rebuild database caches used for efficient query handling (e.g. compliance graphs)",
       "Enable logging of updates to the promise log",
       "Reindex all collections in the CFEngine report database",
+      "Splay all updating times for full updates",
       NULL
       };
 
@@ -145,7 +150,7 @@ void CheckOpts(int argc,char **argv)
   int optindex = 0;
   int c;
 
-while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMai",OPTIONS,&optindex)) != EOF)
+while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMais",OPTIONS,&optindex)) != EOF)
   {
   switch ((char) c)
       {
@@ -226,6 +231,13 @@ while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMai",OPTIONS,&optindex)) != EOF)
 
       case 'M': ManPage("cf-hub - cfengine's report aggregator",OPTIONS,HINTS,ID);
           exit(0);
+
+      case 's':
+          CheckOpts(argc,argv);
+          InitializeGA(argc,argv);
+          SplayLongUpdates();
+          exit(0);
+          break;
           
       default: Syntax("cf-hub - cfengine's report aggregator",OPTIONS,HINTS,ID);
           exit(1);
@@ -371,6 +383,121 @@ CfOut(cf_error,"","This component is only used in commercial editions of the Cfe
 }
 
 #endif  /* NOT MINGW */
+
+/*****************************************************************************/
+
+void SplayLongUpdates()
+
+{ CF_DB *dbp;
+  struct LockData entry;
+  CF_DBC *dbcp;
+  int ksize,vsize, count = 0, optimum_splay_interval;
+  char *key;
+  time_t now = time(NULL), min = now + 24000, max = 0;;
+
+if ((dbp = OpenLock()) == NULL)
+   {
+   return;
+   }
+
+// Key format lock.internal_bundle.hail.handle.-MY_HOST.open_6424_SHA=36651898d78d40...
+
+if (!NewDBCursor(dbp,&dbcp))
+   {
+   CloseLock(dbp);
+   return;
+   }
+
+while(NextDB(dbp,dbcp,&key,&ksize,(void *)&entry,&vsize))
+   {
+   if (now - entry.time > (time_t)CF_LOCKHORIZON)
+      {
+      CfDebug(" --> Purging dead lock (%d) %s",now-entry.time,key);
+      DeleteDB(dbp,key);
+      }
+   
+   // Just look at the hail promise locks
+   
+   if (strncmp(key,"last.internal_bundle.hail.",strlen("last.internal_bundle.hail.")) != 0)
+      {
+      continue;
+      }
+
+   count++;
+
+   // Make an offset based on an extracted substring = hostname
+
+   if (entry.time > max)
+      {
+      max = entry.time;
+      }
+
+   if (entry.time < min)
+      {
+      min = entry.time;
+      }
+   }
+
+
+DeleteDBCursor(dbp,dbcp);
+
+CfOut(cf_verbose,""," -> A total of %d hosts made known hails.",count);
+CfOut(cf_verbose,""," -> Oldest non-expired hail at %s",cf_ctime(&min));
+CfOut(cf_verbose,""," -> Most recent hail at %s",cf_ctime(&max));
+
+// Assume a full update might take 2s => we can do 150 in each time slot, say 100
+
+// A time slot is less than 6 hours, but we want to minimize the distance between updates
+// so that the results between all hosts are comparable
+
+optimum_splay_interval = 300 * (count / 100 + 1); // In seconds
+
+CfOut(cf_verbose,""," -> Optimum splay interval is computed at %d mins",optimum_splay_interval/60);
+
+if (optimum_splay_interval > BIG_UPDATES * 3600)
+   {
+   CfOut(cf_verbose,""," !! Warning, the host count is exceeds the supported limits");
+   }
+
+// We can now set entry.time = now + hash_offset + 300
+// Where hash_offset = hash(SHA....)/CF_HASHTABLESIZE * optimum_splay_interval
+
+if (!NewDBCursor(dbp,&dbcp))
+   {
+   CloseLock(dbp);
+   return;
+   }
+
+while(NextDB(dbp,dbcp,&key,&ksize,(void *)&entry,&vsize))
+   {
+   char shahash[CF_MAXVARSIZE];
+   int histo[CF_HASHTABLESIZE] = {0};
+   int slothash;
+   time_t newtime;
+   
+   if (strncmp(key,"last.internal_bundle.hail.",strlen("last.internal_bundle.hail.")) != 0)
+      {
+      continue;
+      }
+
+   sscanf(key,"%*[^=]=%s",shahash);
+
+   slothash = GetHash(shahash);
+   histo[slothash]++;
+   
+   newtime = now + (slothash*optimum_splay_interval)/CF_HASHTABLESIZE + 300;
+
+   ////entry.time = newtime;
+
+   printf("Want to set update of %s to %s",cf_ctime(&newtime));
+   //WriteDB(dbp,"lock_horizon",&entry,sizeof(entry));
+
+   }
+
+
+DeleteDBCursor(dbp,dbcp);
+CloseLock(dbp);
+}
 
 /*****************************************************************************/
 /* Level                                                                     */
@@ -598,8 +725,6 @@ signal(SIGUSR1,HandleSignals);
 signal(SIGUSR2,HandleSignals);
 
 umask(077);
-
-struct Item *ip;
 
 while (true)
    {
@@ -868,7 +993,7 @@ static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer,stru
   struct Attributes aa = {{0}};
 
 aa.restart_class = "nonce";
-aa.transaction.ifelapsed = 60*6;
+aa.transaction.ifelapsed = 60*BIG_UPDATES;
 aa.transaction.expireafter = CF_INFINITY;
   
 thislock = AcquireLock(ppp->promiser,CanonifyName(peer),now,aa,ppp,true);
