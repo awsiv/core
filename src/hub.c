@@ -402,6 +402,8 @@ if ((dbp = OpenLock()) == NULL)
 
 // Key format lock.internal_bundle.hail.handle.-MY_HOST.open_6424_SHA=36651898d78d40...
 
+//lock.internal_bundle.hail.handle.-10_0_0]
+
 if (!NewDBCursor(dbp,&dbcp))
    {
    CloseLock(dbp);
@@ -412,19 +414,19 @@ while(NextDB(dbp,dbcp,&key,&ksize,(void *)&entry,&vsize))
    {
    if (now - entry.time > (time_t)CF_LOCKHORIZON)
       {
-      CfDebug(" --> Purging dead lock (%d) %s",now-entry.time,key);
-      DeleteDB(dbp,key);
+//      CfDebug(" --> Purging dead lock (%d) %s",now-entry.time,key);
+//      DeleteDB(dbp,key);
       }
    
    // Just look at the hail promise locks
 
-   printf("KEY %s\n",key);
+   printf("K: %s\n",key);
    
-   if (strncmp(key,"lock.internal_bundle.hail.",strlen("lock.internal_bundle.hail.")) != 0)
+/*   if (strncmp(key,"last.internal_bundle.hail.",strlen("last.internal_bundle.hail.")) != 0)
       {
       continue;
       }
-
+*/
    count++;
 
    // Make an offset based on an extracted substring = hostname
@@ -1011,7 +1013,7 @@ CfOut(cf_inform,"","............................................................
 CfOut(cf_inform,""," * Hailing %s : %u\n",peer,(int)aa.copy.portnumber);
 CfOut(cf_inform,"","...........................................................................\n");
 
-// record client host id (from lastseen) immideatley so we can track failed connection attempts
+// record client host id (from lastseen) immediately so we can track failed connection attempts
 // the timestamp is updated when we get response - see UnpackReportBook
 
 Nova_CreateHostID(dbconn,hostID,peer);
