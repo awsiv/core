@@ -277,6 +277,7 @@ else if (SCHEDULE == NULL)
    AppendItem(&SCHEDULE,"Min50",NULL);
    AppendItem(&SCHEDULE,"Min55",NULL);
    }
+
 }
 
 /*****************************************************************************/
@@ -392,9 +393,11 @@ void SplayLongUpdates()
   struct LockData entry;
   CF_DBC *dbcp;
   int ksize,vsize, count = 0, optimum_splay_interval;
-  char *key;
-  time_t now = time(NULL), min = now + 24000, max = 0;;
-
+  char *key,*slots;
+  time_t now = time(NULL), min = now + 300, max = now - 300, this;
+  int slot = 0, total_slots;
+  time_t newtime;
+   
 if ((dbp = OpenLock()) == NULL)
    {
    return;
@@ -412,39 +415,41 @@ if (!NewDBCursor(dbp,&dbcp))
 
 while(NextDB(dbp,dbcp,&key,&ksize,(void *)&entry,&vsize))
    {
-   if (now - entry.time > (time_t)CF_LOCKHORIZON)
+   if (vsize != 0)
       {
-//      CfDebug(" --> Purging dead lock (%d) %s",now-entry.time,key);
-//      DeleteDB(dbp,key);
-      }
-   
-   // Just look at the hail promise locks
+      // Just look at the hail promise locks
+      
+      if (strncmp(key,"last.internal_bundle.hail.",strlen("last.internal_bundle.hail.")) != 0)
+         {
+         continue;
+         }
+      
+      count++;
+      
+      if (entry.time <= 0 || entry.time > now + 2400)
+         {
+         // The value may be uninitialized
+         entry.time = now;
+         }     
+      
+      if (entry.time > max)
+         {
+         max = entry.time;
+         }
+      
+      if (entry.time < min)
+         {
+         min = entry.time;
+         }
 
-   printf("K: %s\n",key);
-   
-/*   if (strncmp(key,"last.internal_bundle.hail.",strlen("last.internal_bundle.hail.")) != 0)
-      {
-      continue;
-      }
-*/
-   count++;
-
-   // Make an offset based on an extracted substring = hostname
-
-   if (entry.time > max)
-      {
-      max = entry.time;
-      }
-
-   if (entry.time < min)
-      {
-      min = entry.time;
+      this = entry.time;
       }
    }
 
 
 DeleteDBCursor(dbp,dbcp);
 
+CfOut(cf_verbose,""," -> Marshalling full updates within a minimal max-entropy pattern");
 CfOut(cf_verbose,""," -> A total of %d hosts made known hails.",count);
 CfOut(cf_verbose,""," -> Oldest non-expired hail at %s",cf_ctime(&min));
 CfOut(cf_verbose,""," -> Most recent hail at %s",cf_ctime(&max));
@@ -454,17 +459,19 @@ CfOut(cf_verbose,""," -> Most recent hail at %s",cf_ctime(&max));
 // A time slot is less than 6 hours, but we want to minimize the distance between updates
 // so that the results between all hosts are comparable
 
-optimum_splay_interval = 300 * (count / 100 + 1); // In seconds
+total_slots = count / 100 + 1;
+optimum_splay_interval = 300 * total_slots; // In seconds
 
-CfOut(cf_verbose,""," -> Optimum splay interval is computed at %d mins",optimum_splay_interval/60);
+CfOut(cf_verbose,""," -> Optimum splay renormalizes to %d mins for %d hosts, i.e. %d update slot(s)",optimum_splay_interval/60,count,total_slots);
 
 if (optimum_splay_interval > BIG_UPDATES * 3600)
    {
    CfOut(cf_verbose,""," !! Warning, the host count is exceeds the supported limits");
    }
 
-// We can now set entry.time = now + hash_offset + 300
-// Where hash_offset = hash(SHA....)/CF_HASHTABLESIZE * optimum_splay_interval
+slots = xmalloc(total_slots);
+
+// Don't rely on hashing, as we can't guarantee sufficient entropy, so just round-robin
 
 if (!NewDBCursor(dbp,&dbcp))
    {
@@ -474,30 +481,20 @@ if (!NewDBCursor(dbp,&dbcp))
 
 while(NextDB(dbp,dbcp,&key,&ksize,(void *)&entry,&vsize))
    {
-   char shahash[CF_MAXVARSIZE];
-   int histo[CF_HASHTABLESIZE] = {0};
-   int slothash;
-   time_t newtime;
-   
    if (strncmp(key,"last.internal_bundle.hail.",strlen("last.internal_bundle.hail.")) != 0)
       {
       continue;
       }
 
-   sscanf(key,"%*[^=]=%s",shahash);
-
-   slothash = GetHash(shahash);
-   histo[slothash]++;
+   // Keep the splaying simple, and use round-robin
    
-   newtime = now + (slothash*optimum_splay_interval)/CF_HASHTABLESIZE + 300;
+   newtime = now + 300*(slot++ % total_slots);
 
-   ////entry.time = newtime;
-
-   printf("Want to set update of %s to %s",cf_ctime(&newtime));
+   printf("Want to set update of %s to %s\n",key,cf_ctime(&newtime));
    //WriteDB(dbp,"lock_horizon",&entry,sizeof(entry));
-
    }
 
+free(slots);
 
 DeleteDBCursor(dbp,dbcp);
 CloseLock(dbp);
