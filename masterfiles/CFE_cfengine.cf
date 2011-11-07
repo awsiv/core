@@ -215,13 +215,13 @@ bundle agent garbage_collection
       depth_search => recurse("inf");
 
   # Other resources
-!darwin::
-   "/tmp"  # this is a symlink on Macs 
-           comment => "Garbage collection of any temporary files",
-            handle => "garbage_collection_files_tidy_tmp",
-            delete => tidy,
-       file_select => days_old("3"),
-      depth_search => recurse("inf");
+!(darwin|windows)::
+#   "/tmp"  # this is a symlink on Macs 
+#           comment => "Garbage collection of any temporary files",
+#            handle => "garbage_collection_files_tidy_tmp",
+#            delete => tidy,
+#       file_select => days_old("3"),
+#      depth_search => recurse("inf");
   
    "/var/log/apache2/.*bz" 
           comment => "Garbage collection of rotated log files",
