@@ -2,12 +2,12 @@
    <div class="panelhead"><?php echo $report_type ?> query</div>
     <div class="panelcontent">
           <form method="post" action="<?php echo site_url('search')?>">
-          <p>Promise handles: (.*+[])<input class="searchfield" type="text" name="name"></p>
+          <p>Promise handles: (.*+[])<input class="searchfield" type="text" name="name" value="<?php echo (is_array($paramArray) && isset($paramArray['name'])) ? trim($paramArray['name']) : ''; ?>"></p>
           <p>Host class: (.*+[])
                <a href="<?php echo site_url('widget/allclasses')?>" id="bphghelp" class="help"
              title="<?php echo $this->lang->line('report_hostgp_help');?>">Help ?</a>
-              <input class="searchfield" type="text" name="class_regex" size="80" id="hg"></p>
-          <p>From minimum age <input type="text" name="hours_deltafrom" size="2"> hours to maximum age <input type="text" name="hours_deltato" size="2"> hours old. </p>
+              <input class="searchfield" type="text" name="class_regex" size="80" id="hg" value="<?php echo (is_array($paramArray) && isset($paramArray['class_regex'])) ? trim($paramArray['class_regex']) : ''; ?>"></p>
+          <p>From minimum age <input type="text" name="hours_deltafrom" size="2" value="<?php echo (is_array($paramArray) && isset($paramArray['hours_deltafrom'])) ? trim($paramArray['hours_deltafrom']) : ''; ?>"> hours to maximum age <input type="text" name="hours_deltato" size="2" value="<?php echo (is_array($paramArray) && isset($paramArray['hours_deltato'])) ? trim($paramArray['hours_deltato']) : ''; ?>"> hours old. </p>
           <input type="hidden" name="host" value="All">
           <input type="hidden" name="report" value="<?php echo $report_type ?>">
           <p>Return hostnames only: <input type="checkbox" name="hosts_only" value="true"></p>

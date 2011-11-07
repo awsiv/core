@@ -2,13 +2,13 @@
    <div class="panelhead"><?php echo $report_type ?> query</div>
    <div class="panelcontent">
           <form method="post" action="<?php echo site_url('search')?>">
-          <p>Package name: (.*+[])<input class="searchfield" type="text" name="name"></p>
-          <p>Package version: (.*+[])<input class="searchfield" type="text" name="version"></p>
-          <p>Package architecture:<p><input class="searchfield" type="text" name="arch"></p>
+          <p>Package name: (.*+[])<input class="searchfield" type="text" name="name" value="<?php echo (is_array($paramArray) && isset($paramArray['name'])) ? trim($paramArray['name']) : ''; ?>"></p>
+          <p>Package version: (.*+[])<input class="searchfield" type="text" name="version" value="<?php echo (is_array($paramArray) && isset($paramArray['version'])) ? trim($paramArray['version']) : ''; ?>"></p>
+          <p>Package architecture:<p><input class="searchfield" type="text" name="arch" value="<?php echo (is_array($paramArray) && isset($paramArray['arch'])) ? trim($paramArray['arch']) : ''; ?>"></p>
           <p>Host class: (.*+[])
            <a href="<?php echo site_url('widget/allclasses')?>" id="bphghelp" class="help"
              title="<?php echo $this->lang->line('report_hostgp_help');?>">Help ?</a>
-          <input class="searchfield" type="text" name="class_regex" size="80" id="hg"></p>
+          <input class="searchfield" type="text" name="class_regex" size="80" id="hg" value="<?php echo (is_array($paramArray) && isset($paramArray['class_regex'])) ? trim($paramArray['class_regex']) : ''; ?>"></p>
           <input type="hidden" name="host" value="All">
           <input type="hidden" name="report" value="<?php echo $report_type ?>">
           <p>Return hostnames only: <input type="checkbox" name="hosts_only" value="true"></p>

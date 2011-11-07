@@ -3,7 +3,7 @@
 	 <p class="title">
                 <strong><?php echo $report_type?> Report</strong>  
          </p>
-         <div><?Php
+         <div><?php
                $link="";
                if($classregex) { echo "Host list according to  <strong>Class :</strong>  $classregex"; }
               if(isset($name)) {$link.="  <strong>Name:</strong> ".$name; }

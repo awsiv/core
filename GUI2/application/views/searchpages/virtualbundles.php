@@ -3,8 +3,8 @@
     <div class="panelhead"><?php echo $report_type . ' query' ?> </div>
     <div class="panelcontent">
         <form method="post" action="<?php echo site_url('search') ?>">
-            <p>Virtual bundle pattern: (.*+[])<input class="searchfield" type="text" name="name" id="bp" ></p>
-            <p>Show definitions from all users: <input type="checkbox" name="all_user" value="true"></p>
+            <p>Virtual bundle pattern: (.*+[])<input class="searchfield" type="text" name="name" id="bp" value="<?php echo (is_array($paramArray) && isset($paramArray['name'])) ? trim($paramArray['name']) : ''; ?>" ></p>
+            <p>Show definitions from all users: <input type="checkbox" name="all_user" value="true" <?php echo (is_array($paramArray) && isset($paramArray['all_user']) && $paramArray['all_user'] == 'true') ? 'checked' : ''; ?>></p>
             <p><input class="btn" type="submit" value="Generate report">  <span>       
                     <a href="<?php echo site_url("/savedsearch/listSavedSearches/$report_type"); ?>"  class="btn loadsavedsearch">Load saved searches</a>
                 </span>  </p>

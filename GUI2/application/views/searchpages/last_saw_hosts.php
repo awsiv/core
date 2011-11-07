@@ -1,14 +1,14 @@
  <div id="searchform" class="panel"><div class="panelhead"><?php echo $report_type?> query</div>
  <div class="panelcontent">
           <form method="post" action="<?php echo site_url('search')?>">
-          <p>Remote host name: (.*+[])<input class="searchfield" type="text" name="name"></p>
-          <p>Remote IP address: (.*+[])<input class="searchfield" type="text" name="address"></p>
-          <p>Remote host key:<input class="searchfield" type="text" name="key"></p>
-          <p>Minimum hours ago:<p><input class="searchfield" type="text" name="ago"></p>
+          <p>Remote host name: (.*+[])<input class="searchfield" type="text" name="name" value="<?php echo (is_array($paramArray) && isset($paramArray['name'])) ? trim($paramArray['name']) : ''; ?>"></p>
+          <p>Remote IP address: (.*+[])<input class="searchfield" type="text" name="address" value="<?php echo (is_array($paramArray) && isset($paramArray['address'])) ? trim($paramArray['address']) : ''; ?>"></p>
+          <p>Remote host key:<input class="searchfield" type="text" name="key" value="<?php echo (is_array($paramArray) && isset($paramArray['key'])) ? trim($paramArray['key']) : ''; ?>"></p>
+          <p>Minimum hours ago:<p><input class="searchfield" type="text" name="ago" value="<?php echo (is_array($paramArray) && isset($paramArray['ago'])) ? trim($paramArray['ago']) : ''; ?>"></p>
           <p>Host class: (.*+[])
             <a href="<?php echo site_url('widget/allclasses')?>" id="bphghelp" class="help"
              title="<?php echo $this->lang->line('report_hostgp_help');?>">Help ?</a>
-          <input class="searchfield" type="text" name="class_regex" size="80" id="hg"></p>
+          <input class="searchfield" type="text" name="class_regex" size="80" id="hg" value="<?php echo (is_array($paramArray) && isset($paramArray['class_regex'])) ? trim($paramArray['class_regex']) : ''; ?>"></p>
           <!--<input type="hidden" name="manyhosts" value="true">-->
           <input type="hidden" name="host" value="All">
           <input type="hidden" name="report" value="<?php echo $report_type?>">

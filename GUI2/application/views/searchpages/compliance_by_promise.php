@@ -2,17 +2,17 @@
  <div id="searchform" class="panel"><div class="panelhead"><?php echo $report_type?> query</div>
      <div class="panelcontent">
           <form method="post" action="<?php echo site_url('search')?>">
-          <p>Promise by handle: (.*+[])<input class="searchfield" type="text" name="name"></p>
-          <p><select name="state"><option value="x">Any</option>
-		     <option value="c">Compliant</option>
-			 <option value="r">Repaired</option>
-			 <option value="n">Non-compliant</option>
+          <p>Promise by handle: (.*+[])<input class="searchfield" type="text" name="name" value="<?php echo (is_array($paramArray) && isset($paramArray['name'])) ? trim($paramArray['name']) : ''; ?>"></p>
+          <p><select name="state"><option value="x" <?php echo (is_array($paramArray) && isset($paramArray['state']) && $paramArray['state'] == 'x') ? 'selected' : ''; ?>>Any</option>
+		     <option value="c" <?php echo (is_array($paramArray) && isset($paramArray['state']) && $paramArray['state'] == 'c') ? 'selected' : ''; ?>>Compliant</option>
+			 <option value="r" <?php echo (is_array($paramArray) && isset($paramArray['state']) && $paramArray['state'] == 'r') ? 'selected' : ''; ?>>Repaired</option>
+			 <option value="n" <?php echo (is_array($paramArray) && isset($paramArray['state']) && $paramArray['state'] == 'n') ? 'selected' : ''; ?>>Non-compliant</option>
 			 </select>
 		  </p>
           <p>Host class: (.*+[])
                <a href="<?php echo site_url('widget/allclasses')?>" id="bphghelp" class="help"
              title="<?php echo $this->lang->line('report_hostgp_help');?>">Help ?</a>
-              <input class="searchfield" type="text" name="class_regex" size="80" id="hg"></p>
+              <input class="searchfield" type="text" name="class_regex" size="80" id="hg" value="<?php echo (is_array($paramArray) && isset($paramArray['class_regex'])) ? trim($paramArray['class_regex']) : ''; ?>"></p>
           <input type="hidden" name="host" value="All">
           <input type="hidden" name="report" value="<?php echo $report_type?>">
           <p>Return hostnames only: <input type="checkbox" name="hosts_only" value="true"></p>

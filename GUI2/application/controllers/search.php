@@ -49,7 +49,7 @@ class Search extends Cf_Controller {
         $report_type = isset($getparams['report']) ? urldecode($getparams['report']) : urldecode($this->input->post('report'));
 
 
-        $host = isset($getparams['host']) ? urldecode($getparams['host']) : $this->input->post('host');
+        $host = isset($getparams['host']) ? urldecode(trim($getparams['host'])) : trim($this->input->post('host'));
         $hours_deltafrom = isset($getparams['hours_deltafrom']) ? $getparams['hours_deltafrom'] : $this->input->post('hours_deltafrom');
         $hours_deltato = isset($getparams['hours_deltato']) ? $getparams['hours_deltato'] : $this->input->post('hours_deltato');
         $class_regex = isset($getparams['class_regex']) ? urldecode($getparams['class_regex']) : $this->input->post('class_regex');
@@ -67,10 +67,10 @@ class Search extends Cf_Controller {
         $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
         //necessary for search result view
         //must use site_url for making bread crumbs work
-        if ($host == "All") {
+        if (!is_ajax() && $host == "All" ) {
             $hostkey = "";
             $many = true;
-        } elseif ($host != "") {
+        } elseif (!is_ajax() &&  $host != "") {
             $many = false;
             $hostkey = $host;
         }
@@ -79,6 +79,7 @@ class Search extends Cf_Controller {
         $params = '';
         $breadcrumbs_url = "search/index/";
         $hostfinderparams = "";
+        
         if (!is_ajax()) {
 
             if (count($getparams) > 0) {
@@ -116,7 +117,13 @@ class Search extends Cf_Controller {
             );
             $this->breadcrumb->setBreadCrumb($bc);
         }
-
+        
+        $paramArray = array_merge($getparams,$_POST);
+        $paramArray['report'] = $report_type; // we need this for the ajax queries
+        foreach ($paramArray as $index=>$value) {
+            $paramArray[$index] = urldecode($value);
+        }
+      
         $data = array(
             'report_type' => $report_type,
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
@@ -125,6 +132,7 @@ class Search extends Cf_Controller {
             'current' => $page_number,
             'number_of_rows' => $rows,
             'params' => $params,
+            'paramArray' => $paramArray,
             'classregex' => $class_regex,
             'hostfinderparams' => $hostfinderparams,
             'breadCrumbUrl' => isset($breadcrumbs_url) ? $breadcrumbs_url : '',
@@ -137,9 +145,9 @@ class Search extends Cf_Controller {
 
 
         if (isset($getparams['name'])) {
-            $data['name'] = urldecode($getparams['name']);
+            $data['name'] = urldecode(trim($getparams['name']));
         } elseif ($this->input->post('name')) {
-            $data['name'] = urldecode($this->input->post('name'));
+            $data['name'] = urldecode(trim($this->input->post('name')));
         }
 
         if ($search == "") {
@@ -148,7 +156,7 @@ class Search extends Cf_Controller {
 
         switch ($report_type) {
             case "Bundle profile":
-
+                 
                 if ($many) {
 
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
@@ -180,6 +188,7 @@ class Search extends Cf_Controller {
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
                     //not nothing else is satisfied display extra form for more search paramaters
+                 
                     is_ajax() ? $this->load->view('searchpages/bundleprofile', $data) : $this->template->load('template', 'searchpages/bundleprofile', $data);
                 }
                 break;

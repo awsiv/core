@@ -75,7 +75,7 @@ echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : "" ?></p>
             $('#modifySearchPanel').toggle();
             if(!$("#modifySearchPanel").is(":hidden")) {
                 var url = '<?php echo site_url(); ?>/search/index';
-                var postData = {'report':'<?php echo $report_title; ?>'};
+                 var postData = <?php echo json_encode($paramArray); ?>;
                 $.post(url,postData, function(data) {
                     $('#modifySearchPanel').html(data);                   
                 });
