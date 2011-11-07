@@ -277,7 +277,6 @@ else if (SCHEDULE == NULL)
    AppendItem(&SCHEDULE,"Min50",NULL);
    AppendItem(&SCHEDULE,"Min55",NULL);
    }
-
 }
 
 /*****************************************************************************/
@@ -390,11 +389,11 @@ CfOut(cf_error,"","This component is only used in commercial editions of the Cfe
 void SplayLongUpdates()
 
 { CF_DB *dbp;
-  struct LockData entry;
+  struct LockData entry,update;
   CF_DBC *dbcp;
   int ksize,vsize, count = 0, optimum_splay_interval;
   char *key,*slots;
-  time_t now = time(NULL), min = now + 300, max = now - 300, this;
+  time_t now = time(NULL), min = now + 30000, max = 0, this;
   int slot = 0, total_slots;
   time_t newtime;
    
@@ -404,8 +403,7 @@ if ((dbp = OpenLock()) == NULL)
    }
 
 // Key format lock.internal_bundle.hail.handle.-MY_HOST.open_6424_SHA=36651898d78d40...
-
-//lock.internal_bundle.hail.handle.-10_0_0]
+// lock.internal_bundle.hail.handle.-10_0_0]
 
 if (!NewDBCursor(dbp,&dbcp))
    {
@@ -426,12 +424,15 @@ while(NextDB(dbp,dbcp,&key,&ksize,(void *)&entry,&vsize))
       
       count++;
       
-      if (entry.time <= 0 || entry.time > now + 2400)
+      if (entry.time < 0 || entry.time > now + 3000)
          {
          // The value may be uninitialized
-         entry.time = now;
+         printf("Found an unitialized lock time for %s, set to %s\n",key,cf_ctime(&now));
+         update.pid = entry.pid;
+         update.time = now;
+         WriteDB(dbp,key,&update,sizeof(update));
          }     
-      
+
       if (entry.time > max)
          {
          max = entry.time;
@@ -444,6 +445,8 @@ while(NextDB(dbp,dbcp,&key,&ksize,(void *)&entry,&vsize))
 
       this = entry.time;
       }
+
+   printf("INit: %s = %s\n",key,cf_ctime(&this));
    }
 
 
@@ -488,16 +491,20 @@ while(NextDB(dbp,dbcp,&key,&ksize,(void *)&entry,&vsize))
 
    // Keep the splaying simple, and use round-robin
    
-   newtime = now + 300*(slot++ % total_slots);
+   newtime = now + 300 * (slot++ % total_slots);
 
-   printf("Want to set update of %s to %s\n",key,cf_ctime(&newtime));
-   //WriteDB(dbp,"lock_horizon",&entry,sizeof(entry));
+   update.time = newtime;
+   update.pid = entry.pid;
+   
+   printf("Want to set update of %s to %s\n",key,cf_ctime(&update.time));
+   WriteDB(dbp,key,&update,sizeof(update));
    }
 
 free(slots);
-
 DeleteDBCursor(dbp,dbcp);
 CloseLock(dbp);
+
+CfOut(cf_verbose,""," -> Distributed max-ext with le %d per slot, estimating update around %d secs per slot",slot / total_slots,slot / total_slots * 2);
 }
 
 /*****************************************************************************/
