@@ -150,7 +150,7 @@ void CheckOpts(int argc,char **argv)
   int optindex = 0;
   int c;
 
-while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMais",OPTIONS,&optindex)) != EOF)
+while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMaisn",OPTIONS,&optindex)) != EOF)
   {
   switch ((char) c)
       {
@@ -235,6 +235,15 @@ while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMais",OPTIONS,&optindex)) != EOF)
       case 's':
           CheckOpts(argc,argv);
           InitializeGA(argc,argv);
+
+          int i;
+          char name[1000];
+          
+          for (i = 0; i < 2000; i++)
+             {             
+             snprintf(name,1000,"last.internal_bundle.hail.%d",i);
+             WriteLock(name);
+             }
           SplayLongUpdates();
           exit(0);
           break;
@@ -391,6 +400,7 @@ void SplayLongUpdates()
 { CF_DB *dbp;
   struct LockData entry,update;
   CF_DBC *dbcp;
+  void *value;
   int ksize,vsize, count = 0, optimum_splay_interval;
   char *key,*slots;
   time_t now = time(NULL), min = now + 30000, max = 0, this;
@@ -411,42 +421,39 @@ if (!NewDBCursor(dbp,&dbcp))
    return;
    }
 
-while(NextDB(dbp,dbcp,&key,&ksize,(void *)&entry,&vsize))
+while(NextDB(dbp,dbcp,&key,&ksize,(void *)&value,&vsize))
    {
-   if (vsize != 0)
+   // Just look at the hail promise locks
+   
+   if (strncmp(key,"last.internal_bundle.hail.",strlen("last.internal_bundle.hail.")) != 0)
       {
-      // Just look at the hail promise locks
-      
-      if (strncmp(key,"last.internal_bundle.hail.",strlen("last.internal_bundle.hail.")) != 0)
-         {
-         continue;
-         }
-      
-      count++;
-      
-      if (entry.time < 0 || entry.time > now + 3000)
-         {
-         // The value may be uninitialized
-         printf("Found an unitialized lock time for %s, set to %s\n",key,cf_ctime(&now));
-         update.pid = entry.pid;
-         update.time = now;
-         WriteDB(dbp,key,&update,sizeof(update));
-         }     
-
-      if (entry.time > max)
-         {
-         max = entry.time;
-         }
-      
-      if (entry.time < min)
-         {
-         min = entry.time;
-         }
-
-      this = entry.time;
+      continue;
       }
+   
+   count++;
 
-   printf("INit: %s = %s\n",key,cf_ctime(&this));
+   memcpy(&entry,value,sizeof(entry));
+   
+   if (entry.time < 0 || entry.time > now + 300)
+      {
+      // The value may be uninitialized
+      printf("Found an unitialized lock time for %s, set to %s\n",key,cf_ctime(&now));
+      update.pid = entry.pid;
+      update.time = entry.time = now;
+      WriteDB(dbp,key,&update,sizeof(update));
+      }     
+   
+   if (entry.time > max)
+      {
+      max = entry.time;
+      }
+   
+   if (entry.time < min)
+      {
+      min = entry.time;
+      }
+   
+   this = entry.time;
    }
 
 
@@ -496,15 +503,21 @@ while(NextDB(dbp,dbcp,&key,&ksize,(void *)&entry,&vsize))
    update.time = newtime;
    update.pid = entry.pid;
    
-   printf("Want to set update of %s to %s\n",key,cf_ctime(&update.time));
-   WriteDB(dbp,key,&update,sizeof(update));
+   if (!DONTDO)
+      {
+      WriteDB(dbp,key,&update,sizeof(update));
+      }
+   else
+      {
+      printf(" -> Want to set update of %s to %s\n",key,cf_ctime(&update.time));
+      }
    }
 
 free(slots);
 DeleteDBCursor(dbp,dbcp);
 CloseLock(dbp);
 
-CfOut(cf_verbose,""," -> Distributed max-ext with le %d per slot, estimating update around %d secs per slot",slot / total_slots,slot / total_slots * 2);
+printf(" -> Redistributed host updates with <= %d per slot, each ~%d secs per slot into %d slots, total time = %d mins\n",slot / total_slots,slot / total_slots * 2,total_slots,5*total_slots);
 }
 
 /*****************************************************************************/
@@ -1299,7 +1312,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       //IdempPrependItem(&list,key+1,entry.address);
       struct Item *ip = ReturnItemIn(list,key+1);
 
-      if(!ip)
+      if (!ip)
          {
          ip = PrependItem(&list,key+1,entry.address);
          }
