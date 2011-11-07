@@ -58,7 +58,7 @@ static void Nova_Scan(struct Item *masterlist, struct Attributes a, struct Promi
 static pid_t Nova_ScanList(struct Item *list,struct Attributes a,struct Promise *pp);
 static void Nova_SequentialScan(struct Item *masterlist, struct Attributes a, struct Promise *pp);
 static void Nova_ParallelizeScan(struct Item *masterlist,struct Attributes a,struct Promise *pp);
-void SplayLongUpdates(void);
+static void SplayLongUpdates(void);
 
 #ifdef HAVE_LIBMONGOC
 static void Nova_CreateHostID(mongo_connection *dbconnp, char *hostID, char *ipaddr);
@@ -110,7 +110,7 @@ const char *HINTS[16] =
       "Rebuild database caches used for efficient query handling (e.g. compliance graphs)",
       "Enable logging of updates to the promise log",
       "Reindex all collections in the CFEngine report database",
-      "Splay all updating times for full updates",
+      "Splay/load balance full-updates, overriding bootstrap times, assuming a default 5 minute update schedule.",
       NULL
       };
 
@@ -509,7 +509,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,(void *)&entry,&vsize))
       }
    else
       {
-      printf(" -> Want to set update of %s to %s\n",key,cf_ctime(&update.time));
+      CfLog(cf_verbose,""," -> Want to set update of %s to %s\n",key,cf_ctime(&update.time));
       }
    }
 
@@ -517,7 +517,7 @@ free(slots);
 DeleteDBCursor(dbp,dbcp);
 CloseLock(dbp);
 
-printf(" -> Redistributed host updates with <= %d per slot, each ~%d secs per slot into %d slots, total time = %d mins\n",slot / total_slots,slot / total_slots * 2,total_slots,5*total_slots);
+printf(" -> Redistributed host updates with <= %d per slot, each ~%d secs per slot into %d 5-min time slots, total time = %d mins\n",slot / total_slots,slot / total_slots * 2,total_slots,5*total_slots);
 }
 
 /*****************************************************************************/
