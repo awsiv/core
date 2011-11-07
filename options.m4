@@ -1,6 +1,6 @@
 define([novasvnversion], [r]esyscmd([sh -c "cd nova && svnversion --no-newline || echo exported | tr -d '\n'" 2>/dev/null]))dnl
 
-AC_DEFINE(NOVA_VERSION, "2.2.0.a1.svnversion", "Nova version")
+AC_DEFINE(NOVA_VERSION, "2.2.0.a1.novasvnversion", "Nova version")
 
 AC_ARG_WITH(nova,
 	AS_HELP_STRING(--without-nova, [disable Nova enterprise extensions (enabled by default)]),[],
