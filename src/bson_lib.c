@@ -34,12 +34,12 @@ void BsonAppendAgedQuery(bson_buffer *querybuf, int maxAgeInSeconds)
 
  sub1 = bson_append_start_object(or, "0");
  bson_append_null(sub1, cfr_time);
+ bson_append_finish_object(sub1);
  
  sub1 = bson_append_start_object(or, "1");
  sub2 = bson_append_start_object(sub1, cfr_time);
  bson_append_int(sub2, "$lt", minTimeStamp);
  bson_append_finish_object(sub2);
-
  bson_append_finish_object(sub1);
  
  bson_append_finish_object(or);
