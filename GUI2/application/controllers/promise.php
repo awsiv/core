@@ -65,8 +65,12 @@ class Promise extends Cf_Controller {
             'promise' => sanitycheckjson(cfpr_summarize_promise($handle),true),
             'breadcrumbs' => $this->breadcrumblist->display()
         );
+        if(is_ajax()){
+            $this->load->view('promise/promise',$data);
+        }else{
+            $this->template->load('template', 'promise/promise', $data);
+        }
         
-        $this->template->load('template', 'promise/promise', $data);
     }
 
 }

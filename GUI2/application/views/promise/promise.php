@@ -2,11 +2,11 @@
     <div class="outerdiv">
         <div id="custom-tabs" style="margin:15px;">
             <ul>
-                <li><a href="#tabs-1"><?php echo $this->lang->line('promise_tab_definition'); ?></a></li>
-                <li><a href="#tabs-2"><?php echo $this->lang->line('promise_tab_leads'); ?></a></li>
-                <li><a href="#tabs-3"><?php echo $this->lang->line('promise_tab_same_bundle'); ?></a></li>
-                <li><a href="#tabs-4"><?php echo $this->lang->line('promise_tab_same_promiser'); ?></a></li>
-                <li><a href="#tabs-5"><?php echo $this->lang->line('promise_tab_same_type'); ?></a></li>
+                <li><a target="_self" href="#tabs-1"><?php echo $this->lang->line('promise_tab_definition'); ?></a></li>
+                <li><a href="#tabs-2" target="_self"><?php echo $this->lang->line('promise_tab_leads'); ?></a></li>
+                <li><a href="#tabs-3" target="_self"><?php echo $this->lang->line('promise_tab_same_bundle'); ?></a></li>
+                <li><a href="#tabs-4" target="_self"><?php echo $this->lang->line('promise_tab_same_promiser'); ?></a></li>
+                <li><a href="#tabs-5" target="_self"><?php echo $this->lang->line('promise_tab_same_type'); ?></a></li>
 
             </ul>
             <div id="tabs-1" class="ui-corner-all">
@@ -137,7 +137,7 @@
 <div class="clear"></div>
 <script type="text/javascript">
     jQuery(document).ready(function(){
-        $( "#custom-tabs" ).tabs();
+        $("#custom-tabs" ).tabs();
     });
 </script>
 

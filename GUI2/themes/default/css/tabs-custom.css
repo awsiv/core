@@ -17,21 +17,21 @@
 
 
 
-#custom-tabs  .ui-tab .ui-widget-content{ border: 0px; }
-#custom-tabs .ui-widget-header { border: 0px; background: none; font-weight: bold; }
+#custom-tabs  .ui-tab .ui-widget-content,.custom-tabs  .ui-tab .ui-widget-content{ border: 0px; }
+#custom-tabs .ui-widget-header,.custom-tabs .ui-widget-header { border: 0px; background: none; font-weight: bold; }
 
 
 
-#custom-tabs {
+#custom-tabs,#body .custom-tabs {
     border: 0px;
     background: none;
 }
 
-#custom-tabs  .ui-tabs-nav { margin-left: 10px; padding: .2em .2em 0; }
-#custom-tabs .ui-tabs-nav li a { float: left; padding: 2px 8px 1px 8px; text-decoration: none; }
-#custom-tabs .ui-tabs-panel { display: block; border-width: 1px; padding: 1em 1.4em; background: #FFFFFF }
-#custom-tabs .ui-tabs .ui-tabs-hide { display: none !important; }
-#custom-tabs .ui-tabs-panel a {color:#08A3C1;}
+#custom-tabs  .ui-tabs-nav,.custom-tabs  .ui-tabs-nav { margin-left: 10px; padding: .2em .2em 0; }
+#custom-tabs .ui-tabs-nav li a,.custom-tabs .ui-tabs-nav li a { float: left; padding: 2px 8px 1px 8px; text-decoration: none; }
+#custom-tabs .ui-tabs-panel,#body .custom-tabs .ui-tabs-panel { display: block; border-width: 1px; padding: 1em 1.4em; background: #FFFFFF }
+#custom-tabs .ui-tabs .ui-tabs-hide,.custom-tabs .ui-tabs .ui-tabs-hide { display: none !important; }
+#custom-tabs .ui-tabs-panel a,.custom-tabs .ui-tabs-panel a {color:#08A3C1;}
 
 
 

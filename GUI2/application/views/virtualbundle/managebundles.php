@@ -1,6 +1,6 @@
 <div id="body">
     <div class=" outerdiv">
-        <div id="custom-tabs" style="margin:15px;">
+        <div class="custom-tabs" style="margin:15px;">
             <ul>
                 <li><a href="#tabs-1">Create</a></li>
                 <li><?php echo anchor('virtualbundle/myBundles', 'List', array('id' => 'tabs-2')) ?></li>
@@ -56,7 +56,7 @@
         selPromises=new Array();
         var promise_url= '<?php echo site_url('promise/details/') ?>';
          
-        var $tabs=$( "#custom-tabs" ).tabs();
+        var $tabs=$( ".custom-tabs" ).tabs();
         
         $('#addpromises').policyfinder({
             baseUrl: '<?php echo site_url() ?>',
@@ -73,7 +73,7 @@
                     var rmbtn=$('<span class="removePromise">');
                     var selectedPromise=$('<a class="promisetext" href="'+promise_url+'/'+data.selectedHandleName+'" target="_blank">'+data.selectedHandleName+'</a>');
                     li.append(selectedPromise).appendTo(selectedpromisesContainer);
-                    //$(selectedPromise).ajaxyDialog({'title':'Promise Detail',dontOverrideTitle:true});
+                    $(selectedPromise).ajaxyDialog({'title':'Promise Detail',dontOverrideTitle:true});
                     rmbtn.text('x').appendTo(li);
                     selPromises.push(data.selectedHandleName);
                 }
@@ -122,7 +122,7 @@
             });
         });
     
-    
+       //when create or list is switched
         $('.inside').find('a').live('click',function(event){
             event.preventDefault();
             loadContent( this.href );

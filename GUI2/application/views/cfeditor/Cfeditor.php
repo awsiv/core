@@ -21,7 +21,7 @@ $this->carabiner->display('both');
   <div id="wrapper" class="container_12">
      <div id="header">
               <div id="header_left" class="grid_3">
-               <p class="sitetitle"><?php echo anchor("welcome/index",'cfengine mission portal') ?></p>
+               <p class="sitetitle"><?php echo anchor("welcome/index",'Nova mission portal') ?></p>
                </div>
          <div class="grid_6">
          <p id="repoinfo"> Working on :: <strong><?php echo $curreny_repo ?></strong></p>
@@ -57,8 +57,8 @@ $this->carabiner->display('both');
 			   </li>
 		  </ul>
 		  <div id="news">
-                  Welcome to the CFEngine Nova policy editor. Please click an existing policy file on the left, or "New" to start editing.
-                  To know about the shortcuts available press <strong>ctrl+h (help)</strong>.
+                  Welcome to the CFEngine 3 Nova policy editor. Please click an existing policy file on the left, or "New", to start editing. 
+                  Press <strong>ctrl+h (help)</strong> to access tips about available shortcuts.
 		  </div>
 	 </div>
 

@@ -2616,6 +2616,7 @@ div#userdirs p button{
 ul#promisesContainer{
     margin-left:20%;
     width:350px;
+    list-style: none;
 }
 
 ul#promisesContainer li
