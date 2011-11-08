@@ -509,7 +509,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,(void *)&entry,&vsize))
       }
    else
       {
-      CfLog(cf_verbose,""," -> Want to set update of %s to %s\n",key,cf_ctime(&update.time));
+      CfOut(cf_verbose,""," -> Want to set update of %s to %s\n",key,cf_ctime(&update.time));
       }
    }
 
