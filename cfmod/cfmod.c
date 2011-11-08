@@ -174,8 +174,8 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_hostname,NULL)
     PHP_FE(cfpr_ipaddr,NULL)
 
-    PHP_FE(cfpr_get_story_by_name,NULL)
-    PHP_FE(cfpr_get_story_by_id,NULL)
+    PHP_FE(cfcon_get_story_by_name,NULL)
+    PHP_FE(cfcon_get_story_by_id,NULL)
 
     PHP_FE(cfpr_show_topic,NULL)
     PHP_FE(cfpr_search_topics,NULL)
@@ -2822,7 +2822,7 @@ PHP_FUNCTION(cfpr_show_topic_category)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_get_story_by_id)
+PHP_FUNCTION(cfcon_get_story_by_id)
 
 { const int bufsize = 100000; 
  char buffer[bufsize];
@@ -2842,7 +2842,7 @@ RETURN_STRING(buffer,1);
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_get_story_by_name)
+PHP_FUNCTION(cfcon_get_story_by_name)
 
 { const int bufsize = 100000; 
   char buffer[bufsize];

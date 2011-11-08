@@ -141,8 +141,8 @@ PHP_FUNCTION(cfpr_ipaddr);
 PHP_FUNCTION(cfpr_hub_key);
 PHP_FUNCTION(cfpr_get_hub_master);
 
-PHP_FUNCTION(cfpr_get_story_by_name);
-PHP_FUNCTION(cfpr_get_story_by_id);
+PHP_FUNCTION(cfcon_get_story_by_name);
+PHP_FUNCTION(cfcon_get_story_by_id);
 
 PHP_FUNCTION(cfpr_get_pid_for_topic);
 PHP_FUNCTION(cfpr_show_topic);
