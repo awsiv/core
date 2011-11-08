@@ -262,8 +262,7 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
       }
    }
 
-CFDB_SaveLastUpdate(dbconn,MONGO_DATABASE,cfr_keyhash,id);
-
+CFDB_SaveLastHostUpdate(dbconn, id);
 }
 
 #endif

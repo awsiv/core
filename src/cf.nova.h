@@ -485,7 +485,7 @@ void CFDB_SaveValueReport(mongo_connection *conn, char *kH, struct Item *data);
 void CFDB_SaveHostID(mongo_connection *conn, char *database, char *keyField, char *keyhash,char *ipaddr, char *hostname);
 void Nova_CheckGlobalKnowledgeClass(char *name,char *key);
 bool GetBsonBool(char *data, char *boolKey, bool *val);
-void BsonToString(char *retBuf, int retBufSz, char *data);
+void CFDB_SaveLastHostUpdate(mongo_connection *conn, char *hostKey);
 void CFDB_SaveLastUpdate(mongo_connection *conn, char *database, char *keyField, char *keyhash);
 
 struct HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *policy, time_t minGenTime);

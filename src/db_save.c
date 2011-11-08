@@ -1620,6 +1620,13 @@ bson_destroy(&cacheType);
 
 /*****************************************************************************/
 
+void CFDB_SaveLastHostUpdate(mongo_connection *conn, char *hostKey)
+{
+ CFDB_SaveLastUpdate(conn, MONGO_DATABASE, cfr_keyhash, hostKey);
+}
+
+/*****************************************************************************/
+
 void CFDB_SaveLastUpdate(mongo_connection *conn, char *database, char *keyField, char *keyhash)
 
 { bson_buffer bb;
