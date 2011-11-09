@@ -2370,7 +2370,7 @@ void Nova_CommandAPI(char *lsdata,char *name,char *phandle,char *hostkey,char *c
   int slen = strlen(lsdata);
   int hlen = strlen(hostkey);
   int clen = strlen(classregex);
-     
+
 if (hlen > 0 && slen == 0 && plen == 0 && clen == 0)
    {
    // Show host details
@@ -2414,8 +2414,8 @@ else if (strcmp(lsdata,"software") == 0)
    }
 else if (strcmp(lsdata,"vars") == 0)
    {
-   char name[CF_MAXVARSIZE],lval[CF_MAXVARSIZE] = {0},
-       scope[CF_MAXVARSIZE] = {0},*sp;
+   char lval[CF_MAXVARSIZE] = {0};
+   char scope[CF_MAXVARSIZE] = {0},*sp;
        
    if (name && (sp = strchr(name,'.')))
       {
