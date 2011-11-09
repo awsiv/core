@@ -308,12 +308,12 @@ if (retv == 1)  // existing and new acl differ, update existing
 	 if(!DONTDO)
 	   {
 	     if ((retv = acl_set_file(file_path, acl_type, acl_new)) != 0)
-	       {
-		 CfOut(cf_error,"","!! Error setting new %s ACL on file '%s' (are required ACEs present?)", acl_type_str, file_path);
-		 acl_free((void*)acl_existing);
-		 acl_free((void*)acl_tmp);
-		 acl_free((void*)acl_new);
-		 return false;
+	       {             
+               CfOut(cf_error,"","!! Error setting new %s ACL on file '%s' (are required ACEs present?)", acl_type_str, file_path);
+               acl_free((void*)acl_existing);
+               acl_free((void*)acl_tmp);
+               acl_free((void*)acl_new);
+               return false;
 	       }
 	   }
 
@@ -807,7 +807,7 @@ if (strncmp(*str, "user:", 5) == 0)
    for(i = 0; i < idsz; i++)
      ids[i] = (*str)[i];
    ids[idsz] = '\0';
-
+   
    *str += idsz;
 
    // file object owner
@@ -979,9 +979,13 @@ while (more_entries)
       }
 
    // parse generic perms (they are 1-1 on Posix)
-
+   
    while(strchr(CF_VALID_GPERMS,*mode))
       {
+      if(*mode == '\0')
+         {
+         break;
+         }
       switch(*mode)
          {
          case 'r':

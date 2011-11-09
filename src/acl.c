@@ -330,14 +330,13 @@ if (chkid)  // look for following "id:"
          }
       else if(*str == '\0')
          {
-		 CfOut(cf_error,"","Nothing following id string in ACE '%s'", ace);
+         CfOut(cf_error,"","Nothing following id string in ACE '%s'", ace);
          return false;
          }
       }
    }
 
 // check the mode-string (also skips to next field)
-
 valid_mode = Nova_CheckModeSyntax(&str, valid_ops, valid_nperms,pp);
 
 if (!valid_mode)
@@ -399,6 +398,10 @@ while(true)
    // scan past any generic perms
    while (strchr(CF_VALID_GPERMS,*mode))
       {
+      if(*mode == '\0')
+         {
+         break;
+         }
       mode++;
       }
 
