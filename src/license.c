@@ -367,17 +367,17 @@ if (licenses == 0)
    if (!IsDefinedClass("bootstrap_mode") && getuid() == 0 && (THIS_AGENT_TYPE != cf_know) && (THIS_AGENT_TYPE != cf_keygen))
       {
       CfOut(cf_error,""," !! Your configuration promises no host_licenses_paid in common control");
-      CfOut(cf_error,""," !! By doing this, you confirm the terms of contract already legally binding");
+      CfOut(cf_error,""," !! By doing this, you confirm that the terms of the contract are legally binding");
       }
    }
 else if (licenses > LICENSES && THIS_AGENT_TYPE != cf_know)
    {
-   CfOut(cf_error,""," !! You have promised that %d licenses have been paid for, but CFEngine has only promised to honour %d in the agreement. ",licenses,LICENSES);
+   CfOut(cf_error,""," !! You have promised that %d license(s) have been paid for, but CFEngine has only promised to honour %d in the agreement. ",licenses,LICENSES);
    CfOut(cf_inform,""," !! You could be in violation of contract.");
    }
 else if (licenses < LICENSES)
    {
-   CfOut(cf_inform,""," -> According to you only %d licenses have been paid for. CFEngine has promised to honour %d in the agreement.",licenses,LICENSES);
+   CfOut(cf_inform,""," -> According to you only %d license(s) have been paid for. CFEngine has promised to honour %d in the agreement.",licenses,LICENSES);
    }
 }
 

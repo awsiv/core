@@ -25,7 +25,7 @@ if (FIPS_MODE && !FIPS_mode_set(1))
    }
 else
    {
-   CfOut(cf_verbose,""," ** Cfengine Nova Operating if FIPS 140-2 validated mode");
+   CfOut(cf_verbose,""," ** CFEngine Nova is operating in FIPS 140-2 validated mode");
    }
 #else
 if (FIPS_MODE)
