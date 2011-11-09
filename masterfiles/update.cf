@@ -157,7 +157,8 @@ bundle agent update_bins
    "CfengineNovaExec"
       service_policy => "stop",
              comment => "Stop the executor windows service before updating Cfengine",
-              handle => "update_bins_services_stop_cf_execd_windows";
+              handle => "update_bins_services_stop_cf_execd_windows",
+               classes => u_if_repaired("stopped_cfprocs");
 
 #
 

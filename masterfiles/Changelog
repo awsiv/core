@@ -1,3 +1,7 @@
+November 2011
+*update.cf*
+- add classes => u_if_repaired("stopped_cfprocs"); to Windows in order to ensure the self-upgrade would work properly
+
 October 2011
 *failsafe.cf*
 - unset LD_LIBRARY_PATH for all distributions
