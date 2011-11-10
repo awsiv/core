@@ -647,6 +647,7 @@ struct Item *Nova_GetMongoLastSeen(void);
 void PrependPromiserList(struct PromiseIdent **list,char *s,struct Promise *pp);
 struct HubQuery *NewHubQuery(struct Rlist *hosts,struct Rlist *records);
 void DeleteHubQuery(struct HubQuery *hq,void (*fnptr)());
+int CountRecords(struct HubQuery *hq);
 struct HubHost *NewHubHost(char *hubkey, char *keyhash,char *ipaddr,char *hostname);
 struct HubHost *GetHubHostIn(struct Rlist *host_list, char *keyhash);
 void DeleteHubHost(struct HubHost *hp);

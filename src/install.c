@@ -64,13 +64,11 @@ struct HubQuery *NewHubQuery(struct Rlist *hosts,struct Rlist *records)
 
 { struct HubQuery *hq;
 
- if ((hq = malloc(sizeof(struct HubQuery))) == NULL)
-    {
-    FatalError("Memory exhausted NewHubQuery");
-    }
+ hq = xmalloc(sizeof(struct HubQuery));
 
  hq->hosts = hosts;
  hq->records = records;
+ hq->errid = ERRID_SUCCESS;
  return hq;
 }
 
@@ -101,6 +99,19 @@ void DeleteHubQuery(struct HubQuery *hq,void (*fnptr)())
  
  DeleteRlist(hq->records);
  free(hq);
+}
+
+/*****************************************************************************/
+
+int CountRecords(struct HubQuery *hq)
+
+{
+ if(hq == NULL)
+    {
+    return 0;
+    }
+ 
+ return RlistLen(hq->records);
 }
 
 /*****************************************************************************/
