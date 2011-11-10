@@ -4804,8 +4804,10 @@ static char *cfcon_aggr_promiselog(int argc, enum promiselog_rep log_type)
  static char buffer[CFCON_SPL_BUFSIZE];
  char *hubKeyHash, *fhubKeyHash;
  char *promiseHandle, *fPromiseHandle;
+ PageInfo_t page = {0};
 
- if (zend_parse_parameters(argc, "ss",&hubKeyHash,&hkh_len,&promiseHandle,&ph_len) == FAILURE)
+ if (zend_parse_parameters(argc, "ssll",&hubKeyHash,&hkh_len,&promiseHandle,&ph_len,
+                           &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     return NULL;
     }
@@ -4819,7 +4821,7 @@ static char *cfcon_aggr_promiselog(int argc, enum promiselog_rep log_type)
  fPromiseHandle = (ph_len == 0) ? NULL : promiseHandle;
      
  buffer[0]='\0';
- Con2PHP_aggr_promiselog(fhubKeyHash,fPromiseHandle,log_type,buffer,sizeof(buffer));
+ Con2PHP_aggr_promiselog(fhubKeyHash,fPromiseHandle,log_type,&page,buffer,sizeof(buffer));
 
  return buffer;
 }
@@ -5048,8 +5050,10 @@ PHP_FUNCTION(cfcon_aggr_filechange)
  char *hubHostKey, *filePath;
  char *fHubHostKey, *fFilePath;
  int hkLen, fpLen;
+ PageInfo_t page = {0};
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&hubHostKey, &hkLen, &filePath, &fpLen) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll",&hubHostKey, &hkLen, &filePath, &fpLen,
+                           &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     RETURN_NULL();
     }
@@ -5064,7 +5068,7 @@ PHP_FUNCTION(cfcon_aggr_filechange)
  fFilePath = (fpLen == 0) ? NULL : filePath;
 
  buffer[0]='\0';
- Con2PHP_aggr_filechange(fHubHostKey, fFilePath, buffer, sizeof(buffer));
+ Con2PHP_aggr_filechange(fHubHostKey, fFilePath, &page, buffer, sizeof(buffer));
  
  RETURN_STRING(buffer,1);
 }
@@ -5078,8 +5082,10 @@ PHP_FUNCTION(cfcon_aggr_software)
  char *hubHostKey, *pkgname;
  char *fHubHostKey, *fPackageName;
  int hkLen, pnLen;
+ PageInfo_t page = {0};
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&hubHostKey, &hkLen, &pkgname, &pnLen) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll",&hubHostKey, &hkLen, &pkgname, &pnLen,
+                           &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     RETURN_NULL();
     }
@@ -5094,7 +5100,7 @@ PHP_FUNCTION(cfcon_aggr_software)
  fPackageName = (pnLen == 0) ? NULL : pkgname;
 
  buffer[0]='\0';
- Con2PHP_aggr_software(fHubHostKey, fPackageName, buffer, sizeof(buffer));
+ Con2PHP_aggr_software(fHubHostKey, fPackageName, &page, buffer, sizeof(buffer));
  
  RETURN_STRING(buffer,1);
 }
@@ -5108,8 +5114,10 @@ PHP_FUNCTION(cfcon_aggr_classes)
  char *hubHostKey, *classname;
  char *fHubHostKey, *fClassName;
  int hkLen, cnLen;
+ PageInfo_t page = {0};
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&hubHostKey, &hkLen, &classname, &cnLen) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll",&hubHostKey, &hkLen, &classname, &cnLen,
+                           &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     RETURN_NULL();
     }
@@ -5124,7 +5132,7 @@ PHP_FUNCTION(cfcon_aggr_classes)
  fClassName = (cnLen == 0) ? NULL : classname;
 
  buffer[0]='\0';
- Con2PHP_aggr_classes(fHubHostKey, fClassName, buffer, sizeof(buffer));
+ Con2PHP_aggr_classes(fHubHostKey, fClassName, &page, buffer, sizeof(buffer));
  
  RETURN_STRING(buffer,1);
 }
