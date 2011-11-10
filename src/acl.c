@@ -390,30 +390,16 @@ if (*mode == '\0' || *mode == ':')
 
 while(true)
    {
-   if (strchr(valid_ops,*mode))
-      {
-      mode++;
-      }
+   mode = ScanPastChars(valid_ops, mode);
 
-   // scan past any generic perms
-   while (strchr(CF_VALID_GPERMS,*mode))
-      {
-      if(*mode == '\0')
-         {
-         break;
-         }
-      mode++;
-      }
+   mode = ScanPastChars(CF_VALID_GPERMS, mode);
 
    if (*mode == CF_NATIVE_PERMS_SEP_START)
       {
       mode++;
 
-      while (strchr(valid_nperms,*mode))
-         {
-         mode++;
-         }
-
+      mode = ScanPastChars(valid_nperms, mode);
+      
       if (*mode == CF_NATIVE_PERMS_SEP_END)
          {
          mode++;

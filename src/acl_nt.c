@@ -994,7 +994,7 @@ int Nova_ParseModeNt(char **modePtr, ACCESS_MASK *perms)
         }
 
       // parse generic perms
-      while(strchr(CF_VALID_GPERMS,*mode))
+      while(*mode != '\0' && strchr(CF_VALID_GPERMS,*mode))
         {
           switch(*mode)
             {
@@ -1032,7 +1032,7 @@ int Nova_ParseModeNt(char **modePtr, ACCESS_MASK *perms)
         {
           mode++;
 
-          while(strchr(CF_VALID_NPERMS_NTFS,*mode))
+          while(*mode != '\0' && strchr(CF_VALID_NPERMS_NTFS,*mode))
             {
               switch(*mode)
                 {
