@@ -2117,7 +2117,7 @@ for (ptr = VSCOPE; ptr != NULL; ptr=ptr->next)
 
       if(!PrintRval(var.rval, sizeof(var.rval) - 15, assoc->rval, assoc->rtype))
          {
-         CfOut(cf_verbose, "", "!! Truncated variable %s in var db -- larger than %d", key, sizeof(var.rval));
+         CfOut(cf_verbose, "", "!! Variable %s is too large for transmission to reporting hub (larger than %d bytes) -- will be truncated in reports", key, sizeof(var.rval));
          }
       
       WriteDB(dbp,key,&var,VARSTRUCTUSAGE(var));
