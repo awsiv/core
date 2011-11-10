@@ -4270,24 +4270,29 @@ char *CONSTELLATION_REPORTS[2][2] =
     {"Virtual bundles","Custom collections of promises and their compliance"},
     {NULL,NULL}
 };
-
+/*****************************************************************************/
 void Nova2PHP_select_reports(char *buffer,int bufsize)
 
-{
-buffer[0] = '[';
+{ char novaListJson[CF_BUFSIZE]={0};
+  char constellationListJson[CF_BUFSIZE]={0};
+  char work[CF_BUFSIZE]={0};
 
-FormatTwoDimensionalArrayAsJson(buffer,bufsize,BASIC_REPORTS);
+constellationListJson[0] ='\0';
+novaListJson[0] ='\0';
+
+FormatTwoDimensionalArrayAsJson(novaListJson,sizeof(novaListJson),BASIC_REPORTS);
 
 #ifdef HAVE_CONSTELLATION
 char errBuf[CF_MAXVARSIZE] = {0};  // TODO: ignored for now (needs to be handled by GUI)
+
 if(Con2PHP_CheckLicenseAndFormatError(errBuf, sizeof(errBuf)))
    {
-   Join(buffer, ",", bufsize);
-   FormatTwoDimensionalArrayAsJson(buffer,bufsize,CONSTELLATION_REPORTS);
+   FormatTwoDimensionalArrayAsJson(constellationListJson,sizeof(constellationListJson),CONSTELLATION_REPORTS);
    }
 #endif
 
-EndJoin(buffer,"]",bufsize);
+snprintf(buffer,bufsize,"[%s,%s",novaListJson,constellationListJson);
+ReplaceTrailingChar(buffer, ',', ']');
 }
 
 /*****************************************************************************/
