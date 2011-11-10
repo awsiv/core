@@ -274,6 +274,7 @@ PHP_FUNCTION(cfcon_subscribe_repairlog);
 
 PHP_FUNCTION(cfcon_report_software);
 PHP_FUNCTION(cfcon_local_report_virtualbundle);
+PHP_FUNCTION(cfcon_local_report_virtualbundle_promises);
 
 PHP_FUNCTION(cfcon_aggr_filechange);
 PHP_FUNCTION(cfcon_aggr_software);

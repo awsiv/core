@@ -286,6 +286,7 @@ static function_entry cfmod_functions[] =
     
     PHP_FE(cfcon_report_software, NULL)
     PHP_FE(cfcon_local_report_virtualbundle, NULL)
+    PHP_FE(cfcon_local_report_virtualbundle_promises, NULL)
     
     
     PHP_FE(cfcon_aggr_filechange, NULL)
@@ -5322,6 +5323,41 @@ PHP_FUNCTION(cfcon_local_report_virtualbundle)
 
  buffer[0]='\0';
  Con2PHP_local_report_virtualbundle(fUser, fSubHandleRx, &page, buffer, sizeof(buffer));
+ 
+ RETURN_STRING(buffer,1);
+
+}
+
+/******************************************************************************/
+
+PHP_FUNCTION(cfcon_local_report_virtualbundle_promises)
+{
+ char buffer[CF_WEBBUFFER];
+ char *user, *subHandle;
+ int usLen, shLen;
+ struct PageInfo page = {0};
+ 
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll", &user, &usLen, &subHandle, &shLen,
+                           &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
+    {
+    RETURN_NULL();
+    }
+
+ if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+    {
+    RETURN_STRING(buffer,1);
+    }
+
+ if(shLen == 0)
+    {
+    FormatSingletonErrorJson(buffer, sizeof(buffer), ERRID_ARGUMENT_MISSING);
+    RETURN_STRING(buffer,1);
+    }
+
+ char *fUser = (usLen == 0) ? NULL : user;
+
+ buffer[0]='\0';
+ Con2PHP_local_report_virtualbundle_promises(fUser, subHandle, &page, buffer, sizeof(buffer));
  
  RETURN_STRING(buffer,1);
 
