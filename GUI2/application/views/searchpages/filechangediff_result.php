@@ -25,7 +25,7 @@ if (count($result['data']) > 0) {
         foreach ($result['meta']['header'] as $key => $value) {
             if (!is_array($value)) {
                 if (strtolower($key) == "change detected at")
-                    array_push($temp, getDateStatus ($row[$value]));
+                    array_push($temp, getDateStatus ($row[$value],true));
                 else
                     array_push($temp, $row[$value]);
             }
