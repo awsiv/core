@@ -436,7 +436,7 @@ struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *t
   bson query,field;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
-  struct HubHost *hh;
+  struct HubHost *hh = NULL;
   struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
   char rname[CF_MAXVARSIZE] = {0},rversion[CF_MAXVARSIZE] = {0},rarch[3] = {0},arch[3] = {0};
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
@@ -495,6 +495,8 @@ cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 bson_destroy(&query);
 bson_destroy(&field);
 
+time_t lastSeen = 0;
+
 while (mongo_cursor_next(cursor))  // loops over documents
    {
    bson_iterator_init(&it1,cursor->current.data);
@@ -502,13 +504,12 @@ while (mongo_cursor_next(cursor))  // loops over documents
    keyhash[0] = '\0';
    hostnames[0] = '\0';
    addresses[0] = '\0';
-   time_t lastSeen = 0;
+   lastSeen = 0;
    found = false;
+   hh = NewHubHost(NULL, NULL, NULL, NULL);  // filled in later if we get data (hub info may come last...)
    
    while (bson_iterator_next(&it1))
       {
-      /* Extract the common HubHost data */
-
       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
 
       if(strcmp(type, cfr_software) == 0 && strcmp(bson_iterator_key(&it1),cfr_software_t) == 0)
@@ -516,9 +517,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
          // TODO: Add support for time of NOVA_PATCHES_INSTALLED and NOVA_PATCHES_AVAIL?
          lastSeen = bson_iterator_int(&it1);
          }
-      
-      /* Query specific search/marshalling */
-      
+
       if (strcmp(bson_iterator_key(&it1),type) == 0)
          {
          bson_iterator_init(&it2,bson_iterator_value(&it1));
@@ -591,7 +590,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                if (match_name && match_version && match_arch)
                   {
                   found = true;
-                  rp = PrependRlistAlien(&record_list,NewHubSoftware(CF_THIS_HH,rname,rversion,rarch));
+                  rp = PrependRlistAlien(&record_list,NewHubSoftware(hh,rname,rversion,rarch));
                   }
                }               
             }
@@ -600,21 +599,14 @@ while (mongo_cursor_next(cursor))  // loops over documents
    
    if (found)
       {
-      hh = NewHubHost(NULL,keyhash,addresses,hostnames);
+      hh->keyhash = xstrdup(keyhash);
+      hh->ipaddr = xstrdup(addresses);
+      hh->hostname = xstrdup(hostnames);
       PrependRlistAlien(&host_list,hh);
-      
-      // Now cache the host reference in all of the records to flatten the 2d list
-      // also add the timestamp to all reports
-      
-      for (rp = record_list; rp != NULL; rp=rp->next)
-         {
-         struct HubSoftware *hs = (struct HubSoftware *)rp->item;
-         if (hs->hh == CF_THIS_HH)
-            {
-            hs->hh = hh;
-            }
-         hs->t = lastSeen;
-         }
+      }
+   else
+      {
+      DeleteHubHost(hh);
       }
    }
 

@@ -120,14 +120,11 @@ struct HubHost *NewHubHost(char *hubkey, char *keyhash,char *ipaddr,char *hostna
 
 { struct HubHost *hp;
 
- if ((hp = malloc(sizeof(struct HubHost))) == NULL)
-    {
-    FatalError("Memory exhausted NewHubHost");
-    }
+ hp = xmalloc(sizeof(struct HubHost));
 
  if (hubkey)
     {
-    hp->hubkey = strdup(hubkey);
+    hp->hubkey = xstrdup(hubkey);
     }
  else
     {
@@ -136,7 +133,7 @@ struct HubHost *NewHubHost(char *hubkey, char *keyhash,char *ipaddr,char *hostna
  
  if (keyhash)
     {
-    hp->keyhash = strdup(keyhash);
+    hp->keyhash = xstrdup(keyhash);
     }
  else
     {
@@ -145,7 +142,7 @@ struct HubHost *NewHubHost(char *hubkey, char *keyhash,char *ipaddr,char *hostna
 
  if (ipaddr)
     {
-    hp->ipaddr = strdup(ipaddr);
+    hp->ipaddr = xstrdup(ipaddr);
     }
  else
     {
@@ -154,7 +151,7 @@ struct HubHost *NewHubHost(char *hubkey, char *keyhash,char *ipaddr,char *hostna
 
  if (hostname)
     {
-    hp->hostname = strdup(hostname);
+    hp->hostname = xstrdup(hostname);
     }
  else
     {
@@ -195,6 +192,11 @@ struct HubHost *GetHubHostIn(struct Rlist *host_list, char *keyhash)
 
 void DeleteHubHost(struct HubHost *hp)
 {
+ if(!hp)
+    {
+    return;
+    }
+ 
   if (hp->hubkey)
     {
     free(hp->hubkey);
