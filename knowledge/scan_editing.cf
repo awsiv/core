@@ -26,6 +26,8 @@ Special_Topics_Guide::
 Special_Topics_Guide::
     "Why is file editing difficult?"  association => a("discusses","Promising and Editing File Content","is discussed in");
 Special_Topics_Guide::
+    "File templates"  association => a("discusses","Promising and Editing File Content","is discussed in");
+Special_Topics_Guide::
     "What is convergent file editing?"  association => a("discusses","Promising and Editing File Content","is discussed in");
 Special_Topics_Guide::
     "Editing"  association => a("discusses","Promising and Editing File Content","is discussed in");
@@ -45,6 +47,18 @@ Editing::
 What_is_convergent_file_editing_::
  "/docs/st-editing.html#What-is-convergent-file-editing_003f"
   represents => { "Text section" };
+File_templates::
+ "/docs/st-editing.html#File-templates"
+  represents => { "Text section" };
+File_templates::
+ "/docs/st-editing.html#File-templates"
+  represents => { "code example" };
+File_templates::
+ "/docs/st-editing.html#File-templates"
+  represents => { "code example" };
+File_templates::
+ "/docs/st-editing.html#File-templates"
+  represents => { "code example" };
 Why_is_file_editing_difficult_::
  "/docs/st-editing.html#Why-is-file-editing-difficult_003f"
   represents => { "Text section" };
