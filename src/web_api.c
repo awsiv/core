@@ -4271,6 +4271,8 @@ char *CONSTELLATION_REPORTS[2][2] =
     {NULL,NULL}
 };
 /*****************************************************************************/
+/*****************************************************************************/
+
 void Nova2PHP_select_reports(char *buffer,int bufsize)
 
 { char novaListJson[CF_BUFSIZE]={0};
@@ -4281,6 +4283,7 @@ constellationListJson[0] ='\0';
 novaListJson[0] ='\0';
 
 FormatTwoDimensionalArrayAsJson(novaListJson,sizeof(novaListJson),BASIC_REPORTS);
+snprintf(buffer,bufsize,"[%s]",novaListJson);
 
 #ifdef HAVE_CONSTELLATION
 char errBuf[CF_MAXVARSIZE] = {0};  // TODO: ignored for now (needs to be handled by GUI)
@@ -4288,18 +4291,16 @@ char errBuf[CF_MAXVARSIZE] = {0};  // TODO: ignored for now (needs to be handled
 if(Con2PHP_CheckLicenseAndFormatError(errBuf, sizeof(errBuf)))
    {
    FormatTwoDimensionalArrayAsJson(constellationListJson,sizeof(constellationListJson),CONSTELLATION_REPORTS);
+   snprintf(buffer,bufsize,"[%s,%s]",novaListJson,constellationListJson);
    }
 #endif
-
-snprintf(buffer,bufsize,"[%s,%s",novaListJson,constellationListJson);
-ReplaceTrailingChar(buffer, ',', ']');
 }
 
 /*****************************************************************************/
 
 static char *FormatTwoDimensionalArrayAsJson(char *buf, int bufsize, char *array[][2])
 {
- char work[CF_MAXVARSIZE];
+ char work[CF_MAXVARSIZE] = {0};
  int i;
 
  for (i = 0; array[i][0] != NULL; i++)
