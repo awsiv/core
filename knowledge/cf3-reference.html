@@ -244,7 +244,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h2 class="chapter">1 CFEngine 3.3.0a1.r3278 &ndash; Getting started</h2>
+<h2 class="chapter">1 CFEngine 3.3.0a1.r3343M &ndash; Getting started</h2>
 
 <p><br>
 
@@ -16833,6 +16833,43 @@ with backslash continuation. The default is to not process continuation backslas
 and will not be restored. Restoration of the backslashes is not
 possible in a meaningful and convergent fashion.
 
+     <br><dt>&lsquo;<samp><code>rotate</code></samp>&rsquo;<dd><b>Type</b>: int
+
+     <p class="noindent"><b>Allowed input range</b>: <code>0,99</code>
+
+     <p class="noindent"><b>Synopsis</b>: How many backups to store if 'rotate' edit_backup strategy is selected. Defaults to 1
+
+     <p><b>Example</b>:<br>
+<br>
+
+     <pre class="verbatim">     
+<span class="red">body rename</span> <span class="blue">example</span>
+     {
+<span class="red">     rotate </span>=><span class="green"> "4";</span>
+     }
+     
+</pre>
+
+     <p><b>Notes</b>:<br>
+<br>
+
+     <p>Used for log rotation. If the file is named <samp><span class="file">foo</span></samp> and the &lsquo;<samp><span class="samp">rotate</span></samp>&rsquo;
+attribute is set to &lsquo;<samp><span class="samp">4</span></samp>&rsquo;, as above, then initially <samp><span class="file">foo</span></samp> is copied
+to <samp><span class="file">foo.1</span></samp> and the old file <samp><span class="file">foo</span></samp> is zeroed out (that is, the inode
+of the original logfile does not change, but the original logfile will be
+empty after the rotation is complete).
+
+     <p>The next time the promise is executed, <samp><span class="file">foo.1</span></samp> will be renamed
+<samp><span class="file">foo.2</span></samp>, <samp><span class="file">foo</span></samp> is again copied to <samp><span class="file">foo.1</span></samp> and the old file
+<samp><span class="file">foo</span></samp> is again zeroed out.
+
+     <p>Each time the promise is executed (and typically, the promise would be
+executed as guarded by time-based or file-size-based classes), the files are
+copied/zeroed or rotated as above until there are &lsquo;<samp><span class="samp">rotate</span></samp>&rsquo; numbered files
+plus the one "main" file.  In the example above, the file <samp><span class="file">foo.3</span></samp> will be
+renamed <samp><span class="file">foo.4</span></samp>, but the old version of the file <samp><span class="file">foo.4</span></samp> will be
+deleted (that is, it "falls off the end" of the rotation).
+
    </dl>
 
 <div class="node">
@@ -19264,6 +19301,17 @@ reproducible significance.
 <br>
 
      <pre class="verbatim">     
+<span class="comment">     # Editing
+</span>
+     
+<span class="red">body location</span> <span class="blue">example</span>
+     {
+<span class="red">     select_line_matching </span>=><span class="green"> "Expression match.* whole line";</span>
+     }
+     
+<span class="comment">     # Measurement promises
+</span>
+     
 <span class="red">body match_value</span> <span class="blue">example</span>
      {
 <span class="red">     select_line_matching </span>=><span class="green"> "Expression match.* whole line";</span>
@@ -25287,6 +25335,17 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#measurements-in-monitor-promises">meas
 <br>
 
      <pre class="verbatim">     
+<span class="comment">     # Editing
+</span>
+     
+<span class="red">body location</span> <span class="blue">example</span>
+     {
+<span class="red">     select_line_matching </span>=><span class="green"> "Expression match.* whole line";</span>
+     }
+     
+<span class="comment">     # Measurement promises
+</span>
+     
 <span class="red">body match_value</span> <span class="blue">example</span>
      {
 <span class="red">     select_line_matching </span>=><span class="green"> "Expression match.* whole line";</span>
@@ -35791,7 +35850,7 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <h2>Table of Contents</h2>
 <ul>
 <li><a name="toc_Top" href="#Top">CFEngine-AutoReference</a>
-<li><a name="toc_Getting-started" href="#Getting-started">1 CFEngine 3.3.0a1.r3278 &ndash; Getting started</a>
+<li><a name="toc_Getting-started" href="#Getting-started">1 CFEngine 3.3.0a1.r3343M &ndash; Getting started</a>
 <ul>
 <li><a href="#Software-components">1.1 Software components</a>
 <ul>

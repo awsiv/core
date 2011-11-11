@@ -234,8 +234,6 @@ documentation::
 documentation::
     "include_start_delimiter"  association => a("is contained in","cf3-reference","contains");
 documentation::
-    "rotate"  association => a("is contained in","cf3-reference","contains");
-documentation::
     "newname"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "disable_suffix"  association => a("is contained in","cf3-reference","contains");
@@ -291,6 +289,8 @@ documentation::
     "path_name"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "leaf_name"  association => a("is contained in","cf3-reference","contains");
+documentation::
+    "rotate"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "recognize_join"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -500,7 +500,7 @@ CFEngine_reference_manual::
 CFEngine_AutoReference::
  "/docs/cf3-reference.html#Top"
   represents => { "Text section" };
-CFEngine_3_3_0a1_r3278__Getting_started::
+CFEngine_3_3_0a1_r3343M__Getting_started::
  "/docs/cf3-reference.html#Getting-started"
   represents => { "manual chapter" };
 Software_components::
@@ -1770,6 +1770,9 @@ max_file_size::
  "/docs/cf3-reference.html#edit_005fdefaults-in-files"
   represents => { "document" };
 recognize_join::
+ "/docs/cf3-reference.html#edit_005fdefaults-in-files"
+  represents => { "document" };
+rotate::
  "/docs/cf3-reference.html#edit_005fdefaults-in-files"
   represents => { "document" };
 file_select::
