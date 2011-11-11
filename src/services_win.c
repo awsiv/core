@@ -10,6 +10,8 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+static int CountArgs(const char **args);
+
 // services that can't be opened (Windows Server 2008 - separate for each OS?)
 char *PROTECTED_SERVICES[] = { "Schedule", "SamSs", "RpcSs", 
                                "PlugPlay", "gpsvc", "DcomLaunch", 
@@ -121,13 +123,15 @@ int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, char *a
     {
     case cfsrv_start:
 
-        // split argument string, if used
-        if(argStr)
-           {
-           NovaWin_AllocSplitServiceArgs(argStr, &argc, &argv);
-           }
+       if (argStr)
+          {
+          argv = ArgSplitCommand(argStr);
+          argc = CountArgs(argv);
+          }
 
         result = NovaWin_CheckServiceStart(managerHandle, srvHandle, argc, argv, onlyCheckDeps, isDependency, a, pp, setCfPs);
+
+        ArgFree(argv);
 
         if(!result)
            {
@@ -1012,30 +1016,15 @@ int NovaWin_ServiceStateWait(SC_HANDLE srvHandle, DWORD state)
 
 /*****************************************************************************/
 
-void NovaWin_AllocSplitServiceArgs(char *argStr, int *argcp, char ***argvp)
+static int CountArgs(const char **args)
 {
- static char arg[CF_MAXSHELLARGS][CF_BUFSIZE];
- char **argv = NULL;
- int argc = 0;
- int i;
-
- argc = ArgSplitCommand(argStr,arg);
- argv = (char **) malloc((argc+1)*sizeof(char *));
-
- if(argv == NULL)
-    {
-    FatalError("Memory allocation in NovaWin_AllocSplitServiceArgs()");
-    }
- 
- for (i = 0; i < argc; i++)
-    {
-    argv[i] = arg[i];
-    }
-   
- argv[i] = (char *) NULL;
-
- *argvp = argv;
- *argcp = argc;
+int argc = 0;
+while (*args)
+   {
+   argc++;
+   args++;
+   }
+return argc;
 }
 
 #endif  /* MINGW */
