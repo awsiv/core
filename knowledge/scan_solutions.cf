@@ -318,6 +318,9 @@ Selecting_a_region_in_a_file::
  "/docs/cf3-solutions.html#Selecting-a-region-in-a-file"
   represents => { "manual section Selecting a region in a file" };
 Service_management::
+ "/docs/cf3-solutions.html#Service-management-_0028linux_0029"
+  represents => { "manual section Service management" };
+Service_management::
  "/docs/cf3-solutions.html#Service-management-_0028windows_0029"
   represents => { "manual section Service management" };
 Set_up_a_PXE_boot_server::

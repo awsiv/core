@@ -322,17 +322,18 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <li><a href="#Resolver-management">3.50 Resolver management</a>
 <li><a href="#Search-and-replace-text">3.51 Search and replace text</a>
 <li><a href="#Selecting-a-region-in-a-file">3.52 Selecting a region in a file</a>
-<li><a href="#Service-management-_0028windows_0029">3.53 Service management (windows)</a>
-<li><a href="#Set-up-a-PXE-boot-server">3.54 Set up a PXE boot server</a>
-<li><a href="#Tidying-garbage-files">3.55 Tidying garbage files</a>
-<li><a href="#Software-distribution">3.56 Software distribution</a>
-<li><a href="#Trigger-classes">3.57 Trigger classes</a>
-<li><a href="#Unmount-NFS-filesystem">3.58 Unmount NFS filesystem</a>
-<li><a href="#Web-server-modules">3.59 Web server modules</a>
-<li><a href="#Warn-if-matching-line-in-file">3.60 Warn if matching line in file</a>
-<li><a href="#Windows-registry">3.61 Windows registry</a>
-<li><a href="#unit_005fregistry_005fcache_002ecf">3.62 unit_registry_cache.cf</a>
-<li><a href="#unit_005fregistry_002ecf">3.63 unit_registry.cf</a>
+<li><a href="#Service-management-_0028linux_0029">3.53 Service management (linux)</a>
+<li><a href="#Service-management-_0028windows_0029">3.54 Service management (windows)</a>
+<li><a href="#Set-up-a-PXE-boot-server">3.55 Set up a PXE boot server</a>
+<li><a href="#Tidying-garbage-files">3.56 Tidying garbage files</a>
+<li><a href="#Software-distribution">3.57 Software distribution</a>
+<li><a href="#Trigger-classes">3.58 Trigger classes</a>
+<li><a href="#Unmount-NFS-filesystem">3.59 Unmount NFS filesystem</a>
+<li><a href="#Web-server-modules">3.60 Web server modules</a>
+<li><a href="#Warn-if-matching-line-in-file">3.61 Warn if matching line in file</a>
+<li><a href="#Windows-registry">3.62 Windows registry</a>
+<li><a href="#unit_005fregistry_005fcache_002ecf">3.63 unit_registry_cache.cf</a>
+<li><a href="#unit_005fregistry_002ecf">3.64 unit_registry.cf</a>
 </li></ul>
 </li></ul>
 </div>
@@ -394,8 +395,7 @@ system environment, contact CFEngine's Professional Services at
 <li><a accesskey="4" href="#Copy-directory-trees">Copy directory trees</a>
 <li><a accesskey="5" href="#Editing-password-or-group-files">Editing password or group files</a>
 <li><a accesskey="6" href="#Editing-password-or-group-files-custom">Editing password or group files custom</a>
-<li><a accesskey="7" href="#Disabling-and-rotating-files">Disabling and rotating files</a>
-<!-- * unit_disable_and_rotate_files.cf:: -->
+<li><a accesskey="7" href="#Disabling-and-rotating-files">Disabling and rotating files</a>:   <!-- * unit_disable_and_rotate_files.cf:: -->
 <!-- * unit_disable.cf:: -->
 <li><a accesskey="8" href="#Hashing-for-change-detection-_002d-tripwire">Hashing for change detection - tripwire</a>
 <li><a accesskey="9" href="#Command-or-script-execution">Command or script execution</a>
@@ -3757,6 +3757,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <li><a href="#Resolver-management">Resolver management</a>
 <li><a href="#Search-and-replace-text">Search and replace text</a>
 <li><a href="#Selecting-a-region-in-a-file">Selecting a region in a file</a>
+<li><a href="#Service-management-_0028linux_0029">Service management (linux)</a>
 <li><a href="#Service-management-_0028windows_0029">Service management (windows)</a>
 <li><a href="#Set-up-a-PXE-boot-server">Set up a PXE boot server</a>
 <li><a href="#Tidying-garbage-files">Tidying garbage files</a>
@@ -8066,7 +8067,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 <div class="node">
 <a name="Selecting-a-region-in-a-file"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Service-management-_0028windows_0029">Service management (windows)</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Service-management-_0028linux_0029">Service management (linux)</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Search-and-replace-text">Search and replace text</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
@@ -8145,16 +8146,107 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 </pre>
 
 <div class="node">
-<a name="Service-management-(windows)"></a>
-<a name="Service-management-_0028windows_0029"></a>
+<a name="Service-management-(linux)"></a>
+<a name="Service-management-_0028linux_0029"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Set-up-a-PXE-boot-server">Set up a PXE boot server</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Service-management-_0028windows_0029">Service management (windows)</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Selecting-a-region-in-a-file">Selecting a region in a file</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.53 Service management (windows)</h3>
+<h3 class="section">3.53 Service management (linux)</h3>
+
+<pre class="verbatim">
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body executor</span> <span class="blue">control</span>
+
+{
+<span class="red">splaytime </span>=><span class="green"> "1";</span>
+<span class="red">mailto </span>=><span class="green"> "cfengine@example.com";</span>
+<span class="red">smtpserver </span>=><span class="green"> "localhost";</span>
+<span class="red">mailmaxlines </span>=><span class="green"> "30";</span>
+
+<span class="comment"># Once per hour, on the hour
+</span>
+
+<span class="red">schedule     </span>=> { "Min00_05" };
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">services_disable</span>
+{
+<span class="red">vars:
+</span>
+<span class="comment">   # list all of xinetd services (case sensitive)
+</span>
+
+   "xinetd_services"<span class="red"> slist </span>=> {
+                               "imap",
+                               "imaps",
+                               "ipop2",
+                               "ipop3",
+                               "krb5-telnet",
+                               "klogin",
+                               "kshell",
+                               "ktalk",
+                               "ntalk",
+                               "pop3s",
+
+                              };
+<span class="red">methods:
+</span>
+<span class="comment">   # perform the actual disable all xinetd services according to the list above
+</span>
+
+   "any"<span class="red">  usebundle </span>=><span class="blue"> disable_xinetd("$(xinetd_services)");</span>
+
+<span class="red">processes:
+</span>
+  "$(xinetd_services)"
+
+<span class="red">           signals </span>=> { "kill" };
+
+}
+
+<span class="comment">###############################################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">disable_xinetd(name)</span>
+{
+<span class="red"> vars:
+</span>   "status"<span class="red"> string </span>=> execresult("/sbin/chkconfig --list $(name)", "useshell");
+
+<span class="red"> classes:
+</span>   "on"<span class="red">  expression </span>=> regcmp(".*on.*","$(status)");
+   
+<span class="red"> commands:
+</span>   on::
+      "/sbin/chkconfig $(name) off",
+<span class="red">        comment </span>=><span class="green"> "disable $(name) service";</span>
+
+<span class="red"> reports:
+</span>   on::
+      "disable $(name) service.";
+   
+}
+</pre>
+
+<div class="node">
+<a name="Service-management-(windows)"></a>
+<a name="Service-management-_0028windows_0029"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Set-up-a-PXE-boot-server">Set up a PXE boot server</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Service-management-_0028linux_0029">Service management (linux)</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.54 Service management (windows)</h3>
 
 <pre class="verbatim">
 <span class="red">body common control
@@ -8195,7 +8287,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 </span>
 </div>
 
-<h3 class="section">3.54 Set up a PXE boot server</h3>
+<h3 class="section">3.55 Set up a PXE boot server</h3>
 
 <p>Use CFEngine to set up a PXE boot server.
 
@@ -8871,7 +8963,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.55 Tidying garbage files</h3>
+<h3 class="section">3.56 Tidying garbage files</h3>
 
 <p>Emulating the `tidy' feature of CFEngine 2.
 
@@ -8967,7 +9059,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.56 Software distribution</h3>
+<h3 class="section">3.57 Software distribution</h3>
 
 <pre class="verbatim">
 <span class="comment">#########################################################################
@@ -9171,7 +9263,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.57 Trigger classes</h3>
+<h3 class="section">3.58 Trigger classes</h3>
 
 <pre class="verbatim">
 
@@ -9277,7 +9369,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.58 Unmount NFS filesystem</h3>
+<h3 class="section">3.59 Unmount NFS filesystem</h3>
 
 <pre class="verbatim">#####################################################################
 <span class="comment"># Mount NFS
@@ -9329,7 +9421,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.59 Web server modules</h3>
+<h3 class="section">3.60 Web server modules</h3>
 
 <p>The problem of editing the correct modules into the list of standard
 modules for the Apache web server. This example is based on the
@@ -9459,7 +9551,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.60 Warn if matching line in file</h3>
+<h3 class="section">3.61 Warn if matching line in file</h3>
 
 <pre class="verbatim">
 <span class="comment">########################################################
@@ -9522,7 +9614,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.61 Windows registry</h3>
+<h3 class="section">3.62 Windows registry</h3>
 
 <pre class="verbatim">
 
@@ -9556,7 +9648,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.62 unit_registry_cache.cf</h3>
+<h3 class="section">3.63 unit_registry_cache.cf</h3>
 
 <pre class="verbatim">
 <span class="red">body common control
@@ -9607,7 +9699,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.63 unit_registry.cf</h3>
+<h3 class="section">3.64 unit_registry.cf</h3>
 
 <pre class="verbatim">
 
