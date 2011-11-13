@@ -72,17 +72,17 @@ bundle agent update_bins
                             comment => "Name convention of package arch on Solaris",
                              handle => "update_bins_vars_pkgarch_solarisx86";
 
-  redhat_4.i686::
+  redhat.i686::
 
    "pkgarch"                 string => "i386",
-                            comment => "Name convention of package arch on 32-bit RHEL4 ",
-                             handle => "update_bins_vars_pkgarch_redhat4_32b";
+                            comment => "Name convention of package arch on 32-bit RHEL",
+                             handle => "update_bins_vars_pkgarch_redhat_32b";
 
-  redhat_4.x86_64::
+  redhat.x86_64::
 
    "pkgarch"                 string => "$(sys.arch)",
-                            comment => "Name convention of package arch on 64-bit RHEL4 ",
-                             handle => "update_bins_vars_pkgarch_redhat4_64b";
+                            comment => "Name convention of package arch on 64-bit RHEL",
+                             handle => "update_bins_vars_pkgarch_redhat_64b";
 
   freebsd|netbsd|debian|aix::
 
@@ -90,11 +90,11 @@ bundle agent update_bins
                             comment => "Name convention of package arch on *BSD/Debian",
                              handle => "update_bins_vars_pkgarch_bsd_debian_aix";
 
-  !(solarisx86|solaris|freebsd|netbsd|debian|aix|redhat_4)::
+  !(solarisx86|solaris|freebsd|netbsd|debian|aix|redhat)::
 
    "pkgarch"                 string => "$(sys.arch)",
                             comment => "Name convention of package arch for other system except Solaris and *BSD",
-                             handle => "update_bins_vars_pkgarch_not_solaris_bsd_debian_aix_redhat4_32b";
+                             handle => "update_bins_vars_pkgarch_not_solaris_bsd_debian_aix_redhat_32b";
 
 #
 

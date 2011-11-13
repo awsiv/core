@@ -1,6 +1,7 @@
 November 2011
 *update.cf*
 - add classes => u_if_repaired("stopped_cfprocs"); to Windows in order to ensure the self-upgrade would work properly
+- all 32-bit Redhat-related distros seemed to be a problem, fixed in the policy level
 
 October 2011
 *failsafe.cf*
