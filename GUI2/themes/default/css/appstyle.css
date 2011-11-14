@@ -1702,6 +1702,10 @@ div.ui-dialog .ui-dialog-buttonpane{
     background: url("../images/pdf.png") no-repeat left center;
 }
 
+.csv{
+    background: url("../images/csv.png") no-repeat left center;
+}
+
 #bodyreport{
 
 }

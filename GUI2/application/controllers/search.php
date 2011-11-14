@@ -67,10 +67,10 @@ class Search extends Cf_Controller {
         $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
         //necessary for search result view
         //must use site_url for making bread crumbs work
-        if (!is_ajax() && $host == "All" ) {
+        if (!is_ajax() && $host == "All") {
             $hostkey = "";
             $many = true;
-        } elseif (!is_ajax() &&  $host != "") {
+        } elseif (!is_ajax() && $host != "") {
             $many = false;
             $hostkey = $host;
         }
@@ -79,7 +79,7 @@ class Search extends Cf_Controller {
         $params = '';
         $breadcrumbs_url = "search/index/";
         $hostfinderparams = "";
-        
+
         if (!is_ajax()) {
 
             if (count($getparams) > 0) {
@@ -117,13 +117,13 @@ class Search extends Cf_Controller {
             );
             $this->breadcrumb->setBreadCrumb($bc);
         }
-        
-        $paramArray = array_merge($getparams,$_POST);
+
+        $paramArray = array_merge($getparams, $_POST);
         $paramArray['report'] = $report_type; // we need this for the ajax queries
-        foreach ($paramArray as $index=>$value) {
+        foreach ($paramArray as $index => $value) {
             $paramArray[$index] = urldecode($value);
         }
-      
+
         $data = array(
             'report_type' => $report_type,
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
@@ -156,7 +156,7 @@ class Search extends Cf_Controller {
 
         switch ($report_type) {
             case "Bundle profile":
-                 
+
                 if ($many) {
 
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
@@ -188,7 +188,7 @@ class Search extends Cf_Controller {
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
                     //not nothing else is satisfied display extra form for more search paramaters
-                 
+
                     is_ajax() ? $this->load->view('searchpages/bundleprofile', $data) : $this->template->load('template', 'searchpages/bundleprofile', $data);
                 }
                 break;
@@ -240,7 +240,8 @@ class Search extends Cf_Controller {
 
 
                         $pdfurlParams = array('type' => $report_type,
-                            'class_regex' => $class_regex
+                            'class_regex' => $class_regex,
+                            'search' => $name
                         );
 
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
@@ -250,7 +251,8 @@ class Search extends Cf_Controller {
                     }
                 } elseif ($hostkey != "") {
                     $pdfurlParams = array('type' => $report_type,
-                        'search' => $search
+                        'search' => $name,
+                        'class_regex' => $class_regex
                     );
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
@@ -337,7 +339,8 @@ class Search extends Cf_Controller {
                     } else {
                         $pdfurlParams = array('type' => $report_type,
                             'class_regex' => $class_regex,
-                            'hostkey' => $hostkey
+                            'hostkey' => $hostkey,
+                            'search' => $name
                         );
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
@@ -376,7 +379,8 @@ class Search extends Cf_Controller {
                             'class_regex' => $class_regex,
                             'diff' => $diff,
                             'cal' => $cal,
-                            'search' => $name
+                            'search' => $name,
+                            'long_term' => $longterm_data
                         );
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
@@ -588,7 +592,8 @@ class Search extends Cf_Controller {
 
                     $pdfurlParams = array('type' => $report_type,
                         'class' => $class_regex,
-                        'hostkey' => $hostkey
+                        'hostkey' => $hostkey,
+                        'search' => $name
                     );
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
@@ -636,7 +641,8 @@ class Search extends Cf_Controller {
 
                     $pdfurlParams = array('type' => $report_type,
                         'class' => $class_regex,
-                        'hostkey' => $hostkey
+                        'hostkey' => $hostkey,
+                        'search' => $name,
                     );
 
 
@@ -778,16 +784,16 @@ class Search extends Cf_Controller {
                 if ($many) {
                     $username = (trim($allUsers) == '') ? $this->session->userdata('username') : null;
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
-                    
+
 
                     $pdfurlParams = array('type' => $report_type,
                         'name' => $name,
                         'all_user' => $username
                     );
 
-                    
-                    $data['report_result'] = $this->virtual_bundle_model->getVirtualBundleData($name,$username,$rows, $page_number);
-                    
+
+                    $data['report_result'] = $this->virtual_bundle_model->getVirtualBundleData($name, $username, $rows, $page_number);
+
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $this->template->load('template', 'searchpages/businessresult', $data);

@@ -6,6 +6,7 @@
 echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : "" ?></p>
         <div class="reporthead">
             <div class="grid_8">
+                <a href="<?php echo $report_link ?>/rf/csv/" class="icons csv showqtip" title="Generate csv report"></a>
                 <a href="<?php echo $report_link ?>" class="icons pdf showqtip" title="Generate pdf report"></a>
                 <a href="<?php echo $email_link ?>" id="send_mail" class="icons email showqtip" title="Send this report as email"></a>
                 <!--<a href="<?php echo site_url('search/index/report/' . $report_title) ?>" id="advsearch">Advance search</a>-->
@@ -57,6 +58,12 @@ echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : "" ?></p>
             <input type="text" class="" value="<?php echo $fromEmail ?>" id="from_contacts" name="from_contacts" size="50" />
             <label for="mail_subject">Subject:</label>
             <input type="text" class="" value="" id="mail_subject" name="mail_subject"  size="50" />
+            <label for="report_type">Report type:</label>
+            <select id="type" name="type">
+                <option value="pdf" selected>pdf</option>
+                <option value="csv">csv</option>
+            </select>       
+            <br></br>
             <label for="mail_desc">Message:</label>
             <textarea class="" id="mail_desc" name="mail_desc" rows="4" cols="43"></textarea>
             <input type="hidden" id="parameters" />
@@ -142,7 +149,7 @@ echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : "" ?></p>
                     $.ajax({
                         type: "POST",
                         url: $('#parameters',$dialog).val(),
-                        data:({'to':$('#to_contacts',$dialog).val(),'subject':$('#mail_subject',$dialog).val(),'message':$('#mail_desc',$dialog).val(),'from':$('#from_contacts',$dialog).val()}),
+                        data:({'rf':$('#type',$dialog).val(),'to':$('#to_contacts',$dialog).val(),'subject':$('#mail_subject',$dialog).val(),'message':$('#mail_desc',$dialog).val(),'from':$('#from_contacts',$dialog).val()}),
                         dataType:'json',
                         async: false,
                         success: function(data){

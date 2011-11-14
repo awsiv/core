@@ -7,12 +7,12 @@
             <p>Rvalue or content: (.*+[])<input class="searchfield" type="text" name="rval" value="<?php echo (is_array($paramArray) && isset($paramArray['rval'])) ? trim($paramArray['rval']) : ''; ?>"></p>
             <p>Type:<p>
                 <select name="type">
-                    <option value="s" <?php echo (is_array($paramArray) && isset($paramArray['type']) && $paramArray['state'] == 's') ? 'selected' : ''; ?>>String</option>
-                    <option value="sl" <?php echo (is_array($paramArray) && isset($paramArray['type']) && $paramArray['state'] == 'sl') ? 'selected' : ''; ?>>String list</option>
-                    <option value="i" <?php echo (is_array($paramArray) && isset($paramArray['type']) && $paramArray['state'] == 'i') ? 'selected' : ''; ?>>Integer</option>
-                    <option value="il" <?php echo (is_array($paramArray) && isset($paramArray['type']) && $paramArray['state'] == 'il') ? 'selected' : ''; ?>>Integer list</option>
-                    <option value="r" <?php echo (is_array($paramArray) && isset($paramArray['type']) && $paramArray['state'] == 'r') ? 'selected' : ''; ?>>Real</option>
-                    <option value="rl" <?php echo (is_array($paramArray) && isset($paramArray['type']) && $paramArray['state'] == 'rl') ? 'selected' : ''; ?>>Real list</option>
+                    <option value="s" <?php echo (is_array($paramArray) && isset($paramArray['type']) && $paramArray['type'] == 's') ? 'selected' : ''; ?>>String</option>
+                    <option value="sl" <?php echo (is_array($paramArray) && isset($paramArray['type']) && $paramArray['type'] == 'sl') ? 'selected' : ''; ?>>String list</option>
+                    <option value="i" <?php echo (is_array($paramArray) && isset($paramArray['type']) && $paramArray['type'] == 'i') ? 'selected' : ''; ?>>Integer</option>
+                    <option value="il" <?php echo (is_array($paramArray) && isset($paramArray['type']) && $paramArray['type'] == 'il') ? 'selected' : ''; ?>>Integer list</option>
+                    <option value="r" <?php echo (is_array($paramArray) && isset($paramArray['type']) && $paramArray['type'] == 'r') ? 'selected' : ''; ?>>Real</option>
+                    <option value="rl" <?php echo (is_array($paramArray) && isset($paramArray['type']) && $paramArray['type'] == 'rl') ? 'selected' : ''; ?>>Real list</option>
                 </select>
             <p>Host class: (.*+[])
                 <a href="<?php echo site_url('widget/allclasses') ?>" id="bphghelp" class="help"
