@@ -14,8 +14,9 @@ class Virtualbundle extends Cf_controller {
         $this->carabiner->js('widgets/notes.js');
     }
 
-    function details($handle=NULL) {
+    function details($handle=NULL, $user=NULL) {
         $this->carabiner->css('tabs-custom.css');
+
 
         if (is_null($handle)) {
             $handle = isset($_POST['handle']) ? $_POST['handle'] : NULL;
@@ -23,8 +24,13 @@ class Virtualbundle extends Cf_controller {
             $handle = urldecode($handle);
         }
 
+        if (is_null($user)) {
+            $user = $this->session->userdata('username');
+        }
+
         $handleData = $this->virtual_bundle_model->getVirtualBundleDetails($handle);
         $handleStatus = $this->virtual_bundle_model->getVirtualBundleStatus($handle);
+        $promiseDetails = $this->virtual_bundle_model->getVirtualBundlePromises( $handle,$user);
 
         $bc = array(
             'title' => $this->lang->line('breadcrumb_promise'),
@@ -39,6 +45,7 @@ class Virtualbundle extends Cf_controller {
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_promise') . " " . $handle,
             'bundle_data' => $handleData,
             'bundle_status' => $handleStatus,
+            'bundle_promises' => $promiseDetails ,
             'breadcrumbs' => $this->breadcrumblist->display()
         );
         $this->template->load('template', 'virtualbundle/detail', $data);
@@ -77,7 +84,7 @@ class Virtualbundle extends Cf_controller {
         $this->form_validation->set_rules('description', 'Description', 'xss_clean|trim|required');
         $this->form_validation->set_error_delimiters('<span>', '</span><br/>');
         if ($this->form_validation->run() == FALSE) {
-            $this->output->set_status_header('404', "Cannot create virtual bundle");                  
+            $this->output->set_status_header('404', "Cannot create virtual bundle");
             echo validation_errors();
         } else {
             $inputs = array(
@@ -90,14 +97,15 @@ class Virtualbundle extends Cf_controller {
             try {
                 $result = $this->virtual_bundle_model->createVirtualBundle($inputs);
                 if ($result) {
-                    echo sprintf('Virtual bundle ( %s ) sucessfully created.',$inputs['name']);;
+                    echo sprintf('Virtual bundle ( %s ) sucessfully created.', $inputs['name']);
+                    ;
                 } else {
-                    $this->output->set_status_header('500', "Cannot create virtual bundle". $inputs['name']);
-                    echo $result;                  
+                    $this->output->set_status_header('500', "Cannot create virtual bundle" . $inputs['name']);
+                    echo $result;
                 }
             } catch (Exception $e) {
-                $this->output->set_status_header('500', "Cannot create virtual bundle. exception occured". $inputs['name']);
-                echo $e->getMessage(); 
+                $this->output->set_status_header('500', "Cannot create virtual bundle. exception occured" . $inputs['name']);
+                echo $e->getMessage();
             }
         }
     }

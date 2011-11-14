@@ -24,10 +24,10 @@ class virtual_bundle_model extends Cf_Model {
         }
     }
 
-    function getVirtualBundleDetails($handle) {
+    function getVirtualBundleDetails($handle, $user=NULL) {
 
         try {
-            $rawdata = cfcon_local_show_subscription_virtualbundle(NULL, $handle, 1, 1);
+            $rawdata = cfcon_local_show_subscription_virtualbundle($user, $handle, 1, 1);
             $data = $this->checkData($rawdata);
             if ($data) {
                 return $data;
@@ -55,10 +55,9 @@ class virtual_bundle_model extends Cf_Model {
         }
     }
 
-    function getVirtualBundleStatus($handle) {
-
+    function getVirtualBundlePromises($virtualBundle, $user=NULL) {
         try {
-            $rawdata = cfcon_local_report_virtualbundle(NULL, $handle, 1, 1);
+            $rawdata = cfcon_local_report_virtualbundle_promises($user, $virtualBundle, 50, 1);
             $data = $this->checkData($rawdata);
             if ($data) {
                 return $data;
@@ -70,28 +69,42 @@ class virtual_bundle_model extends Cf_Model {
             throw $e;
         }
     }
-    
+
+    function getVirtualBundleStatus($handle,$user=NULL) {
+
+        try {
+            $rawdata = cfcon_local_report_virtualbundle($user, $handle, 1, 1);
+            $data = $this->checkData($rawdata);
+            if ($data) {
+                return $data;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
+            log_message('error', $e->getMessage());
+            throw $e;
+        }
+    }
+
     /**
      * function to create a virtual bundle
      * @return  array
      */
-  
-    function createVirtualBundle($inputs){
-        try{
-            $result=cfcon_local_subscribe_virtualbundle($inputs['username'], $inputs['name'], $inputs['description'], $inputs['promises'], $inputs['hostclass']);
-            if($result){
+    function createVirtualBundle($inputs) {
+        try {
+            $result = cfcon_local_subscribe_virtualbundle($inputs['username'], $inputs['name'], $inputs['description'], $inputs['promises'], $inputs['hostclass']);
+            if ($result) {
                 return true;
-            }else{
-                $this->setError('Cannot create virtual bundle'); 
+            } else {
+                $this->setError('Cannot create virtual bundle');
                 return false;
-            }   
-        }
-        catch(Exception $e){
-            log_message('error',$e->getMessage());
+            }
+        } catch (Exception $e) {
+            log_message('error', $e->getMessage());
             throw $e;
         }
-      
     }
+
 }
 
 ?>
