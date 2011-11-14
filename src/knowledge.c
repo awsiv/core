@@ -1399,7 +1399,9 @@ void ThisHashString(char *str,char *buffer,int len,unsigned char digest[EVP_MAX_
 
  EVP_DigestFinal(&context,digest,&md_len);
 }
+
 /*********************************************************************/
+
 void Nova_GenerateTestData(int count)
 
 {
