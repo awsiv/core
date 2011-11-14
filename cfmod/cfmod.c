@@ -299,7 +299,8 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfcon_count_hubs_colour,NULL)
     PHP_FE(cfcon_count_hub_hosts,NULL)
     PHP_FE(cfcon_list_hub_colour,NULL)
-    PHP_FE(cfcon_value_graph,NULL)    
+    PHP_FE(cfcon_value_graph,NULL)
+    PHP_FE(cfcon_hub_details,NULL)
     
 #endif  /* HAVE_CONSTELLATION */
 
@@ -2966,10 +2967,10 @@ PHP_FUNCTION(cfpr_select_hosts)
 PHP_FUNCTION(cfpr_select_reports)
 
 {  const int bufsize = 100000; 
- char buffer[bufsize];
+ const char buffer[bufsize];
  char *policy;
 
- buffer[0] = '\0';
+// buffer[0] = '\0';
  Nova2PHP_select_reports(buffer,bufsize);
  RETURN_STRING(buffer,1);
 }
@@ -5629,7 +5630,6 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hostkey,&hk_len) == FA
     RETURN_STRING(buffer,1);
     }
 
-
 buffer[0] = '\0';
 Con2PHP_get_hub_colour(hostkey,buffer,bufsize);
 
@@ -5760,6 +5760,37 @@ Con2PHP_get_value_graph(buffer,bufsize);
 RETURN_STRING(buffer,1);
 }
 
+/*****************************************************************************
+ * Name: cfcon_hub_details
+ * Returns OS Class, Flavour, Release, CFE enterprise version and CFE community version for a hub
+ * @return
+ *      1. JSON {meta:{count=<count>},data:[],error:{...}} on success
+ *
+ * @throws cfmod_db_exception_ce
+ * @lastmodifiedby bishwa.shrestha@cfengine.com
+ * @todo throw exception
+ *****************************************************************************/
+
+PHP_FUNCTION(cfcon_hub_details)
+
+{ const int bufsize = 100000;
+ char buffer[bufsize];
+ char* hubkeyhash;
+ int h_len;
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hubkeyhash,&h_len) == FAILURE)
+   {
+   php_printf("Error in cfcon_list_hub_colour needs a host key");
+   RETURN_NULL();
+   }
+
+buffer[0] = '\0';
+Con2PHP_GetHubCFEAndOSDetails(hubkeyhash, buffer, bufsize);
+
+RETURN_STRING(buffer,1);
+}
+
 /******************************************************************************/
+
 #endif  /* HAVE_CONSTELLATION */
 
