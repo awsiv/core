@@ -42,6 +42,7 @@ static const char *CFCON_VIEWS[] = { "Comp",  // NOTE: must match cfl_view enum
                         "HubStatus",
                         "HubMeter",
                         "ValueGraph",
+                        "HubDetails",             
                         NULL };
 
 /*****************************************************************************/

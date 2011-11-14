@@ -121,6 +121,7 @@ enum cfl_view
    cfl_view_hub_status,
    cfl_view_hub_meter,
    cfl_view_value_graph,
+   cfl_view_hub_details,
    cfl_view_error
    };
 
