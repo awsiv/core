@@ -148,7 +148,7 @@ if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
 bson_buffer_init(&bb);
 bson_append_string(&bb,cfk_topicname,topic);
 
-if (strlen(type) > 0)
+if (strlen(type) > 0 && strcmp(type,"any") != 0)
    {
    bson_append_string(&bb,cfk_topiccontext,type);
    }
