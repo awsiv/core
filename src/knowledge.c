@@ -786,7 +786,6 @@ for (i = 2; CLASSTEXT[i] != NULL; i++)
    fprintf(fp," \"%s\" generalizations => { \"operating systems\" };  ", CLASSTEXT[i]);
    }
 
-
 fprintf(fp," \"debian\" generalizations => { \"linux\"};");
 fprintf(fp," \"ubuntu\" generalizations => { \"linux\", \"debian\" };");
 fprintf(fp," \"redhat\" generalizations => { \"linux\"};");

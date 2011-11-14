@@ -115,6 +115,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    printf("   }\n");
    }
 
+DeleteItemList(nn);
 mongo_cursor_destroy(cursor);
 CFDB_Close(&conn);
 #endif
