@@ -33,8 +33,8 @@ class Virtualbundle extends Cf_controller {
         $promiseDetails = $this->virtual_bundle_model->getVirtualBundlePromises( $handle,$user);
 
         $bc = array(
-            'title' => $this->lang->line('breadcrumb_promise'),
-            'url' => 'promise/details/' . $handle,
+            'title' => 'virtual bundle',
+            'url' => 'virtualbundle/details/' . $handle,
             'isRoot' => false,
             'replace_existing' => true
         );

@@ -10,7 +10,7 @@
                 <div class="panelcontent">
                     <table class="bundlelist-table">
                         <tr>
-                            <th scope="col" colspan="2"><?php echo $this->lang->line('header_promise_definition'); ?></th>
+                            <th scope="col" colspan="2">Virtual Bundle details</th>
                         </tr>
                         <?php foreach ($bundle_data['meta']['header'] as $key => $index) { ?>
                             <tr>
