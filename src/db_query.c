@@ -4213,7 +4213,7 @@ int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int
 
 /*****************************************************************************/
 
-int CFDB_QueryLastUpdate(mongo_connection *conn,char *keyhash,time_t *date)
+int CFDB_QueryLastUpdate(mongo_connection *conn,char *db, char *dbkey,char *keyhash,time_t *date)
 
 { bson_buffer b,bb,*sub1,*sub2,*sub3;
  bson qu,query,field;
@@ -4225,17 +4225,17 @@ int CFDB_QueryLastUpdate(mongo_connection *conn,char *keyhash,time_t *date)
 /* BEGIN query document */
 
  bson_buffer_init(&b);
- bson_append_string(&b,cfr_keyhash,keyhash);
+ bson_append_string(&b,dbkey,keyhash);
  bson_from_buffer(&query,&b);
   
 /* BEGIN RESULT DOCUMENT */
 
  bson_buffer_init(&bb);
- bson_append_int(&bb,cfr_keyhash,1);
+ bson_append_int(&bb,dbkey,1);
  bson_append_int(&bb,cfr_day,1);
  bson_from_buffer(&field, &bb);
 
- cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+ cursor = mongo_find(conn,db,&query,&field,0,0,CF_MONGO_SLAVE_OK);
  bson_destroy(&query);
  bson_destroy(&field);
  

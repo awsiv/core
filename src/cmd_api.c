@@ -38,7 +38,7 @@ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
 if (hostkey && strlen(hostkey) > 0)
    {
    then = 0;
-   CFDB_QueryLastUpdate(&dbconn,hostkey,&then);
+   CFDB_QueryLastUpdate(&dbconn,MONGO_DATABASE,cfr_keyhash,hostkey,&then);
 
    if (CSV)
       {
@@ -259,7 +259,7 @@ bool Nova2Txt_vitals_list(char *keyHash, char *buffer, int bufsize)
  strcpy(buffer,"{");
 
  Nova2Txt_hostinfo(keyHash, hostName, ipAddress, sizeof(hostName));
- CFDB_QueryLastUpdate(&dbconn, keyHash, &lastUpdate);
+ CFDB_QueryLastUpdate(&dbconn,MONGO_DATABASE,cfr_keyhash, keyHash, &lastUpdate);
 
  CFDB_Close(&dbconn);
  

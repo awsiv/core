@@ -291,6 +291,7 @@ PHP_FUNCTION(cfcon_count_hub_hosts);
 PHP_FUNCTION(cfcon_list_hub_colour);
 PHP_FUNCTION(cfcon_value_graph);
 PHP_FUNCTION(cfcon_hub_details);
+PHP_FUNCTION(cfcon_getlastupdate);
 #endif  /* HAVE_CONSTELLATION */
 
 /* 

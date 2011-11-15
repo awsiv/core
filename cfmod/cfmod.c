@@ -301,6 +301,7 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfcon_list_hub_colour,NULL)
     PHP_FE(cfcon_value_graph,NULL)
     PHP_FE(cfcon_hub_details,NULL)
+    PHP_FE(cfcon_getlastupdate,NULL)
     
 #endif  /* HAVE_CONSTELLATION */
 
@@ -5790,7 +5791,35 @@ Con2PHP_GetHubCFEAndOSDetails(hubkeyhash, buffer, bufsize);
 RETURN_STRING(buffer,1);
 }
 
-/******************************************************************************/
 
+/*****************************************************************************
+ * Name: cfcon_getlastupdate
+ * Returns last time the Mission Portal hubs reported to the Mission Observaroty (cfpr_getlastupdate)
+ * @return
+ *      1. string (timestamp)
+ *
+ * @throws cfmod_db_exception_ce
+ * @lastmodifiedby bishwa.shrestha@cfengine.com
+ * @todo throw exception
+ *****************************************************************************/
+PHP_FUNCTION(cfcon_getlastupdate)
+
+{ char *hubkey;
+ int hk_len;
+ const int bufsize = 100;
+ char buffer[bufsize];
+
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hubkey,&hk_len) == FAILURE)
+    {
+    php_printf("Error in cfcon_getlastupdate, needs a hub key");
+    RETURN_NULL();
+    }
+
+ buffer[0] = '\0';
+ Con2PHP_getlastupdate(hubkey,buffer,bufsize);
+ RETURN_STRING(buffer,1);
+}
+
+/******************************************************************************/
 #endif  /* HAVE_CONSTELLATION */
 
