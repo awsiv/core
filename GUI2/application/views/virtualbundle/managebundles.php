@@ -15,11 +15,11 @@
                     ?>
                     <p>
                         <label for="vbname">Virtual Bundle Name:<span class="required">*</span></label>
-                        <input type="text" name="vbname" id="vbname"></input>
+                        <input type="text" name="vbname" id="vbname" <?php if(isset($name)){echo "value=\"$name\" DISABLED";}?> ></input>
                     </p>
                     <p>
                         <label for="hostclass">Host Class:<span class="required"></span></label>
-                        <input type="text" name="hostclass" id="hostclass"></input>
+                        <input type="text" name="hostclass" id="hostclass" value="<?php echo isset($hostclass)?$hostclass:"" ?>"></input>
                     </p>
                     <p>
                         <label for="description" class="aligntop">Description:<span class="required">*</span></label>
@@ -28,9 +28,14 @@
                     <p>
                         <label for="promises">Promises:<span class="required">*</span></label>
                         <?php echo anchor('widget/allpolicies', 'Add promises', array('id' => 'addpromises')) ?>
+                       
                     </p>
                     <ul id="promisesContainer">
-
+                         <?php if (isset($plist)) { 
+                             foreach ($plist as $promise) { ?>
+                                <li><a href="<?php echo site_url('promise/details/') . '/' . $promise ?>" class="promisetext"><?php echo $promise; ?></a><span class="removePromise">x</span></li>
+                            <?php }  
+                            } ?>
                     </ul>
                     <p  id="btnholder">
                         <?php echo form_submit(array('name' => 'submit', 'class' => 'btn', 'value' => 'Submit')); ?>

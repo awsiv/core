@@ -17,5 +17,6 @@ class test_constellation_api extends CodeIgniterUnitTestCase {
      $this->assertTrue(function_exists('cfcon_local_report_virtualbundle'),"function exist cfcon_local_report_virtualbundle");
      $this->assertTrue(function_exists('cfcon_local_show_subscription_virtualbundle'),"function exist cfcon_local_show_subscription_virtualbundle");
      }
+     
 }
 ?>

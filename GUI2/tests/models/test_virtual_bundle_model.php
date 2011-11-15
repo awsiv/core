@@ -24,7 +24,7 @@ class test_virtual_bundle_model extends CodeIgniterUnitTestCase {
     }
 
     public function test_getVirtualBundleDetails() {
-        $data = $this->_ci->virtual_bundle_model->getVirtualBundleDetails('test-VIRTUALBUNDLE');
+        $data = $this->_ci->virtual_bundle_model->getVirtualBundleDetails('admin-bundle');
         $this->dump($data);
         $this->assertTrue(is_array($data));
     }

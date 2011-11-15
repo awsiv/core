@@ -12,6 +12,7 @@ class Virtualbundle extends Cf_controller {
         $this->carabiner->js('jquery.tablesorter.pager.js');
         $this->carabiner->js('widgets/policyfinder.js');
         $this->carabiner->js('widgets/notes.js');
+        $this->carabiner->css('tabs-custom.css');
     }
 
     function details($handle=NULL, $user=NULL) {
@@ -61,7 +62,7 @@ class Virtualbundle extends Cf_controller {
     }
 
     function manage() {
-        $this->carabiner->css('tabs-custom.css');
+       
         $bc = array(
             'title' => 'virtual bundles',
             'url' => 'virtualbundle/manage',
@@ -107,6 +108,41 @@ class Virtualbundle extends Cf_controller {
                 $this->output->set_status_header('500', "Cannot create virtual bundle. exception occured" . $inputs['name']);
                 echo $e->getMessage();
             }
+        }
+    }
+    
+    function edit($handle){
+          $bc = array(
+            'title' => 'virtual bundles',
+            'url' => 'virtualbundle/manage',
+            'isRoot' => false,
+            'replace_existing' => true
+        );
+        $this->breadcrumb->setBreadCrumb($bc);
+        try{
+        $vbundledetails=array();
+        $data=$this->virtual_bundle_model->getVirtualBundleDetails($handle,$this->session->userdata('username'));
+        if(count($data['data'])==1){
+            foreach($data['meta']['header'] as $key=>$val){
+              foreach($data['data'] as $content){
+                  $vbundledetails[$key]=$content[$val];
+              }  
+            }
+        }
+        var_dump($vbundledetails);
+       $data=array(
+             'title' => $this->lang->line('mission_portal_title'),
+             'breadcrumbs' => $this->breadcrumblist->display(),
+             'name'=>$vbundledetails['Handle'],
+             'hostclass'=>$vbundledetails['Host class expression'],
+       );
+       $promises=$this->virtual_bundle_model->getVirtualBundlePromises($handle,$this->session->userdata('username'));
+       foreach($promises['data'] as $promise){
+         $data['plist'][]=$promise[0] ;
+       }
+         $this->template->load('template', 'virtualbundle/managebundles', $data); 
+       }catch(Exception $e){
+            show_error($e->getMessage());
         }
     }
 

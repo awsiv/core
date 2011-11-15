@@ -45,7 +45,7 @@ class Testing extends CI_Controller {
         foreach ($result as $docs) {
             //print_r($value)  ;
             $obj = (object) $docs;
-            /* foreach ($docs as $key => $value) {
+            /* foreach/media/Work/working projects ($docs as $key => $value) {
               echo $key.$value;
               echo '</br>';
               } */
@@ -725,6 +725,16 @@ class Testing extends CI_Controller {
             'type' => 'password',
         );
         $this->load->view('auth/loginnew', $data);
+    }
+    
+    
+    //constellation story test
+    function story_sample(){
+        $this->load->view('testviews/test');
+    }
+    
+     function story_sample1(){
+        $this->load->view('testviews/story');
     }
     
 
