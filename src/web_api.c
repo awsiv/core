@@ -2440,7 +2440,7 @@ int Nova2PHP_hostinfo(char *hostkey,char *hostnameOut,char *ipaddrOut,int bufsiz
     return false;
     }
 
- hq = CFDB_QueryHosts(&dbconn,&query);
+ hq = CFDB_QueryHosts(&dbconn,MONGO_DATABASE,cfr_keyhash,&query);
  bson_destroy(&query);
 
  hostnameOut[0] = '\0';

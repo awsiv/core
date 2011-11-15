@@ -302,7 +302,8 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfcon_value_graph,NULL)
     PHP_FE(cfcon_hub_details,NULL)
     PHP_FE(cfcon_getlastupdate,NULL)
-    
+    PHP_FE(cfcon_hubname,NULL)
+    PHP_FE(cfcon_ipaddr,NULL)    
 #endif  /* HAVE_CONSTELLATION */
 
     
@@ -5818,6 +5819,69 @@ PHP_FUNCTION(cfcon_getlastupdate)
  buffer[0] = '\0';
  Con2PHP_getlastupdate(hubkey,buffer,bufsize);
  RETURN_STRING(buffer,1);
+}
+
+/*****************************************************************************
+ * Name: cfcon_hubname
+ * Returns hubname corresponding to a keyhash
+ * @return
+ *      1. string (hub name)
+ *
+ * @throws cfmod_db_exception_ce
+ * @lastmodifiedby bishwa.shrestha@cfengine.com
+ * @todo throw exception
+ *****************************************************************************/
+
+PHP_FUNCTION(cfcon_hubname)
+
+{ char s1[4096],s2[4096];
+ char *hubkey,*fhubkey;
+ int hk_len;
+  
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hubkey,&hk_len) == FAILURE)
+    {
+    php_printf("Error is cfcon_hubname function args");
+    RETURN_NULL();
+    }
+
+ fhubkey =  (hk_len == 0) ? NULL : hubkey;
+
+ s1[0]='\0';
+ s2[0]='\0';
+ Con2PHP_hubinfo(hubkey,s1,s2,sizeof(s1));
+
+ RETURN_STRING(s1,1);
+}
+
+/*****************************************************************************
+ * Name: cfcon_ipaddr
+ * Returns ipaddress corresponding to a keyhash
+ * @return
+ *      1. string (ipaddresses )
+ *
+ * @throws cfmod_db_exception_ce
+ * @lastmodifiedby bishwa.shrestha@cfengine.com
+ * @todo throw exception
+ *****************************************************************************/
+
+PHP_FUNCTION(cfcon_ipaddr)
+
+{ char s1[4096],s2[4096];
+ char *hubkey,*fhubkey;
+ int hk_len;
+  
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hubkey,&hk_len) == FAILURE)
+    {
+    php_printf("Error is cfcon_ipaddr function args");
+    RETURN_NULL();
+    }
+
+ fhubkey =  (hk_len == 0) ? NULL : hubkey;
+
+ s1[0]='\0';
+ s2[0]='\0';
+ Con2PHP_hubinfo(hubkey,s1,s2,sizeof(s1));
+ RETURN_STRING(s2,1);
 }
 
 /******************************************************************************/

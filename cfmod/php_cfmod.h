@@ -292,6 +292,8 @@ PHP_FUNCTION(cfcon_list_hub_colour);
 PHP_FUNCTION(cfcon_value_graph);
 PHP_FUNCTION(cfcon_hub_details);
 PHP_FUNCTION(cfcon_getlastupdate);
+PHP_FUNCTION(cfcon_hubname);
+PHP_FUNCTION(cfcon_ipaddr);
 #endif  /* HAVE_CONSTELLATION */
 
 /* 

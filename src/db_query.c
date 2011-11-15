@@ -231,7 +231,7 @@ mongo_cursor_destroy(cursor);
 
 /*****************************************************************************/
 
-struct HubQuery *CFDB_QueryHosts(mongo_connection *conn,bson *query)
+struct HubQuery *CFDB_QueryHosts(mongo_connection *conn, char *db, char *dbkey,bson *query)
 
 { bson_buffer bb;
  bson field;
@@ -243,41 +243,41 @@ struct HubQuery *CFDB_QueryHosts(mongo_connection *conn,bson *query)
   
 /* BEGIN RESULT DOCUMENT */
 
- bson_buffer_init(&bb);
- bson_append_int(&bb,cfr_keyhash,1);
- bson_append_int(&bb,cfr_ip_array,1);
- bson_append_int(&bb,cfr_host_array,1);
- bson_from_buffer(&field, &bb);
+bson_buffer_init(&bb);
+bson_append_int(&bb,dbkey,1);
+bson_append_int(&bb,cfr_ip_array,1);
+bson_append_int(&bb,cfr_host_array,1);
+bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
- hostnames[0] = '\0';
- addresses[0] = '\0';
+hostnames[0] = '\0';
+addresses[0] = '\0';
 
- cursor = mongo_find(conn,MONGO_DATABASE,query,&field,0,0,CF_MONGO_SLAVE_OK);
+cursor = mongo_find(conn,db,query,&field,0,0,CF_MONGO_SLAVE_OK);
 
- while (mongo_cursor_next(cursor))  // loops over documents
-    {
-    bson_iterator_init(&it1,cursor->current.data);
-
-    keyhash[0] = '\0';
-    hostnames[0] = '\0';
-    addresses[0] = '\0';
+while (mongo_cursor_next(cursor))  // loops over documents
+   {
+   bson_iterator_init(&it1,cursor->current.data);
    
-    while (bson_iterator_next(&it1))
-       {
-       /* Extract the common HubHost data */
+   keyhash[0] = '\0';
+   hostnames[0] = '\0';
+   addresses[0] = '\0';
+   
+   while (bson_iterator_next(&it1))
+      {
+      /* Extract the common HubHost data */
+      
+      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+      }      
 
-       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
-       }      
+   hh = NewHubHost(NULL,keyhash,addresses,hostnames);
+   PrependRlistAlien(&host_list,hh);
+   }
 
-    hh = NewHubHost(NULL,keyhash,addresses,hostnames);
-    PrependRlistAlien(&host_list,hh);
-    }
-
- bson_destroy(&field);
- mongo_cursor_destroy(cursor);
- return NewHubQuery(host_list,NULL);
+bson_destroy(&field);
+mongo_cursor_destroy(cursor);
+return NewHubQuery(host_list,NULL);
 }
 
 /*****************************************************************************/
@@ -418,7 +418,7 @@ else
    bson_from_buffer(&query,&bb);
    }
 
-hq = CFDB_QueryHosts(conn,&query);
+hq = CFDB_QueryHosts(conn,MONGO_DATABASE,cfr_keyhash,&query);
 
 if (!emptyQuery)
    {
