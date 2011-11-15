@@ -261,6 +261,42 @@ class cf_table {
             return $this->CI->table->generate();
         }
     }
+    
+    function generateVirtualbundleTable($result){
+        $return = '';
+        $this->CI->table->clear();
+        $heading=$result['meta']['header'];
+        $heading['']=count($result['meta']['header']);
+        $this->CI->table->set_template($this->template);
+        if (is_array($result)) {
+            $this->CI->table->set_heading(array_keys($heading));
+            $heading = "";
+            if (count($result['data']) > 0) {
+                foreach ($result['data'] as $row) {
+                    $temp = array();
+                    $handle='';
+                    foreach ($result['meta']['header'] as $key => $value) {
+                        if (!is_array($value)) {
+                                if(strtolower($key)=='virtual bundle'){
+                                    $handle=$row[$value];
+                                    $tempValue=anchor('virtualbundle/details/'.urlencode($handle),$handle);
+                                }
+                                else{
+                                  $tempValue = $row[$value];   
+                                }
+                                array_push($temp, $tempValue);
+                        }
+                    }
+                    $actionlink=anchor('virtualbundle/edit/'.urlencode($handle), ' ', array('class'=>'edit')).
+                                    anchor('virtualbundle/delete/handle/'.urlencode($handle), ' ', array('class'=>'delete'));
+                     array_push($temp, $actionlink);
+                    $this->CI->table->add_row($temp);
+                }
+            }
+            $return = $this->CI->table->generate();
+        }
+        return $return;
+    }
 
 }
 

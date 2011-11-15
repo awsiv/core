@@ -121,7 +121,7 @@ class Virtualbundle extends Cf_controller {
         $this->breadcrumb->setBreadCrumb($bc);
         try{
         $vbundledetails=array();
-        $data=$this->virtual_bundle_model->getVirtualBundleDetails($handle,$this->session->userdata('username'));
+        $data=$this->virtual_bundle_model->getVirtualBundleDetails(urldecode($handle),$this->session->userdata('username'));
         if(count($data['data'])==1){
             foreach($data['meta']['header'] as $key=>$val){
               foreach($data['data'] as $content){
@@ -129,32 +129,65 @@ class Virtualbundle extends Cf_controller {
               }  
             }
         }
-        var_dump($vbundledetails);
+      
        $data=array(
              'title' => $this->lang->line('mission_portal_title'),
              'breadcrumbs' => $this->breadcrumblist->display(),
              'name'=>$vbundledetails['Handle'],
              'hostclass'=>$vbundledetails['Host class expression'],
        );
-       $promises=$this->virtual_bundle_model->getVirtualBundlePromises($handle,$this->session->userdata('username'));
-       foreach($promises['data'] as $promise){
-         $data['plist'][]=$promise[0] ;
-       }
-         $this->template->load('template', 'virtualbundle/managebundles', $data); 
+       $promises=$this->virtual_bundle_model->getVirtualBundlePromises(urldecode($handle),$this->session->userdata('username'));
+           foreach($promises['data'] as $promise){
+             $data['plist'][]=$promise[0] ;
+           }
+       $this->template->load('template', 'virtualbundle/managebundles', $data); 
        }catch(Exception $e){
             show_error($e->getMessage());
         }
     }
+    
+    function delete(){
+        $getparams = $this->uri->uri_to_assoc(3);
+        $handle=$rows = isset($getparams['handle']) ? urldecode($getparams['handle']):"";
+        $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : $this->setting_lib->get_no_of_rows());
+            if (is_numeric($rows)) {
+                $rows = (int) $rows;
+            } else {
+                $rows = 50;
+            }
+        $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
+     try{
+            $this->virtual_bundle_model->deleteVirtualBundle($handle);
+            $message='<p class="success"> Virtual bundle <strong>'.$handle .'</strong> sucessfully deleted </p>';
+            $data = array(
+                'report_title' => 'virtual bundle',
+                'current' => $page_number,
+                'number_of_rows' => $rows,
+                'params' => '',
+                'message'=>$message,
+                'url' => 'virtualbundle/myBundles/',
+            );
+            $data['report_result'] = $this->virtual_bundle_model->getVirtualBundleData(null, $this->session->userdata('username'), $rows, $page_number);
+            $result = json_decode($data['report_result'], true);
+            if(count($result['data'])==0 && $page_number-1>0){
+                $page_number=$page_number-1;
+                $data['current']= $page_number;
+            }
+            $data['report_result'] = $this->virtual_bundle_model->getVirtualBundleData(null, $this->session->userdata('username'), $rows, $page_number);
+            $this->load->view('virtualbundle/list', $data);
+       }catch(Exception $e){
+        echo "<p class=\"error\">Exception occured while trying to fetch virtual bundles</p>"; 
+     }
+    }
 
     function myBundles() {
         try {
-            $page_number = 1;
             $getparams = $this->uri->uri_to_assoc(3);
             $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : $this->setting_lib->get_no_of_rows());
             if (is_numeric($rows)) {
                 $rows = (int) $rows;
             } else {
-                $rows = 20;
+                $rows = 50;
             }
             $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
             $data = array(
@@ -165,7 +198,7 @@ class Virtualbundle extends Cf_controller {
                 'url' => 'virtualbundle/myBundles/'
             );
             $data['report_result'] = $this->virtual_bundle_model->getVirtualBundleData(null, $this->session->userdata('username'), $rows, $page_number);
-            $this->load->view('searchpages/default_result_view', $data);
+            $this->load->view('virtualbundle/list', $data);
         } catch (Exception $e) {
             echo "<p class=\"error\">Exception occured while trying to fetch virtual bundles</p>";
         }

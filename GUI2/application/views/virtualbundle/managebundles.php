@@ -39,6 +39,7 @@
                     </ul>
                     <p  id="btnholder">
                         <?php echo form_submit(array('name' => 'submit', 'class' => 'btn', 'value' => 'Submit')); ?>
+                        <?php echo form_button(array('name' => 'reset', 'class' => 'btn', 'id' => 'resetForm','type'=>'reset','content'=>'Reset')); ?>
                     </p>
 
                     <?php echo form_close(); ?>
@@ -138,6 +139,22 @@
             event.preventDefault();
             var url=$(this).attr('action')+'/rows/'+$('input:text[name=rows]').val();
             loadContent( url);
+        });
+        
+        //when delete button is clicked
+        $('#vbundletable').find('a.delete').live('click',function(event){
+            event.preventDefault();
+            var rowPerPage=$('input:text[name=rows]').val();
+            var currPage = $('.inside').find('a.current').find('span').text();
+            loadContent( this.href+'/rows/'+rowPerPage+'/page/'+currPage);
+        });
+        
+        //reset the form and selected promise when reset clicked
+        $('#resetForm').click(function(event){
+            $('input:text[name=vbname]').val(' ');
+            $('input:text[name=vbname]').removeAttr('disabled');
+            $('input:text[name=hostclass]').val();
+            selectedpromisesContainer.html('');
         });
     
         function loadContent( url ) {

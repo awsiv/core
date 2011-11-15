@@ -88,7 +88,7 @@ class virtual_bundle_model extends Cf_Model {
 
     /**
      * function to create a virtual bundle
-     * @return  array
+     * @return  true or false
      */
     function createVirtualBundle($inputs) {
         try {
@@ -103,6 +103,20 @@ class virtual_bundle_model extends Cf_Model {
             log_message('error', $e->getMessage());
             throw $e;
         }
+    }
+    
+    /**
+     * function to delete a virtual bundle
+     * void
+     */
+    
+    function deleteVirtualBundle($handle){
+    try{
+        $result=cfcon_local_delete_subscription_virtualbundle(NULL,$handle);
+       }catch(Exception $e){
+           log_message('error', $e->getMessage());
+            throw $e; 
+       }
     }
 
 }
