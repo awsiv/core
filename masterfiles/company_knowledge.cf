@@ -6,28 +6,24 @@ things:
  regions::
 
    "Americas" comment => "USA, Latin America and Canada";
-
    "EMEA"     comment => "Europe, The Middle-East and Africa";
-
    "APAC"     comment => "Asia and the Pacific countries";
 
  countries::
 
    "USA";
 
-   "Germany";
-
-   "UK"            synonyms => { "Great Britain" },
-              is_located_in => { "EMEA", "Europe" };
-
-   "Netherlands"   synonyms => { "Holland" },
-              is_located_in => { "EMEA", "Europe" };
-
+   "Germany"
+                   is_located_in => { "EMEA", "Europe" };
+   "UK"                 synonyms => { "Great Britain" },
+                   is_located_in => { "EMEA", "Europe" };
+   "Netherlands"        synonyms => { "Holland" },
+                   is_located_in => { "EMEA", "Europe" };
    "Singapore"     is_located_in => { "APAC", "Asia" };
 
  locations::
 
-   # Use this for the names of 
+   # If these things are defined as classes in the policy, CFEngine will correlate them
 
    "London_1"    is_located_in => { "London", "UK" };
    "New_Jersey"  is_located_in => { "USA" };
