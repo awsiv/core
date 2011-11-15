@@ -622,7 +622,7 @@ PHP_FUNCTION(cfpr_enterprise_version)
 
  buf[0] = '\0';
 
- Nova2PHP_enterprise_version(buf,bufsize);
+ Nova2PHP_enterprise_version(buf, bufsize);
 
  RETURN_STRING(buf,1);
 }
@@ -4801,10 +4801,8 @@ static char *cfcon_aggr_promiselog(int argc, enum promiselog_rep log_type)
  * Helper for repaired and notkept logs.
  **/
 {
-#define CFCON_SPL_BUFSIZE 16384
-
  int hkh_len,ph_len;
- static char buffer[CFCON_SPL_BUFSIZE];
+ static char buffer[CF_WEBBUFFER];
  char *hubKeyHash, *fhubKeyHash;
  char *promiseHandle, *fPromiseHandle;
  PageInfo_t page = {0};
