@@ -6436,16 +6436,44 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_enterprise_version(char *buf, int bufsize)
+void Nova2PHP_enterprise_version(char *buf, int bufsize)
 {
+ char *name;
+ char *version;
+ cfapi_errid_t retErrid = ERRID_SUCCESS;
+ 
 #ifdef HAVE_CONSTELLATION
-strlcpy(buf, Constellation_NameVersion(), bufsize);
-return true;
+ 
+ retErrid = Constellation_CheckLicenseInDB();
+ 
+ switch(retErrid)
+    {
+    case ERRID_SUCCESS:
+        name = "Constellation";
+        version = Constellation_Version();
+        break;
+    
+    case ERRID_CONSTELLATION_LICENSE:
+        retErrid = ERRID_SUCCESS;  /* not error to have Nova only */
+        /* fallthrough */
+    default:
+        name = "Nova";
+        version = Nova_Version();
+        break;
+    }
+ 
 #else
-strlcpy(buf, Nova_NameVersion(), bufsize);
-return true;
+
+ name = "Nova";
+ version = Nova_Version();
+
 #endif
-return false;
+
+ char errbuf[CF_MAXVARSIZE];
+
+ snprintf(buf, bufsize, "{ \"name\": \"%s\", \"version\" : \"%s\", %s}",
+          name, version, FormatErrorJsonAttribute(errbuf, sizeof(errbuf), retErrid));
+
 }
 /*****************************************************************************/
 
