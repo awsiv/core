@@ -181,6 +181,7 @@ topics:
   "nagios"               comment => "System monitoring and graphing tool";
   "interactive load monitor";
   "processor snapshot";
+  "vital signs" comment => "A set of key performance measurements for a host. Use the host finder to pick a host and use the finder on the host page.";
 
  logging::
 

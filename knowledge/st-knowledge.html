@@ -220,10 +220,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <li><a accesskey="3" href="#How-should-you-begin_003f">How should you begin?</a>
 <li><a accesskey="4" href="#The-CFEngine-Knowledge-map">The CFEngine Knowledge map</a>
 <li><a accesskey="5" href="#Pitfalls-to-avoid">Pitfalls to avoid</a>
-<li><a accesskey="6" href="#Types-of-information">Types of information</a>
-<li><a accesskey="7" href="#Example-company_005fknowledge_002ecf">Example company_knowledge.cf</a>
-<li><a accesskey="8" href="#Knowledge-transfer">Knowledge transfer</a>
-<li><a accesskey="9" href="#How-does-CFEngine-Nova-help_003f">How does CFEngine Nova help?</a>
+<li><a accesskey="6" href="#Using-the-Knowledge-Map">Using the Knowledge Map</a>
+<li><a accesskey="7" href="#Types-of-information">Types of information</a>
+<li><a accesskey="8" href="#Example-company_005fknowledge_002ecf">Example company_knowledge.cf</a>
+<li><a accesskey="9" href="#Knowledge-transfer">Knowledge transfer</a>
+<li><a href="#How-does-CFEngine-Nova-help_003f">How does CFEngine Nova help?</a>
 </ul>
 
    <p><a href="#Contents"><h1>COMPLETE TABLE OF CONTENTS</h1></a>
@@ -263,6 +264,15 @@ even a single player could cripple a key work process.
 of knowledge: they spend their time reacting to emergencies cultivated
 by a lack of confidence and certainty, and they are too busy patching over holes that
 they never have time to learn enough to escape the pattern.
+
+   <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+The Third Wave of configuration management emphasizes the role of knowledge
+in coping with the diversity and adaptability that modern organizations crave. 
+This document is a beginning towards thinking about IT management in a new way:
+as a knowledge resource, or a set of insight-driven intentions that are
+maintained by smart machinery. This vision is about rehumanizing System Administration
+through a proper division of labour between Man and Machine. 
+</td></tr></table>
 
 <div class="node">
 <a name="Risk-and-uncertainty"></a>
@@ -378,7 +388,7 @@ This is a question every organization needs to ask itself.
 <div class="node">
 <a name="Pitfalls-to-avoid"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Types-of-information">Types of information</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Using-the-Knowledge-Map">Using the Knowledge Map</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#The-CFEngine-Knowledge-map">The CFEngine Knowledge map</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
@@ -391,7 +401,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 </pre>
 
 CFEngine does a lot of work for you, but you need to do something to help
-yourself too. Your organization should create documents and references
+yourself too. As with all information, garbage in leads to garbage out. 
+Your organization should create documents and references
 to capture its internal knowledge. If you are doing this well, it should not be
 a major task.
 
@@ -421,10 +432,171 @@ captures this: <i>You should always make everything as simple as
 possible, but no simpler.</i>
 
 <div class="node">
+<a name="Using-the-Knowledge-Map"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Types-of-information">Types of information</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Pitfalls-to-avoid">Pitfalls to avoid</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<h3 class="unnumberedsec">Using the Knowledge Map</h3>
+
+<p>CFEngine's exploration of knowledge management is still in its infancy
+&ndash; we are learning constantly about how to use state of the art
+technologies and techniques. This is still very much an experimental area
+that we continue to improve upon.
+
+   <p>Let's look at the current state of the smart index which we call the
+(Copernicus) Knowledge Map. If you go to the Mission Portal Library and
+search for a topic, you will land in the Knowledge Map. You will immediately
+see a graphical image and number of tabs that contain various different
+renditions of the information.
+
+   <p>Presently, these are called:
+     <ul>
+<li>Map - a visual view of a small neighbourhood of the closest related topics
+that places the search topic in the context of closely related items. The search
+topic might not be a the centre of this little universe, as other topics can
+be more important. The size of the plantary balls is an indication of the topic's
+connectedness in the web. 
+<li>Leads - an explanation with full text for the nearest neighbours of the search topic. 
+<li>References - Actual document links or remarks made about the search topic. 
+<li>Same context - Other topics discussed in the same context. 
+</ul>
+
+<ul class="menu">
+<li><a accesskey="1" href="#Knowledge-map-example-1">Knowledge map example 1</a>
+<li><a accesskey="2" href="#Knowledge-map-example-2">Knowledge map example 2</a>
+</ul>
+
+<div class="node">
+<a name="Knowledge-map-example-1"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Knowledge-map-example-2">Knowledge map example 2</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Using-the-Knowledge-Map">Using the Knowledge Map</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Using-the-Knowledge-Map">Using the Knowledge Map</a>
+
+</div>
+
+<h4 class="unnumberedsubsec">Knowledge map example 1</h4>
+
+<p>You enter the knowledge map by searching, or being referred there by a link in
+the Mission Portal. Suppose we enter &lsquo;<samp><span class="samp">webserver</span></samp>&rsquo; into the search field. 
+CFEngine searches for matching topics in its index, and returns references in
+different contexts. The context `any' represents an unspecific reference to the topic
+name:
+
+   <div class="block-image"><img src="km1.png" alt="DIKW"></div>
+
+   <p>Suppose we click on the first of these in any context; this leads us to a special
+landing page about that particular topic which contains the four tabs mentioned above. 
+By default we end up in the graphical view. This gives an immediate impression of
+roughly where CFEngine considers this topic to lie in the scope of its knowledge. 
+However, its value is rather limited. 
+<img src="km2.png" alt="DIKW">
+
+   <p>The next step is to walk through the tabs to `drill down' to actual
+content. The second tab points us to the `brainstorming' value of the
+associative links &ndash; now with explanations in text.  If we select
+another tab we arrive at further leads for assisted thinking: these
+associative-thinking pointers can guide you to matters that are
+related and provide context for the current topic.
+
+   <div class="block-image"><img src="km3.png" alt="DIKW"></div>
+
+   <p>Leads are helpful if you didn't really know what you were
+looking for in the first place &ndash; and you would like some explanation
+of what it what you guessed.
+
+   <p>If we select one of these, we go the landing page for that new topic in the advertised
+context.
+
+   <div class="block-image"><img src="km4.png" alt="DIKW"></div>
+
+   <p>Note that several topics might be highlighted
+in yellow on a page &ndash; if they have been named, or if they are topics of special importance in
+this local cluster (meaning that they are highly referred to).
+
+   <p>In this view we are able to see, at a glance, that this somewhat
+Byzantine string is the name of a file, and that is pertains only to
+certain operating systems.  Walking through the tabs again, we see
+both where we came from and where we can go from here, with
+more detailed explanations.
+
+   <div class="block-image"><img src="km5.png" alt="DIKW"></div>
+
+   <p>So far the map has only shown us topics &ndash; or named subjects
+categorized by their context. This gives us a kind of compass for
+knowing what the topic is about, but it tells us little about the
+subject itself.  The third tab points us to actual expansive
+information about the topic, if any is known. This might be information
+from the documentation, external links or commentary and remarks made in
+policy.
+
+   <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+If there are no references to external information, this tab does not appear. 
+Let's choose one of these references; now we are taken to a new topic
+altogether, where we see a new view of the system information. 
+</td></tr></table>
+
+   <div class="block-image"><img src="km6.png" alt="DIKW"></div>
+
+   <p>Because the topic name is categorized in the context of `promises', we
+know that (although this is the name of a file and it refers to
+RedHat-like operating systems) that this is also the object of a
+promise. The references page contains a link that then points us to
+actual information about this promise. The textual comment that was attributed
+to the promise in the policy itself, and a link to the promise's definiton. 
+Clicking on the defintion link takes us the the promise-viewer.
+
+   <div class="block-image"><img src="km7.png" alt="DIKW"></div>
+
+   <p>The Copernicus Knowledge Map view will take you a while to get used to &ndash; use it
+to help you think about matters, and see how they fit together into a systematic
+overview of your environment.
+
+<div class="node">
+<a name="Knowledge-map-example-2"></a>
+<p><hr>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Knowledge-map-example-1">Knowledge map example 1</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Using-the-Knowledge-Map">Using the Knowledge Map</a>
+
+</div>
+
+<h4 class="unnumberedsubsec">Knowledge map example 2</h4>
+
+<p>Let's look at another example. Suppose we enter &lsquo;<samp><span class="samp">vital signs</span></samp>&rsquo; as
+the search text, and go to the leads. We find a long list of other
+topics. CFEngine says that `vital signs' generalizes, or is an
+umbrella concept, for these other concepts.
+
+   <div class="block-image"><img src="km8.png" alt="DIKW"></div>
+
+   <p>One of these
+concepts is a class context that represents an anomaly
+detected by CFEngine &lsquo;<samp><span class="samp">loadavg_high_dev2</span></samp>&rsquo;. 
+Clicking on this, we see the
+significance of this concept quite easily from its relationship
+to other concepts:
+
+   <div class="block-image"><img src="km9.png" alt="DIKW"></div>
+
+   <p>The load average being high might be an anomaly, but we also see that it
+refers to system performance, as does a whole bunch of other concepts.
+
+   <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+The value of the semantic indexing is that it is information a casual user
+can actually learn from. By providing context and leads for further thinking,
+the Mission Portal becomes an quasi-intelligent assistant for working on
+the system. 
+</td></tr></table>
+
+<div class="node">
 <a name="Types-of-information"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Example-company_005fknowledge_002ecf">Example company_knowledge.cf</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Pitfalls-to-avoid">Pitfalls to avoid</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Using-the-Knowledge-Map">Using the Knowledge Map</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
@@ -487,6 +659,130 @@ response to recurring `problems' identified in the observations. It
 originates from internal management.
 
    </dl>
+
+   <pre class="sp">
+
+</pre>
+
+<h3 class="unnumberedsec">Stories and narratives</h3>
+
+<p>In the foregoing section, we saw how leads in the Knowledge Map's
+semantic index could help us to see immediate relationships between
+system issues. The next question is: what about connections that are less
+immediate or obvious?
+
+   <p>In CFEngine Constellation you can ask the agent to brainstorm for you
+about topics, telling any stories is knows about topics. A story is a
+simply a path through the web of connected information that follows
+some kind of connectness. Most interesting stories have a thread of
+cause and effect. CFEngine attempts to reason forth narratives that
+might be sensible or which might offer some kind of insight. This is
+not usually a directly useful revelation, but more often a thought
+provoking stimulus for a human to take further.
+
+   <p>Machine intelligence is never a substitute for the real thing, at least
+not in our present day technologies, but it can be a useful amplifier of
+`leads' to get a smart human thinking about the right things. 
+Most CFEngine stories relate to policy, and they are generated automatically
+by the knowledge engine, so you will not get any stories until you have
+something interesting in your policy.
+
+   <p>Stories can be used from the command-line, or as a tab within the
+Constellation Mission Portal. The command line is useful for interactive
+thinking:
+
+   <p>A story can be quite simple:
+<p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+<pre class="smallexample">     atlas$ src/cf-know --tell-me-about ftpusers
+     F: "ftpusers" seems to affect "any::/etc/ftpusers" (with 50 % probability)
+     
+       "ftpusers" (in any),
+        see also "/etc/ftpusers" (in any),
+</pre>
+   </td></tr></table>
+   Other stories could be more involved:
+<p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+<pre class="smallexample">     cf-know --tell-me-about anomalies::cpu0_high_dev2
+     
+     F: "anomalies::cpu0_high_dev2"
+     seems to affect "any::performance" (with 100 % probability)
+     
+       "cpu0_high_dev2" (in anomalies),
+        is a special case of "vital signs" (in any),
+        which is a generalization of "users_high_dev1" (in anomalies),
+        and this (users_high_dev1) is a special case of "performance" (in any)
+     
+     (Note also that performance, which was mentioned, is a generalization of
+     "anomalies::users_high_dev1")
+     
+</pre>
+   </td></tr></table>
+
+<p class="noindent">Stories can also be quite spurious, because knowledge itself can be spurious. 
+For instance, some guesses might be quite wrong as the system gets the wrong end of the stick,
+so to speak, as it uses general patterns and these patterns always have exceptions:
+<p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+<pre class="smallexample">     atlas$ src/cf-know --tell-me-about operating_systems::suse
+     
+     F: "operating_systems::suse" seems to affect "any::gnu/linux" (with 100 % probability)
+     
+       "suse" (in operating_systems),
+        is a special case of "linux" (in any),
+        and this (linux) seems to refer to "gnu/linux" (in any)
+     
+     F: "operating_systems::suse" seems to affect "any::unitedlinux" (with 100 % probability)
+     
+       "suse" (in operating_systems),
+        is a special case of "linux" (in any),
+        and this (linux) seems to refer to "unitedlinux" (in any)
+     
+</pre>
+   </td></tr></table>
+   Or:
+<p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+<pre class="smallexample">     atlas$ src/cf-know --tell-me-about functions
+     
+     F: "any::functions" seems to affect "any::arrays" (with 100 % probability)
+     
+       "functions" (in any),
+        seems to refer to "functions which read" (in any),
+        which seems to refer to "functions which read arrays" (in any),
+        and this (functions which read arrays) seems to be referred to in "arrays" (in any)
+     
+     F: "any::functions" seems to affect "any::expression" (with 100 % probability)
+     
+       "functions" (in any),
+        seems to refer to "functions which read" (in any),
+        which seems to refer to "functions which read classes" (in any),
+        which seems to be referred to in "class" (in data_types),
+        which seems to refer to "a cfengine class expression" (in any),
+        and this (a cfengine class expression) seems to be referred to in "expression"
+     (in any)
+     ...
+</pre>
+   </td></tr></table>
+
+   <p>As you can see, the story generator looks for causative connections between the things
+that it knows about. Some topics are from the documentation, and some from your
+configuration policy.
+
+   <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+<pre class="smallexample">     F: "any::functions" seems to affect "any::readrealarray" (with 100 % probability)
+     
+       "functions" (in any),
+        seems to refer to "functions which read" (in any),
+        which seems to be referred to in "class" (in data_types),
+        which seems to be referred to in "functions which return" (in any),
+        which seems to refer to "functions which return real" (in any),
+        which seems to be referred to in "real" (in vars_promises),
+        and this (real) seems to refer to "readrealarray" (in any)
+     
+     (Note also that readrealarray, which was mentioned, seems to refer to
+     "any::functions which read classes")
+     (Note also that readrealarray, which was mentioned, seems to refer to
+     "any::functions which return class")
+</pre>
+   </td></tr></table>
 
    <pre class="sp">
 
@@ -592,136 +888,135 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 <h3 class="unnumberedsec">Example <samp><span class="file">company_knowledge.cf</span></samp></h3>
 
-<pre class="verbatim">
-bundle knowledge company_knowledge
-{
-things:
-
- regions::
-
-   "Americas" comment => "USA, Latin America and Canada";
-
-   "EMEA"     comment => "Europe, The Middle-East and Africa";
-
-   "APAC"     comment => "Asia and the Pacific countries";
-
- countries::
-
-   "USA";
-
-   "Germany";
-
-   "UK"            synonyms => { "Great Britain" },
-              is_located_in => { "EMEA", "Europe" };
-
-   "Netherlands"   synonyms => { "Holland" },
-              is_located_in => { "EMEA", "Europe" };
-
-   "Singapore"     is_located_in => { "APAC", "Asia" };
-
- site_locations::
-
-   # Use this for the names of 
-
-   "London_1"  is_located_in => { "London", "UK" };
-   "New_Jersey"  is_located_in => { "USA" };
-
- routers::
-
-  "oslo-hub-p6 "   comment => "Cisco xyz router, 3rd floor machine room, 6 Penny Street";
-  "oslo-hub-trunk" comment => "Cisco BGP router,  floor machine room";
-  "nyc-hub-456"    comment => "Juniper 123 router, 3rd floor machine room";
-
- networks::
-
-  "192.23.45.0/24"         
-                  comment => "Secure network, zone 0. Single octet for corporate offices",
-          is_connected_to => { "oslo-hub-123" };
-
-  "192.12.74.0/23"    comment => "Zone 1, double octet for the London office developer network",
-              is_connected_to => { "oslo-hub-123" };
-
-  "192.12.74.0/23"
-                     comment => "Secure, single octet for the NYC office",
-             is_connected_to => { "nyc-hub-456" };
-
-
-#######
-
-topics:
-
- company::
-
-  "ED"  comment => "Exceptional Devices Ltd";
-  
- ED::
-
-  "EGC"             comment => "Enterprise grid computing",
-                association => a("develops stuff within",
-                                 "ED",
-                                 "contains its engineering unit");
-
-  "EBC"             comment => "Enterprise business computing",
-                association => a("handles business services within",
-                                 "ED",
-                                 "contains its business unit");
-
-  "ED terminology" comment => "Internal company nomenclature";
-
- ED_terminology::
-
-  "interactive job"   comment => "Interactive software running in the grid";
-
-  "apps"              comment => "Software applications",
-                  association => a("are also referred to as",
-                                   "interactive jobs",
-                                   "are also referred to as");
-
-  "business services" comment => "Support services for sales";
-
-########################
-# GOALS as topics
-########################
-
-  goals::
-
-    "goal 1" comment => "The company mission depends on reliability to our customers";
-    "goal 2" comment => "Should be running recent versions of key software";
-    "goal 3" comment => "The company must be compliant with Sarbanes Oxley act.";
-    "goal 4" comment => "Comply with US Export restrictions for class D countries";
-
-
-#######
-# Documents below
-#######
-
-occurrences:
-
- # Fill in company references here
-
- work_shifts::
-
-    "http://www.example.com/shifts_and_rotas.ods"
-       represents => { "Spreadsheet" };
-
-
- current_projects::
-
-    "http://www.example.com/scope_of_work.html"
-       represents => { "SOW" };
-
-
- software_licenses::
-
-    "This CFEngine software license expires &lt;b>$(sys.expires)&lt;/b>"
-   representation => "literal",
-       represents => { "CFEngine Nova" };
-
-}
-
+<pre class="smallexample">     
+     bundle knowledge company_knowledge
+     {
+     things:
+     
+      regions::
+     
+        "Americas" comment =&gt; "USA, Latin America and Canada";
+     
+        "EMEA"     comment =&gt; "Europe, The Middle-East and Africa";
+     
+        "APAC"     comment =&gt; "Asia and the Pacific countries";
+     
+      countries::
+     
+        "USA";
+     
+        "Germany";
+     
+        "UK"            synonyms =&gt; { "Great Britain" },
+                   is_located_in =&gt; { "EMEA", "Europe" };
+     
+        "Netherlands"   synonyms =&gt; { "Holland" },
+                   is_located_in =&gt; { "EMEA", "Europe" };
+     
+        "Singapore"     is_located_in =&gt; { "APAC", "Asia" };
+     
+      site_locations::
+     
+        # Use this for the names of
+     
+        "London_1"  is_located_in =&gt; { "London", "UK" };
+        "New_Jersey"  is_located_in =&gt; { "USA" };
+     
+      routers::
+     
+       "oslo-hub-p6 "   comment =&gt; "Cisco xyz router, 3rd floor machine room, 6 Penny Street";
+       "oslo-hub-trunk" comment =&gt; "Cisco BGP router,  floor machine room";
+       "nyc-hub-456"    comment =&gt; "Juniper 123 router, 3rd floor machine room";
+     
+      networks::
+     
+       "192.23.45.0/24"
+                       comment =&gt; "Secure network, zone 0. Single octet for corporate offices",
+               is_connected_to =&gt; { "oslo-hub-123" };
+     
+       "192.12.74.0/23"    comment =&gt; "Zone 1, double octet for the London office developer network",
+                   is_connected_to =&gt; { "oslo-hub-123" };
+     
+       "192.12.74.0/23"
+                          comment =&gt; "Secure, single octet for the NYC office",
+                  is_connected_to =&gt; { "nyc-hub-456" };
+     
+     
+     #######
+     
+     topics:
+     
+      company::
+     
+       "ED"  comment =&gt; "Exceptional Devices Ltd";
+     
+      ED::
+     
+       "EGC"             comment =&gt; "Enterprise grid computing",
+                     association =&gt; a("develops stuff within",
+                                      "ED",
+                                      "contains its engineering unit");
+     
+       "EBC"             comment =&gt; "Enterprise business computing",
+                     association =&gt; a("handles business services within",
+                                      "ED",
+                                      "contains its business unit");
+     
+       "ED terminology" comment =&gt; "Internal company nomenclature";
+     
+      ED_terminology::
+     
+       "interactive job"   comment =&gt; "Interactive software running in the grid";
+     
+       "apps"              comment =&gt; "Software applications",
+                       association =&gt; a("are also referred to as",
+                                        "interactive jobs",
+                                        "are also referred to as");
+     
+       "business services" comment =&gt; "Support services for sales";
+     
+     ########################
+     # GOALS as topics
+     ########################
+     
+       goals::
+     
+         "goal 1" comment =&gt; "The company mission depends on reliability to our customers";
+         "goal 2" comment =&gt; "Should be running recent versions of key software";
+         "goal 3" comment =&gt; "The company must be compliant with Sarbanes Oxley act.";
+         "goal 4" comment =&gt; "Comply with US Export restrictions for class D countries";
+     
+     
+     #######
+     # Documents below
+     #######
+     
+     occurrences:
+     
+      # Fill in company references here
+     
+      work_shifts::
+     
+         "http://www.example.com/shifts_and_rotas.ods"
+            represents =&gt; { "Spreadsheet" };
+     
+     
+      current_projects::
+     
+         "http://www.example.com/scope_of_work.html"
+            represents =&gt; { "SOW" };
+     
+     
+      software_licenses::
+     
+         "This CFEngine software license expires &lt;b&gt;$(sys.expires)&lt;/b&gt;"
+        representation =&gt; "literal",
+            represents =&gt; { "CFEngine Nova" };
+     
+     }
+     
 </pre>
-
-<pre class="sp">
+   <pre class="sp">
 
 </pre>
 
@@ -864,7 +1159,13 @@ the surrounding story using intelligent algorithms.
 <li><a href="#How-should-you-begin_003f">How should you begin?</a>
 <li><a href="#The-CFEngine-Knowledge-map">The CFEngine Knowledge map</a>
 <li><a href="#Pitfalls-to-avoid">Pitfalls to avoid</a>
+<li><a href="#Using-the-Knowledge-Map">Using the Knowledge Map</a>
+<ul>
+<li><a href="#Knowledge-map-example-1">Knowledge map example 1</a>
+<li><a href="#Knowledge-map-example-2">Knowledge map example 2</a>
+</li></ul>
 <li><a href="#Types-of-information">Types of information</a>
+<li><a href="#Types-of-information">Stories and narratives</a>
 <li><a href="#Types-of-information">Creating your own map</a>
 <li><a href="#Types-of-information">Documenting goals</a>
 <li><a href="#Types-of-information">Documenting locations</a>
