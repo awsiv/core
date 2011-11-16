@@ -2857,10 +2857,10 @@ void Nova2Txt_select_reports(char *buffer,int bufsize)
 buffer[0] = '\0';
 strcat(buffer,"[");
 
-for (i = 0; BASIC_REPORTS[i][0] != NULL; i++)
+for (i = 0; i < cfrep_unknown; i++)
    {
    snprintf(work,CF_MAXVARSIZE,"[\"%s\",\"%s\"]",BASIC_REPORTS[i][0],BASIC_REPORTS[i][1]);
-   if (BASIC_REPORTS[i+1] != NULL)
+   if (i != cfrep_unknown - 1)
       {
       strcat(work,",");
       }

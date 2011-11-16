@@ -220,6 +220,33 @@ struct Variable  /* Used to represent contents of var in DBM file -
 
 /*****************************************************************************/
 
+typedef enum basic_reports
+   {
+   cfrep_bundle,
+   cfrep_business,
+   cfrep_classes,
+   cfrep_promise_compliance,
+   cfrep_total_compliance,
+   cfrep_change,
+   cfrep_diff,
+   cfrep_lastseen,
+   cfrep_patch_avail,
+   cfrep_patch_status,
+   cfrep_performance,
+   cfrep_repaired,
+   cfrep_repair_summary,
+   cfrep_notkept,
+   cfrep_notkept_summary,
+   cfrep_setuid,
+   cfrep_software_installed,
+   cfrep_variables,
+   cfrep_unknown
+   } basic_reports;
+
+extern const char *BASIC_REPORTS[][2];
+
+/*****************************************************************************/
+
 /* Valid ACL syntax values, from documentation */
 
 // Valid generic permissions
