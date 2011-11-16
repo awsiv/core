@@ -21,7 +21,7 @@ struct Item *NOVA_BUNDLEDEPENDENCE = NULL;
 
 /*****************************************************************************/
 
-static char *CF_VALUETYPES[18][3] =
+static const char *CF_VALUETYPES[18][3] =
    {
    {"hup,int,trap,kill,pipe,cont,abrt,stop,quit,term,child,usr1,usr2,bus,segv","system signals","a unix signal name"},
    {"true,false,yes,no,on,off","boolean","a positive or a negative"},
@@ -1206,10 +1206,12 @@ for (ip = NOVA_BUNDLEDEPENDENCE; ip != NULL; ip =ip->next)
 
 /*****************************************************************************/
 
-char *NovaEscape(char *s)
+char *NovaEscape(const char *s)
     
-{ char *sp1,*sp2;
-  static char buffer[CF_EXPANDSIZE];
+{
+const char *sp1;
+char *sp2;
+static char buffer[CF_EXPANDSIZE];
 
 memset(buffer,0,CF_EXPANDSIZE);
 
@@ -1220,7 +1222,7 @@ if (s == NULL)
   
 if (strlen(s) == 0)
    {
-   return s;
+   return buffer;
    }
 
 for (sp1 = s,sp2 = buffer; *sp1 != '\0'; sp1++)
@@ -1244,7 +1246,7 @@ return buffer;
 void NovaShowValues(FILE *fp,struct BodySyntax bs)
 
 { int i;
-  char *range =  NULL;
+  const char *range =  NULL;
 
 for (i = 0; CF_VALUETYPES[i][0] != NULL; i++)
    {

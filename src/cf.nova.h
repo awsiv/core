@@ -772,7 +772,7 @@ double NovaExtractValueFromStream(char *handle,struct Item *stream,struct Attrib
 void NovaLogSymbolicValue(char *handle,struct Item *stream,struct Attributes a,struct Promise *pp);
 void Nova_ShowBundleDependence(FILE *fp);
 void Nova_RegisterBundleDepedence(char *name,struct Promise *pp);
-char *NovaEscape(char *s);
+char *NovaEscape(const char *s); /* Thread-unsafe */
 void NovaShowValues(FILE *fp,struct BodySyntax bs);
 void Nova_RegisterImg(struct Item **list,char *dir,char *pic);
 void Nova_RegisterDoc(struct Item **list,char *dir,char *doc);

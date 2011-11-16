@@ -42,7 +42,7 @@ static const char *ERRID_DESCRIPTION[] =
 
 /*****************************************************************************/
 
-static char *FormatTwoDimensionalArrayAsJson(char *buf, int bufsize, char *array[][2]);
+static char *FormatTwoDimensionalArrayAsJson(char *buf, int bufsize, const char *array[][2]);
 void Nova_EnterpriseModuleTrick()
 {
 #ifdef HAVE_LIBMONGOC
@@ -4288,7 +4288,7 @@ int Nova2PHP_get_variable(char *hostkey,char *scope,char *lval,char *returnval,i
 /* Reports                                                                   */
 /*****************************************************************************/
 
-char *CONSTELLATION_REPORTS[2][2] =
+const char *CONSTELLATION_REPORTS[2][2] =
 {
     {"Virtual bundles","Custom collections of promises and their compliance"},
     {NULL,NULL}
@@ -4321,7 +4321,7 @@ if(Con2PHP_CheckLicenseAndFormatError(errBuf, sizeof(errBuf)))
 
 /*****************************************************************************/
 
-static char *FormatTwoDimensionalArrayAsJson(char *buf, int bufsize, char *array[][2])
+static char *FormatTwoDimensionalArrayAsJson(char *buf, int bufsize, const char *array[][2])
 {
  char work[CF_MAXVARSIZE] = {0};
  int i;
@@ -6462,7 +6462,7 @@ return true;
 void Nova2PHP_enterprise_version(char *buf, int bufsize)
 {
  char *name;
- char *version;
+ const char *version;
  cfapi_errid retErrid = ERRID_SUCCESS;
  
 #ifdef HAVE_CONSTELLATION
