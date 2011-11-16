@@ -1665,7 +1665,7 @@ struct HubQuery
    {
    struct Rlist *hosts;
    struct Rlist *records;
-   cfapi_errid_t errid;
+   cfapi_errid errid;
    };
 
 

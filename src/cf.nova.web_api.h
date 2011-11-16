@@ -19,34 +19,20 @@
 
 /* error handling and description*/
 
+/* Corresponding description is in web_api.c:ERRID_DESCRIPTION */
 typedef enum cfapi_errid
-{
-    ERRID_SUCCESS,
-    ERRID_DBCONNECT,
-    ERRID_ARGUMENT_MISSING,
-    ERRID_ARGUMENT_WRONG,
-    ERRID_BUFFER_FULL,
-    ERRID_SUBSCRIPTION_NONEXISTING,
-    ERRID_SUBSCRIPTION_EXISTS,
-    ERRID_SUBSCRIPTION_MULTIPLE,
-    ERRID_CONSTELLATION_LICENSE,
-    ERRID_MAX
-}cfapi_errid_t;
-
-static char *ERRID_DESCRIPTION[ERRID_MAX+2] =
-{
-    "Success",
-    "Could not open connection to reporting database",
-    "A mandatory argument is missing",
-    "An argument is incorrect",
-    "The JSON-buffer is too small to hold the report data",
-    "The given subscription handle does not exist",
-    "The given subscription handle already exists",
-    "There are multiple subscriptions matching the request",
-    "This functionality requires a Constellation license",
-    "Unknown error - description out of bounds",
-    NULL
-};
+   {
+   ERRID_SUCCESS,
+   ERRID_DBCONNECT,
+   ERRID_ARGUMENT_MISSING,
+   ERRID_ARGUMENT_WRONG,
+   ERRID_BUFFER_FULL,
+   ERRID_SUBSCRIPTION_NONEXISTING,
+   ERRID_SUBSCRIPTION_EXISTS,
+   ERRID_SUBSCRIPTION_MULTIPLE,
+   ERRID_CONSTELLATION_LICENSE,
+   ERRID_MAX
+   } cfapi_errid;
 
 /* reports */
 
@@ -260,8 +246,8 @@ void FreeEnvironmentsList(struct EnvironmentsList *list);
 void FreeHostsList(struct HostsList *list);
 
 
-char *FormatErrorJsonAttribute(char *out, int outSz, cfapi_errid_t errid);
-char *FormatSingletonErrorJson(char *out, int outSz, cfapi_errid_t errid);
-void EndJsonBuffer(char *buf, int bufsize, cfapi_errid_t errid);
+char *FormatErrorJsonAttribute(char *out, int outSz, cfapi_errid errid);
+char *FormatSingletonErrorJson(char *out, int outSz, cfapi_errid errid);
+void EndJsonBuffer(char *buf, int bufsize, cfapi_errid errid);
 
 #endif // CFENGINE_NOVA_WEB_API_H

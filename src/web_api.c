@@ -26,6 +26,20 @@ static const char *CDP_REPORTS[][2] =
     [cdp_services] = {"Services","System services status"},
     };
 
+static const char *ERRID_DESCRIPTION[] =
+{
+    [ERRID_SUCCESS] = "Success",
+    [ERRID_DBCONNECT] = "Could not open connection to reporting database",
+    [ERRID_ARGUMENT_MISSING] = "A mandatory argument is missing",
+    [ERRID_ARGUMENT_WRONG] = "An argument is incorrect",
+    [ERRID_BUFFER_FULL] = "The JSON-buffer is too small to hold the report data",
+    [ERRID_SUBSCRIPTION_NONEXISTING] = "The given subscription handle does not exist",
+    [ERRID_SUBSCRIPTION_EXISTS] = "The given subscription handle already exists",
+    [ERRID_SUBSCRIPTION_MULTIPLE] = "There are multiple subscriptions matching the request",
+    [ERRID_CONSTELLATION_LICENSE] = "This functionality requires a Constellation license",
+    [ERRID_MAX] = "Unknown error - description out of bounds",
+};
+
 /*****************************************************************************/
 
 static char *FormatTwoDimensionalArrayAsJson(char *buf, int bufsize, char *array[][2]);
@@ -6449,7 +6463,7 @@ void Nova2PHP_enterprise_version(char *buf, int bufsize)
 {
  char *name;
  char *version;
- cfapi_errid_t retErrid = ERRID_SUCCESS;
+ cfapi_errid retErrid = ERRID_SUCCESS;
  
 #ifdef HAVE_CONSTELLATION
  
@@ -6612,7 +6626,7 @@ int Nova2PHP_GetHubMaster(char *buffer,int bufsize)
 
 /*****************************************************************************/
 
-char *FormatErrorJsonAttribute(char *out, int outSz, cfapi_errid_t errid)
+char *FormatErrorJsonAttribute(char *out, int outSz, cfapi_errid errid)
 {
  if(errid >= ERRID_MAX)
     {
@@ -6627,7 +6641,7 @@ char *FormatErrorJsonAttribute(char *out, int outSz, cfapi_errid_t errid)
 
 /*****************************************************************************/
 
-char *FormatSingletonErrorJson(char *out, int outSz, cfapi_errid_t errid)
+char *FormatSingletonErrorJson(char *out, int outSz, cfapi_errid errid)
 {
  out[0] = '{';
  FormatErrorJsonAttribute(out+1, outSz-1, errid);
@@ -6638,7 +6652,7 @@ char *FormatSingletonErrorJson(char *out, int outSz, cfapi_errid_t errid)
 
 /*****************************************************************************/
 
-void EndJsonBuffer(char *buf, int bufsize, cfapi_errid_t errid)
+void EndJsonBuffer(char *buf, int bufsize, cfapi_errid errid)
 {
  char work[CF_MAXVARSIZE];
  
