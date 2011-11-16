@@ -91,6 +91,8 @@ while (mongo_cursor_next(cursor))  // loops over documents
          while (bson_iterator_next(&it2))
             {
             bson_iterator_init(&it3, bson_iterator_value(&it2));
+            keyhash[0] = '\0';
+            ipAddr[0] = '\0';
             while (bson_iterator_next(&it3))
                {
                if(strcmp(bson_iterator_key(&it3),cfr_keyhash)==0)
@@ -106,7 +108,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   t = bson_iterator_int(&it3);
                   }
                }
-            if(keyhash && ipAddr)
+            if(strlen(keyhash)>0 && strlen(ipAddr)>0)
                {
                ip = IdempPrependItem(&list,keyhash,ipAddr);
                ip->time = t;
@@ -126,13 +128,11 @@ return list;
 struct Item * CFDB_GetDeletedHosts(void)
     
 { bson query,field;
-  bson_iterator it1,it2,it3;
+  bson_iterator it1,it2;
   mongo_cursor *cursor;
  mongo_connection conn;
  bson_buffer bb;
- char keyhash[CF_BUFSIZE]={0},ipAddr[CF_MAXVARSIZE]={0};
- time_t t = time(NULL);
- struct Item *ip,*list = NULL;
+ struct Item *list = NULL;
 
 
 if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
@@ -288,13 +288,10 @@ struct HubQuery *CFDB_QueryHostsInClassContext(mongo_connection *conn,char *expr
   bson query,field;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
-  struct Rlist *rp = NULL,*host_list = NULL;
+  struct Rlist *host_list = NULL;
   time_t rtime, now = time(NULL);
   char rclass[CF_MAXVARSIZE];
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
-  int match_class,found = false;
-  char classRegexAnch[CF_MAXVARSIZE];
-  int emptyQuery = true;
   
 /* BEGIN query document */
 
@@ -2069,8 +2066,8 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *l
 
 struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query,char *db)
 
-{ bson_buffer b,bb,*sub1,*sub2,*sub3;
- bson qe,field;
+{ bson_buffer bb;
+ bson field;
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3;
  struct HubHost *hh;
@@ -2171,8 +2168,8 @@ struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query,char *db)
 
 struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char *lname,int regex,int sort,char *classRegex)
 
-{ bson_buffer bb,*sub1,*sub2,*sub3;
- bson b,query,field;
+{ bson_buffer bb;
+ bson query,field;
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3;
  struct HubHost *hh;
@@ -2356,8 +2353,8 @@ struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char
 
 struct HubQuery *CFDB_QuerySetuid(mongo_connection *conn,char *keyHash,char *lname,int regex, char *classRegex)
 
-{ bson_buffer bb,*sub1,*sub2,*sub3;
- bson b,query,field;
+{ bson_buffer bb;
+ bson query,field;
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3;
  struct HubHost *hh;
@@ -2495,8 +2492,8 @@ struct HubQuery *CFDB_QuerySetuid(mongo_connection *conn,char *keyHash,char *lna
 
 struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char *lname,int regex,time_t lt,int cmp, int sort, char *classRegex, int lookInArchive)
 
-{ bson_buffer bb,*sub1,*sub2,*sub3;
- bson b,query,field;
+{ bson_buffer bb;
+ bson query,field;
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3;
  struct HubHost *hh;
@@ -2688,8 +2685,8 @@ struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char
 
 struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,char *ldiff,int regex,time_t lt,int cmp, int sort, char *classRegex, int lookInArchive)
 
-{ bson_buffer bb,*sub1,*sub2,*sub3;
- bson b,query,field;
+{ bson_buffer bb;
+ bson query,field;
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3;
  struct HubHost *hh;
@@ -2898,7 +2895,7 @@ struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum 
  char *collName;
  mongo_cursor *cursor;
  bson_buffer bb;
- bson_buffer *timeRange, *sortObj;
+ bson_buffer *timeRange;
  time_t rt;  
 
 
@@ -3083,8 +3080,8 @@ struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum 
 
 struct HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, char *classRegex)
 
-{ bson_buffer bb,*sub1,*sub2,*sub3;
-  bson b,query,field;
+{ bson_buffer bb;
+  bson query,field;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
   struct HubHost *hh;
@@ -3095,7 +3092,6 @@ struct HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char
   int match_day,match_month,match_year,found = false;
   char classRegexAnch[CF_MAXVARSIZE];
   int emptyQuery = true;
-  time_t rt;
   
 /* BEGIN query document */
  bson_buffer_init(&bb);
@@ -3265,8 +3261,8 @@ return NewHubQuery(host_list,record_list);
 
 struct HubQuery *CFDB_QueryValueGraph(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, char *classRegex)
 
-{ bson_buffer bb,*sub1,*sub2,*sub3;
-  bson b,query,field;
+{ bson_buffer bb;
+  bson query,field;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
   struct HubHost *hh;
@@ -3277,7 +3273,6 @@ struct HubQuery *CFDB_QueryValueGraph(mongo_connection *conn,char *keyHash,char 
   int match_day,match_month,match_year,found = false;
   char classRegexAnch[CF_MAXVARSIZE];
   int emptyQuery = true;
-  time_t rt;
 
   struct tm tm;
   time_t epoch;
@@ -3458,8 +3453,8 @@ return NewHubQuery(host_list,record_list);
 
 struct HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lname,int regex, char *classRegex, int sort)
 
-{ bson_buffer bb,*sub1,*sub2,*sub3;
-  bson b,query,field;
+{ bson_buffer bb;
+  bson query,field;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
   struct HubHost *hh;
@@ -3791,9 +3786,7 @@ struct HubVital *CFDB_QueryVitalsMeta(mongo_connection *conn, char *keyHash)
 /**
  * Return a list of mag vital ids and meta-data, restricted to one host.
  */
-{
- struct Item *retVal;
- bson_buffer bb;
+{ bson_buffer bb;
  bson query, field;
  mongo_cursor *cursor;
  bson_iterator it1;
@@ -3992,7 +3985,7 @@ int CFDB_QueryMonView(mongo_connection *conn, char *keyhash,char *monId, enum mo
 { bson_buffer bb;
  bson query,field;
  mongo_cursor *cursor;
- bson_iterator it1,it2,it3;
+ bson_iterator it1,it2;
  double *monArr = NULL;
  int ok = false;
  char *db;
@@ -4215,12 +4208,11 @@ int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int
 
 int CFDB_QueryLastUpdate(mongo_connection *conn,char *db, char *dbkey,char *keyhash,time_t *date)
 
-{ bson_buffer b,bb,*sub1,*sub2,*sub3;
- bson qu,query,field;
+{ bson_buffer b,bb;
+ bson query,field;
  mongo_cursor *cursor;
  bson_iterator it1;
- int ok = false,slot,start_slot,wrap_around;
- double q,e,d;
+ int ok = false;
   
 /* BEGIN query document */
 
@@ -4756,7 +4748,7 @@ struct Item *CFDB_QueryExpandedPromiseAttr(mongo_connection *conn, char *handle,
 /*****************************************************************************/
 
 struct HubQuery *CFDB_QueryHandlesForBundlesWithComments(mongo_connection *conn, char *bType, char *bName)
-{ bson_buffer bb, *obj, *arr;
+{ bson_buffer bb;
  bson_iterator it1;
  bson query,field;
  mongo_cursor *cursor;
@@ -4794,7 +4786,9 @@ struct HubQuery *CFDB_QueryHandlesForBundlesWithComments(mongo_connection *conn,
  while(mongo_cursor_next(cursor))  // iterate over docs
     {
     bson_iterator_init(&it1,cursor->current.data);
-   
+
+    handle[0] = '\0';
+    comment[0] = '\0';
     while(bson_iterator_next(&it1))
        {
        if (strcmp(bson_iterator_key(&it1), cfp_handle) == 0)
@@ -4808,7 +4802,7 @@ struct HubQuery *CFDB_QueryHandlesForBundlesWithComments(mongo_connection *conn,
        
        }
 
-    if(handle || comment)
+    if(strlen(handle)>0 || strlen(comment)>0)
        {
        PrependRlistAlien(&recordList,NewHubPromise(NULL,NULL,NULL,NULL,NULL,NULL,NULL,handle,comment,NULL,0,NULL));
        }
@@ -4946,7 +4940,7 @@ struct HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle
  * and server may optinally be excluded since they often only lead to
  * mess in Knowledge Management. 
  */
-{ bson_buffer bb, *obj, *arr;
+{ bson_buffer bb;
  bson_iterator it1;
  bson query,field;
  mongo_cursor *cursor;
@@ -5075,7 +5069,6 @@ struct Item *CFDB_QueryBundles(mongo_connection *conn,char *bTypeRegex,char *bNa
  struct Item *matched = {0};
  char type[CF_MAXVARSIZE] = {0};
  char name[CF_MAXVARSIZE] = {0};
- char match[CF_MAXVARSIZE] = {0};
 
  // query
  bson_buffer_init(&bbuf);
@@ -5397,12 +5390,7 @@ int CFDB_QueryBundleCount(mongo_connection *conn)
 /*****************************************************************************/
 
 int CFDB_QueryPromiseCount(mongo_connection *conn)
-{ bson_buffer bbuf;
- bson_iterator it1;
- bson query,field;
- mongo_cursor *cursor;
- struct Item *bundleNames = {0};
- int promiseCount = 0;
+{ int promiseCount = 0;
 
  promiseCount = (int)mongo_count(conn,MONGO_BASE,MONGO_PROMISES_UNEXP_COLLECTION,NULL);
   
@@ -5510,15 +5498,11 @@ struct Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *b
  * MEMORY NOTE: Caller must use DeleteHubBody() on the reutrned val (!=NULL)
  */
 
-{ bson_buffer b;
- bson_buffer bbuf; 
+{  bson_buffer bbuf; 
  bson query,field;
  int emptyQuery = true,found;
  mongo_cursor *cursor;
- bson_iterator it1,it2,it3;
- char ba[CF_MAXVARSIZE] = {0}, cc[CF_MAXVARSIZE] = {0};
- char lval[CF_MAXVARSIZE] = {0}, rval[CF_MAXVARSIZE] = {0};
- struct HubBody *hb = {0};
+ bson_iterator it1;
  char type[CF_MAXVARSIZE] = {0};
  char name[CF_MAXVARSIZE] = {0};
  struct Item *record_list = NULL;
@@ -6380,7 +6364,6 @@ int QueryInsertHostInfo(mongo_connection *conn, struct Rlist *host_list)
 {
  bson_buffer bb;
  bson query,field;
- struct Rlist *rp;
  struct HubHost *hh;
  mongo_cursor *cursor;
  bson_iterator it1;
@@ -6673,7 +6656,7 @@ struct HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *p
 struct Rlist *CFDB_QueryNotes(mongo_connection *conn,char *keyhash, char *nid,  struct Item *data)
 
 { bson_buffer bb;
- bson b,query,field;
+ bson query,field;
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3;
  struct HubNoteInfo *hci = NULL;
@@ -6877,16 +6860,13 @@ struct Rlist *CFDB_QueryNotes(mongo_connection *conn,char *keyhash, char *nid,  
 
 struct Rlist *CFDB_QueryNoteId(mongo_connection *conn,bson *query)
 
-{ bson_buffer bb,*sub1,*sub2,*sub3;
- bson b,field;
+{ bson_buffer bb;
+ bson field;
  mongo_cursor *cursor;
- bson_iterator it1,it2,it3;
- struct HubHost *hh;
- struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
- char rname[CF_MAXVARSIZE],rversion[CF_MAXVARSIZE],rarch[3];
- char noteId[CF_MAXVARSIZE];
- char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
- int found = false;
+ bson_iterator it1;
+ struct Rlist *host_list = NULL;
+ char noteId[CF_MAXVARSIZE]={0};
+ char keyhash[CF_MAXVARSIZE]={0},addresses[CF_BUFSIZE]={0};
   
 /* BEGIN RESULT DOCUMENT */
 
@@ -6930,10 +6910,12 @@ struct Rlist *CFDB_QueryNoteId(mongo_connection *conn,bson *query)
                  strncpy(noteId, bson_iterator_string(&it1),CF_MAXVARSIZE - 1);
                  }
               break;
+          default:
+              break;
 	  }      
 	
        }
-    if(noteId && strlen(noteId)>15)
+    if(strlen(noteId)>15)
        {
        PrependRlistAlien(&host_list,noteId);
        }
@@ -6948,7 +6930,7 @@ int CFDB_GetRow(mongo_connection *conn, char *db, int reportType, bson *query, c
 
 { bson_buffer bb;
  bson field;
- bson_iterator it1,it2,it3,it4;
+ bson_iterator it1,it2,it3;
  mongo_cursor *cursor;
  char buffer[CF_BUFSIZE] = {0};
  bson_type t;
@@ -7024,7 +7006,6 @@ struct Item *CFDB_QueryDistinctStr(mongo_connection *conn, char *database, char 
 {
  struct Item *retVal;
  bson_buffer bb;
-
  bson query;
 
  bson_buffer_init(&bb);
@@ -7042,7 +7023,7 @@ struct Item *CFDB_QueryDistinctStr(mongo_connection *conn, char *database, char 
  
 struct Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collection, char *dKey, bson *queryBson)
 {
- bson_buffer bb,*query;
+ bson_buffer bb;
  bson cmd,result;
  bson_iterator it1,values;
  struct Item *ret = NULL;
@@ -7212,7 +7193,6 @@ void BsonIteratorToString(char *retBuf, int retBufSz, bson_iterator *i, int dept
 /* NOTE: Only depth 1 is implemented */
 {
  const char * key;
- int temp;
  char oidhex[25];
  char buf[CF_MAXVARSIZE];
  char header[CF_MAXVARSIZE] = {0};
@@ -7295,11 +7275,9 @@ struct Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *l
 { bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
-  bson_iterator it1,it2,it3;
+  bson_iterator it1;
   struct Rlist *classList = {0};
-  char rclass[CF_MAXVARSIZE];
   char classRegexAnch[CF_MAXVARSIZE];
-  char ipAddress[CF_MAXVARSIZE];
   int emptyQuery = true;
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
   char hostclass[CF_BUFSIZE];
@@ -7375,10 +7353,7 @@ struct Rlist *CFDB_QueryAllClasses(mongo_connection *conn,char *keyHash,char *lc
   struct Rlist *classList = {0};
   char rclass[CF_MAXVARSIZE];
   char classRegexAnch[CF_MAXVARSIZE];
-  char ipAddress[CF_MAXVARSIZE];
   int emptyQuery = true;
-  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
-  char hostclass[CF_BUFSIZE];
 
     /* BEGIN query document */
 
@@ -7451,9 +7426,9 @@ struct Rlist *CFDB_QueryAllClasses(mongo_connection *conn,char *keyHash,char *lc
 /*************************************************/
 int CFDB_QueryIsMaster(void)
 {
- bson_buffer bb,*query;
+ bson_buffer bb;
  bson cmd,result;
- bson_iterator it1,values,it2;
+ bson_iterator it1;
  int ret = false;
  mongo_connection conn;
 
@@ -7496,12 +7471,11 @@ int CFDB_QueryIsMaster(void)
 
 int CFDB_QueryMasterIP(char *buffer,int bufsize)
 {
- bson_buffer bb,*query;
+ bson_buffer bb;
  bson cmd,result;
- bson_iterator it1,values,it2;
+ bson_iterator it1;
  int ret = false;
  mongo_connection conn;
- char master[CF_MAXVARSIZE]={0};
 
  if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
     {
@@ -7539,9 +7513,9 @@ int CFDB_QueryMasterIP(char *buffer,int bufsize)
 
 int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
 {
- bson_buffer bb,*query;
+ bson_buffer bb;
  bson cmd,result;
- bson_iterator it1,values,it2,it3;
+ bson_iterator it1,it2,it3;
  int ret = false;
  char work[CF_MAXVARSIZE] = {0};
  int totalStatus = 1;

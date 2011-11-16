@@ -52,7 +52,6 @@ void BsonToString(char *retBuf, int retBufSz, char *data)
 {
  bson_iterator i;
  const char * key;
- int temp;
  char oidhex[25];
  char buf[CF_BUFSIZE];
 

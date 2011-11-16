@@ -113,7 +113,6 @@ int CFDB_SaveLastseenCache(struct Item *lastseen)
  bson_buffer *setObj,*sub,*arr;
  bson setOp,empty;
  mongo_connection dbconn;
- time_t now = time(NULL);
  struct Item *ip;
  char arrIndex[CF_BUFSIZE] = {0};
  int i=0;
@@ -165,12 +164,9 @@ return true;
 void CFDB_SaveGoalsCache(char *goal_patterns, char *goal_categories)
 
 { bson_buffer bb;
- bson_buffer *setObj,*sub;
- bson setOp,empty, setOp1;
+ bson_buffer *setObj;
+ bson setOp,empty;
   mongo_connection dbconn;
- struct Rlist *rp1, *rp2;
- int i = 0;
- char pos[CF_SMALLBUF] = {0};
 
 if (!IsDefinedClass("am_policy_hub"))
    {
@@ -342,7 +338,7 @@ void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_
  bool didUpdate, haveAllMeta=false;
  char *db;
  char *dbOp;
- struct Item *ip, *ip2, *slotStart;
+ struct Item *ip, *slotStart;
  int monGlobal;
  double monExpMin, monExpMax;
  int i,slot, numSlots, iterations;
@@ -533,7 +529,7 @@ void CFDB_SaveMonitorHistograms(mongo_connection *conn, char *keyhash, struct It
   bson setOp;
   char monId[128], kStr[32];
   struct Item *ip;
-  int i,k;
+  int k;
   double currHist;
   char *sp;
   
@@ -1810,7 +1806,6 @@ int CFDB_MarkAsDeleted(char *keyhash)
 { bson_buffer bb;
   bson_buffer *setObj;
   bson setOp,empty;
-  char varName[CF_MAXVARSIZE];
   mongo_connection dbconn;
 
 if (!IsDefinedClass("am_policy_hub"))
