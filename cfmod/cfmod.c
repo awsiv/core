@@ -303,7 +303,8 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfcon_hub_details,NULL)
     PHP_FE(cfcon_getlastupdate,NULL)
     PHP_FE(cfcon_hubname,NULL)
-    PHP_FE(cfcon_ipaddr,NULL)    
+    PHP_FE(cfcon_ipaddr,NULL)
+    PHP_FE(cfcon_delete_hub,NULL)
 #endif  /* HAVE_CONSTELLATION */
 
     
@@ -5869,6 +5870,36 @@ PHP_FUNCTION(cfcon_ipaddr)
  Con2PHP_hubinfo(hubkey,s1,s2,sizeof(s1));
  RETURN_STRING(s2,1);
 }
+
+/*****************************************************************************
+ * Name: cfcon_delete_host
+ * Delete the record of a certain host from web-supporting DB 
+ * @return
+ *      1. true or false
+ *
+ * @throws cfmod_db_exception_ce
+ * @lastmodifiedby bishwa.shrestha@cfengine.com
+ * @todo throw exception
+ *****************************************************************************/
+
+PHP_FUNCTION(cfcon_delete_hub)
+
+{ char *hubkey;
+ int hk_len;
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hubkey,&hk_len) == FAILURE)
+   {
+   php_printf("Error is cfcon_delete_hub function args");
+   RETURN_NULL();
+   }
+
+if(hk_len == 0)
+   {
+   return;
+   }
+Con2PHP_delete_hub(hubkey);
+}
+
 
 /******************************************************************************/
 #endif  /* HAVE_CONSTELLATION */

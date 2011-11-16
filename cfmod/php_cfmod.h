@@ -294,6 +294,7 @@ PHP_FUNCTION(cfcon_hub_details);
 PHP_FUNCTION(cfcon_getlastupdate);
 PHP_FUNCTION(cfcon_hubname);
 PHP_FUNCTION(cfcon_ipaddr);
+PHP_FUNCTION(cfcon_delete_hub);
 #endif  /* HAVE_CONSTELLATION */
 
 /* 
