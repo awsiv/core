@@ -48,6 +48,21 @@ static char *ERRID_DESCRIPTION[ERRID_MAX+2] =
     NULL
 };
 
+/* reports */
+
+/* Corresponding names and descriptions are in web_api.c:CDP_REPORTS */
+typedef enum cdp_report
+   {
+   cdp_acls,
+   cdp_commands,
+   cdp_filechanges,
+   cdp_filediffs,
+   cdp_registry,
+   cdp_services,
+   cdp_unknown
+   } cdp_report;
+
+/* misc */
 
 extern int AM_PHP_MODULE;
 
@@ -209,8 +224,8 @@ int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize);
 
 void Nova2PHP_cdp_reportnames(char *buf,int bufSz);
 int Nova2PHP_cdp_report(char *hostkey, char *reportName, struct PageInfo *page, char *buf, int bufSz);
-char *GetCdpTableHeader(cdp_t cdpType);
-cdp_t CdpReportNameToType(char *reportName);
+char *GetCdpTableHeader(cdp_report cdpType);
+cdp_report CdpReportNameToType(char *reportName);
 
 
 int Nova2PHP_delete_host(char *keyHash);

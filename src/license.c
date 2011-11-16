@@ -201,7 +201,9 @@ Nova_LogLicenseStatus();
 NewScalar("sys","license_owner",company,cf_str);
 snprintf(snumber,CF_SMALLBUF,"%d",LICENSES);
 NewScalar("sys","licenses_granted",snumber,cf_int);
+#ifndef __CDT_PARSER__
 snprintf(installed_time,CF_MAXVARSIZE,"%ld",sb.st_mtime);
+#endif
 NewScalar("sys","licenses_installtime",installed_time,cf_str);
 
 #ifdef HAVE_LIBMONGOC

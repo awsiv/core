@@ -16,6 +16,15 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+static const char *CDP_REPORTS[][2] =
+    {
+    [cdp_acls] = {"ACLs","File access controls"},
+    [cdp_commands] = {"Commands","Scheduled commands to execute"},
+    [cdp_filechanges] = {"File Changes","File changes observed on the system"},
+    [cdp_filediffs] = {"File Diffs","Delta/difference comparison showing file changes"},
+    [cdp_registry] = {"Registry","Promised Windows registry setting status"},
+    [cdp_services] = {"Services","System services status"},
+    };
 
 /*****************************************************************************/
 
@@ -5633,7 +5642,7 @@ void Nova2PHP_cdp_reportnames(char *buf,int bufSz)
 
 buf[0] = '[';
 
-for (i = 0; CDP_REPORTS[i][0] != NULL; i++)
+for (i = 0; i < cdp_unknown; i++)
    {
    snprintf(work,sizeof(work),"[\"%s\",\"%s\"],",CDP_REPORTS[i][0],CDP_REPORTS[i][1]);
    
@@ -5649,7 +5658,7 @@ EndJoin(buf,"]",bufSz);
 
 /*****************************************************************************/
 
-cdp_t CdpReportNameToType(char *reportName)
+cdp_report CdpReportNameToType(char *reportName)
 
 { int i;
 
@@ -5657,7 +5666,7 @@ for (i = 0; i < cdp_unknown; i++)
    {
    if (strcmp(reportName,CDP_REPORTS[i][0]) == 0)
       {
-      return (cdp_t)i;      
+      return (cdp_report)i;
       }
    }
 
@@ -5688,7 +5697,7 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, struct PageInfo *page, 
  char attributesTmp[CF_MAXVARSIZE] = {0};
  char row[CF_MAXVARSIZE] = {0};
  int ret = false;
- cdp_t cdpType;
+ cdp_report cdpType;
  int count = 0;
  int timewarn = false;
  int startIndex, endIndex;
@@ -5818,7 +5827,7 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, struct PageInfo *page, 
 
 /*****************************************************************************/
 
-char *GetCdpTableHeader(cdp_t cdpType)
+char *GetCdpTableHeader(cdp_report cdpType)
 {
  switch(cdpType)
     {

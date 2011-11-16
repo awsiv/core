@@ -432,18 +432,6 @@ typedef struct PageInfo
 #define cfr_patch_installed "pi"
 #define CF_WEBBUFFER 7*1024*1024
 
-typedef enum cdp_report
-   {
-   cdp_acls,
-   cdp_commands,
-   cdp_filechanges,
-   cdp_filediffs,
-   cdp_registry,
-   cdp_services,
-   cdp_unknown
-   }
-  cdp_t;
-
 #include "cf.nova.web_api.h"
 
 #ifdef HAVE_CONSTELLATION
