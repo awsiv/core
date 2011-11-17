@@ -26,7 +26,7 @@ void PrependPromiserList(struct PromiseIdent **list,char *s,struct Promise *pp)
 
  for (ptr = *list; ptr != NULL; ptr = ptr->next)
     {
-    if (pp->lineno == ptr->lineno)
+    if (pp->line_number == ptr->line_number)
        {
        if (strcmp(pp->audit->filename,ptr->filename) == 0)
           {
@@ -51,7 +51,7 @@ void PrependPromiserList(struct PromiseIdent **list,char *s,struct Promise *pp)
     ptr->classes = strdup("any");
     }
 
- ptr->lineno = pp->lineno;
+ ptr->line_number = pp->line_number;
  ptr->handle = strdup(s);
  ptr->next = *list;
  *list = ptr;
