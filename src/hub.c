@@ -236,14 +236,6 @@ while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMaisn",OPTIONS,&optindex)) != EOF)
           CheckOpts(argc,argv);
           InitializeGA(argc,argv);
 
-          int i;
-          char name[1000];
-          
-          for (i = 0; i < 2000; i++)
-             {             
-             snprintf(name,1000,"last.internal_bundle.hail.%d",i);
-             WriteLock(name);
-             }
           SplayLongUpdates();
           exit(0);
           break;
