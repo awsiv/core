@@ -5703,8 +5703,6 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, struct PageInfo *page, 
  char cause[CF_MAXVARSIZE] = {0};
  char statusStr[CF_SMALLBUF];
  char lastChangeStr[CF_SMALLBUF], jsonLastChangeStr[CF_SMALLBUF]={0};
- char fileChangePath[CF_MAXVARSIZE];
- char fileChangePathUrl[CF_MAXVARSIZE];
  char *urlReportName = "";
  time_t then = 0, now;
  char attributes[CF_MAXVARSIZE] = {0};
@@ -5787,13 +5785,15 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, struct PageInfo *page, 
                 row[0]='\0';
                 lastChangeStr[0]='\0';
                 jsonLastChangeStr[0]='\0';
+                char fileChangePath[CF_MAXVARSIZE];
+                
                 switch(cdpType)  // include special fields
                    {
                    case cdp_filechanges:
                    case cdp_filediffs:
 
-                       sscanf(attributes, "%512[^,]", fileChangePath);
-                   
+                       sscanf(attributes, "\"%512[^\",]", fileChangePath);
+                       
                        CFDB_QueryLastFileChange(&dbconn, hostKeyHash, reportName, fileChangePath, lastChangeStr, sizeof(lastChangeStr));
 
                        snprintf(row,sizeof(row),"[\"%s\",\"%s\",%s,\"%s\",\"%s\",\"%s\",\"%s\",%d],",
