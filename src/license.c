@@ -20,6 +20,9 @@
 #define LIC_YEAR "2001"
 #define LIC_COMPANY "PARTNER TEST LICENSE - NOT FOR PRODUCTION"
 
+time_t LAST_LICENSE_CHECK_TIMESTAMP = 0;
+static bool RecentlyCheckedLicense(void);
+
 /*****************************************************************************/
 
 int Nova_EnterpriseModuleExpiry(char *day,char *month,char *year)
@@ -44,6 +47,11 @@ int Nova_EnterpriseExpiry(void)
   RSA * serverrsa;
 
 if (THIS_AGENT_TYPE == cf_keygen)
+   {
+   return false;
+   }
+
+if(RecentlyCheckedLicense())
    {
    return false;
    }
@@ -246,6 +254,24 @@ else
       }
    return false;
    }
+}
+
+/*****************************************************************************/
+
+static bool RecentlyCheckedLicense(void)
+{
+#define SECONDS_BETWEEN_CHECKS (5 * SECONDS_PER_MINUTE)
+ 
+ time_t now = time(NULL);
+
+ if(LAST_LICENSE_CHECK_TIMESTAMP > now - SECONDS_BETWEEN_CHECKS)
+    {
+    return true;
+    }
+ 
+ LAST_LICENSE_CHECK_TIMESTAMP = now;
+ 
+ return false;
 }
 
 /*****************************************************************************/
