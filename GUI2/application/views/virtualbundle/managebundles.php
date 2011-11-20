@@ -11,11 +11,14 @@
                 <div class="form">
                     <?php
                     $attributes = array('class' => '', 'id' => 'virtualbundleform');
-                    echo form_open('virtualbundle/create', $attributes);
+                    echo form_open('virtualbundle/'.$op, $attributes);
                     ?>
                     <p>
                         <label for="vbname">Virtual Bundle Name:<span class="required">*</span></label>
-                        <input type="text" name="vbname" id="vbname" <?php if(isset($name)){echo "value=\"$name\" DISABLED";}?> ></input>
+                        <input type="text" name="vbname" id="vbname" <?php if(isset($name)){echo "value=\"$name\"";}?> ></input>
+                        <?php if(isset($name)){?>
+                        <input type="hidden" name="orgvbname" id="vbname" value="<?php echo $name ?>"></input> 
+                        <?php }?>
                     </p>
                     <p>
                         <label for="hostclass">Host Class:<span class="required"></span></label>
@@ -93,6 +96,11 @@
             $(this).parent().remove();
         });
         
+        selectedpromisesContainer.find("li").each(function() { 
+            var val=$(this).find('a').text();
+              $(this).data('val',val);
+          });
+        
         $('#virtualbundleform').submit(function(event){
             event.preventDefault();
             var promises=new Array(),
@@ -107,8 +115,10 @@
                 'promises':promises.join(','),
                 'name':$('input:text[name=vbname]').val(),
                 'description':$('textarea#description').val(),
-                'hostclass':$('input:text[name=hostclass]').val()
+                'hostclass':$('input:text[name=hostclass]').val(),
+                'orgname':$('input:hidden[name=orgvbname]').val()
             };
+           
             $.ajax({
                 url:$(form).attr('action'),
                 data: inputs,
@@ -151,9 +161,10 @@
         
         //reset the form and selected promise when reset clicked
         $('#resetForm').click(function(event){
-            $('input:text[name=vbname]').val(' ');
-            $('input:text[name=vbname]').removeAttr('disabled');
-            $('input:text[name=hostclass]').val();
+            $('input:text[name=vbname]').val('').attr('value','');
+            $('input:text[name=hostclass]').val('').attr('value','');
+            $('input:hidden[name=orgvbname]').remove();
+            $('#virtualbundleform').attr('action','<?php echo site_url('virtualbundle/create') ?>')
             selectedpromisesContainer.html('');
         });
     

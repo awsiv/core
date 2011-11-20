@@ -62,7 +62,6 @@ class Virtualbundle extends Cf_controller {
     }
 
     function manage() {
-       
         $bc = array(
             'title' => 'virtual bundles',
             'url' => 'virtualbundle/manage',
@@ -74,6 +73,7 @@ class Virtualbundle extends Cf_controller {
         $data = array(
             'title' => $this->lang->line('mission_portal_title'),
             'breadcrumbs' => $this->breadcrumblist->display(),
+            'op'=>'create'
         );
         $this->template->load('template', 'virtualbundle/managebundles', $data);
     }
@@ -99,7 +99,6 @@ class Virtualbundle extends Cf_controller {
                 $result = $this->virtual_bundle_model->createVirtualBundle($inputs);
                 if ($result) {
                     echo sprintf('Virtual bundle ( %s ) sucessfully created.', $inputs['name']);
-                    ;
                 } else {
                     $this->output->set_status_header('500', "Cannot create virtual bundle" . $inputs['name']);
                     echo $result;
@@ -135,6 +134,7 @@ class Virtualbundle extends Cf_controller {
              'breadcrumbs' => $this->breadcrumblist->display(),
              'name'=>$vbundledetails['Handle'],
              'hostclass'=>$vbundledetails['Host class expression'],
+             'op'=>'edited'
        );
        $promises=$this->virtual_bundle_model->getVirtualBundlePromises(urldecode($handle),$this->session->userdata('username'));
            foreach($promises['data'] as $promise){
@@ -143,6 +143,40 @@ class Virtualbundle extends Cf_controller {
        $this->template->load('template', 'virtualbundle/managebundles', $data); 
        }catch(Exception $e){
             show_error($e->getMessage());
+        }
+    }
+    
+    function edited(){
+        $this->form_validation->set_rules('name', 'Virtual Bundlename', 'xss_clean|trim|required');
+        $this->form_validation->set_rules('promises', 'Promises', 'xss_clean|trim|required');
+        $this->form_validation->set_rules('description', 'Description', 'xss_clean|trim|required');
+        $this->form_validation->set_error_delimiters('<span>', '</span><br/>');
+        if ($this->form_validation->run() == FALSE) {
+            $this->output->set_status_header('404', "Cannot create virtual bundle");
+            echo validation_errors();
+        } else {
+            $inputs = array(
+                'username' => $this->session->userdata('username'),
+                'name' => $this->input->post('name'),
+                'hostclass' => $this->input->post('hostclass') ? $this->input->post('hostclass') : "",
+                'description' => $this->input->post('description') ? $this->input->post('description') : "",
+                'promises' => $this->input->post('promises')
+            );
+            $handle=$this->input->post('orgname');
+            
+            try {
+                $this->virtual_bundle_model->deleteVirtualBundle($handle);
+                $result = $this->virtual_bundle_model->createVirtualBundle($inputs);
+                if ($result) {
+                    echo "Virtual bundle was sucessfully update.";
+                } else {
+                    $this->output->set_status_header('500', "Cannot create virtual bundle" . $inputs['name']);
+                    echo $result;
+                }
+            } catch (Exception $e) {
+                $this->output->set_status_header('500', "Cannot create virtual bundle. exception occured" . $inputs['name']);
+                echo $e->getMessage();
+            }
         }
     }
     

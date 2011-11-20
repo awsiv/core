@@ -734,7 +734,9 @@ class Testing extends CI_Controller {
     }
     
      function story_sample1(){
-        $this->load->view('testviews/story');
+        $this->load->model('stories_model');
+        $data['story']=$this->stories_model->getStoryByName('webserver');
+        $this->load->view('testviews/story',$data);
     }
     
 

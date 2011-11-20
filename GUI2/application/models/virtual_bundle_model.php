@@ -110,9 +110,9 @@ class virtual_bundle_model extends Cf_Model {
      * void
      */
     
-    function deleteVirtualBundle($handle){
+    function deleteVirtualBundle($handle,$username=NULL){
     try{
-        $result=cfcon_local_delete_subscription_virtualbundle(NULL,$handle);
+        $result=cfcon_local_delete_subscription_virtualbundle($username,$handle);
        }catch(Exception $e){
            log_message('error', $e->getMessage());
             throw $e; 

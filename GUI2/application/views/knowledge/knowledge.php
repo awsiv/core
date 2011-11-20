@@ -7,6 +7,7 @@
                 <?php if ($showTopicHits) { ?><li><a href="#tabs-3"><?php echo $this->lang->line('knowledge_tab_references'); ?></a></li><?php } ?>
                 <?php if ($showSameContext) { ?><li><a href="#tabs-4"><?php echo $this->lang->line('knowledge_tab_same_context'); ?></a></li> <?php } ?>
                 <?php if ($showSubTopics) { ?><li><a href="#tabs-5"><?php echo $this->lang->line('knowledge_tab_subtopic'); ?></a></li> <?php } ?>
+                <?php if ($showStory) { ?><li><a href="#tabs-6">Stories</a></li> <?php } ?>
             </ul>
 
             <div id="tabs-1" class="ui-corner-all">
@@ -49,6 +50,12 @@
                     <?php
                     require_once('category.php');
                     ?>
+                </div>
+            <?php } ?>
+            
+             <?php if ($showStory) { ?>
+                <div id="tabs-6" class="ui-corner-all">
+                   <div id="story" style="position:relative"></div>
                 </div>
             <?php } ?>
         </div>
@@ -280,10 +287,85 @@
         // end
 
     }
+<?php if($showStory){?>
+     jsPlumb.bind("ready", function() {
+       var story_json=<?php echo $story?>;
+       
+       var container=$("#story");
+       var   wheight = $(window).height(),
+            cheight = wheight - 250;
+            container.height(cheight);
+       var common = {
+	cssClass:"myCssClass"
+       };
+       
+       jsPlumb.Defaults.DragOptions = { cursor: 'pointer', zIndex:2000 };
+       jsPlumb.setMouseEventsEnabled(true);
+       //draw all the nodes
+       var nextleft=10,
+           nexttop=20,
+           direction='left';
+       jQuery.each(story_json.F, function(i, val) {
+           var linkLength=20;
+           if(!$('#'+val.id).length>0){
+            var nodeHtml=$('<div>').attr('id',val.id).addClass('topic').append('<strong>'+val.name+'</strong>');
+             
+            
+            if(direction=='left'){
+              nodeHtml.css({'left':nextleft+'px','top':nexttop+'px'}).appendTo(container);
+                
+            }
+            if(direction=='right'){
+              nodeHtml.css({'right':nextleft+'px','top':nexttop+'px'}).appendTo(container);
+            }
+            
+            nextleft+=val.name.length*10+linkLength;
+            if(nextleft>container.width() && direction=='left'){
+               direction='right'
+               nexttop+=nodeHtml.height()+150;
+               nextleft=10;
+             }
+            if(nextleft<10 && direction=='right'){
+               direction='left'
+               nexttop+=nodeHtml.height()+150;
+               nextleft=10;
+             }
+            //console.log(nextleft);
+           }
+        });
+        
+        //drawing the links
+       jQuery.each(story_json.F, function(i, val) {
+          if(val.adjacencies.length !== 0){
+              jQuery.each(val.adjacencies, function(i, adj){
+                  var anchors=["BottomCenter", "BottomCenter"],
+                      topFrom=parseInt($('#'+adj.nodeFrom).css('top')),
+                      topTo=parseInt($('#'+adj.nodeTo).css('top'))
+              
+                    if(topFrom > topTo){
+                        anchors=["TopCenter", "BottomCenter"];
+                    }
+                    if(topFrom < topTo){
+                          anchors=["BottomCenter", "TopCenter"]; 
+                    }
+                    jsPlumb.connect({
+                            source:adj.nodeFrom,
+                            target:adj.nodeTo,
+                            anchors:anchors,
+                            endpoint:[ "Dot", { radius:5 }, common ],
+                            connector:[ "Bezier", { curviness:50 }, common ],
+                            overlays: [
+                                    [ "Arrow", { width:20, length:30, location:0.75, id:"arrow" }, common ],
+                                    [ "Label", {label:adj.data.association, id:"label",cssClass:"labelClass" } ]	
+                            ]
+                    });
+              });
+              //console.log(val.adjacencies.nodeFrom+' '+val.id);
+           }
+        });
+      }); 
 
-
-
-
+<?php } ?>
 
 
    

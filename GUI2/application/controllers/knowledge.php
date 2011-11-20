@@ -89,9 +89,11 @@ class Knowledge extends Cf_Controller {
         // add a js file
         $this->carabiner->js('jit/jit-yc.js');
         $this->carabiner->js('jquery.cookie.js');
+        $this->carabiner->js('jquery.jsPlumb-1.3.3-all-min.js');
         $jsIE = array('jit/Extras/excanvas.js');
         $this->carabiner->group('iefix', array('js' => $jsIE));
         $this->carabiner->css('tabs-custom.css');
+        $this->load->model('stories_model');
 
         $getparams = $this->uri->uri_to_assoc(3);
         $search = isset($getparams['search']) ? $getparams['search'] : $this->input->post('search');
@@ -139,6 +141,10 @@ class Knowledge extends Cf_Controller {
         $data['showSameContext'] = (!is_array($data['topicCategory']['other_topics']) || empty($data['topicCategory']['other_topics'])) ? false :true; 
         $data['showSubTopics'] = (!is_array($data['topicCategory']['topic']['sub_topics']) || empty($data['topicCategory']['topic']['sub_topics'])) ? false :true; 
         
+        //for story generation
+        $data['story']=$this->stories_model->getStoryByName($data['topicDetail']['topic']);
+        $stories=json_decode(utf8_encode($data['story']), true);
+        $data['showStory']=(!is_array($stories) || empty($stories['F'])) ? false : true;
         $this->template->load('template', 'knowledge/knowledge', $data);
     }
 
