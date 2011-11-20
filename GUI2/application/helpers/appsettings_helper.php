@@ -31,6 +31,32 @@ function initializeHub() {
     }
 }
 
+/**
+ * To get the version and the product name;
+ */
+   function get_productname(){
+       $CI = &get_instance();
+       $rawdata=cfpr_enterprise_version();
+       $CI->load->helper('cf_util_helper');
+       $data=sanitycheckjson($rawdata, true);
+       $ret=array();
+       if(is_array($data) && $data['error']['errid']==0){
+           $ret['name']=$data['name'];
+           $ret['version']=$data['version'];
+       }
+       return $ret;
+   }
+   
+   function init_productname(){
+       $data=get_productname();
+       define(strtoupper($data['name']),true);
+   }
+   
+   function is_constellation(){
+      return !defined('CONSTELLATION') ? false : constant('CONSTELLATION');
+   }
+
+
 //this file contains the functions that generates paths to different portion of the application
 
 function get_cssdir() {

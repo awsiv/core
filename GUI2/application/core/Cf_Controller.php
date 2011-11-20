@@ -12,7 +12,7 @@ class Cf_Controller extends CI_Controller {
 
 
         initializeHub();
-
+        init_productname();
 
         $this->load->library(array('session', 'ion_auth', 'breadcrumb', 'breadcrumblist', 'onlineUsers', 'carabiner', 'user_agent', 'setting_lib','log_maintenance'));
         $this->lang->load('tooltip');

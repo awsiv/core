@@ -15,6 +15,7 @@ class Auth extends Controller {
     function __construct() {
         parent::__construct();
         initializeHub();
+        init_productname();
         $this->load->library(array('ion_auth', 'ion_auth', 'form_validation', 'breadcrumb', 'breadcrumblist', 'carabiner', 'onlineUsers','user_agent','setting_lib'));
         $this->lang->load('cf_message');        
         //list of errors wrapped in <p> class of errors
