@@ -1,9 +1,9 @@
 abs_srcdir=@abs_srcdir@
 MKDIR_P=@mkdir_p@
 
-top_srcdir = $(abs_srcdir)/../core
-top_builddir = $(abs_srcdir)/../core
-top_build_prefix = $(abs_srcdir)/../core/
+top_srcdir = $(abs_top_srcdir)
+top_builddir = $(abs_top_builddir)
+top_build_prefix = $(abs_top_builddir)/
 
 SUBDIRS = src docs GUI2
 
@@ -45,13 +45,13 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess config.sub \
 ACLOCAL_AMFLAGS = -I m4
 
 initdir= $(sysconfdir)/init.d
-init_SCRIPTS = misc/init.d/cfengine3
+init_SCRIPTS = $(abs_srcdir)/misc/init.d/cfengine3
 
 sysconfigdir = $(sysconfdir)/sysconfig
-sysconfig_DATA = misc/sysconfig/cfengine3
+sysconfig_DATA = $(abs_srcdir)/misc/sysconfig/cfengine3
 
 shprofiledir = $(sysconfdir)/profile.d
-shprofile_SCRIPTS = misc/profile.d/cfengine.sh
+shprofile_SCRIPTS = $(abs_srcdir)/misc/profile.d/cfengine.sh
 
 install-data-hook:
 	mkdir -p $(DESTDIR)$(prefix)/inputs
@@ -60,5 +60,5 @@ install-data-hook:
 	mkdir -p $(DESTDIR)$(prefix)/modules
 	mkdir -p $(DESTDIR)$(prefix)/outputs
 	mkdir -p $(DESTDIR)$(prefix)/ppkeys
-	cp -R misc/software_updates $(DESTDIR)$(prefix)
+	cp -R $(abs_srcdir)/misc/software_updates $(DESTDIR)$(prefix)
 	find $(DESTDIR)$(prefix)/software_updates -name .svn | xargs rm -rf

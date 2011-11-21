@@ -1,9 +1,9 @@
 abs_srcdir=@abs_srcdir@
 MKDIR_P=@mkdir_p@
 
-top_srcdir = $(abs_srcdir)/../../core
-top_builddir = $(abs_srcdir)/../../core
-top_build_prefix = $(abs_srcdir)/../../core/
+top_srcdir = $(abs_top_srcdir)
+top_builddir = $(abs_top_builddir)
+top_build_prefix = $(abs_top_builddir)/
 
 # Info used in building the MAN files
 man_MANS =

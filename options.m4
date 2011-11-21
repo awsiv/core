@@ -11,8 +11,8 @@ if test "x$with_nova" != xno; then
    if test -d "${srcdir}/nova"; then
      AC_DEFINE([HAVE_NOVA],[1],[Define if Nova extensions are to be enabled])
      NOVA_SUBDIR=nova
-     NOVA_CFLAGS='-I$(top_srcdir)/nova/src'
-     NOVA_LDADD='$(top_srcdir)/nova/src/libcfnova.la'
+     NOVA_CFLAGS='-I$(abs_top_srcdir)/nova/src'
+     NOVA_LDADD='$(abs_top_builddir)/nova/src/libcfnova.la'
      AC_MSG_RESULT(yes)
    else
      AC_MSG_RESULT(no)
