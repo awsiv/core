@@ -64,7 +64,9 @@ function get_cssdir() {
     if ($CI->session->userdata('theme')) {
         return base_url() . 'themes/' . $CI->session->userdata('theme') . '/' . $CI->config->item('css_dir');
     } else {
-
+        if(is_constellation()){
+            return base_url() . $CI->config->item('constellation') . $CI->config->item('css_dir');
+        }
         return base_url() . $CI->config->item('default') . $CI->config->item('css_dir');
     }
 }

@@ -27,8 +27,12 @@ $config['script_dir'] = 'scripts/';
   | Path to the style directory.  Relative to the CI front controller
   |
  */
+if(is_constellation()){
+  $config['style_dir'] = 'themes/constellation/css/';  
+}else{
+  $config['style_dir'] = 'themes/default/css/';   
+}
 
-$config['style_dir'] = 'themes/default/css/';
 
 /*
   |--------------------------------------------------------------------------

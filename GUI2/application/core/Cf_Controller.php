@@ -10,8 +10,10 @@ class Cf_Controller extends CI_Controller {
         parent::__construct();
 
 
-
+        //for replication to work and specifies if this is the primary huc
         initializeHub();
+        
+        //for setting the constant ie constellation or nova as product name
         init_productname();
 
         $this->load->library(array('session', 'ion_auth', 'breadcrumb', 'breadcrumblist', 'onlineUsers', 'carabiner', 'user_agent', 'setting_lib','log_maintenance'));

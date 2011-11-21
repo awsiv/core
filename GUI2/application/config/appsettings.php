@@ -14,7 +14,8 @@ $config['scripts_dir']= 'scripts/';
 $config['hub_dir']='/hub/';
 $config['graph_dir']='./graphs/';
 $config['policies_dir']='./policies/';
-$config['default']='themes/default/';
+$config['constellation'] = 'themes/constellation/';  
+$config['default'] = 'themes/default/';   
 
 /*
  * Set this item to 'ldap' if ldap is to be used for authenticating user , other wise

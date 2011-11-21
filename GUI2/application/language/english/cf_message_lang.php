@@ -4,7 +4,8 @@
  */
 $lang['mission_portal_title']='Mission Portal';
 $lang['policy_editor']='Policy Editor';
-
+$lang['nova_logo_link_text']='Nova mission portal';
+$lang['cons_logo_link_text']='Constellation mission portal';
 
 
 /**

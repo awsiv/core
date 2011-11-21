@@ -48,7 +48,9 @@ if($this->agent->is_browser('Safari')){
           <div id="header">
               <div id="header_left"class="grid_8">
                <p class="sitetitle">
-                  <?php echo anchor("welcome/index",'Nova mission portal') ?> 
+                  <?php 
+                  $text=is_constellation()?$this->lang->line('cons_logo_link_text'):$this->lang->line('nova_logo_link_text');
+                  echo anchor("welcome/index", $text ) ?> 
                   <span class="version"></span>
                </p>
                <p class="breadcrumbs">
