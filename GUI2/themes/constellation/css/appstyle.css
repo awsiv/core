@@ -2569,7 +2569,36 @@ ul.admin_menu li.current a{
     margin:10px;
     padding:10px;
 }
+/*for stories nodes and links*/
+#story .topic{
+    background-color: #EEEEEF;
+    border: 1px solid #346789;
+    border-radius: 0.5em 0.5em 0.5em 0.5em;
+    box-shadow: 2px 2px 19px #AAAAAA;
+    color: black;
+    font-family: helvetica;
+    font-size: 0.9em;
+    height: 5em;
+    line-height: 5em;
+    opacity: 0.8;
+    padding: 0.5em;
+    position: absolute;
+    text-align: center;
+}
 
+#story .topic:hover{
+    box-shadow: 2px 2px 19px #444444;
+    opacity:0.6;
+    cursor: pointer;
+}        
+#story .labelClass{
+    z-index: 6;
+    border: 1px solid #346789;
+    padding: 8px;
+    opacity: 0.8;
+    font-family: helvetica;
+    background-color: white;
+}
 /* for login page */
 
 #login h1.logo{
