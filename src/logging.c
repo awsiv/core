@@ -7,6 +7,7 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+#include "logging.h"
 
 /*****************************************************************************/
 /*                                                                           */
@@ -15,6 +16,10 @@
 /* Created: Sun Feb 14 11:19:26 2010                                         */
 /*                                                                           */
 /*****************************************************************************/
+
+static char SYSLOG_HOST[CF_BUFSIZE] = "localhost";
+static uint16_t SYSLOG_PORT = 514;
+
 
 int FACILITY;
 
@@ -25,6 +30,16 @@ RemoteSysLog(a.transaction.log_priority, a.transaction.log_string);
 }
 
 /*****************************************************************************/
+
+void SetSyslogHost(const char *host)
+{
+strlcpy(SYSLOG_HOST, host, CF_BUFSIZE);
+}
+
+void SetSyslogPort(uint16_t port)
+{
+SYSLOG_PORT = port;
+}
 
 void RemoteSysLog(int log_priority, const char *log_string)
 {
@@ -37,20 +52,20 @@ void RemoteSysLog(int log_priority, const char *log_string)
   struct addrinfo query, *response, *ap;
   char strport[CF_MAXVARSIZE];
 
-snprintf(strport,CF_MAXVARSIZE-1,"%u",(int)SYSLOGPORT);  
+snprintf(strport,CF_MAXVARSIZE-1,"%u",(unsigned)SYSLOG_PORT);
 memset(&query,0,sizeof(struct addrinfo));   
 query.ai_family = AF_UNSPEC;
 query.ai_socktype = SOCK_DGRAM;
 
-if ((err = getaddrinfo(SYSLOGHOST,strport,&query,&response)) != 0)
+if ((err = getaddrinfo(SYSLOG_HOST,strport,&query,&response)) != 0)
    {
-   CfOut(cf_inform,"","Unable to find syslog_host or service: (%s/%s) %s",SYSLOGHOST,strport,gai_strerror(err));
+   CfOut(cf_inform,"","Unable to find syslog_host or service: (%s/%s) %s",SYSLOG_HOST,strport,gai_strerror(err));
    return;
    }
 
 for (ap = response; ap != NULL; ap = ap->ai_next)
    {
-   CfOut(cf_verbose,""," -> Connect to syslog %s = %s on port %s\n",SYSLOGHOST,sockaddr_ntop(ap->ai_addr),strport);
+   CfOut(cf_verbose,""," -> Connect to syslog %s = %s on port %s\n",SYSLOG_HOST,sockaddr_ntop(ap->ai_addr),strport);
    
    if ((sd = socket(ap->ai_family,ap->ai_socktype,IPPROTO_UDP)) == -1)
       {
@@ -63,11 +78,11 @@ for (ap = response; ap != NULL; ap = ap->ai_next)
       snprintf(message,rfc3164_len,"<%u>%.15s %s %s",pri,cf_strtimestamp_local(now,timebuffer)+4,VFQNAME, log_string);
       if (sendto(sd,message,strlen(message),0,ap->ai_addr,ap->ai_addrlen) == -1)
          {
-         CfOut(cf_verbose,"sendto"," -> Couldn't send \"%s\" to syslog server \"%s\"\n",message,SYSLOGHOST);
+         CfOut(cf_verbose,"sendto"," -> Couldn't send \"%s\" to syslog server \"%s\"\n",message,SYSLOG_HOST);
          }
       else
          {
-         CfOut(cf_verbose,""," -> Syslog message: \"%s\" to server \"%s\"\n",message,SYSLOGHOST);
+         CfOut(cf_verbose,""," -> Syslog message: \"%s\" to server \"%s\"\n",message,SYSLOG_HOST);
          }
       close(sd);
       return;
@@ -77,8 +92,8 @@ for (ap = response; ap != NULL; ap = ap->ai_next)
 #else
 struct sockaddr_in addr;
 char timebuffer[26];
-sockaddr_pton(AF_INET,SYSLOGHOST,&addr);
-addr.sin_port = htons(SYSLOGPORT);
+sockaddr_pton(AF_INET,SYSLOG_HOST,&addr);
+addr.sin_port = htons(SYSLOG_PORT);
 
 if ((sd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
    {
@@ -94,7 +109,7 @@ if (sendto(sd,message,strlen(message),0,(struct sockaddr *)&addr, sizeof(addr)) 
    return;
    }
 
-CfOut(cf_verbose,""," -> Syslog message: \"%s\" to server %s\n",message,SYSLOGHOST);
+CfOut(cf_verbose,""," -> Syslog message: \"%s\" to server %s\n",message,SYSLOG_HOST);
 close(sd);
 #endif
 }

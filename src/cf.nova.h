@@ -800,7 +800,7 @@ char *Nova_LicenseOwner(void);
 /* Delete this function once we build Nova against Core trunk/3.3 */
 void Nova_RemoteSyslog(struct Attributes a,struct Promise *pp);
 
-void RemoteSysLog(int log_priority, const char *log_string);
+#include "logging.h"
 
 /* magnify.c */
 

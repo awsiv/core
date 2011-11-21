@@ -24,7 +24,7 @@ libcfnova_la_SOURCES =						\
 	benchmark.c						\
 	cfnova.c						\
 	conversion.c						\
-	logging.c						\
+	logging.c logging.h					\
 	acl.c							\
 	acl_linux.c						\
 	acl_nt.c                                                \
