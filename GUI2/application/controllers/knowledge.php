@@ -74,7 +74,7 @@ class Knowledge extends Cf_Controller {
         if ($data['search']) {
             $searchJson = cfpr_search_topics($search, true);
             $data['searchData'] = json_decode(utf8_encode($searchJson), TRUE);
-            $this->load->view('/knowledge/search', $data);
+            $this->load->view('/knowledge/search_result', $data);
         } else {
             // search for default manuals
             $pid = cfpr_get_pid_for_topic("any", "manuals");

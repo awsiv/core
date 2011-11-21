@@ -1052,7 +1052,7 @@ div.ui-dialog .ui-dialog-buttonpane{
     font-weight: normal;
     width:150px;
     z-index:1;
-    background:#3d453a;
+    background:#4A575C;
     padding:20px 0;
     font-size: 11px;
     border-radius:0 0 5px 5px;
@@ -1165,7 +1165,7 @@ div.ui-dialog .ui-dialog-buttonpane{
     margin: 0 10px; 
 }
 
-#policyList .btn,#classList .btn
+#policyList .btn, #classList .btn
 {
     background: none repeat scroll 0 0 #E7EED9;
     border-radius: 10px 10px 10px 10px;
@@ -1176,7 +1176,7 @@ div.ui-dialog .ui-dialog-buttonpane{
     color:#222222;
 }
 
-#policyList li:hover .btn,#classList li:hover .btn
+#policyList li:hover .btn, #classList li:hover .btn
 {
   border:  1px solid #3D453A
 }
@@ -2293,7 +2293,7 @@ div.ui-dialog .ui-dialog-buttonpane{
 .bundlelist-table th[scope=col]
 {
     color: #FFF;
-    background-color:#3d4439;
+    background-color:#4A575C;
     border-right: 1px solid #666;
     font-size: 0.9em; 
     border-bottom: 1px solid #666;
