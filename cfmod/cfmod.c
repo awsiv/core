@@ -273,13 +273,13 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfcon_list_subscriptions, NULL)
     PHP_FE(cfcon_local_show_subscription_virtualbundle, NULL)
     
-    PHP_FE(cfcon_subscribe_software, NULL)
+//    PHP_FE(cfcon_subscribe_software, NULL)
     PHP_FE(cfcon_local_subscribe_virtualbundle, NULL)
     PHP_FE(cfcon_local_delete_subscription_virtualbundle, NULL)
 
     
     
-    PHP_FE(cfcon_subscribe_repairlog, NULL)
+//    PHP_FE(cfcon_subscribe_repairlog, NULL)
 //    PHP_FE(cfcon_subscribe_notkeptlog, NULL)
     
     
@@ -4270,8 +4270,7 @@ PHP_FUNCTION(cfpr_cdp_reportnames)
 
 PHP_FUNCTION(cfpr_cdp_report)
 
-{const int bufsize = CF_WEBBUFFER;
- char buf[bufsize];  // one row is ~300 bytes
+{char buf[CF_WEBBUFFER];  // one row is ~300 bytes
  char *hostkey,*reportName;
  int hk_len,rn_len;
  struct PageInfo page = {0};
@@ -4283,7 +4282,7 @@ PHP_FUNCTION(cfpr_cdp_report)
     }
 
  buf[0]='\0';
- Nova2PHP_cdp_report(hostkey,reportName,&page,buf,bufsize);
+ Nova2PHP_cdp_report(hostkey,reportName,&page,buf,sizeof(buf));
 
  RETURN_STRING(buf,1);
 }
