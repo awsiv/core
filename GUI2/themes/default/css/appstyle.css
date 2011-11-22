@@ -2818,6 +2818,7 @@ padding:5px 10px;
 border:solid 1px;
 text-shadow:none;
 margin:0 0 10px 0;
+background-image: none;
 }
 
 #login h3 .modeinfo{

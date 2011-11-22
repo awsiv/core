@@ -319,7 +319,14 @@
               nodeHtml.css({'right':nextleft+'px','top':nexttop+'px'}).appendTo(container);
             }
             
-            nextleft+=val.name.length*10+linkLength;
+            //for extremely small nodes
+            if(val.name.length<15){
+              nextleft+=val.name.length*20+linkLength;    
+            }else{
+              nextleft+=val.name.length*10+linkLength;  
+            }
+           
+            
             if(nextleft>container.width() && direction=='left'){
                direction='right'
                nexttop+=nodeHtml.height()+150;

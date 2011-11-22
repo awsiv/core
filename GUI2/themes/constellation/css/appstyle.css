@@ -775,7 +775,7 @@ span#today
 
 #compliance
 {
-    margin:0 2px 22px 5px;
+    margin:0 8px 22px;
     padding-bottom:20px;
 }
 
@@ -2780,6 +2780,7 @@ padding:5px 10px;
 border:solid 1px;
 text-shadow:none;
 margin:0 0 10px 0;
+background-image: none;
 }
 
 #login h3 .modeinfo{
