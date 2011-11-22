@@ -17,6 +17,7 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+#include "bson_lib.h"
 
 /*****************************************************************************/
 
@@ -494,7 +495,7 @@ bson_destroy(&field);
 
 time_t lastSeen = 0;
 
-while (mongo_cursor_next(cursor))  // loops over documents
+while (mongo_cursor_next(cursor))
    {
    bson_iterator_init(&it1,cursor->current.data);
    
@@ -503,7 +504,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    addresses[0] = '\0';
    lastSeen = 0;
    found = false;
-   hh = NewHubHost(NULL, NULL, NULL, NULL);  // filled in later if we get data (hub info may come last...)
+   hh = CreateEmptyHubHost();
    
    while (bson_iterator_next(&it1))
       {
@@ -596,9 +597,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
    
    if (found)
       {
-      hh->keyhash = xstrdup(keyhash);
-      hh->ipaddr = xstrdup(addresses);
-      hh->hostname = xstrdup(hostnames);
+      UpdateHubHost(hh,keyhash,addresses,hostnames);
       PrependRlistAlien(&host_list,hh);
       }
    else
@@ -685,7 +684,7 @@ if (!emptyQuery)
    }
 
 
-while (mongo_cursor_next(cursor))  // loops over documents
+while (mongo_cursor_next(cursor))
    {
    bson_iterator_init(&it1,cursor->current.data);
    
@@ -694,14 +693,11 @@ while (mongo_cursor_next(cursor))  // loops over documents
    addresses[0] = '\0';
    rclass[0] = '\0';
    found = false;
+   hh = CreateEmptyHubHost();
    
    while (bson_iterator_next(&it1))
       {
-      /* Extract the common HubHost data */
-      
       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
-      
-      /* Query specific search/marshalling */
       
       if (strcmp(bson_iterator_key(&it1),cfr_class) == 0)
          {
@@ -756,27 +752,21 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_class && (now - rtime < horizon))
                {
                found = true;
-               rp = PrependRlistAlien(&record_list,NewHubClass(CF_THIS_HH,rclass,rex,rsigma,rtime));
+               rp = PrependRlistAlien(&record_list,NewHubClass(hh,rclass,rex,rsigma,rtime));
                }            
             }
          }   
       }
-   
-   if (found)
-      {
-      hh = NewHubHost(NULL,keyhash,addresses,hostnames);
-      PrependRlistAlien(&host_list,hh);
-      
-      // Now cache the host reference in all of the records to flatten the 2d list
-      for (rp = record_list; rp != NULL; rp=rp->next)
-         {
-         struct HubClass *hs = (struct HubClass *)rp->item;
-         if (hs->hh == CF_THIS_HH)
-            {
-            hs->hh = hh;
-            }
-         }
-      }
+
+    if (found)
+       {
+       UpdateHubHost(hh,keyhash,addresses,hostnames);
+       PrependRlistAlien(&host_list,hh);
+       }
+    else
+       {
+       DeleteHubHost(hh);
+       }
    }
 
 if (sort)
@@ -1180,7 +1170,7 @@ struct HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes)
 
      CfDebug("class (%s,%d)\n", ip->name, classFrequency);
 
-     PrependRlistAlien(&recordList,NewHubClassSum(CF_THIS_HH, ip->name, classFrequency));
+     PrependRlistAlien(&recordList,NewHubClassSum(NULL, ip->name, classFrequency));
 
      bson_destroy(&query);
     }
@@ -1267,16 +1257,13 @@ struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,
     keyhash[0] = '\0';
     hostnames[0] = '\0';
     addresses[0] = '\0';
-   
+    hh = CreateEmptyHubHost();
+    
     while (bson_iterator_next(&it1))
        {
-       /* Extract the common HubHost data */
-
        CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
        found = false;
       
-       /* Query specific search/marshalling */
-
        if (strcmp(bson_iterator_key(&it1),cfr_total_compliance) == 0)
           {
           bson_iterator_init(&it2,bson_iterator_value(&it1));
@@ -1374,7 +1361,7 @@ struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,
              if (match_kept && match_notkept && match_repaired && match_t && match_version)
                 {
                 found = true;
-                rp = PrependRlistAlien(&record_list,NewHubTotalCompliance(CF_THIS_HH,rt,rversion,rkept,rrepaired,rnotkept));
+                rp = PrependRlistAlien(&record_list,NewHubTotalCompliance(hh,rt,rversion,rkept,rrepaired,rnotkept));
                 }
              }
           }   
@@ -1382,18 +1369,12 @@ struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,
 
     if (found)
        {
-       hh = NewHubHost(NULL,keyhash,addresses,hostnames);
+       UpdateHubHost(hh,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
-      
-       // Now cache the host reference in all of the records to flatten the 2d list
-       for (rp = record_list; rp != NULL; rp=rp->next)
-          {
-          struct HubTotalCompliance *hs = (struct HubTotalCompliance *)rp->item;
-          if (hs->hh == CF_THIS_HH)
-             {
-             hs->hh = hh;
-             }
-          }
+       }
+    else
+       {
+       DeleteHubHost(hh);
        }
     }
 
@@ -1476,18 +1457,17 @@ struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *
     bson_destroy(&query);
     }
 
- while (mongo_cursor_next(cursor))  // loops over documents
+ while (mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
 
     keyhash[0] = '\0';
     hostnames[0] = '\0';
     addresses[0] = '\0';
+    hh = CreateEmptyHubHost();
    
     while (bson_iterator_next(&it1))
        {
-       /* Extract the common HubHost data */
-
        CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
        found = false;
 
@@ -1495,8 +1475,6 @@ struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *
        rrval = NULL;
        rtype = CF_SCALAR;
       
-       /* Query specific search/marshalling */
-
        if (strcmp(bson_iterator_key(&it1),cfr_vars) == 0)
           {
           bson_iterator_init(&it2,bson_iterator_value(&it1));
@@ -1612,7 +1590,7 @@ struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *
                 if (match_type && match_scope && match_lval && match_rval)
                    {
                    found = true;
-                   rp = PrependRlistAlien(&record_list,NewHubVariable(CF_THIS_HH,dtype,rscope,rlval,rrval,rtype,rt));
+                   rp = PrependRlistAlien(&record_list,NewHubVariable(hh,dtype,rscope,rlval,rrval,rtype,rt));
                    }
                 else
                    {
@@ -1638,18 +1616,12 @@ struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *
 
     if (found)
        {
-       hh = NewHubHost(NULL,keyhash,addresses,hostnames);
+       UpdateHubHost(hh,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
-      
-       // Now cache the host reference in all of the records to flatten the 2d list
-       for (rp = record_list; rp != NULL; rp=rp->next)
-          {
-          struct HubVariable *hv = (struct HubVariable *)rp->item;
-          if (hv->hh == CF_THIS_HH)
-             {
-             hv->hh = hh;
-             }
-          }
+       }
+    else
+       {
+       DeleteHubHost(hh);
        }
     }
 
@@ -1725,7 +1697,7 @@ struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHas
     bson_destroy(&query);
     }
 
- while (mongo_cursor_next(cursor))  // loops over documents
+ while (mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
 
@@ -1734,15 +1706,12 @@ struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHas
     addresses[0] = '\0';
     rhandle[0] = '\0';
     found = false;
+    hh = CreateEmptyHubHost();
    
     while (bson_iterator_next(&it1))
        {
-       /* Extract the common HubHost data */
-
        CFDB_ScanHubHost(&it1,keyHashDb,addresses,hostnames);
       
-       /* Query specific search/marshalling */
-
        if (strcmp(bson_iterator_key(&it1),cfr_promisecompl) == 0)
           {
           bson_iterator_init(&it2,bson_iterator_value(&it1));
@@ -1813,26 +1782,20 @@ struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHas
              if (match_handle && match_status && match_time)
                 {
                 found = true;
-                rp = PrependRlistAlien(&record_list,NewHubCompliance(CF_THIS_HH,rhandle,rstatus,rex,rsigma,rtime));
+                rp = PrependRlistAlien(&record_list,NewHubCompliance(hh,rhandle,rstatus,rex,rsigma,rtime));
                 }            
              }
           }   
        }
-
+    
     if (found)
        {
-       hh = NewHubHost(NULL,keyHashDb,addresses,hostnames);
+       UpdateHubHost(hh,keyHashDb,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
-
-       for (rp = record_list; rp != NULL; rp=rp->next)
-          {
-          struct HubPromiseCompliance *hp = (struct HubPromiseCompliance *)rp->item;      
-
-          if (hp->hh == CF_THIS_HH)
-             {
-             hp->hh = hh;
-             }
-          }
+       }
+    else
+       {
+       DeleteHubHost(hh);
        }
     }
 
@@ -1915,7 +1878,7 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *l
     }
 
 
- while (mongo_cursor_next(cursor))  // loops over documents
+ while (mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
 
@@ -1927,15 +1890,12 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *l
     rhost[0] = '\0';
     found = false;
     list_start = NULL;
+    hh = CreateEmptyHubHost();
    
     while (bson_iterator_next(&it1))
        {
-       /* Extract the common HubHost data */
-
        CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       
-       /* Query specific search/marshalling */
-
        if (strcmp(bson_iterator_key(&it1),cfr_lastseen) == 0)
           {
           bson_iterator_init(&it2,bson_iterator_value(&it1));
@@ -2028,27 +1988,20 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *l
              if (match_hash && match_host && match_addr && match_ago)
                 {
                 found = true;
-                PrependRlistAlien(&record_list,NewHubLastSeen(CF_THIS_HH,*rhash,rhash+1,rhost,raddr,rago,ravg,rdev,rt));
+                PrependRlistAlien(&record_list,NewHubLastSeen(hh,*rhash,rhash+1,rhost,raddr,rago,ravg,rdev,rt));
                 }
              }
           }   
        }
-
+    
     if (found)
        {
-       hh = NewHubHost(NULL,keyhash,addresses,hostnames);
+       UpdateHubHost(hh,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
-
-       // Now cache the host reference in all of the records to flatten the 2d list
-
-       for (rp = record_list; rp != NULL; rp=rp->next)
-          {
-          struct HubLastSeen *hs = (struct HubLastSeen *)rp->item;
-          if (hs->hh == CF_THIS_HH)
-             {
-             hs->hh = hh;
-             }
-          }
+       }
+    else
+       {
+       DeleteHubHost(hh);
        }
     }
 
@@ -2100,15 +2053,12 @@ struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query,char *db)
     hostnames[0] = '\0';
     addresses[0] = '\0';
     found = false;
+    hh = CreateEmptyHubHost();
    
     while (bson_iterator_next(&it1))
        {
-       /* Extract the common HubHost data */
-
        CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       
-       /* Query specific search/marshalling */
-
        if (strcmp(bson_iterator_key(&it1),cfr_meter) == 0)
           {
           bson_iterator_init(&it2,bson_iterator_value(&it1));
@@ -2138,24 +2088,19 @@ struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query,char *db)
                 }
 
              found = true;
-             rp = PrependRlistAlien(&record_list,NewHubMeter(CF_THIS_HH,*rcolumn,rkept,rrepaired));
+             rp = PrependRlistAlien(&record_list,NewHubMeter(hh,*rcolumn,rkept,rrepaired));
              }
           }   
        }
-
+    
     if (found)
        {
-       hh = NewHubHost(NULL,keyhash,addresses,hostnames);
+       UpdateHubHost(hh,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
-
-       for (rp = record_list; rp != NULL; rp=rp->next)
-          {
-          struct HubMeter *hm = (struct HubMeter *)rp->item;
-          if (hm->hh == CF_THIS_HH)
-             {
-             hm->hh = hh;
-             }
-          }
+       }
+    else
+       {
+       DeleteHubHost(hh);
        }
     }
 
@@ -2240,15 +2185,12 @@ struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char
     hostnames[0] = '\0';
     addresses[0] = '\0';
     found = false;
+    hh = CreateEmptyHubHost();
    
     while (bson_iterator_next(&it1))
        {
-       /* Extract the common HubHost data */
-
        CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       
-       /* Query specific search/marshalling */
-
        if (strcmp(bson_iterator_key(&it1),cfr_performance) == 0)
           {
           bson_iterator_init(&it2,bson_iterator_value(&it1));
@@ -2317,7 +2259,7 @@ struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char
              if (match_name)
                 {
                 found = true;
-                rp = PrependRlistAlien(&record_list,NewHubPerformance(CF_THIS_HH,rname,rtime,rq,rex,rsigma,noteid,rhandle));
+                rp = PrependRlistAlien(&record_list,NewHubPerformance(hh,rname,rtime,rq,rex,rsigma,noteid,rhandle));
                 }
              }
           }   
@@ -2325,18 +2267,12 @@ struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char
 
     if (found)
        {
-       hh = NewHubHost(NULL,keyhash,addresses,hostnames);
+       UpdateHubHost(hh,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
-
-       // Now cache the host reference in all of the records to flatten the 2d list
-       for (rp = record_list; rp != NULL; rp=rp->next)
-          {
-          struct HubPerformance *hp = (struct HubPerformance *)rp->item;
-          if (hp->hh == CF_THIS_HH)
-             {
-             hp->hh = hh;
-             }
-          }
+       }
+    else
+       {
+       DeleteHubHost(hh);
        }
     }
 
@@ -2414,7 +2350,7 @@ struct HubQuery *CFDB_QuerySetuid(mongo_connection *conn,char *keyHash,char *lna
     }
 
 
- while (mongo_cursor_next(cursor))  // loops over documents
+ while (mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
 
@@ -2422,15 +2358,12 @@ struct HubQuery *CFDB_QuerySetuid(mongo_connection *conn,char *keyHash,char *lna
     hostnames[0] = '\0';
     addresses[0] = '\0';
     found = false;
+    hh = CreateEmptyHubHost();
    
     while (bson_iterator_next(&it1))
        {
-       /* Extract the common HubHost data */
-
        CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       
-       /* Query specific search/marshalling */
-
        if (strcmp(bson_iterator_key(&it1),cfr_setuid) == 0)
           {
           bson_iterator_init(&it2,bson_iterator_value(&it1));
@@ -2460,28 +2393,22 @@ struct HubQuery *CFDB_QuerySetuid(mongo_connection *conn,char *keyHash,char *lna
              if (match_name)
                 {
                 found = true;
-                rp = PrependRlistAlien(&record_list,NewHubSetUid(CF_THIS_HH,rname));
+                rp = PrependRlistAlien(&record_list,NewHubSetUid(hh,rname));
                 }
              }
           }   
        }
-
+    
     if (found)
        {
-       hh = NewHubHost(NULL,keyhash,addresses,hostnames);
+       UpdateHubHost(hh,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
-
-       // Now cache the host reference in all of the records to flatten the 2d list
-
-       for (rp = record_list; rp != NULL; rp=rp->next)
-          {
-          struct HubSetUid *hs = (struct HubSetUid *)rp->item;
-          if (hs->hh == CF_THIS_HH)
-             {
-             hs->hh = hh;
-             }
-          }
        }
+    else
+       {
+       DeleteHubHost(hh);
+       }
+
     }
 
  mongo_cursor_destroy(cursor);
@@ -2567,7 +2494,7 @@ struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char
     }
 
 
- while (mongo_cursor_next(cursor))  // loops over documents
+ while (mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
 
@@ -2575,15 +2502,12 @@ struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char
     hostnames[0] = '\0';
     addresses[0] = '\0';
     found = false;
+    hh = CreateEmptyHubHost();
    
     while (bson_iterator_next(&it1))
        {
-       /* Extract the common HubHost data */
-
        CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       
-       /* Query specific search/marshalling */
-
        if (strcmp(bson_iterator_key(&it1),cfr_filechanges) == 0)
           {
           bson_iterator_init(&it2,bson_iterator_value(&it1));
@@ -2648,7 +2572,7 @@ struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char
              if (match_name && match_t)
                 {
                 found = true;
-                rp = PrependRlistAlien(&record_list,NewHubFileChanges(CF_THIS_HH,rname,rt,noteid,handle));
+                rp = PrependRlistAlien(&record_list,NewHubFileChanges(hh,rname,rt,noteid,handle));
                 }
              }
           }   
@@ -2656,18 +2580,12 @@ struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char
 
     if (found)
        {
-       hh = NewHubHost(NULL,keyhash,addresses,hostnames);
+       UpdateHubHost(hh,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
-
-       // Now cache the host reference in all of the records to flatten the 2d list
-       for (rp = record_list; rp != NULL; rp=rp->next)
-          {
-          struct HubFileChanges *hs = (struct HubFileChanges *)rp->item;
-          if (hs->hh == CF_THIS_HH)
-             {
-             hs->hh = hh;
-             }
-          }
+       }
+    else
+       {
+       DeleteHubHost(hh);
        }
     }
 
@@ -2759,7 +2677,7 @@ struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *l
     }
 
 
- while (mongo_cursor_next(cursor))  // loops over documents
+ while (mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
 
@@ -2767,15 +2685,12 @@ struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *l
     hostnames[0] = '\0';
     addresses[0] = '\0';
     found = false;
+    hh = CreateEmptyHubHost();
    
     while (bson_iterator_next(&it1))
        {
-       /* Extract the common HubHost data */
-
        CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       
-       /* Query specific search/marshalling */
-
        if (strcmp(bson_iterator_key(&it1),cfr_filediffs) == 0)
           {
           bson_iterator_init(&it2,bson_iterator_value(&it1));
@@ -2848,26 +2763,20 @@ struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *l
              if (match_name && match_diff && match_t)
                 {
                 found = true;
-                rp = PrependRlistAlien(&record_list,NewHubFileDiff(CF_THIS_HH,rname,rdiff,rt));
+                rp = PrependRlistAlien(&record_list,NewHubFileDiff(hh,rname,rdiff,rt));
                 }
              }
           }   
        }
-
+    
     if (found)
        {
-       hh = NewHubHost(NULL,keyhash,addresses,hostnames);
+       UpdateHubHost(hh,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
-
-       // Now cache the host reference in all of the records to flatten the 2d list
-       for (rp = record_list; rp != NULL; rp=rp->next)
-          {
-          struct HubFileDiff *hs = (struct HubFileDiff *)rp->item;
-          if (hs->hh == CF_THIS_HH)
-             {
-             hs->hh = hh;
-             }
-          }
+       }
+    else
+       {
+       DeleteHubHost(hh);
        }
     }
 
@@ -3143,7 +3052,7 @@ if (!emptyQuery)
    bson_destroy(&query);
    }
 
-while (mongo_cursor_next(cursor))  // loops over documents
+while (mongo_cursor_next(cursor))
    {
    bson_iterator_init(&it1,cursor->current.data);
    
@@ -3151,14 +3060,11 @@ while (mongo_cursor_next(cursor))  // loops over documents
    hostnames[0] = '\0';
    addresses[0] = '\0';
    found = false;
+   hh = CreateEmptyHubHost();
    
    while (bson_iterator_next(&it1))
       {
-      /* Extract the common HubHost data */
-      
       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
-      
-      /* Query specific search/marshalling */
       
       if (strcmp(bson_iterator_key(&it1),cfr_valuereport) == 0)
          {
@@ -3223,28 +3129,20 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_day && match_month && match_year)
                {
                found = true;
-               rp = PrependRlistAlien(&record_list,NewHubValue(CF_THIS_HH,rday,rkept,rrepaired,rnotkept,noteid,rhandle));
+               rp = PrependRlistAlien(&record_list,NewHubValue(hh,rday,rkept,rrepaired,rnotkept,noteid,rhandle));
                }
             }
          }   
       }
    
-   
    if (found)
       {
-      hh = NewHubHost(NULL,keyhash,addresses,hostnames);
+      UpdateHubHost(hh,keyhash,addresses,hostnames);
       PrependRlistAlien(&host_list,hh);
-      
-      // Now cache the host reference in all of the records to flatten the 2d list
-      for (rp = record_list; rp != NULL; rp=rp->next)
-         {
-         struct HubValue *hs = (struct HubValue *)rp->item;
-         
-         if (hs->hh == CF_THIS_HH)
-            {
-            hs->hh = hh;
-            }
-         }
+      }
+   else
+      {
+      DeleteHubHost(hh);
       }
    }
 
@@ -3327,7 +3225,7 @@ if (!emptyQuery)
    bson_destroy(&query);
    }
 
-while (mongo_cursor_next(cursor))  // loops over documents
+while (mongo_cursor_next(cursor))
    {
    bson_iterator_init(&it1,cursor->current.data);
    
@@ -3335,14 +3233,11 @@ while (mongo_cursor_next(cursor))  // loops over documents
    hostnames[0] = '\0';
    addresses[0] = '\0';
    found = false;
+   hh = CreateEmptyHubHost();
    
    while (bson_iterator_next(&it1))
       {
-      /* Extract the common HubHost data */
-      
       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
-      
-      /* Query specific search/marshalling */
       
       if (strcmp(bson_iterator_key(&it1),cfr_valuereport) == 0)
          {
@@ -3415,28 +3310,20 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_day && match_month && match_year)
                {
                found = true;
-	       rp = PrependRlistAlien(&record_list,NewHubValue(NULL,rday,rkept,rrepaired,rnotkept,"",""));
+	       rp = PrependRlistAlien(&record_list,NewHubValue(hh,rday,rkept,rrepaired,rnotkept,"",""));
                }
             }
          }   
       }
-   
-   
+
    if (found)
       {
-      hh = NewHubHost(NULL,keyhash,addresses,hostnames);
+      UpdateHubHost(hh,keyhash,addresses,hostnames);
       PrependRlistAlien(&host_list,hh);
-      
-      // Now cache the host reference in all of the records to flatten the 2d list
-      for (rp = record_list; rp != NULL; rp=rp->next)
-         {
-         struct HubValue *hs = (struct HubValue *)rp->item;
-         
-         if (hs->hh == CF_THIS_HH)
-            {
-            hs->hh = hh;
-            }
-         }
+      }
+   else
+      {
+      DeleteHubHost(hh);
       }
    }
 
@@ -3517,7 +3404,7 @@ if (!emptyQuery)
    }
 
 
-while (mongo_cursor_next(cursor))  // loops over documents
+while (mongo_cursor_next(cursor))
    {
    bson_iterator_init(&it1,cursor->current.data);
    
@@ -3527,14 +3414,11 @@ while (mongo_cursor_next(cursor))  // loops over documents
    rname[0] = '\0';
    found = false;
    rt = 0;
+   hh = CreateEmptyHubHost();
    
    while (bson_iterator_next(&it1))
       {
-      /* Extract the common HubHost data */
-      
       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
-      
-      /* Query specific search/marshalling */
       
       if (strcmp(bson_iterator_key(&it1),cfr_bundles) == 0)
          {
@@ -3598,28 +3482,21 @@ while (mongo_cursor_next(cursor))  // loops over documents
             if (match_name)
                {
                found = true;
-               rp = PrependRlistAlien(&record_list,NewHubBundleSeen(CF_THIS_HH,rname,rago,ravg,rdev,rt,noteid));
+               rp = PrependRlistAlien(&record_list,NewHubBundleSeen(hh,rname,rago,ravg,rdev,rt,noteid));
                }            
             }
          }   
       }
-   
-   if (found)
-      {
-      hh = NewHubHost(NULL,keyhash,addresses,hostnames);
-      PrependRlistAlien(&host_list,hh);
-      
-      // Now cache the host reference in all of the records to flatten the 2d list
-      for (rp = record_list; rp != NULL; rp=rp->next)
-         {
-         struct HubBundleSeen *hs = (struct HubBundleSeen *)rp->item;
-         
-         if (hs->hh == CF_THIS_HH)
-            {
-            hs->hh = hh;
-            }
-         }
-      }
+
+    if (found)
+       {
+       UpdateHubHost(hh,keyhash,addresses,hostnames);
+       PrependRlistAlien(&host_list,hh);
+       }
+    else
+       {
+       DeleteHubHost(hh);
+       }
    }
 
 if (sort)

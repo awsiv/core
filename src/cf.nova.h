@@ -88,7 +88,6 @@
 #define CF_MAX_ERROR_LIMIT 50
 #define CF_MAX_LIMIT 999999
 #define CF_N_CODE '\07'
-#define CF_THIS_HH (void *)-1
 #define CF_KMAP "knowledge.php"
 #define CFDB_PORT 27017
 #define MONITOR_CLASS_PREFIX "mXC_"
