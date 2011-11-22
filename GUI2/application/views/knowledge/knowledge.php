@@ -7,7 +7,7 @@
                 <?php if ($showTopicHits) { ?><li><a href="#tabs-3"><?php echo $this->lang->line('knowledge_tab_references'); ?></a></li><?php } ?>
                 <?php if ($showSameContext) { ?><li><a href="#tabs-4"><?php echo $this->lang->line('knowledge_tab_same_context'); ?></a></li> <?php } ?>
                 <?php if ($showSubTopics) { ?><li><a href="#tabs-5"><?php echo $this->lang->line('knowledge_tab_subtopic'); ?></a></li> <?php } ?>
-                <?php if ($showStory) { ?><li><a href="#tabs-6">Stories</a></li> <?php } ?>
+                <?php if (isset ($showStory)&&$showStory) { ?><li><a href="#tabs-6">Stories</a></li> <?php } ?>
             </ul>
 
             <div id="tabs-1" class="ui-corner-all">
@@ -53,7 +53,7 @@
                 </div>
             <?php } ?>
             
-             <?php if ($showStory) { ?>
+             <?php if (isset($showStory)&&$showStory) { ?>
                 <div id="tabs-6" class="ui-corner-all">
                    <div id="story" style="position:relative"></div>
                 </div>
@@ -287,7 +287,7 @@
         // end
 
     }
-<?php if($showStory){?>
+<?php if(isset($showStory)&&$showStory){?>
      jsPlumb.bind("ready", function() {
        var story_json=<?php echo $story?>;
        

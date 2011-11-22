@@ -142,9 +142,11 @@ class Knowledge extends Cf_Controller {
         $data['showSubTopics'] = (!is_array($data['topicCategory']['topic']['sub_topics']) || empty($data['topicCategory']['topic']['sub_topics'])) ? false :true; 
         
         //for story generation
+        if(is_constellation()){
         $data['story']=$this->stories_model->getStoryByName($data['topicDetail']['topic']);
         $stories=json_decode(utf8_encode($data['story']), true);
         $data['showStory']=(!is_array($stories) || empty($stories['F'])) ? false : true;
+        }
         $this->template->load('template', 'knowledge/knowledge', $data);
     }
 
