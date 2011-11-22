@@ -82,6 +82,7 @@ class Virtualbundle extends Cf_controller {
 
         $this->form_validation->set_rules('name', 'Virtual Bundlename', 'xss_clean|trim|required');
         $this->form_validation->set_rules('promises', 'Promises', 'xss_clean|trim|required');
+        $this->form_validation->set_rules('hostclass', 'Hostclass', 'xss_clean|trim|required');
         $this->form_validation->set_rules('description', 'Description', 'xss_clean|trim|required');
         $this->form_validation->set_error_delimiters('<span>', '</span><br/>');
         if ($this->form_validation->run() == FALSE) {

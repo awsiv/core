@@ -21,7 +21,7 @@
                         <?php }?>
                     </p>
                     <p>
-                        <label for="hostclass">Host Class:<span class="required"></span></label>
+                        <label for="hostclass">Host Class:<span class="required">*</span></label>
                         <input type="text" name="hostclass" id="hostclass" value="<?php echo isset($hostclass)?$hostclass:"" ?>"></input>
                     </p>
                     <p>
@@ -165,6 +165,7 @@
             $('input:text[name=hostclass]').val('').attr('value','');
             $('input:hidden[name=orgvbname]').remove();
             $('#virtualbundleform').attr('action','<?php echo site_url('virtualbundle/create') ?>')
+            messageContainer.html('');
             selectedpromisesContainer.html('');
         });
     
