@@ -161,6 +161,27 @@ struct HubHost *NewHubHost(char *hubkey, char *keyhash,char *ipaddr,char *hostna
  return hp;
 }
 
+
+struct HubHost *CreateEmptyHubHost(void)
+{
+ return (struct HubHost *)xcalloc(1, sizeof(struct HubHost));
+}
+
+
+struct HubHost *UpdateHubHost(struct HubHost *hubHost, char *keyhash,char *ipaddr,char *hostname)
+{
+ free(hubHost->keyhash);
+ free(hubHost->ipaddr);
+ free(hubHost->hostname);
+
+ hubHost->keyhash = xstrdup(keyhash);
+ hubHost->ipaddr = xstrdup(ipaddr);
+ hubHost->hostname = xstrdup(hostname);
+
+ return hubHost;
+}
+
+
 /*****************************************************************************/
 
 struct HubHost *GetHubHostIn(struct Rlist *host_list, char *keyhash)
