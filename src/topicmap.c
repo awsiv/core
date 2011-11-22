@@ -287,8 +287,11 @@ if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
 
 if (!EMPTY(search_topic))
    {
+   Nova_DeClassifyTopic(search_topic,topic_name,topic_context);
+
    bson_buffer_init(&bb);
-   bson_append_regex(&bb,cfk_topicname,search_topic,"");
+   bson_append_regex(&bb,cfk_topicname,topic_name,"");
+   bson_append_regex(&bb,cfk_topiccontext,topic_context,"");
    bson_from_buffer(&query,&bb);
    }
 else
