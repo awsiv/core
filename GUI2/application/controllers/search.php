@@ -728,10 +728,6 @@ class Search extends Cf_Controller {
                     $data['report_result'] = cfpr_report_software_in($hostkey, $search, NULL, NULL, true, $class_regex, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
-                    $data['options'] = $this->__host_availabe();
-                    $data['package_name_list'] = $this->__software_installed_autocomplete('Name');
-                    $data['architecture'] = $this->__software_installed_autocomplete('Architecture');
-                    $data['version'] = $this->__software_installed_autocomplete('Version');
                     is_ajax() ? $this->load->view('searchpages/software_installed', $data) : $this->template->load('template', 'searchpages/software_installed', $data);
                 }
                 break;
@@ -807,35 +803,8 @@ class Search extends Cf_Controller {
             default:
                 $this->template->load('template', 'searchpages/nodata', $data);
         }
-    }
-
-    function __software_installed_autocomplete($column) {
-        $data = cfpr_report_software_in(NULL, NULL, NULL, NULL, true, NULL, NULL, NULL);
-        $decoded_data = json_decode($data);
-        $column_index = $decoded_data->meta->header->$column;
-        $column = array();
-        foreach ($decoded_data->data as $rows) {
-            array_push($column, $rows[$column_index]);
-        }
-        $unique_elements = array_unique($column);
-        if (is_array($unique_elements)) {  //necessary because the array_unique some times return associative array
-            $val = array_values($unique_elements);
-            return json_encode($val);
-        } else {
-            return json_encode($unique_elements);
-        }
-    }
-
-    function __host_availabe() {
-        $result = json_decode(cfpr_select_hosts("none", ".*", 100));
-        $allhosts = array('All' => 'All host');
-        if (count($result) > 0) {
-            foreach ($result as $host) {
-                $allhosts[$host->key] = $host->id;
-            }
-        }
-        return $allhosts;
-    }
+    } 
+    
 
     function __host_only_table($data_array) {
         $table = "";
