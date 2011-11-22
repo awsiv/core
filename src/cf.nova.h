@@ -677,6 +677,8 @@ struct HubQuery *NewHubQuery(struct Rlist *hosts,struct Rlist *records);
 void DeleteHubQuery(struct HubQuery *hq,void (*fnptr)());
 int CountRecords(struct HubQuery *hq);
 struct HubHost *NewHubHost(char *hubkey, char *keyhash,char *ipaddr,char *hostname);
+struct HubHost *CreateEmptyHubHost(void);
+struct HubHost *UpdateHubHost(struct HubHost *hubHost, char *keyhash,char *ipaddr,char *hostname);
 struct HubHost *GetHubHostIn(struct Rlist *host_list, char *keyhash);
 void DeleteHubHost(struct HubHost *hp);
 struct HubSoftware *NewHubSoftware(struct HubHost *hh,char *name,char *version,char *arch);
