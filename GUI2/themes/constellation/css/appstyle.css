@@ -396,20 +396,52 @@ label#searchbox input
     color:#F68E36;
 }
 
-.dash a.hubs{
-    background: url("../images/hub.png") no-repeat;
+.dash a.host{
+    background: url("../images/host.png") no-repeat;
 }
 
-.dash a.hubs:hover{
-    background: url("../images/hub.png") no-repeat;
+ .dash a.host:hover{
+    background: url("../images/host_hover.png") no-repeat;
 }
 
-.dash a.aggregrate_report{
-    background: url("../images/aggregate_reports.png") no-repeat;
+.dash a.classes{
+    background: url("../images/class.png") no-repeat;
 }
-.dash a.aggregrate_report:hover{
-    background: url("../images/aggregate_reports.png") no-repeat;
+.dash a.classes:hover{
+    background: url("../images/class_hover.png") no-repeat;
 }
+
+.dash a.policies{
+    background: url("../images/policy.png") no-repeat;
+}
+.dash a.policies:hover{
+    background: url("../images/policy_hover.png") no-repeat;
+}
+
+.dash a.report{
+    background: url("../images/report.png") no-repeat;
+}
+
+.dash a.report:hover{
+    background: url("../images/report_hover.png") no-repeat;
+}
+
+.dash a.summary_report{
+    background: url("../images/summary_reports.png") no-repeat;
+}
+
+.dash a.summary_report:hover{
+    background: url("../images/summary_reports_hover.png") no-repeat;
+}
+
+.dash a.cdpreport{
+    background: url("../images/cdp_reports.png") no-repeat;
+}
+
+.dash a.cdpreport:hover{
+    background: url("../images/cdp_reports_hover.png") no-repeat;
+}
+
 
 .dash a.savedsearch{
     background: url("../images/list_of_saved.png") no-repeat;
