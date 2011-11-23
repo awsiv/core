@@ -4174,56 +4174,9 @@ char *Nova2PHP_GetPromiser(char *handle)
 
 int Nova2PHP_get_variable(char *hostkey,char *scope,char *lval,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE],lscope[CF_MAXVARSIZE];
- struct HubVariable *hv,*hv2;
- struct HubQuery *hq;
- struct Rlist *rp,*result;
- int count = 0, n = 180;
- mongo_connection dbconn;
-
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
-
- hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,NULL,NULL,false,NULL);
-
- lscope[0] = '\0';
- returnval[0] = '\0';
-
- for (rp = hq->records; rp != NULL; rp=rp->next)
-    {
-    char typestr[CF_SMALLBUF];
-   
-    hv = (struct HubVariable *)rp->item;
-
-    if (strlen(hv->dtype) > 1) // list
-       {
-       char b[CF_BUFSIZE];
-       b[0] = '\0';
-       PrintRlist(b,CF_BUFSIZE,hv->rval);
-       snprintf(returnval,bufsize-1,"%s",b);
-       }
-    else
-       {
-       snprintf(returnval,bufsize-1,"%s",(char *)hv->rval);
-       }
-    }
-
- if (hq->records == NULL)
-    {
-    snprintf(buffer,sizeof(buffer),"Unknown value");
-    }
-
- DeleteHubQuery(hq,DeleteHubVariable);
-
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
-
- return true;
+{
+// Moved to conversion.c and re-aliased 
+return Nova_GetReportedScalar(hostkey,scope,lval,returnval,bufsize);
 }
 
 /*****************************************************************************/

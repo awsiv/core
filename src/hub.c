@@ -662,8 +662,8 @@ static void Nova_CreateHostID(mongo_connection *dbconn, char *hostID, char *ipad
 /* Make sure an entry for the given keyhash,ip exists */
 
 {
- CFDB_SaveHostID(dbconn,MONGO_DATABASE,cfr_keyhash,hostID,ipaddr,NULL);
- CFDB_SaveHostID(dbconn,MONGO_ARCHIVE,cfr_keyhash,hostID,ipaddr,NULL);
+CFDB_SaveHostID(dbconn,MONGO_DATABASE,cfr_keyhash,hostID,ipaddr,NULL);
+CFDB_SaveHostID(dbconn,MONGO_ARCHIVE,cfr_keyhash,hostID,ipaddr,NULL);
 }
 
 #endif  /* HAVE_LIBMONGOC */
@@ -748,7 +748,7 @@ while (true)
       CfOut(cf_verbose,""," -> Wake up");
 
 
-      if(!FEDERATION)  // FEDERATION is for Constellation Mission Observatory
+      if (!FEDERATION)  // FEDERATION is for Constellation Mission Observatory
          {
          Nova_CollectReports(a,pp);
          }
@@ -792,6 +792,7 @@ if (CFDB_QueryIsMaster())  // relevant if we are part of mongo replica set
       }
    
    // Longterm reports cleanup everyday
+   
    if (IsDefinedClass("Hr10.Min00_05"))
       {
       CFDB_Maintenance(true);
