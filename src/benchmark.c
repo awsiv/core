@@ -45,15 +45,16 @@ int Nova_BenchmarkReportStorage(char *reportFilePath, int iterationsToRun)
     fseek(fin, 0, SEEK_SET);
     char discardHeader[CF_MAXVARSIZE];
     CfReadLine(discardHeader, sizeof(discardHeader), fin);
-    
+
+    int randomNumber = rand();
     char randomString[EVP_MAX_MD_SIZE*4] = {0};
     unsigned char randomDigest[EVP_MAX_MD_SIZE+1] = {0};
-    snprintf(randomString, sizeof(randomString), "%d", rand());
+    snprintf(randomString, sizeof(randomString), "%d", randomNumber);
     HashString(randomString, sizeof(randomString), randomDigest, cf_sha256);
     
     char header[CF_MAXVARSIZE];
-    snprintf(header,sizeof(header),"NOVA_EXPORT full %s 10.10.10.1 generated-hostname",
-             HashPrint(cf_sha256, randomDigest));
+    snprintf(header,sizeof(header),"NOVA_EXPORT full %s 10.10.10.1 generated-hostname-%d",
+             HashPrint(cf_sha256, randomDigest), randomNumber);
     
     if(!Nova_ImportHostReportsFromStream(&dbconn, header, fin))
        {
