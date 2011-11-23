@@ -1929,7 +1929,7 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *l
                    strncpy(raddr,bson_iterator_string(&it3),CF_MAXVARSIZE-1);
 
                    // try to find host name of IP from local DB
-
+                   // FIXME: this is very slow on large queries (one new query per result)
                    CFDB_QueryHostName(conn,raddr,rhost,sizeof(rhost));
                    }
                 else if (strcmp(bson_iterator_key(&it3),cfr_time) == 0)
