@@ -2445,22 +2445,22 @@ extract lists of keys from array variables for iteration purposes.
 following example:
 
 <pre class="verbatim">
-<span class="red">bundle agent</span> <span class="blue">array</span>
+<span class="red">bundle agent</span> <span class="blue">example</span>
 
 {
 <span class="red">vars:
 </span>
-  "v[index_1]"<span class="red"> string </span>=><span class="green"> "value_1";</span>
-  "v[index_2]"<span class="red"> string </span>=><span class="green"> "value_2";</span>
+  "array[cf-monitord]"<span class="red"> string </span>=><span class="green"> "The monitor";</span>
+  "array[cf-serverd]"<span class="red"> string </span>=><span class="green"> "The server";</span>
+  "array[cf-exced]"<span class="red"> string </span>=><span class="green"> "The executor, not executioner";</span>
 
-  "parameter_name"<span class="red"> slist </span>=> getindices("v");
+  "component"<span class="red"> slist </span>=> getindices("array");
 
-<span class="red">reports:
+<span class="red">commands:
 </span>
-  Yr2008::
+  "/bin/echo $(component) is"
 
-<span class="red">   "Found index: $(parameter_name)";
-</span>
+<span class="red">           args </span>=><span class="green"> "$(array[$(component)])";</span>
 }
 
 </pre>
