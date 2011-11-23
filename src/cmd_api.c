@@ -546,7 +546,7 @@ hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,classreg);
 
 if (!CSV)
    {
-   printf("%25s %14s %17s %s\n","Host","Type","lval","rval");
+   printf("%25s %14s %25s %s\n","Host","Type","lval","rval");
    }
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -587,11 +587,11 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 
    if (CSV)
       {
-      printf("%s,%s,%s,%s\n",hv->hh->hostname,typestr,hv->lval,rvalBuf);
+      printf("%s,%s,%s.%s,%s\n",hv->hh->hostname,typestr,hv->scope,hv->lval,rvalBuf);
       }
    else
       {
-      printf("%25s %14s %17s %s\n",hv->hh->hostname,typestr,hv->lval,rvalBuf);
+      printf("%25s %14s %s.%-25s %s\n",hv->hh->hostname,typestr,hv->scope,hv->lval,rvalBuf);
       }
    }
 
@@ -1021,7 +1021,7 @@ hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,true,classreg,false
 
 if (!CSV)
    {
-   printf("%s,%s,%s\n","Host","File", "Changed-on", "Note");
+   printf("%s,%s,%s,%s\n","Host","File", "Changed-on", "Note");
    }
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -2417,7 +2417,7 @@ for (ip = clist; (ip !=  NULL); ip=ip->next)
          snprintf(work,sizeof(work),"{ \"colour\": \"red\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
          }
       
-      if(work)
+      if (strlen(work) > 0)
          {
          if (!Join(buffer,work,bufsize))
             {
