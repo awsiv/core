@@ -17,29 +17,25 @@ static void CFDB_EnsureIndices(mongo_connection *conn);
 static void CFDB_DropAllIndices(mongo_connection *conn);
 #endif 
 
-void CFDB_Maintenance(int purgeArchive)
+void CFDB_Maintenance(void)
 {
 #ifdef HAVE_LIBMONGOC
 
   mongo_connection dbconn;
-
+  
   if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
-    {
-      CfOut(cf_error,"", "!! Could not open connection to report database on maintain");
-      return;
-    }
+     {
+     CfOut(cf_error,"", "!! Could not open connection to report database on maintain");
+     return;
+     }
+    
+  CFDB_EnsureIndices(&dbconn);
+  CFDB_PurgeTimestampedReports(&dbconn);
+  CFDB_PurgePromiseLogs(&dbconn,CF_HUB_PURGESECS,time(NULL));
 
-  if(purgeArchive)
-     {
-     CFDB_PurgeTimestampedLongtermReports(&dbconn);
-     CFDB_PurgeDeprecatedVitals(&dbconn);
-     }
-  else
-     {
-     CFDB_EnsureIndices(&dbconn);
-     CFDB_PurgeTimestampedReports(&dbconn);
-     CFDB_PurgePromiseLogs(&dbconn,CF_HUB_PURGESECS,time(NULL));
-     }
+  CFDB_PurgeTimestampedLongtermReports(&dbconn);
+  CFDB_PurgeDeprecatedVitals(&dbconn);
+  
   CFDB_Close(&dbconn);
 
 #endif  /* HAVE_LIBMONGOC */

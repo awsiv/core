@@ -537,7 +537,7 @@ void GetReportKeyMapping(int reportType, char *key, char *retBuf, int retBufSz);
 
 /* db_maintain.c */
 
-void CFDB_Maintenance(int purgeArchive);
+void CFDB_Maintenance(void);
 void CFDB_ReIndexAll(void);
 #ifdef HAVE_LIBMONGOC
 void CFDB_PurgeDropReports(mongo_connection *conn);

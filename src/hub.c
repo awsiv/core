@@ -60,6 +60,9 @@ static void Nova_SequentialScan(struct Item *masterlist, struct Attributes a, st
 static void Nova_ParallelizeScan(struct Item *masterlist,struct Attributes a,struct Promise *pp);
 static void SplayLongUpdates(void);
 
+static void CreateMaintenanceProcess(void);
+static void ScheduleRunMaintenanceJobs(void);
+
 #ifdef HAVE_LIBMONGOC
 static void Nova_CreateHostID(mongo_connection *dbconnp, char *hostID, char *ipaddr);
 static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer,struct Attributes a, struct Promise *pp);
@@ -739,6 +742,8 @@ signal(SIGUSR2,HandleSignals);
 
 umask(077);
 
+CreateMaintenanceProcess();
+
 while (true)
    {
    time_to_run = ScheduleRun();
@@ -781,29 +786,7 @@ if (CFDB_QueryIsMaster())  // relevant if we are part of mongo replica set
    struct Item *masterhostlist = Nova_ScanClients();
 
    Nova_Scan(masterhostlist,a,pp);
-   DeleteItemList(masterhostlist);
-   
-   if (ShiftChange())
-      {
-      CfOut(cf_verbose,""," -> Scanning all total compliance cache");
-      NewClass("am_policy_hub");
-      Nova_CacheTotalCompliance(true);
-      CFDB_Maintenance(false);
-      }
-   
-   // Longterm reports cleanup everyday
-   
-   if (IsDefinedClass("Hr10.Min00_05"))
-      {
-      CFDB_Maintenance(true);
-      }
-   
-   if (CFH_ZENOSS && IsDefinedClass("Min00_05"))
-      {
-      Nova_ZenossSummary(DOCROOT);
-      }
-   
-   Nova_CountMonitoredClasses();
+   DeleteItemList(masterhostlist);   
    }
 else
    {
@@ -980,7 +963,6 @@ child_id = fork();
 
 if (child_id == 0)
    {
-   // Am child
    ALARM_PID = -1;
 
    Nova_SequentialScan(list, a, pp);
@@ -1086,6 +1068,7 @@ return true;
 }
 
 #endif /* HAVE_LIBMONGOC */
+
 
 /*********************************************************************/
 
@@ -1378,6 +1361,63 @@ fclose(fout);
 }
 
 /*********************************************************************/
+
+static void CreateMaintenanceProcess(void)
+{
+ pid_t child_id = fork();
+
+ if (child_id == 0)
+    {
+    ALARM_PID = -1;
+
+    ScheduleRunMaintenanceJobs();
+    // never returns
+    exit(0);
+    }
+}
+
+/*********************************************************************/
+
+static void ScheduleRunMaintenanceJobs(void)
+// NOTE: run as separate thread/process, do not use global vars here
+//       (e.g. classes)
+{
+ time_t lastCacheTimeStamp = 0;
+ time_t lastZenossTimeStamp = 0;
+ 
+ while(true)
+    {
+    time_t now = time(NULL);
+    
+    if (now - lastCacheTimeStamp > SECONDS_PER_HOUR * 6)
+       {
+       CfOut(cf_verbose,""," -> Scanning total compliance cache and doing db maintenance");
+       Nova_CacheTotalCompliance(true);
+       CFDB_Maintenance();
+       
+       lastCacheTimeStamp = now;
+       }
+    
+    if (CFH_ZENOSS && (now - lastZenossTimeStamp > SECONDS_PER_HOUR))
+       {
+       Nova_ZenossSummary(DOCROOT);
+       
+       lastZenossTimeStamp = now;
+       }
+    
+    Nova_CountMonitoredClasses();
+
+    if(LOGGING)
+       {
+       char msg[CF_MAXVARSIZE];
+       snprintf(msg, sizeof(msg), "Last maintenance took %ld seconds", time(NULL) - now);
+       Nova_HubLog(msg);
+       }
+    
+    sleep(SECONDS_PER_MINUTE * 5);
+    }
+}
+
 
 #endif  /* NOT MINGW */
 
