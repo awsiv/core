@@ -3518,6 +3518,9 @@ Variable_sys_fstab::
 Variable_sys_hardware_mac_eth0_::
  "/docs/cf3-reference.html#Variable-sys_002ehardware_005fmac_005beth0_005d"
   represents => { "manual subsection" };
+Variable_sys_hardware_mac_tun0_::
+ "/docs/cf3-reference.html#Variable-sys_002ehardware_005fmac_005btun0_005d"
+  represents => { "manual subsection" };
 Variable_sys_hardware_mac_virbr0_::
  "/docs/cf3-reference.html#Variable-sys_002ehardware_005fmac_005bvirbr0_005d"
   represents => { "manual subsection" };
