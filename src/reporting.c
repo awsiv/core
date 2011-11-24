@@ -2485,3 +2485,40 @@ else if (strcmp(lsdata,"license") == 0)
 printf("Unknown report\n");
 #endif
 }
+
+/*****************************************************************************/
+
+void Nova_ImportReports(const char *input_file)
+{
+ #ifdef HAVE_LIBMONGOC
+ if (IsDefinedClass("am_policy_hub"))
+    {
+    mongo_connection dbconn;
+
+    if(!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+       {
+       CfOut(cf_error, "", "!! Could not connect to database -- skipping import");
+       GenericDeInitialize();
+       exit(0);
+       }
+
+    if(Nova_ImportHostReports(&dbconn, input_file))
+       {
+       GenericDeInitialize();
+       exit(0);
+       }
+    else
+       {
+       GenericDeInitialize();
+       exit(1);
+       }
+    }
+ else
+    {
+    CfOut(cf_error, "", "Importing reports is only possible on Nova policy hubs");
+    }
+
+#else  /* NOT HAVE_LIBMONGOC */
+ CfOut(cf_error, "", "Importing reports is only possible on Nova policy hubs");
+#endif
+}

@@ -943,6 +943,8 @@ int Nova_ExportReports(char *reportName);
 void Nova_CommandAPI(char *lsdata,char *name,char *handle,char *hostkey,char *classregex);
 
 #ifdef HAVE_LIBMONGOC
+void Nova_ImportReports(const char *input_file);
+
 int Nova_ImportHostReports(mongo_connection *dbconnp, char *filePath);
 int Nova_ImportHostReportsFromStream(mongo_connection *dbconn, char *header, FILE *fin);
 #endif
