@@ -48,6 +48,7 @@ libcfnova_la_SOURCES =						\
 	packages.c						\
 	processes.c						\
 	pscalar.c						\
+	runagent.c						\
 	services.c						\
 	services_win.c						\
 	environments.c						\

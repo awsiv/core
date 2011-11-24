@@ -949,6 +949,10 @@ int Nova_ImportHostReports(mongo_connection *dbconnp, char *filePath);
 int Nova_ImportHostReportsFromStream(mongo_connection *dbconn, char *header, FILE *fin);
 #endif
 
+/* runagent.c */
+
+bool Nova_ExecuteRunagent(struct cfagent_connection *conn, const char *menu);
+
 /* scorecards.c */
 #ifdef HAVE_LIBMONGOC
 void Nova_BarMeter(int pos,double kept,double rep,char *name,char *buffer,int bufsize);
