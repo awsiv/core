@@ -354,8 +354,11 @@ void DeleteReportBook(struct Item **reports);
 
 enum cfl_view Str2View(const char *s);
 const char *View2Str(enum cfl_view view);
+
+#ifdef HAVE_LIBMONGOC
 int Nova_GetReportedScalar(char *hostkey,char *scope,char *lval,char *returnval,int bufsize);
 int Nova_GetReportedList(char *hostkey,char *scope,char *lval,struct Rlist **list);
+#endif
 
 /* copernicus.c */
 

@@ -76,6 +76,8 @@ return CFCON_VIEWS[view];
 
 /*****************************************************************************/
 
+#ifdef HAVE_LIBMONGOC
+
 int Nova_GetReportedScalar(char *hostkey,char *scope,char *lval,char *returnval,int bufsize)
 
 { char *report,buffer[CF_BUFSIZE],lscope[CF_MAXVARSIZE];
@@ -183,3 +185,5 @@ if (!CFDB_Close(&dbconn))
 
 return true;
 }
+
+#endif
