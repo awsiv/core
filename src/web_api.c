@@ -27,18 +27,18 @@ static const char *CDP_REPORTS[][2] =
     };
 
 static const char *ERRID_DESCRIPTION[] =
-{
-    [ERRID_SUCCESS] = "Success",
-    [ERRID_DBCONNECT] = "Could not open connection to reporting database",
-    [ERRID_ARGUMENT_MISSING] = "A mandatory argument is missing",
-    [ERRID_ARGUMENT_WRONG] = "An argument is incorrect",
-    [ERRID_BUFFER_FULL] = "The JSON-buffer is too small to hold the report data",
-    [ERRID_SUBSCRIPTION_NONEXISTING] = "The given subscription handle does not exist",
-    [ERRID_SUBSCRIPTION_EXISTS] = "The given subscription handle already exists",
-    [ERRID_SUBSCRIPTION_MULTIPLE] = "There are multiple subscriptions matching the request",
-    [ERRID_CONSTELLATION_LICENSE] = "This functionality requires a Constellation license",
-    [ERRID_MAX] = "Unknown error - description out of bounds",
-};
+   {
+   [ERRID_SUCCESS] = "Success",
+   [ERRID_DBCONNECT] = "Could not open connection to reporting database",
+   [ERRID_ARGUMENT_MISSING] = "A mandatory argument is missing",
+   [ERRID_ARGUMENT_WRONG] = "An argument is incorrect",
+   [ERRID_BUFFER_FULL] = "The JSON-buffer is too small to hold the report data",
+   [ERRID_SUBSCRIPTION_NONEXISTING] = "The given subscription handle does not exist",
+   [ERRID_SUBSCRIPTION_EXISTS] = "The given subscription handle already exists",
+   [ERRID_SUBSCRIPTION_MULTIPLE] = "There are multiple subscriptions matching the request",
+   [ERRID_CONSTELLATION_LICENSE] = "This functionality requires a Constellation license",
+   [ERRID_MAX] = "Unknown error - description out of bounds",
+   };
 
 /*****************************************************************************/
 
