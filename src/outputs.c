@@ -133,11 +133,11 @@ if (handle)
       {
       if (ip && ip->classes)
          {
-         AppendConstraint(&(pp->conlist),"report_level",strdup(ip->classes),CF_SCALAR,"any",false);
+         AppendConstraint(&(pp->conlist),"report_level",xstrdup(ip->classes),CF_SCALAR,"any",false);
          }
       else
          {
-         AppendConstraint(&(pp->conlist),"report_level",strdup("verbose"),CF_SCALAR,"any",false);
+         AppendConstraint(&(pp->conlist),"report_level",xstrdup("verbose"),CF_SCALAR,"any",false);
          }
       }
    }

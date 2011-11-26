@@ -471,15 +471,9 @@ WIN32_FIND_DATA data;
 char pattern[MAX_PATH];
 snprintf(pattern, MAX_PATH, "%s\\*", dirname);
 
-if ((ret = calloc(1, sizeof(CFDIR))) == NULL)
-   {
-   FatalError("Unable to allocate memory for CFDIR");
-   }
+ret = xcalloc(1, sizeof(CFDIR));
 
-if ((ret->entrybuf = calloc(1, sizeof(struct dirent))) == NULL)
-   {
-   FatalError("Unable to allocate memory for dirent structure");
-   }
+ret->entrybuf = xcalloc(1, sizeof(struct dirent));
 
 ret->dirh = searchHandle = FindFirstFile(pattern, &data);
 
@@ -549,7 +543,7 @@ free(dir);
 
 struct dirent *AllocateDirentForFilename(const char *filename)
 {
-struct dirent *entry = calloc(1, sizeof(struct dirent));
+struct dirent *entry = xcalloc(1, sizeof(struct dirent));
 strcpy(entry->d_name, filename);
 return entry;
 }

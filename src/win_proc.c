@@ -269,12 +269,7 @@ int NovaWin_GetCurrentProcessOwner(SID *sid, int sidSz)
 
 
   // allocate enough buffer bytes and do real call
-  if(!(userToken = calloc(1, reqBufSz)))
-    {
-      CloseHandle(currProcToken);	  
-      FatalError("Memory allocation in NovaWin_GetCurrentProcessOwner()");
-      return false;
-    }
+  userToken = xcalloc(1, reqBufSz);
 
   if(!GetTokenInformation(currProcToken, TokenUser, userToken, reqBufSz, &reqBufSz))
     {

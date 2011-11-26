@@ -1518,7 +1518,7 @@ struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *
                              break;
 
                          default:
-                             rrval = strdup(bson_iterator_string(&it4));
+                             rrval = xstrdup(bson_iterator_string(&it4));
                              rtype = CF_SCALAR;
                              break;                            
                          }
@@ -4435,13 +4435,13 @@ if (mongo_cursor_next(cursor))  // loops over documents
          
          // save constraints (freed in DeleteHubPromise)
          bson_iterator_init(&it2,bson_iterator_value(&it1));
-         cons = malloc(sizeof(char *) * (constCount + 1));
+         cons = xmalloc(sizeof(char *) * (constCount + 1));
          
          i = 0;  // race-safe check
          
          while(bson_iterator_next(&it2) && (i < constCount))
             {
-            cons[i] = strdup(bson_iterator_string(&it2));
+            cons[i] = xstrdup(bson_iterator_string(&it2));
             i++;
             }
          
@@ -5335,7 +5335,7 @@ struct HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name)
           if(ba[0] != '\0')
              {
              ba[strlen(ba)-1] = '\0';  // remove last comma
-             hb->bodyArgs = strdup(ba);  // freed in DeleteHubBody()
+             hb->bodyArgs = xstrdup(ba);  // freed in DeleteHubBody()
              }
          
           }
@@ -6284,12 +6284,12 @@ int QueryInsertHostInfo(mongo_connection *conn, struct Rlist *host_list)
        {
        if(*ipAddrs != '\0')
 	  {
-	  hh->ipaddr = strdup(ipAddrs);
+	  hh->ipaddr = xstrdup(ipAddrs);
 	  }
 
        if(*hostNames != '\0')
 	  {
-	  hh->hostname = strdup(hostNames);
+	  hh->hostname = xstrdup(hostNames);
 	  }
        }
     }

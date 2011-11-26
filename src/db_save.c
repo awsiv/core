@@ -658,7 +658,7 @@ static void CFDB_SaveEnvironment(mongo_connection *conn, const char *keyhash,
                 /* FIXME: warn user */
                 free(environment);
             }
-            environment = strdup(classname + ENV_NAME_LEN);
+            environment = xstrdup(classname + ENV_NAME_LEN);
         }
     }
 

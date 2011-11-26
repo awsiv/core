@@ -803,7 +803,7 @@ if (strncmp(*str, "user:", 5) == 0)
       idsz = id_end - *str;
       }
 
-   ids = malloc(idsz + 1);
+   ids = xmalloc(idsz + 1);
    for(i = 0; i < idsz; i++)
      ids[i] = (*str)[i];
    ids[idsz] = '\0';
@@ -848,7 +848,7 @@ else if(strncmp(*str, "group:", 6) == 0)
       idsz = id_end - *str;
       }
 
-   ids = malloc(idsz + 1);
+   ids = xmalloc(idsz + 1);
    for(i = 0; i < idsz; i++)
      ids[i] = (*str)[i];
    ids[idsz] = '\0';

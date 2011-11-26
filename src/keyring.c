@@ -56,21 +56,11 @@ for (rp = SERVER_KEYRING; rp !=  NULL; rp=rp->next)
 CfOut(cf_verbose,""," -> Caching key for %s in the ring",name);
 
 ThreadLock(cft_system);
-kp = (struct CfKeyBinding *)malloc((sizeof(struct CfKeyBinding)));
+kp = xmalloc(sizeof(struct CfKeyBinding));
 ThreadUnlock(cft_system);
 
-if (kp == NULL)
-   {
-   return;
-   }
-
 ThreadLock(cft_system);
-if ((kp->name = strdup(name)) == NULL)
-   {
-   free(kp);
-   ThreadUnlock(cft_system);
-   return;
-   }
+kp->name = xstrdup(name);
 ThreadUnlock(cft_system);
 
 rp = PrependRlist(&SERVER_KEYRING,"nothing",CF_SCALAR);
@@ -80,7 +70,7 @@ free(rp->item);
 rp->item = kp;
 RSA_up_ref(key);
 ThreadUnlock(cft_system);
-kp->address = strdup(ipaddress);
+kp->address = xstrdup(ipaddress);
 kp->key = key;
 kp->timestamp = time(NULL);
 }

@@ -5883,9 +5883,9 @@ bson_iterator_subiterator(&i, &values);
 
 while (bson_iterator_next(&values))
    {
-   struct EnvironmentsList *node = malloc(sizeof(struct EnvironmentsList));
+   struct EnvironmentsList *node = xmalloc(sizeof(struct EnvironmentsList));
    node->next = *out;
-   node->name = strdup(bson_iterator_string(&values));
+   node->name = xstrdup(bson_iterator_string(&values));
    *out = node;
    }
 
@@ -5949,9 +5949,9 @@ while (mongo_cursor_next(cursor))
       return false;
       }
    
-   struct HostsList *node = malloc(sizeof(struct HostsList));
+   struct HostsList *node = xmalloc(sizeof(struct HostsList));
    node->next = *out;
-   node->keyhash = strdup(bson_iterator_string(&i));
+   node->keyhash = xstrdup(bson_iterator_string(&i));
    *out = node;
    }
 
@@ -5996,7 +5996,7 @@ if (res)
    {
    if (bson_find(&i, &result, "env"))
       {
-      environment = strdup(bson_iterator_string(&i));
+      environment = xstrdup(bson_iterator_string(&i));
       }
    bson_destroy(&result);
    }

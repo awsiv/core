@@ -994,13 +994,13 @@ while (mongo_cursor_next(cursor))  // loops over documents
       
       if (strcmp(bson_iterator_key(&it1),cfk_occurlocator) == 0)
          {
-         ip->classes = strdup(bson_iterator_string(&it1));
+         ip->classes = xstrdup(bson_iterator_string(&it1));
          return;
          }   
       }
    }
 
-ip->classes = strdup("No description found");
+ip->classes = xstrdup("No description found");
 #endif
 }
 
@@ -1064,7 +1064,7 @@ return "";
 
 char *Nova_StripString(char *source,char *substring)
 
-{ char *replace = malloc(strlen(source)+1);
+{ char *replace = xmalloc(strlen(source)+1);
   struct Rlist *rp,*new = SplitStringAsRList(source,'.');
 
 replace[0] = '\0';
@@ -1452,9 +1452,9 @@ if (node > 5)
    }
 
 tribe[node].real_id = real; 
-tribe[node].shortname = strdup(sshort);
-tribe[node].fullname = strdup(topic_name);
-tribe[node].context = strdup(topic_context);
+tribe[node].shortname = xstrdup(sshort);
+tribe[node].fullname = xstrdup(topic_name);
+tribe[node].context = xstrdup(topic_context);
 tribe[node].distance_from_centre = distance;
 return true;
 }

@@ -102,7 +102,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                    if (cf_strcmp(a,name) == 0)
                       {
                       CfOut(cf_verbose,"","Located LDAP value %s => %s\n", a,vals[i]->bv_val);
-                      return_value = strdup((char *)vals[i]->bv_val);
+                      return_value = xstrdup((char *)vals[i]->bv_val);
                       break;
                       }
                    }
@@ -462,7 +462,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                       snprintf(name,CF_MAXVARSIZE-1,"%s[%s]",array,a);
                       NewScalar(THIS_BUNDLE,name,(char *)vals[i]->bv_val,cf_str);
                       CfOut(cf_verbose,""," -> Setting %s => %s, in context %s/%s\n",name,(char *)vals[i]->bv_val,THIS_BUNDLE,CONTEXTID);
-                      return_value = strdup("any");
+                      return_value = xstrdup("any");
 
                       if (return_value)
                          {
@@ -568,7 +568,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
 
 if (!return_value)
    {
-   return_value = strdup("!any");
+   return_value = xstrdup("!any");
    }
 
 ldap_unbind(ld);
@@ -652,7 +652,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                    if (cf_strcmp(a,name) == 0 && FullTextMatch(regex,(char *)vals[i]->bv_val))
                       {
                       CfOut(cf_verbose,""," -> Located regex matching LDAP value %s => %s\n", a,(char *)vals[i]->bv_val);
-                      return_value = strdup("any");
+                      return_value = xstrdup("any");
                       break;
                       }
                    }
@@ -757,7 +757,7 @@ ldap_unbind(ld);
 
 if (!return_value)
    {
-   return_value = strdup("!any");
+   return_value = xstrdup("!any");
    }
 
 return return_value;
@@ -1436,7 +1436,7 @@ if (starttls)
             char *msg=NULL;
             ldap_get_option( ld, LDAP_OPT_DIAGNOSTIC_MESSAGE, (void*)&msg);
             //tool_perror( "ldap_start_tls", rc, NULL, NULL, msg, NULL );
-            *errstr = strdup(msg);
+            *errstr = xstrdup(msg);
             ldap_memfree(msg);
             }
          else

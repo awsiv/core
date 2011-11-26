@@ -212,23 +212,13 @@ struct UidList *NovaWin_Rlist2SidList(struct Rlist *uidnames, struct Promise *pp
 	  
 	  if(uidlist == NULL)  // first element
 	    { 
-	      uidlist = (struct UidList *)calloc(1, sizeof(struct UidList));
-	      
-	      if(uidlist == NULL)
-		{
-		  FatalError("Memory allocation in NovaWin_Rlist2SidList() - 1");
-		}
+	      uidlist = xcalloc(1, sizeof(struct UidList));
 
 	      currEl = uidlist;
 	    }
 	  else  // not first element
 	    {
-	      currEl->next = (struct UidList *)calloc(1, sizeof(struct UidList));
-	      
-	      if(currEl->next == NULL)
-		{
-		  FatalError("Memory allocation in NovaWin_Rlist2SidList() - 2");
-		}
+	      currEl->next = xcalloc(1, sizeof(struct UidList));
 	      
 	      currEl = currEl->next;
 	    }
@@ -240,12 +230,7 @@ struct UidList *NovaWin_Rlist2SidList(struct Rlist *uidnames, struct Promise *pp
   
   if(uidlist == NULL)  // empty uidnames or no user in it found on this system
     {
-      uidlist = (struct UidList *)calloc(1, sizeof(struct UidList));
-
-      if(uidlist == NULL)
-	{
-	  FatalError("Memory allocation in NovaWin_Rlist2SidList() - 3");
-	}
+      uidlist = xcalloc(1, sizeof(struct UidList));
     }
 
   return uidlist;
@@ -272,10 +257,7 @@ strcpy(buffer,CF_ANYCLASS);
      strcpy(buffer,"!any");
    }
 
-if ((rval.item = strdup(buffer)) == NULL)
-   {
-   FatalError("Memory allocation in NovaWin_FnCallUserExists");
-   }
+ rval.item = xstrdup(buffer);
 
 /* end fn specific content */
 
@@ -305,10 +287,7 @@ strcpy(buffer,CF_ANYCLASS);
    strcpy(buffer,"!any");
    }
 
-if ((rval.item = strdup(buffer)) == NULL)
-   {
-   FatalError("Memory allocation in FnCallUserExists");
-   }
+ rval.item = xstrdup(buffer);
 
 /* end fn specific content */
 

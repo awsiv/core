@@ -121,10 +121,10 @@ static MonitoringSlot *Nova_MakeSlot(const char *name, const char *description,
                                      double expected_minimum, double expected_maximum,
                                      bool consolidable)
 {
-MonitoringSlot *slot = malloc(sizeof(MonitoringSlot));
-slot->name = strdup(name);
-slot->description = strdup(description);
-slot->units = strdup(units);
+MonitoringSlot *slot = xmalloc(sizeof(MonitoringSlot));
+slot->name = xstrdup(name);
+slot->description = xstrdup(description);
+slot->units = xstrdup(units);
 slot->expected_minimum = expected_minimum;
 slot->expected_maximum = expected_maximum;
 slot->consolidable = consolidable;
@@ -883,7 +883,7 @@ for (i = 0; i < CF_DUNBAR_WORK; i++)
       }
    }
 
-NOVA_DATA[i].path = strdup(pp->promiser);
+NOVA_DATA[i].path = xstrdup(pp->promiser);
 NOVA_DATA[i].output = NovaReSample(i,a,pp);
 return NOVA_DATA[i].output;
 }

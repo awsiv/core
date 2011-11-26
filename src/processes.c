@@ -463,17 +463,9 @@ struct CfFileLine *AppendFileLine(struct CfFileLine **liststart,char *item,int p
 
 { struct CfFileLine *ip, *lp,*prev = NULL;
 
-if ((ip = (struct CfFileLine *)malloc(sizeof(struct Item))) == NULL)
-   {
-   CfOut(cf_error,"malloc","Failed to alloc in AppendItemList");
-   FatalError("");
-   }
+ip = xmalloc(sizeof(struct Item));
 
-if ((ip->text = strdup(item)) == NULL)
-   {
-   CfOut(cf_error,"strdup","Failed to alloc in AppendItemList");
-   FatalError("");
-   }
+ip->text = xstrdup(item);
 
 if (*liststart == NULL)
    {

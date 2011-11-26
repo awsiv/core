@@ -31,9 +31,9 @@ static PrevValue *values;
 
 static PrevValue *AppendNewValue(const char *name, const char *subname, time_t timestamp)
 {
-PrevValue *v = malloc(sizeof(PrevValue));
-v->name = strdup(name);
-v->subname = strdup(subname);
+PrevValue *v = xmalloc(sizeof(PrevValue));
+v->name = xstrdup(name);
+v->subname = xstrdup(subname);
 v->timestamp = timestamp;
 v->next = values;
 values = v;

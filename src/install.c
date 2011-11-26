@@ -35,24 +35,20 @@ void PrependPromiserList(struct PromiseIdent **list,char *s,struct Promise *pp)
        }
     }
 
- if ((ptr = malloc(sizeof(struct PromiseIdent))) == NULL)
-    {
-    FatalError("MemoryAlloc NewPromiseId\n");
-    }
-
- ptr->filename = strdup(pp->audit->filename);
+ ptr = xmalloc(sizeof(struct PromiseIdent));
+ ptr->filename = xstrdup(pp->audit->filename);
 
  if (ptr->classes)
     {
-    ptr->classes = strdup(pp->classes);
+    ptr->classes = xstrdup(pp->classes);
     }
  else
     {
-    ptr->classes = strdup("any");
+    ptr->classes = xstrdup("any");
     }
 
  ptr->line_number = pp->line_number;
- ptr->handle = strdup(s);
+ ptr->handle = xstrdup(s);
  ptr->next = *list;
  *list = ptr;
 }
@@ -247,16 +243,13 @@ struct HubSoftware *NewHubSoftware(struct HubHost *hh,char *name,char *version,c
 
 { struct HubSoftware *hp;
 
- if ((hp = malloc(sizeof(struct HubSoftware))) == NULL)
-    {
-    FatalError("Memory exhausted NewHubSoftware");
-    }
+hp = xmalloc(sizeof(struct HubSoftware));
 
  hp->hh = hh;
 
  if (name)
     {
-    hp->name = strdup(name);
+    hp->name = xstrdup(name);
     }
  else
     {
@@ -265,7 +258,7 @@ struct HubSoftware *NewHubSoftware(struct HubHost *hh,char *name,char *version,c
 
  if (version)
     {
-    hp->version = strdup(version);
+    hp->version = xstrdup(version);
     }
  else
     {
@@ -274,7 +267,7 @@ struct HubSoftware *NewHubSoftware(struct HubHost *hh,char *name,char *version,c
 
  if (arch)
     {
-    hp->arch = strdup(arch);
+    hp->arch = xstrdup(arch);
     }
  else
     {
@@ -314,16 +307,13 @@ struct HubClass *NewHubClass(struct HubHost *hh,char *class,double p, double dev
 
 { struct HubClass *hp;
 
- if ((hp = malloc(sizeof(struct HubClass))) == NULL)
-    {
-    FatalError("Memory exhausted NewHubSoftware");
-    }
+hp = xmalloc(sizeof(struct HubClass));
 
  hp->hh = hh;
 
  if (class)
     {
-    hp->class = strdup(class);
+    hp->class = xstrdup(class);
     }
  else
     {
@@ -354,16 +344,13 @@ struct HubClassSum *NewHubClassSum(struct HubHost *hh,char *class,int frequency)
 
 { struct HubClassSum *hc;
 
- if ((hc = malloc(sizeof(struct HubClassSum))) == NULL)
-    {
-    FatalError("Memory exhausted NewHubClassSum");
-    }
+hc = xmalloc(sizeof(struct HubClassSum));
 
  hc->hh = hh;
 
  if (class)
     {
-    hc->class = strdup(class);
+    hc->class = xstrdup(class);
     }
  else
     {
@@ -393,15 +380,12 @@ struct HubTotalCompliance *NewHubTotalCompliance(struct HubHost *hh,time_t t,cha
 
 { struct HubTotalCompliance *hp;
  
- if ((hp = malloc(sizeof(struct HubTotalCompliance))) == NULL)
-    {
-    FatalError("Memory exhausted NewHubSoftware");
-    }
+hp = xmalloc(sizeof(struct HubTotalCompliance));
 
  hp->hh = hh;
  hp->t = t;
 
- hp->version = strdup(v);
+ hp->version = xstrdup(v);
  hp->kept = k;
  hp->repaired = r;
  hp->notkept = n;
@@ -426,12 +410,9 @@ struct HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slo
 
 { struct HubCacheTotalCompliance *tc;
  
- if ((tc = malloc(sizeof(struct HubCacheTotalCompliance))) == NULL)
-    {
-    FatalError("Memory exhausted NewHubSoftware");
-    }
+tc = xmalloc(sizeof(struct HubCacheTotalCompliance));
 
- tc->policy = strdup(policy);
+ tc->policy = xstrdup(policy);
  tc->slot = slot;
  tc->hostCount = hostCount;
  tc->totalHostCount = totalHostCount;
@@ -457,17 +438,14 @@ struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,cha
 // NOTE: rval must be allocated by caller
 { struct HubVariable *hp;
      
- if ((hp = malloc(sizeof(struct HubVariable))) == NULL)
-    {
-    FatalError("Memory exhausted NewHubVariable");
-    }
+hp = xmalloc(sizeof(struct HubVariable));
 
  hp->hh = hh;
  hp->rtype = rtype;
  hp->rval = rval;
- hp->scope = strdup(scope);
- hp->lval = strdup(lval);
- hp->dtype = strdup(type);
+ hp->scope = xstrdup(scope);
+ hp->lval = xstrdup(lval);
+ hp->dtype = xstrdup(type);
  hp->t = t;
  return hp;
 }
@@ -504,16 +482,13 @@ struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *handle,char *cau
 
 { struct HubPromiseLog *hp;
  
- if ((hp = malloc(sizeof(struct HubPromiseLog))) == NULL)
-    {
-    FatalError("Memory exhausted NewHubPromiseLog");
-    }
+hp = xmalloc(sizeof(struct HubPromiseLog));
 
  hp->hh = hh;
- hp->handle = strdup(handle);
- hp->cause = strdup(cause);
- hp->nid = strdup(noteId);
- hp->oid = strdup(oid);
+ hp->handle = xstrdup(handle);
+ hp->cause = xstrdup(cause);
+ hp->nid = xstrdup(noteId);
+ hp->oid = xstrdup(oid);
  hp->t = t;
  return hp;
 }
@@ -536,17 +511,14 @@ struct HubPromiseSum *NewHubPromiseSum(struct HubHost *hh,char *handle,char *cau
 
 { struct HubPromiseSum *hs;
  
- if ((hs = malloc(sizeof(struct HubPromiseSum))) == NULL)
-    {
-    FatalError("Memory exhausted NewHubPromiseSum");
-    }
+hs = xmalloc(sizeof(struct HubPromiseSum));
 
  hs->hh = hh;
- hs->handle = strdup(handle);
+ hs->handle = xstrdup(handle);
 
  if(cause)
     {
-    hs->cause = strdup(cause);
+    hs->cause = xstrdup(cause);
     }
  else
     {
@@ -580,10 +552,7 @@ struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rho
 
 { struct HubLastSeen *hp;
      
- if ((hp = malloc(sizeof(struct HubLastSeen))) == NULL)
-    {
-    FatalError("Memory exhausted NewHubLastSeen");
-    }
+hp = xmalloc(sizeof(struct HubLastSeen));
 
  hp->hh = hh;
  hp->io = io;  // '+' or '-'
@@ -609,10 +578,7 @@ struct HubMeter *NewHubMeter(struct HubHost *hh,char type,double kept,double rep
 
 { struct HubMeter *hp;
      
- if ((hp = malloc(sizeof(struct HubMeter))) == NULL)
-    {
-    FatalError("Memory exhausted NewHubLastSeen");
-    }
+ hp = xmalloc(sizeof(struct HubMeter));
 
  hp->hh = hh;
  hp->type = type;
@@ -635,18 +601,15 @@ struct HubValue *NewHubValue(struct HubHost *hh,char *day,double kept,double rep
 
 { struct HubValue *hp;
      
- if ((hp = malloc(sizeof(struct HubValue))) == NULL)
-    {
-    FatalError("Memory exhausted NewHubValue");
-    }
+ hp = xmalloc(sizeof(struct HubValue));
 
  hp->hh = hh;
- hp->day = strdup(day);
+ hp->day = xstrdup(day);
  hp->kept = kept;
  hp->repaired = repaired;
  hp->notkept = notkept;
- hp->nid = strdup(noteid);
- hp->handle = strdup(handle);
+ hp->nid = xstrdup(noteid);
+ hp->handle = xstrdup(handle);
  return hp;
 }
 
@@ -666,19 +629,16 @@ struct HubPerformance *NewHubPerformance(struct HubHost *hh,char *event,time_t t
 
 { struct HubPerformance *hp;
      
- if ((hp = malloc(sizeof(struct HubPerformance))) == NULL)
-    {
-    FatalError("Memory exhausted NewHubPerformance");
-    }
+ hp = xmalloc(sizeof(struct HubPerformance));
 
  hp->hh = hh;
- hp->event = strdup(event);
+ hp->event = xstrdup(event);
  hp->q = q;
  hp->e = e;
  hp->d = d;
  hp->t = t;
- hp->nid = strdup(noteid);
- hp->handle = strdup(handle);
+ hp->nid = xstrdup(noteid);
+ hp->handle = xstrdup(handle);
  return hp;
 }
 
@@ -698,13 +658,10 @@ struct HubSetUid *NewHubSetUid(struct HubHost *hh,char *file)
 
 { struct HubSetUid *hp;
      
- if ((hp = malloc(sizeof(struct HubSetUid))) == NULL)
-    {
-    FatalError("Memory exhausted NewHubSetuid");
-    }
+ hp = xmalloc(sizeof(struct HubSetUid));
 
  hp->hh = hh;
- hp->path = strdup(file);
+ hp->path = xstrdup(file);
  return hp;
 }
 
@@ -722,16 +679,13 @@ struct HubFileChanges *NewHubFileChanges(struct HubHost *hh,char *file,time_t t,
 
 { struct HubFileChanges *hp;
      
- if ((hp = (struct HubFileChanges *)malloc(sizeof(struct HubFileChanges))) == NULL)
-    {
-    FatalError("Memory exhausted NewHubFileChange");
-    }
+ hp = xmalloc(sizeof(struct HubFileChanges));
 
  hp->hh = hh;
- hp->path = strdup(file);
+ hp->path = xstrdup(file);
  hp->t = t;
- hp->handle = strdup(handle);
- hp->nid = strdup(noteid);
+ hp->handle = xstrdup(handle);
+ hp->nid = xstrdup(noteid);
  return hp;
 }
 
@@ -751,14 +705,11 @@ struct HubFileDiff *NewHubFileDiff(struct HubHost *hh,char *file,char *diff,time
 
 { struct HubFileDiff *hp;
      
- if ((hp = malloc(sizeof(struct HubFileDiff))) == NULL)
-    {
-    FatalError("Memory exhausted NewHubFileDiff");
-    }
+ hp = xmalloc(sizeof(struct HubFileDiff));
 
  hp->hh = hh;
- hp->path = strdup(file);
- hp->diff = strdup(diff);
+ hp->path = xstrdup(file);
+ hp->diff = xstrdup(diff);
  hp->t = t;
  return hp;
 }
@@ -778,13 +729,10 @@ struct HubPromiseCompliance *NewHubCompliance(struct HubHost *hh,char *handle,ch
 
 { struct HubPromiseCompliance *hp;
      
- if ((hp = malloc(sizeof(struct HubPromiseCompliance))) == NULL)
-    {
-    FatalError("Memory exhausted NewHubPromiseCompliance");
-    }
+ hp = xmalloc(sizeof(struct HubPromiseCompliance));
 
  hp->hh = hh;
- hp->handle = strdup(handle);
+ hp->handle = xstrdup(handle);
  hp->status = status;
  hp->e = e;
  hp->d = d;
@@ -806,18 +754,15 @@ struct HubBundleSeen *NewHubBundleSeen(struct HubHost *hh,char *rname,double ago
 
 { struct HubBundleSeen *hp;
      
- if ((hp = malloc(sizeof(struct HubBundleSeen))) == NULL)
-    {
-    FatalError("Memory exhausted NewHubLastSeen");
-    }
+ hp = xmalloc(sizeof(struct HubBundleSeen));
 
  hp->hh = hh;
- hp->bundle = strdup(rname);
+ hp->bundle = xstrdup(rname);
  hp->hrsago = ago;
  hp->hrsavg = avg;
  hp->hrsdev = dev;
  hp->t = t;
- hp->nid = strdup(noteid);
+ hp->nid = xstrdup(noteid);
  return hp;
 }
 
@@ -836,50 +781,47 @@ struct HubPromise *NewHubPromise(char *bn,char *bt,char *ba,char *pt, char *pr, 
 
 { struct HubPromise *hp;
 
-if ((hp = calloc(1, sizeof(struct HubPromise))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubPromise");
-   }
+hp = xcalloc(1, sizeof(struct HubPromise));
 
 if (bn)
    {
-   hp->bundleName = strdup(bn);
+   hp->bundleName = xstrdup(bn);
    }
 if (bt)
    {
-   hp->bundleType = strdup(bt);
+   hp->bundleType = xstrdup(bt);
    }
 if (ba)
    {
-   hp->bundleArgs = strdup(ba);
+   hp->bundleArgs = xstrdup(ba);
    }
 if (pt)
    {
-   hp->promiseType = strdup(pt);
+   hp->promiseType = xstrdup(pt);
    }
 if (pr)
    {
-   hp->promiser = strdup(pr);
+   hp->promiser = xstrdup(pr);
    }
 if (pe)
    {
-   hp->promisee = strdup(pe);
+   hp->promisee = xstrdup(pe);
    }
 if (cl)
    {
-   hp->classContext = strdup(cl);
+   hp->classContext = xstrdup(cl);
    }
 if (ha)
    {
-   hp->handle = strdup(ha);
+   hp->handle = xstrdup(ha);
    }
 if (co)
    {
-   hp->comment = strdup(co);
+   hp->comment = xstrdup(co);
    }
 if (fn)
    {
-   hp->file = strdup(fn);
+   hp->file = xstrdup(fn);
    }
 hp->lineNo = lno;
 hp->constraints = cons; // allocated by caller
@@ -952,13 +894,10 @@ struct HubBody *NewHubBody(char *bodyType,char *bodyName,char *bodyArgs)
 
 { struct HubBody *hb;
 
-if ((hb = malloc(sizeof(struct HubBody))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubBody");
-   }
+hb = xmalloc(sizeof(struct HubBody));
 
-hb->bodyName = strdup(bodyName);
-hb->bodyType = strdup(bodyType);
+hb->bodyName = xstrdup(bodyName);
+hb->bodyType = xstrdup(bodyType);
 
 if (EMPTY(bodyArgs))
    {
@@ -966,7 +905,7 @@ if (EMPTY(bodyArgs))
    }
 else
    {
-   hb->bodyArgs = strdup(bodyArgs);
+   hb->bodyArgs = xstrdup(bodyArgs);
    }
 
 
@@ -1000,14 +939,11 @@ struct HubBodyAttr *NewHubBodyAttr(struct HubBody *hb,char *lval,char *rval,char
 
 { struct HubBodyAttr *ha,*curr;
 
- if ((ha = malloc(sizeof(struct HubBodyAttr))) == NULL)
-    {
-    FatalError("Memory exhausted NewHubBodyAttr");
-    }
+ ha = xmalloc(sizeof(struct HubBodyAttr));
 
- ha->lval = strdup(lval);
- ha->rval = strdup(rval);
- ha->classContext = strdup(classContext);
+ ha->lval = xstrdup(lval);
+ ha->rval = xstrdup(rval);
+ ha->classContext = xstrdup(classContext);
  ha->next = NULL;
 
  if (!hb->attr)
@@ -1057,13 +993,10 @@ struct HubNote *NewHubNote(char *user,char *msg,time_t t)
 
 { struct HubNote *hc;
 
-if ((hc = malloc(sizeof(struct HubNote))) == NULL)
-   {
-   FatalError("Memory exhausted HubNote");
-   }
+hc = xmalloc(sizeof(struct HubNote));
 
-hc->user = strdup(user);
-hc->msg = strdup(msg);
+hc->user = xstrdup(user);
+hc->msg = xstrdup(msg);
 hc->t = t;
 hc->next=NULL;
 return hc;
@@ -1084,15 +1017,12 @@ struct HubNoteInfo *NewHubNoteInfo(struct HubHost *hh,char *nid,char *user,char 
 
 { struct HubNoteInfo *hci;
 
-if ((hci = malloc(sizeof(struct HubNoteInfo))) == NULL)
-   {
-   FatalError("Memory exhausted HubNoteInfo");
-   }
+hci = xmalloc(sizeof(struct HubNoteInfo));
 
 hci->hh = hh;
-hci->nid = strdup(nid);
+hci->nid = xstrdup(nid);
 hci->note = NewHubNote(user,msg,t);
-hci->report = strdup(reportData);
+hci->report = xstrdup(reportData);
 hci->reportType = reportType;
 return hci;
 }
@@ -1119,14 +1049,11 @@ struct HubVital *PrependHubVital(struct HubVital **first, char *id, char *units,
 
 { struct HubVital *hv;
 
-if ((hv = malloc(sizeof(struct HubVital))) == NULL)
-   {
-   FatalError("Memory exhausted NewHubVital");
-   }
+hv = xmalloc(sizeof(struct HubVital));
 
-hv->id = strdup(id);
-hv->units = strdup(units);
-hv->description = strdup(description);
+hv->id = xstrdup(id);
+hv->units = xstrdup(units);
+hv->description = xstrdup(description);
 
 hv->next = *first;
 *first = hv;

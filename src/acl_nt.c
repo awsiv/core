@@ -119,15 +119,7 @@ else
    }
 
 // allocate buffer large enough for existing and new aces
-eas = calloc(eaCount + newAceCount, sizeof(EXPLICIT_ACCESS));
-
-if(eas == NULL)
-   {
-   LocalFree(existingSecDesc);
-   FatalError("Memory allocation in Nova_CheckNtACEs()");
-   return false;
-   }
-
+eas = xcalloc(eaCount + newAceCount, sizeof(EXPLICIT_ACCESS));
 
 // convert existing aces to another format (EXPLICIT_ACCESS)
 if(!Nova_AclToExplicitAccess(eas, eaCount, existingAcl))
@@ -235,15 +227,7 @@ else
    }
 
 // allocate buffer large enough for existing aces
-eas = calloc(eaCount, sizeof(EXPLICIT_ACCESS));
-
-if(eas == NULL)
-   {
-   LocalFree(existingSecDesc);
-   FatalError("Memory allocation in Nova_CheckNtDefaultClearACL()");
-   return false;
-   }
-
+eas = xcalloc(eaCount, sizeof(EXPLICIT_ACCESS));
 
 // convert existing aces to another format (EXPLICIT_ACCESS)
 if(!Nova_AclToExplicitAccess(eas, eaCount, existingAcl))
@@ -340,14 +324,7 @@ else
    }
 
 // allocate buffer large enough for existing aces
-eas = calloc(eaCount, sizeof(EXPLICIT_ACCESS));
-
-if(eas == NULL)
-   {
-   LocalFree(existingSecDesc);
-   FatalError("Memory allocation in Nova_CheckNtDefaultEqualsAccessACL()");
-   return false;
-   }
+eas = xcalloc(eaCount, sizeof(EXPLICIT_ACCESS));
 
 // convert existing aces to another format (EXPLICIT_ACCESS)
 if(!Nova_AclToExplicitAccess(eas, eaCount, existingAcl))
@@ -616,14 +593,7 @@ int Nova_AclToExplicitAccess(EXPLICIT_ACCESS *eas, int eaCount, ACL *acl)
       eas[i].Trustee.TrusteeForm = TRUSTEE_IS_SID;
 
       // copy SID
-      sidAlloc = (SID *)calloc(1, GetLengthSid((SID *)&(currAce->SidStart)));
-
-      if(sidAlloc == NULL)
-      {
-        Nova_FreeSids(eas, i);
-        FatalError("Memory allocation in Nova_AclToExplicitAccess()");
-        return false;
-      }
+      sidAlloc = xcalloc(1, GetLengthSid((SID *)&(currAce->SidStart)));
 
       memcpy(sidAlloc, &(currAce->SidStart), GetLengthSid((SID *)&(currAce->SidStart)));
 
@@ -697,14 +667,7 @@ int Nova_ParseAcl(char *file_path, struct Rlist *aces, EXPLICIT_ACCESS *eas, int
           currEa->grfAccessPermissions = newPerms;
 
           currEa->Trustee.TrusteeForm = TRUSTEE_IS_SID;
-          sidAlloc = (SID *)calloc(1, GetLengthSid(sid));
-
-          if(sidAlloc == NULL)
-            {
-              Nova_FreeSids(firstUsedEa, numNewEas);
-              FatalError("Memory allocation in Nova_ParseAcl()");
-              return false;
-            }
+          sidAlloc = xcalloc(1, GetLengthSid(sid));
 
           memcpy(sidAlloc, sid, GetLengthSid(sid));
           currEa->Trustee.ptstrName = (void *)sidAlloc;  // freed in Nova_FreeSids()

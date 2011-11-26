@@ -709,12 +709,7 @@ QUERY_SERVICE_CONFIG *NovaWin_AllocServiceConfig(SC_HANDLE srvHandle)
        {
        srvConfigSz = bytesNeeded;
        
-       srvConfig = (QUERY_SERVICE_CONFIG *)malloc(srvConfigSz);
-
-       if(srvConfig == NULL)
-          {
-          FatalError("Memory allocation in NovaWin_AllocServiceConfig()");
-          }
+       srvConfig = (QUERY_SERVICE_CONFIG *)xmalloc(srvConfigSz);
        }
     else
        {
@@ -769,12 +764,7 @@ int NovaWin_StopDependentServices(SC_HANDLE managerHandle, SC_HANDLE srvHandle, 
        return false;
        }
     
-    deps = (ENUM_SERVICE_STATUS *)calloc(1, bytesNeeded);
-
-    if(deps == NULL)
-       {
-       FatalError("Memory allocation in NovaWin_StopDependentServices()");
-       }
+    deps = xcalloc(1, bytesNeeded);
 
     if(!EnumDependentServices(srvHandle, SERVICE_ACTIVE, deps, bytesNeeded, &bytesNeeded, &depCount))
        {

@@ -1642,7 +1642,7 @@ while (!feof(fin))
       // If more than one (max 2) store the other data in classes
       if (file->classes == NULL)
          {
-         file->classes = strdup(line);
+         file->classes = xstrdup(line);
          }
       }
    else

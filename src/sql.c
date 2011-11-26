@@ -96,10 +96,10 @@ int Nova_NewSQLColumns(char *table,struct Rlist *columns,char ***name_table,char
 { int i,no_of_cols = RlistLen(columns);
   struct Rlist *cols,*rp;
  
-*name_table = (char **)malloc(sizeof(char *)*(no_of_cols+1));
-*type_table = (char **)malloc(sizeof(char *)*(no_of_cols+1));
-*size_table = (int *)malloc(sizeof(int)*(no_of_cols+1));
-*done = (int *)malloc(sizeof(int)*(no_of_cols+1));
+*name_table = (char **)xmalloc(sizeof(char *)*(no_of_cols+1));
+*type_table = (char **)xmalloc(sizeof(char *)*(no_of_cols+1));
+*size_table = (int *)xmalloc(sizeof(int)*(no_of_cols+1));
+*done = (int *)xmalloc(sizeof(int)*(no_of_cols+1));
 
 for (i = 0,rp = columns; rp != NULL; rp = rp->next,i++)
    {
@@ -123,7 +123,7 @@ for (i = 0,rp = columns; rp != NULL; rp = rp->next,i++)
       return false;   
       }
 
-   (*name_table)[i] = strdup((char *)cols->item);
+   (*name_table)[i] = xstrdup((char *)cols->item);
    
    if (cols->next == NULL)
       {
@@ -135,7 +135,7 @@ for (i = 0,rp = columns; rp != NULL; rp = rp->next,i++)
       return false;   
       }
    
-   (*type_table)[i] = strdup(cols->next->item);
+   (*type_table)[i] = xstrdup(cols->next->item);
 
    if (cols->next->next == NULL)
       {

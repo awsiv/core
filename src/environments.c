@@ -416,7 +416,7 @@ if (a.env.specfile)
       }
    else
       {
-      xml_file = strdup(a.env.specfile);
+      xml_file = xstrdup(a.env.specfile);
       }
    
    alloc_file = true;
