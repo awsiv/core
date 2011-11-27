@@ -71,23 +71,6 @@ CFDB_PutValue(s,t);
 
 /*****************************************************************************/
 
-void Nova_CheckInstalledLibraries(void)
-{
-#ifndef HAVE_LIBLDAP
-printf("\t->LIBLDAP not found!!\n");
-#endif
-
-#ifndef HAVE_FIPS_MODE_SET
-printf("\t->FIPS OpenSSL canister not found!!\n");
-#endif
-
-#ifndef HAVE_LIBVIRT
-printf("\t->LIBVIRT not found!!\n");
-#endif
-}
-
-/*****************************************************************************/
-
 #if defined(__MINGW32__)
 
 bool BootstrapAllowed(void)

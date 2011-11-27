@@ -328,7 +328,6 @@ ACCESS_MODE Nova_ParsePermTypeNt(char *ace);
 /* cfnova.c */
 
 void Nova_Initialize(void);
-void Nova_CheckInstalledLibraries(void);
 void Nova_SaveDocumentRoot(void);
 
 #if defined(__MINGW32__)
