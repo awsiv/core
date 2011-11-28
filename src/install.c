@@ -239,7 +239,7 @@ void DeleteHubHost(struct HubHost *hp)
 
 /*****************************************************************************/
 
-struct HubSoftware *NewHubSoftware(struct HubHost *hh,char *name,char *version,char *arch)
+struct HubSoftware *NewHubSoftware(struct HubHost *hh,char *name,char *version,char *arch,time_t timeseen)
 
 { struct HubSoftware *hp;
 
@@ -274,8 +274,8 @@ hp = xmalloc(sizeof(struct HubSoftware));
     hp->arch = NULL;
     }
 
- hp->t = 0;
- 
+ hp->t = timeseen;
+
  return hp;
 }
 

@@ -683,7 +683,7 @@ struct HubHost *CreateEmptyHubHost(void);
 struct HubHost *UpdateHubHost(struct HubHost *hubHost, char *keyhash,char *ipaddr,char *hostname);
 struct HubHost *GetHubHostIn(struct Rlist *host_list, char *keyhash);
 void DeleteHubHost(struct HubHost *hp);
-struct HubSoftware *NewHubSoftware(struct HubHost *hh,char *name,char *version,char *arch);
+struct HubSoftware *NewHubSoftware(struct HubHost *hh,char *name,char *version,char *arch,time_t timeseen);
 void DeleteHubSoftware(struct HubSoftware *hs);
 struct HubClass *NewHubClass(struct HubHost *hh,char *class,double p, double dev, time_t t);
 void DeleteHubClass(struct HubClass *hc);
@@ -1334,7 +1334,7 @@ struct cf_pscalar
 #define cfr_histo        "hs"
 #define cfr_perf_event    "P"
 #define cfr_software     "sw"
-#define cfr_software_t   "swt"
+#define cfr_software_t   "lswt"
 #define cfr_patch_avail  "pa"
 #define cfr_patch_installed "pi"
 #define cfr_cause        "ca"

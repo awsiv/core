@@ -502,7 +502,7 @@ while (mongo_cursor_next(cursor))
    keyhash[0] = '\0';
    hostnames[0] = '\0';
    addresses[0] = '\0';
-   lastSeen = 0;
+//   lastSeen = 0;
    found = false;
    hh = CreateEmptyHubHost();
    
@@ -588,8 +588,8 @@ while (mongo_cursor_next(cursor))
                if (match_name && match_version && match_arch)
                   {
                   found = true;
-                  rp = PrependRlistAlien(&record_list,NewHubSoftware(hh,rname,rversion,rarch));
-                  }
+                  rp = PrependRlistAlien(&record_list,NewHubSoftware(hh,rname,rversion,rarch,lastSeen));
+		}
                }               
             }
          }   
