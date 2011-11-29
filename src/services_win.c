@@ -131,7 +131,10 @@ int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, char *a
 
         result = NovaWin_CheckServiceStart(managerHandle, srvHandle, argc, argv, onlyCheckDeps, isDependency, a, pp, setCfPs);
 
-        ArgFree(argv);
+        if (argStr)
+           {
+           ArgFree(argv);
+           }
 
         if(!result)
            {
