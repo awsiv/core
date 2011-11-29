@@ -5695,8 +5695,9 @@ PHP_FUNCTION(cfcon_list_hub_colour)
  char buffer[bufsize];
  char *colour;
  int c_len;
+ struct PageInfo page = {0};
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&colour,&c_len) == FAILURE)
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sll",&colour,&c_len,&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
    {
    php_printf("Error in cfcon_list_hub_colour needs a host key");
    RETURN_NULL();
@@ -5715,7 +5716,7 @@ if(*colour!='R' && *colour!='G' && *colour!='B' && *colour!='Y' && *colour!='A')
 
 buffer[0] = '\0';
 colour[1]='\0';
-Con2PHP_list_hub_colour(colour,buffer,bufsize);
+Con2PHP_list_hub_colour(colour,&page,buffer,bufsize);
 RETURN_STRING(buffer,1);
 }
 
