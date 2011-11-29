@@ -59,9 +59,9 @@ static pid_t Nova_ScanList(struct Item *list,struct Attributes a,struct Promise 
 static void Nova_SequentialScan(struct Item *masterlist, struct Attributes a, struct Promise *pp);
 static void Nova_ParallelizeScan(struct Item *masterlist,struct Attributes a,struct Promise *pp);
 static void SplayLongUpdates(void);
-
-static void CreateMaintenanceProcess(void);
 static void ScheduleRunMaintenanceJobs(void);
+static pid_t Nova_Maintain(pid_t maintainer_pid);
+static bool IsMaintainerProcRunning(pid_t maintainer_pid);
 
 #ifdef HAVE_LIBMONGOC
 static void Nova_CreateHostID(mongo_connection *dbconnp, char *hostID, char *ipaddr);
@@ -706,6 +706,7 @@ void Nova_StartHub(int argc,char **argv)
   struct Promise *pp = NewPromise("hub_cfengine","the aggregator"); 
   struct Attributes a = {{0}};
   struct CfLock thislock;
+  pid_t maintainer_pid = CF_UNDEFINED;
 
 Banner("Starting hub core");
 
@@ -742,8 +743,6 @@ signal(SIGUSR2,HandleSignals);
 
 umask(077);
 
-CreateMaintenanceProcess();
-
 while (true)
    {
    time_to_run = ScheduleRun();
@@ -756,6 +755,7 @@ while (true)
       if (!FEDERATION)  // FEDERATION is for Constellation Mission Observatory
          {
          Nova_CollectReports(a,pp);
+         maintainer_pid = Nova_Maintain(maintainer_pid);
          }
       
 #ifdef HAVE_CONSTELLATION
@@ -764,6 +764,11 @@ while (true)
          Constellation_CollectFederatedReports(FEDERATION);
          }
 #endif
+      }
+
+   if(!IsMaintainerProcRunning(maintainer_pid))
+      {
+      maintainer_pid = CF_UNDEFINED;
       }
    
    CfOut(cf_verbose,"","Sleeping...");
@@ -786,7 +791,14 @@ if (CFDB_QueryIsMaster())  // relevant if we are part of mongo replica set
    struct Item *masterhostlist = Nova_ScanClients();
 
    Nova_Scan(masterhostlist,a,pp);
-   DeleteItemList(masterhostlist);   
+   DeleteItemList(masterhostlist);
+   
+   if (CFH_ZENOSS && IsDefinedClass("Min00_05"))
+      {
+      Nova_ZenossSummary(DOCROOT);
+      }
+   
+   Nova_CountMonitoredClasses();
    }
 else
    {
@@ -963,6 +975,7 @@ child_id = fork();
 
 if (child_id == 0)
    {
+   // Am child
    ALARM_PID = -1;
 
    Nova_SequentialScan(list, a, pp);
@@ -1068,7 +1081,6 @@ return true;
 }
 
 #endif /* HAVE_LIBMONGOC */
-
 
 /*********************************************************************/
 
@@ -1361,64 +1373,89 @@ fclose(fout);
 }
 
 /*********************************************************************/
+static pid_t Nova_Maintain(pid_t maintainer_pid)
 
-static void CreateMaintenanceProcess(void)
-{
- pid_t child_id = fork();
+{ pid_t child_id = maintainer_pid;;
 
- if (child_id == 0)
-    {
-    ALARM_PID = -1;
+if(IsMaintainerProcRunning(child_id))
+   {
+   return child_id;
+   }
 
-    ScheduleRunMaintenanceJobs();
-    // never returns
-    exit(0);
-    }
+if (ShiftChange())
+   {   
+   NewClass("am_policy_hub");
+   
+   child_id = fork();
+   
+   if (child_id == 0)
+      {
+      ALARM_PID = -1;
+      
+      ScheduleRunMaintenanceJobs();
+      _exit(0);
+      }
+   else
+      {
+      CfOut(cf_verbose,""," -> Started new Maintainer process (pid = %d)",child_id);
+
+      if(LOGGING)
+         {
+         char msg[CF_MAXVARSIZE];
+         snprintf(msg,CF_MAXVARSIZE,"-> Started new Maintainer process (pid = %d)\n",child_id);
+         Nova_HubLog(msg);
+         }
+      
+      return child_id;
+      }
+   }
+
+return CF_UNDEFINED;  // NO ShiftChange and Maintainer process is NOT running
 }
-
 /*********************************************************************/
-
 static void ScheduleRunMaintenanceJobs(void)
-// NOTE: run as separate thread/process, do not use global vars here
-//       (e.g. classes)
-{
- time_t lastCacheTimeStamp = 0;
- time_t lastZenossTimeStamp = 0;
- 
- while(true)
-    {
-    time_t now = time(NULL);
-    
-    if (now - lastCacheTimeStamp > SECONDS_PER_HOUR * 6)
-       {
-       CfOut(cf_verbose,""," -> Scanning total compliance cache and doing db maintenance");
-       Nova_CacheTotalCompliance(true);
-       CFDB_Maintenance();
-       
-       lastCacheTimeStamp = now;
-       }
-    
-    if (CFH_ZENOSS && (now - lastZenossTimeStamp > SECONDS_PER_HOUR))
-       {
-       Nova_ZenossSummary(DOCROOT);
-       
-       lastZenossTimeStamp = now;
-       }
-    
-    Nova_CountMonitoredClasses();
 
-    if(LOGGING)
-       {
-       char msg[CF_MAXVARSIZE];
-       snprintf(msg, sizeof(msg), "Last maintenance took %ld seconds", time(NULL) - now);
-       Nova_HubLog(msg);
-       }
-    
-    sleep(SECONDS_PER_MINUTE * 5);
-    }
+{  time_t now = time(NULL);
+
+CfOut(cf_verbose,""," -> Scanning total compliance cache and doing db maintenance");
+Nova_CacheTotalCompliance(true);
+CFDB_Maintenance();
+
+if(LOGGING)
+   {
+   char msg[CF_MAXVARSIZE];
+   snprintf(msg, sizeof(msg), "Last maintenance took %ld seconds", time(NULL) - now);
+   Nova_HubLog(msg);
+   }
 }
+/********************************************************************/
 
+static bool IsMaintainerProcRunning(pid_t maintainer_pid)
 
+{ pid_t pid;
+ int status = 0;
+ bool retval = false;
+
+if(maintainer_pid > 0)
+   {
+   pid = waitpid(maintainer_pid, &status, WNOHANG);
+
+   if(pid == 0)
+      {      
+      retval = true;
+      }
+
+   if(LOGGING)
+      {
+      char msg[CF_MAXVARSIZE];
+      snprintf(msg,CF_MAXVARSIZE,"Checking if Maintainer process is running (pid:running(0/1)?) = (%d:%d)\n", maintainer_pid, retval);
+      Nova_HubLog(msg);
+      }   
+   }
+
+return retval;
+}
+/********************************************************************/
 #endif  /* NOT MINGW */
-
+ 
 /* EOF */
