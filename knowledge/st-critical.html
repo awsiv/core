@@ -225,7 +225,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <li><a accesskey="8" href="#Redundant-hub-architecture">Redundant hub architecture</a>
 <li><a accesskey="9" href="#How-do-I-make-a-change-in-mission_002dcritical-infrastructure_003f">How do I make a change in mission-critical infrastructure?</a>
 <li><a href="#Separating-Policy-Changes-from-ad_002dhoc-Changes">Separating Policy Changes from ad-hoc Changes</a>
-<li><a href="#Appendix">Appendix</a>
+<li><a href="#Appendix-1">Appendix 1</a>
+<li><a href="#Appendix-2">Appendix 2</a>
 </ul>
 
    <p><a href="#Contents"><h1>COMPLETE TABLE OF CONTENTS</h1></a>
@@ -886,7 +887,7 @@ hosts within a timeframe of 5 to 10 minutes.
 <a name="Separating-Policy-Changes-from-ad-hoc-Changes"></a>
 <a name="Separating-Policy-Changes-from-ad_002dhoc-Changes"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Appendix">Appendix</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Appendix-1">Appendix 1</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#How-do-I-make-a-change-in-mission_002dcritical-infrastructure_003f">How do I make a change in mission-critical infrastructure?</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
@@ -935,14 +936,15 @@ form for your convenience.
    </td></tr></table>
 
 <div class="node">
-<a name="Appendix"></a>
+<a name="Appendix-1"></a>
 <p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Appendix-2">Appendix 2</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Separating-Policy-Changes-from-ad_002dhoc-Changes">Separating Policy Changes from ad-hoc Changes</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h3 class="section">Appendix MongoDB access from the command line.</h3>
+<h3 class="unnumberedsec">Appendix MongoDB access from the command line.</h3>
 
 <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
 <b>Using more than one hub at a time</b>:
@@ -979,6 +981,56 @@ CFEngineNova:SECONDARY> db.notebook.find();
 </pre>
 </td></tr></table>
 
+<div class="node">
+<a name="Appendix-2"></a>
+<p><hr>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Appendix-1">Appendix 1</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<h3 class="unnumberedsec">Appendix Shutting down Mongo with replication</h3>
+
+<p>Anytime you shutdown mongo, it will automatically failover. You can~t
+specifically tell which node to become primary, but you can use
+replFreeze and replSetStepDown to alter which is eligible to become
+primary (small difference).
+
+   <p>Basically we would freeze a node from becoming primary, then tell the
+primary to step down, which leaves only one node (see
+<a href="http://www.mongodb.org/display/DOCS/Forcing+a+Member+to+be+Primary">http://www.mongodb.org/display/DOCS/Forcing+a+Member+to+be+Primary</a> for
+a good explanation).
+
+   <p>However, failover is the easy part. The other half to the action is
+that all client will receive a new policy_server.dat based on the new
+primary. This will create quite a flux in the system for a bit as it
+reconfigure. This will take 10-20 minutes for everyone to stabilize. I
+would reserve a full failover for when the primary will be down for an
+extended period of time.
+
+   <p>Since the outages you have are fairly quick, I would just shutdown
+mongo/cfengine (or freeze) the secondaries to prevent a
+failover. Shutting them down would prevent all client from getting new
+files, but that shouldn~t be an issue.
+
+   <p>If you freeze the secondaries, and leave CFE runnning, the clients
+will update from the secondaries (they will get a license error).
+
+   <p>To freeze the secondaries:
+
+   <p>On any node:
+<pre class="verbatim"># mongo -host `IP OF THE SECONDARY' # or login to the node and run plain ´mongo¡.
+> rs.status()                       # this will show the status of the replicaSet
+> rs.freeze(seconds)                # how many seconds before the host can become primary.
+> exit
+</pre>
+
+   <p>Set the freeze for several hours (for four hours -
+&lsquo;<samp><span class="samp">rs.freeze(14400)</span></samp>&rsquo;). Then shutdown cfengine on the primary as normal
+(<code>/etc/init.d/cfengine3 stop</code>). When you are done with the change, bring
+up cfengine (<code>cf-agent -f failsafe.cf</code>), then set the freeze time for 0
+seconds to unfreeze it (&lsquo;<samp><span class="samp">rs.freeze(0)</span></samp>&rsquo;).
+
    <p><a name="Contents">
    <div class="contents">
 <h2>Table of Contents</h2>
@@ -1002,7 +1054,8 @@ CFEngineNova:SECONDARY> db.notebook.find();
 </li></ul>
 <li><a href="#How-do-I-make-a-change-in-mission_002dcritical-infrastructure_003f">How do I make a change in mission-critical infrastructure?</a>
 <li><a href="#Separating-Policy-Changes-from-ad_002dhoc-Changes">Separating Policy Changes from <i>ad-hoc</i> Changes</a>
-<li><a href="#Appendix">Appendix MongoDB access from the command line.</a>
+<li><a href="#Appendix-1">Appendix MongoDB access from the command line.</a>
+<li><a href="#Appendix-2">Appendix Shutting down Mongo with replication</a>
 </li></ul>
 </li></ul>
 </div>
