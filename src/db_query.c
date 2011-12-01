@@ -5514,7 +5514,7 @@ struct Item *CFDB_QueryCdpAcls(mongo_connection *conn, char *sep)
        {
        if (strcmp(bson_iterator_key(&it1), cfp_promiser_exp) == 0)
           {
-          snprintf(path,sizeof(path),"%s",bson_iterator_string(&it1));
+          EscapeJson((char*)bson_iterator_string(&it1),path,sizeof(path));
           }
        else if (strcmp(bson_iterator_key(&it1), cfp_handle_exp) == 0)
           {
@@ -5699,7 +5699,7 @@ struct Item *CFDB_QueryCdpPromiser(mongo_connection *conn, char *sep, char *bund
        {
        if (strcmp(bson_iterator_key(&it1), cfp_promiser_exp) == 0)
           {
-          snprintf(path,sizeof(path),"%s",bson_iterator_string(&it1));
+          EscapeJson((char*)bson_iterator_string(&it1),path,sizeof(path));
           }
        else if (strcmp(bson_iterator_key(&it1), cfp_handle_exp) == 0)
           {
@@ -5878,7 +5878,7 @@ struct Item *CFDB_QueryCdpRegistry(mongo_connection *conn, char *sep)
        {
        if (strcmp(bson_iterator_key(&it1), cfp_promiser_exp) == 0)
           {
-          snprintf(key,sizeof(key),"%s",bson_iterator_string(&it1));
+          EscapeJson((char*)bson_iterator_string(&it1),key,sizeof(key));
           }
        else if (strcmp(bson_iterator_key(&it1), cfp_handle_exp) == 0)
           {

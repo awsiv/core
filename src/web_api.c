@@ -5597,7 +5597,7 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, struct PageInfo *page, 
  char thenStr[CF_SMALLBUF] = {0};
  char cause[CF_MAXVARSIZE] = {0};
  char statusStr[CF_SMALLBUF];
- char lastChangeStr[CF_SMALLBUF], jsonLastChangeStr[CF_SMALLBUF]={0};
+ char lastChangeStr[CF_SMALLBUF];
  char *urlReportName = "";
  time_t then = 0, now;
  char attributes[CF_MAXVARSIZE] = {0};
@@ -5679,7 +5679,7 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, struct PageInfo *page, 
             
                 row[0]='\0';
                 lastChangeStr[0]='\0';
-                jsonLastChangeStr[0]='\0';
+
                 char fileChangePath[CF_MAXVARSIZE];
                 
                 switch(cdpType)  // include special fields
