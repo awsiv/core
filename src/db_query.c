@@ -5699,7 +5699,7 @@ struct Item *CFDB_QueryCdpPromiser(mongo_connection *conn, char *sep, char *bund
        {
        if (strcmp(bson_iterator_key(&it1), cfp_promiser_exp) == 0)
           {
-          EscapeJson((char*)bson_iterator_string(&it1),path,sizeof(path));
+          snprintf(path,sizeof(path),"%s",bson_iterator_string(&it1));
           }
        else if (strcmp(bson_iterator_key(&it1), cfp_handle_exp) == 0)
           {
