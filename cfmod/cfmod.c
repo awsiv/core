@@ -112,7 +112,6 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_list_handles_for_bundle,NULL)
     PHP_FE(cfpr_get_handles_for_bundle_with_comments,NULL)
     PHP_FE(cfpr_get_promise_comment,NULL)
-    PHP_FE(cfpr_get_help_text,NULL)
     PHP_FE(cfpr_get_promise_bundle,NULL)
     PHP_FE(cfpr_get_promise_type,NULL)
     PHP_FE(cfpr_get_promiser,NULL)
@@ -183,10 +182,6 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_show_topic_hits,NULL)
     PHP_FE(cfpr_show_topic_category,NULL)
     PHP_FE(cfpr_get_pid_for_topic,NULL)
-   
-    PHP_FE(cfpr_header,NULL)
-    PHP_FE(cfpr_footer,NULL)
-    PHP_FE(cfpr_menu,NULL)
 
     /*
      * For pdf generation
@@ -627,56 +622,6 @@ PHP_FUNCTION(cfpr_community_version)
  buf[0] = '\0';
  Nova2PHP_community_version(buf,bufsize);
  RETURN_STRING(buf,1);
-}
-
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_header)
-
-{ char *title,*device;
-  int t_len, d_len;
-  const int bufsize = 512*1024; 
-  char buffer[bufsize];
-
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&title,&t_len,&device,&d_len) == FAILURE)
-   {
-   php_printf("Error is cfpr_header args");
-   RETURN_NULL();
-   }
-
-Nova_Header(title,device,buffer,bufsize);
-//php_printf("%s\n",buffer);
-//Nova_TabMenu(buffer,bufsize);
-php_printf("%s\n",buffer);
-}
-
-/******************************************************************************/
-PHP_FUNCTION(cfpr_menu)
-
-{ char *title,*device;
- int t_len, d_len;
- const int bufsize = 512*1024; 
- char buffer[bufsize];
-
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&title,&t_len) == FAILURE)
-    {
-    php_printf("Error is cfpr_menu args");
-    RETURN_NULL();
-    }
-
- Nova_TabMenu(title,buffer,bufsize);
- php_printf("%s\n",buffer);
-}
-
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_footer)
-
-{ const int bufsize = 512*1024; 
- char buffer[bufsize];
-
- Nova_Footer(buffer,bufsize);
- php_printf("%s\n",buffer);
 }
 
 /******************************************************************************/
@@ -3280,22 +3225,6 @@ PHP_FUNCTION(cfpr_get_promise_comment)
     }
 
  RETURN_STRING(Nova2PHP_GetPromiseComment(handle),1);
-}
-
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_get_help_text)
-
-{ char *key;
-  int hk_len;
-  
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&key,&hk_len) == FAILURE)
-   {
-   php_printf("Error in cfpr_get_promise_comment args");
-   RETURN_NULL();
-   }
-
-RETURN_STRING(Nova2PHP_get_help_text(key),1);
 }
 
 /******************************************************************************/
