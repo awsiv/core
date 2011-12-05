@@ -566,7 +566,7 @@ void Nova_ShowTopicRepresentation(FILE *fp)
     
 { int i,j,k,l;
   struct SubTypeSyntax *ss;
-  struct BodySyntax *bs,*bs2;
+  const struct BodySyntax *bs,*bs2;
   void *retval;
   char rettype;
   static char *level[] = { "high", "low", "normal", NULL };

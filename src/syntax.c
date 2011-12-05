@@ -175,7 +175,7 @@ for (i = 0; i < CF3_MODULES; i++)
 
 /*******************************************************************/
 
-void Nova_ShowBodyParts(struct BodySyntax *bs,int indent)
+void Nova_ShowBodyParts(const struct BodySyntax *bs,int indent)
 
 { int i;
   int closeBrack = false;
