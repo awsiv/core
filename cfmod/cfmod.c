@@ -24,6 +24,11 @@
 
 #include "rlist.h"
 
+/* PHP has HAVE_LCHOWN in php_config.h */
+#ifdef HAVE_LCHOWN
+# undef HAVE_LCHOWN
+#endif
+
 #include "php.h"
 #include "php_ini.h"
 #include "ext/standard/info.h"
