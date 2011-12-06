@@ -23,7 +23,7 @@ static HANDLE logHandle = NULL;
 extern int FACILITY;
 
 /* We use Event Logging on widows. */
-void NovaWin_MakeLog(struct Item *mess, enum cfreport level)
+void MakeLog(struct Item *mess, enum cfreport level)
 {
  WORD eventType;
  DWORD eventId;
@@ -95,10 +95,10 @@ void NovaWin_MakeLog(struct Item *mess, enum cfreport level)
 
 /*****************************************************************************/
 
-void NovaWin_OpenLog(int facility)
+void OpenLog(int facility)
 {
-  
- if(!NovaWin_CheckRegistryLogKey())
+
+ if(!CheckRegistryLogKey())
     {
     CfOut(cf_error, "", "!! Could not check for logging key in registry");
     return;
@@ -116,7 +116,7 @@ FACILITY = facility;
 
 /*****************************************************************************/
 
-int NovaWin_CheckRegistryLogKey()
+static int CheckRegistryLogKey(void)
 {
  long openRes;
  HKEY keyHandle;
@@ -206,7 +206,7 @@ int NovaWin_CheckRegistryLogKey()
 
 /*****************************************************************************/
 
-void NovaWin_CloseLog(void)
+void CloseLog(void)
 {
  if(logHandle != NULL)
     {
@@ -227,7 +227,7 @@ void NovaWin_CloseLog(void)
 
 /* Logs promise result. CfOut() should not be called here due to risk of 
  * infinite recursion. */
-void NovaWin_LogPromiseResult(char *promiser, char peeType, void *promisee, char status, enum cfreport log_level, struct Item *mess)
+void LogPromiseResult(char *promiser, char peeType, void *promisee, char status, enum cfreport log_level, struct Item *mess)
 {
  char *strMsg, *strPromisee;
  char *insertStrings[6] = {0};
@@ -237,7 +237,7 @@ void NovaWin_LogPromiseResult(char *promiser, char peeType, void *promisee, char
  struct Rlist *rp;
  int peebCopied = 0;
 
- if(!BOOTSTRAP && !Nova_CheckLicenseWin("NovaWin_LogPromiseResult"))
+ if(!BOOTSTRAP && !Nova_CheckLicenseWin("LogPromiseResult"))
     {
     return;
     }

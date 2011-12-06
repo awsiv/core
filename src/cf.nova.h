@@ -1124,11 +1124,10 @@ int NovaWin_GetNumHardlinks(char *path, int *numHardLinks);
 
 /* win_log.c */
 
-void NovaWin_OpenLog(int facility);
-int NovaWin_CheckRegistryLogKey(void);
-void NovaWin_CloseLog(void);
-void NovaWin_MakeLog(struct Item *mess,enum cfreport level);
-void NovaWin_LogPromiseResult(char *promiser, char peeType, void *promisee, char status, enum cfreport log_level, struct Item *mess);
+void OpenLog(int facility);
+void MakeLog(struct Item *mess,enum cfreport level);
+void LogPromiseResult(char *promiser, char peeType, void *promisee, char status, enum cfreport log_level, struct Item *mess);
+void CloseLog(void);
 
 /* win_mon.c */
 
