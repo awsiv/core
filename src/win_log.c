@@ -18,6 +18,8 @@ This file is (C) Cfengine AS. See LICENSE for details.
 
 #ifdef MINGW
 
+static int CheckRegistryLogKey(void);
+
 static HANDLE logHandle = NULL;
 
 extern int FACILITY;
