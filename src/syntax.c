@@ -328,7 +328,7 @@ for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
    Nova_Indent(6);
    printf("{\n");
    Nova_Indent(6);
-   printf("args: %d,\n",CF_FNCALL_TYPES[i].numargs);
+   printf("args: %d,\n",FnNumArgs(&CF_FNCALL_TYPES[i]));
    Nova_Indent(6);
    printf("description: \"%s\"\n",CF_FNCALL_TYPES[i].description);
    Nova_Indent(6);
