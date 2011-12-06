@@ -2908,7 +2908,7 @@ PHP_FUNCTION(cfpr_select_hosts)
 PHP_FUNCTION(cfpr_select_reports)
 
 {  const int bufsize = 100000; 
- const char buffer[bufsize];
+ char buffer[bufsize];
  char *policy;
 
 // buffer[0] = '\0';
