@@ -1512,7 +1512,7 @@ void Nova_GenerateTestData(int count)
  DeleteRlist(total);
  printf("%d test machines added\n",hostCount-startFrom);
 #else
- printf(stderr, "Test data generation requires MongoDB support\n");
+ fprintf(stderr, "Test data generation requires MongoDB support\n");
 #endif
 }
 /*********************************************************************/
