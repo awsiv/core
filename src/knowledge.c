@@ -181,7 +181,7 @@ void Nova_SyntaxCompletion(char *s)
 { int i,j,k,l,m;
   struct SubTypeSyntax *ss;
   struct BodySyntax *bs,*bs2 = NULL;
-  FnCallType *fn;
+  const FnCallType *fn;
 
 if (EnterpriseExpiry())
    {
@@ -903,10 +903,10 @@ for (i = 0; CF_FNCALL_TYPES[i].name != NULL; i++)
 
 /*****************************************************************************/
 
-void Nova_ListFunction(struct FnCallType *f,int full)
+void Nova_ListFunction(const FnCallType *f,int full)
 
 { int j;
-  struct FnCallArg *args = f->args;
+  const FnCallArg *args = f->args;
  
 switch (f->dtype)
    {
