@@ -289,8 +289,6 @@ char *Nova_GetRemoteScalar(char *proto,char *handle,char *server,int encrypted,c
   struct Attributes a = {{0}};
   struct Promise *pp = NewPromise("remotescalar","handle");
   char peer[CF_MAXVARSIZE];
-  struct Rlist *rp;
-  struct ServerItem *svp;
  
 a.copy.portnumber = (short)Nova_ParseHostname(server,peer);
 a.copy.trustkey = false;
@@ -377,27 +375,7 @@ if (encrypted)
       }
    }
 
-for (rp = SERVERLIST; rp != NULL; rp = rp->next)
-   {
-   svp = (struct ServerItem *)rp->item;
-
-   if (svp == NULL)
-      {
-      continue;
-      }
-   
-   ServerDisconnection(svp->conn);
-   
-   if (svp->server)
-      {
-      free(svp->server);
-      }
-   
-   rp->item = NULL;
-   }
-
-DeleteRlist(SERVERLIST);
-SERVERLIST = NULL;
+ConnectionsCleanup();
 
 DeleteRlist(a.copy.servers);
 DeletePromise(pp);
