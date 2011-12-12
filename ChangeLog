@@ -2,7 +2,8 @@
 	Greatly reduced amount of connections from cf-hub
 	to localhost mongodb. Now there is one connection per
 	cf-hub run (max 50), before it was three per client.
-
+	
+	Software and variable report now contains end-node discovery time.
 
 2.1.0 
 	New interface with interactive graphs on Nova hub.
