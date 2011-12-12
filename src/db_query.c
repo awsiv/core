@@ -503,8 +503,8 @@ while (mongo_cursor_next(cursor))
    hostnames[0] = '\0';
    addresses[0] = '\0';
 //   lastSeen = 0;
+   hh = NULL;
    found = false;
-   hh = CreateEmptyHubHost();
    
    while (bson_iterator_next(&it1))
       {
@@ -588,21 +588,24 @@ while (mongo_cursor_next(cursor))
                if (match_name && match_version && match_arch)
                   {
                   found = true;
+
+                  if(!hh)
+                     {
+                     hh = CreateEmptyHubHost();
+                     }
+
                   rp = PrependRlistAlien(&record_list,NewHubSoftware(hh,rname,rversion,rarch,lastSeen));
-		}
+                  }
                }               
             }
-         }   
+         }
+      printf("lastSeen=%d\n", lastSeen);
       }
    
    if (found)
       {
       UpdateHubHost(hh,keyhash,addresses,hostnames);
       PrependRlistAlien(&host_list,hh);
-      }
-   else
-      {
-      DeleteHubHost(hh);
       }
    }
 
@@ -693,7 +696,7 @@ while (mongo_cursor_next(cursor))
    addresses[0] = '\0';
    rclass[0] = '\0';
    found = false;
-   hh = CreateEmptyHubHost();
+   hh = NULL;
    
    while (bson_iterator_next(&it1))
       {
@@ -752,6 +755,12 @@ while (mongo_cursor_next(cursor))
             if (match_class && (now - rtime < horizon))
                {
                found = true;
+               
+               if(!hh)
+                  {
+                  hh = CreateEmptyHubHost();
+                  }
+               
                rp = PrependRlistAlien(&record_list,NewHubClass(hh,rclass,rex,rsigma,rtime));
                }            
             }
@@ -762,10 +771,6 @@ while (mongo_cursor_next(cursor))
        {
        UpdateHubHost(hh,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
-       }
-    else
-       {
-       DeleteHubHost(hh);
        }
    }
 
@@ -1257,12 +1262,13 @@ struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,
     keyhash[0] = '\0';
     hostnames[0] = '\0';
     addresses[0] = '\0';
-    hh = CreateEmptyHubHost();
+    found = false;
+    hh = NULL;
     
     while (bson_iterator_next(&it1))
        {
        CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
-       found = false;
+
       
        if (strcmp(bson_iterator_key(&it1),cfr_total_compliance) == 0)
           {
@@ -1361,6 +1367,12 @@ struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,
              if (match_kept && match_notkept && match_repaired && match_t && match_version)
                 {
                 found = true;
+
+                if(!hh)
+                   {
+                   hh = CreateEmptyHubHost();
+                   }
+                
                 rp = PrependRlistAlien(&record_list,NewHubTotalCompliance(hh,rt,rversion,rkept,rrepaired,rnotkept));
                 }
              }
@@ -1371,10 +1383,6 @@ struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,
        {
        UpdateHubHost(hh,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
-       }
-    else
-       {
-       DeleteHubHost(hh);
        }
     }
 
@@ -1464,12 +1472,12 @@ struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *
     keyhash[0] = '\0';
     hostnames[0] = '\0';
     addresses[0] = '\0';
-    hh = CreateEmptyHubHost();
+    hh = NULL;
+    found = false;
    
     while (bson_iterator_next(&it1))
        {
        CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
-       found = false;
 
        rlval[0] = '\0';
        rrval = NULL;
@@ -1590,6 +1598,12 @@ struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *
                 if (match_type && match_scope && match_lval && match_rval)
                    {
                    found = true;
+
+                  if(!hh)
+                     {
+                     hh = CreateEmptyHubHost();
+                     }
+                   
                    rp = PrependRlistAlien(&record_list,NewHubVariable(hh,dtype,rscope,rlval,rrval,rtype,rt));
                    }
                 else
@@ -1618,10 +1632,6 @@ struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *
        {
        UpdateHubHost(hh,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
-       }
-    else
-       {
-       DeleteHubHost(hh);
        }
     }
 
@@ -1706,7 +1716,7 @@ struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHas
     addresses[0] = '\0';
     rhandle[0] = '\0';
     found = false;
-    hh = CreateEmptyHubHost();
+    hh = NULL;
    
     while (bson_iterator_next(&it1))
        {
@@ -1782,6 +1792,12 @@ struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHas
              if (match_handle && match_status && match_time)
                 {
                 found = true;
+
+                if(!hh)
+                   {
+                   hh = CreateEmptyHubHost();
+                   }
+                
                 rp = PrependRlistAlien(&record_list,NewHubCompliance(hh,rhandle,rstatus,rex,rsigma,rtime));
                 }            
              }
@@ -1792,10 +1808,6 @@ struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHas
        {
        UpdateHubHost(hh,keyHashDb,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
-       }
-    else
-       {
-       DeleteHubHost(hh);
        }
     }
 
@@ -1890,7 +1902,7 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *l
     rhost[0] = '\0';
     found = false;
     list_start = NULL;
-    hh = CreateEmptyHubHost();
+    hh = NULL;
    
     while (bson_iterator_next(&it1))
        {
@@ -1988,6 +2000,12 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *l
              if (match_hash && match_host && match_addr && match_ago)
                 {
                 found = true;
+
+                if(!hh)
+                   {
+                   hh = CreateEmptyHubHost();
+                   }
+                
                 PrependRlistAlien(&record_list,NewHubLastSeen(hh,*rhash,rhash+1,rhost,raddr,rago,ravg,rdev,rt));
                 }
              }
@@ -1998,10 +2016,6 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *l
        {
        UpdateHubHost(hh,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
-       }
-    else
-       {
-       DeleteHubHost(hh);
        }
     }
 
@@ -2053,7 +2067,7 @@ struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query,char *db)
     hostnames[0] = '\0';
     addresses[0] = '\0';
     found = false;
-    hh = CreateEmptyHubHost();
+    hh = NULL;
    
     while (bson_iterator_next(&it1))
        {
@@ -2088,6 +2102,12 @@ struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query,char *db)
                 }
 
              found = true;
+
+             if(!hh)
+                {
+                hh = CreateEmptyHubHost();
+                }
+             
              rp = PrependRlistAlien(&record_list,NewHubMeter(hh,*rcolumn,rkept,rrepaired));
              }
           }   
@@ -2097,10 +2117,6 @@ struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query,char *db)
        {
        UpdateHubHost(hh,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
-       }
-    else
-       {
-       DeleteHubHost(hh);
        }
     }
 
@@ -2185,7 +2201,7 @@ struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char
     hostnames[0] = '\0';
     addresses[0] = '\0';
     found = false;
-    hh = CreateEmptyHubHost();
+    hh = NULL;
    
     while (bson_iterator_next(&it1))
        {
@@ -2259,6 +2275,12 @@ struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char
              if (match_name)
                 {
                 found = true;
+
+                if(!hh)
+                   {
+                   hh = CreateEmptyHubHost();
+                   }
+                
                 rp = PrependRlistAlien(&record_list,NewHubPerformance(hh,rname,rtime,rq,rex,rsigma,noteid,rhandle));
                 }
              }
@@ -2269,10 +2291,6 @@ struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char
        {
        UpdateHubHost(hh,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
-       }
-    else
-       {
-       DeleteHubHost(hh);
        }
     }
 
@@ -2358,7 +2376,7 @@ struct HubQuery *CFDB_QuerySetuid(mongo_connection *conn,char *keyHash,char *lna
     hostnames[0] = '\0';
     addresses[0] = '\0';
     found = false;
-    hh = CreateEmptyHubHost();
+    hh = NULL;
    
     while (bson_iterator_next(&it1))
        {
@@ -2393,6 +2411,12 @@ struct HubQuery *CFDB_QuerySetuid(mongo_connection *conn,char *keyHash,char *lna
              if (match_name)
                 {
                 found = true;
+
+                if(!hh)
+                   {
+                   hh = CreateEmptyHubHost();
+                   }
+                
                 rp = PrependRlistAlien(&record_list,NewHubSetUid(hh,rname));
                 }
              }
@@ -2404,11 +2428,6 @@ struct HubQuery *CFDB_QuerySetuid(mongo_connection *conn,char *keyHash,char *lna
        UpdateHubHost(hh,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
        }
-    else
-       {
-       DeleteHubHost(hh);
-       }
-
     }
 
  mongo_cursor_destroy(cursor);
@@ -2502,7 +2521,7 @@ struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char
     hostnames[0] = '\0';
     addresses[0] = '\0';
     found = false;
-    hh = CreateEmptyHubHost();
+    hh = NULL;
    
     while (bson_iterator_next(&it1))
        {
@@ -2572,6 +2591,12 @@ struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char
              if (match_name && match_t)
                 {
                 found = true;
+
+                if(!hh)
+                   {
+                   hh = CreateEmptyHubHost();
+                   }
+                
                 rp = PrependRlistAlien(&record_list,NewHubFileChanges(hh,rname,rt,noteid,handle));
                 }
              }
@@ -2582,10 +2607,6 @@ struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char
        {
        UpdateHubHost(hh,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
-       }
-    else
-       {
-       DeleteHubHost(hh);
        }
     }
 
@@ -2685,7 +2706,7 @@ struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *l
     hostnames[0] = '\0';
     addresses[0] = '\0';
     found = false;
-    hh = CreateEmptyHubHost();
+    hh = NULL;
    
     while (bson_iterator_next(&it1))
        {
@@ -2763,6 +2784,12 @@ struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *l
              if (match_name && match_diff && match_t)
                 {
                 found = true;
+
+                if(!hh)
+                   {
+                   hh = CreateEmptyHubHost();
+                   }
+                
                 rp = PrependRlistAlien(&record_list,NewHubFileDiff(hh,rname,rdiff,rt));
                 }
              }
@@ -2773,10 +2800,6 @@ struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *l
        {
        UpdateHubHost(hh,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
-       }
-    else
-       {
-       DeleteHubHost(hh);
        }
     }
 
@@ -3060,7 +3083,7 @@ while (mongo_cursor_next(cursor))
    hostnames[0] = '\0';
    addresses[0] = '\0';
    found = false;
-   hh = CreateEmptyHubHost();
+   hh = NULL;
    
    while (bson_iterator_next(&it1))
       {
@@ -3129,6 +3152,12 @@ while (mongo_cursor_next(cursor))
             if (match_day && match_month && match_year)
                {
                found = true;
+
+               if(!hh)
+                  {
+                  hh = CreateEmptyHubHost();
+                  }
+               
                rp = PrependRlistAlien(&record_list,NewHubValue(hh,rday,rkept,rrepaired,rnotkept,noteid,rhandle));
                }
             }
@@ -3139,10 +3168,6 @@ while (mongo_cursor_next(cursor))
       {
       UpdateHubHost(hh,keyhash,addresses,hostnames);
       PrependRlistAlien(&host_list,hh);
-      }
-   else
-      {
-      DeleteHubHost(hh);
       }
    }
 
@@ -3233,7 +3258,7 @@ while (mongo_cursor_next(cursor))
    hostnames[0] = '\0';
    addresses[0] = '\0';
    found = false;
-   hh = CreateEmptyHubHost();
+   hh = NULL;
    
    while (bson_iterator_next(&it1))
       {
@@ -3310,6 +3335,12 @@ while (mongo_cursor_next(cursor))
             if (match_day && match_month && match_year)
                {
                found = true;
+
+               if(!hh)
+                  {
+                  hh = CreateEmptyHubHost();
+                  }
+               
 	       rp = PrependRlistAlien(&record_list,NewHubValue(hh,rday,rkept,rrepaired,rnotkept,"",""));
                }
             }
@@ -3320,10 +3351,6 @@ while (mongo_cursor_next(cursor))
       {
       UpdateHubHost(hh,keyhash,addresses,hostnames);
       PrependRlistAlien(&host_list,hh);
-      }
-   else
-      {
-      DeleteHubHost(hh);
       }
    }
 
@@ -3414,7 +3441,7 @@ while (mongo_cursor_next(cursor))
    rname[0] = '\0';
    found = false;
    rt = 0;
-   hh = CreateEmptyHubHost();
+   hh = NULL;
    
    while (bson_iterator_next(&it1))
       {
@@ -3482,6 +3509,12 @@ while (mongo_cursor_next(cursor))
             if (match_name)
                {
                found = true;
+
+               if(!hh)
+                  {
+                  hh = CreateEmptyHubHost();
+                  }
+               
                rp = PrependRlistAlien(&record_list,NewHubBundleSeen(hh,rname,rago,ravg,rdev,rt,noteid));
                }            
             }
@@ -3492,10 +3525,6 @@ while (mongo_cursor_next(cursor))
        {
        UpdateHubHost(hh,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
-       }
-    else
-       {
-       DeleteHubHost(hh);
        }
    }
 
@@ -6396,7 +6425,7 @@ bool GetBsonBool(char *data, char *boolKey, bool *val)
 
  return found;
 } 
- 
+
 /*****************************************************************************/
 
 bool MongoCheckForError(mongo_connection *conn, const char *operation, const char *extra, bool *checkUpdate)
@@ -7517,6 +7546,7 @@ int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
  bson_destroy(&result);
  return ret;
 }
+
 /*************************************************/
 
 #endif  /* HAVE LIBMONGOC */
