@@ -541,7 +541,9 @@ void GetReportKeyMapping(int reportType, char *key, char *retBuf, int retBufSz);
 
 void CFDB_Maintenance(void);
 void CFDB_ReIndexAll(void);
+void CFDB_ConnectAndEnsureIndices(void);
 #ifdef HAVE_LIBMONGOC
+void CFDB_EnsureIndices(mongo_connection *conn);
 void CFDB_PurgeDropReports(mongo_connection *conn);
 void CFDB_PurgeTimestampedReports(mongo_connection *conn);
 void CFDB_PurgeTimestampedLongtermReports(mongo_connection *conn);

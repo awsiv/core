@@ -2502,6 +2502,8 @@ void Nova_ImportReports(const char *input_file)
        exit(0);
        }
 
+    CFDB_EnsureIndices(&dbconn);
+
     if(Nova_ImportHostReports(&dbconn, input_file))
        {
        GenericDeInitialize();

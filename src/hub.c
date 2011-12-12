@@ -743,6 +743,10 @@ signal(SIGUSR2,HandleSignals);
 
 umask(077);
 
+// operating on a non-indexed database can choke the hub
+// before Nova_Maintain() gets run
+CFDB_ConnectAndEnsureIndices();
+
 while (true)
    {
    time_to_run = ScheduleRun();
