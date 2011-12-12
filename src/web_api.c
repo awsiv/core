@@ -1252,7 +1252,7 @@ int Nova2PHP_software_report(char *hostkey,char *name,char *value, char *arch,in
 
  snprintf(header,sizeof(header),
 	  "\"meta\":{\"count\" : %d,"
-	  "\"header\": {\"Host\":0,\"Name\":1,\"Version\":2,\"Architecture\":3"
+	  "\"header\": {\"Host\":0,\"Name\":1,\"Version\":2,\"Architecture\":3,\"Time discovered\":4"
 	  "}", page->totalResultCount);
 
  headerLen = strlen(header);
@@ -1263,7 +1263,9 @@ int Nova2PHP_software_report(char *hostkey,char *name,char *value, char *arch,in
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
     hs = (struct HubSoftware *)rp->item;
-    snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",\"%s\",\"%s\"],",hs->hh->hostname,hs->name,hs->version,Nova_LongArch(hs->arch));
+    snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",\"%s\",\"%s\",%ld],",
+             hs->hh->hostname,hs->name,hs->version,Nova_LongArch(hs->arch),hs->t);
+    
     margin = headerLen + noticeLen + strlen(buffer);
     if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
