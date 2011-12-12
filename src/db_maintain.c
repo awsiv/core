@@ -13,7 +13,7 @@
 #include "cf.nova.h"
 
 #ifdef HAVE_LIBMONGOC
-static void CFDB_EnsureIndices(mongo_connection *conn);
+
 static void CFDB_DropAllIndices(mongo_connection *conn);
 #endif 
 
@@ -70,16 +70,39 @@ void CFDB_ReIndexAll(void)
 
 /*****************************************************************************/
 
+void CFDB_ConnectAndEnsureIndices(void)
+{
+#ifdef HAVE_LIBMONGOC
+
+ mongo_connection dbconn;
+ 
+ if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    {
+    CfOut(cf_error,"", "!! Could not open connection to report database to check indices");
+    return;
+    }
+ 
+ CFDB_EnsureIndices(&dbconn);
+
+ CFDB_Close(&dbconn);
+ 
+#endif  /* HAVE_LIBMONGOC */
+}
+
+/*****************************************************************************/
+
 #ifdef HAVE_LIBMONGOC
 
 
-static void CFDB_EnsureIndices(mongo_connection *conn)
+void CFDB_EnsureIndices(mongo_connection *conn)
 /**
  *  Makes sure certain keys have an index to optimize querying and updating.
  **/
 {
   bson_buffer bb;
   bson b;
+
+  CfOut(cf_verbose, "", "Ensuring database indices are in place");
 
   // main host collection
 
