@@ -496,25 +496,23 @@ bson_destroy(&field);
 time_t lastSeen = 0;
 
 while (mongo_cursor_next(cursor))
-   {
+   {   
    bson_iterator_init(&it1,cursor->current.data);
    
    keyhash[0] = '\0';
    hostnames[0] = '\0';
    addresses[0] = '\0';
-//   lastSeen = 0;
    hh = NULL;
    found = false;
+
+   if(strcmp(type, cfr_software) == 0)
+      {
+      lastSeen = (time_t)BsonFindInt(&(cursor->current), cfr_software_t);
+      }
    
    while (bson_iterator_next(&it1))
       {
       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
-
-      if(strcmp(type, cfr_software) == 0 && strcmp(bson_iterator_key(&it1),cfr_software_t) == 0)
-         {
-         // TODO: Add support for time of NOVA_PATCHES_INSTALLED and NOVA_PATCHES_AVAIL?
-         lastSeen = bson_iterator_int(&it1);
-         }
 
       if (strcmp(bson_iterator_key(&it1),type) == 0)
          {
@@ -599,7 +597,6 @@ while (mongo_cursor_next(cursor))
                }               
             }
          }
-      printf("lastSeen=%d\n", lastSeen);
       }
    
    if (found)

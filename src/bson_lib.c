@@ -8,6 +8,24 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 
 #ifdef HAVE_LIBMONGOC
 
+/*****************************************************************************/
+
+int BsonFindInt(const bson* b, const char* key)
+{
+ bson_iterator it;
+ 
+ if(bson_find(&it, b, key) == bson_int)
+    {
+    return bson_iterator_int(&it);
+    }
+
+ CfOut(cf_verbose, "", "BsonFindInt: No match for \"%s\"", key);
+
+ return 0;  // TODO: handle this better?
+}
+
+/*****************************************************************************/
+
 void BsonAppendRecentQuery(bson_buffer *querybuf, int maxAgeInSeconds)
 {
  time_t currentTimeStamp = time(NULL);
