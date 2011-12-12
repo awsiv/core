@@ -1252,7 +1252,7 @@ int Nova2PHP_software_report(char *hostkey,char *name,char *value, char *arch,in
 
  snprintf(header,sizeof(header),
 	  "\"meta\":{\"count\" : %d,"
-	  "\"header\": {\"Host\":0,\"Name\":1,\"Version\":2,\"Architecture\":3,\"Time discovered\":4"
+	  "\"header\": {\"Host\":0,\"Name\":1,\"Version\":2,\"Architecture\":3,\"Last seen\":4"
 	  "}", page->totalResultCount);
 
  headerLen = strlen(header);
