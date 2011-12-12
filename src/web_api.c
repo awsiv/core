@@ -1677,7 +1677,7 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
           }
      
        snprintf(buffer,CF_BUFSIZE,"\"%s\":{"
-                "\"header\":{\"Host\":0,\"Type\":1,\"Name\":2,\"Value\":3},"
+                "\"header\":{\"Host\":0,\"Type\":1,\"Name\":2,\"Value\":3,\"Last seen\":4},"
                 "\"data\":[",hv->scope);
        Join(returnval,buffer,bufsize);
       
