@@ -77,7 +77,7 @@ void NovaWin_ServiceMain(int argc,char *argv[])
   CfOut(cf_log, "", "Started service %s", WINSERVICE_NAME);
 
   // worker function (loop)
-  StartServer(argc,argv);
+  MonitorStartServer(argc,argv);
 }
 
 /*******************************************************************/

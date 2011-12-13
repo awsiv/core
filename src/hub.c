@@ -12,8 +12,8 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include "cf3.defs.h"
-#include "cf3.extern.h"
+#include "generic_agent.h"
+
 #include "cf.nova.h"
 
 #ifdef NT
@@ -132,7 +132,7 @@ return 1;
 struct GenericAgentConfig config = CheckOpts(argc,argv);
 GenericInitialize(argc,argv, "hub", config);
 ThisAgentInit();
-KeepPromises();
+KeepPromises(config);
 StartHub(argc,argv);
 
 #endif
@@ -288,7 +288,7 @@ else if (SCHEDULE == NULL)
 
 /*****************************************************************************/
 
-void KeepPromises()
+void KeepPromises(struct GenericAgentConfig config)
 
 { struct Constraint *cp;
   char rettype;
