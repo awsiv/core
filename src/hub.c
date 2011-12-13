@@ -129,8 +129,8 @@ return 1;
 
 #else
 
-CheckOpts(argc,argv);
-GenericInitialize(argc,argv,"hub");
+struct GenericAgentConfig config = CheckOpts(argc,argv);
+GenericInitialize(argc,argv, "hub", config);
 ThisAgentInit();
 KeepPromises();
 StartHub(argc,argv);
@@ -146,12 +146,13 @@ return 0;
 /* Level 1                                                                   */
 /*****************************************************************************/
 
-void CheckOpts(int argc,char **argv)
+struct GenericAgentConfig CheckOpts(int argc,char **argv)
 
 { extern char *optarg;
   char arg[CF_BUFSIZE];
   int optindex = 0;
   int c;
+  struct GenericAgentConfig config = GenericAgentDefaultConfig(cf_hub);
 
 while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMaisn",OPTIONS,&optindex)) != EOF)
   {
@@ -253,6 +254,8 @@ if (argv[optind] != NULL)
    {
    CfOut(cf_error,"","Unexpected argument with no preceding option: %s\n",argv[optind]);
    }
+
+return config;
 }
 
 /*****************************************************************************/
