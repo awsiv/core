@@ -16,6 +16,6 @@ check_PROGRAMS = \
 
 TESTS = $(check_PROGRAMS)
 
-logging_test_SOURCES = $(MOCKERY_SOURCES) logging_test.c ../../logging.h
+logging_test_SOURCES = $(MOCKERY_SOURCES) logging_test.c
 logging_test_LDADD = $(top_builddir)/src/libpromises.la
 
