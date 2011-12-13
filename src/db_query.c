@@ -7367,6 +7367,12 @@ int CFDB_QueryIsMaster(void)
  bson_destroy(&cmd);
  bson_destroy(&result);
  CFDB_Close(&conn);
+
+ if(!ret)
+    {
+    CfOut(cf_verbose,"","We are part of report replica set, but not master \n");
+    }
+
  return ret;
 }
 

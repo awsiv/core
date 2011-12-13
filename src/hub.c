@@ -759,7 +759,7 @@ while (true)
       CfOut(cf_verbose,""," -> Wake up");
 
 
-      if (!FEDERATION)  // FEDERATION is for Constellation Mission Observatory
+      if (!FEDERATION && CFDB_QueryIsMaster())  // FEDERATION is for Constellation Mission Observatory
          {
          Nova_CollectReports(a,pp);
          maintainer_pid = Nova_Maintain(maintainer_pid);
@@ -793,24 +793,17 @@ void Nova_CollectReports(struct Attributes a, struct Promise *pp)
 {
 #ifdef HAVE_LIBMONGOC 
  
-if (CFDB_QueryIsMaster())  // relevant if we are part of mongo replica set
-   {
-   struct Item *masterhostlist = Nova_ScanClients();
+struct Item *masterhostlist = Nova_ScanClients();
 
-   Nova_Scan(masterhostlist,a,pp);
-   DeleteItemList(masterhostlist);
-   
-   if (CFH_ZENOSS && IsDefinedClass("Min00_05"))
-      {
-      Nova_ZenossSummary(DOCROOT);
-      }
-   
-   Nova_CountMonitoredClasses();
-   }
-else
+Nova_Scan(masterhostlist,a,pp);
+DeleteItemList(masterhostlist);
+
+if (CFH_ZENOSS && IsDefinedClass("Min00_05"))
    {
-   CfOut(cf_verbose,"","We are part of report repliaca set, but not master - not collecting reports...\n");
+   Nova_ZenossSummary(DOCROOT);
    }
+
+Nova_CountMonitoredClasses();
 
 #endif
 }
@@ -1328,28 +1321,13 @@ Nova_RemoveExcludedHosts(&list,EXCLUDE_HOSTS);
 
 #ifdef HAVE_LIBMONGOC
 
-/* Now we need to do some magic for hubs so that only one hub collects reports at a time */
+Nova_UpdateMongoHostList(&list);
+DeleteItemList(list);
 
-NewClass("am_policy_hub");
-CfOut(cf_inform,"","Checking for Hub master");
+// If there is a list in Mongo, this takes precedence, else populate one
+list = Nova_GetMongoLastSeen();
+Nova_RemoveExcludedHosts(&list,EXCLUDE_HOSTS);
 
-if (CFDB_QueryIsMaster())
-   {
-   CfOut(cf_inform,"","I am the hub master");
-
-   Nova_UpdateMongoHostList(&list);
-   DeleteItemList(list);
-
-   // If there is a list in Mongo, this takes precedence, else populate one
-   list = Nova_GetMongoLastSeen();
-   Nova_RemoveExcludedHosts(&list,EXCLUDE_HOSTS);
-   }
-else
-   {
-   CfOut(cf_inform,"","I am not the hub master");
-   DeleteItemList(list);
-   list = NULL;   
-   }
 #endif
 return list;
 }
