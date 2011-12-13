@@ -26,7 +26,7 @@ void PrependPromiserList(struct PromiseIdent **list,char *s,struct Promise *pp)
 
  for (ptr = *list; ptr != NULL; ptr = ptr->next)
     {
-    if (pp->line_number == ptr->line_number)
+    if (pp->offset.line == ptr->line_number)
        {
        if (strcmp(pp->audit->filename,ptr->filename) == 0)
           {
@@ -47,7 +47,7 @@ void PrependPromiserList(struct PromiseIdent **list,char *s,struct Promise *pp)
     ptr->classes = xstrdup("any");
     }
 
- ptr->line_number = pp->line_number;
+ ptr->line_number = pp->offset.line;
  ptr->handle = xstrdup(s);
  ptr->next = *list;
  *list = ptr;

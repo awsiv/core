@@ -76,9 +76,9 @@ bson_append_string(&bbuf,cfp_bundletype,pp->bundletype);
 
 if (pp->audit)
    {
-   CfDebug("In file %s near line %d\n",pp->audit->filename,pp->line_number);
+   CfDebug("In file %s near line %d\n",pp->audit->filename,pp->offset.line);
    bson_append_string(&bbuf,cfp_file,pp->audit->filename);
-   bson_append_int(&bbuf, cfp_lineno, pp->line_number);
+   bson_append_int(&bbuf, cfp_lineno, pp->offset.line);
    }
 
 // The promise body
@@ -211,7 +211,7 @@ for (bp = bundles; bp != NULL; bp=bp->next)
          if (pp->audit)
             {
 	    bson_append_string(&bbuf,cfp_file,pp->audit->filename);
-	    bson_append_int(&bbuf, cfp_lineno, pp->line_number);
+	    bson_append_int(&bbuf, cfp_lineno, pp->offset.line);
             }
          
          if ((sp = GetConstraint("handle",pp,CF_SCALAR)) || (sp = PromiseID(pp)))

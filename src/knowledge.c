@@ -988,7 +988,7 @@ if (handle)
 else if (pp && pp->audit)
    {
    snprintf(vbuff,CF_MAXVARSIZE,"%s",ReadLastNode(pp->audit->filename));
-   snprintf(id,CF_MAXVARSIZE,"promise_%s_%d",CanonifyName(vbuff),pp->line_number);
+   snprintf(id,CF_MAXVARSIZE,"promise_%s_%d",CanonifyName(vbuff),pp->offset.line);
    }
 else
    {
