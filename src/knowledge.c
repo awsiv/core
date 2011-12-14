@@ -365,6 +365,39 @@ fprintf(fp,"      association => a(\"has alias\",\"%s\",\"is a promise handle fo
 fprintf(fp,"promise_types::\n");
 fprintf(fp,"  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",pp->agentsubtype,"is promised in",pp->bundle,"has promises of type");
 
+/* Look for copies and edits that lead to influence imports */
+
+if (strcmp(pp->agentsubtype,"files") == 0)
+   {
+   struct Rlist *servers = GetListConstraint("servers",pp);
+   struct FnCall *edit_bundle = (struct FnCall *)GetConstraint("edit_line",pp,CF_FNCALL);
+   char *source = GetConstraint("source",pp,CF_SCALAR);
+
+   fprintf(fp,"files::\n");
+
+   for (rp = servers; rp != NULL; rp = rp->next)
+      {
+      fprintf(fp," \"%s\" association => a(\"might use data from\",\"%s\",\"might provide data for\");  \n",pp->promiser,rp->item);
+      }
+
+   if (source)
+      {
+      fprintf(fp," \"%s\" association => a(\"uses data from\",\"%s\",\"provides data for\");  \n",pp->promiser,source);
+      }
+
+   if (edit_bundle)
+      {
+      if (strcmp(edit_bundle->name,"insert_file") == 0) // stdlib
+         {
+         if (edit_bundle->args) // Single arg
+            {
+            fprintf(fp," \"%s\" association => a(\"uses data from\",\"%s\",\"provides data for\");  \n",pp->promiser,edit_bundle->args);
+            }
+         }
+      }
+   }
+
+
 /* Look for bundles used as promises through methods  -- these are service bundles */
 
 if (strcmp(pp->agentsubtype,"methods") == 0)
@@ -773,7 +806,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
       }
    
    fprintf(fp," \"%s\" comment => \"%s\",",OBS[i][0],OBS[i][1]);   
-   fprintf(fp,"      generalizations => { \"vital signs\", \"observables\" },",OBS[i][0],OBS[i][1]);
+   fprintf(fp,"      generalizations => { \"vital signs\", \"observables\" },");
    fprintf(fp,"      determines => { \"actual state\" , \"monitoring classes\" };\n");
    }
 
