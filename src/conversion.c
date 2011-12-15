@@ -161,7 +161,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    
    if (strlen(hv->dtype) > 1) // list
       {
-      *list = CopyRvalItem(hv->rval,CF_LIST);
+      *list = CopyRvalItem((struct Rval) { hv->rval, CF_LIST }).item;
       }
    else
       {
