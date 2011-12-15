@@ -374,17 +374,17 @@ return result;
 void Nova_CheckLicensePromise()
 
 { int licenses = 0;
-  char *retval,rettype;
+struct Rval retval;
 
-if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&retval,&rettype) != cf_notype)
+if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval, &retval) != cf_notype)
    {   
-   licenses = Str2Int(retval);
+   licenses = Str2Int(retval.item);
    CfOut(cf_verbose,""," -> %d paid licenses have been purchased (this is a promise by you)",licenses);
-   NewScalar("sys","licenses_promised",retval,cf_int);
+   NewScalar("sys","licenses_promised",retval.item,cf_int);
 #ifdef HAVE_LIBMONGOC
    if (THIS_AGENT_TYPE == cf_agent && CFDB_QueryIsMaster())
       {
-      CFDB_PutValue("licenses_promised",retval);
+      CFDB_PutValue("licenses_promised",retval.item);
       }
 #endif
    }
@@ -415,9 +415,9 @@ void Nova_LogLicenseStatus()
 
 { CF_DB *dbp;
   CF_DBC *dbcp;
-  char rettype,datestr[CF_MAXVARSIZE],data[CF_MAXVARSIZE],name[CF_BUFSIZE];
+  char datestr[CF_MAXVARSIZE],data[CF_MAXVARSIZE],name[CF_BUFSIZE];
   char buffer[CF_BUFSIZE] = {0},work[CF_BUFSIZE] = {0};
-  void *retval;
+  struct Rval retval;
   int licenses = 0,count = 0;
   struct Promise *pp = NewPromise("track_license","License tracker");
   struct Attributes dummyattr = {{0}};
@@ -449,9 +449,9 @@ if (thislock.lock == NULL)
    return;
    }
 
-if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval,(void *)&retval,&rettype) != cf_notype)
+if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval, &retval) != cf_notype)
    {   
-   licenses = Str2Int(retval);
+   licenses = Str2Int(retval.item);
    }
 
 snprintf(name,CF_MAXVARSIZE-1,"%s%c%s",CFWORKDIR,FILE_SEPARATOR,CF_LASTDB_FILE);

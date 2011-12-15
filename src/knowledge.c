@@ -599,8 +599,7 @@ void Nova_ShowTopicRepresentation(FILE *fp)
 { int i,j,k,l;
   struct SubTypeSyntax *ss;
   const struct BodySyntax *bs,*bs2;
-  void *retval;
-  char rettype;
+  struct Rval retval;
   static char *level[] = { "high", "low", "normal", NULL };
   static char *dev[] = { "dev1", "dev2", "microanomaly", "anomaly", NULL };
 
@@ -838,13 +837,13 @@ fprintf(fp," \"WinServer2008\" generalizations => { \"windows\"};");
 
 // Check for location descriptors - we need this categorization for hierarchy view / spanning tree
 
-if (GetVariable("control_common",CFG_CONTROLBODY[cfg_site_classes].lval,&retval,&rettype) != cf_notype)
+if (GetVariable("control_common",CFG_CONTROLBODY[cfg_site_classes].lval,&retval) != cf_notype)
    {
    struct Rlist *rp;
    
    fprintf(fp,"locations::");
 
-   for (rp = retval; rp != NULL; rp=rp->next)
+   for (rp = retval.item; rp != NULL; rp=rp->next)
       {
       fprintf(fp,"  \"%s\" comment => { \"A hosting location for computers.\" }, generalizations => { \"locations\" }; ",(char *)rp->item);
       }

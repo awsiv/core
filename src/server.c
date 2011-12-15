@@ -106,8 +106,8 @@ switch(type)
 
 int Nova_ReturnLiteralData(char *handle,char *recv)
 
-{ char rtype;
-  void *retval;
+{
+struct Rval retval;
 
 if (LICENSES <= 0)
    {
@@ -118,11 +118,11 @@ if (Nova_GetPersistentScalar(handle,recv,CF_BUFSIZE-1,CF_HUB_HORIZON))
    {
    return true;
    }
-else if (GetVariable("remote_access",handle,(void *)&retval,&rtype) != cf_notype)
+else if (GetVariable("remote_access",handle, &retval) != cf_notype)
    {
-   if (rtype == CF_SCALAR)
+   if (retval.rtype == CF_SCALAR)
       {     
-      strncpy(recv,retval,CF_BUFSIZE-1);
+      strncpy(recv,retval.item,CF_BUFSIZE-1);
       return true;
       }
    else
