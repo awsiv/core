@@ -12,6 +12,7 @@
 
 #include "cf3.defs.h"
 #include "cf3.extern.h"
+#include "cf3.server.h"
 #include "cf.nova.h"
 
 struct Rlist *SERVER_KEYRING = NULL;

@@ -272,10 +272,6 @@ extern const char *BASIC_REPORTS[][2];
 /* Prototypes                                                                       */
 /************************************************************************************/
 
-#ifndef HAVE_SERV_H
-#include "../../core/src/cf3.server.h"
-#endif
-   
 /* acl.c */
 
 void Nova_VerifyACL(char *file,struct Attributes a, struct Promise *pp);
@@ -980,7 +976,6 @@ char Nova_CfEnterpriseOptions(void);
 int Nova_CfSessionKeySize(char c);
 void  Nova_RegisterLiteralServerData(char *handle,struct Promise *pp);
 int Nova_ReturnLiteralData(char *handle,char *retval);
-int Nova_ReturnQueryData(struct cfd_connection *conn,char *menu);
 void Nova_PackAllReports(struct Item **reply, time_t from, time_t delta1, enum cfd_menu type);
 char *Nova_GetRemoteScalar(char *proto,char *handle,char *server,int encrypted,char *rcv);
 int Nova_ParseHostname(char *name,char *hostname);
