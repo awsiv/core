@@ -34,6 +34,7 @@ SERVICE_STATUS_HANDLE statusHandle;
 void NovaWin_ServiceMain(int argc,char *argv[]);
 void NovaWin_ControlHandler(DWORD request);
 
+void StartServer(int argc,char **argv);
 
 void NovaWin_StartExecService(void)
 {
@@ -77,7 +78,7 @@ void NovaWin_ServiceMain(int argc,char *argv[])
   CfOut(cf_log, "", "Started service %s", WINSERVICE_NAME);
 
   // worker function (loop)
-  MonitorStartServer(argc,argv);
+  StartServer(argc,argv);
 }
 
 /*******************************************************************/
