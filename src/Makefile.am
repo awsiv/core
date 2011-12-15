@@ -14,7 +14,11 @@ AM_LDFLAGS = $(BERKELEY_DB_LDFLAGS) $(OPENSSL_LIB_LDFLAGS) @LDFLAGS@
 
 AM_CPPFLAGS = -I$(srcdir)/../../core/src $(CONSTELLATION_CFLAGS)
 
-noinst_LTLIBRARIES = libcfnova.la libcfhub.la libcfmonitord.la
+noinst_LTLIBRARIES = libcfnova.la libcfmonitord.la
+
+if MONGO
+noinst_LTLIBRARIES += libcfhub.la
+endif
 
 libcfnova_la_LDFLAGS = -no-undefined
 
@@ -103,8 +107,11 @@ libcfmonitord_la_SOURCES += mon_mem_stub.c
 endif
 endif
 
+if MONGO
 libcfhub_la_SOURCES =	                                        \
 	hub.c
+endif
+
 #
 # Pickup header files here so Automake knows about them
 #

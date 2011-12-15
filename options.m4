@@ -44,6 +44,8 @@ if test $WITH_MONGO = 1; then
   ])
 fi
 
+AM_CONDITIONAL(MONGO, test "x$ac_cv_lib_mongoc_mongo_connect" = xyes)
+
 AC_ARG_WITH([ldap],
     [AS_HELP_STRING([--with-ldap[[=PATH]]], [Enable LDAP functions])],
     [], [with_ldap=check])
