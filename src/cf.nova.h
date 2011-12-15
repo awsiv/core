@@ -88,7 +88,6 @@
 #define CF_MAX_ERROR_LIMIT 50
 #define CF_MAX_LIMIT 999999
 #define CF_N_CODE '\07'
-#define CFDB_PORT 27017
 #define MONITOR_CLASS_PREFIX "mXC_"
 #define CF_CHANGE_HORIZON 10
 #define NOVA_EXPORT_HEADER "NOVA_EXPORT"
@@ -487,7 +486,7 @@ struct Item *CFDB_GetDeletedHosts(void);
 
 #ifdef HAVE_LIBMONGOC
 
-int CFDB_Open(mongo_connection *conn, char *host, int port);
+int CFDB_Open(mongo_connection *conn);
 int CFDB_Close(mongo_connection *conn);
 void CFDB_Initialize(void);
 

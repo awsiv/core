@@ -29,7 +29,7 @@ void Nova2Txt_getlastupdate(char *hostkey,char *buffer,int bufsize)
 
 /* BEGIN query document */
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return;
@@ -101,7 +101,7 @@ int Nova2Txt_summary_report(char *hostkey,char *handle,char *status,int regex,ch
   double n,r,k,n_av,k_av,r_av,tot_promises;
   char *current_host = "x";
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -248,7 +248,7 @@ bool Nova2Txt_vitals_list(char *keyHash, char *buffer, int bufsize)
  char hostName[CF_MAXVARSIZE], ipAddress[CF_MAXVARSIZE];
  struct HubVital *res, *hv;
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -298,7 +298,7 @@ int Nova2Txt_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time
  int reportType;
  mongo_connection dbconn;
   
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -380,7 +380,7 @@ int Nova2Txt_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep t
 
 /* BEGIN query document */
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -436,7 +436,7 @@ int Nova2Txt_software_report(char *hostkey,char *name,char *value, char *arch,in
  struct Rlist *rp;
  mongo_connection dbconn;
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -486,7 +486,7 @@ int Nova2Txt_classes_report(char *hostkey,char *name,int regex,char *classreg)
 
 /* BEGIN query document */
  
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -536,7 +536,7 @@ int Nova2Txt_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
  int margin = 0, noticeLen=0,headerLen=0;
  int truncated = false;
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -627,7 +627,7 @@ int Nova2Txt_compliance_report(char *hostkey,char *version,time_t t,int k,int nk
         break;
     }
   
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -677,7 +677,7 @@ int Nova2Txt_compliance_promises(char *hostkey,char *handle,char *status,int reg
  int margin = 0,headerLen=0,noticeLen=0;
  int truncated = false;
  
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -737,7 +737,7 @@ int Nova2Txt_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddres
   
 /* BEGIN query document */
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -806,7 +806,7 @@ int Nova2Txt_deadclient_report(char *hostkey,char *lhash,char *lhost,char *laddr
   
 /* BEGIN query document */
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -868,7 +868,7 @@ int Nova2Txt_setuid_report(char *hostkey,char *file,int regex,char *classreg)
  int margin = 0,headerLen=0,noticeLen=0;
  int truncated = false;
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -921,7 +921,7 @@ int Nova2Txt_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,s
 
 /* BEGIN query document */
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -1011,7 +1011,7 @@ switch (*cmp)
        break;
    }
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -1079,7 +1079,7 @@ switch (*cmp)
        break;
    }
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -1150,7 +1150,7 @@ else
    return false;
    }
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -1208,7 +1208,7 @@ int Nova2Txt_value_hosts(char *hostkey,char *day,char *month,char *year,char *cl
 
 /* BEGIN query document */
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -1261,7 +1261,7 @@ int Nova2Txt_software_hosts(char *hostkey,char *name,char *value, char *arch,int
  mongo_connection dbconn;
 
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -1316,7 +1316,7 @@ int Nova2Txt_classes_hosts(char *hostkey,char *name,int regex,char *classreg,cha
 
 /* BEGIN query document */
  
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -1368,7 +1368,7 @@ int Nova2Txt_vars_hosts(char *hostkey,char *scope,char *lval,char *rval,char *ty
   int counter = 0, n = 180;
   mongo_connection dbconn;
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -1427,7 +1427,7 @@ int Nova2Txt_compliance_hosts(char *hostkey,char *version,time_t t,int k,int nk,
         break;
     }
   
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -1479,7 +1479,7 @@ int Nova2Txt_promise_hosts(char *hostkey,char *handle,char *status,int regex,cha
   mongo_connection dbconn;
 
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
@@ -1539,7 +1539,7 @@ int Nova2Txt_lastseen_hosts(char *hostkey,char *lhash,char *lhost,char *laddress
 
 /* BEGIN query document */
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -1590,7 +1590,7 @@ int Nova2Txt_performance_hosts(char *hostkey,char *job,int regex,char *classreg,
  int counter = 0, n = 180,icmp;
  mongo_connection dbconn;
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -1641,7 +1641,7 @@ int Nova2Txt_setuid_hosts(char *hostkey,char *file,int regex,char *classreg,char
  int counter = 0, n = 180,icmp;
  mongo_connection dbconn;
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -1695,7 +1695,7 @@ int Nova2Txt_bundle_hosts(char *hostkey,char *bundle,int regex,char *classreg,ch
 
 /* BEGIN query document */
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -1756,7 +1756,7 @@ int Nova2Txt_filechanges_hosts(char *hostkey,char *file,int regex,time_t t,char 
         break;
     }
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -1814,7 +1814,7 @@ int Nova2Txt_filediffs_hosts(char *hostkey,char *file,char *diffs,int regex,time
         break;
     }
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -1867,7 +1867,7 @@ int Nova2Txt_promiselog_hosts(char *hostkey,char *handle,enum promiselog_rep typ
  int counter = 0, n = 180;
  char buffer[CF_BUFSIZE];
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -1918,7 +1918,7 @@ int Nova2Txt_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsi
  int pid;
  char jsonEscapedStr[CF_MAXVARSIZE] = {0};
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return -1;
@@ -1979,7 +1979,7 @@ int Nova2Txt_get_args_for_bundle(char *name,char *type,char *buffer,int bufsize)
   struct Item *matched,*ip;
   char work[CF_MAXVARSIZE];
   
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return -1;
@@ -2023,7 +2023,7 @@ int Nova2Txt_list_all_bundles(char *type,char *buffer,int bufsize)
 
 Nova_WebTopicMap_Initialize();
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return -1;
@@ -2124,7 +2124,7 @@ int Nova2Txt_get_bundle_type(char *name,char *buffer,int bufsize)
 
 Nova_WebTopicMap_Initialize();
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return -1;
@@ -2171,7 +2171,7 @@ int Nova2Txt_list_bundles_using(char *name,char *buffer,int bufsize)
   char work[CF_MAXVARSIZE];
   struct Item *matched,*ip;
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return -1;
@@ -2215,7 +2215,7 @@ int Nova2Txt_get_bundle_count(char *buffer, int bufsize)
 { mongo_connection dbconn;
  int bundleCount = 0;
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return -1;
@@ -2240,7 +2240,7 @@ int Nova2Txt_get_promise_count(char *buffer, int bufsize)
 { mongo_connection dbconn;
  int promiseCount = 0;
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return -1;
@@ -2479,7 +2479,7 @@ int Nova2Txt_show_hosts(char *hostNameRegex,char *ipRegex,char *classRegex,struc
  mongo_connection dbconn;
  char work[CF_MAXVARSIZE];
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -2597,7 +2597,7 @@ char *Nova2Txt_GetPromiseComment(char *handle)
 { static char buffer[CF_BUFSIZE];
  mongo_connection dbconn;
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -2628,7 +2628,7 @@ char *Nova2Txt_GetPromiseBundle(char *handle)
     return "";
     }
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -2652,7 +2652,7 @@ void Nova2Txt_GetPromiseBody(char *name,char *type,char *returnval,int bufsize)
  mongo_connection dbconn;
  struct HubBody *hb;    
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return;
@@ -2708,7 +2708,7 @@ int Nova2Txt_list_bodies(char *name,char *type,char *returnval,int bufsize)
  char work[CF_MAXVARSIZE];
  struct Item *all_bodies,*ip;    
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return -1;
@@ -2750,7 +2750,7 @@ char *Nova2Txt_GetPromiseType(char *handle)
     return "";
     }
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -2774,7 +2774,7 @@ char *Nova2Txt_GetPromiser(char *handle)
 { static char buffer[CF_BUFSIZE];
  mongo_connection dbconn;
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -2801,7 +2801,7 @@ int Nova2Txt_get_variable(char *hostkey,char *scope,char *lval,char *returnval,i
  int count = 0, n = 180;
  mongo_connection dbconn;
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -2889,7 +2889,7 @@ int Nova2Txt_summarize_promise(char *handle, char *returnval,int bufsize)
     }
 
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -3007,7 +3007,7 @@ int Nova2Txt_list_promise_handles_with_comments(char *bundle,char *btype,char *r
   
 /* BEGIN query document */
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -3058,7 +3058,7 @@ int Nova2Txt_list_promise_handles(char *promiser,char *ptype,char *bundle,char *
   
 /* BEGIN query document */
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
@@ -3108,7 +3108,7 @@ void Nova2Txt_get_network_speed(char *hostkey,char *buffer, int bufsize)
  int found = false;
  struct Event e;
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not open connection to database (read network measurements)");
     return;
@@ -3223,7 +3223,7 @@ int Nova2Txt_list_handles_policy_finder(char *handle,char *promiser,char *bundle
 
   /* BEGIN query document */
 
-  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+  if (!CFDB_Open(&dbconn))
     {
       CfOut(cf_verbose,"", "!! Could not open connection to report database");
       return false;

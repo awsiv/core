@@ -16,25 +16,27 @@
 
 /*****************************************************************************/
 
-int CFDB_Open(mongo_connection *conn, char *host, int port)
+int CFDB_Open(mongo_connection *conn)
 
 {
+#define MONGO_HOST "127.0.0.1"
+#define MONGO_PORT 27017
+ 
  int result;
 
 #ifdef MONGO_OLD_CONNECT
 mongo_connection_options connOpts;
 
-snprintf(connOpts.host, sizeof(connOpts.host), "%s", host);
-connOpts.port = port;
+snprintf(connOpts.host, sizeof(connOpts.host), "%s", MONGO_HOST);
+connOpts.port = MONGO_PORT;
 
 result = mongo_connect(conn,&connOpts);
 
 #else
  
- result = mongo_connect(conn, host, port);
+ result = mongo_connect(conn, MONGO_HOST, MONGO_PORT);
 
 #endif
-
  
  if (result != 0)
     {
@@ -84,9 +86,8 @@ if (!IsDefinedClass("am_policy_hub") && !AM_PHP_MODULE)
    return false;
    }
   
-if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
-   CfOut(cf_verbose,"","!! Could not open connection to report database to put value %s",lval);
    return false;
    }
 
@@ -123,9 +124,8 @@ if (!IsDefinedClass("am_policy_hub"))
    return false;
    }
   
-if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
-   CfOut(cf_verbose,"","!! Could not open connection to report database");
    return false;
    }
   
@@ -174,9 +174,8 @@ if (!IsDefinedClass("am_policy_hub"))
    return;
    }
   
-if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
-   CfOut(cf_verbose,"","!! Could not open connection to report database to put value");
    return;
    }
 
@@ -1814,9 +1813,8 @@ if (!IsDefinedClass("am_policy_hub"))
    return false;
    }
   
-if (!CFDB_Open(&dbconn, "127.0.0.1",CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
-   CfOut(cf_verbose,"","!! Could not open connection to report database");
    return false;
    }
   

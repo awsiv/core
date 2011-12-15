@@ -47,9 +47,8 @@ void Nova_DumpTopics()
   char work[CF_BUFSIZE];
   struct Item *ip,*nn;
 
-if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+if (!CFDB_Open(&conn))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to knowledge map");
    return;
    }
 
@@ -137,9 +136,8 @@ int Nova_GetTopicIdForTopic(char *typed_topic)
   
 Nova_DeClassifyTopic(ToLowerStr(typed_topic),topic,type); // Linker trouble - copy this from core
 
-if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+if (!CFDB_Open(&conn))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to knowledge map");
    return false;
    }
 
@@ -201,9 +199,8 @@ int Nova_GetTopicByTopicId(int search_id,char *topic_name,char *topic_id,char *t
   mongo_connection conn;
   int topicid = 0;
 
-if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+if (!CFDB_Open(&conn))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to knowledge map");
    return false;
    }
 
@@ -277,9 +274,8 @@ int Nova_SearchTopicMap(char *search_topic,char *buffer,int bufsize)
   char work[CF_BUFSIZE];
   struct Item *ip,*list = NULL;
 
-if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+if (!CFDB_Open(&conn))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to knowledge map");
    return false;
    }
 
@@ -459,9 +455,8 @@ struct Item *Nova_ScanLeadsAssociations(int search_id,char *assoc_mask)
   struct Item *list = NULL;
   int assoc_id;
 
-if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+if (!CFDB_Open(&conn))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to knowledge map");
    return NULL;
    }
 
@@ -570,9 +565,8 @@ void Nova_ScanOccurrences(int this_id,char *buffer, int bufsize)
    must be too big. BUT anything must!= "any"
 */
 
-if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+if (!CFDB_Open(&conn))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to knowledge map");
    return;
    }
 
@@ -716,9 +710,8 @@ int Nova_GetReportDescription(int this_id,char *buffer, int bufsize)
   bson_iterator it1,it2,it3;
   mongo_connection conn;
 
-if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+if (!CFDB_Open(&conn))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to knowledge map");
    return false;
    }
 
@@ -838,9 +831,8 @@ else
    snprintf(searchstring,CF_MAXVARSIZE-1,"goals\\.goal_.*");
    }
 
-if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+if (!CFDB_Open(&conn))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to knowledge map");
    return false;
    }
 
@@ -960,9 +952,8 @@ else
    snprintf(searchstring,CF_MAXVARSIZE-1,"%s",canonified_goal);
    }
 
-if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+if (!CFDB_Open(&conn))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to knowledge map");
    return;
    }
 
@@ -1019,9 +1010,8 @@ char *Nova_GetBundleComment(char *bundle)
 
 // Get comment goals.* or targets.%s etc
 
-if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+if (!CFDB_Open(&conn))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to knowledge map");
    return NULL;
    }
 
@@ -1479,9 +1469,8 @@ struct Item *Nova_NearestNeighbours(int search_id,char *assoc_mask)
   char assoc_context[CF_BUFSIZE];
   int assoc_id;
 
-if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+if (!CFDB_Open(&conn))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to knowledge map");
    return false;
    }
 
@@ -1597,9 +1586,8 @@ struct Item *Nova_GetTopicsInContext(char *context)
   char assoc_context[CF_BUFSIZE];
   int assoc_id;
 
-if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+if (!CFDB_Open(&conn))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to knowledge map");
    return false;
    }
 

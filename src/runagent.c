@@ -13,7 +13,7 @@ bool Nova_ExecuteRunagent(struct cfagent_connection *conn, const char *menu_str)
 #if defined(HAVE_LIBMONGOC)
 mongo_connection dbconn;
 
-if(!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if(!CFDB_Open(&dbconn))
    {
    return false;
    }

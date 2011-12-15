@@ -62,9 +62,8 @@ bson_buffer bb,bbuf,*sub,*assocs,*setObj;
 bson b;
 int slot,assoc_id = 0;
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not open connection to database to store Knowledge Map");
    return;
    }
 
@@ -1505,9 +1504,8 @@ void Nova_GenerateTestData(int count)
  DeleteRlist(testmachines);
 
  mongo_connection dbconn;
- if(!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if(!CFDB_Open(&dbconn))
     {
-    CfOut(cf_error, "", "!! Could not open connection to report database");
     return;
     }
    
@@ -1524,7 +1522,7 @@ void Nova_GenerateTestData(int count)
     snprintf(VFQNAME,CF_MAXVARSIZE-1,"%s",newhostnames);
     UnpackReportBook(&dbconn,newkeyhash,reports);
     
-    if(CFDB_Open(&conn,"127.0.0.1",CFDB_PORT))
+    if(CFDB_Open(&conn))
       {
       CFDB_SaveHostID(&conn,MONGO_DATABASE,cfr_keyhash,newkeyhash,newaddresses,newhostnames);
       CFDB_SaveHostID(&conn,MONGO_ARCHIVE,cfr_keyhash,newkeyhash,newaddresses,newhostnames);
@@ -1571,9 +1569,8 @@ struct Rlist* Nova_GetTestMachines(void)
 
   oid = &_oid;
 
-if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&conn))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return NULL;
    }
   
@@ -1674,9 +1671,8 @@ void Nova_UpdateTestData(void)
   int i=0;
   oid = &_oid;
 
-if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&conn))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return;
    }
   

@@ -2300,7 +2300,7 @@ if (LICENSES == 0)
    return false;
    }
 
-if(!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if(!CFDB_Open(&dbconn))
     {
     return false;
     }
@@ -2495,7 +2495,7 @@ void Nova_ImportReports(const char *input_file)
     {
     mongo_connection dbconn;
 
-    if(!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+    if(!CFDB_Open(&dbconn))
        {
        CfOut(cf_error, "", "!! Could not connect to database -- skipping import");
        GenericDeInitialize();

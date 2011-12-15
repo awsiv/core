@@ -24,7 +24,7 @@ int Nova_BenchmarkReportStorage(char *reportFilePath, int iterationsToRun)
 {
  mongo_connection dbconn;
 
- if(!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if(!CFDB_Open(&dbconn))
     {
     return false;
     }

@@ -87,9 +87,8 @@ int Nova_GetReportedScalar(char *hostkey,char *scope,char *lval,char *returnval,
  int count = 0, n = 180;
  mongo_connection dbconn;
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 
@@ -145,9 +144,8 @@ int Nova_GetReportedList(char *hostkey,char *scope,char *lval,struct Rlist **lis
   int count = 0, n = 180;
   mongo_connection dbconn;
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
 

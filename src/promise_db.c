@@ -41,9 +41,8 @@ if (!SHOWREPORTS)
 // NOTE: Inefficient to Open/Close DB for each promise,
 // but call is coming from community which may not have DB
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not open connection to promise database to store expanded promises");
    return;
    }
 
@@ -155,9 +154,8 @@ if (!SHOWREPORTS)
    return;
    }
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not open connection to promise database to store unexpanded promises");
    return;
    }
  

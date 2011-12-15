@@ -831,9 +831,8 @@ static void Nova_SequentialScan(struct Item *masterlist, struct Attributes a, st
  mongo_connection dbconn;
  struct Item *ip;
 
- if(!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if(!CFDB_Open(&dbconn))
    {
-   CfOut(cf_error, "", "!! Could not open connection to mongod to store reports");
    return;
    }
 
@@ -1114,9 +1113,8 @@ else
    curr = GetShiftSlotStart(now - SECONDS_PER_SHIFT);
    }
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
-   CfOut(cf_error,"", "!! Could not open connection to report database to cache total compliance");
    return;
    }
 
@@ -1218,9 +1216,8 @@ void Nova_CountMonitoredClasses()
 
 /* BEGIN query document */
  
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
-   CfOut(cf_error,"", "!! Could not open connection to report database to count monitored classes");
    return;
    }
 

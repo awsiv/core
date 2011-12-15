@@ -29,9 +29,8 @@ void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, 
   int i,slot,count;
   char buf[CF_MAXVARSIZE];
 
-if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&dbconn))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to cache database");
    return;
    }
 
@@ -121,9 +120,8 @@ void Nova_Meter(bson *query,char *db,char *buffer,int bufsize)
 
  strcpy(buffer,"[");
 
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
-    CfOut(cf_error,"", "!! Could not open connection to report database on meter summary");
     Join(buffer,"]",bufsize);
     return;
     }
@@ -252,9 +250,8 @@ int Nova_GetHostColour(char *lkeyhash)
   mongo_connection conn;
   time_t now = time(NULL);
 
-if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&conn))
    {
-   CfOut(cf_error,"", "!! Could not open connection to report database on host colour query");
    return -1;
    }
 
@@ -543,9 +540,8 @@ struct Item *Nova_ClassifyHostState(char *search_string,int regex,enum cf_rank_m
   struct Item *list = NULL;
   time_t now = time(NULL);
 
-if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&conn))
    {
-   CfOut(cf_error,"", "!! Could not open connection to report database on classify host state");
    return NULL;
    }
 

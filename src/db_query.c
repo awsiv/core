@@ -38,9 +38,8 @@ if (!IsDefinedClass("am_policy_hub") && !AM_PHP_MODULE)
    return false;
    }
 
-if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+if (!CFDB_Open(&conn))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to report database to get value %s", lval);
    return false;
    }
 
@@ -64,9 +63,8 @@ struct Item *CFDB_GetLastseenCache(void)
  struct Item *ip,*list = NULL;
 
 
-if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+if (!CFDB_Open(&conn))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to report database to get lastseen cache");
    return false;
    }
 
@@ -136,9 +134,8 @@ struct Item * CFDB_GetDeletedHosts(void)
  struct Item *list = NULL;
 
 
-if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+if (!CFDB_Open(&conn))
    {
-   CfOut(cf_verbose,"", "!! Could not open connection to report database to get list of deleted hosts");
    return false;
    }
 
@@ -7336,9 +7333,8 @@ int CFDB_QueryIsMaster(void)
  mongo_connection conn;
 
 
- if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+ if (!CFDB_Open(&conn))
     {
-    CfOut(cf_verbose,"", "!! Could not open connection to check if the db is master");
     return false;
     }
 
@@ -7386,9 +7382,8 @@ int CFDB_QueryMasterIP(char *buffer,int bufsize)
  int ret = false;
  mongo_connection conn;
 
- if (!CFDB_Open(&conn, "127.0.0.1",CFDB_PORT))
+ if (!CFDB_Open(&conn))
     {
-    CfOut(cf_verbose,"", "!! Could not open connection to check if the db is master");
     return false;
     }
 

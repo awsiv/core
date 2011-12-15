@@ -23,9 +23,8 @@ void CFDB_Maintenance(void)
 
   mongo_connection dbconn;
   
-  if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+  if (!CFDB_Open(&dbconn))
      {
-     CfOut(cf_error,"", "!! Could not open connection to report database on maintain");
      return;
      }
     
@@ -54,9 +53,8 @@ void CFDB_ReIndexAll(void)
 
  mongo_connection dbconn;
  
- if(!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if(!CFDB_Open(&dbconn))
     {
-    CfOut(cf_error, "", "!! Could not open connection to drop indices");
     return;
     }
  
@@ -76,9 +74,8 @@ void CFDB_ConnectAndEnsureIndices(void)
 
  mongo_connection dbconn;
  
- if (!CFDB_Open(&dbconn, "127.0.0.1", CFDB_PORT))
+ if (!CFDB_Open(&dbconn))
     {
-    CfOut(cf_error,"", "!! Could not open connection to report database to check indices");
     return;
     }
  
@@ -752,9 +749,8 @@ void CFDB_RemoveTestData(char *db, char *keyhash)
   bson_buffer bb;
   mongo_connection conn;
 
-if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&conn))
     {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return;
     }
 
@@ -778,9 +774,8 @@ int CFDB_PurgeDeletedHosts(void)
  bson op,empty;
  mongo_connection conn;
 
-if (!CFDB_Open(&conn, "127.0.0.1", CFDB_PORT))
+if (!CFDB_Open(&conn))
     {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
     return false;
     }
 
