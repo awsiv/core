@@ -344,7 +344,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
 void Nova_VerifyMeasurement(double *this,struct Attributes a,struct Promise *pp)
 
-{ char *handle = (char *)GetConstraint("handle",pp,CF_SCALAR);
+{ char *handle = (char *)GetConstraintValue("handle",pp,CF_SCALAR);
   struct Item *stream = NULL;
   int slot = 0;
   double new_value;

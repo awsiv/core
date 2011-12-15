@@ -369,8 +369,8 @@ fprintf(fp,"  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",pp->agentsubtype
 if (strcmp(pp->agentsubtype,"files") == 0)
    {
    struct Rlist *servers = GetListConstraint("servers",pp);
-   struct FnCall *edit_bundle = (struct FnCall *)GetConstraint("edit_line",pp,CF_FNCALL);
-   char *source = GetConstraint("source",pp,CF_SCALAR);
+   struct FnCall *edit_bundle = (struct FnCall *)GetConstraintValue("edit_line",pp,CF_FNCALL);
+   char *source = GetConstraintValue("source",pp,CF_SCALAR);
 
    fprintf(fp,"files::\n");
 
@@ -1006,7 +1006,7 @@ char *Nova_PromiseID(struct Promise *pp)
 
 { char static id[CF_MAXVARSIZE];
   char vbuff[CF_MAXVARSIZE];
-  char *handle = GetConstraint("handle",pp,CF_SCALAR);
+  char *handle = GetConstraintValue("handle",pp,CF_SCALAR);
 
 if (LICENSES == 0)
    {
@@ -1107,7 +1107,7 @@ for (rp = potential; rp !=  NULL; rp=rp->next)
    IdempPrependRScalar(&dependency,rp->item,CF_SCALAR);
    }
 
-if ((value = GetConstraint("expression",pp,CF_SCALAR)))
+if ((value = GetConstraintValue("expression",pp,CF_SCALAR)))
    {
    IdempPrependRScalar(&dependency,value,CF_SCALAR);
    }
@@ -1149,7 +1149,7 @@ for (bp = BUNDLES; bp != NULL; bp = bp->next)
          
          for (rp = impacted; rp != NULL; rp=rp->next)
             {
-            char *varclass = GetConstraint("ifvarclass",pp,CF_SCALAR);
+            char *varclass = GetConstraintValue("ifvarclass",pp,CF_SCALAR);
 
             if (strstr(pp2->classes,rp->item) || (varclass && strstr(varclass,rp->item)))
                {
@@ -1216,7 +1216,7 @@ snprintf(assertion,CF_BUFSIZE-1,"topics: \"%s\" association => a(\"%s\",\"%s\",\
 
 PrependItemList(&NOVA_BUNDLEDEPENDENCE,assertion);
 
-if ((handle = (char *)GetConstraint("handle",pp,CF_SCALAR)))
+if ((handle = (char *)GetConstraintValue("handle",pp,CF_SCALAR)))
    {
    snprintf(assertion,CF_BUFSIZE-1,"topics: \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",name,NOVA_BUNDLE_DATA_INV_P,handle,NOVA_BUNDLE_DATA);
 

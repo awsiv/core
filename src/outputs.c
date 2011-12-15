@@ -81,8 +81,8 @@ else // promises
 
 void Nova_SetPromiseOutputs(struct Promise *pp)
 
-{ char *handle = GetConstraint("handle",pp,CF_SCALAR);
-  char *setting = GetConstraint("report_level",pp,CF_SCALAR);
+{ char *handle = GetConstraintValue("handle",pp,CF_SCALAR);
+  char *setting = GetConstraintValue("report_level",pp,CF_SCALAR);
   enum cfreport report_level = String2ReportLevel(setting);
   int verbose = false,inform = false;
   struct Item *ip;

@@ -96,7 +96,7 @@ if (pp->ref)
    bson_append_string(&bbuf,cfp_comment_exp,pp->ref);
    }
  
-if ((sp = GetConstraint("handle",pp,CF_SCALAR)) || (sp = PromiseID(pp)))
+if ((sp = GetConstraintValue("handle",pp,CF_SCALAR)) || (sp = PromiseID(pp)))
    {
    bson_append_string(&bbuf, cfp_handle_exp, sp);
    }
@@ -212,12 +212,12 @@ for (bp = bundles; bp != NULL; bp=bp->next)
 	    bson_append_int(&bbuf, cfp_lineno, pp->offset.line);
             }
          
-         if ((sp = GetConstraint("handle",pp,CF_SCALAR)) || (sp = PromiseID(pp)))
+         if ((sp = GetConstraintValue("handle",pp,CF_SCALAR)) || (sp = PromiseID(pp)))
             {
             bson_append_string(&bbuf, cfp_handle, sp);
             }
 	 
-         if ((sp = GetConstraint("comment",pp,CF_SCALAR)))
+         if ((sp = GetConstraintValue("comment",pp,CF_SCALAR)))
             {
             bson_append_string(&bbuf, cfp_comment, sp);
             }
