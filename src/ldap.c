@@ -938,17 +938,17 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
 
                          if ((dn_rp = LDAPKeyInRlist(master,a)) == NULL)
                             {
-                            dn_rp = PrependRlistAlien(&master,NewAssoc(a,"dummy",CF_SCALAR,cf_slist));
+                            dn_rp = PrependRlistAlien(&master, NewAssoc(a, (struct Rval) { "dummy", CF_SCALAR }, cf_slist));
                             ap = (struct CfAssoc *)dn_rp->item;
-                            free(ap->rval);
-                            ap->rval = NULL;
+                            free(ap->rval.item);
+                            ap->rval.item = NULL;
                             }
                          else
                             {
                             ap = (struct CfAssoc *)dn_rp->item;
                             }
 
-                         list = (struct Item **)&(ap->rval);
+                         list = (struct Item **)&(ap->rval.item);
 
                          CfOut(cf_verbose,"","Located LDAP value %s => %s\n", a,vals[i]->bv_val);
                          PrependItem(list,(char *)vals[i]->bv_val,rp->item);
@@ -1058,7 +1058,7 @@ for (rp = master; rp != NULL; rp=rp->next,count++)
    struct Item *list;
 
    ap = rp->item;
-   rp->state_ptr = ap->rval;
+   rp->state_ptr = ap->rval.item;
 
    if (rp->next)
       {

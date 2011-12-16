@@ -2135,10 +2135,10 @@ for (ptr = VSCOPE; ptr != NULL; ptr=ptr->next)
       {
       snprintf(key,sizeof(key),"%s.%s", ptr->scope, assoc->lval);
       var.dtype = assoc->dtype;
-      var.rtype = assoc->rtype;
+      var.rtype = assoc->rval.rtype;
       var.rval[0] = '\0';
 
-      if (!PrintRval(var.rval, sizeof(var.rval) - 15, (struct Rval) { assoc->rval, assoc->rtype }))
+      if (!PrintRval(var.rval, sizeof(var.rval) - 15, assoc->rval))
          {
          CfOut(cf_verbose, "", "!! Variable %s is too large for transmission to reporting hub (larger than %d bytes) -- will be truncated in reports", key, sizeof(var.rval));
          }
