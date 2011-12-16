@@ -6,6 +6,8 @@ topics:
 
 "st-knowledge";
 Special_Topics_Guide::
+    "Knowledge Management Objectives"  association => a("discusses","Implementing Knowledge Management","is discussed in");
+Special_Topics_Guide::
     "How does CFEngine Nova help?"  association => a("discusses","Implementing Knowledge Management","is discussed in");
 Special_Topics_Guide::
     "Knowledge transfer"  association => a("discusses","Implementing Knowledge Management","is discussed in");
@@ -122,6 +124,9 @@ Knowledge_transfer::
   represents => { "Text section" };
 How_does_CFEngine_Nova_help_::
  "/docs/st-knowledge.html#How-does-CFEngine-Nova-help_003f"
+  represents => { "Text section" };
+Knowledge_Management_Objectives::
+ "/docs/st-knowledge.html#Knowledge-Management-Objectives"
   represents => { "Text section" };
 }
 

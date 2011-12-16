@@ -302,7 +302,10 @@ cfengine-nova-VERSION-ARCH.msi</span></samp>&rsquo; (replace <code>VERSION</code
 the license to get downloaded and verified. This is required even if
 you just want to run some tests on the local machine manually. The
 policy hub needs to run a flavour of Linux, as noted in the Nova
-getting started document.
+getting started document. Find the hostname or IP address of the hub, here we assume the address is '123.456.789.123' (do not bootstrap with a localhost address):
+
+<pre class="verbatim">   C:\Program Files\Cfengine\bin\cf-agent.exe --bootstrap --policy-server 123.456.789.123
+</pre>
 
 <div class="node">
 <a name="Testing-policies-locally"></a>
