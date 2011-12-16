@@ -63,10 +63,8 @@ static void ScheduleRunMaintenanceJobs(void);
 static pid_t Nova_Maintain(pid_t maintainer_pid);
 static bool IsMaintainerProcRunning(pid_t maintainer_pid);
 
-#ifdef HAVE_LIBMONGOC
 static void Nova_CreateHostID(mongo_connection *dbconnp, char *hostID, char *ipaddr);
 static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer,struct Attributes a, struct Promise *pp);
-#endif
 
 /*****************************************************************************/
 
@@ -523,7 +521,6 @@ printf(" -> Redistributed host updates with <= %d per slot, each ~%d secs per sl
 /*****************************************************************************/
 
 int ScheduleRun()
-
 {
 struct Item *ip;
 
@@ -577,7 +574,6 @@ return false;
 void Nova_UpdateMongoHostList(struct Item **list)
 
 {
-#ifdef HAVE_LIBMONGOC
  struct Item *ip = NULL, *lastseen = NULL, *ip2 = NULL, *new_lastseen=NULL;
  struct Item *deleted_hosts=NULL;
  int count = 0;
@@ -643,25 +639,9 @@ if (lastseen)
    }
 
 CfOut(cf_inform,"","%d hosts added to the lastseen cache\n",count);
- #endif
 }
 
 /*****************************************************************************/
-
-struct Item *Nova_GetMongoLastSeen()
-
-{
-#ifdef HAVE_LIBMONGOC
- // Read back the full list from Mongo
-return CFDB_GetLastseenCache();
-#else
-return NULL;
-#endif
-}
-
-/*****************************************************************************/
-
-#ifdef HAVE_LIBMONGOC
 
 static void Nova_CreateHostID(mongo_connection *dbconn, char *hostID, char *ipaddr)
 
@@ -671,8 +651,6 @@ static void Nova_CreateHostID(mongo_connection *dbconn, char *hostID, char *ipad
 CFDB_SaveHostID(dbconn,MONGO_DATABASE,cfr_keyhash,hostID,ipaddr,NULL);
 CFDB_SaveHostID(dbconn,MONGO_ARCHIVE,cfr_keyhash,hostID,ipaddr,NULL);
 }
-
-#endif  /* HAVE_LIBMONGOC */
 
 /*****************************************************************************/
 
@@ -791,8 +769,6 @@ YieldCurrentLock(thislock); // Never get here
 
 void Nova_CollectReports(struct Attributes a, struct Promise *pp)
 {
-#ifdef HAVE_LIBMONGOC 
- 
 struct Item *masterhostlist = Nova_ScanClients();
 
 Nova_Scan(masterhostlist,a,pp);
@@ -804,8 +780,6 @@ if (CFH_ZENOSS && IsDefinedClass("Min00_05"))
    }
 
 Nova_CountMonitoredClasses();
-
-#endif
 }
 
 /********************************************************************/
@@ -826,8 +800,6 @@ else
 
 static void Nova_SequentialScan(struct Item *masterlist, struct Attributes a, struct Promise *pp)
 {
-#ifdef HAVE_LIBMONGOC
-
  mongo_connection dbconn;
  struct Item *ip;
 
@@ -842,8 +814,6 @@ for (ip = masterlist; ip != NULL; ip = ip->next)
    }
 
 CFDB_Close(&dbconn);
-
-#endif  /*  HAVE_LIBMONGOC */
 }
 
 /********************************************************************/
@@ -989,8 +959,6 @@ else
 
 /********************************************************************/
 
-#ifdef HAVE_LIBMONGOC
-
 static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer,struct Attributes a, struct Promise *pp)
 
 { struct cfagent_connection *conn;
@@ -1079,8 +1047,6 @@ DeleteRlist(aa.copy.servers);
 return true;
 }
 
-#endif /* HAVE_LIBMONGOC */
-
 /*********************************************************************/
 
 void Nova_CacheTotalCompliance(bool allSlots)
@@ -1090,7 +1056,6 @@ void Nova_CacheTotalCompliance(bool allSlots)
  * graph slot).
  */
 {
-#ifdef HAVE_LIBMONGOC
   time_t curr,now = time(NULL);
   mongo_connection dbconn;
   struct EnvironmentsList *env, *ep;
@@ -1145,8 +1110,6 @@ for(; curr + (3600 * 6) < now; curr += SECONDS_PER_SHIFT) // in case of all slot
 
 FreeEnvironmentsList(env);
 CFDB_Close(&dbconn);
-
-#endif  /* HAVE_LIBMONGOC */
 }
 
 /*********************************************************************/
@@ -1154,8 +1117,6 @@ CFDB_Close(&dbconn);
 void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, char *envClass, int slot, time_t start, time_t now)
 
 {
-#ifdef HAVE_LIBMONGOC
-
   struct HubQuery *hq;
   struct HubTotalCompliance *ht;
   struct Rlist *rp;
@@ -1197,8 +1158,6 @@ if(count > 0)
    }
 
 CFDB_SaveCachedTotalCompliance(conn, envName, slot, kept, repaired, notkept, count, now); 
-
-#endif  /* HAVE_LIBMONGOC */
 }
 
 /*********************************************************************/
@@ -1206,8 +1165,6 @@ CFDB_SaveCachedTotalCompliance(conn, envName, slot, kept, repaired, notkept, cou
 void Nova_CountMonitoredClasses()
 
 {
-#ifdef HAVE_LIBMONGOC
-
   char work[CF_BUFSIZE];
   struct HubQuery *hq;
   struct Rlist *rp;
@@ -1244,8 +1201,6 @@ for (ip = order_results; ip != NULL; ip = ip->next)
    snprintf(countstr,CF_SMALLBUF,"%d",ip->counter+1);
    Nova_SetPersistentScalar(ip->name+strlen(MONITOR_CLASS_PREFIX),countstr);
    }
-
-#endif  /* HAVE_LIBMONGOC */
 }
 
 /*********************************************************************/
@@ -1316,16 +1271,13 @@ CloseDB(dbp);
 
 Nova_RemoveExcludedHosts(&list,EXCLUDE_HOSTS);
 
-#ifdef HAVE_LIBMONGOC
-
 Nova_UpdateMongoHostList(&list);
 DeleteItemList(list);
 
 // If there is a list in Mongo, this takes precedence, else populate one
-list = Nova_GetMongoLastSeen();
+list = CFDB_GetLastseenCache();
 Nova_RemoveExcludedHosts(&list,EXCLUDE_HOSTS);
 
-#endif
 return list;
 }
 
