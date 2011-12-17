@@ -2726,54 +2726,6 @@ PHP_FUNCTION(cfpr_show_topic_category)
 }
 
 /******************************************************************************/
-
-PHP_FUNCTION(cfcon_get_story_by_id)
-
-{ const int bufsize = 100000; 
- char buffer[bufsize];
- long id;
-
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l",&id) == FAILURE)
-   {
-   php_printf("Error is cfpr_get_story_by_name function args");
-   RETURN_NULL();
-   }
-
-buffer[0] = '\0';
-Con2PHP_get_story_by_id((int)id,buffer,bufsize);
-
-RETURN_STRING(buffer,1);
-}
-
-/******************************************************************************/
-
-PHP_FUNCTION(cfcon_get_story_by_name)
-
-{ const int bufsize = 100000; 
-  char buffer[bufsize];
-  char *search;
-  int s_len;
-  
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&search,&s_len) == FAILURE)
-   {
-   php_printf("Error is cfpr_get_story_by_name function args");
-   RETURN_NULL();
-   }
-
-if (strlen(search) == 0)
-   {
-   snprintf(buffer,1000,"Can't tell any stories about an empty topic");
-   }
-else
-   {
-   buffer[0] = '\0';
-   Con2PHP_get_story_by_name(search,buffer,bufsize);
-   }
-
-RETURN_STRING(buffer,1);
-}
-
-/******************************************************************************/
 /* GRAPHS                                                                     */
 /******************************************************************************/
 
@@ -4514,9 +4466,57 @@ RETURN_STRING(buffer,1);
 
 #ifdef HAVE_CONSTELLATION
 
+/******************************************************************************/
+
+PHP_FUNCTION(cfcon_get_story_by_id)
+
+{ const int bufsize = 100000;
+ char buffer[bufsize];
+ long id;
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l",&id) == FAILURE)
+   {
+   php_printf("Error is cfpr_get_story_by_name function args");
+   RETURN_NULL();
+   }
+
+buffer[0] = '\0';
+Con2PHP_get_story_by_id((int)id,buffer,bufsize);
+
+RETURN_STRING(buffer,1);
+}
+
+/******************************************************************************/
+
+PHP_FUNCTION(cfcon_get_story_by_name)
+
+{ const int bufsize = 100000;
+  char buffer[bufsize];
+  char *search;
+  int s_len;
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&search,&s_len) == FAILURE)
+   {
+   php_printf("Error is cfpr_get_story_by_name function args");
+   RETURN_NULL();
+   }
+
+if (strlen(search) == 0)
+   {
+   snprintf(buffer,1000,"Can't tell any stories about an empty topic");
+   }
+else
+   {
+   buffer[0] = '\0';
+   Con2PHP_get_story_by_name(search,buffer,bufsize);
+   }
+
+RETURN_STRING(buffer,1);
+}
+
 PHP_FUNCTION(cfcon_compliance_summary_graph)
 
-{ const int bufsize = 512*1024; 
+{ const int bufsize = 512*1024;
  char buffer[bufsize];
  char *hubKeyHash, *fhubKeyHash, *policy, *fpolicy;
  int pol_len,hkh_len;
