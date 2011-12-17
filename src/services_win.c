@@ -10,7 +10,9 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#ifdef __MINGW32__
 static int CountArgs(const char **args);
+#endif
 
 // services that can't be opened (Windows Server 2008 - separate for each OS?)
 char *PROTECTED_SERVICES[] = { "Schedule", "SamSs", "RpcSs", 
