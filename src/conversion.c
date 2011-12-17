@@ -66,7 +66,7 @@ return cfl_view_error;
 
 const char *View2Str(enum cfl_view view)
 {
-if(view < 0 || view >= cfl_view_error)
+if((int)view < 0 || view >= cfl_view_error)
    {
    return "VIEWERROR";
    }
