@@ -406,13 +406,13 @@ while(!feof(fin1) || !feof(fin2))
    if (read1)
       {
       last1 = AppendFileLine(list1,line1,c1);
-      *len1++;
+      (*len1)++;
       }
 
    if (read2)
       {
       last2 = AppendFileLine(list2,line2,c2);
-      *len2++;
+      (*len2)++;
       }
 
    line1[0] = '\0';
