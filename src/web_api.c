@@ -5503,7 +5503,7 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, struct PageInfo *page, 
  
  if (promises)
     {
-    snprintf(buf,bufSz,"{\"data\":[", count,GetCdpTableHeader(cdpType));
+    snprintf(buf,bufSz,"{\"data\":[");
     for(ip = promises; ip != NULL; ip = ip->next)  // join policy with host reports
        {
        sscanf(ip->name,"%128[^,],%512[^$]",handle,attributes);
