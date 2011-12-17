@@ -3544,7 +3544,7 @@ for (ip = clist; (ip !=  NULL); ip=ip->next)
          snprintf(work,sizeof(work),"{ \"colour\": \"red\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
          }
       
-      if(work)
+      if(*work)
          {
          if (!Join(buffer,work,bufsize))
             {
@@ -5542,7 +5542,7 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, struct PageInfo *page, 
                                 hostKeyHash,host,attributes,Nova_LongStateWarn(*statusStr),thenStr,timewarn);
                        break;
                    }
-                if(!row)
+                if(!*row)
                    {
                    continue;
                    }
