@@ -122,10 +122,10 @@ CFDB_Close(&conn);
 
 /*****************************************************************************/
 
+#ifdef HAVE_LIBMONGOC
 int Nova_GetTopicIdForTopic(char *typed_topic)
     
 {
-#ifdef HAVE_LIBMONGOC
   char topic[CF_BUFSIZE],type[CF_BUFSIZE];
   bson_buffer bb;
   bson query,field;
@@ -183,15 +183,15 @@ mongo_cursor_destroy(cursor);
 CFDB_Close(&conn);
 
 return topic_id;
-#endif
 }
+#endif
 
 /*****************************************************************************/
 
+#ifdef HAVE_LIBMONGOC
 int Nova_GetTopicByTopicId(int search_id,char *topic_name,char *topic_id,char *topic_context)
 
 {
-#ifdef HAVE_LIBMONGOC
   bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
@@ -254,15 +254,15 @@ while (mongo_cursor_next(cursor))  // loops over documents
 mongo_cursor_destroy(cursor);
 CFDB_Close(&conn);
 return topicid;
-#endif
 }
+#endif
 
 /*********************************************************************/
 
+#ifdef HAVE_LIBMONGOC
 int Nova_SearchTopicMap(char *search_topic,char *buffer,int bufsize)
 
 {
-#ifdef HAVE_LIBMONGOC
   bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
@@ -360,8 +360,8 @@ buffer[strlen(buffer)-1] = ']';
 mongo_cursor_destroy(cursor);
 CFDB_Close(&conn);
 return true;
-#endif
 }
+#endif
 
 /*****************************************************************************/
 
@@ -429,6 +429,7 @@ EndJoin(buffer,"]}",bufsize);
 
 /*****************************************************************************/
 
+#ifdef HAVE_LIBMONGOC
 struct Item *Nova_ScanLeadsAssociations(int search_id,char *assoc_mask)
 
 /* Look for neighbours and retain/sort link names - return JSON array
@@ -443,7 +444,6 @@ struct Item *Nova_ScanLeadsAssociations(int search_id,char *assoc_mask)
 */
     
 {
-#ifdef HAVE_LIBMONGOC
   bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
@@ -538,8 +538,8 @@ list = SortItemListNames(list);
 mongo_cursor_destroy(cursor);
 CFDB_Close(&conn);
 return list;
-#endif
 }
+#endif
 
 /*****************************************************************************/
 
@@ -783,10 +783,10 @@ return worklist;
 }
     
 /*************************************************************************/
+#ifdef HAVE_LIBMONGOC
 int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 
 {
-#ifdef HAVE_LIBMONGOC
  struct Rlist *rp,*rp2;
  bson_buffer bb;
  bson query,field;
@@ -886,8 +886,8 @@ mongo_cursor_destroy(cursor);
 CFDB_Close(&conn);
 
 return true;
-#endif
 }
+#endif
     
 /*************************************************************************/
 /* Level                                                                 */
@@ -997,10 +997,10 @@ ip->classes = xstrdup("No description found");
 
 /*************************************************************************/
 
+#ifdef HAVE_LIBMONGOC
 char *Nova_GetBundleComment(char *bundle)
 
 {
-#ifdef HAVE_LIBMONGOC
   static char buf[CF_BUFSIZE];
   bson_buffer bb;
   bson query,field;
@@ -1047,8 +1047,8 @@ while (mongo_cursor_next(cursor))  // loops over documents
       }
    }
 return "";
-#endif
 }
+#endif
 
 /*********************************************************************/
 
@@ -1451,10 +1451,10 @@ return true;
 
 /*********************************************************************/
 
+#ifdef HAVE_LIBMONGOC
 struct Item *Nova_NearestNeighbours(int search_id,char *assoc_mask)
 
 {
-#ifdef HAVE_LIBMONGOC
   bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
@@ -1563,15 +1563,15 @@ while (mongo_cursor_next(cursor))  // loops over documents
 mongo_cursor_destroy(cursor);
 CFDB_Close(&conn);
 return list;
-#endif
 }
+#endif
 
 /*********************************************************************/
 
+#ifdef HAVE_LIBMONGOC
 struct Item *Nova_GetTopicsInContext(char *context)
     
 {
-#ifdef HAVE_LIBMONGOC
   bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
@@ -1642,8 +1642,8 @@ while (mongo_cursor_next(cursor))  // loops over documents
 mongo_cursor_destroy(cursor);
 CFDB_Close(&conn);
 return list;
-#endif
 }
+#endif
 
 /*********************************************************************/
 // Copy from ontology.c because of a linker bug
