@@ -1409,7 +1409,6 @@ void ThisHashString(char *str,char *buffer,int len,unsigned char digest[EVP_MAX_
  char *file_buffer;
  FILE *fp;
  int md_len;
- char fbuf[2048];
  int i=0;
 
  OpenSSL_add_all_algorithms();
@@ -1425,8 +1424,6 @@ void ThisHashString(char *str,char *buffer,int len,unsigned char digest[EVP_MAX_
 
  EVP_DigestInit(&context,md);
  EVP_DigestUpdate(&context,(unsigned char*)buffer,len);
-
- fbuf[0] = '\0';
 
  EVP_DigestUpdate(&context,(unsigned char*)str,strlen(str));
 
