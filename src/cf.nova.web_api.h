@@ -55,6 +55,14 @@ extern int AM_PHP_MODULE;
 // Separation needed because it is included by php extension
 
 /*
+ * These functions are apparently used by PHP module
+ */
+#ifdef HAVE_LIBMONGOC
+int CFDB_GetValue(char *lval,char *rval,int size);
+int Nova_GetTopicIdForTopic(char *typed_topic);
+#endif
+
+/*
  * Returned error strings are statically allocated and do not need freeing.
  * NULL is placed to errstr if no error occured.
  */

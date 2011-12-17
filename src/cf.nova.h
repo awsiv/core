@@ -395,7 +395,6 @@ int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 /* db_query.c */
 
 #ifdef HAVE_LIBMONGOC
-int CFDB_GetValue(char *lval,char *rval,int size);
 void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn);
 int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int bufsize);
 struct HubQuery *CFDB_QueryHostsInClassContext(mongo_connection *conn,char *expression,time_t horizon,int sort);
@@ -1044,7 +1043,6 @@ void Nova_DumpTopics(void);
 void Nova_FillInGoalComment(struct Item *ip);
 char *Nova_GetBundleComment(char *bundle);
 void Nova_WebTopicMap_Initialize(void);
-int Nova_GetTopicIdForTopic(char *typed_topic);
 void Nova_LookupUniqueAssoc(int pid,char *buffer,int bufsize);
 void Nova_ScanTheRest(int pid,char *buffer, int bufsize);
 int Nova_SearchTopicMap(char *typed_topic,char *buffer,int bufsize);
