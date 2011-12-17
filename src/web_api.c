@@ -5567,10 +5567,9 @@ char *GetCdpTableHeader(cdp_report cdpType)
         return "{\"hostkey\":0,\"Host\":1,\"Key\":2,\"Value\":3,\"Action\":4,\"Class expression\":5,\"State\":6,\"Last checked\":7,\"timewarn\":8}";
     case cdp_services:
         return "{\"hostkey\":0,\"Host\":1,\"Service name\":2,\"Runstatus\":3,\"Action\":4,\"Class expression\":5,\"State\":6,\"Last checked\":7,\"timewarn\":8}";
+    default:
+       return "\"Undefined Special Policy Header\"";
     }
-
-
- return "\"Undefined Special Policy Header\"";
 }
 
 /*****************************************************************************/
