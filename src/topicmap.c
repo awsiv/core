@@ -1119,7 +1119,7 @@ int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_ad
   char *a_name,*a_context,view[CF_MAXVARSIZE];
   int from_pid,to_pid,a_pid;
   char query[CF_BUFSIZE];
-  struct CfGraphNode neighbours1[CF_TRIBE_SIZE],neighbours2[CF_TRIBE_SIZE][CF_TRIBE_SIZE],neighbours3[CF_TRIBE_SIZE][CF_TRIBE_SIZE][CF_TRIBE_SIZE];
+  struct CfGraphNode neighbours1[CF_TRIBE_SIZE],neighbours2[CF_TRIBE_SIZE][CF_TRIBE_SIZE];
   int tribe_counter = 0,secondary_boundary,tertiary_boundary,i,j;
   struct Item *ip,*nn = NULL;
 
@@ -1271,7 +1271,6 @@ if (tribe_counter < CF_TRIBE_SIZE-1 && tertiary_boundary > 0)
             
             if (Nova_NewVertex(tribe_nodes,tribe_counter,3,a_pid,a_name,a_context))
                {            
-               neighbours3[i][j][tribe_counter].real_id = a_pid;
                tribe_id[tribe_counter] = a_pid;
                tribe_adj[tribe_counter][j] = 1;
                tribe_adj[j][tribe_counter] = 1;
