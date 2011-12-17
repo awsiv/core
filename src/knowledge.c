@@ -135,7 +135,7 @@ for (op = occurrences; op != NULL; op=op->next)
 
    for (rp = op->represents; rp != NULL; rp=rp->next)
       {
-      CfDebug("Add occurrence (context,locator,locator_type,subtype) values ('%s','%s','%d','%s')\n",op->occurrence_context,op->locator,op->rep_type,rp->item);
+      CfDebug("Add occurrence (context,locator,locator_type,subtype) values ('%s','%s','%d','%s')\n",op->occurrence_context,op->locator,op->rep_type, (const char *)rp->item);
 
       bson_buffer_init(&bbuf);
       bson_append_new_oid(&bbuf, "_id" );

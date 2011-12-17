@@ -815,7 +815,7 @@ for (rp = goal_categories; rp != NULL; rp=rp->next)
    {
    for (rp2 = goal_patterns; rp2 != NULL; rp2=rp2->next)
       {
-      snprintf(work,CF_MAXVARSIZE-1,"%s\\.%s|",(char*)rp->item,rp2->item);
+      snprintf(work,CF_MAXVARSIZE-1,"%s\\.%s|",(char*)rp->item, (const char *)rp2->item);
       strcat(searchstring,work);
       }
    }
