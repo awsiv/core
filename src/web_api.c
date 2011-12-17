@@ -6338,7 +6338,7 @@ int Nova2PHP_GetHubMaster(char *buffer,int bufsize)
 
     CFDB_QueryMasterIP(master,sizeof(master));
 
-    if (sp = strchr(master,':'))
+    if ((sp = strchr(master,':')))
        {
        *sp = '\0';
        }

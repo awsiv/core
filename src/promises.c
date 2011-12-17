@@ -199,7 +199,7 @@ else
    
    CFDB_QueryMasterIP(master,sizeof(master));
    
-   if (sp = strchr(master,':'))
+   if ((sp = strchr(master,':')))
       {
       *sp = '\0';
       }
