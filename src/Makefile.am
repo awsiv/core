@@ -69,7 +69,6 @@ libcfnova_la_SOURCES =						\
 	topicmap.c                                              \
 	install.c						\
 	cmd_api.c						\
-	web_api.c						\
 	win_api.c						\
         win_disphelper.c                                        \
 	win_file.c						\
@@ -83,6 +82,11 @@ libcfnova_la_SOURCES =						\
 	win_sysinfo.c                                           \
 	win_user.c                                              \
         win_wmi.c
+
+if MONGO
+libcfnova_la_SOURCES +=						\
+	web_api.c
+endif
 
 libcfmonitord_la_LDFLAGS = -no-undefined
 

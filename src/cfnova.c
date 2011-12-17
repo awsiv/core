@@ -79,3 +79,76 @@ return true;
 }
 
 #endif
+
+/*****************************************************************************/
+
+void Nova_EnterpriseModuleTrick()
+{
+#ifdef HAVE_LIBMONGOC
+char buffer[CF_MAXVARSIZE];
+
+// Shared library linking requires these functions to appear in something linked to libpromises
+// use this for diagnostics? This is linked through enterprise_stubs.c
+
+if (false)
+   {
+   //   Nova2PHP_software_report(0,0,0,0,0,cfr_software,NULL,buffer,20);
+   //   Nova2PHP_classes_report(NULL,NULL,0,NULL,buffer,1000);
+   //   Nova2PHP_vars_report(NULL,NULL,NULL,NULL,NULL,0,NULL,buffer,1000);
+   //   Nova2PHP_compliance_promises(NULL,NULL,"x",0,NULL,buffer,10000);
+   //   Nova2PHP_lastseen_report(NULL,NULL,NULL,NULL,-1,0,NULL,buffer,10000);
+   //   Nova2PHP_bundles_report(NULL,NULL,0,NULL,buffer,10000);
+   //   Nova2PHP_performance_report(NULL,NULL,0,NULL,buffer,10000);
+   //   Nova2PHP_setuid_report(NULL,NULL,0,NULL,buffer,10000);
+   //   Nova2PHP_filechanges_report(NULL,NULL,false,-1,">",NULL,buffer,10000);
+   //   Nova2PHP_filediffs_report(NULL,NULL,NULL,false,-1,">",NULL,buffer,10000);
+   //   Nova2PHP_value_report(NULL,NULL,NULL,NULL,NULL,buffer,1000);
+   //   Nova2PHP_promiselog(NULL,NULL,1,0,0,NULL,buffer,1000);
+   Nova2PHP_promises(NULL, NULL, NULL, 0);
+   //   Nova2PHP_getlastupdate(NULL,buffer,10);
+
+   CFDB_PutValue("one_two","three");
+   CFDB_GetValue("newvar",buffer,120);
+   Nova2PHP_count_hosts();
+   Nova2PHP_count_red_hosts();
+   Nova2PHP_count_yellow_hosts();
+   Nova2PHP_count_green_hosts();
+   Nova_Header("123","123",buffer,1000);
+   Nova_Footer(buffer,1000);
+   Nova2PHP_choose_hosts("123",2,buffer,1000);
+   Nova2PHP_get_host_colour(NULL,buffer,3);
+   Nova_Header("sd","we",buffer,3);
+   Nova2PHP_get_network_speed("","",3);
+   Nova2PHP_meter(NULL,NULL,0);
+   /* pdf functions */
+   Nova2PHP_compliance_report_pdf(NULL,NULL,0,0,0,0,0,NULL,buffer,10000);
+   Nova2PHP_promiselog_pdf(NULL,NULL,1,0,0,NULL,buffer,1000);
+   Nova2PHP_bundle_report_pdf(NULL,NULL,0,NULL,buffer,10000);
+   Nova2PHP_value_report_pdf(NULL,NULL,NULL,NULL,NULL,buffer,1000);
+   Nova2PHP_classes_report_pdf(NULL,NULL,0,NULL, buffer,1000);
+   Nova2PHP_compliance_promises_pdf(NULL,NULL,"x",0,NULL, buffer,10000);
+   Nova2PHP_filechanges_report_pdf(NULL,NULL,false,-1,">",NULL, buffer,10000);
+   Nova2PHP_lastseen_report_pdf(NULL,NULL,NULL,NULL,-1,0,NULL, buffer,10000);
+   Nova2PHP_software_report_pdf(0,0,0,0,0,cfr_software,NULL, buffer,20);
+   Nova2PHP_performance_report_pdf(NULL,NULL,0,NULL, buffer,10000);
+   Nova2PHP_vars_report_pdf(NULL,NULL,NULL,NULL,NULL,0,NULL, buffer,1000);
+   Nova2PHP_filediffs_report_pdf(NULL,NULL,NULL,false,-1,">",NULL, buffer,10000);
+   Nova2PHP_setuid_report_pdf(NULL,NULL,0,NULL, buffer,10000);
+
+   /* svn helper */
+   Nova2PHP_validate_policy(NULL,NULL,10000);
+   /*
+    * commenting
+    */
+   Nova2PHP_add_new_note(NULL,NULL, -1,NULL, -1, NULL,NULL,100);
+   Nova2PHP_add_note(NULL,NULL,-1,NULL,NULL,100);
+   Nova2PHP_get_notes(NULL,NULL, NULL,-1,-1,NULL,NULL,10000);
+   Nova2PHP_get_host_noteid(NULL,NULL,4096);
+
+   Nova2PHP_get_knowledge_view(0,NULL,NULL,999);
+
+   CfLDAPAuthenticate(NULL,NULL,NULL,NULL,false);
+   Nova2PHP_cdp_report(NULL, NULL, NULL, NULL, 10000);
+   }
+#endif
+}

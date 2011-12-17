@@ -762,6 +762,7 @@ return false;
 
 /*************************************************************************/
 
+#ifdef HAVE_LIBMONGOC
 struct Item *Nova_GetBusinessGoals(char *handle)
 
 { char querytopic[CF_BUFSIZE];
@@ -781,8 +782,10 @@ for (ip = worklist; ip !=  NULL; ip=ip->next)
 worklist = SortItemListNames(worklist);
 return worklist;
 }
+#endif
     
 /*************************************************************************/
+
 #ifdef HAVE_LIBMONGOC
 int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 
@@ -1083,6 +1086,7 @@ return replace;
 /* Plot cosmos                                                               */
 /*****************************************************************************/
 
+#ifdef HAVE_LIBMONGOC
 void Nova_PlotTopicCosmos(int topic,char *view,char *buffer,int bufsize)
 
 /* This assumes that we have the whole graph in a matrix */
@@ -1105,11 +1109,13 @@ if ((tribe_size = Nova_GetTribe(tribe_id,tribe_nodes,tribe_adj,topic,view)))
 
 Join(buffer,"]",bufsize);
 }
+#endif
 
 /*************************************************************************/
 /* Local patch computation                                               */
 /*************************************************************************/
 
+#ifdef HAVE_LIBMONGOC
 int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int pid,char *view_pattern)
 
 /* This function generates a breadth-first connected sub-graph of the full graph
@@ -1300,7 +1306,7 @@ if (tribe_counter < CF_TRIBE_SIZE-1 && tertiary_boundary > 0)
 
 return tribe_counter;
 }
-
+#endif
 
 /*************************************************************************/
 /* Level                                                                 */
@@ -1416,10 +1422,12 @@ CfDebug("NEWVERT(%d,%d,%s:%s)\n",distance,real,topic_context,topic_name);
 
 /* If more than a few nodes, don't waste visual space on repeated topics */
 
+#ifdef HAVE_LIBMONGOC
 if (strlen(topic_name) == 0)
    {
    Nova_GetTopicByTopicId(real,topic_name,topic_id,topic_context);
    }
+#endif
 
 sscanf(topic_name,"%32[^\n]",sshort);
 
