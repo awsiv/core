@@ -202,7 +202,6 @@ i = 0;
 
 while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
    {
-   double measure;
    time_t then;
 
    strncpy(eventname,(char *)key,CF_BUFSIZE-1);
@@ -212,7 +211,6 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       memcpy(&entry,value,sizeof(entry));
 
       then    = entry.t;
-      measure = entry.Q.q;
       average = entry.Q.expect;
       var     = entry.Q.var;
 
@@ -405,7 +403,7 @@ void Nova_PackDiffs(struct Item **reply,char *header,time_t from,enum cfd_menu t
       output[CF_MAXTRANSSIZE],aggregate[CF_BUFSIZE];
   struct Item *ip,*file = NULL;
   char pm;
-  int i = 0,first = true;
+  int first = true;
   time_t then;
   long lthen;
 
@@ -499,7 +497,7 @@ while (!feof(fin))
 
 fclose(fin);
 
-for (i = 0,ip = file; ip != NULL; ip = ip->next)
+for (ip = file; ip != NULL; ip = ip->next)
    {
    if (first)
       {
