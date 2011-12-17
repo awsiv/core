@@ -944,6 +944,10 @@ int Nova_ImportHostReports(mongo_connection *dbconnp, char *filePath);
 int Nova_ImportHostReportsFromStream(mongo_connection *dbconn, char *header, FILE *fin);
 #endif
 
+/* reporting.c */
+
+void Nova_ImportReports(const char *input_file);
+
 /* runagent.c */
 
 bool Nova_ExecuteRunagent(struct cfagent_connection *conn, const char *menu);
