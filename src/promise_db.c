@@ -82,10 +82,10 @@ if (pp->audit)
 
 // The promise body
 
-if (pp->promisee)
+if (pp->promisee.item)
    {
    memset(rval_buffer, 0, sizeof(rval_buffer));
-   PrintRval(rval_buffer,CF_BUFSIZE, (struct Rval) { pp->promisee, pp->petype });
+   PrintRval(rval_buffer,CF_BUFSIZE, pp->promisee);
    CfDebug(" -> %s\n",rval_buffer);
    bson_append_string(&bbuf,cfp_promisee_exp,rval_buffer);
    }
@@ -112,7 +112,7 @@ for (cp = pp->conlist, j = 0; cp != NULL; cp = cp->next)
      }
 
    memset(rval_buffer, 0, sizeof(rval_buffer));
-   PrintRval(rval_buffer,CF_BUFSIZE, (struct Rval) { cp->rval, cp->type });
+   PrintRval(rval_buffer,CF_BUFSIZE, cp->rval);
    CfDebug("  %s => %s\n",cp->lval,rval_buffer);
    snprintf(con, sizeof(con), "%s => %s", cp->lval, rval_buffer);
    snprintf(jStr, sizeof(jStr), "%d", j);
@@ -196,10 +196,10 @@ for (bp = bundles; bp != NULL; bp=bp->next)
 	 bson_append_string(&bbuf, cfp_classcontext, pp->classes);
 
          
-         if (pp->promisee)
+         if (pp->promisee.item)
             {
             memset(rval_buffer, 0, sizeof(rval_buffer));
-            PrintRval(rval_buffer,CF_BUFSIZE, (struct Rval) { pp->promisee, pp->petype });
+            PrintRval(rval_buffer,CF_BUFSIZE, pp->promisee);
             
             bson_append_string(&bbuf, cfp_promisee, rval_buffer);
             }
@@ -233,7 +233,7 @@ for (bp = bundles; bp != NULL; bp=bp->next)
                }
             
             memset(rval_buffer, 0, sizeof(rval_buffer));
-            PrintRval(rval_buffer,CF_BUFSIZE, (struct Rval) { cp->rval, cp->type });
+            PrintRval(rval_buffer,CF_BUFSIZE, cp->rval);
             CfDebug("  %s => %s\n",cp->lval,rval_buffer);
             
             snprintf(con, sizeof(con), "%s => %s", cp->lval, rval_buffer);	    
@@ -323,7 +323,7 @@ for (cp = body->conlist; cp != NULL; cp=cp->next)
       }
    
    memset(rval_buffer,0,sizeof(rval_buffer));
-   PrintRval(rval_buffer,sizeof(rval_buffer), (struct Rval) { cp->rval, cp->type });
+   PrintRval(rval_buffer,sizeof(rval_buffer), cp->rval);
    CfDebug("  %s => %s\n",cp->lval,rval_buffer);
    
    snprintf(varName,sizeof(varName),"%s.%s.%s",cfb_classcontext,classContext,cp->lval);
