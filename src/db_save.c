@@ -989,7 +989,6 @@ void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, enum promiselog_
   struct Item *ip;
   char handle[CF_MAXVARSIZE],reason[CF_BUFSIZE];
   char *collName;
-  char *dbOp = NULL;
   long then;
   time_t tthen;
     
@@ -997,11 +996,9 @@ switch(rep_type)
    {
    case plog_repaired:
        collName = MONGO_LOGS_REPAIRED;
-       dbOp = "update promise repaired";
        break;
    case plog_notkept:
        collName = MONGO_LOGS_NOTKEPT;
-       dbOp = "update promise not kept";
        break;
    default:
        CfOut(cf_error, "", "!! Unknown promise log report type (%d)", rep_type);

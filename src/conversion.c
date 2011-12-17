@@ -80,7 +80,7 @@ return CFCON_VIEWS[view];
 
 int Nova_GetReportedScalar(char *hostkey,char *scope,char *lval,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE],lscope[CF_MAXVARSIZE];
+{ char *report,buffer[CF_BUFSIZE];
  struct HubVariable *hv,*hv2;
  struct HubQuery *hq;
  struct Rlist *rp,*result;
@@ -94,7 +94,6 @@ if (!CFDB_Open(&dbconn))
 
 hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,NULL,NULL,false,NULL);
 
-lscope[0] = '\0';
 returnval[0] = '\0';
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -137,7 +136,7 @@ int Nova_GetReportedList(char *hostkey,char *scope,char *lval,struct Rlist **lis
 
 /* This function allocates memory which needs to be deleted afterwards */
     
-{ char *report,buffer[CF_BUFSIZE],lscope[CF_MAXVARSIZE];
+{ char *report,buffer[CF_BUFSIZE];
   struct HubVariable *hv,*hv2;
   struct HubQuery *hq;
   struct Rlist *rp,*result;
@@ -150,8 +149,6 @@ if (!CFDB_Open(&dbconn))
    }
 
 hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,NULL,NULL,false,NULL);
-
-lscope[0] = '\0';
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
