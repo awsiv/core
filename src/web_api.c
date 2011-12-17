@@ -42,6 +42,7 @@ static const char *ERRID_DESCRIPTION[] =
 
 /*****************************************************************************/
 
+static char *FormatTwoDimensionalArrayAsJson(char *buf, int bufsize, const char *array[][2]);
 
 #ifdef HAVE_LIBMONGOC
 
