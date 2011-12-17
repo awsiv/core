@@ -30,7 +30,7 @@ while (fgets(buf, 1024, fd))
    
    *s = 0;
    
-   if (1 == sscanf(s + 1, "%llu", &value) != 1)
+   if (sscanf(s + 1, "%llu", &value) != 1)
       {
       /* Malformed file */
       return false;
