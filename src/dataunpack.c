@@ -620,7 +620,6 @@ void Nova_UnPackLastSeen(mongo_connection *dbconn, char *id, struct Item *data)
  char inout, asserted[CF_MAXVARSIZE],dns[CF_MAXVARSIZE],hash[CF_MAXVARSIZE];
   double ago,average,dev;
   long fthen;
-  time_t then;
  
 CfOut(cf_verbose,""," -> Last-seen data..........................");
 
@@ -642,8 +641,6 @@ for (ip = data; ip != NULL; ip=ip->next)
           &ago,
           &average,
           &dev);
-
-   then = (time_t)fthen;
 
    // map our own address
    if(IsInterfaceAddress(asserted))
@@ -828,7 +825,6 @@ void Nova_UnPackBundles(mongo_connection *dbconn, char *id, struct Item *data)
   char bundle[CF_SMALLBUF];
   double ago,average,dev;
   long fthen;
-  time_t then;
   
 CfOut(cf_verbose,""," -> Bundle data...........................");
 
@@ -848,7 +844,6 @@ for (ip = data; ip != NULL; ip=ip->next)
           &average,
           &dev);
 
-   then = (time_t)fthen;
    CfDebug("Bundle: %s done %.2lf hrs ago, av %.2lf +/- %.2lf at %s",bundle,ago,average,dev,cf_ctime(&fthen));
    }
 }

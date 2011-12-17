@@ -318,7 +318,7 @@ void Nova_NotePromiseCompliance(struct Promise *pp,double val,enum cf_status sta
   static char oldNoRepeatId[CF_BUFSIZE] = {0};
   struct Event e,newe;
   time_t now = time(NULL);
-  double lastseen,delta2;
+  double delta2;
   double vstatus;      /* end with a rough probability */
   
 CfDebug("Note Promise Compliance\n");
@@ -364,7 +364,6 @@ if (!OpenDB(name,&dbp))
 
 if (ReadDB(dbp,promiseHandle,&e,sizeof(e)))
    {
-   lastseen = now - e.t;
    newe.t = now;
    newe.Q.q = vstatus;
    newe.Q.expect = GAverage(vstatus,e.Q.expect,0.5);
@@ -373,7 +372,6 @@ if (ReadDB(dbp,promiseHandle,&e,sizeof(e)))
    }
 else
    {
-   lastseen = 0;
    newe.t = now;
    newe.Q.q = vstatus;
    newe.Q.expect = 0.5*vstatus;  /* With no data it's 50/50 what we can say */
