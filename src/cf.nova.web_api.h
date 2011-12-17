@@ -113,6 +113,7 @@ int Nova2PHP_hostinfo(char *hostkey,char *hostnameOut,char *ipaddrOut,int bufsiz
 int Nova2PHP_software_report(char *key,char *name,char *value, char *arch,int regex,char *type,char *classreg,struct PageInfo *page,char *returnval,int bufsize);
 int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *classreg,struct PageInfo *page,char *buffer,int bufsize);
 int Nova2PHP_classes_summary(char **classes, char *buf, int bufsize);
+int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int bufsize);
 int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg,struct PageInfo *page, char *returnval,int bufsize);
 int Nova2PHP_compliance_report(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg,struct PageInfo *page, char *returnval,int bufsize);
 int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int regex,char *classreg,struct PageInfo *page,char *buffer,int bufsize);
