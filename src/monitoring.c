@@ -1323,7 +1323,7 @@ void NovaNamedEvent(char *eventname,double value,struct Attributes a,struct Prom
 
 { char dbname[CF_BUFSIZE];
   struct Event ev_new,ev_old;
-  time_t lastseen, now = time(NULL);
+  time_t now = time(NULL);
   double delta2;
   CF_DB *dbp;
 
@@ -1336,7 +1336,6 @@ if (!OpenDB(dbname,&dbp))
 
 if (ReadDB(dbp,eventname,&ev_old,sizeof(ev_old)))
    {
-   lastseen = now - ev_old.t;
    ev_new.t = now;
    ev_new.Q.q = value;
    ev_new.Q.expect = GAverage(value,ev_old.Q.expect,FORGETRATE);
