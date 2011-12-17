@@ -835,9 +835,9 @@ void Nova_PackMonitorHist(struct Item **reply,char *header,time_t from,enum cfd_
   int ok[CF_OBSERVABLES];
   char filename[CF_BUFSIZE];
   char buffer[CF_MAXTRANSSIZE],val[CF_SMALLBUF];
-  double weekly[CF_OBSERVABLES][CF_GRAINS] = {0};
-  double histogram[CF_OBSERVABLES][7][CF_GRAINS] = {0};
-  double smoothhistogram[CF_OBSERVABLES][7][CF_GRAINS] = {0};
+  double weekly[CF_OBSERVABLES][CF_GRAINS] = {{0}};
+  double histogram[CF_OBSERVABLES][7][CF_GRAINS] = {{{0}}};
+  double smoothhistogram[CF_OBSERVABLES][7][CF_GRAINS] = {{{0}}};
   FILE *fp;
 
 CfOut(cf_verbose,""," -> Packing histograms");
