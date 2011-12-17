@@ -2284,7 +2284,7 @@ int Nova_ExportReports(char *reportName)
 
 #ifdef HAVE_LIBMONGOC
 
-int Nova_ImportHostReports(mongo_connection *dbconnp, char *filePath)
+int Nova_ImportHostReports(mongo_connection *dbconnp, const char *filePath)
 /*
  * Import from text file to Mongo database.
  * NOTE: Should only be called on Nova hub.

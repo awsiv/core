@@ -331,7 +331,7 @@ bool BoostrapAllowed(void);
 
 /* client_code.c */
 #ifdef HAVE_LIBMONGOC
-int Nova_QueryClientForReports(mongo_connection *dbconn, struct cfagent_connection *conn,char *menu,time_t since);
+int Nova_QueryClientForReports(mongo_connection *dbconn, struct cfagent_connection *conn, const char *menu, time_t since);
 void UnpackReportBook(mongo_connection *dbconn, char *id,struct Item **reports);
 #endif
 
@@ -940,7 +940,7 @@ void Nova_CommandAPI(char *lsdata,char *name,char *handle,char *hostkey,char *cl
 #ifdef HAVE_LIBMONGOC
 void Nova_ImportReports(const char *input_file);
 
-int Nova_ImportHostReports(mongo_connection *dbconnp, char *filePath);
+int Nova_ImportHostReports(mongo_connection *dbconnp, const char *filePath);
 int Nova_ImportHostReportsFromStream(mongo_connection *dbconn, char *header, FILE *fin);
 #endif
 
