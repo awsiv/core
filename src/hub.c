@@ -399,7 +399,7 @@ void SplayLongUpdates()
   void *value;
   int ksize,vsize, count = 0, optimum_splay_interval;
   char *key,*slots;
-  time_t now = time(NULL), min = now + 30000, max = 0, this;
+  time_t now = time(NULL), min = now + 30000, max = 0;
   int slot = 0, total_slots;
   time_t newtime;
    
@@ -448,8 +448,6 @@ while(NextDB(dbp,dbcp,&key,&ksize,(void *)&value,&vsize))
       {
       min = entry.time;
       }
-   
-   this = entry.time;
    }
 
 

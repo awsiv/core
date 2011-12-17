@@ -770,7 +770,7 @@ bool Nova2PHP_vitals_analyse_year(char *hostkey, char *vitalId, char *buffer, in
 
 bool Nova2PHP_vitals_analyse_histogram(char *hostkey, char *vitalId, char *buffer, int bufsize)
 
-{ double sx, q, delta, sum = 0, sigma2;
+{ double sx, delta, sum = 0, sigma2;
   int new_gradient = 0, past_gradient = 0, max = 0;
   int redshift = 0, blueshift = 0;
   int above_noise = false;
@@ -801,7 +801,6 @@ strcpy(buffer,"[");
 
 for (sx = 1; sx < CF_GRAINS; sx++)
    {
-   q = cfv.data_E[(int)sx];
    delta = cfv.data_E[(int)sx] - cfv.data_E[(int)(sx-1)];
    sum += delta*delta;
    }
@@ -815,7 +814,6 @@ Join(buffer,work,bufsize);
 
 for (sx = 1; sx < CF_GRAINS; sx++)
    {
-   q = cfv.data_E[(int)sx];
    delta = cfv.data_E[(int)sx] - cfv.data_E[(int)(sx-1)];
 
    above_noise = (delta*delta > sigma2) * sensitivity_factor;
@@ -1815,7 +1813,6 @@ int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddres
  int count = 0;
  mongo_connection dbconn;
  char inout[CF_SMALLBUF];
- time_t then;
  char header[CF_BUFSIZE]={0};
  int margin = 0,headerLen=0,noticeLen=0;
  int truncated = false;
@@ -1855,8 +1852,6 @@ int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddres
            break;
        }
 
-    then = hl->t;
-   
     snprintf(buffer,sizeof(buffer),
              "[\"%s\",\"%s\",\"%s\",\"%s\",%ld,"
              "%.2lf,%.2lf,%.2lf,\"%s\"],",
@@ -4110,7 +4105,7 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
 { mongo_connection dbconn;
  struct HubPromise *hp;
  char promiseeText[CF_MAXVARSIZE],bArgText[CF_MAXVARSIZE];
- char commentText[CF_MAXVARSIZE], constText[CF_MAXVARSIZE];
+ char commentText[CF_MAXVARSIZE];
  char work[CF_BUFSIZE], escaped[CF_BUFSIZE];
  int i,count;
   
@@ -4181,8 +4176,6 @@ if (strcmp(handle,"internal_promise") == 0)
  snprintf(work,sizeof(work),"\"file\":\"%s\",\"line_num\":%d,",hp->file,hp->lineNo);
  Join(returnval,work,bufsize);
 
- constText[0] = '\0';
- 
  if (hp->constraints)
     {
     snprintf(work,sizeof(work),"\"body\":[");
@@ -4976,7 +4969,7 @@ int Nova2PHP_performance_report_pdf(char *hostkey,char *job,int regex,char *clas
  struct HubPerformance *hP;
  struct HubQuery *hq;
  struct Rlist *rp,*result;
- int count = 0, tmpsize,icmp;
+ int count = 0, icmp;
  mongo_connection dbconn;
  int margin = strlen(CF_NOTICE_TRUNCATED);
 
@@ -4996,9 +4989,7 @@ int Nova2PHP_performance_report_pdf(char *hostkey,char *job,int regex,char *clas
     snprintf(buffer,sizeof(buffer),"%s<nc>%s<nc>%.2lf<nc>%.2lf<nc>%.2lf<nc>%s<nova_nl>",
              hP->hh->hostname,
              hP->event,hP->q,hP->e,hP->d,cf_ctime(&(hP->t)));
-   
-    tmpsize = strlen(buffer);
-   
+
     if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
        snprintf(buffer,sizeof(buffer),"<nc>%s<nc><nc><nc><nc><nova_nl>",CF_NOTICE_TRUNCATED);

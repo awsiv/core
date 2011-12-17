@@ -1554,7 +1554,7 @@ struct Rlist* Nova_GetTestMachines(void)
   bson_buffer bb,bb_dup;
   bson_buffer *setObj, *arr;
   bson setOp;
-  bson_oid_t *oid,_oid;
+  bson_oid_t _oid;
 
   char keyhash[CF_MAXVARSIZE],addresses[CF_MAXVARSIZE],hostnames[CF_MAXVARSIZE];
   char newkeyhash[CF_BUFSIZE]={0},newaddresses[CF_MAXVARSIZE]={0},newhostnames[CF_BUFSIZE]={0};
@@ -1562,8 +1562,6 @@ struct Rlist* Nova_GetTestMachines(void)
   unsigned char digest[EVP_MAX_MD_SIZE+1];
   int i, total_added=0;
    struct Rlist *testmachines = NULL,*rp=NULL;
-
-  oid = &_oid;
 
 if (!CFDB_Open(&conn))
    {
@@ -1592,7 +1590,7 @@ while(mongo_cursor_next(cursor))  // loops over documents
          }
       else if (strcmp(bson_iterator_key(&it),"_id") == 0)
          {
-         oid = bson_iterator_oid(&it);
+         bson_iterator_oid(&it);
          }
       }
    
@@ -1658,14 +1656,13 @@ void Nova_UpdateTestData(void)
   bson b,query,empty,element,setOp;
   bson_buffer bb;
   bson_buffer *setObj;
-  bson_oid_t *oid,_oid;
+  bson_oid_t _oid;
   mongo_connection conn;
 
   char keyhash[CF_MAXVARSIZE],addresses[CF_MAXVARSIZE];
   char temp[CF_MAXVARSIZE],hostnames[CF_MAXVARSIZE],noDot[CF_BUFSIZE]={0};
 
   int i=0;
-  oid = &_oid;
 
 if (!CFDB_Open(&conn))
    {
@@ -1695,7 +1692,7 @@ while(mongo_cursor_next(cursor))  // loops over documents
          }
       else if (strcmp(bson_iterator_key(&it),"_id") == 0)
          {
-         oid = bson_iterator_oid(&it);
+         bson_iterator_oid(&it);
          }
       }
    

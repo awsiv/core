@@ -68,7 +68,7 @@ return have_data;
 
 struct Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash)
 
-{ double sx, q, delta, sum = 0, sigma2;
+{ double sx, delta, sum = 0, sigma2;
   int new_gradient = 0, past_gradient = 0, max = 0;
   int redshift = 0, blueshift = 0;
   int above_noise = false;
@@ -80,7 +80,6 @@ struct Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash)
 
 for (sx = 1; sx < CF_GRAINS; sx++)
    {
-   q = cfv->data_E[(int)sx];
    delta = cfv->data_E[(int)sx] - cfv->data_E[(int)(sx-1)];
    sum += delta*delta;
    }
@@ -89,7 +88,6 @@ sigma2 = sum / (double)CF_GRAINS;
 
 for (sx = 1; sx < CF_GRAINS; sx++)
    {
-   q = cfv->data_E[(int)sx];
    delta = cfv->data_E[(int)sx] - cfv->data_E[(int)(sx-1)];
 
    above_noise = (delta*delta > sigma2) * sensitivity_factor;

@@ -87,8 +87,8 @@ int Nova_QueryClientForReports(mongo_connection *dbconn, struct cfagent_connecti
 
 { int tosend,cipherlen=0;
  char in[CF_BUFSIZE],out[CF_BUFSIZE],workbuf[CF_BUFSIZE],cfchangedstr[265];
-  long n_read_total = 0,length = 0;
-  int plainlen,more = true,header = true,current_report = -1;
+  long length = 0;
+  int more = true,header = true,current_report = -1;
   time_t now,then,time2 = 0,delta1 = 0,delta2 = 0;
   struct Item *reports[CF_CODEBOOK_SIZE] = {0};
   char keyHash[EVP_MAX_MD_SIZE*4];
@@ -118,8 +118,6 @@ if (SendTransaction(conn->sd,workbuf,tosend,CF_DONE) == -1)
    return false;
    }
 
-n_read_total = 0;
-
 while (more)
    {
    out[0] = '\0';
@@ -136,7 +134,7 @@ while (more)
       break;;
       }
 
-   plainlen = DecryptString(conn->encryption_type,in,out,conn->session_key,cipherlen);
+   DecryptString(conn->encryption_type,in,out,conn->session_key,cipherlen);
 
 
     // Check the header for timing of response - we can eventually use this to

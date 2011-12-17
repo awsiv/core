@@ -645,8 +645,6 @@ while (mongo_cursor_next(cursor))  // loops over documents
    
    for (rp = frags; rp != NULL; rp=rp->next)
       {
-      int found = false;
-
       if (strcmp(rp->item,topic_id) == 0)
          {
          Nova_AddOccurrenceBuffer("any/all",locator,locator_type,represents,buffer,bufsize);
@@ -676,7 +674,6 @@ while (mongo_cursor_next(cursor))  // loops over documents
                   }
                
                free(stripped);
-               found = true;
                break;
                }
             else
@@ -1468,8 +1465,6 @@ struct Item *Nova_NearestNeighbours(int search_id,char *assoc_mask)
   bson_iterator it1,it2,it3;
   mongo_connection conn;
   struct Item *list = NULL;
-  char topic_name[CF_BUFSIZE];
-  char topic_context[CF_BUFSIZE];
   int topic_id;
   char assoc_name[CF_BUFSIZE];
   char afwd[CF_BUFSIZE],abwd[CF_BUFSIZE];
@@ -1508,8 +1503,6 @@ while (mongo_cursor_next(cursor))  // loops over documents
    {
    bson_iterator_init(&it1,cursor->current.data);
    
-   topic_name[0] = '\0';
-   topic_context[0] = '\0';
    topic_id = 0;
    
    while (bson_iterator_next(&it1))

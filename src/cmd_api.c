@@ -763,8 +763,6 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
           break;
       }
    
-   then = hl->t;
-
    if (CSV)
       {
       printf("%s,%s,%s,%s,%.2lf,%.2lf,%.2lf,%s\n",
@@ -2794,7 +2792,7 @@ char *Nova2Txt_GetPromiser(char *handle)
 
 int Nova2Txt_get_variable(char *hostkey,char *scope,char *lval,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE],lscope[CF_MAXVARSIZE];
+{ char *report,buffer[CF_BUFSIZE];
  struct HubVariable *hv,*hv2;
  struct HubQuery *hq;
  struct Rlist *rp,*result;
@@ -2809,7 +2807,6 @@ int Nova2Txt_get_variable(char *hostkey,char *scope,char *lval,char *returnval,i
 
  hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,NULL,NULL,false,NULL);
 
- lscope[0] = '\0';
  returnval[0] = '\0';
 
  for (rp = hq->records; rp != NULL; rp=rp->next)
@@ -2878,7 +2875,7 @@ int Nova2Txt_summarize_promise(char *handle, char *returnval,int bufsize)
 { mongo_connection dbconn;
  struct HubPromise *hp;
  char promiseeText[CF_MAXVARSIZE],bArgText[CF_MAXVARSIZE];
- char commentText[CF_MAXVARSIZE], constText[CF_MAXVARSIZE];
+ char commentText[CF_MAXVARSIZE];
  char work[CF_MAXVARSIZE];
  int i,count;
   
@@ -2950,8 +2947,6 @@ int Nova2Txt_summarize_promise(char *handle, char *returnval,int bufsize)
  snprintf(work,CF_MAXVARSIZE-1,"\"file\":\"%s\",\"line_num\":%d,",hp->file,hp->lineNo);
  Join(returnval,work,bufsize);
 
- constText[0] = '\0';
- 
  if (hp->constraints)
     {
      snprintf(work,CF_MAXVARSIZE-1,"\"body\":[");

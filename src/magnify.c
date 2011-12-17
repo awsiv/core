@@ -23,8 +23,7 @@
 
 bool Nova_ReadMagTimeSeries2(mongo_connection *conn, struct CfDataView *cfv,char *hostkey,char *vitalId)
 
-{ double ry,rq,rs;
-  double ly = 1,lq = 1,ls = 1;
+{ double ry,rq;
   double q[CF_MAGDATA],e[CF_MAGDATA],d[CF_MAGDATA];
   int i,have_data = false;
 
@@ -45,7 +44,6 @@ for (i = 0; i < CF_MAGDATA; i++)
    {
    ry = Num(e[i]);
    rq = Num(q[i]);
-   rs = Num(d[i]);
 
    // Num() resets to zero negative numbers
    if (q[i] >= 0)
@@ -72,10 +70,6 @@ for (i = 0; i < CF_MAGDATA; i++)
       {
       cfv->min = ry;
       }
-   
-   ly = cfv->data_E[i] = ry;
-   lq = cfv->data_q[i] = rq;
-   ls = cfv->bars[i] = rs;
    }
 
 if (have_data > 1)

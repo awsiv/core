@@ -432,7 +432,7 @@ struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *t
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
   struct HubHost *hh = NULL;
-  struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
+  struct Rlist *record_list = NULL, *host_list = NULL;
   char rname[CF_MAXVARSIZE] = {0},rversion[CF_MAXVARSIZE] = {0},rarch[3] = {0},arch[3] = {0};
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
   char classRegexAnch[CF_MAXVARSIZE];
@@ -589,7 +589,7 @@ while (mongo_cursor_next(cursor))
                      hh = CreateEmptyHubHost();
                      }
 
-                  rp = PrependRlistAlien(&record_list,NewHubSoftware(hh,rname,rversion,rarch,lastSeen));
+                  PrependRlistAlien(&record_list,NewHubSoftware(hh,rname,rversion,rarch,lastSeen));
                   }
                }               
             }
@@ -621,7 +621,7 @@ struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lc
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3;
  struct HubHost *hh;
- struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
+ struct Rlist *record_list = NULL, *host_list = NULL;
  time_t rtime, now = time(NULL);
  double rsigma,rex;
  char rclass[CF_MAXVARSIZE];
@@ -755,7 +755,7 @@ while (mongo_cursor_next(cursor))
                   hh = CreateEmptyHubHost();
                   }
                
-               rp = PrependRlistAlien(&record_list,NewHubClass(hh,rclass,rex,rsigma,rtime));
+               PrependRlistAlien(&record_list,NewHubClass(hh,rclass,rex,rsigma,rtime));
                }            
             }
          }   
@@ -1191,7 +1191,7 @@ struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3;
  struct HubHost *hh;
- struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
+ struct Rlist *record_list = NULL, *host_list = NULL;
  int rkept,rnotkept,rrepaired,found = false;
  int match_kept,match_notkept,match_repaired,match_version,match_t;
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rversion[CF_MAXVARSIZE];
@@ -1367,7 +1367,7 @@ struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,
                    hh = CreateEmptyHubHost();
                    }
                 
-                rp = PrependRlistAlien(&record_list,NewHubTotalCompliance(hh,rt,rversion,rkept,rrepaired,rnotkept));
+                PrependRlistAlien(&record_list,NewHubTotalCompliance(hh,rt,rversion,rkept,rrepaired,rnotkept));
                 }
              }
           }   
@@ -1399,7 +1399,7 @@ struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3,it4,it5;
  struct HubHost *hh;
- struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL,*newlist = NULL;
+ struct Rlist *record_list = NULL, *host_list = NULL,*newlist = NULL;
  int found = false;
  int match_type,match_scope,match_lval,match_rval;
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
@@ -1598,7 +1598,7 @@ struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *
                      hh = CreateEmptyHubHost();
                      }
                    
-                   rp = PrependRlistAlien(&record_list,NewHubVariable(hh,dtype,rscope,rlval,rrval,rtype,rt));
+                   PrependRlistAlien(&record_list,NewHubVariable(hh,dtype,rscope,rlval,rrval,rtype,rt));
                    }
                 else
                    {
@@ -1642,7 +1642,7 @@ struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHas
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3;
  struct HubHost *hh;
- struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
+ struct Rlist *record_list = NULL, *host_list = NULL;
  time_t rtime;
  double rsigma,rex;
  char rhandle[CF_MAXVARSIZE],rstatus,*prstat;
@@ -1792,7 +1792,7 @@ struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHas
                    hh = CreateEmptyHubHost();
                    }
                 
-                rp = PrependRlistAlien(&record_list,NewHubCompliance(hh,rhandle,rstatus,rex,rsigma,rtime));
+                PrependRlistAlien(&record_list,NewHubCompliance(hh,rhandle,rstatus,rex,rsigma,rtime));
                 }            
              }
           }   
@@ -1824,7 +1824,7 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *l
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3;
  struct HubHost *hh;
- struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL,*list_start = NULL;
+ struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
  double rago,ravg,rdev;
  char rhash[CF_MAXVARSIZE],rhost[CF_MAXVARSIZE],raddr[CF_MAXVARSIZE];
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
@@ -1895,7 +1895,6 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *l
     raddr[0] = '\0';
     rhost[0] = '\0';
     found = false;
-    list_start = NULL;
     hh = NULL;
    
     while (bson_iterator_next(&it1))
@@ -2032,7 +2031,7 @@ struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query,char *db)
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3;
  struct HubHost *hh;
- struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
+ struct Rlist *record_list = NULL, *host_list = NULL;
  double rkept,rrepaired;
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rcolumn[CF_SMALLBUF];
  int found = false;
@@ -2102,7 +2101,7 @@ struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query,char *db)
                 hh = CreateEmptyHubHost();
                 }
              
-             rp = PrependRlistAlien(&record_list,NewHubMeter(hh,*rcolumn,rkept,rrepaired));
+             PrependRlistAlien(&record_list,NewHubMeter(hh,*rcolumn,rkept,rrepaired));
              }
           }   
        }
@@ -2128,7 +2127,7 @@ struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3;
  struct HubHost *hh;
- struct Rlist *rp =  NULL,*record_list = NULL, *host_list = NULL;
+ struct Rlist *record_list = NULL, *host_list = NULL;
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rname[CF_MAXVARSIZE], noteid[CF_MAXVARSIZE], rhandle[CF_MAXVARSIZE];
  int match_name,found = false;
  double rsigma,rex,rq;
@@ -2275,7 +2274,7 @@ struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char
                    hh = CreateEmptyHubHost();
                    }
                 
-                rp = PrependRlistAlien(&record_list,NewHubPerformance(hh,rname,rtime,rq,rex,rsigma,noteid,rhandle));
+                PrependRlistAlien(&record_list,NewHubPerformance(hh,rname,rtime,rq,rex,rsigma,noteid,rhandle));
                 }
              }
           }   
@@ -2306,7 +2305,7 @@ struct HubQuery *CFDB_QuerySetuid(mongo_connection *conn,char *keyHash,char *lna
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3;
  struct HubHost *hh;
- struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
+ struct Rlist *record_list = NULL, *host_list = NULL;
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rname[CF_MAXVARSIZE];
  int match_name,found = false;
  char classRegexAnch[CF_MAXVARSIZE];
@@ -2411,7 +2410,7 @@ struct HubQuery *CFDB_QuerySetuid(mongo_connection *conn,char *keyHash,char *lna
                    hh = CreateEmptyHubHost();
                    }
                 
-                rp = PrependRlistAlien(&record_list,NewHubSetUid(hh,rname));
+                PrependRlistAlien(&record_list,NewHubSetUid(hh,rname));
                 }
              }
           }   
@@ -2437,7 +2436,7 @@ struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3;
  struct HubHost *hh;
- struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
+ struct Rlist *record_list = NULL, *host_list = NULL;
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rname[CF_BUFSIZE], handle[CF_MAXVARSIZE],noteid[CF_MAXVARSIZE];
  char classRegexAnch[CF_MAXVARSIZE];
  int emptyQuery = true;
@@ -2591,7 +2590,7 @@ struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char
                    hh = CreateEmptyHubHost();
                    }
                 
-                rp = PrependRlistAlien(&record_list,NewHubFileChanges(hh,rname,rt,noteid,handle));
+                PrependRlistAlien(&record_list,NewHubFileChanges(hh,rname,rt,noteid,handle));
                 }
              }
           }   
@@ -2623,7 +2622,7 @@ struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *l
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3;
  struct HubHost *hh;
- struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
+ struct Rlist *record_list = NULL, *host_list = NULL;
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rname[CF_MAXVARSIZE],rdiff[CF_BUFSIZE];
  int match_name,match_t,match_diff,found = false;
  char classRegexAnch[CF_MAXVARSIZE];
@@ -2784,7 +2783,7 @@ struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *l
                    hh = CreateEmptyHubHost();
                    }
                 
-                rp = PrependRlistAlien(&record_list,NewHubFileDiff(hh,rname,rdiff,rt));
+                PrependRlistAlien(&record_list,NewHubFileDiff(hh,rname,rdiff,rt));
                 }
              }
           }   
@@ -2812,10 +2811,10 @@ struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum 
 {
  char classRegexAnch[CF_MAXVARSIZE];
  char rhandle[CF_MAXVARSIZE],rcause[CF_BUFSIZE];
- char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE], noteid[CF_MAXVARSIZE], oid[CF_MAXVARSIZE];
+ char keyhash[CF_MAXVARSIZE], noteid[CF_MAXVARSIZE], oid[CF_MAXVARSIZE];
  bson_iterator it1;
  struct HubHost *hh;
- struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
+ struct Rlist *record_list = NULL, *host_list = NULL;
  bson query, field;
  int emptyQuery = true;  
  char *collName;
@@ -2935,8 +2934,6 @@ struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum 
     bson_iterator_init(&it1,cursor->current.data);
 
     keyhash[0] = '\0';
-    hostnames[0] = '\0';
-    addresses[0] = '\0';
     rhandle[0] = '\0';
     rcause[0] = '\0';
     noteid[0] = '\0';
@@ -2983,7 +2980,7 @@ struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum 
        }
      
 
-    rp = PrependRlistAlien(&record_list,NewHubPromiseLog(hh,rhandle,rcause,rt,noteid,oid));
+    PrependRlistAlien(&record_list,NewHubPromiseLog(hh,rhandle,rcause,rt,noteid,oid));
     }
 
 
@@ -3011,7 +3008,7 @@ struct HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
   struct HubHost *hh;
-  struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
+  struct Rlist *record_list = NULL, *host_list = NULL;
   double rkept,rnotkept,rrepaired;
   char rday[CF_MAXVARSIZE],rmonth[CF_MAXVARSIZE],ryear[CF_MAXVARSIZE];
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rhandle[CF_MAXVARSIZE],noteid[CF_MAXVARSIZE];
@@ -3152,7 +3149,7 @@ while (mongo_cursor_next(cursor))
                   hh = CreateEmptyHubHost();
                   }
                
-               rp = PrependRlistAlien(&record_list,NewHubValue(hh,rday,rkept,rrepaired,rnotkept,noteid,rhandle));
+               PrependRlistAlien(&record_list,NewHubValue(hh,rday,rkept,rrepaired,rnotkept,noteid,rhandle));
                }
             }
          }   
@@ -3183,7 +3180,7 @@ struct HubQuery *CFDB_QueryValueGraph(mongo_connection *conn,char *keyHash,char 
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
   struct HubHost *hh;
-  struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
+  struct Rlist *record_list = NULL, *host_list = NULL;
   double rkept,rnotkept,rrepaired;
   char rday[CF_MAXVARSIZE],rmonth[CF_MAXVARSIZE],ryear[CF_MAXVARSIZE];
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rhandle[CF_MAXVARSIZE],noteid[CF_MAXVARSIZE];
@@ -3335,7 +3332,7 @@ while (mongo_cursor_next(cursor))
                   hh = CreateEmptyHubHost();
                   }
                
-	       rp = PrependRlistAlien(&record_list,NewHubValue(hh,rday,rkept,rrepaired,rnotkept,"",""));
+	       PrependRlistAlien(&record_list,NewHubValue(hh,rday,rkept,rrepaired,rnotkept,"",""));
                }
             }
          }   
@@ -3366,7 +3363,7 @@ struct HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, cha
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
   struct HubHost *hh;
-  struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
+  struct Rlist *record_list = NULL, *host_list = NULL;
   double rago,ravg,rdev;
   char rname[CF_MAXVARSIZE];
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],noteid[CF_BUFSIZE];
@@ -3509,7 +3506,7 @@ while (mongo_cursor_next(cursor))
                   hh = CreateEmptyHubHost();
                   }
                
-               rp = PrependRlistAlien(&record_list,NewHubBundleSeen(hh,rname,rago,ravg,rdev,rt,noteid));
+               PrependRlistAlien(&record_list,NewHubBundleSeen(hh,rname,rago,ravg,rdev,rt,noteid));
                }            
             }
          }   
@@ -6766,7 +6763,7 @@ struct Rlist *CFDB_QueryNoteId(mongo_connection *conn,bson *query)
  bson_iterator it1;
  struct Rlist *host_list = NULL;
  char noteId[CF_MAXVARSIZE]={0};
- char keyhash[CF_MAXVARSIZE]={0},addresses[CF_BUFSIZE]={0};
+ char keyhash[CF_MAXVARSIZE]={0};
   
 /* BEGIN RESULT DOCUMENT */
 
@@ -6778,8 +6775,6 @@ struct Rlist *CFDB_QueryNoteId(mongo_connection *conn,bson *query)
  bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
-
- addresses[0] = '\0';
 
  cursor = mongo_find(conn,MONGO_DATABASE,query,&field,0,0,CF_MONGO_SLAVE_OK);
  if(!cursor)

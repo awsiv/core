@@ -769,7 +769,7 @@ PHP_FUNCTION(cfpr_getlicenses_granted)
 PHP_FUNCTION(cfpr_hostname)
 
 { char s1[4096],s2[4096];
- char *hostkey,*fhostkey;
+ char *hostkey;
  int hk_len;
   
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hostkey,&hk_len) == FAILURE)
@@ -777,8 +777,6 @@ PHP_FUNCTION(cfpr_hostname)
     php_printf("Error is cfpr_hostname function args");
     RETURN_NULL();
     }
-
- fhostkey =  (hk_len == 0) ? NULL : hostkey;
 
  s1[0]='\0';
  s2[0]='\0';
@@ -792,7 +790,7 @@ PHP_FUNCTION(cfpr_hostname)
 PHP_FUNCTION(cfpr_ipaddr)
 
 { char s1[4096],s2[4096];
- char *hostkey,*fhostkey;
+ char *hostkey;
  int hk_len;
   
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hostkey,&hk_len) == FAILURE)
@@ -800,8 +798,6 @@ PHP_FUNCTION(cfpr_ipaddr)
     php_printf("Error is cfpr_ipaddr function args");
     RETURN_NULL();
     }
-
- fhostkey =  (hk_len == 0) ? NULL : hostkey;
 
  s1[0]='\0';
  s2[0]='\0';
@@ -1507,7 +1503,7 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
 //$ret = cfpr_report_compliance_summary($hostkey,$version,$time,$kept,$notkept,$repaired,">");
 
 { char *hostkey,*version,*cmp,*returnval,*classreg;
- char *fhostkey,*fversion,*fclassreg;
+ char *fhostkey,*fversion;
  int hk_len,v_len,cmp_len,cr_len;
  long k,nk,r,t;
  const int bufsize = CF_WEBBUFFER;
@@ -1524,7 +1520,6 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
 
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fversion = (v_len == 0) ? NULL : version;
- fclassreg = (cr_len == 0) ? NULL : classreg;
 
  buffer[0]='\0';
  Nova2PHP_compliance_report(fhostkey,fversion,(time_t)t,(int)k,(int)nk,(int)r,cmp,classreg,&page,buffer,bufsize);
@@ -1652,7 +1647,6 @@ PHP_FUNCTION(cfpr_report_performance)
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
  zend_bool regex;
- int use_reg;
  struct PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbsll",
@@ -1663,7 +1657,6 @@ PHP_FUNCTION(cfpr_report_performance)
     RETURN_NULL();
     }
 
- use_reg = (int)regex;
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fjob =  (j_len == 0) ? NULL : job;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
@@ -1686,7 +1679,6 @@ PHP_FUNCTION(cfpr_report_setuid)
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
  zend_bool regex;
- int use_reg;
  struct PageInfo page = {0};
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbsll",
                            &hostkey,&hk_len,&file,&j_len,&regex,&classreg,&cr_len,
@@ -1696,7 +1688,6 @@ PHP_FUNCTION(cfpr_report_setuid)
     RETURN_NULL();
     }
 
- use_reg = (int)regex;
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  ffile =  (j_len == 0) ? NULL : file;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
@@ -1719,7 +1710,6 @@ PHP_FUNCTION(cfpr_report_filechanges)
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
  zend_bool regex;
- int use_reg;
  long t;
  time_t then;
  struct PageInfo page = {0};
@@ -1731,7 +1721,6 @@ PHP_FUNCTION(cfpr_report_filechanges)
     RETURN_NULL();
     }
 
- use_reg = (int)regex;
  then = (time_t)t;
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  ffile =  (f_len == 0) ? NULL : file;
@@ -1794,7 +1783,6 @@ PHP_FUNCTION(cfpr_report_filechanges_longterm)
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
  zend_bool regex;
- int use_reg;
  long t;
  time_t then;
  struct PageInfo page = {0};
@@ -1806,7 +1794,6 @@ PHP_FUNCTION(cfpr_report_filechanges_longterm)
     RETURN_NULL();
     }
 
- use_reg = (int)regex;
  then = (time_t)t;
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  ffile =  (f_len == 0) ? NULL : file;
@@ -2175,8 +2162,8 @@ PHP_FUNCTION(cfpr_hosts_with_patch_in)
 // $ret = cfpr_hosts_with_patch_in($hostkey,$name,$version,$arch,$regex);
 
 { char *hostkey,*name,*version,*arch,*n,*v,*a,*returnval,*classreg;
- char *fhostkey,*fname,*fversion,*farch,*fclassreg;
- int hk_len, n_len,v_len,a_len,use_reg,cr_len;
+ char *fclassreg;
+ int hk_len, n_len,v_len,a_len,cr_len;
  long regex;
  const int bufsize = 512*1024; 
  char buffer[bufsize];
@@ -2187,12 +2174,6 @@ PHP_FUNCTION(cfpr_hosts_with_patch_in)
     RETURN_NULL();
     }
 
- use_reg = (int)regex;
-  
- fhostkey =  (hk_len == 0) ? NULL : hostkey;
- fname =  (n_len == 0) ? NULL : name;
- fversion = (v_len == 0) ? NULL : version;
- farch = (a_len == 0) ? NULL : arch;
  fclassreg = (cr_len == 0) ? NULL : classreg;   
 
  buffer[0] = '\0';
@@ -2371,7 +2352,6 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_summary)
 { char *hostkey,*version,*cmp,*returnval,*classreg;
  int hk_len,v_len,cmp_len,cr_len;
  long k,nk,r,t;
- time_t then;
  const int bufsize = 512*1024; 
  char buffer[bufsize];
 
@@ -2380,8 +2360,6 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_summary)
     php_printf("Error is cfpr_hosts_with_compliance function args");
     RETURN_NULL();
     }
-
- then = (time_t)t;
 
  buffer[0] = '\0';
  Nova2PHP_compliance_hosts(hostkey,version,(int)t,(int)k,(int)nk,(int)r,cmp,classreg,buffer,bufsize);
@@ -2434,7 +2412,6 @@ PHP_FUNCTION(cfpr_hosts_with_lastseen)
  const int bufsize = 512*1024; 
  char buffer[bufsize];
  long ago;
- time_t tago;
  zend_bool regex;
  int use_reg;
 
@@ -2444,7 +2421,6 @@ PHP_FUNCTION(cfpr_hosts_with_lastseen)
     RETURN_NULL();
     }
 
- tago = (time_t)ago;
  use_reg = (int)regex;
 
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
@@ -2472,7 +2448,6 @@ PHP_FUNCTION(cfpr_hosts_with_performance)
  const int bufsize = 512*1024; 
  char buffer[bufsize];
  zend_bool regex;
- int use_reg;
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbs",&hostkey,&hk_len,&job,&j_len,&regex,&classreg,&cr_len) == FAILURE)
     {
@@ -2480,7 +2455,6 @@ PHP_FUNCTION(cfpr_hosts_with_performance)
     RETURN_NULL();
     }
 
- use_reg = (int)regex;
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fjob =  (j_len == 0) ? NULL : job;
  fclassreg =  (cr_len == 0) ? NULL : job;
@@ -2498,12 +2472,11 @@ PHP_FUNCTION(cfpr_hosts_with_setuid)
 //$ret = cfpr_hosts_with_setuid($hostkey,$file,$regex);
 
 { char *hostkey,*file,*returnval, *classreg;
- char *fhostkey,*ffile,*fclassreg;
+ char *fhostkey,*ffile;
  int hk_len,j_len,cr_len;
  const int bufsize = 512*1024; 
  char buffer[bufsize];
  zend_bool regex;
- int use_reg;
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbs",&hostkey,&hk_len,&file,&j_len,&regex,&classreg,&cr_len) == FAILURE)
     {
@@ -2511,10 +2484,8 @@ PHP_FUNCTION(cfpr_hosts_with_setuid)
     RETURN_NULL();
     }
 
- use_reg = (int)regex;
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  ffile =  (j_len == 0) ? NULL : file;
- fclassreg =  (cr_len == 0) ? NULL : classreg;
 
  buffer[0] = '\0';
  Nova2PHP_setuid_hosts(fhostkey,ffile,regex,fhostkey,buffer,bufsize);
@@ -2534,7 +2505,6 @@ PHP_FUNCTION(cfpr_hosts_with_filechanges)
  const int bufsize = 512*1024; 
  char buffer[bufsize];
  zend_bool regex;
- int use_reg;
  long t;
  time_t then;
 
@@ -2544,7 +2514,6 @@ PHP_FUNCTION(cfpr_hosts_with_filechanges)
     RETURN_NULL();
     }
 
- use_reg = (int)regex;
  then = (time_t)t;
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  ffile =  (j_len == 0) ? NULL : file;
@@ -2564,12 +2533,11 @@ PHP_FUNCTION(cfpr_hosts_with_filediffs)
 //$ret = cfpr_hosts_with_filediffs($hostkey,$name,$diff,$regex,$time,">");
 
 { char *hostkey,*file,*cmp,*diff,*returnval;
- char *fhostkey,*ffile,*fcmp,*fdiff,*fclassreg,*classreg;
+ char *fhostkey,*ffile,*fcmp,*fclassreg,*classreg;
  int hk_len,j_len,c_len,d_len,cr_len;
  const int bufsize = 512*1024; 
  char buffer[bufsize];
  zend_bool regex;
- int use_reg;
  long t;
  time_t then;
 
@@ -2579,12 +2547,10 @@ PHP_FUNCTION(cfpr_hosts_with_filediffs)
     RETURN_NULL();
     }
 
- use_reg = (int)regex;
  then = (time_t)t;
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  ffile =  (j_len == 0) ? NULL : file;
  fcmp =  (c_len == 0) ? NULL : cmp;
- fdiff =  (d_len == 0) ? NULL : diff;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
 
  buffer[0] = '\0';
@@ -2605,7 +2571,6 @@ PHP_FUNCTION(cfpr_hosts_with_bundlesseen)
  const int bufsize = 512*1024; 
  char buffer[bufsize];
  zend_bool regex;
- int use_reg;
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbs",&hostkey,&hk_len,&bundle,&j_len,&regex,&classreg,&cr_len) == FAILURE)
     {
@@ -2613,7 +2578,6 @@ PHP_FUNCTION(cfpr_hosts_with_bundlesseen)
     RETURN_NULL();
     }
 
- use_reg = (int)regex;
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fbundle =  (j_len == 0) ? NULL : bundle;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
@@ -2665,7 +2629,6 @@ PHP_FUNCTION(cfpr_search_topics)
  const int bufsize = 100000; 
  char buffer[bufsize];
  zend_bool regex;
- int use_reg;
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sb",&search,&s_len,&regex) == FAILURE)
     {
@@ -2673,7 +2636,6 @@ PHP_FUNCTION(cfpr_search_topics)
     RETURN_NULL();
     }
 
- use_reg = (int)regex;
  fsearch =  (s_len == 0) ? NULL : search;
 
  buffer[0] = '\0';
@@ -3594,7 +3556,6 @@ PHP_FUNCTION(cfpr_report_compliance_summary_pdf)
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
  zend_bool regex;
- int use_reg;
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssllllss",&hostkey,&hk_len,&version,&v_len,&t,&k,&nk,&r,&cmp,&cmp_len,&classreg,&cr_len) == FAILURE)
     {
@@ -3602,7 +3563,6 @@ PHP_FUNCTION(cfpr_report_compliance_summary_pdf)
     RETURN_NULL();
     }
    
- use_reg = (int)regex;
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fversion = (v_len == 0) ? NULL : version;
  fclassreg = (cr_len == 0) ? NULL : classreg;
@@ -3779,7 +3739,6 @@ PHP_FUNCTION(cfpr_report_filechanges_pdf)
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
  zend_bool regex;
- int use_reg;
  long t;
  time_t then;
 
@@ -3789,7 +3748,6 @@ PHP_FUNCTION(cfpr_report_filechanges_pdf)
     RETURN_NULL();
     }
 
- use_reg = (int)regex;
  then = (time_t)t;
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  ffile =  (f_len == 0) ? NULL : file;
@@ -3814,7 +3772,6 @@ PHP_FUNCTION(cfpr_report_lastseen_pdf)
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
  long ago;
- time_t tago;
  zend_bool regex;
  int use_reg;
 
@@ -3824,7 +3781,6 @@ PHP_FUNCTION(cfpr_report_lastseen_pdf)
     RETURN_NULL();
     }
 
- tago = (time_t)ago;
  use_reg = (int)regex;
 
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
@@ -3950,7 +3906,6 @@ PHP_FUNCTION(cfpr_report_performance_pdf)
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
  zend_bool regex;
- int use_reg;
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbs",&hostkey,&hk_len,&job,&j_len,&regex,&classreg,&cr_len) == FAILURE)
     {
@@ -3958,7 +3913,6 @@ PHP_FUNCTION(cfpr_report_performance_pdf)
     RETURN_NULL();
     }
 
- use_reg = (int)regex;
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fjob =  (j_len == 0) ? NULL : job;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
@@ -4140,7 +4094,6 @@ PHP_FUNCTION(cfpr_report_setuid_pdf)
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
  zend_bool regex;
- int use_reg;
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbs",&hostkey,&hk_len,&file,&j_len,&regex,&classreg,&cr_len) == FAILURE)
     {
@@ -4148,7 +4101,6 @@ PHP_FUNCTION(cfpr_report_setuid_pdf)
     RETURN_NULL();
     }
 
- use_reg = (int)regex;
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  ffile =  (j_len == 0) ? NULL : file;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
@@ -4414,7 +4366,6 @@ PHP_FUNCTION(cfpr_add_note)
  int u_len,n_len, nid_len;
  int report_type;
  time_t datetime;
- int ret = 0;
  const int bufsize = 1000;
  char returnval[bufsize];
    
@@ -4435,7 +4386,7 @@ PHP_FUNCTION(cfpr_add_note)
  fnote =  (n_len == 0) ? NULL : note;
 
  returnval[0]='\0';
- ret = Nova2PHP_add_note(fnid,fuser,datetime,fnote,returnval,bufsize);
+ Nova2PHP_add_note(fnid,fuser,datetime,fnote,returnval,bufsize);
  RETURN_STRING(returnval,1);
 }
 /******************************************************************************/
@@ -4446,7 +4397,6 @@ PHP_FUNCTION(cfpr_new_note)
  int hk_len,u_len,n_len,rid_len;
  int report_type;
  time_t datetime;
- int ret = 0;
  const int bufsize = 1000;
  char returnval[bufsize];
    
@@ -4470,7 +4420,7 @@ PHP_FUNCTION(cfpr_new_note)
  fnote =  (n_len == 0) ? NULL : note;
  
  returnval[0]='\0';  
- ret = Nova2PHP_add_new_note(fhostkey,frepid,report_type,fuser,datetime,fnote,returnval,bufsize);  
+ Nova2PHP_add_new_note(fhostkey,frepid,report_type,fuser,datetime,fnote,returnval,bufsize);
  RETURN_STRING(returnval,1);
 }
 /******************************************************************************/
@@ -4504,7 +4454,7 @@ PHP_FUNCTION(cfpr_query_note)
 PHP_FUNCTION(cfpr_get_host_noteid)
 
 { char s1[4096];
- char *hostkey,*fhostkey;
+ char *hostkey;
  int hk_len;
   
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hostkey,&hk_len) == FAILURE)
@@ -4512,8 +4462,6 @@ PHP_FUNCTION(cfpr_get_host_noteid)
     php_printf("Error is cfpr_hostname function args");
     RETURN_NULL();
     }
-
- fhostkey = (hk_len == 0) ? NULL : hostkey;
 
  s1[0]='\0';
  Nova2PHP_get_host_noteid(hostkey,s1,sizeof(s1));
@@ -5756,7 +5704,7 @@ PHP_FUNCTION(cfcon_getlastupdate)
 PHP_FUNCTION(cfcon_hubname)
 
 { char s1[4096],s2[4096];
- char *hubkey,*fhubkey;
+ char *hubkey;
  int hk_len;
   
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hubkey,&hk_len) == FAILURE)
@@ -5764,8 +5712,6 @@ PHP_FUNCTION(cfcon_hubname)
     php_printf("Error is cfcon_hubname function args");
     RETURN_NULL();
     }
-
- fhubkey =  (hk_len == 0) ? NULL : hubkey;
 
  s1[0]='\0';
  s2[0]='\0';
@@ -5788,7 +5734,7 @@ PHP_FUNCTION(cfcon_hubname)
 PHP_FUNCTION(cfcon_ipaddr)
 
 { char s1[4096],s2[4096];
- char *hubkey,*fhubkey;
+ char *hubkey;
  int hk_len;
   
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hubkey,&hk_len) == FAILURE)
@@ -5796,8 +5742,6 @@ PHP_FUNCTION(cfcon_ipaddr)
     php_printf("Error is cfcon_ipaddr function args");
     RETURN_NULL();
     }
-
- fhubkey =  (hk_len == 0) ? NULL : hubkey;
 
  s1[0]='\0';
  s2[0]='\0';
