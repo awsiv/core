@@ -463,33 +463,33 @@ if (strcmp(pp->agentsubtype,"methods") == 0)
 
 /* Promisees as topics too */
 
-switch (pp->petype)
+switch (pp->promisee.rtype)
    {
    case CF_SCALAR:
        fprintf(fp,"promisees::\n\n");
-       fprintf(fp,"  \"%s\"\n",pp->promisee);
+       fprintf(fp,"  \"%s\"\n",pp->promisee.item);
        fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,NovaEscape(pp->promiser),NOVA_GIVES);
-       fprintf(fp,"  \"%s\"\n",pp->promisee);
+       fprintf(fp,"  \"%s\"\n",pp->promisee.item);
        fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,promise_id,NOVA_GIVES);          
-       fprintf(fp,"  \"%s\"\n",pp->promisee);
+       fprintf(fp,"  \"%s\"\n",pp->promisee.item);
        fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",KM_AFFECTS_CERT_B,promise_id,KM_AFFECTS_CERT_F);          
-       fprintf(fp,"  \"%s\"\n",pp->promisee);
+       fprintf(fp,"  \"%s\"\n",pp->promisee.item);
        fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",KM_AFFECTS_CERT_B,NovaEscape(pp->promiser),KM_AFFECTS_CERT_F);          
 
        for (rp = GOALS; rp != NULL; rp = rp->next)
           {          
-          if (FullTextMatch(rp->item,pp->promisee))
+          if (FullTextMatch(rp->item,pp->promisee.item))
              {
              fprintf(fp,"promises::\n\n");
              fprintf(fp,"  \"%s\"\n",promise_id);
-             fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS,pp->promisee,NOVA_ISIMPACTED);
+             fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS,pp->promisee.item,NOVA_ISIMPACTED);
              
              if (bundlename)
                 {
                 fprintf(fp,"bundles::\n\n");
                 fprintf(fp,"  \"%s\"\n",bundlename);
-                fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS,pp->promisee,NOVA_ISIMPACTED);
-                fprintf(fp,"  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");",bundlename,NOVA_GOAL,pp->promisee,NOVA_GOAL_INV);
+                fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS,pp->promisee.item,NOVA_ISIMPACTED);
+                fprintf(fp,"  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");",bundlename,NOVA_GOAL,pp->promisee.item,NOVA_GOAL_INV);
                 }
              }
           }
@@ -498,7 +498,7 @@ switch (pp->petype)
    case CF_LIST:
 
        fprintf(fp,"promisees::\n\n");
-       for (rp = (struct Rlist *)pp->promisee; rp != NULL; rp=rp->next)
+       for (rp = (struct Rlist *)pp->promisee.item; rp != NULL; rp=rp->next)
           {
           fprintf(fp,"  \"%s\"\n",rp->item);
           fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,NovaEscape(pp->promiser),NOVA_GIVES);          
