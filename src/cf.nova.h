@@ -1072,6 +1072,7 @@ int Nova_AlreadyInTribe(int node, int *tribe_id);
 void Nova_InitVertex(struct CfGraphNode *tribe,int i);
 int Nova_NewVertex(struct CfGraphNode *tribe,int node,int distance,int real,char *name,char *context);
 char *Nova_StripString(char *source,char *substring);
+void Nova_DeClassifyTopic(char *typed_topic,char *topic,char *type);
 
 /* web_api.c */
 

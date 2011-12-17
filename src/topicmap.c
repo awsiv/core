@@ -8,8 +8,6 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-void Nova_DeClassifyTopic(char *typed_topic,char *topic,char *type);
-
 /*****************************************************************************/
 /*                                                                           */
 /* File: topicmap.c                                                          */
