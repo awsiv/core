@@ -4060,10 +4060,11 @@ const char *CONSTELLATION_REPORTS[2][2] =
 void Nova2PHP_select_reports(char *buffer,int bufsize)
 
 { char novaListJson[CF_BUFSIZE]={0};
+#ifdef HAVE_CONSTELLATION
   char constellationListJson[CF_BUFSIZE]={0};
+#endif
   char work[CF_BUFSIZE]={0};
 
-constellationListJson[0] ='\0';
 novaListJson[0] ='\0';
 
 FormatTwoDimensionalArrayAsJson(novaListJson,sizeof(novaListJson),BASIC_REPORTS);
