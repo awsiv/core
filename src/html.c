@@ -21,25 +21,6 @@ void Nova_Header(char *title,char *device_type, char *buffer, int bufsize)
 
 { char *stylesheet_normal = "nova.css";
   char *stylesheet_phone = "nova_hand.css";
-  char *css,*reload;
-  
-if (strstr(device_type,"mobile"))
-   {
-   css = stylesheet_phone;
-   }
-else
-   {
-   css = stylesheet_normal;
-   }
-
-if (strstr(device_type,"reload"))
-   {
-   reload = "    <meta http-equiv=\"refresh\" CONTENT=\"150\">\n";
-   }
-else
-   {
-   reload ="";
-   }
 
 snprintf(buffer,bufsize,
 
