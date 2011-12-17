@@ -264,14 +264,14 @@ for  (i = 0; i < CF3_MODULES; i++)
                          putchar(' ');
                          }
                       
-                      printf("~ (%s)\n",bs2[l].range);
+                      printf("~ (%s)\n",(const char *)bs2[l].range);
                       }
                    
                    printf("\nDescription: %s\n",bs2[l].description);
                    break;
                    
                default:
-                   printf("   %s  ~ (%s)\n",bs[k].lval,bs[k].range);
+                   printf("   %s  ~ (%s)\n",bs[k].lval, (const char *)bs[k].range);
                    printf("\nDescription: %s\n",bs[k].description);
                    break;
                }
@@ -297,7 +297,7 @@ for  (i = 0; i < CF3_MODULES; i++)
                      putchar(' ');
                      }
                   
-                  printf("~ (%s)\n",bs2[l].range);
+                  printf("~ (%s)\n", (const char *)bs2[l].range);
                   printf("\nDescription: %s\n",bs2[l].description);
                   return;
                   }
@@ -376,7 +376,7 @@ if (strcmp(pp->agentsubtype,"files") == 0)
 
    for (rp = servers; rp != NULL; rp = rp->next)
       {
-      fprintf(fp," \"%s\" association => a(\"might use data from\",\"%s\",\"might provide data for\");  \n",pp->promiser,rp->item);
+      fprintf(fp," \"%s\" association => a(\"might use data from\",\"%s\",\"might provide data for\");  \n",pp->promiser, (const char *)rp->item);
       }
 
    if (source)
@@ -390,7 +390,7 @@ if (strcmp(pp->agentsubtype,"files") == 0)
          {
          if (edit_bundle->args) // Single arg
             {
-            fprintf(fp," \"%s\" association => a(\"uses data from\",\"%s\",\"provides data for\");  \n",pp->promiser,edit_bundle->args);
+            fprintf(fp," \"%s\" association => a(\"uses data from\",\"%s\",\"provides data for\");  \n",pp->promiser, (const char *)edit_bundle->args);
             }
          }
       }
@@ -467,13 +467,13 @@ switch (pp->promisee.rtype)
    {
    case CF_SCALAR:
        fprintf(fp,"promisees::\n\n");
-       fprintf(fp,"  \"%s\"\n",pp->promisee.item);
+       fprintf(fp,"  \"%s\"\n", (const char *)pp->promisee.item);
        fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,NovaEscape(pp->promiser),NOVA_GIVES);
-       fprintf(fp,"  \"%s\"\n",pp->promisee.item);
+       fprintf(fp,"  \"%s\"\n", (const char *)pp->promisee.item);
        fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,promise_id,NOVA_GIVES);          
-       fprintf(fp,"  \"%s\"\n",pp->promisee.item);
+       fprintf(fp,"  \"%s\"\n", (const char *)pp->promisee.item);
        fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",KM_AFFECTS_CERT_B,promise_id,KM_AFFECTS_CERT_F);          
-       fprintf(fp,"  \"%s\"\n",pp->promisee.item);
+       fprintf(fp,"  \"%s\"\n", (const char *)pp->promisee.item);
        fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",KM_AFFECTS_CERT_B,NovaEscape(pp->promiser),KM_AFFECTS_CERT_F);          
 
        for (rp = GOALS; rp != NULL; rp = rp->next)
@@ -482,14 +482,14 @@ switch (pp->promisee.rtype)
              {
              fprintf(fp,"promises::\n\n");
              fprintf(fp,"  \"%s\"\n",promise_id);
-             fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS,pp->promisee.item,NOVA_ISIMPACTED);
+             fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS, (const char *)pp->promisee.item,NOVA_ISIMPACTED);
              
              if (bundlename)
                 {
                 fprintf(fp,"bundles::\n\n");
                 fprintf(fp,"  \"%s\"\n",bundlename);
-                fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS,pp->promisee.item,NOVA_ISIMPACTED);
-                fprintf(fp,"  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");",bundlename,NOVA_GOAL,pp->promisee.item,NOVA_GOAL_INV);
+                fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS, (const char *)pp->promisee.item,NOVA_ISIMPACTED);
+                fprintf(fp,"  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");",bundlename,NOVA_GOAL, (const char *)pp->promisee.item,NOVA_GOAL_INV);
                 }
              }
           }
@@ -500,9 +500,9 @@ switch (pp->promisee.rtype)
        fprintf(fp,"promisees::\n\n");
        for (rp = (struct Rlist *)pp->promisee.item; rp != NULL; rp=rp->next)
           {
-          fprintf(fp,"  \"%s\"\n",rp->item);
+          fprintf(fp,"  \"%s\"\n", (const char *)rp->item);
           fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,NovaEscape(pp->promiser),NOVA_GIVES);          
-          fprintf(fp,"  \"%s\"\n",rp->item);
+          fprintf(fp,"  \"%s\"\n", (const char *)rp->item);
           fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,promise_id,NOVA_GIVES);          
           for (rp2 = GOALS; rp2 != NULL; rp2 = rp2->next)
              {
@@ -510,14 +510,14 @@ switch (pp->promisee.rtype)
                 {
                 fprintf(fp,"promises::\n\n");
                 fprintf(fp,"  \"%s\"\n",promise_id);
-                fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS,rp2->item,NOVA_ISIMPACTED);
+                fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS, (const char *)rp2->item, NOVA_ISIMPACTED);
                 
                 if (bundlename)
                    {
                    fprintf(fp,"bundles::\n\n");
                    fprintf(fp,"  \"%s\"\n",bundlename);
-                   fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS,rp->item,NOVA_ISIMPACTED);
-                   fprintf(fp,"  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");",bundlename,NOVA_GOAL,rp->item,NOVA_GOAL_INV);
+                   fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_IMPACTS, (const char *)rp->item, NOVA_ISIMPACTED);
+                   fprintf(fp,"  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");",bundlename,NOVA_GOAL, (const char *)rp->item, NOVA_GOAL_INV);
                    }
                 }
              }
@@ -551,11 +551,11 @@ fprintf(fp,"\"%s\" association => a(\"is a promise of type\",\"%s\",\"has curren
 for (rp = depends_on; rp != NULL; rp=rp->next)
    {
    fprintf(fp,"  \"%s\"\n",promise_id);
-   fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,rp->item,NOVA_GIVES);
+   fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES, (const char *)rp->item, NOVA_GIVES);
    fprintf(fp,"  \"%s\"\n",promise_id);
-   fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",KM_AFFECTS_CERT_B,rp->item,KM_AFFECTS_CERT_F);
+   fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",KM_AFFECTS_CERT_B, (const char *)rp->item, KM_AFFECTS_CERT_F);
    fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
-   fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",KM_AFFECTS_CERT_B,rp->item,KM_AFFECTS_CERT_F);
+   fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",KM_AFFECTS_CERT_B, (const char *)rp->item, KM_AFFECTS_CERT_F);
    }
 
 //DeleteRlist(depends_on);
@@ -776,7 +776,7 @@ fprintf(fp,"data_types::\n");
 
 for (i = 0; CF_VARBODY[i].lval != NULL; i++)
    {
-   fprintf(fp,"  \"%s\" comment => \"%s matching %s\";\n",CF_VARBODY[i].lval,(char*)CF_VARBODY[i].description,CF_VARBODY[i].range);
+   fprintf(fp,"  \"%s\" comment => \"%s matching %s\";\n",CF_VARBODY[i].lval,(char*)CF_VARBODY[i].description, (const char *)CF_VARBODY[i].range);
    }
 
 fprintf(fp,"  \"class\" comment => \"A boolean returned by certain functions in classes promises\";\n");
