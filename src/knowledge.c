@@ -408,13 +408,13 @@ if (strcmp(pp->agentsubtype,"methods") == 0)
       {
       if (strcmp(cp->lval,"usebundle") == 0)
          {
-         switch (cp->type)
+         switch (cp->rval.rtype)
             {
             case CF_SCALAR:
-                bundlename = (char *)cp->rval;
+                bundlename = (char *)cp->rval.item;
                 break;
             case CF_FNCALL:
-                fnp = (struct FnCall *)cp->rval;
+                fnp = (struct FnCall *)cp->rval.item;
                 bundlename = fnp->name;
                 break;
             default:
@@ -423,16 +423,16 @@ if (strcmp(pp->agentsubtype,"methods") == 0)
          }
       else
          {
-         switch(cp->type)
+         switch(cp->rval.rtype)
             {
             case CF_SCALAR:
                 if (cp->isbody)
                    {
-                   bodyname = (char *)cp->rval;
+                   bodyname = (char *)cp->rval.item;
                    }
                 break;   
             case CF_FNCALL:
-                fnp = (struct FnCall *)cp->rval;
+                fnp = (struct FnCall *)cp->rval.item;
                 bodyname = fnp->name;                
                 break;
             }
