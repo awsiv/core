@@ -104,7 +104,7 @@ if (false)
    //   Nova2PHP_filediffs_report(NULL,NULL,NULL,false,-1,">",NULL,buffer,10000);
    //   Nova2PHP_value_report(NULL,NULL,NULL,NULL,NULL,buffer,1000);
    //   Nova2PHP_promiselog(NULL,NULL,1,0,0,NULL,buffer,1000);
-   Nova2PHP_promises(NULL, NULL, NULL, 0);
+   //   Nova2PHP_promises(NULL, NULL, NULL, 0);
    //   Nova2PHP_getlastupdate(NULL,buffer,10);
 
    CFDB_PutValue("one_two","three");
@@ -115,7 +115,7 @@ if (false)
    Nova2PHP_count_green_hosts();
    Nova_Header("123","123",buffer,1000);
    Nova_Footer(buffer,1000);
-   Nova2PHP_choose_hosts("123",2,buffer,1000);
+   // Nova2PHP_choose_hosts("123",2,buffer,1000);
    Nova2PHP_get_host_colour(NULL,buffer,3);
    Nova_Header("sd","we",buffer,3);
    Nova2PHP_get_network_speed("","",3);
