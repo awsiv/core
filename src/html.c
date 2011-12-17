@@ -19,9 +19,7 @@
 
 void Nova_Header(char *title,char *device_type, char *buffer, int bufsize)
 
-{ char *stylesheet_normal = "nova.css";
-  char *stylesheet_phone = "nova_hand.css";
-
+{
 snprintf(buffer,bufsize,
 
 

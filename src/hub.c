@@ -575,7 +575,6 @@ void Nova_UpdateMongoHostList(struct Item **list)
  struct Item *ip = NULL, *lastseen = NULL, *ip2 = NULL, *new_lastseen=NULL;
  struct Item *deleted_hosts=NULL;
  int count = 0;
- bool ignore = false;
 
 deleted_hosts = CFDB_GetDeletedHosts();
 lastseen = CFDB_GetLastseenCache();
@@ -1213,7 +1212,7 @@ struct Item *Nova_ScanClients()
   void *value;
   struct CfKeyHostSeen entry;
   int ksize,vsize;
-  struct Item *list = NULL,*listm;
+  struct Item *list = NULL;
   time_t now = time(NULL);
 
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_LASTDB_FILE);

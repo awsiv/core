@@ -43,7 +43,6 @@ bool Nova_ReadWeekTimeSeries2(mongo_connection *conn, struct CfDataView *cfv,cha
 
 { double ry,rs,rq;
   int i,have_data = false;
-  mongo_connection dbconn;
   double q[CF_TIMESERIESDATA],e[CF_TIMESERIESDATA],d[CF_TIMESERIESDATA];
 
   CFDB_QueryMonView(conn, keyhash, vitalId, mon_rep_week, q, e, d);

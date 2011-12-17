@@ -80,11 +80,10 @@ return CFCON_VIEWS[view];
 
 int Nova_GetReportedScalar(char *hostkey,char *scope,char *lval,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
- struct HubVariable *hv,*hv2;
+{ char buffer[CF_BUFSIZE];
+ struct HubVariable *hv;
  struct HubQuery *hq;
- struct Rlist *rp,*result;
- int count = 0, n = 180;
+ struct Rlist *rp;
  mongo_connection dbconn;
 
 if (!CFDB_Open(&dbconn))
@@ -98,8 +97,6 @@ returnval[0] = '\0';
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
-   char typestr[CF_SMALLBUF];
-   
    hv = (struct HubVariable *)rp->item;
    
    if (strlen(hv->dtype) > 1) // list
@@ -136,11 +133,10 @@ int Nova_GetReportedList(char *hostkey,char *scope,char *lval,struct Rlist **lis
 
 /* This function allocates memory which needs to be deleted afterwards */
     
-{ char *report,buffer[CF_BUFSIZE];
-  struct HubVariable *hv,*hv2;
+{ char buffer[CF_BUFSIZE];
+  struct HubVariable *hv;
   struct HubQuery *hq;
-  struct Rlist *rp,*result;
-  int count = 0, n = 180;
+  struct Rlist *rp;
   mongo_connection dbconn;
 
 if (!CFDB_Open(&dbconn))
@@ -152,8 +148,6 @@ hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,NULL,NULL,false,NULL);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
-   char typestr[CF_SMALLBUF];
-   
    hv = (struct HubVariable *)rp->item;
    
    if (strlen(hv->dtype) > 1) // list

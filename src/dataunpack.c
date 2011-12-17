@@ -267,10 +267,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackMonitorHist(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
-  double weekly[CF_OBSERVABLES][CF_GRAINS];
-  int i = 0,k;
-  char *sp;
- 
+
 CfOut(cf_verbose,""," -> Monitor histogram data.....................");
 CfOut(cf_inform, "", "!! Deprecated monitor histogram format - response from Nova 2.0.4 or earlier -- skipped");
 
@@ -292,10 +289,7 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackMonitorHg(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
-  double weekly[CF_OBSERVABLES][CF_GRAINS];
-  int i = 0,k;
-  char *sp;
- 
+
 CfOut(cf_verbose,""," -> Monitor histogram data.....................");
 
 #ifdef HAVE_LIBMONGOC
@@ -316,8 +310,6 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackMonitorMg(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
-  int observable,slot;
-  double q,e,dev;
 
 CfOut(cf_verbose,""," -> Monitor magnified data.....................");
 
@@ -340,9 +332,6 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackMonitorWk(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
-  int observable,slot;
-  double q,e,dev;
-  char t[CF_TIME_SIZE];
 
 CfOut(cf_verbose,""," -> Monitor weekly data.....................");
 
@@ -365,8 +354,6 @@ for (ip = data; ip != NULL; ip=ip->next)
 void Nova_UnPackMonitorYr(mongo_connection *dbconn, char *id, struct Item *data)
 
 { struct Item *ip;
- int observable,slot = 0;
-  double q,e,dev;
 
 CfOut(cf_verbose,""," -> Monitor year data.....................");
 
@@ -791,8 +778,7 @@ void Nova_UnPackSoftwareDates(mongo_connection *dbconn, char *id, struct Item *d
 
 { struct Item *ip;
   char type;
-  double kept,repaired;
-  
+
 CfOut(cf_verbose,""," -> Software dates data...........................");
 
 #ifdef HAVE_LIBMONGOC

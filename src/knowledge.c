@@ -58,7 +58,7 @@ struct Inference *ip;
 struct Item *itp;
 char packNumStr[CF_MAXVARSIZE];
 mongo_connection dbconn = {0};
-bson_buffer bb,bbuf,*sub,*assocs,*setObj;
+bson_buffer bb,bbuf,*sub,*assocs;
 bson b;
 int slot,assoc_id = 0;
 
@@ -96,7 +96,6 @@ for (slot = 0; slot < CF_HASHTABLESIZE; slot++)
          for (itp = ta->associates; itp != NULL; itp=itp->next)
             {
             char to_context[CF_MAXVARSIZE],to_topic[CF_MAXVARSIZE];
-            char tcontext[CF_MAXVARSIZE],ttype[CF_MAXVARSIZE],ttopic[CF_MAXVARSIZE];
             int to_id = GetTopicPid(itp->name);
 
             DeClassifyTopic(itp->name,to_topic,to_context);
@@ -1406,10 +1405,7 @@ void ThisHashString(char *str,char *buffer,int len,unsigned char digest[EVP_MAX_
 
 { EVP_MD_CTX context;
  const EVP_MD *md = NULL;
- char *file_buffer;
- FILE *fp;
  int md_len;
- int i=0;
 
  OpenSSL_add_all_algorithms();
  OpenSSL_add_all_digests();
@@ -1549,19 +1545,13 @@ struct Rlist* Nova_GetTestMachines(void)
 #ifdef HAVE_LIBMONGOC
   mongo_cursor *cursor;
   bson_iterator it;
-  bson b,query,empty,element;
+  bson query;
   mongo_connection conn;
-  bson_buffer bb,bb_dup;
-  bson_buffer *setObj, *arr;
-  bson setOp;
-  bson_oid_t _oid;
 
   char keyhash[CF_MAXVARSIZE],addresses[CF_MAXVARSIZE],hostnames[CF_MAXVARSIZE];
-  char newkeyhash[CF_BUFSIZE]={0},newaddresses[CF_MAXVARSIZE]={0},newhostnames[CF_BUFSIZE]={0};
-  char noDot[CF_BUFSIZE]={0}, temp[CF_MAXVARSIZE];
-  unsigned char digest[EVP_MAX_MD_SIZE+1];
-  int i, total_added=0;
-   struct Rlist *testmachines = NULL,*rp=NULL;
+  char temp[CF_MAXVARSIZE];
+  int total_added=0;
+   struct Rlist *testmachines = NULL;
 
 if (!CFDB_Open(&conn))
    {
@@ -1653,10 +1643,9 @@ void Nova_UpdateTestData(void)
 #ifdef HAVE_LIBMONGOC
   mongo_cursor *cursor;
   bson_iterator it;
-  bson b,query,empty,element,setOp;
+  bson query,setOp;
   bson_buffer bb;
   bson_buffer *setObj;
-  bson_oid_t _oid;
   mongo_connection conn;
 
   char keyhash[CF_MAXVARSIZE],addresses[CF_MAXVARSIZE];

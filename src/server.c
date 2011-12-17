@@ -142,12 +142,12 @@ else
 int Nova_ReturnQueryData(struct cfd_connection *conn,char *menu)
 
 {
-  char buffer[CF_MAXVARSIZE],out[CF_BUFSIZE],menu_name[CF_MAXVARSIZE];
+  char out[CF_BUFSIZE],menu_name[CF_MAXVARSIZE];
   char tbuf[CF_SMALLBUF];
   enum cfd_menu type;
   struct Item *ip,*reply = NULL;
   int cipherlen = 0;
-  time_t from = 0, time0 = 0, time1 = 0, time2 = 0,delta1;
+  time_t from = 0, time0 = 0, time1 = 0, delta1;
 
 if (LICENSES <= 0)
    {

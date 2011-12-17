@@ -41,7 +41,6 @@
 */
 
 /* True global resources - no need for thread safety here */
-static int le_cfmod;
 
 static zend_class_entry *cfmod_ldap_exception_ce;
 
@@ -505,8 +504,8 @@ PHP_FUNCTION(cfpr_ldap_get_single_attribute_list)
 */
 
 {
-char *uri,*host,*basedn,*filter,*name,*scopes,*sec,*passwd,*user;
-int u_len,h_len, d_len, f_len,n_len,s_len,ss_len,p_len,page,linesperpage,uu_len;
+char *uri,*basedn,*filter,*name,*scopes,*sec,*passwd,*user;
+int u_len, d_len, f_len,n_len,s_len,ss_len,p_len,page,linesperpage,uu_len;
 char buffer[1000000];
 const char *errmsg;
 zend_bool starttls = false;
@@ -561,8 +560,8 @@ cfpr_ldap_get_several_attributes(
     
 {
 struct Rlist *names = NULL;
-char *uri,*host,*basedn,*filter,*name,*scopes,*sec,*passwd,*user;
-int ret,u_len,h_len, d_len, f_len,n_len,s_len,ss_len,p_len,page,linesperpage,uu_len;
+char *uri,*basedn,*filter,*name,*scopes,*sec,*passwd,*user;
+int ret,u_len, d_len, f_len,n_len,s_len,ss_len,p_len,page,linesperpage,uu_len;
 char buffer[1000000];
 const char *errstr;
 zend_bool starttls;
@@ -821,9 +820,8 @@ PHP_FUNCTION(cfpr_summary_meter)
 
 PHP_FUNCTION(cfpr_host_meter)
 
-{ char *hostkey,*fhostkey,*name;
- int hk_len, n_len;
- long regex;
+{ char *hostkey,*fhostkey;
+ int hk_len;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
 
@@ -1139,7 +1137,7 @@ PHP_FUNCTION(cfpr_report_software_in)
 
 //$ret = cfpr_report_software_in($hostkey,$name,$version,$arch,$regex);
 
-{ char *hostkey,*name,*version,*arch,*n,*v,*a,*returnval,*classreg;
+{ char *hostkey,*name,*version,*arch,*classreg;
  char *fhostkey,*fname,*fversion,*farch,*fclassreg;
  int hk_len, n_len,v_len,a_len,cr_len;
  long regex;
@@ -1174,7 +1172,7 @@ PHP_FUNCTION(cfpr_report_patch_in)
 
 // $ret = cfpr_report_patch_in($hostkey,$name,$version,$arch,$regex);
 
-{ char *hostkey,*name,*version,*arch,*n,*v,*a,*returnval,*classreg;
+{ char *hostkey,*name,*version,*arch,*classreg;
  char *fhostkey,*fname,*fversion,*farch,*fclassreg;
  int hk_len, n_len,v_len,a_len,use_reg,cr_len;
  long regex;
@@ -1208,7 +1206,7 @@ PHP_FUNCTION(cfpr_report_patch_avail)
 
 // $ret = cfpr_report_patch_avail($hostkey,$name,$version,$arch,$regex);
 
-{ char *hostkey,*name,*version,*arch,*n,*v,*a,*returnval,*classreg;
+{ char *hostkey,*name,*version,*arch,*classreg;
  char *fhostkey,*fname,*fversion,*farch,*fclassreg;
  int hk_len, n_len,v_len,a_len,use_reg,cr_len;
  long regex;
@@ -1242,9 +1240,9 @@ PHP_FUNCTION(cfpr_report_classes)
 
 //$ret = cfpr_report_classes($hostkey,$name,$regex);
 
-{ char *hostkey,*name,*version,*arch,*n,*v,*a,*classreg;
+{ char *hostkey,*name,*classreg;
  char *fname,*fhostkey,*fclassreg;
- int hk_len, n_len,v_len,a_len,cr_len;
+ int hk_len, n_len,cr_len;
  long regex;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
@@ -1271,9 +1269,9 @@ PHP_FUNCTION(cfpr_list_time_classes)
 
 //$ret = cfpr_report_classes($hostkey,$name,$regex);
 
-{ char *hostkey,*name,*version,*arch,*n,*v,*a,*classreg;
+{ char *hostkey,*name,*classreg;
  char *fname,*fhostkey,*fclassreg;
- int hk_len, n_len,v_len,a_len,cr_len;
+ int hk_len, n_len,cr_len;
  long regex;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
@@ -1298,9 +1296,9 @@ PHP_FUNCTION(cfpr_list_host_classes)
 
 //$ret = cfpr_report_classes($hostkey,$name,$regex);
 
-{ char *hostkey,*name,*version,*arch,*n,*v,*a,*classreg;
+{ char *hostkey,*name,*classreg;
  char *fname,*fhostkey,*fclassreg;
- int hk_len, n_len,v_len,a_len,cr_len;
+ int hk_len, n_len,cr_len;
  long regex;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
@@ -1325,9 +1323,9 @@ PHP_FUNCTION(cfpr_list_all_classes)
 
 //$ret = cfpr_report_classes($hostkey,$name,$regex);
 
-{ char *hostkey,*name,*version,*arch,*n,*v,*a,*classreg;
+{ char *hostkey,*name,*classreg;
  char *fname,*fhostkey,*fclassreg;
- int hk_len, n_len,v_len,a_len,cr_len;
+ int hk_len, n_len,cr_len;
  long regex;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
@@ -1353,9 +1351,9 @@ PHP_FUNCTION(cfpr_list_soft_classes)
 
 //$ret = cfpr_report_classes($hostkey,$name,$regex);
 
-{ char *hostkey,*name,*version,*arch,*n,*v,*a,*classreg;
+{ char *hostkey,*name,*classreg;
  char *fname,*fhostkey,*fclassreg;
- int hk_len, n_len,v_len,a_len,cr_len;
+ int hk_len, n_len,cr_len;
  long regex;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
@@ -1380,9 +1378,9 @@ PHP_FUNCTION(cfpr_list_soft_classes)
 PHP_FUNCTION(cfpr_list_ip_classes)
 //$ret = cfpr_report_classes($hostkey,$name,$regex);
 
-{ char *hostkey,*name,*version,*arch,*n,*v,*a,*classreg;
+{ char *hostkey,*name,*classreg;
  char *fname,*fhostkey,*fclassreg;
- int hk_len, n_len,v_len,a_len,cr_len;
+ int hk_len, n_len,cr_len;
  long regex;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
@@ -1436,7 +1434,7 @@ PHP_FUNCTION(cfpr_report_vars)
 
 //$ret = cfpr_report_vars($hostkey,$scope,$lval,$rval,$type,$regex);
 
-{ char *hostkey,*scope,*lval,*rval,*type,*returnval,*classreg;
+{ char *hostkey,*scope,*lval,*rval,*type,*classreg;
  char *fhostkey,*fscope,*flval,*frval,*ftype,*fclassreg;
  int hk_len,s_len,l_len,r_len,t_len,use_reg,cr_len;
  zend_bool regex;
@@ -1502,7 +1500,7 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
 
 //$ret = cfpr_report_compliance_summary($hostkey,$version,$time,$kept,$notkept,$repaired,">");
 
-{ char *hostkey,*version,*cmp,*returnval,*classreg;
+{ char *hostkey,*version,*cmp,*classreg;
  char *fhostkey,*fversion;
  int hk_len,v_len,cmp_len,cr_len;
  long k,nk,r,t;
@@ -1533,7 +1531,7 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
 
 //$ret = cfpr_report_compliance_promises($hostkey,$handle,$status,$regex);
 
-{ char *hostkey,*handle,*status,*returnval,*classreg;
+{ char *hostkey,*handle,*status,*classreg;
  char *fhostkey,*fhandle,*fstatus,*fclassreg;
  int hk_len,h_len,s_len,cr_len;
  const int bufsize = CF_WEBBUFFER;
@@ -1566,7 +1564,7 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
 PHP_FUNCTION(cfpr_report_overall_summary)
 //$ret = cfpr_report_overall_summary($hostkey,$handle,$status,$regex);
 
-{ char *hostkey,*handle,*status,*returnval,*classreg;
+{ char *hostkey,*handle,*status,*classreg;
   char *fhostkey,*fhandle,*fstatus,*fclassreg;
   int hk_len,h_len,s_len,cr_len;
 
@@ -1600,7 +1598,7 @@ PHP_FUNCTION(cfpr_report_overall_summary)
 PHP_FUNCTION(cfpr_report_lastseen)
 
 
-{ char *hostkey,*host,*address,*hash,*returnval,*classreg;
+{ char *hostkey,*host,*address,*hash,*classreg;
  char *fhostkey,*fhost,*faddress,*fhash,*fclassreg;
  int hk_len,h_len,a_len,h2_len,cr_len;
  const int bufsize = CF_WEBBUFFER;
@@ -1641,7 +1639,7 @@ PHP_FUNCTION(cfpr_report_performance)
 
 //$ret = cfpr_report_performance($hostkey,$job,$regex);
 
-{ char *hostkey,*job,*returnval,*classreg;
+{ char *hostkey,*job,*classreg;
  char *fhostkey,*fjob,*fclassreg;
  int hk_len,j_len,cr_len;
  const int bufsize = CF_WEBBUFFER;
@@ -1850,7 +1848,7 @@ PHP_FUNCTION(cfpr_summarize_promise)
 
 //$ret = cfpr_summarize_promise($handle);
 
-{ char *returnval;
+{
  char *handle;
  int handleLen;
  const int bufsize = CF_WEBBUFFER;
@@ -1874,7 +1872,7 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
 
 //$ret = cfpr_report_bundlesseen($hostkey,$name,$isNameRegex,$classRegexStr);
 
-{ char *hostkey,*bundle,*returnval,*classreg;
+{ char *hostkey,*bundle,*classreg;
  char *fhostkey,*fbundle,*fclassreg;
  int hk_len,j_len,cr_len;
  const int bufsize = CF_WEBBUFFER;
@@ -1910,8 +1908,6 @@ PHP_FUNCTION(cfpr_report_value)
  int hk_len,d_len,m_len,y_len,cr_len;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
- zend_bool regex;
- int use_reg;
  struct PageInfo page = {0};
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssll",
                            &hostkey,&hk_len,&day,&d_len,&month,&m_len,&year,&y_len,&classreg,&cr_len,
@@ -1942,9 +1938,6 @@ PHP_FUNCTION(cfpr_get_value_graph)
  int hk_len,d_len,m_len,y_len,cr_len;
  const int bufsize = 10000; 
  char buffer[bufsize];
- zend_bool regex;
- int use_reg;
- struct PageInfo page = {0};
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssss",
                            &hostkey,&hk_len,&day,&d_len,&month,&m_len,&year,&y_len,&classreg,&cr_len) == FAILURE)
     {
@@ -2100,7 +2093,7 @@ PHP_FUNCTION(cfpr_hosts_with_software_in)
 
 //$ret = cfpr_hosts_with_software_in($hostkey,$name,$version,$arch,$regex);
 
-{ char *hostkey,*name,*version,*arch,*n,*v,*a,*returnval,*classreg;
+{ char *hostkey,*name,*version,*arch,*classreg;
  char *fhostkey,*fname,*fversion,*farch,*fclassreg;
  int hk_len, n_len,v_len,a_len,use_reg,cr_len;
  long regex;
@@ -2161,7 +2154,7 @@ PHP_FUNCTION(cfpr_hosts_with_patch_in)
 
 // $ret = cfpr_hosts_with_patch_in($hostkey,$name,$version,$arch,$regex);
 
-{ char *hostkey,*name,*version,*arch,*n,*v,*a,*returnval,*classreg;
+{ char *hostkey,*name,*version,*arch,*classreg;
  char *fclassreg;
  int hk_len, n_len,v_len,a_len,cr_len;
  long regex;
@@ -2188,7 +2181,7 @@ PHP_FUNCTION(cfpr_hosts_with_patch_avail)
 
 // $ret = cfpr_hosts_with_patch_avail($hostkey,$name,$version,$arch,$regex);
 
-{ char *hostkey,*name,*version,*arch,*n,*v,*a,*returnval,*classreg;
+{ char *hostkey,*name,*version,*arch,*classreg;
  char *fhostkey,*fname,*fversion,*farch,*fclassreg;
  int hk_len, n_len,v_len,a_len,use_reg,cr_len;
  long regex;
@@ -2222,8 +2215,8 @@ PHP_FUNCTION(cfpr_hosts_with_classes)
 
 //$ret = cfpr_hosts_with_classes($hostkey,$name,$regex);
 
-{ char *hostkey,*name,*version,*arch,*n,*v,*a,*returnval,*classreg;
- int hk_len, n_len,v_len,a_len,cr_len;
+{ char *hostkey,*name,*classreg;
+ int hk_len, n_len,cr_len;
  long regex;
  const int bufsize = 512*1024; 
  char buffer[bufsize];
@@ -2308,7 +2301,7 @@ PHP_FUNCTION(cfpr_hosts_with_vars)
 
 //$ret = cfpr_hosts_with_vars($hostkey,$scope,$lval,$rval,$type,$regex);
 
-{ char *hostkey,*scope,*lval,*rval,*type,*returnval,*classreg;
+{ char *hostkey,*scope,*lval,*rval,*type,*classreg;
  char *fhostkey,*fscope,*flval,*frval,*ftype,*fclassreg;
  int hk_len,s_len,l_len,r_len,t_len,use_reg,cr_len;
  zend_bool regex;
@@ -2349,7 +2342,7 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_summary)
 
 //$ret = cfpr_hosts_with_compliance_summary($hostkey,$version,$time,$kept,$notkept,$repaired,">");
 
-{ char *hostkey,*version,*cmp,*returnval,*classreg;
+{ char *hostkey,*version,*cmp,*classreg;
  int hk_len,v_len,cmp_len,cr_len;
  long k,nk,r,t;
  const int bufsize = 512*1024; 
@@ -2373,7 +2366,7 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_promises)
 
 //$ret = cfpr_hosts_with_compliance_promises($hostkey,$handle,$status,$regex);
 
-{ char *hostkey,*handle,*status,*returnval,*classreg;
+{ char *hostkey,*handle,*status,*classreg;
  char *fhostkey,*fhandle,*fstatus,*fclassreg;
  int hk_len,h_len,s_len,cr_len;
  const int bufsize = 512 * 1024; 
@@ -2406,7 +2399,7 @@ PHP_FUNCTION(cfpr_hosts_with_lastseen)
 
 //$ret = cfpr_hosts_with_lastseen($hostkey,$host,$addr,$tago,$regex);
 
-{ char *hostkey,*host,*address,*hash,*returnval,*classreg;
+{ char *hostkey,*host,*address,*hash,*classreg;
  char *fhostkey,*fhost,*faddress,*fhash,*fclassreg;
  int hk_len,h_len,a_len,h2_len,cr_len;
  const int bufsize = 512*1024; 
@@ -2442,7 +2435,7 @@ PHP_FUNCTION(cfpr_hosts_with_performance)
 
 //$ret = cfpr_hosts_with_performance($hostkey,$job,$regex);
 
-{ char *hostkey,*job,*returnval,*classreg;
+{ char *hostkey,*job,*classreg;
  char *fhostkey,*fjob,*fclassreg;
  int hk_len,j_len,cr_len;
  const int bufsize = 512*1024; 
@@ -2471,7 +2464,7 @@ PHP_FUNCTION(cfpr_hosts_with_setuid)
 
 //$ret = cfpr_hosts_with_setuid($hostkey,$file,$regex);
 
-{ char *hostkey,*file,*returnval, *classreg;
+{ char *hostkey,*file, *classreg;
  char *fhostkey,*ffile;
  int hk_len,j_len,cr_len;
  const int bufsize = 512*1024; 
@@ -2499,7 +2492,7 @@ PHP_FUNCTION(cfpr_hosts_with_filechanges)
 
 //$ret = cfpr_hosts_with_filechanges($hostkey,$name,$regex,$time,">");
 
-{ char *hostkey,*file,*cmp,*returnval,*classreg;
+{ char *hostkey,*file,*cmp,*classreg;
  char *fhostkey,*ffile,*fcmp,*fclassreg;
  int hk_len,j_len,c_len,cr_len;
  const int bufsize = 512*1024; 
@@ -2532,7 +2525,7 @@ PHP_FUNCTION(cfpr_hosts_with_filediffs)
 
 //$ret = cfpr_hosts_with_filediffs($hostkey,$name,$diff,$regex,$time,">");
 
-{ char *hostkey,*file,*cmp,*diff,*returnval;
+{ char *hostkey,*file,*cmp,*diff;
  char *fhostkey,*ffile,*fcmp,*fclassreg,*classreg;
  int hk_len,j_len,c_len,d_len,cr_len;
  const int bufsize = 512*1024; 
@@ -2565,7 +2558,7 @@ PHP_FUNCTION(cfpr_hosts_with_bundlesseen)
 
 //$ret = cfpr_hosts_with_bundlesseen($hostkey,$name,$isNameRegex,$classreg);
 
-{ char *hostkey,*bundle,*returnval,*classreg;
+{ char *hostkey,*bundle,*classreg;
  char *fhostkey,*fbundle,*fclassreg;
  int hk_len,j_len,cr_len;
  const int bufsize = 512*1024; 
@@ -2823,7 +2816,6 @@ PHP_FUNCTION(cfpr_select_reports)
 
 {  const int bufsize = 100000; 
  char buffer[bufsize];
- char *policy;
 
 // buffer[0] = '\0';
  Nova2PHP_select_reports(buffer,bufsize);
@@ -3024,7 +3016,7 @@ PHP_FUNCTION(cfpr_list_handles)
 PHP_FUNCTION(cfpr_policy_finder_by_handle)
 
 { char *handle;
- int h_len, p_len;
+ int h_len;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
  zend_bool escRegex;
@@ -3045,7 +3037,7 @@ PHP_FUNCTION(cfpr_policy_finder_by_handle)
 PHP_FUNCTION(cfpr_policy_finder_by_promiser)
 
 { char *promiser;
- int pr_len, p_len;
+ int pr_len;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
  zend_bool escRegex;
@@ -3067,8 +3059,7 @@ PHP_FUNCTION(cfpr_policy_finder_by_promiser)
 PHP_FUNCTION(cfpr_policy_finder_by_bundle)
 
 { char *bundle;
- char *btype;
- int r_len, b_len;
+ int r_len;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
  zend_bool escRegex;
@@ -3093,7 +3084,6 @@ PHP_FUNCTION(cfpr_get_handles_for_bundle_with_comments)
  int r_len, p_len;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
- zend_bool regex;
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&bundle,&r_len,&btype,&p_len) == FAILURE)
     {
@@ -3262,9 +3252,9 @@ PHP_FUNCTION(cfpr_get_args_for_bundle)
 
 PHP_FUNCTION(cfpr_list_all_bundles)
 
-{ char *bundle;
+{
  char *btype,*fbtype;
- int r_len, p_len;
+ int p_len;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
 
@@ -3284,7 +3274,7 @@ PHP_FUNCTION(cfpr_list_all_bundles)
 /******************************************************************************/
 PHP_FUNCTION(cfpr_get_bundle_type)
 
-{ char *bundle;
+{
  char *bname,*fbname;
  int n_len;
  const int bufsize = 10000;
@@ -3307,7 +3297,7 @@ PHP_FUNCTION(cfpr_get_bundle_type)
 PHP_FUNCTION(cfpr_list_bundles_using)
 
 { char *bundle,*fbundle;
- int r_len, p_len;
+ int p_len;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
 
@@ -3329,8 +3319,7 @@ PHP_FUNCTION(cfpr_list_bundles_using)
 
 PHP_FUNCTION(cfpr_get_bundle_count)
 
-{ char *bundle,*fbundle;
- int r_len, p_len;
+{
  const int bufsize = 32; 
  char buffer[bufsize];
 
@@ -3344,8 +3333,7 @@ PHP_FUNCTION(cfpr_get_bundle_count)
 
 PHP_FUNCTION(cfpr_get_promise_count)
 
-{ char *bundle,*fbundle;
- int r_len, p_len;
+{
  const int bufsize = 32; 
  char buffer[bufsize];
 
@@ -3357,9 +3345,7 @@ PHP_FUNCTION(cfpr_get_promise_count)
 /******************************************************************************/
 PHP_FUNCTION(cfpr_list_business_goals)
 
-{ char *bundle;
- char *btype,*fbtype;
- int r_len, p_len;
+{
  const int bufsize = 1000000; 
  char buffer[bufsize];
 
@@ -3461,7 +3447,6 @@ PHP_FUNCTION(cfpr_list_bodies)
  int pr_len, p_len;
  const int bufsize = 1000000; 
  char buffer[bufsize];
- zend_bool regex;
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&name,&pr_len,&btype,&p_len) == FAILURE)
     {
@@ -3501,13 +3486,12 @@ PHP_FUNCTION(cfpr_report_compliance_summary_pdf)
 
 //$ret = cfpr_report_compliance_summary($hostkey,$version,$time,$kept,$notkept,$repaired,">");
 
-{ char *hostkey,*version,*cmp,*returnval,*classreg;
+{ char *hostkey,*version,*cmp,*classreg;
  char *fhostkey,*fversion, *fclassreg;
  int hk_len,v_len,cmp_len,cr_len;
  long k,nk,r,t;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
- zend_bool regex;
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssllllss",&hostkey,&hk_len,&version,&v_len,&t,&k,&nk,&r,&cmp,&cmp_len,&classreg,&cr_len) == FAILURE)
     {
@@ -3563,7 +3547,7 @@ PHP_FUNCTION(cfpr_report_bundlesseen_pdf)
 
 //$ret = cfpr_report_bundlesseen($hostkey,$name,$isNameRegex,$classRegexStr);
 
-{ char *hostkey,*bundle,*returnval,*classreg;
+{ char *hostkey,*bundle,*classreg;
  char *fhostkey,*fbundle,*fclassreg;
  int hk_len,j_len,cr_len;
  const int bufsize = CF_WEBBUFFER;
@@ -3597,8 +3581,6 @@ PHP_FUNCTION(cfpr_report_value_pdf)
  int hk_len,d_len,m_len,y_len,cr_len;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
- zend_bool regex;
- int use_reg;
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssss",&hostkey,&hk_len,&day,&d_len,&month,&m_len,&year,&y_len,&classreg,&cr_len) == FAILURE)
     {
@@ -3623,9 +3605,9 @@ PHP_FUNCTION(cfpr_report_classes_pdf)
 
 //$ret = cfpr_report_classes($hostkey,$name,$regex);
 
-{ char *hostkey,*name,*version,*arch,*n,*v,*a,*classreg;
+{ char *hostkey,*name,*classreg;
  char *fclassreg,*fname,*fhostkey;
- int hk_len, n_len,v_len,a_len,cr_len;
+ int hk_len,cr_len,n_len;
  long regex;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
@@ -3652,7 +3634,7 @@ PHP_FUNCTION(cfpr_report_compliance_promises_pdf)
 
 //$ret = cfpr_report_compliance_promises($hostkey,$handle,$status,$regex);
 
-{ char *hostkey,*handle,*status,*returnval,*classreg;
+{ char *hostkey,*handle,*status,*classreg;
  char *fhostkey,*fhandle,*fstatus,*fclassreg;
  int hk_len,h_len,s_len,cr_len;
  const int bufsize = CF_WEBBUFFER;
@@ -3718,7 +3700,7 @@ PHP_FUNCTION(cfpr_report_lastseen_pdf)
 
 //$ret = cfpr_report_lastseen($hostkey,$rhash,rhost,$addr,$tago,$regex);
 
-{ char *hostkey,*host,*address,*hash,*returnval,*classreg;
+{ char *hostkey,*host,*address,*hash,*classreg;
  char *fhostkey,*fhost,*faddress,*fhash,*fclassreg;
  int hk_len,h_len,a_len,h2_len,cr_len;
  const int bufsize = CF_WEBBUFFER;
@@ -3753,7 +3735,7 @@ PHP_FUNCTION(cfpr_report_patch_avail_pdf)
 
 // $ret = cfpr_report_patch_avail($hostkey,$name,$version,$arch,$regex);
 
-{ char *hostkey,*name,*version,*arch,*n,*v,*a,*returnval,*classreg;
+{ char *hostkey,*name,*version,*arch,*classreg;
  char *fhostkey,*fname,*fversion,*farch,*fclassreg;
  int hk_len, n_len,v_len,a_len,use_reg,cr_len;
  long regex;
@@ -3786,7 +3768,7 @@ PHP_FUNCTION(cfpr_report_patch_in_pdf)
 
 // $ret = cfpr_report_patch_in($hostkey,$name,$version,$arch,$regex);
 
-{ char *hostkey,*name,*version,*arch,*n,*v,*a,*returnval,*classreg;
+{ char *hostkey,*name,*version,*arch,*classreg;
  char *fhostkey,*fname,*fversion,*farch,*fclassreg;
  int hk_len, n_len,v_len,a_len,use_reg,cr_len;
  long regex;
@@ -3818,7 +3800,7 @@ PHP_FUNCTION(cfpr_report_software_in_pdf)
 
 //$ret = cfpr_report_software_in($hostkey,$name,$version,$arch,$regex);
 
-{ char *hostkey,*name,*version,*arch,*n,*v,*a,*returnval,*classreg;
+{ char *hostkey,*name,*version,*arch,*classreg;
  char *fhostkey,*fname,*fversion,*farch,*fclassreg;
  int hk_len, n_len,v_len,a_len,cr_len;
  long regex;
@@ -3852,7 +3834,7 @@ PHP_FUNCTION(cfpr_report_performance_pdf)
 
 //$ret = cfpr_report_performance($hostkey,$job,$regex);
 
-{ char *hostkey,*job,*returnval,*classreg;
+{ char *hostkey,*job,*classreg;
  char *fhostkey,*fjob,*fclassreg;
  int hk_len,j_len,cr_len;
  const int bufsize = CF_WEBBUFFER;
@@ -3963,7 +3945,7 @@ PHP_FUNCTION(cfpr_report_vars_pdf)
 
 //$ret = cfpr_report_vars($hostkey,$scope,$lval,$rval,$type,$regex);
 
-{ char *hostkey,*scope,*lval,*rval,*type,*returnval,*classreg;
+{ char *hostkey,*scope,*lval,*rval,*type,*classreg;
  char *fhostkey,*fscope,*flval,*frval,*ftype,*fclassreg;
  int hk_len,s_len,l_len,r_len,t_len,use_reg,cr_len;
  zend_bool regex;
@@ -4095,10 +4077,7 @@ PHP_FUNCTION(cfpr_report_description)
 PHP_FUNCTION(cfpr_cdp_reportnames)
 
 { char buf[1024]={0};
- char *hostkey;
- int hk_len;
 
- buf[0]='\0';
  Nova2PHP_cdp_reportnames(buf,sizeof(buf));
 
  RETURN_STRING(buf,1);
@@ -4316,7 +4295,6 @@ PHP_FUNCTION(cfpr_add_note)
 { char *user,*note,*nid;
  char *fuser,*fnote,*fnid;
  int u_len,n_len, nid_len;
- int report_type;
  time_t datetime;
  const int bufsize = 1000;
  char returnval[bufsize];
@@ -4380,7 +4358,7 @@ PHP_FUNCTION(cfpr_query_note)
 
 { char *hostkey = {0},*user, *nid;
  char *fhostkey,*fuser, *fnid;
- int hk_len,sk_len,h_len,u_len,nid_len;
+ int hk_len,u_len,nid_len;
  const int bufsize = 1000000;
  long from,to;
  struct PageInfo page = {0};
@@ -4810,8 +4788,8 @@ static char *cfcon_reasons_promiselog(int argc, enum promiselog_rep log_type)
 {
 #define CFCON_RPL_BUFSIZE 16384
  
- char *promiseHandle, *fpromiseHandle, *time, *hubKeyHash, *fhubKeyHash;
- int ph_len,t_len,hkh_len;
+ char *promiseHandle, *fpromiseHandle, *hubKeyHash, *fhubKeyHash;
+ int ph_len,hkh_len;
  static char buffer[CFCON_RPL_BUFSIZE];
 
  if (zend_parse_parameters(argc, "ss",&hubKeyHash,&hkh_len,&promiseHandle,&ph_len) == FAILURE)
@@ -4833,7 +4811,6 @@ static char *cfcon_reasons_promiselog(int argc, enum promiselog_rep log_type)
 
 PHP_FUNCTION(cfcon_environments_list)
 {
- struct EnvironmentsList *el, *i;
  char *hubKeyHash, *fhubKeyHash;
  int hkh_len;
  const int bufsize = 1024;
@@ -4888,8 +4865,6 @@ PHP_FUNCTION(cfcon_promise_popularity)
 
 PHP_FUNCTION(cfcon_rank_promise_popularity)
 {
- char *promiseHandle;
- int prh_len;
  const int bufsize = CF_WEBBUFFER;;
  char buffer[bufsize];
  zend_bool sortAscending;
@@ -5338,7 +5313,6 @@ PHP_FUNCTION(cfcon_subscribe_repairlog)
 { const int bufsize = 4096;
  char buffer[bufsize];
  char *user, *hubClassRegex, *subHandle, *promiseHandleRegex, *reportRegex, *hostClassRegex;
- int pnRegex;
  int usLen, hcLen, shLen, phLen, rxLen, ocLen;
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssss",&user, &usLen, &subHandle, &shLen, &hubClassRegex, &hcLen,
@@ -5398,9 +5372,8 @@ PHP_FUNCTION(cfcon_subscribe_repairlog)
  *****************************************************************************/
 PHP_FUNCTION(cfcon_hub_meter)
 
-{ char *hostkey,*fhostkey,*name;
- int hk_len, n_len;
- long regex;
+{ char *hostkey,*fhostkey;
+ int hk_len;
  const int bufsize = 512*1024;
  char buffer[bufsize];
 

@@ -182,7 +182,6 @@ void Nova_DefineHubMaster()
 {
 #ifdef HAVE_LIBMONGOC
  char master[CF_MAXVARSIZE]={0};
- char master_ip[CF_MAXVARSIZE]={0};
  struct hostent *hp;
  struct sockaddr_in cin;
 

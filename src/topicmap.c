@@ -37,12 +37,11 @@ void Nova_DumpTopics()
   bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
-  bson_iterator it1,it2,it3;
+  bson_iterator it1;
   mongo_connection conn;
   char topic_name[CF_BUFSIZE];
   char topic_context[CF_BUFSIZE];
   int topic_id;
-  char work[CF_BUFSIZE];
   struct Item *ip,*nn;
 
 if (!CFDB_Open(&conn))
@@ -129,7 +128,7 @@ int Nova_GetTopicIdForTopic(char *typed_topic)
   bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
-  bson_iterator it1,it2,it3;
+  bson_iterator it1;
   mongo_connection conn;
   int topic_id = 0;
   
@@ -194,7 +193,7 @@ int Nova_GetTopicByTopicId(int search_id,char *topic_name,char *topic_id,char *t
   bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
-  bson_iterator it1,it2,it3;
+  bson_iterator it1;
   mongo_connection conn;
   int topicid = 0;
 
@@ -265,7 +264,7 @@ int Nova_SearchTopicMap(char *search_topic,char *buffer,int bufsize)
   bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
-  bson_iterator it1,it2,it3;
+  bson_iterator it1;
   mongo_connection conn;
   char topic_name[CF_BUFSIZE],jsonEscapedStr[CF_BUFSIZE];
   char topic_context[CF_BUFSIZE];
@@ -373,7 +372,7 @@ void Nova_ScanTheRest(int pid,char *buffer, int bufsize)
   char this_name[CF_BUFSIZE],this_id[CF_BUFSIZE],this_context[CF_BUFSIZE];
   struct Item *worklist, *ip;
   char work[CF_BUFSIZE];
-  char name[CF_BUFSIZE] = {0},*a_context;
+  char name[CF_BUFSIZE] = {0};
   int id=0;
 
 id= Nova_GetTopicByTopicId(pid,this_name,this_id,this_context);
@@ -553,7 +552,7 @@ void Nova_ScanOccurrences(int this_id,char *buffer, int bufsize)
   bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
-  bson_iterator it1,it2,it3;
+  bson_iterator it1;
   mongo_connection conn;
 
 // Do we want to prune using the topic context?
@@ -655,7 +654,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
 
          for (rrp = atoms; rrp != NULL; rrp=rrp->next)
             {
-            char *sp,*stripped = rrp->item;
+            char *stripped = rrp->item;
 
             // Try to strip out the common topic string
             
@@ -703,7 +702,7 @@ int Nova_GetReportDescription(int this_id,char *buffer, int bufsize)
   bson query,field;
   mongo_cursor *cursor;
   bson_buffer bb;
-  bson_iterator it1,it2,it3;
+  bson_iterator it1;
   mongo_connection conn;
 
 if (!CFDB_Open(&conn))
@@ -790,7 +789,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
  bson_buffer bb;
  bson query,field;
  mongo_cursor *cursor;
- bson_iterator it1,it2,it3;
+ bson_iterator it1;
  mongo_connection conn;
 
  char topic_name[CF_MAXVARSIZE] = {0};
@@ -921,7 +920,7 @@ void Nova_FillInGoalComment(struct Item *ip)
   bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
-  bson_iterator it1,it2,it3;
+  bson_iterator it1;
   mongo_connection conn;
   struct Rlist *goal_categories = NULL;
   char db_goal_categories[CF_BUFSIZE] = {0}; 
@@ -1004,7 +1003,7 @@ char *Nova_GetBundleComment(char *bundle)
   bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
-  bson_iterator it1,it2,it3;
+  bson_iterator it1;
   mongo_connection conn;
 
 // Get comment goals.* or targets.%s etc
@@ -1119,8 +1118,7 @@ int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_ad
 
 { char topic_name[CF_BUFSIZE],topic_context[CF_BUFSIZE];
   char *a_name,*a_context,view[CF_MAXVARSIZE];
-  int from_pid,to_pid,a_pid;
-  char query[CF_BUFSIZE];
+  int a_pid;
   struct CfGraphNode neighbours1[CF_TRIBE_SIZE],neighbours2[CF_TRIBE_SIZE][CF_TRIBE_SIZE];
   int tribe_counter = 0,secondary_boundary,tertiary_boundary,i,j;
   struct Item *ip,*nn = NULL;
@@ -1410,7 +1408,7 @@ tribe[i].distance_from_centre = 0;
 
 int Nova_NewVertex(struct CfGraphNode *tribe,int node,int distance,int real,char *topic_name,char *topic_context)
 
-{ char sshort[CF_BUFSIZE],name[CF_BUFSIZE];
+{ char sshort[CF_BUFSIZE];
   char topic_id[CF_BUFSIZE];
   int j;
 
@@ -1574,16 +1572,12 @@ struct Item *Nova_GetTopicsInContext(char *context)
   bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
-  bson_iterator it1,it2,it3;
+  bson_iterator it1;
   mongo_connection conn;
   struct Item *list = NULL;
   char topic_name[CF_BUFSIZE];
   char topic_context[CF_BUFSIZE];
   int topic_id;
-  char assoc_name[CF_BUFSIZE];
-  char afwd[CF_BUFSIZE],abwd[CF_BUFSIZE];
-  char assoc_context[CF_BUFSIZE];
-  int assoc_id;
 
 if (!CFDB_Open(&conn))
    {

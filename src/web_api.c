@@ -261,13 +261,13 @@ int Nova2PHP_summary_report(char *hostkey,char *handle,char *status,int regex,ch
 /*
   Return current best-knowledge of average compliance for the class of hosts and promises selected
  */
-{ char buffer[CF_BUFSIZE];
+{
   struct HubPromiseCompliance *hp;
   struct HubQuery *hq;
   struct Rlist *rp;
   mongo_connection dbconn;
-  time_t now = time(NULL),from=now,to=now-SECONDS_PER_WEEK, interval;
-  int total,code_blue = 0,tot_hosts;
+  time_t now = time(NULL),from=now,to=now-SECONDS_PER_WEEK;
+  int code_blue = 0,tot_hosts;
   double n,r,k,n_av,k_av,r_av,tot_promises;
   char *current_host = "x";
 
@@ -1885,7 +1885,7 @@ int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddres
 /*****************************************************************************/
 int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *classreg,struct PageInfo *page, char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE];
  struct HubPerformance *hP;
  struct HubQuery *hq;
  struct Rlist *rp;
@@ -2341,7 +2341,7 @@ int Nova2PHP_hostinfo(char *hostkey,char *hostnameOut,char *ipaddrOut,int bufsiz
 
 int Nova2PHP_value_hosts(char *hostkey,char *day,char *month,char *year,char *classreg,char *returnval,int bufsize)
 
-{ struct HubValue *hp;
+{
   struct HubQuery *hq;
   struct Rlist *rp;
   mongo_connection dbconn;
@@ -2501,10 +2501,10 @@ int Nova2PHP_classes_hosts(char *hostkey,char *name,int regex,char *classreg,cha
 
 int Nova2PHP_vars_hosts(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE];
   struct HubHost *hh;
   struct HubQuery *hq;
-  struct Rlist *rp,*result;
+  struct Rlist *rp;
   int counter = 0, n = 180;
   mongo_connection dbconn;
 
@@ -2551,10 +2551,10 @@ return true;
 
 int Nova2PHP_compliance_hosts(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE];
  struct HubHost *hh;
  struct HubQuery *hq;
- struct Rlist *rp,*result;
+ struct Rlist *rp;
  int counter = 0, n = 180,icmp;
  mongo_connection dbconn;
 
@@ -2609,11 +2609,11 @@ int Nova2PHP_compliance_hosts(char *hostkey,char *version,time_t t,int k,int nk,
 
 int Nova2PHP_promise_hosts(char *hostkey,char *handle,char *status,int regex,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE];
   struct HubHost *hh;
   struct HubQuery *hq;
-  struct Rlist *rp,*result;
-  int counter = 0, n = 180,icmp;
+  struct Rlist *rp;
+  int counter = 0, n = 180;
   mongo_connection dbconn;
 
 
@@ -2666,13 +2666,12 @@ return true;
 
 int Nova2PHP_lastseen_hosts(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE];
  struct HubHost *hh;
  struct HubQuery *hq;
- struct Rlist *rp,*result;
- int counter = 0, n = 180,icmp;
+ struct Rlist *rp;
+ int counter = 0, n = 180;
  mongo_connection dbconn;
- char inout[CF_SMALLBUF];
 
 /* BEGIN query document */
 
@@ -2719,11 +2718,11 @@ int Nova2PHP_lastseen_hosts(char *hostkey,char *lhash,char *lhost,char *laddress
 
 int Nova2PHP_performance_hosts(char *hostkey,char *job,int regex,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE];
  struct HubHost *hh;
  struct HubQuery *hq;
- struct Rlist *rp,*result;
- int counter = 0, n = 180,icmp;
+ struct Rlist *rp;
+ int counter = 0, n = 180;
  mongo_connection dbconn;
 
  if (!CFDB_Open(&dbconn))
@@ -2769,11 +2768,11 @@ int Nova2PHP_performance_hosts(char *hostkey,char *job,int regex,char *classreg,
 
 int Nova2PHP_setuid_hosts(char *hostkey,char *file,int regex,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE];
  struct HubHost *hh;
  struct HubQuery *hq;
- struct Rlist *rp,*result;
- int counter = 0, n = 180,icmp;
+ struct Rlist *rp;
+ int counter = 0, n = 180;
  mongo_connection dbconn;
 
  if (!CFDB_Open(&dbconn))
@@ -2820,11 +2819,11 @@ int Nova2PHP_setuid_hosts(char *hostkey,char *file,int regex,char *classreg,char
 
 int Nova2PHP_bundle_hosts(char *hostkey,char *bundle,int regex,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE];
  struct HubHost *hh;
  struct HubQuery *hq;
- struct Rlist *rp,*result;
- int counter = 0, n = 180,icmp;
+ struct Rlist *rp;
+ int counter = 0, n = 180;
  mongo_connection dbconn;
 
 /* BEGIN query document */
@@ -2873,10 +2872,10 @@ int Nova2PHP_bundle_hosts(char *hostkey,char *bundle,int regex,char *classreg,ch
 
 int Nova2PHP_filechanges_hosts(char *hostkey,char *file,int regex,time_t t,char *cmp,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];   
+{ char buffer[CF_BUFSIZE];
  struct HubHost *hh;
  struct HubQuery *hq;
- struct Rlist *rp,*result;
+ struct Rlist *rp;
  int counter = 0, n = 180,icmp;
  mongo_connection dbconn;
 
@@ -2930,10 +2929,10 @@ int Nova2PHP_filechanges_hosts(char *hostkey,char *file,int regex,time_t t,char 
 
 int Nova2PHP_filediffs_hosts(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];   
+{ char buffer[CF_BUFSIZE];
  struct HubHost *hh;
  struct HubQuery *hq;
- struct Rlist *rp,*result;
+ struct Rlist *rp;
  int counter = 0, n = 180,icmp;
  mongo_connection dbconn;
 
@@ -3104,7 +3103,6 @@ int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsi
 int Nova2PHP_get_args_for_bundle(char *name,char *type,char *buffer,int bufsize)
 
 { mongo_connection dbconn;
-  struct Rlist *classList;
   struct Item *matched,*ip;
   char work[CF_MAXVARSIZE];
 
@@ -3250,7 +3248,6 @@ return true;
 int Nova2PHP_get_bundle_type(char *name,char *buffer,int bufsize)
 
 { mongo_connection dbconn;
-  char work[CF_BUFSIZE];
   int matched = false;
 
 Nova_WebTopicMap_Initialize();
@@ -3281,9 +3278,7 @@ else
 
 int Nova2PHP_list_all_goals(char *buffer,int bufsize)
 
-{ char work[CF_BUFSIZE];
-  struct Item *ip2,*glist;
-
+{
 if (Nova_GetUniqueBusinessGoals(buffer,bufsize))
    {
    return true;
@@ -3416,7 +3411,7 @@ return false;
 
 void Nova2PHP_show_topic(int id,char *buffer,int bufsize)
 
-{ char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_context[CF_BUFSIZE],topic_comment[CF_BUFSIZE];
+{ char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_context[CF_BUFSIZE];
   char work[CF_BUFSIZE];
  
 buffer[0] = '\0';
@@ -4063,7 +4058,6 @@ void Nova2PHP_select_reports(char *buffer,int bufsize)
 #ifdef HAVE_CONSTELLATION
   char constellationListJson[CF_BUFSIZE]={0};
 #endif
-  char work[CF_BUFSIZE]={0};
 
 novaListJson[0] ='\0';
 
@@ -4106,10 +4100,10 @@ int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
 
 { mongo_connection dbconn;
  struct HubPromise *hp;
- char promiseeText[CF_MAXVARSIZE],bArgText[CF_MAXVARSIZE];
+ char promiseeText[CF_MAXVARSIZE];
  char commentText[CF_MAXVARSIZE];
  char work[CF_BUFSIZE], escaped[CF_BUFSIZE];
- int i,count;
+ int i;
   
 if (strcmp(handle,"internal_promise") == 0)
     {
@@ -4273,14 +4267,11 @@ int Nova2PHP_list_promise_handles_with_comments(char *bundle,char *btype,char *r
 int Nova2PHP_list_promise_handles(char *promiser,char *ptype,char *bundle,char *btype,int regex,char *returnval,int bufsize)
 
 { mongo_connection dbconn;
- char promiseeText[CF_MAXVARSIZE],bArgText[CF_MAXVARSIZE];
- char commentText[CF_MAXVARSIZE], constText[CF_MAXVARSIZE];
  char work[CF_MAXVARSIZE];
  struct Rlist *rp;
  struct HubQuery *hq;
  struct HubPromise *hp;
- int i,count;
-  
+
 /* BEGIN query document */
 
  if (!CFDB_Open(&dbconn))
@@ -4326,7 +4317,6 @@ void Nova2PHP_get_network_speed(char *hostkey,char *buffer, int bufsize)
 
 { mongo_connection dbconn;
  mongo_cursor *cursor;
- bson_iterator it1;
  bson_buffer bb;
  bson query,field;
  int found = false;
@@ -4393,15 +4383,12 @@ void Nova2PHP_get_network_speed(char *hostkey,char *buffer, int bufsize)
 
 int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int bufsize)
 
-{ char *report,work[CF_BUFSIZE];
- struct HubHost *hh;
+{
  struct HubQuery *hq;
- struct Rlist *rp,*result;
+ struct Rlist *rp;
  struct Item *order_results = NULL,*ip;
- int count = 0, tmpsize;
+ int count = 0;
  mongo_connection dbconn;
- bson query,b;
- bson_buffer bb;
 
 /* BEGIN query document */
  
@@ -4428,7 +4415,8 @@ int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int
  order_results = SortItemListNames(order_results);
 
  for (ip = order_results; ip != NULL; ip = ip->next)
-    {   
+    {
+    char work[CF_BUFSIZE];
     snprintf(work,CF_BUFSIZE,"{\"name\":\"%s\",\"count\":%d},",ip->name+strlen(MONITOR_CLASS_PREFIX),ip->counter+1);
     Join(returnval,work,bufsize);
     count += ip->counter+1;
@@ -4547,11 +4535,11 @@ char *Nova_FormatDiff(char *s)
 
 int Nova2PHP_compliance_report_pdf(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE];
  struct HubTotalCompliance *ht;
  struct HubQuery *hq;
- struct Rlist *rp,*result;
- int count = 0, tmpsize,icmp;
+ struct Rlist *rp;
+ int icmp;
  mongo_connection dbconn;
  int margin = strlen(CF_NOTICE_TRUNCATED);
 
@@ -4603,11 +4591,10 @@ int Nova2PHP_compliance_report_pdf(char *hostkey,char *version,time_t t,int k,in
 
 int Nova2PHP_promiselog_pdf(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE];
  struct HubPromiseLog *hp;
  struct HubQuery *hq;
- struct Rlist *rp,*result;
- int count = 0, tmpsize,icmp;
+ struct Rlist *rp;
  mongo_connection dbconn;
  int margin = strlen(CF_NOTICE_TRUNCATED);
  
@@ -4649,11 +4636,10 @@ int Nova2PHP_promiselog_pdf(char *hostkey,char *handle,enum promiselog_rep type,
 
 int Nova2PHP_bundle_report_pdf(char *hostkey,char *bundle,int regex,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE], date[CF_MAXVARSIZE];
+{ char buffer[CF_BUFSIZE], date[CF_MAXVARSIZE];
  struct HubBundleSeen *hb;   
  struct HubQuery *hq;
- struct Rlist *rp,*result;
- int count = 0, tmpsize,icmp;
+ struct Rlist *rp;
  mongo_connection dbconn;
  int margin = strlen(CF_NOTICE_TRUNCATED);
  
@@ -4707,11 +4693,8 @@ int Nova2PHP_value_report_pdf(char *hostkey,char *day,char *month,char *year,cha
 
 { struct HubValue *hp;
  struct HubQuery *hq;
- struct Rlist *rp,*result;
- int count = 0, tmpsize,icmp;
+ struct Rlist *rp;
  mongo_connection dbconn;
- bson query,b;
- bson_buffer bb;
  char buffer[CF_BUFSIZE];
  int margin = strlen(CF_NOTICE_TRUNCATED);
 /* BEGIN query document */
@@ -4752,11 +4735,10 @@ int Nova2PHP_value_report_pdf(char *hostkey,char *day,char *month,char *year,cha
 /*****************************************************************************/
 int Nova2PHP_classes_report_pdf(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE];
  struct HubClass *hc;
  struct HubQuery *hq;
- struct Rlist *rp,*result;
- int count = 0, tmpsize;
+ struct Rlist *rp;
  mongo_connection dbconn;
  time_t now = time(NULL);
  int margin = strlen(CF_NOTICE_TRUNCATED);
@@ -4811,11 +4793,10 @@ int Nova2PHP_classes_report_pdf(char *hostkey,char *name,int regex,char *classre
 
 int Nova2PHP_compliance_promises_pdf(char *hostkey,char *handle,char *status,int regex,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE];
  struct HubPromiseCompliance *hp;
  struct HubQuery *hq;
- struct Rlist *rp,*result;
- int count = 0, tmpsize,icmp;
+ struct Rlist *rp;
  mongo_connection dbconn;
  int margin = strlen(CF_NOTICE_TRUNCATED);
 
@@ -4859,11 +4840,10 @@ int Nova2PHP_compliance_promises_pdf(char *hostkey,char *handle,char *status,int
 
 int Nova2PHP_lastseen_report_pdf(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE];
  struct HubLastSeen *hl;
  struct HubQuery *hq;
- struct Rlist *rp,*result;
- int tmpsize,icmp;
+ struct Rlist *rp;
  mongo_connection dbconn;
  char inout[CF_SMALLBUF];
  time_t then;
@@ -4922,11 +4902,10 @@ int Nova2PHP_lastseen_report_pdf(char *hostkey,char *lhash,char *lhost,char *lad
 
 int Nova2PHP_software_report_pdf(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE];
  struct HubSoftware *hs;
  struct HubQuery *hq;
- struct Rlist *rp,*result;
- int count = 0, tmpsize;
+ struct Rlist *rp;
  mongo_connection dbconn;
  int margin = strlen(CF_NOTICE_TRUNCATED);
 
@@ -4967,11 +4946,10 @@ int Nova2PHP_software_report_pdf(char *hostkey,char *name,char *value, char *arc
 
 int Nova2PHP_performance_report_pdf(char *hostkey,char *job,int regex,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE];
  struct HubPerformance *hP;
  struct HubQuery *hq;
- struct Rlist *rp,*result;
- int count = 0, icmp;
+ struct Rlist *rp;
  mongo_connection dbconn;
  int margin = strlen(CF_NOTICE_TRUNCATED);
 
@@ -5012,13 +4990,13 @@ int Nova2PHP_performance_report_pdf(char *hostkey,char *job,int regex,char *clas
 /*****************************************************************************/
 int Nova2PHP_promiselog_summary_pdf(char *hostkey,char *handle,enum promiselog_rep type,time_t from, time_t to,char *classreg,char *returnval,int bufsize)
 
-{  char buffer[CF_BUFSIZE],report[CF_BUFSIZE]={0};
+{  char buffer[CF_BUFSIZE];
  struct HubPromiseLog *hp;
  struct HubQuery *hq;
  struct Rlist *rp;
  mongo_connection dbconn;
  struct Item *ip,*summary = NULL;
- int startIndex = 0, endIndex=0, i = 0;
+ int i = 0;
  int margin = strlen(CF_NOTICE_TRUNCATED);
 
 /* BEGIN query document */
@@ -5072,11 +5050,11 @@ int Nova2PHP_promiselog_summary_pdf(char *hostkey,char *handle,enum promiselog_r
 
 int Nova2PHP_vars_report_pdf(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE],lscope[CF_MAXVARSIZE];
- struct HubVariable *hv,*hv2;
+{ char buffer[CF_BUFSIZE],lscope[CF_MAXVARSIZE];
+ struct HubVariable *hv;
  struct HubQuery *hq;
- struct Rlist *rp,*result;
- int count = 0, tmpsize = 0;
+ struct Rlist *rp;
+ int count = 0;
  mongo_connection dbconn;
  int margin = strlen(CF_NOTICE_TRUNCATED);
 
@@ -5197,11 +5175,11 @@ return false;
 
 int Nova2PHP_filechanges_report_pdf(char *hostkey,char *file,int regex,time_t t,char *cmp,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE];
  struct HubFileChanges *hC;
  struct HubQuery *hq;
- struct Rlist *rp,*result;
- int count = 0, tmpsize,icmp;
+ struct Rlist *rp;
+ int icmp;
  mongo_connection dbconn;
  int margin = strlen(CF_NOTICE_TRUNCATED);
 
@@ -5250,11 +5228,11 @@ int Nova2PHP_filechanges_report_pdf(char *hostkey,char *file,int regex,time_t t,
 
 int Nova2PHP_filediffs_report_pdf(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];   
+{ char buffer[CF_BUFSIZE];
  struct HubFileDiff *hd;
  struct HubQuery *hq;
- struct Rlist *rp,*result;
- int count = 0, tmpsize,icmp;
+ struct Rlist *rp;
+ int icmp;
  mongo_connection dbconn;
 int margin = strlen(CF_NOTICE_TRUNCATED);
  switch (*cmp)
@@ -5308,7 +5286,6 @@ char *Nova_FormatDiff_pdf(char *s)
  static char returnval[CF_BUFSIZE] = "";
  char pm;
  int line = 0;
- int margin = strlen(CF_NOTICE_TRUNCATED);
  for (sp = s; *sp != '\0'; sp += strlen(tline)+1)
     {
     sscanf(sp,"%c,%d,%2047[^\n]",&pm,&line,diff);
@@ -5340,11 +5317,10 @@ char *Nova_FormatDiff_pdf(char *s)
 
 int Nova2PHP_setuid_report_pdf(char *hostkey,char *file,int regex,char *classreg,char *returnval,int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE];
  struct HubSetUid *hS;   
  struct HubQuery *hq;
- struct Rlist *rp,*result;
- int count = 0, tmpsize,icmp;
+ struct Rlist *rp;
  mongo_connection dbconn;
  int margin = strlen(CF_NOTICE_TRUNCATED);
 
@@ -5435,17 +5411,14 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, struct PageInfo *page, 
  struct Item *ip = {0}, *ip2 = {0};
  mongo_connection dbconn;
  char handle[CF_MAXVARSIZE] = {0};
- char action[CF_MAXVARSIZE] = {0};
  char host[CF_MAXVARSIZE] = {0};
  char hostKeyHash[CF_MAXVARSIZE] = {0};
  char thenStr[CF_SMALLBUF] = {0};
- char cause[CF_MAXVARSIZE] = {0};
  char statusStr[CF_SMALLBUF];
  char lastChangeStr[CF_SMALLBUF];
  char *urlReportName = "";
  time_t then = 0, now;
  char attributes[CF_MAXVARSIZE] = {0};
- char attributesTmp[CF_MAXVARSIZE] = {0};
  char row[CF_MAXVARSIZE] = {0};
  int ret = false;
  cdp_report cdpType;
@@ -5878,7 +5851,6 @@ int Nova2PHP_add_note(char *noteid,char *username, time_t datetime,char* note,ch
 { struct Item *data = NULL;
   char msg[CF_BUFSIZE] = {0}, nid[CF_MAXVARSIZE] = {0};
   mongo_connection dbconn;
-  bson_buffer bb;
   int ret = 0;
 
 if (!noteid || strlen(noteid) == 0)
@@ -5914,18 +5886,16 @@ return ret;
 
 int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *username, time_t datetime, char *note,char *returnval, int bufsize)
 
-{ struct Item *data = NULL, *ip = NULL, *report = NULL;
+{ struct Item *data = NULL;
  char msg[CF_BUFSIZE] = {0};
- char reportText[CF_BUFSIZE] = {0}, row[CF_BUFSIZE] = {0};
- char noteId[CF_MAXVARSIZE] = {0}, objectId[CF_MAXVARSIZE] = {0};
+ char row[CF_BUFSIZE] = {0};
+ char noteId[CF_MAXVARSIZE] = {0};
  mongo_connection dbconn;
- char handle[CF_MAXVARSIZE]={0};
- bson query,b, result;
+ bson query;
  bson_buffer bb;
  bson_oid_t oid;
 
  char row_name[CF_MAXVARSIZE] = {0}, row_add[CF_MAXVARSIZE] = {0}, db[CF_MAXVARSIZE] = {0};
- bson_iterator it1,it2;
  int level = 0, getrow=false, ret;
   
  snprintf(msg, CF_BUFSIZE, "%s,%ld,%s",username,datetime,note);
@@ -6049,7 +6019,7 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
 
 int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, time_t from, time_t to, struct PageInfo *page, char *returnval, int bufsize)
 
-{ struct Item *data = NULL, *ip = NULL;
+{ struct Item *data = NULL;
   char msg[CF_BUFSIZE] = {0};
   char buffer[CF_BUFSIZE] = {0};
   mongo_connection dbconn;
@@ -6138,10 +6108,10 @@ return true;
 
 int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize)
 
-{ char *report,buffer[CF_BUFSIZE];
+{ char buffer[CF_BUFSIZE];
   struct Rlist *rp,*result;
   mongo_connection dbconn;
-  bson query,b;
+  bson query;
   bson_buffer bb;
 
 /* BEGIN query document */
@@ -6240,14 +6210,11 @@ int Nova2PHP_community_version(char *buf, int bufsize)
 int Nova2PHP_list_handles_policy_finder(char *handle,char *promiser,char *bundle,int escRegex,char *returnval,int bufsize)
 
 { mongo_connection dbconn;
-  char promiseeText[CF_MAXVARSIZE],bArgText[CF_MAXVARSIZE];
-  char commentText[CF_MAXVARSIZE], constText[CF_MAXVARSIZE];
   char work[CF_MAXVARSIZE] = {0};
-  char bundleName[CF_BUFSIZE],promiserJson[CF_MAXVARSIZE];
+  char promiserJson[CF_MAXVARSIZE];
   struct Rlist *rp;
   struct HubPromise *hp;
   struct HubQuery *hq;
-  int i,count;
 
   /* BEGIN query document */
 
@@ -6292,7 +6259,6 @@ int Nova2PHP_list_handles_policy_finder(char *handle,char *promiser,char *bundle
 int Nova2PHP_GetHubKey(char *buffer,int bufsize)
 
 { char name[CF_MAXVARSIZE]={0},policy_server[CF_MAXVARSIZE]={0};
-  char serverdig[CF_MAXVARSIZE] = "";
   FILE *fp;
   struct Item *list=NULL,*ip=NULL;
   int ret = false;

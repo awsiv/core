@@ -2099,7 +2099,7 @@ void Nova_NoteVarUsageDB(void)
   char key[CF_MAXVARSIZE], *keyDb;  // scope.varname
   void *val;
   struct Variable var = {{0}}, *varDb;
-  int i, keyDbSize, valSize;
+  int keyDbSize, valSize;
   time_t varExpireAge = SECONDS_PER_WEEK * 4;  // remove vars from DB after about one month
   time_t now = time(NULL);
 

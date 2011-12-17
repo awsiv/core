@@ -1824,7 +1824,7 @@ struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *l
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3;
  struct HubHost *hh;
- struct Rlist *rp = NULL,*record_list = NULL, *host_list = NULL;
+ struct Rlist *record_list = NULL, *host_list = NULL;
  double rago,ravg,rdev;
  char rhash[CF_MAXVARSIZE],rhost[CF_MAXVARSIZE],raddr[CF_MAXVARSIZE];
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
