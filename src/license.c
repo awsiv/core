@@ -37,7 +37,10 @@ int Nova_EnterpriseExpiry(void)
 { struct stat sb;
   char name[CF_MAXVARSIZE],hash[CF_MAXVARSIZE],serverkey[CF_MAXVARSIZE],policy_server[CF_MAXVARSIZE], installed_time[CF_MAXVARSIZE];
   char company[CF_BUFSIZE],snumber[CF_SMALLBUF];
-  int m_now,m_expire,d_now,d_expire,number = 1,am_policy_server = false;
+  int m_now,m_expire,d_now,d_expire,number = 1;
+#ifdef HAVE_LIMONGOC
+  bool am_policy_server = false;
+#endif
   char f_day[16],f_month[16],f_year[16];
   char u_day[16],u_month[16],u_year[16];
   char edition = 'N';
@@ -153,7 +156,9 @@ if ((fp = fopen(name,"r")) != NULL)
       strcpy(u_year,f_year);
       LICENSES = number;
       CfOut(cf_verbose,""," -> Verified license file %s - this is a policy server (%s)",hash,company);
+#ifdef HAVE_LIMONGOC
       am_policy_server = true;
+#endif
       NewClass("am_policy_hub");
       }
    else if (memset(digest,0,sizeof(digest)) && Nova_HashKey(serverkey,name,digest,hash))
@@ -182,13 +187,17 @@ else
    if (stat(name,&sb) != -1)
       {
       CfOut(cf_verbose,""," -> This is a policy server %s of %s",POLICY_SERVER,company);
+#ifdef HAVE_LIMONGOC
       am_policy_server = true;
+#endif
       NewClass("am_policy_hub");
       }
    else
       {
       CfOut(cf_verbose,""," -> This system is a satellite of (%s)",POLICY_SERVER);
+#ifdef HAVE_LIMONGOC
       am_policy_server = false;
+#endif
       }
    }
 
