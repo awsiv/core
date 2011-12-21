@@ -41,7 +41,7 @@ void *CfLDAPValue(char *uri,char *basedn,char *filter,char *name,char *scopes,ch
   BerElement *ber;
   struct berval **vals;
   char **referrals;
-  int version,i,ret,parse_ret,msgtype,num_entries = 0,num_refs = 0;
+  int i,ret,parse_ret,msgtype,num_entries = 0,num_refs = 0;
   char *a, *dn, *matched_msg = NULL, *error_msg = NULL,*return_value = NULL;
   int scope = NovaStr2Scope(scopes);
 
@@ -225,7 +225,7 @@ void *CfLDAPList(char *uri,char *basedn,char *filter,char *name,char *scopes,cha
   BerElement *ber;
   struct berval **vals;
   char **referrals;
-  int version,i,ret,parse_ret,num_entries = 0,num_refs = 0;
+  int i,ret,parse_ret,num_entries = 0,num_refs = 0;
   char *a, *dn, *matched_msg = NULL, *error_msg = NULL;
   int scope = NovaStr2Scope(scopes);
   struct Rlist *return_value = NULL;
@@ -402,7 +402,7 @@ void *CfLDAPArray(char *array,char *uri,char *basedn,char *filter,char *scopes,c
   BerElement *ber;
   struct berval **vals;
   char **referrals;
-  int version,i,ret,parse_ret,msgtype,num_entries = 0,num_refs = 0;
+  int i,ret,parse_ret,msgtype,num_entries = 0,num_refs = 0;
   char *a, *dn,*matched_msg = NULL, *error_msg = NULL;
   int scope = NovaStr2Scope(scopes);
   char name[CF_MAXVARSIZE],*return_value = NULL;
@@ -597,7 +597,7 @@ void *CfRegLDAP(char *uri,char *basedn,char *filter,char *name,char *scopes,char
   BerElement *ber;
   struct berval **vals;
   char **referrals;
-  int version,i,ret,parse_ret,num_entries = 0,num_refs = 0;
+  int i,ret,parse_ret,num_entries = 0,num_refs = 0;
   char *a, *dn, *matched_msg = NULL, *error_msg = NULL,*return_value = NULL;
   int scope = NovaStr2Scope(scopes);
 
@@ -854,7 +854,7 @@ int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *authdn,char *basedn,char *f
   BerElement *ber;
   struct berval **vals;
   char **referrals;
-  int version,i,ret,parse_ret,num_entries = 0,num_refs = 0,notdone=false;
+  int i,ret,parse_ret,num_entries = 0,num_refs = 0,notdone=false;
   char *a, *dn, *matched_msg = NULL, *error_msg = NULL;
   int scope = NovaStr2Scope(scopes), count;
   struct Rlist *master = NULL,*rp,*dn_rp;
@@ -1055,8 +1055,6 @@ count = 0;
 
 for (rp = master; rp != NULL; rp=rp->next,count++)
    {
-   struct Item *list;
-
    ap = rp->item;
    rp->state_ptr = ap->rval.item;
 
@@ -1081,8 +1079,6 @@ while(notdone)
 
    for (rp = master; rp != NULL; rp=rp->next)
       {
-      struct Item *list;
-
       ap = rp->item;
 
       ip = (struct Item *)rp->state_ptr;
@@ -1151,7 +1147,7 @@ int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *authdn,char *basedn,char 
   BerElement *ber;
   struct berval **vals;
   char **referrals;
-  int version,i,ret,parse_ret,num_entries = 0,num_refs = 0;
+  int i,ret,parse_ret,num_entries = 0,num_refs = 0;
   char *a, *dn, *matched_msg = NULL, *error_msg = NULL;
   int scope = NovaStr2Scope(scopes),count = 0;
   struct Rlist *return_value = NULL,*rp;
@@ -1367,7 +1363,6 @@ return 0;
 LDAP *NovaLDAPConnect(char *uri, bool starttls, const char **const errstr)
 
 { LDAP *ld;
-  char *matched_msg = NULL, *error_msg = NULL;
   int ret,version;
 
 /* TLS options need to be set up before opening a connection */
@@ -1466,13 +1461,13 @@ if (password)
    pwdLen = strlen(password);
    }
 
-const struct berval passwd = { pwdLen, password };
+/* ldap_sasl_bind_s accepts non-constant string as a parameter */
+struct berval passwd = { pwdLen, (char*)password };
 
 /* Bind to the server anonymously. */
 
 if (cf_strcmp(sec,"sasl") == 0)
    {
-   int err;
    struct berval *servcred;
    ret = ldap_sasl_bind_s(ld,basedn,LDAP_SASL_SIMPLE,&passwd,NULL,NULL,&servcred);
    }
