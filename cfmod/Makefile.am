@@ -10,7 +10,8 @@ AM_CPPFLAGS = @CPPFLAGS@
 
 if MONGO
 
-cfmod_la_SOURCES = cfmod.c
+cfmod_la_SOURCES = cfmod.c \
+	private-api.c private-api.h
 
 lib_LTLIBRARIES = cfmod.la
 cfmod_la_LDFLAGS = -module -avoid-version -R$(workdir)/lib
