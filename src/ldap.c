@@ -174,7 +174,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
              {
              CfOut(cf_error,""," !! LDAP search failed: %s\n",ldap_err2string(ret));
 
-             if (error_msg != NULL & *error_msg != '\0')
+             if (error_msg != NULL && *error_msg != '\0')
                 {
                 CfOut(cf_error,"","%s", error_msg);
                 }
@@ -352,7 +352,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
              {
              CfOut(cf_error,""," !! LDAP search failed: %s\n",ldap_err2string(ret));
 
-             if (error_msg != NULL & *error_msg != '\0')
+             if (error_msg != NULL && *error_msg != '\0')
                 {
                 CfOut(cf_error,"","%s", error_msg);
                 }
@@ -537,7 +537,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
              {
              CfOut(cf_error,""," !! LDAP search failed: %s\n",ldap_err2string(ret));
 
-             if (error_msg != NULL & *error_msg != '\0')
+             if (error_msg != NULL && *error_msg != '\0')
                 {
                 CfOut(cf_error,"","%s", error_msg);
                 }
@@ -723,7 +723,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
              {
              CfOut(cf_error,""," !! LDAP search failed: %s\n",ldap_err2string(ret));
 
-             if (error_msg != NULL & *error_msg != '\0')
+             if (error_msg != NULL && *error_msg != '\0')
                 {
                 CfOut(cf_error,"","%s", error_msg);
                 }
@@ -1020,7 +1020,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
              {
              CfOut(cf_error,""," !! LDAP search failed: %s\n",ldap_err2string(ret));
 
-             if (error_msg != NULL & *error_msg != '\0')
+             if (error_msg != NULL && *error_msg != '\0')
                 {
                 CfOut(cf_error,"","%s", error_msg);
                 }
@@ -1294,7 +1294,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
              {
              CfOut(cf_error,""," !! LDAP search failed: %s\n",ldap_err2string(ret));
 
-             if (error_msg != NULL & *error_msg != '\0')
+             if (error_msg != NULL && *error_msg != '\0')
                 {
                 CfOut(cf_error,"","%s", error_msg);
                 }
