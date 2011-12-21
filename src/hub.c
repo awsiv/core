@@ -173,24 +173,11 @@ while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMaisn",OPTIONS,&optindex)) != EOF)
           LOGGING = true;
           break;
           
-      case 'd': 
-          NewClass("opt_debug");
-          switch ((optarg==NULL) ? '3' : *optarg)
-             {
-             case '1':
-                 D1 = true;
-                 DEBUG = true;
-                 break;
-             case '2':
-                 D2 = true;
-                 DEBUG = true;
-                 break;
-             default:
-                 DEBUG = true;
-                 break;
-             }
-          break;
-          
+      case 'd':
+         NewClass("opt_debug");
+         DEBUG = true;
+         break;
+
       case 'K': IGNORELOCK = true;
           break;
                     
