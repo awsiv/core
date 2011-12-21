@@ -880,7 +880,7 @@ if ((ld = NovaLDAPConnect(uri, starttls, errstr)) == NULL)
 if ((ret = NovaLDAPAuthenticate(ld, authdn, sec, passwd)) != LDAP_SUCCESS)
    {
    *errstr = ldap_err2string(ret);
-   return NULL;
+   return -1;
    }
 
 if ((ret = ldap_search_ext_s(ld,basedn,scope,filter,NULL,0,NULL,NULL,NULL,LDAP_NO_LIMIT,&res)) != LDAP_SUCCESS)
