@@ -1766,19 +1766,6 @@ int CFDB_AddNote(mongo_connection *conn, char *keyhash, int reportType, char *ni
 
 /*****************************************************************************/
 
-static time_t rev_ctime(char *str_time)
-
-{ struct tm tm;
-  char buf[255];
-
-snprintf(buf,sizeof(buf),"%s",str_time);
-memset(&tm, 0, sizeof(tm));
-strptime(buf, "%A %b %d %H:%M:%S %Y", &tm);
-return mktime(&tm);
-}
-
-/*****************************************************************************/
-
 void CFDBRef_AddToRow(mongo_connection *conn, char *coll,bson *query, char *row_name, char *nid)
 
 { bson_buffer bb;
