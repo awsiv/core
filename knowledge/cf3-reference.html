@@ -2442,7 +2442,7 @@ there are no numerical loops in CFEngine. Special functions exist to
 extract lists of keys from array variables for iteration purposes.
 
    <p>Thus one could have written the example above in the form of the
-following example:
+following example. Note, too, that the use of <code>getindices</code> avoids the earlier poor practice of repeating the enumeration of key names, and instead uses the better strategy of automatically deriving them.
 
 <pre class="verbatim">
 <span class="red">bundle agent</span> <span class="blue">example</span>
@@ -13576,22 +13576,6 @@ as a regular command does.
      #
      
      /bin/echo $*
-     
-</pre>
-   <p><code>cf-agent</code> defines the classes as an environment variable so that programs
-have access to these. E.g. try the following module:
-
-<pre class="smallexample">     #!/usr/bin/perl
-     
-     print "Decoding $ENV{CFALLCLASSES}\n";
-     
-     @allclasses = split (":","$ENV{CFALLCLASSES}");
-     
-     while ($c=shift(@allclasses))
-       {
-       $classes{$c} = 1;
-       print "$c is set\n";
-       }
      
 </pre>
    <p>Modules define variables in <code>cf-agent</code> by outputting strings of the form
@@ -34414,7 +34398,6 @@ variable itself is class-specific.
 <li><a href="#Variable-sys_002efqhost">Variable sys.fqhost</a>
 <li><a href="#Variable-sys_002efstab">Variable sys.fstab</a>
 <li><a href="#Variable-sys_002ehardware_005fmac_005beth0_005d">Variable sys.hardware_mac[eth0]</a>
-<li><a href="#Variable-sys_002ehardware_005fmac_005btun0_005d">Variable sys.hardware_mac[tun0]</a>
 <li><a href="#Variable-sys_002ehardware_005fmac_005bvirbr0_005d">Variable sys.hardware_mac[virbr0]</a>
 <li><a href="#Variable-sys_002ehardware_005fmac_005bwlan0_005d">Variable sys.hardware_mac[wlan0]</a>
 <li><a href="#Variable-sys_002ehost">Variable sys.host</a>
@@ -34937,7 +34920,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 <a name="Variable-sys.hardware_mac%5beth0%5d"></a>
 <a name="Variable-sys_002ehardware_005fmac_005beth0_005d"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ehardware_005fmac_005btun0_005d">Variable sys.hardware_mac[tun0]</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ehardware_005fmac_005bvirbr0_005d">Variable sys.hardware_mac[virbr0]</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002efstab">Variable sys.fstab</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
@@ -34955,37 +34938,16 @@ Fill me in (./var_sys_hardware_mac[eth0].texinfo)
 </pre>
 
 <div class="node">
-<a name="Variable-sys.hardware_mac%5btun0%5d"></a>
-<a name="Variable-sys_002ehardware_005fmac_005btun0_005d"></a>
+<a name="Variable-sys.hardware_mac%5bvirbr0%5d"></a>
+<a name="Variable-sys_002ehardware_005fmac_005bvirbr0_005d"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ehardware_005fmac_005bvirbr0_005d">Variable sys.hardware_mac[virbr0]</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ehardware_005fmac_005bwlan0_005d">Variable sys.hardware_mac[wlan0]</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002ehardware_005fmac_005beth0_005d">Variable sys.hardware_mac[eth0]</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
 </div>
 
-<h4 class="subsection">12.5.23 Variable sys.hardware_mac[tun0]</h4>
-
-<p><br>
-
-   <p><i>History</i>: Was introduced in 3.3.0a1.r3461:3462 (2011)
-
-<pre class="verbatim">
-Fill me in (./var_sys_hardware_mac[tun0].texinfo)
-""
-</pre>
-
-<div class="node">
-<a name="Variable-sys.hardware_mac%5bvirbr0%5d"></a>
-<a name="Variable-sys_002ehardware_005fmac_005bvirbr0_005d"></a>
-<p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ehardware_005fmac_005bwlan0_005d">Variable sys.hardware_mac[wlan0]</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002ehardware_005fmac_005btun0_005d">Variable sys.hardware_mac[tun0]</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
-
-</div>
-
-<h4 class="subsection">12.5.24 Variable sys.hardware_mac[virbr0]</h4>
+<h4 class="subsection">12.5.23 Variable sys.hardware_mac[virbr0]</h4>
 
 <p><br>
 
@@ -35006,7 +34968,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.25 Variable sys.hardware_mac[wlan0]</h4>
+<h4 class="subsection">12.5.24 Variable sys.hardware_mac[wlan0]</h4>
 
 <p><br>
 
@@ -35027,7 +34989,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.26 Variable sys.host</h4>
+<h4 class="subsection">12.5.25 Variable sys.host</h4>
 
 <p><br>
 
@@ -35050,7 +35012,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.27 Variable sys.interface</h4>
+<h4 class="subsection">12.5.26 Variable sys.interface</h4>
 
 <p><br>
 
@@ -35072,7 +35034,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.28 Variable sys.ipv4</h4>
+<h4 class="subsection">12.5.27 Variable sys.ipv4</h4>
 
 <p><br>
 
@@ -35096,7 +35058,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.29 Variable sys.ipv4[interface_name]</h4>
+<h4 class="subsection">12.5.28 Variable sys.ipv4[interface_name]</h4>
 
 <p><br>
 
@@ -35150,7 +35112,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.30 Variable sys.ipv4_1[interface_name]</h4>
+<h4 class="subsection">12.5.29 Variable sys.ipv4_1[interface_name]</h4>
 
 <p><br>
 
@@ -35168,7 +35130,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.31 Variable sys.ipv4_2[interface_name]</h4>
+<h4 class="subsection">12.5.30 Variable sys.ipv4_2[interface_name]</h4>
 
 <p><br>
 
@@ -35186,7 +35148,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.32 Variable sys.ipv4_3[interface_name]</h4>
+<h4 class="subsection">12.5.31 Variable sys.ipv4_3[interface_name]</h4>
 
 <p><br>
 
@@ -35204,7 +35166,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.33 Variable sys.long_arch</h4>
+<h4 class="subsection">12.5.32 Variable sys.long_arch</h4>
 
 <p><br>
 
@@ -35227,7 +35189,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.34 Variable sys.maildir</h4>
+<h4 class="subsection">12.5.33 Variable sys.maildir</h4>
 
 <p><br>
 
@@ -35249,7 +35211,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.35 Variable sys.os</h4>
+<h4 class="subsection">12.5.34 Variable sys.os</h4>
 
 <p><br>
 
@@ -35271,7 +35233,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.36 Variable sys.ostype</h4>
+<h4 class="subsection">12.5.35 Variable sys.ostype</h4>
 
 <p><br>
 
@@ -35293,7 +35255,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.37 Variable sys.policy_hub</h4>
+<h4 class="subsection">12.5.36 Variable sys.policy_hub</h4>
 
 <p><br>
 Hostname of the machine acting as a policy hub. This value is set
@@ -35318,7 +35280,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.38 Variable sys.release</h4>
+<h4 class="subsection">12.5.37 Variable sys.release</h4>
 
 <p><br>
 
@@ -35340,7 +35302,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.39 Variable sys.resolv</h4>
+<h4 class="subsection">12.5.38 Variable sys.resolv</h4>
 
 <p><br>
 
@@ -35362,7 +35324,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.40 Variable sys.uqhost</h4>
+<h4 class="subsection">12.5.39 Variable sys.uqhost</h4>
 
 <p><br>
 
@@ -35384,7 +35346,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.41 Variable sys.version</h4>
+<h4 class="subsection">12.5.40 Variable sys.version</h4>
 
 <p><br>
 
@@ -35409,7 +35371,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.42 Variable sys.windir</h4>
+<h4 class="subsection">12.5.41 Variable sys.windir</h4>
 
 <p><br>
 
@@ -35432,7 +35394,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.43 Variable sys.winprogdir</h4>
+<h4 class="subsection">12.5.42 Variable sys.winprogdir</h4>
 
 <p><br>
 
@@ -35455,7 +35417,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.44 Variable sys.winprogdir86</h4>
+<h4 class="subsection">12.5.43 Variable sys.winprogdir86</h4>
 
 <p><br>
 
@@ -35478,7 +35440,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.45 Variable sys.winsysdir</h4>
+<h4 class="subsection">12.5.44 Variable sys.winsysdir</h4>
 
 <p><br>
 
@@ -35500,7 +35462,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.46 Variable sys.workdir</h4>
+<h4 class="subsection">12.5.45 Variable sys.workdir</h4>
 
 <p><br>
 
@@ -36622,30 +36584,29 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <li><a href="#Variable-sys_002efqhost">12.5.20 Variable sys.fqhost</a>
 <li><a href="#Variable-sys_002efstab">12.5.21 Variable sys.fstab</a>
 <li><a href="#Variable-sys_002ehardware_005fmac_005beth0_005d">12.5.22 Variable sys.hardware_mac[eth0]</a>
-<li><a href="#Variable-sys_002ehardware_005fmac_005btun0_005d">12.5.23 Variable sys.hardware_mac[tun0]</a>
-<li><a href="#Variable-sys_002ehardware_005fmac_005bvirbr0_005d">12.5.24 Variable sys.hardware_mac[virbr0]</a>
-<li><a href="#Variable-sys_002ehardware_005fmac_005bwlan0_005d">12.5.25 Variable sys.hardware_mac[wlan0]</a>
-<li><a href="#Variable-sys_002ehost">12.5.26 Variable sys.host</a>
-<li><a href="#Variable-sys_002einterface">12.5.27 Variable sys.interface</a>
-<li><a href="#Variable-sys_002eipv4">12.5.28 Variable sys.ipv4</a>
-<li><a href="#Variable-sys_002eipv4_005binterface_005fname_005d">12.5.29 Variable sys.ipv4[interface_name]</a>
-<li><a href="#Variable-sys_002eipv4_005f1_005binterface_005fname_005d">12.5.30 Variable sys.ipv4_1[interface_name]</a>
-<li><a href="#Variable-sys_002eipv4_005f2_005binterface_005fname_005d">12.5.31 Variable sys.ipv4_2[interface_name]</a>
-<li><a href="#Variable-sys_002eipv4_005f3_005binterface_005fname_005d">12.5.32 Variable sys.ipv4_3[interface_name]</a>
-<li><a href="#Variable-sys_002elong_005farch">12.5.33 Variable sys.long_arch</a>
-<li><a href="#Variable-sys_002emaildir">12.5.34 Variable sys.maildir</a>
-<li><a href="#Variable-sys_002eos">12.5.35 Variable sys.os</a>
-<li><a href="#Variable-sys_002eostype">12.5.36 Variable sys.ostype</a>
-<li><a href="#Variable-sys_002epolicy_005fhub">12.5.37 Variable sys.policy_hub</a>
-<li><a href="#Variable-sys_002erelease">12.5.38 Variable sys.release</a>
-<li><a href="#Variable-sys_002eresolv">12.5.39 Variable sys.resolv</a>
-<li><a href="#Variable-sys_002euqhost">12.5.40 Variable sys.uqhost</a>
-<li><a href="#Variable-sys_002eversion">12.5.41 Variable sys.version</a>
-<li><a href="#Variable-sys_002ewindir">12.5.42 Variable sys.windir</a>
-<li><a href="#Variable-sys_002ewinprogdir">12.5.43 Variable sys.winprogdir</a>
-<li><a href="#Variable-sys_002ewinprogdir86">12.5.44 Variable sys.winprogdir86</a>
-<li><a href="#Variable-sys_002ewinsysdir">12.5.45 Variable sys.winsysdir</a>
-<li><a href="#Variable-sys_002eworkdir">12.5.46 Variable sys.workdir</a>
+<li><a href="#Variable-sys_002ehardware_005fmac_005bvirbr0_005d">12.5.23 Variable sys.hardware_mac[virbr0]</a>
+<li><a href="#Variable-sys_002ehardware_005fmac_005bwlan0_005d">12.5.24 Variable sys.hardware_mac[wlan0]</a>
+<li><a href="#Variable-sys_002ehost">12.5.25 Variable sys.host</a>
+<li><a href="#Variable-sys_002einterface">12.5.26 Variable sys.interface</a>
+<li><a href="#Variable-sys_002eipv4">12.5.27 Variable sys.ipv4</a>
+<li><a href="#Variable-sys_002eipv4_005binterface_005fname_005d">12.5.28 Variable sys.ipv4[interface_name]</a>
+<li><a href="#Variable-sys_002eipv4_005f1_005binterface_005fname_005d">12.5.29 Variable sys.ipv4_1[interface_name]</a>
+<li><a href="#Variable-sys_002eipv4_005f2_005binterface_005fname_005d">12.5.30 Variable sys.ipv4_2[interface_name]</a>
+<li><a href="#Variable-sys_002eipv4_005f3_005binterface_005fname_005d">12.5.31 Variable sys.ipv4_3[interface_name]</a>
+<li><a href="#Variable-sys_002elong_005farch">12.5.32 Variable sys.long_arch</a>
+<li><a href="#Variable-sys_002emaildir">12.5.33 Variable sys.maildir</a>
+<li><a href="#Variable-sys_002eos">12.5.34 Variable sys.os</a>
+<li><a href="#Variable-sys_002eostype">12.5.35 Variable sys.ostype</a>
+<li><a href="#Variable-sys_002epolicy_005fhub">12.5.36 Variable sys.policy_hub</a>
+<li><a href="#Variable-sys_002erelease">12.5.37 Variable sys.release</a>
+<li><a href="#Variable-sys_002eresolv">12.5.38 Variable sys.resolv</a>
+<li><a href="#Variable-sys_002euqhost">12.5.39 Variable sys.uqhost</a>
+<li><a href="#Variable-sys_002eversion">12.5.40 Variable sys.version</a>
+<li><a href="#Variable-sys_002ewindir">12.5.41 Variable sys.windir</a>
+<li><a href="#Variable-sys_002ewinprogdir">12.5.42 Variable sys.winprogdir</a>
+<li><a href="#Variable-sys_002ewinprogdir86">12.5.43 Variable sys.winprogdir86</a>
+<li><a href="#Variable-sys_002ewinsysdir">12.5.44 Variable sys.winsysdir</a>
+<li><a href="#Variable-sys_002eworkdir">12.5.45 Variable sys.workdir</a>
 </li></ul>
 <li><a href="#Variable-context-this">12.6 Variable context <code>this</code></a>
 <ul>
