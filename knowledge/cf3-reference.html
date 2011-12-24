@@ -244,7 +244,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h2 class="chapter">1 CFEngine 3.3.0a1.r3461:3462 &ndash; Getting started</h2>
+<h2 class="chapter">1 CFEngine 3.3.0a1.r3641 &ndash; Getting started</h2>
 
 <p><br>
 
@@ -4982,6 +4982,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-common">control common</a>
 
 <p class="noindent"><b>Allowed input range</b>: <code>[a-zA-Z0-9_$(){}.:-]+</code>
 
+<p class="noindent"><b>Default value:</b> 514
+
 <p class="noindent"><b>Synopsis</b>: The name or address of a host to which syslog messages should be sent directly by UDP
 
 <p class="noindent"><b>Example</b>:<br>
@@ -5015,8 +5017,6 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-common">control common</a>
 <p class="noindent"><b>Type</b>: int
 
 <p class="noindent"><b>Allowed input range</b>: <code>0,99999999999</code>
-
-<p class="noindent"><b>Default value:</b> 514
 
 <p class="noindent"><b>Synopsis</b>: The port number of a UDP syslog service
 
@@ -5754,9 +5754,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-agent">control agent</a>
                <code>hash</code>
                <code>binary</code>
 </pre>
-   <p class="noindent"><b>Default value:</b> ctime or mtime differ
-
-<p class="noindent"><b>Synopsis</b>: (null)
+   <p class="noindent"><b>Synopsis</b>: ctime or mtime differ
 
 <p class="noindent"><b>Example</b>:<br>
 <br>
@@ -5875,7 +5873,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-agent">control agent</a>
 
 <p class="noindent"><b>Allowed input range</b>: <code>0,99999999999</code>
 
-<p class="noindent"><b>Default value:</b> 10000
+<p class="noindent"><b>Default value:</b> 100000
 
 <p class="noindent"><b>Synopsis</b>: Integer limit on maximum text file size to be edited
 
@@ -6274,7 +6272,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-agent">control agent</a>
 </pre>
    <p class="noindent"><b>Default value:</b> false
 
-<p class="noindent"><b>Synopsis</b>: true/false store detailed recordings of last observed time for all client-server connections for reliability assessment (false)
+<p class="noindent"><b>Synopsis</b>: true/false store detailed recordings of last observed time for all client-server connections for reliability assessment
 
 <p class="noindent"><b>Example</b>:<br>
 <br>
@@ -8364,7 +8362,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-runagent">control runagent</a>
 
 <p class="noindent"><b>Allowed input range</b>: <code>0,99999999999</code>
 
-<p class="noindent"><b>Default value:</b> 1 concurrent agent promise
+<p class="noindent"><b>Default value:</b> 50 runagents
 
 <p class="noindent"><b>Synopsis</b>: Maximum number of simultaneous connections to attempt
 
@@ -11701,7 +11699,7 @@ given by <code>cf-agent</code> will differ.
 
      <p class="noindent"><b>Synopsis</b>: Number of minutes before next allowed assessment of promise
 
-     <p class="noindent"><b>Default value:</b> 1
+     <p class="noindent"><b>Default value:</b> control body value
 
      <p><b>Example</b>:<br>
 <br>
@@ -11743,7 +11741,7 @@ is another which is not tied to a specific time.
 
      <p class="noindent"><b>Synopsis</b>: Number of minutes before a repair action is interrupted and retried
 
-     <p class="noindent"><b>Default value:</b> 1 min
+     <p class="noindent"><b>Default value:</b> control body value
 
      <p><b>Example</b>:<br>
 <br>
@@ -12183,7 +12181,7 @@ operations can not be performed in the background on windows.
 </pre>
      <p class="noindent"><b>Synopsis</b>: The reporting level for standard output for this promise
 
-     <p class="noindent"><b>Default value:</b> (none)
+     <p class="noindent"><b>Default value:</b> none
 
      <p><b>Example</b>:<br>
 <br>
@@ -13152,7 +13150,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#commands-in-agent-promises">commands i
                     <code>on</code>
                     <code>off</code>
 </pre>
-     <p class="noindent"><b>Synopsis</b>: true/false embed the command in a shell environment (true)
+     <p class="noindent"><b>Synopsis</b>: true/false embed the command in a shell environment
 
      <p class="noindent"><b>Default value:</b> false
 
@@ -16570,7 +16568,7 @@ the same attributes as the files inside it.
                     <code>on</code>
                     <code>off</code>
 </pre>
-     <p class="noindent"><b>Synopsis</b>: true/false traverse symbolic links to directories (false)
+     <p class="noindent"><b>Synopsis</b>: true/false traverse symbolic links to directories
 
      <p class="noindent"><b>Default value:</b> false
 
@@ -25579,6 +25577,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <li><a href="#Function-ldaplist">Function ldaplist</a>
 <li><a href="#Function-ldapvalue">Function ldapvalue</a>
 <li><a href="#Function-lsdir">Function lsdir</a>
+<li><a href="#Function-maplist">Function maplist</a>
 <li><a href="#Function-not">Function not</a>
 <li><a href="#Function-now">Function now</a>
 <li><a href="#Function-on">Function on</a>
@@ -28763,7 +28762,7 @@ parameters. The first matching value it taken.
 <div class="node">
 <a name="Function-lsdir"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Function-not">Function not</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Function-maplist">Function maplist</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Function-ldapvalue">Function ldapvalue</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</a>
 
@@ -28800,15 +28799,61 @@ paths are returned, otherwise only names relative to the the directory
 are returned.
 
 <div class="node">
-<a name="Function-not"></a>
+<a name="Function-maplist"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Function-now">Function now</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Function-not">Function not</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Function-lsdir">Function lsdir</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</a>
 
 </div>
 
-<h3 class="section">11.54 Function not</h3>
+<h3 class="section">11.54 Function maplist</h3>
+
+<p class="noindent"><b>Synopsis</b>: maplist(arg1,arg2) returns type <b>slist</b>
+
+   <p><br>
+   <i>arg1</i> : Pattern based on $(this) as original text, <i>in the range</i> .*
+<br>
+   <i>arg2</i> : The name of the list variable to map, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
+<br>
+
+<p class="noindent">Return a list with each element modified by a pattern based $(this)
+
+<p class="noindent"><b>Example</b>:<br>
+<br>
+
+<pre class="verbatim">
+<span class="red">bundle agent</span> <span class="blue">test</span>
+{
+<span class="red">vars:
+</span>
+  "oldlist"<span class="red"> slist </span>=> { "a", "b", "c" };
+  "newlist"<span class="red"> slist </span>=><span class="blue"> maplist("Element ($(this))","oldlist");</span>
+
+<span class="red">reports:
+</span> linux::
+<span class="red">  "Transform: $(newlist)";
+</span>}
+
+</pre>
+
+<p class="noindent"><b>Notes</b>:<br>
+<br>
+
+   <p><i>History</i>: Was introduced in 3.3.0, Nova 2.2.0, Constellation 1.0.0 (2011)
+
+   <p>This is essentially like the map() function in Perl, and applies to lists.
+
+<div class="node">
+<a name="Function-not"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Function-now">Function now</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Function-maplist">Function maplist</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</a>
+
+</div>
+
+<h3 class="section">11.55 Function not</h3>
 
 <p class="noindent"><b>Synopsis</b>: not(arg1) returns type <b>string</b>
 
@@ -28840,7 +28885,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.55 Function now</h3>
+<h3 class="section">11.56 Function now</h3>
 
 <p class="noindent"><b>Synopsis</b>: now() returns type <b>int</b>
 
@@ -28872,7 +28917,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.56 Function on</h3>
+<h3 class="section">11.57 Function on</h3>
 
 <p class="noindent"><b>Synopsis</b>: on(arg1,arg2,arg3,arg4,arg5,arg6) returns type <b>int</b>
 
@@ -28932,7 +28977,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.57 Function or</h3>
+<h3 class="section">11.58 Function or</h3>
 
 <p class="noindent"><b>Synopsis</b>: or(...) returns type <b>string</b>
 
@@ -28962,7 +29007,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.58 Function parseintarray</h3>
+<h3 class="section">11.59 Function parseintarray</h3>
 
 <p class="noindent"><b>Synopsis</b>: parseintarray(arg1,arg2,arg3,arg4,arg5,arg6) returns type <b>int</b>
 
@@ -29045,7 +29090,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.59 Function parserealarray</h3>
+<h3 class="section">11.60 Function parserealarray</h3>
 
 <p class="noindent"><b>Synopsis</b>: parserealarray(arg1,arg2,arg3,arg4,arg5,arg6) returns type <b>int</b>
 
@@ -29128,7 +29173,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.60 Function parsestringarray</h3>
+<h3 class="section">11.61 Function parsestringarray</h3>
 
 <p class="noindent"><b>Synopsis</b>: parsestringarray(arg1,arg2,arg3,arg4,arg5,arg6) returns type <b>int</b>
 
@@ -29211,14 +29256,14 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.61 Function parsestringarrayidx</h3>
+<h3 class="section">11.62 Function parsestringarrayidx</h3>
 
 <p class="noindent"><b>Synopsis</b>: parsestringarrayidx(arg1,arg2,arg3,arg4,arg5,arg6) returns type <b>int</b>
 
    <p><br>
    <i>arg1</i> : Array identifier to populate, <i>in the range</i> [a-zA-Z0-9_$(){}\[\].]+
 <br>
-   <i>arg2</i> : File name to read, <i>in the range</i> "?(/.*)
+   <i>arg2</i> : A string to parse for input data, <i>in the range</i> "?(/.*)
 <br>
    <i>arg3</i> : Regex matching comments, <i>in the range</i> .*
 <br>
@@ -29293,7 +29338,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.62 Function peers</h3>
+<h3 class="section">11.63 Function peers</h3>
 
 <p class="noindent"><b>Synopsis</b>: peers(arg1,arg2,arg3) returns type <b>slist</b>
 
@@ -29395,7 +29440,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.63 Function peerleader</h3>
+<h3 class="section">11.64 Function peerleader</h3>
 
 <p class="noindent"><b>Synopsis</b>: peerleader(arg1,arg2,arg3) returns type <b>string</b>
 
@@ -29495,7 +29540,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.64 Function peerleaders</h3>
+<h3 class="section">11.65 Function peerleaders</h3>
 
 <p class="noindent"><b>Synopsis</b>: peerleaders(arg1,arg2,arg3) returns type <b>slist</b>
 
@@ -29596,7 +29641,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.65 Function product</h3>
+<h3 class="section">11.66 Function product</h3>
 
 <p class="noindent"><b>Synopsis</b>: product(arg1) returns type <b>real</b>
 
@@ -29645,7 +29690,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.66 Function randomint</h3>
+<h3 class="section">11.67 Function randomint</h3>
 
 <p class="noindent"><b>Synopsis</b>: randomint(arg1,arg2) returns type <b>int</b>
 
@@ -29682,7 +29727,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.67 Function readfile</h3>
+<h3 class="section">11.68 Function readfile</h3>
 
 <p class="noindent"><b>Synopsis</b>: readfile(arg1,arg2) returns type <b>string</b>
 
@@ -29720,7 +29765,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.68 Function readintarray</h3>
+<h3 class="section">11.69 Function readintarray</h3>
 
 <p class="noindent"><b>Synopsis</b>: readintarray(arg1,arg2,arg3,arg4,arg5,arg6) returns type <b>int</b>
 
@@ -29817,7 +29862,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.69 Function readintlist</h3>
+<h3 class="section">11.70 Function readintlist</h3>
 
 <p class="noindent"><b>Synopsis</b>: readintlist(arg1,arg2,arg3,arg4,arg5) returns type <b>ilist</b>
 
@@ -29897,7 +29942,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.70 Function readrealarray</h3>
+<h3 class="section">11.71 Function readrealarray</h3>
 
 <p class="noindent"><b>Synopsis</b>: readrealarray(arg1,arg2,arg3,arg4,arg5,arg6) returns type <b>int</b>
 
@@ -29963,7 +30008,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.71 Function readreallist</h3>
+<h3 class="section">11.72 Function readreallist</h3>
 
 <p class="noindent"><b>Synopsis</b>: readreallist(arg1,arg2,arg3,arg4,arg5) returns type <b>rlist</b>
 
@@ -30043,7 +30088,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.72 Function readstringarray</h3>
+<h3 class="section">11.73 Function readstringarray</h3>
 
 <p class="noindent"><b>Synopsis</b>: readstringarray(arg1,arg2,arg3,arg4,arg5,arg6) returns type <b>int</b>
 
@@ -30149,7 +30194,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.73 Function readstringarrayidx</h3>
+<h3 class="section">11.74 Function readstringarrayidx</h3>
 
 <p class="noindent"><b>Synopsis</b>: readstringarrayidx(arg1,arg2,arg3,arg4,arg5,arg6) returns type <b>int</b>
 
@@ -30253,7 +30298,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.74 Function readstringlist</h3>
+<h3 class="section">11.75 Function readstringlist</h3>
 
 <p class="noindent"><b>Synopsis</b>: readstringlist(arg1,arg2,arg3,arg4,arg5) returns type <b>slist</b>
 
@@ -30351,7 +30396,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.75 Function readtcp</h3>
+<h3 class="section">11.76 Function readtcp</h3>
 
 <p class="noindent"><b>Synopsis</b>: readtcp(arg1,arg2,arg3,arg4) returns type <b>string</b>
 
@@ -30424,7 +30469,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.76 Function regarray</h3>
+<h3 class="section">11.77 Function regarray</h3>
 
 <p class="noindent"><b>Synopsis</b>: regarray(arg1,arg2) returns type <b>class</b>
 
@@ -30501,7 +30546,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.77 Function regcmp</h3>
+<h3 class="section">11.78 Function regcmp</h3>
 
 <p class="noindent"><b>Synopsis</b>: regcmp(arg1,arg2) returns type <b>class</b>
 
@@ -30610,7 +30655,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.78 Function regextract</h3>
+<h3 class="section">11.79 Function regextract</h3>
 
 <p class="noindent"><b>Synopsis</b>: regextract(arg1,arg2,arg3) returns type <b>class</b>
 
@@ -30678,7 +30723,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.79 Function registryvalue</h3>
+<h3 class="section">11.80 Function registryvalue</h3>
 
 <p class="noindent"><b>Synopsis</b>: registryvalue(arg1,arg2) returns type <b>string</b>
 
@@ -30728,7 +30773,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.80 Function regline</h3>
+<h3 class="section">11.81 Function regline</h3>
 
 <p class="noindent"><b>Synopsis</b>: regline(arg1,arg2) returns type <b>class</b>
 
@@ -30816,7 +30861,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.81 Function reglist</h3>
+<h3 class="section">11.82 Function reglist</h3>
 
 <p class="noindent"><b>Synopsis</b>: reglist(arg1,arg2) returns type <b>class</b>
 
@@ -30871,7 +30916,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.82 Function regldap</h3>
+<h3 class="section">11.83 Function regldap</h3>
 
 <p class="noindent"><b>Synopsis</b>: regldap(arg1,arg2,arg3,arg4,arg5,arg6,arg7) returns type <b>class</b>
 
@@ -30960,7 +31005,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.83 Function remotescalar</h3>
+<h3 class="section">11.84 Function remotescalar</h3>
 
 <p class="noindent"><b>Synopsis</b>: remotescalar(arg1,arg2,arg3) returns type <b>string</b>
 
@@ -31031,7 +31076,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.84 Function remoteclassesmatching</h3>
+<h3 class="section">11.85 Function remoteclassesmatching</h3>
 
 <p class="noindent"><b>Synopsis</b>: remoteclassesmatching(arg1,arg2,arg3,arg4) returns type <b>class</b>
 
@@ -31093,7 +31138,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.85 Function returnszero</h3>
+<h3 class="section">11.86 Function returnszero</h3>
 
 <p class="noindent"><b>Synopsis</b>: returnszero(arg1,arg2) returns type <b>class</b>
 
@@ -31150,7 +31195,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.86 Function rrange</h3>
+<h3 class="section">11.87 Function rrange</h3>
 
 <p class="noindent"><b>Synopsis</b>: rrange(arg1,arg2) returns type <b>rrange [real,real]</b>
 
@@ -31184,7 +31229,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.87 Function selectservers</h3>
+<h3 class="section">11.88 Function selectservers</h3>
 
 <p class="noindent"><b>Synopsis</b>: selectservers(arg1,arg2,arg3,arg4,arg5,arg6) returns type <b>int</b>
 
@@ -31296,7 +31341,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.88 Function splayclass</h3>
+<h3 class="section">11.89 Function splayclass</h3>
 
 <p class="noindent"><b>Synopsis</b>: splayclass(arg1,arg2) returns type <b>class</b>
 
@@ -31385,7 +31430,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.89 Function splitstring</h3>
+<h3 class="section">11.90 Function splitstring</h3>
 
 <p class="noindent"><b>Synopsis</b>: splitstring(arg1,arg2,arg3) returns type <b>slist</b>
 
@@ -31453,7 +31498,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.90 Function strcmp</h3>
+<h3 class="section">11.91 Function strcmp</h3>
 
 <p class="noindent"><b>Synopsis</b>: strcmp(arg1,arg2) returns type <b>class</b>
 
@@ -31510,7 +31555,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.91 Function sum</h3>
+<h3 class="section">11.92 Function sum</h3>
 
 <p class="noindent"><b>Synopsis</b>: sum(arg1) returns type <b>real</b>
 
@@ -31571,7 +31616,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.92 Function translatepath</h3>
+<h3 class="section">11.93 Function translatepath</h3>
 
 <p class="noindent"><b>Synopsis</b>: translatepath(arg1) returns type <b>string</b>
 
@@ -31632,7 +31677,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.93 Function usemodule</h3>
+<h3 class="section">11.94 Function usemodule</h3>
 
 <p class="noindent"><b>Synopsis</b>: usemodule(arg1,arg2) returns type <b>class</b>
 
@@ -31701,7 +31746,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Special-functions">Special functions</
 
 </div>
 
-<h3 class="section">11.94 Function userexists</h3>
+<h3 class="section">11.95 Function userexists</h3>
 
 <p class="noindent"><b>Synopsis</b>: userexists(arg1) returns type <b>class</b>
 
@@ -34391,24 +34436,32 @@ variable itself is class-specific.
 <li><a href="#Variable-sys_002ecf_005ftwin">Variable sys.cf_twin</a>
 <li><a href="#Variable-sys_002ecf_005fversion">Variable sys.cf_version</a>
 <li><a href="#Variable-sys_002eclass">Variable sys.class</a>
+<li><a href="#Variable-sys_002econstellation_005fversion">Variable sys.constellation_version</a>
 <li><a href="#Variable-sys_002edate">Variable sys.date</a>
 <li><a href="#Variable-sys_002edomain">Variable sys.domain</a>
 <li><a href="#Variable-sys_002eexpires">Variable sys.expires</a>
 <li><a href="#Variable-sys_002eexports">Variable sys.exports</a>
 <li><a href="#Variable-sys_002efqhost">Variable sys.fqhost</a>
 <li><a href="#Variable-sys_002efstab">Variable sys.fstab</a>
-<li><a href="#Variable-sys_002ehardware_005fmac_005beth0_005d">Variable sys.hardware_mac[eth0]</a>
-<li><a href="#Variable-sys_002ehardware_005fmac_005bvirbr0_005d">Variable sys.hardware_mac[virbr0]</a>
+<li><a href="#Variable-sys_002ehardware_005faddresses">Variable sys.hardware_addresses</a>
 <li><a href="#Variable-sys_002ehardware_005fmac_005bwlan0_005d">Variable sys.hardware_mac[wlan0]</a>
 <li><a href="#Variable-sys_002ehost">Variable sys.host</a>
+<li><a href="#Variable-sys_002ehub_005fmaster">Variable sys.hub_master</a>
 <li><a href="#Variable-sys_002einterface">Variable sys.interface</a>
+<li><a href="#Variable-sys_002einterfaces">Variable sys.interfaces</a>
+<li><a href="#Variable-sys_002eip_005faddresses">Variable sys.ip_addresses</a>
 <li><a href="#Variable-sys_002eipv4">Variable sys.ipv4</a>
 <li><a href="#Variable-sys_002eipv4_005binterface_005fname_005d">Variable sys.ipv4[interface_name]</a>
 <li><a href="#Variable-sys_002eipv4_005f1_005binterface_005fname_005d">Variable sys.ipv4_1[interface_name]</a>
 <li><a href="#Variable-sys_002eipv4_005f2_005binterface_005fname_005d">Variable sys.ipv4_2[interface_name]</a>
 <li><a href="#Variable-sys_002eipv4_005f3_005binterface_005fname_005d">Variable sys.ipv4_3[interface_name]</a>
+<li><a href="#Variable-sys_002ekey_005fdigest">Variable sys.key_digest</a>
+<li><a href="#Variable-sys_002elicense_005fowner">Variable sys.license_owner</a>
+<li><a href="#Variable-sys_002elicenses_005fgranted">Variable sys.licenses_granted</a>
+<li><a href="#Variable-sys_002elicenses_005finstalltime">Variable sys.licenses_installtime</a>
 <li><a href="#Variable-sys_002elong_005farch">Variable sys.long_arch</a>
 <li><a href="#Variable-sys_002emaildir">Variable sys.maildir</a>
+<li><a href="#Variable-sys_002enova_005fversion">Variable sys.nova_version</a>
 <li><a href="#Variable-sys_002eos">Variable sys.os</a>
 <li><a href="#Variable-sys_002eostype">Variable sys.ostype</a>
 <li><a href="#Variable-sys_002epolicy_005fhub">Variable sys.policy_hub</a>
@@ -34759,7 +34812,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 <a name="Variable-sys.class"></a>
 <a name="Variable-sys_002eclass"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002edate">Variable sys.date</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002econstellation_005fversion">Variable sys.constellation_version</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002ecf_005fversion">Variable sys.cf_version</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
@@ -34779,16 +34832,39 @@ top level operating system type classification.
 </pre>
 
 <div class="node">
-<a name="Variable-sys.date"></a>
-<a name="Variable-sys_002edate"></a>
+<a name="Variable-sys.constellation_version"></a>
+<a name="Variable-sys_002econstellation_005fversion"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002edomain">Variable sys.domain</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002edate">Variable sys.date</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002eclass">Variable sys.class</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
 </div>
 
-<h4 class="subsection">12.5.16 Variable sys.date</h4>
+<h4 class="subsection">12.5.16 Variable sys.constellation_version</h4>
+
+<p><br>
+This variable contains the version of running CFEngine Constellation
+
+   <p><i>History</i>: Was introduced in 3.2.0, Nova 2.1.0, Constellation 1.0.0 (2011)
+
+<pre class="verbatim">
+<span class="comment"># constellation_version = 1.0.0
+</span>
+
+</pre>
+
+<div class="node">
+<a name="Variable-sys.date"></a>
+<a name="Variable-sys_002edate"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002edomain">Variable sys.domain</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002econstellation_005fversion">Variable sys.constellation_version</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
+
+</div>
+
+<h4 class="subsection">12.5.17 Variable sys.date</h4>
 
 <p><br>
 
@@ -34810,7 +34886,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.17 Variable sys.domain</h4>
+<h4 class="subsection">12.5.18 Variable sys.domain</h4>
 
 <p><br>
 
@@ -34836,7 +34912,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.18 Variable sys.expires</h4>
+<h4 class="subsection">12.5.19 Variable sys.expires</h4>
 
 <p><br>
 
@@ -34857,7 +34933,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.19 Variable sys.exports</h4>
+<h4 class="subsection">12.5.20 Variable sys.exports</h4>
 
 <p><br>
 
@@ -34881,7 +34957,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.20 Variable sys.fqhost</h4>
+<h4 class="subsection">12.5.21 Variable sys.fqhost</h4>
 
 <p><br>
 
@@ -34898,13 +34974,13 @@ name must be defined.
 <a name="Variable-sys.fstab"></a>
 <a name="Variable-sys_002efstab"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ehardware_005fmac_005beth0_005d">Variable sys.hardware_mac[eth0]</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ehardware_005faddresses">Variable sys.hardware_addresses</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002efqhost">Variable sys.fqhost</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
 </div>
 
-<h4 class="subsection">12.5.21 Variable sys.fstab</h4>
+<h4 class="subsection">12.5.22 Variable sys.fstab</h4>
 
 <p><br>
 
@@ -34917,44 +34993,23 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 </pre>
 
 <div class="node">
-<a name="Variable-sys.hardware_mac%5beth0%5d"></a>
-<a name="Variable-sys_002ehardware_005fmac_005beth0_005d"></a>
+<a name="Variable-sys.hardware_addresses"></a>
+<a name="Variable-sys_002ehardware_005faddresses"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ehardware_005fmac_005bvirbr0_005d">Variable sys.hardware_mac[virbr0]</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ehardware_005fmac_005bwlan0_005d">Variable sys.hardware_mac[wlan0]</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002efstab">Variable sys.fstab</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
 </div>
 
-<h4 class="subsection">12.5.22 Variable sys.hardware_mac[eth0]</h4>
+<h4 class="subsection">12.5.23 Variable sys.hardware_addresses</h4>
 
 <p><br>
 
-   <p><i>History</i>: Was introduced in 3.3.0a1.r3461:3462 (2011)
+   <p><i>History</i>: Was introduced in 3.3.0a1.r3641, Nova 2.2.0.a1.r3258, Constellation 1.0.0a1.r307 (2011)
 
 <pre class="verbatim">
-Fill me in (./var_sys_hardware_mac[eth0].texinfo)
-""
-</pre>
-
-<div class="node">
-<a name="Variable-sys.hardware_mac%5bvirbr0%5d"></a>
-<a name="Variable-sys_002ehardware_005fmac_005bvirbr0_005d"></a>
-<p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ehardware_005fmac_005bwlan0_005d">Variable sys.hardware_mac[wlan0]</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002ehardware_005fmac_005beth0_005d">Variable sys.hardware_mac[eth0]</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
-
-</div>
-
-<h4 class="subsection">12.5.23 Variable sys.hardware_mac[virbr0]</h4>
-
-<p><br>
-
-   <p><i>History</i>: Was introduced in 3.3.0a1.r3461:3462 (2011)
-
-<pre class="verbatim">
-Fill me in (./var_sys_hardware_mac[virbr0].texinfo)
+Fill me in (./var_sys_hardware_addresses.texinfo)
 ""
 </pre>
 
@@ -34963,7 +35018,7 @@ Fill me in (./var_sys_hardware_mac[virbr0].texinfo)
 <a name="Variable-sys_002ehardware_005fmac_005bwlan0_005d"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ehost">Variable sys.host</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002ehardware_005fmac_005bvirbr0_005d">Variable sys.hardware_mac[virbr0]</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002ehardware_005faddresses">Variable sys.hardware_addresses</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
 </div>
@@ -34972,7 +35027,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 <p><br>
 
-   <p><i>History</i>: Was introduced in 3.3.0a1.r3461:3462 (2011)
+   <p><i>History</i>: Was introduced in 3.3.0a1.r3641, Nova 2.2.0.a1.r3258, Constellation 1.0.0a1.r307 (2011)
 
 <pre class="verbatim">
 Fill me in (./var_sys_hardware_mac[wlan0].texinfo)
@@ -34983,7 +35038,7 @@ Fill me in (./var_sys_hardware_mac[wlan0].texinfo)
 <a name="Variable-sys.host"></a>
 <a name="Variable-sys_002ehost"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002einterface">Variable sys.interface</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ehub_005fmaster">Variable sys.hub_master</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002ehardware_005fmac_005bwlan0_005d">Variable sys.hardware_mac[wlan0]</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
@@ -35003,16 +35058,41 @@ is qualified or unqualified with a domain name.
 </pre>
 
 <div class="node">
-<a name="Variable-sys.interface"></a>
-<a name="Variable-sys_002einterface"></a>
+<a name="Variable-sys.hub_master"></a>
+<a name="Variable-sys_002ehub_005fmaster"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002eipv4">Variable sys.ipv4</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002einterface">Variable sys.interface</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002ehost">Variable sys.host</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
 </div>
 
-<h4 class="subsection">12.5.26 Variable sys.interface</h4>
+<h4 class="subsection">12.5.26 Variable sys.hub_master</h4>
+
+<p><br>
+
+   <p><i>History</i>: Was introduced in 3.2.0, Nova 2.1.0, Constellation 1.0.0 (2011)
+
+<pre class="verbatim">
+<span class="red">reports:
+</span>  am_hub_master::
+    "This hub is a primary hub for other replicas";
+  !am_hub_master::
+    "This hub is replicated from $(sys.hub_master)";
+
+</pre>
+
+<div class="node">
+<a name="Variable-sys.interface"></a>
+<a name="Variable-sys_002einterface"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002einterfaces">Variable sys.interfaces</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002ehub_005fmaster">Variable sys.hub_master</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
+
+</div>
+
+<h4 class="subsection">12.5.27 Variable sys.interface</h4>
 
 <p><br>
 
@@ -35025,16 +35105,58 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 </pre>
 
 <div class="node">
-<a name="Variable-sys.ipv4"></a>
-<a name="Variable-sys_002eipv4"></a>
+<a name="Variable-sys.interfaces"></a>
+<a name="Variable-sys_002einterfaces"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002eipv4_005binterface_005fname_005d">Variable sys.ipv4[interface_name]</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002eip_005faddresses">Variable sys.ip_addresses</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002einterface">Variable sys.interface</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
 </div>
 
-<h4 class="subsection">12.5.27 Variable sys.ipv4</h4>
+<h4 class="subsection">12.5.28 Variable sys.interfaces</h4>
+
+<p><br>
+
+   <p><i>History</i>: Was introduced in 3.3.0a1.r3641, Nova 2.2.0.a1.r3258, Constellation 1.0.0a1.r307 (2011)
+
+<pre class="verbatim">
+Fill me in (./var_sys_interfaces.texinfo)
+""
+</pre>
+
+<div class="node">
+<a name="Variable-sys.ip_addresses"></a>
+<a name="Variable-sys_002eip_005faddresses"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002eipv4">Variable sys.ipv4</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002einterfaces">Variable sys.interfaces</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
+
+</div>
+
+<h4 class="subsection">12.5.29 Variable sys.ip_addresses</h4>
+
+<p><br>
+
+   <p><i>History</i>: Was introduced in 3.3.0a1.r3641, Nova 2.2.0.a1.r3258, Constellation 1.0.0a1.r307 (2011)
+
+<pre class="verbatim">
+Fill me in (./var_sys_ip_addresses.texinfo)
+""
+</pre>
+
+<div class="node">
+<a name="Variable-sys.ipv4"></a>
+<a name="Variable-sys_002eipv4"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002eipv4_005binterface_005fname_005d">Variable sys.ipv4[interface_name]</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002eip_005faddresses">Variable sys.ip_addresses</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
+
+</div>
+
+<h4 class="subsection">12.5.30 Variable sys.ipv4</h4>
 
 <p><br>
 
@@ -35058,7 +35180,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.28 Variable sys.ipv4[interface_name]</h4>
+<h4 class="subsection">12.5.31 Variable sys.ipv4[interface_name]</h4>
 
 <p><br>
 
@@ -35112,7 +35234,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.29 Variable sys.ipv4_1[interface_name]</h4>
+<h4 class="subsection">12.5.32 Variable sys.ipv4_1[interface_name]</h4>
 
 <p><br>
 
@@ -35130,7 +35252,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.30 Variable sys.ipv4_2[interface_name]</h4>
+<h4 class="subsection">12.5.33 Variable sys.ipv4_2[interface_name]</h4>
 
 <p><br>
 
@@ -35142,13 +35264,13 @@ as the associative array index, e.g.
 <a name="Variable-sys.ipv4_3%5binterface_name%5d"></a>
 <a name="Variable-sys_002eipv4_005f3_005binterface_005fname_005d"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002elong_005farch">Variable sys.long_arch</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ekey_005fdigest">Variable sys.key_digest</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002eipv4_005f2_005binterface_005fname_005d">Variable sys.ipv4_2[interface_name]</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
 </div>
 
-<h4 class="subsection">12.5.31 Variable sys.ipv4_3[interface_name]</h4>
+<h4 class="subsection">12.5.34 Variable sys.ipv4_3[interface_name]</h4>
 
 <p><br>
 
@@ -35157,16 +35279,116 @@ as the associative array index, e.g.
 &lsquo;<samp><span class="samp">$(ipv4_3[le0])</span></samp>&rsquo; or &lsquo;<samp><span class="samp">$(ipv4_3[xr1])</span></samp>&rsquo;, See <a href="#Variable-sys_002eipv4_005binterface_005fname_005d">Variable sys.ipv4[interface_name]</a>.
 
 <div class="node">
-<a name="Variable-sys.long_arch"></a>
-<a name="Variable-sys_002elong_005farch"></a>
+<a name="Variable-sys.key_digest"></a>
+<a name="Variable-sys_002ekey_005fdigest"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002emaildir">Variable sys.maildir</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002elicense_005fowner">Variable sys.license_owner</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002eipv4_005f3_005binterface_005fname_005d">Variable sys.ipv4_3[interface_name]</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
 </div>
 
-<h4 class="subsection">12.5.32 Variable sys.long_arch</h4>
+<h4 class="subsection">12.5.35 Variable sys.key_digest</h4>
+
+<p><br>
+
+   <p>Contains the unique identifier of the current host.
+
+<pre class="verbatim">reports:
+
+ cfengine_3_1::
+
+ "My digest is $(sys.key_digest)";
+
+</pre>
+
+<div class="node">
+<a name="Variable-sys.license_owner"></a>
+<a name="Variable-sys_002elicense_005fowner"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002elicenses_005fgranted">Variable sys.licenses_granted</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002ekey_005fdigest">Variable sys.key_digest</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
+
+</div>
+
+<h4 class="subsection">12.5.36 Variable sys.license_owner</h4>
+
+<p><br>
+
+   <p><i>History</i>: Was introduced in version 3.1.4,Nova 2.0.2 (2011)
+
+<pre class="verbatim">
+<span class="red">reports:
+</span>
+ nova::
+
+  "This version of CFEngine is licensed to $(sys.license_owner)";
+
+</pre>
+
+<div class="node">
+<a name="Variable-sys.licenses_granted"></a>
+<a name="Variable-sys_002elicenses_005fgranted"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002elicenses_005finstalltime">Variable sys.licenses_installtime</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002elicense_005fowner">Variable sys.license_owner</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
+
+</div>
+
+<h4 class="subsection">12.5.37 Variable sys.licenses_granted</h4>
+
+<p><br>
+
+   <p><i>History</i>: Was introduced in version 3.1.4,Nova 2.0.2 (2011)
+
+<pre class="verbatim">
+<span class="red">reports:
+</span>
+ nova::
+
+  "There are $(sys.licenses_granted) licenses granted for use";
+
+</pre>
+
+<div class="node">
+<a name="Variable-sys.licenses_installtime"></a>
+<a name="Variable-sys_002elicenses_005finstalltime"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002elong_005farch">Variable sys.long_arch</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002elicenses_005fgranted">Variable sys.licenses_granted</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
+
+</div>
+
+<h4 class="subsection">12.5.38 Variable sys.licenses_installtime</h4>
+
+<p><br>
+
+   <p><i>History</i>: Was introduced in version 3.1.5, Nova 2.1, Constellation 1.0(2011)
+
+<pre class="verbatim">
+<span class="red">reports:
+</span>
+ nova::
+
+  "The license was installed on $(sys.licenses_installtime)";
+
+
+</pre>
+
+<div class="node">
+<a name="Variable-sys.long_arch"></a>
+<a name="Variable-sys_002elong_005farch"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002emaildir">Variable sys.maildir</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002elicenses_005finstalltime">Variable sys.licenses_installtime</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
+
+</div>
+
+<h4 class="subsection">12.5.39 Variable sys.long_arch</h4>
 
 <p><br>
 
@@ -35183,13 +35405,13 @@ but can be useful for logging purposes.
 <a name="Variable-sys.maildir"></a>
 <a name="Variable-sys_002emaildir"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002eos">Variable sys.os</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002enova_005fversion">Variable sys.nova_version</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002elong_005farch">Variable sys.long_arch</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
 </div>
 
-<h4 class="subsection">12.5.33 Variable sys.maildir</h4>
+<h4 class="subsection">12.5.40 Variable sys.maildir</h4>
 
 <p><br>
 
@@ -35202,16 +35424,38 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 </pre>
 
 <div class="node">
-<a name="Variable-sys.os"></a>
-<a name="Variable-sys_002eos"></a>
+<a name="Variable-sys.nova_version"></a>
+<a name="Variable-sys_002enova_005fversion"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002eostype">Variable sys.ostype</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002eos">Variable sys.os</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002emaildir">Variable sys.maildir</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
 </div>
 
-<h4 class="subsection">12.5.34 Variable sys.os</h4>
+<h4 class="subsection">12.5.41 Variable sys.nova_version</h4>
+
+<p><br>
+
+   <p>The variable gives the version of the running CFEngine Nova Edition.
+
+<pre class="verbatim">
+<span class="comment"># nova_version = 1.1.3
+</span>
+
+</pre>
+
+<div class="node">
+<a name="Variable-sys.os"></a>
+<a name="Variable-sys_002eos"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002eostype">Variable sys.ostype</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002enova_005fversion">Variable sys.nova_version</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
+
+</div>
+
+<h4 class="subsection">12.5.42 Variable sys.os</h4>
 
 <p><br>
 
@@ -35233,7 +35477,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.35 Variable sys.ostype</h4>
+<h4 class="subsection">12.5.43 Variable sys.ostype</h4>
 
 <p><br>
 
@@ -35255,7 +35499,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.36 Variable sys.policy_hub</h4>
+<h4 class="subsection">12.5.44 Variable sys.policy_hub</h4>
 
 <p><br>
 Hostname of the machine acting as a policy hub. This value is set
@@ -35280,7 +35524,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.37 Variable sys.release</h4>
+<h4 class="subsection">12.5.45 Variable sys.release</h4>
 
 <p><br>
 
@@ -35302,7 +35546,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.38 Variable sys.resolv</h4>
+<h4 class="subsection">12.5.46 Variable sys.resolv</h4>
 
 <p><br>
 
@@ -35324,7 +35568,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.39 Variable sys.uqhost</h4>
+<h4 class="subsection">12.5.47 Variable sys.uqhost</h4>
 
 <p><br>
 
@@ -35346,7 +35590,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.40 Variable sys.version</h4>
+<h4 class="subsection">12.5.48 Variable sys.version</h4>
 
 <p><br>
 
@@ -35371,7 +35615,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.41 Variable sys.windir</h4>
+<h4 class="subsection">12.5.49 Variable sys.windir</h4>
 
 <p><br>
 
@@ -35394,7 +35638,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.42 Variable sys.winprogdir</h4>
+<h4 class="subsection">12.5.50 Variable sys.winprogdir</h4>
 
 <p><br>
 
@@ -35417,7 +35661,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.43 Variable sys.winprogdir86</h4>
+<h4 class="subsection">12.5.51 Variable sys.winprogdir86</h4>
 
 <p><br>
 
@@ -35440,7 +35684,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.44 Variable sys.winsysdir</h4>
+<h4 class="subsection">12.5.52 Variable sys.winsysdir</h4>
 
 <p><br>
 
@@ -35462,7 +35706,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.45 Variable sys.workdir</h4>
+<h4 class="subsection">12.5.53 Variable sys.workdir</h4>
 
 <p><br>
 
@@ -35529,19 +35773,67 @@ attempt to declare a variable name with one of the following special
 reserved names, CFEngine will issue a warning (and you can reference your
 variable by qualifying it with the bundle name in which it is declared).
 
+<ul class="menu">
+<li><a accesskey="1" href="#Variable-this_002ehandle">Variable this.handle</a>
+<li><a accesskey="2" href="#Variable-this_002epromise_005ffilename">Variable this.promise_filename</a>
+<li><a accesskey="3" href="#Variable-this_002epromise_005flinenumber">Variable this.promise_linenumber</a>
+<li><a accesskey="4" href="#Variable-this_002epromiser">Variable this.promiser</a>
+<li><a accesskey="5" href="#Variable-this_002ethis">Variable this.this</a>
+</ul>
+
+<div class="node">
+<a name="Variable-this.handle"></a>
+<a name="Variable-this_002ehandle"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-this_002epromise_005ffilename">Variable this.promise_filename</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-context-this">Variable context this</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-this">Variable context this</a>
+
+</div>
+
 <h4 class="subsection">12.6.1 Variable this.handle</h4>
 
 <p>This variable points to the promise handle of the currently handled promise;
  it is useful for referring to the intention in log messages.
 
+<div class="node">
+<a name="Variable-this.promise_filename"></a>
+<a name="Variable-this_002epromise_005ffilename"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-this_002epromise_005flinenumber">Variable this.promise_linenumber</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-this_002ehandle">Variable this.handle</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-this">Variable context this</a>
+
+</div>
+
 <h4 class="subsection">12.6.2 Variable this.promise_filename</h4>
 
 <p>This variable reveals the name of the file in which the current promise is defined.
+
+<div class="node">
+<a name="Variable-this.promise_linenumber"></a>
+<a name="Variable-this_002epromise_005flinenumber"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-this_002epromiser">Variable this.promiser</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-this_002epromise_005ffilename">Variable this.promise_filename</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-this">Variable context this</a>
+
+</div>
 
 <h4 class="subsection">12.6.3 Variable this.promise_linenumber</h4>
 
 <p>This variable reveals the line number in the file at which it is used.  It is
 useful to differentiate otherwise identical reports promises.
+
+<div class="node">
+<a name="Variable-this.promiser"></a>
+<a name="Variable-this_002epromiser"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-this_002ethis">Variable this.this</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-this_002epromise_005flinenumber">Variable this.promise_linenumber</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-this">Variable context this</a>
+
+</div>
 
 <h4 class="subsection">12.6.4 Variable this.promiser</h4>
 
@@ -35574,6 +35866,21 @@ currently identified file that makes the promise.  For example:
 <span class="red">  file_result </span>=><span class="green"> "mode";</span>
 }
 </pre>
+
+<div class="node">
+<a name="Variable-this.this"></a>
+<a name="Variable-this_002ethis"></a>
+<p><hr>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-this_002epromiser">Variable this.promiser</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-this">Variable context this</a>
+
+</div>
+
+<h4 class="subsection">12.6.5 Variable this.this</h4>
+
+<p>From version core 3.3.0 this variables is reserved. It is used by
+functions like <code>maplist()</code> to represent the current object in
+a transformation map.
 
 <!-- ***************************************************** -->
 <!-- * CHAPTER -->
@@ -35780,7 +36087,7 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <h2>Table of Contents</h2>
 <ul>
 <li><a name="toc_Top" href="#Top">CFEngine-AutoReference</a>
-<li><a name="toc_Getting-started" href="#Getting-started">1 CFEngine 3.3.0a1.r3461:3462 &ndash; Getting started</a>
+<li><a name="toc_Getting-started" href="#Getting-started">1 CFEngine 3.3.0a1.r3641 &ndash; Getting started</a>
 <ul>
 <li><a href="#Software-components">1.1 Software components</a>
 <ul>
@@ -36335,47 +36642,48 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <li><a href="#Function-ldaplist">11.51 Function ldaplist</a>
 <li><a href="#Function-ldapvalue">11.52 Function ldapvalue</a>
 <li><a href="#Function-lsdir">11.53 Function lsdir</a>
-<li><a href="#Function-not">11.54 Function not</a>
-<li><a href="#Function-now">11.55 Function now</a>
-<li><a href="#Function-on">11.56 Function on</a>
-<li><a href="#Function-or">11.57 Function or</a>
-<li><a href="#Function-parseintarray">11.58 Function parseintarray</a>
-<li><a href="#Function-parserealarray">11.59 Function parserealarray</a>
-<li><a href="#Function-parsestringarray">11.60 Function parsestringarray</a>
-<li><a href="#Function-parsestringarrayidx">11.61 Function parsestringarrayidx</a>
-<li><a href="#Function-peers">11.62 Function peers</a>
-<li><a href="#Function-peerleader">11.63 Function peerleader</a>
-<li><a href="#Function-peerleaders">11.64 Function peerleaders</a>
-<li><a href="#Function-product">11.65 Function product</a>
-<li><a href="#Function-randomint">11.66 Function randomint</a>
-<li><a href="#Function-readfile">11.67 Function readfile</a>
-<li><a href="#Function-readintarray">11.68 Function readintarray</a>
-<li><a href="#Function-readintlist">11.69 Function readintlist</a>
-<li><a href="#Function-readrealarray">11.70 Function readrealarray</a>
-<li><a href="#Function-readreallist">11.71 Function readreallist</a>
-<li><a href="#Function-readstringarray">11.72 Function readstringarray</a>
-<li><a href="#Function-readstringarrayidx">11.73 Function readstringarrayidx</a>
-<li><a href="#Function-readstringlist">11.74 Function readstringlist</a>
-<li><a href="#Function-readtcp">11.75 Function readtcp</a>
-<li><a href="#Function-regarray">11.76 Function regarray</a>
-<li><a href="#Function-regcmp">11.77 Function regcmp</a>
-<li><a href="#Function-regextract">11.78 Function regextract</a>
-<li><a href="#Function-registryvalue">11.79 Function registryvalue</a>
-<li><a href="#Function-regline">11.80 Function regline</a>
-<li><a href="#Function-reglist">11.81 Function reglist</a>
-<li><a href="#Function-regldap">11.82 Function regldap</a>
-<li><a href="#Function-remotescalar">11.83 Function remotescalar</a>
-<li><a href="#Function-remoteclassesmatching">11.84 Function remoteclassesmatching</a>
-<li><a href="#Function-returnszero">11.85 Function returnszero</a>
-<li><a href="#Function-rrange">11.86 Function rrange</a>
-<li><a href="#Function-selectservers">11.87 Function selectservers</a>
-<li><a href="#Function-splayclass">11.88 Function splayclass</a>
-<li><a href="#Function-splitstring">11.89 Function splitstring</a>
-<li><a href="#Function-strcmp">11.90 Function strcmp</a>
-<li><a href="#Function-sum">11.91 Function sum</a>
-<li><a href="#Function-translatepath">11.92 Function translatepath</a>
-<li><a href="#Function-usemodule">11.93 Function usemodule</a>
-<li><a href="#Function-userexists">11.94 Function userexists</a>
+<li><a href="#Function-maplist">11.54 Function maplist</a>
+<li><a href="#Function-not">11.55 Function not</a>
+<li><a href="#Function-now">11.56 Function now</a>
+<li><a href="#Function-on">11.57 Function on</a>
+<li><a href="#Function-or">11.58 Function or</a>
+<li><a href="#Function-parseintarray">11.59 Function parseintarray</a>
+<li><a href="#Function-parserealarray">11.60 Function parserealarray</a>
+<li><a href="#Function-parsestringarray">11.61 Function parsestringarray</a>
+<li><a href="#Function-parsestringarrayidx">11.62 Function parsestringarrayidx</a>
+<li><a href="#Function-peers">11.63 Function peers</a>
+<li><a href="#Function-peerleader">11.64 Function peerleader</a>
+<li><a href="#Function-peerleaders">11.65 Function peerleaders</a>
+<li><a href="#Function-product">11.66 Function product</a>
+<li><a href="#Function-randomint">11.67 Function randomint</a>
+<li><a href="#Function-readfile">11.68 Function readfile</a>
+<li><a href="#Function-readintarray">11.69 Function readintarray</a>
+<li><a href="#Function-readintlist">11.70 Function readintlist</a>
+<li><a href="#Function-readrealarray">11.71 Function readrealarray</a>
+<li><a href="#Function-readreallist">11.72 Function readreallist</a>
+<li><a href="#Function-readstringarray">11.73 Function readstringarray</a>
+<li><a href="#Function-readstringarrayidx">11.74 Function readstringarrayidx</a>
+<li><a href="#Function-readstringlist">11.75 Function readstringlist</a>
+<li><a href="#Function-readtcp">11.76 Function readtcp</a>
+<li><a href="#Function-regarray">11.77 Function regarray</a>
+<li><a href="#Function-regcmp">11.78 Function regcmp</a>
+<li><a href="#Function-regextract">11.79 Function regextract</a>
+<li><a href="#Function-registryvalue">11.80 Function registryvalue</a>
+<li><a href="#Function-regline">11.81 Function regline</a>
+<li><a href="#Function-reglist">11.82 Function reglist</a>
+<li><a href="#Function-regldap">11.83 Function regldap</a>
+<li><a href="#Function-remotescalar">11.84 Function remotescalar</a>
+<li><a href="#Function-remoteclassesmatching">11.85 Function remoteclassesmatching</a>
+<li><a href="#Function-returnszero">11.86 Function returnszero</a>
+<li><a href="#Function-rrange">11.87 Function rrange</a>
+<li><a href="#Function-selectservers">11.88 Function selectservers</a>
+<li><a href="#Function-splayclass">11.89 Function splayclass</a>
+<li><a href="#Function-splitstring">11.90 Function splitstring</a>
+<li><a href="#Function-strcmp">11.91 Function strcmp</a>
+<li><a href="#Function-sum">11.92 Function sum</a>
+<li><a href="#Function-translatepath">11.93 Function translatepath</a>
+<li><a href="#Function-usemodule">11.94 Function usemodule</a>
+<li><a href="#Function-userexists">11.95 Function userexists</a>
 </li></ul>
 <li><a name="toc_Special-Variables" href="#Special-Variables">12 Special Variables</a>
 <ul>
@@ -36577,43 +36885,52 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <li><a href="#Variable-sys_002ecf_005ftwin">12.5.13 Variable sys.cf_twin</a>
 <li><a href="#Variable-sys_002ecf_005fversion">12.5.14 Variable sys.cf_version</a>
 <li><a href="#Variable-sys_002eclass">12.5.15 Variable sys.class</a>
-<li><a href="#Variable-sys_002edate">12.5.16 Variable sys.date</a>
-<li><a href="#Variable-sys_002edomain">12.5.17 Variable sys.domain</a>
-<li><a href="#Variable-sys_002eexpires">12.5.18 Variable sys.expires</a>
-<li><a href="#Variable-sys_002eexports">12.5.19 Variable sys.exports</a>
-<li><a href="#Variable-sys_002efqhost">12.5.20 Variable sys.fqhost</a>
-<li><a href="#Variable-sys_002efstab">12.5.21 Variable sys.fstab</a>
-<li><a href="#Variable-sys_002ehardware_005fmac_005beth0_005d">12.5.22 Variable sys.hardware_mac[eth0]</a>
-<li><a href="#Variable-sys_002ehardware_005fmac_005bvirbr0_005d">12.5.23 Variable sys.hardware_mac[virbr0]</a>
+<li><a href="#Variable-sys_002econstellation_005fversion">12.5.16 Variable sys.constellation_version</a>
+<li><a href="#Variable-sys_002edate">12.5.17 Variable sys.date</a>
+<li><a href="#Variable-sys_002edomain">12.5.18 Variable sys.domain</a>
+<li><a href="#Variable-sys_002eexpires">12.5.19 Variable sys.expires</a>
+<li><a href="#Variable-sys_002eexports">12.5.20 Variable sys.exports</a>
+<li><a href="#Variable-sys_002efqhost">12.5.21 Variable sys.fqhost</a>
+<li><a href="#Variable-sys_002efstab">12.5.22 Variable sys.fstab</a>
+<li><a href="#Variable-sys_002ehardware_005faddresses">12.5.23 Variable sys.hardware_addresses</a>
 <li><a href="#Variable-sys_002ehardware_005fmac_005bwlan0_005d">12.5.24 Variable sys.hardware_mac[wlan0]</a>
 <li><a href="#Variable-sys_002ehost">12.5.25 Variable sys.host</a>
-<li><a href="#Variable-sys_002einterface">12.5.26 Variable sys.interface</a>
-<li><a href="#Variable-sys_002eipv4">12.5.27 Variable sys.ipv4</a>
-<li><a href="#Variable-sys_002eipv4_005binterface_005fname_005d">12.5.28 Variable sys.ipv4[interface_name]</a>
-<li><a href="#Variable-sys_002eipv4_005f1_005binterface_005fname_005d">12.5.29 Variable sys.ipv4_1[interface_name]</a>
-<li><a href="#Variable-sys_002eipv4_005f2_005binterface_005fname_005d">12.5.30 Variable sys.ipv4_2[interface_name]</a>
-<li><a href="#Variable-sys_002eipv4_005f3_005binterface_005fname_005d">12.5.31 Variable sys.ipv4_3[interface_name]</a>
-<li><a href="#Variable-sys_002elong_005farch">12.5.32 Variable sys.long_arch</a>
-<li><a href="#Variable-sys_002emaildir">12.5.33 Variable sys.maildir</a>
-<li><a href="#Variable-sys_002eos">12.5.34 Variable sys.os</a>
-<li><a href="#Variable-sys_002eostype">12.5.35 Variable sys.ostype</a>
-<li><a href="#Variable-sys_002epolicy_005fhub">12.5.36 Variable sys.policy_hub</a>
-<li><a href="#Variable-sys_002erelease">12.5.37 Variable sys.release</a>
-<li><a href="#Variable-sys_002eresolv">12.5.38 Variable sys.resolv</a>
-<li><a href="#Variable-sys_002euqhost">12.5.39 Variable sys.uqhost</a>
-<li><a href="#Variable-sys_002eversion">12.5.40 Variable sys.version</a>
-<li><a href="#Variable-sys_002ewindir">12.5.41 Variable sys.windir</a>
-<li><a href="#Variable-sys_002ewinprogdir">12.5.42 Variable sys.winprogdir</a>
-<li><a href="#Variable-sys_002ewinprogdir86">12.5.43 Variable sys.winprogdir86</a>
-<li><a href="#Variable-sys_002ewinsysdir">12.5.44 Variable sys.winsysdir</a>
-<li><a href="#Variable-sys_002eworkdir">12.5.45 Variable sys.workdir</a>
+<li><a href="#Variable-sys_002ehub_005fmaster">12.5.26 Variable sys.hub_master</a>
+<li><a href="#Variable-sys_002einterface">12.5.27 Variable sys.interface</a>
+<li><a href="#Variable-sys_002einterfaces">12.5.28 Variable sys.interfaces</a>
+<li><a href="#Variable-sys_002eip_005faddresses">12.5.29 Variable sys.ip_addresses</a>
+<li><a href="#Variable-sys_002eipv4">12.5.30 Variable sys.ipv4</a>
+<li><a href="#Variable-sys_002eipv4_005binterface_005fname_005d">12.5.31 Variable sys.ipv4[interface_name]</a>
+<li><a href="#Variable-sys_002eipv4_005f1_005binterface_005fname_005d">12.5.32 Variable sys.ipv4_1[interface_name]</a>
+<li><a href="#Variable-sys_002eipv4_005f2_005binterface_005fname_005d">12.5.33 Variable sys.ipv4_2[interface_name]</a>
+<li><a href="#Variable-sys_002eipv4_005f3_005binterface_005fname_005d">12.5.34 Variable sys.ipv4_3[interface_name]</a>
+<li><a href="#Variable-sys_002ekey_005fdigest">12.5.35 Variable sys.key_digest</a>
+<li><a href="#Variable-sys_002elicense_005fowner">12.5.36 Variable sys.license_owner</a>
+<li><a href="#Variable-sys_002elicenses_005fgranted">12.5.37 Variable sys.licenses_granted</a>
+<li><a href="#Variable-sys_002elicenses_005finstalltime">12.5.38 Variable sys.licenses_installtime</a>
+<li><a href="#Variable-sys_002elong_005farch">12.5.39 Variable sys.long_arch</a>
+<li><a href="#Variable-sys_002emaildir">12.5.40 Variable sys.maildir</a>
+<li><a href="#Variable-sys_002enova_005fversion">12.5.41 Variable sys.nova_version</a>
+<li><a href="#Variable-sys_002eos">12.5.42 Variable sys.os</a>
+<li><a href="#Variable-sys_002eostype">12.5.43 Variable sys.ostype</a>
+<li><a href="#Variable-sys_002epolicy_005fhub">12.5.44 Variable sys.policy_hub</a>
+<li><a href="#Variable-sys_002erelease">12.5.45 Variable sys.release</a>
+<li><a href="#Variable-sys_002eresolv">12.5.46 Variable sys.resolv</a>
+<li><a href="#Variable-sys_002euqhost">12.5.47 Variable sys.uqhost</a>
+<li><a href="#Variable-sys_002eversion">12.5.48 Variable sys.version</a>
+<li><a href="#Variable-sys_002ewindir">12.5.49 Variable sys.windir</a>
+<li><a href="#Variable-sys_002ewinprogdir">12.5.50 Variable sys.winprogdir</a>
+<li><a href="#Variable-sys_002ewinprogdir86">12.5.51 Variable sys.winprogdir86</a>
+<li><a href="#Variable-sys_002ewinsysdir">12.5.52 Variable sys.winsysdir</a>
+<li><a href="#Variable-sys_002eworkdir">12.5.53 Variable sys.workdir</a>
 </li></ul>
 <li><a href="#Variable-context-this">12.6 Variable context <code>this</code></a>
 <ul>
-<li><a href="#Variable-context-this">12.6.1 Variable this.handle</a>
-<li><a href="#Variable-context-this">12.6.2 Variable this.promise_filename</a>
-<li><a href="#Variable-context-this">12.6.3 Variable this.promise_linenumber</a>
-<li><a href="#Variable-context-this">12.6.4 Variable this.promiser</a>
+<li><a href="#Variable-this_002ehandle">12.6.1 Variable this.handle</a>
+<li><a href="#Variable-this_002epromise_005ffilename">12.6.2 Variable this.promise_filename</a>
+<li><a href="#Variable-this_002epromise_005flinenumber">12.6.3 Variable this.promise_linenumber</a>
+<li><a href="#Variable-this_002epromiser">12.6.4 Variable this.promiser</a>
+<li><a href="#Variable-this_002ethis">12.6.5 Variable this.this</a>
 </li></ul>
 </li></ul>
 <li><a name="toc_Logs-and-records" href="#Logs-and-records">13 Logs and records</a>

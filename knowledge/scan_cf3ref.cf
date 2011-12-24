@@ -500,7 +500,7 @@ CFEngine_reference_manual::
 CFEngine_AutoReference::
  "/docs/cf3-reference.html#Top"
   represents => { "Text section" };
-CFEngine_3_3_0a1_r3461_3462__Getting_started::
+CFEngine_3_3_0a1_r3641__Getting_started::
  "/docs/cf3-reference.html#Getting-started"
   represents => { "manual chapter" };
 Software_components::
@@ -2759,6 +2759,9 @@ Function_ldapvalue::
 Function_lsdir::
  "/docs/cf3-reference.html#Function-lsdir"
   represents => { "manual section Function lsdir" };
+Function_maplist::
+ "/docs/cf3-reference.html#Function-maplist"
+  represents => { "manual section Function maplist" };
 Function_not::
  "/docs/cf3-reference.html#Function-not"
   represents => { "manual section Function not" };
@@ -3494,6 +3497,9 @@ Variable_sys_cf_version::
 Variable_sys_class::
  "/docs/cf3-reference.html#Variable-sys_002eclass"
   represents => { "manual subsection" };
+Variable_sys_constellation_version::
+ "/docs/cf3-reference.html#Variable-sys_002econstellation_005fversion"
+  represents => { "manual subsection" };
 Variable_sys_date::
  "/docs/cf3-reference.html#Variable-sys_002edate"
   represents => { "manual subsection" };
@@ -3512,11 +3518,8 @@ Variable_sys_fqhost::
 Variable_sys_fstab::
  "/docs/cf3-reference.html#Variable-sys_002efstab"
   represents => { "manual subsection" };
-Variable_sys_hardware_mac_eth0_::
- "/docs/cf3-reference.html#Variable-sys_002ehardware_005fmac_005beth0_005d"
-  represents => { "manual subsection" };
-Variable_sys_hardware_mac_virbr0_::
- "/docs/cf3-reference.html#Variable-sys_002ehardware_005fmac_005bvirbr0_005d"
+Variable_sys_hardware_addresses::
+ "/docs/cf3-reference.html#Variable-sys_002ehardware_005faddresses"
   represents => { "manual subsection" };
 Variable_sys_hardware_mac_wlan0_::
  "/docs/cf3-reference.html#Variable-sys_002ehardware_005fmac_005bwlan0_005d"
@@ -3524,8 +3527,17 @@ Variable_sys_hardware_mac_wlan0_::
 Variable_sys_host::
  "/docs/cf3-reference.html#Variable-sys_002ehost"
   represents => { "manual subsection" };
+Variable_sys_hub_master::
+ "/docs/cf3-reference.html#Variable-sys_002ehub_005fmaster"
+  represents => { "manual subsection" };
 Variable_sys_interface::
  "/docs/cf3-reference.html#Variable-sys_002einterface"
+  represents => { "manual subsection" };
+Variable_sys_interfaces::
+ "/docs/cf3-reference.html#Variable-sys_002einterfaces"
+  represents => { "manual subsection" };
+Variable_sys_ip_addresses::
+ "/docs/cf3-reference.html#Variable-sys_002eip_005faddresses"
   represents => { "manual subsection" };
 Variable_sys_ipv4::
  "/docs/cf3-reference.html#Variable-sys_002eipv4"
@@ -3542,11 +3554,26 @@ Variable_sys_ipv4_2_interface_name_::
 Variable_sys_ipv4_3_interface_name_::
  "/docs/cf3-reference.html#Variable-sys_002eipv4_005f3_005binterface_005fname_005d"
   represents => { "manual subsection" };
+Variable_sys_key_digest::
+ "/docs/cf3-reference.html#Variable-sys_002ekey_005fdigest"
+  represents => { "manual subsection" };
+Variable_sys_license_owner::
+ "/docs/cf3-reference.html#Variable-sys_002elicense_005fowner"
+  represents => { "manual subsection" };
+Variable_sys_licenses_granted::
+ "/docs/cf3-reference.html#Variable-sys_002elicenses_005fgranted"
+  represents => { "manual subsection" };
+Variable_sys_licenses_installtime::
+ "/docs/cf3-reference.html#Variable-sys_002elicenses_005finstalltime"
+  represents => { "manual subsection" };
 Variable_sys_long_arch::
  "/docs/cf3-reference.html#Variable-sys_002elong_005farch"
   represents => { "manual subsection" };
 Variable_sys_maildir::
  "/docs/cf3-reference.html#Variable-sys_002emaildir"
+  represents => { "manual subsection" };
+Variable_sys_nova_version::
+ "/docs/cf3-reference.html#Variable-sys_002enova_005fversion"
   represents => { "manual subsection" };
 Variable_sys_os::
  "/docs/cf3-reference.html#Variable-sys_002eos"
@@ -3588,16 +3615,19 @@ Variable_context_this::
  "/docs/cf3-reference.html#Variable-context-this"
   represents => { "manual section Variable context this" };
 Variable_this_handle::
- "/docs/cf3-reference.html#Variable-context-this"
+ "/docs/cf3-reference.html#Variable-this_002ehandle"
   represents => { "manual subsection" };
 Variable_this_promise_filename::
- "/docs/cf3-reference.html#Variable-context-this"
+ "/docs/cf3-reference.html#Variable-this_002epromise_005ffilename"
   represents => { "manual subsection" };
 Variable_this_promise_linenumber::
- "/docs/cf3-reference.html#Variable-context-this"
+ "/docs/cf3-reference.html#Variable-this_002epromise_005flinenumber"
   represents => { "manual subsection" };
 Variable_this_promiser::
- "/docs/cf3-reference.html#Variable-context-this"
+ "/docs/cf3-reference.html#Variable-this_002epromiser"
+  represents => { "manual subsection" };
+Variable_this_this::
+ "/docs/cf3-reference.html#Variable-this_002ethis"
   represents => { "manual subsection" };
 Logs_and_records::
  "/docs/cf3-reference.html#Logs-and-records"
