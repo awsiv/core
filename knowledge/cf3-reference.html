@@ -22441,7 +22441,7 @@ to use the same name both when it is running and not.
    <p>Some operating systems are bundled with a lot of unused services that
 are running as default. At the same time, faulty or inherently
 insecure services are often the cause of security issues.  With
-CFEngine Nova, one can create promises stating services that should be
+CFEngine, one can create promises stating services that should be
 stopped and disabled.
 
    <p>The operating system may start a service at boot time, or it can be
@@ -22452,7 +22452,7 @@ demand, i.e. when they are needed. This is implemented though the
 <code>inetd</code> or <code>xinetd</code> daemon on Unix. Windows does not support
 this.
 
-   <p>CFEngine Nova also allows for the concept of dependencies between
+   <p>CFEngine also allows for the concept of dependencies between
 services, and can automatically start or stop these, if
 desired. Parameters can be passed to services that are started by
 CFEngine.
@@ -22485,9 +22485,88 @@ CFEngine.
 
    <p><br>
 
-   <p>Services promises are only avaiable in CFEngine Nova and above.
+   <p>Services promises for Windows are only available in CFEngine Nova and
+above. 
+Windows Vista/Server 2008 and later introduced new complications to
+the service security policy. Therefore, when testing <code>services</code>
+promises from the command line, CFEngine may not be given proper
+access rights, which gives errors like "Access is denied". However,
+when running through the CFEngine Nova Executor service, typical for
+on production machines, CFEngine has sufficent rights.
 
-   <p>Windows Vista/Server 2008 and later introduced new complications to the service security policy. Therefore, when testing <code>services</code> promises from the command line, CFEngine may not be given proper access rights, which gives errors like "Access is denied". However, when running through the CFEngine Nova Executor service, which is done on production machines, CFEngine has sufficent rights.
+   <p>Services of type &lsquo;<samp><span class="samp">generic</span></samp>&rsquo; promises are implemented for all
+operating systems and are merely as a convenient front-end to
+<code>processes</code> and <code>commands</code>.  If nothing else is specified,
+CFEngine looks for an special reserved agent bundle called
+
+<pre class="verbatim">bundle agent standard_services(service,state)
+{
+...
+}
+</pre>
+
+   <p>This bundle is called with two parameters: the name if the service and
+a start/stop state variable. The CFEngine standard library defines
+many common services for standard operating systems for convenience. 
+If no <code>service_bundle</code> is defined in a <code>service_method</code>
+body, then CFEngine assumes the &lsquo;<samp><span class="samp">standard_services</span></samp>&rsquo; bundle to be
+the default source of action for the services. This is executed just
+like a <code>methods</code> promise on the service bundle, so this is merely
+a front-end.
+
+   <p>The standard bundle can be replaced with another, as follows, e.g. for
+testing purposes:
+
+<pre class="verbatim">body common control
+{
+<span class="red">bundlesequence </span>=> { "test" };
+}
+
+<span class="comment">#
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">test</span>
+{
+<span class="red">vars:
+</span>
+ "mail"<span class="red"> slist </span>=> { "spamassassin", "postfix" };
+
+
+<span class="red">services:
+</span>
+  "www"<span class="red"> service_policy </span>=><span class="green"> "start",</span>
+<span class="red">        service_method </span>=><span class="blue"> service_test;</span>
+
+
+  "$(mail)"<span class="red"> service_policy </span>=><span class="green"> "stop",</span>
+<span class="red">        service_method </span>=><span class="blue"> service_test;</span>
+}
+
+<span class="comment">#
+</span>
+
+<span class="red">body service_method</span> <span class="blue">service_test</span>
+{
+<span class="red">service_bundle </span>=> non_standard_services("$(this.promiser)","$(this.service_policy)");
+}
+
+<span class="comment">#
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">non_standard_services(service,state)</span>
+{
+<span class="red">reports:
+</span>
+  !done::
+
+    "Test service promise for \"$(service)\" -> $(state)";
+}
+</pre>
+
+   <p>Note that the special variables <code>$(this.promiser)</code> and
+<code>$(this.service_policy)</code> may be used to fill in the service and
+state parameters from the promise definition. The <code>$(this.service_policy)</code>
+variable is only defined for services promises.
 
 <ul class="menu">
 <li><a accesskey="1" href="#service_005fpolicy-in-services">service_policy in services</a>
@@ -22595,39 +22674,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#services-in-agent-promises">services i
 <p class="noindent"><b>Type</b>: (ext body)
 
      <dl>
-<dt>&lsquo;<samp><code>service_type</code></samp>&rsquo;<dd><b>Type</b>: (menu option)
-
-     <p class="noindent"><b>Allowed input range</b>: <br>
-     <pre class="example">                    <code>windows</code>
-                    <code>init</code>
-                    <code>inetd</code>
-                    <code>xinetd</code>
-</pre>
-     <p class="noindent"><b>Synopsis</b>: Service abstraction type
-
-     <p><b>Example</b>:<br>
-<br>
-
-     <pre class="verbatim">     
-<span class="red">body service_method</span> <span class="blue">example</span>
-     {
-<span class="red">       type </span>=><span class="green"> "windows";</span>
-     }
-     
-</pre>
-
-     <p><b>Notes</b>:<br>
-<br>
-
-     <p>On Windows this defaults to, and must be <code>windows</code>. 
-Unix systems can however have multiple means of registering
-services, but the choice must be available on the given system.
-
-     <br><dt>&lsquo;<samp><code>service_args</code></samp>&rsquo;<dd><b>Type</b>: string
+<dt>&lsquo;<samp><code>service_args</code></samp>&rsquo;<dd><b>Type</b>: string
 
      <p class="noindent"><b>Allowed input range</b>: (arbitrary string)
 
-     <p class="noindent"><b>Synopsis</b>: Parameters for starting the service
+     <p class="noindent"><b>Synopsis</b>: Parameters for starting the service as command
 
      <p><b>Example</b>:<br>
 <br>
@@ -22684,6 +22735,9 @@ it is being used.
      <p><code>on_demand</code> is not supported by Windows, and is implemented
 through inetd or xinetd on Unix.
 
+     <br><dt>&lsquo;<samp><code>service_bundle</code></samp>&rsquo;<dd><b>Type</b>: (ext bundle)
+ (Separate Bundle)
+
      <br><dt>&lsquo;<samp><code>service_dependence_chain</code></samp>&rsquo;<dd><b>Type</b>: (menu option)
 
      <p class="noindent"><b>Allowed input range</b>: <br>
@@ -22731,6 +22785,32 @@ CFEngine Nova will start A, if it is not running. On the other hand,
 if we want to stop B, C needs to be stopped
 first. <code>stop_child_services</code> or <code>all_related</code> means that
 CFEngine Nova will stop C, if it is running.
+
+     <br><dt>&lsquo;<samp><code>service_type</code></samp>&rsquo;<dd><b>Type</b>: (menu option)
+
+     <p class="noindent"><b>Allowed input range</b>: <br>
+     <pre class="example">                    <code>windows</code>
+                    <code>generic</code>
+</pre>
+     <p class="noindent"><b>Synopsis</b>: Service abstraction type
+
+     <p><b>Example</b>:<br>
+<br>
+
+     <pre class="verbatim">     
+<span class="red">body service_method</span> <span class="blue">example</span>
+     {
+<span class="red">       type </span>=><span class="green"> "windows";</span>
+     }
+     
+</pre>
+
+     <p><b>Notes</b>:<br>
+<br>
+
+     <p>On Windows this defaults to, and must be <code>windows</code>. 
+Unix systems can however have multiple means of registering
+services, but the choice must be available on the given system.
 
    </dl>
 
@@ -34444,7 +34524,7 @@ variable itself is class-specific.
 <li><a href="#Variable-sys_002efqhost">Variable sys.fqhost</a>
 <li><a href="#Variable-sys_002efstab">Variable sys.fstab</a>
 <li><a href="#Variable-sys_002ehardware_005faddresses">Variable sys.hardware_addresses</a>
-<li><a href="#Variable-sys_002ehardware_005fmac_005bwlan0_005d">Variable sys.hardware_mac[wlan0]</a>
+<li><a href="#Variable-sys_002ehardware_005fmac_005binterface_005fname_005d">Variable sys.hardware_mac[interface_name]</a>
 <li><a href="#Variable-sys_002ehost">Variable sys.host</a>
 <li><a href="#Variable-sys_002ehub_005fmaster">Variable sys.hub_master</a>
 <li><a href="#Variable-sys_002einterface">Variable sys.interface</a>
@@ -34996,7 +35076,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 <a name="Variable-sys.hardware_addresses"></a>
 <a name="Variable-sys_002ehardware_005faddresses"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ehardware_005fmac_005bwlan0_005d">Variable sys.hardware_mac[wlan0]</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ehardware_005fmac_005binterface_005fname_005d">Variable sys.hardware_mac[interface_name]</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002efstab">Variable sys.fstab</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
@@ -35006,16 +35086,14 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 <p><br>
 
-   <p><i>History</i>: Was introduced in 3.3.0a1.r3641, Nova 2.2.0.a1.r3258, Constellation 1.0.0a1.r307 (2011)
+   <p><i>History</i>: Was introduced in 3.3.0, Nova 2.2.0, Constellation 1.0.0 (2011)
 
-<pre class="verbatim">
-Fill me in (./var_sys_hardware_addresses.texinfo)
-""
-</pre>
+   <p>This is a list variable containing a list of all known MAC addresses for
+system interfaces.
 
 <div class="node">
-<a name="Variable-sys.hardware_mac%5bwlan0%5d"></a>
-<a name="Variable-sys_002ehardware_005fmac_005bwlan0_005d"></a>
+<a name="Variable-sys.hardware_mac%5binterface_name%5d"></a>
+<a name="Variable-sys_002ehardware_005fmac_005binterface_005fname_005d"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ehost">Variable sys.host</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002ehardware_005faddresses">Variable sys.hardware_addresses</a>,
@@ -35023,15 +35101,20 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.24 Variable sys.hardware_mac[wlan0]</h4>
+<h4 class="subsection">12.5.24 Variable sys.hardware_mac[interface_name]</h4>
 
 <p><br>
 
-   <p><i>History</i>: Was introduced in 3.3.0a1.r3641, Nova 2.2.0.a1.r3258, Constellation 1.0.0a1.r307 (2011)
+   <p><i>History</i>: Was introduced in 3.3.0, Nova 2.2.0, Constellation 1.0.0 (2011)
+
+   <p>This contains the MAC address of the named interface. e.g.
 
 <pre class="verbatim">
-Fill me in (./var_sys_hardware_mac[wlan0].texinfo)
-""
+<span class="red">reports:
+</span>
+  linux::
+
+    "Tell me $(harware_mac[eth0])";
 </pre>
 
 <div class="node">
@@ -35039,7 +35122,7 @@ Fill me in (./var_sys_hardware_mac[wlan0].texinfo)
 <a name="Variable-sys_002ehost"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ehub_005fmaster">Variable sys.hub_master</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002ehardware_005fmac_005bwlan0_005d">Variable sys.hardware_mac[wlan0]</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002ehardware_005fmac_005binterface_005fname_005d">Variable sys.hardware_mac[interface_name]</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
 </div>
@@ -35778,7 +35861,8 @@ variable by qualifying it with the bundle name in which it is declared).
 <li><a accesskey="2" href="#Variable-this_002epromise_005ffilename">Variable this.promise_filename</a>
 <li><a accesskey="3" href="#Variable-this_002epromise_005flinenumber">Variable this.promise_linenumber</a>
 <li><a accesskey="4" href="#Variable-this_002epromiser">Variable this.promiser</a>
-<li><a accesskey="5" href="#Variable-this_002ethis">Variable this.this</a>
+<li><a accesskey="5" href="#Variable-service_005fpolicy">Variable service_policy</a>
+<li><a accesskey="6" href="#Variable-this_002ethis">Variable this.this</a>
 </ul>
 
 <div class="node">
@@ -35829,7 +35913,7 @@ useful to differentiate otherwise identical reports promises.
 <a name="Variable-this.promiser"></a>
 <a name="Variable-this_002epromiser"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-this_002ethis">Variable this.this</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-service_005fpolicy">Variable service_policy</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-this_002epromise_005flinenumber">Variable this.promise_linenumber</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-this">Variable context this</a>
 
@@ -35868,15 +35952,36 @@ currently identified file that makes the promise.  For example:
 </pre>
 
 <div class="node">
-<a name="Variable-this.this"></a>
-<a name="Variable-this_002ethis"></a>
+<a name="Variable-service_policy"></a>
+<a name="Variable-service_005fpolicy"></a>
 <p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-this_002ethis">Variable this.this</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-this_002epromiser">Variable this.promiser</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-this">Variable context this</a>
 
 </div>
 
-<h4 class="subsection">12.6.5 Variable this.this</h4>
+<h4 class="subsection">12.6.5 Variable service_policy</h4>
+
+<p>This variable is set to the values of the promise attribute <code>service_policy</code>, e.g.
+
+<pre class="verbatim">services:
+
+  "www"<span class="red">  service_policy </span>=><span class="green"> "start";</span>
+</pre>
+and is typically used in the adaptations for custom services bundles
+in the service methods, See <a href="#service_005fmethod-in-services">service_method in services</a>.
+
+<div class="node">
+<a name="Variable-this.this"></a>
+<a name="Variable-this_002ethis"></a>
+<p><hr>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-service_005fpolicy">Variable service_policy</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-this">Variable context this</a>
+
+</div>
+
+<h4 class="subsection">12.6.6 Variable this.this</h4>
 
 <p>From version core 3.3.0 this variables is reserved. It is used by
 functions like <code>maplist()</code> to represent the current object in
@@ -36893,7 +36998,7 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <li><a href="#Variable-sys_002efqhost">12.5.21 Variable sys.fqhost</a>
 <li><a href="#Variable-sys_002efstab">12.5.22 Variable sys.fstab</a>
 <li><a href="#Variable-sys_002ehardware_005faddresses">12.5.23 Variable sys.hardware_addresses</a>
-<li><a href="#Variable-sys_002ehardware_005fmac_005bwlan0_005d">12.5.24 Variable sys.hardware_mac[wlan0]</a>
+<li><a href="#Variable-sys_002ehardware_005fmac_005binterface_005fname_005d">12.5.24 Variable sys.hardware_mac[interface_name]</a>
 <li><a href="#Variable-sys_002ehost">12.5.25 Variable sys.host</a>
 <li><a href="#Variable-sys_002ehub_005fmaster">12.5.26 Variable sys.hub_master</a>
 <li><a href="#Variable-sys_002einterface">12.5.27 Variable sys.interface</a>
@@ -36930,7 +37035,8 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <li><a href="#Variable-this_002epromise_005ffilename">12.6.2 Variable this.promise_filename</a>
 <li><a href="#Variable-this_002epromise_005flinenumber">12.6.3 Variable this.promise_linenumber</a>
 <li><a href="#Variable-this_002epromiser">12.6.4 Variable this.promiser</a>
-<li><a href="#Variable-this_002ethis">12.6.5 Variable this.this</a>
+<li><a href="#Variable-service_005fpolicy">12.6.5 Variable service_policy</a>
+<li><a href="#Variable-this_002ethis">12.6.6 Variable this.this</a>
 </li></ul>
 </li></ul>
 <li><a name="toc_Logs-and-records" href="#Logs-and-records">13 Logs and records</a>

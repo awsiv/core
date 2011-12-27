@@ -74,13 +74,15 @@ documentation::
 documentation::
     "edit_fstab"  association => a("is contained in","cf3-reference","contains");
 documentation::
+    "service_type"  association => a("is contained in","cf3-reference","contains");
+documentation::
     "service_dependence_chain"  association => a("is contained in","cf3-reference","contains");
+documentation::
+    "service_bundle"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "service_autostart_policy"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "service_args"  association => a("is contained in","cf3-reference","contains");
-documentation::
-    "service_type"  association => a("is contained in","cf3-reference","contains");
 documentation::
     "vsize"  association => a("is contained in","cf3-reference","contains");
 documentation::
@@ -2264,16 +2266,19 @@ service_dependencies::
 service_method::
  "/docs/cf3-reference.html#service_005fmethod-in-services"
   represents => { "manual subsection" };
-service_type::
- "/docs/cf3-reference.html#service_005fmethod-in-services"
-  represents => { "document" };
 service_args::
  "/docs/cf3-reference.html#service_005fmethod-in-services"
   represents => { "document" };
 service_autostart_policy::
  "/docs/cf3-reference.html#service_005fmethod-in-services"
   represents => { "document" };
+service_bundle::
+ "/docs/cf3-reference.html#service_005fmethod-in-services"
+  represents => { "document" };
 service_dependence_chain::
+ "/docs/cf3-reference.html#service_005fmethod-in-services"
+  represents => { "document" };
+service_type::
  "/docs/cf3-reference.html#service_005fmethod-in-services"
   represents => { "document" };
 storage_promises_in_agent::
@@ -3521,8 +3526,8 @@ Variable_sys_fstab::
 Variable_sys_hardware_addresses::
  "/docs/cf3-reference.html#Variable-sys_002ehardware_005faddresses"
   represents => { "manual subsection" };
-Variable_sys_hardware_mac_wlan0_::
- "/docs/cf3-reference.html#Variable-sys_002ehardware_005fmac_005bwlan0_005d"
+Variable_sys_hardware_mac_interface_name_::
+ "/docs/cf3-reference.html#Variable-sys_002ehardware_005fmac_005binterface_005fname_005d"
   represents => { "manual subsection" };
 Variable_sys_host::
  "/docs/cf3-reference.html#Variable-sys_002ehost"
@@ -3625,6 +3630,9 @@ Variable_this_promise_linenumber::
   represents => { "manual subsection" };
 Variable_this_promiser::
  "/docs/cf3-reference.html#Variable-this_002epromiser"
+  represents => { "manual subsection" };
+Variable_service_policy::
+ "/docs/cf3-reference.html#Variable-service_005fpolicy"
   represents => { "manual subsection" };
 Variable_this_this::
  "/docs/cf3-reference.html#Variable-this_002ethis"
