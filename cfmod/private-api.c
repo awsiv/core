@@ -2399,12 +2399,12 @@ PHP_FUNCTION(cfpr_select_hosts)
 
 PHP_FUNCTION(cfpr_select_reports)
 
-{  const int bufsize = 100000;
- char buffer[bufsize];
+{ const int bufsize = 1000000;
+  char buffer[bufsize];
 
 // buffer[0] = '\0';
- Nova2PHP_select_reports(buffer,bufsize);
- RETURN_STRING(buffer,1);
+Nova2PHP_select_reports(buffer,bufsize);
+RETURN_STRING(buffer,1);
 }
 
 /******************************************************************************/

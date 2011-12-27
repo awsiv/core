@@ -240,7 +240,7 @@ typedef enum basic_reports
    cfrep_unknown
    } basic_reports;
 
-extern const char *BASIC_REPORTS[][2];
+extern const char *BASIC_REPORTS[][4];
 
 /*****************************************************************************/
 

@@ -4084,7 +4084,7 @@ static char *FormatTwoDimensionalArrayAsJson(char *buf, int bufsize, const char 
 
  for (i = 0; array[i][0] != NULL; i++)
     {
-    snprintf(work, sizeof(work), "[\"%s\",\"%s\"],", array[i][0], array[i][1]);
+    snprintf(work, sizeof(work), "[\"%s\",\"%s\"],", array[i][2], array[i][3]);
     Join(buf,work,bufsize);
     }
 

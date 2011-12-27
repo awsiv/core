@@ -20,19 +20,19 @@
 
 // TODO: Implement ? - we only support one signal: SIGKILL (9)
 /* Returns true if SIGKILL was one of the signals, false otherwise */
+
 int NovaWin_DoAllSignals(struct Item *siglist,struct Attributes a,struct Promise *pp)
 {
- 
- if(!BOOTSTRAP && !Nova_CheckLicenseWin("NovaWin_DoAllSignals"))
-    {
-    return 0;
-    }
- 
-  int kill = false;
-  int signal;
-  struct Item *ip;
-  struct Rlist *rp;
-  pid_t pid;
+if(!BOOTSTRAP && !Nova_CheckLicenseWin("NovaWin_DoAllSignals"))
+   {
+   return 0;
+   }
+
+int kill = false;
+int signal;
+struct Item *ip;
+struct Rlist *rp;
+pid_t pid;
 
 if (siglist == NULL)
    {
@@ -53,17 +53,17 @@ for (ip = siglist; ip != NULL; ip=ip->next)
       {
       signal = Signal2Int(rp->item);
 
-      if(signal != SIGKILL)
-	{
-	  CfOut(cf_verbose, "", "The only supported signal on windows is 'kill'");
-	  continue;
-	}
+      if (signal != SIGKILL)
+         {
+         CfOut(cf_verbose, "", "The only supported signal on windows is 'kill'");
+         continue;
+         }
       
       kill = true;
       
       if (!DONTDO)
          {         
-	   if(!NovaWin_GracefulTerminate(pid))
+         if(!NovaWin_GracefulTerminate(pid))
             {
             cfPS(cf_verbose,CF_FAIL,"",pp,a," !! Couldn't terminate process with pid %d\n", pid);
             continue;
@@ -76,7 +76,7 @@ for (ip = siglist; ip != NULL; ip=ip->next)
          }
       else
          {
-	   CfOut(cf_error,""," -> Need to terminate process with pid %d", pid);
+         CfOut(cf_error,""," -> Need to terminate process with pid %d", pid);
          }
       }
    }
