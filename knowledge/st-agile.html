@@ -1,0 +1,368 @@
+<html lang="en">
+<head>
+<title>Agility in Infrastructure Engineering</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Agility in Infrastructure Engineering">
+<meta name="generator" content="makeinfo 4.13">
+<link title="Top" rel="top" href="#Top">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+@font-face {
+    font-family: 'CFE_FONT';
+    src: url('fonts/eot/opensans-regular-webfont.eot');
+    src: local('☺'),  url('fonts/ttf/opensans-regular-webfont.ttf') format('truetype'), url('fonts/svg/opensans-regular-webfont.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}    
+pre {
+    background-color: #EEFFDD;
+    border: 1px solid #CCCCCC;
+    font-family: courier;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    padding: 5px;
+    font-size: 90%;
+    }
+pre.display { font-family:inherit }
+pre.format  { font-family:inherit }
+pre.smallexample
+pre.smalllisp,
+pre.smallformat,
+pre.smalldisplay {
+  font-size: 90%;
+} 
+
+span.sc    { font-variant:small-caps }
+span.roman { font-family:serif; font-weight:normal; } 
+span.sansserif { font-family:sans-serif; font-weight:normal; } 
+
+body {
+    font:  90%  'CFE_FONT', arial, Helvetica,sans-serif; 
+    color: #646464;
+    padding: 10px 20px;
+    width: 960px;
+    margin: 0 auto;
+}
+.node
+{
+    text-align: right;
+    padding: 2px;
+    font-size: smaller;
+}
+.node hr {
+    border: 0;
+    width: 100%;
+    color: #CCC;
+    background-color: #CCC;
+    height: 5px;
+}
+.section {
+    padding-right: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+}
+
+h1 {
+    font-size: 26px;
+    font-weight: normal;
+    line-height: 32px;
+    margin: 32px 0 16px;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+h2 {
+    color: #9E9981 !important;
+    font-size: 16px;
+    line-height: 18px;
+    font-weight: normal;
+    margin: 16px 0 26px;
+    text-align: left;
+}
+h3 {
+    margin-top: 3px;
+    margin-right: 0px;
+    margin-bottom: 10px;
+    margin-left: 0px;
+    line-height: 20px;
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.contents
+{
+    background-color: #CCC;
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 10px;
+}
+
+.index-cp
+{  
+background: #fff url(index-cp.png) right repeat-y;
+}
+
+.index-vr
+{  
+background: #fff url(index-vr.png) right repeat-y;
+}
+
+.index-mb
+{  
+background: #eee url(index-faq.png) right repeat-y;
+}
+
+table.border
+{
+	border-color: #666;
+	border-width: 0px;
+}
+
+FONT.liten {font-size: 80%; }
+ 
+.tynn {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: smaller;
+    font-style: normal;
+    font-weight: lighter;
+    margin-bottom: 0em;
+    font-size: 11pt;
+}
+.verbatim {
+    color: #000;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 20px;
+    margin-left: 0px;
+}
+.example {
+    color: #000;
+    width: 100%;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 20px;
+    margin-left: 0px;
+}
+.smallexample {
+    color: #000;
+    padding-top: 10px;
+    padding-right: 30px;
+    padding-bottom: 5px;
+    padding-left: 30px;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+}
+.cartouche {
+    padding: 5px;
+    font-style: italic;
+    font-size: 85%;
+}
+
+table.cartouche {
+    border: none !important;
+}
+
+ .cartouche td  {
+    background-color: #ddd;
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+
+A:link { color: #2c2e70 }
+A:visited { color: black }
+A:active { color: #600041 }
+dt em {font-weight: bold}
+/* don't change this rule */    
+pre.sp {
+    background: none !important;   
+    border:none !important
+}
+/* --- */
+/*code hightlight*/
+.red { color: #b80047; font-weight: bold; }
+
+.blue { color: blue;  /*font-weight: bold;*/ }
+
+.green { color: darkgreen; }
+
+.comment { font-style: italic; }
+--></style>
+</head>
+<body>
+<h1 class="settitle">Agility in Infrastructure Engineering</h1>
+<div class="node">
+<a name="Top"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Defining-Agilty">Defining Agilty</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#dir">(dir)</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
+
+</div>
+
+<h2 class="unnumbered">Agility</h2>
+
+   <p><a href="#Contents"><h1>COMPLETE TABLE OF CONTENTS</h1></a>
+<h2>Summary of contents</h2>
+
+<ul class="menu">
+<li><a accesskey="1" href="#Defining-Agilty">Defining Agilty</a>
+</ul>
+
+<div class="node">
+<a name="Defining-Agilty"></a>
+<p><hr>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Top">Top</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
+
+</div>
+
+<h2 class="chapter">1 Defining Agilty</h2>
+
+<pre class="sp">
+
+</pre>
+
+We intuitively recognize agility as the capability to respond fast
+enough to a pressing event. The event might represent danger, or
+merely a self-imposed deadline.  In any case, there is generally a
+penalty associated with not responding quickly.
+
+   <p>To understand agility, we have to understand time. Agility is a
+relative concept: it's about being fast enough, in the right context. 
+Let's try to gain an engineering perspective on agility to see what
+enables it and what throttles it.
+
+   <p>We can define a measure of agility as the ratio of available speed to
+required speed.
+
+<pre class="verbatim">Agilty ~ Available speed with control
+         ----------------------------
+                Required speed
+</pre>
+
+<p class="noindent">This definition behaves reasonably. If we our speed matches what we need, then
+we can claim 100% agility. If it is less than required, thenwe get a smaller number, and if
+we have excess speed we can claim a superefficiency.
+
+   <p>What is required speed?  It is is the rate of change you have to be
+able to enact in order to achieve and maintain a state (keep a
+promise) that is aligned with a an organization's well-being. If we
+think in terms of services, it is the Service Level you have to
+achieve to comply with a Service Level Agreement.  If we think of a
+support ticket, it is the speed we have to work at in order
+to keep the impact of an unpredicted change within acceptable
+levels. What is acceptable is clearly a subjective judgement, a matter
+for policy to decide. So there are many uncertainties and relativisms.
+
+   <p>The weakest link in a chain of dependencies limits the speed of any chain. 
+The weakest link might be a human who doesn't understand what to do, or a
+broken wire or a misconfigured switch. An organization is an information
+rich <i>society</i> with complex interplays between Man and Machine.
+
+   <p>The available speed is called the Capacity of the component.
+
+   <p>Let's create some scaling laws.
+
+<pre class="verbatim">Average available speed ~ Expected capacity * reliability
+                          ----------------------------
+                                  Consumers
+</pre>
+
+<pre class="verbatim">Efficiency ~  Number of objects affected
+             ----------------------------
+                Number of rules + 1
+</pre>
+
+<pre class="verbatim">Comprehensibilty ~  Predictability or reliability
+                    ----------------------------
+                         Machines * rules
+</pre>
+
+   <p>Mean Time to Repair.
+
+   <p>Nimble, lightweight, strong, balanced..
+
+   <p>From the perspective of agility, regular scheduling and speed of change are the
+values we covet.
+
+   <div class="block-image"><img src="agility.png" alt="agility.png"></div>
+
+<ul class="menu">
+<li><a accesskey="1" href="#What-is-scalability_003f">What is scalability?</a>
+</ul>
+
+<div class="node">
+<a name="What-is-scalability%3f"></a>
+<a name="What-is-scalability_003f"></a>
+<p><hr>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Defining-Agilty">Defining Agilty</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Defining-Agilty">Defining Agilty</a>
+
+</div>
+
+<h3 class="section">1.1 What is scalability?</h3>
+
+<pre class="sp">
+
+</pre>
+
+By scalability we mean the intrinsic capacity of a system to
+handle growth. Growth in a system can occur in three ways: by the volume of input
+the system must handle, in the total size of its infrastructure,
+and by the complexity of the processes within it.
+
+   <p>For a system to be called scalable, growth should proceed unhindered,
+i.e. the size and volume of processing may expand without
+significantly affecting the average service level per node.
+
+   <p>Although most of us have an intuitive notion of what scalability
+means, a full understanding of it is a very complex issue, mainly
+because there are so many factors to take into account. One factor
+that is often forgotten in considering scalability, is the human
+ability to <i>comprehend</i> the system as it grows. Limitations of
+comprehension often lead to over-simplification and
+lowest-common-denominator standardization.
+
+   <p>Scalability is addressed in a separate document: <i>Scale and Scalability</i>.
+
+   <p><a name="Contents">
+   <div class="contents">
+<h2>Table of Contents</h2>
+<ul>
+<li><a name="toc_Top" href="#Top">Agility</a>
+<li><a name="toc_Defining-Agilty" href="#Defining-Agilty">1 Defining Agilty</a>
+<ul>
+<li><a href="#What-is-scalability_003f">1.1 What is scalability?</a>
+</li></ul>
+</li></ul>
+</div>
+
+
+
+   <p><script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://
+ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-
+analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+var pageTracker = _gat._getTracker("UA-2576171-2");
+pageTracker._initData();
+pageTracker._trackPageview();
+</script>
+
+</body></html>
+
