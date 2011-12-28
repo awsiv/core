@@ -243,11 +243,11 @@ chmod(filename,0600);
 
 /*****************************************************************************/
 
-void LookupClassName(int n, char *name, char *desc)
+void LookupObservable(int n, char *name, char *desc)
 
 {
 Nova_LoadSlots();
-GetClassName(n, name, desc);
+GetObservable(n, name, desc);
 }
 
 /*****************************************************************************/
@@ -256,12 +256,12 @@ void Nova_LookupAggregateClassName(int n,char *name,char *desc)
 
 {
 Nova_LoadSlots();
-GetClassName(n,name,desc);
+GetObservable(n,name,desc);
 }
 
 /*****************************************************************************/
 
-void GetClassName(int i,char *name,char *desc)
+void GetObservable(int i,char *name,char *desc)
 
 {
 Nova_LoadSlots();
