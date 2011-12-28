@@ -15,6 +15,7 @@
 #endif
 
 #ifdef HAVE_LIBLDAP
+/* LDAP functionality uses several functions which are only provided if this macro is defined */
 #  define LDAP_DEPRECATED 1
 #  include <ldap.h>
 #endif
