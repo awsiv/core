@@ -15,6 +15,88 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+
+int VerifyDatabasePromise(CfdbConn *cfdb,char *database,struct Attributes a,struct Promise *pp)
+
+{
+  char query[CF_BUFSIZE],name[CF_MAXVARSIZE];
+  int found = false;
+ 
+CfOut(cf_verbose,""," -> Verifying promised database");
+
+if (!cfdb->connected)
+   {
+   CfOut(cf_inform,"","Database %s is not connected\n",database);
+   return false;
+   }
+
+Nova_CreateDBQuery(cfdb->type,query);
+
+CfNewQueryDB(cfdb,query);
+
+if (cfdb->maxcolumns < 1)
+   {
+   CfOut(cf_error,""," !! The schema did not promise the expected number of fields - got %d expected >= %d\n",cfdb->maxcolumns,1);
+   return false;
+   }
+
+while(CfFetchRow(cfdb))
+   {
+   strncpy(name,CfFetchColumn(cfdb,0),CF_MAXVARSIZE-1);
+
+   CfOut(cf_verbose,"","      ? ... discovered a database called \"%s\"",name);
+   
+   if (strcmp(name,database) == 0)
+      {
+      found = true;
+      }
+   }
+
+if (found)
+   {
+   CfOut(cf_verbose,""," -> Database \"%s\" exists on this connection",database);
+   return true;
+   }
+else
+   {
+   CfOut(cf_verbose,""," !! Database \"%s\" does not seem to exist on this connection",database);
+   }
+
+if (a.database.operation && strcmp(a.database.operation,"drop") == 0)
+   {
+   if (a.transaction.action != cfa_warn && !DONTDO)
+      {
+      CfOut(cf_verbose,""," -> Attempting to delete the database %s",database);
+      snprintf(query,CF_MAXVARSIZE-1,"drop database %s",database); 
+      CfVoidQueryDB(cfdb,query);
+      return cfdb->result;
+      }
+   else
+      {
+      CfOut(cf_error,""," !! Need to delete the database %s but only a warning was promised\n",database);
+      return false;
+      }   
+   }
+
+if (a.database.operation && strcmp(a.database.operation,"create") == 0)
+   {
+   if (a.transaction.action != cfa_warn && !DONTDO)
+      {
+      CfOut(cf_verbose,""," -> Attempting to create the database %s",database);
+      snprintf(query,CF_MAXVARSIZE-1,"create database %s",database); 
+      CfVoidQueryDB(cfdb,query);
+      return cfdb->result;
+      }
+   else
+      {
+      CfOut(cf_error,""," !! Need to create the database %s but only a warning was promised\n",database);
+      return false;
+      }
+   }
+
+return false;
+}
+
 /*****************************************************************************/
 
 int CheckDatabaseSanity(struct Attributes a, struct Promise *pp)

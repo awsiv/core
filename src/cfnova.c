@@ -82,7 +82,7 @@ return true;
 
 /*****************************************************************************/
 
-void Nova_EnterpriseModuleTrick()
+void EnterpriseModuleTrick()
 {
 #ifdef HAVE_LIBMONGOC
 char buffer[CF_MAXVARSIZE];
@@ -151,4 +151,33 @@ if (false)
    Nova2PHP_cdp_report(NULL, NULL, NULL, NULL, 10000);
    }
 #endif
+
+#if defined(HAVE_CONSTELLATION)
+Constellation_EnterpriseModuleTrick();
+#endif
+}
+
+/*****************************************************************************/
+
+const char *GetConsolePrefix(void)
+{
+#if defined(HAVE_CONSTELLATION)
+return "constellation";
+#else
+return "nova";
+#endif
+}
+
+/*****************************************************************************/
+
+const char *MailSubject(void)
+{
+if (LICENSES)
+   {
+   return "Nova";
+   }
+else
+   {
+   return "NO LICENSE";
+   }
 }

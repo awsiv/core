@@ -779,7 +779,6 @@ void ThisHashString(char *str,char *buffer,int len,unsigned char digest[EVP_MAX_
 
 int Nova_HashKey(char *filename,char *buffer,unsigned char digest[EVP_MAX_MD_SIZE+1],char *hash);
 int Nova_EnterpriseModuleExpiry(char *day,char *month,char *year);
-void Nova_CheckLicensePromise(void);
 void Nova_LogLicenseStatus(void);
 int Nova_CheckLicenseWin(char *pos);
 char *Nova_LicenseOwner(void);
@@ -964,7 +963,7 @@ void Nova_ListTables(int type,char *query);
 
 /* syntax.c */
 
-void Nova_SyntaxTree2JavaScript(void);
+void SyntaxTree2JavaScript(void);
 void Nova_ShowBundleTypes(void);
 void Nova_ShowControlBodies(void);
 void Nova_ShowPromiseTypesFor(char *s, struct SubTypeSyntax *commonMerge);

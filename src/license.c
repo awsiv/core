@@ -387,7 +387,7 @@ return result;
 
 /*****************************************************************************/
 
-void Nova_CheckLicensePromise()
+void CheckLicenses(void)
 
 { int licenses = 0;
 struct Rval retval;

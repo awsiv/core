@@ -2532,3 +2532,14 @@ void Nova_ImportReports(const char *input_file)
  CfOut(cf_error, "", "Importing reports is only possible on Nova policy hubs");
 #endif
 }
+
+/*****************************************************************************/
+
+void NoteEfficiency(double e)
+{
+struct Attributes a = {{0}};
+struct Promise p = {0};
+
+NovaNamedEvent("Configuration model efficiency",e,a,&p);
+CfOut(cf_verbose,""," -> Configuration model efficiency for %s = %.2lf%%",VUQNAME,e);
+}

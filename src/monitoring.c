@@ -103,6 +103,9 @@ struct CfMeasurement NOVA_DATA[CF_DUNBAR_WORK];
 static bool slots_loaded;
 static MonitoringSlot *SLOTS[CF_OBSERVABLES - ob_spare];
 
+static struct Averages SHIFT_VALUE;
+static char CURRENT_SHIFT[CF_MAXVARSIZE];
+
 /*****************************************************************************/
 
 static void Nova_FreeSlot(MonitoringSlot *slot)
@@ -1487,3 +1490,71 @@ else
    return value;
    }
 }
+
+/****************************************************************************/
+
+void HistoryUpdate(struct Averages newvals)
+
+{
+  struct Promise *pp = NewPromise("history_db","the long term memory");
+  struct Attributes dummyattr = {{0}};
+  struct CfLock thislock;
+  time_t now = time(NULL);
+
+/* We do this only once per hour - this should not be changed */
+
+Banner("Update long-term history");
+
+if (strlen(CURRENT_SHIFT) == 0)
+   {
+   // initialize
+   Nova_ResetShiftAverage(&SHIFT_VALUE);
+   }
+
+memset(&dummyattr,0,sizeof(dummyattr));
+dummyattr.transaction.ifelapsed = 59;
+
+thislock = AcquireLock(pp->promiser,VUQNAME,now,dummyattr,pp,false);
+
+if (thislock.lock == NULL)
+   {
+   Nova_UpdateShiftAverage(&SHIFT_VALUE,&newvals);
+   DeletePromise(pp);
+   return;
+   }
+
+/* Refresh the class context of the agent */
+DeletePrivateClassContext();
+DeleteEntireHeap();
+DeleteAllScope();
+
+NewScope("sys");
+NewScope("const");
+NewScope("match");
+NewScope("mon");
+NewScope("control_monitor");
+NewScope("control_common");
+GetNameInfo3();
+CfGetInterfaceInfo(cf_monitor);
+Get3Environment();
+BuiltinClasses();
+OSClasses();
+SetReferenceTime(true);
+
+LoadPersistentContext();
+LoadSystemConstants();
+
+YieldCurrentLock(thislock);
+DeletePromise(pp);
+
+Nova_HistoryUpdate(CFSTARTTIME, &newvals);
+
+if (strcmp(CURRENT_SHIFT,VSHIFT) != 0)
+   {
+   strcpy(CURRENT_SHIFT,VSHIFT);
+   Nova_ResetShiftAverage(&SHIFT_VALUE);
+   }
+
+Nova_DumpSlowlyVaryingObservations();
+}
+

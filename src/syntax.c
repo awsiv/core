@@ -10,7 +10,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-void Nova_SyntaxTree2JavaScript()
+void SyntaxTree2JavaScript()
 {
 
   Nova_ShowBundleTypes();
