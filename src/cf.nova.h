@@ -274,9 +274,7 @@ extern const char *BASIC_REPORTS[][4];
 
 /* acl.c */
 
-void Nova_VerifyACL(char *file,struct Attributes a, struct Promise *pp);
 void  Nova_SetACLDefaults(char *path, struct CfACL *acl);
-int Nova_CheckACLSyntax(char *file,struct CfACL acl,struct Promise *pp);
 int Nova_CheckACESyntax(char *ace, char *valid_nperms, char *valid_ops, int deny_support, int mask_support,struct Promise *pp);
 int Nova_CheckModeSyntax(char **mode_p, char *valid_nperms, char *valid_ops,struct Promise *pp);
 int Nova_CheckPermTypeSyntax(char *permt, int deny_support,struct Promise *pp);
@@ -387,10 +385,6 @@ void Nova_Annealing(struct CfGraphNode neighbours1[CF_TRIBE_SIZE],struct CfGraph
 int Overlap(double x1,double y1,double x2,double y2);
 int Nova_InRange(struct CfDataView cfv,int x,int y);
 void Nova_BoundaryCheck(struct CfDataView *cfv,int *x1,int *y1,int *x2, int *y2);
-
-/* database.c */
-
-int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp);
 
 /* db_query.c */
 
@@ -748,21 +742,18 @@ void CountMarginRecordsVars(struct Rlist **records_p, struct PageInfo *page,int 
 
 char *Name2Id(char *s);
 void Nova_StoreKMDB(struct Topic **topichash,struct Occurrence *occurrences,struct Inference *inferences);
-void Nova_SyntaxCompletion(char *s);
 void Nova_ListAgents(void);
 void Nova_ListFunctions(void);
 void Nova_ListFunction(const FnCallType *f,int full);
 void Nova_ListPromiseTypes(void);
 
 void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,const char *version);
-void Nova_ShowTopicRepresentation(FILE *fp);
 void Nova_BundleReference(FILE *fp,char *bundle);
 void Nova_TypeNode(FILE *fp,char *type);
 void Nova_PromiseNode(FILE *fp,struct Promise *pp,int calltype);
 void Nova_TypeNode(FILE *fp,char *type);
 void Nova_BundleNode(FILE *fp,char *bundle);
 void Nova_BodyNode(FILE *fp,char *body,int calltype);
-char *Nova_PromiseID(struct Promise *pp);
 void Nova_DependencyGraph(struct Topic *map);
 void Nova_PlotTopicDependencies(int topic,double **adj,char **names,int dim);
 void Nova_MapClassParameterAssociations(FILE *fp, struct Promise *pp,char *promise_id);
@@ -770,7 +761,6 @@ double NovaShiftAverage(double new,double old);
 double NovaExtractValueFromStream(char *handle,struct Item *stream,struct Attributes a,struct Promise *pp);
 void NovaLogSymbolicValue(char *handle,struct Item *stream,struct Attributes a,struct Promise *pp);
 void Nova_ShowBundleDependence(FILE *fp);
-void Nova_RegisterBundleDepedence(char *name,struct Promise *pp);
 char *NovaEscape(const char *s); /* Thread-unsafe */
 void NovaShowValues(FILE *fp,struct BodySyntax bs);
 void Nova_RegisterImg(struct Item **list,char *dir,char *pic);
@@ -787,7 +777,6 @@ void ThisHashString(char *str,char *buffer,int len,unsigned char digest[EVP_MAX_
 /* license.c */
 
 int Nova_HashKey(char *filename,char *buffer,unsigned char digest[EVP_MAX_MD_SIZE+1],char *hash);
-int Nova_EnterpriseExpiry(void);
 int Nova_EnterpriseModuleExpiry(char *day,char *month,char *year);
 void Nova_CheckLicensePromise(void);
 void Nova_LogLicenseStatus(void);
@@ -795,9 +784,6 @@ int Nova_CheckLicenseWin(char *pos);
 char *Nova_LicenseOwner(void);
 
 /* logging.c */
-
-/* Delete this function once we build Nova against Core trunk/3.3 */
-void Nova_RemoteSyslog(struct Attributes a,struct Promise *pp);
 
 #include "logging.h"
 
@@ -807,13 +793,10 @@ bool Nova_ReadMagTimeSeries2(mongo_connection *conn, struct CfDataView *cfv,char
 
 /* monitoring.c */
 
-void Nova_GetClassName(int i,char *name,char *desc);
 void Nova_HistoryUpdate(time_t time, const struct Averages *newvals);
 void Nova_UpdateShiftAverage(struct Averages *shift_value,struct Averages *newvals);
 void Nova_ResetShiftAverage(struct Averages *shift_value);
 double ShiftAverage(double new,double old);
-void Nova_VerifyMeasurement(double *this,struct Attributes a,struct Promise *pp);
-void Nova_LongHaul(time_t starttime);
 int NovaRegisterSlot(const char *name, const char *description,const char *units,
                      double expected_minimum, double expected_maximum, bool consolidable);
 bool NovaHasSlot(int idx);
@@ -826,12 +809,9 @@ bool NovaIsSlotConsolidable(int index);
 struct Item *NovaGetMeasurementStream(struct Attributes a,struct Promise *pp);
 struct Item *NovaReSample(int slot,struct Attributes a,struct Promise *pp);
 void NovaNamedEvent(char *eventname,double value,struct Attributes a,struct Promise *pp);
-void Nova_SetMeasurementPromises(struct Item **classlist);
-void Nova_LoadSlowlyVaryingObservations(void);
 void Nova_DumpSlowlyVaryingObservations(void);
 void Nova_MonOtherInit(void);
 void Nova_MonOtherGatherData(double *cf_this);
-void Nova_LookupClassName(int n,char *name, char *desc);
 void Nova_SaveFilePosition(char *filename,long fileptr);
 long Nova_RestoreFilePosition(char *filename);
 void Nova_LookupAggregateClassName(int n,char *name,char *desc);
@@ -850,22 +830,9 @@ double BoundedValue(double value, double defval);
 unsigned GetInstantUint32Value(const char *name, const char *subname, unsigned value, time_t timestamp);
 unsigned long long GetInstantUint64Value(const char *name, const char *subname, unsigned long long value, time_t timestamp);
 
-/* outputs.c */
-
-void Nova_VerifyOutputsPromise(struct Promise *pp);
-void Nova_SetPromiseOutputs(struct Promise *pp);
-void Nova_SetBundleOutputs(char *name);
-void Nova_ResetBundleOutputs(char *name);
-
-/* packages.c */
-
-int Nova_GetInstalledPkgsRpath(struct CfPackageItem **pkgList, struct Attributes a, struct Promise *pp);
-int Nova_ExecPackageCommandRpath(char *command,int verify,int setCmdClasses,struct Attributes a,struct Promise *pp);
-
 /* processes.c */
 
 char *Nova_GetProcessOptions(void);
-void Nova_LogFileChange(char *file,int change,struct Attributes a,struct Promise *pp);
 void Nova_DoFileDiff(char *file,char *destination,struct stat sb,struct stat dsb);
 int Nova_GetFirstChangePosition(char *file,char *destination);
 int Nova_FileIsBinary(char *name,int size,int maxsize);
@@ -886,18 +853,9 @@ void Nova_StoreBody(mongo_connection *dbconn, struct Body *body);
 const char *Nova_Version(void);
 const char *Nova_NameVersion(void);
 
-void Nova_NotePromiseCompliance(struct Promise *pp,double val,enum cf_status status,char *reason);
-time_t Nova_GetPromiseCompliance(struct Promise *pp,double *value,double *average,double *var,time_t *t);
-void Nova_EnterpriseContext(void);
-void Nova_PreSanitizePromise(struct Promise *pp);
-void Nova_TrackValue(char *date,double kept,double repaired, double notkept);
-void Nova_LastSawBundle(char *name);
 void Nova_EnterpriseDiscovery(void);
-void Nova_AnalyzePromiseConflicts(void);
-void Nova_NewPromiser(struct Promise *pp);
 int Nova_ClassesIntersect(struct Rlist *contexts1,struct Rlist *contexts2);
 void Nova_DefineHubMaster(void);
-void Nova_AddGoalsToDB(char *goal_patterns, char *goal_categories);
 /* pscalar.c */
 
 int Nova_GetPersistentScalar(char *lval,char *rval,int size,time_t timeout);
@@ -906,25 +864,11 @@ void Nova_SetPersistentScalar(char *lval,char *rval);
 /* registry.c */
 
 int Nova_ValidateRegistryPromiser(char *s,struct Attributes a,struct Promise *pp);
-int Nova_GetRegistryValueAsString(char *key, char *name, char *buf, int bufSz);
-
 
 /* reporting.c */
 
-void Nova_CSV2XML(struct Rlist *list);
 void Nova_SummarizePromiseRepaired(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
-void Nova_SummarizePromiseNotKept(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
-void Nova_SummarizePerPromiseCompliance(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
-void Nova_SummarizeCompliance(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
-void Nova_SummarizeSetuid(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
-void Nova_SummarizeFileChanges(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
-void Nova_ReportPatches(struct CfPackageManager *list);
-void Nova_SummarizeSoftware(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
-void Nova_SummarizeUpdates(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
-void Nova_SummarizeVariables(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
-void Nova_SummarizeValue(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web);
 void Nova_NoteVarUsage(void);
-void Nova_GrandSummary(void);
 void Nova_SummarizeComms(void);
 void Nova_SummarizeLicense(char *stylesheet,char *banner,char *footer,char *webdriver);
 void Nova_ZenossSummary(char *docroot);
@@ -973,22 +917,13 @@ int Nova_GetHostColour(char *lkeyhash);
 #endif
 /* server.c */
 
-const EVP_CIPHER *Nova_CfengineCipher(char type);
-char Nova_CfEnterpriseOptions(void);
-int Nova_CfSessionKeySize(char c);
-void  Nova_RegisterLiteralServerData(char *handle,struct Promise *pp);
-int Nova_ReturnLiteralData(char *handle,char *retval);
 void Nova_PackAllReports(struct Item **reply, time_t from, time_t delta1, enum cfd_menu type);
-char *Nova_GetRemoteScalar(char *proto,char *handle,char *server,int encrypted,char *rcv);
 int Nova_ParseHostname(char *name,char *hostname);
 
-int Nova_RetrieveUnreliableValue(char *caller,char *handle,char *buffer);
-void Nova_CacheUnreliableValue(char *caller,char *handle,char *buffer);
 pid_t Nova_StartTwin(int argc,char **argv);
 void Nova_SignalTwin(void);
 void Nova_SignalOther(void);
 void Nova_ReviveOther(int argc,char **argv);
-void Nova_TranslatePath(char *new, const char *old);
 
 /* services.c */
 
@@ -1014,7 +949,7 @@ void NovaWin_AllocSplitServiceArgs(char *argStr, int *argcp, char ***argvp);
 /* sql.c */
 
 int Nova_ValidateSQLTableName(char *table_path,char *db,char *table);
-int Nova_VerifyTablePromise(CfdbConn *cfdb,char *table_path,struct Rlist *columns,struct Attributes a,struct Promise *pp);
+int VerifyTablePromise(CfdbConn *cfdb,char *table_path,struct Rlist *columns,struct Attributes a,struct Promise *pp);
 int Nova_ValidateSQLTableName(char *table_path,char *db,char *table);
 void Nova_QueryTableColumns(char *s,char *db,char *table);
 int Nova_NewSQLColumns(char *table,struct Rlist *columns,char ***name_table,char ***type_table,int **size_table,int **done);
@@ -1063,7 +998,6 @@ struct Item *Nova_GetTopicsInContext(char *context);
 struct Item *Nova_GetBusinessGoals(char *handle);
 int Nova_GetUniqueBusinessGoals(char *buffer,int bufsize);
 
-void Nova_SpecialQuote(char *name,char *type);
 void Nova_PlotTopicCosmos(int topic,char *view,char *buf,int size);
 int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int pid,char *v);
 void Nova_EigenvectorCentrality(double A[CF_TRIBE_SIZE][CF_TRIBE_SIZE],double *v,int dim);

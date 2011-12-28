@@ -25,11 +25,10 @@
 
 /*****************************************************************************/
 
-void Nova_VerifyRegistryPromise(struct Attributes a,struct Promise *pp);
 int Nova_OpenRegistryKey(char *key, HKEY *key_h, int create);
 int Nova_PrintAllValues(HKEY key_h);
 int Nova_VerifyRegistryValueAssocs(HKEY key_h,struct Attributes a,struct Promise *pp);
-int Nova_GetRegistryValue(HKEY key_h, char *name, void *data_p, unsigned long *data_sz);
+int Nova_GetRawRegistryValue(HKEY key_h, char *name, void *data_p, unsigned long *data_sz);
 DWORD Str2RegDtype(char *datatypeStr);
 void Nova_RecursiveQueryKey(CF_DB *dbp,HKEY *key_h,char *name,struct Attributes a,struct Promise *pp, int level);
 int Nova_RegistryKeyIntegrity(CF_DB *dbp,char *key,struct Attributes a,struct Promise *pp);
@@ -44,9 +43,9 @@ static bool Nova_CompareRegistryValue(HKEY key_h, DWORD dataType, char *name, ch
 
 /*****************************************************************************/
 
-void Nova_VerifyRegistryPromise(struct Attributes a,struct Promise *pp)
- 
-{ HKEY key_h;  // a registry key handle
+void VerifyRegistryPromise(struct Attributes a,struct Promise *pp)
+{
+  HKEY key_h;  // a registry key handle
   char name[CF_MAXVARSIZE];
   int rr,rw,create = false;
   CF_DB*dbp;
@@ -154,7 +153,7 @@ buffer[0] = '\0';
 
 if (Nova_OpenRegistryKey(key,&key_h,false))
    {
-   if (Nova_GetRegistryValue(key_h,value,reg_data_p,&reg_data_sz))
+   if (Nova_GetRawRegistryValue(key_h,value,reg_data_p,&reg_data_sz))
       {
       RegCloseKey(key_h);
       
@@ -445,7 +444,7 @@ return 0;
 
 /*****************************************************************************/
 
-int Nova_GetRegistryValue(HKEY key_h, char *name, void *data_p, unsigned long *data_sz)
+int Nova_GetRawRegistryValue(HKEY key_h, char *name, void *data_p, unsigned long *data_sz)
 
 { int ret;
 
@@ -464,8 +463,7 @@ else
 
 /*****************************************************************************/
 
-int Nova_GetRegistryValueAsString(char *key, char *name, char *buf, int bufSz)
-
+int GetRegistryValue(char *key, char *name, char *buf, int bufSz)
 {
  unsigned long reg_data_sz = CF_BUFSIZE;
  int len;
@@ -1000,8 +998,15 @@ static bool Nova_CompareRegistryValue(HKEY key_h, DWORD dataType, char *name, ch
  return true;
 }
 
-#endif
+#else /* MINGW */
 
+void VerifyRegistryPromise(struct Attributes a,struct Promise *pp)
+{
+}
 
+int GetRegistryValue(char *key, char *name, char *buf, int bufSz)
+{
+return 0;
+}
 
- 
+#endif /* MINGW */

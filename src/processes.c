@@ -31,7 +31,7 @@ char *Nova_GetProcessOptions()
 
 /*****************************************************************************/
 
-void Nova_LogFileChange(char *file,int change,struct Attributes a,struct Promise *pp)
+void LogFileChange(char *file,int change,struct Attributes a,struct Promise *pp)
 
 { char destination[CF_BUFSIZE];
   struct stat sb, dsb;

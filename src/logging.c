@@ -20,14 +20,7 @@
 static char SYSLOG_HOST[CF_BUFSIZE] = "localhost";
 static uint16_t SYSLOG_PORT = 514;
 
-
 int FACILITY;
-
-/* Delete this function once we build Nova against Core trunk/3.3 */
-void Nova_RemoteSyslog(struct Attributes a, struct Promise *pp)
-{
-RemoteSysLog(a.transaction.log_priority, a.transaction.log_string);
-}
 
 /*****************************************************************************/
 

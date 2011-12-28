@@ -146,7 +146,7 @@ const char *BASIC_REPORTS[][4] =
 
 /*****************************************************************************/
 
-void Nova_CSV2XML(struct Rlist *list)
+void CSV2XML(struct Rlist *list)
 
 { struct Rlist *rp,*rline,*rl;
   int i;
@@ -220,7 +220,7 @@ for (rp = list; rp != NULL; rp = rp->next)
 
 /*****************************************************************************/
 
-void Nova_SummarizeCompliance(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
+void SummarizeCompliance(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
 
 /* /var/cfengine/promise.log */
 
@@ -408,7 +408,7 @@ METER_REPAIRED[meter_compliance_hour] = av_hour_repaired;
 
 /*****************************************************************************/
 
-void Nova_GrandSummary()
+void GrandSummary()
 
 { char name[CF_BUFSIZE];
   FILE *fout;
@@ -437,7 +437,7 @@ fclose(fout);
 
 /*****************************************************************************/
 
-void Nova_SummarizePerPromiseCompliance(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
+void SummarizePerPromiseCompliance(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
 
 { FILE *fout;
   char name[CF_BUFSIZE];
@@ -636,7 +636,7 @@ fclose(fout);
 
 /*****************************************************************************/
 
-void Nova_SummarizeSetuid(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
+void SummarizeSetuid(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
 
 { FILE *fin,*fout;
   char name[CF_BUFSIZE],line[CF_BUFSIZE];
@@ -750,7 +750,7 @@ DeleteItemList(file);
 
 /*****************************************************************************/
 
-void Nova_SummarizeFileChanges(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
+void SummarizeFileChanges(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
 
 { FILE *fin,*fout;
   char name[CF_BUFSIZE],line[CF_BUFSIZE],datestr[CF_MAXVARSIZE],size[CF_MAXVARSIZE];
@@ -1082,7 +1082,7 @@ DeleteItemList(file);
 
 /*****************************************************************************/
 
-void Nova_SummarizePromiseRepaired(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
+void SummarizePromiseRepaired(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
 
 { FILE *fin,*fout;
   char name[CF_BUFSIZE],line[CF_BUFSIZE];
@@ -1207,7 +1207,7 @@ DeleteItemList(file);
 
 /*****************************************************************************/
 
-void Nova_SummarizePromiseNotKept(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
+void SummarizePromiseNotKept(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
 
 { FILE *fin,*fout;
   char name[CF_BUFSIZE],line[CF_BUFSIZE];
@@ -1334,7 +1334,7 @@ DeleteItemList(file);
 
 /*****************************************************************************/
 
-void Nova_ReportPatches(struct CfPackageManager *list)
+void ReportPatches(struct CfPackageManager *list)
 
 { FILE *fout;
   struct CfPackageManager *mp = NULL;
@@ -1383,7 +1383,7 @@ fclose(fout);
 
 /*****************************************************************************/
 
-void Nova_SummarizeSoftware(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
+void SummarizeSoftware(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
 
 { FILE *fin,*fout;
   char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch[CF_MAXVARSIZE],mgr[CF_MAXVARSIZE],line[CF_BUFSIZE];
@@ -1508,7 +1508,7 @@ DeleteItemList(file);
 
 /*****************************************************************************/
 
-void Nova_SummarizeUpdates(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
+void SummarizeUpdates(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
 
 { FILE *fin,*fout;
   char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch[CF_MAXVARSIZE],mgr[CF_MAXVARSIZE],line[CF_BUFSIZE];
@@ -1758,7 +1758,7 @@ DeleteItemList(file);
 
 /*****************************************************************************/
 
-void Nova_SummarizeVariables(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
+void SummarizeVariables(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
 
 {
   char line[CF_BUFSIZE];
@@ -1888,7 +1888,7 @@ METER_REPAIRED[meter_comms_hour] = 100.0*repaired/(kept+repaired+not_kept);
 
 /*****************************************************************************/
 
-void Nova_SummarizeValue(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
+void SummarizeValue(int xml,int html,int csv,int embed,char *stylesheet,char *head,char *foot,char *web)
 
 {
   char name[CF_BUFSIZE];

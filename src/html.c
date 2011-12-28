@@ -174,7 +174,7 @@ snprintf(buffer,bufsize,
 
 /*****************************************************************************/
 
-void Nova_SpecialQuote(char *name,char *type)
+void SpecialQuote(char *name,char *type)
 
 { char filename[CF_BUFSIZE];
   FILE *fin,*fout = stdout;

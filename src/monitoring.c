@@ -240,11 +240,11 @@ chmod(filename,0600);
 
 /*****************************************************************************/
 
-void Nova_LookupClassName(int n,char *name,char *desc)
+void LookupClassName(int n, char *name, char *desc)
 
 {
 Nova_LoadSlots();
-Nova_GetClassName(n, name, desc);
+GetClassName(n, name, desc);
 }
 
 /*****************************************************************************/
@@ -253,12 +253,12 @@ void Nova_LookupAggregateClassName(int n,char *name,char *desc)
 
 {
 Nova_LoadSlots();
-Nova_GetClassName(n,name,desc);
+GetClassName(n,name,desc);
 }
 
 /*****************************************************************************/
 
-void Nova_GetClassName(int i,char *name,char *desc)
+void GetClassName(int i,char *name,char *desc)
 
 {
 Nova_LoadSlots();
@@ -342,7 +342,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
 /*****************************************************************************/
 
-void Nova_VerifyMeasurement(double *this,struct Attributes a,struct Promise *pp)
+void VerifyMeasurement(double *this,struct Attributes a,struct Promise *pp)
 
 { char *handle = (char *)GetConstraintValue("handle",pp,CF_SCALAR);
   struct Item *stream = NULL;
@@ -448,7 +448,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
 /*****************************************************************************/
 
-void Nova_LongHaul(time_t current)
+void LongHaul(time_t current)
 {
 int y,i,j,k;
 char filename[CF_BUFSIZE];
@@ -510,7 +510,7 @@ CloseDB(dbp);
 
 /*****************************************************************************/
 
-void Nova_SetMeasurementPromises(struct Item **classlist)
+void SetMeasurementPromises(struct Item **classlist)
 
 { CF_DB *dbp;
   CF_DBC *dbcp;
@@ -570,7 +570,7 @@ CloseDB(dbp);
 
 /*****************************************************************************/
 
-void Nova_LoadSlowlyVaryingObservations()
+void LoadSlowlyVaryingObservations()
 
 { CF_DB *dbp;
   CF_DBC *dbcp;

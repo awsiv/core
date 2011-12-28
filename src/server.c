@@ -19,7 +19,7 @@ struct Rlist *SERVER_KEYRING = NULL;
 
 /*****************************************************************************/
 
-void Nova_TranslatePath(char *new, const char *old)
+void TranslatePath(char *new, const char *old)
 
 {
 if (strncmp(old,"/var/cfengine",strlen("/var/cfengine")) == 0)
@@ -34,7 +34,7 @@ else
 
 /*****************************************************************************/
 
-void Nova_RegisterLiteralServerData(char *handle,struct Promise *pp)
+void RegisterLiteralServerData(char *handle,struct Promise *pp)
 
 {
 NewScalar("remote_access",handle,pp->promiser,cf_str);
@@ -42,7 +42,7 @@ NewScalar("remote_access",handle,pp->promiser,cf_str);
 
 /*****************************************************************************/
 
-char Nova_CfEnterpriseOptions()
+char CfEnterpriseOptions()
 
 {
 if (LICENSES)
@@ -57,7 +57,7 @@ else
 
 /*****************************************************************************/
 
-int Nova_CfSessionKeySize(char c)
+int CfSessionKeySize(char c)
 
 {
 if (LICENSES == 0)
@@ -85,7 +85,7 @@ switch (c)
 
 /*****************************************************************************/
 
-const EVP_CIPHER *Nova_CfengineCipher(char type)
+const EVP_CIPHER *CfengineCipher(char type)
 
 {
 if (LICENSES <= 0)
@@ -105,7 +105,7 @@ switch(type)
 
 /*****************************************************************************/
 
-int Nova_ReturnLiteralData(char *handle,char *recv)
+int ReturnLiteralData(char *handle,char *recv)
 
 {
 struct Rval retval;
@@ -282,7 +282,7 @@ PrependItem(reply,buffer,NULL);
 
 /*****************************************************************************/
 
-char *Nova_GetRemoteScalar(char *proto,char *handle,char *server,int encrypted,char *recvbuffer)
+char *GetRemoteScalar(char *proto,char *handle,char *server,int encrypted,char *recvbuffer)
 
 { char in[CF_BUFSIZE],out[CF_BUFSIZE],sendbuffer[CF_BUFSIZE];
   int cipherlen,tosend,n,plainlen;
@@ -385,7 +385,7 @@ return recvbuffer;
 
 /********************************************************************/    
 
-void Nova_CacheUnreliableValue(char *caller,char *handle,char *buffer)
+void CacheUnreliableValue(char *caller,char *handle,char *buffer)
 
 { char key[CF_BUFSIZE],name[CF_BUFSIZE];
   CF_DB *dbp;
@@ -406,7 +406,7 @@ CloseDB(dbp);
 
 /********************************************************************/
 
-int Nova_RetrieveUnreliableValue(char *caller,char *handle,char *buffer)
+int RetrieveUnreliableValue(char *caller,char *handle,char *buffer)
 
 { char key[CF_BUFSIZE],name[CF_BUFSIZE];
   CF_DB *dbp;

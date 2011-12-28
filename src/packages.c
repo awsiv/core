@@ -19,7 +19,7 @@
 char *RPATH_FILE = "/home/eystein/tmp/conary-system-model";
 
 
-int Nova_GetInstalledPkgsRpath(struct CfPackageItem **pkgList, struct Attributes a, struct Promise *pp)
+int GetInstalledPkgsRpath(struct CfPackageItem **pkgList, struct Attributes a, struct Promise *pp)
 {
   char line[CF_BUFSIZE] = {0};
   FILE *fin;
@@ -56,7 +56,7 @@ int Nova_GetInstalledPkgsRpath(struct CfPackageItem **pkgList, struct Attributes
 }
 
 
-int Nova_ExecPackageCommandRpath(char *command,int verify,int setCmdClasses,struct Attributes a,struct Promise *pp)
+int ExecPackageCommandRpath(char *command,int verify,int setCmdClasses,struct Attributes a,struct Promise *pp)
 {
   // TODO: command string is /cf_internal_rpath_add or
   // /cf_internal_rpath_delete: appendline or deleteline from rpath

@@ -17,7 +17,7 @@
 
 /*****************************************************************************/
 
-int Nova_CheckDatabaseSanity(struct Attributes a, struct Promise *pp)
+int CheckDatabaseSanity(struct Attributes a, struct Promise *pp)
 
 { struct Rlist *rp;
   int retval = true,commas = 0;
@@ -141,7 +141,7 @@ return retval;
 /* Linker troubles require this code to be here in the main body             */
 /*****************************************************************************/
 
-int Nova_VerifyTablePromise(CfdbConn *cfdb,char *table_path,struct Rlist *columns,struct Attributes a,struct Promise *pp)
+int VerifyTablePromise(CfdbConn *cfdb,char *table_path,struct Rlist *columns,struct Attributes a,struct Promise *pp)
 
 { char name[CF_MAXVARSIZE],type[CF_MAXVARSIZE],query[CF_MAXVARSIZE],table[CF_MAXVARSIZE],db[CF_MAXVARSIZE];
   int i,count,size,no_of_cols,*size_table,*done,identified,retval = true;

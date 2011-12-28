@@ -23,7 +23,7 @@ struct PromiseIdent *PROMISER_REGEXES = NULL;
 
 /*****************************************************************************/
 
-void Nova_NewPromiser(struct Promise *pp)
+void NewPromiser(struct Promise *pp)
 
 { int hash;
   char unique[CF_BUFSIZE];
@@ -61,7 +61,7 @@ else
 
 /*****************************************************************************/
 
-void Nova_AnalyzePromiseConflicts()
+void AnalyzePromiseConflicts(void)
 
 { int i;
   struct PromiseIdent *p1,*p2;
@@ -156,8 +156,7 @@ for (p1 = PROMISER_REGEXES; p1 != NULL; p1=p1->next)
 
 /*****************************************************************************/
 
-void Nova_EnterpriseContext()
-
+void EnterpriseContext(void)
 {
 #ifdef HAVE_GETZONEID
   zoneid_t zid;
@@ -244,7 +243,7 @@ if (IsDefinedClass("debian"))
 
 /*****************************************************************************/
 
-void Nova_PreSanitizePromise(struct Promise *pp)
+void PreSanitizePromise(struct Promise *pp)
 
 { struct Attributes a = {{0}};
 
@@ -309,7 +308,7 @@ return "CFEngine Nova " NOVA_VERSION;
 
 /***************************************************************/
 
-void Nova_NotePromiseCompliance(struct Promise *pp,double val,enum cf_status status,char *reason)
+void NotePromiseCompliance(struct Promise *pp,double val,enum cf_status status,char *reason)
 
 { CF_DB *dbp;
   FILE *fp;
@@ -322,7 +321,7 @@ void Nova_NotePromiseCompliance(struct Promise *pp,double val,enum cf_status sta
   
 CfDebug("Note Promise Compliance\n");
 
-cf_strncpy(promiseHandle,Nova_PromiseID(pp),sizeof(promiseHandle)-1);
+cf_strncpy(promiseHandle,PromiseID(pp),sizeof(promiseHandle)-1);
 snprintf(newNoRepeatId, sizeof(newNoRepeatId), "%s:%s", promiseHandle, reason);
 
 if (strcmp(newNoRepeatId,oldNoRepeatId) == 0)
@@ -422,7 +421,7 @@ chmod(name,0644);
 
 /***************************************************************/
 
-time_t Nova_GetPromiseCompliance(struct Promise *pp,double *value,double *average,double *var,time_t *lastseen)
+time_t GetPromiseCompliance(struct Promise *pp,double *value,double *average,double *var,time_t *lastseen)
 
 { CF_DB *dbp;
   char name[CF_MAXVARSIZE];
@@ -438,7 +437,7 @@ if (!OpenDB(name,&dbp))
    return (time_t)0;
    }
 
-cf_strncpy(name,Nova_PromiseID(pp),CF_MAXVARSIZE);
+cf_strncpy(name,PromiseID(pp),CF_MAXVARSIZE);
 
 if (ReadDB(dbp,name,&e,sizeof(e)))
    {
@@ -467,7 +466,7 @@ return *lastseen;
 
 /***************************************************************/
 
-void Nova_TrackValue(char *date,double kept,double repaired, double notkept)
+void TrackValue(char *date,double kept,double repaired, double notkept)
 
 { char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF],key[CF_SMALLBUF],name[CF_BUFSIZE];
   CF_DB *dbp;
@@ -506,7 +505,7 @@ CloseDB(dbp);
 
 /*****************************************************************************/
 
-void Nova_LastSawBundle(char *name)
+void LastSawBundle(char *name)
 
 { char filename[CF_BUFSIZE];
   int lsea = LASTSEENEXPIREAFTER;
@@ -581,7 +580,7 @@ return false;
 }
 /*****************************************************************************/
 
-void Nova_AddGoalsToDB(char *goal_patterns, char *goal_categories)
+void AddGoalsToDB(char *goal_patterns, char *goal_categories)
 
 {
 #ifdef HAVE_LIBMONGOC

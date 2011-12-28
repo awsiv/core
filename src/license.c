@@ -32,7 +32,14 @@ return false;
 
 /*****************************************************************************/
 
-int Nova_EnterpriseExpiry(void)
+int IsEnterprise(void)
+{
+return true;
+}
+
+/*****************************************************************************/
+
+int EnterpriseExpiry(void)
 
 { struct stat sb;
   char name[CF_MAXVARSIZE],hash[CF_MAXVARSIZE],serverkey[CF_MAXVARSIZE],policy_server[CF_MAXVARSIZE], installed_time[CF_MAXVARSIZE];

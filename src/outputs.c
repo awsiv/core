@@ -26,7 +26,7 @@ int SAVE_VERBOSE = 0;
 
 /*****************************************************************************/
 
-void Nova_VerifyOutputsPromise(struct Promise *pp)
+void VerifyOutputsPromise(struct Promise *pp)
 
 { struct Attributes a = GetOutputsAttributes(pp);
   struct Item *ip;
@@ -79,7 +79,7 @@ else // promises
 
 /*****************************************************************************/
 
-void Nova_SetPromiseOutputs(struct Promise *pp)
+void SetPromiseOutputs(struct Promise *pp)
 
 { char *handle = GetConstraintValue("handle",pp,CF_SCALAR);
   char *setting = GetConstraintValue("report_level",pp,CF_SCALAR);
@@ -145,7 +145,7 @@ if (handle)
 
 /*****************************************************************************/
 
-void Nova_SetBundleOutputs(char *name)
+void SetBundleOutputs(char *name)
 
 { struct Item *ip;
 
@@ -172,7 +172,7 @@ for (ip = NOVA_BUNDLE_OUTPUTS; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_ResetBundleOutputs(char *name)
+void ResetBundleOutputs(char *name)
 
 { struct Item *ip;
 

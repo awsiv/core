@@ -17,7 +17,7 @@
 
 /*****************************************************************************/
 
-void Nova_VerifyACL(char *file,struct Attributes a, struct Promise *pp)
+void VerifyACL(char *file,struct Attributes a, struct Promise *pp)
 
 {
 if (LICENSES == 0)
@@ -25,7 +25,7 @@ if (LICENSES == 0)
    return;
    }
 
-if (!Nova_CheckACLSyntax(file, a.acl,pp))
+if (!CheckACLSyntax(file, a.acl,pp))
    {
    cfPS(cf_error,CF_INTERPT,"",pp,a," !! Syntax error in access control list for \"%s\"",file);
    PromiseRef(cf_error,pp);
@@ -94,7 +94,7 @@ switch(a.acl.acl_type)
 /* Level                                                                     */
 /*****************************************************************************/
 
-int Nova_CheckACLSyntax(char *file, struct CfACL acl, struct Promise *pp)
+int CheckACLSyntax(char *file, struct CfACL acl, struct Promise *pp)
 
 { int valid = true;
   int deny_support = false;

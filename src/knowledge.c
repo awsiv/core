@@ -174,7 +174,7 @@ CFDB_Close(&dbconn);
 
 /*****************************************************************************/
 
-void Nova_SyntaxCompletion(char *s)
+void SyntaxCompletion(char *s)
 
 { int i,j,k,l,m;
   struct SubTypeSyntax *ss;
@@ -339,7 +339,7 @@ if (LICENSES == 0)
    return;
    }
 
-strcpy(promise_id,Nova_PromiseID(pp));
+strcpy(promise_id,PromiseID(pp));
 
 fprintf(fp,"\ntopics:\n\n");
 
@@ -593,7 +593,7 @@ Constellation_ScanAccessRelationships(fp,pp,promise_id);
 
 /*****************************************************************************/
 
-void Nova_ShowTopicRepresentation(FILE *fp)
+void ShowTopicRepresentation(FILE *fp)
     
 { int i,j,k,l;
   struct SubTypeSyntax *ss;
@@ -1004,7 +1004,7 @@ for (i = 0; CF_COMMON_SUBTYPES[i].subtype != NULL; i++)
 
 /*****************************************************************************/
 
-char *Nova_PromiseID(struct Promise *pp)
+const char *PromiseID(struct Promise *pp)
 
 { char static id[CF_MAXVARSIZE];
   char vbuff[CF_MAXVARSIZE];
@@ -1191,7 +1191,7 @@ DeleteRlist(impacted);
 
 /*****************************************************************************/
 
-void Nova_RegisterBundleDepedence(char *name,struct Promise *pp)
+void RegisterBundleDependence(char *name,struct Promise *pp)
 
 { char assertion[CF_BUFSIZE];
   char *handle;
