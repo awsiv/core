@@ -1,7 +1,7 @@
 <div class="outerdiv">
     <div class="innerdiv">
           <p class="title"><?php echo $report; ?></p>
-          <div class="tables">
+          <div class="tables tablesfixed">
         <?php
          if((int)$tabledata['meta']['count'] >0){
           $pg = paging($current, $number_of_rows, $tabledata['meta']['count'], 10);
