@@ -1159,7 +1159,7 @@ int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *user,char *basedn,char *f
 #define NOVA_USES "relies on promise from"
 #define NOVA_GIVES "makes promise to"
 #define NOVA_ACTIVATED "is activated by class context"
-#define NOVA_ACTIVATES "activates promises"
+#define NOVA_ACTIVATES "activates promises with handle"
 #define NOVA_IMPACTS "has direct influence on"
 #define NOVA_ISIMPACTED "is directly influenced by"
 #define NOVA_BUNDLE_DATA "uses variables defined in"
@@ -1172,7 +1172,7 @@ int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *user,char *basedn,char *f
 #define NOVA_GOAL_INV "is supported by a promise"
 #define NOVA_GEN "is derived from"
 #define NOVA_REPORTED "are reported in"
-#define NOVA_SEEALSO "see also"
+#define NOVA_SEEALSO "might also refer to"
 
 /***************************************************************************/
 /* DBs                                                                     */

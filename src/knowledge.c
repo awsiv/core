@@ -745,7 +745,7 @@ for (i = 0; i < CF3_MODULES; i++)
                   {
                   fprintf(fp,"   \"%s\"\n",bs2[k].lval);
                   fprintf(fp,"   comment => \"%s\",\n",NovaEscape(bs2[k].description));
-                  fprintf(fp,"   association => a(\"%s\",\"%s\",\"%s\");\n",KM_PARTOF_POSS_F,bs[l].lval,KM_PARTOF_POSS_F);
+                  fprintf(fp,"   association => a(\"%s\",\"%s\",\"%s\");\n",KM_PARTOF_POSS_F,bs[l].lval,KM_PARTOF_POSS_B);
                   
                   NovaShowValues(fp,bs2[k]);
                   }
