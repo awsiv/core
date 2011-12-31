@@ -206,7 +206,7 @@ pre.sp {
 <div class="node">
 <a name="Top"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Defining-Agilty">Defining Agilty</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Defining-Agility">Defining Agility</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#dir">(dir)</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 
@@ -218,108 +218,580 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <h2>Summary of contents</h2>
 
 <ul class="menu">
-<li><a accesskey="1" href="#Defining-Agilty">Defining Agilty</a>
+<li><a accesskey="1" href="#Defining-Agility">Defining Agility</a>
 </ul>
 
 <div class="node">
-<a name="Defining-Agilty"></a>
+<a name="Defining-Agility"></a>
 <p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Top">Top</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h2 class="chapter">1 Defining Agilty</h2>
+<h2 class="chapter">1 Defining Agility</h2>
 
 <pre class="sp">
 
 </pre>
 
-We intuitively recognize agility as the capability to respond fast
-enough to a pressing event. The event might represent danger, or
-merely a self-imposed deadline.  In any case, there is generally a
-penalty associated with not responding quickly.
+We intuitively recognize agility as the capability to respond rapidly
+enough and flexibly enough to a difficult challenge. If we imagine an
+animal surviving in the wild, a climber on a rock-face or a wrestler engaged in
+combat, we identify the skills of <i>anticipation</i>, <i>speed</i> of response and
+the ability to <i>adapt</i> or bend without breaking to meet the challenges.
 
-   <p>To understand agility, we have to understand time. Agility is a
-relative concept: it's about being fast enough, in the right context. 
-Let's try to gain an engineering perspective on agility to see what
-enables it and what throttles it.
+     <ul>
+<li>Anticipate. 
+<li>Act. 
+<li>Adapt. 
+</ul>
 
-   <p>We can define a measure of agility as the ratio of available speed to
-required speed.
+   <p>In infrastructure management, agility represents the need to handle
+changing demand for service, to repair an absence of service, and to
+improve and deploy new services in response to changes from users and
+market requirements. It is tied to economic, business or work-related
+imperatives by the need to maintain a competitive lead.
 
-<pre class="verbatim">Agilty ~ Available speed with control
-         ----------------------------
-                Required speed
-</pre>
-
-<p class="noindent">This definition behaves reasonably. If we our speed matches what we need, then
-we can claim 100% agility. If it is less than required, thenwe get a smaller number, and if
-we have excess speed we can claim a superefficiency.
-
-   <p>What is required speed?  It is is the rate of change you have to be
-able to enact in order to achieve and maintain a state (keep a
-promise) that is aligned with a an organization's well-being. If we
-think in terms of services, it is the Service Level you have to
-achieve to comply with a Service Level Agreement.  If we think of a
-support ticket, it is the speed we have to work at in order
-to keep the impact of an unpredicted change within acceptable
-levels. What is acceptable is clearly a subjective judgement, a matter
-for policy to decide. So there are many uncertainties and relativisms.
-
-   <p>The weakest link in a chain of dependencies limits the speed of any chain. 
-The weakest link might be a human who doesn't understand what to do, or a
-broken wire or a misconfigured switch. An organization is an information
-rich <i>society</i> with complex interplays between Man and Machine.
-
-   <p>The available speed is called the Capacity of the component.
-
-   <p>Let's create some scaling laws.
-
-<pre class="verbatim">Average available speed ~ Expected capacity * reliability
-                          ----------------------------
-                                  Consumers
-</pre>
-
-<pre class="verbatim">Efficiency ~  Number of objects affected
-             ----------------------------
-                Number of rules + 1
-</pre>
-
-<pre class="verbatim">Comprehensibilty ~  Predictability or reliability
-                    ----------------------------
-                         Machines * rules
-</pre>
-
-   <p>Mean Time to Repair.
-
-   <p>Nimble, lightweight, strong, balanced..
-
-   <p>From the perspective of agility, regular scheduling and speed of change are the
-values we covet.
-
-   <div class="block-image"><img src="agility.png" alt="agility.png"></div>
+   <p>The compelling event that our system must respond to might represent
+danger, or merely a self-imposed deadline.  In either case, there is
+generally a penalty associated with a lack of agility: a blow, a fall or
+a loss.
 
 <ul class="menu">
-<li><a accesskey="1" href="#What-is-scalability_003f">What is scalability?</a>
+<li><a accesskey="1" href="#What-comprises-agility_003f">What comprises agility?</a>
+<li><a accesskey="2" href="#Aspects-of-CFEngine-that-bring-agility">Aspects of CFEngine that bring agility</a>
+<li><a accesskey="3" href="#How-does-complexity-affect-agility_003f">How does complexity affect agility?</a>
+<li><a accesskey="4" href="#Packaging-limits-agility">Packaging limits agility</a>
+<li><a accesskey="5" href="#An-effective-understanding-helps-agility">An effective understanding helps agility</a>
+<li><a accesskey="6" href="#Increasing-capacity">Increasing capacity</a>
+<li><a accesskey="7" href="#Maximizing-business-imperatives">Maximizing business imperatives</a>
+<li><a accesskey="8" href="#Scalability-and-agility">Scalability and agility</a>
+<li><a accesskey="9" href="#Who-is-responsible-for-agility_003f">Who is responsible for agility?</a>
 </ul>
 
 <div class="node">
-<a name="What-is-scalability%3f"></a>
-<a name="What-is-scalability_003f"></a>
+<a name="What-comprises-agility%3f"></a>
+<a name="What-comprises-agility_003f"></a>
 <p><hr>
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Defining-Agilty">Defining Agilty</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Defining-Agilty">Defining Agilty</a>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Aspects-of-CFEngine-that-bring-agility">Aspects of CFEngine that bring agility</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Defining-Agility">Defining Agility</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Defining-Agility">Defining Agility</a>
 
 </div>
 
-<h3 class="section">1.1 What is scalability?</h3>
+<h3 class="unnumberedsec">What comprises agility?</h3>
 
 <pre class="sp">
 
 </pre>
 
-By scalability we mean the intrinsic capacity of a system to
+To understand agility, we have to understand time and the capacity for change. Agility is a
+relative concept: it's about adapting fast enough, in the right context. 
+Let's try to gain an engineering perspective on agility to see what
+enables it and what throttles it.
+
+   <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+In a challenge there are four stages that need attention:
+
+     <ul>
+<li>To comprehend the challenge. 
+<li>To solve the challenge. 
+<li>To respond to the challenge. 
+<li>To confirm or verify the response. 
+</ul>
+   </td></tr></table>
+
+   <pre class="sp">
+
+</pre>
+Each of these phases takes time and requires a certain flexibility. 
+Our goal is to keep these phases simple and therefore cheap for the long-term. 
+Affording the time and flexibility needed is the key to being agile. 
+Technology can help with this, if we adopt sound practices.
+
+   <p>We can go
+one step further and define an engineering scale of agility as the
+ratio of available speed to required speed and ratio of number ways a
+system can be changed to the number of ways imperatives require us to
+change.
+
+   <pre class="sp">
+
+</pre>
+
+<p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+<pre class="verbatim">  Agility ~ Available speed under control        Changes available
+           -----------------------------  *  -----------------------
+                  Required speed                 Changes Required
+</pre>
+</td></tr></table>
+
+<p class="noindent">Although such a scale might be hard to track in practice,
+the definition makes simple engineering sense<a rel="footnote" href="#fn-1" name="fnd-1"><sup>1</sup></a>, and brings
+some insight into what we need to think about.
+
+   <p>What is required speed?  It is is the rate of change we have to be
+able to enact in order to achieve and maintain a state (keep a
+promise) that is aligned with our intent.  This requires a dependence
+on technology and human processes. 
+The weakest link in any chain of dependencies limits the speed. 
+The weakest link might be a human who doesn't understand what to do, or a
+broken wire or a misconfigured switch, so there are many
+possible failure modes for agility. An organization is an information
+rich <i>society</i> with complex interplays between Man and Machine; agility
+challenges us to think about these weakest links and try to bolster
+them with CFEngine's technology.
+
+   <p>For example:
+
+     <ul>
+<li>If we think in terms of
+services, it is the Service Level you have to achieve in order to
+comply with a Service Level Agreement.
+
+     <li>If we think of a support
+ticket, it is the speed we have to work at in order to keep the impact
+of an unpredicted change within acceptable levels. 
+</ul>
+
+   <p>What we call acceptable
+is clearly a subjective judgement, i.e. a matter for policy to decide. So
+there are many uncertainties and relativisms in such definitions. It would
+be inconceivable to claim any kind of industry standard for these.
+
+   <pre class="sp">
+
+</pre>
+<div align="center"><img src="agility.png" alt="agility.png"></div>
+<div align="center">How agility depends on technology measures.</div>
+   <pre class="sp">
+
+</pre>
+
+   <p>The available maximum speed of any system is usually called its `capacity'. 
+We can write some scaling laws for the dependencies of agility to see where
+the failure modes might arise.
+   <pre class="sp">
+
+</pre>
+<p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+<pre class="verbatim">      Average available speed ~ Expected capacity * reliability
+                                ----------------------------
+                                           Consumers
+</pre>
+</td></tr></table>
+
+   <pre class="sp">
+
+</pre>
+This expression says that the rate at which we get work done on average depends
+no only on how we share maximum capacity amongst a number of different consumers,
+clients, processes, etc, but also on how much of the time this capacity is fully
+available, perhaps because systems are down or unavailable.
+
+   <p>The appearance of reliability in this expression therefore tells us that maintenance
+of the system, and anticipation of failure will play a key role in agility. 
+Remarkably this is usually unexpected for most practitioners, and most of system planning
+goes into first time deployment, rather than maintaining operational state.
+
+   <p>The next challenge is concerns a human limitation. One of the greatest challenges in any
+organization lies in comprehending the system.
+   <pre class="sp">
+
+</pre>
+<p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+<pre class="verbatim">       Comprehensibility ~  Predictability (Reliability)
+                           ----------------------------
+                                 Machines * rules
+</pre>
+</td></tr></table>
+
+   <pre class="sp">
+
+</pre>
+Our ability to comprehend behaviour depends on how predictable it is, i.e. 
+how well it meets our expectations. For technology, we expect behaviour
+to be as close as possible on our intentions. CFEngine's maintenance of promises
+ensures that this is done with best possible effort and a rapid cycle of checking.
+
+   <p>To keep the number of rules to a minimum, CFEngine avoids mixing up
+<i>what</i> policy is being expressed with <i>how</i> the promises are
+kept. It uses a declarative language to separate the what from the
+how. This allows ordinary users to see what was intended without
+having to know the meaning of how, as was the case when scripting was
+used to configure systems.
+
+   <p>Finally, if we think about the efficiency of a configuration, which is
+another way of estimating its simplicity, we are interested in how
+much work it takes to represent our intentions.
+   <pre class="sp">
+
+</pre>
+<p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+<pre class="verbatim">             Efficiency ~  Number of objects affected
+                           ----------------------------
+                                Number of rules
+</pre>
+</td></tr></table>
+
+   <pre class="sp">
+
+</pre>
+Patterns play a role too in simplifying. This affects not just the
+technology cost, but also the cognitive cost (comprehensibility). 
+Efficiency lies in the
+power of the model to encapsulate needs with few rules. In the
+underlying technology, this represents an ability to encapsulate and
+represent patterns without losing flexibility. Making black boxes is
+easy, but using flexible or programmable boxes is simple.
+
+   <p>From the perspective of agility, regular scheduling of a verifiable and comprehensible
+configuration model, combined with speed of verification and repair
+are the values we covet for agility.
+
+<div class="node">
+<a name="Aspects-of-CFEngine-that-bring-agility"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#How-does-complexity-affect-agility_003f">How does complexity affect agility?</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#What-comprises-agility_003f">What comprises agility?</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Defining-Agility">Defining Agility</a>
+
+</div>
+
+<h3 class="unnumberedsec">Aspects of CFEngine that bring agility</h3>
+
+<pre class="sp">
+
+</pre>
+
+We can now summarize some qualities of CFEngine that favour agility:
+   <pre class="sp">
+
+</pre>
+     <ul>
+<li>Ability to express clear intentions about desired outcome (comprehension). 
+<li>Availability of insight into system performance and state (comprehension). 
+<li>Ability to customize policy down to a low level without programming (adaptability).
+
+     <li>The default, parallelized execution framework verifies promises every 5 minutes
+for rapid fault detection and change deployment. 
+<li>System monitoring/sampling rate is every 2.5 minutes (Nyquist frequency),
+for automated hands-free response to errors. 
+<li>The lightweight resource footprint of CFEngine does not consume system resources
+required for actual business (low overhead, maximum capacity).
+
+     <li>Ability to increase number of clients without significant penalty (scalability and ease of increasing capacity).
+
+   </ul>
+
+   <pre class="sp">
+
+</pre>
+As indicated above, time-scales are the key to enabling agility. Different environments
+have rather different needs:
+
+     <ul>
+<li>Web shops:
+Resource consumption is an issue on
+busy web servers, however web services are typically quite slow already and it is
+easy to load balance a web service, so resource efficiency is not
+usually considered a priority until the possible savings become
+significant with thousands of hosts.
+
+     <p>Credit card information is subject PCI-DSS regulation and requires more
+intensive verification, but these systems are often separated from the main
+web service.
+
+     <p>Run-frequency of CFEngine is not critical here, but speed of execution
+is a factor during updates.  During software updates speed and
+orchestration are issues, as time lost during upgrades is often
+revenue lost.
+
+     <p>The level of customization in a web shop could be quite high, as there
+is a stack of interdependent services including databases and name
+services that have to work seamlessly, and the rate of deployment of
+new versions of the software might be relatively high.
+
+     <li>Cloud providers
+For Infrastructure-as-a-Service providers and consumers, set up
+and tear-down rates are quite high so efficient and speedy configuration
+is imperative. For Software and Platform as a service providers, stability,
+high performance and regulation are key issues, and scaling up and down
+for demand is probably the fastest rate of change.
+
+     <li>High Performance Computing:
+
+     <p>High performance clusters are typically found in Oil and Gas,
+Financial, weather and aviation industries, and other places where raw
+computation is used to number crunch. The lightweight footprint of
+CFEngine is a major benefit here, as every CPU cycle and megabyte of
+memory is precious.
+
+     <p>In clusters the rate of customization is low, so the need for agility
+is generally low, and raw speed is the issue.
+
+     <li>Government and finance sectors:
+
+     <p>Security and version control of approved software are major challenges
+in government regulated institutions. Agility has been a low priority
+in the past, but this will have to change as the rest of the world's
+IT services accelerate.
+
+     <p>High availability in CFEngine is used for continuous auditing and
+security. Passing regulatory frameworks like SOX, SAS-70, ISO 20k, etc
+can depend on this non-intrusive availability. Liability is a major
+concern and significant levels of approval are generally required to
+make changes, with tracking of individual responsibility. Out-of-hours
+change windows are common for making upgrades and making intended
+changes. Scalability of reporting is a key here, but change happens
+slowly.
+
+   </ul>
+
+<div class="node">
+<a name="How-does-complexity-affect-agility%3f"></a>
+<a name="How-does-complexity-affect-agility_003f"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Packaging-limits-agility">Packaging limits agility</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Aspects-of-CFEngine-that-bring-agility">Aspects of CFEngine that bring agility</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Defining-Agility">Defining Agility</a>
+
+</div>
+
+<h3 class="unnumberedsec">How does complexity affect agility?</h3>
+
+<pre class="sp">
+
+</pre>
+
+In the past<a rel="footnote" href="#fn-2" name="fnd-2"><sup>2</sup></a>, it was common to manage change by making
+everything the same. Today, the individual custom experience is what today's information
+society craves.  Being forced into a single mold is a hindrance to
+adaptability and therefore to agility. In the world of commerce,
+consumers rule the roost, and agility is competitive edge in a market of
+many more players than before.
+
+   <p>Today, we live in a culture of `ease', and we focus on what can be
+done easily rather than worrying about long term simplicity (Total Cost
+of Ownership). At CFEngine, we believe that `easy' answers often suffer from
+oversimplification issues. Anyone can make something appear superficially
+easy by working hard on behalf of a user, or by papering  over a mess. 
+Moreover, making a risky process `too easy' can encourage haste and
+carelessness.
+
+   <pre class="sp">
+
+</pre>
+<p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+Infrastructure engineering is a potentially high risk occupation, as many
+users rely on the infrastructure for their livelihoods. Simplicity is
+a key strategy to minimizing Total Cost of Ownership. 
+</td></tr></table>
+
+   <pre class="sp">
+
+</pre>
+
+Making something truly simple is a very hard problem, but it is an
+investment in future change. What is easy today might be expensive to make easy tomorrow. 
+But if something is truly simple, then the work is all up front in learning
+the basics, and does not come
+as an unexpected surprise down the line.
+
+   <p>At CFEngine, we believe in agility through simplicity, and so we
+invest continuous research into making our technology genuinely simple for trained
+users. We know that a novice user will not necessarily find CFEngine easy, but
+after a small amount of training, CFEngine will be a tool for life, not just a hurried
+deployment.
+
+   <p>Simplicity in CFEngine is addressed in the following ways:
+
+   <pre class="sp">
+
+</pre>
+     <ul>
+<li>The software has few dependencies that complicate installation and upgrade. 
+<li>Changes made are atomic and minimize dependencies. 
+<li>Each host works as an independent entity, reducing communication fragility. 
+<li>The configuration model is based on Promise Theory &ndash; a very consistent and simple
+approach to modelling autonomous cooperative systems. 
+<li>All hosts run a basically identical agent on all operating
+platforms (from mobile phones to mainframes), and understand a common language of intent which they
+can translate into any operating system's naive system calls. 
+<li>Comprehensive facilities are allowed for making use of patterns and other total-information-reducing
+tactics. 
+</ul>
+
+   <pre class="sp">
+
+</pre>
+A certain level of complexity is necessary and desirable. 
+Some organizations still try to remain agile by avoiding complexity. However, the ability
+to respond to complex scenarios often requires us to delve into complexity. Avoiding
+it merely creates a lack of agility as we are constrained by the requirement of
+oversimplification.
+
+<div class="node">
+<a name="Packaging-limits-agility"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#An-effective-understanding-helps-agility">An effective understanding helps agility</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#How-does-complexity-affect-agility_003f">How does complexity affect agility?</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Defining-Agility">Defining Agility</a>
+
+</div>
+
+<h3 class="unnumberedsec">Packaging limits agility</h3>
+
+<pre class="sp">
+
+</pre>
+
+   <p>Atomicity, or avoidance of dependency, is a key approach to simplicity. 
+Today this is often used to argue to packaging of software.
+
+   <p>Handling software and system configuration as packages of data makes
+certain processes appear superficially easy, because you get a single object
+to deal with, that has a name and a version number. 
+However, to maintain flexibility we should
+not bundle too many features into a package.
+
+   <p>For example, a tin of
+soup or a microwave meal might be a superficially easy way to make
+dinner, for many scenarios, but the day you get a visitor with special
+dietary requirements (vegetarian or allergic etc) then the
+prepackaging is a major obstacle to adapting: the recipe cannot be
+changed and repackaged without going back to the factory that made
+it. Thus oversimplification generally tends to end up sending up back
+to work around the technology.
+
+   <p>CFEngine's modelling language gives you control over the smallest
+ingredients, but also allows you to package your own containers
+or work with other suppliers' packages. This ensures that
+adaptability is not sacrificed for superficial ease.
+
+<div class="node">
+<a name="An-effective-understanding-helps-agility"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Increasing-capacity">Increasing capacity</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Packaging-limits-agility">Packaging limits agility</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Defining-Agility">Defining Agility</a>
+
+</div>
+
+<h3 class="unnumberedsec">An effective understanding helps agility</h3>
+
+<pre class="sp">
+
+</pre>
+
+All configuration issues, including fitness for purpose, boil down to
+three things: why, what and how. Knowing why we do something is the
+most important way of avoiding error and risk of failure. Simplicity
+then comes from keeping the `what' and the `how' separate, and
+reducing the how to a predictable, repairable transaction. This is
+what CFEngine's <i>convergent promise</i> technology does.
+
+   <p>Knowledge is an antidote to uncertainty. Insight into patterns, brings
+simplicity to the information management, and insight into behaviour
+allows us to estimate impact of change, thus avoiding the risk associated
+with agility.
+
+   <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+In configuration `what' represents transitory knowledge, while `how'
+is often more lasting and can be absorbed into the infrastructure. The
+consistency and repairability of `how' makes it simpler to change what
+without risk. 
+</td></tr></table>
+
+<div class="node">
+<a name="Increasing-capacity"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Maximizing-business-imperatives">Maximizing business imperatives</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#An-effective-understanding-helps-agility">An effective understanding helps agility</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Defining-Agility">Defining Agility</a>
+
+</div>
+
+<h3 class="unnumberedsec">Increasing capacity</h3>
+
+<p>Capacity in IT infrastructure is increased by increasing machine
+power. Today, at the limit of hardware capacity, this typically means
+increasing the number of machines serving a task. Cloud services have
+increased the speed agility with which resources can be deployed &ndash;
+whether public or private cloud &ndash;
+but they do not usually provide any customization tools.  This is
+where CFEngine brings significant value.
+
+   <p>The rapid deployment of new services is assisted by:
+
+     <ul>
+<li>Virtualization hypervisor control or private cloud management (libvirt integration). 
+<li>Rapid, massively-parallelized custom configuration. 
+<li>Avoidance of network dependencies. 
+</ul>
+
+<div class="node">
+<a name="Maximizing-business-imperatives"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Scalability-and-agility">Scalability and agility</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Increasing-capacity">Increasing capacity</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Defining-Agility">Defining Agility</a>
+
+</div>
+
+<h3 class="unnumberedsec">Maximizing business imperatives</h3>
+
+<p>Agility allows companies and public services to compete and address
+the needs of continuous service improvement. This requires insight
+into IT operations from business and vice versa. Recently, the
+`DevOps' movement in web arenas has emphasized the need for a more
+streamlined approach to integrating business-driven change and IT
+operations. Whatever we choose to call this, and in whatever arena,
+`connecting the dots between business and IT' is a major enabler for
+agility to business imperatives.
+
+   <p>Some business issues are inherently complex, e.g. software
+customization and security, because they introduce multifaceted
+conflicts of interest that need to resolved with clear documentation
+about <i>why</i>.
+
+   <p>The ability to model our intentions about these matters in a clearly
+understandable way enables insight and understanding; this, in turn,
+allows us to anticipate and comprehend challenges. CFEngine's
+knowledge management features help to make the configuration itself a
+documentation of the system. Instead of relying on command line tools
+to interact, the user documents intentions (as `promises to be kept'). 
+These promises, and how well they have been kept, can be examined either
+from the original specification or in the Mission Portal.
+
+   <p>In the industrial age, the strategy was to supply sufficient force to
+a small problem in order to `control' it by brute force. In systems
+today the scale and complexity are such that no such brute force
+approach can seriously be expected to work. Thus one is reduced to a more even
+state of affairs: learning to work with the environment `as is',
+with clear expectations of what is possible and controlling only certain
+parts on which crucial things depend.
+
+<div class="node">
+<a name="Scalability-and-agility"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Who-is-responsible-for-agility_003f">Who is responsible for agility?</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Maximizing-business-imperatives">Maximizing business imperatives</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Defining-Agility">Defining Agility</a>
+
+</div>
+
+<h3 class="unnumberedsec">Scalability and agility</h3>
+
+<pre class="sp">
+
+</pre>
+
+Related to capacity is the issue of scaling services for massive available
+capacity.
+
+   <p>By scalability we mean the intrinsic capacity of a system to
 handle growth. Growth in a system can occur in three ways: by the volume of input
 the system must handle, in the total size of its infrastructure,
 and by the complexity of the processes within it.
@@ -336,16 +808,58 @@ ability to <i>comprehend</i> the system as it grows. Limitations of
 comprehension often lead to over-simplification and
 lowest-common-denominator standardization.
 
-   <p>Scalability is addressed in a separate document: <i>Scale and Scalability</i>.
+   <p>Scalability is addressed in a separate document: <i>Scale and Scalability</i>,
+so we shall not discuss it further here.
+
+<div class="node">
+<a name="Who-is-responsible-for-agility%3f"></a>
+<a name="Who-is-responsible-for-agility_003f"></a>
+<p><hr>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Scalability-and-agility">Scalability and agility</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Defining-Agility">Defining Agility</a>
+
+</div>
+
+<h3 class="unnumberedsec">Who is responsible for agility?</h3>
+
+<pre class="sp">
+
+</pre>
+
+Agility is going to be an increasingly important and prevalent feature
+of the modern world, as we enter the information-based
+society. Competitiveness edge in both private sector and research
+makes agility the actual product of a not-too-distant tomorrow.
+
+   <p>Who or what makes agility a reality? The simple answer to this
+question is everyone and everything. Change is a chain of dependent
+activities and the weakest link in the chain is the limiting
+factor. Often, that is human knowledge, since it is the part of the
+chain that we take most for granted.
+
+   <p>CFEngine has been carefully designed to support agile operations for
+the long term, by investing in knowledge management, speed and efficiency. 
+We recommend all infrastructure engineers to reexamine the role of time in
+their systems.
+
+   <p>Tempus fugit!
 
    <p><a name="Contents">
    <div class="contents">
 <h2>Table of Contents</h2>
 <ul>
 <li><a name="toc_Top" href="#Top">Agility</a>
-<li><a name="toc_Defining-Agilty" href="#Defining-Agilty">1 Defining Agilty</a>
+<li><a name="toc_Defining-Agility" href="#Defining-Agility">1 Defining Agility</a>
 <ul>
-<li><a href="#What-is-scalability_003f">1.1 What is scalability?</a>
+<li><a href="#What-comprises-agility_003f">What comprises agility?</a>
+<li><a href="#Aspects-of-CFEngine-that-bring-agility">Aspects of CFEngine that bring agility</a>
+<li><a href="#How-does-complexity-affect-agility_003f">How does complexity affect agility?</a>
+<li><a href="#Packaging-limits-agility">Packaging limits agility</a>
+<li><a href="#An-effective-understanding-helps-agility">An effective understanding helps agility</a>
+<li><a href="#Increasing-capacity">Increasing capacity</a>
+<li><a href="#Maximizing-business-imperatives">Maximizing business imperatives</a>
+<li><a href="#Scalability-and-agility">Scalability and agility</a>
+<li><a href="#Who-is-responsible-for-agility_003f">Who is responsible for agility?</a>
 </li></ul>
 </li></ul>
 </div>
@@ -363,6 +877,22 @@ var pageTracker = _gat._getTracker("UA-2576171-2");
 pageTracker._initData();
 pageTracker._trackPageview();
 </script>
+
+   <div class="footnote">
+<hr>
+<a name="texinfo-footnotes-in-document"></a><h4>Footnotes</h4><p class="footnote"><small>[<a name="fn-1" href="#fnd-1">1</a>]</small> If available
+speed matches need, and we have the capability to make all required
+changes, then we can claim exactly 100% agility. If we have less than
+required, then we get a smaller number, and if we have excess speed or
+changeability then we can even claim a super-efficiency.</p>
+
+   <p class="footnote"><small>[<a name="fn-2" href="#fnd-2">2</a>]</small> Perhaps not just in the past. We are emerging
+from an industrial era of management where mass producing everything
+the same was the cheapest approach to scaling up services. However,
+today personal freedom demands variety and will not tolerate such
+oversimplification.</p>
+
+   <hr></div>
 
 </body></html>
 
