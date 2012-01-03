@@ -139,9 +139,6 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_hostname,NULL)
     PHP_FE(cfpr_ipaddr,NULL)
 
-    PHP_FE(cfcon_get_story_by_name,NULL)
-    PHP_FE(cfcon_get_story_by_id,NULL)
-
     PHP_FE(cfpr_show_topic,NULL)
     PHP_FE(cfpr_search_topics,NULL)
     PHP_FE(cfpr_show_topic_leads,NULL)
@@ -266,6 +263,9 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfcon_hubname,NULL)
     PHP_FE(cfcon_ipaddr,NULL)
     PHP_FE(cfcon_delete_hub,NULL)
+
+    PHP_FE(cfcon_get_story_by_name,NULL)
+    PHP_FE(cfcon_get_story_by_id,NULL)
 #endif  /* HAVE_CONSTELLATION */
 
     
