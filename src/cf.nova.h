@@ -241,7 +241,16 @@ typedef enum basic_reports
    cfrep_unknown
    } basic_reports;
 
-extern const char *BASIC_REPORTS[][4];
+struct ReportInfo
+   {
+   const char *id;
+   const char *category;
+   const char *name;
+   const char *name_old;
+   const char *description;
+   };
+
+extern struct ReportInfo BASIC_REPORTS[];
 
 /*****************************************************************************/
 

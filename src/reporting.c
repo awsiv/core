@@ -113,36 +113,36 @@ char *NUMBER_TXT[] =
    NULL
    };
 
-const char *BASIC_REPORTS[][4] =
-    {
-    {"Policy","Themes by bundle","Bundle profile","Status of promise bundles and when they were last verified"},
-    {"Policy","View compliance","Compliance by promise","Compliance of each promise individually"},
-    {"Policy","Promises repaired (log)","Promises repaired log","Log of actual repairs made to the system"},
-    {"Policy","Promises repaired (summary)","Promises repaired summary","Cumulative (histogram) summary of promises repaired"},
-    {"Policy","Promises not kept (log)","Promises not kept log","Log of promises that could not or would not be kept"},
-    {"Policy","Promises not kept (summary)","Promises not kept summary","Cumulative (histogram) summary of promises not kept"},
-    
-    
-    {"System","Context classes","Class profile","User defined classes observed on the system"},
-    {"System","Neighbors","Last seen hosts","Log of when neighbouring hosts were last observed online"},
-    {"System","Values","Variables","Table of variable values last observed"},
-    
-    {"Software","Patches available","Patches available","A list of patches currently claimed to be available by the local package manager"},
-    {"Software","Patches installed","Patch status","A list of (un)applied patches according to the local package manager"},
-    
-    
-    {"Software","Installed","Software installed","List of software packages claimed to be installed according to the local package manager"},
-    
-    {"File watch","Change summary","File change log","Log of all detected changes to files from changes promises"},
-    {"File watch","Text changes","File change diffs","Delta/difference comparison showing file changes"},
-    {"File watch","Setuid","Setuid/gid root programs","Current list of observed setuid/setgid root programs"},
-    
-    
-    {"Accounting","Business value","Business value report","Accumulated value of promises kept"},
-    {"Accounting","Benchmarks","Performance","Execution time used to verify selected promises"},
-    {"Accounting","Compliance summary","Compliance summary","Total summary of host compliance"},
-    {NULL,NULL,NULL,NULL}
-    };
+struct ReportInfo BASIC_REPORTS[] =
+   {
+   {"bundle-profile", "Policy","Themes by bundle","Bundle profile","Status of promise bundles and when they were last verified"},
+   {"promise-compliance", "Policy","View compliance","Compliance by promise","Compliance of each promise individually"},
+   {"promises-repaired-log","Policy","Promises repaired (log)","Promises repaired log","Log of actual repairs made to the system"},
+   {"promises-repaired-summary","Policy","Promises repaired (summary)","Promises repaired summary","Cumulative (histogram) summary of promises repaired"},
+   {"promises-not-kept-log","Policy","Promises not kept (log)","Promises not kept log","Log of promises that could not or would not be kept"},
+   {"promises-not-kept-summary""Policy","Promises not kept (summary)","Promises not kept summary","Cumulative (histogram) summary of promises not kept"},
+
+
+   {"context","System","Context classes","Class profile","User defined classes observed on the system"},
+   {"neighbors","System","Neighbors","Last seen hosts","Log of when neighbouring hosts were last observed online"},
+   {"values","System","Values","Variables","Table of variable values last observed"},
+
+   {"patches-available","Software","Patches available","Patches available","A list of patches currently claimed to be available by the local package manager"},
+   {"patches-installed","Software","Patches installed","Patch status","A list of (un)applied patches according to the local package manager"},
+
+
+   {"software-installed","Software","Installed","Software installed","List of software packages claimed to be installed according to the local package manager"},
+
+   {"file-change-log","File watch","Change summary","File change log","Log of all detected changes to files from changes promises"},
+   {"file-change-diffs","File watch","Text changes","File change diffs","Delta/difference comparison showing file changes"},
+   {"setuid-programs","File watch","Setuid","Setuid/gid root programs","Current list of observed setuid/setgid root programs"},
+
+
+   {"business-value","Accounting","Business value","Business value report","Accumulated value of promises kept"},
+   {"benchmarks","Accounting","Benchmarks","Performance","Execution time used to verify selected promises"},
+   {"compliance-summary","Accounting","Compliance summary","Compliance summary","Total summary of host compliance"},
+   {NULL,NULL,NULL,NULL,NULL}
+   };
 
 /*****************************************************************************/
 

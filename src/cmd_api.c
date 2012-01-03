@@ -2812,7 +2812,7 @@ strcat(buffer,"[");
 
 for (i = 0; i < cfrep_unknown; i++)
    {
-   snprintf(work,CF_MAXVARSIZE,"[\"%s\",\"%s\"]",BASIC_REPORTS[i][0],BASIC_REPORTS[i][1]);
+   snprintf(work,CF_MAXVARSIZE,"[\"%s\",\"%s\"]",BASIC_REPORTS[i].category,BASIC_REPORTS[i].name);
    if (i != cfrep_unknown - 1)
       {
       strcat(work,",");

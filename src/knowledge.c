@@ -616,48 +616,48 @@ fprintf(fp,"system_reports::\n");
 
 for (i = 0; i < cfrep_unknown; i++)
    {
-   fprintf(fp,"  \"%s\" comment => \"%s\",\n",BASIC_REPORTS[i][2],BASIC_REPORTS[i][3]);
-   fprintf(fp,"         association => a(\"is now called\",\"%s\",\"was previously called\");\n",BASIC_REPORTS[i][1]);
+   fprintf(fp,"  \"%s\" comment => \"%s\",\n",BASIC_REPORTS[i].name_old,BASIC_REPORTS[i].description);
+   fprintf(fp,"         association => a(\"is now called\",\"%s\",\"was previously called\");\n",BASIC_REPORTS[i].name);
 
-   fprintf(fp,"  \"%s\" comment => \"%s\",\n",BASIC_REPORTS[i][1],BASIC_REPORTS[i][3]);
-   fprintf(fp,"         association => a(\"deals with\",\"%s\",\"reports\");\n",BASIC_REPORTS[i][0]);
+   fprintf(fp,"  \"%s\" comment => \"%s\",\n",BASIC_REPORTS[i].name,BASIC_REPORTS[i].description);
+   fprintf(fp,"         association => a(\"deals with\",\"%s\",\"reports\");\n",BASIC_REPORTS[i].category);
    }
 
 fprintf(fp,"  # New assocs\n");
 
-fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_classes][1]);
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_classes].name);
 fprintf(fp,"    association => a(\"%s\",\"promise_types::classes\",\"%s\");\n",NOVA_GEN,NOVA_REPORTED);
-fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_lastseen][1]);
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_lastseen].name);
 fprintf(fp,"   association => a(\"is affected by\",\"body_constraints::copy_from\",\"%s\");\n",NOVA_REPORTED);
-fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_lastseen][1]);
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_lastseen].name);
 fprintf(fp,"   association => a(\"is affected by\",\"promise_types::access\",\"%s\");\n",NOVA_REPORTED);
 
-fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_promise_compliance][1]);
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_promise_compliance].name);
 fprintf(fp,"    association => a(\"is based on\",\"promises\",\"%s\");\n",NOVA_REPORTED);
-fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_promise_compliance][1]);
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_promise_compliance].name);
 fprintf(fp,"    association => a(\"%s\",\"promise report\",\"%s\");\n",NOVA_SEEALSO,NOVA_SEEALSO);
 
-fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_performance][1]);
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_performance].name);
 fprintf(fp,"    association => a(\"is based on\",\"promises\",\"%s\");\n",NOVA_REPORTED);
-fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_setuid][1]);
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_setuid].name);
 fprintf(fp,"    association => a(\"%s\",\"promise_types::files\",\"%s\");\n",NOVA_GEN,NOVA_REPORTED);
 fprintf(fp,"  \"hashes report\"\n");
 fprintf(fp,"    association => a(\"%s\",\"promise_types::files\",\"%s\");\n",NOVA_GEN,NOVA_REPORTED);
 fprintf(fp,"  \"hashes report\"\n");
 fprintf(fp,"    association => a(\"%s\",\"body_constraints::changes\",\"%s\");\n",NOVA_GEN,NOVA_REPORTED);
-fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_change][1]);
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_change].name);
 fprintf(fp,"    association => a(\"%s\",\"promise_types::files\",\"%s\");\n",NOVA_GEN,NOVA_REPORTED);
-fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_change][1]);
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_change].name);
 fprintf(fp,"    association => a(\"%s\",\"body_constraints::changes\",\"%s\");\n",NOVA_GEN,NOVA_REPORTED);
-fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_diff][1]);
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_diff].name);
 fprintf(fp,"    association => a(\"%s\",\"promise_types::files\",\"%s\");\n",NOVA_GEN,NOVA_REPORTED);
-fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_diff][1]);
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_diff].name);
 fprintf(fp,"    association => a(\"%s\",\"body_constraints::changes\",\"%s\");\n",NOVA_GEN,NOVA_REPORTED);
-fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_software_installed][1]);
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_software_installed].name);
 fprintf(fp,"    association => a(\"%s\",\"promise_types::packages\",\"%s\");\n",NOVA_GEN,NOVA_REPORTED);
-fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_patch_status][1]);
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_patch_status].name);
 fprintf(fp,"    association => a(\"%s\",\"promise_types::packages\",\"%s\");\n",NOVA_GEN,NOVA_REPORTED);
-fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_patch_avail][1]);
+fprintf(fp,"  \"%s\"\n",BASIC_REPORTS[cfrep_patch_avail].name);
 fprintf(fp,"    association => a(\"%s\",\"promise_types::packages\",\"%s\");\n",NOVA_GEN,NOVA_REPORTED);
 
         
