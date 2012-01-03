@@ -2,19 +2,6 @@
 
 #include "rlist.h"
 
-enum promiselog_rep
-   {
-   plog_repaired,
-   plog_notkept
-   };
-
-typedef struct PageInfo
-{
-  int resultsPerPage;
-  int pageNum;
-  int totalResultCount;
-}PageInfo_t;
-
 #define cfr_software     "sw"
 #define cfr_patch_avail  "pa"
 #define cfr_patch_installed "pi"
