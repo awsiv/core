@@ -122,7 +122,7 @@
             max:110
         },
             
-        grid: {hoverable: true, clickable: true },
+        grid: {"hoverable": true, "clickable": true,"autoHighlight":true },
         colors: ["#779a62", "#F0d76a", "#cc4358","#000000"]
     };
     var plot = $.plot($("#compliance_summary_graph"), startData,options );
@@ -140,6 +140,9 @@
             if (previousPoint == null || previousPoint.point != item.dataIndex || previousPoint.sIndex != item.seriesIndex ) { 
                 previousPoint.point = item.dataIndex;
                 previousPoint.sIndex = item.seriesIndex;
+                
+                $(this).css('cursor','pointer');
+                plot.highlight(item.series, item.datapoint,event);
                 
                 $("#tooltip").remove();
                 var x = item.datapoint[0].toFixed(2),
@@ -160,10 +163,13 @@
                     + ' <br />Count :: ' + c;
                    
                 showTooltip(item.pageX, item.pageY,tooltip);
+                
             }   
         }
         else {
+            $(this).css('cursor','default');
             $("#tooltip").remove();
+            plot.unhighlight();
             previousPoint.point = null;
             previousPoint.sIndex = null;
         }

@@ -72,6 +72,8 @@ function init(){
         family: 'Arial',
         color: 'white'
       },
+      //change if hovered color
+      hoveredColor: false,
       //add tooltips
       Tips: {
         enable: true,
