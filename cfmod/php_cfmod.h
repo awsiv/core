@@ -25,6 +25,8 @@ extern zend_module_entry cfmod_module_entry;
 #define phpext_cfmod_ptr &cfmod_module_entry
 
 extern zend_class_entry *cfmod_ldap_exception_ce;
+extern zend_class_entry *cfmod_exception_db;
+extern zend_class_entry *cfmod_exception_args;
 
 #ifdef PHP_WIN32
 #	define PHP_CFMOD_API __declspec(dllexport)
