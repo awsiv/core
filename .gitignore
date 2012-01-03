@@ -30,3 +30,15 @@ tests/unit/*_test
 .cproject
 .project
 .settings
+
+# netbeans
+
+GUI2/nbproject
+
+# qt-creator
+
+nova.config
+nova.creator
+nova.creator.user
+nova.files
+nova.includes
