@@ -5994,7 +5994,6 @@ int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *user
  if(strlen(noteId)>0 && ret)
     {
       CFDBRef_AddToRow(&dbconn, db, &query, row_add, noteId);
-      CFDBRef_AddToRow(&dbconn, MONGO_ARCHIVE, &query, row_add, noteId);
       snprintf(returnval,bufsize,"%s",noteId);
     }
  //TODO: delete comment if addtorow fails?
