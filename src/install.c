@@ -1427,14 +1427,12 @@ int PageRecords(struct Rlist **records_p, struct PageInfo *page,void (*fnptr)())
 
  if(page->resultsPerPage <= 0 || page->pageNum <= 0)
     {
-    CfOut(cf_error, "", "!! Wrong parameters to PageRecords() - %d,%d",
-	  page->resultsPerPage, page->pageNum);
-    return false;
+    page->totalResultCount = RlistLen(*records_p);
+    return true;
     }
   
  startIdx = page->resultsPerPage*(page->pageNum - 1);
  endIdx = (page->resultsPerPage*page->pageNum) - 1;
-
  prevStartEl = NULL;  // points to startEl
  startEl = *records_p;
  endEl = NULL;
