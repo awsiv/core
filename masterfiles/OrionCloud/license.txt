@@ -1,9 +1,9 @@
 
-The Cfengine Cloud Pack, Copyright  (C) Cfengine AS, Oslo Norway
+The CFEngine Cloud Pack, Copyright  (C) CFEngine AS, Oslo Norway
 --------------------------------------------------------------------
 
 This file is provided under a perpetual license as part of tjhe
-Cfengine Cloud Pack (hereby called The Software). The Software may be
+CFEngine Cloud Pack (hereby called The Software). The Software may be
 used within a single Internet Domain. If no Internet Domain is
 registered, it may be used within a single legal organization
 possessing a maximum of 1024 computers, or by a single individual with
@@ -17,15 +17,15 @@ any manner or form to any other third party not holding a license for
 the Software.
 
 The Licensee may not transfer any of its rights under this agreement
-without the prior and express written consent of Cfengine.
+without the prior and express written consent of CFEngine.
 
 INTELLECTUAL PROPERTY RIGHTS
 
-Cfengine does not transfer any copyrights or other intellectual
+CFEngine does not transfer any copyrights or other intellectual
 property rights relating to the Software to the Licensee. Such rights
 are protected by intellectual property legislation in the United
 States, Europe and other jurisdictions and by international treaty
-provisions. Cfengine and its suppliers retain all rights in the
+provisions. CFEngine and its suppliers retain all rights in the
 Software that are not expressly granted to the Licensee through this
 license.
 
@@ -35,13 +35,13 @@ within the Software.
 
 NO WARRANTY
 
-To the maximum extent permitted by law, Cfengine disclaims any
+To the maximum extent permitted by law, CFEngine disclaims any
 warranty for the Software. The Software, any services and any related
 documentation are provided on an "as is" basis without warranty of any
 kind, whether express or implied, including, but not limited to,
 implied warranties of merchantability, fitness for a particular
 purpose or non-infringement. Hereunder the parties acknowledges that
-Cfengine does not warrant for the performance of any data centre on
+CFEngine does not warrant for the performance of any data centre on
 which the Software runs, or the absence of any errors in the Software,
 and that any such errors does not constitute a contractual defect.
 
@@ -50,7 +50,7 @@ LIABILITY
 The liability of the parties in contract, tort (including negligence)
 or otherwise shall for all incidents during the entire term of 30 days
 from the date of purchase be limited to a half of the fees paid for a
-perpetual license. Cfengine or its suppliers shall not be liable for
+perpetual license. CFEngine or its suppliers shall not be liable for
 any special, incidental, indirect or consequential damages whatsoever
 (including, without limitation, damages for loss of business profits,
 lost savings, business interruption, loss of business information,
@@ -61,6 +61,5 @@ Software, even if advised of the possibility of such damages.
 THIRD-PARTY TERMS
 
 For third-party software that is integrated with or used by
-Cfengine, the current terms of the relevant third party software
+CFEngine, the current terms of the relevant third party software
 supplier shall apply.
-
