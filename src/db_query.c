@@ -3446,6 +3446,12 @@ while (mongo_cursor_next(cursor))
             {
             bson_iterator_init(&it3, bson_iterator_value(&it2));
             strncpy(rname,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
+
+            if (strcmp(rname,"QUERY") == 0)
+               {
+               continue;
+               }
+            
             snprintf(noteid,CF_MAXVARSIZE,"%s",CF_NONOTE);
             
             ravg = 0;
