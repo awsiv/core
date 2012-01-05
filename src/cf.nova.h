@@ -14,6 +14,8 @@
 #  include "conf.h"
 #endif
 
+#include "cf3.defs.h"
+
 #ifdef HAVE_LIBLDAP
 /* LDAP functionality uses several functions which are only provided if this macro is defined */
 #  define LDAP_DEPRECATED 1
