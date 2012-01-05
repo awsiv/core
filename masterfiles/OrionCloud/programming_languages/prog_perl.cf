@@ -47,7 +47,7 @@
 # or
 #
 #  methods:
-#   "build-essential" usebundle => prog_perl("$(state)");
+#   "PERL" usebundle => prog_perl("$(state)");
 #
 #    $(state) = "on"    -> to install PERL
 #    $(state) = "purge" -> to uninstall PERL

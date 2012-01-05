@@ -47,7 +47,7 @@
 # or
 #
 #  methods:
-#   "build-essential" usebundle => prog_python("$(state)");
+#   "PYTHON" usebundle => prog_python("$(state)");
 #
 #    $(state) = "on"    -> to install PYTHON
 #    $(state) = "purge" -> to uninstall PYTHON
