@@ -14,9 +14,7 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 /*                                                                           */
 /*****************************************************************************/
 
-#include "cf3.defs.h"
-#include "cf3.extern.h"
-#include "cf.nova.h"
+#include "db_query.h"
 #include "bson_lib.h"
 
 /*****************************************************************************/
@@ -7547,6 +7545,48 @@ int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
 }
 
 /*************************************************/
+
+JsonArray *CFDB_QueryHostKeys(mongo_connection *conn, char *hostname, char *ip)
+{
+bson_buffer buffer;
+bson query, field;
+
+// query
+bson_buffer_init(&buffer);
+bson_append_regex(&buffer, cfr_host_array, hostname, "");
+bson_append_regex(&buffer, cfr_ip_array, ip, "");
+bson_from_buffer(&query, &buffer);
+
+// projection
+bson_buffer_init(&buffer);
+bson_append_int(&buffer, cfr_keyhash, 1);
+bson_from_buffer(&field, &buffer);
+
+mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+
+bson_destroy(&query);
+bson_destroy(&field);
+
+JsonArray *host_keys = NULL;
+while (mongo_cursor_next(cursor))
+   {
+   bson_iterator iter;
+   bson_iterator_init(&iter, cursor->current.data);
+
+   while (bson_iterator_next(&iter))
+      {
+      if (strcmp(bson_iterator_key(&iter), cfr_keyhash) == 0)
+         {
+         JsonArrayAppendString(&host_keys, bson_iterator_string(&iter));
+         }
+      }
+   }
+
+mongo_cursor_destroy(cursor);
+
+return host_keys;
+}
+
 
 #endif  /* HAVE LIBMONGOC */
 

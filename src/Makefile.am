@@ -35,7 +35,7 @@ libcfnova_la_SOURCES =						\
 	bson_lib.c						\
 	database.c						\
 	db_save.c                                               \
-        db_query.c                                              \
+        db_query.c db_query                                     \
         db_maintain.c                                           \
 	sql.c							\
 	ldap.c							\
