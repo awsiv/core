@@ -8,6 +8,12 @@
 
 static function_entry cfmod_functions[] =
     {
+    // public API
+    PHP_FE(cfmod_resource_host_list, NULL)
+
+    PHP_FE(cfmod_resource_report_list, NULL)
+
+    // private API
     PHP_FE(cfpr_enterprise_version,NULL)
     PHP_FE(cfpr_community_version,NULL)
     PHP_FE(cfpr_getlicense_summary,NULL)
@@ -268,7 +274,6 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfcon_get_story_by_id,NULL)
 #endif  /* HAVE_CONSTELLATION */
 
-    
     {NULL, NULL, NULL}	/* Must be the last line in cfmod_functions[] */
     };
 

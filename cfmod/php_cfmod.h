@@ -46,6 +46,7 @@ PHP_RINIT_FUNCTION(cfmod);
 PHP_RSHUTDOWN_FUNCTION(cfmod);
 PHP_MINFO_FUNCTION(cfmod);
 
+#include "public-api.h"
 #include "private-api.h"
 
 /* 
