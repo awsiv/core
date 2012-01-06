@@ -1133,8 +1133,8 @@ int NovaWin_StringToSid(char *stringSid, SID *sid, int sidSz);
 struct UidList *NovaWin_Rlist2SidList(struct Rlist *uidnames, struct Promise *pp);
 
 #if defined(__MINGW32__)
-struct Rval FnCallUserExists(struct FnCall *fp,struct Rlist *finalargs);
-struct Rval FnCallGroupExists(struct FnCall *fp,struct Rlist *finalargs);
+FnCallResult FnCallUserExists(struct FnCall *fp,struct Rlist *finalargs);
+FnCallResult FnCallGroupExists(struct FnCall *fp,struct Rlist *finalargs);
 #endif
 
 /* win_wmi.c */
