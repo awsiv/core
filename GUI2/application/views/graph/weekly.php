@@ -6,7 +6,7 @@
         <li><span style="display:inline-block;width:20px;color:rgb(255, 153, 0);font-size: 15px; font-weight: bold;text-align: center;">&mdash;</span> Last measured value</li>
         <li><span style="display:inline-block;width:20px;color:rgb(0, 204, 0);font-size: 15px; font-weight: bold;text-align: center;">&mdash;</span> Average measured value</li>
         <li><span style="display:inline-block;width:20px;color:red;font-size: 15px; font-weight: bold;text-align: center;">|</span> std dev above average </li>   
-        <li><span style="display:inline-block;width:20px;color:rgb(0, 204, 0);font-size: 15px; font-weight: bold;text-align: center;">|</span> std dev above average</li>
+        <li><span style="display:inline-block;width:20px;color:rgb(0, 204, 0);font-size: 15px; font-weight: bold;text-align: center;">|</span> std dev below average</li>
     </ul>
 
     <h3>Analysis</h3>
