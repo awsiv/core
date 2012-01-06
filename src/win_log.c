@@ -1,6 +1,6 @@
 /*
 
-This file is (C) Cfengine AS. See LICENSE for details.
+  This file is (C) Cfengine AS. See LICENSE for details.
 
 */
 
@@ -76,13 +76,13 @@ void MakeLog(struct Item *mess, enum cfreport level)
 
  // don't include prefix if it is the default
  if(strcmp(VPREFIX, GetConsolePrefix()) == 0)
-   {
-     insertStrings[0] = "";
-   }
+    {
+    insertStrings[0] = "";
+    }
  else
-   {
-     insertStrings[0] = VPREFIX;
-   }
+    {
+    insertStrings[0] = VPREFIX;
+    }
 
  strMsg = Item2String(mess);
  insertStrings[1] = strMsg;
@@ -113,7 +113,7 @@ void OpenLog(int facility)
     CfOut(cf_error, "RegisterEventSource", "!! Could not open log");
     }
 
-FACILITY = facility;
+ FACILITY = facility;
 }
 
 /*****************************************************************************/
@@ -257,9 +257,9 @@ void LogPromiseResult(char *promiser, char peeType, void *promisee, char status,
         eventId = EVMSG_PROMISE_KEPT;
 
 	if(log_level != cf_verbose)
-	  {
-	  return;
-	  }
+           {
+           return;
+           }
         break;
 
     case CF_CHG:  // promise repaired
@@ -268,9 +268,9 @@ void LogPromiseResult(char *promiser, char peeType, void *promisee, char status,
         eventId = EVMSG_PROMISE_REPAIRED;
 
 	if(log_level != cf_verbose)
-	  {
-	  return;
-	  }
+           {
+           return;
+           }
         break;
 
     case CF_WARN:  // promise not kept, but not repaired due to policy (e.g. dry-run)
@@ -335,15 +335,15 @@ void LogPromiseResult(char *promiser, char peeType, void *promisee, char status,
 
  strMsg = Item2String(mess);
 
-  // don't include prefix if it is the default
+ // don't include prefix if it is the default
  if(strcmp(VPREFIX, GetConsolePrefix()) == 0)
-   {
-     insertStrings[0] = "";
-   }
+    {
+    insertStrings[0] = "";
+    }
  else
-   {
-     insertStrings[0] = VPREFIX;
-   }
+    {
+    insertStrings[0] = VPREFIX;
+    }
 
  insertStrings[1] = promiser;
  insertStrings[2] = strPromisee;

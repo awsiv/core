@@ -1,6 +1,6 @@
 /*
 
-This file is (C) Cfengine AS. See LICENSE for details.
+  This file is (C) Cfengine AS. See LICENSE for details.
 
 */
 
@@ -103,7 +103,7 @@ void NovaWin_GetInterfaceInfo()
     // we only care about ethernet interfaces that are up
     if(pCurrAddresses->IfType == IF_TYPE_ETHERNET_CSMACD &&
        pCurrAddresses->OperStatus == IfOperStatusUp)
-      {
+       {
 
        stored_ipv4 = false;
        stored_ipv6 = false;
@@ -130,25 +130,25 @@ void NovaWin_GetInterfaceInfo()
 
 	  // keep only one address of each type (ipv4/ipv6)
 	  if(IsIPV4Address(addrBuf))
-	    {
-	    if(stored_ipv4)
-	      {
-   	      continue;
-	      }
+             {
+             if(stored_ipv4)
+                {
+                continue;
+                }
 
-            ifType = "ipv4";
-	    stored_ipv4 = true;
-	    }
+             ifType = "ipv4";
+             stored_ipv4 = true;
+             }
 	  else
-	    {
-	    if(stored_ipv6)
-	      {
-   	      continue;
-	      }
+             {
+             if(stored_ipv6)
+                {
+                continue;
+                }
 
-            ifType = "ipv6";
-	    stored_ipv6 = true;
-	    }
+             ifType = "ipv6";
+             stored_ipv6 = true;
+             }
 
 
 	  // set the interface name and ipv4 & ipv6 address of first
@@ -159,16 +159,16 @@ void NovaWin_GetInterfaceInfo()
              }
 
 	  if((strcmp(ifType, "ipv4") == 0) && firstIfaceIp4)
-	    {
-	    NewScalar("sys", "ipv4", addrBuf, cf_str);
-            firstIfaceIp4 = false;
-	    }
+             {
+             NewScalar("sys", "ipv4", addrBuf, cf_str);
+             firstIfaceIp4 = false;
+             }
 
 	  if((strcmp(ifType, "ipv6") == 0) && firstIfaceIp6)
-	    {
-	    NewScalar("sys", "ipv6", addrBuf, cf_str);
-            firstIfaceIp6 = false;
-	    }
+             {
+             NewScalar("sys", "ipv6", addrBuf, cf_str);
+             firstIfaceIp6 = false;
+             }
 
 	  AppendItem(&IPADDRESSES,addrBuf,"");
 
@@ -187,8 +187,8 @@ void NovaWin_GetInterfaceInfo()
              tup = 1;
 
 	     for(j = 0; addrBuf[j] != '\0'; j++)
-	       {
-		 if(addrBuf[j] == '.')
+                {
+                if(addrBuf[j] == '.')
 		   {
 		   strcpy(bufVal, addrBuf);
 		   bufVal[j] = '\0';
@@ -201,12 +201,12 @@ void NovaWin_GetInterfaceInfo()
 
 		   tup++;
 		   }
-	       }
+                }
 
              }
           }
 
-        }
+       }
 
     pCurrAddresses = pCurrAddresses->Next;
     }
@@ -224,104 +224,104 @@ int TryConnect(struct cfagent_connection *conn, struct timeval *tvp, struct sock
  * NB! Do not use recv() timeout - see note below.
  **/
 {
-  int res;
-  long arg;
-  struct sockaddr_in emptyCin = {0};
-  u_long nonBlock;
+ int res;
+ long arg;
+ struct sockaddr_in emptyCin = {0};
+ u_long nonBlock;
 
-  if(!cinp)
+ if(!cinp)
     {
-      cinp = &emptyCin;
-      cinpSz = sizeof(emptyCin);
+    cinp = &emptyCin;
+    cinpSz = sizeof(emptyCin);
     }
 
-   /* set non-blocking socket */
+ /* set non-blocking socket */
 
-   nonBlock= true;
-   if(ioctlsocket(conn->sd,FIONBIO,&nonBlock) != 0)
-     {
-     CfOut(cf_error,"ioctlsocket","!! Could not disable socket blocking mode");
-     }
+ nonBlock= true;
+ if(ioctlsocket(conn->sd,FIONBIO,&nonBlock) != 0)
+    {
+    CfOut(cf_error,"ioctlsocket","!! Could not disable socket blocking mode");
+    }
 
-   res = connect(conn->sd,cinp,cinpSz);
+ res = connect(conn->sd,cinp,cinpSz);
 
-   if (res != 0)
-      {
+ if (res != 0)
+    {
 
-	if(WSAGetLastError() == WSAEWOULDBLOCK)
-	  {
-	    fd_set wrset;
-	    fd_set exset;
-	    int valopt;
-	    socklen_t lon = sizeof(int);
+    if(WSAGetLastError() == WSAEWOULDBLOCK)
+       {
+       fd_set wrset;
+       fd_set exset;
+       int valopt;
+       socklen_t lon = sizeof(int);
 
-	    FD_ZERO(&wrset);
-	    FD_ZERO(&exset);
-	    FD_SET(conn->sd,&wrset);
-	    FD_SET(conn->sd,&exset);
+       FD_ZERO(&wrset);
+       FD_ZERO(&exset);
+       FD_SET(conn->sd,&wrset);
+       FD_SET(conn->sd,&exset);
 
-	    /* now wait for connect, but no more than tvp.sec */
-	    res = select(0, NULL, &wrset, &exset, tvp);
+       /* now wait for connect, but no more than tvp.sec */
+       res = select(0, NULL, &wrset, &exset, tvp);
 
-	    if(res == SOCKET_ERROR)
-	      {
-		CfOut(cf_error,"select"," !! Error connecting to server (select error))");
-		return false;
-	      }
-	    else if(res == 0)
-	      {
-		CfOut(cf_error,""," !! Error connecting to server (timeout))");
-		return false;
-	      }
-
-
-	    if(getsockopt(conn->sd, SOL_SOCKET, SO_ERROR, (void*)(&valopt), &lon) != 0)
-	      {
-		CfOut(cf_error,"getsockopt","!! Could not check connection status");
-		return false;
-	      }
-
-	    if (valopt != 0)
-	      {
-		CfOut(cf_error,"connect"," !! Error connecting to server (timeout)");
-		return false;
-	      }
-
-	  }
-	else
-	  {
-	    CfOut(cf_error,"connect"," !! Error connecting to server");
-	    return false;
-	  }
-      }
+       if(res == SOCKET_ERROR)
+          {
+          CfOut(cf_error,"select"," !! Error connecting to server (select error))");
+          return false;
+          }
+       else if(res == 0)
+          {
+          CfOut(cf_error,""," !! Error connecting to server (timeout))");
+          return false;
+          }
 
 
-   /* connection is succeed; return to blocking mode */
+       if(getsockopt(conn->sd, SOL_SOCKET, SO_ERROR, (void*)(&valopt), &lon) != 0)
+          {
+          CfOut(cf_error,"getsockopt","!! Could not check connection status");
+          return false;
+          }
 
-   nonBlock = false;
+       if (valopt != 0)
+          {
+          CfOut(cf_error,"connect"," !! Error connecting to server (timeout)");
+          return false;
+          }
 
-   if(ioctlsocket(conn->sd,FIONBIO,&nonBlock) != 0)
-     {
-     CfOut(cf_error,"ioctlsocket","!! Could not enable socket blocking mode");
-     }
+       }
+    else
+       {
+       CfOut(cf_error,"connect"," !! Error connecting to server");
+       return false;
+       }
+    }
 
-   /*
-    * NB: recv() timeout is a bad idea.  struct timeval is very
-    *     unstable - interpreted differently on different
-    *     platforms. E.g. setting tv_sec to 50 (and tv_usec to 0)
-    *     results in a timeout of 0.5 seconds on Windows, but 50
-    *     seconds on Linux.
-    *
-   tvRecv.tv_sec = RECVTIMEOUT;
-   tvRecv.tv_usec = 0;
 
-   if (setsockopt(conn->sd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tvRecv, sizeof(tvRecv)))
-      {
-      CfOut(cf_error,"setsockopt","!! Couldn't set socket timeout");
-      }
-   */
+ /* connection is succeed; return to blocking mode */
 
-  return true;
+ nonBlock = false;
+
+ if(ioctlsocket(conn->sd,FIONBIO,&nonBlock) != 0)
+    {
+    CfOut(cf_error,"ioctlsocket","!! Could not enable socket blocking mode");
+    }
+
+ /*
+  * NB: recv() timeout is a bad idea.  struct timeval is very
+  *     unstable - interpreted differently on different
+  *     platforms. E.g. setting tv_sec to 50 (and tv_usec to 0)
+  *     results in a timeout of 0.5 seconds on Windows, but 50
+  *     seconds on Linux.
+  *
+  tvRecv.tv_sec = RECVTIMEOUT;
+  tvRecv.tv_usec = 0;
+
+  if (setsockopt(conn->sd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tvRecv, sizeof(tvRecv)))
+  {
+  CfOut(cf_error,"setsockopt","!! Couldn't set socket timeout");
+  }
+ */
+
+ return true;
 }
 
 

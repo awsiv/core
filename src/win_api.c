@@ -1,6 +1,6 @@
 /*
 
-This file is (C) Cfengine AS. See LICENSE for details.
+  This file is (C) Cfengine AS. See LICENSE for details.
 
 */
 
@@ -465,7 +465,7 @@ int NovaWin_uname(struct utsname *buf)
     CfOut(cf_error, "", "!! Could not get this host's hostname");
     snprintf(buf->nodename, _SYS_NMLN, "%s", "UNKNOWN_HOSTNAME");
     }
-  else
+ else
     {
     snprintf(buf->nodename, _SYS_NMLN, "%s", hostName);
     }

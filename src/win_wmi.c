@@ -33,30 +33,30 @@ DISPATCH_OBJ(wmiSvc);
 
 int NovaWin_GetInstalledPkgs(struct CfPackageItem **pkgList, struct Attributes a, struct Promise *pp)
 {
-  int res;
+ int res;
 
-  if(!NovaWin_WmiInitialize())  // deinitialized before agents exit
+ if(!NovaWin_WmiInitialize())  // deinitialized before agents exit
     {
-      CfOut(cf_error, "", "!! Could not initialize WMI to get installed packages");
-      return false;
+    CfOut(cf_error, "", "!! Could not initialize WMI to get installed packages");
+    return false;
     }
 
 
-  // NOTE: Win2008+ supports querying msi-name directly,
-  // but sw is not always installed from msi-package.
+ // NOTE: Win2008+ supports querying msi-name directly,
+ // but sw is not always installed from msi-package.
 
-  res = NovaWin_WmiGetInstalledPkgsOld(pkgList, a, pp);
+ res = NovaWin_WmiGetInstalledPkgsOld(pkgList, a, pp);
 
-  /*
-if (WINVER_MAJOR < 6) // 2003/XP or earlier versions
+ /*
+   if (WINVER_MAJOR < 6) // 2003/XP or earlier versions
    {
-     res = NovaWin_WmiGetInstalledPkgsOld(pkgList, a, pp);
+   res = NovaWin_WmiGetInstalledPkgsOld(pkgList, a, pp);
    }
-else
+   else
    {
-     res = NovaWin_WmiGetInstalledPkgsNew(pkgList, a, pp);
+   res = NovaWin_WmiGetInstalledPkgsNew(pkgList, a, pp);
    }
-  */
+ */
 
  return res;
 }
@@ -69,78 +69,78 @@ else
 static int NovaWin_WmiGetInstalledPkgsNew(struct CfPackageItem **pkgList, struct Attributes a, struct Promise *pp)
 
 { char *pkgName = NULL;
-  char name[CF_MAXVARSIZE], version[CF_MAXVARSIZE];
-  char *nameRegex, *versionRegex;
+ char name[CF_MAXVARSIZE], version[CF_MAXVARSIZE];
+ char *nameRegex, *versionRegex;
 
-  DISPATCH_OBJ(colSoftware);
+ DISPATCH_OBJ(colSoftware);
 
  CfDebug("NovaWin_WmiGetInstalledPkgsNew()\n");
 
 
  // default to user-defined name and version regex
  if(a.packages.package_name_regex != NULL)
-   {
-   nameRegex = a.packages.package_name_regex;
-   }
+    {
+    nameRegex = a.packages.package_name_regex;
+    }
  else
-   {
-   nameRegex = "^(\\S+)-(\\d+\\.?)+";
-   }
+    {
+    nameRegex = "^(\\S+)-(\\d+\\.?)+";
+    }
 
 
  if(a.packages.package_version_regex != NULL)
-   {
-   versionRegex = a.packages.package_version_regex;
-   }
+    {
+    versionRegex = a.packages.package_version_regex;
+    }
  else
-   {
-   versionRegex = "^\\S+-((\\d+\\.?)+)";
-   }
+    {
+    versionRegex = "^\\S+-((\\d+\\.?)+)";
+    }
 
 
-if (!RUN_QUERY(colSoftware, "SELECT PackageName FROM Win32_Product"))
-   {
-   NovaWin_PrintWmiError("Could not execute query 'SELECT PackageName FROM Win32_Product' in 'NovaWin_WmiGetInstalledPkgsNew'");
+ if (!RUN_QUERY(colSoftware, "SELECT PackageName FROM Win32_Product"))
+    {
+    NovaWin_PrintWmiError("Could not execute query 'SELECT PackageName FROM Win32_Product' in 'NovaWin_WmiGetInstalledPkgsNew'");
 
-   SAFE_RELEASE(colSoftware);
-   return false;
-   }
+    SAFE_RELEASE(colSoftware);
+    return false;
+    }
 
 
  FOR_EACH(softwareItem, colSoftware, NULL)
-  {
-   dhGetValue(L"%s", &pkgName, softwareItem, L".PackageName");
+    {
+    dhGetValue(L"%s", &pkgName, softwareItem, L".PackageName");
 
 
-   if(pkgName == NULL)
-      {
-      CfOut(cf_error, "", "!! Empty package name for installed package");
-      }
-   else
-      {
-	CfDebug("pkgname=\"%s\"\n", pkgName);
+    if(pkgName == NULL)
+       {
+       CfOut(cf_error, "", "!! Empty package name for installed package");
+       }
+    else
+       {
+       CfDebug("pkgname=\"%s\"\n", pkgName);
 
-	snprintf(name, sizeof(name), "%s", ExtractFirstReference(nameRegex, pkgName));
-        snprintf(version, sizeof(version), "%s", ExtractFirstReference(versionRegex, pkgName));
+       snprintf(name, sizeof(name), "%s", ExtractFirstReference(nameRegex, pkgName));
+       snprintf(version, sizeof(version), "%s", ExtractFirstReference(versionRegex, pkgName));
 
-        CfDebug("regex_pkgname=\"%s\", regex_pkgver=\"%s\"\n", name, version);
+       CfDebug("regex_pkgname=\"%s\", regex_pkgver=\"%s\"\n", name, version);
 
-      if (!PrependPackageItem(pkgList, name, version, VSYSNAME.machine, a, pp))
-         {
-         CfOut(cf_error, "", "!! Could not prepend package name to list");
-         }
+       if (!PrependPackageItem(pkgList, name, version, VSYSNAME.machine, a, pp))
+          {
+          CfOut(cf_error, "", "!! Could not prepend package name to list");
+          }
 
-      dhFreeString(pkgName);
-      pkgName = NULL;
-      }
-
-
-   } NEXT(softwareItem);
+       dhFreeString(pkgName);
+       pkgName = NULL;
+       }
 
 
-SAFE_RELEASE(colSoftware);
+    } NEXT(softwareItem);
 
-return true;
+
+ SAFE_RELEASE(colSoftware);
+
+ return true;
 }
 
 /*****************************************************************************/
@@ -152,98 +152,98 @@ static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, struct
  * On Windows Server 2003, "Windows Installer Provider" may need
  * to be installed (Add/Remove Windows Components). */
 { char *caption = NULL;
-  char *version = NULL;
-  char *sp;
-  int count = 0;
+ char *version = NULL;
+ char *sp;
+ int count = 0;
 
-  DISPATCH_OBJ(colSoftware);
+ DISPATCH_OBJ(colSoftware);
 
  CfDebug("NovaWin_WmiGetInstalledPkgsOld()\n");
 
-  if(!RUN_QUERY(colSoftware, "SELECT Caption, Version FROM Win32_Product"))
+ if(!RUN_QUERY(colSoftware, "SELECT Caption, Version FROM Win32_Product"))
     {
-      NovaWin_PrintWmiError("Could not execute query 'SELECT Caption, Version FROM Win32_Product' in 'NovaWin_WmiGetInstalledPkgsOld'");
+    NovaWin_PrintWmiError("Could not execute query 'SELECT Caption, Version FROM Win32_Product' in 'NovaWin_WmiGetInstalledPkgsOld'");
 
-      SAFE_RELEASE(colSoftware);
-      return false;
+    SAFE_RELEASE(colSoftware);
+    return false;
     }
 
-  FOR_EACH(softwareItem, colSoftware, NULL)
+ FOR_EACH(softwareItem, colSoftware, NULL)
     {
-      dhGetValue(L"%s", &caption, softwareItem, L".Caption");
-      dhGetValue(L"%s", &version, softwareItem, L".Version");
+    dhGetValue(L"%s", &caption, softwareItem, L".Caption");
+    dhGetValue(L"%s", &version, softwareItem, L".Version");
 
 
-      if(caption == NULL || strlen(caption) == 0)
-	{
-	  CfOut(cf_error, "", "!! Empty package caption for installed package");
-	}
-      else if(version == NULL || strlen(version) == 0)
-	{
-	  CfOut(cf_verbose, "", "!! Empty package version for installed package \"%s\"", caption);
-	}
-      else
-	{
+    if(caption == NULL || strlen(caption) == 0)
+       {
+       CfOut(cf_error, "", "!! Empty package caption for installed package");
+       }
+    else if(version == NULL || strlen(version) == 0)
+       {
+       CfOut(cf_verbose, "", "!! Empty package version for installed package \"%s\"", caption);
+       }
+    else
+       {
 
-	  CfDebug("pkgname=\"%s\", pkgver=\"%s\"\n", caption, version);
+       CfDebug("pkgname=\"%s\", pkgver=\"%s\"\n", caption, version);
 
-	  for(sp = caption; *sp != '\0'; sp++)
-	    {
-	      if(*sp == ' ')
-		{
-		  *sp = '-';
-		}
-	      else
-		{
-		  *sp = tolower(*sp);
-		}
-	    }
+       for(sp = caption; *sp != '\0'; sp++)
+          {
+          if(*sp == ' ')
+             {
+             *sp = '-';
+             }
+          else
+             {
+             *sp = tolower(*sp);
+             }
+          }
 
 
-	  if(!PrependPackageItem(pkgList, caption, version, VSYSNAME.machine, a, pp))
-	    {
-	      CfOut(cf_error, "", "!! Could not prepend package name to list");
-	    }
+       if(!PrependPackageItem(pkgList, caption, version, VSYSNAME.machine, a, pp))
+          {
+          CfOut(cf_error, "", "!! Could not prepend package name to list");
+          }
 
-	}
+       }
 
-      if(caption != NULL)
-        {
-	  dhFreeString(caption);
-	  caption = NULL;
-        }
+    if(caption != NULL)
+       {
+       dhFreeString(caption);
+       caption = NULL;
+       }
 
-      if(version != NULL)
-        {
-	  dhFreeString(version);
-	  version = NULL;
-        }
+    if(version != NULL)
+       {
+       dhFreeString(version);
+       version = NULL;
+       }
 
-      count++;
+    count++;
 
     } NEXT(softwareItem);
 
 
-SAFE_RELEASE(colSoftware);
+ SAFE_RELEASE(colSoftware);
 
-if(count == 0)
-  {
-  // can never have empty list since Cfengine is installed
-  CfOut(cf_error,"", "!! List of installed packages is empty - make sure \"Windows Installer Provider\" is installed and working");
-  }
+ if(count == 0)
+    {
+    // can never have empty list since Cfengine is installed
+    CfOut(cf_error,"", "!! List of installed packages is empty - make sure \"Windows Installer Provider\" is installed and working");
+    }
 
-return true;
+ return true;
 }
 
 /****************************************************************************/
 
 void NovaWin_PrintWmiError(char *str)
 {
-  char dhErrMsg[CF_BUFSIZE];
+ char dhErrMsg[CF_BUFSIZE];
 
-  dhFormatExceptionA(NULL, dhErrMsg, sizeof(dhErrMsg)/sizeof(dhErrMsg[0]), TRUE);
+ dhFormatExceptionA(NULL, dhErrMsg, sizeof(dhErrMsg)/sizeof(dhErrMsg[0]), TRUE);
 
-  CfOut(cf_error, "", "!! WMI (disphelper) error: \"%s\" (%s)", dhErrMsg, str);
+ CfOut(cf_error, "", "!! WMI (disphelper) error: \"%s\" (%s)", dhErrMsg, str);
 }
 
 
@@ -254,33 +254,33 @@ int NovaWin_WmiInitialize(void)
  * Initialize WMI for this thread, safe to call when already initialized.
  */
 {
-  CfDebug("NovaWin_WmiInitialize()\n");
+ CfDebug("NovaWin_WmiInitialize()\n");
 
-  if(wmiSvc != NULL)
+ if(wmiSvc != NULL)
     {
-      CfDebug("WMI already initialized\n");
-      return true;
+    CfDebug("WMI already initialized\n");
+    return true;
     }
 
-  if(FAILED(dhInitialize(TRUE)))
+ if(FAILED(dhInitialize(TRUE)))
     {
-      CfOut(cf_error, "dhInitialize", "!! Could not initialize disphelper");
-      return false;
+    CfOut(cf_error, "dhInitialize", "!! Could not initialize disphelper");
+    return false;
     }
 
-  // Debug: call with TRUE to enable dialog box error messages
-  if(FAILED(dhToggleExceptions(FALSE)))
+ // Debug: call with TRUE to enable dialog box error messages
+ if(FAILED(dhToggleExceptions(FALSE)))
     {
-      CfOut(cf_error, "dhToggleExceptions", "!! Could not control disphelper exception messages");
+    CfOut(cf_error, "dhToggleExceptions", "!! Could not control disphelper exception messages");
     }
 
-  if(FAILED(dhGetObject(L"winmgmts:{impersonationLevel=impersonate}!\\\\.\\root\\cimv2", NULL, &wmiSvc)))
+ if(FAILED(dhGetObject(L"winmgmts:{impersonationLevel=impersonate}!\\\\.\\root\\cimv2", NULL, &wmiSvc)))
     {
-      CfOut(cf_error, "dhGetObject", "!! Could not obtain WMI object");
-      return false;
+    CfOut(cf_error, "dhGetObject", "!! Could not obtain WMI object");
+    return false;
     }
 
-  return true;
+ return true;
 }
 
 /*****************************************************************************/
@@ -288,17 +288,17 @@ int NovaWin_WmiInitialize(void)
 int NovaWin_WmiDeInitialize(void)
 /* Safe to call even when not initialized */
 {
-  CfDebug("NovaWin_WmiDeInitialize()\n");
+ CfDebug("NovaWin_WmiDeInitialize()\n");
 
-  if(wmiSvc != NULL)
+ if(wmiSvc != NULL)
     {
-      SAFE_RELEASE(wmiSvc);
-      dhUninitialize(TRUE);
+    SAFE_RELEASE(wmiSvc);
+    dhUninitialize(TRUE);
     }
 
-  wmiSvc = NULL;
+ wmiSvc = NULL;
 
-  return true;
+ return true;
 }
 
 #endif  /* MINGW */
