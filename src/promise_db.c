@@ -26,7 +26,8 @@ void Nova_StoreExpandedPromise(struct Promise *pp)
 { struct Constraint *cp;
   char rval_buffer[CF_BUFSIZE];
   static int firstCall = true;
-  char *sp,jStr[32];
+  char jStr[32];
+  const char *sp;
   char con[CF_MAXVARSIZE];
   mongo_connection dbconn = {0};
   bson_buffer bbuf,*cstr;
@@ -147,7 +148,7 @@ void Nova_StoreUnExpandedPromises(struct Bundle *bundles,struct Body *bodies)
   char iStr[32],jStr[32];
   char rval_buffer[CF_BUFSIZE];
   char con[CF_MAXVARSIZE];
-  char *sp;
+  const char *sp;
 
 if (!SHOWREPORTS)
    {
