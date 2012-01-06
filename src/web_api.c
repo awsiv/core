@@ -870,7 +870,7 @@ return true;
 
 int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
 
-{ char buffer[CF_BUFSIZE], canonifiedCause[CF_BUFSIZE]={0};
+{ char buffer[CF_BUFSIZE], jsonEscapedStr[CF_BUFSIZE]={0};
  struct HubPromiseLog *hp;  struct HubQuery *hq;
  struct Rlist *rp;
  int reportType;
@@ -894,7 +894,7 @@ int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
     hp = (struct HubPromiseLog *)rp->item;
-    EscapeJson(hp->cause,canonifiedCause,sizeof(canonifiedCause));
+    EscapeJson(hp->cause,jsonEscapedStr,sizeof(jsonEscapedStr));
     if (strcmp(hp->nid,CF_NONOTE) == 0)
        {
        switch (type)
@@ -911,7 +911,7 @@ int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time
                 "[ \"%s\",\"%s\",\"%s\",%ld,"
                 "[ \"add\",\"%s\",%d,\"%s\",\"\"]"
                 "],",
-                hp->hh->hostname,hp->handle,canonifiedCause,hp->t,
+                hp->hh->hostname,hp->handle,jsonEscapedStr,hp->t,
                 hp->hh->keyhash,reportType,hp->oid);
        }
     else
@@ -920,7 +920,7 @@ int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time
                 "[ \"%s\",\"%s\",\"%s\",%ld,"
                 "[ \"show\",\"\",\"\",\"\",\"%s\"]"
                 "],",
-                hp->hh->hostname,hp->handle,canonifiedCause,hp->t,
+                hp->hh->hostname,hp->handle,jsonEscapedStr,hp->t,
                 hp->nid);
        }
     if(!Join(returnval,buffer,bufsize))
@@ -947,7 +947,7 @@ int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time
 
 int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,time_t from, time_t to,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
 
-{ char buffer[CF_BUFSIZE],report[CF_BUFSIZE]={0};
+{ char buffer[CF_BUFSIZE],jsonEscapedStr[CF_BUFSIZE]={0};
  struct HubPromiseLog *hp;
  struct HubQuery *hq;
  struct Rlist *rp;
@@ -996,9 +996,9 @@ int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep t
        {
        if(i>=startIndex && (i<=endIndex || endIndex < 0))
           {
-          EscapeJson(ip->classes,report,sizeof(report));
+          EscapeJson(ip->classes,jsonEscapedStr,sizeof(jsonEscapedStr));
           snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%d],",
-                   ip->name,report,ip->counter);
+                   ip->name,jsonEscapedStr,ip->counter);
        
           if(!Join(returnval,buffer,bufsize))
              {
@@ -1531,7 +1531,7 @@ int Nova2PHP_classes_summary(char **classes, char *buf, int bufsize)
 
 int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
 
-{ char buffer[CF_BUFSIZE],lscope[CF_MAXVARSIZE],canonifiedValue[CF_BUFSIZE]={0};
+{ char buffer[CF_BUFSIZE],lscope[CF_MAXVARSIZE],jsonEscapedStr[CF_BUFSIZE]={0};
  char rvalBuf[CF_MAXVARSIZE];
  struct HubVariable *hv;
  struct HubQuery *hq;
@@ -1617,11 +1617,11 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
        snprintf(rvalBuf,sizeof(rvalBuf),"%s",(char *)hv->rval);
        }
 
-    EscapeJson(rvalBuf,canonifiedValue,sizeof(canonifiedValue));
+    EscapeJson(rvalBuf,jsonEscapedStr,sizeof(jsonEscapedStr));
 
     snprintf(buffer,CF_BUFSIZE,
              "[\"%s\",\"%s\",\"%s\",\"%s\",%ld],",
-             hv->hh->hostname,typestr,hv->lval,canonifiedValue,hv->t);
+             hv->hh->hostname,typestr,hv->lval,jsonEscapedStr,hv->t);
 
     margin = headerLen + noticeLen + strlen(buffer);
     if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
@@ -1893,6 +1893,7 @@ int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *classreg
  char header[CF_BUFSIZE]={0};
  int margin = 0,headerLen=0,noticeLen=0;
  int truncated = false;
+ char jsonEscapedStr[CF_BUFSIZE]={0};
 
  if (!CFDB_Open(&dbconn))
     {
@@ -1915,19 +1916,21 @@ int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *classreg
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
     hP = ( struct HubPerformance *)rp->item;
-
+    
+    EscapeJson(hP->event,jsonEscapedStr,sizeof(jsonEscapedStr));
+    
     if(strcmp(hP->nid,CF_NONOTE) == 0)
        {
        snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%.2lf,%.2lf,%.2lf,%ld,"
 		"[\"add\",\"%s\",%d,\"%s\",\"\"]],",
-		hP->hh->hostname,hP->event,hP->q,hP->e,hP->d,hP->t,
+		hP->hh->hostname,jsonEscapedStr,hP->q,hP->e,hP->d,hP->t,
 		hP->hh->keyhash,CFREPORT_PERFORMANCE,hP->handle);
        }
     else
        {
        snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%.2lf,%.2lf,%.2lf,%ld,"
 		"[\"show\",\"\",\"\",\"\",\"%s\"]],",
-		hP->hh->hostname,hP->event,hP->q,hP->e,hP->d,hP->t,
+		hP->hh->hostname,jsonEscapedStr,hP->q,hP->e,hP->d,hP->t,
 		hP->nid);
        }
     margin = headerLen + noticeLen + strlen(buffer);
@@ -2108,6 +2111,7 @@ int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char
  char header[CF_BUFSIZE]={0};
  int margin = 0,headerLen=0,noticeLen=0;
  int truncated = false;
+ char jsonEscapedStr[CF_BUFSIZE] = {0};
  
  switch (*cmp)
     {
@@ -2137,19 +2141,21 @@ int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
     hC = (struct HubFileChanges *)rp->item;
-              
+
+    EscapeJson(hC->path,jsonEscapedStr,sizeof(jsonEscapedStr));
+    
     if(strcmp(hC->nid,CF_NONOTE) == 0)
        {
        snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%ld,"
                 "[\"add\",\"%s\",%d,\"%s\",\"\"]],",
-                hC->hh->hostname,hC->path,hC->t,
+                hC->hh->hostname,jsonEscapedStr,hC->t,
                 hC->hh->keyhash,CFREPORT_FILECHANGES,hC->handle);
        }
     else
        {
        snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%ld,"
                 "[\"show\",\"\",\"\",\"\",\"%s\"]],",
-                hC->hh->hostname,hC->path,hC->t,
+                hC->hh->hostname,jsonEscapedStr,hC->t,
                 hC->nid);
        }
     
@@ -2189,6 +2195,7 @@ int Nova2PHP_filediffs_report(char *hostkey,char *file,char *diffs,int regex,tim
  char header[CF_BUFSIZE]={0};
  int margin = 0,headerLen=0,noticeLen=0;
  int truncated = false;
+ char jsonEscapedStr[CF_BUFSIZE]={0};
  
  switch (*cmp)
     {
@@ -2218,9 +2225,11 @@ int Nova2PHP_filediffs_report(char *hostkey,char *file,char *diffs,int regex,tim
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
     hd = (struct HubFileDiff *)rp->item;
-
+    
+    EscapeJson(hd->path,jsonEscapedStr,sizeof(jsonEscapedStr));
+    
     snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%ld,%s],",
-             hd->hh->hostname,hd->path,hd->t,Nova_FormatDiff(hd->diff));
+             hd->hh->hostname,jsonEscapedStr,hd->t,Nova_FormatDiff(hd->diff));
 
     margin = headerLen + noticeLen + strlen(buffer);
     if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
@@ -3040,7 +3049,7 @@ int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsi
  struct Item *ip,*list = NULL;
  char work[CF_MAXVARSIZE],context[CF_MAXVARSIZE];
  int pid;
- char jsonEscapedStr[CF_MAXVARSIZE] = {0};
+ char jsonEscapedStr[CF_BUFSIZE] = {0};
 
  if (!CFDB_Open(&dbconn))
     {
