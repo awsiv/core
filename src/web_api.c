@@ -1971,6 +1971,7 @@ int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,char *classreg,str
  char header[CF_BUFSIZE]={0};
  int margin = 0,headerLen=0,noticeLen=0;
  int truncated = false;
+ char jsonEscapedStr[CF_BUFSIZE]={0};
 
  if (!CFDB_Open(&dbconn))
     {
@@ -1993,7 +1994,9 @@ int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,char *classreg,str
     {
     hS = ( struct HubSetUid *)rp->item;
 
-    snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\"],",hS->hh->hostname,hS->path);
+    EscapeJson(hS->path,jsonEscapedStr,sizeof(jsonEscapedStr));
+    
+    snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\"],",hS->hh->hostname,jsonEscapedStr);
     margin = headerLen + noticeLen + strlen(buffer);
     if(!JoinMargin(returnval,buffer,NULL,bufsize,margin))
        {
