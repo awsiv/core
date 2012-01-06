@@ -1,6 +1,14 @@
 <div class="graphunit"><?php echo urldecode($units); ?></div>
 <div id="placeholder-weekly_<?php echo $observable; ?>" style="height: 300px; width: 95%; "></div>
 <div>
+    <h3>Legend</h3>
+    <ul>
+        <li><span style="display:inline-block;width:20px;color:rgb(255, 153, 0);font-size: 15px; font-weight: bold;text-align: center;">&mdash;</span> Last measured value</li>
+        <li><span style="display:inline-block;width:20px;color:rgb(0, 204, 0);font-size: 15px; font-weight: bold;text-align: center;">&mdash;</span> Average measured value</li>
+        <li><span style="display:inline-block;width:20px;color:red;font-size: 15px; font-weight: bold;text-align: center;">|</span> std dev above average </li>   
+        <li><span style="display:inline-block;width:20px;color:rgb(0, 204, 0);font-size: 15px; font-weight: bold;text-align: center;">|</span> std dev above average</li>
+    </ul>
+
     <h3>Analysis</h3>
     <ul>
         <?php foreach ((array) $graphDetails as $details) { ?>

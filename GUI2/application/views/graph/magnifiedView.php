@@ -1,11 +1,20 @@
 <div class="graphunit"><?php echo urldecode($units); ?></div>
 <div id="placeholder-magview_<?php echo $observable; ?>" style="height: 300px; width: 95%; "></div>
 <div>
+    <h3>Legend</h3>
+    <ul>
+        <li><span style="display:inline-block;width:20px;color:rgb(255, 153, 0);font-size: 15px; font-weight: bold;text-align: center;">&mdash;</span> Last measured value</li>
+        <li><span style="display:inline-block;width:20px;color:rgb(0, 204, 0);font-size: 15px; font-weight: bold;text-align: center;">&mdash;</span> Average measured value</li>
+        <li><span style="display:inline-block;width:20px;color:red;font-size: 15px; font-weight: bold;text-align: center;">|</span> std dev above average </li>   
+        <li><span style="display:inline-block;width:20px;color:rgb(0, 204, 0);font-size: 15px; font-weight: bold;text-align: center;">|</span> std dev above average</li>
+    </ul>
+
+
     <h3>Analysis</h3>
     <ul>
-    <?php foreach ((array)$graphDetails as $details) { ?>
-        <li><?php echo $details; ?></li>   
-    <?php } ?>
+        <?php foreach ((array) $graphDetails as $details) { ?>
+            <li><?php echo $details; ?></li>   
+        <?php } ?>
     </ul>
 </div>
 <script language="javascript" type="text/javascript">
@@ -48,9 +57,9 @@
         };
         var plot = $.plot($("#placeholder-magview_<?php echo $observable; ?>"),
         [
-            { data:magnifiedViewdata, magnifiedView: {show: true, lineWidth: 1}},
-            { data:lineSeries1,lines: {show:true},color:"rgb(255, 153, 0)"},
-            { data:lineSeries2,lines: {show: true, lineWidth: 1},color:"rgb(0, 204, 0)"}
+            { label:"",data:magnifiedViewdata, magnifiedView: {show: true, lineWidth: 1}},
+            { label:"",data:lineSeries1,lines: {show:true},color:"rgb(255, 153, 0)"},
+            { label:"",data:lineSeries2,lines: {show: true, lineWidth: 1},color:"rgb(0, 204, 0)"}
         ]
         ,options);
 
@@ -91,4 +100,3 @@
     })();
     //]]>
 </script>
-
