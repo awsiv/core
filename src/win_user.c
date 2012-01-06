@@ -238,61 +238,44 @@ struct UidList *NovaWin_Rlist2SidList(struct Rlist *uidnames, struct Promise *pp
 
 /*******************************************************************/
 
-struct Rval NovaWin_FnCallUserExists(struct FnCall *fp,struct Rlist *finalargs)
+FnCallResult FnCallUserExists(struct FnCall *fp,struct Rlist *finalargs)
 
-{ struct Rlist *rp;
-  struct Rval rval;
+{
   char userSid[CF_MAXSIDSIZE];
   char buffer[CF_BUFSIZE];
   char *arg = finalargs->item;
- 
-buffer[0] = '\0';  
 
-/* begin fn specific content */
-
-strcpy(buffer,CF_ANYCLASS);
-
- if(!NovaWin_UserNameToSid(arg, (SID *)userSid, sizeof(userSid), false))
+if (NovaWin_UserNameToSid(arg, (SID *)userSid, sizeof(userSid), false))
    {
-     strcpy(buffer,"!any");
+   strcpy(buffer,CF_ANYCLASS);
    }
-
- rval.item = xstrdup(buffer);
-
-/* end fn specific content */
-
-rval.rtype = CF_SCALAR;
-return rval;
-}
-
-/*********************************************************************/
-
-struct Rval NovaWin_FnCallGroupExists(struct FnCall *fp,struct Rlist *finalargs)
-
-{ 
-  struct Rlist *rp;
-  struct Rval rval;
-  char groupSid[CF_MAXSIDSIZE];
-  char buffer[CF_BUFSIZE];
-  char *arg = finalargs->item;
- 
-buffer[0] = '\0';  
-
-/* begin fn specific content */
-
-strcpy(buffer,CF_ANYCLASS);
-
- if (!NovaWin_GroupNameToSid(arg, (SID *)groupSid, sizeof(groupSid), false))
+else
    {
    strcpy(buffer,"!any");
    }
 
- rval.item = xstrdup(buffer);
+return (FnCallResult) { FNCALL_SUCCESS, { xstrdup(buffer), CF_SCALAR } };
+}
 
-/* end fn specific content */
+/*********************************************************************/
 
-rval.rtype = CF_SCALAR;
-return rval;
+FnCallResult FnCallGroupExists(struct FnCall *fp,struct Rlist *finalargs)
+
+{
+  char groupSid[CF_MAXSIDSIZE];
+  char buffer[CF_BUFSIZE];
+  char *arg = finalargs->item;
+
+if (NovaWin_GroupNameToSid(arg, (SID *)groupSid, sizeof(groupSid), false))
+   {
+   strcpy(buffer, CF_ANYCLASS);
+   }
+else
+   {
+   strcpy(buffer,"!any");
+   }
+
+return (FnCallResult) { FNCALL_SUCCESS, { xstrdup(buffer), CF_SCALAR } };
 }
 
 
