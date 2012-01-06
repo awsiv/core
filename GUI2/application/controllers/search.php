@@ -367,6 +367,7 @@ class Search extends Cf_Controller {
                 break;
             case "File change diffs":
                 $data['resultView'] = 'filechangediff_result';
+                $data['nofix']=true;
                 $cal = -1;
                 if ($many) {
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));

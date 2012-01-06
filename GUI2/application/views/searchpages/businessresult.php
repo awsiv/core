@@ -40,7 +40,7 @@ echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : "" ?></p>
 
         <div class="reportpanelcontent">
             <div id="filterdialog" class="hidden"></div>
-            <div class="tables tablesfixed">
+            <div class="tables <?php echo isset($nofix)? "":"tablesfixed" ?>">
                 <?php
                 include_once ($resultView . '.php');
                 ?> 
@@ -74,7 +74,7 @@ echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : "" ?></p>
 <script type="text/javascript">
     $(document).ready(function() {
         // $('.tables table').tableFilter();
-        $('.tables table').tablesorter({widgets: ['zebra']});
+            // $('.tables table').tablesorter({widgets: ['zebra']});
         
         
         $('#modifySearch').click(function(e) {

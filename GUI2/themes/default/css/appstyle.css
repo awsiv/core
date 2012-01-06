@@ -1600,6 +1600,10 @@ div.ui-dialog .ui-dialog-buttonpane{
     background:#e6eee3;
 }
 
+.tables tr:nth-child(2n) td{
+    background:#e6eee3;
+}
+
 
 .tables td a
 {
@@ -2774,7 +2778,7 @@ width: 120px;
    margin-top: 7px;
 }
 
-#login input[type="text"], input[type="password"], select {
+#login input[type="text"],#login input[type="password"],#login select {
 -webkit-box-shadow: #AAA 0px -1px 3px;
 -moz-box-shadow:0 -1px 3px #AAA;
  box-shadow:0 -1px 3px #AAA;

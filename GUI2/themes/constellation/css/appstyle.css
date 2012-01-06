@@ -1592,6 +1592,10 @@ div.ui-dialog .ui-dialog-buttonpane{
     */
 }
 
+.tables tr td{
+    max-width:300px;
+}
+
 .tables tr td.notes-highlight
 {
     /* background-color: yellow;*/
@@ -1603,6 +1607,10 @@ div.ui-dialog .ui-dialog-buttonpane{
 
 .tables tr.odd td
 {
+    background:#e6eee3;
+}
+
+.tables tr:nth-child(2n) td{
     background:#e6eee3;
 }
 
@@ -1621,24 +1629,6 @@ div.ui-dialog .ui-dialog-buttonpane{
 .tables tr:first-child td
 {
     border-top:1px solid #757575;
-}
-
-.tables tr.filters td
-{
-    padding:5px;
-    background-color:#3d4439;
-    border:solid 1px #3d4439;
-}
-
-.tables tr.filters  input[type='text']
-{
-    background-color:#fff;
-    border:none;
-    -moz-border-radius: 3px;
-    -opera-border-radius:3px;
-    -khtml-border-radius:3px;
-    -webkit-border-radius:3px;
-    border-radius:5px;
 }
 
 .coloricon
@@ -2768,7 +2758,7 @@ width: 120px;
    margin-top: 7px;
 }
 
-#login input[type="text"], input[type="password"], select {
+#login input[type="text"], #login input[type="password"], #login select {
 -webkit-box-shadow: #AAA 0px -1px 3px;
 -moz-box-shadow:0 -1px 3px #AAA;
  box-shadow:0 -1px 3px #AAA;

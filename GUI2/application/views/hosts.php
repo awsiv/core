@@ -64,8 +64,10 @@
     </span>
 </div>
 <script type="text/javascript">
+    
     $(document).ready(function() {
-     $.tablesorter.addParser({
+     
+     /* $.tablesorter.addParser({
       id: 'hostname',
       is: function(s) {
         return false;
@@ -90,7 +92,7 @@
             sortList: [[0,0]]
        });
        
-   
+   */
 
     $("a.deletehostbtn").bind("click", function(e){
          var a = this; 
