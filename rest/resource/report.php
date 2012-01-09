@@ -28,6 +28,7 @@ class ReportResource extends Resource
         $repaired = Utils::queryParam('repaired');
         $handle = Utils::queryParam('handle');
         $status = Utils::queryParam('status'); // TODO: discontinue
+        $job = Utils::queryParam('job');
 
         if ($id == '')
         {
@@ -76,6 +77,11 @@ class ReportResource extends Resource
                     $response->body = cfpr_report_compliance_promises($hostkey,
                             $handle, $status, true, $context, $count,
                             $startPage);
+                    break;
+
+                case 'performance':
+                    $response->body = cfpr_report_performance($hostkey, $job,
+                            true, $context, $count, $startPage);
                     break;
 
                 default:
