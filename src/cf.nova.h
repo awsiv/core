@@ -253,6 +253,7 @@ struct ReportInfo
    };
 
 extern struct ReportInfo BASIC_REPORTS[];
+extern struct ReportInfo CONSTELLATION_REPORTS[];
 
 /*****************************************************************************/
 

@@ -42,7 +42,7 @@ static const char *ERRID_DESCRIPTION[] =
 
 /*****************************************************************************/
 
-static char *FormatTwoDimensionalArrayAsJson(char *buf, int bufsize, const char *array[][2]);
+static char *FormatTwoDimensionalArrayAsJson(char *buf, int bufsize, struct ReportInfo *reports);//const char *array[][2]);
 
 #ifdef HAVE_LIBMONGOC
 
@@ -4050,13 +4050,12 @@ return Nova_GetReportedScalar(hostkey,scope,lval,returnval,bufsize);
 /*****************************************************************************/
 /* Reports                                                                   */
 /*****************************************************************************/
-
-const char *CONSTELLATION_REPORTS[2][2] =
+struct ReportInfo CONSTELLATION_REPORTS[] =
 {
-    {"Virtual bundles","Custom collections of promises and their compliance"},
+    {"virtual-bundles","Constellation","Virtual bundles","Virtual bundles","Custom collections of promises and their compliance"},
     {NULL,NULL}
 };
-/*****************************************************************************/
+
 /*****************************************************************************/
 
 void Nova2PHP_select_reports(char *buffer,int bufsize)
@@ -4084,20 +4083,20 @@ if(Con2PHP_CheckLicenseAndFormatError(errBuf, sizeof(errBuf)))
 
 /*****************************************************************************/
 
-static char *FormatTwoDimensionalArrayAsJson(char *buf, int bufsize, const char *array[][2])
-{
- char work[CF_MAXVARSIZE] = {0};
- int i;
+static char *FormatTwoDimensionalArrayAsJson(char *buf, int bufsize, struct ReportInfo *reports)//const char *array[][2])
+{ char work[CF_MAXVARSIZE] = {0};
+  int i;
 
- for (i = 0; array[i][0] != NULL; i++)
-    {
-    snprintf(work, sizeof(work), "[\"%s\",\"%s\"],", array[i][2], array[i][3]);
-    Join(buf,work,bufsize);
-    }
+for (i = 0; reports[i].id != NULL; i++)
+   {
+   snprintf(work, sizeof(work), "{\"id\":\"%s\",\"category\":\"%s\",\"name\":\"%s\",\"old-name\":\"%s\",\"description\":\"%s\"},",
+            reports[i].id ,reports[i].category,reports[i].name,reports[i].name_old,reports[i].description);
+   Join(buf,work,bufsize);
+   }
 
- ReplaceTrailingChar(buf, ',', '\0');
- 
- return buf;
+ReplaceTrailingChar(buf, ',', '\0');
+
+return buf;
 }
 
 /*****************************************************************************/
