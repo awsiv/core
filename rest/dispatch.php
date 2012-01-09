@@ -1,6 +1,7 @@
 <?php
 
 require_once 'lib/tonic.php';
+require_once 'lib/utils.php';
 
 // load resources
 require_once 'resource/report.php';
