@@ -26,7 +26,7 @@
 #  COPBL
 #
 # PLATFORMS:
-#  Redhat, CentOS, Fedora, Debian, Ubuntu
+#  Redhat, CentOS, Fedora, Debian, Ubuntu, SUSE
 #
 # DESCRIPTION:
 #  Install RUBY and RUBYGEMS from source then setup rails
