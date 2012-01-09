@@ -49,7 +49,7 @@
 # or
 #
 #  methods:
-#   "SQLite" usebundle => db_postgresql("$(state)","$(type)");
+#   "PostgreSQL" usebundle => db_postgresql("$(state)","$(type)");
 #
 #    $(state) = "on"     -> to install PostgreSQL database
 #    $(state) = "purge"  -> to uninstall PostgreSQL database
@@ -144,7 +144,7 @@ bundle agent db_postgresql(state,type)
       package_policy => "add",
       package_method => generic,
              classes => if_ok("ensure_postgresql_running"),
-              action => log_repaired("stdout","PostgreSQL was installed");
+              action => log_repaired("stdout","PostgreSQL $(type) was installed");
 
   purge::
 
@@ -154,7 +154,7 @@ bundle agent db_postgresql(state,type)
               handle => "db_postgresql_packages_remove",
       package_policy => "delete",
       package_method => generic,
-              action => log_repaired("stdout","PostgreSQL was removed");
+              action => log_repaired("stdout","PostgreSQL $(type) was removed");
 
 #
 
@@ -163,15 +163,15 @@ bundle agent db_postgresql(state,type)
   (redhat|centos|fedora|suse|SuSE).server.ensure_postgresql_running::
 
    "/usr/bin/postmaster.*"
-      comment => "",
-       handle => "db_postgresql_processes_run_redhat_centos_fedora_suse",
+            comment => "Check for postgresql process on Redhat-related and SUSE distributions",
+             handle => "db_postgresql_processes_run_redhat_centos_fedora_suse",
       restart_class => "redhat_centos_fedora_suse_start_postgresql";
 
   (debian|ubuntu).server.ensure_postgresql_running::
 
    ".*postgres.*"
-      comment => "",
-       handle => "db_postgresql_processes_run_debian_ubuntu",
+            comment => "Check for postgresql process on Debian-related distributions",
+             handle => "db_postgresql_processes_run_debian_ubuntu",
       restart_class => "debian_ubuntu_start_postgresql";
 
 #
@@ -181,13 +181,13 @@ bundle agent db_postgresql(state,type)
   redhat_centos_fedora_suse_start_postgresql::
 
    "/etc/init.d/postgresql restart"
-      comment => "",
+      comment => "Start/Restart command of PostgreSQL on Redhat-related and SUSU distributions",
        handle => "db_postgresql_commands_run_redhat_centos_fedora_suse";
 
   debian_ubuntu_start_postgresql::
 
    "/etc/init.d/postgresql-8.4 restart"
-      comment => "",
+      comment => "Start/Restart command of PostgreSQL on Debian-related distributions",
        handle => "db_postgresql_commands_run_debian_ubuntu";
 
 }
