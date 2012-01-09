@@ -120,7 +120,7 @@ struct ReportInfo BASIC_REPORTS[] =
    {"promises-repaired-log","Policy","Promises repaired (log)","Promises repaired log","Log of actual repairs made to the system"},
    {"promises-repaired-summary","Policy","Promises repaired (summary)","Promises repaired summary","Cumulative (histogram) summary of promises repaired"},
    {"promises-not-kept-log","Policy","Promises not kept (log)","Promises not kept log","Log of promises that could not or would not be kept"},
-   {"promises-not-kept-summary""Policy","Promises not kept (summary)","Promises not kept summary","Cumulative (histogram) summary of promises not kept"},
+   {"promises-not-kept-summary","Policy","Promises not kept (summary)","Promises not kept summary","Cumulative (histogram) summary of promises not kept"},
 
 
    {"contexts","System","Context classes","Class profile","User defined classes observed on the system"},
