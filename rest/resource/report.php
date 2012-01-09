@@ -29,6 +29,7 @@ class ReportResource extends Resource
         $handle = Utils::queryParam('handle');
         $status = Utils::queryParam('status'); // TODO: discontinue
         $job = Utils::queryParam('job');
+        $filename = Utils::queryParam('filename');
 
         if ($id == '')
         {
@@ -83,6 +84,10 @@ class ReportResource extends Resource
                     $response->body = cfpr_report_performance($hostkey, $job,
                             true, $context, $count, $startPage);
                     break;
+
+                case 'setuid-programs':
+                    $response->body = cfpr_report_setuid($hostkey, $filename,
+                            true, $context, $count, $startPage);
 
                 default:
                     $response->code = Response::NOTFOUND;
