@@ -20,7 +20,16 @@ class Utils {
         {
             return $_GET[$name];
         }
-        
+    }
+
+    public static function checkInteger($var, $name)
+    {
+        if (!is_null($var) && !ctype_digit($var))
+        {
+            throw new ResponseException($name . ' must be an integer',
+                    Response::BADREQUEST);
+        }
+        return (int)$var;
     }
 }
 

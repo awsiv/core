@@ -18,9 +18,9 @@ class ReportResource extends Resource
         $version = Utils::queryParam('version');
         $arch = Utils::queryParam('arch');
         $context = Utils::queryParam('context');
-        $count = Utils::queryParam('count');
-        $startPage = Utils::queryParam('startPage');
-        $since = Utils::queryParam('since');
+        $count = Utils::checkInteger(Utils::queryParam('count'), 'count');
+        $startPage = Utils::checkInteger(Utils::queryParam('startPage'), 'startPage');
+        $since = Utils::checkInteger(Utils::queryParam('since'), 'since');
         $scope = Utils::queryParam('scope');
         $value = Utils::queryParam('value');
         $kept = Utils::queryParam('kept');
