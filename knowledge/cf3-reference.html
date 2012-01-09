@@ -244,7 +244,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h2 class="chapter">1 CFEngine 3.3.0a1.r3641 &ndash; Getting started</h2>
+<h2 class="chapter">1 CFEngine 3.3.0a1.r3641:3651 &ndash; Getting started</h2>
 
 <p><br>
 
@@ -20613,6 +20613,12 @@ while others require an empty list. The default behaviour is to try to
 append the name of one or more packages to the command, depending on
 whether the policy is for individual or bulk installation.
 
+<p class="noindent"><b>Default pachage method</b>
+
+   <p>As of core 3.3.0, if no <code>package_method</code> is defined, CFEngine will
+look for a method called &lsquo;<samp><span class="samp">generic</span></samp>&rsquo;. Such a method is defined in
+the standard library for supported operating systems.
+
 <ul class="menu">
 <li><a accesskey="1" href="#package_005farchitectures-in-packages">package_architectures in packages</a>
 <li><a accesskey="2" href="#package_005fmethod-in-packages">package_method in packages</a>
@@ -21492,7 +21498,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#packages-in-agent-promises">packages i
    <p>This decides what fate is intended for the named package.
 
      <dl>
-<dt>&bull;add<dd>Ensure that a package is present. 
+<dt>&bull;add<dd>Ensure that a package is present (this is the default setting from 3.3.0). 
 <br><dt>&bull;delete<dd>Ensure that a package is not present. 
 <br><dt>&bull;reinstall<dd>Delete then add package (warning, non-convergent). 
 <br><dt>&bull;update<dd>Update the package if an update is available (manager dependent). 
@@ -36192,7 +36198,7 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <h2>Table of Contents</h2>
 <ul>
 <li><a name="toc_Top" href="#Top">CFEngine-AutoReference</a>
-<li><a name="toc_Getting-started" href="#Getting-started">1 CFEngine 3.3.0a1.r3641 &ndash; Getting started</a>
+<li><a name="toc_Getting-started" href="#Getting-started">1 CFEngine 3.3.0a1.r3641:3651 &ndash; Getting started</a>
 <ul>
 <li><a href="#Software-components">1.1 Software components</a>
 <ul>
