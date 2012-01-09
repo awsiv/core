@@ -48,6 +48,12 @@ class ReportResource extends Resource
                             $startPage);
                     break;
 
+                case 'patches-available':
+                    $response->body = cfpr_report_patch_avail($hostkey,
+                            $name, $version, $arch, true, $context, $count,
+                            $startPage);
+                    break;
+
                 case 'contexts':
                     $response->body = cfpr_report_classes($hostkey, NULL, true,
                             $context, $count, $startPage);
