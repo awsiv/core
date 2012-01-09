@@ -42,7 +42,7 @@ static const char *ERRID_DESCRIPTION[] =
 
 /*****************************************************************************/
 
-static char *FormatTwoDimensionalArrayAsJson(char *buf, int bufsize, struct ReportInfo *reports);//const char *array[][2]);
+static char *FormatReportInfoAsJson(char *buf, int bufsize, struct ReportInfo *reports);
 
 #ifdef HAVE_LIBMONGOC
 
@@ -4067,7 +4067,7 @@ void Nova2PHP_select_reports(char *buffer,int bufsize)
 
 novaListJson[0] ='\0';
 
-FormatTwoDimensionalArrayAsJson(novaListJson,sizeof(novaListJson),BASIC_REPORTS);
+FormatReportInfoAsJson(novaListJson,sizeof(novaListJson),BASIC_REPORTS);
 snprintf(buffer,bufsize,"[%s]",novaListJson);
 
 #ifdef HAVE_CONSTELLATION
@@ -4075,7 +4075,7 @@ char errBuf[CF_MAXVARSIZE] = {0};  // TODO: ignored for now (needs to be handled
 
 if(Con2PHP_CheckLicenseAndFormatError(errBuf, sizeof(errBuf)))
    {
-   FormatTwoDimensionalArrayAsJson(constellationListJson,sizeof(constellationListJson),CONSTELLATION_REPORTS);
+   FormatReportInfoAsJson(constellationListJson,sizeof(constellationListJson),CONSTELLATION_REPORTS);
    snprintf(buffer,bufsize,"[%s,%s]",novaListJson,constellationListJson);
    }
 #endif
@@ -4083,7 +4083,7 @@ if(Con2PHP_CheckLicenseAndFormatError(errBuf, sizeof(errBuf)))
 
 /*****************************************************************************/
 
-static char *FormatTwoDimensionalArrayAsJson(char *buf, int bufsize, struct ReportInfo *reports)//const char *array[][2])
+static char *FormatReportInfoAsJson(char *buf, int bufsize, struct ReportInfo *reports)
 { char work[CF_MAXVARSIZE] = {0};
   int i;
 
