@@ -42,6 +42,18 @@ class ReportResource extends Resource
                             $_GET['startPage']);
                     break;
 
+                case 'values':
+                    $response->body = cfpr_report_vars($_GET['hostkey'],
+                            $_GET['scope'],
+                            $_GET['name'],
+                            $_GET['value'],
+                            $_GET['type'],
+                            true,
+                            $_GET['context'],
+                            $_GET['count'],
+                            $_GET['startPage']);
+                    break;
+
                 default:
                     $response->code = Response::NOTFOUND;
                     return $response;
