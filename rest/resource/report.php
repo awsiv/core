@@ -26,6 +26,8 @@ class ReportResource extends Resource
         $kept = Utils::queryParam('kept');
         $notkept = Utils::queryParam('notkept');
         $repaired = Utils::queryParam('repaired');
+        $handle = Utils::queryParam('handle');
+        $status = Utils::queryParam('status'); // TODO: discontinue
 
         if ($id == '')
         {
@@ -68,6 +70,12 @@ class ReportResource extends Resource
                     $response->body = cfpr_report_compliance_summary($hostkey,
                             NULL, $since, $kept, $notkept, $repaired, ">",
                             $context, $count, $startPage);
+                    break;
+
+                case 'promise-compliance':
+                    $response->body = cfpr_report_compliance_promises($hostkey,
+                            $handle, $status, true, $context, $count,
+                            $startPage);
                     break;
 
                 default:
