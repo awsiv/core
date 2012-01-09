@@ -94,6 +94,12 @@ class ReportResource extends Resource
                             true, $since, ">", $context, $count, $startPage);
                     break;
 
+                case 'file-change-diffs':
+                    $response->body = cfpr_report_filediffs($hostkey, $name,
+                            $value, true, $since, ">", $context, $count,
+                            $startPage);
+                    break;
+
                 default:
                     $response->code = Response::NOTFOUND;
                     return $response;
