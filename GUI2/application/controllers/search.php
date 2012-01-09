@@ -12,7 +12,7 @@ class Search extends Cf_Controller {
     }
 
     /**
-     * Function to conver associative array to path segement
+     * Function to convert associative array to path segement
      * Discards the empty value 
      */
     function assoc_to_uri($array) {
@@ -340,7 +340,8 @@ class Search extends Cf_Controller {
                         $pdfurlParams = array('type' => $report_type,
                             'class_regex' => $class_regex,
                             'hostkey' => $hostkey,
-                            'search' => $name
+                            'search' => $name,
+                            'long_term' => $longterm_data
                         );
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
@@ -619,7 +620,7 @@ class Search extends Cf_Controller {
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     } else {
                         if ($report_type == "Promises not kept summary")
-                            $data['report_result'] = cfpr_summarize_notkept(NULL, NULL, NULL, NULL, NULL, $rows, $page_number);
+                            $data['report_result'] = cfpr_summarize_notkept(NULL, $name, NULL, NULL, $class_regex, $rows, $page_number);
                         if ($report_type == "Promises not kept log")
                             $data['report_result'] = cfpr_report_notkept(NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
 
@@ -718,6 +719,10 @@ class Search extends Cf_Controller {
                     }
                 } elseif ($hostkey != "") {
 
+                    $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
+                    $version = isset($getparams['version']) ? urldecode($getparams['version']) : urldecode($this->input->post('version'));
+                    $arch = isset($getparams['arch']) ? urldecode($getparams['arch']) : urldecode($this->input->post('arch'));
+
                     $pdfurlParams = array('type' => $report_type,
                         'class' => $class_regex,
                         'hostkey' => $hostkey,
@@ -726,7 +731,7 @@ class Search extends Cf_Controller {
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                    $data['report_result'] = cfpr_report_software_in($hostkey, $search, NULL, NULL, true, $class_regex, $rows, $page_number);
+                    $data['report_result'] = cfpr_report_software_in($hostkey, $search, $version, $arch, true, $class_regex, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
                     is_ajax() ? $this->load->view('searchpages/software_installed', $data) : $this->template->load('template', 'searchpages/software_installed', $data);
@@ -804,8 +809,7 @@ class Search extends Cf_Controller {
             default:
                 $this->template->load('template', 'searchpages/nodata', $data);
         }
-    } 
-    
+    }
 
     function __host_only_table($data_array) {
         $table = "";

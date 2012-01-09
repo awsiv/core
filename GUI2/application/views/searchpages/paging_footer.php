@@ -1,6 +1,6 @@
 
 <?php
-$path=isset($url)?$url:'search/index/';
+$path = isset($url) ? $url : 'search/index/';
 ?>
 <div class="Paging">
     <div class="pages">
@@ -10,17 +10,19 @@ $path=isset($url)?$url:'search/index/';
 
             <?php
             for ($i = $pg['start']; $i <= $pg['end']; $i++) {
-                if ($i == $pg['page'])
-                    $current = 'current'; else
-                    $current = "";
+                if ($i == $pg['page']) {
+                    $current_class = 'current';
+                } else {
+                    $current_class = "";
+                }
                 ?>
 
-                <a href="<?php echo site_url($path . $params . 'rows/' . $number_of_rows . "/page/$i") ?>" title="Go to Page <?php echo $i ?>" class="page <?php echo $current; ?>"><span><?php echo $i; ?></span></a>
+                <a href="<?php echo site_url($path . $params . 'rows/' . $number_of_rows . "/page/$i") ?>" title="Go to Page <?php echo $i ?>" class="page <?php echo $current_class; ?>"><span><?php echo $i; ?></span></a>
 
-            <?php } ?>
+<?php } ?>
 
             <a href="<?php echo site_url($path . $params . 'rows/' . $number_of_rows . '/page/' . $pg['next']) ?>" title="Go to Next Page" class="next"><span>></span></a>
-            <a href="<?php echo site_url($path. $params . 'rows/' . $number_of_rows . '/page/' . $pg['last']) ?>" title="Go to Last Page" class="last"><span>Last</span></a>
+            <a href="<?php echo site_url($path . $params . 'rows/' . $number_of_rows . '/page/' . $pg['last']) ?>" title="Go to Last Page" class="last"><span>Last</span></a>
         </div>
     </div>
 

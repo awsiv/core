@@ -85,7 +85,7 @@ div.ui-accordion .ui-accordion-header a{
 
 
 #header_left .sitetitle a{
-     background: url("../images/head_agent.png") no-repeat scroll 0 0 transparent;
+    background: url("../images/head_agent.png") no-repeat scroll 0 0 transparent;
     color: #F8F8F8;
     font-size: 21px;
     padding: 3px 0 5px 30px;
@@ -303,7 +303,7 @@ label#searchbox input
     background: url("../images/mo_title.png") no-repeat center;
     height:36px;
     padding: 2px 0;
-    
+
 }
 
 #work .header p{
@@ -400,7 +400,7 @@ label#searchbox input
     background: url("../images/host.png") no-repeat;
 }
 
- .dash a.host:hover{
+.dash a.host:hover{
     background: url("../images/host_hover.png") no-repeat;
 }
 
@@ -1001,6 +1001,15 @@ div.ui-dialog, .customdlg
     /*background: url("images/ui-bg_glass_75_ffffff_1x400.png") repeat-x scroll 50% 50% #FFFFFF;*/
     border: 1px solid #4a575c;
     color: #222222;
+}
+
+div.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset .ui-state-default{
+    background: #4A575C;
+    color:#fff;
+}
+
+div.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset .ui-state-hover{
+    border: 1px solid #999999; background: #dadada url(images/ui-bg_glass_75_dadada_1x400.png) 50% 50% repeat-x; font-weight: normal; color: #212121; 
 }
 
 .customdlg #topiclistcontainer
@@ -1696,6 +1705,10 @@ div.ui-dialog .ui-dialog-buttonpane{
 
 .pdf{
     background: url("../images/pdf.png") no-repeat left center;
+}
+
+.csv{
+    background: url("../images/csv.png") no-repeat left center;
 }
 
 #bodyreport{
@@ -2670,29 +2683,29 @@ ul#promisesContainer .removePromise:hover{
 /* for login page */
 
 #login h1.logo{
-	background: url('../images/cf_heading.png') no-repeat;
-                height: 31px;
-                margin: 25px 0 21px;
+    background: url('../images/cf_heading.png') no-repeat;
+    height: 31px;
+    margin: 25px 0 21px;
 }
 
 #login {
-border-bottom-left-radius: 6px 6px;
-border-bottom-right-radius: 6px 6px;
-border-top-left-radius: 6px 6px;
-border-top-right-radius: 6px 6px;
-background:#383838;
-margin: 65px auto 0;
-padding: 35px;
-width: 376px;
+    border-bottom-left-radius: 6px 6px;
+    border-bottom-right-radius: 6px 6px;
+    border-top-left-radius: 6px 6px;
+    border-top-right-radius: 6px 6px;
+    background:#383838;
+    margin: 65px auto 0;
+    padding: 35px;
+    width: 376px;
 }
 
 #login h3 {
-font-size: 17px;
-font-weight: normal;
-margin-bottom: 9px;
-text-transform: uppercase;
-color:#383838;
-margin:0;
+    font-size: 17px;
+    font-weight: normal;
+    margin-bottom: 9px;
+    text-transform: uppercase;
+    color:#383838;
+    margin:0;
 }
 
 #login hr{
@@ -2728,13 +2741,13 @@ margin:0;
 }
 
 #login #start {
-display: block;
+    display: block;
 }
 
 #credits {
-font-size: 9px;
-margin-top: 21px;
-text-align: center;
+    font-size: 9px;
+    margin-top: 21px;
+    text-align: center;
 }
 
 #credits a{
@@ -2742,73 +2755,73 @@ text-align: center;
 }
 
 #login label {
-color:#383838;
-cursor: pointer;
-display: block;
-float: left;
-font-size: 17px;
-font-weight: normal;
-line-height: 28px;
-margin-bottom: 5px;
-width: 120px;
+    color:#383838;
+    cursor: pointer;
+    display: block;
+    float: left;
+    font-size: 17px;
+    font-weight: normal;
+    line-height: 28px;
+    margin-bottom: 5px;
+    width: 120px;
 }
 
 #login input[type="checkbox"]{
-   vertical-align: bottom;
-   margin-top: 7px;
+    vertical-align: bottom;
+    margin-top: 7px;
 }
 
 #login input[type="text"], #login input[type="password"], #login select {
--webkit-box-shadow: #AAA 0px -1px 3px;
--moz-box-shadow:0 -1px 3px #AAA;
- box-shadow:0 -1px 3px #AAA;
-background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EEE), color-stop(0.2, white), to(white));
-border: 1px solid #AAA;
-border-bottom-left-radius: 3px 3px;
-border-bottom-right-radius: 3px 3px;
-border-top-left-radius: 3px 3px;
-border-top-right-radius: 3px 3px;
-color: #666;
-padding: 5px;
-font-size: 14px;
-width:156px;
+    -webkit-box-shadow: #AAA 0px -1px 3px;
+    -moz-box-shadow:0 -1px 3px #AAA;
+    box-shadow:0 -1px 3px #AAA;
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EEE), color-stop(0.2, white), to(white));
+    border: 1px solid #AAA;
+    border-bottom-left-radius: 3px 3px;
+    border-bottom-right-radius: 3px 3px;
+    border-top-left-radius: 3px 3px;
+    border-top-right-radius: 3px 3px;
+    color: #666;
+    padding: 5px;
+    font-size: 14px;
+    width:156px;
 }
 
 #login input.error {
-border-color: #A60303;
-margin: 0px;
+    border-color: #A60303;
+    margin: 0px;
 }
 
 #login input[type="submit"], #login a.submit {
-background: url('../images/login_button.png') no-repeat transparent center center;
-border:none;
-width: 62px;
-height: 26px;
-cursor: pointer;
-display:block;
+    background: url('../images/login_button.png') no-repeat transparent center center;
+    border:none;
+    width: 62px;
+    height: 26px;
+    cursor: pointer;
+    display:block;
 }
 
 
 #login input[type="submit"]:hover, #login a.submit:hover {
-background: url('../images/login_button_hover.png') no-repeat transparent center center;
-width: 62px;
-height: 26px;
+    background: url('../images/login_button_hover.png') no-repeat transparent center center;
+    width: 62px;
+    height: 26px;
 }
 
 #login p.error{
-color: #D8000C;
-background-color: #FFBABA;
-padding:5px 10px;
-border:solid 1px;
-text-shadow:none;
-margin:0 0 10px 0;
-background-image: none;
+    color: #D8000C;
+    background-color: #FFBABA;
+    padding:5px 10px;
+    border:solid 1px;
+    text-shadow:none;
+    margin:0 0 10px 0;
+    background-image: none;
 }
 
 #login h3 .modeinfo{
     font-size: 11px;
     padding:0px 2px;
-   text-transform: none;
+    text-transform: none;
 }
 
 

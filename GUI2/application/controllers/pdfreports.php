@@ -3,6 +3,7 @@
 class pdfreports extends Cf_Controller {
 
     var $reportGenerator = '';
+    public $storeDir = './tmp/';
 
     function __construct() {
         parent::__construct();
@@ -25,7 +26,6 @@ class pdfreports extends Cf_Controller {
             'cal',
             'hours_deltafrom',
             'hours_deltato',
-            'pdfaction',
             'to',
             'from',
             'subject',
@@ -57,7 +57,6 @@ class pdfreports extends Cf_Controller {
             'cal',
             'hours_deltafrom',
             'hours_deltato',
-            'pdfaction',
             'to',
             'from',
             'subject',
@@ -79,13 +78,8 @@ class pdfreports extends Cf_Controller {
     }
 
     function index() {
-
         $this->load->library('email');
-
-
         $params = $this->uri->uri_to_assoc(3, $this->predefinedKeys);
-
-        //$params = $this->populateParamsWithDefault($params);
         $report_type = isset($params['type']) ? urldecode($params['type']) : $this->input->post('type');
 
         $report_format = 'pdf';
@@ -97,8 +91,23 @@ class pdfreports extends Cf_Controller {
             $report_format = $this->input->post('rf');
         }
 
+        $report_download = isset($params['download']) && trim($params['download'] != '') ? $params['download'] : $this->input->post('download');
+
+        // check if its all download or current page download only 
+        if ($report_download == 1) {
+            // it all download so pagination paramteres are null 
+            $params['page'] = null;
+            $params['rows'] = null;
+        } else {
+            // check the current page and rows
+            $params['page'] = $this->input->post('page');
+            $params['rows'] = $this->input->post('rows');
+        }
+
+
         if (trim($report_format) === 'pdf') {
-            $pdf_filename = 'Nova_' . preg_replace('/ /', '_', $report_type) . '.pdf';
+            $filename = 'Nova_' . preg_replace('/ /', '_', $report_type) . "-" . date('m-d-Y-His') . '.pdf';
+
             $pdf = $this->cf_pdf;
             $pdf->PDFSetReportName($report_type);
             $pdf->PDFSetTableTitle('DATA REPORTED');
@@ -107,97 +116,92 @@ class pdfreports extends Cf_Controller {
             $pdf->AddPage();
             $this->reportGenerator = $pdf;
         } else if (trim($report_format) === 'csv') {
-            $pdf_filename = 'Nova_' . preg_replace('/ /', '_', $report_type) . '.csv';
-            $this->cf_csv->setFileName($pdf_filename);
+            $filename = 'Nova_' . preg_replace('/ /', '_', $report_type) . "-" . date('m-d-Y-His') . '.csv';
+            $this->cf_csv->setFileName($filename);
             $this->reportGenerator = $this->cf_csv;
         }
 
-
-
-
         switch ($report_type) {
             case "Bundle profile":
-                $this->rpt_bundle_profile($params['hostkey'], $params['search'], $params['class_regex']);
+                $this->rpt_bundle_profile($params['hostkey'], $params['search'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "Business value report":
-                $this->rpt_business_value($params['hostkey'], $params['days'], $params['months'], $params['years'], $params['class_regex']);
+                $this->rpt_business_value($params['hostkey'], $params['days'], $params['months'], $params['years'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "Class profile":
-                $this->rpt_class_profile($params['hostkey'], $params['search'], $params['class_regex']);
+                $this->rpt_class_profile($params['hostkey'], $params['search'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "Compliance by promise":
-                $this->rpt_compliance_promises($params['hostkey'], $params['search'], $params['state'], $params['class_regex']);
+                $this->rpt_compliance_promises($params['hostkey'], $params['search'], $params['state'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "Compliance summary":
-                $this->rpt_compliance_summary($params['hostkey'], $params['class_regex']);
+                $this->rpt_compliance_summary($params['hostkey'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "File change log":
-                $this->rpt_filechange_log($params['hostkey'], $params['search'], $params['class_regex']);
+                $this->rpt_filechange_log($params['hostkey'], $params['search'], $params['class_regex'], $params['long_term'], $params['rows'], $params['page']);
                 break;
 
             case "Last saw hosts":
-                $this->rpt_lastsaw_hosts($params['hostkey'], $params['key'], $params['search'], $params['address'], $params['ago'], $params['class_regex']);
+                $this->rpt_lastsaw_hosts($params['hostkey'], $params['key'], $params['search'], $params['address'], $params['ago'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "Patches available":
-                $this->rpt_patches_available($params['hostkey'], $params['search'], $params['version'], $params['arch'], $params['class_regex']);
+                $this->rpt_patches_available($params['hostkey'], $params['search'], $params['version'], $params['arch'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "Patch status":
-                $this->rpt_patch_status($params['hostkey'], $params['search'], $params['version'], $params['arch'], $params['class_regex']);
+                $this->rpt_patch_status($params['hostkey'], $params['search'], $params['version'], $params['arch'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "Performance":
-                $this->rpt_performance($params['hostkey'], $params['search'], $params['class_regex']);
+                $this->rpt_performance($params['hostkey'], $params['search'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "Promises repaired summary":
-                $this->rpt_promise_repaired_summary($params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex']);
+                $this->rpt_promise_repaired_summary($params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "Promises repaired log":
-                $this->rpt_repaired_log($params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex']);
+                $this->rpt_repaired_log($params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "Promises not kept summary":
-                $this->rpt_promise_notkept_summary($params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex']);
+                $this->rpt_promise_notkept_summary($params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "Promises not kept log":
-                $this->rpt_promise_notkept($params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex']);
+                $this->rpt_promise_notkept($params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "Setuid-gid root programs":
-                $this->rpt_setuid($params['hostkey'], $params['search'], $params['class_regex']);
+                $this->rpt_setuid($params['hostkey'], $params['search'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "Software installed":
-                $this->rpt_software_installed($params['hostkey'], $params['search'], $params['version'], $params['arch'], $params['class_regex']);
+                $this->rpt_software_installed($params['hostkey'], $params['search'], $params['version'], $params['arch'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "Variables":
-                $this->rpt_variables($params['hostkey'], $params['search'], $params['scope'], $params['lval'], $params['rval'], $params['var_type'], $params['class_regex']);
+                $this->rpt_variables($params['hostkey'], $params['search'], $params['scope'], $params['lval'], $params['rval'], $params['var_type'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "File change diffs":
-                $this->rpt_filediffs($params['hostkey'], $params['search'], $params['diff'], $params['cal'], $params['class_regex'], $params['long_term']);
+                $this->rpt_filediffs($params['hostkey'], $params['search'], $params['diff'], $params['cal'], $params['class_regex'], $params['long_term'], $params['rows'], $params['page']);
                 break;
 
             case "Virtual bundles":
                 $name = isset($params['name']) ? $params['name'] : null;
                 $allUser = isset($params['all_user']) ? $params['all_user'] : null;
-                $this->rpt_virtualBundles($name, $allUser);
+                $this->rpt_virtualBundles($name, $allUser, $params['rows'], $params['page']);
                 break;
         }
 
-        $pdf_action = $params['pdfaction'];
-
-
+        $pdf_action = key_exists('pdfaction', $params) ? $params['pdfaction'] : $this->input->post('pdfaction');
         # get email parameters from ajax query
         if ($pdf_action == 'email') {
             try {
@@ -210,10 +214,13 @@ class pdfreports extends Cf_Controller {
                 if (!file_exists("./tmp")) {
                     mkdir("./tmp", 0777);
                 }
-                if (!is_writable('./tmp')) {
-                    throw new Exception('directory /tmp is not writable ');
+                
+                if (!is_writable($this->storeDir)) {
+                    log_message('error', 'Please make sure the tmp directory in web root is writeable');
+                    throw new Exception('directory "tmp" is not writable ');
                 }
-                $filename = './tmp/' . $pdf_filename;
+
+                $filename = $this->storeDir . $filename;
                 $doc = $this->reportGenerator->Output($filename, 'F');
                 if (trim($to) === '') {
                     throw new Exception('Email address is empty.');
@@ -225,13 +232,32 @@ class pdfreports extends Cf_Controller {
                 exit();
             }
         } else {
-            $this->reportGenerator->Output($pdf_filename, "D");
+            try {
+                if (!file_exists("./tmp")) {
+                    mkdir("./tmp", 0777);
+                }
+                if (!is_writable($this->storeDir)) {
+                    log_message('error', 'Please make sure the tmp directory in web root is writeable');
+                    throw new Exception('directory "tmp" is not writable ');
+                }
+                $filepath = $this->storeDir . $filename;
+                $this->reportGenerator->Output($filepath, "F");
+                $downloadLink = site_url() . "/pdfreports/download/file/$filename/action/download";
+                $msg = sprintf("<a href='%s' target='_blank'>Click here to download the file.</a>", $downloadLink);
+                $retData = array('message' => $msg);
+                $jsonReturn = json_encode($retData);
+                echo $jsonReturn;
+                exit();
+            } catch (Exception $e) {
+                $this->output->set_status_header('400', $e->getMessage());
+                echo $e->getMessage();
+                exit();
+            }
         }
     }
 
     /**
      * Emails the pdf
-     * @param <type> $pdf
      * @param <type> $pdf_filename
      * @param <type> $to
      * @param <type> $from
@@ -239,8 +265,6 @@ class pdfreports extends Cf_Controller {
      * @param <type> $message
      */
     function emailReport($filename, $to, $from, $subject, $message) {
-
-
 
         // attachment name
         // encode data (puts attachment in proper format)
@@ -268,6 +292,24 @@ class pdfreports extends Cf_Controller {
         exit();
     }
 
+    /**
+     * Function to download the given file and cleanup
+     */
+    function download() {
+        $this->load->helper('download');
+        $params = $this->uri->uri_to_assoc(3);
+        $filename = isset($params['file']) ? urldecode($params['file']) : null;
+        if (is_null($filename)) {
+            show_404();
+        }
+        $downloadFile = $this->storeDir . $filename;
+        $fsize = @filesize($downloadFile);
+
+        $data = file_get_contents($downloadFile); // Read the file's contents
+        unlink($downloadFile); // remove the file from the server
+        force_download($filename, $data);
+    }
+
     ## functions for reports
 
     function calc_width_percent($total, $width) {
@@ -275,18 +317,45 @@ class pdfreports extends Cf_Controller {
         return $ret;
     }
 
-    function rpt_bundle_profile($hostkey, $search, $class_regex) {
+    function changeDateFields($data, $index) {
+        foreach ($data as &$row) {
+            $row[$index] = getDateStatus($row[$index], false, true);
+        }
+        return $data;
+    }
+
+    function removeNotesField($data, $header) {
+        // check for notes if present remove the field from the data
+        if (array_key_exists('Note', $header)) {
+            $index = $header['Note']['index'];
+            // remove the notes data from the array 
+            foreach ($data as &$row) {
+                unset($row[$index]);
+            }
+        }
+        return $data;
+    }
+
+    function rpt_bundle_profile($hostkey, $search, $class_regex, $rows=0, $page_number=0) {
 
         $header = array('Host', 'Bundle', 'Last verified', 'Hours Ago', 'Avg interval', 'Uncertainty');
-        $ret = cfpr_report_bundlesseen_pdf($hostkey, $search, true, $class_regex);
-        $data1 = $this->cf_pdf->ParseData($ret);
+        $ret = cfpr_report_bundlesseen($hostkey, $search, true, $class_regex, $rows, $page_number);
+        $jsondata = json_decode($ret, true);
+        $data1 = $jsondata['data'];
+        $header = ($jsondata['meta']['header']);
+
+        $data1 = $this->removeNotesField($data1, $header);
+        unset($header['Note']);
+        $header = array_keys($header);
+        $data1 = $this->changeDateFields($data1, 2);
 
         if ($this->reportGenerator instanceof cf_pdf) {
             $pdf = $this->reportGenerator;
             $desc = cfpr_report_description('bundle profile');
+
             $pdf->PDFSetDescription($desc);
 
-            $cols = 6;
+            $cols = count($header);
             $col_len = array(24, 23, 23, 10, 10, 10); #in percentage    
             $pdf->ReportTitle();
             $pdf->ReportDescription();
@@ -300,19 +369,23 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-### business value report ###
+    function rpt_business_value($hostkey, $days, $months, $years, $class_regex, $rows=0, $page_number=0) {
 
-    function rpt_business_value($hostkey, $days, $months, $years, $class_regex) {
+        $ret = cfpr_report_value($hostkey, $days, $months, $years, $class_regex, $rows, $page_number);
+        $jsondata = json_decode($ret, true);
 
-        $header = array('Host', 'Day', 'Kept', 'Repaired', 'Not kept');
-        $ret = cfpr_report_value_pdf($hostkey, $days, $months, $years, $class_regex);
-        $data1 = $this->cf_pdf->ParseData($ret);
+        $data1 = $jsondata['data'];
+        $header = ($jsondata['meta']['header']);
+
+        $data1 = $this->removeNotesField($data1, $header);
+        unset($header['Note']);
+        $header = array_keys($header);
 
         if ($this->reportGenerator instanceof cf_pdf) {
             $pdf = $this->reportGenerator;
             $desc = cfpr_report_description('business value report');
             $pdf->PDFSetDescription($desc);
-            $cols = 5;
+            $cols = count($header);
             $col_len = array(24, 19, 19, 19, 19);
             $pdf->ReportTitle();
             $pdf->ReportDescription();
@@ -326,19 +399,27 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-### Classes report ###
-
-    function rpt_class_profile($hostkey, $search, $class_regex) {
+    function rpt_class_profile($hostkey, $search, $class_regex, $rows=0, $page_number=0) {
 
         $header = array('Host', 'Class Context', 'Occurs with probability', 'Uncertainty', 'Last seen');
 
-        $ret = cfpr_report_classes_pdf($hostkey, $search, true, $class_regex);
-        $data1 = $this->cf_pdf->ParseData($ret);
+        $ret = cfpr_report_classes($hostkey, $search, true, $class_regex, $rows, $page_number);
+        $jsondata = json_decode($ret, true);
+
+        $data1 = $jsondata['data'];
+        $header = $jsondata['meta']['header'];
+
+        $data1 = $this->removeNotesField($data1, $header);
+        unset($header['Note']);
+        $header = array_keys($header);
+        $data1 = $this->changeDateFields($data1, 4);
+
+
         if ($this->reportGenerator instanceof cf_pdf) {
             $pdf = $this->reportGenerator;
             $desc = cfpr_report_description('class profile');
             $pdf->PDFSetDescription($desc);
-            $cols = 5;
+            $cols = count($header);
             $col_len = array(28, 28, 18, 10, 16);
 
             $pdf->ReportTitle();
@@ -352,12 +433,21 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_promise_notkept($hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex='') {
+    function rpt_promise_notkept($hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex='', $rows=0, $page_number=0) {
 
         $header = array('Host', 'Promise Handle', 'Report', 'Time');
 
-        $ret = cfpr_report_notkept_pdf($hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex);
-        $data1 = $this->cf_pdf->ParseData($ret);
+        $ret = cfpr_report_notkept($hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
+        $jsondata = json_decode($ret, true);
+
+        $data1 = $jsondata['data'];
+        $header = $jsondata['meta']['header'];
+
+        $data1 = $this->removeNotesField($data1, $header);
+        unset($header['Note']);
+        $header = array_keys($header);
+        $data1 = $this->changeDateFields($data1, 3);
+
 
         if ($this->reportGenerator instanceof cf_pdf) {
             $col_len = array(15, 21, 49, 15);
@@ -371,20 +461,22 @@ class pdfreports extends Cf_Controller {
             $pdf->Ln(8);
 
             $pdf->SetFont('Arial', '', 9);
-            $pdf->DrawTable($data1, 4, $col_len, $header, 8);
+            $pdf->DrawTable($data1, count($header), $col_len, $header, 8);
         } else if ($this->reportGenerator instanceof cf_csv) {
             $this->cf_csv->initialize($header, $data1);
         }
     }
 
-# promise summary
+    function rpt_promise_notkept_summary($hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex='', $rows=0, $page_number=0) {
 
-    function rpt_promise_notkept_summary($hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex='') {
+        $ret = cfpr_summarize_notkept($hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
+        $jsondata = json_decode($ret, true);
 
-        $header = array('Promise Handle', 'Report', 'Occurrences');
+        $data1 = $jsondata['data'];
+        $header = $jsondata['meta']['header'];
 
-        $ret = cfpr_summarize_notkept_pdf($hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex);
-        $data1 = $this->cf_pdf->ParseData($ret);
+        $header = array_keys($header);
+
         if ($this->reportGenerator instanceof cf_pdf) {
             $pdf = $this->reportGenerator;
             $desc = cfpr_report_description('promises not kept summary');
@@ -396,17 +488,23 @@ class pdfreports extends Cf_Controller {
             $pdf->Ln(8);
             $col_len = array(25, 55, 20);
             $pdf->SetFont('Arial', '', 9);
-            $pdf->DrawTable($data1, 3, $col_len, $header, 8);
+            $pdf->DrawTable($data1, count($header), $col_len, $header, 8);
         } else if ($this->reportGenerator instanceof cf_csv) {
             $this->cf_csv->initialize($header, $data1);
         }
     }
 
-    function rpt_promise_repaired_summary($hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex='') {
+    function rpt_promise_repaired_summary($hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex='', $rows=0, $page_number=0) {
         $header = array('Promise Handle', 'Report', 'Occurrences');
 
-        $ret = cfpr_summarize_repaired_pdf($hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex);
-        $data1 = $this->cf_pdf->ParseData($ret);
+        $ret = cfpr_summarize_repaired($hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
+
+        $jsondata = json_decode($ret, true);
+
+        $data1 = $jsondata['data'];
+        $header = $jsondata['meta']['header'];
+
+        $header = array_keys($header);
         if ($this->reportGenerator instanceof cf_pdf) {
             $pdf = $this->reportGenerator;
             $desc = cfpr_report_description('promises repaired summary');
@@ -418,20 +516,28 @@ class pdfreports extends Cf_Controller {
             $pdf->Ln(8);
             $col_len = array(25, 55, 20);
             $pdf->SetFont('Arial', '', 9);
-            $pdf->DrawTable($data1, 3, $col_len, $header, 8);
+            $pdf->DrawTable($data1, count($header), $col_len, $header, 8);
         } else if ($this->reportGenerator instanceof cf_csv) {
             $this->cf_csv->initialize($header, $data1);
         }
     }
 
-### Compliance by promise ##
-
-    function rpt_compliance_promises($hostkey, $search, $state, $class_regex) {
-        $cols = 6;
-        $col_len = array(21, 24, 14, 14, 12, 15);
+    function rpt_compliance_promises($hostkey, $search, $state, $class_regex, $rows=0, $page_number=0) {
         $header = array('Host', 'Promise Handle', 'Last known state', 'Probability kept', 'Uncertainty', 'Last seen');
-        $ret = cfpr_report_compliance_promises_pdf($hostkey, $search, $state, true, $class_regex);
-        $data1 = $this->cf_pdf->ParseData($ret);
+
+        $ret = cfpr_report_compliance_promises($hostkey, $search, $state, true, $class_regex, $rows, $page_number);
+        $jsondata = json_decode($ret, true);
+
+        $data1 = $jsondata['data'];
+        $header = $jsondata['meta']['header'];
+
+        $header = array_keys($header);
+        $data1 = $this->changeDateFields($data1, 5);
+
+        $cols = count($header);
+        $col_len = array(21, 24, 14, 14, 12, 15);
+
+
         if ($this->reportGenerator instanceof cf_pdf) {
             $pdf = $this->reportGenerator;
             $desc = cfpr_report_description('compliance by promise');
@@ -449,15 +555,22 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-### Compliance Summary ##
-
-    function rpt_compliance_summary($hostkey, $class_regex) {
-        $cols = 6;
-        $col_len = array(25, 33, 8, 8, 8, 18);
+    function rpt_compliance_summary($hostkey, $class_regex, $rows=0, $page_number=0) {
         $header = array('Host', 'Policy', 'Kept', 'Repaired', 'Not kept', 'Last seen');
 
-        $ret = cfpr_report_compliance_summary_pdf($hostkey, NULL, -1, -1, -1, -1, ">", $class_regex);
-        $data1 = $this->cf_pdf->ParseData($ret);
+
+        $ret = cfpr_report_compliance_summary($hostkey, NULL, -1, -1, -1, -1, ">", $class_regex, $rows, $page_number);
+        $jsondata = json_decode($ret, true);
+
+        $data1 = $jsondata['data'];
+        $header = $jsondata['meta']['header'];
+
+        $header = array_keys($header);
+        $data1 = $this->changeDateFields($data1, 5);
+
+        $cols = count($header);
+        $col_len = array(25, 33, 8, 8, 8, 18);
+
         if ($this->reportGenerator instanceof cf_pdf) {
             $pdf = $this->reportGenerator;
             $desc = cfpr_report_description('compliance summary');
@@ -474,15 +587,30 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-### Classes report ###
-
-    function rpt_filechange_log($hostkey, $search, $class_regex) {
+    function rpt_filechange_log($hostkey, $search, $class_regex, $longterm_data, $rows=0, $page_number=0) {
         $cols = 3;
         $col_len = array(33, 34, 33);
         $header = array('Host', 'File', 'Time of Change');
 
-        $ret = cfpr_report_filechanges_pdf($hostkey, $search, true, -1, ">", $class_regex);
-        $data1 = $this->cf_pdf->ParseData($ret);
+        if ($longterm_data) {
+            $data['report_result'] = cfpr_report_filechanges_longterm($hostkey, $search, true, -1, ">", $class_regex, $rows, $page_number);
+        } else {
+            $data['report_result'] = cfpr_report_filechanges($hostkey, $search, true, -1, ">", $class_regex, $rows, $page_number);
+        }
+
+        $ret = $data['report_result'];
+
+        $jsondata = json_decode($ret, true);
+
+        $data1 = $jsondata['data'];
+        $header = $jsondata['meta']['header'];
+
+        $data1 = $this->removeNotesField($data1, $header);
+        unset($header['Note']);
+
+        $header = array_keys($header);
+        $data1 = $this->changeDateFields($data1, 2);
+
 
         if ($this->reportGenerator instanceof cf_pdf) {
             $pdf = $this->reportGenerator;
@@ -499,15 +627,20 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-### Classes report ###
-
-    function rpt_lastsaw_hosts($hostkey, $key, $name, $address, $ago, $class_regex) {
-        $cols = 9;
-        $col_len = array(14, 8, 10, 14, 12, 7, 7, 7, 21);
+    function rpt_lastsaw_hosts($hostkey, $key, $name, $address, $ago, $class_regex, $rows=0, $page_number=0) {
         $header = array('Host', 'Initiated', 'IP Address', 'Remote Host', 'Last Seen', 'Hours Ago', ' Avg Interval', 'Uncertainty', 'Remote Host Key');
 
-        $ret = cfpr_report_lastseen_pdf($hostkey, $key, $name, $address, $ago, true, $class_regex);
-        $data1 = $this->cf_pdf->ParseData($ret);
+        $ret = cfpr_report_lastseen($hostkey, $key, $name, $address, $ago, true, $class_regex, $rows, $page_number);
+        $jsondata = json_decode($ret, true);
+
+        $data1 = $jsondata['data'];
+        $header = $jsondata['meta']['header'];
+
+        $header = array_keys($header);
+        $data1 = $this->changeDateFields($data1, 4);
+
+        $cols = count($header);
+        $col_len = array(14, 8, 10, 14, 12, 7, 7, 7, 21);
 
         if ($this->reportGenerator instanceof cf_pdf) {
             $pdf = $this->reportGenerator;
@@ -525,15 +658,21 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-### Patches Available  ###
+    function rpt_patches_available($hostkey, $search, $version, $arch, $class_regex, $rows=0, $page_number=0) {
 
-    function rpt_patches_available($hostkey, $search, $version, $arch, $class_regex) {
-        $cols = 4;
-        $col_len = array(30, 30, 20, 20);
-        $header = array('Host', 'Name', 'Version', 'Architecture');
+        $ret = cfpr_report_patch_avail($hostkey, $search, $version, $arch, true, $class_regex, $rows, $page_number);
+        $jsondata = json_decode($ret, true);
 
-        $ret = cfpr_report_patch_avail_pdf($hostkey, $search, $version, $arch, true, $class_regex);
-        $data1 = $this->cf_pdf->ParseData($ret);
+        $data1 = $jsondata['data'];
+        $header = $jsondata['meta']['header'];
+        $data1 = $this->changeDateFields($data1, 4);
+
+        $header = array_keys($header);
+
+        $cols = count($header);
+
+        $col_len = array(30, 30, 10, 10, 20);
+
         if ($this->reportGenerator instanceof cf_pdf) {
             $pdf = $this->reportGenerator;
             $desc = cfpr_report_description('patches available');
@@ -550,22 +689,27 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-### Patch Status  ###
+    function rpt_patch_status($hostkey, $search, $version, $arch, $class_regex, $rows=0, $page_number=0) {
 
-    function rpt_patch_status($hostkey, $search, $version, $arch, $class_regex) {
-        $cols = 4;
-        $col_len = array(30, 30, 20, 20);
-        $header = array('Host', 'Name', 'Version', 'Architecture');
+        $ret = cfpr_report_patch_in($hostkey, $search, $version, $arch, true, $class_regex, $rows, $page_number);
+        $jsondata = json_decode($ret, true);
 
-        $ret = cfpr_report_patch_in_pdf($hostkey, $search, $version, $arch, true, $class_regex);
-        $data1 = $this->cf_pdf->ParseData($ret);
+        $data1 = $jsondata['data'];
+        $header = $jsondata['meta']['header'];
+
+        $header = array_keys($header);
+        $data1 = $this->changeDateFields($data1, 4);
+
+        $cols = count($header);
+        $col_len = array(30, 30, 10, 10,20);
+
+
         if ($this->reportGenerator instanceof cf_pdf) {
             $desc = cfpr_report_description('patch status');
+            $pdf = $this->reportGenerator;           
             $pdf->PDFSetDescription($desc);
             $pdf->ReportTitle();
             $pdf->ReportDescription();
-
-
             $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
             $pdf->Ln(8);
             $pdf->SetFont('Arial', '', 9);
@@ -575,15 +719,22 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    ### Software Installed  ###
+    function rpt_software_installed($hostkey, $search, $version, $arch, $class_regex, $rows=0, $page_number=0) {
 
-    function rpt_software_installed($hostkey, $search, $version, $arch, $class_regex) {
-        $cols = 4;
-        $col_len = array(30, 30, 20, 20);
-        $header = array('Host', 'Name', 'Version', 'Architecture');
+        $ret = cfpr_report_software_in($hostkey, $search, $version, $arch, true, $class_regex, $rows, $page_number);
+        $jsondata = json_decode($ret, true);
 
-        $ret = cfpr_report_software_in_pdf($hostkey, $search, $version, $arch, true, $class_regex);
-        $data1 = $this->cf_pdf->ParseData($ret);
+        $data1 = $jsondata['data'];
+        $header = $jsondata['meta']['header'];
+
+        $header = array_keys($header);
+        $data1 = $this->changeDateFields($data1, 4);
+
+
+
+        $cols = count($header);
+        $col_len = array(30, 30, 10, 10, 20);
+
         if ($this->reportGenerator instanceof cf_pdf) {
             $pdf = $this->reportGenerator;
             $desc = cfpr_report_description('software installed');
@@ -599,15 +750,24 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-### Performance Report  ###
+    function rpt_performance($hostkey, $search, $class_regex, $rows=0, $page_number=0) {
 
-    function rpt_performance($hostkey, $search, $class_regex) {
-        $cols = 6;
+        $ret = cfpr_report_performance($hostkey, $search, true, $class_regex, $rows, $page_number);
+        $jsondata = json_decode($ret, true);
+
+        $data1 = $jsondata['data'];
+        $header = $jsondata['meta']['header'];
+
+        $data1 = $this->removeNotesField($data1, $header);
+        unset($header['Note']);
+        $header = array_keys($header);
+        $data1 = $this->changeDateFields($data1, 5);
+
+
+        $cols = count($header);
         $col_len = array(19, 38, 7.5, 7.5, 10, 18);
-        $header = array('Host', 'Repair', 'Last Time', 'Avg Time', 'Uncertainty', 'Last Performed');
 
-        $ret = cfpr_report_performance_pdf($hostkey, $search, true, $class_regex);
-        $data1 = $this->cf_pdf->ParseData($ret);
+
         if ($this->reportGenerator instanceof cf_pdf) {
             $pdf = $this->reportGenerator;
             $desc = cfpr_report_description('performance');
@@ -624,14 +784,26 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_repaired_log($hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex) {
-        $cols = 4;
-//        $col_len = array(20, 20, 45, 15);
-        $col_len = array(19, 19, 43, 19);
+    function rpt_repaired_log($hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex, $rows=0, $page_number=0) {
         $header = array('Host', 'Promise Handle', 'Report', 'Time');
 
-        $ret = cfpr_report_repaired_pdf($hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex);
-        $data1 = $this->cf_pdf->ParseData($ret);
+        $ret = cfpr_report_repaired($hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
+        $jsondata = json_decode($ret, true);
+
+        $data1 = $jsondata['data'];
+        $header = $jsondata['meta']['header'];
+
+
+        $data1 = $this->removeNotesField($data1, $header);
+        unset($header['Note']);
+        $header = array_keys($header);
+        $data1 = $this->changeDateFields($data1, 3);
+
+
+        $cols = count($header);
+        $col_len = array(19, 19, 43, 19);
+
+
         if ($this->reportGenerator instanceof cf_pdf) {
             $pdf = $this->reportGenerator;
             $desc = cfpr_report_description('promises repaired log');
@@ -648,51 +820,8 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_repaired_summary($hostkey, $search, $class_regex) {
-        $cols = 4;
-        $col_len = array(19, 19, 43, 19);
-        $header = array('Host', 'Promise Handle', 'Report', 'Occurrences');
-
-        $ret = cfpr_summarize_repaired_pdf($hostkey, $search, $class_regex);
-        $data1 = $this->cf_pdf->ParseData($ret);
-        if ($this->reportGenerator instanceof cf_pdf) {
-            $pdf = $this->reportGenerator;
-            $pdf->ReportTitle();
-            $pdf->ReportDescription();
-            $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
-            $pdf->Ln(8);
-
-            $pdf->SetFont('Arial', '', 9);
-            $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
-        } else if ($this->reportGenerator instanceof cf_csv) {
-            $this->cf_csv->initialize($header, $data1);
-        }
-    }
-
-    function rpt_notkept_summary($hostkey, $search, $class_regex) {
-        $cols = 4;
-        $col_len = array(19, 19, 43, 19);
-        $header = array('Host', 'Promise Handle', 'Report', 'Occurrences');
-
-        $ret = cfpr_summarize_notkept_pdf($hostkey, $search, $class_regex);
-        $data1 = $pdf->ParseData($ret);
-        if ($this->reportGenerator instanceof cf_pdf) {
-            $pdf = $this->reportGenerator;
-            $pdf->ReportTitle();
-            $pdf->ReportDescription();
-            $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
-            $pdf->Ln(8);
-            $pdf->SetFont('Arial', '', 9);
-            $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
-        } else if ($this->reportGenerator instanceof cf_csv) {
-            $this->cf_csv->initialize($header, $data1);
-        }
-    }
-
-    function rpt_virtualBundles($name, $allUser) {
-
+    function rpt_virtualBundles($name, $allUser, $page=0, $rows=0) {
         $this->load->model('virtual_bundle_model');
-
         $cols = 4;
         $col_len = array(19, 19, 43, 19);
         $header = array('Virtual bundle', 'Promises', 'Hosts', 'Compliance');
@@ -700,6 +829,7 @@ class pdfreports extends Cf_Controller {
         $ret = $this->virtual_bundle_model->getVirtualBundleData($name, $allUser);
         $dataArray = json_decode($ret, true);
         $data1 = $dataArray['data'];
+
         if ($this->reportGenerator instanceof cf_pdf) {
 
             $pdf = $this->reportGenerator;
@@ -716,18 +846,35 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_variables($hostkey, $search, $scope, $lval, $rval, $type, $class_regex) {
-        $cols = 4;
-        $col_len = array(19, 15, 19, 47);
-        // $header = array('Host', 'Type', 'Name', 'Value');
+    function rpt_variables($hostkey, $search, $scope, $lval, $rval, $type, $class_regex, $rows=0, $page_number=0) {
         $header = array();
-
+        
         if ($hostkey == NULL) {
-            $ret = cfpr_report_vars_pdf(NULL, $scope, $lval, $rval, $type, true, $class_regex);
+            $ret = cfpr_report_vars(NULL, $scope, $lval, $rval, $type, true, $class_regex, $rows, $page_number);
         } else {
-            $ret = cfpr_report_vars_pdf($hostkey, NULL, $search, NULL, NULL, true, $class_regex);
+            $ret = cfpr_report_vars($hostkey, NULL, $search, NULL, NULL, true, $class_regex, $rows, $page_number);
         }
-        $data1 = $this->cf_pdf->ParseData($ret);
+
+        $dataArray = json_decode($ret, true);
+
+        $data1 = $dataArray;
+
+        foreach ($data1 as $topic => &$subtopic) {
+            if ($topic == 'meta')
+                continue;
+            $head = array_keys($subtopic['header']);
+            $newArray[][] = $topic;
+            $newArray[] = $head;
+            // change the time stamp
+            $subtopic['data'] = $this->changeDateFields($subtopic['data'], 4);
+
+            $newArray = array_merge($newArray, $subtopic['data']);
+        }
+
+        $cols = 5;
+        $col_len = array(20, 20, 20, 20, 20);
+
+
         if ($this->reportGenerator instanceof cf_pdf) {
             $pdf = $this->reportGenerator;
             $desc = cfpr_report_description('variables');
@@ -739,24 +886,38 @@ class pdfreports extends Cf_Controller {
             $pdf->Ln(8);
 
             $pdf->SetFont('Arial', '', 9);
-            $pdf->DrawTableSpecial($data1, $cols, $col_len, $header, 8);
+            $pdf->drawMultiTable($data1, $col_len);
         } else if ($this->reportGenerator instanceof cf_csv) {
-
-            foreach ($data1 as &$formatdata) {
-                $formatdata = str_replace('<nh>', '', $formatdata);
-            }
-            $this->cf_csv->initialize($header, $data1);
+            $this->cf_csv->initialize($header, $newArray);
         }
     }
 
-    function rpt_filediffs($hostkey, $search, $diff, $cal, $class_regex, $longterm) {
-        $cols = 4;
-        $col_len = array(19, 15, 19, 47);
-        $header = array('Host', 'File', 'Change detected at', 'Change');
+    function rpt_filediffs($hostkey, $search, $diff, $cal, $class_regex, $longterm, $page=0, $rows=0) {
 
-        $ret = cfpr_report_filediffs_pdf($hostkey, $search, $diff, true, $cal, ">", $class_regex);
+        if ($longterm) {
+            $data['report_result'] = cfpr_report_filediffs_longterm(NULL, $search, $diff, true, $cal, ">", $class_regex, $page, $rows);
+        } else {
+            $data['report_result'] = cfpr_report_filediffs(NULL, $search, $diff, true, $cal, ">", $class_regex, $page, $rows);
+        }
+        $result = json_decode($data['report_result'], true);
+        $newFormat = array();
+        foreach ($result['data'] as $parentIndex => $data) {
 
-        $data1 = $this->cf_pdf->ParseData($ret);
+            foreach ($data[3] as $index => $subArray) {
+                $newIndex = $parentIndex . '-' . $index;
+                $newFormat[$newIndex][0] = $data[0];
+                $newFormat[$newIndex][1] = $data[1];
+                $newFormat[$newIndex][2] = date('c', $data[2]);
+                $newFormat[$newIndex][3] = $subArray[0];
+                $newFormat[$newIndex][4] = $subArray[1];
+                $newFormat[$newIndex][5] = $subArray[2];
+            }
+        }
+        $header = array('Host', 'File', 'Change detected at', 'Change', 'Line number', 'File');
+
+        $cols = 6;
+        $col_len = array(20, 15, 15, 10, 10, 30);
+
         if ($this->reportGenerator instanceof cf_pdf) {
             $pdf = $this->reportGenerator;
             $desc = cfpr_report_description('file change diffs');
@@ -768,46 +929,24 @@ class pdfreports extends Cf_Controller {
             $pdf->Ln(8);
 
             $pdf->SetFont('Arial', '', 9);
-            $pdf->DrawTableSpecial($data1, $cols, $col_len, $header, 8);
+            $pdf->DrawTable($newFormat, count($header), $col_len, $header, 8);
         } else if ($this->reportGenerator instanceof cf_csv) {
-
-            if ($longterm) {
-                $data['report_result'] = cfpr_report_filediffs_longterm(NULL, $search, $diff, true, $cal, ">", $class_regex, null, null);
-            } else {
-                $data['report_result'] = cfpr_report_filediffs(NULL, $search, $diff, true, $cal, ">", $class_regex, null, null);
-            }
-            $result = json_decode($data['report_result'], true);
-            // format for csv
-            $newFormat = array();
-            foreach ($result['data'] as $parentIndex => $data) {
-
-                // var_dump($data['3']);
-                foreach ($data[3] as $index => $subArray) {
-                    $newIndex = $parentIndex . '-' . $index;
-                    $newFormat[$newIndex][0] = $data[0];
-                    $newFormat[$newIndex][1] = $data[1];
-                    $newFormat[$newIndex][2] = date('c', $data[2]);
-                    $newFormat[$newIndex][3] = $subArray[0];
-                    $newFormat[$newIndex][4] = $subArray[1];
-                    $newFormat[$newIndex][5] = $subArray[2];
-                }
-            }
-            $header = array('Host', 'File', 'Change detected at', 'Change', 'Line number', 'File');
-            foreach ($data1 as &$formatdata) {
-                $formatdata = str_replace('<nh>', '', $formatdata);
-            }
             $this->cf_csv->initialize($header, $newFormat);
         }
     }
 
-    function rpt_setuid($hostkey, $search, $class_regex) {
-        $cols = 2;
-        $col_len = array(30, 70);
+    function rpt_setuid($hostkey, $search, $class_regex, $rows=0, $page_number=0) {
         $header = array('Host', 'Type', 'Name', 'Value');
+        $ret = cfpr_report_setuid($hostkey, $search, true, $class_regex, $rows, $page_number);
 
-        $ret = cfpr_report_setuid_pdf($hostkey, $search, true, $class_regex);
+        $jsondata = json_decode($ret, true);
 
-        $data1 = $this->cf_pdf->ParseData($ret);
+        $data1 = $jsondata['data'];
+        $header = $jsondata['meta']['header'];
+        $header = array_keys($header);
+        $cols = count($header);
+        $col_len = array(30, 70);
+
         if ($this->reportGenerator instanceof cf_pdf) {
             $pdf = $this->reportGenerator;
             $desc = cfpr_report_description('setuid gid root programs');
@@ -818,7 +957,7 @@ class pdfreports extends Cf_Controller {
             $pdf->Ln(8);
 
             $pdf->SetFont('Arial', '', 9);
-            $pdf->DrawTableSpecial($data1, $cols, $col_len, $header, 8);
+            $pdf->DrawTable($data1, $cols, $col_len, $header, 8);
         } else if ($this->reportGenerator instanceof cf_csv) {
             $this->cf_csv->initialize($header, $data1);
         }
