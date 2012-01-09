@@ -123,7 +123,7 @@ struct ReportInfo BASIC_REPORTS[] =
    {"promises-not-kept-summary""Policy","Promises not kept (summary)","Promises not kept summary","Cumulative (histogram) summary of promises not kept"},
 
 
-   {"context","System","Context classes","Class profile","User defined classes observed on the system"},
+   {"contexts","System","Context classes","Class profile","User defined classes observed on the system"},
    {"neighbors","System","Neighbors","Last seen hosts","Log of when neighbouring hosts were last observed online"},
    {"values","System","Values","Variables","Table of variable values last observed"},
 
