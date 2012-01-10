@@ -40,9 +40,8 @@ class ReportResource extends Resource
             switch ($id)
             {
                 case 'software-installed':
-                    $response->body = cfpr_report_software_in($hostkey,
-                            $name, $version, $arch, true, $context, $count,
-                            $startPage);
+                    $response->body = cfmod_resource_report_software_installed($hostkey,
+                            $name, $version, $arch, $context, $count, $startPage);
                     break;
 
                 case 'patches-installed':
