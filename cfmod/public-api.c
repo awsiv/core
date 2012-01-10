@@ -8,6 +8,32 @@
    JsonArrayDelete(json);           \
    RETURN_STRING(StringWriterClose(writer), 1);
 
+static const char *LABEL_ID = "id";
+static const char *LABEL_CATEGORY = "category";
+static const char *LABEL_DESCRIPTION = "description";
+static const char *LABEL_HOSTKEY = "hostkey";
+static const char *LABEL_NAME = "name";
+static const char *LABEL_VALUE = "value";
+static const char *LABEL_VERSION = "version";
+static const char *LABEL_ARCH = "arch";
+static const char *LABEL_TIMESTAMP = "timestamp";
+
+static void database_open(mongo_connection *connection)
+{
+if (!CFDB_Open(connection))
+   {
+   zend_throw_exception(cfmod_exception_db, "Unable to connect to database", 0 TSRMLS_CC);
+   }
+}
+
+static void database_close(mongo_connection *connection)
+{
+if (!CFDB_Close(connection))
+   {
+   zend_throw_exception(cfmod_exception_db, "Unable to close database", 0 TSRMLS_CC);
+   }
+}
+
 
 PHP_FUNCTION(cfmod_resource_report_list)
 {
@@ -16,9 +42,9 @@ JsonArray *reports = NULL;
 for (struct ReportInfo *report = BASIC_REPORTS; report->id != NULL; report++)
    {
    JsonObject *report_entry = NULL;
-   JsonObjectAppendString(&report_entry, "id", report->id);
-   JsonObjectAppendString(&report_entry, "category", report->category);
-   JsonObjectAppendString(&report_entry, "description", report->description);
+   JsonObjectAppendString(&report_entry, LABEL_ID, report->id);
+   JsonObjectAppendString(&report_entry, LABEL_CATEGORY, report->category);
+   JsonObjectAppendString(&report_entry, LABEL_DESCRIPTION, report->description);
 
    JsonArrayAppendObject(&reports, report_entry);
    }
@@ -26,7 +52,9 @@ for (struct ReportInfo *report = BASIC_REPORTS; report->id != NULL; report++)
 RETURN_JSON(reports);
 }
 
+
 /************************************************************************************/
+
 
 PHP_FUNCTION(cfmod_resource_report_software_installed)
 {
@@ -51,18 +79,12 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssll",
    }
 
 mongo_connection conn;
-if (!CFDB_Open(&conn))
-   {
-   zend_throw_exception(cfmod_exception_db, "Unable to connect to database", 0 TSRMLS_CC);
-   }
+database_open(&conn);
 
 struct HubQuery *result = CFDB_QuerySoftware(&conn, hostkey,
    cfr_software, name, version, arch, true, context ,true);
 
-if (!CFDB_Close(&conn))
-   {
-   zend_throw_exception(cfmod_exception_db, "Unable to close database", 0 TSRMLS_CC);
-   }
+database_close(&conn);
 
 JsonArray *software = NULL;
 for (struct Rlist *rp = result->records; rp != NULL; rp = rp->next)
@@ -70,11 +92,11 @@ for (struct Rlist *rp = result->records; rp != NULL; rp = rp->next)
    struct HubSoftware *record = (struct HubSoftware *)rp->item;
    struct JsonObject *software_entry = NULL;
 
-   JsonObjectAppendString(&software_entry, "hostkey", record->hh->keyhash);
-   JsonObjectAppendString(&software_entry, "name", record->name);
-   JsonObjectAppendString(&software_entry, "version", record->version);
-   JsonObjectAppendString(&software_entry, "arch", Nova_LongArch(record->arch));
-   JsonObjectAppendInteger(&software_entry, "timestamp", (int)record->t);
+   JsonObjectAppendString(&software_entry, LABEL_HOSTKEY, record->hh->keyhash);
+   JsonObjectAppendString(&software_entry, LABEL_NAME, record->name);
+   JsonObjectAppendString(&software_entry, LABEL_VERSION, record->version);
+   JsonObjectAppendString(&software_entry, LABEL_ARCH, Nova_LongArch(record->arch));
+   JsonObjectAppendInteger(&software_entry, LABEL_TIMESTAMP, (int)record->t);
 
    JsonArrayAppendObject(&software, software_entry);
    }
@@ -82,4 +104,88 @@ for (struct Rlist *rp = result->records; rp != NULL; rp = rp->next)
 DeleteHubQuery(result, DeleteHubSoftware);
 
 RETURN_JSON(software);
+}
+
+
+/************************************************************************************/
+
+static const char *DataTypeToString(const char *datatype)
+{
+switch (*datatype)
+   {
+   case 's':
+     return "string";
+   case 'i':
+     return "int";
+   case 'r':
+     return "real";
+   case 'm':
+     return "menu";
+
+   default:
+      if (strlen(datatype) == 2)
+      {
+      return "list";
+      }
+      return "unknown";
+   }
+}
+
+PHP_FUNCTION(cfmod_resource_report_values)
+{
+char *hostkey = NULL,
+     *scope = NULL,
+     *name = NULL,
+     *value = NULL,
+     *type = NULL,
+     *context = NULL;
+int len;
+struct PageInfo page = { 0 };
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssssll",
+      &hostkey, &len,
+      &scope, &len,
+      &name, &len,
+      &value, &len,
+      &type, &len,
+      &context, &len,
+      &(page.resultsPerPage),
+      &(page.pageNum)) == FAILURE)
+   {
+   zend_throw_exception(cfmod_exception_db, "Unable to parse arguments", 0 TSRMLS_CC);
+   }
+
+mongo_connection conn;
+database_open(&conn);
+
+struct HubQuery *result = CFDB_QueryVariables(&conn, hostkey,
+   scope, name, value, type, true, context);
+
+database_close(&conn);
+
+JsonArray *values = NULL;
+for (struct Rlist *rp = result->records; rp != NULL; rp = rp->next)
+   {
+   struct HubVariable *record = (struct HubVariable *)rp->item;
+   const char *type = DataTypeToString(record->dtype);
+
+   JsonObject *value_entry = NULL;
+   JsonObjectAppendString(&value_entry, LABEL_HOSTKEY, record->hh->keyhash);
+   JsonObjectAppendString(&value_entry, LABEL_NAME, type);
+
+   if (strcmp(type, "list"))
+      {
+      JsonObjectAppendString(&value_entry, LABEL_VALUE, "not implemented");
+      }
+   else
+      {
+      JsonObjectAppendString(&value_entry, LABEL_VALUE, (const char *)record->rval);
+      }
+
+   JsonArrayAppendObject(&value, value_entry);
+   }
+
+DeleteHubQuery(result, DeleteHubVariable);
+
+RETURN_JSON(values);
 }

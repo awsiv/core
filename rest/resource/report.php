@@ -62,8 +62,8 @@ class ReportResource extends Resource
                     break;
 
                 case 'values':
-                    $response->body = cfpr_report_vars($hostkey, $scope, $name,
-                            $value, $type, true, $context, $count, $startPage);
+                    $response->body = cfmod_resource_report_values($hostkey, $scope, $name,
+                            $value, $type, $context, $count, $startPage);
                     break;
 
                 case 'compliance-summary':
