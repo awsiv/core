@@ -781,7 +781,7 @@ class Search extends Cf_Controller {
                 }
                 break;
 
-            case "Virtual bundles":
+            case "virtual-bundles":
                 $allUsers = isset($getparams['all_user']) ? urldecode($getparams['all_user']) : urldecode($this->input->post('all_user'));
                 if ($many) {
                     $username = (trim($allUsers) == '') ? $this->session->userdata('username') : null;
