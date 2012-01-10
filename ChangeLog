@@ -5,6 +5,9 @@
 	
 	Software and variable report now contains end-node discovery time.
 
+	Software report is much faster on larger data-sets due
+	to removal of autocomplete feature.
+
 2.1.0 
 	New interface with interactive graphs on Nova hub.
 
