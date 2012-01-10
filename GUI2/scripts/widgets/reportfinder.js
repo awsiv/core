@@ -43,20 +43,26 @@ loadpagebody:function(){
   $.getJSON(self.element.attr('href'), function(data) {
                              self.dialogcontent.append(self.reports);
                                   $.each(data,function(key, value) {
-                                     // var ul=$("<ul>");
                                      var li = $("<li>").addClass('reportcategory').text(key);
                                      li.appendTo(self.reports);
+                                     var ul=$("<ul>");
                                           $.each(value,function(i,val)
                                           {
                                             var li = $("<li>").addClass('reportitem');
                                             $("<a>").text(val['name']).data('id',val.id).attr({title:'Generates Report for: '+val['description'], href:"#"}).appendTo(li);
                                             $("<span class=\"repdesc\">").text(val['description']).appendTo(li);
-                                            li.appendTo(self.reports); 
+                                            li.appendTo(ul); 
                                           });
-                                       
+                                       ul.appendTo(self.reports);  
                                   });
      });
  self.reports.delegate('a','click',$.proxy(self.reportselected,self))
+ self.reports.delegate('li.reportcategory','click',$.proxy(self.categoryclicked,self));
+},
+
+categoryclicked:function(event){
+ var sender=$(event.target);
+   sender.next().toggle('slow');
 },
 
 reportselected:function(event){
