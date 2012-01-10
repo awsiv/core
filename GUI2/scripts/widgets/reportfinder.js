@@ -62,7 +62,7 @@ loadpagebody:function(){
 
 categoryclicked:function(event){
  var sender=$(event.target);
-   sender.next().toggle('slow');
+   sender.next().toggle();
 },
 
 reportselected:function(event){

@@ -2836,6 +2836,7 @@ background-image: none;
     color:#222222;
     text-transform: uppercase;
     padding-left: 5px;
+    cursor: pointer;
 }
 
 .result li.reportitem{
