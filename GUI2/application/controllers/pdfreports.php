@@ -122,79 +122,79 @@ class pdfreports extends Cf_Controller {
         }
 
         switch ($report_type) {
-            case "Bundle profile":
+            case "bundle-profile":
                 $this->rpt_bundle_profile($params['hostkey'], $params['search'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
-            case "Business value report":
+            case "business-value":
                 $this->rpt_business_value($params['hostkey'], $params['days'], $params['months'], $params['years'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
-            case "Class profile":
+            case "contexts":
                 $this->rpt_class_profile($params['hostkey'], $params['search'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
-            case "Compliance by promise":
+            case "promise-compliance":
                 $this->rpt_compliance_promises($params['hostkey'], $params['search'], $params['state'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
-            case "Compliance summary":
+            case "compliance-summary":
                 $this->rpt_compliance_summary($params['hostkey'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
-            case "File change log":
+            case "file-change-log":
                 $this->rpt_filechange_log($params['hostkey'], $params['search'], $params['class_regex'], $params['long_term'], $params['rows'], $params['page']);
                 break;
 
-            case "Last saw hosts":
+            case "neighbors":
                 $this->rpt_lastsaw_hosts($params['hostkey'], $params['key'], $params['search'], $params['address'], $params['ago'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
-            case "Patches available":
+            case "patches-available":
                 $this->rpt_patches_available($params['hostkey'], $params['search'], $params['version'], $params['arch'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
-            case "Patch status":
+            case "patches-installed":
                 $this->rpt_patch_status($params['hostkey'], $params['search'], $params['version'], $params['arch'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
-            case "Performance":
+            case "benchmarks":
                 $this->rpt_performance($params['hostkey'], $params['search'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
-            case "Promises repaired summary":
+            case "promises-repaired-summary":
                 $this->rpt_promise_repaired_summary($params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
-            case "Promises repaired log":
+            case "promises-repaired-log":
                 $this->rpt_repaired_log($params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
-            case "Promises not kept summary":
+            case "promises-not-kept-summary":
                 $this->rpt_promise_notkept_summary($params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
-            case "Promises not kept log":
+            case "promises-not-kept-log":
                 $this->rpt_promise_notkept($params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
-            case "Setuid-gid root programs":
+            case "setuid-programs":
                 $this->rpt_setuid($params['hostkey'], $params['search'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
-            case "Software installed":
+            case "software-installed":
                 $this->rpt_software_installed($params['hostkey'], $params['search'], $params['version'], $params['arch'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
-            case "Variables":
+            case "values":
                 $this->rpt_variables($params['hostkey'], $params['search'], $params['scope'], $params['lval'], $params['rval'], $params['var_type'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
-            case "File change diffs":
+            case "file-change-diffs":
                 $this->rpt_filediffs($params['hostkey'], $params['search'], $params['diff'], $params['cal'], $params['class_regex'], $params['long_term'], $params['rows'], $params['page']);
                 break;
 
-            case "Virtual bundles":
+            case "virtual-bundles":
                 $name = isset($params['name']) ? $params['name'] : null;
                 $allUser = isset($params['all_user']) ? $params['all_user'] : null;
                 $this->rpt_virtualBundles($name, $allUser, $params['rows'], $params['page']);
