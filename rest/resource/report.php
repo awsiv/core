@@ -39,6 +39,11 @@ class ReportResource extends Resource
         {
             switch ($id)
             {
+                case 'bundle-profile':
+                    $response->body = cfmod_resource_report_bundle_profile($hostkey,
+                            $name, $context, $count, $startPage);
+                    break;
+
                 case 'software-installed':
                     $response->body = cfmod_resource_report_software_installed($hostkey,
                             $name, $version, $arch, $context, $count, $startPage);

@@ -17,6 +17,9 @@ static const char *LABEL_VALUE = "value";
 static const char *LABEL_VERSION = "version";
 static const char *LABEL_ARCH = "arch";
 static const char *LABEL_TIMESTAMP = "timestamp";
+static const char *LABEL_LASTSEEN = "last-seen";
+static const char *LABEL_AVERAGE = "average";
+static const char *LABEL_STDV = "stdv";
 
 static void database_open(mongo_connection *connection)
 {
@@ -109,6 +112,7 @@ RETURN_JSON(software);
 
 /************************************************************************************/
 
+
 static const char *DataTypeToString(const char *datatype)
 {
 switch (*datatype)
@@ -188,4 +192,53 @@ for (struct Rlist *rp = result->records; rp != NULL; rp = rp->next)
 DeleteHubQuery(result, DeleteHubVariable);
 
 RETURN_JSON(values);
+}
+
+
+/************************************************************************************/
+
+
+PHP_FUNCTION(cfmod_resource_report_bundle_profile)
+{
+char *hostkey = NULL,
+     *name = NULL,
+     *context = NULL;
+int len;
+struct PageInfo page = { 0 };
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssll",
+      &hostkey, &len,
+      &name, &len,
+      &context, &len,
+      &(page.resultsPerPage),
+      &(page.pageNum)) == FAILURE)
+   {
+   zend_throw_exception(cfmod_exception_db, "Unable to parse arguments", 0 TSRMLS_CC);
+   }
+
+mongo_connection conn;
+database_open(&conn);
+
+struct HubQuery *result = CFDB_QueryBundleSeen(&conn, hostkey, name, true, context, true);
+
+database_close(&conn);
+
+JsonArray *bundles = NULL;
+for (struct Rlist *rp = result->records; rp != NULL; rp = rp->next)
+   {
+   struct HubBundleSeen *record = (struct HubBundleSeen *)rp->item;
+   struct JsonObject *bundle_entry = NULL;
+
+   JsonObjectAppendString(&bundle_entry, LABEL_HOSTKEY, record->hh->keyhash);
+   JsonObjectAppendString(&bundle_entry, LABEL_NAME, record->bundle);
+   JsonObjectAppendInteger(&bundle_entry, LABEL_LASTSEEN, SECONDS_PER_HOUR * record->hrsago);
+   JsonObjectAppendReal(&bundle_entry, LABEL_AVERAGE, SECONDS_PER_HOUR * record->hrsavg);
+   JsonObjectAppendReal(&bundle_entry, LABEL_STDV, SECONDS_PER_HOUR * record->hrsdev);
+
+   JsonArrayAppendObject(&bundles, bundle_entry);
+   }
+
+DeleteHubQuery(result, DeleteHubBundleSeen);
+
+RETURN_JSON(bundles);
 }
