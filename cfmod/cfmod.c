@@ -192,11 +192,10 @@ static function_entry cfmod_functions[] =
 
     PHP_FE(cfpr_hub_key,NULL)
     PHP_FE(cfpr_get_hub_master,NULL)
+    
     /*
      * Constellation
      */
-
-    
 #ifdef HAVE_CONSTELLATION    
     
     PHP_FE(cfcon_compliance_summary_graph,NULL)

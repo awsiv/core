@@ -12,6 +12,7 @@ if MONGO
 
 cfmod_la_SOURCES = cfmod.c \
 	private-api.c private-api.h \
+	private-api-constellation.c private-api-constellation.h \
 	public-api.c public-api.h
 
 lib_LTLIBRARIES = cfmod.la
