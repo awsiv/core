@@ -120,20 +120,6 @@ if (false)
    Nova_Header("sd","we",buffer,3);
    Nova2PHP_get_network_speed("","",3);
    Nova2PHP_meter(NULL,NULL,0);
-   /* pdf functions */
-   Nova2PHP_compliance_report_pdf(NULL,NULL,0,0,0,0,0,NULL,buffer,10000);
-   Nova2PHP_promiselog_pdf(NULL,NULL,1,0,0,NULL,buffer,1000);
-   Nova2PHP_bundle_report_pdf(NULL,NULL,0,NULL,buffer,10000);
-   Nova2PHP_value_report_pdf(NULL,NULL,NULL,NULL,NULL,buffer,1000);
-   Nova2PHP_classes_report_pdf(NULL,NULL,0,NULL, buffer,1000);
-   Nova2PHP_compliance_promises_pdf(NULL,NULL,"x",0,NULL, buffer,10000);
-   Nova2PHP_filechanges_report_pdf(NULL,NULL,false,-1,">",NULL, buffer,10000);
-   Nova2PHP_lastseen_report_pdf(NULL,NULL,NULL,NULL,-1,0,NULL, buffer,10000);
-   Nova2PHP_software_report_pdf(0,0,0,0,0,cfr_software,NULL, buffer,20);
-   Nova2PHP_performance_report_pdf(NULL,NULL,0,NULL, buffer,10000);
-   Nova2PHP_vars_report_pdf(NULL,NULL,NULL,NULL,NULL,0,NULL, buffer,1000);
-   Nova2PHP_filediffs_report_pdf(NULL,NULL,NULL,false,-1,">",NULL, buffer,10000);
-   Nova2PHP_setuid_report_pdf(NULL,NULL,0,NULL, buffer,10000);
 
    /* svn helper */
    Nova2PHP_validate_policy(NULL,NULL,10000);

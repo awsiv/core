@@ -914,30 +914,6 @@ PHP_FUNCTION(cfpr_get_host_environment);
  */
 PHP_FUNCTION(cfpr_replica_status);
 
-/*
- * For pdf generation
- */
-
-PHP_FUNCTION(cfpr_report_compliance_summary_pdf);
-PHP_FUNCTION(cfpr_report_bundlesseen_pdf);
-PHP_FUNCTION(cfpr_report_value_pdf);
-PHP_FUNCTION(cfpr_report_classes_pdf);
-PHP_FUNCTION(cfpr_report_compliance_promises_pdf);
-PHP_FUNCTION(cfpr_report_filechanges_pdf);
-PHP_FUNCTION(cfpr_report_lastseen_pdf);
-PHP_FUNCTION(cfpr_report_patch_avail_pdf);
-PHP_FUNCTION(cfpr_report_patch_in_pdf);
-PHP_FUNCTION(cfpr_report_software_in_pdf);
-PHP_FUNCTION(cfpr_report_performance_pdf);
-PHP_FUNCTION(cfpr_report_notkept_pdf);
-PHP_FUNCTION(cfpr_report_repaired_pdf);
-PHP_FUNCTION(cfpr_summarize_repaired_pdf);
-PHP_FUNCTION(cfpr_summarize_notkept_pdf);
-PHP_FUNCTION(cfpr_report_vars_pdf);
-PHP_FUNCTION(cfpr_report_filediffs_pdf);
-PHP_FUNCTION(cfpr_report_setuid_pdf);
-
-
 
 /*
  * SVN helper
