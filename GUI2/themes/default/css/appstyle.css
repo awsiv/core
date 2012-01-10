@@ -1052,7 +1052,7 @@ div.ui-dialog .ui-dialog-buttonpane{
     font-weight: normal;
     width:150px;
     z-index:1;
-    background:#4A575C;
+    background:#3D453A;
     padding:20px 0;
     font-size: 11px;
     border-radius:0 0 5px 5px;
@@ -2297,7 +2297,7 @@ div.ui-dialog .ui-dialog-buttonpane{
 .bundlelist-table th[scope=col]
 {
     color: #FFF;
-    background-color:#4A575C;
+    background-color:#3D453A;
     border-right: 1px solid #666;
     font-size: 0.9em; 
     border-bottom: 1px solid #666;
@@ -2830,3 +2830,16 @@ background-image: none;
     padding:0px 2px;
    text-transform: none;
 }
+
+.result li.reportcategory{
+    background: #E7EED9;
+    color:#222222;
+    text-transform: uppercase;
+    padding-left: 5px;
+}
+
+.result li.reportitem{
+    padding-left:10px;
+}
+
+

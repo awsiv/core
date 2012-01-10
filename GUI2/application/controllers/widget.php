@@ -259,7 +259,21 @@ class Widget extends Cf_Controller {
 
     function allreports() {
         $data= cfpr_select_reports(".*", 100);
-        sanitycheckjson($data);
+        $reports=sanitycheckjson($data,true);
+        //var_dump($reports);
+        $treeview_reports=array();
+        foreach ($reports as $report){
+            if(key_exists($report['category'], $treeview_reports)){
+                array_push($treeview_reports[$report['category']],$report);
+            }
+            else{
+                $treeview_reports[$report['category']]=array();
+                array_push($treeview_reports[$report['category']],$report);
+            }
+        }
+        //var_dump($treeview_reports);
+        $json=json_encode($treeview_reports);
+        echo $json;
     }
 
     function insertworkinglogs() {

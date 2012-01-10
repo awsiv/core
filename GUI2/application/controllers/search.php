@@ -155,7 +155,7 @@ class Search extends Cf_Controller {
         }
 
         switch ($report_type) {
-            case "Bundle profile":
+            case "bundle-profile":
 
                 if ($many) {
 
@@ -192,7 +192,7 @@ class Search extends Cf_Controller {
                     is_ajax() ? $this->load->view('searchpages/bundleprofile', $data) : $this->template->load('template', 'searchpages/bundleprofile', $data);
                 }
                 break;
-            case "Business value report":
+            case "business-value":
                 if ($many) {
                     $days = isset($getparams['days']) ? urldecode($getparams['days']) : urldecode($this->input->post('days'));
                     $months = isset($getparams['months']) ? urldecode($getparams['months']) : urldecode($this->input->post('months'));
@@ -230,7 +230,7 @@ class Search extends Cf_Controller {
                     is_ajax() ? $this->load->view('searchpages/business_value_report', $data) : $this->template->load('template', 'searchpages/business_value_report', $data);
                 }
                 break;
-            case "Class profile":
+            case "contexts":
                 if ($many) {
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : $this->input->post('name');
                     if ($hosts_only) {
@@ -263,7 +263,7 @@ class Search extends Cf_Controller {
                     is_ajax() ? $this->load->view('searchpages/class_profile', $data) : $this->template->load('template', 'searchpages/class_profile', $data);
                 }
                 break;
-            case "Compliance by promise":
+            case "promise-compliance":
                 if ($many) {
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     $state = isset($getparams['state']) ? urldecode($getparams['state']) : urldecode($this->input->post('state'));
@@ -301,7 +301,7 @@ class Search extends Cf_Controller {
                     is_ajax() ? $this->load->view('searchpages/compliance_by_promise', $data) : $this->template->load('template', 'searchpages/compliance_by_promise', $data);
                 }
                 break;
-            case "Compliance summary":
+            case "compliance-summary":
                 if ($many) {
                     if ($hosts_only) {
                         $data['report_result'] = cfpr_hosts_with_compliance_summary($hostkey, NULL, -1, -1, -1, -1, ">", $class_regex);
@@ -330,7 +330,7 @@ class Search extends Cf_Controller {
                     is_ajax() ? $this->load->view('searchpages/summary_report', $data) : $this->template->load('template', 'searchpages/summary_report', $data);
                 }
                 break;
-            case "File change log":
+            case "file-change-log":
                 if ($many) {
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     if ($hosts_only) {
@@ -366,7 +366,7 @@ class Search extends Cf_Controller {
                     is_ajax() ? $this->load->view('searchpages/file_change_log', $data) : $this->template->load('template', 'searchpages/file_change_log', $data);
                 }
                 break;
-            case "File change diffs":
+            case "file-change-diffs":
                 $data['resultView'] = 'filechangediff_result';
                 $data['nofix']=true;
                 $cal = -1;
@@ -408,7 +408,7 @@ class Search extends Cf_Controller {
                     is_ajax() ? $this->load->view('searchpages/file_change_diffs', $data) : $this->template->load('template', 'searchpages/file_change_diffs', $data);
                 }
                 break;
-            case "Last saw hosts":
+            case "neighbors":
                 if ($many) {
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     $address = isset($getparams['address']) ? urldecode($getparams['address']) : urldecode($this->input->post('address'));
@@ -452,7 +452,7 @@ class Search extends Cf_Controller {
                     is_ajax() ? $this->load->view('searchpages/last_saw_hosts', $data) : $this->template->load('template', 'searchpages/last_saw_hosts', $data);
                 }
                 break;
-            case "Patches available":
+            case "patches-available":
                 if ($many) {
 
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
@@ -492,7 +492,7 @@ class Search extends Cf_Controller {
                     is_ajax() ? $this->load->view('searchpages/patches_available', $data) : $this->template->load('template', 'searchpages/patches_available', $data);
                 }
                 break;
-            case "Patch status":
+            case "patches-installed":
                 if ($many) {
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     $version = isset($getparams['version']) ? urldecode($getparams['version']) : urldecode($this->input->post('version'));
@@ -532,7 +532,7 @@ class Search extends Cf_Controller {
                     is_ajax() ? $this->load->view('searchpages/patch_status', $data) : $this->template->load('template', 'searchpages/patch_status', $data);
                 }
                 break;
-            case "Performance":
+            case "benchmarks":
                 if ($many) {
 
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
@@ -565,10 +565,10 @@ class Search extends Cf_Controller {
                     is_ajax() ? $this->load->view('searchpages/performance', $data) : $this->template->load('template', 'searchpages/performance', $data);
                 }
                 break;
-            case "Promises repaired log":
-            case "Promises repaired summary":
+            case "promises-repaired-log":
+            case "promises-repaired-summary":
+              
                 if ($many) {
-
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     if ($hosts_only) {
                         $data['report_result'] = cfpr_hosts_with_repaired(NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex);
@@ -581,9 +581,9 @@ class Search extends Cf_Controller {
                             'hours_deltafrom' => $hours_deltafrom,
                             'hours_deltato' => $hours_deltato
                         );
-                        if ($report_type == "Promises repaired log")
+                        if ($report_type == "promises-repaired-log")
                             $data['report_result'] = cfpr_report_repaired(NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
-                        if ($report_type == "Promises repaired summary")
+                        if ($report_type == "promises-repaired-summary")
                             $data['report_result'] = cfpr_summarize_repaired(NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
                         // $data['report_result'] = cfpr_report_repaired(NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
@@ -610,8 +610,8 @@ class Search extends Cf_Controller {
                     is_ajax() ? $this->load->view('searchpages/promises_repaired_log', $data) : $this->template->load('template', 'searchpages/promises_repaired_log', $data);
                 }
                 break;
-            case "Promises not kept summary":
-            case "Promises not kept log":
+            case "promises-not-kept-summary":
+            case "promises-not-kept-log":
                 if ($many) {
 
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
@@ -619,9 +619,9 @@ class Search extends Cf_Controller {
                         $data['report_result'] = cfpr_hosts_with_notkept(NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     } else {
-                        if ($report_type == "Promises not kept summary")
+                        if ($report_type == "promises-not-kept-summary")
                             $data['report_result'] = cfpr_summarize_notkept(NULL, $name, NULL, NULL, $class_regex, $rows, $page_number);
-                        if ($report_type == "Promises not kept log")
+                        if ($report_type == "promises-not-kept-log")
                             $data['report_result'] = cfpr_report_notkept(NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
 
                         $pdfurlParams = array('type' => $report_type,
@@ -660,7 +660,7 @@ class Search extends Cf_Controller {
                     is_ajax() ? $this->load->view('searchpages/promises_not_kept', $data) : $this->template->load('template', 'searchpages/promises_not_kept', $data);
                 }
                 break;
-            case "Setuid/gid root programs":
+            case "setuid-programs":
                 if ($many) {
 
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
@@ -694,7 +694,7 @@ class Search extends Cf_Controller {
                     is_ajax() ? $this->load->view('searchpages/uid_gid_root_programs', $data) : $this->template->load('template', 'searchpages/uid_gid_root_programs', $data);
                 }
                 break;
-            case "Software installed":
+            case "software-installed":
                 if ($many) {
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     $version = isset($getparams['version']) ? urldecode($getparams['version']) : urldecode($this->input->post('version'));
@@ -737,7 +737,7 @@ class Search extends Cf_Controller {
                     is_ajax() ? $this->load->view('searchpages/software_installed', $data) : $this->template->load('template', 'searchpages/software_installed', $data);
                 }
                 break;
-            case "Variables":
+            case "values":
                 $data['resultView'] = 'variable_result';
 
                 if ($many) {

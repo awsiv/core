@@ -42,11 +42,18 @@ loadpagebody:function(){
   self.reports =$("<ul>").attr("id", "reportList")
   $.getJSON(self.element.attr('href'), function(data) {
                              self.dialogcontent.append(self.reports);
-                                  $.each(data, function(i, val) {
-                                        var li = $("<li>");
-                                        $("<a>").text(val[0]).attr({title:'Generates Report for: '+val[1], href:"#"}).appendTo(li);
-                                        $("<span class=\"repdesc\">").text(val[1]).appendTo(li);
-                                        li.appendTo(self.reports);
+                                  $.each(data,function(key, value) {
+                                     // var ul=$("<ul>");
+                                     var li = $("<li>").addClass('reportcategory').text(key);
+                                     li.appendTo(self.reports);
+                                          $.each(value,function(i,val)
+                                          {
+                                            var li = $("<li>").addClass('reportitem');
+                                            $("<a>").text(val['name']).data('id',val.id).attr({title:'Generates Report for: '+val['description'], href:"#"}).appendTo(li);
+                                            $("<span class=\"repdesc\">").text(val['description']).appendTo(li);
+                                            li.appendTo(self.reports); 
+                                          });
+                                       
                                   });
      });
  self.reports.delegate('a','click',$.proxy(self.reportselected,self))
@@ -58,7 +65,7 @@ var self=this,
     sender=$(event.target);
 if(self.options.allhost)
     {
-    self.repdialog.load(self.options.baseUrl+'/search/index', {report: sender.text()}, function() {
+    self.repdialog.load(self.options.baseUrl+'/search/index', {report: sender.data('id')}, function() {
                self.repdialog.slideDown();
                var $closebtn=$("<a class='ui-dialog-titlebar-close ui-corner-all'><span class='ui-icon ui-icon-closethick'></span></a>");
                 $(this).find('.panelhead').append($closebtn);

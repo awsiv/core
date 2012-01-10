@@ -733,10 +733,27 @@ class Testing extends CI_Controller {
         $this->load->view('testviews/test');
     }
     
-     function story_sample1(){
+     function story_sample1() {
         $this->load->model('stories_model');
-        $data['story']=$this->stories_model->getStoryByName('webserver');
-        $this->load->view('testviews/story',$data);
+        $data['story'] = $this->stories_model->getStoryByName('webserver');
+        $this->load->view('testviews/story', $data);
+    }
+    
+    function json_test() {
+        $data = "{
+    \"categorykey\": {
+        \"name\": \"file\",
+        \"reports\": {
+            \"key1\": \"reportname\",
+            \"key2\": \"reportname\"
+        }
+       }
+     }";
+        $array=json_decode($data,TRUE);
+        foreach ($array as $key=>$value)
+        {
+          var_dump($key);  
+        }
     }
     
 
