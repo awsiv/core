@@ -40,6 +40,8 @@ if (FIPS_MODE)
 void Nova_SaveDocumentRoot(void)
 {
 #if defined(HAVE_LIBMONGOC)
+
+NewClass("am_policy_hub");
 if (IsDefinedClass("redhat"))
    {
    CfOut(cf_verbose,""," -> Recording default document root /var/www/html");
