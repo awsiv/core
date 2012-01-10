@@ -3,8 +3,6 @@
 
 #include "php_cfmod.h"
 
-PHP_FUNCTION(cfmod_resource_host_list);
-
 PHP_FUNCTION(cfmod_resource_report_list);
 
 #endif

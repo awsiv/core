@@ -9,8 +9,6 @@
 static function_entry cfmod_functions[] =
     {
     // public API
-    PHP_FE(cfmod_resource_host_list, NULL)
-
     PHP_FE(cfmod_resource_report_list, NULL)
 
     // private API
