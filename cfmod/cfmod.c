@@ -152,27 +152,6 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_show_topic_category,NULL)
     PHP_FE(cfpr_get_pid_for_topic,NULL)
 
-    /*
-     * For pdf generation
-     */
-    PHP_FE(cfpr_report_compliance_summary_pdf,NULL)
-    PHP_FE(cfpr_report_notkept_pdf,NULL)
-    PHP_FE(cfpr_report_bundlesseen_pdf,NULL)
-    PHP_FE(cfpr_report_value_pdf,NULL)
-    PHP_FE(cfpr_report_classes_pdf,NULL)	
-    PHP_FE(cfpr_report_compliance_promises_pdf,NULL)
-    PHP_FE(cfpr_report_filechanges_pdf,NULL)
-    PHP_FE(cfpr_report_lastseen_pdf,NULL)
-    PHP_FE(cfpr_report_patch_avail_pdf,NULL)
-    PHP_FE(cfpr_report_patch_in_pdf,NULL)
-    PHP_FE(cfpr_report_software_in_pdf,NULL)
-    PHP_FE(cfpr_report_performance_pdf,NULL)
-    PHP_FE(cfpr_report_repaired_pdf,NULL)
-    PHP_FE(cfpr_summarize_repaired_pdf,NULL)
-    PHP_FE(cfpr_summarize_notkept_pdf,NULL)
-    PHP_FE(cfpr_report_vars_pdf,NULL)   
-    PHP_FE(cfpr_report_filediffs_pdf,NULL)																											    
-    PHP_FE(cfpr_report_setuid_pdf,NULL)
     PHP_FE(cfpr_report_description,NULL)
 
     PHP_FE(cfpr_list_documents,NULL)
