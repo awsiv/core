@@ -15,9 +15,13 @@ JsonArray *reports = NULL;
 
 for (struct ReportInfo *report = BASIC_REPORTS; report->id != NULL; report++)
    {
-   JsonArrayAppendString(&reports, report->id);
+   JsonObject *report_entry = NULL;
+   JsonObjectAppendString(&report_entry, "id", report->id);
+   JsonObjectAppendString(&report_entry, "category", report->category);
+   JsonObjectAppendString(&report_entry, "description", report->description);
+
+   JsonArrayAppendObject(&reports, report_entry);
    }
 
 RETURN_JSON(reports);
 }
-
