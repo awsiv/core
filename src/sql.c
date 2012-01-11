@@ -71,7 +71,6 @@ if ((sp = cf_strchr(table_path,'.')))
 
 if (dot + back + fwd > true)
    {
-   CfOut(cf_error,"","");
    return false;
    }
 
