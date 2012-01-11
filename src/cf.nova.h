@@ -435,13 +435,14 @@ struct HubPromiseCompliance
    time_t t;
    };
 
+#ifdef HAVE_LIBMONGOC
 struct HubQuery
    {
    struct Rlist *hosts;
    struct Rlist *records;
    cfapi_errid errid;
    };
-
+#endif
 
 struct HubPromise
    {

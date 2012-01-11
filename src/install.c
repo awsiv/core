@@ -56,6 +56,7 @@ void PrependPromiserList(struct PromiseIdent **list,char *s,struct Promise *pp)
 
 /*****************************************************************************/
 
+#ifdef HAVE_LIBMONGOC
 struct HubQuery *NewHubQuery(struct Rlist *hosts,struct Rlist *records)
 
 { struct HubQuery *hq;
@@ -109,6 +110,7 @@ int CountRecords(struct HubQuery *hq)
  
  return RlistLen(hq->records);
 }
+#endif
 
 /*****************************************************************************/
 
