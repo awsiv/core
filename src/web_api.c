@@ -15,6 +15,8 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+#include "cf.nova.web_api.h"
+
 
 static const char *CDP_REPORTS[][2] =
     {
@@ -5515,6 +5517,13 @@ int Nova2PHP_GetHubMaster(char *buffer,int bufsize)
     }
  snprintf(buffer,bufsize,"Unknown hub_master");
  return false;
+}
+
+/*****************************************************************************/
+
+const char *GetErrorDescription(cfapi_errid errid)
+{
+ return ERRID_DESCRIPTION[errid];
 }
 
 /*****************************************************************************/

@@ -23,7 +23,7 @@
 static Item *GetRolesFromDB(bson *query);
 static bool RoleExists(char *name);
 
-HubRBAC *GetRBACForUser(char *userName)
+HubRBAC *CFDB_GetRBACForUser(char *userName)
 /*
  * Looks up the roles of the given user, and generates
  * the union of the RBAC permissions of these roles.
@@ -35,7 +35,7 @@ return NULL;
 }
 // TODO: Add php fns
 
-cfapi_errid CreateRole(char *name, char *description, char *includeClassRx, char *excludeClassRx, char *includeBundleRx)
+cfapi_errid CFDB_CreateRole(char *name, char *description, char *includeClassRx, char *excludeClassRx, char *includeBundleRx)
 {
  
  if(RoleExists(name))
@@ -80,7 +80,7 @@ cfapi_errid CreateRole(char *name, char *description, char *includeClassRx, char
 }
 
 
-cfapi_errid DeleteRole(char *name)
+cfapi_errid CFDB_DeleteRole(char *name)
 {
  if(!RoleExists(name))
     {
@@ -113,7 +113,7 @@ cfapi_errid DeleteRole(char *name)
 
 static bool RoleExists(char *name)
 {
- Item *roles = GetAllRoles();
+ Item *roles = CFDB_GetAllRoles();
  bool exists = IsItemIn(roles, name);
  DeleteItemList(roles);
 
@@ -121,7 +121,7 @@ static bool RoleExists(char *name)
 }
 
 
-Item *GetAllRoles(void)
+Item *CFDB_GetAllRoles(void)
 {
  bson query;
  bson_empty(&query);
@@ -130,7 +130,7 @@ Item *GetAllRoles(void)
 }
 
 
-Item *GetRolesForUser(char *userName)
+Item *CFDB_GetRolesForUser(char *userName)
 {
  bson_buffer bb;
  bson query;
@@ -146,7 +146,7 @@ Item *GetRolesForUser(char *userName)
 }
 
 
-cfapi_errid SetRolesForUser(char *userName, Item *roles)
+cfapi_errid CFDB_SetRolesForUser(char *userName, Item *roles)
 {
  bson_buffer bb;
  bson query;

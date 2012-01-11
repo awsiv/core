@@ -240,6 +240,7 @@ void FreeEnvironmentsList(EnvironmentsList *list);
 void FreeHostsList(HostsList *list);
 
 
+const char *GetErrorDescription(cfapi_errid errid);
 char *FormatErrorJsonAttribute(char *out, int outSz, cfapi_errid errid);
 char *FormatSingletonErrorJson(char *out, int outSz, cfapi_errid errid);
 void EndJsonBuffer(char *buf, int bufsize, cfapi_errid errid);
