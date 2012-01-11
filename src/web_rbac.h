@@ -21,4 +21,4 @@ cfapi_errid CFDB_DeleteRole(char *name);
 Item *CFDB_GetAllRoles(void);
 Item *CFDB_GetRolesForUser(char *userName);
 cfapi_errid CFDB_SetRolesForUser(char *userName, Item *roles);
-HubRBAC *CFDB_GetRBACForUser(char *userName);
+HubUserRBAC *CFDB_GetRBACForUser(char *userName);

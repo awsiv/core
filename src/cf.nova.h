@@ -537,10 +537,19 @@ struct HubVital_
 typedef struct
    {
    char *userName;
-   char *includeClassRx;
-   char *excludeClassRx;
-   char *includeBundleRx;
-   } HubRBAC;
+   char *classRxInclude;
+   char *classRxExclude;
+   char *bundleRxInclude;
+   } HubUserRBAC;
+
+typedef struct
+   {
+   char *name;
+   char *description;
+   char *classRxInclude;
+   char *classRxExclude;
+   char *bundleRxInclude;
+   } HubRole;
 
 
 /*****************************************************************************/
@@ -1017,8 +1026,10 @@ void DeleteHubNote(HubNote *hc);
 void DeleteHubNoteInfo(HubNoteInfo *hci);
 HubVital *PrependHubVital(HubVital **first, char *id, char *units, char *description);
 void DeleteHubVital(HubVital *hv);
-HubRBAC *NewHubRBAC(char *userName, char *includeClassRx, char *excludeClassRx, char *includeBundleRx);
-void DeleteHubRBAC(HubRBAC *rbac);
+HubUserRBAC *NewHubUserRBAC(char *userName, char *classRxInclude, char *classRxExclude, char *bunldeRxExclude);
+void DeleteHubUserRBAC(HubUserRBAC *userRbac);
+HubRole *NewHubRole(char *name, char *description, char *classRxInclude, char *classRxExclude, char *bundleRxInclude);
+void DeleteHubRole(HubRole *role);
 HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int hostCount, int totalHostCount, double kept, double repaired, double notkept, time_t genTime);
 void DeleteHubCacheTotalCompliance(HubCacheTotalCompliance *tc);
 

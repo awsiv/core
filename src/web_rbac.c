@@ -11,7 +11,7 @@
 /*   class regex to include                                                  */
 /*   class regex to exclude (overrides include)                              */
 /*   bundle regex to include                                                 */
-/*   (see HubRBAC)                                                    */
+/*   (see HubUserRBAC)                                                       */
 /*                                                                           */
 /*  Currently, reports are filtered by class regexes only (on hosts),        */
 /*  while promise definitions are filtered on bundle regex only              */
@@ -23,17 +23,16 @@
 static Item *GetRolesFromDB(bson *query);
 static bool RoleExists(char *name);
 
-HubRBAC *CFDB_GetRBACForUser(char *userName)
+HubUserRBAC *CFDB_GetRBACForUser(char *userName)
 /*
  * Looks up the roles of the given user, and generates
  * the union of the RBAC permissions of these roles.
  */
 {
  
-return NULL;
-
+ return NULL;
 }
-// TODO: Add php fns
+
 
 cfapi_errid CFDB_CreateRole(char *name, char *description, char *includeClassRx, char *excludeClassRx, char *includeBundleRx)
 {

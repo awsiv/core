@@ -1082,27 +1082,54 @@ void DeleteHubVital(HubVital *hv)
 
 /*****************************************************************************/
 
-HubRBAC *NewHubRBAC(char *userName, char *includeClassRx, char *excludeClassRx, char *includeBundleRx)
+HubUserRBAC *NewHubUserRBAC(char *userName, char *classRxInclude, char *classRxExclude, char *bundleRxInclude)
 {
- HubRBAC *rbac = xmalloc(sizeof(HubRBAC));
+ HubUserRBAC *rbac = xmalloc(sizeof(HubUserRBAC));
 
  rbac->userName = xstrdup(userName);
- rbac->includeClassRx = xstrdup(includeClassRx);
- rbac->excludeClassRx = xstrdup(excludeClassRx);
- rbac->includeBundleRx = xstrdup(includeBundleRx);
+ rbac->classRxInclude = xstrdup(classRxInclude);
+ rbac->classRxExclude = xstrdup(classRxExclude);
+ rbac->bundleRxInclude = xstrdup(bundleRxInclude);
  
  return rbac;
 }
 
 /*****************************************************************************/
 
-void DeleteHubRBAC(HubRBAC *rbac)
+void DeleteHubUserRBAC(HubUserRBAC *userRbac)
 {
- free(rbac->userName);
- free(rbac->includeClassRx);
- free(rbac->excludeClassRx);
- free(rbac->includeBundleRx);
- free(rbac);
+ free(userRbac->userName);
+ free(userRbac->classRxInclude);
+ free(userRbac->classRxExclude);
+ free(userRbac->bundleRxInclude);
+ free(userRbac);
+}
+
+/*****************************************************************************/
+
+HubRole *NewHubRole(char *name, char *description, char *classRxInclude, char *classRxExclude, char *bundleRxInclude)
+{
+ HubRole *role = xmalloc(sizeof(HubRole));
+
+ role->name = xstrdup(name);
+ role->description = SafeDuplicateString(description);
+ role->classRxInclude = SafeDuplicateString(classRxInclude);
+ role->classRxExclude = SafeDuplicateString(classRxExclude);
+ role->bundleRxInclude = SafeDuplicateString(bundleRxInclude);
+ 
+ return role;
+}
+
+/*****************************************************************************/
+
+void DeleteHubRole(HubRole *role)
+{
+ free(role->name);
+ free(role->description);
+ free(role->classRxInclude);
+ free(role->classRxExclude);
+ free(role->bundleRxInclude);
+ free(role);
 }
 
 /*****************************************************************************/
