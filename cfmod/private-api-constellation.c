@@ -1,7 +1,6 @@
-#ifdef HAVE_CONSTELLATION
-
 #include "private-api-constellation.h"
-#include "cf.constellation.web_api.h"
+
+#ifdef HAVE_CONSTELLATION
 
 static char *cfcon_aggr_promiselog(int argc, enum promiselog_rep log_type);
 static char *cfcon_count_promiselog(int argc, enum promiselog_rep log_type);

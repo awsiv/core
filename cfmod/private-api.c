@@ -1,13 +1,8 @@
 #include "private-api.h"
 
-#include "rlist.h"
-
 #define cfr_software     "sw"
 #define cfr_patch_avail  "pa"
 #define cfr_patch_installed "pi"
-#define CF_WEBBUFFER 7*1024*1024
-
-#include "cf.nova.web_api.h"
 
 static time_t DeltaHrsConvert(long hrsAgo);
 char **String2StringArray(char *str, char separator);
@@ -3439,3 +3434,6 @@ RETURN_STRING(buffer,1);
 }
 
 
+/******************************************************************************/
+/* RBAC                                                                       */
+/******************************************************************************/

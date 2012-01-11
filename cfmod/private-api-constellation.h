@@ -4,6 +4,11 @@
 
 */
 
+#ifndef CFENGINE_CFMOD_PRIVATE_API_CONSTELLATION_H
+#define CFENGINE_CFMOD_PRIVATE_API_CONSTELLATION_H
+
+#include "php_cfmod.h"
+
 #ifdef HAVE_CONSTELLATION
 
 PHP_FUNCTION(cfcon_get_story_by_name);
@@ -61,3 +66,6 @@ PHP_FUNCTION(cfcon_ipaddr);
 PHP_FUNCTION(cfcon_delete_hub);
 
 #endif  /* HAVE_CONSTELLATION */
+
+
+#endif /* CFENGINE_CFMOD_PRIVATE_API_CONSTELLATION_H */
