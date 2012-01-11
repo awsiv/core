@@ -43,7 +43,7 @@ struct Item *GetAllRoles(void)
 }
 
 
-struct Item *GetUserRoles(char *userName)
+struct Item *GetRolesForUser(char *userName)
 {
  
 }
@@ -64,7 +64,7 @@ static struct Item *GetRolesFromDB(bson *query)
  bson field;
  
  bson_buffer_init(&bb);
- bson_append_int(&bb, dbkey_role_members, 1);
+ bson_append_int(&bb, dbkey_role_name, 1);
  bson_from_buffer(&field, &bb);
  
  if(!CFDB_Open(&conn))
@@ -81,7 +81,12 @@ static struct Item *GetRolesFromDB(bson *query)
  
  while (mongo_cursor_next(cursor))
     {
-    roles = BsonStringArrayToItemList(&(cursor->current), dbkey_role_members);
+    const char* roleName = BsonGetString(&(cursor->current), dbkey_role_name);
+
+    if(roleName)
+       {
+       printf("roleName=%s\n", roleName);
+       }
     }
 
  mongo_cursor_destroy(cursor);

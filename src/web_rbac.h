@@ -9,5 +9,6 @@
 
 #define MONGO_ROLES_COLLECTION "phpcfengine.roles"
 #define dbkey_role_members "members"
+#define dbkey_role_name "name"
 
 struct HubRBAC *GetRBACForUser(char *userName);
