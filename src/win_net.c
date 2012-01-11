@@ -217,7 +217,7 @@ void NovaWin_GetInterfaceInfo()
     }
 }
 
-int TryConnect(AgentConnection *conn, struct timeval *tvp, Sockaddr *cinp, int cinpSz)
+int TryConnect(AgentConnection *conn, struct timeval *tvp, struct sockaddr *cinp, int cinpSz)
 /**
  * Tries a nonblocking connect and then restores blocking if
  * successful. Returns true on success, false otherwise.
@@ -226,7 +226,7 @@ int TryConnect(AgentConnection *conn, struct timeval *tvp, Sockaddr *cinp, int c
 {
  int res;
  long arg;
- Sockaddr_in emptyCin = {0};
+ struct sockaddr_in emptyCin = {0};
  u_long nonBlock;
 
  if(!cinp)
