@@ -976,9 +976,12 @@ PHP_FUNCTION(cfpr_query_note);
 PHP_FUNCTION(cfpr_get_host_noteid);
 
 
+PHP_FUNCTION(cfpr_role_create);
+
 #define CF_WEBBUFFER 7*1024*1024
 
 #include "rlist.h"
 #include "cf.nova.web_api.h"
+#include "web_rbac.h"
 
 #endif  /* CFENGINE_CFMOD_PRIVATE_API_H */

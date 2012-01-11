@@ -3437,3 +3437,33 @@ RETURN_STRING(buffer,1);
 /******************************************************************************/
 /* RBAC                                                                       */
 /******************************************************************************/
+
+PHP_FUNCTION(cfpr_role_create)
+
+{
+  char *name, *description, *includeClassRx, *excludeClassRx, *includeBundleRx;
+  int nameLen, descLen, icrxLen, ecrxLen, ibrxLen;
+  
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssss",
+                            &name, &nameLen,
+                            &description, &descLen,
+                            &includeClassRx, &icrxLen,
+                            &excludeClassRx, &ecrxLen,
+                            &includeBundleRx, &ibrxLen) == FAILURE)
+     {
+     zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
+     }
+
+  if(!(nameLen|descLen|icrxLen|ecrxLen|ibrxLen))
+     {
+     zend_throw_exception(cfmod_exception_args, "Missing argument contents", 0 TSRMLS_CC);
+     }
+
+  cfapi_errid errid = CFDB_CreateRole(name, description, includeClassRx, excludeClassRx, includeBundleRx);
+  
+  if(errid != ERRID_SUCCESS)
+     {
+     zend_throw_exception(cfmod_exception_generic, (char *)GetErrorDescription(errid), 0 TSRMLS_CC);     
+     }
+}
+
