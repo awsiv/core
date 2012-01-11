@@ -103,6 +103,15 @@ void BsonAppendStringArray(bson_buffer *bb, char *arrayName, Item *arrayValues)
 
 /*****************************************************************************/
 
+void BsonAppendAddToSetString(bson_buffer *bb, char *key, char *value)
+{
+ bson_append_start_object(bb, "$addToSet");
+ bson_append_string(bb, key, value);
+ bson_append_finish_object(bb);
+}
+
+/*****************************************************************************/
+
 void BsonAppendRecentQuery(bson_buffer *querybuf, int maxAgeInSeconds)
 {
  time_t currentTimeStamp = time(NULL);

@@ -21,7 +21,7 @@
 #include "web_rbac.h"
 
 static Item *GetRolesFromDB(bson *query);
-
+static bool RoleExists(char *name);
 
 HubRBAC *GetRBACForUser(char *userName)
 /*
@@ -32,6 +32,92 @@ HubRBAC *GetRBACForUser(char *userName)
  
 return NULL;
 
+}
+// TODO: Add php fns
+
+cfapi_errid CreateRole(char *name, char *description, char *includeClassRx, char *excludeClassRx, char *includeBundleRx)
+{
+ 
+ if(RoleExists(name))
+    {
+    return ERRID_ITEM_EXISTS;
+    }
+
+ bson_buffer bb;
+ 
+ bson query;
+ bson_buffer_init(&bb);
+ bson_append_string(&bb, dbkey_role_name, name);
+ bson_from_buffer(&query, &bb);
+
+ bson update;
+ bson_buffer_init(&bb);
+ bson_buffer *set = bson_append_start_object(&bb, "$set");
+ bson_append_string(set, dbkey_role_description, description);
+ bson_append_string(set, dbkey_role_classrx_include, includeClassRx);
+ bson_append_string(set, dbkey_role_classrx_exclude, excludeClassRx); 
+ bson_append_string(set, dbkey_role_bundlerx_include, includeBundleRx);
+ bson_append_finish_object(set);
+ bson_from_buffer(&update, &bb);
+
+ mongo_connection conn;
+ 
+ if(!CFDB_Open(&conn))
+    {
+    bson_destroy(&query);
+    bson_destroy(&update);
+    return ERRID_DBCONNECT;
+    }
+
+ mongo_update(&conn, MONGO_ROLES_COLLECTION, &query, &update, MONGO_UPDATE_UPSERT);
+ 
+ bson_destroy(&query);
+ bson_destroy(&update);
+
+ CFDB_Close(&conn);
+ 
+ return ERRID_SUCCESS;
+}
+
+
+cfapi_errid DeleteRole(char *name)
+{
+ if(!RoleExists(name))
+    {
+    return ERRID_ITEM_NONEXISTING;
+    }
+ 
+ bson_buffer bb;
+ bson query;
+
+ bson_buffer_init(&bb);
+ bson_append_string(&bb, dbkey_role_name, name);
+ bson_from_buffer(&query, &bb);
+
+ mongo_connection conn;
+ 
+ if(!CFDB_Open(&conn))
+    {
+    bson_destroy(&query);
+    return ERRID_DBCONNECT;
+    }
+ 
+ mongo_remove(&conn, MONGO_ROLES_COLLECTION, &query);
+ bson_destroy(&query);
+
+ CFDB_Close(&conn);
+
+ return ERRID_SUCCESS;
+}
+
+
+static bool RoleExists(char *name)
+{
+ Item *roles = GetAllRoles();
+ bool exists = IsItemIn(roles, name);
+ DeleteItemList(roles);
+
+ return exists;
 }
 
 
@@ -60,13 +146,38 @@ Item *GetRolesForUser(char *userName)
 }
 
 
-void *SetRolesForUser(char *userName, Item *roles)
+cfapi_errid SetRolesForUser(char *userName, Item *roles)
 {
  bson_buffer bb;
+ bson query;
 
  bson_buffer_init(&bb);
-// BsonAppendStringArray(&bb, dbkey_role_roles, roles);
- return NULL;
+ 
+ bson_append_start_object(&bb, dbkey_role_name);
+ BsonAppendStringArray(&bb, "$in", roles);
+ bson_append_finish_object(&bb);
+ bson_from_buffer(&query, &bb);
+
+ bson update;
+ bson_buffer_init(&bb);
+ BsonAppendAddToSetString(&bb, dbkey_role_members, userName);
+ bson_from_buffer(&update, &bb);
+
+ mongo_connection conn;
+ 
+ if(!CFDB_Open(&conn))
+    {
+    return ERRID_DBCONNECT;
+    }
+
+ mongo_update(&conn, MONGO_ROLES_COLLECTION, &query, &update, MONGO_UPDATE_MULTI);
+
+ bson_destroy(&query);
+ bson_destroy(&update);
+
+ CFDB_Close(&conn);
+
+ return ERRID_SUCCESS;
 }
 
 
