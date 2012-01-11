@@ -3439,7 +3439,6 @@ RETURN_STRING(buffer,1);
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_role_create)
-
 {
   char *name, *description, *includeClassRx, *excludeClassRx, *includeBundleRx;
   int nameLen, descLen, icrxLen, ecrxLen, ibrxLen;
@@ -3452,11 +3451,13 @@ PHP_FUNCTION(cfpr_role_create)
                             &includeBundleRx, &ibrxLen) == FAILURE)
      {
      zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
+     RETURN_NULL();
      }
 
   if(!(nameLen|descLen|icrxLen|ecrxLen|ibrxLen))
      {
      zend_throw_exception(cfmod_exception_args, "Missing argument contents", 0 TSRMLS_CC);
+     RETURN_NULL();
      }
 
   cfapi_errid errid = CFDB_CreateRole(name, description, includeClassRx, excludeClassRx, includeBundleRx);
@@ -3464,6 +3465,51 @@ PHP_FUNCTION(cfpr_role_create)
   if(errid != ERRID_SUCCESS)
      {
      zend_throw_exception(cfmod_exception_generic, (char *)GetErrorDescription(errid), 0 TSRMLS_CC);     
+     }
+}
+
+/******************************************************************************/
+
+PHP_FUNCTION(cfpr_role_delete)
+{
+ char *name;
+ int nameLen;
+  
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&name, &nameLen) == FAILURE)
+     {
+     zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
+     RETURN_NULL();
+     }
+
+  if(!nameLen)
+     {
+     zend_throw_exception(cfmod_exception_args, "Missing argument contents", 0 TSRMLS_CC);
+     RETURN_NULL();
+     }
+
+  cfapi_errid errid = CFDB_DeleteRole(name);
+  
+  if(errid != ERRID_SUCCESS)
+     {
+     zend_throw_exception(cfmod_exception_generic, (char *)GetErrorDescription(errid), 0 TSRMLS_CC);
+     }
+}
+
+/******************************************************************************/
+
+PHP_FUNCTION(cfpr_role_list_all)
+{
+  if (ZEND_NUM_ARGS() != 0)
+     {
+     zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
+     RETURN_NULL();
+     }
+
+  cfapi_errid errid = 0; // FIXME: finish - call fn and return the roles!
+  
+  if(errid != ERRID_SUCCESS)
+     {
+     zend_throw_exception(cfmod_exception_generic, (char *)GetErrorDescription(errid), 0 TSRMLS_CC);
      }
 }
 

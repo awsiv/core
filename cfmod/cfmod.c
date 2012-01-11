@@ -197,6 +197,8 @@ static function_entry cfmod_functions[] =
      * Role-Based Access Control
      */
     PHP_FE(cfpr_role_create,NULL)
+    PHP_FE(cfpr_role_delete,NULL)
+    PHP_FE(cfpr_role_list_all,NULL)
     
     
     /*
