@@ -1087,7 +1087,7 @@ void Nova_PlotTopicCosmos(int topic,char *view,char *buffer,int bufsize)
 /* This assumes that we have the whole graph in a matrix */
 
 {
-  struct CfGraphNode tribe_nodes[CF_TRIBE_SIZE];
+  GraphNode tribe_nodes[CF_TRIBE_SIZE];
   int tribe_id[CF_TRIBE_SIZE],tribe_size;
   double tribe_evc[CF_TRIBE_SIZE] = {0};
   double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE];
@@ -1111,7 +1111,7 @@ Join(buffer,"]",bufsize);
 /*************************************************************************/
 
 #ifdef HAVE_LIBMONGOC
-int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int pid,char *view_pattern)
+int Nova_GetTribe(int *tribe_id,GraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int pid,char *view_pattern)
 
 /* This function generates a breadth-first connected sub-graph of the full graph
    and identifies the orbits and distances, up to a maximum of Dunbar's tribe-size */
@@ -1119,7 +1119,7 @@ int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_ad
 { char topic_name[CF_BUFSIZE],topic_context[CF_BUFSIZE];
   char *a_name,*a_context,view[CF_MAXVARSIZE];
   int a_pid;
-  struct CfGraphNode neighbours1[CF_TRIBE_SIZE],neighbours2[CF_TRIBE_SIZE][CF_TRIBE_SIZE];
+  GraphNode neighbours1[CF_TRIBE_SIZE],neighbours2[CF_TRIBE_SIZE][CF_TRIBE_SIZE];
   int tribe_counter = 0,secondary_boundary,tertiary_boundary,i,j;
   Item *ip,*nn = NULL;
 
@@ -1394,7 +1394,7 @@ return false;
 
 /*************************************************************************/
 
-void Nova_InitVertex(struct CfGraphNode *tribe,int i)
+void Nova_InitVertex(GraphNode *tribe,int i)
 
 {
 tribe[i].real_id = 0;
@@ -1406,7 +1406,7 @@ tribe[i].distance_from_centre = 0;
 
 /*************************************************************************/
 
-int Nova_NewVertex(struct CfGraphNode *tribe,int node,int distance,int real,char *topic_name,char *topic_context)
+int Nova_NewVertex(GraphNode *tribe,int node,int distance,int real,char *topic_name,char *topic_context)
 
 { char sshort[CF_BUFSIZE];
   char topic_id[CF_BUFSIZE];

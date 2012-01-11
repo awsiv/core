@@ -275,9 +275,9 @@ return false;
 
 void Nova_ReportFileChange(FILE *fp,char *file,char *destination,int maxsize)
 
-{ struct CfFileLine *list1 = NULL, *list2 = NULL;
-  struct CfFileLine *it1 = NULL, *it2 = NULL;
-  struct CfFileLine *flp1, *flp2,*next1,*next2;
+{ FileLine *list1 = NULL, *list2 = NULL;
+  FileLine *it1 = NULL, *it2 = NULL;
+  FileLine *flp1, *flp2,*next1,*next2;
   int len1,len2;
 
 CfOut(cf_verbose,""," -> Reporting on file changes to \"%s\"\n",file);
@@ -348,12 +348,12 @@ DeleteAllFileLines(it2);
 /* Level                                                                     */
 /*****************************************************************************/
 
-int Nova_LoadFileHunks(char *file,char *destination,struct CfFileLine **list1,struct CfFileLine **list2,int *len1,int *len2,int maxsize)
+int Nova_LoadFileHunks(char *file,char *destination,FileLine **list1,FileLine **list2,int *len1,int *len2,int maxsize)
 
 { int pos = 0, size = 0, read1, read2,c1,c2;
   FILE *fin1,*fin2;
   char line1[CF_BUFSIZE],line2[CF_BUFSIZE];
-  struct CfFileLine *flp1,*flp2,*last1 = 0,*last2 = 0;
+  FileLine *flp1,*flp2,*last1 = 0,*last2 = 0;
  
 if ((fin1 = fopen(file,"r")) == NULL)
    {
@@ -434,7 +434,7 @@ for (flp2 = last2; flp2 != NULL ; flp2=flp2->prev)
 
 if (last1 && last2)
    {
-   struct CfFileLine *next1,*next2;
+   FileLine *next1,*next2;
    
    for (flp1 = last1, flp2 = last2; flp1 != NULL && flp2 != NULL; flp1=next1,flp2=next2)
       {
@@ -459,9 +459,9 @@ return pos;
 
 /*****************************************************************************/
 
-struct CfFileLine *AppendFileLine(struct CfFileLine **liststart,char *item,int pos)
+FileLine *AppendFileLine(FileLine **liststart,char *item,int pos)
 
-{ struct CfFileLine *ip, *lp,*prev = NULL;
+{ FileLine *ip, *lp,*prev = NULL;
 
 ip = xmalloc(sizeof(Item));
 
@@ -493,9 +493,9 @@ return ip;
 
 /*****************************************************************************/
 
-void DeleteAllFileLines(struct CfFileLine *list)
+void DeleteAllFileLines(FileLine *list)
  
-{ struct CfFileLine *flp, *next = list;
+{ FileLine *flp, *next = list;
  
  for (flp = list; next != NULL; flp = next)
    {
@@ -512,9 +512,9 @@ void DeleteAllFileLines(struct CfFileLine *list)
 
 /*********************************************************************/
 
-void DeleteFileLine(struct CfFileLine  **liststart,struct CfFileLine *item)
+void DeleteFileLine(FileLine  **liststart,FileLine *item)
  
-{ struct CfFileLine *ip, *sp;
+{ FileLine *ip, *sp;
 
 if (item == NULL || liststart == NULL)
    {

@@ -42,7 +42,7 @@ PHP_FUNCTION(cfmod_resource_report_list)
 {
 JsonArray *reports = NULL;
 
-for (struct ReportInfo *report = BASIC_REPORTS; report->id != NULL; report++)
+for (ReportInfo *report = BASIC_REPORTS; report->id != NULL; report++)
    {
    JsonObject *report_entry = NULL;
    JsonObjectAppendString(&report_entry, LABEL_ID, report->id);
@@ -226,7 +226,7 @@ database_close(&conn);
 JsonArray *bundles = NULL;
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    {
-   struct HubBundleSeen *record = (struct HubBundleSeen *)rp->item;
+   HubBundleSeen *record = (HubBundleSeen *)rp->item;
    JsonObject *bundle_entry = NULL;
 
    JsonObjectAppendString(&bundle_entry, LABEL_HOSTKEY, record->hh->keyhash);

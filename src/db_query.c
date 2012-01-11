@@ -3683,7 +3683,7 @@ Item *CFDB_QueryVitalIds(mongo_connection *conn, char *keyHash)
 
 /*****************************************************************************/
 
-struct HubVital *CFDB_QueryVitalsMeta(mongo_connection *conn, char *keyHash)
+HubVital *CFDB_QueryVitalsMeta(mongo_connection *conn, char *keyHash)
 /**
  * Return a list of mag vital ids and meta-data, restricted to one host.
  */
@@ -3691,7 +3691,7 @@ struct HubVital *CFDB_QueryVitalsMeta(mongo_connection *conn, char *keyHash)
  bson query, field;
  mongo_cursor *cursor;
  bson_iterator it1;
- struct HubVital *hv = NULL;
+ HubVital *hv = NULL;
  char id[CF_MAXVARSIZE];
  char units[CF_MAXVARSIZE];
  char description[CF_MAXVARSIZE];
@@ -5301,7 +5301,7 @@ int CFDB_QueryPromiseCount(mongo_connection *conn)
 
 /*****************************************************************************/
 
-struct HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name)
+HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name)
 
 /*
  * Returns all attribs of one body by its type and name.
@@ -5314,7 +5314,7 @@ struct HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name)
  bson_iterator it1,it2,it3;
  char ba[CF_MAXVARSIZE] = {0}, cc[CF_MAXVARSIZE] = {0};
  char lval[CF_MAXVARSIZE] = {0}, rval[CF_MAXVARSIZE] = {0};
- struct HubBody *hb = {0};
+ HubBody *hb = {0};
   
  /* BEGIN query document */
 
@@ -6560,8 +6560,8 @@ Rlist *CFDB_QueryNotes(mongo_connection *conn,char *keyhash, char *nid,  Item *d
  bson query,field;
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3;
- struct HubNoteInfo *hci = NULL;
- struct HubNote *hc = NULL, *tail=NULL;
+ HubNoteInfo *hci = NULL;
+ HubNote *hc = NULL, *tail=NULL;
  HubHost *hh;
  Rlist *ret = NULL, *host_list = NULL;
 

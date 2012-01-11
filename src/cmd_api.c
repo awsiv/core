@@ -244,7 +244,7 @@ bool Nova2Txt_vitals_list(char *keyHash, char *buffer, int bufsize)
  char work[CF_MAXVARSIZE];
  time_t lastUpdate = 0;
  char hostName[CF_MAXVARSIZE], ipAddress[CF_MAXVARSIZE];
- struct HubVital *res, *hv;
+ HubVital *res, *hv;
 
  if (!CFDB_Open(&dbconn))
     {
@@ -599,7 +599,7 @@ return true;
 int Nova2Txt_compliance_report(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg)
 
 { char buffer[CF_BUFSIZE];
- struct HubTotalCompliance *ht;
+ HubTotalCompliance *ht;
  HubQuery *hq;
  Rlist *rp;
  int icmp;
@@ -628,7 +628,7 @@ if (!CSV)
  
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
-   ht = (struct HubTotalCompliance *)rp->item;
+   ht = (HubTotalCompliance *)rp->item;
 
    if (CSV)
       {
@@ -831,7 +831,7 @@ return true;
 int Nova2Txt_setuid_report(char *hostkey,char *file,int regex,char *classreg)
 
 {
- struct HubSetUid *hS;   
+ HubSetUid *hS;   
  HubQuery *hq;
  Rlist *rp;
  mongo_connection dbconn;
@@ -851,7 +851,7 @@ if (!CSV)
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
-   hS = ( struct HubSetUid *)rp->item;
+   hS = ( HubSetUid *)rp->item;
 
    if (CSV)
       {
@@ -879,7 +879,7 @@ if (!CFDB_Close(&dbconn))
 int Nova2Txt_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,PageInfo *page,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE]={0};
- struct HubBundleSeen *hb;   
+ HubBundleSeen *hb;   
  HubQuery *hq;
  Rlist *rp;
  mongo_connection dbconn;
@@ -909,7 +909,7 @@ int Nova2Txt_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,P
 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
-    hb = ( struct HubBundleSeen *)rp->item;
+    hb = ( HubBundleSeen *)rp->item;
 
     if (strcmp(hb->bundle,"QUERY") == 0)
        {
@@ -1027,7 +1027,7 @@ return true;
 int Nova2Txt_filediffs_report(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *classreg)
 
 {
-  struct HubFileDiff *hd;
+  HubFileDiff *hd;
   HubQuery *hq;
   Rlist *rp;
   int icmp;
@@ -1051,7 +1051,7 @@ hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,true,classreg,fa
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
-   hd = (struct HubFileDiff *)rp->item;
+   hd = (HubFileDiff *)rp->item;
 
    if (CSV)
       {
@@ -2607,7 +2607,7 @@ void Nova2Txt_GetPromiseBody(char *name,char *type,char *returnval,int bufsize)
     
 { char work[CF_BUFSIZE];
  mongo_connection dbconn;
- struct HubBody *hb;    
+ HubBody *hb;    
 
  if (!CFDB_Open(&dbconn))
     {
@@ -2635,7 +2635,7 @@ void Nova2Txt_GetPromiseBody(char *name,char *type,char *returnval,int bufsize)
    
     if (hb->attr)
        {
-       struct HubBodyAttr *ha; 
+       HubBodyAttr *ha; 
        Join(returnval,"\"attributes\":[",bufsize);
        for (ha = hb->attr; ha != NULL; ha = ha->next)
           {

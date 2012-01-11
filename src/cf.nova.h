@@ -140,7 +140,7 @@ enum cf_rank_method
 
 /*****************************************************************************/
 
-struct CfDataView
+typedef struct
    {
    double max;
    double min;
@@ -158,9 +158,9 @@ struct CfDataView
    int margins;
    char *title;
    char *docroot;
-   };
+   } DataView;
 
-struct CfGraphNode
+typedef struct
    {
    int real_id;
    int tribe_id;
@@ -168,19 +168,21 @@ struct CfGraphNode
    char *fullname;
    char *context;
    int distance_from_centre;
-   };
+   } GraphNode;
 
 #define CF_MIN_RADIUS    15.0  // Reduce this at your peril, could hang gd
 #define CF_RADIUS_SCALE  10.0
 
 /*****************************************************************************/
 
-struct CfFileLine
+typedef struct FileLine_ FileLine;
+
+struct FileLine_
    {
    char  *text;
    int    counter;
-   struct CfFileLine *next;
-   struct CfFileLine *prev;
+   FileLine *next;
+   FileLine *prev;
    };
 
 /*****************************************************************************/
@@ -194,14 +196,15 @@ typedef struct
 
 /*****************************************************************************/
 
-struct Variable  /* Used to represent contents of var in DBM file -
-		    scope.name is key */
+/* Used to represent contents of var in DBM file -
+   scope.name is key */
+typedef struct
    {
    Event e;
    enum cfdatatype dtype;
    char rtype;
    char rval[CF_MAXVARSIZE];    // as string, \0-terminated
-   };
+   } Variable;
 
 #define VARSTRUCTUSAGE(v) (sizeof(v) - sizeof(v.rval) + strlen(v.rval) + 1)
 
@@ -249,17 +252,17 @@ typedef enum basic_reports
    cfrep_unknown
    } basic_reports;
 
-struct ReportInfo
+typedef struct
    {
    const char *id;
    const char *category;
    const char *name;
    const char *name_old;
    const char *description;
-   };
+   } ReportInfo;
 
-extern struct ReportInfo BASIC_REPORTS[];
-extern struct ReportInfo CONSTELLATION_REPORTS[];
+extern ReportInfo BASIC_REPORTS[];
+extern ReportInfo CONSTELLATION_REPORTS[];
 
 /*****************************************************************************/
 /* Report DB API Structs                                                     */
@@ -282,13 +285,13 @@ typedef struct
    char *handle;
    } HubFileChanges;
 
-struct HubFileDiff
+typedef struct
    {
    HubHost *hh;
    char *path;
    char *diff;
    time_t t;
-   };
+   } HubFileDiff;
 
 typedef struct
    {
@@ -315,7 +318,7 @@ typedef struct
    int frequency;  // across all hosts
    } HubClassSum;
 
-struct HubTotalCompliance
+typedef struct
    {
    HubHost *hh;
    time_t t;
@@ -323,7 +326,7 @@ struct HubTotalCompliance
    int kept;
    int repaired;
    int notkept;
-   };
+   } HubTotalCompliance;
 
 typedef struct
    {
@@ -336,7 +339,8 @@ typedef struct
    time_t t;
    } HubVariable;
 
-typedef struct // promise kept,repaired or not kept
+// promise kept,repaired or not kept
+typedef struct
    {
    HubHost *hh;
      //   char *policy;
@@ -347,7 +351,8 @@ typedef struct // promise kept,repaired or not kept
    char *oid;  
    } HubPromiseLog;
 
-typedef struct // promise not kept/repaired summary
+// promise not kept/repaired summary
+typedef struct
    {
    HubHost *hh;
    char *policy;
@@ -368,7 +373,7 @@ typedef struct
    time_t t;
    } HubLastSeen;
 
-struct HubBundleSeen
+typedef struct
    {
    HubHost *hh;      
    char *bundle;
@@ -377,7 +382,7 @@ struct HubBundleSeen
    double hrsdev;
    time_t t;
    char *nid;
-   };
+   } HubBundleSeen;
 
 typedef struct
    {
@@ -407,7 +412,7 @@ typedef struct
 #define cfmeter_anomaly 'A'
 #define cfmeter_other 'S'
 
-struct HubPerformance
+typedef struct
    {
    HubHost *hh;      
    char *event;
@@ -417,13 +422,13 @@ struct HubPerformance
    time_t t;
    char *nid;
      char *handle;  
-   };
+   } HubPerformance;
   
-struct HubSetUid
+typedef struct
    {
    HubHost *hh;      
    char *path;
-   };
+   } HubSetUid;
 
 typedef struct
    {
@@ -461,22 +466,22 @@ typedef struct
    double popularity;  // optional
    } HubPromise;
 
+typedef struct HubBodyAttr_ HubBodyAttr;
 
-struct HubBody
+typedef struct
   {
   char *bodyName;
   char *bodyType;
   char *bodyArgs; // comma separated
-  struct HubBodyAttr *attr;
-  };
+  HubBodyAttr *attr;
+  } HubBody;
 
-
-struct HubBodyAttr
+struct HubBodyAttr_
   {
   char *classContext;
   char *lval;
   char *rval;
-  struct HubBodyAttr *next;
+  HubBodyAttr *next;
   };
 
 /* cfreport.cache */
@@ -494,18 +499,20 @@ typedef struct
   } HubCacheTotalCompliance;
 
 
+typedef struct HubNote_ HubNote;
+
 /*
  * Commenting on reports
- */ 
-struct HubNote
+ */
+struct HubNote_
   {
   char *user;
   char *msg;
   time_t t;
-  struct HubNote *next;
+  HubNote *next;
   };
 
-struct HubNoteInfo
+typedef struct
   {
   HubHost *hh;
   char *nid;
@@ -514,24 +521,26 @@ struct HubNoteInfo
   time_t t;
   char *report;
   int reportType;
-  struct HubNote *note;
-  };
+  HubNote *note;
+  } HubNoteInfo;
 
-struct HubVital
+typedef struct HubVital_ HubVital;
+
+struct HubVital_
    {
    char *id;
    char *units;
    char *description;
-   struct HubVital *next;
+   HubVital *next;
    };
 
-typedef struct HubRBAC
+typedef struct
    {
    char *userName;
    char *includeClassRx;
    char *excludeClassRx;
    char *includeBundleRx;
-   }HubRBAC_t;
+   } HubRBAC;
 
 
 /*****************************************************************************/
@@ -647,36 +656,36 @@ int Nova_GetReportedList(char *hostkey,char *scope,char *lval,Rlist **list);
 /* copernicus.c */
 
 void Nova_PrimeGraph(Rlist **semantic);
-void Nova_DrawTribe_PNG(char *filename,int *tribe_id,struct CfGraphNode *tribe_node, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size, double *tribe_evc,int topic,char *buffer,int bufsize);
-void Nova_DrawTribe(int *tribe_id,struct CfGraphNode *tribe_node, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size, double *tribe_evc,int topic,char *buffer,int bufsize);
+void Nova_DrawTribe_PNG(char *filename,int *tribe_id,GraphNode *tribe_node, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size, double *tribe_evc,int topic,char *buffer,int bufsize);
+void Nova_DrawTribe(int *tribe_id,GraphNode *tribe_node, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size, double *tribe_evc,int topic,char *buffer,int bufsize);
 int Nova_GetMaxEvcNode(double *evc,int tribe_size);
-int Nova_GetAdjacent(int i,double adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int size, struct CfGraphNode *tribe, struct CfGraphNode *neighbours);
-int Nova_SplayAdjacent(int i,double adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size,struct CfGraphNode *tribe,int *trail,struct CfGraphNode *neighbours);
-void Nova_CopyNeighbours2(struct CfGraphNode *from,int tribe_size,struct CfGraphNode to[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int index1);
-void Nova_CopyNeighbours3(struct CfGraphNode *from,int tribe_size,struct CfGraphNode to[CF_TRIBE_SIZE][CF_TRIBE_SIZE][CF_TRIBE_SIZE],int index1,int index2);
+int Nova_GetAdjacent(int i,double adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int size, GraphNode *tribe, GraphNode *neighbours);
+int Nova_SplayAdjacent(int i,double adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size,GraphNode *tribe,int *trail,GraphNode *neighbours);
+void Nova_CopyNeighbours2(GraphNode *from,int tribe_size,GraphNode to[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int index1);
+void Nova_CopyNeighbours3(GraphNode *from,int tribe_size,GraphNode to[CF_TRIBE_SIZE][CF_TRIBE_SIZE][CF_TRIBE_SIZE],int index1,int index2);
 int Nova_GetEvcTops(double **adj,int size, double *evc, int *tops);
-void Nova_CentreScale(struct CfDataView *cfv,double min_x,double max_x,double min_y,double max_y);
-int Nova_X(struct CfDataView cfv,double x);
-int Nova_Y(struct CfDataView cfv,double y);
-int Nova_TribeUnion(int *array1,struct CfGraphNode *array2, int size1, int size2);
+void Nova_CentreScale(DataView *cfv,double min_x,double max_x,double min_y,double max_y);
+int Nova_X(DataView cfv,double x);
+int Nova_Y(DataView cfv,double y);
+int Nova_TribeUnion(int *array1,GraphNode *array2, int size1, int size2);
 void Nova_ClearTrail(int *array);
 void Nova_AnchorTrail(int *array,int node);
 int Nova_InTrail(int *trail,int node);
-void Nova_Line(struct CfDataView cfv,double x1,double y1,double x2,double y2,int colour);
-void Nova_Disc(struct CfDataView cfv,double x1,double y1,double radius,int colour);
-void Nova_Print(struct CfDataView cfv,double x,double y,char *s,int colour);
-void Nova_BigPrint(struct CfDataView cfv,double x,double y,char *s,int colour);
+void Nova_Line(DataView cfv,double x1,double y1,double x2,double y2,int colour);
+void Nova_Disc(DataView cfv,double x1,double y1,double radius,int colour);
+void Nova_Print(DataView cfv,double x,double y,char *s,int colour);
+void Nova_BigPrint(DataView cfv,double x,double y,char *s,int colour);
 double Nova_SignPerturbation(int i);
-void Nova_ColdBall(struct CfDataView cfv,double x,double y,double radius,int *shade);
-void Nova_HotBall(struct CfDataView cfv,double x,double y,double radius,int *shade);
+void Nova_ColdBall(DataView cfv,double x,double y,double radius,int *shade);
+void Nova_HotBall(DataView cfv,double x,double y,double radius,int *shade);
 void Nova_AlignmentCorrection(double *x,double *y,double cx,double cy);
-void Nova_MapHorizon(struct CfDataView cfv,double x,double y,double *min_x,double *min_y,double *max_x,double *max_y);
-double Nova_Orbit(struct CfDataView cfv,double radius,double min_x,double max_x,double min_y,double max_y);
-void Nova_MapBall(struct CfDataView cfv,struct CfGraphNode n,char *buffer,int bufsize);
-void Nova_Annealing(struct CfGraphNode neighbours1[CF_TRIBE_SIZE],struct CfGraphNode neighbours2[CF_TRIBE_SIZE][CF_TRIBE_SIZE],struct CfGraphNode neighbours3[CF_TRIBE_SIZE][CF_TRIBE_SIZE][CF_TRIBE_SIZE],int size1,int size2[CF_TRIBE_SIZE],int size3[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size);
+void Nova_MapHorizon(DataView cfv,double x,double y,double *min_x,double *min_y,double *max_x,double *max_y);
+double Nova_Orbit(DataView cfv,double radius,double min_x,double max_x,double min_y,double max_y);
+void Nova_MapBall(DataView cfv,GraphNode n,char *buffer,int bufsize);
+void Nova_Annealing(GraphNode neighbours1[CF_TRIBE_SIZE],GraphNode neighbours2[CF_TRIBE_SIZE][CF_TRIBE_SIZE],GraphNode neighbours3[CF_TRIBE_SIZE][CF_TRIBE_SIZE][CF_TRIBE_SIZE],int size1,int size2[CF_TRIBE_SIZE],int size3[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size);
 int Overlap(double x1,double y1,double x2,double y2);
-int Nova_InRange(struct CfDataView cfv,int x,int y);
-void Nova_BoundaryCheck(struct CfDataView *cfv,int *x1,int *y1,int *x2, int *y2);
+int Nova_InRange(DataView cfv,int x,int y);
+void Nova_BoundaryCheck(DataView *cfv,int *x1,int *y1,int *x2, int *y2);
 
 /* db_query.c */
 
@@ -712,7 +721,7 @@ Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,i
 
 //int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,time_t start_time,double *qa,double *ea,double *da);
 Item *CFDB_QueryVitalIds(mongo_connection *conn, char *keyHash);
-struct HubVital *CFDB_QueryVitalsMeta(mongo_connection *conn, char *keyHash);
+HubVital *CFDB_QueryVitalsMeta(mongo_connection *conn, char *keyHash);
 int CFDB_QueryMagView2(mongo_connection *conn,char *keyhash,char *monId,time_t start_time,double *qa,double *ea,double *da);
 int CFDB_QueryMonView(mongo_connection *conn, char *keyhash,char *monId, enum monitord_rep rep_type,double *qa,double *ea,double *da);
 int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da);
@@ -732,7 +741,7 @@ Item *CFDB_QueryBundlesUsing(mongo_connection *conn, char *bNameReferenced);
 int CFDB_QueryBundleCount(mongo_connection *conn);
 int CFDB_QueryBundleType(mongo_connection *conn,char *bName,char *buffer,int bufsize);
 int CFDB_QueryPromiseCount(mongo_connection *conn);
-struct HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name);
+HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name);
 Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);
 Item *CFDB_QueryCdpAcls(mongo_connection *conn, char *sep);
 Item *CFDB_QueryCdpCommands(mongo_connection *conn, char *sep);
@@ -932,8 +941,8 @@ int Nova_DeleteVirtNetwork(virConnectPtr vc,char **networks,Attributes a,Promise
 
 /* histogram.c */
 
-int Nova_ReadHistogram2(mongo_connection *conn, struct CfDataView *cfv,char *hostkey,char *monId);
-Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash);
+int Nova_ReadHistogram2(mongo_connection *conn, DataView *cfv,char *hostkey,char *monId);
+Item *Nova_MapHistogram(DataView *cfv,char *keyhash);
 void Nova_AnalyseHistogram(char *keyhash,enum observables obs,char *buffer,int bufsize);
 
 /* html.c */
@@ -970,8 +979,8 @@ HubClass *NewHubClass(HubHost *hh,char *class,double p, double dev, time_t t);
 void DeleteHubClass(HubClass *hc);
 HubClassSum *NewHubClassSum(HubHost *hh,char *class,int frequency);
 void DeleteHubClassSum(HubClassSum *hc);
-struct HubTotalCompliance *NewHubTotalCompliance(HubHost *hh,time_t t,char *v,int k,int r,int n);
-void DeleteHubTotalCompliance(struct HubTotalCompliance *ht);
+HubTotalCompliance *NewHubTotalCompliance(HubHost *hh,time_t t,char *v,int k,int r,int n);
+void DeleteHubTotalCompliance(HubTotalCompliance *ht);
 HubVariable *NewHubVariable(HubHost *hh,char *type,char *scope,char *lval,void *rval,char rtype,time_t t);
 void DeleteHubVariable(HubVariable *hv);
 HubPromiseLog *NewHubPromiseLog(HubHost *hh, char *handle,char *cause,time_t t, char *noteId,char *oid);
@@ -982,34 +991,34 @@ HubLastSeen *NewHubLastSeen(HubHost *hh,char io,char *kh,char *rhost,char *ip,do
 void DeleteHubLastSeen(HubLastSeen *hp);
 HubMeter *NewHubMeter(HubHost *hh,char type,double kept,double repaired);
 void DeleteHubMeter(HubMeter *hp);
-struct HubPerformance *NewHubPerformance(HubHost *hh,char *event,time_t t,double q,double e,double d,char *noteid, char *handle);
-void DeleteHubPerformance(struct HubPerformance *hp);
-struct HubSetUid *NewHubSetUid(HubHost *hh,char *file);
-void DeleteHubSetUid(struct HubSetUid *hp);
+HubPerformance *NewHubPerformance(HubHost *hh,char *event,time_t t,double q,double e,double d,char *noteid, char *handle);
+void DeleteHubPerformance(HubPerformance *hp);
+HubSetUid *NewHubSetUid(HubHost *hh,char *file);
+void DeleteHubSetUid(HubSetUid *hp);
 HubPromiseCompliance *NewHubCompliance(HubHost *hh,char *handle,char status,double e,double d,time_t t);
 void DeleteHubPromiseCompliance(HubPromiseCompliance *hp);
-struct HubBundleSeen *NewHubBundleSeen(HubHost *hh,char *rname,double ago,double avg,double dev,time_t t,char *noteid);
-void DeleteHubBundleSeen(struct HubBundleSeen *hp);
+HubBundleSeen *NewHubBundleSeen(HubHost *hh,char *rname,double ago,double avg,double dev,time_t t,char *noteid);
+void DeleteHubBundleSeen(HubBundleSeen *hp);
 HubFileChanges *NewHubFileChanges(HubHost *hh,char *file,time_t t, char *noteid,char *handle);
 void DeleteHubFileChanges(HubFileChanges *hp);
-struct HubFileDiff *NewHubFileDiff(HubHost *hh,char *file,char *diff,time_t t);
-void DeleteHubFileDiff(struct HubFileDiff *hp);
+HubFileDiff *NewHubFileDiff(HubHost *hh,char *file,char *diff,time_t t);
+void DeleteHubFileDiff(HubFileDiff *hp);
 HubValue *NewHubValue(HubHost *hh,char *day,double kept,double repaired,double notkept,char *noteid, char *handle);
 void DeleteHubValue(HubValue *hp);
 HubPromise *NewHubPromise(char *bn,char *bt,char *ba,char *pt, char *pr, char *pe, char *cl, char *ha, char *co, char *fn, int lno, char **cons);
 void DeleteHubPromise(HubPromise *hp);
-struct HubBody *NewHubBody(char *bodyName,char *bodyType,char *bodyArgs);
-void DeleteHubBody(struct HubBody *hb);
-struct HubBodyAttr *NewHubBodyAttr(struct HubBody *hb,char *lval,char *rval,char *classContext);
-void DeleteHubBodyAttributes(struct HubBodyAttr *ha);
-struct HubNote *NewHubNote(char *user,char *msg,time_t t);
-struct HubNoteInfo *NewHubNoteInfo(HubHost *hh,char *nid,char *user,char *msg,time_t t,char *reportData, int reportType);
-void DeleteHubNote(struct HubNote *hc);
-void DeleteHubNoteInfo(struct HubNoteInfo *hci);
-struct HubVital *PrependHubVital(struct HubVital **first, char *id, char *units, char *description);
-void DeleteHubVital(struct HubVital *hv);
-HubRBAC_t *NewHubRBAC(char *userName, char *includeClassRx, char *excludeClassRx, char *includeBundleRx);
-void DeleteHubRBAC(HubRBAC_t *rbac);
+HubBody *NewHubBody(char *bodyName,char *bodyType,char *bodyArgs);
+void DeleteHubBody(HubBody *hb);
+HubBodyAttr *NewHubBodyAttr(HubBody *hb,char *lval,char *rval,char *classContext);
+void DeleteHubBodyAttributes(HubBodyAttr *ha);
+HubNote *NewHubNote(char *user,char *msg,time_t t);
+HubNoteInfo *NewHubNoteInfo(HubHost *hh,char *nid,char *user,char *msg,time_t t,char *reportData, int reportType);
+void DeleteHubNote(HubNote *hc);
+void DeleteHubNoteInfo(HubNoteInfo *hci);
+HubVital *PrependHubVital(HubVital **first, char *id, char *units, char *description);
+void DeleteHubVital(HubVital *hv);
+HubRBAC *NewHubRBAC(char *userName, char *includeClassRx, char *excludeClassRx, char *includeBundleRx);
+void DeleteHubRBAC(HubRBAC *rbac);
 HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int hostCount, int totalHostCount, double kept, double repaired, double notkept, time_t genTime);
 void DeleteHubCacheTotalCompliance(HubCacheTotalCompliance *tc);
 
@@ -1035,7 +1044,7 @@ void CountMarginRecordsVars(Rlist **records_p, PageInfo *page,int *start_count,i
 /* knowledge.c */
 
 char *Name2Id(char *s);
-void Nova_StoreKMDB(struct Topic **topichash,struct Occurrence *occurrences,struct Inference *inferences);
+void Nova_StoreKMDB(Topic **topichash,Occurrence *occurrences,Inference *inferences);
 void Nova_ListAgents(void);
 void Nova_ListFunctions(void);
 void Nova_ListFunction(const FnCallType *f,int full);
@@ -1048,7 +1057,7 @@ void Nova_PromiseNode(FILE *fp,Promise *pp,int calltype);
 void Nova_TypeNode(FILE *fp,char *type);
 void Nova_BundleNode(FILE *fp,char *bundle);
 void Nova_BodyNode(FILE *fp,char *body,int calltype);
-void Nova_DependencyGraph(struct Topic *map);
+void Nova_DependencyGraph(Topic *map);
 void Nova_PlotTopicDependencies(int topic,double **adj,char **names,int dim);
 void Nova_MapClassParameterAssociations(FILE *fp, Promise *pp,char *promise_id);
 double NovaShiftAverage(double new,double old);
@@ -1082,7 +1091,7 @@ char *Nova_LicenseOwner(void);
 
 /* magnify.c */
 
-bool Nova_ReadMagTimeSeries2(mongo_connection *conn, struct CfDataView *cfv,char *hostkey,char *vitalId);
+bool Nova_ReadMagTimeSeries2(mongo_connection *conn, DataView *cfv,char *hostkey,char *vitalId);
 
 /* monitoring.c */
 
@@ -1130,10 +1139,10 @@ void Nova_DoFileDiff(char *file,char *destination,struct stat sb,struct stat dsb
 int Nova_GetFirstChangePosition(char *file,char *destination);
 int Nova_FileIsBinary(char *name,int size,int maxsize);
 void Nova_ReportFileChange(FILE *fp,char *file,char *destination,int maxsize);
-int Nova_LoadFileHunks(char *file,char *destination,struct CfFileLine **list1,struct CfFileLine **list2,int *l1,int *l2,int maxsize);
-struct CfFileLine *AppendFileLine(struct CfFileLine **liststart,char *item,int pos);
-void DeleteAllFileLines(struct CfFileLine *item);
-void DeleteFileLine(struct CfFileLine  **liststart,struct CfFileLine *item);
+int Nova_LoadFileHunks(char *file,char *destination,FileLine **list1,FileLine **list2,int *l1,int *l2,int maxsize);
+FileLine *AppendFileLine(FileLine **liststart,char *item,int pos);
+void DeleteAllFileLines(FileLine *item);
+void DeleteFileLine(FileLine  **liststart,FileLine *item);
 
 /* promise_db.c */
 
@@ -1205,7 +1214,7 @@ int Nova_IsYellow(int level);
 int Nova_IsRed(int level);
 int Nova_IsBlue(int level);
 void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, char *buffer, int bufsize);
-void Nova_DrawComplianceAxes(struct CfDataView *cfv,int col);
+void Nova_DrawComplianceAxes(DataView *cfv,int col);
 int Nova_GetHostColour(char *lkeyhash);
 #endif
 /* server.c */
@@ -1292,19 +1301,19 @@ Item *Nova_GetBusinessGoals(char *handle);
 int Nova_GetUniqueBusinessGoals(char *buffer,int bufsize);
 
 void Nova_PlotTopicCosmos(int topic,char *view,char *buf,int size);
-int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int pid,char *v);
+int Nova_GetTribe(int *tribe_id,GraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int pid,char *v);
 void Nova_EigenvectorCentrality(double A[CF_TRIBE_SIZE][CF_TRIBE_SIZE],double *v,int dim);
 void Nova_MatrixOperation(double A[CF_TRIBE_SIZE][CF_TRIBE_SIZE],double *v,int dim);
 int Nova_AlreadyInTribe(int node, int *tribe_id);
-void Nova_InitVertex(struct CfGraphNode *tribe,int i);
-int Nova_NewVertex(struct CfGraphNode *tribe,int node,int distance,int real,char *name,char *context);
+void Nova_InitVertex(GraphNode *tribe,int i);
+int Nova_NewVertex(GraphNode *tribe,int node,int distance,int real,char *name,char *context);
 char *Nova_StripString(char *source,char *substring);
 void Nova_DeClassifyTopic(char *typed_topic,char *topic,char *type);
 
 /* weekly.c */
 
 double Num(double x);
-bool Nova_ReadWeekTimeSeries2(mongo_connection *conn, struct CfDataView *cfv,char *keyhash, char *vitalId);
+bool Nova_ReadWeekTimeSeries2(mongo_connection *conn, DataView *cfv,char *keyhash, char *vitalId);
 
 #ifdef MINGW
 /* win_api.c */
@@ -1427,8 +1436,8 @@ int NovaWin_WmiDeInitialize(void);
 
 /* yearly.c */
 
-int Nova_ReadYearTimeSeries(mongo_connection *conn, struct CfDataView *cfv,char *keyhash,char *monId);
-void Nova_DrawLongHAxes(struct CfDataView *cfv,int col);
+int Nova_ReadYearTimeSeries(mongo_connection *conn, DataView *cfv,char *keyhash,char *monId);
+void Nova_DrawLongHAxes(DataView *cfv,int col);
 void Nova_AnalyseLongHistory(char *keyname,enum observables obs,char *buffer,int bufsize);
 
 /* ldap.c */
@@ -1492,24 +1501,24 @@ int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *user,char *basedn,char *f
 
 /***************************************************************************/
 
-struct month_days
+typedef struct
    {
    char *m;
    int d;
-   };
+   } MonthDays;
 
-struct promise_value
+typedef struct
    {
    double kept;
    double repaired;
    double notkept;
-   };
+   } PromiseValue;
 
-struct cf_pscalar
+typedef struct
    {
    char rval[CF_MAXVARSIZE];
    time_t time;
-   };
+   } PersistentScalar;
 
 /***************************************************************************/
 

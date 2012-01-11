@@ -19,7 +19,7 @@
 void Nova_SetPersistentScalar(char *lval,char *rval)
 
 { CF_DB *dbp;
-  struct cf_pscalar new;
+  PersistentScalar new;
   char filename[CF_MAXVARSIZE];
 
 snprintf(filename,sizeof(filename),"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_PSCALARDB);
@@ -33,7 +33,7 @@ if (!OpenDB(filename,&dbp))
    }
 
 CfOut(cf_verbose,""," -> Setting persistent hub knowledge: %s =>\"%s\"",lval,rval);
-WriteDB(dbp,lval,&new,sizeof(struct cf_pscalar));
+WriteDB(dbp,lval,&new,sizeof(PersistentScalar));
 CloseDB(dbp);
 }
 
@@ -42,7 +42,7 @@ CloseDB(dbp);
 int Nova_GetPersistentScalar(char *lval,char *rval,int size,time_t timeout)
 
 { CF_DB *dbp;
-  struct cf_pscalar var;
+  PersistentScalar var;
   time_t now = time(NULL);
   char filename[CF_MAXVARSIZE];
   
@@ -56,7 +56,7 @@ if (!OpenDB(filename,&dbp))
    return false;
    }
 
-if (ReadDB(dbp,lval,&var,sizeof(struct cf_pscalar)))
+if (ReadDB(dbp,lval,&var,sizeof(PersistentScalar)))
    {
    if (now > var.time + timeout)
       {

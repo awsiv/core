@@ -213,27 +213,31 @@ int Nova2PHP_replica_status(char *buffer, int bufsize);
 int Nova2PHP_GetHubKey(char *buffer,int bufsize);
 int Nova2PHP_GetHubMaster(char *buffer,int bufsize);
 
-struct EnvironmentsList
-{
-    char *name;
-    struct EnvironmentsList *next;
-};
+typedef struct EnvironmentsList_ EnvironmentsList;
 
-bool Nova2PHP_environments_list(struct EnvironmentsList **out);
+struct EnvironmentsList_
+   {
+   char *name;
+   EnvironmentsList *next;
+   };
 
-struct HostsList
-{
-    char *keyhash;
-    struct HostsList *next;
-};
+bool Nova2PHP_environments_list(EnvironmentsList **out);
+
+typedef struct HostsList_ HostsList;
+
+struct HostsList_
+   {
+   char *keyhash;
+   HostsList *next;
+   };
 
 bool Nova2PHP_environment_contents(const char *environment,
-                                   struct HostsList **out);
+                                   HostsList **out);
 
 char *Nova2PHP_get_host_environment(const char *keyhash);
 
-void FreeEnvironmentsList(struct EnvironmentsList *list);
-void FreeHostsList(struct HostsList *list);
+void FreeEnvironmentsList(EnvironmentsList *list);
+void FreeHostsList(HostsList *list);
 
 
 char *FormatErrorJsonAttribute(char *out, int outSz, cfapi_errid errid);

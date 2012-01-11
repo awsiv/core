@@ -42,7 +42,7 @@ static const char *ERRID_DESCRIPTION[] =
 
 /*****************************************************************************/
 
-static char *FormatReportInfoAsJson(char *buf, int bufsize, struct ReportInfo *reports);
+static char *FormatReportInfoAsJson(char *buf, int bufsize, ReportInfo *reports);
 
 #ifdef HAVE_LIBMONGOC
 
@@ -442,7 +442,7 @@ bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize)
  char work[CF_MAXVARSIZE];
  time_t lastUpdate = 0;
  char hostName[CF_MAXVARSIZE], ipAddress[CF_MAXVARSIZE];
- struct HubVital *res, *hv;
+ HubVital *res, *hv;
 
  if (!CFDB_Open(&dbconn))
     {
@@ -486,7 +486,7 @@ bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize)
 bool Nova2PHP_vitals_view_magnified(char *keyHash, char *vitalId, char *buffer, int bufsize)
 {
  mongo_connection dbconn;
- struct CfDataView cfv = {0};
+ DataView cfv = {0};
  char work[CF_MAXVARSIZE];
  bool haveData = false;
  int i;
@@ -522,7 +522,7 @@ return haveData;
 bool Nova2PHP_vitals_view_week(char *keyHash, char *vitalId, char *buffer, int bufsize)
 {
  mongo_connection dbconn;
- struct CfDataView cfv = {0};
+ DataView cfv = {0};
  char work[CF_MAXVARSIZE];
  bool haveData = false;
  int i;
@@ -558,7 +558,7 @@ return haveData;
 bool Nova2PHP_vitals_view_year(char *keyHash, char *vitalId, char *buffer, int bufsize)
 {
  mongo_connection dbconn;
- struct CfDataView cfv = {0};
+ DataView cfv = {0};
  char work[CF_MAXVARSIZE];
  bool haveData = false;
  int i;
@@ -594,7 +594,7 @@ return haveData;
 bool Nova2PHP_vitals_view_histogram(char *keyHash, char *vitalId, char *buffer, int bufsize)
 {
  mongo_connection dbconn;
- struct CfDataView cfv = {0};
+ DataView cfv = {0};
  char work[CF_MAXVARSIZE];
  bool haveData = false;
  int i;
@@ -631,7 +631,7 @@ bool Nova2PHP_vitals_analyse_magnified(char *hostkey, char *vitalId, char *buffe
 {
  mongo_connection dbconn;
  char work[CF_BUFSIZE];
- struct CfDataView cfv = {0};
+ DataView cfv = {0};
   
  buffer[0] = '\0';
 
@@ -680,7 +680,7 @@ bool Nova2PHP_vitals_analyse_week(char *hostkey, char *vitalId, char *buffer, in
 
 { char work[CF_BUFSIZE];
  double x;
- struct CfDataView cfv = {0};
+ DataView cfv = {0};
  mongo_connection dbconn;
 
  buffer[0] = '\0';
@@ -734,7 +734,7 @@ bool Nova2PHP_vitals_analyse_week(char *hostkey, char *vitalId, char *buffer, in
 bool Nova2PHP_vitals_analyse_year(char *hostkey, char *vitalId, char *buffer, int bufsize)
 {
  char work[CF_BUFSIZE];
- struct CfDataView cfv = {0};
+ DataView cfv = {0};
  mongo_connection dbconn;
 
  buffer[0] = '\0';
@@ -777,7 +777,7 @@ bool Nova2PHP_vitals_analyse_histogram(char *hostkey, char *vitalId, char *buffe
   int above_noise = false;
   char work[CF_BUFSIZE];
   double sensitivity_factor = 1.2;
-  struct CfDataView cfv = {0};
+  DataView cfv = {0};
   Item *spectrum;
   mongo_connection dbconn;
 
@@ -1667,7 +1667,7 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
 int Nova2PHP_compliance_report(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg,PageInfo *page, char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
- struct HubTotalCompliance *ht;
+ HubTotalCompliance *ht;
  HubQuery *hq;
  Rlist *rp;
  int icmp;
@@ -1704,7 +1704,7 @@ int Nova2PHP_compliance_report(char *hostkey,char *version,time_t t,int k,int nk
 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
-    ht = (struct HubTotalCompliance *)rp->item;
+    ht = (HubTotalCompliance *)rp->item;
 
     snprintf(buffer,sizeof(buffer),
              "[\"%s\",\"%s\",%d,%d,%d,%ld],",
@@ -1886,7 +1886,7 @@ int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddres
 int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *classreg,PageInfo *page, char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
- struct HubPerformance *hP;
+ HubPerformance *hP;
  HubQuery *hq;
  Rlist *rp;
  mongo_connection dbconn;
@@ -1915,7 +1915,7 @@ int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *classreg
 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
-    hP = ( struct HubPerformance *)rp->item;
+    hP = ( HubPerformance *)rp->item;
     
     EscapeJson(hP->event,jsonEscapedStr,sizeof(jsonEscapedStr));
     
@@ -1964,7 +1964,7 @@ int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *classreg
 int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,char *classreg,PageInfo *page,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
- struct HubSetUid *hS;   
+ HubSetUid *hS;   
  HubQuery *hq;
  Rlist *rp;
  mongo_connection dbconn;
@@ -1992,7 +1992,7 @@ int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,char *classreg,Pag
 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
-    hS = ( struct HubSetUid *)rp->item;
+    hS = ( HubSetUid *)rp->item;
 
     EscapeJson(hS->path,jsonEscapedStr,sizeof(jsonEscapedStr));
     
@@ -2029,7 +2029,7 @@ int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,char *classreg,Pag
 int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,PageInfo *page,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE]={0};
- struct HubBundleSeen *hb;   
+ HubBundleSeen *hb;   
  HubQuery *hq;
  Rlist *rp;
  mongo_connection dbconn;
@@ -2058,7 +2058,7 @@ int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,P
 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
-    hb = ( struct HubBundleSeen *)rp->item;
+    hb = ( HubBundleSeen *)rp->item;
 
     if(strcmp(hb->nid,CF_NONOTE) == 0)
        {
@@ -2190,7 +2190,7 @@ int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char
 int Nova2PHP_filediffs_report(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *classreg,PageInfo *page, int lookInArchive,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];   
- struct HubFileDiff *hd;
+ HubFileDiff *hd;
  HubQuery *hq;
  Rlist *rp;
  int icmp;
@@ -2227,7 +2227,7 @@ int Nova2PHP_filediffs_report(char *hostkey,char *file,char *diffs,int regex,tim
 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
-    hd = (struct HubFileDiff *)rp->item;
+    hd = (HubFileDiff *)rp->item;
     
     EscapeJson(hd->path,jsonEscapedStr,sizeof(jsonEscapedStr));
     
@@ -3902,7 +3902,7 @@ void Nova2PHP_GetPromiseBody(char *name,char *type,char *returnval,int bufsize)
     
 { char work[CF_BUFSIZE];
  mongo_connection dbconn;
- struct HubBody *hb;    
+ HubBody *hb;    
 
  if (!CFDB_Open(&dbconn))
     {
@@ -3929,7 +3929,7 @@ void Nova2PHP_GetPromiseBody(char *name,char *type,char *returnval,int bufsize)
    
     if (hb->attr)
        {
-       struct HubBodyAttr *ha; 
+       HubBodyAttr *ha; 
        Join(returnval,"\"attributes\":[",bufsize);
        for (ha = hb->attr; ha != NULL; ha = ha->next)
           {
@@ -4050,7 +4050,7 @@ return Nova_GetReportedScalar(hostkey,scope,lval,returnval,bufsize);
 /*****************************************************************************/
 /* Reports                                                                   */
 /*****************************************************************************/
-struct ReportInfo CONSTELLATION_REPORTS[] =
+ReportInfo CONSTELLATION_REPORTS[] =
 {
     {"virtual-bundles","Constellation","Virtual bundles","Virtual bundles","Custom collections of promises and their compliance"},
     {NULL,NULL}
@@ -4083,7 +4083,7 @@ if(Con2PHP_CheckLicenseAndFormatError(errBuf, sizeof(errBuf)))
 
 /*****************************************************************************/
 
-static char *FormatReportInfoAsJson(char *buf, int bufsize, struct ReportInfo *reports)
+static char *FormatReportInfoAsJson(char *buf, int bufsize, ReportInfo *reports)
 { char work[CF_MAXVARSIZE] = {0};
   int i;
 
@@ -4842,7 +4842,7 @@ return true;
 /* Multiple policy environments                                              */
 /*****************************************************************************/
 
-bool Nova2PHP_environments_list(struct EnvironmentsList **out)
+bool Nova2PHP_environments_list(EnvironmentsList **out)
 
 { mongo_connection dbconn;
   bson_buffer bb;
@@ -4895,7 +4895,7 @@ bson_iterator_subiterator(&i, &values);
 
 while (bson_iterator_next(&values))
    {
-   struct EnvironmentsList *node = xmalloc(sizeof(struct EnvironmentsList));
+   EnvironmentsList *node = xmalloc(sizeof(EnvironmentsList));
    node->next = *out;
    node->name = xstrdup(bson_iterator_string(&values));
    *out = node;
@@ -4908,7 +4908,7 @@ return true;
 
 /*****************************************************************************/
 
-bool Nova2PHP_environment_contents(const char *environment, struct HostsList **out)
+bool Nova2PHP_environment_contents(const char *environment, HostsList **out)
 
 { mongo_connection dbconn;
   mongo_cursor *cursor;
@@ -4960,7 +4960,7 @@ while (mongo_cursor_next(cursor))
       return false;
       }
    
-   struct HostsList *node = xmalloc(sizeof(struct HostsList));
+   HostsList *node = xmalloc(sizeof(HostsList));
    node->next = *out;
    node->keyhash = xstrdup(bson_iterator_string(&i));
    *out = node;
@@ -5017,11 +5017,11 @@ return environment;
 
 /*****************************************************************************/
 
-void FreeEnvironmentsList(struct EnvironmentsList *list)
+void FreeEnvironmentsList(EnvironmentsList *list)
 {
  while (list)
     {
-    struct EnvironmentsList *next = list->next;
+    EnvironmentsList *next = list->next;
     free(list->name);
     free(list);
     list = next;
@@ -5030,11 +5030,11 @@ void FreeEnvironmentsList(struct EnvironmentsList *list)
 
 /*****************************************************************************/
 
-void FreeHostsList(struct HostsList *list)
+void FreeHostsList(HostsList *list)
 {
  while (list)
     {
-    struct HostsList *next = list->next;
+    HostsList *next = list->next;
     free(list->keyhash);
     free(list);
     list = next;
@@ -5222,8 +5222,8 @@ int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, time_t from, ti
   char msg[CF_BUFSIZE] = {0};
   char buffer[CF_BUFSIZE] = {0};
   mongo_connection dbconn;
-  struct HubNoteInfo *hni;
-  struct HubNote *hn;
+  HubNoteInfo *hni;
+  HubNote *hn;
   Rlist *result, *rp;
 
   char fuser[CF_MAXVARSIZE] = {0};
@@ -5266,7 +5266,7 @@ startIndex = page->resultsPerPage*(page->pageNum - 1);
 endIndex = (page->resultsPerPage*page->pageNum) - 1;
 for (rp = result; rp != NULL; rp=rp->next)
    {
-   hni = ( struct HubNoteInfo *) rp->item;
+   hni = ( HubNoteInfo *) rp->item;
    
    EscapeJson(hni->report,jsonEscapedReport,sizeof(jsonEscapedReport));
    

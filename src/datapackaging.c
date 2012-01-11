@@ -17,13 +17,14 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-struct CEnt /* For sorting */
+/* For sorting */
+typedef struct
    {
    char name[256];
    time_t date;
    double q;
    double d;
-   };
+   } CEnt;
 
 /*****************************************************************************/
 
@@ -167,7 +168,7 @@ void Nova_PackClasses(Item **reply,char *header,time_t from,enum cfd_menu type)
   double now = (double)time(NULL),average = 0, var = 0;
   char name[CF_BUFSIZE],eventname[CF_BUFSIZE],buffer[CF_MAXVARSIZE];
   Event entry;
-  struct CEnt array[1024];
+  CEnt array[1024];
   int i,ksize,vsize,first = true;
 
 CfOut(cf_verbose,""," -> Packing class data");
@@ -1234,7 +1235,7 @@ void Nova_PackValueReport(Item **reply,char *header,time_t from,enum cfd_menu ty
   int ksize,vsize,first = true;
   void *value;
   char *key;
-  struct promise_value pt;
+  PromiseValue pt;
   char ref[CF_SMALLBUF];
 
 // Strip out the date resolution so we keep only each day of the year
@@ -1426,7 +1427,7 @@ char filename[CF_MAXVARSIZE];
 char buf[CF_MAXTRANSSIZE];
 CF_DB *dbp;
 CF_DBC *dbcp;
-struct Variable *var;
+Variable *var;
 char *key;  // scope.lval
 void *val;
 int keySize, valSize;
@@ -1457,7 +1458,7 @@ while(NextDB(dbp,dbcp,&key,&keySize,&val,&valSize))
    {
    if (val != NULL)
       {
-      var = (struct Variable *)val;
+      var = (Variable *)val;
 
       if(var->e.t < from)
         {

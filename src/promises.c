@@ -470,7 +470,7 @@ void TrackValue(char *date,double kept,double repaired, double notkept)
 
 { char month[CF_SMALLBUF],day[CF_SMALLBUF],year[CF_SMALLBUF],key[CF_SMALLBUF],name[CF_BUFSIZE];
   CF_DB *dbp;
-  struct promise_value value,new_value;
+  PromiseValue value,new_value;
 
 // Strip out the date resolution so we keep only each day of the year
   
@@ -485,7 +485,7 @@ if (!OpenDB(name,&dbp))
    return;
    }
 
-if (ReadDB(dbp,key,&value,sizeof(struct promise_value)))
+if (ReadDB(dbp,key,&value,sizeof(PromiseValue)))
    {
    new_value.kept = value.kept + kept;
    new_value.repaired = value.repaired + repaired;
@@ -499,7 +499,7 @@ else
    }
 
 CfOut(cf_verbose,""," -> recording value (%.4lf,%.4lf,%.4lf)",kept,repaired,notkept);
-WriteDB(dbp,key,&new_value,sizeof(struct promise_value));
+WriteDB(dbp,key,&new_value,sizeof(PromiseValue));
 CloseDB(dbp);
 }
 

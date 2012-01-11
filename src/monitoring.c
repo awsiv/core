@@ -18,13 +18,13 @@
 
 /* Structs */
 
-struct CfMeasurement
+typedef struct
    {
    char *path;
    Item *output;
-   };
+   } CustomMeasurement;
 
-typedef struct MonitoringSlot
+typedef struct
    {
    char *name;
    char *description;
@@ -98,7 +98,7 @@ static const char *UNITS[CF_OBSERVABLES] =
 
 int MONITOR_RESTARTED = true;
 char *MEASUREMENTS[CF_DUNBAR_WORK];
-struct CfMeasurement NOVA_DATA[CF_DUNBAR_WORK];
+CustomMeasurement NOVA_DATA[CF_DUNBAR_WORK];
 
 static bool slots_loaded;
 static MonitoringSlot *SLOTS[CF_OBSERVABLES - ob_spare];

@@ -46,15 +46,15 @@ static const char *CF_VALUETYPES[18][3] =
 /* Level                                                                     */
 /*****************************************************************************/
 
-void Nova_StoreKMDB(struct Topic **topichash,struct Occurrence *occurrences,struct Inference *inferences)
+void Nova_StoreKMDB(Topic **topichash,Occurrence *occurrences,Inference *inferences)
 
 {
 #ifdef HAVE_LIBMONGOC
 
-struct Topic *tp;
-struct TopicAssociation *ta;
-struct Occurrence *op;
-struct Inference *ip;
+Topic *tp;
+TopicAssociation *ta;
+Occurrence *op;
+Inference *ip;
 Item *itp;
 char packNumStr[CF_MAXVARSIZE];
 mongo_connection dbconn = {0};

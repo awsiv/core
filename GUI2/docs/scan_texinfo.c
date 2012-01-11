@@ -29,24 +29,24 @@
 /* Ontology                                                              */
 /*************************************************************************/
 
-struct Topic
+Topic
    {
    char *topic_type;
    char *topic_name;
    char *comment;
-   struct Occurrence *occurrences;
-   struct TopicAssociation *associations;
-   struct Topic *next;
+   Occurrence *occurrences;
+   TopicAssociation *associations;
+   Topic *next;
    };
 
-struct TopicAssociation
+TopicAssociation
    {
    char *assoc_type;
    char *fwd_name;
    char *bwd_name;
    Rlist *associates;
    char *associate_topic_type;
-   struct TopicAssociation *next;
+   TopicAssociation *next;
    };
 
 /*******************************************************************/
@@ -70,18 +70,18 @@ Item
 void Manual(char *prefix,char *str,char *file);
 void ProcessFile(char *file,FILE *fin,char *context,char *prefix);
 char *CanonifyName(char *str);
-void AddTopic(struct Topic **list,char *name,char *type,int nr);
-int TopicExists(struct Topic *list,char *topic_name,char *topic_type);
+void AddTopic(Topic **list,char *name,char *type,int nr);
+int TopicExists(Topic *list,char *topic_name,char *topic_type);
 void AppendItem (Item **liststart,char *itemstring);
 char ToLower (char ch);
 char ToUpper (char ch);
 char *ToUpperStr (char *str);
 char *ToLowerStr (char *str);
 char *GetTitle(char *base, char *type);
-char *GetTopicType(struct Topic *list,char *topic_name);
-void AddTopicAssociation(struct TopicAssociation **list,char *fwd_name,char *bwd_name,char *topic_type,char *associate,int verify);
-struct Topic *GetTopic(struct Topic *list,char *topic_name);
-struct TopicAssociation *AssociationExists(struct TopicAssociation *list,char *fwd,char *bwd,int verify);
+char *GetTopicType(Topic *list,char *topic_name);
+void AddTopicAssociation(TopicAssociation **list,char *fwd_name,char *bwd_name,char *topic_type,char *associate,int verify);
+Topic *GetTopic(Topic *list,char *topic_name);
+TopicAssociation *AssociationExists(TopicAssociation *list,char *fwd,char *bwd,int verify);
 Rlist *IdempPrependRScalar(Rlist **start,void *item, char type);
 Rlist *KeyInRlist(Rlist *list,char *key);
 Rlist *PrependRlist(Rlist **start,void *item, char type);
@@ -135,7 +135,7 @@ void ProcessFile(char *document,FILE *fin,char *context,char *prefix)
 
 { char tmp[2048],line[2048],type[2048],url[2048],title[2048],*sp;
  char chapter[2048],section[2048],subsection[2048],script[2048],doctitle[2048];
-  struct Topic *tp,*topics = NULL;
+  Topic *tp,*topics = NULL;
   Item *ip,*scriptlog = NULL;
   int lineno = 0;  
 
@@ -343,7 +343,7 @@ printf("\"%s\";\n",document);
 
 for (tp = topics; tp != NULL; tp=tp->next)
    {
-   struct TopicAssociation *ta;
+   TopicAssociation *ta;
 
    for (ta = tp->associations; ta != NULL; ta=ta->next)
       {
@@ -483,9 +483,9 @@ return buffer;
 
 /*****************************************************************************/
 
-void AddTopic(struct Topic **list,char *name,char *type,int nr)
+void AddTopic(Topic **list,char *name,char *type,int nr)
 
-{ struct Topic *tp;
+{ Topic *tp;
 
 if (TopicExists(*list,name,type))
    {
@@ -493,7 +493,7 @@ if (TopicExists(*list,name,type))
    return;
    }
  
-if ((tp = (struct Topic *)malloc(sizeof(struct Topic))) == NULL)
+if ((tp = (Topic *)malloc(sizeof(Topic))) == NULL)
    {
    printf("Memory failure in AddTopic");
    exit(1);
@@ -521,7 +521,7 @@ tp->next = *list;
 
 /*****************************************************************************/
 
-int AddKeyAssociations(struct TopicAssociation **a, char *s)
+int AddKeyAssociations(TopicAssociation **a, char *s)
 
 { char *keywords[8000];
   char *exceptions[] = { "or", "and","the", "there","then", "what", "how", "ci", NULL };
@@ -634,9 +634,9 @@ for (i = 0; otherwords[i] != NULL; i++)
 /* Level                                                                     */
 /*****************************************************************************/
 
-int TopicExists(struct Topic *list,char *topic_name,char *topic_type)
+int TopicExists(Topic *list,char *topic_name,char *topic_type)
 
-{ struct Topic *tp;
+{ Topic *tp;
 
 for (tp = list; tp != NULL; tp=tp->next)
    {
@@ -657,9 +657,9 @@ return false;
 
 /*****************************************************************************/
 
-struct Topic *GetTopic(struct Topic *list,char *topic_name)
+Topic *GetTopic(Topic *list,char *topic_name)
 
-{ struct Topic *tp;
+{ Topic *tp;
 
 for (tp = list; tp != NULL; tp=tp->next)
    {
@@ -674,9 +674,9 @@ return NULL;
 
 /*****************************************************************************/
 
-struct Topic *GetCanonizedTopic(struct Topic *list,char *topic_name)
+Topic *GetCanonizedTopic(Topic *list,char *topic_name)
 
-{ struct Topic *tp;
+{ Topic *tp;
 
 for (tp = list; tp != NULL; tp=tp->next)
    {
@@ -691,9 +691,9 @@ return NULL;
 
 /*****************************************************************************/
 
-char *GetTopicType(struct Topic *list,char *topic_name)
+char *GetTopicType(Topic *list,char *topic_name)
 
-{ struct Topic *tp;
+{ Topic *tp;
 
 for (tp = list; tp != NULL; tp=tp->next)
    {
@@ -837,9 +837,9 @@ return buffer;
 
 /*****************************************************************************/
 
-void AddTopicAssociation(struct TopicAssociation **list,char *fwd_name,char *bwd_name,char *topic_type,char *associates,int verify)
+void AddTopicAssociation(TopicAssociation **list,char *fwd_name,char *bwd_name,char *topic_type,char *associates,int verify)
 
-{ struct TopicAssociation *ta = NULL,*texist;
+{ TopicAssociation *ta = NULL,*texist;
   char assoc_type[256];
   Rlist *rp;
 
@@ -853,7 +853,7 @@ if (associates == NULL)
 
 if ((texist = AssociationExists(*list,fwd_name,bwd_name,verify)) == NULL)
    {
-   if ((ta = (struct TopicAssociation *)malloc(sizeof(struct TopicAssociation))) == NULL)
+   if ((ta = (TopicAssociation *)malloc(sizeof(TopicAssociation))) == NULL)
       {
       printf("malloc","Memory failure in AddTopicAssociation");
       exit(1);
@@ -894,9 +894,9 @@ IdempPrependRScalar(&(ta->associates),associates,'s');
 
 /*****************************************************************************/
 
-struct TopicAssociation *AssociationExists(struct TopicAssociation *list,char *fwd,char *bwd,int verify)
+TopicAssociation *AssociationExists(TopicAssociation *list,char *fwd,char *bwd,int verify)
 
-{ struct TopicAssociation *ta;
+{ TopicAssociation *ta;
   int yfwd = false,ybwd = false;
   char l[CF_BUFSIZE],r[CF_BUFSIZE];
 

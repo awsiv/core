@@ -10,7 +10,9 @@
  * Cumulative statitsics support and conversion to instant values
  */
 
-typedef struct PrevValue
+typedef struct PrevValue_ PrevValue;
+
+struct PrevValue_
    {
    char *name;
    char *subname;
@@ -20,8 +22,8 @@ typedef struct PrevValue
       unsigned long long u64;
       } value;
    time_t timestamp;
-   struct PrevValue *next;
-   } PrevValue;
+   PrevValue *next;
+   };
 
 /* Globals */
 

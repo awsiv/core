@@ -46,7 +46,7 @@ return !ferror(fd);
 
 /* Getting data from /proc/meminfo -  All values are in bytes */
 
-typedef struct MemoryInfo
+typedef struct
    {
    off_t total;
    off_t free;

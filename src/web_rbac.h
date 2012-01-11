@@ -13,4 +13,4 @@
 
 Item *GetAllRoles(void);
 Item *GetRolesForUser(char *userName);
-struct HubRBAC *GetRBACForUser(char *userName);
+HubRBAC *GetRBACForUser(char *userName);

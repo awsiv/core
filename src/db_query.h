@@ -36,7 +36,7 @@ Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,i
 
 //int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,time_t start_time,double *qa,double *ea,double *da);
 Item *CFDB_QueryVitalIds(mongo_connection *conn, char *keyHash);
-struct HubVital *CFDB_QueryVitalsMeta(mongo_connection *conn, char *keyHash);
+HubVital *CFDB_QueryVitalsMeta(mongo_connection *conn, char *keyHash);
 int CFDB_QueryMagView2(mongo_connection *conn,char *keyhash,char *monId,time_t start_time,double *qa,double *ea,double *da);
 int CFDB_QueryMonView(mongo_connection *conn, char *keyhash,char *monId, enum monitord_rep rep_type,double *qa,double *ea,double *da);
 int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da);
@@ -56,7 +56,7 @@ Item *CFDB_QueryBundlesUsing(mongo_connection *conn, char *bNameReferenced);
 int CFDB_QueryBundleCount(mongo_connection *conn);
 int CFDB_QueryBundleType(mongo_connection *conn,char *bName,char *buffer,int bufsize);
 int CFDB_QueryPromiseCount(mongo_connection *conn);
-struct HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name);
+HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name);
 Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);
 Item *CFDB_QueryCdpAcls(mongo_connection *conn, char *sep);
 Item *CFDB_QueryCdpCommands(mongo_connection *conn, char *sep);

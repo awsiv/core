@@ -11,7 +11,7 @@
 /*   class regex to include                                                  */
 /*   class regex to exclude (overrides include)                              */
 /*   bundle regex to include                                                 */
-/*   (see struct HubRBAC)                                                    */
+/*   (see HubRBAC)                                                    */
 /*                                                                           */
 /*  Currently, reports are filtered by class regexes only (on hosts),        */
 /*  while promise definitions are filtered on bundle regex only              */
@@ -23,7 +23,7 @@
 static Item *GetRolesFromDB(bson *query);
 
 
-HubRBAC_t *GetRBACForUser(char *userName)
+HubRBAC *GetRBACForUser(char *userName)
 /*
  * Looks up the roles of the given user, and generates
  * the union of the RBAC permissions of these roles.

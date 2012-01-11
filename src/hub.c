@@ -1040,7 +1040,7 @@ void Nova_CacheTotalCompliance(bool allSlots)
 {
   time_t curr,now = time(NULL);
   mongo_connection dbconn;
-  struct EnvironmentsList *env, *ep;
+  EnvironmentsList *env, *ep;
   int slot;
   char envName[CF_SMALLBUF];
   char envClass[CF_SMALLBUF];
@@ -1100,7 +1100,7 @@ void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, char *e
 
 {
   HubQuery *hq;
-  struct HubTotalCompliance *ht;
+  HubTotalCompliance *ht;
   Rlist *rp;
   double kept,repaired,notkept;
   int count;
@@ -1117,7 +1117,7 @@ hq = CFDB_QueryTotalCompliance(conn,NULL,NULL,start,-1,-1,-1,CFDB_GREATERTHANEQ,
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
-   ht = (struct HubTotalCompliance *)rp->item;
+   ht = (HubTotalCompliance *)rp->item;
 
    if(ht->t >= end)
       {

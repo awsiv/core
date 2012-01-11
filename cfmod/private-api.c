@@ -3153,7 +3153,7 @@ PHP_FUNCTION(cfpr_delete_host)
 
 PHP_FUNCTION(cfpr_environments_list)
 {
- struct EnvironmentsList *el, *i;
+ EnvironmentsList *el, *i;
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "") == FAILURE)
     {
@@ -3181,7 +3181,7 @@ PHP_FUNCTION(cfpr_environments_list)
 
 PHP_FUNCTION(cfpr_environment_contents)
 {
- struct HostsList *hl, *i;
+ HostsList *hl, *i;
  char *name;
  int name_len;
 

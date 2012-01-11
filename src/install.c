@@ -378,11 +378,11 @@ void DeleteHubClassSum(HubClassSum *hc)
 
 /*****************************************************************************/
 
-struct HubTotalCompliance *NewHubTotalCompliance(HubHost *hh,time_t t,char *v,int k,int r,int n)
+HubTotalCompliance *NewHubTotalCompliance(HubHost *hh,time_t t,char *v,int k,int r,int n)
 
-{ struct HubTotalCompliance *hp;
+{ HubTotalCompliance *hp;
  
-hp = xmalloc(sizeof(struct HubTotalCompliance));
+hp = xmalloc(sizeof(HubTotalCompliance));
 
  hp->hh = hh;
  hp->t = t;
@@ -396,7 +396,7 @@ hp = xmalloc(sizeof(struct HubTotalCompliance));
 
 /*****************************************************************************/
 
-void DeleteHubTotalCompliance(struct HubTotalCompliance *ht)
+void DeleteHubTotalCompliance(HubTotalCompliance *ht)
 {
  if (ht->version)
     {
@@ -627,11 +627,11 @@ void DeleteHubValue(HubValue *hp)
 
 /*****************************************************************************/
 
-struct HubPerformance *NewHubPerformance(HubHost *hh,char *event,time_t t,double q,double e,double d,char *noteid, char *handle)
+HubPerformance *NewHubPerformance(HubHost *hh,char *event,time_t t,double q,double e,double d,char *noteid, char *handle)
 
-{ struct HubPerformance *hp;
+{ HubPerformance *hp;
      
- hp = xmalloc(sizeof(struct HubPerformance));
+ hp = xmalloc(sizeof(HubPerformance));
 
  hp->hh = hh;
  hp->event = xstrdup(event);
@@ -646,7 +646,7 @@ struct HubPerformance *NewHubPerformance(HubHost *hh,char *event,time_t t,double
 
 /*****************************************************************************/
 
-void DeleteHubPerformance(struct HubPerformance *hp)
+void DeleteHubPerformance(HubPerformance *hp)
 {
  free(hp->event);
  free(hp->nid);
@@ -656,11 +656,11 @@ void DeleteHubPerformance(struct HubPerformance *hp)
 
 /*****************************************************************************/
 
-struct HubSetUid *NewHubSetUid(HubHost *hh,char *file)
+HubSetUid *NewHubSetUid(HubHost *hh,char *file)
 
-{ struct HubSetUid *hp;
+{ HubSetUid *hp;
      
- hp = xmalloc(sizeof(struct HubSetUid));
+ hp = xmalloc(sizeof(HubSetUid));
 
  hp->hh = hh;
  hp->path = xstrdup(file);
@@ -669,7 +669,7 @@ struct HubSetUid *NewHubSetUid(HubHost *hh,char *file)
 
 /*****************************************************************************/
 
-void DeleteHubSetUid(struct HubSetUid *hp)
+void DeleteHubSetUid(HubSetUid *hp)
 {
  free(hp->path);
  free(hp); 
@@ -703,11 +703,11 @@ void DeleteHubFileChanges(HubFileChanges *hp)
 
 /*****************************************************************************/
 
-struct HubFileDiff *NewHubFileDiff(HubHost *hh,char *file,char *diff,time_t t)
+HubFileDiff *NewHubFileDiff(HubHost *hh,char *file,char *diff,time_t t)
 
-{ struct HubFileDiff *hp;
+{ HubFileDiff *hp;
      
- hp = xmalloc(sizeof(struct HubFileDiff));
+ hp = xmalloc(sizeof(HubFileDiff));
 
  hp->hh = hh;
  hp->path = xstrdup(file);
@@ -718,7 +718,7 @@ struct HubFileDiff *NewHubFileDiff(HubHost *hh,char *file,char *diff,time_t t)
 
 /*****************************************************************************/
 
-void DeleteHubFileDiff(struct HubFileDiff *hp)
+void DeleteHubFileDiff(HubFileDiff *hp)
 {
  free(hp->path);
  free(hp->diff);
@@ -752,11 +752,11 @@ void DeleteHubPromiseCompliance(HubPromiseCompliance *hp)
 
 /*****************************************************************************/
 
-struct HubBundleSeen *NewHubBundleSeen(HubHost *hh,char *rname,double ago,double avg,double dev,time_t t,char *noteid)
+HubBundleSeen *NewHubBundleSeen(HubHost *hh,char *rname,double ago,double avg,double dev,time_t t,char *noteid)
 
-{ struct HubBundleSeen *hp;
+{ HubBundleSeen *hp;
      
- hp = xmalloc(sizeof(struct HubBundleSeen));
+ hp = xmalloc(sizeof(HubBundleSeen));
 
  hp->hh = hh;
  hp->bundle = xstrdup(rname);
@@ -770,7 +770,7 @@ struct HubBundleSeen *NewHubBundleSeen(HubHost *hh,char *rname,double ago,double
 
 /*****************************************************************************/
 
-void DeleteHubBundleSeen(struct HubBundleSeen *hp)
+void DeleteHubBundleSeen(HubBundleSeen *hp)
 {
  free(hp->bundle);
  free(hp->nid);
@@ -892,11 +892,11 @@ hp = NULL;
 
 /*****************************************************************************/
 
-struct HubBody *NewHubBody(char *bodyType,char *bodyName,char *bodyArgs)
+HubBody *NewHubBody(char *bodyType,char *bodyName,char *bodyArgs)
 
-{ struct HubBody *hb;
+{ HubBody *hb;
 
-hb = xmalloc(sizeof(struct HubBody));
+hb = xmalloc(sizeof(HubBody));
 
 hb->bodyName = xstrdup(bodyName);
 hb->bodyType = xstrdup(bodyType);
@@ -918,7 +918,7 @@ return hb;
 
 /*****************************************************************************/
 
-void DeleteHubBody(struct HubBody *hb)
+void DeleteHubBody(HubBody *hb)
 
 {
 free(hb->bodyName);
@@ -936,12 +936,12 @@ free(hb);
 
 /*****************************************************************************/
 
-struct HubBodyAttr *NewHubBodyAttr(struct HubBody *hb,char *lval,char *rval,char *classContext)
+HubBodyAttr *NewHubBodyAttr(HubBody *hb,char *lval,char *rval,char *classContext)
 /* Appends to existing attribs */
 
-{ struct HubBodyAttr *ha,*curr;
+{ HubBodyAttr *ha,*curr;
 
- ha = xmalloc(sizeof(struct HubBodyAttr));
+ ha = xmalloc(sizeof(HubBodyAttr));
 
  ha->lval = xstrdup(lval);
  ha->rval = xstrdup(rval);
@@ -969,7 +969,7 @@ struct HubBodyAttr *NewHubBodyAttr(struct HubBody *hb,char *lval,char *rval,char
 
 /*****************************************************************************/
 
-void DeleteHubBodyAttributes(struct HubBodyAttr *ha)
+void DeleteHubBodyAttributes(HubBodyAttr *ha)
 
 {
 if (!ha)
@@ -990,11 +990,11 @@ free(ha);
 
 /*****************************************************************************/
 
-struct HubNote *NewHubNote(char *user,char *msg,time_t t)
+HubNote *NewHubNote(char *user,char *msg,time_t t)
 
-{ struct HubNote *hc;
+{ HubNote *hc;
 
-hc = xmalloc(sizeof(struct HubNote));
+hc = xmalloc(sizeof(HubNote));
 
 hc->user = xstrdup(user);
 hc->msg = xstrdup(msg);
@@ -1005,7 +1005,7 @@ return hc;
 
 /*****************************************************************************/
 
-void DeleteHubNote(struct HubNote *hc)
+void DeleteHubNote(HubNote *hc)
 {
 free(hc->user);
 free(hc->msg);
@@ -1014,11 +1014,11 @@ free(hc);
 
 /*****************************************************************************/
 
-struct HubNoteInfo *NewHubNoteInfo(HubHost *hh,char *nid,char *user,char *msg,time_t t,char *reportData, int reportType)
+HubNoteInfo *NewHubNoteInfo(HubHost *hh,char *nid,char *user,char *msg,time_t t,char *reportData, int reportType)
 
-{ struct HubNoteInfo *hci;
+{ HubNoteInfo *hci;
 
-hci = xmalloc(sizeof(struct HubNoteInfo));
+hci = xmalloc(sizeof(HubNoteInfo));
 
 hci->hh = hh;
 hci->nid = xstrdup(nid);
@@ -1030,9 +1030,9 @@ return hci;
 
 /*****************************************************************************/
 
-void DeleteHubNoteInfo(struct HubNoteInfo *hci)
+void DeleteHubNoteInfo(HubNoteInfo *hci)
 
-{ struct HubNote *hc;
+{ HubNote *hc;
 
 free(hci->nid);
 free(hci->report);
@@ -1046,11 +1046,11 @@ free(hci);
 
 /*****************************************************************************/
 
-struct HubVital *PrependHubVital(struct HubVital **first, char *id, char *units, char *description)
+HubVital *PrependHubVital(HubVital **first, char *id, char *units, char *description)
 
-{ struct HubVital *hv;
+{ HubVital *hv;
 
-hv = xmalloc(sizeof(struct HubVital));
+hv = xmalloc(sizeof(HubVital));
 
 hv->id = xstrdup(id);
 hv->units = xstrdup(units);
@@ -1064,10 +1064,10 @@ return hv;
 
 /*****************************************************************************/
 
-void DeleteHubVital(struct HubVital *hv)
+void DeleteHubVital(HubVital *hv)
 
 {
- struct HubVital *curr, *next;
+ HubVital *curr, *next;
 
  for(curr = hv; curr != NULL; curr = next)
     {
@@ -1082,9 +1082,9 @@ void DeleteHubVital(struct HubVital *hv)
 
 /*****************************************************************************/
 
-HubRBAC_t *NewHubRBAC(char *userName, char *includeClassRx, char *excludeClassRx, char *includeBundleRx)
+HubRBAC *NewHubRBAC(char *userName, char *includeClassRx, char *excludeClassRx, char *includeBundleRx)
 {
- HubRBAC_t *rbac = xmalloc(sizeof(HubRBAC_t));
+ HubRBAC *rbac = xmalloc(sizeof(HubRBAC));
 
  rbac->userName = xstrdup(userName);
  rbac->includeClassRx = xstrdup(includeClassRx);
@@ -1096,7 +1096,7 @@ HubRBAC_t *NewHubRBAC(char *userName, char *includeClassRx, char *excludeClassRx
 
 /*****************************************************************************/
 
-void DeleteHubRBAC(HubRBAC_t *rbac)
+void DeleteHubRBAC(HubRBAC *rbac)
 {
  free(rbac->userName);
  free(rbac->includeClassRx);
@@ -1160,10 +1160,10 @@ int SortTotalCompliance(void *p1, void *p2)
  * For SortRlist() - sorts total compliance descending on time.
  **/
 {
- struct HubTotalCompliance *hc1, *hc2;
+ HubTotalCompliance *hc1, *hc2;
 
- hc1 = (struct HubTotalCompliance *)p1;
- hc2 = (struct HubTotalCompliance *)p2;
+ hc1 = (HubTotalCompliance *)p1;
+ hc2 = (HubTotalCompliance *)p2;
 
  if(hc1->t > hc2->t)
     {
@@ -1204,10 +1204,10 @@ int SortFileDiff(void *p1, void *p2)
  * For SortRlist() - sorts file diffs descending on time.
  **/
 {
- struct HubFileDiff *hd1, *hd2;
+ HubFileDiff *hd1, *hd2;
 
- hd1 = (struct HubFileDiff *)p1;
- hd2 = (struct HubFileDiff *)p2;
+ hd1 = (HubFileDiff *)p1;
+ hd2 = (HubFileDiff *)p2;
 
  if(hd1->t > hd2->t)
     {
@@ -1248,10 +1248,10 @@ int SortPerformance(void *p1, void *p2)
  * For SortRlist() - sorts performance descending on time.
  **/
 {
- struct HubPerformance *hp1, *hp2;
+ HubPerformance *hp1, *hp2;
 
- hp1 = (struct HubPerformance *)p1;
- hp2 = (struct HubPerformance *)p2;
+ hp1 = (HubPerformance *)p1;
+ hp2 = (HubPerformance *)p2;
 
  if(hp1->t > hp2->t)
     {
@@ -1359,10 +1359,10 @@ int SortBundleSeen(void *p1, void *p2)
  * For SortRlist() - sorts bundles on name.
  **/
 {
- struct HubBundleSeen *hb1, *hb2;
+ HubBundleSeen *hb1, *hb2;
 
- hb1 = (struct HubBundleSeen *)p1;
- hb2 = (struct HubBundleSeen *)p2;
+ hb1 = (HubBundleSeen *)p1;
+ hb2 = (HubBundleSeen *)p2;
 
  if(strcmp(hb1->bundle,hb2->bundle) < 0)
     {

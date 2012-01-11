@@ -17,7 +17,7 @@
 
 #ifdef HAVE_LIBMONGOC
 
-int Nova_ReadYearTimeSeries(mongo_connection *conn, struct CfDataView *cfv,char *keyhash,char *monId)
+int Nova_ReadYearTimeSeries(mongo_connection *conn, DataView *cfv,char *keyhash,char *monId)
 
 { double ry,rq,rs;
   double max,min;

@@ -17,7 +17,7 @@
 
 #ifdef HAVE_LIBMONGOC
 
-int Nova_ReadHistogram2(mongo_connection *conn, struct CfDataView *cfv,char *hostkey,char *monId)
+int Nova_ReadHistogram2(mongo_connection *conn, DataView *cfv,char *hostkey,char *monId)
 
 { double ry;
  int i,have_data = false;
@@ -66,7 +66,7 @@ return have_data;
 
 /*******************************************************************/
 
-Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash)
+Item *Nova_MapHistogram(DataView *cfv,char *keyhash)
 
 { double sx, delta, sum = 0, sigma2;
   int new_gradient = 0, past_gradient = 0, max = 0;

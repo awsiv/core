@@ -39,7 +39,7 @@ return x;
 
 /*******************************************************************/
 
-bool Nova_ReadWeekTimeSeries2(mongo_connection *conn, struct CfDataView *cfv,char *keyhash, char *vitalId)
+bool Nova_ReadWeekTimeSeries2(mongo_connection *conn, DataView *cfv,char *keyhash, char *vitalId)
 
 { double ry,rs,rq;
   int i,have_data = false;

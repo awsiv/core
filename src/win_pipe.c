@@ -18,13 +18,15 @@
 
 #ifdef MINGW
 
-struct CfWinPipe{  // links pipe descriptors to process handles
+// links pipe descriptors to process handles
+typedef struct
+   {
    FILE *pipe;
    HANDLE procHandle;
-};
+   } WinPipe;
 
 #define MAX_PIPES 20
-struct CfWinPipe PIPES[MAX_PIPES];
+WinPipe PIPES[MAX_PIPES];
 
 
 /* static prototypes */

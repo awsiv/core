@@ -113,7 +113,7 @@ char *NUMBER_TXT[] =
    NULL
    };
 
-struct ReportInfo BASIC_REPORTS[] =
+ReportInfo BASIC_REPORTS[] =
    {
    {"bundle-profile", "Policy","Themes by bundle","Bundle profile","Status of promise bundles and when they were last verified"},
    {"promise-compliance", "Policy","View compliance","Compliance by promise","Compliance of each promise individually"},
@@ -1899,7 +1899,7 @@ void SummarizeValue(int xml,int html,int csv,int embed,char *stylesheet,char *he
   char *key;
   FILE *fout;
   time_t now = time(NULL);
-  struct promise_value pt;
+  PromiseValue pt;
   Item *ip,*data = NULL;
   char timebuffer[26];
 
@@ -2106,7 +2106,7 @@ void Nova_NoteVarUsageDB(void)
   CF_DBC *dbcp;
   char key[CF_MAXVARSIZE], *keyDb;  // scope.varname
   void *val;
-  struct Variable var = {{0}}, *varDb;
+  Variable var = {{0}}, *varDb;
   int keyDbSize, valSize;
   time_t varExpireAge = SECONDS_PER_WEEK * 4;  // remove vars from DB after about one month
   time_t now = time(NULL);
@@ -2168,7 +2168,7 @@ while(NextDB(dbp,dbcp,&keyDb,&keyDbSize,&val,&valSize))
    {
    if (val != NULL)
       {
-      varDb = (struct Variable *)val;
+      varDb = (Variable *)val;
       
       if (varDb->e.t < now - varExpireAge)
          {

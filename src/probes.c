@@ -9,7 +9,7 @@
 
 /* Structs */
 
-typedef struct Probe
+typedef struct
    {
    const char *name;
    ProbeInit init;
@@ -17,7 +17,7 @@ typedef struct Probe
 
 /* Constants */
 
-static const struct Probe NOVA_PROBES[] =
+static const Probe NOVA_PROBES[] =
    {
    { "Input/output", &MonIoInit },
    { "Memory", &MonMemoryInit },

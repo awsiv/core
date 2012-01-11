@@ -31,7 +31,7 @@ PrependRScalar(semantics,NOVA_BUNDLE_DATA_INV_P,CF_SCALAR);
 
 /*****************************************************************************/
 
-void Nova_DrawTribe(int *tribe_id,struct CfGraphNode *tribe_node,double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size,double *tribe_evc,int topic,char *buffer,int bufsize)
+void Nova_DrawTribe(int *tribe_id,GraphNode *tribe_node,double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size,double *tribe_evc,int topic,char *buffer,int bufsize)
 
 { int i,j;
   double radius;
