@@ -11,4 +11,6 @@
 #define dbkey_role_members "members"
 #define dbkey_role_name "name"
 
+Item *GetAllRoles(void);
+Item *GetRolesForUser(char *userName);
 struct HubRBAC *GetRBACForUser(char *userName);

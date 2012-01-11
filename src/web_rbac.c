@@ -45,19 +45,31 @@ Item *GetAllRoles(void)
 
 Item *GetRolesForUser(char *userName)
 {
- 
+ bson_buffer bb;
+ bson query;
+
+ bson_buffer_init(&bb);
+ bson_append_string(&bb, dbkey_role_members, userName);
+ bson_from_buffer(&query, &bb);
+
+ Item *roles = GetRolesFromDB(&query);
+ bson_destroy(&query);
+
+ return roles;
 }
 
 
-Item *SetUserRoles(char *userName, Item *roles)
+void *SetRolesForUser(char *userName, Item *roles)
 {
- 
+ bson_buffer bb;
+
+ bson_buffer_init(&bb);
+// BsonAppendStringArray(&bb, dbkey_role_roles, roles);
 }
 
 
 static Item *GetRolesFromDB(bson *query)
 
-// FIXME: finish this up
 {
  mongo_connection conn;
  bson_buffer bb;
@@ -77,15 +89,15 @@ static Item *GetRolesFromDB(bson *query)
 
  CFDB_Close(&conn);
 
- Item* roles;
+ Item *roles = NULL;
  
  while (mongo_cursor_next(cursor))
     {
-    const char* roleName = BsonGetString(&(cursor->current), dbkey_role_name);
+    const char *roleName = BsonGetString(&(cursor->current), dbkey_role_name);
 
     if(roleName)
        {
-       printf("roleName=%s\n", roleName);
+       PrependItem(&roles, roleName, NULL);
        }
     }
 

@@ -85,13 +85,13 @@ static const char *BsonGetArrayValue(const bson *b, const char *key)
 
 /*****************************************************************************/
 
-void BsonAppendStringArray(bson_buffer *bb, char *arrayName, struct Item *arrayValues)
+void BsonAppendStringArray(bson_buffer *bb, char *arrayName, Item *arrayValues)
 {
  bson_buffer *arr = bson_append_start_array(bb, arrayName);
  int i = 0;
  char iStr[32];
 
- struct Item *ip;
+ Item *ip;
  for(ip = arrayValues; ip != NULL; ip = ip->next, i++)
     {
     snprintf(iStr, sizeof(iStr), "%d", i);
