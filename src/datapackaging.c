@@ -27,7 +27,7 @@ struct CEnt /* For sorting */
 
 /*****************************************************************************/
 
-void Nova_PackPerformance(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackPerformance(Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { CF_DB *dbp;
   CF_DBC *dbcp;
@@ -36,7 +36,7 @@ void Nova_PackPerformance(struct Item **reply,char *header,time_t from,enum cfd_
   time_t now = time(NULL);
   double ticksperminute = 60.0,average = 0, var = 0;
   char name[CF_BUFSIZE],eventname[CF_BUFSIZE],buffer[CF_BUFSIZE];
-  struct Event entry;
+  Event entry;
   int ksize,vsize,first = true,kept = 0, repaired = 0,not_kept = 0;
 
 CfOut(cf_verbose,""," -> Packing performance data");
@@ -158,7 +158,7 @@ METER_REPAIRED[meter_perf_day] = 100 * (repaired / (kept + not_kept + repaired))
 
 /*****************************************************************************/
 
-void Nova_PackClasses(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackClasses(Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { CF_DB *dbp;
   CF_DBC *dbcp;
@@ -166,7 +166,7 @@ void Nova_PackClasses(struct Item **reply,char *header,time_t from,enum cfd_menu
   void *value;
   double now = (double)time(NULL),average = 0, var = 0;
   char name[CF_BUFSIZE],eventname[CF_BUFSIZE],buffer[CF_MAXVARSIZE];
-  struct Event entry;
+  Event entry;
   struct CEnt array[1024];
   int i,ksize,vsize,first = true;
 
@@ -263,11 +263,11 @@ CloseDB(dbp);
 
 /*****************************************************************************/
 
-void Nova_PackSetuid(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackSetuid(Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { FILE *fin;
   char name[CF_BUFSIZE],line[CF_MAXTRANSSIZE];
-  struct Item *ip,*file = NULL;
+  Item *ip,*file = NULL;
   char start[32];
   int first = true;
 
@@ -321,11 +321,11 @@ DeleteItemList(file);
 
 /*****************************************************************************/
 
-void Nova_PackFileChanges(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackFileChanges(Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { FILE *fin;
   char name[CF_BUFSIZE],line[CF_MAXTRANSSIZE];
-  struct Item *ip,*file = NULL;
+  Item *ip,*file = NULL;
   char start[32];
   long lthen;
   time_t then, now = time(NULL);
@@ -395,13 +395,13 @@ METER_REPAIRED[meter_other_day] = 100.0*repaired/(kept+repaired+not_kept);
 
 /*****************************************************************************/
 
-void Nova_PackDiffs(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackDiffs(Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { FILE *fin;
   char name[CF_BUFSIZE],line[CF_BUFSIZE],size[CF_MAXVARSIZE];
   char no[CF_SMALLBUF],change[CF_BUFSIZE],changeNoTab[CF_BUFSIZE],reformat[CF_BUFSIZE],
       output[CF_MAXTRANSSIZE],aggregate[CF_BUFSIZE];
-  struct Item *ip,*file = NULL;
+  Item *ip,*file = NULL;
   char pm;
   int first = true;
   time_t then;
@@ -513,14 +513,14 @@ DeleteItemList(file);
 
 /*****************************************************************************/
 
-void Nova_PackMonitorMg(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackMonitorMg(Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { int i,slot;
- struct Averages entry,det;
+ Averages entry,det;
  time_t now,here_and_now;
  double havedata;
  char timekey[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],buffer[CF_MAXTRANSSIZE];
- struct Item *data = {0};
+ Item *data = {0};
  CF_DB *dbp;
 
  CfOut(cf_verbose,""," -> Packing monitor magnified data");
@@ -555,7 +555,7 @@ void Nova_PackMonitorMg(struct Item **reply,char *header,time_t from,enum cfd_me
        continue;
        }
    
-    if (ReadDB(dbp,timekey,&det,sizeof(struct Averages)))
+    if (ReadDB(dbp,timekey,&det,sizeof(Averages)))
        {
        for (i = 0; i < CF_OBSERVABLES; i++)
           {
@@ -599,13 +599,13 @@ void Nova_PackMonitorMg(struct Item **reply,char *header,time_t from,enum cfd_me
 
 /*****************************************************************************/
 
-void Nova_PackMonitorWk(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackMonitorWk(Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { int its,i,j,slot;
  double kept = 0, not_kept = 0, repaired = 0;
- struct Averages entry,det;
+ Averages entry,det;
  char timekey[CF_MAXVARSIZE],filename[CF_MAXVARSIZE],buffer[CF_MAXTRANSSIZE];
- struct Item *data = {0};
+ Item *data = {0};
  time_t now;
  CF_DB *dbp;
 
@@ -632,7 +632,7 @@ void Nova_PackMonitorWk(struct Item **reply,char *header,time_t from,enum cfd_me
        {
        strcpy(timekey,GenTimeKey(now));
 
-       if (ReadDB(dbp,timekey,&det,sizeof(struct Averages)))
+       if (ReadDB(dbp,timekey,&det,sizeof(Averages)))
           {
           for (i = 0; i < CF_OBSERVABLES; i++)
              {
@@ -706,7 +706,7 @@ void Nova_PackMonitorWk(struct Item **reply,char *header,time_t from,enum cfd_me
 
 /*****************************************************************************/
 
-void Nova_PackMonitorYr(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackMonitorYr(Item **reply,char *header,time_t from,enum cfd_menu type)
 {
 int i,j,k;
 char filename[CF_BUFSIZE];
@@ -714,7 +714,7 @@ CF_DB *dbp;
 time_t now = CFSTARTTIME;
 /* Start with 3*52 - 1 weeks ago, so the 3*52th week is the current one */
 time_t w = SubtractWeeks(WeekBegin(now), MONITORING_HISTORY_LENGTH_WEEKS-1);
-struct Item *data = {0};
+Item *data = {0};
 
 CfOut(cf_verbose,""," -> Packing and compressing monitor 3 year data");
 
@@ -739,7 +739,7 @@ for (i = 0; i < MONITORING_HISTORY_LENGTH_WEEKS; ++i)
 
    for (j = 0; j < SHIFTS_PER_WEEK && w <= now; ++j, w = NextShift(w))
       {
-      struct Averages av;
+      Averages av;
 
       if (GetRecordForTime(dbp, w, &av))
          {
@@ -782,9 +782,9 @@ CloseDB(dbp);
 
 /*****************************************************************************/
 
-void Nova_FormatMonitoringReply(struct Item **datap, struct Item **reply, enum cfd_menu type)
+void Nova_FormatMonitoringReply(Item **datap, Item **reply, enum cfd_menu type)
 {
- struct Item *ip;
+ Item *ip;
  int currId = -1;
  char buffer[CF_MAXTRANSSIZE];
  
@@ -829,7 +829,7 @@ void Nova_FormatMonitoringReply(struct Item **datap, struct Item **reply, enum c
 
 /*****************************************************************************/
 
-void Nova_PackMonitorHist(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackMonitorHist(Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { int i,j,k,day,position;
   int ok[CF_OBSERVABLES];
@@ -932,12 +932,12 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
 /*****************************************************************************/
 
-void Nova_PackCompliance(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackCompliance(Item **reply,char *header,time_t from,enum cfd_menu type)
 
 {
   char name[CF_MAXTRANSSIZE];
   double lsea = SECONDS_PER_WEEK; /* expire after a week */
-  struct Event entry;
+  Event entry;
   int ksize,vsize,first = true;
   CF_DB *dbp;
   CF_DBC *dbcp;
@@ -1025,12 +1025,12 @@ CloseDB(dbp);
 
 /*****************************************************************************/
 
-void Nova_PackSoftware(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackSoftware(Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { FILE *fin;
   char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch[CF_MAXVARSIZE],mgr[CF_MAXVARSIZE],line[CF_BUFSIZE];
   char buffer[CF_MAXTRANSSIZE];
-  struct Item *ip,*file = NULL;
+  Item *ip,*file = NULL;
   int first = true;
 
 CfOut(cf_verbose,""," -> Packing software data");
@@ -1088,13 +1088,13 @@ DeleteItemList(file);
 
 /*****************************************************************************/
 
-void Nova_PackAvailPatches(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackAvailPatches(Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { int first = true;
   FILE *fin;
   char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch[CF_MAXVARSIZE],mgr[CF_MAXVARSIZE];
   char buffer[CF_MAXTRANSSIZE],line[CF_BUFSIZE];
-  struct Item *ip,*file = NULL;
+  Item *ip,*file = NULL;
 
 CfOut(cf_verbose,""," -> Packing available patch report...\n");
 
@@ -1151,13 +1151,13 @@ DeleteItemList(file);
 
 /*****************************************************************************/
 
-void Nova_PackPatchStatus(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackPatchStatus(Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { int first = true,count = 0;
   FILE *fin;
   char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch[CF_MAXVARSIZE],mgr[CF_MAXVARSIZE];
   char buffer[CF_MAXTRANSSIZE],line[CF_BUFSIZE];
-  struct Item *ip,*file = NULL;
+  Item *ip,*file = NULL;
 
 CfOut(cf_verbose,""," -> Packing patch installed data");
  
@@ -1217,7 +1217,7 @@ DeleteItemList(file);
 
 /*****************************************************************************/
 
-void Nova_Pack_promise_output_common(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_Pack_promise_output_common(Item **reply,char *header,time_t from,enum cfd_menu type)
 
 {
 CfOut(cf_verbose,""," -> Packing promise data (deprecated)");
@@ -1226,7 +1226,7 @@ CfOut(cf_verbose,""," -> Packing promise data (deprecated)");
 
 /*****************************************************************************/
 
-void Nova_PackValueReport(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackValueReport(Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { char name[CF_MAXTRANSSIZE];
   CF_DB *dbp;
@@ -1285,7 +1285,7 @@ CloseDB(dbp);
 
 /*****************************************************************************/
 
-void Nova_PackVariables(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackVariables(Item **reply,char *header,time_t from,enum cfd_menu type)
 
 /* Should be deprecated some time - was replaced after Nova 2.0.2 */
 
@@ -1419,7 +1419,7 @@ fclose(fin);
 
 /*****************************************************************************/
 
-void Nova_PackVariables2(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackVariables2(Item **reply,char *header,time_t from,enum cfd_menu type)
 /* Includes date-stamp of variable (but not avg and stddev). */
 {
 char filename[CF_MAXVARSIZE];
@@ -1502,7 +1502,7 @@ CloseDB(dbp);
 
 /*****************************************************************************/
 
-void Nova_PackLastSeen(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackLastSeen(Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { CF_DB *dbp;
   CF_DBC *dbcp;
@@ -1512,7 +1512,7 @@ void Nova_PackLastSeen(struct Item **reply,char *header,time_t from,enum cfd_men
   double now = (double)tid,average = 0, var = 0;
   double ticksperhr = (double)SECONDS_PER_HOUR;
   char name[CF_BUFSIZE],hostkey[CF_BUFSIZE],buffer[CF_MAXTRANSSIZE];
-  struct CfKeyHostSeen entry;
+  KeyHostSeen entry;
   int ksize,vsize,first = true;
 
 CfOut(cf_verbose,""," -> Packing last-seen data");
@@ -1595,11 +1595,11 @@ CloseDB(dbp);
 
 /*****************************************************************************/
 
-void Nova_PackTotalCompliance(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackTotalCompliance(Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { FILE *fin;
   char name[CF_BUFSIZE],line[CF_BUFSIZE],buffer[CF_MAXTRANSSIZE];
-  struct Item *ip,*file = NULL;
+  Item *ip,*file = NULL;
   time_t start,end;
   char version[CF_MAXVARSIZE];
   int kept,repaired,notrepaired;
@@ -1767,11 +1767,11 @@ METER_REPAIRED[meter_compliance_hour] = av_hour_repaired;
 
 /*****************************************************************************/
 
-void Nova_PackRepairLog(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackRepairLog(Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { FILE *fin;
   char name[CF_BUFSIZE],line[CF_MAXTRANSSIZE];
-  struct Item *ip = NULL,*file = NULL;
+  Item *ip = NULL,*file = NULL;
   int i = 0,first = true;
   long then;
   
@@ -1831,11 +1831,11 @@ DeleteItemList(file);
 
 /*****************************************************************************/
 
-void Nova_PackNotKeptLog(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackNotKeptLog(Item **reply,char *header,time_t from,enum cfd_menu type)
 
 { FILE *fin;
   char name[CF_BUFSIZE],line[CF_MAXTRANSSIZE];
-  struct Item *ip,*file = NULL;
+  Item *ip,*file = NULL;
   int i = 0,first = true;
   long then;
 
@@ -1895,7 +1895,7 @@ DeleteItemList(file);
 
 /*****************************************************************************/
 
-void Nova_PackMeter(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackMeter(Item **reply,char *header,time_t from,enum cfd_menu type)
 /**
  * NOTE: This function depends on the meters being computed correctly first,
  *       see e.g. Nova_PackTotalCompliance().
@@ -1953,7 +1953,7 @@ if (METER_KEPT[meter_anomalies_day] > 0 || METER_REPAIRED[meter_anomalies_day] >
 
 /*****************************************************************************/
 
-void Nova_PackSoftwareDates(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackSoftwareDates(Item **reply,char *header,time_t from,enum cfd_menu type)
 /**
  * What time the list of installed packages got updated.
  * TODO: Inlcude time for NOVA_PATCHES_INSTALLED and NOVA_PATCHES_AVAIL?
@@ -1982,12 +1982,12 @@ void Nova_PackSoftwareDates(struct Item **reply,char *header,time_t from,enum cf
 
 /*****************************************************************************/
 
-void Nova_PackBundles(struct Item **reply,char *header,time_t from,enum cfd_menu type)
+void Nova_PackBundles(Item **reply,char *header,time_t from,enum cfd_menu type)
 
 {
   char name[CF_BUFSIZE],line[CF_MAXTRANSSIZE];
   char bundle[CF_MAXVARSIZE];
-  struct Item *file = NULL;
+  Item *file = NULL;
   int first = true,ksize,vsize;
   time_t tid = time(NULL);
   double now = (double)tid,average = 0, var = 0;
@@ -1996,7 +1996,7 @@ void Nova_PackBundles(struct Item **reply,char *header,time_t from,enum cfd_menu
   CF_DBC *dbcp;
   char *key;
   void *value;
-  struct QPoint entry;
+  QPoint entry;
  
 CfOut(cf_verbose,""," -> Packing bundle log");
   

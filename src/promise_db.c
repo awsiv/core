@@ -21,9 +21,9 @@
 
 #ifdef HAVE_LIBMONGOC
 
-void Nova_StoreExpandedPromise(struct Promise *pp)
+void Nova_StoreExpandedPromise(Promise *pp)
 
-{ struct Constraint *cp;
+{ Constraint *cp;
   char rval_buffer[CF_BUFSIZE];
   static int firstCall = true;
   char jStr[32];
@@ -132,14 +132,14 @@ CFDB_Close(&dbconn);
 
 /*****************************************************************************/
 
-void Nova_StoreUnExpandedPromises(struct Bundle *bundles,struct Body *bodies)
+void Nova_StoreUnExpandedPromises(Bundle *bundles,Body *bodies)
 
-{ struct Body *bdp;
-  struct Bundle *bp;
-  struct Rlist *rp;
-  struct SubType *st;
-  struct Promise *pp;
-  struct Constraint *cp;
+{ Body *bdp;
+  Bundle *bp;
+  Rlist *rp;
+  SubType *st;
+  Promise *pp;
+  Constraint *cp;
   mongo_connection dbconn = {0};
   bson_buffer bbuf;
   bson_buffer *args, *cstr;
@@ -266,10 +266,10 @@ CFDB_Close(&dbconn);
 
 /*****************************************************************************/
 
-void Nova_StoreBody(mongo_connection *dbconn, struct Body *body)
+void Nova_StoreBody(mongo_connection *dbconn, Body *body)
     
-{ struct Rlist *rp;
-  struct Constraint *cp;
+{ Rlist *rp;
+  Constraint *cp;
   bson_buffer bbuf,bb, *args, *setObj;
   char classContext[CF_MAXVARSIZE],varName[CF_MAXVARSIZE];
   char rval_buffer[CF_BUFSIZE];
@@ -342,7 +342,7 @@ bson_destroy(&b);
 
 #else
 
-void Nova_StoreUnExpandedPromises(struct Bundle *bundles,struct Body *bodies)
+void Nova_StoreUnExpandedPromises(Bundle *bundles,Body *bodies)
 {
 }
 

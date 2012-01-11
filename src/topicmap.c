@@ -42,7 +42,7 @@ void Nova_DumpTopics()
   char topic_name[CF_BUFSIZE];
   char topic_context[CF_BUFSIZE];
   int topic_id;
-  struct Item *ip,*nn;
+  Item *ip,*nn;
 
 if (!CFDB_Open(&conn))
    {
@@ -270,7 +270,7 @@ int Nova_SearchTopicMap(char *search_topic,char *buffer,int bufsize)
   char topic_context[CF_BUFSIZE];
   int topic_id;
   char work[CF_BUFSIZE];
-  struct Item *ip,*list = NULL;
+  Item *ip,*list = NULL;
 
 if (!CFDB_Open(&conn))
    {
@@ -370,7 +370,7 @@ void Nova_ScanTheRest(int pid,char *buffer, int bufsize)
 {
 #ifdef HAVE_LIBMONGOC
   char this_name[CF_BUFSIZE],this_id[CF_BUFSIZE],this_context[CF_BUFSIZE];
-  struct Item *worklist, *ip;
+  Item *worklist, *ip;
   char work[CF_BUFSIZE];
   char name[CF_BUFSIZE] = {0};
   int id=0;
@@ -428,7 +428,7 @@ EndJoin(buffer,"]}",bufsize);
 /*****************************************************************************/
 
 #ifdef HAVE_LIBMONGOC
-struct Item *Nova_ScanLeadsAssociations(int search_id,char *assoc_mask)
+Item *Nova_ScanLeadsAssociations(int search_id,char *assoc_mask)
 
 /* Look for neighbours and retain/sort link names - return JSON array
 
@@ -450,7 +450,7 @@ struct Item *Nova_ScanLeadsAssociations(int search_id,char *assoc_mask)
   char assoc_name[CF_BUFSIZE];
   char afwd[CF_BUFSIZE];
   char assoc_context[CF_BUFSIZE];
-  struct Item *list = NULL;
+  Item *list = NULL;
   int assoc_id;
 
 if (!CFDB_Open(&conn))
@@ -546,7 +546,7 @@ void Nova_ScanOccurrences(int this_id,char *buffer, int bufsize)
 {
 #ifdef HAVE_LIBMONGOC
   enum representations locator_type;
-  struct Rlist *rp,*frags = NULL,*atoms = NULL,*rrp;
+  Rlist *rp,*frags = NULL,*atoms = NULL,*rrp;
   char topic_name[CF_BUFSIZE],topic_id[CF_BUFSIZE],topic_context[CF_BUFSIZE];
   char locator[CF_BUFSIZE],context[CF_BUFSIZE],represents[CF_BUFSIZE],searchstring[CF_BUFSIZE];
   bson_buffer bb;
@@ -758,10 +758,10 @@ return false;
 /*************************************************************************/
 
 #ifdef HAVE_LIBMONGOC
-struct Item *Nova_GetBusinessGoals(char *handle)
+Item *Nova_GetBusinessGoals(char *handle)
 
 { char querytopic[CF_BUFSIZE];
-  struct Item *worklist = NULL, *ip;
+  Item *worklist = NULL, *ip;
   int pid;
 
 snprintf(querytopic,CF_BUFSIZE,"bundles::%s",handle);
@@ -785,7 +785,7 @@ return worklist;
 int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 
 {
- struct Rlist *rp,*rp2;
+ Rlist *rp,*rp2;
  bson_buffer bb;
  bson query,field;
  mongo_cursor *cursor;
@@ -797,7 +797,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
  char work[CF_BUFSIZE] = {0};
  char goals[CF_MAXVARSIZE] = {0};
  char searchstring[CF_BUFSIZE] = {0};
- struct Rlist *goal_categories = NULL, *goal_patterns = NULL;
+ Rlist *goal_categories = NULL, *goal_patterns = NULL;
  char db_goal_patterns[CF_BUFSIZE] = {0}; 
  char db_goal_categories[CF_BUFSIZE] = {0}; 
 
@@ -911,18 +911,18 @@ return buf;
 
 /*************************************************************************/
 
-void Nova_FillInGoalComment(struct Item *ip)
+void Nova_FillInGoalComment(Item *ip)
 
 {
 #ifdef HAVE_LIBMONGOC
-  struct Rlist *rp;
+  Rlist *rp;
   char searchstring[CF_MAXVARSIZE],work[CF_MAXVARSIZE];
   bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
   bson_iterator it1;
   mongo_connection conn;
-  struct Rlist *goal_categories = NULL;
+  Rlist *goal_categories = NULL;
   char db_goal_categories[CF_BUFSIZE] = {0}; 
   char canonified_goal[CF_BUFSIZE] = {0}; 
 
@@ -1053,7 +1053,7 @@ return "";
 char *Nova_StripString(char *source,char *substring)
 
 { char *replace = xmalloc(strlen(source)+1);
-  struct Rlist *rp,*new = SplitStringAsRList(source,'.');
+  Rlist *rp,*new = SplitStringAsRList(source,'.');
 
 replace[0] = '\0';
   
@@ -1121,7 +1121,7 @@ int Nova_GetTribe(int *tribe_id,struct CfGraphNode *tribe_nodes, double tribe_ad
   int a_pid;
   struct CfGraphNode neighbours1[CF_TRIBE_SIZE],neighbours2[CF_TRIBE_SIZE][CF_TRIBE_SIZE];
   int tribe_counter = 0,secondary_boundary,tertiary_boundary,i,j;
-  struct Item *ip,*nn = NULL;
+  Item *ip,*nn = NULL;
 
 for (i = 0; i < CF_TRIBE_SIZE; i++)
    {
@@ -1453,7 +1453,7 @@ return true;
 /*********************************************************************/
 
 #ifdef HAVE_LIBMONGOC
-struct Item *Nova_NearestNeighbours(int search_id,char *assoc_mask)
+Item *Nova_NearestNeighbours(int search_id,char *assoc_mask)
 
 {
   bson_buffer bb;
@@ -1461,7 +1461,7 @@ struct Item *Nova_NearestNeighbours(int search_id,char *assoc_mask)
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
   mongo_connection conn;
-  struct Item *list = NULL;
+  Item *list = NULL;
   int topic_id;
   char assoc_name[CF_BUFSIZE];
   char afwd[CF_BUFSIZE],abwd[CF_BUFSIZE];
@@ -1566,7 +1566,7 @@ return list;
 /*********************************************************************/
 
 #ifdef HAVE_LIBMONGOC
-struct Item *Nova_GetTopicsInContext(char *context)
+Item *Nova_GetTopicsInContext(char *context)
     
 {
   bson_buffer bb;
@@ -1574,7 +1574,7 @@ struct Item *Nova_GetTopicsInContext(char *context)
   mongo_cursor *cursor;
   bson_iterator it1;
   mongo_connection conn;
-  struct Item *list = NULL;
+  Item *list = NULL;
   char topic_name[CF_BUFSIZE];
   char topic_context[CF_BUFSIZE];
   int topic_id;

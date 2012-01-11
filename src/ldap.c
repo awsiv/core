@@ -26,7 +26,7 @@ void *CfLDAPArray(char *array,char *uri,char *basedn,char *filter,char *scopes,c
 void *CfRegLDAP(char *uri,char *basedn,char *filter,char *name,char *scopes,char *regex,char *sec);
 
 int NovaStr2Scope(char *scope);
-struct Rlist *LDAPKeyInRlist(struct Rlist *list,char *key);
+Rlist *LDAPKeyInRlist(Rlist *list,char *key);
 #endif
 
 
@@ -228,7 +228,7 @@ void *CfLDAPList(char *uri,char *basedn,char *filter,char *name,char *scopes,cha
   int i,ret,parse_ret,num_entries = 0,num_refs = 0;
   char *a, *dn, *matched_msg = NULL, *error_msg = NULL;
   int scope = NovaStr2Scope(scopes);
-  struct Rlist *return_value = NULL;
+  Rlist *return_value = NULL;
 
 if (LICENSES == 0)
    {
@@ -817,7 +817,7 @@ void test(void)
 
              printf("Authenticated\n");
 
-             struct Rlist *names = SplitStringAsRList("uid,mail,sn,altSecurityIdentities",',');
+             Rlist *names = SplitStringAsRList("uid,mail,sn,altSecurityIdentities",',');
 
              buffer[0] = '\0';
              if (CfLDAP_JSON_GetSeveralAttributes(
@@ -846,7 +846,7 @@ void test(void)
 
 /*****************************************************************************/
 
-int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *authdn,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,bool starttls,int page,int linesperpage,char *buffer, int bufsize, const char **const errstr)
+int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *authdn,char *basedn,char *filter,Rlist *names,char *scopes,char *sec,char *passwd,bool starttls,int page,int linesperpage,char *buffer, int bufsize, const char **const errstr)
 
 { LDAP *ld;
   LDAPMessage *res, *msg;
@@ -857,9 +857,9 @@ int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *authdn,char *basedn,char *f
   int i,ret,parse_ret,num_entries = 0,num_refs = 0,notdone=false;
   char *a, *dn, *matched_msg = NULL, *error_msg = NULL;
   int scope = NovaStr2Scope(scopes), count;
-  struct Rlist *master = NULL,*rp,*dn_rp;
-  struct Item *ip;
-  struct CfAssoc *ap;
+  Rlist *master = NULL,*rp,*dn_rp;
+  Item *ip;
+  CfAssoc *ap;
   char work[CF_BUFSIZE];
 
 if (page == 0)
@@ -934,21 +934,21 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                       {
                       if (cf_strcmp(a,rp->item) == 0)
                          {
-                         struct Item **list;
+                         Item **list;
 
                          if ((dn_rp = LDAPKeyInRlist(master,a)) == NULL)
                             {
-                            dn_rp = PrependRlistAlien(&master, NewAssoc(a, (struct Rval) { "dummy", CF_SCALAR }, cf_slist));
-                            ap = (struct CfAssoc *)dn_rp->item;
+                            dn_rp = PrependRlistAlien(&master, NewAssoc(a, (Rval) { "dummy", CF_SCALAR }, cf_slist));
+                            ap = (CfAssoc *)dn_rp->item;
                             free(ap->rval.item);
                             ap->rval.item = NULL;
                             }
                          else
                             {
-                            ap = (struct CfAssoc *)dn_rp->item;
+                            ap = (CfAssoc *)dn_rp->item;
                             }
 
-                         list = (struct Item **)&(ap->rval.item);
+                         list = (Item **)&(ap->rval.item);
 
                          CfOut(cf_verbose,"","Located LDAP value %s => %s\n", a,vals[i]->bv_val);
                          PrependItem(list,(char *)vals[i]->bv_val,rp->item);
@@ -1081,7 +1081,7 @@ while(notdone)
       {
       ap = rp->item;
 
-      ip = (struct Item *)rp->state_ptr;
+      ip = (Item *)rp->state_ptr;
 
       snprintf(work,CF_BUFSIZE,"\"%s\"",ip->name);
       Join(buffer,work,bufsize);
@@ -1091,7 +1091,7 @@ while(notdone)
          Join(buffer,",",bufsize);
          }
 
-      ap = (struct CfAssoc *)rp->item;
+      ap = (CfAssoc *)rp->item;
       DeleteAssoc(ap);
       rp->item = NULL;
 
@@ -1125,7 +1125,7 @@ return 0;
 
 #else /* HAVE_LIBLDAP */
 
-int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *user,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,bool starttls,int page,int linesperpage,char *buffer, int bufsize, const char **const errstr)
+int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *user,char *basedn,char *filter,Rlist *names,char *scopes,char *sec,char *passwd,bool starttls,int page,int linesperpage,char *buffer, int bufsize, const char **const errstr)
 
 {
 *errstr = "LDAP support is disabled";
@@ -1150,7 +1150,7 @@ int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *authdn,char *basedn,char 
   int i,ret,parse_ret,num_entries = 0,num_refs = 0;
   char *a, *dn, *matched_msg = NULL, *error_msg = NULL;
   int scope = NovaStr2Scope(scopes),count = 0;
-  struct Rlist *return_value = NULL,*rp;
+  Rlist *return_value = NULL,*rp;
   char work[CF_BUFSIZE];
 
 if (page == 0)
@@ -1504,10 +1504,10 @@ return LDAP_SCOPE_SUBTREE;
 
 /*******************************************************************/
 
-struct Rlist *LDAPKeyInRlist(struct Rlist *list,char *key)
+Rlist *LDAPKeyInRlist(Rlist *list,char *key)
 
-{ struct Rlist *rp;
-  struct CfAssoc *ap;
+{ Rlist *rp;
+  CfAssoc *ap;
 
 for (rp = list; rp != NULL; rp = rp->next)
    {
@@ -1516,7 +1516,7 @@ for (rp = list; rp != NULL; rp = rp->next)
       continue;
       }
 
-   ap = (struct CfAssoc *)rp->item;
+   ap = (CfAssoc *)rp->item;
 
    if (strcmp((char *)ap->lval,key) == 0)
       {

@@ -18,18 +18,18 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-struct Item *NOVA_HANDLE_OUTPUTS = NULL;
-struct Item *NOVA_BUNDLE_OUTPUTS = NULL;
+Item *NOVA_HANDLE_OUTPUTS = NULL;
+Item *NOVA_BUNDLE_OUTPUTS = NULL;
 
 int SAVE_INFORM = 0;
 int SAVE_VERBOSE = 0;
 
 /*****************************************************************************/
 
-void VerifyOutputsPromise(struct Promise *pp)
+void VerifyOutputsPromise(Promise *pp)
 
-{ struct Attributes a = GetOutputsAttributes(pp);
-  struct Item *ip;
+{ Attributes a = GetOutputsAttributes(pp);
+  Item *ip;
   static char *defaultval = "verbose";
 
 if (a.output.level == NULL)
@@ -79,13 +79,13 @@ else // promises
 
 /*****************************************************************************/
 
-void SetPromiseOutputs(struct Promise *pp)
+void SetPromiseOutputs(Promise *pp)
 
 { char *handle = GetConstraintValue("handle",pp,CF_SCALAR);
   char *setting = GetConstraintValue("report_level",pp,CF_SCALAR);
   enum cfreport report_level = String2ReportLevel(setting);
   int verbose = false,inform = false;
-  struct Item *ip;
+  Item *ip;
   
 if (handle)
    {
@@ -133,11 +133,11 @@ if (handle)
       {
       if (ip && ip->classes)
          {
-         AppendConstraint(&(pp->conlist), "report_level", (struct Rval) { xstrdup(ip->classes), CF_SCALAR }, "any", false);
+         AppendConstraint(&(pp->conlist), "report_level", (Rval) { xstrdup(ip->classes), CF_SCALAR }, "any", false);
          }
       else
          {
-         AppendConstraint(&(pp->conlist), "report_level", (struct Rval) { xstrdup("verbose"), CF_SCALAR },"any", false);
+         AppendConstraint(&(pp->conlist), "report_level", (Rval) { xstrdup("verbose"), CF_SCALAR },"any", false);
          }
       }
    }
@@ -147,7 +147,7 @@ if (handle)
 
 void SetBundleOutputs(char *name)
 
-{ struct Item *ip;
+{ Item *ip;
 
 for (ip = NOVA_BUNDLE_OUTPUTS; ip != NULL; ip=ip->next)
    {
@@ -174,7 +174,7 @@ for (ip = NOVA_BUNDLE_OUTPUTS; ip != NULL; ip=ip->next)
 
 void ResetBundleOutputs(char *name)
 
-{ struct Item *ip;
+{ Item *ip;
 
 for (ip = NOVA_BUNDLE_OUTPUTS; ip != NULL; ip=ip->next)
    {

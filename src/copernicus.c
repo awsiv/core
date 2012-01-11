@@ -18,7 +18,7 @@
 
 /*****************************************************************************/
 
-void Nova_PrimeGraph(struct Rlist **semantics)
+void Nova_PrimeGraph(Rlist **semantics)
 {
 PrependRScalar(semantics,NOVA_GIVES,CF_SCALAR);
 PrependRScalar(semantics,NOVA_USES,CF_SCALAR);

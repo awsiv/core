@@ -90,16 +90,16 @@ struct HubQuery *result = CFDB_QuerySoftware(&conn, hostkey,
 database_close(&conn);
 
 JsonArray *software = NULL;
-for (struct Rlist *rp = result->records; rp != NULL; rp = rp->next)
+for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    {
    struct HubSoftware *record = (struct HubSoftware *)rp->item;
-   struct JsonObject *software_entry = NULL;
+   JsonObject *software_entry = NULL;
 
    JsonObjectAppendString(&software_entry, LABEL_HOSTKEY, record->hh->keyhash);
    JsonObjectAppendString(&software_entry, LABEL_NAME, record->name);
    JsonObjectAppendString(&software_entry, LABEL_VERSION, record->version);
    JsonObjectAppendString(&software_entry, LABEL_ARCH, Nova_LongArch(record->arch));
-   JsonObjectAppendInteger(&software_entry, LABEL_TIMESTAMP, (int)record->t);
+   //JsonObjectAppendInteger(&software_entry, LABEL_TIMESTAMP, (int)record->t);
 
    JsonArrayAppendObject(&software, software_entry);
    }
@@ -168,7 +168,7 @@ struct HubQuery *result = CFDB_QueryVariables(&conn, hostkey,
 database_close(&conn);
 
 JsonArray *values = NULL;
-for (struct Rlist *rp = result->records; rp != NULL; rp = rp->next)
+for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    {
    struct HubVariable *record = (struct HubVariable *)rp->item;
    const char *type = DataTypeToString(record->dtype);
@@ -186,7 +186,7 @@ for (struct Rlist *rp = result->records; rp != NULL; rp = rp->next)
       JsonObjectAppendString(&value_entry, LABEL_VALUE, (const char *)record->rval);
       }
 
-   JsonArrayAppendObject(&value, value_entry);
+   JsonArrayAppendObject(&value_entry, value_entry);
    }
 
 DeleteHubQuery(result, DeleteHubVariable);
@@ -224,16 +224,16 @@ struct HubQuery *result = CFDB_QueryBundleSeen(&conn, hostkey, name, true, conte
 database_close(&conn);
 
 JsonArray *bundles = NULL;
-for (struct Rlist *rp = result->records; rp != NULL; rp = rp->next)
+for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    {
    struct HubBundleSeen *record = (struct HubBundleSeen *)rp->item;
-   struct JsonObject *bundle_entry = NULL;
+   JsonObject *bundle_entry = NULL;
 
    JsonObjectAppendString(&bundle_entry, LABEL_HOSTKEY, record->hh->keyhash);
    JsonObjectAppendString(&bundle_entry, LABEL_NAME, record->bundle);
-   JsonObjectAppendInteger(&bundle_entry, LABEL_LASTSEEN, SECONDS_PER_HOUR * record->hrsago);
-   JsonObjectAppendReal(&bundle_entry, LABEL_AVERAGE, SECONDS_PER_HOUR * record->hrsavg);
-   JsonObjectAppendReal(&bundle_entry, LABEL_STDV, SECONDS_PER_HOUR * record->hrsdev);
+   //JsonObjectAppendInteger(&bundle_entry, LABEL_LASTSEEN, SECONDS_PER_HOUR * record->hrsago);
+   //JsonObjectAppendReal(&bundle_entry, LABEL_AVERAGE, SECONDS_PER_HOUR * record->hrsavg);
+   //JsonObjectAppendReal(&bundle_entry, LABEL_STDV, SECONDS_PER_HOUR * record->hrsdev);
 
    JsonArrayAppendObject(&bundles, bundle_entry);
    }

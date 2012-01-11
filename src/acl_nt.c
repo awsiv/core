@@ -16,7 +16,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-int Nova_CheckNtACL(char *file_path, struct CfACL acl, struct Attributes a, struct Promise *pp)
+int Nova_CheckNtACL(char *file_path, Acl acl, Attributes a, Promise *pp)
 {
 #ifdef MINGW
 Nova_SetACLDefaults(file_path, &acl);
@@ -49,7 +49,7 @@ return true;
 #ifdef MINGW
 
 
-int Nova_CheckNtInheritACEs(char *file_path, struct Rlist *aces, enum cf_acl_method method, enum cf_acl_inherit directory_inherit, struct Attributes a, struct Promise *pp)
+int Nova_CheckNtInheritACEs(char *file_path, Rlist *aces, enum cf_acl_method method, enum cf_acl_inherit directory_inherit, Attributes a, Promise *pp)
 
 {
 int result;
@@ -82,12 +82,12 @@ return result;
 }
 
 
-int Nova_CheckNtACEs(char *file_path, struct Rlist *aces, inherit_t inherit, enum cf_acl_method method, struct Attributes a, struct Promise *pp)
+int Nova_CheckNtACEs(char *file_path, Rlist *aces, inherit_t inherit, enum cf_acl_method method, Attributes a, Promise *pp)
 {
 SECURITY_DESCRIPTOR *existingSecDesc;
 ACL *existingAcl;
 EXPLICIT_ACCESS *eas;
-struct Rlist *rp;
+Rlist *rp;
 int newAceCount = 0;
 int aclsEqual;
 int eaCount;
@@ -199,7 +199,7 @@ return true;
 
 
 /* Removes any default aces (aces that apply to child objects) */
-int Nova_CheckNtDefaultClearACL(char *file_path, struct Attributes a, struct Promise *pp)
+int Nova_CheckNtDefaultClearACL(char *file_path, Attributes a, Promise *pp)
 {
 SECURITY_DESCRIPTOR *existingSecDesc;
 ACL *existingAcl;
@@ -295,7 +295,7 @@ return true;
 /* Makes sure default ACL is the same as access ACL.
  * On NT, this means that all aces with INHERIT_ONLY_ACE
  * set are removed. */
-int Nova_CheckNtDefaultEqualsAccessACL(char *file_path, struct Attributes a, struct Promise *pp)
+int Nova_CheckNtDefaultEqualsAccessACL(char *file_path, Attributes a, Promise *pp)
 {
 SECURITY_DESCRIPTOR *existingSecDesc;
 ACL *existingAcl;
@@ -606,13 +606,13 @@ int Nova_AclToExplicitAccess(EXPLICIT_ACCESS *eas, int eaCount, ACL *acl)
 
 /* assmes large enough buffer is allocated in eas. eaCount elements are filled from existing ACL
  * when called, and contains the number of elemements when returning successfully */
-int Nova_ParseAcl(char *file_path, struct Rlist *aces, EXPLICIT_ACCESS *eas, int *eaCount, inherit_t inherit)
+int Nova_ParseAcl(char *file_path, Rlist *aces, EXPLICIT_ACCESS *eas, int *eaCount, inherit_t inherit)
 {
   EXPLICIT_ACCESS *currEa, *nextFreeEa, *firstUsedEa, *splitOldEa;
   int numNewEas = 0;
   char sidBuf[CF_BUFSIZE];
   SID *sid = (SID*)sidBuf;
-  struct Rlist *rp;
+  Rlist *rp;
   SID *sidAlloc;
   char *currAce;
   ACCESS_MASK newPerms = CF_MINIMUM_PERMS_NT;

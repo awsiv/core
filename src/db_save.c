@@ -107,13 +107,13 @@ return true;
 
 /*****************************************************************************/
 
-int CFDB_SaveLastseenCache(struct Item *lastseen)
+int CFDB_SaveLastseenCache(Item *lastseen)
 
 { bson_buffer bb;
  bson_buffer *setObj,*sub,*arr;
  bson setOp,empty;
  mongo_connection dbconn;
- struct Item *ip;
+ Item *ip;
  char arrIndex[CF_BUFSIZE] = {0};
  int i=0;
 
@@ -248,7 +248,7 @@ bson_destroy(&host_key);
 
 /*****************************************************************************/
 
-void CFDB_SaveSoftware(mongo_connection *conn,enum software_rep sw, char *keyhash, struct Item *data)
+void CFDB_SaveSoftware(mongo_connection *conn,enum software_rep sw, char *keyhash, Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj;
@@ -257,7 +257,7 @@ void CFDB_SaveSoftware(mongo_connection *conn,enum software_rep sw, char *keyhas
   bson setOp;
   int i;
   bson_buffer *arr;
-  struct Item *ip;
+  Item *ip;
   char *dbOp = {0};
   char packNumStr[CF_MAXVARSIZE];
   char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch,archStr[CF_MAXVARSIZE];
@@ -324,7 +324,7 @@ bson_destroy(&host_key);
 /* Monitor data                                                              */
 /*****************************************************************************/
 
-void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_rep rep_type, struct Item *data)
+void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_rep rep_type, Item *data)
 {
  bson_buffer bb;
  bson_buffer *setObj, *arr;
@@ -336,7 +336,7 @@ void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_
  bool didUpdate, haveAllMeta=false;
  char *db;
  char *dbOp;
- struct Item *ip, *slotStart;
+ Item *ip, *slotStart;
  int monGlobal;
  double monExpMin, monExpMax;
  int i,slot, numSlots, iterations;
@@ -518,7 +518,7 @@ void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_
 
 /*****************************************************************************/
 
-void CFDB_SaveMonitorHistograms(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveMonitorHistograms(mongo_connection *conn, char *keyhash, Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj;
@@ -526,7 +526,7 @@ void CFDB_SaveMonitorHistograms(mongo_connection *conn, char *keyhash, struct It
   bson host_key;  // host description
   bson setOp;
   char monId[128], kStr[32];
-  struct Item *ip;
+  Item *ip;
   int k;
   double currHist;
   char *sp;
@@ -638,9 +638,9 @@ static void CFDB_PutEnvironmentForHost(mongo_connection *conn, const char *keyha
 #define ENV_NAME_LEN (sizeof(ENV_NAME_PREFIX) / sizeof(char) - 1)
 
 static void CFDB_SaveEnvironment(mongo_connection *conn, const char *keyhash,
-                                 const struct Item *data)
+                                 const Item *data)
 {
-    const struct Item *i;
+    const Item *i;
     char *environment = NULL;
 
     for (i = data; i; i = i->next)
@@ -667,7 +667,7 @@ static void CFDB_SaveEnvironment(mongo_connection *conn, const char *keyhash,
 
 /*****************************************************************************/
 
-void CFDB_SaveClasses(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveClasses(mongo_connection *conn, char *keyhash, Item *data)
 
 /*
  *  Replacing existing class entry, but not deleting "old" entries (purging)
@@ -676,7 +676,7 @@ void CFDB_SaveClasses(mongo_connection *conn, char *keyhash, struct Item *data)
 { bson_buffer bb,*setObj,*clObj,*keyArr,*keyAdd,*keyArrField;
   bson host_key;  // host description
   bson setOp;
-  struct Item *ip;
+  Item *ip;
   char name[CF_MAXVARSIZE], varName[CF_MAXVARSIZE];
   time_t t;
   double e = 0, dev = 0;
@@ -739,7 +739,7 @@ bson_destroy(&host_key);
 
 /*****************************************************************************/
 
-void CFDB_SaveVariables(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveVariables(mongo_connection *conn, char *keyhash, Item *data)
 
 /* Should be deprecated some time - was replaced after Nova 2.0.2 */
 
@@ -747,10 +747,10 @@ void CFDB_SaveVariables(mongo_connection *conn, char *keyhash, struct Item *data
   bson_buffer *unset, *setObj, *arr;
   bson host_key;  // host description
   bson setOp,unsetOp;
-  struct Item *ip;
+  Item *ip;
   int i;
   char iStr[32];
-  struct Rlist *rp,*list;
+  Rlist *rp,*list;
   char type[CF_SMALLBUF],lval[CF_MAXVARSIZE],rval[CF_BUFSIZE],
       scope[CF_MAXVARSIZE], varName[CF_MAXVARSIZE];
   
@@ -830,18 +830,18 @@ bson_destroy(&host_key);
 
 /*****************************************************************************/
 
-void CFDB_SaveVariables2(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveVariables2(mongo_connection *conn, char *keyhash, Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj, *arr;
   bson host_key;  // host description
   bson setOp;
-  struct Item *ip;
+  Item *ip;
   int i;
   char iStr[32];
   long tl;
   time_t t;
-  struct Rlist *rp,*list;
+  Rlist *rp,*list;
   char type[CF_SMALLBUF],lval[CF_MAXVARSIZE],rval[CF_BUFSIZE],
       scope[CF_MAXVARSIZE], varName[CF_MAXVARSIZE];
   
@@ -914,15 +914,15 @@ bson_destroy(&host_key);
 
 /*****************************************************************************/
 
-void CFDB_SaveTotalCompliance(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveTotalCompliance(mongo_connection *conn, char *keyhash, Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj;
   bson host_key;  // host description
   bson setOp;
-  struct Item *ip;
+  Item *ip;
   char version[CF_MAXVARSIZE];
-  struct Item *keys = NULL,*addedKey = NULL;
+  Item *keys = NULL,*addedKey = NULL;
   int kept,repaired,notrepaired;
   char varName[CF_MAXVARSIZE];
   long t;
@@ -979,13 +979,13 @@ bson_destroy(&host_key);
 
 /*****************************************************************************/
 
-void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, enum promiselog_rep rep_type, struct Item *data)
+void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, enum promiselog_rep rep_type, Item *data)
 {
   bson_buffer bb,record;
   bson host_key;  // host description
   bson_buffer *setObj;
   bson setOp;
-  struct Item *ip;
+  Item *ip;
   char handle[CF_MAXVARSIZE],reason[CF_BUFSIZE];
   char *collName;
   long then;
@@ -1036,13 +1036,13 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void CFDB_SaveLastSeen(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveLastSeen(mongo_connection *conn, char *keyhash, Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj, *sub;
   bson host_key;  // host description
   bson setOp;
-  struct Item *ip;
+  Item *ip;
   char inout, ipaddr[CF_MAXVARSIZE];
   char hostkey[CF_MAXVARSIZE],varName[CF_MAXVARSIZE];
   double ago = 0 ,average = 0,dev = 0;
@@ -1093,14 +1093,14 @@ bson_destroy(&host_key);
 
 /*****************************************************************************/
 
-void CFDB_SaveMeter(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveMeter(mongo_connection *conn, char *keyhash, Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj;
   bson_buffer *sub;
   bson host_key;  // host description
   bson setOp;
-  struct Item *ip;
+  Item *ip;
   char varName[CF_MAXVARSIZE];
   char type;
   double kept,repaired;
@@ -1136,13 +1136,13 @@ bson_destroy(&host_key);
 
 /*****************************************************************************/
 
-void CFDB_SaveSoftwareDates(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveSoftwareDates(mongo_connection *conn, char *keyhash, Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj;
   bson host_key;  // host description
   bson setOp;
-  struct Item *ip;
+  Item *ip;
   char type;
   time_t t;
 
@@ -1178,14 +1178,14 @@ bson_destroy(&host_key);
 
 /*****************************************************************************/
 
-void CFDB_SavePerformance(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SavePerformance(mongo_connection *conn, char *keyhash, Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj;
   bson_buffer *sub;
   bson host_key;  // host description
   bson setOp;
-  struct Item *ip;
+  Item *ip;
   char varName[CF_MAXVARSIZE];
   long t;
   char eventname[CF_MAXVARSIZE],eventnameKey[CF_MAXVARSIZE];
@@ -1230,13 +1230,13 @@ bson_destroy(&host_key);
 
 /*****************************************************************************/
 
-void CFDB_SaveSetUid(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveSetUid(mongo_connection *conn, char *keyhash, Item *data)
 
 { bson_buffer bb;
   bson_buffer *keyArr, *set;
   bson host_key;  // host description
   bson setOp;
-  struct Item *ip;
+  Item *ip;
   char progName[CF_MAXVARSIZE];
   char iStr[32];
   int i;
@@ -1274,16 +1274,16 @@ bson_destroy(&host_key);
 
 /*****************************************************************************/
 
-void CFDB_SavePromiseCompliance(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SavePromiseCompliance(mongo_connection *conn, char *keyhash, Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj;
   bson_buffer *sub;
   bson_buffer *keyArr, *keyAdd, *keyArrField;
-  struct Item *keys = NULL,*addedKey = NULL;
+  Item *keys = NULL,*addedKey = NULL;
   bson host_key;  // host description
   bson setOp;
-  struct Item *ip;
+  Item *ip;
   char varName[CF_MAXVARSIZE];
   char handle[CF_MAXVARSIZE];
   char status, statusStr[16];
@@ -1356,13 +1356,13 @@ bson_destroy(&host_key);
 
 /*****************************************************************************/
 
-void CFDB_SaveFileChanges(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveFileChanges(mongo_connection *conn, char *keyhash, Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj;
   bson host_key;  // host description
   bson setOp;
-  struct Item *ip;
+  Item *ip;
   char name[CF_MAXVARSIZE]={0},nameNoDot[CF_MAXVARSIZE]={0};
   char varName[128] = {0};
   bson_buffer *sub;
@@ -1406,13 +1406,13 @@ bson_destroy(&host_key);
 
 /*****************************************************************************/ 
 
-void CFDB_SaveFileDiffs(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveFileDiffs(mongo_connection *conn, char *keyhash, Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj;
   bson host_key;  // host description
   bson setOp;
-  struct Item *ip;
+  Item *ip;
   char name[CF_MAXVARSIZE],change[CF_BUFSIZE],nameNoDot[CF_MAXVARSIZE];
   char varName[128];
   bson_buffer *sub;
@@ -1468,13 +1468,13 @@ bson_destroy(&host_key);
 
 /*****************************************************************************/
 
-void CFDB_SaveBundles(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveBundles(mongo_connection *conn, char *keyhash, Item *data)
 
 { bson_buffer bb;
   bson_buffer *setObj, *sub;
   bson host_key;  // host description
   bson setOp;
-  struct Item *ip;
+  Item *ip;
   char bundle[CF_MAXVARSIZE];
   char varName[CF_MAXVARSIZE];
   double ago = 0,average = 0,dev = 0;
@@ -1521,13 +1521,13 @@ bson_destroy(&host_key);
 
 /*****************************************************************************/
 
-void CFDB_SaveValueReport(mongo_connection *conn, char *keyhash, struct Item *data)
+void CFDB_SaveValueReport(mongo_connection *conn, char *keyhash, Item *data)
 
 { bson_buffer bb;
   bson_buffer *set;
   bson host_key;  // host description
   bson setOp;
-  struct Item *ip;
+  Item *ip;
   bson_buffer *sub1, *sub2;
   char datestr[CF_SMALLBUF];
   double kept,notkept,repaired;
@@ -1649,7 +1649,7 @@ bson_destroy(&host_key);
  */
 /*****************************************************************************/
 
-int CFDB_AddNote(mongo_connection *conn, char *keyhash, int reportType, char *nid, char *reportData, struct Item *data)
+int CFDB_AddNote(mongo_connection *conn, char *keyhash, int reportType, char *nid, char *reportData, Item *data)
 {
   bson_buffer bb;
   bson host_key;

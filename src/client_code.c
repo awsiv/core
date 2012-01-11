@@ -11,7 +11,7 @@
 #include "cf.nova.h"
 
 #ifdef HAVE_LIBMONGOC 
-static void Nova_RecordNetwork(mongo_connection *dbconnp, time_t now, double datarate,struct cfagent_connection *conn);
+static void Nova_RecordNetwork(mongo_connection *dbconnp, time_t now, double datarate,AgentConnection *conn);
 #endif 
 
 char *CF_CODEBOOK[CF_CODEBOOK_SIZE] =
@@ -83,14 +83,14 @@ void *CF_CODEBOOK_HANDLER[CF_CODEBOOK_SIZE] =
 
 #ifdef HAVE_LIBMONGOC
 
-int Nova_QueryClientForReports(mongo_connection *dbconn, struct cfagent_connection *conn, const char *menu, time_t since)
+int Nova_QueryClientForReports(mongo_connection *dbconn, AgentConnection *conn, const char *menu, time_t since)
 
 { int tosend,cipherlen=0;
  char in[CF_BUFSIZE],out[CF_BUFSIZE],workbuf[CF_BUFSIZE],cfchangedstr[265];
   long length = 0;
   int more = true,header = true,current_report = -1;
   time_t now,then,time2 = 0,delta1 = 0,delta2 = 0;
-  struct Item *reports[CF_CODEBOOK_SIZE] = {0};
+  Item *reports[CF_CODEBOOK_SIZE] = {0};
   char keyHash[EVP_MAX_MD_SIZE*4];
   double datarate;
 
@@ -206,7 +206,7 @@ return true;
 
 /*********************************************************************/
 
-int Nova_StoreIncomingReports(char *reply,struct Item **reports,int current_report)
+int Nova_StoreIncomingReports(char *reply,Item **reports,int current_report)
 
 {
 int report;
@@ -233,7 +233,7 @@ return current_report;
 
 /*********************************************************************/
 
-void NewReportBook(struct Item **reports)
+void NewReportBook(Item **reports)
 
 { int i;
 
@@ -247,7 +247,7 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
 
 #ifdef HAVE_LIBMONGOC
 
-void UnpackReportBook(mongo_connection *dbconn, char *id,struct Item **reports)
+void UnpackReportBook(mongo_connection *dbconn, char *id,Item **reports)
 
 { int i;
 
@@ -267,7 +267,7 @@ CFDB_SaveLastHostUpdate(dbconn, id);
 
 /*********************************************************************/
 
-void DeleteReportBook(struct Item **reports)
+void DeleteReportBook(Item **reports)
 
 { int i;
 
@@ -284,13 +284,13 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
 
 #ifdef HAVE_LIBMONGOC
 
-static void Nova_RecordNetwork(mongo_connection *dbconnp, time_t now, double datarate,struct cfagent_connection *conn)
+static void Nova_RecordNetwork(mongo_connection *dbconnp, time_t now, double datarate,AgentConnection *conn)
 // NOTE: NOT Thread-safe (use of HashPrint())
 {
   mongo_cursor *cursor;
   bson_buffer bb, *setObj;
   bson query,field,update;
-  struct Event e = {0},newe = {0};
+  Event e = {0},newe = {0};
   double delta;
 
   newe.t = now;

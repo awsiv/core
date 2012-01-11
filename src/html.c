@@ -178,7 +178,7 @@ void SpecialQuote(char *name,char *type)
 
 { char filename[CF_BUFSIZE];
   FILE *fin,*fout = stdout;
-  struct Item *ip,*file = NULL;
+  Item *ip,*file = NULL;
   int have_title = false;
 
 snprintf(filename,CF_BUFSIZE,"%s/%s",DOCROOT,name);

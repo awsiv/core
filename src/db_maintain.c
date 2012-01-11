@@ -210,8 +210,8 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
  *
  **/
 {
-  struct Item *purgeKeys = NULL, *ip;
-  struct Item *purgePcNames = NULL, *purgeClassNames = NULL;
+  Item *purgeKeys = NULL, *ip;
+  Item *purgePcNames = NULL, *purgeClassNames = NULL;
   mongo_cursor *cursor;
   bson query,field,hostQuery,op;
   bson_iterator it1;
@@ -317,8 +317,8 @@ void CFDB_PurgeTimestampedLongtermReports(mongo_connection *conn)
  *
  **/
 {
-  struct Item *purgeKeys = NULL, *ip;
-  struct Item *purgePcNames = NULL, *purgeClassNames = NULL;
+  Item *purgeKeys = NULL, *ip;
+  Item *purgePcNames = NULL, *purgeClassNames = NULL;
   mongo_cursor *cursor;
   bson query,field,hostQuery,op;
   bson_iterator it1;
@@ -468,7 +468,7 @@ void CFDB_PurgeDropReports(mongo_connection *conn)
 
 /*****************************************************************************/
 
-void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr, struct Item **purgeNamesPtr)
+void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, Item **purgeKeysPtr, Item **purgeNamesPtr)
 
 {
   bson_iterator it1,it2,it3;
@@ -549,7 +549,7 @@ void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey,
 
 /*****************************************************************************/
 
-int CFDB_CheckAge(char *var, char *key, bson_iterator *it, time_t now, time_t oldThreshold, struct Item **purgeKeysPtr, struct Item **purgeNamesPtr)
+int CFDB_CheckAge(char *var, char *key, bson_iterator *it, time_t now, time_t oldThreshold, Item **purgeKeysPtr, Item **purgeNamesPtr)
 {
   time_t then;
   int found;
@@ -583,7 +583,7 @@ int CFDB_CheckAge(char *var, char *key, bson_iterator *it, time_t now, time_t ol
 
 /*****************************************************************************/
 
-void CFDB_PurgeScanStrTime(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr)
+void CFDB_PurgeScanStrTime(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, Item **purgeKeysPtr)
 /**
  * Like PurgeScan but uses time in format "30 Sep 2010" instead of time_t.
  */
@@ -632,9 +632,9 @@ void CFDB_PurgeScanStrTime(mongo_connection *conn, bson_iterator *itp, char *rep
 
 /*****************************************************************************/
 
-void DeleteFromBsonArray(bson_buffer *bb, char *arrName, struct Item *elements)
+void DeleteFromBsonArray(bson_buffer *bb, char *arrName, Item *elements)
 {
-  struct Item *ip = NULL;
+  Item *ip = NULL;
   bson_buffer *pullAll, *arr;
   char iStr[64];
   int i;

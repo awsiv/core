@@ -13,7 +13,7 @@ static const char* BsonGetArrayValue(const bson* b, const char* key);
 
 /*****************************************************************************/
 
-struct Item *BsonGetStringArrayAsItemList(const bson* b, const char* key)
+Item *BsonGetStringArrayAsItemList(const bson* b, const char* key)
 {
  const char *array = BsonGetArrayValue(b, key);
 
@@ -25,7 +25,7 @@ struct Item *BsonGetStringArrayAsItemList(const bson* b, const char* key)
  bson_iterator it;
  bson_iterator_init(&it, array);
 
- struct Item *values = NULL;
+ Item *values = NULL;
  
  while (bson_iterator_next(&it))
     {

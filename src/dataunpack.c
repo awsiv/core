@@ -19,9 +19,9 @@
 
 /*****************************************************************************/
 
-void Nova_UnPackPerformance(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackPerformance(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
   time_t t;
   char eventname[CF_MAXVARSIZE];
   double measure = 0,average = 0,dev = 0;
@@ -45,9 +45,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackClasses(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackClasses(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
   char name[CF_MAXVARSIZE];
   time_t t;
   double q = 0, dev = 0;
@@ -71,9 +71,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackSetuid(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackSetuid(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
 
 CfOut(cf_verbose,""," -> setuid data ......................");
 
@@ -92,9 +92,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackFileChanges(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackFileChanges(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
   char name[CF_MAXVARSIZE];
   long date;
   time_t then;
@@ -119,9 +119,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackDiffs(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackDiffs(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
   char name[CF_MAXVARSIZE],change[CF_BUFSIZE];
   long t;
   char *sp;
@@ -155,9 +155,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorWeek(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackMonitorWeek(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
   int observable,slot;
   double q,e,dev;
   char t[CF_TIME_SIZE];
@@ -194,9 +194,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorMag(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackMonitorMag(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
   int observable,slot;
   double q,e,dev;
 
@@ -229,9 +229,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorYear(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackMonitorYear(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
  int observable,slot = 0;
   double q,e,dev;
 
@@ -264,9 +264,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorHist(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackMonitorHist(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
 
 CfOut(cf_verbose,""," -> Monitor histogram data.....................");
 CfOut(cf_inform, "", "!! Deprecated monitor histogram format - response from Nova 2.0.4 or earlier -- skipped");
@@ -286,9 +286,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorHg(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackMonitorHg(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
 
 CfOut(cf_verbose,""," -> Monitor histogram data.....................");
 
@@ -307,9 +307,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorMg(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackMonitorMg(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
 
 CfOut(cf_verbose,""," -> Monitor magnified data.....................");
 
@@ -329,9 +329,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorWk(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackMonitorWk(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
 
 CfOut(cf_verbose,""," -> Monitor weekly data.....................");
 
@@ -351,9 +351,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorYr(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackMonitorYr(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
 
 CfOut(cf_verbose,""," -> Monitor year data.....................");
 
@@ -373,9 +373,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackCompliance(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackCompliance(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
   time_t then;
   double av,dev;
   char type,eventname[CF_MAXVARSIZE];
@@ -412,9 +412,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackSoftware(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackSoftware(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
   char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch;
 
 CfOut(cf_verbose,""," -> Installed software data...............");
@@ -438,9 +438,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackAvailPatches(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackAvailPatches(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
   char arch, name[CF_MAXVARSIZE],version[CF_MAXVARSIZE];
 
 CfOut(cf_verbose,""," -> Available patch data...................");
@@ -464,9 +464,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackPatchStatus(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackPatchStatus(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
   char arch, name[CF_MAXVARSIZE],version[CF_MAXVARSIZE];
   
 CfOut(cf_verbose,""," -> Patches installed data.......................");
@@ -490,9 +490,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPack_promise_output_common(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPack_promise_output_common(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
   
 CfOut(cf_verbose,""," -> Expanded private promise data.............");
 
@@ -504,9 +504,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackValueReport(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackValueReport(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
   double kept,notkept,repaired;
   char date[CF_SMALLBUF];
 
@@ -529,11 +529,11 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackVariables(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackVariables(mongo_connection *dbconn, char *id, Item *data)
 
 /* Should be deprecated some time - was replaced after Nova 2.0.4 */
 
-{ struct Item *ip;
+{ Item *ip;
   char type[CF_SMALLBUF],name[CF_MAXVARSIZE],value[CF_BUFSIZE],scope[CF_MAXVARSIZE];
 
 CfOut(cf_verbose,""," -> Variable data...........................");
@@ -567,9 +567,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackVariables2(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackVariables2(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
   char type[CF_SMALLBUF],name[CF_MAXVARSIZE],value[CF_BUFSIZE],scope[CF_MAXVARSIZE];
   time_t t;
 
@@ -601,9 +601,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackLastSeen(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackLastSeen(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
  char inout, asserted[CF_MAXVARSIZE],dns[CF_MAXVARSIZE],hash[CF_MAXVARSIZE];
   double ago,average,dev;
   long fthen;
@@ -643,9 +643,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackTotalCompliance(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackTotalCompliance(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
   char version[CF_SMALLBUF];
   int kept,repaired,notrepaired;
   long date;
@@ -672,9 +672,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackRepairLog(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackRepairLog(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
   char handle[CF_MAXVARSIZE];
   long then;
   time_t tthen;
@@ -699,9 +699,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackNotKeptLog(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackNotKeptLog(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
   char handle[CF_MAXVARSIZE];
   time_t tthen;
   long then;
@@ -726,9 +726,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackMeter(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackMeter(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
   char type;
   double kept,repaired;
   
@@ -774,9 +774,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackSoftwareDates(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackSoftwareDates(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
   char type;
 
 CfOut(cf_verbose,""," -> Software dates data...........................");
@@ -805,9 +805,9 @@ for (ip = data; ip != NULL; ip=ip->next)
 
 /*****************************************************************************/
 
-void Nova_UnPackBundles(mongo_connection *dbconn, char *id, struct Item *data)
+void Nova_UnPackBundles(mongo_connection *dbconn, char *id, Item *data)
 
-{ struct Item *ip;
+{ Item *ip;
   char bundle[CF_SMALLBUF];
   double ago,average,dev;
   long fthen;

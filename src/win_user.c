@@ -195,10 +195,10 @@ int NovaWin_StringToSid(char *stringSid, SID *sid, int sidSz)
 
 /*******************************************************************/
 
-struct UidList *NovaWin_Rlist2SidList(struct Rlist *uidnames, struct Promise *pp)
+UidList *NovaWin_Rlist2SidList(Rlist *uidnames, Promise *pp)
 {
- struct UidList *uidlist, *currEl;
- struct Rlist *rp;
+ UidList *uidlist, *currEl;
+ Rlist *rp;
  char sidBuf[CF_MAXSIDSIZE];
 
  currEl = NULL;
@@ -212,13 +212,13 @@ struct UidList *NovaWin_Rlist2SidList(struct Rlist *uidnames, struct Promise *pp
 	  
        if(uidlist == NULL)  // first element
           { 
-          uidlist = xcalloc(1, sizeof(struct UidList));
+          uidlist = xcalloc(1, sizeof(UidList));
 
           currEl = uidlist;
           }
        else  // not first element
           {
-          currEl->next = xcalloc(1, sizeof(struct UidList));
+          currEl->next = xcalloc(1, sizeof(UidList));
 	      
           currEl = currEl->next;
           }
@@ -230,7 +230,7 @@ struct UidList *NovaWin_Rlist2SidList(struct Rlist *uidnames, struct Promise *pp
   
  if(uidlist == NULL)  // empty uidnames or no user in it found on this system
     {
-    uidlist = xcalloc(1, sizeof(struct UidList));
+    uidlist = xcalloc(1, sizeof(UidList));
     }
 
  return uidlist;
@@ -238,7 +238,7 @@ struct UidList *NovaWin_Rlist2SidList(struct Rlist *uidnames, struct Promise *pp
 
 /*******************************************************************/
 
-FnCallResult FnCallUserExists(struct FnCall *fp,struct Rlist *finalargs)
+FnCallResult FnCallUserExists(FnCall *fp,Rlist *finalargs)
 
 {
  char userSid[CF_MAXSIDSIZE];
@@ -259,7 +259,7 @@ FnCallResult FnCallUserExists(struct FnCall *fp,struct Rlist *finalargs)
 
 /*********************************************************************/
 
-FnCallResult FnCallGroupExists(struct FnCall *fp,struct Rlist *finalargs)
+FnCallResult FnCallGroupExists(FnCall *fp,Rlist *finalargs)
 
 {
  char groupSid[CF_MAXSIDSIZE];

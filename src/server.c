@@ -15,7 +15,7 @@
 #include "cf3.server.h"
 #include "cf.nova.h"
 
-struct Rlist *SERVER_KEYRING = NULL;
+Rlist *SERVER_KEYRING = NULL;
 
 /*****************************************************************************/
 
@@ -34,7 +34,7 @@ else
 
 /*****************************************************************************/
 
-void RegisterLiteralServerData(char *handle,struct Promise *pp)
+void RegisterLiteralServerData(char *handle,Promise *pp)
 
 {
 NewScalar("remote_access",handle,pp->promiser,cf_str);
@@ -108,7 +108,7 @@ switch(type)
 int ReturnLiteralData(char *handle,char *recv)
 
 {
-struct Rval retval;
+Rval retval;
 
 if (LICENSES <= 0)
    {
@@ -139,13 +139,13 @@ else
 
 /*****************************************************************************/
 
-int Nova_ReturnQueryData(struct cfd_connection *conn,char *menu)
+int Nova_ReturnQueryData(ServerConnectionState *conn,char *menu)
 
 {
   char out[CF_BUFSIZE],menu_name[CF_MAXVARSIZE];
   char tbuf[CF_SMALLBUF];
   enum cfd_menu type;
-  struct Item *ip,*reply = NULL;
+  Item *ip,*reply = NULL;
   int cipherlen = 0;
   time_t from = 0, time0 = 0, time1 = 0, delta1;
 
@@ -214,7 +214,7 @@ return true;
 
 /*****************************************************************************/
 
-void Nova_PackAllReports(struct Item **reply, time_t from, time_t delta1, enum cfd_menu type)
+void Nova_PackAllReports(Item **reply, time_t from, time_t delta1, enum cfd_menu type)
 /**
  * Creates the reply item list from all available reports on this host.
  */
@@ -286,9 +286,9 @@ char *GetRemoteScalar(char *proto,char *handle,char *server,int encrypted,char *
 
 { char in[CF_BUFSIZE],out[CF_BUFSIZE],sendbuffer[CF_BUFSIZE];
   int cipherlen,tosend,n,plainlen;
-  struct cfagent_connection *conn;
-  struct Attributes a = {{0}};
-  struct Promise *pp = NewPromise("remotescalar","handle");
+  AgentConnection *conn;
+  Attributes a = {{0}};
+  Promise *pp = NewPromise("remotescalar","handle");
   char peer[CF_MAXVARSIZE];
  
 a.copy.portnumber = (short)Nova_ParseHostname(server,peer);

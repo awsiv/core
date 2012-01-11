@@ -197,7 +197,7 @@ typedef struct PageInfo
 struct Variable  /* Used to represent contents of var in DBM file -
 		    scope.name is key */
    {
-   struct Event e;
+   Event e;
    enum cfdatatype dtype;
    char rtype;
    char rval[CF_MAXVARSIZE];    // as string, \0-terminated
@@ -438,8 +438,8 @@ struct HubPromiseCompliance
 #ifdef HAVE_LIBMONGOC
 struct HubQuery
    {
-   struct Rlist *hosts;
-   struct Rlist *records;
+   Rlist *hosts;
+   Rlist *records;
    cfapi_errid errid;
    };
 #endif
@@ -566,21 +566,21 @@ typedef struct HubRBAC
 
 /* acl.c */
 
-void  Nova_SetACLDefaults(char *path, struct CfACL *acl);
-int Nova_CheckACESyntax(char *ace, char *valid_nperms, char *valid_ops, int deny_support, int mask_support,struct Promise *pp);
-int Nova_CheckModeSyntax(char **mode_p, char *valid_nperms, char *valid_ops,struct Promise *pp);
-int Nova_CheckPermTypeSyntax(char *permt, int deny_support,struct Promise *pp);
-int Nova_CheckDirectoryInherit(char *path, struct CfACL *acl, struct Promise *pp);
+void  Nova_SetACLDefaults(char *path, Acl *acl);
+int Nova_CheckACESyntax(char *ace, char *valid_nperms, char *valid_ops, int deny_support, int mask_support,Promise *pp);
+int Nova_CheckModeSyntax(char **mode_p, char *valid_nperms, char *valid_ops,Promise *pp);
+int Nova_CheckPermTypeSyntax(char *permt, int deny_support,Promise *pp);
+int Nova_CheckDirectoryInherit(char *path, Acl *acl, Promise *pp);
 
 /* acl_linux.c */
 
-int Nova_CheckPosixLinuxACL(char *file_path, struct CfACL acl, struct Attributes a, struct Promise *pp);
+int Nova_CheckPosixLinuxACL(char *file_path, Acl acl, Attributes a, Promise *pp);
 #ifdef HAVE_LIBACL
-int Nova_CheckPosixLinuxAccessACEs(struct Rlist *aces, enum cf_acl_method method, char *file_path, struct Attributes a, struct Promise *pp);
-int Nova_CheckPosixLinuxInheritACEs(struct Rlist *aces, enum cf_acl_method method, enum cf_acl_inherit directory_inherit, char *file_path, struct Attributes a, struct Promise *pp);
-int Nova_CheckPosixLinuxACEs(struct Rlist *aces, enum cf_acl_method method, char *file_path, acl_type_t acl_type, struct Attributes a, struct Promise *pp);
-int Nova_CheckDefaultEqualsAccessACL(char *file_path, struct Attributes a, struct Promise *pp);
-int Nova_CheckDefaultClearACL(char *file_path, struct Attributes a, struct Promise *pp);
+int Nova_CheckPosixLinuxAccessACEs(Rlist *aces, enum cf_acl_method method, char *file_path, Attributes a, Promise *pp);
+int Nova_CheckPosixLinuxInheritACEs(Rlist *aces, enum cf_acl_method method, enum cf_acl_inherit directory_inherit, char *file_path, Attributes a, Promise *pp);
+int Nova_CheckPosixLinuxACEs(Rlist *aces, enum cf_acl_method method, char *file_path, acl_type_t acl_type, Attributes a, Promise *pp);
+int Nova_CheckDefaultEqualsAccessACL(char *file_path, Attributes a, Promise *pp);
+int Nova_CheckDefaultClearACL(char *file_path, Attributes a, Promise *pp);
 int Nova_ParseEntityPosixLinux(char **str, acl_entry_t ace, int *is_mask);
 int Nova_ParseModePosixLinux(char *mode, acl_permset_t old_perms);
 acl_entry_t Nova_FindACE(acl_t acl, acl_entry_t ace_find);
@@ -591,17 +591,17 @@ int Nova_PermsetEquals(acl_permset_t first, acl_permset_t second);
 
 /* acl_nt.c */
 
-int Nova_CheckNtACL(char *file_path, struct CfACL acl, struct Attributes a, struct Promise *pp);
+int Nova_CheckNtACL(char *file_path, Acl acl, Attributes a, Promise *pp);
 #ifdef MINGW
-int Nova_CheckNtACEs(char *file_path, struct Rlist *aces, inherit_t inherit, enum cf_acl_method method, struct Attributes a, struct Promise *pp);
-int Nova_CheckNtInheritACEs(char *file_path, struct Rlist *aces, enum cf_acl_method method, enum cf_acl_inherit directory_inherit, struct Attributes a, struct Promise *pp);
-int Nova_CheckNtDefaultClearACL(char *file_path, struct Attributes a, struct Promise *pp);
-int Nova_CheckNtDefaultEqualsAccessACL(char *file_path, struct Attributes a, struct Promise *pp);
+int Nova_CheckNtACEs(char *file_path, Rlist *aces, inherit_t inherit, enum cf_acl_method method, Attributes a, Promise *pp);
+int Nova_CheckNtInheritACEs(char *file_path, Rlist *aces, enum cf_acl_method method, enum cf_acl_inherit directory_inherit, Attributes a, Promise *pp);
+int Nova_CheckNtDefaultClearACL(char *file_path, Attributes a, Promise *pp);
+int Nova_CheckNtDefaultEqualsAccessACL(char *file_path, Attributes a, Promise *pp);
 void Nova_RemoveEasByInheritance(EXPLICIT_ACCESS *eas, int *eaCount, inherit_t inherit);
 void Nova_RemoveEmptyEas(EXPLICIT_ACCESS *eas, int *eaCount);
 int Nova_ACLEquals(int *aclsEqual, EXPLICIT_ACCESS *firstEas, int eaCount, ACL *acl);
 int Nova_AclToExplicitAccess(EXPLICIT_ACCESS *eas, int eaCount, ACL *acl);
-int Nova_ParseAcl(char *file_path, struct Rlist *aces, EXPLICIT_ACCESS *eas, int *eaCount, inherit_t inherit);
+int Nova_ParseAcl(char *file_path, Rlist *aces, EXPLICIT_ACCESS *eas, int *eaCount, inherit_t inherit);
 int Nova_SetEas(char *file_path, EXPLICIT_ACCESS *eas, int eaCount);
 EXPLICIT_ACCESS *Nova_FindAceNt(EXPLICIT_ACCESS *eas, EXPLICIT_ACCESS *endEa, SID *findSid, ACCESS_MODE findPermt, inherit_t findInherit);
 void Nova_FreeSids(EXPLICIT_ACCESS *eas, int num);
@@ -621,13 +621,13 @@ bool BoostrapAllowed(void);
 
 /* client_code.c */
 #ifdef HAVE_LIBMONGOC
-int Nova_QueryClientForReports(mongo_connection *dbconn, struct cfagent_connection *conn, const char *menu, time_t since);
-void UnpackReportBook(mongo_connection *dbconn, char *id,struct Item **reports);
+int Nova_QueryClientForReports(mongo_connection *dbconn, AgentConnection *conn, const char *menu, time_t since);
+void UnpackReportBook(mongo_connection *dbconn, char *id,Item **reports);
 #endif
 
-int Nova_StoreIncomingReports(char *reply,struct Item **reports,int current_report);
-void NewReportBook(struct Item **reports);
-void DeleteReportBook(struct Item **reports);
+int Nova_StoreIncomingReports(char *reply,Item **reports,int current_report);
+void NewReportBook(Item **reports);
+void DeleteReportBook(Item **reports);
 
 
 /* cmd_api.c */
@@ -641,12 +641,12 @@ const char *View2Str(enum cfl_view view);
 
 #ifdef HAVE_LIBMONGOC
 int Nova_GetReportedScalar(char *hostkey,char *scope,char *lval,char *returnval,int bufsize);
-int Nova_GetReportedList(char *hostkey,char *scope,char *lval,struct Rlist **list);
+int Nova_GetReportedList(char *hostkey,char *scope,char *lval,Rlist **list);
 #endif
 
 /* copernicus.c */
 
-void Nova_PrimeGraph(struct Rlist **semantic);
+void Nova_PrimeGraph(Rlist **semantic);
 void Nova_DrawTribe_PNG(char *filename,int *tribe_id,struct CfGraphNode *tribe_node, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size, double *tribe_evc,int topic,char *buffer,int bufsize);
 void Nova_DrawTribe(int *tribe_id,struct CfGraphNode *tribe_node, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],int tribe_size, double *tribe_evc,int topic,char *buffer,int bufsize);
 int Nova_GetMaxEvcNode(double *evc,int tribe_size);
@@ -704,14 +704,14 @@ struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char
 struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,char *ldiff,int regex,time_t lt,int cmp, int sort, char *classRegex, int lookInArchive);
 
 // class finder
-struct Rlist *CFDB_QueryDateTimeClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
-struct Rlist *CFDB_QuerySoftClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
-struct Rlist *CFDB_QueryIpClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
-struct Rlist *CFDB_QueryAllClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
-struct Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
+Rlist *CFDB_QueryDateTimeClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
+Rlist *CFDB_QuerySoftClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
+Rlist *CFDB_QueryIpClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
+Rlist *CFDB_QueryAllClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
+Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
 
 //int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,time_t start_time,double *qa,double *ea,double *da);
-struct Item *CFDB_QueryVitalIds(mongo_connection *conn, char *keyHash);
+Item *CFDB_QueryVitalIds(mongo_connection *conn, char *keyHash);
 struct HubVital *CFDB_QueryVitalsMeta(mongo_connection *conn, char *keyHash);
 int CFDB_QueryMagView2(mongo_connection *conn,char *keyhash,char *monId,time_t start_time,double *qa,double *ea,double *da);
 int CFDB_QueryMonView(mongo_connection *conn, char *keyhash,char *monId, enum monitord_rep rep_type,double *qa,double *ea,double *da);
@@ -721,46 +721,46 @@ int CFDB_QueryLastUpdate(mongo_connection *conn,char *db, char *dbkey,char *keyh
 
 struct HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle, char *file, int lineNo);
 int CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, char *attrVal, int attrValSz);
-struct Item *CFDB_QueryExpandedPromiseAttr(mongo_connection *conn, char *handle, char *attrKey);
+Item *CFDB_QueryExpandedPromiseAttr(mongo_connection *conn, char *handle, char *attrKey);
 struct HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char *promiserType, char *bType, char *bName, int regex, bool filter);
 struct HubQuery *CFDB_QueryHandlesForBundlesWithComments(mongo_connection *conn, char *bType, char *bName);
 struct HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle,char *promiser,char *bName, int escRegex);
-struct Item *CFDB_QueryBundles(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);
-struct Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char *bName);
-struct Item *CFDB_QueryBundleArgs(mongo_connection *conn, char *bType, char *bName);
-struct Item *CFDB_QueryBundlesUsing(mongo_connection *conn, char *bNameReferenced);
+Item *CFDB_QueryBundles(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);
+Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char *bName);
+Item *CFDB_QueryBundleArgs(mongo_connection *conn, char *bType, char *bName);
+Item *CFDB_QueryBundlesUsing(mongo_connection *conn, char *bNameReferenced);
 int CFDB_QueryBundleCount(mongo_connection *conn);
 int CFDB_QueryBundleType(mongo_connection *conn,char *bName,char *buffer,int bufsize);
 int CFDB_QueryPromiseCount(mongo_connection *conn);
 struct HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name);
-struct Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);
-struct Item *CFDB_QueryCdpAcls(mongo_connection *conn, char *sep);
-struct Item *CFDB_QueryCdpCommands(mongo_connection *conn, char *sep);
-struct Item *CFDB_QueryCdpPromiser(mongo_connection *conn, char *sep, char *bundleName, char *promiseType);
+Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);
+Item *CFDB_QueryCdpAcls(mongo_connection *conn, char *sep);
+Item *CFDB_QueryCdpCommands(mongo_connection *conn, char *sep);
+Item *CFDB_QueryCdpPromiser(mongo_connection *conn, char *sep, char *bundleName, char *promiseType);
 int CFDB_QueryLastFileChange(mongo_connection *conn, char *keyHash, char *reportType, char *fileName, char *outBuf, int outBufSz);
-struct Item *CFDB_QueryCdpRegistry(mongo_connection *conn, char *sep);
-struct Item *CFDB_QueryCdpServices(mongo_connection *conn, char *sep);
-struct Item *CFDB_QueryCdpCompliance(mongo_connection *conn, char *handle);
+Item *CFDB_QueryCdpRegistry(mongo_connection *conn, char *sep);
+Item *CFDB_QueryCdpServices(mongo_connection *conn, char *sep);
+Item *CFDB_QueryCdpCompliance(mongo_connection *conn, char *handle);
 
 void CFDB_ListEverything(mongo_connection *conn);
 void CFDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
 int QueryHostsWithClass(mongo_connection *conn, bson_buffer *bb, char *classRegex);
-int QueryInsertHostInfo(mongo_connection *conn,struct Rlist *host_list);
+int QueryInsertHostInfo(mongo_connection *conn,Rlist *host_list);
 void PrintCFDBKey(bson_iterator *it, int depth);
 int CFDB_IteratorNext(bson_iterator *it, bson_type valType);
 int Nova_MagViewOffset(int start_slot,int dbslot,int wrap);
 int CFDB_CountHosts(mongo_connection *conn);
-int CFDB_CountHostsWithClasses(mongo_connection *conn, struct Item *classes);
+int CFDB_CountHostsWithClasses(mongo_connection *conn, Item *classes);
 int CFDB_CountHostsGeneric(mongo_connection *conn, bson *query);
 int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int hostNameSz);
 bool MongoCheckForError(mongo_connection *conn, const char *operation, const char *extra, bool *checkUpdate);
 
 //replica set
-struct Item * CFDB_GetLastseenCache(void);
+Item * CFDB_GetLastseenCache(void);
 int CFDB_QueryIsMaster(void);
 int CFDB_QueryMasterIP(char *buffer,int bufsize);
 int CFDB_QueryReplStatus(mongo_connection *conn, char *buffer,int bufsize);
-struct Item *CFDB_GetDeletedHosts(void);
+Item *CFDB_GetDeletedHosts(void);
 #endif
 
 /* db_save.c */
@@ -773,25 +773,25 @@ void CFDB_Initialize(void);
 
 int CFDB_PutValue(char *lval,char *rval);
 
-void CFDB_SaveSoftware(mongo_connection *conn,enum software_rep sw, char *kH, struct Item *data);
-//void CFDB_SaveMonitorData(mongo_connection *conn, char *kH, enum monitord_rep rep_type, struct Item *data);
-void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_rep rep_type, struct Item *data);
-void CFDB_SaveMonitorHistograms(mongo_connection *conn, char *kH, struct Item *data);
-void CFDB_SaveClasses(mongo_connection *conn, char *kH, struct Item *data);
-void CFDB_SaveVariables(mongo_connection *conn, char *kH, struct Item *data);
-void CFDB_SaveVariables2(mongo_connection *conn, char *kH, struct Item *data);
-void CFDB_SaveTotalCompliance(mongo_connection *conn, char *kH, struct Item *data);
-void CFDB_SavePromiseLog(mongo_connection *conn, char *kH, enum promiselog_rep rep_type, struct Item *data);
-void CFDB_SaveLastSeen(mongo_connection *conn, char *kH, struct Item *data);
-void CFDB_SaveMeter(mongo_connection *conn, char *kH, struct Item *data);
-void CFDB_SaveSoftwareDates(mongo_connection *conn, char *kH, struct Item *data);
-void CFDB_SavePerformance(mongo_connection *conn, char *kH, struct Item *data);
-void CFDB_SaveSetUid(mongo_connection *conn, char *kH, struct Item *data);
-void CFDB_SavePromiseCompliance(mongo_connection *conn, char *kH, struct Item *data);
-void CFDB_SaveFileChanges(mongo_connection *conn, char *kH, struct Item *data);
-void CFDB_SaveFileDiffs(mongo_connection *conn, char *kH, struct Item *data);
-void CFDB_SaveBundles(mongo_connection *conn, char *kH, struct Item *data);
-void CFDB_SaveValueReport(mongo_connection *conn, char *kH, struct Item *data);
+void CFDB_SaveSoftware(mongo_connection *conn,enum software_rep sw, char *kH, Item *data);
+//void CFDB_SaveMonitorData(mongo_connection *conn, char *kH, enum monitord_rep rep_type, Item *data);
+void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_rep rep_type, Item *data);
+void CFDB_SaveMonitorHistograms(mongo_connection *conn, char *kH, Item *data);
+void CFDB_SaveClasses(mongo_connection *conn, char *kH, Item *data);
+void CFDB_SaveVariables(mongo_connection *conn, char *kH, Item *data);
+void CFDB_SaveVariables2(mongo_connection *conn, char *kH, Item *data);
+void CFDB_SaveTotalCompliance(mongo_connection *conn, char *kH, Item *data);
+void CFDB_SavePromiseLog(mongo_connection *conn, char *kH, enum promiselog_rep rep_type, Item *data);
+void CFDB_SaveLastSeen(mongo_connection *conn, char *kH, Item *data);
+void CFDB_SaveMeter(mongo_connection *conn, char *kH, Item *data);
+void CFDB_SaveSoftwareDates(mongo_connection *conn, char *kH, Item *data);
+void CFDB_SavePerformance(mongo_connection *conn, char *kH, Item *data);
+void CFDB_SaveSetUid(mongo_connection *conn, char *kH, Item *data);
+void CFDB_SavePromiseCompliance(mongo_connection *conn, char *kH, Item *data);
+void CFDB_SaveFileChanges(mongo_connection *conn, char *kH, Item *data);
+void CFDB_SaveFileDiffs(mongo_connection *conn, char *kH, Item *data);
+void CFDB_SaveBundles(mongo_connection *conn, char *kH, Item *data);
+void CFDB_SaveValueReport(mongo_connection *conn, char *kH, Item *data);
 void CFDB_SaveHostID(mongo_connection *conn, char *database, char *keyField, char *keyhash,char *ipaddr, char *hostname);
 void Nova_CheckGlobalKnowledgeClass(char *name,char *key);
 bool GetBsonBool(char *data, char *boolKey, bool *val);
@@ -800,19 +800,19 @@ void CFDB_SaveLastUpdate(mongo_connection *conn, char *database, char *keyField,
 
 struct HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *policy, time_t minGenTime);
 void CFDB_SaveCachedTotalCompliance(mongo_connection *conn, char *policy, int slot, double kept, double repaired, double notkept, int count, time_t genTime);
-int CFDB_SaveLastseenCache(struct Item *lastseen);
+int CFDB_SaveLastseenCache(Item *lastseen);
 void CFDB_SaveGoalsCache(char *goal_patterns, char *goal_categories);
 int CFDB_MarkAsDeleted(char *keyhash);
 /*
  * commenting
  */
-int CFDB_AddNote(mongo_connection *conn, char *keyhash, int reportType, char *nid, char *reportData, struct Item *data);
-struct Rlist *CFDB_QueryNotes(mongo_connection *conn,char *keyhash, char *nid, struct Item *data);
-struct Rlist *CFDB_QueryNoteId(mongo_connection *conn,bson *query);
+int CFDB_AddNote(mongo_connection *conn, char *keyhash, int reportType, char *nid, char *reportData, Item *data);
+Rlist *CFDB_QueryNotes(mongo_connection *conn,char *keyhash, char *nid, Item *data);
+Rlist *CFDB_QueryNoteId(mongo_connection *conn,bson *query);
 void CFDBRef_AddToRow(mongo_connection *conn, char *coll,bson *query, char *row_name, char *cid);
 int CFDB_GetRow(mongo_connection *conn, char *db, int reportType, bson *query, char *rowname, char *row, int rowSz, int level);
-struct Item *CFDB_QueryDistinctStr(mongo_connection *conn, char *database, char *collection, char *dKey, char *qKey, char *qVal);
-struct Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collection, char *dKey, bson *queryBson);
+Item *CFDB_QueryDistinctStr(mongo_connection *conn, char *database, char *collection, char *dKey, char *qKey, char *qVal);
+Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collection, char *dKey, bson *queryBson);
 void BsonIteratorToString(char *retBuf, int retBufSz, bson_iterator *i, int depth, int reportType);
 void GetReportKeyMapping(int reportType, char *key, char *retBuf, int retBufSz);
 #endif  /* HAVE_LIBMONGOC */
@@ -828,10 +828,10 @@ void CFDB_PurgeDropReports(mongo_connection *conn);
 void CFDB_PurgeTimestampedReports(mongo_connection *conn);
 void CFDB_PurgeTimestampedLongtermReports(mongo_connection *conn);
 void CFDB_PurgePromiseLogs(mongo_connection *conn, time_t oldThreshold, time_t now);
-void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr, struct Item **purgeNamesPtr);
-int CFDB_CheckAge(char *var, char *key, bson_iterator *it, time_t now, time_t oldThreshold, struct Item **purgeKeysPtr, struct Item **purgeNamesPtr);
-void CFDB_PurgeScanStrTime(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, struct Item **purgeKeysPtr);
-void DeleteFromBsonArray(bson_buffer *bb, char *arrName, struct Item *elements);
+void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, Item **purgeKeysPtr, Item **purgeNamesPtr);
+int CFDB_CheckAge(char *var, char *key, bson_iterator *it, time_t now, time_t oldThreshold, Item **purgeKeysPtr, Item **purgeNamesPtr);
+void CFDB_PurgeScanStrTime(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now, Item **purgeKeysPtr);
+void DeleteFromBsonArray(bson_buffer *bb, char *arrName, Item *elements);
 void CFDB_PurgeHost(mongo_connection *conn, char *keyHash);
 void CFDB_PurgeDeprecatedVitals(mongo_connection *conn);
 
@@ -842,31 +842,31 @@ int CFDB_PurgeDeletedHosts(void);
 
 /* datapackaging.c */
 
-void Nova_PackPerformance(struct Item **reply,char *header,time_t date,enum cfd_menu type);
-void Nova_PackClasses(struct Item **reply,char *header,time_t date,enum cfd_menu type);
-void Nova_PackSetuid(struct Item **reply,char *header,time_t date,enum cfd_menu type);
-void Nova_PackFileChanges(struct Item **reply,char *header,time_t date,enum cfd_menu type);
-void Nova_PackDiffs(struct Item **reply,char *header,time_t date,enum cfd_menu type);
-void Nova_PackMonitorMg(struct Item **reply,char *header,time_t from,enum cfd_menu type);
-void Nova_PackMonitorWk(struct Item **reply,char *header,time_t from,enum cfd_menu type);
-void Nova_PackMonitorYr(struct Item **reply,char *header,time_t from,enum cfd_menu type);
-void Nova_FormatMonitoringReply(struct Item **datap, struct Item **reply, enum cfd_menu type);
-void Nova_PackMonitorHist(struct Item **reply,char *header,time_t from,enum cfd_menu type);
-void Nova_PackCompliance(struct Item **reply,char *header,time_t date,enum cfd_menu type);
-void Nova_PackSoftware(struct Item **reply,char *header,time_t date,enum cfd_menu type);
-void Nova_PackAvailPatches(struct Item **reply,char *header,time_t date,enum cfd_menu type);
-void Nova_PackPatchStatus(struct Item **reply,char *header,time_t date,enum cfd_menu type);
-void Nova_Pack_promise_output_common(struct Item **reply,char *header,time_t date,enum cfd_menu type);
-void Nova_PackValueReport(struct Item **reply,char *header,time_t date,enum cfd_menu type);
-void Nova_PackVariables(struct Item **reply,char *header,time_t date,enum cfd_menu type);
-void Nova_PackVariables2(struct Item **reply,char *header,time_t from,enum cfd_menu type);
-void Nova_PackLastSeen(struct Item **reply,char *header,time_t date,enum cfd_menu type);
-void Nova_PackTotalCompliance(struct Item **reply,char *header,time_t date,enum cfd_menu type);
-void Nova_PackRepairLog(struct Item **reply,char *header,time_t date,enum cfd_menu type);
-void Nova_PackNotKeptLog(struct Item **reply,char *header,time_t date,enum cfd_menu type);
-void Nova_PackMeter(struct Item **reply,char *header,time_t date,enum cfd_menu type);
-void Nova_PackSoftwareDates(struct Item **reply,char *header,time_t from,enum cfd_menu type);
-void Nova_PackBundles(struct Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackPerformance(Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackClasses(Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackSetuid(Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackFileChanges(Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackDiffs(Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackMonitorMg(Item **reply,char *header,time_t from,enum cfd_menu type);
+void Nova_PackMonitorWk(Item **reply,char *header,time_t from,enum cfd_menu type);
+void Nova_PackMonitorYr(Item **reply,char *header,time_t from,enum cfd_menu type);
+void Nova_FormatMonitoringReply(Item **datap, Item **reply, enum cfd_menu type);
+void Nova_PackMonitorHist(Item **reply,char *header,time_t from,enum cfd_menu type);
+void Nova_PackCompliance(Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackSoftware(Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackAvailPatches(Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackPatchStatus(Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_Pack_promise_output_common(Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackValueReport(Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackVariables(Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackVariables2(Item **reply,char *header,time_t from,enum cfd_menu type);
+void Nova_PackLastSeen(Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackTotalCompliance(Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackRepairLog(Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackNotKeptLog(Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackMeter(Item **reply,char *header,time_t date,enum cfd_menu type);
+void Nova_PackSoftwareDates(Item **reply,char *header,time_t from,enum cfd_menu type);
+void Nova_PackBundles(Item **reply,char *header,time_t date,enum cfd_menu type);
 int Nova_CoarseLaterThan(char *key,char *from);
 int Nova_YearSlot(char *day,char *month, char *lifecycle);
 int Nova_LaterThan(char *bigger,char *smaller);
@@ -874,66 +874,66 @@ char *Nova_ShortArch(char *arch);
 
 /* dataunpack.c */
 
-void Nova_UnPackPerformance(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackClasses(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackSetuid(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackFileChanges(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackDiffs(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackMonitorWeek(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackMonitorMag(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackMonitorHist(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackMonitorYear(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackMonitorMg(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackMonitorWk(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackMonitorYr(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackMonitorHg(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackCompliance(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackSoftware(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackAvailPatches(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackPatchStatus(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPack_promise_output_common(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackValueReport(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackVariables(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackVariables2(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackLastSeen(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackTotalCompliance(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackRepairLog(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackNotKeptLog(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackMeter(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackSoftwareDates(mongo_connection *dbconn, char *id, struct Item *data);
-void Nova_UnPackBundles(mongo_connection *dbconn, char *id, struct Item *data);
+void Nova_UnPackPerformance(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackClasses(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackSetuid(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackFileChanges(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackDiffs(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackMonitorWeek(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackMonitorMag(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackMonitorHist(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackMonitorYear(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackMonitorMg(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackMonitorWk(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackMonitorYr(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackMonitorHg(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackCompliance(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackSoftware(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackAvailPatches(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackPatchStatus(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPack_promise_output_common(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackValueReport(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackVariables(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackVariables2(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackLastSeen(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackTotalCompliance(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackRepairLog(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackNotKeptLog(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackMeter(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackSoftwareDates(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackBundles(mongo_connection *dbconn, char *id, Item *data);
 char *Nova_LongArch(char *arch);
 
 /* environments.c */
 
-int Nova_EnvironmentsSanityChecks(struct Attributes a,struct Promise *pp);
-void Nova_VerifyEnvironments(struct Attributes a,struct Promise *pp);
-void Nova_VerifyEnvironmentsPromise(struct Promise *pp);
-void Nova_VerifyVirtDomain(char *uri,enum cfhypervisors envtype,struct Attributes a,struct Promise *pp);
-void Nova_VerifyVirtNetwork(char *uri,enum cfhypervisors envtype,struct Attributes a,struct Promise *pp);
+int Nova_EnvironmentsSanityChecks(Attributes a,Promise *pp);
+void Nova_VerifyEnvironments(Attributes a,Promise *pp);
+void Nova_VerifyEnvironmentsPromise(Promise *pp);
+void Nova_VerifyVirtDomain(char *uri,enum cfhypervisors envtype,Attributes a,Promise *pp);
+void Nova_VerifyVirtNetwork(char *uri,enum cfhypervisors envtype,Attributes a,Promise *pp);
 void Nova_NewEnvironmentsContext(void);
 void Nova_DeleteEnvironmentsContext(void);
 #ifdef HAVE_LIBVIRT
-int Nova_CreateVirtDom(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp);
-int Nova_DeleteVirt(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp);
-int Nova_DeleteVirt(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp);
-int Nova_RunningVirt(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp);
-int Nova_SuspendedVirt(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp);
-int Nova_DownVirt(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp);
-int VerifyZone(struct Attributes a,struct Promise *pp);
+int Nova_CreateVirtDom(virConnectPtr vc,char *uri,Attributes a,Promise *pp);
+int Nova_DeleteVirt(virConnectPtr vc,char *uri,Attributes a,Promise *pp);
+int Nova_DeleteVirt(virConnectPtr vc,char *uri,Attributes a,Promise *pp);
+int Nova_RunningVirt(virConnectPtr vc,char *uri,Attributes a,Promise *pp);
+int Nova_SuspendedVirt(virConnectPtr vc,char *uri,Attributes a,Promise *pp);
+int Nova_DownVirt(virConnectPtr vc,char *uri,Attributes a,Promise *pp);
+int VerifyZone(Attributes a,Promise *pp);
 void Nova_EnvironmentErrorHandler(void);
 void Nova_ShowRunList(virConnectPtr vc);
 void Nova_ShowDormant(virConnectPtr vc);
 void Nova_ShowNetworks(virConnectPtr vc,char **networks);
-int Nova_CreateVirtNetwork(virConnectPtr vc,char **networks,struct Attributes a,struct Promise *pp);
-int Nova_DeleteVirtNetwork(virConnectPtr vc,char **networks,struct Attributes a,struct Promise *pp);
+int Nova_CreateVirtNetwork(virConnectPtr vc,char **networks,Attributes a,Promise *pp);
+int Nova_DeleteVirtNetwork(virConnectPtr vc,char **networks,Attributes a,Promise *pp);
 #endif
 
 
 /* histogram.c */
 
 int Nova_ReadHistogram2(mongo_connection *conn, struct CfDataView *cfv,char *hostkey,char *monId);
-struct Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash);
+Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash);
 void Nova_AnalyseHistogram(char *keyhash,enum observables obs,char *buffer,int bufsize);
 
 /* html.c */
@@ -945,24 +945,24 @@ void Nova_IncludeFile(char *name,char *buffer,int bufsize);
 /* hub.c */
 
 void Nova_StartHub(int argc,char **argv);
-struct Item *Nova_ScanClients(void);
+Item *Nova_ScanClients(void);
 void Nova_HubLog(char *s);
 void Nova_CountMonitoredClasses(void);
 void Nova_CacheTotalCompliance(bool allSlots);
 void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, char *envClass, int slot, time_t start, time_t now);
 int Nova_ShiftChange(void);
-void Nova_UpdateMongoHostList(struct Item **list);
+void Nova_UpdateMongoHostList(Item **list);
 
 /* install.c */
 
-void PrependPromiserList(struct PromiseIdent **list,char *s,struct Promise *pp);
-struct HubQuery *NewHubQuery(struct Rlist *hosts,struct Rlist *records);
+void PrependPromiserList(PromiseIdent **list,char *s,Promise *pp);
+struct HubQuery *NewHubQuery(Rlist *hosts,Rlist *records);
 void DeleteHubQuery(struct HubQuery *hq,void (*fnptr)());
 int CountRecords(struct HubQuery *hq);
 struct HubHost *NewHubHost(char *hubkey, char *keyhash,char *ipaddr,char *hostname);
 struct HubHost *CreateEmptyHubHost(void);
 struct HubHost *UpdateHubHost(struct HubHost *hubHost, char *keyhash,char *ipaddr,char *hostname);
-struct HubHost *GetHubHostIn(struct Rlist *host_list, char *keyhash);
+struct HubHost *GetHubHostIn(Rlist *host_list, char *keyhash);
 void DeleteHubHost(struct HubHost *hp);
 struct HubSoftware *NewHubSoftware(struct HubHost *hh,char *name,char *version,char *arch,time_t timeseen);
 void DeleteHubSoftware(struct HubSoftware *hs);
@@ -1027,10 +1027,10 @@ int SortSoftware(void *p1, void *p2);
 int SortBundleSeen(void *p1, void *p2);
 int SortPromisePopularAscending(void *p1, void *p2);
 int SortPromisePopularDescending(void *p1, void *p2);
-struct HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(struct Rlist *records, int slot);
+struct HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(Rlist *records, int slot);
 
-int PageRecords(struct Rlist **records_p, struct PageInfo *page,void (*fnptr)());
-void CountMarginRecordsVars(struct Rlist **records_p, struct PageInfo *page,int *start_count,int *end_count);
+int PageRecords(Rlist **records_p, struct PageInfo *page,void (*fnptr)());
+void CountMarginRecordsVars(Rlist **records_p, struct PageInfo *page,int *start_count,int *end_count);
 
 /* knowledge.c */
 
@@ -1041,30 +1041,30 @@ void Nova_ListFunctions(void);
 void Nova_ListFunction(const FnCallType *f,int full);
 void Nova_ListPromiseTypes(void);
 
-void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,const char *version);
+void Nova_MapPromiseToTopic(FILE *fp,Promise *pp,const char *version);
 void Nova_BundleReference(FILE *fp,char *bundle);
 void Nova_TypeNode(FILE *fp,char *type);
-void Nova_PromiseNode(FILE *fp,struct Promise *pp,int calltype);
+void Nova_PromiseNode(FILE *fp,Promise *pp,int calltype);
 void Nova_TypeNode(FILE *fp,char *type);
 void Nova_BundleNode(FILE *fp,char *bundle);
 void Nova_BodyNode(FILE *fp,char *body,int calltype);
 void Nova_DependencyGraph(struct Topic *map);
 void Nova_PlotTopicDependencies(int topic,double **adj,char **names,int dim);
-void Nova_MapClassParameterAssociations(FILE *fp, struct Promise *pp,char *promise_id);
+void Nova_MapClassParameterAssociations(FILE *fp, Promise *pp,char *promise_id);
 double NovaShiftAverage(double new,double old);
-double NovaExtractValueFromStream(char *handle,struct Item *stream,struct Attributes a,struct Promise *pp);
-void NovaLogSymbolicValue(char *handle,struct Item *stream,struct Attributes a,struct Promise *pp);
+double NovaExtractValueFromStream(char *handle,Item *stream,Attributes a,Promise *pp);
+void NovaLogSymbolicValue(char *handle,Item *stream,Attributes a,Promise *pp);
 void Nova_ShowBundleDependence(FILE *fp);
 char *NovaEscape(const char *s); /* Thread-unsafe */
-void NovaShowValues(FILE *fp,struct BodySyntax bs);
-void Nova_RegisterImg(struct Item **list,char *dir,char *pic);
-void Nova_RegisterDoc(struct Item **list,char *dir,char *doc);
+void NovaShowValues(FILE *fp,BodySyntax bs);
+void Nova_RegisterImg(Item **list,char *dir,char *pic);
+void Nova_RegisterDoc(Item **list,char *dir,char *doc);
 
 // generating test data
 void Nova_GenerateTestData(int count);
 void Nova_RemoveTestData(void);
 void Nova_UpdateTestData(void);
-struct Rlist* Nova_GetTestMachines(void);
+Rlist* Nova_GetTestMachines(void);
 char *ThisHashPrint(unsigned char digest[EVP_MAX_MD_SIZE+1]);
 void ThisHashString(char *str,char *buffer,int len,unsigned char digest[EVP_MAX_MD_SIZE+1]);
 
@@ -1086,9 +1086,9 @@ bool Nova_ReadMagTimeSeries2(mongo_connection *conn, struct CfDataView *cfv,char
 
 /* monitoring.c */
 
-void Nova_HistoryUpdate(time_t time, const struct Averages *newvals);
-void Nova_UpdateShiftAverage(struct Averages *shift_value,struct Averages *newvals);
-void Nova_ResetShiftAverage(struct Averages *shift_value);
+void Nova_HistoryUpdate(time_t time, const Averages *newvals);
+void Nova_UpdateShiftAverage(Averages *shift_value,Averages *newvals);
+void Nova_ResetShiftAverage(Averages *shift_value);
 double ShiftAverage(double new,double old);
 int NovaRegisterSlot(const char *name, const char *description,const char *units,
                      double expected_minimum, double expected_maximum, bool consolidable);
@@ -1099,9 +1099,9 @@ const char *NovaGetSlotUnits(int index);
 double NovaGetSlotExpectedMinimum(int index);
 double NovaGetSlotExpectedMaximum(int index);
 bool NovaIsSlotConsolidable(int index);
-struct Item *NovaGetMeasurementStream(struct Attributes a,struct Promise *pp);
-struct Item *NovaReSample(int slot,struct Attributes a,struct Promise *pp);
-void NovaNamedEvent(char *eventname,double value,struct Attributes a,struct Promise *pp);
+Item *NovaGetMeasurementStream(Attributes a,Promise *pp);
+Item *NovaReSample(int slot,Attributes a,Promise *pp);
+void NovaNamedEvent(char *eventname,double value,Attributes a,Promise *pp);
 void Nova_DumpSlowlyVaryingObservations(void);
 void Nova_MonOtherInit(void);
 void Nova_MonOtherGatherData(double *cf_this);
@@ -1114,8 +1114,8 @@ void Nova_LookupAggregateClassName(int n,char *name,char *desc);
 time_t WeekBegin(time_t time);
 time_t SubtractWeeks(time_t time, int weeks);
 time_t NextShift(time_t time);
-bool GetRecordForTime(CF_DB *db, time_t time, struct Averages *result);
-void PutRecordForTime(CF_DB *db, time_t time, const struct Averages *values);
+bool GetRecordForTime(CF_DB *db, time_t time, Averages *result);
+void PutRecordForTime(CF_DB *db, time_t time, const Averages *values);
 double BoundedValue(double value, double defval);
 
 /* mon_cumulative.c */
@@ -1137,9 +1137,9 @@ void DeleteFileLine(struct CfFileLine  **liststart,struct CfFileLine *item);
 
 /* promise_db.c */
 
-void Nova_StoreExpandedPromise(struct Promise *pp);
-void Nova_StoreUnExpandedPromises(struct Bundle *bundles,struct Body *bodies);
-void Nova_StoreBody(mongo_connection *dbconn, struct Body *body);
+void Nova_StoreExpandedPromise(Promise *pp);
+void Nova_StoreUnExpandedPromises(Bundle *bundles,Body *bodies);
+void Nova_StoreBody(mongo_connection *dbconn, Body *body);
 
 /* promises.c */
 
@@ -1147,7 +1147,7 @@ const char *Nova_Version(void);
 const char *Nova_NameVersion(void);
 
 void Nova_EnterpriseDiscovery(void);
-int Nova_ClassesIntersect(struct Rlist *contexts1,struct Rlist *contexts2);
+int Nova_ClassesIntersect(Rlist *contexts1,Rlist *contexts2);
 void Nova_DefineHubMaster(void);
 /* pscalar.c */
 
@@ -1156,7 +1156,7 @@ void Nova_SetPersistentScalar(char *lval,char *rval);
 
 /* registry.c */
 
-int Nova_ValidateRegistryPromiser(char *s,struct Attributes a,struct Promise *pp);
+int Nova_ValidateRegistryPromiser(char *s,Attributes a,Promise *pp);
 
 /* reporting.c */
 
@@ -1168,8 +1168,8 @@ void Nova_ZenossSummary(char *docroot);
 void Nova_NoteVarUsageDB(void);
 
 void Nova_OpenCompilationReportFiles(const char *fname);
-void Nova_ShowPromises(struct Bundle *bundles, struct Body *bodies);
-void Nova_ShowPromise(const char *version, struct Promise *pp, int indent);
+void Nova_ShowPromises(Bundle *bundles, Body *bodies);
+void Nova_ShowPromise(const char *version, Promise *pp, int indent);
 int Nova_ExportReports(char *reportName);
 void Nova_CommandAPI(char *lsdata,char *name,char *handle,char *hostkey,char *classregex);
 
@@ -1186,19 +1186,19 @@ void Nova_ImportReports(const char *input_file);
 
 /* runagent.c */
 
-bool Nova_ExecuteRunagent(struct cfagent_connection *conn, const char *menu);
+bool Nova_ExecuteRunagent(AgentConnection *conn, const char *menu);
 
 /* scorecards.c */
 #ifdef HAVE_LIBMONGOC
 void Nova_BarMeter(int pos,double kept,double rep,char *name,char *buffer,int bufsize);
 void Nova_Meter(bson *query,char *db,char *buffer,int bufsize);
 void Nova_GetHourlyData(char *search_string,char *buffer,int bufsize);
-struct Item *Nova_RankHosts(char *search_string,int regex,enum cf_rank_method method,int max_return);
-struct Item *Nova_GreenHosts(void);
-struct Item *Nova_YellowHosts(void);
-struct Item *Nova_RedHosts(void);
-struct Item *Nova_BlueHosts(void);
-struct Item *Nova_ClassifyHostState(char *search_string,int regex,enum cf_rank_method method,int max_return);
+Item *Nova_RankHosts(char *search_string,int regex,enum cf_rank_method method,int max_return);
+Item *Nova_GreenHosts(void);
+Item *Nova_YellowHosts(void);
+Item *Nova_RedHosts(void);
+Item *Nova_BlueHosts(void);
+Item *Nova_ClassifyHostState(char *search_string,int regex,enum cf_rank_method method,int max_return);
 int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *rep);
 int Nova_IsGreen(int level);
 int Nova_IsYellow(int level);
@@ -1210,7 +1210,7 @@ int Nova_GetHostColour(char *lkeyhash);
 #endif
 /* server.c */
 
-void Nova_PackAllReports(struct Item **reply, time_t from, time_t delta1, enum cfd_menu type);
+void Nova_PackAllReports(Item **reply, time_t from, time_t delta1, enum cfd_menu type);
 int Nova_ParseHostname(char *name,char *hostname);
 
 pid_t Nova_StartTwin(int argc,char **argv);
@@ -1220,16 +1220,16 @@ void Nova_ReviveOther(int argc,char **argv);
 
 /* services.c */
 
-void Nova_VerifyServices(struct Attributes a,struct Promise *pp);
+void Nova_VerifyServices(Attributes a,Promise *pp);
 
 /* services_win.c */
 
-void NovaWin_VerifyServices(struct Attributes a,struct Promise *pp);
+void NovaWin_VerifyServices(Attributes a,Promise *pp);
 #ifdef MINGW
-int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, char *argStr,int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp, int setCfPs);
-int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int argc, char **argv, int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp, int setCfPs);
-int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, int unDisable, struct Attributes a,struct Promise *pp, int setCfPs);
-int NovaWin_CheckServiceDisable(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, struct Attributes a,struct Promise *pp, int setCfPs);
+int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, char *argStr,int onlyCheckDeps, int isDependency, Attributes a,Promise *pp, int setCfPs);
+int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int argc, char **argv, int onlyCheckDeps, int isDependency, Attributes a,Promise *pp, int setCfPs);
+int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, int unDisable, Attributes a,Promise *pp, int setCfPs);
+int NovaWin_CheckServiceDisable(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, Attributes a,Promise *pp, int setCfPs);
 int NovaWin_ServiceDepsRunning(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int *allDepsRunning);
 int NovaWin_StopDependentServices(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps);
 int NovaWin_SetServiceStartTime(SC_HANDLE srvHandle, DWORD setState, int onlyFrom, DWORD fromState, int *changeRes);
@@ -1242,16 +1242,16 @@ void NovaWin_AllocSplitServiceArgs(char *argStr, int *argcp, char ***argvp);
 /* sql.c */
 
 int Nova_ValidateSQLTableName(char *table_path,char *db,char *table);
-int VerifyTablePromise(CfdbConn *cfdb,char *table_path,struct Rlist *columns,struct Attributes a,struct Promise *pp);
+int VerifyTablePromise(CfdbConn *cfdb,char *table_path,Rlist *columns,Attributes a,Promise *pp);
 int Nova_ValidateSQLTableName(char *table_path,char *db,char *table);
 void Nova_QueryTableColumns(char *s,char *db,char *table);
-int Nova_NewSQLColumns(char *table,struct Rlist *columns,char ***name_table,char ***type_table,int **size_table,int **done);
+int Nova_NewSQLColumns(char *table,Rlist *columns,char ***name_table,char ***type_table,int **size_table,int **done);
 void Nova_DeleteSQLColumns(char **name_table,char **type_table,int *size_table,int *done,int len);
 void Nova_CreateDBQuery(enum cfdbtype type,char *query);
-int Nova_CreateTableColumns(CfdbConn *cfdb,char *table,struct Rlist *columns,struct Attributes a,struct Promise *pp);
-int NovaCheckSQLDataType(char *type,char *ref_type,struct Promise *pp);
+int Nova_CreateTableColumns(CfdbConn *cfdb,char *table,Rlist *columns,Attributes a,Promise *pp);
+int NovaCheckSQLDataType(char *type,char *ref_type,Promise *pp);
 int Nova_TableExists(CfdbConn *cfdb,char *name);
-struct Rlist *Nova_GetSQLTables(CfdbConn *cfdb);
+Rlist *Nova_GetSQLTables(CfdbConn *cfdb);
 void Nova_ListTables(int type,char *query);
 
 /* syntax.c */
@@ -1259,8 +1259,8 @@ void Nova_ListTables(int type,char *query);
 void SyntaxTree2JavaScript(void);
 void Nova_ShowBundleTypes(void);
 void Nova_ShowControlBodies(void);
-void Nova_ShowPromiseTypesFor(char *s, struct SubTypeSyntax *commonMerge);
-void Nova_ShowBodyParts(const struct BodySyntax *bs,int i);
+void Nova_ShowPromiseTypesFor(char *s, SubTypeSyntax *commonMerge);
+void Nova_ShowBodyParts(const BodySyntax *bs,int i);
 void Nova_ShowRange(char *s,enum cfdatatype type);
 void Nova_ShowBuiltinFunctions(void);
 void Nova_Indent(int i);
@@ -1268,13 +1268,13 @@ void Nova_Indent(int i);
 /* topicmap.c */
 
 void Nova_DumpTopics(void);
-void Nova_FillInGoalComment(struct Item *ip);
+void Nova_FillInGoalComment(Item *ip);
 char *Nova_GetBundleComment(char *bundle);
 void Nova_WebTopicMap_Initialize(void);
 void Nova_LookupUniqueAssoc(int pid,char *buffer,int bufsize);
 void Nova_ScanTheRest(int pid,char *buffer, int bufsize);
 int Nova_SearchTopicMap(char *typed_topic,char *buffer,int bufsize);
-struct Item *Nova_ScanLeadsAssociations(int pid,char *view);
+Item *Nova_ScanLeadsAssociations(int pid,char *view);
 void Nova_ScanOccurrences(int this_id,char *buffer, int bufsize);
 int Nova_GetReportDescription(int this_id,char *buffer, int bufsize);
 
@@ -1282,13 +1282,13 @@ int Nova_GetTopicByTopicId(int pid,char *topic_name,char *topic_id,char *topic_t
 int Nova_AddTopicSearchBuffer(int pid,char *topic_name,char *topic_type,char *buffer,int bufsize);
 int Nova_AddAssocSearchBuffer(char *from_assoc,char *to_assoc,char *buffer,int bufsize);
 void Nova_AddOccurrenceBuffer(char *context,char *locator,enum representations locator_type,char *represents,char *buffer,int bufsize);
-void AtomizeTopicContext(struct AlphaList *context_list,char *topic_context);
+void AtomizeTopicContext(AlphaList *context_list,char *topic_context);
 char *Nova_TopicIdURL(int pid,char *s);
 char *Nova_AssocURL(char *s);
 char *Nova_URL(char *s,char *rep);
-struct Item *Nova_NearestNeighbours(int topic_id,char *assoc_mask);
-struct Item *Nova_GetTopicsInContext(char *context);
-struct Item *Nova_GetBusinessGoals(char *handle);
+Item *Nova_NearestNeighbours(int topic_id,char *assoc_mask);
+Item *Nova_GetTopicsInContext(char *context);
+Item *Nova_GetBusinessGoals(char *handle);
 int Nova_GetUniqueBusinessGoals(char *buffer,int bufsize);
 
 void Nova_PlotTopicCosmos(int topic,char *view,char *buf,int size);
@@ -1334,20 +1334,20 @@ int NovaWin_mkdir(const char *path, mode_t mode);
 int NovaWin_rename(const char *oldpath, const char *newpath);
 int NovaWin_FileExists(const char *fileName);
 int NovaWin_IsDir(char *fileName);
-int NovaWin_VerifyOwner(char *file,struct Promise *pp,struct Attributes attr);
+int NovaWin_VerifyOwner(char *file,Promise *pp,Attributes attr);
 int NovaWin_TakeFileOwnership(char *path);
 int NovaWin_SetFileOwnership(char *path, SID *sid);
 int NovaWin_GetOwnerName(char *path, char *owner, int ownerSz);
-void NovaWin_VerifyFileAttributes(char *file,struct stat *dstat,struct Attributes attr,struct Promise *pp);
-void NovaWin_VerifyCopiedFileAttributes(char *file,struct stat *dstat,struct Attributes attr,struct Promise *pp);
+void NovaWin_VerifyFileAttributes(char *file,struct stat *dstat,Attributes attr,Promise *pp);
+void NovaWin_VerifyCopiedFileAttributes(char *file,struct stat *dstat,Attributes attr,Promise *pp);
 off_t NovaWin_GetDiskUsage(char *file,enum cfsizes type);
 int NovaWin_GetNumHardlinks(char *path, int *numHardLinks);
 
 /* win_log.c */
 
 void OpenLog(int facility);
-void MakeLog(struct Item *mess,enum cfreport level);
-void LogPromiseResult(char *promiser, char peeType, void *promisee, char status, enum cfreport log_level, struct Item *mess);
+void MakeLog(Item *mess,enum cfreport level);
+void LogPromiseResult(char *promiser, char peeType, void *promisee, char status, enum cfreport log_level, Item *mess);
 void CloseLog(void);
 
 /* win_mon.c */
@@ -1357,7 +1357,7 @@ void GatherCPUData(double *CF_THIS);
 /* win_net.c */
 
 void NovaWin_GetInterfaceInfo(void);
-int TryConnect(struct cfagent_connection *conn, struct timeval *tvp, struct sockaddr *cinp, int cinpSz);
+int TryConnect(AgentConnection *conn, struct timeval *tvp, Sockaddr *cinp, int cinpSz);
 
 /* win_pipe.c */
 
@@ -1366,11 +1366,11 @@ FILE *NovaWin_cf_popen_sh(char *command,char *type);
 FILE *NovaWin_cf_popensetuid(char *command,char *type,uid_t uid,gid_t gid,char *chdirv,char *chrootv,int background);
 FILE *NovaWin_cf_popen_shsetuid(char *command,char *type,uid_t uid,gid_t gid,char *chdirv,char *chrootv,int background);
 int NovaWin_cf_pclose(FILE *pp);
-int NovaWin_cf_pclose_def(FILE *pfp, struct Attributes a, struct Promise *pp);
+int NovaWin_cf_pclose_def(FILE *pfp, Attributes a, Promise *pp);
 
 /* win_proc.c */
 
-int NovaWin_DoAllSignals(struct Item *siglist,struct Attributes a,struct Promise *pp);
+int NovaWin_DoAllSignals(Item *siglist,Attributes a,Promise *pp);
 int NovaWin_GracefulTerminate(pid_t pid);
 int NovaWin_IsProcessRunning(pid_t pid);
 int NovaWin_ShellCommandReturnsZero(char *comm, int useshell);
@@ -1381,9 +1381,9 @@ int NovaWin_SetTokenPrivilege(HANDLE token, char *privilegeName, int enablePriv)
 
 /* win_ps.c */
 
-int NovaWin_LoadProcessTable(struct Item **procdata);
-int NovaWin_GetProcessSnapshot(struct Item **procdata);
-int NovaWin_GatherProcessUsers(struct Item **userList, int *userListSz, int *numRootProcs, int *numOtherProcs);
+int NovaWin_LoadProcessTable(Item **procdata);
+int NovaWin_GetProcessSnapshot(Item **procdata);
+int NovaWin_GatherProcessUsers(Item **userList, int *userListSz, int *numRootProcs, int *numOtherProcs);
 
 /* win_service_exec.c */
 
@@ -1408,16 +1408,16 @@ int NovaWin_NameToSid(char *name, SID *sid, DWORD sidSz);
 int NovaWin_SidToName(SID* sid, char *name, int nameSz);
 int NovaWin_SidToString(SID *sid, char *stringSid, int stringSz);
 int NovaWin_StringToSid(char *stringSid, SID *sid, int sidSz);
-struct UidList *NovaWin_Rlist2SidList(struct Rlist *uidnames, struct Promise *pp);
+UidList *NovaWin_Rlist2SidList(Rlist *uidnames, Promise *pp);
 
 #if defined(__MINGW32__)
-FnCallResult FnCallUserExists(struct FnCall *fp,struct Rlist *finalargs);
-FnCallResult FnCallGroupExists(struct FnCall *fp,struct Rlist *finalargs);
+FnCallResult FnCallUserExists(FnCall *fp,Rlist *finalargs);
+FnCallResult FnCallGroupExists(FnCall *fp,Rlist *finalargs);
 #endif
 
 /* win_wmi.c */
 
-int NovaWin_GetInstalledPkgs(struct CfPackageItem **pkgList, struct Attributes a, struct Promise *pp);
+int NovaWin_GetInstalledPkgs(struct CfPackageItem **pkgList, Attributes a, Promise *pp);
 void NovaWin_PrintWmiError(char *str);
 int NovaWin_WmiInitialize(void);
 int NovaWin_WmiDeInitialize(void);
@@ -1433,7 +1433,7 @@ void Nova_AnalyseLongHistory(char *keyname,enum observables obs,char *buffer,int
 
 /* ldap.c */
 bool CfLDAPAuthenticate(char *uri,char *basedn,char *passwd, bool starttls, const char **const errstr);
-int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *user,char *basedn,char *filter,struct Rlist *names,char *scopes,char *sec,char *passwd,bool starttls,int page,int linesperpage,char *buffer, int bufsize, const char **const errstr);
+int CfLDAP_JSON_GetSeveralAttributes(char *uri,char *user,char *basedn,char *filter,Rlist *names,char *scopes,char *sec,char *passwd,bool starttls,int page,int linesperpage,char *buffer, int bufsize, const char **const errstr);
 int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *user,char *basedn,char *filter,char *name,char *scopes,char *sec,char *passwd,bool starttls,int page,int linesperpage,char *buffer, int bufsize, const char **const errstr);
 
 /***************************************************************************/

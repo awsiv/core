@@ -8,7 +8,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-bool Nova_ExecuteRunagent(struct cfagent_connection *conn, const char *menu_str)
+bool Nova_ExecuteRunagent(AgentConnection *conn, const char *menu_str)
 {
 #if defined(HAVE_LIBMONGOC)
 mongo_connection dbconn;
@@ -32,7 +32,7 @@ switch(menu)
    case cfd_menu_relay:
 #ifdef HAVE_CONSTELLATION
       {
-      struct Item *queries = Constellation_CreateAllQueries();
+      Item *queries = Constellation_CreateAllQueries();
       Constellation_QueryRelay(&dbconn, conn,queries);
       DeleteItemList(queries);
       }

@@ -32,8 +32,8 @@ void SyntaxTree2JavaScript()
 void Nova_ShowBundleTypes()
 
 { int i;
-  struct SubTypeSyntax *st;
-  struct SubTypeSyntax *commonEditLine = NULL;
+  SubTypeSyntax *st;
+  SubTypeSyntax *commonEditLine = NULL;
   int closeBrack = false;
 
 printf("var edit_line_bundle_syntax = {\n");
@@ -132,10 +132,10 @@ for (i = 0; CF_ALL_BODIES[i].btype != NULL; i++)
 
 /*******************************************************************/
 
-void Nova_ShowPromiseTypesFor(char *s, struct SubTypeSyntax *commonMerge)
+void Nova_ShowPromiseTypesFor(char *s, SubTypeSyntax *commonMerge)
 
 { int i,j;
-  struct SubTypeSyntax *st;
+  SubTypeSyntax *st;
   int closeBrack = false;
 
 for (i = 0; i < CF3_MODULES; i++)
@@ -175,7 +175,7 @@ for (i = 0; i < CF3_MODULES; i++)
 
 /*******************************************************************/
 
-void Nova_ShowBodyParts(const struct BodySyntax *bs,int indent)
+void Nova_ShowBodyParts(const BodySyntax *bs,int indent)
 
 { int i;
   int closeBrack = false;
@@ -217,7 +217,7 @@ for (i = 0; bs[i].lval != NULL; i++)
       Nova_Indent(indent+6);
       printf("{\n");
       //Nova_Indent(indent+6);
-      Nova_ShowBodyParts((struct BodySyntax *)bs[i].range,indent+3);
+      Nova_ShowBodyParts((BodySyntax *)bs[i].range,indent+3);
       Nova_Indent(indent+6);
       //      printf("},\n\n");
       printf("\n");

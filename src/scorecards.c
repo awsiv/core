@@ -116,7 +116,7 @@ void Nova_Meter(bson *query,char *db,char *buffer,int bufsize)
    struct HubMeter *hm;
  struct HubQuery *hq;
  mongo_connection dbconn;
- struct Rlist *rp;
+ Rlist *rp;
 
  strcpy(buffer,"[");
 
@@ -406,9 +406,9 @@ return result;
 
 /*****************************************************************************/
 
-struct Item *Nova_RankHosts(char *search_string,int regex,enum cf_rank_method method,int max_return)
+Item *Nova_RankHosts(char *search_string,int regex,enum cf_rank_method method,int max_return)
 
-{ struct Item *ip,*hosts,*counted =  NULL;
+{ Item *ip,*hosts,*counted =  NULL;
   int num = 0;
  
 hosts = Nova_ClassifyHostState(search_string,regex,method,0);
@@ -438,9 +438,9 @@ else
 
 /*****************************************************************************/
 
-struct Item *Nova_GreenHosts()
+Item *Nova_GreenHosts()
 
-{ struct Item *ip,*hosts = NULL,*sorted = NULL;
+{ Item *ip,*hosts = NULL,*sorted = NULL;
 
 hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,0);
 
@@ -459,9 +459,9 @@ return sorted;
 
 /*****************************************************************************/
 
-struct Item *Nova_YellowHosts()
+Item *Nova_YellowHosts()
 
-{ struct Item *ip,*hosts = NULL,*sorted = NULL;
+{ Item *ip,*hosts = NULL,*sorted = NULL;
 
 hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,0);
 
@@ -480,9 +480,9 @@ return sorted;
 
 /*****************************************************************************/
 
-struct Item *Nova_RedHosts()
+Item *Nova_RedHosts()
 
-{ struct Item *ip,*hosts = NULL,*sorted = NULL;
+{ Item *ip,*hosts = NULL,*sorted = NULL;
 
  hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,0);
 
@@ -501,9 +501,9 @@ struct Item *Nova_RedHosts()
 
 /*****************************************************************************/
 
-struct Item *Nova_BlueHosts()
+Item *Nova_BlueHosts()
 
-{ struct Item *ip,*hosts = NULL,*sorted = NULL;
+{ Item *ip,*hosts = NULL,*sorted = NULL;
 
 hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,0);
 
@@ -524,7 +524,7 @@ return sorted;
 /* Level                                                                     */
 /*****************************************************************************/
 
-struct Item *Nova_ClassifyHostState(char *search_string,int regex,enum cf_rank_method method,int max_return)
+Item *Nova_ClassifyHostState(char *search_string,int regex,enum cf_rank_method method,int max_return)
 
 /* note the similarities between this fn and GetHostColour() */
     
@@ -537,7 +537,7 @@ struct Item *Nova_ClassifyHostState(char *search_string,int regex,enum cf_rank_m
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rcolumn[CF_SMALLBUF];
   int num = 0,awol,foundMeter;
   mongo_connection conn;
-  struct Item *list = NULL;
+  Item *list = NULL;
   time_t now = time(NULL);
 
 if (!CFDB_Open(&conn))

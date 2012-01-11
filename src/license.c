@@ -390,7 +390,7 @@ return result;
 void CheckLicenses(void)
 
 { int licenses = 0;
-struct Rval retval;
+Rval retval;
 
 if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval, &retval) != cf_notype)
    {   
@@ -433,13 +433,13 @@ void Nova_LogLicenseStatus()
   CF_DBC *dbcp;
   char datestr[CF_MAXVARSIZE],data[CF_MAXVARSIZE],name[CF_BUFSIZE];
   char buffer[CF_BUFSIZE] = {0},work[CF_BUFSIZE] = {0};
-  struct Rval retval;
+  Rval retval;
   int licenses = 0,count = 0;
-  struct Promise *pp = NewPromise("track_license","License tracker");
-  struct Attributes dummyattr = {{0}};
+  Promise *pp = NewPromise("track_license","License tracker");
+  Attributes dummyattr = {{0}};
   struct CfLock thislock;
-  struct QPoint entry;
-  struct Rlist *counter = NULL;
+  QPoint entry;
+  Rlist *counter = NULL;
   int min = 9999999,max = -1,lic1,lic2,i = 0;
   time_t now = time(NULL),dt,then;
   double average,granted,sum_t = 0,ex_t = 0,lic_t = 0;

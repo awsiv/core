@@ -18,12 +18,12 @@
 # include <zone.h>
 #endif
 
-struct PromiseIdent *PROMISER_LIST[CF_HASHTABLESIZE] = { NULL };
-struct PromiseIdent *PROMISER_REGEXES = NULL;
+PromiseIdent *PROMISER_LIST[CF_HASHTABLESIZE] = { NULL };
+PromiseIdent *PROMISER_REGEXES = NULL;
 
 /*****************************************************************************/
 
-void NewPromiser(struct Promise *pp)
+void NewPromiser(Promise *pp)
 
 { int hash;
   char unique[CF_BUFSIZE];
@@ -64,9 +64,9 @@ else
 void AnalyzePromiseConflicts(void)
 
 { int i;
-  struct PromiseIdent *p1,*p2;
-  struct Rlist *contexts1,*contexts2;
-  struct Promise *pp = NULL;
+  PromiseIdent *p1,*p2;
+  Rlist *contexts1,*contexts2;
+  Promise *pp = NULL;
 
 // There should be no duplicate entries in these lists when we get here
   
@@ -243,9 +243,9 @@ if (IsDefinedClass("debian"))
 
 /*****************************************************************************/
 
-void PreSanitizePromise(struct Promise *pp)
+void PreSanitizePromise(Promise *pp)
 
-{ struct Attributes a = {{0}};
+{ Attributes a = {{0}};
 
  /* Attempt run-time-like analysis here before execution if possible */
 
@@ -308,13 +308,13 @@ return "CFEngine Nova " NOVA_VERSION;
 
 /***************************************************************/
 
-void NotePromiseCompliance(struct Promise *pp,double val,enum cf_status status,char *reason)
+void NotePromiseCompliance(Promise *pp,double val,enum cf_status status,char *reason)
 
 { CF_DB *dbp;
   FILE *fp;
   char name[CF_BUFSIZE],promiseHandle[CF_MAXVARSIZE],newNoRepeatId[CF_BUFSIZE];
   static char oldNoRepeatId[CF_BUFSIZE] = {0};
-  struct Event e,newe;
+  Event e,newe;
   time_t now = time(NULL);
   double delta2;
   double vstatus;      /* end with a rough probability */
@@ -421,11 +421,11 @@ chmod(name,0644);
 
 /***************************************************************/
 
-time_t GetPromiseCompliance(struct Promise *pp,double *value,double *average,double *var,time_t *lastseen)
+time_t GetPromiseCompliance(Promise *pp,double *value,double *average,double *var,time_t *lastseen)
 
 { CF_DB *dbp;
   char name[CF_MAXVARSIZE];
-  struct Event e;
+  Event e;
   double lsea = SECONDS_PER_WEEK * 52; /* expire after a year */
   time_t now = time(NULL);
 
@@ -510,7 +510,7 @@ void LastSawBundle(char *name)
 { char filename[CF_BUFSIZE];
   int lsea = LASTSEENEXPIREAFTER;
   double lastseen,delta2;
-  struct QPoint q,newq;
+  QPoint q,newq;
   time_t now = time(NULL);
   CF_DB *dbp;
 
@@ -559,9 +559,9 @@ CloseDB(dbp);
 
 /********************************************************************/
 
-int Nova_ClassesIntersect(struct Rlist *contexts1,struct Rlist *contexts2)
+int Nova_ClassesIntersect(Rlist *contexts1,Rlist *contexts2)
 
-{ struct Rlist *rp1, *rp2;
+{ Rlist *rp1, *rp2;
 
 for (rp1 = contexts1; rp1 != NULL; rp1=rp1->next)
    {

@@ -20,7 +20,7 @@
 
 #include "web_rbac.h"
 
-static struct Item *GetRolesFromDB(bson *query);
+static Item *GetRolesFromDB(bson *query);
 
 
 HubRBAC_t *GetRBACForUser(char *userName)
@@ -34,7 +34,7 @@ HubRBAC_t *GetRBACForUser(char *userName)
 }
 
 
-struct Item *GetAllRoles(void)
+Item *GetAllRoles(void)
 {
  bson query;
  bson_empty(&query);
@@ -43,19 +43,19 @@ struct Item *GetAllRoles(void)
 }
 
 
-struct Item *GetRolesForUser(char *userName)
+Item *GetRolesForUser(char *userName)
 {
  
 }
 
 
-struct Item *SetUserRoles(char *userName, struct Item *roles)
+Item *SetUserRoles(char *userName, Item *roles)
 {
  
 }
 
 
-static struct Item *GetRolesFromDB(bson *query)
+static Item *GetRolesFromDB(bson *query)
 
 // FIXME: finish this up
 {
@@ -77,7 +77,7 @@ static struct Item *GetRolesFromDB(bson *query)
 
  CFDB_Close(&conn);
 
- struct Item* roles;
+ Item* roles;
  
  while (mongo_cursor_next(cursor))
     {

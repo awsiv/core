@@ -16,7 +16,7 @@
 
 /*****************************************************************************/
 
-int Nova_CheckPosixLinuxACL(char *file_path, struct CfACL acl, struct Attributes a, struct Promise *pp)
+int Nova_CheckPosixLinuxACL(char *file_path, Acl acl, Attributes a, Promise *pp)
 
 {
 #ifdef HAVE_LIBACL
@@ -52,14 +52,14 @@ return true;
 
 #ifdef HAVE_LIBACL
 
-int Nova_CheckPosixLinuxAccessACEs(struct Rlist *aces, enum cf_acl_method method, char *file_path, struct Attributes a, struct Promise *pp)
+int Nova_CheckPosixLinuxAccessACEs(Rlist *aces, enum cf_acl_method method, char *file_path, Attributes a, Promise *pp)
 {
   return Nova_CheckPosixLinuxACEs(aces, method,file_path,ACL_TYPE_ACCESS, a, pp);
 }
 
 /************************************************************************************/
 
-int Nova_CheckPosixLinuxInheritACEs(struct Rlist *aces, enum cf_acl_method method, enum cf_acl_inherit directory_inherit, char *file_path, struct Attributes a, struct Promise *pp)
+int Nova_CheckPosixLinuxInheritACEs(Rlist *aces, enum cf_acl_method method, enum cf_acl_inherit directory_inherit, char *file_path, Attributes a, Promise *pp)
 
 { int result;
 
@@ -96,7 +96,7 @@ return result;
 
 /************************************************************************************/
 
-int Nova_CheckPosixLinuxACEs(struct Rlist *aces, enum cf_acl_method method, char *file_path, acl_type_t acl_type, struct Attributes a, struct Promise *pp)
+int Nova_CheckPosixLinuxACEs(Rlist *aces, enum cf_acl_method method, char *file_path, acl_type_t acl_type, Attributes a, Promise *pp)
 
 /*
    Takes as input Cfengine-syntax ACEs and a path to a file.
@@ -114,7 +114,7 @@ int Nova_CheckPosixLinuxACEs(struct Rlist *aces, enum cf_acl_method method, char
   int retv;
   int has_mask;
   int result;
-  struct Rlist *rp;
+  Rlist *rp;
   char *acl_type_str;
 
 acl_new = NULL;
@@ -339,7 +339,7 @@ return true;
 
 /************************************************************************************/
 
-int Nova_CheckDefaultEqualsAccessACL(char *file_path, struct Attributes a, struct Promise *pp)
+int Nova_CheckDefaultEqualsAccessACL(char *file_path, Attributes a, Promise *pp)
 
 /*
   Checks if the default ACL of the given file is the same as the
@@ -425,7 +425,7 @@ return result;
 
 /************************************************************************************/
 
-int Nova_CheckDefaultClearACL(char *file_path, struct Attributes a, struct Promise *pp)
+int Nova_CheckDefaultClearACL(char *file_path, Attributes a, Promise *pp)
 
 /*
   Checks if the default ACL is empty. If not, it is cleared.

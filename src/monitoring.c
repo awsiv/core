@@ -21,7 +21,7 @@
 struct CfMeasurement
    {
    char *path;
-   struct Item *output;
+   Item *output;
    };
 
 typedef struct MonitoringSlot
@@ -103,7 +103,7 @@ struct CfMeasurement NOVA_DATA[CF_DUNBAR_WORK];
 static bool slots_loaded;
 static MonitoringSlot *SLOTS[CF_OBSERVABLES - ob_spare];
 
-static struct Averages SHIFT_VALUE;
+static Averages SHIFT_VALUE;
 static char CURRENT_SHIFT[CF_MAXVARSIZE];
 
 /*****************************************************************************/
@@ -288,7 +288,7 @@ else
 
 /*****************************************************************************/
 
-void Nova_HistoryUpdate(time_t time, const struct Averages *newvals)
+void Nova_HistoryUpdate(time_t time, const Averages *newvals)
 {
 CF_DB *dbp;
 char filename[CF_BUFSIZE];
@@ -314,7 +314,7 @@ CloseDB(dbp);
 
 /*****************************************************************************/
 
-void Nova_UpdateShiftAverage(struct Averages *shift_value,struct Averages *newvals)
+void Nova_UpdateShiftAverage(Averages *shift_value,Averages *newvals)
 
 { int i;
 
@@ -331,7 +331,7 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
 /*****************************************************************************/
 
-void Nova_ResetShiftAverage(struct Averages *shift_value)
+void Nova_ResetShiftAverage(Averages *shift_value)
 
 { int i;
 
@@ -345,10 +345,10 @@ for (i = 0; i < CF_OBSERVABLES; i++)
 
 /*****************************************************************************/
 
-void VerifyMeasurement(double *this,struct Attributes a,struct Promise *pp)
+void VerifyMeasurement(double *this,Attributes a,Promise *pp)
 
 { char *handle = (char *)GetConstraintValue("handle",pp,CF_SCALAR);
-  struct Item *stream = NULL;
+  Item *stream = NULL;
   int slot = 0;
   double new_value;
 
@@ -483,7 +483,7 @@ for (y = 0; y < MONITORING_HISTORY_LENGTH_YEARS; ++y)
       {
       for (j = 0; j < SHIFTS_PER_WEEK && w <= now; ++j, w = NextShift(w))
          {
-         struct Averages av;
+         Averages av;
          if (GetRecordForTime(dbp, w, &av))
             {
             for (k = 0; k < CF_OBSERVABLES; ++k)
@@ -513,12 +513,12 @@ CloseDB(dbp);
 
 /*****************************************************************************/
 
-void SetMeasurementPromises(struct Item **classlist)
+void SetMeasurementPromises(Item **classlist)
 
 { CF_DB *dbp;
   CF_DBC *dbcp;
   char dbname[CF_MAXVARSIZE],eventname[CF_MAXVARSIZE],assignment[CF_BUFSIZE];
-  struct Event entry;
+  Event entry;
   char *key;
   void *stored;
   int ksize,vsize;
@@ -606,7 +606,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
    {
    char buf[CF_MAXVARSIZE],lval[CF_MAXVARSIZE],rval[CF_BUFSIZE];
    enum cfdatatype type;
-   struct Rlist *list = NULL;
+   Rlist *list = NULL;
 
    strncpy(buf,key,CF_MAXVARSIZE-1);
 
@@ -868,7 +868,7 @@ return idx < ob_spare ? true : SLOTS[idx - ob_spare]->consolidable;
 
 /*****************************************************************************/
 
-struct Item *NovaGetMeasurementStream(struct Attributes a,struct Promise *pp)
+Item *NovaGetMeasurementStream(Attributes a,Promise *pp)
 
 { int i;
 
@@ -893,7 +893,7 @@ return NOVA_DATA[i].output;
 
 /*****************************************************************************/
 
-struct Item *NovaReSample(int slot,struct Attributes a,struct Promise *pp)
+Item *NovaReSample(int slot,Attributes a,Promise *pp)
 
 { struct CfLock thislock;
   char line[CF_BUFSIZE],eventname[CF_BUFSIZE];
@@ -901,7 +901,7 @@ struct Item *NovaReSample(int slot,struct Attributes a,struct Promise *pp)
   struct timespec start;
   FILE *fin = NULL;
   mode_t maskval = 0;
-  struct Attributes at = {{0}};
+  Attributes at = {{0}};
 
 if (LICENSES == 0)
    {
@@ -1080,12 +1080,12 @@ return NOVA_DATA[slot].output;
 
 /*****************************************************************************/
 
-double NovaExtractValueFromStream(char *handle,struct Item *stream,struct Attributes a,struct Promise *pp)
+double NovaExtractValueFromStream(char *handle,Item *stream,Attributes a,Promise *pp)
 
 { char value[CF_MAXVARSIZE];
   int count = 1, found = false,match_count = 0;
   double real_val = 0;
-  struct Item *ip,*match = NULL;
+  Item *ip,*match = NULL;
 
   
 for (ip = stream; ip != NULL; ip = ip-> next)
@@ -1190,11 +1190,11 @@ return real_val;
 
 /*****************************************************************************/
 
-void NovaLogSymbolicValue(char *handle,struct Item *stream,struct Attributes a,struct Promise *pp)
+void NovaLogSymbolicValue(char *handle,Item *stream,Attributes a,Promise *pp)
 
 { char value[CF_BUFSIZE],sdate[CF_MAXVARSIZE],filename[CF_BUFSIZE],*v;
   int count = 1, found = false,match_count = 0;
-  struct Item *ip,*match = NULL,*matches = NULL;
+  Item *ip,*match = NULL,*matches = NULL;
   time_t now = time(NULL);
   FILE *fout;
 
@@ -1322,10 +1322,10 @@ else // scalar or static
 
 /*****************************************************************************/
 
-void NovaNamedEvent(char *eventname,double value,struct Attributes a,struct Promise *pp)
+void NovaNamedEvent(char *eventname,double value,Attributes a,Promise *pp)
 
 { char dbname[CF_BUFSIZE];
-  struct Event ev_new,ev_old;
+  Event ev_new,ev_old;
   time_t now = time(NULL);
   double delta2;
   CF_DB *dbp;
@@ -1458,23 +1458,23 @@ snprintf(result, 64, "%d_%.3s_Lcycle_%d_%s",
 /****************************************************************************/
 
 /* Returns true if entry was found, false otherwise */
-bool GetRecordForTime(CF_DB *db, time_t time, struct Averages *result)
+bool GetRecordForTime(CF_DB *db, time_t time, Averages *result)
 {
 char timekey[CF_MAXVARSIZE];
 MakeTimekey(time, timekey);
 
-return ReadDB(db, timekey, result, sizeof(struct Averages));
+return ReadDB(db, timekey, result, sizeof(Averages));
 }
 
 
 /****************************************************************************/
 
-void PutRecordForTime(CF_DB *db, time_t time, const struct Averages *values)
+void PutRecordForTime(CF_DB *db, time_t time, const Averages *values)
 {
 char timekey[CF_MAXVARSIZE];
 MakeTimekey(time, timekey);
 
-WriteDB(db, timekey, values, sizeof(struct Averages));
+WriteDB(db, timekey, values, sizeof(Averages));
 }
 
 /****************************************************************************/
@@ -1493,11 +1493,11 @@ else
 
 /****************************************************************************/
 
-void HistoryUpdate(struct Averages newvals)
+void HistoryUpdate(Averages newvals)
 
 {
-  struct Promise *pp = NewPromise("history_db","the long term memory");
-  struct Attributes dummyattr = {{0}};
+  Promise *pp = NewPromise("history_db","the long term memory");
+  Attributes dummyattr = {{0}};
   struct CfLock thislock;
   time_t now = time(NULL);
 

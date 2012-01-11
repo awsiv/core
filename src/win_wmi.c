@@ -25,13 +25,13 @@
 #define RUN_QUERY(col,q) (!FAILED(dhGetValue(L"%o", &col, wmiSvc, L".ExecQuery(%S)",  L ## q)))
 
 /* static prototypes */
-static int NovaWin_WmiGetInstalledPkgsNew(struct CfPackageItem **pkgList, struct Attributes a, struct Promise *pp);
-static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, struct Attributes a, struct Promise *pp);
+static int NovaWin_WmiGetInstalledPkgsNew(struct CfPackageItem **pkgList, Attributes a, Promise *pp);
+static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, Attributes a, Promise *pp);
 
 DISPATCH_OBJ(wmiSvc);
 
 
-int NovaWin_GetInstalledPkgs(struct CfPackageItem **pkgList, struct Attributes a, struct Promise *pp)
+int NovaWin_GetInstalledPkgs(struct CfPackageItem **pkgList, Attributes a, Promise *pp)
 {
  int res;
 
@@ -66,7 +66,7 @@ int NovaWin_GetInstalledPkgs(struct CfPackageItem **pkgList, struct Attributes a
 /*                             WMI FUNCTIONS                                 */
 /*****************************************************************************/
 
-static int NovaWin_WmiGetInstalledPkgsNew(struct CfPackageItem **pkgList, struct Attributes a, struct Promise *pp)
+static int NovaWin_WmiGetInstalledPkgsNew(struct CfPackageItem **pkgList, Attributes a, Promise *pp)
 
 { char *pkgName = NULL;
  char name[CF_MAXVARSIZE], version[CF_MAXVARSIZE];
@@ -145,7 +145,7 @@ static int NovaWin_WmiGetInstalledPkgsNew(struct CfPackageItem **pkgList, struct
 
 /*****************************************************************************/
 
-static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, struct Attributes a, struct Promise *pp)
+static int NovaWin_WmiGetInstalledPkgsOld(struct CfPackageItem **pkgList, Attributes a, Promise *pp)
 /* For Windows Server 2003 R2, Windows XP and earlier.
  * Less accurate since it does not get .msi file names, only
  * the Caption (fiendly name) of the packages and canonifies those.

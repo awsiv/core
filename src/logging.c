@@ -83,7 +83,7 @@ for (ap = response; ap != NULL; ap = ap->ai_next)
    }
 
 #else
-struct sockaddr_in addr;
+Sockaddr_in addr;
 char timebuffer[26];
 sockaddr_pton(AF_INET,SYSLOG_HOST,&addr);
 addr.sin_port = htons(SYSLOG_PORT);
@@ -96,7 +96,7 @@ if ((sd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
 
 snprintf(message,rfc3164_len,"<%u>%.15s %s %s",pri,cf_strtimestamp_local(now,timebuffer)+4,VFQNAME, log_string);
 
-if (sendto(sd,message,strlen(message),0,(struct sockaddr *)&addr, sizeof(addr)) == -1)
+if (sendto(sd,message,strlen(message),0,(Sockaddr *)&addr, sizeof(addr)) == -1)
    {
    CfOut(cf_error,"sendto"," !! Unable to send syslog datagram");
    return;

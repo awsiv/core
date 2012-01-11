@@ -146,9 +146,9 @@ struct ReportInfo BASIC_REPORTS[] =
 
 /*****************************************************************************/
 
-void CSV2XML(struct Rlist *list)
+void CSV2XML(Rlist *list)
 
-{ struct Rlist *rp,*rline,*rl;
+{ Rlist *rp,*rline,*rl;
   int i;
 
 for (rp = list; rp != NULL; rp = rp->next)
@@ -226,7 +226,7 @@ void SummarizeCompliance(int xml,int html,int csv,int embed,char *stylesheet,cha
 
 { FILE *fin,*fout;
   char name[CF_BUFSIZE],line[CF_BUFSIZE];
-  struct Item *ip,*file = NULL;
+  Item *ip,*file = NULL;
   char start[32],end[32];
   char version[CF_MAXVARSIZE];
   int kept,repaired,notrepaired;
@@ -442,8 +442,8 @@ void SummarizePerPromiseCompliance(int xml,int html,int csv,int embed,char *styl
 { FILE *fout;
   char name[CF_BUFSIZE];
   double lsea = SECONDS_PER_WEEK * 52; /* expire after a year */
-  struct Event entry;
-  struct Item *ip,*htmlreport = NULL;
+  Event entry;
+  Item *ip,*htmlreport = NULL;
   int ksize,vsize;
   CF_DB *dbp;
   CF_DBC *dbcp;
@@ -640,7 +640,7 @@ void SummarizeSetuid(int xml,int html,int csv,int embed,char *stylesheet,char *h
 
 { FILE *fin,*fout;
   char name[CF_BUFSIZE],line[CF_BUFSIZE];
-  struct Item *ip,*file = NULL;
+  Item *ip,*file = NULL;
   char start[32];
 
 snprintf(name,CF_BUFSIZE,"%s/cfagent.%s.log",CFWORKDIR,VSYSNAME.nodename);
@@ -755,7 +755,7 @@ void SummarizeFileChanges(int xml,int html,int csv,int embed,char *stylesheet,ch
 { FILE *fin,*fout;
   char name[CF_BUFSIZE],line[CF_BUFSIZE],datestr[CF_MAXVARSIZE],size[CF_MAXVARSIZE];
   char no[CF_SMALLBUF],change[CF_BUFSIZE],reformat[CF_BUFSIZE],output[2*CF_BUFSIZE],aggregate[CF_BUFSIZE];
-  struct Item *ip,*file = NULL;
+  Item *ip,*file = NULL;
   char pm;
   long start;
   time_t now;
@@ -1089,7 +1089,7 @@ void SummarizePromiseRepaired(int xml,int html,int csv,int embed,char *styleshee
   char handle[CF_MAXVARSIZE];
   time_t date;
   long then;
-  struct Item *ip,*file = NULL;
+  Item *ip,*file = NULL;
   int i = 0;
 
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_REPAIR_LOG);
@@ -1214,7 +1214,7 @@ void SummarizePromiseNotKept(int xml,int html,int csv,int embed,char *stylesheet
   char handle[CF_MAXVARSIZE];
   time_t date;
   long then;
-  struct Item *ip,*file = NULL;
+  Item *ip,*file = NULL;
   char start[32];
   int i = 0;
 
@@ -1387,7 +1387,7 @@ void SummarizeSoftware(int xml,int html,int csv,int embed,char *stylesheet,char 
 
 { FILE *fin,*fout;
   char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch[CF_MAXVARSIZE],mgr[CF_MAXVARSIZE],line[CF_BUFSIZE];
-  struct Item *ip,*file = NULL;
+  Item *ip,*file = NULL;
   int i = 0;
 
 snprintf(name,CF_MAXVARSIZE-1,"%s/state/%s",CFWORKDIR,SOFTWARE_PACKAGES_CACHE);
@@ -1512,7 +1512,7 @@ void SummarizeUpdates(int xml,int html,int csv,int embed,char *stylesheet,char *
 
 { FILE *fin,*fout;
   char name[CF_MAXVARSIZE],version[CF_MAXVARSIZE],arch[CF_MAXVARSIZE],mgr[CF_MAXVARSIZE],line[CF_BUFSIZE];
-  struct Item *ip,*file = NULL;
+  Item *ip,*file = NULL;
   int i = 0, count = 0;
 
 CfOut(cf_verbose,"","Creating available patch report...\n");
@@ -1822,7 +1822,7 @@ void Nova_SummarizeComms()
 { CF_DB *dbp;
   CF_DBC *dbcp;
   int ksize,vsize;
-  struct CfKeyHostSeen entry;
+  KeyHostSeen entry;
   double kept = 1,not_kept = 0,repaired = 0,var,average;
   char name[CF_BUFSIZE], *key;
   void *value;
@@ -1900,7 +1900,7 @@ void SummarizeValue(int xml,int html,int csv,int embed,char *stylesheet,char *he
   FILE *fout;
   time_t now = time(NULL);
   struct promise_value pt;
-  struct Item *ip,*data = NULL;
+  Item *ip,*data = NULL;
   char timebuffer[26];
 
 // Strip out the date resolution so we keep only each day of the year
@@ -2065,7 +2065,7 @@ fprintf(fout,"</table></div>\n");
 void Nova_ZenossSummary(char *docroot)
 
 { char name[CF_MAXVARSIZE];
- struct Item *clist = NULL,*ip;
+ Item *clist = NULL,*ip;
   FILE *fout;
 
 snprintf(name,sizeof(name),"%s/reports/summary.z",docroot);
@@ -2100,7 +2100,7 @@ void Nova_NoteVarUsageDB(void)
 
 /* WARNING: Not thread safe (access to VSCOPE) */
 
-{ struct Scope *ptr;
+{ Scope *ptr;
   char filename[CF_BUFSIZE];
   CF_DB *dbp;
   CF_DBC *dbcp;
@@ -2203,7 +2203,7 @@ OpenCompilationReportFiles(fname);
 
 /*****************************************************************************/
 
-void Nova_ShowPromises(struct Bundle *bundles, struct Body *bodies)
+void Nova_ShowPromises(Bundle *bundles, Body *bodies)
 {
 #if defined(HAVE_LIBMONGOC)
 Nova_StoreUnExpandedPromises(bundles, bodies);
@@ -2214,7 +2214,7 @@ ShowPromisesInReport(bundles, bodies);
 
 /*****************************************************************************/
 
-void Nova_ShowPromise(const char *version, struct Promise *pp, int indent)
+void Nova_ShowPromise(const char *version, Promise *pp, int indent)
 {
 #if defined (HAVE_LIBMONGOC)
 Nova_StoreExpandedPromise(pp);
@@ -2234,7 +2234,7 @@ int Nova_ExportReports(char *reportName)
  * Export from dbm files to one text file.
  */
 {
- struct Item *reports = NULL, *ip;
+ Item *reports = NULL, *ip;
  enum cfd_menu reportType;
  time_t from;
  char filePath[CF_MAXVARSIZE];
@@ -2337,7 +2337,7 @@ int Nova_ImportHostReportsFromStream(mongo_connection *dbconn, char *header, FIL
  char keyHash[CF_MAXVARSIZE] = {0}, ipAddr[CF_MAXVARSIZE] = {0}, hostName[CF_MAXVARSIZE] = {0};
  char buf[CF_BUFSIZE];
  char headerText[CF_SMALLBUF], reportType[CF_SMALLBUF];
- struct Item *reports[CF_CODEBOOK_SIZE] = {0};
+ Item *reports[CF_CODEBOOK_SIZE] = {0};
  char validate[5];
  time_t delta1, genTime;
  long length;
@@ -2537,8 +2537,8 @@ void Nova_ImportReports(const char *input_file)
 
 void NoteEfficiency(double e)
 {
-struct Attributes a = {{0}};
-struct Promise p = {0};
+Attributes a = {{0}};
+Promise p = {0};
 
 NovaNamedEvent("Configuration model efficiency",e,a,&p);
 CfOut(cf_verbose,""," -> Configuration model efficiency for %s = %.2lf%%",VUQNAME,e);

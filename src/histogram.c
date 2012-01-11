@@ -66,7 +66,7 @@ return have_data;
 
 /*******************************************************************/
 
-struct Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash)
+Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash)
 
 { double sx, delta, sum = 0, sigma2;
   int new_gradient = 0, past_gradient = 0, max = 0;
@@ -74,7 +74,7 @@ struct Item *Nova_MapHistogram(struct CfDataView *cfv,char *keyhash)
   int above_noise = false;
   char output[CF_BUFSIZE];
   double sensitivity_factor = 1.2;
-  struct Item *maxima = NULL;
+  Item *maxima = NULL;
 
   /* First find the variance sigma2 */
 

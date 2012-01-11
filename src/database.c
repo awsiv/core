@@ -16,7 +16,7 @@
 #include "cf.nova.h"
 
 
-int VerifyDatabasePromise(CfdbConn *cfdb,char *database,struct Attributes a,struct Promise *pp)
+int VerifyDatabasePromise(CfdbConn *cfdb,char *database,Attributes a,Promise *pp)
 
 {
   char query[CF_BUFSIZE],name[CF_MAXVARSIZE];
@@ -99,9 +99,9 @@ return false;
 
 /*****************************************************************************/
 
-int CheckDatabaseSanity(struct Attributes a, struct Promise *pp)
+int CheckDatabaseSanity(Attributes a, Promise *pp)
 
-{ struct Rlist *rp;
+{ Rlist *rp;
   int retval = true,commas = 0;
 
 if (a.database.type && cf_strcmp(a.database.type,"ms_registry") == 0)
@@ -223,7 +223,7 @@ return retval;
 /* Linker troubles require this code to be here in the main body             */
 /*****************************************************************************/
 
-int VerifyTablePromise(CfdbConn *cfdb,char *table_path,struct Rlist *columns,struct Attributes a,struct Promise *pp)
+int VerifyTablePromise(CfdbConn *cfdb,char *table_path,Rlist *columns,Attributes a,Promise *pp)
 
 { char name[CF_MAXVARSIZE],type[CF_MAXVARSIZE],query[CF_MAXVARSIZE],table[CF_MAXVARSIZE],db[CF_MAXVARSIZE];
   int i,count,size,no_of_cols,*size_table,*done,identified,retval = true;
@@ -407,7 +407,7 @@ return retval;
 
 int Nova_TableExists(CfdbConn *cfdb,char *name)
 
-{ struct Rlist *rp,*list = NULL;
+{ Rlist *rp,*list = NULL;
   int match = false;
 
 list = Nova_GetSQLTables(cfdb);
@@ -427,7 +427,7 @@ return match;
 
 /*****************************************************************************/
 
-int Nova_CreateTableColumns(CfdbConn *cfdb,char *table,struct Rlist *columns,struct Attributes a,struct Promise *pp)
+int Nova_CreateTableColumns(CfdbConn *cfdb,char *table,Rlist *columns,Attributes a,Promise *pp)
 
 { char entry[CF_MAXVARSIZE],query[CF_BUFSIZE];
   int i,*size_table,*done;
@@ -479,9 +479,9 @@ return true;
 /* Level                                                                     */
 /*****************************************************************************/
 
-struct Rlist *Nova_GetSQLTables(CfdbConn *cfdb)
+Rlist *Nova_GetSQLTables(CfdbConn *cfdb)
 
-{ struct Rlist *list = NULL;
+{ Rlist *list = NULL;
   char query[CF_MAXVARSIZE];
 
 Nova_ListTables(cfdb->type,query);

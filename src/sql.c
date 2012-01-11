@@ -91,10 +91,10 @@ snprintf(s,CF_MAXVARSIZE-1,"SELECT column_name,data_type,character_maximum_lengt
 
 /*****************************************************************************/
 
-int Nova_NewSQLColumns(char *table,struct Rlist *columns,char ***name_table,char ***type_table,int **size_table,int **done)
+int Nova_NewSQLColumns(char *table,Rlist *columns,char ***name_table,char ***type_table,int **size_table,int **done)
 
 { int i,no_of_cols = RlistLen(columns);
-  struct Rlist *cols,*rp;
+  Rlist *cols,*rp;
  
 *name_table = (char **)xmalloc(sizeof(char *)*(no_of_cols+1));
 *type_table = (char **)xmalloc(sizeof(char *)*(no_of_cols+1));
@@ -192,7 +192,7 @@ free(done);
 
 /*****************************************************************************/
 
-int NovaCheckSQLDataType(char *type,char *ref_type,struct Promise *pp)
+int NovaCheckSQLDataType(char *type,char *ref_type,Promise *pp)
 
 { static char *aliases[3][2] =
      {

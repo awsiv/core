@@ -134,7 +134,7 @@ int NovaWin_cf_pclose(FILE *pp)
 }
 
 
-int NovaWin_cf_pclose_def(FILE *pfp, struct Attributes a, struct Promise *pp)
+int NovaWin_cf_pclose_def(FILE *pfp, Attributes a, Promise *pp)
 {
  HANDLE procHandle;
  DWORD exitCode;

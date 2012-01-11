@@ -17,7 +17,7 @@
 
 /*****************************************************************************/
 
-void VerifyACL(char *file,struct Attributes a, struct Promise *pp)
+void VerifyACL(char *file,Attributes a, Promise *pp)
 
 {
 if (LICENSES == 0)
@@ -94,14 +94,14 @@ switch(a.acl.acl_type)
 /* Level                                                                     */
 /*****************************************************************************/
 
-int CheckACLSyntax(char *file, struct CfACL acl, struct Promise *pp)
+int CheckACLSyntax(char *file, Acl acl, Promise *pp)
 
 { int valid = true;
   int deny_support = false;
   int mask_support = false;
   char *valid_ops = NULL;
   char *valid_nperms = NULL;
-  struct Rlist *rp;
+  Rlist *rp;
 
 // set unset fields to defautls
 Nova_SetACLDefaults(file, &acl);
@@ -188,7 +188,7 @@ return valid;
  * Set unset fields with documented defaults, to these defaults.
  **/
 
-void Nova_SetACLDefaults(char *path, struct CfACL *acl)
+void Nova_SetACLDefaults(char *path, Acl *acl)
 
 {
 // default: acl_method => append
@@ -216,7 +216,7 @@ if(acl->acl_directory_inherit == cfacl_noinherit && IsDir(path))
 
 /*****************************************************************************/
 
-int Nova_CheckDirectoryInherit(char *path, struct CfACL *acl, struct Promise *pp)
+int Nova_CheckDirectoryInherit(char *path, Acl *acl, Promise *pp)
 
 /*
   Checks that acl_directory_inherit is set to a valid value for this acl type.
@@ -260,7 +260,7 @@ int Nova_CheckDirectoryInherit(char *path, struct CfACL *acl, struct Promise *pp
 
 /*****************************************************************************/
 
-int Nova_CheckACESyntax(char *ace,char *valid_ops,char *valid_nperms,int deny_support, int mask_support,struct Promise *pp)
+int Nova_CheckACESyntax(char *ace,char *valid_ops,char *valid_nperms,int deny_support, int mask_support,Promise *pp)
 
 { char *str;
   int chkid;
@@ -367,7 +367,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova_CheckModeSyntax(char **mode_p, char *valid_ops, char *valid_nperms,struct Promise *pp)
+int Nova_CheckModeSyntax(char **mode_p, char *valid_ops, char *valid_nperms,Promise *pp)
 
 /*
   Checks the syntax of a ':' or NULL terminated mode string.
@@ -438,7 +438,7 @@ return valid;
 
 /*****************************************************************************/
 
-int Nova_CheckPermTypeSyntax(char *permt, int deny_support,struct Promise *pp)
+int Nova_CheckPermTypeSyntax(char *permt, int deny_support,Promise *pp)
 
 /*
   Checks if the given string corresponds to the perm_type syntax.

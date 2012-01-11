@@ -142,11 +142,11 @@ int NovaWin_IsDir(char *fileName)
 
 /*****************************************************************************/
 
-int NovaWin_VerifyOwner(char *file,struct Promise *pp,struct Attributes attr)
+int NovaWin_VerifyOwner(char *file,Promise *pp,Attributes attr)
 {
  SECURITY_DESCRIPTOR *secDesc;
  char procOwnerSid[CF_BUFSIZE];
- struct UidList *ulp;
+ UidList *ulp;
  SID *ownerSid;
  int sidMatch = false;
  DWORD getRes;
@@ -331,7 +331,7 @@ int NovaWin_GetOwnerName(char *path, char *owner, int ownerSz)
 
 /*****************************************************************************/
 
-void NovaWin_VerifyFileAttributes(char *file,struct stat *dstat,struct Attributes attr,struct Promise *pp)
+void NovaWin_VerifyFileAttributes(char *file,struct stat *dstat,Attributes attr,Promise *pp)
 
 {
  CfDebug("NovaWin_VerifyFileAttributes()\n");
@@ -378,7 +378,7 @@ void NovaWin_VerifyFileAttributes(char *file,struct stat *dstat,struct Attribute
 
 /*****************************************************************************/
 
-void NovaWin_VerifyCopiedFileAttributes(char *file,struct stat *dstat,struct Attributes attr,struct Promise *pp)
+void NovaWin_VerifyCopiedFileAttributes(char *file,struct stat *dstat,Attributes attr,Promise *pp)
 
 {
  // TODO: Correct assumption?: if attr.owner.sid is invalid, it will not be changed - no need to backup like on Unix
@@ -463,15 +463,15 @@ int NovaWin_GetNumHardlinks(char *path, int *numHardLinks)
 
 /*****************************************************************************/
 
-CFDIR *OpenDirLocal(const char *dirname)
+Dir *OpenDirLocal(const char *dirname)
 {
- CFDIR *ret;
+ Dir *ret;
  HANDLE searchHandle;
  WIN32_FIND_DATA data;
  char pattern[MAX_PATH];
  snprintf(pattern, MAX_PATH, "%s\\*", dirname);
 
- ret = xcalloc(1, sizeof(CFDIR));
+ ret = xcalloc(1, sizeof(Dir));
 
  ret->entrybuf = xcalloc(1, sizeof(struct dirent));
 
@@ -485,7 +485,7 @@ CFDIR *OpenDirLocal(const char *dirname)
 
 /*
  * Hack: we store 1 in dirent->d_ino to mark "this has not been displayed" after
- * FindFirstFile. Better have it encapsulated somewhere in subtype of CFDIR.
+ * FindFirstFile. Better have it encapsulated somewhere in subtype of Dir.
  */
  ret->entrybuf->d_ino = 1;
  ret->entrybuf->d_namlen = strlen(data.cFileName);
@@ -496,7 +496,7 @@ CFDIR *OpenDirLocal(const char *dirname)
 
 /*****************************************************************************/
 
-const struct dirent *ReadDirLocal(CFDIR *dir)
+const struct dirent *ReadDirLocal(Dir *dir)
 {
  if ((HANDLE)dir->dirh == INVALID_HANDLE_VALUE)
     {
@@ -529,7 +529,7 @@ const struct dirent *ReadDirLocal(CFDIR *dir)
 
 /*****************************************************************************/
 
-void CloseDirLocal(CFDIR *dir)
+void CloseDirLocal(Dir *dir)
 {
  if ((HANDLE)dir->dirh != INVALID_HANDLE_VALUE)
     {

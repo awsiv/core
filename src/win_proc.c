@@ -21,7 +21,7 @@
 // TODO: Implement ? - we only support one signal: SIGKILL (9)
 /* Returns true if SIGKILL was one of the signals, false otherwise */
 
-int NovaWin_DoAllSignals(struct Item *siglist,struct Attributes a,struct Promise *pp)
+int NovaWin_DoAllSignals(Item *siglist,Attributes a,Promise *pp)
 {
  if(!BOOTSTRAP && !Nova_CheckLicenseWin("NovaWin_DoAllSignals"))
     {
@@ -30,8 +30,8 @@ int NovaWin_DoAllSignals(struct Item *siglist,struct Attributes a,struct Promise
 
  int kill = false;
  int signal;
- struct Item *ip;
- struct Rlist *rp;
+ Item *ip;
+ Rlist *rp;
  pid_t pid;
 
  if (siglist == NULL)

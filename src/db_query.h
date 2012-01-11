@@ -28,14 +28,14 @@ struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char
 struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,char *ldiff,int regex,time_t lt,int cmp, int sort, char *classRegex, int lookInArchive);
 
 // class finder
-struct Rlist *CFDB_QueryDateTimeClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
-struct Rlist *CFDB_QuerySoftClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
-struct Rlist *CFDB_QueryIpClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
-struct Rlist *CFDB_QueryAllClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
-struct Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
+Rlist *CFDB_QueryDateTimeClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
+Rlist *CFDB_QuerySoftClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
+Rlist *CFDB_QueryIpClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
+Rlist *CFDB_QueryAllClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
+Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
 
 //int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,time_t start_time,double *qa,double *ea,double *da);
-struct Item *CFDB_QueryVitalIds(mongo_connection *conn, char *keyHash);
+Item *CFDB_QueryVitalIds(mongo_connection *conn, char *keyHash);
 struct HubVital *CFDB_QueryVitalsMeta(mongo_connection *conn, char *keyHash);
 int CFDB_QueryMagView2(mongo_connection *conn,char *keyhash,char *monId,time_t start_time,double *qa,double *ea,double *da);
 int CFDB_QueryMonView(mongo_connection *conn, char *keyhash,char *monId, enum monitord_rep rep_type,double *qa,double *ea,double *da);
@@ -45,46 +45,46 @@ int CFDB_QueryLastUpdate(mongo_connection *conn,char *db, char *dbkey,char *keyh
 
 struct HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle, char *file, int lineNo);
 int CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, char *attrVal, int attrValSz);
-struct Item *CFDB_QueryExpandedPromiseAttr(mongo_connection *conn, char *handle, char *attrKey);
+Item *CFDB_QueryExpandedPromiseAttr(mongo_connection *conn, char *handle, char *attrKey);
 struct HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char *promiserType, char *bType, char *bName, int regex, bool filter);
 struct HubQuery *CFDB_QueryHandlesForBundlesWithComments(mongo_connection *conn, char *bType, char *bName);
 struct HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle,char *promiser,char *bName, int escRegex);
-struct Item *CFDB_QueryBundles(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);
-struct Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char *bName);
-struct Item *CFDB_QueryBundleArgs(mongo_connection *conn, char *bType, char *bName);
-struct Item *CFDB_QueryBundlesUsing(mongo_connection *conn, char *bNameReferenced);
+Item *CFDB_QueryBundles(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);
+Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char *bName);
+Item *CFDB_QueryBundleArgs(mongo_connection *conn, char *bType, char *bName);
+Item *CFDB_QueryBundlesUsing(mongo_connection *conn, char *bNameReferenced);
 int CFDB_QueryBundleCount(mongo_connection *conn);
 int CFDB_QueryBundleType(mongo_connection *conn,char *bName,char *buffer,int bufsize);
 int CFDB_QueryPromiseCount(mongo_connection *conn);
 struct HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name);
-struct Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);
-struct Item *CFDB_QueryCdpAcls(mongo_connection *conn, char *sep);
-struct Item *CFDB_QueryCdpCommands(mongo_connection *conn, char *sep);
-struct Item *CFDB_QueryCdpPromiser(mongo_connection *conn, char *sep, char *bundleName, char *promiseType);
+Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);
+Item *CFDB_QueryCdpAcls(mongo_connection *conn, char *sep);
+Item *CFDB_QueryCdpCommands(mongo_connection *conn, char *sep);
+Item *CFDB_QueryCdpPromiser(mongo_connection *conn, char *sep, char *bundleName, char *promiseType);
 int CFDB_QueryLastFileChange(mongo_connection *conn, char *keyHash, char *reportType, char *fileName, char *outBuf, int outBufSz);
-struct Item *CFDB_QueryCdpRegistry(mongo_connection *conn, char *sep);
-struct Item *CFDB_QueryCdpServices(mongo_connection *conn, char *sep);
-struct Item *CFDB_QueryCdpCompliance(mongo_connection *conn, char *handle);
+Item *CFDB_QueryCdpRegistry(mongo_connection *conn, char *sep);
+Item *CFDB_QueryCdpServices(mongo_connection *conn, char *sep);
+Item *CFDB_QueryCdpCompliance(mongo_connection *conn, char *handle);
 
 void CFDB_ListEverything(mongo_connection *conn);
 void CFDB_ScanHubHost(bson_iterator *it,char *keyhash,char *ipaddr,char *hostnames);
 int QueryHostsWithClass(mongo_connection *conn, bson_buffer *bb, char *classRegex);
-int QueryInsertHostInfo(mongo_connection *conn,struct Rlist *host_list);
+int QueryInsertHostInfo(mongo_connection *conn,Rlist *host_list);
 void PrintCFDBKey(bson_iterator *it, int depth);
 int CFDB_IteratorNext(bson_iterator *it, bson_type valType);
 int Nova_MagViewOffset(int start_slot,int dbslot,int wrap);
 int CFDB_CountHosts(mongo_connection *conn);
-int CFDB_CountHostsWithClasses(mongo_connection *conn, struct Item *classes);
+int CFDB_CountHostsWithClasses(mongo_connection *conn, Item *classes);
 int CFDB_CountHostsGeneric(mongo_connection *conn, bson *query);
 int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int hostNameSz);
 bool MongoCheckForError(mongo_connection *conn, const char *operation, const char *extra, bool *checkUpdate);
 
 //replica set
-struct Item * CFDB_GetLastseenCache(void);
+Item * CFDB_GetLastseenCache(void);
 int CFDB_QueryIsMaster(void);
 int CFDB_QueryMasterIP(char *buffer,int bufsize);
 int CFDB_QueryReplStatus(mongo_connection *conn, char *buffer,int bufsize);
-struct Item *CFDB_GetDeletedHosts(void);
+Item *CFDB_GetDeletedHosts(void);
 
 // host
 JsonArray *CFDB_QueryHostKeys(mongo_connection *conn, char *hostname, char *ip);

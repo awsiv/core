@@ -31,7 +31,7 @@ char *Nova_GetProcessOptions()
 
 /*****************************************************************************/
 
-void LogFileChange(char *file,int change,struct Attributes a,struct Promise *pp)
+void LogFileChange(char *file,int change,Attributes a,Promise *pp)
 
 { char destination[CF_BUFSIZE];
   struct stat sb, dsb;
@@ -463,7 +463,7 @@ struct CfFileLine *AppendFileLine(struct CfFileLine **liststart,char *item,int p
 
 { struct CfFileLine *ip, *lp,*prev = NULL;
 
-ip = xmalloc(sizeof(struct Item));
+ip = xmalloc(sizeof(Item));
 
 ip->text = xstrdup(item);
 

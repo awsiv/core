@@ -44,25 +44,25 @@ struct TopicAssociation
    char *assoc_type;
    char *fwd_name;
    char *bwd_name;
-   struct Rlist *associates;
+   Rlist *associates;
    char *associate_topic_type;
    struct TopicAssociation *next;
    };
 
 /*******************************************************************/
 
-struct Rlist
+Rlist
    {
    void *item;
    char type;
-   struct Rlist *state_ptr; /* Points to "current" state/element of sub-list */
-   struct Rlist *next;
+   Rlist *state_ptr; /* Points to "current" state/element of sub-list */
+   Rlist *next;
    };
 
-struct Item
+Item
    {
    char  *name;
-   struct Item *next;
+   Item *next;
    };
 
 /*****************************************************************************/
@@ -72,7 +72,7 @@ void ProcessFile(char *file,FILE *fin,char *context,char *prefix);
 char *CanonifyName(char *str);
 void AddTopic(struct Topic **list,char *name,char *type,int nr);
 int TopicExists(struct Topic *list,char *topic_name,char *topic_type);
-void AppendItem (struct Item **liststart,char *itemstring);
+void AppendItem (Item **liststart,char *itemstring);
 char ToLower (char ch);
 char ToUpper (char ch);
 char *ToUpperStr (char *str);
@@ -82,10 +82,10 @@ char *GetTopicType(struct Topic *list,char *topic_name);
 void AddTopicAssociation(struct TopicAssociation **list,char *fwd_name,char *bwd_name,char *topic_type,char *associate,int verify);
 struct Topic *GetTopic(struct Topic *list,char *topic_name);
 struct TopicAssociation *AssociationExists(struct TopicAssociation *list,char *fwd,char *bwd,int verify);
-struct Rlist *IdempPrependRScalar(struct Rlist **start,void *item, char type);
-struct Rlist *KeyInRlist(struct Rlist *list,char *key);
-struct Rlist *PrependRlist(struct Rlist **start,void *item, char type);
-struct Rlist *SplitStringAsRList(char *string,char sep);
+Rlist *IdempPrependRScalar(Rlist **start,void *item, char type);
+Rlist *KeyInRlist(Rlist *list,char *key);
+Rlist *PrependRlist(Rlist **start,void *item, char type);
+Rlist *SplitStringAsRList(char *string,char sep);
 int SubStrnCopyChr(char *to,char *from,int len,char sep);
 
 /*****************************************************************************/
@@ -136,7 +136,7 @@ void ProcessFile(char *document,FILE *fin,char *context,char *prefix)
 { char tmp[2048],line[2048],type[2048],url[2048],title[2048],*sp;
  char chapter[2048],section[2048],subsection[2048],script[2048],doctitle[2048];
   struct Topic *tp,*topics = NULL;
-  struct Item *ip,*scriptlog = NULL;
+  Item *ip,*scriptlog = NULL;
   int lineno = 0;  
 
 strcpy(chapter,"Special Topics Guide");
@@ -354,7 +354,7 @@ for (tp = topics; tp != NULL; tp=tp->next)
       
       printf("    \"%s\" ",tp->topic_name);
       
-      struct Rlist *list = ta->associates;
+      Rlist *list = ta->associates;
       
       printf(" association => a(\"%s\",\"%s\",\"%s\")",
              ta->fwd_name,
@@ -709,12 +709,12 @@ return NULL;
 
 /*********************************************************************/
 
-void AppendItem (struct Item **liststart,char *itemstring)
+void AppendItem (Item **liststart,char *itemstring)
 
-{ struct Item *ip, *lp;
+{ Item *ip, *lp;
   char *sp,*spe = NULL;
 
-if ((ip = (struct Item *)malloc(sizeof(struct Item))) == NULL)
+if ((ip = (Item *)malloc(sizeof(Item))) == NULL)
    {
    perror("malloc");
    exit(1);
@@ -841,7 +841,7 @@ void AddTopicAssociation(struct TopicAssociation **list,char *fwd_name,char *bwd
 
 { struct TopicAssociation *ta = NULL,*texist;
   char assoc_type[256];
-  struct Rlist *rp;
+  Rlist *rp;
 
 strncpy(assoc_type,CanonifyName(fwd_name),255);
 
@@ -961,7 +961,7 @@ return NULL;
 
 /*******************************************************************/
 
-struct Rlist *IdempPrependRScalar(struct Rlist **start,void *item, char type)
+Rlist *IdempPrependRScalar(Rlist **start,void *item, char type)
 
 { char *scalar = strdup((char *)item);
 
@@ -978,9 +978,9 @@ else
 
 /*******************************************************************/
 
-struct Rlist *KeyInRlist(struct Rlist *list,char *key)
+Rlist *KeyInRlist(Rlist *list,char *key)
 
-{ struct Rlist *rp;
+{ Rlist *rp;
 
 for (rp = list; rp != NULL; rp = rp->next)
    {
@@ -995,15 +995,15 @@ return NULL;
 
 /*******************************************************************/
 
-struct Rlist *PrependRlist(struct Rlist **start,void *item, char type)
+Rlist *PrependRlist(Rlist **start,void *item, char type)
 
    /* heap memory for item must have already been allocated */
     
-{ struct Rlist *rp,*lp = *start;
-  struct FnCall *fp;
+{ Rlist *rp,*lp = *start;
+  FnCall *fp;
   char *sp = NULL;
 
-if ((rp = (struct Rlist *)malloc(sizeof(struct Rlist))) == NULL)
+if ((rp = (Rlist *)malloc(sizeof(Rlist))) == NULL)
    {
    exit(1);
    }
@@ -1022,13 +1022,13 @@ return rp;
 
 /*******************************************************************/
 
-struct Rlist *SplitStringAsRList(char *string,char sep)
+Rlist *SplitStringAsRList(char *string,char sep)
 
  /* Splits a string containing a separator like "," 
     into a linked list of separate items, supports
     escaping separators, e.g. \, */
 
-{ struct Rlist *liststart = NULL;
+{ Rlist *liststart = NULL;
   char *sp;
   char node[CF_MAXVARSIZE];
   int maxlen = strlen(string);

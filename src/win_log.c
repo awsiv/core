@@ -25,7 +25,7 @@ static HANDLE logHandle = NULL;
 extern int FACILITY;
 
 /* We use Event Logging on widows. */
-void MakeLog(struct Item *mess, enum cfreport level)
+void MakeLog(Item *mess, enum cfreport level)
 {
  WORD eventType;
  DWORD eventId;
@@ -229,14 +229,14 @@ void CloseLog(void)
 
 /* Logs promise result. CfOut() should not be called here due to risk of 
  * infinite recursion. */
-void LogPromiseResult(char *promiser, char peeType, void *promisee, char status, enum cfreport log_level, struct Item *mess)
+void LogPromiseResult(char *promiser, char peeType, void *promisee, char status, enum cfreport log_level, Item *mess)
 {
  char *strMsg, *strPromisee;
  char *insertStrings[6] = {0};
  char peeBuf[CF_BUFSIZE];
  WORD eventType;
  DWORD eventId;
- struct Rlist *rp;
+ Rlist *rp;
  int peebCopied = 0;
 
  if(!BOOTSTRAP && !Nova_CheckLicenseWin("LogPromiseResult"))
@@ -308,7 +308,7 @@ void LogPromiseResult(char *promiser, char peeType, void *promisee, char status,
 
         memset(peeBuf, 0, sizeof(peeBuf));
 
-        for (rp = (struct Rlist *)promisee; rp != NULL; rp=rp->next)
+        for (rp = (Rlist *)promisee; rp != NULL; rp=rp->next)
            {
            if(strlen(rp->item) + peebCopied + 2 >= sizeof(peeBuf))
               {

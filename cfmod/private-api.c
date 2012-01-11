@@ -127,7 +127,7 @@ cfpr_ldap_get_several_attributes(
 */
 
 {
-struct Rlist *names = NULL;
+Rlist *names = NULL;
 char *uri,*basedn,*filter,*name,*scopes,*sec,*passwd,*user;
 int ret,u_len, d_len, f_len,n_len,s_len,ss_len,p_len,page,linesperpage,uu_len;
 char buffer[1000000];

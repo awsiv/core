@@ -17,7 +17,7 @@
 #define CF_TEST_HOSTNAME "cfengine_auto_test"
 /*****************************************************************************/
 
-struct Item *NOVA_BUNDLEDEPENDENCE = NULL;
+Item *NOVA_BUNDLEDEPENDENCE = NULL;
 
 /*****************************************************************************/
 
@@ -55,7 +55,7 @@ struct Topic *tp;
 struct TopicAssociation *ta;
 struct Occurrence *op;
 struct Inference *ip;
-struct Item *itp;
+Item *itp;
 char packNumStr[CF_MAXVARSIZE];
 mongo_connection dbconn = {0};
 bson_buffer bb,bbuf,*sub,*assocs;
@@ -130,7 +130,7 @@ mongo_remove(&dbconn,MONGO_KM_OCCURRENCES,bson_empty(&b));
 
 for (op = occurrences; op != NULL; op=op->next)
    {
-   struct Rlist *rp;
+   Rlist *rp;
 
    for (rp = op->represents; rp != NULL; rp=rp->next)
       {
@@ -177,8 +177,8 @@ CFDB_Close(&dbconn);
 void SyntaxCompletion(char *s)
 
 { int i,j,k,l,m;
-  struct SubTypeSyntax *ss;
-  struct BodySyntax *bs,*bs2 = NULL;
+  SubTypeSyntax *ss;
+  BodySyntax *bs,*bs2 = NULL;
   const FnCallType *fn;
 
 if (EnterpriseExpiry())
@@ -218,7 +218,7 @@ for  (i = 0; i < CF3_MODULES; i++)
    
    for (j = 0; ss[j].btype != NULL; j++)
       {
-      bs = (struct BodySyntax *)ss[j].bs;
+      bs = (BodySyntax *)ss[j].bs;
 
       if (s && cf_strcmp(s,ss[j].subtype) == 0)
          {
@@ -253,7 +253,7 @@ for  (i = 0; i < CF3_MODULES; i++)
                    break;
                case cf_body:
                    printf("   %s  ~ defined in a separate body, with elements\n\n",bs[k].lval);
-                   bs2 = (struct BodySyntax *)bs[k].range;
+                   bs2 = (BodySyntax *)bs[k].range;
                    
                    for (l = 0; bs2[l].lval !=  NULL; l++)
                       {
@@ -282,7 +282,7 @@ for  (i = 0; i < CF3_MODULES; i++)
          
          if (bs[k].dtype == cf_body)
             {
-            bs2 = (struct BodySyntax *)bs[k].range;
+            bs2 = (BodySyntax *)bs[k].range;
             
             for (l = 0; bs2[l].lval !=  NULL; l++)
                {
@@ -326,11 +326,11 @@ printf("   <syntax element>\n");
 
 /*****************************************************************************/
 
-void Nova_MapPromiseToTopic(FILE *fp,struct Promise *pp,const char *version)
+void Nova_MapPromiseToTopic(FILE *fp,Promise *pp,const char *version)
 
 { char promise_id[CF_BUFSIZE];
-  struct Rlist *rp,*depends_on = GetListConstraint("depends_on",pp), *rp2;
-  struct Rlist *class_list = SplitRegexAsRList(pp->classes,"[.!()|&]+",100,false);
+  Rlist *rp,*depends_on = GetListConstraint("depends_on",pp), *rp2;
+  Rlist *class_list = SplitRegexAsRList(pp->classes,"[.!()|&]+",100,false);
   char *bundlename = NULL, *bodyname = NULL;
 
 if (LICENSES == 0)
@@ -367,8 +367,8 @@ fprintf(fp,"  \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",pp->agentsubtype
 
 if (strcmp(pp->agentsubtype,"files") == 0)
    {
-   struct Rlist *servers = GetListConstraint("servers",pp);
-   struct FnCall *edit_bundle = (struct FnCall *)GetConstraintValue("edit_line",pp,CF_FNCALL);
+   Rlist *servers = GetListConstraint("servers",pp);
+   FnCall *edit_bundle = (FnCall *)GetConstraintValue("edit_line",pp,CF_FNCALL);
    char *source = GetConstraintValue("source",pp,CF_SCALAR);
 
    fprintf(fp,"files::\n");
@@ -400,8 +400,8 @@ if (strcmp(pp->agentsubtype,"files") == 0)
 
 if (strcmp(pp->agentsubtype,"methods") == 0)
    {
-   struct Constraint *cp;
-   struct FnCall *fnp;
+   Constraint *cp;
+   FnCall *fnp;
    
    for (cp = pp->conlist; cp != NULL; cp = cp->next)
       {
@@ -413,7 +413,7 @@ if (strcmp(pp->agentsubtype,"methods") == 0)
                 bundlename = (char *)cp->rval.item;
                 break;
             case CF_FNCALL:
-                fnp = (struct FnCall *)cp->rval.item;
+                fnp = (FnCall *)cp->rval.item;
                 bundlename = fnp->name;
                 break;
             default:
@@ -431,7 +431,7 @@ if (strcmp(pp->agentsubtype,"methods") == 0)
                    }
                 break;   
             case CF_FNCALL:
-                fnp = (struct FnCall *)cp->rval.item;
+                fnp = (FnCall *)cp->rval.item;
                 bodyname = fnp->name;                
                 break;
             }
@@ -497,7 +497,7 @@ switch (pp->promisee.rtype)
    case CF_LIST:
 
        fprintf(fp,"promisees::\n\n");
-       for (rp = (struct Rlist *)pp->promisee.item; rp != NULL; rp=rp->next)
+       for (rp = (Rlist *)pp->promisee.item; rp != NULL; rp=rp->next)
           {
           fprintf(fp,"  \"%s\"\n", (const char *)rp->item);
           fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,NovaEscape(pp->promiser),NOVA_GIVES);          
@@ -596,9 +596,9 @@ Constellation_ScanAccessRelationships(fp,pp,promise_id);
 void ShowTopicRepresentation(FILE *fp)
     
 { int i,j,k,l;
-  struct SubTypeSyntax *ss;
-  const struct BodySyntax *bs,*bs2;
-  struct Rval retval;
+  SubTypeSyntax *ss;
+  const BodySyntax *bs,*bs2;
+  Rval retval;
   static char *level[] = { "high", "low", "normal", NULL };
   static char *dev[] = { "dev1", "dev2", "microanomaly", "anomaly", NULL };
 
@@ -731,7 +731,7 @@ for (i = 0; i < CF3_MODULES; i++)
             
             if (bs[l].dtype == cf_body)
                {
-               bs2 = (struct BodySyntax *)(bs[l].range);
+               bs2 = (BodySyntax *)(bs[l].range);
                
                if (bs2 == NULL || bs2 == (void *)CF_BUNDLE)
                   {
@@ -842,7 +842,7 @@ fprintf(fp," \"WinServer2008\" generalizations => { \"windows\"};");
 
 if (GetVariable("control_common",CFG_CONTROLBODY[cfg_site_classes].lval,&retval) != cf_notype)
    {
-   struct Rlist *rp;
+   Rlist *rp;
    
    fprintf(fp,"locations::");
 
@@ -1004,7 +1004,7 @@ for (i = 0; CF_COMMON_SUBTYPES[i].subtype != NULL; i++)
 
 /*****************************************************************************/
 
-const char *PromiseID(struct Promise *pp)
+const char *PromiseID(Promise *pp)
 
 { char static id[CF_MAXVARSIZE];
   char vbuff[CF_MAXVARSIZE];
@@ -1034,12 +1034,12 @@ return id;
 
 /*****************************************************************************/
 
-void Nova_MapClassParameterAssociations(FILE *fp, struct Promise *pp,char *promise_id)
+void Nova_MapClassParameterAssociations(FILE *fp, Promise *pp,char *promise_id)
 
-{ struct Rlist *impacted = NULL, *dependency = NULL, *potential,*rp;
-  struct Bundle *bp;
-  struct SubType *sp;
-  struct Promise *pp2;
+{ Rlist *impacted = NULL, *dependency = NULL, *potential,*rp;
+  Bundle *bp;
+  SubType *sp;
+  Promise *pp2;
   char *value;
   int found = false;
 
@@ -1191,7 +1191,7 @@ DeleteRlist(impacted);
 
 /*****************************************************************************/
 
-void RegisterBundleDependence(char *name,struct Promise *pp)
+void RegisterBundleDependence(char *name,Promise *pp)
 
 { char assertion[CF_BUFSIZE];
   char *handle;
@@ -1230,7 +1230,7 @@ if ((handle = (char *)GetConstraintValue("handle",pp,CF_SCALAR)))
 
 void Nova_ShowBundleDependence(FILE *fp)
 
-{ struct Item *ip;
+{ Item *ip;
 
 for (ip = NOVA_BUNDLEDEPENDENCE; ip != NULL; ip =ip->next)
    {
@@ -1277,7 +1277,7 @@ return buffer;
 
 /*****************************************************************************/
 
-void NovaShowValues(FILE *fp,struct BodySyntax bs)
+void NovaShowValues(FILE *fp,BodySyntax bs)
 
 { int i;
   const char *range =  NULL;
@@ -1351,7 +1351,7 @@ return detox;
 /* Library documents                                                 */
 /*********************************************************************/
 
-void Nova_RegisterDoc(struct Item **list,char *dir,char *doc)
+void Nova_RegisterDoc(Item **list,char *dir,char *doc)
 
 { char title[CF_BUFSIZE] = {0},path[CF_BUFSIZE],line[CF_BUFSIZE];
   int i;
@@ -1436,15 +1436,15 @@ void Nova_GenerateTestData(int count)
 
 {
 #ifdef HAVE_LIBMONGOC
- struct Rlist *testmachines = NULL,*rp=NULL,*total=NULL;
- struct Item *ip;
+ Rlist *testmachines = NULL,*rp=NULL,*total=NULL;
+ Item *ip;
  time_t from;
  char newkeyhash[CF_BUFSIZE]={0},newaddresses[CF_MAXVARSIZE]={0},newhostnames[CF_BUFSIZE]={0},noDot[CF_BUFSIZE]={0};
  unsigned char digest[EVP_MAX_MD_SIZE+1];
  int i = 0;
  int currReport = -1;
 
- struct Item *reports[CF_CODEBOOK_SIZE] = {0}, *packedReports=NULL;
+ Item *reports[CF_CODEBOOK_SIZE] = {0}, *packedReports=NULL;
  char buffer[1000000]={0},buf[CF_BUFSIZE]={0};
  int bufsize = 1000000;
  int countLen =0;
@@ -1543,7 +1543,7 @@ void Nova_GenerateTestData(int count)
 #endif
 }
 /*********************************************************************/
-struct Rlist* Nova_GetTestMachines(void)
+Rlist* Nova_GetTestMachines(void)
 
 {
 #ifdef HAVE_LIBMONGOC
@@ -1555,7 +1555,7 @@ struct Rlist* Nova_GetTestMachines(void)
   char keyhash[CF_MAXVARSIZE],addresses[CF_MAXVARSIZE],hostnames[CF_MAXVARSIZE];
   char temp[CF_MAXVARSIZE];
   int total_added=0;
-   struct Rlist *testmachines = NULL;
+   Rlist *testmachines = NULL;
 
 if (!CFDB_Open(&conn))
    {
@@ -1617,7 +1617,7 @@ return NULL;
 void Nova_RemoveTestData(void)
 {
 #ifdef HAVE_LIBMONGOC
- struct Rlist *testmachines = NULL,*rp=NULL;
+ Rlist *testmachines = NULL,*rp=NULL;
   int i=0;
   testmachines= Nova_GetTestMachines();
 
@@ -1728,7 +1728,7 @@ if (!CFDB_Close(&conn))
 
 /*********************************************************************/
 
-void Nova_RegisterImg(struct Item **list,char *dir,char *pic)
+void Nova_RegisterImg(Item **list,char *dir,char *pic)
 
 { char work[CF_MAXVARSIZE],*sp;
 

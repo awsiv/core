@@ -32,9 +32,9 @@ char MAILTO[CF_BUFSIZE];
 char MAILFROM[CF_BUFSIZE];
 char EXECCOMMAND[CF_BUFSIZE];
 char VMAILSERVER[CF_BUFSIZE];
-struct Item *SCHEDULE = NULL;
-struct Item *FEDERATION = NULL;
-struct Item *EXCLUDE_HOSTS = NULL;
+Item *SCHEDULE = NULL;
+Item *FEDERATION = NULL;
+Item *EXCLUDE_HOSTS = NULL;
 
 pid_t MYTWIN = 0;
 int MAXLINES = 30;
@@ -45,26 +45,26 @@ int NOWINSERVICE = false;
 int THREADS = 0;
 int CFH_ZENOSS = false;
 
-extern struct BodySyntax CFEX_CONTROLBODY[];
+extern BodySyntax CFEX_CONTROLBODY[];
 
 /* Prototypes */
 
 void StartHub(int argc,char **argv);
-void Nova_CollectReports(struct Attributes a, struct Promise *pp);
+void Nova_CollectReports(Attributes a, Promise *pp);
 int ScheduleRun(void);
-static void Nova_RemoveExcludedHosts(struct Item **list, struct Item *hosts_exclude);
+static void Nova_RemoveExcludedHosts(Item **list, Item *hosts_exclude);
 
-static void Nova_Scan(struct Item *masterlist, struct Attributes a, struct Promise *pp);
-static pid_t Nova_ScanList(struct Item *list,struct Attributes a,struct Promise *pp);
-static void Nova_SequentialScan(struct Item *masterlist, struct Attributes a, struct Promise *pp);
-static void Nova_ParallelizeScan(struct Item *masterlist,struct Attributes a,struct Promise *pp);
+static void Nova_Scan(Item *masterlist, Attributes a, Promise *pp);
+static pid_t Nova_ScanList(Item *list,Attributes a,Promise *pp);
+static void Nova_SequentialScan(Item *masterlist, Attributes a, Promise *pp);
+static void Nova_ParallelizeScan(Item *masterlist,Attributes a,Promise *pp);
 static void SplayLongUpdates(void);
 static void ScheduleRunMaintenanceJobs(void);
 static pid_t Nova_Maintain(pid_t maintainer_pid);
 static bool IsMaintainerProcRunning(pid_t maintainer_pid);
 
 static void Nova_CreateHostID(mongo_connection *dbconnp, char *hostID, char *ipaddr);
-static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer,struct Attributes a, struct Promise *pp);
+static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer,Attributes a, Promise *pp);
 
 /*****************************************************************************/
 
@@ -127,7 +127,7 @@ return 1;
 
 #else
 
-struct GenericAgentConfig config = CheckOpts(argc,argv);
+GenericAgentConfig config = CheckOpts(argc,argv);
 GenericInitialize(argc,argv, "hub", config);
 ThisAgentInit();
 KeepPromises(config);
@@ -144,13 +144,13 @@ return 0;
 /* Level 1                                                                   */
 /*****************************************************************************/
 
-struct GenericAgentConfig CheckOpts(int argc,char **argv)
+GenericAgentConfig CheckOpts(int argc,char **argv)
 
 { extern char *optarg;
   char arg[CF_BUFSIZE];
   int optindex = 0;
   int c;
-  struct GenericAgentConfig config = GenericAgentDefaultConfig(cf_hub);
+  GenericAgentConfig config = GenericAgentDefaultConfig(cf_hub);
 
 while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMaisn",OPTIONS,&optindex)) != EOF)
   {
@@ -273,11 +273,11 @@ else if (SCHEDULE == NULL)
 
 /*****************************************************************************/
 
-void KeepPromises(struct GenericAgentConfig config)
+void KeepPromises(GenericAgentConfig config)
 
 { 
-struct Constraint *cp;
-struct Rval retval;
+Constraint *cp;
+Rval retval;
 
 for (cp = ControlBodyConstraints(cf_hub); cp != NULL; cp=cp->next)
    {
@@ -294,12 +294,12 @@ for (cp = ControlBodyConstraints(cf_hub); cp != NULL; cp=cp->next)
    
    if (strcmp(cp->lval,CFH_CONTROLBODY[cfh_schedule].lval) == 0)
       {
-      struct Rlist *rp;
+      Rlist *rp;
       CfDebug("schedule ...\n");
       DeleteItemList(SCHEDULE);
       SCHEDULE = NULL;
       
-      for (rp  = (struct Rlist *)retval.item; rp != NULL; rp = rp->next)
+      for (rp  = (Rlist *)retval.item; rp != NULL; rp = rp->next)
          {
          if (!IsItemIn(SCHEDULE,rp->item))
             {
@@ -310,12 +310,12 @@ for (cp = ControlBodyConstraints(cf_hub); cp != NULL; cp=cp->next)
    
    if (strcmp(cp->lval,CFH_CONTROLBODY[cfh_federation].lval) == 0)
       {
-      struct Rlist *rp;
+      Rlist *rp;
       CfDebug("federation ...\n");
       DeleteItemList(FEDERATION);
       FEDERATION = NULL;
       
-      for (rp  = (struct Rlist *)retval.item; rp != NULL; rp = rp->next)
+      for (rp  = (Rlist *)retval.item; rp != NULL; rp = rp->next)
          {
          if (!IsItemIn(FEDERATION,rp->item))
             {
@@ -326,12 +326,12 @@ for (cp = ControlBodyConstraints(cf_hub); cp != NULL; cp=cp->next)
 
    if (strcmp(cp->lval,CFH_CONTROLBODY[cfh_exclude_hosts].lval) == 0)
       {
-      struct Rlist *rp;
+      Rlist *rp;
       CfDebug("exclude_hosts ...\n");
       DeleteItemList(EXCLUDE_HOSTS);
       EXCLUDE_HOSTS = NULL;
       
-      for (rp  = (struct Rlist *)retval.item; rp != NULL; rp = rp->next)
+      for (rp  = (Rlist *)retval.item; rp != NULL; rp = rp->next)
          {
          if (!IsItemIn(EXCLUDE_HOSTS,rp->item))
             {
@@ -381,7 +381,7 @@ CfOut(cf_error,"","This component is only used in commercial editions of the Cfe
 void SplayLongUpdates()
 
 { CF_DB *dbp;
-  struct LockData entry,update;
+  LockData entry,update;
   CF_DBC *dbcp;
   void *value;
   int ksize,vsize, count = 0, optimum_splay_interval;
@@ -507,7 +507,7 @@ printf(" -> Redistributed host updates with <= %d per slot, each ~%d secs per sl
 
 int ScheduleRun()
 {
-struct Item *ip;
+Item *ip;
 
 if (EnterpriseExpiry())
   {
@@ -556,11 +556,11 @@ return false;
 
 /*****************************************************************************/
 
-void Nova_UpdateMongoHostList(struct Item **list)
+void Nova_UpdateMongoHostList(Item **list)
 
 {
- struct Item *ip = NULL, *lastseen = NULL, *ip2 = NULL, *new_lastseen=NULL;
- struct Item *deleted_hosts=NULL;
+ Item *ip = NULL, *lastseen = NULL, *ip2 = NULL, *new_lastseen=NULL;
+ Item *deleted_hosts=NULL;
  int count = 0;
 
 deleted_hosts = CFDB_GetDeletedHosts();
@@ -638,10 +638,10 @@ CFDB_SaveHostID(dbconn,MONGO_ARCHIVE,cfr_keyhash,hostID,ipaddr,NULL);
 
 /*****************************************************************************/
 
-static void Nova_RemoveExcludedHosts(struct Item **listp, struct Item *hosts_exclude)
+static void Nova_RemoveExcludedHosts(Item **listp, Item *hosts_exclude)
 
-{ struct Item *ip;
-  struct Item *include = NULL;
+{ Item *ip;
+  Item *include = NULL;
 
   
 for (ip = *listp; ip != NULL; ip = ip->next)
@@ -668,8 +668,8 @@ void Nova_StartHub(int argc,char **argv)
 
 { int time_to_run = false;
   time_t now = time(NULL);
-  struct Promise *pp = NewPromise("hub_cfengine","the aggregator"); 
-  struct Attributes a = {{0}};
+  Promise *pp = NewPromise("hub_cfengine","the aggregator"); 
+  Attributes a = {{0}};
   struct CfLock thislock;
   pid_t maintainer_pid = CF_UNDEFINED;
 
@@ -751,9 +751,9 @@ YieldCurrentLock(thislock); // Never get here
 /* level                                                            */
 /********************************************************************/
 
-void Nova_CollectReports(struct Attributes a, struct Promise *pp)
+void Nova_CollectReports(Attributes a, Promise *pp)
 {
-struct Item *masterhostlist = Nova_ScanClients();
+Item *masterhostlist = Nova_ScanClients();
 
 Nova_Scan(masterhostlist,a,pp);
 DeleteItemList(masterhostlist);
@@ -768,7 +768,7 @@ Nova_CountMonitoredClasses();
 
 /********************************************************************/
 
-static void Nova_Scan(struct Item *masterlist, struct Attributes a, struct Promise *pp)
+static void Nova_Scan(Item *masterlist, Attributes a, Promise *pp)
 {
 if (NO_FORK)
    {
@@ -782,10 +782,10 @@ else
 
 /********************************************************************/
 
-static void Nova_SequentialScan(struct Item *masterlist, struct Attributes a, struct Promise *pp)
+static void Nova_SequentialScan(Item *masterlist, Attributes a, Promise *pp)
 {
  mongo_connection dbconn;
- struct Item *ip;
+ Item *ip;
 
  if(!CFDB_Open(&dbconn))
    {
@@ -820,7 +820,7 @@ return false;
 
 /********************************************************************/
 
-static void DistributeScanTasks(struct Item* scanhosts, struct Item** queues, int nqueues)
+static void DistributeScanTasks(Item* scanhosts, Item** queues, int nqueues)
 {
 /*
  * In order to avoid large number of processes to be started just to get the
@@ -836,7 +836,7 @@ for (;;)
       {
       for (j = 0; j < CHUNKSIZE; ++j)
          {
-         struct Item *host = scanhosts;
+         Item *host = scanhosts;
          if (host == NULL)
             {
             return;
@@ -852,12 +852,12 @@ for (;;)
 
 /********************************************************************/
 
-static void Nova_ParallelizeScan(struct Item *masterlist,struct Attributes a,struct Promise *pp)
+static void Nova_ParallelizeScan(Item *masterlist,Attributes a,Promise *pp)
 
 {
 #define SCAN_CHILDREN 50
 
-struct Item *list[SCAN_CHILDREN] = { NULL };
+Item *list[SCAN_CHILDREN] = { NULL };
 int i = 0;
 pid_t children[SCAN_CHILDREN] = { 0 };
 int nchildren = 0;
@@ -908,10 +908,10 @@ CfOut(cf_verbose, "", "All hostscan processes finished execution");
 
 /********************************************************************/
 
-static pid_t Nova_ScanList(struct Item *list,struct Attributes a,struct Promise *pp)
+static pid_t Nova_ScanList(Item *list,Attributes a,Promise *pp)
 
 {
-struct Item *ip;
+Item *ip;
 pid_t child_id;
 
 CfOut(cf_verbose,"","----------------------------------------------------------------\n");
@@ -943,14 +943,14 @@ else
 
 /********************************************************************/
 
-static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer,struct Attributes a, struct Promise *pp)
+static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer,Attributes a, Promise *pp)
 
-{ struct cfagent_connection *conn;
+{ AgentConnection *conn;
   time_t average_time = 600, now = time(NULL);
   int long_time_no_see = false;
   struct CfLock thislock;
-  struct Promise *ppp = NewPromise("hail","open"); 
-  struct Attributes aa = {{0}};
+  Promise *ppp = NewPromise("hail","open"); 
+  Attributes aa = {{0}};
 
 aa.restart_class = "nonce";
 aa.transaction.ifelapsed = 60*BIG_UPDATES;
@@ -1103,7 +1103,7 @@ void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, char *e
 {
   struct HubQuery *hq;
   struct HubTotalCompliance *ht;
-  struct Rlist *rp;
+  Rlist *rp;
   double kept,repaired,notkept;
   int count;
   time_t end;
@@ -1151,8 +1151,8 @@ void Nova_CountMonitoredClasses()
 {
   char work[CF_BUFSIZE];
   struct HubQuery *hq;
-  struct Rlist *rp;
-  struct Item *order_results = NULL,*ip;
+  Rlist *rp;
+  Item *order_results = NULL,*ip;
   mongo_connection dbconn;
 
 /* BEGIN query document */
@@ -1191,15 +1191,15 @@ for (ip = order_results; ip != NULL; ip = ip->next)
 /* Hub control                                                       */
 /*********************************************************************/
 
-struct Item *Nova_ScanClients()
+Item *Nova_ScanClients()
 
 { CF_DB *dbp;
   CF_DBC *dbcp;
   char *key,name[CF_BUFSIZE];
   void *value;
-  struct CfKeyHostSeen entry;
+  KeyHostSeen entry;
   int ksize,vsize;
-  struct Item *list = NULL;
+  Item *list = NULL;
   time_t now = time(NULL);
 
 snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_LASTDB_FILE);
@@ -1234,7 +1234,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       
       memcpy(&entry,value,sizeof(entry));
       //IdempPrependItem(&list,key+1,entry.address);
-      struct Item *ip = ReturnItemIn(list,key+1);
+      Item *ip = ReturnItemIn(list,key+1);
 
       if (!ip)
          {

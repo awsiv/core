@@ -83,7 +83,7 @@ int Nova_GetReportedScalar(char *hostkey,char *scope,char *lval,char *returnval,
 { char buffer[CF_BUFSIZE];
  struct HubVariable *hv;
  struct HubQuery *hq;
- struct Rlist *rp;
+ Rlist *rp;
  mongo_connection dbconn;
 
 if (!CFDB_Open(&dbconn))
@@ -129,14 +129,14 @@ return true;
 
 /*****************************************************************************/
 
-int Nova_GetReportedList(char *hostkey,char *scope,char *lval,struct Rlist **list)
+int Nova_GetReportedList(char *hostkey,char *scope,char *lval,Rlist **list)
 
 /* This function allocates memory which needs to be deleted afterwards */
     
 { char buffer[CF_BUFSIZE];
   struct HubVariable *hv;
   struct HubQuery *hq;
-  struct Rlist *rp;
+  Rlist *rp;
   mongo_connection dbconn;
 
 if (!CFDB_Open(&dbconn))
@@ -152,7 +152,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    
    if (strlen(hv->dtype) > 1) // list
       {
-      *list = CopyRvalItem((struct Rval) { hv->rval, CF_LIST }).item;
+      *list = CopyRvalItem((Rval) { hv->rval, CF_LIST }).item;
       }
    else
       {

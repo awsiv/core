@@ -14,14 +14,14 @@
 
 RSA *Nova_SelectKeyRing(char *name)
 
-{ struct Rlist *rp;
-  struct CfKeyBinding *kp;
+{ Rlist *rp;
+  KeyBinding *kp;
   
 CfOut(cf_verbose,""," -> Looking for key for \"%s\" in cache",name);
  
 for (rp = SERVER_KEYRING; rp !=  NULL; rp=rp->next)
    {
-   kp = (struct CfKeyBinding *) rp->item;
+   kp = (KeyBinding *) rp->item;
 
    if (strcmp(kp->name,name) == 0)
       {
@@ -40,12 +40,12 @@ return NULL;
 
 void Nova_IdempAddToKeyRing(char *name,char *ipaddress,RSA *key)
 
-{ struct Rlist *rp;
-  struct CfKeyBinding *kp;
+{ Rlist *rp;
+  KeyBinding *kp;
   
 for (rp = SERVER_KEYRING; rp !=  NULL; rp=rp->next)
    {
-   kp = (struct CfKeyBinding *) rp->item;
+   kp = (KeyBinding *) rp->item;
 
    if (strcmp(kp->name,name) == 0)
       {
@@ -56,7 +56,7 @@ for (rp = SERVER_KEYRING; rp !=  NULL; rp=rp->next)
 CfOut(cf_verbose,""," -> Caching key for %s in the ring",name);
 
 ThreadLock(cft_system);
-kp = xmalloc(sizeof(struct CfKeyBinding));
+kp = xmalloc(sizeof(KeyBinding));
 ThreadUnlock(cft_system);
 
 ThreadLock(cft_system);
@@ -79,8 +79,8 @@ kp->timestamp = time(NULL);
 
 void Nova_PurgeKeyRing()
 
-{ struct Rlist *rp,*rpp = NULL;
-  struct CfKeyBinding *kp;
+{ Rlist *rp,*rpp = NULL;
+  KeyBinding *kp;
   time_t now = time(NULL);
   static time_t then;
   
@@ -95,7 +95,7 @@ rp = SERVER_KEYRING;
 
 while (rp !=  NULL)
    {
-   kp = (struct CfKeyBinding *) rp->item;
+   kp = (KeyBinding *) rp->item;
 
    CfOut(cf_verbose,""," -> Holding key for %s (%s)",kp->name,kp->address);
    

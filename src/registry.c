@@ -27,23 +27,23 @@
 
 int Nova_OpenRegistryKey(char *key, HKEY *key_h, int create);
 int Nova_PrintAllValues(HKEY key_h);
-int Nova_VerifyRegistryValueAssocs(HKEY key_h,struct Attributes a,struct Promise *pp);
+int Nova_VerifyRegistryValueAssocs(HKEY key_h,Attributes a,Promise *pp);
 int Nova_GetRawRegistryValue(HKEY key_h, char *name, void *data_p, unsigned long *data_sz);
 DWORD Str2RegDtype(char *datatypeStr);
-void Nova_RecursiveQueryKey(CF_DB *dbp,HKEY *key_h,char *name,struct Attributes a,struct Promise *pp, int level);
-int Nova_RegistryKeyIntegrity(CF_DB *dbp,char *key,struct Attributes a,struct Promise *pp);
-void Nova_RegistryValueIntegrity(CF_DB *dbp,char *key,char *value,char *data,int size,int type,struct Attributes a,struct Promise *pp);
+void Nova_RecursiveQueryKey(CF_DB *dbp,HKEY *key_h,char *name,Attributes a,Promise *pp, int level);
+int Nova_RegistryKeyIntegrity(CF_DB *dbp,char *key,Attributes a,Promise *pp);
+void Nova_RegistryValueIntegrity(CF_DB *dbp,char *key,char *value,char *data,int size,int type,Attributes a,Promise *pp);
 int Nova_ReadCmpPseudoRegistry(CF_DB *dbp,char *dbkey,void *ptr,int size,int *cmp);
 HKEY Str2HKey(char *root_key);
-void Nova_RecursiveRestoreKey(CF_DB *dbp,char *keyname,struct Attributes a,struct Promise *pp);
+void Nova_RecursiveRestoreKey(CF_DB *dbp,char *keyname,Attributes a,Promise *pp);
 int Nova_CopyRegistryValue(char *key,char *value,char *buffer);
-void Nova_DeleteRegistryKey(struct Attributes a,struct Promise *pp);
+void Nova_DeleteRegistryKey(Attributes a,Promise *pp);
 static bool Nova_CompareRegistryValue(HKEY key_h, DWORD dataType, char *name, char *valueStr, bool *outCmp);
 
 
 /*****************************************************************************/
 
-void VerifyRegistryPromise(struct Attributes a,struct Promise *pp)
+void VerifyRegistryPromise(Attributes a,Promise *pp)
 {
   HKEY key_h;  // a registry key handle
   char name[CF_MAXVARSIZE];
@@ -178,7 +178,7 @@ return false;
 /* Level                                                                     */
 /*****************************************************************************/
 
-void Nova_RecursiveQueryKey(CF_DB*dbp,HKEY *key_h,char *keyname,struct Attributes a,struct Promise *pp, int level) 
+void Nova_RecursiveQueryKey(CF_DB*dbp,HKEY *key_h,char *keyname,Attributes a,Promise *pp, int level) 
 
 /*  key_h,                   // key handle 
     classname,               // buffer for class name 
@@ -290,14 +290,14 @@ if (changes)
 
 /*****************************************************************************/
 
-void Nova_DeleteRegistryKey(struct Attributes a,struct Promise *pp)
+void Nova_DeleteRegistryKey(Attributes a,Promise *pp)
     
 { int ret;
   HKEY key_h;
   char root_key[CF_MAXVARSIZE],sub_key[CF_MAXVARSIZE];
   char *sp;
   HKEY ms_key;
-  struct Rlist *rp;
+  Rlist *rp;
 
 cf_strncpy(root_key,pp->promiser,CF_MAXVARSIZE-1);
 sp = strchr(root_key,'\\');
@@ -366,10 +366,10 @@ else
 
 /*****************************************************************************/
 
-int Nova_VerifyRegistryValueAssocs(HKEY key_h,struct Attributes a,struct Promise *pp)
+int Nova_VerifyRegistryValueAssocs(HKEY key_h,Attributes a,Promise *pp)
 
 { int ret = ERROR_SUCCESS;
-  struct Rlist *rp,*rpr,*assign;
+  Rlist *rp,*rpr,*assign;
   unsigned long reg_data_sz = CF_BUFSIZE;
   DWORD reg_dtype;
   int regCmpSize;
@@ -536,7 +536,7 @@ DWORD Str2RegDtype(char *datatypeStr)
 /* Level                                                                     */
 /*****************************************************************************/
 
-int Nova_ValidateRegistryPromiser(char *key,struct Attributes a,struct Promise *pp)
+int Nova_ValidateRegistryPromiser(char *key,Attributes a,Promise *pp)
 
 { static char *valid[] = { "HKEY_CLASSES_ROOT","HKEY_CURRENT_CONFIG",
                            "HKEY_CURRENT_USER","HKEY_LOCAL_MACHINE", "HKEY_USERS", NULL };
@@ -598,7 +598,7 @@ return HKEY_LOCAL_MACHINE;
 
 /*****************************************************************************/
 
-void Nova_RecursiveRestoreKey(CF_DB *dbp,char *keyname,struct Attributes a,struct Promise *pp) 
+void Nova_RecursiveRestoreKey(CF_DB *dbp,char *keyname,Attributes a,Promise *pp) 
 
 { CF_DBC *dbcp;
   int ret,is_a_key = false,is_a_value = false;
@@ -788,7 +788,7 @@ switch (ret)
 
 /*****************************************************************************/
 
-int Nova_RegistryKeyIntegrity(CF_DB *dbp,char *key,struct Attributes a,struct Promise *pp)
+int Nova_RegistryKeyIntegrity(CF_DB *dbp,char *key,Attributes a,Promise *pp)
 
 { char dbkey[CF_BUFSIZE];
   int size = 0, dummy;
@@ -812,7 +812,7 @@ else
 
 /*****************************************************************************/
 
-void Nova_RegistryValueIntegrity(CF_DB *dbp,char *key,char *value,char *data,int size,int type,struct Attributes a,struct Promise *pp)
+void Nova_RegistryValueIntegrity(CF_DB *dbp,char *key,char *value,char *data,int size,int type,Attributes a,Promise *pp)
 
 { char dbkey[CF_BUFSIZE];
   int cmp_ok;
@@ -1000,7 +1000,7 @@ static bool Nova_CompareRegistryValue(HKEY key_h, DWORD dataType, char *name, ch
 
 #else /* MINGW */
 
-void VerifyRegistryPromise(struct Attributes a,struct Promise *pp)
+void VerifyRegistryPromise(Attributes a,Promise *pp)
 {
 }
 

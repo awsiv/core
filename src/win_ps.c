@@ -38,13 +38,13 @@ static void GetProcessUserName(HANDLE procHandle, int incDomain, char *nameStr, 
 
 /*****************************************************************************/
 
-int NovaWin_LoadProcessTable(struct Item **procdata)
+int NovaWin_LoadProcessTable(Item **procdata)
 /* Creates a list with current process table, and saves lists of SYSTEM
  * and non-SYSTEM processes to files.
  */
 {
- struct Item *systemprocs = NULL;
- struct Item *otherprocs = NULL;
+ Item *systemprocs = NULL;
+ Item *otherprocs = NULL;
  char buf[CF_BUFSIZE];
 
  // no licenses present yet when bootstrapping
@@ -90,7 +90,7 @@ int NovaWin_LoadProcessTable(struct Item **procdata)
 
 /*****************************************************************************/
 
-int NovaWin_GetProcessSnapshot(struct Item **procdata)
+int NovaWin_GetProcessSnapshot(Item **procdata)
 /*
  * Returns the equivalent of "ps auxw" in a item list - the current process table
  */
@@ -197,10 +197,10 @@ int NovaWin_GetProcessSnapshot(struct Item **procdata)
 
 /*****************************************************************************/
 
-int NovaWin_GatherProcessUsers(struct Item **userList, int *userListSz, int *numRootProcs, int *numOtherProcs)
+int NovaWin_GatherProcessUsers(Item **userList, int *userListSz, int *numRootProcs, int *numOtherProcs)
 {
- struct Item *procdata = NULL;
- struct Item *currItem;
+ Item *procdata = NULL;
+ Item *currItem;
  char user[CF_MAXVARSIZE];
 
  if(!Nova_CheckLicenseWin("NovaWin_GatherProcessUsers"))

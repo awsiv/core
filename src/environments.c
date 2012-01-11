@@ -56,13 +56,13 @@ for (i = 0; i < cfv_none; i++)
 
 /*****************************************************************************/
 
-void Nova_VerifyEnvironmentsPromise(struct Promise *pp)
+void Nova_VerifyEnvironmentsPromise(Promise *pp)
 
 {
 #ifdef HAVE_LIBVIRT
-struct Attributes a = {{0}};
+Attributes a = {{0}};
 struct CfLock thislock;
-struct Promise *pexp;
+Promise *pexp;
 
 a = GetEnvironmentsAttributes(pp);
 
@@ -93,7 +93,7 @@ YieldCurrentLock(thislock);
 
 #ifdef HAVE_LIBVIRT
 
-int Nova_EnvironmentsSanityChecks(struct Attributes a,struct Promise *pp)
+int Nova_EnvironmentsSanityChecks(Attributes a,Promise *pp)
 
 { 
 if (a.env.specfile)
@@ -133,7 +133,7 @@ return true;
 
 /*****************************************************************************/
 
-void Nova_VerifyEnvironments(struct Attributes a,struct Promise *pp)
+void Nova_VerifyEnvironments(Attributes a,Promise *pp)
 
 { char hyper_uri[CF_MAXVARSIZE];
   enum cfhypervisors envtype = cfv_none;
@@ -242,7 +242,7 @@ switch (VSYSTEMHARDCLASS)
 /* Level                                                                     */
 /*****************************************************************************/
 
-void Nova_VerifyVirtDomain(char *uri,enum cfhypervisors envtype,struct Attributes a,struct Promise *pp)
+void Nova_VerifyVirtDomain(char *uri,enum cfhypervisors envtype,Attributes a,Promise *pp)
 
 { int num,i;
   virDomainPtr dom;
@@ -301,7 +301,7 @@ switch(a.env.state)
 
 /*****************************************************************************/
 
-void Nova_VerifyVirtNetwork(char *uri,enum cfhypervisors envtype,struct Attributes a,struct Promise *pp)
+void Nova_VerifyVirtNetwork(char *uri,enum cfhypervisors envtype,Attributes a,Promise *pp)
 
 { int num,i;
   const char *name;
@@ -349,7 +349,7 @@ switch(a.env.state)
 
 /*****************************************************************************/
 
-int VerifyZone(struct Attributes a,struct Promise *pp)
+int VerifyZone(Attributes a,Promise *pp)
 {
 return true;
 }
@@ -358,7 +358,7 @@ return true;
 /* Level                                                                     */
 /*****************************************************************************/
 
-int Nova_CreateVirtDom(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp)
+int Nova_CreateVirtDom(virConnectPtr vc,char *uri,Attributes a,Promise *pp)
 
 { int alloc_file = false;
   char *xml_file;
@@ -517,7 +517,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova_DeleteVirt(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp)
+int Nova_DeleteVirt(virConnectPtr vc,char *uri,Attributes a,Promise *pp)
 
 { virDomainPtr dom;
   int ret = true;
@@ -548,7 +548,7 @@ return ret;
 
 /*****************************************************************************/
 
-int Nova_RunningVirt(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp)
+int Nova_RunningVirt(virConnectPtr vc,char *uri,Attributes a,Promise *pp)
 
 { virDomainPtr dom;
   virDomainInfo info;
@@ -667,7 +667,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova_SuspendedVirt(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp)
+int Nova_SuspendedVirt(virConnectPtr vc,char *uri,Attributes a,Promise *pp)
 
 { virDomainPtr dom;
   virDomainInfo info;
@@ -741,7 +741,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova_DownVirt(virConnectPtr vc,char *uri,struct Attributes a,struct Promise *pp)
+int Nova_DownVirt(virConnectPtr vc,char *uri,Attributes a,Promise *pp)
 
 { virDomainPtr dom;
   virDomainInfo info;
@@ -809,7 +809,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova_CreateVirtNetwork(virConnectPtr vc,char **networks,struct Attributes a,struct Promise *pp)
+int Nova_CreateVirtNetwork(virConnectPtr vc,char **networks,Attributes a,Promise *pp)
 
 { virNetworkPtr network;
   char *xml_file;
@@ -881,7 +881,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova_DeleteVirtNetwork(virConnectPtr vc,char **networks,struct Attributes a,struct Promise *pp)
+int Nova_DeleteVirtNetwork(virConnectPtr vc,char **networks,Attributes a,Promise *pp)
 
 { virNetworkPtr network;
   char *xml_file;

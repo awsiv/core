@@ -20,9 +20,9 @@ static void DateStrToTime(const char *inStr, time_t *t);
 
 /*****************************************************************************/
 
-void PrependPromiserList(struct PromiseIdent **list,char *s,struct Promise *pp)
+void PrependPromiserList(PromiseIdent **list,char *s,Promise *pp)
 
-{ struct PromiseIdent *ptr;
+{ PromiseIdent *ptr;
 
  for (ptr = *list; ptr != NULL; ptr = ptr->next)
     {
@@ -35,7 +35,7 @@ void PrependPromiserList(struct PromiseIdent **list,char *s,struct Promise *pp)
        }
     }
 
- ptr = xmalloc(sizeof(struct PromiseIdent));
+ ptr = xmalloc(sizeof(PromiseIdent));
  ptr->filename = xstrdup(pp->audit->filename);
 
  if (ptr->classes)
@@ -57,7 +57,7 @@ void PrependPromiserList(struct PromiseIdent **list,char *s,struct Promise *pp)
 /*****************************************************************************/
 
 #ifdef HAVE_LIBMONGOC
-struct HubQuery *NewHubQuery(struct Rlist *hosts,struct Rlist *records)
+struct HubQuery *NewHubQuery(Rlist *hosts,Rlist *records)
 
 { struct HubQuery *hq;
 
@@ -73,7 +73,7 @@ struct HubQuery *NewHubQuery(struct Rlist *hosts,struct Rlist *records)
 
 void DeleteHubQuery(struct HubQuery *hq,void (*fnptr)())
 
-{ struct Rlist *rp;
+{ Rlist *rp;
 
  if(!hq)
     {
@@ -182,9 +182,9 @@ struct HubHost *UpdateHubHost(struct HubHost *hubHost, char *keyhash,char *ipadd
 
 /*****************************************************************************/
 
-struct HubHost *GetHubHostIn(struct Rlist *host_list, char *keyhash)
+struct HubHost *GetHubHostIn(Rlist *host_list, char *keyhash)
 {
- struct Rlist *lp;
+ Rlist *lp;
  struct HubHost *hh;
 
  if(host_list == NULL)
@@ -1420,9 +1420,9 @@ int SortPromisePopularDescending(void *p1, void *p2)
 
 /*****************************************************************************/
 
-struct HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(struct Rlist *records, int slot)
+struct HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(Rlist *records, int slot)
 {
- struct Rlist *rp;
+ Rlist *rp;
  struct HubCacheTotalCompliance *tc;
 
  for(rp = records; rp != NULL; rp = rp->next)
@@ -1440,14 +1440,14 @@ struct HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(struct Rlist *rec
 
 /*****************************************************************************/
 
-int PageRecords(struct Rlist **records_p, struct PageInfo *page,void (*fnptr)())
+int PageRecords(Rlist **records_p, struct PageInfo *page,void (*fnptr)())
 /**
  * Unlinks and unallocates records not within the desired page.
  * Writes the total number of records given as input.
  **/
 {
- struct Rlist *rp;
- struct Rlist *prevStartEl, *startEl, *endEl;
+ Rlist *rp;
+ Rlist *prevStartEl, *startEl, *endEl;
  int startIdx, endIdx;
  int count = 0;
 
@@ -1530,14 +1530,14 @@ int PageRecords(struct Rlist **records_p, struct PageInfo *page,void (*fnptr)())
 
 /*****************************************************************************/
 
-void CountMarginRecordsVars(struct Rlist **records_p, struct PageInfo *page,int *start_count,int *end_count)
+void CountMarginRecordsVars(Rlist **records_p, struct PageInfo *page,int *start_count,int *end_count)
 /**
  * Counts the total records for a scope
  * if it spans multiple pages
  **/
 { int startIdx=0, endIdx=0,count=0, head_count=0, tail_count=0;
   struct HubVariable *hv,*hv2,*hv3;
-  struct Rlist *rp,*rp2,*rp3;
+  Rlist *rp,*rp2,*rp3;
   int last_scope=false;
   char lscope[CF_MAXVARSIZE];
 
