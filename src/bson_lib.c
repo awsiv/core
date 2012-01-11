@@ -13,9 +13,9 @@ static const char* BsonGetArrayValue(const bson* b, const char* key);
 
 /*****************************************************************************/
 
-struct Item* BsonGetStringArrayAsItemList(const bson* b, const char* key)
+struct Item *BsonGetStringArrayAsItemList(const bson* b, const char* key)
 {
- const char* array = BsonGetArrayValue(b, key);
+ const char *array = BsonGetArrayValue(b, key);
 
  if(!array)
     {
@@ -25,7 +25,7 @@ struct Item* BsonGetStringArrayAsItemList(const bson* b, const char* key)
  bson_iterator it;
  bson_iterator_init(&it, array);
 
- struct Item* values = NULL;
+ struct Item *values = NULL;
  
  while (bson_iterator_next(&it))
     {
@@ -37,7 +37,7 @@ struct Item* BsonGetStringArrayAsItemList(const bson* b, const char* key)
 
 /*****************************************************************************/
 
-int BsonGetInt(const bson* b, const char* key)
+int BsonGetInt(const bson *b, const char *key)
 {
  bson_iterator it;
  
@@ -53,7 +53,7 @@ int BsonGetInt(const bson* b, const char* key)
 
 /*****************************************************************************/
 
-const char* BsonGetString(const bson* b, const char* key)
+const char *BsonGetString(const bson *b, const char *key)
 {
  bson_iterator it;
  
@@ -69,7 +69,7 @@ const char* BsonGetString(const bson* b, const char* key)
 
 /*****************************************************************************/
 
-static const char* BsonGetArrayValue(const bson* b, const char* key)
+static const char *BsonGetArrayValue(const bson *b, const char *key)
 {
  bson_iterator it;
  
@@ -81,6 +81,24 @@ static const char* BsonGetArrayValue(const bson* b, const char* key)
  CfOut(cf_verbose, "", "BsonGetArrayValue: No match for \"%s\"", key);
 
  return NULL;
+}
+
+/*****************************************************************************/
+
+void BsonAppendStringArray(bson_buffer *bb, char *arrayName, struct Item *arrayValues)
+{
+ bson_buffer *arr = bson_append_start_array(bb, arrayName);
+ int i = 0;
+ char iStr[32];
+
+ struct Item *ip;
+ for(ip = arrayValues; ip != NULL; ip = ip->next, i++)
+    {
+    snprintf(iStr, sizeof(iStr), "%d", i);
+    bson_append_string(bb, iStr, ip->name);
+    }
+ 
+ bson_append_finish_object(arr);
 }
 
 /*****************************************************************************/
