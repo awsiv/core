@@ -502,7 +502,7 @@ while (mongo_cursor_next(cursor))
 
    if(strcmp(type, cfr_software) == 0)
       {
-      lastSeen = (time_t)BsonFindInt(&(cursor->current), cfr_software_t);
+      lastSeen = (time_t)BsonGetInt(&(cursor->current), cfr_software_t);
       }
    
    while (bson_iterator_next(&it1))

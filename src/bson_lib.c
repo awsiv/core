@@ -8,12 +8,14 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 
 #ifdef HAVE_LIBMONGOC
 
+static const char* BsonGetArrayValue(const bson* b, const char* key);
+
 
 /*****************************************************************************/
 
-struct Item *BsonStringArrayToItemList(const bson* b, const char* key)
+struct Item* BsonGetStringArrayAsItemList(const bson* b, const char* key)
 {
- const char* array = BsonFindArray(b, key);
+ const char* array = BsonGetArrayValue(b, key);
 
  if(!array)
     {
@@ -35,7 +37,7 @@ struct Item *BsonStringArrayToItemList(const bson* b, const char* key)
 
 /*****************************************************************************/
 
-int BsonFindInt(const bson* b, const char* key)
+int BsonGetInt(const bson* b, const char* key)
 {
  bson_iterator it;
  
@@ -51,7 +53,23 @@ int BsonFindInt(const bson* b, const char* key)
 
 /*****************************************************************************/
 
-const char* BsonFindArray(const bson* b, const char* key)
+const char* BsonGetString(const bson* b, const char* key)
+{
+ bson_iterator it;
+ 
+ if(bson_find(&it, b, key) == bson_string)
+    {
+    return bson_iterator_string(&it);
+    }
+
+ CfOut(cf_verbose, "", "BsonGetString: No match for \"%s\"", key);
+
+ return NULL;
+}
+
+/*****************************************************************************/
+
+static const char* BsonGetArrayValue(const bson* b, const char* key)
 {
  bson_iterator it;
  
@@ -60,7 +78,7 @@ const char* BsonFindArray(const bson* b, const char* key)
     return bson_iterator_value(&it);
     }
 
- CfOut(cf_verbose, "", "BsonFindArray: No match for \"%s\"", key);
+ CfOut(cf_verbose, "", "BsonGetArrayValue: No match for \"%s\"", key);
 
  return NULL;
 }
