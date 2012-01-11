@@ -147,7 +147,6 @@ return 0;
 GenericAgentConfig CheckOpts(int argc,char **argv)
 
 { extern char *optarg;
-  char arg[CF_BUFSIZE];
   int optindex = 0;
   int c;
   GenericAgentConfig config = GenericAgentDefaultConfig(cf_hub);
@@ -160,8 +159,7 @@ while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMaisn",OPTIONS,&optindex)) != EOF)
 
           if (optarg && strlen(optarg) < 5)
              {
-             snprintf(arg,CF_MAXVARSIZE," -f used but argument \"%s\" incorrect",optarg);
-             FatalError(arg);
+             FatalError("-f used but argument \"%s\" incorrect", optarg);
              }
 
           strncpy(VINPUTFILE,optarg,CF_BUFSIZE-1);
