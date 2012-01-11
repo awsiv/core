@@ -19,7 +19,7 @@
 char *RPATH_FILE = "/home/eystein/tmp/conary-system-model";
 
 
-int GetInstalledPkgsRpath(struct CfPackageItem **pkgList, Attributes a, Promise *pp)
+int GetInstalledPkgsRpath(PackageItem **pkgList, Attributes a, Promise *pp)
 {
   char line[CF_BUFSIZE] = {0};
   FILE *fin;

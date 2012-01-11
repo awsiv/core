@@ -712,7 +712,7 @@ PHP_FUNCTION(cfpr_report_software_in)
  int use_reg;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssbsll",&hostkey,&hk_len,&name,&n_len,&version,&v_len,&arch,&a_len,&regex,&classreg,&cr_len,&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
@@ -746,7 +746,7 @@ PHP_FUNCTION(cfpr_report_patch_in)
  long regex;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssbsll",&hostkey,&hk_len,&name,&n_len,&version,&v_len,&arch,&a_len,&regex,&classreg,&cr_len,&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
@@ -780,7 +780,7 @@ PHP_FUNCTION(cfpr_report_patch_avail)
  long regex;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssbsll",&hostkey,&hk_len,&name,&n_len,&version,&v_len,&arch,&a_len,&regex,&classreg,&cr_len,&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
@@ -814,7 +814,7 @@ PHP_FUNCTION(cfpr_report_classes)
  long regex;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbsll",&hostkey,&hk_len,&name,&n_len,&regex,&classreg,&cr_len,&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
@@ -1008,7 +1008,7 @@ PHP_FUNCTION(cfpr_report_vars)
  zend_bool regex;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssbsll",
                            &hostkey,&hk_len,
@@ -1074,7 +1074,7 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
  long k,nk,r,t;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssllllssll",
                            &hostkey,&hk_len,&version,&v_len,&t,&k,&nk,&r,&cmp,&cmp_len,&classreg,&cr_len,
@@ -1106,7 +1106,7 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
  char buffer[bufsize];
  zend_bool regex;
  int use_reg;
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbsll",
                            &hostkey,&hk_len,&handle,&h_len,&status,&s_len,&regex,&classreg,&cr_len,
@@ -1175,7 +1175,7 @@ PHP_FUNCTION(cfpr_report_lastseen)
  time_t tago;
  zend_bool regex;
  int use_reg;
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslbsll",
                            &hostkey,&hk_len,&hash,&h2_len,&host,&h_len,&address,&a_len,&ago,&regex,&classreg,&cr_len,
@@ -1213,7 +1213,7 @@ PHP_FUNCTION(cfpr_report_performance)
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
  zend_bool regex;
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbsll",
                            &hostkey,&hk_len,&job,&j_len,&regex,&classreg,&cr_len,
@@ -1245,7 +1245,7 @@ PHP_FUNCTION(cfpr_report_setuid)
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
  zend_bool regex;
- struct PageInfo page = {0};
+ PageInfo page = {0};
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbsll",
                            &hostkey,&hk_len,&file,&j_len,&regex,&classreg,&cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
@@ -1278,7 +1278,7 @@ PHP_FUNCTION(cfpr_report_filechanges)
  zend_bool regex;
  long t;
  time_t then;
- struct PageInfo page = {0};
+ PageInfo page = {0};
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssblssll",
                            &hostkey,&hk_len,&file,&f_len,&regex,&t,&cmp,&c_len,&classreg,&cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
@@ -1314,7 +1314,7 @@ PHP_FUNCTION(cfpr_report_filediffs)
  int use_reg;
  long t;
  time_t then;
- struct PageInfo page = {0};
+ PageInfo page = {0};
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssblssll",
                            &hostkey,&hk_len,&file,&f_len,&diff,&d_len,&regex,&t,&cmp,&c_len,&classreg,&cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
@@ -1351,7 +1351,7 @@ PHP_FUNCTION(cfpr_report_filechanges_longterm)
  zend_bool regex;
  long t;
  time_t then;
- struct PageInfo page = {0};
+ PageInfo page = {0};
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssblssll",
                            &hostkey,&hk_len,&file,&f_len,&regex,&t,&cmp,&c_len,&classreg,&cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
@@ -1387,7 +1387,7 @@ PHP_FUNCTION(cfpr_report_filediffs_longterm)
  int use_reg;
  long t;
  time_t then;
- struct PageInfo page = {0};
+ PageInfo page = {0};
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssblssll",
                            &hostkey,&hk_len,&file,&f_len,&diff,&d_len,&regex,&t,&cmp,&c_len,&classreg,&cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
@@ -1447,7 +1447,7 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
  char buffer[bufsize];
  zend_bool regex;
  int use_reg;
- struct PageInfo page = {0};
+ PageInfo page = {0};
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbsll",
                            &hostkey,&hk_len,&bundle,&j_len,&regex,&classreg,&cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
@@ -1476,7 +1476,7 @@ PHP_FUNCTION(cfpr_report_value)
  int hk_len,d_len,m_len,y_len,cr_len;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
- struct PageInfo page = {0};
+ PageInfo page = {0};
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssll",
                            &hostkey,&hk_len,&day,&d_len,&month,&m_len,&year,&y_len,&classreg,&cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
@@ -1536,7 +1536,7 @@ PHP_FUNCTION(cfpr_report_notkept)
  char buffer[bufsize];
  long hours_deltafrom, hours_deltato;
  time_t from = 0, to = 0;
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssllsll",
                            &hostkey,&hk_len,&handle,&h_len,&hours_deltafrom,&hours_deltato,&classreg,&cr_len,
@@ -1572,7 +1572,7 @@ PHP_FUNCTION(cfpr_report_repaired)
  char buffer[bufsize];
  long hours_deltafrom, hours_deltato;
  time_t from = 0, to = 0;
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssllsll",
                            &hostkey,&hk_len,&handle,&h_len,&hours_deltafrom,&hours_deltato,&classreg,&cr_len,
@@ -1606,7 +1606,7 @@ PHP_FUNCTION(cfpr_summarize_notkept)
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
  time_t from,to;
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssllsll",&hostkey,&hk_len,&handle,&h_len,&from,&to,&classreg,&cr_len, &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
@@ -1635,7 +1635,7 @@ PHP_FUNCTION(cfpr_summarize_repaired)
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
  time_t from,to;
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssllsll",&hostkey,&hk_len,&handle,&h_len,&from,&to,&classreg,&cr_len, &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
@@ -2297,7 +2297,7 @@ PHP_FUNCTION(cfpr_top_n_hosts)
  long n;
  const int bufsize = 100000;
  char buffer[bufsize];
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "slll",&policy,&hk_len,&n,&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
@@ -2396,7 +2396,7 @@ PHP_FUNCTION(cfpr_show_red_hosts)
 
 { const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll",&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
@@ -2416,7 +2416,7 @@ PHP_FUNCTION(cfpr_show_yellow_hosts)
 
 {  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll",&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
@@ -2435,7 +2435,7 @@ PHP_FUNCTION(cfpr_show_green_hosts)
 
 {  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll",&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
@@ -2454,7 +2454,7 @@ PHP_FUNCTION(cfpr_show_blue_hosts)
 
 {  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll",&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
@@ -2476,7 +2476,7 @@ PHP_FUNCTION(cfpr_show_hosts_ip)
  char buffer[bufsize];
  char *ipRegex, *fipRegex, *classRegex, *fclassRegex;
  int ip_len,cl_len;
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll",&ipRegex,&ip_len,&classRegex,&cl_len,&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
@@ -2500,7 +2500,7 @@ PHP_FUNCTION(cfpr_show_hosts_name)
  char buffer[bufsize];
  char *hostNameRegex, *fhostNameRegex, *classRegex, *fclassRegex;
  int ip_len,cl_len;
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll",&hostNameRegex,&ip_len,&classRegex,&cl_len,&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
@@ -3091,7 +3091,7 @@ PHP_FUNCTION(cfpr_cdp_report)
 {char buf[CF_WEBBUFFER];  // one row is ~300 bytes
  char *hostkey,*reportName;
  int hk_len,rn_len;
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll",&hostkey,&hk_len,&reportName,&rn_len,&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
@@ -3362,7 +3362,7 @@ PHP_FUNCTION(cfpr_query_note)
  int hk_len,u_len,nid_len;
  const int bufsize = 1000000;
  long from,to;
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  char buffer[bufsize];
 

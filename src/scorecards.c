@@ -22,8 +22,8 @@ void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, 
 
 { char work[CF_BUFSIZE];
   mongo_connection dbconn;
-  struct HubCacheTotalCompliance *tc;
-  struct HubQuery *hq;
+  HubCacheTotalCompliance *tc;
+  HubQuery *hq;
   double kept, repaired, notkept, nodata;
   time_t now = time(NULL),start,one_week = (time_t)SECONDS_PER_WEEK;
   int i,slot,count;
@@ -113,8 +113,8 @@ void Nova_Meter(bson *query,char *db,char *buffer,int bufsize)
  double kept_week = 0,kept_day = 0,kept_hour = 0,kept_comms = 0,kept_anom = 0,kept_perf = 0,kept_other = 0;
  double rep_week = 0,rep_day = 0,rep_hour = 0,rep_comms = 0,rep_anom = 0,rep_perf = 0,rep_other = 0;
  double num_week = 0,num_day = 0,num_hour = 0,num_comms = 0,num_anom = 0,num_perf = 0,num_other = 0;
-   struct HubMeter *hm;
- struct HubQuery *hq;
+   HubMeter *hm;
+ HubQuery *hq;
  mongo_connection dbconn;
  Rlist *rp;
 
@@ -132,7 +132,7 @@ void Nova_Meter(bson *query,char *db,char *buffer,int bufsize)
 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
-    hm = (struct HubMeter *)rp->item;
+    hm = (HubMeter *)rp->item;
     CfDebug("Meter result: (%c) %lf,%lf,%lf\n",hm->type,hm->kept,hm->repaired,hm->notkept);
     CfDebug("found on (%s=%s=%s)\n",hm->hh->keyhash,hm->hh->hostname,hm->hh->ipaddr);
 

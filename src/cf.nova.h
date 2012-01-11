@@ -185,12 +185,12 @@ struct CfFileLine
 
 /*****************************************************************************/
 
-typedef struct PageInfo
-{
-  int resultsPerPage;
-  int pageNum;
-  int totalResultCount;
-}PageInfo_t;
+typedef struct
+   {
+   int resultsPerPage;
+   int pageNum;
+   int totalResultCount;
+   } PageInfo;
 
 /*****************************************************************************/
 
@@ -265,59 +265,59 @@ extern struct ReportInfo CONSTELLATION_REPORTS[];
 /* Report DB API Structs                                                     */
 /*****************************************************************************/
 
-struct HubHost
+typedef struct
    {
    char *keyhash;
    char *hubkey;
    char *ipaddr;
    char *hostname;
-   };
+   } HubHost;
 
-struct HubFileChanges
+typedef struct
    {
-   struct HubHost *hh;
+   HubHost *hh;
    char *path;
    time_t t;
      char *nid;
    char *handle;
-   };
+   } HubFileChanges;
 
 struct HubFileDiff
    {
-   struct HubHost *hh;
+   HubHost *hh;
    char *path;
    char *diff;
    time_t t;
    };
 
-struct HubSoftware
+typedef struct
    {
-   struct HubHost *hh;
+   HubHost *hh;
    char *name;
    char *version;
    char *arch;
    time_t t;
-   };
+   } HubSoftware;
 
-struct HubClass
+typedef struct
    {
-   struct HubHost *hh;
+   HubHost *hh;
    char *class;
    double prob;
    double dev;
    time_t t;
-   };
+   } HubClass;
 
-struct HubClassSum
+typedef struct
    {
-   struct HubHost *hh;
+   HubHost *hh;
    char *class;
    int frequency;  // across all hosts
-   };
+   } HubClassSum;
 
 struct HubTotalCompliance
    {
-   struct HubHost *hh;
+   HubHost *hh;
    time_t t;
    char *version;
    int kept;
@@ -325,52 +325,52 @@ struct HubTotalCompliance
    int notkept;
    };
 
-struct HubVariable
+typedef struct
    {
-   struct HubHost *hh;
+   HubHost *hh;
    char *scope;
    char *lval;
    void *rval;
    char *dtype;
    char rtype;
    time_t t;
-   };
+   } HubVariable;
 
-struct HubPromiseLog // promise kept,repaired or not kept
+typedef struct // promise kept,repaired or not kept
    {
-   struct HubHost *hh;
+   HubHost *hh;
      //   char *policy;
    char *handle;
    char *cause;
    time_t t;
    char *nid;  
    char *oid;  
-   };
+   } HubPromiseLog;
 
-struct HubPromiseSum // promise not kept/repaired summary
+typedef struct // promise not kept/repaired summary
    {
-   struct HubHost *hh;
+   HubHost *hh;
    char *policy;
    char *handle;
    char *cause;
    int occurences;
    int hostOccurences;
-   };
+   } HubPromiseSum;
 
-struct HubLastSeen
+typedef struct
    {
-   struct HubHost *hh;      
-   struct HubHost *rhost;
+   HubHost *hh;      
+   HubHost *rhost;
    char io;
    double hrsago;
    double hrsavg;
    double hrsdev;
    time_t t;
-   };
+   } HubLastSeen;
 
 struct HubBundleSeen
    {
-   struct HubHost *hh;      
+   HubHost *hh;      
    char *bundle;
    double hrsago;
    double hrsavg;
@@ -379,25 +379,25 @@ struct HubBundleSeen
    char *nid;
    };
 
-struct HubValue
+typedef struct
    {
-   struct HubHost *hh;      
+   HubHost *hh;      
    char* day; /* 'DD Month YYYY' */
    double kept;
    double repaired;
    double notkept;
      char *nid;
      char *handle;
-   };
+   } HubValue;
 
-struct HubMeter
+typedef struct
    {
-   struct HubHost *hh;      
+   HubHost *hh;      
    char type;
    double kept;
    double repaired;
    double notkept;
-   };
+   } HubMeter;
 
 #define cfmeter_hour 'H'
 #define cfmeter_week 'W'
@@ -409,7 +409,7 @@ struct HubMeter
 
 struct HubPerformance
    {
-   struct HubHost *hh;      
+   HubHost *hh;      
    char *event;
    double q;
    double e;
@@ -421,30 +421,30 @@ struct HubPerformance
   
 struct HubSetUid
    {
-   struct HubHost *hh;      
+   HubHost *hh;      
    char *path;
    };
 
-struct HubPromiseCompliance
+typedef struct
    {
-   struct HubHost *hh;
+   HubHost *hh;
    char *handle;
    char status; // 'r' / 'k' / 'n'
    double e;
    double d;
    time_t t;
-   };
+   } HubPromiseCompliance;
 
 #ifdef HAVE_LIBMONGOC
-struct HubQuery
+typedef struct
    {
    Rlist *hosts;
    Rlist *records;
    cfapi_errid errid;
-   };
+   } HubQuery;
 #endif
 
-struct HubPromise
+typedef struct
    {
    char *bundleName;
    char *bundleType;
@@ -459,7 +459,7 @@ struct HubPromise
    int lineNo;
    char **constraints;
    double popularity;  // optional
-   };
+   } HubPromise;
 
 
 struct HubBody
@@ -481,7 +481,7 @@ struct HubBodyAttr
 
 /* cfreport.cache */
 
-struct HubCacheTotalCompliance
+typedef struct
   {
   char *policy;
   int slot;
@@ -491,7 +491,7 @@ struct HubCacheTotalCompliance
   double repaired;
   double notkept;
   time_t genTime;
-  };
+  } HubCacheTotalCompliance;
 
 
 /*
@@ -507,7 +507,7 @@ struct HubNote
 
 struct HubNoteInfo
   {
-  struct HubHost *hh;
+  HubHost *hh;
   char *nid;
   char *user;
   char *msg;
@@ -683,25 +683,25 @@ void Nova_BoundaryCheck(struct CfDataView *cfv,int *x1,int *y1,int *x2, int *y2)
 #ifdef HAVE_LIBMONGOC
 void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn);
 int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int bufsize);
-struct HubQuery *CFDB_QueryHostsInClassContext(mongo_connection *conn,char *expression,time_t horizon,int sort);
-struct HubQuery *CFDB_QueryHosts(mongo_connection *conn, char *db, char *dbkey,bson *query);
-struct HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, char *ipRegex, char *classRegex);
-struct HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, char *classRegex);
-struct HubQuery *CFDB_QueryValueGraph(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, char *classRegex);
-struct HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum promiselog_rep type,char *lhandle, int regex, time_t from, time_t to,int sort,char *classRegex);
-struct HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,char *lname,char *lver,char *larch,int regex, char *classRegex, int sort);
-struct HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
-struct HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes);
-struct HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,char *lversion,time_t lt,int lkept,int lnotkept,int lrepaired,int cmp, int sort, char *classRegex);
-struct HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *lscope,char *llval,char *lrval,char *ltype,int reg, char *classRegex);
-struct HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHash,char *lhandle,char lstatus,int regex, time_t minTime, int sort, char *classRegex);
-struct HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *lhash,char *lhost,char *laddr,time_t lago,int regex,int sort,char *classRegex);
-struct HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query,char *db);
-struct HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char *lname,int regex,int sort,char *classRegex);
-struct HubQuery *CFDB_QuerySetuid(mongo_connection *conn,char *keyHash,char *lname,int regex, char *classRegex);
-struct HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lname,int regex, char *classRegex, int sort);
-struct HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char *lname,int regex,time_t lt,int cmp, int sort, char *classRegex, int lookInArchive);
-struct HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,char *ldiff,int regex,time_t lt,int cmp, int sort, char *classRegex, int lookInArchive);
+HubQuery *CFDB_QueryHostsInClassContext(mongo_connection *conn,char *expression,time_t horizon,int sort);
+HubQuery *CFDB_QueryHosts(mongo_connection *conn, char *db, char *dbkey,bson *query);
+HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, char *ipRegex, char *classRegex);
+HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, char *classRegex);
+HubQuery *CFDB_QueryValueGraph(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, char *classRegex);
+HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum promiselog_rep type,char *lhandle, int regex, time_t from, time_t to,int sort,char *classRegex);
+HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,char *lname,char *lver,char *larch,int regex, char *classRegex, int sort);
+HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
+HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes);
+HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,char *lversion,time_t lt,int lkept,int lnotkept,int lrepaired,int cmp, int sort, char *classRegex);
+HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *lscope,char *llval,char *lrval,char *ltype,int reg, char *classRegex);
+HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHash,char *lhandle,char lstatus,int regex, time_t minTime, int sort, char *classRegex);
+HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *lhash,char *lhost,char *laddr,time_t lago,int regex,int sort,char *classRegex);
+HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query,char *db);
+HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char *lname,int regex,int sort,char *classRegex);
+HubQuery *CFDB_QuerySetuid(mongo_connection *conn,char *keyHash,char *lname,int regex, char *classRegex);
+HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lname,int regex, char *classRegex, int sort);
+HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char *lname,int regex,time_t lt,int cmp, int sort, char *classRegex, int lookInArchive);
+HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,char *ldiff,int regex,time_t lt,int cmp, int sort, char *classRegex, int lookInArchive);
 
 // class finder
 Rlist *CFDB_QueryDateTimeClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
@@ -719,12 +719,12 @@ int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs
 bool CFDB_QueryHistogram(mongo_connection *conn,char *keyhash,char *monId,double *histo);
 int CFDB_QueryLastUpdate(mongo_connection *conn,char *db, char *dbkey,char *keyhash,time_t *date);
 
-struct HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle, char *file, int lineNo);
+HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle, char *file, int lineNo);
 int CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, char *attrVal, int attrValSz);
 Item *CFDB_QueryExpandedPromiseAttr(mongo_connection *conn, char *handle, char *attrKey);
-struct HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char *promiserType, char *bType, char *bName, int regex, bool filter);
-struct HubQuery *CFDB_QueryHandlesForBundlesWithComments(mongo_connection *conn, char *bType, char *bName);
-struct HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle,char *promiser,char *bName, int escRegex);
+HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char *promiserType, char *bType, char *bName, int regex, bool filter);
+HubQuery *CFDB_QueryHandlesForBundlesWithComments(mongo_connection *conn, char *bType, char *bName);
+HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle,char *promiser,char *bName, int escRegex);
 Item *CFDB_QueryBundles(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);
 Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char *bName);
 Item *CFDB_QueryBundleArgs(mongo_connection *conn, char *bType, char *bName);
@@ -798,7 +798,7 @@ bool GetBsonBool(char *data, char *boolKey, bool *val);
 void CFDB_SaveLastHostUpdate(mongo_connection *conn, char *hostKey);
 void CFDB_SaveLastUpdate(mongo_connection *conn, char *database, char *keyField, char *keyhash);
 
-struct HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *policy, time_t minGenTime);
+HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *policy, time_t minGenTime);
 void CFDB_SaveCachedTotalCompliance(mongo_connection *conn, char *policy, int slot, double kept, double repaired, double notkept, int count, time_t genTime);
 int CFDB_SaveLastseenCache(Item *lastseen);
 void CFDB_SaveGoalsCache(char *goal_patterns, char *goal_categories);
@@ -956,62 +956,62 @@ void Nova_UpdateMongoHostList(Item **list);
 /* install.c */
 
 void PrependPromiserList(PromiseIdent **list,char *s,Promise *pp);
-struct HubQuery *NewHubQuery(Rlist *hosts,Rlist *records);
-void DeleteHubQuery(struct HubQuery *hq,void (*fnptr)());
-int CountRecords(struct HubQuery *hq);
-struct HubHost *NewHubHost(char *hubkey, char *keyhash,char *ipaddr,char *hostname);
-struct HubHost *CreateEmptyHubHost(void);
-struct HubHost *UpdateHubHost(struct HubHost *hubHost, char *keyhash,char *ipaddr,char *hostname);
-struct HubHost *GetHubHostIn(Rlist *host_list, char *keyhash);
-void DeleteHubHost(struct HubHost *hp);
-struct HubSoftware *NewHubSoftware(struct HubHost *hh,char *name,char *version,char *arch,time_t timeseen);
-void DeleteHubSoftware(struct HubSoftware *hs);
-struct HubClass *NewHubClass(struct HubHost *hh,char *class,double p, double dev, time_t t);
-void DeleteHubClass(struct HubClass *hc);
-struct HubClassSum *NewHubClassSum(struct HubHost *hh,char *class,int frequency);
-void DeleteHubClassSum(struct HubClassSum *hc);
-struct HubTotalCompliance *NewHubTotalCompliance(struct HubHost *hh,time_t t,char *v,int k,int r,int n);
+HubQuery *NewHubQuery(Rlist *hosts,Rlist *records);
+void DeleteHubQuery(HubQuery *hq,void (*fnptr)());
+int CountRecords(HubQuery *hq);
+HubHost *NewHubHost(char *hubkey, char *keyhash,char *ipaddr,char *hostname);
+HubHost *CreateEmptyHubHost(void);
+HubHost *UpdateHubHost(HubHost *hubHost, char *keyhash,char *ipaddr,char *hostname);
+HubHost *GetHubHostIn(Rlist *host_list, char *keyhash);
+void DeleteHubHost(HubHost *hp);
+HubSoftware *NewHubSoftware(HubHost *hh,char *name,char *version,char *arch,time_t timeseen);
+void DeleteHubSoftware(HubSoftware *hs);
+HubClass *NewHubClass(HubHost *hh,char *class,double p, double dev, time_t t);
+void DeleteHubClass(HubClass *hc);
+HubClassSum *NewHubClassSum(HubHost *hh,char *class,int frequency);
+void DeleteHubClassSum(HubClassSum *hc);
+struct HubTotalCompliance *NewHubTotalCompliance(HubHost *hh,time_t t,char *v,int k,int r,int n);
 void DeleteHubTotalCompliance(struct HubTotalCompliance *ht);
-struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,void *rval,char rtype,time_t t);
-void DeleteHubVariable(struct HubVariable *hv);
-struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh, char *handle,char *cause,time_t t, char *noteId,char *oid);
-void DeleteHubPromiseLog(struct HubPromiseLog *hp);
-struct HubPromiseSum *NewHubPromiseSum(struct HubHost *hh,char *handle,char *cause,int occurences, int hostOccurences);
-void DeleteHubPromiseSum(struct HubPromiseSum *hs);
-struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t);
-void DeleteHubLastSeen(struct HubLastSeen *hp);
-struct HubMeter *NewHubMeter(struct HubHost *hh,char type,double kept,double repaired);
-void DeleteHubMeter(struct HubMeter *hp);
-struct HubPerformance *NewHubPerformance(struct HubHost *hh,char *event,time_t t,double q,double e,double d,char *noteid, char *handle);
+HubVariable *NewHubVariable(HubHost *hh,char *type,char *scope,char *lval,void *rval,char rtype,time_t t);
+void DeleteHubVariable(HubVariable *hv);
+HubPromiseLog *NewHubPromiseLog(HubHost *hh, char *handle,char *cause,time_t t, char *noteId,char *oid);
+void DeleteHubPromiseLog(HubPromiseLog *hp);
+HubPromiseSum *NewHubPromiseSum(HubHost *hh,char *handle,char *cause,int occurences, int hostOccurences);
+void DeleteHubPromiseSum(HubPromiseSum *hs);
+HubLastSeen *NewHubLastSeen(HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t);
+void DeleteHubLastSeen(HubLastSeen *hp);
+HubMeter *NewHubMeter(HubHost *hh,char type,double kept,double repaired);
+void DeleteHubMeter(HubMeter *hp);
+struct HubPerformance *NewHubPerformance(HubHost *hh,char *event,time_t t,double q,double e,double d,char *noteid, char *handle);
 void DeleteHubPerformance(struct HubPerformance *hp);
-struct HubSetUid *NewHubSetUid(struct HubHost *hh,char *file);
+struct HubSetUid *NewHubSetUid(HubHost *hh,char *file);
 void DeleteHubSetUid(struct HubSetUid *hp);
-struct HubPromiseCompliance *NewHubCompliance(struct HubHost *hh,char *handle,char status,double e,double d,time_t t);
-void DeleteHubPromiseCompliance(struct HubPromiseCompliance *hp);
-struct HubBundleSeen *NewHubBundleSeen(struct HubHost *hh,char *rname,double ago,double avg,double dev,time_t t,char *noteid);
+HubPromiseCompliance *NewHubCompliance(HubHost *hh,char *handle,char status,double e,double d,time_t t);
+void DeleteHubPromiseCompliance(HubPromiseCompliance *hp);
+struct HubBundleSeen *NewHubBundleSeen(HubHost *hh,char *rname,double ago,double avg,double dev,time_t t,char *noteid);
 void DeleteHubBundleSeen(struct HubBundleSeen *hp);
-struct HubFileChanges *NewHubFileChanges(struct HubHost *hh,char *file,time_t t, char *noteid,char *handle);
-void DeleteHubFileChanges(struct HubFileChanges *hp);
-struct HubFileDiff *NewHubFileDiff(struct HubHost *hh,char *file,char *diff,time_t t);
+HubFileChanges *NewHubFileChanges(HubHost *hh,char *file,time_t t, char *noteid,char *handle);
+void DeleteHubFileChanges(HubFileChanges *hp);
+struct HubFileDiff *NewHubFileDiff(HubHost *hh,char *file,char *diff,time_t t);
 void DeleteHubFileDiff(struct HubFileDiff *hp);
-struct HubValue *NewHubValue(struct HubHost *hh,char *day,double kept,double repaired,double notkept,char *noteid, char *handle);
-void DeleteHubValue(struct HubValue *hp);
-struct HubPromise *NewHubPromise(char *bn,char *bt,char *ba,char *pt, char *pr, char *pe, char *cl, char *ha, char *co, char *fn, int lno, char **cons);
-void DeleteHubPromise(struct HubPromise *hp);
+HubValue *NewHubValue(HubHost *hh,char *day,double kept,double repaired,double notkept,char *noteid, char *handle);
+void DeleteHubValue(HubValue *hp);
+HubPromise *NewHubPromise(char *bn,char *bt,char *ba,char *pt, char *pr, char *pe, char *cl, char *ha, char *co, char *fn, int lno, char **cons);
+void DeleteHubPromise(HubPromise *hp);
 struct HubBody *NewHubBody(char *bodyName,char *bodyType,char *bodyArgs);
 void DeleteHubBody(struct HubBody *hb);
 struct HubBodyAttr *NewHubBodyAttr(struct HubBody *hb,char *lval,char *rval,char *classContext);
 void DeleteHubBodyAttributes(struct HubBodyAttr *ha);
 struct HubNote *NewHubNote(char *user,char *msg,time_t t);
-struct HubNoteInfo *NewHubNoteInfo(struct HubHost *hh,char *nid,char *user,char *msg,time_t t,char *reportData, int reportType);
+struct HubNoteInfo *NewHubNoteInfo(HubHost *hh,char *nid,char *user,char *msg,time_t t,char *reportData, int reportType);
 void DeleteHubNote(struct HubNote *hc);
 void DeleteHubNoteInfo(struct HubNoteInfo *hci);
 struct HubVital *PrependHubVital(struct HubVital **first, char *id, char *units, char *description);
 void DeleteHubVital(struct HubVital *hv);
 HubRBAC_t *NewHubRBAC(char *userName, char *includeClassRx, char *excludeClassRx, char *includeBundleRx);
 void DeleteHubRBAC(HubRBAC_t *rbac);
-struct HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int hostCount, int totalHostCount, double kept, double repaired, double notkept, time_t genTime);
-void DeleteHubCacheTotalCompliance(struct HubCacheTotalCompliance *tc);
+HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int hostCount, int totalHostCount, double kept, double repaired, double notkept, time_t genTime);
+void DeleteHubCacheTotalCompliance(HubCacheTotalCompliance *tc);
 
 int SortPromiseLog(void *p1, void *p2);
 int SortBusinessValue(void *p1, void *p2);
@@ -1027,10 +1027,10 @@ int SortSoftware(void *p1, void *p2);
 int SortBundleSeen(void *p1, void *p2);
 int SortPromisePopularAscending(void *p1, void *p2);
 int SortPromisePopularDescending(void *p1, void *p2);
-struct HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(Rlist *records, int slot);
+HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(Rlist *records, int slot);
 
-int PageRecords(Rlist **records_p, struct PageInfo *page,void (*fnptr)());
-void CountMarginRecordsVars(Rlist **records_p, struct PageInfo *page,int *start_count,int *end_count);
+int PageRecords(Rlist **records_p, PageInfo *page,void (*fnptr)());
+void CountMarginRecordsVars(Rlist **records_p, PageInfo *page,int *start_count,int *end_count);
 
 /* knowledge.c */
 
@@ -1417,7 +1417,7 @@ FnCallResult FnCallGroupExists(FnCall *fp,Rlist *finalargs);
 
 /* win_wmi.c */
 
-int NovaWin_GetInstalledPkgs(struct CfPackageItem **pkgList, Attributes a, Promise *pp);
+int NovaWin_GetInstalledPkgs(PackageItem **pkgList, Attributes a, Promise *pp);
 void NovaWin_PrintWmiError(char *str);
 int NovaWin_WmiInitialize(void);
 int NovaWin_WmiDeInitialize(void);

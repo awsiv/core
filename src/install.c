@@ -57,11 +57,11 @@ void PrependPromiserList(PromiseIdent **list,char *s,Promise *pp)
 /*****************************************************************************/
 
 #ifdef HAVE_LIBMONGOC
-struct HubQuery *NewHubQuery(Rlist *hosts,Rlist *records)
+HubQuery *NewHubQuery(Rlist *hosts,Rlist *records)
 
-{ struct HubQuery *hq;
+{ HubQuery *hq;
 
- hq = xmalloc(sizeof(struct HubQuery));
+ hq = xmalloc(sizeof(HubQuery));
 
  hq->hosts = hosts;
  hq->records = records;
@@ -71,7 +71,7 @@ struct HubQuery *NewHubQuery(Rlist *hosts,Rlist *records)
 
 /*****************************************************************************/
 
-void DeleteHubQuery(struct HubQuery *hq,void (*fnptr)())
+void DeleteHubQuery(HubQuery *hq,void (*fnptr)())
 
 { Rlist *rp;
 
@@ -100,7 +100,7 @@ void DeleteHubQuery(struct HubQuery *hq,void (*fnptr)())
 
 /*****************************************************************************/
 
-int CountRecords(struct HubQuery *hq)
+int CountRecords(HubQuery *hq)
 
 {
  if(hq == NULL)
@@ -114,11 +114,11 @@ int CountRecords(struct HubQuery *hq)
 
 /*****************************************************************************/
 
-struct HubHost *NewHubHost(char *hubkey, char *keyhash,char *ipaddr,char *hostname)
+HubHost *NewHubHost(char *hubkey, char *keyhash,char *ipaddr,char *hostname)
 
-{ struct HubHost *hp;
+{ HubHost *hp;
 
- hp = xmalloc(sizeof(struct HubHost));
+ hp = xmalloc(sizeof(HubHost));
 
  if (hubkey)
     {
@@ -160,13 +160,13 @@ struct HubHost *NewHubHost(char *hubkey, char *keyhash,char *ipaddr,char *hostna
 }
 
 
-struct HubHost *CreateEmptyHubHost(void)
+HubHost *CreateEmptyHubHost(void)
 {
- return (struct HubHost *)xcalloc(1, sizeof(struct HubHost));
+ return (HubHost *)xcalloc(1, sizeof(HubHost));
 }
 
 
-struct HubHost *UpdateHubHost(struct HubHost *hubHost, char *keyhash,char *ipaddr,char *hostname)
+HubHost *UpdateHubHost(HubHost *hubHost, char *keyhash,char *ipaddr,char *hostname)
 {
  free(hubHost->keyhash);
  free(hubHost->ipaddr);
@@ -182,10 +182,10 @@ struct HubHost *UpdateHubHost(struct HubHost *hubHost, char *keyhash,char *ipadd
 
 /*****************************************************************************/
 
-struct HubHost *GetHubHostIn(Rlist *host_list, char *keyhash)
+HubHost *GetHubHostIn(Rlist *host_list, char *keyhash)
 {
  Rlist *lp;
- struct HubHost *hh;
+ HubHost *hh;
 
  if(host_list == NULL)
     {
@@ -195,7 +195,7 @@ struct HubHost *GetHubHostIn(Rlist *host_list, char *keyhash)
   
  for (lp = host_list; lp != NULL; lp=lp->next)
     {
-    hh = (struct HubHost *)lp->item;
+    hh = (HubHost *)lp->item;
 
     if(strcmp(hh->keyhash,keyhash) == 0)
        {
@@ -209,7 +209,7 @@ struct HubHost *GetHubHostIn(Rlist *host_list, char *keyhash)
 
 /*****************************************************************************/
 
-void DeleteHubHost(struct HubHost *hp)
+void DeleteHubHost(HubHost *hp)
 {
  if(!hp)
     {
@@ -241,11 +241,11 @@ void DeleteHubHost(struct HubHost *hp)
 
 /*****************************************************************************/
 
-struct HubSoftware *NewHubSoftware(struct HubHost *hh,char *name,char *version,char *arch,time_t timeseen)
+HubSoftware *NewHubSoftware(HubHost *hh,char *name,char *version,char *arch,time_t timeseen)
 
-{ struct HubSoftware *hp;
+{ HubSoftware *hp;
 
-hp = xmalloc(sizeof(struct HubSoftware));
+hp = xmalloc(sizeof(HubSoftware));
 
  hp->hh = hh;
 
@@ -283,7 +283,7 @@ hp = xmalloc(sizeof(struct HubSoftware));
 
 /*****************************************************************************/
 
-void DeleteHubSoftware(struct HubSoftware *hs)
+void DeleteHubSoftware(HubSoftware *hs)
 {
  if (hs->name)
     {
@@ -305,11 +305,11 @@ void DeleteHubSoftware(struct HubSoftware *hs)
 
 /*****************************************************************************/
 
-struct HubClass *NewHubClass(struct HubHost *hh,char *class,double p, double dev, time_t t)
+HubClass *NewHubClass(HubHost *hh,char *class,double p, double dev, time_t t)
 
-{ struct HubClass *hp;
+{ HubClass *hp;
 
-hp = xmalloc(sizeof(struct HubClass));
+hp = xmalloc(sizeof(HubClass));
 
  hp->hh = hh;
 
@@ -330,7 +330,7 @@ hp = xmalloc(sizeof(struct HubClass));
 
 /*****************************************************************************/
 
-void DeleteHubClass(struct HubClass *hc)
+void DeleteHubClass(HubClass *hc)
 {
  if (hc->class)
     {
@@ -342,11 +342,11 @@ void DeleteHubClass(struct HubClass *hc)
 
 /*****************************************************************************/
 
-struct HubClassSum *NewHubClassSum(struct HubHost *hh,char *class,int frequency)
+HubClassSum *NewHubClassSum(HubHost *hh,char *class,int frequency)
 
-{ struct HubClassSum *hc;
+{ HubClassSum *hc;
 
-hc = xmalloc(sizeof(struct HubClassSum));
+hc = xmalloc(sizeof(HubClassSum));
 
  hc->hh = hh;
 
@@ -366,7 +366,7 @@ hc = xmalloc(sizeof(struct HubClassSum));
 
 /*****************************************************************************/
 
-void DeleteHubClassSum(struct HubClassSum *hc)
+void DeleteHubClassSum(HubClassSum *hc)
 {
  if (hc->class)
     {
@@ -378,7 +378,7 @@ void DeleteHubClassSum(struct HubClassSum *hc)
 
 /*****************************************************************************/
 
-struct HubTotalCompliance *NewHubTotalCompliance(struct HubHost *hh,time_t t,char *v,int k,int r,int n)
+struct HubTotalCompliance *NewHubTotalCompliance(HubHost *hh,time_t t,char *v,int k,int r,int n)
 
 { struct HubTotalCompliance *hp;
  
@@ -408,11 +408,11 @@ void DeleteHubTotalCompliance(struct HubTotalCompliance *ht)
 
 /*****************************************************************************/
 
-struct HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int hostCount, int totalHostCount, double kept, double repaired, double notkept, time_t genTime)
+HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int hostCount, int totalHostCount, double kept, double repaired, double notkept, time_t genTime)
 
-{ struct HubCacheTotalCompliance *tc;
+{ HubCacheTotalCompliance *tc;
  
-tc = xmalloc(sizeof(struct HubCacheTotalCompliance));
+tc = xmalloc(sizeof(HubCacheTotalCompliance));
 
  tc->policy = xstrdup(policy);
  tc->slot = slot;
@@ -428,7 +428,7 @@ tc = xmalloc(sizeof(struct HubCacheTotalCompliance));
 
 /*****************************************************************************/
 
-void DeleteHubCacheTotalCompliance(struct HubCacheTotalCompliance *tc)
+void DeleteHubCacheTotalCompliance(HubCacheTotalCompliance *tc)
 {
  free(tc->policy);
  free(tc);
@@ -436,11 +436,11 @@ void DeleteHubCacheTotalCompliance(struct HubCacheTotalCompliance *tc)
 
 /*****************************************************************************/
 
-struct HubVariable *NewHubVariable(struct HubHost *hh,char *type,char *scope,char *lval,void *rval,char rtype,time_t t)
+HubVariable *NewHubVariable(HubHost *hh,char *type,char *scope,char *lval,void *rval,char rtype,time_t t)
 // NOTE: rval must be allocated by caller
-{ struct HubVariable *hp;
+{ HubVariable *hp;
      
-hp = xmalloc(sizeof(struct HubVariable));
+hp = xmalloc(sizeof(HubVariable));
 
  hp->hh = hh;
  hp->rtype = rtype;
@@ -454,7 +454,7 @@ hp = xmalloc(sizeof(struct HubVariable));
 
 /*****************************************************************************/
 
-void DeleteHubVariable(struct HubVariable *hv)
+void DeleteHubVariable(HubVariable *hv)
 
 {
  free(hv->scope);
@@ -480,11 +480,11 @@ void DeleteHubVariable(struct HubVariable *hv)
 
 /*****************************************************************************/
 
-struct HubPromiseLog *NewHubPromiseLog(struct HubHost *hh,char *handle,char *cause,time_t t,char *noteId,char *oid)
+HubPromiseLog *NewHubPromiseLog(HubHost *hh,char *handle,char *cause,time_t t,char *noteId,char *oid)
 
-{ struct HubPromiseLog *hp;
+{ HubPromiseLog *hp;
  
-hp = xmalloc(sizeof(struct HubPromiseLog));
+hp = xmalloc(sizeof(HubPromiseLog));
 
  hp->hh = hh;
  hp->handle = xstrdup(handle);
@@ -497,7 +497,7 @@ hp = xmalloc(sizeof(struct HubPromiseLog));
 
 /*****************************************************************************/
 
-void DeleteHubPromiseLog(struct HubPromiseLog *hp)
+void DeleteHubPromiseLog(HubPromiseLog *hp)
 
 {
  free(hp->handle);
@@ -509,11 +509,11 @@ void DeleteHubPromiseLog(struct HubPromiseLog *hp)
 
 /*****************************************************************************/
 
-struct HubPromiseSum *NewHubPromiseSum(struct HubHost *hh,char *handle,char *cause,int occurences, int hostOccurences)
+HubPromiseSum *NewHubPromiseSum(HubHost *hh,char *handle,char *cause,int occurences, int hostOccurences)
 
-{ struct HubPromiseSum *hs;
+{ HubPromiseSum *hs;
  
-hs = xmalloc(sizeof(struct HubPromiseSum));
+hs = xmalloc(sizeof(HubPromiseSum));
 
  hs->hh = hh;
  hs->handle = xstrdup(handle);
@@ -535,7 +535,7 @@ hs = xmalloc(sizeof(struct HubPromiseSum));
 
 /*****************************************************************************/
 
-void DeleteHubPromiseSum(struct HubPromiseSum *hs)
+void DeleteHubPromiseSum(HubPromiseSum *hs)
 
 {
  free(hs->handle);
@@ -550,11 +550,11 @@ void DeleteHubPromiseSum(struct HubPromiseSum *hs)
 
 /*****************************************************************************/
 
-struct HubLastSeen *NewHubLastSeen(struct HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t)
+HubLastSeen *NewHubLastSeen(HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t)
 
-{ struct HubLastSeen *hp;
+{ HubLastSeen *hp;
      
-hp = xmalloc(sizeof(struct HubLastSeen));
+hp = xmalloc(sizeof(HubLastSeen));
 
  hp->hh = hh;
  hp->io = io;  // '+' or '-'
@@ -568,7 +568,7 @@ hp = xmalloc(sizeof(struct HubLastSeen));
 
 /*****************************************************************************/
 
-void DeleteHubLastSeen(struct HubLastSeen *hp)
+void DeleteHubLastSeen(HubLastSeen *hp)
 {
  DeleteHubHost(hp->rhost);
  free(hp); 
@@ -576,11 +576,11 @@ void DeleteHubLastSeen(struct HubLastSeen *hp)
 
 /*****************************************************************************/
 
-struct HubMeter *NewHubMeter(struct HubHost *hh,char type,double kept,double repaired)
+HubMeter *NewHubMeter(HubHost *hh,char type,double kept,double repaired)
 
-{ struct HubMeter *hp;
+{ HubMeter *hp;
      
- hp = xmalloc(sizeof(struct HubMeter));
+ hp = xmalloc(sizeof(HubMeter));
 
  hp->hh = hh;
  hp->type = type;
@@ -592,18 +592,18 @@ struct HubMeter *NewHubMeter(struct HubHost *hh,char type,double kept,double rep
 
 /*****************************************************************************/
 
-void DeleteHubMeter(struct HubMeter *hp)
+void DeleteHubMeter(HubMeter *hp)
 {
  free(hp);
 }
 
 /*****************************************************************************/
 
-struct HubValue *NewHubValue(struct HubHost *hh,char *day,double kept,double repaired,double notkept,char *noteid,char *handle)
+HubValue *NewHubValue(HubHost *hh,char *day,double kept,double repaired,double notkept,char *noteid,char *handle)
 
-{ struct HubValue *hp;
+{ HubValue *hp;
      
- hp = xmalloc(sizeof(struct HubValue));
+ hp = xmalloc(sizeof(HubValue));
 
  hp->hh = hh;
  hp->day = xstrdup(day);
@@ -617,7 +617,7 @@ struct HubValue *NewHubValue(struct HubHost *hh,char *day,double kept,double rep
 
 /*****************************************************************************/
 
-void DeleteHubValue(struct HubValue *hp)
+void DeleteHubValue(HubValue *hp)
 {
  free(hp->day);
  free(hp->nid);
@@ -627,7 +627,7 @@ void DeleteHubValue(struct HubValue *hp)
 
 /*****************************************************************************/
 
-struct HubPerformance *NewHubPerformance(struct HubHost *hh,char *event,time_t t,double q,double e,double d,char *noteid, char *handle)
+struct HubPerformance *NewHubPerformance(HubHost *hh,char *event,time_t t,double q,double e,double d,char *noteid, char *handle)
 
 { struct HubPerformance *hp;
      
@@ -656,7 +656,7 @@ void DeleteHubPerformance(struct HubPerformance *hp)
 
 /*****************************************************************************/
 
-struct HubSetUid *NewHubSetUid(struct HubHost *hh,char *file)
+struct HubSetUid *NewHubSetUid(HubHost *hh,char *file)
 
 { struct HubSetUid *hp;
      
@@ -677,11 +677,11 @@ void DeleteHubSetUid(struct HubSetUid *hp)
 
 /*****************************************************************************/
 
-struct HubFileChanges *NewHubFileChanges(struct HubHost *hh,char *file,time_t t,char *noteid,char *handle)
+HubFileChanges *NewHubFileChanges(HubHost *hh,char *file,time_t t,char *noteid,char *handle)
 
-{ struct HubFileChanges *hp;
+{ HubFileChanges *hp;
      
- hp = xmalloc(sizeof(struct HubFileChanges));
+ hp = xmalloc(sizeof(HubFileChanges));
 
  hp->hh = hh;
  hp->path = xstrdup(file);
@@ -693,7 +693,7 @@ struct HubFileChanges *NewHubFileChanges(struct HubHost *hh,char *file,time_t t,
 
 /*****************************************************************************/
 
-void DeleteHubFileChanges(struct HubFileChanges *hp)
+void DeleteHubFileChanges(HubFileChanges *hp)
 {
  free(hp->path);
  free(hp->handle);
@@ -703,7 +703,7 @@ void DeleteHubFileChanges(struct HubFileChanges *hp)
 
 /*****************************************************************************/
 
-struct HubFileDiff *NewHubFileDiff(struct HubHost *hh,char *file,char *diff,time_t t)
+struct HubFileDiff *NewHubFileDiff(HubHost *hh,char *file,char *diff,time_t t)
 
 { struct HubFileDiff *hp;
      
@@ -727,11 +727,11 @@ void DeleteHubFileDiff(struct HubFileDiff *hp)
 
 /*****************************************************************************/
 
-struct HubPromiseCompliance *NewHubCompliance(struct HubHost *hh,char *handle,char status,double e,double d,time_t t)
+HubPromiseCompliance *NewHubCompliance(HubHost *hh,char *handle,char status,double e,double d,time_t t)
 
-{ struct HubPromiseCompliance *hp;
+{ HubPromiseCompliance *hp;
      
- hp = xmalloc(sizeof(struct HubPromiseCompliance));
+ hp = xmalloc(sizeof(HubPromiseCompliance));
 
  hp->hh = hh;
  hp->handle = xstrdup(handle);
@@ -744,7 +744,7 @@ struct HubPromiseCompliance *NewHubCompliance(struct HubHost *hh,char *handle,ch
 
 /*****************************************************************************/
 
-void DeleteHubPromiseCompliance(struct HubPromiseCompliance *hp)
+void DeleteHubPromiseCompliance(HubPromiseCompliance *hp)
 {
  free(hp->handle);
  free(hp); 
@@ -752,7 +752,7 @@ void DeleteHubPromiseCompliance(struct HubPromiseCompliance *hp)
 
 /*****************************************************************************/
 
-struct HubBundleSeen *NewHubBundleSeen(struct HubHost *hh,char *rname,double ago,double avg,double dev,time_t t,char *noteid)
+struct HubBundleSeen *NewHubBundleSeen(HubHost *hh,char *rname,double ago,double avg,double dev,time_t t,char *noteid)
 
 { struct HubBundleSeen *hp;
      
@@ -779,11 +779,11 @@ void DeleteHubBundleSeen(struct HubBundleSeen *hp)
 
 /*****************************************************************************/
 
-struct HubPromise *NewHubPromise(char *bn,char *bt,char *ba,char *pt, char *pr, char *pe, char *cl, char *ha, char *co, char *fn, int lno, char **cons)
+HubPromise *NewHubPromise(char *bn,char *bt,char *ba,char *pt, char *pr, char *pe, char *cl, char *ha, char *co, char *fn, int lno, char **cons)
 
-{ struct HubPromise *hp;
+{ HubPromise *hp;
 
-hp = xcalloc(1, sizeof(struct HubPromise));
+hp = xcalloc(1, sizeof(HubPromise));
 
 if (bn)
    {
@@ -834,7 +834,7 @@ return hp;
 
 /*****************************************************************************/
 
-void DeleteHubPromise(struct HubPromise *hp)
+void DeleteHubPromise(HubPromise *hp)
 
 {
 
@@ -1014,7 +1014,7 @@ free(hc);
 
 /*****************************************************************************/
 
-struct HubNoteInfo *NewHubNoteInfo(struct HubHost *hh,char *nid,char *user,char *msg,time_t t,char *reportData, int reportType)
+struct HubNoteInfo *NewHubNoteInfo(HubHost *hh,char *nid,char *user,char *msg,time_t t,char *reportData, int reportType)
 
 { struct HubNoteInfo *hci;
 
@@ -1113,10 +1113,10 @@ int SortPromiseLog(void *p1, void *p2)
 /**
  * For SortRlist() - sorts promise logs descending on time.
  **/
-{ struct HubPromiseLog *pl1, *pl2;
+{ HubPromiseLog *pl1, *pl2;
 
-pl1 = (struct HubPromiseLog *)p1;
-pl2 = (struct HubPromiseLog *)p2;
+pl1 = (HubPromiseLog *)p1;
+pl2 = (HubPromiseLog *)p2;
 
 if (pl1->t > pl2->t)
    {
@@ -1134,11 +1134,11 @@ int SortBusinessValue(void *p1, void *p2)
 /**
  * For SortRlist() - sorts business value descending on time.
  **/
-{ struct HubValue *hv1, *hv2;
+{ HubValue *hv1, *hv2;
   time_t t1, t2;
 
-hv1 = (struct HubValue *)p1;
-hv2 = (struct HubValue *)p2;
+hv1 = (HubValue *)p1;
+hv2 = (HubValue *)p2;
 
 DateStrToTime(hv1->day,&t1);
 DateStrToTime(hv2->day,&t2);
@@ -1182,10 +1182,10 @@ int SortFileChanges(void *p1, void *p2)
  * For SortRlist() - sorts file changes descending on time.
  **/
 {
- struct HubFileChanges *hc1, *hc2;
+ HubFileChanges *hc1, *hc2;
 
- hc1 = (struct HubFileChanges *)p1;
- hc2 = (struct HubFileChanges *)p2;
+ hc1 = (HubFileChanges *)p1;
+ hc2 = (HubFileChanges *)p2;
 
  if(hc1->t > hc2->t)
     {
@@ -1226,10 +1226,10 @@ int SortLastSeen(void *p1, void *p2)
  * For SortRlist() - sorts last seen descending on time.
  **/
 {
- struct HubLastSeen *hl1, *hl2;
+ HubLastSeen *hl1, *hl2;
 
- hl1 = (struct HubLastSeen *)p1;
- hl2 = (struct HubLastSeen *)p2;
+ hl1 = (HubLastSeen *)p1;
+ hl2 = (HubLastSeen *)p2;
 
  if(hl1->t > hl2->t)
     {
@@ -1270,10 +1270,10 @@ int SortPromiseCompliance(void *p1, void *p2)
  * For SortRlist() - sorts promise compliance descending on time.
  **/
 {
- struct HubPromiseCompliance *hp1, *hp2;
+ HubPromiseCompliance *hp1, *hp2;
 
- hp1 = (struct HubPromiseCompliance *)p1;
- hp2 = (struct HubPromiseCompliance *)p2;
+ hp1 = (HubPromiseCompliance *)p1;
+ hp2 = (HubPromiseCompliance *)p2;
 
  if(hp1->t > hp2->t)
     {
@@ -1293,10 +1293,10 @@ int SortClasses(void *p1, void *p2)
  * For SortRlist() - sorts classes on name.
  **/
 {
- struct HubClass *hc1, *hc2;
+ HubClass *hc1, *hc2;
 
- hc1 = (struct HubClass *)p1;
- hc2 = (struct HubClass *)p2;
+ hc1 = (HubClass *)p1;
+ hc2 = (HubClass *)p2;
 
  if(strcmp(hc1->class,hc2->class) < 0)
     {
@@ -1315,10 +1315,10 @@ int SortClassSum(void *p1, void *p2)
  * For SortRlist() - sorts classes on frequency.
  **/
 {
- struct HubClassSum *hc1, *hc2;
+ HubClassSum *hc1, *hc2;
 
- hc1 = (struct HubClassSum *)p1;
- hc2 = (struct HubClassSum *)p2;
+ hc1 = (HubClassSum *)p1;
+ hc2 = (HubClassSum *)p2;
 
  if(hc1->frequency > hc2->frequency)
     {
@@ -1337,10 +1337,10 @@ int SortSoftware(void *p1, void *p2)
  * For SortRlist() - sorts software on name.
  **/
 {
- struct HubSoftware *hs1, *hs2;
+ HubSoftware *hs1, *hs2;
 
- hs1 = (struct HubSoftware *)p1;
- hs2 = (struct HubSoftware *)p2;
+ hs1 = (HubSoftware *)p1;
+ hs2 = (HubSoftware *)p2;
 
  if(strcmp(hs1->name,hs2->name) < 0)
     {
@@ -1381,10 +1381,10 @@ int SortPromisePopularAscending(void *p1, void *p2)
  * For SortRlist() - sorts least popular promises first.
  **/
 {
- struct HubPromise *hp1, *hp2;
+ HubPromise *hp1, *hp2;
 
- hp1 = (struct HubPromise *)p1;
- hp2 = (struct HubPromise *)p2;
+ hp1 = (HubPromise *)p1;
+ hp2 = (HubPromise *)p2;
 
  if(hp1->popularity < hp2->popularity)
     {
@@ -1403,10 +1403,10 @@ int SortPromisePopularDescending(void *p1, void *p2)
  * For SortRlist() - sorts most popular promises first.
  **/
 {
- struct HubPromise *hp1, *hp2;
+ HubPromise *hp1, *hp2;
 
- hp1 = (struct HubPromise *)p1;
- hp2 = (struct HubPromise *)p2;
+ hp1 = (HubPromise *)p1;
+ hp2 = (HubPromise *)p2;
 
  if(hp1->popularity > hp2->popularity)
     {
@@ -1420,14 +1420,14 @@ int SortPromisePopularDescending(void *p1, void *p2)
 
 /*****************************************************************************/
 
-struct HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(Rlist *records, int slot)
+HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(Rlist *records, int slot)
 {
  Rlist *rp;
- struct HubCacheTotalCompliance *tc;
+ HubCacheTotalCompliance *tc;
 
  for(rp = records; rp != NULL; rp = rp->next)
     {
-    tc = (struct HubCacheTotalCompliance *)rp->item;
+    tc = (HubCacheTotalCompliance *)rp->item;
 
     if(tc->slot == slot)
        {
@@ -1440,7 +1440,7 @@ struct HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(Rlist *records, i
 
 /*****************************************************************************/
 
-int PageRecords(Rlist **records_p, struct PageInfo *page,void (*fnptr)())
+int PageRecords(Rlist **records_p, PageInfo *page,void (*fnptr)())
 /**
  * Unlinks and unallocates records not within the desired page.
  * Writes the total number of records given as input.
@@ -1530,13 +1530,13 @@ int PageRecords(Rlist **records_p, struct PageInfo *page,void (*fnptr)())
 
 /*****************************************************************************/
 
-void CountMarginRecordsVars(Rlist **records_p, struct PageInfo *page,int *start_count,int *end_count)
+void CountMarginRecordsVars(Rlist **records_p, PageInfo *page,int *start_count,int *end_count)
 /**
  * Counts the total records for a scope
  * if it spans multiple pages
  **/
 { int startIdx=0, endIdx=0,count=0, head_count=0, tail_count=0;
-  struct HubVariable *hv,*hv2,*hv3;
+  HubVariable *hv,*hv2,*hv3;
   Rlist *rp,*rp2,*rp3;
   int last_scope=false;
   char lscope[CF_MAXVARSIZE];
@@ -1550,7 +1550,7 @@ void CountMarginRecordsVars(Rlist **records_p, struct PageInfo *page,int *start_
 
   for (rp = *records_p; (rp != NULL && !last_scope); rp=rp->next)
     {
-      hv = (struct HubVariable *)rp->item;
+      hv = (HubVariable *)rp->item;
       if (strcmp(lscope,hv->scope) != 0)
 	{
 	  strcpy(lscope,hv->scope);
@@ -1562,7 +1562,7 @@ void CountMarginRecordsVars(Rlist **records_p, struct PageInfo *page,int *start_
 	  head_count=tail_count;
 	  for (rp3 = rp; rp3 != NULL; rp3=rp3->next)
 	     {
-	       hv3 = (struct HubVariable *)rp3->item;
+	       hv3 = (HubVariable *)rp3->item;
 
 	       if (strcmp(lscope,hv3->scope) != 0)
 		 {
@@ -1577,7 +1577,7 @@ void CountMarginRecordsVars(Rlist **records_p, struct PageInfo *page,int *start_
 	   last_scope=true;
 	   for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
 	     {
-	       hv2 = (struct HubVariable *)rp2->item;
+	       hv2 = (HubVariable *)rp2->item;
 
 	       if (strcmp(lscope,hv2->scope) != 0)
 		 {

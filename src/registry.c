@@ -49,7 +49,7 @@ void VerifyRegistryPromise(Attributes a,Promise *pp)
   char name[CF_MAXVARSIZE];
   int rr,rw,create = false;
   CF_DB*dbp;
-  struct CfLock thislock;
+  CfLock thislock;
   char lockname[CF_BUFSIZE];
 
 if (LICENSES == 0)

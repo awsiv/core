@@ -67,7 +67,7 @@ char *hostkey = NULL,
      *arch = NULL,
      *context = NULL;
 int len;
-struct PageInfo page = { 0 };
+PageInfo page = { 0 };
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssll",
       &hostkey, &len,
@@ -84,7 +84,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssll",
 mongo_connection conn;
 database_open(&conn);
 
-struct HubQuery *result = CFDB_QuerySoftware(&conn, hostkey,
+HubQuery *result = CFDB_QuerySoftware(&conn, hostkey,
    cfr_software, name, version, arch, true, context ,true);
 
 database_close(&conn);
@@ -92,7 +92,7 @@ database_close(&conn);
 JsonArray *software = NULL;
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    {
-   struct HubSoftware *record = (struct HubSoftware *)rp->item;
+   HubSoftware *record = (HubSoftware *)rp->item;
    JsonObject *software_entry = NULL;
 
    JsonObjectAppendString(&software_entry, LABEL_HOSTKEY, record->hh->keyhash);
@@ -144,7 +144,7 @@ char *hostkey = NULL,
      *type = NULL,
      *context = NULL;
 int len;
-struct PageInfo page = { 0 };
+PageInfo page = { 0 };
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssssll",
       &hostkey, &len,
@@ -162,7 +162,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssssll",
 mongo_connection conn;
 database_open(&conn);
 
-struct HubQuery *result = CFDB_QueryVariables(&conn, hostkey,
+HubQuery *result = CFDB_QueryVariables(&conn, hostkey,
    scope, name, value, type, true, context);
 
 database_close(&conn);
@@ -170,7 +170,7 @@ database_close(&conn);
 JsonArray *values = NULL;
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    {
-   struct HubVariable *record = (struct HubVariable *)rp->item;
+   HubVariable *record = (HubVariable *)rp->item;
    const char *type = DataTypeToString(record->dtype);
 
    JsonObject *value_entry = NULL;
@@ -204,7 +204,7 @@ char *hostkey = NULL,
      *name = NULL,
      *context = NULL;
 int len;
-struct PageInfo page = { 0 };
+PageInfo page = { 0 };
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssll",
       &hostkey, &len,
@@ -219,7 +219,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssll",
 mongo_connection conn;
 database_open(&conn);
 
-struct HubQuery *result = CFDB_QueryBundleSeen(&conn, hostkey, name, true, context, true);
+HubQuery *result = CFDB_QueryBundleSeen(&conn, hostkey, name, true, context, true);
 
 database_close(&conn);
 

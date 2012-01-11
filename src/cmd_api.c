@@ -90,8 +90,8 @@ int Nova2Txt_summary_report(char *hostkey,char *handle,char *status,int regex,ch
   Return current best-knowledge of average compliance for the class of hosts and promises selected
  */
 { char buf1[CF_SMALLBUF],buf2[CF_SMALLBUF];
-  struct HubPromiseCompliance *hp;
-  struct HubQuery *hq;
+  HubPromiseCompliance *hp;
+  HubQuery *hq;
   Rlist *rp;
   mongo_connection dbconn;
   time_t now = time(NULL),from=now,to=now-SECONDS_PER_WEEK;
@@ -121,7 +121,7 @@ tot_hosts = 0;
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
-   hp = (struct HubPromiseCompliance *)rp->item;
+   hp = (HubPromiseCompliance *)rp->item;
 
    // If data have passed the time horizon, we should not claim to know their state
    // The system might or might not be compliant, hp->e is the expected schedule for this promise
@@ -288,10 +288,10 @@ bool Nova2Txt_vitals_list(char *keyHash, char *buffer, int bufsize)
 /* Search for answers                                                        */
 /*****************************************************************************/
 
-int Nova2Txt_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
+int Nova2Txt_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,PageInfo *page,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE], canonifiedCause[CF_BUFSIZE]={0};
- struct HubPromiseLog *hp;  struct HubQuery *hq;
+ HubPromiseLog *hp;  HubQuery *hq;
  Rlist *rp;
  int reportType;
  mongo_connection dbconn;
@@ -314,7 +314,7 @@ int Nova2Txt_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time
 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
-    hp = (struct HubPromiseLog *)rp->item;
+    hp = (HubPromiseLog *)rp->item;
     EscapeJson(hp->cause,canonifiedCause,sizeof(canonifiedCause));
     if (strcmp(hp->nid,CF_NONOTE) == 0)
        {
@@ -369,8 +369,8 @@ int Nova2Txt_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time
 int Nova2Txt_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,time_t from, time_t to,char *classreg)
 
 {
- struct HubPromiseLog *hp;
- struct HubQuery *hq;
+ HubPromiseLog *hp;
+ HubQuery *hq;
  Rlist *rp;
  mongo_connection dbconn;
  Item *ip,*summary = NULL;
@@ -388,7 +388,7 @@ int Nova2Txt_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep t
  
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
-    hp = (struct HubPromiseLog *)rp->item;
+    hp = (HubPromiseLog *)rp->item;
     ip = IdempPrependItem(&summary,hp->handle,hp->cause);
     ip->counter++;
     }
@@ -427,8 +427,8 @@ int Nova2Txt_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep t
 int Nova2Txt_software_report(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *classreg)
 
 {
- struct HubSoftware *hs;
- struct HubQuery *hq;
+ HubSoftware *hs;
+ HubQuery *hq;
  Rlist *rp;
  mongo_connection dbconn;
 
@@ -447,7 +447,7 @@ if (!CSV)
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
-   hs = (struct HubSoftware *)rp->item;
+   hs = (HubSoftware *)rp->item;
    if (CSV)
       {
       printf("%s,%s,%s,%s\n",hs->hh->hostname,hs->name,hs->version,Nova_LongArch(hs->arch));
@@ -473,8 +473,8 @@ return true;
 int Nova2Txt_classes_report(char *hostkey,char *name,int regex,char *classreg)
 
 {
-  struct HubClass *hc;
-  struct HubQuery *hq;
+  HubClass *hc;
+  HubQuery *hq;
   Rlist *rp;
   mongo_connection dbconn;
 
@@ -495,7 +495,7 @@ if (!CSV)
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
-   hc = (struct HubClass *)rp->item;
+   hc = (HubClass *)rp->item;
 
    if (CSV)
       {
@@ -520,8 +520,8 @@ int Nova2Txt_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
 
 {
  char rvalBuf[CF_MAXVARSIZE];
- struct HubVariable *hv;
- struct HubQuery *hq;
+ HubVariable *hv;
+ HubQuery *hq;
  Rlist *rp;
  mongo_connection dbconn;
 
@@ -542,7 +542,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    char typestr[CF_SMALLBUF];
    
-   hv = (struct HubVariable *)rp->item;
+   hv = (HubVariable *)rp->item;
    
    switch (*hv->dtype)
       {
@@ -600,7 +600,7 @@ int Nova2Txt_compliance_report(char *hostkey,char *version,time_t t,int k,int nk
 
 { char buffer[CF_BUFSIZE];
  struct HubTotalCompliance *ht;
- struct HubQuery *hq;
+ HubQuery *hq;
  Rlist *rp;
  int icmp;
  mongo_connection dbconn;
@@ -655,8 +655,8 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 int Nova2Txt_compliance_promises(char *hostkey,char *handle,char *status,int regex,char *classreg)
 
 { char buffer[CF_BUFSIZE];
- struct HubPromiseCompliance *hp;
- struct HubQuery *hq;
+ HubPromiseCompliance *hp;
+ HubQuery *hq;
  Rlist *rp;
  mongo_connection dbconn;
  
@@ -680,7 +680,7 @@ if (!CSV)
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
-   hp = (struct HubPromiseCompliance *)rp->item;
+   hp = (HubPromiseCompliance *)rp->item;
 
    if (CSV)
       {
@@ -707,8 +707,8 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
 int Nova2Txt_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,char *classreg)
 
 {
- struct HubLastSeen *hl;
- struct HubQuery *hq;
+ HubLastSeen *hl;
+ HubQuery *hq;
  Rlist *rp;
  mongo_connection dbconn;
  char inout[CF_SMALLBUF];
@@ -729,7 +729,7 @@ if (!CSV)
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
-   hl = (struct HubLastSeen *)rp->item;
+   hl = (HubLastSeen *)rp->item;
    
    switch (hl->io)
       {
@@ -768,8 +768,8 @@ return true;
 int Nova2Txt_deadclient_report(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,char *classreg)
 
 {
- struct HubLastSeen *hl;
- struct HubQuery *hq;
+ HubLastSeen *hl;
+ HubQuery *hq;
  Rlist *rp;
  mongo_connection dbconn;
  time_t then;
@@ -791,7 +791,7 @@ if (!CSV)
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
-   hl = (struct HubLastSeen *)rp->item;
+   hl = (HubLastSeen *)rp->item;
    
    switch (hl->io)
       {
@@ -832,7 +832,7 @@ int Nova2Txt_setuid_report(char *hostkey,char *file,int regex,char *classreg)
 
 {
  struct HubSetUid *hS;   
- struct HubQuery *hq;
+ HubQuery *hq;
  Rlist *rp;
  mongo_connection dbconn;
 
@@ -876,11 +876,11 @@ if (!CFDB_Close(&dbconn))
 
 /*****************************************************************************/
 
-int Nova2Txt_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,struct PageInfo *page,char *returnval,int bufsize)
+int Nova2Txt_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,PageInfo *page,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE]={0};
  struct HubBundleSeen *hb;   
- struct HubQuery *hq;
+ HubQuery *hq;
  Rlist *rp;
  mongo_connection dbconn;
  char header[CF_BUFSIZE]={0};
@@ -962,8 +962,8 @@ int Nova2Txt_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,s
 int Nova2Txt_filechanges_report(char *hostkey,char *file,int regex,time_t t,char *cmp,char *classreg)
 
 { char buffer[CF_SMALLBUF];
-  struct HubFileChanges *hC;
-  struct HubQuery *hq;
+  HubFileChanges *hC;
+  HubQuery *hq;
   Rlist *rp;
   int icmp;
   mongo_connection dbconn;
@@ -991,7 +991,7 @@ if (!CSV)
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
-   hC = (struct HubFileChanges *)rp->item;
+   hC = (HubFileChanges *)rp->item;
 
    if (CSV)
       {
@@ -1028,7 +1028,7 @@ int Nova2Txt_filediffs_report(char *hostkey,char *file,char *diffs,int regex,tim
 
 {
   struct HubFileDiff *hd;
-  struct HubQuery *hq;
+  HubQuery *hq;
   Rlist *rp;
   int icmp;
   mongo_connection dbconn;
@@ -1091,8 +1091,8 @@ return true;
 int Nova2Txt_hostinfo(char *hostkey,char *hostnameOut,char *ipaddrOut,int bufsize)
 
 { char buffer1[CF_BUFSIZE],buffer2[CF_BUFSIZE];
- struct HubHost *hh;
- struct HubQuery *hq;
+ HubHost *hh;
+ HubQuery *hq;
  Rlist *rp;
  int count1 = 0,count2 = 0,tmpsize1,tmpsize2;
  mongo_connection dbconn;
@@ -1126,7 +1126,7 @@ ipaddrOut[0] = '\0';
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
-   hh = (struct HubHost *)rp->item;
+   hh = (HubHost *)rp->item;
    
    snprintf(buffer1,CF_MAXVARSIZE-1,"%s ",hh->hostname);
    snprintf(buffer2,CF_MAXVARSIZE-1,"%s ",hh->ipaddr);
@@ -1161,12 +1161,12 @@ return true;
 int Nova2Txt_value_hosts(char *hostkey,char *day,char *month,char *year,char *classreg,char *returnval,int bufsize)
 
 {
-  struct HubQuery *hq;
+  HubQuery *hq;
   Rlist *rp;
   mongo_connection dbconn;
   char buffer[CF_BUFSIZE]={0};
   int counter = 0, n = 180;
-  struct HubHost *hh;
+  HubHost *hh;
 
 /* BEGIN query document */
 
@@ -1182,7 +1182,7 @@ StartJoin(returnval,"[",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
-   hh = (struct HubHost *)rp->item;
+   hh = (HubHost *)rp->item;
    
    counter++;
    snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
@@ -1216,8 +1216,8 @@ return true;
 int Nova2Txt_software_hosts(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *classreg,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
- struct HubHost *hh;
- struct HubQuery *hq;
+ HubHost *hh;
+ HubQuery *hq;
  Rlist *rp;
  int counter = 0, n = 180;
  mongo_connection dbconn;
@@ -1236,7 +1236,7 @@ int Nova2Txt_software_hosts(char *hostkey,char *name,char *value, char *arch,int
 
  for (rp = hq->hosts; rp != NULL; rp=rp->next)
     {
-    hh = (struct HubHost *)rp->item;
+    hh = (HubHost *)rp->item;
 
     counter++;
     snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
@@ -1270,8 +1270,8 @@ int Nova2Txt_software_hosts(char *hostkey,char *name,char *value, char *arch,int
 int Nova2Txt_classes_hosts(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
- struct HubHost *hh;
- struct HubQuery *hq;
+ HubHost *hh;
+ HubQuery *hq;
  Rlist *rp;
  int counter = 0, n = 180;
  mongo_connection dbconn;
@@ -1290,7 +1290,7 @@ int Nova2Txt_classes_hosts(char *hostkey,char *name,int regex,char *classreg,cha
 
  for (rp = hq->hosts; rp != NULL; rp=rp->next)
     {
-    hh = (struct HubHost *)rp->item;
+    hh = (HubHost *)rp->item;
 
     counter++;
     snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
@@ -1324,8 +1324,8 @@ int Nova2Txt_classes_hosts(char *hostkey,char *name,int regex,char *classreg,cha
 int Nova2Txt_vars_hosts(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
-  struct HubHost *hh;
-  struct HubQuery *hq;
+  HubHost *hh;
+  HubQuery *hq;
   Rlist *rp;
   int counter = 0, n = 180;
   mongo_connection dbconn;
@@ -1342,7 +1342,7 @@ StartJoin(returnval,"[",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
-   hh = (struct HubHost *)rp->item;
+   hh = (HubHost *)rp->item;
    counter++;
    snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
@@ -1375,8 +1375,8 @@ return true;
 int Nova2Txt_compliance_hosts(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
- struct HubHost *hh;
- struct HubQuery *hq;
+ HubHost *hh;
+ HubQuery *hq;
  Rlist *rp;
  int counter = 0, n = 180,icmp;
  mongo_connection dbconn;
@@ -1401,7 +1401,7 @@ int Nova2Txt_compliance_hosts(char *hostkey,char *version,time_t t,int k,int nk,
 
  for (rp = hq->hosts; rp != NULL; rp=rp->next)
     {
-    hh = (struct HubHost *)rp->item;
+    hh = (HubHost *)rp->item;
     counter++;   
     snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
@@ -1434,8 +1434,8 @@ int Nova2Txt_compliance_hosts(char *hostkey,char *version,time_t t,int k,int nk,
 int Nova2Txt_promise_hosts(char *hostkey,char *handle,char *status,int regex,char *classreg,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
-  struct HubHost *hh;
-  struct HubQuery *hq;
+  HubHost *hh;
+  HubQuery *hq;
   Rlist *rp;
   int counter = 0, n = 180;
   mongo_connection dbconn;
@@ -1459,7 +1459,7 @@ StartJoin(returnval,"[",bufsize);
 
 for (rp = hq->hosts; rp != NULL; rp=rp->next)
    {
-   hh = (struct HubHost *)rp->item;
+   hh = (HubHost *)rp->item;
    counter++;   
    snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
@@ -1492,8 +1492,8 @@ return true;
 int Nova2Txt_lastseen_hosts(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,char *classreg,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
- struct HubHost *hh;
- struct HubQuery *hq;
+ HubHost *hh;
+ HubQuery *hq;
  Rlist *rp;
  int counter = 0, n = 180;
  mongo_connection dbconn;
@@ -1512,7 +1512,7 @@ int Nova2Txt_lastseen_hosts(char *hostkey,char *lhash,char *lhost,char *laddress
 
  for (rp = hq->hosts; rp != NULL; rp=rp->next)
     {
-    hh = (struct HubHost *)rp->item;
+    hh = (HubHost *)rp->item;
     counter++;   
     snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
@@ -1545,8 +1545,8 @@ int Nova2Txt_lastseen_hosts(char *hostkey,char *lhash,char *lhost,char *laddress
 int Nova2Txt_performance_hosts(char *hostkey,char *job,int regex,char *classreg,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
- struct HubHost *hh;
- struct HubQuery *hq;
+ HubHost *hh;
+ HubQuery *hq;
  Rlist *rp;
  int counter = 0, n = 180;
  mongo_connection dbconn;
@@ -1563,7 +1563,7 @@ int Nova2Txt_performance_hosts(char *hostkey,char *job,int regex,char *classreg,
 
  for (rp = hq->hosts; rp != NULL; rp=rp->next)
     {
-    hh = (struct HubHost *)rp->item;
+    hh = (HubHost *)rp->item;
     counter++;   
     snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
@@ -1596,8 +1596,8 @@ int Nova2Txt_performance_hosts(char *hostkey,char *job,int regex,char *classreg,
 int Nova2Txt_setuid_hosts(char *hostkey,char *file,int regex,char *classreg,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
- struct HubHost *hh;
- struct HubQuery *hq;
+ HubHost *hh;
+ HubQuery *hq;
  Rlist *rp;
  int counter = 0, n = 180;
  mongo_connection dbconn;
@@ -1614,7 +1614,7 @@ int Nova2Txt_setuid_hosts(char *hostkey,char *file,int regex,char *classreg,char
 
  for (rp = hq->hosts; rp != NULL; rp=rp->next)
     {
-    hh = (struct HubHost *)rp->item;
+    hh = (HubHost *)rp->item;
     counter++;   
     snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
@@ -1648,8 +1648,8 @@ int Nova2Txt_setuid_hosts(char *hostkey,char *file,int regex,char *classreg,char
 int Nova2Txt_bundle_hosts(char *hostkey,char *bundle,int regex,char *classreg,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
- struct HubHost *hh;
- struct HubQuery *hq;
+ HubHost *hh;
+ HubQuery *hq;
  Rlist *rp;
  int counter = 0, n = 180;
  mongo_connection dbconn;
@@ -1669,7 +1669,7 @@ int Nova2Txt_bundle_hosts(char *hostkey,char *bundle,int regex,char *classreg,ch
 
  for (rp = hq->hosts; rp != NULL; rp=rp->next)
     {
-    hh = (struct HubHost *)rp->item;
+    hh = (HubHost *)rp->item;
     counter++;   
     snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
@@ -1702,8 +1702,8 @@ int Nova2Txt_bundle_hosts(char *hostkey,char *bundle,int regex,char *classreg,ch
 int Nova2Txt_filechanges_hosts(char *hostkey,char *file,int regex,time_t t,char *cmp,char *classreg,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
- struct HubHost *hh;
- struct HubQuery *hq;
+ HubHost *hh;
+ HubQuery *hq;
  Rlist *rp;
  int counter = 0, n = 180,icmp;
  mongo_connection dbconn;
@@ -1730,7 +1730,7 @@ int Nova2Txt_filechanges_hosts(char *hostkey,char *file,int regex,time_t t,char 
 
  for (rp = hq->hosts; rp != NULL; rp=rp->next)
     {
-    hh = (struct HubHost *)rp->item;
+    hh = (HubHost *)rp->item;
     counter++;
     snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
@@ -1760,8 +1760,8 @@ int Nova2Txt_filechanges_hosts(char *hostkey,char *file,int regex,time_t t,char 
 int Nova2Txt_filediffs_hosts(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *classreg,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
- struct HubHost *hh;
- struct HubQuery *hq;
+ HubHost *hh;
+ HubQuery *hq;
  Rlist *rp;
  int counter = 0, n = 180,icmp;
  mongo_connection dbconn;
@@ -1787,7 +1787,7 @@ int Nova2Txt_filediffs_hosts(char *hostkey,char *file,char *diffs,int regex,time
 
  for (rp = hq->hosts; rp != NULL; rp=rp->next)
     {
-    hh = (struct HubHost *)rp->item;
+    hh = (HubHost *)rp->item;
     counter++;
     snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
@@ -1821,8 +1821,8 @@ int Nova2Txt_filediffs_hosts(char *hostkey,char *file,char *diffs,int regex,time
 
 int Nova2Txt_promiselog_hosts(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,char *returnval,int bufsize)
 {
- struct HubHost *hh;
- struct HubQuery *hq;
+ HubHost *hh;
+ HubQuery *hq;
  mongo_connection dbconn;
  Rlist *rp;
  int counter = 0, n = 180;
@@ -1840,7 +1840,7 @@ int Nova2Txt_promiselog_hosts(char *hostkey,char *handle,enum promiselog_rep typ
 
  for (rp = hq->hosts; rp != NULL; rp=rp->next)
     {
-    hh = (struct HubHost *)rp->item;
+    hh = (HubHost *)rp->item;
     counter++;
     snprintf(buffer,CF_MAXVARSIZE,"{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},",hh->keyhash,hh->hostname,hh->ipaddr);
    
@@ -2320,7 +2320,7 @@ Nova_ScanTheRest(id,buffer,bufsize);
 /* Hosts stats                                                               */
 /*****************************************************************************/
 
-void Nova2Txt_show_topN(char *policy,int n,struct PageInfo *page,char *buffer,int bufsize)
+void Nova2Txt_show_topN(char *policy,int n,PageInfo *page,char *buffer,int bufsize)
 
 { Item *ip,*clist;
  char work[CF_BUFSIZE] = {0};
@@ -2427,11 +2427,11 @@ void Nova2Txt_show_all_hosts(char *policy,int n,char *buffer,int bufsize)
 
 /*****************************************************************************/
 
-int Nova2Txt_show_hosts(char *hostNameRegex,char *ipRegex,char *classRegex,struct PageInfo *page,char *buf,int bufsize)
+int Nova2Txt_show_hosts(char *hostNameRegex,char *ipRegex,char *classRegex,PageInfo *page,char *buf,int bufsize)
 
 {
- struct HubQuery *hq;
- struct HubHost *hh;
+ HubQuery *hq;
+ HubHost *hh;
  Rlist *rp;
  mongo_connection dbconn;
  char work[CF_MAXVARSIZE];
@@ -2463,7 +2463,7 @@ int Nova2Txt_show_hosts(char *hostNameRegex,char *ipRegex,char *classRegex,struc
  
  for (rp = hq->hosts; rp != NULL; rp=rp->next)
        {
-       hh = (struct HubHost *)rp->item;
+       hh = (HubHost *)rp->item;
        
        snprintf(work, sizeof(work), "[\"%s\", \"%s\", \"%s\"]\n,",
                 hh->hostname, hh->ipaddr, hh->keyhash);
@@ -2486,7 +2486,7 @@ int Nova2Txt_show_hosts(char *hostNameRegex,char *ipRegex,char *classRegex,struc
 
 /*****************************************************************************/
 
-void Nova2Txt_show_col_hosts(char *colour,int n,struct PageInfo *page,char *buffer,int bufsize)
+void Nova2Txt_show_col_hosts(char *colour,int n,PageInfo *page,char *buffer,int bufsize)
 
 { Item *ip,*clist;
  char work[CF_MAXVARSIZE],lastseen[CF_MAXVARSIZE]={0};
@@ -2752,8 +2752,8 @@ char *Nova2Txt_GetPromiser(char *handle)
 int Nova2Txt_get_variable(char *hostkey,char *scope,char *lval,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
- struct HubVariable *hv;
- struct HubQuery *hq;
+ HubVariable *hv;
+ HubQuery *hq;
  Rlist *rp;
  mongo_connection dbconn;
 
@@ -2769,7 +2769,7 @@ int Nova2Txt_get_variable(char *hostkey,char *scope,char *lval,char *returnval,i
 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
-    hv = (struct HubVariable *)rp->item;
+    hv = (HubVariable *)rp->item;
 
     if (strlen(hv->dtype) > 1) // list
        {
@@ -2829,7 +2829,7 @@ EndJoin(buffer,"]",bufsize);
 int Nova2Txt_summarize_promise(char *handle, char *returnval,int bufsize)
 
 { mongo_connection dbconn;
- struct HubPromise *hp;
+ HubPromise *hp;
  char promiseeText[CF_MAXVARSIZE];
  char commentText[CF_MAXVARSIZE];
  char work[CF_MAXVARSIZE];
@@ -2953,8 +2953,8 @@ int Nova2Txt_list_promise_handles_with_comments(char *bundle,char *btype,char *r
 { mongo_connection dbconn;
  char work[CF_BUFSIZE];
  Rlist *rp;
- struct HubQuery *hq;
- struct HubPromise *hp;
+ HubQuery *hq;
+ HubPromise *hp;
   
 /* BEGIN query document */
 
@@ -2976,7 +2976,7 @@ int Nova2Txt_list_promise_handles_with_comments(char *bundle,char *btype,char *r
         
     for (rp = hq->records; rp != NULL; rp=rp->next)
        {
-       hp = (struct HubPromise *)rp->item;
+       hp = (HubPromise *)rp->item;
        snprintf(work,CF_BUFSIZE-1,"[\"%s\", \"%s\"],",(char*)hp->handle, (char*)hp->comment);
        Join(returnval,work,bufsize);
        }
@@ -3001,8 +3001,8 @@ int Nova2Txt_list_promise_handles(char *promiser,char *ptype,char *bundle,char *
 { mongo_connection dbconn;
  char work[CF_MAXVARSIZE];
  Rlist *rp;
- struct HubQuery *hq;
- struct HubPromise *hp;
+ HubQuery *hq;
+ HubPromise *hp;
 
 /* BEGIN query document */
 
@@ -3025,7 +3025,7 @@ int Nova2Txt_list_promise_handles(char *promiser,char *ptype,char *bundle,char *
         
     for (rp = hq->records; rp != NULL; rp=rp->next)
        {
-       hp = (struct HubPromise *)rp->item;
+       hp = (HubPromise *)rp->item;
        snprintf(work,CF_MAXVARSIZE-1,"\"%s\",",(char*)hp->handle);
        Join(returnval,work,bufsize);
        }
@@ -3162,8 +3162,8 @@ int Nova2Txt_list_handles_policy_finder(char *handle,char *promiser,char *bundle
   char work[CF_MAXVARSIZE] = {0};
   char promiserJson[CF_BUFSIZE];
   Rlist *rp;
-  struct HubPromise *hp;
-  struct HubQuery *hq;
+  HubPromise *hp;
+  HubQuery *hq;
 
   /* BEGIN query document */
 
@@ -3181,7 +3181,7 @@ int Nova2Txt_list_handles_policy_finder(char *handle,char *promiser,char *bundle
     StartJoin(returnval, "[", bufsize);
     for (rp = hq->records; rp != NULL; rp=rp->next)
       {
-      hp = (struct HubPromise *)rp->item;
+      hp = (HubPromise *)rp->item;
       snprintf(work,sizeof(work),"[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"],",
                (char*)hp->handle,
                (char*)hp->promiseType,

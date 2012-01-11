@@ -1334,11 +1334,11 @@ DeleteItemList(file);
 
 /*****************************************************************************/
 
-void ReportPatches(struct CfPackageManager *list)
+void ReportPatches(PackageManager *list)
 
 { FILE *fout;
-  struct CfPackageManager *mp = NULL;
-  struct CfPackageItem *pi;
+  PackageManager *mp = NULL;
+  PackageItem *pi;
   char name[CF_BUFSIZE];
   int count = 0;
 

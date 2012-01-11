@@ -437,7 +437,7 @@ void Nova_LogLicenseStatus()
   int licenses = 0,count = 0;
   Promise *pp = NewPromise("track_license","License tracker");
   Attributes dummyattr = {{0}};
-  struct CfLock thislock;
+  CfLock thislock;
   QPoint entry;
   Rlist *counter = NULL;
   int min = 9999999,max = -1,lic1,lic2,i = 0;

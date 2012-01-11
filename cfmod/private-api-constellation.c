@@ -216,7 +216,7 @@ static char *cfcon_aggr_promiselog(int argc, enum promiselog_rep log_type)
  static char buffer[CF_WEBBUFFER];
  char *hubKeyHash, *fhubKeyHash;
  char *promiseHandle, *fPromiseHandle;
- PageInfo_t page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(argc, "ssll",&hubKeyHash,&hkh_len,&promiseHandle,&ph_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
@@ -459,7 +459,7 @@ PHP_FUNCTION(cfcon_aggr_filechange)
  char *hubHostKey, *filePath;
  char *fHubHostKey, *fFilePath;
  int hkLen, fpLen;
- PageInfo_t page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll",&hubHostKey, &hkLen, &filePath, &fpLen,
                            &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
@@ -491,7 +491,7 @@ PHP_FUNCTION(cfcon_aggr_software)
  char *hubHostKey, *pkgname;
  char *fHubHostKey, *fPackageName;
  int hkLen, pnLen;
- PageInfo_t page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll",&hubHostKey, &hkLen, &pkgname, &pnLen,
                            &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
@@ -523,7 +523,7 @@ PHP_FUNCTION(cfcon_aggr_classes)
  char *hubHostKey, *classname;
  char *fHubHostKey, *fClassName;
  int hkLen, cnLen;
- PageInfo_t page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll",&hubHostKey, &hkLen, &classname, &cnLen,
                            &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
@@ -558,7 +558,7 @@ PHP_FUNCTION(cfcon_list_subscriptions)
  char buffer[bufsize];
  char *user, *subHandleRx;
  int usLen, shLen;
- PageInfo_t page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll",&user, &usLen, &subHandleRx, &shLen,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
@@ -589,7 +589,7 @@ PHP_FUNCTION(cfcon_local_show_subscription_virtualbundle)
  char buffer[bufsize];
  char *user, *subHandleRx;
  int usLen, shLen;
- PageInfo_t page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll",&user, &usLen, &subHandleRx, &shLen,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
@@ -676,7 +676,7 @@ PHP_FUNCTION(cfcon_report_software)
  char buffer[CF_WEBBUFFER];
  char *user, *subHandle, *hubClassRegex;
  int usLen, shLen, hcLen;
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssll", &user, &usLen, &subHandle, &shLen, &hubClassRegex, &hcLen,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
@@ -721,7 +721,7 @@ PHP_FUNCTION(cfcon_local_report_virtualbundle)
  char buffer[CF_WEBBUFFER];
  char *user, *subHandleRx;
  int usLen, shLen;
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll", &user, &usLen, &subHandleRx, &shLen,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
@@ -752,7 +752,7 @@ PHP_FUNCTION(cfcon_local_report_virtualbundle_promises)
  char buffer[CF_WEBBUFFER];
  char *user, *subHandle;
  int usLen, shLen;
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll", &user, &usLen, &subHandle, &shLen,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
@@ -1113,7 +1113,7 @@ PHP_FUNCTION(cfcon_list_hub_colour)
  char buffer[bufsize];
  char *colour;
  int c_len;
- struct PageInfo page = {0};
+ PageInfo page = {0};
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sll",&colour,&c_len,&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
    {

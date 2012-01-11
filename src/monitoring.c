@@ -895,7 +895,7 @@ return NOVA_DATA[i].output;
 
 Item *NovaReSample(int slot,Attributes a,Promise *pp)
 
-{ struct CfLock thislock;
+{ CfLock thislock;
   char line[CF_BUFSIZE],eventname[CF_BUFSIZE];
   char comm[20];
   struct timespec start;
@@ -1498,7 +1498,7 @@ void HistoryUpdate(Averages newvals)
 {
   Promise *pp = NewPromise("history_db","the long term memory");
   Attributes dummyattr = {{0}};
-  struct CfLock thislock;
+  CfLock thislock;
   time_t now = time(NULL);
 
 /* We do this only once per hour - this should not be changed */

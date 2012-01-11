@@ -670,7 +670,7 @@ void Nova_StartHub(int argc,char **argv)
   time_t now = time(NULL);
   Promise *pp = NewPromise("hub_cfengine","the aggregator"); 
   Attributes a = {{0}};
-  struct CfLock thislock;
+  CfLock thislock;
   pid_t maintainer_pid = CF_UNDEFINED;
 
 Banner("Starting hub core");
@@ -948,7 +948,7 @@ static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer,Attr
 { AgentConnection *conn;
   time_t average_time = 600, now = time(NULL);
   int long_time_no_see = false;
-  struct CfLock thislock;
+  CfLock thislock;
   Promise *ppp = NewPromise("hail","open"); 
   Attributes aa = {{0}};
 
@@ -1101,7 +1101,7 @@ CFDB_Close(&dbconn);
 void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, char *envClass, int slot, time_t start, time_t now)
 
 {
-  struct HubQuery *hq;
+  HubQuery *hq;
   struct HubTotalCompliance *ht;
   Rlist *rp;
   double kept,repaired,notkept;
@@ -1150,7 +1150,7 @@ void Nova_CountMonitoredClasses()
 
 {
   char work[CF_BUFSIZE];
-  struct HubQuery *hq;
+  HubQuery *hq;
   Rlist *rp;
   Item *order_results = NULL,*ip;
   mongo_connection dbconn;
@@ -1168,7 +1168,7 @@ hq = CFDB_QueryClasses(&dbconn,NULL,work,true,CF_HUB_HORIZON,NULL,false);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
-   struct HubClass *hc = (struct HubClass *)rp->item;
+   HubClass *hc = (HubClass *)rp->item;
    IdempItemCount(&order_results,hc->class,NULL);
    }
 

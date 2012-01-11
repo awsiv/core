@@ -61,7 +61,7 @@ void Nova_VerifyEnvironmentsPromise(Promise *pp)
 {
 #ifdef HAVE_LIBVIRT
 Attributes a = {{0}};
-struct CfLock thislock;
+CfLock thislock;
 Promise *pexp;
 
 a = GetEnvironmentsAttributes(pp);
