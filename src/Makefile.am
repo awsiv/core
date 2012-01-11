@@ -85,7 +85,8 @@ libcfnova_la_SOURCES =						\
 
 if MONGO
 libcfnova_la_SOURCES +=						\
-	web_api.c
+	web_api.c						\
+	web_rbac.c
 endif
 
 libcfmonitord_la_LDFLAGS = -no-undefined

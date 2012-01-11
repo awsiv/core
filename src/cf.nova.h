@@ -220,6 +220,12 @@ struct Variable  /* Used to represent contents of var in DBM file -
 
 /*****************************************************************************/
 
+#ifdef HAVE_LIBMONGOC
+#include "cf.nova.web_api.h"
+#endif
+
+/*****************************************************************************/
+
 typedef enum basic_reports
    {
    cfrep_bundle,
@@ -254,6 +260,278 @@ struct ReportInfo
 
 extern struct ReportInfo BASIC_REPORTS[];
 extern struct ReportInfo CONSTELLATION_REPORTS[];
+
+/*****************************************************************************/
+/* Report DB API Structs                                                     */
+/*****************************************************************************/
+
+struct HubHost
+   {
+   char *keyhash;
+   char *hubkey;
+   char *ipaddr;
+   char *hostname;
+   };
+
+struct HubFileChanges
+   {
+   struct HubHost *hh;
+   char *path;
+   time_t t;
+     char *nid;
+   char *handle;
+   };
+
+struct HubFileDiff
+   {
+   struct HubHost *hh;
+   char *path;
+   char *diff;
+   time_t t;
+   };
+
+struct HubSoftware
+   {
+   struct HubHost *hh;
+   char *name;
+   char *version;
+   char *arch;
+   time_t t;
+   };
+
+struct HubClass
+   {
+   struct HubHost *hh;
+   char *class;
+   double prob;
+   double dev;
+   time_t t;
+   };
+
+struct HubClassSum
+   {
+   struct HubHost *hh;
+   char *class;
+   int frequency;  // across all hosts
+   };
+
+struct HubTotalCompliance
+   {
+   struct HubHost *hh;
+   time_t t;
+   char *version;
+   int kept;
+   int repaired;
+   int notkept;
+   };
+
+struct HubVariable
+   {
+   struct HubHost *hh;
+   char *scope;
+   char *lval;
+   void *rval;
+   char *dtype;
+   char rtype;
+   time_t t;
+   };
+
+struct HubPromiseLog // promise kept,repaired or not kept
+   {
+   struct HubHost *hh;
+     //   char *policy;
+   char *handle;
+   char *cause;
+   time_t t;
+   char *nid;  
+   char *oid;  
+   };
+
+struct HubPromiseSum // promise not kept/repaired summary
+   {
+   struct HubHost *hh;
+   char *policy;
+   char *handle;
+   char *cause;
+   int occurences;
+   int hostOccurences;
+   };
+
+struct HubLastSeen
+   {
+   struct HubHost *hh;      
+   struct HubHost *rhost;
+   char io;
+   double hrsago;
+   double hrsavg;
+   double hrsdev;
+   time_t t;
+   };
+
+struct HubBundleSeen
+   {
+   struct HubHost *hh;      
+   char *bundle;
+   double hrsago;
+   double hrsavg;
+   double hrsdev;
+   time_t t;
+   char *nid;
+   };
+
+struct HubValue
+   {
+   struct HubHost *hh;      
+   char* day; /* 'DD Month YYYY' */
+   double kept;
+   double repaired;
+   double notkept;
+     char *nid;
+     char *handle;
+   };
+
+struct HubMeter
+   {
+   struct HubHost *hh;      
+   char type;
+   double kept;
+   double repaired;
+   double notkept;
+   };
+
+#define cfmeter_hour 'H'
+#define cfmeter_week 'W'
+#define cfmeter_day  'D'
+#define cfmeter_perf 'P'
+#define cfmeter_comms 'C'
+#define cfmeter_anomaly 'A'
+#define cfmeter_other 'S'
+
+struct HubPerformance
+   {
+   struct HubHost *hh;      
+   char *event;
+   double q;
+   double e;
+   double d;
+   time_t t;
+   char *nid;
+     char *handle;  
+   };
+  
+struct HubSetUid
+   {
+   struct HubHost *hh;      
+   char *path;
+   };
+
+struct HubPromiseCompliance
+   {
+   struct HubHost *hh;
+   char *handle;
+   char status; // 'r' / 'k' / 'n'
+   double e;
+   double d;
+   time_t t;
+   };
+
+struct HubQuery
+   {
+   struct Rlist *hosts;
+   struct Rlist *records;
+   cfapi_errid errid;
+   };
+
+
+struct HubPromise
+   {
+   char *bundleName;
+   char *bundleType;
+   char *bundleArgs;  // comma separated
+   char *promiseType;
+   char *promiser;
+   char *promisee;
+   char *classContext;
+   char *handle;
+   char *comment;
+   char *file;
+   int lineNo;
+   char **constraints;
+   double popularity;  // optional
+   };
+
+
+struct HubBody
+  {
+  char *bodyName;
+  char *bodyType;
+  char *bodyArgs; // comma separated
+  struct HubBodyAttr *attr;
+  };
+
+
+struct HubBodyAttr
+  {
+  char *classContext;
+  char *lval;
+  char *rval;
+  struct HubBodyAttr *next;
+  };
+
+/* cfreport.cache */
+
+struct HubCacheTotalCompliance
+  {
+  char *policy;
+  int slot;
+  int hostCount;  // how many hosts matched
+  int totalHostCount; // optional, how many hosts could possibly match
+  double kept;
+  double repaired;
+  double notkept;
+  time_t genTime;
+  };
+
+
+/*
+ * Commenting on reports
+ */ 
+struct HubNote
+  {
+  char *user;
+  char *msg;
+  time_t t;
+  struct HubNote *next;
+  };
+
+struct HubNoteInfo
+  {
+  struct HubHost *hh;
+  char *nid;
+  char *user;
+  char *msg;
+  time_t t;
+  char *report;
+  int reportType;
+  struct HubNote *note;
+  };
+
+struct HubVital
+   {
+   char *id;
+   char *units;
+   char *description;
+   struct HubVital *next;
+   };
+
+typedef struct HubRBAC
+   {
+   char *userName;
+   char *includeClassRx;
+   char *excludeClassRx;
+   char *includeBundleRx;
+   }HubRBAC_t;
+
 
 /*****************************************************************************/
 
@@ -729,6 +1007,8 @@ void DeleteHubNote(struct HubNote *hc);
 void DeleteHubNoteInfo(struct HubNoteInfo *hci);
 struct HubVital *PrependHubVital(struct HubVital **first, char *id, char *units, char *description);
 void DeleteHubVital(struct HubVital *hv);
+HubRBAC_t *NewHubRBAC(char *userName, char *includeClassRx, char *excludeClassRx, char *includeBundleRx);
+void DeleteHubRBAC(HubRBAC_t *rbac);
 struct HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int hostCount, int totalHostCount, double kept, double repaired, double notkept, time_t genTime);
 void DeleteHubCacheTotalCompliance(struct HubCacheTotalCompliance *tc);
 
@@ -1019,10 +1299,6 @@ void Nova_InitVertex(struct CfGraphNode *tribe,int i);
 int Nova_NewVertex(struct CfGraphNode *tribe,int node,int distance,int real,char *name,char *context);
 char *Nova_StripString(char *source,char *substring);
 void Nova_DeClassifyTopic(char *typed_topic,char *topic,char *type);
-
-/* web_api.c */
-
-#include "cf.nova.web_api.h"
 
 /* weekly.c */
 
@@ -1442,271 +1718,6 @@ struct cf_pscalar
 
 #define CFDB_GREATERTHANEQ 4
 #define CFDB_LESSTHANEQ 5
-
-/*****************************************************************************/
-/* Report DB API Structs                                                     */
-/*****************************************************************************/
-
-struct HubHost
-   {
-   char *keyhash;
-   char *hubkey;
-   char *ipaddr;
-   char *hostname;
-   };
-
-struct HubFileChanges
-   {
-   struct HubHost *hh;
-   char *path;
-   time_t t;
-     char *nid;
-   char *handle;
-   };
-
-struct HubFileDiff
-   {
-   struct HubHost *hh;
-   char *path;
-   char *diff;
-   time_t t;
-   };
-
-struct HubSoftware
-   {
-   struct HubHost *hh;
-   char *name;
-   char *version;
-   char *arch;
-   time_t t;
-   };
-
-struct HubClass
-   {
-   struct HubHost *hh;
-   char *class;
-   double prob;
-   double dev;
-   time_t t;
-   };
-
-struct HubClassSum
-   {
-   struct HubHost *hh;
-   char *class;
-   int frequency;  // across all hosts
-   };
-
-struct HubTotalCompliance
-   {
-   struct HubHost *hh;
-   time_t t;
-   char *version;
-   int kept;
-   int repaired;
-   int notkept;
-   };
-
-struct HubVariable
-   {
-   struct HubHost *hh;
-   char *scope;
-   char *lval;
-   void *rval;
-   char *dtype;
-   char rtype;
-   time_t t;
-   };
-
-struct HubPromiseLog // promise kept,repaired or not kept
-   {
-   struct HubHost *hh;
-     //   char *policy;
-   char *handle;
-   char *cause;
-   time_t t;
-   char *nid;  
-   char *oid;  
-   };
-
-struct HubPromiseSum // promise not kept/repaired summary
-   {
-   struct HubHost *hh;
-   char *policy;
-   char *handle;
-   char *cause;
-   int occurences;
-   int hostOccurences;
-   };
-
-struct HubLastSeen
-   {
-   struct HubHost *hh;      
-   struct HubHost *rhost;
-   char io;
-   double hrsago;
-   double hrsavg;
-   double hrsdev;
-   time_t t;
-   };
-
-struct HubBundleSeen
-   {
-   struct HubHost *hh;      
-   char *bundle;
-   double hrsago;
-   double hrsavg;
-   double hrsdev;
-   time_t t;
-   char *nid;
-   };
-
-struct HubValue
-   {
-   struct HubHost *hh;      
-   char* day; /* 'DD Month YYYY' */
-   double kept;
-   double repaired;
-   double notkept;
-     char *nid;
-     char *handle;
-   };
-
-struct HubMeter
-   {
-   struct HubHost *hh;      
-   char type;
-   double kept;
-   double repaired;
-   double notkept;
-   };
-
-#define cfmeter_hour 'H'
-#define cfmeter_week 'W'
-#define cfmeter_day  'D'
-#define cfmeter_perf 'P'
-#define cfmeter_comms 'C'
-#define cfmeter_anomaly 'A'
-#define cfmeter_other 'S'
-
-struct HubPerformance
-   {
-   struct HubHost *hh;      
-   char *event;
-   double q;
-   double e;
-   double d;
-   time_t t;
-   char *nid;
-     char *handle;  
-   };
-  
-struct HubSetUid
-   {
-   struct HubHost *hh;      
-   char *path;
-   };
-
-struct HubPromiseCompliance
-   {
-   struct HubHost *hh;
-   char *handle;
-   char status; // 'r' / 'k' / 'n'
-   double e;
-   double d;
-   time_t t;
-   };
-
-struct HubQuery
-   {
-   struct Rlist *hosts;
-   struct Rlist *records;
-   cfapi_errid errid;
-   };
-
-
-struct HubPromise
-   {
-   char *bundleName;
-   char *bundleType;
-   char *bundleArgs;  // comma separated
-   char *promiseType;
-   char *promiser;
-   char *promisee;
-   char *classContext;
-   char *handle;
-   char *comment;
-   char *file;
-   int lineNo;
-   char **constraints;
-   double popularity;  // optional
-   };
-
-
-struct HubBody
-  {
-  char *bodyName;
-  char *bodyType;
-  char *bodyArgs; // comma separated
-  struct HubBodyAttr *attr;
-  };
-
-
-struct HubBodyAttr
-  {
-  char *classContext;
-  char *lval;
-  char *rval;
-  struct HubBodyAttr *next;
-  };
-
-/* cfreport.cache */
-
-struct HubCacheTotalCompliance
-  {
-  char *policy;
-  int slot;
-  int hostCount;  // how many hosts matched
-  int totalHostCount; // optional, how many hosts could possibly match
-  double kept;
-  double repaired;
-  double notkept;
-  time_t genTime;
-  };
-
-
-/*
- * Commenting on reports
- */ 
-struct HubNote
-  {
-  char *user;
-  char *msg;
-  time_t t;
-  struct HubNote *next;
-  };
-
-struct HubNoteInfo
-  {
-  struct HubHost *hh;
-  char *nid;
-  char *user;
-  char *msg;
-  time_t t;
-  char *report;
-  int reportType;
-  struct HubNote *note;
-  };
-
-
-struct HubVital
-   {
-   char *id;
-   char *units;
-   char *description;
-   struct HubVital *next;
-   };
-
 
 #endif
 

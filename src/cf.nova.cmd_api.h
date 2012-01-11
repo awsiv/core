@@ -17,9 +17,6 @@
 
 #include <stdbool.h>
 
-// Separation needed because it is included by php extension
-
-
 bool Nova2Txt_vitals_list(char *keyHash, char *buffer, int bufsize);
 bool Nova2Txt_vitals_view_magnified(char *keyHash, char *vitalId, char *buffer, int bufsize);
 bool Nova2Txt_vitals_view_week(char *keyHash, char *vitalId, char *buffer, int bufsize);

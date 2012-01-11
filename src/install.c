@@ -986,7 +986,6 @@ free(ha->classContext);
 free(ha);
 }
 
-/*commenting*/
 /*****************************************************************************/
 
 struct HubNote *NewHubNote(char *user,char *msg,time_t t)
@@ -1077,6 +1076,31 @@ void DeleteHubVital(struct HubVital *hv)
     next = curr->next;
     free(curr);
     }
+}
+
+/*****************************************************************************/
+
+HubRBAC_t *NewHubRBAC(char *userName, char *includeClassRx, char *excludeClassRx, char *includeBundleRx)
+{
+ HubRBAC_t *rbac = xmalloc(sizeof(HubRBAC_t));
+
+ rbac->userName = xstrdup(userName);
+ rbac->includeClassRx = xstrdup(includeClassRx);
+ rbac->excludeClassRx = xstrdup(excludeClassRx);
+ rbac->includeBundleRx = xstrdup(includeBundleRx);
+ 
+ return rbac;
+}
+
+/*****************************************************************************/
+
+void DeleteHubRBAC(HubRBAC_t *rbac)
+{
+ free(rbac->userName);
+ free(rbac->includeClassRx);
+ free(rbac->excludeClassRx);
+ free(rbac->includeBundleRx);
+ free(rbac);
 }
 
 /*****************************************************************************/
@@ -1571,7 +1595,6 @@ void CountMarginRecordsVars(struct Rlist **records_p, struct PageInfo *page,int 
   *end_count = tail_count;
 }
 
-/*************************************************************/
 
 /*****************************************************************************/
 

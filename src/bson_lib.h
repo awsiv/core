@@ -12,7 +12,9 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 
 #ifdef HAVE_LIBMONGOC
 
+struct Item *BsonStringArrayToItemList(const bson* b, const char* key);
 int BsonFindInt(const bson* b, const char* key);
+const char* BsonFindArray(const bson* b, const char* key);
 void BsonAppendRecentQuery(bson_buffer *querybuf, int maxAgeInSeconds);
 void BsonAppendAgedQuery(bson_buffer *querybuf, int maxAgeInSeconds);
 void BsonToString(char *retBuf, int retBufSz, char *data);

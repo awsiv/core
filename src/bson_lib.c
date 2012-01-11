@@ -8,6 +8,31 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 
 #ifdef HAVE_LIBMONGOC
 
+
+/*****************************************************************************/
+
+struct Item *BsonStringArrayToItemList(const bson* b, const char* key)
+{
+ const char* array = BsonFindArray(b, key);
+
+ if(!array)
+    {
+    return NULL;
+    }
+ 
+ bson_iterator it;
+ bson_iterator_init(&it, array);
+
+ struct Item* values = NULL;
+ 
+ while (bson_iterator_next(&it))
+    {
+    PrependItem(&values, bson_iterator_string(&it), NULL);
+    }
+
+ return values;
+}
+
 /*****************************************************************************/
 
 int BsonFindInt(const bson* b, const char* key)
@@ -22,6 +47,22 @@ int BsonFindInt(const bson* b, const char* key)
  CfOut(cf_verbose, "", "BsonFindInt: No match for \"%s\"", key);
 
  return 0;  // TODO: handle this better?
+}
+
+/*****************************************************************************/
+
+const char* BsonFindArray(const bson* b, const char* key)
+{
+ bson_iterator it;
+ 
+ if(bson_find(&it, b, key) == bson_array)
+    {
+    return bson_iterator_value(&it);
+    }
+
+ CfOut(cf_verbose, "", "BsonFindArray: No match for \"%s\"", key);
+
+ return NULL;
 }
 
 /*****************************************************************************/
