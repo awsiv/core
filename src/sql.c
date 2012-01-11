@@ -126,7 +126,7 @@ for (i = 0,rp = columns; rp != NULL; rp = rp->next,i++)
    
    if (cols->next == NULL)
       {
-      CfOut(cf_error,"","Malformed column \"%s\" promised for table \"%s\" - missing a type",name_table[i],table);
+      CfOut(cf_error,"","Malformed column \"%s\" promised for table \"%s\" - missing a type",(*name_table)[i],table);
       free(*name_table);
       free(*type_table);
       free(*size_table);
