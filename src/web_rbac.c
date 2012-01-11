@@ -30,7 +30,8 @@ HubRBAC_t *GetRBACForUser(char *userName)
  */
 {
  
- 
+return NULL;
+
 }
 
 
@@ -65,6 +66,7 @@ void *SetRolesForUser(char *userName, Item *roles)
 
  bson_buffer_init(&bb);
 // BsonAppendStringArray(&bb, dbkey_role_roles, roles);
+ return NULL;
 }
 
 
