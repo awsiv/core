@@ -1179,7 +1179,7 @@ switch (a.measure.data_type)
 
 if (real_val == CF_NODOUBLE)
    {
-   cfPS(cf_inform,CF_FAIL,"",pp,a," !! Unable to extract a value from the matched line \"%\"",match->name);
+   cfPS(cf_inform,CF_FAIL,"",pp,a," !! Unable to extract a value from the matched line \"%s\"",match->name);
    PromiseRef(cf_inform,pp);
    real_val = 0.0;
    }

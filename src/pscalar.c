@@ -61,7 +61,7 @@ if (ReadDB(dbp,lval,&var,sizeof(struct cf_pscalar)))
    if (now > var.time + timeout)
       {
       DeleteDB(dbp,lval);
-      CfOut(cf_verbose,""," -> Persistent scalar timed out (%d too late), so looking for default",now - var.time);
+      CfOut(cf_verbose,""," -> Persistent scalar timed out (%jd too late), so looking for default", (intmax_t)now - var.time);
       CloseDB(dbp);
       return false;
       }
