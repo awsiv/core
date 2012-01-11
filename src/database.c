@@ -233,7 +233,7 @@ CfOut(cf_verbose,""," -> Verifying promised table structure for \"%s\"",table_pa
 
 if (!Nova_ValidateSQLTableName(table_path,db,table))
    {
-   CfOut(cf_error,""," !! The structure of the promiser did not match that for an SQL table, i.e. \"database.table\"\n",table_path);
+   CfOut(cf_error,""," !! The structure of the promiser did not match that for an SQL table, i.e. \"database.table\"\n");
    return false;
    }
 else
