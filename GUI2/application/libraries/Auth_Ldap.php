@@ -270,12 +270,13 @@ class Auth_Ldap {
         }
       
         $this->authenticated=true;
-        $roles = array();
-        if ($this->use_ad) {
-            $roles = $this->get_role_for_user($username, $password, $dn);
+        $roles = $this->get_role_for_user_from_localdb($username);
+        /*if ($this->use_ad) {
+           $roles = $this->get_role_for_user($username, $password, $dn);
+            
         } else {
             $roles = $this->get_role_for_user($id, $password,null,$gid);
-        }
+        }*/
         return array('cn' => $cn, 'dn' => $dn, 'id' => $id,
             'role' => $roles); 
     }
@@ -416,7 +417,15 @@ class Auth_Ldap {
             return $result;
         }
     }
-
+     
+    /**
+     *
+     * @param type $username
+     * @param type $password
+     * @param type $get_role_arg
+     * @param type $gid
+     * @return Returns a the roles for the user form ldap .
+     */
     function get_role_for_user($username, $password, $get_role_arg=null,$gid=null) {
         $result=array();
         if ($this->use_ad) {
@@ -457,6 +466,12 @@ class Auth_Ldap {
         return $result;
     }
 
+     /**
+      *
+      * @param type $username
+      * @param type $password
+      * @return Returns the details for users like the username , unique dn , etc
+      */
     function get_details_for_user($username, $password) {
         $result=array();
         $filter = '(' . $this->login_attribute . '=' . $username . ')';
@@ -471,7 +486,7 @@ class Auth_Ldap {
             }
             $result = $this->cfpr_ldap_search($binddn, $password, $filter, $fields, $dn); 
         } else {
-            $groups=explode(',',  $this->member_attribute);
+            //$groups=explode(',',  $this->member_attribute);
             $fields = "cn,dn,uid,gidNumber";
             $userdn = $this->login_attribute . '=' . $username . ',' . $this->users_directory . ',' . $this->basedn;
             $dn = $this->users_directory . ',' . $this->basedn;
@@ -480,7 +495,27 @@ class Auth_Ldap {
         return $result;
     }
     
+    /**
+     *
+     * @param type $username
+     * @returns the roles for the ldap user from local Db as matched by the mission portal
+     */
+    function get_role_for_user_from_localdb($username){
+        $roles=array();
+        return $roles;
+    }
     
+    
+    /**
+     *
+     * @param type $user_dn
+     * @param type $password
+     * @param type $filter
+     * @param type $fields
+     * @param type $dn
+     * @return array  helper funtion that utilizes the cfpr ldap funtion form the web api in noval module to support 
+     * upper function
+     */
     function cfpr_ldap_search($user_dn, $password, $filter, $fields, $dn) {
         try{
              $result = cfpr_ldap_get_several_attributes($this->ldap_url,
@@ -628,13 +663,13 @@ class Auth_Ldap {
         return implode(';',$this->user_directories);
     }
 
-    public function set_member_attr($mem_attr) {
+    /*public function set_member_attr($mem_attr) {
         $this->member_attribute = $mem_attr;
     }
 
     public function get_member_attr() {
         return $this->member_attribute;
-    }
+    }*/
 
     public function set_ad_domain($ad_domain) {
         $this->ad_domain = $ad_domain;

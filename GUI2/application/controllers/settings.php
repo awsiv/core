@@ -38,7 +38,7 @@ class Settings extends Cf_Controller {
         $this->form_validation->set_rules('login_attribute', 'login attribute', 'xss_clean|trim' . $required_if_ldap);
         $this->form_validation->set_rules('users_directory[]', 'users directory', 'xss_clean' . $required_if_ldap);
         $this->form_validation->set_rules('active_directory_domain', 'active directory domain', 'xss_clean|trim' . $required_if_ad);
-        $this->form_validation->set_rules('member_attribute', 'memberof attribute', 'xss_clean|trim');
+        //$this->form_validation->set_rules('member_attribute', 'memberof attribute', 'xss_clean|trim');
         $this->form_validation->set_rules('fall_back_for', 'valid role', 'callback_required_valid_role');
         $this->form_validation->set_rules('admin_role', 'valid role');
         $this->form_validation->set_rules('encryption', 'Encryption mode', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
@@ -57,11 +57,11 @@ class Settings extends Cf_Controller {
             foreach ((array) $roles as $role) {
                 $data['roles'][$role['name']] = $role['name'];
             }
-            //$data['roles']['select'] = "--select-one--";
+          
 
             //for selecting admin_role from list, populated list depends on the mode selected and saved
            
-            if($this->settings_model->app_settings_get_item('mode')==$this->session->userdata('mode')){
+           /* if($this->settings_model->app_settings_get_item('mode')==$this->session->userdata('mode')){
             $roles_acc_mode = $this->ion_auth->get_roles();
                 foreach ((array) $roles_acc_mode as $role) {
                     key_exists('name', $role) ? $data['rolesacc'][$role['name']] = $role['name'] : $data['rolesacc'][$role['displayname']] = $role['displayname'];
@@ -69,8 +69,9 @@ class Settings extends Cf_Controller {
             } else
             {
                 $data['selected_role']=$this->settings_model->app_settings_get_item('admin_role');
-            }
-            //$data['rolesacc']['select'] = "--select-one--";
+            }*/
+             $data['rolesacc']=$data['roles'];
+          
             //if previous settings exist load it and display
             $settings = $this->settings_model->get_app_settings();
 
@@ -114,7 +115,7 @@ class Settings extends Cf_Controller {
                     //'users_directory[]' => set_value('users_directory[]'),
                     //'active_directory' => set_value('active_directory'),
                     'active_directory_domain' => set_value('active_directory_domain'),
-                    'member_attribute' => set_value('member_attribute'),
+                    //'member_attribute' => set_value('member_attribute'),
                     'encryption' => set_value('encryption'),
                 );
                 
@@ -133,7 +134,7 @@ class Settings extends Cf_Controller {
                 'users_directory' => implode(';', $this->input->post('users_directory')),
                 //  	'active_directory' => set_value('active_directory'),
                 'active_directory_domain' => set_value('active_directory_domain'),
-                'member_attribute' => set_value('member_attribute'),
+                //'member_attribute' => set_value('member_attribute'),
                 'fall_back_for' => $this->input->post('fall_back_for'),
                 'admin_role' => $this->input->post('admin_role'),
                 'encryption' => set_value('encryption'),
@@ -182,13 +183,14 @@ class Settings extends Cf_Controller {
                         $data[$property] = $this->form_validation->set_value($property, $value);
                     }
                 }
-//$this->load->view('appsetting/missionportalpref',$data);
+                //$this->load->view('appsetting/missionportalpref',$data);
                 $roles = $this->ion_auth->get_roles_fromdb();
                 foreach ((array) $roles as $role) {
                     $data['roles'][$role['name']] = $role['name'];
                 }
-                //$data['roles']['select'] = "--select-one--";
-                if($this->input->post('mode')==$this->session->userdata('mode')||$this->input->post('mode')=='database'){
+                
+                //perviously used for selecting the roles form the resective source now , the roles are used form DB only
+               /* if($this->input->post('mode')==$this->session->userdata('mode')||$this->input->post('mode')=='database'){
                 $roles_acc_mode = $this->ion_auth->get_roles();
                     foreach ((array) $roles_acc_mode as $role) {
                         key_exists('name', $role) ? $data['rolesacc'][$role['name']] = $role['name'] : $data['rolesacc'][$role['displayname']] = $role['displayname'];
@@ -197,8 +199,8 @@ class Settings extends Cf_Controller {
                 else
                 {
                     $data['selected_role']=$this->input->post('admin_role');
-                }
-                //$data['rolesacc']['select'] = "--select-one--";
+                }*/
+                 $data['rolesacc']=$data['roles'];
                 $this->template->load('template', 'appsetting/missionportalpref', $data);
             } else {
                 echo 'An error occurred saving your information. Please try again later';
@@ -253,12 +255,14 @@ class Settings extends Cf_Controller {
             $this->auth_ldap->set_login_attr($this->input->post('login_attr'));
         }
         $this->auth_ldap->set_user_dir($this->input->post('user_dir'));
-        $this->auth_ldap->set_member_attr($this->input->post('member_attr'));
+        //$this->auth_ldap->set_member_attr($this->input->post('member_attr'));
         $this->auth_ldap->set_ad_domain($this->input->post('addomain'));
         $this->auth_ldap->set_encryption($this->input->post('encryption'));
 
         $result = $this->auth_ldap->login($this->input->post('username'), $this->input->post('password'));
-        $roles = $this->auth_ldap->get_all_ldap_roles($this->input->post('username'), $this->input->post('password'));
+        //previously used for obtaining roles form ldap now local roles is used with ldap users
+        
+        /*$roles = $this->auth_ldap->get_all_ldap_roles($this->input->post('username'), $this->input->post('password'));
         $rolesarry=array();
         foreach ((array)$roles as $role){
             if(key_exists('name', $role)){
@@ -268,8 +272,9 @@ class Settings extends Cf_Controller {
              $rolesarry[$role['displayname']]=$role['displayname'];    
             }
            
-        }
-//print_r($result);
+        }*/
+        
+        //print_r($result);
         $message = "<div>";
         if ($result) {
             $message.=" <p class=\"success\">" . $this->lang->line('successful_bind') . "</p>";
@@ -281,7 +286,8 @@ class Settings extends Cf_Controller {
 
         $message.="</div>";
         //echo $message;
-        $ret=array('message'=>$message,'roles'=>form_dropdown('admin_role',$rolesarry));
+        //$ret=array('message'=>$message,'roles'=>form_dropdown('admin_role',$rolesarry));
+        $ret=array('message'=>$message);
         echo json_encode($ret);
     }
 

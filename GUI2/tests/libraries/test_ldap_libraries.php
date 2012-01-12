@@ -23,7 +23,7 @@ private $dn='CN=Sudhir Pandey,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com';
        $this->_ci->auth_ldap->set_basedn('dc=cfengine,dc=com');
        $this->_ci->auth_ldap->set_login_attr('uid');
        $this->_ci->auth_ldap->set_user_dir('ou=people;ou=sales');
-       $this->_ci->auth_ldap->set_member_attr('memberUid');
+       //$this->_ci->auth_ldap->set_member_attr('memberUid');
        $this->_ci->auth_ldap->set_mode('ldap');
        $this->password='password';
        $this->_ci->auth_ldap->set_encryption('none'); //ssl
@@ -48,7 +48,7 @@ private $dn='CN=Sudhir Pandey,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com';
                               'base_dn'=>$this->_ci->auth_ldap->get_basedn(),
                               'login_attr'=>$this->_ci->auth_ldap->get_login_attr(),
                                'user_dir'=>$this->_ci->auth_ldap->get_user_dir(),
-                               'member_attr'=>$this->_ci->auth_ldap->get_member_attr(),
+                               //'member_attr'=>$this->_ci->auth_ldap->get_member_attr(),
                                'ad_domian'=>$this->_ci->auth_ldap->get_ad_domain() ,
                                'mode'=>$this->_ci->auth_ldap->get_mode(),
                                'encryption'=>$this->_ci->auth_ldap->get_encryption()
@@ -77,13 +77,14 @@ private $dn='CN=Sudhir Pandey,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com';
         $this->dump($ret);
     }
 
+    /*
     public function test_php_ldap_getallgroups_for_user() {
         // $ret=$this->_ci->auth_ldap->get_role_for_user($this->username,$this->password);
         //for openldap the third parameter is use less
         $ret = $this->_ci->auth_ldap->get_role_for_user($this->username, $this->password, $this->dn);
         $this->assertTrue(is_array($ret), "Should be  an array of list of groups");
         $this->dump($ret);
-    }
+    }*/
 
     public function test_php_ldap_getallgroups() {
         $ret = $this->_ci->auth_ldap->get_all_ldap_roles($this->username, $this->password);
