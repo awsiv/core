@@ -152,9 +152,9 @@ loadpagebody:function(){
                                //$("<ul>").attr("id", "tagList").appendTo(self.classdlg);
                                   $.each(data, function(i, val) {
                                         var li = $("<li>");
-                                        $("<a>").text(val).attr({title:val, href:self.options.baseUrl+"/search/index/host/All/report/Class+profile/name/"+val}).addClass('name').appendTo(li);
+                                        $("<a>").text(val).attr({title:val, href:self.options.baseUrl+"/search/index/host/All/report/contexts/name/"+val}).addClass('name').appendTo(li);
                                         if(self.options.defaultbehaviour){
-                                        $("<a>").text('View hosts').attr('href',self.options.baseUrl+"/search/index/host/All/report/Class+profile/hosts_only/true/name/"+val).addClass('action').addClass('btn').appendTo(li);
+                                        $("<a>").text('View hosts').attr('href',self.options.baseUrl+"/search/index/host/All/report/contexts/hosts_only/true/name/"+val).addClass('action').addClass('btn').appendTo(li);
                                          $("<a>").text('add to list').data('val',val).addClass('classadd').addClass('btn').appendTo(li);
                                         }
                                        li.appendTo("#classList");
@@ -174,10 +174,6 @@ classSelected:function(event){
              self.dialogcontent.dialog('close')
              self._trigger("complete",null,{selectedclass:sender.text()});
           }
-       else{
-           //event.preventDefault();
-           //console.log(sender.text());
-       }
 },
 
 dialogContainer: function() {

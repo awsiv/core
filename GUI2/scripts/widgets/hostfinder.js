@@ -358,10 +358,11 @@
                     mylist.append(itm);
                 });
             }
-            if($(this).text().toLowerCase() == 'search')
+            
+            /*if($(this).text().toLowerCase() == 'search')
             {
                 alert('search');
-            }
+            }*/
 
         },
         searchclassinlist:function(event)
@@ -410,7 +411,6 @@
                 self.classdlg.focused=0;
             }
             self.classdlg.find("#tagList").find('li.selected').eq(self.classdlg.focused).attr("tabindex",-1).focus();
-            console.log(self.classdlg.focused++);
         },
         tagcloudkeydown:function(event){
             var self=event.data.ui;
