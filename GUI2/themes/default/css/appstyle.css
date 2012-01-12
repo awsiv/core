@@ -1710,6 +1710,10 @@ div.ui-dialog .ui-dialog-buttonpane{
     background: url("../images/csv.png") no-repeat left center;
 }
 
+.download{
+    background: url("../images/download.png") no-repeat left center;
+}
+
 #bodyreport{
 
 }
