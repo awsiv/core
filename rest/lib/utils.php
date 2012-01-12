@@ -4,7 +4,7 @@ class Utils {
     
     public static function queryParam($name)
     {
-        if (is_null($_GET[$name]))
+        if (!array_key_exists($name, $_GET))
         {
             return NULL;
         }
