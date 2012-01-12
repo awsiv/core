@@ -974,9 +974,11 @@ void Nova_UpdateMongoHostList(Item **list);
 /* install.c */
 
 void PrependPromiserList(PromiseIdent **list,char *s,Promise *pp);
+#ifdef HAVE_LIBMONGOC
 HubQuery *NewHubQuery(Rlist *hosts,Rlist *records);
 void DeleteHubQuery(HubQuery *hq,void (*fnptr)());
 int CountRecords(HubQuery *hq);
+#endif
 HubHost *NewHubHost(char *hubkey, char *keyhash,char *ipaddr,char *hostname);
 HubHost *CreateEmptyHubHost(void);
 HubHost *UpdateHubHost(HubHost *hubHost, char *keyhash,char *ipaddr,char *hostname);
