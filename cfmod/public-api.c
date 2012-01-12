@@ -232,9 +232,9 @@ for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
 
    JsonObjectAppendString(&bundle_entry, LABEL_HOSTKEY, record->hh->keyhash);
    JsonObjectAppendString(&bundle_entry, LABEL_NAME, record->bundle);
-   //JsonObjectAppendInteger(&bundle_entry, LABEL_LASTSEEN, SECONDS_PER_HOUR * record->hrsago);
-   //JsonObjectAppendReal(&bundle_entry, LABEL_AVERAGE, SECONDS_PER_HOUR * record->hrsavg);
-   //JsonObjectAppendReal(&bundle_entry, LABEL_STDV, SECONDS_PER_HOUR * record->hrsdev);
+   JsonObjectAppendInteger(&bundle_entry, LABEL_LASTSEEN, SECONDS_PER_HOUR * record->hrsago);
+   JsonObjectAppendReal(&bundle_entry, LABEL_AVERAGE, SECONDS_PER_HOUR * record->hrsavg);
+   JsonObjectAppendReal(&bundle_entry, LABEL_STDV, SECONDS_PER_HOUR * record->hrsdev);
 
    JsonArrayAppendObject(&bundles, bundle_entry);
    }
