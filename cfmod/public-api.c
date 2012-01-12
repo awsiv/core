@@ -253,7 +253,7 @@ PHP_FUNCTION(cfmod_resource_report_contexts)
 char *hostkey = NULL,
      *context = NULL;
 int len, from;
-struct PageInfo page = { 0 };
+PageInfo page = { 0 };
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslll",
       &hostkey, &len,
@@ -268,14 +268,14 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslll",
 mongo_connection conn;
 database_open(&conn);
 
-struct HubQuery *result = CFDB_QueryClasses(&conn, hostkey, NULL, true, (time_t)from, context, true);
+HubQuery *result = CFDB_QueryClasses(&conn, hostkey, NULL, true, (time_t)from, context, true);
 
 database_close(&conn);
 
 JsonArray *contexts = NULL;
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    {
-   struct HubClass *record = (struct HubClass *)rp->item;
+   HubClass *record = (HubClass *)rp->item;
    JsonObject *entry = NULL;
 
    JsonObjectAppendString(&entry, LABEL_HOSTKEY, record->hh->keyhash);
