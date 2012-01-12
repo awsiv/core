@@ -160,6 +160,7 @@ static const char *GetUsersCollection(mongo_connection *conn)
     }
 }
 
+
 static bool IsLDAPOn(mongo_connection *conn)
 {
  // FIXME - check this 
@@ -175,7 +176,7 @@ Item *CFDB_GetAllRoles(void)
  return GetRolesFromDB(&query);
 }
 
-
+/*
 Item *CFDB_GetRolesForUser(char *userName)
 {
  bson_buffer bb;
@@ -189,42 +190,7 @@ Item *CFDB_GetRolesForUser(char *userName)
  bson_destroy(&query);
 
  return roles;
-}
-
-
-cfapi_errid CFDB_SetRolesForUser(char *userName, Item *roles)
-{
- bson_buffer bb;
- bson query;
-
- bson_buffer_init(&bb);
- 
- bson_append_start_object(&bb, dbkey_role_name);
- BsonAppendStringArray(&bb, "$in", roles);
- bson_append_finish_object(&bb);
- bson_from_buffer(&query, &bb);
-
- bson update;
- bson_buffer_init(&bb);
- BsonAppendAddToSetString(&bb, dbkey_role_members, userName);
- bson_from_buffer(&update, &bb);
-
- mongo_connection conn;
- 
- if(!CFDB_Open(&conn))
-    {
-    return ERRID_DBCONNECT;
-    }
-
- mongo_update(&conn, MONGO_ROLES_COLLECTION, &query, &update, MONGO_UPDATE_MULTI);
-
- bson_destroy(&query);
- bson_destroy(&update);
-
- CFDB_Close(&conn);
-
- return ERRID_SUCCESS;
-}
+ }*/
 
 
 static Item *GetRolesFromDB(bson *query)

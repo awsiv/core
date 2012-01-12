@@ -13,7 +13,6 @@
 #define MONGO_USERS_LDAP_COLLECTION "phpcfengine.ldap_users"
 #define dbkey_user_roles "roles"
 #define dbkey_role_name "name"
-#define dbkey_role_members "members"
 #define dbkey_role_description "description"
 #define dbkey_role_classrx_include "crxi"
 #define dbkey_role_classrx_exclude "crxx"
@@ -23,5 +22,4 @@ cfapi_errid CFDB_CreateRole(char *name, char *description, char *includeClassRx,
 cfapi_errid CFDB_DeleteRole(char *name);
 Item *CFDB_GetAllRoles(void);
 Item *CFDB_GetRolesForUser(char *userName);
-cfapi_errid CFDB_SetRolesForUser(char *userName, Item *roles);
 HubUserRBAC *CFDB_GetRBACForUser(char *userName);
