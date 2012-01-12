@@ -3595,30 +3595,3 @@ static JsonArray *ParseRolesToJson(HubQuery *hq)
  
  return roles;
 }
-
-//cfpr_role_create(scope, etc.)
-//cfpr_role_delete(scope, etc.)
-//cfpr_role_describe
-//cfpr_role_list(scope)
-// cfpr_rbac_status_get
-// cfpr_rbac_status_set
-
-// is rbac on at all?
-// getrolesforuser (take LDAP into account - different table, read settings table)
-
-// users
-// {
-// username:"sudhir"
-// password:"asdasdas"
-// email:"sudhir.pandey@gmail.com",
-// roles:["admin", "develover"]
-// }
-
-
-// roles
-// {
-// scope:"internal" / ldap://some.server.com....
-// name:"admin"
-// description:"asdasdsa"
-// etc.
-// }
