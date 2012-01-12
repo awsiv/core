@@ -19,6 +19,7 @@
 #define dbkey_role_classrx_exclude "crxx"
 #define dbkey_role_bundlerx_include "brxi"
 
+const char *GetUsersCollection(mongo_connection *conn);
 cfapi_errid CFDB_CreateRole(char *name, char *description, char *includeClassRx, char *excludeClassRx, char *includeBundleRx);
 cfapi_errid CFDB_DeleteRole(char *name);
 HubQuery *CFDB_GetAllRoles(void);

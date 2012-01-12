@@ -14,17 +14,14 @@ function addAuthenticateHeader($response)
 // handle request
 $request = new Request();
 
-if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW']))
-{
-    $response = new Response($request);
-    $response->code = Response::UNAUTHORIZED;
-    addAuthenticateHeader($response);
-    $response->output();
-    return;
-}
-
 try
 {
+    if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW']) ||
+        !cfpr_user_authenticate($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']))
+    {
+        throw new ResponseException(Response::UNAUTHORIZED);
+    }
+
     $resource = $request->loadResource();
     $response = $resource->exec($request);
     $response->output();

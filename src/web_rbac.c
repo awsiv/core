@@ -23,7 +23,6 @@
 static HubQuery *CFDB_GetRoles(bson *query);
 static bool RoleExists(char *name);
 static void DeAssociateUsersFromRole(mongo_connection *conn, char *roleName);
-static const char *GetUsersCollection(mongo_connection *conn);
 static bool IsLDAPOn(mongo_connection *conn);
 
 
@@ -150,7 +149,7 @@ static void DeAssociateUsersFromRole(mongo_connection *conn, char *roleName)
 }
 
 
-static const char *GetUsersCollection(mongo_connection *conn)
+const char *GetUsersCollection(mongo_connection *conn)
 {
  if(IsLDAPOn(conn))
     {
