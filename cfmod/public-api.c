@@ -187,7 +187,7 @@ for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
       JsonObjectAppendString(&value_entry, LABEL_VALUE, (const char *)record->rval);
       }
 
-   JsonArrayAppendObject(&value_entry, value_entry);
+   JsonArrayAppendObject(&values, value_entry);
    }
 
 DeleteHubQuery(result, DeleteHubVariable);
