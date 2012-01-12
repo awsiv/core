@@ -1,4 +1,11 @@
+/*
+ * PHP macros use standard memory allocation functions. Do not override those
+ * with CFEngine macros.
+ */
+#define ALLOC_IMPL
+
 #include "php_cfmod.h"
+
 
 /* If you declare any globals in php_cfmod.h uncomment this:
    ZEND_DECLARE_MODULE_GLOBALS(cfmod)
