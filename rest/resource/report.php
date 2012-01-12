@@ -92,8 +92,8 @@ class ReportResource extends Resource
                         break;
 
                     case 'setuid-programs':
-                        $response->body = cfpr_report_setuid($hostkey, $name,
-                                true, $context, $count, $startPage);
+                        $response->body = cfmod_resource_report_setuid_programs($hostkey,
+                                $name, $context, $count, $startPage);
                         break;
 
                     case 'file-change-log':

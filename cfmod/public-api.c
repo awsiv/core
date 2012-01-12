@@ -35,6 +35,7 @@ static const char *LABEL_LASTSEEN = "last-seen";
 static const char *LABEL_AVERAGE = "average";
 static const char *LABEL_STDV = "stdv";
 static const char *LABEL_CONTEXT = "context";
+static const char *LABEL_PATH = "path";
 
 PHP_FUNCTION(cfmod_resource_report_list)
 {
@@ -291,4 +292,51 @@ for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
 DeleteHubQuery(result, DeleteHubClass);
 
 RETURN_JSON(contexts);
+}
+
+
+/************************************************************************************/
+
+
+PHP_FUNCTION(cfmod_resource_report_setuid_programs)
+{
+char *hostkey = NULL,
+     *name = NULL,
+     *context = NULL;
+int len;
+PageInfo page = { 0 };
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslll",
+      &hostkey, &len,
+      &name, &len,
+      &context, &len,
+      &(page.resultsPerPage),
+      &(page.pageNum)) == FAILURE)
+   {
+   zend_throw_exception(cfmod_exception_args, "Unable to parse arguments", 0 TSRMLS_CC);
+   RETURN_NULL();
+   }
+
+mongo_connection conn;
+DATABASE_OPEN(&conn)
+
+HubQuery *result = CFDB_QuerySetuid(&conn, hostkey, name, true, context);
+
+DATABASE_CLOSE(&conn)
+
+JsonArray *output = NULL;
+for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
+   {
+   HubSetUid *record = (HubSetUid *)rp->item;
+   JsonObject *entry = NULL;
+
+   JsonObjectAppendString(&entry, LABEL_HOSTKEY, record->hh->keyhash);
+   JsonObjectAppendString(&entry, LABEL_PATH, record->path);
+
+   JsonArrayAppendObject(&output, entry);
+   }
+
+DeleteHubQuery(result, DeleteHubSetUid);
+
+RETURN_JSON(output);
 }
