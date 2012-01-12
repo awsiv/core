@@ -37,7 +37,7 @@ class Auth extends Controller {
             $this->data['username'] = $this->session->userdata('username');
             //list the users
             //
-            $this->data['usergroup'] = $this->session->userdata('group');
+            $this->data['userrole'] = $this->session->userdata('role');
             $this->data['is_admin'] = $this->ion_auth->is_admin();
             $this->data['message'] = (validation_errors()) ? '<p class="error">' . validation_errors() . '</p>' : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message'));
             $_data = array('event_loggedin' => true, 'ttlusr' => $this->onlineusers->total_users());
@@ -73,7 +73,7 @@ class Auth extends Controller {
         $this->data['users'] = $this->ion_auth->get_users_array();
         //$this->load->view('auth/index', $this->data);
         $this->data['breadcrumbs'] = $this->breadcrumblist->display();
-        $this->data['usergroup'] = $this->session->userdata('group');
+        $this->data['userrole'] = $this->session->userdata('role');
         $this->data['is_admin'] = $this->ion_auth->is_admin();
         if (is_ajax ()) {
             $this->load->view('auth/user_list', $this->data);
@@ -158,11 +158,11 @@ class Auth extends Controller {
     }
 
     //change password
-    function change_password($id=Null) {
+ function change_password($id=Null) {
         $this->form_validation->set_rules('old', 'Old password', 'required');
         $this->form_validation->set_rules('new', 'New Password', 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[new_confirm]');
         $this->form_validation->set_rules('new_confirm', 'Confirm New Password', 'required');
-        $this->data['usergroup'] = $this->session->userdata('group');
+        $this->data['userrole'] = $this->session->userdata('role');
         $this->data['is_admin'] = $this->ion_auth->is_admin();
         if (!$this->ion_auth->logged_in()) {
             redirect('auth/login', 'refresh');
@@ -376,26 +376,26 @@ class Auth extends Controller {
         $this->form_validation->set_rules('email', 'Email Address', 'required|valid_email|unique[users.email]');
         $this->form_validation->set_rules('password', 'Password', 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[password_confirm]');
         $this->form_validation->set_rules('password_confirm', 'Password Confirmation', 'required');
-        $this->form_validation->set_rules('group[]', 'Group', 'required|xss_clean');
+        $this->form_validation->set_rules('role[]', 'role', 'required|xss_clean');
 
         if ($this->form_validation->run() == true) {
             $username = strtolower($this->input->post('user_name'));
             $email = $this->input->post('email');
             $password = $this->input->post('password');
-            $group = $this->input->post('group');
+            $role = $this->input->post('role');
             /* $additional_data = array('first_name' => $this->input->post('first_name'),
               'last_name' => $this->input->post('last_name'),
               'company' => $this->input->post('company'),
               'phone' => $this->input->post('phone1') . '-' . $this->input->post('phone2') . '-' . $this->input->post('phone3'),
-              'group_id'=>$this->input->post('group')
+              'role_id'=>$this->input->post('role')
               ); */
         }
-        if ($this->form_validation->run() == true && $this->ion_auth->register($username, $password, $email, $group)) { //check to see if we are creating the user
+        if ($this->form_validation->run() == true && $this->ion_auth->register($username, $password, $email, $role)) { //check to see if we are creating the user
             //redirect them back to the admin page
             if (is_ajax ()) {
                 $this->data['message'] = $this->ion_auth->messages();
                 $this->data['users'] = $this->ion_auth->get_users_array();
-                $this->data['usergroup'] = $this->session->userdata('group');
+                $this->data['userrole'] = $this->session->userdata('role');
                 $this->data['is_admin'] = $this->ion_auth->is_admin();
                 $this->load->view('auth/user_list', $this->data);
             } else {
@@ -433,20 +433,20 @@ class Auth extends Controller {
              */
 
             /* $options =array();
-              $groups=$this->ion_auth->get_groups();
-              foreach ($groups as $group)
+              $roles=$this->ion_auth->get_roles();
+              foreach ($roles as $role)
               {
-              $options[$group['id']]=$group['name'];
+              $options[$role['id']]=$role['name'];
               } */
-            $groups = $this->ion_auth->get_groups();
-            foreach ($groups as $group) {
-                $this->data['groups'][$group['name']] = array('name' => 'group[]',
-                    'id' => $group['name'],
-                    'value' => $group['name'],
-                    'checked' => $this->form_validation->set_checkbox('group[]', $group['name'])
+            $roles = $this->ion_auth->get_roles();
+            foreach ($roles as $role) {
+                $this->data['roles'][$role['name']] = array('name' => 'role[]',
+                    'id' => $role['name'],
+                    'value' => $role['name'],
+                    'checked' => $this->form_validation->set_checkbox('role[]', $role['name'])
                 );
             }
-            //$this->data['group']=array('name'=>'group','options'=>$options,'default'=>set_value('group', '2'));
+            //$this->data['role']=array('name'=>'role','options'=>$options,'default'=>set_value('role', '2'));
             $this->load->view('auth/create_user', $this->data);
         }
     }
@@ -478,13 +478,13 @@ class Auth extends Controller {
         //validate form input
         $this->form_validation->set_rules('user_name', 'First Name', 'required|xss_clean');
         $this->form_validation->set_rules('email', 'Email Address', 'required|valid_email');
-        $this->form_validation->set_rules('group[]', 'Group', 'required|xss_clean');
+        $this->form_validation->set_rules('role[]', 'role', 'required|xss_clean');
 
         if ($this->form_validation->run() == true) {
             $data = array(
                 'username' => $this->input->post('user_name'),
                 'email' => $this->input->post('email'),
-                'group' => $this->input->post('group'),
+                'role' => $this->input->post('role'),
             );
         }
         if ($this->form_validation->run() == true && $this->ion_auth->update_user($id, $data)) { //check to see if we are creating the user
@@ -495,7 +495,7 @@ class Auth extends Controller {
             if (is_ajax ()) {
                 $this->data['message'] = $this->ion_auth->messages();
                 $this->data['users'] = $this->ion_auth->get_users_array();
-                $this->data['usergroup'] = $this->session->userdata('group');
+                $this->data['userrole'] = $this->session->userdata('role');
                 $this->data['is_admin'] = $this->ion_auth->is_admin();
                 $this->load->view('auth/user_list', $this->data);
             } else {
@@ -519,62 +519,62 @@ class Auth extends Controller {
                 'value' => $this->form_validation->set_value('email', $user->email),
             );
 
-            $groups = $this->ion_auth->get_groups();
-            foreach ($groups as $group) {
-                $this->data['groups'][$group['name']] = array('name' => 'group[]',
-                    'id' => $group['name'],
-                    'value' => $group['name'],
-                    'checked' => $this->form_validation->set_checkbox('group[]', $group['name'], (in_array($group['name'], $user->group)) ? TRUE : FALSE)
+            $roles = $this->ion_auth->get_roles();
+            foreach ($roles as $role) {
+                $this->data['roles'][$role['name']] = array('name' => 'role[]',
+                    'id' => $role['name'],
+                    'value' => $role['name'],
+                    'checked' => $this->form_validation->set_checkbox('role[]', $role['name'], (in_array($role['name'], $user->role)) ? TRUE : FALSE)
                 );
             }
 
-            //$this->data['group']=array('name'=>'group','options'=>$options,'default'=>set_value('group', $user->group_id));
+            //$this->data['role']=array('name'=>'role','options'=>$options,'default'=>set_value('role', $user->role_id));
             $this->load->view('auth/edit_user', $this->data);
         }
     }
 
-    function manage_group($op=false, $id=false) {
+    function manage_role($op=false, $id=false) {
         if (!$this->ion_auth->logged_in()) {
             redirect('auth', 'refresh');
         }
         $this->data['is_admin'] = $this->ion_auth->is_admin();
         if (!empty($op)) {
-            $this->data['title'] = "Create Group";
+            $this->data['title'] = "Create role";
             $this->data['operation'] = "Create";
             if ($op != 'edit')
-                $this->form_validation->set_rules('name', 'Name', 'required|xss_clean|unique[groups.name]');
+                $this->form_validation->set_rules('name', 'Name', 'required|xss_clean|unique[roles.name]');
             else
                 $this->form_validation->set_rules('name', 'Name', 'required|xss_clean');
             $this->form_validation->set_rules('description', 'Description', 'required|xss_clean');
             if ($this->form_validation->run() == true) {
                 $data = array('name' => $this->input->post('name'), 'description' => $this->input->post('description'));
-                if (($op == 'edit' && !$this->ion_auth->update_group($id, $data))) {
-                    $this->__load_group_add_edit($op, $id);
+                if (($op == 'edit' && !$this->ion_auth->update_role($id, $data))) {
+                    $this->__load_role_add_edit($op, $id);
                     return;
                 }
-                if ($op == 'create' && $this->ion_auth->create_group($data) === FALSE) {
-                    $this->__load_group_add_edit($op, $id);
+                if ($op == 'create' && $this->ion_auth->create_role($data) === FALSE) {
+                    $this->__load_role_add_edit($op, $id);
                     return;
                 }
                 if (is_ajax ()) {
                     $this->data['message'] = $this->ion_auth->messages();
-                    $this->data['groups'] = $this->ion_auth->get_groups();
-                    $this->load->view('auth/list_group', $this->data);
+                    $this->data['roles'] = $this->ion_auth->get_roles();
+                    $this->load->view('auth/list_role', $this->data);
                 } else {
                     $this->session->set_flashdata('message', $this->ion_auth->messages());
-                    redirect("auth/manage_group", 'refresh');
+                    redirect("auth/manage_role", 'refresh');
                 }
             } else {
-                $this->__load_group_add_edit($op, $id);
+                $this->__load_role_add_edit($op, $id);
             }
         } else {
-            $this->data['groups'] = $this->ion_auth->get_groups();
+            $this->data['roles'] = $this->ion_auth->get_roles();
             $this->data['message'] = (validation_errors()) ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message'));
-            $this->load->view('auth/list_group', $this->data);
+            $this->load->view('auth/list_role', $this->data);
         }
     }
 
-    function __load_group_add_edit($op, $id) {
+    function __load_role_add_edit($op, $id) {
         $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
         $this->data['name'] = array('name' => 'name',
             'id' => 'name',
@@ -593,14 +593,14 @@ class Auth extends Controller {
                 show_error('cannot update - record not specified', 500);
                 return;
             }
-            $group = $this->ion_auth->get_group($id);
-            $this->data['title'] = "Edit Group";
+            $role = $this->ion_auth->get_role($id);
+            $this->data['title'] = "Edit role";
             $this->data['operation'] = "Update";
             $this->data['name']['enable'] = 'enable';
-            $this->data['name']['value'] = $this->form_validation->set_value('name', $group->name);
-            $this->data['description']['value'] = $this->form_validation->set_value('description', property_exists($group, 'description') ? $group->description : "");
+            $this->data['name']['value'] = $this->form_validation->set_value('name', $role->name);
+            $this->data['description']['value'] = $this->form_validation->set_value('description', property_exists($role, 'description') ? $role->description : "");
         }
-        $this->load->view('auth/add_edit_group', $this->data);
+        $this->load->view('auth/add_edit_role', $this->data);
     }
 
     function delete_user($id) {
@@ -608,7 +608,7 @@ class Auth extends Controller {
         if (is_ajax ()) {
             $this->data['message'] = $this->ion_auth->errors()?$this->ion_auth->errors():$this->ion_auth->messages();
             $this->data['users'] = $this->ion_auth->get_users_array();
-            $this->data['usergroup'] = $this->session->userdata('group');
+            $this->data['userrole'] = $this->session->userdata('role');
             $this->data['is_admin'] = $this->ion_auth->is_admin();
             $this->load->view('auth/user_list', $this->data);
         } else {
@@ -617,16 +617,16 @@ class Auth extends Controller {
         }
     }
 
-    function delete_group($id) {
-        $this->ion_auth->delete_group($id);
+    function delete_role($id) {
+        $this->ion_auth->delete_role($id);
         if (is_ajax ()) {
             $this->data['message'] = $this->ion_auth->errors()?$this->ion_auth->errors():$this->ion_auth->messages();
-            $this->data['groups'] = $this->ion_auth->get_groups();
+            $this->data['roles'] = $this->ion_auth->get_roles();
             $this->data['is_admin'] = $this->ion_auth->is_admin();
-            $this->load->view('auth/list_group', $this->data);
+            $this->load->view('auth/list_role', $this->data);
         } else {
             $this->session->set_flashdata('message', $this->ion_auth->messages());
-            redirect("auth/manage_group", 'refresh');
+            redirect("auth/manage_role", 'refresh');
         }
     }
 

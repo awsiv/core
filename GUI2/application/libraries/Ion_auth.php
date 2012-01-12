@@ -314,13 +314,13 @@ class Ion_auth
 	 * @return void
 	 * @author Mathew
 	 **/
-	public function register($username, $password, $email, $group, $additional_data = false) //need to test email activation
+	public function register($username, $password, $email, $role, $additional_data = false) //need to test email activation
 	{
 		$email_activation = $this->ci->config->item('email_activation', 'ion_auth');
 
 		if (!$email_activation)
 		{
-			$id = $this->ci->ion_auth_model_mongo->register($username, $password, $email, $group, $additional_data);
+			$id = $this->ci->ion_auth_model_mongo->register($username, $password, $email, $role, $additional_data);
 			if ($id !== FALSE)
 			{
 				$this->set_message('account_creation_successful');
@@ -334,7 +334,7 @@ class Ion_auth
 		}
 		else
 		{
-			$id = $this->ci->ion_auth_model_mongo->register($username, $password, $email, $group, $additional_data);
+			$id = $this->ci->ion_auth_model_mongo->register($username, $password, $email, $role, $additional_data);
 
 			if (!$id)
 			{
@@ -437,7 +437,7 @@ class Ion_auth
 	{
 		$identity = $this->ci->config->item('identity', 'ion_auth');
 		$this->ci->session->unset_userdata($identity);
-		$this->ci->session->unset_userdata('group');
+		$this->ci->session->unset_userdata('role');
 		$this->ci->session->unset_userdata('id');
 		$this->ci->session->unset_userdata('user_id');
 
@@ -478,36 +478,36 @@ class Ion_auth
 	 **/
 	public function is_admin()
 	{
-                 $admin_group=$this->ci->settings_model->app_settings_get_item('admin_group');
+                 $admin_role=$this->ci->settings_model->app_settings_get_item('admin_role');
                  
-                 if($admin_group===False){
-                     $admin_group = $this->ci->config->item('admin_group', 'ion_auth');
+                 if($admin_role===False){
+                     $admin_role = $this->ci->config->item('admin_role', 'ion_auth');
                  }
-                 $user_group  = $this->ci->session->userdata('group');
-                       if($user_group===False ||empty($user_group)){
+                 $user_role  = $this->ci->session->userdata('role');
+                       if($user_role===False ||empty($user_role)){
                         return false;
                       }
-                return in_array($admin_group, $user_group);
+                return in_array($admin_role, $user_role);
 	}
 
         /**
-	 * is_in_fallback_group
+	 * is_in_fallback_role
 	 *
 	 * @return bool
 	 * @author sudhir
 	 **/
-        public function is_in_fallback_group()
+        public function is_in_fallback_role()
 	{
-                 $admin_group=$this->ci->settings_model->app_settings_get_item('fall_back_for');
+                 $admin_role=$this->ci->settings_model->app_settings_get_item('fall_back_for');
 
-                 if($admin_group===False){
-                     $admin_group = $this->ci->config->item('admin_group', 'ion_auth');
+                 if($admin_role===False){
+                     $admin_role = $this->ci->config->item('admin_role', 'ion_auth');
                  }
-                 $user_group  = $this->ci->session->userdata('group');
-                     if($user_group===False){
+                 $user_role  = $this->ci->session->userdata('role');
+                     if($user_role===False){
                         return false;
                     }
-                return in_array($admin_group, $user_group);
+                return in_array($admin_role, $user_role);
 	}
 
         /**
@@ -516,28 +516,28 @@ class Ion_auth
 
         public function is_accessable()
         {
-           $isadmin=$this->ci->settings_model->app_settings_get_item('admin_group');
-            if($isadmin!==FALSE && (!$this->is_admin() && !$this->is_in_fallback_group())){
+           $isadmin=$this->ci->settings_model->app_settings_get_item('admin_role');
+            if($isadmin!==FALSE && (!$this->is_admin() && !$this->is_in_fallback_role())){
                 return false;
             }
             return true;
         }
 	/**
-	 * is_group
+	 * is_role
 	 *
 	 * @return bool
 	 * @author Phil Sturgeon
 	 **/
-	public function is_group($check_group)
+	public function is_role($check_role)
 	{
-		$user_group = $this->ci->session->userdata('group');
+		$user_role = $this->ci->session->userdata('role');
 
-		if(is_array($check_group))
+		if(is_array($check_role))
 		{
-			return in_array($user_group, $check_group);
+			return in_array($user_role, $check_role);
 		}
 
-		return $user_group == $check_group;
+		return $user_role == $check_role;
 	}
 
 	/**
@@ -560,21 +560,21 @@ class Ion_auth
 	 * @return objects Users
 	 * @author Ben Edmunds
 	 **/
-	public function get_users($group_name=false, $limit=NULL, $offset=NULL)
+	public function get_users($role_name=false, $limit=NULL, $offset=NULL)
 	{
-		return $this->ci->ion_auth_model_mongo->get_users($group_name, $limit, $offset);
+		return $this->ci->ion_auth_model_mongo->get_users($role_name, $limit, $offset);
 	}
 
 
-        public function get_user_group($id)
+        public function get_user_role($id)
         {
-            return $this->ci->ion_auth_model_mongo->get_users_group($id);
+            return $this->ci->ion_auth_model_mongo->get_users_role($id);
         }
         
-        public function get_user_grouplist($id){
-            $groups= $this->ci->ion_auth_model_mongo->get_users_group($id);
-            if(!empty ($groups)&&$groups!==False){
-                return $groups[0]['group'];
+        public function get_user_rolelist($id){
+            $roles= $this->ci->ion_auth_model_mongo->get_users_role($id);
+            if(!empty ($roles)&&$roles!==False){
+                return $roles[0]['role'];
             }
             return array();
         }
@@ -585,7 +585,7 @@ class Ion_auth
 	 * @return array Users
 	 * @author Ben Edmunds
 	 **/
-       public function get_users_array($group_name=false, $limit=NULL, $offset=NULL) {
+       public function get_users_array($role_name=false, $limit=NULL, $offset=NULL) {
         if (strtolower($this->mode) != 'database') {
             if (!$this->ci->session->userdata('pwd')) {
                 $this->set_error('login_mode_changed');
@@ -595,7 +595,7 @@ class Ion_auth
             }           
             return $this->ci->auth_ldap->get_all_ldap_users($this->ci->session->userdata('username'), $this->ci->session->userdata('pwd'));
         }
-        return $this->ci->ion_auth_model_mongo->get_users_by_group($group_name, $limit, $offset);
+        return $this->ci->ion_auth_model_mongo->get_users_by_role($role_name, $limit, $offset);
     }
 
 	/**
@@ -626,9 +626,9 @@ class Ion_auth
 	 * @return object Users
 	 * @author Ben Edmunds
 	 **/
-	public function get_active_users($group_name = false)
+	public function get_active_users($role_name = false)
 	{
-		return (object)$this->ci->ion_auth_model_mongo->get_active_users($group_name);
+		return (object)$this->ci->ion_auth_model_mongo->get_active_users($role_name);
 	}
 
 	/**
@@ -637,9 +637,9 @@ class Ion_auth
 	 * @return object Users
 	 * @author Ben Edmunds
 	 **/
-	public function get_active_users_array($group_name = false)
+	public function get_active_users_array($role_name = false)
 	{
-		return $this->ci->ion_auth_model_mongo->get_active_users($group_name);
+		return $this->ci->ion_auth_model_mongo->get_active_users($role_name);
 	}
 
 	/**
@@ -648,9 +648,9 @@ class Ion_auth
 	 * @return object Users
 	 * @author Ben Edmunds
 	 **/
-	public function get_inactive_users($group_name = false)
+	public function get_inactive_users($role_name = false)
 	{
-		return (object)$this->ci->ion_auth_model_mongo->get_inactive_users($group_name);
+		return (object)$this->ci->ion_auth_model_mongo->get_inactive_users($role_name);
 	}
 
 	/**
@@ -659,9 +659,9 @@ class Ion_auth
 	 * @return object Users
 	 * @author Ben Edmunds
 	 **/
-	public function get_inactive_users_array($group_name = false)
+	public function get_inactive_users_array($role_name = false)
 	{
-		return $this->ci->ion_auth_model_mongo->get_inactive_users($group_name);
+		return $this->ci->ion_auth_model_mongo->get_inactive_users($role_name);
 	}
 
 	/**
@@ -706,10 +706,10 @@ class Ion_auth
 	 **/
 	public function update_user($id, $data)
 	{
-	$groups=$this->get_user_grouplist($id);
-                $admin_group=$this->ci->settings_model->app_settings_get_item('admin_group');
-                $count=$this->ci->ion_auth_model_mongo->count_users_in_group($admin_group);
-                if($count <= 1 && in_array($admin_group,$groups)&& !in_array($admin_group,$data['group'])){
+	$roles=$this->get_user_rolelist($id);
+                $admin_role=$this->ci->settings_model->app_settings_get_item('admin_role');
+                $count=$this->ci->ion_auth_model_mongo->count_users_in_role($admin_role);
+                if($count <= 1 && in_array($admin_role,$roles)&& !in_array($admin_role,$data['role'])){
                     $this->set_error('one_admin_required');
                     return FALSE;
                 }
@@ -732,10 +732,10 @@ class Ion_auth
 	 **/
 	public function delete_user($id)
 	{
-	$groups=$this->get_user_grouplist($id);
-                $admin_group=$this->ci->settings_model->app_settings_get_item('admin_group');
-                $count=$this->ci->ion_auth_model_mongo->count_users_in_group($admin_group);
-                if($count <= 1 && in_array($admin_group,$groups)){
+	$roles=$this->get_user_rolelist($id);
+                $admin_role=$this->ci->settings_model->app_settings_get_item('admin_role');
+                $count=$this->ci->ion_auth_model_mongo->count_users_in_role($admin_role);
+                if($count <= 1 && in_array($admin_role,$roles)){
                     $this->set_error('one_admin_required');
                     return FALSE;
                 }
@@ -750,15 +750,15 @@ class Ion_auth
 	}
 
 
-        public function delete_group($id)
+        public function delete_role($id)
         {
-            if($this->ci->ion_auth_model_mongo->delete_group($id))
+            if($this->ci->ion_auth_model_mongo->delete_role($id))
             {
-                $this->set_message('group_delete_successful');
+                $this->set_message('role_delete_successful');
 	        return TRUE;
             }
 
-           $this->set_error('group_delete_unsuccessful');
+           $this->set_error('role_delete_unsuccessful');
 	   return FALSE;
         }
 
@@ -929,13 +929,13 @@ class Ion_auth
 		return $_output;
 	}
 	/**
-	 *get_groups
-	 *get groups in the system
+	 *get_roles
+	 *get roles in the system
 	 *
 	 *@return array
 	 *@author sudhir
 	 **/
-	 public function get_groups()
+	 public function get_roles()
 	 {
             if(strtolower($this->mode)!='database'){
                 if(!$this->ci->session->userdata('pwd')){
@@ -944,70 +944,70 @@ class Ion_auth
                  if($this->ci->session->userdata('dn')){
                  $this->ci->auth_ldap->set_user_dn($this->ci->session->userdata('dn'));
             }
-               return $this->ci->auth_ldap->get_all_ldap_groups( $this->ci->session->userdata('username'), $this->ci->session->userdata('pwd'));
+               return $this->ci->auth_ldap->get_all_ldap_roles( $this->ci->session->userdata('username'), $this->ci->session->userdata('pwd'));
             }
-		 return $this->ci->ion_auth_model_mongo->get_groups();
+		 return $this->ci->ion_auth_model_mongo->get_roles();
 	 }
 
-          public function get_groups_fromdb()
+          public function get_roles_fromdb()
 	 {
-		 return $this->ci->ion_auth_model_mongo->get_groups();
+		 return $this->ci->ion_auth_model_mongo->get_roles();
 	 }
 	 
 	 /**
-	 *get_group
-	 * particular get group in the system
+	 *get_role
+	 * particular get role in the system
 	 *
 	 *@return object
 	 *@author sudhir
 	 **/
 	 
-	  public function get_group($id)
+	  public function get_role($id)
 	 {
-		 return $this->ci->ion_auth_model_mongo->get_group($id);
+		 return $this->ci->ion_auth_model_mongo->get_role($id);
 	 }
 	 
 	 /**
-	 *create_group
-	 *Update the group
+	 *create_role
+	 *Update the role
 	 *
 	 *@return object
 	 *@author sudhir
 	 **/
 	 
-	 public function create_group($data)
+	 public function create_role($data)
 	 {
-		 $id=$this->ci->ion_auth_model_mongo->create_group($data);
+		 $id=$this->ci->ion_auth_model_mongo->create_role($data);
 		 if ($id !== FALSE)
 			{
-				$this->set_message('group_creation_successful');
+				$this->set_message('role_creation_successful');
 				return $id;
 			}
 			else
 			{
-				$this->set_error('group_creation_unsuccessful');
+				$this->set_error('role_creation_unsuccessful');
 				return FALSE;
 			}
 	  
 
 	 }
 	 /**
-	 *update_group
-	 *Update the group
+	 *update_role
+	 *Update the role
 	 *
 	 *@return bool
 	 *@author sudhir
 	 **/
 	 
-	 public function update_group($id,$data)
+	 public function update_role($id,$data)
 	  {
-	    if ($this->ci->ion_auth_model_mongo->update_group($id, $data))
+	    if ($this->ci->ion_auth_model_mongo->update_role($id, $data))
 		{
-			$this->set_message('group_update_successful');
+			$this->set_message('role_update_successful');
 			return TRUE;
 		}
 
-		$this->set_error('group_update_unsuccessful');
+		$this->set_error('role_update_unsuccessful');
 		return FALSE;
 	  }
 

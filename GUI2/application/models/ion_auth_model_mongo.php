@@ -388,8 +388,8 @@ class Ion_auth_model_mongo extends CI_Model
 
 	    $this->db->select(array(
 				$this->tables['users'].'.*',
-				$this->tables['groups'].'.name AS '. $this->db->protect_identifiers('group'),
-				$this->tables['groups'].'.description AS '. $this->db->protect_identifiers('group_description')
+				$this->tables['roles'].'.name AS '. $this->db->protect_identifiers('role'),
+				$this->tables['roles'].'.description AS '. $this->db->protect_identifiers('role_description')
 				   ));
 
 	    if (!empty($this->columns))
@@ -401,7 +401,7 @@ class Ion_auth_model_mongo extends CI_Model
 	    }
 
 	    $this->db->join($this->tables['meta'], $this->tables['users'].'.id = '.$this->tables['meta'].'.'.$this->meta_join, 'left');
-	    $this->db->join($this->tables['groups'], $this->tables['users'].'.group_id = '.$this->tables['groups'].'.id', 'left');
+	    $this->db->join($this->tables['roles'], $this->tables['users'].'.role_id = '.$this->tables['roles'].'.id', 'left');
 
 	    if ($is_code)
 	    {
@@ -445,7 +445,7 @@ class Ion_auth_model_mongo extends CI_Model
 	 * @return bool
 	 * @author Mathew
 	 **/
-	public function register($username, $password, $email,$groups = array(),$additional_data=false)
+	public function register($username, $password, $email,$roles = array(),$additional_data=false)
 	{
 	    if ($this->identity_column == 'email' && $this->email_check($email))
 	    {
@@ -481,7 +481,7 @@ class Ion_auth_model_mongo extends CI_Model
 			'username'   => $username,
 			'password'   => $password,
 			'email'      => $email,
-			'group'   => $groups,
+			'role'   => $roles,
 			'ip_address' => $ip_address,
 			'created_on' => now(),
 			'last_login' => now(),
@@ -514,12 +514,12 @@ class Ion_auth_model_mongo extends CI_Model
          
            if($ldap_fallback){
                $this->load->model('settings_model');
-               $group=$this->settings_model->app_settings_get_item('fall_back_for');
+               $role=$this->settings_model->app_settings_get_item('fall_back_for');
                
-               $this->mongo_db->select(array($this->identity_column,'id', 'password','group'));
-               $this->mongo_db->where(array($this->identity_column => $identity,'active' => 1,'group'=>$group));
+               $this->mongo_db->select(array($this->identity_column,'id', 'password','role'));
+               $this->mongo_db->where(array($this->identity_column => $identity,'active' => 1,'role'=>$role));
            }else{
-                $this->mongo_db->select(array($this->identity_column,'id', 'password','group'));
+                $this->mongo_db->select(array($this->identity_column,'id', 'password','role'));
                 $this->mongo_db->where(array($this->identity_column => $identity,'active' => 1));
            }
 
@@ -538,7 +538,7 @@ class Ion_auth_model_mongo extends CI_Model
 					$this->identity_column => $result->{$this->identity_column},
 					'id'                   => $result->_id, //kept for backwards compatibility
 					'user_id'              => $result->_id, //everyone likes to overwrite id so we'll use user_id
-					'group'                => $result->group
+					'role'                => $result->role
 					 );
 
 		    $this->session->set_userdata($session_data);
@@ -561,15 +561,15 @@ class Ion_auth_model_mongo extends CI_Model
 	 * @return object Users
 	 * @author Ben Edmunds
 	 **/
-	public function get_users_by_group($group=false, $limit=NULL, $offset=NULL)
+	public function get_users_by_role($role=false, $limit=NULL, $offset=NULL)
 	{
-             if (is_string($group))
+             if (is_string($role))
 	    {
-		$this->mongo_db->where(array('group'=>$group));
+		$this->mongo_db->where(array('role'=>$role));
 	    }
-             else if (is_array($group))
+             else if (is_array($role))
 	    {
-		$this->mongo_db->where_in('group',$group);
+		$this->mongo_db->where_in('role',$role);
 	    }
             if (isset($limit))
 			$this->mongo_db->limit($limit);
@@ -585,10 +585,10 @@ class Ion_auth_model_mongo extends CI_Model
 	 * @return object
 	 * @author Ben Edmunds
 	 **/
-	public function get_active_users($group_name = false)
+	public function get_active_users($role_name = false)
 	{
 	    $this->mongo_db->where(array('active'=>1));
-	    return $this->get_users($group_name);
+	    return $this->get_users($role_name);
 	}
 
 	/**
@@ -597,10 +597,10 @@ class Ion_auth_model_mongo extends CI_Model
 	 * @return object
 	 * @author Ben Edmunds
 	 **/
-	public function get_inactive_users($group_name = false)
+	public function get_inactive_users($role_name = false)
 	{
 	    $this->mongo_db->where(array('active'=>0));
-	    return $this->get_users($group_name);
+	    return $this->get_users($role_name);
 	}
 
 	/**
@@ -649,59 +649,59 @@ class Ion_auth_model_mongo extends CI_Model
   	}
 
 	/**
-	 * get_users_group
+	 * get_users_role
 	 *
 	 * @return object
 	 * @author sudhir
 	 **/
-	public function get_users_group($id=false)
+	public function get_users_role($id=false)
 	{
 	    //if no id was passed use the current users id
 	    $id || $id = $this->session->userdata('user_id');
 
-	    return $this->mongo_db->select(array('group'))
+	    return $this->mongo_db->select(array('role'))
 			    ->where(array('_id'=>new MongoId($id)))
 			    ->get('users');		    
 	}
 
 	/**
-	 * get_groups
+	 * get_roles
 	 *
 	 * @return object
 	 * @author Phil Sturgeon
 	 **/
-	public function get_groups()
+	public function get_roles()
   	{
-	    return $this->mongo_db->get('groups');
+	    return $this->mongo_db->get('roles');
   	}
 
 	/**
-	 * get_group
+	 * get_role
 	 *
 	 * @return object
 	 * @author Ben Edmunds
 	 **/
-	public function get_group($id)
+	public function get_role($id)
   	{
-	    return $this->mongo_db->get_where_object('groups',array('_id'=>new MongoId($id)),1);
+	    return $this->mongo_db->get_where_object('roles',array('_id'=>new MongoId($id)),1);
 			    
   	}
 
 	/**
-	 * get_group_by_name
+	 * get_role_by_name
 	 *
 	 * @return object
 	 * @author Ben Edmunds
 	 **/
-	public function get_group_by_name($name)
+	public function get_role_by_name($name)
   	{
 
-	    return $this->mongo_db->get_where_object('groups',array('name'=>$name),1);
+	    return $this->mongo_db->get_where_object('roles',array('name'=>$name),1);
   	}
 
-        public function group_check($name)
+        public function role_check($name)
         {
-            return $this->mongo_db->where(array('name'=>$name))->count('groups') > 0;
+            return $this->mongo_db->where(array('name'=>$name))->count('roles') > 0;
         }
 
 	/**
@@ -751,28 +751,28 @@ class Ion_auth_model_mongo extends CI_Model
 	}
 
         /**
-	 * delete_group
+	 * delete_role
 	 *
 	 * @return bool
 	 * @author Sudhir Pandey
 	 **/
 
-        public function delete_group($id)
+        public function delete_role($id)
         {
-            // return $this->mongo_db->where(array('_id'=>new MongoId($id)))->delete('groups');
-            $group=$this->mongo_db->get_where_object('groups',array('_id'=>new MongoId($id)));
-            $admin_group=$this->mongo_db->select(array('admin_group','fall_back_for'))->limit(1)->get_object('appsettings');
-            $not_deleteable_group=array($admin_group->admin_group,$admin_group->fall_back_for);
-            if (is_object($admin_group) && $admin_group->admin_group !==False){
-                if(!in_array($group->name, $not_deleteable_group)){
-                    return $this->mongo_db->where(array('_id'=>new MongoId($id)))->delete('groups');
+            // return $this->mongo_db->where(array('_id'=>new MongoId($id)))->delete('roles');
+            $role=$this->mongo_db->get_where_object('roles',array('_id'=>new MongoId($id)));
+            $admin_role=$this->mongo_db->select(array('admin_role','fall_back_for'))->limit(1)->get_object('appsettings');
+            $not_deleteable_role=array($admin_role->admin_role,$admin_role->fall_back_for);
+            if (is_object($admin_role) && $admin_role->admin_role !==False){
+                if(!in_array($role->name, $not_deleteable_role)){
+                    return $this->mongo_db->where(array('_id'=>new MongoId($id)))->delete('roles');
                  }
-                 $this->ion_auth->set_error('admin_group_deletion');
+                 $this->ion_auth->set_error('admin_role_deletion');
               }else{
-                 /* if($group->name!='admin'){
-                       return $this->mongo_db->where(array('_id'=>new MongoId($id)))->delete('groups');
+                 /* if($role->name!='admin'){
+                       return $this->mongo_db->where(array('_id'=>new MongoId($id)))->delete('roles');
                   }*/
-                  $this->ion_auth->set_error('no_admin_group');
+                  $this->ion_auth->set_error('no_admin_role');
               }
                
 		return FALSE;
@@ -825,7 +825,7 @@ class Ion_auth_model_mongo extends CI_Model
 		    return FALSE;
 	    }
 
-	    $result = $this->mongo_db->select(array($this->identity_column,'_id','group'))
+	    $result = $this->mongo_db->select(array($this->identity_column,'_id','role'))
 			      ->where(array($this->identity_column =>get_cookie('identity'),'remember_code'=>get_cookie('remember_code')))
 			      ->limit(1)
 			      ->get_object('users');
@@ -840,7 +840,7 @@ class Ion_auth_model_mongo extends CI_Model
 		$session_data = array(
 				    $this->identity_column => $result->{$this->identity_column},
 				    'user_id'              => $result->_id, //everyone likes to overwrite id so we'll use user_id
-				    'group'                => $result->group,
+				    'role'                => $result->role,
 				     );
 		$this->session->set_userdata($session_data);
 		//extend the users cookies if the option is enabled
@@ -895,54 +895,54 @@ class Ion_auth_model_mongo extends CI_Model
 	}
 
 	/**
-	*add groups
+	*add roles
 	*
 	*@ retutn id
 	*@ author sudhir pandey
 	**/
 
-	public function create_group($data)
+	public function create_role($data)
 	{
-		return $this->mongo_db->insert('groups', $data);
+		return $this->mongo_db->insert('roles', $data);
 	}
 
 
 	/**
-	*update groups
+	*update roles
 	*
 	*@ return id
 	*@ author sudhir pandey
 	**/
 
-	public function update_group($id,$data)
+	public function update_role($id,$data)
 	{
-            if (array_key_exists('name', $data) && $this->group_check($data['name']))
+            if (array_key_exists('name', $data) && $this->role_check($data['name']))
 	    {
-                $group=$this->get_group_by_name($data['name']);
-                if($group->_id->__toString() != $id)
+                $role=$this->get_role_by_name($data['name']);
+                if($role->_id->__toString() != $id)
                 {
-		$this->ion_auth->set_error('group_creation_duplicate');
+		$this->ion_auth->set_error('role_creation_duplicate');
 		return FALSE;
                 }
 	    }
-            $old_doc=$this->mongo_db->get_where_object('groups',array('_id'=>new MongoId($id)));
+            $old_doc=$this->mongo_db->get_where_object('roles',array('_id'=>new MongoId($id)));
 	    $this->mongo_db->where(array('_id'=>new MongoId($id)));
-            $result_group=$this->mongo_db->update('groups', $data);
+            $result_role=$this->mongo_db->update('roles', $data);
 	    //if($result['n']==1)return TRUE; else return FALSE;
-            //$this->get_users_by_group($)
+            //$this->get_users_by_role($)
 
-            // make changes of the ripple effect of change of group in the user table;
+            // make changes of the ripple effect of change of role in the user table;
             $this->mongo_db->clear();
-            $this->mongo_db->where(array('group'=>$old_doc->name));
-            $result_user=$this->mongo_db->update_all('users',array('group.$' => $data['name']));
+            $this->mongo_db->where(array('role'=>$old_doc->name));
+            $result_user=$this->mongo_db->update_all('users',array('role.$' => $data['name']));
             $this->mongo_db->clear();
 
             $this->mongo_db->where(array('fall_back_for'=>$old_doc->name));
             $result_user=$this->mongo_db->update_all('appsettings',array('fall_back_for' => $data['name']));
             $this->mongo_db->clear();
 
-            $this->mongo_db->where(array('admin_group'=>$old_doc->name));
-            $result_user=$this->mongo_db->update_all('appsettings',array('admin_group' => $data['name']));
+            $this->mongo_db->where(array('admin_role'=>$old_doc->name));
+            $result_user=$this->mongo_db->update_all('appsettings',array('admin_role' => $data['name']));
             $this->mongo_db->clear();
             return True;
 	}
@@ -952,8 +952,8 @@ class Ion_auth_model_mongo extends CI_Model
 	return $newcode;
 }
 
-       function count_users_in_group($groupname){
-           return $this->mongo_db->where(array('group'=>$groupname))->count('users');
+       function count_users_in_role($rolename){
+           return $this->mongo_db->where(array('role'=>$rolename))->count('users');
        }
 
 }

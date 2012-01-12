@@ -17,12 +17,12 @@
       
       
       <p>
-      <?php //echo form_dropdown($group['name'],$group['options'],$group['default']);
-       echo form_label('Group');
-       foreach($groups as $group)
+      <?php //echo form_dropdown($role['name'],$role['options'],$role['default']);
+       echo form_label('Role');
+       foreach($roles as $role)
         {
-          echo form_checkbox($group);
-          echo form_label($group['id'], $group['id'],array('class'=>'group'));
+          echo form_checkbox($role);
+          echo form_label($role['id'], $role['id'],array('class'=>'role'));
         }
       ?>
       </p>

@@ -32,14 +32,15 @@ class Settings extends Cf_Controller {
         $required_if_ad = $this->__AD_check();
         $this->form_validation->set_rules('appemail', 'Administrative email', 'xss_clean|trim|required|valid_email');
         $this->form_validation->set_rules('mode', 'Authentication mode', 'xss_clean|trim|required');
+        $this->form_validation->set_rules('rbac', 'Role based acccess control', 'xss_clean|trim|required');
         $this->form_validation->set_rules('host', 'host', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
         $this->form_validation->set_rules('base_dn', 'base dn', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
         $this->form_validation->set_rules('login_attribute', 'login attribute', 'xss_clean|trim' . $required_if_ldap);
         $this->form_validation->set_rules('users_directory[]', 'users directory', 'xss_clean' . $required_if_ldap);
         $this->form_validation->set_rules('active_directory_domain', 'active directory domain', 'xss_clean|trim' . $required_if_ad);
         $this->form_validation->set_rules('member_attribute', 'memberof attribute', 'xss_clean|trim');
-        $this->form_validation->set_rules('fall_back_for', 'valid group', 'callback_required_valid_group');
-        $this->form_validation->set_rules('admin_group', 'valid group');
+        $this->form_validation->set_rules('fall_back_for', 'valid role', 'callback_required_valid_role');
+        $this->form_validation->set_rules('admin_role', 'valid role');
         $this->form_validation->set_rules('encryption', 'Encryption mode', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
         $this->form_validation->set_error_delimiters('<span>', '</span><br/>');
 
@@ -51,31 +52,31 @@ class Settings extends Cf_Controller {
                 'op' => 'create'
             );
 
-            //for fall back groups list
-            $groups = $this->ion_auth->get_groups_fromdb();
-            foreach ((array) $groups as $group) {
-                $data['groups'][$group['name']] = $group['name'];
+            //for fall back roles list
+            $roles = $this->ion_auth->get_roles_fromdb();
+            foreach ((array) $roles as $role) {
+                $data['roles'][$role['name']] = $role['name'];
             }
-            //$data['groups']['select'] = "--select-one--";
+            //$data['roles']['select'] = "--select-one--";
 
-            //for selecting admin_group from list, populated list depends on the mode selected and saved
+            //for selecting admin_role from list, populated list depends on the mode selected and saved
            
             if($this->settings_model->app_settings_get_item('mode')==$this->session->userdata('mode')){
-            $groups_acc_mode = $this->ion_auth->get_groups();
-                foreach ((array) $groups_acc_mode as $group) {
-                    key_exists('name', $group) ? $data['groupsacc'][$group['name']] = $group['name'] : $data['groupsacc'][$group['displayname']] = $group['displayname'];
+            $roles_acc_mode = $this->ion_auth->get_roles();
+                foreach ((array) $roles_acc_mode as $role) {
+                    key_exists('name', $role) ? $data['rolesacc'][$role['name']] = $role['name'] : $data['rolesacc'][$role['displayname']] = $role['displayname'];
                 }
             } else
             {
-                $data['selected_group']=$this->settings_model->app_settings_get_item('admin_group');
+                $data['selected_role']=$this->settings_model->app_settings_get_item('admin_role');
             }
-            //$data['groupsacc']['select'] = "--select-one--";
+            //$data['rolesacc']['select'] = "--select-one--";
             //if previous settings exist load it and display
             $settings = $this->settings_model->get_app_settings();
 
             if (is_object($settings)) {// the information has therefore been successfully saved in the db
                 foreach ($settings as $property => $value) {
-                    if ($property == 'mode' || $property == 'active_directory' || $property == 'encryption') {
+                    if ($property == 'mode' || $property == 'active_directory' || $property == 'encryption' || $property=='rbac') {
                         if (!$this->input->post('mode')) {
                             $data[$value] = 'checked="checked"';
                             continue;
@@ -134,8 +135,9 @@ class Settings extends Cf_Controller {
                 'active_directory_domain' => set_value('active_directory_domain'),
                 'member_attribute' => set_value('member_attribute'),
                 'fall_back_for' => $this->input->post('fall_back_for'),
-                'admin_group' => $this->input->post('admin_group'),
-                'encryption' => set_value('encryption')
+                'admin_role' => $this->input->post('admin_role'),
+                'encryption' => set_value('encryption'),
+                'rbac'=>set_value('rbac')
             );
 
 // run insert model to write data to db
@@ -156,7 +158,7 @@ class Settings extends Cf_Controller {
                     'message' => '<p class="success"> Settings configured sucessfully</p>'
                 );
                 foreach ($form_data as $property => $value) {
-                    if ($property == 'mode' || $property == 'encryption') {
+                    if ($property == 'mode' || $property == 'encryption' || $property=='rbac') {
                         $data[$value] = ' checked="checked"';
                         continue;
                     }
@@ -181,22 +183,22 @@ class Settings extends Cf_Controller {
                     }
                 }
 //$this->load->view('appsetting/missionportalpref',$data);
-                $groups = $this->ion_auth->get_groups_fromdb();
-                foreach ((array) $groups as $group) {
-                    $data['groups'][$group['name']] = $group['name'];
+                $roles = $this->ion_auth->get_roles_fromdb();
+                foreach ((array) $roles as $role) {
+                    $data['roles'][$role['name']] = $role['name'];
                 }
-                //$data['groups']['select'] = "--select-one--";
+                //$data['roles']['select'] = "--select-one--";
                 if($this->input->post('mode')==$this->session->userdata('mode')||$this->input->post('mode')=='database'){
-                $groups_acc_mode = $this->ion_auth->get_groups();
-                    foreach ((array) $groups_acc_mode as $group) {
-                        key_exists('name', $group) ? $data['groupsacc'][$group['name']] = $group['name'] : $data['groupsacc'][$group['displayname']] = $group['displayname'];
+                $roles_acc_mode = $this->ion_auth->get_roles();
+                    foreach ((array) $roles_acc_mode as $role) {
+                        key_exists('name', $role) ? $data['rolesacc'][$role['name']] = $role['name'] : $data['rolesacc'][$role['displayname']] = $role['displayname'];
                     }
                 }
                 else
                 {
-                    $data['selected_group']=$this->input->post('admin_group');
+                    $data['selected_role']=$this->input->post('admin_role');
                 }
-                //$data['groupsacc']['select'] = "--select-one--";
+                //$data['rolesacc']['select'] = "--select-one--";
                 $this->template->load('template', 'appsetting/missionportalpref', $data);
             } else {
                 echo 'An error occurred saving your information. Please try again later';
@@ -223,9 +225,9 @@ class Settings extends Cf_Controller {
         }
     }
 
-    function required_valid_group($value) {
+    function required_valid_role($value) {
         if ($value == "select") {
-            $this->form_validation->set_message('required_valid_group', 'Required a valid group');
+            $this->form_validation->set_message('required_valid_role', 'Required a valid role');
             return false;
         } else {
             return true;
@@ -256,14 +258,14 @@ class Settings extends Cf_Controller {
         $this->auth_ldap->set_encryption($this->input->post('encryption'));
 
         $result = $this->auth_ldap->login($this->input->post('username'), $this->input->post('password'));
-        $groups = $this->auth_ldap->get_all_ldap_groups($this->input->post('username'), $this->input->post('password'));
-        $groupsarry=array();
-        foreach ((array)$groups as $group){
-            if(key_exists('name', $group)){
-             $groupsarry[$group['name']]=$group['name'];    
+        $roles = $this->auth_ldap->get_all_ldap_roles($this->input->post('username'), $this->input->post('password'));
+        $rolesarry=array();
+        foreach ((array)$roles as $role){
+            if(key_exists('name', $role)){
+             $rolesarry[$role['name']]=$role['name'];    
             }
-            if(key_exists('displayname', $group)){
-             $groupsarry[$group['displayname']]=$group['displayname'];    
+            if(key_exists('displayname', $role)){
+             $rolesarry[$role['displayname']]=$role['displayname'];    
             }
            
         }
@@ -279,7 +281,7 @@ class Settings extends Cf_Controller {
 
         $message.="</div>";
         //echo $message;
-        $ret=array('message'=>$message,'groups'=>form_dropdown('admin_group',$groupsarry));
+        $ret=array('message'=>$message,'roles'=>form_dropdown('admin_role',$rolesarry));
         echo json_encode($ret);
     }
 
@@ -291,13 +293,13 @@ class Settings extends Cf_Controller {
         $this->load->view('appsetting/ldaplogintest', $data);
     }
     
-    function get_native_groups(){
-        $groups=$this->ion_auth->get_groups_fromdb();
-        $groupsarr=array();
-        foreach($groups as $group){
-            $groupsarr[$group['name']]=$group['name'];
+    function get_native_roles(){
+        $roles=$this->ion_auth->get_roles_fromdb();
+        $rolesarr=array();
+        foreach($roles as $role){
+            $rolesarr[$role['name']]=$role['name'];
         }
-        echo form_dropdown('admin_group',$groupsarr);
+        echo form_dropdown('admin_role',$rolesarr);
     }
 
     function preferences($op=false, $id=false) {

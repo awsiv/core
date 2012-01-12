@@ -4,7 +4,7 @@
 <!--<p><?php  echo "Logged in: $username" ; ?>&nbsp;<a href="<?php echo site_url('auth/logout'); ?>">Logout</a></p>-->
         <ul class="admin_menu">
             <li class="current"><a href="<?php echo site_url('auth/index');?>">Users</a></li>
-            <li><a href="<?php echo site_url('auth/manage_group');?>">Groups</a></li>
+            <li><a href="<?php echo site_url('auth/manage_role');?>">Roles</a></li>
             <!--<li>Settings</li>-->
         </ul>
         <div class="holder">
@@ -111,26 +111,26 @@ $(document).ready(function() {
       $(this).parent().addClass('current').siblings().removeClass('current');
   });
 
-//loading the  group create page in the  admin area ajaxcially
-  $('#add_group').live('click',function(event){
+//loading the  role create page in the  admin area ajaxcially
+  $('#add_role').live('click',function(event){
       event.preventDefault();
       var path=$(this).attr('href');
       $("#admin_content").slideUp().load(path).slideDown();
   });
 
-//create a new group form the page loaded
- $('#create_group').live('submit',function(event){
+//create a new role form the page loaded
+ $('#create_role').live('submit',function(event){
       event.preventDefault();
       $(this).ajaxSubmit(options);
   });
 
- $('#Create_group').live('submit',function(event){
+ $('#Create_role').live('submit',function(event){
       event.preventDefault();
       $(this).ajaxSubmit(options);
   });
 
 
- $('#Update_group').live('submit',function(event){
+ $('#Update_role').live('submit',function(event){
       event.preventDefault();
       $(this).ajaxSubmit(options);
   });

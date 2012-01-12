@@ -5,7 +5,7 @@
 			<th>Users</th>
 			<th>Email</th>
                         <?php if($this->ion_auth->mode =="database"){?>
-			<th>Groups</th>
+			<th>roles</th>
 			<th>Status</th>
                         <th>Action</th>
                        <?php } ?>
@@ -17,20 +17,20 @@
 				<td><?php echo  isset($user['username'])?$user['username']:$user['displayname'] ?></td>
 				<td><?php echo isset($user['email'])?$user['email']:"";?></td>
                       <?php  if($this->ion_auth->mode=="database"){?>
-                                <td><?php if(isset($user['group'])&&is_array($user['group'])){
-                                    $no_of_elements=count($user['group']);
-                                      foreach ($user['group'] as $group) {
+                                <td><?php if(isset($user['role'])&&is_array($user['role'])){
+                                    $no_of_elements=count($user['role']);
+                                      foreach ($user['role'] as $role) {
 
                                         $no_of_elements=$no_of_elements-1;
                                         if($no_of_elements==0)
-                                            echo $group;
+                                            echo $role;
                                         else
-                                             echo $group.", ";
+                                             echo $role.", ";
                                     }
                                 }
                                 else
                                 {
-                                    echo isset($user['group'])?$user['group']:"";
+                                    echo isset($user['role'])?$user['role']:"";
                                  }
                                     ;?></td>
 

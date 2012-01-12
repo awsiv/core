@@ -15,16 +15,16 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
 
  
 <p id='admingrpsec'>
-    <label for="admin_group">Administrative group<span class="required"></span></label>
-   <?php if(isset( $groupsacc)){
+    <label for="admin_role">Administrative role<span class="required"></span></label>
+   <?php if(isset( $rolesacc)){
     echo tooltip('tooltip_admin_grp','',true) ;// echo form_error('active_directory_domain'); 
-    echo form_dropdown('admin_group', $groupsacc, $admin_group?$admin_group:'select');
+    echo form_dropdown('admin_role', $rolesacc, $admin_role?$admin_role:'select');
     }?>
     
-   <?php if(isset($selected_group)){
-      echo  form_label($selected_group,'',array('id'=>'selected_grplbl'));
+   <?php if(isset($selected_role)){
+      echo  form_label($selected_role,'',array('id'=>'selected_grplbl'));
    }?>
- <a class="btn testldap" id="getgrpsbtn" href="<?php echo site_url('settings/ldaptest')?>">Get groups</a>
+ <a class="btn testldap" id="getgrpsbtn" href="<?php echo site_url('settings/ldaptest')?>">Get roles</a>
 </p>
 
 
@@ -132,9 +132,18 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
 </fieldset>
 <p>
     
-    <label for="fall back for">Fall-back group ( if authentication server down)<span class="required"></span></label>
+    <label for="fall back for">Fall-back role ( if authentication server down)<span class="required"></span></label>
     <?php echo tooltip('tooltip_fall_back','',true) ;// echo form_error('active_directory_domain'); ?>
-    <?php echo form_dropdown('fall_back_for', $groups, $fall_back_for?$fall_back_for:'select');?>
+    <?php echo form_dropdown('fall_back_for', $roles, $fall_back_for?$fall_back_for:'select');?>
+</p>
+
+<p>
+    <label for="rbac">Role based access control <span class="required">*</span></label>
+        <input id="rbac_on" name="rbac" type="radio" class="" value="rbac_on" <?php echo (isset($rbac_on))?$database:$this->form_validation->set_radio('rbac', 'rbac_on') ; ?> checked="checked"/>
+        <label for="mode" class="">On</label>
+                        
+        <input id="rbac_off" name="rbac" type="radio" class="" value="rbac_off" <?php echo (isset($rbac_off))?$rbac_off:$this->form_validation->set_radio('rbac', 'rbac_off'); ?> />
+        <label for="mode" class="">Off</label>
 </p>
 
 <p  id="btnholder">
@@ -150,7 +159,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
  $(document).ready(function(){
      $('#ldapsettings').hide();
      var mode= $("input[name='mode']:checked").val();
-     var elem=$("select[name='admin_group']").clone();
+     var elem=$("select[name='admin_role']").clone();
      var grplbl=$('#selected_grplbl').clone();
      var getgrpbtn=$('#getgrpsbtn').clone();
      var grpcontainer=$('#admingrpsec');
@@ -161,7 +170,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
                 $('#ldapsettings').hide();
                 $('#getgrpsbtn').hide();
                 if(mode!='database'){
-                $.get("<?php echo site_url('settings/get_native_groups')?>", function(result){
+                $.get("<?php echo site_url('settings/get_native_roles')?>", function(result){
                      grpcontainer.append(result);
                      $('#getgrpsbtn').hide();
                   });
@@ -235,7 +244,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
           })
           var dlgtitle='LDAP Test'
           if($(this).attr('id')=='getgrpsbtn'){
-             dlgtitle='Get groups' ;
+             dlgtitle='Get roles' ;
           }
            
           $(this).ajaxyDialog({title:dlgtitle,clickData:{
@@ -251,10 +260,10 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
          submitDatatype:'json',
          change:function(response){
              $('#infoMessage').html(response.message);
-              $("select[name='admin_group']").remove();
+              $("select[name='admin_role']").remove();
               $('#selected_grplbl').remove();  
-              //grpcontainer.append(response.groups);
-              $('#getgrpsbtn').before(response.groups);
+              //grpcontainer.append(response.roles);
+              $('#getgrpsbtn').before(response.roles);
          }
         
        }).ajaxyDialog('open');
@@ -263,7 +272,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
       
       $("input[name='mode']").change(function(){  
       settings_toggle();
-      var selbox=$("select[name='admin_group']");
+      var selbox=$("select[name='admin_role']");
       if($(this).val()==mode){
           selbox.remove();
           $('#selected_grplbl').remove();

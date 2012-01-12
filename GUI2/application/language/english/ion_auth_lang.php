@@ -48,20 +48,20 @@ $lang['user_delete_successful'] 		 	 = 'User deleted';
 $lang['user_delete_unsuccessful'] 		 	 = 'Unable to delete user';
 $lang['one_admin_required']                                        ="At least one admin account is required by CFEngine Nova Mission Portal";
 
-//Group createion
-$lang['group_creation_successful']              ="Group created successfully";
-$lang['group_creation_unsuccessful']            ="Unable to create group";
-$lang['group_creation_duplicate']               ="Group name already exists";
+//role createion
+$lang['role_creation_successful']              ="Role created successfully";
+$lang['role_creation_unsuccessful']            ="Unable to create role";
+$lang['role_creation_duplicate']               ="Role name already exists";
 
-//Group changes
-$lang['group_delete_successful'] 		= 'Group deleted';
-$lang['group_delete_unsuccessful'] 		= 'Unable to delete group';
-$lang['group_update_successful']                = 'Group information updated successfully';
-$lang['group_update_unsuccessful']              = 'Unable to update group';
-$lang['no_groups_for_user']                     = "User does not belong to any group, but can login to the Nova Mission Portal with limited access";
+//role changes
+$lang['role_delete_successful'] 		= 'Role deleted';
+$lang['role_delete_unsuccessful'] 		= 'Unable to delete role';
+$lang['role_update_successful']                = 'Role information updated successfully';
+$lang['role_update_unsuccessful']              = 'Unable to update role';
+$lang['no_roles_for_user']                     = "User does not belong to any role, but can login to the Nova Mission Portal with limited access";
 $lang['backend_error']                          = "Cannot connect to the user database. Please make sure it exists.";
-$lang['admin_group_deletion']= "Cannot delete the admin group";
-$lang['no_admin_group']="No admin group selected yet";
+$lang['admin_role_deletion']= "Cannot delete the admin role";
+$lang['no_admin_role']="No admin role selected yet";
 //modes of login
 $lang['login_mode_changed']          =  'The mode of authentication has changed, it might be due to config changes or a system fallback to a local database due to failed LDAP login. Please retry login.';
 
@@ -75,7 +75,7 @@ $lang['ldap_login_error']                            ="failed to bind with LDAP"
 $lang['Internal_Ldap_module_error']            ="Error: Please check credentials and configuration for the LDAP.";
 $lang['successful_bind']                             ="Authentication sucessful";
 $lang['ldap_value_grabbing_error']             =" Cannot fetch some attributes values, please correct the attribute names";
-$lang['error_fetching_group']                    ="Cannot query for available group names, but user can login into mission portal with limited access";
+$lang['error_fetching_role']                    ="Cannot query for available role names, but user can login into mission portal with limited access";
 
 //login page message
 $lang['login_database'] ='Internal authentication';

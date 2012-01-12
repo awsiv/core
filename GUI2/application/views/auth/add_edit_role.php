@@ -1,11 +1,11 @@
 
 	<div id="infoMessage"><?php echo $message;?></div>
 <div class="form">
-    <?php echo form_open("auth/manage_group/".$this->uri->segment(3).'/'.$this->uri->segment(4),array('id'=>$operation.'_group'));?>
+    <?php echo form_open("auth/manage_role/".$this->uri->segment(3).'/'.$this->uri->segment(4),array('id'=>$operation.'_role'));?>
     
       <p>
       <?php
-       echo form_label('Group Name',$name['name']);
+       echo form_label('role Name',$name['name']);
        echo form_input($name);
        ?>
       </p>

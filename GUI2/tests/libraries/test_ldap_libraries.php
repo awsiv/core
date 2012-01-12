@@ -86,7 +86,7 @@ private $dn='CN=Sudhir Pandey,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com';
     }
 
     public function test_php_ldap_getallgroups() {
-        $ret = $this->_ci->auth_ldap->get_all_ldap_groups($this->username, $this->password);
+        $ret = $this->_ci->auth_ldap->get_all_ldap_roles($this->username, $this->password);
         $this->assertTrue(is_array($ret), "Should be  an array of list of users");
         $this->dump($ret);
     }
@@ -139,7 +139,7 @@ private $dn='CN=Sudhir Pandey,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com';
          $this->dump($ret);
     }
    public function test_php_ad_getallgroups(){
-        $ret=$this->_ci->auth_ldap->get_all_ldap_groups($this->username,$this->password);
+        $ret=$this->_ci->auth_ldap->get_all_ldap_roles($this->username,$this->password);
         $this->assertTrue(is_array($ret),"Should be  an array of list of users");
         $this->dump($ret);
     }

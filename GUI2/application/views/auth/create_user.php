@@ -25,13 +25,13 @@
       </p>
       
       <p>
-      <?php echo form_label('Group');
-      //echo form_dropdown('group', $groups,set_value('group', '2'));
-	       // echo form_dropdown($group['name'],$group['options'],$group['default']);
-      foreach($groups as $group)
+      <?php echo form_label('role');
+      //echo form_dropdown('role', $roles,set_value('role', '2'));
+	       // echo form_dropdown($role['name'],$role['options'],$role['default']);
+      foreach($roles as $role)
       {
-          echo form_checkbox($group);
-          echo form_label($group['id'], $group['id'],array('class'=>'group'));
+          echo form_checkbox($role);
+          echo form_label($role['id'], $role['id'],array('class'=>'role'));
       }
       ?>
       </p>

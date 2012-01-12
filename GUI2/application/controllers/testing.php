@@ -739,22 +739,7 @@ class Testing extends CI_Controller {
         $this->load->view('testviews/story', $data);
     }
     
-    function json_test() {
-        $data = "{
-    \"categorykey\": {
-        \"name\": \"file\",
-        \"reports\": {
-            \"key1\": \"reportname\",
-            \"key2\": \"reportname\"
-        }
-       }
-     }";
-        $array=json_decode($data,TRUE);
-        foreach ($array as $key=>$value)
-        {
-          var_dump($key);  
-        }
-    }
+
     
 
 

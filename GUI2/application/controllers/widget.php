@@ -258,7 +258,7 @@ class Widget extends Cf_Controller {
     }
 
     function allreports() {
-        $data= cfpr_select_reports(".*", 100);
+        $data= cfpr_select_reports();
         $reports=sanitycheckjson($data,true);
         //var_dump($reports);
         $treeview_reports=array();

@@ -241,9 +241,9 @@ class Auth_Ldap {
             catch(Exception $e){
               $this->set_error('ldap_conf_error', $e->getMessage());
               if($e->getMessage()=='Invalid credentials'){
-                 log_message('error', 'Unable to perform LDAP bind due to invalid values either in user directory field or username and password, '.$e->getMessage().'  ' .$e->getLine());
+                   log_message('error', 'Unable to perform LDAP bind due to invalid values either in user directory field or username and password, '.$e->getMessage().'  ' .$e->getLine());
               }elseif($e->getMessage()=='Server is unavailable'){
-                 log_message('error', 'Unable to perform LDAP bind ,make sure the correct encryption is set and valid values supplied in hostname, '.$e->getMessage().'  ' .$e->getLine());
+                   log_message('error', 'Unable to perform LDAP bind ,make sure the correct encryption is set and valid values supplied in hostname, '.$e->getMessage().'  ' .$e->getLine());
               }else{
                    log_message('error', 'Unable to perform LDAP bind, '.$e->getMessage().'  ' .$e->getLine());
               }
@@ -387,7 +387,7 @@ class Auth_Ldap {
      * @param <type> $password
      * @return <type> Returns array of associative array each conaining different attributes mentioned in the $fields array;
      */
-    function get_all_ldap_groups($username, $password) {
+    function get_all_ldap_roles($username, $password) {
         if ($this->use_ad) {
             $filter = '(&(objectCategory=group))';
             $fields = "sAMAccountName";
@@ -442,15 +442,15 @@ class Auth_Ldap {
             $result = $this->cfpr_ldap_single_search($userdn, $password, $filter, $field, $dn);
         }
          if(empty($result)){
-                $available_groups=$this->get_all_ldap_groups($username,$password);
+                $available_groups=$this->get_all_ldap_roles($username,$password);
                 if(!empty($available_groups) && $this->authenticated){
-                   $this->set_warning('no_groups_for_user'); 
+                   $this->set_warning('no_roles_for_user'); 
                    log_message('error', 'User does not belong to any group, But can login into mission portal with limited access');
                 }elseif($this->authenticated){
-                   $this->set_warning('no groups fetched'); 
+                   $this->set_warning('no roles fetched'); 
                    log_message('error', 'No groups could be fetched from ldap'); 
                 }else{
-                $this->set_warning('error_fetching_group', 'invalid member attribute or user attribute');
+                $this->set_warning('error_fetching_role', 'invalid member attribute or user attribute');
                 log_message('error', 'Error fetching groups from directory service  possibly due to invalid member attribute or user directory  value');
                 } 
             }
