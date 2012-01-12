@@ -329,7 +329,7 @@ printf("   <syntax element>\n");
 void Nova_MapPromiseToTopic(FILE *fp,Promise *pp,const char *version)
 
 { char promise_id[CF_BUFSIZE];
-  Rlist *rp,*depends_on = GetListConstraint("depends_on",pp), *rp2;
+  Rlist *rp,*rp2,*depends_on = GetListConstraint("depends_on",pp);
   Rlist *class_list = SplitRegexAsRList(pp->classes,"[.!()|&]+",100,false);
   char *bundlename = NULL, *bodyname = NULL;
 
@@ -402,8 +402,10 @@ if (strcmp(pp->agentsubtype,"methods") == 0)
    {
    Constraint *cp;
    FnCall *fnp;
+
+   // Look at the unexpanded promise to see the variable refs
    
-   for (cp = pp->conlist; cp != NULL; cp = cp->next)
+   for (cp = pp->org_pp->conlist; cp != NULL; cp = cp->next)
       {
       if (strcmp(cp->lval,"usebundle") == 0)
          {
@@ -415,12 +417,38 @@ if (strcmp(pp->agentsubtype,"methods") == 0)
             case CF_FNCALL:
                 fnp = (FnCall *)cp->rval.item;
                 bundlename = fnp->name;
+
+                // For each argument, variables in actual params affect the bundle
+                
+                for (rp = fnp->args; rp != NULL; rp = rp->next)
+                   {
+                   Rlist *allvars = NULL;
+                   
+                   ScanRval(pp->bundle,&allvars,&allvars,(Rval) { rp->item, CF_SCALAR },pp);
+
+                   for (rp2 = allvars; rp2 != NULL; rp2=rp2->next)
+                      {
+                      fprintf(fp,"bundles::\n\n");
+                      fprintf(fp,"  \"%s\"\n",bundlename);
+                      if (strchr(rp2->item,'.'))
+                         {
+                         fprintf(fp,"      association => a(\"%s\",\"variables::%s\",\"%s\");\n",NOVA_ISIMPACTED,(const char *)rp2->item,NOVA_IMPACTS);
+                         }
+                      else
+                         {
+                         fprintf(fp,"      association => a(\"%s\",\"variables::%s.%s\",\"%s\");\n",NOVA_ISIMPACTED,pp->bundle,(const char *)rp2->item,NOVA_IMPACTS);
+                         }
+                      }
+
+                   DeleteRlist(allvars);
+                   }
+ 
                 break;
             default:
                 break;
             }
          }
-      else
+      else // must be something generic action/classes etc
          {
          switch(cp->rval.rtype)
             {
@@ -449,12 +477,33 @@ if (strcmp(pp->agentsubtype,"methods") == 0)
 
       if (bundlename)
          {
+         Bundle *bp;
+         
          if (pp->ref)
             {
             fprintf(fp,"occurrences: \n\n");
             fprintf(fp," %s:: \"%s\"  representation => \"literal\",\n",bundlename,pp->ref);
             fprintf(fp,"   represents => { \"description\" }; \ntopics:\n");
             }
+
+         // The used bundle affects the parent, in principle
+
+         fprintf(fp,"bundles::\n\n");
+         fprintf(fp,"  \"%s\"\n",bundlename);
+         fprintf(fp,"      association => a(\"%s\",\"bundles::%s\",\"%s\");\n",NOVA_IMPACTS,(const char *)pp->bundle,NOVA_ISIMPACTED);
+         
+         /* Bundlename is a conduit that is said to affect its formal
+            parameters, through the substituted values */
+         
+         bp = GetBundle(bundlename,"agent");
+
+         for (rp = bp->args; rp != NULL; rp = rp->next)
+            {
+            fprintf(fp,"bundles::\n\n");
+            fprintf(fp,"  \"%s\"\n",bundlename);
+            fprintf(fp,"      association => a(\"%s\",\"parameters::%s\",\"%s\");\n",NOVA_ISIMPACTED,(const char *)rp->item,NOVA_IMPACTS);
+            }
+         
          break;
          }
       }
@@ -467,9 +516,9 @@ switch (pp->promisee.rtype)
    case CF_SCALAR:
        fprintf(fp,"promisees::\n\n");
        fprintf(fp,"  \"%s\"\n", (const char *)pp->promisee.item);
-       fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,NovaEscape(pp->promiser),NOVA_GIVES);
+       fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES_PR,NovaEscape(pp->promiser),NOVA_GIVES_PR);
        fprintf(fp,"  \"%s\"\n", (const char *)pp->promisee.item);
-       fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,promise_id,NOVA_GIVES);          
+       fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES_PR,promise_id,NOVA_GIVES_PR);          
        fprintf(fp,"  \"%s\"\n", (const char *)pp->promisee.item);
        fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",KM_AFFECTS_CERT_B,promise_id,KM_AFFECTS_CERT_F);          
        fprintf(fp,"  \"%s\"\n", (const char *)pp->promisee.item);
@@ -500,9 +549,9 @@ switch (pp->promisee.rtype)
        for (rp = (Rlist *)pp->promisee.item; rp != NULL; rp=rp->next)
           {
           fprintf(fp,"  \"%s\"\n", (const char *)rp->item);
-          fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,NovaEscape(pp->promiser),NOVA_GIVES);          
+          fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES_PR,NovaEscape(pp->promiser),NOVA_GIVES_PR);          
           fprintf(fp,"  \"%s\"\n", (const char *)rp->item);
-          fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES,promise_id,NOVA_GIVES);          
+          fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES_PR,promise_id,NOVA_GIVES_PR);          
           for (rp2 = GOALS; rp2 != NULL; rp2 = rp2->next)
              {
              if (FullTextMatch(rp2->item,rp->item))
@@ -550,7 +599,7 @@ fprintf(fp,"\"%s\" association => a(\"is a promise of type\",\"%s\",\"has curren
 for (rp = depends_on; rp != NULL; rp=rp->next)
    {
    fprintf(fp,"  \"%s\"\n",promise_id);
-   fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES, (const char *)rp->item, NOVA_GIVES);
+   fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",NOVA_USES_PR, (const char *)rp->item, NOVA_GIVES_PR);
    fprintf(fp,"  \"%s\"\n",promise_id);
    fprintf(fp,"      association => a(\"%s\",\"%s\",\"%s\");\n",KM_AFFECTS_CERT_B, (const char *)rp->item, KM_AFFECTS_CERT_F);
    fprintf(fp,"  \"%s\"\n",NovaEscape(pp->promiser));
@@ -562,7 +611,7 @@ for (rp = depends_on; rp != NULL; rp=rp->next)
 for (rp = class_list; rp != NULL; rp=rp->next)
    {
    fprintf(fp,"  \"%s\"\n",promise_id);
-   fprintf(fp,"      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n",NOVA_USES,NovaEscape(rp->item),NOVA_GIVES);
+   fprintf(fp,"      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n",NOVA_USES_PR,NovaEscape(rp->item),NOVA_GIVES_PR);
    }
 
 DeleteRlist(class_list);
@@ -1050,7 +1099,7 @@ if (promise_id && pp->ref)
    }
 else if (promise_id)
    {
-   fprintf(fp,"topics: handles:: \"%s\" association => a(\"%s\",\"%s\",\"%s\");\n",promise_id,NOVA_HANDLE,NovaEscape(pp->promiser),NOVA_HANDLE_INV);
+   fprintf(fp,"topics: handles:: \"%s\" association => a(\"%s\",\"promisers::%s\",\"%s\");\n",promise_id,NOVA_HANDLE,NovaEscape(pp->promiser),NOVA_HANDLE_INV);
    }
 
 if (promise_id)

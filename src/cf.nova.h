@@ -1470,8 +1470,10 @@ int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *user,char *basedn,char *f
 
 // See also similar in cf3.defs.h
 
-#define NOVA_USES "relies on promise from"
-#define NOVA_GIVES "makes promise to"
+#define NOVA_USES_PR "relies on promise from"
+#define NOVA_GIVES_PR "makes promise to"
+#define NOVA_USES "uses"
+#define NOVA_GIVES "is used by"
 #define NOVA_ACTIVATED "is activated by class context"
 #define NOVA_ACTIVATES "activates promises with handle"
 #define NOVA_IMPACTS "has direct influence on"
@@ -1479,8 +1481,8 @@ int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *user,char *basedn,char *f
 #define NOVA_BUNDLE_DATA "uses variables defined in"
 #define NOVA_BUNDLE_DATA_INV_B "promises variables used by bundle"
 #define NOVA_BUNDLE_DATA_INV_P "promises variables used by promise"
-#define NOVA_HANDLE "is the handle for"
-#define NOVA_HANDLE_INV "has a promise with handle"
+#define NOVA_HANDLE "is the promise handle affecting"
+#define NOVA_HANDLE_INV "makes a promise with handle"
 #define NOVA_SYNONYM KM_SYNONYM
 #define NOVA_GOAL "contributes to business goal"
 #define NOVA_GOAL_INV "is supported by a promise"
