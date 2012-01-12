@@ -273,7 +273,7 @@ struct HubQuery *result = CFDB_QueryClasses(&conn, hostkey, NULL, true, (time_t)
 database_close(&conn);
 
 JsonArray *contexts = NULL;
-for (struct Rlist *rp = result->records; rp != NULL; rp = rp->next)
+for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    {
    struct HubClass *record = (struct HubClass *)rp->item;
    JsonObject *entry = NULL;
