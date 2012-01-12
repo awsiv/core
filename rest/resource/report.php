@@ -20,7 +20,8 @@ class ReportResource extends Resource
         $context = Utils::queryParam('context');
         $count = Utils::checkInteger(Utils::queryParam('count'), 'count');
         $startPage = Utils::checkInteger(Utils::queryParam('startPage'), 'startPage');
-        $since = Utils::checkInteger(Utils::queryParam('since'), 'since');
+        $from = Utils::checkInteger(Utils::queryParam('from'), 'from');
+        $to = Utils::checkInteger(Utils::queryParam('to'), 'to');
         $scope = Utils::queryParam('scope');
         $value = Utils::queryParam('value');
         $kept = Utils::queryParam('kept');
@@ -62,8 +63,8 @@ class ReportResource extends Resource
                     break;
 
                 case 'contexts':
-                    $response->body = cfpr_report_classes($hostkey, NULL, true,
-                            $context, $count, $startPage);
+                    $response->body = cfmod_resource_report_contexts($hostkey,
+                            $context, $from, $count, $startPage);
                     break;
 
                 case 'values':
@@ -73,7 +74,7 @@ class ReportResource extends Resource
 
                 case 'compliance-summary':
                     $response->body = cfpr_report_compliance_summary($hostkey,
-                            NULL, $since, $kept, $notkept, $repaired, ">",
+                            NULL, $from, $kept, $notkept, $repaired, ">",
                             $context, $count, $startPage);
                     break;
 
@@ -95,12 +96,12 @@ class ReportResource extends Resource
 
                 case 'file-change-log':
                     $response->body = cfpr_report_filechanges($hostkey, $name,
-                            true, $since, ">", $context, $count, $startPage);
+                            true, $from, ">", $context, $count, $startPage);
                     break;
 
                 case 'file-change-diffs':
                     $response->body = cfpr_report_filediffs($hostkey, $name,
-                            $value, true, $since, ">", $context, $count,
+                            $value, true, $from, ">", $context, $count,
                             $startPage);
                     break;
 

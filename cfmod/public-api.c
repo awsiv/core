@@ -20,6 +20,7 @@ static const char *LABEL_TIMESTAMP = "timestamp";
 static const char *LABEL_LASTSEEN = "last-seen";
 static const char *LABEL_AVERAGE = "average";
 static const char *LABEL_STDV = "stdv";
+static const char *LABEL_CONTEXT = "context";
 
 static void database_open(mongo_connection *connection)
 {
@@ -241,4 +242,52 @@ for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
 DeleteHubQuery(result, DeleteHubBundleSeen);
 
 RETURN_JSON(bundles);
+}
+
+
+/************************************************************************************/
+
+
+PHP_FUNCTION(cfmod_resource_report_contexts)
+{
+char *hostkey = NULL,
+     *context = NULL;
+int len, from;
+struct PageInfo page = { 0 };
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslll",
+      &hostkey, &len,
+      &context, &len,
+      &from,
+      &(page.resultsPerPage),
+      &(page.pageNum)) == FAILURE)
+   {
+   zend_throw_exception(cfmod_exception_args, "Unable to parse arguments", 0 TSRMLS_CC);
+   }
+
+mongo_connection conn;
+database_open(&conn);
+
+struct HubQuery *result = CFDB_QueryClasses(&conn, hostkey, NULL, true, (time_t)from, context, true);
+
+database_close(&conn);
+
+JsonArray *contexts = NULL;
+for (struct Rlist *rp = result->records; rp != NULL; rp = rp->next)
+   {
+   struct HubClass *record = (struct HubClass *)rp->item;
+   JsonObject *entry = NULL;
+
+   JsonObjectAppendString(&entry, LABEL_HOSTKEY, record->hh->keyhash);
+   JsonObjectAppendString(&entry, LABEL_CONTEXT, record->class);
+   JsonObjectAppendReal(&entry, LABEL_AVERAGE, record->prob);
+   JsonObjectAppendReal(&entry, LABEL_STDV, record->dev);
+   JsonObjectAppendInteger(&entry, LABEL_LASTSEEN, record->t);
+
+   JsonArrayAppendObject(&contexts, entry);
+   }
+
+DeleteHubQuery(result, DeleteHubClass);
+
+RETURN_JSON(contexts);
 }

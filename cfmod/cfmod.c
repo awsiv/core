@@ -20,6 +20,7 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfmod_resource_report_bundle_profile, NULL)
     PHP_FE(cfmod_resource_report_software_installed, NULL)
     PHP_FE(cfmod_resource_report_values, NULL)
+    PHP_FE(cfmod_resource_report_contexts, NULL)
 
     // private API
     PHP_FE(cfpr_enterprise_version,NULL)

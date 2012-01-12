@@ -7,5 +7,6 @@ PHP_FUNCTION(cfmod_resource_report_list);
 PHP_FUNCTION(cfmod_resource_report_bundle_profile);
 PHP_FUNCTION(cfmod_resource_report_software_installed);
 PHP_FUNCTION(cfmod_resource_report_values);
+PHP_FUNCTION(cfmod_resource_report_contexts);
 
 #endif
