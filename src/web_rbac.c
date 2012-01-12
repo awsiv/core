@@ -20,7 +20,7 @@
 
 #include "web_rbac.h"
 
-static Item *GetRolesFromDB(bson *query);
+static HubQuery *CFDB_GetRoles(bson *query);
 static bool RoleExists(char *name);
 static void DeAssociateUsersFromRole(mongo_connection *conn, char *roleName);
 static const char *GetUsersCollection(mongo_connection *conn);
@@ -118,9 +118,11 @@ cfapi_errid CFDB_DeleteRole(char *name)
 
 static bool RoleExists(char *name)
 {
- Item *roles = CFDB_GetAllRoles();
- bool exists = IsItemIn(roles, name);
- DeleteItemList(roles);
+ HubQuery *hq = CFDB_GetRoleByName(name);
+
+ // TODO: handle db connect error?
+ bool exists = (hq->records == NULL) ? false : true;
+ DeleteHubQuery(hq, DeleteHubRole);
 
  return exists;
 }
@@ -168,45 +170,71 @@ static bool IsLDAPOn(mongo_connection *conn)
 }
 
 
-Item *CFDB_GetAllRoles(void)
+HubQuery *CFDB_GetAllRoles(void)
 {
  bson query;
  bson_empty(&query);
  
- return GetRolesFromDB(&query);
+ return CFDB_GetRoles(&query);
 }
 
-/*
+
+HubQuery *CFDB_GetRoleByName(char *name)
+{
+ bson_buffer bb;
+
+ bson query;
+ bson_buffer_init(&bb);
+ bson_append_string(&bb, dbkey_role_name, name);
+ bson_from_buffer(&query, &bb);
+ 
+ HubQuery *hq = CFDB_GetRoles(&query);
+
+ bson_destroy(&query);
+ 
+ return hq;
+}
+
+
 Item *CFDB_GetRolesForUser(char *userName)
 {
  bson_buffer bb;
  bson query;
 
  bson_buffer_init(&bb);
- bson_append_string(&bb, dbkey_role_members, userName);
+ bson_append_string(&bb, dbkey_user_name, userName);
  bson_from_buffer(&query, &bb);
 
- Item *roles = GetRolesFromDB(&query);
+ // FIXME: users table
+// Item *roles = CFDB_GetRole(&query);
  bson_destroy(&query);
 
- return roles;
- }*/
+ return NULL;
+ }
 
 
-static Item *GetRolesFromDB(bson *query)
+HubQuery *CFDB_GetRoles(bson *query)
 
 {
+ Rlist *recordList = NULL;
+ HubQuery *hq = NewHubQuery(NULL, recordList);
+
  mongo_connection conn;
  bson_buffer bb;
  bson field;
  
  bson_buffer_init(&bb);
  bson_append_int(&bb, dbkey_role_name, 1);
+ bson_append_int(&bb, dbkey_role_description, 1);
+ bson_append_int(&bb, dbkey_role_classrx_include, 1);
+ bson_append_int(&bb, dbkey_role_classrx_exclude, 1);
+ bson_append_int(&bb, dbkey_role_bundlerx_include, 1);
  bson_from_buffer(&field, &bb);
  
  if(!CFDB_Open(&conn))
     {
-    return NULL;
+    hq->errid = ERRID_DBCONNECT;
+    return hq;
     }
  
  mongo_cursor *cursor = mongo_find(&conn, MONGO_ROLES_COLLECTION, query, &field, 0, 0, CF_MONGO_SLAVE_OK);
@@ -214,19 +242,20 @@ static Item *GetRolesFromDB(bson *query)
 
  CFDB_Close(&conn);
 
- Item *roles = NULL;
- 
  while (mongo_cursor_next(cursor))
     {
-    const char *roleName = BsonGetString(&(cursor->current), dbkey_role_name);
+    char name[CF_MAXVARSIZE],  desc[CF_MAXVARSIZE],
+        clRxIncl[CF_MAXVARSIZE], clRxExcl[CF_MAXVARSIZE], bRxIncl[CF_MAXVARSIZE];
 
-    if(roleName)
-       {
-       PrependItem(&roles, roleName, NULL);
-       }
+    snprintf(name, sizeof(name), "%s", BsonGetString(&(cursor->current), dbkey_role_name));
+    snprintf(desc, sizeof(desc), "%s", BsonGetString(&(cursor->current), dbkey_role_description));
+    snprintf(clRxIncl, sizeof(clRxIncl), "%s", BsonGetString(&(cursor->current), dbkey_role_classrx_include));
+    snprintf(clRxExcl, sizeof(clRxExcl), "%s", BsonGetString(&(cursor->current), dbkey_role_classrx_exclude));
+    snprintf(bRxIncl, sizeof(bRxIncl), "%s", BsonGetString(&(cursor->current), dbkey_role_bundlerx_include));
+    PrependRlistAlien(&(hq->records), NewHubRole(name, desc, clRxIncl, clRxExcl, bRxIncl));
     }
 
  mongo_cursor_destroy(cursor);
 
- return roles;
+ return hq;
 }
