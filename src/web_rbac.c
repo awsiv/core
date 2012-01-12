@@ -22,6 +22,10 @@
 
 static Item *GetRolesFromDB(bson *query);
 static bool RoleExists(char *name);
+static void DeAssociateUsersFromRole(mongo_connection *conn, char *roleName);
+static const char *GetUsersCollection(mongo_connection *conn);
+static bool IsLDAPOn(mongo_connection *conn);
+
 
 HubUserRBAC *CFDB_GetRBACForUser(char *userName)
 /*
@@ -104,6 +108,8 @@ cfapi_errid CFDB_DeleteRole(char *name)
  mongo_remove(&conn, MONGO_ROLES_COLLECTION, &query);
  bson_destroy(&query);
 
+ DeAssociateUsersFromRole(&conn, name);
+
  CFDB_Close(&conn);
 
  return ERRID_SUCCESS;
@@ -117,6 +123,47 @@ static bool RoleExists(char *name)
  DeleteItemList(roles);
 
  return exists;
+}
+
+
+static void DeAssociateUsersFromRole(mongo_connection *conn, char *roleName)
+{
+ const char *usersCollection = GetUsersCollection(conn);
+
+ bson query;
+ bson_empty(&query);
+
+ 
+ bson_buffer bb;
+ bson update;
+ 
+ bson_buffer_init(&bb);
+ bson_buffer *pull = bson_append_start_object(&bb, "$pull");
+ bson_append_string(pull, dbkey_user_roles, roleName);
+ bson_append_finish_object(pull);
+ bson_from_buffer(&update, &bb);
+
+ mongo_update(conn, usersCollection, &query, &update, MONGO_UPDATE_MULTI);
+ bson_destroy(&update);
+}
+
+
+static const char *GetUsersCollection(mongo_connection *conn)
+{
+ if(IsLDAPOn(conn))
+    {
+    return MONGO_USERS_LDAP_COLLECTION;
+    }
+ else
+    {
+    return MONGO_USERS_INTERNAL_COLLECTION;
+    }
+}
+
+static bool IsLDAPOn(mongo_connection *conn)
+{
+ // FIXME - check this 
+ return false;
 }
 
 

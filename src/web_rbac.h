@@ -9,6 +9,9 @@
 #include "bson_lib.h"
 
 #define MONGO_ROLES_COLLECTION "phpcfengine.roles"
+#define MONGO_USERS_INTERNAL_COLLECTION "phpcfengine.users"
+#define MONGO_USERS_LDAP_COLLECTION "phpcfengine.ldap_users"
+#define dbkey_user_roles "roles"
 #define dbkey_role_name "name"
 #define dbkey_role_members "members"
 #define dbkey_role_description "description"
