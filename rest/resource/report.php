@@ -31,86 +31,96 @@ class ReportResource extends Resource
         $status = Utils::queryParam('status'); // TODO: discontinue
         $job = Utils::queryParam('job');
 
-        if ($id == '')
+        try
         {
-            $response->body = cfmod_resource_report_list();
-            return $response;
-        }
-        else
-        {
-            switch ($id)
+            if ($id == '')
             {
-                case 'bundle-profile':
-                    $response->body = cfmod_resource_report_bundle_profile($hostkey,
-                            $name, $context, $count, $startPage);
-                    break;
-
-                case 'software-installed':
-                    $response->body = cfmod_resource_report_software_installed($hostkey,
-                            $name, $version, $arch, $context, $count, $startPage);
-                    break;
-
-                case 'patches-installed':
-                    $response->body = cfpr_report_patch_in($hostkey,
-                            $name, $version, $arch, true, $context, $count,
-                            $startPage);
-                    break;
-
-                case 'patches-available':
-                    $response->body = cfpr_report_patch_avail($hostkey,
-                            $name, $version, $arch, true, $context, $count,
-                            $startPage);
-                    break;
-
-                case 'contexts':
-                    $response->body = cfmod_resource_report_contexts($hostkey,
-                            $context, $from, $count, $startPage);
-                    break;
-
-                case 'values':
-                    $response->body = cfmod_resource_report_values($hostkey, $scope, $name,
-                            $value, $type, $context, $count, $startPage);
-                    break;
-
-                case 'compliance-summary':
-                    $response->body = cfpr_report_compliance_summary($hostkey,
-                            NULL, $from, $kept, $notkept, $repaired, ">",
-                            $context, $count, $startPage);
-                    break;
-
-                case 'promise-compliance':
-                    $response->body = cfpr_report_compliance_promises($hostkey,
-                            $handle, $status, true, $context, $count,
-                            $startPage);
-                    break;
-
-                case 'performance':
-                    $response->body = cfpr_report_performance($hostkey, $job,
-                            true, $context, $count, $startPage);
-                    break;
-
-                case 'setuid-programs':
-                    $response->body = cfpr_report_setuid($hostkey, $name,
-                            true, $context, $count, $startPage);
-                    break;
-
-                case 'file-change-log':
-                    $response->body = cfpr_report_filechanges($hostkey, $name,
-                            true, $from, ">", $context, $count, $startPage);
-                    break;
-
-                case 'file-change-diffs':
-                    $response->body = cfpr_report_filediffs($hostkey, $name,
-                            $value, true, $from, ">", $context, $count,
-                            $startPage);
-                    break;
-
-                default:
-                    $response->code = Response::NOTFOUND;
-                    return $response;
+                $response->body = cfmod_resource_report_list();
+                return $response;
             }
+            else
+            {
+                switch ($id)
+                {
+                    case 'bundle-profile':
+                        $response->body = cfmod_resource_report_bundle_profile($hostkey,
+                                $name, $context, $count, $startPage);
+                        break;
 
-            return $response;
+                    case 'software-installed':
+                        $response->body = cfmod_resource_report_software_installed($hostkey,
+                                $name, $version, $arch, $context, $count, $startPage);
+                        break;
+
+                    case 'patches-installed':
+                        $response->body = cfpr_report_patch_in($hostkey,
+                                $name, $version, $arch, true, $context, $count,
+                                $startPage);
+                        break;
+
+                    case 'patches-available':
+                        $response->body = cfpr_report_patch_avail($hostkey,
+                                $name, $version, $arch, true, $context, $count,
+                                $startPage);
+                        break;
+
+                    case 'contexts':
+                        $response->body = cfmod_resource_report_contexts($hostkey,
+                                $context, $from, $count, $startPage);
+                        break;
+
+                    case 'values':
+                        $response->body = cfmod_resource_report_values($hostkey, $scope, $name,
+                                $value, $type, $context, $count, $startPage);
+                        break;
+
+                    case 'compliance-summary':
+                        $response->body = cfpr_report_compliance_summary($hostkey,
+                                NULL, $from, $kept, $notkept, $repaired, ">",
+                                $context, $count, $startPage);
+                        break;
+
+                    case 'promise-compliance':
+                        $response->body = cfpr_report_compliance_promises($hostkey,
+                                $handle, $status, true, $context, $count,
+                                $startPage);
+                        break;
+
+                    case 'performance':
+                        $response->body = cfpr_report_performance($hostkey, $job,
+                                true, $context, $count, $startPage);
+                        break;
+
+                    case 'setuid-programs':
+                        $response->body = cfpr_report_setuid($hostkey, $name,
+                                true, $context, $count, $startPage);
+                        break;
+
+                    case 'file-change-log':
+                        $response->body = cfpr_report_filechanges($hostkey, $name,
+                                true, $from, ">", $context, $count, $startPage);
+                        break;
+
+                    case 'file-change-diffs':
+                        $response->body = cfpr_report_filediffs($hostkey, $name,
+                                $value, true, $from, ">", $context, $count,
+                                $startPage);
+                        break;
+
+                    default:
+                        $response->code = Response::NOTFOUND;
+                        return $response;
+                }
+                return $response;
+            }
+        }
+        catch (CFModExceptionArgs $ae)
+        {
+            throw new ResponseException($ae->getMessage(), $ae->getCode());
+        }
+        catch (CFModExceptionDB $dbe)
+        {
+            throw new ResponseException($dbe->getMessage(), $dbe->getCode());
         }
     }
 }

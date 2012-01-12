@@ -8,6 +8,20 @@
    JsonArrayDelete(json);           \
    RETURN_STRING(StringWriterClose(writer), 1);
 
+#define DATABASE_OPEN(connection) \
+   if (!CFDB_Open(connection))\
+   {\
+   zend_throw_exception(cfmod_exception_db, "Unable to connect to database", 0 TSRMLS_CC);\
+   RETURN_NULL();\
+   }\
+
+#define DATABASE_CLOSE(connection) \
+   if (!CFDB_Close(connection))\
+   {\
+   zend_throw_exception(cfmod_exception_db, "Unable to close to database", 0 TSRMLS_CC);\
+   RETURN_NULL();\
+   }\
+
 static const char *LABEL_ID = "id";
 static const char *LABEL_CATEGORY = "category";
 static const char *LABEL_DESCRIPTION = "description";
@@ -21,23 +35,6 @@ static const char *LABEL_LASTSEEN = "last-seen";
 static const char *LABEL_AVERAGE = "average";
 static const char *LABEL_STDV = "stdv";
 static const char *LABEL_CONTEXT = "context";
-
-static void database_open(mongo_connection *connection)
-{
-if (!CFDB_Open(connection))
-   {
-   zend_throw_exception(cfmod_exception_db, "Unable to connect to database", 0 TSRMLS_CC);
-   }
-}
-
-static void database_close(mongo_connection *connection)
-{
-if (!CFDB_Close(connection))
-   {
-   zend_throw_exception(cfmod_exception_db, "Unable to close database", 0 TSRMLS_CC);
-   }
-}
-
 
 PHP_FUNCTION(cfmod_resource_report_list)
 {
@@ -80,15 +77,16 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssll",
       &(page.pageNum)) == FAILURE)
    {
    zend_throw_exception(cfmod_exception_db, "Unable to parse arguments", 0 TSRMLS_CC);
+   RETURN_NULL();
    }
 
 mongo_connection conn;
-database_open(&conn);
+DATABASE_OPEN(&conn)
 
 HubQuery *result = CFDB_QuerySoftware(&conn, hostkey,
    cfr_software, name, version, arch, true, context ,true);
 
-database_close(&conn);
+DATABASE_CLOSE(&conn)
 
 JsonArray *software = NULL;
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
@@ -158,15 +156,16 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssssll",
       &(page.pageNum)) == FAILURE)
    {
    zend_throw_exception(cfmod_exception_db, "Unable to parse arguments", 0 TSRMLS_CC);
+   RETURN_NULL();
    }
 
 mongo_connection conn;
-database_open(&conn);
+DATABASE_OPEN(&conn)
 
 HubQuery *result = CFDB_QueryVariables(&conn, hostkey,
    scope, name, value, type, true, context);
 
-database_close(&conn);
+DATABASE_CLOSE(&conn)
 
 JsonArray *values = NULL;
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
@@ -215,14 +214,15 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssll",
       &(page.pageNum)) == FAILURE)
    {
    zend_throw_exception(cfmod_exception_db, "Unable to parse arguments", 0 TSRMLS_CC);
+   RETURN_NULL();
    }
 
 mongo_connection conn;
-database_open(&conn);
+DATABASE_OPEN(&conn)
 
 HubQuery *result = CFDB_QueryBundleSeen(&conn, hostkey, name, true, context, true);
 
-database_close(&conn);
+DATABASE_CLOSE(&conn)
 
 JsonArray *bundles = NULL;
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
@@ -263,14 +263,15 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslll",
       &(page.pageNum)) == FAILURE)
    {
    zend_throw_exception(cfmod_exception_args, "Unable to parse arguments", 0 TSRMLS_CC);
+   RETURN_NULL();
    }
 
 mongo_connection conn;
-database_open(&conn);
+DATABASE_OPEN(&conn)
 
 HubQuery *result = CFDB_QueryClasses(&conn, hostkey, NULL, true, (time_t)from, context, true);
 
-database_close(&conn);
+DATABASE_CLOSE(&conn)
 
 JsonArray *contexts = NULL;
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)

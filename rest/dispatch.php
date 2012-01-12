@@ -29,7 +29,7 @@ try
     $response = $resource->exec($request);
     $response->output();
     return;
-} 
+}
 catch (ResponseException $e) 
 {
     switch ($e->getCode())
@@ -38,6 +38,11 @@ catch (ResponseException $e)
         $response = $e->response($request);
         addAuthenticateHeader($response);
         break;
+
+    case Response::INTERNALSERVERERROR:
+        $response = $e->response($request);
+        break;
+
     default:
         $response = $e->response($request);
     }
