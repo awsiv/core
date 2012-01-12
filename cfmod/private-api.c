@@ -1,5 +1,7 @@
 #include "private-api.h"
 
+#include "json.h"
+
 #define cfr_software     "sw"
 #define cfr_patch_avail  "pa"
 #define cfr_patch_installed "pi"
@@ -8,6 +10,8 @@ static time_t DeltaHrsConvert(long hrsAgo);
 char **String2StringArray(char *str, char separator);
 void FreeStringArray(char **strs);
 static bool ParseVitalsArgs(int argc, char **retHostKey, char **retVitalId);
+static JsonArray *ParseRolesToJson(HubQuery *hq);
+
 
 /******************************************************************************/
 /* API                                                                        */
@@ -3499,17 +3503,122 @@ PHP_FUNCTION(cfpr_role_delete)
 
 PHP_FUNCTION(cfpr_role_list_all)
 {
-  if (ZEND_NUM_ARGS() != 0)
-     {
-     zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
-     RETURN_NULL();
-     }
+#define LABEL_ROLE_NAME "name"
+#define LABEL_ROLE_DESCRIPTION "description"
+#define LABEL_ROLE_CLASSRX_INCLUDE "classrxinclude"
+#define LABEL_ROLE_CLASSRX_EXCLUDE "classrxexclude"
+#define LABEL_ROLE_BUNDLERX_INCLUDE "bundlerxinlcude"
+ 
+ if (ZEND_NUM_ARGS() != 0)
+    {
+    zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
 
-  cfapi_errid errid = 0; // FIXME: finish - call fn and return the roles!
-  
-  if(errid != ERRID_SUCCESS)
-     {
-     zend_throw_exception(cfmod_exception_generic, (char *)GetErrorDescription(errid), 0 TSRMLS_CC);
-     }
+ HubQuery *hq = CFDB_GetAllRoles();
+
+ if(hq->errid != ERRID_SUCCESS)
+    {
+    DeleteHubQuery(hq, DeleteHubRole);
+    zend_throw_exception(cfmod_exception_generic, (char *)GetErrorDescription(hq->errid), 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
+
+ JsonArray *roles = ParseRolesToJson(hq);
+
+ DeleteHubQuery(hq, DeleteHubRole);
+   
+ RETURN_JSON(roles);
 }
 
+/******************************************************************************/
+
+PHP_FUNCTION(cfpr_role_list_by_name)
+{
+
+ char *name;
+ int nameLen;
+ 
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&name, &nameLen) == FAILURE)
+    {
+    zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
+
+ if(nameLen == 0)
+    {
+    zend_throw_exception(cfmod_exception_args, "Missing argument contents", 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
+
+ HubQuery *hq = CFDB_GetRoleByName(name);
+
+ if(hq->errid != ERRID_SUCCESS)
+    {
+    DeleteHubQuery(hq, DeleteHubRole);
+    zend_throw_exception(cfmod_exception_generic, (char *)GetErrorDescription(hq->errid), 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
+
+ JsonArray *roles = ParseRolesToJson(hq);
+
+ DeleteHubQuery(hq, DeleteHubRole);
+
+ RETURN_JSON(roles);
+}
+
+/******************************************************************************/
+
+static JsonArray *ParseRolesToJson(HubQuery *hq)
+{
+#define LABEL_ROLE_NAME "name"
+#define LABEL_ROLE_DESCRIPTION "description"
+#define LABEL_ROLE_CLASSRX_INCLUDE "classrxinclude"
+#define LABEL_ROLE_CLASSRX_EXCLUDE "classrxexclude"
+#define LABEL_ROLE_BUNDLERX_INCLUDE "bundlerxinlcude"
+
+ JsonArray *roles = NULL;
+ 
+ for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+    {
+    HubRole *record = (HubRole *)rp->item;
+    JsonObject *role_entry = NULL;
+      
+    JsonObjectAppendString(&role_entry, LABEL_ROLE_NAME, record->name);
+    JsonObjectAppendString(&role_entry, LABEL_ROLE_DESCRIPTION, record->description);
+    JsonObjectAppendString(&role_entry, LABEL_ROLE_CLASSRX_INCLUDE, record->classRxInclude);
+    JsonObjectAppendString(&role_entry, LABEL_ROLE_CLASSRX_EXCLUDE, record->classRxExclude);
+    JsonObjectAppendString(&role_entry, LABEL_ROLE_BUNDLERX_INCLUDE, record->bundleRxInclude);
+    
+    JsonArrayAppendObject(&roles, role_entry);
+    }
+ 
+ return roles;
+}
+
+//cfpr_role_create(scope, etc.)
+//cfpr_role_delete(scope, etc.)
+//cfpr_role_describe
+//cfpr_role_list(scope)
+// cfpr_rbac_status_get
+// cfpr_rbac_status_set
+
+// is rbac on at all?
+// getrolesforuser (take LDAP into account - different table, read settings table)
+
+// users
+// {
+// username:"sudhir"
+// password:"asdasdas"
+// email:"sudhir.pandey@gmail.com",
+// roles:["admin", "develover"]
+// }
+
+
+// roles
+// {
+// scope:"internal" / ldap://some.server.com....
+// name:"admin"
+// description:"asdasdsa"
+// etc.
+// }

@@ -51,6 +51,13 @@ PHP_MINFO_FUNCTION(cfmod);
 #include "private-api.h"
 #include "private-api-constellation.h"
 
+#define RETURN_JSON(json) \
+   Writer *writer = StringWriter(); \
+   JsonArrayPrint(writer, json, 0); \
+   JsonArrayDelete(json);           \
+   RETURN_STRING(StringWriterClose(writer), 1);
+
+
 /* 
   	Declare any global variables you may need between the BEGIN
 	and END macros here:     

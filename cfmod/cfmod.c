@@ -208,7 +208,7 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_role_create,NULL)
     PHP_FE(cfpr_role_delete,NULL)
     PHP_FE(cfpr_role_list_all,NULL)
-    
+    PHP_FE(cfpr_role_list_by_name,NULL)
     
     /*
      * Constellation

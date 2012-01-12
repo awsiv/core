@@ -2,12 +2,6 @@
 
 #include "db_query.h"
 
-#define RETURN_JSON(json) \
-   Writer *writer = StringWriter(); \
-   JsonArrayPrint(writer, json, 0); \
-   JsonArrayDelete(json);           \
-   RETURN_STRING(StringWriterClose(writer), 1);
-
 #define DATABASE_OPEN(connection) \
    if (!CFDB_Open(connection))\
    {\

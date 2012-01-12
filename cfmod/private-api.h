@@ -979,6 +979,7 @@ PHP_FUNCTION(cfpr_get_host_noteid);
 PHP_FUNCTION(cfpr_role_create);
 PHP_FUNCTION(cfpr_role_delete);
 PHP_FUNCTION(cfpr_role_list_all);
+PHP_FUNCTION(cfpr_role_list_by_name);
 
 #define CF_WEBBUFFER 7*1024*1024
 
