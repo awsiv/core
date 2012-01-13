@@ -3493,6 +3493,8 @@ PHP_FUNCTION(cfpr_role_create)
 
   if(!(nameLen|descLen|icrxLen|ecrxLen|ibrxLen))
      {
+     // NOTE: important security check to not fool access control check algorithm
+     // FIXME: this is too strict, support empty input (but be careful)
      zend_throw_exception(cfmod_exception_args, "Missing argument contents", 0 TSRMLS_CC);
      RETURN_NULL();
      }
