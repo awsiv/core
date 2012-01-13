@@ -110,7 +110,7 @@ bundle agent prog_perl(state)
 
    "$(perl_pkgs)"
 
-             comment => "Prepare PERL environment for perl programing and perl cgi",
+             comment => "Install PERL packages",
               handle => "prog_perl_packages_add",
       package_policy => "add",
       package_method => generic,
@@ -120,7 +120,7 @@ bundle agent prog_perl(state)
 
    "$(perl_pkgs)"
 
-             comment => "Prepare PERL environment for perl programing and perl cgi",
+             comment => "Remove PERL packages",
               handle => "prog_perl_packages_remove",
       package_policy => "delete",
       package_method => generic,
