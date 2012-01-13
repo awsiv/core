@@ -75,7 +75,7 @@ cursor = mongo_find(&conn,MONGO_SCRATCH,bson_empty(&query),&field,0,0,CF_MONGO_S
 bson_destroy(&field);
 bson_destroy(&query);
 
-while (mongo_cursor_next(cursor))  // loops over documents
+while (mongo_cursor_next(cursor))
    {
    bson_iterator_init(&it1,cursor->current.data);
    
@@ -146,7 +146,7 @@ cursor = mongo_find(&conn,MONGO_SCRATCH,bson_empty(&query),&field,0,0,CF_MONGO_S
 bson_destroy(&field);
 bson_destroy(&query);
 
-while (mongo_cursor_next(cursor))  // loops over documents
+while (mongo_cursor_next(cursor))
    {
    bson_iterator_init(&it1,cursor->current.data);
    
@@ -181,7 +181,7 @@ rval[0] = '\0';
 
 cursor = mongo_find(conn,MONGO_SCRATCH,bson_empty(&query),0,0,0,CF_MONGO_SLAVE_OK);
 
-while (mongo_cursor_next(cursor))  // loops over documents
+while (mongo_cursor_next(cursor))
    {
    bson_iterator_init(&it1,cursor->current.data);
    
@@ -212,7 +212,7 @@ query = bson_empty(&b);
  
 cursor = mongo_find(conn,MONGO_DATABASE,query,0,0,0,CF_MONGO_SLAVE_OK);
 
-while(mongo_cursor_next(cursor))  // loops over documents
+while(mongo_cursor_next(cursor))
    {
    bson_iterator_init(&it,cursor->current.data);
    
@@ -252,7 +252,7 @@ addresses[0] = '\0';
 
 cursor = mongo_find(conn,db,query,&field,0,0,CF_MONGO_SLAVE_OK);
 
-while (mongo_cursor_next(cursor))  // loops over documents
+while (mongo_cursor_next(cursor))
    {
    bson_iterator_init(&it1,cursor->current.data);
    
@@ -314,7 +314,7 @@ cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
 bson_destroy(&field);
 
-while (mongo_cursor_next(cursor))  // loops over documents
+while (mongo_cursor_next(cursor))
    {
    bson_iterator_init(&it1,cursor->current.data);
    
@@ -833,7 +833,7 @@ if (!emptyQuery)
    bson_destroy(&query);
    }
 
-while (mongo_cursor_next(cursor))  // loops over documents
+while (mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
     
@@ -921,7 +921,7 @@ Rlist *CFDB_QuerySoftClasses(mongo_connection *conn,char *keyHash,char *lclass,i
     bson_destroy(&query);
     }
 
- while (mongo_cursor_next(cursor))  // loops over documents
+ while (mongo_cursor_next(cursor))
     {
 
     bson_iterator_init(&it1,cursor->current.data);
@@ -1011,7 +1011,7 @@ Rlist *CFDB_QueryIpClasses(mongo_connection *conn,char *keyHash,char *lclass,int
     bson_destroy(&query);
     }
 
- while (mongo_cursor_next(cursor))  // loops over documents
+ while (mongo_cursor_next(cursor))
     {
 
     bson_iterator_init(&it1,cursor->current.data);
@@ -1247,7 +1247,7 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,char *l
     bson_destroy(&query);
     }
 
- while (mongo_cursor_next(cursor))  // loops over documents
+ while (mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
 
@@ -2050,7 +2050,7 @@ HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query,char *db)
 
  cursor = mongo_find(conn,db,query,&field,0,0,CF_MONGO_SLAVE_OK);
  
- while (mongo_cursor_next(cursor))  // loops over documents
+ while (mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
 
@@ -2184,7 +2184,7 @@ HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char *lname
     }
 
 
- while (mongo_cursor_next(cursor))  // loops over documents
+ while (mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
 
@@ -2927,7 +2927,7 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum promise
     bson_destroy(&query);
     }
 
- while (mongo_cursor_next(cursor))  // loops over documents
+ while (mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
 
@@ -3574,7 +3574,7 @@ int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,
  bson_destroy(&query);
  bson_destroy(&field);
 
- while (mongo_cursor_next(cursor))  // loops over documents
+ while (mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
 
@@ -3715,7 +3715,7 @@ HubVital *CFDB_QueryVitalsMeta(mongo_connection *conn, char *keyHash)
  bson_destroy(&field);
  
 
-  while (mongo_cursor_next(cursor))  // loops over documents
+  while (mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
 
@@ -4132,7 +4132,7 @@ int CFDB_QueryLastUpdate(mongo_connection *conn,char *db, char *dbkey,char *keyh
  bson_destroy(&query);
  bson_destroy(&field);
  
- while (mongo_cursor_next(cursor))  // loops over documents
+ while (mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
    
@@ -4191,7 +4191,7 @@ int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs
  cursor = mongo_find(conn,MONGO_DATABASE_MON,&query,&field,0,0,0);
  bson_destroy(&query);
 
- while (mongo_cursor_next(cursor))  // loops over documents
+ while (mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
    
@@ -4368,7 +4368,7 @@ bson_from_buffer(&query,&bb);
 cursor = mongo_find(conn,MONGO_PROMISES_UNEXP,&query,NULL,0,0,CF_MONGO_SLAVE_OK);
 bson_destroy(&query);
 
-if (mongo_cursor_next(cursor))  // loops over documents
+if (mongo_cursor_next(cursor))
    {
    bson_iterator_init(&it1,cursor->current.data);
    
@@ -4493,7 +4493,7 @@ else if(!fileLineSearch)  // if not found in unexpanded promise DB, try expanded
    bson_destroy(&query);
    bson_destroy(&result);
    
-   if (mongo_cursor_next(cursor2))  // loops over documents
+   if (mongo_cursor_next(cursor2))
       {
       bson_iterator_init(&it1,cursor2->current.data);
       
@@ -5327,7 +5327,7 @@ HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name)
  cursor = mongo_find(conn,MONGO_BODIES,&query,NULL,0,0,CF_MONGO_SLAVE_OK);
  bson_destroy(&query);
 
- if (mongo_cursor_next(cursor))  // loops over documents
+ if (mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
 
@@ -5450,7 +5450,7 @@ Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameReg
 
 /* BEGIN SEARCH */
 
- while (mongo_cursor_next(cursor))  // loops over documents
+ while (mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
     found = false;
@@ -6289,7 +6289,7 @@ int QueryInsertHostInfo(mongo_connection *conn, Rlist *host_list)
 
  bson_destroy(&field);
 
- while(mongo_cursor_next(cursor))  // loops over documents
+ while(mongo_cursor_next(cursor))
     {
     keyHash[0] = '\0';
     ipAddrs[0] = '\0';
@@ -6632,7 +6632,7 @@ Rlist *CFDB_QueryNotes(mongo_connection *conn,char *keyhash, char *nid,  Item *d
  bson_destroy(&field);
  bson_destroy(&query);
 
- while (mongo_cursor_next(cursor))  // loops over documents
+ while (mongo_cursor_next(cursor))
     { 
     bson_iterator_init(&it1,cursor->current.data);
     kh[0] = '\0';
@@ -6785,7 +6785,7 @@ Rlist *CFDB_QueryNoteId(mongo_connection *conn,bson *query)
     {
     return NULL;
     }
- while (mongo_cursor_next(cursor))  // loops over documents
+ while (mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
 
@@ -6846,7 +6846,7 @@ int CFDB_GetRow(mongo_connection *conn, char *db, int reportType, bson *query, c
     }
 
  cursor = mongo_find(conn,db,query,&field,0,0,CF_MONGO_SLAVE_OK);
- while (mongo_cursor_next(cursor))  // loops over documents
+ while (mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
     if(level == 1)
@@ -7219,7 +7219,7 @@ Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,i
     {
       bson_destroy(&query);
     }
-  while (mongo_cursor_next(cursor))  // loops over documents
+  while (mongo_cursor_next(cursor))
     {
       bson_iterator_init(&it1,cursor->current.data);
       keyhash[0] = '\0';
@@ -7296,7 +7296,7 @@ Rlist *CFDB_QueryAllClasses(mongo_connection *conn,char *keyHash,char *lclass,in
       bson_destroy(&query);
     }
 
-  while (mongo_cursor_next(cursor))  // loops over documents
+  while (mongo_cursor_next(cursor))
     {
       bson_iterator_init(&it1,cursor->current.data);
 

@@ -261,7 +261,7 @@ cfapi_errid CFDB_CreateRole(char *name, char *description, char *includeClassRx,
     }
  if(excludeClassRx)
     {
-     bson_append_string(set, dbkey_role_classrx_exclude, excludeClassRx);
+    bson_append_string(set, dbkey_role_classrx_exclude, excludeClassRx);
     }
  if(includeBundleRx)
     {
