@@ -16,10 +16,9 @@ int Nova_BenchmarkReportStorage(char *reportFilePath, int iterationsToRun)
  * iterationsToRun times. Check if mongod drops down to 0% CPU quickly
  * after this function completes.
  *
- * NOTE: Since we are not seeding the random number generator with srand(),
- *       it will generate the same sequence of hostkeys on every run. This is
- *       realistic, because hosts are seldomly added in real-world scenarios
- *       (compared to all the 5-minute intervals).
+ * NOTE: The cryptographic functions needs to be initialised before calling
+ *       this function. This can be done by running the agent initialisation
+ *       functions.
  **/
 {
  mongo_connection dbconn;
