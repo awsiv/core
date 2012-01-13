@@ -244,7 +244,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h2 class="chapter">1 CFEngine 3.3.0a1.r3641:3651 &ndash; Getting started</h2>
+<h2 class="chapter">1 CFEngine 3.3.0a1.r3728M &ndash; Getting started</h2>
 
 <p><br>
 
@@ -5120,7 +5120,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Control-Promises">Control Promises</a>
    <p><br>
 
    <p>Settings describing the details of the fixed behavioural promises made by
-<code>cf-agent</code>. For example:
+<code>cf-agent</code>.
 
 <ul class="menu">
 <li><a accesskey="1" href="#abortclasses-in-agent">abortclasses in agent</a>
@@ -35207,11 +35207,37 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 <p><br>
 
-   <p><i>History</i>: Was introduced in 3.3.0a1.r3641, Nova 2.2.0.a1.r3258, Constellation 1.0.0a1.r307 (2011)
+   <p><i>History</i>: Was introduced in 3.3.0, Nova 2.2.0, Constellation 1.0.0 (2011)
+
+   <p>Displays a system list of configured interfaces currently active
+in use by the system. 
+This list is detected at runtime and it passed in the variables report
+to a Mission Portal in commercial editions of CFEngine.
+
+   <p>To use this list in a policy, you will need a local copy since only local
+variables can be iterated.
 
 <pre class="verbatim">
-Fill me in (./var_sys_interfaces.texinfo)
-""
+<span class="red">bundle agent</span> <span class="blue">test</span>
+{
+<span class="red">vars:
+</span>
+<span class="comment"> # To iterate, we need a local copy
+</span>
+
+ "i1"<span class="red"> slist </span>=> { @(sys.ip_addresses)} ;
+ "i2"<span class="red"> slist </span>=> { @(sys.interfaces)} ;
+
+<span class="red">reports:
+</span>
+  cfengine::
+
+<span class="red">    "Addresses: $(i1)";
+</span><span class="red">    "Interfaces: $(i2)";
+</span><span class="red">    "Addresses of the interfaces: $(sys.ipv4[$(i2)])";
+</span>
+}
+
 </pre>
 
 <div class="node">
@@ -35228,11 +35254,36 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 <p><br>
 
-   <p><i>History</i>: Was introduced in 3.3.0a1.r3641, Nova 2.2.0.a1.r3258, Constellation 1.0.0a1.r307 (2011)
+   <p><i>History</i>: Was introduced in 3.3.0, Nova 2.2.0, Constellation 1.0.0 (2011)
+
+   <p>Displays a system list of IP addresses currently in use by the system. 
+This list is detected at runtime and it passed in the variables report
+to a Mission Portal in commercial editions of CFEngine.
+
+   <p>To use this list in a policy, you will need a local copy since only local
+variables can be iterated.
 
 <pre class="verbatim">
-Fill me in (./var_sys_ip_addresses.texinfo)
-""
+<span class="red">bundle agent</span> <span class="blue">test</span>
+{
+<span class="red">vars:
+</span>
+<span class="comment"> # To iterate, we need a local copy
+</span>
+
+ "i1"<span class="red"> slist </span>=> { @(sys.ip_addresses)} ;
+ "i2"<span class="red"> slist </span>=> { @(sys.interfaces)} ;
+
+<span class="red">reports:
+</span>
+  cfengine::
+
+<span class="red">    "Addresses: $(i1)";
+</span><span class="red">    "Interfaces: $(i2)";
+</span><span class="red">    "Addresses of the interfaces: $(sys.ipv4[$(i2)])";
+</span>
+}
+
 </pre>
 
 <div class="node">
@@ -36198,7 +36249,7 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <h2>Table of Contents</h2>
 <ul>
 <li><a name="toc_Top" href="#Top">CFEngine-AutoReference</a>
-<li><a name="toc_Getting-started" href="#Getting-started">1 CFEngine 3.3.0a1.r3641:3651 &ndash; Getting started</a>
+<li><a name="toc_Getting-started" href="#Getting-started">1 CFEngine 3.3.0a1.r3728M &ndash; Getting started</a>
 <ul>
 <li><a href="#Software-components">1.1 Software components</a>
 <ul>
