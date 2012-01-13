@@ -17,39 +17,6 @@ static JsonArray *ParseRolesToJson(HubQuery *hq);
 /* API                                                                        */
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_user_authenticate)
-{
-char *username = NULL,
-     *password = NULL;
-int username_len = -1,
-    password_len;
-
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
-                          &username, &username_len,
-                          &password, &password_len) == FAILURE)
-   {
-   zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
-   RETURN_NULL();
-   }
-
-mongo_connection conn;
-if (!CFDB_Open(&conn))
-   {
-   zend_throw_exception(cfmod_exception_db, "Error opening database", 0 TSRMLS_CC);
-   RETURN_NULL();
-   }
-
-bool authenticated = CFDB_UserAuthenticate(&conn, (const char *)username, (const char *)password, (size_t)password_len);
-
-if (!CFDB_Close(&conn))
-   {
-   zend_throw_exception(cfmod_exception_db, "Error closing database", 0 TSRMLS_CC);
-   RETURN_NULL();
-   }
-
-RETURN_BOOL(authenticated);
-}
-
 PHP_FUNCTION(cfpr_ldap_authenticate)
 {
 char *host,*dn,*passwd;
@@ -3474,6 +3441,42 @@ RETURN_STRING(buffer,1);
 /******************************************************************************/
 /* RBAC                                                                       */
 /******************************************************************************/
+
+PHP_FUNCTION(cfpr_user_authenticate)
+{
+char *username = NULL,
+     *password = NULL;
+int username_len = -1,
+    password_len;
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
+                          &username, &username_len,
+                          &password, &password_len) == FAILURE)
+   {
+   zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
+   RETURN_NULL();
+   }
+
+switch (CFDB_UserAuthenticate(username, password, password_len))
+   {
+   case ERRID_DBCONNECT:
+      zend_throw_exception(cfmod_exception_db, "Error opening database", 0 TSRMLS_CC);
+      RETURN_NULL();
+
+   case ERRID_DBCLOSE:
+      zend_throw_exception(cfmod_exception_db, "Error closing database", 0 TSRMLS_CC);
+      RETURN_NULL();
+
+   case ERRID_SUCCESS:
+      RETURN_BOOL(true);
+
+   default:
+      RETURN_BOOL(false);
+   }
+}
+
+/******************************************************************************/
+
 
 PHP_FUNCTION(cfpr_role_create)
 {

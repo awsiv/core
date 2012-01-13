@@ -24,7 +24,6 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfmod_resource_report_setuid_programs, NULL)
 
     // private API
-    PHP_FE(cfpr_user_authenticate,NULL)
     PHP_FE(cfpr_enterprise_version,NULL)
     PHP_FE(cfpr_community_version,NULL)
     PHP_FE(cfpr_getlicense_summary,NULL)
@@ -206,6 +205,7 @@ static function_entry cfmod_functions[] =
     /*
      * Role-Based Access Control
      */
+    PHP_FE(cfpr_user_authenticate,NULL)
     PHP_FE(cfpr_role_create,NULL)
     PHP_FE(cfpr_role_delete,NULL)
     PHP_FE(cfpr_role_list_all,NULL)

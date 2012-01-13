@@ -24,13 +24,112 @@
 
 static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles);
 static char *StringAppendRealloc2(char *start, char *append1, char *append2);
-const char *GetUsersCollection(mongo_connection *conn);
 static bool RoleExists(char *name);
 static void DeAssociateUsersFromRole(mongo_connection *conn, char *roleName);
-static bool IsLDAPOn(mongo_connection *conn);
 static Item *CFDB_GetRolesForUser(char *userName);
 static HubQuery *CFDB_GetRolesByMultipleNames(Item *names);
 static HubQuery *CFDB_GetRoles(bson *query);
+static const char *GetUsersCollection(mongo_connection *conn);
+static bool IsLDAPOn(mongo_connection *conn);
+
+/*************************************************/
+
+static const char *FIELD_USERNAME = "username";
+static const char *FIELD_PASSWORD = "password";
+static const char *FIELD_ACTIVE = "active";
+
+/*************************************************/
+
+static char *SHA1Hash(const char *string, int len)
+{
+unsigned char digest[EVP_MAX_MD_SIZE+1];
+HashString(string, len, digest, cf_sha1);
+
+char *buffer = xcalloc(EVP_MAX_MD_SIZE*4, sizeof(char));
+HashPrintSafe(cf_sha1, digest, buffer);
+return buffer;
+}
+
+static bool VerifyPasswordIonAuth(const char *password, size_t password_len, const char *db_password)
+{
+static const int SALT_LENGTH = 10;
+static const size_t SHA1_LENGTH = 40;
+
+char *salt = StringSubstring(db_password, SHA1_LENGTH, 0, SALT_LENGTH);
+char *salt_password = StringConcatenate(salt, SALT_LENGTH, password, password_len);
+char *salt_password_hashed = SHA1Hash(salt_password, SALT_LENGTH + password_len);
+char *salt_password_hashed_shifted = StringSubstring(salt_password_hashed + 4, SHA1_LENGTH, 0, -SALT_LENGTH);
+
+char *db_hash = StringConcatenate(salt, SALT_LENGTH, salt_password_hashed_shifted, SHA1_LENGTH - SALT_LENGTH + 1);
+
+free(salt);
+free(salt_password);
+free(salt_password_hashed);
+free(salt_password_hashed_shifted);
+
+bool authenticated = strcmp(db_password, db_hash) == 0;
+
+free(db_hash);
+return authenticated;
+}
+
+cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, size_t password_len)
+{
+// query
+bson_buffer buffer;
+bson_buffer_init(&buffer);
+bson_append_string(&buffer, FIELD_USERNAME, username);
+bson_append_int(&buffer, FIELD_ACTIVE, 1);
+
+bson query;
+bson_from_buffer(&query, &buffer);
+
+// projection
+bson_buffer_init(&buffer);
+bson_append_int(&buffer, FIELD_PASSWORD, 1);
+
+bson field;
+bson_from_buffer(&field, &buffer);
+
+mongo_connection conn;
+if (!CFDB_Open(&conn))
+   {
+   return ERRID_DBCONNECT;
+   }
+
+bson record;
+bson_bool_t found = mongo_find_one(&conn, GetUsersCollection(&conn), &query, &field, &record);
+
+if (!CFDB_Close(&conn))
+   {
+   return ERRID_DBCLOSE;
+   }
+
+bson_destroy(&query);
+bson_destroy(&field);
+
+if (found)
+   {
+   const char *db_password = BsonGetString(&record, FIELD_PASSWORD);
+   if (db_password)
+      {
+      if (IsLDAPOn(&conn))
+         {
+         if (VerifyPasswordIonAuth(password, password_len, db_password))
+            {
+            return ERRID_SUCCESS;
+            }
+         else
+            {
+            return ERRID_RBAC_ACCESS_DENIED;
+            }
+         }
+
+      }
+   }
+
+return ERRID_RBAC_ACCESS_DENIED;
+}
 
 
 HubQuery *CFDB_GetRBACForUser(char *userName)
@@ -244,7 +343,7 @@ static void DeAssociateUsersFromRole(mongo_connection *conn, char *roleName)
 }
 
 
-const char *GetUsersCollection(mongo_connection *conn)
+static const char *GetUsersCollection(mongo_connection *conn)
 {
  if(IsLDAPOn(conn))
     {
