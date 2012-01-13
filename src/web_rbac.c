@@ -20,6 +20,8 @@
 
 #include "web_rbac.h"
 
+#ifdef HAVE_LIBMONGOC
+
 static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles);
 static char *StringAppendRealloc2(char *start, char *append1, char *append2);
 const char *GetUsersCollection(mongo_connection *conn);
@@ -418,3 +420,5 @@ HubQuery *CFDB_GetRoles(bson *query)
 
  return hq;
 }
+
+#endif

@@ -2,11 +2,16 @@
   This file is (C) Cfengine AS. See LICENSE for details.
 */
 
+#ifndef CFENGINE_WEB_RBAC_H
+#define CFENGINE_WEB_RBAC_H
+
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
 #include "cf.nova.web_api.h"
 #include "bson_lib.h"
+
+#ifdef HAVE_LIBMONGOC
 
 #define MONGO_ROLES_COLLECTION "phpcfengine.roles"
 #define MONGO_USERS_INTERNAL_COLLECTION "phpcfengine.users"
@@ -24,3 +29,7 @@ cfapi_errid CFDB_CreateRole(char *name, char *description, char *includeClassRx,
 cfapi_errid CFDB_DeleteRole(char *name);
 HubQuery *CFDB_GetAllRoles(void);
 HubQuery *CFDB_GetRoleByName(char *name);
+
+#endif
+
+#endif
