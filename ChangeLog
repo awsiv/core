@@ -1,3 +1,9 @@
+2.1.5
+	Fixed issue where client would show as green in the Mission Portal when no
+	data was received, e.g. due to access or license error at client.
+	Now correctly shows as blue in these cases.
+
+
 2.1.4
 	Greatly reduced amount of connections from cf-hub
 	to localhost mongodb. Now there is one connection per

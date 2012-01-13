@@ -10,9 +10,13 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+static bool ReportBookHasData(Item **reports);
+
 #ifdef HAVE_LIBMONGOC 
 static void Nova_RecordNetwork(mongo_connection *dbconnp, time_t now, double datarate,AgentConnection *conn);
-#endif 
+#endif
+
+
 
 char *CF_CODEBOOK[CF_CODEBOOK_SIZE] =
    {
@@ -131,7 +135,7 @@ while (more)
    if (strncmp(in,"BAD:",4) == 0)
       {
       CfOut(cf_error,""," !! Abort transmission: got \"%s\" from %s",in+4,conn->remoteip);
-      break;;
+      break;
       }
 
    DecryptString(conn->encryption_type,in,out,conn->session_key,cipherlen);
@@ -191,7 +195,7 @@ while (more)
       }
    }
 
-if (reports == NULL)
+if (!ReportBookHasData(reports))
    {
    return false;
    }
@@ -241,6 +245,21 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
    {
    reports[i] = NULL;
    }
+}
+
+/*********************************************************************/
+
+static bool ReportBookHasData(Item **reports)
+{
+ for (int i = 0; i < CF_CODEBOOK_SIZE; i++)
+    {
+    if(reports[i] != NULL)
+       {
+       return true;
+      }
+    }
+ 
+ return false;
 }
 
 /*********************************************************************/
