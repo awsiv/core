@@ -3494,15 +3494,17 @@ PHP_FUNCTION(cfpr_role_create)
      RETURN_NULL();
      }
 
-  if(!(nameLen|descLen|icrxLen|ecrxLen|ibrxLen))
+  if(!(nameLen|descLen))
      {
-     // NOTE: important security check to not fool access control check algorithm
-     // FIXME: this is too strict, support empty input (but be careful)
      zend_throw_exception(cfmod_exception_args, "Missing argument contents", 0 TSRMLS_CC);
      RETURN_NULL();
      }
 
-  cfapi_errid errid = CFDB_CreateRole(name, description, includeClassRx, excludeClassRx, includeBundleRx);
+  char *fIncludeClassRx = (icrxLen == 0) ? NULL : includeClassRx;
+  char *fExcludeClassRx = (ecrxLen == 0) ? NULL : excludeClassRx;
+  char *fIncludeBundleRx = (ibrxLen == 0) ? NULL : includeBundleRx;
+
+  cfapi_errid errid = CFDB_CreateRole(name, description, fIncludeClassRx, fExcludeClassRx, fIncludeBundleRx);
   
   if(errid != ERRID_SUCCESS)
      {

@@ -94,19 +94,21 @@ bson_from_buffer(&field, &buffer);
 mongo_connection conn;
 if (!CFDB_Open(&conn))
    {
+   bson_destroy(&query);
+   bson_destroy(&field);
    return ERRID_DBCONNECT;
    }
 
 bson record;
 bson_bool_t found = mongo_find_one(&conn, GetUsersCollection(&conn), &query, &field, &record);
+bson_destroy(&query);
+bson_destroy(&field);
 
 if (!CFDB_Close(&conn))
    {
    return ERRID_DBCLOSE;
    }
 
-bson_destroy(&query);
-bson_destroy(&field);
 
 if (found)
    {
@@ -192,7 +194,7 @@ static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles)
     combinedClassRxExclude = StringAppendRealloc2(combinedClassRxExclude, role->classRxExclude, "|");
     combinedBundleRxInclude = StringAppendRealloc2(combinedBundleRxInclude, role->bundleRxInclude, "|");
     }
-
+ 
  ReplaceTrailingChar(combinedClassRxInclude, '|', '\0');
  ReplaceTrailingChar(combinedClassRxExclude, '|', '\0');
  ReplaceTrailingChar(combinedBundleRxInclude, '|', '\0');
@@ -252,9 +254,20 @@ cfapi_errid CFDB_CreateRole(char *name, char *description, char *includeClassRx,
  bson_buffer_init(&bb);
  bson_buffer *set = bson_append_start_object(&bb, "$set");
  bson_append_string(set, dbkey_role_description, description);
- bson_append_string(set, dbkey_role_classrx_include, includeClassRx);
- bson_append_string(set, dbkey_role_classrx_exclude, excludeClassRx); 
- bson_append_string(set, dbkey_role_bundlerx_include, includeBundleRx);
+ 
+ if(includeClassRx)
+    {
+    bson_append_string(set, dbkey_role_classrx_include, includeClassRx);
+    }
+ if(excludeClassRx)
+    {
+     bson_append_string(set, dbkey_role_classrx_exclude, excludeClassRx);
+    }
+ if(includeBundleRx)
+    {
+    bson_append_string(set, dbkey_role_bundlerx_include, includeBundleRx);
+    }
+
  bson_append_finish_object(set);
  bson_from_buffer(&update, &bb);
 
