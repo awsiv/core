@@ -71,6 +71,20 @@ HubQuery *NewHubQuery(Rlist *hosts,Rlist *records)
 
 /*****************************************************************************/
 
+HubQuery *NewHubQueryErrid(Rlist *hosts,Rlist *records, cfapi_errid errid)
+
+{ HubQuery *hq;
+
+ hq = xmalloc(sizeof(HubQuery));
+
+ hq->hosts = hosts;
+ hq->records = records;
+ hq->errid = errid;
+ return hq;
+}
+
+/*****************************************************************************/
+
 void DeleteHubQuery(HubQuery *hq,void (*fnptr)())
 
 { Rlist *rp;
@@ -1086,10 +1100,10 @@ HubUserRBAC *NewHubUserRBAC(char *userName, char *classRxInclude, char *classRxE
 {
  HubUserRBAC *rbac = xmalloc(sizeof(HubUserRBAC));
 
- rbac->userName = xstrdup(userName);
- rbac->classRxInclude = xstrdup(classRxInclude);
- rbac->classRxExclude = xstrdup(classRxExclude);
- rbac->bundleRxInclude = xstrdup(bundleRxInclude);
+ rbac->userName = SafeStringDuplicate(userName);
+ rbac->classRxInclude = SafeStringDuplicate(classRxInclude);
+ rbac->classRxExclude = SafeStringDuplicate(classRxExclude);
+ rbac->bundleRxInclude = SafeStringDuplicate(bundleRxInclude);
  
  return rbac;
 }
@@ -1112,10 +1126,10 @@ HubRole *NewHubRole(char *name, char *description, char *classRxInclude, char *c
  HubRole *role = xmalloc(sizeof(HubRole));
 
  role->name = xstrdup(name);
- role->description = SafeDuplicateString(description);
- role->classRxInclude = SafeDuplicateString(classRxInclude);
- role->classRxExclude = SafeDuplicateString(classRxExclude);
- role->bundleRxInclude = SafeDuplicateString(bundleRxInclude);
+ role->description = SafeStringDuplicate(description);
+ role->classRxInclude = SafeStringDuplicate(classRxInclude);
+ role->classRxExclude = SafeStringDuplicate(classRxExclude);
+ role->bundleRxInclude = SafeStringDuplicate(bundleRxInclude);
  
  return role;
 }

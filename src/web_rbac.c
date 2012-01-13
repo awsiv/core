@@ -20,20 +20,115 @@
 
 #include "web_rbac.h"
 
-static HubQuery *CFDB_GetRoles(bson *query);
+static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles);
+static char *StringAppendRealloc2(char *start, char *append1, char *append2);
+const char *GetUsersCollection(mongo_connection *conn);
 static bool RoleExists(char *name);
 static void DeAssociateUsersFromRole(mongo_connection *conn, char *roleName);
 static bool IsLDAPOn(mongo_connection *conn);
+static Item *CFDB_GetRolesForUser(char *userName);
+static HubQuery *CFDB_GetRolesByMultipleNames(Item *names);
+static HubQuery *CFDB_GetRoles(bson *query);
 
 
-HubUserRBAC *CFDB_GetRBACForUser(char *userName)
+HubQuery *CFDB_GetRBACForUser(char *userName)
 /*
  * Looks up the roles of the given user, and generates
  * the union of the RBAC permissions of these roles.
  */
 {
  
- return NULL;
+ Item *roleNames = CFDB_GetRolesForUser(userName);
+
+ if(!roleNames)
+    {
+    DeleteItemList(roleNames);
+    return NewHubQueryErrid(NULL, NULL, ERRID_RBAC_ACCESS_DENIED);
+    }
+ 
+ HubQuery *hqRoles = CFDB_GetRolesByMultipleNames(roleNames);
+ DeleteItemList(roleNames);
+
+ if(hqRoles->errid != ERRID_SUCCESS)
+    {
+    HubQuery *hq = NewHubQueryErrid(NULL, NULL, hqRoles->errid);
+    DeleteHubQuery(hqRoles, DeleteHubRole);
+    return hq;
+    }
+
+ if(hqRoles->records == NULL)
+    {
+    // bad: missing role, but user refers to it (missing foreign key)
+    HubQuery *hq = NewHubQueryErrid(NULL, NULL, ERRID_RBAC_ACCESS_DENIED);
+    DeleteHubQuery(hqRoles, DeleteHubRole);
+    return hq;
+    }
+
+ HubQuery *hqUserRBAC = CombineAccessOfRoles(userName, hqRoles);
+ DeleteHubQuery(hqRoles, DeleteHubRole);
+
+ return hqUserRBAC;
+}
+
+
+static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles)
+{
+ char *combinedClassRxInclude = NULL;
+ char *combinedClassRxExclude = NULL;
+ char *combinedBundleRxInclude = NULL;
+
+ if(hqRoles->records == NULL)
+    {
+    return NewHubQueryErrid(NULL, NULL, ERRID_RBAC_ACCESS_DENIED);
+    }
+ 
+ for (Rlist *rp = hqRoles->records; rp != NULL; rp = rp->next)
+    {
+    HubRole *role = (HubRole *)rp->item;
+
+    // absolute correctness outweighs efficiency here
+    combinedClassRxInclude = StringAppendRealloc2(combinedClassRxInclude, role->classRxInclude, "|");
+    combinedClassRxExclude = StringAppendRealloc2(combinedClassRxExclude, role->classRxExclude, "|");
+    combinedBundleRxInclude = StringAppendRealloc2(combinedBundleRxInclude, role->bundleRxInclude, "|");
+    }
+
+ ReplaceTrailingChar(combinedClassRxInclude, '|', '\0');
+ ReplaceTrailingChar(combinedClassRxExclude, '|', '\0');
+ ReplaceTrailingChar(combinedBundleRxInclude, '|', '\0');
+ 
+ HubUserRBAC *rbac = NewHubUserRBAC(userName, combinedClassRxInclude, combinedClassRxExclude, combinedBundleRxInclude);
+
+ free(combinedClassRxInclude);
+ free(combinedClassRxExclude);
+ free(combinedBundleRxInclude);
+
+ Rlist *recordList = NULL;
+ PrependRlistAlien(&(recordList), rbac);
+ 
+ return NewHubQuery(NULL, recordList);
+}
+
+
+static char *StringAppendRealloc2(char *start, char *append1, char *append2)
+{
+ if(SafeStringLength(append1) == 0)
+    {
+    return start;
+    }
+
+ int startLen = SafeStringLength(start);
+ 
+ start = xrealloc(start, startLen + strlen(append1) + strlen(append2) + 1);
+
+ if(startLen == 0)
+    {
+    start[0] = '\0';
+    }
+ 
+ strcat(start, append1);
+ strcat(start, append2);
+
+ return start;
 }
 
 
@@ -118,8 +213,6 @@ cfapi_errid CFDB_DeleteRole(char *name)
 static bool RoleExists(char *name)
 {
  HubQuery *hq = CFDB_GetRoleByName(name);
-
- // TODO: handle db connect error?
  bool exists = (hq->records == NULL) ? false : true;
  DeleteHubQuery(hq, DeleteHubRole);
 
@@ -168,6 +261,49 @@ static bool IsLDAPOn(mongo_connection *conn)
  return false;
 }
 
+static Item *CFDB_GetRolesForUser(char *userName)
+{
+ bson_buffer bb;
+ 
+ bson query;
+ bson_buffer_init(&bb);
+ bson_append_string(&bb, dbkey_user_name, userName);
+ bson_from_buffer(&query, &bb);
+ 
+ bson field;
+ bson_buffer_init(&bb);
+ bson_append_int(&bb, dbkey_user_roles, 1);
+ bson_from_buffer(&field, &bb);
+
+ mongo_connection conn;
+
+ if(!CFDB_Open(&conn))
+    {
+    bson_destroy(&query);
+    bson_destroy(&field);
+    return NULL;
+    }
+ 
+ const char *usersCollection = GetUsersCollection(&conn);
+
+ mongo_cursor *cursor = mongo_find(&conn, usersCollection, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+ bson_destroy(&query);
+ bson_destroy(&field);
+
+ CFDB_Close(&conn);
+
+ Item *memberRoles = NULL;
+
+ if(mongo_cursor_next(cursor))
+    {
+    memberRoles = BsonGetStringArrayAsItemList(&(cursor->current), dbkey_user_roles);
+    }
+ 
+ mongo_cursor_destroy(cursor);
+
+ return memberRoles;
+ }
+
 
 HubQuery *CFDB_GetAllRoles(void)
 {
@@ -195,21 +331,41 @@ HubQuery *CFDB_GetRoleByName(char *name)
 }
 
 
-Item *CFDB_GetRolesForUser(char *userName)
+HubQuery *CFDB_GetRolesByMultipleNames(Item *names)
 {
+ if(!names)
+    {
+    NewHubQueryErrid(NULL, NULL, ERRID_ARGUMENT_WRONG);
+    }
+ 
  bson_buffer bb;
+
  bson query;
-
  bson_buffer_init(&bb);
- bson_append_string(&bb, dbkey_user_name, userName);
+ 
+ bson_buffer *or = bson_append_start_array(&bb, "$or");
+
+ int i = 0;
+ char iStr[64];
+ 
+ for(Item *ip = names; ip != NULL; ip = ip->next, i++)
+    {
+    snprintf(iStr, sizeof(iStr), "%d", i);
+    bson_buffer *entry = bson_append_start_object(or, iStr);
+    bson_append_string(entry, dbkey_role_name, ip->name);
+    bson_append_finish_object(entry);
+    }
+
+ bson_append_finish_object(or);
+ 
  bson_from_buffer(&query, &bb);
+ 
+ HubQuery *hq = CFDB_GetRoles(&query);
 
- // FIXME: users table
-// Item *roles = CFDB_GetRole(&query);
  bson_destroy(&query);
-
- return NULL;
- }
+ 
+ return hq;
+}
 
 
 HubQuery *CFDB_GetRoles(bson *query)
@@ -243,15 +399,19 @@ HubQuery *CFDB_GetRoles(bson *query)
 
  while (mongo_cursor_next(cursor))
     {
-    char name[CF_MAXVARSIZE],  desc[CF_MAXVARSIZE],
-        clRxIncl[CF_MAXVARSIZE], clRxExcl[CF_MAXVARSIZE], bRxIncl[CF_MAXVARSIZE];
-
-    snprintf(name, sizeof(name), "%s", BsonGetString(&(cursor->current), dbkey_role_name));
-    snprintf(desc, sizeof(desc), "%s", BsonGetString(&(cursor->current), dbkey_role_description));
-    snprintf(clRxIncl, sizeof(clRxIncl), "%s", BsonGetString(&(cursor->current), dbkey_role_classrx_include));
-    snprintf(clRxExcl, sizeof(clRxExcl), "%s", BsonGetString(&(cursor->current), dbkey_role_classrx_exclude));
-    snprintf(bRxIncl, sizeof(bRxIncl), "%s", BsonGetString(&(cursor->current), dbkey_role_bundlerx_include));
+    char *name = SafeStringDuplicate(BsonGetString(&(cursor->current), dbkey_role_name));
+    char *desc = SafeStringDuplicate(BsonGetString(&(cursor->current), dbkey_role_description));
+    char *clRxIncl = SafeStringDuplicate(BsonGetString(&(cursor->current), dbkey_role_classrx_include));
+    char *clRxExcl = SafeStringDuplicate(BsonGetString(&(cursor->current), dbkey_role_classrx_exclude));
+    char *bRxIncl = SafeStringDuplicate(BsonGetString(&(cursor->current), dbkey_role_bundlerx_include));
+    
     PrependRlistAlien(&(hq->records), NewHubRole(name, desc, clRxIncl, clRxExcl, bRxIncl));
+
+    free(name);
+    free(desc);
+    free(clRxIncl);
+    free(clRxExcl);
+    free(bRxIncl);
     }
 
  mongo_cursor_destroy(cursor);

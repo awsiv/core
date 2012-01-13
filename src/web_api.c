@@ -38,6 +38,7 @@ static const char *ERRID_DESCRIPTION[] =
    [ERRID_ITEM_NONEXISTING] = "The given item does not exist",
    [ERRID_ITEM_EXISTS] = "The given item already exists",
    [ERRID_ITEM_MULTIPLE] = "There are multiple items matching the request",
+   [ERRID_RBAC_ACCESS_DENIED] = "The given user has no access to this data",
    [ERRID_CONSTELLATION_LICENSE] = "This functionality requires a Constellation license",
    [ERRID_MAX] = "Unknown error - description out of bounds",
    };

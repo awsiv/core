@@ -976,6 +976,7 @@ void Nova_UpdateMongoHostList(Item **list);
 void PrependPromiserList(PromiseIdent **list,char *s,Promise *pp);
 #ifdef HAVE_LIBMONGOC
 HubQuery *NewHubQuery(Rlist *hosts,Rlist *records);
+HubQuery *NewHubQueryErrid(Rlist *hosts, Rlist *records, cfapi_errid errid);
 void DeleteHubQuery(HubQuery *hq,void (*fnptr)());
 int CountRecords(HubQuery *hq);
 #endif
