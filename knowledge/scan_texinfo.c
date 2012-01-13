@@ -25,33 +25,11 @@
 #define CF_MAXVARSIZE 1024
 #define cf_error 1
 
-/*************************************************************************/
-/* Ontology                                                              */
-/*************************************************************************/
-
-Topic
-   {
-   char *topic_type;
-   char *topic_name;
-   char *comment;
-   Occurrence *occurrences;
-   TopicAssociation *associations;
-   Topic *next;
-   };
-
-TopicAssociation
-   {
-   char *assoc_type;
-   char *fwd_name;
-   char *bwd_name;
-   Rlist *associates;
-   char *associate_topic_type;
-   TopicAssociation *next;
-   };
-
 /*******************************************************************/
 
-Rlist
+typedef struct Rlist_ Rlist;
+
+struct Rlist_
    {
    void *item;
    char type;
@@ -59,10 +37,41 @@ Rlist
    Rlist *next;
    };
 
-Item
+typedef struct Item_ Item;
+
+struct Item_
    {
    char  *name;
    Item *next;
+   };
+
+/*************************************************************************/
+/* Ontology                                                              */
+/*************************************************************************/
+
+typedef struct Topic_ Topic;
+typedef struct TopicAssociation_ TopicAssociation;
+
+struct Topic_
+   {
+   int id;
+   char *topic_context;
+   char *topic_name;
+   double evc;
+   TopicAssociation *associations;
+   char *comment;
+   struct Occurrence *occurrences;
+   Topic *next;
+   };
+
+struct TopicAssociation_
+   {
+   char *assoc_type;
+   char *fwd_name;
+   char *bwd_name;
+   Rlist *associates;
+   char *associate_topic_context;
+   TopicAssociation *next;
    };
 
 /*****************************************************************************/
@@ -71,7 +80,7 @@ void Manual(char *prefix,char *str,char *file);
 void ProcessFile(char *file,FILE *fin,char *context,char *prefix);
 char *CanonifyName(char *str);
 void AddTopic(Topic **list,char *name,char *type,int nr);
-int TopicExists(Topic *list,char *topic_name,char *topic_type);
+int TopicExists(Topic *list,char *topic_name,char *topic_context);
 void AppendItem (Item **liststart,char *itemstring);
 char ToLower (char ch);
 char ToUpper (char ch);
@@ -79,7 +88,7 @@ char *ToUpperStr (char *str);
 char *ToLowerStr (char *str);
 char *GetTitle(char *base, char *type);
 char *GetTopicType(Topic *list,char *topic_name);
-void AddTopicAssociation(TopicAssociation **list,char *fwd_name,char *bwd_name,char *topic_type,char *associate,int verify);
+void AddTopicAssociation(TopicAssociation **list,char *fwd_name,char *bwd_name,char *topic_context,char *associate,int verify);
 Topic *GetTopic(Topic *list,char *topic_name);
 TopicAssociation *AssociationExists(TopicAssociation *list,char *fwd,char *bwd,int verify);
 Rlist *IdempPrependRScalar(Rlist **start,void *item, char type);
@@ -354,9 +363,9 @@ for (tp = topics; tp != NULL; tp=tp->next)
 
    for (ta = tp->associations; ta != NULL; ta=ta->next)
       {
-      if (strlen(tp->topic_type) > 0)
+      if (strlen(tp->topic_context) > 0)
          {
-         printf("%s::\n",CanonifyName(tp->topic_type));
+         printf("%s::\n",CanonifyName(tp->topic_context));
          }
       
       printf("    \"%s\" ",tp->topic_name);
@@ -512,7 +521,7 @@ if ((tp->topic_name = strdup(name)) == NULL)
    exit(1);
    }
 
-if ((tp->topic_type = strdup(type)) == NULL)
+if ((tp->topic_context = strdup(type)) == NULL)
    {
    printf("Memory failure in AddTopic");
    exit(1);
@@ -641,7 +650,7 @@ for (i = 0; otherwords[i] != NULL; i++)
 /* Level                                                                     */
 /*****************************************************************************/
 
-int TopicExists(Topic *list,char *topic_name,char *topic_type)
+int TopicExists(Topic *list,char *topic_name,char *topic_context)
 
 { Topic *tp;
 
@@ -649,9 +658,9 @@ for (tp = list; tp != NULL; tp=tp->next)
    {
    if (strcmp(tp->topic_name,topic_name) == 0)
       {
-      if (topic_type && strcmp(tp->topic_type,topic_type) != 0)
+      if (topic_context && strcmp(tp->topic_context,topic_context) != 0)
          {
-         //fprintf(stderr,"Scan: Topic \"%s\" exists, but its type \"%s\" does not match promised type \"%s\"\n",topic_name,tp->topic_type,topic_type);
+         //fprintf(stderr,"Scan: Topic \"%s\" exists, but its type \"%s\" does not match promised type \"%s\"\n",topic_name,tp->topic_context,topic_context);
          }
       
       return true;
@@ -706,7 +715,7 @@ for (tp = list; tp != NULL; tp=tp->next)
    {
    if (strcmp(topic_name,tp->topic_name) == 0)
       {
-      return tp->topic_type;
+      return tp->topic_context;
       }
    }
 
@@ -844,7 +853,7 @@ return buffer;
 
 /*****************************************************************************/
 
-void AddTopicAssociation(TopicAssociation **list,char *fwd_name,char *bwd_name,char *topic_type,char *associates,int verify)
+void AddTopicAssociation(TopicAssociation **list,char *fwd_name,char *bwd_name,char *topic_context,char *associates,int verify)
 
 { TopicAssociation *ta = NULL,*texist;
   char assoc_type[256];
@@ -885,7 +894,7 @@ if ((texist = AssociationExists(*list,fwd_name,bwd_name,verify)) == NULL)
       }
 
    ta->associates = NULL;
-   ta->associate_topic_type = NULL;
+   ta->associate_topic_context = NULL;
    ta->next = *list;
    *list = ta;
    }
@@ -1007,7 +1016,6 @@ Rlist *PrependRlist(Rlist **start,void *item, char type)
    /* heap memory for item must have already been allocated */
     
 { Rlist *rp,*lp = *start;
-  FnCall *fp;
   char *sp = NULL;
 
 if ((rp = (Rlist *)malloc(sizeof(Rlist))) == NULL)
