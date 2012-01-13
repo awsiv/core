@@ -484,6 +484,7 @@ class Ion_auth
                      $admin_role = $this->ci->config->item('admin_role', 'ion_auth');
                  }
                  $user_role  = $this->ci->session->userdata('role');
+                 
                        if($user_role===False ||empty($user_role)){
                         return false;
                       }
@@ -592,8 +593,20 @@ class Ion_auth
             }
             if($this->ci->session->userdata('dn')){
                 $this->ci->auth_ldap->set_user_dn($this->ci->session->userdata('dn'));
-            }           
-            return $this->ci->auth_ldap->get_all_ldap_users($this->ci->session->userdata('username'), $this->ci->session->userdata('pwd'));
+            }      
+           
+            $users=$this->ci->auth_ldap->get_all_ldap_users($this->ci->session->userdata('username'), $this->ci->session->userdata('pwd'));
+            $users_collection=array();
+            
+            foreach($users as $user){
+                $user_with_roles=$user;
+                $user_details_from_db=$this->get_ldap_user_details_from_local_db($user['name']);
+                $user_with_roles['roles']=$user_details_from_db->roles;
+                array_push($users_collection, $user_with_roles);
+                
+            }
+            //var_dump($users_collection);
+            return $users_collection;
         }
         return $this->ci->ion_auth_model_mongo->get_users_by_role($role_name, $limit, $offset);
     }
@@ -732,6 +745,16 @@ class Ion_auth
              return false;
        }
         
+       /**
+        *
+        * @param type $username
+        * @return type get the details of cached ldap user 
+        */
+        public function get_ldap_user_details_from_local_db($username){
+            return $this->ci->ion_auth_model_mongo->get_ldap_user_by_col("username",$username); 
+        }
+       
+       
         /**
          *
          * @param type $username
@@ -756,12 +779,15 @@ class Ion_auth
             $user_entry=array("username"=>$username,"roles"=>$data);
             if($this->ldap_user_role_entry_exits($username)){
                $this->ci->ion_auth_model_mongo->update_ldap_user($username,$user_entry);
+               $this->set_message('update_successful');
                return true;
               }else{
                $id=$this->ci->ion_auth_model_mongo->cache_ldap_user($user_entry);
+               $this->set_message('update_successful');
                if($id !== FALSE){
                    return true;
                }
+               $this->set_error('update_unsuccessful');
                return false;
              }
         }

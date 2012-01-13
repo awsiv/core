@@ -67,7 +67,9 @@ $(document).ready(function() {
   $('a.edit').live('click',function(event){
       event.preventDefault();
       var path=$(this).attr('href');
-      $("#admin_content").load(path);  
+      $("#admin_content").load(path,function(res){
+          $(this).html(res);
+      });
   });
 
 //loading the change password in admin_content

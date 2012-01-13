@@ -153,7 +153,7 @@ class Auth_Ldap {
                 'user_id' => $username,
                 'username' => $username,
                 'cn' => $user_info['cn'],
-                'group' => $user_info['role'],
+                'role' => $user_info['role'],
                 'dn'=>$user_info['dn']
             );
             return $customdata;
@@ -375,9 +375,9 @@ class Auth_Ldap {
                 $result = $this->cfpr_ldap_search($userdn, $password, $filter, $fields, $dn);
                 if(!is_null($result)){
                  $collectedusers=array_merge($collectedusers,$result);
+                 
                 }
             }
-            
             return $collectedusers;
         }
     }
@@ -502,6 +502,10 @@ class Auth_Ldap {
      */
     function get_role_for_user_from_localdb($username){
         $roles=array();
+        $user=$this->ci->ion_auth->get_ldap_user_details_from_local_db($username);
+        if($user !==NULL){
+        $roles=$user->roles;
+        }
         return $roles;
     }
     

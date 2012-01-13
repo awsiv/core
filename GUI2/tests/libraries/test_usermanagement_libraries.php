@@ -48,6 +48,12 @@ class test_usermanagement_libraries extends CodeIgniterUnitTestCase {
         $ret=$this->_ci->ion_auth->is_ldap_user_exists();
         $this->assertTrue($ret);
     }
+    
+    public function test_get_ldap_user_from_local_db(){
+        $ret=$this->_ci->ion_auth->get_ldap_user_details_from_local_db("test");
+        $this->assertNotNull($ret, "The user test must be there");
+        $this->dump($ret);
+    }
 
 }
 ?>

@@ -13,9 +13,10 @@
                      
 		</tr>
 		<?php
-                $username=isset($username)?$username:$this->session->userdata('username');
+                $loggedinusername=isset($username)?$username:$this->session->userdata('username');
                 foreach ((array)$users as $user){ 
-                        $username=isset($user['username'])?$user['username']:$user['displayname'];
+                    // can use $user['displayname']
+                        $username=isset($user['username'])?$user['username']:$user['name'];
                      ?>
 			<tr>
 				<td><?php echo $username ?></td>
@@ -38,7 +39,7 @@
                                  }
                                     ;?></td>
                            <?php  if($this->ion_auth->mode=="database"){?>
-				<td><?php 
+				<td><?php
                                     if($is_admin) {
                                         echo ($user['active']) ? anchor("auth/deactivate/".$user['_id']->__toString(), 'Active', array('class'=>'activate')) : anchor("auth/activate/". $user['_id'], 'Inactive',array('class'=>'inactivate'));
                                     }else{
@@ -52,10 +53,6 @@
                 <?php
                     if($is_admin || ($this->ion_auth->mode !="database" && !$this->ion_auth->is_ldap_user_exists()))
                     {
-                        if($this->ion_auth->mode=="database"){
-                        echo anchor("auth/change_password/".$user['_id']->__toString(), ' ',array('class'=>'changepassword','title'=>'change password'));
-                        }
-                    
                        if($this->ion_auth->mode !="database"){
                            echo anchor("auth/edit_user_ldap/".$username, ' ',array('class'=>'edit','title'=>'edit user'));
                         }else{
@@ -63,10 +60,10 @@
                         }
                         
                      if($this->ion_auth->mode=="database"){
-                        if( $user['username']!=$username){
+                        if( $user['username']!=$loggedinusername){
                           echo anchor("auth/delete_user/".$user['_id']->__toString(), ' ', array('class' => 'delete','title'=>'delete user'));
                           }
-                        elseif( $user['username']==$username)
+                        elseif( $user['username']==$loggedinusername)
                         {
                         echo anchor("auth/change_password/".$user['_id']->__toString(), ' ',array('class'=>'changepassword','title'=>'change password'));
                        // echo anchor("auth/edit_user/".$user['_id']->__toString(), ' ',array('class'=>'edit','title'=>'edit my details'));

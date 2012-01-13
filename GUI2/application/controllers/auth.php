@@ -535,21 +535,25 @@ class Auth extends Controller {
     
      function edit_user_ldap($username) {
         $this->data['title'] = "Edit User";
-        if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
-            redirect('auth', 'refresh');
-        }
+       
         //validate form input
         $this->form_validation->set_rules('user_name', 'First Name', 'required|xss_clean');
         $this->form_validation->set_rules('role[]', 'role', 'required|xss_clean');
 
-        if ($this->form_validation->run() == true) {
+        /*if ($this->form_validation->run() == true) {
             $data = array(
                 'username' => $this->input->post('user_name'),
-                'role' => $this->input->post('role'),
+                'roles' => $this->input->post('role'),
             );
-        }
-        if ($this->form_validation->run() == true && $this->ion_auth->update_user($username, $data)) { //check to see if we are creating the user
+        }*/
+        if ($this->form_validation->run() == true && $this->ion_auth->update_ldap_users($username, $this->input->post('role'))) { //check to see if we are creating the user
             //redirect them back to the admin page
+            $user = $this->ion_auth->get_ldap_user_details_from_local_db($username);
+            $user_roles=array();
+            if($user !==NULL){
+                $user_roles=$user->roles;
+            }
+            $this->session->set_userdata('role',$user_roles);
             if (is_ajax ()) {
                 $this->data['message'] = $this->ion_auth->messages();
                 $this->data['users'] = $this->ion_auth->get_users_array();
@@ -557,30 +561,37 @@ class Auth extends Controller {
                 $this->data['is_admin'] = $this->ion_auth->is_admin();
                 $this->load->view('auth/user_list', $this->data);
             } else {
+               
                 $this->session->set_flashdata('message', "User Updated");
                 redirect("auth", 'refresh');
             }
         } else { //display the create user form
             //set the flash data error message if there is one
             $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
-            $user = $this->ion_auth->get_user($id);
+            
             //$phone=explode('-',$user->phone);
             $this->data['user_name'] = array('name' => 'user_name',
                 'id' => 'first_name',
                 'type' => 'text',
-                'value' => $this->form_validation->set_value('user_name', $user->username),
+                'value' => $this->form_validation->set_value('user_name', $username),
             );
             $roles = $this->ion_auth->get_roles();
+          
+            $user = $this->ion_auth->get_ldap_user_details_from_local_db($username);
+            $user_roles=array();
+            if($user !==NULL){
+                $user_roles=$user->roles;
+            }
             foreach ($roles as $role) {
                 $this->data['roles'][$role['name']] = array('name' => 'role[]',
                     'id' => $role['name'],
                     'value' => $role['name'],
-                    'checked' => $this->form_validation->set_checkbox('role[]', $role['name'], (in_array($role['name'], $user->role)) ? TRUE : FALSE)
+                    'checked' => $this->form_validation->set_checkbox('role[]', $role['name'], (in_array($role['name'], $user_roles)) ? TRUE : FALSE)
                 );
             }
 
             //$this->data['role']=array('name'=>'role','options'=>$options,'default'=>set_value('role', $user->role_id));
-            $this->load->view('auth/edit_user', $this->data);
+            $this->load->view('auth/edit_user_ldap', $this->data);
         }
     }
 
