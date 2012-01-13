@@ -574,7 +574,7 @@ class Ion_auth
         public function get_user_rolelist($id){
             $roles= $this->ci->ion_auth_model_mongo->get_users_role($id);
             if(!empty ($roles)&&$roles!==False){
-                return $roles[0]['role'];
+                return $roles[0]['roles'];
             }
             return array();
         }
@@ -709,7 +709,7 @@ class Ion_auth
 	$roles=$this->get_user_rolelist($id);
                 $admin_role=$this->ci->settings_model->app_settings_get_item('admin_role');
                 $count=$this->ci->ion_auth_model_mongo->count_users_in_role($admin_role);
-                if($count <= 1 && in_array($admin_role,$roles)&& !in_array($admin_role,$data['role'])){
+                if($count <= 1 && in_array($admin_role,$roles)&& !in_array($admin_role,$data['roles'])){
                     $this->set_error('one_admin_required');
                     return FALSE;
                 }
@@ -722,6 +722,49 @@ class Ion_auth
 		$this->set_error('update_unsuccessful');
 		return FALSE;
 	}
+        
+       public function is_ldap_user_exists(){
+           
+           $number=$this->ci->ion_auth_model_mongo->total_ldap_users_cached();
+             if($number>0){
+                 return true;
+             }
+             return false;
+       }
+        
+        /**
+         *
+         * @param type $username
+         * @return type for checking the is there a previous entry present for this user
+         */
+        public function ldap_user_role_entry_exits($username)
+        {
+           $user=$this->ci->ion_auth_model_mongo->get_ldap_user_by_col("username",$username); 
+           if(is_null($user)){
+             return FALSE;  
+           }
+           return TRUE;
+        }
+        
+        /**
+         *
+         * @param type $username
+         * @param type $data which contains all the things as well as roles
+         * @return type 
+         */
+        public function update_ldap_users($username,$data){
+            $user_entry=array("username"=>$username,"roles"=>$data);
+            if($this->ldap_user_role_entry_exits($username)){
+               $this->ci->ion_auth_model_mongo->update_ldap_user($username,$user_entry);
+               return true;
+              }else{
+               $id=$this->ci->ion_auth_model_mongo->cache_ldap_user($user_entry);
+               if($id !== FALSE){
+                   return true;
+               }
+               return false;
+             }
+        }
 
 
 	/**
@@ -937,7 +980,7 @@ class Ion_auth
 	 **/
 	 public function get_roles()
 	 {
-            if(strtolower($this->mode)!='database'){
+            /*if(strtolower($this->mode)!='database'){
                 if(!$this->ci->session->userdata('pwd')){
                      $this->set_error('login_mode_changed');
                 }
@@ -945,7 +988,7 @@ class Ion_auth
                  $this->ci->auth_ldap->set_user_dn($this->ci->session->userdata('dn'));
             }
                return $this->ci->auth_ldap->get_all_ldap_roles( $this->ci->session->userdata('username'), $this->ci->session->userdata('pwd'));
-            }
+            }*/
 		 return $this->ci->ion_auth_model_mongo->get_roles();
 	 }
 

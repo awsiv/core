@@ -55,6 +55,7 @@ class Ion_auth_model_mongo extends CI_Model
 	 * @var string
 	 **/
 	public $identity;
+        
 
 	public function __construct()
 	{
@@ -481,7 +482,7 @@ class Ion_auth_model_mongo extends CI_Model
 			'username'   => $username,
 			'password'   => $password,
 			'email'      => $email,
-			'role'   => $roles,
+			'roles'   => $roles,
 			'ip_address' => $ip_address,
 			'created_on' => now(),
 			'last_login' => now(),
@@ -494,8 +495,6 @@ class Ion_auth_model_mongo extends CI_Model
 	    }
 
 	    $id=$this->mongo_db->insert('users', $data);
-
-
 	    return $id;
 	}
 
@@ -516,10 +515,10 @@ class Ion_auth_model_mongo extends CI_Model
                $this->load->model('settings_model');
                $role=$this->settings_model->app_settings_get_item('fall_back_for');
                
-               $this->mongo_db->select(array($this->identity_column,'id', 'password','role'));
-               $this->mongo_db->where(array($this->identity_column => $identity,'active' => 1,'role'=>$role));
+               $this->mongo_db->select(array($this->identity_column,'id', 'password','roles'));
+               $this->mongo_db->where(array($this->identity_column => $identity,'active' => 1,'roles'=>$role));
            }else{
-                $this->mongo_db->select(array($this->identity_column,'id', 'password','role'));
+                $this->mongo_db->select(array($this->identity_column,'id', 'password','roles'));
                 $this->mongo_db->where(array($this->identity_column => $identity,'active' => 1));
            }
 
@@ -538,7 +537,7 @@ class Ion_auth_model_mongo extends CI_Model
 					$this->identity_column => $result->{$this->identity_column},
 					'id'                   => $result->_id, //kept for backwards compatibility
 					'user_id'              => $result->_id, //everyone likes to overwrite id so we'll use user_id
-					'role'                => $result->role
+					'role'                => $result->roles
 					 );
 
 		    $this->session->set_userdata($session_data);
@@ -565,11 +564,11 @@ class Ion_auth_model_mongo extends CI_Model
 	{
              if (is_string($role))
 	    {
-		$this->mongo_db->where(array('role'=>$role));
+		$this->mongo_db->where(array('roles'=>$role));
 	    }
              else if (is_array($role))
 	    {
-		$this->mongo_db->where_in('role',$role);
+		$this->mongo_db->where_in('roles',$role);
 	    }
             if (isset($limit))
 			$this->mongo_db->limit($limit);
@@ -634,6 +633,11 @@ class Ion_auth_model_mongo extends CI_Model
         {
             return $this->mongo_db->get_where_object('users',array($col=>$col_val),1);
         }
+        
+         public function get_ldap_user_by_col($col,$col_val)
+        {
+            return $this->mongo_db->get_where_object('ldap_users',array($col=>$col_val),1);
+        }
 
 	/**
 	 * get_newest_users
@@ -659,7 +663,7 @@ class Ion_auth_model_mongo extends CI_Model
 	    //if no id was passed use the current users id
 	    $id || $id = $this->session->userdata('user_id');
 
-	    return $this->mongo_db->select(array('role'))
+	    return $this->mongo_db->select(array('roles'))
 			    ->where(array('_id'=>new MongoId($id)))
 			    ->get('users');		    
 	}
@@ -736,7 +740,32 @@ class Ion_auth_model_mongo extends CI_Model
 	    return TRUE;
 	}
 
-
+        /**
+         *
+         * @param type $username
+         * @param type $data 
+         * for updating the roles and related things for ldap user in local db
+         */
+         public function update_ldap_user($username,$data){
+               $this->mongo_db->where(array('username' => $username));
+               $this->mongo_db->update('ldap_users', $data);
+         }
+         
+         /**
+          *
+          * @param type $data 
+          * for caching the ldap username for RBAC implemetation
+          */
+         public function cache_ldap_user($data){
+             $id=$this->mongo_db->insert('ldap_users', $data);
+             return $id;
+         }
+         
+         
+         public function total_ldap_users_cached(){
+             return $this->mongo_db->count('ldap_users');
+         }
+         
 	/**
 	 * delete_user
 	 *
@@ -825,7 +854,7 @@ class Ion_auth_model_mongo extends CI_Model
 		    return FALSE;
 	    }
 
-	    $result = $this->mongo_db->select(array($this->identity_column,'_id','role'))
+	    $result = $this->mongo_db->select(array($this->identity_column,'_id','roles'))
 			      ->where(array($this->identity_column =>get_cookie('identity'),'remember_code'=>get_cookie('remember_code')))
 			      ->limit(1)
 			      ->get_object('users');
@@ -840,7 +869,7 @@ class Ion_auth_model_mongo extends CI_Model
 		$session_data = array(
 				    $this->identity_column => $result->{$this->identity_column},
 				    'user_id'              => $result->_id, //everyone likes to overwrite id so we'll use user_id
-				    'role'                => $result->role,
+				    'role'                => $result->roles,
 				     );
 		$this->session->set_userdata($session_data);
 		//extend the users cookies if the option is enabled
@@ -933,8 +962,8 @@ class Ion_auth_model_mongo extends CI_Model
 
             // make changes of the ripple effect of change of role in the user table;
             $this->mongo_db->clear();
-            $this->mongo_db->where(array('role'=>$old_doc->name));
-            $result_user=$this->mongo_db->update_all('users',array('role.$' => $data['name']));
+            $this->mongo_db->where(array('roles'=>$old_doc->name));
+            $result_user=$this->mongo_db->update_all('users',array('roles.$' => $data['name']));
             $this->mongo_db->clear();
 
             $this->mongo_db->where(array('fall_back_for'=>$old_doc->name));
@@ -953,7 +982,7 @@ class Ion_auth_model_mongo extends CI_Model
 }
 
        function count_users_in_role($rolename){
-           return $this->mongo_db->where(array('role'=>$rolename))->count('users');
+           return $this->mongo_db->where(array('roles'=>$rolename))->count('users');
        }
 
 }

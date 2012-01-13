@@ -78,8 +78,9 @@ if($this->agent->is_browser('Safari')){
                               </label>
                           </form>
                           </div>
-                             <?php if($this->ion_auth->mode == "database") { echo anchor('auth/admin_page',' ',array('class'=>'adminbtn'));} ?>
-                             <?php echo anchor('auth/setting',' ',array('class'=>'settingbtn'));?>
+                             <?php //if($this->ion_auth->mode == "database") { echo anchor('auth/admin_page',' ',array('class'=>'adminbtn'));}
+                              echo anchor('auth/admin_page',' ',array('class'=>'adminbtn'));
+                              echo anchor('auth/setting',' ',array('class'=>'settingbtn'));?>
                       </div>
                       <p class="clearright"></p>
 

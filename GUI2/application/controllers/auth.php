@@ -478,13 +478,13 @@ class Auth extends Controller {
         //validate form input
         $this->form_validation->set_rules('user_name', 'First Name', 'required|xss_clean');
         $this->form_validation->set_rules('email', 'Email Address', 'required|valid_email');
-        $this->form_validation->set_rules('role[]', 'role', 'required|xss_clean');
+        $this->form_validation->set_rules('roles[]', 'Role', 'required|xss_clean');
 
         if ($this->form_validation->run() == true) {
             $data = array(
                 'username' => $this->input->post('user_name'),
                 'email' => $this->input->post('email'),
-                'role' => $this->input->post('role'),
+                'roles' => $this->input->post('roles'),
             );
         }
         if ($this->form_validation->run() == true && $this->ion_auth->update_user($id, $data)) { //check to see if we are creating the user
@@ -519,6 +519,57 @@ class Auth extends Controller {
                 'value' => $this->form_validation->set_value('email', $user->email),
             );
 
+            $roles = $this->ion_auth->get_roles();
+            foreach ($roles as $role) {
+                $this->data['roles'][$role['name']] = array('name' => 'roles[]',
+                    'id' => $role['name'],
+                    'value' => $role['name'],
+                    'checked' => $this->form_validation->set_checkbox('roles[]', $role['name'], (in_array($role['name'], $user->roles)) ? TRUE : FALSE)
+                );
+            }
+
+            //$this->data['role']=array('name'=>'role','options'=>$options,'default'=>set_value('role', $user->role_id));
+            $this->load->view('auth/edit_user', $this->data);
+        }
+    }
+    
+     function edit_user_ldap($username) {
+        $this->data['title'] = "Edit User";
+        if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+            redirect('auth', 'refresh');
+        }
+        //validate form input
+        $this->form_validation->set_rules('user_name', 'First Name', 'required|xss_clean');
+        $this->form_validation->set_rules('role[]', 'role', 'required|xss_clean');
+
+        if ($this->form_validation->run() == true) {
+            $data = array(
+                'username' => $this->input->post('user_name'),
+                'role' => $this->input->post('role'),
+            );
+        }
+        if ($this->form_validation->run() == true && $this->ion_auth->update_user($username, $data)) { //check to see if we are creating the user
+            //redirect them back to the admin page
+            if (is_ajax ()) {
+                $this->data['message'] = $this->ion_auth->messages();
+                $this->data['users'] = $this->ion_auth->get_users_array();
+                $this->data['userrole'] = $this->session->userdata('role');
+                $this->data['is_admin'] = $this->ion_auth->is_admin();
+                $this->load->view('auth/user_list', $this->data);
+            } else {
+                $this->session->set_flashdata('message', "User Updated");
+                redirect("auth", 'refresh');
+            }
+        } else { //display the create user form
+            //set the flash data error message if there is one
+            $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
+            $user = $this->ion_auth->get_user($id);
+            //$phone=explode('-',$user->phone);
+            $this->data['user_name'] = array('name' => 'user_name',
+                'id' => 'first_name',
+                'type' => 'text',
+                'value' => $this->form_validation->set_value('user_name', $user->username),
+            );
             $roles = $this->ion_auth->get_roles();
             foreach ($roles as $role) {
                 $this->data['roles'][$role['name']] = array('name' => 'role[]',
