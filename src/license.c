@@ -245,8 +245,8 @@ if (am_policy_server && THIS_AGENT_TYPE == cf_agent && CFDB_QueryIsMaster())
    }
 #endif
 
-if ((cf_strcmp(VYEAR,u_year) > 0) || ((cf_strcmp(VYEAR,u_year) == 0) && (m_now > m_expire))
-    || ((cf_strcmp(VYEAR,u_year) == 0) && (m_now == m_expire) && (d_now > d_expire)))
+if ((strcmp(VYEAR,u_year) > 0) || ((strcmp(VYEAR,u_year) == 0) && (m_now > m_expire))
+    || ((strcmp(VYEAR,u_year) == 0) && (m_now == m_expire) && (d_now > d_expire)))
    {   
    if(!IsDefinedClass("bootstrap_mode"))  // avoid cf-promises complaints while bootstrapping
       {

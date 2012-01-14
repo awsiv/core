@@ -376,7 +376,7 @@ switch (a.measure.data_type)
 
        stream = NovaGetMeasurementStream(a,pp);
 
-       if (cf_strcmp(a.measure.history_type,"weekly") == 0)
+       if (strcmp(a.measure.history_type,"weekly") == 0)
           {
           if ((slot = NovaRegisterSlot(handle, pp->ref ? pp->ref : "User defined measure",
                                        a.measure.units ? a.measure.units : "unknown",
@@ -388,7 +388,7 @@ switch (a.measure.data_type)
           this[slot] = NovaExtractValueFromStream(handle,stream,a,pp);
           CfOut(cf_verbose,""," -> Setting Nova slot %d=%s to %lf\n",slot,handle,this[slot]);
           }
-       else if (cf_strcmp(a.measure.history_type,"log") == 0)
+       else if (strcmp(a.measure.history_type,"log") == 0)
           {
           CfOut(cf_verbose,""," -> Promise to log a numerical value");
           NovaLogSymbolicValue(handle,stream,a,pp);
@@ -879,7 +879,7 @@ for (i = 0; i < CF_DUNBAR_WORK; i++)
       break;
       }
 
-   if (cf_strcmp (NOVA_DATA[i].path,pp->promiser) == 0)
+   if (strcmp (NOVA_DATA[i].path,pp->promiser) == 0)
       {
       NOVA_DATA[i].output = NovaReSample(i,a,pp);
       return NOVA_DATA[i].output;
@@ -909,7 +909,7 @@ if (LICENSES == 0)
    return NULL;
    }
   
-if (a.measure.stream_type && cf_strcmp(a.measure.stream_type,"pipe") == 0)
+if (a.measure.stream_type && strcmp(a.measure.stream_type,"pipe") == 0)
    {
    if (!IsExecutable(GetArg0(pp->promiser)))
       {
@@ -939,7 +939,7 @@ thislock = AcquireLock(pp->promiser,VUQNAME,CFSTARTTIME,at,pp,false);
 
 if (thislock.lock == NULL)
    {
-   if (cf_strcmp(a.measure.history_type,"log") == 0)
+   if (strcmp(a.measure.history_type,"log") == 0)
       {
       DeleteItemList(NOVA_DATA[slot].output);
       NOVA_DATA[slot].output = NULL;
@@ -971,7 +971,7 @@ else
 
    /* Stream types */
 
-   if (a.measure.stream_type && cf_strcmp(a.measure.stream_type,"file") == 0)
+   if (a.measure.stream_type && strcmp(a.measure.stream_type,"file") == 0)
       {
       long filepos = 0;
       struct stat sb;
@@ -999,7 +999,7 @@ else
             }
          }
       }
-   else if (a.measure.stream_type && cf_strcmp(a.measure.stream_type,"pipe") == 0)
+   else if (a.measure.stream_type && strcmp(a.measure.stream_type,"pipe") == 0)
       {
       CfOut(cf_verbose,""," -> (Setting pipe umask to %o)\n",a.contain.umask);
       maskval = umask(a.contain.umask);
@@ -1050,13 +1050,13 @@ else
          }
       }
    
-   if (a.measure.stream_type && cf_strcmp(a.measure.stream_type,"file") == 0)
+   if (a.measure.stream_type && strcmp(a.measure.stream_type,"file") == 0)
       {
       long fileptr = ftell(fin);
       fclose(fin);
       Nova_SaveFilePosition(pp->promiser,fileptr);
       }
-   else if (a.measure.stream_type && cf_strcmp(a.measure.stream_type,"pipe") == 0)
+   else if (a.measure.stream_type && strcmp(a.measure.stream_type,"pipe") == 0)
       {
       cf_pclose_def(fin,a,pp);
       }
@@ -1283,7 +1283,7 @@ switch (a.measure.data_type)
        snprintf(value,CF_BUFSIZE,"%s",matches->name);
    }
 
-if (a.measure.history_type && cf_strcmp(a.measure.history_type,"log") == 0)
+if (a.measure.history_type && strcmp(a.measure.history_type,"log") == 0)
    {
    snprintf(filename,CF_BUFSIZE,"%s%cstate%c%s_measure.log",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,handle);
 

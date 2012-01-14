@@ -321,7 +321,7 @@ void NotePromiseCompliance(Promise *pp,double val,enum cf_status status,char *re
   
 CfDebug("Note Promise Compliance\n");
 
-cf_strncpy(promiseHandle,PromiseID(pp),sizeof(promiseHandle)-1);
+strncpy(promiseHandle,PromiseID(pp),sizeof(promiseHandle)-1);
 snprintf(newNoRepeatId, sizeof(newNoRepeatId), "%s:%s", promiseHandle, reason);
 
 if (strcmp(newNoRepeatId,oldNoRepeatId) == 0)
@@ -330,7 +330,7 @@ if (strcmp(newNoRepeatId,oldNoRepeatId) == 0)
    return;
    }
 
-cf_strncpy(oldNoRepeatId,newNoRepeatId,sizeof(oldNoRepeatId)-1);
+strncpy(oldNoRepeatId,newNoRepeatId,sizeof(oldNoRepeatId)-1);
 
 snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_COMPLIANCE);
 MapName(name);
@@ -437,7 +437,7 @@ if (!OpenDB(name,&dbp))
    return (time_t)0;
    }
 
-cf_strncpy(name,PromiseID(pp),CF_MAXVARSIZE);
+strncpy(name,PromiseID(pp),CF_MAXVARSIZE);
 
 if (ReadDB(dbp,name,&e,sizeof(e)))
    {

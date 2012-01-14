@@ -99,7 +99,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                 {
                 for (i = 0; vals[i] != NULL; i++)
                    {
-                   if (cf_strcmp(a,name) == 0)
+                   if (strcmp(a,name) == 0)
                       {
                       CfOut(cf_verbose,"","Located LDAP value %s => %s\n", a,vals[i]->bv_val);
                       return_value = xstrdup((char *)vals[i]->bv_val);
@@ -283,7 +283,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                 {
                 for (i = 0; vals[i] != NULL; i++)
                    {
-                   if (cf_strcmp(a,name) == 0)
+                   if (strcmp(a,name) == 0)
                       {
                       CfOut(cf_verbose,"","Located LDAP value %s => %s\n", a,vals[i]->bv_val);
                       AppendRScalar(&return_value,(char *)vals[i]->bv_val,CF_SCALAR);
@@ -457,7 +457,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                 {
                 for (i = 0; vals[i] != NULL; i++)
                    {
-                   if (cf_strcmp(a,"objectClass") != 0) // This is non-unique
+                   if (strcmp(a,"objectClass") != 0) // This is non-unique
                       {
                       snprintf(name,CF_MAXVARSIZE-1,"%s[%s]",array,a);
                       NewScalar(THIS_BUNDLE,name,(char *)vals[i]->bv_val,cf_str);
@@ -649,7 +649,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                 {
                 for (i = 0; vals[i] != NULL; i++)
                    {
-                   if (cf_strcmp(a,name) == 0 && FullTextMatch(regex,(char *)vals[i]->bv_val))
+                   if (strcmp(a,name) == 0 && FullTextMatch(regex,(char *)vals[i]->bv_val))
                       {
                       CfOut(cf_verbose,""," -> Located regex matching LDAP value %s => %s\n", a,(char *)vals[i]->bv_val);
                       return_value = xstrdup("any");
@@ -932,7 +932,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                    {
                    for (rp = names; rp != NULL; rp=rp->next)
                       {
-                      if (cf_strcmp(a,rp->item) == 0)
+                      if (strcmp(a,rp->item) == 0)
                          {
                          Item **list;
 
@@ -1223,7 +1223,7 @@ for (msg = ldap_first_message(ld,res); msg != NULL; msg = ldap_next_message(ld,m
                 {
                 for (i = 0; vals[i] != NULL; i++)
                    {
-                   if (cf_strcmp(a,name) == 0)
+                   if (strcmp(a,name) == 0)
                       {
                       CfOut(cf_verbose,"","Located LDAP value %s => %s\n", a,vals[i]->bv_val);
                       AppendRScalar(&return_value,(char *)vals[i]->bv_val,CF_SCALAR);
@@ -1466,7 +1466,7 @@ struct berval passwd = { pwdLen, (char*)password };
 
 /* Bind to the server anonymously. */
 
-if (cf_strcmp(sec,"sasl") == 0)
+if (strcmp(sec,"sasl") == 0)
    {
    struct berval *servcred;
    ret = ldap_sasl_bind_s(ld,basedn,LDAP_SASL_SIMPLE,&passwd,NULL,NULL,&servcred);
@@ -1484,17 +1484,17 @@ return ret;
 int NovaStr2Scope(char *scope)
 
 {
-if (cf_strcmp(scope,"subtree") == 0)
+if (strcmp(scope,"subtree") == 0)
    {
    return LDAP_SCOPE_SUBTREE;
    }
 
-if (cf_strcmp(scope,"base") == 0)
+if (strcmp(scope,"base") == 0)
    {
    return LDAP_SCOPE_BASE;
    }
 
-if (cf_strcmp(scope,"onelevel") == 0)
+if (strcmp(scope,"onelevel") == 0)
    {
    return LDAP_SCOPE_ONELEVEL;
    }

@@ -49,19 +49,19 @@ int Nova_ValidateSQLTableName(char *table_path,char *db,char *table)
 
 /* Valid separators . / or \ only */ 
 
-if ((sp = cf_strchr(table_path,'/')))
+if ((sp = strchr(table_path,'/')))
    {
    fwd = true;
    *sp = '.';
    }
 
-if ((sp = cf_strchr(table_path,'\\')))
+if ((sp = strchr(table_path,'\\')))
    {
    back = true;
    *sp = '.';
    }
 
-if ((sp = cf_strchr(table_path,'.')))
+if ((sp = strchr(table_path,'.')))
    {
    dot = true;
    sp++;
@@ -75,8 +75,8 @@ if (dot + back + fwd > true)
    }
 
 memset(db,0,CF_MAXVARSIZE);
-cf_strncpy(db,table_path,sp-table_path-1);
-cf_strncpy(table,sp,CF_MAXVARSIZE-1);
+strncpy(db,table_path,sp-table_path-1);
+strncpy(table,sp,CF_MAXVARSIZE-1);
 return true;
 }
 
@@ -204,16 +204,16 @@ int NovaCheckSQLDataType(char *type,char *ref_type,Promise *pp)
 
 for (i = 0; aliases[i][0] != NULL; i++)
    {
-   if (cf_strcmp(ref_type,aliases[i][0]) == 0 || cf_strcmp(ref_type,aliases[i][1]) == 0 || cf_strcmp(type,aliases[i][0]) == 0 || cf_strcmp(type,aliases[i][1]) == 0)
+   if (strcmp(ref_type,aliases[i][0]) == 0 || strcmp(ref_type,aliases[i][1]) == 0 || strcmp(type,aliases[i][0]) == 0 || strcmp(type,aliases[i][1]) == 0)
       {
-      if ((cf_strcmp(type,ref_type) != 0) && (cf_strcmp(aliases[i][0],ref_type) != 0))
+      if ((strcmp(type,ref_type) != 0) && (strcmp(aliases[i][0],ref_type) != 0))
          {
          CfOut(cf_verbose,""," !! Promised column in database %s has a non-matching type (%s != %s)",pp->promiser,ref_type,type);
          }      
       }
    else
       {
-      if (cf_strcmp(type,ref_type) != 0)
+      if (strcmp(type,ref_type) != 0)
          {
          CfOut(cf_verbose,""," !! Promised column in database %s has a non-matching type (%s != %s)",pp->promiser,ref_type,type);
          }

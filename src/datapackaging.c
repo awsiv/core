@@ -301,7 +301,7 @@ for (ip = file; ip != NULL; ip = ip->next)
    memset(start,0,32);
    memset(name,0,255);
 
-   if (cf_strlen(ip->name) == 0)
+   if (strlen(ip->name) == 0)
       {
       continue;
       }
@@ -370,7 +370,7 @@ for (ip = file; ip != NULL; ip = ip->next)
    memset(start,0,32);
    memset(name,0,255);
 
-   if (cf_strlen(ip->name) == 0)
+   if (strlen(ip->name) == 0)
       {
       continue;
       }
@@ -975,7 +975,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
    char eventname[CF_BUFSIZE];
 
    name[0] = '\0';
-   cf_strcpy(eventname,(char *)key);
+   strcpy(eventname,(char *)key);
    memcpy(&entry,stored,sizeof(entry));
 
    then    = entry.t;
@@ -1066,7 +1066,7 @@ for (ip = file; ip != NULL; ip = ip->next)
    memset(arch,0,CF_MAXVARSIZE);
    memset(mgr,0,CF_MAXVARSIZE);
 
-   if (cf_strlen(ip->name) == 0)
+   if (strlen(ip->name) == 0)
       {
       continue;
       }
@@ -1129,7 +1129,7 @@ for (ip = file; ip != NULL; ip = ip->next)
    memset(arch,0,CF_MAXVARSIZE);
    memset(mgr,0,CF_MAXVARSIZE);
 
-   if (cf_strlen(ip->name) == 0)
+   if (strlen(ip->name) == 0)
       {
       continue;
       }
@@ -1194,7 +1194,7 @@ for (ip = file; ip != NULL; ip = ip->next)
    memset(arch,0,CF_MAXVARSIZE);
    memset(mgr,0,CF_MAXVARSIZE);
 
-   if (cf_strlen(ip->name) == 0)
+   if (strlen(ip->name) == 0)
       {
       continue;
       }
@@ -1658,7 +1658,7 @@ for (ip = file; ip != NULL; ip = ip->next)
    kept = repaired = notrepaired = 0;
    memset(version,0,255);
 
-   if (cf_strlen(ip->name) == 0)
+   if (strlen(ip->name) == 0)
       {
       continue;
       }
@@ -1801,7 +1801,7 @@ while (!feof(fin))
       continue;
       }
 
-   if (cf_strlen(line) == 0 || (line[0] == '\n'))
+   if (strlen(line) == 0 || (line[0] == '\n'))
       {
       continue;
       }
@@ -1865,7 +1865,7 @@ while (!feof(fin))
       continue;
       }
 
-   if (cf_strlen(line) == 0 || (line[0] == '\n'))
+   if (strlen(line) == 0 || (line[0] == '\n'))
       {
       continue;
       }

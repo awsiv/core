@@ -324,7 +324,7 @@ if (encrypted)
    {
    snprintf(in,CF_BUFSIZE,"%s %s",proto,handle);   
 
-   if ((cipherlen = EncryptString('N',in,out,conn->session_key,cf_strlen(in)+1)) < 0)
+   if ((cipherlen = EncryptString('N',in,out,conn->session_key,strlen(in)+1)) < 0)
       {
       CfOut(cf_error,""," !! Encryption failed for \"%s\"",in);
       return recvbuffer;
@@ -337,7 +337,7 @@ if (encrypted)
 else
    {
    snprintf(sendbuffer,CF_BUFSIZE,"%s %s",proto,handle);
-   tosend = cf_strlen(sendbuffer);
+   tosend = strlen(sendbuffer);
    } 
  
 if (SendTransaction(conn->sd,sendbuffer,tosend,CF_DONE) == -1)
@@ -400,7 +400,7 @@ if (!OpenDB(name,&dbp))
    return;
    }
 
-WriteDB(dbp,key,buffer,cf_strlen(buffer)+1);
+WriteDB(dbp,key,buffer,strlen(buffer)+1);
 CloseDB(dbp);
 }
 
@@ -425,7 +425,7 @@ if (!OpenDB(name,&dbp))
 
 ReadDB(dbp,key,buffer,CF_BUFSIZE-1);
 CloseDB(dbp);
-return cf_strlen(buffer);
+return strlen(buffer);
 }
 
 /********************************************************************/
@@ -436,13 +436,13 @@ int Nova_ParseHostname(char *name,char *hostname)
 
 { int port = (int)ntohs(SHORT_CFENGINEPORT);
 
-if (cf_strchr(name,':'))
+if (strchr(name,':'))
    {
    sscanf(name,"%250[^:]:%d",hostname,&port);
    }
 else
    {
-   cf_strncpy(hostname,name,CF_MAXVARSIZE);
+   strncpy(hostname,name,CF_MAXVARSIZE);
    }
 
 return(port);

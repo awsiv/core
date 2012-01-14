@@ -309,7 +309,7 @@ for (ip = file; ip != NULL; ip = ip->next)
    memset(end,0,32);
    memset(version,0,255);
 
-   if (cf_strlen(ip->name) == 0)
+   if (strlen(ip->name) == 0)
       {
       continue;
       }
@@ -519,7 +519,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&stored,&vsize))
    time_t then,lastseen,now = time(NULL);
    char tbuf[CF_BUFSIZE],eventname[CF_BUFSIZE];
 
-   cf_strcpy(eventname,(char *)key);
+   strcpy(eventname,(char *)key);
 
    memcpy(&entry,stored,sizeof(entry));
 
@@ -707,7 +707,7 @@ for (ip = file; ip != NULL; ip = ip->next)
    memset(start,0,32);
    memset(name,0,255);
 
-   if (cf_strlen(ip->name) == 0)
+   if (strlen(ip->name) == 0)
       {
       continue;
       }
@@ -824,7 +824,7 @@ for (ip = file; ip != NULL; ip = ip->next)
    char timebuffer[26];
    memset(name,0,255);
 
-   if (cf_strlen(ip->name) == 0)
+   if (strlen(ip->name) == 0)
       {
       continue;
       }
@@ -1154,7 +1154,7 @@ for (ip = file; ip != NULL; ip = ip->next)
    {
    memset(name,0,255);
 
-   if (cf_strlen(ip->name) == 0)
+   if (strlen(ip->name) == 0)
       {
       continue;
       }
@@ -1281,7 +1281,7 @@ for (ip = file; ip != NULL; ip = ip->next)
    memset(start,0,32);
    memset(name,0,255);
 
-   if (cf_strlen(ip->name) == 0)
+   if (strlen(ip->name) == 0)
       {
       continue;
       }
@@ -1456,7 +1456,7 @@ for (ip = file; ip != NULL; ip = ip->next)
    memset(arch,0,CF_MAXVARSIZE);
    memset(mgr,0,CF_MAXVARSIZE);
 
-   if (cf_strlen(ip->name) == 0)
+   if (strlen(ip->name) == 0)
       {
       continue;
       }
@@ -1583,7 +1583,7 @@ for (ip = file; ip != NULL; ip = ip->next)
    memset(arch,0,CF_MAXVARSIZE);
    memset(mgr,0,CF_MAXVARSIZE);
 
-   if (cf_strlen(ip->name) == 0)
+   if (strlen(ip->name) == 0)
       {
       continue;
       }
@@ -1706,7 +1706,7 @@ for (ip = file; ip != NULL; ip = ip->next)
    memset(arch,0,CF_MAXVARSIZE);
    memset(mgr,0,CF_MAXVARSIZE);
 
-   if (cf_strlen(ip->name) == 0)
+   if (strlen(ip->name) == 0)
       {
       continue;
       }

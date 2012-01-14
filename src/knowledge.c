@@ -187,19 +187,19 @@ if (EnterpriseExpiry())
    exit(1);
    }
 
-if (cf_strncmp(s,"function",strlen("function")) == 0)
+if (strncmp(s,"function",strlen("function")) == 0)
    {
    Nova_ListFunctions();
    return;
    }
 
-if (cf_strncmp(s,"bundle",strlen("bundle")) == 0 || cf_strncmp(s,"agent",strlen("agent")) == 0)
+if (strncmp(s,"bundle",strlen("bundle")) == 0 || strncmp(s,"agent",strlen("agent")) == 0)
    {
    Nova_ListAgents();
    return;
    }
 
-if (cf_strcmp(s,"promise") == 0)
+if (strcmp(s,"promise") == 0)
    {
    Nova_ListPromiseTypes();
    return;
@@ -220,7 +220,7 @@ for  (i = 0; i < CF3_MODULES; i++)
       {
       bs = (BodySyntax *)ss[j].bs;
 
-      if (s && cf_strcmp(s,ss[j].subtype) == 0)
+      if (s && strcmp(s,ss[j].subtype) == 0)
          {
          printf("Promise type %s has possible contraints:\n\n",ss[j].subtype);
          
@@ -229,7 +229,7 @@ for  (i = 0; i < CF3_MODULES; i++)
             printf("   %s\n",bs[k].lval);
             }
 
-         if (cf_strcmp(s,"classes") == 0)
+         if (strcmp(s,"classes") == 0)
             {
             /* non-unique */
             continue;
@@ -242,7 +242,7 @@ for  (i = 0; i < CF3_MODULES; i++)
 
       for (k = 0; bs[k].lval !=  NULL; k++)
          {
-         if (s && cf_strcmp(s,bs[k].lval) == 0)
+         if (s && strcmp(s,bs[k].lval) == 0)
             {
             printf("constraint %s (of promise type %s) has possible values:\n\n",bs[k].lval,ss[j].subtype);
             
@@ -286,7 +286,7 @@ for  (i = 0; i < CF3_MODULES; i++)
             
             for (l = 0; bs2[l].lval !=  NULL; l++)
                {
-               if (cf_strcmp(s,bs2[l].lval) == 0)
+               if (strcmp(s,bs2[l].lval) == 0)
                   {
                   printf("body constraint %s is part of %s (in promise type %s) and has possible values:\n\n",bs2[l].lval,bs[k].lval,ss[j].subtype);
                   
@@ -1218,7 +1218,7 @@ for (bp = BUNDLES; bp != NULL; bp = bp->next)
 
             /* Omit class "any" */
             
-            if (strstr(pp2->classes,rp->item) && cf_strcmp(rp->item,"any") != 0 && cf_strcmp(pp->classes,"any") != 0)
+            if (strstr(pp2->classes,rp->item) && strcmp(rp->item,"any") != 0 && strcmp(pp->classes,"any") != 0)
                {                           
                fprintf(fp,"class_contexts::");
                fprintf(fp,"  \"%s\"\n",pp->classes);
@@ -1250,12 +1250,12 @@ if (pp == NULL || pp->bundle == NULL)
    return;
    }
 
-if (cf_strcmp(name,pp->bundle) == 0)
+if (strcmp(name,pp->bundle) == 0)
    {
    return;
    }
 
-if (cf_strcmp(name,"const") == 0)
+if (strcmp(name,"const") == 0)
    {
    return;
    }
@@ -1338,7 +1338,7 @@ for (i = 0; CF_VALUETYPES[i][0] != NULL; i++)
       continue;
       }
    
-   if (cf_strcmp(CF_VALUETYPES[i][0],bs.range) == 0)
+   if (strcmp(CF_VALUETYPES[i][0],bs.range) == 0)
       {
       range = CF_VALUETYPES[i][1];
       break;

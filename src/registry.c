@@ -67,14 +67,14 @@ if (thislock.lock == NULL)
    return;
    }
 
-if (a.database.operation && (cf_strcmp(a.database.operation,"drop") == 0 || cf_strcmp(a.database.operation,"delete") == 0))
+if (a.database.operation && (strcmp(a.database.operation,"drop") == 0 || strcmp(a.database.operation,"delete") == 0))
    {
    Nova_DeleteRegistryKey(a,pp);
    YieldCurrentLock(thislock);
    return;
    }
 
-else if (a.database.operation && cf_strcmp(a.database.operation,"create") == 0)
+else if (a.database.operation && strcmp(a.database.operation,"create") == 0)
    { 
    if (Nova_OpenRegistryKey(pp->promiser,&key_h,false))
       {
@@ -89,7 +89,7 @@ else if (a.database.operation && cf_strcmp(a.database.operation,"create") == 0)
       }
    }
 
-if (a.database.operation && cf_strcmp(a.database.operation,"restore") == 0)
+if (a.database.operation && strcmp(a.database.operation,"restore") == 0)
    {
    create = true;
    }
@@ -108,7 +108,7 @@ if (Nova_OpenRegistryKey(pp->promiser,&key_h,create))
       return;
       }
    
-   if (a.database.operation && cf_strcmp(a.database.operation,"restore") == 0)
+   if (a.database.operation && strcmp(a.database.operation,"restore") == 0)
       {
       Nova_RecursiveRestoreKey(dbp,pp->promiser,a,pp);
       YieldCurrentLock(thislock);
@@ -121,8 +121,8 @@ if (Nova_OpenRegistryKey(pp->promiser,&key_h,create))
       {
       Nova_VerifyRegistryValueAssocs(key_h,a,pp);
       }      
-   else if (a.database.operation && (cf_strcmp(a.database.operation,"verify") == 0)
-            || (cf_strcmp(a.database.operation,"cache") == 0))
+   else if (a.database.operation && (strcmp(a.database.operation,"verify") == 0)
+            || (strcmp(a.database.operation,"cache") == 0))
       {
       CfOut(cf_verbose,"","Recursive cache of registry from here...\n");
       Nova_RecursiveQueryKey(dbp,&key_h,pp->promiser,a,pp,0) ;
@@ -299,9 +299,9 @@ void Nova_DeleteRegistryKey(Attributes a,Promise *pp)
   HKEY ms_key;
   Rlist *rp;
 
-cf_strncpy(root_key,pp->promiser,CF_MAXVARSIZE-1);
+strncpy(root_key,pp->promiser,CF_MAXVARSIZE-1);
 sp = strchr(root_key,'\\');
-cf_strncpy(sub_key,sp+1,CF_MAXVARSIZE-1);
+strncpy(sub_key,sp+1,CF_MAXVARSIZE-1);
 *sp = '\0';
 
 ms_key = Str2HKey(root_key);
@@ -546,13 +546,13 @@ int Nova_ValidateRegistryPromiser(char *key,Attributes a,Promise *pp)
 
   /* First remove the root key */
   
-cf_strncpy(root_key,key,CF_MAXVARSIZE-1);
+strncpy(root_key,key,CF_MAXVARSIZE-1);
 sp = strchr(root_key,'\\');
 *sp = '\0';
 
 for (i = 0; valid[i] != NULL; i++)
    {
-   if (cf_strcmp(root_key,valid[i]) == 0)
+   if (strcmp(root_key,valid[i]) == 0)
       {
       return true;
       }
@@ -568,27 +568,27 @@ return false;
 HKEY Str2HKey(char *root_key)
 
 {
-if (cf_strcmp(root_key,"HKEY_CLASSES_ROOT") == 0)
+if (strcmp(root_key,"HKEY_CLASSES_ROOT") == 0)
    {
    return HKEY_CLASSES_ROOT;
    }
 
-if (cf_strcmp(root_key,"HKEY_CURRENT_CONFIG") == 0)
+if (strcmp(root_key,"HKEY_CURRENT_CONFIG") == 0)
    {
    return HKEY_CURRENT_CONFIG;
    }
 
-if (cf_strcmp(root_key,"HKEY_CURRENT_USER") == 0)
+if (strcmp(root_key,"HKEY_CURRENT_USER") == 0)
    {
    return HKEY_CURRENT_USER;
    }
 
-if (cf_strcmp(root_key,"HKEY_LOCAL_MACHINE") == 0)
+if (strcmp(root_key,"HKEY_LOCAL_MACHINE") == 0)
    {
    return HKEY_LOCAL_MACHINE;
    }
 
-if (cf_strcmp(root_key,"HKEY_USERS") == 0)
+if (strcmp(root_key,"HKEY_USERS") == 0)
    {
    return HKEY_USERS;
    }
@@ -626,12 +626,12 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
       continue;
       }
 
-   if (cf_strncmp(key,keyname,strlen(keyname)) != 0)
+   if (strncmp(key,keyname,strlen(keyname)) != 0)
       {
       continue;
       }
 
-   if (cf_strchr(key,':'))
+   if (strchr(key,':'))
       {
       is_a_value = true;
       }
@@ -757,9 +757,9 @@ int Nova_OpenRegistryKey(char *key,HKEY *key_h,int create)
 
   /* First remove the root key */
   
-cf_strncpy(root_key,key,CF_MAXVARSIZE-1);
+strncpy(root_key,key,CF_MAXVARSIZE-1);
 sp = strchr(root_key,'\\');
-cf_strncpy(sub_key,sp+1,CF_MAXVARSIZE-1);
+strncpy(sub_key,sp+1,CF_MAXVARSIZE-1);
 *sp = '\0';
 
 ms_key = Str2HKey(root_key);
@@ -802,7 +802,7 @@ else
    {
    CfOut(cf_inform,""," !! New registry key \"%s\" ",key);
 
-   if (a.database.operation && (cf_strcmp(a.database.operation,"cache") == 0))
+   if (a.database.operation && (strcmp(a.database.operation,"cache") == 0))
       {
       WriteDB(dbp,key,"",1);
       }
@@ -839,7 +839,7 @@ if (Nova_ReadCmpPseudoRegistry(dbp,dbkey,data,size,&cmp_ok))
       }
    else
       {
-      if (a.database.operation && (cf_strcmp(a.database.operation,"cache") == 0))
+      if (a.database.operation && (strcmp(a.database.operation,"cache") == 0))
          {
          WriteDB(dbp,dbkey,data,size);
          }
@@ -849,7 +849,7 @@ if (Nova_ReadCmpPseudoRegistry(dbp,dbkey,data,size,&cmp_ok))
    }
 else
    {
-   if (a.database.operation && (cf_strcmp(a.database.operation,"cache") == 0))
+   if (a.database.operation && (strcmp(a.database.operation,"cache") == 0))
       {
       cfPS(cf_error,CF_CHG,"",pp,a," !! New registry value \"%s\" found in key \"%s\"",value,key);
       WriteDB(dbp,dbkey,data,size);
