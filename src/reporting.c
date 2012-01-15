@@ -141,6 +141,9 @@ ReportInfo BASIC_REPORTS[] =
    {"business-value","Accounting","Business value","Business value report","Accumulated value of promises kept"},
    {"benchmarks","Accounting","Benchmarks","Performance","Execution time used to verify selected promises"},
    {"compliance-summary","Accounting","Compliance summary","Compliance summary","Total summary of host compliance"},
+#ifdef HAVE_CONSTELLATION
+   {"virtual-bundles","Constellation","Virtual bundles","Virtual bundles","Custom collections of promises and their compliance"},
+#endif
    {NULL,NULL,NULL,NULL,NULL}
    };
 

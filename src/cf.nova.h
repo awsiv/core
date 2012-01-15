@@ -262,7 +262,7 @@ typedef struct
    } ReportInfo;
 
 extern ReportInfo BASIC_REPORTS[];
-extern ReportInfo CONSTELLATION_REPORTS[];
+//extern ReportInfo CONSTELLATION_REPORTS[];
 
 /*****************************************************************************/
 /* Report DB API Structs                                                     */

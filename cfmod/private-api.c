@@ -2383,9 +2383,17 @@ PHP_FUNCTION(cfpr_select_reports)
 
 { const int bufsize = 1000000;
   char buffer[bufsize];
+  char *report_id;
+  int r_len;
 
-// buffer[0] = '\0';
-Nova2PHP_select_reports(buffer,bufsize);
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &report_id, &r_len) == FAILURE)
+  {
+  php_printf("Error in cfpr_select_reports args");
+  RETURN_NULL();
+  }
+
+buffer[0] = '\0';
+Nova2PHP_select_reports(report_id, buffer, bufsize);
 RETURN_STRING(buffer,1);
 }
 

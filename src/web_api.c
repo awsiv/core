@@ -44,8 +44,7 @@ static const char *ERRID_DESCRIPTION[] =
    };
 
 /*****************************************************************************/
-
-static char *FormatReportInfoAsJson(char *buf, int bufsize, ReportInfo *reports);
+static cfapi_errid FormatReportInfoAsJson(char *reportId, ReportInfo *reports, char *buf, int bufsize);
 
 #ifdef HAVE_LIBMONGOC
 
@@ -873,11 +872,12 @@ return true;
 
 int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,PageInfo *page,char *returnval,int bufsize)
 
-{ char buffer[CF_BUFSIZE], jsonEscapedStr[CF_BUFSIZE]={0};
+{ char buffer[CF_BUFSIZE] = {0}, jsonEscapedStr[CF_BUFSIZE] = {0}, header[CF_BUFSIZE] = {0};
  HubPromiseLog *hp;  HubQuery *hq;
  Rlist *rp;
  int reportType;
  mongo_connection dbconn;
+ bool truncated = false;
   
  if (!CFDB_Open(&dbconn))
     {
@@ -887,12 +887,13 @@ int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time
  hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,from,to,true,classreg);
  PageRecords(&(hq->records),page,DeleteHubPromiseLog);
  
- snprintf(buffer,sizeof(buffer), 
-	  "{\"meta\":{\"count\" : %d,"
+ snprintf(header,sizeof(header), 
+	  "\"meta\":{\"count\" : %d,"
 	  "\"header\":{\"Host\":0,\"Promise Handle\":1,\"Report\":2,\"Time\":3,"
-	  "\"Note\":{\"index\":4,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
-	  "}},\"data\":[", page->totalResultCount);
- StartJoin(returnval,buffer,bufsize);
+	  "\"Note\":{\"index\":4,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}}",
+	  page->totalResultCount);
+
+StartJoin(returnval,"{\"data\":[",bufsize);
 
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
@@ -928,14 +929,19 @@ int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time
        }
     if(!Join(returnval,buffer,bufsize))
        {
+       truncated = true;
        break;
        }
     }
- if(returnval[strlen(returnval)-1]==',')
-    {
-    returnval[strlen(returnval)-1]='\0';
-    }
- EndJoin(returnval,"]}",bufsize);
+
+ ReplaceTrailingChar(returnval, ',','\0');
+ EndJoin(returnval,"]",bufsize);
+
+ Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
+ 
+ Join(returnval,buffer,bufsize);
+ EndJoin(returnval,"}}\n",bufsize);
+
  DeleteHubQuery(hq,DeleteHubPromiseLog);
 
  if (!CFDB_Close(&dbconn))
@@ -950,13 +956,14 @@ int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time
 
 int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,time_t from, time_t to,char *classreg,PageInfo *page,char *returnval,int bufsize)
 
-{ char buffer[CF_BUFSIZE],jsonEscapedStr[CF_BUFSIZE]={0};
+{ char buffer[CF_BUFSIZE],jsonEscapedStr[CF_BUFSIZE]={0}, header[CF_BUFSIZE]={0};
  HubPromiseLog *hp;
  HubQuery *hq;
  Rlist *rp;
  mongo_connection dbconn;
  Item *ip,*summary = NULL;
  int startIndex = 0, endIndex=0, i = 0;
+ bool truncated = false;
 
 /* BEGIN query document */
 
@@ -988,12 +995,12 @@ int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep t
  else
     {     
     summary = SortItemListCounters(summary);
-    snprintf(buffer,sizeof(buffer),
-             "{\"meta\":{\"count\" : %d,"
-             "\"header\":{\"Promise Handle\":0,\"Report\":1,\"Occurrences\":2"
-             "}},\"data\":[",ListLen(summary));
-     
-    StartJoin(returnval,buffer,bufsize);
+    snprintf(header,sizeof(header),
+             "\"meta\":{\"count\" : %d,"
+             "\"header\":{\"Promise Handle\":0,\"Report\":1,\"Occurrences\":2}",
+	     ListLen(summary));
+    
+    StartJoin(returnval,"{data:[",bufsize);
    
     for (ip = summary; ip != NULL; ip=ip->next, i++)
        {
@@ -1005,14 +1012,19 @@ int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep t
        
           if(!Join(returnval,buffer,bufsize))
              {
+             truncated = true;
              break;
              }
           }
        }
 
     ReplaceTrailingChar(returnval, ',', '\0');
+    EndJoin(returnval,"]",bufsize);
 
-    EndJoin(returnval,"]}\n",bufsize);
+    Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
+
+    Join(returnval,buffer,bufsize);
+    EndJoin(returnval,"}}\n",bufsize);
     DeleteItemList(summary);
     }
 
@@ -4053,57 +4065,43 @@ return Nova_GetReportedScalar(hostkey,scope,lval,returnval,bufsize);
 /*****************************************************************************/
 /* Reports                                                                   */
 /*****************************************************************************/
-ReportInfo CONSTELLATION_REPORTS[] =
-{
-    {"virtual-bundles","Constellation","Virtual bundles","Virtual bundles","Custom collections of promises and their compliance"},
-    {NULL,NULL}
-};
 
-/*****************************************************************************/
-
-void Nova2PHP_select_reports(char *buffer,int bufsize)
+void Nova2PHP_select_reports(char *reportId, char *buffer, int bufsize)
 
 { char novaListJson[CF_BUFSIZE]={0};
-#ifdef HAVE_CONSTELLATION
-  char constellationListJson[CF_BUFSIZE]={0};
-#endif
+  char errbuf[CF_MAXVARSIZE] = {0};
+  cfapi_errid errid;
 
 novaListJson[0] ='\0';
 
-FormatReportInfoAsJson(novaListJson,sizeof(novaListJson),BASIC_REPORTS);
-snprintf(buffer,bufsize,"[%s]",novaListJson);
-
-#ifdef HAVE_CONSTELLATION
-char errBuf[CF_MAXVARSIZE] = {0};  // TODO: ignored for now (needs to be handled by GUI)
-
-if(Con2PHP_CheckLicenseAndFormatError(errBuf, sizeof(errBuf)))
-   {
-   FormatReportInfoAsJson(constellationListJson,sizeof(constellationListJson),CONSTELLATION_REPORTS);
-   snprintf(buffer,bufsize,"[%s,%s]",novaListJson,constellationListJson);
-   }
-#endif
+errid = FormatReportInfoAsJson(reportId, BASIC_REPORTS, novaListJson,sizeof(novaListJson));
+snprintf(buffer,bufsize,"{\"meta\":{},\"data\":[%s],%s}",novaListJson, FormatErrorJsonAttribute(errbuf, sizeof(errbuf), errid));
 }
 
 /*****************************************************************************/
 
-static char *FormatReportInfoAsJson(char *buf, int bufsize, ReportInfo *reports)
+static cfapi_errid FormatReportInfoAsJson(char *reportId, ReportInfo *reports, char *buf, int bufsize)
 { char work[CF_MAXVARSIZE] = {0};
   int i;
+  cfapi_errid errid = ERRID_ITEM_NONEXISTING;
 
 for (i = 0; reports[i].id != NULL; i++)
    {
-   snprintf(work, sizeof(work), "{\"id\":\"%s\",\"category\":\"%s\",\"name\":\"%s\",\"old-name\":\"%s\",\"description\":\"%s\"},",
-            reports[i].id ,reports[i].category,reports[i].name,reports[i].name_old,reports[i].description);
-   Join(buf,work,bufsize);
+   if(EMPTY(reportId) || strcmp(reportId,reports[i].id) == 0)
+     {
+     snprintf(work, sizeof(work), "{\"id\":\"%s\",\"category\":\"%s\",\"name\":\"%s\",\"old-name\":\"%s\",\"description\":\"%s\"},",
+	      reports[i].id ,reports[i].category,reports[i].name,reports[i].name_old,reports[i].description);
+     Join(buf,work,bufsize);
+     errid = ERRID_SUCCESS;
+     }
    }
 
 ReplaceTrailingChar(buf, ',', '\0');
 
-return buf;
+return errid;
 }
 
 /*****************************************************************************/
-
 
 int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
 
