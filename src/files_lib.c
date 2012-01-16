@@ -8,7 +8,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-int ReadFile(const char *filename, char *buffer, size_t bufsize)
+int FileRead(const char *filename, char *buffer, size_t bufsize)
 {
 FILE *f = fopen(filename, "rb");
 if (f == NULL)

@@ -949,7 +949,7 @@ int Nova_DeleteVirtNetwork(virConnectPtr vc,char **networks,Attributes a,Promise
 
 /* files_lib.c */
 
-int ReadFile(const char *filename, char *buffer, size_t bufsize);
+int FileRead(const char *filename, char *buffer, size_t bufsize);
 
 /* histogram.c */
 

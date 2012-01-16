@@ -406,7 +406,7 @@ if (a.env.specfile)
    if (IsAbsPath(a.env.specfile))
       {
       char buf[CF_BUFSIZE];
-      if (ReadFile(a.env.specfile, buf, CF_BUFSIZE) < 0)
+      if (FileRead(a.env.specfile, buf, CF_BUFSIZE) < 0)
          {
          cfPS(cf_verbose,CF_FAIL,"",pp,a," !! Unable to read environment specfile \"%s\"\n",a.env.specfile);
          return false;
@@ -848,7 +848,7 @@ if (a.env.specfile)
    {
    char buf[CF_BUFSIZE];
 
-   if (ReadFile(a.env.specfile, buf, CF_BUFSIZE) < 0)
+   if (FileRead(a.env.specfile, buf, CF_BUFSIZE) < 0)
       {
       cfPS(cf_verbose,CF_FAIL,"",pp,a," !! Unable to read environment specfile \"%s\"\n",a.env.specfile);
       return false;

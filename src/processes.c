@@ -236,7 +236,7 @@ int Nova_FileIsBinary(char *name,int size,int maxsize)
   int hasbinary = false, hasnewline = 1;
 
 file_buffer = xmalloc(maxsize);
-if (ReadFile(name, file_buffer, maxsize) < 0)
+if (FileRead(name, file_buffer, maxsize) < 0)
    {
    free(file_buffer);
    return false;
