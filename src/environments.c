@@ -120,7 +120,7 @@ switch (Str2Hypervisors(a.env.type))
    case cfv_virt_test_net:
           if (a.env.cpus != CF_NOINT || a.env.memory  != CF_NOINT || a.env.disk  != CF_NOINT || a.env.name || a.env.addresses)
              {
-             CfOut(cf_error,""," !! Network environment promises computational resources (%d,%d,%d,%d,%d)",a.env.cpus,a.env.memory,a.env.disk,a.env.name,a.env.addresses);
+             CfOut(cf_error,""," !! Network environment promises computational resources (%d,%d,%d,%s)",a.env.cpus,a.env.memory,a.env.disk,a.env.name);
              PromiseRef(cf_error,pp);
              }
        break;
@@ -400,7 +400,7 @@ for (i = 0; CF_SUSPENDED[i] != NULL; i++)
    {
    if (strcmp(CF_SUSPENDED[i],pp->promiser) == 0)
       {
-      CfOut(cf_inform,""," -> Found an existing, but suspended, environment id = %d, called \"%s\"\n",CF_SUSPENDED[i],CF_SUSPENDED[i]);
+      CfOut(cf_inform,""," -> Found an existing, but suspended, environment id = %s, called \"%s\"\n",CF_SUSPENDED[i],CF_SUSPENDED[i]);
       }
    }
 
@@ -472,12 +472,12 @@ if (dom = virDomainCreateXML(vc,xml_file,0))
             }
          else
             {
-            CfOut(cf_inform,""," -> Setting the memory limit to %ld",a.env.memory);
+            CfOut(cf_inform, "", " -> Setting the memory limit to %d", a.env.memory);
             }
          
          if (virDomainSetMemory(dom,(unsigned long)a.env.memory) == -1)
             {
-            CfOut(cf_inform,""," !!! Unable to set the current memory to %ld",a.env.memory);
+            CfOut(cf_inform, "", " !!! Unable to set the current memory to %d", a.env.memory);
             }
          }
       }
@@ -636,16 +636,16 @@ if (dom)
       {
       if (virDomainSetMaxMemory(dom,(unsigned long)a.env.memory) == -1)
          {
-         CfOut(cf_inform,""," !!! Unable to set the memory limit to %d",a.env.memory);
+         CfOut(cf_inform, "", " !!! Unable to set the memory limit to %d", a.env.memory);
          }
       else
          {
-         CfOut(cf_inform,""," -> Setting the memory limit to %ld",a.env.memory);
+         CfOut(cf_inform, "", " -> Setting the memory limit to %d", a.env.memory);
          }
 
       if (virDomainSetMemory(dom,(unsigned long)a.env.memory) == -1)
          {
-         CfOut(cf_inform,""," !!! Unable to set the current memory to %ld",a.env.memory);
+         CfOut(cf_inform, "", " !!! Unable to set the current memory to %d", a.env.memory);
          }
       }
    
