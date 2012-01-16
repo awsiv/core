@@ -2805,7 +2805,9 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,ch
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash, PromiseLogState state,char *lhandle, int regex, time_t from, time_t to, int sort,char *classRegex)
+HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, PromiseLogState state,
+                               const char *lhandle, int regex, time_t from, time_t to, int sort,
+                               const char *classRegex)
 {
  char classRegexAnch[CF_MAXVARSIZE];
  char rhandle[CF_MAXVARSIZE],rcause[CF_BUFSIZE];
