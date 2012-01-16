@@ -1555,7 +1555,7 @@ PHP_FUNCTION(cfpr_report_notkept)
  to = DeltaHrsConvert(hours_deltafrom);
 
  buffer[0]='\0';
- Nova2PHP_promiselog(fhostkey,fhandle,plog_notkept,from,to,fclassreg,&page,buffer,bufsize);
+ Nova2PHP_promiselog(fhostkey,fhandle, CF_PROMISE_LOG_STATE_NOTKEPT,from,to,fclassreg,&page,buffer,bufsize);
 
  RETURN_STRING(buffer,1);
 }
@@ -1591,7 +1591,7 @@ PHP_FUNCTION(cfpr_report_repaired)
  to = DeltaHrsConvert(hours_deltafrom);
 
  buffer[0]='\0';
- Nova2PHP_promiselog(fhostkey,fhandle,plog_repaired,from,to,fclassreg,&page,buffer,bufsize);
+ Nova2PHP_promiselog(fhostkey,fhandle,CF_PROMISE_LOG_STATE_REPAIRED,from,to,fclassreg,&page,buffer,bufsize);
  RETURN_STRING(buffer,1);
 }
 
@@ -1618,7 +1618,7 @@ PHP_FUNCTION(cfpr_summarize_notkept)
  fclassreg =  (cr_len == 0) ? NULL : classreg;
 
  buffer[0]='\0';
- Nova2PHP_promiselog_summary(fhostkey,fhandle,plog_notkept,from,to,fclassreg,&page,buffer,bufsize);
+ Nova2PHP_promiselog_summary(fhostkey,fhandle,CF_PROMISE_LOG_STATE_NOTKEPT,from,to,fclassreg,&page,buffer,bufsize);
  RETURN_STRING(buffer,1);
 }
 
@@ -1647,7 +1647,7 @@ PHP_FUNCTION(cfpr_summarize_repaired)
  fclassreg =  (cr_len == 0) ? NULL : classreg;
 
  buffer[0]='\0';
- Nova2PHP_promiselog_summary(fhostkey,fhandle,plog_repaired,from,to,fclassreg,&page,buffer,bufsize);
+ Nova2PHP_promiselog_summary(fhostkey,fhandle,CF_PROMISE_LOG_STATE_REPAIRED,from,to,fclassreg,&page,buffer,bufsize);
  RETURN_STRING(buffer,1);
 }
 
@@ -1825,7 +1825,7 @@ PHP_FUNCTION(cfpr_hosts_with_repaired)
  to = DeltaHrsConvert(hours_deltafrom);
 
  buffer[0] = '\0';
- Nova2PHP_promiselog_hosts(hostkey,handle,plog_repaired,from,to,classreg,buffer,bufsize);
+ Nova2PHP_promiselog_hosts(hostkey,handle,CF_PROMISE_LOG_STATE_REPAIRED,from,to,classreg,buffer,bufsize);
 
  RETURN_STRING(buffer,1);
 }
@@ -1856,7 +1856,7 @@ PHP_FUNCTION(cfpr_hosts_with_notkept)
  to = DeltaHrsConvert(hours_deltafrom);
 
  buffer[0] = '\0';
- Nova2PHP_promiselog_hosts(hostkey,handle,plog_notkept,from,to,classreg,buffer,bufsize);
+ Nova2PHP_promiselog_hosts(hostkey,handle,CF_PROMISE_LOG_STATE_NOTKEPT,from,to,classreg,buffer,bufsize);
 
  RETURN_STRING(buffer,1);
 }

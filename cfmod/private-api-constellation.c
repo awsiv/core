@@ -2,9 +2,9 @@
 
 #ifdef HAVE_CONSTELLATION
 
-static char *cfcon_aggr_promiselog(int argc, enum promiselog_rep log_type);
-static char *cfcon_count_promiselog(int argc, enum promiselog_rep log_type);
-static char *cfcon_reasons_promiselog(int argc, enum promiselog_rep log_type);
+static char *cfcon_aggr_promiselog(int argc, PromiseLogState state);
+static char *cfcon_count_promiselog(int argc, PromiseLogState state);
+static char *cfcon_reasons_promiselog(int argc, PromiseLogState state);
 
 /******************************************************************************/
 
@@ -173,7 +173,7 @@ PHP_FUNCTION(cfcon_aggr_repaired)
 {
  char *buffer;
 
- buffer = cfcon_aggr_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,plog_repaired);
+ buffer = cfcon_aggr_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,CF_PROMISE_LOG_STATE_REPAIRED);
 
  if(!buffer)
     {
@@ -192,7 +192,7 @@ PHP_FUNCTION(cfcon_aggr_notkept)
 {
  char *buffer;
 
- buffer = cfcon_aggr_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,plog_notkept);
+ buffer = cfcon_aggr_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,CF_PROMISE_LOG_STATE_NOTKEPT);
 
  if(!buffer)
     {
@@ -206,7 +206,7 @@ PHP_FUNCTION(cfcon_aggr_notkept)
 
 /******************************************************************************/
 
-static char *cfcon_aggr_promiselog(int argc, enum promiselog_rep log_type)
+static char *cfcon_aggr_promiselog(int argc, PromiseLogState state)
 /**
  * Helper for repaired and notkept logs.
  **/
@@ -232,7 +232,7 @@ static char *cfcon_aggr_promiselog(int argc, enum promiselog_rep log_type)
  fPromiseHandle = (ph_len == 0) ? NULL : promiseHandle;
 
  buffer[0]='\0';
- Con2PHP_aggr_promiselog(fhubKeyHash,fPromiseHandle,log_type,&page,buffer,sizeof(buffer));
+ Con2PHP_aggr_promiselog(fhubKeyHash,fPromiseHandle,state,&page,buffer,sizeof(buffer));
 
  return buffer;
 }
@@ -244,7 +244,7 @@ PHP_FUNCTION(cfcon_count_repaired)
 {
  char *buffer;
 
- buffer = cfcon_count_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,plog_repaired);
+ buffer = cfcon_count_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,CF_PROMISE_LOG_STATE_REPAIRED);
 
  if(!buffer)
     {
@@ -263,7 +263,7 @@ PHP_FUNCTION(cfcon_count_notkept)
 {
  char *buffer;
 
- buffer = cfcon_count_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,plog_notkept);
+ buffer = cfcon_count_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,CF_PROMISE_LOG_STATE_NOTKEPT);
 
  if(!buffer)
     {
@@ -277,7 +277,7 @@ PHP_FUNCTION(cfcon_count_notkept)
 
 /******************************************************************************/
 
-static char *cfcon_count_promiselog(int argc, enum promiselog_rep log_type)
+static char *cfcon_count_promiselog(int argc, PromiseLogState state)
 /**
  * Helper for repaired and notkept logs.
  **/
@@ -298,7 +298,7 @@ static char *cfcon_count_promiselog(int argc, enum promiselog_rep log_type)
  fhubKeyHash = (hkh_len == 0) ? NULL : hubKeyHash;
 
  buffer[0]='\0';
- Con2PHP_count_promiselog(fhubKeyHash,fpromiseHandle,log_type,buffer,sizeof(buffer));
+ Con2PHP_count_promiselog(fhubKeyHash,fpromiseHandle,state,buffer,sizeof(buffer));
 
  return buffer;
 }
@@ -310,7 +310,7 @@ PHP_FUNCTION(cfcon_reasons_repaired)
 {
  char *buffer;
 
- buffer = cfcon_reasons_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,plog_repaired);
+ buffer = cfcon_reasons_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,CF_PROMISE_LOG_STATE_REPAIRED);
 
  if(!buffer)
     {
@@ -329,7 +329,7 @@ PHP_FUNCTION(cfcon_reasons_notkept)
 {
  char *buffer;
 
- buffer = cfcon_reasons_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,plog_notkept);
+ buffer = cfcon_reasons_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,CF_PROMISE_LOG_STATE_NOTKEPT);
 
  if(!buffer)
     {
@@ -343,7 +343,7 @@ PHP_FUNCTION(cfcon_reasons_notkept)
 
 /******************************************************************************/
 
-static char *cfcon_reasons_promiselog(int argc, enum promiselog_rep log_type)
+static char *cfcon_reasons_promiselog(int argc, PromiseLogState state)
 /**
  * Helper for repaired and notkept logs.
  **/
@@ -363,7 +363,7 @@ static char *cfcon_reasons_promiselog(int argc, enum promiselog_rep log_type)
  fhubKeyHash = (hkh_len == 0) ? NULL : hubKeyHash;
 
  buffer[0]='\0';
- Con2PHP_reasons_promiselog(fhubKeyHash,fpromiseHandle,log_type,buffer,sizeof(buffer));
+ Con2PHP_reasons_promiselog(fhubKeyHash,fpromiseHandle,state,buffer,sizeof(buffer));
 
  return buffer;
 }

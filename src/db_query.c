@@ -2805,7 +2805,7 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,ch
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum promiselog_rep type,char *lhandle, int regex, time_t from, time_t to, int sort,char *classRegex)
+HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash, PromiseLogState state,char *lhandle, int regex, time_t from, time_t to, int sort,char *classRegex)
 {
  char classRegexAnch[CF_MAXVARSIZE];
  char rhandle[CF_MAXVARSIZE],rcause[CF_BUFSIZE];
@@ -2904,12 +2904,12 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum promise
  bson_append_int(&bb,cfn_nid,1);
  bson_from_buffer(&field,&bb);
 
- switch (type)
+ switch (state)
     {
-    case plog_repaired:
+    case CF_PROMISE_LOG_STATE_REPAIRED:
         collName = MONGO_LOGS_REPAIRED;
         break;
-    case plog_notkept:
+    case CF_PROMISE_LOG_STATE_NOTKEPT:
     default:
         collName = MONGO_LOGS_NOTKEPT;
         break;

@@ -13,7 +13,7 @@ HubQuery *CFDB_QueryHosts(mongo_connection *conn, char *db, char *dbkey,bson *qu
 HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, char *ipRegex, char *classRegex);
 HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, char *classRegex);
 HubQuery *CFDB_QueryValueGraph(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, char *classRegex);
-HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash,enum promiselog_rep type,char *lhandle, int regex, time_t from, time_t to,int sort,char *classRegex);
+HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn,char *keyHash, PromiseLogState state,char *lhandle, int regex, time_t from, time_t to,int sort,char *classRegex);
 HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,char *lname,char *lver,char *larch,int regex, char *classRegex, int sort);
 HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
 HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes);

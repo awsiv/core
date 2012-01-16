@@ -870,7 +870,7 @@ return true;
 /* Search for answers                                                        */
 /*****************************************************************************/
 
-int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,PageInfo *page,char *returnval,int bufsize)
+int Nova2PHP_promiselog(char *hostkey,char *handle, PromiseLogState state,time_t from,time_t to,char *classreg,PageInfo *page,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE] = {0}, jsonEscapedStr[CF_BUFSIZE] = {0}, header[CF_BUFSIZE] = {0};
  HubPromiseLog *hp;  HubQuery *hq;
@@ -884,7 +884,7 @@ int Nova2PHP_promiselog(char *hostkey,char *handle,enum promiselog_rep type,time
     return false;
     }
 
- hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,from,to,true,classreg);
+ hq = CFDB_QueryPromiseLog(&dbconn,hostkey,state,handle,true,from,to,true,classreg);
  PageRecords(&(hq->records),page,DeleteHubPromiseLog);
  
  snprintf(header,sizeof(header), 
@@ -901,12 +901,12 @@ StartJoin(returnval,"{\"data\":[",bufsize);
     EscapeJson(hp->cause,jsonEscapedStr,sizeof(jsonEscapedStr));
     if (strcmp(hp->nid,CF_NONOTE) == 0)
        {
-       switch (type)
+       switch (state)
 	  {
-	  case plog_repaired:
+          case CF_PROMISE_LOG_STATE_REPAIRED:
               reportType = CFREPORT_REPAIRED;
               break;
-	  case plog_notkept:
+          case CF_PROMISE_LOG_STATE_NOTKEPT:
 	  default:
               reportType = CFREPORT_NOTKEPT;
               break;
@@ -954,7 +954,7 @@ StartJoin(returnval,"{\"data\":[",bufsize);
 
 /*****************************************************************************/
 
-int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep type,time_t from, time_t to,char *classreg,PageInfo *page,char *returnval,int bufsize)
+int Nova2PHP_promiselog_summary(char *hostkey,char *handle, PromiseLogState state,time_t from, time_t to,char *classreg,PageInfo *page,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE],jsonEscapedStr[CF_BUFSIZE]={0}, header[CF_BUFSIZE]={0};
  HubPromiseLog *hp;
@@ -972,7 +972,7 @@ int Nova2PHP_promiselog_summary(char *hostkey,char *handle,enum promiselog_rep t
     return false;
     }
 
- hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,from,to,false,classreg);
+ hq = CFDB_QueryPromiseLog(&dbconn,hostkey,state,handle,true,from,to,false,classreg);
  
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
@@ -3010,7 +3010,7 @@ int Nova2PHP_filediffs_hosts(char *hostkey,char *file,char *diffs,int regex,time
 
 /*****************************************************************************/
 
-int Nova2PHP_promiselog_hosts(char *hostkey,char *handle,enum promiselog_rep type,time_t from,time_t to,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_promiselog_hosts(char *hostkey,char *handle, PromiseLogState state,time_t from,time_t to,char *classreg,char *returnval,int bufsize)
 {
  HubHost *hh;
  HubQuery *hq;
@@ -3024,7 +3024,7 @@ int Nova2PHP_promiselog_hosts(char *hostkey,char *handle,enum promiselog_rep typ
     return false;
     }
 
- hq = CFDB_QueryPromiseLog(&dbconn,hostkey,type,handle,true,from,to,false,classreg);
+ hq = CFDB_QueryPromiseLog(&dbconn,hostkey,state,handle,true,from,to,false,classreg);
 
  StartJoin(returnval,"[",bufsize);
 

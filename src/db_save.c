@@ -979,7 +979,7 @@ bson_destroy(&host_key);
 
 /*****************************************************************************/
 
-void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, enum promiselog_rep rep_type, Item *data)
+void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, PromiseLogState state, Item *data)
 {
   bson_buffer bb,record;
   bson host_key;  // host description
@@ -991,16 +991,16 @@ void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, enum promiselog_
   long then;
   time_t tthen;
     
-switch(rep_type)
+switch(state)
    {
-   case plog_repaired:
+   case CF_PROMISE_LOG_STATE_REPAIRED:
        collName = MONGO_LOGS_REPAIRED;
        break;
-   case plog_notkept:
+   case CF_PROMISE_LOG_STATE_NOTKEPT:
        collName = MONGO_LOGS_NOTKEPT;
        break;
    default:
-       CfOut(cf_error, "", "!! Unknown promise log report type (%d)", rep_type);
+       CfOut(cf_error, "", "!! Unknown promise log report type (%d)", state);
        return;
    }
 
