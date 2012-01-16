@@ -11,7 +11,6 @@ class ReportResource extends Resource
         $response = new Response($request);
 
         $response->code = Response::OK;
-        $response->addHeader('Content-type', 'application/json');
         
         $hostkey = Utils::queryParam('hostkey');
         $name = Utils::queryParam('name');
@@ -114,13 +113,9 @@ class ReportResource extends Resource
                 return $response;
             }
         }
-        catch (CFModExceptionArgs $ae)
+        catch (Exception $e)
         {
-            throw new ResponseException($ae->getMessage(), $ae->getCode());
-        }
-        catch (CFModExceptionDB $dbe)
-        {
-            throw new ResponseException($dbe->getMessage(), $dbe->getCode());
+            return Utils::InternalExceptionResponse($request, $e);
         }
     }
 }

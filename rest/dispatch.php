@@ -4,6 +4,7 @@ require_once 'lib/tonic.php';
 require_once 'lib/utils.php';
 
 // load resources
+require_once 'resource/promise.php';
 require_once 'resource/report.php';
 
 function addAuthenticateHeader($response)
@@ -19,13 +20,13 @@ try
     if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW']) ||
         !cfpr_user_authenticate($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']))
     {
-        throw new ResponseException(Response::UNAUTHORIZED);
+        //throw new ResponseException("Not authenticated", Response::UNAUTHORIZED);
     }
 
     $resource = $request->loadResource();
     $response = $resource->exec($request);
-    $response->output();
-    return;
+
+    $response->addHeader('Content-type', 'application/json');
 }
 catch (ResponseException $e) 
 {
@@ -43,7 +44,11 @@ catch (ResponseException $e)
     default:
         $response = $e->response($request);
     }
-
-    $response->output();
-    return;
 }
+catch (Exception $e)
+{
+    $response = Utils::InternalExceptionResponse($request, $e);
+}
+
+$response->output();
+return;

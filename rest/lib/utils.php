@@ -31,5 +31,13 @@ class Utils {
         }
         return (int)$var;
     }
+
+    public static function InternalExceptionResponse($request, $exception)
+    {
+        $response = new Response($request);
+        $response->body = $exception->getMessage();
+        $response->code = Response::INTERNALSERVERERROR;
+        return $response;
+    }
 }
 

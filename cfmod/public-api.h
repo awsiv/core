@@ -3,6 +3,9 @@
 
 #include "php_cfmod.h"
 
+PHP_FUNCTION(cfmod_resource_promise_log_repaired);
+PHP_FUNCTION(cfmod_resource_promise_log_notkept);
+
 PHP_FUNCTION(cfmod_resource_report_list);
 PHP_FUNCTION(cfmod_resource_report_bundle_profile);
 PHP_FUNCTION(cfmod_resource_report_software_installed);
