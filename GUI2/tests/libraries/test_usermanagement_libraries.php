@@ -55,5 +55,41 @@ class test_usermanagement_libraries extends CodeIgniterUnitTestCase {
         $this->dump($ret);
     }
 
+    //-------------  Roles --------------------------------
+    /*
+     * will run cfpr_role_create(name,desc,classRxInclude,classRxExclude,bundleRxInclude) in the end
+     */
+    public function test_cfpr_role_create() {
+        $data = array('name'             => "test_role_".date("d_M_Y_H_i_s").time(),
+                      'description'      => "Test role. Created at: ". date("d/M/Y H:i:s"),
+                      'include_classes'  => "classRxInclude",
+                      'exclude_classes'  => 'classRxExclude',
+                      'include_bundlers' => 'bundleRxInclude'
+        );
+        $ret = $this->_ci->ion_auth->create_role($data);
+
+        $this->assertTrue($ret, 'New role created. cfpr_role_create() returned 1');
+    }        
+    
+    /*
+     *  will run cfpr_role_delete(name)  in the end
+     */
+    public function test_cfpr_role_delete() {
+        $data = array('name'             => "test_role_".date("d_M_Y_H_i_s").time(),
+                      'description'      => "Test role. Created at: ". date("d/M/Y H:i:s"),
+                      'include_classes'  => "classRxInclude",
+                      'exclude_classes'  => 'classRxExclude',
+                      'include_bundlers' => 'bundleRxInclude'
+        );
+        $ret = $this->_ci->ion_auth->create_role($data);
+        
+        if ($ret === true)
+        {
+            $ret = $this->_ci->ion_auth->delete_role($data['name']);
+        }
+
+        $this->assertTrue($ret, 'Role  '. $data['name'] .' deleted. cfpr_role_delete() returned 1. Note this test depen on result from test_cfpr_role_create()');
+    }  
+    
 }
 ?>
