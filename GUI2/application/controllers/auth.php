@@ -599,6 +599,7 @@ class Auth extends Controller {
         if (!$this->ion_auth->logged_in()) {
             redirect('auth', 'refresh');
         }
+        
         $this->data['is_admin'] = $this->ion_auth->is_admin();
         if (!empty($op)) {
             $this->data['title'] = "Create role";
@@ -612,21 +613,22 @@ class Auth extends Controller {
             $this->form_validation->set_rules('description',      'Description',      'required|xss_clean|trim');
             $this->form_validation->set_rules('include_classes',  'Include classes',  'xss_clean|trim');
             $this->form_validation->set_rules('exclude_classes',  'Exclude classes',  'xss_clean|trim');
-            $this->form_validation->set_rules('exclude_classes', 'Include bundlers', 'xss_clean|trim');    
-            
-            
+            $this->form_validation->set_rules('include_bundlers', 'Include bundlers', 'xss_clean|trim');    
 
+            
             if ($this->form_validation->run() == true) {
-                $data = array('name'            => $this->input->post('name'),
-                              'description'     => $this->input->post('description'),
-                              'include_classes' => $this->input->post('include_classes'),
-                              'exclude_classes' => $this->input->post('exclude_classes'),
-                              'exclude_classes' => $this->input->post('exclude_classes')
-                             );
+                $data = array('name'             => $this->input->post('name'),
+                              'description'      => $this->input->post('description'),
+                              'include_classes'  => $this->input->post('include_classes'),
+                              'exclude_classes'  => $this->input->post('exclude_classes'),
+                              'include_bundlers' => $this->input->post('include_bundlers')
+                );
+                
                 if (($op == 'edit' && !$this->ion_auth->update_role($id, $data))) {
                     $this->__load_role_add_edit($op, $id);
                     return;
                 }
+        
                 if ($op == 'create' && $this->ion_auth->create_role($data) === FALSE) {
                     $this->__load_role_add_edit($op, $id);
                     return;
@@ -707,16 +709,23 @@ class Auth extends Controller {
             $this->data['is_admin'] = $this->ion_auth->is_admin();
             $this->load->view('auth/user_list', $this->data);
         } else {
+            
             $this->session->set_flashdata('message', $this->ion_auth->messages());
             redirect("auth", 'refresh');
         }
     }
 
-    function delete_role($id) {
-        $this->ion_auth->delete_role($id);
+    /**
+     * Delete role
+     * 
+     * @param type $name  - role name
+     */
+    
+    function delete_role($name) {
+        $this->ion_auth->delete_role($name);
         if (is_ajax ()) {
             $this->data['message'] = $this->ion_auth->errors()?$this->ion_auth->errors():$this->ion_auth->messages();
-            $this->data['roles'] = $this->ion_auth->get_roles();
+            $this->data['roles'] = $this->ion_auth->get_roles();           
             $this->data['is_admin'] = $this->ion_auth->is_admin();
             $this->load->view('auth/list_role', $this->data);
         } else {

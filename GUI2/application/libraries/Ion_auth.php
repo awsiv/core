@@ -818,10 +818,16 @@ class Ion_auth
 		return FALSE;
 	}
 
+        /**
+         *Delete role
+         * 
+         * @param type $name role name
+         * @return type bool
+         */
 
-        public function delete_role($id)
+        public function delete_role($name)
         {
-            if($this->ci->ion_auth_model_mongo->delete_role($id))
+            if($this->ci->ion_auth_model_mongo->delete_role($name))
             {
                 $this->set_message('role_delete_successful');
 	        return TRUE;
@@ -1018,7 +1024,7 @@ class Ion_auth
 		 return $this->ci->ion_auth_model_mongo->get_roles();
 	 }
 
-          public function get_roles_fromdb()
+         public function get_roles_fromdb()
 	 {
 		 return $this->ci->ion_auth_model_mongo->get_roles();
 	 }
@@ -1031,7 +1037,7 @@ class Ion_auth
 	 *@author sudhir
 	 **/
 	 
-	  public function get_role($id)
+	 public function get_role($id)
 	 {
 		 return $this->ci->ion_auth_model_mongo->get_role($id);
 	 }
@@ -1046,19 +1052,18 @@ class Ion_auth
 	 
 	 public function create_role($data)
 	 {
-		 $id=$this->ci->ion_auth_model_mongo->create_role($data);
-		 if ($id !== FALSE)
-			{
-				$this->set_message('role_creation_successful');
-				return $id;
-			}
-			else
-			{
-				$this->set_error('role_creation_unsuccessful');
-				return FALSE;
-			}
-	  
-
+            $id = $this->ci->ion_auth_model_mongo->create_role($data);
+            
+            if ($id !== FALSE)
+            {
+                $this->set_message('role_creation_successful');
+                return $id;
+            }
+            else
+            {
+                $this->set_error('role_creation_unsuccessful');
+                return FALSE;
+            }
 	 }
 	 /**
 	 *update_role
@@ -1070,30 +1075,11 @@ class Ion_auth
 	 
 	 public function update_role($id,$data)
 	  {
-/*	    if ($this->ci->ion_auth_model_mongo->update_role($id, $data))
+	    if ($this->ci->ion_auth_model_mongo->update_role($id, $data))
 		{
 			$this->set_message('role_update_successful');
 			return TRUE;
 		}
-*/
-             try {
-                    $rawdata = cfpr_role_create($data['name'], $data['description'], $data['include_classes'], $data['exclude_classes'], $data['include_bundles']);
-                    $data = $this->checkData($rawdata);
-
-                    print_r($data);
-                    die;
-                    
-                    if ($data) {
-                        return $rawdata;
-                    } else {
-                        return false;
-                    }
-                } catch (Exception $e) {
-                    log_message('error', $e->getMessage());
-                    throw $e;
-                }
-		$this->set_error('role_update_unsuccessful');
-		return FALSE;
 	  }
 
           public function set_mode($mode){

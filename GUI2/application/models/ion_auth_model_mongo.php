@@ -786,25 +786,24 @@ class Ion_auth_model_mongo extends CI_Model
 	 * @author Sudhir Pandey
 	 **/
 
-        public function delete_role($id)
+        public function delete_role($name)
         {
-            // return $this->mongo_db->where(array('_id'=>new MongoId($id)))->delete('roles');
-            $role=$this->mongo_db->get_where_object('roles',array('_id'=>new MongoId($id)));
-            $admin_role=$this->mongo_db->select(array('admin_role','fall_back_for'))->limit(1)->get_object('appsettings');
-            $not_deleteable_role=array($admin_role->admin_role,$admin_role->fall_back_for);
-            if (is_object($admin_role) && $admin_role->admin_role !==False){
-                if(!in_array($role->name, $not_deleteable_role)){
-                    return $this->mongo_db->where(array('_id'=>new MongoId($id)))->delete('roles');
-                 }
-                 $this->ion_auth->set_error('admin_role_deletion');
-              }else{
-                 /* if($role->name!='admin'){
-                       return $this->mongo_db->where(array('_id'=>new MongoId($id)))->delete('roles');
-                  }*/
-                  $this->ion_auth->set_error('no_admin_role');
-              }
-               
-		return FALSE;
+          try {
+                    // cfpr_role_create - return 1 if everything ok
+                    $ret = cfpr_role_delete($name);
+
+                    if ($ret === 1 ) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } catch (Exception $e) {
+                    log_message('error', $e->getMessage());
+                    throw $e;
+                }
+        
+		$this->set_error('role_delete_unsuccessful');
+		return FALSE; 
         }
 
 
@@ -932,7 +931,23 @@ class Ion_auth_model_mongo extends CI_Model
 
 	public function create_role($data)
 	{
-		return $this->mongo_db->insert('roles', $data);
+		//return $this->mongo_db->insert('roles', $data); 
+            try {
+                    // cfpr_role_create - return 1 if everything ok
+                    $ret = cfpr_role_create($data['name'], $data['description'], $data['include_classes'], $data['exclude_classes'], $data['include_bundlers']);
+
+                    if ($ret === 1 ) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } catch (Exception $e) {
+                    log_message('error', $e->getMessage());
+                    throw $e;
+                }
+        
+		$this->set_error('role_update_unsuccessful');
+		return FALSE; 
 	}
 
 
@@ -954,6 +969,7 @@ class Ion_auth_model_mongo extends CI_Model
 		return FALSE;
                 }
 	    }
+            
             $old_doc=$this->mongo_db->get_where_object('roles',array('_id'=>new MongoId($id)));
 	    $this->mongo_db->where(array('_id'=>new MongoId($id)));
             $result_role=$this->mongo_db->update('roles', $data);
