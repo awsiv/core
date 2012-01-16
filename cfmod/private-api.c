@@ -3518,6 +3518,7 @@ PHP_FUNCTION(cfpr_role_create)
      {
      zend_throw_exception(cfmod_exception_generic, (char *)GetErrorDescription(errid), 0 TSRMLS_CC);     
      }
+RETURN_LONG(true);
 }
 
 /******************************************************************************/
@@ -3545,6 +3546,7 @@ PHP_FUNCTION(cfpr_role_delete)
      {
      zend_throw_exception(cfmod_exception_generic, (char *)GetErrorDescription(errid), 0 TSRMLS_CC);
      }
+RETURN_LONG(true);
 }
 
 /******************************************************************************/
