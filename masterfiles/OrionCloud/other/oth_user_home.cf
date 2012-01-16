@@ -81,7 +81,16 @@ bundle agent oth_user_home(home)
  
    "accounts"   slist => { readstringlist("$(tmp_file)","#[^\n]*","[\n]","999","9999999999") },
               comment => "Create an account list from the tmp file",
-               handle => "oth_user_home_vars_accounts"; 
+               handle => "oth_user_home_vars_accounts",
+               policy => "free";
+
+#
+
+ classes:
+
+  "have_accounts" expression => isvariable("accounts"),
+                     comment => "Check if accounts variable exists",
+                      handle => "oth_user_home_classes_have_accounts";
 
 #
 
@@ -107,13 +116,14 @@ bundle agent oth_user_home(home)
 
  files:
 
-  linux::
+  linux.have_accounts::
 
    "/home/$(accounts)"
            comment => "Ensure right ownnership to system accounts' home directory",
             handle => "oth_user_home_files_home_accounts",
              perms => mog("644","$(accounts)","users"),
       depth_search => recurse_basedir("inf");
+
 }
 
 #######################################################
@@ -126,4 +136,3 @@ body depth_search recurse_basedir(d)
 depth => "$(d)";
 include_basedir  => "true";
 }
-

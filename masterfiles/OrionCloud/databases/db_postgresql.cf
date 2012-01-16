@@ -43,18 +43,18 @@
 #  In bundlesequence/methods, do like the following;
 #
 #   bundlesequence => {
-#                       db_postgresql("$(state)","$(type)"),
+#                       db_postgresql("$(type)","$(state)"),
 #                     };
 #
 # or
 #
 #  methods:
-#   "PostgreSQL" usebundle => db_postgresql("$(state)","$(type)");
+#   "PostgreSQL" usebundle => db_postgresql("$(type)","$(state)");
 #
+#    $(type)  = "client" -> to select only PostgreSQL client packages
+#    $(type)  = "server" -> to select both PostgreSQL client and server packages  
 #    $(state) = "on"     -> to install PostgreSQL database
 #    $(state) = "purge"  -> to uninstall PostgreSQL database
-#    $(type)  = "client" -> to install only PostgreSQL client packages
-#    $(type)  = "server" -> to install PostgreSQL both client and server packages  
 #    
 #
 # CHANGES:
@@ -66,7 +66,7 @@
 #
 #
 
-bundle agent db_postgresql(state,type)
+bundle agent db_postgresql(type,state)
 {
  vars:
 

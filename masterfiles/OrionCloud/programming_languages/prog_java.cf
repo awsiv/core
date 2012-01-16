@@ -29,7 +29,8 @@
 #  Redhat, CentOS, Debian, Ubuntu, SUSE
 #
 # DESCRIPTION:
-#  Install JRE packages
+#  Install JRE packages. It is required to modify the code if you'd like to
+# 
 #
 # REQUIREMENT:
 #  CFEngine version 3.x.x
@@ -42,18 +43,18 @@
 # USAGE:
 #  In bundlesequence/methods, do like the following;
 #
-#   bundlesequence => { prog_java("$(state)","$(type)") };
+#   bundlesequence => { prog_java("$(type)","$(state)") };
 #
 # or
 #
 #  methods:
-#   "JRE" usebundle => prog_java("$(state)","$(type)");
+#   "JRE" usebundle => prog_java("$(type)","$(state)");
 #
-#    $(state) = "on"      -> to install JRE
-#    $(state) = "purge"   -> to uninstall JRE
 #    $(type)  = "openjdk" -> to select JRE from openjdk
 #    $(type)  = "sun"     -> to select JRE from SUN/Oracle
 #    $(type)  = "oracle"  -> to select JRE from SUN/Oracle 
+#    $(state) = "on"      -> to install JRE
+#    $(state) = "purge"   -> to uninstall JRE
 #
 # CHANGES:
 #  
@@ -64,7 +65,7 @@
 #
 #
 
-bundle agent prog_java(state,type)
+bundle agent prog_java(type,state)
 {
  vars:
 

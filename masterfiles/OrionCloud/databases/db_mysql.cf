@@ -43,18 +43,18 @@
 #  In bundlesequence/methods, do like the following;
 #
 #   bundlesequence => {
-#                       db_mysql("$(state)","$(type)"),
+#                       db_mysql("$(type)","$(state)"),
 #                     };
 #
 # or
 #
 #  methods:
-#   "MySQL" usebundle => db_mysql("$(state)","$(type)");
+#   "MySQL" usebundle => db_mysql("$(type)","$(state)");
 #
+#    $(type)  = "client" -> to select only MySQL client packages
+#    $(type)  = "server" -> to select both MySQL client and server packages
 #    $(state) = "on"     -> to install MySQL database
 #    $(state) = "purge"  -> to uninstall MySQL database
-#    $(type)  = "client" -> to install only MySQL client packages
-#    $(type)  = "server" -> to install MySQL both client and server packages  
 #    
 #
 # CHANGES:
@@ -66,7 +66,7 @@
 #
 #
 
-bundle agent db_mysql(state,type)
+bundle agent db_mysql(type,state)
 {
  vars:
 

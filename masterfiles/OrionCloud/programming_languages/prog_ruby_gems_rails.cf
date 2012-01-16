@@ -46,19 +46,19 @@
 #
 #   bundlesequence => {
 #                       build_essential("on"), 
-#                       prog_ruby_gem_rails("$(state)","$(ruby)","$(gem)"),
+#                       prog_ruby_gem_rails("$(ruby)","$(gem)","$(state)"),
 #                     };
 #
 # or
 #
 #  methods:
 #   "C/C++"         usebundle => build_essential("on");
-#   "RUBY on RAILS" usebundle => prog_ruby_gem_rails("$(state)","$(ruby)","$(gem)");
+#   "RUBY on RAILS" usebundle => prog_ruby_gem_rails("$(ruby)","$(gem)","$(state)");
 #
-#    $(state) = "on"    -> to install RUBY on RAILS
-#    $(state) = "purge" -> to uninstall RUBY on RAILS
 #    $(ruby)  = any version of ruby. For instance, "ruby-1.8.7-p357"
 #    $(gem)   = any version of gem. For instance, "rubygems-1.8.12"
+#    $(state) = "on"    -> to install RUBY on RAILS
+#    $(state) = "purge" -> to uninstall RUBY on RAILS
 #    
 #
 # CHANGES:
@@ -70,7 +70,7 @@
 #
 #
 
-bundle agent prog_ruby_gem_rails(state,vruby,vgem)
+bundle agent prog_ruby_gem_rails(vruby,vgem,state)
 {
  vars:
 
