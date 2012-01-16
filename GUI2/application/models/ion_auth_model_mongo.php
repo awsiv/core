@@ -537,7 +537,7 @@ class Ion_auth_model_mongo extends CI_Model
 					$this->identity_column => $result->{$this->identity_column},
 					'id'                   => $result->_id, //kept for backwards compatibility
 					'user_id'              => $result->_id, //everyone likes to overwrite id so we'll use user_id
-					'role'                => $result->roles
+					'roles'                => $result->roles
 					 );
 
 		    $this->session->set_userdata($session_data);

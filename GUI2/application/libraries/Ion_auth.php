@@ -479,12 +479,12 @@ class Ion_auth
 	public function is_admin()
 	{
                  $admin_role=$this->ci->settings_model->app_settings_get_item('admin_role');
-                 
+        
                  if($admin_role===False){
                      $admin_role = $this->ci->config->item('admin_role', 'ion_auth');
                  }
-                 $user_role  = $this->ci->session->userdata('role');
-                 
+                 $user_role = $this->ci->session->userdata('roles');
+
                        if($user_role===False ||empty($user_role)){
                         return false;
                       }
@@ -1070,12 +1070,28 @@ class Ion_auth
 	 
 	 public function update_role($id,$data)
 	  {
-	    if ($this->ci->ion_auth_model_mongo->update_role($id, $data))
+/*	    if ($this->ci->ion_auth_model_mongo->update_role($id, $data))
 		{
 			$this->set_message('role_update_successful');
 			return TRUE;
 		}
+*/
+             try {
+                    $rawdata = cfpr_role_create($data['name'], $data['description'], $data['include_classes'], $data['exclude_classes'], $data['include_bundles']);
+                    $data = $this->checkData($rawdata);
 
+                    print_r($data);
+                    die;
+                    
+                    if ($data) {
+                        return $rawdata;
+                    } else {
+                        return false;
+                    }
+                } catch (Exception $e) {
+                    log_message('error', $e->getMessage());
+                    throw $e;
+                }
 		$this->set_error('role_update_unsuccessful');
 		return FALSE;
 	  }

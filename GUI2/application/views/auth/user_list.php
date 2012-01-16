@@ -5,7 +5,7 @@
 			<th>Users</th>
 			<th>Email</th>
                         
-			<th>roles</th>
+			<th>Roles</th>
                         <?php if($this->ion_auth->mode =="database"){?>
 			<th>Status</th>
                         <?php } ?>
@@ -16,13 +16,14 @@
                 $loggedinusername=isset($username)?$username:$this->session->userdata('username');
                 foreach ((array)$users as $user){ 
                     // can use $user['displayname']
-                        $username=isset($user['username'])?$user['username']:$user['name'];
+                        $username = isset($user['username']) ? $user['username'] : $user['name'];
                      ?>
 			<tr>
 				<td><?php echo $username ?></td>
-				<td><?php echo isset($user['email'])?$user['email']:"";?></td>
+				<td><?php echo isset($user['email'])?$user['email'] : "";?></td>
                      
                                 <td><?php if(isset($user['roles'])&&is_array($user['roles'])){
+//TODO: refactor this - implode?                                   
                                     $no_of_elements=count($user['roles']);
                                       foreach ($user['roles'] as $role) {
 

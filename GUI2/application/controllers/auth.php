@@ -31,8 +31,7 @@ class Auth extends Controller {
             //redirect them to the login page
             redirect('auth/login', 'refresh');
         }
-        else {
-           
+        else {           
             $this->data['title'] = $this->lang->line('mission_portal_title')." - Admin";
             $this->data['username'] = $this->session->userdata('username');
             //list the users
@@ -40,6 +39,7 @@ class Auth extends Controller {
             $this->data['userrole'] = $this->session->userdata('role');
             $this->data['is_admin'] = $this->ion_auth->is_admin();
             $this->data['message'] = (validation_errors()) ? '<p class="error">' . validation_errors() . '</p>' : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message'));
+
             $_data = array('event_loggedin' => true, 'ttlusr' => $this->onlineusers->total_users());
             //notifier( get_nodehost_from_server().'/userloggedin', $_data );
             if (is_ajax ()) {
@@ -48,8 +48,7 @@ class Auth extends Controller {
             } else {
                 // $this->template->load('template', 'auth/index',$this->data);
                 redirect($this->config->item('base_url'), 'refresh');
-            }
-           
+            }           
         }
     }
 
@@ -68,12 +67,13 @@ class Auth extends Controller {
         $this->data['title'] = $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_admin');
         $this->data['title_header'] = "Admin";
         $this->data['username'] = $this->session->userdata('username');
-        $this->data['message'] = (validation_errors()) ? '<p class="error">' . validation_errors() . '</p>' : $this->session->flashdata('message');
+        $this->data['message']  = (validation_errors()) ? '<p class="error">' . validation_errors() . '</p>' : $this->session->flashdata('message');
         //list the users
-        $this->data['users'] = $this->ion_auth->get_users_array();
+        $this->data['users'] = $this->ion_auth->get_users_array();         
         //$this->load->view('auth/index', $this->data);
         $this->data['breadcrumbs'] = $this->breadcrumblist->display();
-        $this->data['userrole'] = $this->session->userdata('role');
+        $this->data['userrole']    = $this->session->userdata('roles');
+
         $this->data['is_admin'] = $this->ion_auth->is_admin();
         if (is_ajax ()) {
             $this->load->view('auth/user_list', $this->data);
@@ -603,13 +603,26 @@ class Auth extends Controller {
         if (!empty($op)) {
             $this->data['title'] = "Create role";
             $this->data['operation'] = "Create";
+            
             if ($op != 'edit')
                 $this->form_validation->set_rules('name', 'Name', 'required|xss_clean|unique[roles.name]');
             else
                 $this->form_validation->set_rules('name', 'Name', 'required|xss_clean');
-            $this->form_validation->set_rules('description', 'Description', 'required|xss_clean');
+            
+            $this->form_validation->set_rules('description',      'Description',      'required|xss_clean|trim');
+            $this->form_validation->set_rules('include_classes',  'Include classes',  'xss_clean|trim');
+            $this->form_validation->set_rules('exclude_classes',  'Exclude classes',  'xss_clean|trim');
+            $this->form_validation->set_rules('exclude_classes', 'Include bundlers', 'xss_clean|trim');    
+            
+            
+
             if ($this->form_validation->run() == true) {
-                $data = array('name' => $this->input->post('name'), 'description' => $this->input->post('description'));
+                $data = array('name'            => $this->input->post('name'),
+                              'description'     => $this->input->post('description'),
+                              'include_classes' => $this->input->post('include_classes'),
+                              'exclude_classes' => $this->input->post('exclude_classes'),
+                              'exclude_classes' => $this->input->post('exclude_classes')
+                             );
                 if (($op == 'edit' && !$this->ion_auth->update_role($id, $data))) {
                     $this->__load_role_add_edit($op, $id);
                     return;
@@ -650,17 +663,37 @@ class Auth extends Controller {
             'cols' => '20',
             'value' => $this->form_validation->set_value('description'),
         );
+        $this->data['include_classes'] = array('name' => "include_classes",
+            'id' => 'include_classes',
+            'type' => 'text',
+            'value' => $this->form_validation->set_value('include_classes'),
+        );
+        
+        $this->data['exclude_classes'] = array('name' => "exclude_classes",
+            'id' => 'exclude_classes',
+            'type' => 'text',
+            'value' => $this->form_validation->set_value('exclude_classes'),
+        );        
+        
+        $this->data['include_bundlers'] = array('name' => "include_bundlers",
+            'id' => 'include_bundlers',
+            'type' => 'text',
+            'value' => $this->form_validation->set_value('include_bundlers'),
+        );          
         if ($op == 'edit') {
             if (empty($id)) {
                 show_error('cannot update - record not specified', 500);
                 return;
             }
             $role = $this->ion_auth->get_role($id);
-            $this->data['title'] = "Edit role";
-            $this->data['operation'] = "Update";
+            $this->data['title']          = "Edit role";
+            $this->data['operation']      = "Update";
             $this->data['name']['enable'] = 'enable';
-            $this->data['name']['value'] = $this->form_validation->set_value('name', $role->name);
-            $this->data['description']['value'] = $this->form_validation->set_value('description', property_exists($role, 'description') ? $role->description : "");
+            $this->data['name']['value']             = $this->form_validation->set_value('name', $role->name);
+            $this->data['description']['value']      = $this->form_validation->set_value('description',      property_exists($role, 'description')      ? $role->description      : "");
+            $this->data['inlude_classes']['value']   = $this->form_validation->set_value('inlude_classes',   property_exists($role, 'inlude_classes')   ? $role->inlude_classes   : "");
+            $this->data['exclude_classes']['value']  = $this->form_validation->set_value('exclude_classes',  property_exists($role, 'exclude_classes')  ? $role->exclude_classes  : "");
+            $this->data['include_bundlers']['value'] = $this->form_validation->set_value('include_bundlers', property_exists($role, 'include_bundlers') ? $role->include_bundlers : "");
         }
         $this->load->view('auth/add_edit_role', $this->data);
     }
