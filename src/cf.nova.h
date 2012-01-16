@@ -947,6 +947,9 @@ int Nova_CreateVirtNetwork(virConnectPtr vc,char **networks,Attributes a,Promise
 int Nova_DeleteVirtNetwork(virConnectPtr vc,char **networks,Attributes a,Promise *pp);
 #endif
 
+/* files_lib.c */
+
+int ReadFile(const char *filename, char *buffer, size_t bufsize);
 
 /* histogram.c */
 

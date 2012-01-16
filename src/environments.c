@@ -405,18 +405,20 @@ if (a.env.specfile)
    {
    if (IsAbsPath(a.env.specfile))
       {
-      if (virFileReadAll(a.env.specfile,CF_BUFSIZE,&xml_file) < 0)
+      char buf[CF_BUFSIZE];
+      if (ReadFile(a.env.specfile, buf, CF_BUFSIZE) < 0)
          {
          cfPS(cf_verbose,CF_FAIL,"",pp,a," !! Unable to read environment specfile \"%s\"\n",a.env.specfile);
          return false;
          }
+      xml_file = xstrdup(buf);
+      alloc_file = true;
       }
    else
       {
       xml_file = xstrdup(a.env.specfile);
+      alloc_file = true;
       }
-   
-   alloc_file = true;
    }
 else
    {
@@ -844,12 +846,14 @@ if (found)
 
 if (a.env.specfile)
    {
-   if (virFileReadAll(a.env.specfile,CF_BUFSIZE,&xml_file) < 0)
+   char buf[CF_BUFSIZE];
+
+   if (ReadFile(a.env.specfile, buf, CF_BUFSIZE) < 0)
       {
       cfPS(cf_verbose,CF_FAIL,"",pp,a," !! Unable to read environment specfile \"%s\"\n",a.env.specfile);
       return false;
       }
-   
+
    alloc_file = true;
    }
 else

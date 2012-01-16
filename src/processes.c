@@ -234,12 +234,12 @@ int Nova_FileIsBinary(char *name,int size,int maxsize)
 {
   char *file_buffer,*sp;
   int hasbinary = false, hasnewline = 1;
- 
-file_buffer = (char *)CfReadFile(name,maxsize);
 
-if (file_buffer == NULL)
+file_buffer = xmalloc(maxsize);
+if (ReadFile(name, file_buffer, maxsize) < 0)
    {
-   return true;
+   free(file_buffer);
+   return false;
    }
 
 for (sp = file_buffer; *sp != '\0' && sp < sp+maxsize; sp++)

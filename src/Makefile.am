@@ -68,6 +68,7 @@ libcfnova_la_SOURCES =						\
 	magnify.c						\
 	topicmap.c                                              \
 	install.c						\
+	files_lib.c                                             \
 	cmd_api.c						\
 	win_api.c						\
         win_disphelper.c                                        \
