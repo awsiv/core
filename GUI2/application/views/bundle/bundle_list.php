@@ -45,8 +45,8 @@
         $('<thead></thead>').append($('.tables tr:first').remove())
     );
      */
-    $('.tables table').tableFilter();
-    $('.tables table').tablesorter({widgets: ['zebra']});
+    //$('.tables table').tableFilter();
+    //$('.tables table').tablesorter({widgets: ['zebra']});
 	
     
 </script>

@@ -89,7 +89,7 @@ echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : "" ?></p>
                         <script type="text/javascript">
                             $(document).ready(function() {
                                 // $('.tables table').tableFilter();
-                                $('.tables table').tablesorter({widgets: ['zebra']});
+                                //$('.tables table').tablesorter({widgets: ['zebra']});
         
         
                                 $('#modifySearch').click(function(e) {

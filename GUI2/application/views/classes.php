@@ -40,7 +40,7 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function() {
-        $('.tables table').tablesorter({widgets: ['zebra']});
+        //$('.tables table').tablesorter({widgets: ['zebra']});
     });
  
 </script>
