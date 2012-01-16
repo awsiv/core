@@ -40,6 +40,7 @@ result = mongo_connect(conn,&connOpts);
  
  if (result != 0)
     {
+    mongo_destroy(conn);
     CfOut(cf_verbose, "mongo_connect", "!! Could not connect to mongo server (got %d)", result);
     return false;
     }
