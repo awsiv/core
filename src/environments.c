@@ -245,9 +245,7 @@ switch (VSYSTEMHARDCLASS)
 void Nova_VerifyVirtDomain(char *uri,enum cfhypervisors envtype,Attributes a,Promise *pp)
 
 { int num,i;
-  virDomainPtr dom;
-  const char *name;
- 
+
 /* set up the library error handler */
 virSetErrorFunc(NULL,(void *)Nova_EnvironmentErrorHandler);
 
@@ -304,9 +302,8 @@ switch(a.env.state)
 void Nova_VerifyVirtNetwork(char *uri,enum cfhypervisors envtype,Attributes a,Promise *pp)
 
 { int num,i;
-  const char *name;
   char *networks[CF_MAX_CONCURRENT_ENVIRONMENTS];
-  
+
 /* set up the library error handler */
 //virSetErrorFunc(NULL,Nova_EnvironmentErrorHandler);
 
@@ -884,7 +881,6 @@ return true;
 int Nova_DeleteVirtNetwork(virConnectPtr vc,char **networks,Attributes a,Promise *pp)
 
 { virNetworkPtr network;
-  char *xml_file;
   int ret = true;
   
 if ((network = virNetworkLookupByName(vc,pp->promiser)) == NULL)
@@ -950,8 +946,7 @@ for (i = 0; i < CF_MAX_CONCURRENT_ENVIRONMENTS; i++)
 void Nova_ShowDormant(virConnectPtr vc)
 
 { int i;
-  virDomainPtr dom;
- 
+
 for (i = 0; CF_SUSPENDED[i] != NULL; i++)
    {
    CfOut(cf_verbose,""," ---> Found a suspended, domain environment called \"%s\"\n",CF_SUSPENDED[i]);
@@ -963,8 +958,7 @@ for (i = 0; CF_SUSPENDED[i] != NULL; i++)
 void Nova_ShowNetworks(virConnectPtr vc,char **networks)
 
 { int i;
-  virDomainPtr dom;
- 
+
 for (i = 0; networks[i] != NULL; i++)
    {
    CfOut(cf_verbose,""," ---> Found a virt-network environment called \"%s\"\n",networks[i]);
