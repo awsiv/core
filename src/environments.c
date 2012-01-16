@@ -426,7 +426,7 @@ else
    xml_file = defaultxml;
    }
 
-if (dom = virDomainCreateXML(vc,xml_file,0))
+if ((dom = virDomainCreateXML(vc,xml_file,0)))
    {
    cfPS(cf_verbose,CF_CHG,"",pp,a," -> Created a virtual domain \"%s\"\n",pp->promiser);   
 
@@ -930,12 +930,12 @@ for (i = 0; i < CF_MAX_CONCURRENT_ENVIRONMENTS; i++)
    {
    if (CF_RUNNING[i] > 0)
       {
-      if (dom = virDomainLookupByID(vc,CF_RUNNING[i]))
+      if ((dom = virDomainLookupByID(vc,CF_RUNNING[i])))
          {
          CfOut(cf_verbose,""," -> Found a running virtual domain with id %d\n",CF_RUNNING[i]);
          }
       
-      if (name = virDomainGetName(dom))
+      if ((name = virDomainGetName(dom)))
          {
          CfOut(cf_verbose,""," ---> Found a running virtual domain called \"%s\"\n",name);
          }
