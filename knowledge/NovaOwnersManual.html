@@ -1085,18 +1085,41 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Mission-Portal-Rooms">Mission Portal R
 
 </pre>
 
-Host Status:
+<b>Host Status:</b>
      <ul>
-<li>The hosts are classified into red, yellow, green and blue according to the status of their compliance. A host is red if less than 80% of its promises are kept (&gt; 20% not compliant), yellow if 20% or more of its promises were repaired and host is now compliant (&gt; 20% repaired, now compliant), green if more than 80% of its promises are kept (&gt; 80% compliant), and blue if there is no contact between the hub and the client (host unreachable). Clicking a link produces a list of the hosts in that category. 
-<li>Worst available host rank: Display the weakest hosts (that have been in contact with the hub) over the last hour. 
+<li>The hosts are classified into red, yellow, green and blue according to the status of their compliance. A host is red if less than 80% of its promises are kept (&gt; 20% not compliant), yellow if 20% or more of its promises were repaired and host is now compliant (&gt; 20% repaired, now compliant), green if more than 80% of its promises are kept (&gt; 80% compliant), and blue if there is no contact between the hub and the client (host unreachable). Clicking a link produces a list of the hosts in that category:
+
+     <pre class="sp">
+     
+     </pre>
+     <div align="center"><img src="img-complianthosts.png" alt="Compliant hosts"></div>
+     <div align="center">Figure: Compliant hosts</div>
+     <pre class="sp">
+     
+     </pre>
+     
+The list presents the name of hosts and three action icons:
+          <ul>
+<li>Yellow warning triangle: View the promises not kept on this host
+<li>Pulse line: View vitals signs (statistics) on this host
+<li>Red X: Delete this host (host will be deleted from database, but may re-appear if CFEngine is still running on it; see footnote below).<a rel="footnote" href="#fn-4" name="fnd-4"><sup>4</sup></a>
+</ul>
+
+     <li>Worst available host rank: Display the weakest hosts (that have been in contact with the hub) over the last hour. 
 <li>Hub replication status: Display status of redundant monitoring hubs (if activated). 
 </ul>
 
-   <p>Promise compliance summary for reachable hosts:
+   <pre class="sp">
+
+</pre>
+<b>Promise compliance summary for reachable hosts:</b> <br>
 The row of bar meters shows the compliance (average percentage of promises kept, repaired or not kept) of all registered hosts over the past week, the past day and the past hour. It summarizes performance
 and anomalous behavior in a simple red (promises not kept), yellow (promises repaired), and green (promises kept) scale. The "Chng" bar relates to the amount of changes made to files monitored by a CFEngine policy in the last hour (change watch). It is green if no changes have been made. The level of yellow increases as changes occur (but it will never be red).  For the "Seen" bar, CFEngine monitors the average time between connections to the clients; a last seen promise is considered not kept if the hub has not been in touch with a host for said average time plus two standard deviations, repaired for said average time plus the interval between one and two standard deviations, and kept for said average time plus the interval between zero and one standard deviation. The "Anom" bar relates to anomalies and is generated from monitoring data (vitals) for the last week in the following fashion: all observations (over the whole week) that are more than two std deviations away from the average is counted as not kept. They are counted as repaired if the distance is between one and two standard deviations from the average. Otherwise, they are kept &amp; green.
 
-   <p>Finders:
+   <pre class="sp">
+
+</pre>
+<b>Finders:</b> <br>
 The Mission Engineering room comes with six finder functions (modules that make it simple and intuitive to browse and search for objects of a particular type, see section on Finders): host, class, promises, reports, summary reports, and CDP (Content Driven Policies) reports.
 
 <div class="node">
@@ -1334,7 +1357,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Finders">Finders</a>
 
 </pre>
 
-The result shows the number of hosts and their compliance when a single promise handle is specified, and an expectation value <a rel="footnote" href="#fn-4" name="fnd-4"><sup>4</sup></a> of the number of hosts that match a search criteria when a search string (regex) is specified. Click <code>New search</code> to change or refine the query.
+The result shows the number of hosts and their compliance when a single promise handle is specified, and an expectation value <a rel="footnote" href="#fn-5" name="fnd-5"><sup>5</sup></a> of the number of hosts that match a search criteria when a search string (regex) is specified. Click <code>New search</code> to change or refine the query.
 
    <pre class="sp">
 
@@ -1433,7 +1456,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Viewers">Viewers</a>
 
 </pre>
 
-Action buttons:
+<b>Action buttons:</b>
      <ul>
 <li>Reports: Tabular summary of the host's internal information, tailored to a particular topics
 <li>Notes: View and make comments about this host
@@ -1441,11 +1464,11 @@ Action buttons:
 <li>Problems: Overview of promises not kept by this host
 </ul>
 
-<p class="noindent">Monitored jobs:
+<p class="noindent"><b>Monitored jobs:</b>
 To be developed.
 
-<p class="noindent">Analysis: The bar meter shows the host-summary status of a number of key
-performance indicators.
+<p class="noindent"><b>Analysis:</b>
+The bar meter shows the host-summary status of a number of key performance indicators:
 
      <ul>
 <li>Week: The average level of promise-compliance over the whole past week. 
@@ -1456,6 +1479,9 @@ performance indicators.
 <li>Seen: The average level of connectivity compliance (to the hub) over the past week . 
 <li>Anom: Level of anomalous site-wide activity on the system. 
 </ul>
+
+<p class="noindent"><b>Host details (discovered):</b>
+Lists properties that CFEninge has discovered about the host (alias (name), operating system, release version of operating system, etc.). You can also delete this host by pressing the button on the right (host will be deleted from database, but may re-appear if CFEngine is still running on it; see footnote below).<a rel="footnote" href="#fn-6" name="fnd-6"><sup>6</sup></a>
 
 <div class="node">
 <a name="Bundle-viewer"></a>
@@ -1572,7 +1598,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Viewers">Viewers</a>
 
 <h4 class="subsection">5.3.6 Weakest hosts viewer</h4>
 
-<p>A link to the worst ranked hosts is located in the Mission Engineering room. This ranks all hosts that have reported to the hub <a rel="footnote" href="#fn-5" name="fnd-5"><sup>5</sup></a> according to their level of promises not kept during the last hour, with the worst host on top.
+<p>A link to the worst ranked hosts is located in the Mission Engineering room. This ranks all hosts that have reported to the hub <a rel="footnote" href="#fn-7" name="fnd-7"><sup>7</sup></a> according to their level of promises not kept during the last hour, with the worst host on top.
 
    <pre class="sp">
 
@@ -4401,9 +4427,13 @@ pageTracker._trackPageview();
 
    <p class="footnote"><small>[<a name="fn-3" href="#fnd-3">3</a>]</small> Blue hosts will not appear here</p>
 
-   <p class="footnote"><small>[<a name="fn-4" href="#fnd-4">4</a>]</small> Predicted mean based on a weighted average. The weights used in computing this mean correspond to the probabilities in case of a discrete random variable, or densities in case of a continuous random variable.</p>
+   <p class="footnote"><small>[<a name="fn-4" href="#fnd-4">4</a>]</small> You have to stop CFEngine on the concerned host before deleting it in the Mission Portal, else the host will contact the hub and re-appear in the database.</p>
 
-   <p class="footnote"><small>[<a name="fn-5" href="#fnd-5">5</a>]</small> Blue hosts will not appear</p>
+   <p class="footnote"><small>[<a name="fn-5" href="#fnd-5">5</a>]</small> Predicted mean based on a weighted average. The weights used in computing this mean correspond to the probabilities in case of a discrete random variable, or densities in case of a continuous random variable.</p>
+
+   <p class="footnote"><small>[<a name="fn-6" href="#fnd-6">6</a>]</small> You have to stop CFEngine on the concerned host before deleting it in the Mission Portal, else the host will contact the hub and re-appear in the database.</p>
+
+   <p class="footnote"><small>[<a name="fn-7" href="#fnd-7">7</a>]</small> Blue hosts will not appear</p>
 
    <hr></div>
 
