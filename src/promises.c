@@ -337,16 +337,16 @@ MapName(name);
 
 switch (state)
    {
-   case CF_PROMISE_STATE_KEPT:
-   case CF_PROMISE_STATE_ANY:
+   case PROMISE_STATE_KEPT:
+   case PROMISE_STATE_ANY:
        vstatus = 1.0;
        break;
 
-   case CF_PROMISE_STATE_REPAIRED:
+   case PROMISE_STATE_REPAIRED:
        vstatus = 0.5;
        break;
 
-   case CF_PROMISE_STATE_NOTKEPT:
+   case PROMISE_STATE_NOTKEPT:
        vstatus = 0;
        break;
    default:
@@ -390,11 +390,11 @@ if (pp->agentsubtype == NULL)
 
 switch (state)
    {
-   case CF_PROMISE_STATE_REPAIRED:
+   case PROMISE_STATE_REPAIRED:
        snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_REPAIR_LOG);
        break;
 
-   case CF_PROMISE_STATE_NOTKEPT:
+   case PROMISE_STATE_NOTKEPT:
        snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_NOTKEPT_LOG);
        break;
 

@@ -994,10 +994,10 @@ void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, PromiseLogState 
     
 switch(state)
    {
-   case CF_PROMISE_LOG_STATE_REPAIRED:
+   case PROMISE_LOG_STATE_REPAIRED:
        collName = MONGO_LOGS_REPAIRED;
        break;
-   case CF_PROMISE_LOG_STATE_NOTKEPT:
+   case PROMISE_LOG_STATE_NOTKEPT:
        collName = MONGO_LOGS_NOTKEPT;
        break;
    default:

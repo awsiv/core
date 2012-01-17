@@ -173,7 +173,7 @@ PHP_FUNCTION(cfcon_aggr_repaired)
 {
  char *buffer;
 
- buffer = cfcon_aggr_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,CF_PROMISE_LOG_STATE_REPAIRED);
+ buffer = cfcon_aggr_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,PROMISE_LOG_STATE_REPAIRED);
 
  if(!buffer)
     {
@@ -192,7 +192,7 @@ PHP_FUNCTION(cfcon_aggr_notkept)
 {
  char *buffer;
 
- buffer = cfcon_aggr_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,CF_PROMISE_LOG_STATE_NOTKEPT);
+ buffer = cfcon_aggr_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,PROMISE_LOG_STATE_NOTKEPT);
 
  if(!buffer)
     {
@@ -244,7 +244,7 @@ PHP_FUNCTION(cfcon_count_repaired)
 {
  char *buffer;
 
- buffer = cfcon_count_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,CF_PROMISE_LOG_STATE_REPAIRED);
+ buffer = cfcon_count_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,PROMISE_LOG_STATE_REPAIRED);
 
  if(!buffer)
     {
@@ -263,7 +263,7 @@ PHP_FUNCTION(cfcon_count_notkept)
 {
  char *buffer;
 
- buffer = cfcon_count_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,CF_PROMISE_LOG_STATE_NOTKEPT);
+ buffer = cfcon_count_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,PROMISE_LOG_STATE_NOTKEPT);
 
  if(!buffer)
     {
@@ -310,7 +310,7 @@ PHP_FUNCTION(cfcon_reasons_repaired)
 {
  char *buffer;
 
- buffer = cfcon_reasons_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,CF_PROMISE_LOG_STATE_REPAIRED);
+ buffer = cfcon_reasons_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,PROMISE_LOG_STATE_REPAIRED);
 
  if(!buffer)
     {
@@ -329,7 +329,7 @@ PHP_FUNCTION(cfcon_reasons_notkept)
 {
  char *buffer;
 
- buffer = cfcon_reasons_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,CF_PROMISE_LOG_STATE_NOTKEPT);
+ buffer = cfcon_reasons_promiselog(ZEND_NUM_ARGS() TSRMLS_CC,PROMISE_LOG_STATE_NOTKEPT);
 
  if(!buffer)
     {

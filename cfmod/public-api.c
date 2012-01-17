@@ -47,9 +47,9 @@ static const char *PromiseLogStateToString(PromiseLogState state)
 {
 switch (state)
    {
-   case CF_PROMISE_LOG_STATE_REPAIRED:
+   case PROMISE_LOG_STATE_REPAIRED:
       return LABEL_STATE_REPAIRED;
-   case CF_PROMISE_LOG_STATE_NOTKEPT:
+   case PROMISE_LOG_STATE_NOTKEPT:
       return LABEL_STATE_NOTKEPT;
    default:
       return LABEL_UNKNOWN;
@@ -106,7 +106,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",
 mongo_connection conn;
 DATABASE_OPEN(&conn)
 
-JsonArray *output = PromiseLogAsJson(&conn, CF_PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to, page);
+JsonArray *output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to, page);
 
 DATABASE_CLOSE(&conn)
 
@@ -178,7 +178,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",
 mongo_connection conn;
 DATABASE_OPEN(&conn)
 
-JsonArray *output = PromiseLogSummaryAsJson(&conn, CF_PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to, page);
+JsonArray *output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to, page);
 
 DATABASE_CLOSE(&conn)
 
@@ -215,7 +215,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",
 mongo_connection conn;
 DATABASE_OPEN(&conn);
 
-JsonArray *output = PromiseLogAsJson(&conn, CF_PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to, page);
+JsonArray *output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to, page);
 
 DATABASE_CLOSE(&conn);
 
@@ -252,7 +252,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",
 mongo_connection conn;
 DATABASE_OPEN(&conn);
 
-JsonArray *output = PromiseLogSummaryAsJson(&conn, CF_PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to, page);
+JsonArray *output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to, page);
 
 DATABASE_CLOSE(&conn);
 

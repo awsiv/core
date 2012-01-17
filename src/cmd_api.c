@@ -320,10 +320,10 @@ int Nova2Txt_promiselog(char *hostkey,char *handle, PromiseLogState state,time_t
        {
        switch (state)
 	  {
-          case CF_PROMISE_LOG_STATE_REPAIRED:
+          case PROMISE_LOG_STATE_REPAIRED:
               reportType = CFREPORT_REPAIRED;
               break;
-          case CF_PROMISE_LOG_STATE_NOTKEPT:
+          case PROMISE_LOG_STATE_NOTKEPT:
 	  default:
               reportType = CFREPORT_NOTKEPT;
               break;

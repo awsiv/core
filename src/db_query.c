@@ -1763,7 +1763,7 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
                    }
                 }
 
-             if (lstatus != CF_PROMISE_STATE_ANY && lstatus != rstatus)
+             if (lstatus != PROMISE_STATE_ANY && lstatus != rstatus)
                 {
                 match_status = false;
                 }
@@ -2900,10 +2900,10 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
 
  switch (state)
     {
-    case CF_PROMISE_LOG_STATE_REPAIRED:
+    case PROMISE_LOG_STATE_REPAIRED:
         collName = MONGO_LOGS_REPAIRED;
         break;
-    case CF_PROMISE_LOG_STATE_NOTKEPT:
+    case PROMISE_LOG_STATE_NOTKEPT:
     default:
         collName = MONGO_LOGS_NOTKEPT;
         break;
