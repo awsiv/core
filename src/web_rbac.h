@@ -29,7 +29,7 @@ HubQuery *CFDB_GetRBACForUser(char *userName);
 cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *description, char *includeClassRx, char *excludeClassRx, char *includeBundleRx);
 cfapi_errid CFDB_DeleteRole(char *deletingUser, char *roleName);
 HubQuery *CFDB_GetAllRoles(void);
-HubQuery *CFDB_GetRoleByName(char *name);
+HubQuery *CFDB_GetRoleByNameAuth(char *userName, char *roleName);
 
 #endif
 

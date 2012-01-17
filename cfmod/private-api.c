@@ -3626,22 +3626,22 @@ PHP_FUNCTION(cfpr_role_list_all)
 PHP_FUNCTION(cfpr_role_list_by_name)
 {
 
- char *name;
- int nameLen;
+ char *userName, *roleName;
+ int userNameLen, roleNameLen;
  
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&name, &nameLen) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&userName, &userNameLen, &roleName, &roleNameLen) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
- if(nameLen == 0)
+ if(!(userNameLen|roleNameLen))
     {
     zend_throw_exception(cfmod_exception_args, "Missing argument contents", 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
- HubQuery *hq = CFDB_GetRoleByName(name);
+ HubQuery *hq = CFDB_GetRoleByNameAuth(userName, roleName);
 
  if(hq->errid != ERRID_SUCCESS)
     {
