@@ -434,7 +434,7 @@ typedef struct
    {
    HubHost *hh;
    char *handle;
-   char status; // 'r' / 'k' / 'n'
+   PromiseState status;
    double e;
    double d;
    time_t t;
@@ -989,7 +989,7 @@ HubPerformance *NewHubPerformance(HubHost *hh,char *event,time_t t,double q,doub
 void DeleteHubPerformance(HubPerformance *hp);
 HubSetUid *NewHubSetUid(HubHost *hh,char *file);
 void DeleteHubSetUid(HubSetUid *hp);
-HubPromiseCompliance *NewHubCompliance(HubHost *hh,char *handle,char status,double e,double d,time_t t);
+HubPromiseCompliance *NewHubCompliance(HubHost *hh, char *handle, PromiseState status, double e, double d, time_t t);
 void DeleteHubPromiseCompliance(HubPromiseCompliance *hp);
 HubBundleSeen *NewHubBundleSeen(HubHost *hh,char *rname,double ago,double avg,double dev,time_t t,char *noteid);
 void DeleteHubBundleSeen(HubBundleSeen *hp);

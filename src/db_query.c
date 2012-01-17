@@ -1624,7 +1624,8 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *lscope,
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHash,char *lhandle,char lstatus,int regex, time_t minTime, int sort, char *classRegex)
+HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, char *lhandle, PromiseState lstatus,
+                                      int regex, time_t minTime, int sort, char *classRegex)
 // status = c (compliant), r (repaired) or n (not kept), x (any)
 { bson_buffer bb;
  bson query,field;
@@ -1762,7 +1763,7 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn,char *keyHash,char 
                    }
                 }
 
-             if (lstatus != 'x' && lstatus != rstatus)
+             if (lstatus != CF_PROMISE_STATE_ANY && lstatus != rstatus)
                 {
                 match_status = false;
                 }

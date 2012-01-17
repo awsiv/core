@@ -741,7 +741,7 @@ void DeleteHubFileDiff(HubFileDiff *hp)
 
 /*****************************************************************************/
 
-HubPromiseCompliance *NewHubCompliance(HubHost *hh,char *handle,char status,double e,double d,time_t t)
+HubPromiseCompliance *NewHubCompliance(HubHost *hh, char *handle, PromiseState status, double e, double d, time_t t)
 
 { HubPromiseCompliance *hp;
      
