@@ -437,8 +437,9 @@ if (!CFDB_Open(&dbconn))
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
-
-hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,classreg,true);
+HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
+hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,filter,true);
+DeleteHostClassFilter(filter);
 
 if (!CSV)
    {
@@ -894,7 +895,10 @@ int Nova2Txt_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,P
     return false;
     }
 
- hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classreg,true);
+ HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
+ hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,filter,true);
+ DeleteHostClassFilter(filter);
+ 
  PageRecords(&(hq->records),page,DeleteHubBundleSeen);
  snprintf(header,sizeof(header),
           "\"meta\":{\"count\" : %d,"
@@ -1228,8 +1232,9 @@ int Nova2Txt_software_hosts(char *hostkey,char *name,char *value, char *arch,int
     return false;
     }
 
- hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,classreg,false);
-
+ HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
+ hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,filter,false);
+ DeleteHostClassFilter(filter);
 
  StartJoin(returnval,"[",bufsize);
 
@@ -1661,8 +1666,9 @@ int Nova2Txt_bundle_hosts(char *hostkey,char *bundle,int regex,char *classreg,ch
     return false;
     }
 
- hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classreg,false);
-
+ HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
+ hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,filter,false);
+ DeleteHostClassFilter(filter);
 
  StartJoin(returnval,"[",bufsize);
 

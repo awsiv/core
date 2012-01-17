@@ -3353,7 +3353,7 @@ return NewHubQuery(host_list,record_list);
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lname,int regex, char *classRegex, int sort)
+HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lname,int regex, HostClassFilter *hostClassFilter, int sort)
 
 { bson_buffer bb;
   bson query,field;
@@ -3365,8 +3365,7 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
   char rname[CF_MAXVARSIZE];
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],noteid[CF_BUFSIZE];
   int match_name,found = false;
-  int emptyQuery = true;
-  char classRegexAnch[CF_MAXVARSIZE];
+  int queryHasData = false;
   time_t rt;
   
 /* BEGIN query document */
@@ -3376,24 +3375,20 @@ bson_buffer_init(&bb);
 if (!EMPTY(keyHash))
    {
    bson_append_string(&bb,cfr_keyhash,keyHash);
-   emptyQuery = false;
+   queryHasData = true;
    }
 
-if (!EMPTY(classRegex))
-   {
-   AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
-   bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-   emptyQuery = false;
-   }
+queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
 
-if (emptyQuery)
-   {
-   bson_empty(&query);
-   }
-else
+if (queryHasData)
    {
    bson_from_buffer(&query,&bb);
    }
+else
+   {
+   bson_empty(&query);
+   }
+
 
 /* BEGIN RESULT DOCUMENT */
 
@@ -3413,11 +3408,10 @@ cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
 bson_destroy(&field);
 
-if (!emptyQuery)
+if (queryHasData)
    {
    bson_destroy(&query);
    }
-
 
 while (mongo_cursor_next(cursor))
    {

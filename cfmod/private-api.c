@@ -1472,9 +1472,13 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
  fbundle =  (j_len == 0) ? NULL : bundle;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
 
- buffer[0]='\0';
- Nova2PHP_bundle_report(fhostkey,fbundle,use_reg,fclassreg,&page,buffer,bufsize);
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
 
+ buffer[0]='\0';
+ Nova2PHP_bundle_report(fhostkey,fbundle,use_reg,filter,&page,buffer,bufsize);
+
+ DeleteHostClassFilter(filter);
+ 
  RETURN_STRING(buffer,1);
 }
 
@@ -1693,9 +1697,13 @@ PHP_FUNCTION(cfpr_hosts_with_software_in)
  farch = (a_len == 0) ? NULL : arch;
  fclassreg = (cr_len == 0) ? NULL : classreg;
 
- buffer[0] = '\0';
- Nova2PHP_software_hosts(fhostkey,fname,fversion,farch,use_reg,cfr_software,fclassreg,buffer,bufsize);
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
 
+ buffer[0] = '\0';
+ Nova2PHP_software_hosts(fhostkey,fname,fversion,farch,use_reg,cfr_software,filter,buffer,bufsize);
+
+ DeleteHostClassFilter(filter);
+ 
  RETURN_STRING(buffer,1);
 }
 
@@ -1748,8 +1756,12 @@ PHP_FUNCTION(cfpr_hosts_with_patch_in)
 
  fclassreg = (cr_len == 0) ? NULL : classreg;
 
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+
  buffer[0] = '\0';
- Nova2PHP_software_hosts(hostkey,name,version,arch,regex,cfr_patch_installed,fclassreg,buffer,bufsize);
+ Nova2PHP_software_hosts(hostkey,name,version,arch,regex,cfr_patch_installed,filter,buffer,bufsize);
+
+ DeleteHostClassFilter(filter);
 
  RETURN_STRING(buffer,1);
 }
@@ -1782,8 +1794,12 @@ PHP_FUNCTION(cfpr_hosts_with_patch_avail)
  farch = (a_len == 0) ? NULL : arch;
  fclassreg = (cr_len == 0) ? NULL : classreg;
 
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+
  buffer[0] = '\0';
- Nova2PHP_software_hosts(fhostkey,fname,fversion,farch,use_reg,cfr_patch_avail,fclassreg,buffer,bufsize);
+ Nova2PHP_software_hosts(fhostkey,fname,fversion,farch,use_reg,cfr_patch_avail,filter,buffer,bufsize);
+
+ DeleteHostClassFilter(filter);
 
  RETURN_STRING(buffer,1);
 }
@@ -2154,8 +2170,12 @@ PHP_FUNCTION(cfpr_hosts_with_bundlesseen)
  fbundle =  (j_len == 0) ? NULL : bundle;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
 
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+ 
  buffer[0] = '\0';
- Nova2PHP_bundle_hosts(fhostkey,fbundle,regex,fclassreg,buffer,bufsize);
+ Nova2PHP_bundle_hosts(fhostkey,fbundle,regex,filter,buffer,bufsize);
+
+ DeleteHostClassFilter(filter);
 
  RETURN_STRING(buffer,1);
 }

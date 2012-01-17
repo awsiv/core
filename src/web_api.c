@@ -2041,7 +2041,7 @@ int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,char *classreg,Pag
 
 /*****************************************************************************/
 
-int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,PageInfo *page,char *returnval,int bufsize)
+int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE]={0};
  HubBundleSeen *hb;   
@@ -2059,7 +2059,7 @@ int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,char *classreg,P
     return false;
     }
 
- hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classreg,true);
+ hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,hostClassFilter,true);
  PageRecords(&(hq->records),page,DeleteHubBundleSeen);
  snprintf(header,sizeof(header),
           "\"meta\":{\"count\" : %d,"
@@ -2415,7 +2415,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_software_hosts(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_software_hosts(char *hostkey,char *name,char *value, char *arch,int regex,char *type,HostClassFilter *hostClassFilter,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
  HubHost *hh;
@@ -2430,7 +2430,7 @@ int Nova2PHP_software_hosts(char *hostkey,char *name,char *value, char *arch,int
     return false;
     }
 
- hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,classreg,false);
+ hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,hostClassFilter,false);
 
 
  StartJoin(returnval,"[",bufsize);
@@ -2839,7 +2839,7 @@ int Nova2PHP_setuid_hosts(char *hostkey,char *file,int regex,char *classreg,char
 
 /*****************************************************************************/
 
-int Nova2PHP_bundle_hosts(char *hostkey,char *bundle,int regex,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_bundle_hosts(char *hostkey,char *bundle,int regex,HostClassFilter *hostClassFilter,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
  HubHost *hh;
@@ -2855,7 +2855,7 @@ int Nova2PHP_bundle_hosts(char *hostkey,char *bundle,int regex,char *classreg,ch
     return false;
     }
 
- hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,classreg,false);
+ hq = CFDB_QueryBundleSeen(&dbconn,hostkey,bundle,regex,hostClassFilter,false);
 
 
  StartJoin(returnval,"[",bufsize);

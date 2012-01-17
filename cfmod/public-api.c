@@ -340,7 +340,9 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssll",
 mongo_connection conn;
 DATABASE_OPEN(&conn)
 
-HubQuery *result = CFDB_QueryBundleSeen(&conn, hostkey, name, true, context, true);
+HostClassFilter *filter = NewHostClassFilter(context, NULL);
+HubQuery *result = CFDB_QueryBundleSeen(&conn, hostkey, name, true, filter, true);
+DeleteHostClassFilter(filter);
 
 DATABASE_CLOSE(&conn)
 
