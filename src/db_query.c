@@ -7631,10 +7631,16 @@ bson out;
 HubHost *host = NULL;
 if (mongo_find_one(conn, MONGO_DATABASE, &query, &field, &out))
    {
+   Item *host_names = BsonGetStringArrayAsItemList(&out, cfr_host_array);
+   Item *ip_addresses = BsonGetStringArrayAsItemList(&out, cfr_ip_array);
+
    host = NewHubHost(NULL,
                      BsonGetString(&out, cfr_keyhash),
-                     BsonGetString(&out, cfr_host_array),
-                     BsonGetString(&out, cfr_ip_array));
+                     host_names->name,
+                     ip_addresses->name);
+
+   DeleteItemList(host_names);
+   DeleteItemList(ip_addresses);
    bson_destroy(&out);
    }
 
