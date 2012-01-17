@@ -20,6 +20,7 @@ class test_reports_libraries extends CodeIgniterUnitTestCase {
          $retValue = json_last_error();
          $this->assertTrue(is_array($array), "Should Return a valid array");
          $this->dump($data);
+         $this->dump($array);
         $this->assertFalse($retValue, "This should return 0 in case of no error, returned value is $retValue");
         if(isset($array['data']))
         {
@@ -31,6 +32,8 @@ class test_reports_libraries extends CodeIgniterUnitTestCase {
         }
         
     }
+    
+    
 
     function __pagingtest($data)
     {
@@ -45,12 +48,27 @@ class test_reports_libraries extends CodeIgniterUnitTestCase {
         $this->dump($data);
     }
     
+    
+    function test_get_all_reports() {
+        $data = cfpr_select_reports(NULL);
+       $this->__testcases($data);
+ 
+    }
+    
+    function test_get_specific_reports() {
+        $data = cfpr_select_reports('bundle-profile');
+        $this->__testcases($data);
+ 
+    }
+    
     public function test_cfpr_hosts_with_bundlesseen(){
         $data=cfpr_hosts_with_bundlesseen(NULL, NULL, true, false);
        $this->__testcases($data);
 
     }
 
+    
+    
 
     public function test_cfpr_report_class_frequency(){
         $hostkey = NULL;

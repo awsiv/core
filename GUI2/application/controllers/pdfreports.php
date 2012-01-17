@@ -41,43 +41,7 @@ class pdfreports extends Cf_Controller {
             'long_term'
         );
     }
-
-    function populateParamsWithDefault($params) {
-        $predefinedKeys = array(
-            'hostkey',
-            'type',
-            'search',
-            'class_regex',
-            'days',
-            'months',
-            'years',
-            'address',
-            'ago',
-            'version',
-            'arch',
-            'cal',
-            'hours_deltafrom',
-            'hours_deltato',
-            'to',
-            'from',
-            'subject',
-            'message',
-            'diff',
-            'scope',
-            'lval',
-            'rval',
-            'state',
-            'key'
-        );
-
-        foreach ($predefinedKeys as $key) {
-            if (!isset($params[$key])) {
-                $params[$key] = null; #set key with null value
-            }
-        }
-        return $params;
-    }
-
+    
     function index() {
         $this->load->library('email');
         $params = $this->uri->uri_to_assoc(3, $this->predefinedKeys);
@@ -218,7 +182,7 @@ class pdfreports extends Cf_Controller {
 
                 if (!is_writable($this->storeDir)) {
                     log_message('error', 'Please make sure the tmp directory in web root is writeable');
-                    throw new Exception('directory "tmp" is not writable ');
+                    throw new Exception('"tmp" directory in web root is not writable ');
                 }
 
                 $filename = $this->storeDir . $filename;
@@ -239,7 +203,7 @@ class pdfreports extends Cf_Controller {
                 }
                 if (!is_writable($this->storeDir)) {
                     log_message('error', 'Please make sure the tmp directory in web root is writeable');
-                    throw new Exception('directory "tmp" is not writable ');
+                    throw new Exception('"tmp" directory in web root is not writable ');
                 }
                 $filepath = $this->storeDir . $filename;
                 $this->reportGenerator->Output($filepath, "F");
