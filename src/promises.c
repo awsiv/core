@@ -308,7 +308,7 @@ return "CFEngine Nova " NOVA_VERSION;
 
 /***************************************************************/
 
-void NotePromiseCompliance(Promise *pp,double val,enum cf_status status,char *reason)
+void NotePromiseCompliance(Promise *pp, double val, PromiseState state, char *reason)
 
 { CF_DB *dbp;
   FILE *fp;
@@ -335,18 +335,18 @@ strncpy(oldNoRepeatId,newNoRepeatId,sizeof(oldNoRepeatId)-1);
 snprintf(name,CF_BUFSIZE-1,"%s/state/%s",CFWORKDIR,NOVA_COMPLIANCE);
 MapName(name);
 
-switch (status)
+switch (state)
    {
-   case cfn_kept:
-   case cfn_nop:
+   case CF_PROMISE_STATE_KEPT:
+   case CF_PROMISE_STATE_ANY:
        vstatus = 1.0;
        break;
 
-   case cfn_repaired:
+   case CF_PROMISE_STATE_REPAIRED:
        vstatus = 0.5;
        break;
 
-   case cfn_notkept:
+   case CF_PROMISE_STATE_NOTKEPT:
        vstatus = 0;
        break;
    default:
@@ -388,13 +388,13 @@ if (pp->agentsubtype == NULL)
 
 /* Now keep the next log */
 
-switch (status)
+switch (state)
    {
-   case cfn_repaired:
+   case CF_PROMISE_STATE_REPAIRED:
        snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_REPAIR_LOG);
        break;
 
-   case cfn_notkept:
+   case CF_PROMISE_STATE_NOTKEPT:
        snprintf(name,CF_BUFSIZE-1,"%s/%s",CFWORKDIR,CF_NOTKEPT_LOG);
        break;
 
