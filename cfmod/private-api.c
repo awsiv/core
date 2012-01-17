@@ -3525,11 +3525,12 @@ switch (CFDB_UserAuthenticate(username, password, password_len))
 
 PHP_FUNCTION(cfpr_role_create)
 {
-  char *name, *description, *includeClassRx, *excludeClassRx, *includeBundleRx;
-  int nameLen, descLen, icrxLen, ecrxLen, ibrxLen;
+ char *creatingUserName, *roleName, *description, *includeClassRx, *excludeClassRx, *includeBundleRx;
+ int creatingUserNameLen, roleNameLen, descLen, icrxLen, ecrxLen, ibrxLen;
   
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssss",
-                            &name, &nameLen,
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssss",
+                            &creatingUserName, &creatingUserNameLen,                            
+                            &roleName, &roleNameLen,
                             &description, &descLen,
                             &includeClassRx, &icrxLen,
                             &excludeClassRx, &ecrxLen,
@@ -3539,7 +3540,7 @@ PHP_FUNCTION(cfpr_role_create)
      RETURN_NULL();
      }
 
-  if(!(nameLen|descLen))
+  if(!(creatingUserNameLen|roleNameLen|descLen))
      {
      zend_throw_exception(cfmod_exception_args, "Missing argument contents", 0 TSRMLS_CC);
      RETURN_NULL();
@@ -3549,13 +3550,14 @@ PHP_FUNCTION(cfpr_role_create)
   char *fExcludeClassRx = (ecrxLen == 0) ? NULL : excludeClassRx;
   char *fIncludeBundleRx = (ibrxLen == 0) ? NULL : includeBundleRx;
 
-  cfapi_errid errid = CFDB_CreateRole(name, description, fIncludeClassRx, fExcludeClassRx, fIncludeBundleRx);
+  cfapi_errid errid = CFDB_CreateRole(creatingUserName, roleName, description, fIncludeClassRx, fExcludeClassRx, fIncludeBundleRx);
   
   if(errid != ERRID_SUCCESS)
      {
      zend_throw_exception(cfmod_exception_generic, (char *)GetErrorDescription(errid), 0 TSRMLS_CC);     
      }
-RETURN_LONG(true);
+  
+  RETURN_LONG(true);
 }
 
 /******************************************************************************/

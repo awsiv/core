@@ -31,6 +31,7 @@ static HubQuery *CFDB_GetRolesByMultipleNames(Item *names);
 static HubQuery *CFDB_GetRoles(bson *query);
 static const char *GetUsersCollection(mongo_connection *conn);
 static bool IsLDAPOn(mongo_connection *conn);
+static cfapi_errid UserIsRoleAdmin(char *userName);
 
 /*************************************************/
 
@@ -145,7 +146,6 @@ HubQuery *CFDB_GetRBACForUser(char *userName)
 
  if(!roleNames)
     {
-    DeleteItemList(roleNames);
     return NewHubQueryErrid(NULL, NULL, ERRID_RBAC_ACCESS_DENIED);
     }
  
@@ -235,10 +235,16 @@ static char *StringAppendRealloc2(char *start, char *append1, char *append2)
 }
 
 
-cfapi_errid CFDB_CreateRole(char *name, char *description, char *includeClassRx, char *excludeClassRx, char *includeBundleRx)
+cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *description, char *includeClassRx, char *excludeClassRx, char *includeBundleRx)
 {
+ cfapi_errid errid = UserIsRoleAdmin(creatingUser);
+
+ if(errid != ERRID_SUCCESS)
+    {
+    return errid;
+    }
  
- if(RoleExists(name))
+ if(RoleExists(roleName))
     {
     return ERRID_ITEM_EXISTS;
     }
@@ -247,7 +253,7 @@ cfapi_errid CFDB_CreateRole(char *name, char *description, char *includeClassRx,
  
  bson query;
  bson_buffer_init(&bb);
- bson_append_string(&bb, dbkey_role_name, name);
+ bson_append_string(&bb, dbkey_role_name, roleName);
  bson_from_buffer(&query, &bb);
 
  bson update;
@@ -285,8 +291,6 @@ cfapi_errid CFDB_CreateRole(char *name, char *description, char *includeClassRx,
  bson_destroy(&query);
  bson_destroy(&update);
 
- cfapi_errid errid = ERRID_SUCCESS;
- 
  if(!MongoCheckForError(&conn, "CFDB_DeleteRole", NULL, false))
     {
     errid = ERRID_DB_OPERATION;
@@ -545,6 +549,30 @@ HubQuery *CFDB_GetRoles(bson *query)
  mongo_cursor_destroy(cursor);
 
  return hq;
+}
+
+
+static cfapi_errid UserIsRoleAdmin(char *userName)
+{
+#define ROLE_NAME_ADMIN "admin"
+ 
+ Item *roleNames = CFDB_GetRolesForUser(userName);
+ 
+ if(!roleNames)
+    {
+    return ERRID_RBAC_ACCESS_DENIED;
+    }
+
+ cfapi_errid errid = ERRID_SUCCESS;
+
+ if(!IsItemIn(roleNames, ROLE_NAME_ADMIN))
+    {
+    errid = ERRID_RBAC_ACCESS_DENIED;
+    }
+
+ DeleteItemList(roleNames);
+
+ return errid;
 }
 
 #endif
