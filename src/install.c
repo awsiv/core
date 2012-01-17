@@ -1148,6 +1148,7 @@ void DeleteHubRole(HubRole *role)
 
 /*****************************************************************************/
 
+#ifdef HAVE_LIBMONGOC
 HostClassFilter *NewHostClassFilter(char *classRxInclude, char *classRxExclude)
 {
  HostClassFilter *filter = xmalloc(sizeof(HostClassFilter));
@@ -1166,6 +1167,7 @@ void DeleteHostClassFilter(HostClassFilter *filter)
  free(filter->classRxExclude);
  free(filter);
 }
+#endif
 
 /*****************************************************************************/
 /*                        REPORT SORTING FUNCTIONS                           */
