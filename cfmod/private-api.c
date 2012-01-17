@@ -3540,7 +3540,7 @@ PHP_FUNCTION(cfpr_role_create)
      RETURN_NULL();
      }
 
-  if(!(creatingUserNameLen|roleNameLen|descLen))
+  if(!(creatingUserNameLen && roleNameLen && descLen))
      {
      zend_throw_exception(cfmod_exception_args, "Missing argument contents", 0 TSRMLS_CC);
      RETURN_NULL();
@@ -3573,7 +3573,7 @@ PHP_FUNCTION(cfpr_role_delete)
     RETURN_NULL();
     }
  
- if(!(userNameLen|roleNameLen))
+ if(!(userNameLen && roleNameLen))
     {
     zend_throw_exception(cfmod_exception_args, "Missing argument contents", 0 TSRMLS_CC);
     RETURN_NULL();
@@ -3638,7 +3638,7 @@ PHP_FUNCTION(cfpr_role_list_by_name)
     RETURN_NULL();
     }
 
- if(!(userNameLen|roleNameLen))
+ if(!(userNameLen && roleNameLen))
     {
     zend_throw_exception(cfmod_exception_args, "Missing argument contents", 0 TSRMLS_CC);
     RETURN_NULL();
