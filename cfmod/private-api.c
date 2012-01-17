@@ -1,6 +1,5 @@
 #include "private-api.h"
-
-#include "json.h"
+#include "common.h"
 
 #define cfr_software     "sw"
 #define cfr_patch_avail  "pa"

@@ -64,7 +64,7 @@ for (Rlist *rp = hostkeys; rp != NULL; rp = rp->next)
 
 DeleteRlist(hostkeys);
 
-RETURN_JSON(output);
+RETURN_JSON_ARRAY(output);
 }
 
 
@@ -94,7 +94,7 @@ if (record != NULL)
    JsonObjectAppendString(&entry, LABEL_NAME, record->hostname);
    JsonObjectAppendString(&entry, LABEL_IP, record->ipaddr);
 
-   RETURN_JSON(entry);
+   RETURN_JSON_OBJECT(entry);
    }
 
 RETURN_NULL();
@@ -192,7 +192,7 @@ for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
 
 DATABASE_CLOSE(&conn)
 
-RETURN_JSON(output)
+RETURN_JSON_ARRAY(output)
 }
 
 
@@ -266,7 +266,7 @@ JsonArray *output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, 
 
 DATABASE_CLOSE(&conn)
 
-RETURN_JSON(output);
+RETURN_JSON_ARRAY(output);
 }
 
 
@@ -338,7 +338,7 @@ JsonArray *output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, h
 
 DATABASE_CLOSE(&conn)
 
-RETURN_JSON(output);
+RETURN_JSON_ARRAY(output);
 }
 
 
@@ -375,7 +375,7 @@ JsonArray *output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, h
 
 DATABASE_CLOSE(&conn);
 
-RETURN_JSON(output);
+RETURN_JSON_ARRAY(output);
 }
 
 
@@ -412,7 +412,7 @@ JsonArray *output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, ha
 
 DATABASE_CLOSE(&conn);
 
-RETURN_JSON(output);
+RETURN_JSON_ARRAY(output);
 }
 
 
@@ -433,7 +433,7 @@ for (ReportInfo *report = BASIC_REPORTS; report->id != NULL; report++)
    JsonArrayAppendObject(&reports, report_entry);
    }
 
-RETURN_JSON(reports);
+RETURN_JSON_ARRAY(reports);
 }
 
 
@@ -492,7 +492,7 @@ for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
 
 DeleteHubQuery(result, DeleteHubSoftware);
 
-RETURN_JSON(software);
+RETURN_JSON_ARRAY(software);
 }
 
 
@@ -578,7 +578,7 @@ for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
 
 DeleteHubQuery(result, DeleteHubVariable);
 
-RETURN_JSON(values);
+RETURN_JSON_ARRAY(values);
 }
 
 
@@ -630,7 +630,7 @@ for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
 
 DeleteHubQuery(result, DeleteHubBundleSeen);
 
-RETURN_JSON(bundles);
+RETURN_JSON_ARRAY(bundles);
 }
 
 
@@ -681,7 +681,7 @@ for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
 
 DeleteHubQuery(result, DeleteHubClass);
 
-RETURN_JSON(contexts);
+RETURN_JSON_ARRAY(contexts);
 }
 
 
@@ -728,5 +728,5 @@ for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
 
 DeleteHubQuery(result, DeleteHubSetUid);
 
-RETURN_JSON(output);
+RETURN_JSON_ARRAY(output);
 }

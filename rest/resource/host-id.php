@@ -17,6 +17,7 @@ class HostId extends Resource
             return $response;
         }
         
+        $response->body = $payload;
         $response->code = Response::OK;
 
         return $response;
