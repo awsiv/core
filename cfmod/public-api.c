@@ -31,12 +31,16 @@ static const char *LABEL_STDV = "stdv";
 static const char *LABEL_CONTEXT = "context";
 static const char *LABEL_PATH = "path";
 static const char *LABEL_HANDLE = "handle";
+static const char *LABEL_COUNT = "count";
 
 static const char *LABEL_STATE = "state";
 static const char *LABEL_STATE_REPAIRED = "repaired";
 static const char *LABEL_STATE_NOTKEPT = "notkept";
 
 static const char *LABEL_UNKNOWN = "unknown";
+
+
+/************************************************************************************/
 
 
 static const char *PromiseLogStateToString(PromiseLogState state)
@@ -52,19 +56,6 @@ switch (state)
    }
 }
 
-static JsonObject *PromiseLogEntryAsJson(HubPromiseLog *log_entry, PromiseLogState state)
-{
-JsonObject *entry = NULL;
-
-JsonObjectAppendString(&entry, LABEL_HANDLE, log_entry->handle);
-JsonObjectAppendString(&entry, LABEL_HOSTKEY, log_entry->hh->keyhash);
-JsonObjectAppendString(&entry, LABEL_DESCRIPTION, log_entry->cause);
-JsonObjectAppendString(&entry, LABEL_STATE, PromiseLogStateToString(state));
-JsonObjectAppendInteger(&entry, LABEL_TIMESTAMP, log_entry->t);
-
-return entry;
-}
-
 static JsonArray *PromiseLogAsJson(mongo_connection *conn, PromiseLogState state, const char *handle,
                                    const char *hostkey, const char *context, int from, int to, PageInfo page)
 {
@@ -74,7 +65,14 @@ JsonArray *output = NULL;
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    {
    HubPromiseLog *log_entry = (HubPromiseLog *)rp;
-   JsonArrayAppendObject(&output, PromiseLogEntryAsJson(log_entry, state));
+   JsonObject *entry = NULL;
+
+   JsonObjectAppendString(&entry, LABEL_HANDLE, log_entry->handle);
+   JsonObjectAppendString(&entry, LABEL_HOSTKEY, log_entry->hh->keyhash);
+   JsonObjectAppendString(&entry, LABEL_DESCRIPTION, log_entry->cause);
+   JsonObjectAppendString(&entry, LABEL_STATE, PromiseLogStateToString(state));
+   JsonObjectAppendInteger(&entry, LABEL_TIMESTAMP, log_entry->t);
+   JsonArrayAppendObject(&output, entry);
    }
 
 DeleteHubQuery(result, DeleteHubPromiseLog);
@@ -115,6 +113,82 @@ DATABASE_CLOSE(&conn)
 RETURN_JSON(output);
 }
 
+
+/************************************************************************************/
+
+
+static JsonArray *PromiseLogSummaryAsJson(mongo_connection *conn, PromiseLogState state, const char *handle,
+                                          const char *hostkey, const char *context, int from, int to, PageInfo page)
+{
+HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from, to, true, context);
+
+// FIX: wrong on several levels
+Item *summary = NULL;
+for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
+   {
+   HubPromiseLog *log_entry = (HubPromiseLog *)rp;
+   Item *ip = IdempPrependItem(&summary, log_entry->handle, log_entry->cause);
+   ip->counter++;
+   }
+
+DeleteHubQuery(result, DeleteHubPromiseLog);
+
+JsonArray *output = NULL;
+for (Item *ip = summary; ip != NULL; ip = ip->next)
+   {
+   JsonObject *entry = NULL;
+
+   JsonObjectAppendString(&entry, LABEL_HANDLE, ip->name);
+   JsonObjectAppendString(&entry, LABEL_DESCRIPTION, ip->classes);
+   JsonObjectAppendInteger(&entry, LABEL_COUNT, ip->counter);
+   JsonObjectAppendString(&entry, LABEL_STATE, PromiseLogStateToString(state));
+
+   JsonArrayAppendObject(&output, entry);
+   }
+
+DeleteItemList(summary);
+
+return output;
+}
+
+
+PHP_FUNCTION(cfmod_resource_promise_log_repaired_summary)
+{
+char *handle = NULL,
+     *hostkey = NULL,
+     *context = NULL;
+long from,
+     to;
+int len;
+PageInfo page = { 0 };
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",
+      &handle, &len,
+      &hostkey, &len,
+      &context, &len,
+      &from,
+      &to,
+      &(page.resultsPerPage),
+      &(page.pageNum)) == FAILURE)
+   {
+   zend_throw_exception(cfmod_exception_args, "Unable to parse arguments", 0 TSRMLS_CC);
+   RETURN_NULL();
+   }
+
+mongo_connection conn;
+DATABASE_OPEN(&conn)
+
+JsonArray *output = PromiseLogSummaryAsJson(&conn, CF_PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to, page);
+
+DATABASE_CLOSE(&conn)
+
+RETURN_JSON(output);
+}
+
+
+/************************************************************************************/
+
+
 PHP_FUNCTION(cfmod_resource_promise_log_notkept)
 {
 char *handle = NULL,
@@ -142,6 +216,43 @@ mongo_connection conn;
 DATABASE_OPEN(&conn);
 
 JsonArray *output = PromiseLogAsJson(&conn, CF_PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to, page);
+
+DATABASE_CLOSE(&conn);
+
+RETURN_JSON(output);
+}
+
+
+/************************************************************************************/
+
+
+PHP_FUNCTION(cfmod_resource_promise_log_notkept_summary)
+{
+char *handle = NULL,
+     *hostkey = NULL,
+     *context = NULL;
+long from,
+     to;
+int len;
+PageInfo page = { 0 };
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",
+      &handle, &len,
+      &hostkey, &len,
+      &context, &len,
+      &from,
+      &to,
+      &(page.resultsPerPage),
+      &(page.pageNum)) == FAILURE)
+   {
+   zend_throw_exception(cfmod_exception_args, "Unable to parse arguments", 0 TSRMLS_CC);
+   RETURN_NULL();
+   }
+
+mongo_connection conn;
+DATABASE_OPEN(&conn);
+
+JsonArray *output = PromiseLogSummaryAsJson(&conn, CF_PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to, page);
 
 DATABASE_CLOSE(&conn);
 

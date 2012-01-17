@@ -17,7 +17,9 @@ static function_entry cfmod_functions[] =
     {
     // public API
     PHP_FE(cfmod_resource_promise_log_repaired, NULL)
+    PHP_FE(cfmod_resource_promise_log_repaired_summary, NULL)
     PHP_FE(cfmod_resource_promise_log_notkept, NULL)
+    PHP_FE(cfmod_resource_promise_log_notkept_summary, NULL)
 
     PHP_FE(cfmod_resource_report_list, NULL)
     PHP_FE(cfmod_resource_report_bundle_profile, NULL)

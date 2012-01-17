@@ -20,39 +20,22 @@ class Promise extends Resource
 
         try
         {
-            $response = new Response($request);
-            
             switch ($report_id)
             {
                 case 'log':
-                    switch ($state)
-                    {
-                        case 'repaired':
-                            $response->body = cfmod_resource_promise_log_repaired($handle, $hostkey,
-                                    $context, $from, $to, $count, $startPage);
-                            break;
-
-                        case 'not-kept':
-                            $response->body = cfmod_resource_promise_log_notkept($handle, $hostkey,
-                                    $context, $from, $to, $count, $startPage);
-                            break;
-
-                        default:
-                            throw new ResponseException("Unknown promise log type", Response::NOTFOUND);
-                    }
-                    break;
+                    $response = $this->promise_log_response($request, $state,
+                            $is_summary, $handle, $hostkey, $context, $from,
+                            $to, $count, $startPage);
+                    $response->code = Response::OK;
+                    return $response;
                 
                 case 'compliance':
                     throw new ResponseException("Not implemented", Response::INTERNALSERVERERROR);
-                    break;
                 
                 default:
                     throw new ResponseException("Unknown report id: " . $report_id, 
                             Response::NOTFOUND);
             }
-            
-            $response->code = Response::OK;
-            return $response;
         }
         catch (CFModExceptionArgs $ae)
         {
@@ -64,6 +47,46 @@ class Promise extends Resource
         }
     }
     
+    function promise_log_response($request, $state, $is_summary,
+            $handle, $hostkey, $context, $from, $to, $count, $startPage)
+    {
+        $response = new Response($request);
+
+        switch ($state)
+        {
+            case 'repaired':
+                if ($is_summary)
+                {
+                    $response->body = cfmod_resource_promise_log_repaired_summary($handle,
+                            $hostkey, $context, $from, $to, $count, $startPage);
+                }
+                else
+                {
+                    $response->body = cfmod_resource_promise_log_repaired($handle,
+                            $hostkey, $context, $from, $to, $count, $startPage);
+                }
+                break;
+
+            case 'not-kept':
+                if ($is_summary)
+                {
+                    $response->body = cfmod_resource_promise_log_notkept_summary($handle,
+                            $hostkey, $context, $from, $to, $count, $startPage);
+                }
+                else
+                {
+                    $response->body = cfmod_resource_promise_log_notkept($handle,
+                            $hostkey, $context, $from, $to, $count, $startPage);
+                }
+                break;
+
+            default:
+                throw new ResponseException("Unknown promise log type", Response::NOTFOUND);
+        }
+
+        return $response;
+    }
+
 }
 
 ?>
