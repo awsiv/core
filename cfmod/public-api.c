@@ -411,7 +411,7 @@ for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    JsonObjectAppendString(&software_entry, LABEL_NAME, record->name);
    JsonObjectAppendString(&software_entry, LABEL_VERSION, record->version);
    JsonObjectAppendString(&software_entry, LABEL_ARCH, Nova_LongArch(record->arch));
-   //JsonObjectAppendInteger(&software_entry, LABEL_TIMESTAMP, (int)record->t);
+   JsonObjectAppendInteger(&software_entry, LABEL_TIMESTAMP, (int)record->t);
 
    JsonArrayAppendObject(&software, software_entry);
    }
