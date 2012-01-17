@@ -4,6 +4,7 @@ require_once 'lib/tonic.php';
 require_once 'lib/utils.php';
 
 // load resources
+require_once 'resource/host.php';
 require_once 'resource/promise-compliance.php';
 require_once 'resource/promise-log-notkept-summary.php';
 require_once 'resource/promise-log-notkept.php';

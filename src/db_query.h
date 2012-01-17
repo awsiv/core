@@ -87,6 +87,9 @@ int CFDB_QueryMasterIP(char *buffer,int bufsize);
 int CFDB_QueryReplStatus(mongo_connection *conn, char *buffer,int bufsize);
 Item *CFDB_GetDeletedHosts(void);
 
+// host
+Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const char *ip);
+
 #endif
 
 #endif

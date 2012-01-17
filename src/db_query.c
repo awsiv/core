@@ -7565,6 +7565,48 @@ static bool AppendHostClassFilter(bson_buffer *queryBuffer, HostClassFilter *fil
 }
 
 
+Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const char *ip)
+{
+bson_buffer buffer;
+bson query, field;
+
+// query
+bson_buffer_init(&buffer);
+bson_append_regex(&buffer, cfr_host_array, hostname, "");
+bson_append_regex(&buffer, cfr_ip_array, ip, "");
+bson_from_buffer(&query, &buffer);
+
+// projection
+bson_buffer_init(&buffer);
+bson_append_int(&buffer, cfr_keyhash, 1);
+bson_from_buffer(&field, &buffer);
+
+mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+
+bson_destroy(&query);
+bson_destroy(&field);
+
+Rlist *hostkeys = NULL;
+while (mongo_cursor_next(cursor))
+   {
+   bson_iterator iter;
+   bson_iterator_init(&iter, cursor->current.data);
+
+   while (bson_iterator_next(&iter))
+      {
+      if (strcmp(bson_iterator_key(&iter), cfr_keyhash) == 0)
+         {
+         AppendRlist(&hostkeys, bson_iterator_string(&iter), CF_SCALAR);
+         }
+      }
+   }
+
+mongo_cursor_destroy(cursor);
+
+return hostkeys;
+}
+
+
 #endif  /* HAVE LIBMONGOC */
 
 

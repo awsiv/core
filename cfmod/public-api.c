@@ -28,7 +28,47 @@ static const char *LABEL_STATE_ANY = "any";
 
 static const char *LABEL_UNKNOWN = "unknown";
 
+
 /************************************************************************************/
+
+
+PHP_FUNCTION(cfmod_resource_host)
+{
+char *hostname = NULL,
+     *ip = NULL;
+int len;
+PageInfo page = { 0 };
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll",
+      &hostname, &len,
+      &ip, &len,
+      &(page.resultsPerPage),
+      &(page.pageNum)) == FAILURE)
+   {
+   zend_throw_exception(cfmod_exception_db, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+   }
+
+mongo_connection conn;
+DATABASE_OPEN(&conn)
+
+Rlist *hostkeys = CFDB_QueryHostKeys(&conn, hostname, ip);
+
+DATABASE_CLOSE(&conn);
+
+JsonArray *output = NULL;
+for (Rlist *rp = hostkeys; rp != NULL; rp = rp->next)
+   {
+   JsonArrayAppendString(&output, ScalarValue(rp));
+   }
+
+DeleteRlist(hostkeys);
+
+RETURN_JSON(output);
+}
+
+
+/************************************************************************************/
+
 
 static PromiseState PromiseStateFromString(const char *state)
 {
