@@ -4,7 +4,11 @@ require_once 'lib/tonic.php';
 require_once 'lib/utils.php';
 
 // load resources
-require_once 'resource/promise.php';
+require_once 'resource/promise-compliance.php';
+require_once 'resource/promise-log-notkept-summary.php';
+require_once 'resource/promise-log-notkept.php';
+require_once 'resource/promise-log-repaired-summary.php';
+require_once 'resource/promise-log-repaired.php';
 require_once 'resource/report.php';
 
 function addAuthenticateHeader($response)
