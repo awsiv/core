@@ -3621,7 +3621,7 @@ PHP_FUNCTION(cfpr_role_list_all)
 
  DeleteHubQuery(hq, DeleteHubRole);
    
- RETURN_JSON(roles);
+ RETURN_JSON_ARRAY(roles);
 }
 
 /******************************************************************************/
@@ -3657,7 +3657,7 @@ PHP_FUNCTION(cfpr_role_list_by_name)
 
  DeleteHubQuery(hq, DeleteHubRole);
 
- RETURN_JSON(roles);
+ RETURN_JSON_ARRAY(roles);
 }
 
 /******************************************************************************/
