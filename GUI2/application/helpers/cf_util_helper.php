@@ -152,8 +152,11 @@ function getonlineusernames() {
  * Formats a timestamp and then gives it a color code
  * amber when time difference is greater than 6 hours
  * red when older than 7 days
- * @param <type> $timestamp
+ * @param int $timestamp 
+ * @param bool $noColor HTML with no color class
+ * @param bool $onlyDate no html output
  * @return <string> datetime with wrapped in span with colorclass
+ * 
  */
 function getDateStatus($timestamp, $noColor=false,$onlyDate = false) {
 

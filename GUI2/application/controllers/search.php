@@ -124,10 +124,12 @@ class Search extends Cf_Controller {
             $paramArray[$index] = urldecode($value);
         }
 
+        $report_title_array =  json_decode(cfpr_select_reports($report_type),10);
+        $report_title = $report_title_array['data'][0]['name'];
         $data = array(
             'report_type' => $report_type,
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
-            'report_title' => $report_type,
+            'report_title' => $report_title,
             'breadcrumbs' => $this->breadcrumblist->display(),
             'current' => $page_number,
             'number_of_rows' => $rows,

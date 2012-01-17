@@ -6,19 +6,19 @@ class Widget extends Cf_Controller {
         parent::__construct();
     }
 
-    function hostfinder($page=1) {
+    function hostfinder($page = 1) {
         //$data= cfpr_select_hosts("none", ".*", NULL);
-        $data= cfpr_show_hosts_name('.*', NULL, 15, $page);
-         if($page>1){
-           echo sanitycheckjson($data);
-           return;
+        $data = cfpr_show_hosts_name('.*', NULL, 15, $page);
+        if ($page > 1) {
+            echo sanitycheckjson($data);
+            return;
         }
-        $result=sanitycheckjson($data,true);
-        if(is_array($result)){
-       // $this->data['hostlist']= array_msort($result,array('id'=>SORT_ASC),true);
-           $this->data['hostlist']= array_msort($result['data'],array('0'=>SORT_ASC),true);
-        }else{
-         $this->data['error'] ="Host list cannot be  generated due to invalid json data";
+        $result = sanitycheckjson($data, true);
+        if (is_array($result)) {
+            // $this->data['hostlist']= array_msort($result,array('id'=>SORT_ASC),true);
+            $this->data['hostlist'] = array_msort($result['data'], array('0' => SORT_ASC), true);
+        } else {
+            $this->data['error'] = "Host list cannot be  generated due to invalid json data";
         }
         $this->load->view('widgets/hostfinder', $this->data);
     }
@@ -62,7 +62,7 @@ class Widget extends Cf_Controller {
     function __format_to_html($result, $display) {
         $html = "";
         if (key_exists('data', $result) && count($result['data']) > 0) {
-            $result=array_msort($result['data'],array('0'=>SORT_ASC),true);
+            $result = array_msort($result['data'], array('0' => SORT_ASC), true);
             $html.="<ul class=\"result\">";
             foreach ($result as $row) {
                 if ($display == 'hostname' && strlen($row[0]) > 0)
@@ -100,7 +100,7 @@ class Widget extends Cf_Controller {
         echo json_encode($arr->classes);
     }
 
-    function ajaxlisthost($currentclass=NULL) {
+    function ajaxlisthost($currentclass = NULL) {
         $filters = $this->input->post('filter');
         if ($filters) {
             $classlist = implode(",", $filters);
@@ -116,28 +116,28 @@ class Widget extends Cf_Controller {
     }
 
     function allclasses() {
-        $data=cfpr_list_all_classes(NULL, NULL, NULL, NULL);
+        $data = cfpr_list_all_classes(NULL, NULL, NULL, NULL);
         sanitycheckjson($data);
     }
 
     function filterclass() {
         $filter = $this->input->post('filter');
-        $data="";
+        $data = "";
         switch ($filter) {
             case "time":
-                $data= cfpr_list_time_classes(NULL, NULL, NULL, NULL);
+                $data = cfpr_list_time_classes(NULL, NULL, NULL, NULL);
                 break;
             case "ip":
-                $data= cfpr_list_ip_classes(NULL, NULL, NULL, NULL);
+                $data = cfpr_list_ip_classes(NULL, NULL, NULL, NULL);
                 break;
             case "soft":
-                $data= cfpr_list_soft_classes(NULL, NULL, NULL, NULL);
+                $data = cfpr_list_soft_classes(NULL, NULL, NULL, NULL);
                 break;
             case "all":
-                $data= cfpr_list_all_classes(NULL, NULL, NULL, NULL);
+                $data = cfpr_list_all_classes(NULL, NULL, NULL, NULL);
                 break;
             case "host":
-                $data= cfpr_list_host_classes(NULL, NULL, NULL, NULL);
+                $data = cfpr_list_host_classes(NULL, NULL, NULL, NULL);
                 break;
         }
         sanitycheckjson($data);
@@ -161,7 +161,7 @@ class Widget extends Cf_Controller {
     }
 
     function allpolicies() {
-        $data=cfpr_policy_finder_by_handle(NULL, true);
+        $data = cfpr_policy_finder_by_handle(NULL, true);
         sanitycheckjson($data);
     }
 
@@ -180,7 +180,7 @@ class Widget extends Cf_Controller {
         } else {
             $data = cfpr_policy_finder_by_handle(NULL, $reg);
         }
-       sanitycheckjson($data);
+        sanitycheckjson($data);
     }
 
     function search_by_bundle() {
@@ -198,45 +198,42 @@ class Widget extends Cf_Controller {
         } else {
             $data = cfpr_policy_finder_by_bundle(NULL, $reg);
         }
-       sanitycheckjson($data);
+        sanitycheckjson($data);
     }
-    
-    function search_by_type(){
-        $val= $this->input->post('filter');
+
+    function search_by_type() {
+        $val = $this->input->post('filter');
         $reg = $this->input->post('reg');
-        $type= $this->input->post('type');
-         if ($reg == "true") {
+        $type = $this->input->post('type');
+        if ($reg == "true") {
             $reg = true;
         }
         if ($reg == "false") {
             $reg = false;
         }
-        if(preg_match("/^\^\w+/i",$val)){
-             $data = cfpr_policy_finder_by_bundle($val, $reg);
-        }
-        else
-        {
-             $data = cfpr_policy_finder_by_bundle(NULL, $reg);
+        if (preg_match("/^\^\w+/i", $val)) {
+            $data = cfpr_policy_finder_by_bundle($val, $reg);
+        } else {
+            $data = cfpr_policy_finder_by_bundle(NULL, $reg);
         }
 
-        $return_array=array();
-        $promises=sanitycheckjson($data,true);
-        
-        if($type!=""){
-                foreach($promises as $promise){
-                    if(array_search($type, $promise)!==FALSE){
-                      $return_array[]=$promise;
-                    }
-                  }
-                    $json=json_encode($return_array);
-                    sanitycheckjson($json);
+        $return_array = array();
+        $promises = sanitycheckjson($data, true);
+
+        if ($type != "") {
+            foreach ($promises as $promise) {
+                if (array_search($type, $promise) !== FALSE) {
+                    $return_array[] = $promise;
+                }
+            }
+            $json = json_encode($return_array);
+            sanitycheckjson($json);
+        } else {
+
+            $ret = array_msort($promises, array('3' => SORT_ASC), true);
+            $json = json_encode($ret);
+            sanitycheckjson($json);
         }
-        else {
-         
-              $ret=array_msort($promises,array('3' => SORT_ASC),true);
-              $json=json_encode($ret);
-               sanitycheckjson($json);
-         }
     }
 
     function search_by_promiser() {
@@ -258,22 +255,29 @@ class Widget extends Cf_Controller {
     }
 
     function allreports() {
-        $data= cfpr_select_reports();
-        $reports=sanitycheckjson($data,true);
-        //var_dump($reports);
-        $treeview_reports=array();
-        foreach ($reports as $report){
-            if(key_exists($report['category'], $treeview_reports)){
-                array_push($treeview_reports[$report['category']],$report);
+        $data = cfpr_select_reports(null);
+        $reportsData = sanitycheckjson($data, true);
+        // check for error code returned
+        $errorCode = $reportsData['error']['errid'];
+        if ($errorCode == 0) {
+            $reports = $reportsData['data'];
+            $treeview_reports = array();
+            foreach ($reports as $report) {
+                if (key_exists($report['category'], $treeview_reports)) {
+                    array_push($treeview_reports[$report['category']], $report);
+                } else {
+                    $treeview_reports[$report['category']] = array();
+                    array_push($treeview_reports[$report['category']], $report);
+                }
             }
-            else{
-                $treeview_reports[$report['category']]=array();
-                array_push($treeview_reports[$report['category']],$report);
-            }
+            $json = json_encode($treeview_reports);
+            echo $json;
+            exit;
+        } else {
+            // we got some error here throw it out 
+            $this->output->set_status_header('500', $reportsData['error']['message']);
+            exit;
         }
-        //var_dump($treeview_reports);
-        $json=json_encode($treeview_reports);
-        echo $json;
     }
 
     function insertworkinglogs() {
@@ -312,9 +316,9 @@ class Widget extends Cf_Controller {
         echo $this->breadcrumblist->display();
     }
 
-    function cdpreports(){
-        $data= cfpr_cdp_reportnames();
-        sanitycheckjson($data);  
+    function cdpreports() {
+        $data = cfpr_cdp_reportnames();
+        sanitycheckjson($data);
     }
 
 }
