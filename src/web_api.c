@@ -1221,9 +1221,9 @@ int Nova2PHP_software_report(char *hostkey,char *name,char *value, char *arch,in
 
 /*****************************************************************************/
 
-int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *classreg,PageInfo *page,char *returnval,int bufsize)
-
-{  char buffer[CF_BUFSIZE]={0}, header[CF_BUFSIZE]={0};
+int Nova2PHP_classes_report(char *hostkey,char *name,int regex,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
+{
+ char buffer[CF_BUFSIZE]={0}, header[CF_BUFSIZE]={0};
  int margin = 0,headerLen=0,noticeLen=0;
  int truncated = false;
  HubClass *hc;
@@ -1238,7 +1238,7 @@ int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *classreg,Pa
     return false;
     }
 
- hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)SECONDS_PER_WEEK,classreg,true);
+ hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)SECONDS_PER_WEEK,hostClassFilter,true);
  PageRecords(&(hq->records),page,DeleteHubClass);
 
  snprintf(header,sizeof(header),
@@ -2468,9 +2468,9 @@ int Nova2PHP_software_hosts(char *hostkey,char *name,char *value, char *arch,int
 
 /*****************************************************************************/
 
-int Nova2PHP_classes_hosts(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
-
-{ char buffer[CF_BUFSIZE];
+int Nova2PHP_classes_hosts(char *hostkey,char *name,int regex,HostClassFilter *hostClassFilter,char *returnval,int bufsize)
+{
+ char buffer[CF_BUFSIZE];
  HubHost *hh;
  HubQuery *hq;
  Rlist *rp;
@@ -2484,7 +2484,7 @@ int Nova2PHP_classes_hosts(char *hostkey,char *name,int regex,char *classreg,cha
     return false;
     }
 
- hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)SECONDS_PER_WEEK,classreg,false);
+ hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)SECONDS_PER_WEEK,hostClassFilter,false);
 
  StartJoin(returnval,"[",bufsize);
 
@@ -4404,9 +4404,10 @@ int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int
     return false;
     }
 
-
- hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,CF_HUB_HORIZON,NULL,false);
-
+ HostClassFilter *filter = NewHostClassFilter(NULL, NULL);
+ hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,CF_HUB_HORIZON,filter,false);
+ DeleteHostClassFilter(filter);
+ 
  returnval[0] = '\0';
 
  for (rp = hq->records; rp != NULL; rp=rp->next)

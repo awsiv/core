@@ -1162,7 +1162,9 @@ if (!CFDB_Open(&dbconn))
 
 snprintf(work,CF_MAXVARSIZE-1,"%s.*",MONITOR_CLASS_PREFIX);
 
-hq = CFDB_QueryClasses(&dbconn,NULL,work,true,CF_HUB_HORIZON,NULL,false);
+HostClassFilter *filter = NewHostClassFilter(NULL, NULL);
+hq = CFDB_QueryClasses(&dbconn,NULL,work,true,CF_HUB_HORIZON,filter,false);
+DeleteHostClassFilter(filter);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {

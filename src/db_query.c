@@ -609,7 +609,7 @@ return NewHubQuery(host_list,record_list);
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort)
+HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, HostClassFilter *hostClassFilter, int sort)
 
 { bson_buffer bb;
  bson query,field;
@@ -622,8 +622,7 @@ HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lclass,in
  char rclass[CF_MAXVARSIZE];
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
  int match_class,found = false;
- char classRegexAnch[CF_MAXVARSIZE];
- int emptyQuery = true;
+ bool queryHasData = false;
   
 /* BEGIN query document */
 
@@ -632,23 +631,18 @@ HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lclass,in
 if (!EMPTY(keyHash))
    {
    bson_append_string(&bb,cfr_keyhash,keyHash);
-   emptyQuery = false;
+   queryHasData = true;
    }
 
-if (!EMPTY(classRegex))
-   {
-   AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
-   bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-   emptyQuery = false;
-   }
+queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
 
-if(emptyQuery)
+if(queryHasData)
    {
-   bson_empty(&query);
+   bson_from_buffer(&query,&bb);
    }
 else
    {
-   bson_from_buffer(&query,&bb);
+   bson_empty(&query);
    }
 
 
@@ -670,7 +664,7 @@ cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
 bson_destroy(&field);
 
-if (!emptyQuery)
+if (queryHasData)
    {
    bson_destroy(&query);
    }
@@ -3365,7 +3359,7 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
   char rname[CF_MAXVARSIZE];
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],noteid[CF_BUFSIZE];
   int match_name,found = false;
-  int queryHasData = false;
+  bool queryHasData = false;
   time_t rt;
   
 /* BEGIN query document */
@@ -7542,7 +7536,6 @@ int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
 static bool AppendHostClassFilter(bson_buffer *queryBuffer, HostClassFilter *filter)
 {
  bool modified = false;
-
  char classRxAnchored[CF_BUFSIZE];
 
  if(filter->classRxInclude)
