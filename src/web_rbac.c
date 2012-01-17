@@ -31,6 +31,7 @@ static HubQuery *CFDB_GetRolesByMultipleNames(Item *names);
 static HubQuery *CFDB_GetRoles(bson *query);
 static const char *GetUsersCollection(mongo_connection *conn);
 static bool IsLDAPOn(mongo_connection *conn);
+static HubQuery *CFDB_GetAllRoles(void);
 static HubQuery *CFDB_GetRoleByName(char *name);
 static cfapi_errid UserIsRoleAdmin(char *userName);
 
@@ -442,8 +443,20 @@ static Item *CFDB_GetRolesForUser(char *userName)
  return memberRoles;
  }
 
+HubQuery *CFDB_GetAllRolesAuth(char *userName)
+{
+ cfapi_errid errid = UserIsRoleAdmin(userName);
 
-HubQuery *CFDB_GetAllRoles(void)
+ if(errid != ERRID_SUCCESS)
+    {
+    return NewHubQueryErrid(NULL, NULL, errid);
+    }
+ 
+ return CFDB_GetAllRoles();
+}
+
+
+static HubQuery *CFDB_GetAllRoles(void)
 {
  bson query;
  bson_empty(&query);

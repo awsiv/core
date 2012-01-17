@@ -3593,19 +3593,22 @@ PHP_FUNCTION(cfpr_role_delete)
 
 PHP_FUNCTION(cfpr_role_list_all)
 {
-#define LABEL_ROLE_NAME "name"
-#define LABEL_ROLE_DESCRIPTION "description"
-#define LABEL_ROLE_CLASSRX_INCLUDE "classrxinclude"
-#define LABEL_ROLE_CLASSRX_EXCLUDE "classrxexclude"
-#define LABEL_ROLE_BUNDLERX_INCLUDE "bundlerxinlcude"
- 
- if (ZEND_NUM_ARGS() != 0)
+ char *userName;
+ int userNameLen;
+
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&userName, &userNameLen) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
- HubQuery *hq = CFDB_GetAllRoles();
+ if(!(userNameLen))
+    {
+    zend_throw_exception(cfmod_exception_args, "Missing argument contents", 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
+ 
+ HubQuery *hq = CFDB_GetAllRolesAuth(userName);
 
  if(hq->errid != ERRID_SUCCESS)
     {
