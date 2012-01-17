@@ -285,9 +285,16 @@ cfapi_errid CFDB_CreateRole(char *name, char *description, char *includeClassRx,
  bson_destroy(&query);
  bson_destroy(&update);
 
+ cfapi_errid errid = ERRID_SUCCESS;
+ 
+ if(!MongoCheckForError(&conn, "CFDB_DeleteRole", NULL, false))
+    {
+    errid = ERRID_DB_OPERATION;
+    }
+
  CFDB_Close(&conn);
  
- return ERRID_SUCCESS;
+ return errid;
 }
 
 
@@ -318,9 +325,16 @@ cfapi_errid CFDB_DeleteRole(char *name)
 
  DeAssociateUsersFromRole(&conn, name);
 
+ cfapi_errid errid = ERRID_SUCCESS;
+ 
+ if(!MongoCheckForError(&conn, "CFDB_DeleteRole", NULL, false))
+    {
+    errid = ERRID_DB_OPERATION;
+    }
+
  CFDB_Close(&conn);
 
- return ERRID_SUCCESS;
+ return errid;
 }
 
 
