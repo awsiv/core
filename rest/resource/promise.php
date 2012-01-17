@@ -1,8 +1,9 @@
 <?php
 
 /**
- * @uri /promise/:log/:repaired
- * @uri /promise/:log/:repaired/:summary
+ * @uri /promise/:report-id/:state/:summary
+ * @uri /promise/:report-id/:state
+ * @uri /promise/:report-id
  */
 class Promise extends Resource
 {
@@ -30,7 +31,10 @@ class Promise extends Resource
                     return $response;
                 
                 case 'compliance':
-                    throw new ResponseException("Not implemented", Response::INTERNALSERVERERROR);
+                    $response = new Response($request);
+                    $response->body = cfmod_resource_promise_compliance($handle,
+                            $hostkey, $context, $state, $from, $count, $startPage);
+                    return $response;
                 
                 default:
                     throw new ResponseException("Unknown report id: " . $report_id, 

@@ -3,6 +3,7 @@
 
 #include "php_cfmod.h"
 
+PHP_FUNCTION(cfmod_resource_promise_compliance);
 PHP_FUNCTION(cfmod_resource_promise_log_repaired);
 PHP_FUNCTION(cfmod_resource_promise_log_repaired_summary);
 PHP_FUNCTION(cfmod_resource_promise_log_notkept);

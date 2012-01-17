@@ -36,8 +36,103 @@ static const char *LABEL_COUNT = "count";
 static const char *LABEL_STATE = "state";
 static const char *LABEL_STATE_REPAIRED = "repaired";
 static const char *LABEL_STATE_NOTKEPT = "notkept";
+static const char *LABEL_STATE_KEPT = "kept";
+static const char *LABEL_STATE_ANY = "any";
 
 static const char *LABEL_UNKNOWN = "unknown";
+
+/************************************************************************************/
+
+static PromiseState PromiseStateFromString(const char *state)
+{
+if (state == NULL)
+   {
+   return PROMISE_STATE_ANY;
+   }
+else if (strcmp(LABEL_STATE_REPAIRED, state) == 0)
+   {
+   return PROMISE_STATE_REPAIRED;
+   }
+else if (strcmp(LABEL_STATE_NOTKEPT, state) == 0)
+   {
+   return PROMISE_STATE_NOTKEPT;
+   }
+else if (strcmp(LABEL_STATE_KEPT, state) == 0)
+   {
+   return PROMISE_STATE_KEPT;
+   }
+else
+   {
+   return PROMISE_STATE_ANY;
+   }
+}
+
+static const char *PromiseStateToString(PromiseState state)
+{
+switch (state)
+   {
+   case PROMISE_STATE_REPAIRED:
+      return LABEL_STATE_REPAIRED;
+   case PROMISE_STATE_NOTKEPT:
+      return LABEL_STATE_NOTKEPT;
+   case PROMISE_STATE_KEPT:
+      return LABEL_STATE_KEPT;
+   default:
+   case PROMISE_STATE_ANY:
+      // FIX: probably should never happen, add warning?
+      return LABEL_STATE_ANY;
+   }
+}
+
+PHP_FUNCTION(cfmod_resource_promise_compliance)
+{
+char *handle = NULL,
+     *hostkey = NULL,
+     *context = NULL,
+     *state = NULL;
+long from;
+int len;
+PageInfo page = { 0 };
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslll",
+      &handle, &len,
+      &hostkey, &len,
+      &context, &len,
+      &state, &len,
+      &from,
+      &(page.resultsPerPage),
+      &(page.pageNum)) == FAILURE)
+   {
+   zend_throw_exception(cfmod_exception_args, "Unable to parse arguments", 0 TSRMLS_CC);
+   RETURN_NULL();
+   }
+
+mongo_connection conn;
+DATABASE_OPEN(&conn)
+
+HubQuery *result = CFDB_QueryPromiseCompliance(&conn, hostkey, handle, PromiseStateFromString(state),
+                                               true , 0, true, context);
+
+JsonArray *output = NULL;
+for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
+   {
+   HubPromiseCompliance *record = (HubPromiseCompliance *)rp->item;
+   JsonObject *entry = NULL;
+
+   JsonObjectAppendString(&entry, LABEL_HANDLE, record->handle);
+   JsonObjectAppendString(&entry, LABEL_HOSTKEY, record->hh->keyhash);
+   JsonObjectAppendString(&entry, LABEL_STATE, PromiseStateToString(record->status));
+   JsonObjectAppendReal(&entry, LABEL_AVERAGE, record->e);
+   JsonObjectAppendReal(&entry, LABEL_STATE, record->d);
+   JsonObjectAppendInteger(&entry, LABEL_TIMESTAMP, record->t);
+
+   JsonArrayAppendObject(&output, entry);
+   }
+
+DATABASE_CLOSE(&conn)
+
+RETURN_JSON(output)
+}
 
 
 /************************************************************************************/
