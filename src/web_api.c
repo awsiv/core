@@ -1158,7 +1158,7 @@ int Nova2PHP_get_value_graph(char *hostkey,char *day,char *month,char *year,char
 
 /*****************************************************************************/
 
-int Nova2PHP_software_report(char *hostkey,char *name,char *value, char *arch,int regex,char *type,char *classreg,PageInfo *page,char *returnval,int bufsize)
+int Nova2PHP_software_report(char *hostkey,char *name,char *value, char *arch,int regex,char *type,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE]={0}, header[CF_BUFSIZE]={0};
  int margin = 0,headerLen=0,noticeLen=0;
@@ -1174,7 +1174,7 @@ int Nova2PHP_software_report(char *hostkey,char *name,char *value, char *arch,in
     }
 
 
- hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,classreg,true);
+ hq = CFDB_QuerySoftware(&dbconn,hostkey,type,name,value,arch,regex,hostClassFilter,true);
  PageRecords(&(hq->records),page,DeleteHubSoftware);
 
  snprintf(header,sizeof(header),

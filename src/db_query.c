@@ -22,6 +22,8 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 
 #ifdef HAVE_LIBMONGOC
 
+static bool AppendHostClassFilter(bson_buffer *queryBuffer, HostClassFilter *filter);
+
 /*****************************************************************************/
 
 int CFDB_GetValue(char *lval,char *rval,int size)
@@ -423,7 +425,7 @@ return hq;
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,char *lname,char *lver,char *larch,int regex, char *classRegex, int sort)
+HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,char *lname,char *lver,char *larch,int regex, HostClassFilter *hostClassFilter, int sort)
 // NOTE: needs to return report from one host before next - not mixed (for Constellation)
 { bson_buffer bb;
   bson query,field;
@@ -433,8 +435,7 @@ HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,cha
   Rlist *record_list = NULL, *host_list = NULL;
   char rname[CF_MAXVARSIZE] = {0},rversion[CF_MAXVARSIZE] = {0},rarch[3] = {0},arch[3] = {0};
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
-  char classRegexAnch[CF_MAXVARSIZE];
-  int emptyQuery = true;
+  bool queryHasData = false;
   int found = false;
 
 if (!EMPTY(larch))
@@ -448,24 +449,20 @@ bson_buffer_init(&bb);
 if (!EMPTY(keyHash))
    {
    bson_append_string(&bb,cfr_keyhash,keyHash);
-   emptyQuery = false;
+   queryHasData = true;
    }
 
-if (!EMPTY(classRegex))
-   {
-   AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
-   bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-   emptyQuery = false;
-   }
+queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
 
-if (emptyQuery)
-   {
-   bson_empty(&query);
-   }
-else
+if (queryHasData)
    {
    bson_from_buffer(&query,&bb);
    }
+else    
+   {
+   bson_empty(&query);
+   }
+
 
 /* BEGIN RESULT DOCUMENT */
 
@@ -7545,6 +7542,40 @@ int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
  bson_destroy(&result);
  return ret;
 }
+
+/*****************************************************************************/
+
+static bool AppendHostClassFilter(bson_buffer *queryBuffer, HostClassFilter *filter)
+{
+ bool modified = false;
+
+ char classRxAnchored[CF_BUFSIZE];
+
+ if(filter->classRxInclude)
+    {
+    AnchorRegex(filter->classRxInclude, classRxAnchored, sizeof(classRxAnchored));
+    bson_append_regex(queryBuffer, cfr_class_keys, classRxAnchored, "");
+    modified = true;
+    }
+ 
+ if(filter->classRxExclude)
+    {
+    bson_buffer *excludeClassBuffer, *excludeClassArray;
+    excludeClassBuffer = bson_append_start_object(queryBuffer, cfr_class_keys);
+    excludeClassArray = bson_append_start_array(excludeClassBuffer, "$nin");
+
+    AnchorRegex(filter->classRxExclude, classRxAnchored, sizeof(classRxAnchored));
+    bson_append_regex(excludeClassArray, cfr_class_keys, classRxAnchored, "");
+
+    bson_append_finish_object(excludeClassArray);
+    bson_append_finish_object(excludeClassBuffer);
+
+    modified = true;
+    }
+
+ return modified;
+}
+
 
 #endif  /* HAVE LIBMONGOC */
 

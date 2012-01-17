@@ -199,8 +199,12 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssll",
 mongo_connection conn;
 DATABASE_OPEN(&conn)
 
+HostClassFilter *filter = NewHostClassFilter(context, NULL);
+
 HubQuery *result = CFDB_QuerySoftware(&conn, hostkey,
-   cfr_software, name, version, arch, true, context ,true);
+   cfr_software, name, version, arch, true, filter,true);
+
+DeleteHostClassFilter(filter);
 
 DATABASE_CLOSE(&conn)
 

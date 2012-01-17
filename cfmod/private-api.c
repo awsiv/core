@@ -727,8 +727,12 @@ PHP_FUNCTION(cfpr_report_software_in)
  farch = (a_len == 0) ? NULL : arch;
  fclassreg = (cr_len == 0) ? NULL : classreg;
 
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+
  buffer[0]='\0';
- Nova2PHP_software_report(fhostkey,fname,fversion,farch,use_reg,cfr_software,fclassreg,&page,buffer,bufsize);
+ Nova2PHP_software_report(fhostkey,fname,fversion,farch,use_reg,cfr_software,filter,&page,buffer,bufsize);
+
+ DeleteHostClassFilter(filter);
 
  RETURN_STRING(buffer,1);
 }
@@ -761,8 +765,12 @@ PHP_FUNCTION(cfpr_report_patch_in)
  farch = (a_len == 0) ? NULL : arch;
  fclassreg= (cr_len == 0) ? NULL : classreg;
 
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+ 
  buffer[0]='\0';
- Nova2PHP_software_report(fhostkey,fname,fversion,farch,use_reg,cfr_patch_installed,fclassreg,&page,buffer,bufsize);
+ Nova2PHP_software_report(fhostkey,fname,fversion,farch,use_reg,cfr_patch_installed,filter,&page,buffer,bufsize);
+
+ DeleteHostClassFilter(filter);
 
  RETURN_STRING(buffer,1);
 }
@@ -795,8 +803,12 @@ PHP_FUNCTION(cfpr_report_patch_avail)
  farch = (a_len == 0) ? NULL : arch;
  fclassreg = (cr_len == 0) ? NULL : classreg;
 
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+
  buffer[0]='\0';
- Nova2PHP_software_report(fhostkey,fname,fversion,farch,use_reg,cfr_patch_avail,fclassreg,&page,buffer,bufsize);
+ Nova2PHP_software_report(fhostkey,fname,fversion,farch,use_reg,cfr_patch_avail,filter,&page,buffer,bufsize);
+
+ DeleteHostClassFilter(filter);
 
  RETURN_STRING(buffer,1);
 }

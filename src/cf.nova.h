@@ -551,17 +551,6 @@ typedef struct
    char *bundleRxInclude;
    } HubRole;
 
-typedef struct
-   {
-   char *classRxInclude;
-   char *classRxExclude;
-   } HostClassFilter;
-
-typedef struct
-   {
-   char *bundleRxInclude;
-   } PromiseFilter;
-
 
 /*****************************************************************************/
 

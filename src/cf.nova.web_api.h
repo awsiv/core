@@ -50,6 +50,18 @@ typedef enum cdp_report
    cdp_unknown
    } cdp_report;
 
+typedef struct
+   {
+   char *classRxInclude;
+   char *classRxExclude;
+   } HostClassFilter;
+
+typedef struct
+   {
+   char *bundleRxInclude;
+   } PromiseFilter;
+
+
 /* misc */
 
 extern int AM_PHP_MODULE;
@@ -112,7 +124,7 @@ int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *c
 void Nova2PHP_summary_meter(char *buffer,int bufsize);
 void Nova2PHP_meter(char *hostkey,char *buffer,int bufsize);
 int Nova2PHP_hostinfo(char *hostkey,char *hostnameOut,char *ipaddrOut,int bufsize);
-int Nova2PHP_software_report(char *key,char *name,char *value, char *arch,int regex,char *type,char *classreg,PageInfo *page,char *returnval,int bufsize);
+int Nova2PHP_software_report(char *hostkey,char *name,char *value, char *arch,int regex,char *type,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize);
 int Nova2PHP_classes_report(char *hostkey,char *name,int regex,char *classreg,PageInfo *page,char *buffer,int bufsize);
 int Nova2PHP_classes_summary(char **classes, char *buf, int bufsize);
 int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int bufsize);
