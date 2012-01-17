@@ -4,6 +4,7 @@ class pdfreports extends Cf_Controller {
 
     var $reportGenerator = '';
     public $storeDir = './tmp/';
+    public $truncateWarning = null;
 
     function __construct() {
         parent::__construct();
@@ -214,7 +215,7 @@ class pdfreports extends Cf_Controller {
                 if (!file_exists("./tmp")) {
                     mkdir("./tmp", 0777);
                 }
-                
+
                 if (!is_writable($this->storeDir)) {
                     log_message('error', 'Please make sure the tmp directory in web root is writeable');
                     throw new Exception('directory "tmp" is not writable ');
@@ -244,6 +245,9 @@ class pdfreports extends Cf_Controller {
                 $this->reportGenerator->Output($filepath, "F");
                 $downloadLink = site_url() . "/pdfreports/download/file/$filename/action/download";
                 $msg = sprintf("<a href='%s' target='_blank'>Click here to download the file.</a>", $downloadLink);
+               
+        
+                if ($this->truncateWarning !== null) $msg = $msg . '<p class="warning">'.$this->truncateWarning.'</p>';
                 $retData = array('message' => $msg);
                 $jsonReturn = json_encode($retData);
                 echo $jsonReturn;
@@ -283,8 +287,11 @@ class pdfreports extends Cf_Controller {
             echo 'Something went wrong while sending mail';
             exit;
         }
-
-        $retData = array('message' => 'Mail has been sent to the given address.');
+        
+        $msg = 'Mail has been sent to the given address.';
+        if ($this->truncateWarning) $msg .= $msg . '<p class="warning>'.$this->truncateWarning.'</p>';
+                
+        $retData = array('message' => $msg);
         $jsonReturn = json_encode($retData);
 
         echo $jsonReturn;
@@ -310,7 +317,11 @@ class pdfreports extends Cf_Controller {
         force_download($filename, $data);
     }
 
-    ## functions for reports
+    function checkForDataTruncation($result) {
+        if (is_array($result) && key_exists('truncated', $result['meta'])) {
+            $this->truncateWarning = $result['meta']['truncated'];
+        }
+    }
 
     function calc_width_percent($total, $width) {
         $ret = ($width / $total) * 100;
@@ -336,11 +347,12 @@ class pdfreports extends Cf_Controller {
         return $data;
     }
 
-    function rpt_bundle_profile($hostkey, $search, $class_regex, $rows=0, $page_number=0) {
+    function rpt_bundle_profile($hostkey, $search, $class_regex, $rows = 0, $page_number = 0) {
 
         $header = array('Host', 'Bundle', 'Last verified', 'Hours Ago', 'Avg interval', 'Uncertainty');
         $ret = cfpr_report_bundlesseen($hostkey, $search, true, $class_regex, $rows, $page_number);
         $jsondata = json_decode($ret, true);
+        $this->checkForDataTruncation($jsondata);
         $data1 = $jsondata['data'];
         $header = ($jsondata['meta']['header']);
 
@@ -369,7 +381,7 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_business_value($hostkey, $days, $months, $years, $class_regex, $rows=0, $page_number=0) {
+    function rpt_business_value($hostkey, $days, $months, $years, $class_regex, $rows = 0, $page_number = 0) {
 
         $ret = cfpr_report_value($hostkey, $days, $months, $years, $class_regex, $rows, $page_number);
         $jsondata = json_decode($ret, true);
@@ -399,7 +411,7 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_class_profile($hostkey, $search, $class_regex, $rows=0, $page_number=0) {
+    function rpt_class_profile($hostkey, $search, $class_regex, $rows = 0, $page_number = 0) {
 
         $header = array('Host', 'Class Context', 'Occurs with probability', 'Uncertainty', 'Last seen');
 
@@ -433,7 +445,7 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_promise_notkept($hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex='', $rows=0, $page_number=0) {
+    function rpt_promise_notkept($hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex = '', $rows = 0, $page_number = 0) {
 
         $header = array('Host', 'Promise Handle', 'Report', 'Time');
 
@@ -467,7 +479,7 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_promise_notkept_summary($hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex='', $rows=0, $page_number=0) {
+    function rpt_promise_notkept_summary($hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex = '', $rows = 0, $page_number = 0) {
 
         $ret = cfpr_summarize_notkept($hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
         $jsondata = json_decode($ret, true);
@@ -494,7 +506,7 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_promise_repaired_summary($hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex='', $rows=0, $page_number=0) {
+    function rpt_promise_repaired_summary($hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex = '', $rows = 0, $page_number = 0) {
         $header = array('Promise Handle', 'Report', 'Occurrences');
 
         $ret = cfpr_summarize_repaired($hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
@@ -522,7 +534,7 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_compliance_promises($hostkey, $search, $state, $class_regex, $rows=0, $page_number=0) {
+    function rpt_compliance_promises($hostkey, $search, $state, $class_regex, $rows = 0, $page_number = 0) {
         $header = array('Host', 'Promise Handle', 'Last known state', 'Probability kept', 'Uncertainty', 'Last seen');
 
         $ret = cfpr_report_compliance_promises($hostkey, $search, $state, true, $class_regex, $rows, $page_number);
@@ -555,7 +567,7 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_compliance_summary($hostkey, $class_regex, $rows=0, $page_number=0) {
+    function rpt_compliance_summary($hostkey, $class_regex, $rows = 0, $page_number = 0) {
         $header = array('Host', 'Policy', 'Kept', 'Repaired', 'Not kept', 'Last seen');
 
 
@@ -587,7 +599,7 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_filechange_log($hostkey, $search, $class_regex, $longterm_data, $rows=0, $page_number=0) {
+    function rpt_filechange_log($hostkey, $search, $class_regex, $longterm_data, $rows = 0, $page_number = 0) {
         $cols = 3;
         $col_len = array(33, 34, 33);
         $header = array('Host', 'File', 'Time of Change');
@@ -627,7 +639,7 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_lastsaw_hosts($hostkey, $key, $name, $address, $ago, $class_regex, $rows=0, $page_number=0) {
+    function rpt_lastsaw_hosts($hostkey, $key, $name, $address, $ago, $class_regex, $rows = 0, $page_number = 0) {
         $header = array('Host', 'Initiated', 'IP Address', 'Remote Host', 'Last Seen', 'Hours Ago', ' Avg Interval', 'Uncertainty', 'Remote Host Key');
 
         $ret = cfpr_report_lastseen($hostkey, $key, $name, $address, $ago, true, $class_regex, $rows, $page_number);
@@ -658,7 +670,7 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_patches_available($hostkey, $search, $version, $arch, $class_regex, $rows=0, $page_number=0) {
+    function rpt_patches_available($hostkey, $search, $version, $arch, $class_regex, $rows = 0, $page_number = 0) {
 
         $ret = cfpr_report_patch_avail($hostkey, $search, $version, $arch, true, $class_regex, $rows, $page_number);
         $jsondata = json_decode($ret, true);
@@ -689,7 +701,7 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_patch_status($hostkey, $search, $version, $arch, $class_regex, $rows=0, $page_number=0) {
+    function rpt_patch_status($hostkey, $search, $version, $arch, $class_regex, $rows = 0, $page_number = 0) {
 
         $ret = cfpr_report_patch_in($hostkey, $search, $version, $arch, true, $class_regex, $rows, $page_number);
         $jsondata = json_decode($ret, true);
@@ -701,12 +713,12 @@ class pdfreports extends Cf_Controller {
         $data1 = $this->changeDateFields($data1, 4);
 
         $cols = count($header);
-        $col_len = array(30, 30, 10, 10,20);
+        $col_len = array(30, 30, 10, 10, 20);
 
 
         if ($this->reportGenerator instanceof cf_pdf) {
             $desc = cfpr_report_description('patch status');
-            $pdf = $this->reportGenerator;           
+            $pdf = $this->reportGenerator;
             $pdf->PDFSetDescription($desc);
             $pdf->ReportTitle();
             $pdf->ReportDescription();
@@ -719,7 +731,7 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_software_installed($hostkey, $search, $version, $arch, $class_regex, $rows=0, $page_number=0) {
+    function rpt_software_installed($hostkey, $search, $version, $arch, $class_regex, $rows = 0, $page_number = 0) {
 
         $ret = cfpr_report_software_in($hostkey, $search, $version, $arch, true, $class_regex, $rows, $page_number);
         $jsondata = json_decode($ret, true);
@@ -750,7 +762,7 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_performance($hostkey, $search, $class_regex, $rows=0, $page_number=0) {
+    function rpt_performance($hostkey, $search, $class_regex, $rows = 0, $page_number = 0) {
 
         $ret = cfpr_report_performance($hostkey, $search, true, $class_regex, $rows, $page_number);
         $jsondata = json_decode($ret, true);
@@ -784,7 +796,7 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_repaired_log($hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex, $rows=0, $page_number=0) {
+    function rpt_repaired_log($hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex, $rows = 0, $page_number = 0) {
         $header = array('Host', 'Promise Handle', 'Report', 'Time');
 
         $ret = cfpr_report_repaired($hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
@@ -820,7 +832,7 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_virtualBundles($name, $allUser, $page=0, $rows=0) {
+    function rpt_virtualBundles($name, $allUser, $page = 0, $rows = 0) {
         $this->load->model('virtual_bundle_model');
         $cols = 4;
         $col_len = array(19, 19, 43, 19);
@@ -846,9 +858,9 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_variables($hostkey, $search, $scope, $lval, $rval, $type, $class_regex, $rows=0, $page_number=0) {
+    function rpt_variables($hostkey, $search, $scope, $lval, $rval, $type, $class_regex, $rows = 0, $page_number = 0) {
         $header = array();
-        
+
         if ($hostkey == NULL) {
             $ret = cfpr_report_vars(NULL, $scope, $lval, $rval, $type, true, $class_regex, $rows, $page_number);
         } else {
@@ -892,7 +904,7 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_filediffs($hostkey, $search, $diff, $cal, $class_regex, $longterm, $page=0, $rows=0) {
+    function rpt_filediffs($hostkey, $search, $diff, $cal, $class_regex, $longterm, $page = 0, $rows = 0) {
 
         if ($longterm) {
             $data['report_result'] = cfpr_report_filediffs_longterm(NULL, $search, $diff, true, $cal, ">", $class_regex, $page, $rows);
@@ -935,7 +947,7 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_setuid($hostkey, $search, $class_regex, $rows=0, $page_number=0) {
+    function rpt_setuid($hostkey, $search, $class_regex, $rows = 0, $page_number = 0) {
         $header = array('Host', 'Type', 'Name', 'Value');
         $ret = cfpr_report_setuid($hostkey, $search, true, $class_regex, $rows, $page_number);
 

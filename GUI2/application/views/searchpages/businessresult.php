@@ -1,14 +1,15 @@
-<?php //echo $breadCrumbUrl;                ?>
+<?php //echo $breadCrumbUrl;                 ?>
 <div id="bodyreport" class="outerdiv grid_12">
 
     <div id="reportpanel" class="innerdiv">
         <p class="title"><?php echo $report_title;
-echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : "" ?></p>
+echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : ""
+?></p>
         <div class="reporthead">
             <div class="grid_8">
                 <a href="<?php echo $report_link ?>" id="send_mail" class="icons download showqtip" title="Download report"></a>
-                <?php echo anchor('#', 'Select host', array('id' => 'findhost', 'title' => 'Report for another host', 'class' => 'showqtip')) ?>
-                 &nbsp;&nbsp;<?php echo anchor('widget/allreports', 'Select report', array('id' => 'findreport', 'title' => 'Other Reports', 'class' => 'showqtip')) ?>
+<?php echo anchor('#', 'Select host', array('id' => 'findhost', 'title' => 'Report for another host', 'class' => 'showqtip')) ?>
+                &nbsp;&nbsp;<?php echo anchor('widget/allreports', 'Select report', array('id' => 'findreport', 'title' => 'Other Reports', 'class' => 'showqtip')) ?>
             </div>
             <div class="grid_4" style="text-align: right;">
                 <div><a href="#" id="savesearch" class="showqtip" title="save this search for future use"><span class="ui-icon-triangle-1-s"></span>Save this search</a></div>
@@ -37,7 +38,7 @@ echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : "" ?></p>
 
         <div class="reportpanelcontent">
             <div id="filterdialog" class="hidden"></div>
-            <div class="tables <?php echo isset($nofix)? "":"tablesfixed" ?>">
+            <div class="tables <?php echo isset($nofix) ? "" : "tablesfixed" ?>">
                 <?php
                 include_once ($resultView . '.php');
                 ?> 
@@ -69,7 +70,7 @@ echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : "" ?></p>
             <legend><span style="padding: 3px; background: #4A575C; font-size: 11px; border-radius: 5px 5px 5px 5px;color: #fff">
                     Email details<span>
                         </legend>
-            <label for="to_contacts">To: </label>
+                        <label for="to_contacts">To: </label>
                         <input type="text"  value="" id="to_contacts" name="to_contacts"  size="50"/>
                         <label for="from_contacts">From: </label>
                         <input type="text" class="" value="<?php echo $fromEmail ?>" id="from_contacts" name="from_contacts" size="50" />
@@ -160,7 +161,7 @@ echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : "" ?></p>
                                     buttons: {
                                         'Ok': function() {
                                             $('#tempdiv',$dialog).remove(); 
-                                            $dialog.append("<div id='tempdiv' class='info'><img src='<?php echo get_imagedir(); ?>ajax-loader.gif' />Please wait a while...</div>");
+                                            $dialog.append("<div id='tempdiv' class='info'><div id='loading'><img src='<?php echo get_imagedir(); ?>ajax-loader.gif' />Please wait a while...</div></div>");
                                             $.ajax({
                                                 type: "POST",
                                                 url: $('#parameters',$dialog).val(),
@@ -180,14 +181,11 @@ echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : "" ?></p>
                                                 dataType:'json',
                                                 async: false,
                                                 success: function(data){
-                                                    $('form',$dialog).hide();
+                                                    $('#loading',$dialog).remove(); 
                                                     $('#tempdiv',$dialog).removeClass('error');
                                                     $('#tempdiv',$dialog).addClass('info');
-                                                    $('#tempdiv',$dialog).html(''); 
-                                                    $('#tempdiv',$dialog).html(data.message); 
+                                                    $('#tempdiv',$dialog).append(data.message); 
                                                     $(":button:contains('Send')").hide();
-                                                    $(":button:contains('Ok')").hide();
-                                                    $(":button:contains('Cancel')").hide();
                                                     $('#tempdiv').find('a').live('click',function() {
                                                         $dialog.dialog('close');
                                                     }); 
