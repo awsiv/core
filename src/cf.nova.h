@@ -551,6 +551,17 @@ typedef struct
    char *bundleRxInclude;
    } HubRole;
 
+typedef struct
+   {
+   char *classRxInclude;
+   char *classRxExclude;
+   } HostClassFilter;
+
+typedef struct
+   {
+   char *bundleRxInclude;
+   } PromiseFilter;
+
 
 /*****************************************************************************/
 
@@ -1015,6 +1026,8 @@ HubUserRBAC *NewHubUserRBAC(char *userName, char *classRxInclude, char *classRxE
 void DeleteHubUserRBAC(HubUserRBAC *userRbac);
 HubRole *NewHubRole(char *name, char *description, char *classRxInclude, char *classRxExclude, char *bundleRxInclude);
 void DeleteHubRole(HubRole *role);
+HostClassFilter *NewHostClassFilter(char *classRxInclude, char *classRxExclude);
+void DeleteHostClassFilter(HostClassFilter *filter);
 HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int hostCount, int totalHostCount, double kept, double repaired, double notkept, time_t genTime);
 void DeleteHubCacheTotalCompliance(HubCacheTotalCompliance *tc);
 

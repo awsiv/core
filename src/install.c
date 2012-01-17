@@ -1147,6 +1147,27 @@ void DeleteHubRole(HubRole *role)
 }
 
 /*****************************************************************************/
+
+HostClassFilter *NewHostClassFilter(char *classRxInclude, char *classRxExclude)
+{
+ HostClassFilter *filter = xmalloc(sizeof(HostClassFilter));
+
+ filter->classRxInclude = SafeStringDuplicate(classRxInclude);
+ filter->classRxExclude = SafeStringDuplicate(classRxExclude);
+ 
+ return filter;
+}
+
+/*****************************************************************************/
+
+void DeleteHostClassFilter(HostClassFilter *filter)
+{
+ free(filter->classRxInclude);
+ free(filter->classRxExclude);
+ free(filter);
+}
+
+/*****************************************************************************/
 /*                        REPORT SORTING FUNCTIONS                           */
 /*****************************************************************************/
 
