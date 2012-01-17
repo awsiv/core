@@ -1,20 +1,7 @@
 #include "public-api.h"
 
 #include "db_query.h"
-
-#define DATABASE_OPEN(connection) \
-   if (!CFDB_Open(connection))\
-   {\
-   zend_throw_exception(cfmod_exception_db, "Unable to connect to database", 0 TSRMLS_CC);\
-   RETURN_NULL();\
-   }\
-
-#define DATABASE_CLOSE(connection) \
-   if (!CFDB_Close(connection))\
-   {\
-   zend_throw_exception(cfmod_exception_db, "Unable to close to database", 0 TSRMLS_CC);\
-   RETURN_NULL();\
-   }\
+#include "common.h"
 
 static const char *LABEL_ID = "id";
 static const char *LABEL_CATEGORY = "category";
@@ -103,7 +90,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslll",
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
-   zend_throw_exception(cfmod_exception_args, "Unable to parse arguments", 0 TSRMLS_CC);
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
 
@@ -194,7 +181,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
-   zend_throw_exception(cfmod_exception_args, "Unable to parse arguments", 0 TSRMLS_CC);
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
 
@@ -266,7 +253,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
-   zend_throw_exception(cfmod_exception_args, "Unable to parse arguments", 0 TSRMLS_CC);
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
 
@@ -303,7 +290,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
-   zend_throw_exception(cfmod_exception_args, "Unable to parse arguments", 0 TSRMLS_CC);
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
 
@@ -340,7 +327,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
-   zend_throw_exception(cfmod_exception_args, "Unable to parse arguments", 0 TSRMLS_CC);
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
 
@@ -398,7 +385,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssll",
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
-   zend_throw_exception(cfmod_exception_db, "Unable to parse arguments", 0 TSRMLS_CC);
+   zend_throw_exception(cfmod_exception_db, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
 
@@ -481,7 +468,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssssll",
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
-   zend_throw_exception(cfmod_exception_db, "Unable to parse arguments", 0 TSRMLS_CC);
+   zend_throw_exception(cfmod_exception_db, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
 
@@ -505,7 +492,7 @@ for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
 
    if (strcmp(type, "list"))
       {
-      JsonObjectAppendString(&value_entry, LABEL_VALUE, "not implemented");
+      JsonObjectAppendString(&value_entry, LABEL_VALUE, LABEL_ERROR_NOTIMPLEMENTED);
       }
    else
       {
@@ -539,7 +526,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssll",
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
-   zend_throw_exception(cfmod_exception_db, "Unable to parse arguments", 0 TSRMLS_CC);
+   zend_throw_exception(cfmod_exception_db, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
 
@@ -590,7 +577,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslll",
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
-   zend_throw_exception(cfmod_exception_args, "Unable to parse arguments", 0 TSRMLS_CC);
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
 
@@ -642,7 +629,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslll",
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
-   zend_throw_exception(cfmod_exception_args, "Unable to parse arguments", 0 TSRMLS_CC);
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
 
