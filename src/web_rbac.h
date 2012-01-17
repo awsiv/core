@@ -27,7 +27,7 @@
 cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, size_t password_len);
 HubQuery *CFDB_GetRBACForUser(char *userName);
 cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *description, char *includeClassRx, char *excludeClassRx, char *includeBundleRx);
-cfapi_errid CFDB_DeleteRole(char *name);
+cfapi_errid CFDB_DeleteRole(char *deletingUser, char *roleName);
 HubQuery *CFDB_GetAllRoles(void);
 HubQuery *CFDB_GetRoleByName(char *name);
 

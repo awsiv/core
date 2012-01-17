@@ -302,9 +302,16 @@ cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *descriptio
 }
 
 
-cfapi_errid CFDB_DeleteRole(char *name)
+cfapi_errid CFDB_DeleteRole(char *deletingUser, char *roleName)
 {
- if(!RoleExists(name))
+ cfapi_errid errid = UserIsRoleAdmin(deletingUser);
+
+ if(errid != ERRID_SUCCESS)
+    {
+    return errid;
+    }
+ 
+ if(!RoleExists(roleName))
     {
     return ERRID_ITEM_NONEXISTING;
     }
@@ -313,7 +320,7 @@ cfapi_errid CFDB_DeleteRole(char *name)
  bson query;
 
  bson_buffer_init(&bb);
- bson_append_string(&bb, dbkey_role_name, name);
+ bson_append_string(&bb, dbkey_role_name, roleName);
  bson_from_buffer(&query, &bb);
 
  mongo_connection conn;
@@ -327,10 +334,8 @@ cfapi_errid CFDB_DeleteRole(char *name)
  mongo_remove(&conn, MONGO_ROLES_COLLECTION, &query);
  bson_destroy(&query);
 
- DeAssociateUsersFromRole(&conn, name);
+ DeAssociateUsersFromRole(&conn, roleName);
 
- cfapi_errid errid = ERRID_SUCCESS;
- 
  if(!MongoCheckForError(&conn, "CFDB_DeleteRole", NULL, false))
     {
     errid = ERRID_DB_OPERATION;

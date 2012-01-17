@@ -3564,28 +3564,29 @@ PHP_FUNCTION(cfpr_role_create)
 
 PHP_FUNCTION(cfpr_role_delete)
 {
- char *name;
- int nameLen;
+ char *userName, *roleName;
+ int userNameLen, roleNameLen;
   
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&name, &nameLen) == FAILURE)
-     {
-     zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
-     RETURN_NULL();
-     }
-
-  if(!nameLen)
-     {
-     zend_throw_exception(cfmod_exception_args, "Missing argument contents", 0 TSRMLS_CC);
-     RETURN_NULL();
-     }
-
-  cfapi_errid errid = CFDB_DeleteRole(name);
-  
-  if(errid != ERRID_SUCCESS)
-     {
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss", &userName, &userNameLen ,&roleName, &roleNameLen) == FAILURE)
+    {
+    zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
+ 
+ if(!(userNameLen|roleNameLen))
+    {
+    zend_throw_exception(cfmod_exception_args, "Missing argument contents", 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
+ 
+ cfapi_errid errid = CFDB_DeleteRole(userName, roleName);
+ 
+ if(errid != ERRID_SUCCESS)
+    {
      zend_throw_exception(cfmod_exception_generic, (char *)GetErrorDescription(errid), 0 TSRMLS_CC);
-     }
-RETURN_LONG(true);
+    }
+ 
+ RETURN_LONG(true);
 }
 
 /******************************************************************************/
