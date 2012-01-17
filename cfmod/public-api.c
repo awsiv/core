@@ -19,6 +19,7 @@ static const char *LABEL_CONTEXT = "context";
 static const char *LABEL_PATH = "path";
 static const char *LABEL_HANDLE = "handle";
 static const char *LABEL_COUNT = "count";
+static const char *LABEL_IP = "ip";
 
 static const char *LABEL_STATE = "state";
 static const char *LABEL_STATE_REPAIRED = "repaired";
@@ -64,6 +65,39 @@ for (Rlist *rp = hostkeys; rp != NULL; rp = rp->next)
 DeleteRlist(hostkeys);
 
 RETURN_JSON(output);
+}
+
+
+/************************************************************************************/
+
+PHP_FUNCTION(cfmod_resource_host_id)
+{
+char *hostkey;
+int len;
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &hostkey, &len) == FAILURE)
+   {
+   zend_throw_exception(cfmod_exception_db, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+   }
+
+mongo_connection conn;
+DATABASE_OPEN(&conn)
+
+HubHost *record = CFDB_GetHostByKey(&conn, hostkey);
+
+DATABASE_CLOSE(&conn);
+
+if (record != NULL)
+   {
+   JsonObject *entry = NULL;
+   JsonObjectAppendString(&entry, LABEL_HOSTKEY, record->keyhash);
+   JsonObjectAppendString(&entry, LABEL_NAME, record->hostname);
+   JsonObjectAppendString(&entry, LABEL_IP, record->ipaddr);
+
+   RETURN_JSON(entry);
+   }
+
+RETURN_NULL();
 }
 
 

@@ -5,7 +5,7 @@
  */
 class Host extends Resource
 {
-    function get($request, $id)
+    function get($request)
     {
         $hostname = Utils::queryParam('hostname');
         $ip = Utils::queryParam('ip');

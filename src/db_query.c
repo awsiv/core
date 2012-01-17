@@ -7610,6 +7610,40 @@ mongo_cursor_destroy(cursor);
 return hostkeys;
 }
 
+HubHost *CFDB_GetHostByKey(mongo_connection *conn, const char *hostkey)
+{
+bson_buffer buffer;
+bson query, field;
+
+// query
+bson_buffer_init(&buffer);
+bson_append_string(&buffer, cfr_keyhash, hostkey);
+bson_from_buffer(&query, &buffer);
+
+// projection
+bson_buffer_init(&buffer);
+bson_append_int(&buffer, cfr_keyhash, 1);
+bson_append_int(&buffer, cfr_host_array, 1);
+bson_append_int(&buffer, cfr_ip_array, 1);
+bson_from_buffer(&field, &buffer);
+
+bson out;
+HubHost *host = NULL;
+if (mongo_find_one(conn, MONGO_DATABASE, &query, &field, &out))
+   {
+   host = NewHubHost(NULL,
+                     BsonGetString(&out, cfr_keyhash),
+                     BsonGetString(&out, cfr_host_array),
+                     BsonGetString(&out, cfr_ip_array));
+   bson_destroy(&out);
+   }
+
+bson_destroy(&query);
+bson_destroy(&field);
+
+return host;
+}
+
 
 #endif  /* HAVE LIBMONGOC */
 
