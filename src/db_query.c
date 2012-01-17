@@ -6412,6 +6412,10 @@ bool GetBsonBool(char *data, char *boolKey, bool *val)
 /*****************************************************************************/
 
 bool MongoCheckForError(mongo_connection *conn, const char *operation, const char *extra, bool *checkUpdate)
+/**
+ * NOTE: This has performance penalties, and should not be widely used.
+ *       It has the side-effect of guaranteeing that the previous operation finishes before returning.
+ */
 {
  char dbErr[CF_MAXVARSIZE];
  bson b;

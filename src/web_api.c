@@ -32,6 +32,8 @@ static const char *ERRID_DESCRIPTION[] =
    {
    [ERRID_SUCCESS] = "Success",
    [ERRID_DBCONNECT] = "Could not open connection to reporting database",
+   [ERRID_DBCLOSE] = "Could not close a connection to reporting database",
+   [ERRID_DB_OPERATION] = "A database operation failed",
    [ERRID_ARGUMENT_MISSING] = "A mandatory argument is missing",
    [ERRID_ARGUMENT_WRONG] = "An argument is incorrect",
    [ERRID_BUFFER_FULL] = "The JSON-buffer is too small to hold the report data",
