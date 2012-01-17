@@ -189,8 +189,8 @@ struct FileLine_
 
 typedef struct
    {
-   int resultsPerPage;
-   int pageNum;
+   long resultsPerPage;
+   long pageNum;
    int totalResultCount;
    } PageInfo;
 
