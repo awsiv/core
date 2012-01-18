@@ -10,15 +10,19 @@ AM_CPPFLAGS = @CPPFLAGS@
 
 if MONGO
 
+phplibdir = @libdir@/php
+phplib_LTLIBRARIES = cfmod.la
+
 cfmod_la_SOURCES = cfmod.c \
 	private-api.c private-api.h \
 	private-api-constellation.c private-api-constellation.h \
 	public-api.c public-api.h
-
-lib_LTLIBRARIES = cfmod.la
 cfmod_la_LDFLAGS = -module -avoid-version -R$(workdir)/lib
 cfmod_la_CFLAGS = -DCOMPILE_DL_CFMOD=1 $(AM_CFLAGS)
-
 cfmod_la_LIBADD = $(abs_top_builddir)/src/libpromises.la
+
+install-data-local:
+	$(MKDIR_P) $(DESTDIR)$(phplibdir)
+	echo 'extension=cfmod.so' > $(DESTDIR)$(phplibdir)/cfmod.ini
 
 endif

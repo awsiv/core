@@ -51,12 +51,7 @@ sysconfig_DATA = $(abs_srcdir)/misc/sysconfig/cfengine3
 shprofiledir = $(sysconfdir)/profile.d
 shprofile_SCRIPTS = $(abs_srcdir)/misc/profile.d/cfengine.sh
 
-install-data-hook:
-	mkdir -p $(DESTDIR)$(prefix)/inputs
+install-data-local:
+if MONGO
 	mkdir -p $(DESTDIR)$(prefix)/master_software_updates
-	mkdir -p $(DESTDIR)$(prefix)/masterfiles
-	mkdir -p $(DESTDIR)$(prefix)/modules
-	mkdir -p $(DESTDIR)$(prefix)/outputs
-	mkdir -p $(DESTDIR)$(prefix)/ppkeys
-	cp -R $(abs_srcdir)/misc/software_updates $(DESTDIR)$(prefix)
-	find $(DESTDIR)$(prefix)/software_updates -name .svn | xargs rm -rf
+endif
