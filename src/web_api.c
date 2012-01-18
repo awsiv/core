@@ -4406,9 +4406,7 @@ int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int
     return false;
     }
 
- HostClassFilter *filter = NewHostClassFilter(NULL, NULL);
- hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,CF_HUB_HORIZON,filter,false);
- DeleteHostClassFilter(filter);
+ hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,CF_HUB_HORIZON,NULL,false);
  
  returnval[0] = '\0';
 
