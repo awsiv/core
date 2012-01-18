@@ -5,11 +5,6 @@ top_srcdir = $(abs_top_srcdir)
 top_builddir = $(abs_top_builddir)
 top_build_prefix = $(abs_top_builddir)/
 
-# Info used in building the MAN files
-man_MANS =
-
-# Info used in building the Info files
-info_TEXINFOS = #cfnova.texinfo
 infofiles = $(info_TEXINFOS:.texinfo=.info)
 MAKEINFOHTML = $(MAKEINFO) --html --no-split
 
