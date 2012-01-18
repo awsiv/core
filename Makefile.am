@@ -44,7 +44,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess config.sub \
 #
 ACLOCAL_AMFLAGS = -I m4
 
-initdir= $(sysconfdir)/init.d
+initdir = $(sysconfdir)/init.d
 init_SCRIPTS = $(abs_srcdir)/misc/init.d/cfengine3
 
 sysconfigdir = $(sysconfdir)/sysconfig
