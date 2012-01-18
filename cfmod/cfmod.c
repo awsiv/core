@@ -27,10 +27,11 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfmod_resource_promise_log_notkept, NULL)
     PHP_FE(cfmod_resource_promise_log_notkept_summary, NULL)
 
+    PHP_FE(cfmod_resource_variable, NULL)
+
     PHP_FE(cfmod_resource_report_list, NULL)
     PHP_FE(cfmod_resource_report_bundle_profile, NULL)
     PHP_FE(cfmod_resource_report_software_installed, NULL)
-    PHP_FE(cfmod_resource_report_values, NULL)
     PHP_FE(cfmod_resource_report_contexts, NULL)
     PHP_FE(cfmod_resource_report_setuid_programs, NULL)
 

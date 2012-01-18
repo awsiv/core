@@ -68,11 +68,6 @@ class ReportResource extends Resource
                                 $context, $from, $count, $startPage);
                         break;
 
-                    case 'values':
-                        $response->body = cfmod_resource_report_values($hostkey, $scope, $name,
-                                $value, $type, $context, $count, $startPage);
-                        break;
-
                     case 'compliance-summary':
                         $response->body = cfpr_report_compliance_summary($hostkey,
                                 NULL, $from, $kept, $notkept, $repaired, ">",

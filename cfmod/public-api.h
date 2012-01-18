@@ -14,10 +14,11 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired_summary);
 PHP_FUNCTION(cfmod_resource_promise_log_notkept);
 PHP_FUNCTION(cfmod_resource_promise_log_notkept_summary);
 
+PHP_FUNCTION(cfmod_resource_variable);
+
 PHP_FUNCTION(cfmod_resource_report_list);
 PHP_FUNCTION(cfmod_resource_report_bundle_profile);
 PHP_FUNCTION(cfmod_resource_report_software_installed);
-PHP_FUNCTION(cfmod_resource_report_values);
 PHP_FUNCTION(cfmod_resource_report_contexts);
 PHP_FUNCTION(cfmod_resource_report_setuid_programs);
 

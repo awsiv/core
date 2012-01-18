@@ -14,6 +14,7 @@ require_once 'resource/promise-log-notkept.php';
 require_once 'resource/promise-log-repaired-summary.php';
 require_once 'resource/promise-log-repaired.php';
 require_once 'resource/report.php';
+require_once 'resource/variable.php';
 
 function addAuthenticateHeader($response)
 {

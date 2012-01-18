@@ -527,6 +527,93 @@ RETURN_JSON_ARRAY(output);
 /************************************************************************************/
 
 
+static const char *DataTypeToString(const char *datatype)
+{
+switch (*datatype)
+   {
+   case 's':
+     return "string";
+   case 'i':
+     return "int";
+   case 'r':
+     return "real";
+   case 'm':
+     return "menu";
+
+   default:
+      if (strlen(datatype) == 2)
+      {
+      return "list";
+      }
+      return "unknown";
+   }
+}
+
+
+PHP_FUNCTION(cfmod_resource_variable)
+{
+char *hostkey = NULL,
+     *scope = NULL,
+     *name = NULL,
+     *value = NULL,
+     *type = NULL,
+     *context = NULL;
+int len;
+PageInfo page = { 0 };
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssssll",
+      &hostkey, &len,
+      &scope, &len,
+      &name, &len,
+      &value, &len,
+      &type, &len,
+      &context, &len,
+      &(page.resultsPerPage),
+      &(page.pageNum)) == FAILURE)
+   {
+   zend_throw_exception(cfmod_exception_db, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+   RETURN_NULL();
+   }
+
+mongo_connection conn;
+DATABASE_OPEN(&conn)
+
+HubQuery *result = CFDB_QueryVariables(&conn, hostkey,
+   scope, name, value, type, true, context);
+
+DATABASE_CLOSE(&conn)
+
+JsonArray *values = NULL;
+for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
+   {
+   HubVariable *record = (HubVariable *)rp->item;
+   const char *type = DataTypeToString(record->dtype);
+
+   JsonObject *value_entry = NULL;
+   JsonObjectAppendString(&value_entry, LABEL_HOSTKEY, record->hh->keyhash);
+   JsonObjectAppendString(&value_entry, LABEL_NAME, type);
+
+   if (strcmp(type, "list"))
+      {
+      JsonObjectAppendString(&value_entry, LABEL_VALUE, LABEL_ERROR_NOTIMPLEMENTED);
+      }
+   else
+      {
+      JsonObjectAppendString(&value_entry, LABEL_VALUE, (const char *)record->rval);
+      }
+
+   JsonArrayAppendObject(&values, value_entry);
+   }
+
+DeleteHubQuery(result, DeleteHubVariable);
+
+RETURN_JSON_ARRAY(values);
+}
+
+
+/************************************************************************************/
+
+
 PHP_FUNCTION(cfmod_resource_report_list)
 {
 JsonArray *reports = NULL;
@@ -601,92 +688,6 @@ for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
 DeleteHubQuery(result, DeleteHubSoftware);
 
 RETURN_JSON_ARRAY(software);
-}
-
-
-/************************************************************************************/
-
-
-static const char *DataTypeToString(const char *datatype)
-{
-switch (*datatype)
-   {
-   case 's':
-     return "string";
-   case 'i':
-     return "int";
-   case 'r':
-     return "real";
-   case 'm':
-     return "menu";
-
-   default:
-      if (strlen(datatype) == 2)
-      {
-      return "list";
-      }
-      return "unknown";
-   }
-}
-
-PHP_FUNCTION(cfmod_resource_report_values)
-{
-char *hostkey = NULL,
-     *scope = NULL,
-     *name = NULL,
-     *value = NULL,
-     *type = NULL,
-     *context = NULL;
-int len;
-PageInfo page = { 0 };
-
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssssll",
-      &hostkey, &len,
-      &scope, &len,
-      &name, &len,
-      &value, &len,
-      &type, &len,
-      &context, &len,
-      &(page.resultsPerPage),
-      &(page.pageNum)) == FAILURE)
-   {
-   zend_throw_exception(cfmod_exception_db, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-   RETURN_NULL();
-   }
-
-mongo_connection conn;
-DATABASE_OPEN(&conn)
-
-HubQuery *result = CFDB_QueryVariables(&conn, hostkey,
-   scope, name, value, type, true, context);
-
-DATABASE_CLOSE(&conn)
-
-JsonArray *values = NULL;
-for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
-   {
-   HubVariable *record = (HubVariable *)rp->item;
-   const char *type = DataTypeToString(record->dtype);
-
-   JsonObject *value_entry = NULL;
-   JsonObjectAppendString(&value_entry, LABEL_HOSTKEY, record->hh->keyhash);
-   JsonObjectAppendString(&value_entry, LABEL_NAME, type);
-
-   if (strcmp(type, "list"))
-      {
-      JsonObjectAppendString(&value_entry, LABEL_VALUE, LABEL_ERROR_NOTIMPLEMENTED);
-      }
-   else
-      {
-      JsonObjectAppendString(&value_entry, LABEL_VALUE, (const char *)record->rval);
-      }
-
-   JsonArrayAppendObject(&values, value_entry);
-   }
-
-DeleteHubQuery(result, DeleteHubVariable);
-
-RETURN_JSON_ARRAY(values);
 }
 
 
