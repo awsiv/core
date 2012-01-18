@@ -1002,7 +1002,9 @@ if (!CFDB_Open(&dbconn))
    return false;
    }
 
-hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,true,classreg,false);
+HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
+hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,true,filter,false);
+DeleteHostClassFilter(filter);
 
 if (!CSV)
    {
@@ -1753,8 +1755,9 @@ int Nova2Txt_filechanges_hosts(char *hostkey,char *file,int regex,time_t t,char 
     return false;
     }
 
- hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,false,classreg,false);
-
+ HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
+ hq = CFDB_QueryFileChanges(&dbconn,hostkey,file,regex,t,icmp,false,filter,false);
+ DeleteHostClassFilter(filter);
 
  StartJoin(returnval,"[",bufsize);
 

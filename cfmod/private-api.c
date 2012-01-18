@@ -1316,8 +1316,11 @@ PHP_FUNCTION(cfpr_report_filechanges)
 // NOT THIS fcmp =  (c_len == 0) ? NULL : cmp;
 
  buffer[0]='\0';
- Nova2PHP_filechanges_report(fhostkey,ffile,regex,then,cmp,fclassreg,&page,false,buffer,bufsize);
 
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+ Nova2PHP_filechanges_report(fhostkey,ffile,regex,then,cmp,filter,&page,false,buffer,bufsize);
+ DeleteHostClassFilter(filter);
+ 
  RETURN_STRING(buffer,1);
 }
 
@@ -1389,8 +1392,11 @@ PHP_FUNCTION(cfpr_report_filechanges_longterm)
 // NOT THIS fcmp =  (c_len == 0) ? NULL : cmp;
 
  buffer[0]='\0';
- Nova2PHP_filechanges_report(fhostkey,ffile,regex,then,cmp,fclassreg,&page,true,buffer,bufsize);
 
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+ Nova2PHP_filechanges_report(fhostkey,ffile,regex,then,cmp,filter,&page,true,buffer,bufsize);
+ DeleteHostClassFilter(filter);
+ 
  RETURN_STRING(buffer,1);
 }
 
@@ -2132,8 +2138,11 @@ PHP_FUNCTION(cfpr_hosts_with_filechanges)
  fclassreg =  (cr_len == 0) ? NULL : classreg;
 
  buffer[0] = '\0';
- Nova2PHP_filechanges_hosts(fhostkey,ffile,regex,then,fcmp,fclassreg,buffer,bufsize);
 
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+ Nova2PHP_filechanges_hosts(fhostkey,ffile,regex,then,fcmp,filter,buffer,bufsize);
+ DeleteHostClassFilter(filter);
+ 
  RETURN_STRING(buffer,1);
 }
 
