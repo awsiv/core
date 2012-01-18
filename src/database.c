@@ -139,9 +139,9 @@ if (a.database.type && strcmp(a.database.type,"ms_registry") == 0)
       {
       commas = 0;
 
-      if (CountChar(GetRlistScalar(rp), ',') != 2)
+      if (CountChar(ScalarValue(rp), ',') != 2)
          {
-         CfOut(cf_error,"","Registry row format should be NAME,REG_SZ,VALUE, not \"%s\"", GetRlistScalar(rp));
+         CfOut(cf_error,"","Registry row format should be NAME,REG_SZ,VALUE, not \"%s\"", ScalarValue(rp));
          retval = false;
          }
       }

@@ -159,9 +159,9 @@ for (rp = list; rp != NULL; rp = rp->next)
     FILE *fin,*fout;
     char *sp,name[CF_MAXVARSIZE],line[CF_BUFSIZE];
 
-    if ((fin = fopen(GetRlistScalar(rp), "r")) == NULL)
+    if ((fin = fopen(ScalarValue(rp), "r")) == NULL)
        {
-       CfOut(cf_inform,"fopen","Cannot open CSV file %s", GetRlistScalar(rp));
+       CfOut(cf_inform,"fopen","Cannot open CSV file %s", ScalarValue(rp));
        continue;
        }
 
@@ -177,11 +177,11 @@ for (rp = list; rp != NULL; rp = rp->next)
 
     if ((fout = fopen(name,"w")) == NULL)
        {
-       CfOut(cf_inform,"fopen","Cannot open XML file %s", GetRlistScalar(rp));
+       CfOut(cf_inform,"fopen","Cannot open XML file %s", ScalarValue(rp));
        continue;
        }
 
-    CfOut(cf_verbose,"","Converting %s to %s\n", GetRlistScalar(rp), name);
+    CfOut(cf_verbose,"","Converting %s to %s\n", ScalarValue(rp), name);
 
     fprintf(fout,"<?xml version=\"1.0\"?>\n<output>\n");
 
@@ -204,7 +204,7 @@ for (rp = list; rp != NULL; rp = rp->next)
              }
           else
              {
-             CfOut(cf_error,"","Too many fields in csv file %s\n", GetRlistScalar(rp));
+             CfOut(cf_error,"","Too many fields in csv file %s\n", ScalarValue(rp));
              break;
              }
           }
