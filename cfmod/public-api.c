@@ -614,6 +614,56 @@ RETURN_JSON_ARRAY(values);
 /************************************************************************************/
 
 
+PHP_FUNCTION(cfmod_resource_context)
+{
+char *hostkey = NULL,
+     *context = NULL;
+int len, from;
+PageInfo page = { 0 };
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslll",
+      &hostkey, &len,
+      &context, &len,
+      &from,
+      &(page.resultsPerPage),
+      &(page.pageNum)) == FAILURE)
+   {
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+   RETURN_NULL();
+   }
+
+mongo_connection conn;
+DATABASE_OPEN(&conn)
+
+HostClassFilter *filter = NewHostClassFilter(context, NULL);
+HubQuery *result = CFDB_QueryClasses(&conn, hostkey, NULL, true, (time_t)from, filter, true);
+DeleteHostClassFilter(filter);
+
+DATABASE_CLOSE(&conn)
+
+JsonArray *contexts = NULL;
+for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
+   {
+   HubClass *record = (HubClass *)rp->item;
+   JsonObject *entry = NULL;
+
+   JsonObjectAppendString(&entry, LABEL_HOSTKEY, record->hh->keyhash);
+   JsonObjectAppendString(&entry, LABEL_CONTEXT, record->class);
+   JsonObjectAppendReal(&entry, LABEL_AVERAGE, record->prob);
+   JsonObjectAppendReal(&entry, LABEL_STDV, record->dev);
+   JsonObjectAppendInteger(&entry, LABEL_LASTSEEN, record->t);
+
+   JsonArrayAppendObject(&contexts, entry);
+   }
+
+DeleteHubQuery(result, DeleteHubClass);
+
+RETURN_JSON_ARRAY(contexts);
+}
+
+/************************************************************************************/
+
+
 PHP_FUNCTION(cfmod_resource_report_list)
 {
 JsonArray *reports = NULL;
@@ -740,57 +790,6 @@ for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
 DeleteHubQuery(result, DeleteHubBundleSeen);
 
 RETURN_JSON_ARRAY(bundles);
-}
-
-
-/************************************************************************************/
-
-
-PHP_FUNCTION(cfmod_resource_report_contexts)
-{
-char *hostkey = NULL,
-     *context = NULL;
-int len, from;
-PageInfo page = { 0 };
-
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslll",
-      &hostkey, &len,
-      &context, &len,
-      &from,
-      &(page.resultsPerPage),
-      &(page.pageNum)) == FAILURE)
-   {
-   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-   RETURN_NULL();
-   }
-
-mongo_connection conn;
-DATABASE_OPEN(&conn)
-
-HostClassFilter *filter = NewHostClassFilter(context, NULL);
-HubQuery *result = CFDB_QueryClasses(&conn, hostkey, NULL, true, (time_t)from, filter, true);
-DeleteHostClassFilter(filter);
-
-DATABASE_CLOSE(&conn)
-
-JsonArray *contexts = NULL;
-for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
-   {
-   HubClass *record = (HubClass *)rp->item;
-   JsonObject *entry = NULL;
-
-   JsonObjectAppendString(&entry, LABEL_HOSTKEY, record->hh->keyhash);
-   JsonObjectAppendString(&entry, LABEL_CONTEXT, record->class);
-   JsonObjectAppendReal(&entry, LABEL_AVERAGE, record->prob);
-   JsonObjectAppendReal(&entry, LABEL_STDV, record->dev);
-   JsonObjectAppendInteger(&entry, LABEL_LASTSEEN, record->t);
-
-   JsonArrayAppendObject(&contexts, entry);
-   }
-
-DeleteHubQuery(result, DeleteHubClass);
-
-RETURN_JSON_ARRAY(contexts);
 }
 
 

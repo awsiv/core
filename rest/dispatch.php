@@ -4,6 +4,7 @@ require_once 'lib/tonic.php';
 require_once 'lib/utils.php';
 
 // load resources
+require_once 'resource/context.php';
 require_once 'resource/host-id-seen.php';
 require_once 'resource/host-id-seenby.php';
 require_once 'resource/host-id.php';
