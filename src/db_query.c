@@ -7543,6 +7543,11 @@ static bool AppendHostClassFilter(bson_buffer *queryBuffer, HostClassFilter *fil
  bool modified = false;
  char classRxAnchored[CF_BUFSIZE];
 
+ if(filter == NULL)
+    {
+    return false;
+    }
+
  if(filter->classRxInclude)
     {
     AnchorRegex(filter->classRxInclude, classRxAnchored, sizeof(classRxAnchored));
