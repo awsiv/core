@@ -1801,9 +1801,9 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *lhash,char *lhost,char *laddr,time_t lago,int regex,int sort,char *classRegex)
-
-{ bson_buffer bb;
+HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *lhash,char *lhost,char *laddr,time_t lago,int regex,int sort,HostClassFilter *hostClassFilter)
+{
+ bson_buffer bb;
  bson query,field;
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3;
@@ -1813,8 +1813,7 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *lhash,ch
  char rhash[CF_MAXVARSIZE],rhost[CF_MAXVARSIZE],raddr[CF_MAXVARSIZE];
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
  int match_host,match_hash,match_addr,match_ago,found = false;
- char classRegexAnch[CF_MAXVARSIZE];
- int emptyQuery = true;
+ int queryHasData = false;
  time_t rt;
 
 /* BEGIN query document */
@@ -1823,29 +1822,21 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *lhash,ch
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    emptyQuery = false;
+    queryHasData = true;
     }
 
- if(!EMPTY(classRegex))
-    {
-    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
-    bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-    emptyQuery = false;
-    }
+ queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
 
- if(emptyQuery)
-    {
-    bson_empty(&query);
-    }
- else
+ if(queryHasData)
     {
     bson_from_buffer(&query,&bb);
     }
-
+ else
+    {
+    bson_empty(&query);
+    }
 
   
-/* BEGIN RESULT DOCUMENT */
-
  bson_buffer_init(&bb);
  bson_append_int(&bb,cfr_keyhash,1);
  bson_append_int(&bb,cfr_ip_array,1);
@@ -1862,11 +1853,10 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *lhash,ch
 
  bson_destroy(&field);
 
- if(!emptyQuery)
+ if(queryHasData)
     {
     bson_destroy(&query);
     }
-
 
  while (mongo_cursor_next(cursor))
     {

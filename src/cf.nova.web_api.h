@@ -132,7 +132,7 @@ int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int
 int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg,PageInfo *page, char *returnval,int bufsize);
 int Nova2PHP_compliance_report(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg,PageInfo *page, char *returnval,int bufsize);
 int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int regex,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize);
-int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddr,time_t lago,int lregex,char *classreg,PageInfo *page, char *returnval,int bufsize);
+int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddr,time_t lago,int lregex,HostClassFilter *hostClassFilter,PageInfo *page, char *returnval,int bufsize);
 int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *classreg,PageInfo *page, char *returnval,int bufsize);
 int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,char *classreg,PageInfo *page, char *returnval,int bufsize);
 int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize);
@@ -144,7 +144,7 @@ int Nova2PHP_classes_hosts(char *hostkey,char *name,int regex,HostClassFilter *h
 int Nova2PHP_vars_hosts(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg,char *returnval,int bufsize);
 int Nova2PHP_compliance_hosts(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg,char *returnval,int bufsize);
 int Nova2PHP_promise_hosts(char *hostkey,char *handle,char *status,int regex,HostClassFilter *hostClassFilter,char *returnval,int bufsize);
-int Nova2PHP_lastseen_hosts(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,char *classreg,char *returnval,int bufsize);
+int Nova2PHP_lastseen_hosts(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,HostClassFilter *hostClassFilter,char *returnval,int bufsize);
 int Nova2PHP_performance_hosts(char *hostkey,char *job,int regex,char *classreg,char *returnval,int bufsize);
 int Nova2PHP_setuid_hosts(char *hostkey,char *file,int regex,char *classreg,char *returnval,int bufsize);
 int Nova2PHP_bundle_hosts(char *hostkey,char *bundle,int regex,HostClassFilter *hostClassFilter,char *returnval,int bufsize);

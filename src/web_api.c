@@ -1824,7 +1824,7 @@ int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int reg
 
 /*****************************************************************************/
 
-int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,char *classreg,PageInfo *page,char *returnval,int bufsize)
+int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
  HubLastSeen *hl;
@@ -1843,7 +1843,7 @@ int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddres
     {
     return false;
     }
- hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,true,classreg);
+ hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,true,hostClassFilter);
  PageRecords(&(hq->records),page,DeleteHubLastSeen);
 
  snprintf(header,sizeof(header),
@@ -2690,7 +2690,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_lastseen_hosts(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_lastseen_hosts(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,HostClassFilter *hostClassFilter,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
  HubHost *hh;
@@ -2706,7 +2706,7 @@ int Nova2PHP_lastseen_hosts(char *hostkey,char *lhash,char *lhost,char *laddress
     return false;
     }
 
- hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,false,classreg);
+ hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,false,hostClassFilter);
 
  StartJoin(returnval,"[",bufsize);
 

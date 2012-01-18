@@ -1211,7 +1211,10 @@ PHP_FUNCTION(cfpr_report_lastseen)
  fclassreg =  (cr_len == 0) ? NULL : classreg;
 
  buffer[0]='\0';
- Nova2PHP_lastseen_report(fhostkey,fhash,fhost,faddress,tago,use_reg,fclassreg,&page,buffer,bufsize);
+
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+ Nova2PHP_lastseen_report(fhostkey,fhash,fhost,faddress,tago,use_reg,filter,&page,buffer,bufsize);
+ DeleteHostClassFilter(filter);
 
  RETURN_STRING(buffer,1);
 
@@ -2029,7 +2032,10 @@ PHP_FUNCTION(cfpr_hosts_with_lastseen)
  fclassreg =  (cr_len == 0) ? NULL : classreg;
 
  buffer[0] = '\0';
- Nova2PHP_lastseen_hosts(fhostkey,fhash,fhost,faddress,ago,use_reg,fclassreg,buffer,bufsize);
+
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+ Nova2PHP_lastseen_hosts(fhostkey,fhash,fhost,faddress,ago,use_reg,filter,buffer,bufsize);
+ DeleteHostClassFilter(filter);
 
  RETURN_STRING(buffer,1);
 

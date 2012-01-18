@@ -726,7 +726,10 @@ if (!CFDB_Open(&dbconn))
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
     }
-hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,true,classreg);
+
+HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
+hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,true,filter);
+DeleteHostClassFilter(filter);
 
 if (!CSV)
    {
@@ -788,7 +791,10 @@ if (!CFDB_Open(&dbconn))
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
     }
-hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,true,classreg);
+
+HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
+hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,true,filter);
+DeleteHostClassFilter(filter);
 
 if (!CSV)
    {
@@ -1523,7 +1529,9 @@ int Nova2Txt_lastseen_hosts(char *hostkey,char *lhash,char *lhost,char *laddress
     return false;
     }
 
- hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,false,classreg);
+ HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
+ hq = CFDB_QueryLastSeen(&dbconn,hostkey,lhash,lhost,laddress,lago,lregex,false,filter);
+ DeleteHostClassFilter(filter);
 
  StartJoin(returnval,"[",bufsize);
 

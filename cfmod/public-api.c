@@ -155,8 +155,10 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslll",
 mongo_connection conn;
 DATABASE_OPEN(&conn)
 
+HostClassFilter *filter = NewHostClassFilter(context, NULL);
 HubQuery *result = CFDB_QueryLastSeen(&conn, hostkey, NULL, remote_hostname, remote_ip,
-                                      (time_t)from, true, false, context);
+                                      (time_t)from, true, false, filter);
+DeleteHostClassFilter(filter);
 
 DATABASE_CLOSE(&conn);
 
@@ -194,8 +196,10 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslll",
 mongo_connection conn;
 DATABASE_OPEN(&conn)
 
+HostClassFilter *filter = NewHostClassFilter(context, NULL);
 HubQuery *result = CFDB_QueryLastSeen(&conn, hostkey, NULL, remote_hostname, remote_ip,
-                                      from, true, false, context);
+                                      from, true, false, filter);
+DeleteHostClassFilter(filter);
 
 DATABASE_CLOSE(&conn);
 
