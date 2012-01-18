@@ -61,10 +61,10 @@
                             case 200: break;
                             case 401:
                             case 404:
-                                $('#error_status').html('<p class="ajax_error">' + responseText + '</p>');
+                                $('#error_status').html('<p class="error">' + responseText + '</p>');
                                 break;
                             default:
-                                $('#error_status').html('<p class="ajax_error">' + '<?php echo $this->lang->line('500_error'); ?>' +  '</p>');
+                                $('#error_status').html('<p class="error">' + '<?php echo $this->lang->line('500_error'); ?>' +  '</p>');
                                 break;
                             }
                         }
