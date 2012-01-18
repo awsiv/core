@@ -347,13 +347,13 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
   
    switch (hp->status)
       {
-      case 'c':
+      case PROMISE_STATE_KEPT:
           k++;
           break;
-      case 'r':
+      case PROMISE_STATE_REPAIRED:
           r++;
           break;
-      case 'n':
+      case PROMISE_STATE_NOTKEPT:
       default:
           n++;
           break;
