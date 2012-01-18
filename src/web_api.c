@@ -1548,7 +1548,7 @@ int Nova2PHP_classes_summary(char **classes, char *buf, int bufsize)
 
 /*****************************************************************************/
 
-int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg,PageInfo *page,char *returnval,int bufsize)
+int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE],lscope[CF_MAXVARSIZE],jsonEscapedStr[CF_BUFSIZE]={0};
  char rvalBuf[CF_MAXVARSIZE];
@@ -1567,7 +1567,7 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
     return false;
     }
 
- hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,classreg);
+ hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,hostClassFilter);
 
  CountMarginRecordsVars(&(hq->records),page,&first_scope_record_count,&last_scope_record_count);
  PageRecords(&(hq->records),page,DeleteHubVariable);
@@ -2525,7 +2525,7 @@ int Nova2PHP_classes_hosts(char *hostkey,char *name,int regex,HostClassFilter *h
 
 /*****************************************************************************/
 
-int Nova2PHP_vars_hosts(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_vars_hosts(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,HostClassFilter *hostClassFilter,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
   HubHost *hh;
@@ -2539,7 +2539,7 @@ if (!CFDB_Open(&dbconn))
    return false;
    }
 
-hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,classreg);
+hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,hostClassFilter);
 
 StartJoin(returnval,"[",bufsize);
 

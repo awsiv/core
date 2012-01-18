@@ -1381,9 +1381,9 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,char *l
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *lscope,char *llval,char *lrval,char *ltype,int regex, char *classRegex)
-
-{ bson_buffer bb;
+HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *lscope,char *llval,char *lrval,char *ltype,int regex, HostClassFilter *hostClassFilter)
+{
+ bson_buffer bb;
  bson query,field;
  mongo_cursor *cursor;
  bson_iterator it1,it2,it3,it4,it5;
@@ -1395,37 +1395,27 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *lscope,
  char rscope[CF_MAXVARSIZE], rlval[CF_MAXVARSIZE],dtype[CF_MAXVARSIZE],rtype;
  void *rrval;
  time_t rt;
- int emptyQuery = true;
- char classRegexAnch[CF_MAXVARSIZE];
-  
-  
-/* BEGIN query document */
+ bool queryHasData = false;
 
  bson_buffer_init(&bb);
 
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    emptyQuery = false;
+    queryHasData = true;
     }
 
- if(!EMPTY(classRegex))
-    {
-    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
-    bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-    emptyQuery = false;
-    }
+ queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
 
- if(emptyQuery)
+ if(queryHasData)
     {
-    bson_empty(&query);
+    bson_from_buffer(&query, &bb);
     }
  else
     {
-    bson_from_buffer(&query,&bb);
+    bson_empty(&query);
     }
 
-/* BEGIN RESULT DOCUMENT */
 
  bson_buffer_init(&bb);
  bson_append_int(&bb,cfr_keyhash,1);
@@ -1434,19 +1424,14 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *lscope,
  bson_append_int(&bb,cfr_vars,1);
  bson_from_buffer(&field, &bb);
 
-/* BEGIN SEARCH */
 
  hostnames[0] = '\0';
  addresses[0] = '\0';
 
  cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
+ bson_destroy(&query);
  bson_destroy(&field);
-
- if(!emptyQuery)
-    {
-    bson_destroy(&query);
-    }
 
  while (mongo_cursor_next(cursor))
     {

@@ -535,7 +535,9 @@ if (!CFDB_Open(&dbconn))
    return false;
    }
 
-hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,classreg);
+HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
+hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,filter);
+DeleteHostClassFilter(filter);
 
 if (!CSV)
    {
@@ -1357,7 +1359,9 @@ if (!CFDB_Open(&dbconn))
    return false;
    }
 
-hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,classreg);
+HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
+hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,rval,type,regex,filter);
+DeleteHostClassFilter(filter);
 
 StartJoin(returnval,"[",bufsize);
 
