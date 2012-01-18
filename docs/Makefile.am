@@ -5,25 +5,7 @@ top_srcdir = $(abs_top_srcdir)
 top_builddir = $(abs_top_builddir)
 top_build_prefix = $(abs_top_builddir)/
 
-infofiles = $(info_TEXINFOS:.texinfo=.info)
-MAKEINFOHTML = $(MAKEINFO) --html --no-split
-
-# Info used in building and installing HTML files
-#htmlfiles = $(info_TEXINFOS:.texinfo=.html)
-
-htmldir = $(pkgdatadir)/html
-html_DATA = $(htmlfiles)
-
-# Info used in building and installing Postscript files
-
-pdffiles = 
-
-docdir = $(pkgdatadir)/doc
-doc_DATA = $(psfiles) $(pdffiles)
-
 # Make sure these get distributed with everything else.
-
-EXTRA_DIST = # cfnova.pdf cf3-Reference.pdf
 
 SUFFIXES = html pdf dvi
 
@@ -48,7 +30,7 @@ MOSTLYCLEANFILES = *~ *.orig
 # Get everything removed down to where rebuilding requires:
 # "make; make install"
 # 
-CLEANFILES = $(htmlfiles) $(psfiles)
+CLEANFILES = $(htmlfiles)
 
 #
 # Get everything removed down to where rebuilding requires:
