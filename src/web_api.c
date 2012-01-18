@@ -1683,7 +1683,7 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
 }
 
 /*****************************************************************************/
-int Nova2PHP_compliance_report(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg,PageInfo *page, char *returnval,int bufsize)
+int Nova2PHP_compliance_report(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,HostClassFilter *hostClassFilter,PageInfo *page, char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
  HubTotalCompliance *ht;
@@ -1708,7 +1708,7 @@ int Nova2PHP_compliance_report(char *hostkey,char *version,time_t t,int k,int nk
     return false;
     }
 
- hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,true,classreg);
+ hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,true,hostClassFilter);
  PageRecords(&(hq->records),page,DeleteHubTotalCompliance);
 
  snprintf(header,sizeof(header),
@@ -2576,7 +2576,7 @@ return true;
 
 /*****************************************************************************/
 
-int Nova2PHP_compliance_hosts(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_compliance_hosts(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,HostClassFilter *hostClassFilter,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
  HubHost *hh;
@@ -2598,7 +2598,7 @@ int Nova2PHP_compliance_hosts(char *hostkey,char *version,time_t t,int k,int nk,
     return false;
     }
 
- hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,false,classreg);
+ hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,false,hostClassFilter);
 
  StartJoin(returnval,"[",bufsize);
 

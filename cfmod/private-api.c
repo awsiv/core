@@ -1102,9 +1102,13 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
 
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fversion = (v_len == 0) ? NULL : version;
+ char *fclassreg = (cr_len == 0) ? NULL : classreg;
 
  buffer[0]='\0';
- Nova2PHP_compliance_report(fhostkey,fversion,(time_t)t,(int)k,(int)nk,(int)r,cmp,classreg,&page,buffer,bufsize);
+
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+ Nova2PHP_compliance_report(fhostkey,fversion,(time_t)t,(int)k,(int)nk,(int)r,cmp,filter,&page,buffer,bufsize);
+ DeleteHostClassFilter(filter);
 
  RETURN_STRING(buffer,1);
 }
@@ -1990,8 +1994,15 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_summary)
     RETURN_NULL();
     }
 
+ char *fhostkey = (hk_len == 0) ? NULL : hostkey;
+ char *fversion = (v_len == 0) ? NULL : version;
+ char *fclassreg = (cr_len == 0) ? NULL : classreg;
+
  buffer[0] = '\0';
- Nova2PHP_compliance_hosts(hostkey,version,(int)t,(int)k,(int)nk,(int)r,cmp,classreg,buffer,bufsize);
+
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+ Nova2PHP_compliance_hosts(fhostkey,fversion,(int)t,(int)k,(int)nk,(int)r,cmp,filter,buffer,bufsize);
+ DeleteHostClassFilter(filter);
 
  RETURN_STRING(buffer,1);
 }

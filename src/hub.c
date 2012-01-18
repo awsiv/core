@@ -1113,7 +1113,9 @@ count = 0;
 
 end = start + SECONDS_PER_SHIFT;
 
-hq = CFDB_QueryTotalCompliance(conn,NULL,NULL,start,-1,-1,-1,CFDB_GREATERTHANEQ,false,envClass);
+HostClassFilter *filter = NewHostClassFilter(envClass, NULL);
+hq = CFDB_QueryTotalCompliance(conn,NULL,NULL,start,-1,-1,-1,CFDB_GREATERTHANEQ,false,filter);
+DeleteHostClassFilter(filter);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {

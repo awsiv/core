@@ -1173,7 +1173,7 @@ HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes)
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,char *lversion,time_t lt,int lkept,int lnotkept,int lrepaired,int cmp, int sort, char *classRegex)
+HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,char *lversion,time_t lt,int lkept,int lnotkept,int lrepaired,int cmp, int sort, HostClassFilter *hostClassFilter)
 
 { bson_buffer bb;
  bson query,field;
@@ -1184,39 +1184,29 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,char *l
  int rkept,rnotkept,rrepaired,found = false;
  int match_kept,match_notkept,match_repaired,match_version,match_t;
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rversion[CF_MAXVARSIZE];
- int emptyQuery = true;
- char classRegexAnch[CF_MAXVARSIZE];
  time_t rt;
+ bool queryHasData = false;
   
-/* BEGIN query document */
-
  bson_buffer_init(&bb);
 
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    emptyQuery = false;
+    queryHasData = true;
     }
 
- if(!EMPTY(classRegex))
-    {
-    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
-    bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-    emptyQuery = false;
-    }
+ queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
 
- if(emptyQuery)
-    {
-    bson_empty(&query);
-    }
- else
+ if(queryHasData)
     {
     bson_from_buffer(&query,&bb);
     }
+ else
+    {
+    bson_empty(&query);
+    }
 
   
-/* BEGIN RESULT DOCUMENT */
-
  bson_buffer_init(&bb);
  bson_append_int(&bb,cfr_keyhash,1);
  bson_append_int(&bb,cfr_ip_array,1);
@@ -1224,20 +1214,16 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,char *l
  bson_append_int(&bb,cfr_total_compliance,1);
  bson_from_buffer(&field, &bb);
 
-/* BEGIN SEARCH */
 
  hostnames[0] = '\0';
  addresses[0] = '\0';
 
  cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
+ bson_destroy(&query);
  bson_destroy(&field);
 
- if(!emptyQuery)
-    {
-    bson_destroy(&query);
-    }
-
+ 
  while (mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);

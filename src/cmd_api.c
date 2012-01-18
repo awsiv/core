@@ -625,7 +625,9 @@ int Nova2Txt_compliance_report(char *hostkey,char *version,time_t t,int k,int nk
     return false;
     }
 
-hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,true,classreg);
+ HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
+ hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,true,filter);
+ DeleteHostClassFilter(filter);
 
 if (!CSV)
    {
@@ -1428,7 +1430,9 @@ int Nova2Txt_compliance_hosts(char *hostkey,char *version,time_t t,int k,int nk,
     return false;
     }
 
- hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,false,classreg);
+ HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
+ hq = CFDB_QueryTotalCompliance(&dbconn,hostkey,version,t,k,nk,rep,icmp,false,filter);
+ DeleteHostClassFilter(filter);
 
  StartJoin(returnval,"[",bufsize);
 
