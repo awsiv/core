@@ -1982,8 +1982,9 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *lhash,ch
                    {
                    hh = CreateEmptyHubHost();
                    }
-                
-                PrependRlistAlien(&record_list,NewHubLastSeen(hh,*rhash,rhash+1,rhost,raddr,rago,ravg,rdev,rt));
+
+                LastSeenDirection direction = *rhash;
+                PrependRlistAlien(&record_list,NewHubLastSeen(hh, direction, rhash+1, rhost, raddr, rago, ravg, rdev, rt));
                 }
              }
           }   

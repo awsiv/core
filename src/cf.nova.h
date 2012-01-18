@@ -374,7 +374,7 @@ typedef struct
    {
    HubHost *hh;      
    HubHost *rhost;
-   char io;
+   LastSeenDirection direction;
    double hrsago;
    double hrsavg;
    double hrsdev;
@@ -989,7 +989,7 @@ HubPromiseLog *NewHubPromiseLog(HubHost *hh, char *handle,char *cause,time_t t, 
 void DeleteHubPromiseLog(HubPromiseLog *hp);
 HubPromiseSum *NewHubPromiseSum(HubHost *hh,char *handle,char *cause,int occurences, int hostOccurences);
 void DeleteHubPromiseSum(HubPromiseSum *hs);
-HubLastSeen *NewHubLastSeen(HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t);
+HubLastSeen *NewHubLastSeen(HubHost *hh, LastSeenDirection direction, char *kh, char *rhost, char *ip, double ago, double avg, double dev, time_t t);
 void DeleteHubLastSeen(HubLastSeen *hp);
 HubMeter *NewHubMeter(HubHost *hh,char type,double kept,double repaired);
 void DeleteHubMeter(HubMeter *hp);

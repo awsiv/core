@@ -533,14 +533,15 @@ void DeleteHubPromiseSum(HubPromiseSum *hs)
 
 /*****************************************************************************/
 
-HubLastSeen *NewHubLastSeen(HubHost *hh,char io,char *kh,char *rhost,char *ip,double ago,double avg,double dev,time_t t)
+HubLastSeen *NewHubLastSeen(HubHost *hh, LastSeenDirection direction, char *kh, char *rhost,
+                            char *ip, double ago, double avg, double dev, time_t t)
 
 { HubLastSeen *hp;
      
 hp = xmalloc(sizeof(HubLastSeen));
 
  hp->hh = hh;
- hp->io = io;  // '+' or '-'
+ hp->direction = direction;
  hp->rhost = NewHubHost(NULL,kh,ip,rhost);
  hp->hrsago = ago;
  hp->hrsavg = avg;

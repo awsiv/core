@@ -737,12 +737,12 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hl = (HubLastSeen *)rp->item;
    
-   switch (hl->io)
+   switch (hl->direction)
       {
-      case '+':
+      case LAST_SEEN_DIRECTION_OUTGOING:
           snprintf(inout,CF_SMALLBUF,"by us (+)");
           break;
-      case '-':
+      case LAST_SEEN_DIRECTION_INCOMING:
           snprintf(inout,CF_SMALLBUF,"by them (-)");
           break;
       }
@@ -799,10 +799,13 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hl = (HubLastSeen *)rp->item;
    
-   switch (hl->io)
+   switch (hl->direction)
       {
-      case '-':
-          continue;
+      case LAST_SEEN_DIRECTION_OUTGOING:
+         break;
+
+      case LAST_SEEN_DIRECTION_INCOMING:
+         continue;
       }
    
    then = hl->t;

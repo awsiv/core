@@ -1862,12 +1862,12 @@ int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddres
     {
     hl = (HubLastSeen *)rp->item;
 
-    switch (hl->io)
+    switch (hl->direction)
        {
-       case '+':
+       case LAST_SEEN_DIRECTION_OUTGOING:
            snprintf(inout,CF_SMALLBUF,"by us (+)");
            break;
-       case '-':
+       case LAST_SEEN_DIRECTION_INCOMING:
            snprintf(inout,CF_SMALLBUF,"by them (-)");
            break;
        }
