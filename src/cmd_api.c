@@ -1069,7 +1069,9 @@ if (!CFDB_Open(&dbconn))
    return false;
    }
 
-hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,true,classreg,false);
+HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
+hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,true,filter,false);
+DeleteHostClassFilter(filter);
 
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
@@ -1814,8 +1816,10 @@ int Nova2Txt_filediffs_hosts(char *hostkey,char *file,char *diffs,int regex,time
     return false;
     }
 
- hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,false,classreg,false);
-
+ HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
+ hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,false,filter,false);
+ DeleteHostClassFilter(filter);
+ 
  StartJoin(returnval,"[",bufsize);
 
  for (rp = hq->hosts; rp != NULL; rp=rp->next)

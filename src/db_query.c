@@ -2565,7 +2565,7 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char *lname
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,char *ldiff,int regex,time_t lt,int cmp, int sort, char *classRegex, int lookInArchive)
+HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,char *ldiff,int regex,time_t lt,int cmp, int sort, HostClassFilter *hostClassFilter, int lookInArchive)
 
 { bson_buffer bb;
  bson query,field;
@@ -2575,8 +2575,7 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,ch
  Rlist *record_list = NULL, *host_list = NULL;
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rname[CF_MAXVARSIZE],rdiff[CF_BUFSIZE];
  int match_name,match_t,match_diff,found = false;
- char classRegexAnch[CF_MAXVARSIZE];
- int emptyQuery = true;
+ bool queryHasData = false;
  time_t rt = 0;
 
  char collectionName[CF_MAXVARSIZE];
@@ -2597,28 +2596,21 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,ch
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    emptyQuery = false;
+    queryHasData = true;
     }
 
- if(!EMPTY(classRegex))
-    {
-    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
-    bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-    emptyQuery = false;
-    }
+ queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
 
- if(emptyQuery)
-    {
-    bson_empty(&query);
-    }
- else
+ if(queryHasData)
     {
     bson_from_buffer(&query,&bb);
     }
+ else
+    {
+    bson_empty(&query);
+    }
 
   
-/* BEGIN RESULT DOCUMENT */
-
  bson_buffer_init(&bb);
  bson_append_int(&bb,cfr_keyhash,1);
  bson_append_int(&bb,cfr_ip_array,1);
@@ -2626,19 +2618,14 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,ch
  bson_append_int(&bb,cfr_filediffs,1);
  bson_from_buffer(&field, &bb);
 
-/* BEGIN SEARCH */
-
+ 
  hostnames[0] = '\0';
  addresses[0] = '\0';
 
  cursor = mongo_find(conn,collectionName,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
+ bson_destroy(&query);
  bson_destroy(&field);
-
- if(!emptyQuery)
-    {
-    bson_destroy(&query);
-    }
 
 
  while (mongo_cursor_next(cursor))

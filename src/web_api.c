@@ -2206,7 +2206,7 @@ int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char
 
 /*****************************************************************************/
 
-int Nova2PHP_filediffs_report(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *classreg,PageInfo *page, int lookInArchive,char *returnval,int bufsize)
+int Nova2PHP_filediffs_report(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,HostClassFilter *hostClassFilter,PageInfo *page, int lookInArchive,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];   
  HubFileDiff *hd;
@@ -2232,7 +2232,7 @@ int Nova2PHP_filediffs_report(char *hostkey,char *file,char *diffs,int regex,tim
     return false;
     }
 
- hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,true,classreg,lookInArchive);
+ hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,true,hostClassFilter,lookInArchive);
  PageRecords(&(hq->records),page,DeleteHubFileDiff);
  
  snprintf(header,sizeof(header),
@@ -2953,7 +2953,7 @@ int Nova2PHP_filechanges_hosts(char *hostkey,char *file,int regex,time_t t,char 
 
 /*****************************************************************************/
 
-int Nova2PHP_filediffs_hosts(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_filediffs_hosts(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,HostClassFilter *hostClassFilter,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
  HubHost *hh;
@@ -2976,7 +2976,7 @@ int Nova2PHP_filediffs_hosts(char *hostkey,char *file,char *diffs,int regex,time
     return false;
     }
 
- hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,false,classreg,false);
+ hq = CFDB_QueryFileDiff(&dbconn,hostkey,file,diffs,regex,t,icmp,false,hostClassFilter,false);
 
  StartJoin(returnval,"[",bufsize);
 
