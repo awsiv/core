@@ -124,7 +124,7 @@ ReportInfo BASIC_REPORTS[] =
 
 
    {"contexts","System","Context classes","Class profile","User defined classes observed on the system"},
-   {"neighbors","System","Neighbors","Last seen hosts","Log of when neighbouring hosts were last observed online"},
+   {"neighbors","System","Neighbours","Last seen hosts","Log of when neighbouring hosts were last observed online"},
    {"values","System","Values","Variables","Table of variable values last observed"},
 
    {"patches-available","Software","Patches available","Patches available","A list of patches currently claimed to be available by the local package manager"},
