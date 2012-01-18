@@ -1037,7 +1037,7 @@ int Nova2PHP_promiselog_summary(char *hostkey,char *handle, PromiseLogState stat
 
 /*****************************************************************************/
 
-int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,char *classreg,PageInfo *page,char *returnval,int bufsize)
+int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
 { HubValue *hp;
  HubQuery *hq;
@@ -1054,7 +1054,7 @@ if (!CFDB_Open(&dbconn))
    return false;
    }
 
-hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,true,classreg);
+hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,true,hostClassFilter);
 
 PageRecords(&(hq->records),page,DeleteHubValue);
 snprintf(header,sizeof(header), "\"meta\":{\"count\" : %d,"
@@ -2365,7 +2365,7 @@ int Nova2PHP_hostinfo(char *hostkey,char *hostnameOut,char *ipaddrOut,int bufsiz
 }
 /*****************************************************************************/
 
-int Nova2PHP_value_hosts(char *hostkey,char *day,char *month,char *year,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_value_hosts(char *hostkey,char *day,char *month,char *year,HostClassFilter *hostClassFilter,char *returnval,int bufsize)
 
 {
   HubQuery *hq;
@@ -2382,7 +2382,7 @@ if (!CFDB_Open(&dbconn))
    return false;
    }
 
-hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,true,classreg);
+hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,true,hostClassFilter);
 
 StartJoin(returnval,"[",bufsize);
 

@@ -1533,7 +1533,10 @@ PHP_FUNCTION(cfpr_report_value)
  fclassreg =  (cr_len == 0) ? NULL : classreg;
 
  buffer[0]='\0';
- Nova2PHP_value_report(fhostkey,fday,fmonth,fyear,fclassreg,&page,buffer,bufsize);
+
+ HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
+ Nova2PHP_value_report(fhostkey,fday,fmonth,fyear,filter,&page,buffer,bufsize);
+ DeleteHostClassFilter(filter);
 
  RETURN_STRING(buffer,1);
 }
@@ -1757,7 +1760,10 @@ PHP_FUNCTION(cfpr_hosts_with_value)
  fclassreg =  (cr_len == 0) ? NULL : classreg;
 
  buffer[0] = '\0';
- Nova2PHP_value_hosts(fhostkey,fday,fmonth,fyear,fclassreg,buffer,bufsize);
+
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+ Nova2PHP_value_hosts(fhostkey,fday,fmonth,fyear,filter,buffer,bufsize);
+ DeleteHostClassFilter(filter);
 
  RETURN_STRING(buffer,1);
 }

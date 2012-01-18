@@ -2930,20 +2930,19 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, char *classRegex)
-
-{ bson_buffer bb;
-  bson query,field;
-  mongo_cursor *cursor;
-  bson_iterator it1,it2,it3;
-  HubHost *hh;
-  Rlist *record_list = NULL, *host_list = NULL;
-  double rkept,rnotkept,rrepaired;
-  char rday[CF_MAXVARSIZE],rmonth[CF_MAXVARSIZE],ryear[CF_MAXVARSIZE];
-  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rhandle[CF_MAXVARSIZE],noteid[CF_MAXVARSIZE];
-  int match_day,match_month,match_year,found = false;
-  char classRegexAnch[CF_MAXVARSIZE];
-  int emptyQuery = true;
+HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, HostClassFilter *hostClassFilter)
+{
+ bson_buffer bb;
+ bson query,field;
+ mongo_cursor *cursor;
+ bson_iterator it1,it2,it3;
+ HubHost *hh;
+ Rlist *record_list = NULL, *host_list = NULL;
+ double rkept,rnotkept,rrepaired;
+ char rday[CF_MAXVARSIZE],rmonth[CF_MAXVARSIZE],ryear[CF_MAXVARSIZE];
+ char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rhandle[CF_MAXVARSIZE],noteid[CF_MAXVARSIZE];
+ int match_day,match_month,match_year,found = false;
+ bool queryHasData = false;
   
 /* BEGIN query document */
  bson_buffer_init(&bb);
@@ -2951,23 +2950,18 @@ HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,
 if (!EMPTY(keyHash))
    {
    bson_append_string(&bb,cfr_keyhash,keyHash);
-   emptyQuery = false;
+   queryHasData = true;
    }
 
-if (!EMPTY(classRegex))
-   {
-   AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
-   bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-   emptyQuery = false;
-   }
+queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
 
-if (emptyQuery)
+if (queryHasData)
    {
-   bson_empty(&query);
+   bson_from_buffer(&query,&bb);   
    }
 else
    {
-   bson_from_buffer(&query,&bb);
+   bson_empty(&query);
    }
 
  // Turn start_time into Day Month Year
@@ -2988,12 +2982,8 @@ addresses[0] = '\0';
 
 cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
+bson_destroy(&query);
 bson_destroy(&field);
-
-if (!emptyQuery)
-   {
-   bson_destroy(&query);
-   }
 
 while (mongo_cursor_next(cursor))
    {

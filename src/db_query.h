@@ -11,7 +11,7 @@ int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int
 HubQuery *CFDB_QueryHostsInClassContext(mongo_connection *conn,char *expression,time_t horizon,int sort);
 HubQuery *CFDB_QueryHosts(mongo_connection *conn, char *db, char *dbkey,bson *query);
 HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, char *ipRegex, char *classRegex);
-HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, char *classRegex);
+HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryValueGraph(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, char *classRegex);
 HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, PromiseLogState state, const char *lhandle, int regex, time_t from, time_t to,int sort, const char *classRegex);
 HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,char *lname,char *lver,char *larch,int regex, HostClassFilter *hostClassFilter, int sort);

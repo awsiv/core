@@ -1202,7 +1202,9 @@ if (!CFDB_Open(&dbconn))
    return false;
    }
 
-hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,true,classreg);
+HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
+hq = CFDB_QueryValueReport(&dbconn,hostkey,day,month,year,true,filter);
+DeleteHostClassFilter(filter);
 
 StartJoin(returnval,"[",bufsize);
 
