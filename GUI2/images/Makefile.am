@@ -5,11 +5,6 @@ top_srcdir = $(abs_top_srcdir)
 top_builddir = $(abs_top_builddir)
 top_build_prefix = $(abs_top_build_prefix)/
 
-GUIdir = $(docdir)/GUI/images
-GUI_DATA = $(abs_srcdir)/*.png $(abs_srcdir)/*.jpg $(abs_srcdir)/*.gif
-EXTRA_DIST = *
-
-
 #
 # Some basic clean ups
 #

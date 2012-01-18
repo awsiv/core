@@ -6,10 +6,6 @@ top_builddir = $(abs_top_builddir)
 top_build_prefix = $(abs_top_builddir)/
 
 SUBDIRS = images
-GUIdir = $(docdir)/GUI
-GUI_DATA = $(srcdir)/*.php
-EXTRA_DIST = $(srcdir)/*.php
-
 
 #
 # Some basic clean ups
