@@ -328,7 +328,7 @@ HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from
 JsonArray *output = NULL;
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    {
-   HubPromiseLog *log_entry = (HubPromiseLog *)rp;
+   HubPromiseLog *log_entry = (HubPromiseLog *)rp->item;
    JsonObject *entry = NULL;
 
    JsonObjectAppendString(&entry, LABEL_HANDLE, log_entry->handle);
@@ -390,7 +390,7 @@ HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from
 Item *summary = NULL;
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    {
-   HubPromiseLog *log_entry = (HubPromiseLog *)rp;
+   HubPromiseLog *log_entry = (HubPromiseLog *)rp->item;
    Item *ip = IdempPrependItem(&summary, log_entry->handle, log_entry->cause);
    ip->counter++;
    }
