@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @uri /host
+ * @uri /host 0
  */
 class Host extends Resource
 {

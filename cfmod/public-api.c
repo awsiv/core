@@ -70,6 +70,7 @@ RETURN_JSON_ARRAY(output);
 
 /************************************************************************************/
 
+
 PHP_FUNCTION(cfmod_resource_host_id)
 {
 char *hostkey;
@@ -98,6 +99,111 @@ if (record != NULL)
    }
 
 RETURN_NULL();
+}
+
+
+/************************************************************************************/
+
+
+static JsonArray *HostsLastSeen(Rlist *records, LastSeenDirection direction)
+{
+JsonArray *output = NULL;
+
+for (Rlist *rp = records; rp != NULL; rp = rp->next)
+   {
+   HubLastSeen *record = (HubLastSeen *)rp->item;
+
+   if (record->direction == direction)
+      {
+         JsonObject *entry = NULL;
+
+         JsonObjectAppendString(&entry, LABEL_HOSTKEY, record->rhost->keyhash);
+         JsonObjectAppendInteger(&entry, LABEL_LASTSEEN, SECONDS_PER_HOUR * record->hrsago);
+         JsonObjectAppendInteger(&entry, LABEL_AVERAGE, SECONDS_PER_HOUR * record->hrsavg);
+         JsonObjectAppendInteger(&entry, LABEL_STDV, SECONDS_PER_HOUR * record->hrsdev);
+
+         JsonArrayAppendObject(&output, entry);
+      }
+   }
+
+return output;
+}
+
+PHP_FUNCTION(cfmod_resource_host_id_seen)
+{
+char *hostkey = NULL,
+     *remote_hostname = NULL,
+     *remote_ip = NULL,
+     *context = NULL;
+long from = 0;
+int len = -1;
+PageInfo page = { 0 };
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslll",
+      &hostkey, &len,
+      &remote_hostname, &len,
+      &remote_ip, &len,
+      &context, &len,
+      &from,
+      &(page.resultsPerPage),
+      &(page.pageNum)) == FAILURE)
+   {
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+   RETURN_NULL();
+   }
+
+mongo_connection conn;
+DATABASE_OPEN(&conn)
+
+HubQuery *result = CFDB_QueryLastSeen(&conn, hostkey, NULL, remote_hostname, remote_ip,
+                                      (time_t)from, true, false, context);
+
+DATABASE_CLOSE(&conn);
+
+JsonArray *output = HostsLastSeen(result->records, LAST_SEEN_DIRECTION_OUTGOING);
+
+DeleteHubQuery(result, DeleteHubLastSeen);
+
+RETURN_JSON_ARRAY(output);
+}
+
+
+PHP_FUNCTION(cfmod_resource_host_id_seen_by)
+{
+char *hostkey = NULL,
+     *remote_hostname = NULL,
+     *remote_ip = NULL,
+     *context = NULL;
+long from = 0;
+int len = -1;
+PageInfo page = { 0 };
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslll",
+      &hostkey, &len,
+      &remote_hostname, &len,
+      &remote_ip, &len,
+      &context, &len,
+      &from,
+      &(page.resultsPerPage),
+      &(page.pageNum)) == FAILURE)
+   {
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+   RETURN_NULL();
+   }
+
+mongo_connection conn;
+DATABASE_OPEN(&conn)
+
+HubQuery *result = CFDB_QueryLastSeen(&conn, hostkey, NULL, remote_hostname, remote_ip,
+                                      from, true, false, context);
+
+DATABASE_CLOSE(&conn);
+
+JsonArray *output = HostsLastSeen(result->records, LAST_SEEN_DIRECTION_INCOMING);
+
+DeleteHubQuery(result, DeleteHubLastSeen);
+
+RETURN_JSON_ARRAY(output);
 }
 
 

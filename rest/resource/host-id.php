@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @uri /host/:id
+ * @uri /host/:id 1
  */
 class HostId extends Resource
 {
