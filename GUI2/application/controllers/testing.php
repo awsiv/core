@@ -236,7 +236,7 @@ class Testing extends CI_Controller {
     }
 
     function allhostjson() {
-        $result = cfpr_select_reports(".*", 100);
+        $result = cfpr_select_reports(null);
         print_r(json_decode($result));
     }
 
@@ -250,7 +250,7 @@ class Testing extends CI_Controller {
     }
 
     function jsondata() {
-        $reports = json_decode(cfpr_select_reports(".*", 100));
+        $reports = json_decode(cfpr_select_reports(null));
         $adjacencies = array();
         $rootnode = array("id" => "node0", "name" => "", "data" => array("\$type" => "none"));
         $control = array();

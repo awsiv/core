@@ -69,8 +69,7 @@ class Welcome extends Cf_Controller {
 
 
         $this->breadcrumb->setBreadCrumb($bc);
-        $reports = json_decode(cfpr_select_reports(".*", 100));
-
+       
         $data = array(
             'title' => $this->lang->line('mission_portal_title') . "-" . $this->lang->line('breadcrumb_status'),
             'breadcrumbs' => $this->breadcrumblist->display(),
@@ -496,7 +495,7 @@ class Welcome extends Cf_Controller {
 
             $hostkey = isset($_POST['hostkey']) ? $_POST['hostkey'] : "none";
         }
-        $reports = json_decode(cfpr_select_reports(".*", 100));
+        $reports = json_decode(cfpr_select_reports(null));
         $hostname = cfpr_hostname($hostkey);
         $ipaddr = cfpr_ipaddr($hostkey);
         $username = isset($_POST['username']) ? $_POST['username'] : "";
