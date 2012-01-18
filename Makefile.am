@@ -9,8 +9,6 @@ SUBDIRS = src docs GUI2 tests/unit
 
 EXTRA_DIST = acconfig.h COPYING ChangeLog LICENSE
 
-docdir = $(pkgdatadir)
-
 doc_DATA = ChangeLog
 
 #
