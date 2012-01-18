@@ -962,7 +962,7 @@ HubQuery *NewHubQueryErrid(Rlist *hosts, Rlist *records, cfapi_errid errid);
 void DeleteHubQuery(HubQuery *hq,void (*fnptr)());
 int CountRecords(HubQuery *hq);
 #endif
-HubHost *NewHubHost(char *hubkey, char *keyhash,char *ipaddr,char *hostname);
+HubHost *NewHubHost(const char *hubkey, const char *keyhash,const char *ipaddr,const char *hostname);
 HubHost *CreateEmptyHubHost(void);
 HubHost *UpdateHubHost(HubHost *hubHost, char *keyhash,char *ipaddr,char *hostname);
 HubHost *GetHubHostIn(Rlist *host_list, char *keyhash);

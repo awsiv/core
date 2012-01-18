@@ -128,47 +128,16 @@ int CountRecords(HubQuery *hq)
 
 /*****************************************************************************/
 
-HubHost *NewHubHost(char *hubkey, char *keyhash,char *ipaddr,char *hostname)
+HubHost *NewHubHost(const char *hubkey, const char *keyhash,const char *ipaddr,const char *hostname)
 
 { HubHost *hp;
 
  hp = xmalloc(sizeof(HubHost));
-
- if (hubkey)
-    {
-    hp->hubkey = xstrdup(hubkey);
-    }
- else
-    {
-    hp->hubkey = NULL;
-    }
  
- if (keyhash)
-    {
-    hp->keyhash = xstrdup(keyhash);
-    }
- else
-    {
-    hp->keyhash = NULL;
-    }
-
- if (ipaddr)
-    {
-    hp->ipaddr = xstrdup(ipaddr);
-    }
- else
-    {
-    hp->ipaddr = NULL;
-    }
-
- if (hostname)
-    {
-    hp->hostname = xstrdup(hostname);
-    }
- else
-    {
-    hp->hostname = NULL;
-    }
+ hp->hubkey = SafeStringDuplicate(hubkey);
+ hp->keyhash = SafeStringDuplicate(keyhash);
+ hp->ipaddr = SafeStringDuplicate(ipaddr);
+ hp->hostname = SafeStringDuplicate(hostname);
 
  return hp;
 }
