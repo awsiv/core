@@ -171,8 +171,10 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslll",
 mongo_connection conn;
 DATABASE_OPEN(&conn)
 
+HostClassFilter *filter = NewHostClassFilter(context, NULL);
 HubQuery *result = CFDB_QueryPromiseCompliance(&conn, hostkey, handle, PromiseStateFromString(state),
-                                               true , 0, true, context);
+                                               true , 0, true, filter);
+DeleteHostClassFilter(filter);
 
 JsonArray *output = NULL;
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)

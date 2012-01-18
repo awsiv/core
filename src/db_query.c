@@ -1625,7 +1625,7 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *lscope,
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, char *lhandle, PromiseState lstatus,
-                                      int regex, time_t minTime, int sort, char *classRegex)
+                                      int regex, time_t minTime, int sort, HostClassFilter *hostClassFilter)
 // status = c (compliant), r (repaired) or n (not kept), x (any)
 { bson_buffer bb;
  bson query,field;
@@ -1638,8 +1638,7 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
  char rhandle[CF_MAXVARSIZE],rstatus,*prstat;
  char keyHashDb[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
  int match_handle,match_status,found;
- int emptyQuery = true;
- char classRegexAnch[CF_MAXVARSIZE];
+ int queryHasData = false;
   
 /* BEGIN query document */
 
@@ -1648,23 +1647,18 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    emptyQuery = false;
+    queryHasData = false;
     }
 
- if(!EMPTY(classRegex))
-    {
-    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
-    bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-    emptyQuery = false;
-    }
+ queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
 
- if(emptyQuery)
+ if(queryHasData)
     {
-    bson_empty(&query);
+    bson_from_buffer(&query,&bb);
     }
  else
     {
-    bson_from_buffer(&query,&bb);
+    bson_empty(&query);
     }
 
   
@@ -1686,7 +1680,7 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
 
  bson_destroy(&field);
 
- if(!emptyQuery)
+ if(queryHasData)
     {
     bson_destroy(&query);
     }

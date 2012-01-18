@@ -1137,7 +1137,10 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
  fclassreg =  (s_len == 0) ? NULL : classreg;
 
  buffer[0]='\0';
- Nova2PHP_compliance_promises(fhostkey,fhandle,fstatus,use_reg,fclassreg,&page,buffer,bufsize);
+
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+ Nova2PHP_compliance_promises(fhostkey,fhandle,fstatus,use_reg,filter,&page,buffer,bufsize);
+ DeleteHostClassFilter(filter);
 
  RETURN_STRING(buffer,1);
 }
@@ -1988,8 +1991,11 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_promises)
  fclassreg =  (cr_len == 0) ? NULL : classreg;
 
  buffer[0] = '\0';
- Nova2PHP_promise_hosts(fhostkey,fhandle,fstatus,use_reg,fclassreg,buffer,bufsize);
-
+ 
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+ Nova2PHP_promise_hosts(fhostkey,fhandle,fstatus,use_reg,filter,buffer,bufsize);
+ DeleteHostClassFilter(filter);
+ 
  RETURN_STRING(buffer,1);
 }
 

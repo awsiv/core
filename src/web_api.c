@@ -285,7 +285,9 @@ if (!status)  // any
    status = "x";
    }
 
-hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,0,false,classreg);
+HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
+hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, false, filter);
+DeleteHostClassFilter(filter);
 
 n = k = r = 0;
 n_av = k_av = r_av = 0;
@@ -1754,7 +1756,7 @@ int Nova2PHP_compliance_report(char *hostkey,char *version,time_t t,int k,int nk
 
 /*****************************************************************************/
 
-int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int regex,char *classreg,PageInfo *page,char *returnval,int bufsize)
+int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int regex,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
  HubPromiseCompliance *hp;
@@ -1775,7 +1777,7 @@ int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int reg
     status = "x";
     }
 
- hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,0,true,classreg);
+ hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,0,true,hostClassFilter);
  PageRecords(&(hq->records),page,DeleteHubPromiseCompliance);
 
  snprintf(header,sizeof(header),
@@ -2631,7 +2633,7 @@ int Nova2PHP_compliance_hosts(char *hostkey,char *version,time_t t,int k,int nk,
 
 /*****************************************************************************/
 
-int Nova2PHP_promise_hosts(char *hostkey,char *handle,char *status,int regex,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_promise_hosts(char *hostkey,char *handle,char *status,int regex,HostClassFilter *hostClassFilter,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
   HubHost *hh;
@@ -2652,7 +2654,7 @@ if (!status)  // any
    }
 
 
-hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,0,false,classreg);
+hq = CFDB_QueryPromiseCompliance(&dbconn,hostkey,handle,*status,regex,0,false,hostClassFilter);
 
 StartJoin(returnval,"[",bufsize);
 
