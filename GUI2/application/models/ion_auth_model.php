@@ -1027,9 +1027,9 @@ class Ion_auth_model extends CI_Model
 	
 	public function create_group($data)
 	{
-		$this->db->insert($this->tables['groups'], $data);
-		return $this->db->insert_id();
-		
+            $this->db->insert($this->tables['groups'], $data);
+            return $this->db->insert_id();	
+            
 	}
 	
 	

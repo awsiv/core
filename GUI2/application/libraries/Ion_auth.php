@@ -1085,5 +1085,5 @@ class Ion_auth
           public function set_mode($mode){
               $this->mode=$mode;
           }
-
+          
 }
