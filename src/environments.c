@@ -813,7 +813,7 @@ int Nova_CreateVirtNetwork(virConnectPtr vc,char **networks,Attributes a,Promise
 { virNetworkPtr network;
   char *xml_file;
   char defaultxml[CF_MAXVARSIZE];
-  int i, found = false, alloc_file = false;
+  int i, found = false;
   
 snprintf(defaultxml,CF_MAXVARSIZE-1,
          "<network>"
@@ -853,8 +853,6 @@ if (a.env.specfile)
       cfPS(cf_verbose,CF_FAIL,"",pp,a," !! Unable to read environment specfile \"%s\"\n",a.env.specfile);
       return false;
       }
-
-   alloc_file = true;
    }
 else
    {
@@ -871,11 +869,6 @@ else
    cfPS(cf_inform,CF_CHG,"",pp,a," -> Created network \"%s\" - promise repaired\n",pp->promiser);
    }
 
-if (alloc_file)
-   {
-   free(xml_file);
-   }
- 
 virNetworkFree(network);
 return true;
 }

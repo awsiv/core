@@ -1015,7 +1015,9 @@ switch (f->dtype)
    case cf_irange:
        printf("   (range)   ");
        break;
-       
+   default:
+       printf("   (unknown) ");
+       break;
    }
 
 printf("   %s",f->name);
@@ -1362,6 +1364,8 @@ switch(bs.dtype)
 
        fprintf(fp,"   \"%s\" association => a(\"is a list of type\",\"%s\",\"is used in\");\n",bs.lval,range);
 
+   default:
+       break;
    }
 
 if (CF_VALUETYPES[i][0] != NULL)

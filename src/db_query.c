@@ -7599,7 +7599,7 @@ while (mongo_cursor_next(cursor))
       {
       if (strcmp(bson_iterator_key(&iter), cfr_keyhash) == 0)
          {
-         AppendRlist(&hostkeys, bson_iterator_string(&iter), CF_SCALAR);
+         AppendRlist(&hostkeys, (char *)bson_iterator_string(&iter), CF_SCALAR);
          }
       }
    }

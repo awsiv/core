@@ -270,6 +270,9 @@ switch (type)
        Nova_PackBundles(reply,CFR_BUNDLES,from,type);
        Nova_PackSoftwareDates(reply,CFR_SWDATES,from,type);
        break;
+       
+   default:
+       FatalError("Unknown type '%d' in Nova_PackAllReports", type);
    }
 
 tReply = time(NULL);
