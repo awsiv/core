@@ -175,6 +175,14 @@ typedef struct
 
 /*****************************************************************************/
 
+typedef enum
+   {
+   PROMISE_LOG_STATE_REPAIRED,
+   PROMISE_LOG_STATE_NOTKEPT
+   } PromiseLogState;
+
+/*****************************************************************************/
+
 typedef struct FileLine_ FileLine;
 
 struct FileLine_
