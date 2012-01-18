@@ -1980,7 +1980,7 @@ int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *classreg
 
 /*****************************************************************************/
 
-int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,char *classreg,PageInfo *page,char *returnval,int bufsize)
+int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
  HubSetUid *hS;   
@@ -1997,7 +1997,7 @@ int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,char *classreg,Pag
     return false;
     }
 
- hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,classreg);
+ hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,hostClassFilter);
  PageRecords(&(hq->records),page,DeleteHubSetUid);
 
  snprintf(header,sizeof(header),
@@ -2792,7 +2792,7 @@ int Nova2PHP_performance_hosts(char *hostkey,char *job,int regex,char *classreg,
 
 /*****************************************************************************/
 
-int Nova2PHP_setuid_hosts(char *hostkey,char *file,int regex,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_setuid_hosts(char *hostkey,char *file,int regex,HostClassFilter *hostClassFilter,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
  HubHost *hh;
@@ -2806,7 +2806,7 @@ int Nova2PHP_setuid_hosts(char *hostkey,char *file,int regex,char *classreg,char
     return false;
     }
 
- hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,classreg);
+ hq = CFDB_QuerySetuid(&dbconn,hostkey,file,regex,hostClassFilter);
 
  StartJoin(returnval,"[",bufsize);
 

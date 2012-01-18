@@ -134,7 +134,7 @@ int Nova2PHP_compliance_report(char *hostkey,char *version,time_t t,int k,int nk
 int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int regex,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize);
 int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddr,time_t lago,int lregex,HostClassFilter *hostClassFilter,PageInfo *page, char *returnval,int bufsize);
 int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *classreg,PageInfo *page, char *returnval,int bufsize);
-int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,char *classreg,PageInfo *page, char *returnval,int bufsize);
+int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,HostClassFilter *hostClassFilter,PageInfo *page, char *returnval,int bufsize);
 int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize);
 int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char *cmp,HostClassFilter *hostClassFilter,PageInfo *page, int lookInArchive, char *returnval,int bufsize);
 int Nova2PHP_filediffs_report(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,HostClassFilter *hostClassFilter,PageInfo *page, int lookInArchive, char *returnval,int bufsize);
@@ -146,7 +146,7 @@ int Nova2PHP_compliance_hosts(char *hostkey,char *version,time_t t,int k,int nk,
 int Nova2PHP_promise_hosts(char *hostkey,char *handle,char *status,int regex,HostClassFilter *hostClassFilter,char *returnval,int bufsize);
 int Nova2PHP_lastseen_hosts(char *hostkey,char *lhash,char *lhost,char *laddress,time_t lago,int lregex,HostClassFilter *hostClassFilter,char *returnval,int bufsize);
 int Nova2PHP_performance_hosts(char *hostkey,char *job,int regex,char *classreg,char *returnval,int bufsize);
-int Nova2PHP_setuid_hosts(char *hostkey,char *file,int regex,char *classreg,char *returnval,int bufsize);
+int Nova2PHP_setuid_hosts(char *hostkey,char *file,int regex,HostClassFilter *hostClassFilter,char *returnval,int bufsize);
 int Nova2PHP_bundle_hosts(char *hostkey,char *bundle,int regex,HostClassFilter *hostClassFilter,char *returnval,int bufsize);
 int Nova2PHP_filechanges_hosts(char *hostkey,char *file,int regex,time_t t,char *cmp,HostClassFilter *hostClassFilter,char *returnval,int bufsize);
 int Nova2PHP_filediffs_hosts(char *hostkey,char *file,char *diffs,int regex,time_t t,char *cmp,HostClassFilter *hostClassFilter,char *returnval,int bufsize);

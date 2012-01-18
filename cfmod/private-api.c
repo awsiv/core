@@ -1281,7 +1281,10 @@ PHP_FUNCTION(cfpr_report_setuid)
  fclassreg =  (cr_len == 0) ? NULL : classreg;
 
  buffer[0]='\0';
- Nova2PHP_setuid_report(fhostkey,ffile,regex,fclassreg,&page,buffer,bufsize);
+
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+ Nova2PHP_setuid_report(fhostkey,ffile,regex,filter,&page,buffer,bufsize);
+ DeleteHostClassFilter(filter);
 
  RETURN_STRING(buffer,1);
 }
@@ -2109,9 +2112,13 @@ PHP_FUNCTION(cfpr_hosts_with_setuid)
 
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  ffile =  (j_len == 0) ? NULL : file;
+ char *fclassreg = (cr_len == 0) ? NULL : classreg;
 
  buffer[0] = '\0';
- Nova2PHP_setuid_hosts(fhostkey,ffile,regex,fhostkey,buffer,bufsize);
+
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+ Nova2PHP_setuid_hosts(fhostkey,ffile,regex,filter,buffer,bufsize);
+ DeleteHostClassFilter(filter);
 
  RETURN_STRING(buffer,1);
 }
