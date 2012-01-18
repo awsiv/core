@@ -157,11 +157,11 @@ if (!Nova_CheckDirectoryInherit(file, &acl, pp))
 
 for (rp = acl.acl_entries; rp != NULL; rp=rp->next)
    {
-   valid = Nova_CheckACESyntax(rp->item,valid_ops,valid_nperms,deny_support,mask_support,pp);
+   valid = Nova_CheckACESyntax(GetRlistScalar(rp),valid_ops,valid_nperms,deny_support,mask_support,pp);
 
    if (!valid)  // wrong syntax in this ace
       {
-      CfOut(cf_error,"","The ACE \"%s\" contains errors",rp->item);
+      CfOut(cf_error,"","The ACE \"%s\" contains errors", GetRlistScalar(rp));
       PromiseRef(cf_error,pp);
       break;
       }
@@ -173,7 +173,7 @@ for (rp = acl.acl_inherit_entries; rp != NULL; rp=rp->next)
 
    if (!valid)  // wrong syntax in this ace
       {
-      CfOut(cf_error,"","The ACE \"%s\" contains errors",rp->item);
+      CfOut(cf_error,"","The ACE \"%s\" contains errors", GetRlistScalar(rp));
       PromiseRef(cf_error,pp);
       break;
       }
