@@ -1,4 +1,3 @@
-
 <div id="infoMessage"><?php echo $message;?></div>
     <div class="form">
     <?php echo form_open("auth/edit_user/".$this->uri->segment(3),array('id'=>'edit_user'));?>

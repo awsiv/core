@@ -6,7 +6,7 @@
                 <th>Description</th>
        <?php if($this->ion_auth->mode=="database"){ ?> <th>Action</th><?php }?>
         </tr>
-        <?php foreach ((array)$roles as $role){ // debug2($role);
+        <?php foreach ((array)$roles as $role){ 
         ?>
         <tr>
           <td><?php echo isset($role['name'])?$role['name']:$role['displayname']?></td>

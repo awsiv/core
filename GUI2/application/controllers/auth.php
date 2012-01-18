@@ -722,10 +722,27 @@ class Auth extends Controller {
      */
     
     function delete_role($name) {
-        $this->ion_auth->delete_role($name);
+        
+        if($name == '')
+        {
+            $this->permission_deny($this->lang->line('empty_rolename'));
+        } 
+        
+        if($name == 'admin')
+        {
+            $this->permission_deny($this->lang->line('admin_role_delete_forbidden'));
+        }
+        
+        if ($this->ion_auth->is_admin() === false) {
+            $this->permission_deny($this->lang->line('no_permission'));
+        }
+        
+        
+        $this->ion_auth->delete_role($name); 
+                
         if (is_ajax ()) {
-            $this->data['message'] = $this->ion_auth->errors()?$this->ion_auth->errors():$this->ion_auth->messages();
-            $this->data['roles'] = $this->ion_auth->get_roles();           
+            $this->data['message']  = $this->ion_auth->errors()?$this->ion_auth->errors():$this->ion_auth->messages();
+            $this->data['roles']    = $this->ion_auth->get_roles();     
             $this->data['is_admin'] = $this->ion_auth->is_admin();
             $this->load->view('auth/list_role', $this->data);
         } else {
@@ -735,7 +752,7 @@ class Auth extends Controller {
     }
 
     function setting() {
-          if (!$this->ion_auth->logged_in()) {
+        if (!$this->ion_auth->logged_in()) {
             //redirect them to the login page
             redirect('auth/login', 'refresh');
         }
@@ -745,7 +762,7 @@ class Auth extends Controller {
             'isRoot' => false,
             'replace_existing'=>true
         );
-        $this->breadcrumb->setBreadCrumb($bc);
+        
         $data = array(
             'title' => $this->lang->line('mission_portal_title')." - Settings",
             'breadcrumbs' => $this->breadcrumblist->display(),
@@ -753,5 +770,37 @@ class Auth extends Controller {
         );
         $this->template->load('template', 'auth/usersettings', $data);
     }
+          
+        /*
+        * if ajax - show message on top of the page div id=error_status
+        * 
+        * if not ajax - redirect to no_permission page, with some message
+        */
+        function permission_deny($message = '') {
+            if ($message == '') {
+                $message = $this->lang->line('no_permission');
+            }
+            
+            if (is_ajax()) {
+                $this->output->set_status_header(401, $message);
+                echo $message;
+                exit();
+            }
+            else {
+                $bc = array(
+                    'title' => $this->lang->line('mission_portal_title'),
+                    'url' => 'welcome/index',
+                    'isRoot' => true
+                );
 
-}
+                $this->breadcrumb->setBreadCrumb($bc);
+
+                $this->data['title']       = $this->lang->line('mission_portal_title');
+                $this->data['message']     = $this->lang->line('no_permission');
+                $this->data['breadcrumbs'] = $this->breadcrumblist->display();
+                $this->session->set_flashdata('message', $this->lang->line('no_permission'));
+
+                $this->template->load('template', 'auth/no_permission', $this->data);
+            }
+      }
+}   

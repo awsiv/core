@@ -54,14 +54,14 @@ $lang['role_creation_unsuccessful']            ="Unable to create role";
 $lang['role_creation_duplicate']               ="Role name already exists";
 
 //role changes
-$lang['role_delete_successful'] 		= 'Role deleted';
-$lang['role_delete_unsuccessful'] 		= 'Unable to delete role';
+$lang['role_delete_successful']                = 'Role deleted';
+$lang['role_delete_unsuccessful']              = 'Unable to delete role';
 $lang['role_update_successful']                = 'Role information updated successfully';
 $lang['role_update_unsuccessful']              = 'Unable to update role';
 $lang['no_roles_for_user']                     = "User does not belong to any role, but can login to the Nova Mission Portal with limited access";
-$lang['backend_error']                          = "Cannot connect to the user database. Please make sure it exists.";
-$lang['admin_role_deletion']= "Cannot delete the admin role";
-$lang['no_admin_role']="No admin role selected yet";
+$lang['backend_error']                         = "Cannot connect to the user database. Please make sure it exists.";
+$lang['admin_role_deletion']                   = "Cannot delete the admin role";
+$lang['no_admin_role']                         = "No admin role selected yet";
 //modes of login
 $lang['login_mode_changed']          =  'The mode of authentication has changed, it might be due to config changes or a system fallback to a local database due to failed LDAP login. Please retry login.';
 
@@ -82,3 +82,7 @@ $lang['login_database'] ='Internal authentication';
 $lang['login_ldap']='Open LDAP';
 $lang['login_active_directory']='Active Directory';
 $lang['login_mode_not_found']='Cannot find backend';
+
+
+// permission
+$lang['no_permission'] = "You don't have right permission to complete this operation.";
