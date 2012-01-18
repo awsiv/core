@@ -1250,7 +1250,10 @@ PHP_FUNCTION(cfpr_report_performance)
  fclassreg =  (cr_len == 0) ? NULL : classreg;
 
  buffer[0]='\0';
- Nova2PHP_performance_report(fhostkey,fjob,regex,fclassreg,&page,buffer,bufsize);
+
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+ Nova2PHP_performance_report(fhostkey,fjob,regex,filter,&page,buffer,bufsize);
+ DeleteHostClassFilter(filter);
 
  RETURN_STRING(buffer,1);
 }
@@ -2092,7 +2095,10 @@ PHP_FUNCTION(cfpr_hosts_with_performance)
  fclassreg =  (cr_len == 0) ? NULL : job;
 
  buffer[0] = '\0';
- Nova2PHP_performance_hosts(fhostkey,fjob,regex,fclassreg,buffer,bufsize);
+
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+ Nova2PHP_performance_hosts(fhostkey,fjob,regex,filter,buffer,bufsize);
+ DeleteHostClassFilter(filter);
 
  RETURN_STRING(buffer,1);
 }

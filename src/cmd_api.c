@@ -1594,7 +1594,9 @@ int Nova2Txt_performance_hosts(char *hostkey,char *job,int regex,char *classreg,
     return false;
     }
 
- hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,false,classreg);
+ HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
+ hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,false,filter);
+ DeleteHostClassFilter(filter);
 
  StartJoin(returnval,"[",bufsize);
 

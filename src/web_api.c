@@ -1902,7 +1902,7 @@ int Nova2PHP_lastseen_report(char *hostkey,char *lhash,char *lhost,char *laddres
 }
 
 /*****************************************************************************/
-int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *classreg,PageInfo *page, char *returnval,int bufsize)
+int Nova2PHP_performance_report(char *hostkey,char *job,int regex,HostClassFilter *hostClassFilter,PageInfo *page, char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
  HubPerformance *hP;
@@ -1919,7 +1919,8 @@ int Nova2PHP_performance_report(char *hostkey,char *job,int regex,char *classreg
     return false;
     }
 
- hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,true,classreg);
+ hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,true,hostClassFilter);
+ 
  PageRecords(&(hq->records),page,DeleteHubPerformance);
 
  snprintf(header,sizeof(header),
@@ -2742,7 +2743,7 @@ int Nova2PHP_lastseen_hosts(char *hostkey,char *lhash,char *lhost,char *laddress
 
 /*****************************************************************************/
 
-int Nova2PHP_performance_hosts(char *hostkey,char *job,int regex,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_performance_hosts(char *hostkey,char *job,int regex,HostClassFilter *hostClassFilter,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];
  HubHost *hh;
@@ -2756,7 +2757,7 @@ int Nova2PHP_performance_hosts(char *hostkey,char *job,int regex,char *classreg,
     return false;
     }
 
- hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,false,classreg);
+ hq = CFDB_QueryPerformance(&dbconn,hostkey,job,regex,false,hostClassFilter);
 
  StartJoin(returnval,"[",bufsize);
 

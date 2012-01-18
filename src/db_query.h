@@ -22,7 +22,7 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *lscope,
 HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, char *lhandle, PromiseState lstatus, int regex, time_t minTime, int sort, HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *lhash,char *lhost,char *laddr,time_t lago,int regex,int sort,HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query,char *db);
-HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char *lname,int regex,int sort,char *classRegex);
+HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char *lname,int regex,int sort,HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QuerySetuid(mongo_connection *conn,char *keyHash,char *lname,int regex, HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lname,int regex, HostClassFilter *hostClassFilter, int sort);
 HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char *lname,int regex,time_t lt,int cmp, int sort, HostClassFilter *hostClassFilter, int lookInArchive);
