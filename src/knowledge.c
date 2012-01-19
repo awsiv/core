@@ -13,6 +13,11 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+
+/* From cfknow.c */
+
+int GetTopicPid(char *classified_topic);
+
 /*****************************************************************************/
 #define CF_TEST_HOSTNAME "cfengine_auto_test"
 /*****************************************************************************/
