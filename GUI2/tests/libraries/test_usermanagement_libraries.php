@@ -57,7 +57,7 @@ class test_usermanagement_libraries extends CodeIgniterUnitTestCase {
 
     //-------------  Roles --------------------------------
     /*
-     * will run cfpr_role_create(name,desc,classRxInclude,classRxExclude,bundleRxInclude) in the end
+     * will run cfpr_role_create(username, name,desc,classRxInclude,classRxExclude,bundleRxInclude) in the end
      */
     public function test_cfpr_role_create() {
         $data = array('username'         => 'admin',
@@ -73,7 +73,7 @@ class test_usermanagement_libraries extends CodeIgniterUnitTestCase {
     }        
     
     /*
-     *  will run cfpr_role_delete(name)  in the end
+     *  will run cfpr_role_delete(username, name) in the end
      */
     public function test_cfpr_role_delete() {
         $data = array('username'         => "admin",
