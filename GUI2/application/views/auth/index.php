@@ -1,3 +1,41 @@
+   <style> 
+    <!--
+    .roles_wrapper {
+       float: left;
+       width: 98%
+    }
+    .role_list {
+         float: left; 
+         width: 40%; 
+         overflow: auto;
+    }
+    .role_list ul {
+         height: 400px;
+         border: 1px solid #D4D5D0;
+         padding: 5px 10px;
+         overflow: auto;
+    }
+    .role_list ul li {
+        list-style: none;
+        border-top: 1px solid #D4D5D0;
+        padding: 10px 0;
+    }
+    .role_list ul li.first {
+        border: none !important;
+    }
+    
+    .switchers {
+        float: left;
+        width: 7%;
+        text-align: center;
+        margin: 0 20px;
+        padding-top: 150px;
+    }
+    .selected_item {
+        background: #eee;
+    }
+    -->
+   </style>
 <div class="outerdiv grid_12">
 
     <div class="innerdiv">
@@ -8,7 +46,7 @@
             <!--<li>Settings</li>-->
         </ul>
         <div class="holder">
-             <div id="error_status"></div>
+            <div id="error_status"></div>
             <div id="admin_content" class="tables">
                 <?php include 'user_list.php'; ?>
             </div>
@@ -27,6 +65,7 @@
         //loading the create user page from server to add the user
         $('#add_user').live('click',function(event) {
             event.preventDefault();
+            $("#error_status").html('');            
             var path=$(this).attr('href');
             $("#admin_content").slideUp().load(path).slideDown();;
         });
@@ -34,6 +73,7 @@
         //submitting the create user form
         $('#create_user').live('submit',function(event) {
             event.preventDefault();
+            $("#error_status").html('');            
             $(this).ajaxSubmit(options)
         });
 
@@ -41,6 +81,7 @@
 
         $('a.delete').live('click',function(event){
             event.preventDefault();
+            $("#error_status").html('');
             var path=$(this).attr('href');
             $confirmation.data('path',path).dialog("open");
         });
@@ -80,6 +121,7 @@
             //loading the edit page in admin_content of the admin area
             $('a.edit').live('click',function(event){
                 event.preventDefault();
+                $("#error_status").html('');
                 var path=$(this).attr('href');
                 $("#admin_content").load(path,function(res){
                     $(this).html(res);
@@ -89,6 +131,7 @@
             //loading the change password in admin_content
             $('a.changepassword').live('click',function(event){
                 event.preventDefault();
+                $("#error_status").html('');
                 var path=$(this).attr('href');
                 $("#admin_content").load(path);
             });
@@ -140,6 +183,7 @@
             //loading the  role create page in the  admin area ajaxcially
             $('#add_role').live('click',function(event){
                 event.preventDefault();
+                $("#error_status").html('');
                 var path=$(this).attr('href');
                 $("#admin_content").slideUp().load(path).slideDown();
             });
@@ -147,11 +191,13 @@
             //create a new role form the page loaded
             $('#create_role').live('submit',function(event){
                 event.preventDefault();
+                $("#error_status").html('');
                 $(this).ajaxSubmit(options);
             });
 
             $('#Create_role').live('submit',function(event){
                 event.preventDefault();
+                $("#error_status").html('');
                 $(this).ajaxSubmit(options);
             });
 
@@ -184,4 +230,44 @@
                 $(this).ajaxSubmit(options)
             });
         });
+
+// roles 
+    $('#all_roles li, #user_roles li').live('click',function(event) {
+        //var itemid = $(this).parent().attr('itemid');
+        var itemid = $(this).attr('itemid');
+        $("#li_item" + itemid).toggleClass("selected_item");
+       // $(this).find('input:checkbox').attr('checked', 'checked');            
+    });
+    
+    
+    //moving roles
+   $("#move_left").live('click',function(event) {
+        $('#all_roles .selected_item').each(function() {
+            var item_id = $(this).attr('itemid');
+            $('#li_itemid' + item_id).each(function() {this.checked = false;});
+
+            var item_clone = $(this).clone(true);
+            $(item_clone).removeClass('selected_item');
+            $(item_clone).addClass('moved');
+            $(item_clone).find('input:checkbox').attr('checked', 'checked');  
+            $(item_clone).find('input:checkbox').attr('disabled', false);
+            $('#user_roles').append(item_clone);
+            $(this).remove();
+	});
+    });
+    $("#move_right").live('click',function(event) {
+        $('#user_roles .selected_item').each(function() {
+            var item_id = $(this).attr('itemid');
+       
+            $('#li_itemid' + item_id).each(function() {this.checked = false;});
+            var item_clone = $(this).clone(true);
+            $(item_clone).removeClass('selected_item');
+            $(item_clone).addClass('moved');
+            $(item_clone).find('input:checkbox').attr('checked', false);
+            $(item_clone).find('input:checkbox').attr('disabled', true);
+            $('#all_roles').append(item_clone);
+            $(this).remove();
+        });
+    });
+  
 </script>
