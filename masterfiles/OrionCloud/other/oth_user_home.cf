@@ -19,7 +19,7 @@
 # USER Home directory
 #######################################################
 # Scenario:
-# Files/Directories in home directory have wrong ownerships
+#  Files/Directories in home directory have wrong ownerships
 # and permissions.
 #
 # CATEGORY:
