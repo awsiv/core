@@ -756,6 +756,88 @@ DeleteHubQuery(result, DeleteHubSoftware);
 RETURN_JSON_ARRAY(output);
 }
 
+
+/************************************************************************************/
+
+
+static JsonObject *SetUidHostsEntryCreate(HubSetUid *setuid)
+{
+JsonObject *entry = NULL;
+JsonObjectAppendString(&entry, LABEL_PATH, setuid->path);
+
+JsonArray *hostkeys = NULL;
+JsonArrayAppendString(&hostkeys, setuid->hh->keyhash);
+JsonObjectAppendArray(&entry, LABEL_HOSTKEYS, hostkeys);
+
+return entry;
+}
+
+static JsonObject *SetUidHostsEntryFind(JsonArray *entries, HubSetUid *setuid)
+{
+for (Rlist *rp = entries; rp != NULL; rp = rp->next)
+   {
+   JsonObject *entry = (JsonObject *)rp->item;
+   if (strcmp(JsonObjectGetAsString(entry, LABEL_PATH), setuid->path) == 0)
+      {
+      return entry;
+      }
+   }
+
+return NULL;
+}
+
+
+PHP_FUNCTION(cfmod_resource_setuid)
+{
+char *hostkey = NULL,
+     *name = NULL,
+     *context = NULL;
+int len;
+PageInfo page = { 0 };
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssll",
+      &hostkey, &len,
+      &name, &len,
+      &context, &len,
+      &(page.resultsPerPage),
+      &(page.pageNum)) == FAILURE)
+   {
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+   RETURN_NULL();
+   }
+
+mongo_connection conn;
+DATABASE_OPEN(&conn)
+
+HostClassFilter *filter = NewHostClassFilter(context, NULL);
+HubQuery *result = CFDB_QuerySetuid(&conn, hostkey, name, true, filter);
+DeleteHostClassFilter(filter);
+
+DATABASE_CLOSE(&conn)
+
+JsonArray *output = NULL;
+for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
+   {
+   HubSetUid *record = (HubSetUid *)rp->item;
+   JsonObject *entry = SetUidHostsEntryFind(output, record);
+   if (entry)
+      {
+      JsonArray *hostkeys = JsonObjectGetAsArray(entry, LABEL_HOSTKEYS);
+      JsonArrayAppendString(&hostkeys, record->hh->keyhash);
+      }
+   else
+      {
+      entry = SetUidHostsEntryCreate(record);
+      JsonArrayAppendObject(&output, entry);
+      }
+   }
+
+DeleteHubQuery(result, DeleteHubSetUid);
+
+RETURN_JSON_ARRAY(output);
+}
+
+
 /************************************************************************************/
 
 
@@ -805,53 +887,4 @@ for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
 DeleteHubQuery(result, DeleteHubBundleSeen);
 
 RETURN_JSON_ARRAY(bundles);
-}
-
-
-/************************************************************************************/
-
-
-PHP_FUNCTION(cfmod_resource_report_setuid_programs)
-{
-char *hostkey = NULL,
-     *name = NULL,
-     *context = NULL;
-int len;
-PageInfo page = { 0 };
-
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslll",
-      &hostkey, &len,
-      &name, &len,
-      &context, &len,
-      &(page.resultsPerPage),
-      &(page.pageNum)) == FAILURE)
-   {
-   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-   RETURN_NULL();
-   }
-
-mongo_connection conn;
-DATABASE_OPEN(&conn)
-
-HostClassFilter *filter = NewHostClassFilter(context, NULL);    
-HubQuery *result = CFDB_QuerySetuid(&conn, hostkey, name, true, filter);
-DeleteHostClassFilter(filter);
-
-DATABASE_CLOSE(&conn)
-
-JsonArray *output = NULL;
-for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
-   {
-   HubSetUid *record = (HubSetUid *)rp->item;
-   JsonObject *entry = NULL;
-
-   JsonObjectAppendString(&entry, LABEL_HOSTKEY, record->hh->keyhash);
-   JsonObjectAppendString(&entry, LABEL_PATH, record->path);
-
-   JsonArrayAppendObject(&output, entry);
-   }
-
-DeleteHubQuery(result, DeleteHubSetUid);
-
-RETURN_JSON_ARRAY(output);
 }
