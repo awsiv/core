@@ -1,6 +1,6 @@
 /*
 
-This file is (C) Cfengine AS. See COSL LICENSE for details.
+  This file is (C) Cfengine AS. See COSL LICENSE for details.
 
 */
 
@@ -33,21 +33,21 @@ int CFDB_GetValue(char *lval,char *rval,int size)
   
  // clients do not run mongo server -- will fail to connect
 
-if (!IsDefinedClass("am_policy_hub") && !AM_PHP_MODULE)
-   {
-   CfOut(cf_verbose,"","Ignoring DB get of (%s) - we are not a policy server",lval);
-   return false;
-   }
+ if (!IsDefinedClass("am_policy_hub") && !AM_PHP_MODULE)
+    {
+    CfOut(cf_verbose,"","Ignoring DB get of (%s) - we are not a policy server",lval);
+    return false;
+    }
 
-if (!CFDB_Open(&conn))
-   {
-   return false;
-   }
+ if (!CFDB_Open(&conn))
+    {
+    return false;
+    }
 
-CFDB_HandleGetValue(lval,rval,size,&conn);
+ CFDB_HandleGetValue(lval,rval,size,&conn);
 
-CFDB_Close(&conn);
-return true;
+ CFDB_Close(&conn);
+ return true;
 }
 
 /*****************************************************************************/
@@ -55,8 +55,8 @@ return true;
 Item *CFDB_GetLastseenCache(void)
 
 { bson query,field;
-  bson_iterator it1,it2,it3;
-  mongo_cursor *cursor;
+ bson_iterator it1,it2,it3;
+ mongo_cursor *cursor;
  mongo_connection conn;
  bson_buffer bb;
  char keyhash[CF_BUFSIZE]={0},ipAddr[CF_MAXVARSIZE]={0};
@@ -64,63 +64,63 @@ Item *CFDB_GetLastseenCache(void)
  Item *ip,*list = NULL;
 
 
-if (!CFDB_Open(&conn))
-   {
-   return false;
-   }
+ if (!CFDB_Open(&conn))
+    {
+    return false;
+    }
 
-bson_buffer_init(&bb);
-bson_append_int(&bb,cfr_lastseen_hosts,1);
-bson_from_buffer(&field, &bb);
+ bson_buffer_init(&bb);
+ bson_append_int(&bb,cfr_lastseen_hosts,1);
+ bson_from_buffer(&field, &bb);
 
-cursor = mongo_find(&conn,MONGO_SCRATCH,bson_empty(&query),&field,0,0,CF_MONGO_SLAVE_OK);
+ cursor = mongo_find(&conn,MONGO_SCRATCH,bson_empty(&query),&field,0,0,CF_MONGO_SLAVE_OK);
 
-bson_destroy(&field);
-bson_destroy(&query);
+ bson_destroy(&field);
+ bson_destroy(&query);
 
-while (mongo_cursor_next(cursor))
-   {
-   bson_iterator_init(&it1,cursor->current.data);
+ while (mongo_cursor_next(cursor))
+    {
+    bson_iterator_init(&it1,cursor->current.data);
    
-   while(bson_iterator_next(&it1))
-      {
-      if (strcmp(bson_iterator_key(&it1),cfr_lastseen_hosts) == 0)
-         {
-         bson_iterator_init(&it2,bson_iterator_value(&it1));
+    while(bson_iterator_next(&it1))
+       {
+       if (strcmp(bson_iterator_key(&it1),cfr_lastseen_hosts) == 0)
+          {
+          bson_iterator_init(&it2,bson_iterator_value(&it1));
            
-         while (bson_iterator_next(&it2))
-            {
-            bson_iterator_init(&it3, bson_iterator_value(&it2));
-            keyhash[0] = '\0';
-            ipAddr[0] = '\0';
-            while (bson_iterator_next(&it3))
-               {
-               if(strcmp(bson_iterator_key(&it3),cfr_keyhash)==0)
-                  {
-                  snprintf(keyhash,sizeof(keyhash),"%s",bson_iterator_string(&it3));
-                  }
-               else if(strcmp(bson_iterator_key(&it3),cfr_ipaddr)==0)
-                  {
-                  snprintf(ipAddr,sizeof(ipAddr),"%s",bson_iterator_string(&it3));
-                  }
-               else if(strcmp(bson_iterator_key(&it3),cfr_time)==0)
-                  {
-                  t = bson_iterator_int(&it3);
-                  }
-               }
-            if(strlen(keyhash)>0 && strlen(ipAddr)>0)
-               {
-               ip = IdempPrependItem(&list,keyhash,ipAddr);
-               ip->time = t;
-               }
-            }
-         }
-      }
-   }
+          while (bson_iterator_next(&it2))
+             {
+             bson_iterator_init(&it3, bson_iterator_value(&it2));
+             keyhash[0] = '\0';
+             ipAddr[0] = '\0';
+             while (bson_iterator_next(&it3))
+                {
+                if(strcmp(bson_iterator_key(&it3),cfr_keyhash)==0)
+                   {
+                   snprintf(keyhash,sizeof(keyhash),"%s",bson_iterator_string(&it3));
+                   }
+                else if(strcmp(bson_iterator_key(&it3),cfr_ipaddr)==0)
+                   {
+                   snprintf(ipAddr,sizeof(ipAddr),"%s",bson_iterator_string(&it3));
+                   }
+                else if(strcmp(bson_iterator_key(&it3),cfr_time)==0)
+                   {
+                   t = bson_iterator_int(&it3);
+                   }
+                }
+             if(strlen(keyhash)>0 && strlen(ipAddr)>0)
+                {
+                ip = IdempPrependItem(&list,keyhash,ipAddr);
+                ip->time = t;
+                }
+             }
+          }
+       }
+    }
            
-mongo_cursor_destroy(cursor);
-CFDB_Close(&conn);
-return list;
+ mongo_cursor_destroy(cursor);
+ CFDB_Close(&conn);
+ return list;
 }
 
 /*****************************************************************************/
@@ -128,48 +128,48 @@ return list;
 Item * CFDB_GetDeletedHosts(void)
     
 { bson query,field;
-  bson_iterator it1,it2;
-  mongo_cursor *cursor;
+ bson_iterator it1,it2;
+ mongo_cursor *cursor;
  mongo_connection conn;
  bson_buffer bb;
  Item *list = NULL;
 
 
-if (!CFDB_Open(&conn))
-   {
-   return false;
-   }
+ if (!CFDB_Open(&conn))
+    {
+    return false;
+    }
 
-bson_buffer_init(&bb);
-bson_append_int(&bb,cfr_deleted_hosts,1);
-bson_from_buffer(&field, &bb);
+ bson_buffer_init(&bb);
+ bson_append_int(&bb,cfr_deleted_hosts,1);
+ bson_from_buffer(&field, &bb);
 
-cursor = mongo_find(&conn,MONGO_SCRATCH,bson_empty(&query),&field,0,0,CF_MONGO_SLAVE_OK);
+ cursor = mongo_find(&conn,MONGO_SCRATCH,bson_empty(&query),&field,0,0,CF_MONGO_SLAVE_OK);
 
-bson_destroy(&field);
-bson_destroy(&query);
+ bson_destroy(&field);
+ bson_destroy(&query);
 
-while (mongo_cursor_next(cursor))
-   {
-   bson_iterator_init(&it1,cursor->current.data);
+ while (mongo_cursor_next(cursor))
+    {
+    bson_iterator_init(&it1,cursor->current.data);
    
-   while(bson_iterator_next(&it1))
-      {
-      if (strcmp(bson_iterator_key(&it1),cfr_deleted_hosts) == 0)
-         {
-         bson_iterator_init(&it2,bson_iterator_value(&it1));
+    while(bson_iterator_next(&it1))
+       {
+       if (strcmp(bson_iterator_key(&it1),cfr_deleted_hosts) == 0)
+          {
+          bson_iterator_init(&it2,bson_iterator_value(&it1));
            
-         while (bson_iterator_next(&it2))
-            {
-            IdempPrependItem(&list,(char *)bson_iterator_string(&it2),NULL);
-            }
-         }
-      }
-   }
+          while (bson_iterator_next(&it2))
+             {
+             IdempPrependItem(&list,(char *)bson_iterator_string(&it2),NULL);
+             }
+          }
+       }
+    }
            
-mongo_cursor_destroy(cursor);
-CFDB_Close(&conn);
-return list;
+ mongo_cursor_destroy(cursor);
+ CFDB_Close(&conn);
+ return list;
 } 
 
 /*****************************************************************************/
@@ -177,28 +177,28 @@ return list;
 void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn)
 
 { bson query;
-  bson_iterator it1;
-  mongo_cursor *cursor;
+ bson_iterator it1;
+ mongo_cursor *cursor;
 
-rval[0] = '\0';
+ rval[0] = '\0';
 
-cursor = mongo_find(conn,MONGO_SCRATCH,bson_empty(&query),0,0,0,CF_MONGO_SLAVE_OK);
+ cursor = mongo_find(conn,MONGO_SCRATCH,bson_empty(&query),0,0,0,CF_MONGO_SLAVE_OK);
 
-while (mongo_cursor_next(cursor))
-   {
-   bson_iterator_init(&it1,cursor->current.data);
+ while (mongo_cursor_next(cursor))
+    {
+    bson_iterator_init(&it1,cursor->current.data);
    
-   while(bson_iterator_next(&it1))
-      {
-      if (strcmp(bson_iterator_key(&it1),lval) == 0)
-         {
-         snprintf(rval,size,"%s",bson_iterator_string(&it1));
-         break;
-         }
-      }    
-   }
+    while(bson_iterator_next(&it1))
+       {
+       if (strcmp(bson_iterator_key(&it1),lval) == 0)
+          {
+          snprintf(rval,size,"%s",bson_iterator_string(&it1));
+          break;
+          }
+       }    
+    }
 
-mongo_cursor_destroy(cursor);
+ mongo_cursor_destroy(cursor);
 }
 
 /*****************************************************************************/
@@ -208,24 +208,24 @@ mongo_cursor_destroy(cursor);
 void CFDB_ListEverything(mongo_connection *conn)
 
 { mongo_cursor *cursor;
-  bson_iterator it;
-  bson b,*query;
+ bson_iterator it;
+ bson b,*query;
 
-query = bson_empty(&b);
+ query = bson_empty(&b);
  
-cursor = mongo_find(conn,MONGO_DATABASE,query,0,0,0,CF_MONGO_SLAVE_OK);
+ cursor = mongo_find(conn,MONGO_DATABASE,query,0,0,0,CF_MONGO_SLAVE_OK);
 
-while(mongo_cursor_next(cursor))
-   {
-   bson_iterator_init(&it,cursor->current.data);
+ while(mongo_cursor_next(cursor))
+    {
+    bson_iterator_init(&it,cursor->current.data);
    
-   while(bson_iterator_next(&it))
-      {
-      PrintCFDBKey(&it,1);   
-      }
-   }
+    while(bson_iterator_next(&it))
+       {
+       PrintCFDBKey(&it,1);   
+       }
+    }
 
-mongo_cursor_destroy(cursor);
+ mongo_cursor_destroy(cursor);
 }
 
 /*****************************************************************************/
@@ -242,41 +242,41 @@ HubQuery *CFDB_QueryHosts(mongo_connection *conn, char *db, char *dbkey,bson *qu
   
 /* BEGIN RESULT DOCUMENT */
 
-bson_buffer_init(&bb);
-bson_append_int(&bb,dbkey,1);
-bson_append_int(&bb,cfr_ip_array,1);
-bson_append_int(&bb,cfr_host_array,1);
-bson_from_buffer(&field, &bb);
+ bson_buffer_init(&bb);
+ bson_append_int(&bb,dbkey,1);
+ bson_append_int(&bb,cfr_ip_array,1);
+ bson_append_int(&bb,cfr_host_array,1);
+ bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-hostnames[0] = '\0';
-addresses[0] = '\0';
+ hostnames[0] = '\0';
+ addresses[0] = '\0';
 
-cursor = mongo_find(conn,db,query,&field,0,0,CF_MONGO_SLAVE_OK);
+ cursor = mongo_find(conn,db,query,&field,0,0,CF_MONGO_SLAVE_OK);
 
-while (mongo_cursor_next(cursor))
-   {
-   bson_iterator_init(&it1,cursor->current.data);
+ while (mongo_cursor_next(cursor))
+    {
+    bson_iterator_init(&it1,cursor->current.data);
    
-   keyhash[0] = '\0';
-   hostnames[0] = '\0';
-   addresses[0] = '\0';
+    keyhash[0] = '\0';
+    hostnames[0] = '\0';
+    addresses[0] = '\0';
    
-   while (bson_iterator_next(&it1))
-      {
-      /* Extract the common HubHost data */
+    while (bson_iterator_next(&it1))
+       {
+       /* Extract the common HubHost data */
       
-      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
-      }      
+       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+       }      
 
-   hh = NewHubHost(NULL,keyhash,addresses,hostnames);
-   PrependRlistAlien(&host_list,hh);
-   }
+    hh = NewHubHost(NULL,keyhash,addresses,hostnames);
+    PrependRlistAlien(&host_list,hh);
+    }
 
-bson_destroy(&field);
-mongo_cursor_destroy(cursor);
-return NewHubQuery(host_list,NULL);
+ bson_destroy(&field);
+ mongo_cursor_destroy(cursor);
+ return NewHubQuery(host_list,NULL);
 }
 
 /*****************************************************************************/
@@ -284,93 +284,93 @@ return NewHubQuery(host_list,NULL);
 HubQuery *CFDB_QueryHostsInClassContext(mongo_connection *conn,char *expression,time_t horizon,int sort)
 
 { bson_buffer bb;
-  bson query,field;
-  mongo_cursor *cursor;
-  bson_iterator it1,it2,it3;
-  Rlist *host_list = NULL;
-  time_t rtime, now = time(NULL);
-  char rclass[CF_MAXVARSIZE];
-  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
+ bson query,field;
+ mongo_cursor *cursor;
+ bson_iterator it1,it2,it3;
+ Rlist *host_list = NULL;
+ time_t rtime, now = time(NULL);
+ char rclass[CF_MAXVARSIZE];
+ char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
   
 /* BEGIN query document */
 
-bson_buffer_init(&bb);
-bson_empty(&query);
+ bson_buffer_init(&bb);
+ bson_empty(&query);
 
 /* BEGIN RESULT DOCUMENT */
 
-bson_buffer_init(&bb);
-bson_append_int(&bb,cfr_keyhash,1);
-bson_append_int(&bb,cfr_ip_array,1);
-bson_append_int(&bb,cfr_host_array,1);
-bson_append_int(&bb,cfr_class,1);
-bson_from_buffer(&field, &bb);
+ bson_buffer_init(&bb);
+ bson_append_int(&bb,cfr_keyhash,1);
+ bson_append_int(&bb,cfr_ip_array,1);
+ bson_append_int(&bb,cfr_host_array,1);
+ bson_append_int(&bb,cfr_class,1);
+ bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-DeleteEntireHeap();
+ DeleteEntireHeap();
 
-hostnames[0] = '\0';
-addresses[0] = '\0';
+ hostnames[0] = '\0';
+ addresses[0] = '\0';
 
-cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+ cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
-bson_destroy(&field);
+ bson_destroy(&field);
 
-while (mongo_cursor_next(cursor))
-   {
-   bson_iterator_init(&it1,cursor->current.data);
+ while (mongo_cursor_next(cursor))
+    {
+    bson_iterator_init(&it1,cursor->current.data);
    
-   keyhash[0] = '\0';
-   hostnames[0] = '\0';
-   addresses[0] = '\0';
-   rclass[0] = '\0';
+    keyhash[0] = '\0';
+    hostnames[0] = '\0';
+    addresses[0] = '\0';
+    rclass[0] = '\0';
    
-   while (bson_iterator_next(&it1))
-      {
-      /* Extract the common HubHost data */
+    while (bson_iterator_next(&it1))
+       {
+       /* Extract the common HubHost data */
       
-      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       
-      /* Query specific search/marshalling */
+       /* Query specific search/marshalling */
       
-      if (strcmp(bson_iterator_key(&it1),cfr_class) == 0)
-         {
-         bson_iterator_init(&it2,bson_iterator_value(&it1));
+       if (strcmp(bson_iterator_key(&it1),cfr_class) == 0)
+          {
+          bson_iterator_init(&it2,bson_iterator_value(&it1));
          
-         while (bson_iterator_next(&it2))
-            {
-            bson_iterator_init(&it3, bson_iterator_value(&it2));
-            strncpy(rclass,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
+          while (bson_iterator_next(&it2))
+             {
+             bson_iterator_init(&it3, bson_iterator_value(&it2));
+             strncpy(rclass,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
 
-            rtime = 0;
+             rtime = 0;
             
-            while (bson_iterator_next(&it3))
-               {
-               if (strcmp(bson_iterator_key(&it3),cfr_time) == 0)
-                  {
-                  rtime = bson_iterator_int(&it3);
-                  }
-               }
+             while (bson_iterator_next(&it3))
+                {
+                if (strcmp(bson_iterator_key(&it3),cfr_time) == 0)
+                   {
+                   rtime = bson_iterator_int(&it3);
+                   }
+                }
             
-            if (now - rtime < horizon)
-               {
-               NewClass(rclass);
-               }            
-            }
-         }
+             if (now - rtime < horizon)
+                {
+                NewClass(rclass);
+                }            
+             }
+          }
 
-      if (IsDefinedClass(expression))
-         {
-         PrependRlistAlien(&host_list,NewHubHost(NULL,keyhash,addresses,hostnames));
-         }
+       if (IsDefinedClass(expression))
+          {
+          PrependRlistAlien(&host_list,NewHubHost(NULL,keyhash,addresses,hostnames));
+          }
       
-      DeleteEntireHeap();      
-      }   
-   }
+       DeleteEntireHeap();      
+       }   
+    }
 
-mongo_cursor_destroy(cursor);
-return NewHubQuery(host_list,NULL);
+ mongo_cursor_destroy(cursor);
+ return NewHubQuery(host_list,NULL);
 }
 
 /*****************************************************************************/
@@ -378,47 +378,47 @@ return NewHubQuery(host_list,NULL);
 HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, char *ipRegex, char *classRegex)
 
 { bson_buffer bb;
-  bson query;
-  HubQuery *hq;
-  char classRegexAnch[CF_MAXVARSIZE];
-  int emptyQuery = true;
+ bson query;
+ HubQuery *hq;
+ char classRegexAnch[CF_MAXVARSIZE];
+ int emptyQuery = true;
   
 /* BEGIN query document */
-bson_buffer_init(&bb);
+ bson_buffer_init(&bb);
 
-if (!EMPTY(hostNameRegex))
-   {
-   bson_append_regex(&bb,cfr_host_array,hostNameRegex,"");
-   emptyQuery = false;
-   }
+ if (!EMPTY(hostNameRegex))
+    {
+    bson_append_regex(&bb,cfr_host_array,hostNameRegex,"");
+    emptyQuery = false;
+    }
 
-if (!EMPTY(ipRegex))
-   {
-   bson_append_regex(&bb,cfr_ip_array,ipRegex,"");
-   emptyQuery = false;
-   }
+ if (!EMPTY(ipRegex))
+    {
+    bson_append_regex(&bb,cfr_ip_array,ipRegex,"");
+    emptyQuery = false;
+    }
 
-if (!EMPTY(classRegex))
-   {
-   AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
-   bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-   emptyQuery = false;
-   }
+ if (!EMPTY(classRegex))
+    {
+    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
+    bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
+    emptyQuery = false;
+    }
 
-if(emptyQuery)
-   {
-   bson_empty(&query);
-   }
-else
-   {
-   bson_from_buffer(&query,&bb);
-   }
+ if(emptyQuery)
+    {
+    bson_empty(&query);
+    }
+ else
+    {
+    bson_from_buffer(&query,&bb);
+    }
 
-hq = CFDB_QueryHosts(conn,MONGO_DATABASE,cfr_keyhash,&query);
+ hq = CFDB_QueryHosts(conn,MONGO_DATABASE,cfr_keyhash,&query);
 
-bson_destroy(&query);
+ bson_destroy(&query);
 
-return hq;
+ return hq;
 }
 
 /*****************************************************************************/
@@ -426,183 +426,183 @@ return hq;
 HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,char *lname,char *lver,char *larch,int regex, HostClassFilter *hostClassFilter, int sort)
 // NOTE: needs to return report from one host before next - not mixed (for Constellation)
 { bson_buffer bb;
-  bson query,field;
-  mongo_cursor *cursor;
-  bson_iterator it1,it2,it3;
-  HubHost *hh = NULL;
-  Rlist *record_list = NULL, *host_list = NULL;
-  char rname[CF_MAXVARSIZE] = {0},rversion[CF_MAXVARSIZE] = {0},rarch[3] = {0},arch[3] = {0};
-  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
-  bool queryHasData = false;
-  int found = false;
+ bson query,field;
+ mongo_cursor *cursor;
+ bson_iterator it1,it2,it3;
+ HubHost *hh = NULL;
+ Rlist *record_list = NULL, *host_list = NULL;
+ char rname[CF_MAXVARSIZE] = {0},rversion[CF_MAXVARSIZE] = {0},rarch[3] = {0},arch[3] = {0};
+ char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
+ bool queryHasData = false;
+ int found = false;
 
-if (!EMPTY(larch))
-   {
-   snprintf(arch,2,"%c",larch[0]);
-   }
+ if (!EMPTY(larch))
+    {
+    snprintf(arch,2,"%c",larch[0]);
+    }
 /* BEGIN query document */
 
-bson_buffer_init(&bb);
+ bson_buffer_init(&bb);
 
-if (!EMPTY(keyHash))
-   {
-   bson_append_string(&bb,cfr_keyhash,keyHash);
-   queryHasData = true;
-   }
+ if (!EMPTY(keyHash))
+    {
+    bson_append_string(&bb,cfr_keyhash,keyHash);
+    queryHasData = true;
+    }
 
-queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
+ queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
 
-if (queryHasData)
-   {
-   bson_from_buffer(&query,&bb);
-   }
-else    
-   {
-   bson_empty(&query);
-   }
+ if (queryHasData)
+    {
+    bson_from_buffer(&query,&bb);
+    }
+ else    
+    {
+    bson_empty(&query);
+    }
 
 
 /* BEGIN RESULT DOCUMENT */
 
-bson_buffer_init(&bb);
-bson_append_int(&bb,cfr_keyhash,1);
-bson_append_int(&bb,cfr_ip_array,1);
-bson_append_int(&bb,cfr_host_array,1);
-bson_append_int(&bb,type,1);
-bson_append_int(&bb,cfr_software_t,1);
+ bson_buffer_init(&bb);
+ bson_append_int(&bb,cfr_keyhash,1);
+ bson_append_int(&bb,cfr_ip_array,1);
+ bson_append_int(&bb,cfr_host_array,1);
+ bson_append_int(&bb,type,1);
+ bson_append_int(&bb,cfr_software_t,1);
 // TODO: Add support for time of NOVA_PATCHES_INSTALLED and NOVA_PATCHES_AVAIL?
-bson_from_buffer(&field, &bb);
+ bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-hostnames[0] = '\0';
-addresses[0] = '\0';
+ hostnames[0] = '\0';
+ addresses[0] = '\0';
 
-cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+ cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
-bson_destroy(&query);
-bson_destroy(&field);
+ bson_destroy(&query);
+ bson_destroy(&field);
 
-time_t lastSeen = 0;
+ time_t lastSeen = 0;
 
-while (mongo_cursor_next(cursor))
-   {   
-   bson_iterator_init(&it1,cursor->current.data);
+ while (mongo_cursor_next(cursor))
+    {   
+    bson_iterator_init(&it1,cursor->current.data);
    
-   keyhash[0] = '\0';
-   hostnames[0] = '\0';
-   addresses[0] = '\0';
-   hh = NULL;
-   found = false;
+    keyhash[0] = '\0';
+    hostnames[0] = '\0';
+    addresses[0] = '\0';
+    hh = NULL;
+    found = false;
 
-   if(strcmp(type, cfr_software) == 0)
-      {
-      lastSeen = (time_t)BsonGetInt(&(cursor->current), cfr_software_t);
-      }
+    if(strcmp(type, cfr_software) == 0)
+       {
+       lastSeen = (time_t)BsonGetInt(&(cursor->current), cfr_software_t);
+       }
    
-   while (bson_iterator_next(&it1))
-      {
-      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+    while (bson_iterator_next(&it1))
+       {
+       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
 
-      if (strcmp(bson_iterator_key(&it1),type) == 0)
-         {
-         bson_iterator_init(&it2,bson_iterator_value(&it1));
+       if (strcmp(bson_iterator_key(&it1),type) == 0)
+          {
+          bson_iterator_init(&it2,bson_iterator_value(&it1));
          
-         while (bson_iterator_next(&it2))
-            {
-            bson_iterator_init(&it3, bson_iterator_value(&it2));
+          while (bson_iterator_next(&it2))
+             {
+             bson_iterator_init(&it3, bson_iterator_value(&it2));
             
-            rname[0] = '\0';
-            rversion[0] = '\0';
-            rarch[0] = '\0';
+             rname[0] = '\0';
+             rversion[0] = '\0';
+             rarch[0] = '\0';
             
-            while (bson_iterator_next(&it3))
-               {
-               if (strcmp(bson_iterator_key(&it3),cfr_name) == 0)
-                  {
-                  strncpy(rname,bson_iterator_string(&it3),CF_MAXVARSIZE-1);
-                  }
-               else if (strcmp(bson_iterator_key(&it3),cfr_version) == 0)
-                  {
-                  strncpy(rversion,bson_iterator_string(&it3),CF_MAXVARSIZE-1);
-                  }
-               else if (strcmp(bson_iterator_key(&it3),cfr_arch) == 0)
-                  {
-                  strncpy(rarch,bson_iterator_string(&it3),2);
-                  }
-               else
-                  {
-                  CfOut(cf_inform,"", " !! Unknown key \"%s\" in software packages",bson_iterator_key(&it3));
-                  }
-               }
+             while (bson_iterator_next(&it3))
+                {
+                if (strcmp(bson_iterator_key(&it3),cfr_name) == 0)
+                   {
+                   strncpy(rname,bson_iterator_string(&it3),CF_MAXVARSIZE-1);
+                   }
+                else if (strcmp(bson_iterator_key(&it3),cfr_version) == 0)
+                   {
+                   strncpy(rversion,bson_iterator_string(&it3),CF_MAXVARSIZE-1);
+                   }
+                else if (strcmp(bson_iterator_key(&it3),cfr_arch) == 0)
+                   {
+                   strncpy(rarch,bson_iterator_string(&it3),2);
+                   }
+                else
+                   {
+                   CfOut(cf_inform,"", " !! Unknown key \"%s\" in software packages",bson_iterator_key(&it3));
+                   }
+                }
             
-            if (strlen(rname) > 0)
-               {
-               int match_name = true, match_version = true, match_arch = true;
+             if (strlen(rname) > 0)
+                {
+                int match_name = true, match_version = true, match_arch = true;
                
-               if (regex)
-                  {
-                  if (!EMPTY(lname) && !FullTextMatch(lname,rname))
-                     {
-                     match_name = false;
-                     }
+                if (regex)
+                   {
+                   if (!EMPTY(lname) && !FullTextMatch(lname,rname))
+                      {
+                      match_name = false;
+                      }
                   
-                  if (!EMPTY(lver) && !FullTextMatch(lver,rversion))
-                     {
-                     match_version = false;
-                     }
-                  if (!EMPTY(larch) && !FullTextMatch(arch,rarch))
-                     {
-                     match_arch = false;
-                     }
-                  }
-               else
-                  {
-                  if (!EMPTY(lname) && (strcmp(lname,rname) != 0))
-                     {
-                     match_name = false;
-                     }
+                   if (!EMPTY(lver) && !FullTextMatch(lver,rversion))
+                      {
+                      match_version = false;
+                      }
+                   if (!EMPTY(larch) && !FullTextMatch(arch,rarch))
+                      {
+                      match_arch = false;
+                      }
+                   }
+                else
+                   {
+                   if (!EMPTY(lname) && (strcmp(lname,rname) != 0))
+                      {
+                      match_name = false;
+                      }
                   
-                  if (!EMPTY(lver) && (strcmp(lver,rversion) != 0))
-                     {
-                     match_version = false;
-                     }
+                   if (!EMPTY(lver) && (strcmp(lver,rversion) != 0))
+                      {
+                      match_version = false;
+                      }
                   
-                  if (!EMPTY(larch) && (strcmp(arch,rarch) != 0))
-                     {
-                     match_arch = false;
-                     }                  
-                  }
-               if (match_name && match_version && match_arch)
-                  {
-                  found = true;
+                   if (!EMPTY(larch) && (strcmp(arch,rarch) != 0))
+                      {
+                      match_arch = false;
+                      }                  
+                   }
+                if (match_name && match_version && match_arch)
+                   {
+                   found = true;
 
-                  if(!hh)
-                     {
-                     hh = CreateEmptyHubHost();
-                     }
+                   if(!hh)
+                      {
+                      hh = CreateEmptyHubHost();
+                      }
 
-                  PrependRlistAlien(&record_list,NewHubSoftware(hh,rname,rversion,rarch,lastSeen));
-                  }
-               }               
-            }
-         }
-      }
+                   PrependRlistAlien(&record_list,NewHubSoftware(hh,rname,rversion,rarch,lastSeen));
+                   }
+                }               
+             }
+          }
+       }
    
-   if (found)
-      {
-      UpdateHubHost(hh,keyhash,addresses,hostnames);
-      PrependRlistAlien(&host_list,hh);
-      }
-   }
+    if (found)
+       {
+       UpdateHubHost(hh,keyhash,addresses,hostnames);
+       PrependRlistAlien(&host_list,hh);
+       }
+    }
 
-if (sort)
-   {
-   record_list = SortRlist(record_list,SortSoftware);
-   }
+ if (sort)
+    {
+    record_list = SortRlist(record_list,SortSoftware);
+    }
 
-mongo_cursor_destroy(cursor);
-return NewHubQuery(host_list,record_list);
+ mongo_cursor_destroy(cursor);
+ return NewHubQuery(host_list,record_list);
 }
 
 /*****************************************************************************/
@@ -626,142 +626,142 @@ HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lclass,in
 
  bson_buffer_init(&bb);
 
-if (!EMPTY(keyHash))
-   {
-   bson_append_string(&bb,cfr_keyhash,keyHash);
-   queryHasData = true;
-   }
+ if (!EMPTY(keyHash))
+    {
+    bson_append_string(&bb,cfr_keyhash,keyHash);
+    queryHasData = true;
+    }
 
-queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
+ queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
 
-if(queryHasData)
-   {
-   bson_from_buffer(&query,&bb);
-   }
-else
-   {
-   bson_empty(&query);
-   }
+ if(queryHasData)
+    {
+    bson_from_buffer(&query,&bb);
+    }
+ else
+    {
+    bson_empty(&query);
+    }
 
 
 /* BEGIN RESULT DOCUMENT */
 
-bson_buffer_init(&bb);
-bson_append_int(&bb,cfr_keyhash,1);
-bson_append_int(&bb,cfr_ip_array,1);
-bson_append_int(&bb,cfr_host_array,1);
-bson_append_int(&bb,cfr_class,1);
-bson_from_buffer(&field, &bb);
+ bson_buffer_init(&bb);
+ bson_append_int(&bb,cfr_keyhash,1);
+ bson_append_int(&bb,cfr_ip_array,1);
+ bson_append_int(&bb,cfr_host_array,1);
+ bson_append_int(&bb,cfr_class,1);
+ bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-hostnames[0] = '\0';
-addresses[0] = '\0';
+ hostnames[0] = '\0';
+ addresses[0] = '\0';
 
-cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+ cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
-bson_destroy(&field);
+ bson_destroy(&field);
 
-if (queryHasData)
-   {
-   bson_destroy(&query);
-   }
+ if (queryHasData)
+    {
+    bson_destroy(&query);
+    }
 
 
-while (mongo_cursor_next(cursor))
-   {
-   bson_iterator_init(&it1,cursor->current.data);
+ while (mongo_cursor_next(cursor))
+    {
+    bson_iterator_init(&it1,cursor->current.data);
    
-   keyhash[0] = '\0';
-   hostnames[0] = '\0';
-   addresses[0] = '\0';
-   rclass[0] = '\0';
-   found = false;
-   hh = NULL;
+    keyhash[0] = '\0';
+    hostnames[0] = '\0';
+    addresses[0] = '\0';
+    rclass[0] = '\0';
+    found = false;
+    hh = NULL;
    
-   while (bson_iterator_next(&it1))
-      {
-      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+    while (bson_iterator_next(&it1))
+       {
+       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       
-      if (strcmp(bson_iterator_key(&it1),cfr_class) == 0)
-         {
-         bson_iterator_init(&it2,bson_iterator_value(&it1));
+       if (strcmp(bson_iterator_key(&it1),cfr_class) == 0)
+          {
+          bson_iterator_init(&it2,bson_iterator_value(&it1));
          
-         while (bson_iterator_next(&it2))
-            {
-            bson_iterator_init(&it3, bson_iterator_value(&it2));
-            strncpy(rclass,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
+          while (bson_iterator_next(&it2))
+             {
+             bson_iterator_init(&it3, bson_iterator_value(&it2));
+             strncpy(rclass,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
             
-            rex = 0;
-            rsigma = 0;
-            rtime = 0;
+             rex = 0;
+             rsigma = 0;
+             rtime = 0;
             
-            while (bson_iterator_next(&it3))
-               {
-               if (strcmp(bson_iterator_key(&it3),cfr_obs_E) == 0)
-                  {
-                  rex = bson_iterator_double(&it3);
-                  }
-               else if (strcmp(bson_iterator_key(&it3),cfr_obs_sigma) == 0)
-                  {
-                  rsigma = bson_iterator_double(&it3);
-                  }
-               else if (strcmp(bson_iterator_key(&it3),cfr_time) == 0)
-                  {
-                  rtime = bson_iterator_int(&it3);
-                  }
-               else
-                  {
-                  CfOut(cf_inform,"", " !! Unknown key \"%s\" in classes",bson_iterator_key(&it3));
-                  }
-               }
+             while (bson_iterator_next(&it3))
+                {
+                if (strcmp(bson_iterator_key(&it3),cfr_obs_E) == 0)
+                   {
+                   rex = bson_iterator_double(&it3);
+                   }
+                else if (strcmp(bson_iterator_key(&it3),cfr_obs_sigma) == 0)
+                   {
+                   rsigma = bson_iterator_double(&it3);
+                   }
+                else if (strcmp(bson_iterator_key(&it3),cfr_time) == 0)
+                   {
+                   rtime = bson_iterator_int(&it3);
+                   }
+                else
+                   {
+                   CfOut(cf_inform,"", " !! Unknown key \"%s\" in classes",bson_iterator_key(&it3));
+                   }
+                }
             
-            match_class = true;
+             match_class = true;
             
-            if (regex)
-               {
-               if (!EMPTY(lclass) && !FullTextMatch(lclass,rclass))
-                  {
-                  match_class = false;
-                  }
-               }
-            else
-               {
-               if (!EMPTY(lclass) && (strcmp(lclass,rclass) != 0))
-                  {
-                  match_class = false;
-                  }
-               }
+             if (regex)
+                {
+                if (!EMPTY(lclass) && !FullTextMatch(lclass,rclass))
+                   {
+                   match_class = false;
+                   }
+                }
+             else
+                {
+                if (!EMPTY(lclass) && (strcmp(lclass,rclass) != 0))
+                   {
+                   match_class = false;
+                   }
+                }
             
-            if (match_class && (now - rtime < horizon))
-               {
-               found = true;
+             if (match_class && (now - rtime < horizon))
+                {
+                found = true;
                
-               if(!hh)
-                  {
-                  hh = CreateEmptyHubHost();
-                  }
+                if(!hh)
+                   {
+                   hh = CreateEmptyHubHost();
+                   }
                
-               PrependRlistAlien(&record_list,NewHubClass(hh,rclass,rex,rsigma,rtime));
-               }            
-            }
-         }   
-      }
+                PrependRlistAlien(&record_list,NewHubClass(hh,rclass,rex,rsigma,rtime));
+                }            
+             }
+          }   
+       }
 
     if (found)
        {
        UpdateHubHost(hh,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
        }
-   }
+    }
 
-if (sort)
-   {
-   record_list = SortRlist(record_list,SortClasses);
-   }
+ if (sort)
+    {
+    record_list = SortRlist(record_list,SortClasses);
+    }
 
-mongo_cursor_destroy(cursor);
-return NewHubQuery(host_list,record_list);
+ mongo_cursor_destroy(cursor);
+ return NewHubQuery(host_list,record_list);
 }
 
 /*****************************************************************************/
@@ -782,45 +782,45 @@ Rlist *CFDB_QueryDateTimeClasses(mongo_connection *conn,char *keyHash,char *lcla
   
 /* BEGIN query document */
 
-bson_buffer_init(&bb);
+ bson_buffer_init(&bb);
 
-if (!EMPTY(keyHash))
-   {
-   bson_append_string(&bb,cfr_keyhash,keyHash);
-   emptyQuery = false;
-   }
+ if (!EMPTY(keyHash))
+    {
+    bson_append_string(&bb,cfr_keyhash,keyHash);
+    emptyQuery = false;
+    }
 
-if (!EMPTY(classRegex))
-   {
-   AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
-   bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-   emptyQuery = false;
-   }
+ if (!EMPTY(classRegex))
+    {
+    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
+    bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
+    emptyQuery = false;
+    }
 
-if (emptyQuery)
-   {
-   bson_empty(&query);
-   }
-else
-   {
-   bson_from_buffer(&query,&bb);
-   }
+ if (emptyQuery)
+    {
+    bson_empty(&query);
+    }
+ else
+    {
+    bson_from_buffer(&query,&bb);
+    }
 
 /* BEGIN RESULT DOCUMENT */
 
-bson_buffer_init(&bb);
-bson_append_int(&bb,cfr_class,1);
-bson_from_buffer(&field, &bb);
+ bson_buffer_init(&bb);
+ bson_append_int(&bb,cfr_class,1);
+ bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
-bson_destroy(&field);
+ cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+ bson_destroy(&field);
 
-bson_destroy(&query);
+ bson_destroy(&query);
 
 
-while (mongo_cursor_next(cursor))
+ while (mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
     
@@ -846,8 +846,8 @@ while (mongo_cursor_next(cursor))
        }
     }
 
-mongo_cursor_destroy(cursor);
-return classList;
+ mongo_cursor_destroy(cursor);
+ return classList;
 }
 
 /*****************************************************************************/
@@ -952,7 +952,7 @@ Rlist *CFDB_QueryIpClasses(mongo_connection *conn,char *keyHash,char *lclass,int
  Rlist *classList = {0};
  char rclass[CF_MAXVARSIZE];
  char classRegexAnch[CF_MAXVARSIZE];
-  char ipAddress[CF_MAXVARSIZE];
+ char ipAddress[CF_MAXVARSIZE];
  int emptyQuery = true;
   
 /* BEGIN query document */
@@ -1003,22 +1003,22 @@ Rlist *CFDB_QueryIpClasses(mongo_connection *conn,char *keyHash,char *lclass,int
    
     while (bson_iterator_next(&it1))
        {
-	 if (strcmp(bson_iterator_key(&it1),cfr_class) == 0)
-	   {
-	     bson_iterator_init(&it2,bson_iterator_value(&it1));
+       if (strcmp(bson_iterator_key(&it1),cfr_class) == 0)
+          {
+          bson_iterator_init(&it2,bson_iterator_value(&it1));
 	     
-	     while (bson_iterator_next(&it2))
-	       {
-		 bson_iterator_init(&it3, bson_iterator_value(&it2));
-		 strncpy(rclass,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
+          while (bson_iterator_next(&it2))
+             {
+             bson_iterator_init(&it3, bson_iterator_value(&it2));
+             strncpy(rclass,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
 		 
-		 ReplaceChar(rclass,ipAddress,CF_MAXVARSIZE,'_','.');
-		 if(IsIPV4Address(ipAddress) || IsIPV6Address(ipAddress))
-		   {
-		     IdempAppendRScalar(&classList,rclass,CF_SCALAR);
-		   }
-	       }
-	   }
+             ReplaceChar(rclass,ipAddress,CF_MAXVARSIZE,'_','.');
+             if(IsIPV4Address(ipAddress) || IsIPV6Address(ipAddress))
+                {
+                IdempAppendRScalar(&classList,rclass,CF_SCALAR);
+                }
+             }
+          }
        }
     }
 
@@ -1049,7 +1049,7 @@ HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes)
 
  CfDebug("CFDB_QueryClassSum()\n");
 
-  // query
+ // query
  bson_buffer_init(&bb);
 
  if(classes && classes[0])
@@ -1106,10 +1106,10 @@ HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes)
        }
     
     if(!EMPTY(keyhash))
-        {
-        PrependRlistAlien(&hostList,NewHubHost(NULL,keyhash,addresses,hostnames));
-        CfDebug("matched host %s,%s\n", keyhash, addresses);
-        }
+       {
+       PrependRlistAlien(&hostList,NewHubHost(NULL,keyhash,addresses,hostnames));
+       CfDebug("matched host %s,%s\n", keyhash, addresses);
+       }
     }
 
  mongo_cursor_destroy(cursor);
@@ -1125,32 +1125,32 @@ HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes)
  // 3: count occurences of each class in subset of hosts
  for(ip = classList; ip != NULL; ip = ip->next)
     {
-     bson_buffer_init(&bb);
+    bson_buffer_init(&bb);
      
-     obj = bson_append_start_object(&bb,cfr_class_keys);
-     arr1 = bson_append_start_array(&bb,"$all");
+    obj = bson_append_start_object(&bb,cfr_class_keys);
+    arr1 = bson_append_start_array(&bb,"$all");
      
-     for(i = 0; classes && classes[i] != NULL; i++)
-        {
-        snprintf(iStr, sizeof(iStr), "%d", i);
-        bson_append_string(obj, iStr, classes[i]);
-        }
-     snprintf(iStr, sizeof(iStr), "%d", i);
-     bson_append_string(obj, iStr, ip->name);     
+    for(i = 0; classes && classes[i] != NULL; i++)
+       {
+       snprintf(iStr, sizeof(iStr), "%d", i);
+       bson_append_string(obj, iStr, classes[i]);
+       }
+    snprintf(iStr, sizeof(iStr), "%d", i);
+    bson_append_string(obj, iStr, ip->name);     
      
-     bson_append_finish_object(arr1);
-     bson_append_finish_object(obj);
+    bson_append_finish_object(arr1);
+    bson_append_finish_object(obj);
 
      
-     bson_from_buffer(&query,&bb);
+    bson_from_buffer(&query,&bb);
 
-     classFrequency = (int)mongo_count(conn, MONGO_BASE, "hosts", &query);
+    classFrequency = (int)mongo_count(conn, MONGO_BASE, "hosts", &query);
 
-     CfDebug("class (%s,%d)\n", ip->name, classFrequency);
+    CfDebug("class (%s,%d)\n", ip->name, classFrequency);
 
-     PrependRlistAlien(&recordList,NewHubClassSum(NULL, ip->name, classFrequency));
+    PrependRlistAlien(&recordList,NewHubClassSum(NULL, ip->name, classFrequency));
 
-     bson_destroy(&query);
+    bson_destroy(&query);
     }
  
 
@@ -1543,10 +1543,10 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *lscope,
                    {
                    found = true;
 
-                  if(!hh)
-                     {
-                     hh = CreateEmptyHubHost();
-                     }
+                   if(!hh)
+                      {
+                      hh = CreateEmptyHubHost();
+                      }
                    
                    PrependRlistAlien(&record_list,NewHubVariable(hh,dtype,rscope,rlval,rrval,rtype,rt));
                    }
@@ -2884,147 +2884,147 @@ HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,
 /* BEGIN query document */
  bson_buffer_init(&bb);
 
-if (!EMPTY(keyHash))
-   {
-   bson_append_string(&bb,cfr_keyhash,keyHash);
-   queryHasData = true;
-   }
+ if (!EMPTY(keyHash))
+    {
+    bson_append_string(&bb,cfr_keyhash,keyHash);
+    queryHasData = true;
+    }
 
-queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
+ queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
 
-if (queryHasData)
-   {
-   bson_from_buffer(&query,&bb);   
-   }
-else
-   {
-   bson_empty(&query);
-   }
+ if (queryHasData)
+    {
+    bson_from_buffer(&query,&bb);   
+    }
+ else
+    {
+    bson_empty(&query);
+    }
 
  // Turn start_time into Day Month Year
   
 /* BEGIN RESULT DOCUMENT */
 
-bson_buffer_init(&bb);
-bson_append_int(&bb,cfr_keyhash,1);
-bson_append_int(&bb,cfr_ip_array,1);
-bson_append_int(&bb,cfr_host_array,1);
-bson_append_int(&bb,cfr_valuereport,1);
-bson_from_buffer(&field, &bb);
+ bson_buffer_init(&bb);
+ bson_append_int(&bb,cfr_keyhash,1);
+ bson_append_int(&bb,cfr_ip_array,1);
+ bson_append_int(&bb,cfr_host_array,1);
+ bson_append_int(&bb,cfr_valuereport,1);
+ bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-hostnames[0] = '\0';
-addresses[0] = '\0';
+ hostnames[0] = '\0';
+ addresses[0] = '\0';
 
-cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+ cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
-bson_destroy(&query);
-bson_destroy(&field);
+ bson_destroy(&query);
+ bson_destroy(&field);
 
-while (mongo_cursor_next(cursor))
-   {
-   bson_iterator_init(&it1,cursor->current.data);
+ while (mongo_cursor_next(cursor))
+    {
+    bson_iterator_init(&it1,cursor->current.data);
    
-   keyhash[0] = '\0';
-   hostnames[0] = '\0';
-   addresses[0] = '\0';
-   found = false;
-   hh = NULL;
+    keyhash[0] = '\0';
+    hostnames[0] = '\0';
+    addresses[0] = '\0';
+    found = false;
+    hh = NULL;
    
-   while (bson_iterator_next(&it1))
-      {
-      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+    while (bson_iterator_next(&it1))
+       {
+       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       
-      if (strcmp(bson_iterator_key(&it1),cfr_valuereport) == 0)
-         {
-         bson_iterator_init(&it2,bson_iterator_value(&it1));
+       if (strcmp(bson_iterator_key(&it1),cfr_valuereport) == 0)
+          {
+          bson_iterator_init(&it2,bson_iterator_value(&it1));
 	 
-         while (bson_iterator_next(&it2))
-            {
-            snprintf(noteid,CF_MAXVARSIZE,"%s",CF_NONOTE);
-            snprintf(rhandle,CF_MAXVARSIZE,"%s",bson_iterator_key(&it2));
-            bson_iterator_init(&it3, bson_iterator_value(&it2));
+          while (bson_iterator_next(&it2))
+             {
+             snprintf(noteid,CF_MAXVARSIZE,"%s",CF_NONOTE);
+             snprintf(rhandle,CF_MAXVARSIZE,"%s",bson_iterator_key(&it2));
+             bson_iterator_init(&it3, bson_iterator_value(&it2));
 	    
-            rday[0] = '\0';
-            rkept = 0;
-            rnotkept = 0;
-            rrepaired = 0;
+             rday[0] = '\0';
+             rkept = 0;
+             rnotkept = 0;
+             rrepaired = 0;
             
-            while (bson_iterator_next(&it3))
-               {
-               if (strcmp(bson_iterator_key(&it3),cfr_day) == 0)
-                  {
-                  strncpy(rday,bson_iterator_string(&it3),CF_MAXVARSIZE-1);
-                  }
-               else if (strcmp(bson_iterator_key(&it3),cfr_kept) == 0)
-                  {
-                  rkept = bson_iterator_double(&it3);
-                  }
-               else if (strcmp(bson_iterator_key(&it3),cfr_notkept) == 0)
-                  {
-                  rnotkept = bson_iterator_double(&it3);
-                  }
-               else if (strcmp(bson_iterator_key(&it3),cfr_repaired) == 0)
-                  {
-                  rrepaired = bson_iterator_double(&it3);
-                  }
-               else if (strcmp(bson_iterator_key(&it3),cfn_nid) == 0)
-                  {
-                  snprintf(noteid,CF_MAXVARSIZE,"%s",bson_iterator_string(&it3));
-                  }
-               else
-                  {
-                  CfOut(cf_inform,"", " !! Unknown key \"%s\" in value report",bson_iterator_key(&it3));
-                  }
-               }
+             while (bson_iterator_next(&it3))
+                {
+                if (strcmp(bson_iterator_key(&it3),cfr_day) == 0)
+                   {
+                   strncpy(rday,bson_iterator_string(&it3),CF_MAXVARSIZE-1);
+                   }
+                else if (strcmp(bson_iterator_key(&it3),cfr_kept) == 0)
+                   {
+                   rkept = bson_iterator_double(&it3);
+                   }
+                else if (strcmp(bson_iterator_key(&it3),cfr_notkept) == 0)
+                   {
+                   rnotkept = bson_iterator_double(&it3);
+                   }
+                else if (strcmp(bson_iterator_key(&it3),cfr_repaired) == 0)
+                   {
+                   rrepaired = bson_iterator_double(&it3);
+                   }
+                else if (strcmp(bson_iterator_key(&it3),cfn_nid) == 0)
+                   {
+                   snprintf(noteid,CF_MAXVARSIZE,"%s",bson_iterator_string(&it3));
+                   }
+                else
+                   {
+                   CfOut(cf_inform,"", " !! Unknown key \"%s\" in value report",bson_iterator_key(&it3));
+                   }
+                }
             
-            match_day = match_month = match_year = true;
+             match_day = match_month = match_year = true;
             
-            if (lday && (strcmp(lday,rday) != 0))
-               {
-               match_day = false;
-               }
+             if (lday && (strcmp(lday,rday) != 0))
+                {
+                match_day = false;
+                }
             
-            if (lmonth && (strcmp(lmonth,rmonth) != 0))
-               {
-               match_month = false;
-               }
+             if (lmonth && (strcmp(lmonth,rmonth) != 0))
+                {
+                match_month = false;
+                }
             
-            if (lyear && (strcmp(lyear,ryear) != 0))
-               {
-               match_year = false;
-               }
+             if (lyear && (strcmp(lyear,ryear) != 0))
+                {
+                match_year = false;
+                }
             
-            if (match_day && match_month && match_year)
-               {
-               found = true;
+             if (match_day && match_month && match_year)
+                {
+                found = true;
 
-               if(!hh)
-                  {
-                  hh = CreateEmptyHubHost();
-                  }
+                if(!hh)
+                   {
+                   hh = CreateEmptyHubHost();
+                   }
                
-               PrependRlistAlien(&record_list,NewHubValue(hh,rday,rkept,rrepaired,rnotkept,noteid,rhandle));
-               }
-            }
-         }   
-      }
+                PrependRlistAlien(&record_list,NewHubValue(hh,rday,rkept,rrepaired,rnotkept,noteid,rhandle));
+                }
+             }
+          }   
+       }
    
-   if (found)
-      {
-      UpdateHubHost(hh,keyhash,addresses,hostnames);
-      PrependRlistAlien(&host_list,hh);
-      }
-   }
+    if (found)
+       {
+       UpdateHubHost(hh,keyhash,addresses,hostnames);
+       PrependRlistAlien(&host_list,hh);
+       }
+    }
 
-if (sort)
-   {
-   record_list = SortRlist(record_list,SortBusinessValue);
-   }
+ if (sort)
+    {
+    record_list = SortRlist(record_list,SortBusinessValue);
+    }
 
-mongo_cursor_destroy(cursor);
-return NewHubQuery(host_list,record_list);
+ mongo_cursor_destroy(cursor);
+ return NewHubQuery(host_list,record_list);
 }
 
 /*****************************************************************************/
@@ -3032,179 +3032,179 @@ return NewHubQuery(host_list,record_list);
 HubQuery *CFDB_QueryValueGraph(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, char *classRegex)
 
 { bson_buffer bb;
-  bson query,field;
-  mongo_cursor *cursor;
-  bson_iterator it1,it2,it3;
-  HubHost *hh;
-  Rlist *record_list = NULL, *host_list = NULL;
-  double rkept,rnotkept,rrepaired;
-  char rday[CF_MAXVARSIZE],rmonth[CF_MAXVARSIZE],ryear[CF_MAXVARSIZE];
-  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rhandle[CF_MAXVARSIZE],noteid[CF_MAXVARSIZE];
-  int match_day,match_month,match_year,found = false;
-  char classRegexAnch[CF_MAXVARSIZE];
-  int emptyQuery = true;
+ bson query,field;
+ mongo_cursor *cursor;
+ bson_iterator it1,it2,it3;
+ HubHost *hh;
+ Rlist *record_list = NULL, *host_list = NULL;
+ double rkept,rnotkept,rrepaired;
+ char rday[CF_MAXVARSIZE],rmonth[CF_MAXVARSIZE],ryear[CF_MAXVARSIZE];
+ char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rhandle[CF_MAXVARSIZE],noteid[CF_MAXVARSIZE];
+ int match_day,match_month,match_year,found = false;
+ char classRegexAnch[CF_MAXVARSIZE];
+ int emptyQuery = true;
 
-  struct tm tm;
-  time_t epoch;
+ struct tm tm;
+ time_t epoch;
   
 /* BEGIN query document */
  bson_buffer_init(&bb);
 
-if (!EMPTY(keyHash))
-   {
-   bson_append_string(&bb,cfr_keyhash,keyHash);
-   emptyQuery = false;
-   }
+ if (!EMPTY(keyHash))
+    {
+    bson_append_string(&bb,cfr_keyhash,keyHash);
+    emptyQuery = false;
+    }
 
-if (!EMPTY(classRegex))
-   {
-   AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
-   bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-   emptyQuery = false;
-   }
+ if (!EMPTY(classRegex))
+    {
+    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
+    bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
+    emptyQuery = false;
+    }
 
-if (emptyQuery)
-   {
-   bson_empty(&query);
-   }
-else
-   {
-   bson_from_buffer(&query,&bb);
-   }
+ if (emptyQuery)
+    {
+    bson_empty(&query);
+    }
+ else
+    {
+    bson_from_buffer(&query,&bb);
+    }
 
  // Turn start_time into Day Month Year
   
 /* BEGIN RESULT DOCUMENT */
 
-bson_buffer_init(&bb);
-bson_append_int(&bb,cfr_keyhash,1);
-bson_append_int(&bb,cfr_ip_array,1);
-bson_append_int(&bb,cfr_host_array,1);
-bson_append_int(&bb,cfr_valuereport,1);
-bson_from_buffer(&field, &bb);
+ bson_buffer_init(&bb);
+ bson_append_int(&bb,cfr_keyhash,1);
+ bson_append_int(&bb,cfr_ip_array,1);
+ bson_append_int(&bb,cfr_host_array,1);
+ bson_append_int(&bb,cfr_valuereport,1);
+ bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-hostnames[0] = '\0';
-addresses[0] = '\0';
+ hostnames[0] = '\0';
+ addresses[0] = '\0';
 
-cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+ cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
-bson_destroy(&query);
-bson_destroy(&field);
+ bson_destroy(&query);
+ bson_destroy(&field);
 
 
-while (mongo_cursor_next(cursor))
-   {
-   bson_iterator_init(&it1,cursor->current.data);
+ while (mongo_cursor_next(cursor))
+    {
+    bson_iterator_init(&it1,cursor->current.data);
    
-   keyhash[0] = '\0';
-   hostnames[0] = '\0';
-   addresses[0] = '\0';
-   found = false;
-   hh = NULL;
+    keyhash[0] = '\0';
+    hostnames[0] = '\0';
+    addresses[0] = '\0';
+    found = false;
+    hh = NULL;
    
-   while (bson_iterator_next(&it1))
-      {
-      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+    while (bson_iterator_next(&it1))
+       {
+       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       
-      if (strcmp(bson_iterator_key(&it1),cfr_valuereport) == 0)
-         {
-         bson_iterator_init(&it2,bson_iterator_value(&it1));
+       if (strcmp(bson_iterator_key(&it1),cfr_valuereport) == 0)
+          {
+          bson_iterator_init(&it2,bson_iterator_value(&it1));
 	 
-         while (bson_iterator_next(&it2))
-            {
-            snprintf(noteid,CF_MAXVARSIZE,"%s",CF_NONOTE);
-            snprintf(rhandle,CF_MAXVARSIZE,"%s",bson_iterator_key(&it2));
-            bson_iterator_init(&it3, bson_iterator_value(&it2));
+          while (bson_iterator_next(&it2))
+             {
+             snprintf(noteid,CF_MAXVARSIZE,"%s",CF_NONOTE);
+             snprintf(rhandle,CF_MAXVARSIZE,"%s",bson_iterator_key(&it2));
+             bson_iterator_init(&it3, bson_iterator_value(&it2));
 	    
-            rday[0] = '\0';
-            rkept = 0;
-            rnotkept = 0;
-            rrepaired = 0;
+             rday[0] = '\0';
+             rkept = 0;
+             rnotkept = 0;
+             rrepaired = 0;
             
-            while (bson_iterator_next(&it3))
-               {
-               if (strcmp(bson_iterator_key(&it3),cfr_day) == 0)
-		  {
-                  if ( strptime(bson_iterator_string(&it3), "%d %b %Y", &tm) != 0 )
-                     {
-                     epoch = mktime(&tm);
-                     snprintf(rday,CF_MAXVARSIZE-1,"%ld",epoch);
-                     }
-                  else
-                     {
-                     strcpy(rday,"");
-                     }
-                  }
-               else if (strcmp(bson_iterator_key(&it3),cfr_kept) == 0)
-                  {
-                  rkept = bson_iterator_double(&it3);
-                  }
-               else if (strcmp(bson_iterator_key(&it3),cfr_notkept) == 0)
-                  {
-                  rnotkept = bson_iterator_double(&it3);
-                  }
-               else if (strcmp(bson_iterator_key(&it3),cfr_repaired) == 0)
-                  {
-                  rrepaired = bson_iterator_double(&it3);
-                  }
-               else if (strcmp(bson_iterator_key(&it3),cfn_nid) == 0)
-                  {
-                  snprintf(noteid,CF_MAXVARSIZE,"%s",bson_iterator_string(&it3));
-                  }
-               else
-                  {
-                  CfOut(cf_inform,"", " !! Unknown key \"%s\" in value report",bson_iterator_key(&it3));
-                  }
-               }
+             while (bson_iterator_next(&it3))
+                {
+                if (strcmp(bson_iterator_key(&it3),cfr_day) == 0)
+                   {
+                   if ( strptime(bson_iterator_string(&it3), "%d %b %Y", &tm) != 0 )
+                      {
+                      epoch = mktime(&tm);
+                      snprintf(rday,CF_MAXVARSIZE-1,"%ld",epoch);
+                      }
+                   else
+                      {
+                      strcpy(rday,"");
+                      }
+                   }
+                else if (strcmp(bson_iterator_key(&it3),cfr_kept) == 0)
+                   {
+                   rkept = bson_iterator_double(&it3);
+                   }
+                else if (strcmp(bson_iterator_key(&it3),cfr_notkept) == 0)
+                   {
+                   rnotkept = bson_iterator_double(&it3);
+                   }
+                else if (strcmp(bson_iterator_key(&it3),cfr_repaired) == 0)
+                   {
+                   rrepaired = bson_iterator_double(&it3);
+                   }
+                else if (strcmp(bson_iterator_key(&it3),cfn_nid) == 0)
+                   {
+                   snprintf(noteid,CF_MAXVARSIZE,"%s",bson_iterator_string(&it3));
+                   }
+                else
+                   {
+                   CfOut(cf_inform,"", " !! Unknown key \"%s\" in value report",bson_iterator_key(&it3));
+                   }
+                }
             
-            match_day = match_month = match_year = true;
+             match_day = match_month = match_year = true;
             
-            if (lday && (strcmp(lday,rday) != 0))
-               {
-               match_day = false;
-               }
+             if (lday && (strcmp(lday,rday) != 0))
+                {
+                match_day = false;
+                }
             
-            if (lmonth && (strcmp(lmonth,rmonth) != 0))
-               {
-               match_month = false;
-               }
+             if (lmonth && (strcmp(lmonth,rmonth) != 0))
+                {
+                match_month = false;
+                }
             
-            if (lyear && (strcmp(lyear,ryear) != 0))
-               {
-               match_year = false;
-               }
+             if (lyear && (strcmp(lyear,ryear) != 0))
+                {
+                match_year = false;
+                }
             
-            if (match_day && match_month && match_year)
-               {
-               found = true;
+             if (match_day && match_month && match_year)
+                {
+                found = true;
 
-               if(!hh)
-                  {
-                  hh = CreateEmptyHubHost();
-                  }
+                if(!hh)
+                   {
+                   hh = CreateEmptyHubHost();
+                   }
                
-	       PrependRlistAlien(&record_list,NewHubValue(hh,rday,rkept,rrepaired,rnotkept,"",""));
-               }
-            }
-         }   
-      }
+                PrependRlistAlien(&record_list,NewHubValue(hh,rday,rkept,rrepaired,rnotkept,"",""));
+                }
+             }
+          }   
+       }
 
-   if (found)
-      {
-      UpdateHubHost(hh,keyhash,addresses,hostnames);
-      PrependRlistAlien(&host_list,hh);
-      }
-   }
+    if (found)
+       {
+       UpdateHubHost(hh,keyhash,addresses,hostnames);
+       PrependRlistAlien(&host_list,hh);
+       }
+    }
 
-if (sort)
-   {
-   record_list = SortRlist(record_list,SortBusinessValue);
-   }
+ if (sort)
+    {
+    record_list = SortRlist(record_list,SortBusinessValue);
+    }
 
-mongo_cursor_destroy(cursor);
-return NewHubQuery(host_list,record_list);
+ mongo_cursor_destroy(cursor);
+ return NewHubQuery(host_list,record_list);
 }
 
 /*****************************************************************************/
@@ -3212,293 +3212,293 @@ return NewHubQuery(host_list,record_list);
 HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lname,int regex, HostClassFilter *hostClassFilter, int sort)
 
 { bson_buffer bb;
-  bson query,field;
-  mongo_cursor *cursor;
-  bson_iterator it1,it2,it3;
-  HubHost *hh;
-  Rlist *record_list = NULL, *host_list = NULL;
-  double rago,ravg,rdev;
-  char rname[CF_MAXVARSIZE];
-  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],noteid[CF_BUFSIZE];
-  int match_name,found = false;
-  bool queryHasData = false;
-  time_t rt;
+ bson query,field;
+ mongo_cursor *cursor;
+ bson_iterator it1,it2,it3;
+ HubHost *hh;
+ Rlist *record_list = NULL, *host_list = NULL;
+ double rago,ravg,rdev;
+ char rname[CF_MAXVARSIZE];
+ char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],noteid[CF_BUFSIZE];
+ int match_name,found = false;
+ bool queryHasData = false;
+ time_t rt;
   
 /* BEGIN query document */
 
-bson_buffer_init(&bb);
+ bson_buffer_init(&bb);
 
-if (!EMPTY(keyHash))
-   {
-   bson_append_string(&bb,cfr_keyhash,keyHash);
-   queryHasData = true;
-   }
+ if (!EMPTY(keyHash))
+    {
+    bson_append_string(&bb,cfr_keyhash,keyHash);
+    queryHasData = true;
+    }
 
-queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
+ queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
 
-if (queryHasData)
-   {
-   bson_from_buffer(&query,&bb);
-   }
-else
-   {
-   bson_empty(&query);
-   }
+ if (queryHasData)
+    {
+    bson_from_buffer(&query,&bb);
+    }
+ else
+    {
+    bson_empty(&query);
+    }
 
 
 /* BEGIN RESULT DOCUMENT */
 
-bson_buffer_init(&bb);
-bson_append_int(&bb,cfr_keyhash,1);
-bson_append_int(&bb,cfr_ip_array,1);
-bson_append_int(&bb,cfr_host_array,1);
-bson_append_int(&bb,cfr_bundles,1);
-bson_from_buffer(&field, &bb);
+ bson_buffer_init(&bb);
+ bson_append_int(&bb,cfr_keyhash,1);
+ bson_append_int(&bb,cfr_ip_array,1);
+ bson_append_int(&bb,cfr_host_array,1);
+ bson_append_int(&bb,cfr_bundles,1);
+ bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-hostnames[0] = '\0';
-addresses[0] = '\0';
+ hostnames[0] = '\0';
+ addresses[0] = '\0';
 
-cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+ cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
-bson_destroy(&field);
+ bson_destroy(&field);
 
-if (queryHasData)
-   {
-   bson_destroy(&query);
-   }
+ if (queryHasData)
+    {
+    bson_destroy(&query);
+    }
 
-while (mongo_cursor_next(cursor))
-   {
-   bson_iterator_init(&it1,cursor->current.data);
+ while (mongo_cursor_next(cursor))
+    {
+    bson_iterator_init(&it1,cursor->current.data);
    
-   keyhash[0] = '\0';
-   hostnames[0] = '\0';
-   addresses[0] = '\0';
-   rname[0] = '\0';
-   found = false;
-   rt = 0;
-   hh = NULL;
+    keyhash[0] = '\0';
+    hostnames[0] = '\0';
+    addresses[0] = '\0';
+    rname[0] = '\0';
+    found = false;
+    rt = 0;
+    hh = NULL;
    
-   while (bson_iterator_next(&it1))
-      {
-      CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+    while (bson_iterator_next(&it1))
+       {
+       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
       
-      if (strcmp(bson_iterator_key(&it1),cfr_bundles) == 0)
-         {
-         bson_iterator_init(&it2,bson_iterator_value(&it1));
+       if (strcmp(bson_iterator_key(&it1),cfr_bundles) == 0)
+          {
+          bson_iterator_init(&it2,bson_iterator_value(&it1));
          
-         while (bson_iterator_next(&it2))
-            {
-            bson_iterator_init(&it3, bson_iterator_value(&it2));
-            strncpy(rname,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
+          while (bson_iterator_next(&it2))
+             {
+             bson_iterator_init(&it3, bson_iterator_value(&it2));
+             strncpy(rname,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
 
-            if (strcmp(rname,"QUERY") == 0)
-               {
-               continue;
-               }
+             if (strcmp(rname,"QUERY") == 0)
+                {
+                continue;
+                }
             
-            snprintf(noteid,CF_MAXVARSIZE,"%s",CF_NONOTE);
+             snprintf(noteid,CF_MAXVARSIZE,"%s",CF_NONOTE);
             
-            ravg = 0;
-            rdev = 0;
-            rago = 0;
+             ravg = 0;
+             rdev = 0;
+             rago = 0;
             
-            while (bson_iterator_next(&it3))
-               {
-               if (strcmp(bson_iterator_key(&it3),cfr_hrsavg) == 0)
-                  {
-                  ravg = bson_iterator_double(&it3);
-                  }
-               else if (strcmp(bson_iterator_key(&it3),cfr_hrsdev) == 0)
-                  {
-                  rdev = bson_iterator_double(&it3);
-                  }
-               else if (strcmp(bson_iterator_key(&it3),cfr_hrsago) == 0)
-                  {
-                  rago = bson_iterator_double(&it3);
-                  }
-               else if (strcmp(bson_iterator_key(&it3),cfr_time) == 0)
-                  {
-                  rt = bson_iterator_int(&it3);
-                  }
-               else if (strcmp(bson_iterator_key(&it3),cfn_nid) == 0)
-                  {
-                  snprintf(noteid,CF_MAXVARSIZE,"%s",bson_iterator_string(&it3)); 
-                  }
-               else
-                  {
-                  CfOut(cf_inform,"", " !! Unknown key \"%s\" in bundle seen",bson_iterator_key(&it3));
-                  }
-               }
+             while (bson_iterator_next(&it3))
+                {
+                if (strcmp(bson_iterator_key(&it3),cfr_hrsavg) == 0)
+                   {
+                   ravg = bson_iterator_double(&it3);
+                   }
+                else if (strcmp(bson_iterator_key(&it3),cfr_hrsdev) == 0)
+                   {
+                   rdev = bson_iterator_double(&it3);
+                   }
+                else if (strcmp(bson_iterator_key(&it3),cfr_hrsago) == 0)
+                   {
+                   rago = bson_iterator_double(&it3);
+                   }
+                else if (strcmp(bson_iterator_key(&it3),cfr_time) == 0)
+                   {
+                   rt = bson_iterator_int(&it3);
+                   }
+                else if (strcmp(bson_iterator_key(&it3),cfn_nid) == 0)
+                   {
+                   snprintf(noteid,CF_MAXVARSIZE,"%s",bson_iterator_string(&it3)); 
+                   }
+                else
+                   {
+                   CfOut(cf_inform,"", " !! Unknown key \"%s\" in bundle seen",bson_iterator_key(&it3));
+                   }
+                }
             
-            match_name = true;
+             match_name = true;
             
-            if (regex)
-               {
-               if (!EMPTY(lname) && !FullTextMatch(lname,rname))
-                  {
-                  match_name = false;
-                  }
-               }
-            else
-               {
-               if (!EMPTY(lname) && (strcmp(lname,rname) != 0))
-                  {
-                  match_name = false;
-                  }
-               }
+             if (regex)
+                {
+                if (!EMPTY(lname) && !FullTextMatch(lname,rname))
+                   {
+                   match_name = false;
+                   }
+                }
+             else
+                {
+                if (!EMPTY(lname) && (strcmp(lname,rname) != 0))
+                   {
+                   match_name = false;
+                   }
+                }
             
-            if (match_name)
-               {
-               found = true;
+             if (match_name)
+                {
+                found = true;
 
-               if(!hh)
-                  {
-                  hh = CreateEmptyHubHost();
-                  }
+                if(!hh)
+                   {
+                   hh = CreateEmptyHubHost();
+                   }
                
-               PrependRlistAlien(&record_list,NewHubBundleSeen(hh,rname,rago,ravg,rdev,rt,noteid));
-               }            
-            }
-         }   
-      }
+                PrependRlistAlien(&record_list,NewHubBundleSeen(hh,rname,rago,ravg,rdev,rt,noteid));
+                }            
+             }
+          }   
+       }
 
     if (found)
        {
        UpdateHubHost(hh,keyhash,addresses,hostnames);
        PrependRlistAlien(&host_list,hh);
        }
-   }
+    }
 
-if (sort)
-   {
-   record_list = SortRlist(record_list,SortBundleSeen);
-   }
+ if (sort)
+    {
+    record_list = SortRlist(record_list,SortBundleSeen);
+    }
 
 
-mongo_cursor_destroy(cursor);
-return NewHubQuery(host_list,record_list);
+ mongo_cursor_destroy(cursor);
+ return NewHubQuery(host_list,record_list);
 }
 
 /*****************************************************************************/
 
 /* DEPRECATED from Nova 2.1.0 onwards
-int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,time_t start_time,double *qa,double *ea,double *da)
+   int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,time_t start_time,double *qa,double *ea,double *da)
 
-{ bson_buffer b,bb,*sub1,*sub2,*sub3;
- bson qu,query,field;
- mongo_cursor *cursor;
- bson_iterator it1,it2,it3;
- int ok = false,slot,start_slot,wrap_around;
- double q,e,d;
+   { bson_buffer b,bb,*sub1,*sub2,*sub3;
+   bson qu,query,field;
+   mongo_cursor *cursor;
+   bson_iterator it1,it2,it3;
+   int ok = false,slot,start_slot,wrap_around;
+   double q,e,d;
   
- bson_buffer_init(&b);
- bson_append_string(&b,cfr_keyhash,keyhash);
- bson_append_int(&b,cfm_magobs,obs);
- bson_from_buffer(&query,&b);
+   bson_buffer_init(&b);
+   bson_append_string(&b,cfr_keyhash,keyhash);
+   bson_append_int(&b,cfm_magobs,obs);
+   bson_from_buffer(&query,&b);
   
- bson_buffer_init(&bb);
- bson_append_int(&bb,cfm_data,1);
- bson_from_buffer(&field, &bb);
+   bson_buffer_init(&bb);
+   bson_append_int(&bb,cfm_data,1);
+   bson_from_buffer(&field, &bb);
 
- start_slot = GetTimeSlot(start_time);
+   start_slot = GetTimeSlot(start_time);
 
 // Check that start + 4 hours is not greater than the week buffer
 
- wrap_around = (int)start_slot + CF_MAGDATA - CF_MAX_SLOTS;
+wrap_around = (int)start_slot + CF_MAGDATA - CF_MAX_SLOTS;
 
 // Initialize as there might be missing values
 
- for (slot = 0; slot < CF_MAGDATA; slot++)
-    {
-    qa[slot] = -1;
-    ea[slot] = 0;
-    da[slot] = 0;
-    }
+for (slot = 0; slot < CF_MAGDATA; slot++)
+{
+qa[slot] = -1;
+ea[slot] = 0;
+da[slot] = 0;
+}
 
 
- cursor = mongo_find(conn,MONGO_DATABASE_MON,&query,&field,0,0,CF_MONGO_SLAVE_OK);
- bson_destroy(&query);
- bson_destroy(&field);
+cursor = mongo_find(conn,MONGO_DATABASE_MON,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+bson_destroy(&query);
+bson_destroy(&field);
 
- while (mongo_cursor_next(cursor))
-    {
-    bson_iterator_init(&it1,cursor->current.data);
+while (mongo_cursor_next(cursor))
+{
+bson_iterator_init(&it1,cursor->current.data);
 
-    while (bson_iterator_next(&it1))
-       {
+while (bson_iterator_next(&it1))
+{
 
 
-       if (strcmp(bson_iterator_key(&it1),cfm_data) == 0)
-          {
-          int st = 0;
-          slot = 0;
-          bson_iterator_init(&it2,bson_iterator_value(&it1));
+if (strcmp(bson_iterator_key(&it1),cfm_data) == 0)
+{
+int st = 0;
+slot = 0;
+bson_iterator_init(&it2,bson_iterator_value(&it1));
           
-          while (bson_iterator_next(&it2))
-             {
-             bson_iterator_init(&it3,bson_iterator_value(&it2));
-             sscanf(bson_iterator_key(&it2),"%d",&st);
+while (bson_iterator_next(&it2))
+{
+bson_iterator_init(&it3,bson_iterator_value(&it2));
+sscanf(bson_iterator_key(&it2),"%d",&st);
 
-             // Select the past 4 hours
+// Select the past 4 hours
 
-             if (wrap_around >= 0)
-                {
-                if (st >= wrap_around || st < start_slot)
-                   {
-                   continue;
-                   }
-                }
-             else
-                {
-                if (st < start_slot || st >= start_slot + CF_MAGDATA)
-                   {
-                   continue;
-                   }
-                }
+if (wrap_around >= 0)
+{
+if (st >= wrap_around || st < start_slot)
+{
+continue;
+}
+}
+else
+{
+if (st < start_slot || st >= start_slot + CF_MAGDATA)
+{
+continue;
+}
+}
 
-             ok = true; // Have some relevant data
-             q = e = d = 0;
+ok = true; // Have some relevant data
+q = e = d = 0;
 
-             while (bson_iterator_next(&it3))
-                {
-                if (strcmp(bson_iterator_key(&it3),cfr_obs_q) == 0)
-                   {
-                   q = bson_iterator_double(&it3);
-                   if(bson_iterator_double(&it3) != 0)
-                      {
-                      printf("index=%d, val=%f\n", st, bson_iterator_double(&it3));
-                      }
-                   }
-                else if (strcmp(bson_iterator_key(&it3),cfr_obs_E) == 0)
-                   {
-                   e = bson_iterator_double(&it3);
-                   }
-                else if (strcmp(bson_iterator_key(&it3),cfr_obs_sigma) == 0)
-                   {
-                   d = bson_iterator_double(&it3);
-                   }
-                }
+while (bson_iterator_next(&it3))
+{
+if (strcmp(bson_iterator_key(&it3),cfr_obs_q) == 0)
+{
+q = bson_iterator_double(&it3);
+if(bson_iterator_double(&it3) != 0)
+{
+printf("index=%d, val=%f\n", st, bson_iterator_double(&it3));
+}
+}
+else if (strcmp(bson_iterator_key(&it3),cfr_obs_E) == 0)
+{
+e = bson_iterator_double(&it3);
+}
+else if (strcmp(bson_iterator_key(&it3),cfr_obs_sigma) == 0)
+{
+d = bson_iterator_double(&it3);
+}
+}
 
-             qa[Nova_MagViewOffset(start_slot,st,wrap_around)] = q;
-             ea[Nova_MagViewOffset(start_slot,st,wrap_around)] = e;
-             da[Nova_MagViewOffset(start_slot,st,wrap_around)] = d;
-             }
-          }
-       }
-    }
+qa[Nova_MagViewOffset(start_slot,st,wrap_around)] = q;
+ea[Nova_MagViewOffset(start_slot,st,wrap_around)] = e;
+da[Nova_MagViewOffset(start_slot,st,wrap_around)] = d;
+}
+}
+}
+}
 
 // Now we should transform the data to re-order during wrap-around,
 // since at the boundary the data come in the wrong order
 
- mongo_cursor_destroy(cursor);
- return ok;
+mongo_cursor_destroy(cursor);
+return ok;
 }
 */
 
-/*****************************************************************************/
+ /*****************************************************************************/
 
 Item *CFDB_QueryVitalIds(mongo_connection *conn, char *keyHash)
 /**
@@ -3564,7 +3564,7 @@ HubVital *CFDB_QueryVitalsMeta(mongo_connection *conn, char *keyHash)
  bson_destroy(&field);
  
 
-  while (mongo_cursor_next(cursor))
+ while (mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
 
@@ -3592,9 +3592,9 @@ HubVital *CFDB_QueryVitalsMeta(mongo_connection *conn, char *keyHash)
     }
   
   
-  mongo_cursor_destroy(cursor);
+ mongo_cursor_destroy(cursor);
   
-  return hv;
+ return hv;
 }
 
 /*****************************************************************************/
@@ -3767,7 +3767,7 @@ int CFDB_QueryMonView(mongo_connection *conn, char *keyhash,char *monId, enum mo
     da[i] = 0;
     }
 
-  // query
+ // query
  bson_buffer_init(&bb);
  bson_append_string(&bb, cfr_keyhash, keyhash);
  bson_append_string(&bb, cfm_id, monId);
@@ -4002,101 +4002,101 @@ int CFDB_QueryLastUpdate(mongo_connection *conn,char *db, char *dbkey,char *keyh
 /*****************************************************************************/
 
 /* DEPRECATED from Nova 2.1.0 onwards
-int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da)
-{ bson_buffer b,bb,*sub1,*sub2,*sub3;
- bson qu,query,field;
- mongo_cursor *cursor;
- bson_iterator it1,it2,it3;
- char search_name[CF_MAXVARSIZE];
- double q,e,d;
- int ok = false;
- time_t start_time = CF_MONDAY_MORNING;
- int slot;
+   int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs,double *qa,double *ea,double *da)
+   { bson_buffer b,bb,*sub1,*sub2,*sub3;
+   bson qu,query,field;
+   mongo_cursor *cursor;
+   bson_iterator it1,it2,it3;
+   char search_name[CF_MAXVARSIZE];
+   double q,e,d;
+   int ok = false;
+   time_t start_time = CF_MONDAY_MORNING;
+   int slot;
 
 // Initialize as there might be missing values
 
- for (slot = 0; slot < CF_TIMESERIESDATA; slot++)
-    {
-    qa[slot] = -1;
-    ea[slot] = 0;
-    da[slot] = 0;
-    }
+for (slot = 0; slot < CF_TIMESERIESDATA; slot++)
+{
+qa[slot] = -1;
+ea[slot] = 0;
+da[slot] = 0;
+}
 
   
 
 
- bson_buffer_init(&b);
- bson_append_string(&b,cfr_keyhash,keyhash);
- bson_append_int(&b,cfm_weekobs,obs);
- bson_from_buffer(&query,&b);
+bson_buffer_init(&b);
+bson_append_string(&b,cfr_keyhash,keyhash);
+bson_append_int(&b,cfm_weekobs,obs);
+bson_from_buffer(&query,&b);
   
 
- bson_buffer_init(&bb);
- bson_append_int(&bb,cfm_data,1);
- bson_from_buffer(&field, &bb);
+bson_buffer_init(&bb);
+bson_append_int(&bb,cfm_data,1);
+bson_from_buffer(&field, &bb);
 
 
 
- cursor = mongo_find(conn,MONGO_DATABASE_MON,&query,&field,0,0,0);
- bson_destroy(&query);
+cursor = mongo_find(conn,MONGO_DATABASE_MON,&query,&field,0,0,0);
+bson_destroy(&query);
 
- while (mongo_cursor_next(cursor))
-    {
-    bson_iterator_init(&it1,cursor->current.data);
+while (mongo_cursor_next(cursor))
+{
+bson_iterator_init(&it1,cursor->current.data);
    
-    while (bson_iterator_next(&it1))
-       {
+while (bson_iterator_next(&it1))
+{
 
 
-       if (strcmp(bson_iterator_key(&it1),cfm_data) == 0)
-          {
-          int st = 0, index = 0;
-          bson_iterator_init(&it2,bson_iterator_value(&it1));
+if (strcmp(bson_iterator_key(&it1),cfm_data) == 0)
+{
+int st = 0, index = 0;
+bson_iterator_init(&it2,bson_iterator_value(&it1));
 
-          while (bson_iterator_next(&it2))
-             {
-             bson_iterator_init(&it3,bson_iterator_value(&it2));
-             sscanf(bson_iterator_key(&it2),"%d",&st);
+while (bson_iterator_next(&it2))
+{
+bson_iterator_init(&it3,bson_iterator_value(&it2));
+sscanf(bson_iterator_key(&it2),"%d",&st);
 
-             // Select the past 4 hours
+// Select the past 4 hours
             
-             q = e = d = 0;
-             ok  = true;
+q = e = d = 0;
+ok  = true;
 
-             while (bson_iterator_next(&it3))
-                {
-                if (strcmp(bson_iterator_key(&it3),cfr_obs_q) == 0)
-                   {
-                   q = bson_iterator_double(&it3);
-                   }
-                else if (strcmp(bson_iterator_key(&it3),cfr_obs_E) == 0)
-                   {
-                   e = bson_iterator_double(&it3);
-                   }
-                else if (strcmp(bson_iterator_key(&it3),cfr_obs_sigma) == 0)
-                   {
-                   d = bson_iterator_double(&it3);
-                   }
-                }
+while (bson_iterator_next(&it3))
+{
+if (strcmp(bson_iterator_key(&it3),cfr_obs_q) == 0)
+{
+q = bson_iterator_double(&it3);
+}
+else if (strcmp(bson_iterator_key(&it3),cfr_obs_E) == 0)
+{
+e = bson_iterator_double(&it3);
+}
+else if (strcmp(bson_iterator_key(&it3),cfr_obs_sigma) == 0)
+{
+d = bson_iterator_double(&it3);
+}
+}
 
-             // Slot starts at 1 due to coarse graining loop
+// Slot starts at 1 due to coarse graining loop
             
-             index = st/12 - 1;
+index = st/12 - 1;
 
-             qa[index] = q;
-             ea[index] = e;
-             da[index] = d;
-             }
-          }
-       }
-    }
+qa[index] = q;
+ea[index] = e;
+da[index] = d;
+}
+}
+}
+}
 
- bson_destroy(&field);
- mongo_cursor_destroy(cursor);
- return ok;
+bson_destroy(&field);
+mongo_cursor_destroy(cursor);
+return ok;
 }
 */
-/*****************************************************************************/
+ /*****************************************************************************/
 
 bool CFDB_QueryHistogram(mongo_connection *conn,char *keyhash,char *monId,double *histo)
 
@@ -4173,213 +4173,213 @@ HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle, char *file, 
  * Returns all attribs of one promise by its handle XOR (file,lineno).
  */
 { bson_buffer bb;
-  bson query,result;
-  mongo_cursor *cursor,*cursor2;
-  bson_iterator it1,it2;
-  char bn[CF_MAXVARSIZE] = {0}, bt[CF_MAXVARSIZE] = {0},ba[CF_MAXVARSIZE] = {0};
-  char pt[CF_MAXVARSIZE] = {0}, pr[CF_MAXVARSIZE] = {0}, pe[CF_MAXVARSIZE] = {0};
-  char cl[CF_MAXVARSIZE] = {0}, ha[CF_MAXVARSIZE] = {0}, co[CF_MAXVARSIZE] = {0};
-  char fn[CF_MAXVARSIZE] = {0}, **cons = {0};
-  char fileExp[CF_MAXVARSIZE] = {0};
-  int lineExp = 0;
-  int lno = -1;
-  int i,constCount;
-  int fileLineSearch = false;
+ bson query,result;
+ mongo_cursor *cursor,*cursor2;
+ bson_iterator it1,it2;
+ char bn[CF_MAXVARSIZE] = {0}, bt[CF_MAXVARSIZE] = {0},ba[CF_MAXVARSIZE] = {0};
+ char pt[CF_MAXVARSIZE] = {0}, pr[CF_MAXVARSIZE] = {0}, pe[CF_MAXVARSIZE] = {0};
+ char cl[CF_MAXVARSIZE] = {0}, ha[CF_MAXVARSIZE] = {0}, co[CF_MAXVARSIZE] = {0};
+ char fn[CF_MAXVARSIZE] = {0}, **cons = {0};
+ char fileExp[CF_MAXVARSIZE] = {0};
+ int lineExp = 0;
+ int lno = -1;
+ int i,constCount;
+ int fileLineSearch = false;
 
-if(EMPTY(file))  // use handle by default, (file,lineNo) if handle is not found
-   {
-   fileLineSearch = false;
-   }
-else
-   {
-   fileLineSearch = true;
-   }  
+ if(EMPTY(file))  // use handle by default, (file,lineNo) if handle is not found
+    {
+    fileLineSearch = false;
+    }
+ else
+    {
+    fileLineSearch = true;
+    }  
 
 
 /* BEGIN query document */
 
-bson_buffer_init(&bb);
+ bson_buffer_init(&bb);
 
-if (fileLineSearch)
-   {
-   bson_append_string(&bb,cfp_file,file);
-   bson_append_int(&bb,cfp_lineno,lineNo);
-   }
-else
-   {
-   bson_append_string(&bb,cfp_handle,handle);
-   }
+ if (fileLineSearch)
+    {
+    bson_append_string(&bb,cfp_file,file);
+    bson_append_int(&bb,cfp_lineno,lineNo);
+    }
+ else
+    {
+    bson_append_string(&bb,cfp_handle,handle);
+    }
 
-bson_from_buffer(&query,&bb);
+ bson_from_buffer(&query,&bb);
 
 
 /* BEGIN SEARCH */
-cursor = mongo_find(conn,MONGO_PROMISES_UNEXP,&query,NULL,0,0,CF_MONGO_SLAVE_OK);
-bson_destroy(&query);
+ cursor = mongo_find(conn,MONGO_PROMISES_UNEXP,&query,NULL,0,0,CF_MONGO_SLAVE_OK);
+ bson_destroy(&query);
 
-if (mongo_cursor_next(cursor))
-   {
-   bson_iterator_init(&it1,cursor->current.data);
+ if (mongo_cursor_next(cursor))
+    {
+    bson_iterator_init(&it1,cursor->current.data);
    
-   while (bson_iterator_next(&it1))
-      {
-      if(strcmp(bson_iterator_key(&it1), cfp_bundlename) == 0)
-         {
-         snprintf(bn, sizeof(bn), "%s", bson_iterator_string(&it1));
-         }
-      else if(strcmp(bson_iterator_key(&it1), cfp_bundletype) == 0)
-         {
-         snprintf(bt, sizeof(bt), "%s", bson_iterator_string(&it1));
-         }
-      else if(strcmp(bson_iterator_key(&it1), cfp_bundleargs) == 0)
-         {
-         bson_iterator_init(&it2,bson_iterator_value(&it1));         
-         memset(ba,0,sizeof(ba));         
-         bson_iterator_init(&it2,bson_iterator_value(&it1));
+    while (bson_iterator_next(&it1))
+       {
+       if(strcmp(bson_iterator_key(&it1), cfp_bundlename) == 0)
+          {
+          snprintf(bn, sizeof(bn), "%s", bson_iterator_string(&it1));
+          }
+       else if(strcmp(bson_iterator_key(&it1), cfp_bundletype) == 0)
+          {
+          snprintf(bt, sizeof(bt), "%s", bson_iterator_string(&it1));
+          }
+       else if(strcmp(bson_iterator_key(&it1), cfp_bundleargs) == 0)
+          {
+          bson_iterator_init(&it2,bson_iterator_value(&it1));         
+          memset(ba,0,sizeof(ba));         
+          bson_iterator_init(&it2,bson_iterator_value(&it1));
          
-         while(bson_iterator_next(&it2))
-            {
-            if(strlen(ba) + strlen(bson_iterator_string(&it2)) < sizeof(ba))
-               {
-               strcat(ba,bson_iterator_string(&it2));
-               strcat(ba, ",");
-               }
-            else
-               {
-               break;
-               }
-            }
+          while(bson_iterator_next(&it2))
+             {
+             if(strlen(ba) + strlen(bson_iterator_string(&it2)) < sizeof(ba))
+                {
+                strcat(ba,bson_iterator_string(&it2));
+                strcat(ba, ",");
+                }
+             else
+                {
+                break;
+                }
+             }
          
-         if(ba[0] != '\0')
-            {
-            ba[strlen(ba)-1] = '\0';  // remove last comma
-            }
+          if(ba[0] != '\0')
+             {
+             ba[strlen(ba)-1] = '\0';  // remove last comma
+             }
          
-         }
-      else if(strcmp(bson_iterator_key(&it1), cfp_promisetype) == 0)
-         {
-         snprintf(pt, sizeof(pt), "%s", bson_iterator_string(&it1));
-         }
-      else if(strcmp(bson_iterator_key(&it1), cfp_promiser) == 0)
-         {
-         snprintf(pr, sizeof(pr), "%s", bson_iterator_string(&it1));
-         }
-      else if(strcmp(bson_iterator_key(&it1), cfp_promisee) == 0)
-         {
-         snprintf(pe, sizeof(pe), "%s", bson_iterator_string(&it1));
-         }
-      else if(strcmp(bson_iterator_key(&it1), cfp_classcontext) == 0)
-         {
-         snprintf(cl, sizeof(cl), "%s", bson_iterator_string(&it1));
-         }
-      else if(strcmp(bson_iterator_key(&it1), cfp_comment) == 0)
-         {
-         snprintf(co, sizeof(co), "%s", bson_iterator_string(&it1));
-         }
-      else if(strcmp(bson_iterator_key(&it1), cfp_handle) == 0)
-         {
-         snprintf(ha, sizeof(ha), "%s", bson_iterator_string(&it1));
-         }
-      else if(strcmp(bson_iterator_key(&it1), cfp_file) == 0)
-         {
-         snprintf(fn, sizeof(fn), "%s", bson_iterator_string(&it1));
-         }
-      else if(strcmp(bson_iterator_key(&it1), cfp_lineno) == 0)
-         {
-         lno = bson_iterator_int(&it1);
-         }
-      else if(strcmp(bson_iterator_key(&it1), cfp_constraints) == 0)
-         {
-         bson_iterator_init(&it2,bson_iterator_value(&it1));
+          }
+       else if(strcmp(bson_iterator_key(&it1), cfp_promisetype) == 0)
+          {
+          snprintf(pt, sizeof(pt), "%s", bson_iterator_string(&it1));
+          }
+       else if(strcmp(bson_iterator_key(&it1), cfp_promiser) == 0)
+          {
+          snprintf(pr, sizeof(pr), "%s", bson_iterator_string(&it1));
+          }
+       else if(strcmp(bson_iterator_key(&it1), cfp_promisee) == 0)
+          {
+          snprintf(pe, sizeof(pe), "%s", bson_iterator_string(&it1));
+          }
+       else if(strcmp(bson_iterator_key(&it1), cfp_classcontext) == 0)
+          {
+          snprintf(cl, sizeof(cl), "%s", bson_iterator_string(&it1));
+          }
+       else if(strcmp(bson_iterator_key(&it1), cfp_comment) == 0)
+          {
+          snprintf(co, sizeof(co), "%s", bson_iterator_string(&it1));
+          }
+       else if(strcmp(bson_iterator_key(&it1), cfp_handle) == 0)
+          {
+          snprintf(ha, sizeof(ha), "%s", bson_iterator_string(&it1));
+          }
+       else if(strcmp(bson_iterator_key(&it1), cfp_file) == 0)
+          {
+          snprintf(fn, sizeof(fn), "%s", bson_iterator_string(&it1));
+          }
+       else if(strcmp(bson_iterator_key(&it1), cfp_lineno) == 0)
+          {
+          lno = bson_iterator_int(&it1);
+          }
+       else if(strcmp(bson_iterator_key(&it1), cfp_constraints) == 0)
+          {
+          bson_iterator_init(&it2,bson_iterator_value(&it1));
          
-         // count constraints
-         constCount = 0;
+          // count constraints
+          constCount = 0;
          
-         while(bson_iterator_next(&it2))
-            {
-            constCount++;
-            }
+          while(bson_iterator_next(&it2))
+             {
+             constCount++;
+             }
          
-         if(constCount == 0)
-            {
-            cons = NULL;
-            continue;
-            }
+          if(constCount == 0)
+             {
+             cons = NULL;
+             continue;
+             }
          
-         // save constraints (freed in DeleteHubPromise)
-         bson_iterator_init(&it2,bson_iterator_value(&it1));
-         cons = xmalloc(sizeof(char *) * (constCount + 1));
+          // save constraints (freed in DeleteHubPromise)
+          bson_iterator_init(&it2,bson_iterator_value(&it1));
+          cons = xmalloc(sizeof(char *) * (constCount + 1));
          
-         i = 0;  // race-safe check
+          i = 0;  // race-safe check
          
-         while(bson_iterator_next(&it2) && (i < constCount))
-            {
-            cons[i] = xstrdup(bson_iterator_string(&it2));
-            i++;
-            }
+          while(bson_iterator_next(&it2) && (i < constCount))
+             {
+             cons[i] = xstrdup(bson_iterator_string(&it2));
+             i++;
+             }
          
-         cons[i] = NULL;           
-         }
-      }
-   }
-else if(!fileLineSearch)  // if not found in unexpanded promise DB, try expanded
-   {
-   mongo_cursor_destroy(cursor);
+          cons[i] = NULL;           
+          }
+       }
+    }
+ else if(!fileLineSearch)  // if not found in unexpanded promise DB, try expanded
+    {
+    mongo_cursor_destroy(cursor);
    
-   /* query */
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfp_handle_exp,handle);
-   bson_from_buffer(&query,&bb);   
+    /* query */
+    bson_buffer_init(&bb);
+    bson_append_string(&bb,cfp_handle_exp,handle);
+    bson_from_buffer(&query,&bb);   
    
-   /* result */
-   bson_buffer_init(&bb);
-   bson_append_int(&bb,cfp_file,1);
-   bson_append_int(&bb,cfp_lineno,1);
-   bson_from_buffer(&result,&bb);   
+    /* result */
+    bson_buffer_init(&bb);
+    bson_append_int(&bb,cfp_file,1);
+    bson_append_int(&bb,cfp_lineno,1);
+    bson_from_buffer(&result,&bb);   
    
-   cursor2 = mongo_find(conn,MONGO_PROMISES_EXP,&query,&result,0,0,CF_MONGO_SLAVE_OK);
+    cursor2 = mongo_find(conn,MONGO_PROMISES_EXP,&query,&result,0,0,CF_MONGO_SLAVE_OK);
    
-   bson_destroy(&query);
-   bson_destroy(&result);
+    bson_destroy(&query);
+    bson_destroy(&result);
    
-   if (mongo_cursor_next(cursor2))
-      {
-      bson_iterator_init(&it1,cursor2->current.data);
+    if (mongo_cursor_next(cursor2))
+       {
+       bson_iterator_init(&it1,cursor2->current.data);
       
-      while (bson_iterator_next(&it1))
-         {
-         if(strcmp(bson_iterator_key(&it1), cfp_file) == 0)
-            {
-            snprintf(fileExp, sizeof(fileExp), "%s", bson_iterator_string(&it1));
-            }
-         else if(strcmp(bson_iterator_key(&it1), cfp_lineno) == 0)
-            {
-            lineExp = bson_iterator_int(&it1);
-            }
-         }
-      }
+       while (bson_iterator_next(&it1))
+          {
+          if(strcmp(bson_iterator_key(&it1), cfp_file) == 0)
+             {
+             snprintf(fileExp, sizeof(fileExp), "%s", bson_iterator_string(&it1));
+             }
+          else if(strcmp(bson_iterator_key(&it1), cfp_lineno) == 0)
+             {
+             lineExp = bson_iterator_int(&it1);
+             }
+          }
+       }
    
-   mongo_cursor_destroy(cursor2);
+    mongo_cursor_destroy(cursor2);
    
-   if(*fileExp != '\0' && lineExp != 0)
-      {
-      return CFDB_QueryPromise(conn,NULL,fileExp,lineExp);
-      }
-   else  // not found in expanded promise DB either
-      {
-      CfDebug("Promise handle \"%s\" not found in expanded promise DB", handle);
-      return NULL;
-      }
+    if(*fileExp != '\0' && lineExp != 0)
+       {
+       return CFDB_QueryPromise(conn,NULL,fileExp,lineExp);
+       }
+    else  // not found in expanded promise DB either
+       {
+       CfDebug("Promise handle \"%s\" not found in expanded promise DB", handle);
+       return NULL;
+       }
    
-   }
-else  // not found in unexpanded DB by file and line either
-   {
-   mongo_cursor_destroy(cursor);
-   return NULL;
-   }
+    }
+ else  // not found in unexpanded DB by file and line either
+    {
+    mongo_cursor_destroy(cursor);
+    return NULL;
+    }
 
-mongo_cursor_destroy(cursor);
-return NewHubPromise(bn,bt,ba,pt,pr,pe,cl,ha,co,fn,lno,cons);
+ mongo_cursor_destroy(cursor);
+ return NewHubPromise(bn,bt,ba,pt,pr,pe,cl,ha,co,fn,lno,cons);
 }
 
 /*****************************************************************************/
@@ -4703,49 +4703,49 @@ HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle, char 
  bson_buffer_init(&bb);
 
  if(escapeRegex)
-   {
-   if (!EMPTY(promiser))
-     {  
-     EscapeRegex(promiser,regexEscapedStr,CF_BUFSIZE-1);  
-     bson_append_regex(&bb, cfp_promiser,regexEscapedStr,"i");
-     emptyQuery = false;
-     }
-   else if(!EMPTY(bundleName))
-     {
-     EscapeRegex(bundleName,regexEscapedStr,CF_BUFSIZE-1);  
-     bson_append_regex(&bb,cfp_bundlename,regexEscapedStr,"i");
-     emptyQuery = false;
-     }
-   else if(!EMPTY(handle))
-     {
-     EscapeRegex(handle,regexEscapedStr,CF_BUFSIZE-1);
-     bson_append_regex(&bb,cfp_handle,regexEscapedStr,"i");
-     emptyQuery = false;
-     }
-   }
+    {
+    if (!EMPTY(promiser))
+       {  
+       EscapeRegex(promiser,regexEscapedStr,CF_BUFSIZE-1);  
+       bson_append_regex(&bb, cfp_promiser,regexEscapedStr,"i");
+       emptyQuery = false;
+       }
+    else if(!EMPTY(bundleName))
+       {
+       EscapeRegex(bundleName,regexEscapedStr,CF_BUFSIZE-1);  
+       bson_append_regex(&bb,cfp_bundlename,regexEscapedStr,"i");
+       emptyQuery = false;
+       }
+    else if(!EMPTY(handle))
+       {
+       EscapeRegex(handle,regexEscapedStr,CF_BUFSIZE-1);
+       bson_append_regex(&bb,cfp_handle,regexEscapedStr,"i");
+       emptyQuery = false;
+       }
+    }
  else
-   {
-   if (!EMPTY(promiser))
-     {
-     bson_append_regex(&bb, cfp_promiser,promiser,"i");
-     emptyQuery = false;
-     }
-   else if(!EMPTY(bundleName))
-     {
-     bson_append_regex(&bb,cfp_bundlename,bundleName,"i");
-     emptyQuery = false;
-     }
-   else if(!EMPTY(handle))
-     {
-     bson_append_regex(&bb,cfp_handle,handle,"i");
-     emptyQuery = false;
-     }
-   }
+    {
+    if (!EMPTY(promiser))
+       {
+       bson_append_regex(&bb, cfp_promiser,promiser,"i");
+       emptyQuery = false;
+       }
+    else if(!EMPTY(bundleName))
+       {
+       bson_append_regex(&bb,cfp_bundlename,bundleName,"i");
+       emptyQuery = false;
+       }
+    else if(!EMPTY(handle))
+       {
+       bson_append_regex(&bb,cfp_handle,handle,"i");
+       emptyQuery = false;
+       }
+    }
  
  if(!emptyQuery)
-   {
-   bson_from_buffer(&query,&bb);
-   }
+    {
+    bson_from_buffer(&query,&bb);
+    }
 
 // returned attribute
  bson_buffer_init(&bb);
@@ -4762,7 +4762,7 @@ HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle, char 
  bson_destroy(&field);
 
  while(mongo_cursor_next(cursor))  // iterate over docs
-   {    
+    {    
     h[0]='\0';
     pType[0]='\0';
     bName[0]='\0';
@@ -4772,26 +4772,26 @@ HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle, char 
     bson_iterator_init(&it1,cursor->current.data);
     
     while(bson_iterator_next(&it1))
-      {
+       {
        if (strcmp(bson_iterator_key(&it1), cfp_handle) == 0)
           {
-            snprintf(h,CF_MAXVARSIZE,"%s",(char *)bson_iterator_string(&it1));
+          snprintf(h,CF_MAXVARSIZE,"%s",(char *)bson_iterator_string(&it1));
           }
        else if (strcmp(bson_iterator_key(&it1), cfp_promisetype) == 0)
           {
-            snprintf(pType,CF_MAXVARSIZE,"%s",(char *)bson_iterator_string(&it1));
+          snprintf(pType,CF_MAXVARSIZE,"%s",(char *)bson_iterator_string(&it1));
           }
        else if (strcmp(bson_iterator_key(&it1), cfp_bundlename) == 0)
           {
-            snprintf(bName,CF_MAXVARSIZE,"%s",(char *)bson_iterator_string(&it1));
+          snprintf(bName,CF_MAXVARSIZE,"%s",(char *)bson_iterator_string(&it1));
           }
        else if (strcmp(bson_iterator_key(&it1), cfp_bundletype) == 0)
           {
-            snprintf(bType,CF_MAXVARSIZE,"%s",(char *)bson_iterator_string(&it1));
+          snprintf(bType,CF_MAXVARSIZE,"%s",(char *)bson_iterator_string(&it1));
           }
        else if (strcmp(bson_iterator_key(&it1), cfp_promiser) == 0)
           {
-            snprintf(p,CF_MAXVARSIZE,"%s",(char *)bson_iterator_string(&it1));
+          snprintf(p,CF_MAXVARSIZE,"%s",(char *)bson_iterator_string(&it1));
           }
        }
     PrependRlistAlien(&recordList,NewHubPromise(bName,bType,NULL,pType,p,NULL,NULL,h,NULL,NULL,0,NULL));
@@ -5981,55 +5981,55 @@ void CFDB_ScanHubHost(bson_iterator *it1,char *keyhash,char *ipaddr,char *hostna
  int ipFound = false;
  int hostFound = false;
 
-if (bson_iterator_type(it1) == bson_string && strcmp(bson_iterator_key(it1),cfr_keyhash) == 0)
-   {         
-   strncpy(keyhash,bson_iterator_string(it1),CF_MAXVARSIZE-1);
-   }
+ if (bson_iterator_type(it1) == bson_string && strcmp(bson_iterator_key(it1),cfr_keyhash) == 0)
+    {         
+    strncpy(keyhash,bson_iterator_string(it1),CF_MAXVARSIZE-1);
+    }
 
-if (strcmp(bson_iterator_key(it1),cfr_ip_array) == 0)
-   {         
-   bson_iterator_init(&it2, bson_iterator_value(it1));
+ if (strcmp(bson_iterator_key(it1),cfr_ip_array) == 0)
+    {         
+    bson_iterator_init(&it2, bson_iterator_value(it1));
    
-   while (bson_iterator_next(&it2))
-      {
-      ipFound = true;
-      Join(ipaddr,(char *)bson_iterator_string(&it2),CF_MAXVARSIZE);
-      Join(ipaddr,", ",CF_MAXVARSIZE);
-      }
-   }
+    while (bson_iterator_next(&it2))
+       {
+       ipFound = true;
+       Join(ipaddr,(char *)bson_iterator_string(&it2),CF_MAXVARSIZE);
+       Join(ipaddr,", ",CF_MAXVARSIZE);
+       }
+    }
 
-if (strcmp(bson_iterator_key(it1),cfr_host_array) == 0)
-   {         
-   bson_iterator_init(&it2, bson_iterator_value(it1));
+ if (strcmp(bson_iterator_key(it1),cfr_host_array) == 0)
+    {         
+    bson_iterator_init(&it2, bson_iterator_value(it1));
    
-   while (bson_iterator_next(&it2))
-      {
-      hostFound = true;
-      Join(hostnames,(char *)bson_iterator_string(&it2),CF_MAXVARSIZE);
-      Join(hostnames,", ",CF_MAXVARSIZE);
-      }
-   }
+    while (bson_iterator_next(&it2))
+       {
+       hostFound = true;
+       Join(hostnames,(char *)bson_iterator_string(&it2),CF_MAXVARSIZE);
+       Join(hostnames,", ",CF_MAXVARSIZE);
+       }
+    }
 
 // remove any trailing ", "
 
-if (ipFound)
-   {
-   if(ipaddr[strlen(ipaddr) - 2] == ',' &&
-      ipaddr[strlen(ipaddr) - 1] == ' ')
-      {
-      ipaddr[strlen(ipaddr) - 2] = '\0';
-      }
-   }
+ if (ipFound)
+    {
+    if(ipaddr[strlen(ipaddr) - 2] == ',' &&
+       ipaddr[strlen(ipaddr) - 1] == ' ')
+       {
+       ipaddr[strlen(ipaddr) - 2] = '\0';
+       }
+    }
 
 
-if (hostFound)
-   {
-   if(hostnames[strlen(hostnames) - 2] == ',' &&
-      hostnames[strlen(hostnames) - 1] == ' ')
-      {
-      hostnames[strlen(hostnames) - 2] = '\0';
-      }
-   }
+ if (hostFound)
+    {
+    if(hostnames[strlen(hostnames) - 2] == ',' &&
+       hostnames[strlen(hostnames) - 1] == ' ')
+       {
+       hostnames[strlen(hostnames) - 2] = '\0';
+       }
+    }
 }
 
 /*****************************************************************************/
@@ -6722,9 +6722,9 @@ int CFDB_GetRow(mongo_connection *conn, char *db, int reportType, bson *query, c
                       buffer[0] = '\0';
                       if(level == 3)
                          {
-			  BsonIteratorToString(buffer, sizeof(buffer), &it3, 1, reportType);
-			  snprintf(row,rowSz,"%s",buffer);
-			  return true;
+                         BsonIteratorToString(buffer, sizeof(buffer), &it3, 1, reportType);
+                         snprintf(row,rowSz,"%s",buffer);
+                         return true;
                          }
                       }
                    }
@@ -6768,163 +6768,163 @@ Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collectio
  bson_iterator it1,values;
  Item *ret = NULL;
  
-bson_buffer_init(&bb);
-bson_append_string(&bb, "distinct", collection);
-bson_append_string(&bb, "key", dKey);
+ bson_buffer_init(&bb);
+ bson_append_string(&bb, "distinct", collection);
+ bson_append_string(&bb, "key", dKey);
 
-if (queryBson)
-   {
-   bson_append_bson(&bb, "query", queryBson);
-   }
+ if (queryBson)
+    {
+    bson_append_bson(&bb, "query", queryBson);
+    }
 
-bson_from_buffer(&cmd, &bb);
+ bson_from_buffer(&cmd, &bb);
 
-if (!mongo_run_command(conn, database, &cmd, &result))
-   {
-   MongoCheckForError(conn,"CFDB_QueryDistinct()", "", NULL);
-   bson_buffer_destroy(&bb);
-   bson_destroy(&cmd);
-   return false;
-   }
+ if (!mongo_run_command(conn, database, &cmd, &result))
+    {
+    MongoCheckForError(conn,"CFDB_QueryDistinct()", "", NULL);
+    bson_buffer_destroy(&bb);
+    bson_destroy(&cmd);
+    return false;
+    }
 
-bson_destroy(&cmd);
+ bson_destroy(&cmd);
 
-if (!bson_find(&it1, &result, "values"))
-   {
-   CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryDistinct()");
-   bson_destroy(&result);
-   return false;
-   }
+ if (!bson_find(&it1, &result, "values"))
+    {
+    CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryDistinct()");
+    bson_destroy(&result);
+    return false;
+    }
 
-if (bson_iterator_type(&it1) != bson_array)
-   {
-   CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryDistinct()");
-   bson_destroy(&result);
-   return false;
-   }
+ if (bson_iterator_type(&it1) != bson_array)
+    {
+    CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryDistinct()");
+    bson_destroy(&result);
+    return false;
+    }
 
-bson_iterator_subiterator(&it1, &values);
+ bson_iterator_subiterator(&it1, &values);
 
-while (bson_iterator_next(&values))
-   {
-   PrependItem(&ret,(char *)bson_iterator_string(&values),NULL);
-   }
+ while (bson_iterator_next(&values))
+    {
+    PrependItem(&ret,(char *)bson_iterator_string(&values),NULL);
+    }
 
-bson_destroy(&result);
+ bson_destroy(&result);
 
-return ret;
+ return ret;
 }
 
 /******************************************************************/
 void GetReportKeyMapping(int reportType, char *key, char *retBuf, int retBufSz)
 {
-  switch(reportType)
+ switch(reportType)
     {
     case CFREPORT_REPAIRED:
     case CFREPORT_NOTKEPT:
-      if(strcmp(key,cfr_keyhash) == 0)
-	{
-	  snprintf(retBuf,retBufSz,"hostkey"); 
-	}
-      else if(strcmp(key,cfr_cause) == 0)
-	{
-	  snprintf(retBuf,retBufSz,"Report"); 
-	}
-      else if(strcmp(key,cfr_promisehandle) == 0)
-	{
-	  snprintf(retBuf,retBufSz,"Promise Handle"); 
-	}
-      else if(strcmp(key,cfr_time) == 0)
-	{
-	  snprintf(retBuf,retBufSz,"Time"); 
-	}
-      break;
+        if(strcmp(key,cfr_keyhash) == 0)
+           {
+           snprintf(retBuf,retBufSz,"hostkey"); 
+           }
+        else if(strcmp(key,cfr_cause) == 0)
+           {
+           snprintf(retBuf,retBufSz,"Report"); 
+           }
+        else if(strcmp(key,cfr_promisehandle) == 0)
+           {
+           snprintf(retBuf,retBufSz,"Promise Handle"); 
+           }
+        else if(strcmp(key,cfr_time) == 0)
+           {
+           snprintf(retBuf,retBufSz,"Time"); 
+           }
+        break;
     
     case CFREPORT_VALUE:
-      if(strcmp(key,cfr_keyhash) == 0)
-	{
-	  snprintf(retBuf,retBufSz,"hostkey"); 
-	}
-      else if(strcmp(key,cfr_time) == 0)
-	{
-	  snprintf(retBuf,retBufSz,"Day"); 
-	}
-      else if(strcmp(key,cfr_kept) == 0)
-	{
-	  snprintf(retBuf,retBufSz,"Kept"); 
-	} 
-      else if(strcmp(key,cfr_repaired) == 0)
-	{
-	  snprintf(retBuf,retBufSz,"Repaired"); 
-	}
-      else if(strcmp(key,cfr_notkept) == 0)
-	{
-	  snprintf(retBuf,retBufSz,"Not Kept"); 
-	}
-      break;
+        if(strcmp(key,cfr_keyhash) == 0)
+           {
+           snprintf(retBuf,retBufSz,"hostkey"); 
+           }
+        else if(strcmp(key,cfr_time) == 0)
+           {
+           snprintf(retBuf,retBufSz,"Day"); 
+           }
+        else if(strcmp(key,cfr_kept) == 0)
+           {
+           snprintf(retBuf,retBufSz,"Kept"); 
+           } 
+        else if(strcmp(key,cfr_repaired) == 0)
+           {
+           snprintf(retBuf,retBufSz,"Repaired"); 
+           }
+        else if(strcmp(key,cfr_notkept) == 0)
+           {
+           snprintf(retBuf,retBufSz,"Not Kept"); 
+           }
+        break;
     
     case CFREPORT_BUNDLE:
-      if(strcmp(key,cfr_keyhash) == 0)
-	{
-	  snprintf(retBuf,retBufSz,"hostkey"); 
-	}
-      else if(strcmp(key,cfr_hrsago) == 0)
-        {
-          snprintf(retBuf,retBufSz,"Hours Ago");
-        }
-      else if(strcmp(key,cfr_hrsavg) == 0)
-        {
-          snprintf(retBuf,retBufSz,"Average Interval");
-        }
-      else if(strcmp(key,cfr_hrsdev) == 0)
-        {
-          snprintf(retBuf,retBufSz,"Uncertainty");
-        }
-      else if(strcmp(key,cfr_time) == 0)
-	{
-	  snprintf(retBuf,retBufSz,"Time"); 
-	}
-      break;
+        if(strcmp(key,cfr_keyhash) == 0)
+           {
+           snprintf(retBuf,retBufSz,"hostkey"); 
+           }
+        else if(strcmp(key,cfr_hrsago) == 0)
+           {
+           snprintf(retBuf,retBufSz,"Hours Ago");
+           }
+        else if(strcmp(key,cfr_hrsavg) == 0)
+           {
+           snprintf(retBuf,retBufSz,"Average Interval");
+           }
+        else if(strcmp(key,cfr_hrsdev) == 0)
+           {
+           snprintf(retBuf,retBufSz,"Uncertainty");
+           }
+        else if(strcmp(key,cfr_time) == 0)
+           {
+           snprintf(retBuf,retBufSz,"Time"); 
+           }
+        break;
     
     case CFREPORT_PERFORMANCE:
-      if(strcmp(key,cfr_keyhash) == 0)
-	{
-	  snprintf(retBuf,retBufSz,"hostkey"); 
-	}      
-      else if(strcmp(key,cfr_perf_event) == 0)
-	{
-	  snprintf(retBuf,retBufSz,"Event"); 
-	}
-      else if(strcmp(key,cfr_obs_q) == 0)
-	{
-	  snprintf(retBuf,retBufSz,"Last Time"); 
-	}
-      else if(strcmp(key,cfr_obs_E) == 0)
-	{
-	  snprintf(retBuf,retBufSz,"Average Time"); 
-	}
-      else if(strcmp(key,cfr_obs_sigma) == 0)
-	{
-	  snprintf(retBuf,retBufSz,"Uncertainty"); 
-	}
-      break;
+        if(strcmp(key,cfr_keyhash) == 0)
+           {
+           snprintf(retBuf,retBufSz,"hostkey"); 
+           }      
+        else if(strcmp(key,cfr_perf_event) == 0)
+           {
+           snprintf(retBuf,retBufSz,"Event"); 
+           }
+        else if(strcmp(key,cfr_obs_q) == 0)
+           {
+           snprintf(retBuf,retBufSz,"Last Time"); 
+           }
+        else if(strcmp(key,cfr_obs_E) == 0)
+           {
+           snprintf(retBuf,retBufSz,"Average Time"); 
+           }
+        else if(strcmp(key,cfr_obs_sigma) == 0)
+           {
+           snprintf(retBuf,retBufSz,"Uncertainty"); 
+           }
+        break;
    
     case CFREPORT_PRSUMMARY:
       
-      break;
+        break;
 
     case CFREPORT_FILECHANGES:
-      if(strcmp(key,cfr_time) == 0)
-	{
-	  snprintf(retBuf,retBufSz,"Time"); 
-	}   
-      else if(strcmp(key,cfr_name) == 0)
-	{
-	  snprintf(retBuf,retBufSz,"File"); 
-	}
-      break;
+        if(strcmp(key,cfr_time) == 0)
+           {
+           snprintf(retBuf,retBufSz,"Time"); 
+           }   
+        else if(strcmp(key,cfr_name) == 0)
+           {
+           snprintf(retBuf,retBufSz,"File"); 
+           }
+        break;
     default:
-      break;
+        break;
     }
 }
 /******************************************************************/
@@ -6954,9 +6954,9 @@ void BsonIteratorToString(char *retBuf, int retBufSz, bson_iterator *i, int dept
  GetReportKeyMapping(reportType, (char *)key, header, sizeof(header));
  
  if(strlen(header)<1)
-   {
-     snprintf(header,sizeof(header),"%s",key);
-   }
+    {
+    snprintf(header,sizeof(header),"%s",key);
+    }
  
  switch ( t ){
  case bson_int:
@@ -7013,145 +7013,145 @@ void BsonIteratorToString(char *retBuf, int retBufSz, bson_iterator *i, int dept
 Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort)
 
 { bson_buffer bb;
-  bson query,field;
-  mongo_cursor *cursor;
-  bson_iterator it1;
-  Rlist *classList = {0};
-  char classRegexAnch[CF_MAXVARSIZE];
-  int emptyQuery = true;
-  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
-  char hostclass[CF_BUFSIZE];
+ bson query,field;
+ mongo_cursor *cursor;
+ bson_iterator it1;
+ Rlist *classList = {0};
+ char classRegexAnch[CF_MAXVARSIZE];
+ int emptyQuery = true;
+ char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
+ char hostclass[CF_BUFSIZE];
 
-  bson_buffer_init(&bb);
+ bson_buffer_init(&bb);
 
-  if (!EMPTY(keyHash))
+ if (!EMPTY(keyHash))
     {
-      bson_append_string(&bb,cfr_keyhash,keyHash);
-      emptyQuery = false;
+    bson_append_string(&bb,cfr_keyhash,keyHash);
+    emptyQuery = false;
     }
-  if(!EMPTY(classRegex))
+ if(!EMPTY(classRegex))
     {
-      AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
-      bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-      emptyQuery = false;
-    }
-
-  if(emptyQuery)
-    {
-      bson_empty(&query);
-    }
-  else
-    {
-      bson_from_buffer(&query,&bb);
+    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
+    bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
+    emptyQuery = false;
     }
 
-  bson_buffer_init(&bb);
-  bson_append_int(&bb,cfr_keyhash,1);
-  bson_append_int(&bb,cfr_ip_array,1);
-  bson_append_int(&bb,cfr_host_array,1);
-  bson_from_buffer(&field, &bb);
+ if(emptyQuery)
+    {
+    bson_empty(&query);
+    }
+ else
+    {
+    bson_from_buffer(&query,&bb);
+    }
 
-  cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+ bson_buffer_init(&bb);
+ bson_append_int(&bb,cfr_keyhash,1);
+ bson_append_int(&bb,cfr_ip_array,1);
+ bson_append_int(&bb,cfr_host_array,1);
+ bson_from_buffer(&field, &bb);
 
-  bson_destroy(&query);
-  bson_destroy(&field);
+ cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+
+ bson_destroy(&query);
+ bson_destroy(&field);
   
 
 
   
-  while (mongo_cursor_next(cursor))
+ while (mongo_cursor_next(cursor))
     {
-      bson_iterator_init(&it1,cursor->current.data);
-      keyhash[0] = '\0';
-      hostnames[0] = '\0';
-      addresses[0] = '\0';
-      while (bson_iterator_next(&it1))
-	{
-	  CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
-	  if(strlen(hostnames) > 0)
-	    {
-	      ReplaceChar(hostnames,hostclass,CF_BUFSIZE,'.','_');
-	      ReplaceChar(hostclass,hostnames,CF_BUFSIZE,'-','_');
-	      ReplaceChar(hostnames,hostclass,CF_BUFSIZE,' ','_');
-	      IdempAppendRScalar(&classList,hostclass,CF_SCALAR);
-	    }
-	}
+    bson_iterator_init(&it1,cursor->current.data);
+    keyhash[0] = '\0';
+    hostnames[0] = '\0';
+    addresses[0] = '\0';
+    while (bson_iterator_next(&it1))
+       {
+       CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
+       if(strlen(hostnames) > 0)
+          {
+          ReplaceChar(hostnames,hostclass,CF_BUFSIZE,'.','_');
+          ReplaceChar(hostclass,hostnames,CF_BUFSIZE,'-','_');
+          ReplaceChar(hostnames,hostclass,CF_BUFSIZE,' ','_');
+          IdempAppendRScalar(&classList,hostclass,CF_SCALAR);
+          }
+       }
     }
 
-  mongo_cursor_destroy(cursor);
-  return classList;
+ mongo_cursor_destroy(cursor);
+ return classList;
 }
 
 /*************************************************/
 Rlist *CFDB_QueryAllClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort)
 
 { bson_buffer bb;
-  bson query,field;
-  mongo_cursor *cursor;
-  bson_iterator it1,it2,it3;
-  Rlist *classList = {0};
-  char rclass[CF_MAXVARSIZE];
-  char classRegexAnch[CF_MAXVARSIZE];
-  int emptyQuery = true;
+ bson query,field;
+ mongo_cursor *cursor;
+ bson_iterator it1,it2,it3;
+ Rlist *classList = {0};
+ char rclass[CF_MAXVARSIZE];
+ char classRegexAnch[CF_MAXVARSIZE];
+ int emptyQuery = true;
 
-    bson_buffer_init(&bb);
+ bson_buffer_init(&bb);
 
-  if (!EMPTY(keyHash))
+ if (!EMPTY(keyHash))
     {
-      bson_append_string(&bb,cfr_keyhash,keyHash);
-      emptyQuery = false;
+    bson_append_string(&bb,cfr_keyhash,keyHash);
+    emptyQuery = false;
     }
 
-  if (!EMPTY(classRegex))
+ if (!EMPTY(classRegex))
     {
-      AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
-      bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-      emptyQuery = false;
+    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
+    bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
+    emptyQuery = false;
     }
 
-  if (emptyQuery)
+ if (emptyQuery)
     {
-      bson_empty(&query);
+    bson_empty(&query);
     }
-  else
+ else
     {
-      bson_from_buffer(&query,&bb);
+    bson_from_buffer(&query,&bb);
     }
 
-  bson_buffer_init(&bb);
-  bson_append_int(&bb,cfr_class,1);
-  bson_from_buffer(&field, &bb);
+ bson_buffer_init(&bb);
+ bson_append_int(&bb,cfr_class,1);
+ bson_from_buffer(&field, &bb);
 
-  cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+ cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
-  bson_destroy(&query);
-  bson_destroy(&field);
+ bson_destroy(&query);
+ bson_destroy(&field);
 
-  while (mongo_cursor_next(cursor))
+ while (mongo_cursor_next(cursor))
     {
-      bson_iterator_init(&it1,cursor->current.data);
+    bson_iterator_init(&it1,cursor->current.data);
 
-      rclass[0] = '\0';
+    rclass[0] = '\0';
 
-      while (bson_iterator_next(&it1))
-	{
-	  if (strcmp(bson_iterator_key(&it1),cfr_class) == 0)
-	    {
-	      bson_iterator_init(&it2,bson_iterator_value(&it1));
+    while (bson_iterator_next(&it1))
+       {
+       if (strcmp(bson_iterator_key(&it1),cfr_class) == 0)
+          {
+          bson_iterator_init(&it2,bson_iterator_value(&it1));
 
-	      while (bson_iterator_next(&it2))
-		{
-		  bson_iterator_init(&it3, bson_iterator_value(&it2));
-		  strncpy(rclass,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
+          while (bson_iterator_next(&it2))
+             {
+             bson_iterator_init(&it3, bson_iterator_value(&it2));
+             strncpy(rclass,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
 
-		  IdempAppendRScalar(&classList,rclass,CF_SCALAR);
-		}
-	    }
-	}
+             IdempAppendRScalar(&classList,rclass,CF_SCALAR);
+             }
+          }
+       }
     }   
 
-  mongo_cursor_destroy(cursor);
-  return classList;
+ mongo_cursor_destroy(cursor);
+ return classList;
 }
 /*************************************************/
 int CFDB_QueryIsMaster(void)
@@ -7224,10 +7224,10 @@ int CFDB_QueryMasterIP(char *buffer,int bufsize)
  if (mongo_run_command(&conn, MONGO_BASE, &cmd, &result))
     {
     if (bson_find(&it1, &result, "primary"))
-          {
-          snprintf(buffer,bufsize,"%s",bson_iterator_string(&it1));
-          ret=true;
-          }
+       {
+       snprintf(buffer,bufsize,"%s",bson_iterator_string(&it1));
+       ret=true;
+       }
     else
        {
        CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryIsMaster()");
@@ -7415,83 +7415,83 @@ static bool AppendHostClassFilter(bson_buffer *queryBuffer, HostClassFilter *fil
 
 Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const char *ip)
 {
-bson_buffer buffer;
-bson query, field;
+ bson_buffer buffer;
+ bson query, field;
 
 // query
-bson_buffer_init(&buffer);
-bson_append_regex(&buffer, cfr_host_array, hostname, "");
-bson_append_regex(&buffer, cfr_ip_array, ip, "");
-bson_from_buffer(&query, &buffer);
+ bson_buffer_init(&buffer);
+ bson_append_regex(&buffer, cfr_host_array, hostname, "");
+ bson_append_regex(&buffer, cfr_ip_array, ip, "");
+ bson_from_buffer(&query, &buffer);
 
 // projection
-bson_buffer_init(&buffer);
-bson_append_int(&buffer, cfr_keyhash, 1);
-bson_from_buffer(&field, &buffer);
+ bson_buffer_init(&buffer);
+ bson_append_int(&buffer, cfr_keyhash, 1);
+ bson_from_buffer(&field, &buffer);
 
-mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+ mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
-bson_destroy(&query);
-bson_destroy(&field);
+ bson_destroy(&query);
+ bson_destroy(&field);
 
-Rlist *hostkeys = NULL;
-while (mongo_cursor_next(cursor))
-   {
-   bson_iterator iter;
-   bson_iterator_init(&iter, cursor->current.data);
+ Rlist *hostkeys = NULL;
+ while (mongo_cursor_next(cursor))
+    {
+    bson_iterator iter;
+    bson_iterator_init(&iter, cursor->current.data);
 
-   while (bson_iterator_next(&iter))
-      {
-      if (strcmp(bson_iterator_key(&iter), cfr_keyhash) == 0)
-         {
-         AppendRlist(&hostkeys, (char *)bson_iterator_string(&iter), CF_SCALAR);
-         }
-      }
-   }
+    while (bson_iterator_next(&iter))
+       {
+       if (strcmp(bson_iterator_key(&iter), cfr_keyhash) == 0)
+          {
+          AppendRlist(&hostkeys, (char *)bson_iterator_string(&iter), CF_SCALAR);
+          }
+       }
+    }
 
-mongo_cursor_destroy(cursor);
+ mongo_cursor_destroy(cursor);
 
-return hostkeys;
+ return hostkeys;
 }
 
 HubHost *CFDB_GetHostByKey(mongo_connection *conn, const char *hostkey)
 {
-bson_buffer buffer;
-bson query, field;
+ bson_buffer buffer;
+ bson query, field;
 
 // query
-bson_buffer_init(&buffer);
-bson_append_string(&buffer, cfr_keyhash, hostkey);
-bson_from_buffer(&query, &buffer);
+ bson_buffer_init(&buffer);
+ bson_append_string(&buffer, cfr_keyhash, hostkey);
+ bson_from_buffer(&query, &buffer);
 
 // projection
-bson_buffer_init(&buffer);
-bson_append_int(&buffer, cfr_keyhash, 1);
-bson_append_int(&buffer, cfr_host_array, 1);
-bson_append_int(&buffer, cfr_ip_array, 1);
-bson_from_buffer(&field, &buffer);
+ bson_buffer_init(&buffer);
+ bson_append_int(&buffer, cfr_keyhash, 1);
+ bson_append_int(&buffer, cfr_host_array, 1);
+ bson_append_int(&buffer, cfr_ip_array, 1);
+ bson_from_buffer(&field, &buffer);
 
-bson out;
-HubHost *host = NULL;
-if (mongo_find_one(conn, MONGO_DATABASE, &query, &field, &out))
-   {
-   Item *host_names = BsonGetStringArrayAsItemList(&out, cfr_host_array);
-   Item *ip_addresses = BsonGetStringArrayAsItemList(&out, cfr_ip_array);
+ bson out;
+ HubHost *host = NULL;
+ if (mongo_find_one(conn, MONGO_DATABASE, &query, &field, &out))
+    {
+    Item *host_names = BsonGetStringArrayAsItemList(&out, cfr_host_array);
+    Item *ip_addresses = BsonGetStringArrayAsItemList(&out, cfr_ip_array);
 
-   host = NewHubHost(NULL,
-                     BsonGetString(&out, cfr_keyhash),
-                     host_names->name,
-                     ip_addresses->name);
+    host = NewHubHost(NULL,
+                      BsonGetString(&out, cfr_keyhash),
+                      host_names->name,
+                      ip_addresses->name);
 
-   DeleteItemList(host_names);
-   DeleteItemList(ip_addresses);
-   bson_destroy(&out);
-   }
+    DeleteItemList(host_names);
+    DeleteItemList(ip_addresses);
+    bson_destroy(&out);
+    }
 
-bson_destroy(&query);
-bson_destroy(&field);
+ bson_destroy(&query);
+ bson_destroy(&field);
 
-return host;
+ return host;
 }
 
 
