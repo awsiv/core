@@ -327,7 +327,10 @@ switch (state)
 static JsonArray *PromiseLogAsJson(mongo_connection *conn, PromiseLogState state, const char *handle,
                                    const char *hostkey, const char *context, int from, int to, PageInfo page)
 {
-HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from, to, true, context);
+
+ HostClassFilter *filter = NewHostClassFilter(context, NULL);
+ HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from, to, true, filter);
+ DeleteHostClassFilter(filter);
 
 JsonArray *output = NULL;
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
@@ -388,7 +391,9 @@ RETURN_JSON_ARRAY(output);
 static JsonArray *PromiseLogSummaryAsJson(mongo_connection *conn, PromiseLogState state, const char *handle,
                                           const char *hostkey, const char *context, int from, int to, PageInfo page)
 {
-HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from, to, true, context);
+ HostClassFilter *filter = NewHostClassFilter(context, NULL);
+ HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from, to, true, filter);
+ DeleteHostClassFilter(filter);
 
 // FIX: wrong on several levels
 Item *summary = NULL;

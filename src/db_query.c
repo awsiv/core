@@ -23,6 +23,7 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #ifdef HAVE_LIBMONGOC
 
 static bool AppendHostClassFilter(bson_buffer *queryBuffer, HostClassFilter *filter);
+static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFilter *hostClassFilter);
 
 /*****************************************************************************/
 
@@ -2709,31 +2710,27 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,ch
 
 HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, PromiseLogState state,
                                const char *lhandle, int regex, time_t from, time_t to, int sort,
-                               const char *classRegex)
+                               HostClassFilter *hostClassFilter)
 {
- char classRegexAnch[CF_MAXVARSIZE];
  char rhandle[CF_MAXVARSIZE],rcause[CF_BUFSIZE];
  char keyhash[CF_MAXVARSIZE], noteid[CF_MAXVARSIZE], oid[CF_MAXVARSIZE];
  bson_iterator it1;
  HubHost *hh;
  Rlist *record_list = NULL, *host_list = NULL;
  bson query, field;
- int emptyQuery = true;  
  char *collName;
  mongo_cursor *cursor;
  bson_buffer bb;
  bson_buffer *timeRange;
- time_t rt;  
-
-
- // query
-
+ time_t rt;
+ bool queryHasData = false;
+ 
  bson_buffer_init(&bb);
 
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    emptyQuery = false;
+    queryHasData = true;
     }
 
 
@@ -2748,7 +2745,7 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
        bson_append_string(&bb,cfr_promisehandle,lhandle);
        }
 
-    emptyQuery = false;
+    queryHasData = true;
     }
 
 
@@ -2767,37 +2764,20 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
        }
 
     bson_append_finish_object(timeRange);
-    emptyQuery = false;
+    queryHasData = true;
     }
 
+ queryHasData |= AppendHostKeys(conn, &bb, hostClassFilter);
 
- if(!EMPTY(classRegex))  // class
-    {
-    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
-
-    if(!QueryHostsWithClass(conn,&bb,classRegexAnch))
-       {
-       // no host matches class regex, so stop
-       bson_from_buffer(&query,&bb);
-       bson_destroy(&query);
-       return NewHubQuery(NULL,NULL);
-       }
-
-    emptyQuery = false;
-    }
-
-
- if(emptyQuery)
-    {
-    bson_empty(&query);
-    }
- else
+ if(queryHasData)
     {
     bson_from_buffer(&query,&bb);
     }
+ else
+    {
+    bson_empty(&query);
+    }
 
-
- // result 
 
  bson_buffer_init(&bb);
  bson_append_int(&bb,"_id",1);
@@ -2820,16 +2800,12 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
     }
 
 
- // do search
- 
  cursor = mongo_find(conn,collName,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
+ bson_destroy(&query);
  bson_destroy(&field);
- 
- if(!emptyQuery)
-    {
-    bson_destroy(&query);
-    }
+
+    
 
  while (mongo_cursor_next(cursor))
     {
@@ -2844,7 +2820,6 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
 
     while (bson_iterator_next(&it1))
        {
-       /* Query specific search/marshalling */
        snprintf(noteid,sizeof(noteid),"%s",CF_NONOTE);
             
        if (strcmp(bson_iterator_key(&it1),cfr_keyhash) == 0)
@@ -6084,9 +6059,9 @@ if (hostFound)
 
 /*****************************************************************************/
 
-int QueryHostsWithClass(mongo_connection *conn, bson_buffer *bb, char *classRegex)
+static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFilter *hostClassFilter)
 /**
- * Appends to bb the keyhash of hosts matching classRegex.
+ * Appends to bb the keyhash of hosts matching the class filter.
  * Useful for "joins".
  **/
 {
@@ -6095,14 +6070,14 @@ int QueryHostsWithClass(mongo_connection *conn, bson_buffer *bb, char *classRege
  bson query, field;
  mongo_cursor *cursor;
  bson_buffer *sub1, *sub2;
- int found = false;
 
- // query
  bson_buffer_init(&bbuf);
- bson_append_regex(&bbuf,cfr_class_keys,classRegex,"");
+ if(!AppendHostClassFilter(&bbuf, hostClassFilter))
+    {
+    return false;
+    }
  bson_from_buffer(&query,&bbuf);
   
- // returned attribute
  bson_buffer_init(&bbuf);
  bson_append_int(&bbuf,cfr_keyhash,1);
  bson_from_buffer(&field,&bbuf);
@@ -6117,7 +6092,7 @@ int QueryHostsWithClass(mongo_connection *conn, bson_buffer *bb, char *classRege
  int i = 0;
  char iStr[64] = {0};
 
- while(mongo_cursor_next(cursor))  // iterate over docs
+ while(mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
 
@@ -6132,7 +6107,6 @@ int QueryHostsWithClass(mongo_connection *conn, bson_buffer *bb, char *classRege
           bson_append_finish_object(sub2);
 
           i++;
-          found = true;
           }
        }
     }
@@ -6141,7 +6115,7 @@ int QueryHostsWithClass(mongo_connection *conn, bson_buffer *bb, char *classRege
   
  mongo_cursor_destroy(cursor);
 
- return found;
+ return true;
 }
 
 /*****************************************************************************/

@@ -1024,7 +1024,7 @@ void DeleteHubUserRBAC(HubUserRBAC *userRbac);
 HubRole *NewHubRole(char *name, char *description, char *classRxInclude, char *classRxExclude, char *bundleRxInclude);
 void DeleteHubRole(HubRole *role);
 #ifdef HAVE_LIBMONGOC
-HostClassFilter *NewHostClassFilter(char *classRxInclude, char *classRxExclude);
+HostClassFilter *NewHostClassFilter(const char *classRxInclude, const char *classRxExclude);
 void DeleteHostClassFilter(HostClassFilter *filter);
 #endif
 HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int hostCount, int totalHostCount, double kept, double repaired, double notkept, time_t genTime);

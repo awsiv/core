@@ -304,7 +304,10 @@ int Nova2Txt_promiselog(char *hostkey,char *handle, PromiseLogState state,time_t
     return false;
     }
 
- hq = CFDB_QueryPromiseLog(&dbconn,hostkey,state,handle,true,from,to,true,classreg);
+ HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
+ hq = CFDB_QueryPromiseLog(&dbconn,hostkey,state,handle,true,from,to,true,filter);
+ DeleteHostClassFilter(filter);
+ 
  PageRecords(&(hq->records),page,DeleteHubPromiseLog);
  
  snprintf(buffer,sizeof(buffer), 
@@ -386,7 +389,9 @@ int Nova2Txt_promiselog_summary(char *hostkey,char *handle, PromiseLogState stat
     return false;
     }
 
- hq = CFDB_QueryPromiseLog(&dbconn,hostkey,state,handle,true,from,to,false,classreg);
+ HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
+ hq = CFDB_QueryPromiseLog(&dbconn,hostkey,state,handle,true,from,to,false,filter);
+ DeleteHostClassFilter(filter);
  
  for (rp = hq->records; rp != NULL; rp=rp->next)
     {
@@ -1883,7 +1888,9 @@ int Nova2Txt_promiselog_hosts(char *hostkey,char *handle, PromiseLogState state,
     return false;
     }
 
- hq = CFDB_QueryPromiseLog(&dbconn,hostkey,state,handle,true,from,to,false,classreg);
+ HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
+ hq = CFDB_QueryPromiseLog(&dbconn,hostkey,state,handle,true,from,to,false,filter);
+ DeleteHostClassFilter(filter);
 
  StartJoin(returnval,"[",bufsize);
 
