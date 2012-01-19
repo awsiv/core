@@ -22,8 +22,5 @@ PHP_FUNCTION(cfmod_resource_software);
 
 PHP_FUNCTION(cfmod_resource_setuid);
 
-PHP_FUNCTION(cfmod_resource_report_bundle_profile);
-PHP_FUNCTION(cfmod_resource_report_software_installed);
-
 
 #endif
