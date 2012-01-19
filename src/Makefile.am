@@ -16,10 +16,6 @@ AM_CPPFLAGS = -I$(srcdir)/../../core/src $(CONSTELLATION_CFLAGS)
 
 noinst_LTLIBRARIES = libcfnova.la libcfmonitord.la
 
-if MONGO
-noinst_LTLIBRARIES += libcfhub.la
-endif
-
 libcfnova_la_LDFLAGS = -no-undefined
 
 # Separate out a library
@@ -114,6 +110,8 @@ endif
 endif
 
 if MONGO
+noinst_LTLIBRARIES += libcfhub.la
+
 libcfhub_la_SOURCES =	                                        \
 	hub.c
 endif
