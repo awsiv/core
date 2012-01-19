@@ -682,6 +682,10 @@ JsonObjectAppendString(&entry, LABEL_NAME, software->name);
 JsonObjectAppendString(&entry, LABEL_VERSION, software->version);
 JsonObjectAppendString(&entry, LABEL_ARCH, software->arch);
 
+JsonArray *hostkeys = NULL;
+JsonArrayAppendString(&hostkeys, software->hh->keyhash);
+JsonObjectAppendArray(&entry, LABEL_HOSTKEYS, hostkeys);
+
 return entry;
 }
 
@@ -741,14 +745,16 @@ for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    {
    HubSoftware *record = (HubSoftware *)rp->item;
    JsonObject *entry = SoftwareHostsEntryFind(output, record);
-   if (!entry)
+   if (entry)
+      {
+      JsonArray *hostkeys = JsonObjectGetAsArray(entry, LABEL_HOSTKEYS);
+      JsonArrayAppendString(&hostkeys, record->hh->keyhash);
+      }
+   else
       {
       entry = SoftwareHostsEntryCreate(record);
       JsonArrayAppendObject(&output, entry);
       }
-
-   JsonArray *hostkeys = JsonObjectGetAsArray(entry, LABEL_HOSTKEYS);
-   JsonArrayAppendString(&hostkeys, record->hh->keyhash);
    }
 
 DeleteHubQuery(result, DeleteHubSoftware);
