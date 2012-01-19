@@ -38,6 +38,7 @@ libcfnova_la_SOURCES =						\
 	license.c						\
 	registry.c						\
 	monitoring.c						\
+	ontology.c                                              \
 	server.c						\
 	datapackaging.c						\
 	dataunpack.c						\
@@ -54,7 +55,6 @@ libcfnova_la_SOURCES =						\
 	environments.c						\
 	reporting.c						\
 	html.c							\
-	knowledge.c						\
 	syntax.c						\
 	scorecards.c						\
 	copernicus.c						\
@@ -115,6 +115,11 @@ noinst_LTLIBRARIES += libcfhub.la
 libcfhub_la_SOURCES =	                                        \
 	hub.c
 endif
+
+noinst_LTLIBRARIES += libcfknow.la
+
+libcfknow_la_SOURCES = \
+	knowledge.c
 
 #
 # Pickup header files here so Automake knows about them
