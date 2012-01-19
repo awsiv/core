@@ -825,9 +825,9 @@ class Ion_auth
          * @return type bool
          */
 
-        public function delete_role($name)
+        public function delete_role($username, $name)
         {
-            if($this->ci->ion_auth_model_mongo->delete_role($name))
+            if($this->ci->ion_auth_model_mongo->delete_role($username, $name))
             {
                 $this->set_message('role_delete_successful');
 	        return TRUE;

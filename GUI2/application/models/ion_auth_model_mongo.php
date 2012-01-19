@@ -781,16 +781,19 @@ class Ion_auth_model_mongo extends CI_Model
 
         /**
 	 * delete_role
-	 *
+	 *@param
+         * $username - admin by default
+         * $name - role name
+         * 
 	 * @return bool
 	 * @author Sudhir Pandey
 	 **/
 
-        public function delete_role($name)
+        public function delete_role($username, $name)
         {
           try {
-                    // cfpr_role_create - return 1 if everything ok
-                    $ret = cfpr_role_delete($name);
+                    // cfpr_role_delete - return 1 if everything ok
+                    $ret = cfpr_role_delete($username, $name);
 
                     if ($ret === 1 ) {
                         return true;
@@ -934,7 +937,7 @@ class Ion_auth_model_mongo extends CI_Model
 		//return $this->mongo_db->insert('roles', $data); 
             try {
                     // cfpr_role_create - return 1 if everything ok
-                    $ret = cfpr_role_create($data['name'], $data['description'], $data['include_classes'], $data['exclude_classes'], $data['include_bundlers']);
+                    $ret = cfpr_role_create($data['username'], $data['name'], $data['description'], $data['include_classes'], $data['exclude_classes'], $data['include_bundlers']);
 
                     if ($ret === 1 ) {
                         return true;
