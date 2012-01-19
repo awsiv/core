@@ -14,7 +14,6 @@ require_once 'resource/promise-log-notkept-summary.php';
 require_once 'resource/promise-log-notkept.php';
 require_once 'resource/promise-log-repaired-summary.php';
 require_once 'resource/promise-log-repaired.php';
-require_once 'resource/report.php';
 require_once 'resource/setuid.php';
 require_once 'resource/software.php';
 require_once 'resource/variable.php';
