@@ -14,7 +14,7 @@
          <?php if($this->ion_auth->mode=="database"){ ?>
           <td class="actioncol">
              <?php
-             if($is_admin)
+             if($is_admin && $role['name'] != 'admin')
              {
               echo anchor("auth/manage_role/edit/".$role['_id']->__toString(), ' ',array('class'=>'edit','title'=>'edit role'));
               echo anchor("auth/delete_role/".$role['name'], ' ',array('class'=>'delete','title'=>'delete role'));
