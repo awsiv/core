@@ -33,7 +33,6 @@ static function_entry cfmod_functions[] =
 
     PHP_FE(cfmod_resource_software, NULL)
 
-    PHP_FE(cfmod_resource_report_list, NULL)
     PHP_FE(cfmod_resource_report_bundle_profile, NULL)
     PHP_FE(cfmod_resource_report_setuid_programs, NULL)
 

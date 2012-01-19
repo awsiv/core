@@ -1,7 +1,6 @@
 <?php
 
 /**
- * @uri /report
  * @uri /report/:id
  */
 class ReportResource extends Resource
@@ -32,71 +31,63 @@ class ReportResource extends Resource
 
         try
         {
-            if ($id == '')
+            switch ($id)
             {
-                $response->body = cfmod_resource_report_list();
-                return $response;
+                case 'bundle-profile':
+                    $response->body = cfmod_resource_report_bundle_profile($hostkey,
+                            $name, $context, $count, $startPage);
+                    break;
+
+                case 'patches-installed':
+                    $response->body = cfpr_report_patch_in($hostkey,
+                            $name, $version, $arch, true, $context, $count,
+                            $startPage);
+                    break;
+
+                case 'patches-available':
+                    $response->body = cfpr_report_patch_avail($hostkey,
+                            $name, $version, $arch, true, $context, $count,
+                            $startPage);
+                    break;
+
+                case 'compliance-summary':
+                    $response->body = cfpr_report_compliance_summary($hostkey,
+                            NULL, $from, $kept, $notkept, $repaired, ">",
+                            $context, $count, $startPage);
+                    break;
+
+                case 'promise-compliance':
+                    $response->body = cfpr_report_compliance_promises($hostkey,
+                            $handle, $status, true, $context, $count,
+                            $startPage);
+                    break;
+
+                case 'performance':
+                    $response->body = cfpr_report_performance($hostkey, $job,
+                            true, $context, $count, $startPage);
+                    break;
+
+                case 'setuid-programs':
+                    $response->body = cfmod_resource_report_setuid_programs($hostkey,
+                            $name, $context, $count, $startPage);
+                    break;
+
+                case 'file-change-log':
+                    $response->body = cfpr_report_filechanges($hostkey, $name,
+                            true, $from, ">", $context, $count, $startPage);
+                    break;
+
+                case 'file-change-diffs':
+                    $response->body = cfpr_report_filediffs($hostkey, $name,
+                            $value, true, $from, ">", $context, $count,
+                            $startPage);
+                    break;
+
+                default:
+                    $response->code = Response::NOTFOUND;
+                    return $response;
             }
-            else
-            {
-                switch ($id)
-                {
-                    case 'bundle-profile':
-                        $response->body = cfmod_resource_report_bundle_profile($hostkey,
-                                $name, $context, $count, $startPage);
-                        break;
-
-                    case 'patches-installed':
-                        $response->body = cfpr_report_patch_in($hostkey,
-                                $name, $version, $arch, true, $context, $count,
-                                $startPage);
-                        break;
-
-                    case 'patches-available':
-                        $response->body = cfpr_report_patch_avail($hostkey,
-                                $name, $version, $arch, true, $context, $count,
-                                $startPage);
-                        break;
-
-                    case 'compliance-summary':
-                        $response->body = cfpr_report_compliance_summary($hostkey,
-                                NULL, $from, $kept, $notkept, $repaired, ">",
-                                $context, $count, $startPage);
-                        break;
-
-                    case 'promise-compliance':
-                        $response->body = cfpr_report_compliance_promises($hostkey,
-                                $handle, $status, true, $context, $count,
-                                $startPage);
-                        break;
-
-                    case 'performance':
-                        $response->body = cfpr_report_performance($hostkey, $job,
-                                true, $context, $count, $startPage);
-                        break;
-
-                    case 'setuid-programs':
-                        $response->body = cfmod_resource_report_setuid_programs($hostkey,
-                                $name, $context, $count, $startPage);
-                        break;
-
-                    case 'file-change-log':
-                        $response->body = cfpr_report_filechanges($hostkey, $name,
-                                true, $from, ">", $context, $count, $startPage);
-                        break;
-
-                    case 'file-change-diffs':
-                        $response->body = cfpr_report_filediffs($hostkey, $name,
-                                $value, true, $from, ">", $context, $count,
-                                $startPage);
-                        break;
-
-                    default:
-                        $response->code = Response::NOTFOUND;
-                        return $response;
-                }
-                return $response;
-            }
+            return $response;
         }
         catch (Exception $e)
         {

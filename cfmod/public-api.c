@@ -3,8 +3,6 @@
 #include "db_query.h"
 #include "common.h"
 
-static const char *LABEL_ID = "id";
-static const char *LABEL_CATEGORY = "category";
 static const char *LABEL_DESCRIPTION = "description";
 static const char *LABEL_HOSTKEY = "hostkey";
 static const char *LABEL_HOSTKEYS = "hostkeys";
@@ -757,28 +755,6 @@ DeleteHubQuery(result, DeleteHubSoftware);
 
 RETURN_JSON_ARRAY(output);
 }
-
-
-/************************************************************************************/
-
-
-PHP_FUNCTION(cfmod_resource_report_list)
-{
-JsonArray *reports = NULL;
-
-for (ReportInfo *report = BASIC_REPORTS; report->id != NULL; report++)
-   {
-   JsonObject *report_entry = NULL;
-   JsonObjectAppendString(&report_entry, LABEL_ID, report->id);
-   JsonObjectAppendString(&report_entry, LABEL_CATEGORY, report->category);
-   JsonObjectAppendString(&report_entry, LABEL_DESCRIPTION, report->description);
-
-   JsonArrayAppendObject(&reports, report_entry);
-   }
-
-RETURN_JSON_ARRAY(reports);
-}
-
 
 /************************************************************************************/
 
