@@ -46,11 +46,6 @@ class ReportResource extends Resource
                                 $name, $context, $count, $startPage);
                         break;
 
-                    case 'software-installed':
-                        $response->body = cfmod_resource_report_software_installed($hostkey,
-                                $name, $version, $arch, $context, $count, $startPage);
-                        break;
-
                     case 'patches-installed':
                         $response->body = cfpr_report_patch_in($hostkey,
                                 $name, $version, $arch, true, $context, $count,

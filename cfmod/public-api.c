@@ -7,6 +7,7 @@ static const char *LABEL_ID = "id";
 static const char *LABEL_CATEGORY = "category";
 static const char *LABEL_DESCRIPTION = "description";
 static const char *LABEL_HOSTKEY = "hostkey";
+static const char *LABEL_HOSTKEYS = "hostkeys";
 static const char *LABEL_NAME = "name";
 static const char *LABEL_VALUE = "value";
 static const char *LABEL_VERSION = "version";
@@ -672,31 +673,37 @@ DeleteHubQuery(result, DeleteHubClass);
 RETURN_JSON_ARRAY(contexts);
 }
 
+
 /************************************************************************************/
 
-
-PHP_FUNCTION(cfmod_resource_report_list)
+static JsonObject *SoftwareHostsEntryCreate(HubSoftware *software)
 {
-JsonArray *reports = NULL;
+JsonObject *entry = NULL;
 
-for (ReportInfo *report = BASIC_REPORTS; report->id != NULL; report++)
-   {
-   JsonObject *report_entry = NULL;
-   JsonObjectAppendString(&report_entry, LABEL_ID, report->id);
-   JsonObjectAppendString(&report_entry, LABEL_CATEGORY, report->category);
-   JsonObjectAppendString(&report_entry, LABEL_DESCRIPTION, report->description);
+JsonObjectAppendString(&entry, LABEL_NAME, software->name);
+JsonObjectAppendString(&entry, LABEL_VERSION, software->version);
+JsonObjectAppendString(&entry, LABEL_ARCH, software->arch);
 
-   JsonArrayAppendObject(&reports, report_entry);
-   }
-
-RETURN_JSON_ARRAY(reports);
+return entry;
 }
 
+static JsonObject *SoftwareHostsEntryFind(JsonArray *entries, HubSoftware *software)
+{
+for (Rlist *rp = entries; rp != NULL; rp = rp->next)
+   {
+   JsonObject *entry = (JsonObject *)rp->item;
+   if (strcmp(JsonObjectGetAsString(entry, LABEL_NAME), software->name) == 0 &&
+       strcmp(JsonObjectGetAsString(entry, LABEL_VERSION), software->version) == 0 &&
+       strcmp(JsonObjectGetAsString(entry, LABEL_ARCH), software->arch) == 0)
+      {
+      return entry;
+      }
+   }
 
-/************************************************************************************/
+return NULL;
+}
 
-
-PHP_FUNCTION(cfmod_resource_report_software_installed)
+PHP_FUNCTION(cfmod_resource_software)
 {
 char *hostkey = NULL,
      *name = NULL,
@@ -731,24 +738,45 @@ DeleteHostClassFilter(filter);
 
 DATABASE_CLOSE(&conn)
 
-JsonArray *software = NULL;
+JsonArray *output = NULL;
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    {
    HubSoftware *record = (HubSoftware *)rp->item;
-   JsonObject *software_entry = NULL;
+   JsonObject *entry = SoftwareHostsEntryFind(output, record);
+   if (!entry)
+      {
+      entry = SoftwareHostsEntryCreate(record);
+      JsonArrayAppendObject(&output, entry);
+      }
 
-   JsonObjectAppendString(&software_entry, LABEL_HOSTKEY, record->hh->keyhash);
-   JsonObjectAppendString(&software_entry, LABEL_NAME, record->name);
-   JsonObjectAppendString(&software_entry, LABEL_VERSION, record->version);
-   JsonObjectAppendString(&software_entry, LABEL_ARCH, Nova_LongArch(record->arch));
-   JsonObjectAppendInteger(&software_entry, LABEL_TIMESTAMP, (int)record->t);
-
-   JsonArrayAppendObject(&software, software_entry);
+   JsonArray *hostkeys = JsonObjectGetAsArray(entry, LABEL_HOSTKEYS);
+   JsonArrayAppendString(&hostkeys, record->hh->keyhash);
    }
 
 DeleteHubQuery(result, DeleteHubSoftware);
 
-RETURN_JSON_ARRAY(software);
+RETURN_JSON_ARRAY(output);
+}
+
+
+/************************************************************************************/
+
+
+PHP_FUNCTION(cfmod_resource_report_list)
+{
+JsonArray *reports = NULL;
+
+for (ReportInfo *report = BASIC_REPORTS; report->id != NULL; report++)
+   {
+   JsonObject *report_entry = NULL;
+   JsonObjectAppendString(&report_entry, LABEL_ID, report->id);
+   JsonObjectAppendString(&report_entry, LABEL_CATEGORY, report->category);
+   JsonObjectAppendString(&report_entry, LABEL_DESCRIPTION, report->description);
+
+   JsonArrayAppendObject(&reports, report_entry);
+   }
+
+RETURN_JSON_ARRAY(reports);
 }
 
 
