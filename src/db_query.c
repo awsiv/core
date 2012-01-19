@@ -416,10 +416,7 @@ else
 
 hq = CFDB_QueryHosts(conn,MONGO_DATABASE,cfr_keyhash,&query);
 
-if (!emptyQuery)
-   {
-   bson_destroy(&query);
-   }
+bson_destroy(&query);
 
 return hq;
 }
@@ -820,10 +817,8 @@ bson_from_buffer(&field, &bb);
 cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 bson_destroy(&field);
 
-if (!emptyQuery)
-   {
-   bson_destroy(&query);
-   }
+bson_destroy(&query);
+
 
 while (mongo_cursor_next(cursor))
     {
@@ -906,12 +901,11 @@ Rlist *CFDB_QuerySoftClasses(mongo_connection *conn,char *keyHash,char *lclass,i
 /* BEGIN SEARCH */
 
  cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+
+ bson_destroy(&query);
  bson_destroy(&field);
 
- if(!emptyQuery)
-    {
-    bson_destroy(&query);
-    }
+
 
  while (mongo_cursor_next(cursor))
     {
@@ -996,12 +990,9 @@ Rlist *CFDB_QueryIpClasses(mongo_connection *conn,char *keyHash,char *lclass,int
 /* BEGIN SEARCH */
 
  cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
- bson_destroy(&field);
 
- if(!emptyQuery)
-    {
-    bson_destroy(&query);
-    }
+ bson_destroy(&query);
+ bson_destroy(&field);
 
  while (mongo_cursor_next(cursor))
     {
@@ -1127,10 +1118,8 @@ HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes)
  // 2: find all distinct classes in these hosts
  classList = CFDB_QueryDistinct(conn, MONGO_BASE, "hosts", cfr_class_keys, &query);
 
- if(!emptyQuery)
-    {
-    bson_destroy(&query);
-    }
+ bson_destroy(&query);
+
 
  
  // 3: count occurences of each class in subset of hosts
@@ -3101,12 +3090,9 @@ addresses[0] = '\0';
 
 cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
+bson_destroy(&query);
 bson_destroy(&field);
 
-if (!emptyQuery)
-   {
-   bson_destroy(&query);
-   }
 
 while (mongo_cursor_next(cursor))
    {
@@ -4666,17 +4652,16 @@ HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char 
     bson_from_buffer(&query,&bb);
     }
 
-// returned attribute
  bson_buffer_init(&bb);
  bson_append_int(&bb,cfp_handle,1);
  bson_from_buffer(&field,&bb);
 
  cursor = mongo_find(conn,MONGO_PROMISES_UNEXP,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
- bson_destroy(&query);  // ok for empty as well
+ bson_destroy(&query);
  bson_destroy(&field);
 
- while(mongo_cursor_next(cursor))  // iterate over docs
+ while(mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
    
@@ -4866,12 +4851,9 @@ Item *CFDB_QueryBundles(mongo_connection *conn,char *bTypeRegex,char *bNameRegex
 
  cursor = mongo_find(conn,MONGO_PROMISES_UNEXP,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
+ bson_destroy(&query);
  bson_destroy(&field);
 
- if (!emptyQuery)
-    {
-    bson_destroy(&query);
-    }
 
  while(mongo_cursor_next(cursor))  // iterate over docs
     {
@@ -5271,8 +5253,6 @@ Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameReg
  char name[CF_MAXVARSIZE] = {0};
  Item *record_list = NULL;
 
- /* BEGIN query document */
-
  bson_buffer_init(&bbuf);
  
  if (!EMPTY(bTypeRegex))
@@ -5296,7 +5276,7 @@ Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameReg
     bson_from_buffer(&query,&bbuf);
     }
 
-// returned attribute
+
  bson_buffer_init(&bbuf);
  bson_append_int(&bbuf,cfb_bodytype,1);
  bson_append_int(&bbuf,cfb_bodyname,1);
@@ -5304,14 +5284,9 @@ Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameReg
 
  cursor = mongo_find(conn,MONGO_BODIES,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
+ bson_destroy(&query);
  bson_destroy(&field);
 
- if (!emptyQuery)
-    {
-    bson_destroy(&query);
-    }
-
-/* BEGIN SEARCH */
 
  while (mongo_cursor_next(cursor))
     {
@@ -7047,8 +7022,6 @@ Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,i
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
   char hostclass[CF_BUFSIZE];
 
-  /* BEGIN query document */
-
   bson_buffer_init(&bb);
 
   if (!EMPTY(keyHash))
@@ -7072,19 +7045,20 @@ Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,i
       bson_from_buffer(&query,&bb);
     }
 
-  /* BEGIN RESULT DOCUMENT */
   bson_buffer_init(&bb);
   bson_append_int(&bb,cfr_keyhash,1);
   bson_append_int(&bb,cfr_ip_array,1);
   bson_append_int(&bb,cfr_host_array,1);
   bson_from_buffer(&field, &bb);
-  /* BEGIN SEARCH */
+
   cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+
+  bson_destroy(&query);
   bson_destroy(&field);
-  if(!emptyQuery)
-    {
-      bson_destroy(&query);
-    }
+  
+
+
+  
   while (mongo_cursor_next(cursor))
     {
       bson_iterator_init(&it1,cursor->current.data);
@@ -7120,8 +7094,6 @@ Rlist *CFDB_QueryAllClasses(mongo_connection *conn,char *keyHash,char *lclass,in
   char classRegexAnch[CF_MAXVARSIZE];
   int emptyQuery = true;
 
-    /* BEGIN query document */
-
     bson_buffer_init(&bb);
 
   if (!EMPTY(keyHash))
@@ -7146,21 +7118,14 @@ Rlist *CFDB_QueryAllClasses(mongo_connection *conn,char *keyHash,char *lclass,in
       bson_from_buffer(&query,&bb);
     }
 
-  /* BEGIN RESULT DOCUMENT */
-
   bson_buffer_init(&bb);
   bson_append_int(&bb,cfr_class,1);
   bson_from_buffer(&field, &bb);
 
-  /* BEGIN SEARCH */
-
   cursor = mongo_find(conn,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
-  bson_destroy(&field);
 
-  if (!emptyQuery)
-    {
-      bson_destroy(&query);
-    }
+  bson_destroy(&query);
+  bson_destroy(&field);
 
   while (mongo_cursor_next(cursor))
     {
