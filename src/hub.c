@@ -28,24 +28,11 @@ int BIG_UPDATES = 6;
 
 int  NO_FORK = false;
 int  CONTINUOUS = false;
-char MAILTO[CF_BUFSIZE];
-char MAILFROM[CF_BUFSIZE];
-char EXECCOMMAND[CF_BUFSIZE];
-char VMAILSERVER[CF_BUFSIZE];
 Item *SCHEDULE = NULL;
 Item *FEDERATION = NULL;
 Item *EXCLUDE_HOSTS = NULL;
 
-pid_t MYTWIN = 0;
-int MAXLINES = 30;
-int SPLAYTIME = 0;
-const int INF_LINES = -2;
-int NOSPLAY = false;
-int NOWINSERVICE = false;
-int THREADS = 0;
 int CFH_ZENOSS = false;
-
-extern BodySyntax CFEX_CONTROLBODY[];
 
 /* Prototypes */
 
