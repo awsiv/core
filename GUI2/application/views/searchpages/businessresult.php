@@ -1,14 +1,16 @@
-<?php //echo $breadCrumbUrl;                 ?>
 <div id="bodyreport" class="outerdiv grid_12">
 
     <div id="reportpanel" class="innerdiv">
-        <p class="title"><?php echo $report_title;
-echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : ""
-?></p>
+        <p class="title">
+            <?php
+            echo $report_title;
+            echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : ""
+            ?>
+        </p>
         <div class="reporthead">
             <div class="grid_8">
                 <a href="<?php echo $report_link ?>" id="send_mail" class="icons download showqtip" title="Download report"></a>
-<?php echo anchor('#', 'Select host', array('id' => 'findhost', 'title' => 'Report for another host', 'class' => 'showqtip')) ?>
+                <?php echo anchor('#', 'Select host', array('id' => 'findhost', 'title' => 'Report for another host', 'class' => 'showqtip')) ?>
                 &nbsp;&nbsp;<?php echo anchor('widget/allreports', 'Select report', array('id' => 'findreport', 'title' => 'Other Reports', 'class' => 'showqtip')) ?>
             </div>
             <div class="grid_4" style="text-align: right;">
@@ -47,7 +49,7 @@ echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : ""
     </div>
 </div>
 <div class="clear"></div>
-<div title="Report download" id="dialog" class="stylized" style="width:400px;display:none">
+<div title="Report download" id="dialog" class="stylized" style="width:400px;display:none;">
     <form>
         <fieldset class="ui-helper-reset">
             <label for="report_download">Download: </label>
@@ -86,13 +88,12 @@ echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : ""
                         <br />
                         </form>
 
+                        <div id="loading" class="info" style="display: none;"><img src='<?php echo get_imagedir(); ?>ajax-loader.gif' />Please wait a while...</div>
+                        <div id="tempdiv" style="display: none;" ></div>
+
                         </div>
                         <script type="text/javascript">
                             $(document).ready(function() {
-                                // $('.tables table').tableFilter();
-                                //$('.tables table').tablesorter({widgets: ['zebra']});
-        
-        
                                 $('#modifySearch').click(function(e) {
                                     e.preventDefault();  
                                     $('#modifySearchPanel').toggle();
@@ -160,13 +161,14 @@ echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : ""
                                     width: 'auto',
                                     buttons: {
                                         'Ok': function() {
-                                            $('#tempdiv',$dialog).remove(); 
-                                            $dialog.append("<div id='tempdiv' class='info'><div id='loading'><img src='<?php echo get_imagedir(); ?>ajax-loader.gif' />Please wait a while...</div></div>");
+                                            $('#tempdiv').html(''); 
+                                            $('#loading').show();                                            
+                                            
                                             $.ajax({
                                                 type: "POST",
                                                 url: $('#parameters',$dialog).val(),
-                                                data:(
-                                                {
+                                                data:
+                                                    {
                                                     'rf':$('#type',$dialog).val(),
                                                     'to':$('#to_contacts',$dialog).val(),
                                                     'subject':$('#mail_subject',$dialog).val(),
@@ -176,13 +178,12 @@ echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : ""
                                                     'page':'<?php echo $current; ?>',
                                                     'rows':'<?php echo $number_of_rows; ?>',
                                                     'download':$('#report_download',$dialog).val()
-                                                }
-                                            ),
+                                                    },
                                                 dataType:'json',
-                                                async: false,
+                                                async: true,
                                                 success: function(data){
-                                                    $('#loading',$dialog).remove(); 
-                                                    $('#tempdiv',$dialog).removeClass('error');
+                                                    $('#loading',$dialog).slideUp(); 
+                                                    $('#tempdiv',$dialog).show().removeClass('error');
                                                     $('#tempdiv',$dialog).addClass('info');
                                                     $('#tempdiv',$dialog).append(data.message); 
                                                     $(":button:contains('Send')").hide();
@@ -192,25 +193,28 @@ echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : ""
                            
                                                 },
                                                 error: function(jqXHR, textStatus, errorThrown){
+                                                    $('#loading',$dialog).slideUp(); 
                                                     $('#tempdiv',$dialog).removeClass('info');
                                                     $('#tempdiv',$dialog).addClass('error');                                
-                                                    $('#tempdiv',$dialog).html(errorThrown);
+                                                    $('#tempdiv',$dialog).show().html(errorThrown);
                                                 }
                                             });
                    
                                         },
                                         'Cancel': function() {
+                                            $('#loading',$dialog).hide(); 
+                                            $('#tempdiv',$dialog).html('');
+                                            $('#tempdiv',$dialog).addClass('info');
                                             $(this).dialog('close');
                                         }
                                     },
                                     open: function() {
                                         $('form',$dialog).show();
                                         $('#to_contacts',$dialog).focus();
-                                        $('#tempdiv',$dialog).remove();
+                                        $('#tempdiv',$dialog).html('').hide();
                                         $(":button:contains('Send')").show();
                                         $(":button:contains('Cancel')").show();
                                         $(":button:contains('Ok')").show();
-
                                     },
                                     close: function() {
 
