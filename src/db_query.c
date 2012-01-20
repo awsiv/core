@@ -3832,54 +3832,28 @@ int CFDB_QueryMonView(mongo_connection *conn, char *keyhash,char *monId, enum mo
 
 /*****************************************************************************/
 
-int CFDB_CountHosts(mongo_connection *conn)
-/**
- * Counts number of hosts.
- *
- **/
+int CFDB_CountHosts(mongo_connection *conn, HostClassFilter *hostClassFilter)
 {
- bson query;
+bson_buffer bb;
+bson_buffer_init(&bb);
 
- bson_empty(&query);
- 
- return CFDB_CountHostsGeneric(conn, &query);
-}
+bool queryHasData = AppendHostClassFilter(&bb, hostClassFilter);
 
-/*****************************************************************************/
+bson query;
+if (queryHasData)
+   {
+   bson_from_buffer(&query,&bb);
+   }
+else
+   {
+   bson_empty(&query);
+   }
 
-int CFDB_CountHostsWithClasses(mongo_connection *conn, Item *classes)
-/**
- * Counts number of hosts with all the classes set during the last week.
- *
- **/
-{
- bson query;
- bson_buffer bb, *sub1, *sub2;
- Item *ip;
- int i;
- char iStr[64];
+int count = CFDB_CountHostsGeneric(conn, &query);
 
- bson_buffer_init(&bb);
+bson_buffer_destroy(&bb);
 
- sub1 = bson_append_start_object(&bb, cfr_class_keys);
- sub2 = bson_append_start_array(&bb, "$all");
-
- for(ip = classes, i = 0; ip != NULL; ip = ip->next, i++)
-    {
-    snprintf(iStr, sizeof(iStr), "%d", i);
-    bson_append_string(sub2, iStr, ip->name);
-    }
- 
- bson_append_finish_object(sub2); 
- bson_append_finish_object(sub1);
- 
- bson_from_buffer(&query, &bb);
- 
- int count = CFDB_CountHostsGeneric(conn, &query);
-
- bson_destroy(&query);
- 
- return count;
+return count;
 }
 
 /*****************************************************************************/
