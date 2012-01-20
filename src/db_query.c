@@ -7402,7 +7402,7 @@ for (Rlist *rp = filter->classRxExcludes; rp != NULL; rp = rp->next)
    {
    AnchorRegex(rp->item, classRxAnchored, sizeof(classRxAnchored));
    bson_append_regex(excludeClassArray, cfr_class_keys, classRxAnchored, "");
-   modified = false;
+   modified = true;
    }
 
 bson_append_finish_object(excludeClassArray);
