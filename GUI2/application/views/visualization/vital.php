@@ -7,8 +7,9 @@
                     <div class="panelcontent">
                         <div class="vitaltable">
                             <div id="graph-pulses-vital-sign">
-                                <?php foreach ($performanceData['obs'] as $index => $fetchData) {
-                               // foreach ($performanceData as $name){
+                                <?php
+                                krsort($performanceData['obs']);
+                                foreach ($performanceData['obs'] as $index => $fetchData) {
                                     ?>
                                 <h3><a href="#"><?php echo $fetchData['id']; ?> <?php echo $fetchData['desc'] ? "(".$fetchData['desc'].")":''; ?>  <?php echo ($fetchData['units']) ? "[".urldecode($fetchData['units'])."]":'' ; ?><br/>
                                             <?php echo getDateStatus($performanceData['ls'],true); ?></a>
