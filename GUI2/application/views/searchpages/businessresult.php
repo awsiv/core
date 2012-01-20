@@ -23,7 +23,7 @@
                         <input type="input" id="search_name" name="search_name" class="textbox"></input>
                         <input type="hidden" id="search_params" name="search_params" value="<?php echo $params; ?>"></input>
                         <input type="hidden" id="search_url" name="search_url" value="<?php echo site_url() . $breadCrumbUrl; ?>"></input>
-                        <input type="hidden" id="report_title" name="report_title" value="<?php echo $report_title; ?>"></input>
+                        <input type="hidden" id="report_title" name="report_title" value="<?php echo $report_type; ?>"></input>
                         <input type="submit" id="submit_search" value="save" class="btn" />
                     </form>                
                 </div> 
