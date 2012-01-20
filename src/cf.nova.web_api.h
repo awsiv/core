@@ -53,8 +53,8 @@ typedef enum cdp_report
 
 typedef struct
    {
-   char *classRxInclude;
-   char *classRxExclude;
+   Rlist *classRxIncludes;
+   Rlist *classRxExcludes;
    } HostClassFilter;
 
 typedef struct

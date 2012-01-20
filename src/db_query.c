@@ -7387,29 +7387,28 @@ static bool AppendHostClassFilter(bson_buffer *queryBuffer, HostClassFilter *fil
     return false;
     }
 
- if(filter->classRxInclude)
-    {
-    AnchorRegex(filter->classRxInclude, classRxAnchored, sizeof(classRxAnchored));
-    bson_append_regex(queryBuffer, cfr_class_keys, classRxAnchored, "");
-    modified = true;
-    }
- 
- if(filter->classRxExclude)
-    {
-    bson_buffer *excludeClassBuffer, *excludeClassArray;
-    excludeClassBuffer = bson_append_start_object(queryBuffer, cfr_class_keys);
-    excludeClassArray = bson_append_start_array(excludeClassBuffer, "$nin");
+for (Rlist *rp = filter->classRxIncludes; rp; rp = rp->next)
+   {
+   AnchorRegex(ScalarValue(rp), classRxAnchored, sizeof(classRxAnchored));
+   bson_append_regex(queryBuffer, cfr_class_keys, classRxAnchored, "");
+   modified = true;
+   }
 
-    AnchorRegex(filter->classRxExclude, classRxAnchored, sizeof(classRxAnchored));
-    bson_append_regex(excludeClassArray, cfr_class_keys, classRxAnchored, "");
 
-    bson_append_finish_object(excludeClassArray);
-    bson_append_finish_object(excludeClassBuffer);
+bson_buffer *excludeClassBuffer = bson_append_start_object(queryBuffer, cfr_class_keys);
+bson_buffer *excludeClassArray = bson_append_start_array(excludeClassBuffer, "$nin");
 
-    modified = true;
-    }
+for (Rlist *rp = filter->classRxExcludes; rp != NULL; rp = rp->next)
+   {
+   AnchorRegex(rp->item, classRxAnchored, sizeof(classRxAnchored));
+   bson_append_regex(excludeClassArray, cfr_class_keys, classRxAnchored, "");
+   modified = false;
+   }
 
- return modified;
+bson_append_finish_object(excludeClassArray);
+bson_append_finish_object(excludeClassBuffer);
+
+return modified;
 }
 
 

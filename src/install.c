@@ -1121,11 +1121,21 @@ void DeleteHubRole(HubRole *role)
 #ifdef HAVE_LIBMONGOC
 HostClassFilter *NewHostClassFilter(const char *classRxInclude, const char *classRxExclude)
 {
+Rlist *classRxIncludes = NULL, *classRxExcludes;
+
+AppendRlist(&classRxIncludes, classRxInclude, CF_SCALAR);
+AppendRlist(&classRxExcludes, classRxExclude, CF_SCALAR);
+
+return NewHostClassFilterLists(classRxIncludes, classRxExcludes);
+}
+
+HostClassFilter *NewHostClassFilterLists(Rlist *classRxIncludes, Rlist *classRxExcludes)
+{
  HostClassFilter *filter = xmalloc(sizeof(HostClassFilter));
 
- filter->classRxInclude = SafeStringDuplicate(classRxInclude);
- filter->classRxExclude = SafeStringDuplicate(classRxExclude);
- 
+ filter->classRxIncludes = classRxIncludes;
+ filter->classRxExcludes = classRxExcludes;
+
  return filter;
 }
 
@@ -1133,9 +1143,10 @@ HostClassFilter *NewHostClassFilter(const char *classRxInclude, const char *clas
 
 void DeleteHostClassFilter(HostClassFilter *filter)
 {
- free(filter->classRxInclude);
- free(filter->classRxExclude);
- free(filter);
+DeleteRlist(filter->classRxIncludes);
+DeleteRlist(filter->classRxExcludes);
+
+free(filter);
 }
 #endif
 
