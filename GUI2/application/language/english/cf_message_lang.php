@@ -258,4 +258,9 @@ $lang['knowledge_insight_leads'] = 'Insight, leads and perspectives';
 $lang['admin_role_delete_forbidden'] = "You can't delete admin role";
 $lang['empty_rolename'] = 'Role name is empty';
 
+
+/*
+ * General
+ */
+$lang['nothing_found'] = 'Nothing Found';
 ?>
