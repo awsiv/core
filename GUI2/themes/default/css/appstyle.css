@@ -2516,7 +2516,7 @@ background-image: url(../images/error.png);
     font-size: 13px;
     padding:3px;
     font-family: "Trebuchet MS",Helvetica, Arial, sans-serif;
-    border:solid 1px #fff
+    border:solid 1px #fff 
 }
 .ui-widget-content .btn a:hover, .btn a:hover, .outerdiv .btn:hover,.ui-widget-content a.btn:hover{
     color:#08A3C1
@@ -2846,5 +2846,3 @@ background-image: none;
 .result li.reportitem{
     padding-left:10px;
 }
-
-

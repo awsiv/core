@@ -34,6 +34,7 @@
     .selected_item {
         background: #eee;
     }
+input[readonly] {background: buttonface;}
     -->
    </style>
 <div class="outerdiv grid_12">
