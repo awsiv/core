@@ -670,13 +670,32 @@ class Ion_auth_model_mongo extends CI_Model
 
 	/**
 	 * get_roles
-	 *
+	 *   Username - we should pass this wariable for authentification
 	 * @return object
 	 * @author Phil Sturgeon
 	 **/
-	public function get_roles()
+	public function get_roles($username = '')
   	{
-	    return $this->mongo_db->get('roles');
+	    //return $this->mongo_db->get('roles');
+            if (trim($username) == '')
+            {
+    	
+                $this->ion_auth->set_error('no_permission');
+		return FALSE; 
+            }
+                try {
+                    // cfpr_role_delete - return 1 if everything ok
+                    $ret = json_decode(cfpr_role_list_all($username), TRUE);
+
+                    return $ret;
+
+                } catch (Exception $e) {
+                    log_message('error', $e->getMessage());
+                    throw $e;
+                }
+        
+		$this->ion_auth->set_error('role_delete_unsuccessful');
+		return FALSE; 
   	}
 
 	/**
@@ -685,10 +704,14 @@ class Ion_auth_model_mongo extends CI_Model
 	 * @return object
 	 * @author Ben Edmunds
 	 **/
-	public function get_role($id)
+	public function get_role($username, $rolename)
   	{
-	    return $this->mongo_db->get_where_object('roles',array('_id'=>new MongoId($id)),1);
-			    
+            $ret = json_decode(cfpr_role_list_by_name($username, $rolename), true);
+            if (count($ret) >0)
+            {    
+                return $ret[0];			    
+            } 
+            return false;
   	}
 
 	/**
@@ -700,12 +723,16 @@ class Ion_auth_model_mongo extends CI_Model
 	public function get_role_by_name($name)
   	{
 
-	    return $this->mongo_db->get_where_object('roles',array('name'=>$name),1);
+	   // return $this->mongo_db->get_where_object('roles',array('name'=>$name),1);
+           return $this->get_role($username, $rolename);
   	}
 
-        public function role_check($name)
+        public function role_check($username, $rolename)
         {
-            return $this->mongo_db->where(array('name'=>$name))->count('roles') > 0;
+            if (count($this->get_role($username, $rolename)) >0 ) {
+                return true;
+            }
+            return false;
         }
 
 	/**
@@ -932,12 +959,11 @@ class Ion_auth_model_mongo extends CI_Model
 	*@ author sudhir pandey
 	**/
 
-	public function create_role($data)
+	public function create_role($username, $data)
 	{
-		//return $this->mongo_db->insert('roles', $data); 
             try {
                     // cfpr_role_create - return 1 if everything ok
-                    $ret = cfpr_role_create($data['username'], $data['name'], $data['description'], $data['include_classes'], $data['exclude_classes'], $data['include_bundlers']);
+                    $ret = cfpr_role_create($username, $data['name'], $data['description'], $data['classrxinclude'], $data['classrxexclude'], $data['bundlerxinlcude']);
 
                     if ($ret === 1 ) {
                         return true;
@@ -961,18 +987,20 @@ class Ion_auth_model_mongo extends CI_Model
 	*@ author sudhir pandey
 	**/
 
-	public function update_role($id,$data)
+	public function update_role($usename, $data)
 	{
-            if (array_key_exists('name', $data) && $this->role_check($data['name']))
+            /*  something old
+            if (array_key_exists('name', $data) && $this->role_check($username, $data['name']))
 	    {
-                $role=$this->get_role_by_name($data['name']);
-                if($role->_id->__toString() != $id)
+                $role = $this->get_role_by_name($username, $data['name']);
+                
+                if($role->name != $id)
                 {
 		$this->ion_auth->set_error('role_creation_duplicate');
 		return FALSE;
                 }
 	    }
-            
+
             $old_doc=$this->mongo_db->get_where_object('roles',array('_id'=>new MongoId($id)));
 	    $this->mongo_db->where(array('_id'=>new MongoId($id)));
             $result_role=$this->mongo_db->update('roles', $data);
@@ -993,6 +1021,24 @@ class Ion_auth_model_mongo extends CI_Model
             $result_user=$this->mongo_db->update_all('appsettings',array('admin_role' => $data['name']));
             $this->mongo_db->clear();
             return True;
+
+            */
+            // role name is uniqu and it we are not allow to chnage it, so the only think which we should do - update role properties_
+            //  like descriptinon and include/exclude params
+            
+            //TODO: Ask for C equivalent for this functionality
+       
+            //$this->mongo_db->where( array('name' => $data['name']));
+            
+            $this->mongo_db->where(array('name'=>$data['name']));
+            unset($data['name']); // make sure that we will never update rolename
+            $this->mongo_db->update('roles', $data);
+            $this->mongo_db->clear();
+            
+   
+            
+	    return TRUE;
+
 	}
 
         function random_text($code_length = 10){
