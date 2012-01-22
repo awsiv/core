@@ -58,7 +58,7 @@
 #    
 #
 # CHANGES:
-#  
+#  - terminate running mysql processes when purge selected.
 #
 # Author:
 #  Nakarin Phooripoom
@@ -217,12 +217,26 @@ bundle agent db_mysql(type,state)
              handle => "db_mysql_processes_run_redhat_centos_fedora",
       restart_class => "redhat_centos_fedora_start_mysqld";
 
+  (redhat|centos|fedora).purge::
+
+   ".*mysqld.*"
+      comment => "Teminate MySQL process on Redhat-related distributions",
+       handle => "db_mysql_processes_terminate_redhat_centos_fedora",
+      signals => { "term","kill" };
+   
   (debian|ubuntu|suse|SuSE).server.ensure_mysql_running::
 
    "/usr/sbin/mysqld.*"
             comment => "Check for MySQL process on Debian-related and SUSE distributions",
              handle => "db_mysql_processes_run_debian_ubuntu_suse",
       restart_class => "debian_ubuntu_suse_start_mysqld";
+
+  (debian|ubuntu|suse|SuSE).purge::
+
+   "/usr/sbin/mysqld.*"
+      comment => "Terminate MySQL process on Debian-related and SUSE distributions",
+       handle => "db_mysql_processes_terminate_debian_ubuntu_suse",
+      signals => { "term","kill" };
 
 #
 
