@@ -1010,7 +1010,7 @@ class Ion_auth
 	 *@return array
 	 *@author sudhir
 	 **/
-	 public function get_roles()
+	 public function get_roles($username=NULL)
 	 {
             /*if(strtolower($this->mode)!='database'){
                 if(!$this->ci->session->userdata('pwd')){
@@ -1021,7 +1021,7 @@ class Ion_auth
             }
                return $this->ci->auth_ldap->get_all_ldap_roles( $this->ci->session->userdata('username'), $this->ci->session->userdata('pwd'));
             }*/
-		 return $this->ci->ion_auth_model_mongo->get_roles();
+		 return $this->ci->ion_auth_model_mongo->get_roles($username);
 	 }
 
          public function get_roles_fromdb()
@@ -1037,9 +1037,9 @@ class Ion_auth
 	 *@author sudhir
 	 **/
 	 
-	 public function get_role($id)
+	 public function get_role($username = NULL, $rolename = NULL)
 	 {
-		 return $this->ci->ion_auth_model_mongo->get_role($id);
+		 return $this->ci->ion_auth_model_mongo->get_role($username, $rolename);
 	 }
 	 
 	 /**
@@ -1050,9 +1050,9 @@ class Ion_auth
 	 *@author sudhir
 	 **/
 	 
-	 public function create_role($data)
+	 public function create_role($username, $data)
 	 {
-            $id = $this->ci->ion_auth_model_mongo->create_role($data);
+            $id = $this->ci->ion_auth_model_mongo->create_role($username, $data);
             
             if ($id !== FALSE)
             {
@@ -1068,14 +1068,18 @@ class Ion_auth
 	 /**
 	 *update_role
 	 *Update the role
-	 *
+	 *@param 
+          * username - current logged user
+          * rolename - name of the role
+          * data - new values
+         * 
 	 *@return bool
 	 *@author sudhir
 	 **/
 	 
-	 public function update_role($id,$data)
+	 public function update_role($username, $data)
 	  {
-	    if ($this->ci->ion_auth_model_mongo->update_role($id, $data))
+	    if ($this->ci->ion_auth_model_mongo->update_role($username, $data))
 		{
 			$this->set_message('role_update_successful');
 			return TRUE;
