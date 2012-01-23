@@ -29,6 +29,7 @@
 #define dbkey_role_bundlerx_include "brxi"
 
 
+HubQuery *CFBD_HostClassFilterFromUserRBAC(char *userName, char *classRxIncludeOption);
 cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, size_t password_len);
 HubQuery *CFDB_GetRBACForUser(char *userName);
 cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *description, char *includeClassRx, char *excludeClassRx, char *includeBundleRx);
