@@ -525,6 +525,7 @@ HubQuery *CFDB_GetAllRolesAuth(char *userName)
  return CFDB_GetAllRoles();
 }
 
+/*****************************************************************************/
 
 static HubQuery *CFDB_GetAllRoles(void)
 {
