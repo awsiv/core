@@ -227,6 +227,7 @@ static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles)
  char *combinedClassRxInclude = NULL;
  char *combinedClassRxExclude = NULL;
  char *combinedBundleRxInclude = NULL;
+ char *combinedBundleRxExclude = NULL;
 
  if(hqRoles->records == NULL)
     {
@@ -241,17 +242,21 @@ static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles)
     combinedClassRxInclude = StringAppendRealloc2(combinedClassRxInclude, role->classRxInclude, "|");
     combinedClassRxExclude = StringAppendRealloc2(combinedClassRxExclude, role->classRxExclude, "|");
     combinedBundleRxInclude = StringAppendRealloc2(combinedBundleRxInclude, role->bundleRxInclude, "|");
+    combinedBundleRxExclude = StringAppendRealloc2(combinedBundleRxExclude, role->bundleRxExclude, "|");
     }
  
  ReplaceTrailingChar(combinedClassRxInclude, '|', '\0');
  ReplaceTrailingChar(combinedClassRxExclude, '|', '\0');
  ReplaceTrailingChar(combinedBundleRxInclude, '|', '\0');
+ ReplaceTrailingChar(combinedBundleRxExclude, '|', '\0');
 
- HubUserRBAC *rbac = NewHubUserRBAC(userName, combinedClassRxInclude, combinedClassRxExclude, combinedBundleRxInclude);
+ HubUserRBAC *rbac = NewHubUserRBAC(userName, combinedClassRxInclude, combinedClassRxExclude,
+                                    combinedBundleRxInclude, combinedBundleRxExclude);
 
  free(combinedClassRxInclude);
  free(combinedClassRxExclude);
  free(combinedBundleRxInclude);
+ free(combinedBundleRxExclude);
 
  Rlist *recordList = NULL;
  PrependRlistAlien(&(recordList), rbac);
@@ -285,7 +290,8 @@ static char *StringAppendRealloc2(char *start, char *append1, char *append2)
 
 /*****************************************************************************/
 
-cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *description, char *includeClassRx, char *excludeClassRx, char *includeBundleRx)
+cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *description,
+                            char *includeClassRx, char *excludeClassRx, char *includeBundleRx, char *excludeBundleRx)
 {
  cfapi_errid errid = UserIsRoleAdmin(creatingUser);
 
@@ -323,7 +329,11 @@ cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *descriptio
     {
     bson_append_string(set, dbkey_role_bundlerx_include, includeBundleRx);
     }
-
+ if(excludeBundleRx)
+    {
+    bson_append_string(set, dbkey_role_bundlerx_exclude, excludeBundleRx);
+    }
+ 
  bson_append_finish_object(set);
  bson_from_buffer(&update, &bb);
 
@@ -402,7 +412,8 @@ cfapi_errid CFDB_DeleteRole(char *deletingUser, char *roleName, bool deassociate
 
 /*****************************************************************************/
 
-cfapi_errid CFDB_UpdateRole(char *updatingUser, char *roleName, char *description, char *includeClassRx, char *excludeClassRx, char *includeBundleRx)
+cfapi_errid CFDB_UpdateRole(char *updatingUser, char *roleName, char *description,
+                            char *includeClassRx, char *excludeClassRx, char *includeBundleRx, char *excludeBundleRx)
 {
  cfapi_errid errid = CFDB_DeleteRole(updatingUser, roleName, false);
 
@@ -411,9 +422,8 @@ cfapi_errid CFDB_UpdateRole(char *updatingUser, char *roleName, char *descriptio
     return errid;
     }
 
- return CFDB_CreateRole(updatingUser, roleName, description, includeClassRx, excludeClassRx, includeBundleRx);
+ return CFDB_CreateRole(updatingUser, roleName, description, includeClassRx, excludeClassRx, includeBundleRx, excludeBundleRx);
 }
-
 
 /*****************************************************************************/
 
@@ -636,6 +646,7 @@ HubQuery *CFDB_GetRoles(bson *query)
  bson_append_int(&bb, dbkey_role_classrx_include, 1);
  bson_append_int(&bb, dbkey_role_classrx_exclude, 1);
  bson_append_int(&bb, dbkey_role_bundlerx_include, 1);
+ bson_append_int(&bb, dbkey_role_bundlerx_exclude, 1);
  bson_from_buffer(&field, &bb);
  
  if(!CFDB_Open(&conn))
@@ -656,14 +667,16 @@ HubQuery *CFDB_GetRoles(bson *query)
     char *clRxIncl = SafeStringDuplicate(BsonGetString(&(cursor->current), dbkey_role_classrx_include));
     char *clRxExcl = SafeStringDuplicate(BsonGetString(&(cursor->current), dbkey_role_classrx_exclude));
     char *bRxIncl = SafeStringDuplicate(BsonGetString(&(cursor->current), dbkey_role_bundlerx_include));
+    char *bRxExcl = SafeStringDuplicate(BsonGetString(&(cursor->current), dbkey_role_bundlerx_exclude));
     
-    PrependRlistAlien(&(hq->records), NewHubRole(name, desc, clRxIncl, clRxExcl, bRxIncl));
+    PrependRlistAlien(&(hq->records), NewHubRole(name, desc, clRxIncl, clRxExcl, bRxIncl, bRxExcl));
 
     free(name);
     free(desc);
     free(clRxIncl);
     free(clRxExcl);
     free(bRxIncl);
+    free(bRxExcl);
     }
 
  mongo_cursor_destroy(cursor);

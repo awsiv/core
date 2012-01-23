@@ -548,6 +548,7 @@ typedef struct
    char *classRxInclude;
    char *classRxExclude;
    char *bundleRxInclude;
+   char *bundleRxExclude;
    } HubUserRBAC;
 
 typedef struct
@@ -557,6 +558,7 @@ typedef struct
    char *classRxInclude;
    char *classRxExclude;
    char *bundleRxInclude;
+   char *bundleRxExclude;
    } HubRole;
 
 
@@ -1017,9 +1019,10 @@ void DeleteHubNote(HubNote *hc);
 void DeleteHubNoteInfo(HubNoteInfo *hci);
 HubVital *PrependHubVital(HubVital **first, char *id, char *units, char *description);
 void DeleteHubVital(HubVital *hv);
-HubUserRBAC *NewHubUserRBAC(char *userName, char *classRxInclude, char *classRxExclude, char *bunldeRxExclude);
+HubUserRBAC *NewHubUserRBAC(char *userName, char *classRxInclude, char *classRxExclude, char *bundleRxInclude, char *bundleRxExclude);
 void DeleteHubUserRBAC(HubUserRBAC *userRbac);
-HubRole *NewHubRole(char *name, char *description, char *classRxInclude, char *classRxExclude, char *bundleRxInclude);
+HubRole *NewHubRole(char *name, char *description,
+                    char *classRxInclude, char *classRxExclude, char *bundleRxInclude, char *bundleRxExclude);
 void DeleteHubRole(HubRole *role);
 #ifdef HAVE_LIBMONGOC
 HostClassFilter *NewHostClassFilter(const char *classRxInclude, const char *classRxExclude);

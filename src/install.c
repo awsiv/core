@@ -1066,7 +1066,7 @@ void DeleteHubVital(HubVital *hv)
 
 /*****************************************************************************/
 
-HubUserRBAC *NewHubUserRBAC(char *userName, char *classRxInclude, char *classRxExclude, char *bundleRxInclude)
+HubUserRBAC *NewHubUserRBAC(char *userName, char *classRxInclude, char *classRxExclude, char *bundleRxInclude, char *bundleRxExclude)
 {
  HubUserRBAC *rbac = xmalloc(sizeof(HubUserRBAC));
 
@@ -1074,6 +1074,7 @@ HubUserRBAC *NewHubUserRBAC(char *userName, char *classRxInclude, char *classRxE
  rbac->classRxInclude = SafeStringDuplicate(classRxInclude);
  rbac->classRxExclude = SafeStringDuplicate(classRxExclude);
  rbac->bundleRxInclude = SafeStringDuplicate(bundleRxInclude);
+ rbac->bundleRxExclude = SafeStringDuplicate(bundleRxExclude);
  
  return rbac;
 }
@@ -1091,7 +1092,7 @@ void DeleteHubUserRBAC(HubUserRBAC *userRbac)
 
 /*****************************************************************************/
 
-HubRole *NewHubRole(char *name, char *description, char *classRxInclude, char *classRxExclude, char *bundleRxInclude)
+HubRole *NewHubRole(char *name, char *description, char *classRxInclude, char *classRxExclude, char *bundleRxInclude, char *bundleRxExclude)
 {
  HubRole *role = xmalloc(sizeof(HubRole));
 
@@ -1100,6 +1101,7 @@ HubRole *NewHubRole(char *name, char *description, char *classRxInclude, char *c
  role->classRxInclude = SafeStringDuplicate(classRxInclude);
  role->classRxExclude = SafeStringDuplicate(classRxExclude);
  role->bundleRxInclude = SafeStringDuplicate(bundleRxInclude);
+ role->bundleRxExclude = SafeStringDuplicate(bundleRxExclude);
  
  return role;
 }

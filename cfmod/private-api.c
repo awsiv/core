@@ -3619,16 +3619,17 @@ switch (CFDB_UserAuthenticate(username, password, password_len))
 
 PHP_FUNCTION(cfpr_role_create)
 {
- char *creatingUserName, *roleName, *description, *includeClassRx, *excludeClassRx, *includeBundleRx;
- int creatingUserNameLen, roleNameLen, descLen, icrxLen, ecrxLen, ibrxLen;
+ char *creatingUserName, *roleName, *description, *includeClassRx, *excludeClassRx, *includeBundleRx, *excludeBundleRx;
+ int creatingUserNameLen, roleNameLen, descLen, icrxLen, ecrxLen, ibrxLen, ebrxLen;
   
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssss",
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssss",
                             &creatingUserName, &creatingUserNameLen,                            
                             &roleName, &roleNameLen,
                             &description, &descLen,
                             &includeClassRx, &icrxLen,
                             &excludeClassRx, &ecrxLen,
-                            &includeBundleRx, &ibrxLen) == FAILURE)
+                            &includeBundleRx, &ibrxLen,
+                            &excludeBundleRx, &ebrxLen) == FAILURE)
      {
      zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
      RETURN_NULL();
@@ -3643,8 +3644,10 @@ PHP_FUNCTION(cfpr_role_create)
   char *fIncludeClassRx = (icrxLen == 0) ? NULL : includeClassRx;
   char *fExcludeClassRx = (ecrxLen == 0) ? NULL : excludeClassRx;
   char *fIncludeBundleRx = (ibrxLen == 0) ? NULL : includeBundleRx;
+  char *fExcludeBundleRx = (ebrxLen == 0) ? NULL : excludeBundleRx;
 
-  cfapi_errid errid = CFDB_CreateRole(creatingUserName, roleName, description, fIncludeClassRx, fExcludeClassRx, fIncludeBundleRx);
+  cfapi_errid errid = CFDB_CreateRole(creatingUserName, roleName, description,
+                                      fIncludeClassRx, fExcludeClassRx, fIncludeBundleRx, fExcludeBundleRx);
   
   if(errid != ERRID_SUCCESS)
      {
@@ -3687,16 +3690,17 @@ PHP_FUNCTION(cfpr_role_delete)
 
 PHP_FUNCTION(cfpr_role_update)
 {
- char *updatingUserName, *roleName, *description, *includeClassRx, *excludeClassRx, *includeBundleRx;
- int updatingUserNameLen, roleNameLen, descLen, icrxLen, ecrxLen, ibrxLen;
+ char *updatingUserName, *roleName, *description, *includeClassRx, *excludeClassRx, *includeBundleRx, *excludeBundleRx;
+ int updatingUserNameLen, roleNameLen, descLen, icrxLen, ecrxLen, ibrxLen, ebrxLen;
   
-  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssss",
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssss",
                             &updatingUserName, &updatingUserNameLen,                            
                             &roleName, &roleNameLen,
                             &description, &descLen,
                             &includeClassRx, &icrxLen,
                             &excludeClassRx, &ecrxLen,
-                            &includeBundleRx, &ibrxLen) == FAILURE)
+                            &includeBundleRx, &ibrxLen,
+                            &excludeBundleRx, &ebrxLen) == FAILURE)
      {
      zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
      RETURN_NULL();
@@ -3711,8 +3715,10 @@ PHP_FUNCTION(cfpr_role_update)
   char *fIncludeClassRx = (icrxLen == 0) ? NULL : includeClassRx;
   char *fExcludeClassRx = (ecrxLen == 0) ? NULL : excludeClassRx;
   char *fIncludeBundleRx = (ibrxLen == 0) ? NULL : includeBundleRx;
+  char *fExcludeBundleRx = (ebrxLen == 0) ? NULL : excludeBundleRx;
 
-  cfapi_errid errid = CFDB_UpdateRole(updatingUserName, roleName, description, fIncludeClassRx, fExcludeClassRx, fIncludeBundleRx);
+  cfapi_errid errid = CFDB_UpdateRole(updatingUserName, roleName, description,
+                                      fIncludeClassRx, fExcludeClassRx, fIncludeBundleRx, fExcludeBundleRx);
   
   if(errid != ERRID_SUCCESS)
      {
@@ -3802,6 +3808,7 @@ static JsonArray *ParseRolesToJson(HubQuery *hq)
 #define LABEL_ROLE_CLASSRX_INCLUDE "classrxinclude"
 #define LABEL_ROLE_CLASSRX_EXCLUDE "classrxexclude"
 #define LABEL_ROLE_BUNDLERX_INCLUDE "bundlerxinlcude"
+#define LABEL_ROLE_BUNDLERX_EXCLUDE "bundlerxexclude"
 
  JsonArray *roles = NULL;
  
@@ -3815,6 +3822,7 @@ static JsonArray *ParseRolesToJson(HubQuery *hq)
     JsonObjectAppendString(&role_entry, LABEL_ROLE_CLASSRX_INCLUDE, record->classRxInclude);
     JsonObjectAppendString(&role_entry, LABEL_ROLE_CLASSRX_EXCLUDE, record->classRxExclude);
     JsonObjectAppendString(&role_entry, LABEL_ROLE_BUNDLERX_INCLUDE, record->bundleRxInclude);
+    JsonObjectAppendString(&role_entry, LABEL_ROLE_BUNDLERX_EXCLUDE, record->bundleRxExclude);
     
     JsonArrayAppendObject(&roles, role_entry);
     }

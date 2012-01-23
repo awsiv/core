@@ -27,14 +27,17 @@
 #define dbkey_role_classrx_include "crxi"
 #define dbkey_role_classrx_exclude "crxx"
 #define dbkey_role_bundlerx_include "brxi"
+#define dbkey_role_bundlerx_exclude "brxx"
 
 
 HubQuery *CFBD_HostClassFilterFromUserRBAC(char *userName, char *classRxIncludeOption, char *classRxExcludeOption);
 cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, size_t password_len);
 HubQuery *CFDB_GetRBACForUser(char *userName);
-cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *description, char *includeClassRx, char *excludeClassRx, char *includeBundleRx);
+cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *description,
+                            char *includeClassRx, char *excludeClassRx, char *includeBundleRx, char *excludeBundleRx);
 cfapi_errid CFDB_DeleteRole(char *deletingUser, char *roleName, bool deassociateUsers);
-cfapi_errid CFDB_UpdateRole(char *updatingUser, char *roleName, char *description, char *includeClassRx, char *excludeClassRx, char *includeBundleRx);
+cfapi_errid CFDB_UpdateRole(char *updatingUser, char *roleName, char *description,
+                            char *includeClassRx, char *excludeClassRx, char *includeBundleRx, char *excludeBundleRx);
 HubQuery *CFDB_GetAllRolesAuth(char *userName);
 HubQuery *CFDB_GetRoleByNameAuth(char *userName, char *roleName);
 
