@@ -137,7 +137,7 @@ return ERRID_RBAC_ACCESS_DENIED;
 
 /*****************************************************************************/
 
-HubQuery *CFBD_HostClassFilterFromUserRBAC(char *userName, char *classRxIncludeOption)
+HubQuery *CFBD_HostClassFilterFromUserRBAC(char *userName, char *classRxIncludeOption, char *classRxExcludeOption)
 {
  mongo_connection conn;
  
@@ -153,11 +153,13 @@ HubQuery *CFBD_HostClassFilterFromUserRBAC(char *userName, char *classRxIncludeO
     {
     CFDB_Close(&conn);
     // no RBAC restrictions - filter determined by user query only
-    PrependRlistAlien(&(recordList), NewHostClassFilter(classRxIncludeOption, NULL));
+    PrependRlistAlien(&(recordList), NewHostClassFilter(classRxIncludeOption, classRxExcludeOption));
     return NewHubQuery(NULL, recordList);
     }
  
  HubQuery *hqRBAC = CFDB_GetRBACForUser(userName);
+
+ CFDB_Close(&conn);
 
  cfapi_errid errid = hqRBAC->errid;
 
@@ -167,12 +169,11 @@ HubQuery *CFBD_HostClassFilterFromUserRBAC(char *userName, char *classRxIncludeO
     return NewHubQueryErrid(NULL, NULL, errid);
     }
  
- 
  HubUserRBAC *rbac = hqRBAC->records->item;
 
-// HostClassFilter *hostClassFilter = NewHostClassFilter(classRxIncludeOption, NULL);
- //AddHostClassFilterPatterns(hostClassFilter, rbac->classRxInclude, rbac->classRxExclude);
- PrependRlistAlien(&(recordList), NewHostClassFilter(NULL, NULL));
+ HostClassFilter *hostClassFilter = NewHostClassFilter(classRxIncludeOption, classRxExcludeOption);
+ AddHostClassFilterPatterns(hostClassFilter, rbac->classRxInclude, rbac->classRxExclude);
+ PrependRlistAlien(&(recordList), hostClassFilter);
  
  DeleteHubQuery(hqRBAC, DeleteHubUserRBAC);
 
@@ -194,7 +195,7 @@ HubQuery *CFDB_GetRBACForUser(char *userName)
     {
     return NewHubQueryErrid(NULL, NULL, ERRID_RBAC_ACCESS_DENIED);
     }
- 
+
  HubQuery *hqRoles = CFDB_GetRolesByMultipleNames(roleNames);
  DeleteItemList(roleNames);
 
@@ -245,7 +246,7 @@ static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles)
  ReplaceTrailingChar(combinedClassRxInclude, '|', '\0');
  ReplaceTrailingChar(combinedClassRxExclude, '|', '\0');
  ReplaceTrailingChar(combinedBundleRxInclude, '|', '\0');
- 
+
  HubUserRBAC *rbac = NewHubUserRBAC(userName, combinedClassRxInclude, combinedClassRxExclude, combinedBundleRxInclude);
 
  free(combinedClassRxInclude);
@@ -262,7 +263,7 @@ static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles)
 
 static char *StringAppendRealloc2(char *start, char *append1, char *append2)
 {
- if(SafeStringLength(append1) == 0 || SafeStringLength(append2))
+ if(SafeStringLength(append1) == 0 || SafeStringLength(append2) == 0)
     {
     return start;
     }
@@ -457,7 +458,7 @@ static bool IsLDAPOn(mongo_connection *conn)
 static bool IsRBACOn(mongo_connection *conn)
 {
  // FIXME - check this 
- return false;
+ return true;
 }
 
 /*****************************************************************************/
