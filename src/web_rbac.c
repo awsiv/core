@@ -31,6 +31,7 @@ static HubQuery *CFDB_GetRolesByMultipleNames(Item *names);
 static HubQuery *CFDB_GetRoles(bson *query);
 static const char *GetUsersCollection(mongo_connection *conn);
 static bool IsLDAPOn(mongo_connection *conn);
+static bool IsRBACOn(mongo_connection *conn);
 static HubQuery *CFDB_GetAllRoles(void);
 static HubQuery *CFDB_GetRoleByName(char *name);
 static cfapi_errid UserIsRoleAdmin(char *userName);
@@ -75,6 +76,7 @@ bool authenticated = strcmp(db_password, db_hash) == 0;
 free(db_hash);
 return authenticated;
 }
+
 
 cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, size_t password_len)
 {
@@ -134,6 +136,43 @@ if (found)
    }
 
 return ERRID_RBAC_ACCESS_DENIED;
+}
+
+
+HubQuery *CFBD_HostClassFilterFromUserRBAC(char *userName, char *classRxIncludeOption)
+{
+ mongo_connection conn;
+ 
+ if(!CFDB_Open(&conn))
+    {
+    return NewHubQueryErrid(NULL, NULL, ERRID_DBCONNECT);
+    }
+
+
+ Rlist *recordList = NULL;
+
+ if(!IsRBACOn(&conn))
+    {
+    CFDB_Close(&conn);
+    PrependRlistAlien(&(recordList), NewHostClassFilter(classRxIncludeOption, NULL));
+    return NewHubQuery(NULL, recordList);
+    }
+ 
+ HubQuery *hqRBAC = CFDB_GetRBACForUser(userName);
+/*
+ cfapt_errid errid = hqRBAC->errid;
+
+ if(errid != ERRID_SUCCESS)
+    {
+    DeleteHubQuery(hqRBAC, DeleteHubUserRBAC);
+    return NewHubQueryErrid(NULL, NULL, errid);
+    }
+ 
+
+ HubUserRBAC *rbac = hqRBAC->records->item; 
+ 
+ DeleteHubQuery(hqRBAC);
+*/
 }
 
 
@@ -216,14 +255,14 @@ static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles)
 
 static char *StringAppendRealloc2(char *start, char *append1, char *append2)
 {
- if(SafeStringLength(append1) == 0)
+ if(SafeStringLength(append1) == 0 || SafeStringLength(append2))
     {
     return start;
     }
 
  int startLen = SafeStringLength(start);
  
- start = xrealloc(start, startLen + strlen(append1) + strlen(append2) + 1);
+ start = xrealloc(start, startLen + SafeStringLength(append1) + SafeStringLength(append2) + 1);
 
  if(startLen == 0)
     {
@@ -236,6 +275,17 @@ static char *StringAppendRealloc2(char *start, char *append1, char *append2)
  return start;
 }
 
+
+static HostClassFilter *AppendHostClassRx(HubUserRBAC *rbac, char *classRxIncludeOptional, char classRxExcludeOptional)
+{
+ char *classRxIncludeCombined = SafeStringDuplicate(rbac->classRxInclude);
+
+ classRxIncludeCombined = StringAppendRealloc2(classRxIncludeCombined, "|", classRxIncludeOptional);
+ 
+
+ char *classRxExcludeCombined = SafeStringDuplicate(rbac->classRxExclude);
+ 
+}
 
 cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *description, char *includeClassRx, char *excludeClassRx, char *includeBundleRx)
 {
@@ -395,6 +445,12 @@ static const char *GetUsersCollection(mongo_connection *conn)
 
 
 static bool IsLDAPOn(mongo_connection *conn)
+{
+ // FIXME - check this 
+ return false;
+}
+
+static bool IsRBACOn(mongo_connection *conn)
 {
  // FIXME - check this 
  return false;
