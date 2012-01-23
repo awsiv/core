@@ -353,7 +353,7 @@ cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *descriptio
 
 /*****************************************************************************/
 
-cfapi_errid CFDB_DeleteRole(char *deletingUser, char *roleName)
+cfapi_errid CFDB_DeleteRole(char *deletingUser, char *roleName, bool deassociateUsers)
 {
  cfapi_errid errid = UserIsRoleAdmin(deletingUser);
 
@@ -385,7 +385,10 @@ cfapi_errid CFDB_DeleteRole(char *deletingUser, char *roleName)
  mongo_remove(&conn, MONGO_ROLES_COLLECTION, &query);
  bson_destroy(&query);
 
- DeAssociateUsersFromRole(&conn, roleName);
+ if(deassociateUsers)
+    {
+    DeAssociateUsersFromRole(&conn, roleName);
+    }
 
  if(!MongoCheckForError(&conn, "CFDB_DeleteRole", NULL, false))
     {
@@ -396,6 +399,21 @@ cfapi_errid CFDB_DeleteRole(char *deletingUser, char *roleName)
 
  return errid;
 }
+
+/*****************************************************************************/
+
+cfapi_errid CFDB_UpdateRole(char *updatingUser, char *roleName, char *description, char *includeClassRx, char *excludeClassRx, char *includeBundleRx)
+{
+ cfapi_errid errid = CFDB_DeleteRole(updatingUser, roleName, false);
+
+ if(errid != ERRID_SUCCESS)
+    {
+    return errid;
+    }
+
+ return CFDB_CreateRole(updatingUser, roleName, description, includeClassRx, excludeClassRx, includeBundleRx);
+}
+
 
 /*****************************************************************************/
 

@@ -33,7 +33,8 @@ HubQuery *CFBD_HostClassFilterFromUserRBAC(char *userName, char *classRxIncludeO
 cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, size_t password_len);
 HubQuery *CFDB_GetRBACForUser(char *userName);
 cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *description, char *includeClassRx, char *excludeClassRx, char *includeBundleRx);
-cfapi_errid CFDB_DeleteRole(char *deletingUser, char *roleName);
+cfapi_errid CFDB_DeleteRole(char *deletingUser, char *roleName, bool deassociateUsers);
+cfapi_errid CFDB_UpdateRole(char *updatingUser, char *roleName, char *description, char *includeClassRx, char *excludeClassRx, char *includeBundleRx);
 HubQuery *CFDB_GetAllRolesAuth(char *userName);
 HubQuery *CFDB_GetRoleByNameAuth(char *userName, char *roleName);
 

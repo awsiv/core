@@ -3673,7 +3673,7 @@ PHP_FUNCTION(cfpr_role_delete)
     RETURN_NULL();
     }
  
- cfapi_errid errid = CFDB_DeleteRole(userName, roleName);
+ cfapi_errid errid = CFDB_DeleteRole(userName, roleName, true);
  
  if(errid != ERRID_SUCCESS)
     {
@@ -3681,6 +3681,45 @@ PHP_FUNCTION(cfpr_role_delete)
     }
  
  RETURN_LONG(true);
+}
+
+/******************************************************************************/
+
+PHP_FUNCTION(cfpr_role_update)
+{
+ char *updatingUserName, *roleName, *description, *includeClassRx, *excludeClassRx, *includeBundleRx;
+ int updatingUserNameLen, roleNameLen, descLen, icrxLen, ecrxLen, ibrxLen;
+  
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssss",
+                            &updatingUserName, &updatingUserNameLen,                            
+                            &roleName, &roleNameLen,
+                            &description, &descLen,
+                            &includeClassRx, &icrxLen,
+                            &excludeClassRx, &ecrxLen,
+                            &includeBundleRx, &ibrxLen) == FAILURE)
+     {
+     zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
+     RETURN_NULL();
+     }
+
+  if(!(updatingUserNameLen && roleNameLen && descLen))
+     {
+     zend_throw_exception(cfmod_exception_args, "Missing argument contents", 0 TSRMLS_CC);
+     RETURN_NULL();
+     }
+
+  char *fIncludeClassRx = (icrxLen == 0) ? NULL : includeClassRx;
+  char *fExcludeClassRx = (ecrxLen == 0) ? NULL : excludeClassRx;
+  char *fIncludeBundleRx = (ibrxLen == 0) ? NULL : includeBundleRx;
+
+  cfapi_errid errid = CFDB_UpdateRole(updatingUserName, roleName, description, fIncludeClassRx, fExcludeClassRx, fIncludeBundleRx);
+  
+  if(errid != ERRID_SUCCESS)
+     {
+     zend_throw_exception(cfmod_exception_generic, (char *)GetErrorDescription(errid), 0 TSRMLS_CC);     
+     }
+  
+  RETURN_LONG(true);
 }
 
 /******************************************************************************/

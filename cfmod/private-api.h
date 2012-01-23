@@ -978,6 +978,7 @@ PHP_FUNCTION(cfpr_get_host_noteid);
 PHP_FUNCTION(cfpr_user_authenticate);
 PHP_FUNCTION(cfpr_role_create);
 PHP_FUNCTION(cfpr_role_delete);
+PHP_FUNCTION(cfpr_role_update);
 PHP_FUNCTION(cfpr_role_list_all);
 PHP_FUNCTION(cfpr_role_list_by_name);
 
