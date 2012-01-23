@@ -4,14 +4,6 @@
 
 */
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: hub.c                                                               */
-/*                                                                           */
-/* Created: Sat Jul 24 08:35:41 2010                                         */
-/*                                                                           */
-/*****************************************************************************/
-
 #include "generic_agent.h"
 
 #include "cf.nova.h"
@@ -65,7 +57,7 @@ const char *ID = "The hub is a scheduler and aggregator for the CFDB knowledge\n
                  "repository. It automatically schedules updates from clients\n"
                  "that have registered by previous connection.";
 
- 
+
 const struct option OPTIONS[16] =
       {
       { "help",no_argument,0,'h' },
@@ -156,7 +148,7 @@ while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMaisn",OPTIONS,&optindex)) != EOF)
       case 'l':
           LOGGING = true;
           break;
-          
+
       case 'd':
          NewClass("opt_debug");
          DEBUG = true;
@@ -164,15 +156,15 @@ while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMaisn",OPTIONS,&optindex)) != EOF)
 
       case 'K': IGNORELOCK = true;
           break;
-                    
+
       case 'I': INFORM = true;
           break;
-          
+
       case 'v':
           VERBOSE = true;
           NO_FORK = true;
           break;
-	            
+
       case 'n': DONTDO = true;
           IGNORELOCK = true;
           NewClass("opt_dry_run");
@@ -185,8 +177,8 @@ while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMaisn",OPTIONS,&optindex)) != EOF)
       case 'a':
           Nova_CacheTotalCompliance(true);
           exit(0);
-          break;          
-          
+          break;
+
       case 'F':
           NO_FORK = true;
           break;
@@ -198,7 +190,7 @@ while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMaisn",OPTIONS,&optindex)) != EOF)
 
       case 'V': PrintVersionBanner("cf-hub");
           exit(0);
-          
+
       case 'h': Syntax("cf-hub - cfengine's report aggregator",OPTIONS,HINTS,ID);
           exit(0);
 
@@ -212,10 +204,10 @@ while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMaisn",OPTIONS,&optindex)) != EOF)
           SplayLongUpdates();
           exit(0);
           break;
-          
+
       default: Syntax("cf-hub - cfengine's report aggregator",OPTIONS,HINTS,ID);
           exit(1);
-          
+
       }
    }
 
@@ -245,7 +237,7 @@ else if (SCHEDULE == NULL)
    AppendItem(&SCHEDULE,"Min10",NULL);
    AppendItem(&SCHEDULE,"Min15",NULL);
    AppendItem(&SCHEDULE,"Min20",NULL);
-   AppendItem(&SCHEDULE,"Min25",NULL);   
+   AppendItem(&SCHEDULE,"Min25",NULL);
    AppendItem(&SCHEDULE,"Min30",NULL);
    AppendItem(&SCHEDULE,"Min35",NULL);
    AppendItem(&SCHEDULE,"Min40",NULL);
@@ -259,7 +251,7 @@ else if (SCHEDULE == NULL)
 
 void KeepPromises(GenericAgentConfig config)
 
-{ 
+{
 Constraint *cp;
 Rval retval;
 
@@ -269,20 +261,20 @@ for (cp = ControlBodyConstraints(cf_hub); cp != NULL; cp=cp->next)
       {
       continue;
       }
-   
+
    if (GetVariable("control_hub", cp->lval, &retval) == cf_notype)
       {
       CfOut(cf_error,"","Unknown lval %s in hub control body",cp->lval);
       continue;
       }
-   
+
    if (strcmp(cp->lval,CFH_CONTROLBODY[cfh_schedule].lval) == 0)
       {
       Rlist *rp;
       CfDebug("schedule ...\n");
       DeleteItemList(SCHEDULE);
       SCHEDULE = NULL;
-      
+
       for (rp  = (Rlist *)retval.item; rp != NULL; rp = rp->next)
          {
          if (!IsItemIn(SCHEDULE,rp->item))
@@ -291,14 +283,14 @@ for (cp = ControlBodyConstraints(cf_hub); cp != NULL; cp=cp->next)
             }
          }
       }
-   
+
    if (strcmp(cp->lval,CFH_CONTROLBODY[cfh_federation].lval) == 0)
       {
       Rlist *rp;
       CfDebug("federation ...\n");
       DeleteItemList(FEDERATION);
       FEDERATION = NULL;
-      
+
       for (rp  = (Rlist *)retval.item; rp != NULL; rp = rp->next)
          {
          if (!IsItemIn(FEDERATION,rp->item))
@@ -314,7 +306,7 @@ for (cp = ControlBodyConstraints(cf_hub); cp != NULL; cp=cp->next)
       CfDebug("exclude_hosts ...\n");
       DeleteItemList(EXCLUDE_HOSTS);
       EXCLUDE_HOSTS = NULL;
-      
+
       for (rp  = (Rlist *)retval.item; rp != NULL; rp = rp->next)
          {
          if (!IsItemIn(EXCLUDE_HOSTS,rp->item))
@@ -324,14 +316,14 @@ for (cp = ControlBodyConstraints(cf_hub); cp != NULL; cp=cp->next)
          }
       }
 
-   
+
    if (strcmp(cp->lval,CFH_CONTROLBODY[cfh_export_zenoss].lval) == 0)
       {
       CFH_ZENOSS = GetBoolean((const char *)retval.item);
       CfOut(cf_verbose,"","SET export_zenoss = %d\n",CFH_ZENOSS);
       continue;
       }
-   
+
    if (strcmp(cp->lval,CFH_CONTROLBODY[cfh_port].lval) == 0)
       {
       SHORT_CFENGINEPORT = htons((short)Str2Int((const char *)retval.item));
@@ -373,7 +365,7 @@ void SplayLongUpdates()
   time_t now = time(NULL), min = now + 30000, max = 0;
   int slot = 0, total_slots;
   time_t newtime;
-   
+
 if ((dbp = OpenLock()) == NULL)
    {
    return;
@@ -391,16 +383,16 @@ if (!NewDBCursor(dbp,&dbcp))
 while(NextDB(dbp,dbcp,&key,&ksize,(void *)&value,&vsize))
    {
    // Just look at the hail promise locks
-   
+
    if (strncmp(key,"last.internal_bundle.hail.",strlen("last.internal_bundle.hail.")) != 0)
       {
       continue;
       }
-   
+
    count++;
 
    memcpy(&entry,value,sizeof(entry));
-   
+
    if (entry.time < 0 || entry.time > now + 300)
       {
       // The value may be uninitialized
@@ -408,13 +400,13 @@ while(NextDB(dbp,dbcp,&key,&ksize,(void *)&value,&vsize))
       update.pid = entry.pid;
       update.time = entry.time = now;
       WriteDB(dbp,key,&update,sizeof(update));
-      }     
-   
+      }
+
    if (entry.time > max)
       {
       max = entry.time;
       }
-   
+
    if (entry.time < min)
       {
       min = entry.time;
@@ -462,12 +454,12 @@ while(NextDB(dbp,dbcp,&key,&ksize,(void *)&entry,&vsize))
       }
 
    // Keep the splaying simple, and use round-robin
-   
+
    newtime = now + 300 * (slot++ % total_slots);
 
    update.time = newtime;
    update.pid = entry.pid;
-   
+
    if (!DONTDO)
       {
       WriteDB(dbp,key,&update,sizeof(update));
@@ -556,7 +548,7 @@ for (ip=*list; ip!=NULL;ip=ip->next)
    if(deleted_hosts && IsItemIn(deleted_hosts,ip->name))
       {
       continue;
-      }      
+      }
 
    PrependFullItem(&new_lastseen,ip->name,ip->classes,0,time(NULL));
    count++;
@@ -568,7 +560,7 @@ for (ip2=lastseen; ip2!=NULL;ip2=ip2->next)
    if( IsItemIn(new_lastseen,ip2->name)                       //already added from list
        || ((time(NULL) - ip2->time) > CF_HUB_HORIZON)           // entry passed horizon)
        || IsItemIn(deleted_hosts,ip2->name))                     //deleted
-      {      
+      {
       continue;
       }
 
@@ -585,19 +577,19 @@ if (deleted_hosts)
       {
       // remove from the local lastseen db
       // TODO: remove the public keys also?
-      
+
       removed = (removed && RemoveHostFromLastSeen(NULL,ip->name));
       }
-   
+
    // if all hosts marked as "deleted" were removed from cf_lastseen.tcdb
    // purge the list of deleted host
    // otherwise keep it for the next run of cf-hub
-   
+
    if (removed)
       {
       CFDB_PurgeDeletedHosts();
       }
-   
+
    DeleteItemList(deleted_hosts);
    }
 
@@ -627,7 +619,7 @@ static void Nova_RemoveExcludedHosts(Item **listp, Item *hosts_exclude)
 { Item *ip;
   Item *include = NULL;
 
-  
+
 for (ip = *listp; ip != NULL; ip = ip->next)
    {
    if(IsMatchItemIn(hosts_exclude, ip->classes))
@@ -652,7 +644,7 @@ void Nova_StartHub(int argc,char **argv)
 
 { int time_to_run = false;
   time_t now = time(NULL);
-  Promise *pp = NewPromise("hub_cfengine","the aggregator"); 
+  Promise *pp = NewPromise("hub_cfengine","the aggregator");
   Attributes a = {{0}};
   CfLock thislock;
   pid_t maintainer_pid = CF_UNDEFINED;
@@ -681,7 +673,7 @@ if (!NO_FORK)
    {
    ActAsDaemon(0);
    }
-   
+
 WritePID("cf-hub.pid");
 signal(SIGINT,HandleSignals);
 signal(SIGTERM,HandleSignals);
@@ -699,7 +691,7 @@ CFDB_ConnectAndEnsureIndices();
 while (true)
    {
    time_to_run = ScheduleRun();
-   
+
    if (time_to_run)
       {
       CfOut(cf_verbose,""," -> Wake up");
@@ -710,7 +702,7 @@ while (true)
          Nova_CollectReports(a,pp);
          maintainer_pid = Nova_Maintain(maintainer_pid);
          }
-      
+
 #ifdef HAVE_CONSTELLATION
       if(FEDERATION)
          {
@@ -723,7 +715,7 @@ while (true)
       {
       maintainer_pid = CF_UNDEFINED;
       }
-   
+
    CfOut(cf_verbose,"","Sleeping...");
    sleep(CFPULSETIME);
    }
@@ -933,13 +925,13 @@ static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer,Attr
   time_t average_time = 600, now = time(NULL);
   int long_time_no_see = false;
   CfLock thislock;
-  Promise *ppp = NewPromise("hail","open"); 
+  Promise *ppp = NewPromise("hail","open");
   Attributes aa = {{0}};
 
 aa.restart_class = "nonce";
 aa.transaction.ifelapsed = 60*BIG_UPDATES;
 aa.transaction.expireafter = CF_INFINITY;
-  
+
 thislock = AcquireLock(ppp->promiser,CanonifyName(peer),now,aa,ppp,true);
 
 if (thislock.lock != NULL)
@@ -975,7 +967,7 @@ if (conn == NULL)
       {
       YieldCurrentLock(thislock);
       }
-   
+
    return false;
    }
 
@@ -1032,7 +1024,7 @@ void Nova_CacheTotalCompliance(bool allSlots)
   char envClass[CF_SMALLBUF];
 
 // Query all hosts in one time slot
-// ht->hh->hostname,ht->kept,ht->repaired,ht->notkept,ht->t;        
+// ht->hh->hostname,ht->kept,ht->repaired,ht->notkept,ht->t;
 // Divide each day into 4 lifecycle units 3600 * 24 / 4 seconds
 
 now = time(NULL);
@@ -1064,14 +1056,14 @@ for(; curr + (3600 * 6) < now; curr += SECONDS_PER_SHIFT) // in case of all slot
    slot = GetShiftSlot(curr);
 
    // first any environment, then environment-specific
-   
+
    Nova_CacheTotalComplianceEnv(&dbconn,"any",NULL,slot,curr,now);
 
    for (ep = env; ep != NULL; ep = ep->next)
       {
       snprintf(envName, sizeof(envName), "%s", ep->name);
       snprintf(envClass, sizeof(envClass), "environment_%s", ep->name);
-      
+
       Nova_CacheTotalComplianceEnv(&dbconn,envName,envClass,slot,curr,now);
       }
    }
@@ -1127,7 +1119,7 @@ if(count > 0)
    notkept = notkept/count;
    }
 
-CFDB_SaveCachedTotalCompliance(conn, envName, slot, kept, repaired, notkept, count, now); 
+CFDB_SaveCachedTotalCompliance(conn, envName, slot, kept, repaired, notkept, count, now);
 }
 
 /*********************************************************************/
@@ -1142,7 +1134,7 @@ void Nova_CountMonitoredClasses()
   mongo_connection dbconn;
 
 /* BEGIN query document */
- 
+
 if (!CFDB_Open(&dbconn))
    {
    return;
@@ -1217,7 +1209,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
          {
          continue;
          }
-      
+
       memcpy(&entry,value,sizeof(entry));
       //IdempPrependItem(&list,key+1,entry.address);
       Item *ip = ReturnItemIn(list,key+1);
@@ -1226,7 +1218,7 @@ while(NextDB(dbp,dbcp,&key,&ksize,&value,&vsize))
          {
          ip = PrependItem(&list,key+1,entry.address);
          }
-      
+
       time_t lastseen = now - (time_t)entry.Q.q;
 
       if(ip->time < lastseen)
@@ -1263,7 +1255,7 @@ if (s == NULL || strlen(s) ==  0)
    {
    return;
    }
-  
+
 snprintf(filename,CF_BUFSIZE,"%s/%s",CFWORKDIR,"hub_log");
 
 if ((fout = fopen(filename,"a")) == NULL)
@@ -1287,15 +1279,15 @@ if(IsMaintainerProcRunning(child_id))
    }
 
 if (ShiftChange())
-   {   
+   {
    NewClass("am_policy_hub");
-   
+
    child_id = fork();
-   
+
    if (child_id == 0)
       {
       ALARM_PID = -1;
-      
+
       ScheduleRunMaintenanceJobs();
       _exit(0);
       }
@@ -1309,7 +1301,7 @@ if (ShiftChange())
          snprintf(msg,CF_MAXVARSIZE,"-> Started new Maintainer process (pid = %d)\n",child_id);
          Nova_HubLog(msg);
          }
-      
+
       return child_id;
       }
    }
@@ -1345,7 +1337,7 @@ if(maintainer_pid > 0)
    pid = waitpid(maintainer_pid, &status, WNOHANG);
 
    if(pid == 0)
-      {      
+      {
       retval = true;
       }
 
@@ -1354,12 +1346,12 @@ if(maintainer_pid > 0)
       char msg[CF_MAXVARSIZE];
       snprintf(msg,CF_MAXVARSIZE,"Checking if Maintainer process is running (pid:running(0/1)?) = (%d:%d)\n", maintainer_pid, retval);
       Nova_HubLog(msg);
-      }   
+      }
    }
 
 return retval;
 }
 /********************************************************************/
 #endif  /* NOT MINGW */
- 
+
 /* EOF */
