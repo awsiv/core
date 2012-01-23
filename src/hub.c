@@ -8,10 +8,6 @@
 
 #include "cf.nova.h"
 
-#ifdef NT
-#include <process.h>
-#endif
-
 /*******************************************************************/
 /* GLOBAL VARIABLES                                                */
 /*******************************************************************/
@@ -99,25 +95,13 @@ const char *HINTS[16] =
 int main(int argc,char *argv[])
 
 {
-#ifdef MINGW
-
-CfOut(cf_error,"","This service is not available on Windows.");
-return 1;
-
-#else
-
 GenericAgentConfig config = CheckOpts(argc,argv);
 GenericInitialize(argc,argv, "hub", config);
 ThisAgentInit();
 KeepPromises(config);
 StartHub(argc,argv);
-
-#endif
-
 return 0;
 }
-
-#ifndef MINGW
 
 /*****************************************************************************/
 /* Level 1                                                                   */
@@ -338,19 +322,11 @@ for (cp = ControlBodyConstraints(cf_hub); cp != NULL; cp=cp->next)
 
 /*****************************************************************************/
 
-#ifndef MINGW
-
 void StartHub(int argc,char **argv)
 
 {
-#ifdef HAVE_NOVA
 Nova_StartHub(argc,argv);
-#else
-CfOut(cf_error,"","This component is only used in commercial editions of the Cfengine software");
-#endif
 }
-
-#endif  /* NOT MINGW */
 
 /*****************************************************************************/
 
@@ -528,8 +504,6 @@ for (ip = SCHEDULE; ip != NULL; ip = ip->next)
 return false;
 }
 
-#endif /* !MINGW */
-
 /*****************************************************************************/
 
 void Nova_UpdateMongoHostList(Item **list)
@@ -637,8 +611,6 @@ DeleteItemList(*listp);
 }
 
 /***************************************************************************/
-
-#ifndef MINGW
 
 void Nova_StartHub(int argc,char **argv)
 
@@ -1352,6 +1324,5 @@ if(maintainer_pid > 0)
 return retval;
 }
 /********************************************************************/
-#endif  /* NOT MINGW */
 
 /* EOF */
