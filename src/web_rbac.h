@@ -16,13 +16,18 @@
 #define MONGO_ROLES_COLLECTION "phpcfengine.roles"
 #define MONGO_USERS_INTERNAL_COLLECTION "phpcfengine.users"
 #define MONGO_USERS_LDAP_COLLECTION "phpcfengine.ldap_users"
+
 #define dbkey_user_name "username"
+#define dbkey_user_password "password"
+#define dbkey_user_active "active"
 #define dbkey_user_roles "roles"
+
 #define dbkey_role_name "name"
 #define dbkey_role_description "description"
 #define dbkey_role_classrx_include "crxi"
 #define dbkey_role_classrx_exclude "crxx"
 #define dbkey_role_bundlerx_include "brxi"
+
 
 cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, size_t password_len);
 HubQuery *CFDB_GetRBACForUser(char *userName);

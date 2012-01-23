@@ -38,12 +38,6 @@ static cfapi_errid UserIsRoleAdmin(char *userName);
 
 /*****************************************************************************/
 
-static const char *FIELD_USERNAME = "username";
-static const char *FIELD_PASSWORD = "password";
-static const char *FIELD_ACTIVE = "active";
-
-/*****************************************************************************/
-
 static char *SHA1Hash(const char *string, int len)
 {
 unsigned char digest[EVP_MAX_MD_SIZE+1];
@@ -86,15 +80,15 @@ cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, si
 // query
 bson_buffer buffer;
 bson_buffer_init(&buffer);
-bson_append_string(&buffer, FIELD_USERNAME, username);
-bson_append_int(&buffer, FIELD_ACTIVE, 1);
+bson_append_string(&buffer, dbkey_user_name, username);
+bson_append_int(&buffer, dbkey_user_active, 1);
 
 bson query;
 bson_from_buffer(&query, &buffer);
 
 // projection
 bson_buffer_init(&buffer);
-bson_append_int(&buffer, FIELD_PASSWORD, 1);
+bson_append_int(&buffer, dbkey_user_password, 1);
 
 bson field;
 bson_from_buffer(&field, &buffer);
@@ -120,7 +114,7 @@ if (!CFDB_Close(&conn))
 
 if (found)
    {
-   const char *db_password = BsonGetString(&record, FIELD_PASSWORD);
+   const char *db_password = BsonGetString(&record, dbkey_user_password);
    if (db_password)
       {
       if (IsLDAPOn(&conn))
