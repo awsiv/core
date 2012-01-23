@@ -1121,12 +1121,19 @@ void DeleteHubRole(HubRole *role)
 #ifdef HAVE_LIBMONGOC
 HostClassFilter *NewHostClassFilter(const char *classRxInclude, const char *classRxExclude)
 {
-Rlist *classRxIncludes = NULL, *classRxExcludes = NULL;
-
-AppendRlist(&classRxIncludes, classRxInclude, CF_SCALAR);
-AppendRlist(&classRxExcludes, classRxExclude, CF_SCALAR);
-
-return NewHostClassFilterLists(classRxIncludes, classRxExcludes);
+ Rlist *classRxIncludes = NULL, *classRxExcludes;
+ 
+ if(classRxInclude)
+    {
+    AppendRlist(&classRxIncludes, classRxInclude, CF_SCALAR);
+    }
+ 
+ if(classRxExclude)
+    {
+    AppendRlist(&classRxExcludes, classRxExclude, CF_SCALAR);
+    }
+ 
+ return NewHostClassFilterLists(classRxIncludes, classRxExcludes);
 }
 
 HostClassFilter *NewHostClassFilterLists(Rlist *classRxIncludes, Rlist *classRxExcludes)
@@ -1137,6 +1144,19 @@ HostClassFilter *NewHostClassFilterLists(Rlist *classRxIncludes, Rlist *classRxE
  filter->classRxExcludes = classRxExcludes;
 
  return filter;
+}
+
+void AddHostClassFilterPatterns(HostClassFilter *filter, const char *classRxInclude, const char *classRxExclude)
+{
+ if(classRxInclude)
+    {
+    AppendRlist(&(filter->classRxIncludes), classRxInclude, CF_SCALAR);
+    }
+
+ if(classRxExclude)
+    {
+    AppendRlist(&(filter->classRxExcludes), classRxExclude, CF_SCALAR);
+    }
 }
 
 /*****************************************************************************/

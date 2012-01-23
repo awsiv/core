@@ -154,13 +154,14 @@ HubQuery *CFBD_HostClassFilterFromUserRBAC(char *userName, char *classRxIncludeO
  if(!IsRBACOn(&conn))
     {
     CFDB_Close(&conn);
+    // no RBAC restrictions - filter determined by user query only
     PrependRlistAlien(&(recordList), NewHostClassFilter(classRxIncludeOption, NULL));
     return NewHubQuery(NULL, recordList);
     }
  
  HubQuery *hqRBAC = CFDB_GetRBACForUser(userName);
-/*
- cfapt_errid errid = hqRBAC->errid;
+
+ cfapi_errid errid = hqRBAC->errid;
 
  if(errid != ERRID_SUCCESS)
     {
@@ -168,11 +169,16 @@ HubQuery *CFBD_HostClassFilterFromUserRBAC(char *userName, char *classRxIncludeO
     return NewHubQueryErrid(NULL, NULL, errid);
     }
  
-
- HubUserRBAC *rbac = hqRBAC->records->item; 
  
- DeleteHubQuery(hqRBAC);
-*/
+ HubUserRBAC *rbac = hqRBAC->records->item;
+
+ HostClassFilter *hostClassFilter = NewHostClassFilter(classRxIncludeOption, NULL);
+ AddHostClassFilterPatterns(hostClassFilter, rbac->classRxInclude, rbac->classRxExclude);
+ PrependRlistAlien(&(recordList), hostClassFilter);
+ 
+ DeleteHubQuery(hqRBAC, DeleteHubUserRBAC);
+
+ return NewHubQuery(NULL, recordList);
 }
 
 
@@ -276,16 +282,6 @@ static char *StringAppendRealloc2(char *start, char *append1, char *append2)
 }
 
 
-static HostClassFilter *AppendHostClassRx(HubUserRBAC *rbac, char *classRxIncludeOptional, char classRxExcludeOptional)
-{
- char *classRxIncludeCombined = SafeStringDuplicate(rbac->classRxInclude);
-
- classRxIncludeCombined = StringAppendRealloc2(classRxIncludeCombined, "|", classRxIncludeOptional);
- 
-
- char *classRxExcludeCombined = SafeStringDuplicate(rbac->classRxExclude);
- 
-}
 
 cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *description, char *includeClassRx, char *excludeClassRx, char *includeBundleRx)
 {
