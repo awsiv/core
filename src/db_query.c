@@ -7385,6 +7385,7 @@ bson_append_finish_object(excludeClassBuffer);
 return modified;
 }
 
+/*****************************************************************************/
 
 Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const char *ip)
 {
@@ -7426,6 +7427,8 @@ Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const ch
 
  return hostkeys;
 }
+
+/*****************************************************************************/
 
 HubHost *CFDB_GetHostByKey(mongo_connection *conn, const char *hostkey)
 {

@@ -36,13 +36,13 @@ static HubQuery *CFDB_GetAllRoles(void);
 static HubQuery *CFDB_GetRoleByName(char *name);
 static cfapi_errid UserIsRoleAdmin(char *userName);
 
-/*************************************************/
+/*****************************************************************************/
 
 static const char *FIELD_USERNAME = "username";
 static const char *FIELD_PASSWORD = "password";
 static const char *FIELD_ACTIVE = "active";
 
-/*************************************************/
+/*****************************************************************************/
 
 static char *SHA1Hash(const char *string, int len)
 {
@@ -53,6 +53,8 @@ char *buffer = xcalloc(EVP_MAX_MD_SIZE*4, sizeof(char));
 HashPrintSafe(cf_sha1, digest, buffer);
 return buffer;
 }
+
+/*****************************************************************************/
 
 static bool VerifyPasswordIonAuth(const char *password, size_t password_len, const char *db_password)
 {
@@ -77,6 +79,7 @@ free(db_hash);
 return authenticated;
 }
 
+/*****************************************************************************/
 
 cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, size_t password_len)
 {
@@ -138,6 +141,7 @@ if (found)
 return ERRID_RBAC_ACCESS_DENIED;
 }
 
+/*****************************************************************************/
 
 HubQuery *CFBD_HostClassFilterFromUserRBAC(char *userName, char *classRxIncludeOption)
 {
@@ -181,6 +185,7 @@ HubQuery *CFBD_HostClassFilterFromUserRBAC(char *userName, char *classRxIncludeO
  return NewHubQuery(NULL, recordList);
 }
 
+/*****************************************************************************/
 
 HubQuery *CFDB_GetRBACForUser(char *userName)
 /*
@@ -220,6 +225,7 @@ HubQuery *CFDB_GetRBACForUser(char *userName)
  return hqUserRBAC;
 }
 
+/*****************************************************************************/
 
 static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles)
 {
@@ -258,6 +264,7 @@ static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles)
  return NewHubQuery(NULL, recordList);
 }
 
+/*****************************************************************************/
 
 static char *StringAppendRealloc2(char *start, char *append1, char *append2)
 {
@@ -281,7 +288,7 @@ static char *StringAppendRealloc2(char *start, char *append1, char *append2)
  return start;
 }
 
-
+/*****************************************************************************/
 
 cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *description, char *includeClassRx, char *excludeClassRx, char *includeBundleRx)
 {
@@ -349,6 +356,7 @@ cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *descriptio
  return errid;
 }
 
+/*****************************************************************************/
 
 cfapi_errid CFDB_DeleteRole(char *deletingUser, char *roleName)
 {
@@ -394,6 +402,7 @@ cfapi_errid CFDB_DeleteRole(char *deletingUser, char *roleName)
  return errid;
 }
 
+/*****************************************************************************/
 
 static bool RoleExists(char *name)
 {
@@ -404,6 +413,7 @@ static bool RoleExists(char *name)
  return exists;
 }
 
+/*****************************************************************************/
 
 static void DeAssociateUsersFromRole(mongo_connection *conn, char *roleName)
 {
@@ -426,6 +436,7 @@ static void DeAssociateUsersFromRole(mongo_connection *conn, char *roleName)
  bson_destroy(&update);
 }
 
+/*****************************************************************************/
 
 static const char *GetUsersCollection(mongo_connection *conn)
 {
@@ -439,6 +450,7 @@ static const char *GetUsersCollection(mongo_connection *conn)
     }
 }
 
+/*****************************************************************************/
 
 static bool IsLDAPOn(mongo_connection *conn)
 {
@@ -446,11 +458,15 @@ static bool IsLDAPOn(mongo_connection *conn)
  return false;
 }
 
+/*****************************************************************************/
+
 static bool IsRBACOn(mongo_connection *conn)
 {
  // FIXME - check this 
  return false;
 }
+
+/*****************************************************************************/
 
 static Item *CFDB_GetRolesForUser(char *userName)
 {
@@ -495,6 +511,8 @@ static Item *CFDB_GetRolesForUser(char *userName)
  return memberRoles;
  }
 
+/*****************************************************************************/
+
 HubQuery *CFDB_GetAllRolesAuth(char *userName)
 {
  cfapi_errid errid = UserIsRoleAdmin(userName);
@@ -516,6 +534,7 @@ static HubQuery *CFDB_GetAllRoles(void)
  return CFDB_GetRoles(&query);
 }
 
+/*****************************************************************************/
 
 HubQuery *CFDB_GetRoleByNameAuth(char *userName, char *roleName)
 {
@@ -529,6 +548,7 @@ HubQuery *CFDB_GetRoleByNameAuth(char *userName, char *roleName)
  return CFDB_GetRoleByName(roleName);
 }
 
+/*****************************************************************************/
 
 static HubQuery *CFDB_GetRoleByName(char *name)
 {
@@ -546,6 +566,7 @@ static HubQuery *CFDB_GetRoleByName(char *name)
  return hq;
 }
 
+/*****************************************************************************/
 
 HubQuery *CFDB_GetRolesByMultipleNames(Item *names)
 {
@@ -583,6 +604,7 @@ HubQuery *CFDB_GetRolesByMultipleNames(Item *names)
  return hq;
 }
 
+/*****************************************************************************/
 
 HubQuery *CFDB_GetRoles(bson *query)
 
@@ -635,6 +657,7 @@ HubQuery *CFDB_GetRoles(bson *query)
  return hq;
 }
 
+/*****************************************************************************/
 
 static cfapi_errid UserIsRoleAdmin(char *userName)
 {
