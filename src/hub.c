@@ -668,7 +668,7 @@ while (true)
       {
       CfOut(cf_verbose,""," -> Wake up");
 
-
+      NewClass("am_policy_hub");
       if (!FEDERATION && CFDB_QueryIsMaster())  // FEDERATION is for Constellation Mission Observatory
          {
          Nova_CollectReports(a,pp);
