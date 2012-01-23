@@ -1121,7 +1121,7 @@ void DeleteHubRole(HubRole *role)
 #ifdef HAVE_LIBMONGOC
 HostClassFilter *NewHostClassFilter(const char *classRxInclude, const char *classRxExclude)
 {
-Rlist *classRxIncludes = NULL, *classRxExcludes;
+Rlist *classRxIncludes = NULL, *classRxExcludes = NULL;
 
 AppendRlist(&classRxIncludes, classRxInclude, CF_SCALAR);
 AppendRlist(&classRxExcludes, classRxExclude, CF_SCALAR);
