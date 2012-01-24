@@ -23,23 +23,28 @@
 
       <p>
       <?php
-        echo form_label("Include classrx's (hosts)", $classrxinclude['name'], array('class'=> 'regex'));
-        echo form_input($classrxinclude);
+        echo form_label("Include classrx's (hosts)", $crxi['name'], array('class'=> 'regex'));
+        echo form_input($crxi);
        ?>
       </p>    
       <p>
       <?php
-        echo form_label("Exclude classrx's (hosts)", $classrxexclude['name'], array('class'=> 'regex'));
-        echo form_input($classrxexclude);
+        echo form_label("Exclude classrx's (hosts)", $crxx['name'], array('class'=> 'regex'));
+        echo form_input($crxx);
        ?>
       </p>  
       <p>
       <?php
-        echo form_label("Include bundlerx's", $bundlerxinlcude['name'],  array('class'=> 'regex'));
-        echo form_input($bundlerxinlcude);
+        echo form_label("Include bundlerx's", $brxi['name'],  array('class'=> 'regex'));
+        echo form_input($brxi);
        ?>          
       </p>  
-
+      <p>
+      <?php
+        echo form_label("Exclude bundlerx's", $brxx['name'],  array('class'=> 'regex'));
+        echo form_input($brxx);
+       ?>          
+      </p>  
           
       <p id="btnholder">
       <?php echo form_submit(array('name'=>'submit','value'=>$operation,'class'=>'btn'));?>

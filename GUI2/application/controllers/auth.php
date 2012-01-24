@@ -620,17 +620,19 @@ class Auth extends Controller {
                 $this->form_validation->set_rules('name', 'Name', 'required|xss_clean');
             
             $this->form_validation->set_rules('description',     'Description',      'required|xss_clean|trim');
-            $this->form_validation->set_rules('classrxinclude',  'Include classes',  'xss_clean|trim');
-            $this->form_validation->set_rules('classrxexclude',  'Exclude classes',  'xss_clean|trim');
-            $this->form_validation->set_rules('bundlerxinlcude', 'Include bundlers', 'xss_clean|trim');    
+            $this->form_validation->set_rules('crxi',  'Include classes', 'xss_clean|trim');
+            $this->form_validation->set_rules('crxx',  'Exclude classes', 'xss_clean|trim');
+            $this->form_validation->set_rules('brxi', 'Include bundlers', 'xss_clean|trim'); 
+            $this->form_validation->set_rules('brxx', 'Include bundlers', 'xss_clean|trim');             
 
             
             if ($this->form_validation->run() == true) {
                 $data = array('name'            => $this->input->post('name'),
                               'description'     => $this->input->post('description'),
-                              'classrxinclude'  => $this->input->post('classrxinclude'),
-                              'classrxexclude'  => $this->input->post('classrxexclude'),
-                              'bundlerxinlcude' => $this->input->post('bundlerxinlcude')
+                              'crxi' => $this->input->post('crxi'),
+                              'crxx' => $this->input->post('crxx'),
+                              'brxi' => $this->input->post('brxi'),
+                              'brxx' => $this->input->post('brxx')                    
                 );
       
                 if (($op == 'edit' && !$this->ion_auth->update_role($this->session->userdata('username'), $data))) {
@@ -678,22 +680,28 @@ class Auth extends Controller {
             'cols'  => '20',
             'value' => $this->form_validation->set_value('description'),
         );
-        $this->data['classrxinclude'] = array('name' => "classrxinclude",
-            'id'    => 'classrxinclude',
+        $this->data['crxi'] = array('name' => "crxi",
+            'id'    => 'crxi',
             'type'  => 'text',
-            'value' => $this->form_validation->set_value('classrxinclude'),
+            'value' => $this->form_validation->set_value('crxi'),
         );
         
-        $this->data['classrxexclude'] = array('name' => "classrxexclude",
-            'id'    => 'classrxexclude',
+        $this->data['crxx'] = array('name' => "crxx",
+            'id'    => 'crxx',
             'type'  => 'text',
-            'value' => $this->form_validation->set_value('classrxexclude'),
+            'value' => $this->form_validation->set_value('crxx'),
         );        
         
-        $this->data['bundlerxinlcude'] = array('name' => "bundlerxinlcude",
-            'id'    => 'bundlerxinlcude',
+        $this->data['brxi'] = array('name' => "brxi",
+            'id'    => 'brxi',
             'type'  => 'text',
-            'value' => $this->form_validation->set_value('bundlerxinlcude'),
+            'value' => $this->form_validation->set_value('brxi'),
+        );  
+        
+        $this->data['brxx'] = array('name' => "brxx",
+            'id'    => 'brxx',
+            'type'  => 'text',
+            'value' => $this->form_validation->set_value('brxx'),
         );  
         
         if ($op == 'edit')
@@ -709,11 +717,12 @@ class Auth extends Controller {
             $this->data['operation']      = "Update";
             $this->data['name']['enable'] = 'enable';
             
-            $this->data['name']['value']            = $this->form_validation->set_value('name',            $role['name']); 
-            $this->data['description']['value']     = $this->form_validation->set_value('description',     array_key_exists('description',     $role) ? $role['description']     : "");
-            $this->data['classrxinclude']['value']  = $this->form_validation->set_value('classrxinclude',  array_key_exists('classrxinclude',  $role) ? $role['classrxinclude']  : "");
-            $this->data['classrxexclude']['value']  = $this->form_validation->set_value('classrxexclude',  array_key_exists('classrxexclude',  $role) ? $role['classrxexclude']  : "");
-            $this->data['bundlerxinlcude']['value'] = $this->form_validation->set_value('bundlerxinlcude', array_key_exists('bundlerxinlcude', $role) ? $role['bundlerxinlcude'] : "");
+            $this->data['name']['value']        = $this->form_validation->set_value('name',        $role['name']); 
+            $this->data['description']['value'] = $this->form_validation->set_value('description', array_key_exists('description', $role) ? $role['description'] : "");
+            $this->data['crxi']['value'] = $this->form_validation->set_value('crxi', array_key_exists('crxi', $role) ? $role['crxi'] : "");
+            $this->data['crxx']['value'] = $this->form_validation->set_value('crxx', array_key_exists('crxx', $role) ? $role['crxx'] : "");
+            $this->data['brxi']['value'] = $this->form_validation->set_value('brxi', array_key_exists('brxi', $role) ? $role['brxi'] : "");
+            $this->data['brxx']['value'] = $this->form_validation->set_value('brxx', array_key_exists('brxx', $role) ? $role['brxx'] : "");
         }
         
         

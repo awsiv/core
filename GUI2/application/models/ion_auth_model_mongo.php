@@ -963,7 +963,7 @@ class Ion_auth_model_mongo extends CI_Model
 	{
             try {
                     // cfpr_role_create - return 1 if everything ok
-                    $ret = cfpr_role_create($username, $data['name'], $data['description'], $data['classrxinclude'], $data['classrxexclude'], $data['bundlerxinlcude']);
+                    $ret = cfpr_role_create($username, $data['name'], $data['description'], $data['crxi'], $data['crxx'], $data['brxi'], $data['brxx']);
 
                     if ($ret === 1 ) {
                         return true;

@@ -56,15 +56,16 @@ class test_usermanagement_libraries extends CodeIgniterUnitTestCase {
 
     //-------------  Roles --------------------------------
     /*
-     * will run cfpr_role_create(username, name,desc,classRxInclude,classRxExclude,bundleRxInclude) in the end
+     * will run cfpr_role_create(username, name,desc,crxi,crxx,brxi) in the end
      */
     public function test_cfpr_role_create() {
         $username = 'admin';        
         $data = array('name' => "test_role_" . date("d_M_Y_H_i_s") . time(),
             'description' => "Test role. Created at: " . date("d/M/Y H:i:s"),
-            'classrxinclude' => "classRxInclude",
-            'classrxexclude' => 'classRxExclude',
-            'bundlerxinlcude' => 'bundleRxInclude'
+            'crxi' => "crxi",
+            'crxx' => 'crxx',
+            'brxi' => 'brxi',
+            'brxx' => 'brxx'
         );
         $ret = $this->_ci->ion_auth->create_role($username, $data);
 
@@ -80,9 +81,10 @@ class test_usermanagement_libraries extends CodeIgniterUnitTestCase {
         $data = array(
             'name' => "test_role_" . date("d_M_Y_H_i_s") . '_' . rand(0, 2345) . '_' . time(),
             'description'     => "Test role. Created at: " . date("d/M/Y H:i:s"),
-            'classrxinclude'  => "classRxInclude",
-            'classrxexclude'  => 'classRxExclude',
-            'bundlerxinlcude' => 'bundleRxInclude'
+            'crxi' => "crxi",
+            'crxx' => 'crxx',
+            'brxi' => 'brxi',
+            'brxx' => 'brxx'
         );
 
         $ret = $this->_ci->ion_auth->create_role($username, $data);
