@@ -6,41 +6,11 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 #include "probes.h"
+#include "proc_keyvalue.h"
 
 /************************************************************************/
 
 /* Generic "Key: Numeric Value" parser */
-
-typedef void (*MemoryFieldCallback)(const char *field, off_t value, void *param);
-
-static bool ParseKeyNumericValue(FILE *fd, MemoryFieldCallback callback, void *param)
-
-{ char buf[1024];
-
-while (fgets(buf, 1024, fd))
-   {
-   char *s = strchr(buf, ':');
-   unsigned long long value;
-   
-   if (!s)
-      {
-      /* Malformed file */
-      return false;
-      }
-   
-   *s = 0;
-   
-   if (sscanf(s + 1, "%llu", &value) != 1)
-      {
-      /* Malformed file */
-      return false;
-      }
-   
-   (*callback)(buf, value, param);
-   }
-
-return !ferror(fd);
-}
 
 /************************************************************************/
 
@@ -57,7 +27,7 @@ typedef struct
 
 #define KB 1024
 
-static void AcceptMemoryField(const char *field, off_t value, void *param)
+static bool AcceptMemoryField(const char *field, off_t value, void *param)
 
 { MemoryInfo *info = param;
 
@@ -83,6 +53,8 @@ else if (!strcmp(field, "SwapFree"))
    {
    info->free_swap = value;
    }
+
+return true;
 }
 
 /************************************************************************/
