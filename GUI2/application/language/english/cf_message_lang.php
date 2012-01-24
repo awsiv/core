@@ -263,4 +263,5 @@ $lang['empty_rolename'] = 'Role name is empty';
  * General
  */
 $lang['nothing_found'] = 'Nothing Found';
+$lang['500_error']     = 'Internal Server Error';
 ?>
