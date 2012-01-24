@@ -54,7 +54,8 @@ input[readonly] {background: buttonface;}
         </div>
     </div>
 </div>
-<div id="confirmation" title="Are you sure"><span>Do you want to continue deleting..</span></div>
+<div id="confirmation" title="Are you sure"><span></span></div>
+<div id="confirmation_create" title="Are you sure"><span>This role will allow complete reporting permissions for all hosts, is this what you wanted? If not, please fill in a host class regular expression.</span></div>
 <script src="<?php echo get_scriptdir() ?>jquery.form.js" type="text/javascript"></script>
 <script src="<?php echo get_scriptdir() ?>jquery.blockUI.js" type="text/javascript"></script>
 <script type="text/javascript">
@@ -84,6 +85,7 @@ input[readonly] {background: buttonface;}
             event.preventDefault();
             $("#error_status").html('');
             var path=$(this).attr('href');
+            $('#confirmation span').text('Do you want to continue deleting..');
             $confirmation.data('path',path).dialog("open");
         });
 
