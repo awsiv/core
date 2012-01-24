@@ -19,7 +19,11 @@ class Cdpreports extends Cf_Controller {
             $rows = 20;
         }
         $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
-        $data = cfpr_cdp_report(NULL,$report,$rows,$page_number);
+        
+        // we will use username for RBAC
+        $username =  $this->session->userdata('username');   
+        
+        $data = cfpr_cdp_report($username, NULL,$report,$rows,$page_number);
         $tabledata = json_decode(utf8_encode($data), true);
         $bc = array(
                 'title' => $this->lang->line('breadcrumb_cdpreport'),
