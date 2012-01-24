@@ -41,10 +41,6 @@ static bool IsMaintainerProcRunning(pid_t maintainer_pid);
 static void Nova_CreateHostID(mongo_connection *dbconnp, char *hostID, char *ipaddr);
 static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer,Attributes a, Promise *pp);
 
-/*****************************************************************************/
-
-
-
 /*******************************************************************/
 /* Command line options                                            */
 /*******************************************************************/
@@ -93,7 +89,6 @@ const char *HINTS[16] =
 /*****************************************************************************/
 
 int main(int argc,char *argv[])
-
 {
 GenericAgentConfig config = CheckOpts(argc,argv);
 GenericInitialize(argc,argv, "hub", config);
@@ -108,7 +103,6 @@ return 0;
 /*****************************************************************************/
 
 GenericAgentConfig CheckOpts(int argc,char **argv)
-
 { extern char *optarg;
   int optindex = 0;
   int c;
@@ -206,7 +200,6 @@ return config;
 /*****************************************************************************/
 
 void ThisAgentInit()
-
 {
 umask(077);
 
@@ -234,7 +227,6 @@ else if (SCHEDULE == NULL)
 /*****************************************************************************/
 
 void KeepPromises(GenericAgentConfig config)
-
 {
 Constraint *cp;
 Rval retval;
@@ -323,7 +315,6 @@ for (cp = ControlBodyConstraints(cf_hub); cp != NULL; cp=cp->next)
 /*****************************************************************************/
 
 void StartHub(int argc,char **argv)
-
 {
 Nova_StartHub(argc,argv);
 }
@@ -331,7 +322,6 @@ Nova_StartHub(argc,argv);
 /*****************************************************************************/
 
 void SplayLongUpdates()
-
 { CF_DB *dbp;
   LockData entry,update;
   CF_DBC *dbcp;
@@ -507,7 +497,6 @@ return false;
 /*****************************************************************************/
 
 void Nova_UpdateMongoHostList(Item **list)
-
 {
  Item *ip = NULL, *lastseen = NULL, *ip2 = NULL, *new_lastseen=NULL;
  Item *deleted_hosts=NULL;
@@ -577,10 +566,9 @@ CfOut(cf_inform,"","%d hosts added to the lastseen cache\n",count);
 
 /*****************************************************************************/
 
-static void Nova_CreateHostID(mongo_connection *dbconn, char *hostID, char *ipaddr)
-
 /* Make sure an entry for the given keyhash,ip exists */
 
+static void Nova_CreateHostID(mongo_connection *dbconn, char *hostID, char *ipaddr)
 {
 CFDB_SaveHostID(dbconn,MONGO_DATABASE,cfr_keyhash,hostID,ipaddr,NULL);
 CFDB_SaveHostID(dbconn,MONGO_ARCHIVE,cfr_keyhash,hostID,ipaddr,NULL);
@@ -589,7 +577,6 @@ CFDB_SaveHostID(dbconn,MONGO_ARCHIVE,cfr_keyhash,hostID,ipaddr,NULL);
 /*****************************************************************************/
 
 static void Nova_RemoveExcludedHosts(Item **listp, Item *hosts_exclude)
-
 { Item *ip;
   Item *include = NULL;
 
@@ -613,7 +600,6 @@ DeleteItemList(*listp);
 /***************************************************************************/
 
 void Nova_StartHub(int argc,char **argv)
-
 { int time_to_run = false;
   time_t now = time(NULL);
   Promise *pp = NewPromise("hub_cfengine","the aggregator");
@@ -801,7 +787,6 @@ for (;;)
 /********************************************************************/
 
 static void Nova_ParallelizeScan(Item *masterlist,Attributes a,Promise *pp)
-
 {
 #define SCAN_CHILDREN 50
 
@@ -857,7 +842,6 @@ CfOut(cf_verbose, "", "All hostscan processes finished execution");
 /********************************************************************/
 
 static pid_t Nova_ScanList(Item *list,Attributes a,Promise *pp)
-
 {
 Item *ip;
 pid_t child_id;
@@ -1241,6 +1225,7 @@ fclose(fout);
 }
 
 /*********************************************************************/
+
 static pid_t Nova_Maintain(pid_t maintainer_pid)
 
 { pid_t child_id = maintainer_pid;;
@@ -1280,7 +1265,9 @@ if (ShiftChange())
 
 return CF_UNDEFINED;  // NO ShiftChange and Maintainer process is NOT running
 }
+
 /*********************************************************************/
+
 static void ScheduleRunMaintenanceJobs(void)
 
 {  time_t now = time(NULL);
@@ -1296,6 +1283,7 @@ if(LOGGING)
    Nova_HubLog(msg);
    }
 }
+
 /********************************************************************/
 
 static bool IsMaintainerProcRunning(pid_t maintainer_pid)
@@ -1323,6 +1311,3 @@ if(maintainer_pid > 0)
 
 return retval;
 }
-/********************************************************************/
-
-/* EOF */
