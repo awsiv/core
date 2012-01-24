@@ -52,12 +52,18 @@ class Settings extends Cf_Controller {
                 'op' => 'create'
             );
 
+            
             //for fall back roles list
+            /* disabled. If RBAC is ON admin role is hardcoded.
+             * if not - we shoudl discus this.
+             */
+/*            
             $roles = $this->ion_auth->get_roles_fromdb();
             foreach ((array) $roles as $role) {
                 $data['roles'][$role['name']] = $role['name'];
             }
-          
+*/       
+            
 
             //for selecting admin_role from list, populated list depends on the mode selected and saved
            
@@ -70,8 +76,12 @@ class Settings extends Cf_Controller {
             {
                 $data['selected_role']=$this->settings_model->app_settings_get_item('admin_role');
             }*/
-             $data['rolesacc']=$data['roles'];
-          
+             //$data['rolesacc']=$data['roles'];
+            //tmp solutiom
+            $data['rolesacc']['admin'] = 'admin';//$data['roles'];
+            $data['roles'] = $data['rolesacc'];
+            // ---- end TMP solution
+
             //if previous settings exist load it and display
             $settings = $this->settings_model->get_app_settings();
 
@@ -118,12 +128,13 @@ class Settings extends Cf_Controller {
                     //'member_attribute' => set_value('member_attribute'),
                     'encryption' => set_value('encryption'),
                 );
-                
-                
+                               
                 $data = array_merge($form_data, $data);
             }
+
             $this->template->load('template', 'appsetting/missionportalpref', $data);
         } else {
+            
             $user_dir =$this->input->post('users_directory');
             $form_data = array(
                 'appemail' => set_value('appemail'),
@@ -150,6 +161,7 @@ class Settings extends Cf_Controller {
             } else {
                 $inserted = $this->settings_model->insert_app_settings($form_data);
             }
+            
             if ($inserted) {// the information has therefore been successfully saved in the db
 //redirect('settings/success');   
                 $data = array(
@@ -184,11 +196,12 @@ class Settings extends Cf_Controller {
                     }
                 }
                 //$this->load->view('appsetting/missionportalpref',$data);
+                /* Disabled
                 $roles = $this->ion_auth->get_roles_fromdb();
                 foreach ((array) $roles as $role) {
                     $data['roles'][$role['name']] = $role['name'];
                 }
-                
+                */
                 //perviously used for selecting the roles form the resective source now , the roles are used form DB only
                /* if($this->input->post('mode')==$this->session->userdata('mode')||$this->input->post('mode')=='database'){
                 $roles_acc_mode = $this->ion_auth->get_roles();
@@ -200,7 +213,14 @@ class Settings extends Cf_Controller {
                 {
                     $data['selected_role']=$this->input->post('admin_role');
                 }*/
-                 $data['rolesacc']=$data['roles'];
+                 //$data['rolesacc']=$data['roles'];
+
+            //tmp solutiom
+            $data['rolesacc']['admin'] = 'admin';//$data['roles'];
+            $data['roles'] = $data['rolesacc'];
+            
+          
+            // ---- end TMP solution
                 $this->template->load('template', 'appsetting/missionportalpref', $data);
             } else {
                 echo 'An error occurred saving your information. Please try again later';

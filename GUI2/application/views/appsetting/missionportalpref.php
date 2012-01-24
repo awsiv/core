@@ -22,7 +22,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
     }?>
     
    <?php if(isset($selected_role)){
-     echo  form_label($selected_role,'',array('id'=>'selected_grplbl'));
+     echo form_label($selected_role,'',array('id'=>'selected_grplbl'));
    }?>
  <!--<a class="btn testldap" id="getgrpsbtn" href="<?php echo site_url('settings/ldaptest')?>">Get roles</a>-->
 </p>
@@ -139,10 +139,10 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
 
 <p>
     <label for="rbac">Role based access control <span class="required">*</span></label>
-        <input id="rbac_on" name="rbac" type="radio" class="" value="rbac_on" <?php echo (isset($rbac_on))?$database:$this->form_validation->set_radio('rbac', 'rbac_on') ; ?> checked="checked"/>
+        <input id="rbac_on" name="rbac" type="radio" class="" value="true" <?php echo (isset($rbac_on))?$database:$this->form_validation->set_radio('rbac', 'true') ; ?> checked="checked"/>
         <label for="mode" class="">On</label>
                         
-        <input id="rbac_off" name="rbac" type="radio" class="" value="rbac_off" <?php echo (isset($rbac_off))?$rbac_off:$this->form_validation->set_radio('rbac', 'rbac_off'); ?> />
+        <input id="rbac_off" name="rbac" type="radio" class="" value="false" <?php echo (isset($rbac_off))?$rbac_off:$this->form_validation->set_radio('rbac', 'false'); ?> />
         <label for="mode" class="">Off</label>
 </p>
 
