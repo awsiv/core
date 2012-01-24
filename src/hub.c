@@ -314,13 +314,6 @@ for (cp = ControlBodyConstraints(cf_hub); cp != NULL; cp=cp->next)
 
 /*****************************************************************************/
 
-void StartHub(int argc,char **argv)
-{
-Nova_StartHub(argc,argv);
-}
-
-/*****************************************************************************/
-
 void SplayLongUpdates()
 { CF_DB *dbp;
   LockData entry,update;
@@ -599,7 +592,7 @@ DeleteItemList(*listp);
 
 /***************************************************************************/
 
-void Nova_StartHub(int argc,char **argv)
+void StartHub(int argc,char **argv)
 { int time_to_run = false;
   time_t now = time(NULL);
   Promise *pp = NewPromise("hub_cfengine","the aggregator");

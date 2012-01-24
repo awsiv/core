@@ -952,7 +952,6 @@ void Nova_IncludeFile(char *name,char *buffer,int bufsize);
 
 /* hub.c */
 
-void Nova_StartHub(int argc,char **argv);
 Item *Nova_ScanClients(void);
 void Nova_HubLog(char *s);
 void Nova_CountMonitoredClasses(void);
