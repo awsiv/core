@@ -24,7 +24,7 @@ int CFH_ZENOSS = false;
 
 /* Prototypes */
 
-void StartHub(int argc,char **argv);
+void StartHub(void);
 void Nova_CollectReports(Attributes a, Promise *pp);
 int ScheduleRun(void);
 static void Nova_RemoveExcludedHosts(Item **list, Item *hosts_exclude);
@@ -94,7 +94,7 @@ GenericAgentConfig config = CheckOpts(argc,argv);
 GenericInitialize(argc,argv, "hub", config);
 ThisAgentInit();
 KeepPromises(config);
-StartHub(argc,argv);
+StartHub();
 return 0;
 }
 
@@ -592,7 +592,7 @@ DeleteItemList(*listp);
 
 /***************************************************************************/
 
-void StartHub(int argc,char **argv)
+void StartHub(void)
 { int time_to_run = false;
   time_t now = time(NULL);
   Promise *pp = NewPromise("hub_cfengine","the aggregator");
