@@ -756,32 +756,40 @@ PHP_FUNCTION(cfpr_report_patch_avail)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_report_classes)
-
-//$ret = cfpr_report_classes($hostkey,$name,$regex);
-
-{ char *hostkey,*name,*classreg;
+{
+ char *userName, *hostkey,*name,*classreg;
  char *fname,*fhostkey,*fclassreg;
- int hk_len, n_len,cr_len;
+ int user_len, hk_len, n_len,cr_len;
  long regex;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
  PageInfo page = {0};
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbsll",&hostkey,&hk_len,&name,&n_len,&regex,&classreg,&cr_len,&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbsll",
+                           &userName, &user_len,
+                           &hostkey, &hk_len,
+                           &name, &n_len,
+                           &regex,
+                           &classreg, &cr_len,
+                           &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
+ 
+ ARGUMENT_CHECK_CONTENTS(user_len);
 
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fname =  (n_len == 0) ? NULL : name;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
 
  buffer[0]='\0';
+ 
+ HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
+ ERRID_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
- Nova2PHP_classes_report(fhostkey,fname,regex,filter,&page,buffer,bufsize);
- DeleteHostClassFilter(filter);
+ HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ Nova2PHP_classes_report(fhostkey, fname, regex, filter, &page, buffer, sizeof(buffer));
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
  RETURN_STRING(buffer,1);
 }
@@ -1853,26 +1861,37 @@ PHP_FUNCTION(cfpr_hosts_with_patch_avail)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_hosts_with_classes)
-
-//$ret = cfpr_hosts_with_classes($hostkey,$name,$regex);
-
-{ char *hostkey,*name,*classreg;
- int hk_len, n_len,cr_len;
+{
+ char *userName, *hostkey,*name,*classreg;
+ int user_len, hk_len, n_len,cr_len;
  long regex;
- const int bufsize = 512*1024;
- char buffer[bufsize];
+ char buffer[512*1024];
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbs",&hostkey,&hk_len,&name,&n_len,&regex,&classreg,&cr_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbs",
+                           &userName, &user_len,
+                           &hostkey, &hk_len,
+                           &name, &n_len,
+                           &regex,
+                           &classreg, &cr_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
+ ARGUMENT_CHECK_CONTENTS(user_len);
+
+ char *fhostkey =  (hk_len == 0) ? NULL : hostkey;
+ char *fname =  (n_len == 0) ? NULL : name;
+ char *fclassreg =  (cr_len == 0) ? NULL : classreg;
+
  buffer[0] = '\0';
 
- HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
- Nova2PHP_classes_hosts(hostkey,name,regex,filter,buffer,bufsize);
- DeleteHostClassFilter(filter);
+ HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
+ ERRID_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+ 
+ HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ Nova2PHP_classes_hosts(fhostkey, fname, regex, filter, buffer, sizeof(buffer));
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
  RETURN_STRING(buffer,1);
 }
