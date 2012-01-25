@@ -1929,7 +1929,6 @@ PHP_FUNCTION(cfpr_hosts_with_notkept)
  RETURN_STRING(buffer,1);
 }
 
-
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_hosts_with_vars)
