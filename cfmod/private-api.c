@@ -1557,14 +1557,16 @@ PHP_FUNCTION(cfpr_report_notkept)
 
  ARGUMENT_CHECK_CONTENTS(user_len);
 
+ // convert delta hours to absolute time (deltato is oldest)
+ from = DeltaHrsConvert(hours_deltato);
+ to = DeltaHrsConvert(hours_deltafrom);
+ 
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fhandle =  (h_len == 0) ? NULL : handle;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
 
-// convert delta hours to absolute time (deltato is oldest)
 
- from = DeltaHrsConvert(hours_deltato);
- to = DeltaHrsConvert(hours_deltafrom);
+
 
  buffer[0]='\0';
 
@@ -1582,22 +1584,28 @@ PHP_FUNCTION(cfpr_report_notkept)
 
 PHP_FUNCTION(cfpr_report_repaired)
 
-{ char *hostkey,*handle,*classreg;
+{ char *userName, *hostkey,*handle,*classreg;
  char *fhostkey,*fhandle,*fclassreg;
- int hk_len,h_len,cr_len;
+ int user_len, hk_len,h_len,cr_len;
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
  long hours_deltafrom, hours_deltato;
  time_t from = 0, to = 0;
  PageInfo page = {0};
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssllsll",
-                           &hostkey,&hk_len,&handle,&h_len,&hours_deltafrom,&hours_deltato,&classreg,&cr_len,
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsll",
+                           &userName, &user_len,
+                           &hostkey, &hk_len,
+                           &handle, &h_len,
+                           &hours_deltafrom, &hours_deltato,
+                           &classreg, &cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
+
+ ARGUMENT_CHECK_CONTENTS(user_len);
 
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fhandle =  (h_len == 0) ? NULL : handle;
@@ -1610,9 +1618,12 @@ PHP_FUNCTION(cfpr_report_repaired)
 
  buffer[0]='\0';
 
- HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+ HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
+ ERRID_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+ HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
  Nova2PHP_promiselog(fhostkey,fhandle,PROMISE_LOG_STATE_REPAIRED,from,to,filter,&page,buffer,bufsize);
- DeleteHostClassFilter(filter);
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
  
  RETURN_STRING(buffer,1);
 }
@@ -1661,22 +1672,27 @@ PHP_FUNCTION(cfpr_summarize_notkept)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_summarize_repaired)
-
-//$ret = cfpr_summarize_notkept(hostkey,handle,from,to,classRegex);
-
-{ char *hostkey,*handle,*classreg;
+{
+ char *userName, *hostkey,*handle,*classreg;
  char *fhostkey,*fhandle,*fclassreg;
- int hk_len,h_len,cr_len;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ int user_len, hk_len,h_len,cr_len;
+ char buffer[CF_WEBBUFFER];
  time_t from,to;
  PageInfo page = {0};
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssllsll",&hostkey,&hk_len,&handle,&h_len,&from,&to,&classreg,&cr_len, &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsll",
+                           &userName, &user_len,
+                           &hostkey, &hk_len,
+                           &handle, &h_len,
+                           &from, &to,
+                           &classreg, &cr_len,
+                           &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
+
+ ARGUMENT_CHECK_CONTENTS(user_len);
 
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fhandle =  (h_len == 0) ? NULL : handle;
@@ -1684,9 +1700,12 @@ PHP_FUNCTION(cfpr_summarize_repaired)
 
  buffer[0]='\0';
 
- HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
- Nova2PHP_promiselog_summary(fhostkey,fhandle,PROMISE_LOG_STATE_REPAIRED,from,to,filter,&page,buffer,bufsize);
- DeleteHostClassFilter(filter);
+ HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
+ ERRID_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+ HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ Nova2PHP_promiselog_summary(fhostkey, fhandle, PROMISE_LOG_STATE_REPAIRED, from, to, filter, &page, buffer, sizeof(buffer));
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
  
  RETURN_STRING(buffer,1);
 }
@@ -1864,32 +1883,41 @@ PHP_FUNCTION(cfpr_hosts_with_repaired)
 
 //$ret = cfpr_hosts_with_repaired($hostkey,$name,$hours_deltafrom,$hours_deltato,$class_regex);
 
-{ char *hostkey,*handle,*classreg;
- int hk_len, h_len,cr_len;
- const int bufsize = 512*1024;
- char buffer[bufsize];
+{ char *userName, *hostkey,*handle,*classreg;
+ int user_len, hk_len, h_len,cr_len;
+ char buffer[512*1024];
  long hours_deltafrom, hours_deltato;
  time_t from = 0, to = 0;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslls",&hostkey,&hk_len,&handle,&h_len,&hours_deltafrom,&hours_deltato,&classreg,&cr_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssslls",
+                           &userName, &user_len,
+                           &hostkey, &hk_len,
+                           &handle, &h_len,
+                           &hours_deltafrom, &hours_deltato,
+                           &classreg, &cr_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
-// convert delta hours to absolute time (deltato is oldest)
+ ARGUMENT_CHECK_CONTENTS(user_len);
 
+// convert delta hours to absolute time (deltato is oldest)
  from = DeltaHrsConvert(hours_deltato);
  to = DeltaHrsConvert(hours_deltafrom);
+
  char *fhostkey = (hk_len == 0) ? NULL : hostkey;
  char *fhandle = (h_len == 0) ? NULL : handle;
  char *fclassreg = (cr_len == 0) ? NULL : classreg;
 
  buffer[0] = '\0';
 
- HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
- Nova2PHP_promiselog_hosts(fhostkey,fhandle,PROMISE_LOG_STATE_REPAIRED,from,to,filter,buffer,bufsize);
- DeleteHostClassFilter(filter);
+ HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
+ ERRID_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+ HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ Nova2PHP_promiselog_hosts(fhostkey, fhandle, PROMISE_LOG_STATE_REPAIRED, from, to, filter, buffer, sizeof(buffer));
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
  RETURN_STRING(buffer,1);
 }
