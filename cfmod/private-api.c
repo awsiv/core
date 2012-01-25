@@ -1143,26 +1143,33 @@ PHP_FUNCTION(cfpr_report_overall_summary)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_report_lastseen)
-
-
-{ char *hostkey,*host,*address,*hash,*classreg;
+{
+ char *userName, *hostkey,*host,*address,*hash,*classreg;
  char *fhostkey,*fhost,*faddress,*fhash,*fclassreg;
- int hk_len,h_len,a_len,h2_len,cr_len;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ int user_len, hk_len,h_len,a_len,h2_len,cr_len;
+ char buffer[CF_WEBBUFFER];
  long ago;
  time_t tago;
  zend_bool regex;
  int use_reg;
  PageInfo page = {0};
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslbsll",
-                           &hostkey,&hk_len,&hash,&h2_len,&host,&h_len,&address,&a_len,&ago,&regex,&classreg,&cr_len,
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssslbsll",
+                           &userName, &user_len,
+                           &hostkey, &hk_len,
+                           &hash, &h2_len,
+                           &host, &h_len,
+                           &address, &a_len,
+                           &ago,
+                           &regex,
+                           &classreg, &cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
+
+ ARGUMENT_CHECK_CONTENTS(user_len);
 
  tago = (time_t)ago;
  use_reg = (int)regex;
@@ -1175,9 +1182,12 @@ PHP_FUNCTION(cfpr_report_lastseen)
 
  buffer[0]='\0';
 
- HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
- Nova2PHP_lastseen_report(fhostkey,fhash,fhost,faddress,tago,use_reg,filter,&page,buffer,bufsize);
- DeleteHostClassFilter(filter);
+ HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
+ ERRID_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+ HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ Nova2PHP_lastseen_report(fhostkey, fhash, fhost, faddress, tago,use_reg, filter, &page, buffer, sizeof(buffer));
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
  RETURN_STRING(buffer,1);
 
@@ -2105,23 +2115,30 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_promises)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_hosts_with_lastseen)
-
-//$ret = cfpr_hosts_with_lastseen($hostkey,$host,$addr,$tago,$regex);
-
-{ char *hostkey,*host,*address,*hash,*classreg;
+{
+ char *userName, *hostkey,*host,*address,*hash,*classreg;
  char *fhostkey,*fhost,*faddress,*fhash,*fclassreg;
- int hk_len,h_len,a_len,h2_len,cr_len;
- const int bufsize = 512*1024;
- char buffer[bufsize];
+ int user_len, hk_len,h_len,a_len,h2_len,cr_len;
+ char buffer[512*1024];
  long ago;
  zend_bool regex;
  int use_reg;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslbs",&hostkey,&hk_len,&hash,&h2_len,&host,&h_len,&address,&a_len,&ago,&regex,&classreg,&cr_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssslbs",
+                           &userName, &user_len,                           
+                           &hostkey, &hk_len,
+                           &hash, &h2_len,
+                           &host, &h_len,
+                           &address, &a_len,
+                           &ago,
+                           &regex,
+                           &classreg, &cr_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
+
+ ARGUMENT_CHECK_CONTENTS(user_len);
 
  use_reg = (int)regex;
 
@@ -2133,12 +2150,14 @@ PHP_FUNCTION(cfpr_hosts_with_lastseen)
 
  buffer[0] = '\0';
 
- HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
- Nova2PHP_lastseen_hosts(fhostkey,fhash,fhost,faddress,ago,use_reg,filter,buffer,bufsize);
- DeleteHostClassFilter(filter);
+ HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
+ ERRID_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+ HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ Nova2PHP_lastseen_hosts(fhostkey, fhash, fhost, faddress, ago, use_reg, filter, buffer, sizeof(buffer));
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
  RETURN_STRING(buffer,1);
-
 }
 
 /******************************************************************************/
