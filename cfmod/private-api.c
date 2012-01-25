@@ -409,27 +409,21 @@ PHP_FUNCTION(cfpr_host_meter)
 /*****************************************************************************/
 
 PHP_FUNCTION(cfpr_vitals_list)
-
-{ char *hostkey,*fhostkey;
+{
+ char *hostkey;
  int hk_len;
- const int bufsize = 4096;
- char buffer[bufsize];
+ char buffer[4096];
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hostkey,&hk_len) == FAILURE)
     {
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
- fhostkey =  (hk_len == 0) ? NULL : hostkey;
-
- if(!fhostkey)
-    {
-    php_printf("cfpr_vitals_list: error: hostkey is undefined\n");
-    RETURN_NULL();
-    }
+ ARGUMENT_CHECK_CONTENTS(hk_len);
 
  buffer[0]='\0';
- Nova2PHP_vitals_list(fhostkey, buffer, bufsize);
+ Nova2PHP_vitals_list(hostkey, buffer, sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -438,34 +432,21 @@ PHP_FUNCTION(cfpr_vitals_list)
 
 PHP_FUNCTION(cfpr_vitals_view_magnified)
 
-{ char *hostkey,*fhostkey, *vitalId, *fvitalId;
+{ char *hostkey, *vitalId;
  int hk_len, vi_len;
- const int bufsize = 1024*1024;
- char buffer[bufsize];
+ char buffer[1024*1024];
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&hostkey,&hk_len,&vitalId,&vi_len) == FAILURE)
     {
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
-
- fhostkey =  (hk_len == 0) ? NULL : hostkey;
- fvitalId =  (vi_len == 0) ? NULL : vitalId;
 
  // only support one host and vital at this time
- if(!fhostkey)
-    {
-    php_printf("cfpr_vitals_view_magnified: error: hostkey is undefined\n");
-    RETURN_NULL();
-    }
-
-  if(!fvitalId)
-    {
-    php_printf("cfpr_vitals_view_magnified: error: vitalid is undefined\n");
-    RETURN_NULL();
-    }
+ ARGUMENT_CHECK_CONTENTS(hk_len && vi_len);
 
  buffer[0]='\0';
- Nova2PHP_vitals_view_magnified(fhostkey, fvitalId, buffer, bufsize);
+ Nova2PHP_vitals_view_magnified(hostkey, vitalId, buffer, sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -474,34 +455,21 @@ PHP_FUNCTION(cfpr_vitals_view_magnified)
 
 PHP_FUNCTION(cfpr_vitals_view_week)
 
-{ char *hostkey,*fhostkey, *vitalId, *fvitalId;
+{ char *hostkey, *vitalId;
  int hk_len, vi_len;
- const int bufsize = 1024*1024;
- char buffer[bufsize];
+ char buffer[1024*1024];
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&hostkey,&hk_len,&vitalId,&vi_len) == FAILURE)
     {
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
-
- fhostkey =  (hk_len == 0) ? NULL : hostkey;
- fvitalId =  (vi_len == 0) ? NULL : vitalId;
 
  // only support one host and vital at this time
- if(!fhostkey)
-    {
-    php_printf("cfpr_vitals_view_week: error: hostkey is undefined\n");
-    RETURN_NULL();
-    }
-
-  if(!fvitalId)
-    {
-    php_printf("cfpr_vitals_view_week: error: vitalid is undefined\n");
-    RETURN_NULL();
-    }
+ ARGUMENT_CHECK_CONTENTS(hk_len && vi_len);
 
  buffer[0]='\0';
- Nova2PHP_vitals_view_week(fhostkey, fvitalId, buffer, bufsize);
+ Nova2PHP_vitals_view_week(hostkey, vitalId, buffer, sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -510,34 +478,22 @@ PHP_FUNCTION(cfpr_vitals_view_week)
 
 PHP_FUNCTION(cfpr_vitals_view_year)
 
-{ char *hostkey,*fhostkey, *vitalId, *fvitalId;
+{ char *hostkey, *vitalId;
  int hk_len, vi_len;
- const int bufsize = 1024*1024;
- char buffer[bufsize];
+ char buffer[1024*1024];
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&hostkey,&hk_len,&vitalId,&vi_len) == FAILURE)
     {
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
-
- fhostkey =  (hk_len == 0) ? NULL : hostkey;
- fvitalId =  (vi_len == 0) ? NULL : vitalId;
 
  // only support one host and vital at this time
- if(!fhostkey)
-    {
-    php_printf("cfpr_vitals_view_year: error: hostkey is undefined\n");
-    RETURN_NULL();
-    }
-
-  if(!fvitalId)
-    {
-    php_printf("cfpr_vitals_view_year: error: vitalid is undefined\n");
-    RETURN_NULL();
-    }
+ ARGUMENT_CHECK_CONTENTS(hk_len && vi_len);
+ 
 
  buffer[0]='\0';
- Nova2PHP_vitals_view_year(fhostkey, fvitalId, buffer, bufsize);
+ Nova2PHP_vitals_view_year(hostkey, vitalId, buffer, sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -546,34 +502,21 @@ PHP_FUNCTION(cfpr_vitals_view_year)
 
 PHP_FUNCTION(cfpr_vitals_view_histogram)
 
-{ char *hostkey,*fhostkey, *vitalId, *fvitalId;
+{ char *hostkey, *vitalId;
  int hk_len, vi_len;
- const int bufsize = 1024*1024;
- char buffer[bufsize];
+ char buffer[1024*1024];
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&hostkey,&hk_len,&vitalId,&vi_len) == FAILURE)
     {
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
-
- fhostkey =  (hk_len == 0) ? NULL : hostkey;
- fvitalId =  (vi_len == 0) ? NULL : vitalId;
 
  // only support one host and vital at this time
- if(!fhostkey)
-    {
-    php_printf("cfpr_vitals_view_histogram: error: hostkey is undefined\n");
-    RETURN_NULL();
-    }
-
-  if(!fvitalId)
-    {
-    php_printf("cfpr_vitals_view_histogram: error: vitalid is undefined\n");
-    RETURN_NULL();
-    }
-
+ ARGUMENT_CHECK_CONTENTS(hk_len && vi_len);
+ 
  buffer[0]='\0';
- Nova2PHP_vitals_view_histogram(fhostkey, fvitalId, buffer, bufsize);
+ Nova2PHP_vitals_view_histogram(hostkey, vitalId, buffer, sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -581,11 +524,9 @@ PHP_FUNCTION(cfpr_vitals_view_histogram)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_vitals_analyse_magnified)
-
-{ char *hostkey, *vitalId;
-
- const int bufsize = 4096;
- char buffer[bufsize];
+{
+ char *hostkey, *vitalId;
+ char buffer[4096];
 
  if(!ParseVitalsArgs(ZEND_NUM_ARGS() TSRMLS_CC,&hostkey, &vitalId))
     {
@@ -594,7 +535,7 @@ PHP_FUNCTION(cfpr_vitals_analyse_magnified)
     }
 
  buffer[0]='\0';
- Nova2PHP_vitals_analyse_magnified(hostkey, vitalId, buffer, bufsize);
+ Nova2PHP_vitals_analyse_magnified(hostkey, vitalId, buffer, sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -3319,7 +3260,7 @@ PHP_FUNCTION(cfpr_environments_list)
 
  if (!Nova2PHP_environments_list(&el))
     {
-    php_printf("Unable to query list of environments in cfpr_environments_list");
+    zend_throw_exception(cfmod_exception_generic, "Unable to query list of environments", 0 TSRMLS_CC);     
     RETURN_NULL();
     }
 
@@ -3349,7 +3290,7 @@ PHP_FUNCTION(cfpr_environment_contents)
 
  if (!Nova2PHP_environment_contents(name, &hl))
     {
-    php_printf("Unable to query environment in cfpr_environment_contents");
+    zend_throw_exception(cfmod_exception_generic, "Unable to query environment", 0 TSRMLS_CC);     
     RETURN_NULL();
     }
 
@@ -3445,7 +3386,7 @@ static time_t DeltaHrsConvert(long hrsAgo)
 PHP_FUNCTION(cfpr_add_note)
 
 { char *user,*note,*nid;
- char *fuser,*fnote,*fnid;
+ char *fuser,*fnote;
  int u_len,n_len, nid_len;
  time_t datetime;
  const int bufsize = 1000;
@@ -3457,52 +3398,46 @@ PHP_FUNCTION(cfpr_add_note)
     RETURN_NULL();
     }
 
- if(nid_len == 0)
-    {
-    php_printf("Note ID mut be given!!\n");
-    RETURN_NULL();
-    }
+ ARGUMENT_CHECK_CONTENTS(nid_len);
 
- fnid = nid;
  fuser =  (u_len == 0) ? NULL : user;
  fnote =  (n_len == 0) ? NULL : note;
 
  returnval[0]='\0';
- Nova2PHP_add_note(fnid,fuser,datetime,fnote,returnval,bufsize);
+ Nova2PHP_add_note(nid,fuser,datetime,fnote,returnval,bufsize);
  RETURN_STRING(returnval,1);
 }
-/******************************************************************************/
-PHP_FUNCTION(cfpr_new_note)
 
-{ char *hostkey,*user,*note, *repid;
- char *fhostkey,*fuser,*fnote, *frepid;
+/******************************************************************************/
+
+PHP_FUNCTION(cfpr_new_note)
+{
+ char *hostkey,*user,*note, *repid;
+ char *fuser,*fnote;
  int hk_len,u_len,n_len,rid_len;
  int report_type;
  time_t datetime;
- const int bufsize = 1000;
- char returnval[bufsize];
+ char returnval[1000];
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslsls",&hostkey,&hk_len,&repid,&rid_len,&report_type,&user,&u_len,&datetime,&note,&n_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslsls",
+                           &hostkey, &hk_len,
+                           &repid, &rid_len,
+                           &report_type,
+                           &user, &u_len,
+                           &datetime,
+                           &note, &n_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
- /* none of these fields can be null (due to unique key constraint)!!*/
- if(hk_len == 0 && rid_len == 0)
-    {
-    php_printf("Host Key and report id must be given!!\n");
-    RETURN_NULL();
-    }
-
- fhostkey = hostkey;
- frepid = repid;
+ ARGUMENT_CHECK_CONTENTS(hk_len && rid_len);
 
  fuser =  (u_len == 0) ? NULL : user;
  fnote =  (n_len == 0) ? NULL : note;
 
  returnval[0]='\0';
- Nova2PHP_add_new_note(fhostkey,frepid,report_type,fuser,datetime,fnote,returnval,bufsize);
+ Nova2PHP_add_new_note(hostkey, repid, report_type, fuser, datetime, fnote, returnval, sizeof(returnval));
  RETURN_STRING(returnval,1);
 }
 /******************************************************************************/

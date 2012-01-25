@@ -10,6 +10,7 @@
 #define LABEL_ERROR_DATABASE_OPEN "Unable to connect to database"
 #define LABEL_ERROR_DATABASE_CLOSE "Unable to close to database"
 #define LABEL_ERROR_ARGS "Incorrect argument count or types"
+#define LABEL_ERROR_ARGS_EMPTY "Missing argument contents"
 #define LABEL_ERROR_NOTIMPLEMENTED "Not implemented"
 
 #include "db_query.h"
@@ -31,7 +32,7 @@
 #define ARGUMENT_CHECK_CONTENTS(cond) \
  if(!(cond))                          \
     {                                 \
-    zend_throw_exception(cfmod_exception_args, "Missing argument contents", 0 TSRMLS_CC); \
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS_EMPTY, 0 TSRMLS_CC); \
     RETURN_NULL();                    \
     }
 
