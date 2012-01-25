@@ -975,7 +975,7 @@ class Ion_auth_model_mongo extends CI_Model
                     throw $e;
                 }
         
-		$this->set_error('role_update_unsuccessful');
+		$this->set_error('role_creation_unsuccessful');
 		return FALSE; 
 	}
 
@@ -987,58 +987,24 @@ class Ion_auth_model_mongo extends CI_Model
 	*@ author sudhir pandey
 	**/
 
-	public function update_role($usename, $data)
+	public function update_role($username, $data)
 	{
-            /*  something old
-            if (array_key_exists('name', $data) && $this->role_check($username, $data['name']))
-	    {
-                $role = $this->get_role_by_name($username, $data['name']);
-                
-                if($role->name != $id)
-                {
-		$this->ion_auth->set_error('role_creation_duplicate');
-		return FALSE;
+            try {
+                    // cfpr_role_update - return 1 if everything ok
+                    $ret = cfpr_role_update($username, $data['name'], $data['description'], $data['crxi'], $data['crxx'], $data['brxi'], $data['brxx']);
+
+                    if ($ret === 1 ) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } catch (Exception $e) {
+                    log_message('error', $e->getMessage());
+                    throw $e;
                 }
-	    }
-
-            $old_doc=$this->mongo_db->get_where_object('roles',array('_id'=>new MongoId($id)));
-	    $this->mongo_db->where(array('_id'=>new MongoId($id)));
-            $result_role=$this->mongo_db->update('roles', $data);
-	    //if($result['n']==1)return TRUE; else return FALSE;
-            //$this->get_users_by_role($)
-
-            // make changes of the ripple effect of change of role in the user table;
-            $this->mongo_db->clear();
-            $this->mongo_db->where(array('roles'=>$old_doc->name));
-            $result_user=$this->mongo_db->update_all('users',array('roles.$' => $data['name']));
-            $this->mongo_db->clear();
-
-            $this->mongo_db->where(array('fall_back_for'=>$old_doc->name));
-            $result_user=$this->mongo_db->update_all('appsettings',array('fall_back_for' => $data['name']));
-            $this->mongo_db->clear();
-
-            $this->mongo_db->where(array('admin_role'=>$old_doc->name));
-            $result_user=$this->mongo_db->update_all('appsettings',array('admin_role' => $data['name']));
-            $this->mongo_db->clear();
-            return True;
-
-            */
-            // role name is uniqu and it we are not allow to chnage it, so the only think which we should do - update role properties_
-            //  like descriptinon and include/exclude params
-            
-            //TODO: Ask for C equivalent for this functionality
-       
-            //$this->mongo_db->where( array('name' => $data['name']));
-            
-            $this->mongo_db->where(array('name'=>$data['name']));
-            unset($data['name']); // make sure that we will never update rolename
-            $this->mongo_db->update('roles', $data);
-            $this->mongo_db->clear();
-            
-   
-            
-	    return TRUE;
-
+        
+		$this->set_error('role_update_unsuccessful');
+		return FALSE; 
 	}
 
         function random_text($code_length = 10){
