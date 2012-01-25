@@ -1057,28 +1057,31 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_report_compliance_promises)
-
-//$ret = cfpr_report_compliance_promises($hostkey,$handle,$status,$regex);
-
-{ char *hostkey,*handle,*status,*classreg;
+{
+ char *userName, *hostkey,*handle,*status,*classreg;
  char *fhostkey,*fhandle,*fstatus,*fclassreg;
  int hk_len,h_len,s_len,cr_len;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
  zend_bool regex;
- int use_reg;
+ int user_len, use_reg;
  PageInfo page = {0};
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbsll",
-                           &hostkey,&hk_len,&handle,&h_len,&status,&s_len,&regex,&classreg,&cr_len,
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssbsll",
+                           &userName, &user_len,
+                           &hostkey, &hk_len,
+                           &handle, &h_len,
+                           &status, &s_len,
+                           &regex,
+                           &classreg, &cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
- use_reg = (int)regex;
+ ARGUMENT_CHECK_CONTENTS(user_len);
 
+ use_reg = (int)regex;
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fhandle =  (h_len == 0) ? NULL : handle;
  fstatus =  (s_len == 0) ? NULL : status;
@@ -1086,19 +1089,23 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
 
  buffer[0]='\0';
 
- HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
- Nova2PHP_compliance_promises(fhostkey,fhandle,fstatus,use_reg,filter,&page,buffer,bufsize);
- DeleteHostClassFilter(filter);
+ HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
+ ERRID_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+ 
+ HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ Nova2PHP_compliance_promises(fhostkey, fhandle, fstatus, use_reg, filter, &page, buffer, sizeof(buffer));
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
  RETURN_STRING(buffer,1);
 }
-/******************************************************************************/
-PHP_FUNCTION(cfpr_report_overall_summary)
-//$ret = cfpr_report_overall_summary($hostkey,$handle,$status,$regex);
 
-{ char *hostkey,*handle,*status,*classreg;
-  char *fhostkey,*fhandle,*fstatus,*fclassreg;
-  int hk_len,h_len,s_len,cr_len;
+/******************************************************************************/
+
+PHP_FUNCTION(cfpr_report_overall_summary)
+{
+ char *hostkey,*handle,*status,*classreg;
+ char *fhostkey,*fhandle,*fstatus,*fclassreg;
+ int hk_len,h_len,s_len,cr_len;
 
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
@@ -1985,25 +1992,27 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_summary)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_hosts_with_compliance_promises)
-
-//$ret = cfpr_hosts_with_compliance_promises($hostkey,$handle,$status,$regex);
-
-{ char *hostkey,*handle,*status,*classreg;
+{
+ char *userName, *hostkey,*handle,*status,*classreg;
  char *fhostkey,*fhandle,*fstatus,*fclassreg;
- int hk_len,h_len,s_len,cr_len;
- const int bufsize = 512 * 1024;
- char buffer[bufsize];
+ int user_len, hk_len, h_len, s_len, cr_len;
+ char buffer[512*1024];
  zend_bool regex;
  int use_reg;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbs",&hostkey,&hk_len,&handle,&h_len,&status,&s_len,&regex,&classreg,&cr_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssbs",
+                           &userName, &user_len,
+                           &hostkey, &hk_len,
+                           &handle, &h_len,
+                           &status, &s_len,
+                           &regex,
+                           &classreg, &cr_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
  use_reg = (int)regex;
-
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fhandle =  (h_len == 0) ? NULL : handle;
  fstatus =  (s_len == 0) ? NULL : status;
@@ -2011,9 +2020,12 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_promises)
 
  buffer[0] = '\0';
  
- HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
- Nova2PHP_promise_hosts(fhostkey,fhandle,fstatus,use_reg,filter,buffer,bufsize);
- DeleteHostClassFilter(filter);
+ HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
+ ERRID_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+ 
+ HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ Nova2PHP_promise_hosts(fhostkey, fhandle, fstatus, use_reg, filter, buffer, sizeof(buffer));
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
  
  RETURN_STRING(buffer,1);
 }
