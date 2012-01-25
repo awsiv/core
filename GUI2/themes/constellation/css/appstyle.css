@@ -2847,3 +2847,39 @@ ul#promisesContainer .removePromise:hover{
 .result li.reportitem{
     padding-left:10px;
 }
+
+.roles_wrapper {
+   float: left;
+   width: 98%
+}
+.role_list {
+     float: left; 
+     width: 40%; 
+     overflow: auto;
+}
+.role_list ul {
+     height: 400px;
+     border: 1px solid #D4D5D0;
+     padding: 5px 10px;
+     overflow: auto;
+}
+.role_list ul li {
+    list-style: none;
+    border-top: 1px solid #D4D5D0;
+    padding: 10px 0;
+}
+.role_list ul li.first {
+    border: none !important;
+}
+
+.switchers {
+    float: left;
+    width: 7%;
+    text-align: center;
+    margin: 0 20px;
+    padding-top: 150px;
+}
+.selected_item {
+    background: #eee;
+}
+input[readonly] {background: buttonface;}
