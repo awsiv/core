@@ -714,7 +714,7 @@ class Auth extends Controller {
             $role = $this->ion_auth->get_role($this->session->userdata('username'), $rolename);
 
             $this->data['title']          = "Edit role";
-            $this->data['operation']      = "Update";
+            $this->data['operation']      = "Edit";
             $this->data['name']['enable'] = 'enable';
             
             $this->data['name']['value']        = $this->form_validation->set_value('name',        $role['name']); 
