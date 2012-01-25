@@ -60,7 +60,8 @@ class test_usermanagement_libraries extends CodeIgniterUnitTestCase {
      */
     public function test_cfpr_role_create() {
         $username = 'admin';        
-        $data = array('name' => "test_role_" . date("d_M_Y_H_i_s") . time(),
+        $data = array(
+            'name' => "test_role_" . date("d_M_Y_H_i_s") . time(),
             'description' => "Test role. Created at: " . date("d/M/Y H:i:s"),
             'crxi' => "crxi",
             'crxx' => 'crxx',
@@ -71,6 +72,36 @@ class test_usermanagement_libraries extends CodeIgniterUnitTestCase {
 
         $this->assertTrue($ret, 'New role created. cfpr_role_create() returned 1');
     }
+    
+    /*
+     *  will run cfpr_role_update(username, name) in the end
+     * 
+     * We are not allow to change role name
+     */
+    public function test_cfpr_role_update() {
+        $username = 'admin';
+        $data = array(
+            'name' => "test_role_" . date("d_M_Y_H_i_s") . '_' . rand(2346, 6789) . '_' . time(),
+            'description'     => "Test role. Created at: " . date("d/M/Y H:i:s"),
+            'crxi' => "crxi",
+            'crxx' => 'crxx',
+            'brxi' => 'brxi',
+            'brxx' => 'brxx'
+        );
+
+        $ret = $this->_ci->ion_auth->create_role($username, $data);
+        
+        if ($ret === true) {
+                $data['description'] = "Test role. UPDATED AT: " . date("d/M/Y H:i:s");
+                $data['crxi'] = "crxi UPDATED";
+                $data['crxx'] = 'crxx UPDATED';
+                $data['brxi'] = 'brxi UPDATED';
+                $data['brxx'] = 'brxx UPDATED';
+                $ret = $this->_ci->ion_auth->update_role($username, $data);
+        }
+
+        $this->assertTrue($ret, 'Role  ' . $data['name'] . ' updated. cfpr_role_update() returned 1. Note this test depend on result from test_cfpr_role_create()');
+    }    
 
     /*
      *  will run cfpr_role_delete(username, name) in the end
@@ -93,7 +124,7 @@ class test_usermanagement_libraries extends CodeIgniterUnitTestCase {
             $ret = $this->_ci->ion_auth->delete_role($username, $data['name']);
         }
 
-        $this->assertTrue($ret, 'Role  ' . $data['name'] . ' deleted. cfpr_role_delete() returned 1. Note this test depen on result from test_cfpr_role_create()');
+        $this->assertTrue($ret, 'Role  ' . $data['name'] . ' deleted. cfpr_role_delete() returned 1. Note this test depend on result from test_cfpr_role_create()');
     }
 
     /*
