@@ -1,4 +1,5 @@
 #include "private-api-constellation.h"
+#include "common.h"
 
 #ifdef HAVE_CONSTELLATION
 
@@ -16,7 +17,7 @@ PHP_FUNCTION(cfcon_get_story_by_id)
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l",&id) == FAILURE)
    {
-   php_printf("Error is cfpr_get_story_by_name function args");
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
 
@@ -37,7 +38,7 @@ PHP_FUNCTION(cfcon_get_story_by_name)
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&search,&s_len) == FAILURE)
    {
-   php_printf("Error is cfpr_get_story_by_name function args");
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
 
@@ -941,7 +942,7 @@ PHP_FUNCTION(cfcon_hub_meter)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hostkey,&hk_len) == FAILURE)
     {
-    php_printf("Error in cfcon_hub_meter function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1026,7 +1027,7 @@ PHP_FUNCTION(cfcon_get_hub_colour)
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hostkey,&hk_len) == FAILURE)
    {
-   php_printf("Error in cfcon_get_hub_colour needs a host key");
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
 
@@ -1066,10 +1067,10 @@ PHP_FUNCTION(cfcon_count_hub_hosts)
  int c_len;
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&hostkey,&hk_len,&colour,&c_len) == FAILURE)
-   {
-   php_printf("Error in cfcon_get_hub_colour needs a host key");
-   RETURN_NULL();
-   }
+    {
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
 
 if(*colour!='R' && *colour!='G' && *colour!='B' && *colour!='Y' && *colour!='A')
    {
@@ -1116,7 +1117,7 @@ PHP_FUNCTION(cfcon_list_hub_colour)
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sll",&colour,&c_len,&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
    {
-   php_printf("Error in cfcon_list_hub_colour needs a host key");
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
 
@@ -1186,7 +1187,7 @@ PHP_FUNCTION(cfcon_hub_details)
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hubkeyhash,&h_len) == FAILURE)
    {
-   php_printf("Error in cfcon_list_hub_colour needs a host key");
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
 
@@ -1216,7 +1217,7 @@ PHP_FUNCTION(cfcon_getlastupdate)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hubkey,&hk_len) == FAILURE)
     {
-    php_printf("Error in cfcon_getlastupdate, needs a hub key");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1244,7 +1245,7 @@ PHP_FUNCTION(cfcon_hubname)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hubkey,&hk_len) == FAILURE)
     {
-    php_printf("Error is cfcon_hubname function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1274,7 +1275,7 @@ PHP_FUNCTION(cfcon_ipaddr)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hubkey,&hk_len) == FAILURE)
     {
-    php_printf("Error is cfcon_ipaddr function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1302,7 +1303,7 @@ PHP_FUNCTION(cfcon_delete_hub)
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hubkey,&hk_len) == FAILURE)
    {
-   php_printf("Error is cfcon_delete_hub function args");
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
 

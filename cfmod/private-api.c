@@ -25,7 +25,7 @@ zend_bool starttls = false;
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss|b",&host,&h_len,&dn,&d_len,&passwd,&p_len,&starttls) == FAILURE)
    {
-   php_printf("Error is cfpr_ldap_authenticate args");
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
 
@@ -90,7 +90,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssssssll|b",
                           &starttls
                           ) == FAILURE)
    {
-   php_printf("Error is cfpr_ldap_get_single_attribute_list args");
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
 
@@ -146,7 +146,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssssssll|b",
                           &starttls
                           ) == FAILURE)
    {
-   php_printf("Error is cfpr_ldap_get_several_attributes args");
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
 
@@ -339,7 +339,7 @@ PHP_FUNCTION(cfpr_hostname)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hostkey,&hk_len) == FAILURE)
     {
-    php_printf("Error is cfpr_hostname function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -360,7 +360,7 @@ PHP_FUNCTION(cfpr_ipaddr)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hostkey,&hk_len) == FAILURE)
     {
-    php_printf("Error is cfpr_ipaddr function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -393,7 +393,7 @@ PHP_FUNCTION(cfpr_host_meter)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hostkey,&hk_len) == FAILURE)
     {
-    php_printf("Error in cfpr_host_meter function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -589,7 +589,7 @@ PHP_FUNCTION(cfpr_vitals_analyse_magnified)
 
  if(!ParseVitalsArgs(ZEND_NUM_ARGS() TSRMLS_CC,&hostkey, &vitalId))
     {
-    php_printf("cfpr_vitals_analyse_magnified: Error while parsing arguments\n");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -610,7 +610,7 @@ PHP_FUNCTION(cfpr_vitals_analyse_week)
 
  if(!ParseVitalsArgs(ZEND_NUM_ARGS() TSRMLS_CC,&hostkey, &vitalId))
     {
-    php_printf("cfpr_vitals_analyse_week: Error while parsing arguments\n");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -631,7 +631,7 @@ PHP_FUNCTION(cfpr_vitals_analyse_year)
 
  if(!ParseVitalsArgs(ZEND_NUM_ARGS() TSRMLS_CC,&hostkey, &vitalId))
     {
-    php_printf("cfpr_vitals_analyse_year: Error while parsing arguments\n");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -651,7 +651,7 @@ PHP_FUNCTION(cfpr_vitals_analyse_histogram)
 
  if(!ParseVitalsArgs(ZEND_NUM_ARGS() TSRMLS_CC,&hostkey, &vitalId))
     {
-    php_printf("cfpr_vitals_analyse_histogram: Error while parsing arguments\n");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -714,7 +714,7 @@ PHP_FUNCTION(cfpr_report_software_in)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssbsll",&hostkey,&hk_len,&name,&n_len,&version,&v_len,&arch,&a_len,&regex,&classreg,&cr_len,&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error is cfpr_report_software_in function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -752,7 +752,7 @@ PHP_FUNCTION(cfpr_report_patch_in)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssbsll",&hostkey,&hk_len,&name,&n_len,&version,&v_len,&arch,&a_len,&regex,&classreg,&cr_len,&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error is cfpr_report_patch_in function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -790,7 +790,7 @@ PHP_FUNCTION(cfpr_report_patch_avail)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssbsll",&hostkey,&hk_len,&name,&n_len,&version,&v_len,&arch,&a_len,&regex,&classreg,&cr_len,&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error is cfpr_report_patch_avail function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -828,7 +828,7 @@ PHP_FUNCTION(cfpr_report_classes)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbsll",&hostkey,&hk_len,&name,&n_len,&regex,&classreg,&cr_len,&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error is cfpr_report_classes_in function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -859,7 +859,7 @@ PHP_FUNCTION(cfpr_list_time_classes)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbs",&hostkey,&hk_len,&name,&n_len,&regex,&classreg,&cr_len) == FAILURE)
     {
-    php_printf("Error in cfpr_list_time_classes function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -886,7 +886,7 @@ PHP_FUNCTION(cfpr_list_host_classes)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbs",&hostkey,&hk_len,&name,&n_len,&regex,&classreg,&cr_len) == FAILURE)
     {
-    php_printf("Error in cfpr_list_host_classes function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -913,7 +913,7 @@ PHP_FUNCTION(cfpr_list_all_classes)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbs",&hostkey,&hk_len,&name,&n_len,&regex,&classreg,&cr_len) == FAILURE)
     {
-    php_printf("Error in cfpr_list_all_classes function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -941,7 +941,7 @@ PHP_FUNCTION(cfpr_list_soft_classes)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbs",&hostkey,&hk_len,&name,&n_len,&regex,&classreg,&cr_len) == FAILURE)
     {
-    php_printf("Error in cfpr_list_soft_classes function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -968,7 +968,7 @@ PHP_FUNCTION(cfpr_list_ip_classes)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbs",&hostkey,&hk_len,&name,&n_len,&regex,&classreg,&cr_len) == FAILURE)
     {
-    php_printf("Error in cfpr_list_ip_classes function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1033,7 +1033,7 @@ PHP_FUNCTION(cfpr_report_vars)
                            &classreg,&cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error is cfpr_report_vars function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1096,7 +1096,7 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
                            &hostkey,&hk_len,&version,&v_len,&t,&k,&nk,&r,&cmp,&cmp_len,&classreg,&cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error is cfpr_report_compliance function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1132,7 +1132,7 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
                            &hostkey,&hk_len,&handle,&h_len,&status,&s_len,&regex,&classreg,&cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error is cfpr_report_compliance_promises function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1167,7 +1167,7 @@ PHP_FUNCTION(cfpr_report_overall_summary)
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbs",
                            &hostkey,&hk_len,&handle,&h_len,&status,&s_len,&regex,&classreg,&cr_len) == FAILURE)
     {
-    php_printf("Error is cfpr_report_overall_summary function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1204,7 +1204,7 @@ PHP_FUNCTION(cfpr_report_lastseen)
                            &hostkey,&hk_len,&hash,&h2_len,&host,&h_len,&address,&a_len,&ago,&regex,&classreg,&cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error is cfpr_report_lastseem function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1245,7 +1245,7 @@ PHP_FUNCTION(cfpr_report_performance)
                            &hostkey,&hk_len,&job,&j_len,&regex,&classreg,&cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error is cfpr_report_performance function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1279,7 +1279,7 @@ PHP_FUNCTION(cfpr_report_setuid)
                            &hostkey,&hk_len,&file,&j_len,&regex,&classreg,&cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error is cfpr_report_setuid function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1315,7 +1315,7 @@ PHP_FUNCTION(cfpr_report_filechanges)
                            &hostkey,&hk_len,&file,&f_len,&regex,&t,&cmp,&c_len,&classreg,&cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error is cfpr_report_filechanges function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1354,7 +1354,7 @@ PHP_FUNCTION(cfpr_report_filediffs)
                            &hostkey,&hk_len,&file,&f_len,&diff,&d_len,&regex,&t,&cmp,&c_len,&classreg,&cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error is cfpr_report_filediffs function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1394,7 +1394,7 @@ PHP_FUNCTION(cfpr_report_filechanges_longterm)
                            &hostkey,&hk_len,&file,&f_len,&regex,&t,&cmp,&c_len,&classreg,&cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error is cfpr_report_filechanges function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1433,7 +1433,7 @@ PHP_FUNCTION(cfpr_report_filediffs_longterm)
                            &hostkey,&hk_len,&file,&f_len,&diff,&d_len,&regex,&t,&cmp,&c_len,&classreg,&cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error is cfpr_report_filediffs function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1468,7 +1468,7 @@ PHP_FUNCTION(cfpr_summarize_promise)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&handle,&handleLen) == FAILURE)
     {
-    php_printf("Error is cfpr_summarize_promise function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1498,7 +1498,7 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
                            &classreg, &cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1535,7 +1535,7 @@ PHP_FUNCTION(cfpr_report_value)
                            &hostkey,&hk_len,&day,&d_len,&month,&m_len,&year,&y_len,&classreg,&cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error in cfpr_report_value function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1566,7 +1566,7 @@ PHP_FUNCTION(cfpr_get_value_graph)
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssss",
                            &hostkey,&hk_len,&day,&d_len,&month,&m_len,&year,&y_len,&classreg,&cr_len) == FAILURE)
     {
-    php_printf("Error in cfpr_get_value_graph function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1599,7 +1599,7 @@ PHP_FUNCTION(cfpr_report_notkept)
                            &hostkey,&hk_len,&handle,&h_len,&hours_deltafrom,&hours_deltato,&classreg,&cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error in cfpr_report_notkept function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1638,7 +1638,7 @@ PHP_FUNCTION(cfpr_report_repaired)
                            &hostkey,&hk_len,&handle,&h_len,&hours_deltafrom,&hours_deltato,&classreg,&cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error in cfpr_report_repaired function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1674,7 +1674,7 @@ PHP_FUNCTION(cfpr_summarize_notkept)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssllsll",&hostkey,&hk_len,&handle,&h_len,&from,&to,&classreg,&cr_len, &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error in cfpr_summarize_notkept function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1707,7 +1707,7 @@ PHP_FUNCTION(cfpr_summarize_repaired)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssllsll",&hostkey,&hk_len,&handle,&h_len,&from,&to,&classreg,&cr_len, &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error in cfpr_summarize_repaired function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1742,7 +1742,7 @@ PHP_FUNCTION(cfpr_hosts_with_software_in)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssbs",&hostkey,&hk_len,&name,&n_len,&version,&v_len,&arch,&a_len,&regex,&classreg,&cr_len) == FAILURE)
     {
-    php_printf("Error is cfpr_hosts_with_software_in function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1777,7 +1777,7 @@ PHP_FUNCTION(cfpr_hosts_with_value)
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssss",
                            &hostkey,&hk_len,&day,&d_len,&month,&m_len,&year,&y_len,&classreg,&cr_len) == FAILURE)
     {
-    php_printf("Error in cfpr_hosts_with_value function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1810,7 +1810,7 @@ PHP_FUNCTION(cfpr_hosts_with_patch_in)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssbs",&hostkey,&hk_len,&name,&n_len,&version,&v_len,&arch,&a_len,&regex,&classreg,&cr_len) == FAILURE)
     {
-    php_printf("Error is cfpr_hosts_with_patch_in function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1841,7 +1841,7 @@ PHP_FUNCTION(cfpr_hosts_with_patch_avail)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssbs",&hostkey,&hk_len,&name,&n_len,&version,&v_len,&arch,&a_len,&regex,&classreg,&cr_len) == FAILURE)
     {
-    php_printf("Error is cfpr_hosts_with_patch_avail function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1878,7 +1878,7 @@ PHP_FUNCTION(cfpr_hosts_with_classes)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbs",&hostkey,&hk_len,&name,&n_len,&regex,&classreg,&cr_len) == FAILURE)
     {
-    php_printf("Error is cfpr_hosts_with_classes_in function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1906,7 +1906,7 @@ PHP_FUNCTION(cfpr_hosts_with_repaired)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslls",&hostkey,&hk_len,&handle,&h_len,&hours_deltafrom,&hours_deltato,&classreg,&cr_len) == FAILURE)
     {
-    php_printf("Error is cfpr_hosts_with_repaired function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1943,7 +1943,7 @@ PHP_FUNCTION(cfpr_hosts_with_notkept)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslls",&hostkey,&hk_len,&handle,&h_len,&hours_deltafrom,&hours_deltato,&classreg,&cr_len) == FAILURE)
     {
-    php_printf("Error is cfpr_hosts_with_notkept function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -1988,7 +1988,7 @@ PHP_FUNCTION(cfpr_hosts_with_vars)
                            &regex,
                            &classreg,&cr_len) == FAILURE)
     {
-    php_printf("Error is cfpr_hosts_with_vars function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2024,7 +2024,7 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_summary)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssllllss",&hostkey,&hk_len,&version,&v_len,&t,&k,&nk,&r,&cmp,&cmp_len,&classreg,&cr_len) == FAILURE)
     {
-    php_printf("Error is cfpr_hosts_with_compliance function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2057,7 +2057,7 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_promises)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbs",&hostkey,&hk_len,&handle,&h_len,&status,&s_len,&regex,&classreg,&cr_len) == FAILURE)
     {
-    php_printf("Error is cfpr_hosts_with_compliance_promises function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2094,7 +2094,7 @@ PHP_FUNCTION(cfpr_hosts_with_lastseen)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslbs",&hostkey,&hk_len,&hash,&h2_len,&host,&h_len,&address,&a_len,&ago,&regex,&classreg,&cr_len) == FAILURE)
     {
-    php_printf("Error is cfpr_hosts_with_lastseen function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2131,7 +2131,7 @@ PHP_FUNCTION(cfpr_hosts_with_performance)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbs",&hostkey,&hk_len,&job,&j_len,&regex,&classreg,&cr_len) == FAILURE)
     {
-    php_printf("Error is cfpr_hosts_with_performance function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2163,7 +2163,7 @@ PHP_FUNCTION(cfpr_hosts_with_setuid)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbs",&hostkey,&hk_len,&file,&j_len,&regex,&classreg,&cr_len) == FAILURE)
     {
-    php_printf("Error is cfpr_hosts_with_setuid function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2197,7 +2197,7 @@ PHP_FUNCTION(cfpr_hosts_with_filechanges)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssblss",&hostkey,&hk_len,&file,&j_len,&regex,&t,&cmp,&c_len,&classreg,&cr_len) == FAILURE)
     {
-    php_printf("Error is cfpr_hosts_with_filechanges function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2233,7 +2233,7 @@ PHP_FUNCTION(cfpr_hosts_with_filediffs)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssblss",&hostkey,&hk_len,&file,&j_len,&diff,&d_len,&regex,&t,&cmp,&c_len,&classreg,&cr_len) == FAILURE)
     {
-    php_printf("Error is cfpr_hosts_with_filediffs function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2269,7 +2269,7 @@ PHP_FUNCTION(cfpr_hosts_with_bundlesseen)
                            &regex,
                            &classreg, &cr_len) == FAILURE)
     {
-    zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2303,7 +2303,7 @@ PHP_FUNCTION(cfpr_get_pid_for_topic)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&type,&y_len,&topic,&o_len) == FAILURE)
     {
-    php_printf("Error is cfpr_get_pid_for_topic function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2335,7 +2335,7 @@ PHP_FUNCTION(cfpr_search_topics)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sb",&search,&s_len,&regex) == FAILURE)
     {
-    php_printf("Error is cfpr_search_topics function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2359,7 +2359,7 @@ PHP_FUNCTION(cfpr_show_topic)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l",&id) == FAILURE)
     {
-    php_printf("Error is cfpr_show_topic function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2379,7 +2379,7 @@ PHP_FUNCTION(cfpr_show_topic_leads)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l",&id) == FAILURE)
     {
-    php_printf("Error is cfpr_show_topic_leads function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2399,7 +2399,7 @@ PHP_FUNCTION(cfpr_show_topic_hits)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l",&id) == FAILURE)
     {
-    php_printf("Error is cfpr_show_topic_hits function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2418,7 +2418,7 @@ PHP_FUNCTION(cfpr_show_topic_category)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l",&id) == FAILURE)
     {
-    php_printf("Error is cfpr_show_topic_category function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2443,7 +2443,7 @@ PHP_FUNCTION(cfpr_top_n_hosts)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "slll",&policy,&hk_len,&n,&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error in cfpr_show_top_n_hosts needs a policy");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2511,7 +2511,7 @@ PHP_FUNCTION(cfpr_select_hosts)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssl",&select,&s_len,&policy,&hk_len,&n) == FAILURE)
     {
-    php_printf("Error in cfpr_select_hosts args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2530,10 +2530,10 @@ PHP_FUNCTION(cfpr_select_reports)
   int r_len;
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &report_id, &r_len) == FAILURE)
-  {
-  php_printf("Error in cfpr_select_reports args");
-  RETURN_NULL();
-  }
+   {
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+   RETURN_NULL();
+   }
 
 buffer[0] = '\0';
 Nova2PHP_select_reports(report_id, buffer, bufsize);
@@ -2550,7 +2550,7 @@ PHP_FUNCTION(cfpr_show_red_hosts)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll",&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error in cfpr_show_red_hosts args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2570,9 +2570,10 @@ PHP_FUNCTION(cfpr_show_yellow_hosts)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll",&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error in cfpr_show_yellow_hosts args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
+ 
  buffer[0] = '\0';
  Nova2PHP_show_col_hosts("yellow",200,&page,buffer,bufsize);
 
@@ -2589,7 +2590,7 @@ PHP_FUNCTION(cfpr_show_green_hosts)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll",&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error in cfpr_show_green_hosts args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
  buffer[0] = '\0';
@@ -2608,7 +2609,7 @@ PHP_FUNCTION(cfpr_show_blue_hosts)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll",&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error in cfpr_show_blue_hosts args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2677,7 +2678,7 @@ PHP_FUNCTION(cfpr_getlastupdate)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hostkey,&hk_len) == FAILURE)
     {
-    php_printf("Error in cfpr_getlastupdate needs a host key");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2697,7 +2698,7 @@ PHP_FUNCTION(cfpr_get_host_colour)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hostkey,&hk_len) == FAILURE)
     {
-    php_printf("Error in cfpr_get_host_colour needs a host key");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2720,7 +2721,7 @@ PHP_FUNCTION(cfpr_list_handles)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssb",&promiser,&pr_len,&ptype,&p_len,&regex) == FAILURE)
     {
-    php_printf("Error in cfpr_list_handles args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2741,7 +2742,7 @@ PHP_FUNCTION(cfpr_policy_finder_by_handle)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sb",&handle,&h_len,&escRegex) == FAILURE)
     {
-    php_printf("Error in cfpr_policy_finder_by_handle args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2762,7 +2763,7 @@ PHP_FUNCTION(cfpr_policy_finder_by_promiser)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sb",&promiser,&pr_len,&escRegex) == FAILURE)
     {
-    php_printf("Error in cfpr_policy_finder_by_promiser args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2784,7 +2785,7 @@ PHP_FUNCTION(cfpr_policy_finder_by_bundle)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sb",&bundle,&r_len,&escRegex) == FAILURE)
     {
-    php_printf("Error in cfpr_policy_finder_by_bundle args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2805,7 +2806,7 @@ PHP_FUNCTION(cfpr_get_handles_for_bundle_with_comments)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&bundle,&r_len,&btype,&p_len) == FAILURE)
     {
-    php_printf("Error in cfpr_get_handles_for_bundle_with_comments args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2828,7 +2829,7 @@ PHP_FUNCTION(cfpr_list_handles_for_bundle)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssb",&bundle,&r_len,&btype,&p_len,&regex) == FAILURE)
     {
-    php_printf("Error in cfpr_list_handles args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2847,7 +2848,7 @@ PHP_FUNCTION(cfpr_get_promise_comment)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&handle,&hk_len) == FAILURE)
     {
-    php_printf("Error in cfpr_get_promise_comment args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2863,7 +2864,7 @@ PHP_FUNCTION(cfpr_get_promise_bundle)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&handle,&hk_len) == FAILURE)
     {
-    php_printf("Error in cfpr_get_promise_bundle args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2879,7 +2880,7 @@ PHP_FUNCTION(cfpr_get_promise_type)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&handle,&hk_len) == FAILURE)
     {
-    php_printf("Error in cfpr_get_promise_type args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2895,7 +2896,7 @@ PHP_FUNCTION(cfpr_get_promiser)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&handle,&hk_len) == FAILURE)
     {
-    php_printf("Error in cfpr_get_promiser args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2912,7 +2913,7 @@ PHP_FUNCTION(cfpr_get_variable)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss",&key,&hk_len,&scope,&s_len,&lval,&l_len) == FAILURE)
     {
-    php_printf("Error in cfpr_get_variable args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2934,7 +2935,7 @@ PHP_FUNCTION(cfpr_get_classes_for_bundle)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&bundle,&r_len,&btype,&p_len) == FAILURE)
     {
-    php_printf("Error in cfpr_get_classes_for_bundle args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2956,7 +2957,7 @@ PHP_FUNCTION(cfpr_get_args_for_bundle)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&bundle,&r_len,&btype,&p_len) == FAILURE)
     {
-    php_printf("Error in cfpr_list_handles args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -2978,7 +2979,7 @@ PHP_FUNCTION(cfpr_list_all_bundles)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&btype,&p_len) == FAILURE)
     {
-    php_printf("Error in cfpr_list_all_bundles args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -3000,7 +3001,7 @@ PHP_FUNCTION(cfpr_get_bundle_type)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&bname,&n_len) == FAILURE)
     {
-    php_printf("Error in cfpr_get_bundle_type args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -3021,7 +3022,7 @@ PHP_FUNCTION(cfpr_list_bundles_using)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&bundle,&p_len) == FAILURE)
     {
-    php_printf("Error in cfpr_list_bundles_using args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -3084,7 +3085,7 @@ PHP_FUNCTION(cfpr_get_class_frequency)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&hkey,&h_len,&pattern,&p_len) == FAILURE)
     {
-    php_printf("Error in cfpr_count_classes args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -3108,7 +3109,7 @@ PHP_FUNCTION(cfpr_report_class_frequency)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&hkey,&h_len,&pattern,&p_len) == FAILURE)
     {
-    php_printf("Error in cfpr_count_classes args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -3144,7 +3145,7 @@ PHP_FUNCTION(cfpr_get_promise_body)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&name,&p_len,&type,&t_len) == FAILURE)
     {
-    php_printf("Error in cfpr_show-body args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -3168,7 +3169,7 @@ PHP_FUNCTION(cfpr_list_bodies)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&name,&pr_len,&btype,&p_len) == FAILURE)
     {
-    php_printf("Error in cfpr_list_bodies args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -3189,7 +3190,7 @@ PHP_FUNCTION(cfpr_get_network_rate)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&name,&n_len) == FAILURE)
     {
-    php_printf("Error in cfpr_get_network_rate args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -3208,7 +3209,7 @@ PHP_FUNCTION(cfpr_report_description)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&reportName,&reportNameSz) == FAILURE)
     {
-    php_printf("Error is cfpr_report_description function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -3245,7 +3246,7 @@ PHP_FUNCTION(cfpr_cdp_report)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll",&hostkey,&hk_len,&reportName,&rn_len,&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error is cfpr_cdp_report_acl function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -3265,7 +3266,7 @@ PHP_FUNCTION(cfpr_validate_policy)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&file,&f_len) == FAILURE)
     {
-    php_printf("Error in cfpr_validate_policy args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -3293,7 +3294,7 @@ PHP_FUNCTION(cfpr_delete_host)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hostkey,&hk_len) == FAILURE)
     {
-    php_printf("Error is cfpr_delete_host function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -3312,7 +3313,7 @@ PHP_FUNCTION(cfpr_environments_list)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "") == FAILURE)
     {
-    php_printf("Wrong number of arguments in cfpr_environments_list");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -3342,7 +3343,7 @@ PHP_FUNCTION(cfpr_environment_contents)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE)
     {
-    php_printf("Wrong arguments in cfpr_environment_contents");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -3370,7 +3371,7 @@ PHP_FUNCTION(cfpr_get_host_environment)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &hostkey, &hostkey_len) == FAILURE)
     {
-    php_printf("Wrong arguments in cfpr_get_host_contents");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -3403,7 +3404,7 @@ PHP_FUNCTION(cfpr_get_knowledge_view)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ls",&pid,&view,&v_len) == FAILURE)
     {
-    php_printf("Error in cfpr_get_knowledge_view args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -3452,7 +3453,7 @@ PHP_FUNCTION(cfpr_add_note)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssls",&nid,&nid_len,&user,&u_len,&datetime,&note,&n_len) == FAILURE)
     {
-    php_printf("Error in cfpr_add_note function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -3483,7 +3484,7 @@ PHP_FUNCTION(cfpr_new_note)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslsls",&hostkey,&hk_len,&repid,&rid_len,&report_type,&user,&u_len,&datetime,&note,&n_len) == FAILURE)
     {
-    php_printf("Error is cfpr_add_note function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -3518,7 +3519,7 @@ PHP_FUNCTION(cfpr_query_note)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",&hostkey,&hk_len,&nid,&nid_len,&user, &u_len, &from, &to,&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error is cfpr_query_note function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -3540,7 +3541,7 @@ PHP_FUNCTION(cfpr_get_host_noteid)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hostkey,&hk_len) == FAILURE)
     {
-    php_printf("Error is cfpr_hostname function args");
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -3604,7 +3605,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
                           &username, &username_len,
                           &password, &password_len) == FAILURE)
    {
-   zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
 
@@ -3643,7 +3644,7 @@ PHP_FUNCTION(cfpr_role_create)
                             &includeBundleRx, &ibrxLen,
                             &excludeBundleRx, &ebrxLen) == FAILURE)
      {
-     zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
+     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
      RETURN_NULL();
      }
 
@@ -3678,7 +3679,7 @@ PHP_FUNCTION(cfpr_role_delete)
   
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss", &userName, &userNameLen ,&roleName, &roleNameLen) == FAILURE)
     {
-    zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
  
@@ -3714,7 +3715,7 @@ PHP_FUNCTION(cfpr_role_update)
                             &includeBundleRx, &ibrxLen,
                             &excludeBundleRx, &ebrxLen) == FAILURE)
      {
-     zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
+     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
      RETURN_NULL();
      }
 
@@ -3749,7 +3750,7 @@ PHP_FUNCTION(cfpr_role_list_all)
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&userName, &userNameLen) == FAILURE)
     {
-    zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -3785,7 +3786,7 @@ PHP_FUNCTION(cfpr_role_list_by_name)
  
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&userName, &userNameLen, &roleName, &roleNameLen) == FAILURE)
     {
-    zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
