@@ -2794,7 +2794,6 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
  bson_destroy(&query);
  bson_destroy(&field);
 
-    
 
  while (mongo_cursor_next(cursor))
     {
@@ -6012,6 +6011,7 @@ static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFil
 /**
  * Appends to bb the keyhash of hosts matching the class filter.
  * Useful for "joins".
+ * Returns true if bb is modified, false otherwise.
  **/
 {
  bson_iterator it1;
@@ -6036,10 +6036,10 @@ static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFil
  bson_destroy(&query);
  bson_destroy(&field);
 
- sub1 = bson_append_start_array(bb, "$or");
-
  int i = 0;
  char iStr[64] = {0};
+
+ bool found = false;
 
  while(mongo_cursor_next(cursor))
     {
@@ -6049,6 +6049,11 @@ static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFil
        {
        if (strcmp(bson_iterator_key(&it1), cfr_keyhash) == 0)
           {
+          if(!found)
+             {
+             sub1 = bson_append_start_array(bb, "$or");
+             }
+          
           snprintf(iStr, sizeof(iStr), "%d", i);
           
           sub2 = bson_append_start_object(sub1, iStr);
@@ -6056,12 +6061,20 @@ static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFil
           bson_append_finish_object(sub2);
 
           i++;
+          found = true;
           }
        }
     }
 
- bson_append_finish_object(sub1);
-  
+ if(found)
+    {
+    bson_append_finish_object(sub1);
+    }
+ else
+    {
+    bson_append_string(bb, cfr_keyhash, "");  // no match, indicate to caller
+    }
+
  mongo_cursor_destroy(cursor);
 
  return true;
@@ -7368,19 +7381,22 @@ for (Rlist *rp = filter->classRxIncludes; rp; rp = rp->next)
    modified = true;
    }
 
-
-bson_buffer *excludeClassBuffer = bson_append_start_object(queryBuffer, cfr_class_keys);
-bson_buffer *excludeClassArray = bson_append_start_array(excludeClassBuffer, "$nin");
-
-for (Rlist *rp = filter->classRxExcludes; rp != NULL; rp = rp->next)
+if(filter->classRxExcludes)
    {
-   AnchorRegex(rp->item, classRxAnchored, sizeof(classRxAnchored));
-   bson_append_regex(excludeClassArray, cfr_class_keys, classRxAnchored, "");
+   bson_buffer *excludeClassBuffer = bson_append_start_object(queryBuffer, cfr_class_keys);
+   bson_buffer *excludeClassArray = bson_append_start_array(excludeClassBuffer, "$nin");
+
+   for (Rlist *rp = filter->classRxExcludes; rp != NULL; rp = rp->next)
+      {
+      AnchorRegex(rp->item, classRxAnchored, sizeof(classRxAnchored));
+      bson_append_regex(excludeClassArray, cfr_class_keys, classRxAnchored, "");
+      }
+   
+   bson_append_finish_object(excludeClassArray);
+   bson_append_finish_object(excludeClassBuffer);
+
    modified = true;
    }
-
-bson_append_finish_object(excludeClassArray);
-bson_append_finish_object(excludeClassBuffer);
 
 return modified;
 }
