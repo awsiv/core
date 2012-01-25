@@ -1,42 +1,3 @@
-   <style> 
-    <!--
-    .roles_wrapper {
-       float: left;
-       width: 98%
-    }
-    .role_list {
-         float: left; 
-         width: 40%; 
-         overflow: auto;
-    }
-    .role_list ul {
-         height: 400px;
-         border: 1px solid #D4D5D0;
-         padding: 5px 10px;
-         overflow: auto;
-    }
-    .role_list ul li {
-        list-style: none;
-        border-top: 1px solid #D4D5D0;
-        padding: 10px 0;
-    }
-    .role_list ul li.first {
-        border: none !important;
-    }
-    
-    .switchers {
-        float: left;
-        width: 7%;
-        text-align: center;
-        margin: 0 20px;
-        padding-top: 150px;
-    }
-    .selected_item {
-        background: #eee;
-    }
-input[readonly] {background: buttonface;}
-    -->
-   </style>
 <div class="outerdiv grid_12">
 
     <div class="innerdiv">
@@ -55,7 +16,6 @@ input[readonly] {background: buttonface;}
     </div>
 </div>
 <div id="confirmation" title="Are you sure"><span></span></div>
-<div id="confirmation_create" title="Are you sure"><span>This role will allow complete reporting permissions for all hosts, is this what you wanted? If not, please fill in a host class regular expression.</span></div>
 <script src="<?php echo get_scriptdir() ?>jquery.form.js" type="text/javascript"></script>
 <script src="<?php echo get_scriptdir() ?>jquery.blockUI.js" type="text/javascript"></script>
 <script type="text/javascript">
@@ -63,12 +23,71 @@ input[readonly] {background: buttonface;}
         var options = {
             target:  '#admin_content'  // target element(s) to be updated with server response
         };
+        
+        // buttons wrapper, just set label, action (if needed), and dialog object
+        function generateCloseBtn(label,dialogObj) {
+           var btn = [{
+                        text: label,
+                        click: function() {
+                                dialogObj.dialog('close');
+                            }
+           }];
+           return btn;
+        }
+        
+        function generateLoadBtn(label, link, dialogObj) {
+            var btn = [{
+                        text: label,
+                        click: function()
+                            {
+                                $("#admin_content").load(link, 
+                                function(responseText, textStatus, XMLHttpRequest) {
+                                    switch (XMLHttpRequest.status) {
+                                        case 200: break;
+                                        case 401:
+                                        case 404:
+                                            $('#error_status').html('<p class="error">' + responseText + '</p>');
+                                            break;
+                                        default:
+                                            $('#error_status').html('<p class="error">' + '<?php //echo $this->lang->line('500_error'); ?>' +  '</p>');
+                                            break;
+                                        }
+                                    }
+                                );
+                                dialogObj.dialog('close');
+                            }
+             }];
+             return btn;
+         }
+            
+        function generateSubmitBtn(label, form, dialogObj) {
+            var btn = [{
+                        text: label,
+                        click: function()
+                            {
+                                form.ajaxSubmit(options);
+                                dialogObj.dialog('close');
+                            }
+                }];
+            return btn;
+        }
+        //dialog object                
+        var $confirmation = $('#confirmation').dialog({
+            autoOpen: false,
+            modal: true,
+            resizable: false,
+            buttons: [],
+                open: function() 
+                    {
+                        $(this).parent().find('.ui-dialog-buttonpane').find('button:last').focus()
+                    }
+        });        
 
         //loading the create user page from server to add the user
         $('#add_user').live('click',function(event) {
             event.preventDefault();
             $("#error_status").html('');            
-            var path=$(this).attr('href');
+            var path = $(this).attr('href');
             $("#admin_content").slideUp().load(path).slideDown();;
         });
 
@@ -80,64 +99,37 @@ input[readonly] {background: buttonface;}
         });
 
         //load the result from the server after delete page is called
-
         $('a.delete').live('click',function(event){
             event.preventDefault();
             $("#error_status").html('');
-            var path=$(this).attr('href');
+            var path = $(this).attr('href');
             $('#confirmation span').text('Do you want to continue deleting..');
-            $confirmation.data('path',path).dialog("open");
+
+            // create buttons - cancel and confirm
+            var cancelBtn  = generateCloseBtn('Cancel', $confirmation);
+            var confirmBtn = generateLoadBtn('Confirm', path, $confirmation);
+
+            $confirmation.dialog("option", "buttons", cancelBtn.concat(confirmBtn) );
+            $confirmation.dialog("open");
         });
 
-
-        var $confirmation = $('#confirmation').dialog({
-            autoOpen: false,
-            modal: true,
-            resizable: false,
-            buttons: {
-                'Cancel':function() {
-                    $(this).dialog('close');
-                },
-                'Confirm': function() {
-                    $("#admin_content").load($(this).data('path'), 
-                    function(responseText, textStatus, XMLHttpRequest) {
-                        switch (XMLHttpRequest.status) {
-                            case 200: break;
-                            case 401:
-                            case 404:
-                                $('#error_status').html('<p class="error">' + responseText + '</p>');
-                                break;
-                            default:
-                                $('#error_status').html('<p class="error">' + '<?php echo $this->lang->line('500_error'); ?>' +  '</p>');
-                                break;
-                            }
-                        }
-                    );
-                        $(this).dialog('close');
-                    }
-                },
-                open: function() {
-                    $(this).parent().find('.ui-dialog-buttonpane').find('button:last').focus()
-                }
+        //loading the edit page in admin_content of the admin area
+        $('a.edit').live('click',function(event){
+            event.preventDefault();
+            $("#error_status").html('');
+            var path=$(this).attr('href');
+            $("#admin_content").load(path,function(res){
+                $(this).html(res);
             });
+        });
 
-            //loading the edit page in admin_content of the admin area
-            $('a.edit').live('click',function(event){
-                event.preventDefault();
-                $("#error_status").html('');
-                var path=$(this).attr('href');
-                $("#admin_content").load(path,function(res){
-                    $(this).html(res);
-                });
-            });
-
-            //loading the change password in admin_content
-            $('a.changepassword').live('click',function(event){
-                event.preventDefault();
-                $("#error_status").html('');
-                var path=$(this).attr('href');
-                $("#admin_content").load(path);
-            });
+        //loading the change password in admin_content
+        $('a.changepassword').live('click',function(event){
+            event.preventDefault();
+            $("#error_status").html('');
+            var path=$(this).attr('href');
+            $("#admin_content").load(path);
+        });
             //submitting the form ajaxically to the page in form action and loading the result in admin_content
             $('#edit_user').live('submit',function(event)
             {
@@ -192,24 +184,40 @@ input[readonly] {background: buttonface;}
             });
 
             //create a new role form the page loaded
-            $('#create_role').live('submit',function(event){
+            $('#create_role, #edit_role').live('submit',function(event){
+                console.log('edit');
                 event.preventDefault();
                 $("#error_status").html('');
-                $(this).ajaxSubmit(options);
-            });
+                if (roleValidate() == false)
+                {
+                    var cancelBtn  = generateCloseBtn('Cancel', $confirmation);
+                    var confirmBtn = generateSubmitBtn('Confirm', $(this), $confirmation);
 
-            $('#Create_role').live('submit',function(event){
-                event.preventDefault();
-                $("#error_status").html('');
-                $(this).ajaxSubmit(options);
+                    $confirmation.dialog("option", "buttons", cancelBtn.concat(confirmBtn) );
+                    $confirmation.dialog("open");
+                }
+                else
+                {   
+                    $(this).ajaxSubmit(options);
+                }   
             });
+            
+            function roleValidate()
+            {
+                if ($.trim($('#crxi').val()).length === 0 && $.trim($('#crxx').val()).length === 0)                 
+                {
+                    $('#confirmation span').text('This role will allow complete reporting permissions for all hosts, is this what you wanted? If not, please fill in a host class regular expression.');
+                    return false;
+                }
 
-
-            $('#Update_role').live('submit',function(event){
-                event.preventDefault();
-                $(this).ajaxSubmit(options);
-            });
-  
+                if ($.trim($('#brxi').val()).length === 0 && $.trim($('#brxx').val()).length === 0) 
+                {
+                    $('#confirmation span').text('This role will allow complete viewing permissions for all promises, is this what you wanted? If not, please fill in a bundle class regular expression.');
+                    return false;
+                }
+                return true;
+            }
+            
             $(document).ajaxStop(function(){
                 setTimeout(function() {
                     $("#infoMessage").fadeOut(500)
@@ -234,43 +242,40 @@ input[readonly] {background: buttonface;}
             });
         });
 
-// roles 
-    $('#all_roles li, #user_roles li').live('click',function(event) {
-        //var itemid = $(this).parent().attr('itemid');
-        var itemid = $(this).attr('itemid');
-        $("#li_item" + itemid).toggleClass("selected_item");
-       // $(this).find('input:checkbox').attr('checked', 'checked');            
-    });
-    
-    
-    //moving roles
-   $("#move_left").live('click',function(event) {
-        $('#all_roles .selected_item').each(function() {
-            var item_id = $(this).attr('itemid');
-            $('#li_itemid' + item_id).each(function() {this.checked = false;});
-
-            var item_clone = $(this).clone(true);
-            $(item_clone).removeClass('selected_item');
-            $(item_clone).addClass('moved');
-            $(item_clone).find('input:checkbox').attr('checked', 'checked');  
-            $(item_clone).find('input:checkbox').attr('disabled', false);
-            $('#user_roles').append(item_clone);
-            $(this).remove();
-	});
-    });
-    $("#move_right").live('click',function(event) {
-        $('#user_roles .selected_item').each(function() {
-            var item_id = $(this).attr('itemid');
-       
-            $('#li_itemid' + item_id).each(function() {this.checked = false;});
-            var item_clone = $(this).clone(true);
-            $(item_clone).removeClass('selected_item');
-            $(item_clone).addClass('moved');
-            $(item_clone).find('input:checkbox').attr('checked', false);
-            $(item_clone).find('input:checkbox').attr('disabled', true);
-            $('#all_roles').append(item_clone);
-            $(this).remove();
+        
+        //asign roles on edit user page
+        $('#all_roles li, #user_roles li').live('click',function(event) {
+            var itemid = $(this).attr('itemid');
+            $("#li_item" + itemid).toggleClass("selected_item");
         });
-    });
-  
+
+        //moving roles
+       $("#move_left").live('click',function(event) {
+            $('#all_roles .selected_item').each(function() {
+                var item_id = $(this).attr('itemid');
+                $('#li_itemid' + item_id).each(function() {this.checked = false;});
+
+                var item_clone = $(this).clone(true);
+                $(item_clone).removeClass('selected_item');
+                $(item_clone).addClass('moved');
+                $(item_clone).find('input:checkbox').attr('checked', 'checked');  
+                $(item_clone).find('input:checkbox').attr('disabled', false);
+                $('#user_roles').append(item_clone);
+                $(this).remove();
+            });
+        });
+        $("#move_right").live('click',function(event) {
+            $('#user_roles .selected_item').each(function() {
+                var item_id = $(this).attr('itemid');
+
+                $('#li_itemid' + item_id).each(function() {this.checked = false;});
+                var item_clone = $(this).clone(true);
+                $(item_clone).removeClass('selected_item');
+                $(item_clone).addClass('moved');
+                $(item_clone).find('input:checkbox').attr('checked', false);
+                $(item_clone).find('input:checkbox').attr('disabled', true);
+                $('#all_roles').append(item_clone);
+                $(this).remove();
+            });
+        });  
 </script>
