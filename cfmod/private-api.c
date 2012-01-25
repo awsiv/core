@@ -1620,20 +1620,27 @@ PHP_FUNCTION(cfpr_report_repaired)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_summarize_notkept)
-
-{ char *hostkey,*handle,*classreg;
+{
+ char *userName, *hostkey,*handle,*classreg;
  char *fhostkey,*fhandle,*fclassreg;
- int hk_len,h_len,cr_len;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ int user_len,hk_len,h_len,cr_len;
+ char buffer[CF_WEBBUFFER];
  time_t from,to;
  PageInfo page = {0};
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssllsll",&hostkey,&hk_len,&handle,&h_len,&from,&to,&classreg,&cr_len, &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsll",
+                           &userName, &user_len,
+                           &hostkey, &hk_len,
+                           &handle, &h_len,
+                           &from, &to,
+                           &classreg, &cr_len,
+                           &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
+
+ ARGUMENT_CHECK_CONTENTS(user_len);
 
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fhandle =  (h_len == 0) ? NULL : handle;
@@ -1641,9 +1648,12 @@ PHP_FUNCTION(cfpr_summarize_notkept)
 
  buffer[0]='\0';
 
- HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
- Nova2PHP_promiselog_summary(fhostkey,fhandle,PROMISE_LOG_STATE_NOTKEPT,from,to,filter,&page,buffer,bufsize);
- DeleteHostClassFilter(filter);
+ HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
+ ERRID_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+ HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ Nova2PHP_promiselog_summary(fhostkey, fhandle, PROMISE_LOG_STATE_NOTKEPT, from, to, filter, &page, buffer, sizeof(buffer));
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
  
  RETURN_STRING(buffer,1);
 }
