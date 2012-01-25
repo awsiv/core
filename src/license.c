@@ -20,7 +20,7 @@
 #define LIC_YEAR "2001"
 #define LIC_COMPANY "PARTNER TEST LICENSE - NOT FOR PRODUCTION"
 
-time_t LAST_LICENSE_CHECK_TIMESTAMP = 0;
+static time_t LAST_LICENSE_CHECK_TIMESTAMP;
 static bool RecentlyCheckedLicense(void);
 
 /*****************************************************************************/
