@@ -91,7 +91,7 @@ const char *HINTS[16] =
 int main(int argc,char *argv[])
 {
 GenericAgentConfig config = CheckOpts(argc,argv);
-GenericInitialize(argc,argv, "hub", config);
+GenericInitialize("hub", config);
 ThisAgentInit();
 KeepPromises(config);
 StartHub();
@@ -177,7 +177,7 @@ while ((c=getopt_long(argc,argv,"cd:vKf:VhFlMaisn",OPTIONS,&optindex)) != EOF)
 
       case 's':
           CheckOpts(argc,argv);
-          InitializeGA(argc,argv);
+          InitializeGA();
 
           SplayLongUpdates();
           exit(0);
