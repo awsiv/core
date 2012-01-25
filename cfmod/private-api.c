@@ -1481,36 +1481,42 @@ PHP_FUNCTION(cfpr_summarize_promise)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_report_bundlesseen)
-
-//$ret = cfpr_report_bundlesseen($hostkey,$name,$isNameRegex,$classRegexStr);
-
-{ char *hostkey,*bundle,*classreg;
+{
+ char *userName, *hostkey,*bundle,*classreg;
  char *fhostkey,*fbundle,*fclassreg;
- int hk_len,j_len,cr_len;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ int user_len, hk_len,j_len,cr_len;
+ char buffer[CF_WEBBUFFER];
  zend_bool regex;
  int use_reg;
  PageInfo page = {0};
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbsll",
-                           &hostkey,&hk_len,&bundle,&j_len,&regex,&classreg,&cr_len,
+ 
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbsll",
+                           &userName, &user_len,
+                           &hostkey, &hk_len,
+                           &bundle, &j_len,
+                           &regex,
+                           &classreg, &cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
-    php_printf("Error is cfpr_report_bundlesseen function args");
+    zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
     RETURN_NULL();
     }
+
+ ARGUMENT_CHECK_CONTENTS(user_len);
 
  use_reg = (int)regex;
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fbundle =  (j_len == 0) ? NULL : bundle;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
 
- HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
-
  buffer[0]='\0';
- Nova2PHP_bundle_report(fhostkey,fbundle,use_reg,filter,&page,buffer,bufsize);
+ 
+ HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
+ ERRID_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- DeleteHostClassFilter(filter);
+ HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ Nova2PHP_bundle_report(fhostkey, fbundle, use_reg, filter, &page, buffer, sizeof(buffer));
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
  
  RETURN_STRING(buffer,1);
 }
@@ -2249,32 +2255,38 @@ PHP_FUNCTION(cfpr_hosts_with_filediffs)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_hosts_with_bundlesseen)
-
-//$ret = cfpr_hosts_with_bundlesseen($hostkey,$name,$isNameRegex,$classreg);
-
-{ char *hostkey,*bundle,*classreg;
+{
+ char *userName, *hostkey,*bundle,*classreg;
  char *fhostkey,*fbundle,*fclassreg;
- int hk_len,j_len,cr_len;
- const int bufsize = 512*1024;
- char buffer[bufsize];
+ int user_len, hk_len,j_len,cr_len;
+ char buffer[512*1024];
  zend_bool regex;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbs",&hostkey,&hk_len,&bundle,&j_len,&regex,&classreg,&cr_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbs",
+                           &userName, &user_len,
+                           &hostkey, &hk_len,
+                           &bundle, &j_len,
+                           &regex,
+                           &classreg, &cr_len) == FAILURE)
     {
-    php_printf("Error is cfpr_hosts_with_bundlesseen function args");
+    zend_throw_exception(cfmod_exception_args, "Incorrect argument count or types", 0 TSRMLS_CC);
     RETURN_NULL();
     }
+
+ ARGUMENT_CHECK_CONTENTS(user_len);
 
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fbundle =  (j_len == 0) ? NULL : bundle;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
 
- HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
- 
  buffer[0] = '\0';
- Nova2PHP_bundle_hosts(fhostkey,fbundle,regex,filter,buffer,bufsize);
+ 
+ HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
+ ERRID_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- DeleteHostClassFilter(filter);
+ HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ Nova2PHP_bundle_hosts(fhostkey, fbundle, regex, filter, buffer, sizeof(buffer));
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
  RETURN_STRING(buffer,1);
 }

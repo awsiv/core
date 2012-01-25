@@ -28,6 +28,25 @@
    RETURN_NULL();\
    }\
 
+#define ARGUMENT_CHECK_CONTENTS(cond) \
+ if(!(cond))                          \
+    {                                 \
+    zend_throw_exception(cfmod_exception_args, "Missing argument contents", 0 TSRMLS_CC); \
+    RETURN_NULL();                    \
+    }
+
+
+
+#define ERRID_CHECK(hq, DeleteFunction)           \
+ if(hq->errid != ERRID_SUCCESS)                   \
+    {                                             \
+    cfapi_errid errid = hq->errid;                \
+    DeleteHubQuery(hq, DeleteFunction);           \
+    zend_throw_exception(cfmod_exception_generic, (char *)GetErrorDescription(errid), 0 TSRMLS_CC);  \
+    RETURN_NULL();                                \
+    }                                             \
+
+
 #include "json.h"
 
 #define RETURN_JSON_ARRAY(json) \
