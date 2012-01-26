@@ -3710,11 +3710,7 @@ PHP_FUNCTION(cfpr_role_create)
      RETURN_NULL();
      }
 
-  if(!(creatingUserNameLen && roleNameLen && descLen))
-     {
-     zend_throw_exception(cfmod_exception_args, "Missing argument contents", 0 TSRMLS_CC);
-     RETURN_NULL();
-     }
+  ARGUMENT_CHECK_CONTENTS(creatingUserNameLen && roleNameLen && descLen);
 
   char *fIncludeClassRx = (icrxLen == 0) ? NULL : includeClassRx;
   char *fExcludeClassRx = (ecrxLen == 0) ? NULL : excludeClassRx;
@@ -3744,13 +3740,9 @@ PHP_FUNCTION(cfpr_role_delete)
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
- 
- if(!(userNameLen && roleNameLen))
-    {
-    zend_throw_exception(cfmod_exception_args, "Missing argument contents", 0 TSRMLS_CC);
-    RETURN_NULL();
-    }
- 
+
+ ARGUMENT_CHECK_CONTENTS(userNameLen && roleNameLen);
+
  cfapi_errid errid = CFDB_DeleteRole(userName, roleName, true);
  
  if(errid != ERRID_SUCCESS)
@@ -3781,11 +3773,7 @@ PHP_FUNCTION(cfpr_role_update)
      RETURN_NULL();
      }
 
-  if(!(updatingUserNameLen && roleNameLen && descLen))
-     {
-     zend_throw_exception(cfmod_exception_args, "Missing argument contents", 0 TSRMLS_CC);
-     RETURN_NULL();
-     }
+  ARGUMENT_CHECK_CONTENTS(updatingUserNameLen && roleNameLen && descLen);
 
   char *fIncludeClassRx = (icrxLen == 0) ? NULL : includeClassRx;
   char *fExcludeClassRx = (ecrxLen == 0) ? NULL : excludeClassRx;
@@ -3816,11 +3804,7 @@ PHP_FUNCTION(cfpr_role_list_all)
     RETURN_NULL();
     }
 
- if(!(userNameLen))
-    {
-    zend_throw_exception(cfmod_exception_args, "Missing argument contents", 0 TSRMLS_CC);
-    RETURN_NULL();
-    }
+ ARGUMENT_CHECK_CONTENTS(userNameLen);
  
  HubQuery *hq = CFDB_GetAllRolesAuth(userName);
 
@@ -3852,11 +3836,7 @@ PHP_FUNCTION(cfpr_role_list_by_name)
     RETURN_NULL();
     }
 
- if(!(userNameLen && roleNameLen))
-    {
-    zend_throw_exception(cfmod_exception_args, "Missing argument contents", 0 TSRMLS_CC);
-    RETURN_NULL();
-    }
+ ARGUMENT_CHECK_CONTENTS(userNameLen && roleNameLen);
 
  HubQuery *hq = CFDB_GetRoleByNameAuth(userName, roleName);
 
