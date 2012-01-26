@@ -1343,26 +1343,33 @@ PHP_FUNCTION(cfpr_report_filechanges)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_report_filediffs)
-
-//$ret = cfpr_report_filediffs($hostkey,$name,$diff,$regex,$time,">");
-
-{ char *hostkey,*file,*cmp,*diff,*classreg;
+{
+ char *userName, *hostkey,*file,*cmp,*diff,*classreg;
  char *fhostkey,*ffile,*fdiff,*fclassreg;
- int hk_len,f_len,c_len,d_len,cr_len;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ int user_len, hk_len,f_len,c_len,d_len,cr_len;
+ char buffer[CF_WEBBUFFER];
  zend_bool regex;
  int use_reg;
  long t;
  time_t then;
  PageInfo page = {0};
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssblssll",
-                           &hostkey,&hk_len,&file,&f_len,&diff,&d_len,&regex,&t,&cmp,&c_len,&classreg,&cr_len,
-                           &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
+ 
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssblssll",
+                           &userName, &user_len,
+                           &hostkey, &hk_len,
+                           &file, &f_len,
+                           &diff, &d_len,
+                           &regex,
+                           &t,
+                           &cmp, &c_len,
+                           &classreg, &cr_len,
+                           &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
+
+ ARGUMENT_CHECK_CONTENTS(user_len);
 
  use_reg = (int)regex;
  then = (time_t)t;
@@ -1374,9 +1381,12 @@ PHP_FUNCTION(cfpr_report_filediffs)
 
  buffer[0]='\0';
 
- HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
- Nova2PHP_filediffs_report(fhostkey,ffile,fdiff,use_reg,then,cmp,filter,&page,false,buffer,bufsize);
- DeleteHostClassFilter(filter);
+ HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
+ ERRID_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+ HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ Nova2PHP_filediffs_report(fhostkey, ffile, fdiff, use_reg, then, cmp, filter, &page, false, buffer, sizeof(buffer));
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
  RETURN_STRING(buffer,1);
 }
@@ -1431,26 +1441,33 @@ PHP_FUNCTION(cfpr_report_filechanges_longterm)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_report_filediffs_longterm)
-
-//$ret = cfpr_report_filediffs($hostkey,$name,$diff,$regex,$time,">");
-
-{ char *hostkey,*file,*cmp,*diff,*classreg;
+{
+ char *userName, *hostkey,*file,*cmp,*diff,*classreg;
  char *fhostkey,*ffile,*fdiff,*fclassreg;
- int hk_len,f_len,c_len,d_len,cr_len;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ int user_len, hk_len,f_len,c_len,d_len,cr_len;
+ char buffer[CF_WEBBUFFER];
  zend_bool regex;
  int use_reg;
  long t;
  time_t then;
  PageInfo page = {0};
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssblssll",
-                           &hostkey,&hk_len,&file,&f_len,&diff,&d_len,&regex,&t,&cmp,&c_len,&classreg,&cr_len,
-                           &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
+ 
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssblssll",
+                           &userName, &user_len,
+                           &hostkey, &hk_len,
+                           &file, &f_len,
+                           &diff, &d_len,
+                           &regex,
+                           &t,
+                           &cmp, &c_len,
+                           &classreg, &cr_len,
+                           &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
+
+ ARGUMENT_CHECK_CONTENTS(user_len);
 
  use_reg = (int)regex;
  then = (time_t)t;
@@ -1462,9 +1479,12 @@ PHP_FUNCTION(cfpr_report_filediffs_longterm)
 
  buffer[0]='\0';
 
- HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
- Nova2PHP_filediffs_report(fhostkey,ffile,fdiff,use_reg,then,cmp,filter,&page,true,buffer,bufsize);
- DeleteHostClassFilter(filter);
+ HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
+ ERRID_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+ HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ Nova2PHP_filediffs_report(fhostkey, ffile, fdiff, use_reg, then, cmp, filter, &page, true, buffer, sizeof(buffer));
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
  
  RETURN_STRING(buffer,1);
 }
@@ -2351,24 +2371,31 @@ PHP_FUNCTION(cfpr_hosts_with_filechanges)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_hosts_with_filediffs)
-
-//$ret = cfpr_hosts_with_filediffs($hostkey,$name,$diff,$regex,$time,">");
-
-{ char *hostkey,*file,*cmp,*diff;
+{
+ char *userName, *hostkey,*file,*cmp,*diff;
  char *fhostkey,*ffile,*fcmp,*fclassreg,*classreg;
- int hk_len,j_len,c_len,d_len,cr_len;
- const int bufsize = 512*1024;
- char buffer[bufsize];
+ int user_len, hk_len,j_len,c_len,d_len,cr_len;
+ char buffer[512*1024];
  zend_bool regex;
  long t;
  time_t then;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssblss",&hostkey,&hk_len,&file,&j_len,&diff,&d_len,&regex,&t,&cmp,&c_len,&classreg,&cr_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssblss",
+                           &userName, &user_len,
+                           &hostkey, &hk_len,
+                           &file, &j_len,
+                           &diff, &d_len,
+                           &regex,
+                           &t,
+                           &cmp, &c_len,
+                           &classreg, &cr_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
+ ARGUMENT_CHECK_CONTENTS(user_len);
+ 
  then = (time_t)t;
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  ffile =  (j_len == 0) ? NULL : file;
@@ -2377,9 +2404,12 @@ PHP_FUNCTION(cfpr_hosts_with_filediffs)
 
  buffer[0] = '\0';
 
- HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
- Nova2PHP_filediffs_hosts(fhostkey,ffile,diff,regex,then,fcmp,filter,buffer,bufsize);
- DeleteHostClassFilter(filter);
+ HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
+ ERRID_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+ HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ Nova2PHP_filediffs_hosts(fhostkey, ffile, diff, regex, then, fcmp, filter, buffer, sizeof(buffer));
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
  
  RETURN_STRING(buffer,1);
 }
