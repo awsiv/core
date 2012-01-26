@@ -1262,23 +1262,27 @@ PHP_FUNCTION(cfpr_report_performance)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_report_setuid)
-
-//$ret = cfpr_report_setuid($hostkey,$file,$regex);
-
-{ char *hostkey,*file,*classreg;
+{
+ char *userName, *hostkey,*file,*classreg;
  char *fhostkey,*ffile,*fclassreg;
- int hk_len,j_len,cr_len;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ int user_len, hk_len,j_len,cr_len;
+ char buffer[CF_WEBBUFFER];
  zend_bool regex;
  PageInfo page = {0};
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbsll",
-                           &hostkey,&hk_len,&file,&j_len,&regex,&classreg,&cr_len,
+ 
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbsll",
+                           &userName, &user_len,
+                           &hostkey, &hk_len,
+                           &file, &j_len,
+                           &regex,
+                           &classreg, &cr_len,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
+
+ ARGUMENT_CHECK_CONTENTS(user_len);
 
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  ffile =  (j_len == 0) ? NULL : file;
@@ -1286,9 +1290,12 @@ PHP_FUNCTION(cfpr_report_setuid)
 
  buffer[0]='\0';
 
- HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
- Nova2PHP_setuid_report(fhostkey,ffile,regex,filter,&page,buffer,bufsize);
- DeleteHostClassFilter(filter);
+ HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
+ ERRID_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+ HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ Nova2PHP_setuid_report(fhostkey, ffile, regex, filter, &page, buffer, sizeof(buffer));
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
  RETURN_STRING(buffer,1);
 }
@@ -2294,21 +2301,25 @@ PHP_FUNCTION(cfpr_hosts_with_performance)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_hosts_with_setuid)
-
-//$ret = cfpr_hosts_with_setuid($hostkey,$file,$regex);
-
-{ char *hostkey,*file, *classreg;
+{
+ char *userName, *hostkey,*file, *classreg;
  char *fhostkey,*ffile;
- int hk_len,j_len,cr_len;
- const int bufsize = 512*1024;
- char buffer[bufsize];
+ int user_len, hk_len,j_len,cr_len;
+ char buffer[512*1024];
  zend_bool regex;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbs",&hostkey,&hk_len,&file,&j_len,&regex,&classreg,&cr_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbs",
+                           &userName, &user_len,
+                           &hostkey, &hk_len,
+                           &file, &j_len,
+                           &regex,
+                           &classreg, &cr_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
+
+ ARGUMENT_CHECK_CONTENTS(user_len);
 
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  ffile =  (j_len == 0) ? NULL : file;
@@ -2316,9 +2327,12 @@ PHP_FUNCTION(cfpr_hosts_with_setuid)
 
  buffer[0] = '\0';
 
- HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
- Nova2PHP_setuid_hosts(fhostkey,ffile,regex,filter,buffer,bufsize);
- DeleteHostClassFilter(filter);
+ HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
+ ERRID_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+ HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ Nova2PHP_setuid_hosts(fhostkey, ffile, regex, filter, buffer, sizeof(buffer));
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
  RETURN_STRING(buffer,1);
 }
