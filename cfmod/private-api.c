@@ -1566,20 +1566,27 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_report_value)
-
-{ char *hostkey,*day,*month,*year,*classreg;
+{
+ char *userName, *hostkey,*day,*month,*year,*classreg;
  char *fhostkey,*fmonth,*fday,*fyear,*fclassreg;
- int hk_len,d_len,m_len,y_len,cr_len;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ int user_len, hk_len,d_len,m_len,y_len,cr_len;
+ char buffer[CF_WEBBUFFER];
  PageInfo page = {0};
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssll",
-                           &hostkey,&hk_len,&day,&d_len,&month,&m_len,&year,&y_len,&classreg,&cr_len,
-                           &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
+ 
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssssll",
+                           &userName, &user_len,
+                           &hostkey, &hk_len,
+                           &day, &d_len,
+                           &month, &m_len,
+                           &year, &y_len,
+                           &classreg, &cr_len,
+                           &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
+
+ ARGUMENT_CHECK_CONTENTS(user_len);
 
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fday =  (d_len == 0) ? NULL : day;
@@ -1589,9 +1596,12 @@ PHP_FUNCTION(cfpr_report_value)
 
  buffer[0]='\0';
 
- HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
- Nova2PHP_value_report(fhostkey,fday,fmonth,fyear,filter,&page,buffer,bufsize);
- DeleteHostClassFilter(filter);
+ HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
+ ERRID_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+ HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ Nova2PHP_value_report(fhostkey, fday, fmonth, fyear, filter, &page, buffer, sizeof(buffer));
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
  RETURN_STRING(buffer,1);
 }
@@ -1855,19 +1865,26 @@ PHP_FUNCTION(cfpr_hosts_with_software_in)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_hosts_with_value)
-
-{ char *hostkey,*day,*month,*year,*classreg;
+{
+ char *userName, *hostkey,*day,*month,*year,*classreg;
  char *fhostkey,*fmonth,*fday,*fyear,*fclassreg;
- int hk_len,d_len,m_len,y_len,cr_len;
+ int user_len, hk_len,d_len,m_len,y_len,cr_len;
  const int bufsize = 512*1024;
  char buffer[bufsize];
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssss",
-                           &hostkey,&hk_len,&day,&d_len,&month,&m_len,&year,&y_len,&classreg,&cr_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssss",
+                           &userName, &user_len,
+                           &hostkey, &hk_len,
+                           &day, &d_len,
+                           &month, &m_len,
+                           &year, &y_len,
+                           &classreg, &cr_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
+
+ ARGUMENT_CHECK_CONTENTS(user_len);
 
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fday =  (d_len == 0) ? NULL : day;
@@ -1877,9 +1894,12 @@ PHP_FUNCTION(cfpr_hosts_with_value)
 
  buffer[0] = '\0';
 
- HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+ HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
+ ERRID_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+ HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
  Nova2PHP_value_hosts(fhostkey,fday,fmonth,fyear,filter,buffer,bufsize);
- DeleteHostClassFilter(filter);
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
  RETURN_STRING(buffer,1);
 }
