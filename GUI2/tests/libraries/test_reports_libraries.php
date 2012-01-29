@@ -1,6 +1,8 @@
 <?php
 class test_reports_libraries extends CodeIgniterUnitTestCase {
-
+    
+    public $username = 'admin'; // set username who will "run" test - we need this for RBAC
+    
     public function __construct() {
         parent::__construct();
     }
@@ -62,9 +64,8 @@ class test_reports_libraries extends CodeIgniterUnitTestCase {
     }
     
     public function test_cfpr_hosts_with_bundlesseen(){
-        $data=cfpr_hosts_with_bundlesseen(NULL, NULL, true, false);
-       $this->__testcases($data);
-
+        $data=cfpr_hosts_with_bundlesseen($this->username, NULL, NULL, true, false);
+        $this->__testcases($data);
     }
 
     
@@ -77,9 +78,9 @@ class test_reports_libraries extends CodeIgniterUnitTestCase {
     }
     
     public function test_cfpr_report_bundlesseen(){
-        $data=cfpr_report_bundlesseen(NULL, NULL, true, false, NULL, NULL);
+        $data = cfpr_report_bundlesseen($this->username, NULL, NULL, true, false, NULL, NULL);
         $this->__testcases($data);
-        $data2=cfpr_report_bundlesseen(NULL, NULL, true, false, 1, 1);
+        $data2 = cfpr_report_bundlesseen($this->username, NULL, NULL, true, false, 1, 1);
         $this->__pagingtest($data2);
     }
     //busineess value report
@@ -119,14 +120,14 @@ class test_reports_libraries extends CodeIgniterUnitTestCase {
   * complience promise test
   */
     public function test_cfpr_hosts_with_compliance_promises(){
-       $data= cfpr_hosts_with_compliance_promises(NULL,NULL, NULL, true, false);
+       $data = cfpr_hosts_with_compliance_promises($this->username, NULL,NULL, NULL, true, false);
        $this->__testcases($data);
     }
 
     public function test_cfpr_report_compliance_promises(){
-        $data=cfpr_report_compliance_promises(NULL, NULL, NULL, true, false, NULL, NULL);
+        $data = cfpr_report_compliance_promises($this->username, NULL, NULL, NULL, true, false, NULL, NULL);
         $this->__testcases($data);
-         $data2=cfpr_report_compliance_promises(NULL, NULL, NULL, true, false,1, 1);
+        $data2 = cfpr_report_compliance_promises($this->username, NULL, NULL, NULL, true, false,1, 1);
         $this->__pagingtest($data2);
     }
 
@@ -278,9 +279,9 @@ class test_reports_libraries extends CodeIgniterUnitTestCase {
     }
 
     public function test_cfpr_summarize_repaired(){
-        $data=cfpr_summarize_repaired(NULL, NULL, NULL, NULL, NULL,NULL,NULL);
+        $data=cfpr_summarize_repaired($this->username, NULL, NULL, NULL, NULL, NULL,NULL,NULL);
          $this->__testcases($data);
-           $data2=cfpr_summarize_repaired(NULL, NULL, NULL, NULL, NULL,1,1);
+           $data2=cfpr_summarize_repaired($this->username, NULL, NULL, NULL, NULL, NULL,1,1);
         $this->__pagingtest($data2);
     }
 
@@ -289,21 +290,21 @@ class test_reports_libraries extends CodeIgniterUnitTestCase {
      */
 
     public function test_cfpr_hosts_with_notkept(){
-        $data=cfpr_hosts_with_notkept(NULL, NULL, NULL, NULL, false);
+        $data = cfpr_hosts_with_notkept($this->username, NULL, NULL, NULL, NULL, false);
         $this->__testcases($data);
     }
 
     public function test_cfpr_summarize_notkept(){
-        $data=cfpr_summarize_notkept(NULL, NULL, NULL, NULL, NULL,NULL,NULL);
+        $data = cfpr_summarize_notkept($this->username, NULL, NULL, NULL, NULL, NULL,NULL,NULL);
         $this->__testcases($data);
-        $data2=cfpr_summarize_notkept(NULL, NULL, NULL, NULL, NULL,1,1);
+        $data2 = cfpr_summarize_notkept($this->username, NULL, NULL, NULL, NULL, NULL,1,1);
         $this->__pagingtest($data2);
     }
 
     public function test_cfpr_report_notkept(){
-        $data=cfpr_report_notkept(NULL, NULL, NULL, NULL, false, NULL, NULL);
+        $data = cfpr_report_notkept($this->username, NULL, NULL, NULL, NULL, false, NULL, NULL);
          $this->__testcases($data);
-        $data2=cfpr_report_notkept(NULL, NULL, NULL, NULL, false,1, 1);
+        $data2 = cfpr_report_notkept($this->username, NULL, NULL, NULL, NULL, false,1, 1);
         $this->__pagingtest($data2);
     }
 
