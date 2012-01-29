@@ -87,7 +87,7 @@ class Settings extends Cf_Controller {
 
             if (is_object($settings)) {// the information has therefore been successfully saved in the db
                 foreach ($settings as $property => $value) {
-                    if ($property == 'mode' || $property == 'active_directory' || $property == 'encryption' || $property=='rbac') {
+                    if ($property == 'mode' || $property == 'active_directory' || $property == 'encryption') {
                         if (!$this->input->post('mode')) {
                             $data[$value] = 'checked="checked"';
                             continue;
@@ -126,15 +126,15 @@ class Settings extends Cf_Controller {
                     //'active_directory' => set_value('active_directory'),
                     'active_directory_domain' => set_value('active_directory_domain'),
                     //'member_attribute' => set_value('member_attribute'),
-                    'encryption' => set_value('encryption'),
+                    'encryption' => set_value('encryption')
                 );
                                
                 $data = array_merge($form_data, $data);
             }
-
+            
             $this->template->load('template', 'appsetting/missionportalpref', $data);
         } else {
-            
+
             $user_dir =$this->input->post('users_directory');
             $form_data = array(
                 'appemail' => set_value('appemail'),
@@ -151,7 +151,6 @@ class Settings extends Cf_Controller {
                 'encryption' => set_value('encryption'),
                 'rbac'=>set_value('rbac')
             );
-
 // run insert model to write data to db
             $inserted = '';
             if ($op == 'edit') {
@@ -171,7 +170,7 @@ class Settings extends Cf_Controller {
                     'message' => '<p class="success"> Settings configured sucessfully</p>'
                 );
                 foreach ($form_data as $property => $value) {
-                    if ($property == 'mode' || $property == 'encryption' || $property=='rbac') {
+                    if ($property == 'mode' || $property == 'encryption') {
                         $data[$value] = ' checked="checked"';
                         continue;
                     }

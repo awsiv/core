@@ -13,7 +13,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
         <input id="appemail" type="text" name="appemail" maxlength="50" value="<?php echo $appemail; ?>"  />
 </p>
 
- 
+
 <p id='admingrpsec'>
     <label for="admin_role">Administrative role<span class="required"></span></label>
    <?php if(isset( $rolesacc)){
@@ -42,7 +42,6 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
                         <input id="mode3" name="mode" type="radio" class="" value="active_directory" <?php echo (isset($active_directory))?$active_directory:$this->form_validation->set_radio('mode', 'active_directory') ; ?> />
         		<label for="mode" class="">Active Directory</label>
 
-                       
 </p>
 
 <fieldset id="ldapsettings">
@@ -130,19 +129,32 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
 
 <p><label></label> <a class="btn testldap" id="testsettings" href="<?php echo site_url('settings/ldaptest')?>">Test settings</a></p>
 </fieldset>
-<p>
-    
+<p>    
     <label for="fall back for">Fall-back role ( if authentication server down)<span class="required"></span></label>
     <?php echo tooltip('tooltip_fall_back','',true) ;// echo form_error('active_directory_domain'); ?>
     <?php echo form_dropdown('fall_back_for', $roles, $fall_back_for?$fall_back_for:'select');?>
 </p>
-
 <p>
     <label for="rbac">Role based access control <span class="required">*</span></label>
-        <input id="rbac_on" name="rbac" type="radio" class="" value="true" <?php echo (isset($rbac_on))?$database:$this->form_validation->set_radio('rbac', 'true') ; ?> checked="checked"/>
+        <?php 
+      
+        $elem = array(
+                'name'        => 'rbac',
+                'id'          => 'rbac_on',
+                'value'       => 'true',
+                'checked'     => ($rbac == 'true' ? TRUE : '')
+            );
+        echo form_radio($elem); ?>
         <label for="mode" class="">On</label>
-                        
-        <input id="rbac_off" name="rbac" type="radio" class="" value="false" <?php echo (isset($rbac_off))?$rbac_off:$this->form_validation->set_radio('rbac', 'false'); ?> />
+        <?php 
+        $elem = array(
+                'name'        => 'rbac',
+                'id'          => 'rbac_on',
+                'value'       => 'false',
+                'checked'     => ($rbac == 'false' ? TRUE : '')
+            );
+        echo form_radio($elem); ?>                
+        
         <label for="mode" class="">Off</label>
 </p>
 
