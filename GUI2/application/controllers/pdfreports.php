@@ -85,10 +85,12 @@ class pdfreports extends Cf_Controller {
             $this->cf_csv->setFileName($filename);
             $this->reportGenerator = $this->cf_csv;
         }
-
+        // we will use username for RBAC
+        $username =  $this->session->userdata('username');
+        
         switch ($report_type) {
             case "bundle-profile":
-                $this->rpt_bundle_profile($params['hostkey'], $params['search'], $params['class_regex'], $params['rows'], $params['page']);
+                $this->rpt_bundle_profile($username, $params['hostkey'], $params['search'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "business-value":
@@ -96,67 +98,67 @@ class pdfreports extends Cf_Controller {
                 break;
 
             case "contexts":
-                $this->rpt_class_profile($params['hostkey'], $params['search'], $params['class_regex'], $params['rows'], $params['page']);
+                $this->rpt_class_profile($username, $params['hostkey'], $params['search'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "promise-compliance":
-                $this->rpt_compliance_promises($params['hostkey'], $params['search'], $params['state'], $params['class_regex'], $params['rows'], $params['page']);
+                $this->rpt_compliance_promises($username, $params['hostkey'], $params['search'], $params['state'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "compliance-summary":
-                $this->rpt_compliance_summary($params['hostkey'], $params['class_regex'], $params['rows'], $params['page']);
+                $this->rpt_compliance_summary($username, $params['hostkey'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "file-change-log":
-                $this->rpt_filechange_log($params['hostkey'], $params['search'], $params['class_regex'], $params['long_term'], $params['rows'], $params['page']);
+                $this->rpt_filechange_log($username, $params['hostkey'], $params['search'], $params['class_regex'], $params['long_term'], $params['rows'], $params['page']);
                 break;
 
             case "neighbors":
-                $this->rpt_lastsaw_hosts($params['hostkey'], $params['key'], $params['search'], $params['address'], $params['ago'], $params['class_regex'], $params['rows'], $params['page']);
+                $this->rpt_lastsaw_hosts($username, $params['hostkey'], $params['key'], $params['search'], $params['address'], $params['ago'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "patches-available":
-                $this->rpt_patches_available($params['hostkey'], $params['search'], $params['version'], $params['arch'], $params['class_regex'], $params['rows'], $params['page']);
+                $this->rpt_patches_available($username, $params['hostkey'], $params['search'], $params['version'], $params['arch'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "patches-installed":
-                $this->rpt_patch_status($params['hostkey'], $params['search'], $params['version'], $params['arch'], $params['class_regex'], $params['rows'], $params['page']);
+                $this->rpt_patch_status($username, $params['hostkey'], $params['search'], $params['version'], $params['arch'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "benchmarks":
-                $this->rpt_performance($params['hostkey'], $params['search'], $params['class_regex'], $params['rows'], $params['page']);
+                $this->rpt_performance($username, $params['hostkey'], $params['search'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "promises-repaired-summary":
-                $this->rpt_promise_repaired_summary($params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex'], $params['rows'], $params['page']);
+                $this->rpt_promise_repaired_summary($username, $params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "promises-repaired-log":
-                $this->rpt_repaired_log($params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex'], $params['rows'], $params['page']);
+                $this->rpt_repaired_log($username, $params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "promises-not-kept-summary":
-                $this->rpt_promise_notkept_summary($params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex'], $params['rows'], $params['page']);
+                $this->rpt_promise_notkept_summary($username, $params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "promises-not-kept-log":
-                $this->rpt_promise_notkept($params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex'], $params['rows'], $params['page']);
+                $this->rpt_promise_notkept($username, $params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "setuid-programs":
-                $this->rpt_setuid($params['hostkey'], $params['search'], $params['class_regex'], $params['rows'], $params['page']);
+                $this->rpt_setuid($username, $params['hostkey'], $params['search'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "software-installed":
-                $this->rpt_software_installed($params['hostkey'], $params['search'], $params['version'], $params['arch'], $params['class_regex'], $params['rows'], $params['page']);
+                $this->rpt_software_installed($username, $params['hostkey'], $params['search'], $params['version'], $params['arch'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "values":
-                $this->rpt_variables($params['hostkey'], $params['search'], $params['scope'], $params['lval'], $params['rval'], $params['var_type'], $params['class_regex'], $params['rows'], $params['page']);
+                $this->rpt_variables($username, $params['hostkey'], $params['search'], $params['scope'], $params['lval'], $params['rval'], $params['var_type'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "file-change-diffs":
-                $this->rpt_filediffs($params['hostkey'], $params['search'], $params['diff'], $params['cal'], $params['class_regex'], $params['long_term'], $params['rows'], $params['page']);
+                $this->rpt_filediffs($username, $params['hostkey'], $params['search'], $params['diff'], $params['cal'], $params['class_regex'], $params['long_term'], $params['rows'], $params['page']);
                 break;
 
             case "virtual-bundles":
@@ -311,10 +313,10 @@ class pdfreports extends Cf_Controller {
         return $data;
     }
 
-    function rpt_bundle_profile($hostkey, $search, $class_regex, $rows = 0, $page_number = 0) {
+    function rpt_bundle_profile($username, $hostkey, $search, $class_regex, $rows = 0, $page_number = 0) {
 
         $header = array('Host', 'Bundle', 'Last verified', 'Hours Ago', 'Avg interval', 'Uncertainty');
-        $ret = cfpr_report_bundlesseen($hostkey, $search, true, $class_regex, $rows, $page_number);
+        $ret = cfpr_report_bundlesseen($username, $hostkey, $search, true, $class_regex, $rows, $page_number);
         $jsondata = json_decode($ret, true);
         $this->checkForDataTruncation($jsondata);
         $data1 = $jsondata['data'];
@@ -375,11 +377,11 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_class_profile($hostkey, $search, $class_regex, $rows = 0, $page_number = 0) {
+    function rpt_class_profile($username, $hostkey, $search, $class_regex, $rows = 0, $page_number = 0) {
 
         $header = array('Host', 'Class Context', 'Occurs with probability', 'Uncertainty', 'Last seen');
 
-        $ret = cfpr_report_classes($hostkey, $search, true, $class_regex, $rows, $page_number);
+        $ret = cfpr_report_classes($username, $hostkey, $search, true, $class_regex, $rows, $page_number);
         $jsondata = json_decode($ret, true);
 
         $data1 = $jsondata['data'];
@@ -409,11 +411,11 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_promise_notkept($hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex = '', $rows = 0, $page_number = 0) {
+    function rpt_promise_notkept($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex = '', $rows = 0, $page_number = 0) {
 
         $header = array('Host', 'Promise Handle', 'Report', 'Time');
 
-        $ret = cfpr_report_notkept($hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
+        $ret = cfpr_report_notkept($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
         $jsondata = json_decode($ret, true);
 
         $data1 = $jsondata['data'];
@@ -443,9 +445,9 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_promise_notkept_summary($hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex = '', $rows = 0, $page_number = 0) {
+    function rpt_promise_notkept_summary($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex = '', $rows = 0, $page_number = 0) {
 
-        $ret = cfpr_summarize_notkept($hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
+        $ret = cfpr_summarize_notkept($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
         $jsondata = json_decode($ret, true);
 
         $data1 = $jsondata['data'];
@@ -470,10 +472,10 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_promise_repaired_summary($hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex = '', $rows = 0, $page_number = 0) {
+    function rpt_promise_repaired_summary($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex = '', $rows = 0, $page_number = 0) {
         $header = array('Promise Handle', 'Report', 'Occurrences');
 
-        $ret = cfpr_summarize_repaired($hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
+        $ret = cfpr_summarize_repaired($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
 
         $jsondata = json_decode($ret, true);
 
@@ -498,10 +500,10 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_compliance_promises($hostkey, $search, $state, $class_regex, $rows = 0, $page_number = 0) {
+    function rpt_compliance_promises($username, $hostkey, $search, $state, $class_regex, $rows = 0, $page_number = 0) {
         $header = array('Host', 'Promise Handle', 'Last known state', 'Probability kept', 'Uncertainty', 'Last seen');
 
-        $ret = cfpr_report_compliance_promises($hostkey, $search, $state, true, $class_regex, $rows, $page_number);
+        $ret = cfpr_report_compliance_promises($username, $hostkey, $search, $state, true, $class_regex, $rows, $page_number);
         $jsondata = json_decode($ret, true);
 
         $data1 = $jsondata['data'];
@@ -531,11 +533,11 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_compliance_summary($hostkey, $class_regex, $rows = 0, $page_number = 0) {
+    function rpt_compliance_summary($username, $hostkey, $class_regex, $rows = 0, $page_number = 0) {
         $header = array('Host', 'Policy', 'Kept', 'Repaired', 'Not kept', 'Last seen');
 
 
-        $ret = cfpr_report_compliance_summary($hostkey, NULL, -1, -1, -1, -1, ">", $class_regex, $rows, $page_number);
+        $ret = cfpr_report_compliance_summary($username, $hostkey, NULL, -1, -1, -1, -1, ">", $class_regex, $rows, $page_number);
         $jsondata = json_decode($ret, true);
 
         $data1 = $jsondata['data'];
@@ -563,15 +565,15 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_filechange_log($hostkey, $search, $class_regex, $longterm_data, $rows = 0, $page_number = 0) {
+    function rpt_filechange_log($username, $hostkey, $search, $class_regex, $longterm_data, $rows = 0, $page_number = 0) {
         $cols = 3;
         $col_len = array(33, 34, 33);
         $header = array('Host', 'File', 'Time of Change');
 
         if ($longterm_data) {
-            $data['report_result'] = cfpr_report_filechanges_longterm($hostkey, $search, true, -1, ">", $class_regex, $rows, $page_number);
+            $data['report_result'] = cfpr_report_filechanges_longterm($username, $hostkey, $search, true, -1, ">", $class_regex, $rows, $page_number);
         } else {
-            $data['report_result'] = cfpr_report_filechanges($hostkey, $search, true, -1, ">", $class_regex, $rows, $page_number);
+            $data['report_result'] = cfpr_report_filechanges($username, $hostkey, $search, true, -1, ">", $class_regex, $rows, $page_number);
         }
 
         $ret = $data['report_result'];
@@ -603,10 +605,10 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_lastsaw_hosts($hostkey, $key, $name, $address, $ago, $class_regex, $rows = 0, $page_number = 0) {
+    function rpt_lastsaw_hosts($username, $hostkey, $key, $name, $address, $ago, $class_regex, $rows = 0, $page_number = 0) {
         $header = array('Host', 'Initiated', 'IP Address', 'Remote Host', 'Last Seen', 'Hours Ago', ' Avg Interval', 'Uncertainty', 'Remote Host Key');
 
-        $ret = cfpr_report_lastseen($hostkey, $key, $name, $address, $ago, true, $class_regex, $rows, $page_number);
+        $ret = cfpr_report_lastseen($username, $hostkey, $key, $name, $address, $ago, true, $class_regex, $rows, $page_number);
         $jsondata = json_decode($ret, true);
 
         $data1 = $jsondata['data'];
@@ -634,9 +636,9 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_patches_available($hostkey, $search, $version, $arch, $class_regex, $rows = 0, $page_number = 0) {
+    function rpt_patches_available($username, $hostkey, $search, $version, $arch, $class_regex, $rows = 0, $page_number = 0) {
 
-        $ret = cfpr_report_patch_avail($hostkey, $search, $version, $arch, true, $class_regex, $rows, $page_number);
+        $ret = cfpr_report_patch_avail($username, $hostkey, $search, $version, $arch, true, $class_regex, $rows, $page_number);
         $jsondata = json_decode($ret, true);
 
         $data1 = $jsondata['data'];
@@ -665,9 +667,9 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_patch_status($hostkey, $search, $version, $arch, $class_regex, $rows = 0, $page_number = 0) {
+    function rpt_patch_status($username, $hostkey, $search, $version, $arch, $class_regex, $rows = 0, $page_number = 0) {
 
-        $ret = cfpr_report_patch_in($hostkey, $search, $version, $arch, true, $class_regex, $rows, $page_number);
+        $ret = cfpr_report_patch_in($username, $hostkey, $search, $version, $arch, true, $class_regex, $rows, $page_number);
         $jsondata = json_decode($ret, true);
 
         $data1 = $jsondata['data'];
@@ -695,9 +697,9 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_software_installed($hostkey, $search, $version, $arch, $class_regex, $rows = 0, $page_number = 0) {
+    function rpt_software_installed($username, $hostkey, $search, $version, $arch, $class_regex, $rows = 0, $page_number = 0) {
 
-        $ret = cfpr_report_software_in($hostkey, $search, $version, $arch, true, $class_regex, $rows, $page_number);
+        $ret = cfpr_report_software_in($username, $hostkey, $search, $version, $arch, true, $class_regex, $rows, $page_number);
         $jsondata = json_decode($ret, true);
 
         $data1 = $jsondata['data'];
@@ -726,9 +728,9 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_performance($hostkey, $search, $class_regex, $rows = 0, $page_number = 0) {
+    function rpt_performance($username, $hostkey, $search, $class_regex, $rows = 0, $page_number = 0) {
 
-        $ret = cfpr_report_performance($hostkey, $search, true, $class_regex, $rows, $page_number);
+        $ret = cfpr_report_performance($username, $hostkey, $search, true, $class_regex, $rows, $page_number);
         $jsondata = json_decode($ret, true);
 
         $data1 = $jsondata['data'];
@@ -760,10 +762,10 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_repaired_log($hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex, $rows = 0, $page_number = 0) {
+    function rpt_repaired_log($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex, $rows = 0, $page_number = 0) {
         $header = array('Host', 'Promise Handle', 'Report', 'Time');
 
-        $ret = cfpr_report_repaired($hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
+        $ret = cfpr_report_repaired($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, $rows, $page_number);
         $jsondata = json_decode($ret, true);
 
         $data1 = $jsondata['data'];
@@ -822,13 +824,13 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_variables($hostkey, $search, $scope, $lval, $rval, $type, $class_regex, $rows = 0, $page_number = 0) {
+    function rpt_variables($username, $hostkey, $search, $scope, $lval, $rval, $type, $class_regex, $rows = 0, $page_number = 0) {
         $header = array();
 
         if ($hostkey == NULL) {
-            $ret = cfpr_report_vars(NULL, $scope, $lval, $rval, $type, true, $class_regex, $rows, $page_number);
+            $ret = cfpr_report_vars($username, NULL, $scope, $lval, $rval, $type, true, $class_regex, $rows, $page_number);
         } else {
-            $ret = cfpr_report_vars($hostkey, NULL, $search, NULL, NULL, true, $class_regex, $rows, $page_number);
+            $ret = cfpr_report_vars($username, $hostkey, NULL, $search, NULL, NULL, true, $class_regex, $rows, $page_number);
         }
 
         $dataArray = json_decode($ret, true);
@@ -868,12 +870,12 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_filediffs($hostkey, $search, $diff, $cal, $class_regex, $longterm, $page = 0, $rows = 0) {
+    function rpt_filediffs($username, $hostkey, $search, $diff, $cal, $class_regex, $longterm, $page = 0, $rows = 0) {
 
         if ($longterm) {
-            $data['report_result'] = cfpr_report_filediffs_longterm(NULL, $search, $diff, true, $cal, ">", $class_regex, $page, $rows);
+            $data['report_result'] = cfpr_report_filediffs_longterm($username, NULL, $search, $diff, true, $cal, ">", $class_regex, $page, $rows);
         } else {
-            $data['report_result'] = cfpr_report_filediffs(NULL, $search, $diff, true, $cal, ">", $class_regex, $page, $rows);
+            $data['report_result'] = cfpr_report_filediffs($username, NULL, $search, $diff, true, $cal, ">", $class_regex, $page, $rows);
         }
         $result = json_decode($data['report_result'], true);
         $newFormat = array();
@@ -911,9 +913,9 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_setuid($hostkey, $search, $class_regex, $rows = 0, $page_number = 0) {
+    function rpt_setuid($username, $hostkey, $search, $class_regex, $rows = 0, $page_number = 0) {
         $header = array('Host', 'Type', 'Name', 'Value');
-        $ret = cfpr_report_setuid($hostkey, $search, true, $class_regex, $rows, $page_number);
+        $ret = cfpr_report_setuid($username, $hostkey, $search, true, $class_regex, $rows, $page_number);
 
         $jsondata = json_decode($ret, true);
 

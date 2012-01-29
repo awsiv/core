@@ -88,7 +88,7 @@ $colour = cfpr_get_host_colour($hostkey);
         </div>
         <div class="clear"></div>
         <div id="notkepttable" title="<?php echo $this->lang->line('host_promise_not_kept'); ?>">
-            <?php $report = cfpr_summarize_notkept($hostkey, NULL, NULL, NULL, NULL, NULL, NULL); ?>
+            <?php $report = cfpr_summarize_notkept($this->session->userdata('username'), $hostkey, NULL, NULL, NULL, NULL, NULL, NULL); ?>
                <!--<p class="title">Promises not kept in the past week</p-->
             <div class="bundlelist-table">
                 <?php

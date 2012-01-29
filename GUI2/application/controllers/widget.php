@@ -24,7 +24,9 @@ class Widget extends Cf_Controller {
     }
 
     function summaryCompliance() {
-
+        // we will use username for RBAC
+        $username =  $this->session->userdata('username');
+        
         $getparams = $this->uri->uri_to_assoc(3);
         $startDate = isset($getparams['start']) ? $getparams['start'] : -1;
         $env = $getparams['env'];
@@ -35,13 +37,13 @@ class Widget extends Cf_Controller {
         $stopDateTimeStamp = ($stopDate == null) ? ($startDate + (6 * 3600)) : time();
         $environment = $env;
 
-        $this->data['notkept'] = json_decode(cfpr_summarize_notkept(NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment, 0, 0), true);
-        $this->data['repaired'] = json_decode(cfpr_summarize_repaired(NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment, 0, 0), true);
+        $this->data['notkept']  = json_decode(cfpr_summarize_notkept ($username, NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment, 0, 0), true);
+        $this->data['repaired'] = json_decode(cfpr_summarize_repaired($username, NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment, 0, 0), true);
 
 
 
         $this->data['startDate'] = getDateStatus($startDateTimeStamp, true);
-        $this->data['stopDate'] = getDateStatus($stopDateTimeStamp, true);
+        $this->data['stopDate']  = getDateStatus($stopDateTimeStamp,  true);
         $this->load->view('widgets/summaryCompliance', $this->data);
     }
 
