@@ -4393,8 +4393,7 @@ void Nova2PHP_get_network_speed(char *hostkey,char *buffer, int bufsize)
 
 /*****************************************************************************/
 
-int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int bufsize)
-
+int Nova2PHP_countclasses(char *hostkey,char *name,int regex, HostClassFilter *hostClassFilter, char *returnval,int bufsize)
 {
  HubQuery *hq;
  Rlist *rp;
@@ -4409,7 +4408,7 @@ int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int
     return false;
     }
 
- hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,CF_HUB_HORIZON,NULL,false);
+ hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,CF_HUB_HORIZON,hostClassFilter,false);
  
  returnval[0] = '\0';
 

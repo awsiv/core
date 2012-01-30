@@ -3398,46 +3398,68 @@ PHP_FUNCTION(cfpr_list_business_goals)
 
 PHP_FUNCTION(cfpr_get_class_frequency)
 
-{ char *hkey,*fhkey,*pattern,*fpattern;
- int p_len, h_len,count;
- const int bufsize = 1000000;
- char buffer[bufsize];
+{
+ char *userName, *hkey,*fhkey,*pattern,*fpattern;
+ int user_len, p_len, h_len,count;
+ char buffer[1000000];
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&hkey,&h_len,&pattern,&p_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss",
+                           &userName, &user_len,
+                           &hkey, &h_len,
+                           &pattern, &p_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
- buffer[0] = '\0';
+ ARGUMENT_CHECK_CONTENTS(user_len);
 
  fpattern = (p_len == 0) ? NULL : pattern;
  fhkey =  (h_len == 0) ? NULL : hkey;
 
- count = Nova2PHP_countclasses(fhkey,fpattern,1,buffer,bufsize);
+ buffer[0] = '\0';
+
+ HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, NULL, NULL);
+ ERRID_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+ HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ count = Nova2PHP_countclasses(fhkey, fpattern, 1, filter, buffer, sizeof(buffer));
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+
  RETURN_LONG((long)count);
 }
 
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_report_class_frequency)
-
-{ char *hkey,*fhkey,*pattern,*fpattern;
- int p_len, h_len;
+{
+ char *userName, *hkey,*fhkey,*pattern,*fpattern;
+ int user_len, p_len, h_len;
  char buffer[CF_WEBBUFFER];
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&hkey,&h_len,&pattern,&p_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss",
+                           &userName, &user_len,
+                           &hkey, &h_len,
+                           &pattern, &p_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
+
+ ARGUMENT_CHECK_CONTENTS(user_len);
 
  buffer[0] = '\0';
 
  fpattern = (p_len == 0) ? NULL : pattern;
  fhkey =  (h_len == 0) ? NULL : hkey;
 
- Nova2PHP_countclasses(fhkey,fpattern,1,buffer,sizeof(buffer));
+ HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, NULL, NULL);
+ ERRID_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+ HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ Nova2PHP_countclasses(fhkey, fpattern, 1, filter, buffer, sizeof(buffer));
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+
  RETURN_STRING(buffer,1);
 }
 

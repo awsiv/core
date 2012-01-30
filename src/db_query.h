@@ -7,7 +7,6 @@
 #ifdef HAVE_LIBMONGOC
 
 void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn, char *db_name);
-int Nova2PHP_countclasses(char *hostkey,char *name,int regex,char *returnval,int bufsize);
 HubQuery *CFDB_QueryHostsInClassContext(mongo_connection *conn,char *expression,time_t horizon,int sort);
 HubQuery *CFDB_QueryHosts(mongo_connection *conn, char *db, char *dbkey,bson *query);
 HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, char *ipRegex, char *classRegex);
