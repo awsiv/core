@@ -7,6 +7,9 @@ require_once "restBase.php";
 
 class hostIdTest extends restBaseTest {
 
+    /**
+     * Checks for valid json response 
+     */
     public function testhostID() {
         try {
             $id = "SHA=eb98cd79ff30c793a815ab4f29dc5d1400fc45a13f30db69bedb4c8ca3ab8576";
@@ -17,6 +20,10 @@ class hostIdTest extends restBaseTest {
         }
     }
 
+     /**
+     * 
+     * Matches the data format with values that are returned and expected 
+     */
     public function testhostIdData() {
         try {
             $id = "SHA=eb98cd79ff30c793a815ab4f29dc5d1400fc45a13f30db69bedb4c8ca3ab8576";
@@ -39,8 +46,7 @@ class hostIdTest extends restBaseTest {
      */
      public function testhostIdWithInvalidData() {       
             $id = "SHA=eb98cd79ff30c793a815ab4f29dc5d1400fc45a13f30db69bedb4c8ca3ab8579";
-            $this->pest->get("/host/$id");
-           
+            $this->pest->get("/host/$id");           
     }
 
 }

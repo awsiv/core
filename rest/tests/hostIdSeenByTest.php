@@ -5,26 +5,25 @@ require_once "../lib/Pest.php";
 require_once "../lib/PestJSON.php";
 require_once "restBase.php";
 
-class hostIdSeenTest extends restBaseTest {
-
+class hostIdSeenByTest extends restBaseTest {
 
     /**
-     * Check for valid json data 
+     * Test if the returned data is correct 
      */
-    public function testhostIdSeen() {
+    public function testhostIdSeenBy() {
         try {
             $id = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
-            $jsonArray = $this->pest->get("/host/$id/seen");
+            $jsonArray = $this->pest->get("/host/$id/seen-by");
             $this->assertValidJson($jsonArray);
         } catch (Pest_NotFound $e) {
             $this->fail('Resource not found');
         }
     }
 
-     /**
-     * Checks the format for invalid key and empty result
+    /**
+     * Test for the invalid key 
      */
-    public function testhostIdSeenWithInvalidKey() {
+    public function testhostIdSeenByWithInvalidKey() {
         try {
             $id = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697c";
             $jsonArray = $this->pest->get("/host/$id/seen");
@@ -35,14 +34,14 @@ class hostIdSeenTest extends restBaseTest {
         }
     }
 
-     /**
+    /**
      * Checks the remote name parameter
      * Matches the data format (array keys) that are returned and expected, doesnot check for the values 
      */
-    public function testhostIdSeenWithRemoteName() {
+    public function testhostIdSeenByWithRemoteName() {
         try {
             $id = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
-            $remoteName = "solaris1.test.cfengine.com";
+            $remoteName = "redhat1.test.cfengine.com";
             $jsonArray = $this->pest->get("/host/$id/seen?remote-name=$remoteName");
             $this->assertValidJson($jsonArray);
             $expectedArray = array(
@@ -61,18 +60,18 @@ class hostIdSeenTest extends restBaseTest {
     }
 
     /**
-     * Checks the remote IP parameter
+     * Checks the remote ip parameter
      * Matches the data format (array keys) that are returned and expected, doesnot check for the values 
      */
-    public function testhostIdSeenWithRemoteIP() {
+    public function testhostIdSeenByWithRemoteIP() {
         try {
-            $remoteIp = "10.0.0.151";
+            $remoteIp = "10.0.0.153";
             $id = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
 
             $jsonArray = $this->pest->get("/host/$id/seen?remote-ip=$remoteIp");
             $this->assertValidJson($jsonArray);
             $expectedArray = array(
-                "hostkey" => "SHA=db6f6be353bb61e3e02dcae40c1d9c9d89a5e60edd42fabd8ee1da44552efda6",
+                "hostkey" => "",
                 "last-seen" => 288,
                 "average" => 288,
                 "stdv" => 144
@@ -97,7 +96,7 @@ class hostIdSeenTest extends restBaseTest {
             $jsonArray = $this->pest->get("/host/$id/seen?context=$context");
             $this->assertValidJson($jsonArray);
             $expectedArray = array(
-                "hostkey" => "SHA=db6f6be353bb61e3e02dcae40c1d9c9d89a5e60edd42fabd8ee1da44552efda6",
+                "hostkey" => "",
                 "last-seen" => 288,
                 "average" => 288,
                 "stdv" => 180
