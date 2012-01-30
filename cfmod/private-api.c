@@ -3443,18 +3443,6 @@ PHP_FUNCTION(cfpr_report_class_frequency)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_docroot)
-
-{ const int bufsize = 1000000;
- char buffer[bufsize];
-
- buffer[0] = '\0';
- Nova2PHP_docroot(buffer,bufsize);
- RETURN_STRING(buffer,1);
-}
-
-/******************************************************************************/
-
 PHP_FUNCTION(cfpr_get_promise_body)
 
 { char *type,*ftype,*name,*fname;

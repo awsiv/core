@@ -56,11 +56,6 @@ PHP_FUNCTION(cfpr_getlicenses_granted);
  */
 PHP_FUNCTION(cfpr_getlicense_installtime);
 
-/*! \brief Path where we think web applications are installed.
- *  \warning Reads from scratch area.
- */
-PHP_FUNCTION(cfpr_docroot);
-
 /*! \brief
  * \param hostKey
  * \param contextExpression
