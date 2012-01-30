@@ -37,7 +37,7 @@ try
     $resource = $request->loadResource();
     $response = $resource->exec($request);
 
-    $response->addHeader('Content-type', 'application/json');
+    $response->addHeader('Content-type', 'application/vnd.cfengine.nova-v1+json');
 }
 catch (ResponseException $e) 
 {
