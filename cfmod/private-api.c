@@ -650,8 +650,12 @@ PHP_FUNCTION(cfpr_report_software_in)
  const int bufsize = CF_WEBBUFFER;
  char buffer[bufsize];
  PageInfo page = {0};
+ char *sortColumnName;
+ char *fsortColumnName;
+ int sc_len;
+ bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssbsll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssbssbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &name, &n_len,
@@ -659,6 +663,7 @@ PHP_FUNCTION(cfpr_report_software_in)
                            &arch, &a_len,
                            &regex,
                            &classreg, &cr_len,
+			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -674,6 +679,7 @@ PHP_FUNCTION(cfpr_report_software_in)
  fversion = (v_len == 0) ? NULL : version;
  farch = (a_len == 0) ? NULL : arch;
  fclassreg = (cr_len == 0) ? NULL : classreg;
+ fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
 
@@ -697,8 +703,12 @@ PHP_FUNCTION(cfpr_report_patch_in)
  long regex;
  char buffer[CF_WEBBUFFER];
  PageInfo page = {0};
+ char *sortColumnName;
+ char *fsortColumnName;
+ int sc_len;
+ bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssbsll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssbssbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &name, &n_len,
@@ -706,6 +716,7 @@ PHP_FUNCTION(cfpr_report_patch_in)
                            &arch, &a_len,
                            &regex,
                            &classreg, &cr_len,
+			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -721,6 +732,7 @@ PHP_FUNCTION(cfpr_report_patch_in)
  fversion = (v_len == 0) ? NULL : version;
  farch = (a_len == 0) ? NULL : arch;
  fclassreg= (cr_len == 0) ? NULL : classreg;
+ fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
 
@@ -744,8 +756,12 @@ PHP_FUNCTION(cfpr_report_patch_avail)
  long regex;
  char buffer[CF_WEBBUFFER];
  PageInfo page = {0};
+ char *sortColumnName;
+ char *fsortColumnName;
+ int sc_len;
+ bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssbsll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssbssbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &name, &n_len,
@@ -753,6 +769,7 @@ PHP_FUNCTION(cfpr_report_patch_avail)
                            &arch, &a_len,
                            &regex,
                            &classreg, &cr_len,
+			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -768,6 +785,7 @@ PHP_FUNCTION(cfpr_report_patch_avail)
  fversion = (v_len == 0) ? NULL : version;
  farch = (a_len == 0) ? NULL : arch;
  fclassreg = (cr_len == 0) ? NULL : classreg;
+ fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
 
@@ -791,13 +809,18 @@ PHP_FUNCTION(cfpr_report_classes)
  long regex;
  char buffer[CF_WEBBUFFER];
  PageInfo page = {0};
+ char *sortColumnName;
+ char *fsortColumnName;
+ int sc_len;
+ bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbsll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbssbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &name, &n_len,
                            &regex,
                            &classreg, &cr_len,
+			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -809,6 +832,7 @@ PHP_FUNCTION(cfpr_report_classes)
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fname =  (n_len == 0) ? NULL : name;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
+ fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
  
@@ -996,8 +1020,12 @@ PHP_FUNCTION(cfpr_report_vars)
  zend_bool regex;
  char buffer[CF_WEBBUFFER];
  PageInfo page = {0};
+ char *sortColumnName;
+ char *fsortColumnName;
+ int sc_len;
+ bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssssbsll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssssbssbll",
                            &userName, &user_len,
                            &hostkey,&hk_len,
                            &scope,&s_len,
@@ -1006,6 +1034,7 @@ PHP_FUNCTION(cfpr_report_vars)
                            &type,&t_len,
                            &regex,
                            &classreg,&cr_len,
+			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1022,6 +1051,7 @@ PHP_FUNCTION(cfpr_report_vars)
  frval = (r_len == 0) ? NULL : rval;
  ftype = (t_len == 0) ? NULL : type;
  fclassreg = (cr_len == 0) ? NULL : classreg;
+ fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
 
@@ -1068,8 +1098,12 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
  long k,nk,r,t;
  char buffer[CF_WEBBUFFER];
  PageInfo page = {0};
+ char *sortColumnName;
+ char *fsortColumnName;
+ int sc_len;
+ bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllllssll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllllsssbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &version, &v_len,
@@ -1079,6 +1113,7 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
                            &r,
                            &cmp, &cmp_len,
                            &classreg, &cr_len,
+			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1090,6 +1125,7 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fversion = (v_len == 0) ? NULL : version;
  char *fclassreg = (cr_len == 0) ? NULL : classreg;
+ fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
 
@@ -1114,14 +1150,19 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
  zend_bool regex;
  int user_len, use_reg;
  PageInfo page = {0};
+ char *sortColumnName;
+ char *fsortColumnName;
+ int sc_len;
+ bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssbsll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssbssbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &handle, &h_len,
                            &status, &s_len,
                            &regex,
                            &classreg, &cr_len,
+			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1135,6 +1176,7 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
  fhandle =  (h_len == 0) ? NULL : handle;
  fstatus =  (s_len == 0) ? NULL : status;
  fclassreg =  (s_len == 0) ? NULL : classreg;
+ fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
 
@@ -1194,8 +1236,12 @@ PHP_FUNCTION(cfpr_report_lastseen)
  zend_bool regex;
  int use_reg;
  PageInfo page = {0};
+ char *sortColumnName;
+ char *fsortColumnName;
+ int sc_len;
+ bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssslbsll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssslbssbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &hash, &h2_len,
@@ -1204,6 +1250,7 @@ PHP_FUNCTION(cfpr_report_lastseen)
                            &ago,
                            &regex,
                            &classreg, &cr_len,
+			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1220,6 +1267,7 @@ PHP_FUNCTION(cfpr_report_lastseen)
  fhost =  (h_len == 0) ? NULL : host;
  faddress =  (a_len == 0) ? NULL : address;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
+ fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
 
@@ -1244,13 +1292,18 @@ PHP_FUNCTION(cfpr_report_performance)
  char buffer[CF_WEBBUFFER];
  zend_bool regex;
  PageInfo page = {0};
+ char *sortColumnName;
+ char *fsortColumnName;
+ int sc_len;
+ bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbsll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbssbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &job, &j_len,
                            &regex,
                            &classreg, &cr_len,
+			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1262,6 +1315,7 @@ PHP_FUNCTION(cfpr_report_performance)
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fjob =  (j_len == 0) ? NULL : job;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
+ fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
 
@@ -1285,13 +1339,18 @@ PHP_FUNCTION(cfpr_report_setuid)
  char buffer[CF_WEBBUFFER];
  zend_bool regex;
  PageInfo page = {0};
+ char *sortColumnName;
+ char *fsortColumnName;
+ int sc_len;
+ bool sortDescending;
  
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbsll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbssbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &file, &j_len,
                            &regex,
                            &classreg, &cr_len,
+			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1303,6 +1362,7 @@ PHP_FUNCTION(cfpr_report_setuid)
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  ffile =  (j_len == 0) ? NULL : file;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
+ fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
 
@@ -1328,8 +1388,12 @@ PHP_FUNCTION(cfpr_report_filechanges)
  long t;
  time_t then;
  PageInfo page = {0};
+ char *sortColumnName;
+ char *fsortColumnName;
+ int sc_len;
+ bool sortDescending;
  
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssblssll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssblsssbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &file, &f_len,
@@ -1337,6 +1401,7 @@ PHP_FUNCTION(cfpr_report_filechanges)
                            &t,
                            &cmp, &c_len,
                            &classreg, &cr_len,
+			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1349,6 +1414,7 @@ PHP_FUNCTION(cfpr_report_filechanges)
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  ffile =  (f_len == 0) ? NULL : file;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
+ fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 // NOT THIS fcmp =  (c_len == 0) ? NULL : cmp;
 
  buffer[0]='\0';
@@ -1376,8 +1442,12 @@ PHP_FUNCTION(cfpr_report_filediffs)
  long t;
  time_t then;
  PageInfo page = {0};
+ char *sortColumnName;
+ char *fsortColumnName;
+ int sc_len;
+ bool sortDescending;
  
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssblssll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssblsssbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &file, &f_len,
@@ -1386,6 +1456,7 @@ PHP_FUNCTION(cfpr_report_filediffs)
                            &t,
                            &cmp, &c_len,
                            &classreg, &cr_len,
+			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1400,6 +1471,7 @@ PHP_FUNCTION(cfpr_report_filediffs)
  ffile =  (f_len == 0) ? NULL : file;
  fdiff =  (d_len == 0) ? NULL : diff;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
+ fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 // NOT THIS fcmp =  (c_len == 0) ? NULL : cmp;
 
  buffer[0]='\0';
@@ -1426,8 +1498,12 @@ PHP_FUNCTION(cfpr_report_filechanges_longterm)
  long t;
  time_t then;
  PageInfo page = {0};
+ char *sortColumnName;
+ char *fsortColumnName;
+ int sc_len;
+ bool sortDescending;
  
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssblssll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssblsssbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &file, &f_len,
@@ -1435,6 +1511,7 @@ PHP_FUNCTION(cfpr_report_filechanges_longterm)
                            &t,
                            &cmp, &c_len,
                            &classreg, &cr_len,
+			   &sortColumnName, &sc_len, &sortDescending, 
                            &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1447,6 +1524,7 @@ PHP_FUNCTION(cfpr_report_filechanges_longterm)
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  ffile =  (f_len == 0) ? NULL : file;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
+ fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 // NOT THIS fcmp =  (c_len == 0) ? NULL : cmp;
 
  buffer[0]='\0';
@@ -1474,8 +1552,12 @@ PHP_FUNCTION(cfpr_report_filediffs_longterm)
  long t;
  time_t then;
  PageInfo page = {0};
+ char *sortColumnName;
+ char *fsortColumnName;
+ int sc_len;
+ bool sortDescending;
  
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssblssll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssblsssbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &file, &f_len,
@@ -1484,6 +1566,7 @@ PHP_FUNCTION(cfpr_report_filediffs_longterm)
                            &t,
                            &cmp, &c_len,
                            &classreg, &cr_len,
+			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1498,6 +1581,7 @@ PHP_FUNCTION(cfpr_report_filediffs_longterm)
  ffile =  (f_len == 0) ? NULL : file;
  fdiff =  (d_len == 0) ? NULL : diff;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
+ fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 // NOT THIS fcmp =  (c_len == 0) ? NULL : cmp;
 
  buffer[0]='\0';
@@ -1547,13 +1631,18 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
  zend_bool regex;
  int use_reg;
  PageInfo page = {0};
+ char *sortColumnName;
+ char *fsortColumnName;
+ int sc_len;
+ bool sortDescending;
  
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbsll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbssbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &bundle, &j_len,
                            &regex,
                            &classreg, &cr_len,
+			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1566,6 +1655,7 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fbundle =  (j_len == 0) ? NULL : bundle;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
+ fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
  
@@ -1588,14 +1678,19 @@ PHP_FUNCTION(cfpr_report_value)
  int user_len, hk_len,d_len,m_len,y_len,cr_len;
  char buffer[CF_WEBBUFFER];
  PageInfo page = {0};
+ char *sortColumnName;
+ char *fsortColumnName;
+ int sc_len;
+ bool sortDescending;
  
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssssll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssssbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &day, &d_len,
                            &month, &m_len,
                            &year, &y_len,
                            &classreg, &cr_len,
+			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1609,6 +1704,7 @@ PHP_FUNCTION(cfpr_report_value)
  fmonth =  (m_len == 0) ? NULL : month;
  fyear =  (y_len == 0) ? NULL : year;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
+ fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
 
@@ -1661,14 +1757,19 @@ PHP_FUNCTION(cfpr_report_notkept)
  long hours_deltafrom, hours_deltato;
  time_t from = 0, to = 0;
  PageInfo page = {0};
+ char *sortColumnName;
+ char *fsortColumnName;
+ int sc_len;
+ bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllssbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &handle, &h_len,
                            &hours_deltafrom,
                            &hours_deltato,
                            &classreg, &cr_len,
+			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1684,9 +1785,7 @@ PHP_FUNCTION(cfpr_report_notkept)
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fhandle =  (h_len == 0) ? NULL : handle;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
-
-
-
+ fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
 
@@ -1712,13 +1811,18 @@ PHP_FUNCTION(cfpr_report_repaired)
  long hours_deltafrom, hours_deltato;
  time_t from = 0, to = 0;
  PageInfo page = {0};
+ char *sortColumnName;
+ char *fsortColumnName;
+ int sc_len;
+ bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllssbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &handle, &h_len,
                            &hours_deltafrom, &hours_deltato,
                            &classreg, &cr_len,
+			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1730,6 +1834,7 @@ PHP_FUNCTION(cfpr_report_repaired)
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fhandle =  (h_len == 0) ? NULL : handle;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
+ fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
 // convert delta hours to absolute time (deltato is oldest)
 
@@ -1758,13 +1863,18 @@ PHP_FUNCTION(cfpr_summarize_notkept)
  char buffer[CF_WEBBUFFER];
  time_t from,to;
  PageInfo page = {0};
+ char *sortColumnName;
+ char *fsortColumnName;
+ int sc_len;
+ bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllssbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &handle, &h_len,
                            &from, &to,
                            &classreg, &cr_len,
+			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1776,6 +1886,7 @@ PHP_FUNCTION(cfpr_summarize_notkept)
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fhandle =  (h_len == 0) ? NULL : handle;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
+ fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
 
@@ -1799,13 +1910,18 @@ PHP_FUNCTION(cfpr_summarize_repaired)
  char buffer[CF_WEBBUFFER];
  time_t from,to;
  PageInfo page = {0};
+ char *sortColumnName;
+ char *fsortColumnName;
+ int sc_len;
+ bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllssbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &handle, &h_len,
                            &from, &to,
                            &classreg, &cr_len,
+			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1817,6 +1933,7 @@ PHP_FUNCTION(cfpr_summarize_repaired)
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fhandle =  (h_len == 0) ? NULL : handle;
  fclassreg =  (cr_len == 0) ? NULL : classreg;
+ fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
 
