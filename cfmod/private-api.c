@@ -202,7 +202,7 @@ PHP_FUNCTION(cfpr_getlicense_summary)
 
  s[0] = '\0';
 
- CFDB_GetValue("license_report",s,sizeof(s));
+ CFDB_GetValue("license_report",s,sizeof(s),MONGO_SCRATCH);
 
  if (strlen(s) < 2)
     {
@@ -248,7 +248,7 @@ PHP_FUNCTION(cfpr_getlicense_expiry)
 
  s[0] = '\0';
 
- CFDB_GetValue("license_expires",s,sizeof(s));
+ CFDB_GetValue("license_expires",s,sizeof(s),MONGO_SCRATCH);
 
  if (strlen(s) < 2)
     {
@@ -266,7 +266,7 @@ PHP_FUNCTION(cfpr_getlicense_installtime)
 
  s[0] = '\0';
 
- CFDB_GetValue("license_installtime",s,sizeof(s));
+ CFDB_GetValue("license_installtime",s,sizeof(s),MONGO_SCRATCH);
 
  if (strlen(s) < 2)
     {
@@ -283,7 +283,7 @@ PHP_FUNCTION(cfpr_getlicense_owner)
 { char s[4096];
 
  s[0] = '\0';
- CFDB_GetValue("license_owner",s,sizeof(s));
+ CFDB_GetValue("license_owner",s,sizeof(s),MONGO_SCRATCH);
 
  if (strlen(s) < 3)
     {
@@ -301,7 +301,7 @@ PHP_FUNCTION(cfpr_getlicenses_promised)
  int i = -1;
 
  s[0] = '\0';
- CFDB_GetValue("licenses_promised",s,sizeof(s));
+ CFDB_GetValue("licenses_promised",s,sizeof(s),MONGO_SCRATCH);
 
  sscanf(s,"%d",&i);
  if (i == -1)
@@ -319,7 +319,7 @@ PHP_FUNCTION(cfpr_getlicenses_granted)
 { char s[4096];
  int i = -1;
 
- CFDB_GetValue("licenses_granted",s,sizeof(s));
+ CFDB_GetValue("licenses_granted",s,sizeof(s),MONGO_SCRATCH);
  sscanf(s,"%d",&i);
  if (i == -1)
     {

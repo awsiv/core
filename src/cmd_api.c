@@ -80,7 +80,7 @@ void Nova2Txt_getlicense(char *buffer,int bufsize)
 
 {
 NewClass("am_policy_hub");
-CFDB_GetValue("license_report",buffer,bufsize);
+CFDB_GetValue("license_report",buffer,bufsize,MONGO_SCRATCH);
 }
 
 /*****************************************************************************/

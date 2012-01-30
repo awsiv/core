@@ -109,7 +109,7 @@ if (false)
    //   Nova2PHP_getlastupdate(NULL,buffer,10);
 
    CFDB_PutValue("one_two","three");
-   CFDB_GetValue("newvar",buffer,120);
+   CFDB_GetValue("newvar",buffer,120,MONGO_SCRATCH);
    Nova2PHP_count_hosts();
    Nova2PHP_count_red_hosts();
    Nova2PHP_count_yellow_hosts();

@@ -27,7 +27,7 @@ static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFil
 
 /*****************************************************************************/
 
-int CFDB_GetValue(char *lval,char *rval,int size)
+int CFDB_GetValue(char *lval, char *rval, int size, char *db_name)
 
 { mongo_connection conn;
   
@@ -44,7 +44,7 @@ int CFDB_GetValue(char *lval,char *rval,int size)
     return false;
     }
 
- CFDB_HandleGetValue(lval,rval,size,&conn);
+ CFDB_HandleGetValue(lval, rval, size, &conn, db_name);
 
  CFDB_Close(&conn);
  return true;
@@ -174,7 +174,7 @@ Item * CFDB_GetDeletedHosts(void)
 
 /*****************************************************************************/
 
-void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn)
+void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn, char *db_name)
 
 { bson query;
  bson_iterator it1;
@@ -182,7 +182,7 @@ void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *con
 
  rval[0] = '\0';
 
- cursor = mongo_find(conn,MONGO_SCRATCH,bson_empty(&query),0,0,0,CF_MONGO_SLAVE_OK);
+ cursor = mongo_find(conn,db_name,bson_empty(&query),0,0,0,CF_MONGO_SLAVE_OK);
 
  while (mongo_cursor_next(cursor))
     {

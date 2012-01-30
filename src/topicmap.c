@@ -19,7 +19,7 @@ void Nova_WebTopicMap_Initialize()
 { char retval[CF_MAXVARSIZE];
 
 #ifdef HAVE_LIBMONGOC 
-CFDB_GetValue("document_root",retval,CF_MAXVARSIZE);
+CFDB_GetValue("document_root",retval,CF_MAXVARSIZE, MONGO_SCRATCH);
 strncpy(DOCROOT,retval,CF_MAXVARSIZE);
 
 CfDebug("Loaded values: docroot=%s\n",DOCROOT);
@@ -801,12 +801,12 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
  char db_goal_patterns[CF_BUFSIZE] = {0}; 
  char db_goal_categories[CF_BUFSIZE] = {0}; 
 
-if(CFDB_GetValue("goal_patterns",db_goal_patterns,sizeof(db_goal_patterns)))
+if(CFDB_GetValue("goal_patterns",db_goal_patterns,sizeof(db_goal_patterns), MONGO_SCRATCH))
   {
   goal_patterns = SplitStringAsRList(db_goal_patterns,',');
   }
 
-if(CFDB_GetValue("goal_categories",db_goal_categories,sizeof(db_goal_categories)))
+if(CFDB_GetValue("goal_categories",db_goal_categories,sizeof(db_goal_categories), MONGO_SCRATCH))
   {
   goal_categories = SplitStringAsRList(db_goal_categories,',');
   }
@@ -930,7 +930,7 @@ void Nova_FillInGoalComment(Item *ip)
 
 searchstring[0] = '\0';
 ReplaceChar(ip->name,canonified_goal,CF_BUFSIZE,' ','_');
-if(CFDB_GetValue("goal_categories",db_goal_categories,sizeof(db_goal_categories)))
+if(CFDB_GetValue("goal_categories",db_goal_categories,sizeof(db_goal_categories),MONGO_SCRATCH))
   {
   goal_categories = SplitStringAsRList(db_goal_categories,',');
   }

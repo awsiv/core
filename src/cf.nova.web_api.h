@@ -73,7 +73,7 @@ extern int AM_PHP_MODULE;
  * These functions are apparently used by PHP module
  */
 #ifdef HAVE_LIBMONGOC
-int CFDB_GetValue(char *lval,char *rval,int size);
+int CFDB_GetValue(char *lval, char *rval, int size, char *db_name);
 int Nova_GetTopicIdForTopic(char *typed_topic);
 #endif
 
