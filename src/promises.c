@@ -172,7 +172,10 @@ snprintf(vbuff,CF_BUFSIZE-1,"zone_%s",zone);
 NewClass(vbuff);
 #endif
 
-Nova_DefineHubMaster();
+if(IsDefinedClass("am_policy_hub"))
+  {
+  Nova_DefineHubMaster();
+  }
 }
 
 /*****************************************************************************/
@@ -203,7 +206,7 @@ else
       }
    }
 
-if(!IsIPV4Address(master) && !IsIPV6Address(master))
+if(!EMPTY(master) && !IsIPV4Address(master) && !IsIPV6Address(master))
    {
    if ((hp = gethostbyname(master)) == NULL)
       {
