@@ -42,18 +42,11 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&search,&s_len) == FAIL
    RETURN_NULL();
    }
 
-if (strlen(search) == 0)
-   {
-   snprintf(buffer,1000,"Can't tell any stories about an empty topic");
-   }
-else
-   {
-   buffer[0] = '\0';
-   Con2PHP_get_story_by_name(search,buffer,bufsize);
-   }
+ARGUMENT_CHECK_CONTENTS(s_len);
 
 RETURN_STRING(buffer,1);
 }
+
 
 PHP_FUNCTION(cfcon_compliance_summary_graph)
 
@@ -101,11 +94,7 @@ PHP_FUNCTION(cfcon_compliance_virtualbundle_graph)
  fHubHostKey = (hkLen == 0) ? NULL : hubHostKey;
  fBundleName = (vbLen == 0) ? NULL : bundleName;
 
- if(fBundleName == NULL)
-    {
-    php_printf("Error: Virtual bundle name is undefined in cfcon_virtualbundle_graph()\n");
-    RETURN_NULL();
-    }
+ ARGUMENT_CHECK_CONTENTS(vbLen);
 
  buffer[0]='\0';
  Con2PHP_compliance_virtualbundle_graph(fHubHostKey, fBundleName, buffer, sizeof(buffer));
@@ -406,17 +395,12 @@ PHP_FUNCTION(cfcon_promise_popularity)
     RETURN_NULL();
     }
 
- if(prh_len == 0)
-    {
-    php_printf("Error: Promise handle is undefined in cfcon_promise_popularity()\n");
-    RETURN_NULL();
-    }
-
+ ARGUMENT_CHECK_CONTENTS(prh_len);
+ 
   if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
     {
     RETURN_STRING(buffer,1);
     }
-
 
  buffer[0]='\0';
  Con2PHP_promise_popularity(promiseHandle,buffer,sizeof(buffer));
@@ -628,41 +612,18 @@ PHP_FUNCTION(cfcon_subscribe_software)
     RETURN_NULL();
     }
 
- if(usLen == 0)
-    {
-    php_printf("cfcon_subscribe_software: Parameter error: user must be specified\n");
-    RETURN_NULL();
-    }
+ ARGUMENT_CHECK_CONTENTS(usLen && shLen && pnLen && ocLen);
 
- if(shLen == 0)
-    {
-    php_printf("cfcon_subscribe_software: Parameter error: handle must be specified\n");
-    RETURN_NULL();
-    }
-
-  if(pnLen == 0)
-    {
-    php_printf("cfcon_subscribe_software: Parameter error: package name must be specified\n");
-    RETURN_NULL();
-    }
-
-  if(ocLen == 0)
-    {
-    php_printf("cfcon_subscribe_software: Parameter error: host class regex must be specified\n");
-    RETURN_NULL();
-    }
-
-   if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+ if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
     {
     RETURN_STRING(buffer,1);
     }
-
-
-  if(hcLen == 0)
-     {
+ 
+ if(hcLen == 0)
+    {
      hubClassRegex = "any";
-     }
-
+    }
+ 
  buffer[0]='\0';
  Con2PHP_subscribe_software(user, subHandle, hubClassRegex, pkgName, pnRegex, hostClassRegex, buffer, sizeof(buffer));
 
@@ -684,24 +645,13 @@ PHP_FUNCTION(cfcon_report_software)
     RETURN_NULL();
     }
 
-  if(usLen == 0)
-    {
-    php_printf("cfcon_report_software: Parameter error: user must be specified\n");
-    RETURN_NULL();
-    }
+ ARGUMENT_CHECK_CONTENTS(usLen && shLen);
 
- if(shLen == 0)
-    {
-    php_printf("cfcon_report_software: Parameter error: handle must be specified\n");
-    RETURN_NULL();
-    }
-
-  if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
+ if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
     {
     RETURN_STRING(buffer,1);
     }
-
-
+ 
  if(hcLen == 0)
     {
     hubClassRegex = "any";
@@ -760,14 +710,10 @@ PHP_FUNCTION(cfcon_local_report_virtualbundle_promises)
     RETURN_NULL();
     }
 
+ ARGUMENT_CHECK_CONTENTS(shLen);
+
  if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
     {
-    RETURN_STRING(buffer,1);
-    }
-
- if(shLen == 0)
-    {
-    FormatSingletonErrorJson(buffer, sizeof(buffer), ERRID_ARGUMENT_MISSING);
     RETURN_STRING(buffer,1);
     }
 
@@ -796,45 +742,23 @@ PHP_FUNCTION(cfcon_local_subscribe_virtualbundle)
     RETURN_NULL();
     }
 
- if(usLen == 0)
+ ARGUMENT_CHECK_CONTENTS(usLen && shLen && descLen && plLen);
+
+ if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
     {
-    php_printf("cfcon_local_subscribe_virtualbundle: Parameter error: user must be specified\n");
-    RETURN_NULL();
+    RETURN_STRING(buffer,1);
     }
 
- if(shLen == 0)
-    {
-    php_printf("cfcon_local_subscribe_virtualbundle: Parameter error: handle must be specified\n");
-    RETURN_NULL();
-    }
+ char **promises = String2StringArray(promiseListStr, ',');
 
-  if(descLen == 0)
-    {
-    php_printf("cfcon_local_subscribe_virtualbundle: Parameter error: description must be specified\n");
-    RETURN_NULL();
-    }
-
-  if(plLen == 0)
-    {
-    php_printf("cfcon_local_subscribe_virtualbundle: Parameter error: promise handle list must be specified\n");
-    RETURN_NULL();
-    }
-
-  if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
-   {
-   RETURN_STRING(buffer,1);
-   }
-
-  char **promises = String2StringArray(promiseListStr, ',');
-
-  char *fHostClassRx = (ocLen == 0) ? NULL : hostClassRegex;
-
-  buffer[0]='\0';
-  Con2PHP_local_subscribe_virtualbundle(user, subHandle, description, promises, fHostClassRx, buffer, sizeof(buffer));
-
-  FreeStringArray(promises);
-
-  RETURN_STRING(buffer,1);
+ char *fHostClassRx = (ocLen == 0) ? NULL : hostClassRegex;
+ 
+ buffer[0]='\0';
+ Con2PHP_local_subscribe_virtualbundle(user, subHandle, description, promises, fHostClassRx, buffer, sizeof(buffer));
+ 
+ FreeStringArray(promises);
+ 
+ RETURN_STRING(buffer,1);
 }
 
 /******************************************************************************/
@@ -850,18 +774,13 @@ PHP_FUNCTION(cfcon_local_delete_subscription_virtualbundle)
     RETURN_NULL();
     }
 
- if(shLen == 0)
-    {
-    php_printf("cfcon_local_delete_subscription_virtualbundle: Parameter error: subscription handle must be specified\n");
-    RETURN_NULL();
-    }
+ ARGUMENT_CHECK_CONTENTS(shLen);
 
  if(!Con2PHP_CheckLicenseAndFormatError(buffer, sizeof(buffer)))
     {
     RETURN_STRING(buffer,1);
     }
-
-
+ 
  char *fUser = (usLen == 0) ? NULL : user;
 
  Con2PHP_delete_subscription(fUser, cfl_subtype_local_virtualbundle, subHandle, buffer, sizeof(buffer));
@@ -884,40 +803,18 @@ PHP_FUNCTION(cfcon_subscribe_repairlog)
     RETURN_NULL();
     }
 
- if(usLen == 0)
+ ARGUMENT_CHECK_CONTENTS(usLen && shLen && phLen && ocLen);
+
+ if(rxLen == 0)
     {
-    php_printf("cfcon_subscribe_repairlog: Parameter error: user must be specified\n");
-    RETURN_NULL();
+    reportRegex = NULL;
     }
-
- if(shLen == 0)
+ 
+ if(hcLen == 0)
     {
-    php_printf("cfcon_subscribe_repairlog: Parameter error: handle must be specified\n");
-    RETURN_NULL();
+    hubClassRegex = "any";
     }
-
-  if(phLen == 0)
-    {
-    php_printf("cfcon_subscribe_repairlog: Parameter error: package name must be specified\n");
-    RETURN_NULL();
-    }
-
-  if(ocLen == 0)
-    {
-    php_printf("cfcon_subscribe_repairlog: Parameter error: host class regex must be specified\n");
-    RETURN_NULL();
-    }
-
-  if(rxLen == 0)
-     {
-     reportRegex = NULL;
-     }
-
-  if(hcLen == 0)
-     {
-     hubClassRegex = "any";
-     }
-
+ 
  buffer[0]='\0';
  Con2PHP_subscribe_promiselog(user, subHandle, hubClassRegex, promiseHandleRegex, reportRegex, hostClassRegex, cfl_subtype_repairlog, buffer, sizeof(buffer));
 
@@ -1307,10 +1204,8 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hubkey,&hk_len) == FAI
    RETURN_NULL();
    }
 
-if(hk_len == 0)
-   {
-   return;
-   }
+ARGUMENT_CHECK_CONTENTS(hk_len);
+
 Con2PHP_delete_hub(hubkey);
 }
 
