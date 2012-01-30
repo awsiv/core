@@ -113,40 +113,45 @@ char *NUMBER_TXT[] =
    NULL
    };
 
+/*****************************************************************************/
+
 ReportInfo BASIC_REPORTS[] =
-   {
-   {"bundle-profile", "Policy","Themes by bundle","Bundle profile","Status of promise bundles and when they were last verified"},
-   {"promise-compliance", "Policy","View compliance","Compliance by promise","Compliance of each promise individually"},
-   {"promises-repaired-log","Policy","Promises repaired (log)","Promises repaired log","Log of actual repairs made to the system"},
-   {"promises-repaired-summary","Policy","Promises repaired (summary)","Promises repaired summary","Cumulative (histogram) summary of promises repaired"},
-   {"promises-not-kept-log","Policy","Promises not kept (log)","Promises not kept log","Log of promises that could not or would not be kept"},
-   {"promises-not-kept-summary","Policy","Promises not kept (summary)","Promises not kept summary","Cumulative (histogram) summary of promises not kept"},
-
-
-   {"contexts","System","Context classes","Class profile","User defined classes observed on the system"},
-   {"neighbors","System","Neighbours","Last seen hosts","Log of when neighbouring hosts were last observed online"},
-   {"values","System","Values","Variables","Table of variable values last observed"},
-
-   {"patches-available","Software","Patches available","Patches available","A list of patches currently claimed to be available by the local package manager"},
-   {"patches-installed","Software","Patches installed","Patch status","A list of (un)applied patches according to the local package manager"},
-
-
-   {"software-installed","Software","Installed","Software installed","List of software packages claimed to be installed according to the local package manager"},
-
-   {"file-change-log","File watch","Change summary","File change log","Log of all detected changes to files from changes promises"},
-   {"file-change-diffs","File watch","Text changes","File change diffs","Delta/difference comparison showing file changes"},
-   {"setuid-programs","File watch","Setuid","Setuid/gid root programs","Current list of observed setuid/setgid root programs"},
-
-
-   {"business-value","Accounting","Business value","Business value report","Accumulated value of promises kept"},
-   {"benchmarks","Accounting","Benchmarks","Performance","Execution time used to verify selected promises"},
-   {"compliance-summary","Accounting","Compliance summary","Compliance summary","Total summary of host compliance"},
+  {
+  {CFRID_BUNDLE_PROFILE, "Policy","Themes by bundle","Bundle profile","Status of promise bundles and when they were last verified"},
+  {CFRID_PROMISE_COMPLIANCE, "Policy","View compliance","Compliance by promise","Compliance of each promise individually"},
+  {CFRID_PROMISES_REPAIRED_LOG,"Policy","Promises repaired (log)","Promises repaired log","Log of actual repairs made to the system"},
+  {CFRID_PROMISES_REPAIRED_SUMMARY,"Policy","Promises repaired (summary)","Promises repaired summary","Cumulative (histogram) summary of promises repaired"},
+  {CFRID_PROMISES_NOTKEPT_LOG,"Policy","Promises not kept (log)","Promises not kept log","Log of promises that could not or would not be kept"},
+  {CFRID_PROMISES_NOTKEPT_SUMMARY,"Policy","Promises not kept (summary)","Promises not kept summary","Cumulative (histogram) summary of promises not kept"},
+  
+  {CFRID_CONTEXTS,"System","Context classes","Class profile","User defined classes observed on the system"},
+  {CFRID_NEIGHBORS,"System","Neighbours","Last seen hosts","Log of when neighbouring hosts were last observed online"},
+  {CFRID_VALUES,"System","Values","Variables","Table of variable values last observed"},
+  
+  {CFRID_PATCHES_AVAILABLE,"Software","Patches available","Patches available","A list of patches currently claimed to be available by the local package manager"},
+  {CFRID_PATCHES_INSTALLED,"Software","Patches installed","Patch status","A list of (un)applied patches according to the local package manager"},
+  
+  {CFRID_SOFTWARE_INSTALLED,"Software","Installed","Software installed","List of software packages claimed to be installed according to the local package manager"},
+  
+  {CFRID_FILECHANGE_LOG,"File watch","Change summary","File change log","Log of all detected changes to files from changes promises"},
+  {CFRID_FILECHANGE_DIFFS,"File watch","Text changes","File change diffs","Delta/difference comparison showing file changes"},
+  {CFRID_SETUID_PROGRAMS,"File watch","Setuid","Setuid/gid root programs","Current list of observed setuid/setgid root programs"},
+  
+  {CFRID_BUSINESS_VALUE,"Accounting","Business value","Business value report","Accumulated value of promises kept"},
+  {CFRID_BENCHMARKS,"Accounting","Benchmarks","Performance","Execution time used to verify selected promises"},
+  {CFRID_COMPLIANCE_SUMMARY,"Accounting","Compliance summary","Compliance summary","Total summary of host compliance"},
 #ifdef HAVE_CONSTELLATION
-   {"virtual-bundles","Constellation","Virtual bundles","Virtual bundles","Custom collections of promises and their compliance"},
+  {CFRID_VIRTUAL_BUNDLES,"Constellation","Virtual bundles","Virtual bundles","Custom collections of promises and their compliance"},
 #endif
-   {NULL,NULL,NULL,NULL,NULL}
-   };
+  {NULL,NULL,NULL,NULL,NULL}
+  }; 
 
+/*****************************************************************************/
+/*ReportColumnInfo REPORT_COLUMN_MAPPING[] = 
+  {
+    {},
+    {NULL,NULL,NULL}  
+    }*/
 /*****************************************************************************/
 
 void CSV2XML(Rlist *list)

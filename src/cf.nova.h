@@ -1748,6 +1748,31 @@ typedef struct
 #define CFDB_GREATERTHANEQ 4
 #define CFDB_LESSTHANEQ 5
 
+// Report Keys
+#define CFRID_BUNDLE_PROFILE "bundle-profile"
+#define CFRID_PROMISE_COMPLIANCE "promise-compliance"
+#define CFRID_PROMISES_REPAIRED_LOG "promises-repaired-log"
+#define CFRID_PROMISES_REPAIRED_SUMMARY "promises-repaired-summary"
+#define CFRID_PROMISES_NOTKEPT_LOG "promises-not-kept-log"
+#define CFRID_PROMISES_NOTKEPT_SUMMARY "promises-not-kept-summary"
+
+#define CFRID_CONTEXTS "contexts"
+#define CFRID_NEIGHBORS "neighbors"
+#define CFRID_VALUES "values"
+
+#define CFRID_PATCHES_AVAILABLE "patches-available"
+#define CFRID_PATCHES_INSTALLED "patches-installed"
+#define CFRID_SOFTWARE_INSTALLED "software-installed"
+
+#define CFRID_FILECHANGE_LOG "file-change-log"
+#define CFRID_FILECHANGE_DIFFS "file-change-diffs"
+#define CFRID_SETUID_PROGRAMS "setuid-programs"
+
+#define CFRID_BUSINESS_VALUE "business-value"
+#define CFRID_BENCHMARKS "benchmarks"
+#define CFRID_COMPLIANCE_SUMMARY "compliance-summary"
+#define CFRID_VIRTUAL_BUNDLES "virtual-bundles"
+
 #endif
 
 
