@@ -137,6 +137,8 @@ char *hostkey = NULL,
 long from = 0;
 int len = -1;
 PageInfo page = { 0 };
+char *sortColumnName;
+bool sortDescending;
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslll",
       &hostkey, &len,
@@ -144,6 +146,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslll",
       &remote_ip, &len,
       &context, &len,
       &from,
+      &sortColumnName, &len, &sortDescending,
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
@@ -263,13 +266,16 @@ char *handle = NULL,
 long from;
 int len;
 PageInfo page = { 0 };
+char *sortColumnName;
+bool sortDescending;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslsbll",
       &handle, &len,
       &hostkey, &len,
       &context, &len,
       &state, &len,
       &from,
+      &sortColumnName, &len, &sortDescending,
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
@@ -359,13 +365,16 @@ long from,
      to;
 int len;
 PageInfo page = { 0 };
+char *sortColumnName;
+bool sortDescending;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsbll",
       &handle, &len,
       &hostkey, &len,
       &context, &len,
       &from,
       &to,
+      &sortColumnName, &len, &sortDescending,
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
@@ -433,13 +442,16 @@ long from,
      to;
 int len;
 PageInfo page = { 0 };
+char *sortColumnName;
+bool sortDescending;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsbll",
       &handle, &len,
       &hostkey, &len,
       &context, &len,
       &from,
       &to,
+      &sortColumnName, &len, &sortDescending,
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
@@ -470,13 +482,16 @@ long from,
      to;
 int len;
 PageInfo page = { 0 };
+char *sortColumnName;
+bool sortDescending;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsbll",
       &handle, &len,
       &hostkey, &len,
       &context, &len,
       &from,
       &to,
+      &sortColumnName, &len, &sortDescending,
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
@@ -507,13 +522,16 @@ long from,
      to;
 int len;
 PageInfo page = { 0 };
+char *sortColumnName;
+bool sortDescending;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsbll",
       &handle, &len,
       &hostkey, &len,
       &context, &len,
       &from,
       &to,
+      &sortColumnName, &len, &sortDescending,
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
@@ -568,14 +586,17 @@ char *hostkey = NULL,
      *context = NULL;
 int len;
 PageInfo page = { 0 };
+char *sortColumnName;
+bool sortDescending;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssssll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssssbll",
       &hostkey, &len,
       &scope, &len,
       &name, &len,
       &value, &len,
       &type, &len,
       &context, &len,
+      &sortColumnName, &len, &sortDescending,
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
@@ -630,11 +651,14 @@ char *hostkey = NULL,
      *context = NULL;
 int len, from;
 PageInfo page = { 0 };
+char *sortColumnName;
+bool sortDescending;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslsbll",
       &hostkey, &len,
       &context, &len,
       &from,
+      &sortColumnName, &len, &sortDescending,
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
@@ -714,13 +738,16 @@ char *hostkey = NULL,
      *context = NULL;
 int len;
 PageInfo page = { 0 };
+char *sortColumnName;
+bool sortDescending;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssssbll",
       &hostkey, &len,
       &name, &len,
       &version, &len,
       &arch, &len,
       &context, &len,
+      &sortColumnName, &len, &sortDescending,
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
@@ -800,11 +827,14 @@ char *hostkey = NULL,
      *context = NULL;
 int len;
 PageInfo page = { 0 };
+char *sortColumnName;
+bool sortDescending;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssbll",
       &hostkey, &len,
       &name, &len,
       &context, &len,
+      &sortColumnName, &len, &sortDescending,
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
