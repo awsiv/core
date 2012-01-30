@@ -31,7 +31,7 @@ try
     if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW']) ||
         !cfpr_user_authenticate($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']))
     {
-        //throw new ResponseException("Not authenticated", Response::UNAUTHORIZED);
+        throw new ResponseException("Not authenticated", Response::UNAUTHORIZED);
     }
 
     $resource = $request->loadResource();

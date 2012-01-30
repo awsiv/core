@@ -117,7 +117,7 @@ if (found)
    const char *db_password = BsonGetString(&record, dbkey_user_password);
    if (db_password)
       {
-      if (IsLDAPOn(&conn))
+      if (!IsLDAPOn(&conn))
          {
          if (VerifyPasswordIonAuth(password, password_len, db_password))
             {
