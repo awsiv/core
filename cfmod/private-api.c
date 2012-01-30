@@ -388,8 +388,7 @@ PHP_FUNCTION(cfpr_host_meter)
 
 { char *hostkey,*fhostkey;
  int hk_len;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hostkey,&hk_len) == FAILURE)
     {
@@ -400,7 +399,7 @@ PHP_FUNCTION(cfpr_host_meter)
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
 
  buffer[0]='\0';
- Nova2PHP_meter(fhostkey,buffer,bufsize);
+ Nova2PHP_meter(fhostkey,buffer,sizeof(buffer));
  RETURN_STRING(buffer,1);
 }
 
@@ -647,8 +646,7 @@ PHP_FUNCTION(cfpr_report_software_in)
  int user_len, hk_len, n_len,v_len,a_len,cr_len;
  long regex;
  int use_reg;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
  PageInfo page = {0};
  char *sortColumnName;
  char *fsortColumnName;
@@ -855,8 +853,7 @@ PHP_FUNCTION(cfpr_list_time_classes)
  char *fname,*fhostkey,*fclassreg;
  int hk_len, n_len,cr_len;
  long regex;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbs",&hostkey,&hk_len,&name,&n_len,&regex,&classreg,&cr_len) == FAILURE)
     {
@@ -869,7 +866,7 @@ PHP_FUNCTION(cfpr_list_time_classes)
  fclassreg =  (cr_len == 0) ? NULL : classreg;
 
  buffer[0]='\0';
- Nova2PHP_listclasses_time(fhostkey,fname,regex,fclassreg,buffer,bufsize);
+ Nova2PHP_listclasses_time(fhostkey,fname,regex,fclassreg,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -882,8 +879,7 @@ PHP_FUNCTION(cfpr_list_host_classes)
  char *fname,*fhostkey,*fclassreg;
  int hk_len, n_len,cr_len;
  long regex;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbs",&hostkey,&hk_len,&name,&n_len,&regex,&classreg,&cr_len) == FAILURE)
     {
@@ -896,7 +892,7 @@ PHP_FUNCTION(cfpr_list_host_classes)
  fclassreg =  (cr_len == 0) ? NULL : classreg;
 
  buffer[0]='\0';
- Nova2PHP_listclasses_host(fhostkey,fname,regex,fclassreg,buffer,bufsize);
+ Nova2PHP_listclasses_host(fhostkey,fname,regex,fclassreg,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -909,8 +905,7 @@ PHP_FUNCTION(cfpr_list_all_classes)
  char *fname,*fhostkey,*fclassreg;
  int hk_len, n_len,cr_len;
  long regex;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbs",&hostkey,&hk_len,&name,&n_len,&regex,&classreg,&cr_len) == FAILURE)
     {
@@ -923,7 +918,7 @@ PHP_FUNCTION(cfpr_list_all_classes)
  fclassreg =  (cr_len == 0) ? NULL : classreg;
 
  buffer[0]='\0';
- Nova2PHP_listclasses_all(fhostkey,fname,regex,fclassreg,buffer,bufsize);
+ Nova2PHP_listclasses_all(fhostkey,fname,regex,fclassreg,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -937,8 +932,7 @@ PHP_FUNCTION(cfpr_list_soft_classes)
  char *fname,*fhostkey,*fclassreg;
  int hk_len, n_len,cr_len;
  long regex;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbs",&hostkey,&hk_len,&name,&n_len,&regex,&classreg,&cr_len) == FAILURE)
     {
@@ -951,7 +945,7 @@ PHP_FUNCTION(cfpr_list_soft_classes)
  fclassreg =  (cr_len == 0) ? NULL : classreg;
 
  buffer[0]='\0';
- Nova2PHP_listclasses_soft(fhostkey,fname,regex,fclassreg,buffer,bufsize);
+ Nova2PHP_listclasses_soft(fhostkey,fname,regex,fclassreg,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -964,8 +958,7 @@ PHP_FUNCTION(cfpr_list_ip_classes)
  char *fname,*fhostkey,*fclassreg;
  int hk_len, n_len,cr_len;
  long regex;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbs",&hostkey,&hk_len,&name,&n_len,&regex,&classreg,&cr_len) == FAILURE)
     {
@@ -978,7 +971,7 @@ PHP_FUNCTION(cfpr_list_ip_classes)
  fclassreg =  (cr_len == 0) ? NULL : classreg;
 
  buffer[0]='\0';
- Nova2PHP_listclasses_ip(fhostkey,fname,regex,fclassreg,buffer,bufsize);
+ Nova2PHP_listclasses_ip(fhostkey,fname,regex,fclassreg,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -1197,9 +1190,7 @@ PHP_FUNCTION(cfpr_report_overall_summary)
  char *hostkey,*handle,*status,*classreg;
  char *fhostkey,*fhandle,*fstatus,*fclassreg;
  int hk_len,h_len,s_len,cr_len;
-
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
  zend_bool regex;
  int use_reg;
 
@@ -1218,7 +1209,7 @@ PHP_FUNCTION(cfpr_report_overall_summary)
  fclassreg =  (s_len == 0) ? NULL : classreg;
 
  buffer[0]='\0';
- Nova2PHP_summary_report(fhostkey,fhandle,fstatus,use_reg,fclassreg,buffer,bufsize);
+ Nova2PHP_summary_report(fhostkey,fhandle,fstatus,use_reg,fclassreg,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -1605,8 +1596,7 @@ PHP_FUNCTION(cfpr_summarize_promise)
 {
  char *handle;
  int handleLen;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&handle,&handleLen) == FAILURE)
     {
@@ -1615,7 +1605,7 @@ PHP_FUNCTION(cfpr_summarize_promise)
     }
 
  buffer[0]='\0';
- Nova2PHP_summarize_promise(handle, buffer, bufsize);
+ Nova2PHP_summarize_promise(handle, buffer, sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -1806,8 +1796,7 @@ PHP_FUNCTION(cfpr_report_repaired)
 { char *userName, *hostkey,*handle,*classreg;
  char *fhostkey,*fhandle,*fclassreg;
  int user_len, hk_len,h_len,cr_len;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
  long hours_deltafrom, hours_deltato;
  time_t from = 0, to = 0;
  PageInfo page = {0};
@@ -1847,7 +1836,7 @@ PHP_FUNCTION(cfpr_report_repaired)
  ERRID_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
- Nova2PHP_promiselog(fhostkey,fhandle,PROMISE_LOG_STATE_REPAIRED,from,to,filter,&page,buffer,bufsize);
+ Nova2PHP_promiselog(fhostkey,fhandle,PROMISE_LOG_STATE_REPAIRED,from,to,filter,&page,buffer,sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
  
  RETURN_STRING(buffer,1);
@@ -2851,8 +2840,7 @@ PHP_FUNCTION(cfpr_count_blue_hosts)
 
 PHP_FUNCTION(cfpr_select_hosts)
 
-{  const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+{ char buffer[CF_WEBBUFFER];
  char *policy,*select;
  int hk_len,s_len;
  long n;
@@ -2864,7 +2852,7 @@ PHP_FUNCTION(cfpr_select_hosts)
     }
 
  buffer[0] = '\0';
- Nova2PHP_select_hosts(policy,select,(int)n,buffer,bufsize);
+ Nova2PHP_select_hosts(policy,select,(int)n,buffer,sizeof(buffer));
  RETURN_STRING(buffer,1);
 }
 
@@ -2892,8 +2880,7 @@ RETURN_STRING(buffer,1);
 
 PHP_FUNCTION(cfpr_show_red_hosts)
 
-{ const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+{ char buffer[CF_WEBBUFFER];
  PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll",&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
@@ -2903,7 +2890,7 @@ PHP_FUNCTION(cfpr_show_red_hosts)
     }
 
  buffer[0] = '\0';
- Nova2PHP_show_col_hosts("red",200,&page,buffer,bufsize);
+ Nova2PHP_show_col_hosts("red",200,&page,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -2912,8 +2899,7 @@ PHP_FUNCTION(cfpr_show_red_hosts)
 
 PHP_FUNCTION(cfpr_show_yellow_hosts)
 
-{  const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+{ char buffer[CF_WEBBUFFER];
  PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll",&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
@@ -2923,7 +2909,7 @@ PHP_FUNCTION(cfpr_show_yellow_hosts)
     }
  
  buffer[0] = '\0';
- Nova2PHP_show_col_hosts("yellow",200,&page,buffer,bufsize);
+ Nova2PHP_show_col_hosts("yellow",200,&page,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -2932,8 +2918,7 @@ PHP_FUNCTION(cfpr_show_yellow_hosts)
 
 PHP_FUNCTION(cfpr_show_green_hosts)
 
-{  const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+{ char buffer[CF_WEBBUFFER];
  PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll",&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
@@ -2942,7 +2927,7 @@ PHP_FUNCTION(cfpr_show_green_hosts)
     RETURN_NULL();
     }
  buffer[0] = '\0';
- Nova2PHP_show_col_hosts("green",200,&page,buffer,bufsize);
+ Nova2PHP_show_col_hosts("green",200,&page,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -2951,8 +2936,7 @@ PHP_FUNCTION(cfpr_show_green_hosts)
 
 PHP_FUNCTION(cfpr_show_blue_hosts)
 
-{  const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+{ char buffer[CF_WEBBUFFER];
  PageInfo page = {0};
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll",&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
@@ -2962,7 +2946,7 @@ PHP_FUNCTION(cfpr_show_blue_hosts)
     }
 
  buffer[0] = '\0';
- Nova2PHP_show_col_hosts("blue",200,&page,buffer,bufsize);
+ Nova2PHP_show_col_hosts("blue",200,&page,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -2971,8 +2955,7 @@ PHP_FUNCTION(cfpr_show_blue_hosts)
 
 PHP_FUNCTION(cfpr_show_hosts_ip)
 
-{  const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+{ char buffer[CF_WEBBUFFER];
  char *ipRegex, *fipRegex, *classRegex, *fclassRegex;
  int ip_len,cl_len;
  PageInfo page = {0};
@@ -2986,7 +2969,7 @@ PHP_FUNCTION(cfpr_show_hosts_ip)
  fclassRegex = (cl_len == 0) ? NULL : classRegex;
 
  buffer[0] = '\0';
- Nova2PHP_show_hosts(NULL,fipRegex,fclassRegex,&page,buffer,bufsize);
+ Nova2PHP_show_hosts(NULL,fipRegex,fclassRegex,&page,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -2995,8 +2978,7 @@ PHP_FUNCTION(cfpr_show_hosts_ip)
 
 PHP_FUNCTION(cfpr_show_hosts_name)
 
-{  const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+{ char buffer[CF_WEBBUFFER];
  char *hostNameRegex, *fhostNameRegex, *classRegex, *fclassRegex;
  int ip_len,cl_len;
  PageInfo page = {0};
@@ -3010,7 +2992,7 @@ PHP_FUNCTION(cfpr_show_hosts_name)
  fclassRegex = (cl_len == 0) ? NULL : classRegex;
 
  buffer[0] = '\0';
- Nova2PHP_show_hosts(fhostNameRegex,NULL,fclassRegex,&page,buffer,bufsize);
+ Nova2PHP_show_hosts(fhostNameRegex,NULL,fclassRegex,&page,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -3063,8 +3045,7 @@ PHP_FUNCTION(cfpr_list_handles)
 { char *promiser;
  char *ptype;
  int pr_len, p_len;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
  zend_bool regex;
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssb",&promiser,&pr_len,&ptype,&p_len,&regex) == FAILURE)
@@ -3074,7 +3055,7 @@ PHP_FUNCTION(cfpr_list_handles)
     }
 
  buffer[0] = '\0';
- Nova2PHP_list_promise_handles(promiser,ptype,"","",(int)regex,buffer,100000);
+ Nova2PHP_list_promise_handles(promiser,ptype,"","",(int)regex,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -3084,8 +3065,7 @@ PHP_FUNCTION(cfpr_policy_finder_by_handle)
 
 { char *handle;
  int h_len;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
  zend_bool escRegex;
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sb",&handle,&h_len,&escRegex) == FAILURE)
@@ -3095,7 +3075,7 @@ PHP_FUNCTION(cfpr_policy_finder_by_handle)
     }
 
  buffer[0] = '\0';
- Nova2PHP_list_handles_policy_finder(handle,"","",escRegex,buffer,100000);
+ Nova2PHP_list_handles_policy_finder(handle,"","",escRegex,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -3105,8 +3085,7 @@ PHP_FUNCTION(cfpr_policy_finder_by_promiser)
 
 { char *promiser;
  int pr_len;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
  zend_bool escRegex;
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sb",&promiser,&pr_len,&escRegex) == FAILURE)
@@ -3116,7 +3095,7 @@ PHP_FUNCTION(cfpr_policy_finder_by_promiser)
     }
 
  buffer[0] = '\0';
- Nova2PHP_list_handles_policy_finder("",promiser,"",escRegex,buffer,100000);
+ Nova2PHP_list_handles_policy_finder("",promiser,"",escRegex,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -3127,8 +3106,7 @@ PHP_FUNCTION(cfpr_policy_finder_by_bundle)
 
 { char *bundle;
  int r_len;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
  zend_bool escRegex;
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sb",&bundle,&r_len,&escRegex) == FAILURE)
@@ -3138,7 +3116,7 @@ PHP_FUNCTION(cfpr_policy_finder_by_bundle)
     }
 
  buffer[0] = '\0';
- Nova2PHP_list_handles_policy_finder("","",bundle,escRegex,buffer,100000);
+ Nova2PHP_list_handles_policy_finder("","",bundle,escRegex,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -3149,8 +3127,7 @@ PHP_FUNCTION(cfpr_get_handles_for_bundle_with_comments)
 { char *bundle;
  char *btype;
  int r_len, p_len;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&bundle,&r_len,&btype,&p_len) == FAILURE)
     {
@@ -3160,7 +3137,7 @@ PHP_FUNCTION(cfpr_get_handles_for_bundle_with_comments)
 
  buffer[0] = '\0';
 
- Nova2PHP_list_promise_handles_with_comments(bundle,btype,buffer,100000);
+ Nova2PHP_list_promise_handles_with_comments(bundle,btype,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -3171,8 +3148,7 @@ PHP_FUNCTION(cfpr_list_handles_for_bundle)
 { char *bundle;
  char *btype;
  int r_len, p_len;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
  zend_bool regex;
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssb",&bundle,&r_len,&btype,&p_len,&regex) == FAILURE)
@@ -3182,7 +3158,7 @@ PHP_FUNCTION(cfpr_list_handles_for_bundle)
     }
 
  buffer[0] = '\0';
- Nova2PHP_list_promise_handles("","",bundle,btype,(int)regex,buffer,100000);
+ Nova2PHP_list_promise_handles("","",bundle,btype,(int)regex,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -3278,8 +3254,7 @@ PHP_FUNCTION(cfpr_get_classes_for_bundle)
 { char *bundle;
  char *btype;
  int r_len, p_len;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&bundle,&r_len,&btype,&p_len) == FAILURE)
     {
@@ -3288,7 +3263,7 @@ PHP_FUNCTION(cfpr_get_classes_for_bundle)
     }
 
  buffer[0] = '\0';
- Nova2PHP_get_classes_for_bundle(bundle,btype,buffer,100000);
+ Nova2PHP_get_classes_for_bundle(bundle,btype,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -3300,8 +3275,7 @@ PHP_FUNCTION(cfpr_get_args_for_bundle)
 { char *bundle;
  char *btype;
  int r_len, p_len;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&bundle,&r_len,&btype,&p_len) == FAILURE)
     {
@@ -3310,7 +3284,7 @@ PHP_FUNCTION(cfpr_get_args_for_bundle)
     }
 
  buffer[0] = '\0';
- Nova2PHP_get_args_for_bundle(bundle,btype,buffer,100000);
+ Nova2PHP_get_args_for_bundle(bundle,btype,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -3322,8 +3296,7 @@ PHP_FUNCTION(cfpr_list_all_bundles)
 {
  char *btype,*fbtype;
  int p_len;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&btype,&p_len) == FAILURE)
     {
@@ -3335,7 +3308,7 @@ PHP_FUNCTION(cfpr_list_all_bundles)
 
  fbtype =  (p_len == 0) ? NULL : btype;
 
- Nova2PHP_list_all_bundles(fbtype,buffer,bufsize);
+ Nova2PHP_list_all_bundles(fbtype,buffer,sizeof(buffer));
  RETURN_STRING(buffer,1);
 }
 /******************************************************************************/
@@ -3365,8 +3338,7 @@ PHP_FUNCTION(cfpr_list_bundles_using)
 
 { char *bundle,*fbundle;
  int p_len;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&bundle,&p_len) == FAILURE)
     {
@@ -3378,7 +3350,7 @@ PHP_FUNCTION(cfpr_list_bundles_using)
 
  fbundle =  (p_len == 0) ? NULL : bundle;
 
- Nova2PHP_list_bundles_using(fbundle,buffer,bufsize);
+ Nova2PHP_list_bundles_using(fbundle,buffer,sizeof(buffer));
  RETURN_STRING(buffer,1);
 }
 
@@ -3452,8 +3424,7 @@ PHP_FUNCTION(cfpr_report_class_frequency)
 
 { char *hkey,*fhkey,*pattern,*fpattern;
  int p_len, h_len;
- const int bufsize = CF_WEBBUFFER;
- char buffer[bufsize];
+ char buffer[CF_WEBBUFFER];
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&hkey,&h_len,&pattern,&p_len) == FAILURE)
     {
@@ -3466,7 +3437,7 @@ PHP_FUNCTION(cfpr_report_class_frequency)
  fpattern = (p_len == 0) ? NULL : pattern;
  fhkey =  (h_len == 0) ? NULL : hkey;
 
- Nova2PHP_countclasses(fhkey,fpattern,1,buffer,bufsize);
+ Nova2PHP_countclasses(fhkey,fpattern,1,buffer,sizeof(buffer));
  RETURN_STRING(buffer,1);
 }
 
@@ -3587,7 +3558,7 @@ PHP_FUNCTION(cfpr_cdp_reportnames)
 
 PHP_FUNCTION(cfpr_cdp_report)
 
-{char buf[CF_WEBBUFFER];  // one row is ~300 bytes
+{char buffer[CF_WEBBUFFER];  // one row is ~300 bytes
  char *hostkey,*reportName;
  int hk_len,rn_len;
  PageInfo page = {0};
@@ -3598,10 +3569,10 @@ PHP_FUNCTION(cfpr_cdp_report)
     RETURN_NULL();
     }
 
- buf[0]='\0';
- Nova2PHP_cdp_report(hostkey,reportName,&page,buf,sizeof(buf));
+ buffer[0]='\0';
+ Nova2PHP_cdp_report(hostkey,reportName,&page,buffer,sizeof(buffer));
 
- RETURN_STRING(buf,1);
+ RETURN_STRING(buffer,1);
 }
 /******************************************************************************/
 
