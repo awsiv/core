@@ -1,8 +1,8 @@
 <html lang="en">
 <head>
-<title>CFEngine Solutions</title>
+<title>CFEngine 3 Solution Examples</title>
 <meta http-equiv="Content-Type" content="text/html">
-<meta name="description" content="CFEngine Solutions">
+<meta name="description" content="CFEngine 3 Solution Examples">
 <meta name="generator" content="makeinfo 4.13">
 <link title="Top" rel="top" href="#Top">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
@@ -202,7 +202,7 @@ pre.sp {
 --></style>
 </head>
 <body>
-<h1 class="settitle">CFEngine Solutions</h1>
+<h1 class="settitle">CFEngine 3 Solution Examples</h1>
 <div class="node">
 <a name="Top"></a>
 <p><hr>
@@ -212,13 +212,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 
 </div>
 
-<h2 class="unnumbered">CFEngine-Solutions</h2>
+<h2 class="unnumbered">CFEngine 3 Solution Examples</h2>
 
    <p><a name="Contents">
    <div class="contents">
 <h2>Table of Contents</h2>
 <ul>
-<li><a name="toc_Top" href="#Top">CFEngine-Solutions</a>
+<li><a name="toc_Top" href="#Top">CFEngine 3 Solution Examples</a>
 <li><a name="toc_Introduction" href="#Introduction">1 Introduction</a>
 <ul>
 <li><a href="#Begin-_002d-Get-started">1.1 Begin - Get Started</a>
@@ -1240,8 +1240,8 @@ Examples MSI for Windows, by name:
 </span>
   "$(match_package)"
 
-<span class="red">     package_policy </span>=><span class="green"> "add",</span>
-<span class="red">     package_method </span>=><span class="blue"> msi_fmatch;</span>
+<span class="red">     package_policy </span>=><span class="green"> "add",</span>
+<span class="red">     package_method </span>=><span class="blue"> msi_fmatch;</span>
 
 }
 
@@ -1251,20 +1251,20 @@ Examples MSI for Windows, by name:
 <span class="red">body package_method</span> <span class="blue">msi_fmatch</span>
 
 {
-<span class="red"> package_changes </span>=><span class="green"> "individual";</span>
+<span class="red"> package_changes </span>=><span class="green"> "individual";</span>
 <span class="red"> package_file_repositories </span>=> { "$(sys.workdir)\software_updates\windows", "s:\su" };
 
-<span class="red"> package_installed_regex </span>=><span class="green"> ".*";</span>
+<span class="red"> package_installed_regex </span>=><span class="green"> ".*";</span>
 
-<span class="red"> package_name_regex    </span>=><span class="green"> "^(\S+)-(\d+\.?)+";</span>
-<span class="red"> package_version_regex </span>=><span class="green"> "^\S+-((\d+\.?)+)";</span>
-<span class="red"> package_arch_regex    </span>=><span class="green"> "^\S+-(\d+\.?)+(^.+)";</span>
+<span class="red"> package_name_regex    </span>=><span class="green"> "^(\S+)-(\d+\.?)+";</span>
+<span class="red"> package_version_regex </span>=><span class="green"> "^\S+-((\d+\.?)+)";</span>
+<span class="red"> package_arch_regex    </span>=><span class="green"> "^\S+-(\d+\.?)+(^.+)";</span>
  
-<span class="red"> package_name_convention </span>=><span class="green"> "$(name)-$(version)-$(arch).msi";</span>
+<span class="red"> package_name_convention </span>=><span class="green"> "$(name)-$(version)-$(arch).msi";</span>
 
-<span class="red"> package_add_command </span>=><span class="green"> "\"$(sys.winsysdir)\msiexec.exe\" /qn /i";</span>
-<span class="red"> package_update_command </span>=><span class="green"> "\"$(sys.winsysdir)\msiexec.exe\" /qn /i";</span>
-<span class="red"> package_delete_command </span>=><span class="green"> "\"$(sys.winsysdir)\msiexec.exe\" /qn /x";</span>
+<span class="red"> package_add_command </span>=><span class="green"> "\"$(sys.winsysdir)\msiexec.exe\" /qn /i";</span>
+<span class="red"> package_update_command </span>=><span class="green"> "\"$(sys.winsysdir)\msiexec.exe\" /qn /i";</span>
+<span class="red"> package_delete_command </span>=><span class="green"> "\"$(sys.winsysdir)\msiexec.exe\" /qn /x";</span>
  }
 </pre>
 Windows MSI by version:
@@ -4045,15 +4045,15 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 <span class="red">vars:
 </span><span class="comment"># NOTE: Edit this to your domain, e.g. "corp", may also need more DC's after it
 </span>
-  "domain_name"<span class="red"> string </span>=><span class="green"> "cftesting";</span>
-  "user_name"<span class="red">    string </span>=><span class="green"> "Guest";</span>
+  "domain_name"<span class="red"> string </span>=><span class="green"> "cftesting";</span>
+  "user_name"<span class="red">    string </span>=><span class="green"> "Guest";</span>
 
   
 <span class="comment"># NOTE: We can also extract data from remote Domain Controllers
 </span>
 
 dummy.DomainController::
-  "domain_controller"<span class="red">  string </span>=><span class="green"> "localhost";</span>
+  "domain_controller"<span class="red">  string </span>=><span class="green"> "localhost";</span>
 
   "userlist"<span class="red">    slist </span>=> ldaplist(
 <span class="red">                                  "ldap://$(domain_controller)",
@@ -4483,7 +4483,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 <span class="red">methods:
 </span>windows::
-"any"<span class="red"> usebundle </span>=><span class="blue"> detect_adobereader;</span>
+"any"<span class="red"> usebundle </span>=><span class="blue"> detect_adobereader;</span>
 
 }
 
@@ -9156,15 +9156,15 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 <span class="red">vars:
 </span><span class="comment"># dir to install from locally - can also check multiple directories
 </span>
- "local_software_dir"<span class="red"> string </span>=><span class="green"> "C:\Program Files\Cfengine\software\add";</span>
+ "local_software_dir"<span class="red"> string </span>=><span class="green"> "C:\Program Files\Cfengine\software\add";</span>
  
 <span class="red">files:
 </span>
   "$(local_software_dir)"
-<span class="red">       copy_from </span>=><span class="blue"> remote_cp("/var/cfengine/master_software_updates/$(sys.flavour)_$(sys.arch)/add", "$(srv)"),</span>
-<span class="red">    depth_search </span>=><span class="blue"> recurse("1"),</span>
-<span class="red">         classes </span>=><span class="blue"> if_repaired("got_newpkg"),</span>
-<span class="red">		 comment </span>=><span class="green"> "Copy software from remote repository";</span>
+<span class="red">       copy_from </span>=><span class="blue"> remote_cp("/var/cfengine/master_software_updates/$(sys.flavour)_$(sys.arch)/add", "$(srv)"),</span>
+<span class="red">    depth_search </span>=><span class="blue"> recurse("1"),</span>
+<span class="red">         classes </span>=><span class="blue"> if_repaired("got_newpkg"),</span>
+<span class="red">		 comment </span>=><span class="green"> "Copy software from remote repository";</span>
 
 
 <span class="red">packages:
@@ -9173,10 +9173,10 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 </span>
  got_newpkg|any::
   "$(pkg_name)"
-<span class="red">    package_policy           </span>=><span class="green"> "add",</span>
-<span class="red">    package_method           </span>=><span class="blue"> msi_implicit( "$(local_software_dir)" ),</span>
-<span class="red">    classes                  </span>=><span class="blue"> if_else("add_success", "add_fail" ),</span>
-<span class="red">    comment                  </span>=><span class="green"> "Install new software, if not already present";</span>
+<span class="red">    package_policy           </span>=><span class="green"> "add",</span>
+<span class="red">    package_method           </span>=><span class="blue"> msi_implicit( "$(local_software_dir)" ),</span>
+<span class="red">    classes                  </span>=><span class="blue"> if_else("add_success", "add_fail" ),</span>
+<span class="red">    comment                  </span>=><span class="green"> "Install new software, if not already present";</span>
 
 reports::
  add_fail::
@@ -9191,15 +9191,15 @@ reports::
 <span class="red">vars:
 </span><span class="comment"># dir to install from locally - can also check multiple directories
 </span>
- "local_software_dir"<span class="red"> string </span>=><span class="green"> "C:\Program Files\Cfengine\software\update";</span>
+ "local_software_dir"<span class="red"> string </span>=><span class="green"> "C:\Program Files\Cfengine\software\update";</span>
  
 <span class="red">files:
 </span>
   "$(local_software_dir)"
-<span class="red">       copy_from </span>=><span class="blue"> remote_cp("/var/cfengine/master_software_updates/$(sys.flavour)_$(sys.arch)/update", "$(srv)"),</span>
-<span class="red">    depth_search </span>=><span class="blue"> recurse("1"),</span>
-<span class="red">         classes </span>=><span class="blue"> if_repaired("got_newpkg"),</span>
-<span class="red">		 comment </span>=><span class="green"> "Copy software updates from remote repository";</span>
+<span class="red">       copy_from </span>=><span class="blue"> remote_cp("/var/cfengine/master_software_updates/$(sys.flavour)_$(sys.arch)/update", "$(srv)"),</span>
+<span class="red">    depth_search </span>=><span class="blue"> recurse("1"),</span>
+<span class="red">         classes </span>=><span class="blue"> if_repaired("got_newpkg"),</span>
+<span class="red">		 comment </span>=><span class="green"> "Copy software updates from remote repository";</span>
  
  
 <span class="red">packages:
@@ -9208,12 +9208,12 @@ reports::
 </span>
  got_newpkg|any::
   "$(sw_names)"
-<span class="red">    package_policy           </span>=><span class="green"> "update",</span>
-<span class="red">    package_select           </span>=><span class="green"> ">=",                 # picks the newest update available</span>
+<span class="red">    package_policy           </span>=><span class="green"> "update",</span>
+<span class="red">    package_select           </span>=><span class="green"> ">=",                 # picks the newest update available</span>
 <span class="red">    package_architectures    </span>=> { "$(sys.arch)" },    # install 32 or 64 bit package ?
-<span class="red">    package_version          </span>=><span class="green"> "1.0",                # at least version 1.0</span>
-<span class="red">    package_method           </span>=><span class="blue"> msi_explicit( "$(local_software_dir)" ),</span>
-<span class="red">    classes                  </span>=><span class="blue"> if_else("update_success", "update_fail");</span>
+<span class="red">    package_version          </span>=><span class="green"> "1.0",                # at least version 1.0</span>
+<span class="red">    package_method           </span>=><span class="blue"> msi_explicit( "$(local_software_dir)" ),</span>
+<span class="red">    classes                  </span>=><span class="blue"> if_else("update_success", "update_fail");</span>
 
 	
 reports::
@@ -9229,23 +9229,23 @@ reports::
 <span class="red">vars:
 </span><span class="comment"># dir to install from locally - can also check multiple directories
 </span>
- "local_software_dir"<span class="red"> string </span>=><span class="green"> "C:\Program Files\Cfengine\software\remove";</span>
+ "local_software_dir"<span class="red"> string </span>=><span class="green"> "C:\Program Files\Cfengine\software\remove";</span>
  
 <span class="red">files:
 </span>
   "$(local_software_dir)"
-<span class="red">       copy_from </span>=><span class="blue"> remote_cp("/var/cfengine/master_software_updates/$(sys.flavour)_$(sys.arch)/remove", "$(srv)"),</span>
-<span class="red">    depth_search </span>=><span class="blue"> recurse("1"),</span>
-<span class="red">         classes </span>=><span class="blue"> if_repaired("got_newpkg"),</span>
-<span class="red">         comment </span>=><span class="green"> "Copy removable software from remote repository";</span>
+<span class="red">       copy_from </span>=><span class="blue"> remote_cp("/var/cfengine/master_software_updates/$(sys.flavour)_$(sys.arch)/remove", "$(srv)"),</span>
+<span class="red">    depth_search </span>=><span class="blue"> recurse("1"),</span>
+<span class="red">         classes </span>=><span class="blue"> if_repaired("got_newpkg"),</span>
+<span class="red">         comment </span>=><span class="green"> "Copy removable software from remote repository";</span>
 
 <span class="red">packages:
 </span>got_newpkg::
   "$(pkg_name)"
-<span class="red">    package_policy           </span>=><span class="green"> "delete",</span>
-<span class="red">    package_method           </span>=><span class="blue"> msi_implicit( "$(local_software_dir)" ),</span>
-<span class="red">    classes                  </span>=><span class="blue"> if_else("remove_success", "remove_fail" ),</span>
-<span class="red">    comment                  </span>=><span class="green"> "Remove software, if present";</span>
+<span class="red">    package_policy           </span>=><span class="green"> "delete",</span>
+<span class="red">    package_method           </span>=><span class="blue"> msi_implicit( "$(local_software_dir)" ),</span>
+<span class="red">    classes                  </span>=><span class="blue"> if_else("remove_success", "remove_fail" ),</span>
+<span class="red">    comment                  </span>=><span class="green"> "Remove software, if present";</span>
 
 reports::
  remove_fail::
