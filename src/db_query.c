@@ -381,7 +381,6 @@ HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, 
  bson query;
  HubQuery *hq;
  char classRegexAnch[CF_MAXVARSIZE];
- int emptyQuery = true;
   
 /* BEGIN query document */
  bson_buffer_init(&bb);
@@ -389,20 +388,17 @@ HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, 
  if (!EMPTY(hostNameRegex))
     {
     bson_append_regex(&bb,cfr_host_array,hostNameRegex,"");
-    emptyQuery = false;
     }
 
  if (!EMPTY(ipRegex))
     {
     bson_append_regex(&bb,cfr_ip_array,ipRegex,"");
-    emptyQuery = false;
     }
 
  if (!EMPTY(classRegex))
     {
     AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
     bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-    emptyQuery = false;
     }
 
  bson_from_buffer(&query,&bb);
@@ -426,7 +422,6 @@ HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,cha
  Rlist *record_list = NULL, *host_list = NULL;
  char rname[CF_MAXVARSIZE] = {0},rversion[CF_MAXVARSIZE] = {0},rarch[3] = {0},arch[3] = {0};
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
- bool queryHasData = false;
  int found = false;
 
  if (!EMPTY(larch))
@@ -440,10 +435,9 @@ HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,cha
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    queryHasData = true;
     }
 
- queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
+ AppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -606,18 +600,15 @@ HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lclass,in
  char rclass[CF_MAXVARSIZE];
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
  int match_class,found = false;
- bool queryHasData = false;
-  
 
  bson_buffer_init(&bb);
 
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    queryHasData = true;
     }
 
- queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
+ AppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
  
@@ -750,7 +741,6 @@ Rlist *CFDB_QueryDateTimeClasses(mongo_connection *conn,char *keyHash,char *lcla
  Rlist *classList = {0};
  char rclass[CF_MAXVARSIZE];
  char classRegexAnch[CF_MAXVARSIZE];
- int emptyQuery = true;
   
 /* BEGIN query document */
 
@@ -759,14 +749,12 @@ Rlist *CFDB_QueryDateTimeClasses(mongo_connection *conn,char *keyHash,char *lcla
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    emptyQuery = false;
     }
 
  if (!EMPTY(classRegex))
     {
     AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
     bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-    emptyQuery = false;
     }
 
  bson_from_buffer(&query, &bb);
@@ -830,7 +818,6 @@ Rlist *CFDB_QuerySoftClasses(mongo_connection *conn,char *keyHash,char *lclass,i
  Rlist *classList = {0};
  char rclass[CF_MAXVARSIZE];
  char classRegexAnch[CF_MAXVARSIZE];
- int emptyQuery = true;
   
 /* BEGIN query document */
 
@@ -839,14 +826,12 @@ Rlist *CFDB_QuerySoftClasses(mongo_connection *conn,char *keyHash,char *lclass,i
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    emptyQuery = false;
     }
 
  if(!EMPTY(classRegex))
     {
     AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
     bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-    emptyQuery = false;
     }
 
  bson_from_buffer(&query, &bb);
@@ -913,7 +898,6 @@ Rlist *CFDB_QueryIpClasses(mongo_connection *conn,char *keyHash,char *lclass,int
  char rclass[CF_MAXVARSIZE];
  char classRegexAnch[CF_MAXVARSIZE];
  char ipAddress[CF_MAXVARSIZE];
- int emptyQuery = true;
   
 /* BEGIN query document */
 
@@ -922,14 +906,12 @@ Rlist *CFDB_QueryIpClasses(mongo_connection *conn,char *keyHash,char *lclass,int
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    emptyQuery = false;
     }
 
  if(!EMPTY(classRegex))
     {
     AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
     bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-    emptyQuery = false;
     }
 
  bson_from_buffer(&query, &bb);
@@ -998,7 +980,6 @@ HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes)
  char keyhash[CF_MAXVARSIZE],hostnames[CF_MAXVARSIZE],addresses[CF_MAXVARSIZE];
  char iStr[CF_SMALLBUF];
  int classFrequency;
- bool emptyQuery = true;
  int i;
 
  CfDebug("CFDB_QueryClassSum()\n");
@@ -1019,8 +1000,6 @@ HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes)
         
     bson_append_finish_object(arr1);
     bson_append_finish_object(obj);
-    
-    emptyQuery = false;
     }
 
  bson_from_buffer(&query, &bb);
@@ -1121,17 +1100,15 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,char *l
  int match_kept,match_notkept,match_repaired,match_version,match_t;
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rversion[CF_MAXVARSIZE];
  time_t rt;
- bool queryHasData = false;
   
  bson_buffer_init(&bb);
 
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    queryHasData = true;
     }
 
- queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
+ AppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -1310,17 +1287,15 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *lscope,
  char rscope[CF_MAXVARSIZE], rlval[CF_MAXVARSIZE],dtype[CF_MAXVARSIZE],rtype;
  void *rrval;
  time_t rt;
- bool queryHasData = false;
 
  bson_buffer_init(&bb);
 
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    queryHasData = true;
     }
 
- queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
+ AppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -1531,19 +1506,15 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
  char rhandle[CF_MAXVARSIZE],rstatus,*prstat;
  char keyHashDb[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
  int match_handle,match_status,found;
- int queryHasData = false;
   
-/* BEGIN query document */
-
  bson_buffer_init(&bb);
 
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    queryHasData = false;
     }
 
- queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
+ AppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -1696,7 +1667,6 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *lhash,ch
  char rhash[CF_MAXVARSIZE],rhost[CF_MAXVARSIZE],raddr[CF_MAXVARSIZE];
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
  int match_host,match_hash,match_addr,match_ago,found = false;
- int queryHasData = false;
  time_t rt;
 
 /* BEGIN query document */
@@ -1705,10 +1675,9 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *lhash,ch
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    queryHasData = true;
     }
 
- queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
+ AppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -1980,7 +1949,6 @@ HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char *lname
  int match_name,found = false;
  double rsigma,rex,rq;
  time_t rtime;
- bool queryHasData = false;
   
 /* BEGIN query document */
  bson_buffer_init(&bb);
@@ -1988,10 +1956,9 @@ HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char *lname
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    queryHasData = true;
     }
 
- queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
+ AppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -2136,19 +2103,15 @@ HubQuery *CFDB_QuerySetuid(mongo_connection *conn,char *keyHash,char *lname,int 
  Rlist *record_list = NULL, *host_list = NULL;
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rname[CF_MAXVARSIZE];
  int match_name,found = false;
- bool queryHasData = false;
 
-  
-/* BEGIN query document */
  bson_buffer_init(&bb);
 
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    queryHasData = true;
     }
 
- queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
+ AppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -2250,7 +2213,6 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char *lname
  HubHost *hh;
  Rlist *record_list = NULL, *host_list = NULL;
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rname[CF_BUFSIZE], handle[CF_MAXVARSIZE],noteid[CF_MAXVARSIZE];
- bool queryHasData = false;
  int match_name,match_t,found = false;
  time_t rt;
   
@@ -2272,10 +2234,9 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char *lname
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    queryHasData = true;
     }
 
- queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
+ AppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -2420,7 +2381,6 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,ch
  Rlist *record_list = NULL, *host_list = NULL;
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rname[CF_MAXVARSIZE],rdiff[CF_BUFSIZE];
  int match_name,match_t,match_diff,found = false;
- bool queryHasData = false;
  time_t rt = 0;
 
  char collectionName[CF_MAXVARSIZE];
@@ -2441,10 +2401,9 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,ch
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    queryHasData = true;
     }
 
- queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
+ AppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -2597,14 +2556,12 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
  bson_buffer bb;
  bson_buffer *timeRange;
  time_t rt;
- bool queryHasData = false;
  
  bson_buffer_init(&bb);
 
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    queryHasData = true;
     }
 
 
@@ -2619,7 +2576,6 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
        bson_append_string(&bb,cfr_promisehandle,lhandle);
        }
 
-    queryHasData = true;
     }
 
 
@@ -2638,10 +2594,9 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
        }
 
     bson_append_finish_object(timeRange);
-    queryHasData = true;
     }
 
- queryHasData |= AppendHostKeys(conn, &bb, hostClassFilter);
+ AppendHostKeys(conn, &bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -2756,18 +2711,15 @@ HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,
  char rday[CF_MAXVARSIZE],rmonth[CF_MAXVARSIZE],ryear[CF_MAXVARSIZE];
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rhandle[CF_MAXVARSIZE],noteid[CF_MAXVARSIZE];
  int match_day,match_month,match_year,found = false;
- bool queryHasData = false;
   
-/* BEGIN query document */
  bson_buffer_init(&bb);
 
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    queryHasData = true;
     }
 
- queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
+ AppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -2912,8 +2864,6 @@ HubQuery *CFDB_QueryValueGraph(mongo_connection *conn,char *keyHash,char *lday,c
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rhandle[CF_MAXVARSIZE],noteid[CF_MAXVARSIZE];
  int match_day,match_month,match_year,found = false;
  char classRegexAnch[CF_MAXVARSIZE];
- int emptyQuery = true;
-
  struct tm tm;
  time_t epoch;
   
@@ -2923,14 +2873,12 @@ HubQuery *CFDB_QueryValueGraph(mongo_connection *conn,char *keyHash,char *lday,c
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    emptyQuery = false;
     }
 
  if (!EMPTY(classRegex))
     {
     AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
     bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-    emptyQuery = false;
     }
 
  bson_from_buffer(&query, &bb);
@@ -3085,7 +3033,6 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
  char rname[CF_MAXVARSIZE];
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],noteid[CF_BUFSIZE];
  int match_name,found = false;
- bool queryHasData = false;
  time_t rt;
   
 /* BEGIN query document */
@@ -3095,10 +3042,9 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    queryHasData = true;
     }
 
- queryHasData |= AppendHostClassFilter(&bb, hostClassFilter);
+ AppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -4324,7 +4270,6 @@ HubQuery *CFDB_QueryHandlesForBundlesWithComments(mongo_connection *conn, char *
  bson query,field;
  mongo_cursor *cursor;
  Rlist *recordList = NULL;
- bool emptyQuery = true;
  char handle[CF_MAXVARSIZE] = {0}, comment[CF_BUFSIZE]={0};
 
  // query
@@ -4334,7 +4279,6 @@ HubQuery *CFDB_QueryHandlesForBundlesWithComments(mongo_connection *conn, char *
     {
     bson_append_string(&bb,cfp_bundletype,bType);
     bson_append_string(&bb,cfp_bundlename,bName);
-    emptyQuery = false;
     }
 
  bson_from_buffer(&query, &bb);
@@ -4394,7 +4338,6 @@ HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char 
  bson query,field;
  mongo_cursor *cursor;
  Rlist *recordList = NULL;
- bool emptyQuery = true;
 
  bson_buffer_init(&bb);
 
@@ -4403,18 +4346,15 @@ HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char 
     if (!EMPTY(promiser))
        {
        bson_append_regex(&bb, cfp_promiser, promiser,"");
-       emptyQuery = false;
        }
     else if(!EMPTY(promiserType))
        {
        bson_append_regex(&bb, cfp_promisetype, promiserType,"");
-       emptyQuery = false;
        }
     else if(!EMPTY(bType))
        {
        bson_append_regex(&bb,cfp_bundletype,bType,"");
        bson_append_regex(&bb,cfp_bundlename,bName,"");
-       emptyQuery = false;
        }
     }
  else
@@ -4422,18 +4362,15 @@ HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char 
     if (!EMPTY(promiser))
        {
        bson_append_string(&bb, cfp_promiser, promiser);
-       emptyQuery = false;
        }
     else if(!EMPTY(promiserType))
        {
        bson_append_string(&bb, cfp_promisetype, promiserType);
-       emptyQuery = false;
        }
     else if(!EMPTY(bType))
        {
        bson_append_string(&bb,cfp_bundletype,bType);
        bson_append_string(&bb,cfp_bundlename,bName);
-       emptyQuery = false;
        }
     }
  
@@ -4458,8 +4395,6 @@ HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char 
     
     bson_append_finish_object(arr);
     bson_append_finish_object(obj);
-
-    emptyQuery = false;
     }
  
  bson_from_buffer(&query,&bb);
@@ -4506,7 +4441,6 @@ HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle, char 
  bson query,field;
  mongo_cursor *cursor;
  Rlist *recordList = NULL;
- bool emptyQuery = true;
  char regexEscapedStr[CF_BUFSIZE] = {0};
  char h[CF_MAXVARSIZE],pType[CF_MAXVARSIZE],bName[CF_MAXVARSIZE],bType[CF_MAXVARSIZE],p[CF_MAXVARSIZE];
 
@@ -4518,19 +4452,16 @@ HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle, char 
        {  
        EscapeRegex(promiser,regexEscapedStr,CF_BUFSIZE-1);  
        bson_append_regex(&bb, cfp_promiser,regexEscapedStr,"i");
-       emptyQuery = false;
        }
     else if(!EMPTY(bundleName))
        {
        EscapeRegex(bundleName,regexEscapedStr,CF_BUFSIZE-1);  
        bson_append_regex(&bb,cfp_bundlename,regexEscapedStr,"i");
-       emptyQuery = false;
        }
     else if(!EMPTY(handle))
        {
        EscapeRegex(handle,regexEscapedStr,CF_BUFSIZE-1);
        bson_append_regex(&bb,cfp_handle,regexEscapedStr,"i");
-       emptyQuery = false;
        }
     }
  else
@@ -4538,17 +4469,14 @@ HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle, char 
     if (!EMPTY(promiser))
        {
        bson_append_regex(&bb, cfp_promiser,promiser,"i");
-       emptyQuery = false;
        }
     else if(!EMPTY(bundleName))
        {
        bson_append_regex(&bb,cfp_bundlename,bundleName,"i");
-       emptyQuery = false;
        }
     else if(!EMPTY(handle))
        {
        bson_append_regex(&bb,cfp_handle,handle,"i");
-       emptyQuery = false;
        }
     }
  
@@ -4622,7 +4550,6 @@ Item *CFDB_QueryBundles(mongo_connection *conn,char *bTypeRegex,char *bNameRegex
  bson_iterator it1;
  bson query,field;
  mongo_cursor *cursor;
- int emptyQuery = true;
  Item *matched = {0};
  char type[CF_MAXVARSIZE] = {0};
  char name[CF_MAXVARSIZE] = {0};
@@ -4632,13 +4559,11 @@ Item *CFDB_QueryBundles(mongo_connection *conn,char *bTypeRegex,char *bNameRegex
  if (!EMPTY(bTypeRegex))
     {
     bson_append_regex(&bbuf, cfp_bundletype, bTypeRegex,"");
-    emptyQuery = false;
     }
 
  if (!EMPTY(bNameRegex))
     {
     bson_append_regex(&bbuf, cfp_bundlename, bNameRegex,"");
-    emptyQuery = false;
     }
 
  bson_from_buffer(&query,&bbuf);
@@ -5047,7 +4972,7 @@ Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameReg
 
 {  bson_buffer bbuf; 
  bson query,field;
- int emptyQuery = true,found;
+ int found;
  mongo_cursor *cursor;
  bson_iterator it1;
  char type[CF_MAXVARSIZE] = {0};
@@ -5059,13 +4984,11 @@ Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameReg
  if (!EMPTY(bTypeRegex))
     {
     bson_append_regex(&bbuf,cfb_bodytype,bTypeRegex,"");
-    emptyQuery = false;
     }
 
  if (!EMPTY(bNameRegex))
     {
     bson_append_regex(&bbuf,cfb_bodyname,bNameRegex,"");
-    emptyQuery = false;
     }
 
  bson_from_buffer(&query,&bbuf);
@@ -6220,7 +6143,7 @@ Rlist *CFDB_QueryNotes(mongo_connection *conn,char *keyhash, char *nid,  Item *d
  time_t datetime = -1,from = -1,to = -1;
  bson_oid_t bsonid;
  bson_type t;
- int emptyQuery = true, firstComment=false, specificQuery = false;
+ int firstComment=false, specificQuery = false;
  int reportType = -1;
 
  if(BEGINSWITH(data->name,","))
@@ -6238,20 +6161,17 @@ Rlist *CFDB_QueryNotes(mongo_connection *conn,char *keyhash, char *nid,  Item *d
     {
     bson_oid_from_string(&bsonid,nid);
     bson_append_oid(&bb,"_id",&bsonid);
-    emptyQuery = false;
     }
  else 
     {
     if (!EMPTY(keyhash))
        {
        bson_append_string(&bb,cfn_keyhash,keyhash);
-       emptyQuery = false;
        }
         
     if (!EMPTY(fusername))
        {
        bson_append_string(&bb,"n.u",fusername);
-       emptyQuery = false;
        specificQuery = true;
        }
 
@@ -6826,7 +6746,6 @@ Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,i
  bson_iterator it1;
  Rlist *classList = {0};
  char classRegexAnch[CF_MAXVARSIZE];
- int emptyQuery = true;
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
  char hostclass[CF_BUFSIZE];
 
@@ -6835,13 +6754,11 @@ Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,i
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    emptyQuery = false;
     }
  if(!EMPTY(classRegex))
     {
     AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
     bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-    emptyQuery = false;
     }
 
  bson_from_buffer(&query,&bb);
@@ -6892,21 +6809,18 @@ Rlist *CFDB_QueryAllClasses(mongo_connection *conn,char *keyHash,char *lclass,in
  Rlist *classList = {0};
  char rclass[CF_MAXVARSIZE];
  char classRegexAnch[CF_MAXVARSIZE];
- int emptyQuery = true;
 
  bson_buffer_init(&bb);
 
  if (!EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
-    emptyQuery = false;
     }
 
  if (!EMPTY(classRegex))
     {
     AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
     bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-    emptyQuery = false;
     }
 
  bson_from_buffer(&query, &bb);
