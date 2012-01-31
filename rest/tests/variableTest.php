@@ -5,7 +5,7 @@ require_once "../lib/Pest.php";
 require_once "../lib/PestJSON.php";
 require_once "restBase.php";
 
-class variableTest extends restBaseTest {
+class variableTest extends RestBaseTest {
 
     /**
      * test valid json response 
