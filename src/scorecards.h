@@ -33,8 +33,6 @@ Item *Nova_RankHosts(char *search_string,int regex,enum cf_rank_method method,in
 void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, char *buffer, int bufsize);
 void Nova_Meter(bson *query,char *db,char *buffer,int bufsize);
 void Nova_BarMeter(int pos,double kept,double rep,char *name,char *buffer,int bufsize);
-void Nova_DrawComplianceAxes(DataView *cfv,int col); // not used?
-void Nova_GetHourlyData(char *search_string,char *buffer,int bufsize); // not used?
 
 #endif
 
