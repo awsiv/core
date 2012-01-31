@@ -783,7 +783,7 @@ int CFDB_Open(mongo_connection *conn);
 int CFDB_Close(mongo_connection *conn);
 void CFDB_Initialize(void);
 
-int CFDB_PutValue(char *lval,char *rval);
+int CFDB_PutValue(char *lval, char *rval, char *db_name);
 
 void CFDB_SaveSoftware(mongo_connection *conn,enum software_rep sw, char *kH, Item *data);
 //void CFDB_SaveMonitorData(mongo_connection *conn, char *kH, enum monitord_rep rep_type, Item *data);

@@ -44,19 +44,19 @@ void Nova_SaveDocumentRoot(void)
 if (IsDefinedClass("redhat"))
    {
    CfOut(cf_verbose,""," -> Recording default document root /var/www/html");
-   CFDB_PutValue("document_root","/var/www/html");
+   CFDB_PutValue("document_root","/var/www/html",MONGO_SCRATCH);
    }
 
 if (IsDefinedClass("SuSE"))
    {
    CfOut(cf_verbose,""," -> Recording default document root /srv/www/htdocs");
-   CFDB_PutValue("document_root","/srv/www/htdocs");
+   CFDB_PutValue("document_root","/srv/www/htdocs",MONGO_SCRATCH);
    }
 
 if (IsDefinedClass("debian"))
    {
    CfOut(cf_verbose,""," -> Recording default document root /var/www");
-   CFDB_PutValue("document_root","/var/www");
+   CFDB_PutValue("document_root","/var/www",MONGO_SCRATCH);
    }
 #endif
 }
@@ -66,7 +66,7 @@ if (IsDefinedClass("debian"))
 void WebCache(char *s, char *t)
 {
 #if defined(HAVE_LIBMONGOC)
-CFDB_PutValue(s,t);
+CFDB_PutValue(s,t,MONGO_SCRATCH);
 #endif
 }
 
@@ -108,7 +108,7 @@ if (false)
    //   Nova2PHP_promises(NULL, NULL, NULL, 0);
    //   Nova2PHP_getlastupdate(NULL,buffer,10);
 
-   CFDB_PutValue("one_two","three");
+   CFDB_PutValue("one_two","three",MONGO_SCRATCH);
    CFDB_GetValue("newvar",buffer,120,MONGO_SCRATCH);
    Nova2PHP_count_hosts();
    Nova2PHP_count_red_hosts();

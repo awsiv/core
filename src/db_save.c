@@ -74,7 +74,7 @@ void CFDB_Initialize()
 /* Cache / scratch space                                                     */
 /*****************************************************************************/
 
-int CFDB_PutValue(char *lval,char *rval)
+int CFDB_PutValue(char *lval, char *rval, char *db_name)
 
 { bson_buffer bb;
   bson_buffer *setObj;
@@ -98,7 +98,7 @@ bson_append_string(setObj,lval,rval);
 bson_append_finish_object(setObj);
 
 bson_from_buffer(&setOp,&bb);
-mongo_update(&dbconn,MONGO_SCRATCH,bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT);
+mongo_update(&dbconn,db_name,bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT);
 
 bson_destroy(&setOp);
 CFDB_Close(&dbconn);

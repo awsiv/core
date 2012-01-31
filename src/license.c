@@ -237,11 +237,11 @@ if (am_policy_server && THIS_AGENT_TYPE == cf_agent && CFDB_QueryIsMaster())
 
    snprintf(editionStr, sizeof(editionStr), "%c", edition);
    
-   CFDB_PutValue("license_owner",company);
-   CFDB_PutValue("licenses_granted",snumber);
-   CFDB_PutValue("license_expires",EXPIRY);
-   CFDB_PutValue("license_installtime",installed_time);
-   CFDB_PutValue("license_edition", editionStr);
+   CFDB_PutValue("license_owner",company,MONGO_SCRATCH);
+   CFDB_PutValue("licenses_granted",snumber,MONGO_SCRATCH);
+   CFDB_PutValue("license_expires",EXPIRY,MONGO_SCRATCH);
+   CFDB_PutValue("license_installtime",installed_time,MONGO_SCRATCH);
+   CFDB_PutValue("license_edition", editionStr,MONGO_SCRATCH);
    }
 #endif
 
@@ -400,7 +400,7 @@ if (GetVariable("control_common",CFG_CONTROLBODY[cfg_licenses].lval, &retval) !=
 #ifdef HAVE_LIBMONGOC
    if (THIS_AGENT_TYPE == cf_agent && CFDB_QueryIsMaster())
       {
-      CFDB_PutValue("licenses_promised",retval.item);
+      CFDB_PutValue("licenses_promised",retval.item,MONGO_SCRATCH);
       }
 #endif
    }
@@ -615,7 +615,7 @@ Join(buffer,work,sizeof(buffer));
 #ifdef HAVE_LIBMONGOC
 if (CFDB_QueryIsMaster())
    {
-   CFDB_PutValue("license_report",buffer);
+   CFDB_PutValue("license_report",buffer,MONGO_SCRATCH);
    }
 #endif
 YieldCurrentLock(thislock);
