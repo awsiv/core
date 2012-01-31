@@ -15,6 +15,24 @@ This file is (C) Cfengine AS. See LICENSE for details.
 /*                                                                           */
 /*****************************************************************************/
 
+const char *Nova_HostColourToString(HostColour colour)
+{
+   switch (colour)
+   {
+   case HOST_COLOUR_BLUE:
+      return "blue";
+   case HOST_COLOUR_RED:
+      return "red";
+   case HOST_COLOUR_YELLOW:
+      return "yellow";
+   case HOST_COLOUR_GREEN:
+      return "green";
+   default:
+      return "unknown";
+   }
+}
+
+
 void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, char *buffer, int bufsize)
 
 // Read the cached compliance summary (either from Hub or
@@ -446,7 +464,7 @@ hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,0);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
-   if (Nova_IsGreen(ip->counter))
+   if (Nova_HostScoreToColour(ip->counter) == HOST_COLOUR_GREEN)
       {
       AppendItem(&sorted,ip->name,ip->classes);
       }
@@ -467,7 +485,7 @@ hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,0);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
-   if (Nova_IsYellow(ip->counter))
+   if (Nova_HostScoreToColour(ip->counter) == HOST_COLOUR_YELLOW)
       {
       AppendItem(&sorted,ip->name,ip->classes);
       }
@@ -488,7 +506,7 @@ Item *Nova_RedHosts()
 
  for (ip = hosts; ip != NULL; ip=ip->next)
     {
-    if (Nova_IsRed(ip->counter))
+    if (Nova_HostScoreToColour(ip->counter) == HOST_COLOUR_RED)
        {
        AppendItem(&sorted,ip->name,ip->classes);
        }
@@ -509,7 +527,7 @@ hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,0);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
-   if (Nova_IsBlue(ip->counter))
+   if (Nova_HostScoreToColour(ip->counter) == HOST_COLOUR_BLUE)
       {
       AppendItem(&sorted,ip->name,ip->classes);
       }
@@ -811,64 +829,25 @@ int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *r)
 return result;
 }
 
-/*****************************************************************************/
-
-int Nova_IsGreen(int level)
-
+HostColour Nova_HostScoreToColour(int score)
 {
-if (level < CF_AMBER_THRESHOLD && level != CF_CODE_BLUE)
+if (score == CF_CODE_BLUE)
    {
-   return true;
+   return HOST_COLOUR_BLUE;
+   }
+else if (score < CF_AMBER_THRESHOLD)
+   {
+   return HOST_COLOUR_GREEN;
+   }
+else if (score >= CF_AMBER_THRESHOLD && score < CF_RED_THRESHOLD)
+   {
+   return HOST_COLOUR_YELLOW;
    }
 else
    {
-   return false;
+   return HOST_COLOUR_RED;
    }
-}
 
-/*****************************************************************************/
-
-int Nova_IsYellow(int level)
-
-{
-if (level >= CF_AMBER_THRESHOLD && level < CF_RED_THRESHOLD)
-   {
-   return true;
-   }
-else
-   {
-   return false;
-   }
-}
-
-/*****************************************************************************/
-
-int Nova_IsRed(int level)
-
-{
-if (level >= CF_RED_THRESHOLD)
-   {
-   return true;
-   }
-else
-   {
-   return false;
-   }
-}
-
-/*****************************************************************************/
-
-int Nova_IsBlue(int level)
-
-{
-if (level == CF_CODE_BLUE)
-   {
-   return true;
-   }
-else
-   {
-   return false;
-   }
 }
 
 /*****************************************************************************/

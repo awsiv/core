@@ -16,6 +16,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "cf3.extern.h"
 #include "cf.nova.h"
 #include "cf.nova.web_api.h"
+#include "scorecards.h"
 
 
 static const char *CDP_REPORTS[][2] =
@@ -3539,7 +3540,7 @@ endIndex = (page->resultsPerPage*page->pageNum) - 1;
 
 for (ip = clist; (ip !=  NULL); ip=ip->next)
    {
-   if(Nova_IsBlue(ip->counter))
+   if(Nova_HostScoreToColour(ip->counter) == HOST_COLOUR_BLUE)
       {
       continue;
       }
@@ -3552,15 +3553,15 @@ for (ip = clist; (ip !=  NULL); ip=ip->next)
    if (count >= startIndex && (count <= endIndex || endIndex <= 0))
       {
       work[0] = '\0';
-      if (Nova_IsGreen(ip->counter))
+      if (Nova_HostScoreToColour(ip->counter) == HOST_COLOUR_GREEN)
          {
          snprintf(work,sizeof(work),"{ \"colour\": \"green\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
          }
-      else if (Nova_IsYellow(ip->counter))
+      else if (Nova_HostScoreToColour(ip->counter) == HOST_COLOUR_YELLOW)
          {
          snprintf(work,sizeof(work),"{ \"colour\": \"yellow\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
          }
-      else if (Nova_IsRed(ip->counter))
+      else if (Nova_HostScoreToColour(ip->counter) == HOST_COLOUR_RED)
          {
          snprintf(work,sizeof(work),"{ \"colour\": \"red\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
          }
@@ -3831,25 +3832,10 @@ return (long)len;
 /*****************************************************************************/
 
 void Nova2PHP_get_host_colour(char *hostkey,char *buffer,int bufsize)
-
-{ int score = Nova_GetHostColour(hostkey);
-
-if (Nova_IsYellow(score))
-   {
-   strncpy(buffer,"yellow",bufsize);
-   }
-else if (Nova_IsGreen(score))
-   {
-   strncpy(buffer,"green",bufsize);
-   }
-else if(Nova_IsRed(score))
-   {
-   strncpy(buffer,"red",bufsize);
-   }
-else
-   {
-   strncpy(buffer,"blue",bufsize);
-   }
+{
+int score = Nova_GetHostColour(hostkey);
+HostColour colour = Nova_HostScoreToColour(score);
+strncpy(buffer, Nova_HostColourToString(colour), bufsize);
 }
 
 /*****************************************************************************/

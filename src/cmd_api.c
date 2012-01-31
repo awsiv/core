@@ -2403,7 +2403,7 @@ endIndex = (page->resultsPerPage*page->pageNum) - 1;
 
 for (ip = clist; (ip !=  NULL); ip=ip->next)
    {
-   if(Nova_IsBlue(ip->counter))
+   if(Nova_HostScoreToColour(ip->counter) == HOST_COLOUR_BLUE)
       {
       continue;
       }
@@ -2416,15 +2416,15 @@ for (ip = clist; (ip !=  NULL); ip=ip->next)
    if (count >= startIndex && (count <= endIndex || endIndex <= 0))
       {
       work[0] = '\0';
-      if (Nova_IsGreen(ip->counter))
+      if (Nova_HostScoreToColour(ip->counter) == HOST_COLOUR_GREEN)
          {
          snprintf(work,sizeof(work),"{ \"colour\": \"green\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
          }
-      else if (Nova_IsYellow(ip->counter))
+      else if (Nova_HostScoreToColour(ip->counter) == HOST_COLOUR_YELLOW)
          {
          snprintf(work,sizeof(work),"{ \"colour\": \"yellow\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
          }
-      else if (Nova_IsRed(ip->counter))
+      else if (Nova_HostScoreToColour(ip->counter) == HOST_COLOUR_RED)
          {
          snprintf(work,sizeof(work),"{ \"colour\": \"red\", \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
          }
