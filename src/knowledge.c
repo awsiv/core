@@ -34,7 +34,7 @@ Inference *ip;
 Item *itp;
 char packNumStr[CF_MAXVARSIZE];
 mongo_connection dbconn = {0};
-bson_buffer bb,bbuf,*sub,*assocs;
+bson_buffer bbuf,*sub,*assocs;
 bson b;
 int slot,assoc_id = 0;
 
@@ -64,7 +64,6 @@ for (slot = 0; slot < CF_HASHTABLESIZE; slot++)
 
       // Associations
 
-      bson_buffer_init(&bb);
       assocs = bson_append_start_array(&bbuf,cfk_associations);
 
       for (ta = tp->associations; ta != NULL; ta=ta->next)

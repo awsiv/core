@@ -805,7 +805,6 @@ bson_from_buffer(&op,&bb);
 
 mongo_update(&conn,MONGO_SCRATCH,bson_empty(&empty), &op, 0);
 
-bson_destroy(&empty);
 bson_destroy(&op);
 
 if (!CFDB_Close(&conn))

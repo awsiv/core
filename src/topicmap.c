@@ -51,7 +51,6 @@ if (!CFDB_Open(&conn))
 
 /* BEGIN query document */
 
-bson_buffer_init(&bb);
 bson_empty(&query);
 
 /* BEGIN RESULT DOCUMENT */
@@ -162,6 +161,8 @@ bson_from_buffer(&field, &bb);
 /* BEGIN SEARCH */
 
 cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+
+bson_destroy(&query);
 bson_destroy(&field);
 
 while (mongo_cursor_next(cursor))  // loops over documents
@@ -219,6 +220,8 @@ bson_from_buffer(&field, &bb);
 /* BEGIN SEARCH */
 
 cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+
+bson_destroy(&query);
 bson_destroy(&field);
 
 while (mongo_cursor_next(cursor))  // loops over documents
@@ -279,20 +282,18 @@ if (!CFDB_Open(&conn))
 
 /* BEGIN query document */
 
+bson_buffer_init(&bb);
+
 if (!EMPTY(search_topic))
    {
    Nova_DeClassifyTopic(search_topic,topic_name,topic_context);
 
-   bson_buffer_init(&bb);
    bson_append_regex(&bb,cfk_topicname,topic_name,"");
    bson_append_regex(&bb,cfk_topiccontext,topic_context,"");
-   bson_from_buffer(&query,&bb);
    }
-else
-   {
-   bson_buffer_init(&bb);
-   bson_empty(&query);
-   }
+
+bson_from_buffer(&query, &bb);
+
 
 /* BEGIN RESULT DOCUMENT */
 
@@ -309,6 +310,8 @@ bson_from_buffer(&field, &bb);
 /* BEGIN SEARCH */
 
 cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+
+bson_destroy(&query);
 bson_destroy(&field);
 
 strcpy(buffer,"[ ");
@@ -476,6 +479,8 @@ bson_from_buffer(&field, &bb);
 /* BEGIN SEARCH */
 
 cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+
+bson_destroy(&query);
 bson_destroy(&field);
 
 while (mongo_cursor_next(cursor))  // loops over documents
@@ -597,6 +602,8 @@ bson_from_buffer(&field, &bb);
 /* BEGIN SEARCH */
 
 cursor = mongo_find(&conn,MONGO_KM_OCCURRENCES,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+
+bson_destroy(&query);
 bson_destroy(&field);
 
 strcpy(buffer,"[ ");
@@ -735,9 +742,11 @@ bson_from_buffer(&field, &bb);
 /* BEGIN SEARCH */
 
 cursor = mongo_find(&conn,MONGO_KM_OCCURRENCES,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+
+bson_destroy(&query);
 bson_destroy(&field);
 
-while (mongo_cursor_next(cursor))  // loops over documents
+while (mongo_cursor_next(cursor))
    {
    bson_iterator_init(&it1,cursor->current.data);
    
@@ -746,10 +755,12 @@ while (mongo_cursor_next(cursor))  // loops over documents
       if (strcmp(bson_iterator_key(&it1),cfk_occurlocator) == 0)
          {
          strncpy(buffer,bson_iterator_string(&it1),bufsize-1);
+         mongo_cursor_destroy(cursor);
          return true;
          }
       }
    }
+mongo_cursor_destroy(cursor);
 return false;
 #endif
 return false;
@@ -851,6 +862,8 @@ bson_from_buffer(&field, &bb);
 /* BEGIN SEARCH */
 
 cursor = mongo_find(&conn,MONGO_KM_OCCURRENCES,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+
+bson_destroy(&query);
 bson_destroy(&field);
 
 strcpy(buffer,"[");
@@ -971,6 +984,8 @@ bson_from_buffer(&field, &bb);
 /* BEGIN SEARCH */
 
 cursor = mongo_find(&conn,MONGO_KM_OCCURRENCES,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+
+bson_destroy(&query);
 bson_destroy(&field);
 
 while (mongo_cursor_next(cursor))  // loops over documents
@@ -984,11 +999,13 @@ while (mongo_cursor_next(cursor))  // loops over documents
       if (strcmp(bson_iterator_key(&it1),cfk_occurlocator) == 0)
          {
          ip->classes = xstrdup(bson_iterator_string(&it1));
+         mongo_cursor_destroy(cursor);
          return;
          }   
       }
    }
 
+mongo_cursor_destroy(cursor);
 ip->classes = xstrdup("No description found");
 #endif
 }
@@ -1027,6 +1044,8 @@ bson_from_buffer(&field, &bb);
 /* BEGIN SEARCH */
 
 cursor = mongo_find(&conn,MONGO_KM_OCCURRENCES,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+
+bson_destroy(&query);
 bson_destroy(&field);
 
 while (mongo_cursor_next(cursor))  // loops over documents
@@ -1040,10 +1059,12 @@ while (mongo_cursor_next(cursor))  // loops over documents
       if (strcmp(bson_iterator_key(&it1),cfk_occurlocator) == 0)
          {
          strncpy(buf,bson_iterator_string(&it1),CF_BUFSIZE-1);
+         mongo_cursor_destroy(cursor);
          return buf;
          }
       }
    }
+mongo_cursor_destroy(cursor);
 return "";
 }
 #endif
@@ -1494,6 +1515,8 @@ bson_from_buffer(&field, &bb);
 /* BEGIN SEARCH */
 
 cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+
+bson_destroy(&query);
 bson_destroy(&field);
 
 while (mongo_cursor_next(cursor))  // loops over documents
@@ -1601,6 +1624,7 @@ bson_from_buffer(&field, &bb);
 /* BEGIN SEARCH */
 
 cursor = mongo_find(&conn,MONGO_KM_TOPICS,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+bson_destroy(&query);
 bson_destroy(&field);
 
 while (mongo_cursor_next(cursor))  // loops over documents

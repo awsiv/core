@@ -331,6 +331,9 @@ bson_from_buffer(&field,&bb);
 
 cursor = mongo_find(dbconnp,MONGO_DATABASE,&query,&field,0,0,CF_MONGO_SLAVE_OK);
 
+// freeing query below
+bson_destroy(&field);
+
 if (mongo_cursor_next(cursor))  // not more than one record
    {
    bson_iterator it;
@@ -373,7 +376,6 @@ bson_from_buffer(&update,&bb);
 mongo_update(dbconnp,MONGO_DATABASE,&query,&update,MONGO_UPDATE_UPSERT);
 
 bson_destroy(&query);
-bson_destroy(&field);
 bson_destroy(&update);
 }
 

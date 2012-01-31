@@ -387,23 +387,22 @@ return true;
 /*****************************************************************************/
 
 void Nova2PHP_meter(char *hostkey,char *buffer,int bufsize)
+{
+ bson_buffer bb;
+ bson query;
 
-{ bson_buffer bb[1];
- bson query[1];
-  
-if (hostkey && strlen(hostkey) != 0)
+ bson_buffer_init(&bb);
+ 
+ if(!EMPTY(hostkey))
    {
-   bson_buffer_init(bb);
-   bson_append_string(bb,cfr_keyhash,hostkey);
-   bson_from_buffer(query,bb);
-   }
-else
-   {
-   bson_empty(query);
+   bson_append_string(&bb, cfr_keyhash, hostkey);
    }
 
-Nova_Meter(query,MONGO_DATABASE,buffer,bufsize);
-bson_destroy(query);
+ bson_from_buffer(&query, &bb);
+
+ Nova_Meter(&query, MONGO_DATABASE, buffer, bufsize);
+ 
+ bson_destroy(&query);
 }
 
 /*****************************************************************************/
@@ -5317,21 +5316,18 @@ int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize)
   bson query;
   bson_buffer bb;
 
-/* BEGIN query document */
-
-if (hostkey && strlen(hostkey) != 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   }
-else
-   {
-   return false;
-   }
-
+  if(EMPTY(hostkey))
+     {
+     return false;
+     }
+  
+  bson_buffer_init(&bb);
+  bson_append_string(&bb,cfr_keyhash,hostkey);
+  bson_from_buffer(&query,&bb);
+  
 if (!CFDB_Open(&dbconn))
    {
+   bson_destroy(&query);
    return false;
    }
 

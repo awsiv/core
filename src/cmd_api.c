@@ -1132,24 +1132,23 @@ int Nova2Txt_hostinfo(char *hostkey,char *hostnameOut,char *ipaddrOut,int bufsiz
  bson query;
  bson_buffer bb;
 
-/* BEGIN query document */
+ 
+ if (EMPTY(hostkey))
+    {
+    return false;
+    }
 
-if (hostkey && strlen(hostkey) != 0)
-   {
-   bson_buffer_init(&bb);
-   bson_append_string(&bb,cfr_keyhash,hostkey);
-   bson_from_buffer(&query,&bb);
-   }
-else
-   {
-   return false;
-   }
 
 if (!CFDB_Open(&dbconn))
    {
    CfOut(cf_verbose,"", "!! Could not open connection to report database");
    return false;
    }
+
+bson_buffer_init(&bb);
+bson_append_string(&bb,cfr_keyhash,hostkey);
+bson_from_buffer(&query,&bb);
+
 
 hq = CFDB_QueryHosts(&dbconn,MONGO_DATABASE,cfr_keyhash,&query);
 bson_destroy(&query);

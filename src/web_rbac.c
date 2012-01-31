@@ -652,6 +652,7 @@ HubQuery *CFDB_GetRoles(bson *query)
  if(!CFDB_Open(&conn))
     {
     hq->errid = ERRID_DBCONNECT;
+    bson_destroy(&field);
     return hq;
     }
  
