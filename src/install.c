@@ -1087,6 +1087,7 @@ void DeleteHubUserRBAC(HubUserRBAC *userRbac)
  free(userRbac->classRxInclude);
  free(userRbac->classRxExclude);
  free(userRbac->bundleRxInclude);
+ free(userRbac->bundleRxExclude);
  free(userRbac);
 }
 
@@ -1115,6 +1116,7 @@ void DeleteHubRole(HubRole *role)
  free(role->classRxInclude);
  free(role->classRxExclude);
  free(role->bundleRxInclude);
+ free(role->bundleRxExclude);
  free(role);
 }
 
