@@ -13,9 +13,9 @@
 
 #ifdef HAVE_LIBMONGOC
 
-#define MONGO_ROLES_COLLECTION "phpcfengine.roles"
-#define MONGO_USERS_INTERNAL_COLLECTION "phpcfengine.users"
-#define MONGO_USERS_LDAP_COLLECTION "phpcfengine.ldap_users"
+#define MONGO_ROLES_COLLECTION MONGO_MPBASE ".roles"
+#define MONGO_USERS_INTERNAL_COLLECTION MONGO_MPBASE ".users"
+#define MONGO_USERS_LDAP_COLLECTION MONGO_MPBASE ".ldap_users"
 
 #define dbkey_user_name "username"
 #define dbkey_user_password "password"
