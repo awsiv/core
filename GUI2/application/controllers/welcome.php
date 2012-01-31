@@ -659,7 +659,7 @@ class Welcome extends Cf_Controller {
         $data = array(
             'title_header' => "classes",
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_classes'),
-            'ret' => json_decode(cfpr_report_classes($hostkey, $name, $regex, NULL, 1000, 1), true),
+            'ret' => json_decode(cfpr_report_classes($hostkey, $name, $regex, NULL, "last-seen", true, 1000, 1), true),
             'breadcrumbs' => $this->breadcrumblist->display(),
             'hostname' => cfpr_hostname($hostkey)
         );

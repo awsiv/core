@@ -37,8 +37,8 @@ class Widget extends Cf_Controller {
         $stopDateTimeStamp = ($stopDate == null) ? ($startDate + (6 * 3600)) : time();
         $environment = $env;
 
-        $this->data['notkept']  = json_decode(cfpr_summarize_notkept ($username, NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment, 0, 0), true);
-        $this->data['repaired'] = json_decode(cfpr_summarize_repaired($username, NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment, 0, 0), true);
+        $this->data['notkept']  = json_decode(cfpr_summarize_notkept ($username, NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment, "time", true, 0, 0), true);
+        $this->data['repaired'] = json_decode(cfpr_summarize_repaired($username, NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment, "time", true, 0, 0), true);
 
 
 

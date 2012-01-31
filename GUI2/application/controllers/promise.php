@@ -1,4 +1,4 @@
-<?php
+?php
 
 class Promise extends Cf_Controller {
 
@@ -23,7 +23,7 @@ class Promise extends Cf_Controller {
         $handle = NULL;
         $data = array(
             'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_promise'),
-            'promise_list' => json_decode(cfpr_report_compliance_promises($hostkey, $handle, NULL, false, NULL,1000,1), true),
+            'promise_list' => json_decode(cfpr_report_compliance_promises($hostkey, $handle, NULL, false, NULL,"last-seen", true, 1000,1), true),
             'breadcrumbs' => $this->breadcrumblist->display()
         );
         $this->template->load('template', 'promise/promises', $data);
