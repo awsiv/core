@@ -10,9 +10,9 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#ifdef HAVE_LIBMONGOC
 static bool ReportBookHasData(Item **reports);
 
-#ifdef HAVE_LIBMONGOC 
 static void Nova_RecordNetwork(mongo_connection *dbconnp, time_t now, double datarate,AgentConnection *conn);
 #endif
 
@@ -249,6 +249,7 @@ for (i = 0; CF_CODEBOOK[i] != NULL; i++)
 
 /*********************************************************************/
 
+#ifdef HAVE_LIBMONGOC
 static bool ReportBookHasData(Item **reports)
 {
  for (int i = 0; i < CF_CODEBOOK_SIZE; i++)
@@ -261,6 +262,7 @@ static bool ReportBookHasData(Item **reports)
  
  return false;
 }
+#endif
 
 /*********************************************************************/
 
