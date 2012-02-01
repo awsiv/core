@@ -16,6 +16,8 @@ int BIG_UPDATES = 6;
 
 int  NO_FORK = false;
 int  CONTINUOUS = false;
+
+int LOGGING = false;
 Item *SCHEDULE = NULL;
 Item *FEDERATION = NULL;
 Item *EXCLUDE_HOSTS = NULL;
