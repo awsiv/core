@@ -1151,7 +1151,7 @@ HostClassFilter *NewHostClassFilterLists(Rlist *classRxIncludes, Rlist *classRxE
  return filter;
 }
 
-void AddHostClassFilterPatterns(HostClassFilter *filter, const char *classRxInclude, const char *classRxExclude)
+void HostClassFilterAddClasses(HostClassFilter *filter, const char *classRxInclude, const char *classRxExclude)
 {
  if(classRxInclude)
     {

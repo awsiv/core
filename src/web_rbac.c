@@ -172,7 +172,7 @@ HubQuery *CFBD_HostClassFilterFromUserRBAC(char *userName, char *classRxIncludeO
  HubUserRBAC *rbac = hqRBAC->records->item;
 
  HostClassFilter *hostClassFilter = NewHostClassFilter(classRxIncludeOption, classRxExcludeOption);
- AddHostClassFilterPatterns(hostClassFilter, rbac->classRxInclude, rbac->classRxExclude);
+ HostClassFilterAddClasses(hostClassFilter, rbac->classRxInclude, rbac->classRxExclude);
  PrependRlistAlien(&(recordList), hostClassFilter);
  
  DeleteHubQuery(hqRBAC, DeleteHubUserRBAC);

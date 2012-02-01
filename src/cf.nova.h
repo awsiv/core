@@ -1034,7 +1034,7 @@ void DeleteHubRole(HubRole *role);
 #ifdef HAVE_LIBMONGOC
 HostClassFilter *NewHostClassFilter(const char *classRxInclude, const char *classRxExclude);
 HostClassFilter *NewHostClassFilterLists(Rlist *classRxInclude, Rlist *classRxExclude);
-void AddHostClassFilterPatterns(HostClassFilter *filter, const char *classRxInclude, const char *classRxExclude);
+void HostClassFilterAddClasses(HostClassFilter *filter, const char *classRxInclude, const char *classRxExclude);
 void DeleteHostClassFilter(HostClassFilter *filter);
 PromiseFilter *NewPromiseFilter(const char *handle, const char *promiser);
 void PromiseFilterAddBundles(PromiseFilter *filter, const char *bundleRxInclude, const char *bundleRxExclude);
