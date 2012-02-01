@@ -1036,6 +1036,9 @@ HostClassFilter *NewHostClassFilter(const char *classRxInclude, const char *clas
 HostClassFilter *NewHostClassFilterLists(Rlist *classRxInclude, Rlist *classRxExclude);
 void AddHostClassFilterPatterns(HostClassFilter *filter, const char *classRxInclude, const char *classRxExclude);
 void DeleteHostClassFilter(HostClassFilter *filter);
+PromiseFilter *NewPromiseFilter(const char *handle, const char *promiser);
+void PromiseFilterAddBundles(PromiseFilter *filter, const char *bundleRxInclude, const char *bundleRxExclude);
+void DeletePromiseFilter(PromiseFilter *filter);
 #endif
 HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int hostCount, int totalHostCount, double kept, double repaired, double notkept, time_t genTime);
 void DeleteHubCacheTotalCompliance(HubCacheTotalCompliance *tc);

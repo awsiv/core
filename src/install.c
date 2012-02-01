@@ -1173,6 +1173,46 @@ DeleteRlist(filter->classRxExcludes);
 
 free(filter);
 }
+
+/*****************************************************************************/
+
+PromiseFilter *NewPromiseFilter(const char *handle, const char *promiser)
+{
+ PromiseFilter *filter = xcalloc(1, sizeof(PromiseFilter));
+
+ filter->handle = SafeStringDuplicate(handle);
+ filter->promiser = SafeStringDuplicate(promiser);
+  
+ return filter;
+}
+
+void PromiseFilterAddBundles(PromiseFilter *filter, const char *bundleRxInclude, const char *bundleRxExclude)
+{
+ if(bundleRxInclude)
+    {
+    AppendRlist(&(filter->bundleRxIncludes), bundleRxInclude, CF_SCALAR);
+    }
+
+ if(bundleRxExclude)
+    {
+    AppendRlist(&(filter->bundleRxExcludes), bundleRxExclude, CF_SCALAR);
+    }
+}
+
+/*****************************************************************************/
+
+void DeletePromiseFilter(PromiseFilter *filter)
+{
+ free(filter->handle);
+ free(filter->promiser);
+ DeleteRlist(filter->bundleRxIncludes);
+ DeleteRlist(filter->bundleRxExcludes);
+ 
+ free(filter);
+}
+
+
+
 #endif
 
 /*****************************************************************************/
