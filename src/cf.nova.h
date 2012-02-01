@@ -1311,7 +1311,6 @@ void Nova_EigenvectorCentrality(double A[CF_TRIBE_SIZE][CF_TRIBE_SIZE],double *v
 void Nova_MatrixOperation(double A[CF_TRIBE_SIZE][CF_TRIBE_SIZE],double *v,int dim);
 int Nova_AlreadyInTribe(int node, int *tribe_id);
 void Nova_InitVertex(GraphNode *tribe,int i);
-int Nova_NewVertex(GraphNode *tribe,int node,int distance,int real,char *name,char *context);
 char *Nova_StripString(char *source,char *substring);
 void Nova_DeClassifyTopic(char *typed_topic,char *topic,char *type);
 

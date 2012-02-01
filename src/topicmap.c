@@ -15,7 +15,12 @@
 /*****************************************************************************/
 
 #ifdef HAVE_LIBMONGOC
+static int Nova_NewVertex(GraphNode *tribe,int node,int distance,int real,char *name,char *context);
+#endif
 
+/*****************************************************************************/
+
+#ifdef HAVE_LIBMONGOC
 void Nova_WebTopicMap_Initialize()
 {
 char retval[CF_MAXVARSIZE];
@@ -1428,7 +1433,8 @@ tribe[i].distance_from_centre = 0;
 
 /*************************************************************************/
 
-int Nova_NewVertex(GraphNode *tribe,int node,int distance,int real,char *topic_name,char *topic_context)
+#ifdef HAVE_LIBMONGOC
+static int Nova_NewVertex(GraphNode *tribe,int node,int distance,int real,char *topic_name,char *topic_context)
 
 { char sshort[CF_BUFSIZE];
   char topic_id[CF_BUFSIZE];
@@ -1471,6 +1477,7 @@ tribe[node].context = xstrdup(topic_context);
 tribe[node].distance_from_centre = distance;
 return true;
 }
+#endif
 
 /*********************************************************************/
 
