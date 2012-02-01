@@ -139,34 +139,17 @@ return ERRID_RBAC_ACCESS_DENIED;
 
 HubQuery *CFBD_HostClassFilterFromUserRBAC(char *userName, char *classRxIncludeOption, char *classRxExcludeOption)
 {
- mongo_connection conn;
- 
- if(!CFDB_Open(&conn))
-    {
-    return NewHubQueryErrid(NULL, NULL, ERRID_DBCONNECT);
-    }
-
-
- Rlist *recordList = NULL;
-
- if(!IsRBACOn(&conn))
-    {
-    CFDB_Close(&conn);
-    // no RBAC restrictions - filter determined by user query only
-    PrependRlistAlien(&(recordList), NewHostClassFilter(classRxIncludeOption, classRxExcludeOption));
-    return NewHubQuery(NULL, recordList);
-    }
- 
  HubQuery *hqRBAC = CFDB_GetRBACForUser(userName);
 
- CFDB_Close(&conn);
-
  cfapi_errid errid = hqRBAC->errid;
+
+ Rlist *recordList = NULL;
 
  if(errid != ERRID_SUCCESS)
     {
     DeleteHubQuery(hqRBAC, DeleteHubUserRBAC);
-    return NewHubQueryErrid(NULL, NULL, errid);
+    PrependRlistAlien(&(recordList), NewHostClassFilter(classRxIncludeOption, classRxExcludeOption));
+    return NewHubQueryErrid(NULL, recordList, errid);
     }
  
  HubUserRBAC *rbac = hqRBAC->records->item;
@@ -188,6 +171,21 @@ HubQuery *CFDB_GetRBACForUser(char *userName)
  * the union of the RBAC permissions of these roles.
  */
 {
+ mongo_connection conn;
+ 
+ if(!CFDB_Open(&conn))
+    {
+    return NewHubQueryErrid(NULL, NULL, ERRID_DBCONNECT);
+    }
+ 
+ if(!IsRBACOn(&conn))
+    {
+    CFDB_Close(&conn);
+    // no RBAC restrictions - filter determined by user query only
+    return NewHubQueryErrid(NULL, NULL, ERRID_RBAC_DISABLED);
+    }
+
+ CFDB_Close(&conn);
  
  Item *roleNames = CFDB_GetRolesForUser(userName);
 

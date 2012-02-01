@@ -38,8 +38,8 @@
 
 
 
-#define ERRID_CHECK(hq, DeleteFunction)           \
- if(hq->errid != ERRID_SUCCESS)                   \
+#define ERRID_RBAC_CHECK(hq, DeleteFunction)           \
+ if(hq->errid != ERRID_RBAC_DISABLED && hq->errid != ERRID_SUCCESS)       \
     {                                             \
     cfapi_errid errid = hq->errid;                \
     DeleteHubQuery(hq, DeleteFunction);           \
