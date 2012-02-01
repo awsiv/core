@@ -181,7 +181,6 @@ HubQuery *CFDB_GetRBACForUser(char *userName)
  if(!IsRBACOn(&conn))
     {
     CFDB_Close(&conn);
-    // no RBAC restrictions - filter determined by user query only
     return NewHubQueryErrid(NULL, NULL, ERRID_RBAC_DISABLED);
     }
 
