@@ -1282,7 +1282,9 @@ void Nova_Indent(int i);
 void Nova_DumpTopics(void);
 void Nova_FillInGoalComment(Item *ip);
 char *Nova_GetBundleComment(char *bundle);
+#ifdef HAVE_LIBMONGOC
 void Nova_WebTopicMap_Initialize(void);
+#endif
 void Nova_LookupUniqueAssoc(int pid,char *buffer,int bufsize);
 void Nova_ScanTheRest(int pid,char *buffer, int bufsize);
 int Nova_SearchTopicMap(char *typed_topic,char *buffer,int bufsize);

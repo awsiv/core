@@ -14,17 +14,18 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#ifdef HAVE_LIBMONGOC
+
 void Nova_WebTopicMap_Initialize()
-
-{ char retval[CF_MAXVARSIZE];
-
-#ifdef HAVE_LIBMONGOC 
+{
+char retval[CF_MAXVARSIZE];
 CFDB_GetValue("document_root",retval,CF_MAXVARSIZE, MONGO_SCRATCH);
 strncpy(DOCROOT,retval,CF_MAXVARSIZE);
 
 CfDebug("Loaded values: docroot=%s\n",DOCROOT);
-#endif
 }
+
+#endif
 
 /*****************************************************************************/
 /* The main panels                                                           */
