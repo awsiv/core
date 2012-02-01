@@ -41,7 +41,7 @@ class pdfreports extends Cf_Controller {
             'long_term'
         );
     }
-    
+
     function index() {
         $this->load->library('email');
         $params = $this->uri->uri_to_assoc(3, $this->predefinedKeys);
@@ -178,15 +178,7 @@ class pdfreports extends Cf_Controller {
                 $msg = $_POST['message'];
                 // write the file 
                 // check for directory
-                if (!file_exists("./tmp")) {
-                    mkdir("./tmp", 0777);
-                }
-
-                if (!is_writable($this->storeDir)) {
-                    log_message('error', 'Please make sure the tmp directory in web root is writeable');
-                    throw new Exception('"tmp" directory in web root is not writable ');
-                }
-
+                $this->checkTempDir();
                 $filename = $this->storeDir . $filename;
                 $doc = $this->reportGenerator->Output($filename, 'F');
                 if (trim($to) === '') {
@@ -200,20 +192,15 @@ class pdfreports extends Cf_Controller {
             }
         } else {
             try {
-                if (!file_exists("./tmp")) {
-                    mkdir("./tmp", 0777);
-                }
-                if (!is_writable($this->storeDir)) {
-                    log_message('error', 'Please make sure the tmp directory in web root is writeable');
-                    throw new Exception('"tmp" directory in web root is not writable ');
-                }
+                $this->checkTempDir();
                 $filepath = $this->storeDir . $filename;
                 $this->reportGenerator->Output($filepath, "F");
                 $downloadLink = site_url() . "/pdfreports/download/file/$filename/action/download";
                 $msg = sprintf("<a href='%s' target='_blank'>Click here to download the file.</a>", $downloadLink);
-               
-        
-                if ($this->truncateWarning !== null) $msg = $msg . '<p class="warning">'.$this->truncateWarning.'</p>';
+
+
+                if ($this->truncateWarning !== null)
+                    $msg = $msg . '<p class="warning">' . $this->truncateWarning . '</p>';
                 $retData = array('message' => $msg);
                 $jsonReturn = json_encode($retData);
                 echo $jsonReturn;
@@ -223,6 +210,23 @@ class pdfreports extends Cf_Controller {
                 echo $e->getMessage();
                 exit();
             }
+        }
+    }
+
+    /**
+     * Checks if the tmp directory exist and is writable 
+     * @throws Exception if not writable
+     */
+    function checkTempDir() {
+        if (!file_exists($this->storeDir)) {
+            if (!mkdir($this->storeDir, 0777)) {
+                log_message('error', 'Please make sure the tmp directory in web root is present');
+                throw new Exception('"tmp" directory in web root not found.');
+            }
+        }
+        if (!is_writable($this->storeDir)) {
+            log_message('error', 'Please make sure the tmp directory in web root is writeable');
+            throw new Exception('"tmp" directory in web root is not writable ');
         }
     }
 
@@ -253,10 +257,11 @@ class pdfreports extends Cf_Controller {
             echo 'Something went wrong while sending mail';
             exit;
         }
-        
+
         $msg = 'Mail has been sent to the given address.';
-        if ($this->truncateWarning) $msg .= $msg . '<p class="warning>'.$this->truncateWarning.'</p>';
-                
+        if ($this->truncateWarning)
+            $msg .= $msg . '<p class="warning>' . $this->truncateWarning . '</p>';
+
         $retData = array('message' => $msg);
         $jsonReturn = json_encode($retData);
 
@@ -276,24 +281,27 @@ class pdfreports extends Cf_Controller {
             show_404();
         }
         $downloadFile = $this->storeDir . $filename;
-        $fsize = @filesize($downloadFile);
-
         $data = file_get_contents($downloadFile); // Read the file's contents
         unlink($downloadFile); // remove the file from the server
         force_download($filename, $data);
     }
 
+    /**
+     * Checks if there is data truncation warning from the C-API and set the warning  
+     * @param array $result data received from C-API 
+     */
     function checkForDataTruncation($result) {
         if (is_array($result) && key_exists('truncated', $result['meta'])) {
             $this->truncateWarning = $result['meta']['truncated'];
         }
     }
 
-    function calc_width_percent($total, $width) {
-        $ret = ($width / $total) * 100;
-        return $ret;
-    }
-
+   /**
+    * Changes the timestamp to date format
+    * @param array $data 
+    * @param type $index array index of the timestamp field
+    * @return array
+    */
     function changeDateFields($data, $index) {
         foreach ($data as &$row) {
             $row[$index] = getDateStatus($row[$index], false, true);
@@ -301,6 +309,12 @@ class pdfreports extends Cf_Controller {
         return $data;
     }
 
+    /**
+     * Removes notes field from the data
+     * @param type $data
+     * @param type $header
+     * @return array 
+     */
     function removeNotesField($data, $header) {
         // check for notes if present remove the field from the data
         if (array_key_exists('Note', $header)) {
