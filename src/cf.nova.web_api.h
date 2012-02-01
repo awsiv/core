@@ -59,8 +59,8 @@ typedef struct
 
 typedef struct
    {
-   char *handle;
-   char *promiser;
+   char *handleRxInclude;
+   char *promiserRxInclude;
    Rlist *bundleRxIncludes;
    Rlist *bundleRxExcludes;
    } PromiseFilter;

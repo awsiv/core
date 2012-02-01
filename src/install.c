@@ -1176,12 +1176,12 @@ free(filter);
 
 /*****************************************************************************/
 
-PromiseFilter *NewPromiseFilter(const char *handle, const char *promiser)
+PromiseFilter *NewPromiseFilter(const char *handleRxInclude, const char *promiserRxInclude)
 {
  PromiseFilter *filter = xcalloc(1, sizeof(PromiseFilter));
 
- filter->handle = SafeStringDuplicate(handle);
- filter->promiser = SafeStringDuplicate(promiser);
+ filter->handleRxInclude = SafeStringDuplicate(handleRxInclude);
+ filter->promiserRxInclude = SafeStringDuplicate(promiserRxInclude);
   
  return filter;
 }
@@ -1203,8 +1203,8 @@ void PromiseFilterAddBundles(PromiseFilter *filter, const char *bundleRxInclude,
 
 void DeletePromiseFilter(PromiseFilter *filter)
 {
- free(filter->handle);
- free(filter->promiser);
+ free(filter->handleRxInclude);
+ free(filter->promiserRxInclude);
  DeleteRlist(filter->bundleRxIncludes);
  DeleteRlist(filter->bundleRxExcludes);
  

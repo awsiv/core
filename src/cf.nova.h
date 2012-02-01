@@ -1036,7 +1036,7 @@ HostClassFilter *NewHostClassFilter(const char *classRxInclude, const char *clas
 HostClassFilter *NewHostClassFilterLists(Rlist *classRxInclude, Rlist *classRxExclude);
 void HostClassFilterAddClasses(HostClassFilter *filter, const char *classRxInclude, const char *classRxExclude);
 void DeleteHostClassFilter(HostClassFilter *filter);
-PromiseFilter *NewPromiseFilter(const char *handle, const char *promiser);
+PromiseFilter *NewPromiseFilter(const char *handleRxInclude, const char *promiserRxInclude);
 void PromiseFilterAddBundles(PromiseFilter *filter, const char *bundleRxInclude, const char *bundleRxExclude);
 void DeletePromiseFilter(PromiseFilter *filter);
 #endif
