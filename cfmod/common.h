@@ -43,7 +43,7 @@
     {                                             \
     cfapi_errid errid = hq->errid;                \
     DeleteHubQuery(hq, DeleteFunction);           \
-    zend_throw_exception(cfmod_exception_generic, (char *)GetErrorDescription(errid), 0 TSRMLS_CC);  \
+    zend_throw_exception(cfmod_exception_rbac, (char *)GetErrorDescription(errid), 0 TSRMLS_CC);  \
     RETURN_NULL();                                \
     }                                             \
 

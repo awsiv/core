@@ -314,6 +314,7 @@ extern int AM_PHP_MODULE;  // TODO: Defined in cf.nova.web.api.h, but apparently
 zend_class_entry *cfmod_ldap_exception_ce;
 zend_class_entry *cfmod_exception_db;
 zend_class_entry *cfmod_exception_args;
+zend_class_entry *cfmod_exception_rbac;
 zend_class_entry *cfmod_exception_generic;
 
 PHP_MINIT_FUNCTION(cfmod)
@@ -340,6 +341,13 @@ zend_class_entry cfmod_exception_args_class_entry;
 INIT_CLASS_ENTRY(cfmod_exception_args_class_entry, "CFModExceptionArgs", NULL);
 cfmod_exception_args = zend_register_internal_class_ex(
     &cfmod_exception_args_class_entry,
+    exception_class_entry,
+    NULL TSRMLS_CC);
+
+zend_class_entry cfmod_exception_rbac_class_entry;
+INIT_CLASS_ENTRY(cfmod_exception_rbac_class_entry, "CFModExceptionRBAC", NULL);
+cfmod_exception_rbac = zend_register_internal_class_ex(
+    &cfmod_exception_rbac_class_entry,
     exception_class_entry,
     NULL TSRMLS_CC);
 
