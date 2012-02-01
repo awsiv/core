@@ -1,4 +1,4 @@
-?php
+<?php
 
 class Promise extends Cf_Controller {
 
