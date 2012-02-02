@@ -106,7 +106,6 @@ int Nova2Txt_list_promise_handles_with_comments(char *bundle,char *btype,char *r
 
 char *Nova_HostProfile(char *key);
 void Nova2Txt_show_all_hosts(char *policy,int n,char *buffer,int bufsize);
-int Nova2Txt_summarize_promise(char *handle, char *returnval,int bufsize);
 
 char *Nova2Txt_GetPromiseComment(char *handle);
 char *Nova2Txt_GetPromiseBundle(char *handle);
