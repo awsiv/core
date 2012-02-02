@@ -103,6 +103,52 @@ void BsonAppendStringArray(bson_buffer *bb, char *arrayName, Item *arrayValues)
 
 /*****************************************************************************/
 
+bool BsonAppendIncludeList(bson_buffer *queryBuffer, char *includeKey, Rlist *includeRxValues)
+// NOTE: using regex on values
+{
+ if(!includeRxValues)
+    {
+    return false;
+    }
+
+ for (Rlist *rp = includeRxValues; rp; rp = rp->next)
+    {
+    char anchoredRx[CF_BUFSIZE];
+    AnchorRegex(ScalarValue(rp), anchoredRx, sizeof(anchoredRx));
+    bson_append_regex(queryBuffer, includeKey, anchoredRx, "");
+    }
+ 
+ return true;
+}
+
+/*****************************************************************************/
+
+bool BsonAppendExcludeList(bson_buffer *queryBuffer, char *excludeKey, Rlist *excludeRxValues)
+// NOTE: using regex on values
+{
+ if(!excludeRxValues)
+    {
+    return false;
+    }
+ 
+ bson_buffer *excludeClassBuffer = bson_append_start_object(queryBuffer, excludeKey);
+ bson_buffer *excludeClassArray = bson_append_start_array(excludeClassBuffer, "$nin");
+ 
+ for (Rlist *rp = excludeRxValues; rp != NULL; rp = rp->next)
+    {
+    char anchoredRx[CF_BUFSIZE];
+    AnchorRegex(rp->item, anchoredRx, sizeof(anchoredRx));
+    bson_append_regex(excludeClassArray, excludeKey, anchoredRx, "");
+    }
+ 
+ bson_append_finish_object(excludeClassArray);
+ bson_append_finish_object(excludeClassBuffer);
+
+ return true;
+}
+
+/*****************************************************************************/
+
 void BsonAppendAddToSetString(bson_buffer *bb, char *key, char *value)
 {
  bson_append_start_object(bb, "$addToSet");

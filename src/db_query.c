@@ -22,7 +22,7 @@
 
 #ifdef HAVE_LIBMONGOC
 
-static bool AppendHostClassFilter(bson_buffer *queryBuffer, HostClassFilter *filter);
+static bool BsonAppendHostClassFilter(bson_buffer *queryBuffer, HostClassFilter *filter);
 static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFilter *hostClassFilter);
 
 /*****************************************************************************/
@@ -437,7 +437,7 @@ HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,cha
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
 
- AppendHostClassFilter(&bb, hostClassFilter);
+ BsonAppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -608,7 +608,7 @@ HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lclass,in
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
 
- AppendHostClassFilter(&bb, hostClassFilter);
+ BsonAppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
  
@@ -1108,7 +1108,7 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,char *l
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
 
- AppendHostClassFilter(&bb, hostClassFilter);
+ BsonAppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -1295,7 +1295,7 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *lscope,
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
 
- AppendHostClassFilter(&bb, hostClassFilter);
+ BsonAppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -1514,7 +1514,7 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
 
- AppendHostClassFilter(&bb, hostClassFilter);
+ BsonAppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -1677,7 +1677,7 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *lhash,ch
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
 
- AppendHostClassFilter(&bb, hostClassFilter);
+ BsonAppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -1958,7 +1958,7 @@ HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char *lname
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
 
- AppendHostClassFilter(&bb, hostClassFilter);
+ BsonAppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -2111,7 +2111,7 @@ HubQuery *CFDB_QuerySetuid(mongo_connection *conn,char *keyHash,char *lname,int 
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
 
- AppendHostClassFilter(&bb, hostClassFilter);
+ BsonAppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -2236,7 +2236,7 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char *lname
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
 
- AppendHostClassFilter(&bb, hostClassFilter);
+ BsonAppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -2403,7 +2403,7 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,ch
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
 
- AppendHostClassFilter(&bb, hostClassFilter);
+ BsonAppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -2719,7 +2719,7 @@ HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
 
- AppendHostClassFilter(&bb, hostClassFilter);
+ BsonAppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -3044,7 +3044,7 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
 
- AppendHostClassFilter(&bb, hostClassFilter);
+ BsonAppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query, &bb);
 
@@ -3636,7 +3636,7 @@ int CFDB_CountHosts(mongo_connection *conn, HostClassFilter *hostClassFilter)
 bson_buffer bb;
 bson_buffer_init(&bb);
 
-AppendHostClassFilter(&bb, hostClassFilter);
+BsonAppendHostClassFilter(&bb, hostClassFilter);
 
 bson query;
 
@@ -5765,7 +5765,7 @@ static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFil
  bson_buffer *sub1, *sub2;
 
  bson_buffer_init(&bbuf);
- if(!AppendHostClassFilter(&bbuf, hostClassFilter))
+ if(!BsonAppendHostClassFilter(&bbuf, hostClassFilter))
     {
     bson_buffer_destroy(&bbuf);
     return false;
@@ -7085,39 +7085,17 @@ int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
 
 /*****************************************************************************/
 
-static bool AppendHostClassFilter(bson_buffer *queryBuffer, HostClassFilter *filter)
+static bool BsonAppendHostClassFilter(bson_buffer *queryBuffer, HostClassFilter *filter)
 {
  bool modified = false;
- char classRxAnchored[CF_BUFSIZE];
 
  if(filter == NULL)
     {
     return false;
     }
 
-for (Rlist *rp = filter->classRxIncludes; rp; rp = rp->next)
-   {
-   AnchorRegex(ScalarValue(rp), classRxAnchored, sizeof(classRxAnchored));
-   bson_append_regex(queryBuffer, cfr_class_keys, classRxAnchored, "");
-   modified = true;
-   }
-
-if(filter->classRxExcludes)
-   {
-   bson_buffer *excludeClassBuffer = bson_append_start_object(queryBuffer, cfr_class_keys);
-   bson_buffer *excludeClassArray = bson_append_start_array(excludeClassBuffer, "$nin");
-
-   for (Rlist *rp = filter->classRxExcludes; rp != NULL; rp = rp->next)
-      {
-      AnchorRegex(rp->item, classRxAnchored, sizeof(classRxAnchored));
-      bson_append_regex(excludeClassArray, cfr_class_keys, classRxAnchored, "");
-      }
-   
-   bson_append_finish_object(excludeClassArray);
-   bson_append_finish_object(excludeClassBuffer);
-
-   modified = true;
-   }
+modified |= BsonAppendIncludeList(queryBuffer, cfr_class_keys, filter->classRxIncludes);
+modified |= BsonAppendExcludeList(queryBuffer, cfr_class_keys, filter->classRxExcludes);
 
 return modified;
 }
