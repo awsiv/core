@@ -14,6 +14,7 @@ static const char* BsonGetArrayValue(const bson* b, const char* key);
 /*****************************************************************************/
 
 Item *BsonGetStringArrayAsItemList(const bson* b, const char* key)
+// TODO: Deprecate in favour of BsonStringArrayAsRlist()
 {
  const char *array = BsonGetArrayValue(b, key);
 
@@ -30,6 +31,39 @@ Item *BsonGetStringArrayAsItemList(const bson* b, const char* key)
  while (bson_iterator_next(&it))
     {
     PrependItem(&values, bson_iterator_string(&it), NULL);
+    }
+
+ return values;
+}
+
+/*****************************************************************************/
+
+Rlist *BsonStringArrayAsRlist(const bson* b, const char* key)
+{
+ const char *array = BsonGetArrayValue(b, key);
+
+ if(!array)
+    {
+    return NULL;
+    }
+ 
+ bson_iterator it;
+ bson_iterator_init(&it, array);
+
+ Rlist *values = NULL;
+ 
+ while (bson_iterator_next(&it))
+    {
+    if(bson_iterator_type(&it) == bson_string)
+       {
+       // NOTE: preserve ordering (don't prepend)
+       AppendRScalar(&values, (char *)bson_iterator_string(&it), CF_SCALAR);
+       }
+    else
+       {
+       CfOut(cf_error, "BsonStringArrayAsRlist: a value in array \"%s\" is not a string, but type=%d",
+             key, bson_iterator_type(&it));
+       }
     }
 
  return values;
