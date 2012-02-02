@@ -869,19 +869,19 @@ PHP_FUNCTION(cfpr_list_bodies);
  * \param handle
  * \param useRegularExpressions
  */
-PHP_FUNCTION(cfpr_policy_finder_by_handle);
+PHP_FUNCTION(cfpr_promise_list_by_handle);
 
 /*! \brief List handles for policy findler by bundle
  * \param bundle
  * \param useRegularExpressions
  */
-PHP_FUNCTION(cfpr_policy_finder_by_bundle);
+PHP_FUNCTION(cfpr_promise_list_by_bundle);
 
 /*! \brief List handles for policy findler promiser
  * \param promiser
  * \param useRegularExpressions
  */
-PHP_FUNCTION(cfpr_policy_finder_by_promiser);
+PHP_FUNCTION(cfpr_promise_list_by_promiser);
 
 /*! \brief Delete a host from the database
  * \param hostKey
