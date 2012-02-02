@@ -305,9 +305,7 @@ zend_module_entry cfmod_module_entry =
     STANDARD_MODULE_PROPERTIES
 };
 
-#ifdef COMPILE_DL_CFMOD
 ZEND_GET_MODULE(cfmod)
-#endif
 
 extern int AM_PHP_MODULE;  // TODO: Defined in cf.nova.web.api.h, but apparently need to redifine here??
 

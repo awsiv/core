@@ -18,7 +18,7 @@ cfmod_la_SOURCES = cfmod.c \
 	private-api-constellation.c private-api-constellation.h \
 	public-api.c public-api.h
 cfmod_la_LDFLAGS = -module -avoid-version -R$(workdir)/lib
-cfmod_la_CFLAGS = -DCOMPILE_DL_CFMOD=1 $(AM_CFLAGS)
+cfmod_la_CFLAGS = $(AM_CFLAGS)
 cfmod_la_LIBADD = $(abs_top_builddir)/src/libpromises.la
 
 install-data-local:
