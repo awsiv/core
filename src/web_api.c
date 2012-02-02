@@ -5411,8 +5411,6 @@ int Nova2PHP_list_handles_policy_finder(PromiseFilter *promiseFilter ,char *retu
 
   hq = CFDB_QueryPromise2(&dbconn, promiseFilter);
 
-  //hq = CFDB_QueryPolicyFinderData(&dbconn,handle,promiser,bundle,escRegex);
-
   if(hq)
     {
     StartJoin(returnval, "[", bufsize);

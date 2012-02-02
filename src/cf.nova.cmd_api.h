@@ -103,7 +103,6 @@ long Nova2Txt_count_green_hosts(void);
 void Nova2Txt_show_col_hosts(char *colour,int n,PageInfo *page,char *buffer,int bufsize);
 int Nova2Txt_list_promise_handles(char *promiser,char *ptype,char *bundle,char *btype,int regex,char *returnval,int bufsize);
 int Nova2Txt_list_promise_handles_with_comments(char *bundle,char *btype,char *returnval,int bufsize);
-int Nova2Txt_list_handles_policy_finder(char *handle,char *promiser,char *bundle,int regex,char *returnval,int bufsize);
 
 char *Nova_HostProfile(char *key);
 void Nova2Txt_show_all_hosts(char *policy,int n,char *buffer,int bufsize);
