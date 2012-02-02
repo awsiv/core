@@ -5393,7 +5393,7 @@ int Nova2PHP_community_version(char *buf, int bufsize)
 
 /*****************************************************************************/
 
-int Nova2PHP_list_handles_policy_finder(char *handle,char *promiser,char *bundle,int escRegex,char *returnval,int bufsize)
+int Nova2PHP_list_handles_policy_finder(PromiseFilter *promiseFilter ,char *returnval, int bufsize)
 
 { mongo_connection dbconn;
   char work[CF_MAXVARSIZE] = {0};
@@ -5409,8 +5409,9 @@ int Nova2PHP_list_handles_policy_finder(char *handle,char *promiser,char *bundle
     return false;
     }
 
-  hq = CFDB_QueryPolicyFinderData(&dbconn,handle,promiser,bundle,escRegex);
-  returnval[0] = '\0';
+  hq = CFDB_QueryPromise2(&dbconn, promiseFilter);
+
+  //hq = CFDB_QueryPolicyFinderData(&dbconn,handle,promiser,bundle,escRegex);
 
   if(hq)
     {

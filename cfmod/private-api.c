@@ -3146,8 +3146,18 @@ PHP_FUNCTION(cfpr_policy_finder_by_handle)
     RETURN_NULL();
     }
 
+ char *fhandle = (h_len == 0) ? NULL : handle;
+
  buffer[0] = '\0';
- Nova2PHP_list_handles_policy_finder(handle,"","",escRegex,buffer,sizeof(buffer));
+
+ // FIXME: we are discarding escRegex
+
+ PromiseFilter *filter = NewPromiseFilter();
+ PromiseFilterAddPromiseBody(filter, fhandle, NULL);
+ 
+ Nova2PHP_list_handles_policy_finder(filter,buffer,sizeof(buffer));
+
+ DeletePromiseFilter(filter);
 
  RETURN_STRING(buffer,1);
 }
@@ -3166,8 +3176,18 @@ PHP_FUNCTION(cfpr_policy_finder_by_promiser)
     RETURN_NULL();
     }
 
+ // FIXME: we are discarding escRegex
+ 
+ char *fpromiser = (pr_len == 0) ? NULL : promiser;
+
  buffer[0] = '\0';
- Nova2PHP_list_handles_policy_finder("",promiser,"",escRegex,buffer,sizeof(buffer));
+
+ PromiseFilter *filter = NewPromiseFilter();
+ PromiseFilterAddPromiseBody(filter, NULL, fpromiser);
+
+ Nova2PHP_list_handles_policy_finder(filter, buffer, sizeof(buffer));
+
+ DeletePromiseFilter(filter);
 
  RETURN_STRING(buffer,1);
 }
@@ -3177,18 +3197,28 @@ PHP_FUNCTION(cfpr_policy_finder_by_promiser)
 PHP_FUNCTION(cfpr_policy_finder_by_bundle)
 
 { char *bundle;
- int r_len;
+ int b_len;
  char buffer[CF_WEBBUFFER];
  zend_bool escRegex;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sb",&bundle,&r_len,&escRegex) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sb",&bundle,&b_len,&escRegex) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
+ // FIXME: we are discarding escRegex
+
+ char *fbundle = (b_len == 0) ? NULL : bundle;
+ 
  buffer[0] = '\0';
- Nova2PHP_list_handles_policy_finder("","",bundle,escRegex,buffer,sizeof(buffer));
+
+ PromiseFilter *filter = NewPromiseFilter();
+ PromiseFilterAddBundles(filter, fbundle, NULL);
+ 
+ Nova2PHP_list_handles_policy_finder(filter, buffer, sizeof(buffer));
+
+ DeletePromiseFilter(filter);
 
  RETURN_STRING(buffer,1);
 }

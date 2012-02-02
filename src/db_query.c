@@ -4541,7 +4541,7 @@ HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle, char 
 
 /*****************************************************************************/
 
-HubQuery *QueryPromise2(mongo_connection *conn, PromiseFilter *filter)
+HubQuery *CFDB_QueryPromise2(mongo_connection *conn, PromiseFilter *filter)
 /*
  * Using PromiseFilter, can over time replace the other promise query functions.
  */
