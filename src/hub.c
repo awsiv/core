@@ -30,6 +30,7 @@ static void StartHub(void);
 static void Nova_CollectReports(Attributes a, Promise *pp);
 static int ScheduleRun(void);
 static void Nova_RemoveExcludedHosts(Item **list, Item *hosts_exclude);
+static void KeepPromises(GenericAgentConfig config);
 
 static void Nova_Scan(Item *masterlist, Attributes a, Promise *pp);
 static pid_t Nova_ScanList(Item *list,Attributes a,Promise *pp);
