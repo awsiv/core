@@ -180,7 +180,7 @@ int Nova2PHP_promise_list(PromiseFilter *promiseFilter ,char *returnval, int buf
 
 char *Nova_HostProfile(char *key);
 void Nova2PHP_show_all_hosts(char *policy,int n,char *buffer,int bufsize);
-int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize);
+int Nova2PHP_summarize_promise(PromiseFilter *filter, char *returnval,int bufsize);
 
 char *Nova2PHP_GetPromiseComment(char *handle);
 char *Nova2PHP_GetPromiseBundle(char *handle);

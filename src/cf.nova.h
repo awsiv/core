@@ -466,7 +466,7 @@ typedef struct
    {
    char *bundleName;
    char *bundleType;
-   char *bundleArgs;  // comma separated
+   Rlist *bundleArgs;
    char *promiseType;
    char *promiser;
    char *promisee;
@@ -475,7 +475,7 @@ typedef struct
    char *comment;
    char *file;
    int lineNo;
-   char **constraints;
+   Rlist *constraints;
    double popularity;  // optional
    } HubPromise;
 
@@ -731,7 +731,6 @@ int CFDB_QueryWeekView(mongo_connection *conn,char *keyhash,enum observables obs
 bool CFDB_QueryHistogram(mongo_connection *conn,char *keyhash,char *monId,double *histo);
 int CFDB_QueryLastUpdate(mongo_connection *conn,char *db, char *dbkey,char *keyhash,time_t *date);
 
-HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle, char *file, int lineNo);
 int CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, char *attrVal, int attrValSz);
 Item *CFDB_QueryExpandedPromiseAttr(mongo_connection *conn, char *handle, char *attrKey);
 HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char *promiserType, char *bType, char *bName, int regex, bool filter);
@@ -1012,7 +1011,7 @@ HubFileDiff *NewHubFileDiff(HubHost *hh,char *file,char *diff,time_t t);
 void DeleteHubFileDiff(HubFileDiff *hp);
 HubValue *NewHubValue(HubHost *hh,char *day,double kept,double repaired,double notkept,char *noteid, char *handle);
 void DeleteHubValue(HubValue *hp);
-HubPromise *NewHubPromise(char *bn,char *bt,char *ba,char *pt, char *pr, char *pe, char *cl, char *ha, char *co, char *fn, int lno, char **cons);
+HubPromise *NewHubPromise(char *bn,char *bt,Rlist *ba,char *pt, char *pr, char *pe, char *cl, char *ha, char *co, char *fn, int lno, Rlist *cons);
 void DeleteHubPromise(HubPromise *hp);
 HubBody *NewHubBody(char *bodyName,char *bodyType,char *bodyArgs);
 void DeleteHubBody(HubBody *hb);

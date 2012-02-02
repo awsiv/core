@@ -1623,22 +1623,32 @@ PHP_FUNCTION(cfpr_report_filediffs_longterm)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_summarize_promise)
-
-//$ret = cfpr_summarize_promise($handle);
-
 {
- char *handle;
- int handleLen;
+ char *userName, *handle;
+ int user_len, handle_len;
  char buffer[CF_WEBBUFFER];
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&handle,&handleLen) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
+                           &userName, &user_len,
+                           &handle, &handle_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
+ ARGUMENT_CHECK_CONTENTS(user_len && handle_len);
+ 
+ 
+ HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
+
+ PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
+ PromiseFilterAddPromiseBody(filter, handle, NULL);
+
  buffer[0]='\0';
- Nova2PHP_summarize_promise(handle, buffer, sizeof(buffer));
+ Nova2PHP_summarize_promise(filter, buffer, sizeof(buffer));
+
+ DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 
  RETURN_STRING(buffer,1);
 }

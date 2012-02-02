@@ -4046,35 +4046,31 @@ return errid;
 
 /*****************************************************************************/
 
-int Nova2PHP_summarize_promise(char *handle, char *returnval,int bufsize)
+int Nova2PHP_summarize_promise(PromiseFilter *filter, char *returnval,int bufsize)
 
-{ mongo_connection dbconn;
- HubPromise *hp;
+{
+ mongo_connection dbconn;
  char promiseeText[CF_MAXVARSIZE];
  char commentText[CF_MAXVARSIZE];
  char work[CF_BUFSIZE], escaped[CF_BUFSIZE];
- int i;
-  
-if (strcmp(handle,"internal_promise") == 0)
-    {
-    snprintf(returnval, bufsize, "This is a promise made internally by Cfengine, and is thus not part of your policy.");
-    return true;
-    }
-
 
  if (!CFDB_Open(&dbconn))
     {
     return false;
     }
+ 
+ HubQuery *hqPromise = CFDB_QueryPromise2(&dbconn, filter);
 
- hp = CFDB_QueryPromise(&dbconn, handle, NULL, 0);
-
- if (!hp)
+ if (CountRecords(hqPromise) == 0)
     {
-    snprintf(returnval, bufsize, " Promise '%s' was not found in the database.", handle);
+    snprintf(returnval, bufsize, " Promise was not found in the database.");
+    DeleteHubQuery(hqPromise, DeleteHubPromise);
     CFDB_Close(&dbconn);
     return false;
     }
+ 
+ HubPromise *hp = HubQueryGetFirstRecord(hqPromise);
+
 
  returnval[0] = '\0';
 
@@ -4126,12 +4122,13 @@ if (strcmp(handle,"internal_promise") == 0)
     {
     snprintf(work,sizeof(work),"\"body\":[");
     Join(returnval,work,bufsize);
-    for(i = 0; hp->constraints[i] != NULL; i++)
+    
+    for(Rlist *rp = hp->constraints; rp != NULL; rp = rp->next)
        {
        char lval[CF_MAXVARSIZE],rval[CF_MAXVARSIZE],args[CF_MAXVARSIZE];
 
        args[0] = '\0';
-       sscanf(hp->constraints[i],"%255s => %1023[^(,;]%[^\n]",lval,rval,args);
+       sscanf(ScalarValue(rp),"%255s => %1023[^(,;]%[^\n]",lval,rval,args);
 
        if (strcmp(lval,"usebundle") == 0)
           {
@@ -4145,20 +4142,15 @@ if (strcmp(handle,"internal_promise") == 0)
        Join(returnval,work,bufsize);   
        }
     
-    if (i == 0)
-       {
-       Join(returnval,"\"body content is implicit, no futher details\"",bufsize);
-       }
-    
     ReplaceTrailingChar(returnval, ',', '\0');
     strcat(returnval,"]");
     }
  
  ReplaceTrailingChar(returnval, ',', '\0');
  strcat(returnval,"}");
-    
- DeleteHubPromise(hp);
 
+ DeleteHubQuery(hqPromise, DeleteHubPromise);
+ 
  if (!CFDB_Close(&dbconn))
     {
     CfOut(cf_verbose,"", "!! Could not close connection to report database");

@@ -478,7 +478,7 @@ HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,cha
 
     if(strcmp(type, cfr_software) == 0)
        {
-       lastSeen = (time_t)BsonGetInt(&(cursor->current), cfr_software_t);
+       lastSeen = (time_t)BsonIntGet(&(cursor->current), cfr_software_t);
        }
    
     while (bson_iterator_next(&it1))
@@ -3936,222 +3936,6 @@ bool CFDB_QueryHistogram(mongo_connection *conn,char *keyhash,char *monId,double
 /* Promises collections                                                      */
 /*****************************************************************************/
 
-HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle, char *file, int lineNo)
-/*
- * Returns all attribs of one promise by its handle XOR (file,lineno).
- */
-{ bson_buffer bb;
- bson query,result;
- mongo_cursor *cursor,*cursor2;
- bson_iterator it1,it2;
- char bn[CF_MAXVARSIZE] = {0}, bt[CF_MAXVARSIZE] = {0},ba[CF_MAXVARSIZE] = {0};
- char pt[CF_MAXVARSIZE] = {0}, pr[CF_MAXVARSIZE] = {0}, pe[CF_MAXVARSIZE] = {0};
- char cl[CF_MAXVARSIZE] = {0}, ha[CF_MAXVARSIZE] = {0}, co[CF_MAXVARSIZE] = {0};
- char fn[CF_MAXVARSIZE] = {0}, **cons = {0};
- char fileExp[CF_MAXVARSIZE] = {0};
- int lineExp = 0;
- int lno = -1;
- int i,constCount;
- int fileLineSearch = false;
-
- if(EMPTY(file))  // use handle by default, (file,lineNo) if handle is not found
-    {
-    fileLineSearch = false;
-    }
- else
-    {
-    fileLineSearch = true;
-    }  
-
-
-/* BEGIN query document */
-
- bson_buffer_init(&bb);
-
- if (fileLineSearch)
-    {
-    bson_append_string(&bb,cfp_file,file);
-    bson_append_int(&bb,cfp_lineno,lineNo);
-    }
- else
-    {
-    bson_append_string(&bb,cfp_handle,handle);
-    }
-
- bson_from_buffer(&query,&bb);
-
-
-/* BEGIN SEARCH */
- cursor = mongo_find(conn,MONGO_PROMISES_UNEXP,&query,NULL,0,0,CF_MONGO_SLAVE_OK);
- bson_destroy(&query);
-
- if (mongo_cursor_next(cursor))
-    {
-    bson_iterator_init(&it1,cursor->current.data);
-   
-    while (bson_iterator_next(&it1))
-       {
-       if(strcmp(bson_iterator_key(&it1), cfp_bundlename) == 0)
-          {
-          snprintf(bn, sizeof(bn), "%s", bson_iterator_string(&it1));
-          }
-       else if(strcmp(bson_iterator_key(&it1), cfp_bundletype) == 0)
-          {
-          snprintf(bt, sizeof(bt), "%s", bson_iterator_string(&it1));
-          }
-       else if(strcmp(bson_iterator_key(&it1), cfp_bundleargs) == 0)
-          {
-          bson_iterator_init(&it2,bson_iterator_value(&it1));         
-          memset(ba,0,sizeof(ba));         
-          bson_iterator_init(&it2,bson_iterator_value(&it1));
-         
-          while(bson_iterator_next(&it2))
-             {
-             if(strlen(ba) + strlen(bson_iterator_string(&it2)) < sizeof(ba))
-                {
-                strcat(ba,bson_iterator_string(&it2));
-                strcat(ba, ",");
-                }
-             else
-                {
-                break;
-                }
-             }
-         
-          if(ba[0] != '\0')
-             {
-             ba[strlen(ba)-1] = '\0';  // remove last comma
-             }
-         
-          }
-       else if(strcmp(bson_iterator_key(&it1), cfp_promisetype) == 0)
-          {
-          snprintf(pt, sizeof(pt), "%s", bson_iterator_string(&it1));
-          }
-       else if(strcmp(bson_iterator_key(&it1), cfp_promiser) == 0)
-          {
-          snprintf(pr, sizeof(pr), "%s", bson_iterator_string(&it1));
-          }
-       else if(strcmp(bson_iterator_key(&it1), cfp_promisee) == 0)
-          {
-          snprintf(pe, sizeof(pe), "%s", bson_iterator_string(&it1));
-          }
-       else if(strcmp(bson_iterator_key(&it1), cfp_classcontext) == 0)
-          {
-          snprintf(cl, sizeof(cl), "%s", bson_iterator_string(&it1));
-          }
-       else if(strcmp(bson_iterator_key(&it1), cfp_comment) == 0)
-          {
-          snprintf(co, sizeof(co), "%s", bson_iterator_string(&it1));
-          }
-       else if(strcmp(bson_iterator_key(&it1), cfp_handle) == 0)
-          {
-          snprintf(ha, sizeof(ha), "%s", bson_iterator_string(&it1));
-          }
-       else if(strcmp(bson_iterator_key(&it1), cfp_file) == 0)
-          {
-          snprintf(fn, sizeof(fn), "%s", bson_iterator_string(&it1));
-          }
-       else if(strcmp(bson_iterator_key(&it1), cfp_lineno) == 0)
-          {
-          lno = bson_iterator_int(&it1);
-          }
-       else if(strcmp(bson_iterator_key(&it1), cfp_constraints) == 0)
-          {
-          bson_iterator_init(&it2,bson_iterator_value(&it1));
-         
-          // count constraints
-          constCount = 0;
-         
-          while(bson_iterator_next(&it2))
-             {
-             constCount++;
-             }
-         
-          if(constCount == 0)
-             {
-             cons = NULL;
-             continue;
-             }
-         
-          // save constraints (freed in DeleteHubPromise)
-          bson_iterator_init(&it2,bson_iterator_value(&it1));
-          cons = xmalloc(sizeof(char *) * (constCount + 1));
-         
-          i = 0;  // race-safe check
-         
-          while(bson_iterator_next(&it2) && (i < constCount))
-             {
-             cons[i] = xstrdup(bson_iterator_string(&it2));
-             i++;
-             }
-         
-          cons[i] = NULL;           
-          }
-       }
-    }
- else if(!fileLineSearch)  // if not found in unexpanded promise DB, try expanded
-    {
-    mongo_cursor_destroy(cursor);
-   
-    /* query */
-    bson_buffer_init(&bb);
-    bson_append_string(&bb,cfp_handle_exp,handle);
-    bson_from_buffer(&query,&bb);   
-   
-    /* result */
-    bson_buffer_init(&bb);
-    bson_append_int(&bb,cfp_file,1);
-    bson_append_int(&bb,cfp_lineno,1);
-    bson_from_buffer(&result,&bb);   
-   
-    cursor2 = mongo_find(conn,MONGO_PROMISES_EXP,&query,&result,0,0,CF_MONGO_SLAVE_OK);
-   
-    bson_destroy(&query);
-    bson_destroy(&result);
-   
-    if (mongo_cursor_next(cursor2))
-       {
-       bson_iterator_init(&it1,cursor2->current.data);
-      
-       while (bson_iterator_next(&it1))
-          {
-          if(strcmp(bson_iterator_key(&it1), cfp_file) == 0)
-             {
-             snprintf(fileExp, sizeof(fileExp), "%s", bson_iterator_string(&it1));
-             }
-          else if(strcmp(bson_iterator_key(&it1), cfp_lineno) == 0)
-             {
-             lineExp = bson_iterator_int(&it1);
-             }
-          }
-       }
-   
-    mongo_cursor_destroy(cursor2);
-   
-    if(*fileExp != '\0' && lineExp != 0)
-       {
-       return CFDB_QueryPromise(conn,NULL,fileExp,lineExp);
-       }
-    else  // not found in expanded promise DB either
-       {
-       CfDebug("Promise handle \"%s\" not found in expanded promise DB", handle);
-       return NULL;
-       }
-   
-    }
- else  // not found in unexpanded DB by file and line either
-    {
-    mongo_cursor_destroy(cursor);
-    return NULL;
-    }
-
- mongo_cursor_destroy(cursor);
- return NewHubPromise(bn,bt,ba,pt,pr,pe,cl,ha,co,fn,lno,cons);
-}
-
-/*****************************************************************************/
-
 int CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, char *attrVal, int attrValSz)
 /*
  * For the promise with the given handle, returns the given field
@@ -4432,6 +4216,9 @@ HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char 
 HubQuery *CFDB_QueryPromise2(mongo_connection *conn, PromiseFilter *filter)
 /*
  * Using PromiseFilter, can over time replace the other promise query functions.
+ * FIXME: If not found by handle: may want to do second lookup in expanded promise db
+ *        using file,lineno as keys (in case the handle contains a variable).
+ *        - see previous CFDB_QueryPromise() (VCS history)
  */
 {
  bson_buffer bb;
@@ -4447,7 +4234,14 @@ HubQuery *CFDB_QueryPromise2(mongo_connection *conn, PromiseFilter *filter)
  bson_append_int(&bb, cfp_bundletype, 1);
  bson_append_int(&bb, cfp_handle, 1);
  bson_append_int(&bb, cfp_promiser, 1);
+ bson_append_int(&bb, cfp_promisee, 1);
  bson_append_int(&bb, cfp_promisetype, 1);
+ bson_append_int(&bb, cfp_comment, 1);
+ bson_append_int(&bb, cfp_classcontext, 1);
+ bson_append_int(&bb, cfp_file, 1);
+ bson_append_int(&bb, cfp_lineno, 1);
+ bson_append_int(&bb, cfp_bundleargs, 1);
+ bson_append_int(&bb, cfp_constraints, 1);
  bson_from_buffer(&fields, &bb);
 
  mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
@@ -4460,18 +4254,29 @@ HubQuery *CFDB_QueryPromise2(mongo_connection *conn, PromiseFilter *filter)
  while(mongo_cursor_next(cursor))
     {
     char bundleName[CF_MAXVARSIZE], bundleType[CF_MAXVARSIZE];
-    char promiseHandle[CF_MAXVARSIZE], promiser[CF_MAXVARSIZE], promiseType[CF_MAXVARSIZE];
+    char promiseHandle[CF_MAXVARSIZE], promiser[CF_MAXVARSIZE], promisee[CF_MAXVARSIZE];
+    char promiseType[CF_MAXVARSIZE], comment[CF_MAXVARSIZE], classContext[CF_MAXVARSIZE];
+    char file[CF_MAXVARSIZE];
     
     BsonStringWrite(bundleName, sizeof(bundleName), &(cursor->current), cfp_bundlename);
     BsonStringWrite(bundleType, sizeof(bundleType), &(cursor->current), cfp_bundletype);
     BsonStringWrite(promiseHandle, sizeof(promiseHandle), &(cursor->current), cfp_handle);
     BsonStringWrite(promiser, sizeof(promiser), &(cursor->current), cfp_promiser);
+    BsonStringWrite(promisee, sizeof(promisee), &(cursor->current), cfp_promisee);
     BsonStringWrite(promiseType, sizeof(promiseType), &(cursor->current), cfp_promisetype);
-    
-    PrependRlistAlien(&recordList, NewHubPromise(bundleName, bundleType, NULL,
-                                                 promiseType, promiser, NULL,
-                                                 NULL, promiseHandle, NULL,
-                                                 NULL, 0, NULL));
+    BsonStringWrite(comment, sizeof(comment), &(cursor->current), cfp_comment);
+    BsonStringWrite(classContext, sizeof(classContext), &(cursor->current), cfp_classcontext);
+    BsonStringWrite(file, sizeof(file), &(cursor->current), cfp_file);
+
+    int lineNumber = BsonIntGet(&(cursor->current), cfp_lineno);
+
+    Rlist *bundleArgs = BsonStringArrayAsRlist(&(cursor->current), cfp_bundleargs);
+    Rlist *constraints = BsonStringArrayAsRlist(&(cursor->current), cfp_constraints);
+
+    PrependRlistAlien(&recordList, NewHubPromise(bundleName, bundleType, bundleArgs,
+                                                 promiseType, promiser, promisee,
+                                                 classContext, promiseHandle, comment,
+                                                 file, lineNumber, constraints));
     }
  
  mongo_cursor_destroy(cursor);
