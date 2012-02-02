@@ -2592,7 +2592,7 @@ printf("Unknown report\n");
 
 void Nova_ImportReports(const char *input_file)
 {
- #ifdef HAVE_LIBMONGOC
+#ifdef HAVE_LIBMONGOC
  if (IsDefinedClass("am_policy_hub"))
     {
     mongo_connection dbconn;

@@ -227,7 +227,7 @@ static function_entry cfmod_functions[] =
     /*
      * Constellation
      */
-#ifdef HAVE_CONSTELLATION    
+#ifdef HAVE_CONSTELLATION
     
     PHP_FE(cfcon_compliance_summary_graph,NULL)
     PHP_FE(cfcon_compliance_virtualbundle_graph,NULL)
