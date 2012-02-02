@@ -15,6 +15,7 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+#include "assert.h"
 
 static void DateStrToTime(const char *inStr, time_t *t);
 
@@ -1126,8 +1127,8 @@ PromiseFilter *NewPromiseFilter(void)
 
 void PromiseFilterAddPromiseBody(PromiseFilter *filter, const char *handleRxInclude, const char *promiserRxInclude)
 {
- //assert(!filter->handleRxInclude && "PromiseFilterAddPromiseBody: handle is already set");  FIXME - won't link
- //assert(!filter->promiserRxInclude && "PromiseFilterAddPromiseBody: promiser is already set"); FIXME - won't link
+ assert(!filter->handleRxInclude && "PromiseFilterAddPromiseBody: handle is already set");
+ assert(!filter->promiserRxInclude && "PromiseFilterAddPromiseBody: promiser is already set");
  
  filter->handleRxInclude = SafeStringDuplicate(handleRxInclude);
  filter->promiserRxInclude = SafeStringDuplicate(promiserRxInclude);
