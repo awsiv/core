@@ -740,6 +740,7 @@ Item *CFDB_QueryExpandedPromiseAttr(mongo_connection *conn, char *handle, char *
 HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char *promiserType, char *bType, char *bName, int regex, bool filter);
 HubQuery *CFDB_QueryHandlesForBundlesWithComments(mongo_connection *conn, char *bType, char *bName);
 HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle,char *promiser,char *bName, int escRegex);
+HubQuery *QueryPromise2(mongo_connection *conn, PromiseFilter *filter);
 Item *CFDB_QueryBundles(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);
 Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char *bName);
 Item *CFDB_QueryBundleArgs(mongo_connection *conn, char *bType, char *bName);

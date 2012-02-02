@@ -4541,6 +4541,58 @@ HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle, char 
 
 /*****************************************************************************/
 
+HubQuery *QueryPromise2(mongo_connection *conn, PromiseFilter *filter)
+/*
+ * Using PromiseFilter, can over time replace the other promise query functions.
+ */
+{
+ bson_buffer bb;
+
+ bson query;
+ bson_buffer_init(&bb);
+ BsonAppendPromiseFilter(&bb, filter);
+ bson_from_buffer(&query, &bb);
+
+ bson fields;
+ bson_buffer_init(&bb);
+ bson_append_int(&bb, cfp_bundlename, 1);
+ bson_append_int(&bb, cfp_bundletype, 1);
+ bson_append_int(&bb, cfp_handle, 1);
+ bson_append_int(&bb, cfp_promiser, 1);
+ bson_append_int(&bb, cfp_promisetype, 1);
+ bson_from_buffer(&fields, &bb);
+
+ mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+ 
+ bson_destroy(&query);
+ bson_destroy(&fields);
+
+ Rlist *recordList = NULL;
+ 
+ while(mongo_cursor_next(cursor))
+    {
+    char bundleName[CF_MAXVARSIZE], bundleType[CF_MAXVARSIZE];
+    char promiseHandle[CF_MAXVARSIZE], promiser[CF_MAXVARSIZE], promiseType[CF_MAXVARSIZE];
+    
+    BsonStringWrite(bundleName, sizeof(bundleName), &(cursor->current), cfp_bundlename);
+    BsonStringWrite(bundleType, sizeof(bundleType), &(cursor->current), cfp_bundletype);
+    BsonStringWrite(promiseHandle, sizeof(promiseHandle), &(cursor->current), cfp_handle);
+    BsonStringWrite(promiser, sizeof(promiser), &(cursor->current), cfp_promiser);
+    BsonStringWrite(promiseType, sizeof(promiseType), &(cursor->current), cfp_promisetype);
+    
+    PrependRlistAlien(&recordList, NewHubPromise(bundleName, bundleType, NULL,
+                                                 promiseType, promiser, NULL,
+                                                 NULL, promiseHandle, NULL,
+                                                 NULL, 0, NULL));
+    }
+ 
+ mongo_cursor_destroy(cursor);
+ 
+ return NewHubQuery(NULL, recordList);
+}
+
+/*****************************************************************************/
+
 Item *CFDB_QueryBundles(mongo_connection *conn,char *bTypeRegex,char *bNameRegex)
 /*
  * Returns bundles "type name" matching the given regex.
