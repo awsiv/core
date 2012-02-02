@@ -9,26 +9,26 @@
 #include "cf.nova.h"
 
 /*******************************************************************/
-/* GLOBAL VARIABLES                                                */
+
+static const int BIG_UPDATES = 6;
+
 /*******************************************************************/
 
-int BIG_UPDATES = 6;
+static bool NO_FORK = false;
+static bool CONTINUOUS = false;
 
-int  NO_FORK = false;
-int  CONTINUOUS = false;
+static bool LOGGING = false;
+static Item *SCHEDULE = NULL;
+static Item *FEDERATION = NULL;
+static Item *EXCLUDE_HOSTS = NULL;
 
-static int LOGGING = false;
-Item *SCHEDULE = NULL;
-Item *FEDERATION = NULL;
-Item *EXCLUDE_HOSTS = NULL;
+static bool CFH_ZENOSS = false;
 
-int CFH_ZENOSS = false;
+/*******************************************************************/
 
-/* Prototypes */
-
-void StartHub(void);
-void Nova_CollectReports(Attributes a, Promise *pp);
-int ScheduleRun(void);
+static void StartHub(void);
+static void Nova_CollectReports(Attributes a, Promise *pp);
+static int ScheduleRun(void);
 static void Nova_RemoveExcludedHosts(Item **list, Item *hosts_exclude);
 
 static void Nova_Scan(Item *masterlist, Attributes a, Promise *pp);
@@ -47,12 +47,12 @@ static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer,Attr
 /* Command line options                                            */
 /*******************************************************************/
 
-const char *ID = "The hub is a scheduler and aggregator for the CFDB knowledge\n"
-                 "repository. It automatically schedules updates from clients\n"
-                 "that have registered by previous connection.";
+static const char *ID = "The hub is a scheduler and aggregator for the CFDB knowledge\n"
+   "repository. It automatically schedules updates from clients\n"
+   "that have registered by previous connection.";
 
 
-const struct option OPTIONS[16] =
+static const struct option OPTIONS[16] =
       {
       { "help",no_argument,0,'h' },
       { "debug",optional_argument,0,'d' },
@@ -70,7 +70,7 @@ const struct option OPTIONS[16] =
       { NULL,0,0,'\0' }
       };
 
-const char *HINTS[16] =
+static const char *HINTS[16] =
       {
       "Print the help message",
       "Set debugging level 0,1,2,3",
@@ -442,7 +442,7 @@ printf(" -> Redistributed host updates with <= %d per slot, each ~%d secs per sl
 /* Level                                                                     */
 /*****************************************************************************/
 
-int ScheduleRun()
+static int ScheduleRun()
 {
 Item *ip;
 
@@ -594,7 +594,7 @@ DeleteItemList(*listp);
 
 /***************************************************************************/
 
-void StartHub(void)
+static void StartHub(void)
 { int time_to_run = false;
   time_t now = time(NULL);
   Promise *pp = NewPromise("hub_cfengine","the aggregator");
@@ -680,7 +680,7 @@ YieldCurrentLock(thislock); // Never get here
 /* level                                                            */
 /********************************************************************/
 
-void Nova_CollectReports(Attributes a, Promise *pp)
+static void Nova_CollectReports(Attributes a, Promise *pp)
 {
 Item *masterhostlist = Nova_ScanClients();
 
