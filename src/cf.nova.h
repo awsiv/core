@@ -1232,22 +1232,6 @@ void Nova_SignalTwin(void);
 void Nova_SignalOther(void);
 void Nova_ReviveOther(int argc,char **argv);
 
-/* services_win.c */
-
-#ifdef MINGW
-int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, char *argStr,int onlyCheckDeps, int isDependency, Attributes a,Promise *pp, int setCfPs);
-int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int argc, char **argv, int onlyCheckDeps, int isDependency, Attributes a,Promise *pp, int setCfPs);
-int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, int unDisable, Attributes a,Promise *pp, int setCfPs);
-int NovaWin_CheckServiceDisable(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, Attributes a,Promise *pp, int setCfPs);
-int NovaWin_ServiceDepsRunning(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int *allDepsRunning);
-int NovaWin_StopDependentServices(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps);
-int NovaWin_SetServiceStartTime(SC_HANDLE srvHandle, DWORD setState, int onlyFrom, DWORD fromState, int *changeRes);
-int NovaWin_SetSrvDepsStartTime(SC_HANDLE managerHandle, SC_HANDLE srvHandle, DWORD setState, int onlyFrom, DWORD fromState);
-int NovaWin_ServiceStateWait(SC_HANDLE srvHandle, DWORD state);
-QUERY_SERVICE_CONFIG *NovaWin_AllocServiceConfig(SC_HANDLE srvHandle);
-void NovaWin_AllocSplitServiceArgs(char *argStr, int *argcp, char ***argvp);
-#endif  /* MINGW */
-
 /* sql.c */
 
 int Nova_ValidateSQLTableName(char *table_path,char *db,char *table);

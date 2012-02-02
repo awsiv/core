@@ -11,6 +11,17 @@
 #include "cf.nova.h"
 
 static int CountArgs(const char **args);
+static int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, char *argStr,int onlyCheckDeps, int isDependency, Attributes a,Promise *pp, int setCfPs);
+static int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int argc, char **argv, int onlyCheckDeps, int isDependency, Attributes a,Promise *pp, int setCfPs);
+static int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, int unDisable, Attributes a,Promise *pp, int setCfPs);
+static int NovaWin_CheckServiceDisable(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, Attributes a,Promise *pp, int setCfPs);
+static int NovaWin_ServiceDepsRunning(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int *allDepsRunning);
+static int NovaWin_StopDependentServices(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps);
+static int NovaWin_SetServiceStartTime(SC_HANDLE srvHandle, DWORD setState, int onlyFrom, DWORD fromState, int *changeRes);
+static int NovaWin_SetSrvDepsStartTime(SC_HANDLE managerHandle, SC_HANDLE srvHandle, DWORD setState, int onlyFrom, DWORD fromState);
+static int NovaWin_ServiceStateWait(SC_HANDLE srvHandle, DWORD state);
+static QUERY_SERVICE_CONFIG *NovaWin_AllocServiceConfig(SC_HANDLE srvHandle);
+
 
 // services that can't be opened (Windows Server 2008 - separate for each OS?)
 char *PROTECTED_SERVICES[] = { "Schedule", "SamSs", "RpcSs", 
@@ -79,7 +90,7 @@ void VerifyWindowsService(Attributes a,Promise *pp)
 #define STATUSWAIT_MAXSLEEP 10  // maximum number of times to call Sleep() during waiting
 
 
-int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, char *argStr,int onlyCheckDeps, int isDependency, Attributes a,Promise *pp, int setCfPs)
+static int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, char *argStr,int onlyCheckDeps, int isDependency, Attributes a,Promise *pp, int setCfPs)
 /* cfPS() is never called on failure (i.e. when functions return false), and parameter setCfPs indicates wether cfPS is called on success.  */
 {
  SC_HANDLE managerHandle;
@@ -239,7 +250,7 @@ int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, char *a
 
 /*****************************************************************************/
 
-int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int argc, char **argv, int onlyCheckDeps, int isDependency, Attributes a,Promise *pp, int setCfPs)
+static int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int argc, char **argv, int onlyCheckDeps, int isDependency, Attributes a,Promise *pp, int setCfPs)
 /* Checks that a given service is in started state, or starts it if not. If onlyCheckDeps
  * is true, we don't start the service if there are other not running services depending on it.
  * If onlyCheckDeps is false, all dependent services are started too.
@@ -376,7 +387,7 @@ int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int 
 
 /*****************************************************************************/
 
-int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, int unDisable, Attributes a,Promise *pp, int setCfPs)
+static int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, int unDisable, Attributes a,Promise *pp, int setCfPs)
 /* Checks that a given service is in stopped state, or stops it if not. If onlyCheckDeps
  * is true, we don't stop the service if there are other running services depending on it.
  * If onlyCheckDeps is false, all dependent services are stopped too.
@@ -521,7 +532,7 @@ int NovaWin_CheckServiceStop(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int o
 
 /*****************************************************************************/
 
-int NovaWin_CheckServiceDisable(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, Attributes a,Promise *pp, int setCfPs)
+static int NovaWin_CheckServiceDisable(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps, int isDependency, Attributes a,Promise *pp, int setCfPs)
 /* Checks that a given service is in stopped state and is disabled, or stops and disables it
  * if not. Stopped means not running, and disabled means it can't be started again directly.
  * If onlyCheckDeps is true, we don't do anything if there are other running services
@@ -596,7 +607,7 @@ int NovaWin_CheckServiceDisable(SC_HANDLE managerHandle, SC_HANDLE srvHandle, in
 
 /*****************************************************************************/
 
-int NovaWin_ServiceDepsRunning(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int *allDepsRunning)
+static int NovaWin_ServiceDepsRunning(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int *allDepsRunning)
 /* Checks if all dependencies of the given service is in running or paused state, or
  * pending to any of these. allDepsRunning is set to true if so, false otherwise - if the
  * function succeeds. Returns true on success, false otherwise. */
@@ -682,7 +693,7 @@ int NovaWin_ServiceDepsRunning(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int
 
 /*****************************************************************************/
 
-QUERY_SERVICE_CONFIG *NovaWin_AllocServiceConfig(SC_HANDLE srvHandle)
+static QUERY_SERVICE_CONFIG *NovaWin_AllocServiceConfig(SC_HANDLE srvHandle)
 /* Returns the result of QueryServiceConfig allocated by malloc -
  * should therefore be freed when done using it. Returns NULL on error. */
 {
@@ -723,7 +734,7 @@ QUERY_SERVICE_CONFIG *NovaWin_AllocServiceConfig(SC_HANDLE srvHandle)
 
 /*****************************************************************************/
 
-int NovaWin_StopDependentServices(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps)
+static int NovaWin_StopDependentServices(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int onlyCheckDeps)
 /* Stops all services that depend on the service given in srvHandle. If onlyCheckDeps is true,
  * no services are stopped, and the function returns false if other services depend on the
  * srvHandle service. Returns true on success, false otherwise. */
@@ -811,7 +822,7 @@ int NovaWin_StopDependentServices(SC_HANDLE managerHandle, SC_HANDLE srvHandle, 
 
 /*****************************************************************************/
 
-int NovaWin_SetServiceStartTime(SC_HANDLE srvHandle, DWORD setState, int onlyFrom, DWORD fromState, int *changeRes)
+static int NovaWin_SetServiceStartTime(SC_HANDLE srvHandle, DWORD setState, int onlyFrom, DWORD fromState, int *changeRes)
 /* Sets the startup time of a service to setState. If onlyFrom is true, the state is set
  * only if the current state is fromState. If changeRes is not NULL, the change result is set here -
  * 0 means that setState was already the state, 1 means no change due to onlyFrom restriction, 2 means changed.
@@ -877,7 +888,7 @@ int NovaWin_SetServiceStartTime(SC_HANDLE srvHandle, DWORD setState, int onlyFro
 
 /*****************************************************************************/
 
-int NovaWin_SetSrvDepsStartTime(SC_HANDLE managerHandle, SC_HANDLE srvHandle, DWORD setState, int onlyFrom, DWORD fromState)
+static int NovaWin_SetSrvDepsStartTime(SC_HANDLE managerHandle, SC_HANDLE srvHandle, DWORD setState, int onlyFrom, DWORD fromState)
 {
  QUERY_SERVICE_CONFIG *srvConfig;
  SC_HANDLE depHandle;
@@ -939,7 +950,7 @@ int NovaWin_SetSrvDepsStartTime(SC_HANDLE managerHandle, SC_HANDLE srvHandle, DW
 
 /*****************************************************************************/
 
-int NovaWin_ServiceStateWait(SC_HANDLE srvHandle, DWORD state)
+static int NovaWin_ServiceStateWait(SC_HANDLE srvHandle, DWORD state)
 /* Waits until the state or timeout is reached, returns true on desired state,
    false on timeout or if other state is reached */
 {
