@@ -34,8 +34,6 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#ifdef MINGW
-
 #define DISPHELPER_INTERNAL_BUILD
 #include <win_disphelper.h>
 #include <math.h>
@@ -1294,5 +1292,3 @@ void dhUninitialize(BOOL bUninitializeCOM)
 #endif
 	if (bUninitializeCOM) CoUninitialize();
 }
-
-#endif  /* MINGW */

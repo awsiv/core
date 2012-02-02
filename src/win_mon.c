@@ -19,8 +19,6 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#ifdef MINGW
-
 static int GetCpuTicks(ULARGE_INTEGER *ticksWork, ULARGE_INTEGER *ticksTotal);
 
 // last measured CPU ticks
@@ -96,7 +94,4 @@ static int GetCpuTicks(ULARGE_INTEGER *ticksWork, ULARGE_INTEGER *ticksTotal)
 
  return true;
 }
-
-
-#endif  /* MINGW */
 

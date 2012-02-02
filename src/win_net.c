@@ -16,8 +16,6 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#ifdef MINGW
-
 #define WORKING_BUFFER_SIZE 15000
 #define MAX_ALLOCTRIES 3
 
@@ -323,7 +321,3 @@ int TryConnect(AgentConnection *conn, struct timeval *tvp, struct sockaddr *cinp
 
  return true;
 }
-
-
-
-#endif  /* MINGW */

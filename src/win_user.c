@@ -18,9 +18,6 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#ifdef MINGW
-
-
 /* Finds the security identifier corresponding to a user name 
  * (locally or remotely - use "domain_name\user_name" if a specific domain is desired),
  * and puts a pointer to it in the preallocated sid-variable. If shouldExist is true,
@@ -277,6 +274,3 @@ FnCallResult FnCallGroupExists(FnCall *fp,Rlist *finalargs)
 
  return (FnCallResult) { FNCALL_SUCCESS, { xstrdup(buffer), CF_SCALAR } };
 }
-
-
-#endif  /* MINGW */

@@ -16,7 +16,6 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#ifdef MINGW
 /* ------ BEGIN TEMP DEFINES ------ */
 
 typedef unsigned long uid_t;
@@ -473,5 +472,3 @@ int NovaWin_uname(struct utsname *buf)
  return 0;
 }
 
-
-#endif  /* MINGW */

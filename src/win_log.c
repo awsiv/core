@@ -16,8 +16,6 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#ifdef MINGW
-
 static int CheckRegistryLogKey(void);
 
 static HANDLE logHandle = NULL;
@@ -356,5 +354,3 @@ void LogPromiseResult(char *promiser, char peeType, void *promisee, char status,
   
  ThreadUnlock(cft_output);
 }
-
-#endif  /* MINGW */

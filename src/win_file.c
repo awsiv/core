@@ -16,9 +16,6 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#ifdef MINGW
-
-
 void NovaWin_CreateEmptyFile(char *name)
 {
  HANDLE fileHandle;
@@ -547,5 +544,3 @@ struct dirent *AllocateDirentForFilename(const char *filename)
  strcpy(entry->d_name, filename);
  return entry;
 }
-
-#endif  /* MINGW */

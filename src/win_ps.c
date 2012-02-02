@@ -18,8 +18,6 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#ifdef MINGW
-
 /* defines */
 #define MAXCMDSTR 512  // max length of process commmand line (e.g. "c:\program.exe --param")
 #define TIMESTAMP_WAIT 500  // msecs between checking two process timestamps (for % CPU usage)
@@ -557,7 +555,3 @@ void GetProcessUserName(HANDLE procHandle, int incDomain, char *nameStr, int nam
 
  CloseHandle(token);
 }
-
-
-
-#endif  /* MINGW */

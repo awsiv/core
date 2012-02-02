@@ -18,8 +18,6 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#ifdef MINGW
-
 #include "win_disphelper.h"
 
 #define RUN_QUERY(col,q) (!FAILED(dhGetValue(L"%o", &col, wmiSvc, L".ExecQuery(%S)",  L ## q)))
@@ -300,7 +298,3 @@ int NovaWin_WmiDeInitialize(void)
 
  return true;
 }
-
-#endif  /* MINGW */
-
-

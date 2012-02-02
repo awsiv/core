@@ -25,8 +25,6 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#ifdef MINGW
-
 SERVICE_STATUS serviceStatus;
 SERVICE_STATUS_HANDLE statusHandle;
 
@@ -107,4 +105,3 @@ void NovaWin_ControlHandler(DWORD request)
 
 }
 
-#endif  /* MINGW */

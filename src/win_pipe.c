@@ -16,8 +16,6 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#ifdef MINGW
-
 // links pipe descriptors to process handles
 typedef struct
    {
@@ -383,6 +381,3 @@ static int PopDescriptorPair(FILE *pipe, HANDLE *procHandle)
  ThreadUnlock(cft_count);
  return true;
 }
-
-
-#endif  /* MINGW */

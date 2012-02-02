@@ -65,7 +65,10 @@ libcfnova_la_SOURCES =						\
 	topicmap.c                                              \
 	install.c						\
 	files_lib.c                                             \
-	cmd_api.c						\
+	cmd_api.c
+
+if NT
+libcfnova_la_SOURCES +=                                         \
 	win_api.c						\
         win_disphelper.c                                        \
 	win_file.c						\
@@ -79,6 +82,7 @@ libcfnova_la_SOURCES =						\
 	win_sysinfo.c                                           \
 	win_user.c                                              \
         win_wmi.c
+endif
 
 if MONGO
 libcfnova_la_SOURCES +=						\

@@ -16,8 +16,6 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#ifdef MINGW
-
 // TODO: Implement ? - we only support one signal: SIGKILL (9)
 /* Returns true if SIGKILL was one of the signals, false otherwise */
 
@@ -352,6 +350,3 @@ int NovaWin_SetTokenPrivilege(HANDLE token, char *privilegeName, int enablePriv)
 
  return true;
 }
-
-
-#endif /* MINGW */
