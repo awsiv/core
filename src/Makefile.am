@@ -50,8 +50,6 @@ libcfnova_la_SOURCES =						\
 	processes.c						\
 	pscalar.c						\
 	runagent.c						\
-	services.c						\
-	services_win.c						\
 	environments.c						\
 	reporting.c						\
 	html.c							\
@@ -79,9 +77,13 @@ libcfnova_la_SOURCES +=                                         \
 	win_proc.c						\
 	win_ps.c                                                \
 	win_service_exec.c                                      \
+	win_services.c						\
 	win_sysinfo.c                                           \
 	win_user.c                                              \
         win_wmi.c
+else
+libcfnova_la_SOURCES +=                                         \
+	services.c
 endif
 
 if MONGO

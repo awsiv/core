@@ -10,9 +10,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#ifdef __MINGW32__
 static int CountArgs(const char **args);
-#endif
 
 // services that can't be opened (Windows Server 2008 - separate for each OS?)
 char *PROTECTED_SERVICES[] = { "Schedule", "SamSs", "RpcSs", 
@@ -20,10 +18,8 @@ char *PROTECTED_SERVICES[] = { "Schedule", "SamSs", "RpcSs",
                                "WdiServiceHost", NULL };
 
 
-void NovaWin_VerifyServices(Attributes a,Promise *pp)
+void VerifyWindowsService(Attributes a,Promise *pp)
 {
-#ifdef MINGW
-
  Rlist *dep;
  char *srvName;
  int onlyCheckDeps;
@@ -74,17 +70,9 @@ void NovaWin_VerifyServices(Attributes a,Promise *pp)
     PromiseRef(cf_error,pp);
     return;
     }
-
- 
-#else  /* NOT MINGW */
- cfPS(cf_error,CF_FAIL,"",pp,a,"!! Windows services are only supported on Windows");
- PromiseRef(cf_error,pp);
-#endif
 }
 
 /*****************************************************************************/
-
-#ifdef MINGW
 
 #define STATUSWAIT_MIN 1000   // msecs waiting for a service status change (e.g. pending start -> start)
 #define STATUSWAIT_MAX 10000
@@ -1021,5 +1009,3 @@ while (*args)
    }
 return argc;
 }
-
-#endif  /* MINGW */

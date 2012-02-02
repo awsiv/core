@@ -1232,13 +1232,8 @@ void Nova_SignalTwin(void);
 void Nova_SignalOther(void);
 void Nova_ReviveOther(int argc,char **argv);
 
-/* services.c */
-
-void Nova_VerifyServices(Attributes a,Promise *pp);
-
 /* services_win.c */
 
-void NovaWin_VerifyServices(Attributes a,Promise *pp);
 #ifdef MINGW
 int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, char *argStr,int onlyCheckDeps, int isDependency, Attributes a,Promise *pp, int setCfPs);
 int NovaWin_CheckServiceStart(SC_HANDLE managerHandle, SC_HANDLE srvHandle, int argc, char **argv, int onlyCheckDeps, int isDependency, Attributes a,Promise *pp, int setCfPs);
