@@ -7,9 +7,6 @@
 #ifndef CFENGINE_NOVA_H
 #define CFENGINE_NOVA_H
 
-#ifndef NOVA
-#define NOVA 1
-
 #ifdef HAVE_CONFIG_H
 #  include "conf.h"
 #endif
@@ -1740,9 +1737,6 @@ typedef struct
 #define CFRID_BENCHMARKS "benchmarks"
 #define CFRID_COMPLIANCE_SUMMARY "compliance-summary"
 #define CFRID_VIRTUAL_BUNDLES "virtual-bundles"
-
-#endif
-
 
 #ifdef HAVE_CONSTELLATION
 #include <cf.constellation.h>
