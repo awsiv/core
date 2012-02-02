@@ -773,55 +773,24 @@ void DeleteHubBundleSeen(HubBundleSeen *hp)
 
 HubPromise *NewHubPromise(char *bn,char *bt,char *ba,char *pt, char *pr, char *pe, char *cl, char *ha, char *co, char *fn, int lno, char **cons)
 
-{ HubPromise *hp;
+{
+ HubPromise *hp = xmalloc(sizeof(HubPromise));
 
-hp = xcalloc(1, sizeof(HubPromise));
+ hp->bundleName = SafeStringDuplicate(bn);
+ hp->bundleType = SafeStringDuplicate(bt);
+ hp->bundleArgs = SafeStringDuplicate(ba);
+ hp->promiseType = SafeStringDuplicate(pt);
+ hp->promiser = SafeStringDuplicate(pr);
+ hp->promisee = SafeStringDuplicate(pe);
+ hp->classContext = SafeStringDuplicate(cl);
+ hp->handle = SafeStringDuplicate(ha);
+ hp->comment = SafeStringDuplicate(co);
+ hp->file = SafeStringDuplicate(fn);
+ hp->lineNo = lno;
+ hp->constraints = cons; // allocated by caller
+ hp->popularity = 0;
 
-if (bn)
-   {
-   hp->bundleName = xstrdup(bn);
-   }
-if (bt)
-   {
-   hp->bundleType = xstrdup(bt);
-   }
-if (ba)
-   {
-   hp->bundleArgs = xstrdup(ba);
-   }
-if (pt)
-   {
-   hp->promiseType = xstrdup(pt);
-   }
-if (pr)
-   {
-   hp->promiser = xstrdup(pr);
-   }
-if (pe)
-   {
-   hp->promisee = xstrdup(pe);
-   }
-if (cl)
-   {
-   hp->classContext = xstrdup(cl);
-   }
-if (ha)
-   {
-   hp->handle = xstrdup(ha);
-   }
-if (co)
-   {
-   hp->comment = xstrdup(co);
-   }
-if (fn)
-   {
-   hp->file = xstrdup(fn);
-   }
-hp->lineNo = lno;
-hp->constraints = cons; // allocated by caller
-hp->popularity = 0;  // optional
-
-return hp;
+ return hp;
 }
 
 /*****************************************************************************/
@@ -829,57 +798,21 @@ return hp;
 void DeleteHubPromise(HubPromise *hp)
 
 {
-
- if(hp->bundleName)
-    {
-    free(hp->bundleName);
-    }
- if(hp->bundleType)
-    {
-    free(hp->bundleType);
-    }
- if(hp->bundleArgs)
-    {
-    free(hp->bundleArgs);
-    }
- if(hp->promiseType)
-    {
-    free(hp->promiseType);
-    }
- if(hp->promiser)
-    {
-    free(hp->promiser);
-    }
- if(hp->promisee)
-    {
-    free(hp->promisee);
-    }
- if(hp->classContext)
-    {
-    free(hp->classContext);
-    }
- if(hp->handle)
-    {
-    free(hp->handle);
-    }
- if(hp->comment)
-    {
-    free(hp->comment);
-    }
- if(hp->file)
-    {
-    free(hp->file);
-    }
+ free(hp->bundleName);
+ free(hp->bundleType);
+ free(hp->bundleArgs);
+ free(hp->promiseType);
+ free(hp->promiser);
+ free(hp->promisee);
+ free(hp->classContext);
+ free(hp->handle);
+ free(hp->comment);
+ free(hp->file);
+ hp->lineNo = -1;
  
-hp->lineNo = -1;
+ FreeStringArray(hp->constraints);
 
-if (hp->constraints)
-   {
-   FreeStringArray(hp->constraints);
-   }
-
-free(hp);
-hp = NULL;
+ free(hp);
 }
 
 /*****************************************************************************/
