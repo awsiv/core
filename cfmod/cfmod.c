@@ -74,7 +74,6 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_list_all_bundles,NULL)
     PHP_FE(cfpr_get_bundle_type,NULL)
     PHP_FE(cfpr_list_bundles_using,NULL)
-    PHP_FE(cfpr_get_bundle_count,NULL)
     PHP_FE(cfpr_get_promise_count,NULL)
     PHP_FE(cfpr_list_bodies,NULL)
     PHP_FE(cfpr_list_business_goals,NULL)

@@ -832,10 +832,6 @@ PHP_FUNCTION(cfpr_list_all_bundles);
  */
 PHP_FUNCTION(cfpr_list_bundles_using);
 
-/*! \brief Get the number of bundles
- */
-PHP_FUNCTION(cfpr_get_bundle_count);
-
 /*! \brief Get a bundle type by name
  * \param bundleName
  */
