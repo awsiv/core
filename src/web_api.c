@@ -3361,54 +3361,6 @@ if (!CFDB_Close(&dbconn))
 return true;
 }
 
-/*****************************************************************************/
-
-int Nova2PHP_get_bundle_count(char *buffer, int bufsize)
-
-{ mongo_connection dbconn;
- int bundleCount = 0;
-
- if (!CFDB_Open(&dbconn))
-    {
-    return -1;
-    }
- 
- bundleCount = CFDB_QueryBundleCount(&dbconn);
-
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
-
- snprintf(buffer,bufsize,"%d",bundleCount);
-
- return true;
-}
-
-/*****************************************************************************/
-
-int Nova2PHP_get_promise_count(char *buffer, int bufsize)
-
-{ mongo_connection dbconn;
- int promiseCount = 0;
-
- if (!CFDB_Open(&dbconn))
-    {
-    return -1;
-    }
-
- promiseCount = CFDB_QueryPromiseCount(&dbconn);
-
-
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
-
- snprintf(buffer,bufsize,"%d",promiseCount);
-
- return true;
-}
 
 /*****************************************************************************/
 /* Topic Map                                                                 */

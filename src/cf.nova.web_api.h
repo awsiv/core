@@ -192,8 +192,6 @@ int Nova2PHP_get_args_for_bundle(char *name,char *type,char *buffer,int bufsize)
 int Nova2PHP_list_all_bundles(char *type,char *buffer,int bufsize);
 int Nova2PHP_get_bundle_type(char *name,char *buffer,int bufsize); 
 int Nova2PHP_list_bundles_using(char *name,char *buffer,int bufsize);
-int Nova2PHP_get_bundle_count(char *buffer, int bufsize);
-int Nova2PHP_get_promise_count(char *buffer, int bufsize);
 void Nova2PHP_ComplianceSummaryGraph(char *policy,char *buffer,int bufsize);
 int Nova2PHP_report_description(char *reportName,char *returnval,int bufsize);
 void Nova2PHP_enterprise_version(char *buf, int bufsize);
