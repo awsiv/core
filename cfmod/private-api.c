@@ -1622,7 +1622,7 @@ PHP_FUNCTION(cfpr_report_filediffs_longterm)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_summarize_promise)
+PHP_FUNCTION(cfpr_promise_details)
 {
  char *userName, *handle;
  int user_len, handle_len;
@@ -1646,7 +1646,7 @@ PHP_FUNCTION(cfpr_summarize_promise)
  PromiseFilterAddPromiseBody(filter, handle, NULL);
 
  buffer[0]='\0';
- Nova2PHP_summarize_promise(filter, buffer, sizeof(buffer));
+ Nova2PHP_promise_details(filter, buffer, sizeof(buffer));
 
  DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 

@@ -814,7 +814,7 @@ PHP_FUNCTION(cfpr_count_blue_hosts);
  * \param promiseHandle
  */
 
-PHP_FUNCTION(cfpr_summarize_promise);
+PHP_FUNCTION(cfpr_promise_details);
 
 /*! \brief Query handles by promiser
  * \param promiser

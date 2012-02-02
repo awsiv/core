@@ -4046,7 +4046,7 @@ return errid;
 
 /*****************************************************************************/
 
-int Nova2PHP_summarize_promise(PromiseFilter *filter, char *returnval,int bufsize)
+int Nova2PHP_promise_details(PromiseFilter *filter, char *returnval,int bufsize)
 
 {
  mongo_connection dbconn;

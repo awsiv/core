@@ -102,7 +102,7 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_list_ip_classes,NULL)
     PHP_FE(cfpr_list_host_classes,NULL)
 
-    PHP_FE(cfpr_summarize_promise,NULL)
+    PHP_FE(cfpr_promise_details,NULL)
     PHP_FE(cfpr_list_handles,NULL)
     PHP_FE(cfpr_list_handles_for_bundle,NULL)
     PHP_FE(cfpr_get_handles_for_bundle_with_comments,NULL)
