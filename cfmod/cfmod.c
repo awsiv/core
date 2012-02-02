@@ -5,6 +5,9 @@
 #define ALLOC_IMPL
 
 #include "php_cfmod.h"
+#include "public-api.h"
+#include "private-api.h"
+#include "private-api-constellation.h"
 
 
 /* If you declare any globals in php_cfmod.h uncomment this:

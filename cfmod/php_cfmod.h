@@ -48,10 +48,6 @@ PHP_RINIT_FUNCTION(cfmod);
 PHP_RSHUTDOWN_FUNCTION(cfmod);
 PHP_MINFO_FUNCTION(cfmod);
 
-#include "public-api.h"
-#include "private-api.h"
-#include "private-api-constellation.h"
-
 /* 
   	Declare any global variables you may need between the BEGIN
 	and END macros here:     

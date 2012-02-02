@@ -1,5 +1,10 @@
 #include "private-api.h"
+
 #include "common.h"
+#include "rlist.h"
+#include "cf.nova.web_api.h"
+#include "web_rbac.h"
+
 
 #define cfr_software     "sw"
 #define cfr_patch_avail  "pa"

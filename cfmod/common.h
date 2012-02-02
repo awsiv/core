@@ -13,6 +13,9 @@
 #define LABEL_ERROR_ARGS_EMPTY "Missing argument contents"
 #define LABEL_ERROR_NOTIMPLEMENTED "Not implemented"
 
+// FIX: symptom of something
+#define CF_WEBBUFFER 7*1024*1024
+
 #include "db_query.h"
 
 #define DATABASE_OPEN(connection) \
