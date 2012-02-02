@@ -26,7 +26,7 @@ static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles);
 static char *StringAppendRealloc2(char *start, char *append1, char *append2);
 static bool RoleExists(char *name);
 static void DeAssociateUsersFromRole(mongo_connection *conn, char *roleName);
-static Item *CFDB_GetRolesForUser(char *userName);
+static Item *CFDB_GetRolesForUser(mongo_connection *conn, char *userName);
 static HubQuery *CFDB_GetRolesByMultipleNames(Item *names);
 static HubQuery *CFDB_GetRoles(bson *query);
 static const char *GetUsersCollection(mongo_connection *conn);
@@ -34,7 +34,7 @@ static bool IsLDAPOn(mongo_connection *conn);
 static bool IsRBACOn(mongo_connection *conn);
 static HubQuery *CFDB_GetAllRoles(void);
 static HubQuery *CFDB_GetRoleByName(char *name);
-static cfapi_errid UserIsRoleAdmin(char *userName);
+static cfapi_errid UserIsRoleAdmin(mongo_connection *conn, char *userName);
 
 /*****************************************************************************/
 
@@ -183,9 +183,9 @@ HubQuery *CFDB_GetRBACForUser(char *userName)
     return NewHubQueryErrid(NULL, NULL, ERRID_RBAC_DISABLED);
     }
 
- CFDB_Close(&conn);
+ Item *roleNames = CFDB_GetRolesForUser(&conn, userName);
  
- Item *roleNames = CFDB_GetRolesForUser(userName);
+ CFDB_Close(&conn);
 
  if(!roleNames)
     {
@@ -289,15 +289,24 @@ static char *StringAppendRealloc2(char *start, char *append1, char *append2)
 cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *description,
                             char *includeClassRx, char *excludeClassRx, char *includeBundleRx, char *excludeBundleRx)
 {
- cfapi_errid errid = UserIsRoleAdmin(creatingUser);
+ mongo_connection conn;
+ 
+ if(!CFDB_Open(&conn))
+    {
+    return ERRID_DBCONNECT;
+    }
+ 
+ cfapi_errid errid = UserIsRoleAdmin(&conn, creatingUser);
 
  if(errid != ERRID_SUCCESS)
     {
+    CFDB_Close(&conn);
     return errid;
     }
  
  if(RoleExists(roleName))
     {
+    CFDB_Close(&conn);
     return ERRID_ITEM_EXISTS;
     }
 
@@ -333,15 +342,6 @@ cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *descriptio
  bson_append_finish_object(set);
  bson_from_buffer(&update, &bb);
 
- mongo_connection conn;
- 
- if(!CFDB_Open(&conn))
-    {
-    bson_destroy(&query);
-    bson_destroy(&update);
-    return ERRID_DBCONNECT;
-    }
-
  mongo_update(&conn, MONGO_ROLES_COLLECTION, &query, &update, MONGO_UPDATE_UPSERT);
  
  bson_destroy(&query);
@@ -361,15 +361,24 @@ cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *descriptio
 
 cfapi_errid CFDB_DeleteRole(char *deletingUser, char *roleName, bool deassociateUsers)
 {
- cfapi_errid errid = UserIsRoleAdmin(deletingUser);
+ mongo_connection conn;
+ 
+ if(!CFDB_Open(&conn))
+    {
+    return ERRID_DBCONNECT;
+    }
+ 
+ cfapi_errid errid = UserIsRoleAdmin(&conn, deletingUser);
 
  if(errid != ERRID_SUCCESS)
     {
+    CFDB_Close(&conn);
     return errid;
     }
  
  if(!RoleExists(roleName))
     {
+    CFDB_Close(&conn);
     return ERRID_ITEM_NONEXISTING;
     }
  
@@ -378,15 +387,7 @@ cfapi_errid CFDB_DeleteRole(char *deletingUser, char *roleName, bool deassociate
 
  bson_buffer_init(&bb);
  bson_append_string(&bb, dbkey_role_name, roleName);
- bson_from_buffer(&query, &bb);
-
- mongo_connection conn;
- 
- if(!CFDB_Open(&conn))
-    {
-    bson_destroy(&query);
-    return ERRID_DBCONNECT;
-    }
+ bson_from_buffer(&query, &bb); 
  
  mongo_remove(&conn, MONGO_ROLES_COLLECTION, &query);
  bson_destroy(&query);
@@ -487,7 +488,7 @@ static bool IsRBACOn(mongo_connection *conn)
 
 /*****************************************************************************/
 
-static Item *CFDB_GetRolesForUser(char *userName)
+static Item *CFDB_GetRolesForUser(mongo_connection *conn, char *userName)
 {
  bson_buffer bb;
  
@@ -501,22 +502,11 @@ static Item *CFDB_GetRolesForUser(char *userName)
  bson_append_int(&bb, dbkey_user_roles, 1);
  bson_from_buffer(&field, &bb);
 
- mongo_connection conn;
+ const char *usersCollection = GetUsersCollection(conn);
 
- if(!CFDB_Open(&conn))
-    {
-    bson_destroy(&query);
-    bson_destroy(&field);
-    return NULL;
-    }
- 
- const char *usersCollection = GetUsersCollection(&conn);
-
- mongo_cursor *cursor = mongo_find(&conn, usersCollection, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+ mongo_cursor *cursor = mongo_find(conn, usersCollection, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
  bson_destroy(&query);
  bson_destroy(&field);
-
- CFDB_Close(&conn);
 
  Item *memberRoles = NULL;
 
@@ -534,7 +524,16 @@ static Item *CFDB_GetRolesForUser(char *userName)
 
 HubQuery *CFDB_GetAllRolesAuth(char *userName)
 {
- cfapi_errid errid = UserIsRoleAdmin(userName);
+ mongo_connection conn;
+ 
+ if(!CFDB_Open(&conn))
+    {
+    return NewHubQueryErrid(NULL, NULL, ERRID_DBCONNECT);
+    }
+ 
+ cfapi_errid errid = UserIsRoleAdmin(&conn, userName);
+
+ CFDB_Close(&conn);
 
  if(errid != ERRID_SUCCESS)
     {
@@ -558,7 +557,16 @@ static HubQuery *CFDB_GetAllRoles(void)
 
 HubQuery *CFDB_GetRoleByNameAuth(char *userName, char *roleName)
 {
- cfapi_errid errid = UserIsRoleAdmin(userName);
+ mongo_connection conn;
+ 
+ if(!CFDB_Open(&conn))
+    {
+    return NewHubQueryErrid(NULL, NULL, ERRID_DBCONNECT);
+    }
+
+ cfapi_errid errid = UserIsRoleAdmin(&conn, userName);
+
+ CFDB_Close(&conn);
 
  if(errid != ERRID_SUCCESS)
     {
@@ -683,11 +691,11 @@ HubQuery *CFDB_GetRoles(bson *query)
 
 /*****************************************************************************/
 
-static cfapi_errid UserIsRoleAdmin(char *userName)
+static cfapi_errid UserIsRoleAdmin(mongo_connection *conn, char *userName)
 {
 #define ROLE_NAME_ADMIN "admin"
  
- Item *roleNames = CFDB_GetRolesForUser(userName);
+ Item *roleNames = CFDB_GetRolesForUser(conn, userName);
  
  if(!roleNames)
     {
