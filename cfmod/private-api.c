@@ -684,7 +684,7 @@ PHP_FUNCTION(cfpr_report_software_in)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_software_report(fhostkey, fname, fversion, farch, use_reg, cfr_software, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -737,7 +737,7 @@ PHP_FUNCTION(cfpr_report_patch_in)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_software_report(fhostkey, fname, fversion, farch, use_reg, cfr_patch_installed, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -790,7 +790,7 @@ PHP_FUNCTION(cfpr_report_patch_avail)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_software_report(fhostkey, fname, fversion, farch, use_reg, cfr_patch_avail, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -837,7 +837,7 @@ PHP_FUNCTION(cfpr_report_classes)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_classes_report(fhostkey, fname, regex, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1051,7 +1051,7 @@ PHP_FUNCTION(cfpr_report_vars)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_vars_report(fhostkey, fscope, flval, frval, ftype, use_reg, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1125,7 +1125,7 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_compliance_report(fhostkey, fversion, (time_t)t, (int)k, (int)nk, (int)r, cmp, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1176,7 +1176,7 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
  
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_compliance_promises(fhostkey, fhandle, fstatus, use_reg, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1265,7 +1265,7 @@ PHP_FUNCTION(cfpr_report_lastseen)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_lastseen_report(fhostkey, fhash, fhost, faddress, tago,use_reg, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1313,7 +1313,7 @@ PHP_FUNCTION(cfpr_report_performance)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_performance_report(fhostkey, fjob, regex, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1360,7 +1360,7 @@ PHP_FUNCTION(cfpr_report_setuid)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_setuid_report(fhostkey, ffile, regex, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1413,7 +1413,7 @@ PHP_FUNCTION(cfpr_report_filechanges)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_filechanges_report(fhostkey, ffile, regex, then, cmp, filter, &page, false, buffer,sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1470,7 +1470,7 @@ PHP_FUNCTION(cfpr_report_filediffs)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_filediffs_report(fhostkey, ffile, fdiff, use_reg, then, cmp, filter, &page, false, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1523,7 +1523,7 @@ PHP_FUNCTION(cfpr_report_filechanges_longterm)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_filechanges_report(fhostkey, ffile, regex, then, cmp, filter, &page, true, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1580,7 +1580,7 @@ PHP_FUNCTION(cfpr_report_filediffs_longterm)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_filediffs_report(fhostkey, ffile, fdiff, use_reg, then, cmp, filter, &page, true, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
  
@@ -1652,7 +1652,7 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_bundle_report(fhostkey, fbundle, use_reg, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
  
@@ -1701,7 +1701,7 @@ PHP_FUNCTION(cfpr_report_value)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_value_report(fhostkey, fday, fmonth, fyear, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1782,7 +1782,7 @@ PHP_FUNCTION(cfpr_report_notkept)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_promiselog(fhostkey, fhandle, PROMISE_LOG_STATE_NOTKEPT, from, to, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1835,7 +1835,7 @@ PHP_FUNCTION(cfpr_report_repaired)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_promiselog(fhostkey,fhandle,PROMISE_LOG_STATE_REPAIRED,from,to,filter,&page,buffer,sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
  
@@ -1882,7 +1882,7 @@ PHP_FUNCTION(cfpr_summarize_notkept)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_promiselog_summary(fhostkey, fhandle, PROMISE_LOG_STATE_NOTKEPT, from, to, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
  
@@ -1929,7 +1929,7 @@ PHP_FUNCTION(cfpr_summarize_repaired)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_promiselog_summary(fhostkey, fhandle, PROMISE_LOG_STATE_REPAIRED, from, to, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
  
@@ -1977,7 +1977,7 @@ PHP_FUNCTION(cfpr_hosts_with_software_in)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, use_reg, cfr_software, filter, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2019,7 +2019,7 @@ PHP_FUNCTION(cfpr_hosts_with_value)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_value_hosts(fhostkey,fday,fmonth,fyear,filter,buffer,bufsize);
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2062,7 +2062,7 @@ PHP_FUNCTION(cfpr_hosts_with_patch_in)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, regex, cfr_patch_installed, filter, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2107,7 +2107,7 @@ PHP_FUNCTION(cfpr_hosts_with_patch_avail)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, use_reg, cfr_patch_avail, filter, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2145,7 +2145,7 @@ PHP_FUNCTION(cfpr_hosts_with_classes)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
  
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_classes_hosts(fhostkey, fname, regex, filter, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2190,7 +2190,7 @@ PHP_FUNCTION(cfpr_hosts_with_repaired)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_promiselog_hosts(fhostkey, fhandle, PROMISE_LOG_STATE_REPAIRED, from, to, filter, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2235,7 +2235,7 @@ PHP_FUNCTION(cfpr_hosts_with_notkept)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
  
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_promiselog_hosts(fhostkey, fhandle, PROMISE_LOG_STATE_NOTKEPT, from, to, filter, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2282,7 +2282,7 @@ PHP_FUNCTION(cfpr_hosts_with_vars)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_vars_hosts(fhostkey, fscope, flval, frval, ftype, use_reg, filter, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2324,7 +2324,7 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_summary)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_compliance_hosts(fhostkey, fversion, (int)t, (int)k, (int)nk, (int)r, cmp, filter, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2365,7 +2365,7 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_promises)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
  
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_promise_hosts(fhostkey, fhandle, fstatus, use_reg, filter, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
  
@@ -2413,7 +2413,7 @@ PHP_FUNCTION(cfpr_hosts_with_lastseen)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_lastseen_hosts(fhostkey, fhash, fhost, faddress, ago, use_reg, filter, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2452,7 +2452,7 @@ PHP_FUNCTION(cfpr_hosts_with_performance)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_performance_hosts(fhostkey, fjob, regex, filter, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2491,7 +2491,7 @@ PHP_FUNCTION(cfpr_hosts_with_setuid)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_setuid_hosts(fhostkey, ffile, regex, filter, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2536,7 +2536,7 @@ PHP_FUNCTION(cfpr_hosts_with_filechanges)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_filechanges_hosts(fhostkey, ffile, regex, then, fcmp, filter, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2582,7 +2582,7 @@ PHP_FUNCTION(cfpr_hosts_with_filediffs)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_filediffs_hosts(fhostkey, ffile, diff, regex, then, fcmp, filter, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
  
@@ -2621,7 +2621,7 @@ PHP_FUNCTION(cfpr_hosts_with_bundlesseen)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_bundle_hosts(fhostkey, fbundle, regex, filter, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -3422,7 +3422,7 @@ PHP_FUNCTION(cfpr_get_class_frequency)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, NULL, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  count = Nova2PHP_countclasses(fhkey, fpattern, 1, filter, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -3456,7 +3456,7 @@ PHP_FUNCTION(cfpr_report_class_frequency)
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, NULL, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
- HostClassFilter *filter = (HostClassFilter *)hqHostClassFilter->records->item;
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_countclasses(fhkey, fpattern, 1, filter, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 

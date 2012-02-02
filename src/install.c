@@ -124,6 +124,14 @@ int CountRecords(HubQuery *hq)
  
  return RlistLen(hq->records);
 }
+
+/*****************************************************************************/
+
+void *HubQueryGetFirstRecord(HubQuery *hq)
+{
+ return hq->records->item;
+}
+
 #endif
 
 /*****************************************************************************/
