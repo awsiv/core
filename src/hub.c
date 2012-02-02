@@ -14,7 +14,6 @@
 
 int BIG_UPDATES = 6;
 
-bool LOGGING = false;
 int  NO_FORK = false;
 int  CONTINUOUS = false;
 
