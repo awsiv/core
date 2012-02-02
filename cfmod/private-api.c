@@ -3476,18 +3476,6 @@ PHP_FUNCTION(cfpr_list_bundles_using)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_get_promise_count)
-
-{
- const int bufsize = 32;
- char buffer[bufsize];
-
- buffer[0] = '\0';
-
- Nova2PHP_get_promise_count(buffer,bufsize);
- RETURN_STRING(buffer,1);
-}
-/******************************************************************************/
 PHP_FUNCTION(cfpr_list_business_goals)
 
 {

@@ -837,10 +837,6 @@ PHP_FUNCTION(cfpr_list_bundles_using);
  */
 PHP_FUNCTION(cfpr_get_bundle_type);
 
-/*! \brief Get the number of promises
- */
-PHP_FUNCTION(cfpr_get_promise_count);
-
 /*! \brief A list of handles in a bundle
  * \param bundleName
  * \param bundleType
