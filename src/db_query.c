@@ -5703,7 +5703,8 @@ static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFil
  bson_buffer bbuf;
  bson query, field;
  mongo_cursor *cursor;
- bson_buffer *sub1, *sub2;
+ bson_buffer *sub1 = NULL;
+ bson_buffer *sub2;
 
  bson_buffer_init(&bbuf);
  if(!BsonAppendHostClassFilter(&bbuf, hostClassFilter))
@@ -5725,8 +5726,6 @@ static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFil
  int i = 0;
  char iStr[64] = {0};
 
- bool found = false;
-
  while(mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
@@ -5735,7 +5734,7 @@ static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFil
        {
        if (strcmp(bson_iterator_key(&it1), cfr_keyhash) == 0)
           {
-          if(!found)
+          if(sub1 == NULL)
              {
              sub1 = bson_append_start_array(bb, "$or");
              }
@@ -5747,12 +5746,11 @@ static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFil
           bson_append_finish_object(sub2);
 
           i++;
-          found = true;
           }
        }
     }
 
- if(found)
+ if(sub1 != NULL)
     {
     bson_append_finish_object(sub1);
     }
