@@ -85,6 +85,23 @@ static const char *BsonGetArrayValue(const bson *b, const char *key)
 
 /*****************************************************************************/
 
+bool BsonAppendRegexSafe(bson_buffer *bb, char *key, char *rxValue)
+{
+ if(key == NULL || key[0] == '\0')
+    {
+    return false;
+    }
+
+ char anchoredRx[CF_MAXVARSIZE];
+ AnchorRegex(rxValue, anchoredRx, sizeof(anchoredRx));
+
+ bson_append_regex(bb, key, anchoredRx, "");
+
+ return true;
+}
+
+/*****************************************************************************/
+
 void BsonAppendStringArray(bson_buffer *bb, char *arrayName, Item *arrayValues)
 {
  bson_buffer *arr = bson_append_start_array(bb, arrayName);

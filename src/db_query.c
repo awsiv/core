@@ -23,6 +23,7 @@
 #ifdef HAVE_LIBMONGOC
 
 static bool BsonAppendHostClassFilter(bson_buffer *queryBuffer, HostClassFilter *filter);
+static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *filter);
 static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFilter *hostClassFilter);
 
 /*****************************************************************************/
@@ -7087,17 +7088,37 @@ int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
 
 static bool BsonAppendHostClassFilter(bson_buffer *queryBuffer, HostClassFilter *filter)
 {
- bool modified = false;
-
  if(filter == NULL)
     {
     return false;
     }
 
-modified |= BsonAppendIncludeList(queryBuffer, cfr_class_keys, filter->classRxIncludes);
-modified |= BsonAppendExcludeList(queryBuffer, cfr_class_keys, filter->classRxExcludes);
+ bool modified = false;
 
-return modified;
+ modified |= BsonAppendIncludeList(queryBuffer, cfr_class_keys, filter->classRxIncludes);
+ modified |= BsonAppendExcludeList(queryBuffer, cfr_class_keys, filter->classRxExcludes);
+ 
+ return modified;
+}
+
+/*****************************************************************************/
+
+static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *filter)
+{
+ if(filter == NULL)
+    {
+    return false;
+    }
+ 
+ bool modified = false;
+
+ modified |= BsonAppendRegexSafe(queryBuffer, cfp_handle, filter->handleRxInclude);
+ modified |= BsonAppendRegexSafe(queryBuffer, cfp_promiser, filter->promiserRxInclude);
+ 
+ modified |= BsonAppendIncludeList(queryBuffer, cfp_bundlename, filter->bundleRxIncludes);
+ modified |= BsonAppendExcludeList(queryBuffer, cfp_bundlename, filter->bundleRxExcludes);
+
+ return modified;
 }
 
 /*****************************************************************************/
