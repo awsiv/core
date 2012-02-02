@@ -137,7 +137,7 @@ return ERRID_RBAC_ACCESS_DENIED;
 
 /*****************************************************************************/
 
-HubQuery *CFBD_HostClassFilterFromUserRBAC(char *userName, char *classRxIncludeOption, char *classRxExcludeOption)
+HubQuery *CFBD_HostClassFilterFromUserRBAC(char *userName)
 {
  HubQuery *hqRBAC = CFDB_GetRBACForUser(userName);
 
@@ -148,14 +148,13 @@ HubQuery *CFBD_HostClassFilterFromUserRBAC(char *userName, char *classRxIncludeO
  if(errid != ERRID_SUCCESS)
     {
     DeleteHubQuery(hqRBAC, DeleteHubUserRBAC);
-    PrependRlistAlien(&(recordList), NewHostClassFilter(classRxIncludeOption, classRxExcludeOption));
+    PrependRlistAlien(&(recordList), NewHostClassFilter(NULL, NULL));
     return NewHubQueryErrid(NULL, recordList, errid);
     }
  
  HubUserRBAC *rbac = hqRBAC->records->item;
 
- HostClassFilter *hostClassFilter = NewHostClassFilter(classRxIncludeOption, classRxExcludeOption);
- HostClassFilterAddClasses(hostClassFilter, rbac->classRxInclude, rbac->classRxExclude);
+ HostClassFilter *hostClassFilter = NewHostClassFilter(rbac->classRxInclude, rbac->classRxExclude);
  PrependRlistAlien(&(recordList), hostClassFilter);
  
  DeleteHubQuery(hqRBAC, DeleteHubUserRBAC);
