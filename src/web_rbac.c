@@ -139,11 +139,10 @@ return ERRID_RBAC_ACCESS_DENIED;
 
 HubQuery *CFBD_HostClassFilterFromUserRBAC(char *userName)
 {
- HubQuery *hqRBAC = CFDB_GetRBACForUser(userName);
-
- cfapi_errid errid = hqRBAC->errid;
-
  Rlist *recordList = NULL;
+  
+ HubQuery *hqRBAC = CFDB_GetRBACForUser(userName);
+ cfapi_errid errid = hqRBAC->errid;
 
  if(errid != ERRID_SUCCESS)
     {
@@ -152,10 +151,37 @@ HubQuery *CFBD_HostClassFilterFromUserRBAC(char *userName)
     return NewHubQueryErrid(NULL, recordList, errid);
     }
  
- HubUserRBAC *rbac = hqRBAC->records->item;
+ HubUserRBAC *rbac = HubQueryGetFirstRecord(hqRBAC);
 
  HostClassFilter *hostClassFilter = NewHostClassFilter(rbac->classRxInclude, rbac->classRxExclude);
  PrependRlistAlien(&(recordList), hostClassFilter);
+ 
+ DeleteHubQuery(hqRBAC, DeleteHubUserRBAC);
+
+ return NewHubQuery(NULL, recordList);
+}
+
+/*****************************************************************************/
+
+HubQuery *CFBD_PromiseFilterFromUserRBAC(char *userName)
+{
+ Rlist *recordList = NULL;
+  
+ HubQuery *hqRBAC = CFDB_GetRBACForUser(userName);
+ cfapi_errid errid = hqRBAC->errid;
+
+ if(errid != ERRID_SUCCESS)
+    {
+    DeleteHubQuery(hqRBAC, DeleteHubUserRBAC);
+    PrependRlistAlien(&(recordList), NewPromiseFilter());
+    return NewHubQueryErrid(NULL, recordList, errid);
+    }
+ 
+ HubUserRBAC *rbac = HubQueryGetFirstRecord(hqRBAC);
+
+ PromiseFilter *promiseFilter = NewPromiseFilter();
+ PromiseFilterAddBundles(promiseFilter, rbac->bundleRxInclude, rbac->bundleRxExclude);
+ PrependRlistAlien(&(recordList), promiseFilter);
  
  DeleteHubQuery(hqRBAC, DeleteHubUserRBAC);
 

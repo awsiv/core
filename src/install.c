@@ -1184,14 +1184,20 @@ free(filter);
 
 /*****************************************************************************/
 
-PromiseFilter *NewPromiseFilter(const char *handleRxInclude, const char *promiserRxInclude)
+PromiseFilter *NewPromiseFilter(void)
 {
  PromiseFilter *filter = xcalloc(1, sizeof(PromiseFilter));
+ 
+ return filter;
+}
 
+void PromiseFilterAddPromiseBody(PromiseFilter *filter, const char *handleRxInclude, const char *promiserRxInclude)
+{
+ //assert(!filter->handleRxInclude && "PromiseFilterAddPromiseBody: handle is already set");  FIXME - won't link
+ //assert(!filter->promiserRxInclude && "PromiseFilterAddPromiseBody: promiser is already set"); FIXME - won't link
+ 
  filter->handleRxInclude = SafeStringDuplicate(handleRxInclude);
  filter->promiserRxInclude = SafeStringDuplicate(promiserRxInclude);
-  
- return filter;
 }
 
 void PromiseFilterAddBundles(PromiseFilter *filter, const char *bundleRxInclude, const char *bundleRxExclude)
