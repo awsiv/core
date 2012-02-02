@@ -5393,7 +5393,7 @@ int Nova2PHP_community_version(char *buf, int bufsize)
 
 /*****************************************************************************/
 
-int Nova2PHP_list_handles_policy_finder(PromiseFilter *promiseFilter ,char *returnval, int bufsize)
+int Nova2PHP_promise_list(PromiseFilter *promiseFilter ,char *returnval, int bufsize)
 
 { mongo_connection dbconn;
   char work[CF_MAXVARSIZE] = {0};

@@ -3155,7 +3155,7 @@ PHP_FUNCTION(cfpr_policy_finder_by_handle)
  PromiseFilter *filter = NewPromiseFilter();
  PromiseFilterAddPromiseBody(filter, fhandle, NULL);
  
- Nova2PHP_list_handles_policy_finder(filter,buffer,sizeof(buffer));
+ Nova2PHP_promise_list(filter,buffer,sizeof(buffer));
 
  DeletePromiseFilter(filter);
 
@@ -3185,7 +3185,7 @@ PHP_FUNCTION(cfpr_policy_finder_by_promiser)
  PromiseFilter *filter = NewPromiseFilter();
  PromiseFilterAddPromiseBody(filter, NULL, fpromiser);
 
- Nova2PHP_list_handles_policy_finder(filter, buffer, sizeof(buffer));
+ Nova2PHP_promise_list(filter, buffer, sizeof(buffer));
 
  DeletePromiseFilter(filter);
 
@@ -3216,7 +3216,7 @@ PHP_FUNCTION(cfpr_policy_finder_by_bundle)
  PromiseFilter *filter = NewPromiseFilter();
  PromiseFilterAddBundles(filter, fbundle, NULL);
  
- Nova2PHP_list_handles_policy_finder(filter, buffer, sizeof(buffer));
+ Nova2PHP_promise_list(filter, buffer, sizeof(buffer));
 
  DeletePromiseFilter(filter);
 
