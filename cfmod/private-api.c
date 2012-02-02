@@ -683,7 +683,7 @@ PHP_FUNCTION(cfpr_report_software_in)
 
  HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName, fclassreg, NULL);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
-
+ 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
  Nova2PHP_software_report(fhostkey, fname, fversion, farch, use_reg, cfr_software, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
