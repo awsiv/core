@@ -3148,7 +3148,7 @@ PHP_FUNCTION(cfpr_list_handles)
 }
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_promise_list_by_handle)
+PHP_FUNCTION(cfpr_promise_list_by_handle_rx)
 {
  char *userName, *handle;
  int user_len, h_len;
@@ -3183,7 +3183,7 @@ PHP_FUNCTION(cfpr_promise_list_by_handle)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_promise_list_by_promiser)
+PHP_FUNCTION(cfpr_promise_list_by_promiser_rx)
 {
  char *userName, *promiser;
  int user_len, pr_len;
@@ -3218,7 +3218,7 @@ PHP_FUNCTION(cfpr_promise_list_by_promiser)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_promise_list_by_bundle)
+PHP_FUNCTION(cfpr_promise_list_by_bundle_rx)
 {
  char *userName, *bundle;
  int user_len, b_len;

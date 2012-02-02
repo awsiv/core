@@ -116,9 +116,9 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_get_promise_body,NULL)
     PHP_FE(cfpr_get_value_graph,NULL)
 
-    PHP_FE(cfpr_promise_list_by_handle,NULL)
-    PHP_FE(cfpr_promise_list_by_bundle,NULL)
-    PHP_FE(cfpr_promise_list_by_promiser,NULL)
+    PHP_FE(cfpr_promise_list_by_handle_rx,NULL)
+    PHP_FE(cfpr_promise_list_by_bundle_rx,NULL)
+    PHP_FE(cfpr_promise_list_by_promiser_rx,NULL)
 
     PHP_FE(cfpr_report_value,NULL)
     PHP_FE(cfpr_report_notkept,NULL)
