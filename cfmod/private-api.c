@@ -3139,60 +3139,69 @@ PHP_FUNCTION(cfpr_list_handles)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_policy_finder_by_handle)
-
-{ char *handle;
- int h_len;
+{
+ char *userName, *handle;
+ int user_len, h_len;
  char buffer[CF_WEBBUFFER];
- zend_bool escRegex;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sb",&handle,&h_len,&escRegex) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
+                           &userName, &user_len,
+                           &handle, &h_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
+
+ ARGUMENT_CHECK_CONTENTS(user_len);
 
  char *fhandle = (h_len == 0) ? NULL : handle;
 
  buffer[0] = '\0';
 
- // FIXME: we are discarding escRegex
+ HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
 
- PromiseFilter *filter = NewPromiseFilter();
+ PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
  PromiseFilterAddPromiseBody(filter, fhandle, NULL);
  
  Nova2PHP_promise_list(filter,buffer,sizeof(buffer));
 
- DeletePromiseFilter(filter);
+ DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 
  RETURN_STRING(buffer,1);
 }
 
 /******************************************************************************/
+
 PHP_FUNCTION(cfpr_policy_finder_by_promiser)
-
-{ char *promiser;
- int pr_len;
+{
+ char *userName, *promiser;
+ int user_len, pr_len;
  char buffer[CF_WEBBUFFER];
- zend_bool escRegex;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sb",&promiser,&pr_len,&escRegex) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
+                           &userName, &user_len,
+                           &promiser, &pr_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
- // FIXME: we are discarding escRegex
+ ARGUMENT_CHECK_CONTENTS(user_len);
  
  char *fpromiser = (pr_len == 0) ? NULL : promiser;
 
  buffer[0] = '\0';
 
- PromiseFilter *filter = NewPromiseFilter();
+ HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
+
+ PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
  PromiseFilterAddPromiseBody(filter, NULL, fpromiser);
 
  Nova2PHP_promise_list(filter, buffer, sizeof(buffer));
 
- DeletePromiseFilter(filter);
+ DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 
  RETURN_STRING(buffer,1);
 }
@@ -3200,30 +3209,34 @@ PHP_FUNCTION(cfpr_policy_finder_by_promiser)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_policy_finder_by_bundle)
-
-{ char *bundle;
- int b_len;
+{
+ char *userName, *bundle;
+ int user_len, b_len;
  char buffer[CF_WEBBUFFER];
- zend_bool escRegex;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sb",&bundle,&b_len,&escRegex) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
+                           &userName, &user_len,
+                           &bundle, &b_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
- // FIXME: we are discarding escRegex
+ ARGUMENT_CHECK_CONTENTS(user_len);
 
  char *fbundle = (b_len == 0) ? NULL : bundle;
  
  buffer[0] = '\0';
 
- PromiseFilter *filter = NewPromiseFilter();
+ HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
+
+ PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
  PromiseFilterAddBundles(filter, fbundle, NULL);
  
  Nova2PHP_promise_list(filter, buffer, sizeof(buffer));
 
- DeletePromiseFilter(filter);
+ DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 
  RETURN_STRING(buffer,1);
 }
