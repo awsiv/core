@@ -69,6 +69,23 @@ const char *BsonGetString(const bson *b, const char *key)
 
 /*****************************************************************************/
 
+void BsonStringWrite(char *dest, int destSz, const bson *b, const char *key)
+{
+ bson_iterator it;
+ 
+ if(bson_find(&it, b, key) == bson_string)
+    {
+    snprintf(dest, destSz, "%s", bson_iterator_string(&it));
+    }
+ else
+    {
+    dest[0] = '\0';
+    CfOut(cf_verbose, "", "BsonStringWrite: No match for \"%s\"", key);
+    }
+}
+
+/*****************************************************************************/
+
 static const char *BsonGetArrayValue(const bson *b, const char *key)
 {
  bson_iterator it;
