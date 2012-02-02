@@ -71,7 +71,7 @@ Rlist *BsonStringArrayAsRlist(const bson* b, const char* key)
 
 /*****************************************************************************/
 
-int BsonGetInt(const bson *b, const char *key)
+int BsonIntGet(const bson *b, const char *key)
 {
  bson_iterator it;
  
@@ -88,6 +88,7 @@ int BsonGetInt(const bson *b, const char *key)
 /*****************************************************************************/
 
 const char *BsonGetString(const bson *b, const char *key)
+// TOOD: DEPRECATE in favour of BsonStringWrite()
 {
  bson_iterator it;
  
