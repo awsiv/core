@@ -1043,8 +1043,8 @@ HostClassFilter *NewHostClassFilterLists(Rlist *classRxInclude, Rlist *classRxEx
 void HostClassFilterAddClasses(HostClassFilter *filter, const char *classRxInclude, const char *classRxExclude);
 void DeleteHostClassFilter(HostClassFilter *filter);
 PromiseFilter *NewPromiseFilter(void);
-void PromiseFilterAddPromiseBody(PromiseFilter *filter, const char *handleRxInclude, const char *promiserRxInclude);
-void PromiseFilterAddBundles(PromiseFilter *filter, const char *bundleRxInclude, const char *bundleRxExclude);
+void PromiseFilterAddPromiseBodyRx(PromiseFilter *filter, const char *handleRxInclude, const char *promiserRxInclude);
+void PromiseFilterAddBundlesRx(PromiseFilter *filter, const char *bundleRxInclude, const char *bundleRxExclude);
 void DeletePromiseFilter(PromiseFilter *filter);
 #endif
 HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int hostCount, int totalHostCount, double kept, double repaired, double notkept, time_t genTime);

@@ -1643,7 +1643,7 @@ PHP_FUNCTION(cfpr_promise_details)
  ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
 
  PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
- PromiseFilterAddPromiseBody(filter, handle, NULL);
+ PromiseFilterAddPromiseBodyRx(filter, handle, NULL);
 
  buffer[0]='\0';
  Nova2PHP_promise_details(filter, buffer, sizeof(buffer));
@@ -3172,7 +3172,7 @@ PHP_FUNCTION(cfpr_promise_list_by_handle_rx)
  ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
 
  PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
- PromiseFilterAddPromiseBody(filter, fhandle, NULL);
+ PromiseFilterAddPromiseBodyRx(filter, fhandle, NULL);
  
  Nova2PHP_promise_list(filter,buffer,sizeof(buffer));
 
@@ -3207,7 +3207,7 @@ PHP_FUNCTION(cfpr_promise_list_by_promiser_rx)
  ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
 
  PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
- PromiseFilterAddPromiseBody(filter, NULL, fpromiser);
+ PromiseFilterAddPromiseBodyRx(filter, NULL, fpromiser);
 
  Nova2PHP_promise_list(filter, buffer, sizeof(buffer));
 
@@ -3242,7 +3242,7 @@ PHP_FUNCTION(cfpr_promise_list_by_bundle_rx)
  ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
 
  PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
- PromiseFilterAddBundles(filter, fbundle, NULL);
+ PromiseFilterAddBundlesRx(filter, fbundle, NULL);
  
  Nova2PHP_promise_list(filter, buffer, sizeof(buffer));
 

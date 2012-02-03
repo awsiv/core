@@ -1156,16 +1156,16 @@ PromiseFilter *NewPromiseFilter(void)
  return filter;
 }
 
-void PromiseFilterAddPromiseBody(PromiseFilter *filter, const char *handleRxInclude, const char *promiserRxInclude)
+void PromiseFilterAddPromiseBodyRx(PromiseFilter *filter, const char *handleRxInclude, const char *promiserRxInclude)
 {
- assert(!filter->handleRxInclude && "PromiseFilterAddPromiseBody: handle is already set");
- assert(!filter->promiserRxInclude && "PromiseFilterAddPromiseBody: promiser is already set");
+ assert(!filter->handleRxInclude && "PromiseFilterAddPromiseBodyRx: handle is already set");
+ assert(!filter->promiserRxInclude && "PromiseFilterAddPromiseBodyRx: promiser is already set");
  
  filter->handleRxInclude = SafeStringDuplicate(handleRxInclude);
  filter->promiserRxInclude = SafeStringDuplicate(promiserRxInclude);
 }
 
-void PromiseFilterAddBundles(PromiseFilter *filter, const char *bundleRxInclude, const char *bundleRxExclude)
+void PromiseFilterAddBundlesRx(PromiseFilter *filter, const char *bundleRxInclude, const char *bundleRxExclude)
 {
  if(bundleRxInclude)
     {

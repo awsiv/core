@@ -180,7 +180,7 @@ HubQuery *CFBD_PromiseFilterFromUserRBAC(char *userName)
  HubUserRBAC *rbac = HubQueryGetFirstRecord(hqRBAC);
 
  PromiseFilter *promiseFilter = NewPromiseFilter();
- PromiseFilterAddBundles(promiseFilter, rbac->bundleRxInclude, rbac->bundleRxExclude);
+ PromiseFilterAddBundlesRx(promiseFilter, rbac->bundleRxInclude, rbac->bundleRxExclude);
  PrependRlistAlien(&(recordList), promiseFilter);
  
  DeleteHubQuery(hqRBAC, DeleteHubUserRBAC);
