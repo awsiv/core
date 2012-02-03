@@ -26,6 +26,9 @@ static bool CFH_ZENOSS = false;
 
 /*******************************************************************/
 
+static void Nova_HubLog(const char *s, ...)
+    FUNC_ATTR_FORMAT(printf, 1, 2);
+
 static void StartHub(void);
 static void Nova_CollectReports(Attributes a, Promise *pp);
 static int ScheduleRun(void);
@@ -931,12 +934,7 @@ if (long_time_no_see)
    CfOut(cf_verbose,""," -> Running FULL sensor sweep of %s",HashPrint(CF_DEFAULT_DIGEST,conn->digest));
    Nova_QueryClientForReports(dbconn,conn,"full",last_week);
 
-   if (LOGGING)
-      {
-      char msg[CF_MAXVARSIZE];
-      snprintf(msg,CF_MAXVARSIZE,"HUB full sensor sweep of peer %s",peer);
-      Nova_HubLog(msg);
-      }
+   Nova_HubLog("HUB full sensor sweep of peer %s",peer);
 
    YieldCurrentLock(thislock);
    }
@@ -945,12 +943,7 @@ else
    CfOut(cf_verbose,""," -> Running differential sensor sweep of %s",HashPrint(CF_DEFAULT_DIGEST,conn->digest));
    Nova_QueryClientForReports(dbconn,conn,"delta",now - average_time);
 
-   if (LOGGING)
-      {
-      char msg[CF_MAXVARSIZE];
-      snprintf(msg,CF_MAXVARSIZE,"HUB delta sensor sweep of peer %s",peer);
-      Nova_HubLog(msg);
-      }
+   Nova_HubLog("HUB delta sensor sweep of peer %s", peer);
    // don't yield lock here - we never got it
    }
 
@@ -1197,16 +1190,16 @@ return list;
 
 /*********************************************************************/
 
-void Nova_HubLog(char *s)
-
-{ char filename[CF_BUFSIZE];
-  time_t now = time(NULL);
-  FILE *fout;
-
-if (s == NULL || strlen(s) ==  0)
+static void Nova_HubLog(const char *fmt, ...)
+{
+if (!LOGGING)
    {
    return;
    }
+
+char filename[CF_BUFSIZE];
+time_t now = time(NULL);
+FILE *fout;
 
 snprintf(filename,CF_BUFSIZE,"%s/%s",CFWORKDIR,"hub_log");
 
@@ -1216,7 +1209,12 @@ if ((fout = fopen(filename,"a")) == NULL)
    return;
    }
 
-fprintf(fout,"%ld,%ld: %s\n",CFSTARTTIME,now,s);
+fprintf(fout, "%ld,%ld: ", CFSTARTTIME, now);
+va_list ap;
+va_start(ap, fmt);
+vfprintf(fout, fmt, ap);
+va_end(ap);
+fprintf(fout, "\n");
 fclose(fout);
 }
 
@@ -1248,13 +1246,7 @@ if (ShiftChange())
       {
       CfOut(cf_verbose,""," -> Started new Maintainer process (pid = %d)",child_id);
 
-      if(LOGGING)
-         {
-         char msg[CF_MAXVARSIZE];
-         snprintf(msg,CF_MAXVARSIZE,"-> Started new Maintainer process (pid = %d)\n",child_id);
-         Nova_HubLog(msg);
-         }
-
+      Nova_HubLog("-> Started new Maintainer process (pid = %d)\n", child_id);
       return child_id;
       }
    }
@@ -1272,12 +1264,7 @@ CfOut(cf_verbose,""," -> Scanning total compliance cache and doing db maintenanc
 Nova_CacheTotalCompliance(true);
 CFDB_Maintenance();
 
-if(LOGGING)
-   {
-   char msg[CF_MAXVARSIZE];
-   snprintf(msg, sizeof(msg), "Last maintenance took %ld seconds", time(NULL) - now);
-   Nova_HubLog(msg);
-   }
+Nova_HubLog("Last maintenance took %ld seconds", time(NULL) - now);
 }
 
 /********************************************************************/
@@ -1297,12 +1284,7 @@ if(maintainer_pid > 0)
       retval = true;
       }
 
-   if(LOGGING)
-      {
-      char msg[CF_MAXVARSIZE];
-      snprintf(msg,CF_MAXVARSIZE,"Checking if Maintainer process is running (pid:running(0/1)?) = (%d:%d)\n", maintainer_pid, retval);
-      Nova_HubLog(msg);
-      }
+   Nova_HubLog("Checking if Maintainer process is running (pid:running(0/1)?) = (%d:%d)\n", maintainer_pid, retval);
    }
 
 return retval;
