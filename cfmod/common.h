@@ -57,7 +57,10 @@
    Writer *writer = StringWriter(); \
    JsonArrayPrint(writer, json, 0); \
    JsonArrayDelete(json);           \
-   RETURN_STRING(StringWriterClose(writer), 1);
+   char *JSON_buf = StringWriterClose(writer); \
+   char *JSON_ebuf = estrdup(JSON_buf); \
+   free(JSON_buf);                      \
+   RETURN_STRING(JSON_ebuf, 0);
 
 #define RETURN_JSON_OBJECT(json) \
    Writer *writer = StringWriter(); \
