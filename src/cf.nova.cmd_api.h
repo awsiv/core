@@ -114,7 +114,6 @@ char *Nova2Txt_GetPromiser(char *handle);
 int Nova2Txt_get_variable(char *hostkey,char *scope,char *lval,char *returnval,int bufsize);
 int Nova2Txt_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsize);
 int Nova2Txt_get_args_for_bundle(char *name,char *type,char *buffer,int bufsize);
-int Nova2Txt_list_all_bundles(char *type,char *buffer,int bufsize);
 int Nova2Txt_get_bundle_type(char *name,char *buffer,int bufsize); 
 int Nova2Txt_list_bundles_using(char *name,char *buffer,int bufsize);
 int Nova2Txt_get_bundle_count(char *buffer, int bufsize);
