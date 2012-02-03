@@ -196,7 +196,7 @@ class Widget extends Cf_Controller {
         }
         $data = "";
         if ($bundle) {
-            $data = cfpr_policy_finder_by_bundle($bundle, $reg);
+            $data = cfpr_promise_list_by_bundle_rx($username, $bundle);
         } else {
             $data = cfpr_policy_finder_by_bundle(NULL, $reg);
         }
@@ -249,7 +249,7 @@ class Widget extends Cf_Controller {
         }
         $data = "";
         if ($promiser) {
-            $data = cfpr_policy_finder_by_promiser($promiser, $reg);
+            $data = cfpr_promise_list_by_promiser_rx($this->session->userdata('username'), $promiser);
         } else {
             $data = cfpr_policy_finder_by_promiser(NULL, $reg);
         }

@@ -62,7 +62,7 @@ class Promise extends Cf_Controller {
             'allhandlesbytype' =>json_decode(utf8_encode(cfpr_list_handles("", $type, false)),TRUE),
             'topicLeads' => json_decode(utf8_encode(cfpr_show_topic_leads($pid)),TRUE),
             'topicDetail' => json_decode(utf8_encode($topicDetail), true),
-            'promise' => sanitycheckjson(cfpr_summarize_promise($handle),true),
+            'promise' => sanitycheckjson(cfpr_promise_details($this->session->userdata('username'), $handle),true),
             'breadcrumbs' => $this->breadcrumblist->display()
         );
         if(is_ajax()){

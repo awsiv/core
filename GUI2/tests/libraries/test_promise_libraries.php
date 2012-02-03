@@ -2,6 +2,8 @@
 
 class test_promise_libraries extends CodeIgniterUnitTestCase {
 
+    var $username = 'admin';
+    
     public function __construct() {
         parent::__construct();
 
@@ -16,8 +18,7 @@ class test_promise_libraries extends CodeIgniterUnitTestCase {
     }
 
     public function test_summarizePromise() {
-      
-        $promise = cfpr_summarize_promise($this->testHandle);
+        $promise = cfpr_promise_details($this->username, $this->testHandle);
         $this->dump($promise);
         $array = json_decode(utf8_encode($promise), true);
         $retValue = json_last_error();
@@ -28,9 +29,7 @@ class test_promise_libraries extends CodeIgniterUnitTestCase {
       }
       
       public function testFailingHandle(){
-          
-     
-        $promise = cfpr_summarize_promise('apache2_nova_default_insert_lines_site_available_default');
+        $promise = cfpr_promise_details($this->username, 'apache2_nova_default_insert_lines_site_available_default');
         $this->dump($promise);
         $array = json_decode(utf8_encode($promise), true);
         $retValue = json_last_error();
