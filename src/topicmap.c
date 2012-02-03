@@ -1054,6 +1054,9 @@ cursor = mongo_find(&conn,MONGO_KM_OCCURRENCES,&query,&field,0,0,CF_MONGO_SLAVE_
 bson_destroy(&query);
 bson_destroy(&field);
 
+CFDB_Close(&conn);
+
+
 while (mongo_cursor_next(cursor))  // loops over documents
    {
    bson_iterator_init(&it1,cursor->current.data);
