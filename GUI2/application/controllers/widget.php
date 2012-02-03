@@ -163,7 +163,7 @@ class Widget extends Cf_Controller {
     }
 
     function allpolicies() {
-        $data = cfpr_policy_finder_by_handle(NULL, true);
+        $data = cfpr_promise_list_by_handle_rx($this->session->userdata('username'), NULL);
         sanitycheckjson($data);
     }
 
@@ -196,7 +196,7 @@ class Widget extends Cf_Controller {
         }
         $data = "";
         if ($bundle) {
-            $data = cfpr_promise_list_by_bundle_rx($username, $bundle);
+            $data = cfpr_promise_list_by_bundle_rx($this->session->userdata('username'), $bundle);
         } else {
             $data = cfpr_policy_finder_by_bundle(NULL, $reg);
         }
