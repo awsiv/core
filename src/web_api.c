@@ -1005,7 +1005,7 @@ int Nova2PHP_promiselog_summary(char *hostkey,char *handle, PromiseLogState stat
              "\"header\":{\"Promise Handle\":0,\"Report\":1,\"Occurrences\":2}",
 	     ListLen(summary));
     
-    StartJoin(returnval,"{data:[",bufsize);
+    StartJoin(returnval,"{\"data\":[",bufsize);
    
     for (ip = summary; ip != NULL; ip=ip->next, i++)
        {
