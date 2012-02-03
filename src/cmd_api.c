@@ -1988,36 +1988,6 @@ int Nova2Txt_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsi
 
 /*****************************************************************************/
 
-int Nova2Txt_get_bundle_type(char *name,char *buffer,int bufsize)
-
-{ mongo_connection dbconn;
-  int matched = false;
-
-Nova_WebTopicMap_Initialize();
-
-if (!CFDB_Open(&dbconn))
-   {
-   CfOut(cf_verbose,"", "!! Could not open connection to report database");
-   return -1;
-   }
-
-matched = CFDB_QueryBundleType(&dbconn,name,buffer,bufsize);
- 
-if (!CFDB_Close(&dbconn))
-   {
-   CfOut(cf_verbose,"", "!! Could not close connection to report database");
-   }
-
-if (matched)
-   {
-   return true;
-   }
-else
-   {
-   return false;
-   }
-}
-/*****************************************************************************/
 int Nova2Txt_list_all_goals(char *buffer,int bufsize)
 
 {
