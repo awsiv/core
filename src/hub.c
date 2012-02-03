@@ -26,6 +26,7 @@ static bool CFH_ZENOSS = false;
 
 /*******************************************************************/
 
+static void ThisAgentInit(void);
 static GenericAgentConfig CheckOpts(int argc,char **argv);
 
 static void Nova_HubLog(const char *s, ...)
@@ -207,7 +208,7 @@ return config;
 
 /*****************************************************************************/
 
-void ThisAgentInit()
+static void ThisAgentInit(void)
 {
 umask(077);
 
