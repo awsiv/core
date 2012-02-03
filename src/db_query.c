@@ -6792,10 +6792,18 @@ static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *fil
  
  bool modified = false;
 
- modified |= BsonAppendRegexSafe(queryBuffer, cfp_handle, filter->handleRxInclude);
+ modified |= BsonAppendStringSafe(queryBuffer, cfp_handle, filter->handleInclude);
+ modified |= BsonAppendRegexSafe(queryBuffer, cfp_handle, filter->handleRxInclude); 
+
+ modified |= BsonAppendStringSafe(queryBuffer, cfp_promiser, filter->promiserInclude);
  modified |= BsonAppendRegexSafe(queryBuffer, cfp_promiser, filter->promiserRxInclude);
- 
+
+ modified |= BsonAppendStringSafe(queryBuffer, cfp_bundletype, filter->bundleTypeInclude);
+
+ modified |= BsonAppendIncludeList(queryBuffer, cfp_bundlename, filter->bundleIncludes);
  modified |= BsonAppendIncludeRxList(queryBuffer, cfp_bundlename, filter->bundleRxIncludes);
+
+ modified |= BsonAppendExcludeList(queryBuffer, cfp_bundlename, filter->bundleExcludes);
  modified |= BsonAppendExcludeRxList(queryBuffer, cfp_bundlename, filter->bundleRxExcludes);
 
  return modified;
