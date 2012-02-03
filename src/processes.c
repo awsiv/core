@@ -56,28 +56,10 @@ if (a.havedepthsearch)
    PromiseRef(cf_error,pp);
    return;
    }
-  
-if (a.repository == NULL && VREPOSITORY == NULL)
+
+if (!GetRepositoryPath(file, a, destination))
    {
-   strncpy(destination,file,CF_BUFSIZE-2);
-   }
-else
-   {
-   if (a.repository != NULL)
-      {
-      strncpy(destination,a.repository,CF_BUFSIZE-2);
-      }
-   else if (VREPOSITORY != NULL)
-      {
-      strncpy(destination,VREPOSITORY,CF_BUFSIZE-2);
-      }
-   
-   if (!JoinPath(destination,CanonifyName(file)))
-      {
-      CfOut(cf_error,"","Buffer overflow for long filename\n");
-      return;
-      }
-   
+   strlcpy(destination, file, CF_BUFSIZE);
    }
 
 if (!JoinPath(destination,"_cfchanges"))
