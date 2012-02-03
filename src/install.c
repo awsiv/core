@@ -1543,6 +1543,38 @@ int SortPromisePopularDescending(void *p1, void *p2)
 
 /*****************************************************************************/
 
+int SortPromiseBundle(void *p1, void *p2)
+/**
+ * For SortRlist() - sorts bundles from policy definition by type.
+ **/
+{
+ HubPromiseBundle *hb1 = (HubPromiseBundle *)p1;
+ HubPromiseBundle *hb2 = (HubPromiseBundle *)p2;
+
+ if(strcmp(hb1->bundleType, hb2->bundleType) < 0)
+    {
+    return true;
+    }
+ else if(strcmp(hb1->bundleType, hb2->bundleType) > 0)
+    {
+    return false;
+    }
+
+ // same bundle type - sort on bundle name
+ if(strcmp(hb1->bundleName, hb2->bundleName) < 0)
+    {
+    return true;
+    }
+ else if(strcmp(hb1->bundleName, hb2->bundleName) > 0)
+    {
+    return false;
+    }
+
+ return true;  // identical
+}
+
+/*****************************************************************************/
+
 HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(Rlist *records, int slot)
 {
  Rlist *rp;

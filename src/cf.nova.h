@@ -1067,6 +1067,7 @@ int SortSoftware(void *p1, void *p2);
 int SortBundleSeen(void *p1, void *p2);
 int SortPromisePopularAscending(void *p1, void *p2);
 int SortPromisePopularDescending(void *p1, void *p2);
+int SortPromiseBundle(void *p1, void *p2);
 HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(Rlist *records, int slot);
 
 int PageRecords(Rlist **records_p, PageInfo *page,void (*fnptr)());
