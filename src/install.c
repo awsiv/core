@@ -130,6 +130,11 @@ int CountRecords(HubQuery *hq)
 
 void *HubQueryGetFirstRecord(HubQuery *hq)
 {
+ if(hq->records == NULL)
+    {
+    return NULL;
+    }
+ 
  return hq->records->item;
 }
 
