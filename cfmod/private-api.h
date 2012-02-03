@@ -204,11 +204,6 @@ PHP_FUNCTION(cfpr_getlastupdate);
  */
 PHP_FUNCTION(cfpr_get_promise_body);
 
-/*! \brief Get the comment for a promise
- * \param promiseHandle
- */
-PHP_FUNCTION(cfpr_get_promise_comment);
-
 /*! \brief Get the name of an owner bundle
  * \param promiseHandle
  */

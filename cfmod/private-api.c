@@ -3295,22 +3295,6 @@ PHP_FUNCTION(cfpr_list_handles_for_bundle)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_get_promise_comment)
-
-{ char *handle;
- int hk_len;
-
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&handle,&hk_len) == FAILURE)
-    {
-    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-    RETURN_NULL();
-    }
-
- RETURN_STRING(Nova2PHP_GetPromiseComment(handle),1);
-}
-
-/******************************************************************************/
-
 PHP_FUNCTION(cfpr_get_promise_bundle)
 
 { char *handle;

@@ -69,12 +69,30 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_vitals_analyse_week,NULL)
     PHP_FE(cfpr_vitals_analyse_year,NULL)
     PHP_FE(cfpr_vitals_analyse_histogram,NULL)
+
+    // policy
+    PHP_FE(cfpr_promise_list_by_handle_rx,NULL)
+    PHP_FE(cfpr_promise_list_by_bundle_rx,NULL)
+    PHP_FE(cfpr_promise_list_by_promiser_rx,NULL)
+    PHP_FE(cfpr_promise_details,NULL)
+    
+    PHP_FE(cfpr_list_all_bundles,NULL)
+    PHP_FE(cfpr_list_bundles_using,NULL)
+    PHP_FE(cfpr_get_bundle_type,NULL)
+    PHP_FE(cfpr_get_args_for_bundle,NULL)
+    PHP_FE(cfpr_list_handles_for_bundle,NULL)
+    PHP_FE(cfpr_get_handles_for_bundle_with_comments,NULL)
+    PHP_FE(cfpr_get_classes_for_bundle,NULL)
+    
+    PHP_FE(cfpr_list_bodies,NULL)
+    PHP_FE(cfpr_list_handles,NULL)
+    PHP_FE(cfpr_get_promise_bundle,NULL)
+    PHP_FE(cfpr_get_promise_type,NULL)
+    PHP_FE(cfpr_get_promiser,NULL)
+    PHP_FE(cfpr_get_promise_body,NULL)
+
     
     PHP_FE(cfpr_getlastupdate,NULL)
-    PHP_FE(cfpr_list_all_bundles,NULL)
-    PHP_FE(cfpr_get_bundle_type,NULL)
-    PHP_FE(cfpr_list_bundles_using,NULL)
-    PHP_FE(cfpr_list_bodies,NULL)
     PHP_FE(cfpr_list_business_goals,NULL)
 
     PHP_FE(cfpr_report_software_in,NULL)
@@ -95,30 +113,13 @@ static function_entry cfmod_functions[] =
 
     PHP_FE(cfpr_report_filechanges_longterm,NULL)
     PHP_FE(cfpr_report_filediffs_longterm,NULL)
-
     PHP_FE(cfpr_list_all_classes,NULL)
     PHP_FE(cfpr_list_time_classes,NULL)
     PHP_FE(cfpr_list_soft_classes,NULL)
     PHP_FE(cfpr_list_ip_classes,NULL)
     PHP_FE(cfpr_list_host_classes,NULL)
-
-    PHP_FE(cfpr_promise_details,NULL)
-    PHP_FE(cfpr_list_handles,NULL)
-    PHP_FE(cfpr_list_handles_for_bundle,NULL)
-    PHP_FE(cfpr_get_handles_for_bundle_with_comments,NULL)
-    PHP_FE(cfpr_get_promise_comment,NULL)
-    PHP_FE(cfpr_get_promise_bundle,NULL)
-    PHP_FE(cfpr_get_promise_type,NULL)
-    PHP_FE(cfpr_get_promiser,NULL)
     PHP_FE(cfpr_get_variable,NULL)
-    PHP_FE(cfpr_get_classes_for_bundle,NULL)
-    PHP_FE(cfpr_get_args_for_bundle,NULL)
-    PHP_FE(cfpr_get_promise_body,NULL)
     PHP_FE(cfpr_get_value_graph,NULL)
-
-    PHP_FE(cfpr_promise_list_by_handle_rx,NULL)
-    PHP_FE(cfpr_promise_list_by_bundle_rx,NULL)
-    PHP_FE(cfpr_promise_list_by_promiser_rx,NULL)
 
     PHP_FE(cfpr_report_value,NULL)
     PHP_FE(cfpr_report_notkept,NULL)
