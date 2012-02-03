@@ -42,7 +42,7 @@
             var self =this;
             self.ajaxloader=$('<div class="loading"></div>');
             self.dialogcontent = self.dialogContainer();
-             self.dialogcontent.dialog($.extend({}, 
+            self.dialogcontent.dialog($.extend({}, 
                 $.ui.dialog.prototype.options, 
                 self.options, 
                 {
@@ -86,14 +86,9 @@
             self.menu.appendTo(self.titlebar).hide();
             self.menu.delegate('li','click',$.proxy(self.menuitemclicked,self));
             self.element.bind('click',function(event){
-               event.preventDefault();
-               self. elementtext=$(this).text();
-               $(this).text('').append('<span class="loadinggif"> </span>');
-              /* if(!$("#"+self.containerID()).size()>0)
-                {
-                    self.dialogcontent.html(self.ajaxloader);
-                    self.loadpagebody(self.element.attr('href'),"",true);
-                }*/
+                event.preventDefault();
+                self. elementtext=$(this).text();
+                $(this).text('').append('<span class="loadinggif"> </span>');
                 self.dialogcontent.html(self.ajaxloader);
                 self.loadpagebody(self.element.attr('href'),"",true);
                 self.dialogcontent.dialog('open');
@@ -120,7 +115,9 @@
             submit_url=url,
             searchval=val;
             var searchtext=self.searchbar.find('input[type="text"]').val();
-            if(/search\s+by\s+/.test(searchtext)){searchtext=''};
+            if(/search\s+by\s+/.test(searchtext)){
+                searchtext=''
+            };
             $.ajax({
                 type: "POST",
                 url: submit_url,
@@ -131,13 +128,12 @@
                 },
                 dataType:"json",
                 success: function(data) {
-                    self.dialogcontent.html($("<div id='policyList'><ul id="+self.containerID()+">"));           
                     var li = '';
                     $.each(data, function(i, val) {
                         li += '<li>';
-                          li += '<span class="type">'+val[3]+'</span>'; 
-                          li +='<p>';
-                        if (!self.options.onlyShowHandle) {                
+                        li += '<span class="type">'+val[3]+'</span>'; 
+                        li +='<p>';
+                        if (!self.options.onlyShowHandle) {       
                         
                             li += '<a href="'+ self.options.baseUrl+ '/promise/details/' + escape(val[0])+'" title="'+
                             "promise" +'" class="promiselnk"><span class="promiser">'+val[4]+'</span></a>';
@@ -153,13 +149,15 @@
                         }
                         li +='</p>';
                         if(self.options.showAddButton){
-                        li +='<span class="vblistadd btn" style="display:inline-block">add to list</span>'    
+                            li +='<span class="vblistadd btn" style="display:inline-block">add to list</span>'    
                         }
                         li +='</li>';
                             
                                
                     });
-                    $('#'+self.containerID()).append(li);
+                    
+                    var policyList= "<div id='policyList'><ul id="+self.containerID()+">" + li + "</ul></div>";
+                    self.dialogcontent.html(policyList);                    
                     $('#'+self.containerID()).delegate('a','click',$.proxy(self.handleSelected,self));
                     $('#'+self.containerID()).delegate('.vblistadd','click',$.proxy(self.addSelected,self));
                     self.element.text(self. elementtext);
@@ -180,7 +178,7 @@
             {
                 event.preventDefault();
                 if(self.options.showAddButton){
-                     self._trigger("handleClicked",event,{
+                    self._trigger("handleClicked",event,{
                         selectedHandleName:sender.parent().parent().find('span.handle').html()
                     })   
                 }else{
@@ -195,8 +193,8 @@
             var self=this,
             sender=$(event.target);
             self._trigger("handleClicked",event,{
-                    selectedHandleName:sender.parent().find('span.handle').html()
-                })  
+                selectedHandleName:sender.parent().find('span.handle').html()
+            })  
         },
         
         searchboxevent:function(event)
