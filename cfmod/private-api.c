@@ -1643,7 +1643,7 @@ PHP_FUNCTION(cfpr_promise_details)
  ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
 
  PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
- PromiseFilterAddPromiseBodyRx(filter, handle, NULL);
+ PromiseFilterAddPromiseBody(filter, handle, NULL);
 
  buffer[0]='\0';
  Nova2PHP_promise_details(filter, buffer, sizeof(buffer));
