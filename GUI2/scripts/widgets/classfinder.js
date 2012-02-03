@@ -119,12 +119,7 @@
                 }
             });
             self.searchbar.find('input[type="text"]').trigger('blur');
-            self.alphasearch.find('li').removeClass('selected');
-            // self.menu.fadeOut();
-            self.searchbar.find('input[type="text"]').trigger('focus');
-            self.dialogcontent.find("#classList").delegate('a','click',$.proxy(self.classSelected,self));
-            self.dialogcontent.find("#classList").delegate('a.classadd','click',$.proxy(self.addclassfilter,self));
-             
+            self.alphasearch.find('li').removeClass('selected');            
         },
         
         classlistscrolled:function(event) {
