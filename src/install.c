@@ -1156,6 +1156,15 @@ PromiseFilter *NewPromiseFilter(void)
  return filter;
 }
 
+void PromiseFilterAddPromiseBody(PromiseFilter *filter, const char *handleInclude, const char *promiserInclude)
+{
+ assert(!filter->handleInclude && "PromiseFilterAddPromiseBody: handle is already set");
+ assert(!filter->promiserInclude && "PromiseFilterAddPromiseBody: promiser is already set");
+ 
+ filter->handleInclude = SafeStringDuplicate(handleInclude);
+ filter->promiserInclude = SafeStringDuplicate(promiserInclude);
+}
+
 void PromiseFilterAddPromiseBodyRx(PromiseFilter *filter, const char *handleRxInclude, const char *promiserRxInclude)
 {
  assert(!filter->handleRxInclude && "PromiseFilterAddPromiseBodyRx: handle is already set");
@@ -1163,6 +1172,26 @@ void PromiseFilterAddPromiseBodyRx(PromiseFilter *filter, const char *handleRxIn
  
  filter->handleRxInclude = SafeStringDuplicate(handleRxInclude);
  filter->promiserRxInclude = SafeStringDuplicate(promiserRxInclude);
+}
+
+void PromiseFilterAddBundleType(PromiseFilter *filter, const char *bundleTypeInclude)
+{
+ assert(!filter->bundleTypeInclude && "PromiseFilterAddBundleType: bundleType is already set");
+
+ filter->bundleTypeInclude = SafeStringDuplicate(bundleTypeInclude);
+}
+
+void PromiseFilterAddBundles(PromiseFilter *filter, const char *bundleInclude, const char *bundleExclude)
+{
+ if(bundleInclude)
+    {
+    AppendRlist(&(filter->bundleIncludes), bundleInclude, CF_SCALAR);
+    }
+
+ if(bundleExclude)
+    {
+    AppendRlist(&(filter->bundleExcludes), bundleExclude, CF_SCALAR);
+    }
 }
 
 void PromiseFilterAddBundlesRx(PromiseFilter *filter, const char *bundleRxInclude, const char *bundleRxExclude)
@@ -1182,9 +1211,14 @@ void PromiseFilterAddBundlesRx(PromiseFilter *filter, const char *bundleRxInclud
 
 void DeletePromiseFilter(PromiseFilter *filter)
 {
+ free(filter->handleInclude);
  free(filter->handleRxInclude);
+ free(filter->promiserInclude);
  free(filter->promiserRxInclude);
+ free(filter->bundleTypeInclude);
+ DeleteRlist(filter->bundleIncludes);
  DeleteRlist(filter->bundleRxIncludes);
+ DeleteRlist(filter->bundleExcludes);
  DeleteRlist(filter->bundleRxExcludes);
  
  free(filter);

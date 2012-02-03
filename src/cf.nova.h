@@ -1043,7 +1043,10 @@ HostClassFilter *NewHostClassFilterLists(Rlist *classRxInclude, Rlist *classRxEx
 void HostClassFilterAddClasses(HostClassFilter *filter, const char *classRxInclude, const char *classRxExclude);
 void DeleteHostClassFilter(HostClassFilter *filter);
 PromiseFilter *NewPromiseFilter(void);
+void PromiseFilterAddPromiseBody(PromiseFilter *filter, const char *handleInclude, const char *promiserInclude);
 void PromiseFilterAddPromiseBodyRx(PromiseFilter *filter, const char *handleRxInclude, const char *promiserRxInclude);
+void PromiseFilterAddBundleType(PromiseFilter *filter, const char *bundleTypeInclude);
+void PromiseFilterAddBundles(PromiseFilter *filter, const char *bundleInclude, const char *bundleExclude);
 void PromiseFilterAddBundlesRx(PromiseFilter *filter, const char *bundleRxInclude, const char *bundleRxExclude);
 void DeletePromiseFilter(PromiseFilter *filter);
 #endif
