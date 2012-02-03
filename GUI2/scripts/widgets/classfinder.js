@@ -1,8 +1,6 @@
 (function($){
     $.widget('ui.classfinder', 
-    {
-        
-        
+    {     
         options: {
             baseUrl: '',
             filterhandlerurl: "/widget/filterclass",
@@ -12,17 +10,19 @@
         },
         page:2,
         selectedLetter:null,
+        scrollingEnd:false,
         elementtext:"",
+        selectedMenu:null,
         _init: function(){
-		
+            var self=this;  
+            self.resetPagination();
+            self.dialogcontent.bind('scroll',$.proxy(self.classlistscrolled,self));
         },
         _create:function(){
             var self=this;
             self.addsearchbar();
             self.addalphapager();
-            $.ui.classfinder.instances.push(this.element);
-            
-            self.dialogcontent.bind('scroll',$.proxy(self.classlistscrolled,self));
+            $.ui.classfinder.instances.push(this.element);           
         },
 
         addsearchbar:function(){
@@ -105,9 +105,12 @@
         menuitemclicked:function(event){
             var self=this;
             var sender=$(event.target);
+            self.selectedLetter = null; // reset the letter selection 
+            self.resetPagination();
             self.searchbar.find('input[type="text"]').val('Search on '+sender.text().toLowerCase()).data('default','Search on '+sender.text().toLowerCase())
             self.dialogcontent.html(self.ajaxloader);
             sender.addClass('selected').siblings().removeClass('selected');
+            self.selectedMenu = sender.text().toLowerCase();
             $.ajax({
                 type: "POST",
                 url: self.options.baseUrl+self.options.filterhandlerurl,
@@ -120,22 +123,27 @@
                 }
             });
             self.searchbar.find('input[type="text"]').trigger('blur');
-            self.alphasearch.find('li').removeClass('selected');            
+            self.resetSelectedLetter();            
         },
         
         classlistscrolled:function(event) {
             var listpane=event.currentTarget;
             var self=this;
-            if ($(listpane)[0].scrollHeight - $(listpane).scrollTop() == $(listpane).outerHeight()) {
+            if (self.scrollingEnd == true) return;
+            // only do scrolling event when no menu option are selected or all classes is selected.
+            if (self.selectedMenu == null || self.selectedMenu == 'all classes') {
+            
+                if ($(listpane)[0].scrollHeight - $(listpane).scrollTop() == $(listpane).outerHeight()) {
                    
-                var url = self.element.attr('href')+'/'+self.page;   
-                if (self.selectedLetter != null) {
-                    url = url + '/' + self.selectedLetter;
+                    var url = self.element.attr('href')+'/'+self.page;   
+                    if (self.selectedLetter != null) {
+                        url = url + '/' + self.selectedLetter;
+                    }
+                    $.getJSON(url, function(data) {
+                        self.loadDataInContainer(data,true);
+                    });                              
+                    self.page++;              
                 }
-                $.getJSON(url, function(data) {
-                    self.loadDataInContainer(data,true);
-                });                              
-                self.page++;              
             }
         },
 
@@ -178,7 +186,7 @@
 
         loadpagebody:function(){
             var self=this;
-         
+            $('#classlistcontainer').append('<div class="loading"></div>');
             $.getJSON(self.element.attr('href'), function(data) {
                 self.loadDataInContainer(data,false);
             });
@@ -186,10 +194,22 @@
 
         loadDataInContainer:function(data,append) {
             var self=this;
-            var list = '';          
-           // console.log(data);
+            var previousListElement = document.getElementById('classList');
+            var previousList = null;
+            if (previousListElement != null && previousListElement.value != '' ) {
+                previousList =previousListElement.innerHTML; 
+            }
+            
+            var list = [];
             var length = data.length;
+            
+            // To end the scrolling so that no further request is sent
+            if (data.length == 0) {
+                self.scrollingEnd = true;
+            }
+          
             for(var i=0;i<length;i++) {
+                list.push('<li>');
                 var val = data[i]; 
                 var viewHostLink = '';
                 var addClassLink = '';
@@ -197,21 +217,27 @@
                 if(self.options.defaultbehaviour){
                     viewHostLink = '<a class="action btn" title="'+val+'" href="'+ self.options.baseUrl+"/search/index/host/All/report/contexts/hosts_only/true/name/"+val +'">'+'View hosts'+'</a>';
                     addClassLink = '<a class="classadd btn" title="'+val+'">'+'add to list'+'</a>';
-                }                                       
-                list =list + '<li>'+textLink+viewHostLink+addClassLink+'</li>';                                      
-            }
-            
-            if (append) {                
-                list = self.dialogcontent.find("#classList").html() + list;
-            }
-            var ul = '<ul id="classList">' + list + '</ul>';
-            
-            document.getElementById('classlistcontainer').innerHTML = ul;
-            //self.dialogcontent.html(ul);
-            self.dialogcontent.find("#classList").delegate('a','click',$.proxy(self.classSelected,self));
-            self.dialogcontent.find("#classList").delegate('a.classadd','click',$.proxy(self.addclassfilter,self));
-            self.element.text(self.elementtext);   
+                }
+                list.push(textLink);
+                list.push(viewHostLink);
+                list.push(addClassLink);
+                list.push('</li>');                                                  
                
+            }
+         
+           
+            
+            var ul = '';
+            if (append) {                
+                ul=  '<ul id="classList">' +previousList + list.join('') + '</ul>';
+            } else {
+                ul=  '<ul id="classList">' + list.join('') + '</ul>';
+            }
+
+            document.getElementById('classlistcontainer').innerHTML = ul;
+            self.dialogcontent.find('#classList').delegate('a','click',$.proxy(self.classSelected,self));
+            self.dialogcontent.find('#classList').delegate('a.classadd','click',$.proxy(self.addclassfilter,self));
+            self.element.text(self.elementtext);
         },
 
         classSelected:function(event){
@@ -304,13 +330,13 @@
             var sender=$(event.target).parent();
             sender.addClass('selected').siblings().removeClass('selected');
           
-           var clickedLetter = sender.text().toLowerCase();
+            var clickedLetter = sender.text().toLowerCase();
             self.selectedLetter = clickedLetter;
-           self.resetPagination();
+            self.resetPagination();
             var url = self.element.attr('href')+'/1/'+clickedLetter;     
-                $.getJSON(url, function(data) {
-                    self.loadDataInContainer(data);
-                });
+            $.getJSON(url, function(data) {
+                self.loadDataInContainer(data);
+            });
            
             if(self.menu.css('display')=='block')
             {
@@ -321,12 +347,22 @@
         resetPagination:function() {
             var self = this;
             self.page = 2;
+            self.scrollingEnd = false;
             
+        },
+        
+        resetSelectedLetter: function() {
+            var self = this;            
+            self.selectedLetter=null,
+            self.alphasearch.find('li').removeClass('selected');           
         },
     
         destroy: function(){
             // remove the dialog list content before closing
             document.getElementById('classlistcontainer').innerHTML = '';
+            var self = this;
+            self.resetPagination();
+            self.resetSelectedLetter();
             // remove this instance from $.ui.mywidget.instances
             var element = this.element,
             position = $.inArray(element, $.ui.classfinder.instances);
