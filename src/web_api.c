@@ -3761,33 +3761,6 @@ char *Nova2PHP_GetPromiseComment(char *handle)
 
 /*****************************************************************************/
 
-char *Nova2PHP_GetPromiseBundle(char *handle)
-    
-{ static char buffer[CF_BUFSIZE];
- mongo_connection dbconn;
-
- if(strcmp(handle,"internal_promise") == 0)
-    {
-    return "";
-    }
-
- if (!CFDB_Open(&dbconn))
-    {
-    return false;
-    }
-
- if (!CFDB_QueryPromiseAttr(&dbconn,handle,cfp_bundlename,buffer,CF_BUFSIZE))
-    {
-    *buffer = '\0';
-    }
-
- CFDB_Close(&dbconn);
-
- return buffer;
-}
-
-/*****************************************************************************/
-
 void Nova2PHP_GetPromiseBody(char *name,char *type,char *returnval,int bufsize)
     
 { char work[CF_BUFSIZE];
