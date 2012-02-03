@@ -4170,6 +4170,59 @@ HubQuery *CFDB_QueryPromise2(mongo_connection *conn, PromiseFilter *filter)
 
 /*****************************************************************************/
 
+HubQuery *CFDB_QueryPromiseBundles(mongo_connection *conn, PromiseFilter *filter)
+/**
+ * Differs from CFDB_QueryPromises() in that it only returns distinct bundles.
+ */
+{
+ bson_buffer bb;
+
+ bson query;
+ bson_buffer_init(&bb);
+ BsonAppendPromiseFilter(&bb, filter);
+ bson_from_buffer(&query, &bb);
+
+ bson fields;
+ bson_buffer_init(&bb);
+ bson_append_int(&bb, cfp_bundlename, 1);
+ bson_append_int(&bb, cfp_bundletype, 1);
+ bson_append_int(&bb, cfp_bundleargs, 1);
+ bson_from_buffer(&fields, &bb);
+
+ mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+ 
+ bson_destroy(&query);
+ bson_destroy(&fields);
+
+ Rlist *recordList = NULL;
+ Item *bundlesFound = NULL;
+ 
+ while(mongo_cursor_next(cursor))
+    {
+    char bundleName[CF_MAXVARSIZE], bundleType[CF_MAXVARSIZE];
+    
+    BsonStringWrite(bundleName, sizeof(bundleName), &(cursor->current), cfp_bundlename);
+    BsonStringWrite(bundleType, sizeof(bundleType), &(cursor->current), cfp_bundletype);
+
+    if(!ReturnItemInClass(bundlesFound, bundleName, bundleType))
+        {
+        Rlist *bundleArgs = BsonStringArrayAsRlist(&(cursor->current), cfp_bundleargs);
+        PrependRlistAlien(&recordList, NewHubPromiseBundle(bundleName, bundleType, bundleArgs));
+        
+        PrependItem(&bundlesFound, bundleName, bundleType);
+        }
+    }
+
+ DeleteItemList(bundlesFound);
+ 
+ mongo_cursor_destroy(cursor);
+ 
+ return NewHubQuery(NULL, recordList);
+ 
+}
+
+/*****************************************************************************/
+
 Item *CFDB_QueryBundles(mongo_connection *conn,char *bTypeRegex,char *bNameRegex)
 /*
  * Returns bundles "type name" matching the given regex.
