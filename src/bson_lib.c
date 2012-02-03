@@ -172,6 +172,23 @@ void BsonAppendStringArray(bson_buffer *bb, char *arrayName, Item *arrayValues)
 
 /*****************************************************************************/
 
+bool BsonAppendIncludeList(bson_buffer *queryBuffer, char *includeKey, Rlist *includeValues)
+{
+ if(!includeValues)
+    {
+    return false;
+    }
+
+ for (Rlist *rp = includeValues; rp; rp = rp->next)
+    {
+    bson_append_string(queryBuffer, includeKey, ScalarValue(rp));
+    }
+ 
+ return true;
+}
+
+/*****************************************************************************/
+
 bool BsonAppendIncludeRxList(bson_buffer *queryBuffer, char *includeKey, Rlist *includeRxValues)
 {
  if(!includeRxValues)
@@ -191,6 +208,29 @@ bool BsonAppendIncludeRxList(bson_buffer *queryBuffer, char *includeKey, Rlist *
 
 /*****************************************************************************/
 
+bool BsonAppendExcludeList(bson_buffer *queryBuffer, char *excludeKey, Rlist *excludeValues)
+{
+ if(!excludeValues)
+    {
+    return false;
+    }
+ 
+ bson_buffer *excludeClassBuffer = bson_append_start_object(queryBuffer, excludeKey);
+ bson_buffer *excludeClassArray = bson_append_start_array(excludeClassBuffer, "$nin");
+ 
+ for (Rlist *rp = excludeValues; rp != NULL; rp = rp->next)
+    {
+    bson_append_string(excludeClassArray, excludeKey, ScalarValue(rp));
+    }
+ 
+ bson_append_finish_object(excludeClassArray);
+ bson_append_finish_object(excludeClassBuffer);
+
+ return true;
+}
+
+/*****************************************************************************/
+
 bool BsonAppendExcludeRxList(bson_buffer *queryBuffer, char *excludeKey, Rlist *excludeRxValues)
 {
  if(!excludeRxValues)
@@ -204,7 +244,7 @@ bool BsonAppendExcludeRxList(bson_buffer *queryBuffer, char *excludeKey, Rlist *
  for (Rlist *rp = excludeRxValues; rp != NULL; rp = rp->next)
     {
     char anchoredRx[CF_BUFSIZE];
-    AnchorRegex(rp->item, anchoredRx, sizeof(anchoredRx));
+    AnchorRegex(ScalarValue(rp), anchoredRx, sizeof(anchoredRx));
     bson_append_regex(excludeClassArray, excludeKey, anchoredRx, "");
     }
  
