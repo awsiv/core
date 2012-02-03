@@ -23,14 +23,6 @@
 
 /*****************************************************************************/
 
-char *Nova_GetProcessOptions()
-{
-// Moved back into core
- return NULL;
-}
-
-/*****************************************************************************/
-
 void LogFileChange(char *file,int change,Attributes a,Promise *pp)
 
 { char destination[CF_BUFSIZE];

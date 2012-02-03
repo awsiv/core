@@ -1164,7 +1164,6 @@ unsigned long long GetInstantUint64Value(const char *name, const char *subname, 
 
 /* processes.c */
 
-char *Nova_GetProcessOptions(void);
 void Nova_DoFileDiff(char *file,char *destination,struct stat sb,struct stat dsb);
 int Nova_GetFirstChangePosition(char *file,char *destination);
 int Nova_FileIsBinary(char *name,int size,int maxsize);
