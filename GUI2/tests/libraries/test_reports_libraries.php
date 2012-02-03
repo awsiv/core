@@ -73,8 +73,8 @@ class test_reports_libraries extends CodeIgniterUnitTestCase {
 
     public function test_cfpr_report_class_frequency(){
         $hostkey = NULL;
-        $data= cfpr_report_class_frequency($hostkey,"mXC.*");
-         $this->__testcases($data);
+        $data= cfpr_report_class_frequency($this->username, $hostkey, "mXC.*");
+        $this->__testcases($data);
     }
     
     public function test_cfpr_report_bundlesseen(){
@@ -96,21 +96,21 @@ class test_reports_libraries extends CodeIgniterUnitTestCase {
     }*/
     
     public function  test_cfpr_report_value(){
-        $data=cfpr_report_value(NULL, NULL, NULL, NULL, false, "day", true, NULL, NULL);
+        $data = cfpr_report_value($this->username, NULL, NULL, NULL, NULL, false, "day", true, NULL, NULL);
         $this->__testcases($data);
-        $data2=cfpr_report_value(NULL, NULL, NULL, NULL, false, "day", true, 1,1);
+        $data2 = cfpr_report_value($this->username, NULL, NULL, NULL, NULL, false, "day", true, 1,1);
         $this->__pagingtest($data2);
     }
 
     public function test_cfpr_hosts_with_classes(){
-        $data=cfpr_hosts_with_classes(NULL, NULL, true, false);
+        $data=cfpr_hosts_with_classes($this->username, NULL, NULL, true, false);
          $this->__testcases($data);
     }
 
     public function test_cfpr_report_classes(){
-        $data=cfpr_report_classes(NULL, NULL, true, false, "last-seen", true, NULL, NULL);
+        $data = cfpr_report_classes($this->username, NULL, NULL, true, false, "last-seen", true, NULL, NULL);
         $this->__testcases($data);
-        $data2=cfpr_report_classes(NULL, NULL, true, false, "last-seen", true, 1, 1);
+        $data2 = cfpr_report_classes($this->username, NULL, NULL, true, false, "last-seen", true, 1, 1);
         $this->__pagingtest($data2);
     }
 
@@ -137,15 +137,15 @@ class test_reports_libraries extends CodeIgniterUnitTestCase {
      * Compliance Summary test
      */
     public function test_cfpr_hosts_with_compliance_summary(){
-        $data=cfpr_hosts_with_compliance_summary(NULL, NULL, -1, -1, -1, -1, ">", false);
+        $data=cfpr_hosts_with_compliance_summary($this->username, NULL, NULL, -1, -1, -1, -1, ">", false);
         $this->__testcases($data);
     }
 
     public function test_cfpr_report_compliance_summary()
     {
-        $data=cfpr_report_compliance_summary(NULL, NULL, -1, -1, -1, -1, ">", false, "last-seen", true, NULL, NULL);
+        $data = cfpr_report_compliance_summary($this->username, NULL, NULL, -1, -1, -1, -1, ">", false, "last-seen", true, NULL, NULL);
         $this->__testcases($data);
-         $data2=cfpr_report_compliance_summary(NULL, NULL, -1, -1, -1, -1, ">", false,"last-seen", true, 1, 1);
+        $data2 = cfpr_report_compliance_summary($this->username, NULL, NULL, -1, -1, -1, -1, ">", false,"last-seen", true, 1, 1);
         $this->__pagingtest($data2);
     }
 
@@ -153,24 +153,22 @@ class test_reports_libraries extends CodeIgniterUnitTestCase {
      * File change log
      */
     public function test_cfpr_hosts_with_filechanges(){
-        $data=cfpr_hosts_with_filechanges(NULL, NULL, true, -1, ">", false);
+        $data = cfpr_hosts_with_filechanges($this->username, NULL, NULL, true, -1, ">", false);
         $this->__testcases($data);
-
     }
 
     public function test_cfpr_report_filechanges(){
-        $data=cfpr_report_filechanges(NULL, NULL, true, -1, ">", false, "time", true, NULL, NULL);
-       $this->__testcases($data);
-        $data2=cfpr_report_filechanges(NULL, NULL, true, -1, ">", false, "time", true, 1, 1);
+        $data = cfpr_report_filechanges($this->username, NULL, NULL, true, -1, ">", false, "time", true, NULL, NULL);
+        $this->__testcases($data);
+        $data2 = cfpr_report_filechanges($this->username, NULL, NULL, true, -1, ">", false, "time", true, 1, 1);
         $this->__pagingtest($data2);
     }
 
     public function test_cfpr_report_filechanges_longterm(){
-        $data=cfpr_report_filechanges_longterm(NULL, NULL, true, -1, ">", false, "time", true, NULL, NULL);
-         $this->__testcases($data);
-         $data2=cfpr_report_filechanges_longterm(NULL, NULL, true, -1, ">", false, "time", true, 1,1);
+        $data=cfpr_report_filechanges_longterm($this->username, NULL, NULL, true, -1, ">", false, "time", true, NULL, NULL);
+        $this->__testcases($data);
+        $data2=cfpr_report_filechanges_longterm($this->username, NULL, NULL, true, -1, ">", false, "time", true, 1,1);
         $this->__pagingtest($data2);
-
     }
     
     
@@ -179,22 +177,22 @@ class test_reports_libraries extends CodeIgniterUnitTestCase {
      * File change diff
      */
     public function test_cfpr_hosts_with_filediffs(){
-        $data=cfpr_hosts_with_filediffs(NULL, NULL, NULL, true, NULL, ">", false);
+        $data=cfpr_hosts_with_filediffs($this->username, NULL, NULL, NULL, true, NULL, ">", false);
         $this->__testcases($data);
     }
 
     public function test_cfpr_report_filediffs(){
-        $data=cfpr_report_filediffs(NULL, NULL, NULL, true, NULL, ">", false, "time", true, NULL, NULL);
+        $data = cfpr_report_filediffs($this->username, NULL, NULL, NULL, true, NULL, ">", false, "time", true, NULL, NULL);
         $this->__testcases($data);
-        $data2=cfpr_report_filediffs(NULL, NULL, NULL, true, NULL, ">", false, "time", true, 1, 1);
+        $data2 = cfpr_report_filediffs($this->username, NULL, NULL, NULL, true, NULL, ">", false, "time", true, 1, 1);
         $this->__pagingtest($data2);
     }
 
     public function test_cfpr_report_filediffs_longterm()
     {
-        $data=cfpr_report_filediffs_longterm(NULL, NULL, NULL, true, NULL, ">", false, "time", true, NULL, NULL);
+        $data = cfpr_report_filediffs_longterm($this->username, NULL, NULL, NULL, true, NULL, ">", false, "time", true, NULL, NULL);
         $this->__testcases($data);
-        $data2=cfpr_report_filediffs_longterm(NULL, NULL, NULL, true, NULL, ">", false, "time", true, 1, 1);
+        $data2 = cfpr_report_filediffs_longterm($this->username, NULL, NULL, NULL, true, NULL, ">", false, "time", true, 1, 1);
         $this->__pagingtest($data2);
     }
 
@@ -202,14 +200,14 @@ class test_reports_libraries extends CodeIgniterUnitTestCase {
      * Laste seen Hosts
      */
     public function test_cfpr_hosts_with_lastseen(){
-        $data=cfpr_hosts_with_lastseen(NULL,NULL, NULL, NULL, NULL, true, false);
+        $data=cfpr_hosts_with_lastseen($this->username, NULL,NULL, NULL, NULL, NULL, true, false);
         $this->__testcases($data);
     }
 
     public function test_cfpr_report_lastseen(){
-        $data=cfpr_report_lastseen(NULL, NULL, NULL,NULL, NULL, true, false, "last-seen", true, NULL, NULL);
+        $data = cfpr_report_lastseen($this->username, NULL, NULL, NULL,NULL, NULL, true, false, "last-seen", true, NULL, NULL);
         $this->__testcases($data);
-        $data2=cfpr_report_lastseen(NULL, NULL, NULL,NULL, NULL, true, false, "last-seen", true, 1, 1);
+        $data2 = cfpr_report_lastseen($this->username, NULL, NULL, NULL,NULL, NULL, true, false, "last-seen", true, 1, 1);
         $this->__pagingtest($data2);
     }
     
@@ -218,15 +216,15 @@ class test_reports_libraries extends CodeIgniterUnitTestCase {
      */
 
     public function test_cfpr_hosts_with_patch_avail(){
-        $data=cfpr_hosts_with_patch_avail(NULL, NULL, NULL, NULL, true, false);
+        $data=cfpr_hosts_with_patch_avail($this->username, NULL, NULL, NULL, NULL, true, false);
         $this->__testcases($data);
         
     }
 
     public function test_cfpr_report_patch_avail(){
-        $data=cfpr_report_patch_avail(NULL,NULL, NULL, NULL, true, false, "hostname", true, NULL, NULL);
+        $data = cfpr_report_patch_avail($this->username, NULL,NULL, NULL, NULL, true, false, "hostname", true, NULL, NULL);
         $this->__testcases($data);
-        $data2=cfpr_report_patch_avail(NULL,NULL, NULL, NULL, true, false, "hostname", true, 1,1);
+        $data2 = cfpr_report_patch_avail($this->username, NULL,NULL, NULL, NULL, true, false, "hostname", true, 1,1);
         $this->__pagingtest($data2);
     }
 
@@ -234,14 +232,14 @@ class test_reports_libraries extends CodeIgniterUnitTestCase {
      * patch status
      */
     public function test_cfpr_hosts_with_patch_in(){
-        $data=cfpr_hosts_with_patch_in(NULL,NULL,NULL,NULL, true, false);
+        $data=cfpr_hosts_with_patch_in($this->username, NULL,NULL,NULL,NULL, true, false);
         $this->__testcases($data);
     }
 
     public function test_cfpr_report_patch_in(){
-        $data=cfpr_report_patch_in(NULL, NULL, NULL, NULL, true, false, "hostname", true, NULL, NULL);
+        $data = cfpr_report_patch_in($this->username, NULL, NULL, NULL, NULL, true, false, "hostname", true, NULL, NULL);
         $this->__testcases($data);
-        $data2=cfpr_report_patch_in(NULL, NULL, NULL, NULL, true, false, "hostname", true, 1, 1);
+        $data2 = cfpr_report_patch_in($this->username, NULL, NULL, NULL, NULL, true, false, "hostname", true, 1, 1);
         $this->__pagingtest($data2);
     }
 
@@ -251,14 +249,14 @@ class test_reports_libraries extends CodeIgniterUnitTestCase {
 
     public function test_cfpr_hosts_with_performance()
     {
-      $data=cfpr_hosts_with_performance(NULL, NULL, true, false);
-      $this->__testcases($data);
+        $data=cfpr_hosts_with_performance($this->username, NULL, NULL, true, false);
+        $this->__testcases($data);
     }
 
     public function test_cfpr_report_performance(){
-        $data=cfpr_report_performance(NULL, NULL, true, false, "last-performed", true, NULL, NULL);
+        $data = cfpr_report_performance($this->username, NULL, NULL, true, false, "last-performed", true, NULL, NULL);
         $this->__testcases($data);
-         $data2=cfpr_report_performance(NULL, NULL, true, false, "last-performed", true, 1, 1);
+        $data2 = cfpr_report_performance($this->username, NULL, NULL, true, false, "last-performed", true, 1, 1);
         $this->__pagingtest($data2);
     }
 
@@ -266,22 +264,21 @@ class test_reports_libraries extends CodeIgniterUnitTestCase {
      * Repaired
      */
     public function test_cfpr_hosts_with_repaired(){
-        $data=cfpr_hosts_with_repaired(NULL, NULL, NULL, NULL, false);
+        $data=cfpr_hosts_with_repaired($this->username, NULL, NULL, NULL, NULL, false);
         $this->__testcases($data);
     }
 
     public function test_cfpr_report_repaired(){
-        $data=cfpr_report_repaired(NULL, NULL, 0, 0,false, "time", true, NULL, NULL);
+        $data=cfpr_report_repaired($this->username, NULL, NULL, 0, 0,false, "time", true, NULL, NULL);
         $this->__testcases($data);
-         $data2=cfpr_report_repaired(NULL, NULL, 0, 0,false, "time", true, 1, 1);
+        $data2=cfpr_report_repaired($this->username, NULL, NULL, 0, 0,false, "time", true, 1, 1);
         $this->__pagingtest($data2);
-
     }
 
     public function test_cfpr_summarize_repaired(){
         $data=cfpr_summarize_repaired($this->username, NULL, NULL, NULL, NULL, NULL,"time",true,NULL,NULL);
-         $this->__testcases($data);
-           $data2=cfpr_summarize_repaired($this->username, NULL, NULL, NULL, NULL, NULL,"time",true,1,1);
+        $this->__testcases($data);
+        $data2=cfpr_summarize_repaired($this->username, NULL, NULL, NULL, NULL, NULL,"time",true,1,1);
         $this->__pagingtest($data2);
     }
 
@@ -312,14 +309,14 @@ class test_reports_libraries extends CodeIgniterUnitTestCase {
      * setuid guid
      */
     public function test_cfpr_hosts_with_setuid(){
-        $data=cfpr_hosts_with_setuid(NULL, NULL, true, false);
+        $data=cfpr_hosts_with_setuid($this->username, NULL, NULL, true, false);
         $this->__testcases($data);
     }
 
     public function test_cfpr_report_setuid(){
-        $data= cfpr_report_setuid(NULL, NULL, true, false,"hostname", true, NULL, NULL);
+        $data  = cfpr_report_setuid($this->username, NULL, NULL, true, false,"hostname", true, NULL, NULL);
         $this->__testcases($data);
-        $data2=cfpr_report_setuid(NULL, NULL, true, false,"hostname", true, 1, 1);
+        $data2 = cfpr_report_setuid($this->username, NULL, NULL, true, false,"hostname", true, 1, 1);
         $this->__pagingtest($data2);
     }
 
@@ -328,14 +325,14 @@ class test_reports_libraries extends CodeIgniterUnitTestCase {
      */
 
      public function test_cfpr_hosts_with_software_in(){
-         $data= cfpr_hosts_with_software_in(NULL, NULL, NULL, NULL, true,false);
-         $this->__testcases($data);
+        $data= cfpr_hosts_with_software_in($this->username, NULL, NULL, NULL, NULL, true,false);
+        $this->__testcases($data);
      }
 
      public function test_cfpr_report_software_in(){
-         $data=cfpr_report_software_in(NULL,NULL, NULL, NULL, true, false, "hostname", true, NULL, NULL);
-         $this->__testcases($data);
-         $data2=cfpr_report_software_in(NULL,NULL, NULL, NULL, true, false,"hostname", true, 1,1);
+        $data=cfpr_report_software_in($this->username, NULL,NULL, NULL, NULL, true, false, "hostname", true, NULL, NULL);
+        $this->__testcases($data);
+        $data2=cfpr_report_software_in($this->username, NULL,NULL, NULL, NULL, true, false,"hostname", true, 1,1);
         $this->__pagingtest($data2);
      }
 
@@ -344,22 +341,22 @@ class test_reports_libraries extends CodeIgniterUnitTestCase {
       */
 
      public function test_cfpr_hosts_with_vars(){
-         $data=cfpr_hosts_with_vars(NULL, NULL, NULL, NULL, NULL, true, false);
-         $this->__testcases($data);
+        $data=cfpr_hosts_with_vars($this->username, NULL, NULL, NULL, NULL, NULL, true, false);
+        $this->__testcases($data);
      }
 
      public function test_cfpr_report_vars(){
-         $data= cfpr_report_vars(NULL, NULL, NULL, NULL, NULL, true, false, "var-name", true, NULL, NULL);
-         $this->__testcases($data);
-         $data2=cfpr_report_vars(NULL, NULL, NULL, NULL, NULL, true, false, "var-name", true, 1,1);
-       $array =json_decode(utf8_encode($data2),true);
-       $retValue = json_last_error();
-       $exactly_one_row=false;
-       if(count($array['update_bins']['data'])==1)
-       {
-          $exactly_one_row=true;
-       }
-       $this->assertTrue($exactly_one_row,"exactly one rows");
+        $data = cfpr_report_vars($this->username, NULL, NULL, NULL, NULL, NULL, true, false, "var-name", true, NULL, NULL);
+        $this->__testcases($data);
+        $data2 = cfpr_report_vars($this->username, NULL, NULL, NULL, NULL, NULL, true, false, "var-name", true, 1, 1);
+        $array = json_decode(utf8_encode($data2), true);
+        $retValue = json_last_error();
+        $exactly_one_row = false;
+
+        if (count($array['update_bins']['data']) == 1) {
+            $exactly_one_row = true;
+        }
+        $this->assertTrue($exactly_one_row, "exactly one rows");
         $this->dump($data);
      }
 }

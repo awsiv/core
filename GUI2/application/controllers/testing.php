@@ -1,7 +1,8 @@
 <?php
 
 class Testing extends CI_Controller {
-
+    var $username = 'admin';
+    
     function Testing() {
         parent::__construct();
         initializeHub();
@@ -285,7 +286,7 @@ class Testing extends CI_Controller {
     }
 
     function software_installed_autocomplete($column) {
-        $data = cfpr_report_software_in(NULL, NULL, NULL, NULL, true, NULL, NULL, NULL);
+        $data = cfpr_report_software_in($this->username, NULL, NULL, NULL, NULL, true, NULL, NULL, NULL);
         $decoded_data = json_decode($data);
         $column_index = $decoded_data->meta->header->$column;
         $column = array();
@@ -334,9 +335,10 @@ class Testing extends CI_Controller {
     }
 
     function cfclasses() {
+        
         //$this->load->library('session');
         //$arr=json_decode(cfpr_class_cloud($this->session->userdata('lastclasslist')));
-        echo cfpr_report_classes(NULL, NULL, true, NULL, NULL, NULL);
+        echo cfpr_report_classes($this->username, NULL, NULL, true, NULL, NULL, NULL);
         ///echo json_encode($arr->classes);
     }
 
