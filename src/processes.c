@@ -60,12 +60,6 @@ if (a.havedepthsearch)
 if (a.repository == NULL && VREPOSITORY == NULL)
    {
    strncpy(destination,file,CF_BUFSIZE-2);
-
-   if (!JoinSuffix(destination,"_cfchanges"))
-      {
-      CfOut(cf_error,"","Buffer overflow for long filename\n");
-      return;
-      }
    }
 else
    {
@@ -84,11 +78,12 @@ else
       return;
       }
    
-   if (!JoinPath(destination,"_cfchanges"))
-      {
-      CfOut(cf_error,"","Buffer overflow for long filename\n");
-      return;
-      }
+   }
+
+if (!JoinPath(destination,"_cfchanges"))
+   {
+   CfOut(cf_error,"","Buffer overflow for long filename\n");
+   return;
    }
 
 if (!MakeParentDirectory(destination,a.move_obstructions))
