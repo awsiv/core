@@ -232,18 +232,24 @@
         },
 
         dialogContainer: function() {
+            var self = this;
             var existing = $("#classlistcontainer");
             if ( existing.size() > 0) {
                 return existing.first();
             }
             else {
                 //single shared element for modal dialogs
-                var requestDialog = $('<div id="classlistcontainer" style="display:none" class="result" title="Classes"></div>').appendTo('body').
+                var requestDialog = $('<div id="classlistcontainer" style="display:none" class="result" title="Classes"><ul id="classList"></ul></div>').appendTo('body').
                 dialog({
-                    autoOpen: false
+                    autoOpen: false,
+                    beforeClose: function(event, ui) { 
+                        self.destroy();
+                    }
                 });
+                
                 return requestDialog;
             }
+           
         },
 
         searchboxevent:function(event)
@@ -337,6 +343,8 @@
         },
     
         destroy: function(){
+            // remove the dialog list content before closing
+            document.getElementById('classlistcontainer').innerHTML = '';
             // remove this instance from $.ui.mywidget.instances
             var element = this.element,
             position = $.inArray(element, $.ui.classfinder.instances);
