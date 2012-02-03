@@ -2457,34 +2457,6 @@ char *Nova2Txt_GetPromiseComment(char *handle)
 
 /*****************************************************************************/
 
-char *Nova2Txt_GetPromiseBundle(char *handle)
-    
-{ static char buffer[CF_BUFSIZE];
- mongo_connection dbconn;
-
- if(strcmp(handle,"internal_promise") == 0)
-    {
-    return "";
-    }
-
- if (!CFDB_Open(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
-
- if (!CFDB_QueryPromiseAttr(&dbconn,handle,cfp_bundlename,buffer,CF_BUFSIZE))
-    {
-    *buffer = '\0';
-    }
-
- CFDB_Close(&dbconn);
-
- return buffer;
-}
-
-/*****************************************************************************/
-
 void Nova2Txt_GetPromiseBody(char *name,char *type,char *returnval,int bufsize)
     
 { char work[CF_BUFSIZE];
