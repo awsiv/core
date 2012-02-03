@@ -3277,16 +3277,48 @@ PHP_FUNCTION(cfpr_list_handles_for_bundle)
 
 PHP_FUNCTION(cfpr_get_promise_bundle)
 
-{ char *handle;
- int hk_len;
+{ char *promiseHandle;
+ int ph_len;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&handle,&hk_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",
+                           &promiseHandle, &ph_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
+ 
+ ARGUMENT_CHECK_CONTENTS(ph_len);
 
- RETURN_STRING(Nova2PHP_GetPromiseBundle(handle),1);
+ PromiseFilter *filter = NewPromiseFilter();
+ PromiseFilterAddPromiseBody(filter, promiseHandle, NULL);
+
+ mongo_connection conn;
+ DATABASE_OPEN(&conn);
+ 
+ HubQuery *hqBundle = CFDB_QueryPromiseBundles(&conn, filter);
+ 
+ DeletePromiseFilter(filter);
+ DATABASE_CLOSE(&conn);
+
+ HubPromiseBundle *bundle = HubQueryGetFirstRecord(hqBundle);
+
+ char *returnBuf = NULL;
+
+ if(bundle && bundle->bundleName)
+    {
+    returnBuf = estrdup(bundle->bundleName);
+    }
+
+ DeleteHubQuery(hqBundle, DeleteHubPromiseBundle);
+
+ if(returnBuf)
+    {
+    RETURN_STRING(returnBuf, 0);
+    }
+ else
+    {
+    RETURN_NULL();
+    }
 }
 
 /******************************************************************************/
