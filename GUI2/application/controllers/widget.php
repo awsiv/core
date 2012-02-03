@@ -188,54 +188,36 @@ class Widget extends Cf_Controller {
 
     function search_by_handle() {
         $handle = $this->input->post('filter');
-        $reg = $this->input->post('reg');
-        if ($reg == "true") {
-            $reg = true;
-        }
-        if ($reg == "false") {
-            $reg = false;
-        }
+
         $data = "";
         if ($handle) {
-            $data = cfpr_policy_finder_by_handle($handle, $reg);
+            $data = cfpr_promise_list_by_handle_rx($this->session->userdata('username'), $handle);
         } else {
-            $data = cfpr_policy_finder_by_handle(NULL, $reg);
+            $data = cfpr_promise_list_by_handle_rx($this->session->userdata('username'), NULL);
         }
         sanitycheckjson($data);
     }
 
     function search_by_bundle() {
         $bundle = $this->input->post('filter');
-        $reg = $this->input->post('reg');
-        if ($reg == "true") {
-            $reg = true;
-        }
-        if ($reg == "false") {
-            $reg = false;
-        }
+
         $data = "";
         if ($bundle) {
             $data = cfpr_promise_list_by_bundle_rx($this->session->userdata('username'), $bundle);
         } else {
-            $data = cfpr_policy_finder_by_bundle(NULL, $reg);
+            $data = cfpr_promise_list_by_bundle_rx($this->session->userdata('username'), NULL);
         }
         sanitycheckjson($data);
     }
 
     function search_by_type() {
         $val = $this->input->post('filter');
-        $reg = $this->input->post('reg');
         $type = $this->input->post('type');
-        if ($reg == "true") {
-            $reg = true;
-        }
-        if ($reg == "false") {
-            $reg = false;
-        }
+
         if (preg_match("/^\^\w+/i", $val)) {
-            $data = cfpr_policy_finder_by_bundle($val, $reg);
+            $data = cfpr_promise_list_by_bundle_rx($this->session->userdata('username'), $val);
         } else {
-            $data = cfpr_policy_finder_by_bundle(NULL, $reg);
+            $data = cfpr_promise_list_by_bundle_rx($this->session->userdata('username'), NULL);
         }
 
         $return_array = array();
@@ -259,18 +241,12 @@ class Widget extends Cf_Controller {
 
     function search_by_promiser() {
         $promiser = $this->input->post('filter');
-        $reg = $this->input->post('reg');
-        if ($reg == "true") {
-            $reg = true;
-        }
-        if ($reg == "false") {
-            $reg = false;
-        }
+
         $data = "";
         if ($promiser) {
             $data = cfpr_promise_list_by_promiser_rx($this->session->userdata('username'), $promiser);
         } else {
-            $data = cfpr_policy_finder_by_promiser(NULL, $reg);
+            $data = cfpr_promise_list_by_promiser_rx($this->session->userdata('username'), NULL);
         }
         sanitycheckjson($data);
     }
