@@ -271,31 +271,17 @@
         {
             var self=this;
             var searchbox= $(event.target);
-            var searchWord = searchbox.val();
-            if (searchWord.length >= 3) {
-                //console.log(self.dialogcontent.find("#classList").find('li').length)
-                if(self.menu.css('display')=='block')
-                {
-                    self.menu.fadeOut(400);
-                }
-                self.dialogcontent.find("#classList").find('li').each(function() {
-                    var text = $(this).text();
-                    $(this).css('display','none');
-                       
-                    if (text.match(RegExp(searchWord, 'i'))) {
-                        $(this).css('display','block');
-                    }
+            
+            var searchWord = encodeURIComponent(searchbox.val());
+            
+            if(event.keyCode == 13) {
+                self.selectedMenu = null;
+                var url = self.element.attr('href')+'/1/'+searchWord;     
+                self.selectedLetter = searchWord; 
+                $.getJSON(url, function(data) {                
+                    self.loadDataInContainer(data);
                 });
-            }
-
-            //on backspace key pressed event
-            if(searchWord==''&& event.keyCode == 8)
-            {
-                self.dialogcontent.find("#classList").find('li').each(function() {
-                    $(this).css('display','block');
-                });
-                self.menu.slideDown();
-            }
+            }          
         },
 
         addalphapager:function()
