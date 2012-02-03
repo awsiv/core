@@ -3386,7 +3386,7 @@ PHP_FUNCTION(cfpr_get_args_for_bundle)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_list_all_bundles)
-
+// TODO: deparametarize this, one fn for all, one for btype
 {
  char *btype,*fbtype;
  int p_len;
@@ -3402,7 +3402,13 @@ PHP_FUNCTION(cfpr_list_all_bundles)
 
  fbtype =  (p_len == 0) ? NULL : btype;
 
- Nova2PHP_list_all_bundles(fbtype,buffer,sizeof(buffer));
+ PromiseFilter *filter = NewPromiseFilter();
+ PromiseFilterAddBundleType(filter, fbtype);
+
+ Nova2PHP_list_all_bundles(filter,buffer,sizeof(buffer));
+
+ DeletePromiseFilter(filter);
+ 
  RETURN_STRING(buffer,1);
 }
 /******************************************************************************/

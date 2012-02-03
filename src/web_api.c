@@ -3173,102 +3173,110 @@ if (matched)
 
 /*****************************************************************************/
 
-int Nova2PHP_list_all_bundles(char *type,char *buffer,int bufsize)
+int Nova2PHP_list_all_bundles(PromiseFilter *filter, char *buffer, int bufsize)
+// FIXME: needs refactoring. filter->bundleTypeInclude should not be access directly - split to to functions
+{
+ mongo_connection dbconn;
+ char work[CF_BUFSIZE];
 
-{ mongo_connection dbconn;
-  char work[CF_BUFSIZE];
-  Item *matched,*ip;
+ Nova_WebTopicMap_Initialize();
 
-Nova_WebTopicMap_Initialize();
+ if (!CFDB_Open(&dbconn))
+    {
+    return false;
+    }
 
-if (!CFDB_Open(&dbconn))
-   {
-   return -1;
-   }
+ HubQuery *hqBundles = CFDB_QueryPromiseBundles(&dbconn, filter);
 
-matched = CFDB_QueryBundles(&dbconn,type,NULL);
-matched = SortItemListClasses(matched);
+ if(CountRecords(hqBundles) == 0)
+    {
+    DeleteHubQuery(hqBundles, DeleteHubPromiseBundle);
+    CFDB_Close(&dbconn);
+    }
+
+ hqBundles->records = SortRlist(hqBundles->records, SortPromiseBundle);
  
-if (matched)
-   {
-   if (type)
-      {
-      snprintf(buffer,bufsize,
-               "{\"meta\":{\"header\": {\"Type\":0,\"Service bundle name\":1,\"Description\":2,"
-               "\"Contributing to Goals\":{\"index\":3,\"subkeys\":{\"pid\":0,\"name\":1,\"description\":2}},"
-               "\"\":4"
-               "}},\"data\":[");
-      }
-   else
-      {
-      snprintf(buffer,bufsize,"[");
-      }
+ 
+ if (filter->bundleTypeInclude)
+    {
+    snprintf(buffer,bufsize,
+             "{\"meta\":{\"header\": {\"Type\":0,\"Service bundle name\":1,\"Description\":2,"
+             "\"Contributing to Goals\":{\"index\":3,\"subkeys\":{\"pid\":0,\"name\":1,\"description\":2}},"
+             "\"\":4"
+             "}},\"data\":[");
+    }
+ else
+    {
+    snprintf(buffer,bufsize,"[");
+    }
    
-   for (ip = matched; ip != NULL; ip=ip->next)
-      {
-      Item *ip2,*glist = Nova_GetBusinessGoals(ip->name);
-      char goals[CF_BUFSIZE];
-      char colour[CF_SMALLBUF];
+ for (Rlist *rp = hqBundles->records; rp != NULL; rp = rp->next)
+    {
+    HubPromiseBundle *bundle = rp->item;
+    
+    Item *ip2,*glist = Nova_GetBusinessGoals(bundle->bundleName);
+    char goals[CF_BUFSIZE];
+    char colour[CF_SMALLBUF];
       
-      if (type && glist)
-         {
-         snprintf(goals,sizeof(goals),"[");
+    if (filter->bundleTypeInclude && glist)
+       {
+       snprintf(goals,sizeof(goals),"[");
 
-         for (ip2 = glist; ip2 != NULL; ip2=ip2->next)
-            {
-            snprintf(work,sizeof(work),"[%d,\"%s\",\"%s\"],",ip2->counter,ip2->name,ip2->classes);
+       for (ip2 = glist; ip2 != NULL; ip2=ip2->next)
+          {
+          snprintf(work,sizeof(work),"[%d,\"%s\",\"%s\"],",ip2->counter,ip2->name,ip2->classes);
             
-            if (!Join(goals,work,CF_BUFSIZE))
-               {
-               break;
-               }
-            }
+          if (!Join(goals,work,CF_BUFSIZE))
+             {
+             break;
+             }
+          }
          
-         ReplaceTrailingChar(goals, ',', '\0');
-         EndJoin(goals,"]",sizeof(goals));
+       ReplaceTrailingChar(goals, ',', '\0');
+       EndJoin(goals,"]",sizeof(goals));
 
-         snprintf(colour,CF_SMALLBUF,"green");
-         }
-      else if (type)
-         {
-         snprintf(goals,CF_MAXVARSIZE,"[[-1,\"Unknown\",\"Unknown\"]]");
-         snprintf(colour,CF_SMALLBUF,"yellow");
-         }
+       snprintf(colour,CF_SMALLBUF,"green");
+       }
+    else if (filter->bundleTypeInclude)
+       {
+       snprintf(goals,CF_MAXVARSIZE,"[[-1,\"Unknown\",\"Unknown\"]]");
+       snprintf(colour,CF_SMALLBUF,"yellow");
+       }
 
-      if (type)
-         {
-         snprintf(work,CF_BUFSIZE,"[\"%s\",\"%s\",\"%s\",%s,\"%s\"],",ip->classes,ip->name,Nova_GetBundleComment(ToLowerStr(ip->name)),goals,colour);
-         }
-      else
-         {
-         snprintf(work,CF_BUFSIZE,"[\"%s\",\"%s\"],",ip->classes,ip->name);
-         }
+    if (filter->bundleTypeInclude)
+       {
+       snprintf(work, sizeof(work), "[\"%s\",\"%s\",\"%s\",%s,\"%s\"],",
+                bundle->bundleType, bundle->bundleName, Nova_GetBundleComment(ToLowerStr(bundle->bundleName)), goals, colour);
+       }
+    else
+       {
+       snprintf(work,CF_BUFSIZE,"[\"%s\",\"%s\"],", bundle->bundleType, bundle->bundleName);
+       }
       
-      if(!Join(buffer,work,bufsize))
-         {
-         break;
-         }
-      DeleteItemList(glist);
-      }
+    if(!Join(buffer,work,bufsize))
+       {
+       break;
+       }
+    
+    DeleteItemList(glist);
+    }
 
-   ReplaceTrailingChar(buffer, ',', '\0');
-   if (type)
-      {
-      strcat(buffer,"]}\n");
-      }
-   else
-      {
-      strcat(buffer,"]\n");
-      }
-   DeleteItemList(matched);
-   }
+ ReplaceTrailingChar(buffer, ',', '\0');
+ 
+ if (filter->bundleTypeInclude)
+    {
+    strcat(buffer,"]}\n");
+    }
+ else
+    {
+    strcat(buffer,"]\n");
+    }
 
-if (!CFDB_Close(&dbconn))
-   {
-   CfOut(cf_verbose,"", "!! Could not close connection to report database");
-   }
+ DeleteHubQuery(hqBundles, DeleteHubPromiseBundle);
 
-return true;
+ CFDB_Close(&dbconn);
+
+ return true;
 }
 
 /*****************************************************************************/
