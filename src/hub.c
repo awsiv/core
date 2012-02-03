@@ -26,6 +26,8 @@ static bool CFH_ZENOSS = false;
 
 /*******************************************************************/
 
+static GenericAgentConfig CheckOpts(int argc,char **argv);
+
 static void Nova_HubLog(const char *s, ...)
     FUNC_ATTR_FORMAT(printf, 1, 2);
 
@@ -108,7 +110,7 @@ return 0;
 /* Level 1                                                                   */
 /*****************************************************************************/
 
-GenericAgentConfig CheckOpts(int argc,char **argv)
+static GenericAgentConfig CheckOpts(int argc,char **argv)
 { extern char *optarg;
   int optindex = 0;
   int c;
