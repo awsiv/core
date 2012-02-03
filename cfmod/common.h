@@ -66,6 +66,9 @@
    Writer *writer = StringWriter(); \
    JsonObjectPrint(writer, json, 0); \
    JsonObjectDelete(json);           \
-   RETURN_STRING(StringWriterClose(writer), 1);
+   char *JSON_buf = StringWriterClose(writer); \
+   char *JSON_ebuf = estrdup(JSON_buf); \
+   free(JSON_buf);                      \
+   RETURN_STRING(JSON_ebuf, 0);
 
 #endif
