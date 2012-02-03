@@ -94,7 +94,7 @@ class pdfreports extends Cf_Controller {
                 break;
 
             case "business-value":
-                $this->rpt_business_value($params['hostkey'], $params['days'], $params['months'], $params['years'], $params['class_regex'], $params['rows'], $params['page']);
+                $this->rpt_business_value($username, $params['hostkey'], $params['days'], $params['months'], $params['years'], $params['class_regex'], $params['rows'], $params['page']);
                 break;
 
             case "contexts":
@@ -361,9 +361,9 @@ class pdfreports extends Cf_Controller {
         }
     }
 
-    function rpt_business_value($hostkey, $days, $months, $years, $class_regex, $rows = 0, $page_number = 0) {
+    function rpt_business_value($username, $hostkey, $days, $months, $years, $class_regex, $rows = 0, $page_number = 0) {
 
-        $ret = cfpr_report_value($hostkey, $days, $months, $years, $class_regex, "day", true, $rows, $page_number);
+        $ret = cfpr_report_value($username, $hostkey, $days, $months, $years, $class_regex, "day", true, $rows, $page_number);
         $jsondata = json_decode($ret, true);
 
         $data1 = $jsondata['data'];

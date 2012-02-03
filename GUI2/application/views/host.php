@@ -31,10 +31,9 @@ $colour = cfpr_get_host_colour($hostkey);
             <div id="monitoredjob"class="innerdiv">
                 <p class="title">  <img src= "<?php echo get_imagedir() . $colour ?>_square_little.png" class="hoststatcolorsquare"/><?php echo $this->lang->line('header_monitor_job'); ?></p>
                 <?php
-                $number = cfpr_get_class_frequency($this->session->userdata('username'), NULL, "mXC.*");
-                $count = 0;
-                $nlist = json_decode(cfpr_report_class_frequency($this->session->userdata('username'),$hostkey, "mXC.*"), true);
-//  echo cfpr_report_class_frequency($hostkey,"mXC.*");
+                    $number = cfpr_get_class_frequency($this->session->userdata('username'), NULL, "mXC.*");
+                    $count = 0;
+                    $nlist = json_decode(cfpr_report_class_frequency($this->session->userdata('username'), $hostkey, "mXC.*"), true);
                 ?>
                 <p><?php echo $this->lang->line('host_total_surveillance') ?>: <?php echo $number ?><p>
                 <p><?php echo $this->lang->line('host_on_host') ?>: <?php
