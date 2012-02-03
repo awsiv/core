@@ -746,7 +746,6 @@ HubQuery *CFDB_QueryPromiseBundles(mongo_connection *conn, PromiseFilter *filter
 Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char *bName);
 Item *CFDB_QueryBundlesUsing(mongo_connection *conn, char *bNameReferenced);
 int CFDB_QueryBundleCount(mongo_connection *conn);
-int CFDB_QueryBundleType(mongo_connection *conn,char *bName,char *buffer,int bufsize);
 int CFDB_QueryPromiseCount(mongo_connection *conn);
 HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name);
 Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);

@@ -3236,37 +3236,6 @@ int Nova2PHP_list_all_bundles(PromiseFilter *filter, char *buffer, int bufsize)
 
 /*****************************************************************************/
 
-int Nova2PHP_get_bundle_type(char *name,char *buffer,int bufsize)
-
-{ mongo_connection dbconn;
-  int matched = false;
-
-Nova_WebTopicMap_Initialize();
-
-if (!CFDB_Open(&dbconn))
-   {
-   return -1;
-   }
-
-matched = CFDB_QueryBundleType(&dbconn,name,buffer,bufsize);
- 
-if (!CFDB_Close(&dbconn))
-   {
-   CfOut(cf_verbose,"", "!! Could not close connection to report database");
-   }
-
-if (matched)
-   {
-   return true;
-   }
-else
-   {
-   return false;
-   }
-}
-
-/*****************************************************************************/
-
 int Nova2PHP_list_all_goals(char *buffer,int bufsize)
 
 {

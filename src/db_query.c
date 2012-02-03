@@ -4223,62 +4223,6 @@ HubQuery *CFDB_QueryPromiseBundles(mongo_connection *conn, PromiseFilter *filter
 
 /*****************************************************************************/
 
-int CFDB_QueryBundleType(mongo_connection *conn,char *bName,char *buffer,int bufsize)
-/*
- * Returns "true" and "buffer = bundle type" for the given bundle name
- * "false" otherwise
- */
-
-{ bson_buffer bbuf;
- bson_iterator it1;
- bson query,field;
- mongo_cursor *cursor;
- int matched = false;
-
- // query
- bson_buffer_init(&bbuf);
- 
- if (!EMPTY(bName))
-    {
-    bson_append_string(&bbuf, cfp_bundlename, bName);
-    }
- else
-    {
-    bson_buffer_destroy(&bbuf);
-    return false;
-    }
-
- bson_from_buffer(&query,&bbuf);
- 
-// returned attribute
- bson_buffer_init(&bbuf);
- bson_append_int(&bbuf,cfp_bundletype,1);
- bson_from_buffer(&field,&bbuf);
-
- cursor = mongo_find(conn,MONGO_PROMISES_UNEXP,&query,&field,0,0,CF_MONGO_SLAVE_OK);
-
- bson_destroy(&field);
- bson_destroy(&query);
-
- while(mongo_cursor_next(cursor))  // iterate over docs
-    {
-    bson_iterator_init(&it1,cursor->current.data);
-   
-    while(bson_iterator_next(&it1))
-       {
-       if (strcmp(bson_iterator_key(&it1), cfp_bundletype) == 0)
-          {
-          matched = true;
-          snprintf(buffer,bufsize,"%s",bson_iterator_string(&it1));
-          }
-       }
-    }
- mongo_cursor_destroy(cursor);
-
- return matched;
-}
-/*****************************************************************************/
-
 Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char *bName)
 /*
  * Returns the set of classes used in the given bundle.
