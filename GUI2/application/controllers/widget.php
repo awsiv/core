@@ -25,8 +25,8 @@ class Widget extends Cf_Controller {
 
     function summaryCompliance() {
         // we will use username for RBAC
-        $username =  $this->session->userdata('username');
-        
+        $username = $this->session->userdata('username');
+
         $getparams = $this->uri->uri_to_assoc(3);
         $startDate = isset($getparams['start']) ? $getparams['start'] : -1;
         $env = $getparams['env'];
@@ -37,13 +37,13 @@ class Widget extends Cf_Controller {
         $stopDateTimeStamp = ($stopDate == null) ? ($startDate + (6 * 3600)) : time();
         $environment = $env;
 
-        $this->data['notkept']  = json_decode(cfpr_summarize_notkept ($username, NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment, "time", true, 0, 0), true);
+        $this->data['notkept'] = json_decode(cfpr_summarize_notkept($username, NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment, "time", true, 0, 0), true);
         $this->data['repaired'] = json_decode(cfpr_summarize_repaired($username, NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment, "time", true, 0, 0), true);
 
 
 
         $this->data['startDate'] = getDateStatus($startDateTimeStamp, true);
-        $this->data['stopDate']  = getDateStatus($stopDateTimeStamp,  true);
+        $this->data['stopDate'] = getDateStatus($stopDateTimeStamp, true);
         $this->load->view('widgets/summaryCompliance', $this->data);
     }
 
@@ -117,9 +117,28 @@ class Widget extends Cf_Controller {
         }
     }
 
-    function allclasses() {
-        $data = cfpr_list_all_classes(NULL, NULL, NULL, NULL);
-        sanitycheckjson($data);
+    function allclasses($page = 1, $alphaSearch = null) {
+
+        $this->load->library('session');
+        $username = $this->session->userdata('username');
+        
+        $searchLetter = null;
+        if ($alphaSearch != null) {
+            $searchLetter = $alphaSearch.'.*';
+        }
+        $data = cfpr_report_classes($username, null, $searchLetter, true, null, "last-seen", true, 20, $page);
+
+        //$data = cfpr_report_classes_test(5000,$page,100000);
+        
+        $extractClass = sanitycheckjson($data, true);
+        $classArray = array();
+        foreach ((array) $extractClass['data'] as $classList) {
+            $classArray[] = $classList[1];
+        }
+        $classArray = array_values(array_unique($classArray));
+        
+       echo json_encode($classArray);
+        
     }
 
     function filterclass() {

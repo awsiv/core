@@ -1,6 +1,8 @@
 (function($){
     $.widget('ui.classfinder', 
     {
+        
+        
         options: {
             baseUrl: '',
             filterhandlerurl: "/widget/filterclass",
@@ -8,6 +10,8 @@
             width:700,
             height:600
         },
+        page:2,
+        selectedLetter:null,
         elementtext:"",
         _init: function(){
 		
@@ -17,6 +21,8 @@
             self.addsearchbar();
             self.addalphapager();
             $.ui.classfinder.instances.push(this.element);
+            
+            self.dialogcontent.bind('scroll',$.proxy(self.classlistscrolled,self));
         },
 
         addsearchbar:function(){
@@ -118,6 +124,23 @@
             self.searchbar.find('input[type="text"]').trigger('focus');
             self.dialogcontent.find("#classList").delegate('a','click',$.proxy(self.classSelected,self));
             self.dialogcontent.find("#classList").delegate('a.classadd','click',$.proxy(self.addclassfilter,self));
+             
+        },
+        
+        classlistscrolled:function(event) {
+            var listpane=event.currentTarget;
+            var self=this;
+            if ($(listpane)[0].scrollHeight - $(listpane).scrollTop() == $(listpane).outerHeight()) {
+                   
+                var url = self.element.attr('href')+'/'+self.page;   
+                if (self.selectedLetter != null) {
+                    url = url + '/' + self.selectedLetter;
+                }
+                $.getJSON(url, function(data) {
+                    self.loadDataInContainer(data,true);
+                });                              
+                self.page++;              
+            }
         },
 
         addclassfilter:function(event)
@@ -125,8 +148,7 @@
             event.preventDefault();
             var self=this,
             sender=$(event.target),
-            selectedclass= $(sender).attr('title');
-     
+            selectedclass= $(sender).attr('title');     
             var li = $("<li>");
             li.text(selectedclass).data('filter',selectedclass).appendTo(self.filter);
             $("<a>").text("X").appendTo(li)
@@ -160,18 +182,18 @@
 
         loadpagebody:function(){
             var self=this;
-            self.dialogcontent.html(self.ajaxloader);
+         
             $.getJSON(self.element.attr('href'), function(data) {
-                self.loadDataInContainer(data);
+                self.loadDataInContainer(data,false);
             });
         },
 
-        loadDataInContainer:function(data) {
+        loadDataInContainer:function(data,append) {
             var self=this;
-            var list = '';
+            var list = '';          
+           // console.log(data);
             var length = data.length;
             for(var i=0;i<length;i++) {
-                //$.each(data, function(i, val) {
                 var val = data[i]; 
                 var viewHostLink = '';
                 var addClassLink = '';
@@ -182,11 +204,18 @@
                 }                                       
                 list =list + '<li>'+textLink+viewHostLink+addClassLink+'</li>';                                      
             }
+            
+            if (append) {                
+                list = self.dialogcontent.find("#classList").html() + list;
+            }
             var ul = '<ul id="classList">' + list + '</ul>';
-            self.dialogcontent.html(ul);
+            
+            document.getElementById('classlistcontainer').innerHTML = ul;
+            //self.dialogcontent.html(ul);
             self.dialogcontent.find("#classList").delegate('a','click',$.proxy(self.classSelected,self));
             self.dialogcontent.find("#classList").delegate('a.classadd','click',$.proxy(self.addclassfilter,self));
             self.element.text(self.elementtext);   
+               
         },
 
         classSelected:function(event){
@@ -286,17 +315,25 @@
             var self=this;
             var sender=$(event.target).parent();
             sender.addClass('selected').siblings().removeClass('selected');
-            //console.log(RegExp("/^"+$(event.target).text()+"/", 'i'));
-            self.dialogcontent.find("#classList").find('li').addClass('unmatched').each(function() {
-                var text = $(this).text();
-                if (text.match(RegExp("^"+sender.text().toLowerCase(), 'i'))) {
-                    $(this).removeClass('unmatched');
-                }
-            });
+          
+           var clickedLetter = sender.text().toLowerCase();
+            self.selectedLetter = clickedLetter;
+           self.resetPagination();
+            var url = self.element.attr('href')+'/1/'+clickedLetter;     
+                $.getJSON(url, function(data) {
+                    self.loadDataInContainer(data);
+                });
+           
             if(self.menu.css('display')=='block')
             {
                 self.menu.fadeOut(400);
             }
+        },
+        
+        resetPagination:function() {
+            var self = this;
+            self.page = 2;
+            
         },
     
         destroy: function(){
