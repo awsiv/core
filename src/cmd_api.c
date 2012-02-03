@@ -1988,48 +1988,6 @@ int Nova2Txt_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsi
 
 /*****************************************************************************/
 
-int Nova2Txt_get_args_for_bundle(char *name,char *type,char *buffer,int bufsize)
-
-{ mongo_connection dbconn;
-  Item *matched,*ip;
-  char work[CF_MAXVARSIZE];
-  
-if (!CFDB_Open(&dbconn))
-   {
-   CfOut(cf_verbose,"", "!! Could not open connection to report database");
-   return -1;
-   }
-
-matched = CFDB_QueryBundleArgs(&dbconn,type,name);
-
-if (matched)
-   {
-   snprintf(buffer,bufsize,"<ul>\n");
-   
-    for (ip = matched; ip != NULL; ip=ip->next)
-       {
-       snprintf(work,CF_MAXVARSIZE,"<li><span class=\"args\">%s</span></li>",ip->name);
-
-       if(!Join(buffer,work,bufsize))
-          {
-          break;
-          }
-       }
-
-    strcat(buffer,"</ul>\n");
-    DeleteItemList(matched);
-    }
-
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
-
- return true;
-}
-
-/*****************************************************************************/
-
 int Nova2Txt_get_bundle_type(char *name,char *buffer,int bufsize)
 
 { mongo_connection dbconn;
