@@ -3365,22 +3365,48 @@ PHP_FUNCTION(cfpr_get_classes_for_bundle)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_get_args_for_bundle)
+{
+ char *bundleName;
+ char *bundleType;
+ int bname_len, btype_len;
 
-{ char *bundle;
- char *btype;
- int r_len, p_len;
- char buffer[CF_WEBBUFFER];
-
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&bundle,&r_len,&btype,&p_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
+                           &bundleName, &bname_len,
+                           &bundleType, &btype_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
- buffer[0] = '\0';
- Nova2PHP_get_args_for_bundle(bundle,btype,buffer,sizeof(buffer));
+ ARGUMENT_CHECK_CONTENTS(bname_len && btype_len);
 
- RETURN_STRING(buffer,1);
+ PromiseFilter *filter = NewPromiseFilter();
+ PromiseFilterAddBundles(filter, bundleName, NULL);
+ PromiseFilterAddBundleType(filter, bundleType);
+
+ mongo_connection conn;
+ DATABASE_OPEN(&conn);
+ 
+ HubQuery *hqBundle = CFDB_QueryPromiseBundles(&conn, filter);
+ 
+ DeletePromiseFilter(filter);
+ DATABASE_CLOSE(&conn);
+
+ JsonArray *output = NULL;
+
+ HubPromiseBundle *bundle = HubQueryGetFirstRecord(hqBundle);
+ 
+ if(bundle)
+    {
+    for (Rlist *rp = bundle->bundleArgs; rp != NULL; rp = rp->next)
+       {
+       JsonArrayAppendString(&output, ScalarValue(rp));
+       }
+    }
+
+ DeleteHubQuery(hqBundle, DeleteHubPromiseBundle);
+
+ RETURN_JSON_ARRAY(output);
 }
 
 /******************************************************************************/
