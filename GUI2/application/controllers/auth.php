@@ -99,7 +99,7 @@ class Auth extends Controller {
             //check for "remember me"
             $remember = (bool) $this->input->post('remember');
 
-            if ($this->ion_auth->login($this->input->post($identifier), $this->input->post('password'), $remember)) { //if the login is successful
+            if ($this->ion_auth->login(trim($this->input->post($identifier)), $this->input->post('password'), $remember)) { //if the login is successful
                 //redirect them back to the home page
                 $this->session->set_flashdata('message', $this->ion_auth->messages());
                 //redirect($this->config->item('base_url'), 'refresh');
