@@ -820,6 +820,35 @@ void DeleteHubPromise(HubPromise *hp)
 
 /*****************************************************************************/
 
+HubPromiseBundle *NewHubPromiseBundle(char *bundleName, char *bundleType, Rlist *bundleArgs)
+
+{
+ HubPromiseBundle *hb = xmalloc(sizeof(HubPromiseBundle));
+
+ hb->bundleName = SafeStringDuplicate(bundleName);
+ hb->bundleType = SafeStringDuplicate(bundleType);
+
+ // NOTE: allocated by caller - taking ownership
+ hb->bundleArgs = bundleArgs; 
+
+ return hb;
+}
+
+/*****************************************************************************/
+
+void DeleteHubPromiseBundle(HubPromiseBundle *hb)
+
+{
+ free(hb->bundleName);
+ free(hb->bundleType);
+
+ DeleteRlist(hb->bundleArgs);
+ 
+ free(hb);
+}
+
+/*****************************************************************************/
+
 HubBody *NewHubBody(char *bodyType,char *bodyName,char *bodyArgs)
 
 { HubBody *hb;

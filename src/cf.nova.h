@@ -479,6 +479,13 @@ typedef struct
    double popularity;  // optional
    } HubPromise;
 
+typedef struct
+   {
+   char *bundleName;
+   char *bundleType;
+   Rlist *bundleArgs;
+   } HubPromiseBundle;
+
 typedef struct HubBodyAttr_ HubBodyAttr;
 
 typedef struct
@@ -1012,6 +1019,8 @@ void DeleteHubFileDiff(HubFileDiff *hp);
 HubValue *NewHubValue(HubHost *hh,char *day,double kept,double repaired,double notkept,char *noteid, char *handle);
 void DeleteHubValue(HubValue *hp);
 HubPromise *NewHubPromise(char *bn,char *bt,Rlist *ba,char *pt, char *pr, char *pe, char *cl, char *ha, char *co, char *fn, int lno, Rlist *cons);
+HubPromiseBundle *NewHubPromiseBundle(char *bundleName, char *bundleType, Rlist *bundleArgs);
+void DeleteHubPromiseBundle(HubPromiseBundle *hb);
 void DeleteHubPromise(HubPromise *hp);
 HubBody *NewHubBody(char *bodyName,char *bodyType,char *bodyArgs);
 void DeleteHubBody(HubBody *hb);
