@@ -3438,27 +3438,55 @@ PHP_FUNCTION(cfpr_list_all_bundles)
  RETURN_STRING(buffer,1);
 }
 /******************************************************************************/
+
 PHP_FUNCTION(cfpr_get_bundle_type)
-
+// FIXME: this function inherently wrong - a bundle is not unique by its name -
+//        e.g. there may be a "bundle monitor test" and a "bundle agent test"
 {
- char *bname,*fbname;
- int n_len;
- const int bufsize = 10000;
- char buffer[bufsize];
-
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&bname,&n_len) == FAILURE)
+ char *bundleName;
+ int bname_len;
+ 
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",
+                           &bundleName, &bname_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
- buffer[0] = '\0';
+ ARGUMENT_CHECK_CONTENTS(bname_len);
 
- fbname =  (n_len == 0) ? NULL : bname;
+ PromiseFilter *filter = NewPromiseFilter();
+ PromiseFilterAddBundles(filter, bundleName, NULL);
 
- Nova2PHP_get_bundle_type(fbname,buffer,bufsize);
- RETURN_STRING(buffer,1);
+ mongo_connection conn;
+ DATABASE_OPEN(&conn);
+ 
+ HubQuery *hqBundle = CFDB_QueryPromiseBundles(&conn, filter);
+ 
+ DeletePromiseFilter(filter);
+ DATABASE_CLOSE(&conn);
+
+ HubPromiseBundle *bundle = HubQueryGetFirstRecord(hqBundle);
+
+ char *returnBuf = NULL;
+ 
+ if(bundle && bundle->bundleType)
+    {
+    returnBuf = estrdup(bundle->bundleType);
+    }
+
+ DeleteHubQuery(hqBundle, DeleteHubPromiseBundle);
+
+ if(returnBuf)
+    {
+    RETURN_STRING(returnBuf, 0);
+    }
+ else
+    {
+    RETURN_NULL();
+    }
 }
+
 /******************************************************************************/
 PHP_FUNCTION(cfpr_list_bundles_using)
 
