@@ -3128,51 +3128,6 @@ int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsi
 
 /*****************************************************************************/
 
-int Nova2PHP_get_args_for_bundle(char *name,char *type,char *buffer,int bufsize)
-
-{ mongo_connection dbconn;
-  Item *matched,*ip;
-  char work[CF_MAXVARSIZE];
-
-  buffer[0] = '\0';
-  
-if (!CFDB_Open(&dbconn))
-   {
-   return -1;
-   }
-
-matched = CFDB_QueryBundleArgs(&dbconn,type,name);
-
-if (matched)
-   {
-   StartJoin(buffer, "[", bufsize);
-   
-    for (ip = matched; ip != NULL; ip=ip->next)
-       {
-       snprintf(work,sizeof(work),"\"%s\",",ip->name);
-
-       if(!Join(buffer,work,bufsize))
-          {
-          break;
-          }
-       }
-
-    ReplaceTrailingChar(buffer, ',', '\0');
-    EndJoin(buffer, "]", bufsize);
-
-    DeleteItemList(matched);
-    }
-
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
-
- return true;
-}
-
-/*****************************************************************************/
-
 int Nova2PHP_list_all_bundles(PromiseFilter *filter, char *buffer, int bufsize)
 // FIXME: needs refactoring. filter->bundleTypeInclude should not be access directly - split to to functions
 {

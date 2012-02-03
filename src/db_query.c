@@ -4327,60 +4327,6 @@ Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char *bName)
 
 /*****************************************************************************/
 
-Item *CFDB_QueryBundleArgs(mongo_connection *conn, char *bType, char *bName)
-/*
- * Returns the set of argument names for a given bundle, NULL if none.
- * MEMORY NOTE: Caller must free returned value (!= NULL) with DeleteItemList()
- */
-{ bson_buffer bbuf;
- bson_iterator it1,it2;
- bson query,field;
- mongo_cursor *cursor;
- Item *args = {0};
-
- // query
- bson_buffer_init(&bbuf);
- bson_append_string(&bbuf,cfp_bundletype,bType);
- bson_append_string(&bbuf,cfp_bundlename,bName);
- bson_from_buffer(&query,&bbuf);
-
- // returned attribute
- bson_buffer_init(&bbuf);
- bson_append_int(&bbuf,cfp_bundleargs,1);
- bson_from_buffer(&field,&bbuf);
-
- cursor = mongo_find(conn,MONGO_PROMISES_UNEXP,&query,&field,0,0,CF_MONGO_SLAVE_OK);
-
- bson_destroy(&query);
- bson_destroy(&field);
-
- while(mongo_cursor_next(cursor))  // iterate over docs
-    {
-    bson_iterator_init(&it1,cursor->current.data);
-   
-    while(bson_iterator_next(&it1))
-       {
-       if (strcmp(bson_iterator_key(&it1), cfp_bundleargs) == 0)
-          {
-          bson_iterator_init(&it2,bson_iterator_value(&it1));
-         
-          while(bson_iterator_next(&it2))
-             {
-             IdempPrependItem(&args,(char *)bson_iterator_string(&it2),NULL);
-             }
-         
-          break;  // all records show the same args
-          }
-       }
-    }
-
- mongo_cursor_destroy(cursor);
-
- return args;
-}
-
-/*****************************************************************************/
-
 Item *CFDB_QueryBundlesUsing(mongo_connection *conn, char *bNameReferenced)
 /*
  * Returns the set of bundle names using the given bundle though
