@@ -81,7 +81,6 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_get_bundle_type,NULL)
     PHP_FE(cfpr_get_args_for_bundle,NULL)
     PHP_FE(cfpr_list_handles_for_bundle,NULL)
-    PHP_FE(cfpr_get_handles_for_bundle_with_comments,NULL)
     PHP_FE(cfpr_get_classes_for_bundle,NULL)
     
     PHP_FE(cfpr_list_bodies,NULL)

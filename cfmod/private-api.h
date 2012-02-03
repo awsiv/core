@@ -839,13 +839,6 @@ PHP_FUNCTION(cfpr_get_bundle_type);
  */
 PHP_FUNCTION(cfpr_list_handles_for_bundle);
 
-/*! \brief A list of handles in a bundle (including comments)
- * \param bundleName
- * \param bundleType
- * \param useRegularExpressions
- */
-PHP_FUNCTION(cfpr_get_handles_for_bundle_with_comments);
-
 /*! \brief A list of bodies
  * \param bodyName
  * \param bodyType

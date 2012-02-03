@@ -3250,29 +3250,9 @@ PHP_FUNCTION(cfpr_promise_list_by_bundle_rx)
 
  RETURN_STRING(buffer,1);
 }
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_get_handles_for_bundle_with_comments)
-
-{ char *bundle;
- char *btype;
- int r_len, p_len;
- char buffer[CF_WEBBUFFER];
-
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&bundle,&r_len,&btype,&p_len) == FAILURE)
-    {
-    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-    RETURN_NULL();
-    }
-
- buffer[0] = '\0';
-
- Nova2PHP_list_promise_handles_with_comments(bundle,btype,buffer,sizeof(buffer));
-
- RETURN_STRING(buffer,1);
-}
 
 /******************************************************************************/
+
 PHP_FUNCTION(cfpr_list_handles_for_bundle)
 
 { char *bundle;
