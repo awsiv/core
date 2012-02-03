@@ -4097,7 +4097,7 @@ HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char 
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryPromise2(mongo_connection *conn, PromiseFilter *filter)
+HubQuery *CFDB_QueryPromises(mongo_connection *conn, PromiseFilter *filter)
 /*
  * Using PromiseFilter, can over time replace the other promise query functions.
  * FIXME: If not found by handle: may want to do second lookup in expanded promise db
