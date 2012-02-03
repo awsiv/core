@@ -137,9 +137,23 @@ static const char *BsonGetArrayValue(const bson *b, const char *key)
 
 /*****************************************************************************/
 
+bool BsonAppendStringSafe(bson_buffer *bb, char *key, char *value)
+{
+ if(value == NULL || value[0] == '\0')
+    {
+    return false;
+    }
+ 
+ bson_append_string(bb, key, value);
+
+ return true;
+}
+
+/*****************************************************************************/
+
 bool BsonAppendRegexSafe(bson_buffer *bb, char *key, char *rxValue)
 {
- if(key == NULL || key[0] == '\0')
+ if(rxValue == NULL || rxValue[0] == '\0')
     {
     return false;
     }

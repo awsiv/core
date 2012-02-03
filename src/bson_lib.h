@@ -17,6 +17,7 @@ Rlist *BsonStringArrayAsRlist(const bson* b, const char* key);
 int BsonIntGet(const bson *b, const char *key);
 const char *BsonGetString(const bson *b, const char *key);
 void BsonStringWrite(char *dest, int destSz, const bson *b, const char *key);
+bool BsonAppendStringSafe(bson_buffer *bb, char *key, char *value);
 bool BsonAppendRegexSafe(bson_buffer *bb, char *key, char *rxValue);
 void BsonAppendStringArray(bson_buffer *bb, char *arrayName, Item *arrayValues);
 bool BsonAppendIncludeList(bson_buffer *queryBuffer, char *includeKey, Rlist *includeValues);
