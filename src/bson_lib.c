@@ -172,8 +172,7 @@ void BsonAppendStringArray(bson_buffer *bb, char *arrayName, Item *arrayValues)
 
 /*****************************************************************************/
 
-bool BsonAppendIncludeList(bson_buffer *queryBuffer, char *includeKey, Rlist *includeRxValues)
-// NOTE: using regex on values
+bool BsonAppendIncludeRxList(bson_buffer *queryBuffer, char *includeKey, Rlist *includeRxValues)
 {
  if(!includeRxValues)
     {
@@ -192,8 +191,7 @@ bool BsonAppendIncludeList(bson_buffer *queryBuffer, char *includeKey, Rlist *in
 
 /*****************************************************************************/
 
-bool BsonAppendExcludeList(bson_buffer *queryBuffer, char *excludeKey, Rlist *excludeRxValues)
-// NOTE: using regex on values
+bool BsonAppendExcludeRxList(bson_buffer *queryBuffer, char *excludeKey, Rlist *excludeRxValues)
 {
  if(!excludeRxValues)
     {

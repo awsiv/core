@@ -6775,8 +6775,8 @@ static bool BsonAppendHostClassFilter(bson_buffer *queryBuffer, HostClassFilter 
 
  bool modified = false;
 
- modified |= BsonAppendIncludeList(queryBuffer, cfr_class_keys, filter->classRxIncludes);
- modified |= BsonAppendExcludeList(queryBuffer, cfr_class_keys, filter->classRxExcludes);
+ modified |= BsonAppendIncludeRxList(queryBuffer, cfr_class_keys, filter->classRxIncludes);
+ modified |= BsonAppendExcludeRxList(queryBuffer, cfr_class_keys, filter->classRxExcludes);
  
  return modified;
 }
@@ -6795,8 +6795,8 @@ static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *fil
  modified |= BsonAppendRegexSafe(queryBuffer, cfp_handle, filter->handleRxInclude);
  modified |= BsonAppendRegexSafe(queryBuffer, cfp_promiser, filter->promiserRxInclude);
  
- modified |= BsonAppendIncludeList(queryBuffer, cfp_bundlename, filter->bundleRxIncludes);
- modified |= BsonAppendExcludeList(queryBuffer, cfp_bundlename, filter->bundleRxExcludes);
+ modified |= BsonAppendIncludeRxList(queryBuffer, cfp_bundlename, filter->bundleRxIncludes);
+ modified |= BsonAppendExcludeRxList(queryBuffer, cfp_bundlename, filter->bundleRxExcludes);
 
  return modified;
 }
