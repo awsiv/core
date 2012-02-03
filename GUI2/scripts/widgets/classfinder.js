@@ -84,7 +84,7 @@
 
             self.dialogcontent.parent().delegate('#findmatchedhost','click',$.proxy(self.findmatchedhost,self));
             self.menu=$('<div class="categories"><ul id="classoptions"></ul></div>');
-            self.menu.find('ul').append('<li>All classes</li><li>Time classes</li><li>Soft classes</li><li>Ip classes</li>');
+            self.menu.find('ul').append('<li>All classes</li>');
             $('<span class="slider"></span>').appendTo(self.menu).bind('click',function(event){
                 self.menu.slideUp();
             });
@@ -94,8 +94,9 @@
                 event.preventDefault();
                 self. elementtext=$(this).text();
                 $(this).text('').append('<span class="loadinggif"> </span>');
-                self.loadpagebody();
+               
                 self.dialogcontent.dialog('open');
+                self.loadpagebody();
             
             });
 
