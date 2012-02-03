@@ -121,28 +121,27 @@ class Widget extends Cf_Controller {
 
         $this->load->library('session');
         $username = $this->session->userdata('username');
-        
+
         $searchLetter = null;
         if ($alphaSearch != null) {
-            $searchLetter = $alphaSearch.'.*';
+            $searchLetter = urldecode($alphaSearch) . '.*';
         }
-        $data = cfpr_report_classes($username, null, $searchLetter, true, null, "last-seen", true, 20, $page);
-
-        //$data = cfpr_report_classes_test(5000,$page,100000);
-        
+        $data = cfpr_report_classes($username, null, $searchLetter, true, null, "last-seen", true, 50, $page);
         $extractClass = sanitycheckjson($data, true);
         $classArray = array();
         foreach ((array) $extractClass['data'] as $classList) {
             $classArray[] = $classList[1];
         }
+
         $classArray = array_values(array_unique($classArray));
-        
-       echo json_encode($classArray);
-        
+
+        echo json_encode($classArray);
     }
 
     function filterclass() {
         $filter = $this->input->post('filter');
+        $this->load->library('session');
+        $username = $this->session->userdata('username');
         $data = "";
         switch ($filter) {
             case "time":
@@ -152,10 +151,18 @@ class Widget extends Cf_Controller {
                 $data = cfpr_list_ip_classes(NULL, NULL, NULL, NULL);
                 break;
             case "soft":
-                $data = cfpr_list_soft_classes(NULL, NULL, NULL, NULL);
+                $data = cfpr_list_soft_classes(NULL,NULL, NULL,NULL);
                 break;
             case "all":
-                $data = cfpr_list_all_classes(NULL, NULL, NULL, NULL);
+                $data = cfpr_report_classes($username, null, null, true, null, "last-seen", true, 100, 1);
+                $extractClass = sanitycheckjson($data, true);
+                $classArray = array();
+                foreach ((array) $extractClass['data'] as $classList) {
+                    $classArray[] = $classList[1];
+                }
+                $classArray = array_values(array_unique($classArray));
+                echo json_encode($classArray);
+                exit;
                 break;
             case "host":
                 $data = cfpr_list_host_classes(NULL, NULL, NULL, NULL);
