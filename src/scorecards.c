@@ -407,7 +407,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
       }
    else
       {
-      result = Nova_GetComplianceScore(cfrank_compliance,akept,arepaired);
+      result = Nova_GetComplianceScore(HOST_RANK_METHOD_COMPLIANCE,akept,arepaired);
       }
    }
 
@@ -424,7 +424,7 @@ return result;
 
 /*****************************************************************************/
 
-Item *Nova_RankHosts(char *search_string,int regex,enum cf_rank_method method,int max_return)
+Item *Nova_RankHosts(char *search_string,int regex, HostRankMethod method,int max_return)
 
 { Item *ip,*hosts,*counted =  NULL;
   int num = 0;
@@ -460,7 +460,7 @@ Item *Nova_GreenHosts()
 
 { Item *ip,*hosts = NULL,*sorted = NULL;
 
-hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,0);
+hosts = Nova_ClassifyHostState(NULL,false,HOST_RANK_METHOD_DEFAULT,0);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
@@ -481,7 +481,7 @@ Item *Nova_YellowHosts()
 
 { Item *ip,*hosts = NULL,*sorted = NULL;
 
-hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,0);
+hosts = Nova_ClassifyHostState(NULL,false,HOST_RANK_METHOD_DEFAULT,0);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
@@ -502,7 +502,7 @@ Item *Nova_RedHosts()
 
 { Item *ip,*hosts = NULL,*sorted = NULL;
 
- hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,0);
+ hosts = Nova_ClassifyHostState(NULL,false,HOST_RANK_METHOD_DEFAULT,0);
 
  for (ip = hosts; ip != NULL; ip=ip->next)
     {
@@ -523,7 +523,7 @@ Item *Nova_BlueHosts()
 
 { Item *ip,*hosts = NULL,*sorted = NULL;
 
-hosts = Nova_ClassifyHostState(NULL,false,cfrank_default,0);
+hosts = Nova_ClassifyHostState(NULL,false,HOST_RANK_METHOD_DEFAULT,0);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
@@ -542,7 +542,7 @@ return sorted;
 /* Level                                                                     */
 /*****************************************************************************/
 
-Item *Nova_ClassifyHostState(char *search_string,int regex,enum cf_rank_method method,int max_return)
+Item *Nova_ClassifyHostState(char *search_string,int regex, HostRankMethod method,int max_return)
 
 /* note the similarities between this fn and GetHostColour() */
     
@@ -719,7 +719,7 @@ return list;
 
 /*****************************************************************************/
 
-int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *r)
+int Nova_GetComplianceScore(HostRankMethod method,double *k,double *r)
 
 { int result = CF_GREEN;
  double kav,rav,notkept; 
@@ -727,8 +727,8 @@ int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *r)
  switch (method)
     {
     default:
-    case cfrank_default:
-    case cfrank_compliance:
+    case HOST_RANK_METHOD_DEFAULT:
+    case HOST_RANK_METHOD_COMPLIANCE:
 
         notkept = 100 - k[meter_compliance_hour] - r[meter_compliance_hour];
         
@@ -745,7 +745,7 @@ int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *r)
         result -= k[meter_compliance_hour]; // Adjust the Green Value relative
         break;
        
-    case cfrank_anomaly:
+    case HOST_RANK_METHOD_ANOMALY:
 
         notkept = 100 - k[meter_anomalies_day] - r[meter_anomalies_day];
 
@@ -770,7 +770,7 @@ int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *r)
         result -= k[meter_anomalies_day];
         break;
        
-    case cfrank_performance:
+    case HOST_RANK_METHOD_PERFORMANCE:
 
         notkept = 100 - k[meter_perf_day] - r[meter_perf_day];
         
@@ -787,7 +787,7 @@ int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *r)
         result -= k[meter_perf_day];
         break;
        
-    case cfrank_lastseen:
+    case HOST_RANK_METHOD_LASTSEEN:
 
         notkept = 100 - k[meter_comms_hour] - r[meter_comms_hour];
             
@@ -804,7 +804,7 @@ int Nova_GetComplianceScore(enum cf_rank_method method,double *k,double *r)
         result -= k[meter_comms_hour];
         break;
        
-    case cfrank_mixed:
+    case HOST_RANK_METHOD_MIXED:
         kav = (k[meter_comms_hour] + k[meter_compliance_hour] + k[meter_anomalies_day]) / 3;
         rav = (r[meter_comms_hour] + r[meter_compliance_hour] + r[meter_anomalies_day]) / 3;
 

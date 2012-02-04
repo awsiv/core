@@ -13,21 +13,31 @@ typedef enum
    HOST_COLOUR_GREEN
    } HostColour;
 
+typedef enum
+   {
+   HOST_RANK_METHOD_COMPLIANCE,
+   HOST_RANK_METHOD_ANOMALY,
+   HOST_RANK_METHOD_PERFORMANCE,
+   HOST_RANK_METHOD_LASTSEEN,
+   HOST_RANK_METHOD_MIXED,
+   HOST_RANK_METHOD_DEFAULT
+   } HostRankMethod;
+
 #ifdef HAVE_LIBMONGOC
 
 HostColour Nova_HostScoreToColour(int score);
 const char *Nova_HostColourToString(HostColour colour);
 
-int Nova_GetComplianceScore(enum cf_rank_method method, double *k, double *rep);
+int Nova_GetComplianceScore(HostRankMethod method, double *k, double *rep);
 
 // gets meters from DB, uses GetComplianceScore. rework.
-Item *Nova_ClassifyHostState(char *search_string,int regex,enum cf_rank_method method,int max_return);
+Item *Nova_ClassifyHostState(char *search_string,int regex, HostRankMethod method,int max_return);
 int Nova_GetHostColour(char *lkeyhash);
 Item *Nova_GreenHosts(void);
 Item *Nova_YellowHosts(void);
 Item *Nova_RedHosts(void);
 Item *Nova_BlueHosts(void);
-Item *Nova_RankHosts(char *search_string,int regex,enum cf_rank_method method,int max_return);
+Item *Nova_RankHosts(char *search_string,int regex, HostRankMethod method,int max_return);
 
 // legacy
 void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, char *buffer, int bufsize);

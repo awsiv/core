@@ -3402,7 +3402,7 @@ void Nova2PHP_show_topN(char *policy,int n,PageInfo *page,char *buffer,int bufsi
 { Item *ip,*clist;
  char work[CF_BUFSIZE] = {0};
  static char *policies[] = { "compliance", "anomaly", "performance", "lastseen", NULL};
- enum cf_rank_method pol;
+ HostRankMethod pol;
  int startIndex=0,endIndex=0, total=0, count = -1;
  
 Nova_WebTopicMap_Initialize();
@@ -3477,7 +3477,7 @@ void Nova2PHP_show_all_hosts(char *policy,int n,char *buffer,int bufsize)
  char work[CF_MAXVARSIZE];
 
  Nova_WebTopicMap_Initialize();  
- clist = Nova_RankHosts(policy,1,cfrank_compliance,n);
+ clist = Nova_RankHosts(policy,1,HOST_RANK_METHOD_COMPLIANCE,n);
  clist = SortItemListClasses(clist);
 
  buffer[0] = '\0';
@@ -3630,7 +3630,7 @@ void Nova2PHP_select_hosts(char *match,char *selected,int n,char *buffer,int buf
 { Item *ip,*clist;
  char work[CF_MAXVARSIZE];
 
- clist = Nova_RankHosts(match,1,cfrank_compliance,n);
+ clist = Nova_RankHosts(match,1,HOST_RANK_METHOD_COMPLIANCE,n);
  clist = SortItemListClasses(clist);
 
  buffer[0] = '\0';

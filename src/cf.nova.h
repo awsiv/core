@@ -123,19 +123,6 @@ enum cfl_view
    cfl_view_error
    };
 
-
-/*****************************************************************************/
-
-enum cf_rank_method
-   {
-   cfrank_compliance,
-   cfrank_anomaly,
-   cfrank_performance,
-   cfrank_lastseen,
-   cfrank_mixed,
-   cfrank_default  // Currently set to be same as compliance
-   };
-
 /*****************************************************************************/
 
 typedef struct
