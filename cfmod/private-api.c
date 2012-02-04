@@ -14,7 +14,7 @@ static time_t DeltaHrsConvert(long hrsAgo);
 char **String2StringArray(char *str, char separator);
 void FreeStringArray(char **strs);
 static bool ParseVitalsArgs(int argc, char **retHostKey, char **retVitalId);
-static JsonArray *ParseRolesToJson(HubQuery *hq);
+static JsonElement *ParseRolesToJson(HubQuery *hq);
 
 
 /******************************************************************************/
@@ -3424,7 +3424,7 @@ PHP_FUNCTION(cfpr_get_args_for_bundle)
  DeletePromiseFilter(filter);
  DATABASE_CLOSE(&conn);
 
- JsonArray *output = NULL;
+ JsonElement *output = JsonArrayCreate(100);
 
  HubPromiseBundle *bundle = HubQueryGetFirstRecord(hqBundle);
  
@@ -3432,13 +3432,13 @@ PHP_FUNCTION(cfpr_get_args_for_bundle)
     {
     for (Rlist *rp = bundle->bundleArgs; rp != NULL; rp = rp->next)
        {
-       JsonArrayAppendString(&output, ScalarValue(rp));
+       JsonArrayAppendString(output, ScalarValue(rp));
        }
     }
 
  DeleteHubQuery(hqBundle, DeleteHubPromiseBundle);
 
- RETURN_JSON_ARRAY(output);
+ RETURN_JSON(output);
 }
 
 /******************************************************************************/
@@ -4238,11 +4238,11 @@ PHP_FUNCTION(cfpr_role_list_all)
     RETURN_NULL();
     }
 
- JsonArray *roles = ParseRolesToJson(hq);
+ JsonElement *roles = ParseRolesToJson(hq);
 
  DeleteHubQuery(hq, DeleteHubRole);
    
- RETURN_JSON_ARRAY(roles);
+ RETURN_JSON(roles);
 }
 
 /******************************************************************************/
@@ -4270,16 +4270,16 @@ PHP_FUNCTION(cfpr_role_list_by_name)
     RETURN_NULL();
     }
 
- JsonArray *roles = ParseRolesToJson(hq);
+ JsonElement *roles = ParseRolesToJson(hq);
 
  DeleteHubQuery(hq, DeleteHubRole);
 
- RETURN_JSON_ARRAY(roles);
+ RETURN_JSON(roles);
 }
 
 /******************************************************************************/
 
-static JsonArray *ParseRolesToJson(HubQuery *hq)
+static JsonElement *ParseRolesToJson(HubQuery *hq)
 {
 #define LABEL_ROLE_NAME "name"
 #define LABEL_ROLE_DESCRIPTION "description"
@@ -4288,21 +4288,21 @@ static JsonArray *ParseRolesToJson(HubQuery *hq)
 #define LABEL_ROLE_BUNDLERX_INCLUDE "bundlerxinlcude"
 #define LABEL_ROLE_BUNDLERX_EXCLUDE "bundlerxexclude"
 
- JsonArray *roles = NULL;
+ JsonElement *roles = JsonArrayCreate(100);
  
  for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
     {
     HubRole *record = (HubRole *)rp->item;
-    JsonObject *role_entry = NULL;
+    JsonElement *role_entry = JsonObjectCreate(10);
       
-    JsonObjectAppendString(&role_entry, LABEL_ROLE_NAME, record->name);
-    JsonObjectAppendString(&role_entry, LABEL_ROLE_DESCRIPTION, record->description);
-    JsonObjectAppendString(&role_entry, LABEL_ROLE_CLASSRX_INCLUDE, record->classRxInclude);
-    JsonObjectAppendString(&role_entry, LABEL_ROLE_CLASSRX_EXCLUDE, record->classRxExclude);
-    JsonObjectAppendString(&role_entry, LABEL_ROLE_BUNDLERX_INCLUDE, record->bundleRxInclude);
-    JsonObjectAppendString(&role_entry, LABEL_ROLE_BUNDLERX_EXCLUDE, record->bundleRxExclude);
+    JsonObjectAppendString(role_entry, LABEL_ROLE_NAME, record->name);
+    JsonObjectAppendString(role_entry, LABEL_ROLE_DESCRIPTION, record->description);
+    JsonObjectAppendString(role_entry, LABEL_ROLE_CLASSRX_INCLUDE, record->classRxInclude);
+    JsonObjectAppendString(role_entry, LABEL_ROLE_CLASSRX_EXCLUDE, record->classRxExclude);
+    JsonObjectAppendString(role_entry, LABEL_ROLE_BUNDLERX_INCLUDE, record->bundleRxInclude);
+    JsonObjectAppendString(role_entry, LABEL_ROLE_BUNDLERX_EXCLUDE, record->bundleRxExclude);
     
-    JsonArrayAppendObject(&roles, role_entry);
+    JsonArrayAppendObject(roles, role_entry);
     }
  
  return roles;

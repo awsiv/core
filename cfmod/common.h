@@ -53,22 +53,13 @@
 
 #include "json.h"
 
-#define RETURN_JSON_ARRAY(json) \
+#define RETURN_JSON(json) \
    Writer *writer = StringWriter(); \
-   JsonArrayPrint(writer, json, 0); \
-   JsonArrayDelete(json);           \
+   JsonElementPrint(writer, json, 0); \
+   JsonElementDestroy(json); \
    char *JSON_buf = StringWriterClose(writer); \
    char *JSON_ebuf = estrdup(JSON_buf); \
-   free(JSON_buf);                      \
-   RETURN_STRING(JSON_ebuf, 0);
-
-#define RETURN_JSON_OBJECT(json) \
-   Writer *writer = StringWriter(); \
-   JsonObjectPrint(writer, json, 0); \
-   JsonObjectDelete(json);           \
-   char *JSON_buf = StringWriterClose(writer); \
-   char *JSON_ebuf = estrdup(JSON_buf); \
-   free(JSON_buf);                      \
+   free(JSON_buf); \
    RETURN_STRING(JSON_ebuf, 0);
 
 #endif

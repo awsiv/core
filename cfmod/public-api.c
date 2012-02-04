@@ -55,15 +55,15 @@ Rlist *hostkeys = CFDB_QueryHostKeys(&conn, hostname, ip);
 
 DATABASE_CLOSE(&conn);
 
-JsonArray *output = NULL;
+JsonElement *output = JsonArrayCreate(1000);
 for (Rlist *rp = hostkeys; rp != NULL; rp = rp->next)
    {
-   JsonArrayAppendString(&output, ScalarValue(rp));
+   JsonArrayAppendString(output, ScalarValue(rp));
    }
 
 DeleteRlist(hostkeys);
 
-RETURN_JSON_ARRAY(output);
+RETURN_JSON(output);
 }
 
 
@@ -89,12 +89,12 @@ DATABASE_CLOSE(&conn);
 
 if (record != NULL)
    {
-   JsonObject *entry = NULL;
-   JsonObjectAppendString(&entry, LABEL_HOSTKEY, record->keyhash);
-   JsonObjectAppendString(&entry, LABEL_NAME, record->hostname);
-   JsonObjectAppendString(&entry, LABEL_IP, record->ipaddr);
+   JsonElement *entry = JsonObjectCreate(3);
+   JsonObjectAppendString(entry, LABEL_HOSTKEY, record->keyhash);
+   JsonObjectAppendString(entry, LABEL_NAME, record->hostname);
+   JsonObjectAppendString(entry, LABEL_IP, record->ipaddr);
 
-   RETURN_JSON_OBJECT(entry);
+   RETURN_JSON(entry);
    }
 
 RETURN_NULL();
@@ -104,9 +104,9 @@ RETURN_NULL();
 /************************************************************************************/
 
 
-static JsonArray *HostsLastSeen(Rlist *records, LastSeenDirection direction)
+static JsonElement *HostsLastSeen(Rlist *records, LastSeenDirection direction)
 {
-JsonArray *output = NULL;
+JsonElement *output = NULL;
 
 for (Rlist *rp = records; rp != NULL; rp = rp->next)
    {
@@ -114,14 +114,14 @@ for (Rlist *rp = records; rp != NULL; rp = rp->next)
 
    if (record->direction == direction)
       {
-         JsonObject *entry = NULL;
+         JsonElement *entry = JsonObjectCreate(4);
 
-         JsonObjectAppendString(&entry, LABEL_HOSTKEY, record->rhost->keyhash);
-         JsonObjectAppendInteger(&entry, LABEL_LASTSEEN, SECONDS_PER_HOUR * record->hrsago);
-         JsonObjectAppendInteger(&entry, LABEL_AVERAGE, SECONDS_PER_HOUR * record->hrsavg);
-         JsonObjectAppendInteger(&entry, LABEL_STDV, SECONDS_PER_HOUR * record->hrsdev);
+         JsonObjectAppendString(entry, LABEL_HOSTKEY, record->rhost->keyhash);
+         JsonObjectAppendInteger(entry, LABEL_LASTSEEN, SECONDS_PER_HOUR * record->hrsago);
+         JsonObjectAppendInteger(entry, LABEL_AVERAGE, SECONDS_PER_HOUR * record->hrsavg);
+         JsonObjectAppendInteger(entry, LABEL_STDV, SECONDS_PER_HOUR * record->hrsdev);
 
-         JsonArrayAppendObject(&output, entry);
+         JsonArrayAppendObject(output, entry);
       }
    }
 
@@ -164,11 +164,11 @@ DeleteHostClassFilter(filter);
 
 DATABASE_CLOSE(&conn);
 
-JsonArray *output = HostsLastSeen(result->records, LAST_SEEN_DIRECTION_OUTGOING);
+JsonElement *output = HostsLastSeen(result->records, LAST_SEEN_DIRECTION_OUTGOING);
 
 DeleteHubQuery(result, DeleteHubLastSeen);
 
-RETURN_JSON_ARRAY(output);
+RETURN_JSON(output);
 }
 
 
@@ -205,11 +205,11 @@ DeleteHostClassFilter(filter);
 
 DATABASE_CLOSE(&conn);
 
-JsonArray *output = HostsLastSeen(result->records, LAST_SEEN_DIRECTION_INCOMING);
+JsonElement *output = HostsLastSeen(result->records, LAST_SEEN_DIRECTION_INCOMING);
 
 DeleteHubQuery(result, DeleteHubLastSeen);
 
-RETURN_JSON_ARRAY(output);
+RETURN_JSON(output);
 }
 
 
@@ -291,25 +291,25 @@ HubQuery *result = CFDB_QueryPromiseCompliance(&conn, hostkey, handle, PromiseSt
                                                true , 0, true, filter);
 DeleteHostClassFilter(filter);
 
-JsonArray *output = NULL;
+JsonElement *output = JsonArrayCreate(100);
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    {
    HubPromiseCompliance *record = (HubPromiseCompliance *)rp->item;
-   JsonObject *entry = NULL;
+   JsonElement *entry = JsonObjectCreate(6);
 
-   JsonObjectAppendString(&entry, LABEL_HANDLE, record->handle);
-   JsonObjectAppendString(&entry, LABEL_HOSTKEY, record->hh->keyhash);
-   JsonObjectAppendString(&entry, LABEL_STATE, PromiseStateToString(record->status));
-   JsonObjectAppendReal(&entry, LABEL_AVERAGE, record->e);
-   JsonObjectAppendReal(&entry, LABEL_STATE, record->d);
-   JsonObjectAppendInteger(&entry, LABEL_TIMESTAMP, record->t);
+   JsonObjectAppendString(entry, LABEL_HANDLE, record->handle);
+   JsonObjectAppendString(entry, LABEL_HOSTKEY, record->hh->keyhash);
+   JsonObjectAppendString(entry, LABEL_STATE, PromiseStateToString(record->status));
+   JsonObjectAppendReal(entry, LABEL_AVERAGE, record->e);
+   JsonObjectAppendReal(entry, LABEL_STATE, record->d);
+   JsonObjectAppendInteger(entry, LABEL_TIMESTAMP, record->t);
 
-   JsonArrayAppendObject(&output, entry);
+   JsonArrayAppendObject(output, entry);
    }
 
 DATABASE_CLOSE(&conn)
 
-RETURN_JSON_ARRAY(output)
+RETURN_JSON(output)
 }
 
 
@@ -329,7 +329,7 @@ switch (state)
    }
 }
 
-static JsonArray *PromiseLogAsJson(mongo_connection *conn, PromiseLogState state, const char *handle,
+static JsonElement *PromiseLogAsJson(mongo_connection *conn, PromiseLogState state, const char *handle,
                                    const char *hostkey, const char *context, int from, int to, PageInfo page)
 {
 
@@ -337,18 +337,19 @@ static JsonArray *PromiseLogAsJson(mongo_connection *conn, PromiseLogState state
  HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from, to, true, filter);
  DeleteHostClassFilter(filter);
 
-JsonArray *output = NULL;
+JsonElement *output = JsonArrayCreate(100);
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    {
    HubPromiseLog *log_entry = (HubPromiseLog *)rp->item;
-   JsonObject *entry = NULL;
+   JsonElement *entry = JsonObjectCreate(5);
 
-   JsonObjectAppendString(&entry, LABEL_HANDLE, log_entry->handle);
-   JsonObjectAppendString(&entry, LABEL_HOSTKEY, log_entry->hh->keyhash);
-   JsonObjectAppendString(&entry, LABEL_DESCRIPTION, log_entry->cause);
-   JsonObjectAppendString(&entry, LABEL_STATE, PromiseLogStateToString(state));
-   JsonObjectAppendInteger(&entry, LABEL_TIMESTAMP, log_entry->t);
-   JsonArrayAppendObject(&output, entry);
+   JsonObjectAppendString(entry, LABEL_HANDLE, log_entry->handle);
+   JsonObjectAppendString(entry, LABEL_HOSTKEY, log_entry->hh->keyhash);
+   JsonObjectAppendString(entry, LABEL_DESCRIPTION, log_entry->cause);
+   JsonObjectAppendString(entry, LABEL_STATE, PromiseLogStateToString(state));
+   JsonObjectAppendInteger(entry, LABEL_TIMESTAMP, log_entry->t);
+
+   JsonArrayAppendObject(output, entry);
    }
 
 DeleteHubQuery(result, DeleteHubPromiseLog);
@@ -385,18 +386,18 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsbll",
 mongo_connection conn;
 DATABASE_OPEN(&conn)
 
-JsonArray *output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to, page);
+JsonElement *output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to, page);
 
 DATABASE_CLOSE(&conn)
 
-RETURN_JSON_ARRAY(output);
+RETURN_JSON(output);
 }
 
 
 /************************************************************************************/
 
 
-static JsonArray *PromiseLogSummaryAsJson(mongo_connection *conn, PromiseLogState state, const char *handle,
+static JsonElement *PromiseLogSummaryAsJson(mongo_connection *conn, PromiseLogState state, const char *handle,
                                           const char *hostkey, const char *context, int from, int to, PageInfo page)
 {
  HostClassFilter *filter = NewHostClassFilter(context, NULL);
@@ -414,17 +415,17 @@ for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
 
 DeleteHubQuery(result, DeleteHubPromiseLog);
 
-JsonArray *output = NULL;
+JsonElement *output = JsonArrayCreate(100);
 for (Item *ip = summary; ip != NULL; ip = ip->next)
    {
-   JsonObject *entry = NULL;
+   JsonElement *entry = JsonObjectCreate(4);
 
-   JsonObjectAppendString(&entry, LABEL_HANDLE, ip->name);
-   JsonObjectAppendString(&entry, LABEL_DESCRIPTION, ip->classes);
-   JsonObjectAppendInteger(&entry, LABEL_COUNT, ip->counter);
-   JsonObjectAppendString(&entry, LABEL_STATE, PromiseLogStateToString(state));
+   JsonObjectAppendString(entry, LABEL_HANDLE, ip->name);
+   JsonObjectAppendString(entry, LABEL_DESCRIPTION, ip->classes);
+   JsonObjectAppendInteger(entry, LABEL_COUNT, ip->counter);
+   JsonObjectAppendString(entry, LABEL_STATE, PromiseLogStateToString(state));
 
-   JsonArrayAppendObject(&output, entry);
+   JsonArrayAppendObject(output, entry);
    }
 
 DeleteItemList(summary);
@@ -462,11 +463,11 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsbll",
 mongo_connection conn;
 DATABASE_OPEN(&conn)
 
-JsonArray *output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to, page);
+JsonElement *output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to, page);
 
 DATABASE_CLOSE(&conn)
 
-RETURN_JSON_ARRAY(output);
+RETURN_JSON(output);
 }
 
 
@@ -502,11 +503,11 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsbll",
 mongo_connection conn;
 DATABASE_OPEN(&conn);
 
-JsonArray *output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to, page);
+JsonElement *output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to, page);
 
 DATABASE_CLOSE(&conn);
 
-RETURN_JSON_ARRAY(output);
+RETURN_JSON(output);
 }
 
 
@@ -542,11 +543,11 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsbll",
 mongo_connection conn;
 DATABASE_OPEN(&conn);
 
-JsonArray *output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to, page);
+JsonElement *output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to, page);
 
 DATABASE_CLOSE(&conn);
 
-RETURN_JSON_ARRAY(output);
+RETURN_JSON(output);
 }
 
 
@@ -614,31 +615,31 @@ DeleteHostClassFilter(filter);
 
 DATABASE_CLOSE(&conn)
 
-JsonArray *values = NULL;
+JsonElement *values = JsonArrayCreate(100);
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    {
    HubVariable *record = (HubVariable *)rp->item;
    const char *type = DataTypeToString(record->dtype);
 
-   JsonObject *value_entry = NULL;
-   JsonObjectAppendString(&value_entry, LABEL_HOSTKEY, record->hh->keyhash);
-   JsonObjectAppendString(&value_entry, LABEL_NAME, type);
+   JsonElement *value_entry = JsonObjectCreate(3);
+   JsonObjectAppendString(value_entry, LABEL_HOSTKEY, record->hh->keyhash);
+   JsonObjectAppendString(value_entry, LABEL_NAME, type);
 
    if (strcmp(type, "list"))
       {
-      JsonObjectAppendString(&value_entry, LABEL_VALUE, LABEL_ERROR_NOTIMPLEMENTED);
+      JsonObjectAppendString(value_entry, LABEL_VALUE, LABEL_ERROR_NOTIMPLEMENTED);
       }
    else
       {
-      JsonObjectAppendString(&value_entry, LABEL_VALUE, (const char *)record->rval);
+      JsonObjectAppendString(value_entry, LABEL_VALUE, (const char *)record->rval);
       }
 
-   JsonArrayAppendObject(&values, value_entry);
+   JsonArrayAppendObject(values, value_entry);
    }
 
 DeleteHubQuery(result, DeleteHubVariable);
 
-RETURN_JSON_ARRAY(values);
+RETURN_JSON(values);
 }
 
 
@@ -675,49 +676,49 @@ DeleteHostClassFilter(filter);
 
 DATABASE_CLOSE(&conn)
 
-JsonArray *contexts = NULL;
+JsonElement *contexts = JsonArrayCreate(100);
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    {
    HubClass *record = (HubClass *)rp->item;
-   JsonObject *entry = NULL;
+   JsonElement *entry = JsonObjectCreate(5);
 
-   JsonObjectAppendString(&entry, LABEL_HOSTKEY, record->hh->keyhash);
-   JsonObjectAppendString(&entry, LABEL_CONTEXT, record->class);
-   JsonObjectAppendReal(&entry, LABEL_AVERAGE, record->prob);
-   JsonObjectAppendReal(&entry, LABEL_STDV, record->dev);
-   JsonObjectAppendInteger(&entry, LABEL_LASTSEEN, record->t);
+   JsonObjectAppendString(entry, LABEL_HOSTKEY, record->hh->keyhash);
+   JsonObjectAppendString(entry, LABEL_CONTEXT, record->class);
+   JsonObjectAppendReal(entry, LABEL_AVERAGE, record->prob);
+   JsonObjectAppendReal(entry, LABEL_STDV, record->dev);
+   JsonObjectAppendInteger(entry, LABEL_LASTSEEN, record->t);
 
-   JsonArrayAppendObject(&contexts, entry);
+   JsonArrayAppendObject(contexts, entry);
    }
 
 DeleteHubQuery(result, DeleteHubClass);
 
-RETURN_JSON_ARRAY(contexts);
+RETURN_JSON(contexts);
 }
 
 
 /************************************************************************************/
 
-static JsonObject *SoftwareHostsEntryCreate(HubSoftware *software)
+static JsonElement *SoftwareHostsEntryCreate(HubSoftware *software)
 {
-JsonObject *entry = NULL;
+JsonElement *entry = JsonObjectCreate(4);
 
-JsonObjectAppendString(&entry, LABEL_NAME, software->name);
-JsonObjectAppendString(&entry, LABEL_VERSION, software->version);
-JsonObjectAppendString(&entry, LABEL_ARCH, software->arch);
+JsonObjectAppendString(entry, LABEL_NAME, software->name);
+JsonObjectAppendString(entry, LABEL_VERSION, software->version);
+JsonObjectAppendString(entry, LABEL_ARCH, software->arch);
 
-JsonArray *hostkeys = NULL;
-JsonArrayAppendString(&hostkeys, software->hh->keyhash);
-JsonObjectAppendArray(&entry, LABEL_HOSTKEYS, hostkeys);
+JsonElement *hostkeys = JsonArrayCreate(100);
+JsonArrayAppendString(hostkeys, software->hh->keyhash);
+JsonObjectAppendArray(entry, LABEL_HOSTKEYS, hostkeys);
 
 return entry;
 }
 
-static JsonObject *SoftwareHostsEntryFind(JsonArray *entries, HubSoftware *software)
+static JsonElement *SoftwareHostsEntryFind(JsonElement *entries, HubSoftware *software)
 {
 for (Rlist *rp = entries; rp != NULL; rp = rp->next)
    {
-   JsonObject *entry = (JsonObject *)rp->item;
+   JsonElement *entry = (JsonElement *)rp->item;
    if (strcmp(JsonObjectGetAsString(entry, LABEL_NAME), software->name) == 0 &&
        strcmp(JsonObjectGetAsString(entry, LABEL_VERSION), software->version) == 0 &&
        strcmp(JsonObjectGetAsString(entry, LABEL_ARCH), software->arch) == 0)
@@ -767,49 +768,49 @@ DeleteHostClassFilter(filter);
 
 DATABASE_CLOSE(&conn)
 
-JsonArray *output = NULL;
+JsonElement *output = JsonArrayCreate(100);
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    {
    HubSoftware *record = (HubSoftware *)rp->item;
-   JsonObject *entry = SoftwareHostsEntryFind(output, record);
+   JsonElement *entry = SoftwareHostsEntryFind(output, record);
    if (entry)
       {
-      JsonArray *hostkeys = JsonObjectGetAsArray(entry, LABEL_HOSTKEYS);
-      JsonArrayAppendString(&hostkeys, record->hh->keyhash);
+      JsonElement *hostkeys = JsonObjectGetAsArray(entry, LABEL_HOSTKEYS);
+      JsonArrayAppendString(hostkeys, record->hh->keyhash);
       }
    else
       {
       entry = SoftwareHostsEntryCreate(record);
-      JsonArrayAppendObject(&output, entry);
+      JsonArrayAppendObject(output, entry);
       }
    }
 
 DeleteHubQuery(result, DeleteHubSoftware);
 
-RETURN_JSON_ARRAY(output);
+RETURN_JSON(output);
 }
 
 
 /************************************************************************************/
 
 
-static JsonObject *SetUidHostsEntryCreate(HubSetUid *setuid)
+static JsonElement *SetUidHostsEntryCreate(HubSetUid *setuid)
 {
-JsonObject *entry = NULL;
-JsonObjectAppendString(&entry, LABEL_PATH, setuid->path);
+JsonElement *entry = JsonObjectCreate(2);
+JsonObjectAppendString(entry, LABEL_PATH, setuid->path);
 
-JsonArray *hostkeys = NULL;
-JsonArrayAppendString(&hostkeys, setuid->hh->keyhash);
-JsonObjectAppendArray(&entry, LABEL_HOSTKEYS, hostkeys);
+JsonElement *hostkeys = JsonArrayCreate(100);
+JsonArrayAppendString(hostkeys, setuid->hh->keyhash);
+JsonObjectAppendArray(entry, LABEL_HOSTKEYS, hostkeys);
 
 return entry;
 }
 
-static JsonObject *SetUidHostsEntryFind(JsonArray *entries, HubSetUid *setuid)
+static JsonElement *SetUidHostsEntryFind(JsonElement *entries, HubSetUid *setuid)
 {
 for (Rlist *rp = entries; rp != NULL; rp = rp->next)
    {
-   JsonObject *entry = (JsonObject *)rp->item;
+   JsonElement *entry = (JsonElement *)rp->item;
    if (strcmp(JsonObjectGetAsString(entry, LABEL_PATH), setuid->path) == 0)
       {
       return entry;
@@ -851,24 +852,24 @@ DeleteHostClassFilter(filter);
 
 DATABASE_CLOSE(&conn)
 
-JsonArray *output = NULL;
+JsonElement *output = JsonArrayCreate(100);
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    {
    HubSetUid *record = (HubSetUid *)rp->item;
-   JsonObject *entry = SetUidHostsEntryFind(output, record);
+   JsonElement *entry = SetUidHostsEntryFind(output, record);
    if (entry)
       {
-      JsonArray *hostkeys = JsonObjectGetAsArray(entry, LABEL_HOSTKEYS);
-      JsonArrayAppendString(&hostkeys, record->hh->keyhash);
+      JsonElement *hostkeys = JsonObjectGetAsArray(entry, LABEL_HOSTKEYS);
+      JsonArrayAppendString(hostkeys, record->hh->keyhash);
       }
    else
       {
       entry = SetUidHostsEntryCreate(record);
-      JsonArrayAppendObject(&output, entry);
+      JsonArrayAppendObject(output, entry);
       }
    }
 
 DeleteHubQuery(result, DeleteHubSetUid);
 
-RETURN_JSON_ARRAY(output);
+RETURN_JSON(output);
 }
