@@ -207,7 +207,7 @@ PHP_FUNCTION(cfpr_get_promise_body);
 /*! \brief Get the name of an owner bundle
  * \param promiseHandle
  */
-PHP_FUNCTION(cfpr_get_promise_bundle);
+PHP_FUNCTION(cfpr_bundle_by_promise_handle);
 
 /*! \brief Get the type of a promise, e.g. files
  * \param promiseHandle

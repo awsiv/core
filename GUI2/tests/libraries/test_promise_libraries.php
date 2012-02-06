@@ -46,7 +46,7 @@ class test_promise_libraries extends CodeIgniterUnitTestCase {
       
       
       public function test_listHandlesForBundles(){
-        $b = cfpr_get_promise_bundle(  $this->testHandle );
+        $b = cfpr_bundle_by_promise_handle(  $this->testHandle );
         $promise = cfpr_list_handles_for_bundle($b, "agent", false);
         $this->dump($promise);
         $array = json_decode(utf8_encode($promise), true);

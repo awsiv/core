@@ -3275,7 +3275,7 @@ PHP_FUNCTION(cfpr_list_handles_for_bundle)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_get_promise_bundle)
+PHP_FUNCTION(cfpr_bundle_by_promise_handle)
 
 { char *promiseHandle;
  int ph_len;

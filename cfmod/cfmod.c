@@ -82,8 +82,8 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_bundle_list_all,NULL)
     PHP_FE(cfpr_bundle_agent_goals,NULL)
     PHP_FE(cfpr_bundle_arguments,NULL)
-    PHP_FE(cfpr_get_bundle_type,NULL)
-    PHP_FE(cfpr_get_promise_bundle,NULL)
+    PHP_FE(cfpr_get_bundle_type,NULL)  // TODO: DEPRECATE??
+    PHP_FE(cfpr_bundle_by_promise_handle,NULL)
     
     // pending
     PHP_FE(cfpr_get_classes_for_bundle,NULL)
