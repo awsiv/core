@@ -237,6 +237,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 </li></ul>
 <li><a href="#Planning-room">2.5 Planning room</a>
 <li><a href="#Library-room">2.6 Library room</a>
+<li><a href="#Shell-access-_0028evaluation-feature-only_0029">2.7 Shell access (evaluation feature only)</a>
 </li></ul>
 <li><a name="toc_Standard-reports-in-CFEngine-3-Nova" href="#Standard-reports-in-CFEngine-3-Nova">3 Standard reports in CFEngine 3 Nova</a>
 <ul>
@@ -253,7 +254,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <li><a href="#CFEngine-syntax">5.2 CFEngine syntax</a>
 </li></ul>
 <li><a name="toc_Next-steps" href="#Next-steps">6 Next steps</a>
-<li><a name="toc_Policy-Editing" href="#Policy-Editing">Appendix A Policy Editing</a>
+<li><a name="toc_Policy-editing" href="#Policy-editing">Appendix A Policy editing</a>
 <ul>
 <li><a href="#The-Policy-Editor-_0028beta_0029">A.1 The Policy Editor (beta)</a>
 <li><a href="#Edit-a-CDP-input-file">A.2 Edit a CDP input file</a>
@@ -271,7 +272,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <li><a accesskey="4" href="#Content-Driven-Policy-_0028CDP_0029-reports">Content Driven Policy (CDP) reports</a>
 <li><a accesskey="5" href="#Introduction-to-CFEngine-policies">Introduction to CFEngine policies</a>
 <li><a accesskey="6" href="#Next-steps">Next steps</a>
-<li><a accesskey="7" href="#Policy-Editing">Policy Editing</a>
+<li><a accesskey="7" href="#Policy-editing">Policy editing</a>
+<li><a accesskey="8" href="#Shell-access-_0028evaluation-feature-only_0029">Shell access (evaluation feature only)</a>
 </ul>
 
 <!-- ***************************************************** -->
@@ -317,6 +319,10 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
    <p>For the purpose of this evaluation program, CFEngine 3 Nova has been set up in a network comprising several nodes. One node serves as a central hub to distribute CFEngine configuration policies and collect reports from the other nodes (clients). They run on different operating systems, comprising several linux flavors and windows servers.
 
+   <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+<i>If you have not already done so, you may request access to the CFEngine Nova Evaluation Program by entering your information at</i> <a href="http://cfengine.com/evaluation">http://cfengine.com/evaluation</a>. 
+</td></tr></table>
+
 <!--  -->
 <!-- @node -->
 <!-- @section CFEngine 3 Nova -->
@@ -356,6 +362,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <li><a accesskey="4" href="#Engineering-room">Engineering room</a>
 <li><a accesskey="5" href="#Planning-room">Planning room</a>
 <li><a accesskey="6" href="#Library-room">Library room</a>
+<li><a accesskey="7" href="#Shell-access-_0028evaluation-feature-only_0029">Shell access (evaluation feature only)</a>
 </ul>
 
 <!--  -->
@@ -370,11 +377,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Get-started">Get started</a>
 
 <h3 class="section">2.1 Accessing CFEngine 3 Nova</h3>
 
-<p><table class="cartouche" summary="cartouche" border="1"><tr><td>
-<i>If you have not already done so, you may request access to the CFEngine Nova Evaluation Program by entering your information on</i> <a href="http://cfengine.com/evaluation">http://cfengine.com/evaluation</a>. 
-</td></tr></table>
-
-   <p>You should have received an email with account information after making an evaluation agreement with CFEngine. In it, you will find information on how to access your dedicated CFEngine 3 Nova instance, the CFEngine support ticketing system, and other online resources. Go to the url indicated in this email to access the Nova Mission Portal, use your credentials to log in.
+<p>You should have received an email with account information after making an evaluation agreement with CFEngine. In it, you will find information on how to access your dedicated CFEngine 3 Nova instance, the CFEngine support ticketing system, and other online resources. Go to the url indicated in this email to access the Nova Mission Portal, use your credentials to log in.
 
    <pre class="sp">
 
@@ -382,7 +385,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Get-started">Get started</a>
 <div align="center"><img src="img-login.png" alt="Nova Mission Portal login screen"></div>
 <div align="center">Figure: Nova Mission Portal login screen</div>
 
-   <p>The Nova Mission Portal is divided into four main sections called <i>rooms</i>. Each of these offer insight into different aspects of operations and is a beginning from which you can refine your overview and search through information.
+   <p>The normal Nova Mission Portal is divided into four main sections called <i>rooms</i>. Here we have added a fifth room which is specific to the evaluation environment (i.e. is not shipped with the actual product): shell access to machines. Each <i>room</i> offers insight into different aspects of operations and is a beginning from which you can refine your overview and search through information.
 
    <pre class="sp">
 
@@ -395,6 +398,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Get-started">Get started</a>
 <li>Engineering: a place to see the current state of system repair
 <li>Planning: a place to plan and make policy changes
 <li>Library: a knowledge and document bank that connects information together
+<li>Shell: web based ssh access to the machines in the network (only available in evaluation environment). 
 </ul>
 
 <!-- The rooms contain various information presented in text format and performance graphs. They also contain finders, represented by square icons, that allow the user to explore the environment further. We will mostly look into the Engineering and Planning rooms in this pilot setting, but we encourage exploration of both the Status and Library room as well. Refer to the CFEngine 3 Nova Owner's Manual for more information. -->
@@ -441,7 +445,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Get-started">Get started</a>
 
 </pre>
 <div align="center"><img src="img-gotostatus.png" alt="Go to Status room"></div>
-<div align="center">Figure: Got to Status room</div>
+<div align="center">Figure: Go to Status room</div>
 </td></tr></table>
 
    <pre class="sp">
@@ -502,7 +506,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Status-room">Status room</a>
 
 <h4 class="subsection">2.3.3 Services/Goals</h4>
 
-<p>A summary of Mission goals as defined in user policy files (these examples are from <samp><span class="file">company_knowledge.cf</span></samp>). You can look at editing policy files in <a href="#Policy-Editing">Policy Editing</a>. <!-- Edit the file in the policy editor (Planning room -> repository), or edit the file in your own text editor, to change these goals. -->
+<p>A summary of Mission goals as defined in user policy files (these examples are from <samp><span class="file">company_knowledge.cf</span></samp>). You can look at editing policy files in <a href="#Policy-editing">Policy editing</a>. <!-- Edit the file in the policy editor (Planning room -> repository), or edit the file in your own text editor, to change these goals. -->
 
 <!-- We will now have a look in the @samp{Engineering} room: -->
 <!--  -->
@@ -533,7 +537,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Get-started">Get started</a>
 
 </pre>
 <div align="center"><img src="img-gotoengineering.png" alt="Go to Status room"></div>
-<div align="center">Figure: Got to Engineering room</div>
+<div align="center">Figure: Go to Engineering room</div>
    </td></tr></table>
 
    <p>Mission engineering illustrates the state of the system in relation to the desired state at all scales. Zoom in to specific areas and examine the impact of promises, query data, and extract reports. Each section in the room is described below.
@@ -613,7 +617,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Get-started">Get started</a>
 
 </pre>
 <div align="center"><img src="img-gotoplanning.png" alt="Go to Planning room"></div>
-<div align="center">Figure: Got to Planning room</div>
+<div align="center">Figure: Go to Planning room</div>
    </td></tr></table>
 
    <pre class="sp">
@@ -659,6 +663,7 @@ Shows the latest activity entries. Type in a new activity to keep colleagues pos
 <div class="node">
 <a name="Library-room"></a>
 <p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Shell-access-_0028evaluation-feature-only_0029">Shell access (evaluation feature only)</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Planning-room">Planning room</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Get-started">Get started</a>
 
@@ -673,7 +678,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Get-started">Get started</a>
 
 </pre>
 <div align="center"><img src="img-gotolibrary.png" alt="Go to Library room"></div>
-<div align="center">Figure: Got to Library room</div>
+<div align="center">Figure: Go to Library room</div>
 </td></tr></table>
 
    <pre class="sp">
@@ -691,9 +696,86 @@ The Library room contains finders for documents, topics, a notes archive, and a 
      <ul>
 <li>Docs: Overview of documentation that was packaged with CFEngine 3 Nova. 
 <li>Find Topic: Opens a finder where you can search for topics either by scrolling through the alphabetical list or by typing in a search box (same as the search box on top right of page). 
-<li>Notes Archive: Get overview of all notes made by Mission Portal users in regard to hosts or reports. 
+<li>Notes Archive: Get an overview of all notes made by Mission Portal users. 
 <li>Community: External link to the CFEngine community
 </ul>
+
+<!--  -->
+<div class="node">
+<a name="Shell-access-(evaluation-feature-only)"></a>
+<a name="Shell-access-_0028evaluation-feature-only_0029"></a>
+<p><hr>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Library-room">Library room</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Get-started">Get started</a>
+
+</div>
+
+<h3 class="section">2.7 Shell access (evaluation feature only)</h3>
+
+<p>Although the Mission Portal is the centerpiece of user interaction with CFEngine 3 Nova, system administrators often also wish to have shell access to their machines. We have therefore added a web based application specific to the Mission Portal in the evaluation environment (i.e. not found in the actual product) to provide a shell interface.  You may explore the environment and verify the behavior of the Mission Portal by using this application.
+
+<!-- @node -->
+<!-- @subsection Access the shell (command line interface) -->
+   <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+<b>Action item:</b> Click <b>NOVA MISSION PORTAL</b> on the top left (or <b>MISSION PORTAL</b> in the breadcrumb) to go back to the main Mission Portal page. Click the <b>Shell</b> icon to enter the web based shell application.
+
+   <pre class="sp">
+
+</pre>
+<div align="center"><img src="img-gotoshell.png" alt="Go to shell application"></div>
+<div align="center">Figure: Go to shell application</div>
+   </td></tr></table>
+
+   <pre class="sp">
+
+</pre>
+
+The following screen will appear once the application is loaded:
+
+   <pre class="sp">
+
+</pre>
+<div align="center"><img src="img-pilotshell-menu.png" alt="Shell menu"></div>
+<div align="center">Figure: Shell menu</div>
+   <pre class="sp">
+
+</pre>
+
+The shell application has restricted access on the hub (policy host) for security reasons. Root access has been granted on the clients, so you should be able to perform most tasks from this interface (although some restrictions have been put in place to contain access to the evaluation environment only).
+
+   <pre class="sp">
+
+</pre>
+<p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+<b>Action item:</b> Type the number of the node you wish to log on to and press <b>Enter</b>. 
+</td></tr></table>
+
+   <pre class="sp">
+
+</pre>
+
+The following screen will appear after a successful login:
+
+   <pre class="sp">
+
+</pre>
+<div align="center"><img src="img-pilotshell-login.png" alt="CFEngine Pilot Login Menu"></div>
+<div align="center">Figure: CFEngine Pilot Login Menu</div>
+   <pre class="sp">
+
+</pre>
+
+<p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+<b>Action item:</b> Explore the environment through the command line interface. Type <b>exit</b> to finish the session on the current node. The following screenshot will appear:
+
+   <pre class="sp">
+
+</pre>
+<div align="center"><img src="img-pilotshell-connect.png" alt="Shell logout/connect"></div>
+<div align="center">Figure: Shell logout/connect</div>
+
+<p class="noindent">Click <b>Connect</b> to access the &lsquo;<samp><span class="samp">CFEngine Pilot Login Menu</span></samp>&rsquo; again and choose another node to log on to. Alternatively you can navigate away from the shell access by clicking <b>NOVA MISSION PORTAL</b> on the top left (or <b>MISSION PORTAL</b> in the breadcrumb). 
+</td></tr></table>
 
 <!-- ***************************************************** -->
 <!-- * CHAPTER -->
@@ -838,7 +920,7 @@ There are two ways of narrowing down the listing in these reports: one is to ent
 
    <p>Once you have clicked &lsquo;<samp><span class="samp">Generate report</span></samp>&rsquo;, CFEngine 3 Nova will list an overview of all machines running some version of apache.
 
-   <p>The combination of the extensive reports and detailed filtering is a flexible and powerful tool, made to give as general or granular an overview as the user needs it to be. A summary and explanation to all the standard reports can be found in the <a href="http://cfengine.com/&lt;address TBD&gt;">Nova Evaluation Guide Supplement</a>.
+   <p>The combination of the extensive reports and detailed filtering is a flexible and powerful tool, made to give as general or granular an overview as the user needs it to be. A summary and explanation to all the standard reports can be found in the <a href="http://cfengine.com/manuals/novaevaluationguidesupplement.html">Nova Evaluation Guide Supplement</a>.
 
 <!-- Before moving on to Content Driven Policies (CDPs) and CDP reports, we would like to give you the opportunity to enjoy some hands-on experience with CFEngine. We will first have a look at how you can work with CFEngine policies in the policy editor, and the move on to edit polices relevant to the above examples. -->
 <!-- ***************************************************** -->
@@ -952,8 +1034,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <li>Standard CFEngine policy file: Uses CFEngine syntax (<samp><span class="file">.cf</span></samp> file extension)
 </ul>
 
-   <p>You may choose to edit policy files in either a beta version of the integrated Policy Editor or in an editor of your choice. The evaluation environment is limited to the Policy Editor for the moment, but we will soon implement web based access via ssh so you can edit policy files there (this is normally what you would do in a production environment). In the following, we will see a short introduction to both CDP and standard policies. See <a href="#The-Policy-Editor-_0028beta_0029">The Policy Editor (beta)</a> for how to access the Policy Editor and edit these files.
+   <p>In the following, you will find a short introduction to both CDP and standard policies. See <a href="#The-Policy-Editor-_0028beta_0029">The Policy Editor (beta)</a> for how to access the Policy Editor and edit these files. <a rel="footnote" href="#fn-1" name="fnd-1"><sup>1</sup></a>
 
+<!-- You may choose to view and edit policy files in a beta version of the integrated Policy Editor or in an editor of your choice. The evaluation environment provides ssh access through a web interface so you may explore the environment or access policy files there @footnote{This feature is only available in the evaluation environment and does not ship with the actual product} (@url{https://cfengine.com/pilots/<YOUR INSTANCE ADDRESS>/shell}, see also @ref{Shell access}). In the following, we will see a short introduction to both CDP and standard policies. See @ref{The Policy Editor (beta)} for how to access the Policy Editor and edit these files. -->
 <!--  -->
 <div class="node">
 <a name="Content-Driven-Policy"></a>
@@ -969,34 +1052,26 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction-to-CFEngine-policies">Int
 <p>As explained previously, content driven policies consist of semi-colon separated fields in a text file. The files also contain a header that explains the format and meaning of the fields and typically looks like this (lines have been split and indented for presentability):
 
 <pre class="verbatim">
-<span class="comment">   #  ACLs On Files
-</span>
-<span class="comment">   #
-</span>
-<span class="comment">   #  FORMAT:   path;entity_type1:entity_name1:perms1,
-</span>
-<span class="red">         entity_type2:entity_name2:perms2,...;owner;action;class_expression
-</span><span class="comment">   #
-</span>
-<span class="comment">   #  EXAMPLE:  C:\tmp;user:Administrator:rwx,user:SYSTEM:r;
-</span>
+   #  ACLs On Files
+   #
+   #  FORMAT:   path;entity_type1:entity_name1:perms1,
+         entity_type2:entity_name2:perms2,...;owner;action;class_expression
+   #
+   #  EXAMPLE:  C:\tmp;user:Administrator:rwx,user:SYSTEM:r;
          Administrator;fix;windows
-<span class="comment">   #
-</span>
+   #
 
-<span class="comment">   # Windows 2003
-</span>
-<span class="red">   c:\WINDOWS\system32\drivers\etc\hosts;user:Administrator:rw,user:SYSTEM:rw,
-</span><span class="red">       user:Guest:r;SYSTEM;fix;Windows_Server_2003.!Hr09
-</span><span class="red">   c:\WINDOWS\system32\drivers\etc\hosts;user:Administrator:rw,user:SYSTEM:rw,
-</span><span class="red">       user:Guest:rw;SYSTEM;fix;Windows_Server_2003.Hr09
-</span><span class="comment">   # Windows 2008
-</span>
-<span class="red">   c:\Windows\System32\drivers\etc\hosts;user:Administrator:rw,user:SYSTEM:rw,
-</span><span class="red">       user:Guest:r;SYSTEM;fix;Windows_Server_2008_R2.!Hr11
-</span><span class="red">   c:\Windows\System32\drivers\etc\hosts;user:Administrator:rw,user:SYSTEM:rw,
-</span><span class="red">       user:Guest:rw;SYSTEM;fix;Windows_Server_2008_R2.Hr11
-</span>
+   # Windows 2003
+   c:\WINDOWS\system32\drivers\etc\hosts;user:Administrator:rw,user:SYSTEM:rw,
+       user:Guest:r;SYSTEM;fix;Windows_Server_2003.!Hr09
+   c:\WINDOWS\system32\drivers\etc\hosts;user:Administrator:rw,user:SYSTEM:rw,
+       user:Guest:rw;SYSTEM;fix;Windows_Server_2003.Hr09
+   # Windows 2008
+   c:\Windows\System32\drivers\etc\hosts;user:Administrator:rw,user:SYSTEM:rw,
+       user:Guest:r;SYSTEM;fix;Windows_Server_2008_R2.!Hr11
+   c:\Windows\System32\drivers\etc\hosts;user:Administrator:rw,user:SYSTEM:rw,
+       user:Guest:rw;SYSTEM;fix;Windows_Server_2008_R2.Hr11
+
 </pre>
 
    <p>Anything with a &lsquo;<samp><span class="samp">;</span></samp>&rsquo; before or after it is a field entry. We need to look at the header of the file to understand the structure and meaning of the fields (under the <code>FORMAT</code> and <code>EXAMPLE</code> sections). In this case we have (line has been split and indented for presentability):
@@ -1004,10 +1079,9 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction-to-CFEngine-policies">Int
 <!-- As explained previously, content driven policies consist of semi-colon separated fields in a text file. The files also contain a header that explains the format and meaning of the fields. We will look at an Access Control List (ACL) input file as an example. The default CFEngine 3 Nova ACLs policies allow you to set permissions to directories and files using two different input files (@file{acl_directory_list.txt} and @file{acl_file_list.txt}, respectively). We will limit ourselves to look at one of these as they are conceptually identical. -->
 <!-- We saw earlier that the input consisted of lines containing semi colon separated fields, so anything with a @samp{;} before or after it is a field entry. We need to look at the header of the file to understand its structure, the input fields are explained in the @code{FORMAT} section. In this case we have (line has been split and indented for presentability): -->
 <pre class="verbatim">
-<span class="comment">  #  FORMAT:   path;entity_type1:entity_name1:perms1,
-</span>
-<span class="red">         entity_type2:entity_name2:perms2,...;owner;action;class_expression
-</span>
+  #  FORMAT:   path;entity_type1:entity_name1:perms1,
+         entity_type2:entity_name2:perms2,...;owner;action;class_expression
+
 </pre>
 
 <p class="noindent">Splitting this up into separate fields:
@@ -1048,19 +1122,18 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction-to-CFEngine-policies">Int
 <!-- @sp 1 -->
 <!-- We encourage you to try the keyboard shortcuts along the way. The Policy Editor detects syntax errors and highlights these in red so you are immediately aware of mistakes you may have made. In addition, it is possible to run syntax check by pressing the @b{Check syntax} button. @footnote{The file has to be saved and included in the inputs list of a particular policy file (promises.cf) in order for this to take effect.} -->
 <pre class="verbatim">
-<span class="red">body common control
-</span>{
-<span class="red">  bundlesequence </span>=> { "test" };
+body common control
+{
+  bundlesequence => { "test" };
 }
 
-<span class="comment"># Comments are defined by the hash tag (#), they will not be parsed by CFEngine.
-</span>
+# Comments are defined by the hash tag (#), they will not be parsed by CFEngine.
 
-<span class="red">bundle agent</span> <span class="blue">test</span>
+bundle agent test      # This is a bundle of type agent, named 'test'
 {
-<span class="red">files:		     # This is the promise type, i.e. we make a promise about files
-</span>  "/tmp/testfile"	     # This is the promiser (i.e. the concerned object)
-<span class="red">    create </span>=><span class="green"> "true";  # This tells CFEngine to create the file</span>
+files:		     # This is the promise type, i.e. we make a promise about files
+  "/tmp/testfile"	     # This is the promiser (i.e. the concerned object)
+    create => "true";  # This tells CFEngine to create the file
 }
 
 </pre>
@@ -1076,7 +1149,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Introduction-to-CFEngine-policies">Int
 <div class="node">
 <a name="Next-steps"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Policy-Editing">Policy Editing</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Policy-editing">Policy editing</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Introduction-to-CFEngine-policies">Introduction to CFEngine policies</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
@@ -1087,7 +1160,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <p>We recommend that users familiarize themselves with the <a href="http://cfengine.com/tech">CFEngine 3 documentation</a> and continue to learn about the CFEngine language and CFEngine 3 Nova. Documents of interest include: <br>
 
      <ul>
-<li><a href="http://cfengine.com/manuals/&lt;address TBD&gt;">Nova Evaluation Guide Supplement</a><br>
+<li><a href="http://cfengine.com/manuals/http://cfengine.com/manuals/novaevaluationguidesupplement.html">Nova Evaluation Guide Supplement</a><br>
 <li><a href="http://cfengine.com/manuals/NovaOwnersManual.html">CFEngine 3 Nova Owner's Manual</a><br>
 <li><a href="http://cfengine.com/manuals/cf3-conceptguide.html">CFEngine 3 Concept guide</a><br>
 <li><a href="http://cfengine.com/manuals/cf3-reference.html">CFEngine 3 Reference Manual</a><br>
@@ -1101,14 +1174,14 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <!-- * CHAPTER -->
 <!-- ***************************************************** -->
 <div class="node">
-<a name="Policy-Editing"></a>
+<a name="Policy-editing"></a>
 <p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Next-steps">Next steps</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h2 class="appendix">Appendix A Policy Editing</h2>
+<h2 class="appendix">Appendix A Policy editing</h2>
 
 <!--  -->
 <ul class="menu">
@@ -1122,8 +1195,8 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <a name="The-Policy-Editor-_0028beta_0029"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Edit-a-CDP-input-file">Edit a CDP input file</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Policy-Editing">Policy Editing</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Policy-Editing">Policy Editing</a>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Policy-editing">Policy editing</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Policy-editing">Policy editing</a>
 
 </div>
 
@@ -1190,7 +1263,7 @@ The Policy Editor appears after a successful checkout. It consists of three main
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Create-a-standard-policy">Create a standard policy</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#The-Policy-Editor-_0028beta_0029">The Policy Editor (beta)</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Policy-Editing">Policy Editing</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Policy-editing">Policy editing</a>
 
 </div>
 
@@ -1244,7 +1317,7 @@ We will now modify a field in this policy and check the result in the Mission Po
 <a name="Create-a-standard-policy"></a>
 <p><hr>
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Edit-a-CDP-input-file">Edit a CDP input file</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Policy-Editing">Policy Editing</a>
+Up:&nbsp;<a rel="up" accesskey="u" href="#Policy-editing">Policy editing</a>
 
 </div>
 
@@ -1257,17 +1330,15 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Policy-Editing">Policy Editing</a>
 </td></tr></table>
 
 <pre class="verbatim">
-<span class="red">bundle agent</span> <span class="blue">pilot_simple_custom_report_policy</span>
+bundle agent pilot_simple_custom_report_policy {
 
-<span class="comment">   # promise type: make a promise about variables, see details below
-</span>
-<span class="red">   vars:
-</span>      "file_to_check"<span class="red"> string </span>=><span class="green"> "/tmp/somefile.txt";</span>
+   # promise type: make a promise about variables, see details below
+   vars:
+      "file_to_check" string => "/tmp/somefile.txt";
 
-<span class="comment">   # promise type: promise about classes (context), see details below
-</span>
-<span class="red">   classes:
-</span>      "file_exists"<span class="red"> expression </span>=> fileexists("$(file_to_check)");		
+   # promise type: promise about classes (context), see details below
+   classes:
+      "file_exists" expression => fileexists("$(file_to_check)");		
 </pre>
    <pre class="sp">
 
@@ -1275,13 +1346,12 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Policy-Editing">Policy Editing</a>
 (<i>The policy continues on the next page.</i>)
 
 <pre class="verbatim">   # promise type: make a promise about reports, see details below
-<span class="red">   reports:
-</span>      !file_exists::		# context in which the promise should be executed
-<span class="comment">				# in this case if the file does not exist 
-</span>
-<span class="red">         "WARNING: File $(file_to_check) does not exist on host $(sys.uqhost)"
-</span><span class="red">            handle  </span>=><span class="green"> "pilot_simple_report_policy",</span>
-<span class="red">            comment </span>=><span class="green"> "Simple reports policy to show up in Mission Portal";</span>
+   reports:
+      !file_exists::		# context in which the promise should be executed
+				# in this case if the file does not exist 
+         "WARNING: File $(file_to_check) does not exist on host $(sys.uqhost)"
+            handle  => "pilot_simple_report_policy",
+            comment => "Simple reports policy to show up in Mission Portal";
 }
 
 </pre>
@@ -1308,13 +1378,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Policy-Editing">Policy Editing</a>
 <li>Uncomment the corresponding line by removing the hash tag (<code>#</code>) in front of it (only if you have created and saved the file as instructed above)
 <pre class="verbatim">         "bundlesequence" slist => {
                         "pilot_simple_edit_policy"
-<span class="comment">     #                  "pilot_simple_custom_report_policy",    #Uncomment this line
-</span>
+     #                  "pilot_simple_custom_report_policy",    #Uncomment this line
                                    };
-         "inputs"<span class="red">         slist </span>=> {
+         "inputs"         slist => {
                         "pilot_simple_edit_policy.cf"
-<span class="comment">     #                  "pilot_simple_custom_report_policy.cf", #Uncomment this line
-</span>
+     #                  "pilot_simple_custom_report_policy.cf", #Uncomment this line
                                    };
 </pre>
 <li>Save <samp><span class="file">promises.cf</span></samp>
@@ -1348,6 +1416,11 @@ pageTracker._initData();
 pageTracker._trackPageview();
 </script>
 
-</body></html>
+   <div class="footnote">
+<hr>
+<a name="texinfo-footnotes-in-document"></a><h4>Footnotes</h4><p class="footnote"><small>[<a name="fn-1" href="#fnd-1">1</a>]</small> In a standard CFEngine 3 Nova environment you would be able to choose between the integrated Policy Editor (beta) or an editor of your choice to view and edit policy files. The evaluation environment is limited to the Policy Editor (beta) for security reasons.</p>
 
+   <hr></div>
+
+</body></html>
 
