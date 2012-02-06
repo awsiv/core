@@ -36,7 +36,7 @@ class test_bundle_libraries extends CodeIgniterUnitTestCase {
     }
     
      public function test_argsForBundles() {
-        $list = cfpr_get_args_for_bundle('set_variable_values2', cfpr_get_bundle_type('set_variable_values2'));
+        $list = cfpr_bundle_arguments(cfpr_get_bundle_type('set_variable_values2'), 'set_variable_values2');
         $this->dump($list);
         $array = json_decode(utf8_encode($list), true);
         $retValue = json_last_error();

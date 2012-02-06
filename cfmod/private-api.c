@@ -3396,25 +3396,26 @@ PHP_FUNCTION(cfpr_get_classes_for_bundle)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_get_args_for_bundle)
+PHP_FUNCTION(cfpr_bundle_arguments)
 {
  char *bundleName;
  char *bundleType;
  int bname_len, btype_len;
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
-                           &bundleName, &bname_len,
-                           &bundleType, &btype_len) == FAILURE)
+                           &bundleType, &btype_len,
+                           &bundleName, &bname_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
- ARGUMENT_CHECK_CONTENTS(bname_len && btype_len);
+ ARGUMENT_CHECK_CONTENTS(btype_len && bname_len);
 
  PromiseFilter *filter = NewPromiseFilter();
- PromiseFilterAddBundles(filter, bundleName, NULL);
  PromiseFilterAddBundleType(filter, bundleType);
+ PromiseFilterAddBundles(filter, bundleName, NULL);
+
 
  mongo_connection conn;
  DATABASE_OPEN(&conn);

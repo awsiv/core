@@ -51,7 +51,7 @@ class Bundle extends Cf_Controller {
             'status' => "current",
             'bundle' => $bundle,
             'allbundles' => json_decode(utf8_encode(cfpr_bundle_list_all()), TRUE),
-            'args' => json_decode(utf8_encode(cfpr_get_args_for_bundle($bundle, $type))),
+            'args' => json_decode(utf8_encode(cfpr_bundle_arguments($type, $bundle))),
             'classes' => json_decode(utf8_encode(cfpr_get_classes_for_bundle($bundle, $type)), TRUE),
             'list' => json_decode(utf8_encode(cfpr_list_handles_for_bundle($bundle, $type, False)), TRUE),
             'others' => json_decode(utf8_encode(cfpr_list_bundles_using($bundle)), TRUE),

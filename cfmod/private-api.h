@@ -233,10 +233,10 @@ PHP_FUNCTION(cfpr_get_variable);
 PHP_FUNCTION(cfpr_get_classes_for_bundle);
 
 /*! \brief A list of parameters for a bundle
- * \param bundleName
  * \param bundleType
+ * \param bundleName
  */
-PHP_FUNCTION(cfpr_get_args_for_bundle);
+PHP_FUNCTION(cfpr_bundle_arguments);
 
 /*! \brief Get the list of business goals
  */
