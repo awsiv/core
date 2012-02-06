@@ -3446,19 +3446,32 @@ PHP_FUNCTION(cfpr_bundle_arguments)
 
 PHP_FUNCTION(cfpr_bundle_list_all)
 {
- if (ZEND_NUM_ARGS() != 0)
+ char *userName;
+ int user_len;
+ 
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",
+                           &userName, &user_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
  
+ ARGUMENT_CHECK_CONTENTS(user_len);
+
+ HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
+ 
  mongo_connection conn;
  DATABASE_OPEN(&conn);
+
+ PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
  
- HubQuery *hqBundles = CFDB_QueryPromiseBundles(&conn, NULL);
+ HubQuery *hqBundles = CFDB_QueryPromiseBundles(&conn, filter);
+
+ DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
  
  DATABASE_CLOSE(&conn);
-
+ 
  HubQuerySortPromiseBundles(hqBundles);
 
  JsonElement *output = JsonArrayCreate(100);
