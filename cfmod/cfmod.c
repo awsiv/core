@@ -70,18 +70,22 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_vitals_analyse_year,NULL)
     PHP_FE(cfpr_vitals_analyse_histogram,NULL)
 
-    // policy
+    /* POLICY */
+
+    // RBAC-IFIED
     PHP_FE(cfpr_promise_list_by_handle_rx,NULL)
     PHP_FE(cfpr_promise_list_by_bundle_rx,NULL)
     PHP_FE(cfpr_promise_list_by_promiser_rx,NULL)
     PHP_FE(cfpr_promise_details,NULL)
-    
-    PHP_FE(cfpr_list_all_bundles,NULL)
-    PHP_FE(cfpr_get_bundle_type,NULL)
-    PHP_FE(cfpr_get_args_for_bundle,NULL)
-    PHP_FE(cfpr_list_handles_for_bundle,NULL)
-    PHP_FE(cfpr_get_promise_bundle,NULL)
 
+    // PromiseFilter-IFIED
+    PHP_FE(cfpr_bundle_list_all,NULL)
+    PHP_FE(cfpr_list_all_bundles,NULL)
+    PHP_FE(cfpr_get_args_for_bundle,NULL)
+    PHP_FE(cfpr_get_bundle_type,NULL)
+    PHP_FE(cfpr_get_promise_bundle,NULL)
+    
+    // pending
     PHP_FE(cfpr_get_classes_for_bundle,NULL)
     PHP_FE(cfpr_list_bundles_using,NULL)
     
@@ -89,8 +93,10 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_list_handles,NULL)
     PHP_FE(cfpr_get_promise_type,NULL)
     PHP_FE(cfpr_get_promiser,NULL)
+    PHP_FE(cfpr_list_handles_for_bundle,NULL)
     PHP_FE(cfpr_get_promise_body,NULL)
 
+    /* END POLICY */
     
     PHP_FE(cfpr_getlastupdate,NULL)
     PHP_FE(cfpr_list_business_goals,NULL)

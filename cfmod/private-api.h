@@ -853,6 +853,10 @@ PHP_FUNCTION(cfpr_list_handles);
  */
 PHP_FUNCTION(cfpr_list_all_bundles);
 
+/*! \brief A list of all bundles
+ */
+PHP_FUNCTION(cfpr_bundle_list_all);
+
 /*! \brief A list of all bundles using a bundle
  * \param bundleName
  */

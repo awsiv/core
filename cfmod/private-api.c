@@ -3443,6 +3443,42 @@ PHP_FUNCTION(cfpr_get_args_for_bundle)
 
 /******************************************************************************/
 
+PHP_FUNCTION(cfpr_bundle_list_all)
+{
+ if (ZEND_NUM_ARGS() != 0)
+    {
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
+ 
+ mongo_connection conn;
+ DATABASE_OPEN(&conn);
+ 
+ HubQuery *hqBundles = CFDB_QueryPromiseBundles(&conn, NULL);
+ 
+ DATABASE_CLOSE(&conn);
+
+ JsonElement *output = JsonArrayCreate(100);
+ 
+ for(Rlist *rp = hqBundles->records; rp != NULL; rp = rp->next)
+    {
+    HubPromiseBundle *bundle = rp->item;
+    
+    JsonElement *bundleArray = JsonArrayCreate(2);
+    
+    JsonArrayAppendString(bundleArray, bundle->bundleType);
+    JsonArrayAppendString(bundleArray, bundle->bundleName);
+    
+    JsonArrayAppendArray(output, bundleArray);
+    }
+
+ DeleteHubQuery(hqBundles, DeleteHubPromiseBundle);
+ 
+ RETURN_JSON(output);
+}
+
+/******************************************************************************/
+
 PHP_FUNCTION(cfpr_list_all_bundles)
 // TODO: deparametarize this, one fn for all, one for btype
 {
@@ -3469,6 +3505,7 @@ PHP_FUNCTION(cfpr_list_all_bundles)
  
  RETURN_STRING(buffer,1);
 }
+
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_get_bundle_type)
