@@ -3277,27 +3277,33 @@ PHP_FUNCTION(cfpr_list_handles_for_bundle)
 
 PHP_FUNCTION(cfpr_bundle_by_promise_handle)
 
-{ char *promiseHandle;
- int ph_len;
+{
+ char *userName;
+ char *promiseHandle;
+ int user_len, ph_len;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
+                           &userName, &user_len,
                            &promiseHandle, &ph_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
  
- ARGUMENT_CHECK_CONTENTS(ph_len);
+ ARGUMENT_CHECK_CONTENTS(user_len && ph_len);
 
- PromiseFilter *filter = NewPromiseFilter();
+ HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
+
+ PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
  PromiseFilterAddPromiseBody(filter, promiseHandle, NULL);
 
  mongo_connection conn;
  DATABASE_OPEN(&conn);
  
  HubQuery *hqBundle = CFDB_QueryPromiseBundles(&conn, filter);
+ DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
  
- DeletePromiseFilter(filter);
  DATABASE_CLOSE(&conn);
 
  HubPromiseBundle *bundle = HubQueryGetFirstRecord(hqBundle);
