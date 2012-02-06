@@ -2167,7 +2167,7 @@ int Nova2PHP_filechanges_report(char *hostkey,char *file,int regex,time_t t,char
     hC = (HubFileChanges *)rp->item;
 
     EscapeJson(hC->path,jsonEscapedStr,sizeof(jsonEscapedStr));
-    
+
     if(strcmp(hC->nid,CF_NONOTE) == 0)
        {
        snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%ld,"

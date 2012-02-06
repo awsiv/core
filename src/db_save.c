@@ -1384,9 +1384,11 @@ for (ip = data; ip != NULL; ip=ip->next)
    sscanf(ip->name,"%ld,%255[^\n]",&date,name);
    then = (time_t)date;
 
-   ReplaceChar(name,nameNoDot,sizeof(nameNoDot),'.','_');
+   char escapedname[CF_BUFSIZE] = {0};
+   EscapeJson(name, escapedname, sizeof(escapedname));
+   ReplaceChar(escapedname,nameNoDot,sizeof(nameNoDot),'.','_');
+
    snprintf(varName,sizeof(varName),"%s.%s@%ld",cfr_filechanges,nameNoDot,date);
-   
    sub = bson_append_start_object(setObj,varName);
    bson_append_int(sub,cfr_time,then);
    bson_append_string(sub,cfr_name,name);
@@ -1420,7 +1422,6 @@ void CFDB_SaveFileDiffs(mongo_connection *conn, char *keyhash, Item *data)
   time_t then;
   long t;
   char *sp;
-
 // find right host
 bson_buffer_init(&bb);
 bson_append_string(&bb, cfr_keyhash, keyhash);
