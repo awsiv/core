@@ -196,7 +196,7 @@
                         'margin-top':$(this).height()/2
                     }));
                          
-                    $.getJSON(self.options.classhandler, function(data) {
+                    $.getJSON(self.options.baseUrl+self.options.classhandler, function(data) {
                         self.classdlg.html($("<ul>").attr("id", "tagList"));
                         //$("<ul>").attr("id", "tagList").appendTo(self.classdlg);
                         $.each(data, function(i, val) {
