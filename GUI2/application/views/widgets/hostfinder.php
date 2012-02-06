@@ -21,7 +21,7 @@
         <ul>
             <li id="search_hostname" class="selected">Host Name</li>
             <li id="search_ip">Ip Address</li>
-            <li id="search_class">Class</li>
+            <!--<li id="search_class">Class</li>-->
         </ul>
      </div>
             
