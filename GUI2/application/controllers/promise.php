@@ -37,7 +37,7 @@ class Promise extends Cf_Controller {
         } else {
             $handle = urldecode($handle);
         }
-        $mybundle = cfpr_bundle_by_promise_handle($handle);
+        $mybundle = cfpr_bundle_by_promise_handle($this->session->userdata('username'), $handle);
         $promiser = cfpr_get_promiser($handle);
         $type = cfpr_get_promise_type($handle);
         $pid = cfpr_get_pid_for_topic("promises", $handle);
@@ -55,7 +55,7 @@ class Promise extends Cf_Controller {
             'handle' => $handle,
             'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_promise')." " .$handle,
             'pid' => $pid,
-            'mybundle' => cfpr_bundle_by_promise_handle($handle),
+            'mybundle' => cfpr_bundle_by_promise_handle($this->session->userdata('username'), $handle),
             'allhandles' => json_decode(utf8_encode(cfpr_list_handles_for_bundle($mybundle, cfpr_get_bundle_type($mybundle), false)),TRUE),
             'allhandlespromiser' => json_decode(utf8_encode(cfpr_list_handles($promiser, "", false)),TRUE),
             'type' => $type,

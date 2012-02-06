@@ -1,6 +1,7 @@
 <?php
 class test_goal_libraries extends CodeIgniterUnitTestCase {
-
+    public $username = 'admin'; // set username who will "run" test - we need this for RBAC
+    
     public function __construct() {
         parent::__construct();
     }
@@ -14,7 +15,7 @@ class test_goal_libraries extends CodeIgniterUnitTestCase {
     }
 
     public function test_cfpr_bundle_agent_goals(){
-         $data = cfpr_bundle_agent_goals();
+        $data = cfpr_bundle_agent_goals($this->username);
         $array = json_decode(utf8_encode($data), true);
         $retValue = json_last_error();
         $this->assertTrue(is_array($array), "Should Return a valid array");
