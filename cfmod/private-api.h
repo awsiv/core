@@ -257,6 +257,8 @@ PHP_FUNCTION(cfpr_report_software_in);
  * \param patchVersion
  * \param patchArchitecture
  * \param classExpression
+ * \param sortColumnName
+ * \param sortDescending
  */
 PHP_FUNCTION(cfpr_report_patch_in);
 
@@ -266,6 +268,8 @@ PHP_FUNCTION(cfpr_report_patch_in);
  * \param patchVersion
  * \param patchArchitecture
  * \param classExpression
+ * \param sortColumnName
+ * \param sortDescending
  */
 PHP_FUNCTION(cfpr_report_patch_avail);
 
@@ -274,11 +278,15 @@ PHP_FUNCTION(cfpr_report_patch_avail);
  * \param hostKey
  * \param name (leave this NULL)
  * \param contextExpression
+ * \param sortColumnName
+ * \param sortDescending
  */
 PHP_FUNCTION(cfpr_report_classes);
 
 /*! \brief A JSON document with hosts and contexts matching the context expressions
  * \param classExpressions comma-delimited list
+ * \param sortColumnName
+ * \param sortDescending
  */
 PHP_FUNCTION(cfpr_class_cloud);
 
@@ -301,12 +309,17 @@ PHP_FUNCTION(cfpr_report_vars);
  * \param repaired
  * \param comparator
  * \param contextExpression
+ * \param sortColumnName
+ * \param sortDescending
  * \param resultsPerPage
+ * \param pageNumber
  */
 PHP_FUNCTION(cfpr_report_compliance_summary);
 
 /*! \brief Get a cached promise compliance report for the barcharts
  * \param policy
+ * \param sortColumnName
+ * \param sortDescending
  */
 PHP_FUNCTION(cfpr_compliance_summary_graph);
 
@@ -329,6 +342,8 @@ PHP_FUNCTION(cfpr_report_compliance_promises);
  * \param maxLastSeen
  * \param useRegularExpressions
  * \param contextExpression
+ * \param sortColumnName
+ * \param sortDescending
  * \param resultsPerPage
  * \param pageNumber
  */
@@ -339,6 +354,8 @@ PHP_FUNCTION(cfpr_report_lastseen);
  * \param job
  * \param useRegularExpressions
  * \param contextExpression
+ * \param sortColumnName
+ * \param sortDescending
  * \param resultsPerPage
  * \param pageNumber
  */
@@ -349,6 +366,8 @@ PHP_FUNCTION(cfpr_report_performance);
  * \param file
  * \param useRegularExpressions
  * \param contextExpression
+ * \param sortColumnName
+ * \param sortDescending
  * \param resultsPerPage
  * \param pageNumber
  */
@@ -361,6 +380,8 @@ PHP_FUNCTION(cfpr_report_setuid);
  * \param time
  * \param comparator
  * \param contextExpression
+ * \param sortColumnName
+ * \param sortDescending
  * \param resultsPerPage
  * \param pageNumber
  */
@@ -374,6 +395,8 @@ PHP_FUNCTION(cfpr_report_filechanges);
  * \param time
  * \param comparator
  * \param contextExpression
+ * \param sortColumnName
+ * \param sortDescending
  * \param resultsPerPage
  * \param pageNumber
  */
@@ -388,6 +411,8 @@ PHP_FUNCTION(cfpr_report_bundlesseen);
  * \param time
  * \param comparator
  * \param contextExpression
+ * \param sortColumnName
+ * \param sortDescending
  * \param resultsPerPage
  * \param pageNumber
  */
@@ -401,6 +426,8 @@ PHP_FUNCTION(cfpr_report_filechanges_longterm);
  * \param time
  * \param comparator
  * \param contextExpression
+ * \param sortColumnName
+ * \param sortDescending
  * \param resultsPerPage
  * \param pageNumber
  */
@@ -646,6 +673,8 @@ PHP_FUNCTION(cfpr_report_repaired);
  * \param fromTime
  * \param toTime
  * \param contextExpression
+ * \param sortColumnName
+ * \param sortDescending
  * \param resultsPerPage
  * \param pageNumber
  */
@@ -657,6 +686,8 @@ PHP_FUNCTION(cfpr_summarize_notkept);
  * \param fromTime
  * \param toTime
  * \param contextExpression
+ * \param sortColumnName
+ * \param sortDescending
  * \param resultsPerPage
  * \param pageNumber
  */
