@@ -5,6 +5,8 @@
 .libs
 Makefile
 Makefile.in
+*.pid
+*.log
 
 # Tags
 
