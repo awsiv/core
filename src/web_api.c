@@ -1227,7 +1227,12 @@ int Nova2PHP_software_report(char *hostkey,char *name,char *value, char *arch,in
 /*****************************************************************************/
 
 int Nova2PHP_classes_report(char *hostkey,char *name,int regex,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
-{
+
+{ 
+#ifndef NDEBUG
+ return  Nova2PHP_classes_report_test(hostkey,name,regex,hostClassFilter,page,returnval,bufsize);
+#endif
+
  char buffer[CF_BUFSIZE]={0}, header[CF_BUFSIZE]={0};
  int margin = 0,headerLen=0,noticeLen=0;
  int truncated = false;
@@ -1237,7 +1242,7 @@ int Nova2PHP_classes_report(char *hostkey,char *name,int regex,HostClassFilter *
  mongo_connection dbconn;
 
 /* BEGIN query document */
- 
+
  if (!CFDB_Open(&dbconn))
     {
     return false;
@@ -1486,13 +1491,18 @@ int Nova2PHP_listclasses_all(char *hostkey,char *name,int regex,char *classreg,c
 
 int Nova2PHP_classes_summary(char **classes, char *buf, int bufsize)
 
-{ mongo_connection dbconn;
+{ 
+#ifndef NDEBUG
+ return Nova2PHP_classes_summary_test(classes, buf, bufsize);
+#endif
+
+ mongo_connection dbconn;
  HubQuery *hq;
  HubClassSum *hc;
  HubHost *hh;
  Rlist *rp;
  char work[CF_MAXVARSIZE];
- 
+
  if (!CFDB_Open(&dbconn))
     {
     return false;
@@ -2049,7 +2059,12 @@ int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,HostClassFilter *h
 
 int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
-{ char buffer[CF_BUFSIZE]={0};
+{ 
+#ifndef NDEBUG
+ return Nova2PHP_bundle_report_test(hostkey,bundle,regex,hostClassFilter,page,returnval,bufsize);
+#endif
+
+ char buffer[CF_BUFSIZE]={0};
  HubBundleSeen *hb;   
  HubQuery *hq;
  Rlist *rp;
@@ -3507,6 +3522,10 @@ void Nova2PHP_show_all_hosts(char *policy,int n,char *buffer,int bufsize)
 int Nova2PHP_show_hosts(char *hostNameRegex,char *ipRegex,char *classRegex,PageInfo *page,char *buf,int bufsize)
 
 {
+#ifndef NDEBUG
+ return Nova2PHP_show_hosts_test(hostNameRegex,ipRegex,classRegex,page,buf,bufsize);
+#endif
+
  HubQuery *hq;
  HubHost *hh;
  Rlist *rp;
@@ -5244,13 +5263,18 @@ int Nova2PHP_community_version(char *buf, int bufsize)
 
 int Nova2PHP_promise_list(PromiseFilter *promiseFilter ,char *returnval, int bufsize)
 
-{ mongo_connection dbconn;
+{ 
+#ifndef NDEBUG
+  return Nova2PHP_promise_list_test(promiseFilter, returnval, bufsize);
+#endif
+
+  mongo_connection dbconn;
   char work[CF_MAXVARSIZE] = {0};
   char promiserJson[CF_MAXVARSIZE];
   Rlist *rp;
   HubPromise *hp;
   HubQuery *hq;
-
+  
   /* BEGIN query document */
 
   if (!CFDB_Open(&dbconn))

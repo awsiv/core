@@ -263,4 +263,12 @@ char *FormatErrorJsonAttribute(char *out, int outSz, cfapi_errid errid);
 char *FormatSingletonErrorJson(char *out, int outSz, cfapi_errid errid);
 void EndJsonBuffer(char *buf, int bufsize, cfapi_errid errid);
 
+/* For volume testing Mission portal */
+#ifndef NDEBUG
+int Nova2PHP_promise_list_test(PromiseFilter *promiseFilter ,char *returnval, int bufsize);
+int Nova2PHP_classes_report_test(char *hostkey,char *name,int regex,HostClassFilter *hostClassFilter,PageInfo *page, char *returnval,int bufsize);
+int Nova2PHP_classes_summary_test(char **classes, char *buf, int bufsize);
+int Nova2PHP_show_hosts_test(char *hostNameRegex,char *ipRegex,char *classRegex,PageInfo *page,char *buf,int bufsize);
+int Nova2PHP_bundle_report_test(char *hostkey,char *bundle,int regex,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize);
+#endif
 #endif // CFENGINE_NOVA_WEB_API_H
