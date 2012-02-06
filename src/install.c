@@ -1237,6 +1237,14 @@ void DeletePromiseFilter(PromiseFilter *filter)
 /*                        REPORT SORTING FUNCTIONS                           */
 /*****************************************************************************/
 
+void HubQuerySortPromiseBundles(HubQuery *hqPromiseBundles)
+{
+ if(hqPromiseBundles->records)
+    {
+    hqPromiseBundles->records = SortRlist(hqPromiseBundles->records, SortPromiseBundle);
+    }
+}
+
 int SortPromiseLog(void *p1, void *p2)
 /**
  * For SortRlist() - sorts promise logs descending on time.

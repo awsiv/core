@@ -3458,6 +3458,8 @@ PHP_FUNCTION(cfpr_bundle_list_all)
  
  DATABASE_CLOSE(&conn);
 
+ HubQuerySortPromiseBundles(hqBundles);
+
  JsonElement *output = JsonArrayCreate(100);
  
  for(Rlist *rp = hqBundles->records; rp != NULL; rp = rp->next)
