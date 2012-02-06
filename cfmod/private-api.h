@@ -848,10 +848,10 @@ PHP_FUNCTION(cfpr_promise_details);
  */
 PHP_FUNCTION(cfpr_list_handles);
 
-/*! \brief A list of all bundles by type
+/*! \brief Goals for agent bundles
  * \param bundleType
  */
-PHP_FUNCTION(cfpr_list_all_bundles);
+PHP_FUNCTION(cfpr_bundle_agent_goals);
 
 /*! \brief A list of all bundles
  */

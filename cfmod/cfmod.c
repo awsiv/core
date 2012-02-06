@@ -80,7 +80,7 @@ static function_entry cfmod_functions[] =
 
     // PromiseFilter-IFIED
     PHP_FE(cfpr_bundle_list_all,NULL)
-    PHP_FE(cfpr_list_all_bundles,NULL)
+    PHP_FE(cfpr_bundle_agent_goals,NULL)
     PHP_FE(cfpr_get_args_for_bundle,NULL)
     PHP_FE(cfpr_get_bundle_type,NULL)
     PHP_FE(cfpr_get_promise_bundle,NULL)

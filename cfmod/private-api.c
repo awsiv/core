@@ -3481,27 +3481,22 @@ PHP_FUNCTION(cfpr_bundle_list_all)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_list_all_bundles)
-// TODO: deparametarize this, one fn for all, one for btype
+PHP_FUNCTION(cfpr_bundle_agent_goals)
 {
- char *btype,*fbtype;
- int p_len;
  char buffer[CF_WEBBUFFER];
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&btype,&p_len) == FAILURE)
+ if (ZEND_NUM_ARGS() != 0)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
-
+ 
  buffer[0] = '\0';
 
- fbtype =  (p_len == 0) ? NULL : btype;
-
  PromiseFilter *filter = NewPromiseFilter();
- PromiseFilterAddBundleType(filter, fbtype);
+ PromiseFilterAddBundleType(filter, "agent");
 
- Nova2PHP_list_all_bundles(filter,buffer,sizeof(buffer));
+ Nova2PHP_bundle_agent_goals(filter,buffer,sizeof(buffer));
 
  DeletePromiseFilter(filter);
  

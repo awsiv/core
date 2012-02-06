@@ -3143,8 +3143,7 @@ int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsi
 
 /*****************************************************************************/
 
-int Nova2PHP_list_all_bundles(PromiseFilter *filter, char *buffer, int bufsize)
-// FIXME: needs refactoring. filter->bundleTypeInclude should not be access directly - split to to functions
+int Nova2PHP_bundle_agent_goals(PromiseFilter *filter, char *buffer, int bufsize)
 {
  mongo_connection dbconn;
  char work[CF_BUFSIZE];
@@ -3164,35 +3163,28 @@ int Nova2PHP_list_all_bundles(PromiseFilter *filter, char *buffer, int bufsize)
     CFDB_Close(&dbconn);
     }
 
- hqBundles->records = SortRlist(hqBundles->records, SortPromiseBundle);
+ HubQuerySortPromiseBundles(hqBundles);
  
+ snprintf(buffer,bufsize,
+          "{\"meta\":{\"header\": {\"Type\":0,\"Service bundle name\":1,\"Description\":2,"
+          "\"Contributing to Goals\":{\"index\":3,\"subkeys\":{\"pid\":0,\"name\":1,\"description\":2}},"
+          "\"\":4"
+          "}},\"data\":[");
  
- if (filter->bundleTypeInclude)
-    {
-    snprintf(buffer,bufsize,
-             "{\"meta\":{\"header\": {\"Type\":0,\"Service bundle name\":1,\"Description\":2,"
-             "\"Contributing to Goals\":{\"index\":3,\"subkeys\":{\"pid\":0,\"name\":1,\"description\":2}},"
-             "\"\":4"
-             "}},\"data\":[");
-    }
- else
-    {
-    snprintf(buffer,bufsize,"[");
-    }
    
  for (Rlist *rp = hqBundles->records; rp != NULL; rp = rp->next)
     {
     HubPromiseBundle *bundle = rp->item;
     
-    Item *ip2,*glist = Nova_GetBusinessGoals(bundle->bundleName);
+    Item *ip2,*bundleGoals = Nova_GetBusinessGoals(bundle->bundleName);
     char goals[CF_BUFSIZE];
     char colour[CF_SMALLBUF];
       
-    if (filter->bundleTypeInclude && glist)
+    if (bundleGoals)
        {
        snprintf(goals,sizeof(goals),"[");
 
-       for (ip2 = glist; ip2 != NULL; ip2=ip2->next)
+       for (ip2 = bundleGoals; ip2 != NULL; ip2=ip2->next)
           {
           snprintf(work,sizeof(work),"[%d,\"%s\",\"%s\"],",ip2->counter,ip2->name,ip2->classes);
             
@@ -3207,40 +3199,28 @@ int Nova2PHP_list_all_bundles(PromiseFilter *filter, char *buffer, int bufsize)
 
        snprintf(colour,CF_SMALLBUF,"green");
        }
-    else if (filter->bundleTypeInclude)
+    else
        {
        snprintf(goals,CF_MAXVARSIZE,"[[-1,\"Unknown\",\"Unknown\"]]");
        snprintf(colour,CF_SMALLBUF,"yellow");
        }
 
-    if (filter->bundleTypeInclude)
-       {
-       snprintf(work, sizeof(work), "[\"%s\",\"%s\",\"%s\",%s,\"%s\"],",
-                bundle->bundleType, bundle->bundleName, Nova_GetBundleComment(ToLowerStr(bundle->bundleName)), goals, colour);
-       }
-    else
-       {
-       snprintf(work,CF_BUFSIZE,"[\"%s\",\"%s\"],", bundle->bundleType, bundle->bundleName);
-       }
+
+    snprintf(work, sizeof(work), "[\"%s\",\"%s\",\"%s\",%s,\"%s\"],",
+             bundle->bundleType, bundle->bundleName, Nova_GetBundleComment(ToLowerStr(bundle->bundleName)), goals, colour);
+
       
     if(!Join(buffer,work,bufsize))
        {
        break;
        }
     
-    DeleteItemList(glist);
+    DeleteItemList(bundleGoals);
     }
 
  ReplaceTrailingChar(buffer, ',', '\0');
- 
- if (filter->bundleTypeInclude)
-    {
-    strcat(buffer,"]}\n");
-    }
- else
-    {
-    strcat(buffer,"]\n");
-    }
+
+ EndJoin(buffer, "]}\n", bufsize);
 
  DeleteHubQuery(hqBundles, DeleteHubPromiseBundle);
 

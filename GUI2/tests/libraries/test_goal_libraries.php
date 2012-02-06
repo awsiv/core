@@ -13,8 +13,8 @@ class test_goal_libraries extends CodeIgniterUnitTestCase {
 
     }
 
-    public function test_cfpr_list_all_bundles(){
-         $data = cfpr_list_all_bundles("agent");
+    public function test_cfpr_bundle_agent_goals(){
+         $data = cfpr_bundle_agent_goals();
         $array = json_decode(utf8_encode($data), true);
         $retValue = json_last_error();
         $this->assertTrue(is_array($array), "Should Return a valid array");

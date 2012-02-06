@@ -591,7 +591,7 @@ class Welcome extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
         $data = array(
             'title' => $this->lang->line('mission_portal_title') . " - Service Catalogue",
-            'services' => cfpr_list_all_bundles("agent"),
+            'services' => cfpr_bundle_agent_goals(),
             'breadcrumbs' => $this->breadcrumblist->display()
         );
         $this->template->load('template', 'services', $data);
