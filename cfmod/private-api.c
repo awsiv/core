@@ -3398,11 +3398,13 @@ PHP_FUNCTION(cfpr_get_classes_for_bundle)
 
 PHP_FUNCTION(cfpr_bundle_arguments)
 {
+ char *userName;
  char *bundleName;
  char *bundleType;
- int bname_len, btype_len;
+ int user_len, bname_len, btype_len;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss",
+                           &userName, &user_len,
                            &bundleType, &btype_len,
                            &bundleName, &bname_len) == FAILURE)
     {
@@ -3410,19 +3412,21 @@ PHP_FUNCTION(cfpr_bundle_arguments)
     RETURN_NULL();
     }
 
- ARGUMENT_CHECK_CONTENTS(btype_len && bname_len);
+ ARGUMENT_CHECK_CONTENTS(user_len && btype_len && bname_len);
 
- PromiseFilter *filter = NewPromiseFilter();
+ HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
+
+ PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
  PromiseFilterAddBundleType(filter, bundleType);
  PromiseFilterAddBundles(filter, bundleName, NULL);
-
 
  mongo_connection conn;
  DATABASE_OPEN(&conn);
  
  HubQuery *hqBundle = CFDB_QueryPromiseBundles(&conn, filter);
+ DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
  
- DeletePromiseFilter(filter);
  DATABASE_CLOSE(&conn);
 
  JsonElement *output = JsonArrayCreate(100);
@@ -3460,14 +3464,13 @@ PHP_FUNCTION(cfpr_bundle_list_all)
 
  HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
- 
- mongo_connection conn;
- DATABASE_OPEN(&conn);
 
  PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
  
+ mongo_connection conn;
+ DATABASE_OPEN(&conn);
+ 
  HubQuery *hqBundles = CFDB_QueryPromiseBundles(&conn, filter);
-
  DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
  
  DATABASE_CLOSE(&conn);
