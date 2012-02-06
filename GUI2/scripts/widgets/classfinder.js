@@ -17,12 +17,35 @@
             var self=this;  
             self.resetPagination();
             self.dialogcontent.bind('scroll',$.proxy(self.classlistscrolled,self));
+            self.dialogcontent.ajaxError(function(e, jqxhr, settings, exception) {
+              self._displayFailure(settings.url,jqxhr,exception);
+            });
         },
         _create:function(){
             var self=this;
             self.addsearchbar();
             self.addalphapager();
             $.ui.classfinder.instances.push(this.element);           
+        },
+        
+        _displayFailure: function(uri,x,e) {
+               var serverMsg,
+                   self=this;
+               if(x.status==0){
+			serverMsg='You are offline!!\n Please Check Your Network.';
+			}else if(x.status==404){
+			serverMsg='Requested URL not found.';
+			}else if(x.status==500){
+			serverMsg='Internel Server Error.';
+			}else if(e=='parsererror'){
+			serverMsg='Error.\nParsing JSON Request failed.';
+			}else if(e=='timeout'){
+			serverMsg='Request Time out.';
+			}else {
+			serverMsg='Unknow Error.\n'+x.responseText;
+			}
+                self.dialogcontent.html("<div class='ui-state-error' style='padding: 1em;width:90%'><p><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span>Sorry, a software error has occured.</p><p>" + x.status + " "  + serverMsg+"</p></div>");
+                self.element.text(self.elementtext);  
         },
 
         addsearchbar:function(){
