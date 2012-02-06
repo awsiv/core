@@ -50,7 +50,7 @@ class Bundle extends Cf_Controller {
             'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_bundle'),
             'status' => "current",
             'bundle' => $bundle,
-            'allbundles' => json_decode(utf8_encode(cfpr_list_all_bundles(NULL)), TRUE),
+            'allbundles' => json_decode(utf8_encode(cfpr_bundle_list_all()), TRUE),
             'args' => json_decode(utf8_encode(cfpr_get_args_for_bundle($bundle, $type))),
             'classes' => json_decode(utf8_encode(cfpr_get_classes_for_bundle($bundle, $type)), TRUE),
             'list' => json_decode(utf8_encode(cfpr_list_handles_for_bundle($bundle, $type, False)), TRUE),

@@ -16,7 +16,7 @@ class test_bundle_libraries extends CodeIgniterUnitTestCase {
     }
 
     public function test_allBundles() {
-        $list = cfpr_list_all_bundles(NULL);
+        $list = cfpr_bundle_list_all();
         $this->dump($list);
         $array = json_decode(utf8_encode($list), true);
         $retValue = json_last_error();
