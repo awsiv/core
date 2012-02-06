@@ -716,9 +716,9 @@ return entry;
 
 static JsonElement *SoftwareHostsEntryFind(JsonElement *entries, HubSoftware *software)
 {
-for (Rlist *rp = entries; rp != NULL; rp = rp->next)
+for (size_t i = 0; i < JsonElementLength(entries); i++)
    {
-   JsonElement *entry = (JsonElement *)rp->item;
+   JsonElement *entry = JsonArrayGetAsObject(entries, i);
    if (strcmp(JsonObjectGetAsString(entry, LABEL_NAME), software->name) == 0 &&
        strcmp(JsonObjectGetAsString(entry, LABEL_VERSION), software->version) == 0 &&
        strcmp(JsonObjectGetAsString(entry, LABEL_ARCH), software->arch) == 0)
@@ -808,9 +808,9 @@ return entry;
 
 static JsonElement *SetUidHostsEntryFind(JsonElement *entries, HubSetUid *setuid)
 {
-for (Rlist *rp = entries; rp != NULL; rp = rp->next)
+for (size_t i = 0; i < JsonElementLength(entries); i++)
    {
-   JsonElement *entry = (JsonElement *)rp->item;
+   JsonElement *entry = JsonArrayGetAsObject(entries, i);
    if (strcmp(JsonObjectGetAsString(entry, LABEL_PATH), setuid->path) == 0)
       {
       return entry;
