@@ -1792,12 +1792,12 @@ int CFDB_MarkAsDeleted(char *keyhash)
   bson setOp,empty;
   mongo_connection dbconn;
 
-if (!IsDefinedClass("am_policy_hub"))
+if ( !IsDefinedClass("am_policy_hub") && !AM_PHP_MODULE )
    {
    CfOut(cf_verbose,"","Ignoring caching of deleted hosts - not called by php module");
    return false;
    }
-  
+
 if (!CFDB_Open(&dbconn))
    {
    return false;
