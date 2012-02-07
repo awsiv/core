@@ -88,7 +88,7 @@ static function_entry cfmod_functions[] =
 
     
     // pending
-    PHP_FE(cfpr_get_classes_for_bundle,NULL)
+    PHP_FE(cfpr_bundle_classes_used,NULL)
     PHP_FE(cfpr_list_bundles_using,NULL)
     
     PHP_FE(cfpr_list_bodies,NULL)

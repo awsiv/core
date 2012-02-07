@@ -230,7 +230,7 @@ PHP_FUNCTION(cfpr_get_variable);
  * \param bundleName
  * \param bundleType
  */
-PHP_FUNCTION(cfpr_get_classes_for_bundle);
+PHP_FUNCTION(cfpr_bundle_classes_used);
 
 /*! \brief A list of parameters for a bundle
  * \param bundleType

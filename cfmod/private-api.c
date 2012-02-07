@@ -3381,21 +3381,25 @@ PHP_FUNCTION(cfpr_get_variable)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_get_classes_for_bundle)
-
-{ char *bundle;
- char *btype;
- int r_len, p_len;
+PHP_FUNCTION(cfpr_bundle_classes_used)
+{
+ char *bundleName;
+ char *bundleType;
+ int btype_len, bname_len;
  char buffer[CF_WEBBUFFER];
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&bundle,&r_len,&btype,&p_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
+                           &bundleType, &btype_len,
+                           &bundleName, &bname_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
+ ARGUMENT_CHECK_CONTENTS(btype_len && bname_len);
+
  buffer[0] = '\0';
- Nova2PHP_get_classes_for_bundle(bundle,btype,buffer,sizeof(buffer));
+ Nova2PHP_get_classes_for_bundle(bundleName,bundleType,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }

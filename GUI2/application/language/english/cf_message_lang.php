@@ -234,7 +234,7 @@ $lang['bundle_name'] = 'Name';
 $lang['bundle_arguments'] = 'Arguments';
 $lang['bundle_handle'] = 'Handle';
 $lang['bundle_comment'] = 'Comment';
-$lang['bundle_host_class'] = 'Host classes using this bundle';
+$lang['bundle_host_class'] = 'Host classes used in this bundle';
 $lang['bundle_promise'] = 'Promises in this bundle';
 $lang['bundle_bundle'] = 'Bundles';
 
