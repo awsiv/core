@@ -92,6 +92,11 @@ libcfnova_la_SOURCES +=						\
 	web_rbac.c						
 endif
 
+if !NDEBUG
+libcfnova_la_SOURCES +=						\
+	web_api_test.c
+endif
+
 libcfmonitord_la_LDFLAGS = -no-undefined
 
 libcfmonitord_la_SOURCES = \
