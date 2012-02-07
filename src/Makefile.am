@@ -89,7 +89,8 @@ endif
 if MONGO
 libcfnova_la_SOURCES +=						\
 	web_api.c						\
-	web_rbac.c
+	web_rbac.c						\
+	web_api_test.c
 endif
 
 libcfmonitord_la_LDFLAGS = -no-undefined

@@ -3,7 +3,7 @@
 #include "cf.nova.h"
 #include "cf.nova.web_api.h"
 
-#define MAX_LEN  10
+#define WORD_LEN  10
 /***************************************************************************************************************/
 /* 
  * Using Join/strcat is too slow
@@ -14,9 +14,14 @@ char* strcatUnsafe( char* dest,char* src)
 {
   while (*dest) 
     {
-      dest++; 
+    dest++; 
     }
-  while (*dest++ = *src++);
+
+  while (*src)
+    {
+    *dest++ = *src++;
+    }
+
   return --dest;
 }
 
@@ -24,272 +29,289 @@ char* strcatUnsafe( char* dest,char* src)
 char *RandomizeString(int len, char *buffer, int buflen)
 
 { char *letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_2134lkahsdlkfhjsad982374lkjdflands8234987adslf567890asdf";
-  int max = strlen(letters) -1;
+  int max = strlen(letters);
 
-  buffer[0]='\0';
+buffer[0]='\0';
 
-  for(int i = 0; i < len-1; i++)
-    {
-      int index = rand() % max;
-      buffer[i] = letters[index];
-      buffer[i+1] = '\0';
-    }
+for(int i = 0; i < len; i++)
+  {
+  int index = rand() % max;
+  buffer[i] = letters[index];
+  buffer[i+1] = '\0';
+  }
 
-  return buffer;
+return buffer;
 }
 
-/***************************************************************************************************************/
-
+/***************************************************************************************************************
+ * cfpr_report_classes (sssbssbll) 
+ **************************************************************************************************************/
 int Nova2PHP_classes_report_test(char *hostkey,char *name,int regex,HostClassFilter *hostClassFilter,PageInfo *page, char *returnval,int bufsize)
 
-{ char buffer[CF_BUFSIZE]={0};
+{ char work[CF_BUFSIZE]={0};
   char header[CF_BUFSIZE]={0};
-  int headerLen=0;
-  int noticeLen=0;
-  int truncated = false;
-  char testStr[CF_MAXVARSIZE];
+  char context[CF_MAXVARSIZE];
   char *p = returnval;
+  
+  int truncated = false;
   int totalLen = 0;
-  int recordLen = 0;
+  int recordLen = 0;  
   int startIndex = page->resultsPerPage*(page->pageNum - 1);
   int endIndex = page->resultsPerPage*page->pageNum;
+  
   const char *total_env = getenv("CFENGINE_TEST_OVERRIDE_TOTAL_RECORDS");
-  int total;
 
-total = ( total_env == NULL ) ? endIndex : atoi(total_env);
+  int total = ( total_env == NULL ) ? endIndex : atoi(total_env);
 
 snprintf(header,sizeof(header),
 	 "\"meta\":{\"count\" : %d,"
 	 "\"header\": {\"Host\":0,\"Class Context\":1,\"Occurs with Probability\":2,\"Uncertainty\":3,\"Last seen\":4"
 	 "}", total);
  
-headerLen = strlen(header);
-noticeLen = strlen(CF_NOTICE_TRUNCATED);
-StartJoin(returnval,"{\"data\":[",bufsize);
+StartJoin(returnval, "{\"data\":[", bufsize);
+totalLen = strlen(header) + strlen(CF_NOTICE_TRUNCATED) + strlen(returnval) + 1000; 
 
-totalLen = headerLen + noticeLen + strlen(returnval) + 1000; 
-
-for (int i = startIndex; i < endIndex; i++)
+for (int i = startIndex; (i < endIndex) || (i < total); i++)
   {
-    if(!recordLen)
-      {
-	recordLen = strlen(buffer);
-      }
-    totalLen += recordLen;
+  if(!recordLen)
+    {
+    recordLen = strlen(work);
+    }
+  totalLen += recordLen;
+  
+  if(totalLen >= bufsize-1)
+    {
+    truncated = true;
+    break;
+    }
     
-    if(totalLen >= bufsize-1)
-      {
-	truncated = true;
-	break;
-      }
-    
-    testStr[0] = '\0';
-    snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%lf,%lf,%ld],",
-	     "myhost",
-	     RandomizeString(MAX_LEN,testStr,sizeof(testStr)),
-	     1.8,
-	     1.5,
-	     time(NULL));
-    
-    p = strcatUnsafe(p,buffer);	  
+  RandomizeString(WORD_LEN,context,sizeof(context));
+
+  snprintf(work, sizeof(work), "[\"%s\",\"%s\",%lf,%lf,%ld],",
+	   "myhost",
+	   context,
+	   1.8,
+	   1.5,
+	   time(NULL));
+  
+  p = strcatUnsafe(p, work);	  
   }
 
 ReplaceTrailingChar(returnval,',','\0');
 EndJoin(returnval,"]",bufsize);
 
-Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
+Nova_AddReportHeader(header, truncated, work, sizeof(work)-1);
 
-Join(returnval,buffer,bufsize);
+Join(returnval, work, bufsize);
 EndJoin(returnval,"}}\n",bufsize);
+
 return true;
 }
 
-/***************************************************************************************************************/
+/**************************************************************************************************************/
+/*
+ * cfpr_promise_list_by_handle_rx(ss)
+*/
 int Nova2PHP_promise_list_test(PromiseFilter *promiseFilter ,char *returnval, int bufsize)
 
-{ char work[CF_MAXVARSIZE] = {0};
-  char *p = returnval;
-  char testStr1[CF_MAXVARSIZE];
-  char testStr2[CF_MAXVARSIZE];
-  char testStr3[CF_MAXVARSIZE];
-  char testStr4[CF_MAXVARSIZE];
-  char testStr5[CF_MAXVARSIZE];
-  const char *total_env = getenv("CFENGINE_TEST_OVERRIDE_TOTAL_RECORDS");
-  int total;
- 
-total = ( total_env == NULL || (atoi(total_env) > 80000) ) ? 80000 : atoi(total_env);
+{ const char *total_env = getenv("CFENGINE_TEST_OVERRIDE_TOTAL_RECORDS");
+  int total = ( total_env == NULL || (atoi(total_env) > 80000) ) ? 80000 : atoi(total_env);
 
 StartJoin(returnval, "[", bufsize);
+
+char *p = returnval;
+
 for ( int i = 0; i < total; i++)
   {
-    snprintf(work,sizeof(work),"[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"],",
-             RandomizeString(MAX_LEN *2,testStr1,sizeof(testStr1)),
-             RandomizeString(MAX_LEN,testStr2,sizeof(testStr2)),
-             RandomizeString(MAX_LEN*2,testStr3,sizeof(testStr3)),
-             RandomizeString(MAX_LEN,testStr4,sizeof(testStr4)),
-             RandomizeString(MAX_LEN,testStr5,sizeof(testStr5)));
-    
-    p = strcatUnsafe(p,work);
+  char work[CF_MAXVARSIZE] = {0};
+  char handle[CF_MAXVARSIZE] = {0};
+  char promiseType[CF_MAXVARSIZE] = {0};
+  char bundleName[CF_MAXVARSIZE] = {0};
+  char bundleType[CF_MAXVARSIZE] = {0};
+  char promiser[CF_MAXVARSIZE] = {0};
+  
+  RandomizeString(WORD_LEN, promiseType, sizeof(promiseType));
+  RandomizeString(WORD_LEN, bundleType, sizeof(bundleType));
+  RandomizeString(WORD_LEN, promiser, sizeof(promiser));
+  RandomizeString(WORD_LEN * 2, handle, sizeof(handle));
+  RandomizeString(WORD_LEN * 2, bundleName, sizeof(bundleName));
+
+  snprintf(work,sizeof(work),"[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"],",
+	   handle,
+	   promiseType,
+	   bundleName,
+	   bundleType,
+	   promiser);
+  
+  p = strcatUnsafe(p, work);	  
   }
  
 ReplaceTrailingChar(returnval, ',', '\0');
 EndJoin(returnval, "]", bufsize);
+
 return true;
 }
 /*****************************************************************************/
+/*
+ * cfpr_class_cloud(s)
+*/
+int Nova2PHP_classes_summary_test(char **classes, char *returnval, int bufsize)
 
-int Nova2PHP_classes_summary_test(char **classes, char *buf, int bufsize)
+{ const char *total_env = getenv("CFENGINE_TEST_OVERRIDE_TOTAL_RECORDS"); 
+  int total = (total_env == NULL || (atoi(total_env) > 9000) ) ? 9000 : atoi(total_env);
+  char *p = returnval;
 
-{ char work[CF_MAXVARSIZE];
-  char testStr1[CF_MAXVARSIZE];
-  char testStr2[CF_MAXVARSIZE];
-  char testStr3[CF_MAXVARSIZE];
-  const char *total_env = getenv("CFENGINE_TEST_OVERRIDE_TOTAL_RECORDS");
-  int total;
- 
-total = (total_env == NULL || (atoi(total_env) > 15000) ) ? 15000 : atoi(total_env);
+StartJoin(returnval, "{\"hosts\":[", bufsize);
 
-StartJoin(buf, "{", bufsize);
-
-Join(buf, "\"hosts\":[", bufsize);
-  
 for(int i = 0; i < (total/5) ; i++)
   {
-    snprintf(work, sizeof(work), "[\"%s\",\"%s\"]\n,", 
-	     RandomizeString(MAX_LEN*4,testStr1,sizeof(testStr1)),
-	     RandomizeString(MAX_LEN*2,testStr2,sizeof(testStr2)));
+  char work[CF_MAXVARSIZE] = {0};
+  char hostName[CF_MAXVARSIZE] = {0};
+  char keyHash[CF_MAXVARSIZE] = {0};
     
-    if(!Join(buf, work, bufsize - 10))
-      {
-	break;
-      }
-  }
+  RandomizeString(WORD_LEN*2,hostName,sizeof(hostName));
+  RandomizeString(WORD_LEN*7,keyHash,sizeof(keyHash));
 
-ReplaceTrailingChar(buf, ',', '\0');
-EndJoin(buf,"]",bufsize);
+  snprintf(work, sizeof(work), "[\"%s\",\"%s\"]\n,", hostName, keyHash);
+
+  p = strcatUnsafe(p, work);	  
+  }
+ 
+ReplaceTrailingChar(returnval, ',', '\0');
+EndJoin(returnval,"]",bufsize);
   
-Join(buf, ",\n\"classes\":[", bufsize - 10);
+Join(returnval, ",\n\"classes\":[", bufsize - 10);
       
 for(int i = 0; i < (total*4)/5; i++)
   {
-    snprintf(work, sizeof(work), "[\"%s\",%d]\n,",
-	     RandomizeString(MAX_LEN*3,testStr3,sizeof(testStr3)), i);
-      
-    if(!Join(buf, work, bufsize - 10))
-      {
-	break;
-      }
+  char work[CF_MAXVARSIZE] = {0};
+  char context[CF_MAXVARSIZE] = {0};
+
+  RandomizeString(WORD_LEN*3, context, sizeof(context));
+
+  snprintf(work, sizeof(work), "[\"%s\",%d]\n,", context, i);
+
+  p = strcatUnsafe(p,work);
   }
  
-ReplaceTrailingChar(buf, ',', '\0');
-EndJoin(buf,"]",bufsize);
-
-EndJoin(buf, "}", bufsize);
+ReplaceTrailingChar(returnval, ',', '\0');
+EndJoin(returnval,"]}",bufsize);
 
 return true;
 }
 /*****************************************************************************/
-int Nova2PHP_show_hosts_test(char *hostNameRegex,char *ipRegex,char *classRegex,PageInfo *page,char *buf,int bufsize)
+/*
+ * cfpr_show_hosts_name(ssll)
+*/
+int Nova2PHP_show_hosts_test(char *hostNameRegex,char *ipRegex,char *classRegex,PageInfo *page,char *returnval,int bufsize)
 
-{ char work[CF_MAXVARSIZE];
-  char *p = buf;
-  char testStr1[CF_MAXVARSIZE];
-  char testStr2[CF_MAXVARSIZE];
+{ char work[CF_MAXVARSIZE] = {0};
   int startIndex = page->resultsPerPage*(page->pageNum - 1);
   int endIndex = page->resultsPerPage*page->pageNum;
   const char *total_env = getenv("CFENGINE_TEST_OVERRIDE_TOTAL_RECORDS");
-  int total;
 
-total = ( total_env == NULL ) ? endIndex : atoi(total_env);
+  int total = ( total_env == NULL ) ? endIndex : atoi(total_env);
 
 // Max limit to avoid segfault
 if(total > 60000)
   {
-    total = 60000;
+  total = 60000;
   }
 
-snprintf(work,sizeof(work),
+char *p = returnval;
+
+snprintf(work, sizeof(work),
 	 "{\"meta\":{\"count\" : %d,"
 	 "\"header\": {\"Key Hash\":0,\"Host name\":1,\"IP address\":2"
-	 "}},\n\"data\":[",total);
+	 "}},\n\"data\":[", total);
  
-StartJoin(buf,work,bufsize);
+StartJoin(returnval,work,bufsize);
 
-for (int i = startIndex; i < endIndex; i++)
+for (int i = startIndex; (i < endIndex) || (i < total); i++)
   {
-    snprintf(work, sizeof(work), 
-	     "[\"%s\", \"%s\", \"%s\"]\n,",
-	     RandomizeString(MAX_LEN*3,testStr1,sizeof(testStr1)),
-	     "10.0.0.100", 
-	     RandomizeString(MAX_LEN*7,testStr2,sizeof(testStr2)));
+  char hostName[CF_MAXVARSIZE] = {0};
+  char keyHash[CF_MAXVARSIZE] = {0};
+
+  RandomizeString(WORD_LEN * 3, hostName, sizeof(hostName));
+  RandomizeString(WORD_LEN * 3, keyHash, sizeof(keyHash));
+
+  snprintf(work, sizeof(work), "[\"%s\", \"%s\", \"%s\"]\n,", hostName, "10.0.0.100", keyHash);
     
-    p = strcatUnsafe(p,work);
+  p = strcatUnsafe(p,work);
   }
 
-ReplaceTrailingChar(buf, ',', '\0');
+ReplaceTrailingChar(returnval, ',', '\0');
+EndJoin(returnval,"]}",bufsize);
 
-EndJoin(buf,"]}",bufsize);
 return true;
 }
 /*****************************************************************************/
+/*
+ * cfpr_report_bundlesseen (sssbssbll)
+*/
 int Nova2PHP_bundle_report_test(char *hostkey,char *bundle,int regex,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
-{ char buffer[CF_BUFSIZE]={0};
-  char header[CF_BUFSIZE]={0};
-  int margin = 0,headerLen=0,noticeLen=0;
+{ char *p = returnval;
+  char work[CF_BUFSIZE] = {0};
+  char header[CF_BUFSIZE] = {0};
   int truncated = false;
-  char testStr1[CF_MAXVARSIZE];
-  char testStr2[CF_MAXVARSIZE];
-  char testStr3[CF_MAXVARSIZE];
-  char testStr4[CF_MAXVARSIZE];
-  char *p = returnval;
+
   int startIndex = page->resultsPerPage*(page->pageNum - 1);
   int endIndex = page->resultsPerPage*page->pageNum;
   const char *total_env = getenv("CFENGINE_TEST_OVERRIDE_TOTAL_RECORDS");
-  int total;
 
-total = ( total_env == NULL ) ? endIndex : atoi(total_env);
+  int total = ( total_env == NULL ) ? endIndex : atoi(total_env);
 
+  printf("[bishwa] %s, %d\n",total_env,total);
 // Max limit to avoid segfault
-if(total > 35000)
+if(total > 30000)
   {
-    total = 35000;
+  total = 30000;
   }
 
 snprintf(header,sizeof(header),
 	 "\"meta\":{\"count\" : %d,"
 	 "\"header\": {\"Host\":0,\"Bundle\":1,\"Last Verified\":2,\"Hours Ago\":3,\"Avg Interval\":4,\"Uncertainty\":5,"
 	 "\"Note\":{\"index\":6,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
-	 "}",total);
+	 "}", total);
 
-headerLen = strlen(header);
-noticeLen = strlen(CF_NOTICE_TRUNCATED);
 StartJoin(returnval,"{\"data\":[",bufsize);
 
-for (int i = startIndex; i < endIndex; i++)
+for (int i = startIndex; (i < endIndex) || (i < total); i++)
   {
-    snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%ld,%.2lf,%.2lf,%.2lf,"
-	     "[\"add\",\"%s\",%d,\"%s\",\"\"]],",
-	     RandomizeString(MAX_LEN*3,testStr1,sizeof(testStr1)),
-	     RandomizeString(MAX_LEN*2,testStr2,sizeof(testStr2)),
-	     time(NULL),
-	     (double)(rand()%100)/100,
-	     (double)(rand()%100)/100,
-	     (double)(rand()%100)/100,
-	     RandomizeString(MAX_LEN*7,testStr3,sizeof(testStr3)),
-	     CFREPORT_BUNDLE,
-	     RandomizeString(MAX_LEN*4,testStr4,sizeof(testStr4)));
+  char hostName[CF_MAXVARSIZE];
+  char bundle[CF_MAXVARSIZE];
+  char keyHash[CF_MAXVARSIZE];
+  char nid[CF_MAXVARSIZE];
 
-    margin = headerLen + noticeLen + strlen(buffer);
-    p = strcatUnsafe(p,buffer);
+  RandomizeString(WORD_LEN*3, hostName, sizeof(hostName));
+  RandomizeString(WORD_LEN*2, bundle, sizeof(bundle));
+  RandomizeString(WORD_LEN*7, keyHash, sizeof(keyHash));
+  RandomizeString(WORD_LEN*4, nid, sizeof(nid));
+    
+  snprintf(work, sizeof(work),
+	   "[\"%s\",\"%s\",%ld,%.2lf,%.2lf,%.2lf,"
+	   "[\"add\",\"%s\",%d,\"%s\",\"\"]],",
+	   hostName,
+	   bundle,
+	   time(NULL),
+	   (double)(rand()%100)/100,
+	   (double)(rand()%100)/100,
+	   (double)(rand()%100)/100,
+	   keyHash,
+	   CFREPORT_BUNDLE,
+	   nid);
+
+  p = strcatUnsafe(p, work);
   }
  
 ReplaceTrailingChar(returnval,',','\0');
 EndJoin(returnval,"]",bufsize);
 
-Nova_AddReportHeader(header,truncated,buffer,sizeof(buffer)-1);
-Join(returnval,buffer,bufsize);
-EndJoin(returnval,"}}\n",bufsize);
+Nova_AddReportHeader(header, truncated, work, sizeof(work)-1);
+Join(returnval, work, bufsize);
+EndJoin(returnval, "}}\n", bufsize);
+
 return true;
 }
 
