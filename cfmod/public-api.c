@@ -3,6 +3,9 @@
 #include "db_query.h"
 #include "common.h"
 
+static const char *API_NAME = "CFEngine Nova";
+static const char *API_VERSION = "v1";
+
 static const char *LABEL_DESCRIPTION = "description";
 static const char *LABEL_HOSTKEY = "hostkey";
 static const char *LABEL_HOSTKEYS = "hostkeys";
@@ -31,6 +34,24 @@ static const char *LABEL_UNKNOWN = "unknown";
 
 /************************************************************************************/
 
+
+PHP_FUNCTION(cfmod_resource)
+{
+mongo_connection conn;
+bool db_active = CFDB_Open(&conn);
+if (db_active)
+   {
+   CFDB_Close(&conn);
+   }
+
+JsonElement *info = JsonObjectCreate(4);
+JsonObjectAppendString(info, "api-name", API_NAME);
+JsonObjectAppendString(info, "api-version", API_VERSION);
+JsonObjectAppendString(info, "hub-version", NOVA_VERSION);
+JsonObjectAppendString(info, "database", db_active ? "connected" : "disconnected");
+
+RETURN_JSON(info);
+}
 
 PHP_FUNCTION(cfmod_resource_host)
 {

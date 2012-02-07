@@ -3,6 +3,8 @@
 
 #include "php_cfmod.h"
 
+PHP_FUNCTION(cfmod_resource);
+
 PHP_FUNCTION(cfmod_resource_host);
 PHP_FUNCTION(cfmod_resource_host_id);
 PHP_FUNCTION(cfmod_resource_host_id_seen);

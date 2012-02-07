@@ -19,6 +19,7 @@
 static function_entry cfmod_functions[] =
     {
     // public API
+    PHP_FE(cfmod_resource, NULL)
     PHP_FE(cfmod_resource_host, NULL)
     PHP_FE(cfmod_resource_host_id, NULL)
     PHP_FE(cfmod_resource_host_id_seen, NULL)
