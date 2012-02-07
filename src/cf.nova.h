@@ -730,7 +730,6 @@ HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char 
 HubQuery *CFDB_QueryHandlesForBundlesWithComments(mongo_connection *conn, char *bType, char *bName);
 HubQuery *CFDB_QueryPromises(mongo_connection *conn, PromiseFilter *filter);
 HubQuery *CFDB_QueryPromiseBundles(mongo_connection *conn, PromiseFilter *filter);
-Item *CFDB_QueryBundlesUsing(mongo_connection *conn, char *bNameReferenced);
 int CFDB_QueryBundleCount(mongo_connection *conn);
 int CFDB_QueryPromiseCount(mongo_connection *conn);
 HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name);

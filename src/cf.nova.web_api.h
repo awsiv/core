@@ -193,7 +193,7 @@ char *Nova2PHP_GetPromiser(char *handle);
 int Nova2PHP_get_variable(char *hostkey,char *scope,char *lval,char *returnval,int bufsize);
 int Nova2PHP_bundle_classes_used(PromiseFilter *promiseFilter, char *buffer, int bufsize);
 int Nova2PHP_bundle_agent_goals(PromiseFilter *filter, char *buffer, int bufsize);
-int Nova2PHP_bundle_list_by_bundle_usage(char *name,char *buffer,int bufsize);
+int Nova2PHP_bundle_list_by_bundle_usage(PromiseFilter *promiseFilter, char *bNameReferenced, char *buffer, int bufsize);
 void Nova2PHP_ComplianceSummaryGraph(char *policy,char *buffer,int bufsize);
 int Nova2PHP_report_description(char *reportName,char *returnval,int bufsize);
 void Nova2PHP_enterprise_version(char *buf, int bufsize);

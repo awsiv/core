@@ -4271,7 +4271,7 @@ Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, PromiseFilter *filter)
 
 /*****************************************************************************/
 
-Item *CFDB_QueryBundlesUsing(mongo_connection *conn, char *bNameReferenced)
+Item *CFDB_QueryBundlesUsing(mongo_connection *conn, PromiseFilter *promiseFilter, char *bNameReferenced)
 /*
  * Returns the set of bundle names using the given bundle though
  * methods:usebundle, NULL if none.
@@ -4289,7 +4289,8 @@ Item *CFDB_QueryBundlesUsing(mongo_connection *conn, char *bNameReferenced)
 
  // query
  bson_buffer_init(&bbuf);
- bson_append_string(&bbuf,cfp_constraints,queryConstr);
+ bson_append_string(&bbuf, cfp_constraints, queryConstr);
+ BsonAppendPromiseFilter(&bbuf, promiseFilter);
  bson_from_buffer(&query,&bbuf);
 
  // returned attribute
@@ -4302,7 +4303,7 @@ Item *CFDB_QueryBundlesUsing(mongo_connection *conn, char *bNameReferenced)
  bson_destroy(&query);
  bson_destroy(&field);
 
- while(mongo_cursor_next(cursor))  // iterate over docs
+ while(mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
    
@@ -4310,7 +4311,7 @@ Item *CFDB_QueryBundlesUsing(mongo_connection *conn, char *bNameReferenced)
        {
        if (strcmp(bson_iterator_key(&it1), cfp_bundlename) == 0)
           {
-          IdempPrependItem(&bNameReferees,(char *)bson_iterator_string(&it1),"agent");
+          IdempPrependItem(&bNameReferees, (char *)bson_iterator_string(&it1), "agent");
           }
        }
     }

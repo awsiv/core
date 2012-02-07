@@ -3246,18 +3246,18 @@ else
 
 /*****************************************************************************/
 
-int Nova2PHP_bundle_list_by_bundle_usage(char *name,char *buffer,int bufsize)
-
-{ mongo_connection dbconn;
-  char work[CF_MAXVARSIZE];
-  Item *matched,*ip;
+int Nova2PHP_bundle_list_by_bundle_usage(PromiseFilter *promiseFilter, char *bNameReferenced, char *buffer, int bufsize)
+{
+mongo_connection dbconn;
+char work[CF_MAXVARSIZE];
+Item *matched,*ip;
 
 if (!CFDB_Open(&dbconn))
    {
    return -1;
    }
 
-matched = CFDB_QueryBundlesUsing(&dbconn,name);
+matched = CFDB_QueryBundlesUsing(&dbconn, promiseFilter, bNameReferenced);
 
 matched = SortItemListClasses(matched);
 

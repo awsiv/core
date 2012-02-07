@@ -51,7 +51,7 @@ HubQuery *CFDB_QueryHandlesForBundlesWithComments(mongo_connection *conn, char *
 HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle,char *promiser,char *bName, int escRegex);
 Item *CFDB_QueryBundles(mongo_connection *conn,char *bTypeRegex,char *bNameRegex);
 Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, PromiseFilter *filter);;
-Item *CFDB_QueryBundlesUsing(mongo_connection *conn, char *bNameReferenced);
+Item *CFDB_QueryBundlesUsing(mongo_connection *conn, PromiseFilter *promiseFilter, char *bNameReferenced);
 int CFDB_QueryBundleCount(mongo_connection *conn);
 int CFDB_QueryPromiseCount(mongo_connection *conn);
 HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name);

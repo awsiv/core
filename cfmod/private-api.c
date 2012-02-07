@@ -3610,8 +3610,12 @@ PHP_FUNCTION(cfpr_bundle_list_by_bundle_usage)
 
  ARGUMENT_CHECK_CONTENTS(bname_len);
 
+ PromiseFilter *filter = NewPromiseFilter();
+
  buffer[0] = '\0';
- Nova2PHP_bundle_list_by_bundle_usage(bundleName,buffer,sizeof(buffer));
+ Nova2PHP_bundle_list_by_bundle_usage(filter, bundleName, buffer, sizeof(buffer));
+
+ DeletePromiseFilter(filter);
  
  RETURN_STRING(buffer,1);
 }
