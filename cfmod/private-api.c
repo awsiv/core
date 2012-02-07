@@ -3399,7 +3399,7 @@ PHP_FUNCTION(cfpr_bundle_classes_used)
  ARGUMENT_CHECK_CONTENTS(btype_len && bname_len);
 
  buffer[0] = '\0';
- Nova2PHP_get_classes_for_bundle(bundleName,bundleType,buffer,sizeof(buffer));
+ Nova2PHP_bundle_classes_used(bundleName,bundleType,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }

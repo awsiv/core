@@ -3081,7 +3081,7 @@ int Nova2PHP_promiselog_hosts(char *hostkey,char *handle, PromiseLogState state,
 
 /*****************************************************************************/
 
-int Nova2PHP_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsize)
+int Nova2PHP_bundle_classes_used(char *name,char *type,char *buffer,int bufsize)
 
 { mongo_connection dbconn;
  Rlist *classList,*rp;
