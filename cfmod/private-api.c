@@ -3611,7 +3611,7 @@ PHP_FUNCTION(cfpr_bundle_list_by_bundle_usage)
  ARGUMENT_CHECK_CONTENTS(bname_len);
 
  buffer[0] = '\0';
- Nova2PHP_list_bundles_using(bundleName,buffer,sizeof(buffer));
+ Nova2PHP_bundle_list_by_bundle_usage(bundleName,buffer,sizeof(buffer));
  
  RETURN_STRING(buffer,1);
 }

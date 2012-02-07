@@ -3246,7 +3246,7 @@ else
 
 /*****************************************************************************/
 
-int Nova2PHP_list_bundles_using(char *name,char *buffer,int bufsize)
+int Nova2PHP_bundle_list_by_bundle_usage(char *name,char *buffer,int bufsize)
 
 { mongo_connection dbconn;
   char work[CF_MAXVARSIZE];
