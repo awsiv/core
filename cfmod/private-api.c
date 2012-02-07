@@ -3383,12 +3383,12 @@ PHP_FUNCTION(cfpr_get_variable)
 
 PHP_FUNCTION(cfpr_bundle_classes_used)
 {
- char *bundleName;
- char *bundleType;
- int btype_len, bname_len;
+ char *userName, *bundleName, *bundleType;
+ int user_len, btype_len, bname_len;
  char buffer[CF_WEBBUFFER];
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss",
+                           &userName, &user_len,
                            &bundleType, &btype_len,
                            &bundleName, &bname_len) == FAILURE)
     {
@@ -3396,16 +3396,19 @@ PHP_FUNCTION(cfpr_bundle_classes_used)
     RETURN_NULL();
     }
 
- ARGUMENT_CHECK_CONTENTS(btype_len && bname_len);
+ ARGUMENT_CHECK_CONTENTS(user_len && btype_len && bname_len);
 
- PromiseFilter *filter = NewPromiseFilter();
- PromiseFilterAddBundles(filter, bundleName, NULL);
+ HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
+
+ PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter); 
  PromiseFilterAddBundleType(filter, bundleType);
+ PromiseFilterAddBundles(filter, bundleName, NULL);
 
  buffer[0] = '\0';
  Nova2PHP_bundle_classes_used(filter, buffer, sizeof(buffer));
 
- DeletePromiseFilter(filter);
+ DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 
  RETURN_STRING(buffer,1);
 }
