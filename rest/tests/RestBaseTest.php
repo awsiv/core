@@ -30,9 +30,9 @@ class RestBaseTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-
         $this->baseUrl = "http://localhost:8888/rest";
         $this->pest = new PestJSON($this->baseUrl);
+        $this->pest->setupAuth("admin", "admin");
     }
 
 }
