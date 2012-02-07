@@ -802,7 +802,7 @@ HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *policy, 
 void CFDB_SaveCachedTotalCompliance(mongo_connection *conn, char *policy, int slot, double kept, double repaired, double notkept, int count, time_t genTime);
 int CFDB_SaveLastseenCache(Item *lastseen);
 void CFDB_SaveGoalsCache(char *goal_patterns, char *goal_categories);
-int CFDB_MarkAsDeleted(char *keyhash);
+int CFDB_MarkAsDeleted(mongo_connection *dbconn, char *keyHash);
 /*
  * commenting
  */

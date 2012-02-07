@@ -1785,35 +1785,37 @@ void CFDBRef_AddToRow(mongo_connection *conn, char *coll,bson *query, char *row_
   bson_destroy(&setOp);
 }
 /*****************************************************************************/
-int CFDB_MarkAsDeleted(char *keyhash)
+int CFDB_MarkAsDeleted(mongo_connection *dbconn, char *keyHash)
 
-{ bson_buffer bb;
-  bson_buffer *setObj;
-  bson setOp,empty;
-  mongo_connection dbconn;
+{
+bson_buffer bb;
+bson_buffer *setObj;
+bson setOp,empty;
 
 if ( !IsDefinedClass("am_policy_hub") && !AM_PHP_MODULE )
    {
    CfOut(cf_verbose,"","Ignoring caching of deleted hosts - not called by php module");
+   CFDB_Close(dbconn);
    return false;
    }
 
-if (!CFDB_Open(&dbconn))
-   {
-   return false;
-   }
-  
-bson_buffer_init(&bb);
-setObj = bson_append_start_object(&bb, "$addToSet");
-bson_append_string(setObj,cfr_deleted_hosts,keyhash);
-bson_append_finish_object(setObj);
-bson_from_buffer(&setOp,&bb);
+Rlist *keyHashList = SplitStringAsRList(keyHash, ',');
 
-mongo_update(&dbconn, MONGO_SCRATCH, bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT);
-MongoCheckForError(&dbconn,"MarkHostAsDeleted",keyhash,NULL);
-bson_destroy(&setOp);
+while(keyHashList)
+  {
+  bson_buffer_init(&bb);
+  setObj = bson_append_start_object(&bb, "$addToSet");
+  bson_append_string(setObj,cfr_deleted_hosts,(char*)keyHashList->item);
+  bson_append_finish_object(setObj);
+  bson_from_buffer(&setOp,&bb);
 
-CFDB_Close(&dbconn);
+  mongo_update(dbconn, MONGO_SCRATCH, bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT);
+  MongoCheckForError(dbconn,"MarkHostAsDeleted",(char*)keyHashList->item,NULL);
+  bson_destroy(&setOp);
+
+  keyHashList = keyHashList->next;
+  }
+DeleteRlist(keyHashList);
 
 return true;
 }

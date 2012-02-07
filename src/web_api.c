@@ -4653,7 +4653,7 @@ if (!CFDB_Open(&dbconn))
    {
    return false;
    }
-CFDB_MarkAsDeleted(keyHash);
+CFDB_MarkAsDeleted(&dbconn, keyHash);
 CFDB_PurgeHost(&dbconn, keyHash);
 CFDB_Close(&dbconn);
 return true;

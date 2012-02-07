@@ -680,39 +680,46 @@ void DeleteFromBsonArray(bson_buffer *bb, char *arrName, Item *elements)
 
 void CFDB_PurgeHost(mongo_connection *conn, char *keyHash)
 {
-  bson_buffer bb;
-  bson cond;
+bson_buffer bb;
+bson cond;
 
+Rlist *keyHashList = SplitStringAsRList(keyHash, ',');
+
+while(keyHashList)
+  {
   bson_buffer_init(&bb);
-  bson_append_string(&bb,cfr_keyhash,keyHash);
+  bson_append_string(&bb,cfr_keyhash,(char*)keyHashList->item);
   bson_from_buffer(&cond,&bb);
-  
+
   mongo_remove(conn, MONGO_DATABASE, &cond);
 
-  MongoCheckForError(conn,"delete host from main collection",keyHash,NULL);
+  MongoCheckForError(conn,"delete host from main collection",(char*)keyHashList->item,NULL);
 
   mongo_remove(conn, MONGO_DATABASE_MON_MG, &cond);
 
-  MongoCheckForError(conn,"delete host from mag monitord collection",keyHash,NULL);
+  MongoCheckForError(conn,"delete host from mag monitord collection",(char*)keyHashList->item,NULL);
 
   mongo_remove(conn, MONGO_DATABASE_MON_WK, &cond);
 
-  MongoCheckForError(conn,"delete host from week monitord collection",keyHash,NULL);
+  MongoCheckForError(conn,"delete host from week monitord collection",(char*)keyHashList->item,NULL);
 
   mongo_remove(conn, MONGO_DATABASE_MON_YR, &cond);
 
-  MongoCheckForError(conn,"delete host from year monitord collection",keyHash,NULL);
+  MongoCheckForError(conn,"delete host from year monitord collection",(char*)keyHashList->item,NULL);
 
   mongo_remove(conn, MONGO_LOGS_REPAIRED, &cond);
 
-  MongoCheckForError(conn,"delete host from repair logs collection",keyHash,NULL);
+  MongoCheckForError(conn,"delete host from repair logs collection",(char*)keyHashList->item,NULL);
 
   mongo_remove(conn, MONGO_LOGS_NOTKEPT, &cond);
 
-  MongoCheckForError(conn,"delete host from not kept logs collection",keyHash,NULL);
+  MongoCheckForError(conn,"delete host from not kept logs collection",(char*)keyHashList->item,NULL);
 
-  
-  bson_destroy(&cond);  
+  bson_destroy(&cond);
+  keyHashList = keyHashList->next;
+  }
+
+DeleteRlist(keyHashList);
 }
 
 /*****************************************************************************/
