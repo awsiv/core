@@ -5,7 +5,7 @@ require_once "../lib/Pest.php";
 require_once "../lib/PestJSON.php";
 require_once "RestBaseTest.php";
 
-class contextTest extends RestBaseTest {
+class ContextTest extends RestBaseTest {
 
     public function testAllContext() {
         try {
