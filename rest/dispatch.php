@@ -24,7 +24,9 @@ function addAuthenticateHeader($response)
 }
 
 // handle request
-$request = new Request();
+$request = new Request(array(
+        'baseUri' => '/rest'
+));
 
 try
 {
