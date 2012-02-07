@@ -24,12 +24,11 @@ char* strcatUnsafe( char* dest,char* src)
 char *RandomizeString(int len, char *buffer, int buflen)
 
 { char *letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_2134lkahsdlkfhjsad982374lkjdflands8234987adslf567890asdf";
-  int i;
   int max = strlen(letters) -1;
 
   buffer[0]='\0';
 
-  for(i=0; i<len-1;i++)
+  for(int i = 0; i < len-1; i++)
     {
       int index = rand() % max;
       buffer[i] = letters[index];
@@ -48,16 +47,21 @@ int Nova2PHP_classes_report_test(char *hostkey,char *name,int regex,HostClassFil
   int headerLen=0;
   int noticeLen=0;
   int truncated = false;
-  int i = 0;
   char testStr[CF_MAXVARSIZE];
   char *p = returnval;
   int totalLen = 0;
   int recordLen = 0;
-  int total = page->resultsPerPage*page->pageNum;
+  int startIndex = page->resultsPerPage*(page->pageNum - 1);
+  int endIndex = page->resultsPerPage*page->pageNum;
+  const char *total_env = getenv("CFENGINE_TEST_OVERRIDE_TOTAL_RECORDS");
+  int total;
+
+total = ( total_env == NULL ) ? endIndex : atoi(total_env);
 
 snprintf(header,sizeof(header),
 	 "\"meta\":{\"count\" : %d,"
-	 "\"header\": {\"Host\":0,\"Class Context\":1,\"Occurs with Probability\":2,\"Uncertainty\":3,\"Last seen\":4"          "}", total);
+	 "\"header\": {\"Host\":0,\"Class Context\":1,\"Occurs with Probability\":2,\"Uncertainty\":3,\"Last seen\":4"
+	 "}", total);
  
 headerLen = strlen(header);
 noticeLen = strlen(CF_NOTICE_TRUNCATED);
@@ -65,7 +69,7 @@ StartJoin(returnval,"{\"data\":[",bufsize);
 
 totalLen = headerLen + noticeLen + strlen(returnval) + 1000; 
 
-for (i=0; i<total; i++)
+for (int i = startIndex; i < endIndex; i++)
   {
     if(!recordLen)
       {
@@ -104,17 +108,19 @@ return true;
 int Nova2PHP_promise_list_test(PromiseFilter *promiseFilter ,char *returnval, int bufsize)
 
 { char work[CF_MAXVARSIZE] = {0};
- int total = 80000;
- int i = 0;
- char *p = returnval;
- char testStr1[CF_MAXVARSIZE];
- char testStr2[CF_MAXVARSIZE];
- char testStr3[CF_MAXVARSIZE];
- char testStr4[CF_MAXVARSIZE];
- char testStr5[CF_MAXVARSIZE];
+  char *p = returnval;
+  char testStr1[CF_MAXVARSIZE];
+  char testStr2[CF_MAXVARSIZE];
+  char testStr3[CF_MAXVARSIZE];
+  char testStr4[CF_MAXVARSIZE];
+  char testStr5[CF_MAXVARSIZE];
+  const char *total_env = getenv("CFENGINE_TEST_OVERRIDE_TOTAL_RECORDS");
+  int total;
+ 
+total = ( total_env == NULL || (atoi(total_env) > 80000) ) ? 80000 : atoi(total_env);
 
 StartJoin(returnval, "[", bufsize);
-for ( i= 0; i<total; i++)
+for ( int i = 0; i < total; i++)
   {
     snprintf(work,sizeof(work),"[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"],",
              RandomizeString(MAX_LEN *2,testStr1,sizeof(testStr1)),
@@ -135,16 +141,19 @@ return true;
 int Nova2PHP_classes_summary_test(char **classes, char *buf, int bufsize)
 
 { char work[CF_MAXVARSIZE];
-  int i = 0;
   char testStr1[CF_MAXVARSIZE];
   char testStr2[CF_MAXVARSIZE];
   char testStr3[CF_MAXVARSIZE];
+  const char *total_env = getenv("CFENGINE_TEST_OVERRIDE_TOTAL_RECORDS");
+  int total;
+ 
+total = (total_env == NULL || (atoi(total_env) > 15000) ) ? 15000 : atoi(total_env);
 
 StartJoin(buf, "{", bufsize);
 
 Join(buf, "\"hosts\":[", bufsize);
   
-for(i = 0; i<3000; i++)
+for(int i = 0; i < (total/5) ; i++)
   {
     snprintf(work, sizeof(work), "[\"%s\",\"%s\"]\n,", 
 	     RandomizeString(MAX_LEN*4,testStr1,sizeof(testStr1)),
@@ -161,7 +170,7 @@ EndJoin(buf,"]",bufsize);
   
 Join(buf, ",\n\"classes\":[", bufsize - 10);
       
-for(i = 0; i<10000; i++)
+for(int i = 0; i < (total*4)/5; i++)
   {
     snprintf(work, sizeof(work), "[\"%s\",%d]\n,",
 	     RandomizeString(MAX_LEN*3,testStr3,sizeof(testStr3)), i);
@@ -183,14 +192,17 @@ return true;
 int Nova2PHP_show_hosts_test(char *hostNameRegex,char *ipRegex,char *classRegex,PageInfo *page,char *buf,int bufsize)
 
 { char work[CF_MAXVARSIZE];
-  
-  int i = 0;
   char *p = buf;
   char testStr1[CF_MAXVARSIZE];
   char testStr2[CF_MAXVARSIZE];
-  int total = page->resultsPerPage*page->pageNum;
+  int startIndex = page->resultsPerPage*(page->pageNum - 1);
+  int endIndex = page->resultsPerPage*page->pageNum;
+  const char *total_env = getenv("CFENGINE_TEST_OVERRIDE_TOTAL_RECORDS");
+  int total;
 
+total = ( total_env == NULL ) ? endIndex : atoi(total_env);
 
+// Max limit to avoid segfault
 if(total > 60000)
   {
     total = 60000;
@@ -203,7 +215,7 @@ snprintf(work,sizeof(work),
  
 StartJoin(buf,work,bufsize);
 
-for (i=0; i<total; i++)
+for (int i = startIndex; i < endIndex; i++)
   {
     snprintf(work, sizeof(work), 
 	     "[\"%s\", \"%s\", \"%s\"]\n,",
@@ -230,9 +242,15 @@ int Nova2PHP_bundle_report_test(char *hostkey,char *bundle,int regex,HostClassFi
   char testStr2[CF_MAXVARSIZE];
   char testStr3[CF_MAXVARSIZE];
   char testStr4[CF_MAXVARSIZE];
-  int total = page->resultsPerPage*page->pageNum;
   char *p = returnval;
- 
+  int startIndex = page->resultsPerPage*(page->pageNum - 1);
+  int endIndex = page->resultsPerPage*page->pageNum;
+  const char *total_env = getenv("CFENGINE_TEST_OVERRIDE_TOTAL_RECORDS");
+  int total;
+
+total = ( total_env == NULL ) ? endIndex : atoi(total_env);
+
+// Max limit to avoid segfault
 if(total > 35000)
   {
     total = 35000;
@@ -248,7 +266,7 @@ headerLen = strlen(header);
 noticeLen = strlen(CF_NOTICE_TRUNCATED);
 StartJoin(returnval,"{\"data\":[",bufsize);
 
-for (int i=0; i<total; i++)
+for (int i = startIndex; i < endIndex; i++)
   {
     snprintf(buffer,sizeof(buffer),"[\"%s\",\"%s\",%ld,%.2lf,%.2lf,%.2lf,"
 	     "[\"add\",\"%s\",%d,\"%s\",\"\"]],",
