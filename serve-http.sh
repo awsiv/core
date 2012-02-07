@@ -11,7 +11,7 @@ then
     sleep 1s
     if [ -e $PIDFILE ]
     then
-	echo "Failed to kill running ${SERVICE_NAME}, aborting"
+	echo "Failed to kill running ${SERVICE_NAME}, try deleting ${PIDFILE}, aborting"
 	exit 1
     else
 	echo "${SERVICE_NAME} stopped"
