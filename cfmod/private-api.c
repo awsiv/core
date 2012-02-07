@@ -3600,25 +3600,29 @@ PHP_FUNCTION(cfpr_get_bundle_type)
 
 PHP_FUNCTION(cfpr_bundle_list_by_bundle_usage)
 {
- char *bundleName;
- int bname_len;
+ char *userName, *bundleName;
+ int user_len, bname_len;
  char buffer[CF_WEBBUFFER];
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
+                           &userName, &user_len,
                            &bundleName, &bname_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
- ARGUMENT_CHECK_CONTENTS(bname_len);
+ ARGUMENT_CHECK_CONTENTS(user_len && bname_len);
 
- PromiseFilter *filter = NewPromiseFilter();
+ HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
+
+ PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
 
  buffer[0] = '\0';
  Nova2PHP_bundle_list_by_bundle_usage(filter, bundleName, buffer, sizeof(buffer));
 
- DeletePromiseFilter(filter);
+ DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
  
  RETURN_STRING(buffer,1);
 }
