@@ -1,22 +1,22 @@
 <?php
 
-require_once 'lib/tonic.php';
-require_once 'lib/utils.php';
+require_once 'lib/Tonic.php';
+require_once 'lib/Utils.php';
 
 // load resources
-require_once 'resource/context.php';
-require_once 'resource/host-id-seen.php';
-require_once 'resource/host-id-seenby.php';
-require_once 'resource/host-id.php';
-require_once 'resource/host.php';
-require_once 'resource/promise-compliance.php';
-require_once 'resource/promise-log-notkept-summary.php';
-require_once 'resource/promise-log-notkept.php';
-require_once 'resource/promise-log-repaired-summary.php';
-require_once 'resource/promise-log-repaired.php';
-require_once 'resource/setuid.php';
-require_once 'resource/software.php';
-require_once 'resource/variable.php';
+require_once 'resource/Context.php';
+require_once 'resource/HostIdSeen.php';
+require_once 'resource/HostIdSeenby.php';
+require_once 'resource/HostId.php';
+require_once 'resource/Host.php';
+require_once 'resource/PromiseCompliance.php';
+require_once 'resource/PromiseLogNotkeptSummary.php';
+require_once 'resource/PromiseLogNotkept.php';
+require_once 'resource/PromiseLogRepairedSummary.php';
+require_once 'resource/PromiseLogRepaired.php';
+require_once 'resource/Setuid.php';
+require_once 'resource/Software.php';
+require_once 'resource/Variable.php';
 
 function addAuthenticateHeader($response)
 {
