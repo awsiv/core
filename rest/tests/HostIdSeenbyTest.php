@@ -5,17 +5,22 @@ require_once "../lib/Pest.php";
 require_once "../lib/PestJSON.php";
 require_once "RestBaseTest.php";
 
-class HostIdSeenbyTest extends RestBaseTest {
+class HostIdSeenbyTest extends RestBaseTest
+{
 
     /**
      * Test if the returned data is correct 
      */
-    public function testhostIdSeenBy() {
-        try {
+    public function testhostIdSeenBy()
+    {
+        try
+        {
             $id = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
             $jsonArray = $this->pest->get("/host/$id/seen-by");
             $this->assertValidJson($jsonArray);
-        } catch (Pest_NotFound $e) {
+        }
+        catch (Pest_NotFound $e)
+        {
             $this->fail('Resource not found');
         }
     }
@@ -23,13 +28,17 @@ class HostIdSeenbyTest extends RestBaseTest {
     /**
      * Test for the invalid key 
      */
-    public function testhostIdSeenByWithInvalidKey() {
-        try {
+    public function testhostIdSeenByWithInvalidKey()
+    {
+        try
+        {
             $id = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697c";
             $jsonArray = $this->pest->get("/host/$id/seen");
             $this->assertValidJson($jsonArray);
             $this->assertTrue(empty($jsonArray));
-        } catch (Pest_NotFound $e) {
+        }
+        catch (Pest_NotFound $e)
+        {
             $this->fail('Resource not found');
         }
     }
@@ -38,8 +47,10 @@ class HostIdSeenbyTest extends RestBaseTest {
      * Checks the remote name parameter
      * Matches the data format (array keys) that are returned and expected, doesnot check for the values 
      */
-    public function testhostIdSeenByWithRemoteName() {
-        try {
+    public function testhostIdSeenByWithRemoteName()
+    {
+        try
+        {
             $id = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
             $remoteName = "redhat1.test.cfengine.com";
             $jsonArray = $this->pest->get("/host/$id/seen?remote-name=$remoteName");
@@ -51,10 +62,13 @@ class HostIdSeenbyTest extends RestBaseTest {
                 "stdv" => 180
             );
             $this->assertCount(1, $jsonArray);
-            if (isset($jsonArray[0])) {
+            if (isset($jsonArray[0]))
+            {
                 $this->assertTrue($this->array_keys_exists($jsonArray[0], array_keys($expectedArray)), "Returned data not equal to expected data.");
             }
-        } catch (Pest_NotFound $e) {
+        }
+        catch (Pest_NotFound $e)
+        {
             $this->fail('Resource not found');
         }
     }
@@ -63,8 +77,10 @@ class HostIdSeenbyTest extends RestBaseTest {
      * Checks the remote ip parameter
      * Matches the data format (array keys) that are returned and expected, doesnot check for the values 
      */
-    public function testhostIdSeenByWithRemoteIP() {
-        try {
+    public function testhostIdSeenByWithRemoteIP()
+    {
+        try
+        {
             $remoteIp = "10.0.0.153";
             $id = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
 
@@ -77,10 +93,13 @@ class HostIdSeenbyTest extends RestBaseTest {
                 "stdv" => 144
             );
             $this->assertCount(1, $jsonArray);
-            if (isset($jsonArray[0])) {
+            if (isset($jsonArray[0]))
+            {
                 $this->assertTrue($this->array_keys_exists($jsonArray[0], array_keys($expectedArray)), "Returned data not equal to expected data.");
             }
-        } catch (Pest_NotFound $e) {
+        }
+        catch (Pest_NotFound $e)
+        {
             $this->fail('Resource not found');
         }
     }
@@ -89,8 +108,10 @@ class HostIdSeenbyTest extends RestBaseTest {
      * Checks the remote context parameter
      * Matches the data format (array keys) that are returned and expected, doesnot check for the values 
      */
-    public function testhostIdSeenWithRemoteContext() {
-        try {
+    public function testhostIdSeenWithRemoteContext()
+    {
+        try
+        {
             $context = "10_0_0_153";
             $id = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
             $jsonArray = $this->pest->get("/host/$id/seen?context=$context");
@@ -102,10 +123,13 @@ class HostIdSeenbyTest extends RestBaseTest {
                 "stdv" => 180
             );
             $this->assertFalse(empty($jsonArray), "Result should not be empty");
-            if (isset($jsonArray[0])) {
+            if (isset($jsonArray[0]))
+            {
                 $this->assertTrue($this->array_keys_exists($jsonArray[0], array_keys($expectedArray)), "Returned data not equal to expected data.");
             }
-        } catch (Pest_NotFound $e) {
+        }
+        catch (Pest_NotFound $e)
+        {
             $this->fail('Resource not found');
         }
     }
