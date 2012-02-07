@@ -16,25 +16,43 @@
 
 /*****************************************************************************/
 
-int CFDB_Open(mongo_connection *conn)
-
+static const char *MongoHostname()
 {
-#define MONGO_HOST "127.0.0.1"
-#define MONGO_PORT 27017
- 
+const char *hostname = getenv("CFENGINE_TEST_OVERRIDE_MONGO_HOSTNAME");
+return hostname ? hostname : "127.0.0.1";
+}
+
+static int MongoPort()
+{
+const char *port = getenv("CFENGINE_TEST_OVERRIDE_MONGO_PORT");
+
+if (port)
+   {
+   return (int)StringToLong(port);
+   }
+else
+   {
+   return 27017;
+   }
+}
+
+
+int CFDB_Open(mongo_connection *conn)
+{
+
  int result;
 
 #ifdef MONGO_OLD_CONNECT
 mongo_connection_options connOpts;
 
-snprintf(connOpts.host, sizeof(connOpts.host), "%s", MONGO_HOST);
-connOpts.port = MONGO_PORT;
+snprintf(connOpts.host, sizeof(connOpts.host), "%s", MongoHostname());
+connOpts.port = MongoPort();
 
 result = mongo_connect(conn,&connOpts);
 
 #else
  
- result = mongo_connect(conn, MONGO_HOST, MONGO_PORT);
+ result = mongo_connect(conn, MongoHostname(), MongoPort());
 
 #endif
  
