@@ -1,0 +1,30 @@
+Tests for cfmod API functions
+-----------------------------
+
+Requirements: php cli, valgrind, bash
+
+Usage: Run ./testall
+
+The purpose of these tests are to
+*) Detect functions that are too slow (the UI user waits for these to complete)
+*) Detect memory errors, such as illegal access and leaks
+*) Make a quick reference of the cfmod-functions and their parameters
+
+These are not meant to test functionality (the output from cfmod is discarded).
+This is because functional testing is already covered by the web application framework,
+and having it there makes more sense as it also covers mis-interpretation of input and output
+by the developers.
+
+The speed testing is a bit flaky because we just have one data-point. However,
+running the test multiple times sequentially to produce averages/std dev may not give 
+the correct result because the database may have cached the previous run.
+
+
+TODOs
+ - test more parameters
+   - RBAC: off/is limited user/is admin user
+   - hostkey: NULL/a specific host
+   - classregex: NULL/a small set of hosts matching/a large set of hosts matching
+   - maybe we can pass some parameters to the php-files?
+   - need assumptions about environment: hostkey, class, RBAC users (functionality to set up a test envrionment)
+ - add more tests

@@ -1,0 +1,41 @@
+#!/bin/bash
+
+TEST_FAILED_MEMORY=""
+TEST_FAILED_SPEED=""
+
+for phpfile in *.php
+do
+  echo "Testing $phpfile..."
+  
+  TIME_START=$(date +%s)
+  php -f $phpfile 2>/dev/null
+  TIME_END=$(date +%s)
+
+  SECONDS_USED=$(($TIME_END - $TIME_START))
+  
+  valgrindOutput=$(valgrind -q --max-stackframe=8000000 --leak-check=full php -f $phpfile 2>&1 | grep -v Deprecated)
+
+  if [ -n "$valgrindOutput" ]
+  then
+      echo "Memory error:"
+      echo "$valgrindOutput"
+      TEST_FAILED_MEMORY="$TEST_FAILED_MEMORY $phpfile"
+  fi
+
+  if [ "$SECONDS_USED" -gt 1 ]  # NOTE: may be up to two seconds (1-second resolution)
+  then
+      echo "Too slow (used $SECONDS_USED seconds)"
+      TEST_FAILED_SPEED="$TEST_FAILED_SPEED $phpfile"
+  fi
+
+done
+
+echo -e "\nSUMMARY"
+echo "======================"
+
+echo "Failed memory checks:"
+echo "$TEST_FAILED_MEMORY"
+
+echo "----------------------"
+echo "Failed speed checks:"
+echo "$TEST_FAILED_SPEED"
