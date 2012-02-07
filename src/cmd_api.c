@@ -1943,51 +1943,6 @@ int Nova2Txt_list_all_goals(char *buffer,int bufsize)
 
 /*****************************************************************************/
 
-int Nova2Txt_list_bundles_using(char *name,char *buffer,int bufsize)
-
-{ mongo_connection dbconn;
-  char work[CF_MAXVARSIZE];
-  Item *matched,*ip;
-
-if (!CFDB_Open(&dbconn))
-   {
-   CfOut(cf_verbose,"", "!! Could not open connection to report database");
-   return -1;
-   }
-
-matched = CFDB_QueryBundlesUsing(&dbconn,name);
-
-matched = SortItemListClasses(matched);
-
-if (matched)
-   {
-   snprintf(buffer,bufsize,"[");
-   
-   for (ip = matched; ip != NULL; ip=ip->next)
-      {
-      snprintf(work,CF_MAXVARSIZE,"{\"bundletype\":\"%s\",\"bundlename\":\"%s\"},",ip->classes,ip->name);
-      
-      if(!Join(buffer,work,bufsize))
-         {
-         break;
-         }
-      }
-
-   ReplaceTrailingChar(buffer, ',', '\0');
-   EndJoin(buffer,"]",bufsize);
-   DeleteItemList(matched);
-   }
-
-if (!CFDB_Close(&dbconn))
-   {
-   CfOut(cf_verbose,"", "!! Could not close connection to report database");
-   }
-
-return true;
-}
-
-/*****************************************************************************/
-
 int Nova2Txt_get_bundle_count(char *buffer, int bufsize)
 
 { mongo_connection dbconn;
