@@ -4250,7 +4250,7 @@ Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char *bName)
  bson_destroy(&query);
  bson_destroy(&field);
 
- while(mongo_cursor_next(cursor))  // iterate over docs
+ while(mongo_cursor_next(cursor))
     {
     bson_iterator_init(&it1,cursor->current.data);
    

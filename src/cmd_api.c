@@ -1927,69 +1927,6 @@ int Nova2Txt_promiselog_hosts(char *hostkey,char *handle, PromiseLogState state,
 
 /*****************************************************************************/
 
-int Nova2Txt_get_classes_for_bundle(char *name,char *type,char *buffer,int bufsize)
-
-{ mongo_connection dbconn;
- Rlist *classList,*rp;
- Item *ip,*list = NULL;
- char work[CF_MAXVARSIZE],context[CF_MAXVARSIZE];
- int pid;
- char jsonEscapedStr[CF_MAXVARSIZE] = {0};
-
- if (!CFDB_Open(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return -1;
-    }
-
- classList = CFDB_QueryBundleClasses(&dbconn,type,name);
-
- if (classList)
-    {
-    for (rp = classList; rp != NULL; rp=rp->next)
-       {
-       PrependItem(&list,rp->item,NULL);
-       }
-    DeleteRlist(classList);
-    IdempPrependItem(&list,"any",NULL);
-    }
-
- if (list)
-    {
-    list = SortItemListNames(list);
-   
-    snprintf(buffer,bufsize,"[");
-   
-    for (ip = list; ip != NULL; ip=ip->next)
-       {
-       snprintf(context,CF_MAXVARSIZE,"class_contexts::%s",ip->name);
-       pid = Nova_GetTopicIdForTopic(context);
-
-       EscapeJson(ip->name,jsonEscapedStr,sizeof(jsonEscapedStr));
-       snprintf(work,CF_MAXVARSIZE,"[%d,\"%s\"],",pid,jsonEscapedStr);
-
-       if(!Join(buffer,work,bufsize))
-          {
-          break;
-          }
-       }
-    
-    ReplaceTrailingChar(buffer, ',', '\0');
-    EndJoin(buffer,"]",bufsize);
-
-    DeleteItemList(list);
-    }
-
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
-
- return true;
-}
-
-/*****************************************************************************/
-
 int Nova2Txt_list_all_goals(char *buffer,int bufsize)
 
 {
