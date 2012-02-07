@@ -262,7 +262,6 @@ int Nova2PHP_bundle_report_test(char *hostkey,char *bundle,int regex,HostClassFi
 
   int total = ( total_env == NULL ) ? endIndex : atoi(total_env);
 
-  printf("[bishwa] %s, %d\n",total_env,total);
 // Max limit to avoid segfault
 if(total > 30000)
   {
