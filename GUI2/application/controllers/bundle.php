@@ -54,7 +54,7 @@ class Bundle extends Cf_Controller {
             'args' => json_decode(utf8_encode(cfpr_bundle_arguments($this->session->userdata('username'), $type, $bundle))),
             'classes' => json_decode(utf8_encode(cfpr_bundle_classes_used($type, $bundle)), TRUE),
             'list' => json_decode(utf8_encode(cfpr_list_handles_for_bundle($bundle, $type, False)), TRUE),
-            'others' => json_decode(utf8_encode(cfpr_list_bundles_using($bundle)), TRUE),
+            'others' => json_decode(utf8_encode(cfpr_bundle_list_by_bundle_usage($bundle)), TRUE),
             'breadcrumbs' => $this->breadcrumblist->display()
         );
         $this->template->load('template', 'bundle/bundle_detail', $data);

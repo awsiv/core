@@ -85,11 +85,10 @@ static function_entry cfmod_functions[] =
 
     // PromiseFilter-IFIED
     PHP_FE(cfpr_get_bundle_type,NULL)  // TODO: DEPRECATE??
-
+    PHP_FE(cfpr_bundle_classes_used,NULL)
     
     // pending
-    PHP_FE(cfpr_bundle_classes_used,NULL)
-    PHP_FE(cfpr_list_bundles_using,NULL)
+    PHP_FE(cfpr_bundle_list_by_bundle_usage,NULL)
     
     PHP_FE(cfpr_list_bodies,NULL)
     PHP_FE(cfpr_list_handles,NULL)

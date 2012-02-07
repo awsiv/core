@@ -3594,23 +3594,25 @@ PHP_FUNCTION(cfpr_get_bundle_type)
 }
 
 /******************************************************************************/
-PHP_FUNCTION(cfpr_list_bundles_using)
 
-{ char *bundle,*fbundle;
- int p_len;
+PHP_FUNCTION(cfpr_bundle_list_by_bundle_usage)
+{
+ char *bundleName;
+ int bname_len;
  char buffer[CF_WEBBUFFER];
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&bundle,&p_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",
+                           &bundleName, &bname_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
+ ARGUMENT_CHECK_CONTENTS(bname_len);
+
  buffer[0] = '\0';
-
- fbundle =  (p_len == 0) ? NULL : bundle;
-
- Nova2PHP_list_bundles_using(fbundle,buffer,sizeof(buffer));
+ Nova2PHP_list_bundles_using(bundleName,buffer,sizeof(buffer));
+ 
  RETURN_STRING(buffer,1);
 }
 

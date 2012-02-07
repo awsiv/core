@@ -860,7 +860,7 @@ PHP_FUNCTION(cfpr_bundle_list_all);
 /*! \brief A list of all bundles using a bundle
  * \param bundleName
  */
-PHP_FUNCTION(cfpr_list_bundles_using);
+PHP_FUNCTION(cfpr_bundle_list_by_bundle_usage);
 
 /*! \brief Get a bundle type by name
  * \param bundleName
