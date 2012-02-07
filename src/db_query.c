@@ -4264,6 +4264,8 @@ Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, PromiseFilter *filter)
        }
     }
 
+ DeleteScope("match");  // avoid leak from bad side-effect of SplitRegexAsRList()
+
  mongo_cursor_destroy(cursor);
  
  return classList;
