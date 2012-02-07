@@ -4223,7 +4223,7 @@ HubQuery *CFDB_QueryPromiseBundles(mongo_connection *conn, PromiseFilter *filter
 
 /*****************************************************************************/
 
-Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char *bName)
+Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, PromiseFilter *filter)
 /*
  * Returns the set of classes used in the given bundle.
  * MEMORY NOTE: Caller must free returned value with DeleteRlist()
@@ -4236,8 +4236,7 @@ Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char *bName)
 
  // query
  bson_buffer_init(&bbuf);
- bson_append_string(&bbuf,cfp_bundletype,bType);
- bson_append_string(&bbuf,cfp_bundlename,bName);
+ BsonAppendPromiseFilter(&bbuf, filter);
  bson_from_buffer(&query,&bbuf);
 
  // returned attribute
@@ -4266,6 +4265,7 @@ Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, char *bType, char *bName)
     }
 
  mongo_cursor_destroy(cursor);
+ 
  return classList;
 }
 

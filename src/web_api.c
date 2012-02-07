@@ -3081,7 +3081,7 @@ int Nova2PHP_promiselog_hosts(char *hostkey,char *handle, PromiseLogState state,
 
 /*****************************************************************************/
 
-int Nova2PHP_bundle_classes_used(char *name,char *type,char *buffer,int bufsize)
+int Nova2PHP_bundle_classes_used(PromiseFilter *promiseFilter, char *buffer, int bufsize)
 
 { mongo_connection dbconn;
  Rlist *classList,*rp;
@@ -3095,7 +3095,7 @@ int Nova2PHP_bundle_classes_used(char *name,char *type,char *buffer,int bufsize)
     return -1;
     }
 
- classList = CFDB_QueryBundleClasses(&dbconn,type,name);
+ classList = CFDB_QueryBundleClasses(&dbconn, promiseFilter);
 
  if (classList)
     {

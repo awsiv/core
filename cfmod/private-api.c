@@ -3398,8 +3398,14 @@ PHP_FUNCTION(cfpr_bundle_classes_used)
 
  ARGUMENT_CHECK_CONTENTS(btype_len && bname_len);
 
+ PromiseFilter *filter = NewPromiseFilter();
+ PromiseFilterAddBundles(filter, bundleName, NULL);
+ PromiseFilterAddBundleType(filter, bundleType);
+
  buffer[0] = '\0';
- Nova2PHP_bundle_classes_used(bundleName,bundleType,buffer,sizeof(buffer));
+ Nova2PHP_bundle_classes_used(filter, buffer, sizeof(buffer));
+
+ DeletePromiseFilter(filter);
 
  RETURN_STRING(buffer,1);
 }
