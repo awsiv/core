@@ -76,6 +76,7 @@ static function_entry cfmod_functions[] =
     // RBAC-IFIED
     PHP_FE(cfpr_promise_list_by_handle_rx,NULL)
     PHP_FE(cfpr_promise_list_by_bundle_rx,NULL)
+    PHP_FE(cfpr_promise_list_by_promiser,NULL)
     PHP_FE(cfpr_promise_list_by_promiser_rx,NULL)
     PHP_FE(cfpr_promise_details,NULL)
     PHP_FE(cfpr_bundle_list_all,NULL)

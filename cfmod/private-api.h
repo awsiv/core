@@ -892,9 +892,13 @@ PHP_FUNCTION(cfpr_promise_list_by_handle_rx);
  */
 PHP_FUNCTION(cfpr_promise_list_by_bundle_rx);
 
+/*! \brief List promises
+ * \param promiser
+ */
+PHP_FUNCTION(cfpr_promise_list_by_promiser);
+
 /*! \brief List handles for policy findler promiser
  * \param promiser
- * \param useRegularExpressions
  */
 PHP_FUNCTION(cfpr_promise_list_by_promiser_rx);
 
