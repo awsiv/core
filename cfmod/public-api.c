@@ -127,7 +127,7 @@ RETURN_NULL();
 
 static JsonElement *HostsLastSeen(Rlist *records, LastSeenDirection direction)
 {
-JsonElement *output = NULL;
+JsonElement *output = JsonArrayCreate(100);
 
 for (Rlist *rp = records; rp != NULL; rp = rp->next)
    {
