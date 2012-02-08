@@ -902,6 +902,11 @@ PHP_FUNCTION(cfpr_promise_list_by_promiser);
  */
 PHP_FUNCTION(cfpr_promise_list_by_promiser_rx);
 
+/*! \brief List promises by promise type
+ * \param promiseType
+ */
+PHP_FUNCTION(cfpr_promise_list_by_promise_type);
+
 /*! \brief Delete a host from the database
  * \param hostKey
  */

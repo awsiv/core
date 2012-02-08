@@ -78,6 +78,7 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_promise_list_by_bundle_rx,NULL)
     PHP_FE(cfpr_promise_list_by_promiser,NULL)
     PHP_FE(cfpr_promise_list_by_promiser_rx,NULL)
+    PHP_FE(cfpr_promise_list_by_promise_type,NULL)
     PHP_FE(cfpr_promise_details,NULL)
     PHP_FE(cfpr_bundle_list_all,NULL)
     PHP_FE(cfpr_bundle_agent_goals,NULL)
@@ -93,7 +94,7 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_body_list,NULL)
     
     // pending
-    PHP_FE(cfpr_list_handles,NULL)
+    PHP_FE(cfpr_list_handles,NULL)  // TODO: deprecate with all dependencies
     PHP_FE(cfpr_get_promise_type,NULL)
     PHP_FE(cfpr_get_promiser,NULL)
     PHP_FE(cfpr_list_handles_for_bundle,NULL)

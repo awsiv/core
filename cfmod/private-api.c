@@ -3253,6 +3253,39 @@ PHP_FUNCTION(cfpr_promise_list_by_promiser_rx)
 
 /******************************************************************************/
 
+PHP_FUNCTION(cfpr_promise_list_by_promise_type)
+{
+ char *userName, *promiseType;
+ int user_len, pt_len;
+ char buffer[CF_WEBBUFFER];
+
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
+                           &userName, &user_len,
+                           &promiseType, &pt_len) == FAILURE)
+    {
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
+
+ ARGUMENT_CHECK_CONTENTS(user_len && pt_len);
+ 
+ buffer[0] = '\0';
+
+ HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
+
+ PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
+ PromiseFilterAddPromiseType(filter, promiseType);
+
+ Nova2PHP_promise_list(filter, buffer, sizeof(buffer));
+
+ DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
+
+ RETURN_STRING(buffer,1);
+}
+
+/******************************************************************************/
+
 PHP_FUNCTION(cfpr_promise_list_by_bundle_rx)
 {
  char *userName, *bundle;
