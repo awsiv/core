@@ -66,7 +66,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll",
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
-   zend_throw_exception(cfmod_exception_db, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    }
 
 mongo_connection conn;
@@ -98,7 +98,7 @@ int len;
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &hostkey, &len) == FAILURE)
    {
-   zend_throw_exception(cfmod_exception_db, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    }
 
 mongo_connection conn;
@@ -622,7 +622,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssssbll",
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
-   zend_throw_exception(cfmod_exception_db, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
 
@@ -773,7 +773,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssssbll",
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
-   zend_throw_exception(cfmod_exception_db, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
 
