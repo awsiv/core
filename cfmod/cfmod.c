@@ -93,10 +93,8 @@ static function_entry cfmod_functions[] =
 
     // Not part of RBAC
     PHP_FE(cfpr_body_list,NULL)
+    PHP_FE(cfpr_body_details,NULL)
     
-    // pending
-    PHP_FE(cfpr_get_promise_body,NULL)
-
     /* END POLICY */
     
     PHP_FE(cfpr_getlastupdate,NULL)

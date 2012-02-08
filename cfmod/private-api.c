@@ -3741,24 +3741,26 @@ PHP_FUNCTION(cfpr_report_class_frequency)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_get_promise_body)
+PHP_FUNCTION(cfpr_body_details)
 
-{ char *type,*ftype,*name,*fname;
- int p_len, t_len;
- const int bufsize = 1000000;
- char buffer[bufsize];
+{
+ char *bodyType, *bodyName;
+ int btype_len, bname_len;
+ char buffer[1000000];
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&name,&p_len,&type,&t_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
+                           &bodyType, &btype_len,
+                           &bodyName, &bname_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
- buffer[0] = '\0';
- fname = (p_len == 0) ? NULL : name;
- ftype = (t_len == 0) ? NULL : type;
+ ARGUMENT_CHECK_CONTENTS(btype_len && bname_len);
 
- Nova2PHP_GetPromiseBody(fname,ftype,buffer,bufsize);
+ buffer[0] = '\0';
+ Nova2PHP_GetPromiseBody(bodyName, bodyType, buffer, sizeof(buffer));
+ 
  RETURN_STRING(buffer,1);
 }
 

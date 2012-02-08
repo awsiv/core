@@ -199,10 +199,10 @@ PHP_FUNCTION(cfpr_ldap_get_several_attributes);
 PHP_FUNCTION(cfpr_getlastupdate);
 
 /*! \brief A promise body as JSON
- * \param bodyName
  * \param bodyType
+ * \param bodyName
  */
-PHP_FUNCTION(cfpr_get_promise_body);
+PHP_FUNCTION(cfpr_body_details);
 
 /*! \brief Get the name of an owner bundle
  * \param promiseHandle
