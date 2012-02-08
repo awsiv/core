@@ -875,10 +875,10 @@ PHP_FUNCTION(cfpr_get_bundle_type);
 PHP_FUNCTION(cfpr_list_handles_for_bundle);
 
 /*! \brief A list of bodies
- * \param bodyName
  * \param bodyType
+ * \param bodyName
  */
-PHP_FUNCTION(cfpr_list_bodies);
+PHP_FUNCTION(cfpr_body_list);
 
 /*! \brief List handles for policy findler by handle
  * \param handle

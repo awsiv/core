@@ -87,9 +87,12 @@ static function_entry cfmod_functions[] =
 
     // PromiseFilter-IFIED
     PHP_FE(cfpr_get_bundle_type,NULL)  // TODO: DEPRECATE??
+
+    // Not part of RBAC
+    PHP_FE(cfpr_body_list,NULL)
     
     // pending
-    PHP_FE(cfpr_list_bodies,NULL)
+
     PHP_FE(cfpr_list_handles,NULL)
     PHP_FE(cfpr_get_promise_type,NULL)
     PHP_FE(cfpr_get_promiser,NULL)

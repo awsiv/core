@@ -3737,15 +3737,15 @@ PHP_FUNCTION(cfpr_get_promise_body)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_list_bodies)
+PHP_FUNCTION(cfpr_body_list)
+{
+ char *bodyType, *bodyName;
+ int bname_len, btype_len;
+ char buffer[1000000];
 
-{ char *name;
- char *btype;
- int pr_len, p_len;
- const int bufsize = 1000000;
- char buffer[bufsize];
-
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&name,&pr_len,&btype,&p_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
+                           &bodyType, &btype_len,
+                           &bodyName, &bname_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
@@ -3753,7 +3753,7 @@ PHP_FUNCTION(cfpr_list_bodies)
 
  buffer[0] = '\0';
 
- Nova2PHP_list_bodies(name,btype,buffer,100000);
+ Nova2PHP_body_list(bodyName, bodyType, buffer, sizeof(buffer));
  RETURN_STRING(buffer,1);
 }
 

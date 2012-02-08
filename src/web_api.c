@@ -3815,7 +3815,7 @@ void Nova2PHP_GetPromiseBody(char *name,char *type,char *returnval,int bufsize)
 
 /*****************************************************************************/
 
-int Nova2PHP_list_bodies(char *name,char *type,char *returnval,int bufsize)
+int Nova2PHP_body_list(char *name,char *type,char *returnval,int bufsize)
 
 { mongo_connection dbconn;
  char work[CF_MAXVARSIZE];
