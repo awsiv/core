@@ -2407,44 +2407,6 @@ void Nova2Txt_GetPromiseBody(char *name,char *type,char *returnval,int bufsize)
 
 /*****************************************************************************/
 
-int Nova2Txt_list_bodies(char *name,char *type,char *returnval,int bufsize)
-
-{ mongo_connection dbconn;
- char work[CF_MAXVARSIZE];
- Item *all_bodies,*ip;    
-
- if (!CFDB_Open(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return -1;
-    }
-
- all_bodies = CFDB_QueryAllBodies(&dbconn,type,name);
- all_bodies = SortItemListNames(all_bodies);
-
- if (all_bodies)
-    {
-    snprintf(returnval,CF_MAXVARSIZE-1,"[");
-    for (ip = all_bodies; ip != NULL; ip=ip->next)
-       {
-       snprintf(work,CF_MAXVARSIZE-1,"{\"body\":\"%s\",\"type\":\"%s\"},",ip->name,ip->classes);
-       Join(returnval,work,bufsize);
-       }
-
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval,"]",bufsize);
-    }
-
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
-
- return true;
-}
-
-/*****************************************************************************/
-
 char *Nova2Txt_GetPromiseType(char *handle)
     
 { static char buffer[CF_BUFSIZE];
