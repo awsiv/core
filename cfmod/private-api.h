@@ -876,9 +876,13 @@ PHP_FUNCTION(cfpr_body_list);
  */
 PHP_FUNCTION(cfpr_promise_list_by_handle_rx);
 
-/*! \brief List handles for policy findler by bundle
+/*! \brief List handles by bundle
  * \param bundle
- * \param useRegularExpressions
+ */
+PHP_FUNCTION(cfpr_promise_list_by_bundle);
+
+/*! \brief List handles by bundle regex
+ * \param bundlerx
  */
 PHP_FUNCTION(cfpr_promise_list_by_bundle_rx);
 
