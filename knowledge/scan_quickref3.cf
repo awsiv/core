@@ -47,8 +47,8 @@ cf_report___CFEngines_reporting_agent::
 cf_know___CFEngines_knowledge_agent::
  "/docs/cf-QuickRef3.html#cf_002dknow-_002d-CFEngine_0027s-knowledge-agent"
   represents => { "manual section cf-know - CFEngines knowledge agent" };
-cfkey::
- "/docs/cf-QuickRef3.html#cfkey"
-  represents => { "manual section cfkey" };
+cf_key::
+ "/docs/cf-QuickRef3.html#cf_002dkey"
+  represents => { "manual section cf-key" };
 }
 
