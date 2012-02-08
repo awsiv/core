@@ -154,20 +154,21 @@ PHP_FUNCTION(cfmod_resource_host_id_seen)
 char *hostkey = NULL,
      *remote_hostname = NULL,
      *remote_ip = NULL,
-     *context = NULL;
+     *context = NULL,
+     *sortColumnName = NULL;
 long from = 0;
 int len = -1;
+bool sortDescending = false;
 PageInfo page = { 0 };
-char *sortColumnName;
-bool sortDescending;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslsbll",
       &hostkey, &len,
       &remote_hostname, &len,
       &remote_ip, &len,
       &context, &len,
       &from,
-      &sortColumnName, &len, &sortDescending,
+      &sortColumnName, &len,
+      &sortDescending,
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
@@ -198,17 +199,21 @@ PHP_FUNCTION(cfmod_resource_host_id_seen_by)
 char *hostkey = NULL,
      *remote_hostname = NULL,
      *remote_ip = NULL,
-     *context = NULL;
+     *context = NULL,
+     *sortColumnName = NULL;
 long from = 0;
 int len = -1;
+bool sortDescending = false;
 PageInfo page = { 0 };
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslsbll",
       &hostkey, &len,
       &remote_hostname, &len,
       &remote_ip, &len,
       &context, &len,
       &from,
+      &sortColumnName, &len,
+      &sortDescending,
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
@@ -283,12 +288,12 @@ PHP_FUNCTION(cfmod_resource_promise_compliance)
 char *handle = NULL,
      *hostkey = NULL,
      *context = NULL,
-     *state = NULL;
+     *state = NULL,
+     *sortColumnName = NULL;
 long from;
 int len;
+bool sortDescending = false;
 PageInfo page = { 0 };
-char *sortColumnName;
-bool sortDescending;
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslsbll",
       &handle, &len,
@@ -296,7 +301,8 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslsbll",
       &context, &len,
       &state, &len,
       &from,
-      &sortColumnName, &len, &sortDescending,
+      &sortColumnName, &len,
+      &sortDescending,
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
@@ -382,13 +388,13 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired)
 {
 char *handle = NULL,
      *hostkey = NULL,
-     *context = NULL;
+     *context = NULL,
+     *sortColumnName = NULL;
 long from,
      to;
 int len;
+bool sortDescending = false;
 PageInfo page = { 0 };
-char *sortColumnName;
-bool sortDescending;
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsbll",
       &handle, &len,
@@ -396,7 +402,8 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsbll",
       &context, &len,
       &from,
       &to,
-      &sortColumnName, &len, &sortDescending,
+      &sortColumnName, &len,
+      &sortDescending,
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
@@ -459,13 +466,13 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired_summary)
 {
 char *handle = NULL,
      *hostkey = NULL,
-     *context = NULL;
+     *context = NULL,
+     *sortColumnName = NULL;
 long from,
      to;
 int len;
+bool sortDescending = false;
 PageInfo page = { 0 };
-char *sortColumnName;
-bool sortDescending;
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsbll",
       &handle, &len,
@@ -473,7 +480,8 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsbll",
       &context, &len,
       &from,
       &to,
-      &sortColumnName, &len, &sortDescending,
+      &sortColumnName, &len,
+      &sortDescending,
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
@@ -499,13 +507,13 @@ PHP_FUNCTION(cfmod_resource_promise_log_notkept)
 {
 char *handle = NULL,
      *hostkey = NULL,
-     *context = NULL;
+     *context = NULL,
+     *sortColumnName = NULL;
 long from,
      to;
 int len;
+bool sortDescending = false;
 PageInfo page = { 0 };
-char *sortColumnName;
-bool sortDescending;
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsbll",
       &handle, &len,
@@ -513,7 +521,8 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsbll",
       &context, &len,
       &from,
       &to,
-      &sortColumnName, &len, &sortDescending,
+      &sortColumnName, &len,
+      &sortDescending,
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
@@ -539,13 +548,13 @@ PHP_FUNCTION(cfmod_resource_promise_log_notkept_summary)
 {
 char *handle = NULL,
      *hostkey = NULL,
-     *context = NULL;
+     *context = NULL,
+     *sortColumnName = NULL;
 long from,
      to;
 int len;
+bool sortDescending = false;
 PageInfo page = { 0 };
-char *sortColumnName;
-bool sortDescending;
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsbll",
       &handle, &len,
@@ -553,7 +562,8 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllsbll",
       &context, &len,
       &from,
       &to,
-      &sortColumnName, &len, &sortDescending,
+      &sortColumnName, &len,
+      &sortDescending,
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
@@ -605,11 +615,11 @@ char *hostkey = NULL,
      *name = NULL,
      *value = NULL,
      *type = NULL,
-     *context = NULL;
+     *context = NULL,
+     *sortColumnName = NULL;
 int len;
+bool sortDescending = false;
 PageInfo page = { 0 };
-char *sortColumnName;
-bool sortDescending;
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssssbll",
       &hostkey, &len,
@@ -618,7 +628,8 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssssbll",
       &value, &len,
       &type, &len,
       &context, &len,
-      &sortColumnName, &len, &sortDescending,
+      &sortColumnName, &len,
+      &sortDescending,
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
@@ -670,17 +681,20 @@ RETURN_JSON(values);
 PHP_FUNCTION(cfmod_resource_context)
 {
 char *hostkey = NULL,
-     *context = NULL;
-int len, from;
+     *context = NULL,
+     *sortColumnName = NULL;
+int len;
+long from = 0;
+bool sortDescending = false;
 PageInfo page = { 0 };
-char *sortColumnName;
-bool sortDescending;
+
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslsbll",
       &hostkey, &len,
       &context, &len,
       &from,
-      &sortColumnName, &len, &sortDescending,
+      &sortColumnName, &len,
+      &sortDescending,
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
@@ -757,11 +771,11 @@ char *hostkey = NULL,
      *name = NULL,
      *version = NULL,
      *arch = NULL,
-     *context = NULL;
+     *context = NULL,
+     *sortColumnName = NULL;
 int len;
+bool sortDescending = false;
 PageInfo page = { 0 };
-char *sortColumnName;
-bool sortDescending;
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssssbll",
       &hostkey, &len,
@@ -769,7 +783,8 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssssbll",
       &version, &len,
       &arch, &len,
       &context, &len,
-      &sortColumnName, &len, &sortDescending,
+      &sortColumnName, &len,
+      &sortDescending,
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
@@ -846,17 +861,18 @@ PHP_FUNCTION(cfmod_resource_setuid)
 {
 char *hostkey = NULL,
      *name = NULL,
-     *context = NULL;
+     *context = NULL,
+     *sortColumnName = NULL;
 int len;
+bool sortDescending = false;
 PageInfo page = { 0 };
-char *sortColumnName;
-bool sortDescending;
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssbll",
       &hostkey, &len,
       &name, &len,
       &context, &len,
-      &sortColumnName, &len, &sortDescending,
+      &sortColumnName, &len,
+      &sortDescending,
       &(page.resultsPerPage),
       &(page.pageNum)) == FAILURE)
    {
