@@ -1,8 +1,5 @@
 <?php
 
-require_once "PHPUnit/Autoload.php";
-require_once "../lib/Pest.php";
-require_once "../lib/PestJSON.php";
 require_once "RestBaseTest.php";
 
 class PromiseLogRepairedTest extends RestBaseTest

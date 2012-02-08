@@ -1,8 +1,8 @@
 <?php
 
 require_once "PHPUnit/Autoload.php";
-require_once "../lib/Pest.php";
-require_once "../lib/PestJSON.php";
+require_once __DIR__ . "/../lib/Pest.php";
+require_once __DIR__ . "/../lib/PestJSON.php";
 
 class RestBaseTest extends PHPUnit_Framework_TestCase
 {
