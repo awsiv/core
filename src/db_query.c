@@ -386,17 +386,17 @@ HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, 
 /* BEGIN query document */
  bson_buffer_init(&bb);
 
- if (!EMPTY(hostNameRegex))
+ if (!NULL_OR_EMPTY(hostNameRegex))
     {
     bson_append_regex(&bb,cfr_host_array,hostNameRegex,"");
     }
 
- if (!EMPTY(ipRegex))
+ if (!NULL_OR_EMPTY(ipRegex))
     {
     bson_append_regex(&bb,cfr_ip_array,ipRegex,"");
     }
 
- if (!EMPTY(classRegex))
+ if (!NULL_OR_EMPTY(classRegex))
     {
     AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
     bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
@@ -425,7 +425,7 @@ HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,cha
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
  int found = false;
 
- if (!EMPTY(larch))
+ if (!NULL_OR_EMPTY(larch))
     {
     snprintf(arch,2,"%c",larch[0]);
     }
@@ -433,7 +433,7 @@ HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,cha
 
  bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
+ if (!NULL_OR_EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
@@ -523,33 +523,33 @@ HubQuery *CFDB_QuerySoftware(mongo_connection *conn,char *keyHash,char *type,cha
                
                 if (regex)
                    {
-                   if (!EMPTY(lname) && !FullTextMatch(lname,rname))
+                   if (!NULL_OR_EMPTY(lname) && !FullTextMatch(lname,rname))
                       {
                       match_name = false;
                       }
                   
-                   if (!EMPTY(lver) && !FullTextMatch(lver,rversion))
+                   if (!NULL_OR_EMPTY(lver) && !FullTextMatch(lver,rversion))
                       {
                       match_version = false;
                       }
-                   if (!EMPTY(larch) && !FullTextMatch(arch,rarch))
+                   if (!NULL_OR_EMPTY(larch) && !FullTextMatch(arch,rarch))
                       {
                       match_arch = false;
                       }
                    }
                 else
                    {
-                   if (!EMPTY(lname) && (strcmp(lname,rname) != 0))
+                   if (!NULL_OR_EMPTY(lname) && (strcmp(lname,rname) != 0))
                       {
                       match_name = false;
                       }
                   
-                   if (!EMPTY(lver) && (strcmp(lver,rversion) != 0))
+                   if (!NULL_OR_EMPTY(lver) && (strcmp(lver,rversion) != 0))
                       {
                       match_version = false;
                       }
                   
-                   if (!EMPTY(larch) && (strcmp(arch,rarch) != 0))
+                   if (!NULL_OR_EMPTY(larch) && (strcmp(arch,rarch) != 0))
                       {
                       match_arch = false;
                       }                  
@@ -604,7 +604,7 @@ HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lclass,in
 
  bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
+ if (!NULL_OR_EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
@@ -684,14 +684,14 @@ HubQuery *CFDB_QueryClasses(mongo_connection *conn,char *keyHash,char *lclass,in
             
              if (regex)
                 {
-                if (!EMPTY(lclass) && !FullTextMatch(lclass,rclass))
+                if (!NULL_OR_EMPTY(lclass) && !FullTextMatch(lclass,rclass))
                    {
                    match_class = false;
                    }
                 }
              else
                 {
-                if (!EMPTY(lclass) && (strcmp(lclass,rclass) != 0))
+                if (!NULL_OR_EMPTY(lclass) && (strcmp(lclass,rclass) != 0))
                    {
                    match_class = false;
                    }
@@ -747,12 +747,12 @@ Rlist *CFDB_QueryDateTimeClasses(mongo_connection *conn,char *keyHash,char *lcla
 
  bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
+ if (!NULL_OR_EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
 
- if (!EMPTY(classRegex))
+ if (!NULL_OR_EMPTY(classRegex))
     {
     AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
     bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
@@ -824,12 +824,12 @@ Rlist *CFDB_QuerySoftClasses(mongo_connection *conn,char *keyHash,char *lclass,i
 
  bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
+ if (!NULL_OR_EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
 
- if(!EMPTY(classRegex))
+ if(!NULL_OR_EMPTY(classRegex))
     {
     AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
     bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
@@ -904,12 +904,12 @@ Rlist *CFDB_QueryIpClasses(mongo_connection *conn,char *keyHash,char *lclass,int
 
  bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
+ if (!NULL_OR_EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
 
- if(!EMPTY(classRegex))
+ if(!NULL_OR_EMPTY(classRegex))
     {
     AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
     bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
@@ -1031,7 +1031,7 @@ HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes)
        CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
        }
     
-    if(!EMPTY(keyhash))
+    if(!NULL_OR_EMPTY(keyhash))
        {
        PrependRlistAlien(&hostList,NewHubHost(NULL,keyhash,addresses,hostnames));
        CfDebug("matched host %s,%s\n", keyhash, addresses);
@@ -1104,7 +1104,7 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,char *l
   
  bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
+ if (!NULL_OR_EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
@@ -1190,7 +1190,7 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,char *l
 
              match_version = match_t = match_kept = match_notkept = match_repaired = true;
 
-             if (!EMPTY(lversion) && !FullTextMatch(lversion,rversion))
+             if (!NULL_OR_EMPTY(lversion) && !FullTextMatch(lversion,rversion))
                 {
                 match_version = false;
                 }
@@ -1291,7 +1291,7 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *lscope,
 
  bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
+ if (!NULL_OR_EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
@@ -1403,44 +1403,44 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *lscope,
                
                 if (regex)
                    {
-                   if (!EMPTY(llval) && !FullTextMatch(llval,rlval))
+                   if (!NULL_OR_EMPTY(llval) && !FullTextMatch(llval,rlval))
                       {
                       match_lval = false;
                       }
 
-                   if (!EMPTY(lrval) && !FullTextMatch(lrval,rrval))
+                   if (!NULL_OR_EMPTY(lrval) && !FullTextMatch(lrval,rrval))
                       {
                       match_rval = false;
                       }
 
-                   if (!EMPTY(lscope) && !FullTextMatch(lscope,rscope))
+                   if (!NULL_OR_EMPTY(lscope) && !FullTextMatch(lscope,rscope))
                       {
                       match_scope = false;
                       }
                   
-                   if (!EMPTY(ltype) && !FullTextMatch(ltype,dtype))
+                   if (!NULL_OR_EMPTY(ltype) && !FullTextMatch(ltype,dtype))
                       {
                       match_type = false;
                       }
                    }
                 else
                    {
-                   if (!EMPTY(llval) && strcmp(llval,rlval) != 0)
+                   if (!NULL_OR_EMPTY(llval) && strcmp(llval,rlval) != 0)
                       {
                       match_lval = false;
                       }
 
-                   if (!EMPTY(lrval) && strcmp(lrval,rrval) != 0)
+                   if (!NULL_OR_EMPTY(lrval) && strcmp(lrval,rrval) != 0)
                       {
                       match_rval = false;
                       }
                   
-                   if (!EMPTY(lscope) && strcmp(lscope,rscope) != 0)
+                   if (!NULL_OR_EMPTY(lscope) && strcmp(lscope,rscope) != 0)
                       {
                       match_scope = false;
                       }
                   
-                   if (!EMPTY(ltype) && strcmp(ltype,dtype) != 0)
+                   if (!NULL_OR_EMPTY(ltype) && strcmp(ltype,dtype) != 0)
                       {
                       match_type = false;
                       }
@@ -1510,7 +1510,7 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
   
  bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
+ if (!NULL_OR_EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
@@ -1599,14 +1599,14 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
             
              if (regex)
                 {
-                if (!EMPTY(lhandle) && !FullTextMatch(lhandle,rhandle))
+                if (!NULL_OR_EMPTY(lhandle) && !FullTextMatch(lhandle,rhandle))
                    {
                    match_handle = false;
                    }
                 }
              else
                 {
-                if (!EMPTY(lhandle) && (strcmp(lhandle,rhandle) != 0))
+                if (!NULL_OR_EMPTY(lhandle) && (strcmp(lhandle,rhandle) != 0))
                    {
                    match_handle = false;
                    }
@@ -1673,7 +1673,7 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *lhash,ch
 /* BEGIN query document */
  bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
+ if (!NULL_OR_EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
@@ -1766,35 +1766,35 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn,char *keyHash,char *lhash,ch
             
              if (regex)
                 {
-                if (!EMPTY(lhost) && !FullTextMatch(lhost,rhost))
+                if (!NULL_OR_EMPTY(lhost) && !FullTextMatch(lhost,rhost))
                    {
                    match_host = false;
                    }
 
                 // Doesn't make sense to do regex on a key
-                if (!EMPTY(lhash) && (strcmp(lhash,rhash+1) != 0))
+                if (!NULL_OR_EMPTY(lhash) && (strcmp(lhash,rhash+1) != 0))
                    {
                    match_hash = false;
                    }
 
-                if (!EMPTY(laddr) && !FullTextMatch(laddr,raddr))
+                if (!NULL_OR_EMPTY(laddr) && !FullTextMatch(laddr,raddr))
                    {
                    match_addr = false;
                    }
                 }
              else
                 {
-                if (!EMPTY(lhost) && (strcmp(lhost,rhost) != 0))
+                if (!NULL_OR_EMPTY(lhost) && (strcmp(lhost,rhost) != 0))
                    {
                    match_host = false;
                    }
 
-                if (!EMPTY(lhash) && (strcmp(lhash,rhash+1) != 0))
+                if (!NULL_OR_EMPTY(lhash) && (strcmp(lhash,rhash+1) != 0))
                    {
                    match_hash = false;
                    }
                
-                if (!EMPTY(laddr) && (strcmp(laddr,raddr) != 0))
+                if (!NULL_OR_EMPTY(laddr) && (strcmp(laddr,raddr) != 0))
                    {
                    match_addr = false;
                    }
@@ -1954,7 +1954,7 @@ HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char *lname
 /* BEGIN query document */
  bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
+ if (!NULL_OR_EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
@@ -2048,14 +2048,14 @@ HubQuery *CFDB_QueryPerformance(mongo_connection *conn,char *keyHash,char *lname
             
              if (regex)
                 {
-                if (!EMPTY(lname) && !FullTextMatch(lname,rname))
+                if (!NULL_OR_EMPTY(lname) && !FullTextMatch(lname,rname))
                    {
                    match_name = false;
                    }
                 }
              else
                 {
-                if (!EMPTY(lname) && (strcmp(lname,rname) != 0))
+                if (!NULL_OR_EMPTY(lname) && (strcmp(lname,rname) != 0))
                    {
                    match_name = false;
                    }
@@ -2107,7 +2107,7 @@ HubQuery *CFDB_QuerySetuid(mongo_connection *conn,char *keyHash,char *lname,int 
 
  bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
+ if (!NULL_OR_EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
@@ -2164,14 +2164,14 @@ HubQuery *CFDB_QuerySetuid(mongo_connection *conn,char *keyHash,char *lname,int 
             
              if (regex)
                 {
-                if (!EMPTY(lname) && !FullTextMatch(lname,rname))
+                if (!NULL_OR_EMPTY(lname) && !FullTextMatch(lname,rname))
                    {
                    match_name = false;
                    }
                 }
              else
                 {
-                if (!EMPTY(lname) && (strcmp(lname,rname) != 0))
+                if (!NULL_OR_EMPTY(lname) && (strcmp(lname,rname) != 0))
                    {
                    match_name = false;
                    }
@@ -2232,7 +2232,7 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char *lname
 
  bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
+ if (!NULL_OR_EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
@@ -2325,14 +2325,14 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char *lname
             
              if (regex)
                 {
-                if (!EMPTY(lname) && !FullTextMatch(lname,rname))
+                if (!NULL_OR_EMPTY(lname) && !FullTextMatch(lname,rname))
                    {
                    match_name = false;
                    }
                 }
              else
                 {
-                if (!EMPTY(lname) && (strcmp(lname,rname) != 0))
+                if (!NULL_OR_EMPTY(lname) && (strcmp(lname,rname) != 0))
                    {
                    match_name = false;
                    }
@@ -2399,7 +2399,7 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,ch
  
  bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
+ if (!NULL_OR_EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
@@ -2486,24 +2486,24 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,ch
             
              if (regex)
                 {
-                if (!EMPTY(lname) && !FullTextMatch(lname,rname))
+                if (!NULL_OR_EMPTY(lname) && !FullTextMatch(lname,rname))
                    {
                    match_name = false;
                    }
 
-                if (!EMPTY(ldiff) && !FullTextMatch(ldiff,rdiff))
+                if (!NULL_OR_EMPTY(ldiff) && !FullTextMatch(ldiff,rdiff))
                    {
                    match_diff = false;
                    }
                 }
              else
                 {
-                if (!EMPTY(lname) && (strcmp(lname,rname) != 0))
+                if (!NULL_OR_EMPTY(lname) && (strcmp(lname,rname) != 0))
                    {
                    match_name = false;
                    }
 
-                if (!EMPTY(ldiff) && (strcmp(ldiff,rdiff) != 0))
+                if (!NULL_OR_EMPTY(ldiff) && (strcmp(ldiff,rdiff) != 0))
                    {
                    match_diff = false;
                    }
@@ -2560,13 +2560,13 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
  
  bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
+ if (!NULL_OR_EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
 
 
- if (!EMPTY(lhandle))  // promise handle
+ if (!NULL_OR_EMPTY(lhandle))  // promise handle
     {
     if(regex)
        {
@@ -2715,7 +2715,7 @@ HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,
   
  bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
+ if (!NULL_OR_EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
@@ -2871,12 +2871,12 @@ HubQuery *CFDB_QueryValueGraph(mongo_connection *conn,char *keyHash,char *lday,c
 /* BEGIN query document */
  bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
+ if (!NULL_OR_EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
 
- if (!EMPTY(classRegex))
+ if (!NULL_OR_EMPTY(classRegex))
     {
     AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
     bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
@@ -3040,7 +3040,7 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
 
  bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
+ if (!NULL_OR_EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
@@ -3137,14 +3137,14 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
             
              if (regex)
                 {
-                if (!EMPTY(lname) && !FullTextMatch(lname,rname))
+                if (!NULL_OR_EMPTY(lname) && !FullTextMatch(lname,rname))
                    {
                    match_name = false;
                    }
                 }
              else
                 {
-                if (!EMPTY(lname) && (strcmp(lname,rname) != 0))
+                if (!NULL_OR_EMPTY(lname) && (strcmp(lname,rname) != 0))
                    {
                    match_name = false;
                    }
@@ -3944,7 +3944,7 @@ HubQuery *CFDB_QueryHandlesForBundlesWithComments(mongo_connection *conn, char *
  // query
  bson_buffer_init(&bb);
 
- if(!EMPTY(bType))
+ if(!NULL_OR_EMPTY(bType))
     {
     bson_append_string(&bb,cfp_bundletype,bType);
     bson_append_string(&bb,cfp_bundlename,bName);
@@ -4012,15 +4012,15 @@ HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char 
 
  if(regex)
     {
-    if (!EMPTY(promiser))
+    if (!NULL_OR_EMPTY(promiser))
        {
        bson_append_regex(&bb, cfp_promiser, promiser,"");
        }
-    else if(!EMPTY(promiserType))
+    else if(!NULL_OR_EMPTY(promiserType))
        {
        bson_append_regex(&bb, cfp_promisetype, promiserType,"");
        }
-    else if(!EMPTY(bType))
+    else if(!NULL_OR_EMPTY(bType))
        {
        bson_append_regex(&bb,cfp_bundletype,bType,"");
        bson_append_regex(&bb,cfp_bundlename,bName,"");
@@ -4028,15 +4028,15 @@ HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char 
     }
  else
     {
-    if (!EMPTY(promiser))
+    if (!NULL_OR_EMPTY(promiser))
        {
        bson_append_string(&bb, cfp_promiser, promiser);
        }
-    else if(!EMPTY(promiserType))
+    else if(!NULL_OR_EMPTY(promiserType))
        {
        bson_append_string(&bb, cfp_promisetype, promiserType);
        }
-    else if(!EMPTY(bType))
+    else if(!NULL_OR_EMPTY(bType))
        {
        bson_append_string(&bb,cfp_bundletype,bType);
        bson_append_string(&bb,cfp_bundlename,bName);
@@ -4492,12 +4492,12 @@ Item *CFDB_QueryAllBodies(mongo_connection *conn,char *bTypeRegex,char *bNameReg
 
  bson_buffer_init(&bbuf);
  
- if (!EMPTY(bTypeRegex))
+ if (!NULL_OR_EMPTY(bTypeRegex))
     {
     bson_append_regex(&bbuf,cfb_bodytype,bTypeRegex,"");
     }
 
- if (!EMPTY(bNameRegex))
+ if (!NULL_OR_EMPTY(bNameRegex))
     {
     bson_append_regex(&bbuf,cfb_bodyname,bNameRegex,"");
     }
@@ -5666,19 +5666,19 @@ Rlist *CFDB_QueryNotes(mongo_connection *conn,char *keyhash, char *nid,  Item *d
 
  bson_buffer_init(&bb);
 
- if (!EMPTY(nid))
+ if (!NULL_OR_EMPTY(nid))
     {
     bson_oid_from_string(&bsonid,nid);
     bson_append_oid(&bb,"_id",&bsonid);
     }
  else 
     {
-    if (!EMPTY(keyhash))
+    if (!NULL_OR_EMPTY(keyhash))
        {
        bson_append_string(&bb,cfn_keyhash,keyhash);
        }
         
-    if (!EMPTY(fusername))
+    if (!NULL_OR_EMPTY(fusername))
        {
        bson_append_string(&bb,"n.u",fusername);
        specificQuery = true;
@@ -5781,7 +5781,7 @@ Rlist *CFDB_QueryNotes(mongo_connection *conn,char *keyhash, char *nid,  Item *d
                  /* apply filter: username then datetime*/
                  if(specificQuery)
 		    {
-                    if(strcmp(username, fusername) != 0 && !EMPTY(fusername)) 
+                    if(strcmp(username, fusername) != 0 && !NULL_OR_EMPTY(fusername)) 
                        {
                        continue;			  			  
                        }
@@ -6260,11 +6260,11 @@ Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,i
 
  bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
+ if (!NULL_OR_EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
- if(!EMPTY(classRegex))
+ if(!NULL_OR_EMPTY(classRegex))
     {
     AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
     bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
@@ -6321,12 +6321,12 @@ Rlist *CFDB_QueryAllClasses(mongo_connection *conn,char *keyHash,char *lclass,in
 
  bson_buffer_init(&bb);
 
- if (!EMPTY(keyHash))
+ if (!NULL_OR_EMPTY(keyHash))
     {
     bson_append_string(&bb,cfr_keyhash,keyHash);
     }
 
- if (!EMPTY(classRegex))
+ if (!NULL_OR_EMPTY(classRegex))
     {
     AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
     bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
@@ -6561,7 +6561,7 @@ int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
                    }
 
                 
-                if(!EMPTY(work))
+                if(!NULL_OR_EMPTY(work))
                    {
                    Join(buffer, work, bufsize);
                    }

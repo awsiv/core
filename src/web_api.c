@@ -395,7 +395,7 @@ void Nova2PHP_meter(char *hostkey,char *buffer,int bufsize)
 
  bson_buffer_init(&bb);
  
- if(!EMPTY(hostkey))
+ if(!NULL_OR_EMPTY(hostkey))
    {
    bson_append_string(&bb, cfr_keyhash, hostkey);
    }
@@ -3933,7 +3933,7 @@ static cfapi_errid FormatReportInfoAsJson(char *reportId, ReportInfo *reports, c
 
 for (i = 0; reports[i].id != NULL; i++)
    {
-   if(EMPTY(reportId) || strcmp(reportId,reports[i].id) == 0)
+   if(NULL_OR_EMPTY(reportId) || strcmp(reportId,reports[i].id) == 0)
      {
      snprintf(work, sizeof(work), "{\"id\":\"%s\",\"category\":\"%s\",\"name\":\"%s\",\"old-name\":\"%s\",\"description\":\"%s\"},",
 	      reports[i].id ,reports[i].category,reports[i].name,reports[i].name_old,reports[i].description);
@@ -3988,7 +3988,7 @@ int Nova2PHP_promise_details(PromiseFilter *filter, char *returnval,int bufsize)
  snprintf(work,sizeof(work),"\"promiser\":\"%s\",",EscapeJson(hp->promiser,escaped,sizeof(escaped)));
  Join(returnval,work,bufsize);
 
- if (EMPTY(hp->promisee))
+ if (NULL_OR_EMPTY(hp->promisee))
     {
     strcpy(promiseeText,"None mentioned");
     }
@@ -4000,7 +4000,7 @@ int Nova2PHP_promise_details(PromiseFilter *filter, char *returnval,int bufsize)
  snprintf(work,sizeof(work),"\"promisee\":\"%s\",",promiseeText);
  Join(returnval,work,bufsize);
 
- if (EMPTY(hp->comment))
+ if (NULL_OR_EMPTY(hp->comment))
     {
     strcpy(commentText,"No comment");
     }
@@ -5150,7 +5150,7 @@ int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize)
   bson query;
   bson_buffer bb;
 
-  if(EMPTY(hostkey))
+  if(NULL_OR_EMPTY(hostkey))
      {
      return false;
      }

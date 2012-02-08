@@ -863,7 +863,7 @@ hb = xmalloc(sizeof(HubBody));
 hb->bodyName = xstrdup(bodyName);
 hb->bodyType = xstrdup(bodyType);
 
-if (EMPTY(bodyArgs))
+if (NULL_OR_EMPTY(bodyArgs))
    {
    hb->bodyArgs = NULL;
    }

@@ -290,7 +290,7 @@ if (!CFDB_Open(&conn))
 
 bson_buffer_init(&bb);
 
-if (!EMPTY(search_topic))
+if (!NULL_OR_EMPTY(search_topic))
    {
    Nova_DeClassifyTopic(search_topic,topic_name,topic_context);
 

@@ -220,7 +220,7 @@ void CFDB_SaveHostID(mongo_connection *conn, char *database, char *keyField, cha
  bson setOp;
  char foundHostName[CF_MAXVARSIZE];
 
- if(!EMPTY(hostname))
+ if(!NULL_OR_EMPTY(hostname))
     {
     snprintf(foundHostName, sizeof(foundHostName), "%s", hostname);
     }
@@ -1703,7 +1703,7 @@ int CFDB_AddNote(mongo_connection *conn, char *keyhash, int reportType, char *ni
    // find right host
    bson_buffer_init(&bb);
 
-   if(!EMPTY(nid))
+   if(!NULL_OR_EMPTY(nid))
       {
       bson_oid_from_string(&bsonid,nid);
       bson_append_oid(&bb,"_id",&bsonid);
@@ -1714,7 +1714,7 @@ int CFDB_AddNote(mongo_connection *conn, char *keyhash, int reportType, char *ni
       bson_append_new_oid(&bb,"_id");
       bson_append_string(&bb,cfn_keyhash,keyhash);
       
-      if (!EMPTY(reportData))
+      if (!NULL_OR_EMPTY(reportData))
 	 {
          bson_append_string(&bb,cfn_reportdata,reportData);         
 	 }

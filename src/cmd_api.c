@@ -1135,7 +1135,7 @@ int Nova2Txt_hostinfo(char *hostkey,char *hostnameOut,char *ipaddrOut,int bufsiz
  bson_buffer bb;
 
  
- if (EMPTY(hostkey))
+ if (NULL_OR_EMPTY(hostkey))
     {
     return false;
     }

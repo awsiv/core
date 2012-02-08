@@ -206,7 +206,7 @@ else
       }
    }
 
-if(!EMPTY(master) && !IsIPV4Address(master) && !IsIPV6Address(master))
+if(!NULL_OR_EMPTY(master) && !IsIPV4Address(master) && !IsIPV6Address(master))
    {
    if ((hp = gethostbyname(master)) == NULL)
       {
