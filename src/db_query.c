@@ -6626,6 +6626,8 @@ static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *fil
  modified |= BsonAppendStringSafe(queryBuffer, cfp_promiser, filter->promiserInclude);
  modified |= BsonAppendRegexSafe(queryBuffer, cfp_promiser, filter->promiserRxInclude);
 
+ modified |= BsonAppendStringSafe(queryBuffer, cfp_promisetype, filter->promiseTypeInclude);
+ 
  modified |= BsonAppendStringSafe(queryBuffer, cfp_bundletype, filter->bundleTypeInclude);
 
  modified |= BsonAppendIncludeList(queryBuffer, cfp_bundlename, filter->bundleIncludes);

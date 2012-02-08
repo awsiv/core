@@ -1179,9 +1179,16 @@ void PromiseFilterAddPromiseBodyRx(PromiseFilter *filter, const char *handleRxIn
  filter->promiserRxInclude = SafeStringDuplicate(promiserRxInclude);
 }
 
+void PromiseFilterAddPromiseType(PromiseFilter *filter, const char *promiseTypeInclude)
+{
+ assert(!filter->promiseTypeInclude && "PromiseFilterAddPromiseType: promiseTypeInclude is already set");
+
+ filter->promiseTypeInclude = SafeStringDuplicate(promiseTypeInclude);
+}
+
 void PromiseFilterAddBundleType(PromiseFilter *filter, const char *bundleTypeInclude)
 {
- assert(!filter->bundleTypeInclude && "PromiseFilterAddBundleType: bundleType is already set");
+ assert(!filter->bundleTypeInclude && "PromiseFilterAddBundleType: bundleTypeInclude is already set");
 
  filter->bundleTypeInclude = SafeStringDuplicate(bundleTypeInclude);
 }
@@ -1220,6 +1227,7 @@ void DeletePromiseFilter(PromiseFilter *filter)
  free(filter->handleRxInclude);
  free(filter->promiserInclude);
  free(filter->promiserRxInclude);
+ free(filter->promiseTypeInclude);
  free(filter->bundleTypeInclude);
  DeleteRlist(filter->bundleIncludes);
  DeleteRlist(filter->bundleRxIncludes);
