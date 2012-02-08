@@ -2407,29 +2407,6 @@ void Nova2Txt_GetPromiseBody(char *name,char *type,char *returnval,int bufsize)
 
 /*****************************************************************************/
 
-char *Nova2Txt_GetPromiser(char *handle)
-    
-{ static char buffer[CF_BUFSIZE];
- mongo_connection dbconn;
-
- if (!CFDB_Open(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
-
- if (!CFDB_QueryPromiseAttr(&dbconn,handle,cfp_promiser,buffer,CF_BUFSIZE))
-    {
-    *buffer = '\0';
-    }
-
- CFDB_Close(&dbconn);
-
- return buffer;
-}
-
-/*****************************************************************************/
-
 int Nova2Txt_get_variable(char *hostkey,char *scope,char *lval,char *returnval,int bufsize)
 
 { char buffer[CF_BUFSIZE];

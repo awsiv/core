@@ -3851,28 +3851,6 @@ int Nova2PHP_body_list(char *name,char *type,char *returnval,int bufsize)
 
 /*****************************************************************************/
 
-char *Nova2PHP_GetPromiser(char *handle)
-    
-{ static char buffer[CF_BUFSIZE];
- mongo_connection dbconn;
-
- if (!CFDB_Open(&dbconn))
-    {
-    return false;
-    }
-
- if (!CFDB_QueryPromiseAttr(&dbconn,handle,cfp_promiser,buffer,CF_BUFSIZE))
-    {
-    *buffer = '\0';
-    }
-
- CFDB_Close(&dbconn);
-
- return buffer;
-}
-
-/*****************************************************************************/
-
 int Nova2PHP_get_variable(char *hostkey,char *scope,char *lval,char *returnval,int bufsize)
 
 {

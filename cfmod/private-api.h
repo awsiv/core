@@ -209,11 +209,6 @@ PHP_FUNCTION(cfpr_get_promise_body);
  */
 PHP_FUNCTION(cfpr_bundle_by_promise_handle);
 
-/*! \brief Get the promiser of a promise
- * \param promiseHandle
- */
-PHP_FUNCTION(cfpr_get_promiser);
-
 /*! \brief Get the reported value of a variable
  * \param hostKey
  * \param scope

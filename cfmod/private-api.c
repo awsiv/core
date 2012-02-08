@@ -3397,22 +3397,6 @@ PHP_FUNCTION(cfpr_bundle_by_promise_handle)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_get_promiser)
-
-{ char *handle;
- int hk_len;
-
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&handle,&hk_len) == FAILURE)
-    {
-    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-    RETURN_NULL();
-    }
-
- RETURN_STRING(Nova2PHP_GetPromiser(handle),1);
-}
-
-/******************************************************************************/
-
 PHP_FUNCTION(cfpr_get_variable)
 
 { char *key,*scope,*lval;
