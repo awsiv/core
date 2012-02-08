@@ -3127,27 +3127,6 @@ PHP_FUNCTION(cfpr_get_host_colour)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_list_handles)
-
-{ char *promiser;
- char *ptype;
- int pr_len, p_len;
- char buffer[CF_WEBBUFFER];
- zend_bool regex;
-
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssb",&promiser,&pr_len,&ptype,&p_len,&regex) == FAILURE)
-    {
-    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-    RETURN_NULL();
-    }
-
- buffer[0] = '\0';
- Nova2PHP_list_promise_handles(promiser,ptype,"","",(int)regex,buffer,sizeof(buffer));
-
- RETURN_STRING(buffer,1);
-}
-/******************************************************************************/
-
 PHP_FUNCTION(cfpr_promise_list_by_handle_rx)
 {
  char *userName, *handle;
@@ -3349,28 +3328,6 @@ PHP_FUNCTION(cfpr_promise_list_by_bundle_rx)
  Nova2PHP_promise_list(filter, buffer, sizeof(buffer));
 
  DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
-
- RETURN_STRING(buffer,1);
-}
-
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_list_handles_for_bundle)
-
-{ char *bundle;
- char *btype;
- int r_len, p_len;
- char buffer[CF_WEBBUFFER];
- zend_bool regex;
-
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssb",&bundle,&r_len,&btype,&p_len,&regex) == FAILURE)
-    {
-    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-    RETURN_NULL();
-    }
-
- buffer[0] = '\0';
- Nova2PHP_list_promise_handles("","",bundle,btype,(int)regex,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }

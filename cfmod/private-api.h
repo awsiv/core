@@ -832,12 +832,6 @@ PHP_FUNCTION(cfpr_count_blue_hosts);
 
 PHP_FUNCTION(cfpr_promise_details);
 
-/*! \brief Query handles by promiser
- * \param promiser
- * \param promiseType
- */
-PHP_FUNCTION(cfpr_list_handles);
-
 /*! \brief Goals for agent bundles
  * \param bundleType
  */
@@ -856,13 +850,6 @@ PHP_FUNCTION(cfpr_bundle_list_by_bundle_usage);
  * \param bundleName
  */
 PHP_FUNCTION(cfpr_get_bundle_type);
-
-/*! \brief A list of handles in a bundle
- * \param bundleName
- * \param bundleType
- * \param useRegularExpressions
- */
-PHP_FUNCTION(cfpr_list_handles_for_bundle);
 
 /*! \brief A list of bodies
  * \param bodyType

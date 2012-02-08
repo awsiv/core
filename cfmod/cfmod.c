@@ -95,8 +95,6 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_body_list,NULL)
     
     // pending
-    PHP_FE(cfpr_list_handles,NULL)  // TODO: deprecate with all dependencies
-    PHP_FE(cfpr_list_handles_for_bundle,NULL)
     PHP_FE(cfpr_get_promise_body,NULL)
 
     /* END POLICY */
