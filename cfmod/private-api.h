@@ -209,11 +209,6 @@ PHP_FUNCTION(cfpr_get_promise_body);
  */
 PHP_FUNCTION(cfpr_bundle_by_promise_handle);
 
-/*! \brief Get the type of a promise, e.g. files
- * \param promiseHandle
- */
-PHP_FUNCTION(cfpr_get_promise_type);
-
 /*! \brief Get the promiser of a promise
  * \param promiseHandle
  */

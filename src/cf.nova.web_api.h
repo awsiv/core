@@ -189,7 +189,6 @@ void Nova2PHP_show_all_hosts(char *policy,int n,char *buffer,int bufsize);
 int Nova2PHP_promise_details(PromiseFilter *filter, char *returnval,int bufsize);
 
 char *Nova2PHP_GetPromiseComment(char *handle);
-char *Nova2PHP_GetPromiseType(char *handle);
 char *Nova2PHP_GetPromiser(char *handle);
 int Nova2PHP_get_variable(char *hostkey,char *scope,char *lval,char *returnval,int bufsize);
 int Nova2PHP_bundle_classes_used(PromiseFilter *promiseFilter, char *buffer, int bufsize);
