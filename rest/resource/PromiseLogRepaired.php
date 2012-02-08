@@ -12,6 +12,8 @@ class PromiseLogRepaired extends Resource
         $context = Utils::queryParam('context');
         $from = Utils::checkInteger(Utils::queryParam('from'), 'from');
         $to = Utils::checkInteger(Utils::queryParam('to'), 'to');
+        $sort = Utils::queryParam('sort');
+        $order = Utils::checkBoolean(Utils::queryParam('order'), 'order');
         $count = Utils::checkInteger(Utils::queryParam('count'), 'count');
         $startPage = Utils::checkInteger(Utils::queryParam('startPage'), 'startPage');
 
@@ -19,7 +21,8 @@ class PromiseLogRepaired extends Resource
         {
             $response = new Response($request);
             $response->body = cfmod_resource_promise_log_repaired($handle,
-                    $hostkey, $context, $from, $to, $count, $startPage);
+                    $hostkey, $context, $from, $to,
+                    $sort, $order, $count, $startPage);
             return $response;
         }
         catch (Exception $e)

@@ -12,12 +12,14 @@ class Software extends Resource
         $version = Utils::queryParam('version');
         $arch = Utils::queryParam('arch');
         $context = Utils::queryParam('context');
+        $sort = Utils::queryParam('sort');
+        $order = Utils::checkBoolean(Utils::queryParam('order'), 'order');
         $count = Utils::checkInteger(Utils::queryParam('count'), 'count');
         $startPage = Utils::checkInteger(Utils::queryParam('startPage'), 'startPage');
 
         $response = new Response($request);
         $payload = cfmod_resource_software($hostkey, $name, $version, $arch,
-                $context, $count, $startPage);
+                $context, $sort, $order, $count, $startPage);
 
         if (is_null($payload))
         {

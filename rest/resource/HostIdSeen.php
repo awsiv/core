@@ -11,12 +11,14 @@ class HostIdSeen extends Resource
         $remote_ip = Utils::queryParam('remote-ip');
         $context = Utils::queryParam('context');
         $from = Utils::checkInteger(Utils::queryParam('from'), 'from');
+        $sort = Utils::queryParam('sort');
+        $order = Utils::checkBoolean(Utils::queryParam('order'), 'order');
         $count = Utils::checkInteger(Utils::queryParam('count'), 'count');
         $startPage = Utils::checkInteger(Utils::queryParam('startPage'), 'startPage');
 
         $response = new Response($request);
-        $payload = cfmod_resource_host_id_seen($id, $rename_name, $remote_ip, $context,
-                $from, $count, $startPage);
+        $payload = cfmod_resource_host_id_seen($id, $remote_name, $remote_ip, $context,
+                $from, $sort, $order, $count, $startPage);
         if (is_null($payload))
         {
             $response = new Response($request);

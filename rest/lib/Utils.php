@@ -22,6 +22,16 @@ class Utils {
         }
     }
 
+    public static function checkBoolean($var, $name)
+    {
+        if (!is_null($var) && ($var === "true" || $var === "false"))
+        {
+            throw new ResponseException($name . ' must be true/false',
+                    Response::BADREQUEST);
+        }
+        return (bool)$var;
+    }
+
     public static function checkInteger($var, $name)
     {
         if (!is_null($var) && !ctype_digit($var))
