@@ -3827,6 +3827,8 @@ int Nova2PHP_body_list(char *name,char *type,char *returnval,int bufsize)
     }
 
  all_bodies = CFDB_QueryAllBodies(&dbconn,type,name);
+ CFDB_Close(&dbconn);
+ 
  all_bodies = SortItemListNames(all_bodies);
 
  if (all_bodies)
@@ -3842,10 +3844,7 @@ int Nova2PHP_body_list(char *name,char *type,char *returnval,int bufsize)
     EndJoin(returnval,"]",bufsize);
     }
 
- if (!CFDB_Close(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-    }
+ DeleteItemList(all_bodies);
 
  return true;
 }
