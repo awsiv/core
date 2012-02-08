@@ -20,88 +20,88 @@ libcfnova_la_LDFLAGS = -no-undefined
 
 # Separate out a library
 
-libcfnova_la_SOURCES =						\
-	benchmark.c						\
-	cfnova.c						\
-	conversion.c						\
-	logging.c logging.h					\
-	acl.c							\
-	acl_linux.c						\
-	acl_nt.c                                                \
-	bson_lib.c						\
-	database.c						\
-	db_save.c                                               \
-        db_query.c db_query                                     \
-        db_maintain.c                                           \
-	sql.c							\
-	ldap.c							\
-	license.c						\
-	registry.c						\
-	monitoring.c						\
-	ontology.c                                              \
-	server.c						\
-	datapackaging.c						\
-	dataunpack.c						\
-	client_code.c						\
-	outputs.c						\
-	promises.c						\
-	promise_db.c						\
-	packages.c						\
-	processes.c						\
-	pscalar.c						\
-	runagent.c						\
-	environments.c						\
-	reporting.c						\
-	html.c							\
-	syntax.c						\
-	scorecards.c scorecards.h				\
-	copernicus.c						\
-	histogram.c						\
-	yearly.c						\
-	weekly.c						\
-	magnify.c						\
-	topicmap.c                                              \
-	install.c						\
-	files_lib.c                                             \
-	cmd_api.c
+libcfnova_la_SOURCES = \
+        benchmark.c \
+        cfnova.c \
+        conversion.c \
+        logging.c logging.h \
+        acl.c \
+        acl_linux.c \
+        acl_nt.c \
+        bson_lib.c \
+        database.c \
+        db_save.c \
+        db_query.c db_query \
+        db_maintain.c \
+        sql.c \
+        ldap.c \
+        license.c \
+        registry.c \
+        monitoring.c \
+        ontology.c \
+        server.c \
+        datapackaging.c \
+        dataunpack.c \
+        client_code.c \
+        outputs.c \
+        promises.c \
+        promise_db.c \
+        packages.c \
+        processes.c \
+        pscalar.c \
+        runagent.c \
+        environments.c \
+        reporting.c \
+        html.c \
+        syntax.c \
+        scorecards.c scorecards.h \
+        copernicus.c \
+        histogram.c \
+        yearly.c \
+        weekly.c \
+        magnify.c \
+        topicmap.c \
+        install.c \
+        files_lib.c \
+        cmd_api.c
 
 if NT
-libcfnova_la_SOURCES +=                                         \
-	win_api.c						\
-        win_disphelper.c                                        \
-	win_file.c						\
-	win_log.c                                               \
-	win_mon.c                                               \
-	win_net.c 						\
-	win_pipe.c						\
-	win_proc.c						\
-	win_ps.c                                                \
-	win_service_exec.c                                      \
-	win_services.c						\
-	win_sysinfo.c                                           \
-	win_user.c                                              \
+libcfnova_la_SOURCES += \
+        win_api.c \
+        win_disphelper.c \
+        win_file.c \
+        win_log.c \
+        win_mon.c \
+        win_net.c \
+        win_pipe.c \
+        win_proc.c \
+        win_ps.c \
+        win_service_exec.c \
+        win_services.c \
+        win_sysinfo.c \
+        win_user.c \
         win_wmi.c
 else
-libcfnova_la_SOURCES +=                                         \
-	services.c
+libcfnova_la_SOURCES += \
+        services.c
 endif
 
 if MONGO
-libcfnova_la_SOURCES +=						\
-	web_api.c						\
-	web_rbac.c						
+libcfnova_la_SOURCES += \
+        web_api.c \
+        web_rbac.c
 endif
 
 if !NDEBUG
-libcfnova_la_SOURCES +=						\
-	web_api_test.c
+libcfnova_la_SOURCES += \
+        web_api_test.c
 endif
 
 libcfmonitord_la_LDFLAGS = -no-undefined
 
 libcfmonitord_la_SOURCES = \
-	probes.c \
-	mon_cumulative.c
+        probes.c \
+        mon_cumulative.c
 
 if LINUX
 libcfmonitord_la_SOURCES += mon_io_linux.c
@@ -123,20 +123,20 @@ endif
 if MONGO
 noinst_LTLIBRARIES += libcfhub.la
 
-libcfhub_la_SOURCES =	                                        \
-	hub.c
+libcfhub_la_SOURCES = \
+        hub.c
 endif
 
 noinst_LTLIBRARIES += libcfknow.la
 
 libcfknow_la_SOURCES = \
-	knowledge.c
+        knowledge.c
 
 #
 # Pickup header files here so Automake knows about them
 #
 
-noinst_HEADERS =							\
+noinst_HEADERS = \
         win_disphelper.h cf.nova.h cf.nova.web_api.h cf.nova.cmd_api.h bson_lib.h benchmark.h
 
 #

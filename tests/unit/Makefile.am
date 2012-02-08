@@ -12,7 +12,7 @@ AM_CFLAGS = $(NOVA_CFLAGS) $(CONSTELLATION_CFLAGS) -I$(CMOCKERY_DIR)
 MOCKERY_SOURCES = $(CMOCKERY_DIR)/cmockery.c
 
 check_PROGRAMS = \
-	logging_test
+        logging_test
 
 TESTS = $(check_PROGRAMS)
 
