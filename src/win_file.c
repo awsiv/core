@@ -16,6 +16,9 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#include "dir.h"
+#include "dir_impl.h"
+
 void NovaWin_CreateEmptyFile(char *name)
 {
  HANDLE fileHandle;
