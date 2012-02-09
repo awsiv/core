@@ -26,11 +26,13 @@ NGINX_PID=$!
 ./serve-mongo.sh&
 MONGO_PID=$!
 
-# Load Mongo state
-
+# Wait for Mongo to come online
 while ! mongo --port 27777 --eval 'db.ping'; do
   sleep 0.01
 done
+
+# Load Mongo state
+./load-data.sh data/rest
 
 # Run tests
 php -c conf/php.ini /usr/bin/phpunit ../rest/tests
