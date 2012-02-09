@@ -49,7 +49,11 @@ static const char *ERRID_DESCRIPTION[] =
 
 /*****************************************************************************/
 static cfapi_errid FormatReportInfoAsJson(char *reportId, ReportInfo *reports, char *buf, int bufsize);
-bool IsEnvMissionPortalTesting(void);
+
+/*****************************************************************************/
+#ifndef NDEBUG
+static bool IsEnvMissionPortalTesting(void);
+#endif
 /*****************************************************************************/
 #ifdef HAVE_LIBMONGOC
 
@@ -879,10 +883,12 @@ return true;
 int Nova2PHP_promiselog(char *hostkey,char *handle, PromiseLogState state,time_t from,time_t to,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
 { 
+#ifndef NDEBUG
 if(IsEnvMissionPortalTesting())
   {
   return Nova2PHP_promiselog_test( hostkey, handle, state, from, to, hostClassFilter, page, returnval, bufsize);
   }
+#endif
 
  char buffer[CF_BUFSIZE] = {0}, jsonEscapedStr[CF_BUFSIZE] = {0}, header[CF_BUFSIZE] = {0};
  HubPromiseLog *hp;  HubQuery *hq;
@@ -968,11 +974,13 @@ StartJoin(returnval,"{\"data\":[",bufsize);
 
 int Nova2PHP_promiselog_summary(char *hostkey,char *handle, PromiseLogState state,time_t from, time_t to,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
-{ 
+{
+#ifndef NDEBUG 
 if(IsEnvMissionPortalTesting())
   {
   return Nova2PHP_promiselog_summary_test(hostkey, handle, state, from, to, hostClassFilter, page, returnval, bufsize);
   }
+#endif
 
  char buffer[CF_BUFSIZE],jsonEscapedStr[CF_BUFSIZE]={0}, header[CF_BUFSIZE]={0};
  HubPromiseLog *hp;
@@ -1054,10 +1062,12 @@ if(IsEnvMissionPortalTesting())
 int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
 { 
+#ifndef NDEBUG
 if(IsEnvMissionPortalTesting())
   {
   return Nova2PHP_value_report_test(hostkey, day, month, year, hostClassFilter, page, returnval, bufsize);
   }
+#endif 
 
  HubValue *hp;
  HubQuery *hq;
@@ -1185,10 +1195,12 @@ int Nova2PHP_get_value_graph(char *hostkey,char *day,char *month,char *year,char
 int Nova2PHP_software_report(char *hostkey,char *name,char *value, char *arch,int regex,char *type,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
 { 
+#ifndef NDEBUG
 if(IsEnvMissionPortalTesting())
   {
   return Nova2PHP_software_report_test(hostkey, name, value, arch, regex, type, hostClassFilter, page, returnval, bufsize);
   }
+#endif
 
  char buffer[CF_BUFSIZE]={0}, header[CF_BUFSIZE]={0};
  int margin = 0,headerLen=0,noticeLen=0;
@@ -1254,10 +1266,12 @@ if(IsEnvMissionPortalTesting())
 int Nova2PHP_classes_report(char *hostkey,char *name,int regex,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
 { 
+#ifndef NDEBUG
 if(IsEnvMissionPortalTesting())
   {
   return  Nova2PHP_classes_report_test(hostkey,name,regex,hostClassFilter,page,returnval,bufsize);
   }
+#endif
 
  char buffer[CF_BUFSIZE]={0}, header[CF_BUFSIZE]={0};
  int margin = 0,headerLen=0,noticeLen=0;
@@ -1518,10 +1532,12 @@ int Nova2PHP_listclasses_all(char *hostkey,char *name,int regex,char *classreg,c
 int Nova2PHP_classes_summary(char **classes, char *buf, int bufsize)
 
 { 
+#ifndef NDEBUG
 if(IsEnvMissionPortalTesting())
   {
   return Nova2PHP_classes_summary_test(classes, buf, bufsize);
   }
+#endif
 
  mongo_connection dbconn;
  HubQuery *hq;
@@ -1589,10 +1605,12 @@ if(IsEnvMissionPortalTesting())
 int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
 { 
+#ifndef NDEBUG
 if(IsEnvMissionPortalTesting())
   {
   return Nova2PHP_vars_report_test(hostkey, scope, lval, rval, type, regex, hostClassFilter, page, returnval, bufsize);
   }
+#endif
 
  char buffer[CF_BUFSIZE],lscope[CF_MAXVARSIZE],jsonEscapedStr[CF_BUFSIZE]={0};
  char rvalBuf[CF_MAXVARSIZE];
@@ -1729,10 +1747,12 @@ if(IsEnvMissionPortalTesting())
 int Nova2PHP_compliance_report(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,HostClassFilter *hostClassFilter,PageInfo *page, char *returnval,int bufsize)
 
 { 
+#ifndef NDEBUG
 if(IsEnvMissionPortalTesting())
   {
   return Nova2PHP_compliance_report_test(hostkey, version, t, k, nk, rep, cmp, hostClassFilter, page, returnval, bufsize);
   }
+#endif
 
  char buffer[CF_BUFSIZE];
  HubTotalCompliance *ht;
@@ -1808,10 +1828,12 @@ if(IsEnvMissionPortalTesting())
 int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int regex,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
 { 
+#ifndef NDEBUG
 if(IsEnvMissionPortalTesting())
   {
   return Nova2PHP_compliance_promises(hostkey, handle, status, regex, hostClassFilter, page, returnval, bufsize);
   }
+#endif
 
  char buffer[CF_BUFSIZE];
  HubPromiseCompliance *hp;
@@ -2104,10 +2126,12 @@ int Nova2PHP_setuid_report(char *hostkey,char *file,int regex,HostClassFilter *h
 int Nova2PHP_bundle_report(char *hostkey,char *bundle,int regex,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
 { 
+#ifndef NDEBUG
 if(IsEnvMissionPortalTesting())
   {
   return Nova2PHP_bundle_report_test(hostkey,bundle,regex,hostClassFilter,page,returnval,bufsize);
   }
+#endif
 
  char buffer[CF_BUFSIZE]={0};
  HubBundleSeen *hb;   
@@ -3547,10 +3571,12 @@ void Nova2PHP_show_all_hosts(char *policy,int n,char *buffer,int bufsize)
 int Nova2PHP_show_hosts(char *hostNameRegex,char *ipRegex,char *classRegex,PageInfo *page,char *buf,int bufsize)
 
 {
+#ifndef NDEBUG
 if(IsEnvMissionPortalTesting())
   {
   return Nova2PHP_show_hosts_test(hostNameRegex,ipRegex,classRegex,page,buf,bufsize);
   }
+#endif
 
  HubQuery *hq;
  HubHost *hh;
@@ -5191,10 +5217,12 @@ int Nova2PHP_community_version(char *buf, int bufsize)
 int Nova2PHP_promise_list(PromiseFilter *promiseFilter ,char *returnval, int bufsize)
 
 { 
+#ifndef NDEBUG
 if(IsEnvMissionPortalTesting())
   {
   return Nova2PHP_promise_list_test(promiseFilter, returnval, bufsize);
   }
+#endif
 
   mongo_connection dbconn;
   char work[CF_MAXVARSIZE] = {0};
@@ -5354,6 +5382,7 @@ void EndJsonBuffer(char *buf, int bufsize, cfapi_errid errid)
 #endif  /* HAVE_LIBMONGOC */
 
 /*****************************************************************************/
+#ifndef NDEBUG
 bool IsEnvMissionPortalTesting()
 
 { const char *total_env = getenv("CFENGINE_TEST_MISSION_PORTAL");
@@ -5365,5 +5394,5 @@ if (total_env == NULL)
 
 return (atoi(total_env));
 }
-
+#endif // NDEBUG
 /*****************************************************************************/
