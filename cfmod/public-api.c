@@ -166,9 +166,8 @@ int len = -1;
 bool sortDescending = false;
 PageInfo page = { 0 };
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssslsbll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslsbll",
       &hostkey, &len,
-      &remote_ip, &len,
       &context, &len,
       &from,
       &sortColumnName, &len,
@@ -201,8 +200,6 @@ RETURN_JSON(output);
 PHP_FUNCTION(cfmod_resource_host_id_seen_by)
 {
 char *hostkey = NULL,
-     *remote_hostname = NULL,
-     *remote_ip = NULL,
      *context = NULL,
      *sortColumnName = NULL;
 long from = 0;
@@ -210,10 +207,8 @@ int len = -1;
 bool sortDescending = false;
 PageInfo page = { 0 };
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslsbll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslsbll",
       &hostkey, &len,
-      &remote_hostname, &len,
-      &remote_ip, &len,
       &context, &len,
       &from,
       &sortColumnName, &len,
@@ -229,7 +224,7 @@ mongo_connection conn;
 DATABASE_OPEN(&conn)
 
 HostClassFilter *filter = NewHostClassFilter(context, NULL);
-HubQuery *result = CFDB_QueryLastSeen(&conn, hostkey, NULL, remote_hostname, remote_ip,
+HubQuery *result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL,
                                       from, true, false, filter);
 DeleteHostClassFilter(filter);
 

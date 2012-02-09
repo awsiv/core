@@ -8,10 +8,9 @@ class HostIdSeen extends Resource
     function get($request, $id)
     {
         Utils::checkValidQueryParams(array(
-            'remote-ip', 'context', 'from'
+            'context', 'from'
         ));
 
-        $remote_ip = Utils::queryParam('remote-ip');
         $context = Utils::queryParam('context');
         $from = Utils::checkInteger(Utils::queryParam('from'), 'from');
         $sort = Utils::queryParam('sort');
@@ -20,7 +19,7 @@ class HostIdSeen extends Resource
         $startPage = Utils::checkInteger(Utils::queryParam('startPage'), 'startPage');
 
         $response = new Response($request);
-        $payload = cfmod_resource_host_id_seen($id, $remote_ip, $context,
+        $payload = cfmod_resource_host_id_seen($id, $context,
                 $from, $sort, $order, $count, $startPage);
         if (is_null($payload))
         {

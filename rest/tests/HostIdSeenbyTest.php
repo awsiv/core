@@ -41,37 +41,6 @@ class HostIdSeenbyTest extends RestBaseTest
     }
 
     /**
-     * Checks the remote ip parameter
-     * Matches the data format (array keys) that are returned and expected, doesnot check for the values 
-     */
-    public function testhostIdSeenByWithRemoteIP()
-    {
-        try
-        {
-            $remoteIp = "10.0.0.153";
-            $id = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
-
-            $jsonArray = $this->pest->get("/host/$id/seen?remote-ip=$remoteIp");
-            $this->assertValidJson($jsonArray);
-            $expectedArray = array(
-                "hostkey" => "",
-                "last-seen" => 288,
-                "average" => 288,
-                "stdv" => 144
-            );
-            $this->assertCount(1, $jsonArray);
-            if (isset($jsonArray[0]))
-            {
-                $this->assertTrue($this->array_keys_exists($jsonArray[0], array_keys($expectedArray)), "Returned data not equal to expected data.");
-            }
-        }
-        catch (Pest_NotFound $e)
-        {
-            $this->fail('Resource not found');
-        }
-    }
-
-    /**
      * Checks the remote context parameter
      * Matches the data format (array keys) that are returned and expected, doesnot check for the values 
      */
