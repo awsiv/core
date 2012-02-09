@@ -21,6 +21,7 @@ TAGS
 # unit tests
 
 tests/unit/*_test
+tests/test-db
 
 # emacs
 
