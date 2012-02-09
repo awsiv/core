@@ -19,6 +19,7 @@
 #define MONGO_MPSETTINGS_COLLECTION MONGO_MPBASE ".appsettings"
 
 #define dbkey_mpsettings_rbac "rbac"
+#define dbkey_mpsettings_auth_mode "mode"
 
 #define dbkey_user_name "username"
 #define dbkey_user_password "password"

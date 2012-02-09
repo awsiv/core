@@ -500,7 +500,15 @@ static const char *GetUsersCollection(mongo_connection *conn)
 
 static bool IsLDAPOn(mongo_connection *conn)
 {
- // FIXME -check this
+ char result[32] = {0};
+ 
+ CFDB_HandleGetValue(dbkey_mpsettings_auth_mode, result, sizeof(result), conn, MONGO_MPSETTINGS_COLLECTION);
+ 
+ if(strcmp(result, "ldap") == 0 || strcmp(result, "active_directory") == 0)
+    {
+    return true;
+    }
+
  return false;
 }
 
