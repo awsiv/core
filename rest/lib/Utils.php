@@ -21,6 +21,18 @@ class Utils {
             return $_GET[$name];
         }
     }
+    
+    public static function checkValidQueryParams($queryParams)
+    {
+        foreach (array_keys($_GET) as $value)
+        {
+            if (!in_array($value, $queryParams, true))
+            {
+                throw new ResponseException($value . ' is not a valid query parameter',
+                        Response::BADREQUEST);
+            }
+        }
+    }
 
     public static function checkBoolean($var, $name)
     {
