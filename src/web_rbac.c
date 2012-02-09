@@ -106,11 +106,6 @@ bson_bool_t found = mongo_find_one(&conn, GetUsersCollection(&conn), &query, &fi
 bson_destroy(&query);
 bson_destroy(&field);
 
-if (!CFDB_Close(&conn))
-   {
-   return ERRID_DBCLOSE;
-   }
-
 
 if (found)
    {
@@ -119,6 +114,8 @@ if (found)
       {
       if (!IsLDAPOn(&conn))
          {
+         CFDB_Close(&conn);
+         
          if (VerifyPasswordIonAuth(password, password_len, db_password))
             {
             return ERRID_SUCCESS;
@@ -131,6 +128,8 @@ if (found)
 
       }
    }
+
+CFDB_Close(&conn);
 
 return ERRID_RBAC_ACCESS_DENIED;
 }
