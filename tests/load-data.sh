@@ -8,7 +8,7 @@ fi
 
 PORT=27777
 
-echo "Importing data from ${DATADIR}"
+echo "Importing data from $1"
 
 mongoimport --port ${PORT} -d phpcfengine -c users --drop --file $1/phpcfengine.users.json --jsonArray
 
