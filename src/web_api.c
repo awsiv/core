@@ -877,7 +877,12 @@ return true;
 
 int Nova2PHP_promiselog(char *hostkey,char *handle, PromiseLogState state,time_t from,time_t to,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
-{ char buffer[CF_BUFSIZE] = {0}, jsonEscapedStr[CF_BUFSIZE] = {0}, header[CF_BUFSIZE] = {0};
+{ 
+#ifndef NDEBUG
+  return Nova2PHP_promiselog_test( hostkey, handle, state, from, to, hostClassFilter, page, returnval, bufsize);
+#endif
+
+ char buffer[CF_BUFSIZE] = {0}, jsonEscapedStr[CF_BUFSIZE] = {0}, header[CF_BUFSIZE] = {0};
  HubPromiseLog *hp;  HubQuery *hq;
  Rlist *rp;
  int reportType;
@@ -961,7 +966,12 @@ StartJoin(returnval,"{\"data\":[",bufsize);
 
 int Nova2PHP_promiselog_summary(char *hostkey,char *handle, PromiseLogState state,time_t from, time_t to,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
-{ char buffer[CF_BUFSIZE],jsonEscapedStr[CF_BUFSIZE]={0}, header[CF_BUFSIZE]={0};
+{ 
+#ifndef NDEBUG
+  return Nova2PHP_promiselog_summary_test(hostkey, handle, state, from, to, hostClassFilter, page, returnval, bufsize);
+#endif
+
+ char buffer[CF_BUFSIZE],jsonEscapedStr[CF_BUFSIZE]={0}, header[CF_BUFSIZE]={0};
  HubPromiseLog *hp;
  HubQuery *hq;
  Rlist *rp;
@@ -1040,7 +1050,12 @@ int Nova2PHP_promiselog_summary(char *hostkey,char *handle, PromiseLogState stat
 
 int Nova2PHP_value_report(char *hostkey,char *day,char *month,char *year,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
-{ HubValue *hp;
+{ 
+#ifndef NDEBUG
+  return Nova2PHP_value_report_test(hostkey, day, month, year, hostClassFilter, page, returnval, bufsize);
+#endif
+
+ HubValue *hp;
  HubQuery *hq;
  Rlist *rp;
  mongo_connection dbconn;
@@ -1165,7 +1180,11 @@ int Nova2PHP_get_value_graph(char *hostkey,char *day,char *month,char *year,char
 
 int Nova2PHP_software_report(char *hostkey,char *name,char *value, char *arch,int regex,char *type,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
-{ char buffer[CF_BUFSIZE]={0}, header[CF_BUFSIZE]={0};
+{ 
+#ifndef NDEBUG
+  return Nova2PHP_software_report_test(hostkey, name, value, arch, regex, type, hostClassFilter, page, returnval, bufsize);
+#endif
+ char buffer[CF_BUFSIZE]={0}, header[CF_BUFSIZE]={0};
  int margin = 0,headerLen=0,noticeLen=0;
  int truncated = false;
  HubSoftware *hs;
@@ -1561,14 +1580,19 @@ int Nova2PHP_classes_summary(char **classes, char *buf, int bufsize)
 
 int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *type,int regex,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
-{ char buffer[CF_BUFSIZE],lscope[CF_MAXVARSIZE],jsonEscapedStr[CF_BUFSIZE]={0};
+{ 
+#ifndef NDEBUG
+  return Nova2PHP_vars_report_test(hostkey, scope, lval, rval, type, regex, hostClassFilter, page, returnval, bufsize);
+#endif
+
+ char buffer[CF_BUFSIZE],lscope[CF_MAXVARSIZE],jsonEscapedStr[CF_BUFSIZE]={0};
  char rvalBuf[CF_MAXVARSIZE];
  HubVariable *hv;
  HubQuery *hq;
  Rlist *rp;
  mongo_connection dbconn;
  int first = true, countadded=false;
- int scope_record_count = 0,last_scope_record_count=0,first_scope_record_count=0, meta_len=0;
+ int scope_record_count = 0,last_scope_record_count=0,first_scope_record_count=0;
  char header[CF_BUFSIZE]={0};
  int margin = 0, noticeLen=0,headerLen=0;
  int truncated = false;
@@ -1586,7 +1610,6 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
  lscope[0] = '\0';
 
  snprintf(header,sizeof(header),"\"meta\":{\"count\":%d",page->totalResultCount);
- meta_len=strlen(buffer);
 
  headerLen = strlen(header);
  noticeLen = strlen(CF_NOTICE_TRUNCATED);
@@ -1601,7 +1624,7 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
        {
        strcpy(lscope,hv->scope);
       
-       if(strlen(buffer)>meta_len)
+       if(strlen(buffer)>0)
           {	  
 	  returnval[strlen(returnval)-1] = '\0';
 	  snprintf(buffer,CF_BUFSIZE,"],\"count\":%d},",first?first_scope_record_count:scope_record_count);
@@ -1696,7 +1719,12 @@ int Nova2PHP_vars_report(char *hostkey,char *scope,char *lval,char *rval,char *t
 /*****************************************************************************/
 int Nova2PHP_compliance_report(char *hostkey,char *version,time_t t,int k,int nk,int rep,char *cmp,HostClassFilter *hostClassFilter,PageInfo *page, char *returnval,int bufsize)
 
-{ char buffer[CF_BUFSIZE];
+{ 
+#ifndef NDEBUG
+  return Nova2PHP_compliance_report_test(hostkey, version, t, k, nk, rep, cmp, hostClassFilter, page, returnval, bufsize);
+#endif
+
+ char buffer[CF_BUFSIZE];
  HubTotalCompliance *ht;
  HubQuery *hq;
  Rlist *rp;
@@ -1769,7 +1797,12 @@ int Nova2PHP_compliance_report(char *hostkey,char *version,time_t t,int k,int nk
 
 int Nova2PHP_compliance_promises(char *hostkey,char *handle,char *status,int regex,HostClassFilter *hostClassFilter,PageInfo *page,char *returnval,int bufsize)
 
-{ char buffer[CF_BUFSIZE];
+{ 
+#ifndef NDEBUG
+  return Nova2PHP_compliance_promises(hostkey, handle, status, regex, hostClassFilter, page, returnval, bufsize);
+#endif
+
+ char buffer[CF_BUFSIZE];
  HubPromiseCompliance *hp;
  HubQuery *hq;
  Rlist *rp;
