@@ -648,9 +648,9 @@
 			  "t" : 1327653377
 			}
 	   },
-    "ha" : [ "policy.test.cfengine.com" ],
+    "ha" : [ "hostA" ],
     "kH" : "SHA=305658693b94e003e765956f1609731419cbc0e5c9caa09e230df5e005f1f283",
-    "ls" : { "+SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df" : { "a" : 0.029999999999999999,
+    "ls" : { "+SHA=33736d45041e2a9407be8cf449aeffa95114bef661c20deaca1bbcfbc2922856" : { "a" : 0.029999999999999999,
 											 "d" : 0.050000000000000003,
 											 "i" : "10.0.0.29",
 											 "t" : 1327653377,
@@ -1638,9 +1638,9 @@
 			  "t" : 1328194134
 			}
 	   },
-    "ha" : [ "redhat1.test.cfengine.com" ],
+    "ha" : [ "hostB" ],
     "kH" : "SHA=33736d45041e2a9407be8cf449aeffa95114bef661c20deaca1bbcfbc2922856",
-    "ls" : { "+SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df" : { "a" : 0.02,
+    "ls" : { "+SHA=305658693b94e003e765956f1609731419cbc0e5c9caa09e230df5e005f1f283" : { "a" : 0.02,
 											 "d" : 0.050000000000000003,
 											 "i" : "10.0.0.29",
 											 "t" : 1328194132,
