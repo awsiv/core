@@ -158,7 +158,6 @@ return output;
 PHP_FUNCTION(cfmod_resource_host_id_seen)
 {
 char *hostkey = NULL,
-     *remote_hostname = NULL,
      *remote_ip = NULL,
      *context = NULL,
      *sortColumnName = NULL;
@@ -167,9 +166,8 @@ int len = -1;
 bool sortDescending = false;
 PageInfo page = { 0 };
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslsbll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssslsbll",
       &hostkey, &len,
-      &remote_hostname, &len,
       &remote_ip, &len,
       &context, &len,
       &from,
@@ -186,8 +184,8 @@ mongo_connection conn;
 DATABASE_OPEN(&conn)
 
 HostClassFilter *filter = NewHostClassFilter(context, NULL);
-HubQuery *result = CFDB_QueryLastSeen(&conn, hostkey, NULL, remote_hostname, remote_ip,
-                                      (time_t)from, true, false, filter);
+HubQuery *result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, remote_ip,
+                                      from, true, false, filter);
 DeleteHostClassFilter(filter);
 
 DATABASE_CLOSE(&conn);
@@ -232,7 +230,7 @@ DATABASE_OPEN(&conn)
 
 HostClassFilter *filter = NewHostClassFilter(context, NULL);
 HubQuery *result = CFDB_QueryLastSeen(&conn, hostkey, NULL, remote_hostname, remote_ip,
-                                      Horizon(from), true, false, filter);
+                                      from, true, false, filter);
 DeleteHostClassFilter(filter);
 
 DATABASE_CLOSE(&conn);
