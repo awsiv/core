@@ -6710,8 +6710,8 @@ HubHost *CFDB_GetHostByKey(mongo_connection *conn, const char *hostkey)
 
     host = NewHubHost(NULL,
                       BsonGetString(&out, cfr_keyhash),
-                      host_names->name,
-                      ip_addresses->name);
+                      ip_addresses->name,
+                      host_names->name);
 
     DeleteItemList(host_names);
     DeleteItemList(ip_addresses);
