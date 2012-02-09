@@ -500,7 +500,7 @@ static const char *GetUsersCollection(mongo_connection *conn)
 
 static bool IsLDAPOn(mongo_connection *conn)
 {
- // FIXME - check this 
+ // FIXME -check this
  return false;
 }
 
@@ -508,8 +508,16 @@ static bool IsLDAPOn(mongo_connection *conn)
 
 static bool IsRBACOn(mongo_connection *conn)
 {
- // FIXME - check this 
- return true;
+ char result[8] = {0};
+ 
+ CFDB_HandleGetValue(dbkey_mpsettings_rbac, result, sizeof(result), conn, MONGO_MPSETTINGS_COLLECTION);
+
+ if(strcmp(result, "false") == 0)
+    {
+    return false;
+    }
+
+ return true;  // safe default
 }
 
 /*****************************************************************************/
