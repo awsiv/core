@@ -124,6 +124,12 @@ RETURN_NULL();
 
 /************************************************************************************/
 
+static time_t Horizon(long from)
+{
+time_t now = time(NULL);
+from = MIN(now, from);
+return now - from;
+}
 
 static JsonElement *HostsLastSeen(Rlist *records, LastSeenDirection direction)
 {
@@ -226,7 +232,7 @@ DATABASE_OPEN(&conn)
 
 HostClassFilter *filter = NewHostClassFilter(context, NULL);
 HubQuery *result = CFDB_QueryLastSeen(&conn, hostkey, NULL, remote_hostname, remote_ip,
-                                      from, true, false, filter);
+                                      Horizon(from), true, false, filter);
 DeleteHostClassFilter(filter);
 
 DATABASE_CLOSE(&conn);
@@ -702,15 +708,11 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslsbll",
    RETURN_NULL();
    }
 
-time_t now = time(NULL);
-from = MIN(now, from);
-time_t horizon = now - from;
-
 mongo_connection conn;
 DATABASE_OPEN(&conn)
 
 HostClassFilter *filter = NewHostClassFilter(context, NULL);
-HubQuery *result = CFDB_QueryClasses(&conn, hostkey, NULL, false, horizon, filter, false);
+HubQuery *result = CFDB_QueryClasses(&conn, hostkey, NULL, false, Horizon(from), filter, false);
 DeleteHostClassFilter(filter);
 
 DATABASE_CLOSE(&conn)
