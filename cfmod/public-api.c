@@ -702,11 +702,15 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslsbll",
    RETURN_NULL();
    }
 
+time_t now = time(NULL);
+from = MIN(now, from);
+time_t horizon = now - from;
+
 mongo_connection conn;
 DATABASE_OPEN(&conn)
 
 HostClassFilter *filter = NewHostClassFilter(context, NULL);
-HubQuery *result = CFDB_QueryClasses(&conn, hostkey, NULL, true, (time_t)from, filter, true);
+HubQuery *result = CFDB_QueryClasses(&conn, hostkey, NULL, false, horizon, filter, false);
 DeleteHostClassFilter(filter);
 
 DATABASE_CLOSE(&conn)
