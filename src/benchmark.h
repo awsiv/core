@@ -20,5 +20,3 @@ int Nova_BenchmarkReportStorage(char *reportFilePath, int iterationsToRun);
 
 
 #endif  /* NOT CFENGINE_BENCHMARK_H */
-
-    
