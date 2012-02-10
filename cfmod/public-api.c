@@ -9,6 +9,7 @@ static const char *API_VERSION = "v1";
 static const char *LABEL_DESCRIPTION = "description";
 static const char *LABEL_HOSTKEY = "hostkey";
 static const char *LABEL_HOSTKEYS = "hostkeys";
+static const char *LABEL_SCOPE = "scope";
 static const char *LABEL_NAME = "name";
 static const char *LABEL_VALUE = "value";
 static const char *LABEL_VERSION = "version";
@@ -22,6 +23,7 @@ static const char *LABEL_PATH = "path";
 static const char *LABEL_HANDLE = "handle";
 static const char *LABEL_COUNT = "count";
 static const char *LABEL_IP = "ip";
+static const char *LABEL_TYPE = "type";
 
 static const char *LABEL_STATE = "state";
 static const char *LABEL_STATE_REPAIRED = "repaired";
@@ -581,6 +583,11 @@ RETURN_JSON(output);
 
 static const char *DataTypeToString(const char *datatype)
 {
+if (strlen(datatype) == 2)
+   {
+   return "list";
+   }
+
 switch (*datatype)
    {
    case 's':
@@ -593,10 +600,6 @@ switch (*datatype)
      return "menu";
 
    default:
-      if (strlen(datatype) == 2)
-      {
-      return "list";
-      }
       return "unknown";
    }
 }
@@ -649,11 +652,13 @@ for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
 
    JsonElement *value_entry = JsonObjectCreate(3);
    JsonObjectAppendString(value_entry, LABEL_HOSTKEY, record->hh->keyhash);
-   JsonObjectAppendString(value_entry, LABEL_NAME, type);
+   JsonObjectAppendString(value_entry, LABEL_SCOPE, record->scope);
+   JsonObjectAppendString(value_entry, LABEL_NAME, record->lval);
+   JsonObjectAppendString(value_entry, LABEL_TYPE, type);
 
-   if (strcmp(type, "list") == 0)
+   if (strcmp(type, "list") == 0 )
       {
-      JsonObjectAppendString(value_entry, LABEL_VALUE, LABEL_ERROR_NOTIMPLEMENTED);
+      JsonObjectAppendArray(value_entry, LABEL_VALUE, RvalToJson(record->rval));
       }
    else // FIX: should condition on int/real/menu. possible?
       {

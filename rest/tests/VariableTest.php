@@ -24,18 +24,16 @@ class VariableTest extends RestBaseTest
     /**
      * Test variable with host key 
      */
-    public function testVariableWithHostKey()
+    public function testWithHostKey()
     {
-
-        $hostKey = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
-        $jsonArray = $this->pest->get('/variable?hostkey=' . $hostKey);
+        $jsonArray = $this->pest->get('/variable?hostkey=' . $this->hostA);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray));
         foreach ((array) $jsonArray as $data)
         {
-            if ($hostKey !== $data['hostkey'])
+            if ($this->hostA !== $data['hostkey'])
             {
-                $this->fail("No hostkey found in data, Expected :: " . $hostKey);
+                $this->fail("No hostkey found in data, Expected :: " . $this->hostA);
             }
         }
     }
@@ -43,10 +41,10 @@ class VariableTest extends RestBaseTest
     /**
      * Test variable with name 
      */
-    public function testVariableWithName()
+    public function testWithName()
     {
 
-        $handle = "stop_signal";
+        $handle = "dirs";
         $jsonArray = $this->pest->get('/variable?name=' . $handle);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
@@ -62,10 +60,10 @@ class VariableTest extends RestBaseTest
     /**
      * Test software with scope 
      */
-    public function testVariableWithScope()
+    public function testWithScope()
     {
 
-        $scope = "update_bins";
+        $scope = "control_runagent";
         $jsonArray = $this->pest->get('/variable?scope=' . $scope);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
@@ -74,10 +72,10 @@ class VariableTest extends RestBaseTest
     /**
      * Test software with value 
      */
-    public function testVariableWithValue()
+    public function testWithValue()
     {
 
-        $value = "term";
+        $value = "true";
         $jsonArray = $this->pest->get('/variable?value=' . $value);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
