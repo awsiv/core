@@ -24,9 +24,11 @@ class Utils {
     
     public static function checkValidQueryParams($queryParams)
     {
+        $defaultParams = array('sort', 'order', 'count', 'page');
+        
         foreach (array_keys($_GET) as $value)
         {
-            if (!in_array($value, $queryParams, true))
+            if (!in_array($value, $queryParams, true) && !in_array($value, $defaultParams, true))
             {
                 throw new ResponseException($value . ' is not a valid query parameter',
                         Response::BADREQUEST);
