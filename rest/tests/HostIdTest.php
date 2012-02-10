@@ -12,48 +12,31 @@ class HostIdTest extends RestBaseTest
     {
         try
         {
-            $id = "SHA=eb98cd79ff30c793a815ab4f29dc5d1400fc45a13f30db69bedb4c8ca3ab8576";
-            $jsonArray = $this->pest->get("/host/$id");
+            $jsonArray = $this->pest->get("/host/$this->hostA");
             $this->assertValidJson($jsonArray);
+            $this->assertEquals("hostA", $jsonArray["name"]);
         }
         catch (Pest_NotFound $e)
         {
             $this->fail('Resource not found');
         }
     }
-
+    
     /**
-     * 
-     * Matches the data format with values that are returned and expected 
+     * Get a 404 back for invalid host id
      */
-    public function testhostIdData()
+    public function testInvalidId()
     {
         try
         {
-            $id = "SHA=eb98cd79ff30c793a815ab4f29dc5d1400fc45a13f30db69bedb4c8ca3ab8576";
-            $jsonArray = $this->pest->get("/host/$id");
-            $this->assertValidJson($jsonArray);
-            $expectedArray = array(
-                "hostkey" => "SHA=eb98cd79ff30c793a815ab4f29dc5d1400fc45a13f30db69bedb4c8ca3ab8576",
-                "ip" => "10.0.0.156",
-                "name" => "suse1.test.cfengine.com"
-            );
-            $this->assertTrue($jsonArray == $expectedArray, "Expected values and returned array values are different.");
+            $jsonArray = $this->pest->get("host/$this->hostA");
         }
         catch (Pest_NotFound $e)
         {
-            $this->fail('Resource not found');
+            return;
         }
+        $this->fail('Found resource');
     }
 
-    /**
-     * This muust throw exception of resource not found
-     * @expectedException Pest_NotFound 
-     */
-    public function testhostIdWithInvalidData()
-    {
-        $id = "SHA=eb98cd79ff30c793a815ab4f29dc5d1400fc45a13f30db69bedb4c8ca3ab8579";
-        $this->pest->get("/host/$id");
-    }
-
+    
 }
