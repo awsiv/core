@@ -23,11 +23,10 @@ class HostTest extends RestBaseTest
     {
         try
         {
-            $ip = '10.0.0.150';
-            $jsonArray = $this->pest->get('/host?ip=' . $ip);
+            $jsonArray = $this->pest->get("/host?ip=$this->hostA_ip");
             $this->assertValidJson($jsonArray);
-            $expectedKey = "SHA=305658693b94e003e765956f1609731419cbc0e5c9caa09e230df5e005f1f283";
-            $this->assertEquals($expectedKey, $jsonArray[0], "got key :: $jsonArray[0]");
+            $this->assertEquals(1, sizeof($jsonArray));
+            $this->assertEquals($this->hostA, $jsonArray[0], "got key :: $jsonArray[0]");
         }
         catch (Pest_NotFound $e)
         {
@@ -39,11 +38,10 @@ class HostTest extends RestBaseTest
     {
         try
         {
-            $hostname = 'hub.test.cfengine.com';
-            $jsonArray = $this->pest->get('/host?hostname=' . $hostname);
+            $jsonArray = $this->pest->get('/host?hostname=hostA');
             $this->assertValidJson($jsonArray);
-            $expectedKey = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
-            $this->assertEquals($expectedKey, $jsonArray[0], "got key :: $jsonArray[0]");
+            $this->assertEquals(1, sizeof($jsonArray));
+            $this->assertEquals($this->hostA, $jsonArray[0], "got key :: $jsonArray[0]");
         }
         catch (Pest_NotFound $e)
         {
