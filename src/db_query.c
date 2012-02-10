@@ -1445,7 +1445,9 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *lscope,
                       match_type = false;
                       }
                    }
-                  
+
+                Rval rval = (Rval) { rrval, rtype };
+
                 // NOTE: rrval's ownership (deallocation) is either transferred, or it is freed here
                 if (match_type && match_scope && match_lval && match_rval)
                    {
@@ -1456,25 +1458,12 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *lscope,
                       hh = CreateEmptyHubHost();
                       }
                    
-                   PrependRlistAlien(&record_list,NewHubVariable(hh,dtype,rscope,rlval,rrval,rtype,rt));
+                   PrependRlistAlien(&record_list,NewHubVariable(hh, dtype, rscope, rlval, rval, rt));
                    }
                 else
                    {
-                   switch(rtype)
-                      {
-                      case CF_SCALAR:
-                          if (rrval)
-                             {
-                             free(rrval);
-                             }
-                          break;
-                         
-                      case CF_LIST:
-                          DeleteRlist(rrval);
-                          break;
-                      }                  
+                   DeleteRvalItem(rval);
                    }
-               
                 }
              }
           }   

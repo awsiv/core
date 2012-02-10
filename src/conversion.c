@@ -98,17 +98,17 @@ returnval[0] = '\0';
 for (rp = hq->records; rp != NULL; rp=rp->next)
    {
    hv = (HubVariable *)rp->item;
-   
+
    if (strlen(hv->dtype) > 1) // list
       {
       char b[CF_BUFSIZE];
       b[0] = '\0';
-      PrintRlist(b,CF_BUFSIZE,hv->rval);
+      PrintRlist(b,CF_BUFSIZE,hv->rval.item);
       snprintf(returnval,bufsize-1,"%s",b);
       }
    else
       {
-      snprintf(returnval,bufsize-1,"%s",(char *)hv->rval);
+      snprintf(returnval,bufsize-1,"%s",(char *)hv->rval.item);
       }
    }
 
@@ -152,7 +152,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    
    if (strlen(hv->dtype) > 1) // list
       {
-      *list = CopyRvalItem((Rval) { hv->rval, CF_LIST }).item;
+      *list = CopyRvalItem((Rval) { hv->rval.item, CF_LIST }).item;
       }
    else
       {

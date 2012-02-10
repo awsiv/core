@@ -1690,11 +1690,11 @@ if(IsEnvMissionPortalTesting())
 
     if (strlen(hv->dtype) > 1) // list
        {
-       PrintRlist(rvalBuf,sizeof(rvalBuf),hv->rval);
+       PrintRlist(rvalBuf,sizeof(rvalBuf),hv->rval.item);
        }
     else
        {
-       snprintf(rvalBuf,sizeof(rvalBuf),"%s",(char *)hv->rval);
+       snprintf(rvalBuf,sizeof(rvalBuf),"%s",(char *)hv->rval.item);
        }
 
     EscapeJson(rvalBuf,jsonEscapedStr,sizeof(jsonEscapedStr));

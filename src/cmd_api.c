@@ -580,11 +580,11 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    
    if (strlen(hv->dtype) > 1) // list
       {
-      PrintRlist(rvalBuf,sizeof(rvalBuf),hv->rval);
+      PrintRlist(rvalBuf,sizeof(rvalBuf),hv->rval.item);
       }
    else
       {
-      snprintf(rvalBuf,sizeof(rvalBuf),"%s",(char *)hv->rval);
+      snprintf(rvalBuf,sizeof(rvalBuf),"%s",(char *)hv->rval.item);
       }
 
    if (CSV)
@@ -2433,12 +2433,12 @@ int Nova2Txt_get_variable(char *hostkey,char *scope,char *lval,char *returnval,i
        {
        char b[CF_BUFSIZE];
        b[0] = '\0';
-       PrintRlist(b,CF_BUFSIZE,hv->rval);
+       PrintRlist(b,CF_BUFSIZE,hv->rval.item);
        snprintf(returnval,bufsize-1,"%s",b);
        }
     else
        {
-       snprintf(returnval,bufsize-1,"%s",(char *)hv->rval);
+       snprintf(returnval,bufsize-1,"%s",(char *)hv->rval.item);
        }
     }
 

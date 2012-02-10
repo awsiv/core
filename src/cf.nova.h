@@ -333,9 +333,8 @@ typedef struct
    HubHost *hh;
    char *scope;
    char *lval;
-   void *rval;
+   Rval rval;
    char *dtype;
-   char rtype;
    time_t t;
    } HubVariable;
 
@@ -975,7 +974,7 @@ HubClassSum *NewHubClassSum(HubHost *hh,char *class,int frequency);
 void DeleteHubClassSum(HubClassSum *hc);
 HubTotalCompliance *NewHubTotalCompliance(HubHost *hh,time_t t,char *v,int k,int r,int n);
 void DeleteHubTotalCompliance(HubTotalCompliance *ht);
-HubVariable *NewHubVariable(HubHost *hh,char *type,char *scope,char *lval,void *rval,char rtype,time_t t);
+HubVariable *NewHubVariable(HubHost *hh, char *type, char *scope, char *lval, Rval rval, time_t t);
 void DeleteHubVariable(HubVariable *hv);
 HubPromiseLog *NewHubPromiseLog(HubHost *hh, char *handle,char *cause,time_t t, char *noteId,char *oid);
 void DeleteHubPromiseLog(HubPromiseLog *hp);

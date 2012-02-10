@@ -651,13 +651,13 @@ for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    JsonObjectAppendString(value_entry, LABEL_HOSTKEY, record->hh->keyhash);
    JsonObjectAppendString(value_entry, LABEL_NAME, type);
 
-   if (strcmp(type, "list"))
+   if (strcmp(type, "list") == 0)
       {
       JsonObjectAppendString(value_entry, LABEL_VALUE, LABEL_ERROR_NOTIMPLEMENTED);
       }
-   else
+   else // FIX: should condition on int/real/menu. possible?
       {
-      JsonObjectAppendString(value_entry, LABEL_VALUE, (const char *)record->rval);
+      JsonObjectAppendString(value_entry, LABEL_VALUE, (const char *)record->rval.item);
       }
 
    JsonArrayAppendObject(values, value_entry);

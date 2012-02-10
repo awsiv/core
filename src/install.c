@@ -433,14 +433,13 @@ void DeleteHubCacheTotalCompliance(HubCacheTotalCompliance *tc)
 
 /*****************************************************************************/
 
-HubVariable *NewHubVariable(HubHost *hh,char *type,char *scope,char *lval,void *rval,char rtype,time_t t)
+HubVariable *NewHubVariable(HubHost *hh,char *type,char *scope,char *lval, Rval rval, time_t t)
 // NOTE: rval must be allocated by caller
 { HubVariable *hp;
      
 hp = xmalloc(sizeof(HubVariable));
 
  hp->hh = hh;
- hp->rtype = rtype;
  hp->rval = rval;
  hp->scope = xstrdup(scope);
  hp->lval = xstrdup(lval);
@@ -457,21 +456,7 @@ void DeleteHubVariable(HubVariable *hv)
  free(hv->scope);
  free(hv->lval);
  free(hv->dtype);
-
- switch(hv->rtype)
-    {
-    case CF_SCALAR:
-        if (hv->rval)
-           {
-           free(hv->rval);
-           }
-        break;
-       
-    case CF_LIST:
-        DeleteRlist(hv->rval);
-        break;
-    }
-
+ DeleteRvalItem(hv->rval);
  free(hv);
 }
 
