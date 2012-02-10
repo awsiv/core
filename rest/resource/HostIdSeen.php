@@ -8,19 +8,19 @@ class HostIdSeen extends Resource
     function get($request, $id)
     {
         Utils::checkValidQueryParams(array(
-            'context', 'from'
+            'from',
         ));
 
-        $context = Utils::queryParam('context');
         $from = Utils::checkInteger(Utils::queryParam('from'), 'from');
+
         $sort = Utils::queryParam('sort');
         $order = Utils::checkBoolean(Utils::queryParam('order'), 'order');
         $count = Utils::checkInteger(Utils::queryParam('count'), 'count');
         $startPage = Utils::checkInteger(Utils::queryParam('startPage'), 'startPage');
 
         $response = new Response($request);
-        $payload = cfmod_resource_host_id_seen($id, $context,
-                $from, $sort, $order, $count, $startPage);
+        $payload = cfmod_resource_host_id_seen($id, $from,
+                $sort, $order, $count, $startPage);
         if (is_null($payload))
         {
             $response = new Response($request);

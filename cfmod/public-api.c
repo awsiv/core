@@ -158,17 +158,14 @@ return output;
 PHP_FUNCTION(cfmod_resource_host_id_seen)
 {
 char *hostkey = NULL,
-     *remote_ip = NULL,
-     *context = NULL,
      *sortColumnName = NULL;
 long from = 0;
 int len = -1;
 bool sortDescending = false;
 PageInfo page = { 0 };
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslsbll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "slsbll",
       &hostkey, &len,
-      &context, &len,
       &from,
       &sortColumnName, &len,
       &sortDescending,
@@ -182,9 +179,9 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslsbll",
 mongo_connection conn;
 DATABASE_OPEN(&conn)
 
-HostClassFilter *filter = NewHostClassFilter(context, NULL);
-HubQuery *result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, remote_ip,
-                                      from, true, false, filter);
+HostClassFilter *filter = NewHostClassFilter(NULL, NULL);
+HubQuery *result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL,
+                                      from, false, false, filter);
 DeleteHostClassFilter(filter);
 
 DATABASE_CLOSE(&conn);
@@ -200,16 +197,14 @@ RETURN_JSON(output);
 PHP_FUNCTION(cfmod_resource_host_id_seen_by)
 {
 char *hostkey = NULL,
-     *context = NULL,
      *sortColumnName = NULL;
 long from = 0;
 int len = -1;
 bool sortDescending = false;
 PageInfo page = { 0 };
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslsbll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "slsbll",
       &hostkey, &len,
-      &context, &len,
       &from,
       &sortColumnName, &len,
       &sortDescending,
@@ -223,9 +218,9 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslsbll",
 mongo_connection conn;
 DATABASE_OPEN(&conn)
 
-HostClassFilter *filter = NewHostClassFilter(context, NULL);
+HostClassFilter *filter = NewHostClassFilter(NULL, NULL);
 HubQuery *result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL,
-                                      from, true, false, filter);
+                                      from, false, false, filter);
 DeleteHostClassFilter(filter);
 
 DATABASE_CLOSE(&conn);
