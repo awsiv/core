@@ -8,7 +8,7 @@ class PromiseComplianceTest extends RestBaseTest
     /**
      * test valid json response 
      */
-    public function testAllPromiseCompliance()
+    public function testAll()
     {
         try
         {
@@ -24,7 +24,7 @@ class PromiseComplianceTest extends RestBaseTest
     /**
      * Test promise compliance with host key parameter 
      */
-    public function testPromiseComplianceWithHostKey()
+    public function testWithHostKey()
     {
 
         $hostKey = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
@@ -42,7 +42,7 @@ class PromiseComplianceTest extends RestBaseTest
     /**
      * Test promise compliance with handle 
      */
-    public function testPromiseComplianceWithHandle()
+    public function testWithHandle()
     {
 
         $handle = "check_valid_update";
@@ -61,7 +61,7 @@ class PromiseComplianceTest extends RestBaseTest
     /**
      * Test promise compliance with context 
      */
-    public function testPromiseComplianceWithContext()
+    public function testWithContext()
     {
         $context = "10_0_0_153";
         $jsonArray = $this->pest->get('/promise/compliance?context=' . $context);
@@ -79,7 +79,7 @@ class PromiseComplianceTest extends RestBaseTest
     /**
      * Test promise compliance with state 
      */
-    public function testPromiseComplianceWithState()
+    public function testWithState()
     {
         $jsonArray = $this->pest->get('/promise/compliance?state=repaired');
         $this->assertValidJson($jsonArray);
@@ -93,7 +93,7 @@ class PromiseComplianceTest extends RestBaseTest
     /**
      * Invalid state should get a bad request
      */
-    public function testPromiseComplianceWithInvalidState()
+    public function testWithInvalidState()
     {
         try
         {
