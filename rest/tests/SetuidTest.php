@@ -24,18 +24,16 @@ class SetuidTest extends RestBaseTest
     /**
      * Test setuid with host key 
      */
-    public function testSetUidWithHostKey()
+    public function testWithHostKey()
     {
-
-        $hostKey = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
-        $jsonArray = $this->pest->get('/setuid?hostkey=' . $hostKey);
+        $jsonArray = $this->pest->get('/setuid?hostkey=' . $this->hostA);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray));
         foreach ((array) $jsonArray as $data)
         {
-            if (!in_array($hostKey, $data['hostkeys']))
+            if (!in_array($this->hostA, $data['hostkeys']))
             {
-                $this->fail("No hostkey found in data, Expected :: " . $hostKey);
+                $this->fail("No hostkey found in data, Expected :: " . $this->hostA);
             }
         }
     }
@@ -43,7 +41,7 @@ class SetuidTest extends RestBaseTest
     /**
      * Test setuid with name 
      */
-    public function testSetUidWithName()
+    public function testWithName()
     {
 
         $handle = "/usr/bin/chfn";
@@ -62,19 +60,18 @@ class SetuidTest extends RestBaseTest
     /**
      * Test setuid with context 
      */
-    public function testSetUidWithContext()
+    public function testWithContext()
     {
 
-        $context = "10_0_0_29";
+        $context = "10_0_0_150";
         $jsonArray = $this->pest->get('/setuid?context=' . $context);
         $this->assertValidJson($jsonArray);
-        $hostKey = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
         foreach ((array) $jsonArray as $data)
         {
-            if (!in_array($hostKey, $data['hostkeys']))
+            if (!in_array($this->hostA, $data['hostkeys']))
             {
-                $this->fail("No hostkey found in data, Expected :: " . $hostKey);
+                $this->fail("No hostkey found in data, Expected :: " . $this->hostA);
             }
         }
     }
