@@ -24,18 +24,16 @@ class PromiseLogNotKeptTest extends RestBaseTest
     /**
      * Test PromiseLogNotKept with host key parameter 
      */
-    public function testPromiseLogNotKeptWithHostKey()
+    public function testWithHostKey()
     {
-
-        $hostkey = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
-        $jsonArray = $this->pest->get('/promise/log/not-kept/?hostkey=' . $hostkey);
+        $jsonArray = $this->pest->get('/promise/log/not-kept/?hostkey=' . $this->hostA);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray));
         foreach ((array) $jsonArray as $data)
         {
-            if ($data['hostkey'] !== "$hostkey")
+            if ($data['hostkey'] !== $this->hostA)
             {
-                $this->fail("different hostkey  found in data, found :: " . $data['hostkey'] . " Expected :: " . $hostkey);
+                $this->fail("different hostkey  found in data, found :: " . $data['hostkey'] . " Expected :: " . $this->hostA);
             }
         }
     }
@@ -43,7 +41,7 @@ class PromiseLogNotKeptTest extends RestBaseTest
     /**
      * Test PromiseLogNotKept with handle 
      */
-    public function testPromiseLogNotKeptWithHandle()
+    public function testWithHandle()
     {
 
         $handle = "cfengine_php_mod_files_cfmod_ini_ubuntu10";
@@ -61,19 +59,18 @@ class PromiseLogNotKeptTest extends RestBaseTest
     /**
      * Test  PromiseLogNotKept with context 
      */
-    public function testPromiseLogNotKeptWithContext()
+    public function testWithContext()
     {
 
-        $context = "10_0_0_153";
+        $context = "10_0_0_150";
         $jsonArray = $this->pest->get('/promise/log/not-kept?context=' . $context);
         $this->assertValidJson($jsonArray);
-        $hostkey = "SHA=33736d45041e2a9407be8cf449aeffa95114bef661c20deaca1bbcfbc2922856";
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
         foreach ((array) $jsonArray as $data)
         {
-            if ($data['hostkey'] !== "$hostkey")
+            if ($data['hostkey'] !== $this->hostA)
             {
-                $this->fail("different hostkey  found in data, found :: " . $data['hostkey'] . " Expected :: " . $hostkey);
+                $this->fail("different hostkey  found in data, found :: " . $data['hostkey'] . " Expected :: " . $this->hostA);
             }
         }
     }
