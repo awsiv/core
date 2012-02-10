@@ -74,7 +74,6 @@ ZEND_END_MODULE_GLOBALS(cfmod)
 #define CFMOD_G(v) (cfmod_globals.v)
 #endif
 
-#endif	/* PHP_CFMOD_H */
 
 
 /*
@@ -86,3 +85,5 @@ ZEND_END_MODULE_GLOBALS(cfmod)
  * vim<600: noet sw=4 ts=4
  *
  */
+
+#endif	/* PHP_CFMOD_H */
