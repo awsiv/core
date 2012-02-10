@@ -8,7 +8,7 @@ class PromiseLogRepairedTest extends RestBaseTest
     /**
      * test valid json response 
      */
-    public function testAllPromiseLogRepaired()
+    public function testAll()
     {
         try
         {
@@ -24,11 +24,9 @@ class PromiseLogRepairedTest extends RestBaseTest
     /**
      * Test Promise Log Repaired   with host key parameter 
      */
-    public function testPromiseLogRepairedWithHostKey()
+    public function testWithHostKey()
     {
-
-        $hostKey = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
-        $jsonArray = $this->pest->get('/promise/log/repaired?hostkey=' . $hostKey);
+        $jsonArray = $this->pest->get('/promise/log/repaired?hostkey=' . $this->hostA);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray));
     }
@@ -39,7 +37,7 @@ class PromiseLogRepairedTest extends RestBaseTest
     public function testPromiseLogRepairedWithHandle()
     {
 
-        $handle = "cfengine_php_mod_commands_apache2_debian";
+        $handle = "garbage_collection_files_tidy_outputs";
         $jsonArray = $this->pest->get('/promise/log/repaired?handle=' . $handle);
         $this->assertValidJson($jsonArray);
         foreach ((array) $jsonArray as $data)
@@ -54,19 +52,18 @@ class PromiseLogRepairedTest extends RestBaseTest
     /**
      * Test  Promise Log Repaired summary with context 
      */
-    public function testPromiseLogRepairedWithContext()
+    public function testWithContext()
     {
 
-        $context = "10_0_0_153";
+        $context = "10_0_0_150";
         $jsonArray = $this->pest->get('/promise/log/repaired?context=' . $context);
         $this->assertValidJson($jsonArray);
-        $hostkey = "SHA=33736d45041e2a9407be8cf449aeffa95114bef661c20deaca1bbcfbc2922856";
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
         foreach ((array) $jsonArray as $data)
         {
-            if ($data['hostkey'] !== "$hostkey")
+            if ($data['hostkey'] !== $this->hostA)
             {
-                $this->fail("different hostkey  found in data, found :: " . $data['hostkey'] . " Expected :: " . $hostkey);
+                $this->fail("different hostkey  found in data, found :: " . $data['hostkey'] . " Expected :: " . $this->hostA);
             }
         }
     }
