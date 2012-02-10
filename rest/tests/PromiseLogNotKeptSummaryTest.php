@@ -22,13 +22,11 @@ class PromiseLogNotKeptSummaryTest extends RestBaseTest
     }
 
     /**
-     * Test PromiseLogNotKept with host key parameter 
+     * Test with host key parameter 
      */
-    public function testPromiseLogNotKeptSummaryWithHostKey()
+    public function testWithHostKey()
     {
-
-        $hostKey = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
-        $jsonArray = $this->pest->get('/promise/log/not-kept/summary?hostkey=' . $hostKey);
+        $jsonArray = $this->pest->get('/promise/log/not-kept/summary?hostkey=' . $this->hostA);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray));
     }
@@ -36,10 +34,10 @@ class PromiseLogNotKeptSummaryTest extends RestBaseTest
     /**
      * Test PromiseLogNotKept with handle 
      */
-    public function testPromiseLogNotKeptSummaryWithHandle()
+    public function testWithHandle()
     {
 
-        $handle = "cfengine_php_mod_files_cfmod_ini_ubuntu10";
+        $handle = "cfengine_correct_cftwin_files_libtwin";
         $jsonArray = $this->pest->get('/promise/log/not-kept/summary?handle=' . $handle);
         $this->assertValidJson($jsonArray);
         $this->assertCount(1, $jsonArray);
@@ -50,26 +48,20 @@ class PromiseLogNotKeptSummaryTest extends RestBaseTest
                 $this->fail("different handle found in data, found :: " . $data['handle'] . " Expected :: " . $handle);
             }
         }
+        $this->assertEquals(4, $jsonArray[0]['count']);
     }
 
     /**
      * Test  PromiseLogNotKept with context 
      */
-    public function testPromiseLogNotKeptSummaryWithContext()
+    public function testWithContext()
     {
 
-        $context = "10_0_0_153";
+        $context = "10_0_0_150";
         $jsonArray = $this->pest->get('/promise/log/not-kept/summary?context=' . $context);
         $this->assertValidJson($jsonArray);
-        $handle = "cdp_cmd_c__windows_system32_cmd_exe__c__echo_hello_succeeded___c__reportfile_txt___hello_failed";
-        $this->assertFalse(empty($jsonArray), "Should not return empty result.");
-        foreach ((array) $jsonArray as $data)
-        {
-            if ($data['handle'] !== "$handle")
-            {
-                $this->fail("different handle  found in data, found :: " . $data['handle'] . " Expected :: " . $handle);
-            }
-        }
+        $this->assertCount(2, $jsonArray);
+        $this->assertEquals(4, $jsonArray[0]['count']);
     }
 
 }
