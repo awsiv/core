@@ -734,7 +734,7 @@ JsonElement *entry = JsonObjectCreate(4);
 
 JsonObjectAppendString(entry, LABEL_NAME, software->name);
 JsonObjectAppendString(entry, LABEL_VERSION, software->version);
-JsonObjectAppendString(entry, LABEL_ARCH, software->arch);
+JsonObjectAppendString(entry, LABEL_ARCH, Nova_LongArch(software->arch));
 
 JsonElement *hostkeys = JsonArrayCreate(100);
 JsonArrayAppendString(hostkeys, software->hh->keyhash);
@@ -750,7 +750,7 @@ for (size_t i = 0; i < JsonElementLength(entries); i++)
    JsonElement *entry = JsonArrayGetAsObject(entries, i);
    if (strcmp(JsonObjectGetAsString(entry, LABEL_NAME), software->name) == 0 &&
        strcmp(JsonObjectGetAsString(entry, LABEL_VERSION), software->version) == 0 &&
-       strcmp(JsonObjectGetAsString(entry, LABEL_ARCH), software->arch) == 0)
+       strcmp(JsonObjectGetAsString(entry, LABEL_ARCH), Nova_LongArch(software->arch)) == 0)
       {
       return entry;
       }
@@ -792,7 +792,7 @@ DATABASE_OPEN(&conn)
 HostClassFilter *filter = NewHostClassFilter(context, NULL);
 
 HubQuery *result = CFDB_QuerySoftware(&conn, hostkey,
-   cfr_software, name, version, arch, true, filter,true);
+   cfr_software, name, version, Nova_ShortArch(arch), true, filter,true);
 
 DeleteHostClassFilter(filter);
 

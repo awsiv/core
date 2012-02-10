@@ -8,7 +8,7 @@ class SoftwareTest extends RestBaseTest
     /**
      * test valid json response 
      */
-    public function testAllSoftware()
+    public function testAll()
     {
         try
         {
@@ -24,18 +24,16 @@ class SoftwareTest extends RestBaseTest
     /**
      * Test software with host key 
      */
-    public function testSoftwareWithHostKey()
+    public function testWithHostKey()
     {
-
-        $hostKey = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
-        $jsonArray = $this->pest->get('/software?hostkey=' . $hostKey);
+        $jsonArray = $this->pest->get('/software?hostkey=' . $this->hostA);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray));
         foreach ((array) $jsonArray as $data)
         {
-            if (!in_array($hostKey, $data['hostkeys']))
+            if (!in_array($this->hostA, $data['hostkeys']))
             {
-                $this->fail("No hostkey found in data, Expected :: " . $hostKey);
+                $this->fail("No hostkey found in data, Expected :: " . $this->hostA);
             }
         }
     }
@@ -43,10 +41,10 @@ class SoftwareTest extends RestBaseTest
     /**
      * Test software with name 
      */
-    public function testSoftwareWithName()
+    public function testWithName()
     {
 
-        $handle = "apache2";
+        $handle = "apparmor";
         $jsonArray = $this->pest->get('/software?name=' . $handle);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
@@ -62,34 +60,29 @@ class SoftwareTest extends RestBaseTest
     /**
      * Test software with context 
      */
-    public function testSoftwareWithContext()
+    public function testWithContext()
     {
 
-        $context = "10_0_0_29";
+        $context = "10_0_0_150";
         $jsonArray = $this->pest->get('/software?context=' . $context);
         $this->assertValidJson($jsonArray);
-        $hostKey = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
         foreach ((array) $jsonArray as $data)
         {
-            if (!in_array($hostKey, $data['hostkeys']))
+            if (!in_array($this->hostA, $data['hostkeys']))
             {
-                $this->fail("No hostkey found in data, Expected :: " . $hostKey);
+                $this->fail("No hostkey found in data, Expected :: " . $this->hostA);
             }
         }
     }
 
     /**
-     *  Test the failing data for software
-     */
-
-    /**
      * Test software with name 
      */
-    public function testSoftwareWithEmptyArchValue()
+    public function testWithEmptyArchValue()
     {
 
-        $handle = "Deployment_Guide-en-US";
+        $handle = "apparmor";
         $jsonArray = $this->pest->get('/software?name=' . $handle);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
@@ -105,14 +98,14 @@ class SoftwareTest extends RestBaseTest
     /**
      * Test software with version 
      */
-    public function testSoftwareWithVersion()
+    public function testWithVersion()
     {
 
-        $version = "3.23-1.2";
+        $version = "3.112ubuntu1";
         $jsonArray = $this->pest->get('/software?version=' . $version);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
-        $handle = "MAKEDEV";
+        $handle = "adduser";
         foreach ((array) $jsonArray as $data)
         {
             if ($data['name'] !== "$handle")
@@ -122,7 +115,7 @@ class SoftwareTest extends RestBaseTest
         }
     }
 
-    public function testSoftwareWithDefaultArch()
+    public function testWithDefaultArch()
     {
 
         $arch = "default";
@@ -138,10 +131,16 @@ class SoftwareTest extends RestBaseTest
         }
     }
 
-    public function testSoftwareWithX_86_64Arch()
+    public function testWithInvalidArch()
+    {
+        $jsonArray = $this->pest->get('/software?arch=snookie');
+        $this->assertTrue(empty($jsonArray));
+    }
+    
+    public function testWithX_86_64Arch()
     {
 
-        $arch = "x_86_64";
+        $arch = "x86_64";
         $jsonArray = $this->pest->get('/software?arch=' . $arch);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
