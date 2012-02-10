@@ -581,27 +581,84 @@ RETURN_JSON(output);
 /************************************************************************************/
 
 
-static const char *DataTypeToString(const char *datatype)
+static const char *DeserializeRvalType(const char *datatype)
 {
-if (strlen(datatype) == 2)
+if (strcmp("sl", datatype) == 0)
    {
-   return "list";
+   return "slist";
+   }
+if (strcmp("rl", datatype) == 0)
+   {
+   return "rlist";
+   }
+if (strcmp("il", datatype) == 0)
+   {
+   return "ilist";
+   }
+else if (strcmp("ml", datatype) == 0)
+   {
+   return "mlist";
    }
 
-switch (*datatype)
+else if (strcmp("s", datatype) == 0)
    {
-   case 's':
-     return "string";
-   case 'i':
-     return "int";
-   case 'r':
-     return "real";
-   case 'm':
-     return "menu";
-
-   default:
-      return "unknown";
+   return "string";
    }
+else if (strcmp("r", datatype) == 0)
+   {
+   return "real";
+   }
+else if (strcmp("i", datatype) == 0)
+   {
+   return "int";
+   }
+else if (strcmp("m", datatype) == 0)
+   {
+   return "menu";
+   }
+
+assert(false && "Cannot deserialize rval datatype");
+return "unknown";
+}
+
+static const char *SerializeRvalType(const char *str)
+{
+if (strcmp("slist", str) == 0)
+   {
+   return "sl";
+   }
+if (strcmp("rlist", str) == 0)
+   {
+   return "rl";
+   }
+if (strcmp("ilist", str) == 0)
+   {
+   return "il";
+   }
+else if (strcmp("mlist", str) == 0)
+   {
+   return "ml";
+   }
+
+else if (strcmp("string", str) == 0)
+   {
+   return "s";
+   }
+else if (strcmp("real", str) == 0)
+   {
+   return "r";
+   }
+else if (strcmp("int", str) == 0)
+   {
+   return "i";
+   }
+else if (strcmp("menu", str) == 0)
+   {
+   return "m";
+   }
+
+assert(false && "Cannot serialize rval datatype");
+return NULL; // from core conversion.c
 }
 
 
@@ -639,7 +696,7 @@ DATABASE_OPEN(&conn)
 
 HostClassFilter *filter = NewHostClassFilter(context, NULL);
 HubQuery *result = CFDB_QueryVariables(&conn, hostkey,
-   scope, name, value, type, true, filter);
+   scope, name, value, SerializeRvalType(type), true, filter);
 DeleteHostClassFilter(filter);
 
 DATABASE_CLOSE(&conn)
@@ -648,15 +705,15 @@ JsonElement *values = JsonArrayCreate(100);
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    {
    HubVariable *record = (HubVariable *)rp->item;
-   const char *type = DataTypeToString(record->dtype);
+   const char *datatype = DeserializeRvalType(record->dtype);
 
    JsonElement *value_entry = JsonObjectCreate(3);
    JsonObjectAppendString(value_entry, LABEL_HOSTKEY, record->hh->keyhash);
    JsonObjectAppendString(value_entry, LABEL_SCOPE, record->scope);
    JsonObjectAppendString(value_entry, LABEL_NAME, record->lval);
-   JsonObjectAppendString(value_entry, LABEL_TYPE, type);
+   JsonObjectAppendString(value_entry, LABEL_TYPE, datatype);
 
-   if (strcmp(type, "list") == 0 )
+   if (strstr(datatype, "list"))
       {
       JsonObjectAppendArray(value_entry, LABEL_VALUE, RvalToJson(record->rval));
       }

@@ -58,7 +58,7 @@ class Utils {
     
     public static function checkPromiseState($state)
     {
-        if (!in_array($state, array('kept', 'notkept', 'repaired')))
+        if (!is_null($var) && !in_array($state, array('kept', 'notkept', 'repaired')))
         {
             throw new ResponseException('Valid promise states are kept, notkept and repaired',
                     Response::BADREQUEST);

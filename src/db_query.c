@@ -1274,7 +1274,7 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn,char *keyHash,char *l
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *lscope,char *llval,char *lrval,char *ltype,int regex, HostClassFilter *hostClassFilter)
+HubQuery *CFDB_QueryVariables(mongo_connection *conn,char *keyHash,char *lscope,char *llval,char *lrval, const char *ltype,int regex, HostClassFilter *hostClassFilter)
 {
  bson_buffer bb;
  bson query,field;
