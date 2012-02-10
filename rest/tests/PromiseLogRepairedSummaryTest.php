@@ -8,7 +8,7 @@ class PromiseLogRepairedSummaryTest extends RestBaseTest
     /**
      * test valid json response 
      */
-    public function testAllPromiseLogRepairedSummary()
+    public function testAll()
     {
         try
         {
@@ -24,11 +24,9 @@ class PromiseLogRepairedSummaryTest extends RestBaseTest
     /**
      * Test Promise Log Repaired summary  with host key parameter 
      */
-    public function testPromiseLogRepairedSummaryWithHostKey()
+    public function testWithHostKey()
     {
-
-        $hostKey = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
-        $jsonArray = $this->pest->get('/promise/log/repaired/summary?hostkey=' . $hostKey);
+        $jsonArray = $this->pest->get('/promise/log/repaired/summary?hostkey=' . $this->hostA);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray));
     }
@@ -36,10 +34,10 @@ class PromiseLogRepairedSummaryTest extends RestBaseTest
     /**
      * Test Promise Log Repaired summary with handle 
      */
-    public function testPromiseLogRepairedSummaryWithHandle()
+    public function testWithHandle()
     {
 
-        $handle = "cfengine_php_mod_commands_apache2_debian";
+        $handle = "garbage_collection_files_tidy_outputs";
         $jsonArray = $this->pest->get('/promise/log/repaired/summary?handle=' . $handle);
         $this->assertValidJson($jsonArray);
         $this->assertCount(1, $jsonArray);
@@ -55,10 +53,10 @@ class PromiseLogRepairedSummaryTest extends RestBaseTest
     /**
      * Test  Promise Log Repaired summary with context 
      */
-    public function testPromiseLogRepairedSummaryWithContext()
+    public function testWithContext()
     {
 
-        $context = "10_0_0_153";
+        $context = "10_0_0_150";
         $jsonArray = $this->pest->get('/promise/log/repaired/summary?context=' . $context);
         $this->assertValidJson($jsonArray);
         $handle = "garbage_collection_files_tidy_outputs";
