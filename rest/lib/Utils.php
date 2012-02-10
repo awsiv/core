@@ -55,6 +55,16 @@ class Utils {
         }
         return (int)$var;
     }
+    
+    public static function checkPromiseState($state)
+    {
+        if (!in_array($state, array('kept', 'notkept', 'repaired')))
+        {
+            throw new ResponseException('Valid promise states are kept, notkept and repaired',
+                    Response::BADREQUEST);
+        }
+        return $state;
+    }
 
     public static function InternalExceptionResponse($request, $exception)
     {

@@ -6,12 +6,17 @@
 class PromiseCompliance extends Resource
 {
     function get($request)
-    {   
+    {
+        Utils::checkValidQueryParams(array(
+            'hostkey', 'handle', 'context', 'state', 'from'
+        ));
+        
         $hostkey = Utils::queryParam('hostkey');
         $handle = Utils::queryParam('handle');
         $context = Utils::queryParam('context');
-        $state = Utils::queryParam('context');
+        $state = Utils::checkPromiseState(Utils::queryParam('state'));
         $from = Utils::checkInteger(Utils::queryParam('from'), 'from');
+
         $sort = Utils::queryParam('sort');
         $order = Utils::checkBoolean(Utils::queryParam('order'), 'order');
         $count = Utils::checkInteger(Utils::queryParam('count'), 'count');

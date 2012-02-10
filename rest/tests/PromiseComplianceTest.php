@@ -45,10 +45,10 @@ class PromiseComplianceTest extends RestBaseTest
     public function testPromiseComplianceWithHandle()
     {
 
-        $handle = "internal_promise";
+        $handle = "check_valid_update";
         $jsonArray = $this->pest->get('/promise/compliance?handle=' . $handle);
         $this->assertValidJson($jsonArray);
-        $this->assertCount(1, $jsonArray);
+        $this->assertCount(2, $jsonArray);
         foreach ((array) $jsonArray as $data)
         {
             if ($data['handle'] !== "$handle")
@@ -63,15 +63,13 @@ class PromiseComplianceTest extends RestBaseTest
      */
     public function testPromiseComplianceWithContext()
     {
-
         $context = "10_0_0_153";
         $jsonArray = $this->pest->get('/promise/compliance?context=' . $context);
         $this->assertValidJson($jsonArray);
-        $hostKey = "SHA=33736d45041e2a9407be8cf449aeffa95114bef661c20deaca1bbcfbc2922856";
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
         foreach ((array) $jsonArray as $data)
         {
-            if ($data['hostkey'] !== "$hostKey")
+            if ($data['hostkey'] !== $this->hostB)
             {
                 $this->fail("different host key found in data, found :: " . $data['hostkey'] . " Expected :: " . $hostKey);
             }
@@ -83,11 +81,28 @@ class PromiseComplianceTest extends RestBaseTest
      */
     public function testPromiseComplianceWithState()
     {
-
-        $state = "state";
-        $jsonArray = $this->pest->get('/promise/compliance?state=' . $state);
+        $jsonArray = $this->pest->get('/promise/compliance?state=repaired');
         $this->assertValidJson($jsonArray);
-        $this->fail('Not Implemented, parameter not considered');
+        $this->assertEquals(3, sizeof($jsonArray));
+        foreach ((array) $jsonArray as $entry)
+        {
+            $this->assertEquals('repaired', $entry['state']);
+        }
     }
 
+    /**
+     * Invalid state should get a bad request
+     */
+    public function testPromiseComplianceWithInvalidState()
+    {
+        try
+        {
+            $jsonArray = $this->pest->get('/promise/compliance?state=snookie');
+        }
+        catch (Pest_BadRequest $e)
+        {
+            return;
+        }
+        $this->fail('Should get BadRequest');
+    }
 }

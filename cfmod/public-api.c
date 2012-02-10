@@ -322,7 +322,7 @@ for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    JsonObjectAppendString(entry, LABEL_HOSTKEY, record->hh->keyhash);
    JsonObjectAppendString(entry, LABEL_STATE, PromiseStateToString(record->status));
    JsonObjectAppendReal(entry, LABEL_AVERAGE, record->e);
-   JsonObjectAppendReal(entry, LABEL_STATE, record->d);
+   JsonObjectAppendReal(entry, LABEL_STDV, record->d);
    JsonObjectAppendInteger(entry, LABEL_TIMESTAMP, record->t);
 
    JsonArrayAppendObject(output, entry);
