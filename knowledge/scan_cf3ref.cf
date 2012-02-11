@@ -502,7 +502,7 @@ CFEngine_reference_manual::
 CFEngine_AutoReference::
  "/docs/cf3-reference.html#Top"
   represents => { "Text section" };
-CFEngine_3_3_0a1_r3728M__Getting_started::
+CFEngine_3_4_0a1_r4011M__Getting_started::
  "/docs/cf3-reference.html#Getting-started"
   represents => { "manual chapter" };
 Software_components::
@@ -1198,6 +1198,9 @@ style_sheet::
 view_projections::
  "/docs/cf3-reference.html#view_005fprojections-in-knowledge"
   represents => { "manual subsection" };
+generate_xml::
+ "/docs/cf3-reference.html#generate_005fxml-in-knowledge"
+  represents => { "manual subsection" };
 reporter_control_promises::
  "/docs/cf3-reference.html#control-reporter"
   represents => { "manual section reporter control promises" };
@@ -1291,14 +1294,8 @@ policy::
 classes_promises::
  "/docs/cf3-reference.html#classes-in-common-promises"
   represents => { "manual section classes promises" };
-or::
- "/docs/cf3-reference.html#or-in-classes"
-  represents => { "manual subsection" };
 and::
  "/docs/cf3-reference.html#and-in-classes"
-  represents => { "manual subsection" };
-xor::
- "/docs/cf3-reference.html#xor-in-classes"
   represents => { "manual subsection" };
 dist::
  "/docs/cf3-reference.html#dist-in-classes"
@@ -1309,11 +1306,20 @@ dist::
 expression::
  "/docs/cf3-reference.html#expression-in-classes"
   represents => { "manual subsection" };
+or::
+ "/docs/cf3-reference.html#or-in-classes"
+  represents => { "manual subsection" };
+persistence::
+ "/docs/cf3-reference.html#persistence-in-classes"
+  represents => { "manual subsection" };
 not::
  "/docs/cf3-reference.html#not-in-classes"
   represents => { "manual subsection" };
 select_class::
  "/docs/cf3-reference.html#select_005fclass-in-classes"
+  represents => { "manual subsection" };
+xor::
+ "/docs/cf3-reference.html#xor-in-classes"
   represents => { "manual subsection" };
 reports_promises::
  "/docs/cf3-reference.html#reports-in-common-promises"
@@ -3523,9 +3529,6 @@ Variable_sys_fqhost::
 Variable_sys_fstab::
  "/docs/cf3-reference.html#Variable-sys_002efstab"
   represents => { "manual subsection" };
-Variable_sys_hardware_addresses::
- "/docs/cf3-reference.html#Variable-sys_002ehardware_005faddresses"
-  represents => { "manual subsection" };
 Variable_sys_hardware_mac_interface_name_::
  "/docs/cf3-reference.html#Variable-sys_002ehardware_005fmac_005binterface_005fname_005d"
   represents => { "manual subsection" };
@@ -3537,9 +3540,6 @@ Variable_sys_hub_master::
   represents => { "manual subsection" };
 Variable_sys_interface::
  "/docs/cf3-reference.html#Variable-sys_002einterface"
-  represents => { "manual subsection" };
-Variable_sys_interfaces::
- "/docs/cf3-reference.html#Variable-sys_002einterfaces"
   represents => { "manual subsection" };
 Variable_sys_ip_addresses::
  "/docs/cf3-reference.html#Variable-sys_002eip_005faddresses"

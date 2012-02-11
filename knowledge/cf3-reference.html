@@ -244,7 +244,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 
 </div>
 
-<h2 class="chapter">1 CFEngine 3.3.0a1.r3728M &ndash; Getting started</h2>
+<h2 class="chapter">1 CFEngine 3.4.0a1.r4011M &ndash; Getting started</h2>
 
 <p><br>
 
@@ -8927,6 +8927,7 @@ of the queries.
 <li><a href="#sql_005fconnection_005fdb-in-knowledge">sql_connection_db in knowledge</a>
 <li><a href="#style_005fsheet-in-knowledge">style_sheet in knowledge</a>
 <li><a href="#view_005fprojections-in-knowledge">view_projections in knowledge</a>
+<li><a href="#generate_005fxml-in-knowledge">generate_xml in knowledge</a>
 </ul>
 
 <div class="node">
@@ -9624,6 +9625,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</
 <a name="view_projections-in-knowledge"></a>
 <a name="view_005fprojections-in-knowledge"></a>
 <p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#generate_005fxml-in-knowledge">generate_xml in knowledge</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#style_005fsheet-in-knowledge">style_sheet in knowledge</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</a>
 
@@ -9661,6 +9663,51 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</
    <p>If this is set to true, CFEngine Nova computes additional graphical
 representations in its knowledge map, representing causal dependencies
  between CFEngine promises.
+
+<div class="node">
+<a name="generate_xml-in-knowledge"></a>
+<a name="generate_005fxml-in-knowledge"></a>
+<p><hr>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#view_005fprojections-in-knowledge">view_projections in knowledge</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#control-knowledge">control knowledge</a>
+
+</div>
+
+<h4 class="subsection">5.7.20 <code>generate_xml</code></h4>
+
+<p class="noindent"><b>Type</b>: (menu option)
+
+<p class="noindent"><b>Allowed input range</b>: <br>
+<pre class="example">               <code>true</code>
+               <code>false</code>
+               <code>yes</code>
+               <code>no</code>
+               <code>on</code>
+               <code>off</code>
+</pre>
+   <p class="noindent"><b>Default value:</b> false
+
+<p class="noindent"><b>Synopsis</b>: true/false generate xml format documentation for this version
+
+<p class="noindent"><b>Example</b>:<br>
+<br>
+
+   <p><i>History</i>: Was introduced in 3.4.0a1.r4011M, Nova 2.2.0.a1.r3931, Constellation 1.0.0a1.r351 (2012)
+
+<pre class="verbatim">
+<span class="red">Fill me</span> <span class="blue">in</span>
+""
+</pre>
+
+<p class="noindent"><b>Notes</b>:<br>
+<br>
+
+   <p><i>History</i>: Was introduced in 3.4.0a1.r4011M, Nova 2.2.0.a1.r3931, Constellation 1.0.0a1.r351 (2012)
+
+<pre class="verbatim">
+<span class="red">Fill me</span> <span class="blue">in</span>
+""
+</pre>
 
 <div class="node">
 <a name="control-reporter"></a>
@@ -10921,61 +10968,26 @@ are of a generic input/output nature. These are <code>vars</code>, <code>classes
 and <code>reports</code> promises.  The specific promise attributes are listed below.
 
 <ul class="menu">
-<li><a accesskey="1" href="#or-in-classes">or in classes</a>
-<li><a accesskey="2" href="#and-in-classes">and in classes</a>
-<li><a accesskey="3" href="#xor-in-classes">xor in classes</a>
-<li><a accesskey="4" href="#dist-in-classes">dist in classes</a>
-<li><a accesskey="5" href="#expression-in-classes">expression in classes</a>
+<li><a accesskey="1" href="#and-in-classes">and in classes</a>
+<li><a accesskey="2" href="#dist-in-classes">dist in classes</a>
+<li><a accesskey="3" href="#expression-in-classes">expression in classes</a>
+<li><a accesskey="4" href="#or-in-classes">or in classes</a>
+<li><a accesskey="5" href="#persistence-in-classes">persistence in classes</a>
 <li><a accesskey="6" href="#not-in-classes">not in classes</a>
 <li><a accesskey="7" href="#select_005fclass-in-classes">select_class in classes</a>
+<li><a accesskey="8" href="#xor-in-classes">xor in classes</a>
 </ul>
 
 <div class="node">
-<a name="or-in-classes"></a>
+<a name="and-in-classes"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#and-in-classes">and in classes</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#dist-in-classes">dist in classes</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#classes-in-common-promises">classes in common promises</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#classes-in-common-promises">classes in common promises</a>
 
 </div>
 
-<h4 class="subsection">6.2.1 <code>or</code></h4>
-
-<p class="noindent"><b>Type</b>: clist
-
-<p class="noindent"><b>Allowed input range</b>: <code>[a-zA-Z0-9_!&amp;@@$|.()\[\]{}]+</code>
-
-<p class="noindent"><b>Synopsis</b>: Combine class sources with inclusive OR
-
-<p class="noindent"><b>Example</b>:<br>
-<br>
-
-<pre class="verbatim">
-<span class="red">classes:
-</span>
-    "compound_test" 
-
-<span class="red">      or </span>=> { classmatch("linux_x86_64_2_6_22.*"), "suse_10_3" };
-
-</pre>
-
-<p class="noindent"><b>Notes</b>:<br>
-<br>
-
-   <p>A useful construction for writing expressions that contain special functions. 
-The class in the LHS will be defined if any one (or more) of the class
-expressions in the RHS are true.
-
-<div class="node">
-<a name="and-in-classes"></a>
-<p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#xor-in-classes">xor in classes</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#or-in-classes">or in classes</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#classes-in-common-promises">classes in common promises</a>
-
-</div>
-
-<h4 class="subsection">6.2.2 <code>and</code></h4>
+<h4 class="subsection">6.2.1 <code>and</code></h4>
 
 <p class="noindent"><b>Type</b>: clist
 
@@ -11002,49 +11014,15 @@ providing an expression.  If all of the class expressions listed in the
 RHS match, then the class on the LHS is defined.
 
 <div class="node">
-<a name="xor-in-classes"></a>
+<a name="dist-in-classes"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#dist-in-classes">dist in classes</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#expression-in-classes">expression in classes</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#and-in-classes">and in classes</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#classes-in-common-promises">classes in common promises</a>
 
 </div>
 
-<h4 class="subsection">6.2.3 <code>xor</code></h4>
-
-<p class="noindent"><b>Type</b>: clist
-
-<p class="noindent"><b>Allowed input range</b>: <code>[a-zA-Z0-9_!&amp;@@$|.()\[\]{}]+</code>
-
-<p class="noindent"><b>Synopsis</b>: Combine class sources with XOR
-
-<p class="noindent"><b>Example</b>:<br>
-<br>
-
-<pre class="verbatim">
-<span class="red">classes:
-</span>
- "another_global"<span class="red"> xor </span>=> { "any", "linux", "solaris"};
-
-</pre>
-
-<p class="noindent"><b>Notes</b>:<br>
-<br>
-
-   <p>Behaves as the XOR operation on class expressions. 
-It can be used to define a class if exactly one of the class expressions
-on the RHS matches.
-
-<div class="node">
-<a name="dist-in-classes"></a>
-<p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#expression-in-classes">expression in classes</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#xor-in-classes">xor in classes</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#classes-in-common-promises">classes in common promises</a>
-
-</div>
-
-<h4 class="subsection">6.2.4 <code>dist</code></h4>
+<h4 class="subsection">6.2.2 <code>dist</code></h4>
 
 <p class="noindent"><b>Type</b>: rlist
 
@@ -11083,13 +11061,13 @@ between <code>1-120</code>. This will generate the following classes:
 <div class="node">
 <a name="expression-in-classes"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#not-in-classes">not in classes</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#or-in-classes">or in classes</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#dist-in-classes">dist in classes</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#classes-in-common-promises">classes in common promises</a>
 
 </div>
 
-<h4 class="subsection">6.2.5 <code>expression</code></h4>
+<h4 class="subsection">6.2.3 <code>expression</code></h4>
 
 <p class="noindent"><b>Type</b>: class
 
@@ -11113,10 +11091,139 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#classes-in-common-promises">classes in
    <p>A way of aliasing class combinations.
 
 <div class="node">
+<a name="or-in-classes"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#persistence-in-classes">persistence in classes</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#expression-in-classes">expression in classes</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#classes-in-common-promises">classes in common promises</a>
+
+</div>
+
+<h4 class="subsection">6.2.4 <code>or</code></h4>
+
+<p class="noindent"><b>Type</b>: clist
+
+<p class="noindent"><b>Allowed input range</b>: <code>[a-zA-Z0-9_!&amp;@@$|.()\[\]{}]+</code>
+
+<p class="noindent"><b>Synopsis</b>: Combine class sources with inclusive OR
+
+<p class="noindent"><b>Example</b>:<br>
+<br>
+
+<pre class="verbatim">
+<span class="red">classes:
+</span>
+    "compound_test" 
+
+<span class="red">      or </span>=> { classmatch("linux_x86_64_2_6_22.*"), "suse_10_3" };
+
+</pre>
+
+<p class="noindent"><b>Notes</b>:<br>
+<br>
+
+   <p>A useful construction for writing expressions that contain special functions. 
+The class in the LHS will be defined if any one (or more) of the class
+expressions in the RHS are true.
+
+<div class="node">
+<a name="persistence-in-classes"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#not-in-classes">not in classes</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#or-in-classes">or in classes</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#classes-in-common-promises">classes in common promises</a>
+
+</div>
+
+<h4 class="subsection">6.2.5 <code>persistence</code></h4>
+
+<p class="noindent"><b>Type</b>: int
+
+<p class="noindent"><b>Allowed input range</b>: <code>0,99999999999</code>
+
+<p class="noindent"><b>Synopsis</b>: Make the class persistent (cached) to avoid reevaluation
+
+<p class="noindent"><b>Example</b>:<br>
+<br>
+
+<pre class="verbatim">bundle common setclasses
+{
+<span class="red">classes:
+</span>
+  "cached_classes" 
+<span class="red">                or </span>=> { "any" },
+<span class="red">       persistence </span>=><span class="green"> "1";</span>
+
+  "cached_class" 
+<span class="red">       expression </span>=><span class="green"> "any",</span>
+<span class="red">       persistence </span>=><span class="green"> "1";</span>
+
+}
+</pre>
+
+<p class="noindent"><b>Notes</b>:<br>
+<br>
+
+   <p><i>History</i>: Was introduced in 3.4.0, Nova 2.2.0, Constellation 1.0.0 (2012)
+
+   <p>This feature can be used to avoid recomputing expensive classes
+calculations on each invocation. If a class discovered is essentially
+constant or only slowly varying (like a hostname or alias from a
+non-standard naming facility)
+
+   <p>For example, to create a conditional inclusion of costly class
+definitions, put them into a separate bundle in a file <samp><span class="file">classes.cf</span></samp>.
+<pre class="verbatim"># promises.cf
+
+<span class="red">body common control 
+</span>{
+cached_classes::
+<span class="red">  bundlesequence </span>=> { "test" };
+
+!cached_classes::
+<span class="red">  bundlesequence </span>=> {  "setclasses", "test" };
+
+!cached_classes::
+<span class="red">  inputs </span>=> { "classes.cf" };
+}
+ 
+
+<span class="red">bundle agent</span> <span class="blue">test</span>
+{
+<span class="red">reports:
+</span>
+  !my_cached_class::
+   "no cached class";
+
+  my_cached_class::
+    "cached class defined";
+}
+ 
+</pre>
+Then create <samp><span class="file">classes.cf</span></samp>
+<pre class="verbatim"># classes.cf
+
+<span class="red">bundle common setclasses
+</span>{
+<span class="red">classes:
+</span>
+  "cached_classes"            # timer flag 
+<span class="red">         expression </span>=><span class="green"> "any",</span>
+<span class="red">        persistence </span>=><span class="green"> "480";</span>
+
+  "my_cached_class" 
+<span class="red">                or </span>=> { ...long list or heavy function... } ,
+<span class="red">       persistence </span>=><span class="green"> "480";</span>
+
+}
+
+</pre>
+
+<div class="node">
 <a name="not-in-classes"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#select_005fclass-in-classes">select_class in classes</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#expression-in-classes">expression in classes</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#persistence-in-classes">persistence in classes</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#classes-in-common-promises">classes in common promises</a>
 
 </div>
@@ -11151,6 +11258,7 @@ expression in the RHS is false.
 <a name="select_class-in-classes"></a>
 <a name="select_005fclass-in-classes"></a>
 <p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#xor-in-classes">xor in classes</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#not-in-classes">not in classes</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#classes-in-common-promises">classes in common promises</a>
 
@@ -11197,6 +11305,39 @@ e.g for load balancing purposes.
    <p>The class is chosen deterministically (not randomly) but it is not possible to say which
 host will end up in which class in advance &ndash; only that hosts will always end up in the same class
 every time.
+
+<div class="node">
+<a name="xor-in-classes"></a>
+<p><hr>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#select_005fclass-in-classes">select_class in classes</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#classes-in-common-promises">classes in common promises</a>
+
+</div>
+
+<h4 class="subsection">6.2.8 <code>xor</code></h4>
+
+<p class="noindent"><b>Type</b>: clist
+
+<p class="noindent"><b>Allowed input range</b>: <code>[a-zA-Z0-9_!&amp;@@$|.()\[\]{}]+</code>
+
+<p class="noindent"><b>Synopsis</b>: Combine class sources with XOR
+
+<p class="noindent"><b>Example</b>:<br>
+<br>
+
+<pre class="verbatim">
+<span class="red">classes:
+</span>
+ "another_global"<span class="red"> xor </span>=> { "any", "linux", "solaris"};
+
+</pre>
+
+<p class="noindent"><b>Notes</b>:<br>
+<br>
+
+   <p>Behaves as the XOR operation on class expressions. 
+It can be used to define a class if exactly one of the class expressions
+on the RHS matches.
 
 <div class="node">
 <a name="reports-in-common-promises"></a>
@@ -11254,7 +11395,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#reports-in-common-promises">reports in
 
    "Friend status report"
 
-<span class="red">          lastseen </span>=><span class="green"> "0"</span>
+<span class="red">          lastseen </span>=><span class="green"> "0",</span>
 <span class="red">     friend_pattern </span>=><span class="green"> "host1|host2|.*\.domain\.tld";</span>
 
 </pre>
@@ -34529,12 +34670,10 @@ variable itself is class-specific.
 <li><a href="#Variable-sys_002eexports">Variable sys.exports</a>
 <li><a href="#Variable-sys_002efqhost">Variable sys.fqhost</a>
 <li><a href="#Variable-sys_002efstab">Variable sys.fstab</a>
-<li><a href="#Variable-sys_002ehardware_005faddresses">Variable sys.hardware_addresses</a>
 <li><a href="#Variable-sys_002ehardware_005fmac_005binterface_005fname_005d">Variable sys.hardware_mac[interface_name]</a>
 <li><a href="#Variable-sys_002ehost">Variable sys.host</a>
 <li><a href="#Variable-sys_002ehub_005fmaster">Variable sys.hub_master</a>
 <li><a href="#Variable-sys_002einterface">Variable sys.interface</a>
-<li><a href="#Variable-sys_002einterfaces">Variable sys.interfaces</a>
 <li><a href="#Variable-sys_002eip_005faddresses">Variable sys.ip_addresses</a>
 <li><a href="#Variable-sys_002eipv4">Variable sys.ipv4</a>
 <li><a href="#Variable-sys_002eipv4_005binterface_005fname_005d">Variable sys.ipv4[interface_name]</a>
@@ -35060,7 +35199,7 @@ name must be defined.
 <a name="Variable-sys.fstab"></a>
 <a name="Variable-sys_002efstab"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ehardware_005faddresses">Variable sys.hardware_addresses</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ehardware_005fmac_005binterface_005fname_005d">Variable sys.hardware_mac[interface_name]</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002efqhost">Variable sys.fqhost</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
@@ -35079,35 +35218,16 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 </pre>
 
 <div class="node">
-<a name="Variable-sys.hardware_addresses"></a>
-<a name="Variable-sys_002ehardware_005faddresses"></a>
+<a name="Variable-sys.hardware_mac%5binterface_name%5d"></a>
+<a name="Variable-sys_002ehardware_005fmac_005binterface_005fname_005d"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ehardware_005fmac_005binterface_005fname_005d">Variable sys.hardware_mac[interface_name]</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ehost">Variable sys.host</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002efstab">Variable sys.fstab</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
 </div>
 
-<h4 class="subsection">12.5.23 Variable sys.hardware_addresses</h4>
-
-<p><br>
-
-   <p><i>History</i>: Was introduced in 3.3.0, Nova 2.2.0, Constellation 1.0.0 (2011)
-
-   <p>This is a list variable containing a list of all known MAC addresses for
-system interfaces.
-
-<div class="node">
-<a name="Variable-sys.hardware_mac%5binterface_name%5d"></a>
-<a name="Variable-sys_002ehardware_005fmac_005binterface_005fname_005d"></a>
-<p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002ehost">Variable sys.host</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002ehardware_005faddresses">Variable sys.hardware_addresses</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
-
-</div>
-
-<h4 class="subsection">12.5.24 Variable sys.hardware_mac[interface_name]</h4>
+<h4 class="subsection">12.5.23 Variable sys.hardware_mac[interface_name]</h4>
 
 <p><br>
 
@@ -35133,7 +35253,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.25 Variable sys.host</h4>
+<h4 class="subsection">12.5.24 Variable sys.host</h4>
 
 <p><br>
 
@@ -35156,7 +35276,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.26 Variable sys.hub_master</h4>
+<h4 class="subsection">12.5.25 Variable sys.hub_master</h4>
 
 <p><br>
 
@@ -35175,13 +35295,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 <a name="Variable-sys.interface"></a>
 <a name="Variable-sys_002einterface"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002einterfaces">Variable sys.interfaces</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002eip_005faddresses">Variable sys.ip_addresses</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002ehub_005fmaster">Variable sys.hub_master</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
 </div>
 
-<h4 class="subsection">12.5.27 Variable sys.interface</h4>
+<h4 class="subsection">12.5.26 Variable sys.interface</h4>
 
 <p><br>
 
@@ -35194,63 +35314,16 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 </pre>
 
 <div class="node">
-<a name="Variable-sys.interfaces"></a>
-<a name="Variable-sys_002einterfaces"></a>
+<a name="Variable-sys.ip_addresses"></a>
+<a name="Variable-sys_002eip_005faddresses"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002eip_005faddresses">Variable sys.ip_addresses</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002eipv4">Variable sys.ipv4</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002einterface">Variable sys.interface</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
 
 </div>
 
-<h4 class="subsection">12.5.28 Variable sys.interfaces</h4>
-
-<p><br>
-
-   <p><i>History</i>: Was introduced in 3.3.0, Nova 2.2.0, Constellation 1.0.0 (2011)
-
-   <p>Displays a system list of configured interfaces currently active
-in use by the system. 
-This list is detected at runtime and it passed in the variables report
-to a Mission Portal in commercial editions of CFEngine.
-
-   <p>To use this list in a policy, you will need a local copy since only local
-variables can be iterated.
-
-<pre class="verbatim">
-<span class="red">bundle agent</span> <span class="blue">test</span>
-{
-<span class="red">vars:
-</span>
-<span class="comment"> # To iterate, we need a local copy
-</span>
-
- "i1"<span class="red"> slist </span>=> { @(sys.ip_addresses)} ;
- "i2"<span class="red"> slist </span>=> { @(sys.interfaces)} ;
-
-<span class="red">reports:
-</span>
-  cfengine::
-
-<span class="red">    "Addresses: $(i1)";
-</span><span class="red">    "Interfaces: $(i2)";
-</span><span class="red">    "Addresses of the interfaces: $(sys.ipv4[$(i2)])";
-</span>
-}
-
-</pre>
-
-<div class="node">
-<a name="Variable-sys.ip_addresses"></a>
-<a name="Variable-sys_002eip_005faddresses"></a>
-<p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Variable-sys_002eipv4">Variable sys.ipv4</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Variable-sys_002einterfaces">Variable sys.interfaces</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context sys</a>
-
-</div>
-
-<h4 class="subsection">12.5.29 Variable sys.ip_addresses</h4>
+<h4 class="subsection">12.5.27 Variable sys.ip_addresses</h4>
 
 <p><br>
 
@@ -35296,7 +35369,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.30 Variable sys.ipv4</h4>
+<h4 class="subsection">12.5.28 Variable sys.ipv4</h4>
 
 <p><br>
 
@@ -35320,7 +35393,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.31 Variable sys.ipv4[interface_name]</h4>
+<h4 class="subsection">12.5.29 Variable sys.ipv4[interface_name]</h4>
 
 <p><br>
 
@@ -35374,7 +35447,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.32 Variable sys.ipv4_1[interface_name]</h4>
+<h4 class="subsection">12.5.30 Variable sys.ipv4_1[interface_name]</h4>
 
 <p><br>
 
@@ -35392,7 +35465,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.33 Variable sys.ipv4_2[interface_name]</h4>
+<h4 class="subsection">12.5.31 Variable sys.ipv4_2[interface_name]</h4>
 
 <p><br>
 
@@ -35410,7 +35483,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.34 Variable sys.ipv4_3[interface_name]</h4>
+<h4 class="subsection">12.5.32 Variable sys.ipv4_3[interface_name]</h4>
 
 <p><br>
 
@@ -35428,7 +35501,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.35 Variable sys.key_digest</h4>
+<h4 class="subsection">12.5.33 Variable sys.key_digest</h4>
 
 <p><br>
 
@@ -35452,7 +35525,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.36 Variable sys.license_owner</h4>
+<h4 class="subsection">12.5.34 Variable sys.license_owner</h4>
 
 <p><br>
 
@@ -35477,7 +35550,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.37 Variable sys.licenses_granted</h4>
+<h4 class="subsection">12.5.35 Variable sys.licenses_granted</h4>
 
 <p><br>
 
@@ -35502,7 +35575,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.38 Variable sys.licenses_installtime</h4>
+<h4 class="subsection">12.5.36 Variable sys.licenses_installtime</h4>
 
 <p><br>
 
@@ -35528,7 +35601,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.39 Variable sys.long_arch</h4>
+<h4 class="subsection">12.5.37 Variable sys.long_arch</h4>
 
 <p><br>
 
@@ -35551,7 +35624,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.40 Variable sys.maildir</h4>
+<h4 class="subsection">12.5.38 Variable sys.maildir</h4>
 
 <p><br>
 
@@ -35573,7 +35646,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.41 Variable sys.nova_version</h4>
+<h4 class="subsection">12.5.39 Variable sys.nova_version</h4>
 
 <p><br>
 
@@ -35595,7 +35668,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.42 Variable sys.os</h4>
+<h4 class="subsection">12.5.40 Variable sys.os</h4>
 
 <p><br>
 
@@ -35617,7 +35690,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.43 Variable sys.ostype</h4>
+<h4 class="subsection">12.5.41 Variable sys.ostype</h4>
 
 <p><br>
 
@@ -35639,7 +35712,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.44 Variable sys.policy_hub</h4>
+<h4 class="subsection">12.5.42 Variable sys.policy_hub</h4>
 
 <p><br>
 Hostname of the machine acting as a policy hub. This value is set
@@ -35664,7 +35737,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.45 Variable sys.release</h4>
+<h4 class="subsection">12.5.43 Variable sys.release</h4>
 
 <p><br>
 
@@ -35686,7 +35759,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.46 Variable sys.resolv</h4>
+<h4 class="subsection">12.5.44 Variable sys.resolv</h4>
 
 <p><br>
 
@@ -35708,7 +35781,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.47 Variable sys.uqhost</h4>
+<h4 class="subsection">12.5.45 Variable sys.uqhost</h4>
 
 <p><br>
 
@@ -35730,7 +35803,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.48 Variable sys.version</h4>
+<h4 class="subsection">12.5.46 Variable sys.version</h4>
 
 <p><br>
 
@@ -35755,7 +35828,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.49 Variable sys.windir</h4>
+<h4 class="subsection">12.5.47 Variable sys.windir</h4>
 
 <p><br>
 
@@ -35778,7 +35851,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.50 Variable sys.winprogdir</h4>
+<h4 class="subsection">12.5.48 Variable sys.winprogdir</h4>
 
 <p><br>
 
@@ -35801,7 +35874,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.51 Variable sys.winprogdir86</h4>
+<h4 class="subsection">12.5.49 Variable sys.winprogdir86</h4>
 
 <p><br>
 
@@ -35824,7 +35897,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.52 Variable sys.winsysdir</h4>
+<h4 class="subsection">12.5.50 Variable sys.winsysdir</h4>
 
 <p><br>
 
@@ -35846,7 +35919,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Variable-context-sys">Variable context
 
 </div>
 
-<h4 class="subsection">12.5.53 Variable sys.workdir</h4>
+<h4 class="subsection">12.5.51 Variable sys.workdir</h4>
 
 <p><br>
 
@@ -36249,7 +36322,7 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <h2>Table of Contents</h2>
 <ul>
 <li><a name="toc_Top" href="#Top">CFEngine-AutoReference</a>
-<li><a name="toc_Getting-started" href="#Getting-started">1 CFEngine 3.3.0a1.r3728M &ndash; Getting started</a>
+<li><a name="toc_Getting-started" href="#Getting-started">1 CFEngine 3.4.0a1.r4011M &ndash; Getting started</a>
 <ul>
 <li><a href="#Software-components">1.1 Software components</a>
 <ul>
@@ -36474,6 +36547,7 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <li><a href="#sql_005fconnection_005fdb-in-knowledge">5.7.17 <code>sql_connection_db</code></a>
 <li><a href="#style_005fsheet-in-knowledge">5.7.18 <code>style_sheet</code></a>
 <li><a href="#view_005fprojections-in-knowledge">5.7.19 <code>view_projections</code></a>
+<li><a href="#generate_005fxml-in-knowledge">5.7.20 <code>generate_xml</code></a>
 </li></ul>
 <li><a href="#control-reporter">5.8 <code>reporter</code> control promises</a>
 <ul>
@@ -36514,13 +36588,14 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 </li></ul>
 <li><a href="#classes-in-common-promises">6.2 <code>classes</code> promises</a>
 <ul>
-<li><a href="#or-in-classes">6.2.1 <code>or</code></a>
-<li><a href="#and-in-classes">6.2.2 <code>and</code></a>
-<li><a href="#xor-in-classes">6.2.3 <code>xor</code></a>
-<li><a href="#dist-in-classes">6.2.4 <code>dist</code></a>
-<li><a href="#expression-in-classes">6.2.5 <code>expression</code></a>
+<li><a href="#and-in-classes">6.2.1 <code>and</code></a>
+<li><a href="#dist-in-classes">6.2.2 <code>dist</code></a>
+<li><a href="#expression-in-classes">6.2.3 <code>expression</code></a>
+<li><a href="#or-in-classes">6.2.4 <code>or</code></a>
+<li><a href="#persistence-in-classes">6.2.5 <code>persistence</code></a>
 <li><a href="#not-in-classes">6.2.6 <code>not</code></a>
 <li><a href="#select_005fclass-in-classes">6.2.7 <code>select_class</code></a>
+<li><a href="#xor-in-classes">6.2.8 <code>xor</code></a>
 </li></ul>
 <li><a href="#reports-in-common-promises">6.3 <code>reports</code> promises</a>
 <ul>
@@ -37054,37 +37129,35 @@ by the monitor daemon, and may be used by <code>cf-agent</code> in <code>reports
 <li><a href="#Variable-sys_002eexports">12.5.20 Variable sys.exports</a>
 <li><a href="#Variable-sys_002efqhost">12.5.21 Variable sys.fqhost</a>
 <li><a href="#Variable-sys_002efstab">12.5.22 Variable sys.fstab</a>
-<li><a href="#Variable-sys_002ehardware_005faddresses">12.5.23 Variable sys.hardware_addresses</a>
-<li><a href="#Variable-sys_002ehardware_005fmac_005binterface_005fname_005d">12.5.24 Variable sys.hardware_mac[interface_name]</a>
-<li><a href="#Variable-sys_002ehost">12.5.25 Variable sys.host</a>
-<li><a href="#Variable-sys_002ehub_005fmaster">12.5.26 Variable sys.hub_master</a>
-<li><a href="#Variable-sys_002einterface">12.5.27 Variable sys.interface</a>
-<li><a href="#Variable-sys_002einterfaces">12.5.28 Variable sys.interfaces</a>
-<li><a href="#Variable-sys_002eip_005faddresses">12.5.29 Variable sys.ip_addresses</a>
-<li><a href="#Variable-sys_002eipv4">12.5.30 Variable sys.ipv4</a>
-<li><a href="#Variable-sys_002eipv4_005binterface_005fname_005d">12.5.31 Variable sys.ipv4[interface_name]</a>
-<li><a href="#Variable-sys_002eipv4_005f1_005binterface_005fname_005d">12.5.32 Variable sys.ipv4_1[interface_name]</a>
-<li><a href="#Variable-sys_002eipv4_005f2_005binterface_005fname_005d">12.5.33 Variable sys.ipv4_2[interface_name]</a>
-<li><a href="#Variable-sys_002eipv4_005f3_005binterface_005fname_005d">12.5.34 Variable sys.ipv4_3[interface_name]</a>
-<li><a href="#Variable-sys_002ekey_005fdigest">12.5.35 Variable sys.key_digest</a>
-<li><a href="#Variable-sys_002elicense_005fowner">12.5.36 Variable sys.license_owner</a>
-<li><a href="#Variable-sys_002elicenses_005fgranted">12.5.37 Variable sys.licenses_granted</a>
-<li><a href="#Variable-sys_002elicenses_005finstalltime">12.5.38 Variable sys.licenses_installtime</a>
-<li><a href="#Variable-sys_002elong_005farch">12.5.39 Variable sys.long_arch</a>
-<li><a href="#Variable-sys_002emaildir">12.5.40 Variable sys.maildir</a>
-<li><a href="#Variable-sys_002enova_005fversion">12.5.41 Variable sys.nova_version</a>
-<li><a href="#Variable-sys_002eos">12.5.42 Variable sys.os</a>
-<li><a href="#Variable-sys_002eostype">12.5.43 Variable sys.ostype</a>
-<li><a href="#Variable-sys_002epolicy_005fhub">12.5.44 Variable sys.policy_hub</a>
-<li><a href="#Variable-sys_002erelease">12.5.45 Variable sys.release</a>
-<li><a href="#Variable-sys_002eresolv">12.5.46 Variable sys.resolv</a>
-<li><a href="#Variable-sys_002euqhost">12.5.47 Variable sys.uqhost</a>
-<li><a href="#Variable-sys_002eversion">12.5.48 Variable sys.version</a>
-<li><a href="#Variable-sys_002ewindir">12.5.49 Variable sys.windir</a>
-<li><a href="#Variable-sys_002ewinprogdir">12.5.50 Variable sys.winprogdir</a>
-<li><a href="#Variable-sys_002ewinprogdir86">12.5.51 Variable sys.winprogdir86</a>
-<li><a href="#Variable-sys_002ewinsysdir">12.5.52 Variable sys.winsysdir</a>
-<li><a href="#Variable-sys_002eworkdir">12.5.53 Variable sys.workdir</a>
+<li><a href="#Variable-sys_002ehardware_005fmac_005binterface_005fname_005d">12.5.23 Variable sys.hardware_mac[interface_name]</a>
+<li><a href="#Variable-sys_002ehost">12.5.24 Variable sys.host</a>
+<li><a href="#Variable-sys_002ehub_005fmaster">12.5.25 Variable sys.hub_master</a>
+<li><a href="#Variable-sys_002einterface">12.5.26 Variable sys.interface</a>
+<li><a href="#Variable-sys_002eip_005faddresses">12.5.27 Variable sys.ip_addresses</a>
+<li><a href="#Variable-sys_002eipv4">12.5.28 Variable sys.ipv4</a>
+<li><a href="#Variable-sys_002eipv4_005binterface_005fname_005d">12.5.29 Variable sys.ipv4[interface_name]</a>
+<li><a href="#Variable-sys_002eipv4_005f1_005binterface_005fname_005d">12.5.30 Variable sys.ipv4_1[interface_name]</a>
+<li><a href="#Variable-sys_002eipv4_005f2_005binterface_005fname_005d">12.5.31 Variable sys.ipv4_2[interface_name]</a>
+<li><a href="#Variable-sys_002eipv4_005f3_005binterface_005fname_005d">12.5.32 Variable sys.ipv4_3[interface_name]</a>
+<li><a href="#Variable-sys_002ekey_005fdigest">12.5.33 Variable sys.key_digest</a>
+<li><a href="#Variable-sys_002elicense_005fowner">12.5.34 Variable sys.license_owner</a>
+<li><a href="#Variable-sys_002elicenses_005fgranted">12.5.35 Variable sys.licenses_granted</a>
+<li><a href="#Variable-sys_002elicenses_005finstalltime">12.5.36 Variable sys.licenses_installtime</a>
+<li><a href="#Variable-sys_002elong_005farch">12.5.37 Variable sys.long_arch</a>
+<li><a href="#Variable-sys_002emaildir">12.5.38 Variable sys.maildir</a>
+<li><a href="#Variable-sys_002enova_005fversion">12.5.39 Variable sys.nova_version</a>
+<li><a href="#Variable-sys_002eos">12.5.40 Variable sys.os</a>
+<li><a href="#Variable-sys_002eostype">12.5.41 Variable sys.ostype</a>
+<li><a href="#Variable-sys_002epolicy_005fhub">12.5.42 Variable sys.policy_hub</a>
+<li><a href="#Variable-sys_002erelease">12.5.43 Variable sys.release</a>
+<li><a href="#Variable-sys_002eresolv">12.5.44 Variable sys.resolv</a>
+<li><a href="#Variable-sys_002euqhost">12.5.45 Variable sys.uqhost</a>
+<li><a href="#Variable-sys_002eversion">12.5.46 Variable sys.version</a>
+<li><a href="#Variable-sys_002ewindir">12.5.47 Variable sys.windir</a>
+<li><a href="#Variable-sys_002ewinprogdir">12.5.48 Variable sys.winprogdir</a>
+<li><a href="#Variable-sys_002ewinprogdir86">12.5.49 Variable sys.winprogdir86</a>
+<li><a href="#Variable-sys_002ewinsysdir">12.5.50 Variable sys.winsysdir</a>
+<li><a href="#Variable-sys_002eworkdir">12.5.51 Variable sys.workdir</a>
 </li></ul>
 <li><a href="#Variable-context-this">12.6 Variable context <code>this</code></a>
 <ul>
