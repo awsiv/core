@@ -17,6 +17,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "cf.nova.h"
 #include "cf.nova.web_api.h"
 #include "scorecards.h"
+#include "bson_lib.h"
 
 
 static const char *CDP_REPORTS[][2] =
@@ -4132,12 +4133,11 @@ int Nova2PHP_list_promise_handles_with_comments(char *bundle,char *btype,char *r
 
 /*****************************************************************************/
 
-void Nova2PHP_network_speed(char *hostkey,char *buffer, int bufsize)
-
-{ mongo_connection dbconn;
+void Nova2PHP_network_speed(HostClassFilter *hostClassFilter, char *hostkey, char *buffer, int bufsize)
+{
+ mongo_connection dbconn;
  mongo_cursor *cursor;
  bson_buffer bb;
- bson query,field;
  int found = false;
  Event e;
 
@@ -4146,14 +4146,13 @@ void Nova2PHP_network_speed(char *hostkey,char *buffer, int bufsize)
     return;
     }
 
-// query
-
+ bson query;
  bson_buffer_init(&bb);
  bson_append_string(&bb,cfr_keyhash,hostkey);
+ BsonAppendHostClassFilter(&bb, hostClassFilter);
  bson_from_buffer(&query,&bb);
 
-// returned value
-
+ bson field;
  bson_buffer_init(&bb);
  bson_append_int(&bb,cfr_netmeasure,1);
  bson_from_buffer(&field,&bb);
@@ -4166,7 +4165,7 @@ void Nova2PHP_network_speed(char *hostkey,char *buffer, int bufsize)
     {
     bson_iterator it;
     bson_iterator_init(&it, cursor->current.data);
-   
+
     while(bson_iterator_next(&it))
        {
        if (strcmp(bson_iterator_key(&it),cfr_netmeasure) == 0)

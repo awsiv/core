@@ -20,6 +20,7 @@ void BsonStringWrite(char *dest, int destSz, const bson *b, const char *key);
 bool BsonAppendStringSafe(bson_buffer *bb, char *key, char *value);
 bool BsonAppendRegexSafe(bson_buffer *bb, char *key, char *rxValue);
 void BsonAppendStringArray(bson_buffer *bb, char *arrayName, Item *arrayValues);
+bool BsonAppendHostClassFilter(bson_buffer *queryBuffer, HostClassFilter *filter);
 bool BsonAppendIncludeList(bson_buffer *queryBuffer, char *includeKey, Rlist *includeValues);
 bool BsonAppendIncludeRxList(bson_buffer *queryBuffer, char *includeKey, Rlist *includeRxValues);
 bool BsonAppendExcludeList(bson_buffer *queryBuffer, char *excludeKey, Rlist *excludeValues);

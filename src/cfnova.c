@@ -119,7 +119,6 @@ if (false)
    // Nova2PHP_choose_hosts("123",2,buffer,1000);
    Nova2PHP_get_host_colour(NULL,buffer,3);
    Nova_Header("sd","we",buffer,3);
-   Nova2PHP_network_speed("","",3);
    Nova2PHP_meter(NULL,NULL,0);
 
    /* svn helper */

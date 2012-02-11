@@ -22,7 +22,6 @@
 
 #ifdef HAVE_LIBMONGOC
 
-static bool BsonAppendHostClassFilter(bson_buffer *queryBuffer, HostClassFilter *filter);
 static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *filter);
 static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFilter *hostClassFilter);
 
@@ -6579,23 +6578,6 @@ int CFDB_QueryReplStatus(mongo_connection *conn,char *buffer,int bufsize)
  bson_destroy(&cmd);
  bson_destroy(&result);
  return ret;
-}
-
-/*****************************************************************************/
-
-static bool BsonAppendHostClassFilter(bson_buffer *queryBuffer, HostClassFilter *filter)
-{
- if(filter == NULL)
-    {
-    return false;
-    }
-
- bool modified = false;
-
- modified |= BsonAppendIncludeRxList(queryBuffer, cfr_class_keys, filter->classRxIncludes);
- modified |= BsonAppendExcludeRxList(queryBuffer, cfr_class_keys, filter->classRxExcludes);
- 
- return modified;
 }
 
 /*****************************************************************************/

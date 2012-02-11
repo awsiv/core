@@ -3789,20 +3789,31 @@ PHP_FUNCTION(cfpr_body_list)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_network_speed)
+{
+ char *userName, *hostkey;
+ int user_len, hostkey_len;
+ char buffer[1000000];
 
-{ char *name;
- int n_len;
- const int bufsize = 1000000;
- char buffer[bufsize];
-
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&name,&n_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
+                           &userName, &user_len,
+                           &hostkey, &hostkey_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
+ ARGUMENT_CHECK_CONTENTS(user_len && hostkey_len);
+
+ HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+
  buffer[0] = '\0';
- Nova2PHP_network_speed(name,buffer,bufsize);
+ Nova2PHP_network_speed(filter, hostkey, buffer, sizeof(buffer));
+
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+ 
  RETURN_STRING(buffer,1);
 }
 

@@ -186,6 +186,23 @@ void BsonAppendStringArray(bson_buffer *bb, char *arrayName, Item *arrayValues)
 
 /*****************************************************************************/
 
+bool BsonAppendHostClassFilter(bson_buffer *queryBuffer, HostClassFilter *filter)
+{
+ if(filter == NULL)
+    {
+    return false;
+    }
+
+ bool modified = false;
+
+ modified |= BsonAppendIncludeRxList(queryBuffer, cfr_class_keys, filter->classRxIncludes);
+ modified |= BsonAppendExcludeRxList(queryBuffer, cfr_class_keys, filter->classRxExcludes);
+ 
+ return modified;
+}
+
+/*****************************************************************************/
+
 bool BsonAppendIncludeList(bson_buffer *queryBuffer, char *includeKey, Rlist *includeValues)
 {
  if(!includeValues)
