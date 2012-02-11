@@ -4132,7 +4132,7 @@ int Nova2PHP_list_promise_handles_with_comments(char *bundle,char *btype,char *r
 
 /*****************************************************************************/
 
-void Nova2PHP_get_network_speed(char *hostkey,char *buffer, int bufsize)
+void Nova2PHP_network_speed(char *hostkey,char *buffer, int bufsize)
 
 { mongo_connection dbconn;
  mongo_cursor *cursor;

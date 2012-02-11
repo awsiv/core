@@ -63,13 +63,13 @@ PHP_FUNCTION(cfpr_getlicense_installtime);
 PHP_FUNCTION(cfpr_get_class_frequency);
 PHP_FUNCTION(cfpr_report_class_frequency);
 
-/*! \brief A string describing the network rate to the host
+/*! \brief A string describing the network speed to the host
  * \param hostKey
 \verbatim
 124 Delta; 44636346 bytes/s
 \endverbatim
  */
-PHP_FUNCTION(cfpr_get_network_rate);
+PHP_FUNCTION(cfpr_network_speed);
 
 /*! \brief A JSON document summarizing the meters for all the hosts.
  */

@@ -51,7 +51,7 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_getlicense_installtime,NULL)
     PHP_FE(cfpr_get_class_frequency,NULL)
     PHP_FE(cfpr_report_class_frequency,NULL)
-    PHP_FE(cfpr_get_network_rate,NULL)
+    PHP_FE(cfpr_network_speed,NULL)
    
     PHP_FE(cfpr_summary_meter,NULL)
     PHP_FE(cfpr_host_meter,NULL)

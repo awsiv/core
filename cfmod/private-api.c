@@ -3788,7 +3788,7 @@ PHP_FUNCTION(cfpr_body_list)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_get_network_rate)
+PHP_FUNCTION(cfpr_network_speed)
 
 { char *name;
  int n_len;
@@ -3802,7 +3802,7 @@ PHP_FUNCTION(cfpr_get_network_rate)
     }
 
  buffer[0] = '\0';
- Nova2PHP_get_network_speed(name,buffer,bufsize);
+ Nova2PHP_network_speed(name,buffer,bufsize);
  RETURN_STRING(buffer,1);
 }
 
