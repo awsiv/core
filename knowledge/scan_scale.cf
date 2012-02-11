@@ -59,6 +59,9 @@ Strategy_for_scaling_policy::
 Tactics_for_scaling_policy::
  "/docs/st-scale.html#Tactics-for-scaling-policy"
   represents => { "manual subsection" };
+Caching_classes_that_are_expensive_to_compute::
+ "/docs/st-scale.html#Caching-classes-that-are-expensive-to-compute"
+  represents => { "manual subsection" };
 Performance_impact_of_promises::
  "/docs/st-scale.html#Performance-impact-of-promises"
   represents => { "manual section Performance impact of promises" };

@@ -623,6 +623,7 @@ Checking that growth of complexity requires some user discipline.
 <ul class="menu">
 <li><a accesskey="1" href="#Strategy-for-scaling-policy">Strategy for scaling policy</a>
 <li><a accesskey="2" href="#Tactics-for-scaling-policy">Tactics for scaling policy</a>
+<li><a accesskey="3" href="#Caching-classes-that-are-expensive-to-compute">Caching classes that are expensive to compute</a>
 </ul>
 
 <div class="node">
@@ -703,6 +704,7 @@ us to <i>`see the general in the particular, or the eternal in the transitory'</
 <div class="node">
 <a name="Tactics-for-scaling-policy"></a>
 <p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Caching-classes-that-are-expensive-to-compute">Caching classes that are expensive to compute</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Strategy-for-scaling-policy">Strategy for scaling policy</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Policy-guidelines-for-comprehension">Policy guidelines for comprehension</a>
 
@@ -776,6 +778,72 @@ overhead.
 context.
 
    </ul>
+
+<div class="node">
+<a name="Caching-classes-that-are-expensive-to-compute"></a>
+<p><hr>
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Tactics-for-scaling-policy">Tactics for scaling policy</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Policy-guidelines-for-comprehension">Policy guidelines for comprehension</a>
+
+</div>
+
+<h4 class="subsection">2.1.3 Caching classes that are expensive to compute</h4>
+
+<p>As of version 3.4.0 of the CFEngine core, persistent classes can be
+used to construct a simple time-saving caching of classes
+that depend on very large amounts of data. 
+This feature can be used to avoid recomputing expensive classes
+calculations on each invocation. If a class discovered is essentially
+constant or only slowly varying (like a hostname or alias from a
+non-standard naming facility)
+
+   <p>For example, to create a conditional inclusion of costly class
+definitions, put them into a separate bundle in a file <samp><span class="file">classes.cf</span></samp>.
+<pre class="verbatim"># promises.cf
+
+body common control 
+{
+cached_classes::
+  bundlesequence => { "test" };
+
+!cached_classes::
+  bundlesequence => {  "setclasses", "test" };
+
+!cached_classes::
+  inputs => { "classes.cf" };
+}
+ 
+
+bundle agent test
+{
+reports:
+
+  !my_cached_class::
+   "no cached class";
+
+  my_cached_class::
+    "cached class defined";
+}
+ 
+</pre>
+Then create <samp><span class="file">classes.cf</span></samp>
+<pre class="verbatim"># classes.cf
+
+bundle common setclasses
+{
+classes:
+
+  "cached_classes"            # timer flag 
+         expression => "any",
+        persistence => "480";
+
+  "my_cached_class" 
+                or => { ...long list or heavy function... } ,
+       persistence => "480";
+
+}
+
+</pre>
 
 <div class="node">
 <a name="Performance-impact-of-promises"></a>
@@ -1743,6 +1811,7 @@ for large installations.
 <ul>
 <li><a href="#Strategy-for-scaling-policy">2.1.1 Strategy for scaling policy</a>
 <li><a href="#Tactics-for-scaling-policy">2.1.2 Tactics for scaling policy</a>
+<li><a href="#Caching-classes-that-are-expensive-to-compute">2.1.3 Caching classes that are expensive to compute</a>
 </li></ul>
 <li><a href="#Performance-impact-of-promises">2.2 Performance impact of promises</a>
 <li><a href="#Avoiding-network-traffic">2.3 Avoiding network traffic</a>
