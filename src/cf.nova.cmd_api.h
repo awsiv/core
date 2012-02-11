@@ -40,7 +40,6 @@ int Nova2Txt_listclasses_host(char *hostkey,char *name,int regex,char *classreg,
 
 void Nova2Txt_get_knowledge_view(int pid,char *view,char *buffer,int bufsize);
 char *Nova_FormatDiff(char *s);
-void Nova2Txt_get_network_speed(char *hostkey,char *buffer, int bufsize);
 void Nova2Txt_GetPromiseBody(char *name,char *type,char *returnval,int bufsize);
 char *Nova_LongState(char s);
 char *Nova_LongStateWarn(char s);
