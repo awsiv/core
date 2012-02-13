@@ -66,7 +66,6 @@ class Widget extends Cf_Controller {
         $html = "";
         if (key_exists('data', $result) && count($result['data']) > 0) {
             $result = array_msort($result['data'], array('0' => SORT_ASC), true);
-            $html.="<ul class=\"result\">";
            // $html.="<ul class=\"result\">";
             foreach ($result as $row) {
                 if ($display == 'hostname' && strlen($row[0]) > 0)
@@ -75,11 +74,9 @@ class Widget extends Cf_Controller {
                 if ($display == 'ipaddress' && strlen($row[1]) > 0)
                     $html.="<li><a href=" . site_url('welcome/host') . "/" . $row[2] . " title=" . $row[2] . ">$row[1] ($row[0])</a></li>";
             }
-            $html.="</ul>";
             //$html.="</ul>";
         }
         else {
-            $html = "No Host Found";
             $html = "";
         }
         return $html;
@@ -90,14 +87,13 @@ class Widget extends Cf_Controller {
     }
 
     function search_by_ipaddress($ipregx=null,$page=1) {
-        $ipaddress = $this->input->post('value')||$ipregx;
+        $ipaddress = $this->input->post('value')?$this->input->post('value'):$ipregx;
         $data = "";
         if ($ipaddress) {
             $data = sanitycheckjson(cfpr_show_hosts_ip($ipaddress, NULL, 15, $page), true);
         } else {
             $data = sanitycheckjson(cfpr_show_hosts_ip(NULL, NULL, 15, $page), true);
         }
-        echo $this->__format_to_html($data, 'ipaddress');
             echo $this->__format_to_html($data, 'ipaddress');
             
     }
