@@ -3790,13 +3790,13 @@ PHP_FUNCTION(cfpr_body_list)
 
 PHP_FUNCTION(cfpr_network_speed)
 {
- char *userName, *hostkey;
+ char *userName, *hostKey;
  int user_len, hostkey_len;
  char buffer[1000000];
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
                            &userName, &user_len,
-                           &hostkey, &hostkey_len) == FAILURE)
+                           &hostKey, &hostkey_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
@@ -3804,16 +3804,17 @@ PHP_FUNCTION(cfpr_network_speed)
 
  ARGUMENT_CHECK_CONTENTS(user_len && hostkey_len);
 
- HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
- ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+ cfapi_errid erridAccess = CFDB_HasHostAccessFromUserRBAC(userName, hostKey);
 
- HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+ if(erridAccess != ERRID_SUCCESS)
+    {
+    zend_throw_exception(cfmod_exception_rbac, (char *)GetErrorDescription(erridAccess), 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
 
  buffer[0] = '\0';
- Nova2PHP_network_speed(filter, hostkey, buffer, sizeof(buffer));
+ Nova2PHP_network_speed(NULL, hostKey, buffer, sizeof(buffer));
 
- DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
- 
  RETURN_STRING(buffer,1);
 }
 
