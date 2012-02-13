@@ -17,6 +17,7 @@
 #include "db_query.h"
 #include "bson_lib.h"
 #include "web_rbac.h"
+#include <assert.h>
 
 /*****************************************************************************/
 
@@ -3520,6 +3521,29 @@ int count = CFDB_CountHostsGeneric(conn, &query);
 bson_destroy(&query);
 
 return count;
+}
+
+/*****************************************************************************/
+
+bool CFDB_HasMatchingHost(mongo_connection *conn, char *hostKey, HostClassFilter *hostClassFilter)
+{
+ assert(SafeStringLength(hostKey) > 0);
+ 
+ bson_buffer bb;
+ bson_buffer_init(&bb);
+
+ bson_append_string(&bb, cfr_keyhash, hostKey);
+ BsonAppendHostClassFilter(&bb, hostClassFilter);
+ 
+ bson query;
+ bson_from_buffer(&query, &bb);
+ 
+ int count = CFDB_CountHostsGeneric(conn, &query);
+ bson_destroy(&query);
+
+ assert(count >=0 && count <= 1);
+ 
+ return (count == 1);
 }
 
 /*****************************************************************************/
