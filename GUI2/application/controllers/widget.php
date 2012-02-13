@@ -47,19 +47,24 @@ class Widget extends Cf_Controller {
         $this->load->view('widgets/summaryCompliance', $this->data);
     }
 
-    function search_by_hostname() {
-        $hostname = $this->input->post('value');
+    function search_by_hostname($hostname=null,$page = 1) {
+        $hostname = $this->input->post('value') ||urldecode($hostname);
+        $data = "";
+        $data = sanitycheckjson(cfpr_show_hosts_name($hostname, NULL, 15, $page), true);
          echo $this->__format_to_html($data, 'hostname');
+    }
+    
+    function sort_alphabetically_hostname($hostname=null,$page = 1) {
+        $hostname = $this->input->post('value') || urldecode($hostname);
         $data = "";
         if ($hostname) {
-            $data1 = json_decode(cfpr_show_hosts_name('^' . $hostname, NULL, NULL, NULL), true);
-            $data2 = json_decode(cfpr_show_hosts_name('^' . strtolower($hostname), NULL, NULL, NULL), true);
+            $data1= sanitycheckjson(cfpr_show_hosts_name('^' . $hostname, NULL, 15, $page), true);
+            $data2 = sanitycheckjson(cfpr_show_hosts_name('^' . strtolower($hostname), NULL, 15, $page), true);
             $data = array_merge($data1, $data2);
         } else {
             //last two arguments in the function call are for row no and column no
-            $data = json_decode(cfpr_show_hosts_name(NULL, NULL, NULL, NULL), true);
+            $data = sanitycheckjson(cfpr_show_hosts_name(NULL, NULL, 15, $page), true);
         }
-        echo $this->__format_to_html($data, 'hostname');
             echo $this->__format_to_html($data, 'hostname');
     }
 
@@ -90,13 +95,13 @@ class Widget extends Cf_Controller {
         
     }
 
-    function search_by_ipaddress() {
-        $ipaddress = $this->input->post('value');
+    function search_by_ipaddress($ipregx=null,$page=1) {
+        $ipaddress = $this->input->post('value')||$ipregx;
         $data = "";
         if ($ipaddress) {
-            $data = json_decode(cfpr_show_hosts_ip($ipaddress, NULL, NULL, NULL), true);
+            $data = sanitycheckjson(cfpr_show_hosts_ip($ipaddress, NULL, 15, $page), true);
         } else {
-            $data = json_decode(cfpr_show_hosts_ip(NULL, NULL, NULL, NULL), true);
+            $data = sanitycheckjson(cfpr_show_hosts_ip(NULL, NULL, 15, $page), true);
         }
         echo $this->__format_to_html($data, 'ipaddress');
             echo $this->__format_to_html($data, 'ipaddress');
