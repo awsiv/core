@@ -10,7 +10,9 @@
             onlyShowHandle:false,
             showAddButton:false
         },
+        dataLoaded : false,
         elementtext:"",
+        ajaxloader:$('<div class="loading"></div>'),
         _init: function(){
         },
         _create:function(){
@@ -18,29 +20,41 @@
             self.addsearchbar();
             self.addalphapager();
             $.ui.policyfinder.instances.push(this.element);
+            $('#'+self.containerID()).delegate('a','click',$.proxy(self.handleSelected,self));
+            $('#'+self.containerID()).delegate('.vblistadd','click',$.proxy(self.addSelected,self));
+            
         },
         
         containerID:function() {
-            return this.element.attr('id') + '-'+'policyList';
+            return this.element.attr('id') + '-'+'policyListContainer';
         },
         
         dialogContainer: function() {            
-            var existing = $("#policylistcontainer");
+            var self = this;
+            var existing = $('#' + self.containerID() );
+            
             if ( existing.length > 0) {
                 return existing.first();
             }
             else {
                 //single shared element for modal dialogs
-                var requestDialog = $('<div id="policylistcontainer" style="display:none" class="result" title="Promises"></div>').appendTo('body').
+                var requestDialog = $('<div id="'+self.containerID()+'" style="display:none" class="result" title="Promises"><div id="policyList"><ul id="'+self.containerID()+'-ul"></ul></div></div>').appendTo('body').
                 dialog({
-                    autoOpen: false
+                    autoOpen: false,
+                    beforeClose: function(event, ui) { 
+                    // self.destroy();
+                    }
+                    
+                }).bind('dialogclose', function(event, ui){
+                    //requestDialog.dialog('close');
+                    return false;
                 });
                 return requestDialog;
             }
         },
         addsearchbar:function(){
             var self =this;
-            self.ajaxloader=$('<div class="loading"></div>');
+           
             self.dialogcontent = self.dialogContainer();
             self.dialogcontent.dialog($.extend({}, 
                 $.ui.dialog.prototype.options, 
@@ -87,11 +101,19 @@
             self.menu.delegate('li','click',$.proxy(self.menuitemclicked,self));
             self.element.bind('click',function(event){
                 event.preventDefault();
-                self. elementtext=$(this).text();
+                self.elementtext=$(this).text();
                 $(this).text('').append('<span class="loadinggif"> </span>');
-                self.dialogcontent.html(self.ajaxloader);
-                self.loadpagebody(self.element.attr('href'),"",true);
-                self.dialogcontent.dialog('open');
+                
+                // check if it has already been opened before 
+                if (!self.dataLoaded) {
+                    self.loadpagebody(self.element.attr('href'),"",true);
+                    self.dialogcontent.dialog('open');
+
+                } else {
+                    // reshow the dialog
+                    $('#' + self.containerID()).parent().show();
+                }
+                $(this).text(self.elementtext);
             });
 
         },
@@ -102,21 +124,40 @@
             var selected_category=sender.text().toLowerCase();
             self.searchbar.find('input[type="text"]').val('Search '+sender.text().toLowerCase()).data('default','Search '+sender.text().toLowerCase())
             self.searchbar.attr("action",self.options.baseUrl+"/widget/search_"+selected_category.replace(/\s+/g, "_").toLowerCase());
-            self.dialogcontent.html(self.ajaxloader);
+            self.emptyContainer();
             self.loadpagebody(self.searchbar.attr('action'),"",false) ;
             self.searchbar.find('input[type="text"]').trigger('blur');
             self.alphasearch.find('li').removeClass('selected');
             sender.addClass('selected').siblings().removeClass('selected');
         //self.menu.fadeOut();
         },
+        
+        
+        updateDataInContainer:function(data) {
+            var self = this;
+            var containerUlId = self.containerID()+'-ul';
+            document.getElementById(containerUlId).innerHTML += data;
+            self.dataLoaded = true;            
+            self.element.text(self. elementtext);
+            $('div.loading').remove();                
+        },
+        
+        emptyContainer: function() {
+             var self = this;   
+             var containerUlId = self.containerID()+'-ul';
+             document.getElementById(containerUlId).innerHTML = '';
+        },
 
         loadpagebody:function(url,val,escreg){
+               
             var self=this,
+
             submit_url=url,
             searchval=val;
+            self.dialogcontent.prepend(self.ajaxloader);
             var searchtext=self.searchbar.find('input[type="text"]').val();
             if(/search\s+by\s+/.test(searchtext)){
-                searchtext=''
+                searchtext='';
             };
             $.ajax({
                 type: "POST",
@@ -124,51 +165,24 @@
                 data: {
                     filter:searchval,
                     reg:escreg,
-                    type:searchtext
+                    type:searchtext,
+                    showButton:self.options.showAddButton,
+                    showOnlyHandle:self.options.onlyShowHandle                    
                 },
-                dataType:"json",
+                dataType:"html",
                 success: function(data) {
-                    var li = '';
-                    $.each(data, function(i, val) {
-                        li += '<li>';
-                        li += '<span class="type">'+val[3]+'</span>'; 
-                        li +='<p>';
-                        if (!self.options.onlyShowHandle) {       
-                        
-                            li += '<a href="'+ self.options.baseUrl+ '/promise/details/' + escape(val[0])+'" title="'+
-                            "promise" +'" class="promiselnk"><span class="promiser">'+val[4]+'</span></a>';
-                        }    
-                        
-                        
-                        li += '<a class="handleClick" href="'+self.options.baseUrl+'/promise/details/'+escape(val[0])+'" rel="'+escape(val[0])+'" title="'+'handle' +'"><span class="handle">'+val[0]+'</span></a>';
-                        
-                        if (!self.options.onlyShowHandle) {                
-                                               
-                            li += '<a href="'+self.options.baseUrl+ '/bundle/details/bundle/' +escape(val[2])+"/type/"+val[3]+'" title="'+
-                            'bundle'+'"><span class="bundle">'+val[2]+'</span></a>';
-                        }
-                        li +='</p>';
-                        if(self.options.showAddButton){
-                            li +='<span class="vblistadd btn" style="display:inline-block">add to list</span>'    
-                        }
-                        li +='</li>';
-                            
-                               
-                    });
-                    
-                    var policyList= "<div id='policyList'><ul id="+self.containerID()+">" + li + "</ul></div>";
-                    self.dialogcontent.html(policyList);                    
-                    $('#'+self.containerID()).delegate('a','click',$.proxy(self.handleSelected,self));
-                    $('#'+self.containerID()).delegate('.vblistadd','click',$.proxy(self.addSelected,self));
-                    self.element.text(self. elementtext);
+                    self.updateDataInContainer(data);
                 },
                 error:function(jqXHR, textStatus, errorThrown){
-                    self.dialogcontent.html($("<ul>").attr("id", self.containerID()));
-                    var li = $("<li>");
-                    li.append('<span class="type">'+textStatus+'</span><p>'+errorThrown+'</p>');
-                    li.appendTo($('#'+self.containerID()));
+                    var containerUlId = self.containerID()+'-ul';
+                    //self.dialogcontent.html($("<ul>").attr("id", self.containerID()));
+                    var li = '<li><span class="type">'+textStatus+'</span><p>'+errorThrown+'</p>';
+                    document.getElementById(containerUlId).innerHTML = li ;
+                    $('div.loading').remove();
                 }
             });
+           
+           
         },
         
         handleSelected:function(event){
@@ -218,6 +232,7 @@
             sender=$(event.target),
             submit_url=sender.attr('action'),
             searchval=sender.find('input').val();
+            self.emptyContainer();
             self.loadpagebody(submit_url,searchval,true);
             self.menu.fadeOut();
         },
@@ -245,6 +260,7 @@
             var self=this;
             var sender=$(event.target).parent();
             sender.addClass('selected').siblings().removeClass('selected');
+            self.emptyContainer();            
             self.loadpagebody(self.searchbar.attr('action'),"^"+$(event.target).text(),false);
             if(self.menu.css('display')=='block')
             {

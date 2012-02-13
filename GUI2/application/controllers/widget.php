@@ -190,13 +190,36 @@ class Widget extends Cf_Controller {
         return $html;
     }
 
-    function allpolicies() {
+    function allpolicies($page = 1) {
         $data = cfpr_promise_list_by_handle_rx($this->session->userdata('username'), NULL);
-        sanitycheckjson($data);
+
+        $showButton = $this->input->post('showButton');
+        $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
+        $viewdata = array(
+            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
+            'breadcrumbs' => $this->breadcrumblist->display(),
+            'showButton' => $showButton,
+            'showOnlyHandle' => $showOnlyHandle
+        );
+        $returnedData = sanitycheckjson($data, true);
+        $chunkSize = 100;
+        $startOffset = ($page - 1) * $chunkSize;
+        $returnedData = array_slice($returnedData, $startOffset, $chunkSize);
+
+        $viewdata['viewdata'] = $returnedData;
+        $this->load->view('widgets/allpolicies', $viewdata);
     }
 
-    function search_by_handle() {
+    function search_by_handle($page = 1) {
         $handle = $this->input->post('filter');
+        $showButton = $this->input->post('showButton');
+        $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
+        $viewdata = array(
+            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
+            'breadcrumbs' => $this->breadcrumblist->display(),
+            'showButton' => $showButton,
+            'showOnlyHandle' => $showOnlyHandle
+        );
 
         $data = "";
         if ($handle) {
@@ -204,11 +227,26 @@ class Widget extends Cf_Controller {
         } else {
             $data = cfpr_promise_list_by_handle_rx($this->session->userdata('username'), NULL);
         }
-        sanitycheckjson($data);
+        $returnedData = sanitycheckjson($data, true);
+
+        $chunkSize = 100;
+        $startOffset = ($page - 1) * $chunkSize;
+        $returnedData = array_slice($returnedData, $startOffset, $chunkSize);
+
+        $viewdata['viewdata'] = $returnedData;
+        $this->load->view('widgets/allpolicies', $viewdata);
     }
 
-    function search_by_bundle() {
+    function search_by_bundle($page = 1) {
         $bundle = $this->input->post('filter');
+        $showButton = $this->input->post('showButton');
+        $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
+        $viewdata = array(
+            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
+            'breadcrumbs' => $this->breadcrumblist->display(),
+            'showButton' => $showButton,
+            'showOnlyHandle' => $showOnlyHandle
+        );
 
         $data = "";
         if ($bundle) {
@@ -216,12 +254,27 @@ class Widget extends Cf_Controller {
         } else {
             $data = cfpr_promise_list_by_bundle_rx($this->session->userdata('username'), NULL);
         }
-        sanitycheckjson($data);
+        $returnedData = sanitycheckjson($data, true);
+
+        $chunkSize = 100;
+        $startOffset = ($page - 1) * $chunkSize;
+        $returnedData = array_slice($returnedData, $startOffset, $chunkSize);
+
+        $viewdata['viewdata'] = $returnedData;
+        $this->load->view('widgets/allpolicies', $viewdata);
     }
 
-    function search_by_type() {
+    function search_by_type($page = 1) {
         $val = $this->input->post('filter');
         $type = $this->input->post('type');
+        $showButton = $this->input->post('showButton');
+        $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
+        $viewdata = array(
+            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
+            'breadcrumbs' => $this->breadcrumblist->display(),
+            'showButton' => $showButton,
+            'showOnlyHandle' => $showOnlyHandle
+        );
 
         if (preg_match("/^\^\w+/i", $val)) {
             $data = cfpr_promise_list_by_bundle_rx($this->session->userdata('username'), $val);
