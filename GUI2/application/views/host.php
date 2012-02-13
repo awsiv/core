@@ -5,7 +5,7 @@ $flavour = cfpr_get_variable($hostkey, "sys", "flavour");
 $rel = cfpr_get_variable($hostkey, "sys", "release");
 $load = cfpr_get_variable($hostkey, "mon", "av_loadavg");
 $free = cfpr_get_variable($hostkey, "mon", "av_diskfree");
-$speed = cfpr_network_speed($hostkey);
+$speed = cfpr_network_speed($this->session->userdata('username'), $hostkey);
 $colour = cfpr_get_host_colour($hostkey);
 ?>
 <div id="hostview">
