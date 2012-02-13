@@ -136,7 +136,7 @@ return ERRID_RBAC_ACCESS_DENIED;
 
 /*****************************************************************************/
 
-HubQuery *CFBD_HostClassFilterFromUserRBAC(char *userName)
+HubQuery *CFDB_HostClassFilterFromUserRBAC(char *userName)
 {
  Rlist *recordList = NULL;
   
@@ -162,7 +162,7 @@ HubQuery *CFBD_HostClassFilterFromUserRBAC(char *userName)
 
 /*****************************************************************************/
 
-HubQuery *CFBD_PromiseFilterFromUserRBAC(char *userName)
+HubQuery *CFDB_PromiseFilterFromUserRBAC(char *userName)
 {
  Rlist *recordList = NULL;
   

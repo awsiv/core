@@ -686,7 +686,7 @@ PHP_FUNCTION(cfpr_report_software_in)
 
  buffer[0]='\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
  
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -741,7 +741,7 @@ PHP_FUNCTION(cfpr_report_patch_in)
 
  buffer[0]='\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -796,7 +796,7 @@ PHP_FUNCTION(cfpr_report_patch_avail)
 
  buffer[0]='\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -845,7 +845,7 @@ PHP_FUNCTION(cfpr_report_classes)
 
  buffer[0]='\0';
  
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -1061,7 +1061,7 @@ PHP_FUNCTION(cfpr_report_vars)
 
  buffer[0]='\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -1137,7 +1137,7 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
 
  buffer[0]='\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -1190,7 +1190,7 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
 
  buffer[0]='\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
  
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -1281,7 +1281,7 @@ PHP_FUNCTION(cfpr_report_lastseen)
 
  buffer[0]='\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -1331,7 +1331,7 @@ PHP_FUNCTION(cfpr_report_performance)
 
  buffer[0]='\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -1380,7 +1380,7 @@ PHP_FUNCTION(cfpr_report_setuid)
 
  buffer[0]='\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -1435,7 +1435,7 @@ PHP_FUNCTION(cfpr_report_filechanges)
 
  buffer[0]='\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -1494,7 +1494,7 @@ PHP_FUNCTION(cfpr_report_filediffs)
 
  buffer[0]='\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -1549,7 +1549,7 @@ PHP_FUNCTION(cfpr_report_filechanges_longterm)
 
  buffer[0]='\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -1608,7 +1608,7 @@ PHP_FUNCTION(cfpr_report_filediffs_longterm)
 
  buffer[0]='\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -1639,7 +1639,7 @@ PHP_FUNCTION(cfpr_promise_details)
  ARGUMENT_CHECK_CONTENTS(user_len && handle_len);
  
  
- HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ HubQuery *hqPromiseFilter = CFDB_PromiseFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
 
  PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
@@ -1692,7 +1692,7 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
 
  buffer[0]='\0';
  
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -1743,7 +1743,7 @@ PHP_FUNCTION(cfpr_report_value)
 
  buffer[0]='\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -1826,7 +1826,7 @@ PHP_FUNCTION(cfpr_report_notkept)
 
  buffer[0]='\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -1881,7 +1881,7 @@ PHP_FUNCTION(cfpr_report_repaired)
 
  buffer[0]='\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -1930,7 +1930,7 @@ PHP_FUNCTION(cfpr_summarize_notkept)
 
  buffer[0]='\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -1979,7 +1979,7 @@ PHP_FUNCTION(cfpr_summarize_repaired)
 
  buffer[0]='\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -2029,7 +2029,7 @@ PHP_FUNCTION(cfpr_hosts_with_software_in)
 
  buffer[0] = '\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -2073,7 +2073,7 @@ PHP_FUNCTION(cfpr_hosts_with_value)
 
  buffer[0] = '\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -2118,7 +2118,7 @@ PHP_FUNCTION(cfpr_hosts_with_patch_in)
 
  buffer[0] = '\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -2165,7 +2165,7 @@ PHP_FUNCTION(cfpr_hosts_with_patch_avail)
 
  buffer[0] = '\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -2205,7 +2205,7 @@ PHP_FUNCTION(cfpr_hosts_with_classes)
 
  buffer[0] = '\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
  
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -2252,7 +2252,7 @@ PHP_FUNCTION(cfpr_hosts_with_repaired)
 
  buffer[0] = '\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -2299,7 +2299,7 @@ PHP_FUNCTION(cfpr_hosts_with_notkept)
 
  buffer[0] = '\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
  
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -2348,7 +2348,7 @@ PHP_FUNCTION(cfpr_hosts_with_vars)
 
  buffer[0] = '\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -2392,7 +2392,7 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_summary)
 
  buffer[0] = '\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -2435,7 +2435,7 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_promises)
 
  buffer[0] = '\0';
  
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
  
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -2485,7 +2485,7 @@ PHP_FUNCTION(cfpr_hosts_with_lastseen)
 
  buffer[0] = '\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -2526,7 +2526,7 @@ PHP_FUNCTION(cfpr_hosts_with_performance)
 
  buffer[0] = '\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -2567,7 +2567,7 @@ PHP_FUNCTION(cfpr_hosts_with_setuid)
 
  buffer[0] = '\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -2614,7 +2614,7 @@ PHP_FUNCTION(cfpr_hosts_with_filechanges)
 
  buffer[0] = '\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -2662,7 +2662,7 @@ PHP_FUNCTION(cfpr_hosts_with_filediffs)
 
  buffer[0] = '\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -2703,7 +2703,7 @@ PHP_FUNCTION(cfpr_hosts_with_bundlesseen)
 
  buffer[0] = '\0';
  
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -3147,7 +3147,7 @@ PHP_FUNCTION(cfpr_promise_list_by_handle_rx)
 
  buffer[0] = '\0';
 
- HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ HubQuery *hqPromiseFilter = CFDB_PromiseFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
 
  PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
@@ -3182,7 +3182,7 @@ PHP_FUNCTION(cfpr_promise_list_by_promiser)
 
  buffer[0] = '\0';
 
- HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ HubQuery *hqPromiseFilter = CFDB_PromiseFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
 
  PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
@@ -3217,7 +3217,7 @@ PHP_FUNCTION(cfpr_promise_list_by_promiser_rx)
 
  buffer[0] = '\0';
 
- HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ HubQuery *hqPromiseFilter = CFDB_PromiseFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
 
  PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
@@ -3250,7 +3250,7 @@ PHP_FUNCTION(cfpr_promise_list_by_promise_type)
  
  buffer[0] = '\0';
 
- HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ HubQuery *hqPromiseFilter = CFDB_PromiseFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
 
  PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
@@ -3282,7 +3282,7 @@ PHP_FUNCTION(cfpr_promise_list_by_bundle)
 
  ARGUMENT_CHECK_CONTENTS(user_len && btype_len && bname_len);
 
- HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ HubQuery *hqPromiseFilter = CFDB_PromiseFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
 
  PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
@@ -3319,7 +3319,7 @@ PHP_FUNCTION(cfpr_promise_list_by_bundle_rx)
  
  buffer[0] = '\0';
 
- HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ HubQuery *hqPromiseFilter = CFDB_PromiseFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
 
  PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
@@ -3351,7 +3351,7 @@ PHP_FUNCTION(cfpr_bundle_by_promise_handle)
  
  ARGUMENT_CHECK_CONTENTS(user_len && ph_len);
 
- HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ HubQuery *hqPromiseFilter = CFDB_PromiseFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
 
  PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
@@ -3425,7 +3425,7 @@ PHP_FUNCTION(cfpr_bundle_classes_used)
 
  ARGUMENT_CHECK_CONTENTS(user_len && btype_len && bname_len);
 
- HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ HubQuery *hqPromiseFilter = CFDB_PromiseFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
 
  PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter); 
@@ -3460,7 +3460,7 @@ PHP_FUNCTION(cfpr_bundle_arguments)
 
  ARGUMENT_CHECK_CONTENTS(user_len && btype_len && bname_len);
 
- HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ HubQuery *hqPromiseFilter = CFDB_PromiseFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
 
  PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
@@ -3508,7 +3508,7 @@ PHP_FUNCTION(cfpr_bundle_list_all)
  
  ARGUMENT_CHECK_CONTENTS(user_len);
 
- HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ HubQuery *hqPromiseFilter = CFDB_PromiseFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
 
  PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
@@ -3559,7 +3559,7 @@ PHP_FUNCTION(cfpr_bundle_agent_goals)
  
  ARGUMENT_CHECK_CONTENTS(user_len);
 
- HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ HubQuery *hqPromiseFilter = CFDB_PromiseFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
  
  PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
@@ -3641,7 +3641,7 @@ PHP_FUNCTION(cfpr_bundle_list_by_bundle_usage)
 
  ARGUMENT_CHECK_CONTENTS(user_len && bname_len);
 
- HubQuery *hqPromiseFilter = CFBD_PromiseFilterFromUserRBAC(userName);
+ HubQuery *hqPromiseFilter = CFDB_PromiseFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqPromiseFilter, DeletePromiseFilter);
 
  PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
@@ -3693,7 +3693,7 @@ PHP_FUNCTION(cfpr_get_class_frequency)
 
  buffer[0] = '\0';
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -3728,7 +3728,7 @@ PHP_FUNCTION(cfpr_report_class_frequency)
  fpattern = (p_len == 0) ? NULL : pattern;
  fhkey =  (h_len == 0) ? NULL : hkey;
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
@@ -3804,7 +3804,7 @@ PHP_FUNCTION(cfpr_network_speed)
 
  ARGUMENT_CHECK_CONTENTS(user_len && hostkey_len);
 
- HubQuery *hqHostClassFilter = CFBD_HostClassFilterFromUserRBAC(userName);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);

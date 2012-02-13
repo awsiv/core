@@ -34,8 +34,8 @@
 #define dbkey_role_bundlerx_exclude "brxx"
 
 
-HubQuery *CFBD_HostClassFilterFromUserRBAC(char *userName);
-HubQuery *CFBD_PromiseFilterFromUserRBAC(char *userName);
+HubQuery *CFDB_HostClassFilterFromUserRBAC(char *userName);
+HubQuery *CFDB_PromiseFilterFromUserRBAC(char *userName);
 cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, size_t password_len);
 HubQuery *CFDB_GetRBACForUser(char *userName);
 cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *description,
