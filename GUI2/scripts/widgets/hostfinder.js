@@ -41,6 +41,9 @@
             var self = this;
             // load the view and then save make a dialog out of it
             self.temp = $('<div style="display:hidden" title="Find Host" id="hostfinderctrl"></div>').appendTo('body');
+            $.ajaxSetup({
+              error:function(jqxhr,exception) { self.displayFailure(jqxhr,exception);}
+             });
             self.ajaxloader=$('<div class="loading"></div>');
             $.ajax({
                 type: "POST",
@@ -50,7 +53,10 @@
                 async:false,
                 success: function(data) {
                     self.temp.html(data);
-                    self.cfui.categories=self.temp.find('#searchby');
+                }
+            });
+            
+             self.cfui.categories=self.temp.find('#searchby');
                     self.cfui.resultpane=self.temp.find('#searchresult');
                     self.cfui.searchform=self.temp.find('#searchhost');
                     self.cfui.alphapaging=self.temp.find('#aplhaPaging')
@@ -62,11 +68,9 @@
                         modal: true,
                         resizable: false
                     });
-                   self.element.text(self.elementtext) ;
-                    self.cfui.page=2;
-                }
-            });
-
+             self.element.text(self.elementtext) ;
+             self.cfui.page=2;
+             
             //console.log( self.areas.categories);
             self.temp.parent().addClass('customdlg').removeClass('ui-widget-content');
             self.titlebar=self.temp.siblings('div.ui-dialog-titlebar');
@@ -479,6 +483,26 @@
        resetScrollPosition:function(){
             var self=this;
             self.temp.scrollTop(0);
+        },
+        
+        displayFailure: function(x,e) {	
+               var serverMsg,	
+                   self=this;	
+               if(x.status==0){	
+			serverMsg='You are offline!!\n Please Check Your Network.';	
+			}else if(x.status==404){	
+			serverMsg='Requested URL not found.';	
+			}else if(x.status==500){	
+			serverMsg='Internel Server Error.';
+			}else if(e=='parsererror'){
+			serverMsg='Error.\nParsing JSON Request failed.';	
+			}else if(e=='timeout'){	
+			serverMsg='Request Time out.';	
+			}else {	
+			serverMsg='Unknow Error.\n'+x.responseText;	
+			}
+                self.temp.html("<div class='ui-state-error' style='padding: 1em;width:90%'><p><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span>Sorry, a software error has occured.</p><p>" + x.status + " "  + serverMsg+"</p></div>");	
+                self.element.text(self.elementtext);  	
         },
         
         destroy: function(){
