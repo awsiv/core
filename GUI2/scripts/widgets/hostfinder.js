@@ -17,7 +17,11 @@
             categories:"",
             resultpane:"",
             searchform:"",
-            page:2
+            page:2,
+            selectedLetter:null,
+            scrollingEnd:false,
+            filtermethod:'hostname',
+            searchedkey:null
         },
         options: {
             baseUrl:'',
@@ -30,8 +34,7 @@
         elementtext:"",
         _init: function() {
             var self=this;
-            self.options.url  = self.options.baseUrl + self.options.url;
-           
+            self.options.url  = self.options.baseUrl + self.options.url; 
         },
         createhostfinder:function()
         {
@@ -103,25 +106,42 @@
             
             self.temp.bind('scroll',$.proxy(self.hostlistscrolled,self));
         },
+        
        hostlistscrolled:function(event){
-            var listpane=event.currentTarget;
-            var self=this;
+            var listpane=event.currentTarget,
+                 self=this,
+                 url=self.options.url+'/'+self.cfui.page;
+                 
+            //do nothing if the false scroll event triggred due to click event of alpha sort
+            if($(listpane).scrollTop() == 0 || self.cfui.scrollingEnd) return;
+            
+            if(self.cfui.selectedLetter !=null){
+                url=self.options.baseUrl+'/widget/sort_alphabetically_hostname/'+self.cfui.selectedLetter+'/'+self.cfui.page;
+            }else if(self.cfui.searchedkey !=null){
+                url=self.options.baseUrl+'/widget/search_by_'+self.cfui.filtermethod.replace(/\s+/g, "").toLowerCase()+'/'+encodeURIComponent(self.cfui.searchedkey)+'/'+self.cfui.page; 
+            }
+            
             if ($(listpane)[0].scrollHeight - $(listpane).scrollTop() == $(listpane).outerHeight()) {
-                    $.getJSON(self.options.url+'/'+self.cfui.page,function(data) {
-                                   $.each(data['data'], function(i, post) {
-                                        //console.log(post);
-                                       self.cfui.resultpane.find('ul').append('<li><a href="'+self.options.baseUrl+'/welcome/host/'+post[2]+'" >'+post[0]+'</a></li>');
-                              });
+                    $.get(url,function(data) {   
+                              if (data =="") {
+                                  self.cfui.scrollingEnd = true;
+                                  return;
+                              }
+                              self.cfui.resultpane.find('ul').append(data);
                               self.cfui.page++;
                           });
                   }
        },
+       
       categoryselected:function(event)
         {
             var selected_category=$(this).text().toLowerCase();
             var self=event.data.ui;
             $(this).addClass('selected').siblings().removeClass('selected');
-            self.filtermethod=selected_category;
+            self.cfui.filtermethod=selected_category;
+            self.resetPagination();
+            self.resetSelectedLetter();
+            self.resetSearchKey();
             self.cfui.searchform.attr("action",self.options.baseUrl+"/widget/search_by_"+selected_category.replace(/\s+/g, "").toLowerCase());
             self.cfui.searchform.find('input[type="text"]').val('search by '+selected_category).data('default','search by '+selected_category);
             if( $(this).attr('id')=='search_class')
@@ -132,7 +152,7 @@
                 self.cfui.searchform.find('input[type="text"]').trigger('blur');
                 self.cfui.searchform.find('input[type="text"]').trigger('focus');
             }
-          self.temp.unbind('scroll',$.proxy(self.hostlistscrolled,self));
+          //self.temp.unbind('scroll',$.proxy(self.hostlistscrolled,self));
         },
 
         hostselected:function(event)
@@ -172,7 +192,6 @@
                     }
                 });
             }
-           self.temp.unbind('scroll',$.proxy(self.hostlistscrolled,self));
         },
    
         updatesearchresult:function(data){
@@ -329,7 +348,6 @@
                 'value':$(this).text()
             },function(){});
             self.cfui.categories.slideUp();
-            self.temp.unbind('scroll',$.proxy(self.hostlistscrolled,self));
         },
 
         searchboxkeyup:function(event)
@@ -429,6 +447,28 @@
                 $(this).removeClass('focused');
             }
         },
+        resetPagination:function() {
+            var self = this;
+            self.cfui.page = 2;
+            self.cfui.scrollingEnd = false;
+            
+        },
+        
+        resetSelectedLetter: function() {
+            var self = this;            
+            self.cfui.selectedLetter=null,
+            self.cfui.alphapaging.find('li').removeClass('selected');           
+        },
+        
+        resetSearchKey: function(){
+            var self = this;
+            self.cfui.searchedkey=null;
+        },
+       resetScrollPosition:function(){
+            var self=this;
+            self.temp.scrollTop(0);
+        },
+        
         destroy: function(){
             // remove this instance from $.ui.mywidget.instances
             var element = this.element;
