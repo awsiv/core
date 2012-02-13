@@ -686,11 +686,11 @@ class Welcome extends Cf_Controller {
         $this->load->library('cf_table');
 
         $data = array(
-            'title' => $this->lang->line('mission_portal_title') . " - Promise Body ",
-            'status' => "current",
-            'allbodies' => json_decode(utf8_encode(cfpr_body_list($type, ".*")), TRUE),
-            'def' => json_decode(utf8_encode(cfpr_get_promise_body($body, $type)), TRUE),
-            'type' => $type,
+            'title'       => $this->lang->line('mission_portal_title') . " - Promise Body ",
+            'status'      => "current",
+            'allbodies'   => json_decode(utf8_encode(cfpr_body_list($type, ".*")), TRUE),
+            'def'         => json_decode(utf8_encode(cfpr_body_details($type, $body)), TRUE),
+            'type'        => $type,
             'breadcrumbs' => $this->breadcrumblist->display()
         );
         $this->template->load('template', 'body', $data);

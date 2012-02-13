@@ -30,41 +30,67 @@ class Promise extends Cf_Controller {
     }*/
     
     function details($handle=NULL) {
-         $this->carabiner->css('tabs-custom.css');
+        $this->carabiner->css('tabs-custom.css');
+        
+        $username = $this->session->userdata('username');
 
         if (is_null($handle)) {
             $handle = isset($_POST['handle']) ? $_POST['handle'] : NULL;
         } else {
             $handle = urldecode($handle);
         }
+       
         $mybundle = cfpr_bundle_by_promise_handle($this->session->userdata('username'), $handle);
-        $promiser = cfpr_get_promiser($handle);
-        $type = cfpr_get_promise_type($handle);
+
+        // get promise details
+        $promise  = sanitycheckjson(cfpr_promise_details($this->session->userdata('username'), $handle),true);
+        $promiser = $promise['promiser'];
+        $type     = $promise['promise_type'];
+        
         $pid = cfpr_get_pid_for_topic("promises", $handle);
         $topicDetail = cfpr_show_topic($pid);
 
-            $bc = array(
+        $bc = array(
             'title' => $this->lang->line('breadcrumb_promise'),
             'url' => 'promise/details/'.$handle,
             'isRoot' => false,
-             'replace_existing'=>true
-          );
+            'replace_existing'=>true
+        );
+
+        /*
+         * cfpr_promise_list_by_promiser  and cfpr_promise_list_by_promise_type
+         * 
+         * return nested array like array 0 =>  array 0 => 'promise_cdp_commands_cf_9' ..
+         * 
+         * so we have to use first element from the inner array
+         */
+        
+        $promise_list_by_promiser_arr = array_values(json_decode(utf8_encode(cfpr_promise_list_by_promiser($username, $promiser)),TRUE));
+        $allhandlespromiser = &$promise_list_by_promiser_arr[0];
+        
+        $promise_list_by_promise_type_arr = json_decode(utf8_encode(cfpr_promise_list_by_promise_type($username, $type)),TRUE);
+        $allhandlesbytype = &$promise_list_by_promise_type_arr[0];
+        
         $this->breadcrumb->setBreadCrumb($bc);
-       
+        
         $data = array(
             'handle' => $handle,
-            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_promise')." " .$handle,
-            'pid' => $pid,
-            'mybundle' => cfpr_bundle_by_promise_handle($this->session->userdata('username'), $handle),
-            'allhandles' => json_decode(utf8_encode(cfpr_list_handles_for_bundle($mybundle, cfpr_get_bundle_type($mybundle), false)),TRUE),
-            'allhandlespromiser' => json_decode(utf8_encode(cfpr_list_handles($promiser, "", false)),TRUE),
-            'type' => $type,
-            'allhandlesbytype' =>json_decode(utf8_encode(cfpr_list_handles("", $type, false)),TRUE),
-            'topicLeads' => json_decode(utf8_encode(cfpr_show_topic_leads($pid)),TRUE),
+            'title'  => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_promise')." " .$handle,
+            'pid'    => $pid,
+            'type'   => $type,        
+            'promise'=> $promise,    
+            'allhandlespromiser' => $allhandlespromiser,
+            'allhandlesbytype'   => $allhandlesbytype,       
+            
+            'mybundle'    => cfpr_bundle_by_promise_handle($username, $handle),
+
+            'allhandles'  => json_decode(utf8_encode(cfpr_promise_list_by_bundle($username, cfpr_get_bundle_type($mybundle), $mybundle)),TRUE),
+            'topicLeads'  => json_decode(utf8_encode(cfpr_show_topic_leads($pid)),TRUE),
             'topicDetail' => json_decode(utf8_encode($topicDetail), true),
-            'promise' => sanitycheckjson(cfpr_promise_details($this->session->userdata('username'), $handle),true),
+
             'breadcrumbs' => $this->breadcrumblist->display()
         );
+        
         if(is_ajax()){
             $this->load->view('promise/promise',$data);
         }else{

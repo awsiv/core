@@ -25,7 +25,7 @@ class Bundle extends Cf_Controller {
         );
         $this->breadcrumb->setBreadCrumb($bc);
         $data = array(
-            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_bundle'),
+            'title'       => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_bundle'),
             'bundle_list' => json_decode(cfpr_report_bundlesseen($hostkey, $name, $regex, NULL, "last-verified", true, 10000, 1), true),
             'breadcrumbs' => $this->breadcrumblist->display()
         );
@@ -46,15 +46,17 @@ class Bundle extends Cf_Controller {
         );
         $this->breadcrumb->setBreadCrumb($bc);
 
+        $username = $this->session->userdata('username');
+        
         $data = array(
-            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_bundle'),
-            'status' => "current",
-            'bundle' => $bundle,
-            'allbundles' => json_decode(utf8_encode(cfpr_bundle_list_all($this->session->userdata('username'))), TRUE),
-            'args' => json_decode(utf8_encode(cfpr_bundle_arguments($this->session->userdata('username'), $type, $bundle))),
-            'classes' => json_decode(utf8_encode(cfpr_bundle_classes_used($this->session->userdata('username'), $type, $bundle)), TRUE),
-            'list' => json_decode(utf8_encode(cfpr_list_handles_for_bundle($bundle, $type, False)), TRUE),
-            'others' => json_decode(utf8_encode(cfpr_bundle_list_by_bundle_usage($this->session->userdata('username'), $bundle)), TRUE),
+            'title'       => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_bundle'),
+            'status'      => "current",
+            'bundle'      => $bundle,
+            'allbundles'  => json_decode(utf8_encode(cfpr_bundle_list_all($username)), TRUE),
+            'args'        => json_decode(utf8_encode(cfpr_bundle_arguments($username, $type, $bundle))),
+            'classes'     => json_decode(utf8_encode(cfpr_bundle_classes_used($username, $type, $bundle)), TRUE),
+            'list'        => json_decode(utf8_encode(cfpr_promise_list_by_bundle($username, $type, $bundle)), TRUE),
+            'others'      => json_decode(utf8_encode(cfpr_bundle_list_by_bundle_usage($username, $bundle)), TRUE),
             'breadcrumbs' => $this->breadcrumblist->display()
         );
         $this->template->load('template', 'bundle/bundle_detail', $data);

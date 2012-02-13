@@ -1,7 +1,6 @@
 <?php
 
 class test_bundle_libraries extends CodeIgniterUnitTestCase {
-    public $username = 'admin'; // set username who will "run" test - we need this for RBAC
     
     public function __construct() {
         parent::__construct();
@@ -10,6 +9,7 @@ class test_bundle_libraries extends CodeIgniterUnitTestCase {
     public function setUp() {
         $this->bundle = "main";
         $this->type = "";
+        $this->username = 'admin'; // set username who will "run" test - we need this for RBAC
     }
 
     public function tearDown() {
@@ -27,7 +27,7 @@ class test_bundle_libraries extends CodeIgniterUnitTestCase {
     }
 
     public function test_handlesForBundles() {
-        $list = cfpr_list_handles_for_bundle($this->bundle, $this->type, False);
+        $list = cfpr_promise_list_by_bundle($this->username, $this->type, $this->bundle); 
         $this->dump($list);
         $array = json_decode(utf8_encode($list), true);
         $retValue = json_last_error();
