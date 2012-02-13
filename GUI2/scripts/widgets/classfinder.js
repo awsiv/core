@@ -130,6 +130,7 @@
             var sender=$(event.target);
             self.selectedLetter = null; // reset the letter selection 
             self.resetPagination();
+            self.resetScrollPosition();
             self.searchbar.find('input[type="text"]').val('Search on '+sender.text().toLowerCase()).data('default','Search on '+sender.text().toLowerCase())
             self.dialogcontent.html(self.ajaxloader);
             sender.addClass('selected').siblings().removeClass('selected');
@@ -152,7 +153,7 @@
         classlistscrolled:function(event) {
             var listpane=event.currentTarget;
             var self=this;
-            if (self.scrollingEnd == true) return;
+            if (self.scrollingEnd == true || $(listpane).scrollTop()==0) return;
             // only do scrolling event when no menu option are selected or all classes is selected.
             if (self.selectedMenu == null || self.selectedMenu == 'all classes') {
             
@@ -356,11 +357,12 @@
             var clickedLetter = sender.text().toLowerCase();
             self.selectedLetter = clickedLetter;
             self.resetPagination();
+            self.resetScrollPosition();
             var url = self.element.attr('href')+'/1/'+clickedLetter;     
             $.getJSON(url, function(data) {
                 self.loadDataInContainer(data);
             });
-           
+            
             if(self.menu.css('display')=='block')
             {
                 self.menu.fadeOut(400);
@@ -378,6 +380,11 @@
             var self = this;            
             self.selectedLetter=null,
             self.alphasearch.find('li').removeClass('selected');           
+        },
+        
+        resetScrollPosition:function(){
+            var self=this;
+            self.dialogcontent.scrollTop(0);
         },
     
         destroy: function(){
