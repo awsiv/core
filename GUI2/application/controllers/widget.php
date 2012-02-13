@@ -57,15 +57,9 @@ class Widget extends Cf_Controller {
     function sort_alphabetically_hostname($hostname=null,$page = 1) {
         $hostname = $this->input->post('value')?$this->input->post('value'):urldecode($hostname);
         $data = "";
-        if ($hostname) {
-            $data1= sanitycheckjson(cfpr_show_hosts_name('^' . $hostname, NULL, 15, $page), true);
-            $data2 = sanitycheckjson(cfpr_show_hosts_name('^' . strtolower($hostname), NULL, 15, $page), true);
-            $data = array_merge($data1, $data2);
-        } else {
-            //last two arguments in the function call are for row no and column no
-            $data = sanitycheckjson(cfpr_show_hosts_name(NULL, NULL, 15, $page), true);
-        }
-            echo $this->__format_to_html($data, 'hostname');
+        $searchhost='['.$hostname.'|'.strtolower($hostname).']';
+        $data = sanitycheckjson(cfpr_show_hosts_name($searchhost, NULL, 15, $page), true);
+        echo $this->__format_to_html($data, 'hostname');
     }
 
     function __format_to_html($result, $display) {
