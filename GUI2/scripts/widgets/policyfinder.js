@@ -12,9 +12,19 @@
         },
         dataLoaded : false,
         elementtext:"",
+        page:2,
+        selectedLetter:null,
+        scrollingEnd:false,
+        submitUrl:'',
         ajaxloader:$('<div class="loading"></div>'),
+        originalTitle: '',
+        
         _init: function(){
+            var self=this;  
+            self.resetPagination();
+            $('#'+self.containerID()).bind('scroll',$.proxy(self.policylistscrolled,self));
         },
+        
         _create:function(){
             var self=this;
             self.addsearchbar();
@@ -22,6 +32,13 @@
             $.ui.policyfinder.instances.push(this.element);
             $('#'+self.containerID()).delegate('a','click',$.proxy(self.handleSelected,self));
             $('#'+self.containerID()).delegate('.vblistadd','click',$.proxy(self.addSelected,self));
+                      
+        },
+        
+        resetPagination:function() {
+            var self = this;
+            self.page = 2;
+            self.scrollingEnd = false;
             
         },
         
@@ -39,31 +56,59 @@
             else {
                 //single shared element for modal dialogs
                 var requestDialog = $('<div id="'+self.containerID()+'" style="display:none" class="result" title="Promises"><div id="policyList"><ul id="'+self.containerID()+'-ul"></ul></div></div>').appendTo('body').
-                dialog({
+                    dialog({
                     autoOpen: false,
+                    title:'Promises',
                     beforeClose: function(event, ui) { 
-                    // self.destroy();
+                        // self.destroy();
                     }
                     
                 }).bind('dialogclose', function(event, ui){
-                    //requestDialog.dialog('close');
                     return false;
                 });
+                self.originalTitle =  requestDialog.dialog( "option", "title" );
+
                 return requestDialog;
             }
         },
+        
+        policylistscrolled:function(event) {
+            var $listpane=$(event.currentTarget);
+            var self=this;
+            if (self.scrollingEnd == true) return;
+            
+            
+            if ($listpane[0].scrollHeight - $listpane.scrollTop() == $listpane.outerHeight()) {                   
+                var url = self.submitUrl+'/'+self.page;               
+                self.loadpagebody(url,"",true);   
+                // $listpane.scrollTop($listpane.outerHeight());
+                self.page++;              
+            }
+        },
+        
+        changeTitle:function(text) {
+            var self = this;
+            $('#'+self.containerID()).dialog('option', 'title', text);
+        },
+        
+        revertTitle:function() {
+            var self = this;
+            $('#'+self.containerID()).dialog('option', 'title', self.originalTitle);
+        },
+        
+        
         addsearchbar:function(){
             var self =this;
            
             self.dialogcontent = self.dialogContainer();
             self.dialogcontent.dialog($.extend({}, 
-                $.ui.dialog.prototype.options, 
-                self.options, 
-                {
-                    autoOpen:false, 
-                    modal:true
-                }
-                ));
+            $.ui.dialog.prototype.options, 
+            self.options, 
+            {
+                autoOpen:false, 
+                modal:true
+            }
+        ));
             self.dialogcontent.parent().addClass('customdlg').removeClass('ui-widget-content');
             self.titlebar=self.dialogcontent.siblings('div.ui-dialog-titlebar');
             //self.menuhandler=$('<span id="handle" class="operation">Options</span>');
@@ -106,9 +151,10 @@
                 
                 // check if it has already been opened before 
                 if (!self.dataLoaded) {
-                    self.loadpagebody(self.element.attr('href'),"",true);
+                    self.submitUrl =  self.element.attr('href');
+                    self.loadpagebody(self.submitUrl,"",true);
                     self.dialogcontent.dialog('open');
-
+           
                 } else {
                     // reshow the dialog
                     $('#' + self.containerID()).parent().show();
@@ -123,29 +169,41 @@
             var sender=$(event.target);
             var selected_category=sender.text().toLowerCase();
             self.searchbar.find('input[type="text"]').val('Search '+sender.text().toLowerCase()).data('default','Search '+sender.text().toLowerCase())
-            self.searchbar.attr("action",self.options.baseUrl+"/widget/search_"+selected_category.replace(/\s+/g, "_").toLowerCase());
+            
+            self.submitUrl = self.options.baseUrl+"/widget/search_"+selected_category.replace(/\s+/g, "_").toLowerCase();
+
+            self.searchbar.attr("action", self.submitUrl);
             self.emptyContainer();
-            self.loadpagebody(self.searchbar.attr('action'),"",false) ;
+            
+            self.loadpagebody( self.submitUrl ,"",false) ;
             self.searchbar.find('input[type="text"]').trigger('blur');
             self.alphasearch.find('li').removeClass('selected');
             sender.addClass('selected').siblings().removeClass('selected');
-        //self.menu.fadeOut();
+            //self.menu.fadeOut();
         },
         
         
         updateDataInContainer:function(data) {
-            var self = this;
+            var self = this
+              // To end the scrolling so that no further request is sent
+            if (data.length == 0 || data ==null ) {
+                self.scrollingEnd = true;
+                self.revertTitle();
+                return;
+            }
+            
             var containerUlId = self.containerID()+'-ul';
             document.getElementById(containerUlId).innerHTML += data;
             self.dataLoaded = true;            
             self.element.text(self. elementtext);
-            $('div.loading').remove();                
+            self.revertTitle();                
+
         },
         
         emptyContainer: function() {
-             var self = this;   
-             var containerUlId = self.containerID()+'-ul';
-             document.getElementById(containerUlId).innerHTML = '';
+            var self = this;   
+            var containerUlId = self.containerID()+'-ul';
+            document.getElementById(containerUlId).innerHTML = '';
         },
 
         loadpagebody:function(url,val,escreg){
@@ -154,11 +212,12 @@
 
             submit_url=url,
             searchval=val;
-            self.dialogcontent.prepend(self.ajaxloader);
             var searchtext=self.searchbar.find('input[type="text"]').val();
             if(/search\s+by\s+/.test(searchtext)){
                 searchtext='';
             };
+            self.changeTitle('Loading...');     
+
             $.ajax({
                 type: "POST",
                 url: submit_url,
@@ -178,7 +237,7 @@
                     //self.dialogcontent.html($("<ul>").attr("id", self.containerID()));
                     var li = '<li><span class="type">'+textStatus+'</span><p>'+errorThrown+'</p>';
                     document.getElementById(containerUlId).innerHTML = li ;
-                    $('div.loading').remove();
+                    self.revertTitle();
                 }
             });
            
@@ -230,10 +289,10 @@
             event.preventDefault();
             var self=this,
             sender=$(event.target),
-            submit_url=sender.attr('action'),
             searchval=sender.find('input').val();
+            self.submitUrl=sender.attr('action'),
             self.emptyContainer();
-            self.loadpagebody(submit_url,searchval,true);
+            self.loadpagebody(self.submitUrl,searchval,true);
             self.menu.fadeOut();
         },
 

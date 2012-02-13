@@ -153,7 +153,7 @@ class Widget extends Cf_Controller {
                 $data = cfpr_list_ip_classes(NULL, NULL, NULL, NULL);
                 break;
             case "soft":
-                $data = cfpr_list_soft_classes(NULL,NULL, NULL,NULL);
+                $data = cfpr_list_soft_classes(NULL, NULL, NULL, NULL);
                 break;
             case "all":
                 $data = cfpr_report_classes($username, null, null, true, null, "last-seen", true, 100, 1);
@@ -292,25 +292,45 @@ class Widget extends Cf_Controller {
                 }
             }
             $json = json_encode($return_array);
-            sanitycheckjson($json);
         } else {
-
             $ret = array_msort($promises, array('3' => SORT_ASC), true);
             $json = json_encode($ret);
-            sanitycheckjson($json);
         }
+
+        $returnedData = sanitycheckjson($json, true);
+
+        $chunkSize = 100;
+        $startOffset = ($page - 1) * $chunkSize;
+        $returnedData = array_slice($returnedData, $startOffset, $chunkSize);
+        $viewdata['viewdata'] = $returnedData;
+        $this->load->view('widgets/allpolicies', $viewdata);
     }
 
-    function search_by_promiser() {
+    function search_by_promiser($page = 1) {
         $promiser = $this->input->post('filter');
-
+        $showButton = $this->input->post('showButton');
+        $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
+        $viewdata = array(
+            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
+            'breadcrumbs' => $this->breadcrumblist->display(),
+            'showButton' => $showButton,
+            'showOnlyHandle' => $showOnlyHandle
+        );
         $data = "";
         if ($promiser) {
             $data = cfpr_promise_list_by_promiser_rx($this->session->userdata('username'), $promiser);
         } else {
             $data = cfpr_promise_list_by_promiser_rx($this->session->userdata('username'), NULL);
         }
-        sanitycheckjson($data);
+        $returnedData = sanitycheckjson($data, true);
+
+        $chunkSize = 100;
+        $page = 1;
+        $startOffset = ($page - 1) * $chunkSize;
+        $returnedData = array_slice($returnedData, $startOffset, $chunkSize);
+
+        $viewdata['viewdata'] = $returnedData;
+        $this->load->view('widgets/allpolicies', $viewdata);
     }
 
     function allreports() {
