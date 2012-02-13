@@ -13,6 +13,7 @@
         scrollingEnd:false,
         elementtext:"",
         selectedMenu:null,
+        animate:false,
         _init: function(){
             var self=this;  
             self.resetPagination();
@@ -153,18 +154,18 @@
         classlistscrolled:function(event) {
             var listpane=event.currentTarget;
             var self=this;
-            if (self.scrollingEnd == true || $(listpane).scrollTop()==0) return;
+            if (self.scrollingEnd == true || $(listpane).scrollTop()==0 || self.animate==true) return;
             // only do scrolling event when no menu option are selected or all classes is selected.
             if (self.selectedMenu == null || self.selectedMenu == 'all classes') {
-            
-                if ($(listpane)[0].scrollHeight - $(listpane).scrollTop() == $(listpane).outerHeight()) {
-                   
+                if ($(listpane)[0].scrollHeight - ($(listpane).scrollTop()) <= ($(listpane).outerHeight()+50)) {
+                    self.animate = true;
                     var url = self.element.attr('href')+'/'+self.page;   
                     if (self.selectedLetter != null) {
                         url = url + '/' + self.selectedLetter;
                     }
                     $.getJSON(url, function(data) {
                         self.loadDataInContainer(data,true);
+                        self.animate = false;
                     });                              
                     self.page++;              
                 }
