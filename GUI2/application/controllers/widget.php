@@ -48,14 +48,14 @@ class Widget extends Cf_Controller {
     }
 
     function search_by_hostname($hostname=null,$page = 1) {
-        $hostname = $this->input->post('value') ||urldecode($hostname);
+        $hostname = $this->input->post('value')?$this->input->post('value'):urldecode($hostname);;
         $data = "";
         $data = sanitycheckjson(cfpr_show_hosts_name($hostname, NULL, 15, $page), true);
          echo $this->__format_to_html($data, 'hostname');
     }
     
     function sort_alphabetically_hostname($hostname=null,$page = 1) {
-        $hostname = $this->input->post('value') || urldecode($hostname);
+        $hostname = $this->input->post('value')?$this->input->post('value'):urldecode($hostname);
         $data = "";
         if ($hostname) {
             $data1= sanitycheckjson(cfpr_show_hosts_name('^' . $hostname, NULL, 15, $page), true);
