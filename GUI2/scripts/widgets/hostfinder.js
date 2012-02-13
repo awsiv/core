@@ -177,20 +177,14 @@
             var searchval=$(this).find('input').val();
             var self=event.data.ui;
             self.cfui.categories.slideUp();
-            if(self.filtermethod != "class"){
-                self.cfui.resultpane.html(self.ajaxloader);
-                $.ajax({
-                    type: "POST",
-                    url: submit_url,
-                    data: {
-                        value:searchval
-                    },
-                    dataType:"html",
-                    success: function(data) {
-                        //self.updatesearchresult(data);
-                        self.cfui.resultpane.html(data);
-                    }
-                });
+            self.resetPagination();
+            self.resetSelectedLetter();
+            self.cfui.searchedkey=searchval;
+            
+            if(self.cfui.filtermethod != "class"){
+                //self.cfui.resultpane.html(self.ajaxloader);
+                  self.sendAjaxRequest(submit_url,{value:searchval});
+                  self.resetScrollPosition();
             }
         },
    
@@ -341,13 +335,16 @@
 
         sortalphabetically:function(event)
         {
-            var self=event.data.ui
-            //alert($(this).text());
+            var self=event.data.ui,
+                submit_url=self.options.baseUrl+'/widget/sort_alphabetically_hostname';
+            self.cfui.selectedLetter=$(this).text();
+            self.resetPagination();
+            self.resetSearchKey();
             $(this).addClass('selected').siblings().removeClass('selected');
-            self.cfui.resultpane.load(self.options.baseUrl+'/widget/search_by_hostname',{
-                'value':$(this).text()
-            },function(){});
-            self.cfui.categories.slideUp();
+            self.cfui.resultpane.find('ul').empty();
+            self.sendAjaxRequest(submit_url,{value:$(this).text()});
+            self.resetScrollPosition();
+            //self.cfui.categories.slideUp();
         },
 
         searchboxkeyup:function(event)
@@ -376,11 +373,7 @@
                     mylist.append(itm);
                 });
             }
-            
-            /*if($(this).text().toLowerCase() == 'search')
-            {
-                alert('search');
-            }*/
+           
 
         },
         searchclassinlist:function(event)
@@ -464,6 +457,25 @@
             var self = this;
             self.cfui.searchedkey=null;
         },
+        
+        sendAjaxRequest: function(url,postdata){
+             var self=this;
+             $.ajax({
+                    type: "POST",
+                    url: url,
+                    data:postdata,
+                    dataType:"html",
+                    success: function(data) {
+                        //self.updatesearchresult(data);
+                        if(data==""){
+                           self.cfui.resultpane.find('ul').html("<li>No host found</li>");
+                        }else{
+                           self.cfui.resultpane.find('ul').html(data); 
+                        } 
+                    }
+                });
+        },
+        
        resetScrollPosition:function(){
             var self=this;
             self.temp.scrollTop(0);
