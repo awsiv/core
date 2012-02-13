@@ -119,7 +119,7 @@ int Nova2PHP_listclasses_host(char *hostkey,char *name,int regex,char *classreg,
 
 void Nova2PHP_get_knowledge_view(int pid,char *view,char *buffer,int bufsize);
 char *Nova_FormatDiff(char *s);
-void Nova2PHP_network_speed(HostClassFilter *hostClassFilter, char *hostkey, char *buffer, int bufsize);
+void Nova2PHP_network_speed(char *hostkey, char *buffer, int bufsize);
 void Nova2PHP_GetPromiseBody(char *name,char *type,char *returnval,int bufsize);
 int Nova2PHP_body_list(char *name,char *type,char *returnval,int bufsize);
 char *Nova_LongState(char s);

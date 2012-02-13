@@ -4133,7 +4133,7 @@ int Nova2PHP_list_promise_handles_with_comments(char *bundle,char *btype,char *r
 
 /*****************************************************************************/
 
-void Nova2PHP_network_speed(HostClassFilter *hostClassFilter, char *hostkey, char *buffer, int bufsize)
+void Nova2PHP_network_speed(char *hostkey, char *buffer, int bufsize)
 {
  mongo_connection dbconn;
  mongo_cursor *cursor;
@@ -4149,7 +4149,6 @@ void Nova2PHP_network_speed(HostClassFilter *hostClassFilter, char *hostkey, cha
  bson query;
  bson_buffer_init(&bb);
  bson_append_string(&bb,cfr_keyhash,hostkey);
- BsonAppendHostClassFilter(&bb, hostClassFilter);
  bson_from_buffer(&query,&bb);
 
  bson field;

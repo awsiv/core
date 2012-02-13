@@ -3813,7 +3813,7 @@ PHP_FUNCTION(cfpr_network_speed)
     }
 
  buffer[0] = '\0';
- Nova2PHP_network_speed(NULL, hostKey, buffer, sizeof(buffer));
+ Nova2PHP_network_speed(hostKey, buffer, sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
