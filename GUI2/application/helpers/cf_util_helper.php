@@ -251,28 +251,26 @@ function sanitycheckjson($data, $noecho=false) {
     $CI = &get_instance();
     if (function_exists("json_last_error")) {
         if (json_last_error() == 0) {
+           if ($noecho) return $data_check;
             if (!empty($data_check)) {
-                if ($noecho) {
-                    return $data_check;
-                }
                 echo $data;
             } else {
-                $CI->output->set_status_header('400', 'No data Found');
+                echo "";
             }
         } else {
-            $CI->output->set_status_header('500', 'Valid Json Data cannot be generated');
+           $CI->output->set_status_header('500', 'Valid Json Data cannot be generated');
+           if ($noecho) return array();
         }
     } else {
         if ($data_check == NULL) {
             $CI->output->set_status_header('500', 'Valid Json Data cannot be generated');
+            if ($noecho) return array();
         } else {
+            if ($noecho) return $data_check;
             if (is_array($data_check) && !empty($data_check)) {
-                if ($noecho) {
-                    return $data_check;
-                }
                 echo $data;
             } else {
-                $CI->output->set_status_header('400', 'No data Found');
+                echo "";
             }
         }
     }
