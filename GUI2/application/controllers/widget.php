@@ -9,11 +9,11 @@ class Widget extends Cf_Controller {
     function hostfinder($page = 1) {
         //$data= cfpr_select_hosts("none", ".*", NULL);
         $data = cfpr_show_hosts_name('.*', NULL, 15, $page);
-        if ($page > 1) {
-            echo sanitycheckjson($data);
-            return;
-        }
         $result = sanitycheckjson($data, true);
+        if ($page > 1) {
+            echo $this->__format_to_html($result, 'hostname');
+            return;    
+        }
         if (is_array($result)) {
             // $this->data['hostlist']= array_msort($result,array('id'=>SORT_ASC),true);
             $this->data['hostlist'] = array_msort($result['data'], array('0' => SORT_ASC), true);
@@ -49,6 +49,7 @@ class Widget extends Cf_Controller {
 
     function search_by_hostname() {
         $hostname = $this->input->post('value');
+         echo $this->__format_to_html($data, 'hostname');
         $data = "";
         if ($hostname) {
             $data1 = json_decode(cfpr_show_hosts_name('^' . $hostname, NULL, NULL, NULL), true);
@@ -59,6 +60,7 @@ class Widget extends Cf_Controller {
             $data = json_decode(cfpr_show_hosts_name(NULL, NULL, NULL, NULL), true);
         }
         echo $this->__format_to_html($data, 'hostname');
+            echo $this->__format_to_html($data, 'hostname');
     }
 
     function __format_to_html($result, $display) {
@@ -66,6 +68,7 @@ class Widget extends Cf_Controller {
         if (key_exists('data', $result) && count($result['data']) > 0) {
             $result = array_msort($result['data'], array('0' => SORT_ASC), true);
             $html.="<ul class=\"result\">";
+           // $html.="<ul class=\"result\">";
             foreach ($result as $row) {
                 if ($display == 'hostname' && strlen($row[0]) > 0)
                     $html.="<li><a href=" . site_url('welcome/host') . "/" . $row[2] . " title=" . $row[2] . ">$row[0]</a></li>";
@@ -74,9 +77,11 @@ class Widget extends Cf_Controller {
                     $html.="<li><a href=" . site_url('welcome/host') . "/" . $row[2] . " title=" . $row[2] . ">$row[1] ($row[0])</a></li>";
             }
             $html.="</ul>";
+            //$html.="</ul>";
         }
         else {
             $html = "No Host Found";
+            $html = "";
         }
         return $html;
     }
@@ -94,6 +99,8 @@ class Widget extends Cf_Controller {
             $data = json_decode(cfpr_show_hosts_ip(NULL, NULL, NULL, NULL), true);
         }
         echo $this->__format_to_html($data, 'ipaddress');
+            echo $this->__format_to_html($data, 'ipaddress');
+            
     }
 
     function cfclasses() {
