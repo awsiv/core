@@ -33,7 +33,7 @@
 #define dbkey_role_bundlerx_include "brxi"
 #define dbkey_role_bundlerx_exclude "brxx"
 
-
+cfapi_errid CFDB_HasHostAccessFromUserRBAC(char *userName, char *hostKey);
 HubQuery *CFDB_HostClassFilterFromUserRBAC(char *userName);
 HubQuery *CFDB_PromiseFilterFromUserRBAC(char *userName);
 cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, size_t password_len);

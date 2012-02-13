@@ -11,7 +11,8 @@
 /*   class regex to include                                                  */
 /*   class regex to exclude (overrides include)                              */
 /*   bundle regex to include                                                 */
-/*   (see HubUserRBAC)                                                       */
+/*   bundle regex to exclude (overrides include)                             */
+/*   (see HubRole)                                                           */
 /*                                                                           */
 /*  Currently, reports are filtered by class regexes only (on hosts),        */
 /*  while promise definitions are filtered on bundle regex only              */
@@ -19,6 +20,7 @@
 /*****************************************************************************/
 
 #include "web_rbac.h"
+#include <assert.h>
 
 #ifdef HAVE_LIBMONGOC
 
@@ -185,6 +187,62 @@ HubQuery *CFDB_PromiseFilterFromUserRBAC(char *userName)
  DeleteHubQuery(hqRBAC, DeleteHubUserRBAC);
 
  return NewHubQuery(NULL, recordList);
+}
+
+/*****************************************************************************/
+
+cfapi_errid CFDB_HasHostAccessFromUserRBAC(char *userName, char *hostKey)
+/**
+ * Convenience function in cases where we are checking for user access
+ * to a specific host, as opposed to creating a filter to query reports from
+ * some of many hosts.
+ **/
+{
+ assert(SafeStringLength(userName) > 0);
+ assert(SafeStringLength(hostKey) > 0);
+ 
+ HubQuery *hqFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+
+ if(hqFilter->errid == ERRID_RBAC_DISABLED)
+    {
+    DeleteHubQuery(hqFilter, DeleteHostClassFilter);
+    return ERRID_SUCCESS;
+    }
+
+ if(hqFilter->errid != ERRID_SUCCESS)
+    {
+    cfapi_errid errid = hqFilter->errid;
+    DeleteHubQuery(hqFilter, DeleteHostClassFilter);
+    return errid;
+    }
+
+ HostClassFilter *filter = HubQueryGetFirstRecord(hqFilter);
+ 
+ mongo_connection conn;
+
+ if(!CFDB_Open(&conn))
+    {
+    DeleteHubQuery(hqFilter, DeleteHostClassFilter);
+    return ERRID_DBCONNECT;
+    }
+
+ bool hostAccessForUser = CFDB_HasMatchingHost(&conn, hostKey, filter);
+
+ DeleteHubQuery(hqFilter, DeleteHostClassFilter);
+
+ if(!CFDB_Close(&conn))
+    {
+    return ERRID_DBCLOSE;
+    }
+
+ if(hostAccessForUser)
+    {
+    return ERRID_SUCCESS;
+    }
+ else
+    {
+    return ERRID_RBAC_ACCESS_DENIED;
+    }
 }
 
 /*****************************************************************************/
