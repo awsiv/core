@@ -355,7 +355,8 @@
             sender.addClass('selected').siblings().removeClass('selected');
           
             var clickedLetter = sender.text().toLowerCase();
-            self.selectedLetter = clickedLetter;
+            self.selectedLetter = '('+clickedLetter+'|'+sender.text()+')';
+            
             self.resetPagination();
             self.resetScrollPosition();
             var url = self.element.attr('href')+'/1/'+clickedLetter;     
