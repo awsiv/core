@@ -7,6 +7,8 @@ class PromiseLogNotKept extends Resource
 {
     function get($request)
     {
+        Utils::checkValidQueryParams(array('hostkey', 'handle', 'context', 'to'));
+
         $hostkey = Utils::queryParam('hostkey');
         $handle = Utils::queryParam('handle');
         $context = Utils::queryParam('context');

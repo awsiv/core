@@ -7,6 +7,8 @@ class Context extends Resource
 {
     function get($request)
     {
+        Utils::checkValidQueryParams(array('hostkey', 'context'));
+        
         $hostkey = Utils::queryParam('hostkey');
         $context = Utils::queryParam('context');
 

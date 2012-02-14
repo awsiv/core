@@ -7,6 +7,8 @@ class Setuid extends Resource
 {
     function get($request)
     {
+        Utils::checkValidQueryParams(array('hostkey', 'name', 'context'));
+
         $hostkey = Utils::queryParam('hostkey');
         $name = Utils::queryParam('name');
         $context = Utils::queryParam('context');

@@ -6,7 +6,9 @@
 class HostId extends Resource
 {
     function get($request, $id)
-    {        
+    {
+        Utils::checkValidQueryParams(array());
+
         $response = new Response($request);
         $payload = cfmod_resource_host_id($id);
         if (is_null($payload))

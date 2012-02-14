@@ -8,7 +8,7 @@ class PromiseCompliance extends Resource
     function get($request)
     {
         Utils::checkValidQueryParams(array(
-            'hostkey', 'handle', 'context', 'state', 'from'
+            'hostkey', 'handle', 'context', 'state'
         ));
         
         $hostkey = Utils::queryParam('hostkey');

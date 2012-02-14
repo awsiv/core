@@ -7,6 +7,8 @@ class Host extends Resource
 {
     function get($request)
     {
+        Utils::checkValidQueryParams(array('hostname', 'ip', 'context'));
+
         $hostname = Utils::queryParam('hostname');
         $ip = Utils::queryParam('ip');
         $context = Utils::queryParam('context');

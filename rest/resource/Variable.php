@@ -7,6 +7,9 @@ class Variable extends Resource
 {
     function get($request)
     {
+        Utils::checkValidQueryParams(array('hostkey', 'scope', 'name', 'value',
+            'type'));
+
         $hostkey = Utils::queryParam('hostkey');
         $scope = Utils::queryParam('scope');
         $name = Utils::queryParam('name');

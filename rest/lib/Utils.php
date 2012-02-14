@@ -24,7 +24,7 @@ class Utils {
     
     public static function checkValidQueryParams($queryParams)
     {
-        $defaultParams = array('sort', 'order', 'count', 'page');
+        $defaultParams = array('from', 'count', 'page');
         
         foreach (array_keys($_GET) as $value)
         {

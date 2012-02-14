@@ -7,6 +7,9 @@ class Software extends Resource
 {
     function get($request)
     {
+        Utils::checkValidQueryParams(array('hostkey', 'name', 'version',
+            'arch', 'context'));
+
         $hostkey = Utils::queryParam('hostkey');
         $name = Utils::queryParam('name');
         $version = Utils::queryParam('version');

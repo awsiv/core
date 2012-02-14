@@ -7,10 +7,7 @@ class HostIdSeen extends Resource
 {
     function get($request, $id)
     {
-        Utils::checkValidQueryParams(array(
-            'from',
-        ));
-
+        Utils::checkValidQueryParams(array());
 
         $from = Utils::checkInteger(Utils::queryParam('from'), 'from');
         $count = Utils::checkInteger(Utils::queryParam('count'), 'count');
