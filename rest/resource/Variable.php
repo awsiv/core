@@ -16,12 +16,9 @@ class Variable extends Resource
         $value = Utils::queryParam('value');
         $type = Utils::queryParam('type');
 
-        $count = Utils::checkInteger(Utils::queryParam('count'), 'count');
-        $startPage = Utils::checkInteger(Utils::queryParam('startPage'), 'startPage');
-
         $response = new Response($request);
         $payload = $response->body = cfmod_resource_variable($hostkey, 
-                $scope, $name, $value, $type, $context, $count, $startPage);
+                $scope, $name, $value, $type, $context);
         if (is_null($payload))
         {
             $response = new Response($request);

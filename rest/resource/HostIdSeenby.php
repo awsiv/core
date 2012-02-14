@@ -10,12 +10,9 @@ class HostIdSeenBy extends Resource
         Utils::checkValidQueryParams(array());
 
         $from = Utils::checkInteger(Utils::queryParam('from'), 'from');
-        $count = Utils::checkInteger(Utils::queryParam('count'), 'count');
-        $startPage = Utils::checkInteger(Utils::queryParam('startPage'), 'startPage');
 
         $response = new Response($request);
-        $payload = cfmod_resource_host_id_seen_by($id, $from, 
-                $count, $startPage);
+        $payload = cfmod_resource_host_id_seen_by($id, $from);
         if (is_null($payload))
         {
             $response = new Response($request);

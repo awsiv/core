@@ -60,13 +60,10 @@ PHP_FUNCTION(cfmod_resource_host)
 char *hostname = NULL,
      *ip = NULL;
 int len;
-PageInfo page = { 0 };
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
       &hostname, &len,
-      &ip, &len,
-      &(page.resultsPerPage),
-      &(page.pageNum)) == FAILURE)
+      &ip, &len) == FAILURE)
    {
    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    }
@@ -163,13 +160,9 @@ char *hostkey = NULL;
 long from = 0;
 int len = -1;
 
-PageInfo page = { 0 };
-
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "slll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sl",
       &hostkey, &len,
-      &from,
-      &(page.resultsPerPage),
-      &(page.pageNum)) == FAILURE)
+      &from) == FAILURE)
    {
    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
@@ -199,13 +192,9 @@ char *hostkey = NULL;
 long from = 0;
 int len = -1;
 
-PageInfo page = { 0 };
-
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "slll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sl",
       &hostkey, &len,
-      &from,
-      &(page.resultsPerPage),
-      &(page.pageNum)) == FAILURE)
+      &from) == FAILURE)
    {
    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
@@ -281,16 +270,13 @@ char *handle = NULL,
      *state = NULL;
 long from;
 int len;
-PageInfo page = { 0 };
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssslll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssl",
       &handle, &len,
       &hostkey, &len,
       &context, &len,
       &state, &len,
-      &from,
-      &(page.resultsPerPage),
-      &(page.pageNum)) == FAILURE)
+      &from) == FAILURE)
    {
    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
@@ -343,7 +329,7 @@ switch (state)
 }
 
 static JsonElement *PromiseLogAsJson(mongo_connection *conn, PromiseLogState state, const char *handle,
-                                   const char *hostkey, const char *context, int from, int to, PageInfo page)
+                                   const char *hostkey, const char *context, int from, int to)
 {
 
  HostClassFilter *filter = NewHostClassFilter(context, NULL);
@@ -378,16 +364,13 @@ char *handle = NULL,
 long from,
      to;
 int len;
-PageInfo page = { 0 };
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssll",
       &handle, &len,
       &hostkey, &len,
       &context, &len,
       &to,
-      &from,
-      &(page.resultsPerPage),
-      &(page.pageNum)) == FAILURE)
+      &from) == FAILURE)
    {
    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
@@ -396,7 +379,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",
 mongo_connection conn;
 DATABASE_OPEN(&conn)
 
-JsonElement *output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to, page);
+JsonElement *output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to);
 
 DATABASE_CLOSE(&conn)
 
@@ -408,7 +391,7 @@ RETURN_JSON(output);
 
 
 static JsonElement *PromiseLogSummaryAsJson(mongo_connection *conn, PromiseLogState state, const char *handle,
-                                          const char *hostkey, const char *context, int from, int to, PageInfo page)
+                                          const char *hostkey, const char *context, int from, int to)
 {
  HostClassFilter *filter = NewHostClassFilter(context, NULL);
  HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from, to, true, filter);
@@ -452,16 +435,13 @@ char *handle = NULL,
 long from,
      to;
 int len;
-PageInfo page = { 0 };
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssll",
       &handle, &len,
       &hostkey, &len,
       &context, &len,
       &to,
-      &from,
-      &(page.resultsPerPage),
-      &(page.pageNum)) == FAILURE)
+      &from) == FAILURE)
    {
    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
@@ -470,7 +450,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",
 mongo_connection conn;
 DATABASE_OPEN(&conn)
 
-JsonElement *output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to, page);
+JsonElement *output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to);
 
 DATABASE_CLOSE(&conn)
 
@@ -489,16 +469,13 @@ char *handle = NULL,
 long from,
      to;
 int len;
-PageInfo page = { 0 };
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssll",
       &handle, &len,
       &hostkey, &len,
       &context, &len,
       &to,
-      &from,
-      &(page.resultsPerPage),
-      &(page.pageNum)) == FAILURE)
+      &from) == FAILURE)
    {
    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
@@ -507,7 +484,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",
 mongo_connection conn;
 DATABASE_OPEN(&conn);
 
-JsonElement *output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to, page);
+JsonElement *output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to);
 
 DATABASE_CLOSE(&conn);
 
@@ -526,16 +503,13 @@ char *handle = NULL,
 long from,
      to;
 int len;
-PageInfo page = { 0 };
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssll",
       &handle, &len,
       &hostkey, &len,
       &context, &len,
       &to,
-      &from,
-      &(page.resultsPerPage),
-      &(page.pageNum)) == FAILURE)
+      &from) == FAILURE)
    {
    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
@@ -544,7 +518,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllll",
 mongo_connection conn;
 DATABASE_OPEN(&conn);
 
-JsonElement *output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to, page);
+JsonElement *output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to);
 
 DATABASE_CLOSE(&conn);
 
@@ -645,17 +619,14 @@ char *hostkey = NULL,
      *type = NULL,
      *context = NULL;
 int len;
-PageInfo page = { 0 };
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssssll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssss",
       &hostkey, &len,
       &scope, &len,
       &name, &len,
       &value, &len,
       &type, &len,
-      &context, &len,
-      &(page.resultsPerPage),
-      &(page.pageNum)) == FAILURE)
+      &context, &len) == FAILURE)
    {
    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
@@ -710,15 +681,11 @@ char *hostkey = NULL,
      *context = NULL;
 int len;
 long from = 0;
-PageInfo page = { 0 };
 
-
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sslll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssl",
       &hostkey, &len,
       &context, &len,
-      &from,
-      &(page.resultsPerPage),
-      &(page.pageNum)) == FAILURE)
+      &from) == FAILURE)
    {
    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
@@ -795,16 +762,13 @@ char *hostkey = NULL,
      *arch = NULL,
      *context = NULL;
 int len;
-PageInfo page = { 0 };
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssss",
       &hostkey, &len,
       &name, &len,
       &version, &len,
       &arch, &len,
-      &context, &len,
-      &(page.resultsPerPage),
-      &(page.pageNum)) == FAILURE)
+      &context, &len) == FAILURE)
    {
    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
@@ -881,14 +845,11 @@ char *hostkey = NULL,
      *name = NULL,
      *context = NULL;
 int len;
-PageInfo page = { 0 };
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssll",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss",
       &hostkey, &len,
       &name, &len,
-      &context, &len,
-      &(page.resultsPerPage),
-      &(page.pageNum)) == FAILURE)
+      &context, &len) == FAILURE)
    {
    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();

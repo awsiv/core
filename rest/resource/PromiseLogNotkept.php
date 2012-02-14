@@ -15,14 +15,12 @@ class PromiseLogNotKept extends Resource
         $to = Utils::checkInteger(Utils::queryParam('to'), 'to');
         
         $from = Utils::checkInteger(Utils::queryParam('from'), 'from');
-        $count = Utils::checkInteger(Utils::queryParam('count'), 'count');
-        $startPage = Utils::checkInteger(Utils::queryParam('startPage'), 'startPage');
 
         try
         {
             $response = new Response($request);
             $response->body = cfmod_resource_promise_log_notkept($handle,
-                    $hostkey, $context, $to, $from, $count, $startPage);
+                    $hostkey, $context, $to, $from);
             return $response;
         }
         catch (Exception $e)

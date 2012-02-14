@@ -13,12 +13,9 @@ class Context extends Resource
         $context = Utils::queryParam('context');
 
         $from = Utils::checkInteger(Utils::queryParam('from'), 'from');
-        $count = Utils::checkInteger(Utils::queryParam('count'), 'count');
-        $startPage = Utils::checkInteger(Utils::queryParam('startPage'), 'startPage');
 
         $response = new Response($request);
-        $payload = cfmod_resource_context($hostkey, $context, $from, 
-                $count, $startPage);
+        $payload = cfmod_resource_context($hostkey, $context, $from);
 
         if (is_null($payload))
         {

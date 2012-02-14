@@ -16,12 +16,9 @@ class Software extends Resource
         $arch = Utils::queryParam('arch');
         $context = Utils::queryParam('context');
 
-        $count = Utils::checkInteger(Utils::queryParam('count'), 'count');
-        $startPage = Utils::checkInteger(Utils::queryParam('startPage'), 'startPage');
-
         $response = new Response($request);
         $payload = cfmod_resource_software($hostkey, $name, $version, $arch,
-                $context, $count, $startPage);
+                $context);
 
         if (is_null($payload))
         {

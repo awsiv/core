@@ -4,7 +4,6 @@ require_once 'lib/Tonic.php';
 require_once 'lib/Utils.php';
 
 // load resources
-require_once 'resource/Status.php';
 require_once 'resource/Context.php';
 require_once 'resource/HostIdSeen.php';
 require_once 'resource/HostIdSeenby.php';
@@ -17,6 +16,7 @@ require_once 'resource/PromiseLogRepairedSummary.php';
 require_once 'resource/PromiseLogRepaired.php';
 require_once 'resource/Setuid.php';
 require_once 'resource/Software.php';
+require_once 'resource/Status.php';
 require_once 'resource/Variable.php';
 
 function addAuthenticateHeader($response)

@@ -13,11 +13,8 @@ class Host extends Resource
         $ip = Utils::queryParam('ip');
         $context = Utils::queryParam('context');
 
-        $count = Utils::checkInteger(Utils::queryParam('count'), 'count');
-        $startPage = Utils::checkInteger(Utils::queryParam('startPage'), 'startPage');
-
         $response = new Response($request);
-        $response->body = cfmod_resource_host($hostname, $ip, $count, $startPage);
+        $response->body = cfmod_resource_host($hostname, $ip);
         $response->code = Response::OK;
 
         return $response;
