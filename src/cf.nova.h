@@ -1383,7 +1383,7 @@ int NovaWin_GetProgDir(char *progDir, int progDirSz);
 int NovaWin_GetEnv(char *varName, char *varContents, int varContentsSz);
 
 #if defined(__MINGW32__)
-const char *GetDefaultWorkdir(void);
+const char *GetDefaultWorkDir(void);
 #endif
 
 /* win_user.c */
