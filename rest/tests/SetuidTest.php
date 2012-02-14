@@ -12,7 +12,7 @@ class SetuidTest extends RestBaseTest
     {
         try
         {
-            $jsonArray = $this->pest->get('/setuid');
+            $jsonArray = $this->getResults('/setuid');
             $this->assertValidJson($jsonArray);
         }
         catch (Pest_NotFound $e)
@@ -26,7 +26,7 @@ class SetuidTest extends RestBaseTest
      */
     public function testWithHostKey()
     {
-        $jsonArray = $this->pest->get('/setuid?hostkey=' . $this->hostA);
+        $jsonArray = $this->getResults('/setuid?hostkey=' . $this->hostA);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray));
         foreach ((array) $jsonArray as $data)
@@ -45,7 +45,7 @@ class SetuidTest extends RestBaseTest
     {
 
         $handle = "/usr/bin/chfn";
-        $jsonArray = $this->pest->get('/setuid?name=' . $handle);
+        $jsonArray = $this->getResults('/setuid?name=' . $handle);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
         foreach ((array) $jsonArray as $data)
@@ -64,7 +64,7 @@ class SetuidTest extends RestBaseTest
     {
 
         $context = "10_0_0_150";
-        $jsonArray = $this->pest->get('/setuid?context=' . $context);
+        $jsonArray = $this->getResults('/setuid?context=' . $context);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
         foreach ((array) $jsonArray as $data)

@@ -12,7 +12,7 @@ class HostIdSeenTest extends RestBaseTest
     {
         try
         {
-            $jsonArray = $this->pest->get("/host/$this->hostA/seen");
+            $jsonArray = $this->getResults("/host/$this->hostA/seen");
             $this->assertValidJson($jsonArray);
             $this->assertEquals(1, sizeof($jsonArray));
             $this->assertEquals($this->hostB, $jsonArray[0]['hostkey']);
@@ -31,7 +31,7 @@ class HostIdSeenTest extends RestBaseTest
         try
         {
             $id = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697c";
-            $jsonArray = $this->pest->get("/host/$id/seen");
+            $jsonArray = $this->getResults("/host/$id/seen");
             $this->assertValidJson($jsonArray);
             $this->assertTrue(empty($jsonArray));
         }

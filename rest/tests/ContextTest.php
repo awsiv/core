@@ -9,7 +9,7 @@ class ContextTest extends RestBaseTest
     {
         try
         {
-            $jsonArray = $this->pest->get('/context');
+            $jsonArray = $this->getResults('/context');
             $this->assertValidJson($jsonArray);
             $this->assertFalse(empty($jsonArray), "Should not be empty value");
         }

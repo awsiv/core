@@ -12,7 +12,7 @@ class PromiseLogRepairedSummaryTest extends RestBaseTest
     {
         try
         {
-            $jsonArray = $this->pest->get('/promise/log/repaired/summary');
+            $jsonArray = $this->getResults('/promise/log/repaired/summary');
             $this->assertValidJson($jsonArray);
         }
         catch (Pest_NotFound $e)
@@ -26,7 +26,7 @@ class PromiseLogRepairedSummaryTest extends RestBaseTest
      */
     public function testWithHostKey()
     {
-        $jsonArray = $this->pest->get('/promise/log/repaired/summary?hostkey=' . $this->hostA);
+        $jsonArray = $this->getResults('/promise/log/repaired/summary?hostkey=' . $this->hostA);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray));
     }
@@ -38,7 +38,7 @@ class PromiseLogRepairedSummaryTest extends RestBaseTest
     {
 
         $handle = "garbage_collection_files_tidy_outputs";
-        $jsonArray = $this->pest->get('/promise/log/repaired/summary?handle=' . $handle);
+        $jsonArray = $this->getResults('/promise/log/repaired/summary?handle=' . $handle);
         $this->assertValidJson($jsonArray);
         $this->assertCount(1, $jsonArray);
         foreach ((array) $jsonArray as $data)
@@ -57,7 +57,7 @@ class PromiseLogRepairedSummaryTest extends RestBaseTest
     {
 
         $context = "10_0_0_150";
-        $jsonArray = $this->pest->get('/promise/log/repaired/summary?context=' . $context);
+        $jsonArray = $this->getResults('/promise/log/repaired/summary?context=' . $context);
         $this->assertValidJson($jsonArray);
         $handle = "garbage_collection_files_tidy_outputs";
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");

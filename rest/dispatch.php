@@ -2,6 +2,8 @@
 
 require_once 'lib/Tonic.php';
 require_once 'lib/Utils.php';
+require_once 'lib/DefaultParameters.php';
+require_once 'lib/ResponsePackaging.php';
 
 // load resources
 require_once 'resource/Context.php';
@@ -36,6 +38,8 @@ try
     {
         throw new ResponseException("Not authenticated", Response::UNAUTHORIZED);
     }
+    
+    DefaultParameters::check();
 
     $resource = $request->loadResource();
     $response = $resource->exec($request);
@@ -64,5 +68,5 @@ catch (Exception $e)
     $response = Utils::InternalExceptionResponse($request, $e);
 }
 
-$response->output();
+ResponsePackaging::package($response)->output();
 return;

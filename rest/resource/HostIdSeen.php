@@ -9,10 +9,8 @@ class HostIdSeen extends Resource
     {
         Utils::checkValidQueryParams(array());
 
-        $from = Utils::checkInteger(Utils::queryParam('from'), 'from');
-
         $response = new Response($request);
-        $payload = cfmod_resource_host_id_seen($id, $from);
+        $payload = cfmod_resource_host_id_seen($id, DefaultParameters::from());
         if (is_null($payload))
         {
             $response = new Response($request);

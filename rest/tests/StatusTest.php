@@ -9,8 +9,7 @@ class StatusTest extends RestBaseTest
     {
         try
         {
-            $jsonArray = $this->pest->get('/');
-            $this->assertValidJson($jsonArray);
+            $jsonArray = $this->getResults('/');
             $this->assertEquals($jsonArray['api-version'], 'v1');
         }
         catch (Pest_NotFound $e)

@@ -13,7 +13,7 @@ class HostIdSeenbyTest extends RestBaseTest
         try
         {
             $id = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df";
-            $jsonArray = $this->pest->get("/host/$id/seen-by");
+            $jsonArray = $this->getResults("/host/$id/seen-by");
             $this->assertValidJson($jsonArray);
         }
         catch (Pest_NotFound $e)
@@ -30,7 +30,7 @@ class HostIdSeenbyTest extends RestBaseTest
         try
         {
             $id = "SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697c";
-            $jsonArray = $this->pest->get("/host/$id/seen");
+            $jsonArray = $this->getResults("/host/$id/seen");
             $this->assertValidJson($jsonArray);
             $this->assertTrue(empty($jsonArray));
         }

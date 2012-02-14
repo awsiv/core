@@ -12,7 +12,7 @@ class VariableTest extends RestBaseTest
     {
         try
         {
-            $jsonArray = $this->pest->get('/variable');
+            $jsonArray = $this->getResults('/variable');
             $this->assertValidJson($jsonArray);
         }
         catch (Pest_NotFound $e)
@@ -26,7 +26,7 @@ class VariableTest extends RestBaseTest
      */
     public function testWithHostKey()
     {
-        $jsonArray = $this->pest->get('/variable?hostkey=' . $this->hostA);
+        $jsonArray = $this->getResults('/variable?hostkey=' . $this->hostA);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray));
         foreach ((array) $jsonArray as $data)
@@ -45,7 +45,7 @@ class VariableTest extends RestBaseTest
     {
 
         $handle = "dirs";
-        $jsonArray = $this->pest->get('/variable?name=' . $handle);
+        $jsonArray = $this->getResults('/variable?name=' . $handle);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
         foreach ((array) $jsonArray as $data)
@@ -64,7 +64,7 @@ class VariableTest extends RestBaseTest
     {
 
         $scope = "control_runagent";
-        $jsonArray = $this->pest->get('/variable?scope=' . $scope);
+        $jsonArray = $this->getResults('/variable?scope=' . $scope);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
     }
@@ -76,7 +76,7 @@ class VariableTest extends RestBaseTest
     {
 
         $value = "true";
-        $jsonArray = $this->pest->get('/variable?value=' . $value);
+        $jsonArray = $this->getResults('/variable?value=' . $value);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
     }
@@ -88,7 +88,7 @@ class VariableTest extends RestBaseTest
     {
 
         $value = "string";
-        $jsonArray = $this->pest->get('/variable?type=' . $value);
+        $jsonArray = $this->getResults('/variable?type=' . $value);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
     }

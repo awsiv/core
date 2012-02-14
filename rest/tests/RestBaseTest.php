@@ -39,5 +39,13 @@ class RestBaseTest extends PHPUnit_Framework_TestCase
         $this->pest = new PestJSON($this->baseUrl);
         $this->pest->setupAuth("admin", "admin");
     }
+    
+    public function getResults($path)
+    {
+        $jsonArray = $this->pest->get($path);
+        $this->assertValidJson($jsonArray);
+        $this->assertEquals($jsonArray['status'], 'ok');
+        return $jsonArray['result'];
+    }
 
 }

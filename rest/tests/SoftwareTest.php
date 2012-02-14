@@ -12,7 +12,7 @@ class SoftwareTest extends RestBaseTest
     {
         try
         {
-            $jsonArray = $this->pest->get('/software');
+            $jsonArray = $this->getResults('/software');
             $this->assertValidJson($jsonArray);
         }
         catch (Pest_NotFound $e)
@@ -26,7 +26,7 @@ class SoftwareTest extends RestBaseTest
      */
     public function testWithHostKey()
     {
-        $jsonArray = $this->pest->get('/software?hostkey=' . $this->hostA);
+        $jsonArray = $this->getResults('/software?hostkey=' . $this->hostA);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray));
         foreach ((array) $jsonArray as $data)
@@ -45,7 +45,7 @@ class SoftwareTest extends RestBaseTest
     {
 
         $handle = "apparmor";
-        $jsonArray = $this->pest->get('/software?name=' . $handle);
+        $jsonArray = $this->getResults('/software?name=' . $handle);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
         foreach ((array) $jsonArray as $data)
@@ -64,7 +64,7 @@ class SoftwareTest extends RestBaseTest
     {
 
         $context = "10_0_0_150";
-        $jsonArray = $this->pest->get('/software?context=' . $context);
+        $jsonArray = $this->getResults('/software?context=' . $context);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
         foreach ((array) $jsonArray as $data)
@@ -83,7 +83,7 @@ class SoftwareTest extends RestBaseTest
     {
 
         $handle = "apparmor";
-        $jsonArray = $this->pest->get('/software?name=' . $handle);
+        $jsonArray = $this->getResults('/software?name=' . $handle);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
         foreach ((array) $jsonArray as $data)
@@ -102,7 +102,7 @@ class SoftwareTest extends RestBaseTest
     {
 
         $version = "3.112ubuntu1";
-        $jsonArray = $this->pest->get('/software?version=' . $version);
+        $jsonArray = $this->getResults('/software?version=' . $version);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
         $handle = "adduser";
@@ -119,7 +119,7 @@ class SoftwareTest extends RestBaseTest
     {
 
         $arch = "default";
-        $jsonArray = $this->pest->get('/software?arch=' . $arch);
+        $jsonArray = $this->getResults('/software?arch=' . $arch);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
         foreach ((array) $jsonArray as $data)
@@ -133,7 +133,7 @@ class SoftwareTest extends RestBaseTest
 
     public function testWithInvalidArch()
     {
-        $jsonArray = $this->pest->get('/software?arch=snookie');
+        $jsonArray = $this->getResults('/software?arch=snookie');
         $this->assertTrue(empty($jsonArray));
     }
     
@@ -141,7 +141,7 @@ class SoftwareTest extends RestBaseTest
     {
 
         $arch = "x86_64";
-        $jsonArray = $this->pest->get('/software?arch=' . $arch);
+        $jsonArray = $this->getResults('/software?arch=' . $arch);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
         foreach ((array) $jsonArray as $data)

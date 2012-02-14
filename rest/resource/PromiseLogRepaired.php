@@ -14,13 +14,11 @@ class PromiseLogRepaired extends Resource
         $context = Utils::queryParam('context');
         $to = Utils::checkInteger(Utils::queryParam('to'), 'to');
 
-        $from = Utils::checkInteger(Utils::queryParam('from'), 'from');
-
         try
         {
             $response = new Response($request);
             $response->body = cfmod_resource_promise_log_repaired($handle,
-                    $hostkey, $context, $to, $from);
+                    $hostkey, $context, $to, DefaultParameters::from());
             return $response;
         }
         catch (Exception $e)

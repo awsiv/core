@@ -12,10 +12,8 @@ class Context extends Resource
         $hostkey = Utils::queryParam('hostkey');
         $context = Utils::queryParam('context');
 
-        $from = Utils::checkInteger(Utils::queryParam('from'), 'from');
-
         $response = new Response($request);
-        $payload = cfmod_resource_context($hostkey, $context, $from);
+        $payload = cfmod_resource_context($hostkey, $context, DefaultParameters::from());
 
         if (is_null($payload))
         {

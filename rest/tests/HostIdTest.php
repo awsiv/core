@@ -8,12 +8,11 @@ class HostIdTest extends RestBaseTest
     /**
      * Checks for valid json response 
      */
-    public function testhostID()
+    public function testHostID()
     {
         try
         {
-            $jsonArray = $this->pest->get("/host/$this->hostA");
-            $this->assertValidJson($jsonArray);
+            $jsonArray = $this->getResults("/host/$this->hostA");
             $this->assertEquals("hostA", $jsonArray["name"]);
         }
         catch (Pest_NotFound $e)
@@ -29,7 +28,7 @@ class HostIdTest extends RestBaseTest
     {
         try
         {
-            $jsonArray = $this->pest->get("host/$this->hostA");
+            $jsonArray = $this->getResults("host/$this->hostA");
         }
         catch (Pest_NotFound $e)
         {

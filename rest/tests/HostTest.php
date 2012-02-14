@@ -9,7 +9,7 @@ class HostTest extends RestBaseTest
     {
         try
         {
-            $jsonArray = $this->pest->get('/host');
+            $jsonArray = $this->getResults('/host');
             $this->assertValidJson($jsonArray);
             $this->assertEquals(2, sizeof($jsonArray));
         }
@@ -23,7 +23,7 @@ class HostTest extends RestBaseTest
     {
         try
         {
-            $jsonArray = $this->pest->get("/host?ip=$this->hostA_ip");
+            $jsonArray = $this->getResults("/host?ip=$this->hostA_ip");
             $this->assertValidJson($jsonArray);
             $this->assertEquals(1, sizeof($jsonArray));
             $this->assertEquals($this->hostA, $jsonArray[0], "got key :: $jsonArray[0]");
@@ -38,7 +38,7 @@ class HostTest extends RestBaseTest
     {
         try
         {
-            $jsonArray = $this->pest->get('/host?hostname=hostA');
+            $jsonArray = $this->getResults('/host?hostname=hostA');
             $this->assertValidJson($jsonArray);
             $this->assertEquals(1, sizeof($jsonArray));
             $this->assertEquals($this->hostA, $jsonArray[0], "got key :: $jsonArray[0]");
@@ -54,7 +54,7 @@ class HostTest extends RestBaseTest
         try
         {
             $ip = '11230.0123.03123.2923';
-            $jsonArray = $this->pest->get('/host?ip=' . $ip);
+            $jsonArray = $this->getResults('/host?ip=' . $ip);
             $this->assertValidJson($jsonArray);
             $this->assertTrue(empty($jsonArray));
         }
@@ -69,7 +69,7 @@ class HostTest extends RestBaseTest
         try
         {
             $hostname = 'hub.test.invalidname';
-            $jsonArray = $this->pest->get('/host?hostname=' . $hostname);
+            $jsonArray = $this->getResults('/host?hostname=' . $hostname);
             $this->assertValidJson($jsonArray);
             $this->assertTrue(empty($jsonArray));
         }

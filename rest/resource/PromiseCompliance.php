@@ -15,14 +15,12 @@ class PromiseCompliance extends Resource
         $handle = Utils::queryParam('handle');
         $context = Utils::queryParam('context');
         $state = Utils::checkPromiseState(Utils::queryParam('state'));
-
-        $from = Utils::checkInteger(Utils::queryParam('from'), 'from');
         
         try
         {
             $response = new Response($request);
             $response->body = cfmod_resource_promise_compliance($handle, $hostkey,
-                    $context, $state, $from);
+                    $context, $state, DefaultParameters::from());
             return $response;
         }
         catch (Exception $e)

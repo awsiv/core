@@ -2,19 +2,11 @@
 
 class Utils {
     
-    public static function queryParam($name)
+    public static function queryParam($name, $defaultValue = NULL)
     {
         if (!array_key_exists($name, $_GET))
         {
-            return NULL;
-        }
-        else if (strcasecmp($_GET[$name], 'true') == 0)
-        {
-            return TRUE;
-        }
-        else if (strcasecmp($_GET[$name], 'false') == 0)
-        {
-            return FALSE;
+            return $defaultValue;
         }
         else
         {
@@ -36,24 +28,24 @@ class Utils {
         }
     }
 
-    public static function checkBoolean($var, $name)
-    {
-        if (!is_null($var) && ($var === "true" || $var === "false"))
-        {
-            throw new ResponseException($name . ' must be true/false',
-                    Response::BADREQUEST);
-        }
-        return (bool)$var;
-    }
-
     public static function checkInteger($var, $name)
     {
-        if (!is_null($var) && !ctype_digit($var))
+        if (!is_null($var))
         {
-            throw new ResponseException($name . ' must be an integer',
-                    Response::BADREQUEST);
+            if (ctype_digit($var))
+            {
+                return (int)$var;
+            }
+            else
+            {
+                throw new ResponseException("query parameter '" . $name . "' must be an integer",
+                        Response::BADREQUEST);
+            }
         }
-        return (int)$var;
+        else
+        {
+            return NULL;
+        }
     }
     
     public static function checkPromiseState($state)
