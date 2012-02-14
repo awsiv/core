@@ -3,7 +3,7 @@
 /**
  * @uri /
  */
-class Base extends Resource
+class Status extends Resource
 {
     function get($request)
     {
