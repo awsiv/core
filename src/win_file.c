@@ -19,6 +19,9 @@
 #include "dir.h"
 #include "dir_priv.h"
 
+/* _mkdir(3) */
+#include <direct.h>
+
 void NovaWin_CreateEmptyFile(char *name)
 {
  HANDLE fileHandle;
