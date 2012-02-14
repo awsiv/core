@@ -2,7 +2,7 @@
 
 require_once "RestBaseTest.php";
 
-class BaseTest extends RestBaseTest
+class StatusTest extends RestBaseTest
 {
 
     public function testVersionOne()
