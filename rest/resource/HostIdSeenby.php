@@ -12,15 +12,12 @@ class HostIdSeenBy extends Resource
         ));
 
         $from = Utils::checkInteger(Utils::queryParam('from'), 'from');
-
-        $sort = Utils::queryParam('sort');
-        $order = Utils::checkBoolean(Utils::queryParam('order'), 'order');
         $count = Utils::checkInteger(Utils::queryParam('count'), 'count');
         $startPage = Utils::checkInteger(Utils::queryParam('startPage'), 'startPage');
 
         $response = new Response($request);
         $payload = cfmod_resource_host_id_seen_by($id, $from, 
-                $sort, $order, $count, $startPage);
+                $count, $startPage);
         if (is_null($payload))
         {
             $response = new Response($request);

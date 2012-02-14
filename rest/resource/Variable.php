@@ -12,14 +12,13 @@ class Variable extends Resource
         $name = Utils::queryParam('name');
         $value = Utils::queryParam('value');
         $type = Utils::queryParam('type');
-        $sort = Utils::queryParam('sort');
-        $order = Utils::checkBoolean(Utils::queryParam('order'), 'order');
+
         $count = Utils::checkInteger(Utils::queryParam('count'), 'count');
         $startPage = Utils::checkInteger(Utils::queryParam('startPage'), 'startPage');
 
         $response = new Response($request);
         $payload = $response->body = cfmod_resource_variable($hostkey, 
-                $scope, $name, $value, $type, $context, $sort, $order, $count, $startPage);
+                $scope, $name, $value, $type, $context, $count, $startPage);
         if (is_null($payload))
         {
             $response = new Response($request);

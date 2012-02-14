@@ -10,6 +10,7 @@ class Host extends Resource
         $hostname = Utils::queryParam('hostname');
         $ip = Utils::queryParam('ip');
         $context = Utils::queryParam('context');
+
         $count = Utils::checkInteger(Utils::queryParam('count'), 'count');
         $startPage = Utils::checkInteger(Utils::queryParam('startPage'), 'startPage');
 

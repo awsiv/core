@@ -15,10 +15,8 @@ class PromiseCompliance extends Resource
         $handle = Utils::queryParam('handle');
         $context = Utils::queryParam('context');
         $state = Utils::checkPromiseState(Utils::queryParam('state'));
-        $from = Utils::checkInteger(Utils::queryParam('from'), 'from');
 
-        $sort = Utils::queryParam('sort');
-        $order = Utils::checkBoolean(Utils::queryParam('order'), 'order');
+        $from = Utils::checkInteger(Utils::queryParam('from'), 'from');
         $count = Utils::checkInteger(Utils::queryParam('count'), 'count');
         $startPage = Utils::checkInteger(Utils::queryParam('startPage'), 'startPage');
         
@@ -27,7 +25,7 @@ class PromiseCompliance extends Resource
             $response = new Response($request);
             $response->body = cfmod_resource_promise_compliance($handle, $hostkey,
                     $context, $state, $from,
-                    $sort, $order, $count, $startPage);
+                    $count, $startPage);
             return $response;
         }
         catch (Exception $e)
