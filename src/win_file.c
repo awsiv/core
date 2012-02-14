@@ -17,7 +17,7 @@
 #include "cf.nova.h"
 
 #include "dir.h"
-#include "dir_impl.h"
+#include "dir_priv.h"
 
 void NovaWin_CreateEmptyFile(char *name)
 {
