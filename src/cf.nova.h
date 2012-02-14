@@ -1034,7 +1034,9 @@ void DeletePromiseFilter(PromiseFilter *filter);
 HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int hostCount, int totalHostCount, double kept, double repaired, double notkept, time_t genTime);
 void DeleteHubCacheTotalCompliance(HubCacheTotalCompliance *tc);
 
+#ifdef HAVE_LIBMONGOC
 void HubQuerySortPromiseBundles(HubQuery *hqPromiseBundles);
+#endif
 int SortPromiseLog(void *p1, void *p2);
 int SortBusinessValue(void *p1, void *p2);
 int SortTotalCompliance(void *p1, void *p2);
