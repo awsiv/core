@@ -642,7 +642,7 @@ void Nova_Initialize(void);
 void Nova_SaveDocumentRoot(void);
 
 #if defined(__MINGW32__)
-bool BoostrapAllowed(void);
+bool BootstrapAllowed(void);
 #endif
 
 /* client_code.c */
