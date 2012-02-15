@@ -31,7 +31,7 @@ const char *Nova_HostColourToString(HostColour colour);
 int Nova_GetComplianceScore(HostRankMethod method, double *k, double *rep);
 
 // gets meters from DB, uses GetComplianceScore. rework.
-Item *Nova_ClassifyHostState(HostRankMethod method);
+Item *Nova_ClassifyHostState(HostClassFilter *hostClassFilter, HostRankMethod method);
 int Nova_GetHostColour(char *lkeyhash);
 Item *Nova_GreenHosts(void);
 Item *Nova_YellowHosts(void);

@@ -7,6 +7,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "scorecards.h"
+#include "bson_lib.h"
 
 #ifdef HAVE_LIBMONGOC
 /*****************************************************************************/
@@ -434,7 +435,7 @@ Item *Nova_GreenHosts()
 
 { Item *ip,*hosts = NULL,*sorted = NULL;
 
-hosts = Nova_ClassifyHostState(HOST_RANK_METHOD_COMPLIANCE);
+ hosts = Nova_ClassifyHostState(NULL, HOST_RANK_METHOD_COMPLIANCE);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
@@ -455,7 +456,7 @@ Item *Nova_YellowHosts()
 
 { Item *ip,*hosts = NULL,*sorted = NULL;
 
-hosts = Nova_ClassifyHostState(HOST_RANK_METHOD_COMPLIANCE);
+ hosts = Nova_ClassifyHostState(NULL, HOST_RANK_METHOD_COMPLIANCE);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
@@ -476,7 +477,7 @@ Item *Nova_RedHosts()
 
 { Item *ip,*hosts = NULL,*sorted = NULL;
 
- hosts = Nova_ClassifyHostState(HOST_RANK_METHOD_COMPLIANCE);
+ hosts = Nova_ClassifyHostState(NULL, HOST_RANK_METHOD_COMPLIANCE);
 
  for (ip = hosts; ip != NULL; ip=ip->next)
     {
@@ -497,7 +498,7 @@ Item *Nova_BlueHosts()
 
 { Item *ip,*hosts = NULL,*sorted = NULL;
 
-hosts = Nova_ClassifyHostState(HOST_RANK_METHOD_COMPLIANCE);
+ hosts = Nova_ClassifyHostState(NULL, HOST_RANK_METHOD_COMPLIANCE);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
@@ -516,12 +517,11 @@ return sorted;
 /* Level                                                                     */
 /*****************************************************************************/
 
-Item *Nova_ClassifyHostState(HostRankMethod method)
+Item *Nova_ClassifyHostState(HostClassFilter *hostClassFilter, HostRankMethod method)
 
 /* note the similarities between this fn and GetHostColour() */
     
 { bson_buffer bb;
-  bson qe,field;
   mongo_cursor *cursor;
   bson_iterator it1,it2,it3;
   double akept[meter_endmark] = {0},arepaired[meter_endmark] = {0};
@@ -543,23 +543,29 @@ if (!CFDB_Open(&conn))
    return NULL;
    }
 
-/* BEGIN RESULT DOCUMENT */
 
+bson query;
+bson_buffer_init(&bb);
+BsonAppendHostClassFilter(&bb, hostClassFilter);
+bson_from_buffer(&query, &bb);
+
+bson fields;
 bson_buffer_init(&bb);
 bson_append_int(&bb,cfr_keyhash,1);
 bson_append_int(&bb,cfr_ip_array,1);
 bson_append_int(&bb,cfr_host_array,1);
 bson_append_int(&bb,cfr_meter,1);
 bson_append_int(&bb,cfr_day,1);
-bson_from_buffer(&field, &bb);
+bson_from_buffer(&fields, &bb);
 
-/* BEGIN SEARCH */
 
 hostnames[0] = '\0';
 addresses[0] = '\0';
 
-cursor = mongo_find(&conn,MONGO_DATABASE,bson_empty(&qe),&field,0,0,CF_MONGO_SLAVE_OK);
-bson_destroy(&field);
+cursor = mongo_find(&conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+
+bson_destroy(&query);
+bson_destroy(&fields);
 
 
 while (mongo_cursor_next(cursor))  // loops over documents

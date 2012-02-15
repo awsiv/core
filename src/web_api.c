@@ -3476,7 +3476,7 @@ void Nova2PHP_host_compliance_list_all(PageInfo *page, char *buffer, int bufsize
  
 Nova_WebTopicMap_Initialize();
 
-clist = Nova_ClassifyHostState(HOST_RANK_METHOD_COMPLIANCE);
+clist = Nova_ClassifyHostState(NULL, HOST_RANK_METHOD_COMPLIANCE);
 
 buffer[0] = '\0';
 strcat(buffer,"{\"data\":[");

@@ -2166,7 +2166,7 @@ snprintf(name,sizeof(name),"%s/reports/summary.z",docroot);
 MapName(name);
 
 #ifdef HAVE_LIBMONGOC
-clist = Nova_ClassifyHostState(HOST_RANK_METHOD_COMPLIANCE);
+clist = Nova_ClassifyHostState(NULL, HOST_RANK_METHOD_COMPLIANCE);
 #endif
 
 if ((fout = fopen(name,"w")))
