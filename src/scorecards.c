@@ -435,7 +435,7 @@ Item *Nova_RankHosts(HostRankMethod method,int max_return)
 { Item *ip,*hosts,*counted =  NULL;
   int num = 0;
  
-hosts = Nova_ClassifyHostState(NULL,false,method,0);
+hosts = Nova_ClassifyHostState(method);
 hosts = SortItemListCounters(hosts);
 
 if (max_return > 0)
@@ -466,7 +466,7 @@ Item *Nova_GreenHosts()
 
 { Item *ip,*hosts = NULL,*sorted = NULL;
 
-hosts = Nova_ClassifyHostState(NULL,false,HOST_RANK_METHOD_DEFAULT,0);
+hosts = Nova_ClassifyHostState(HOST_RANK_METHOD_DEFAULT);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
@@ -487,7 +487,7 @@ Item *Nova_YellowHosts()
 
 { Item *ip,*hosts = NULL,*sorted = NULL;
 
-hosts = Nova_ClassifyHostState(NULL,false,HOST_RANK_METHOD_DEFAULT,0);
+hosts = Nova_ClassifyHostState(HOST_RANK_METHOD_DEFAULT);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
@@ -508,7 +508,7 @@ Item *Nova_RedHosts()
 
 { Item *ip,*hosts = NULL,*sorted = NULL;
 
- hosts = Nova_ClassifyHostState(NULL,false,HOST_RANK_METHOD_DEFAULT,0);
+ hosts = Nova_ClassifyHostState(HOST_RANK_METHOD_DEFAULT);
 
  for (ip = hosts; ip != NULL; ip=ip->next)
     {
@@ -529,7 +529,7 @@ Item *Nova_BlueHosts()
 
 { Item *ip,*hosts = NULL,*sorted = NULL;
 
-hosts = Nova_ClassifyHostState(NULL,false,HOST_RANK_METHOD_DEFAULT,0);
+hosts = Nova_ClassifyHostState(HOST_RANK_METHOD_DEFAULT);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
@@ -548,7 +548,7 @@ return sorted;
 /* Level                                                                     */
 /*****************************************************************************/
 
-Item *Nova_ClassifyHostState(char *search_string,int regex, HostRankMethod method,int max_return)
+Item *Nova_ClassifyHostState(HostRankMethod method)
 
 /* note the similarities between this fn and GetHostColour() */
     
@@ -559,7 +559,7 @@ Item *Nova_ClassifyHostState(char *search_string,int regex, HostRankMethod metho
   double akept[meter_endmark] = {0},arepaired[meter_endmark] = {0};
   double rkept,rrepaired;
   char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rcolumn[CF_SMALLBUF];
-  int num = 0,awol,foundMeter;
+  int awol,foundMeter;
   mongo_connection conn;
   Item *list = NULL;
   time_t now = time(NULL);
@@ -695,29 +695,21 @@ while (mongo_cursor_next(cursor))  // loops over documents
          }   
       }
    
-   if (search_string == NULL || FullTextMatch(search_string,hostnames))
+   int score;
+   
+   if (awol || !foundMeter)
       {
-      int score;
-      
-      if (awol || !foundMeter)
-         {
-         score = CF_CODE_BLUE;
-         }
-      else
-         {
-         score = Nova_GetComplianceScore(method,akept,arepaired);
-         }
-
-      PrependItem(&list,keyhash,hostnames);
-      SetItemListCounter(list,keyhash,score);
-         
-      if (max_return && (num++ >= max_return))
-         {
-         break;
-         }
+      score = CF_CODE_BLUE;
       }
-
+   else
+      {
+      score = Nova_GetComplianceScore(method,akept,arepaired);
+      }
+   
+   PrependItem(&list,keyhash,hostnames);
+   SetItemListCounter(list,keyhash,score);
    }
+
 
 mongo_cursor_destroy(cursor);
 
