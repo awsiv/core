@@ -13,7 +13,6 @@
 static time_t DeltaHrsConvert(long hrsAgo);
 char **String2StringArray(char *str, char separator);
 void FreeStringArray(char **strs);
-static bool ParseVitalsArgs(int argc, char **retHostKey, char **retVitalId);
 static JsonElement *ParseRolesToJson(HubQuery *hq);
 
 
@@ -714,40 +713,6 @@ PHP_FUNCTION(cfpr_vitals_analyse_histogram)
  Nova2PHP_vitals_analyse_histogram(hostKey, vitalId, buffer, sizeof(buffer));
 
  RETURN_STRING(buffer,1);
-}
-
-/******************************************************************************/
-
-static bool ParseVitalsArgs(int argc, char **retHostKey, char **retVitalId)
-{
- char *hostkey,*fhostkey, *vitalId, *fvitalId;
- int hk_len, vi_len;
-
- if (zend_parse_parameters(argc, "ss",&hostkey,&hk_len,&vitalId,&vi_len) == FAILURE)
-    {
-    return false;
-    }
-
- fhostkey =  (hk_len == 0) ? NULL : hostkey;
- fvitalId =  (vi_len == 0) ? NULL : vitalId;
-
- // only support one host and vital at this time
- if(!fhostkey)
-    {
-    php_printf("ParseVitalsParams: error: hostkey is undefined\n");
-    return false;
-    }
-
-  if(!fvitalId)
-    {
-    php_printf("ParseVitalsParams: error: vitalid is undefined\n");
-    return false;
-    }
-
-  *retHostKey = fhostkey;
-  *retVitalId = fvitalId;
-
-  return true;
 }
 
 /******************************************************************************/
