@@ -1,5 +1,7 @@
 #!/bin/bash
 
+LOGFILE="test.log"
+
 TEST_FAILED_MEMORY=""
 TEST_FAILED_SPEED=""
 
@@ -7,34 +9,47 @@ TEST_FAILED_SPEED=""
 export CFENGINE_TEST_OVERRIDE_USERNAME="admin"
 export CFENGINE_TEST_OVERRIDE_HOSTKEY="SHA=2f8d59051aac6a2a9538028b2cc8768e69c4db8afcf4be50fc6ccbd92336b4fc"
 
+TIME_START_TEST_ALL=$(date +%s)
+echo -e "\n\n=== Staring tests at $TIME_START_TEST_ALL ===" >> $LOGFILE
+
 for phpfile in *.php
 do
   echo "Testing $phpfile..."
   
-  TIME_START=$(date +%s)
-  php -f $phpfile 2>/dev/null
-  TIME_END=$(date +%s)
+  TIME_START_TEST=$(date +%s)
+  OUTPUT_PHP=$(php -f $phpfile 2>&1)
+  TIME_END_TEST=$(date +%s)
 
-  SECONDS_USED=$(($TIME_END - $TIME_START))
+  SECONDS_USED_TEST=$(($TIME_END_TEST - $TIME_START_TEST))
   
-  valgrindOutput=$(valgrind -q --max-stackframe=8000000 --leak-check=full --log-fd=1 php -f $phpfile 2>/dev/null)
+  OUTPUT_VALGRIND=$(valgrind -q --max-stackframe=8000000 --leak-check=full --log-fd=1 php -f $phpfile 2>/dev/null)
 
-  if [ -n "$valgrindOutput" ]
+  if [ -n "$OUTPUT_VALGRIND" ]
   then
       echo "Memory error:"
-      echo "$valgrindOutput"
+      echo "$OUTPUT_VALGRIND"
       TEST_FAILED_MEMORY="$TEST_FAILED_MEMORY $phpfile"
   fi
 
-  if [ "$SECONDS_USED" -gt 1 ]  # NOTE: may be up to two seconds (1-second resolution)
+  if [ "$SECONDS_USED_TEST" -gt 1 ]  # NOTE: may be up to two seconds (1-second resolution)
   then
-      echo "Too slow (used $SECONDS_USED seconds)"
+      echo "Too slow (used $SECONDS_USED_TEST seconds)"
       TEST_FAILED_SPEED="$TEST_FAILED_SPEED $phpfile"
   fi
+  
+  echo "--- $phpfile ---" >> $LOGFILE
+  echo -e "time: $SECONDS_USED_TEST seconds" >> $LOGFILE
+  echo -e "php:\n$OUTPUT_PHP" >> $LOGFILE
+  echo -e "valgrind:\n$OUTPUT_VALGRIND\n" >> $LOGFILE
 
 done
 
-echo -e "\nSUMMARY"
+TIME_END_TEST_ALL=$(date +%s)
+SECONDS_USED_TEST_ALL=$(($TIME_END_TEST_ALL - $TIME_START_TEST_ALL))
+
+echo -e "Total time: $SECONDS_USED_TEST_ALL seconds\n\n" >> $LOGFILE
+
+echo -e "\nSUMMARY (total time: $SECONDS_USED_TEST_ALL seconds)"
 echo "======================"
 
 echo "Failed memory checks:"
