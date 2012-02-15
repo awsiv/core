@@ -17,7 +17,7 @@ do
 
   SECONDS_USED=$(($TIME_END - $TIME_START))
   
-  valgrindOutput=$(valgrind -q --max-stackframe=8000000 --leak-check=full php -f $phpfile 2>&1 | grep -v Deprecated)
+  valgrindOutput=$(valgrind -q --max-stackframe=8000000 --leak-check=full --log-fd=1 php -f $phpfile 2>/dev/null)
 
   if [ -n "$valgrindOutput" ]
   then
