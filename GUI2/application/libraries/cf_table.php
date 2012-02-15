@@ -206,7 +206,7 @@ class cf_table {
                     $cell3
                 ));
             } else {
-                $lnk = anchor('search/index/report/Promises+not+kept+summary/host/' . $cols['key'], ' ', array('title' => 'promises not kept', 'class' => 'promisesnotkeptbtn showqtip'))
+                $lnk = anchor('search/index/report/promises-not-kept-summary/host/' . $cols['key'], ' ', array('title' => 'promises not kept', 'class' => 'promisesnotkeptbtn showqtip'))
                         . anchor('visual/vital/' . $cols['key'], ' ', array('title' => 'pulse and vitals', 'class' => 'vitalsbtn showqtip'))
                         . anchor('welcome/host/delhost/' . $cols['key'] . '/type/' . $type, ' ', array('title' => 'delete host', 'class' => 'deletehostbtn showqtip'));
                 $cell = array('data' => $lnk, 'class' => 'actioncol');

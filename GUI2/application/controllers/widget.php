@@ -57,7 +57,7 @@ class Widget extends Cf_Controller {
     function sort_alphabetically_hostname($hostname=null,$page = 1) {
         $hostname = $this->input->post('value')?$this->input->post('value'):urldecode($hostname);
         $data = "";
-        $searchhost='['.$hostname.'|'.strtolower($hostname).']';
+        $searchhost='^['.$hostname.'|'.strtolower($hostname).']';
         $data = sanitycheckjson(cfpr_show_hosts_name($searchhost, NULL, 15, $page), true);
         echo $this->__format_to_html($data, 'hostname');
     }
