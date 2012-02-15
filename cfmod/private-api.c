@@ -588,17 +588,31 @@ PHP_FUNCTION(cfpr_vitals_view_histogram)
 
 PHP_FUNCTION(cfpr_vitals_analyse_magnified)
 {
- char *hostkey, *vitalId;
+ char *userName, *hostKey, *vitalId;
+ int user_len, hk_len, vi_len;
  char buffer[4096];
 
- if(!ParseVitalsArgs(ZEND_NUM_ARGS() TSRMLS_CC,&hostkey, &vitalId))
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss",
+                           &userName, &user_len,
+                           &hostKey, &hk_len,
+                           &vitalId, &vi_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
+ 
+ ARGUMENT_CHECK_CONTENTS(user_len && hk_len && vi_len);
 
+ cfapi_errid erridAccess = CFDB_HasHostAccessFromUserRBAC(userName, hostKey);
+
+ if(erridAccess != ERRID_SUCCESS)
+    {
+    zend_throw_exception(cfmod_exception_rbac, (char *)GetErrorDescription(erridAccess), 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
+ 
  buffer[0]='\0';
- Nova2PHP_vitals_analyse_magnified(hostkey, vitalId, buffer, sizeof(buffer));
+ Nova2PHP_vitals_analyse_magnified(hostKey, vitalId, buffer, sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
