@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 
 class Promise extends Cf_Controller {
