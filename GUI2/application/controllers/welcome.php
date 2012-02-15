@@ -515,7 +515,7 @@ class Welcome extends Cf_Controller {
         );
 
 
-        $gdata = cfpr_host_meter($hostkey);
+        $gdata = cfpr_host_meter($this->session->userdata('username'),$hostkey);
 
         $returnedData = $this->_convert_summary_compliance_graph($gdata);
         $data = array_merge($data, $returnedData);
@@ -557,7 +557,7 @@ class Welcome extends Cf_Controller {
         if ($gdata) {
             $ret = json_decode($gdata, TRUE);
             foreach ($ret['data'] as $index => $val) {
-                $rawData = cfpr_host_meter($val['key']);
+                $rawData = cfpr_host_meter($this->session->userdata('username'),$val['key']);
                 $graphData = $this->_convert_summary_compliance_graph($rawData);
                 $ret['data'][$index] = array_merge($ret['data'][$index], $graphData);
             }

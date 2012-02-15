@@ -48,7 +48,7 @@ class Graph extends CF_Controller {
         if (!$hostKey)
             $gdata = cfpr_summary_meter();
         else
-            $gdata = cfpr_host_meter($hostKey);
+            $gdata = cfpr_host_meter($this->session->userdata('username'),$hostKey);
 
         $convertedData = json_decode($gdata, true);
 
