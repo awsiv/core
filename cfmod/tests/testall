@@ -1,48 +1,64 @@
 #!/bin/bash
 
+TESTFILE=$1
+
 LOGFILE="test.log"
 
 TEST_FAILED_MEMORY=""
 TEST_FAILED_SPEED=""
 
 # TODO: standardise & loop over these environment variables to cover useful cases
-export CFENGINE_TEST_OVERRIDE_USERNAME="admin"
-export CFENGINE_TEST_OVERRIDE_HOSTKEY="SHA=2f8d59051aac6a2a9538028b2cc8768e69c4db8afcf4be50fc6ccbd92336b4fc"
+export CFENGINE_TEST_OVERRIDE_USERNAME="superman"
+#export CFENGINE_TEST_OVERRIDE_USERNAME="tester"
+export CFENGINE_TEST_OVERRIDE_HOSTKEY="SHA=2f8d59051aac6a2a9538028b2cc8768e69c4db8afcf4be50fc6ccbd92336b4fd"
+#export CFENGINE_TEST_OVERRIDE_HOSTKEY="SHA=2f8d59051aac6a2a9538028b2cc8768e69c4db8afcf4be50fc6ccbd92336b4cb"
 
 TIME_START_TEST_ALL=$(date +%s)
 echo -e "\n\n=== Staring tests at $TIME_START_TEST_ALL ===" >> $LOGFILE
 
-for phpfile in *.php
-do
-  echo "Testing $phpfile..."
-  
-  TIME_START_TEST=$(date +%s)
-  OUTPUT_PHP=$(php -f $phpfile 2>&1)
-  TIME_END_TEST=$(date +%s)
+runtest()
+{
+    PHPFILE=$1
+    
+    echo "Testing $PHPFILE..."
+    
+    TIME_START_TEST=$(date +%s)
+    OUTPUT_PHP=$(php -f $PHPFILE 2>&1)
+    TIME_END_TEST=$(date +%s)
+    
+    SECONDS_USED_TEST=$(($TIME_END_TEST - $TIME_START_TEST))
+    
+    OUTPUT_VALGRIND=$(valgrind -q --max-stackframe=8000000 --leak-check=full --log-fd=1 php -f $PHPFILE 2>/dev/null)
+    
+    if [ -n "$OUTPUT_VALGRIND" ]
+    then
+        echo "Memory error:"
+        echo "$OUTPUT_VALGRIND"
+        TEST_FAILED_MEMORY="$TEST_FAILED_MEMORY $PHPFILE"
+    fi
+    
+    if [ "$SECONDS_USED_TEST" -gt 1 ]  # NOTE: may be up to two seconds (1-second resolution)
+    then
+        echo "Too slow (used $SECONDS_USED_TEST seconds)"
+        TEST_FAILED_SPEED="$TEST_FAILED_SPEED $PHPFILE"
+    fi
+    
+    echo "--- $PHPFILE ---" >> $LOGFILE
+    echo -e "time: $SECONDS_USED_TEST seconds" >> $LOGFILE
+    echo -e "php:\n$OUTPUT_PHP" >> $LOGFILE
+    echo -e "valgrind:\n$OUTPUT_VALGRIND\n" >> $LOGFILE
+}
 
-  SECONDS_USED_TEST=$(($TIME_END_TEST - $TIME_START_TEST))
-  
-  OUTPUT_VALGRIND=$(valgrind -q --max-stackframe=8000000 --leak-check=full --log-fd=1 php -f $phpfile 2>/dev/null)
 
-  if [ -n "$OUTPUT_VALGRIND" ]
-  then
-      echo "Memory error:"
-      echo "$OUTPUT_VALGRIND"
-      TEST_FAILED_MEMORY="$TEST_FAILED_MEMORY $phpfile"
-  fi
-
-  if [ "$SECONDS_USED_TEST" -gt 1 ]  # NOTE: may be up to two seconds (1-second resolution)
-  then
-      echo "Too slow (used $SECONDS_USED_TEST seconds)"
-      TEST_FAILED_SPEED="$TEST_FAILED_SPEED $phpfile"
-  fi
-  
-  echo "--- $phpfile ---" >> $LOGFILE
-  echo -e "time: $SECONDS_USED_TEST seconds" >> $LOGFILE
-  echo -e "php:\n$OUTPUT_PHP" >> $LOGFILE
-  echo -e "valgrind:\n$OUTPUT_VALGRIND\n" >> $LOGFILE
-
-done
+if [ -n "$TESTFILE" ]
+then
+    runtest "$TESTFILE"
+else
+    for PHPFILE in *.php
+    do
+        runtest "$PHPFILE"
+    done
+fi
 
 TIME_END_TEST_ALL=$(date +%s)
 SECONDS_USED_TEST_ALL=$(($TIME_END_TEST_ALL - $TIME_START_TEST_ALL))
