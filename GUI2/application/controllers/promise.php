@@ -28,46 +28,61 @@ class Promise extends Cf_Controller {
             'replace_existing'=>true
         );
 
-        /*
-         * cfpr_promise_list_by_promiser  and cfpr_promise_list_by_promise_type
-         * 
-         * return nested array like array 0 =>  array 0 => 'promise_cdp_commands_cf_9' ..
-         * 
-         * so we have to use first element from the inner array
-         */
-        
-        $promise_list_by_promiser_arr = array_values(json_decode(utf8_encode(cfpr_promise_list_by_promiser($username, $promiser)),TRUE));
-        $allhandlespromiser = &$promise_list_by_promiser_arr[0];
-        
-        $promise_list_by_promise_type_arr = json_decode(utf8_encode(cfpr_promise_list_by_promise_type($username, $type)),TRUE);
-        $allhandlesbytype = &$promise_list_by_promise_type_arr[0];
         
         $this->breadcrumb->setBreadCrumb($bc);
        
-        $data1= array(
-            'handle' => $handle,
-            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_promise')." " .$handle,
-            'breadcrumbs' => $this->breadcrumblist->display()
-        );
-        
+
+
         try{  
-         $mybundle = cfpr_bundle_by_promise_handle($this->session->userdata('username'), $handle);
-         $promiser = cfpr_get_promiser($handle);
-         $type = cfpr_get_promise_type($handle);
-         $pid = cfpr_get_pid_for_topic("promises", $handle);
-         $topicDetail = cfpr_show_topic($pid);
-        $data2 = array(
-            'pid' => $pid,
-            'type' => $type,
-            'mybundle' => cfpr_bundle_by_promise_handle($this->session->userdata('username'), $handle),
-            'allhandles' => json_decode(utf8_encode(cfpr_list_handles_for_bundle($mybundle, cfpr_get_bundle_type($mybundle), false)),TRUE),
-            'allhandlespromiser' => json_decode(utf8_encode(cfpr_list_handles($promiser, "", false)),TRUE),
-            'allhandlesbytype' =>json_decode(utf8_encode(cfpr_list_handles("", $type, false)),TRUE),
-            'topicLeads' => json_decode(utf8_encode(cfpr_show_topic_leads($pid)),TRUE),
-            'topicDetail' => json_decode(utf8_encode($topicDetail), true),
-            'promise' => sanitycheckjson(cfpr_promise_details($this->session->userdata('username'), $handle),true),
-        );
-        $data=array_merge($data1,$data2);
+            $mybundle = cfpr_bundle_by_promise_handle($username, $handle);
+
+
+            // get promise details
+            $promise  = sanitycheckjson(cfpr_promise_details($this->session->userdata('username'), $handle),true);
+            $promiser = $promise['promiser'];
+            $type     = $promise['promise_type'];
+
+
+            $pid = cfpr_get_pid_for_topic("promises", $handle);
+
+            $topicDetail = cfpr_show_topic($pid);
+
+            $tmp_arr = array();
+            $tmp_arr = json_decode(utf8_encode(cfpr_promise_list_by_promiser($username, $promiser)),TRUE);
+            foreach($tmp_arr as $item => $value) {
+                $allhandlespromiser[] = $value[0];
+            }
+            
+            $tmp_arr = json_decode(utf8_encode(cfpr_promise_list_by_promise_type($username, $type)),TRUE);
+            foreach($tmp_arr as $item => $value) {
+                $allhandlesbytype[] = $value[0];
+            }
+     
+             
+            $tmp_arr = json_decode(utf8_encode(cfpr_promise_list_by_bundle($username, cfpr_get_bundle_type($mybundle), $mybundle)),TRUE);
+            foreach($tmp_arr as $item => $value) {
+                $allhandles[] = $value[0];
+            }            
+
+
+            $data = array(
+                'handle' => $handle,
+                'title'  => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_promise')." " .$handle,
+                'pid'    => $pid,
+                'type'   => $type,  
+
+                'promise'=> $promise,    
+                'allhandlespromiser' => $allhandlespromiser,
+                'allhandlesbytype'   => $allhandlesbytype,   
+                'allhandles'         => $allhandles,
+
+                'mybundle'    => cfpr_bundle_by_promise_handle($username, $handle),
+
+                'topicLeads'  => json_decode(utf8_encode(cfpr_show_topic_leads($pid)),TRUE),
+                'topicDetail' => json_decode(utf8_encode($topicDetail), true),
+
+                'breadcrumbs' => $this->breadcrumblist->display()
+            );
         }catch(Exception $e){
            $data['error']= generate_errormessage($e);
         }
