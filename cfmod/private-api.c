@@ -455,22 +455,32 @@ PHP_FUNCTION(cfpr_vitals_list)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_vitals_view_magnified)
-
-{ char *hostkey, *vitalId;
- int hk_len, vi_len;
+{
+ char *userName, *hostKey, *vitalId;
+ int user_len, hk_len, vi_len;
  char buffer[1024*1024];
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&hostkey,&hk_len,&vitalId,&vi_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss",
+                           &userName, &user_len,
+                           &hostKey, &hk_len,
+                           &vitalId, &vi_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
- // only support one host and vital at this time
- ARGUMENT_CHECK_CONTENTS(hk_len && vi_len);
+ ARGUMENT_CHECK_CONTENTS(user_len && hk_len && vi_len);
+
+ cfapi_errid erridAccess = CFDB_HasHostAccessFromUserRBAC(userName, hostKey);
+ 
+ if(erridAccess != ERRID_SUCCESS)
+    {
+    zend_throw_exception(cfmod_exception_rbac, (char *)GetErrorDescription(erridAccess), 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
 
  buffer[0]='\0';
- Nova2PHP_vitals_view_magnified(hostkey, vitalId, buffer, sizeof(buffer));
+ Nova2PHP_vitals_view_magnified(hostKey, vitalId, buffer, sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
