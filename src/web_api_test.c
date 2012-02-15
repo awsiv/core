@@ -72,6 +72,11 @@ int Nova2PHP_classes_report_test(char *hostkey,char *name,int regex,HostClassFil
   
   int total = GetTotalCount(endIndex);
 
+if(endIndex > total)
+  {
+  endIndex = total;
+  }
+
 snprintf(header,sizeof(header),
 	 "\"meta\":{\"count\" : %d,"
 	 "\"header\": {\"Host\":0,\"Class Context\":1,\"Occurs with Probability\":2,\"Uncertainty\":3,\"Last seen\":4"
@@ -80,7 +85,7 @@ snprintf(header,sizeof(header),
 StartJoin(returnval, "{\"data\":[", bufsize);
 totalLen = strlen(header) + strlen(CF_NOTICE_TRUNCATED) + strlen(returnval) + 1000; 
 
-for (int i = startIndex; (i < endIndex) || (i < total); i++)
+for (int i = startIndex; i < endIndex; i++)
   {
   if(!recordLen)
     {
@@ -237,6 +242,11 @@ if(total > 60000)
   total = 60000;
   }
 
+if(endIndex > total)
+  {
+  endIndex = total;
+  }
+
 char *p = returnval;
 
 snprintf(work, sizeof(work),
@@ -246,7 +256,7 @@ snprintf(work, sizeof(work),
  
 StartJoin(returnval,work,bufsize);
 
-for (int i = startIndex; (i < endIndex) || (i < total); i++)
+for (int i = startIndex; i < endIndex; i++)
   {
   char hostname[CF_MAXVARSIZE] = {0};
   char keyhash[CF_MAXVARSIZE] = {0};
@@ -286,6 +296,11 @@ if(total > 30000)
   total = 30000;
   }
 
+if(endIndex > total)
+  {
+  endIndex = total;
+  }
+
 snprintf(header,sizeof(header),
 	 "\"meta\":{\"count\" : %d,"
 	 "\"header\": {\"Host\":0,\"Bundle\":1,\"Last Verified\":2,\"Hours Ago\":3,\"Avg Interval\":4,\"Uncertainty\":5,"
@@ -294,7 +309,7 @@ snprintf(header,sizeof(header),
 
 StartJoin(returnval,"{\"data\":[",bufsize);
 
-for (int i = startIndex; (i < endIndex) || (i < total); i++)
+for (int i = startIndex; i < endIndex; i++)
   {
   char hostname[CF_MAXVARSIZE];
   char bundle[CF_MAXVARSIZE];
@@ -348,6 +363,11 @@ int Nova2PHP_promiselog_test(char *hostkey,char *handle, PromiseLogState state,t
   int endIndex = page->resultsPerPage*page->pageNum;
   int total = GetTotalCount(endIndex); 
 
+if(endIndex > total)
+  {
+  endIndex = total;
+  }
+
 snprintf(header,sizeof(header), 
 	 "\"meta\":{\"count\" : %d,"
 	 "\"header\":{\"Host\":0,\"Promise Handle\":1,\"Report\":2,\"Time\":3,"
@@ -357,7 +377,7 @@ snprintf(header,sizeof(header),
 char *p = returnval;
 StartJoin(returnval,"{\"data\":[",bufsize);
 
-for (int i = startIndex; (i < endIndex) || (i < total); i++)
+for (int i = startIndex; i < endIndex; i++)
   {
   switch (state)
     {
@@ -418,6 +438,11 @@ int Nova2PHP_promiselog_summary_test(char *hostkey,char *handle, PromiseLogState
   int endIndex = page->resultsPerPage * page->pageNum;
   int total = GetTotalCount(endIndex);
 
+if(endIndex > total)
+  {
+  endIndex = total;
+  }
+
 snprintf(header,sizeof(header),
              "\"meta\":{\"count\" : %d,"
              "\"header\":{\"Promise Handle\":0,\"Report\":1,\"Occurrences\":2}",
@@ -426,7 +451,7 @@ snprintf(header,sizeof(header),
 char *p = returnval;    
 StartJoin(returnval,"{\"data\":[",bufsize);
    
-for(int i = startIndex; (i < endIndex) || (i < total); i++)
+for(int i = startIndex; i < endIndex; i++)
   {
   char handle[CF_MAXVARSIZE];
   char report[CF_MAXVARSIZE];
@@ -467,6 +492,11 @@ int Nova2PHP_value_report_test(char *hostkey,char *day,char *month,char *year,Ho
   int endIndex = page->resultsPerPage * page->pageNum;
   int total = GetTotalCount(endIndex);
 
+if(endIndex > total)
+  {
+  endIndex = total;
+  }
+
 snprintf(header,sizeof(header), "\"meta\":{\"count\" : %d,"
          "\"header\":{\"Host\":0,\"Day\":1,\"Kept\":2,\"Repaired\":3,\"Not Kept\":4,"
          "\"Note\":{\"index\":5,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}}",
@@ -478,7 +508,7 @@ noticeLen = strlen(CF_NOTICE_TRUNCATED);
 char *p = returnval;
 StartJoin(returnval,"{\"data\":[",bufsize);
 
-for(int i = startIndex; (i < total) || (i < endIndex); i++)
+for(int i = startIndex; i < endIndex; i++)
   {
   char hostname[CF_MAXVARSIZE];
   char day[CF_MAXVARSIZE];
@@ -536,6 +566,11 @@ int Nova2PHP_software_report_test(char *hostkey,char *name,char *value, char *ar
   int endIndex = page->resultsPerPage * page->pageNum;
   int total = GetTotalCount(endIndex);
 
+if(endIndex > total)
+  {
+  endIndex = total;
+  }
+
 snprintf(header,sizeof(header),
 	 "\"meta\":{\"count\" : %d,"
 	 "\"header\": {\"Host\":0,\"Name\":1,\"Version\":2,\"Architecture\":3,\"Last seen\":4"
@@ -547,7 +582,7 @@ noticeLen = strlen(CF_NOTICE_TRUNCATED);
 char *p = returnval;
 StartJoin(returnval,"{\"data\":[",bufsize);
 
-for(int i = startIndex; (i < endIndex) || (i < total); i++)
+for(int i = startIndex; i < endIndex; i++)
   {
   char hostname[CF_MAXVARSIZE];
   char name[CF_MAXVARSIZE];
@@ -600,6 +635,11 @@ int Nova2PHP_vars_report_test(char *hostkey,char *scope,char *lval,char *rval,ch
 
 total = (total > 65000) ? 65000 : total;
 
+if(endIndex > total)
+  {
+  endIndex = total;
+  }
+
 lscope[0] = '\0';
 
 snprintf(header,sizeof(header),"\"meta\":{\"count\":%d", total);
@@ -612,7 +652,7 @@ StartJoin(returnval,"{",bufsize);
 
 int values_per_scope = 0;
 
-for (int i = startIndex; (i < total) || (i < endIndex); i++)
+for (int i = startIndex; i < endIndex; i++)
   {
   if(scope_record_count >= values_per_scope)
     {
@@ -700,6 +740,11 @@ int Nova2PHP_compliance_report_test(char *hostkey,char *version,time_t t,int k,i
   int endIndex = page->resultsPerPage * page->pageNum;
   int total = GetTotalCount(endIndex);
 
+if(endIndex > total)
+  {
+  endIndex = total;
+  }
+
 snprintf(header,sizeof(header),
 	 "\"meta\":{\"count\" : %d,"
 	 "\"header\": {\"Host\":0,\"Policy\":1,\"Kept\":2,\"Repaired\":3,\"Not Kept\":4,\"Last seen\":5" 
@@ -711,7 +756,7 @@ noticeLen = strlen(CF_NOTICE_TRUNCATED);
 char *p = returnval;
 StartJoin(returnval,"{\"data\":[",bufsize);
 
-for(int i = startIndex; (i < endIndex) || (i < total); i++)
+for(int i = startIndex; i < endIndex; i++)
   {
   char hostname[CF_MAXVARSIZE];
   char version[CF_MAXVARSIZE];
@@ -756,6 +801,11 @@ int Nova2PHP_compliance_promises_test(char *hostkey,char *handle,char *status,in
   int endIndex = page->resultsPerPage * page->pageNum;
   int total = GetTotalCount(endIndex);
  
+if(endIndex > total)
+  {
+  endIndex = total;
+  }
+
 snprintf(header,sizeof(header),
 	 "\"meta\":{\"count\" : %d,"
 	 "\"header\": {\"Host\":0,\"Promise Handle\":1,\"Last Known State\":2,\"Probability Kept\":3,\"Uncertainty\":4,\"Last seen\":5"
@@ -767,7 +817,7 @@ noticeLen = strlen(CF_NOTICE_TRUNCATED);
 char *p = returnval;
 StartJoin(returnval,"{\"data\":[",bufsize);
 
-for(int i = startIndex; (i < total) || (i < endIndex); i++ )
+for(int i = startIndex; i < endIndex; i++ )
   {
   char hostname[CF_MAXVARSIZE];
   char handle[CF_MAXVARSIZE];
