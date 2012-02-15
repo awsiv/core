@@ -17,7 +17,10 @@ by the developers.
 
 The speed testing is a bit flaky because we just have one data-point. However,
 running the test multiple times sequentially to produce averages/std dev may not give 
-the correct result because the database may have cached the previous run.
+the correct result because the database may have cached the previous
+run. Some investigation into this would be useful.
+
+We are passing parameters to the php-functions through environment-variables.
 
 
 TODOs
@@ -25,6 +28,5 @@ TODOs
    - RBAC: off/is limited user/is admin user
    - hostkey: NULL/a specific host
    - classregex: NULL/a small set of hosts matching/a large set of hosts matching
-   - maybe we can pass some parameters to the php-files?
    - need assumptions about environment: hostkey, class, RBAC users (functionality to set up a test envrionment)
  - add more tests
