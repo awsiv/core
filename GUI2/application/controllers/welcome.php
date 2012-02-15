@@ -99,7 +99,7 @@ class Welcome extends Cf_Controller {
 
 
 
-        $businessValuePieData = cfpr_get_value_graph(NULL, NULL, NULL, NULL, NULL);
+        $businessValuePieData = cfpr_get_value_graph();
         $businessValuePieArray = json_decode($businessValuePieData);
 
 

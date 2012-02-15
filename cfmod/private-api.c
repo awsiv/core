@@ -1833,27 +1833,18 @@ PHP_FUNCTION(cfpr_report_value)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_get_value_graph)
-
-{ char *hostkey,*day,*month,*year,*classreg;
- char *fhostkey,*fmonth,*fday,*fyear,*fclassreg;
- int hk_len,d_len,m_len,y_len,cr_len;
- const int bufsize = 10000;
- char buffer[bufsize];
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssss",
-                           &hostkey,&hk_len,&day,&d_len,&month,&m_len,&year,&y_len,&classreg,&cr_len) == FAILURE)
+{
+ char buffer[10000];
+ 
+ if (ZEND_NUM_ARGS() != 0)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
- fhostkey =  (hk_len == 0) ? NULL : hostkey;
- fday =  (d_len == 0) ? NULL : day;
- fmonth =  (m_len == 0) ? NULL : month;
- fyear =  (y_len == 0) ? NULL : year;
- fclassreg =  (cr_len == 0) ? NULL : classreg;
 
  buffer[0]='\0';
- Nova2PHP_get_value_graph(fhostkey,fday,fmonth,fyear,fclassreg,buffer,bufsize);
+ Nova2PHP_get_value_graph(NULL, NULL, NULL, NULL, NULL, buffer, sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
