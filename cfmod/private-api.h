@@ -785,6 +785,10 @@ PHP_FUNCTION(cfpr_show_green_hosts);
  */
 PHP_FUNCTION(cfpr_show_blue_hosts);
 
+/*! \brief The blue hosts current threshold 
+ */
+PHP_FUNCTION(cfpr_get_bluehost_threshold);
+
 /*! \brief A list of hosts with an IP address
  * \param ipExpression
  * \param contextExpression

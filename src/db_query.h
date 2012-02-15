@@ -6,6 +6,7 @@
 
 #ifdef HAVE_LIBMONGOC
 
+int CFDB_GetBlueHostThreshold(unsigned long *threshold);
 void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn, char *db_name);
 HubQuery *CFDB_QueryHostsInClassContext(mongo_connection *conn,char *expression,time_t horizon,int sort);
 HubQuery *CFDB_QueryHosts(mongo_connection *conn, char *db, char *dbkey,bson *query);

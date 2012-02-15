@@ -4435,3 +4435,19 @@ static JsonElement *ParseRolesToJson(HubQuery *hq)
  
  return roles;
 }
+
+/******************************************************************************/
+
+PHP_FUNCTION(cfpr_get_bluehost_threshold)
+{
+int buffsize = 12;
+char buffer[buffsize];
+
+if (!Nova2PHP_get_bluehost_threshold(buffer, buffsize))
+   {
+   zend_throw_exception(cfmod_exception_db, "Error opening database", 0 TSRMLS_CC);
+   RETURN_NULL();
+   }
+
+RETURN_STRING(buffer,1);
+}

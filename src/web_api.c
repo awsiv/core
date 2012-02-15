@@ -282,6 +282,12 @@ int Nova2PHP_summary_report(char *hostkey,char *handle,char *status,int regex,ch
   int code_blue = 0,tot_hosts;
   double n,r,k,n_av,k_av,r_av,tot_promises;
   char *current_host = "x";
+  unsigned long bluehost_threshold;
+
+if (!CFDB_GetBlueHostThreshold(&bluehost_threshold))
+   {
+   return false;
+   }
 
 if (!CFDB_Open(&dbconn))
    {
@@ -311,7 +317,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    // If data have passed the time horizon, we should not claim to know their state
    // The system might or might not be compliant, hp->e is the expected schedule for this promise
    
-   if (hp->t < now - CF_HUB_HORIZON - hp->e)
+   if (hp->t < now - bluehost_threshold - hp->e)
       {
       if (current_host && strcmp(hp->hh->keyhash,current_host) != 0) // New host
          {
@@ -374,7 +380,7 @@ k_av += k / tot_promises; // Average compliant/kept on available hosts in class
 
 if(tot_hosts == 0)
    {
-   from = now - CF_HUB_HORIZON;
+   from = now - bluehost_threshold;
    to = now;
    }
 // Return current best-knowledge of average compliance for the class of hosts and promises selected
@@ -4205,6 +4211,12 @@ int Nova2PHP_countclasses(char *hostkey,char *name,int regex, HostClassFilter *h
  Item *order_results = NULL,*ip;
  int count = 0;
  mongo_connection dbconn;
+ unsigned long bluehost_threshold; 
+
+ if (!CFDB_GetBlueHostThreshold(&bluehost_threshold))
+ {
+ return false; 
+ }
 
 /* BEGIN query document */
  
@@ -4213,7 +4225,7 @@ int Nova2PHP_countclasses(char *hostkey,char *name,int regex, HostClassFilter *h
     return false;
     }
 
- hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,CF_HUB_HORIZON,hostClassFilter,false);
+ hq = CFDB_QueryClasses(&dbconn,hostkey,name,regex,(time_t)bluehost_threshold,hostClassFilter,false);
  
  returnval[0] = '\0';
 
@@ -4499,8 +4511,8 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, PageInfo *page, char *b
              if(count>=startIndex && (count<=endIndex || endIndex < 0))
                 {
                 sscanf(ip2->name,"%512[^;];%128[^;];%8[^;];%ld[^$]",hostKeyHash,host,statusStr,&then);
-            
-                timewarn = Nova_TimeWarn(now,then,CF_HUB_HORIZON,thenStr,sizeof(thenStr));
+                // todo  depricate timewarn, add coloring on php side
+                timewarn = Nova_TimeWarn(now,then,900,thenStr,sizeof(thenStr));
             
                 row[0]='\0';
                 lastChangeStr[0]='\0';
@@ -5328,6 +5340,21 @@ int Nova2PHP_GetHubMaster(char *buffer,int bufsize)
     }
  snprintf(buffer,bufsize,"Unknown hub_master");
  return false;
+}
+
+/*****************************************************************************/
+
+int Nova2PHP_get_bluehost_threshold(char *buffer, int buffsize)
+{
+ unsigned long threshold;
+
+ if (!CFDB_GetBlueHostThreshold(&threshold))
+   {
+   return false;
+   } 
+
+ snprintf(buffer, buffsize, "%lu", threshold);
+ return true;
 }
 
 /*****************************************************************************/

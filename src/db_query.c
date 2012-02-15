@@ -53,6 +53,39 @@ int CFDB_GetValue(char *lval, char *rval, int size, char *db_name)
 
 /*****************************************************************************/
 
+int CFDB_GetBlueHostThreshold(unsigned long *threshold)
+
+{ unsigned long retval = CF_BLUEHOST_THRESHOLD_DEFAULT;
+  char threshold_str[CF_SMALLBUF];
+
+threshold_str[0] = '\0';
+
+if (!CFDB_GetValue(CFMP_BLUEHOST_THRESHOLD, threshold_str, CF_SMALLBUF, 
+                   MONGO_MP_SETTINGS_COLLECTION))
+   {
+   return false;
+   }   
+
+if (strlen(threshold_str) == 0) // no key in db then insert hardcoded default
+   {
+   snprintf(threshold_str, CF_SMALLBUF, "%lu", retval);
+   if (!CFDB_PutValue(CFMP_BLUEHOST_THRESHOLD, threshold_str,
+                      MONGO_MP_SETTINGS_COLLECTION))
+      {
+      return false;
+      }
+   }
+else
+   {
+   sscanf(threshold_str, "%lu", &retval);
+   } 
+
+*threshold = retval;
+return true;
+}
+
+/*****************************************************************************/
+
 Item *CFDB_GetLastseenCache(void)
 
 { bson query,field;
@@ -240,7 +273,7 @@ HubQuery *CFDB_QueryHosts(mongo_connection *conn, char *db, char *dbkey,bson *qu
  HubHost *hh;
  Rlist *host_list = NULL;
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE];
-  
+
 /* BEGIN RESULT DOCUMENT */
 
  bson_buffer_init(&bb);
@@ -1840,7 +1873,7 @@ HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query,char *db)
  double rkept,rrepaired;
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rcolumn[CF_SMALLBUF];
  int found = false;
-  
+
 /* BEGIN RESULT DOCUMENT */
 
  bson_buffer_init(&bb);
@@ -1868,11 +1901,11 @@ HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query,char *db)
     addresses[0] = '\0';
     found = false;
     hh = NULL;
-   
+
     while (bson_iterator_next(&it1))
-       {
+       { 
        CFDB_ScanHubHost(&it1,keyhash,addresses,hostnames);
-      
+
        if (strcmp(bson_iterator_key(&it1),cfr_meter) == 0)
           {
           bson_iterator_init(&it2,bson_iterator_value(&it1));
@@ -1910,9 +1943,9 @@ HubQuery *CFDB_QueryMeter(mongo_connection *conn,bson *query,char *db)
              
              PrependRlistAlien(&record_list,NewHubMeter(hh,*rcolumn,rkept,rrepaired));
              }
-          }   
+          }
        }
-    
+
     if (found)
        {
        UpdateHubHost(hh,keyhash,addresses,hostnames);

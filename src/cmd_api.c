@@ -130,7 +130,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    // If data have passed the time horizon, we should not claim to know their state
    // The system might or might not be compliant, hp->e is the expected schedule for this promise
    
-   if (hp->t < now - CF_HUB_HORIZON - hp->e)
+   if (hp->t < now - CF_BLUEHOST_THRESHOLD_DEFAULT - hp->e)
       {
       if (current_host && strcmp(hp->hh->keyhash,current_host) != 0) // New host
          {
@@ -193,7 +193,7 @@ k_av += k / tot_promises; // Average compliant/kept on available hosts in class
 
 if (tot_hosts == 0)
    {
-   from = now - CF_HUB_HORIZON;
+   from = now - CF_BLUEHOST_THRESHOLD_DEFAULT;
    to = now;
    }
 // Return current best-knowledge of average compliance for the class of hosts and promises selected
@@ -827,7 +827,7 @@ for (rp = hq->records; rp != NULL; rp=rp->next)
    
    then = hl->t;
 
-   if (then < now - CF_HUB_HORIZON)
+   if (then < now - CF_BLUEHOST_THRESHOLD_DEFAULT)
       {
       if (CSV)
          {

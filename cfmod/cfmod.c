@@ -144,6 +144,7 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_show_yellow_hosts,NULL)
     PHP_FE(cfpr_show_green_hosts,NULL)
     PHP_FE(cfpr_show_blue_hosts,NULL)
+    PHP_FE(cfpr_get_bluehost_threshold,NULL)
 
     PHP_FE(cfpr_show_hosts_ip,NULL)
     PHP_FE(cfpr_show_hosts_name,NULL)

@@ -128,13 +128,13 @@ DeleteHubQuery(hq,DeleteHubCacheTotalCompliance);
 void Nova_Meter(bson *query,char *db,char *buffer,int bufsize)
 
 { double kept = 0,repaired = 0;
- double kept_week = 0,kept_day = 0,kept_hour = 0,kept_comms = 0,kept_anom = 0,kept_perf = 0,kept_other = 0;
- double rep_week = 0,rep_day = 0,rep_hour = 0,rep_comms = 0,rep_anom = 0,rep_perf = 0,rep_other = 0;
- double num_week = 0,num_day = 0,num_hour = 0,num_comms = 0,num_anom = 0,num_perf = 0,num_other = 0;
-   HubMeter *hm;
- HubQuery *hq;
- mongo_connection dbconn;
- Rlist *rp;
+  double kept_week = 0,kept_day = 0,kept_hour = 0,kept_comms = 0,kept_anom = 0,kept_perf = 0,kept_other = 0;
+  double rep_week = 0,rep_day = 0,rep_hour = 0,rep_comms = 0,rep_anom = 0,rep_perf = 0,rep_other = 0;
+  double num_week = 0,num_day = 0,num_hour = 0,num_comms = 0,num_anom = 0,num_perf = 0,num_other = 0;
+  HubMeter *hm;
+  HubQuery *hq;
+  mongo_connection dbconn;
+  Rlist *rp;
 
  strcpy(buffer,"[");
 
@@ -267,13 +267,19 @@ int Nova_GetHostColour(char *lkeyhash)
   int result = -1,awol, foundMeter;
   mongo_connection conn;
   time_t now = time(NULL);
-
-if (!CFDB_Open(&conn))
+  unsigned long bluehost_threshold;
+  
+if (lkeyhash == NULL)
    {
    return -1;
    }
 
-if (lkeyhash == NULL)
+if (!CFDB_GetBlueHostThreshold(&bluehost_threshold))
+   {
+   return -1;
+   }
+
+if (!CFDB_Open(&conn))
    {
    return -1;
    }
@@ -324,7 +330,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
          time_t then;
          then = (time_t)bson_iterator_int(&it1);
          
-         if (now - CF_HUB_HORIZON < then)
+         if (now - bluehost_threshold < then)
             {
             awol = false;
             }
@@ -557,6 +563,12 @@ Item *Nova_ClassifyHostState(char *search_string,int regex, HostRankMethod metho
   mongo_connection conn;
   Item *list = NULL;
   time_t now = time(NULL);
+  unsigned long bluehost_threshold;
+
+if (!CFDB_GetBlueHostThreshold(&bluehost_threshold))
+   {
+   return NULL;
+   }
 
 if (!CFDB_Open(&conn))
    {
@@ -603,7 +615,7 @@ while (mongo_cursor_next(cursor))  // loops over documents
          time_t then;
          then = (time_t)bson_iterator_int(&it1);
          
-         if (now - CF_HUB_HORIZON < then)
+         if (now - bluehost_threshold < then)
             {
             awol = false;
             }

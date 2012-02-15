@@ -65,6 +65,7 @@
 # define MONGO_LOGS_NOTKEPT_COLL "logs_nk"
 # define MONGO_LOGS_NOTKEPT MONGO_BASE ".logs_nk"
 # define MONGO_NOTEBOOK MONGO_BASE ".notebook"
+# define MONGO_MP_SETTINGS_COLLECTION MONGO_MPBASE ".appsettings"
 #define MONGO_ARCHIVE_COLLECTION "archive"
 #define MONGO_ARCHIVE MONGO_BASE ".archive"
 #define CF_MONGO_SLAVE_OK 4
@@ -1469,8 +1470,9 @@ int CfLDAP_JSON_GetSingleAttributeList(char *uri,char *user,char *basedn,char *f
 #define CF_AMBER_THRESHOLD 100
 #define CF_GREEN 0
 #define CF_CODE_BLUE -1
+#define CF_BLUEHOST_THRESHOLD_DEFAULT 900 // 15 minutes
 
-#define CF_HUB_HORIZON 900 // 15 mins
+#define CF_HUB_HORIZON 900 // 15 mins / 3 connection attempts
 #define CF_HUB_PURGESECS 604800  // one week
 
 #define MONITORING_HISTORY_LENGTH_YEARS 3
@@ -1732,6 +1734,9 @@ typedef struct
 #define CFRID_BENCHMARKS "benchmarks"
 #define CFRID_COMPLIANCE_SUMMARY "compliance-summary"
 #define CFRID_VIRTUAL_BUNDLES "virtual-bundles"
+
+// appsettings keys
+#define CFMP_BLUEHOST_THRESHOLD "bluehost_threshold_global"
 
 #ifdef HAVE_CONSTELLATION
 #include <cf.constellation.h>
