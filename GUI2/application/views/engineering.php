@@ -6,7 +6,7 @@
                 <li> <a href="<?php echo site_url('welcome/hosts/red') ?>" title="<?php echo tooltip('tooltip_redhost'); ?>" class="redhost showqtip hoststatuslist"><?php echo $r ?> <?php echo $this->lang->line('not_compliant'); ?></a> </li>
                 <li> <a href="<?php echo site_url('welcome/hosts/yellow') ?>" title="<?php echo tooltip('tooltip_yellowhost'); ?>"  class="yellowhost showqtip hoststatuslist"><?php echo $y ?> <?php echo $this->lang->line('now_compliant'); ?> </a> </li>
                 <li> <a href="<?php echo site_url('welcome/hosts/green') ?>" title="<?php echo tooltip('tooltip_greenhost'); ?>" class="greenhost showqtip hoststatuslist"><?php echo $g ?> <?php echo $this->lang->line('compliant'); ?> </a> </li>
-                <li> <a href="<?php echo site_url('welcome/hosts/blue') ?>" title="<?php echo tooltip('tooltip_bluehost'); ?>" class="bluehost showqtip hoststatuslist"><?php echo $b ?> <?php echo $this->lang->line('unreachable'); ?></a> </li>
+                <li> <a href="<?php echo site_url('welcome/hosts/blue') ?>" title="<?php echo tooltip('tooltip_bluehost'). time_diff_conv(cfpr_get_bluehost_threshold()); ?>" class="bluehost showqtip hoststatuslist"><?php echo $b ?> <?php echo $this->lang->line('unreachable'); ?></a> </li>
             </ul>
 
             <ul>
@@ -65,9 +65,6 @@
         //fix for manintaining the layout of the page when window is resized.
         $('#compliance_summary').css('width','50px');
         
-        
-        
-        
-        
     });
 </script>
+
