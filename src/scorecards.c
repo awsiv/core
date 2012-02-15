@@ -430,12 +430,12 @@ return result;
 
 /*****************************************************************************/
 
-Item *Nova_RankHosts(char *search_string,int regex, HostRankMethod method,int max_return)
+Item *Nova_RankHosts(HostRankMethod method,int max_return)
 
 { Item *ip,*hosts,*counted =  NULL;
   int num = 0;
  
-hosts = Nova_ClassifyHostState(search_string,regex,method,0);
+hosts = Nova_ClassifyHostState(NULL,false,method,0);
 hosts = SortItemListCounters(hosts);
 
 if (max_return > 0)

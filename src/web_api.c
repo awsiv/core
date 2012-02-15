@@ -3486,7 +3486,7 @@ for (pol = 0; policies[pol] != NULL; pol++)
       }
    }
 
-clist = Nova_RankHosts(NULL,0,pol,-1);
+clist = Nova_RankHosts(pol,-1);
 
 buffer[0] = '\0';
 strcat(buffer,"{\"data\":[");
