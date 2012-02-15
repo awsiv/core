@@ -430,7 +430,7 @@ return result;
 
 /*****************************************************************************/
 
-Item *Nova_RankHosts(HostRankMethod method,int max_return)
+Item *Nova_RankHosts(HostRankMethod method)
 
 { Item *ip,*hosts,*counted =  NULL;
   int num = 0;
@@ -438,26 +438,7 @@ Item *Nova_RankHosts(HostRankMethod method,int max_return)
 hosts = Nova_ClassifyHostState(method);
 hosts = SortItemListCounters(hosts);
 
-if (max_return > 0)
-   {
-   for (ip = hosts; ip != NULL; ip = ip->next)
-      {
-      if (num++ > max_return)
-         {
-         break;
-         }
-      
-      AppendItem(&counted,ip->name,ip->classes);
-      SetItemListCounter(counted,ip->name,ip->counter);
-      }
-   
-   DeleteItemList(hosts);
-   return counted;
-   }
-else
-   {
-   return hosts;
-   }
+return hosts;
 }
 
 /*****************************************************************************/
