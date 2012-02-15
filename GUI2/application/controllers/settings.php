@@ -42,6 +42,7 @@ class Settings extends Cf_Controller {
         $this->form_validation->set_rules('fall_back_for', 'valid role', 'callback_required_valid_role');
         $this->form_validation->set_rules('admin_role', 'valid role');
         $this->form_validation->set_rules('encryption', 'Encryption mode', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
+        $this->form_validation->set_rules('bluehost_threshold_global', 'Blue host horizon', 'callback_validate_bluehost_threshold');
         $this->form_validation->set_error_delimiters('<span>', '</span><br/>');
 
         if ($this->form_validation->run() == FALSE) { // validation hasn't been passed
@@ -113,6 +114,9 @@ class Settings extends Cf_Controller {
                     if ($property != '_id') {
                         $data[$property] = $this->form_validation->set_value($property, $value);
                     }
+                    if ($property == 'bluehost_threshold_global') {
+                        $data[$property] = $this->form_validation->set_value($property, $data[$property]/60);
+                    }
                 }
                 $data['op'] = 'edit';
             } else {
@@ -136,6 +140,7 @@ class Settings extends Cf_Controller {
         } else {
 
             $user_dir =$this->input->post('users_directory');
+            $bluehost_threshold_min = $this->input->post('bluehost_threshold_global')*60;
             $form_data = array(
                 'appemail' => set_value('appemail'),
                 'mode' => set_value('mode'),
@@ -149,7 +154,8 @@ class Settings extends Cf_Controller {
                 'fall_back_for' => $this->input->post('fall_back_for'),
                 'admin_role' => $this->input->post('admin_role'),
                 'encryption' => set_value('encryption'),
-                'rbac'=>set_value('rbac')
+                'rbac'=>set_value('rbac'),
+                'bluehost_threshold_global' => "$bluehost_threshold_min"
             );
 // run insert model to write data to db
             $inserted = '';
@@ -253,6 +259,26 @@ class Settings extends Cf_Controller {
         } else {
             return true;
         }
+    }
+
+    function validate_bluehost_threshold($value) {
+         $value = trim($value);
+         if (empty($value)) {
+            $this->form_validation->set_message('validate_bluehost_threshold','Unreachable host threshold filed is required.');
+            return false;
+         }
+
+         if (!ctype_digit($value)) {
+            $this->form_validation->set_message('validate_bluehost_threshold','Unreachable host threshold filed must contain a valid number of minutes.');
+            return false;
+         }
+ 
+         if ($value < 5 || $value > 50400) {
+             $this->form_validation->set_message('validate_bluehost_threshold','Unreachable host threshold filed must be in range of 5 minutes - 5 weeks (50400 minutes).');
+             return false;
+         }
+     
+         return true;
     }
 
     function __db_check() {

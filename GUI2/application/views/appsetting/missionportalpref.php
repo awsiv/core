@@ -158,6 +158,14 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
         <label for="mode" class="">Off</label>
 </p>
 
+ <p>
+        <label for="bluehost_threshold_global">Unreachable host threshold (minutes) <span class="required">*</span></label>
+        <?php echo tooltip('tooltip_bluehost_threshold','',true); ?>
+        <input id="bluehost_threshold_global" type="text" name="bluehost_threshold_global" maxlength="5" value="<?php echo $bluehost_threshold_global ?>"  /> <?php if (!empty($bluehost_threshold_global)) { echo "(".time_diff_conv($bluehost_threshold_global*60).")";} ?>
+
+</p>
+
+
 <p  id="btnholder">
         <?php echo form_submit( array('name'=>'submit','class'=>'btn','value'=>'Submit')); ?>
 </p>
