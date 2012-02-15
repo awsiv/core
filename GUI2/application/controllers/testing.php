@@ -389,7 +389,7 @@ class Testing extends CI_Controller {
     }
 
     function topn() {
-        print_r(json_decode(cfpr_top_n_hosts(10, 1), true));
+        print_r(json_decode(cfpr_host_compliance_list_all(10, 1), true));
     }
 
     function bluehost() {

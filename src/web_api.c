@@ -3468,7 +3468,7 @@ Nova_ScanTheRest(id,buffer,bufsize);
 /* Hosts stats                                                               */
 /*****************************************************************************/
 
-void Nova2PHP_show_topN(PageInfo *page, char *buffer, int bufsize)
+void Nova2PHP_host_compliance_list_all(PageInfo *page, char *buffer, int bufsize)
 
 { Item *ip,*clist;
  char work[CF_BUFSIZE] = {0};

@@ -552,7 +552,7 @@ class Welcome extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
 
 
-        $gdata = cfpr_top_n_hosts($rows, $page_number);
+        $gdata = cfpr_host_compliance_list_all($rows, $page_number);
         $ret = array();
         if ($gdata) {
             $ret = json_decode($gdata, TRUE);

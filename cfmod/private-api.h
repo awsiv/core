@@ -744,12 +744,10 @@ PHP_FUNCTION(cfpr_show_topic_category);
 PHP_FUNCTION(cfpr_get_knowledge_view);
 
 /*! \brief Get a list of the top N hosts
- * \param policy
- * \param N
  * \param resultsPerPage
  * \param pageNumber
  */
-PHP_FUNCTION(cfpr_top_n_hosts);
+PHP_FUNCTION(cfpr_host_compliance_list_all);
 
 /*! \brief Get a list of selected reports
  */

@@ -136,7 +136,7 @@ static function_entry cfmod_functions[] =
    
     PHP_FE(cfpr_get_knowledge_view,NULL)
 
-    PHP_FE(cfpr_top_n_hosts,NULL)
+    PHP_FE(cfpr_host_compliance_list_all,NULL)
 
     PHP_FE(cfpr_select_reports,NULL)
     PHP_FE(cfpr_show_red_hosts,NULL)

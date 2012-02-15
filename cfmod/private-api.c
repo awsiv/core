@@ -2922,7 +2922,7 @@ PHP_FUNCTION(cfpr_show_topic_category)
 /* GRAPHS                                                                     */
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_top_n_hosts)
+PHP_FUNCTION(cfpr_host_compliance_list_all)
 {
  char buffer[100000];
  PageInfo page = {0};
@@ -2934,7 +2934,7 @@ PHP_FUNCTION(cfpr_top_n_hosts)
     }
 
  buffer[0] = '\0';
- Nova2PHP_show_topN(&page, buffer, sizeof(buffer));
+ Nova2PHP_host_compliance_list_all(&page, buffer, sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
