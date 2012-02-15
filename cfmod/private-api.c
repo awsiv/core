@@ -3162,20 +3162,33 @@ PHP_FUNCTION(cfpr_show_hosts_name)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_getlastupdate)
+{
+ char *userName, *hostKey;
+ int user_len, hk_len;
+ char buffer[100];
 
-{ char *hostkey;
- int hk_len;
- const int bufsize = 100;
- char buffer[bufsize];
-
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hostkey,&hk_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
+                           &userName, &user_len,
+                           &hostKey, &hk_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
+ ARGUMENT_CHECK_CONTENTS(user_len && hk_len);
+
+ cfapi_errid erridAccess = CFDB_HasHostAccessFromUserRBAC(userName, hostKey);
+
+ if(erridAccess != ERRID_SUCCESS)
+    {
+    zend_throw_exception(cfmod_exception_rbac, (char *)GetErrorDescription(erridAccess), 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
+
+ 
  buffer[0] = '\0';
- Nova2PHP_getlastupdate(hostkey,buffer,bufsize);
+ Nova2PHP_getlastupdate(hostKey, buffer, sizeof(buffer));
+ 
  RETURN_STRING(buffer,1);
 }
 
