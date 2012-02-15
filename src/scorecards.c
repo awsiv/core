@@ -434,7 +434,7 @@ Item *Nova_GreenHosts()
 
 { Item *ip,*hosts = NULL,*sorted = NULL;
 
-hosts = Nova_ClassifyHostState(HOST_RANK_METHOD_DEFAULT);
+hosts = Nova_ClassifyHostState(HOST_RANK_METHOD_COMPLIANCE);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
@@ -455,7 +455,7 @@ Item *Nova_YellowHosts()
 
 { Item *ip,*hosts = NULL,*sorted = NULL;
 
-hosts = Nova_ClassifyHostState(HOST_RANK_METHOD_DEFAULT);
+hosts = Nova_ClassifyHostState(HOST_RANK_METHOD_COMPLIANCE);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
@@ -476,7 +476,7 @@ Item *Nova_RedHosts()
 
 { Item *ip,*hosts = NULL,*sorted = NULL;
 
- hosts = Nova_ClassifyHostState(HOST_RANK_METHOD_DEFAULT);
+ hosts = Nova_ClassifyHostState(HOST_RANK_METHOD_COMPLIANCE);
 
  for (ip = hosts; ip != NULL; ip=ip->next)
     {
@@ -497,7 +497,7 @@ Item *Nova_BlueHosts()
 
 { Item *ip,*hosts = NULL,*sorted = NULL;
 
-hosts = Nova_ClassifyHostState(HOST_RANK_METHOD_DEFAULT);
+hosts = Nova_ClassifyHostState(HOST_RANK_METHOD_COMPLIANCE);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
@@ -700,7 +700,6 @@ int Nova_GetComplianceScore(HostRankMethod method,double *k,double *r)
  switch (method)
     {
     default:
-    case HOST_RANK_METHOD_DEFAULT:
     case HOST_RANK_METHOD_COMPLIANCE:
 
         notkept = 100 - k[meter_compliance_hour] - r[meter_compliance_hour];
