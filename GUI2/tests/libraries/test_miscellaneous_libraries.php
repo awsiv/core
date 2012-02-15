@@ -52,7 +52,7 @@ class test_miscellaneous_libraries extends CodeIgniterUnitTestCase {
     }
     
      public function test_cfpr_show_top_n_hosts(){
-        $data = cfpr_top_n_hosts(NULL, 50, 20, 1);
+        $data = cfpr_top_n_hosts(20, 1);
         $jsondata=json_decode($data,True);
         $this->assertTrue(isset($jsondata),"should return a valid array");
         $this->dump($data);

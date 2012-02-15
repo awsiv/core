@@ -2923,22 +2923,18 @@ PHP_FUNCTION(cfpr_show_topic_category)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_top_n_hosts)
-
-{ char *policy;
- int hk_len;
- long n;
- const int bufsize = 100000;
- char buffer[bufsize];
+{
+ char buffer[100000];
  PageInfo page = {0};
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "slll",&policy,&hk_len,&n,&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll",&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
  buffer[0] = '\0';
- Nova2PHP_show_topN(policy,(int)n,&page,buffer,bufsize);
+ Nova2PHP_show_topN(&page, buffer, sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }

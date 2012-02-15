@@ -168,7 +168,7 @@ void Nova2PHP_show_topic(int id,char * buffer,int bufsize);
 void Nova2PHP_show_topic_leads(int id,char *buffer,int bufsize);
 void Nova2PHP_show_topic_hits(int id,char *buffer,int bufsize);
 void Nova2PHP_show_topic_category(int id,char *buffer,int bufsize);
-void Nova2PHP_show_topN(char *policy,int n,PageInfo *page,char *buffer,int bufsize);
+void Nova2PHP_show_topN(PageInfo *page,char *buffer,int bufsize);
 int Nova2PHP_show_hosts(char *hostNameRegex,char *ipRegex,char *classRegex,PageInfo *page,char *buf,int bufsize);
 void Nova2PHP_select_reports(char *reportId, char *buffer, int bufsize);
 

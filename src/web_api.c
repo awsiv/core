@@ -3468,25 +3468,15 @@ Nova_ScanTheRest(id,buffer,bufsize);
 /* Hosts stats                                                               */
 /*****************************************************************************/
 
-void Nova2PHP_show_topN(char *policy,int n,PageInfo *page,char *buffer,int bufsize)
+void Nova2PHP_show_topN(PageInfo *page, char *buffer, int bufsize)
 
 { Item *ip,*clist;
  char work[CF_BUFSIZE] = {0};
- static char *policies[] = { "compliance", "anomaly", "performance", "lastseen", NULL};
- HostRankMethod pol;
  int startIndex=0,endIndex=0, total=0, count = -1;
  
 Nova_WebTopicMap_Initialize();
 
-for (pol = 0; policies[pol] != NULL; pol++)
-   {
-   if (strcmp(policy,policies[pol]) == 0)
-      {
-      break;
-      }
-   }
-
-clist = Nova_ClassifyHostState(pol);
+clist = Nova_ClassifyHostState(HOST_RANK_METHOD_COMPLIANCE);
 
 buffer[0] = '\0';
 strcat(buffer,"{\"data\":[");
