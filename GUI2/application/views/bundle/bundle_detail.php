@@ -1,5 +1,10 @@
 <div id="body" class="">
     <div class="outerdiv">
+          <?php if(isset($error)){ ?>
+        <div class="innerdiv">
+          <?php echo $error ?>
+        </div>
+          <?php }else{ ?>
         <div id="custom-tabs" style="margin:15px;">
             <ul>
                 <li><a href="#tabs-1"><?php echo $this->lang->line('bundle_tab_details'); ?></a></li>
@@ -112,6 +117,7 @@
             </div>
 
         </div>
+         <?php } ?>
     </div>
 </div>
 <div class="clear"></div>

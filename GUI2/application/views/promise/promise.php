@@ -1,5 +1,10 @@
 <div id="body">
     <div class="outerdiv">
+        <?php if(isset($error)){ ?>
+        <div class="innerdiv">
+           <?php echo $error ?>
+        </div>
+       <?php }else{ ?>
         <div id="custom-tabs" style="margin:15px;">
             <ul>
                 <li><a target="_self" href="#tabs-1"><?php echo $this->lang->line('promise_tab_definition'); ?></a></li>
@@ -132,6 +137,7 @@
                 </table> 
             </div>
         </div>
+    <?php } ?>
     </div>
 </div>
 <div class="clear"></div>
