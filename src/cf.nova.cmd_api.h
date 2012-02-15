@@ -99,7 +99,6 @@ void Nova2Txt_show_col_hosts(char *colour,int n,PageInfo *page,char *buffer,int 
 int Nova2Txt_list_promise_handles_with_comments(char *bundle,char *btype,char *returnval,int bufsize);
 
 char *Nova_HostProfile(char *key);
-void Nova2Txt_show_all_hosts(char *policy,int n,char *buffer,int bufsize);
 
 char *Nova2Txt_GetPromiseComment(char *handle);
 int Nova2Txt_get_variable(char *hostkey,char *scope,char *lval,char *returnval,int bufsize);

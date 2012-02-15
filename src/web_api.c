@@ -3542,39 +3542,6 @@ DeleteItemList(clist);
 
 /*****************************************************************************/
 
-void Nova2PHP_show_all_hosts(char *policy,int n,char *buffer,int bufsize)
-
-{ Item *ip,*clist;
- char work[CF_MAXVARSIZE];
-
- Nova_WebTopicMap_Initialize();  
- clist = Nova_RankHosts(policy,1,HOST_RANK_METHOD_COMPLIANCE,n);
- clist = SortItemListClasses(clist);
-
- buffer[0] = '\0';
- strcat(buffer,"[");
-
- for (ip = clist; ip != NULL; ip=ip->next)
-    {
-    snprintf(work,CF_MAXVARSIZE,"{ \"key\": \"%s\", \"id\": \"%s\"}",ip->name,ip->classes);
-
-    if (ip && ip->next != NULL)
-       {
-       strcat(work,",");
-       }
-   
-    if (!Join(buffer,work,bufsize))
-       {
-       break;
-       }
-    }
-
- EndJoin(buffer,"]",bufsize);
- DeleteItemList(clist);
-}
-
-/*****************************************************************************/
-
 int Nova2PHP_show_hosts(char *hostNameRegex,char *ipRegex,char *classRegex,PageInfo *page,char *buf,int bufsize)
 
 {

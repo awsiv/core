@@ -169,7 +169,6 @@ void Nova2PHP_show_topic_leads(int id,char *buffer,int bufsize);
 void Nova2PHP_show_topic_hits(int id,char *buffer,int bufsize);
 void Nova2PHP_show_topic_category(int id,char *buffer,int bufsize);
 void Nova2PHP_show_topN(char *policy,int n,PageInfo *page,char *buffer,int bufsize);
-void Nova2PHP_show_all_hosts(char *policy,int n,char *buffer,int bufsize);
 int Nova2PHP_show_hosts(char *hostNameRegex,char *ipRegex,char *classRegex,PageInfo *page,char *buf,int bufsize);
 void Nova2PHP_select_hosts(char *match,char *sel,int n,char *buffer,int bufsize);
 void Nova2PHP_select_reports(char *reportId, char *buffer, int bufsize);
@@ -185,7 +184,6 @@ int Nova2PHP_list_promise_handles_with_comments(char *bundle,char *btype,char *r
 int Nova2PHP_promise_list(PromiseFilter *promiseFilter ,char *returnval, int bufsize);
 
 char *Nova_HostProfile(char *key);
-void Nova2PHP_show_all_hosts(char *policy,int n,char *buffer,int bufsize);
 int Nova2PHP_promise_details(PromiseFilter *filter, char *returnval,int bufsize);
 
 char *Nova2PHP_GetPromiseComment(char *handle);
