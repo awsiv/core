@@ -3597,7 +3597,7 @@ if(IsEnvMissionPortalTesting())
 
 /*****************************************************************************/
 
-void Nova2PHP_show_col_hosts(char *colour,int n,PageInfo *page,char *buffer,int bufsize)
+void Nova2PHP_show_col_hosts(char *colour,PageInfo *page,char *buffer,int bufsize)
 
 { Item *ip,*clist;
  char work[CF_MAXVARSIZE],lastseen[CF_MAXVARSIZE]={0};
