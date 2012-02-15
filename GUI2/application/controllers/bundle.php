@@ -47,7 +47,7 @@ class Bundle extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
 
         $username = $this->session->userdata('username');
-        
+        try{
         $data = array(
             'title'       => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_bundle'),
             'status'      => "current",
@@ -59,6 +59,10 @@ class Bundle extends Cf_Controller {
             'others'      => json_decode(utf8_encode(cfpr_bundle_list_by_bundle_usage($username, $bundle)), TRUE),
             'breadcrumbs' => $this->breadcrumblist->display()
         );
+        }
+        catch(Exception $e){
+            $data['error']= generate_errormessage($e);
+        }
         $this->template->load('template', 'bundle/bundle_detail', $data);
     }
 
