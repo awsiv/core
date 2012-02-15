@@ -1,6 +1,6 @@
 <?php
-$userName = "admin";
-$hostKey = NULL;
+$userName = getenv("CFENGINE_TEST_OVERRIDE_USERNAME");
+$hostKey = getenv("CFENGINE_TEST_OVERRIDE_HOSTKEY");
 $handle = NULL;
 $from = 0;
 $to = 0;

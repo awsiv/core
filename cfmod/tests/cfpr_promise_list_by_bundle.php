@@ -1,6 +1,6 @@
 <?php
 
-$userName = "admin";
+$userName = getenv("CFENGINE_TEST_OVERRIDE_USERNAME");
 $bundleType = "agent";
 $bundleName = "garbage_collection";
 
