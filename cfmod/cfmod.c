@@ -39,6 +39,8 @@ static function_entry cfmod_functions[] =
 
     PHP_FE(cfmod_resource_setuid, NULL)
 
+    PHP_FE(cfmod_resource_file, NULL)
+
 
     // private API
     PHP_FE(cfpr_enterprise_version,NULL)

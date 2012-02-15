@@ -7,6 +7,7 @@ require_once 'lib/ResponsePackaging.php';
 
 // load resources
 require_once 'resource/Context.php';
+require_once 'resource/File.php';
 require_once 'resource/HostIdSeen.php';
 require_once 'resource/HostIdSeenby.php';
 require_once 'resource/HostId.php';

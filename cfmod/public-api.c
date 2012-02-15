@@ -24,6 +24,10 @@ static const char *LABEL_HANDLE = "handle";
 static const char *LABEL_COUNT = "count";
 static const char *LABEL_IP = "ip";
 static const char *LABEL_TYPE = "type";
+static const char *LABEL_ADD = "add";
+static const char *LABEL_REMOVE = "remove";
+static const char *LABEL_DIFF = "diff";
+static const char *LABEL_LINE_NUMBER = "line-number";
 
 static const char *LABEL_STATE = "state";
 static const char *LABEL_STATE_REPAIRED = "repaired";
@@ -842,13 +846,13 @@ return NULL;
 PHP_FUNCTION(cfmod_resource_setuid)
 {
 char *hostkey = NULL,
-     *name = NULL,
+     *path = NULL,
      *context = NULL;
 int len;
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss",
       &hostkey, &len,
-      &name, &len,
+      &path, &len,
       &context, &len) == FAILURE)
    {
    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -859,7 +863,7 @@ mongo_connection conn;
 DATABASE_OPEN(&conn)
 
 HostClassFilter *filter = NewHostClassFilter(context, NULL);
-HubQuery *result = CFDB_QuerySetuid(&conn, hostkey, name, true, filter);
+HubQuery *result = CFDB_QuerySetuid(&conn, hostkey, path, true, filter);
 DeleteHostClassFilter(filter);
 
 DATABASE_CLOSE(&conn)
@@ -882,6 +886,119 @@ for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    }
 
 DeleteHubQuery(result, DeleteHubSetUid);
+
+RETURN_JSON(output);
+}
+
+
+/************************************************************************************/
+
+
+bool FileRecordsEqual(HubFileChanges *change_record, HubFileDiff *diff_record)
+{
+if (!change_record || !diff_record)
+   {
+   return false;
+   }
+
+if (strcmp(change_record->hh->keyhash, diff_record->hh->keyhash) != 0)
+   {
+   return false;
+   }
+
+return (strcmp(change_record->path, diff_record->path) == 0) &&
+       (change_record->t == diff_record->t);
+}
+
+
+PHP_FUNCTION(cfmod_resource_file)
+{
+char *hostkey = NULL,
+     *path = NULL,
+     *context = NULL;
+int len;
+long from = 0;
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssl",
+      &hostkey, &len,
+      &path, &len,
+      &context, &len,
+      &from) == FAILURE)
+   {
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+   RETURN_NULL();
+   }
+
+mongo_connection conn;
+DATABASE_OPEN(&conn)
+
+HostClassFilter *filter = NewHostClassFilter(context, NULL);
+
+HubQuery *change_result = CFDB_QueryFileChanges(&conn, hostkey, path, true, from, CFDB_GREATERTHANEQ, true, filter, false);
+HubQuery *diff_result = CFDB_QueryFileDiff(&conn, hostkey, path, NULL, true ,from, CFDB_GREATERTHANEQ, true, filter, false);
+
+DATABASE_CLOSE(&conn)
+
+JsonElement *output = JsonArrayCreate(1000);
+
+Rlist *changep = change_result->records;
+Rlist *diffp = diff_result->records;
+
+do
+   {
+   HubFileDiff *diff_record = diffp ? (HubFileDiff *)diffp->item : NULL;
+
+   while (changep)
+      {
+      HubFileChanges *change_record = (HubFileChanges *)changep->item;
+
+      JsonElement *entry = JsonObjectCreate(4);
+      JsonObjectAppendString(entry, LABEL_HOSTKEY, change_record->hh->keyhash);
+      JsonObjectAppendString(entry, LABEL_PATH, change_record->path);
+      JsonObjectAppendInteger(entry, LABEL_TIMESTAMP, change_record->t);
+
+      JsonArrayAppendObject(output, entry);
+      if (FileRecordsEqual(change_record, diff_record))
+         {
+         char diff_buffer[CF_BUFSIZE];
+         diff_buffer[0] = '\0';
+         char diff_type = -1;
+         int line = -1;
+         sscanf(diff_record->diff, "%c,%d,%s", &diff_type, &line, diff_buffer);
+
+         JsonElement *diff_entry = JsonObjectCreate(3);
+         switch (diff_type)
+            {
+            case '+':
+               JsonObjectAppendString(diff_entry, LABEL_TYPE, LABEL_ADD);
+               break;
+            case '-':
+               JsonObjectAppendString(diff_entry, LABEL_TYPE, LABEL_REMOVE);
+               break;
+            default:
+               JsonObjectAppendString(diff_entry, LABEL_TYPE, LABEL_UNKNOWN);
+               break;
+            }
+
+         JsonObjectAppendInteger(diff_entry, LABEL_LINE_NUMBER, line);
+         JsonObjectAppendString(diff_entry, LABEL_VALUE, diff_buffer);
+
+         JsonObjectAppendObject(entry, LABEL_DIFF, diff_entry);
+         changep = changep->next;
+         break;
+         }
+      else
+         {
+         changep = changep->next;
+         continue;
+         }
+      }
+
+   diffp = diffp ? diffp->next : NULL;
+   } while (diffp);
+
+DeleteHubQuery(change_result, DeleteHubFileChanges);
+DeleteHubQuery(diff_result, DeleteHubFileDiff);
 
 RETURN_JSON(output);
 }

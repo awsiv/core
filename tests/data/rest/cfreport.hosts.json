@@ -926,6 +926,24 @@
 			  "t" : "27 Jan 2012"
 			} 
     },
+    "fc" : {
+	"/etc/passwd@1234567" : {
+	    "t" : 1234567,
+	    "n" : "/etc/passwd"
+	},
+
+	"/etc/group@1234567" : {
+	    "t" : 1234567,
+	    "n" : "/etc/group"
+	}
+    },
+    "fd" : {
+	"/etc/group@1234567" : {
+	    "t" : 1234567,
+	    "n" : "/etc/group",
+	    "FD" : "+,5,sambashare:x:124:a10021"
+	}
+    },
     "vr" : { 
         "cfengine_update_folders" : { 
 	    "dirs" : { 
