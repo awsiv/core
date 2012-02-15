@@ -264,4 +264,9 @@ $lang['empty_rolename'] = 'Role name is empty';
  */
 $lang['nothing_found'] = 'Nothing Found';
 $lang['500_error']     = 'Internal Server Error';
+
+/*
+ * Exception messages
+ */
+$lang['cf_mod_expection_error']='Server Internal Error.';
 ?>

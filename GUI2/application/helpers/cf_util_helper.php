@@ -342,4 +342,35 @@ function tooltip($line, $id = '',$forinput=false) {
     return $line;
 }
 
+/**
+ *
+ * @param type $exception
+ * @return string 
+ */
+function generate_errormessage($exception){
+    $message="";
+     $CI = & get_instance();
+    
+    switch (ENVIRONMENT)
+	{
+		case 'development':
+			$message= "<div style=\"border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;\">
+                        <h1>Error Occured: ".$exception->getMessage()."</h1><pre>" . $exception->getTraceAsString() . "<pre></div>";
+                        log_message('error', $exception->getMessage().'Trace: '. $exception->getTraceAsString());
+		break;
+	
+		case 'testing':
+                       $message= "<h1>".$exception->getMessage()."</h1><pre>" . $exception->getTraceAsString() . "<pre>";
+                        log_message('error', $exception->getMessage().'Trace: '. $exception->getTraceAsString());
+                        
+		case 'production':
+			$message="<div class=\"error\">".$CI->lang->line('cf_mod_expection_error')."</div>"; 
+                        log_message('error', $exception->getMessage().'File: '. $exception->getFile()." Line: ".$exception->getLine());
+		break;
+
+		default:
+		       log_message('error', $exception->getMessage().'Trace: '. $exception->getTraceAsString());
+	}
+    return $message;
+}
 ?>
