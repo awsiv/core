@@ -502,12 +502,7 @@ class Welcome extends Cf_Controller {
         $comment_text = isset($_POST['comment_text']) ? $_POST['comment_text'] : "";
         $is_commented = trim(cfpr_get_host_noteid($hostkey));
         $op = isset($_POST['op']) ? $_POST['op'] : "";
-        $allhosts = array();
-        $jsonarr = json_decode(cfpr_select_hosts($hostkey, ".*", 100), true);
-        $host = array();
-        foreach ($jsonarr as $data) {
-            $allhosts[$data['key']] = $data['id'];
-        }
+       
 
         $data = array(
             'hostkey' => $hostkey,
@@ -516,8 +511,6 @@ class Welcome extends Cf_Controller {
             'ipaddr' => $ipaddr,
             'is_commented' => $is_commented,
             'op' => $op,
-            //'allreps' => array_combine($reports, $reports),
-            'allhosts' => $allhosts,
             'breadcrumbs' => $this->breadcrumblist->display()
         );
 

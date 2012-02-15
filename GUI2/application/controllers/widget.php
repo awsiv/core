@@ -7,7 +7,6 @@ class Widget extends Cf_Controller {
     }
 
     function hostfinder($page = 1) {
-        //$data= cfpr_select_hosts("none", ".*", NULL);
         $data = cfpr_show_hosts_name('.*', NULL, 15, $page);
         $result = sanitycheckjson($data, true);
         if ($page > 1) {
