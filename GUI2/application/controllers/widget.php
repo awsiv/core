@@ -224,6 +224,7 @@ class Widget extends Cf_Controller {
 
         $data = "";
         if ($handle) {
+            $handle = $handle.'.*';
             $data = cfpr_promise_list_by_handle_rx($this->session->userdata('username'), $handle);
         } else {
             $data = cfpr_promise_list_by_handle_rx($this->session->userdata('username'), NULL);
@@ -251,6 +252,7 @@ class Widget extends Cf_Controller {
 
         $data = "";
         if ($bundle) {
+            $bundle = $bundle.'.*';
             $data = cfpr_promise_list_by_bundle_rx($this->session->userdata('username'), $bundle);
         } else {
             $data = cfpr_promise_list_by_bundle_rx($this->session->userdata('username'), NULL);
@@ -319,6 +321,7 @@ class Widget extends Cf_Controller {
         );
         $data = "";
         if ($promiser) {
+            $promiser = $promiser.'.*';
             $data = cfpr_promise_list_by_promiser_rx($this->session->userdata('username'), $promiser);
         } else {
             $data = cfpr_promise_list_by_promiser_rx($this->session->userdata('username'), NULL);
@@ -326,7 +329,6 @@ class Widget extends Cf_Controller {
         $returnedData = sanitycheckjson($data, true);
 
         $chunkSize = 100;
-        $page = 1;
         $startOffset = ($page - 1) * $chunkSize;
         $returnedData = array_slice($returnedData, $startOffset, $chunkSize);
 

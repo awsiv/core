@@ -38,6 +38,7 @@
         resetPagination:function() {
             var self = this;
             self.page = 2;
+            self.selectedLetter = '';
             self.scrollingEnd = false;
             
         },
@@ -80,8 +81,8 @@
             
             if ($listpane[0].scrollHeight - $listpane.scrollTop() <= ($listpane.outerHeight()+50)) {
                 self.animate = true;
-                var url = self.submitUrl+'/'+self.page;               
-                self.loadpagebody(url,"",true);   
+                var url = self.submitUrl+'/'+self.page;
+                self.loadpagebody(url,self.selectedLetter,true);   
                 self.page++;              
             }
         },
@@ -169,6 +170,7 @@
 
         menuitemclicked:function(event){
             var self=this;
+            self.animate = true;
             var sender=$(event.target);
             var selected_category=sender.text().toLowerCase();
             self.searchbar.find('input[type="text"]').val('Search '+sender.text().toLowerCase()).data('default','Search '+sender.text().toLowerCase())
@@ -294,10 +296,13 @@
             var self=this,
             sender=$(event.target),
             searchval=sender.find('input').val();
+            self.animate = true;    
             self.submitUrl=sender.attr('action'),
             self.emptyContainer();
             self.resetPagination();
+            self.selectedLetter = searchval;
             self.loadpagebody(self.submitUrl,searchval,true);
+            self.alphasearch.find('li').removeClass('selected');
             self.menu.fadeOut();
         },
 
@@ -324,8 +329,11 @@
             var self=this;
             var sender=$(event.target).parent();
             sender.addClass('selected').siblings().removeClass('selected');
-            self.emptyContainer();            
-            self.loadpagebody(self.searchbar.attr('action'),"^"+$(event.target).text(),false);
+            self.animate = true;
+            self.emptyContainer(); 
+            self.resetPagination();
+            self.selectedLetter = "^["+$(event.target).text()+'|'+$(event.target).text().toLowerCase()+']';
+            self.loadpagebody(self.searchbar.attr('action'),self.selectedLetter,false);
             if(self.menu.css('display')=='block')
             {
                 self.menu.fadeOut(400);
