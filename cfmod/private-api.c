@@ -3039,7 +3039,7 @@ PHP_FUNCTION(cfpr_host_compliance_list_red)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_show_yellow_hosts)
+PHP_FUNCTION(cfpr_host_compliance_list_yellow)
 
 { char buffer[CF_WEBBUFFER];
  PageInfo page = {0};
@@ -3058,7 +3058,7 @@ PHP_FUNCTION(cfpr_show_yellow_hosts)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_show_green_hosts)
+PHP_FUNCTION(cfpr_host_compliance_list_green)
 
 { char buffer[CF_WEBBUFFER];
  PageInfo page = {0};
@@ -3076,7 +3076,7 @@ PHP_FUNCTION(cfpr_show_green_hosts)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_show_blue_hosts)
+PHP_FUNCTION(cfpr_host_compliance_list_blue)
 
 { char buffer[CF_WEBBUFFER];
  PageInfo page = {0};
