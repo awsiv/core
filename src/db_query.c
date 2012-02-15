@@ -2887,7 +2887,7 @@ HubQuery *CFDB_QueryValueGraph(mongo_connection *conn,char *keyHash,char *lday,c
  char keyhash[CF_MAXVARSIZE],hostnames[CF_BUFSIZE],addresses[CF_BUFSIZE],rhandle[CF_MAXVARSIZE],noteid[CF_MAXVARSIZE];
  int match_day,match_month,match_year,found = false;
  char classRegexAnch[CF_MAXVARSIZE];
- struct tm tm;
+ struct tm tm = {0};
  time_t epoch;
   
 /* BEGIN query document */
