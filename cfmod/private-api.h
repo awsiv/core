@@ -757,25 +757,25 @@ PHP_FUNCTION(cfpr_select_reports);
  * \param resultsPerPage
  * \param pageNumber
  */
-PHP_FUNCTION(cfpr_show_red_hosts);
+PHP_FUNCTION(cfpr_host_compliance_list_red);
 
 /*! \brief A list of red hosts
  * \param resultsPerPage
  * \param pageNumber
  */
-PHP_FUNCTION(cfpr_show_yellow_hosts);
+PHP_FUNCTION(cfpr_host_compliance_list_yellow);
 
 /*! \brief A list of red hosts
  * \param resultsPerPage
  * \param pageNumber
  */
-PHP_FUNCTION(cfpr_show_green_hosts);
+PHP_FUNCTION(cfpr_host_compliance_list_green);
 
 /*! \brief A list of red hosts
  * \param resultsPerPage
  * \param pageNumber
  */
-PHP_FUNCTION(cfpr_show_blue_hosts);
+PHP_FUNCTION(cfpr_host_compliance_list_blue);
 
 /*! \brief The blue hosts current threshold 
  */

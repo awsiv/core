@@ -3020,7 +3020,7 @@ RETURN_STRING(buffer,1);
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_show_red_hosts)
+PHP_FUNCTION(cfpr_host_compliance_list_red)
 
 { char buffer[CF_WEBBUFFER];
  PageInfo page = {0};
