@@ -685,20 +685,33 @@ PHP_FUNCTION(cfpr_vitals_analyse_year)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_vitals_analyse_histogram)
+{
+ char *userName, *hostKey, *vitalId;
+ int user_len, hk_len, vi_len;
+ char buffer[4096];
 
-{ char *hostkey, *vitalId;
-
- const int bufsize = 4096;
- char buffer[bufsize];
-
- if(!ParseVitalsArgs(ZEND_NUM_ARGS() TSRMLS_CC,&hostkey, &vitalId))
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss",
+                           &userName, &user_len,
+                           &hostKey, &hk_len,
+                           &vitalId, &vi_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
+ ARGUMENT_CHECK_CONTENTS(user_len && hk_len && vi_len);
+
+ cfapi_errid erridAccess = CFDB_HasHostAccessFromUserRBAC(userName, hostKey);
+ 
+ if(erridAccess != ERRID_SUCCESS)
+    {
+    zend_throw_exception(cfmod_exception_rbac, (char *)GetErrorDescription(erridAccess), 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
+ 
+
  buffer[0]='\0';
- Nova2PHP_vitals_analyse_histogram(hostkey, vitalId, buffer, bufsize);
+ Nova2PHP_vitals_analyse_histogram(hostKey, vitalId, buffer, sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
