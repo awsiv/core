@@ -424,20 +424,30 @@ PHP_FUNCTION(cfpr_host_meter)
 
 PHP_FUNCTION(cfpr_vitals_list)
 {
- char *hostkey;
- int hk_len;
+ char *userName, *hostKey;
+ int user_len, hk_len;
  char buffer[4096];
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hostkey,&hk_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
+                           &userName, &user_len,
+                           &hostKey, &hk_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
- ARGUMENT_CHECK_CONTENTS(hk_len);
+ ARGUMENT_CHECK_CONTENTS(user_len && hk_len);
+
+ cfapi_errid erridAccess = CFDB_HasHostAccessFromUserRBAC(userName, hostKey);
+
+ if(erridAccess != ERRID_SUCCESS)
+    {
+    zend_throw_exception(cfmod_exception_rbac, (char *)GetErrorDescription(erridAccess), 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
 
  buffer[0]='\0';
- Nova2PHP_vitals_list(hostkey, buffer, sizeof(buffer));
+ Nova2PHP_vitals_list(hostKey, buffer, sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
