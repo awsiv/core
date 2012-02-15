@@ -71,7 +71,7 @@ $colour = cfpr_get_host_colour($hostkey);
 
 
                 <p class="title"> <img src= "<?php echo get_imagedir() . $colour ?>_square_little.png" class="hoststatcolorsquare"/><?php echo $this->lang->line('header_host_details'); ?></p>
-                <form  id="delform"method="post" action="/welcome/host">
+                <form  id="delform"method="post" action=<?php echo site_url("/welcome/host") ?>>
                     <input type="hidden" name="delhost" id="delhost" value="<?php echo $hostkey ?>"/>
                     <input class="btn"  type="submit" id="btnsubmit"  value="<?php echo $this->lang->line('host_delete'); ?>"/>
                 </form>
