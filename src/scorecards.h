@@ -37,7 +37,6 @@ Item *Nova_GreenHosts(void);
 Item *Nova_YellowHosts(void);
 Item *Nova_RedHosts(void);
 Item *Nova_BlueHosts(void);
-Item *Nova_RankHosts(HostRankMethod method);
 
 // legacy
 void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, char *buffer, int bufsize);

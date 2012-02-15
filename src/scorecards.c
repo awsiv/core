@@ -430,19 +430,6 @@ return result;
 
 /*****************************************************************************/
 
-Item *Nova_RankHosts(HostRankMethod method)
-
-{ Item *ip,*hosts,*counted =  NULL;
-  int num = 0;
- 
-hosts = Nova_ClassifyHostState(method);
-hosts = SortItemListCounters(hosts);
-
-return hosts;
-}
-
-/*****************************************************************************/
-
 Item *Nova_GreenHosts()
 
 { Item *ip,*hosts = NULL,*sorted = NULL;
