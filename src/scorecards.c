@@ -678,13 +678,14 @@ while (mongo_cursor_next(cursor))  // loops over documents
    SetItemListCounter(list,keyhash,score);
    }
 
-
 mongo_cursor_destroy(cursor);
 
 if (!CFDB_Close(&conn))
    {
    CfOut(cf_verbose,"", "!! Could not close connection to report database");
-   } 
+   }
+
+list = SortItemListCounters(list);
 
 return list;
 }
