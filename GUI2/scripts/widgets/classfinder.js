@@ -14,6 +14,7 @@
         elementtext:"",
         selectedMenu:null,
         animate:false,
+        ajaxloader:$('<span class="loading2"></span>'),
         _init: function(){
             var self=this;  
             self.resetPagination();
@@ -46,12 +47,12 @@
 			serverMsg='Unknow Error.\n'+x.responseText;
 			}
                 self.dialogcontent.html("<div class='ui-state-error' style='padding: 1em;width:90%'><p><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span>Sorry, a software error has occured.</p><p>" + x.status + " "  + serverMsg+"</p></div>");
-                self.element.text(self.elementtext);  
+                self.element.text(self.elementtext); 
+                self.revertTitle();
         },
 
         addsearchbar:function(){
             var self =this;
-            self.ajaxloader=$('<div class="loading"></div>');
             self.dialogcontent = self.dialogContainer();
             self.dialogcontent.dialog({
                 height: self.options.height,
@@ -93,6 +94,7 @@
             //self.titlebar.append(self.menuhandler).delegate('#handle','click',function(){self.menu.slideToggle();});
 
             self.searchbar=$('<form id="classfindersearch"><span class="search"><input type="text" name="search" value="Search by class (context)"/></span></form>')
+            self.titlebar.append(self.ajaxloader);
             self.titlebar.append(self.searchbar).delegate('form','submit',{
                 ui:self
             },function(event){
@@ -163,6 +165,7 @@
                     if (self.selectedLetter != null) {
                         url = url + '/' + self.selectedLetter;
                     }
+                    self.changeTitle("Loading");
                     $.getJSON(url, function(data) {
                         self.loadDataInContainer(data,true);
                         self.animate = false;
@@ -211,7 +214,7 @@
 
         loadpagebody:function(){
             var self=this;
-            $('#classlistcontainer').append('<div class="loading"></div>');
+            self.changeTitle("Loading");
             $.getJSON(self.element.attr('href'), function(data) {
                 self.loadDataInContainer(data,false);
             });
@@ -263,6 +266,7 @@
             self.dialogcontent.find('#classList').delegate('a','click',$.proxy(self.classSelected,self));
             self.dialogcontent.find('#classList').delegate('a.classadd','click',$.proxy(self.addclassfilter,self));
             self.element.text(self.elementtext);
+            self.revertTitle();
         },
 
         classSelected:function(event){
@@ -293,7 +297,7 @@
                         self.destroy();
                     }
                 });
-                
+                self.originalTitle =  requestDialog.dialog( "option", "title" );
                 return requestDialog;
             }
            
@@ -360,7 +364,8 @@
             
             self.resetPagination();
             self.resetScrollPosition();
-            var url = self.element.attr('href')+'/1/'+clickedLetter;     
+            var url = self.element.attr('href')+'/1/'+clickedLetter; 
+            self.changeTitle("Loading");
             $.getJSON(url, function(data) {
                 self.loadDataInContainer(data);
             });
@@ -387,6 +392,18 @@
         resetScrollPosition:function(){
             var self=this;
             self.dialogcontent.scrollTop(0);
+        },
+        
+        changeTitle:function(text) {
+            var self = this;
+             self.dialogcontent.dialog('option', 'title', text);
+            self.ajaxloader.show();
+        },
+        
+        revertTitle:function() {
+            var self = this;
+             self.dialogcontent.dialog('option', 'title', self.originalTitle);
+             self.ajaxloader.hide();
         },
     
         destroy: function(){

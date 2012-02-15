@@ -22,7 +22,8 @@
             selectedLetter:null,
             scrollingEnd:false,
             filtermethod:'hostname',
-            searchedkey:null
+            searchedkey:null,
+            ajaxloader:$('<span class="loading2"></span>')
         },
         options: {
             baseUrl:'',
@@ -45,7 +46,6 @@
             $.ajaxSetup({
               error:function(jqxhr,exception) { self.displayFailure(jqxhr,exception);}
              });
-            self.ajaxloader=$('<div class="loading"></div>');
             $.ajax({
                 type: "POST",
                 url: self.options.url,
@@ -69,12 +69,14 @@
                         modal: true,
                         resizable: false
                     });
+             self.originalTitle =   self.temp.dialog( "option", "title" );
              self.element.text(self.elementtext) ;
              self.cfui.page=2;
              
             //console.log( self.areas.categories);
             self.temp.parent().addClass('customdlg').removeClass('ui-widget-content');
             self.titlebar=self.temp.siblings('div.ui-dialog-titlebar');
+            self.titlebar.append(self.cfui.ajaxloader);
             self.titlebar.append(self.cfui.searchform).delegate('form','submit',{
                 ui:self
             },self.searchsubmit);
@@ -129,7 +131,7 @@
             }
             if ($(listpane)[0].scrollHeight - $(listpane).scrollTop() <= ($(listpane).outerHeight()+50)) {
                    self.animate = true;
-                   
+                   self.changeTitle("Loading");
                     $.get(url,function(data) {   
                               if (data =="") {
                                   self.cfui.scrollingEnd = true;
@@ -140,6 +142,7 @@
                               self.cfui.resultpane.find('ul').append(data);
                               self.cfui.page++;
                               self.animate  = false;
+                              self.revertTitle();
                           });
                   }
        },
@@ -469,8 +472,9 @@
             self.cfui.searchedkey=null;
         },
         
-        sendAjaxRequest: function(url,postdata){
+       sendAjaxRequest: function(url,postdata){
              var self=this;
+             self.changeTitle("Loading");
              $.ajax({
                     type: "POST",
                     url: url,
@@ -482,9 +486,21 @@
                            self.cfui.resultpane.find('ul').html("<li>No host found</li>");
                         }else{
                            self.cfui.resultpane.find('ul').html(data); 
-                        } 
+                        }
+                        self.revertTitle();
                     }
                 });
+        },
+        changeTitle:function(text) {
+            var self = this;
+             self.temp.dialog('option', 'title', text);
+             self.cfui.ajaxloader.show();
+        },
+        
+        revertTitle:function() {
+            var self = this;
+             self.temp.dialog('option', 'title', self.originalTitle);
+             self.cfui.ajaxloader.hide();
         },
         
        resetScrollPosition:function(){
@@ -509,7 +525,8 @@
 			serverMsg='Unknow Error.\n'+x.responseText;	
 			}
                 self.temp.html("<div class='ui-state-error' style='padding: 1em;width:90%'><p><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span>Sorry, a software error has occured.</p><p>" + x.status + " "  + serverMsg+"</p></div>");	
-                self.element.text(self.elementtext);  	
+                self.element.text(self.elementtext);
+                self.revertTitle();                
         },
         
         destroy: function(){

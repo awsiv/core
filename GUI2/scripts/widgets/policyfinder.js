@@ -16,10 +16,9 @@
         selectedLetter:null,
         scrollingEnd:false,
         submitUrl:'',
-        ajaxloader:$('<div class="loading"></div>'),
+        ajaxloader:$('<span class="loading2"></span>'),
         originalTitle: '',
         animate:false,
-        
         _init: function(){
             var self=this;  
             self.resetPagination();
@@ -90,11 +89,13 @@
         changeTitle:function(text) {
             var self = this;
             $('#'+self.containerID()).dialog('option', 'title', text);
+            self.ajaxloader.show();
         },
         
         revertTitle:function() {
             var self = this;
             $('#'+self.containerID()).dialog('option', 'title', self.originalTitle);
+             self.ajaxloader.hide();
         },
         
         
@@ -124,6 +125,7 @@
             }
             
             self.titlebar.append(self.searchbar).delegate('form','submit',$.proxy(self.searchpolicyfile,self));
+            self.titlebar.append(self.ajaxloader);
             self.searchbar.delegate('input[type="text"]','click',function(){
                 $(this).focus().select()
             });
@@ -217,7 +219,7 @@
             if(/search\s+by\s+/.test(searchtext)){
                 searchtext='';
             };
-            self.changeTitle('Loading...');     
+            self.changeTitle('Loading');     
 
             $.ajax({
                 type: "POST",

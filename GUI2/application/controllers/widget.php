@@ -207,6 +207,7 @@ class Widget extends Cf_Controller {
         $returnedData = array_slice($returnedData, $startOffset, $chunkSize);
 
         $viewdata['viewdata'] = $returnedData;
+        //sleep(10);
         $this->load->view('widgets/allpolicies', $viewdata);
     }
 
