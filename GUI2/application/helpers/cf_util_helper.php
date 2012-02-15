@@ -343,6 +343,32 @@ function tooltip($line, $id = '',$forinput=false) {
 }
 
 /**
+ * time conversion 
+ *
+ * converts time difference into readable format (like: "12d 05h 10m") 
+ *
+ * @access	public
+ * @param	string   delta timestamp	
+ * @return	string
+ */
+function time_diff_conv($s) {
+    $string = "";
+    $t = array( //suffixes
+        'days' => 86400,
+        'hours' => 3600,
+        'minutes' => 60,
+    );
+    $s = abs($s);
+    foreach($t as $key => &$val) {
+        $$key = floor($s/$val);
+        $s -= ($$key*$val);
+        $string .= ($$key==0) ? '' : $$key . " $key ";
+    }
+
+    return $string ;
+}
+
+/**
  *
  * @param type $exception
  * @return string 
