@@ -751,12 +751,6 @@ PHP_FUNCTION(cfpr_get_knowledge_view);
  */
 PHP_FUNCTION(cfpr_top_n_hosts);
 
-/*! \brief Get a list of selected hosts (don't use this)
- * \param select
- * \param policy
- */
-PHP_FUNCTION(cfpr_select_hosts);
-
 /*! \brief Get a list of selected reports
  */
 PHP_FUNCTION(cfpr_select_reports);

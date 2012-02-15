@@ -3670,33 +3670,6 @@ void Nova2PHP_show_col_hosts(char *colour,int n,PageInfo *page,char *buffer,int 
 
 /*****************************************************************************/
 
-void Nova2PHP_select_hosts(char *match,char *selected,int n,char *buffer,int bufsize)
-
-{ Item *ip,*clist;
- char work[CF_MAXVARSIZE];
-
- clist = Nova_RankHosts(match,1,HOST_RANK_METHOD_COMPLIANCE,n);
- clist = SortItemListClasses(clist);
-
- buffer[0] = '\0';
- strcat(buffer,"[");
-
- for (ip = clist; ip !=  NULL; ip=ip->next)
-    {
-    snprintf(work,CF_MAXVARSIZE,"{ \"key\": \"%s\" , \"id\": \"%s\"},",ip->name,ip->classes);
-
-    if (!Join(buffer,work,bufsize))
-       {
-       break;
-       }
-    }
-
- ReplaceTrailingChar(buffer, ',', ']');
- DeleteItemList(clist);
-}
-
-/*****************************************************************************/
-
 long Nova2PHP_count_hosts()
 
 {

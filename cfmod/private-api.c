@@ -2991,26 +2991,6 @@ PHP_FUNCTION(cfpr_count_blue_hosts)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_select_hosts)
-
-{ char buffer[CF_WEBBUFFER];
- char *policy,*select;
- int hk_len,s_len;
- long n;
-
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssl",&select,&s_len,&policy,&hk_len,&n) == FAILURE)
-    {
-    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-    RETURN_NULL();
-    }
-
- buffer[0] = '\0';
- Nova2PHP_select_hosts(policy,select,(int)n,buffer,sizeof(buffer));
- RETURN_STRING(buffer,1);
-}
-
-/******************************************************************************/
-
 PHP_FUNCTION(cfpr_select_reports)
 
 { const int bufsize = 1000000;
