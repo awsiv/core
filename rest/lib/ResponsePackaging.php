@@ -16,6 +16,8 @@ class ResponsePackaging
                 break;
         }
         
+        $response->addHeader('Content-type', 'application/vnd.cfengine.nova-v1+json');
+        
         return $response;
     }
     
