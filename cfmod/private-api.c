@@ -2955,18 +2955,36 @@ PHP_FUNCTION(cfpr_host_compliance_list_all)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_host_count_all)
-
 {
- long val = Nova2PHP_count_hosts();
+ char *userName;
+ int user_len;
+ 
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",
+                           &userName, &user_len) == FAILURE)
+    {
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
+ 
+ ARGUMENT_CHECK_CONTENTS(user_len);
 
- RETURN_LONG(val);
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+ ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+
+ long count = Nova2PHP_count_hosts(filter);
+ 
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+
+ RETURN_LONG(count);
 }
 
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_count_red_hosts)
 {
- long val = Nova2PHP_count_red_hosts();
+ long val = Nova2PHP_count_red_hosts(NULL);
 
  RETURN_LONG(val);
 }
@@ -2975,7 +2993,7 @@ PHP_FUNCTION(cfpr_count_red_hosts)
 
 PHP_FUNCTION(cfpr_count_yellow_hosts)
 {
- long val = Nova2PHP_count_yellow_hosts();
+ long val = Nova2PHP_count_yellow_hosts(NULL);
 
  RETURN_LONG(val);
 }
@@ -2984,7 +3002,7 @@ PHP_FUNCTION(cfpr_count_yellow_hosts)
 
 PHP_FUNCTION(cfpr_count_green_hosts)
 {
- long val = Nova2PHP_count_green_hosts();
+ long val = Nova2PHP_count_green_hosts(NULL);
 
  RETURN_LONG(val);
 }
@@ -2993,7 +3011,7 @@ PHP_FUNCTION(cfpr_count_green_hosts)
 
 PHP_FUNCTION(cfpr_count_blue_hosts)
 {
- long val = Nova2PHP_count_blue_hosts();
+ long val = Nova2PHP_count_blue_hosts(NULL);
 
  RETURN_LONG(val);
 }

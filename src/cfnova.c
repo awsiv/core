@@ -110,10 +110,6 @@ if (false)
 
    CFDB_PutValue("one_two","three",MONGO_SCRATCH);
    CFDB_GetValue("newvar",buffer,120,MONGO_SCRATCH);
-   Nova2PHP_count_hosts();
-   Nova2PHP_count_red_hosts();
-   Nova2PHP_count_yellow_hosts();
-   Nova2PHP_count_green_hosts();
    Nova_Header("123","123",buffer,1000);
    Nova_Footer(buffer,1000);
    // Nova2PHP_choose_hosts("123",2,buffer,1000);

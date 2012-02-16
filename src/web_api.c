@@ -3660,8 +3660,7 @@ void Nova2PHP_show_col_hosts(char *colour, HostClassFilter *hostClassFilter, Pag
 
 /*****************************************************************************/
 
-long Nova2PHP_count_hosts()
-
+long Nova2PHP_count_hosts(HostClassFilter *hostClassFilter)
 {
  mongo_connection dbconn;
  int count;
@@ -3671,7 +3670,7 @@ long Nova2PHP_count_hosts()
     return 0;
     }
 
- count = CFDB_CountHosts(&dbconn, NULL);
+ count = CFDB_CountHosts(&dbconn, hostClassFilter);
 
  CFDB_Close(&dbconn);
  
@@ -3680,9 +3679,9 @@ long Nova2PHP_count_hosts()
 
 /*****************************************************************************/
 
-long Nova2PHP_count_red_hosts()
-
-{ Item *all = Nova_RedHosts(NULL);
+long Nova2PHP_count_red_hosts(HostClassFilter *hostClassFilter)
+{
+ Item *all = Nova_RedHosts(hostClassFilter);
  int len = ListLen(all);
 
  DeleteItemList(all);
@@ -3691,9 +3690,9 @@ long Nova2PHP_count_red_hosts()
 
 /*****************************************************************************/
 
-long Nova2PHP_count_yellow_hosts()
-
-{ Item *all = Nova_YellowHosts(NULL);
+long Nova2PHP_count_yellow_hosts(HostClassFilter *hostClassFilter)
+{
+ Item *all = Nova_YellowHosts(hostClassFilter);
  int len = ListLen(all);
 
  DeleteItemList(all);
@@ -3702,24 +3701,24 @@ long Nova2PHP_count_yellow_hosts()
 
 /*****************************************************************************/
 
-long Nova2PHP_count_green_hosts()
+long Nova2PHP_count_green_hosts(HostClassFilter *hostClassFilter)
+{
+ Item *all = Nova_GreenHosts(hostClassFilter);
+ int len = ListLen(all);
 
-{ Item *all = Nova_GreenHosts(NULL);
-  int len = ListLen(all);
-
-DeleteItemList(all);
-return (long)len;
+ DeleteItemList(all);
+ return (long)len;
 }
 
 /*****************************************************************************/
 
-long Nova2PHP_count_blue_hosts()
+long Nova2PHP_count_blue_hosts(HostClassFilter *hostClassFilter)
+{
+ Item *all = Nova_BlueHosts(hostClassFilter);
+ int len = ListLen(all);
 
-{ Item *all = Nova_BlueHosts(NULL);
-  int len = ListLen(all);
-
-DeleteItemList(all);
-return (long)len;
+ DeleteItemList(all);
+ return (long)len;
 }
 
 /*****************************************************************************/

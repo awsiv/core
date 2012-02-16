@@ -173,11 +173,11 @@ int Nova2PHP_show_hosts(char *hostNameRegex,char *ipRegex,char *classRegex,PageI
 void Nova2PHP_select_reports(char *reportId, char *buffer, int bufsize);
 
 int Nova2PHP_get_bluehost_threshold(char *buffer, int bufsize);
-long Nova2PHP_count_hosts(void);
-long Nova2PHP_count_blue_hosts(void);
-long Nova2PHP_count_red_hosts(void);
-long Nova2PHP_count_yellow_hosts(void);
-long Nova2PHP_count_green_hosts(void);
+long Nova2PHP_count_hosts(HostClassFilter *hostClassFilter);
+long Nova2PHP_count_blue_hosts(HostClassFilter *hostClassFilter);
+long Nova2PHP_count_red_hosts(HostClassFilter *hostClassFilter);
+long Nova2PHP_count_yellow_hosts(HostClassFilter *hostClassFilter);
+long Nova2PHP_count_green_hosts(HostClassFilter *hostClassFilter);
 void Nova2PHP_show_col_hosts(char *colour, HostClassFilter *hostClassFilter, PageInfo *page, char *buffer, int bufsize);
 int Nova2PHP_list_promise_handles_with_comments(char *bundle,char *btype,char *returnval,int bufsize);
 int Nova2PHP_promise_list(PromiseFilter *promiseFilter ,char *returnval, int bufsize);
