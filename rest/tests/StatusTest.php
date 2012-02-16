@@ -62,4 +62,18 @@ class StatusTest extends RestBaseTest
         }
         $this->fail('Should not pass');
     }
+    
+    public function testBadAuth()
+    {
+        try
+        {
+            $this->pest->setupAuth('snookie', 'sitch');
+            $jsonArray = $this->pest->get('/');
+        }
+        catch (Pest_Unauthorized $e)
+        {
+            return;
+        }
+        $this->fail('Should not pass');
+    }
 }

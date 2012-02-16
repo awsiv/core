@@ -22,10 +22,6 @@ require_once 'resource/Software.php';
 require_once 'resource/Status.php';
 require_once 'resource/Variable.php';
 
-function addAuthenticateHeader($response)
-{
-    $response->addHeader('WWW-Authenticate', 'Basic realm="CFEngine Nova"');
-}
 
 $request = new Request(array(
         'baseUri' => '/rest',
@@ -69,7 +65,6 @@ catch (ResponseException $e)
     {
     case Response::UNAUTHORIZED:
         $response = $e->response($request);
-        addAuthenticateHeader($response);
         break;
 
     case Response::INTERNALSERVERERROR:

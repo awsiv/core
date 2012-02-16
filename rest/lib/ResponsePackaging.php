@@ -11,6 +11,10 @@ class ResponsePackaging
                 ResponsePackaging::ok($response);
                 break;
             
+            case Response::UNAUTHORIZED:
+                $response->addHeader('WWW-Authenticate', 'Basic realm="CFEngine Nova"');
+                // intentional fall
+                
             default:
                 ResponsePackaging::error($response);
                 break;
