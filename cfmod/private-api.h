@@ -806,9 +806,9 @@ PHP_FUNCTION(cfpr_get_host_colour);
  */
 PHP_FUNCTION(cfpr_host_count_all);
 
-/*! \brief The number of red hosts under management of this hub
+/*! \brief The number of blue hosts under management of this hub
  */
-PHP_FUNCTION(cfpr_count_red_hosts);
+PHP_FUNCTION(cfpr_host_compliance_count_blue);
 
 /*! \brief The number of yellow hosts under management of this hub
  */

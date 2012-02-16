@@ -152,7 +152,7 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_get_host_colour,NULL)
 
     PHP_FE(cfpr_host_count_all,NULL)
-    PHP_FE(cfpr_count_red_hosts,NULL)
+    PHP_FE(cfpr_host_compliance_count_blue,NULL)
     PHP_FE(cfpr_count_yellow_hosts,NULL)
     PHP_FE(cfpr_count_green_hosts,NULL)
     PHP_FE(cfpr_count_blue_hosts,NULL)
