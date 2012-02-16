@@ -3040,20 +3040,34 @@ PHP_FUNCTION(cfpr_host_compliance_list_red)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_host_compliance_list_yellow)
-
-{ char buffer[CF_WEBBUFFER];
+{
+ char *userName;
+ int user_len;
+ char buffer[CF_WEBBUFFER];
  PageInfo page = {0};
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll",&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sll",
+                           &userName, &user_len,
+                           &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
- 
+
+ ARGUMENT_CHECK_CONTENTS(user_len);
+
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+ ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+
  buffer[0] = '\0';
- Nova2PHP_show_col_hosts("yellow",NULL,&page,buffer,sizeof(buffer));
+ Nova2PHP_show_col_hosts("yellow",filter,&page,buffer,sizeof(buffer));
+
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
  RETURN_STRING(buffer,1);
+
 }
 
 /******************************************************************************/
