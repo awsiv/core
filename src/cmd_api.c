@@ -2155,69 +2155,6 @@ int Nova2Txt_show_hosts(char *hostNameRegex,char *ipRegex,char *classRegex,PageI
 
 /*****************************************************************************/
 
-void Nova2Txt_show_col_hosts(char *colour,int n,PageInfo *page,char *buffer,int bufsize)
-
-{ Item *ip,*clist;
- char work[CF_MAXVARSIZE],lastseen[CF_MAXVARSIZE]={0};
- int counter = 0, startIndex, endIndex;
-  
- if (strcmp(colour,"green") == 0)
-    {
-    clist = Nova_GreenHosts();
-    }
- else if (strcmp(colour,"yellow") == 0)
-    {
-    clist = Nova_YellowHosts();
-    }
- else if (strcmp(colour,"red") == 0)
-    {
-    clist = Nova_RedHosts();
-    }
- else
-    {
-    clist = Nova_BlueHosts();
-    }
-
- if (clist)
-    {
-    startIndex = page->resultsPerPage*(page->pageNum - 1);
-    endIndex = (page->resultsPerPage*page->pageNum) - 1;
-    
-    buffer[0] = '\0';
-    strcat(buffer,"{ \"data\":[");
-
-    for (ip = clist,counter=0; ip !=  NULL; ip=ip->next, counter++)
-       {
-       if(counter>=startIndex && (counter<=endIndex || endIndex < 0))
-          {
-          if (strcmp(colour,"blue") == 0)
-             {
-             Nova2Txt_getlastupdate(ip->name,lastseen,sizeof(lastseen));
-             snprintf(work,CF_MAXVARSIZE,"{ \"key\": \"%s\", \"id\": \"%s\",\"lastseen\": \"%s\"},",ip->name,ip->classes,lastseen);
-             }
-          else
-             {
-             snprintf(work,CF_MAXVARSIZE,"{ \"key\": \"%s\", \"id\": \"%s\"},",ip->name,ip->classes);
-             }
-
-          if (!Join(buffer,work,bufsize))
-             {
-             break;
-             }
-          }
-       }
-    
-    ReplaceTrailingChar(buffer, ',', '\0');
-
-    snprintf(work,sizeof(work),"],\"meta\":{\"count\":%d}}",counter);
-    Join(buffer,work,bufsize);
-    
-    DeleteItemList(clist);
-    }
-}
-
-/*****************************************************************************/
-
 char *Nova2Txt_GetPromiseComment(char *handle)
     
 { static char buffer[CF_BUFSIZE];
