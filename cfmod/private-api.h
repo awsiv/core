@@ -818,9 +818,10 @@ PHP_FUNCTION(cfpr_host_compliance_count_green);
  */
 PHP_FUNCTION(cfpr_host_compliance_count_yellow);
 
-/*! \brief The number of blue hosts under management of this hub
+/*! \brief The number of red hosts under management of this hub
  */
-PHP_FUNCTION(cfpr_count_blue_hosts);
+PHP_FUNCTION(cfpr_host_compliance_count_red);
+
 
 /*! \brief A summary document of a promise
  * \param promiseHandle
