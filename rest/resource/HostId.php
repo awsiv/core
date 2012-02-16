@@ -9,8 +9,10 @@ class HostId extends Resource
     {
         Utils::checkValidQueryParams(array());
 
+        $username = $_SERVER['PHP_AUTH_USER'];
+        
         $response = new Response($request);
-        $payload = cfmod_resource_host_id($id);
+        $payload = cfmod_resource_host_id($username, $id);
         if (is_null($payload))
         {
             $response = new Response($request);

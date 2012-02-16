@@ -9,12 +9,14 @@ class Host extends Resource
     {
         Utils::checkValidQueryParams(array('hostname', 'ip', 'context'));
 
+        $username = $_SERVER['PHP_AUTH_USER'];
         $hostname = Utils::queryParam('hostname');
         $ip = Utils::queryParam('ip');
         $context = Utils::queryParam('context');
 
         $response = new Response($request);
-        $response->body = cfmod_resource_host($hostname, $ip);
+        $response->body = cfmod_resource_host($username,
+                $hostname, $ip);
         $response->code = Response::OK;
 
         return $response;

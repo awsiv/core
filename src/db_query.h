@@ -85,7 +85,7 @@ int CFDB_QueryReplStatus(mongo_connection *conn, char *buffer,int bufsize);
 Item *CFDB_GetDeletedHosts(void);
 
 // host
-Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const char *ip);
+Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const char *ip, HostClassFilter *hostClassFilter);
 HubHost *CFDB_GetHostByKey(mongo_connection *conn, const char *hostkey);
 
 #endif

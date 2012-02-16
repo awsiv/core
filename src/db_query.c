@@ -6669,7 +6669,7 @@ static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *fil
 
 /*****************************************************************************/
 
-Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const char *ip)
+Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const char *ip, HostClassFilter *hostClassFilter)
 {
  bson_buffer buffer;
  bson query, field;
@@ -6678,6 +6678,7 @@ Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const ch
  bson_buffer_init(&buffer);
  bson_append_regex(&buffer, cfr_host_array, hostname, "");
  bson_append_regex(&buffer, cfr_ip_array, ip, "");
+ BsonAppendHostClassFilter(&buffer, hostClassFilter);
  bson_from_buffer(&query, &buffer);
 
 // projection

@@ -11,6 +11,7 @@ class PromiseCompliance extends Resource
             'hostkey', 'handle', 'context', 'state'
         ));
         
+        $username = $_SERVER['PHP_AUTH_USER'];
         $hostkey = Utils::queryParam('hostkey');
         $handle = Utils::queryParam('handle');
         $context = Utils::queryParam('context');
@@ -19,8 +20,8 @@ class PromiseCompliance extends Resource
         try
         {
             $response = new Response($request);
-            $response->body = cfmod_resource_promise_compliance($handle, $hostkey,
-                    $context, $state, DefaultParameters::from());
+            $response->body = cfmod_resource_promise_compliance($username,
+                    $handle, $hostkey, $context, $state, DefaultParameters::from());
             return $response;
         }
         catch (Exception $e)

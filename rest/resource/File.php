@@ -9,12 +9,14 @@ class File extends Resource
     {
         Utils::checkValidQueryParams(array('hostkey', 'path', 'context'));
         
+        $username = $_SERVER['PHP_AUTH_USER'];
         $hostkey = Utils::queryParam('hostkey');
         $path = Utils::queryParam('path');
         $context = Utils::queryParam('context');
 
         $response = new Response($request);
-        $payload = cfmod_resource_file($hostkey, $path, $context, DefaultParameters::from());
+        $payload = cfmod_resource_file($username,
+                $hostkey, $path, $context, DefaultParameters::from());
 
         if (is_null($payload))
         {

@@ -75,9 +75,17 @@ catch (ResponseException $e)
         $response = $e->response($request);
     }
 }
+catch (CFModExceptionRBAC $e)
+{
+    $response = new Response($request);
+    $response->body = $e->getMessage();
+    $response->code = Response::FORBIDDEN;
+}
 catch (Exception $e)
 {
-    $response = Utils::InternalExceptionResponse($request, $e);
+    $response = new Response($request);
+    $response->body = $e->getMessage();
+    $response->code = Response::INTERNALSERVERERROR;
 }
 
 ResponsePackaging::package($response)->output();

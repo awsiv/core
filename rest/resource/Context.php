@@ -9,11 +9,13 @@ class Context extends Resource
     {
         Utils::checkValidQueryParams(array('hostkey', 'context'));
         
+        $username = $_SERVER['PHP_AUTH_USER'];
         $hostkey = Utils::queryParam('hostkey');
         $context = Utils::queryParam('context');
 
         $response = new Response($request);
-        $payload = cfmod_resource_context($hostkey, $context, DefaultParameters::from());
+        $payload = cfmod_resource_context($username,
+                $hostkey, $context, DefaultParameters::from());
 
         if (is_null($payload))
         {

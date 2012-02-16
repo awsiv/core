@@ -57,13 +57,5 @@ class Utils {
         }
         return $state;
     }
-
-    public static function InternalExceptionResponse($request, $exception)
-    {
-        $response = new Response($request);
-        $response->body = $exception->getMessage();
-        $response->code = Response::INTERNALSERVERERROR;
-        return $response;
-    }
 }
 

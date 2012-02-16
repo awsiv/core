@@ -9,12 +9,14 @@ class Setuid extends Resource
     {
         Utils::checkValidQueryParams(array('hostkey', 'name', 'context'));
 
+        $username = $_SERVER['PHP_AUTH_USER'];
         $hostkey = Utils::queryParam('hostkey');
         $name = Utils::queryParam('name');
         $context = Utils::queryParam('context');
 
         $response = new Response($request);
-        $payload = cfmod_resource_setuid($hostkey, $name, $context);
+        $payload = cfmod_resource_setuid($username,
+                $hostkey, $name, $context);
 
         if (is_null($payload))
         {

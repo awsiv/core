@@ -9,8 +9,11 @@ class HostIdSeenBy extends Resource
     {
         Utils::checkValidQueryParams(array());
 
+        $username = $_SERVER['PHP_AUTH_USER'];
+        
         $response = new Response($request);
-        $payload = cfmod_resource_host_id_seen_by($id, DefaultParameters::from());
+        $payload = cfmod_resource_host_id_seen_by($username,
+                $id, DefaultParameters::from());
         if (is_null($payload))
         {
             $response = new Response($request);

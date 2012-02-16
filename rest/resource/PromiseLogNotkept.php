@@ -9,6 +9,7 @@ class PromiseLogNotKept extends Resource
     {
         Utils::checkValidQueryParams(array('hostkey', 'handle', 'context', 'to'));
 
+        $username = $_SERVER['PHP_AUTH_USER'];
         $hostkey = Utils::queryParam('hostkey');
         $handle = Utils::queryParam('handle');
         $context = Utils::queryParam('context');
@@ -17,8 +18,8 @@ class PromiseLogNotKept extends Resource
         try
         {
             $response = new Response($request);
-            $response->body = cfmod_resource_promise_log_notkept($handle,
-                    $hostkey, $context, $to, DefaultParameters::from());
+            $response->body = cfmod_resource_promise_log_notkept($username,
+                    $handle, $hostkey, $context, $to, DefaultParameters::from());
             return $response;
         }
         catch (Exception $e)

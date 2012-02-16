@@ -10,6 +10,7 @@ class Software extends Resource
         Utils::checkValidQueryParams(array('hostkey', 'name', 'version',
             'arch', 'context'));
 
+        $username = $_SERVER['PHP_AUTH_USER'];
         $hostkey = Utils::queryParam('hostkey');
         $name = Utils::queryParam('name');
         $version = Utils::queryParam('version');
@@ -17,8 +18,8 @@ class Software extends Resource
         $context = Utils::queryParam('context');
 
         $response = new Response($request);
-        $payload = cfmod_resource_software($hostkey, $name, $version, $arch,
-                $context);
+        $payload = cfmod_resource_software($username,
+                $hostkey, $name, $version, $arch, $context);
 
         if (is_null($payload))
         {

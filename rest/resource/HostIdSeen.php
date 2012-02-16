@@ -8,9 +8,11 @@ class HostIdSeen extends Resource
     function get($request, $id)
     {
         Utils::checkValidQueryParams(array());
+        
+        $username = $_SERVER['PHP_AUTH_USER'];
 
         $response = new Response($request);
-        $payload = cfmod_resource_host_id_seen($id, DefaultParameters::from());
+        $payload = cfmod_resource_host_id_seen($username, $id, DefaultParameters::from());
         if (is_null($payload))
         {
             $response = new Response($request);

@@ -11,6 +11,7 @@ PORT=27777
 echo "Importing data from $1"
 
 mongoimport --port ${PORT} -d phpcfengine -c users --drop --file $1/phpcfengine.users.json --jsonArray
+mongoimport --port ${PORT} -d phpcfengine -c roles --drop --file $1/phpcfengine.roles.json --jsonArray
 
 mongoimport --port ${PORT} -d cfreport -c hosts --drop --file $1/cfreport.hosts.json --jsonArray
 mongoimport --port ${PORT} -d cfreport -c logs_rep --drop --file $1/cfreport.logs_rep.json --jsonArray
