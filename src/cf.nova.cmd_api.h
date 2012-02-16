@@ -89,10 +89,6 @@ void Nova2Txt_show_topic_category(int id,char *buffer,int bufsize);
 int Nova2Txt_show_hosts(char *hostNameRegex,char *ipRegex,char *classRegex,PageInfo *page,char *buf,int bufsize);
 void Nova2Txt_select_reports(char *buffer,int bufsize);
 
-long Nova2Txt_count_blue_hosts(void);
-long Nova2Txt_count_red_hosts(void);
-long Nova2Txt_count_yellow_hosts(void);
-long Nova2Txt_count_green_hosts(void);
 int Nova2Txt_list_promise_handles_with_comments(char *bundle,char *btype,char *returnval,int bufsize);
 
 char *Nova_HostProfile(char *key);
