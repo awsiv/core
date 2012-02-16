@@ -3032,7 +3032,7 @@ PHP_FUNCTION(cfpr_host_compliance_list_red)
     }
 
  buffer[0] = '\0';
- Nova2PHP_show_col_hosts("red",&page,buffer,sizeof(buffer));
+ Nova2PHP_show_col_hosts("red",NULL,&page,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -3051,7 +3051,7 @@ PHP_FUNCTION(cfpr_host_compliance_list_yellow)
     }
  
  buffer[0] = '\0';
- Nova2PHP_show_col_hosts("yellow",&page,buffer,sizeof(buffer));
+ Nova2PHP_show_col_hosts("yellow",NULL,&page,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -3069,7 +3069,7 @@ PHP_FUNCTION(cfpr_host_compliance_list_green)
     RETURN_NULL();
     }
  buffer[0] = '\0';
- Nova2PHP_show_col_hosts("green",&page,buffer,sizeof(buffer));
+ Nova2PHP_show_col_hosts("green",NULL,&page,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }
@@ -3088,7 +3088,7 @@ PHP_FUNCTION(cfpr_host_compliance_list_blue)
     }
 
  buffer[0] = '\0';
- Nova2PHP_show_col_hosts("blue",&page,buffer,sizeof(buffer));
+ Nova2PHP_show_col_hosts("blue",NULL,&page,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }

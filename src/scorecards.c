@@ -431,11 +431,11 @@ return result;
 
 /*****************************************************************************/
 
-Item *Nova_GreenHosts()
+Item *Nova_GreenHosts(HostClassFilter *hostClassFilter)
 
 { Item *ip,*hosts = NULL,*sorted = NULL;
 
- hosts = Nova_ClassifyHostState(NULL, HOST_RANK_METHOD_COMPLIANCE);
+ hosts = Nova_ClassifyHostState(hostClassFilter, HOST_RANK_METHOD_COMPLIANCE);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
@@ -452,11 +452,11 @@ return sorted;
 
 /*****************************************************************************/
 
-Item *Nova_YellowHosts()
+Item *Nova_YellowHosts(HostClassFilter *hostClassFilter)
 
 { Item *ip,*hosts = NULL,*sorted = NULL;
 
- hosts = Nova_ClassifyHostState(NULL, HOST_RANK_METHOD_COMPLIANCE);
+ hosts = Nova_ClassifyHostState(hostClassFilter, HOST_RANK_METHOD_COMPLIANCE);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {
@@ -473,11 +473,11 @@ return sorted;
 
 /*****************************************************************************/
 
-Item *Nova_RedHosts()
+Item *Nova_RedHosts(HostClassFilter *hostClassFilter)
 
 { Item *ip,*hosts = NULL,*sorted = NULL;
 
- hosts = Nova_ClassifyHostState(NULL, HOST_RANK_METHOD_COMPLIANCE);
+ hosts = Nova_ClassifyHostState(hostClassFilter, HOST_RANK_METHOD_COMPLIANCE);
 
  for (ip = hosts; ip != NULL; ip=ip->next)
     {
@@ -494,11 +494,11 @@ Item *Nova_RedHosts()
 
 /*****************************************************************************/
 
-Item *Nova_BlueHosts()
+Item *Nova_BlueHosts(HostClassFilter *hostClassFilter)
 
 { Item *ip,*hosts = NULL,*sorted = NULL;
 
- hosts = Nova_ClassifyHostState(NULL, HOST_RANK_METHOD_COMPLIANCE);
+ hosts = Nova_ClassifyHostState(hostClassFilter, HOST_RANK_METHOD_COMPLIANCE);
 
 for (ip = hosts; ip != NULL; ip=ip->next)
    {

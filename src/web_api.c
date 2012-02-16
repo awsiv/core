@@ -3597,27 +3597,27 @@ if(IsEnvMissionPortalTesting())
 
 /*****************************************************************************/
 
-void Nova2PHP_show_col_hosts(char *colour,PageInfo *page,char *buffer,int bufsize)
-
-{ Item *ip,*clist;
+void Nova2PHP_show_col_hosts(char *colour, HostClassFilter *hostClassFilter, PageInfo *page, char *buffer, int bufsize)
+{
+ Item *ip,*clist;
  char work[CF_MAXVARSIZE],lastseen[CF_MAXVARSIZE]={0};
  int counter = 0, startIndex, endIndex;
   
  if (strcmp(colour,"green") == 0)
     {
-    clist = Nova_GreenHosts();
+    clist = Nova_GreenHosts(hostClassFilter);
     }
  else if (strcmp(colour,"yellow") == 0)
     {
-    clist = Nova_YellowHosts();
+    clist = Nova_YellowHosts(hostClassFilter);
     }
  else if (strcmp(colour,"red") == 0)
     {
-    clist = Nova_RedHosts();
+    clist = Nova_RedHosts(hostClassFilter);
     }
  else
     {
-    clist = Nova_BlueHosts();
+    clist = Nova_BlueHosts(hostClassFilter);
     }
 
  if (clist)
@@ -3682,7 +3682,7 @@ long Nova2PHP_count_hosts()
 
 long Nova2PHP_count_red_hosts()
 
-{ Item *all = Nova_RedHosts();
+{ Item *all = Nova_RedHosts(NULL);
  int len = ListLen(all);
 
  DeleteItemList(all);
@@ -3693,7 +3693,7 @@ long Nova2PHP_count_red_hosts()
 
 long Nova2PHP_count_yellow_hosts()
 
-{ Item *all = Nova_YellowHosts();
+{ Item *all = Nova_YellowHosts(NULL);
  int len = ListLen(all);
 
  DeleteItemList(all);
@@ -3704,7 +3704,7 @@ long Nova2PHP_count_yellow_hosts()
 
 long Nova2PHP_count_green_hosts()
 
-{ Item *all = Nova_GreenHosts();
+{ Item *all = Nova_GreenHosts(NULL);
   int len = ListLen(all);
 
 DeleteItemList(all);
@@ -3715,7 +3715,7 @@ return (long)len;
 
 long Nova2PHP_count_blue_hosts()
 
-{ Item *all = Nova_BlueHosts();
+{ Item *all = Nova_BlueHosts(NULL);
   int len = ListLen(all);
 
 DeleteItemList(all);
