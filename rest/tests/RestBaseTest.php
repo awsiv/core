@@ -2,7 +2,7 @@
 
 require_once "PHPUnit/Autoload.php";
 require_once __DIR__ . "/../lib/Pest.php";
-require_once __DIR__ . "/../lib/PestJSON.php";
+require_once __DIR__ . "/../lib/PestNova.php";
 
 class RestBaseTest extends PHPUnit_Framework_TestCase
 {
@@ -36,7 +36,7 @@ class RestBaseTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->baseUrl = "http://localhost:8888/rest";
-        $this->pest = new PestJSON($this->baseUrl);
+        $this->pest = new PestNova($this->baseUrl);
         $this->pest->setupAuth("admin", "admin");
     }
     
@@ -48,4 +48,8 @@ class RestBaseTest extends PHPUnit_Framework_TestCase
         return $jsonArray['result'];
     }
 
+    public function addHeader($header)
+    {
+        $this->pest->curl_opts[CURLOPT_HTTPHEADER][] = $header;
+    }
 }

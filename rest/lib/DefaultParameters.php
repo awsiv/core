@@ -11,6 +11,11 @@ class DefaultParameters
         DefaultParameters::count();
     }
     
+    public static function format()
+    {
+        return 'json-v1';
+    }
+    
     public static function from()
     {
         $from = Utils::checkInteger(Utils::queryParam('from', "0"), 'from');

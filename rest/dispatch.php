@@ -27,19 +27,37 @@ function addAuthenticateHeader($response)
     $response->addHeader('WWW-Authenticate', 'Basic realm="CFEngine Nova"');
 }
 
-// handle request
 $request = new Request(array(
-        'baseUri' => '/rest'
+        'baseUri' => '/rest',
+        'mimetypes' => array(
+            'json-v1' => 'application/vnd.cfengine.nova-v1+json'
+        )
 ));
 
 try
 {
+    $format = DefaultParameters::format();
+    if (!empty($request->accept))
+    {
+        $format = $request->mostAcceptable(array(DefaultParameters::format()));
+    }
+    
+    switch ($format)
+    {
+        case 'json-v1':
+            break;
+        
+        default:
+            throw new ResponseException("Unsupported format or version requested",
+                    Response::NOTACCEPTABLE);
+    }
+    
     if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW']) ||
         !cfpr_user_authenticate($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']))
     {
         throw new ResponseException("Not authenticated", Response::UNAUTHORIZED);
     }
-    
+
     DefaultParameters::check();
 
     $resource = $request->loadResource();
