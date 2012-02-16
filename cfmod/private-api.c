@@ -2954,7 +2954,7 @@ PHP_FUNCTION(cfpr_host_compliance_list_all)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_count_all_hosts)
+PHP_FUNCTION(cfpr_host_count_all)
 
 {
  long val = Nova2PHP_count_hosts();
