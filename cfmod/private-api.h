@@ -810,13 +810,13 @@ PHP_FUNCTION(cfpr_host_count_all);
  */
 PHP_FUNCTION(cfpr_host_compliance_count_blue);
 
-/*! \brief The number of blue hosts under management of this hub
+/*! \brief The number of green hosts under management of this hub
  */
 PHP_FUNCTION(cfpr_host_compliance_count_green);
 
 /*! \brief The number of yellow hosts under management of this hub
  */
-PHP_FUNCTION(cfpr_count_yellow_hosts);
+PHP_FUNCTION(cfpr_host_compliance_count_yellow);
 
 /*! \brief The number of blue hosts under management of this hub
  */
