@@ -75,17 +75,21 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss",
    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    }
 
-HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+Rlist *hostkeys = NULL;
+   {
+   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
+   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
 
-mongo_connection conn;
-DATABASE_OPEN(&conn)
+   mongo_connection conn;
+   DATABASE_OPEN(&conn)
 
-Rlist *hostkeys = CFDB_QueryHostKeys(&conn, hostname, ip, filter);
+   hostkeys = CFDB_QueryHostKeys(&conn, hostname, ip, filter);
 
-DATABASE_CLOSE(&conn);
+   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+   DATABASE_CLOSE(&conn)
+   }
 
 JsonElement *output = JsonArrayCreate(1000);
 for (Rlist *rp = hostkeys; rp != NULL; rp = rp->next)
@@ -94,6 +98,7 @@ for (Rlist *rp = hostkeys; rp != NULL; rp = rp->next)
    }
 
 DeleteRlist(hostkeys);
+
 
 RETURN_JSON(output);
 }
@@ -122,12 +127,15 @@ if(erridAccess != ERRID_SUCCESS)
    RETURN_NULL();
    }
 
-mongo_connection conn;
-DATABASE_OPEN(&conn)
+HubHost *record = NULL;
+   {
+   mongo_connection conn;
+   DATABASE_OPEN(&conn)
 
-HubHost *record = CFDB_GetHostByKey(&conn, hostkey);
+   record = CFDB_GetHostByKey(&conn, hostkey);
 
-DATABASE_CLOSE(&conn);
+   DATABASE_CLOSE(&conn)
+   }
 
 if (record != NULL)
    {
@@ -192,21 +200,25 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssl",
    RETURN_NULL();
    }
 
-HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+HubQuery *result = NULL;
+   {
+   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
+   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
 
-mongo_connection conn;
-DATABASE_OPEN(&conn)
+   mongo_connection conn;
+   DATABASE_OPEN(&conn)
 
-HubQuery *result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL,
-                                      from, false, false, filter);
-DeleteHostClassFilter(filter);
+   result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, from, false, false, filter);
 
-DATABASE_CLOSE(&conn);
+   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+   DATABASE_CLOSE(&conn);
+   }
+assert(result);
 
 JsonElement *output = HostsLastSeen(result->records, LAST_SEEN_DIRECTION_OUTGOING);
+
 
 DeleteHubQuery(result, DeleteHubLastSeen);
 
@@ -214,7 +226,7 @@ RETURN_JSON(output);
 }
 
 
-PHP_FUNCTION(cfmod_resource_host_id_seen_by)
+PHP_FUNCTION(cfmod_resource_host_id_seenby)
 {
 char *username = NULL,
      *hostkey = NULL;
@@ -230,19 +242,23 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssl",
    RETURN_NULL();
    }
 
-HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+HubQuery *result = NULL;
+   {
+   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
+   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
 
-mongo_connection conn;
-DATABASE_OPEN(&conn)
+   mongo_connection conn;
+   DATABASE_OPEN(&conn)
 
-HubQuery *result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL,
-                                      from, false, false, filter);
-DeleteHostClassFilter(filter);
+   result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL,
+                                         from, false, false, filter);
 
-DATABASE_CLOSE(&conn);
+   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+   DATABASE_CLOSE(&conn)
+   }
+assert(result);
 
 JsonElement *output = HostsLastSeen(result->records, LAST_SEEN_DIRECTION_INCOMING);
 
@@ -318,18 +334,24 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssl",
    RETURN_NULL();
    }
 
-HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+HubQuery *result = NULL;
+   {
+   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
+   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-HostClassFilterAddClasses(filter, context, NULL);
+   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+   HostClassFilterAddClasses(filter, context, NULL);
 
-mongo_connection conn;
-DATABASE_OPEN(&conn)
+   mongo_connection conn;
+   DATABASE_OPEN(&conn)
 
-HubQuery *result = CFDB_QueryPromiseCompliance(&conn, hostkey, handle, PromiseStateFromString(state),
-                                               true , 0, true, filter);
-DeleteHostClassFilter(filter);
+   result = CFDB_QueryPromiseCompliance(&conn, hostkey, handle, PromiseStateFromString(state),
+                                                  true , 0, true, filter);
+
+   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+   DATABASE_CLOSE(&conn)
+   }
+assert(result);
 
 JsonElement *output = JsonArrayCreate(100);
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
@@ -347,7 +369,7 @@ for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
    JsonArrayAppendObject(output, entry);
    }
 
-DATABASE_CLOSE(&conn)
+DeleteHubQuery(result, DeleteHubPromiseCompliance);
 
 RETURN_JSON(output)
 }
@@ -370,12 +392,9 @@ switch (state)
 }
 
 static JsonElement *PromiseLogAsJson(mongo_connection *conn, PromiseLogState state, const char *handle,
-                                   const char *hostkey, const char *context, int from, int to)
+                                   const char *hostkey, const char *context, int from, int to, HostClassFilter *filter)
 {
-
- HostClassFilter *filter = NewHostClassFilter(context, NULL);
- HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from, to, true, filter);
- DeleteHostClassFilter(filter);
+HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from, to, true, filter);
 
 JsonElement *output = JsonArrayCreate(100);
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
@@ -419,18 +438,22 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssll",
    RETURN_NULL();
    }
 
-HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+JsonElement *output = NULL;
+   {
+   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
+   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-HostClassFilterAddClasses(filter, context, NULL);
+   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+   HostClassFilterAddClasses(filter, context, NULL);
 
-mongo_connection conn;
-DATABASE_OPEN(&conn)
+   mongo_connection conn;
+   DATABASE_OPEN(&conn)
 
-JsonElement *output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to);
-
-DATABASE_CLOSE(&conn)
+   output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to, filter);
+   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+   DATABASE_CLOSE(&conn)
+   }
+assert(output);
 
 RETURN_JSON(output);
 }
@@ -440,11 +463,10 @@ RETURN_JSON(output);
 
 
 static JsonElement *PromiseLogSummaryAsJson(mongo_connection *conn, PromiseLogState state, const char *handle,
-                                          const char *hostkey, const char *context, int from, int to)
+                                            const char *hostkey, const char *context, int from, int to,
+                                            HostClassFilter *filter)
 {
- HostClassFilter *filter = NewHostClassFilter(context, NULL);
- HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from, to, true, filter);
- DeleteHostClassFilter(filter);
+HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from, to, true, filter);
 
 // FIX: wrong on several levels
 Item *summary = NULL;
@@ -498,18 +520,23 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssll",
    RETURN_NULL();
    }
 
-HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+JsonElement *output = NULL;
+   {
+   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
+   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-HostClassFilterAddClasses(filter, context, NULL);
+   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+   HostClassFilterAddClasses(filter, context, NULL);
 
-mongo_connection conn;
-DATABASE_OPEN(&conn)
+   mongo_connection conn;
+   DATABASE_OPEN(&conn)
 
-JsonElement *output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to);
+   output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to, filter);
 
-DATABASE_CLOSE(&conn)
+   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+   DATABASE_CLOSE(&conn)
+   }
+assert(output);
 
 RETURN_JSON(output);
 }
@@ -540,18 +567,23 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssll",
    RETURN_NULL();
    }
 
-HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+JsonElement *output = NULL;
+   {
+   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
+   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-HostClassFilterAddClasses(filter, context, NULL);
+   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+   HostClassFilterAddClasses(filter, context, NULL);
 
-mongo_connection conn;
-DATABASE_OPEN(&conn);
+   mongo_connection conn;
+   DATABASE_OPEN(&conn);
 
-JsonElement *output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to);
+   output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to, filter);
 
-DATABASE_CLOSE(&conn);
+   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+   DATABASE_CLOSE(&conn);
+   }
+assert(output);
 
 RETURN_JSON(output);
 }
@@ -582,18 +614,24 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssll",
    RETURN_NULL();
    }
 
-HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+JsonElement *output = NULL;
+   {
+   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
+   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-HostClassFilterAddClasses(filter, context, NULL);
+   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+   HostClassFilterAddClasses(filter, context, NULL);
 
-mongo_connection conn;
-DATABASE_OPEN(&conn);
+   mongo_connection conn;
+   DATABASE_OPEN(&conn);
 
-JsonElement *output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to);
+   output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to, filter);
 
-DATABASE_CLOSE(&conn);
+   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+   DATABASE_CLOSE(&conn);
+   }
+assert(output);
+
 
 RETURN_JSON(output);
 }
@@ -707,20 +745,24 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssss",
    RETURN_NULL();
    }
 
-HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+HubQuery *result = NULL;
+   {
+   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
+   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-HostClassFilterAddClasses(filter, context, NULL);
+   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+   HostClassFilterAddClasses(filter, context, NULL);
 
-mongo_connection conn;
-DATABASE_OPEN(&conn)
+   mongo_connection conn;
+   DATABASE_OPEN(&conn)
 
-HubQuery *result = CFDB_QueryVariables(&conn, hostkey,
-   scope, name, value, SerializeRvalType(type), true, filter);
-DeleteHostClassFilter(filter);
+   result = CFDB_QueryVariables(&conn, hostkey, scope, name, value,
+                                SerializeRvalType(type), true, filter);
 
-DATABASE_CLOSE(&conn)
+   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+   DATABASE_CLOSE(&conn)
+   }
+assert(result);
 
 JsonElement *values = JsonArrayCreate(100);
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
@@ -773,19 +815,23 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssl",
    RETURN_NULL();
    }
 
-HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+HubQuery *result = NULL;
+   {
+   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
+   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-HostClassFilterAddClasses(filter, context, NULL);
+   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+   HostClassFilterAddClasses(filter, context, NULL);
 
-mongo_connection conn;
-DATABASE_OPEN(&conn)
+   mongo_connection conn;
+   DATABASE_OPEN(&conn)
 
-HubQuery *result = CFDB_QueryClasses(&conn, hostkey, NULL, false, Horizon(from), filter, false);
-DeleteHostClassFilter(filter);
+   result = CFDB_QueryClasses(&conn, hostkey, NULL, false, Horizon(from), filter, false);
 
-DATABASE_CLOSE(&conn)
+   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+   DATABASE_CLOSE(&conn)
+   }
+assert(result);
 
 JsonElement *contexts = JsonArrayCreate(100);
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
@@ -863,21 +909,24 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssss",
    RETURN_NULL();
    }
 
-HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+HubQuery *result = NULL;
+   {
+   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
+   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-HostClassFilterAddClasses(filter, context, NULL);
+   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+   HostClassFilterAddClasses(filter, context, NULL);
 
-mongo_connection conn;
-DATABASE_OPEN(&conn)
+   mongo_connection conn;
+   DATABASE_OPEN(&conn)
 
-HubQuery *result = CFDB_QuerySoftware(&conn, hostkey,
-   cfr_software, name, version, Nova_ShortArch(arch), true, filter,true);
+   result = CFDB_QuerySoftware(&conn, hostkey, cfr_software, name, version,
+                               Nova_ShortArch(arch), true, filter,true);
 
-DeleteHostClassFilter(filter);
-
-DATABASE_CLOSE(&conn)
+   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+   DATABASE_CLOSE(&conn)
+   }
+assert(result);
 
 JsonElement *output = JsonArrayCreate(100);
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
@@ -950,19 +999,23 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssss",
    RETURN_NULL();
    }
 
-HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+HubQuery *result = NULL;
+   {
+   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
+   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-HostClassFilterAddClasses(filter, context, NULL);
+   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+   HostClassFilterAddClasses(filter, context, NULL);
 
-mongo_connection conn;
-DATABASE_OPEN(&conn)
+   mongo_connection conn;
+   DATABASE_OPEN(&conn)
 
-HubQuery *result = CFDB_QuerySetuid(&conn, hostkey, path, true, filter);
-DeleteHostClassFilter(filter);
+   result = CFDB_QuerySetuid(&conn, hostkey, path, true, filter);
 
-DATABASE_CLOSE(&conn)
+   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+   DATABASE_CLOSE(&conn)
+   }
+assert(result);
 
 JsonElement *output = JsonArrayCreate(100);
 for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
@@ -1027,19 +1080,27 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssl",
    RETURN_NULL();
    }
 
-HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+HubQuery *change_result = NULL;
+HubQuery *diff_result = NULL;
 
-HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-HostClassFilterAddClasses(filter, context, NULL);
+   {
+   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
+   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-mongo_connection conn;
-DATABASE_OPEN(&conn)
+   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+   HostClassFilterAddClasses(filter, context, NULL);
 
-HubQuery *change_result = CFDB_QueryFileChanges(&conn, hostkey, path, true, from, CFDB_GREATERTHANEQ, true, filter, false);
-HubQuery *diff_result = CFDB_QueryFileDiff(&conn, hostkey, path, NULL, true ,from, CFDB_GREATERTHANEQ, true, filter, false);
+   mongo_connection conn;
+   DATABASE_OPEN(&conn)
 
-DATABASE_CLOSE(&conn)
+   change_result = CFDB_QueryFileChanges(&conn, hostkey, path, true, from, CFDB_GREATERTHANEQ, true, filter, false);
+   diff_result = CFDB_QueryFileDiff(&conn, hostkey, path, NULL, true ,from, CFDB_GREATERTHANEQ, true, filter, false);
+
+   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+   DATABASE_CLOSE(&conn)
+   }
+assert(change_result);
+assert(diff_result);
 
 JsonElement *output = JsonArrayCreate(1000);
 

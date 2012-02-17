@@ -23,7 +23,7 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfmod_resource_host, NULL)
     PHP_FE(cfmod_resource_host_id, NULL)
     PHP_FE(cfmod_resource_host_id_seen, NULL)
-    PHP_FE(cfmod_resource_host_id_seen_by, NULL)
+    PHP_FE(cfmod_resource_host_id_seenby, NULL)
 
     PHP_FE(cfmod_resource_promise_compliance, NULL)
     PHP_FE(cfmod_resource_promise_log_repaired, NULL)
