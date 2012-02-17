@@ -132,6 +132,7 @@ class Welcome extends Cf_Controller {
         $username = &$this->session->userdata('username');
         $data['allHost']    = cfpr_host_count_all($username);
         $data['redhost']    = cfpr_host_compliance_count_red($username);
+        $data['yellowhost'] = cfpr_host_compliance_count_yellow($username);
         $data['greenhost']  = cfpr_host_compliance_count_green($username);
         $data['bluehost']   = cfpr_host_compliance_count_blue($username);
 
