@@ -129,12 +129,11 @@ class Welcome extends Cf_Controller {
             $data['businessValuePie']['nodata'] = 100;
         }
 
-
-        $data['allHost'] = cfpr_count_all_hosts();
-        $data['redhost'] = cfpr_count_red_hosts();
-        $data['yellowhost'] = cfpr_count_yellow_hosts();
-        $data['greenhost'] = cfpr_count_green_hosts();
-        $data['bluehost'] = cfpr_count_blue_hosts();
+        $username = &$this->session->userdata('username');
+        $data['allHost']    = cfpr_host_count_all($username);
+        $data['redhost']    = cfpr_host_compliance_count_red($username);
+        $data['greenhost']  = cfpr_host_compliance_count_green($username);
+        $data['bluehost']   = cfpr_host_compliance_count_blue($username);
 
         $this->template->load('template', 'status', $data);
     }
@@ -311,14 +310,16 @@ class Welcome extends Cf_Controller {
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);
+        
+        $username = &$this->session->userdata('username');
         $data = array(
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_engineering'),
             'breadcrumbs' => $this->breadcrumblist->display(),
-            'all' => cfpr_count_all_hosts(),
-            'r' => cfpr_count_red_hosts(),
-            'y' => cfpr_count_yellow_hosts(),
-            'g' => cfpr_count_green_hosts(),
-            'b' => cfpr_count_blue_hosts()
+            'all' => cfpr_host_count_all($username),
+            'r'   => cfpr_host_compliance_count_red($username),
+            'y'   => cfpr_host_compliance_count_yellow($username),
+            'g'   => cfpr_host_compliance_count_green($username),
+            'b'   => cfpr_host_compliance_count_blue($username)
         );
 
         // Summary meter for host
