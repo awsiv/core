@@ -3244,23 +3244,34 @@ PHP_FUNCTION(cfpr_host_compliance_list_blue)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_host_list_by_ip_rx)
-
-{ char buffer[CF_WEBBUFFER];
- char *ipRegex, *fipRegex;
- int ip_len;
+{
+ char buffer[CF_WEBBUFFER];
+ char *userName, *ipRegex, *fipRegex;
+ int user_len, ip_len;
  PageInfo page = {0};
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll",
+                           &userName, &user_len,
                            &ipRegex, &ip_len,
                            &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
+ ARGUMENT_CHECK_CONTENTS(user_len);
+
  fipRegex = (ip_len == 0) ? NULL : ipRegex;
 
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+ ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+
  buffer[0] = '\0';
- Nova2PHP_show_hosts(NULL,fipRegex,NULL,&page,buffer,sizeof(buffer));
+ Nova2PHP_show_hosts(NULL, fipRegex, filter, &page, buffer, sizeof(buffer));
+
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
  RETURN_STRING(buffer,1);
 }
