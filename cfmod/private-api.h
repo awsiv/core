@@ -681,6 +681,11 @@ PHP_FUNCTION(cfpr_summarize_repaired);
  */
 PHP_FUNCTION(cfpr_report_description);
 
+/*! \brief Get information about a host with the given key
+ * \param hostKey
+ */
+PHP_FUNCTION(cfpr_host_by_hostkey);
+
 /*! \brief Get the name of a host with the given key
  * \param hostKey
  */

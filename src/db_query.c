@@ -410,12 +410,11 @@ HubQuery *CFDB_QueryHostsInClassContext(mongo_connection *conn,char *expression,
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, char *ipRegex, HostClassFilter *hostClassFilter)
-
-{ bson_buffer bb;
+{
+ bson_buffer bb;
  bson query;
  HubQuery *hq;
   
-/* BEGIN query document */
  bson_buffer_init(&bb);
 
  if (!NULL_OR_EMPTY(hostNameRegex))
@@ -430,6 +429,27 @@ HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, 
 
  BsonAppendHostClassFilter(&bb, hostClassFilter);
 
+ bson_from_buffer(&query,&bb);
+ 
+ hq = CFDB_QueryHosts(conn,MONGO_DATABASE,cfr_keyhash,&query);
+
+ bson_destroy(&query);
+
+ return hq;
+}
+
+/*****************************************************************************/
+
+HubQuery *CFDB_QueryHostByHostKey(mongo_connection *conn, char *hostKey)
+{
+ bson_buffer bb;
+ bson query;
+ HubQuery *hq;
+
+ assert(SafeStringLength(hostKey) > 0);
+  
+ bson_buffer_init(&bb);
+ bson_append_string(&bb, cfr_keyhash, hostKey);
  bson_from_buffer(&query,&bb);
  
  hq = CFDB_QueryHosts(conn,MONGO_DATABASE,cfr_keyhash,&query);

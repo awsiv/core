@@ -335,6 +335,47 @@ PHP_FUNCTION(cfpr_getlicenses_granted)
 
 /******************************************************************************/
 
+PHP_FUNCTION(cfpr_host_by_hostkey)
+{
+ char *hostKey;
+ int hk_len;
+
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hostKey,&hk_len) == FAILURE)
+    {
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
+
+ ARGUMENT_CHECK_CONTENTS(hk_len);
+
+ mongo_connection conn;
+
+ DATABASE_OPEN(&conn);
+
+ HubQuery *hq = CFDB_QueryHostByHostKey(&conn, hostKey);
+
+ DATABASE_CLOSE(&conn);
+
+ if(!(hq->hosts && hq->hosts->item))
+    {
+    DeleteHubQuery(hq, NULL);
+    zend_throw_exception(cfmod_exception_generic, "No host matches the given hostkey", 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
+ 
+ HubHost *hh = hq->hosts->item;
+ 
+ JsonElement *hostinfo = JsonArrayCreate(2);
+ JsonArrayAppendString(hostinfo, hh->hostname);
+ JsonArrayAppendString(hostinfo, hh->ipaddr);
+ 
+ DeleteHubQuery(hq, NULL);
+ 
+ RETURN_JSON(hostinfo);
+}
+
+/******************************************************************************/
+
 PHP_FUNCTION(cfpr_hostname)
 
 { char s1[4096],s2[4096];

@@ -11,6 +11,7 @@ void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *con
 HubQuery *CFDB_QueryHostsInClassContext(mongo_connection *conn,char *expression,time_t horizon,int sort);
 HubQuery *CFDB_QueryHosts(mongo_connection *conn, char *db, char *dbkey,bson *query);
 HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, char *ipRegex, HostClassFilter *hostClassFilter);
+HubQuery *CFDB_QueryHostByHostKey(mongo_connection *conn, char *hostKey);
 HubQuery *CFDB_QueryValueReport(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryValueGraph(mongo_connection *conn,char *keyHash,char *lday,char *lmonth,char *lyear, int sort, char *classRegex);
 HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, PromiseLogState state,const char *lhandle, int regex, time_t from, time_t to, int sort,HostClassFilter *hostClassFilter);

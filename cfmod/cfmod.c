@@ -172,7 +172,8 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_hosts_with_notkept,NULL)
     PHP_FE(cfpr_hosts_with_bundlesseen,NULL)
     PHP_FE(cfpr_hosts_with_value,NULL)
-   
+
+    PHP_FE(cfpr_host_by_hostkey,NULL)
     PHP_FE(cfpr_hostname,NULL)
     PHP_FE(cfpr_ipaddr,NULL)
 
