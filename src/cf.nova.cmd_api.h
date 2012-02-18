@@ -86,7 +86,6 @@ void Nova2Txt_show_topic(int id,char * buffer,int bufsize);
 void Nova2Txt_show_topic_leads(int id,char *buffer,int bufsize);
 void Nova2Txt_show_topic_hits(int id,char *buffer,int bufsize);
 void Nova2Txt_show_topic_category(int id,char *buffer,int bufsize);
-int Nova2Txt_show_hosts(char *hostNameRegex,char *ipRegex,char *classRegex,PageInfo *page,char *buf,int bufsize);
 void Nova2Txt_select_reports(char *buffer,int bufsize);
 
 int Nova2Txt_list_promise_handles_with_comments(char *bundle,char *btype,char *returnval,int bufsize);

@@ -2096,65 +2096,6 @@ Nova_ScanTheRest(id,buffer,bufsize);
 /* Hosts stats                                                               */
 /*****************************************************************************/
 
-int Nova2Txt_show_hosts(char *hostNameRegex,char *ipRegex,char *classRegex,PageInfo *page,char *buf,int bufsize)
-
-{
- HubQuery *hq;
- HubHost *hh;
- Rlist *rp;
- mongo_connection dbconn;
- char work[CF_MAXVARSIZE];
-
- if (!CFDB_Open(&dbconn))
-    {
-    CfOut(cf_verbose,"", "!! Could not open connection to report database");
-    return false;
-    }
-
- hq = CFDB_QueryHostsByAddress(&dbconn,hostNameRegex,ipRegex,classRegex);
-
- CFDB_Close(&dbconn);
- 
- if(!(hq && hq->hosts))
-    {
-    StartJoin(buf, "{}", bufsize);
-    return true;
-    }
-    
- PageRecords(&(hq->hosts),page,DeleteHubHost);
- 
- snprintf(work,sizeof(work),
-          "{\"meta\":{\"count\" : %d,"
-          "\"header\": {\"Key Hash\":0,\"Host name\":1,\"IP address\":2"
-          "}},\n\"data\":[",page->totalResultCount);
-
- StartJoin(buf,work,bufsize);
- 
- for (rp = hq->hosts; rp != NULL; rp=rp->next)
-       {
-       hh = (HubHost *)rp->item;
-       
-       snprintf(work, sizeof(work), "[\"%s\", \"%s\", \"%s\"]\n,",
-                hh->hostname, hh->ipaddr, hh->keyhash);
-
-       if(!Join(buf,work,bufsize))
-          {
-          break;
-          }
-       }
-    
- DeleteHubQuery(hq,NULL);
-    
- ReplaceTrailingChar(buf, ',', '\0');
-
- EndJoin(buf,"]}",bufsize);
-
- return true;
-
-}
-
-/*****************************************************************************/
-
 char *Nova2Txt_GetPromiseComment(char *handle)
     
 { static char buffer[CF_BUFSIZE];

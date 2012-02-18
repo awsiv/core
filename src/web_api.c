@@ -3553,7 +3553,7 @@ if(IsEnvMissionPortalTesting())
     return false;
     }
 
- hq = CFDB_QueryHostsByAddress(&dbconn,hostNameRegex,ipRegex,classRegex);
+ hq = CFDB_QueryHostsByAddress(&dbconn,hostNameRegex,ipRegex,NULL);
 
  CFDB_Close(&dbconn);
  

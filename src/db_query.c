@@ -409,12 +409,11 @@ HubQuery *CFDB_QueryHostsInClassContext(mongo_connection *conn,char *expression,
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, char *ipRegex, char *classRegex)
+HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, char *ipRegex, HostClassFilter *hostClassFilter)
 
 { bson_buffer bb;
  bson query;
  HubQuery *hq;
- char classRegexAnch[CF_MAXVARSIZE];
   
 /* BEGIN query document */
  bson_buffer_init(&bb);
@@ -429,11 +428,7 @@ HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, 
     bson_append_regex(&bb,cfr_ip_array,ipRegex,"");
     }
 
- if (!NULL_OR_EMPTY(classRegex))
-    {
-    AnchorRegex(classRegex,classRegexAnch,sizeof(classRegexAnch));
-    bson_append_regex(&bb,cfr_class_keys,classRegexAnch,"");
-    }
+ BsonAppendHostClassFilter(&bb, hostClassFilter);
 
  bson_from_buffer(&query,&bb);
  
