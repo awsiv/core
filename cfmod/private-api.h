@@ -686,16 +686,6 @@ PHP_FUNCTION(cfpr_report_description);
  */
 PHP_FUNCTION(cfpr_host_by_hostkey);
 
-/*! \brief Get the name of a host with the given key
- * \param hostKey
- */
-PHP_FUNCTION(cfpr_hostname);
-
-/*! \brief Get the IP of a host with the given key
- * \param hostKey
- */
-PHP_FUNCTION(cfpr_ipaddr);
-
 /*! \brief Get the hubKey
  */
 PHP_FUNCTION(cfpr_hub_key);

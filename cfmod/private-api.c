@@ -386,47 +386,6 @@ PHP_FUNCTION(cfpr_host_by_hostkey)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_hostname)
-
-{ char s1[4096],s2[4096];
- char *hostkey;
- int hk_len;
-
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hostkey,&hk_len) == FAILURE)
-    {
-    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-    RETURN_NULL();
-    }
-
- s1[0]='\0';
- s2[0]='\0';
- Nova2PHP_hostinfo(hostkey,s1,s2,sizeof(s1));
-
- RETURN_STRING(s1,1);
-}
-
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_ipaddr)
-
-{ char s1[4096],s2[4096];
- char *hostkey;
- int hk_len;
-
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hostkey,&hk_len) == FAILURE)
-    {
-    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-    RETURN_NULL();
-    }
-
- s1[0]='\0';
- s2[0]='\0';
- Nova2PHP_hostinfo(hostkey,s1,s2,sizeof(s1));
- RETURN_STRING(s2,1);
-}
-
-/******************************************************************************/
-
 PHP_FUNCTION(cfpr_summary_meter)
 
 { const int bufsize = 512*1024;
