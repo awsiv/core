@@ -3283,7 +3283,7 @@ PHP_FUNCTION(cfpr_show_hosts_name)
  fclassRegex = (cl_len == 0) ? NULL : classRegex;
 
  buffer[0] = '\0';
- Nova2PHP_show_hosts(fhostNameRegex,NULL,fclassRegex,&page,buffer,sizeof(buffer));
+ Nova2PHP_show_hosts(fhostNameRegex,NULL,NULL,&page,buffer,sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }

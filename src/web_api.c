@@ -3532,13 +3532,13 @@ DeleteItemList(clist);
 
 /*****************************************************************************/
 
-int Nova2PHP_show_hosts(char *hostNameRegex,char *ipRegex,char *classRegex,PageInfo *page,char *buf,int bufsize)
+int Nova2PHP_show_hosts(char *hostNameRegex, char *ipRegex, HostClassFilter *hostClassFilter, PageInfo *page, char *buf, int bufsize)
 
 {
 #ifndef NDEBUG
 if(IsEnvMissionPortalTesting())
   {
-  return Nova2PHP_show_hosts_test(hostNameRegex,ipRegex,classRegex,page,buf,bufsize);
+  return Nova2PHP_show_hosts_test(hostNameRegex,ipRegex,NULL,page,buf,bufsize);
   }
 #endif
 
