@@ -125,7 +125,6 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_list_soft_classes,NULL)
     PHP_FE(cfpr_list_ip_classes,NULL)
     PHP_FE(cfpr_list_host_classes,NULL)
-    PHP_FE(cfpr_get_variable,NULL)
     PHP_FE(cfpr_get_value_graph,NULL)
 
     PHP_FE(cfpr_report_value,NULL)

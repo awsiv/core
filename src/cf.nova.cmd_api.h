@@ -94,7 +94,6 @@ int Nova2Txt_list_promise_handles_with_comments(char *bundle,char *btype,char *r
 char *Nova_HostProfile(char *key);
 
 char *Nova2Txt_GetPromiseComment(char *handle);
-int Nova2Txt_get_variable(char *hostkey,char *scope,char *lval,char *returnval,int bufsize);
 int Nova2Txt_get_bundle_count(char *buffer, int bufsize);
 int Nova2Txt_get_promise_count(char *buffer, int bufsize);
 void Nova2Txt_ComplianceSummaryGraph(char *policy,char *buffer,int bufsize);

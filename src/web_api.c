@@ -3858,15 +3858,6 @@ int Nova2PHP_body_list(char *name,char *type,char *returnval,int bufsize)
 }
 
 /*****************************************************************************/
-
-int Nova2PHP_get_variable(char *hostkey,char *scope,char *lval,char *returnval,int bufsize)
-
-{
-// Moved to conversion.c and re-aliased 
-return Nova_GetReportedScalar(hostkey,scope,lval,returnval,bufsize);
-}
-
-/*****************************************************************************/
 /* Reports                                                                   */
 /*****************************************************************************/
 

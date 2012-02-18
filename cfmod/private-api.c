@@ -3604,26 +3604,6 @@ PHP_FUNCTION(cfpr_bundle_by_promise_handle)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_get_variable)
-
-{ char *key,*scope,*lval;
- int hk_len,s_len,l_len;
- char buffer[2048];
-
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss",&key,&hk_len,&scope,&s_len,&lval,&l_len) == FAILURE)
-    {
-    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-    RETURN_NULL();
-    }
-
- buffer[0] = '\0';
- Nova2PHP_get_variable(key,scope,lval,buffer,2048);
-
- RETURN_STRING(buffer,1);
-}
-
-/******************************************************************************/
-
 PHP_FUNCTION(cfpr_bundle_classes_used)
 {
  char *userName, *bundleName, *bundleType;

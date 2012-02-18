@@ -209,13 +209,6 @@ PHP_FUNCTION(cfpr_body_details);
  */
 PHP_FUNCTION(cfpr_bundle_by_promise_handle);
 
-/*! \brief Get the reported value of a variable
- * \param hostKey
- * \param scope
- * \param variableName
- */
-PHP_FUNCTION(cfpr_get_variable);
-
 /*! \brief A list of classes in a bundle
  * \param bundleName
  * \param bundleType
