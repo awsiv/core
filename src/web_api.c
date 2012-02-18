@@ -1619,7 +1619,7 @@ if(IsEnvMissionPortalTesting())
   }
 #endif
 
- char buffer[CF_BUFSIZE],lscope[CF_MAXVARSIZE],jsonEscapedStr[CF_BUFSIZE]={0};
+ char buffer[CF_BUFSIZE] = {0},lscope[CF_MAXVARSIZE],jsonEscapedStr[CF_BUFSIZE]={0};
  char rvalBuf[CF_MAXVARSIZE];
  HubVariable *hv;
  HubQuery *hq;
