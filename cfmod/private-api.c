@@ -3278,20 +3278,22 @@ PHP_FUNCTION(cfpr_host_list_by_ip_rx)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_show_hosts_name)
-
-{ char buffer[CF_WEBBUFFER];
- char *hostNameRegex, *fhostNameRegex, *classRegex, *fclassRegex;
- int ip_len,cl_len;
+PHP_FUNCTION(cfpr_host_list_by_name_rx)
+{
+ char buffer[CF_WEBBUFFER];
+ char *hostNameRegex, *fhostNameRegex;
+ int hname_len;
  PageInfo page = {0};
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll",&hostNameRegex,&ip_len,&classRegex,&cl_len,&(page.resultsPerPage),&(page.pageNum)) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sll",
+                           &hostNameRegex, &hname_len,
+                           &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
- fhostNameRegex = (ip_len == 0) ? NULL : hostNameRegex;
- fclassRegex = (cl_len == 0) ? NULL : classRegex;
+ fhostNameRegex = (hname_len == 0) ? NULL : hostNameRegex;
 
  buffer[0] = '\0';
  Nova2PHP_show_hosts(fhostNameRegex,NULL,NULL,&page,buffer,sizeof(buffer));

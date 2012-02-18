@@ -776,7 +776,6 @@ PHP_FUNCTION(cfpr_get_bluehost_threshold);
 
 /*! \brief A list of hosts with an IP address
  * \param ipExpression
- * \param contextExpression
  * \param resultsPerPage
  * \param pageNumber
  */
@@ -784,11 +783,10 @@ PHP_FUNCTION(cfpr_host_list_by_ip_rx);
 
 /*! \brief A list of hosts with a hostname
  * \param nameExpression
- * \param contextExpression
  * \param resultsPerPage
  * \param pageNumber
  */
-PHP_FUNCTION(cfpr_show_hosts_name);
+PHP_FUNCTION(cfpr_host_list_by_name_rx);
 
 /*! \brief Get the colour of a host
  * \param hostKey
