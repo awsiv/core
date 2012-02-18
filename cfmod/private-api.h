@@ -780,7 +780,7 @@ PHP_FUNCTION(cfpr_get_bluehost_threshold);
  * \param resultsPerPage
  * \param pageNumber
  */
-PHP_FUNCTION(cfpr_show_hosts_ip);
+PHP_FUNCTION(cfpr_host_list_by_ip_rx);
 
 /*! \brief A list of hosts with a hostname
  * \param nameExpression
