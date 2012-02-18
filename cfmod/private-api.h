@@ -791,7 +791,7 @@ PHP_FUNCTION(cfpr_host_list_by_name_rx);
 /*! \brief Get the colour of a host
  * \param hostKey
  */
-PHP_FUNCTION(cfpr_get_host_colour);
+PHP_FUNCTION(cfpr_host_compliance_colour);
 
 /*! \brief The number of hosts under management of this hub
  */

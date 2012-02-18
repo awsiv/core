@@ -3346,7 +3346,7 @@ PHP_FUNCTION(cfpr_getlastupdate)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_get_host_colour)
+PHP_FUNCTION(cfpr_host_compliance_colour)
 
 { char *hostkey;
  int hk_len;
