@@ -233,6 +233,12 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_role_list_by_name,NULL)
     
     /*
+     * Mission Tree-Control (Astrolabe)
+     */
+    PHP_FE(cfpr_astrolabe_host_list, NULL)
+    PHP_FE(cfpr_astrolabe_host_count, NULL)
+
+    /*
      * Constellation
      */
 #ifdef HAVE_CONSTELLATION
