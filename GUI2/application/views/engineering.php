@@ -41,7 +41,7 @@
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/searchEntry.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostsCompliance.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostsMeter.js"></script>
-<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostinfo.js"></script>
+<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostInfo.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>jScrollPane.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>jquery.mousewheel.js"></script>
 
