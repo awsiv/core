@@ -3,6 +3,11 @@ Tests for cfmod API functions
 
 Requirements: php cli, valgrind, bash
 
+Environment assumptions: 
+ *) mongod running on default port
+ *) mongo shell is in /var/cfengine/bin/mongo
+ *) There is some data in the mongo database to test with
+
 Usage: Run ./testall
 
 The purpose of these tests are to
@@ -15,12 +20,17 @@ This is because functional testing is already covered by the web application fra
 and having it there makes more sense as it also covers mis-interpretation of input and output
 by the developers.
 
+We are passing parameters to the php-functions through environment-variables.
+
+To test RBAC, turn it on (e.g. from the Mission Portal), and input a limited user
+in addition to the default "admin" user (currently hardcoded in testall).
+
 The speed testing is a bit flaky because we just have one data-point. However,
 running the test multiple times sequentially to produce averages/std dev may not give 
 the correct result because the database may have cached the previous
-run. Some investigation into this would be useful.
+run, and it would increase the total test time significantly. 
+Some investigation into this would be useful.
 
-We are passing parameters to the php-functions through environment-variables.
 
 
 TODOs
