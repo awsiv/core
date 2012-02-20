@@ -965,4 +965,13 @@ PHP_FUNCTION(cfpr_role_update);
 PHP_FUNCTION(cfpr_role_list_all);
 PHP_FUNCTION(cfpr_role_list_by_name);
 
+
+/******************************************************************************/
+/* Mission Tree-Control (Astrolabe)                                           */
+/******************************************************************************/
+
+PHP_FUNCTION(cfpr_astrolabe_host_list);
+PHP_FUNCTION(cfpr_astrolabe_host_count);
+
+
 #endif  /* CFENGINE_CFMOD_PRIVATE_API_H */

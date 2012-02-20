@@ -17,6 +17,14 @@ static JsonElement *ParseRolesToJson(HubQuery *hq);
 
 
 /******************************************************************************/
+/* Common response payload keys                                               */
+/******************************************************************************/
+static const char *LABEL_HOSTKEY = "hostkey";
+static const char *LABEL_HOSTNAME = "hostname";
+static const char *LABEL_COLOUR = "colour";
+
+
+/******************************************************************************/
 /* API                                                                        */
 /******************************************************************************/
 
@@ -4691,4 +4699,137 @@ if (!Nova2PHP_get_bluehost_threshold(buffer, buffsize))
    }
 
 RETURN_STRING(buffer,1);
+}
+
+
+/******************************************************************************/
+/* Mission Tree-Control (Astrolabe)                                           */
+/******************************************************************************/
+
+
+static Rlist *PHPStringArrayToRlist(zval* php_array, bool prune_empty)
+{
+zval **data;
+HashTable *hash;
+HashPosition hashPos;
+Rlist *rp = NULL;
+
+hash = Z_ARRVAL_P(php_array);
+
+for (zend_hash_internal_pointer_reset_ex(hash, &hashPos);
+     zend_hash_get_current_data_ex(hash, (void**) &data, &hashPos) == SUCCESS;
+     zend_hash_move_forward_ex(hash, &hashPos))
+   {
+   if (Z_TYPE_PP(data) == IS_STRING)
+      {
+      if (strlen(Z_STRVAL_PP(data)) != 0 || !prune_empty)
+         {
+         AppendRlist(&rp, Z_STRVAL_PP(data), 's');
+         }
+      }
+   }
+
+return rp;
+}
+
+PHP_FUNCTION(cfpr_astrolabe_host_list)
+{
+zval *context_includes_param, *context_excludes_param;
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "aa",
+                          &context_includes_param,
+                          &context_excludes_param) == FAILURE)
+   {
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+   RETURN_NULL();
+   }
+
+HostClassFilter *classFilter = NewHostClassFilterLists(PHPStringArrayToRlist(context_includes_param, true),
+                                                       PHPStringArrayToRlist(context_excludes_param, true));
+
+mongo_connection conn;
+DATABASE_OPEN(&conn);
+
+HubQuery *result = CFDB_QueryClasses(&conn, NULL, NULL, 1, (time_t)SECONDS_PER_WEEK, classFilter, false);
+
+DATABASE_CLOSE(&conn);
+
+JsonElement *output = JsonArrayCreate(1000);
+for (Rlist *rp = result->hosts; rp; rp = rp->next)
+   {
+   HubHost *record = (HubHost *)rp->item;
+   int score = Nova_GetHostColour(record->keyhash);
+   HostColour colour = Nova_HostScoreToColour(score);
+
+   JsonElement *entry = JsonObjectCreate(3);
+
+   JsonObjectAppendString(entry, LABEL_HOSTKEY, record->keyhash);
+   JsonObjectAppendString(entry, LABEL_HOSTNAME, record->hostname);
+   JsonObjectAppendString(entry, LABEL_COLOUR, Nova_HostColourToString(colour));
+
+   JsonArrayAppendObject(output, entry);
+   }
+
+DeleteHostClassFilter(classFilter);
+DeleteHubQuery(result, DeleteHubClass);
+
+RETURN_JSON(output)
+}
+
+
+PHP_FUNCTION(cfpr_astrolabe_host_count)
+{
+char *colour = NULL;
+int len = -1;
+zval *context_includes_param, *context_excludes_param;
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "saa",
+                          &colour, &len,
+                          &context_includes_param,
+                          &context_excludes_param) == FAILURE)
+   {
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+   RETURN_NULL();
+   }
+
+HostClassFilter *classFilter = NewHostClassFilterLists(PHPStringArrayToRlist(context_includes_param, true),
+                                                       PHPStringArrayToRlist(context_excludes_param, true));
+
+mongo_connection conn;
+DATABASE_OPEN(&conn);
+
+int count = -1;
+if (NULL_OR_EMPTY(colour))
+   {
+   count = CFDB_CountHosts(&conn, classFilter);
+   }
+else
+   {
+   if (strcmp(colour, "green") == 0)
+      {
+      count = Nova2PHP_count_green_hosts(classFilter);
+      }
+   else if (strcmp(colour, "yellow") == 0)
+      {
+      count = Nova2PHP_count_yellow_hosts(classFilter);
+      }
+   else if (strcmp(colour, "red") == 0)
+      {
+      count = Nova2PHP_count_red_hosts(classFilter);
+      }
+   else if (strcmp(colour, "blue") == 0)
+      {
+      count = Nova2PHP_count_blue_hosts(classFilter);
+      }
+   else
+      {
+      count = 0;
+      }
+   }
+
+DATABASE_CLOSE(&conn);
+
+DeleteHostClassFilter(classFilter);
+
+RETURN_LONG(count);
 }
