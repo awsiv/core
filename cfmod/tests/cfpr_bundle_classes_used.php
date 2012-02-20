@@ -1,6 +1,6 @@
 <?php
 
-$userName = getenv("CFENGINE_TEST_OVERRIDE_USERNAME");
+$userName = getenv("CFENGINE_TEST_USERNAME");
 $bundleType = "agent";
 $bundleName = "cfengine_limit_robot_agents";
 

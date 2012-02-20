@@ -1,27 +1,44 @@
 #!/bin/bash
 
-TESTFILE=$1
-
 LOGFILE="test.log"
-CFENGINE_TEST_OVERRIDE_HOSTKEY=$(/var/cfengine/bin/mongo cfreport --eval "print(db.hosts.findOne({},{kH:1}).kH)" --quiet)
 
+if [ -n "$CFENGINE_TEST_OVERRIDE_USERNAME" ]
+then
+    CFENGINE_TEST_USERNAME=$CFENGINE_TEST_OVERRIDE_USERNAME
+else
+    CFENGINE_TEST_USERNAME="admin"
+fi
+
+if [ -n "$CFENGINE_TEST_OVERRIDE_HOSTKEY" ]
+then
+    CFENGINE_TEST_HOSTKEY=$CFENGINE_TEST_OVERRIDE_HOSTKEY
+else
+    CFENGINE_TEST_HOSTKEY=$(/var/cfengine/bin/mongo cfreport --eval "print(db.hosts.findOne({},{kH:1}).kH)" --quiet)
+fi
+
+if [ -n "$CFENGINE_TEST_OVERRIDE_TEST_FILES" ]
+then
+    CFENGINE_TEST_FILES=$CFENGINE_TEST_OVERRIDE_TEST_FILES
+else
+    CFENGINE_TEST_FILES=*.php
+fi
 
 TEST_FAILED_MEMORY=""
 TEST_FAILED_SPEED=""
 
 # TODO: standardise & loop over these environment variables to cover useful cases
-CFENGINE_TEST_OVERRIDE_USERNAME="admin"
+#CFENGINE_TEST_OVERRIDE_USERNAME="admin"
 #CFENGINE_TEST_OVERRIDE_USERNAME="tester"
 #CFENGINE_TEST_OVERRIDE_HOSTKEY="SHA=2f8d59051aac6a2a9538028b2cc8768e69c4db8afcf4be50fc6ccbd92336b4fd"
 #CFENGINE_TEST_OVERRIDE_HOSTKEY="SHA=2f8d59051aac6a2a9538028b2cc8768e69c4db8afcf4be50fc6ccbd92336b4cb"
 
-export CFENGINE_TEST_OVERRIDE_USERNAME
-export CFENGINE_TEST_OVERRIDE_HOSTKEY
+export CFENGINE_TEST_USERNAME
+export CFENGINE_TEST_HOSTKEY
 
-echo "Testing with params $CFENGINE_TEST_OVERRIDE_USERNAME, $CFENGINE_TEST_OVERRIDE_HOSTKEY"
 
 TIME_START_TEST_ALL=$(date +%s)
 echo -e "\n\n=== Staring tests at $TIME_START_TEST_ALL ===" >> $LOGFILE
+echo -e "Testing with params $CFENGINE_TEST_USERNAME, $CFENGINE_TEST_HOSTKEY, $CFENGINE_TEST_FILES" >> $LOGFILE
 
 runtest()
 {
@@ -57,15 +74,11 @@ runtest()
 }
 
 
-if [ -n "$TESTFILE" ]
-then
+for TESTFILE in $CFENGINE_TEST_FILES
+do
     runtest "$TESTFILE"
-else
-    for PHPFILE in *.php
-    do
-        runtest "$PHPFILE"
-    done
-fi
+done
+
 
 TIME_END_TEST_ALL=$(date +%s)
 SECONDS_USED_TEST_ALL=$(($TIME_END_TEST_ALL - $TIME_START_TEST_ALL))

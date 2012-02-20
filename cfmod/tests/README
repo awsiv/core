@@ -1,15 +1,38 @@
 Tests for cfmod API functions
------------------------------
+=============================
 
 Requirements: php cli, valgrind, bash
 
-Environment assumptions: 
+
+Environment assumptions
+-----------------------
  *) mongod running on default port
  *) mongo shell is in /var/cfengine/bin/mongo
- *) There is some data in the mongo database to test with
+ *) There is some data in the mongo database to test on
 
-Usage: Run ./testall
 
+Environment variables
+-----------------------
+ *) CFENGINE_TEST_OVERRIDE_USERNAME - the username to authorize as (only useful if RBAC is on)
+    Default: "admin"
+ *) CFENGINE_TEST_OVERRIDE_HOSTKEY - a hostkey to pass to the functions that takes it
+    Default: Pick one randomly from the mongo hosts collection
+ *) CFENGINE_TEST_OVERRIDE_TEST_FILES - test files to run
+    Default: *.php
+
+
+Examples
+-----------------------
+ *) ./testall
+    - run all tests with admin user and pick one host from hosts collection
+ *) CFENGINE_TEST_OVERRIDE_TEST_FILES="cfpr_body_details.php cfpr_bundle_agent_goals.php" ./testall
+    - run two tests with admin user and pick one host from hosts collection
+ *) CFENGINE_TEST_OVERRIDE_TEST_USER="tester" CFENGINE_TEST_OVERRIDE_TEST_HOSTKEY="SHA=2f8d59051aac6a2a9538028b2cc8768e69c4db8afcf4be50fc6ccbd92336b4fb" ./testall
+    - run all tests, using a specific user and hostkey
+
+ 
+Description
+-----------------------
 The purpose of these tests are to
 *) Detect functions that are too slow (the UI user waits for these to complete)
 *) Detect memory errors, such as illegal access and leaks
@@ -23,14 +46,7 @@ by the developers.
 We are passing parameters to the php-functions through environment-variables.
 
 To test RBAC, turn it on (e.g. from the Mission Portal), and input a limited user
-in addition to the default "admin" user (currently hardcoded in testall).
-
-The speed testing is a bit flaky because we just have one data-point. However,
-running the test multiple times sequentially to produce averages/std dev may not give 
-the correct result because the database may have cached the previous
-run, and it would increase the total test time significantly. 
-Some investigation into this would be useful.
-
+in addition to the default "admin" user with an evironment variable as described above.
 
 
 TODOs
@@ -40,3 +56,5 @@ TODOs
    - classregex: NULL/a small set of hosts matching/a large set of hosts matching
    - need assumptions about environment: hostkey, class, RBAC users (functionality to set up a test envrionment)
  - add more tests
+ - Improve speed test? It is a bit flaky since we just have one data-point
+   (but creating more data-points may take a long time)
