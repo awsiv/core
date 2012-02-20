@@ -45,39 +45,4 @@ class Visual extends Cf_Controller {
         }
     }
 
-    function vitaldetail() {
-        $params = $this->uri->uri_to_assoc(6);
-        $hostkey = $this->uri->segment(4) . '=' . $this->uri->segment(5);
-        $view = $params['view'];
-        $obs = $params['obs'];
-        $nm = $params['nm'];
-
-        $obs_name = cfpr_get_observable_name($obs);
-        $host = cfpr_hostname($hostkey);
-        $data = array(
-            'hostkey' => $hostkey,
-        );
-
-        switch ($view) {
-            case 'mag':
-
-                $data['title'] = 'Past 4 hours ' . $obs_name . ' on ' . $host;
-                $data['path'] = get_hubdir() . '/' . $hostkey . '/' . $nm . '_mag.png';
-                $data['ret'] = cfpr_analysis_mag($hostkey, $obs);
-                break;
-            case 'week':
-                $data['title'] = 'Past week\'s ' . $obs_name . ' on ' . $host;
-                $data['path'] = get_hubdir() . '/' . $hostkey . '/' . $nm . '_week.png';
-                $data['ret'] = cfpr_analysis_week($hostkey, $obs);
-                break;
-            case 'hist':
-                $data['title'] = 'Frequency spectrum for ' . $obs_name . ' on ' . $host;
-                $data['path'] = get_hubdir() . '/' . $hostkey . '/' . $nm . '_hist.png';
-                $data['ret'] = cfpr_analysis_hist($hostkey, $obs);
-                break;
-            default:
-        }
-        $this->load->view('visualization/vital_details', $data);
-    }
-
 }
