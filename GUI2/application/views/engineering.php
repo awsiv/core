@@ -56,17 +56,6 @@
         var hostFinderOption =   {
             baseUrl:'<?php echo site_url() ?>'
           };
-    
-        $('#findhost').hostfinder(hostFinderOption);
-        $('#findclass').classfinder(genericOption);
-        $('#findpolicy').policyfinder(genericOption);
-        $('#findreport').reportfinder(genericOption);
-        $('#summaryreport').ajaxyDialog({'title':'Summary report',dontOverrideTitle:true,
-            'width':'50%'});
-        $('#findcdpreport').cdpreportfinder(genericOption);
-        //for constellation
-        $('#findvbundle').ajaxyDialog({'title':'Virtual bundle',dontOverrideTitle:true,
-            'width':'50%'});
 
         $.getJSON(genericOption.baseUrl + '/astrolabe/meters/', function(json) {
             $('#hostsMeter').hostsMeter({
