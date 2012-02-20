@@ -46,6 +46,13 @@
 <script type="text/javascript" src="<?php echo get_scriptdir()?>jquery.mousewheel.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>jquery.contextMenu.js"></script>
 
+<link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>astrolabe.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>astrolabeLocation.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>combobox.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>searchEntry.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>hostsCompliance.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>jScrollPane.css" />
+
 <script type="text/javascript">
     $(document).ready(function(){
         
