@@ -12,9 +12,9 @@ PORT=27777
 echo "Importing data from $1"
 
 load_data() {
-    local DB=$1
-    local COLL=$2
-    local FILE=${DATADIR}/${DB}.${COLL}.json
+    DB=$1
+    COLL=$2
+    FILE=${DATADIR}/${DB}.${COLL}.json
     echo "Importing ${FILE}"
     if [ -f ${FILE} ]; then
 	mongoimport --port ${PORT} -d phpcfengine -c $COLL --drop --file ${FILE} --jsonArray
