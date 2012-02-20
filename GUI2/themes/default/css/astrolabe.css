@@ -1,0 +1,171 @@
+.astrolabe
+{
+    padding: 0px;
+}
+
+.astrolabe span
+{
+    cursor: pointer;
+}
+
+.astrolabe .node > .nodeIcon
+{
+    height: 13px;
+    width: 13px;
+    margin-right: 5px;
+    display: inline-block;
+    background-image: url('../images/astrolabe/node.png');
+    cursor: pointer;
+}
+
+.astrolabe .node.expanded > .busyIcon
+{
+    background-image: url('../images/astrolabe/loader.gif');
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+.astrolabe .node > .nodeLabel,
+.astrolabe .host > .hostLabel
+{
+    background: #ffffff;
+    color: #000000;
+}
+
+.astrolabe .node.selectedElement > .nodeLabel,
+.astrolabe .host.selectedElement > .hostLabel
+{
+    background: #6c695a;
+    color: #ffffff;
+}
+
+.astrolabe .node.expanded > .nodeIcon
+{
+    height: 13px;
+    width: 13px;
+    margin-right: 5px;
+    display: inline-block;
+    background-image: url('../images/astrolabe/node-expanded.png');
+}
+
+.astrolabe .hostIcon
+{
+    height: 13px;
+    width: 13px;
+    margin-right: 5px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+#astrolabe-menu .profilesCombo
+{
+    width: 150px;
+    height: 25px
+}
+
+.astrolabe .listContainer
+{
+    height: 420px;
+}
+
+.astrolabe .host > .blue
+{
+    background-color: #476e8c;
+}
+
+.astrolabe .host > .red
+{
+    background-color: #cc4358;
+}
+
+.astrolabe .host > .green
+{
+    background-color: #779a62;
+}
+
+.astrolabe .host > .yellow
+{
+    background-color: #f0d76a;
+}
+
+.astrolabe .rootContainer span:hover {
+    color: #f08b37;
+}
+
+.astrolabe .menu
+{
+    background: #51584d;
+    padding: 10px;
+}
+
+.astrolabe .rootContainer
+{
+    padding: 10px;
+}
+
+.astrolabe .hostCountLabel
+{
+    margin-left: 3px;
+    color: #6C695A;
+}
+
+.astrolabe .menu .search
+{
+    background: url("../images/searchbar.png") no-repeat center center;
+    display: block;
+    height: 25px;
+    width: 208px;
+}
+
+.astrolabe .menu .search input
+{
+    background: none repeat scroll 0 0 transparent;
+    border: medium none;
+    color: #666666;
+    outline: medium none;
+    padding: 5px 0 0 10px;
+    width:166px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.context-menu {
+ background-color: #646c61;
+ color: #ffffff;
+
+ border: 2px solid #979e92;
+ border-radius: 5px;
+
+ list-style-type: none;
+ list-style-position: inside;
+}
+
+.context-menu li {
+ list-style-type: none;
+ list-style-position: inside;
+}
+
+.context-menu a {
+ display: block;
+ text-decoration: none;
+ padding: 3px;
+ color: #ffffff;
+}
+
+.context-menu a:hover {
+ background-color: #ffffff;
+ color: #f08b37;
+}
