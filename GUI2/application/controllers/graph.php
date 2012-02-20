@@ -13,6 +13,7 @@ class Graph extends CF_Controller {
         $this->carabiner->group('iefix', array('js' => $jsIE));
 
         $this->carabiner->js($requiredjs);
+        $this->load->model('vitals_model');
     }
 
     /**
@@ -25,9 +26,7 @@ class Graph extends CF_Controller {
         return str_replace($replaceArray, '', $obs);
     }
 
-    function summary($hostKey=null) {
-
-
+    function summary($hostKey = null) {
 
         $requiredjs = array(
             array('flot/jquery.flot.highlighter.js'),
@@ -41,14 +40,14 @@ class Graph extends CF_Controller {
         $this->template->set('injected_item', implode('', $this->scripts));
 
         $this->data = array(
-            'title' => $this->lang->line('mission_portal_title')." - Summary",
+            'title' => $this->lang->line('mission_portal_title') . " - Summary",
             'summary' => "current"
         );
 
         if (!$hostKey)
             $gdata = cfpr_summary_meter();
         else
-            $gdata = cfpr_host_meter($this->session->userdata('username'),$hostKey);
+            $gdata = cfpr_host_meter($this->session->userdata('username'), $hostKey);
 
         $convertedData = json_decode($gdata, true);
 
@@ -81,27 +80,23 @@ class Graph extends CF_Controller {
 
     function magnifiedView($parameter) {
 
-
         $getparams = $this->uri->uri_to_assoc(3);
 
         $observables = $getparams['obs'];
         $hostKey = $getparams['host'];
         $units = $getparams['units'];
-        // $graphData = cfpr_get_magnified_view($hostKey, $observables);
-        $graphData = cfpr_vitals_view_magnified($hostKey, $observables);
-        $convertData = json_decode($graphData, true);
-        if (!empty($convertData)) {
+        $username = $this->session->userdata('username');
+        $graphData = $this->vitals_model->getVitalsMagnifiedViewJson($username, $hostKey, $observables);
+        $manipulatedSeriesData = json_decode($graphData, true);
+        if ($graphData !== null && $manipulatedSeriesData !== false && !empty($manipulatedSeriesData)) {
 
-            $hostData = cfpr_getlastupdate($hostKey);
-
-            $lastUpdated = trim(strip_tags($hostData));
-
-            $this->data['graphLastUpdated'] = $lastUpdated;
+            $this->data['graphLastUpdated'] = $this->vitals_model->getVitalsLastUpdate($username, $hostKey);
+            $this->data['graphDetails'] = $this->vitals_model->getVitalsMagnifiedAnalysis($username, $hostKey, $observables);
             $this->data['graphdata'] = ($graphData);
             $this->data['observable'] = $this->canonifyObservables($observables);
             $this->data['units'] = $units;
 
-            $manipulatedSeriesData = json_decode($graphData);
+
             $lineSeries1 = array();
             $lineSeries2 = array();
             $tempMaxValue = array();
@@ -114,23 +109,18 @@ class Graph extends CF_Controller {
                 $tempMinValue[] = ($values[2] - $values[3]);
             }
 
-# we can calculate the min and maximum y value for float as well
+            # we can calculate the min and maximum y value for float as well
             $this->data['graphdatamax'] = ceil(max($tempMaxValue) + 1);
             $min = (min($tempMinValue) != 0) ? min($tempMinValue) - 1 : 0;
             $min = ceil($min);
             $this->data['graphdatamin'] = $min;
 
 
-
             $this->data['graphdatalineseries1'] = json_encode($lineSeries1);
             $this->data['graphdatalineseries2'] = json_encode($lineSeries2);
-            
-            $this->data['graphDetails'] = json_decode(cfpr_vitals_analyse_magnified($hostKey, $observables),true);
-            
             $this->load->view('graph/magnifiedView', $this->data);
         } else
             echo $this->lang->line('graph_data_not_available');
-//        $this->template->load('template', 'graph/magnifiedView', $this->data);
     }
 
     function weekView() {
@@ -141,25 +131,16 @@ class Graph extends CF_Controller {
         $hostKey = $getparams['host'];
         $units = $getparams['units'];
         $this->data['units'] = $units;
+        $username = $this->session->userdata('username');
+        $graphData = $this->vitals_model->getVitalsWeekViewJson($username, $hostKey, $observables);
+        $manipulatedSeriesData = json_decode($graphData, true);
+        if ($graphData !== null && $manipulatedSeriesData !== false && !empty($manipulatedSeriesData)) {
 
+            $this->data['graphLastUpdated'] = $this->vitals_model->getVitalsLastUpdate($username, $hostKey);
+            $this->data['graphDetails'] = $this->vitals_model->getVitalsWeekAnalysis($username, $hostKey, $observables);
 
-
-        // $graphData = cfpr_get_weekly_view($hostKey, $observables);
-        $graphData = cfpr_vitals_view_week($hostKey, $observables);
-        $convertData = json_decode($graphData, true);
-        if (!empty($convertData)) {
-
-            $hostData = cfpr_getlastupdate($hostKey);
-
-            $lastUpdated = trim(strip_tags($hostData));
-
-
-            $this->data['graphLastUpdated'] = $lastUpdated;
-            $this->data['graphdata'] = ($graphData);
+            $this->data['graphdata'] = $graphData;
             $this->data['observable'] = $this->canonifyObservables($observables);
-
-            $manipulatedSeriesData = json_decode($graphData);
-
             $lineSeries1 = array();
             $lineSeries2 = array();
             $tempMaxValue = array();
@@ -172,7 +153,7 @@ class Graph extends CF_Controller {
                 $tempMinValue[] = ($values[2] - $values[3]);
             }
 
-# we can calculate the min and maximum y value for float as well
+            # we can calculate the min and maximum y value for float as well
             $this->data['graphdatamax'] = ceil(max($tempMaxValue) + 1);
             $min = (min($tempMinValue) != 0) ? min($tempMinValue) - 1 : 0;
             $min = ceil($min);
@@ -182,12 +163,10 @@ class Graph extends CF_Controller {
 
             $this->data['graphdatalineseries1'] = json_encode($lineSeries1);
             $this->data['graphdatalineseries2'] = json_encode($lineSeries2);
-            $this->data['graphDetails'] = json_decode(cfpr_vitals_analyse_week($hostKey, $observables),true);
-           
+
             $this->load->view('graph/weekly', $this->data);
         } else
             echo $this->lang->line('graph_data_not_available');
-         //$this->template->load('template', 'graph/weekly', $this->data);
     }
 
     function yearView() {
@@ -199,21 +178,15 @@ class Graph extends CF_Controller {
         $units = $getparams['units'];
         $this->data['units'] = $units;
 
-        //$graphData = cfpr_get_yearly_view($hostKey, $observables);
-        $graphData = cfpr_vitals_view_year($hostKey, $observables);
-        // var_dump($graphData);
-        $convertData = json_decode($graphData, true);
-        if (!empty($convertData)) {
+        $username = $this->session->userdata('username');
+        $graphData = $this->vitals_model->getVitalsYearViewJson($username, $hostKey, $observables);
+        $manipulatedSeriesData = json_decode($graphData, true);
+        if ($graphData !== null && $manipulatedSeriesData !== false && !empty($manipulatedSeriesData)) {
 
-            $hostData = cfpr_getlastupdate($hostKey);
-            $lastUpdated = trim(strip_tags($hostData));
-
-
-            $this->data['graphLastUpdated'] = $lastUpdated;
-            $this->data['graphdata'] = ($graphData);
+            $this->data['graphLastUpdated'] = $this->vitals_model->getVitalsLastUpdate($username, $hostKey);
+            $this->data['graphDetails'] = $this->vitals_model->getVitalsYearAnalysis($username, $hostKey, $observables);
+            $this->data['graphdata'] = $graphData;
             $this->data['observable'] = $this->canonifyObservables($observables);
-            $manipulatedSeriesData = json_decode($graphData);
-
             $lineSeries1 = array();
             $lineSeries2 = array();
             $tempMaxValue = array();
@@ -226,7 +199,7 @@ class Graph extends CF_Controller {
                 $tempMinValue[] = ($values[2] - $values[3]);
             }
 
-# we can calculate the min and maximum y value for float as well
+            # we can calculate the min and maximum y value for float as well
             $this->data['graphdatamax'] = ceil(max($tempMaxValue) + 1);
             $min = (min($tempMinValue) != 0) ? min($tempMinValue) - 1 : 0;
             $min = ceil($min);
@@ -236,8 +209,7 @@ class Graph extends CF_Controller {
 
             $this->data['graphdatalineseries1'] = json_encode($lineSeries1);
             $this->data['graphdatalineseries2'] = json_encode($lineSeries2);
-             $this->data['graphDetails'] = json_decode(cfpr_vitals_analyse_year($hostKey, $observables),true);
-           
+
             $this->load->view('graph/yearview', $this->data);
         } else
             echo $this->lang->line('graph_data_not_available');
@@ -253,26 +225,23 @@ class Graph extends CF_Controller {
         $this->data['units'] = $units;
 
 
-        // $graphData = cfpr_get_histogram_view($hostKey, $observables);
-        $graphData = cfpr_vitals_view_histogram($hostKey, $observables);
-        $convertData = json_decode($graphData, true);
-        if (!empty($convertData)) {
+        $username = $this->session->userdata('username');
+        $graphData = $this->vitals_model->getVitalsHistogramViewJson($username, $hostKey, $observables);
+        $manipulatedSeriesData = json_decode($graphData, true);
+        if ($graphData !== null && $manipulatedSeriesData !== false && !empty($manipulatedSeriesData)) {
 
-            $hostData = cfpr_getlastupdate($hostKey);
-            $lastUpdated = trim(strip_tags($hostData));
-
-
+            /*
+            $lastUpdated = $this->vitals_model->getVitalsLastUpdate($username, $hostKey);
             $lastUpdated = strtotime($lastUpdated) * 1000;
-
             $this->data['graphLastUpdated'] = $lastUpdated;
+            */
+            $this->data['graphDetails'] = $this->vitals_model->getVitalsYearAnalysis($username, $hostKey, $observables);
             $this->data['graphdata'] = $graphData;
             $this->data['observable'] = $this->canonifyObservables($observables);
-             $this->data['graphDetails'] = json_decode(cfpr_vitals_analyse_histogram($hostKey, $observables),true);
-           
+
             $this->load->view('graph/histogram', $this->data);
         } else
             echo $this->lang->line('graph_data_not_available');
-        //$this->template->load('template', 'graph/histogram', $this->data);
     }
 
 }
