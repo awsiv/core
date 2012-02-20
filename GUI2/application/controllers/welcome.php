@@ -44,6 +44,16 @@ class Welcome extends Cf_Controller {
             'pbarvalue' => $pbarvalue,
             'daysleft' =>$daysleft,
         );
+        
+        if ($this->setting_lib->get_experimental_mode() === TRUE)
+        {
+            $data['engineering_page'] = 'engineering';
+        }
+        else
+        {
+            $data['engineering_page'] = 'welcome/engg';
+        }
+        
         $this->template->load('template', 'index', $data);
     }
 
@@ -328,7 +338,7 @@ class Welcome extends Cf_Controller {
         $returnedData = $this->_convert_summary_compliance_graph($gdata);
         $data = array_merge($data, $returnedData);
 
-        $this->template->load('template', 'engineering', $data);
+        $this->template->load('template', 'engg', $data);
     }
 
     function workingNotes() {
