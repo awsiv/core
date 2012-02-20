@@ -1,0 +1,94 @@
+.combobox
+{
+    padding: 0px;
+    margin: 0px;
+    width: 100%;
+    background: #ffffff;
+    cursor: pointer;
+}
+
+.combobox dt
+{
+    height: 25px;
+    position: relative;
+    border: 1px solid #979e93;
+}
+
+.combobox .selectedLabel
+{
+    position: absolute;
+    top: 2px;
+    left: 5px;
+}
+
+.combobox .arrowIconBox
+{
+    position: absolute;
+    right: 0px;
+    width: 25px;
+    height: 25px;
+    display: inline-block;
+    text-align: center;
+    border-left: 1px solid #979e93;
+}
+
+.combobox .arrowIcon
+{
+    position: absolute;
+    top: 10px;
+    left: 8.5px;
+}
+
+.combobox dd
+{
+    margin: 0px;
+    border: 1px solid #979e93;
+    position: relative;
+    z-index: 999;
+    background: #ffffff;
+}
+
+.combobox ul li
+{
+    height: 25px;
+    border-bottom: 1px solid #979e93;
+    position: relative;
+}
+
+.combobox ul li .deleteIcon
+{
+    position: absolute;
+    top: 6px;
+    left: 5px;
+    display: inline-block;
+}
+
+.combobox ul li .itemLabel
+{
+    position: absolute;
+    left: 23px;
+}
+
+.combobox ul .addItem
+{
+    padding: 0px;
+    background: #999999;
+}
+
+.combobox ul .addItem .addInput
+{
+    position: absolute;
+    border: 0px none;
+    left: 5px;
+    height: 100%;
+    width: 108px;
+    background: transparent;
+    color: #ffffff;
+}
+
+.combobox ul .addItem .addButton
+{
+    position: absolute;
+    top: 6px;
+    right: 5px;
+}
