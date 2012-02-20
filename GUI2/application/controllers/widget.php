@@ -4,11 +4,21 @@ class Widget extends Cf_Controller {
 
     function Widget() {
         parent::__construct();
+        $this->load->model('host_model');
+        if($this->session->userdata('username') == NULL){
+            $this->output->set_status_header('501', 'Session Exipired');
+            echo "Session Expired ! Please relogin";
+            exit;
+        }
     }
 
     function hostfinder($page = 1) {
-        $data = cfpr_show_hosts_name('.*', NULL, 15, $page);
-        $result = sanitycheckjson($data, true);
+        try{
+             $result = $this->host_model->getHostByName($this->session->userdata('username'),'.*',15,$page);
+            }catch(Exception $e){
+            $this->output->set_status_header('500', 'CFMOD EXCEPTION ');      
+         }
+       
         if ($page > 1) {
             echo $this->__format_to_html($result, 'hostname');
             return;    
@@ -47,23 +57,30 @@ class Widget extends Cf_Controller {
     }
 
     function search_by_hostname($hostname=null,$page = 1) {
-        $hostname = $this->input->post('value')?$this->input->post('value'):urldecode($hostname);;
-        $data = "";
-        $data = sanitycheckjson(cfpr_show_hosts_name($hostname, NULL, 15, $page), true);
-         echo $this->__format_to_html($data, 'hostname');
+        $hostname = $this->input->post('value')?$this->input->post('value'):urldecode($hostname);
+         try{
+            $data = $this->host_model->getHostByName($this->session->userdata('username'),$hostname,15,$page);
+            echo $this->__format_to_html($data, 'hostname');
+            }catch(Exception $e){
+            $this->output->set_status_header('500', 'CFMOD EXCEPTION ');      
+         }
     }
     
     function sort_alphabetically_hostname($hostname=null,$page = 1) {
         $hostname = $this->input->post('value')?$this->input->post('value'):urldecode($hostname);
         $data = "";
         $searchhost='^['.$hostname.'|'.strtolower($hostname).']';
-        $data = sanitycheckjson(cfpr_show_hosts_name($searchhost, NULL, 15, $page), true);
-        echo $this->__format_to_html($data, 'hostname');
+         try{
+            $data = $this->host_model->getHostByName($this->session->userdata('username'),$searchhost,15,$page);
+            echo $this->__format_to_html($data, 'hostname');
+            }catch(Exception $e){
+            $this->output->set_status_header('500', 'CFMOD EXCEPTION ');      
+         }
     }
 
     function __format_to_html($result, $display) {
         $html = "";
-        if (key_exists('data', $result) && count($result['data']) > 0) {
+        if (is_array($result) && key_exists('data', $result) && count($result['data']) > 0) {
             $result = array_msort($result['data'], array('0' => SORT_ASC), true);
            // $html.="<ul class=\"result\">";
             foreach ($result as $row) {
@@ -86,15 +103,13 @@ class Widget extends Cf_Controller {
     }
 
     function search_by_ipaddress($ipregx=null,$page=1) {
-        $ipaddress = $this->input->post('value')?$this->input->post('value'):$ipregx;
-        $data = "";
-        if ($ipaddress) {
-            $data = sanitycheckjson(cfpr_show_hosts_ip($ipaddress, NULL, 15, $page), true);
-        } else {
-            $data = sanitycheckjson(cfpr_show_hosts_ip(NULL, NULL, 15, $page), true);
-        }
-            echo $this->__format_to_html($data, 'ipaddress');
-            
+        $ipaddress = $this->input->post('value')?$this->input->post('value'):urldecode($ipregx);
+         try{
+            $data=$this->host_model->getHostByIP($this->session->userdata('username'),$ipaddress,15,$page);
+            echo $this->__format_to_html($data, 'ipaddress'); 
+            }catch(Exception $e){
+            $this->output->set_status_header('500', 'CFMOD EXCEPTION ');      
+         }      
     }
 
     function cfclasses() {

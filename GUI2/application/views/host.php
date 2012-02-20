@@ -1,12 +1,12 @@
 <?php
-$last = cfpr_getlastupdate($hostkey);
-$class = cfpr_get_variable($hostkey, "sys", "ostype");
-$flavour = cfpr_get_variable($hostkey, "sys", "flavour");
-$rel = cfpr_get_variable($hostkey, "sys", "release");
-$load = cfpr_get_variable($hostkey, "mon", "av_loadavg");
-$free = cfpr_get_variable($hostkey, "mon", "av_diskfree");
-$speed = cfpr_network_speed($this->session->userdata('username'), $hostkey);
-$colour = cfpr_get_host_colour($hostkey);
+$last = $this->host_model->getLastUpdate($this->session->userdata('username'),$hostkey);
+$class = $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "sys", "ostype");
+$flavour = $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "sys", "flavour");
+$rel = $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "sys", "release");
+$load = $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "mon", "av_loadavg");
+$free = $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "mon", "av_diskfree");
+$speed = $this->host_model->getNetWorkSpeed($this->session->userdata('username'), $hostkey);
+$colour = $this->host_model->getHostColor($this->session->userdata('username'),$hostkey);
 ?>
 <div id="hostview">
     <div class="outerdiv">

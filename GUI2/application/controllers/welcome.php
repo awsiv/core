@@ -7,6 +7,7 @@ class Welcome extends Cf_Controller {
         parse_str($_SERVER['QUERY_STRING'], $_GET);
         $this->load->helper('form');
         $this->load->library('table', 'cf_table');
+        $this->load->model('host_model');
     }
 
     function index() {
@@ -421,19 +422,23 @@ class Welcome extends Cf_Controller {
             $rows = 20;
         }
         $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
-        switch ($type) {
-            case "red":
-                $result = json_decode(cfpr_show_red_hosts($rows, $page_number), true);
-                break;
-            case "green":
-                $result = json_decode(cfpr_show_green_hosts($rows, $page_number), true);
-                break;
-            case "yellow":
-                $result = json_decode(cfpr_show_yellow_hosts($rows, $page_number), true);
-                break;
-            case "blue":
-                $result = json_decode(cfpr_show_blue_hosts($rows, $page_number), true);
-                break;
+        try{
+            switch ($type) {
+                case "red":
+                    $result = $this->host_model->getRedHost($this->session->userdata('username'),$rows, $page_number);
+                    break;
+                case "green":
+                    $result = $this->host_model->getGreenHost($this->session->userdata('username'),$rows, $page_number);
+                    break;
+                case "yellow":
+                    $result = $this->host_model->getYellowHost($this->session->userdata('username'),$rows, $page_number);
+                    break;
+                case "blue":
+                    $result = $this->host_model->getBlueHost($this->session->userdata('username'),$rows, $page_number);
+                    break;
+            }
+        }catch(Exception $e){
+           $this->show_error($e->getMessage(),500);
         }
 
         $table = "";
@@ -508,8 +513,8 @@ class Welcome extends Cf_Controller {
             $hostkey = isset($_POST['hostkey']) ? $_POST['hostkey'] : "none";
         }
         $reports = json_decode(cfpr_select_reports(null));
-        $hostname = cfpr_hostname($hostkey);
-        $ipaddr = cfpr_ipaddr($hostkey);
+        $hostname = $this->host_model->getHostName($this->session->userdata('username'),$hostkey);
+        $ipaddr = $this->host_model->getHostIp($this->session->userdata('username'),$hostkey);;
         $username = isset($_POST['username']) ? $_POST['username'] : "";
         $comment_text = isset($_POST['comment_text']) ? $_POST['comment_text'] : "";
         $is_commented = trim(cfpr_get_host_noteid($hostkey));
