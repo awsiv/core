@@ -11,5 +11,5 @@ $resultsPerPage = 100;
 $pageNum = 1;
 
 $res = cfpr_report_repaired($userName, $hostKey, $handle, $from, $to, $classRx, $sortCol, $sortDescending, $resultsPerPage, $pageNum);
-
+fwrite(STDERR, $res);
 ?>
