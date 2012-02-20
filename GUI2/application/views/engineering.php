@@ -44,7 +44,7 @@
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostInfo.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>jScrollPane.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>jquery.mousewheel.js"></script>
-
+<script type="text/javascript" src="<?php echo get_scriptdir()?>jquery.contextMenu.js"></script>
 
 <script type="text/javascript">
     $(document).ready(function(){
