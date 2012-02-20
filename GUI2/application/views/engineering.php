@@ -14,7 +14,7 @@
                 <div style="padding: 15px">
                     <p class="subTitle"><?php echo $this->lang->line('header_promise_compliance'); ?></p>
                     <div class="graphcontainer">
-                        <div id="hostMeter" style="height:120px;"></div>
+                        <div id="hostsMeter" style="height:120px;"></div>
                     </div>
                 </div>
 
@@ -40,7 +40,7 @@
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/combobox.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/searchEntry.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostsCompliance.js"></script>
-<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostmeter.js"></script>
+<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostsMeter.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostinfo.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>jScrollPane.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>jquery.mousewheel.js"></script>
@@ -69,7 +69,7 @@
             'width':'50%'});
 
         $.getJSON(genericOption.baseUrl + '/astrolabe/meters/', function(json) {
-            $('#hostMeter').hostMeter({
+            $('#hostsMeter').hostsMeter({
                 baseUrl: '<?php echo site_url() ?>',
                 data: {
                     color: ['#779a62','#f0d76a','#cc4358'],
@@ -77,7 +77,7 @@
                     'values': json.values
                 }
             });
-            $('#hostMeter').hostMeter("initialize");
+            $('#hostsMeter').hostsMeter("initialize");
         });
         
         $('#hostsCompliance').hostsCompliance();
@@ -86,7 +86,7 @@
 
         $('#astrolabe').astrolabe({
             hostSelected: function(event, args) {
-                $('#hostMeter').hostMeter('updateHostKey', args.hostKey);
+                $('#hostsMeter').hostsMeter('updateHostKey', args.hostKey);
 
                 $('#hostInfo').hostInfo('updateHostKey', args.hostKey);
                 $('#hostInfoContainer').show();
