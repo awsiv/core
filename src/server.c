@@ -45,14 +45,16 @@ NewScalar("remote_access",handle,pp->promiser,cf_str);
 char CfEnterpriseOptions()
 
 {
-if (LICENSES)
+return 'N'; /* If we are using the commercial compilation, use the FIPS option consistently */
+
+/*if (LICENSES) Changing based on license availability is too dangerous
    {
    return 'N';
    }
 else
    {
    return 'c';
-   }
+   }*/
 }
 
 /*****************************************************************************/
@@ -60,10 +62,13 @@ else
 int CfSessionKeySize(char c)
 
 {
+/* Too dangerous in production
+   
 if (LICENSES == 0)
    {
    return CF_BLOWFISHSIZE;
    }
+*/
  
 switch (c)
    {
@@ -88,12 +93,15 @@ switch (c)
 const EVP_CIPHER *CfengineCipher(char type)
 
 {
-if (LICENSES <= 0)
+/* Too dangerous in production
+   
+  if (LICENSES <= 0)
    {
    CfOut(cf_verbose,""," -> License problem, reverting to community edition behaviour");
    return EVP_bf_cbc();
    }
-
+*/
+ 
 switch(type)
    {
    case 'N':

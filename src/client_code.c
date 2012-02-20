@@ -12,11 +12,10 @@
 
 #ifdef HAVE_LIBMONGOC
 static bool ReportBookHasData(Item **reports);
-
 static void Nova_RecordNetwork(mongo_connection *dbconnp, time_t now, double datarate,AgentConnection *conn);
 #endif
 
-
+/*****************************************************************************/
 
 char *CF_CODEBOOK[CF_CODEBOOK_SIZE] =
    {
