@@ -11,6 +11,16 @@ if (!defined('BASEPATH'))
 
 function initializeHub() {
     
+    $mongoPort = getenv('CFENGINE_TEST_OVERRIDE_MONGO_PORT');
+    if ($mongoPort !== false)
+    {
+        define('MONGO_PORT', $mongoPort);
+    }
+    else
+    {
+        define('MONGO_PORT', 27017);
+    }
+    
     $ishubmaster = cfpr_get_hub_master();
      $CI = &get_instance();
     if (!trim($ishubmaster)) {

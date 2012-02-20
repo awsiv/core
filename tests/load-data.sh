@@ -1,6 +1,8 @@
 #!/bin/sh -e
 
-if [ -z $1 ]
+DATADIR=$1
+
+if [ -z $DATADIR ]
 then
     echo "Usage: load-data.sh <data-directory>"
     exit 1;
@@ -10,13 +12,23 @@ PORT=27777
 
 echo "Importing data from $1"
 
-mongoimport --port ${PORT} -d phpcfengine -c users --drop --file $1/phpcfengine.users.json --jsonArray
-mongoimport --port ${PORT} -d phpcfengine -c roles --drop --file $1/phpcfengine.roles.json --jsonArray
+load_data() {
+    local DB=$1;
+    local COLL=$2;
+    local FILE=${DATADIR}/${DB}.${COLL}.json;
+    echo "Importing ${FILE}";
+    if [ -f ${FILE} ] 
+    then
+	mongoimport --port ${PORT} -d phpcfengine -c $COLL --drop --file ${FILE} --jsonArray;
+    fi
+}
 
-mongoimport --port ${PORT} -d cfreport -c hosts --drop --file $1/cfreport.hosts.json --jsonArray
-mongoimport --port ${PORT} -d cfreport -c logs_rep --drop --file $1/cfreport.logs_rep.json --jsonArray
-mongoimport --port ${PORT} -d cfreport -c logs_nk --drop --file $1/cfreport.logs_nk.json --jsonArray
+load_data phpcfengine users;
+load_data phpcfengine roles;
+load_data phpcfengine appsettings;
 
-
+load_data cfreport hosts;
+load_data cfreport logs_rep;
+load_data cfreport logs_nk;
 
 echo "Importing data complete"
