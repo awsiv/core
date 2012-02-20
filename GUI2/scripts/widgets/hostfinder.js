@@ -481,11 +481,11 @@
                     data:postdata,
                     dataType:"html",
                     success: function(data) {
-                        //self.updatesearchresult(data);
+                       var ul= self.resultPane();
                         if(data==""){
-                           self.cfui.resultpane.find('ul').html("<li>No host found</li>");
+                          ul.html("<li>No host found</li>");
                         }else{
-                           self.cfui.resultpane.find('ul').html(data); 
+                           ul.html(data); 
                         }
                         self.revertTitle();
                     }
@@ -508,6 +508,16 @@
             self.temp.scrollTop(0);
         },
         
+        resultPane:function(){
+            var self=this;
+            var existing=self.cfui.resultpane.find('ul')
+            if(existing.size()>0){
+             return existing.first()               
+            }else{
+                self.cfui.resultpane.html('<ul class="result"></ul>')
+                return self.cfui.resultpane.find('ul');
+            }
+        },
         displayFailure: function(x,e) {	
                var serverMsg,	
                    self=this;	
@@ -522,9 +532,9 @@
 			}else if(e=='timeout'){	
 			serverMsg='Request Time out.';	
 			}else {	
-			serverMsg='Unknow Error.\n'+x.responseText;	
+			serverMsg=x.responseText;	
 			}
-                self.temp.html("<div class='ui-state-error' style='padding: 1em;width:90%'><p><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span>Sorry, a software error has occured.</p><p>" + x.status + " "  + serverMsg+"</p></div>");	
+                self.cfui.resultpane.html("<div class='ui-state-error' style='padding: 1em;width:90%'><p><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span>Sorry, a software error has occured.</p><p>" + x.status + " "  + serverMsg+"</p></div>");	
                 self.element.text(self.elementtext);
                 self.revertTitle();                
         },
