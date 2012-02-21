@@ -21,7 +21,9 @@ static JsonElement *ParseRolesToJson(HubQuery *hq);
 /******************************************************************************/
 static const char *LABEL_HOSTKEY = "hostkey";
 static const char *LABEL_HOSTNAME = "hostname";
+static const char *LABEL_IP = "ip";
 static const char *LABEL_COLOUR = "colour";
+static const char *LABEL_OS_TYPE = "osType";
 
 
 /******************************************************************************/
@@ -391,6 +393,82 @@ PHP_FUNCTION(cfpr_host_by_hostkey)
  
  RETURN_JSON(hostinfo);
 }
+
+
+PHP_FUNCTION(cfpr_host_info_get)
+{
+char *username = NULL,
+     *hostKey = NULL;
+int username_len = -1,
+    hostKey_len = -1;
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
+                          &username, &username_len,
+                          &hostKey, &hostKey_len) == FAILURE)
+   {
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+   RETURN_NULL();
+   }
+
+ARGUMENT_CHECK_CONTENTS(username_len && hostKey_len);
+
+cfapi_errid erridAccess = CFDB_HasHostAccessFromUserRBAC(username, hostKey);
+
+if(erridAccess != ERRID_SUCCESS)
+   {
+   zend_throw_exception(cfmod_exception_rbac, (char *)GetErrorDescription(erridAccess), 0 TSRMLS_CC);
+   RETURN_NULL();
+   }
+
+mongo_connection conn;
+DATABASE_OPEN(&conn);
+
+HubQuery *result = CFDB_QueryVariables(&conn, hostKey, NULL, NULL, NULL, NULL, false, NULL);
+
+DATABASE_CLOSE(&conn);
+
+if (result->hosts && result->hosts->item)
+   {
+   JsonElement *infoObject = JsonObjectCreate(10);
+
+   HubHost *hh = (HubHost *)result->hosts->item;
+   if (hh->keyhash)
+      {
+      JsonObjectAppendString(infoObject, LABEL_HOSTKEY, hh->keyhash);
+      }
+   if (hh->hostname)
+      {
+      JsonObjectAppendString(infoObject, LABEL_HOSTNAME, hh->hostname);
+      }
+   if (hh->ipaddr)
+      {
+      JsonObjectAppendString(infoObject, LABEL_IP, hh->ipaddr);
+      }
+
+   for (Rlist *rp = result->records; rp; rp = rp->next)
+      {
+      HubVariable *var = (HubVariable *)rp->item;
+      if (var && strcmp(var->scope, "sys") == 0)
+         {
+         if (strcmp(var->lval, "ostype") == 0)
+            {
+            if (var->rval.item)
+               {
+               JsonObjectAppendString(infoObject, LABEL_OS_TYPE, ScalarRvalValue(var->rval));
+               }
+            }
+         }
+      }
+   DeleteHubQuery(result, DeleteHubVariable);
+   RETURN_JSON(infoObject);
+   }
+else
+   {
+   DeleteHubQuery(result, DeleteHubVariable);
+   RETURN_NULL();
+   }
+}
+
 
 /******************************************************************************/
 

@@ -793,6 +793,9 @@ PHP_FUNCTION(cfpr_host_compliance_count_yellow);
  */
 PHP_FUNCTION(cfpr_host_compliance_count_red);
 
+/*! \brief /host/info
+ */
+PHP_FUNCTION(cfpr_host_info_get);
 
 /*! \brief A summary document of a promise
  * \param promiseHandle
