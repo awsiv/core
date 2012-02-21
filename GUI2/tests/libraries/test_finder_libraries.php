@@ -116,17 +116,7 @@ class test_finder_libraries extends CodeIgniterUnitTestCase {
         $this->assertTrue(!empty($array), "Is  Empty " . count($array) . "items");
     }
     
-    public function test_cfpr_list_all_classes() {
-        $data = cfpr_list_all_classes(NULL, NULL, NULL, NULL);
-        ;
-        $array = json_decode(utf8_encode($data), true);
-        $retValue = json_last_error();
-        $this->assertTrue(is_array($array), "Should Return a valid array");
-        //   $this->dump($gdata);
-        $this->assertFalse($retValue, "This should return 0 in case of no error, returned value is $retValue");
-        $this->assertTrue(!empty($array), "Is  Empty " . count($array) . "items");
-    }
-
+   
     public function test_cfpr_class_cloud() {
         //should return zero when used with windows and linux
         $data = cfpr_class_cloud("linux");

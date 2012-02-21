@@ -568,18 +568,19 @@ class Welcome extends Cf_Controller {
         );
         $this->breadcrumb->setBreadCrumb($bc);
 
-
-        $gdata = cfpr_host_compliance_list_all($rows, $page_number);
-        $ret = array();
-        if ($gdata) {
-            $ret = json_decode($gdata, TRUE);
+        try{
+        $ret = $this->host_model->getComplianceList($this->session->userdata('username'),$rows,$page_number);
+        if (is_array($ret)) {
             foreach ($ret['data'] as $index => $val) {
                 $rawData = cfpr_host_meter($this->session->userdata('username'),$val['key']);
                 $graphData = $this->_convert_summary_compliance_graph($rawData);
                 $ret['data'][$index] = array_merge($ret['data'][$index], $graphData);
             }
         }
-
+        }catch(Exception $e){
+            $this->show_error('500','Internal server error');
+        }
+      
         $data = array(
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_weakest_host'),
             'ret' => $ret,
@@ -652,7 +653,6 @@ class Welcome extends Cf_Controller {
     }
 
     function classes($key = NULL) {
-        $this->carabiner->js('jquery.tablesorter.min.js');
         $bc = array(
             'title' => $this->lang->line('breadcrumb_classes'),
             'url' => 'welcome/classes/' . $key,
@@ -666,14 +666,18 @@ class Welcome extends Cf_Controller {
         $host = NULL;
         $addr = NULL;
         $tago = 0;
-        $data = array(
+      try{
+           $data = array(
             'title_header' => "classes",
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_classes'),
             'ret' => json_decode(cfpr_report_classes($hostkey, $name, $regex, NULL, "last-seen", true, 1000, 1), true),
             'breadcrumbs' => $this->breadcrumblist->display(),
-            'hostname' => cfpr_hostname($hostkey)
-        );
-        $this->template->load('template', 'classes', $data);
+            'hostname' => $this->host_model->getHostName($this->session->userdata('username'),$hostkey)
+        );  
+            $this->template->load('template', 'classes', $data);
+       }catch(Exception $e){
+           $this->show('500','Internal server Error CFMOD Exception');
+       }  
     }
 
     function cfeditor() {

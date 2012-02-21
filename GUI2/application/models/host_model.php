@@ -1,10 +1,10 @@
 <?php
 
 class host_model extends Cf_Model {
-    
-   function getRedHost($username,$rows=10,$page=1){
-   try {
-            $rawdata = cfpr_host_compliance_list_red($username,$rows,$page);
+
+    function getRedHost($username, $rows=10, $page=1) {
+        try {
+            $rawdata = cfpr_host_compliance_list_red($username, $rows, $page);
             $data = $this->checkData($rawdata);
             if ($data) {
                 return $data;
@@ -16,10 +16,10 @@ class host_model extends Cf_Model {
             throw $e;
         }
     }
-    
-   function getGreenHost($username,$rows=10,$page=1){
-   try {
-            $rawdata = cfpr_host_compliance_list_green($username,$rows,$page);
+
+    function getGreenHost($username, $rows=10, $page=1) {
+        try {
+            $rawdata = cfpr_host_compliance_list_green($username, $rows, $page);
             $data = $this->checkData($rawdata);
             if ($data) {
                 return $data;
@@ -31,10 +31,10 @@ class host_model extends Cf_Model {
             throw $e;
         }
     }
-    
-  function getYellowHost($username,$rows=10,$page=1){
-   try {
-            $rawdata = cfpr_host_compliance_list_yellow($username,$rows,$page);
+
+    function getYellowHost($username, $rows=10, $page=1) {
+        try {
+            $rawdata = cfpr_host_compliance_list_yellow($username, $rows, $page);
             $data = $this->checkData($rawdata);
             if ($data) {
                 return $data;
@@ -46,10 +46,10 @@ class host_model extends Cf_Model {
             throw $e;
         }
     }
-    
-  function getBlueHost($username,$rows=10,$page=1){
-   try {
-            $rawdata = cfpr_host_compliance_list_blue($username,$rows,$page);
+
+    function getBlueHost($username, $rows=10, $page=1) {
+        try {
+            $rawdata = cfpr_host_compliance_list_blue($username, $rows, $page);
             $data = $this->checkData($rawdata);
             if ($data) {
                 return $data;
@@ -61,7 +61,7 @@ class host_model extends Cf_Model {
             throw $e;
         }
     }
-    
+
     /**
      *
      * @param type $username
@@ -70,19 +70,19 @@ class host_model extends Cf_Model {
      * @param type $page
      * @return type array data
      */
-    function getHostByIP($username,$ipregx,$rows=15,$page=1){
+    function getHostByIP($username, $ipregx, $rows=15, $page=1) {
         try {
             $rawdata = cfpr_host_list_by_ip_rx(NULL, $ipregx, $rows, $page);
-            $data = sanitycheckjson($rawdata,true);
+            $data = sanitycheckjson($rawdata, true);
             if (is_array($data)) {
-                return $data ;
+                return $data;
             } else {
                 return false;
             }
         } catch (Exception $e) {
-            log_message('error', $e->getMessage()." CFMOD EXCEPTION -->".$e->getFile()." line:">$e->getLine());
+            log_message('error', $e->getMessage() . " CFMOD EXCEPTION -->" . $e->getFile() . " line:" > $e->getLine());
             throw $e;
-        }   
+        }
     }
     
     
