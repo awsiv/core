@@ -725,8 +725,6 @@ styles for status page may be mergerd in the future
     margin-bottom:10px;
     margin-left: 0.5%;
     margin-right: 0.5%;
-
-    padding: 15px;
 }
 
 .grid_9.outerdiv{
@@ -746,6 +744,9 @@ styles for status page may be mergerd in the future
     -webkit-border-radius:5px;
     background: #fff;
     color:#4d4d4d;
+    margin:15px;
+    padding:0.3em;
+
 }
 
 .innerdiv ul li{
