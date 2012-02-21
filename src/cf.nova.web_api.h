@@ -234,7 +234,7 @@ struct EnvironmentsList_
    EnvironmentsList *next;
    };
 
-bool Nova2PHP_environments_list(EnvironmentsList **out);
+bool Nova2PHP_environment_list(EnvironmentsList **out, HostClassFilter *hostClassFilter);
 
 typedef struct HostsList_ HostsList;
 

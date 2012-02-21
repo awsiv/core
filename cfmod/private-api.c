@@ -4193,7 +4193,7 @@ PHP_FUNCTION(cfpr_environment_list)
     RETURN_NULL();
     }
 
- if (!Nova2PHP_environments_list(&el))
+ if (!Nova2PHP_environment_list(&el, NULL))
     {
     zend_throw_exception(cfmod_exception_generic, "Unable to query list of environments", 0 TSRMLS_CC);     
     RETURN_NULL();

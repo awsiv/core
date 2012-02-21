@@ -992,7 +992,7 @@ if (!CFDB_Open(&dbconn))
    }
 
 
-if (!Nova2PHP_environments_list(&env))
+if (!Nova2PHP_environment_list(&env, NULL))
    {
    CfOut(cf_error, "", "!! Unable to query list of environments");
    CFDB_Close(&dbconn);

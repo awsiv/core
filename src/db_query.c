@@ -6079,7 +6079,6 @@ Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collectio
  if (!mongo_run_command(conn, database, &cmd, &result))
     {
     MongoCheckForError(conn,"CFDB_QueryDistinct()", "", NULL);
-    bson_buffer_destroy(&bb);
     bson_destroy(&cmd);
     return false;
     }

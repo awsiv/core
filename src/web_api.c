@@ -4583,14 +4583,10 @@ return true;
 /* Multiple policy environments                                              */
 /*****************************************************************************/
 
-bool Nova2PHP_environments_list(EnvironmentsList **out)
-
-{ mongo_connection dbconn;
-  bson_buffer bb;
-  bson cmd;
-  bson result;
-  bson_iterator i;
-  bson_iterator values;
+bool Nova2PHP_environment_list(EnvironmentsList **out, HostClassFilter *hostClassFilter)
+{
+ mongo_connection dbconn;
+ bson_buffer bb;
 
 *out = NULL;
 
@@ -4599,51 +4595,27 @@ if (!CFDB_Open(&dbconn))
    return false;
    }
 
-/* { distinct: 'hosts', key: 'env' } */
+bson query;
 bson_buffer_init(&bb);
-bson_append_string(&bb, "distinct", "hosts");
-bson_append_string(&bb, "key", cfr_environment);
-bson_from_buffer(&cmd, &bb);
+BsonAppendHostClassFilter(&bb, hostClassFilter);
+bson_from_buffer(&query, &bb);
 
-if (!mongo_run_command(&dbconn, MONGO_BASE, &cmd, &result))
-   {
-   MongoCheckForError(&dbconn,"Nova2PHP_environments_list", "", NULL);
-   bson_buffer_destroy(&bb);
-   bson_destroy(&cmd);
-   CFDB_Close(&dbconn);
-   return false;
-   }
+Item *item_envs = CFDB_QueryDistinct(&dbconn, MONGO_BASE, MONGO_HOSTS_COLLECTION, cfr_environment, &query);
 
-bson_destroy(&cmd);
+bson_destroy(&query);
 
-if (!bson_find(&i, &result, "values"))
-   {
-   CfOut(cf_verbose, "", " Malformed query result in Nova2PHP_environments_list");
-   bson_destroy(&result);
-   CFDB_Close(&dbconn);
-   return false;
-   }
+CFDB_Close(&dbconn);
 
-if (bson_iterator_type(&i) != bson_array)
-   {
-   CfOut(cf_verbose, "", " Malformed query result in Nova2PHP_environments_list");
-   bson_destroy(&result);
-   CFDB_Close(&dbconn);
-   return false;
-   }
-
-bson_iterator_subiterator(&i, &values);
-
-while (bson_iterator_next(&values))
+for(Item *ip = item_envs; ip != NULL; ip = ip->next)
    {
    EnvironmentsList *node = xmalloc(sizeof(EnvironmentsList));
    node->next = *out;
-   node->name = xstrdup(bson_iterator_string(&values));
+   node->name = xstrdup(ip->name);
    *out = node;
    }
 
-bson_destroy(&result);
-CFDB_Close(&dbconn);
+DeleteItemList(item_envs);
+
 return true;
 }
 
