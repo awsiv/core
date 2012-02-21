@@ -4214,20 +4214,32 @@ PHP_FUNCTION(cfpr_environment_list)
 PHP_FUNCTION(cfpr_host_list_by_environment)
 {
  HostsList *hl, *i;
- char *name;
- int name_len;
+ char *userName, *envName;
+ int user_len, env_len;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &name_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
+                           &userName, &user_len,
+                           &envName, &env_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
- if (!Nova2PHP_host_list_by_environment(&hl, name, NULL))
+ ARGUMENT_CHECK_CONTENTS(user_len && env_len);
+
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+ ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+
+ if (!Nova2PHP_host_list_by_environment(&hl, envName, filter))
     {
-    zend_throw_exception(cfmod_exception_generic, "Unable to query environment", 0 TSRMLS_CC);     
+    zend_throw_exception(cfmod_exception_generic, "Unable to query environment", 0 TSRMLS_CC);
+    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
     RETURN_NULL();
     }
+
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
  array_init(return_value);
 
