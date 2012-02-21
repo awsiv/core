@@ -35,8 +35,8 @@
 
             <div id="centeredDiv">
                 <div class="grid_10">
-                    <a href="/" title="Go to home page."><img src="/themes/default/images/error_cf.png" /></a> 
-                    <img src="/themes/default/images/error_agent.png" alt="error" style="float: right;" />
+                    <a href="/" title="Go to home page."><img src="<?php echo base_url()?>/themes/default/images/error_cf.png" /></a> 
+                    <img src="<?php echo base_url()?>/themes/default/images/error_agent.png" alt="error" style="float: right;" />
                     <div style="color:#4d466b;font-size: 14px;font-weight: bold;" class="message">
                         <p class="heading"><?php echo $heading; ?></p>
                         <p class="sub-message"><?php echo $message; ?></p>                       
