@@ -973,28 +973,21 @@ PHP_FUNCTION(cfpr_class_list_time)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_list_host_classes)
-
-//$ret = cfpr_report_classes($hostkey,$name,$regex);
-
-{ char *hostkey,*name,*classreg;
- char *fname,*fhostkey,*fclassreg;
- int hk_len, n_len,cr_len;
- long regex;
+PHP_FUNCTION(cfpr_class_list_hostname)
+{
+ char *userName;
+ int user_len;
  char buffer[CF_WEBBUFFER];
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssbs",&hostkey,&hk_len,&name,&n_len,&regex,&classreg,&cr_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",
+                           &userName, &user_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
- fhostkey =  (hk_len == 0) ? NULL : hostkey;
- fname =  (n_len == 0) ? NULL : name;
- fclassreg =  (cr_len == 0) ? NULL : classreg;
-
  buffer[0]='\0';
- Nova2PHP_listclasses_host(fhostkey,fname,regex,fclassreg,buffer,sizeof(buffer));
+ Nova2PHP_listclasses_host(NULL, NULL, false, NULL, buffer, sizeof(buffer));
 
  RETURN_STRING(buffer,1);
 }

@@ -442,12 +442,9 @@ PHP_FUNCTION(cfpr_class_list_ip);
 PHP_FUNCTION(cfpr_class_list_all);
 
 /*! \brief A list of host contexts
- * \param hostKey
- * \param name
- * \param useRegularExpressions
- * \param contextExpression
+ * \param userName
  */
-PHP_FUNCTION(cfpr_list_host_classes);
+PHP_FUNCTION(cfpr_class_list_hostname);
 
 /*! \brief Query for hosts using some software
  * \param hostKey
