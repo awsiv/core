@@ -1,7 +1,7 @@
 (function($) {
     $.widget('ui.hostInfo', {
         options: {
-            baseUrl: '../',
+            baseUrl: '/astrolabe',
             defaultbehaviour: true
         },
 
