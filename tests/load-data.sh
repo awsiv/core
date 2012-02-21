@@ -17,7 +17,7 @@ load_data() {
     FILE=${DATADIR}/${DB}.${COLL}.json
     if [ -f ${FILE} ]; then
         echo "Importing ${FILE}"
-        mongoimport --port ${PORT} -d phpcfengine -c $COLL --drop --file ${FILE} --jsonArray
+        mongoimport --port ${PORT} -d ${DB} -c ${COLL} --drop --file ${FILE} --jsonArray
     fi
 }
 
