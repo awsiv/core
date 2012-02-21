@@ -5,9 +5,9 @@ class Widget extends Cf_Controller {
     function Widget() {
         parent::__construct();
         $this->load->model('host_model');
-        if($this->session->userdata('username') == NULL){
-            $this->output->set_status_header('501', 'Session Exipired');
-            echo "Session Expired ! Please relogin";
+        if (!$this->ion_auth->logged_in()) {
+            $this->output->set_status_header('401', 'Not Authenticated');
+            echo $this->lang->line('session_expired');
             exit;
         }
     }
