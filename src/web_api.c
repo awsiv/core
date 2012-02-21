@@ -4679,6 +4679,8 @@ cursor = mongo_find(&dbconn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLA
 bson_destroy(&query);
 bson_destroy(&fields);
 
+CFDB_Close(&dbconn);
+
 while (mongo_cursor_next(cursor))
    {
    bson_iterator i;
@@ -4687,7 +4689,6 @@ while (mongo_cursor_next(cursor))
       {
       CfOut(cf_verbose, "", "Malformed query result in Nova2PHP_environment_contents");
       mongo_cursor_destroy(cursor);
-      CFDB_Close(&dbconn);
       return false;
       }
    
