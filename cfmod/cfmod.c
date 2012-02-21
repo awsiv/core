@@ -122,7 +122,7 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_report_filediffs_longterm,NULL)
     
     PHP_FE(cfpr_class_list_all,NULL)
-    PHP_FE(cfpr_list_time_classes,NULL)
+    PHP_FE(cfpr_class_list_time,NULL)
     PHP_FE(cfpr_list_soft_classes,NULL)
     PHP_FE(cfpr_list_ip_classes,NULL)
     PHP_FE(cfpr_list_host_classes,NULL)
