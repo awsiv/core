@@ -165,6 +165,28 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
 
 </p>
 
+<p>
+    <label for="experimental_on">Enable experimental features</label>
+        <?php
+        echo form_radio(array(
+                'name'        => 'experimental',
+                'id'          => 'experiemntal_on',
+                'value'       => TRUE,
+                'checked'     => $experimental
+            ));
+        ?>
+        <label for="mode" class="">On</label>
+
+        <?php
+        echo form_radio(array(
+                'name'        => 'experimental',
+                'id'          => 'experimental_off',
+                'value'       => FALSE,
+                'checked'     => !$experimental
+            ));
+        ?>
+        <label for="mode" class="">Off</label>
+</p>
 
 <p  id="btnholder">
         <?php echo form_submit( array('name'=>'submit','class'=>'btn','value'=>'Submit')); ?>

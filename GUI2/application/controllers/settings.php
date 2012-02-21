@@ -33,6 +33,7 @@ class Settings extends Cf_Controller {
         $this->form_validation->set_rules('appemail', 'Administrative email', 'xss_clean|trim|required|valid_email');
         $this->form_validation->set_rules('mode', 'Authentication mode', 'xss_clean|trim|required');
         $this->form_validation->set_rules('rbac', 'Role based acccess control', 'xss_clean|trim|required');
+        $this->form_validation->set_rules('experimental', 'Enable experimental features', 'xss_clean|trim');
         $this->form_validation->set_rules('host', 'host', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
         $this->form_validation->set_rules('base_dn', 'base dn', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
         $this->form_validation->set_rules('login_attribute', 'login attribute', 'xss_clean|trim' . $required_if_ldap);
@@ -155,7 +156,8 @@ class Settings extends Cf_Controller {
                 'admin_role' => $this->input->post('admin_role'),
                 'encryption' => set_value('encryption'),
                 'rbac'=>set_value('rbac'),
-                'bluehost_threshold_global' => "$bluehost_threshold_min"
+                'bluehost_threshold_global' => "$bluehost_threshold_min",
+                'experimental' => $this->input->post('experimental') === '1',
             );
 // run insert model to write data to db
             $inserted = '';
