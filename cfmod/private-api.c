@@ -4223,7 +4223,7 @@ PHP_FUNCTION(cfpr_host_list_by_environment)
     RETURN_NULL();
     }
 
- if (!Nova2PHP_environment_contents(name, &hl))
+ if (!Nova2PHP_host_list_by_environment(&hl, name, NULL))
     {
     zend_throw_exception(cfmod_exception_generic, "Unable to query environment", 0 TSRMLS_CC);     
     RETURN_NULL();

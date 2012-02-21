@@ -4649,7 +4649,7 @@ return true;
 
 /*****************************************************************************/
 
-bool Nova2PHP_environment_contents(const char *environment, HostsList **out)
+bool Nova2PHP_host_list_by_environment(HostsList **out, const char *environment, HostClassFilter *hostClassFilter)
 
 { mongo_connection dbconn;
   mongo_cursor *cursor;
@@ -4663,20 +4663,10 @@ if (!CFDB_Open(&dbconn))
    return false;
    }
 
-if (environment)
-   {
-   /* { env: $environment } */
-   bson_buffer_init(&bb);
-   bson_append_string(&bb, cfr_environment, environment);
-   }
-else
-   {
-   /* { env: { $exists: 0 } } */
-   bson_buffer_init(&bb);
-   bson_append_start_object(&bb, cfr_environment);
-   bson_append_int(&bb, "$exists", 0);
-   bson_append_finish_object(&bb);
-   }
+/* { env: $environment } */
+bson_buffer_init(&bb);
+BsonAppendHostClassFilter(&bb, hostClassFilter);
+bson_append_string(&bb, cfr_environment, environment);
 bson_from_buffer(&query, &bb);
 
 /* { kH: 1 } */

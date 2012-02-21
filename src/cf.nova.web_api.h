@@ -244,8 +244,7 @@ struct HostsList_
    HostsList *next;
    };
 
-bool Nova2PHP_environment_contents(const char *environment,
-                                   HostsList **out);
+bool Nova2PHP_host_list_by_environment(HostsList **out, const char *environment, HostClassFilter *hostClassFilter);
 
 char *Nova2PHP_get_host_environment(const char *keyhash);
 
