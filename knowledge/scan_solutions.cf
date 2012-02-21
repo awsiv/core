@@ -6,18 +6,18 @@ topics:
 
 "cf3-solutions";
 Special_Topics_Guide::
-    "CFEngine 3 Solution Examples"  association => a("discusses","CFEngine 3 Solution Examples","is discussed in");
+    "CFEngine-Solutions"  association => a("discusses","CFEngine Solutions","is discussed in");
 
 
 occurrences:
 
 manuals::
  "/docs/cf3-solutions.html"
-  represents => { "CFEngine 3 Solution Examples" };
-CFEngine_3_Solution_Examples::
+  represents => { "CFEngine Solutions" };
+CFEngine_Solutions::
  "/docs/cf3-solutions.html"
   represents => { "special topics guide" };
-CFEngine_3_Solution_Examples::
+CFEngine_Solutions::
  "/docs/cf3-solutions.html#Top"
   represents => { "Text section" };
 Introduction::
@@ -317,9 +317,6 @@ Search_and_replace_text::
 Selecting_a_region_in_a_file::
  "/docs/cf3-solutions.html#Selecting-a-region-in-a-file"
   represents => { "manual section Selecting a region in a file" };
-Service_management::
- "/docs/cf3-solutions.html#Service-management-_0028linux_0029"
-  represents => { "manual section Service management" };
 Service_management::
  "/docs/cf3-solutions.html#Service-management-_0028windows_0029"
   represents => { "manual section Service management" };
