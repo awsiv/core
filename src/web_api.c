@@ -1495,44 +1495,6 @@ int Nova2PHP_listclasses_host(char *hostkey,char *name,int regex,char *classreg,
   CFDB_Close(&dbconn);
   return true;
 }
-/*****************************************************************************/
-int Nova2PHP_listclasses_all(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize)
-
-{ char buffer[CF_BUFSIZE]={0};
-  Rlist *rp, *rp2;
-  mongo_connection dbconn;
-  /* BEGIN query document */
-
-  if (!CFDB_Open(&dbconn))
-    {
-      return false;
-    }
-  
-  rp = CFDB_QueryAllClasses(&dbconn,hostkey,name,regex,(time_t)SECONDS_PER_WEEK,classreg,true);
-  
-  StartJoin(returnval,"[",bufsize);
-  
-  for (rp2 = rp; rp2 != NULL; rp2=rp2->next)
-    {
-      snprintf(buffer,sizeof(buffer),"\"%s\",",(char*)rp2->item);
-
-      if(!Join(returnval,buffer,bufsize))
-        {
-          break;
-        }
-    }
-
-  if (returnval[strlen(returnval)-1]==',')
-    {
-      returnval[strlen(returnval)-1]='\0';
-    }
-  EndJoin(returnval,"]\n",bufsize);
-
-  DeleteRlist(rp);
-  CFDB_Close(&dbconn);
-
-  return true;
-}
 
 /*****************************************************************************/
 

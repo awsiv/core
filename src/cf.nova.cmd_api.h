@@ -30,13 +30,6 @@ bool Nova2Txt_vitals_analyse_histogram(char *hostkey, char *vitalId, char *buffe
 int Nova2Txt_list_all_goals(char *buffer,int bufsize);
 void Nova2Txt_getlicense(char *buffer,int bufsize);
 
-// class finder
-int Nova2Txt_listclasses_time(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize);
-int Nova2Txt_listclasses_soft(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize);
-int Nova2Txt_listclasses_ip(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize);
-int Nova2Txt_listclasses_all(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize);
-int Nova2Txt_listclasses_host(char *hostkey,char *name,int regex,char *classreg,char *returnval,int bufsize);
-
 void Nova2Txt_get_knowledge_view(int pid,char *view,char *buffer,int bufsize);
 char *Nova_FormatDiff(char *s);
 void Nova2Txt_GetPromiseBody(char *name,char *type,char *returnval,int bufsize);
