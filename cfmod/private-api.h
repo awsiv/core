@@ -446,12 +446,9 @@ PHP_FUNCTION(cfpr_list_soft_classes);
 PHP_FUNCTION(cfpr_list_ip_classes);
 
 /*! \brief A list of all contexts at a host
- * \param hostKey
- * \param name
- * \param useRegularExpressions
- * \param contextExpression
+ * \param userName
  */
-PHP_FUNCTION(cfpr_list_all_classes);
+PHP_FUNCTION(cfpr_class_list_all);
 
 /*! \brief A list of host contexts
  * \param hostKey
