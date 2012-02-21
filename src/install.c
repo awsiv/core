@@ -1127,6 +1127,20 @@ void HostClassFilterAddClasses(HostClassFilter *filter, const char *classRxInclu
     }
 }
 
+void HostClassFilterAddClassLists(HostClassFilter *filter, const Rlist *classRxIncludes, const Rlist *classRxExcludes)
+{
+for (const Rlist *rp = classRxIncludes; rp; rp = rp->next)
+   {
+   HostClassFilterAddClasses(filter, ScalarValue(rp), NULL);
+   }
+
+for (const Rlist *rp = classRxExcludes; rp; rp = rp->next)
+   {
+   HostClassFilterAddClasses(filter, NULL, ScalarValue(rp));
+   }
+}
+
+
 /*****************************************************************************/
 
 void DeleteHostClassFilter(HostClassFilter *filter)

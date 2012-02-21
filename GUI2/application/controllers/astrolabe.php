@@ -26,7 +26,7 @@ class Astrolabe extends Cf_REST_Controller {
             $excludes = explode(',', urldecode($params['excludes']));
         }
 
-        echo cfpr_astrolabe_host_list($includes, $excludes);
+        echo cfpr_astrolabe_host_list($this->username, $includes, $excludes);
     }
     
     
@@ -45,7 +45,7 @@ class Astrolabe extends Cf_REST_Controller {
             $colour = $params['colour'];
         }
 
-        echo cfpr_astrolabe_host_count($colour, $includes, array());
+        echo cfpr_astrolabe_host_count($this->username, $colour, $includes, array());
     }
     
     function profile_get($id = NULL) {

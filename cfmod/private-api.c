@@ -4734,9 +4734,12 @@ return rp;
 
 PHP_FUNCTION(cfpr_astrolabe_host_list)
 {
+char *username = NULL;
 zval *context_includes_param, *context_excludes_param;
+int len = -1;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "aa",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "saa",
+                          &username, &len,
                           &context_includes_param,
                           &context_excludes_param) == FAILURE)
    {
@@ -4744,15 +4747,31 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "aa",
    RETURN_NULL();
    }
 
-HostClassFilter *classFilter = NewHostClassFilterLists(PHPStringArrayToRlist(context_includes_param, true),
-                                                       PHPStringArrayToRlist(context_excludes_param, true));
+HubQuery *result = NULL;
+   {
+   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
+   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-mongo_connection conn;
-DATABASE_OPEN(&conn);
+   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+      {
+      Rlist *includes = PHPStringArrayToRlist(context_includes_param, true);
+      Rlist *excludes = PHPStringArrayToRlist(context_excludes_param, true);
 
-HubQuery *result = CFDB_QueryClasses(&conn, NULL, NULL, 1, (time_t)SECONDS_PER_WEEK, classFilter, false);
+      HostClassFilterAddClassLists(filter, includes, excludes);
 
-DATABASE_CLOSE(&conn);
+      DeleteRlist(includes);
+      DeleteRlist(excludes);
+      }
+
+   mongo_connection conn;
+   DATABASE_OPEN(&conn);
+
+   result = CFDB_QueryClasses(&conn, NULL, NULL, 1, (time_t)SECONDS_PER_WEEK, filter, false);
+
+   DeleteHostClassFilter(filter);
+   DATABASE_CLOSE(&conn);
+   }
+assert(result);
 
 JsonElement *output = JsonArrayCreate(1000);
 for (Rlist *rp = result->hosts; rp; rp = rp->next)
@@ -4770,7 +4789,6 @@ for (Rlist *rp = result->hosts; rp; rp = rp->next)
    JsonArrayAppendObject(output, entry);
    }
 
-DeleteHostClassFilter(classFilter);
 DeleteHubQuery(result, DeleteHubClass);
 
 RETURN_JSON(output)
@@ -4779,11 +4797,13 @@ RETURN_JSON(output)
 
 PHP_FUNCTION(cfpr_astrolabe_host_count)
 {
-char *colour = NULL;
+char *username = NULL,
+     *colour = NULL;
 int len = -1;
 zval *context_includes_param, *context_excludes_param;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "saa",
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssaa",
+                          &username, &len,
                           &colour, &len,
                           &context_includes_param,
                           &context_excludes_param) == FAILURE)
@@ -4792,8 +4812,19 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "saa",
    RETURN_NULL();
    }
 
-HostClassFilter *classFilter = NewHostClassFilterLists(PHPStringArrayToRlist(context_includes_param, true),
-                                                       PHPStringArrayToRlist(context_excludes_param, true));
+HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
+ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+   {
+   Rlist *includes = PHPStringArrayToRlist(context_includes_param, true);
+   Rlist *excludes = PHPStringArrayToRlist(context_excludes_param, true);
+
+   HostClassFilterAddClassLists(filter, includes, excludes);
+
+   DeleteRlist(includes);
+   DeleteRlist(excludes);
+   }
 
 mongo_connection conn;
 DATABASE_OPEN(&conn);
@@ -4801,25 +4832,25 @@ DATABASE_OPEN(&conn);
 int count = -1;
 if (NULL_OR_EMPTY(colour))
    {
-   count = CFDB_CountHosts(&conn, classFilter);
+   count = CFDB_CountHosts(&conn, filter);
    }
 else
    {
    if (strcmp(colour, "green") == 0)
       {
-      count = Nova2PHP_count_green_hosts(classFilter);
+      count = Nova2PHP_count_green_hosts(filter);
       }
    else if (strcmp(colour, "yellow") == 0)
       {
-      count = Nova2PHP_count_yellow_hosts(classFilter);
+      count = Nova2PHP_count_yellow_hosts(filter);
       }
    else if (strcmp(colour, "red") == 0)
       {
-      count = Nova2PHP_count_red_hosts(classFilter);
+      count = Nova2PHP_count_red_hosts(filter);
       }
    else if (strcmp(colour, "blue") == 0)
       {
-      count = Nova2PHP_count_blue_hosts(classFilter);
+      count = Nova2PHP_count_blue_hosts(filter);
       }
    else
       {
@@ -4827,9 +4858,8 @@ else
       }
    }
 
+DeleteHostClassFilter(filter);
 DATABASE_CLOSE(&conn);
-
-DeleteHostClassFilter(classFilter);
 
 RETURN_LONG(count);
 }

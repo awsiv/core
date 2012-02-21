@@ -1022,6 +1022,7 @@ void DeleteHubRole(HubRole *role);
 HostClassFilter *NewHostClassFilter(const char *classRxInclude, const char *classRxExclude);
 HostClassFilter *NewHostClassFilterLists(Rlist *classRxInclude, Rlist *classRxExclude);
 void HostClassFilterAddClasses(HostClassFilter *filter, const char *classRxInclude, const char *classRxExclude);
+void HostClassFilterAddClassLists(HostClassFilter *filter, const Rlist *classRxIncludes, const Rlist *classRxExcludes);
 void DeleteHostClassFilter(HostClassFilter *filter);
 PromiseFilter *NewPromiseFilter(void);
 void PromiseFilterAddPromiseBody(PromiseFilter *filter, const char *handleInclude, const char *promiserInclude);
