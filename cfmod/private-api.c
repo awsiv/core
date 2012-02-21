@@ -4805,7 +4805,7 @@ HubQuery *result = NULL;
    mongo_connection conn;
    DATABASE_OPEN(&conn);
 
-   result = CFDB_QueryClasses(&conn, NULL, NULL, 1, (time_t)SECONDS_PER_WEEK, filter, false);
+   result = CFDB_QueryHostsByAddress(&conn, NULL, NULL, filter);
 
    DeleteHostClassFilter(filter);
    DATABASE_CLOSE(&conn);
