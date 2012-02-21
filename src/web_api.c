@@ -4602,7 +4602,7 @@ if (!CFDB_Open(&dbconn))
 /* { distinct: 'hosts', key: 'env' } */
 bson_buffer_init(&bb);
 bson_append_string(&bb, "distinct", "hosts");
-bson_append_string(&bb, "key", "env");
+bson_append_string(&bb, "key", cfr_environment);
 bson_from_buffer(&cmd, &bb);
 
 if (!mongo_run_command(&dbconn, MONGO_BASE, &cmd, &result))
@@ -4667,13 +4667,13 @@ if (environment)
    {
    /* { env: $environment } */
    bson_buffer_init(&bb);
-   bson_append_string(&bb, "env", environment);
+   bson_append_string(&bb, cfr_environment, environment);
    }
 else
    {
    /* { env: { $exists: 0 } } */
    bson_buffer_init(&bb);
-   bson_append_start_object(&bb, "env");
+   bson_append_start_object(&bb, cfr_environment);
    bson_append_int(&bb, "$exists", 0);
    bson_append_finish_object(&bb);
    }
@@ -4681,7 +4681,7 @@ bson_from_buffer(&query, &bb);
 
 /* { kH: 1 } */
 bson_buffer_init(&bb);
-bson_append_int(&bb, "kH", 1);
+bson_append_int(&bb, cfr_keyhash, 1);
 bson_from_buffer(&fields, &bb);
 
 cursor = mongo_find(&dbconn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
@@ -4693,7 +4693,7 @@ while (mongo_cursor_next(cursor))
    {
    bson_iterator i;
    
-   if (!bson_find(&i, &cursor->current, "kH"))
+   if (!bson_find(&i, &cursor->current, cfr_keyhash))
       {
       CfOut(cf_verbose, "", "Malformed query result in Nova2PHP_environment_contents");
       mongo_cursor_destroy(cursor);
@@ -4730,12 +4730,12 @@ if (!CFDB_Open(&dbconn))
 
 /* { kH: $hostkey } */
 bson_buffer_init(&bb);
-bson_append_string(&bb, "kH", hostkey);
+bson_append_string(&bb, cfr_keyhash, hostkey);
 bson_from_buffer(&query, &bb);
 
 /* { env: 1 } */
 bson_buffer_init(&bb);
-bson_append_int(&bb, "env", 1);
+bson_append_int(&bb, cfr_environment, 1);
 bson_from_buffer(&fields, &bb);
 
 res = mongo_find_one(&dbconn, MONGO_DATABASE, &query, &fields, &result);
@@ -4745,7 +4745,7 @@ bson_destroy(&fields);
 
 if (res)
    {
-   if (bson_find(&i, &result, "env"))
+   if (bson_find(&i, &result, cfr_environment))
       {
       environment = xstrdup(bson_iterator_string(&i));
       }
