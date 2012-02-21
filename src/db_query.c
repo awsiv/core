@@ -6369,9 +6369,18 @@ Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,i
 
 /*****************************************************************************/
 
-Item *CFDB_QueryClassesDistinct(mongo_connection *conn)
+Item *CFDB_QueryClassesDistinct(mongo_connection *conn, HostClassFilter *hostClassFilter)
 {
- Item *classList = CFDB_QueryDistinct(conn, MONGO_BASE, MONGO_HOSTS_COLLECTION, cfr_class_keys, NULL);
+ bson_buffer bb;
+
+ bson query;
+ bson_buffer_init(&bb);
+ BsonAppendHostClassFilter(&bb, hostClassFilter);
+ bson_from_buffer(&query, &bb);
+ 
+ Item *classList = CFDB_QueryDistinct(conn, MONGO_BASE, MONGO_HOSTS_COLLECTION, cfr_class_keys, &query);
+
+ bson_destroy(&query);
 
  return classList;
 }

@@ -1006,11 +1006,17 @@ PHP_FUNCTION(cfpr_class_list_all)
     RETURN_NULL();
     }
 
- mongo_connection conn;
+ ARGUMENT_CHECK_CONTENTS(user_len);
 
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+ ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+ 
+ mongo_connection conn;
  DATABASE_OPEN(&conn);
 
- Item *distinctClasses = CFDB_QueryClassesDistinct(&conn);
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+ Item *distinctClasses = CFDB_QueryClassesDistinct(&conn, filter);
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
  DATABASE_CLOSE(&conn);
 
