@@ -4156,21 +4156,29 @@ PHP_FUNCTION(cfpr_validate_policy)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_delete_host)
-/* Delete the record of a certain host from web-supporting DB  */
-{ char *hostkey;
- int hk_len;
+{
+ char *userName, *hostKey;
+ int user_len, hk_len;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",&hostkey,&hk_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
+                           &userName, &user_len,
+                           &hostKey, &hk_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
- if(hk_len == 0)
+ ARGUMENT_CHECK_CONTENTS(user_len && hk_len);
+
+ cfapi_errid erridAccess = CFDB_HasHostAccessFromUserRBAC(userName, hostKey);
+ 
+ if(erridAccess != ERRID_SUCCESS)
     {
-    return;
+    zend_throw_exception(cfmod_exception_rbac, (char *)GetErrorDescription(erridAccess), 0 TSRMLS_CC);
+    RETURN_NULL();
     }
- Nova2PHP_delete_host(hostkey);
+
+ Nova2PHP_delete_host(hostKey);
 }
 
 /******************************************************************************/
