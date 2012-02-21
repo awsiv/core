@@ -16,7 +16,7 @@
         },
         cfui:{
             categories:"",
-            resultpane:"",
+            resultpane:[],
             searchform:"",
             page:2,
             selectedLetter:null,
@@ -54,20 +54,24 @@
                 async:false,
                 success: function(data) {
                     self.temp.html(data);
-                }
+                },
+                error:function(jqxhr,exception) { self.displayFailure(jqxhr,exception);}
             });
-            
-             self.cfui.categories=self.temp.find('#searchby');
+                    
+                    self.cfui.categories=self.temp.find('#searchby');
                     self.cfui.resultpane=self.temp.find('#searchresult');
                     self.cfui.searchform=self.temp.find('#searchhost');
-                    self.cfui.alphapaging=self.temp.find('#aplhaPaging')
+                    self.cfui.alphapaging=self.temp.find('#aplhaPaging');
                     self.$filter=$('#filters').find('ul');
                     self.temp.dialog({
                         height: self.options.height,
                         width: self.options.width,
                         autoOpen: false,
                         modal: true,
-                        resizable: false
+                        resizable: false,
+                        close: function(event, ui) {
+                            self.destroy();   
+                        }
                     });
              self.originalTitle =   self.temp.dialog( "option", "title" );
              self.element.text(self.elementtext) ;
@@ -534,7 +538,12 @@
 			}else {	
 			serverMsg=x.responseText;	
 			}
-                self.cfui.resultpane.html("<div class='ui-state-error' style='padding: 1em;width:90%'><p><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span>Sorry, a software error has occured.</p><p>" + x.status + " "  + serverMsg+"</p></div>");	
+                
+                if(self.cfui.resultpane.length>0){
+                     self.cfui.resultpane.html("<div class='ui-state-error' style='padding: 1em;width:90%'><p><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span>Sorry, a software error has occured.</p><p>" + x.status + " "  + serverMsg+"</p></div>");	
+                }else{
+                     self.temp.html("<div class='ui-state-error' style='padding: 1em;width:90%'><p><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span>Sorry, a software error has occured.</p><p>" + x.status + " "  + serverMsg+"</p></div>") ;
+                }
                 self.element.text(self.elementtext);
                 self.revertTitle();                
         },
@@ -542,7 +551,10 @@
         destroy: function(){
             // remove this instance from $.ui.mywidget.instances
             var element = this.element;
-            
+            var self = this;
+            self.resetPagination();
+            self.resetSelectedLetter();
+            self.cfui.resultpane=[];
             position = $.inArray(element, $.ui.classfinder.instances);
             // if this instance was found, splice it off
             if(position > -1){
