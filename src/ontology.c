@@ -195,7 +195,7 @@ if (strcmp(pp->agentsubtype,"methods") == 0)
                    {
                    Rlist *allvars = NULL;
                    
-                   ScanRval(pp->bundle,&allvars,&allvars,(Rval) { rp->item, CF_SCALAR },pp);
+                   MapIteratorsFromRval(pp->bundle,&allvars,&allvars,(Rval) { rp->item, CF_SCALAR },pp);
 
                    for (rp2 = allvars; rp2 != NULL; rp2=rp2->next)
                       {
