@@ -25,7 +25,7 @@ class Cf_Controller extends CI_Controller {
         if ($this->session->userdata('lastclasslist')) {
             $this->session->unset_userdata('lastclasslist');
         };
-        if (!$this->ion_auth->logged_in()) {
+        if (!$this->ion_auth->logged_in() && !is_ajax()) {
             redirect('auth/index', 'refresh');
         } else {
             $this->onlineusers->onlineusers();
