@@ -139,14 +139,18 @@ class Welcome extends Cf_Controller {
             $data['businessValuePie']['repaired'] = 0;
             $data['businessValuePie']['nodata'] = 100;
         }
-
-        $username = &$this->session->userdata('username');
-        $data['allHost']    = cfpr_host_count_all($username);
-        $data['redhost']    = cfpr_host_compliance_count_red($username);
-        $data['yellowhost'] = cfpr_host_compliance_count_yellow($username);
-        $data['greenhost']  = cfpr_host_compliance_count_green($username);
-        $data['bluehost']   = cfpr_host_compliance_count_blue($username);
-
+        
+        try{
+            $username = &$this->session->userdata('username');
+            $data['allHost']    = $this->host_model->getHostCount($username);
+            $data['redhost']    = $this->host_model->getRedHostCount($username);
+            $data['yellowhost'] = $this->host_model->getYellowHostCount($username);
+            $data['greenhost']  = $this->host_model->getGreenHostCount($username);
+            $data['bluehost']   = $this->host_model->getBlueHostCount($username);
+        }catch(Exception $e){
+            show_error($this->lang->line('cfmod_exception'), 500) ;
+        }
+       
         $this->template->load('template', 'status', $data);
     }
 
@@ -324,15 +328,19 @@ class Welcome extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
         
         $username = &$this->session->userdata('username');
+        try{
         $data = array(
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_engineering'),
             'breadcrumbs' => $this->breadcrumblist->display(),
-            'all' => cfpr_host_count_all($username),
-            'r'   => cfpr_host_compliance_count_red($username),
-            'y'   => cfpr_host_compliance_count_yellow($username),
-            'g'   => cfpr_host_compliance_count_green($username),
-            'b'   => cfpr_host_compliance_count_blue($username)
+            'all' => $this->host_model->getHostCount($username),
+            'r'   => $this->host_model->getRedHostCount($username),
+            'y'   => $this->host_model->getYellowHostCount($username),
+            'g'   => $this->host_model->getGreenHostCount($username),
+            'b'   => $this->host_model->getBlueHostCount($username)
         );
+        }catch(Exception $e){
+            show_error($this->lang->line('cfmod_exception'), 500);
+        }
 
         // Summary meter for host
         $gdata = cfpr_summary_meter(null);
@@ -438,7 +446,7 @@ class Welcome extends Cf_Controller {
                     break;
             }
         }catch(Exception $e){
-           $this->show_error($e->getMessage(),500);
+              show_error($this->lang->line('cfmod_exception'),500);
         }
 
         $table = "";
@@ -473,14 +481,18 @@ class Welcome extends Cf_Controller {
 
     function host($hostkey=NULL) {
         $hostkey_tobe_deleted = $this->input->post('delhost');
-        if ($hostkey_tobe_deleted) {
-            cfpr_delete_host($hostkey_tobe_deleted);
-        }
         $getparams = $this->uri->uri_to_assoc(3);
-
-        if (key_exists('delhost', $getparams)) {
-            cfpr_delete_host($getparams['delhost']);
+        try {
+            if ($hostkey_tobe_deleted) {
+                $this->host_model->deleteHost($hostkey_tobe_deleted);
+            }
+            if (key_exists('delhost', $getparams)) {
+                $this->host_model->deleteHost($getparams['delhost']);
+            }
+        } catch (Exception $e) {
+            show_error($this->lang->line('cfmod_exception'),500);
         }
+        
         if (key_exists('type', $getparams)) {
             redirect('welcome/hosts/' . $getparams['type']);
         }
@@ -578,7 +590,7 @@ class Welcome extends Cf_Controller {
             }
         }
         }catch(Exception $e){
-            $this->show_error('500','Internal server error');
+            show_error($this->lang->line('cfmod_exception'),500);
         }
       
         $data = array(
@@ -676,7 +688,7 @@ class Welcome extends Cf_Controller {
         );  
             $this->template->load('template', 'classes', $data);
        }catch(Exception $e){
-           $this->show('500','Internal server Error CFMOD Exception');
+          show($this->lang->line('cfmod_exception'),500);
        }  
     }
 
