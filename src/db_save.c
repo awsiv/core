@@ -1817,23 +1817,22 @@ if ( !IsDefinedClass("am_policy_hub") && !AM_PHP_MODULE )
    return false;
    }
 
-Rlist *keyHashList = SplitStringAsRList(keyHash, ',');
+Rlist *hostKeyList = SplitStringAsRList(keyHash, ',');
 
-while(keyHashList)
+for(Rlist *rp = hostKeyList; rp != NULL; rp = rp->next)
   {
   bson_buffer_init(&bb);
   setObj = bson_append_start_object(&bb, "$addToSet");
-  bson_append_string(setObj,cfr_deleted_hosts,(char*)keyHashList->item);
+  bson_append_string(setObj,cfr_deleted_hosts,ScalarValue(rp));
   bson_append_finish_object(setObj);
   bson_from_buffer(&setOp,&bb);
 
   mongo_update(dbconn, MONGO_SCRATCH, bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT);
-  MongoCheckForError(dbconn,"MarkHostAsDeleted",(char*)keyHashList->item,NULL);
+  MongoCheckForError(dbconn,"MarkHostAsDeleted",ScalarValue(rp),NULL);
   bson_destroy(&setOp);
-
-  keyHashList = keyHashList->next;
   }
-DeleteRlist(keyHashList);
+
+DeleteRlist(hostKeyList);
 
 return true;
 }
