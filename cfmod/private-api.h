@@ -878,7 +878,7 @@ PHP_FUNCTION(cfpr_delete_host);
 
 /*! \brief A list of all environments
  */
-PHP_FUNCTION(cfpr_environments_list);
+PHP_FUNCTION(cfpr_environment_list);
 
 /*! \brief Get the contents of an environment
  * \param environmentName

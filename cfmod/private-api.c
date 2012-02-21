@@ -4183,7 +4183,7 @@ PHP_FUNCTION(cfpr_delete_host)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_environments_list)
+PHP_FUNCTION(cfpr_environment_list)
 {
  EnvironmentsList *el, *i;
 

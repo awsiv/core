@@ -215,7 +215,7 @@ static function_entry cfmod_functions[] =
     /*
      * Environments
      */
-    PHP_FE(cfpr_environments_list, NULL)
+    PHP_FE(cfpr_environment_list, NULL)
     PHP_FE(cfpr_environment_contents, NULL)
     PHP_FE(cfpr_get_host_environment, NULL)
 
