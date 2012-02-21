@@ -683,43 +683,42 @@ void CFDB_PurgeHost(mongo_connection *conn, char *keyHash)
 bson_buffer bb;
 bson cond;
 
-Rlist *keyHashList = SplitStringAsRList(keyHash, ',');
+Rlist *hostKeyList = SplitStringAsRList(keyHash, ',');
 
-while(keyHashList)
+for(Rlist *rp = hostKeyList; rp != NULL; rp = rp->next)
   {
   bson_buffer_init(&bb);
-  bson_append_string(&bb,cfr_keyhash,(char*)keyHashList->item);
+  bson_append_string(&bb,cfr_keyhash,ScalarValue(rp));
   bson_from_buffer(&cond,&bb);
 
   mongo_remove(conn, MONGO_DATABASE, &cond);
 
-  MongoCheckForError(conn,"delete host from main collection",(char*)keyHashList->item,NULL);
+  MongoCheckForError(conn,"delete host from main collection",ScalarValue(rp),NULL);
 
   mongo_remove(conn, MONGO_DATABASE_MON_MG, &cond);
 
-  MongoCheckForError(conn,"delete host from mag monitord collection",(char*)keyHashList->item,NULL);
+  MongoCheckForError(conn,"delete host from mag monitord collection",ScalarValue(rp),NULL);
 
   mongo_remove(conn, MONGO_DATABASE_MON_WK, &cond);
 
-  MongoCheckForError(conn,"delete host from week monitord collection",(char*)keyHashList->item,NULL);
+  MongoCheckForError(conn,"delete host from week monitord collection",ScalarValue(rp),NULL);
 
   mongo_remove(conn, MONGO_DATABASE_MON_YR, &cond);
 
-  MongoCheckForError(conn,"delete host from year monitord collection",(char*)keyHashList->item,NULL);
+  MongoCheckForError(conn,"delete host from year monitord collection",ScalarValue(rp),NULL);
 
   mongo_remove(conn, MONGO_LOGS_REPAIRED, &cond);
 
-  MongoCheckForError(conn,"delete host from repair logs collection",(char*)keyHashList->item,NULL);
+  MongoCheckForError(conn,"delete host from repair logs collection",ScalarValue(rp),NULL);
 
   mongo_remove(conn, MONGO_LOGS_NOTKEPT, &cond);
 
-  MongoCheckForError(conn,"delete host from not kept logs collection",(char*)keyHashList->item,NULL);
+  MongoCheckForError(conn,"delete host from not kept logs collection",ScalarValue(rp),NULL);
 
   bson_destroy(&cond);
-  keyHashList = keyHashList->next;
   }
 
-DeleteRlist(keyHashList);
+DeleteRlist(hostKeyList);
 }
 
 /*****************************************************************************/
