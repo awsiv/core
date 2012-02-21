@@ -4185,20 +4185,33 @@ PHP_FUNCTION(cfpr_delete_host)
 
 PHP_FUNCTION(cfpr_environment_list)
 {
+ char *userName;
+ int user_len;
  EnvironmentsList *el, *i;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "") == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",
+                           &userName, &user_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
- if (!Nova2PHP_environment_list(&el, NULL))
+ ARGUMENT_CHECK_CONTENTS(user_len);
+
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+ ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+ 
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+ 
+ if (!Nova2PHP_environment_list(&el, filter))
     {
-    zend_throw_exception(cfmod_exception_generic, "Unable to query list of environments", 0 TSRMLS_CC);     
+    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+    zend_throw_exception(cfmod_exception_generic, "Unable to query list of environments", 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+ 
  array_init(return_value);
 
  for (i = el; i != NULL; i = i->next)
@@ -4234,8 +4247,8 @@ PHP_FUNCTION(cfpr_host_list_by_environment)
 
  if (!Nova2PHP_host_list_by_environment(&hl, envName, filter))
     {
-    zend_throw_exception(cfmod_exception_generic, "Unable to query environment", 0 TSRMLS_CC);
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+    zend_throw_exception(cfmod_exception_generic, "Unable to query environment", 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
