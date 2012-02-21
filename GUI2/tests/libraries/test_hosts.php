@@ -14,12 +14,6 @@ class test_hosts extends CodeIgniterUnitTestCase {
         
     }
     
-    public function test_cfpr_host_count_all() {
-        $ret = cfpr_host_count_all($this->username);
-        $this->assertNotNull($ret, 'All hosts ');
-        $this->dump($ret);
-    }
-
     public function test_cfpr_host_compliance_count_red() {
         $ret = cfpr_host_compliance_count_red($this->username);
         $this->assertNotNull($ret, '<span style="color:red">Red</span> hosts ');

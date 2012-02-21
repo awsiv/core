@@ -52,5 +52,38 @@ class test_host_model extends CodeIgniterUnitTestCase {
         $this->dump(count($val['data']));
         $this->dump($val);
     }
+    
+    public function test_getHostCount(){
+        $ret = $this->_ci->host_model->getHostCount($this->username);
+        $this->assertTrue(is_numeric($ret), 'Count of all host should be a number ');
+        $this->dump($ret);
+    }
+    
+    public function test_getRedHostCount(){
+        $ret = $this->_ci->host_model->getRedHostCount($this->username);
+        $this->assertTrue(is_numeric($ret), 'Count of red host should be a number ');
+        $this->dump($ret);
+    }
+    
+    public function test_getYellowHostCount(){
+        $ret = $this->_ci->host_model->getYellowHostCount($this->username);
+        $this->assertTrue(is_numeric($ret), 'Count of red host should be a number ');
+        $this->dump($ret);
+    }
+    
+    public function test_getGreenHostCount(){
+        $ret = $this->_ci->host_model->getGreenHostCount($this->username);
+        $this->assertTrue(is_numeric($ret), 'Count of red host should be a number ');
+        $this->dump($ret);
+    }
+    
+    public function test_getBlueHostCount(){
+        $ret = $this->_ci->host_model->getBlueHostCount($this->username);
+        $this->assertTrue(is_numeric($ret), 'Count of red host should be a number ');
+        $this->dump($ret);
+    }
+   
+    
+   
 }
 ?>
