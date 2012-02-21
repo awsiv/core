@@ -1074,13 +1074,14 @@ PHP_FUNCTION(cfpr_class_list_hostname)
 
 PHP_FUNCTION(cfpr_class_list_all)
 {
- char *userName;
- int user_len;
+ char *userName, *classRx;
+ int user_len, cr_len;
  PageInfo page = {0};
 
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll",
                            &userName, &user_len,
+                           &classRx, &cr_len,
                            &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1089,6 +1090,8 @@ PHP_FUNCTION(cfpr_class_list_all)
 
  ARGUMENT_CHECK_CONTENTS(user_len);
 
+ char *fClassRx = (cr_len == 0) ? NULL : classRx;
+
  HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
  
@@ -1096,7 +1099,7 @@ PHP_FUNCTION(cfpr_class_list_all)
  DATABASE_OPEN(&conn);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
- HubQuery *hqClasses = CFDB_QueryClassesDistinctSorted(&conn, filter, &page);
+ HubQuery *hqClasses = CFDB_QueryClassesDistinctSorted(&conn, fClassRx, filter, &page);
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
  DATABASE_CLOSE(&conn);
