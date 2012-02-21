@@ -4211,7 +4211,7 @@ PHP_FUNCTION(cfpr_environment_list)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_environment_contents)
+PHP_FUNCTION(cfpr_host_list_by_environment)
 {
  HostsList *hl, *i;
  char *name;

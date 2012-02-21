@@ -883,7 +883,7 @@ PHP_FUNCTION(cfpr_environment_list);
 /*! \brief Get the contents of an environment
  * \param environmentName
  */
-PHP_FUNCTION(cfpr_environment_contents);
+PHP_FUNCTION(cfpr_host_list_by_environment);
 
 /*! \brief Get the environment of a host
  * \param hostKey
