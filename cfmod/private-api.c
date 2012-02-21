@@ -1104,14 +1104,20 @@ PHP_FUNCTION(cfpr_class_list_all)
 
  DATABASE_CLOSE(&conn);
 
- JsonElement *output = JsonArrayCreate(5000);
+ JsonElement *data = JsonArrayCreate(5000);
  for (Rlist *rp = hqClasses->records; rp != NULL; rp = rp->next)
     {
     HubClass *hubClass = rp->item;
-    JsonArrayAppendString(output, hubClass->class);
+    JsonArrayAppendString(data, hubClass->class);
     }
- 
  DeleteHubQuery(hqClasses, DeleteHubClass);
+
+ JsonElement *meta = JsonObjectCreate(1);
+ JsonObjectAppendInteger(meta, "count", page.totalResultCount);
+ 
+ JsonElement *output = JsonObjectCreate(2);
+ JsonObjectAppendArray(output, "data", data);
+ JsonObjectAppendObject(output, "meta", meta);
  
  RETURN_JSON(output);
 }
