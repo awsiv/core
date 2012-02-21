@@ -4704,7 +4704,7 @@ return true;
 
 /*****************************************************************************/
 
-char *Nova2PHP_get_host_environment(const char *hostkey)
+char *Nova2PHP_environment_by_hostkey(const char *hostkey)
 
 { mongo_connection dbconn;
   bson_buffer bb;

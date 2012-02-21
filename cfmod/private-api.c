@@ -4250,8 +4250,10 @@ PHP_FUNCTION(cfpr_host_list_by_environment)
 
  FreeHostsList(hl);
 }
+
 /******************************************************************************/
-PHP_FUNCTION(cfpr_get_host_environment)
+
+PHP_FUNCTION(cfpr_environment_by_hostkey)
 {
  char *hostkey;
  int hostkey_len;
@@ -4263,7 +4265,7 @@ PHP_FUNCTION(cfpr_get_host_environment)
     RETURN_NULL();
     }
 
- environment = Nova2PHP_get_host_environment(hostkey);
+ environment = Nova2PHP_environment_by_hostkey(hostkey);
 
  if (!environment)
     {

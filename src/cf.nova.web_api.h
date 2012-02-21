@@ -246,7 +246,7 @@ struct HostsList_
 
 bool Nova2PHP_host_list_by_environment(HostsList **out, const char *environment, HostClassFilter *hostClassFilter);
 
-char *Nova2PHP_get_host_environment(const char *keyhash);
+char *Nova2PHP_environment_by_hostkey(const char *keyhash);
 
 void FreeEnvironmentsList(EnvironmentsList *list);
 void FreeHostsList(HostsList *list);

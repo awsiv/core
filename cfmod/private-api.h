@@ -888,7 +888,7 @@ PHP_FUNCTION(cfpr_host_list_by_environment);
 /*! \brief Get the environment of a host
  * \param hostKey
  */
-PHP_FUNCTION(cfpr_get_host_environment);
+PHP_FUNCTION(cfpr_environment_by_hostkey);
 
 /*! \brief Get the replica status of this hub
  */
