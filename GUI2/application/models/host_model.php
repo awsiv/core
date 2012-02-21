@@ -84,9 +84,7 @@ class host_model extends Cf_Model {
             throw $e;
         }
     }
-    
-    
-    
+
     /**
      *
      * @param type $username
@@ -95,105 +93,104 @@ class host_model extends Cf_Model {
      * @param type $page
      * @return type array
      */
-    
-     function getHostByName($username,$hostregx,$rows=15,$page=1){
+    function getHostByName($username, $hostregx, $rows=15, $page=1) {
         try {
             $rawdata = cfpr_host_list_by_name_rx($username, $hostregx, $rows, $page);
-            $data = sanitycheckjson($rawdata,true);
-            if (is_array($data)){
-                return $data ;
+            $data = sanitycheckjson($rawdata, true);
+            if (is_array($data)) {
+                return $data;
             } else {
                 return false;
             }
         } catch (Exception $e) {
-            log_message('error', $e->getMessage()." CFMOD EXCEPTION");
+            log_message('error', $e->getMessage() . " CFMOD EXCEPTION".$e->getFile().' line:'.$e->getLine());
             throw $e;
-        }   
+        }
     }
+
     /**
      *
      * @param type $username
      * @param type $hostKey
      * @return type string
      */
-    function getHostColor($username,$hostKey){
+    function getHostColor($username, $hostKey) {
         try {
             $rawdata = cfpr_host_compliance_colour($username, $hostKey);
-            if (is_string($rawdata)){
-                return $rawdata ;
+            if (is_string($rawdata)) {
+                return $rawdata;
             } else {
                 return false;
             }
         } catch (Exception $e) {
-            log_message('error', $e->getMessage()." CFMOD EXCEPTION");
+            log_message('error', $e->getMessage() . " CFMOD EXCEPTION".$e->getFile().' line:'.$e->getLine());
             throw $e;
-        }   
+        }
     }
-    
+
     /**
      *
      * @param type $username
      * @param type $hostkey
      * @return type string hostname for a given key
      */
-    function getHostName($username,$hostkey){
-         try {
+    function getHostName($username, $hostkey) {
+        try {
             $rawdata = cfpr_host_by_hostkey($username, $hostkey);
-            $data=$this->checkData($rawdata);
-            if ($data){
+            $data = $this->checkData($rawdata);
+            if ($data) {
                 return $data[0];
             } else {
                 return false;
             }
         } catch (Exception $e) {
-            log_message('error', $e->getMessage()." CFMOD EXCEPTION");
+            log_message('error', $e->getMessage() . " CFMOD EXCEPTION".$e->getFile().' line:'.$e->getLine());
             throw $e;
         }
     }
-    
+
     /**
      *
      * @param type $username
      * @param type $hostkey
      * @return type String Ip address for given hostkey 
      */
-    
-    function getHostIp($username,$hostkey){
+    function getHostIp($username, $hostkey) {
         try {
             $rawdata = cfpr_host_by_hostkey($username, $hostkey);
-            $data=$this->checkData($rawdata);
-            if ($data){
+            $data = $this->checkData($rawdata);
+            if ($data) {
                 return $data[1];
             } else {
                 return false;
             }
         } catch (Exception $e) {
-            log_message('error', $e->getMessage()." CFMOD EXCEPTION");
+            log_message('error', $e->getMessage() . " CFMOD EXCEPTION".$e->getFile().' line:'.$e->getLine());
             throw $e;
         }
     }
-    
+
     /**
      *
      * @param type $username
      * @param type $hostkey
      * @return type timestamp
      */
-    function getLastUpdate($username,$hostkey){
+    function getLastUpdate($username, $hostkey) {
         try {
-            $rawdata =  cfpr_getlastupdate($username, $hostkey);
-            $data=$this->checkData($rawdata);
-            if ($data){
+            $rawdata = cfpr_getlastupdate($username, $hostkey);
+            $data = $this->checkData($rawdata);
+            if ($data) {
                 return $data;
             } else {
                 return false;
             }
         } catch (Exception $e) {
-            log_message('error', $e->getMessage()." CFMOD EXCEPTION");
+            log_message('error', $e->getMessage() . " CFMOD EXCEPTION".$e->getFile().' line:'.$e->getLine());
             throw $e;
         }
     }
-    
+
     /**
      *
      * @param type $username
@@ -202,41 +199,58 @@ class host_model extends Cf_Model {
      * @param type $lval
      * @return type depends on the variable type
      */
-    function getHostVariable($username,$hostkey,$scope,$lval){ 
+    function getHostVariable($username, $hostkey, $scope, $lval) {
         try {
-            $rawdata =  cfpr_report_vars($username, $hostkey, $scope, $lval, NULL, NULL, false, NULL, NULL, "var-name", 1, 1);
-            $data=$this->checkData($rawdata);
-            if ($data){
+            $rawdata = cfpr_report_vars($username, $hostkey, $scope, $lval, NULL, NULL, false, NULL, NULL, "var-name", 1, 1);
+            $data = $this->checkData($rawdata);
+            if ($data) {
                 return $data[$scope]['data'][0][3];
             } else {
                 return false;
             }
         } catch (Exception $e) {
-            log_message('error', $e->getMessage()." CFMOD EXCEPTION");
+            log_message('error', $e->getMessage() . " CFMOD EXCEPTION".$e->getFile().' line:'.$e->getLine());
             throw $e;
         }
     }
-    
+
     /**
      *
      * @param type $username
      * @param type $hostkey
      * @return type string
      */
-    function getNetworkSpeed($username,$hostkey){
-         try {
+    function getNetworkSpeed($username, $hostkey) {
+        try {
             $rawdata = cfpr_network_speed($username, $hostkey);
-            $data=$this->checkData($rawdata);
-            if ($data){
+            $data = $this->checkData($rawdata);
+            if ($data) {
                 return $data;
             } else {
                 return false;
             }
         } catch (Exception $e) {
-            log_message('error', $e->getMessage()." CFMOD EXCEPTION");
+            log_message('error', $e->getMessage() . " CFMOD EXCEPTION".$e->getFile().' line:'.$e->getLine());
             throw $e;
         }
     }
-   
+
+    function getComplianceList($username, $rows=15, $page=1) {
+        try {
+
+            $rawdata = cfpr_host_compliance_list_all($username, $rows, $page);
+            $data = $this->checkData($rawdata);
+            if ($data) {
+                return $data;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
+            log_message('error', $e->getMessage() . " CFMOD EXCEPTION ".$e->getFile().' line:'.$e->getLine());
+            throw $e;
+        }
+    }
+
 }
+
 ?>
