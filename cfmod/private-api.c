@@ -1076,9 +1076,12 @@ PHP_FUNCTION(cfpr_class_list_all)
 {
  char *userName;
  int user_len;
+ PageInfo page = {0};
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",
-                           &userName, &user_len) == FAILURE)
+
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sll",
+                           &userName, &user_len,
+                           &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
@@ -1093,7 +1096,7 @@ PHP_FUNCTION(cfpr_class_list_all)
  DATABASE_OPEN(&conn);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
- HubQuery *hqClasses = CFDB_QueryClassesDistinctSorted(&conn, filter);
+ HubQuery *hqClasses = CFDB_QueryClassesDistinctSorted(&conn, filter, &page);
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
  DATABASE_CLOSE(&conn);
@@ -1106,7 +1109,6 @@ PHP_FUNCTION(cfpr_class_list_all)
     }
  
  DeleteHubQuery(hqClasses, DeleteHubClass);
- 
  
  RETURN_JSON(output);
 }
