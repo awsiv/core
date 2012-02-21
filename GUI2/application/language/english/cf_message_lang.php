@@ -264,6 +264,8 @@ $lang['empty_rolename'] = 'Role name is empty';
  */
 $lang['nothing_found'] = 'Nothing Found';
 $lang['500_error']     = 'Internal Server Error';
+$lang['cfmod_exception']= "CFMOD Exception caught";
+$lang['session_expired']= "Session Expired ! Please relogin";
 
 /*
  * Exception messages
