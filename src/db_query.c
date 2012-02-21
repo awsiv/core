@@ -6369,7 +6369,7 @@ Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,i
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryClassesDistinct(mongo_connection *conn, HostClassFilter *hostClassFilter)
+HubQuery *CFDB_QueryClassesDistinctSorted(mongo_connection *conn, HostClassFilter *hostClassFilter)
 {
  bson_buffer bb;
 
@@ -6390,6 +6390,8 @@ HubQuery *CFDB_QueryClassesDistinct(mongo_connection *conn, HostClassFilter *hos
     }
 
  DeleteItemList(classList);
+
+ record_list = SortRlist(record_list,SortClasses);
 
  return NewHubQuery(NULL, record_list);
 }

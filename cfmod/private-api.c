@@ -1093,7 +1093,7 @@ PHP_FUNCTION(cfpr_class_list_all)
  DATABASE_OPEN(&conn);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
- HubQuery *hqClasses = CFDB_QueryClassesDistinct(&conn, filter);
+ HubQuery *hqClasses = CFDB_QueryClassesDistinctSorted(&conn, filter);
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
  DATABASE_CLOSE(&conn);
