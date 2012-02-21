@@ -6369,7 +6369,7 @@ Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,i
 
 /*****************************************************************************/
 
-Item *CFDB_QueryClassesDistinct(mongo_connection *conn, HostClassFilter *hostClassFilter)
+HubQuery *CFDB_QueryClassesDistinct(mongo_connection *conn, HostClassFilter *hostClassFilter)
 {
  bson_buffer bb;
 
@@ -6382,7 +6382,16 @@ Item *CFDB_QueryClassesDistinct(mongo_connection *conn, HostClassFilter *hostCla
 
  bson_destroy(&query);
 
- return classList;
+ Rlist *record_list = NULL;
+
+ for (Item *ip = classList; ip != NULL; ip = ip->next)
+    {
+    PrependRlistAlien(&record_list,NewHubClass(NULL, ip->name, 0, 0, 0));
+    }
+
+ DeleteItemList(classList);
+
+ return NewHubQuery(NULL, record_list);
 }
 
 /*****************************************************************************/

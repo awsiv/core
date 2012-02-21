@@ -1093,18 +1093,19 @@ PHP_FUNCTION(cfpr_class_list_all)
  DATABASE_OPEN(&conn);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
- Item *distinctClasses = CFDB_QueryClassesDistinct(&conn, filter);
+ HubQuery *hqClasses = CFDB_QueryClassesDistinct(&conn, filter);
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
  DATABASE_CLOSE(&conn);
 
  JsonElement *output = JsonArrayCreate(5000);
- for (Item *ip = distinctClasses; ip != NULL; ip = ip->next)
+ for (Rlist *rp = hqClasses->records; rp != NULL; rp = rp->next)
     {
-    JsonArrayAppendString(output, ip->name);
+    HubClass *hubClass = rp->item;
+    JsonArrayAppendString(output, hubClass->class);
     }
  
- DeleteItemList(distinctClasses);
+ DeleteHubQuery(hqClasses, DeleteHubClass);
  
  
  RETURN_JSON(output);
