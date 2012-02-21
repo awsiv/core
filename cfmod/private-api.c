@@ -1072,7 +1072,7 @@ PHP_FUNCTION(cfpr_class_list_hostname)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_class_list_all)
+PHP_FUNCTION(cfpr_class_list_distinct_by_name_rx)
 {
  char *userName, *classRx;
  int user_len, cr_len;
