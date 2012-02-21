@@ -1,7 +1,7 @@
 (function($) {
     $.widget('ui.hostInfo', {
         options: {
-            baseUrl: '/astrolabe',
+            baseUrl: '',
             defaultbehaviour: true
         },
 
@@ -29,10 +29,6 @@
             
             $self.element.append($self._createLabelElement('OS Type'));
             $self.element.append($self._values.osType);
-            $self.element.append($self._createClear());
-            
-            $self.element.append($self._createLabelElement('Flavour'));
-            $self.element.append($self._values.flavour);
             $self.element.append($self._createClear());
             
             $self.element.append($self._createLabelElement('Key'));
@@ -70,17 +66,26 @@
             return $element;
         },
         
+        _clearFields: function() {
+            var $self = this;
+            
+            $self._values.name.html('unknown');
+            $self._values.ip.html('unknown');
+            $self._values.osType.html('unknown');
+            $self._values.key.html('unknown');
+        },
+        
         updateHostKey: function(hostKey) {
             var $self = this;
         
             var requestUrl = $self.options.baseUrl + '/host/info/' + hostKey;
             
             $.getJSON(requestUrl, function(host) {
-                $self._values.name.html(host.name);
+                $self._clearFields();
+                $self._values.name.html(host.hostname);
                 $self._values.ip.html(host.ip);
                 $self._values.osType.html(host.osType);
-                $self._values.flavour.html(host.flavour);
-                $self._values.key.html(host.key);
+                $self._values.key.html(host.hostkey);
             });
         },
         

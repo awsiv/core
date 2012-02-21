@@ -68,7 +68,12 @@ class Cf_REST_Controller extends CI_Controller {
     }
     
     public function respond_not_found() {
-        return respond(404);
+        return $this->respond(404);
+    }
+    
+    public function respond_forbidden()
+    {
+        return $this->respond(403);
     }
 
     protected function _detect_method() {
