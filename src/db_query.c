@@ -840,7 +840,7 @@ Rlist *CFDB_QueryDateTimeClasses(mongo_connection *conn,char *keyHash,char *lcla
              bson_iterator_init(&it3, bson_iterator_value(&it2));
              strncpy(rclass,bson_iterator_key(&it2),CF_MAXVARSIZE-1);
              
-             if (ISCLASS_DATETIME(rclass))
+             if (IsTimeClass(rclass))
                 {
                 IdempAppendRScalar(&classList,rclass,CF_SCALAR);
                 }
@@ -6429,6 +6429,18 @@ Rlist *CFDB_QueryAllClasses(mongo_connection *conn,char *keyHash,char *lclass,in
  mongo_cursor_destroy(cursor);
  return classList;
 }
+
+/*****************************************************************************/
+
+Item *CFDB_QueryClassesDistinct(mongo_connection *conn)
+{
+ Item *classList = CFDB_QueryDistinct(conn, MONGO_BASE, MONGO_HOSTS_COLLECTION, cfr_class_keys, NULL);
+
+ return classList;
+}
+
+/*****************************************************************************/
+
 /*************************************************/
 int CFDB_QueryIsMaster(void)
 {

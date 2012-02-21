@@ -998,7 +998,6 @@ PHP_FUNCTION(cfpr_class_list_all)
 {
  char *userName;
  int user_len;
- char buffer[CF_WEBBUFFER];
 
  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",
                            &userName, &user_len) == FAILURE)
@@ -1007,10 +1006,24 @@ PHP_FUNCTION(cfpr_class_list_all)
     RETURN_NULL();
     }
 
- buffer[0]='\0';
- Nova2PHP_listclasses_all(NULL, NULL, false, NULL, buffer, sizeof(buffer));
+ mongo_connection conn;
 
- RETURN_STRING(buffer,1);
+ DATABASE_OPEN(&conn);
+
+ Item *distinctClasses = CFDB_QueryClassesDistinct(&conn);
+
+ DATABASE_CLOSE(&conn);
+
+ JsonElement *output = JsonArrayCreate(5000);
+ for (Item *ip = distinctClasses; ip != NULL; ip = ip->next)
+    {
+    JsonArrayAppendString(output, ip->name);
+    }
+ 
+ DeleteItemList(distinctClasses);
+ 
+ 
+ RETURN_JSON(output);
 }
 
 /******************************************************************************/

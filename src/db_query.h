@@ -35,6 +35,7 @@ Rlist *CFDB_QuerySoftClasses(mongo_connection *conn,char *keyHash,char *lclass,i
 Rlist *CFDB_QueryIpClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
 Rlist *CFDB_QueryAllClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
 Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
+Item *CFDB_QueryClassesDistinct(mongo_connection *conn);
 
 //int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,time_t start_time,double *qa,double *ea,double *da);
 Item *CFDB_QueryVitalIds(mongo_connection *conn, char *keyHash);
