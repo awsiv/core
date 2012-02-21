@@ -29,6 +29,10 @@ class Search extends Cf_Controller {
     function index() {
 
         $this->load->model('settings_model');
+        $this->load->model('host_model');
+        // we will use username for RBAC
+        $username = $this->session->userdata('username');
+
         $requiredjs = array(
             array('widgets/notes.js'),
             array('jquery.form.js'),
@@ -56,6 +60,7 @@ class Search extends Cf_Controller {
         $hosts_only = isset($getparams['hosts_only']) ? $getparams['hosts_only'] : $this->input->post('hosts_only');
         $state = isset($getparams['state']) ? $getparams['state'] : $this->input->post('state');
         $longterm_data = isset($getparams['long_term']) ? $getparams['long_term'] : $this->input->post('long_term');
+        $hostname = "";
 
 
         $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : $this->setting_lib->get_no_of_rows());
@@ -73,8 +78,9 @@ class Search extends Cf_Controller {
         } elseif (!is_ajax() && $host != "") {
             $many = false;
             $hostkey = $host;
+            $hostname = $this->host_model->getHostName($username, $hostkey);
         }
-        $hostname = cfpr_hostname($hostkey);
+
 
         $params = '';
         $breadcrumbs_url = "search/index/";
@@ -155,9 +161,8 @@ class Search extends Cf_Controller {
         if ($search == "") {
             $search = ".*";
         }
-        
-        // we will use username for RBAC
-        $username =  $this->session->userdata('username');
+
+
 
         switch ($report_type) {
             case "bundle-profile":
