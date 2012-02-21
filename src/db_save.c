@@ -1813,7 +1813,6 @@ bson setOp,empty;
 if ( !IsDefinedClass("am_policy_hub") && !AM_PHP_MODULE )
    {
    CfOut(cf_verbose,"","Ignoring caching of deleted hosts - not called by php module");
-   CFDB_Close(dbconn);
    return false;
    }
 
