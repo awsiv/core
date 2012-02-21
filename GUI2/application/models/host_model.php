@@ -203,7 +203,7 @@ class host_model extends Cf_Model {
         try {
             $rawdata = cfpr_report_vars($username, $hostkey, $scope, $lval, NULL, NULL, false, NULL, NULL, "var-name", 1, 1);
             $data = $this->checkData($rawdata);
-            if ($data) {
+            if (is_array($data) && key_exists($scope, $data)) {
                 return $data[$scope]['data'][0][3];
             } else {
                 return false;
@@ -235,6 +235,13 @@ class host_model extends Cf_Model {
         }
     }
 
+    /**
+     *
+     * @param type $username
+     * @param type $rows
+     * @param type $page
+     * @return type 
+     */
     function getComplianceList($username, $rows=15, $page=1) {
         try {
 
@@ -250,6 +257,73 @@ class host_model extends Cf_Model {
             throw $e;
         }
     }
+    
+    /**
+     *
+     * @param type $key 
+     * deletes the host for supplied hostkey
+     */
+    function deleteHost($key){
+        try {
+            $data = cfpr_delete_host($key);
+            } catch (Exception $e) {
+            log_message('error', $e->getMessage() . " CFMOD EXCEPTION ".$e->getFile().' line:'.$e->getLine());
+            throw $e;
+            }
+    }
+    
+    
+    function getHostCount($username){
+       try{
+        $data=cfpr_host_count_all($username); 
+        return $data;
+       }catch(Exception $e){
+            log_message('error', $e->getMessage() . " CFMOD EXCEPTION ".$e->getFile().' line:'.$e->getLine());
+            throw $e;   
+       }    
+    }
+    
+    function getRedHostCount($username){
+        try{
+        $data=cfpr_host_compliance_count_red($username); 
+        return $data;
+        }catch(Exception $e){
+            log_message('error', $e->getMessage() . " CFMOD EXCEPTION ".$e->getFile().' line:'.$e->getLine());
+            throw $e;   
+       }    
+    }
+    
+    function getYellowHostCount($username){
+        try{
+        $data=cfpr_host_compliance_count_yellow($username); 
+        return $data;
+        }catch(Exception $e){
+            log_message('error', $e->getMessage() . " CFMOD EXCEPTION ".$e->getFile().' line:'.$e->getLine());
+            throw $e;   
+       }    
+    }
+    
+    function getGreenHostCount($username){
+        try{
+        $data=cfpr_host_compliance_count_green($username); 
+        return $data;
+        }catch(Exception $e){
+            log_message('error', $e->getMessage() . " CFMOD EXCEPTION ".$e->getFile().' line:'.$e->getLine());
+            throw $e;   
+       }    
+    }
+    
+    function getBlueHostCount($username){
+        try{
+        $data=cfpr_host_compliance_count_blue($username); 
+        return $data;  
+        }
+        catch(Exception $e){
+            log_message('error', $e->getMessage() . " CFMOD EXCEPTION ".$e->getFile().' line:'.$e->getLine());
+            throw $e;   
+       }    
+    }
+    
 
 }
 
