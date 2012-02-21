@@ -944,7 +944,14 @@
 	    "FD" : "+,5,sambashare:x:124:a10021"
 	}
     },
-    "vr" : { 
+    "vr" : {
+    	"sys" : {
+	    "ostype" : {
+		"T" : "s",
+		"V" : "ubuntu_10_0_4_x86",
+		"t" : 1327640143
+	    }
+	},
         "cfengine_update_folders" : { 
 	    "dirs" : { 
 		"T" : "sl",
