@@ -989,8 +989,11 @@ PHP_FUNCTION(cfpr_report_patch_avail)
 
 PHP_FUNCTION(cfpr_report_classes)
 {
- char *userName, *hostkey,*name,*classreg;
- char *fname,*fhostkey,*fclassreg;
+ char *userName, *hostkey,*name;
+ char *fname,*fhostkey;
+ zval *contextIncludes = NULL,
+      *contextExcludes = NULL;
+
  int user_len, hk_len, n_len,cr_len;
  long regex;
  char buffer[CF_WEBBUFFER];
@@ -1005,8 +1008,9 @@ PHP_FUNCTION(cfpr_report_classes)
                            &hostkey, &hk_len,
                            &name, &n_len,
                            &regex,
-                           &classreg, &cr_len,
-			   &sortColumnName, &sc_len, &sortDescending,
+                           &contextIncludes,
+                           &contextExcludes,
+                           &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1017,7 +1021,6 @@ PHP_FUNCTION(cfpr_report_classes)
 
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fname =  (n_len == 0) ? NULL : name;
- fclassreg =  (cr_len == 0) ? NULL : classreg;
  fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
@@ -1026,7 +1029,7 @@ PHP_FUNCTION(cfpr_report_classes)
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
- HostClassFilterAddClasses(filter, fclassreg, NULL);
+ HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
  
  Nova2PHP_classes_report(fhostkey, fname, regex, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);

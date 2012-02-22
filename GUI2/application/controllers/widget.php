@@ -144,7 +144,7 @@ class Widget extends Cf_Controller {
         if ($alphaSearch != null) {
             $searchLetter = urldecode($alphaSearch) . '.*';
         }
-        $data = cfpr_report_classes($username, null, $searchLetter, true, null, "last-seen", true, 50, $page);
+        $data = cfpr_report_classes($username, null, $searchLetter, true, null, null, "last-seen", true, 50, $page);
         $extractClass = sanitycheckjson($data, true);
         $classArray = array();
         foreach ((array) $extractClass['data'] as $classList) {
@@ -172,7 +172,7 @@ class Widget extends Cf_Controller {
                 $data = cfpr_list_soft_classes(NULL, NULL, NULL, NULL);
                 break;
             case "all":
-                $data = cfpr_report_classes($username, null, null, true, null, "last-seen", true, 100, 1);
+                $data = cfpr_report_classes($username, null, null, true, null, null, "last-seen", true, 100, 1);
                 $extractClass = sanitycheckjson($data, true);
                 $classArray = array();
                 foreach ((array) $extractClass['data'] as $classList) {

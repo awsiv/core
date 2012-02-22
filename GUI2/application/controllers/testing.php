@@ -338,7 +338,7 @@ class Testing extends CI_Controller {
         
         //$this->load->library('session');
         //$arr=json_decode(cfpr_class_cloud($this->session->userdata('lastclasslist')));
-        echo cfpr_report_classes($this->username, NULL, NULL, true, NULL, NULL, NULL);
+        echo cfpr_report_classes($this->username, NULL, NULL, true, NULL, NULL, NULL, NULL);
         ///echo json_encode($arr->classes);
     }
 

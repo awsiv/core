@@ -395,7 +395,7 @@ class pdfreports extends Cf_Controller {
 
         $header = array('Host', 'Class Context', 'Occurs with probability', 'Uncertainty', 'Last seen');
 
-        $ret = cfpr_report_classes($username, $hostkey, $search, true, $class_regex,"last-seen", true, $rows, $page_number);
+        $ret = cfpr_report_classes($username, $hostkey, $search, true, array($class_regex), array(),"last-seen", true, $rows, $page_number);
         $jsondata = json_decode($ret, true);
 
         $data1 = $jsondata['data'];
