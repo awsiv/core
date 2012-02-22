@@ -29,7 +29,7 @@ $this->carabiner->display('both');
            
          <div id="header_right" class="grid_3">
                        <p id="userbox">
-	                 revision:<strong><?php echo $revision ;?></strong>  &  Approvals:<strong><?php echo $total_approvals ?></strong>
+	                 revision:<strong><?php echo $revision ;?></strong>  &amp;  Approvals:<strong><?php echo $total_approvals ?></strong>
                        </p>
                       <p class="clearright"></p>
              <div class="clear"></div>
