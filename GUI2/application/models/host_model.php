@@ -9,10 +9,10 @@ class host_model extends Cf_Model {
             if ($data) {
                 return $data;
             } else {
-                return false;
+                throw new Exception($this->lang->line('invalid_json'));
             }
         } catch (Exception $e) {
-            log_message('error', $e->getMessage());
+            log_message('error', $e->getMessage() . " File:" . $e->getFile() . " line:" > $e->getLine());
             throw $e;
         }
     }
@@ -24,10 +24,10 @@ class host_model extends Cf_Model {
             if ($data) {
                 return $data;
             } else {
-                return false;
+                throw new Exception($this->lang->line('invalid_json'));
             }
         } catch (Exception $e) {
-            log_message('error', $e->getMessage());
+            log_message('error', $e->getMessage() . " File:" . $e->getFile() . " line:" > $e->getLine());
             throw $e;
         }
     }
@@ -39,10 +39,10 @@ class host_model extends Cf_Model {
             if ($data) {
                 return $data;
             } else {
-                return false;
+                throw new Exception($this->lang->line('invalid_json'));
             }
         } catch (Exception $e) {
-            log_message('error', $e->getMessage());
+            log_message('error', $e->getMessage() . " File:" . $e->getFile() . " line:" > $e->getLine());
             throw $e;
         }
     }
@@ -54,7 +54,7 @@ class host_model extends Cf_Model {
             if ($data) {
                 return $data;
             } else {
-                return false;
+                throw new Exception($this->lang->line('invalid_json'));
             }
         } catch (Exception $e) {
             generate_errormessage($e);
@@ -72,15 +72,15 @@ class host_model extends Cf_Model {
      */
     function getHostByIP($username, $ipregx, $rows=15, $page=1) {
         try {
-            $rawdata = cfpr_host_list_by_ip_rx(NULL, $ipregx, $rows, $page);
-            $data = sanitycheckjson($rawdata, true);
+            $rawdata = cfpr_host_list_by_ip_rx($username, $ipregx, $rows, $page);
+            $data = $this->checkData($rawdata);
             if (is_array($data)) {
                 return $data;
             } else {
-                return false;
+                throw new Exception($this->lang->line('invalid_json'));
             }
         } catch (Exception $e) {
-            log_message('error', $e->getMessage() . " CFMOD EXCEPTION -->" . $e->getFile() . " line:" > $e->getLine());
+            log_message('error', $e->getMessage() . " File:" . $e->getFile() . " line:" > $e->getLine());
             throw $e;
         }
     }
@@ -96,14 +96,14 @@ class host_model extends Cf_Model {
     function getHostByName($username, $hostregx, $rows=15, $page=1) {
         try {
             $rawdata = cfpr_host_list_by_name_rx($username, $hostregx, $rows, $page);
-            $data = sanitycheckjson($rawdata, true);
+            $data = $this->checkData($rawdata);
             if (is_array($data)) {
                 return $data;
             } else {
-                return false;
+                throw new Exception($this->lang->line('invalid_json'));
             }
         } catch (Exception $e) {
-            log_message('error', $e->getMessage() . " CFMOD EXCEPTION".$e->getFile().' line:'.$e->getLine());
+            log_message('error', $e->getMessage() . " File:" . $e->getFile() . ' line:' . $e->getLine());
             throw $e;
         }
     }
@@ -120,10 +120,10 @@ class host_model extends Cf_Model {
             if (is_string($rawdata)) {
                 return $rawdata;
             } else {
-                return false;
+                throw new Exception($this->lang->line('invalid_json'));
             }
         } catch (Exception $e) {
-            log_message('error', $e->getMessage() . " CFMOD EXCEPTION".$e->getFile().' line:'.$e->getLine());
+            log_message('error', $e->getMessage() . " File:" . $e->getFile() . ' line:' . $e->getLine());
             throw $e;
         }
     }
@@ -138,13 +138,13 @@ class host_model extends Cf_Model {
         try {
             $rawdata = cfpr_host_by_hostkey($username, $hostkey);
             $data = $this->checkData($rawdata);
-            if ($data) {
+            if (is_array($data)) {
                 return $data[0];
             } else {
-                return false;
+                throw new Exception($this->lang->line('invalid_json'));
             }
         } catch (Exception $e) {
-            log_message('error', $e->getMessage() . " CFMOD EXCEPTION".$e->getFile().' line:'.$e->getLine());
+            log_message('error', $e->getMessage() . " File:" . $e->getFile() . ' line:' . $e->getLine());
             throw $e;
         }
     }
@@ -159,13 +159,13 @@ class host_model extends Cf_Model {
         try {
             $rawdata = cfpr_host_by_hostkey($username, $hostkey);
             $data = $this->checkData($rawdata);
-            if ($data) {
+            if (is_array($data)) {
                 return $data[1];
             } else {
-                return false;
+                throw new Exception($this->lang->line('invalid_json'));
             }
         } catch (Exception $e) {
-            log_message('error', $e->getMessage() . " CFMOD EXCEPTION".$e->getFile().' line:'.$e->getLine());
+            log_message('error', $e->getMessage() . " File:" . $e->getFile() . ' line:' . $e->getLine());
             throw $e;
         }
     }
@@ -183,10 +183,10 @@ class host_model extends Cf_Model {
             if ($data) {
                 return $data;
             } else {
-                return false;
+                throw new Exception($this->lang->line('invalid_json'));
             }
         } catch (Exception $e) {
-            log_message('error', $e->getMessage() . " CFMOD EXCEPTION".$e->getFile().' line:'.$e->getLine());
+            log_message('error', $e->getMessage() . " File:" . $e->getFile() . ' line:' . $e->getLine());
             throw $e;
         }
     }
@@ -209,7 +209,7 @@ class host_model extends Cf_Model {
                 return false;
             }
         } catch (Exception $e) {
-            log_message('error', $e->getMessage() . " CFMOD EXCEPTION".$e->getFile().' line:'.$e->getLine());
+            log_message('error', $e->getMessage() . " File:" . $e->getFile() . ' line:' . $e->getLine());
             throw $e;
         }
     }
@@ -230,7 +230,7 @@ class host_model extends Cf_Model {
                 return false;
             }
         } catch (Exception $e) {
-            log_message('error', $e->getMessage() . " CFMOD EXCEPTION".$e->getFile().' line:'.$e->getLine());
+            log_message('error', $e->getMessage() . " File:" . $e->getFile() . ' line:' . $e->getLine());
             throw $e;
         }
     }
@@ -253,77 +253,94 @@ class host_model extends Cf_Model {
                 return false;
             }
         } catch (Exception $e) {
-            log_message('error', $e->getMessage() . " CFMOD EXCEPTION ".$e->getFile().' line:'.$e->getLine());
+            log_message('error', $e->getMessage() . " File: " . $e->getFile() . ' line:' . $e->getLine());
             throw $e;
         }
     }
-    
+
     /**
      *
      * @param type $key 
      * deletes the host for supplied hostkey
      */
-    function deleteHost($key){
+    function deleteHost($username, $key) {
         try {
-            $data = cfpr_delete_host($key);
-            } catch (Exception $e) {
-            log_message('error', $e->getMessage() . " CFMOD EXCEPTION ".$e->getFile().' line:'.$e->getLine());
+            $data = cfpr_delete_host($username, $key);
+        } catch (Exception $e) {
+            log_message('error', $e->getMessage() . " File: " . $e->getFile() . ' line:' . $e->getLine());
             throw $e;
-            }
-    }
-    
-    
-    function getHostCount($username){
-       try{
-        $data=cfpr_host_count_all($username); 
-        return $data;
-       }catch(Exception $e){
-            log_message('error', $e->getMessage() . " CFMOD EXCEPTION ".$e->getFile().' line:'.$e->getLine());
-            throw $e;   
-       }    
-    }
-    
-    function getRedHostCount($username){
-        try{
-        $data=cfpr_host_compliance_count_red($username); 
-        return $data;
-        }catch(Exception $e){
-            log_message('error', $e->getMessage() . " CFMOD EXCEPTION ".$e->getFile().' line:'.$e->getLine());
-            throw $e;   
-       }    
-    }
-    
-    function getYellowHostCount($username){
-        try{
-        $data=cfpr_host_compliance_count_yellow($username); 
-        return $data;
-        }catch(Exception $e){
-            log_message('error', $e->getMessage() . " CFMOD EXCEPTION ".$e->getFile().' line:'.$e->getLine());
-            throw $e;   
-       }    
-    }
-    
-    function getGreenHostCount($username){
-        try{
-        $data=cfpr_host_compliance_count_green($username); 
-        return $data;
-        }catch(Exception $e){
-            log_message('error', $e->getMessage() . " CFMOD EXCEPTION ".$e->getFile().' line:'.$e->getLine());
-            throw $e;   
-       }    
-    }
-    
-    function getBlueHostCount($username){
-        try{
-        $data=cfpr_host_compliance_count_blue($username); 
-        return $data;  
         }
-        catch(Exception $e){
-            log_message('error', $e->getMessage() . " CFMOD EXCEPTION ".$e->getFile().' line:'.$e->getLine());
-            throw $e;   
-       }    
     }
-    
+
+    function getHostCount($username) {
+        try {
+            $data = cfpr_host_count_all($username);
+            if (is_numeric($data)) {
+                return $data;
+            } else {
+                throw new Exception($this->lang->line('invalid_json'));
+            }
+        } catch (Exception $e) {
+            log_message('error', $e->getMessage() . " File: " . $e->getFile() . ' line:' . $e->getLine());
+            throw $e;
+        }
+    }
+
+    function getRedHostCount($username) {
+        try {
+            $data = cfpr_host_compliance_count_red($username);
+            if (is_numeric($data)) {
+                return $data;
+            } else {
+                throw new Exception($this->lang->line('invalid_json'));
+            }
+        } catch (Exception $e) {
+            log_message('error', $e->getMessage() . " File: " . $e->getFile() . ' line:' . $e->getLine());
+            throw $e;
+        }
+    }
+
+    function getYellowHostCount($username) {
+        try {
+            $data = cfpr_host_compliance_count_yellow($username);
+            if (is_numeric($data)) {
+                return $data;
+            } else {
+                throw new Exception($this->lang->line('invalid_json'));
+            }
+        } catch (Exception $e) {
+            log_message('error', $e->getMessage() . " File: " . $e->getFile() . ' line:' . $e->getLine());
+            throw $e;
+        }
+    }
+
+    function getGreenHostCount($username) {
+        try {
+            $data = cfpr_host_compliance_count_green($username);
+            if (is_numeric($data)) {
+                return $data;
+            } else {
+                throw new Exception($this->lang->line('invalid_json'));
+            }
+        } catch (Exception $e) {
+            log_message('error', $e->getMessage() . " File: " . $e->getFile() . ' line:' . $e->getLine());
+            throw $e;
+        }
+    }
+
+    function getBlueHostCount($username) {
+        try {
+            $data = cfpr_host_compliance_count_blue($username);
+            if (is_numeric($data)) {
+                return $data;
+            } else {
+                throw new Exception($this->lang->line('invalid_json'));
+            }
+        } catch (Exception $e) {
+            log_message('error', $e->getMessage() . " File: " . $e->getFile() . ' line:' . $e->getLine());
+            throw $e;
+        }
+    }
 
 }
 
