@@ -522,7 +522,7 @@ class Search extends Cf_Controller {
                         );
 
 
-                        $data['report_result'] = cfpr_report_patch_in($username, NULL, $name, $version, $arch, true, $class_regex, "hostname", true, $rows, $page_number);
+                        $data['report_result'] = cfpr_report_patch_in($username, NULL, $name, $version, $arch, true, array($class_regex), array(), "hostname", true, $rows, $page_number);
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                         $this->template->load('template', 'searchpages/businessresult', $data);
@@ -537,7 +537,7 @@ class Search extends Cf_Controller {
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                    $data['report_result'] = cfpr_report_patch_in($username, $hostkey, $search, NULL, NULL, true, $class_regex, "hostname", true, $rows, $page_number);
+                    $data['report_result'] = cfpr_report_patch_in($username, $hostkey, $search, NULL, NULL, true, array($class_regex), array(), "hostname", true, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
                     is_ajax() ? $this->load->view('searchpages/patch_status', $data) : $this->template->load('template', 'searchpages/patch_status', $data);
