@@ -14,6 +14,7 @@ phplibdir = @libdir@/php
 phplib_LTLIBRARIES = cfmod.la
 
 cfmod_la_SOURCES = cfmod.c \
+        common.c common.h \
         private-api.c private-api.h \
         private-api-constellation.c private-api-constellation.h \
         public-api.c public-api.h

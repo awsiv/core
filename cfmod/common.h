@@ -7,6 +7,8 @@
 #ifndef CFENGINE_CFMOD_COMMON_H
 #define CFENGINE_CFMOD_COMMON_H
 
+#include "php_cfmod.h"
+
 #define LABEL_ERROR_DATABASE_OPEN "Unable to connect to database"
 #define LABEL_ERROR_DATABASE_CLOSE "Unable to close to database"
 #define LABEL_ERROR_ARGS "Incorrect argument count or types"
@@ -61,5 +63,8 @@
    char *JSON_ebuf = estrdup(JSON_buf); \
    free(JSON_buf); \
    RETURN_STRING(JSON_ebuf, 0);
+
+
+void HostClassFilterAddIncludeExcludeLists(HostClassFilter *filter, zval *includes, zval *excludes);
 
 #endif

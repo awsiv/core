@@ -4836,41 +4836,16 @@ RETURN_STRING(buffer,1);
 /******************************************************************************/
 
 
-static Rlist *PHPStringArrayToRlist(zval* php_array, bool prune_empty)
-{
-zval **data;
-HashTable *hash;
-HashPosition hashPos;
-Rlist *rp = NULL;
-
-hash = Z_ARRVAL_P(php_array);
-
-for (zend_hash_internal_pointer_reset_ex(hash, &hashPos);
-     zend_hash_get_current_data_ex(hash, (void**) &data, &hashPos) == SUCCESS;
-     zend_hash_move_forward_ex(hash, &hashPos))
-   {
-   if (Z_TYPE_PP(data) == IS_STRING)
-      {
-      if (strlen(Z_STRVAL_PP(data)) != 0 || !prune_empty)
-         {
-         AppendRlist(&rp, Z_STRVAL_PP(data), 's');
-         }
-      }
-   }
-
-return rp;
-}
-
 PHP_FUNCTION(cfpr_astrolabe_host_list)
 {
 char *username = NULL;
-zval *context_includes_param, *context_excludes_param;
+zval *includes, *excludes;
 int len = -1;
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "saa",
                           &username, &len,
-                          &context_includes_param,
-                          &context_excludes_param) == FAILURE)
+                          &includes,
+                          &excludes) == FAILURE)
    {
    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
@@ -4882,15 +4857,7 @@ HubQuery *result = NULL;
    ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
    HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-      {
-      Rlist *includes = PHPStringArrayToRlist(context_includes_param, true);
-      Rlist *excludes = PHPStringArrayToRlist(context_excludes_param, true);
-
-      HostClassFilterAddClassLists(filter, includes, excludes);
-
-      DeleteRlist(includes);
-      DeleteRlist(excludes);
-      }
+   HostClassFilterAddIncludeExcludeLists(filter, includes, excludes);
 
    mongo_connection conn;
    DATABASE_OPEN(&conn);
@@ -4929,13 +4896,13 @@ PHP_FUNCTION(cfpr_astrolabe_host_count)
 char *username = NULL,
      *colour = NULL;
 int len = -1;
-zval *context_includes_param, *context_excludes_param;
+zval *includes, *excludes;
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssaa",
                           &username, &len,
                           &colour, &len,
-                          &context_includes_param,
-                          &context_excludes_param) == FAILURE)
+                          &includes,
+                          &excludes) == FAILURE)
    {
    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
@@ -4945,15 +4912,7 @@ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
 HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-   {
-   Rlist *includes = PHPStringArrayToRlist(context_includes_param, true);
-   Rlist *excludes = PHPStringArrayToRlist(context_excludes_param, true);
-
-   HostClassFilterAddClassLists(filter, includes, excludes);
-
-   DeleteRlist(includes);
-   DeleteRlist(excludes);
-   }
+HostClassFilterAddIncludeExcludeLists(filter, includes, excludes);
 
 mongo_connection conn;
 DATABASE_OPEN(&conn);
