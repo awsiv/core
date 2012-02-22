@@ -7,7 +7,7 @@ class Welcome extends Cf_Controller {
         parse_str($_SERVER['QUERY_STRING'], $_GET);
         $this->load->helper('form');
         $this->load->library('table', 'cf_table');
-        $this->load->model('host_model');
+        $this->load->model(array('host_model','environment_model'));
     }
 
     function index() {
@@ -94,8 +94,16 @@ class Welcome extends Cf_Controller {
 
 
         // compliance summary meter
-        $envList = cfpr_environments_list();
-
+        //$envList = cfpr_environments_list();
+        try{
+        $envList=$this->environment_model->getEnvironmentList($this->session->userdata('username'));
+        }
+        catch(CFModExceptionRBAC $e){
+            show_error($this->lang->line('rbac_exception'), 401);
+        }
+        catch(Exception $e){
+            show_error($e->getMessage(),500);
+        }
         //$envListArray = json_decode($envList);
 
         $data['envList'] = $envList;
@@ -148,7 +156,7 @@ class Welcome extends Cf_Controller {
             $data['greenhost']  = $this->host_model->getGreenHostCount($username);
             $data['bluehost']   = $this->host_model->getBlueHostCount($username);
         }catch(Exception $e){
-            show_error($this->lang->line('cfmod_exception'), 500) ;
+           show_error($e->getMessage(),500); ;
         }
        
         $this->template->load('template', 'status', $data);
@@ -339,7 +347,7 @@ class Welcome extends Cf_Controller {
             'b'   => $this->host_model->getBlueHostCount($username)
         );
         }catch(Exception $e){
-            show_error($this->lang->line('cfmod_exception'), 500);
+            show_error($e->getMessage(),500);
         }
 
         // Summary meter for host
@@ -446,7 +454,8 @@ class Welcome extends Cf_Controller {
                     break;
             }
         }catch(Exception $e){
-              show_error($this->lang->line('cfmod_exception'),500);
+     
+              show_error($e->getMessage(),500);
         }
 
         $table = "";
@@ -481,16 +490,17 @@ class Welcome extends Cf_Controller {
 
     function host($hostkey=NULL) {
         $hostkey_tobe_deleted = $this->input->post('delhost');
+        $username=$this->session->userdata('username');
         $getparams = $this->uri->uri_to_assoc(3);
         try {
             if ($hostkey_tobe_deleted) {
-                $this->host_model->deleteHost($hostkey_tobe_deleted);
+                $this->host_model->deleteHost($username,$hostkey_tobe_deleted);
             }
             if (key_exists('delhost', $getparams)) {
-                $this->host_model->deleteHost($getparams['delhost']);
+                $this->host_model->deleteHost($username,$getparams['delhost']);
             }
         } catch (Exception $e) {
-            show_error($this->lang->line('cfmod_exception'),500);
+            show_error($e->getMessage(),500);
         }
         
         if (key_exists('type', $getparams)) {
@@ -525,8 +535,8 @@ class Welcome extends Cf_Controller {
             $hostkey = isset($_POST['hostkey']) ? $_POST['hostkey'] : "none";
         }
         $reports = json_decode(cfpr_select_reports(null));
-        $hostname = $this->host_model->getHostName($this->session->userdata('username'),$hostkey);
-        $ipaddr = $this->host_model->getHostIp($this->session->userdata('username'),$hostkey);;
+        $hostname = $this->host_model->getHostName($username,$hostkey);
+        $ipaddr = $this->host_model->getHostIp($username,$hostkey);;
         $username = isset($_POST['username']) ? $_POST['username'] : "";
         $comment_text = isset($_POST['comment_text']) ? $_POST['comment_text'] : "";
         $is_commented = trim(cfpr_get_host_noteid($hostkey));
@@ -590,7 +600,7 @@ class Welcome extends Cf_Controller {
             }
         }
         }catch(Exception $e){
-            show_error($this->lang->line('cfmod_exception'),500);
+            show_error($e->getMessage(),500);
         }
       
         $data = array(
@@ -688,7 +698,7 @@ class Welcome extends Cf_Controller {
         );  
             $this->template->load('template', 'classes', $data);
        }catch(Exception $e){
-          show($this->lang->line('cfmod_exception'),500);
+         show_error($e->getMessage(),500);
        }  
     }
 

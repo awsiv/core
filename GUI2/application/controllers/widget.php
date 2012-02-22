@@ -4,7 +4,7 @@ class Widget extends Cf_Controller {
 
     function Widget() {
         parent::__construct();
-        $this->load->model('host_model');
+        $this->load->model(array('host_model','class_model'));
         if (!$this->ion_auth->logged_in()) {
             $this->output->set_status_header('401', 'Not Authenticated');
             echo $this->lang->line('session_expired');
@@ -15,10 +15,10 @@ class Widget extends Cf_Controller {
     function hostfinder($page = 1) {
 
         try {
-            $result = $this->host_model->getHostByName($this->session->userdata('username'), '.*', 15, $page);
+        $result = $this->host_model->getHostByName($this->session->userdata('username'), '.*', 15, $page);
         } catch (Exception $e) {
-
-            $this->output->set_status_header('500', 'CFMOD EXCEPTION ');
+            $this->output->set_status_header('500', $e->getMessage());
+            echo $e->message();
         }
 
         if ($page > 1) {
@@ -64,7 +64,8 @@ class Widget extends Cf_Controller {
             $data = $this->host_model->getHostByName($this->session->userdata('username'), $hostname, 15, $page);
             echo $this->__format_to_html($data, 'hostname');
         } catch (Exception $e) {
-            $this->output->set_status_header('500', 'CFMOD EXCEPTION ');
+            $this->output->set_status_header('500', $e->getMessage());
+            echo $e->getMessage();
         }
     }
 
@@ -76,7 +77,8 @@ class Widget extends Cf_Controller {
             $data = $this->host_model->getHostByName($this->session->userdata('username'), $searchhost, 15, $page);
             echo $this->__format_to_html($data, 'hostname');
         } catch (Exception $e) {
-            $this->output->set_status_header('500', 'CFMOD EXCEPTION ');
+            $this->output->set_status_header('500', $e->getMessage());
+            echo $e->getMessage();
         }
     }
 
@@ -110,12 +112,12 @@ class Widget extends Cf_Controller {
             $data = $this->host_model->getHostByIP($this->session->userdata('username'), $ipaddress, 15, $page);
             echo $this->__format_to_html($data, 'ipaddress');
         } catch (Exception $e) {
-            $this->output->set_status_header('500', 'CFMOD EXCEPTION ');
+            $this->output->set_status_header('500', $e->getMessage());
+            echo $e->getMessage();
         }
     }
 
     function cfclasses() {
-        $this->load->library('session');
         $arr = json_decode(cfpr_class_cloud($this->session->userdata('lastclasslist')));
         echo json_encode($arr->classes);
     }
@@ -136,29 +138,25 @@ class Widget extends Cf_Controller {
     }
 
     function allclasses($page = 1, $alphaSearch = null) {
-
-        $this->load->library('session');
         $username = $this->session->userdata('username');
-
         $searchLetter = null;
         if ($alphaSearch != null) {
             $searchLetter = urldecode($alphaSearch) . '.*';
+        }else{
+           $searchLetter='.*';
         }
-        $data = cfpr_report_classes($username, null, $searchLetter, true, null, null, "last-seen", true, 50, $page);
-        $extractClass = sanitycheckjson($data, true);
-        $classArray = array();
-        foreach ((array) $extractClass['data'] as $classList) {
-            $classArray[] = $classList[1];
+        try{
+           $classes=$this->class_model->getAllClasses($username,$searchLetter,100,$page);
+            echo $classes;
+        }catch(Exception $e){
+          $this->output->set_status_header('500', $e->getMessage());
+          echo($e->getMessage());
         }
-
-        $classArray = array_values(array_unique($classArray));
-
-        echo json_encode($classArray);
+       
     }
 
     function filterclass() {
         $filter = $this->input->post('filter');
-        $this->load->library('session');
         $username = $this->session->userdata('username');
         $data = "";
         switch ($filter) {
@@ -172,14 +170,13 @@ class Widget extends Cf_Controller {
                 $data = cfpr_list_soft_classes(NULL, NULL, NULL, NULL);
                 break;
             case "all":
-                $data = cfpr_report_classes($username, null, null, true, null, null, "last-seen", true, 100, 1);
-                $extractClass = sanitycheckjson($data, true);
-                $classArray = array();
-                foreach ((array) $extractClass['data'] as $classList) {
-                    $classArray[] = $classList[1];
+                try {
+                    $classes = $this->class_model->getAllClasses($username, '.*', 100, 1);
+                    echo $classes;
+                } catch (Exception $e) {
+                    $this->output->set_status_header('500', $e->getMessage());
+                    echo($e->getMessage());
                 }
-                $classArray = array_values(array_unique($classArray));
-                echo json_encode($classArray);
                 exit;
                 break;
             case "host":
@@ -403,7 +400,13 @@ class Widget extends Cf_Controller {
 
     function tracker() {
         // compliance summary meter
-        $envList = cfpr_environments_list();
+        try {
+            $envList = $this->environment_model->getEnvironmentList($this->session->userdata('username'));
+        } catch (CFModExceptionRBAC $e) {
+            show_error($this->lang->line('rbac_exception'), 401);
+        } catch (Exception $e) {
+            show_error($this->lang->line('cfmod_exception'), 500);
+        }
         //$envListArray = json_decode($envList);
         $data['envList'] = $envList;
         $this->load->view('widgets/tracker', $data);

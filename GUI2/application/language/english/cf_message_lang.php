@@ -267,6 +267,8 @@ $lang['500_error']     = 'Internal Server Error';
 $lang['cfmod_exception']= "CFMOD Exception caught";
 $lang['session_expired']= "Session Expired ! Please relogin";
 $lang['svn_update_no_user']="Svn credentials not found for user";
+$lang['rbac_exception']= "User not authorised to access this data";
+$lang['invalid_json']="Invalid json data";
 
 /*
  * Exception messages
