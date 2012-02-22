@@ -842,9 +842,9 @@ class pdfreports extends Cf_Controller {
         $header = array();
 
         if ($hostkey == NULL) {
-            $ret = cfpr_report_vars($username, NULL, $scope, $lval, $rval, $type, true, $class_regex, "var-name", true, $rows, $page_number);
+            $ret = cfpr_report_vars($username, NULL, $scope, $lval, $rval, $type, true, array($class_regex), array(), "var-name", true, $rows, $page_number);
         } else {
-            $ret = cfpr_report_vars($username, $hostkey, NULL, $search, NULL, NULL, true, $class_regex, "var-name", true, $rows, $page_number);
+            $ret = cfpr_report_vars($username, $hostkey, NULL, $search, NULL, NULL, true, array($class_regex), array(), "var-name", true, $rows, $page_number);
         }
 
         $dataArray = json_decode($ret, true);

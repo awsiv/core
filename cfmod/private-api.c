@@ -888,7 +888,7 @@ PHP_FUNCTION(cfpr_report_patch_in)
  int sc_len;
  bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssbssbll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssbaasbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &name, &n_len,
@@ -945,7 +945,7 @@ PHP_FUNCTION(cfpr_report_patch_avail)
  int sc_len;
  bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssbssbll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssbaasbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &name, &n_len,
@@ -1003,7 +1003,7 @@ PHP_FUNCTION(cfpr_report_classes)
  int sc_len;
  bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbssbll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbaasbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &name, &n_len,
@@ -1204,8 +1204,10 @@ PHP_FUNCTION(cfpr_class_cloud)
 
 PHP_FUNCTION(cfpr_report_vars)
 {
- char *userName, *hostkey,*scope,*lval,*rval,*type,*classreg;
- char *fhostkey,*fscope,*flval,*frval,*ftype,*fclassreg;
+ char *userName, *hostkey,*scope,*lval,*rval,*type;
+ char *fhostkey,*fscope,*flval,*frval,*ftype;
+ zval *contextIncludes = NULL,
+      *contextExcludes = NULL;
  int user_len, hk_len,s_len,l_len,r_len,t_len,use_reg,cr_len;
  zend_bool regex;
  char buffer[CF_WEBBUFFER];
@@ -1215,7 +1217,7 @@ PHP_FUNCTION(cfpr_report_vars)
  int sc_len;
  bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssssbssbll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssssbaasbll",
                            &userName, &user_len,
                            &hostkey,&hk_len,
                            &scope,&s_len,
@@ -1223,8 +1225,9 @@ PHP_FUNCTION(cfpr_report_vars)
                            &rval,&r_len,
                            &type,&t_len,
                            &regex,
-                           &classreg,&cr_len,
-			   &sortColumnName, &sc_len, &sortDescending,
+                           &contextIncludes,
+                           &contextExcludes,
+                           &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1240,7 +1243,6 @@ PHP_FUNCTION(cfpr_report_vars)
  flval = (l_len == 0) ? NULL : lval;
  frval = (r_len == 0) ? NULL : rval;
  ftype = (t_len == 0) ? NULL : type;
- fclassreg = (cr_len == 0) ? NULL : classreg;
  fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
@@ -1249,7 +1251,7 @@ PHP_FUNCTION(cfpr_report_vars)
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
- HostClassFilterAddClasses(filter, fclassreg, NULL);
+ HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
  
  Nova2PHP_vars_report(fhostkey, fscope, flval, frval, ftype, use_reg, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
