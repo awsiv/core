@@ -107,24 +107,24 @@ class Repository extends Cf_Controller {
         $this->load->helper(array('form', 'url', 'svn'));
         $this->load->library('form_validation');
         $data = array();
-
-
-
+        
+        $params = array(
+                'workingdir' => get_policiesdir() . $this->session->userdata('username')
+            );
+         $this->load->library('cfsvn', $params);
+         
+        $url = $this->cfsvn->get_current_repository();
+        $currentUser = $this->session->userdata('username');
+        $obj = $this->repository_model->get_specific_repository($currentUser, $url);
         $alreadyCheckedOut = is_svn_checked_out('./policies/', $this->session->userdata('username'));
 
         // check if it is already checked out  checked out 
-        if ($alreadyCheckedOut && !$force) {
-
-            $params = array(
-                'workingdir' => get_policiesdir() . $this->session->userdata('username')
-            );
-
-            $this->load->library('cfsvn', $params);
+        if ($alreadyCheckedOut && !$force && $obj != NULL) {
             $hasChanges = array();
             try {
                 $hasChanges = $this->cfsvn->cfsvn_working_copy_status();
             } catch (Exception $e) {
-                log_message('', $e->__toString());
+               log_message ('', $e->__toString());
             }
             $data['hasChanges'] = $hasChanges;
             $this->load->view('/repository/already_checked_out', $data);
