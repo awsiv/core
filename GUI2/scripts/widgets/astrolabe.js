@@ -557,12 +557,17 @@
             
             $self._rootContainer.find('.node').each(function (index, value) {
                 var $node = $(value);
-
-                var includes = $self._nodeIncludes($node);
-                $.getJSON($self._requestUrls.hostCount($self, includes, []), function(count) {
-                    $node.attr('count', count);
-                    $node.children('.hostCountLabel').html('(' + count + ')');
-                });
+                $self._countNode($node);
+            });
+        },
+        
+        _countNode: function($node) {
+            var $self = this;
+            
+            var includes = $self._nodeIncludes($node);
+            $.getJSON($self._requestUrls.hostCount($self, includes, []), function(count) {
+                $node.attr('count', count);
+                $node.children('.hostCountLabel').html('(' + count + ')');
             });
         },
         
