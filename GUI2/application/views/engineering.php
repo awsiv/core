@@ -11,12 +11,14 @@
                     <div id="astrolabeLocation" class="subTitle"></div>
                 </div>
                 
+                <!--
                 <div style="padding: 15px">
                     <p class="subTitle"><?php echo $this->lang->line('header_promise_compliance'); ?></p>
                     <div class="graphcontainer">
                         <div id="hostsMeter" style="height:120px;"></div>
                     </div>
                 </div>
+                -->
 
                 <div id="hostsComplianceContainer" style="padding: 15px">
                     <p class="subTitle"><?php echo $this->lang->line('header_host_status'); ?></p>
@@ -64,6 +66,7 @@
             baseUrl:'<?php echo site_url() ?>'
           };
 
+        /*
         $.getJSON(genericOption.baseUrl + '/astrolabe/meters/', function(json) {
             $('#hostsMeter').hostsMeter({
                 baseUrl: '<?php echo site_url() ?>',
@@ -75,6 +78,7 @@
             });
             $('#hostsMeter').hostsMeter("initialize");
         });
+        */
         
         $('#hostsCompliance').hostsCompliance();
         $('#hostInfo').hostInfo();
@@ -82,7 +86,7 @@
 
         $('#astrolabe').astrolabe({
             hostSelected: function(event, args) {
-                $('#hostsMeter').hostsMeter('updateHostKey', args.hostKey);
+                //$('#hostsMeter').hostsMeter('updateHostKey', args.hostKey);
 
                 $('#hostInfo').hostInfo('updateHostKey', args.hostKey);
                 $('#hostInfoContainer').show();
