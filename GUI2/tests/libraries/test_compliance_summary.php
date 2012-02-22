@@ -14,12 +14,6 @@ class test_compliance_summary extends CodeIgniterUnitTestCase {
         
     }
 
-    public function test_environmentList() {
-        $array = cfpr_environments_list();
-        $this->dump($array);
-        $this->assertTrue(is_array($array), "Must return an array");
-    }
-
     public function test_complianceSummaryGraph() {
         $data = cfpr_compliance_summary_graph(NULL);
        
