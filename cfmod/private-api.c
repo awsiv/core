@@ -818,8 +818,10 @@ PHP_FUNCTION(cfpr_vitals_analyse_histogram)
 PHP_FUNCTION(cfpr_report_software_in)
 {
  char *userName, *hostkey,*name,*version,*arch,*classreg;
- char *fhostkey,*fname,*fversion,*farch,*fclassreg;
- int user_len, hk_len, n_len,v_len,a_len,cr_len;
+ char *fhostkey,*fname,*fversion,*farch;
+ zval *contextIncludes = NULL,
+      *contextExcludes = NULL;
+ int user_len, hk_len, n_len,v_len,a_len;
  long regex;
  int use_reg;
  char buffer[CF_WEBBUFFER];
@@ -829,14 +831,15 @@ PHP_FUNCTION(cfpr_report_software_in)
  int sc_len;
  bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssbssbll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssbaasbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &name, &n_len,
                            &version, &v_len,
                            &arch, &a_len,
                            &regex,
-                           &classreg, &cr_len,
+                           &contextIncludes,
+                           &contextExcludes,
 			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
@@ -852,7 +855,6 @@ PHP_FUNCTION(cfpr_report_software_in)
  fname =  (n_len == 0) ? NULL : name;
  fversion = (v_len == 0) ? NULL : version;
  farch = (a_len == 0) ? NULL : arch;
- fclassreg = (cr_len == 0) ? NULL : classreg;
  fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
@@ -861,7 +863,7 @@ PHP_FUNCTION(cfpr_report_software_in)
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
  
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
- HostClassFilterAddClasses(filter, fclassreg, NULL);
+ HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
  
  Nova2PHP_software_report(fhostkey, fname, fversion, farch, use_reg, cfr_software, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);

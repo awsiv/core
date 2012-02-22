@@ -710,7 +710,7 @@ class Search extends Cf_Controller {
                     $arch = isset($getparams['arch']) ? urldecode($getparams['arch']) : urldecode($this->input->post('arch'));
 
                     if ($hosts_only) {
-                        $data['report_result'] = cfpr_hosts_with_software_in($username, NULL, $name, $version, $arch, true, $class_regex);
+                        $data['report_result'] = cfpr_hosts_with_software_in($username, NULL, $name, $version, $arch, true, array($class_regex), array());
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     } else {
 
@@ -721,7 +721,7 @@ class Search extends Cf_Controller {
                             'search' => $name
                         );
 
-                        $data['report_result'] = cfpr_report_software_in($username, NULL, $name, $version, $arch, true, $class_regex, "hostname", true, $rows, $page_number);
+                        $data['report_result'] = cfpr_report_software_in($username, NULL, $name, $version, $arch, true, array($class_regex), array(), "hostname", true, $rows, $page_number);
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                         $this->template->load('template', 'searchpages/businessresult', $data);
