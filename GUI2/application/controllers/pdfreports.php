@@ -652,7 +652,7 @@ class pdfreports extends Cf_Controller {
 
     function rpt_patches_available($username, $hostkey, $search, $version, $arch, $class_regex, $rows = 0, $page_number = 0) {
 
-        $ret = cfpr_report_patch_avail($username, $hostkey, $search, $version, $arch, true, $class_regex, "hostname", true, $rows, $page_number);
+        $ret = cfpr_report_patch_avail($username, $hostkey, $search, $version, $arch, true, array($class_regex), "hostname", true, $rows, $page_number);
         $jsondata = json_decode($ret, true);
 
         $data1 = $jsondata['data'];
