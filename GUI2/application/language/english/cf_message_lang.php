@@ -266,6 +266,7 @@ $lang['nothing_found'] = 'Nothing Found';
 $lang['500_error']     = 'Internal Server Error';
 $lang['cfmod_exception']= "CFMOD Exception caught";
 $lang['session_expired']= "Session Expired ! Please relogin";
+$lang['svn_update_no_user']="Svn credentials not found for user";
 
 /*
  * Exception messages
