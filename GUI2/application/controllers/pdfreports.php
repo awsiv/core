@@ -551,7 +551,7 @@ class pdfreports extends Cf_Controller {
         $header = array('Host', 'Policy', 'Kept', 'Repaired', 'Not kept', 'Last seen');
 
 
-        $ret = cfpr_report_compliance_summary($username, $hostkey, NULL, -1, -1, -1, -1, ">", $class_regex, "last-seen", true, $rows, $page_number);
+        $ret = cfpr_report_compliance_summary($username, $hostkey, NULL, -1, -1, -1, -1, ">", array($class_regex), array(), "last-seen", true, $rows, $page_number);
         $jsondata = json_decode($ret, true);
 
         $data1 = $jsondata['data'];

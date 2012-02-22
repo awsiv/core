@@ -325,7 +325,7 @@ class Search extends Cf_Controller {
                         $data['report_title'] = $report_type;
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                        $data['report_result'] = cfpr_report_compliance_summary($username, NULL, NULL, -1, -1, -1, -1, ">", $class_regex, "last-seen", true, $rows, $page_number);
+                        $data['report_result'] = cfpr_report_compliance_summary($username, NULL, NULL, -1, -1, -1, -1, ">", array($class_regex), array(), "last-seen", true, $rows, $page_number);
                         $this->template->load('template', 'searchpages/businessresult', $data);
                     }
                 } elseif ($hostkey != "") {
@@ -335,7 +335,7 @@ class Search extends Cf_Controller {
                     );
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                    $data['report_result'] = cfpr_report_compliance_summary($username, $hostkey, NULL, -1, -1, -1, -1, ">", $class_regex, "last-seen", true, $rows, $page_number);
+                    $data['report_result'] = cfpr_report_compliance_summary($username, $hostkey, NULL, -1, -1, -1, -1, ">", array($class_regex), array(), "last-seen", true, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
                     is_ajax() ? $this->load->view('searchpages/summary_report', $data) : $this->template->load('template', 'searchpages/summary_report', $data);
