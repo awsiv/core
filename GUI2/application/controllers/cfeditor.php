@@ -122,8 +122,8 @@ class Cfeditor extends Cf_Controller {
         } catch (Exception $e) {
             $data['status'] = false;
             $data['message'] = $e->getMessage();
+            log_message("Error", $e->getMessage()." ".$e->getFile()." line:".$e->getLine());
         }
-
         echo json_encode($data);
     }
 
@@ -161,6 +161,9 @@ class Cfeditor extends Cf_Controller {
                 } else {
                     $data = array('status' => false, 'message' => $this->lang->line('not_comitted_no_changes'));
                 }
+            }else{
+                 log_message("Error", $e->getMessage()." ".$e->getFile()." line:".$e->getLine());
+                 $data = array('status' => false, 'message' => $this->input->post('file') . $this->lang->line('single_file_commit_fail'));
             }
         } catch (Exception $e) {
             $data = array('status' => false, 'message' => $e->getMessage());
@@ -204,9 +207,13 @@ class Cfeditor extends Cf_Controller {
                     $this->repository_model->insert_svn_log($this->session->userdata('username'), $current_repo, $cdetails, 'update');
                 }
                 $data = array('status' => true, 'rev' => $cdetails, 'total_approvals' => $total_approvals);
+            }else{
+                $data = array('status' => false, 'message' => $this->lang->line('svn_update_no_user')." ".$currentUser); 
+                log_message("Error", $this->lang->line('svn_update_no_user')." ".$currentUser);
             }
         } catch (Exception $e) {
             $data = array('status' => false, 'message' => $e->getMessage());
+            log_message("Error", $e->getMessage()." ".$e->getFile()." line:".$e->getLine());
         }
         echo json_encode($data);
     }
@@ -241,8 +248,11 @@ class Cfeditor extends Cf_Controller {
                 $this->cfsvn->addcredentials($params);
                 $data = array('logs' => $this->cfsvn->cfsvn_log($no_of_records));
                 $this->load->view('cfeditor/svnlogs', $data);
+            }else{
+              log_message("Error", $e->getMessage()." ".$e->getFile()." line:".$e->getLine());
             }
         } catch (Exception $e) {
+            log_message("Error", $e->getMessage()." ".$e->getFile()." line:".$e->getLine());
             echo $e->getMessage();
         }
 
