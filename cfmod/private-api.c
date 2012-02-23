@@ -1541,9 +1541,11 @@ PHP_FUNCTION(cfpr_report_performance)
 
 PHP_FUNCTION(cfpr_report_setuid)
 {
- char *userName, *hostkey,*file,*classreg;
- char *fhostkey,*ffile,*fclassreg;
- int user_len, hk_len,j_len,cr_len;
+ char *userName, *hostkey,*file;
+ char *fhostkey,*ffile;
+ zval *context_includes = NULL,
+      *context_excludes = NULL;
+ int user_len, hk_len,j_len;
  char buffer[CF_WEBBUFFER];
  zend_bool regex;
  PageInfo page = {0};
@@ -1552,13 +1554,14 @@ PHP_FUNCTION(cfpr_report_setuid)
  int sc_len;
  bool sortDescending;
  
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbssbll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbaasbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &file, &j_len,
                            &regex,
-                           &classreg, &cr_len,
-			   &sortColumnName, &sc_len, &sortDescending,
+                           &context_includes,
+                           &context_excludes,
+                           &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1569,7 +1572,6 @@ PHP_FUNCTION(cfpr_report_setuid)
 
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  ffile =  (j_len == 0) ? NULL : file;
- fclassreg =  (cr_len == 0) ? NULL : classreg;
  fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
@@ -1578,7 +1580,7 @@ PHP_FUNCTION(cfpr_report_setuid)
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
- HostClassFilterAddClasses(filter, fclassreg, NULL);
+ HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
  
  Nova2PHP_setuid_report(fhostkey, ffile, regex, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
