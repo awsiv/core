@@ -2,7 +2,7 @@
 (function ($) {
     $.widget('ui.astrolabe', {
         options: {
-            astrolabeUrl: '../astrolabe/',
+            baseUrl: '../',
             defaultbehaviour: true
         },
 
@@ -456,7 +456,7 @@
         _loadProfileList: function() {
             var self = this;
             
-            var requestUrl = self.options.astrolabeUrl + 'profile/';
+            var requestUrl = self.options.baseUrl + 'astrolabe/profile/';
             
             $.getJSON(requestUrl, function(profileList) {
       
@@ -486,7 +486,7 @@
         
         _profileUrl: function(profileId) {
             var self = this;
-            return self.options.astrolabeUrl + 'profile/' + profileId;
+            return self.options.baseUrl + 'astrolabe/profile/' + profileId;
         },
         
         _saveProfile: function(profileId, refreshNode) {
@@ -591,7 +591,7 @@
             
             hosts: function(self, includes, excludes) {
 
-                var url = self.options.astrolabeUrl + 'host?';
+                var url = self.options.baseUrl + 'astrolabe/host?';
 
                 if (includes.length > 0) {
                     url = url + 'includes=' + encodeURIComponent(includes) + '&';
@@ -606,7 +606,7 @@
             
             hostCount: function(self, includes) {
 
-                var url = self.options.astrolabeUrl + 'hostcount?';
+                var url = self.options.baseUrl + 'host/count?';
                 
                 if (includes.length > 0) {
                     url = url + 'includes=' + encodeURIComponent(includes);

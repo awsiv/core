@@ -152,11 +152,7 @@ static function_entry cfmod_functions[] =
 
     PHP_FE(cfpr_host_compliance_colour,NULL)
 
-    PHP_FE(cfpr_host_count_all,NULL)
-    PHP_FE(cfpr_host_compliance_count_blue,NULL)
-    PHP_FE(cfpr_host_compliance_count_green,NULL)
-    PHP_FE(cfpr_host_compliance_count_yellow,NULL)
-    PHP_FE(cfpr_host_compliance_count_red,NULL)
+    PHP_FE(cfpr_host_count,NULL)
    
     PHP_FE(cfpr_hosts_with_software_in,NULL)
     PHP_FE(cfpr_hosts_with_patch_in,NULL)
@@ -240,7 +236,6 @@ static function_entry cfmod_functions[] =
      * Mission Tree-Control (Astrolabe)
      */
     PHP_FE(cfpr_astrolabe_host_list, NULL)
-    PHP_FE(cfpr_astrolabe_host_count, NULL)
 
     /*
      * Constellation

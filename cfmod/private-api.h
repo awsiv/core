@@ -773,25 +773,9 @@ PHP_FUNCTION(cfpr_host_list_by_name_rx);
  */
 PHP_FUNCTION(cfpr_host_compliance_colour);
 
-/*! \brief The number of hosts under management of this hub
+/*! \brief /host/count
  */
-PHP_FUNCTION(cfpr_host_count_all);
-
-/*! \brief The number of blue hosts under management of this hub
- */
-PHP_FUNCTION(cfpr_host_compliance_count_blue);
-
-/*! \brief The number of green hosts under management of this hub
- */
-PHP_FUNCTION(cfpr_host_compliance_count_green);
-
-/*! \brief The number of yellow hosts under management of this hub
- */
-PHP_FUNCTION(cfpr_host_compliance_count_yellow);
-
-/*! \brief The number of red hosts under management of this hub
- */
-PHP_FUNCTION(cfpr_host_compliance_count_red);
+PHP_FUNCTION(cfpr_host_count);
 
 /*! \brief /host/info
  */

@@ -9,6 +9,13 @@ class Host extends Cf_REST_Controller {
         $this->username = $this->session->userdata('username');
     }
 
+    function count_get()
+    {
+        echo cfpr_host_count($this->username, 
+                $this->param('colour'), $this->param_includes(), 
+                $this->param_excludes());
+    }
+    
     function info_get($hostKey) {
 
         if (is_null($hostKey)) {

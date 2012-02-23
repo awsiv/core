@@ -1,7 +1,7 @@
 (function ($) {
     $.widget('ui.hostsConnectivity', {
         options: {
-            astrolabeUrl: '../astrolabe/',
+            baseUrl: '../',
             defaultbehaviour: true
         },
 
@@ -74,7 +74,7 @@
             
             hostCount: function(self, includes, colour) {
 
-                return self.options.astrolabeUrl + 'hostcount?' +
+                return self.options.baseUrl + 'host/count?' +
                     'colour=' + colour + '&' +
                     'includes=' + encodeURIComponent(includes);
             }
