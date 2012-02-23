@@ -744,7 +744,7 @@ class pdfreports extends Cf_Controller {
 
     function rpt_performance($username, $hostkey, $search, $class_regex, $rows = 0, $page_number = 0) {
 
-        $ret = cfpr_report_performance($username, $hostkey, $search, true, $class_regex, "last-performed", true, $rows, $page_number);
+        $ret = cfpr_report_performance($username, $hostkey, $search, true, array($class_regex), array(), "last-performed", true, $rows, $page_number);
         $jsondata = json_decode($ret, true);
 
         $data1 = $jsondata['data'];

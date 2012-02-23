@@ -1490,9 +1490,11 @@ PHP_FUNCTION(cfpr_report_lastseen)
 
 PHP_FUNCTION(cfpr_report_performance)
 {
- char *userName, *hostkey,*job,*classreg;
- char *fhostkey,*fjob,*fclassreg;
- int user_len, hk_len,j_len,cr_len;
+ char *userName, *hostkey,*job;
+ char *fhostkey,*fjob;
+ zval *context_includes = NULL,
+      *context_excludes = NULL;
+ int user_len, hk_len,j_len;
  char buffer[CF_WEBBUFFER];
  zend_bool regex;
  PageInfo page = {0};
@@ -1501,12 +1503,13 @@ PHP_FUNCTION(cfpr_report_performance)
  int sc_len;
  bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbssbll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbaasbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &job, &j_len,
                            &regex,
-                           &classreg, &cr_len,
+                           &context_includes,
+                           &context_excludes,
 			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
@@ -1518,7 +1521,6 @@ PHP_FUNCTION(cfpr_report_performance)
 
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fjob =  (j_len == 0) ? NULL : job;
- fclassreg =  (cr_len == 0) ? NULL : classreg;
  fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
@@ -1527,7 +1529,7 @@ PHP_FUNCTION(cfpr_report_performance)
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
- HostClassFilterAddClasses(filter, fclassreg, NULL);
+ HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
  
  Nova2PHP_performance_report(fhostkey, fjob, regex, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
