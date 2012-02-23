@@ -15,6 +15,8 @@ class Cf_REST_Controller extends CI_Controller {
         parent::__construct();
         
         initializeHub();
+        
+        $this->load->library('security');
 
         $this->request->method = $this->_detect_method();
         $this->_get_args = array_merge($this->_get_args, $this->uri->ruri_to_assoc());
@@ -39,7 +41,69 @@ class Cf_REST_Controller extends CI_Controller {
                 break;
         }
     }
+    
+    protected function param_includes()
+    {
+        $value = $this->param_list('includes', TRUE);
+        if ($value)
+        {
+            return $value;
+        }
+        else
+        {
+            return array();
+        }
+    }
+    
+    protected function param_excludes()
+    {
+        $value = $this->param_list('excludes', TRUE);
+        if ($value)
+        {
+            return $value;
+        }
+        else
+        {
+            return array();
+        }
+    }
+    
+    protected function param_list($key, $xss_clean = TRUE)
+    {
+        $value = $this->param($key, $xss_clean);
+        if ($value)
+        {
+            return explode(',', urldecode($value));
+        }
+        else
+        {
+            return FALSE;
+        }
+    }
+    
+    protected function param($key, $xss_clean = FALSE)
+    {
+        switch ($this->request->method)
+        {
+            case 'get':
+                return array_key_exists($key, $this->_get_args) ? $this->_xss_clean($this->_get_args[$key], $xss_clean) : FALSE;
 
+            case 'post':
+                return $this->input->post($key, $xss_clean);
+
+            case 'put':
+                return array_key_exists($key, $this->_put_args) ? $this->_xss_clean($this->_put_args[$key], $xss_clean) : FALSE;
+
+            case 'delete':
+                return array_key_exists($key, $this->_delete_args) ? $this->_xss_clean($this->_delete_args[$key], $xss_clean) : FALSE;
+        }
+    }
+
+    protected function _xss_clean($val, $bool)
+    {
+        return $bool ? $this->security->xss_clean($val) : $val;
+    }
+    
     public function _remap($object_called, $arguments) {
 
         $controller_method = $object_called . '_' . $this->request->method;

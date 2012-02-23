@@ -591,14 +591,14 @@
             
             hosts: function(self, includes, excludes) {
 
-                var url = self.options.astrolabeUrl + 'host/';
+                var url = self.options.astrolabeUrl + 'host?';
 
                 if (includes.length > 0) {
-                    url = url + 'includes/' + encodeURIComponent(includes) + '/';
+                    url = url + 'includes=' + encodeURIComponent(includes) + '&';
                 }
                 
                 if (excludes.length > 0) {
-                    url = url + 'excludes/' + encodeURIComponent(excludes) + '/';
+                    url = url + 'excludes=' + encodeURIComponent(excludes);
                 }
                 
                 return url;
@@ -606,10 +606,10 @@
             
             hostCount: function(self, includes) {
 
-                var url = self.options.astrolabeUrl + 'hostcount/';
+                var url = self.options.astrolabeUrl + 'hostcount?';
                 
                 if (includes.length > 0) {
-                    url = url + 'includes/' + encodeURIComponent(includes) + '/';
+                    url = url + 'includes=' + encodeURIComponent(includes);
                 }
                 
                 return url;

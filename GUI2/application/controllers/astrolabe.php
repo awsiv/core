@@ -11,41 +11,18 @@ class Astrolabe extends Cf_REST_Controller {
         $this->username = $this->session->userdata('username');
     }
 
-    function host_get() {
-        
-        $params = $this->uri->uri_to_assoc();
-        
-        $includes = array();
-        $excludes = array();
-        
-        if (array_key_exists('includes', $params)) {
-            $includes = explode(',', urldecode($params['includes']));
-        }
-        
-        if (array_key_exists('excludes', $params)) {
-            $excludes = explode(',', urldecode($params['excludes']));
-        }
-
-        echo cfpr_astrolabe_host_list($this->username, $includes, $excludes);
+    function host_get()
+    {
+        echo cfpr_astrolabe_host_list($this->username, 
+                $this->param_includes(), $this->param_excludes());
     }
     
     
-    function hostcount_get() 
+    function hostcount_get()
     {    
-        $params = $this->uri->uri_to_assoc();
-        
-        $includes = array();
-        $colour = NULL;
-        
-        if (array_key_exists('includes', $params)) {
-            $includes = explode(',', urldecode($params['includes']));
-        }
-        
-        if (array_key_exists('colour', $params)) {
-            $colour = $params['colour'];
-        }
-
-        echo cfpr_astrolabe_host_count($this->username, $colour, $includes, array());
+        echo cfpr_astrolabe_host_count($this->username, 
+                $this->param('colour'), $this->param_includes(), 
+                $this->param_excludes());
     }
     
     function profile_get($id = NULL) {

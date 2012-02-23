@@ -85,9 +85,9 @@
             
             hostCount: function(self, includes, colour) {
 
-                return self.options.astrolabeUrl + 'hostcount/' +
-                    'colour/' + colour + '/' +
-                    'includes/' + encodeURIComponent(includes);
+                return self.options.astrolabeUrl + 'hostcount?' +
+                    'colour=' + colour + '&' +
+                    'includes=' + encodeURIComponent(includes);
             }
         }
     });
