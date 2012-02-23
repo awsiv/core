@@ -16,7 +16,7 @@
                 ip: $self._createValueElement(),
                 osType: $self._createValueElement(),
                 flavour: $self._createValueElement(),
-                key: $self._createValueElement()
+                release: $self._createValueElement()
             };
             
             $self.element.append($self._createLabelElement('Name'));
@@ -31,8 +31,12 @@
             $self.element.append($self._values.osType);
             $self.element.append($self._createClear());
             
-            $self.element.append($self._createLabelElement('Key'));
-            $self.element.append($self._values.key);
+            $self.element.append($self._createLabelElement('Flavour'));
+            $self.element.append($self._values.flavour);
+            $self.element.append($self._createClear());
+            
+            $self.element.append($self._createLabelElement('Release'));
+            $self.element.append($self._values.release);
             $self.element.append($self._createClear());
             
             $.ui.hostInfo.instances.push($self.element);
@@ -72,7 +76,8 @@
             $self._values.name.html('unknown');
             $self._values.ip.html('unknown');
             $self._values.osType.html('unknown');
-            $self._values.key.html('unknown');
+            $self._values.flavour.html('unknown');
+            $self._values.release.html('unknown');
         },
         
         updateHostKey: function(hostKey) {
@@ -85,7 +90,8 @@
                 $self._values.name.html(host.hostname);
                 $self._values.ip.html(host.ip);
                 $self._values.osType.html(host.osType);
-                $self._values.key.html(host.hostkey);
+                $self._values.flavour.html(host.flavour);
+                $self._values.release.html(host.release);
             });
         },
         

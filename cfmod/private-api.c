@@ -24,6 +24,8 @@ static const char *LABEL_HOSTNAME = "hostname";
 static const char *LABEL_IP = "ip";
 static const char *LABEL_COLOUR = "colour";
 static const char *LABEL_OS_TYPE = "osType";
+static const char *LABEL_FLAVOUR = "flavour";
+static const char *LABEL_RELEASE = "release";
 
 
 /******************************************************************************/
@@ -432,18 +434,9 @@ if (result->hosts && result->hosts->item)
    JsonElement *infoObject = JsonObjectCreate(10);
 
    HubHost *hh = (HubHost *)result->hosts->item;
-   if (hh->keyhash)
-      {
-      JsonObjectAppendString(infoObject, LABEL_HOSTKEY, hh->keyhash);
-      }
-   if (hh->hostname)
-      {
-      JsonObjectAppendString(infoObject, LABEL_HOSTNAME, hh->hostname);
-      }
-   if (hh->ipaddr)
-      {
-      JsonObjectAppendString(infoObject, LABEL_IP, hh->ipaddr);
-      }
+   JsonObjectAppendString(infoObject, LABEL_HOSTKEY, hh->keyhash);
+   JsonObjectAppendString(infoObject, LABEL_HOSTNAME, hh->hostname);
+   JsonObjectAppendString(infoObject, LABEL_IP, hh->ipaddr);
 
    for (Rlist *rp = result->records; rp; rp = rp->next)
       {
@@ -452,10 +445,15 @@ if (result->hosts && result->hosts->item)
          {
          if (strcmp(var->lval, "ostype") == 0)
             {
-            if (var->rval.item)
-               {
-               JsonObjectAppendString(infoObject, LABEL_OS_TYPE, ScalarRvalValue(var->rval));
-               }
+            JsonObjectAppendString(infoObject, LABEL_OS_TYPE, ScalarRvalValue(var->rval));
+            }
+         else if (strcmp(var->lval, "flavour") == 0)
+            {
+            JsonObjectAppendString(infoObject, LABEL_FLAVOUR, ScalarRvalValue(var->rval));
+            }
+         else if (strcmp(var->lval, "release") == 0)
+            {
+            JsonObjectAppendString(infoObject, LABEL_RELEASE, ScalarRvalValue(var->rval));
             }
          }
       }
