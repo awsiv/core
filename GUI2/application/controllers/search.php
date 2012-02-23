@@ -441,7 +441,7 @@ class Search extends Cf_Controller {
 
 
 
-                        $data['report_result'] = cfpr_report_lastseen($username, NULL, $key, $name, $address, $ago, true, $class_regex, "last-seen", true, $rows, $page_number);
+                        $data['report_result'] = cfpr_report_lastseen($username, NULL, $key, $name, $address, $ago, true, array($class_regex), array(), "last-seen", true, $rows, $page_number);
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                         $this->template->load('template', 'searchpages/businessresult', $data);
@@ -457,7 +457,7 @@ class Search extends Cf_Controller {
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email/');
-                    $data['report_result'] = cfpr_report_lastseen($username, $hostkey, NULL, $search, NULL, -1, true, $class_regex, "last-seen", true, $rows, $page_number);
+                    $data['report_result'] = cfpr_report_lastseen($username, $hostkey, NULL, $search, NULL, -1, true, array($class_regex), array(), "last-seen", true, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
                     is_ajax() ? $this->load->view('searchpages/last_saw_hosts', $data) : $this->template->load('template', 'searchpages/last_saw_hosts', $data);

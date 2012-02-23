@@ -622,7 +622,7 @@ class pdfreports extends Cf_Controller {
     function rpt_lastsaw_hosts($username, $hostkey, $key, $name, $address, $ago, $class_regex, $rows = 0, $page_number = 0) {
         $header = array('Host', 'Initiated', 'IP Address', 'Remote Host', 'Last Seen', 'Hours Ago', ' Avg Interval', 'Uncertainty', 'Remote Host Key');
 
-        $ret = cfpr_report_lastseen($username, $hostkey, $key, $name, $address, $ago, true, $class_regex, "last-seen", true, $rows, $page_number);
+        $ret = cfpr_report_lastseen($username, $hostkey, $key, $name, $address, $ago, true, array($class_regex), array(), "last-seen", true, $rows, $page_number);
         $jsondata = json_decode($ret, true);
 
         $data1 = $jsondata['data'];

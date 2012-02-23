@@ -1427,9 +1427,11 @@ PHP_FUNCTION(cfpr_report_overall_summary)
 
 PHP_FUNCTION(cfpr_report_lastseen)
 {
- char *userName, *hostkey,*host,*address,*hash,*classreg;
- char *fhostkey,*fhost,*faddress,*fhash,*fclassreg;
- int user_len, hk_len,h_len,a_len,h2_len,cr_len;
+ char *userName, *hostkey,*host,*address,*hash;
+ char *fhostkey,*fhost,*faddress,*fhash;
+ zval *context_includes = NULL,
+      *context_excludes = NULL;
+ int user_len, hk_len,h_len,a_len,h2_len;
  char buffer[CF_WEBBUFFER];
  long ago;
  time_t tago;
@@ -1441,7 +1443,7 @@ PHP_FUNCTION(cfpr_report_lastseen)
  int sc_len;
  bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssslbssbll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssslbaasbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &hash, &h2_len,
@@ -1449,7 +1451,8 @@ PHP_FUNCTION(cfpr_report_lastseen)
                            &address, &a_len,
                            &ago,
                            &regex,
-                           &classreg, &cr_len,
+                           &context_includes,
+                           &context_excludes,
 			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
@@ -1466,7 +1469,6 @@ PHP_FUNCTION(cfpr_report_lastseen)
  fhash =  (h2_len == 0) ? NULL : hash;
  fhost =  (h_len == 0) ? NULL : host;
  faddress =  (a_len == 0) ? NULL : address;
- fclassreg =  (cr_len == 0) ? NULL : classreg;
  fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
@@ -1475,7 +1477,7 @@ PHP_FUNCTION(cfpr_report_lastseen)
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
- HostClassFilterAddClasses(filter, fclassreg, NULL);
+ HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
  
  Nova2PHP_lastseen_report(fhostkey, fhash, fhost, faddress, tago,use_reg, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
