@@ -529,9 +529,9 @@ if (ReadDB(dbp,name,&q,sizeof(q)))
    {
    lastseen = (double)now - q.q;
    newq.q = (double)now;                   /* Last seen is now-then */
-   newq.expect = GAverage(lastseen,q.expect,0.3);
+   newq.expect = GAverage(lastseen,q.expect,0.7);
    delta2 = (lastseen - q.expect)*(lastseen - q.expect);
-   newq.var = GAverage(delta2,q.var,0.3);
+   newq.var = GAverage(delta2,q.var,0.7);
    }
 else
    {
