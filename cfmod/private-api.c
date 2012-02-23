@@ -1921,7 +1921,7 @@ PHP_FUNCTION(cfpr_report_value)
  char *fhostkey,*fmonth,*fday,*fyear;
  zval *context_includes = NULL,
       *context_excludes = NULL;
- int user_len, hk_len,d_len,m_len,y_len,cr_len;
+ int user_len, hk_len,d_len,m_len,y_len;
  char buffer[CF_WEBBUFFER];
  PageInfo page = {0};
  char *sortColumnName;
