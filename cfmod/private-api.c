@@ -26,6 +26,7 @@ static const char *LABEL_COLOUR = "colour";
 static const char *LABEL_OS_TYPE = "osType";
 static const char *LABEL_FLAVOUR = "flavour";
 static const char *LABEL_RELEASE = "release";
+static const char *LABEL_LAST_UPDATE = "lastUpdate";
 
 
 /******************************************************************************/
@@ -427,6 +428,9 @@ DATABASE_OPEN(&conn);
 
 HubQuery *result = CFDB_QueryVariables(&conn, hostKey, NULL, NULL, NULL, NULL, false, NULL);
 
+time_t last_update = -1;
+CFDB_QueryLastUpdate(&conn, MONGO_DATABASE, cfr_keyhash, hostKey, &last_update);
+
 DATABASE_CLOSE(&conn);
 
 if (result->hosts && result->hosts->item)
@@ -437,6 +441,7 @@ if (result->hosts && result->hosts->item)
    JsonObjectAppendString(infoObject, LABEL_HOSTKEY, hh->keyhash);
    JsonObjectAppendString(infoObject, LABEL_HOSTNAME, hh->hostname);
    JsonObjectAppendString(infoObject, LABEL_IP, hh->ipaddr);
+   JsonObjectAppendInteger(infoObject, LABEL_LAST_UPDATE, last_update);
 
    for (Rlist *rp = result->records; rp; rp = rp->next)
       {

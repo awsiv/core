@@ -16,7 +16,8 @@
                 ip: $self._createValueElement(),
                 osType: $self._createValueElement(),
                 flavour: $self._createValueElement(),
-                release: $self._createValueElement()
+                release: $self._createValueElement(),
+                lastUpdate: $self._createValueElement()
             };
             
             $self.element.append($self._createLabelElement('Name'));
@@ -37,6 +38,10 @@
             
             $self.element.append($self._createLabelElement('Release'));
             $self.element.append($self._values.release);
+            $self.element.append($self._createClear());
+            
+            $self.element.append($self._createLabelElement('Last report'));
+            $self.element.append($self._values.lastUpdate);
             $self.element.append($self._createClear());
             
             $.ui.hostInfo.instances.push($self.element);
@@ -78,6 +83,7 @@
             $self._values.osType.html('unknown');
             $self._values.flavour.html('unknown');
             $self._values.release.html('unknown');
+            $self._values.lastUpdate.html('unknown');
         },
         
         updateHostKey: function(hostKey) {
@@ -92,6 +98,14 @@
                 $self._values.osType.html(host.osType);
                 $self._values.flavour.html(host.flavour);
                 $self._values.release.html(host.release);
+                
+                if (host.lastUpdate === -1) {
+                    $self._values.lastUpdate.html('never');
+                }
+                else if (host.lastUpdate !== undefined && host.lastUpdate >= 0) {
+                    // TODO: print unix time for now, need to agree on formatting
+                    $self._values.lastUpdate.html(host.lastUpdate);
+                }
             });
         },
         
