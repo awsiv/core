@@ -118,6 +118,7 @@ $lang['services_goals']='Services/goals';
  * Text displayed in the engineering page
  */
 $lang['header_host_status'] = "Host status (last known hour)";
+$lang['header_host_connectivity'] = "Host Connectivity (last known hour)";
 $lang['header_promise_compliance'] = "Promise compliance summary for reachable hosts";
 $lang['header_finders'] = "Finders";
 $lang['host_known'] = "Hosts Known";

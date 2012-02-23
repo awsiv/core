@@ -1,0 +1,27 @@
+.hostsConnectivity .colourEntry
+{
+    padding: 5px;
+}
+
+.hostsConnectivity .colourEntryIcon
+{
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    vertical-align: middle;
+}
+
+.hostsConnectivity .colourEntryLabel
+{
+    padding-left: 5px;
+}
+
+.hostsConnectivity .colourEntryIcon.blue
+{
+    background: #476e8c;
+}
+
+.hostsConnectivity .colourEntryIcon.black
+{
+    background: #000000;
+}

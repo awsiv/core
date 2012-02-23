@@ -25,6 +25,11 @@
                     <div id="hostsCompliance"></div>
                 </div>
                 
+                <div id="hostsConnectivityContainer" style="padding: 15px">
+                    <p class="subTitle"><?php echo $this->lang->line('header_host_connectivity'); ?></p>
+                    <div id="hostsConnectivity"></div>
+                </div>
+                
                 <div id="hostInfoContainer" style="padding: 15px">
                     <p class="subTitle"><?php echo $this->lang->line('host_info'); ?></p>
                     <div id="hostInfo"></div>
@@ -42,6 +47,7 @@
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/combobox.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/searchEntry.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostsCompliance.js"></script>
+<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostsConnectivity.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostsMeter.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostInfo.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>jScrollPane.js"></script>
@@ -53,6 +59,7 @@
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>combobox.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>searchEntry.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>hostsCompliance.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>hostsConnectivity.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>jScrollPane.css" />
 
 <script type="text/javascript">
@@ -81,6 +88,7 @@
         */
         
         $('#hostsCompliance').hostsCompliance();
+        $('#hostsConnectivity').hostsConnectivity();
         $('#hostInfo').hostInfo();
         $('#astrolabeLocation').astrolabeLocation();
 
@@ -92,6 +100,7 @@
                 $('#hostInfoContainer').show();
 
                 $('#hostsComplianceContainer').hide();
+                $('#hostsConnectivityContainer').hide();
 
                 $('#astrolabeLocation').astrolabeLocation('setHostName', args.hostName);
             },
@@ -103,6 +112,9 @@
                     args.includes, args.excludes);
                 $('#hostsComplianceContainer').show();
                 
+                $('#hostsConnectivity').hostsConnectivity('setContextPath',
+                    args.includes, args.excludes);
+                $('#hostsConnectivityContainer').show();
 
                 $('#astrolabeLocation').astrolabeLocation('setContextPath', args.path, args.count);
             }

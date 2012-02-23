@@ -1,5 +1,5 @@
 (function ($) {
-    $.widget('ui.hostsCompliance', {
+    $.widget('ui.hostsConnectivity', {
         options: {
             astrolabeUrl: '../astrolabe/',
             defaultbehaviour: true
@@ -8,41 +8,30 @@
         _create: function () {
             var $self = this;
             
-            $self.element.addClass('hostsCompliance');
+            $self.element.addClass('hostsConnectivity');
             $self.element.addClass('container_12');
 
-            $self._red = $self._createColourEntry('red');
-            $self._red.addClass('grid_2');
-            $self.element.append($self._red);
+            $self._blue = $self._createColourEntry('blue');
+            $self._blue.addClass('grid_2');
+            $self.element.append($self._blue);
             
-            $self._green = $self._createColourEntry('green');
-            $self._green.addClass('grid_2');
-            $self.element.append($self._green);
-            
-            $self.element.append($self._createClear());
-            
-            $self._yellow = $self._createColourEntry('yellow');
-            $self._yellow.addClass('grid_2');
-            $self.element.append($self._yellow);
+            $self._black = $self._createColourEntry('black');
+            $self._black.addClass('grid_2');
+            $self.element.append($self._black);
             
             $self.element.append($self._createClear());
-            
         },
         
         setContextPath: function(includes, excludes) {
             var $self = this;
 
-            $.getJSON($self._requestUrls.hostCount($self, includes, 'red'), 
+            $.getJSON($self._requestUrls.hostCount($self, includes, 'blue'), 
                 function(count) {
-                    $self._setHostCount($self._red, count);
+                    $self._setHostCount($self._blue, count);
                 });
-            $.getJSON($self._requestUrls.hostCount($self, includes, 'green'), 
+            $.getJSON($self._requestUrls.hostCount($self, includes, 'black'), 
                 function(count) {
-                    $self._setHostCount($self._green, count);
-                });
-            $.getJSON($self._requestUrls.hostCount($self, includes, 'yellow'), 
-                function(count) {
-                    $self._setHostCount($self._yellow, count);
+                    $self._setHostCount($self._black, count);
                 });
         },
         
