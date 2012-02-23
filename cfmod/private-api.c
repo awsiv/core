@@ -1341,9 +1341,11 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
 
 PHP_FUNCTION(cfpr_report_compliance_promises)
 {
- char *userName, *hostkey,*handle,*status,*classreg;
- char *fhostkey,*fhandle,*fstatus,*fclassreg;
- int hk_len,h_len,s_len,cr_len;
+ char *userName, *hostkey,*handle,*status;
+ char *fhostkey,*fhandle,*fstatus;
+ zval *context_includes = NULL,
+      *context_excludes = NULL;
+ int hk_len,h_len,s_len;
  char buffer[CF_WEBBUFFER];
  zend_bool regex;
  int user_len, use_reg;
@@ -1353,13 +1355,14 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
  int sc_len;
  bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssbssbll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssbaasbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &handle, &h_len,
                            &status, &s_len,
                            &regex,
-                           &classreg, &cr_len,
+                           &context_includes,
+                           &context_excludes,
 			   &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
@@ -1373,7 +1376,6 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fhandle =  (h_len == 0) ? NULL : handle;
  fstatus =  (s_len == 0) ? NULL : status;
- fclassreg =  (s_len == 0) ? NULL : classreg;
  fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
@@ -1382,7 +1384,7 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
  
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
- HostClassFilterAddClasses(filter, fclassreg, NULL);
+ HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
  
  Nova2PHP_compliance_promises(fhostkey, fhandle, fstatus, use_reg, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
