@@ -17,7 +17,8 @@
                 osType: $self._createValueElement(),
                 flavour: $self._createValueElement(),
                 release: $self._createValueElement(),
-                lastUpdate: $self._createValueElement()
+                lastReportUpdate: $self._createValueElement(),
+                lastPolicyUpdate: $self._createValueElement()
             };
             
             $self.element.append($self._createLabelElement('Name'));
@@ -40,8 +41,12 @@
             $self.element.append($self._values.release);
             $self.element.append($self._createClear());
             
-            $self.element.append($self._createLabelElement('Last report'));
-            $self.element.append($self._values.lastUpdate);
+            $self.element.append($self._createLabelElement('Last Report'));
+            $self.element.append($self._values.lastReportUpdate);
+            $self.element.append($self._createClear());
+            
+            $self.element.append($self._createLabelElement('Policy Updated'));
+            $self.element.append($self._values.lastPolicyUpdate);
             $self.element.append($self._createClear());
             
             $.ui.hostInfo.instances.push($self.element);
@@ -59,7 +64,7 @@
             var $element = $('<span>');
 
             $element.addClass('label');
-            $element.addClass('grid_1');
+            $element.addClass('grid_2');
             $element.html(label);
             
             return $element;
@@ -69,7 +74,7 @@
             var $element = $('<span>');
 
             $element.addClass('value');
-            $element.addClass('grid_2');
+            $element.addClass('grid_3');
             $element.html('&nbsp;');
             
             return $element;
@@ -83,7 +88,8 @@
             $self._values.osType.html('unknown');
             $self._values.flavour.html('unknown');
             $self._values.release.html('unknown');
-            $self._values.lastUpdate.html('unknown');
+            $self._values.lastReportUpdate.html('unknown');
+            $self._values.lastPolicyUpdate.html('unknown');
         },
         
         updateHostKey: function(hostKey) {
@@ -95,16 +101,27 @@
                 $self._clearFields();
                 $self._values.name.html(host.hostname);
                 $self._values.ip.html(host.ip);
-                $self._values.osType.html(host.osType);
-                $self._values.flavour.html(host.flavour);
-                $self._values.release.html(host.release);
                 
-                if (host.lastUpdate === -1) {
-                    $self._values.lastUpdate.html('never');
+                if (host.osType !== undefined) {
+                    $self._values.osType.html(host.osType);
                 }
-                else if (host.lastUpdate !== undefined && host.lastUpdate >= 0) {
+                if (host.flavour !== undefined) {
+                    $self._values.flavour.html(host.flavour);
+                }
+                if (host.release !== undefined) {
+                    $self._values.release.html(host.release);
+                }
+                
+                if (host.lastReportUpdate === -1) {
+                    $self._values.lastReportUpdate.html('never');
+                }
+                else if (host.lastReportUpdate !== undefined && host.lastReportUpdate >= 0) {
                     // TODO: print unix time for now, need to agree on formatting
-                    $self._values.lastUpdate.html(host.lastUpdate);
+                    $self._values.lastReportUpdate.html(host.lastReportUpdate);
+                }
+                
+                if (host.lastPolicyUpdate !== undefined) {
+                    $self._values.lastPolicyUpdate.html(host.lastPolicyUpdate);
                 }
             });
         },

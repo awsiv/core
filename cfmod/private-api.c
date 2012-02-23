@@ -26,7 +26,8 @@ static const char *LABEL_COLOUR = "colour";
 static const char *LABEL_OS_TYPE = "osType";
 static const char *LABEL_FLAVOUR = "flavour";
 static const char *LABEL_RELEASE = "release";
-static const char *LABEL_LAST_UPDATE = "lastUpdate";
+static const char *LABEL_LAST_REPORT_UPDATE = "lastReportUpdate";
+static const char *LABEL_LAST_POLICY_UPDATE = "lastPolicyUpdate";
 
 
 /******************************************************************************/
@@ -428,8 +429,8 @@ DATABASE_OPEN(&conn);
 
 HubQuery *result = CFDB_QueryVariables(&conn, hostKey, NULL, NULL, NULL, NULL, false, NULL);
 
-time_t last_update = -1;
-CFDB_QueryLastUpdate(&conn, MONGO_DATABASE, cfr_keyhash, hostKey, &last_update);
+time_t last_report_update = -1;
+CFDB_QueryLastUpdate(&conn, MONGO_DATABASE, cfr_keyhash, hostKey, &last_report_update);
 
 DATABASE_CLOSE(&conn);
 
@@ -441,7 +442,7 @@ if (result->hosts && result->hosts->item)
    JsonObjectAppendString(infoObject, LABEL_HOSTKEY, hh->keyhash);
    JsonObjectAppendString(infoObject, LABEL_HOSTNAME, hh->hostname);
    JsonObjectAppendString(infoObject, LABEL_IP, hh->ipaddr);
-   JsonObjectAppendInteger(infoObject, LABEL_LAST_UPDATE, last_update);
+   JsonObjectAppendInteger(infoObject, LABEL_LAST_REPORT_UPDATE, last_report_update);
 
    for (Rlist *rp = result->records; rp; rp = rp->next)
       {
@@ -459,6 +460,10 @@ if (result->hosts && result->hosts->item)
          else if (strcmp(var->lval, "release") == 0)
             {
             JsonObjectAppendString(infoObject, LABEL_RELEASE, ScalarRvalValue(var->rval));
+            }
+         else if (strcmp(var->lval, "last_policy_update") == 0)
+            {
+            JsonObjectAppendString(infoObject, LABEL_LAST_POLICY_UPDATE, ScalarRvalValue(var->rval));
             }
          }
       }
