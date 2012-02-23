@@ -1710,9 +1710,11 @@ PHP_FUNCTION(cfpr_report_filediffs)
 
 PHP_FUNCTION(cfpr_report_filechanges_longterm)
 {
- char *userName, *hostkey,*file,*cmp,*classreg;
- char *fhostkey,*ffile,*fclassreg;
- int user_len, hk_len,f_len,c_len,cr_len;
+ char *userName, *hostkey,*file,*cmp;
+ char *fhostkey,*ffile;
+ zval *context_includes = NULL,
+      *context_excludes = NULL;
+ int user_len, hk_len,f_len,c_len;
  char buffer[CF_WEBBUFFER];
  zend_bool regex;
  long t;
@@ -1723,15 +1725,16 @@ PHP_FUNCTION(cfpr_report_filechanges_longterm)
  int sc_len;
  bool sortDescending;
  
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssblsssbll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssblsaasbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &file, &f_len,
                            &regex,
                            &t,
                            &cmp, &c_len,
-                           &classreg, &cr_len,
-			   &sortColumnName, &sc_len, &sortDescending, 
+                           &context_includes,
+                           &context_excludes,
+                           &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1743,7 +1746,6 @@ PHP_FUNCTION(cfpr_report_filechanges_longterm)
  then = (time_t)t;
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  ffile =  (f_len == 0) ? NULL : file;
- fclassreg =  (cr_len == 0) ? NULL : classreg;
  fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 // NOT THIS fcmp =  (c_len == 0) ? NULL : cmp;
 
@@ -1753,7 +1755,7 @@ PHP_FUNCTION(cfpr_report_filechanges_longterm)
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
- HostClassFilterAddClasses(filter, fclassreg, NULL);
+ HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
  
  Nova2PHP_filechanges_report(fhostkey, ffile, regex, then, cmp, filter, &page, true, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
@@ -1765,9 +1767,11 @@ PHP_FUNCTION(cfpr_report_filechanges_longterm)
 
 PHP_FUNCTION(cfpr_report_filediffs_longterm)
 {
- char *userName, *hostkey,*file,*cmp,*diff,*classreg;
- char *fhostkey,*ffile,*fdiff,*fclassreg;
- int user_len, hk_len,f_len,c_len,d_len,cr_len;
+ char *userName, *hostkey,*file,*cmp,*diff;
+ char *fhostkey,*ffile,*fdiff;
+ zval *context_includes = NULL,
+      *context_excludes = NULL;
+ int user_len, hk_len,f_len,c_len,d_len;
  char buffer[CF_WEBBUFFER];
  zend_bool regex;
  int use_reg;
@@ -1779,7 +1783,7 @@ PHP_FUNCTION(cfpr_report_filediffs_longterm)
  int sc_len;
  bool sortDescending;
  
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssblsssbll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssblsaasbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &file, &f_len,
@@ -1787,8 +1791,9 @@ PHP_FUNCTION(cfpr_report_filediffs_longterm)
                            &regex,
                            &t,
                            &cmp, &c_len,
-                           &classreg, &cr_len,
-			   &sortColumnName, &sc_len, &sortDescending,
+                           &context_includes,
+                           &context_excludes,
+                           &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1802,7 +1807,6 @@ PHP_FUNCTION(cfpr_report_filediffs_longterm)
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  ffile =  (f_len == 0) ? NULL : file;
  fdiff =  (d_len == 0) ? NULL : diff;
- fclassreg =  (cr_len == 0) ? NULL : classreg;
  fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 // NOT THIS fcmp =  (c_len == 0) ? NULL : cmp;
 
@@ -1812,7 +1816,7 @@ PHP_FUNCTION(cfpr_report_filediffs_longterm)
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
- HostClassFilterAddClasses(filter, fclassreg, NULL);
+ HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
  
  Nova2PHP_filediffs_report(fhostkey, ffile, fdiff, use_reg, then, cmp, filter, &page, true, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
@@ -1857,9 +1861,11 @@ PHP_FUNCTION(cfpr_promise_details)
 
 PHP_FUNCTION(cfpr_report_bundlesseen)
 {
- char *userName, *hostkey,*bundle,*classreg;
- char *fhostkey,*fbundle,*fclassreg;
- int user_len, hk_len,j_len,cr_len;
+ char *userName, *hostkey,*bundle;
+ char *fhostkey,*fbundle;
+ zval *context_includes = NULL,
+      *context_excludes = NULL;
+ int user_len, hk_len,j_len;
  char buffer[CF_WEBBUFFER];
  zend_bool regex;
  int use_reg;
@@ -1869,13 +1875,14 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
  int sc_len;
  bool sortDescending;
  
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbssbll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssbaasbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &bundle, &j_len,
                            &regex,
-                           &classreg, &cr_len,
-			   &sortColumnName, &sc_len, &sortDescending,
+                           &context_includes,
+                           &context_excludes,
+                           &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1887,7 +1894,6 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
  use_reg = (int)regex;
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fbundle =  (j_len == 0) ? NULL : bundle;
- fclassreg =  (cr_len == 0) ? NULL : classreg;
  fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
@@ -1896,7 +1902,7 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
- HostClassFilterAddClasses(filter, fclassreg, NULL);
+ HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
  
  Nova2PHP_bundle_report(fhostkey, fbundle, use_reg, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
@@ -1908,8 +1914,10 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
 
 PHP_FUNCTION(cfpr_report_value)
 {
- char *userName, *hostkey,*day,*month,*year,*classreg;
- char *fhostkey,*fmonth,*fday,*fyear,*fclassreg;
+ char *userName, *hostkey,*day,*month,*year;
+ char *fhostkey,*fmonth,*fday,*fyear;
+ zval *context_includes = NULL,
+      *context_excludes = NULL;
  int user_len, hk_len,d_len,m_len,y_len,cr_len;
  char buffer[CF_WEBBUFFER];
  PageInfo page = {0};
@@ -1918,14 +1926,15 @@ PHP_FUNCTION(cfpr_report_value)
  int sc_len;
  bool sortDescending;
  
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssssbll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssaasbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &day, &d_len,
                            &month, &m_len,
                            &year, &y_len,
-                           &classreg, &cr_len,
-			   &sortColumnName, &sc_len, &sortDescending,
+                           &context_includes,
+                           &context_excludes,
+                           &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1938,7 +1947,6 @@ PHP_FUNCTION(cfpr_report_value)
  fday =  (d_len == 0) ? NULL : day;
  fmonth =  (m_len == 0) ? NULL : month;
  fyear =  (y_len == 0) ? NULL : year;
- fclassreg =  (cr_len == 0) ? NULL : classreg;
  fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
@@ -1947,7 +1955,7 @@ PHP_FUNCTION(cfpr_report_value)
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
- HostClassFilterAddClasses(filter, fclassreg, NULL);
+ HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
  
  Nova2PHP_value_report(fhostkey, fday, fmonth, fyear, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
@@ -1978,9 +1986,11 @@ PHP_FUNCTION(cfpr_get_value_graph)
 
 PHP_FUNCTION(cfpr_report_notkept)
 {
- char *userName, *hostkey, *handle, *classreg;
- char *fhostkey,*fhandle,*fclassreg;
- int user_len, hk_len, h_len, cr_len;
+ char *userName, *hostkey, *handle;
+ char *fhostkey,*fhandle;
+ zval *context_includes = NULL,
+      *context_excludes = NULL;
+ int user_len, hk_len, h_len;
  char buffer[CF_WEBBUFFER];
  long hours_deltafrom, hours_deltato;
  time_t from = 0, to = 0;
@@ -1990,14 +2000,15 @@ PHP_FUNCTION(cfpr_report_notkept)
  int sc_len;
  bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllssbll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllaasbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &handle, &h_len,
                            &hours_deltafrom,
                            &hours_deltato,
-                           &classreg, &cr_len,
-			   &sortColumnName, &sc_len, &sortDescending,
+                           &context_includes,
+                           &context_excludes,
+                           &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -2012,7 +2023,6 @@ PHP_FUNCTION(cfpr_report_notkept)
  
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fhandle =  (h_len == 0) ? NULL : handle;
- fclassreg =  (cr_len == 0) ? NULL : classreg;
  fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
  buffer[0]='\0';
@@ -2021,7 +2031,7 @@ PHP_FUNCTION(cfpr_report_notkept)
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
- HostClassFilterAddClasses(filter, fclassreg, NULL);
+ HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
  
  Nova2PHP_promiselog(fhostkey, fhandle, PROMISE_LOG_STATE_NOTKEPT, from, to, filter, &page, buffer, sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
@@ -2033,9 +2043,11 @@ PHP_FUNCTION(cfpr_report_notkept)
 
 PHP_FUNCTION(cfpr_report_repaired)
 
-{ char *userName, *hostkey,*handle,*classreg;
- char *fhostkey,*fhandle,*fclassreg;
- int user_len, hk_len,h_len,cr_len;
+{ char *userName, *hostkey,*handle;
+ char *fhostkey,*fhandle;
+ zval *context_includes = NULL,
+      *context_excludes = NULL;
+ int user_len, hk_len,h_len;
  char buffer[CF_WEBBUFFER];
  long hours_deltafrom, hours_deltato;
  time_t from = 0, to = 0;
@@ -2045,13 +2057,14 @@ PHP_FUNCTION(cfpr_report_repaired)
  int sc_len;
  bool sortDescending;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllssbll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssllaasbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &handle, &h_len,
                            &hours_deltafrom, &hours_deltato,
-                           &classreg, &cr_len,
-			   &sortColumnName, &sc_len, &sortDescending,
+                           &context_includes,
+                           &context_excludes,
+                           &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -2062,7 +2075,6 @@ PHP_FUNCTION(cfpr_report_repaired)
 
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fhandle =  (h_len == 0) ? NULL : handle;
- fclassreg =  (cr_len == 0) ? NULL : classreg;
  fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 
 // convert delta hours to absolute time (deltato is oldest)
@@ -2076,7 +2088,7 @@ PHP_FUNCTION(cfpr_report_repaired)
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
- HostClassFilterAddClasses(filter, fclassreg, NULL);
+ HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
  
  Nova2PHP_promiselog(fhostkey,fhandle,PROMISE_LOG_STATE_REPAIRED,from,to,filter,&page,buffer,sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
