@@ -1341,9 +1341,25 @@ if (ReadDB(dbp,eventname,&ev_old,sizeof(ev_old)))
    {
    ev_new.t = now;
    ev_new.Q.q = value;
-   ev_new.Q.expect = GAverage(value,ev_old.Q.expect,FORGETRATE);
-   delta2 = (value - ev_new.Q.expect)*(value - ev_new.Q.expect);
-   ev_new.Q.var = GAverage(delta2,ev_old.Q.var,FORGETRATE);
+
+   if (isnan(ev_old.Q.expect))
+      {
+      ev_new.Q.expect = value;
+      }
+   else
+      {
+      ev_new.Q.expect = GAverage(value,ev_old.Q.expect,FORGETRATE);
+      }
+
+   if (isnan(ev_old.Q.var))
+      {
+      ev_new.Q.var = 0.0;
+      }
+   else
+      {
+      delta2 = (value - ev_new.Q.expect)*(value - ev_new.Q.expect);
+      ev_new.Q.var = GAverage(delta2,ev_old.Q.var,FORGETRATE);
+      }
    }
 else
    {
