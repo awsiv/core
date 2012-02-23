@@ -1,3 +1,7 @@
+February 2012
+*update.cf*
+- Ignore .git directory as well for downloads
+
 November 2011
 *update.cf*
 - add classes => u_if_repaired("stopped_cfprocs"); to Windows in order to ensure the self-upgrade would work properly
