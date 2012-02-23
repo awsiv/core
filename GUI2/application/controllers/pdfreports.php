@@ -889,7 +889,7 @@ class pdfreports extends Cf_Controller {
         if ($longterm) {
             $data['report_result'] = cfpr_report_filediffs_longterm($username, NULL, $search, $diff, true, $cal, ">", $class_regex, "time", true, $page, $rows);
         } else {
-            $data['report_result'] = cfpr_report_filediffs($username, NULL, $search, $diff, true, $cal, ">", $class_regex, "time", true, $page, $rows);
+            $data['report_result'] = cfpr_report_filediffs($username, NULL, $search, $diff, true, $cal, ">", array($class_regex), array(), "time", true, $page, $rows);
         }
         $result = json_decode($data['report_result'], true);
         $newFormat = array();
