@@ -18,7 +18,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
     <label for="admin_role">Administrative role<span class="required"></span></label>
    <?php if(isset( $rolesacc)){
     echo tooltip('tooltip_admin_grp','',true) ;// echo form_error('active_directory_domain'); 
-    echo form_dropdown('admin_role', $rolesacc, $admin_role?$admin_role:'select');
+    echo form_dropdown('admin_role', $rolesacc, isset($admin_role)?$admin_role:'select');
     }?>
     
    <?php if(isset($selected_role)){
@@ -142,7 +142,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
                 'name'        => 'rbac',
                 'id'          => 'rbac_on',
                 'value'       => 'true',
-                'checked'     => ($rbac == 'true' ? TRUE : '')
+                'checked'     => (isset($rbac) && $rbac== 'true' ? TRUE : '')
             );
         echo form_radio($elem); ?>
         <label for="mode" class="">On</label>
@@ -151,7 +151,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
                 'name'        => 'rbac',
                 'id'          => 'rbac_on',
                 'value'       => 'false',
-                'checked'     => ($rbac == 'false' ? TRUE : '')
+                'checked'     => (isset($rbac) == 'false' ? TRUE : '')
             );
         echo form_radio($elem); ?>                
         
@@ -172,8 +172,8 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
                 'name'        => 'experimental',
                 'id'          => 'experiemntal_on',
                 'value'       => TRUE,
-                'checked'     => $experimental
-            ));
+                'checked'     => (isset($experimental)?$experimental:'')
+)            );
         ?>
         <label for="mode" class="">On</label>
 
@@ -182,7 +182,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
                 'name'        => 'experimental',
                 'id'          => 'experimental_off',
                 'value'       => FALSE,
-                'checked'     => !$experimental
+                'checked'     => (isset($experimental)?!$experimental:'')
             ));
         ?>
         <label for="mode" class="">Off</label>
