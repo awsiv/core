@@ -1592,9 +1592,11 @@ PHP_FUNCTION(cfpr_report_setuid)
 
 PHP_FUNCTION(cfpr_report_filechanges)
 {
- char *userName, *hostkey,*file,*cmp,*classreg;
- char *fhostkey,*ffile,*fclassreg;
- int user_len, hk_len,f_len,c_len,cr_len;
+ char *userName, *hostkey,*file,*cmp;
+ char *fhostkey,*ffile;
+ zval *context_includes = NULL,
+      *context_excludes = NULL;
+ int user_len, hk_len,f_len,c_len;
  char buffer[CF_WEBBUFFER];
  zend_bool regex;
  long t;
@@ -1605,15 +1607,16 @@ PHP_FUNCTION(cfpr_report_filechanges)
  int sc_len;
  bool sortDescending;
  
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssblsssbll",
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssblsaasbll",
                            &userName, &user_len,
                            &hostkey, &hk_len,
                            &file, &f_len,
                            &regex,
                            &t,
                            &cmp, &c_len,
-                           &classreg, &cr_len,
-			   &sortColumnName, &sc_len, &sortDescending,
+                           &context_includes,
+                           &context_excludes,
+                           &sortColumnName, &sc_len, &sortDescending,
                            &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -1625,7 +1628,6 @@ PHP_FUNCTION(cfpr_report_filechanges)
  then = (time_t)t;
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  ffile =  (f_len == 0) ? NULL : file;
- fclassreg =  (cr_len == 0) ? NULL : classreg;
  fsortColumnName =  (sc_len == 0) ? NULL : sortColumnName;
 // NOT THIS fcmp =  (c_len == 0) ? NULL : cmp;
 
@@ -1635,7 +1637,7 @@ PHP_FUNCTION(cfpr_report_filechanges)
  ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
  HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
- HostClassFilterAddClasses(filter, fclassreg, NULL);
+ HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
  
  Nova2PHP_filechanges_report(fhostkey, ffile, regex, then, cmp, filter, &page, false, buffer,sizeof(buffer));
  DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);

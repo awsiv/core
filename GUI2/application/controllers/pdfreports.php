@@ -587,7 +587,7 @@ class pdfreports extends Cf_Controller {
         if ($longterm_data) {
             $data['report_result'] = cfpr_report_filechanges_longterm($username, $hostkey, $search, true, -1, ">", $class_regex, "time", true, $rows, $page_number);
         } else {
-            $data['report_result'] = cfpr_report_filechanges($username, $hostkey, $search, true, -1, ">", $class_regex, "time", true, $rows, $page_number);
+            $data['report_result'] = cfpr_report_filechanges($username, $hostkey, $search, true, -1, ">", array($class_regex), array(), "time", true, $rows, $page_number);
         }
 
         $ret = $data['report_result'];
