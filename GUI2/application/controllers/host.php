@@ -11,9 +11,18 @@ class Host extends Cf_REST_Controller {
 
     function count_get()
     {
-        echo cfpr_host_count($this->username, 
-                $this->param('colour'), $this->param_includes(), 
-                $this->param_excludes());
+        try
+        {
+            $result = cfpr_host_count($this->username,
+                    $this->param('colour'), $this->param_includes(), 
+                    $this->param_excludes());
+
+            $this->respond_ok((string)$result);
+        }
+        catch (CFModExceptionRBAC $e)
+        {
+            $this->respond_forbidden();
+        }
     }
     
     function info_get($hostKey) {
