@@ -1028,13 +1028,10 @@ for (ip = data; ip != NULL; ip=ip->next)
    sscanf(ip->name,"%ld,%254[^,],%1024[^\n]",&then,handle,reason);
    tthen = (time_t)then;
 
-
    // update
    bson_buffer_init(&bb);
-   setObj = bson_append_start_object(&bb, "$set");
-
-   bson_append_string(setObj,cfr_cause,reason);
-   
+   setObj = bson_append_start_object(&bb, "$addToSet");
+   bson_append_int(setObj, cfr_time, tthen);
    bson_append_finish_object(setObj);
    bson_from_buffer(&setOp,&bb);
 
@@ -1042,16 +1039,14 @@ for (ip = data; ip != NULL; ip=ip->next)
    bson_buffer_init(&record);
    bson_append_string(&record,cfr_keyhash,keyhash);
    bson_append_string(&record,cfr_promisehandle,handle);
-   bson_append_int(&record,cfr_time,tthen);
+   bson_append_string(&record,cfr_cause,reason);
    bson_from_buffer(&host_key, &record);
-
    mongo_update(conn, collName, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
    bson_destroy(&setOp);
    bson_destroy(&host_key);
    }
 }
-
 
 /*****************************************************************************/
 

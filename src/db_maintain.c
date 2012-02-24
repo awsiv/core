@@ -422,17 +422,18 @@ void CFDB_PurgePromiseLogs(mongo_connection *conn, time_t oldThreshold, time_t n
  * Deletes old repair and not kept log entries.
  **/
 {
-  bson_buffer bb, *sub;
+  bson_buffer bb;
   time_t oldStamp;
   bson cond;
 
   oldStamp = now - oldThreshold;
 
   bson_buffer_init(&bb);
-
-  sub = bson_append_start_object(&bb,cfr_time);
+  bson_buffer *pull = bson_append_start_object(&bb,"$pull");
+  bson_buffer *sub = bson_append_start_object(pull,cfr_time);
   bson_append_int(sub, "$lte", oldStamp);
   bson_append_finish_object(sub);
+  bson_append_finish_object(pull);
 
   bson_from_buffer(&cond, &bb);
 

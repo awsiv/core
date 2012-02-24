@@ -2592,7 +2592,6 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
  char *collName;
  mongo_cursor *cursor;
  bson_buffer bb;
- bson_buffer *timeRange;
  time_t rt;
  
  bson_buffer_init(&bb);
@@ -2614,24 +2613,6 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
        bson_append_string(&bb,cfr_promisehandle,lhandle);
        }
 
-    }
-
-
- if(from || to)  // time interval
-    {
-    timeRange = bson_append_start_object(&bb, cfr_time);
-   
-    if(from)
-       {
-       bson_append_int(timeRange, "$gte",from);
-       }
-   
-    if(to)
-       {
-       bson_append_int(timeRange, "$lte",to);
-       }
-
-    bson_append_finish_object(timeRange);
     }
 
  AppendHostKeys(conn, &bb, hostClassFilter);
@@ -2677,6 +2658,9 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
     oid[0] = '\0';
     rt = 0;
 
+    Rlist *timestampsList = NULL;
+    bool isTimestampArray = false;
+
     while (bson_iterator_next(&it1))
        {
        snprintf(noteid,sizeof(noteid),"%s",CF_NONOTE);
@@ -2697,10 +2681,35 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
           {
           snprintf(noteid,sizeof(noteid),"%s",bson_iterator_string(&it1));
           }
-       else if (strcmp(bson_iterator_key(&it1),cfr_time) == 0)
-          {
-          rt = bson_iterator_int(&it1);
-          }
+       else if (strcmp(bson_iterator_key(&it1),cfr_time) == 0) // new format
+	 {
+	   if (bson_iterator_type(&it1) == bson_array)
+	     {
+	     bson_iterator it2;
+
+	     isTimestampArray = true;
+	     bson_iterator_init(&it2,bson_iterator_value(&it1));            
+	     
+	     while (bson_iterator_next(&it2))
+	       {
+	       rt = bson_iterator_int(&it2);
+	       
+	       if(rt < from && rt > to)
+		 {
+		 continue;  
+		 }
+		 
+	       char timeString[CF_SMALLBUF] = {0};
+	       snprintf(timeString,sizeof(timeString),"%ld",rt);
+	       
+	       PrependRlist(&timestampsList,timeString,CF_SCALAR);
+	       }            
+	     }
+	   else // old format TODO: remove this completely? 
+	     {
+	     rt = bson_iterator_int(&it1);
+	     }
+	 }
        else if (strcmp(bson_iterator_key(&it1),"_id") == 0)
           {
           bson_oid_to_string(bson_iterator_oid(&it1), oid);
@@ -2715,10 +2724,22 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
        PrependRlistAlien(&host_list,hh);
        }
      
+    if(isTimestampArray && timestampsList)
+      {
+      Rlist *time = NULL;
+      for (time = timestampsList; time != NULL; time=time->next)
+	{
+	PrependRlistAlien(&record_list,NewHubPromiseLog(hh,rhandle,rcause,atoi(time->item),noteid,oid));
+	}	
 
-    PrependRlistAlien(&record_list,NewHubPromiseLog(hh,rhandle,rcause,rt,noteid,oid));
+      DeleteRlist(timestampsList);
+      timestampsList = NULL;	
+      }
+    else if (!isTimestampArray)
+      {
+      PrependRlistAlien(&record_list,NewHubPromiseLog(hh,rhandle,rcause,rt,noteid,oid));
+      }
     }
-
 
  // now fill in hostnames and ips of the hosts
 
