@@ -2638,6 +2638,8 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_promises)
     RETURN_NULL();
     }
 
+ ARGUMENT_CHECK_CONTENTS(user_len);
+
  use_reg = (int)regex;
  fhostkey =  (hk_len == 0) ? NULL : hostkey;
  fhandle =  (h_len == 0) ? NULL : handle;
@@ -3103,18 +3105,20 @@ PHP_FUNCTION(cfpr_host_count)
 {
 char *username = NULL,
      *colour = NULL;
-int len = -1;
+int user_len, colour_len;
 zval *includes, *excludes;
 
 if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssaa",
-                          &username, &len,
-                          &colour, &len,
+                          &username, &user_len,
+                          &colour, &colour_len,
                           &includes,
                           &excludes) == FAILURE)
    {
    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
    RETURN_NULL();
    }
+
+ARGUMENT_CHECK_CONTENTS(user_len);
 
 HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
