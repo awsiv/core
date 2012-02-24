@@ -52,9 +52,9 @@ if (db_active)
    }
 
 JsonElement *info = JsonObjectCreate(4);
-JsonObjectAppendString(info, "api-name", API_NAME);
-JsonObjectAppendString(info, "api-version", API_VERSION);
-JsonObjectAppendString(info, "hub-version", NOVA_VERSION);
+JsonObjectAppendString(info, "apiName", API_NAME);
+JsonObjectAppendString(info, "apiVersion", API_VERSION);
+JsonObjectAppendString(info, "hubVersion", NOVA_VERSION);
 JsonObjectAppendString(info, "database", db_active ? "connected" : "disconnected");
 
 RETURN_JSON(info);
