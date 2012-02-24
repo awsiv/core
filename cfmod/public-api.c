@@ -16,7 +16,7 @@ static const char *LABEL_VALUE = "value";
 static const char *LABEL_VERSION = "version";
 static const char *LABEL_ARCH = "arch";
 static const char *LABEL_TIMESTAMP = "timestamp";
-static const char *LABEL_LASTSEEN = "last-seen";
+static const char *LABEL_LASTSEEN = "lastseen";
 static const char *LABEL_AVERAGE = "average";
 static const char *LABEL_STDV = "stdv";
 static const char *LABEL_CONTEXT = "context";
@@ -28,7 +28,7 @@ static const char *LABEL_TYPE = "type";
 static const char *LABEL_ADD = "add";
 static const char *LABEL_REMOVE = "remove";
 static const char *LABEL_DIFF = "diff";
-static const char *LABEL_LINE_NUMBER = "line-number";
+static const char *LABEL_LINE_NUMBER = "line";
 
 static const char *LABEL_STATE = "state";
 static const char *LABEL_STATE_REPAIRED = "repaired";
