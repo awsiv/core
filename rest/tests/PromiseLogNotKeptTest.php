@@ -12,7 +12,7 @@ class PromiseLogNotKeptTest extends RestBaseTest
     {
         try
         {
-            $jsonArray = $this->getResults('/promise/log/not-kept/');
+            $jsonArray = $this->getResults('/promise/log/notkept/');
             $this->assertValidJson($jsonArray);
         }
         catch (Pest_NotFound $e)
@@ -26,7 +26,7 @@ class PromiseLogNotKeptTest extends RestBaseTest
      */
     public function testWithHostKey()
     {
-        $jsonArray = $this->getResults('/promise/log/not-kept/?hostkey=' . $this->hostA);
+        $jsonArray = $this->getResults('/promise/log/notkept/?hostkey=' . $this->hostA);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray));
         foreach ((array) $jsonArray as $data)
@@ -45,7 +45,7 @@ class PromiseLogNotKeptTest extends RestBaseTest
     {
 
         $handle = "cfengine_php_mod_files_cfmod_ini_ubuntu10";
-        $jsonArray = $this->getResults('/promise/log/not-kept?handle=' . $handle);
+        $jsonArray = $this->getResults('/promise/log/notkept?handle=' . $handle);
         $this->assertValidJson($jsonArray);
         foreach ((array) $jsonArray as $data)
         {
@@ -63,7 +63,7 @@ class PromiseLogNotKeptTest extends RestBaseTest
     {
 
         $context = "10_0_0_150";
-        $jsonArray = $this->getResults('/promise/log/not-kept?context=' . $context);
+        $jsonArray = $this->getResults('/promise/log/notkept?context=' . $context);
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
         foreach ((array) $jsonArray as $data)

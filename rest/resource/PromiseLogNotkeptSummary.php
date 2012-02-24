@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @uri /promise/log/not-kept/summary
+ * @uri /promise/log/notkept/summary
  */
 class PromiseLogNotKeptSummary extends Resource
 {
