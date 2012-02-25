@@ -1224,27 +1224,6 @@ PHP_FUNCTION(cfpr_class_list_soft_distinct_by_name_rx)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_class_list_soft)
-{
- char *userName;
- int user_len;
- char buffer[CF_WEBBUFFER];
-
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s",
-                           &userName, &user_len) == FAILURE)
-    {
-    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-    RETURN_NULL();
-    }
-
- buffer[0]='\0';
- Nova2PHP_listclasses_soft(NULL, NULL, false, NULL, buffer, sizeof(buffer));
-
- RETURN_STRING(buffer,1);
-}
-
-/******************************************************************************/
-
 PHP_FUNCTION(cfpr_class_list_ip)
 {
  char *userName;
