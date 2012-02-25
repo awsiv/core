@@ -425,7 +425,6 @@ PHP_FUNCTION(cfpr_list_documents);
  * \param userName
  */
 PHP_FUNCTION(cfpr_class_list_time_distinct_by_name_rx);
-PHP_FUNCTION(cfpr_class_list_time);
 
 /*! \brief A list of all the soft contexts at a host
  * \param userName

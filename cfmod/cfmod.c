@@ -124,7 +124,6 @@ static function_entry cfmod_functions[] =
     PHP_FE(cfpr_class_list_distinct_by_name_rx,NULL)
     PHP_FE(cfpr_class_list_time_distinct_by_name_rx,NULL)
 
-    PHP_FE(cfpr_class_list_time,NULL)
     PHP_FE(cfpr_class_list_soft,NULL)
     PHP_FE(cfpr_class_list_ip,NULL)
     PHP_FE(cfpr_class_list_hostname,NULL)
