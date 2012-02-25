@@ -1446,7 +1446,11 @@ PHP_FUNCTION(cfpr_report_overall_summary)
  fclassreg =  (s_len == 0) ? NULL : classreg;
 
  buffer[0]='\0';
- Nova2PHP_summary_report(fhostkey,fhandle,fstatus,use_reg,fclassreg,buffer,sizeof(buffer));
+ HostClassFilter *filter = NewHostClassFilter(fclassreg, NULL);
+ 
+ Nova2PHP_summary_report(fhostkey,fhandle,fstatus,use_reg,fclassreg,filter,buffer,sizeof(buffer));
+
+ DeleteHostClassFilter(filter);
 
  RETURN_STRING(buffer,1);
 }

@@ -269,7 +269,7 @@ void Nova2PHP_summary_meter(char *buffer,int bufsize)
 
 /*****************************************************************************/
 
-int Nova2PHP_summary_report(char *hostkey,char *handle,char *status,int regex,char *classreg,char *returnval,int bufsize)
+int Nova2PHP_summary_report(char *hostkey,char *handle,char *status,int regex,char *classreg,HostClassFilter *hostClassFilter,char *returnval,int bufsize)
 /*
   Return current best-knowledge of average compliance for the class of hosts and promises selected
  */
@@ -299,9 +299,7 @@ if (!status)  // any
    status = "x";
    }
 
-HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
-hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, false, filter);
-DeleteHostClassFilter(filter);
+hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, false, hostClassFilter);
 
 n = k = r = 0;
 n_av = k_av = r_av = 0;
