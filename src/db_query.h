@@ -29,8 +29,6 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
 HubQuery *CFDB_QueryFileChanges(mongo_connection *conn,char *keyHash,char *lname,int regex,time_t lt,int cmp, int sort, HostClassFilter *hostClassFilter, int lookInArchive);
 HubQuery *CFDB_QueryFileDiff(mongo_connection *conn,char *keyHash,char *lname,char *ldiff,int regex,time_t lt,int cmp, int sort, HostClassFilter *hostClassFilter, int lookInArchive);
 
-// class finder
-Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
 HubQuery *CFDB_QueryClassesDistinctSorted(mongo_connection *conn, char *classNameRx, HostClassFilter *hostClassFilter, PageInfo *page);
 
 //int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,time_t start_time,double *qa,double *ea,double *da);

@@ -709,9 +709,6 @@ void Nova_BoundaryCheck(DataView *cfv,int *x1,int *y1,int *x2, int *y2);
 
 #include "db_query.h"
 
-// class finder
-Rlist *CFDB_QueryHostClasses(mongo_connection *conn,char *keyHash,char *lclass,int regex,time_t horizon, char *classRegex, int sort);
-
 Item *CFDB_QueryVitalIds(mongo_connection *conn, char *keyHash);
 HubVital *CFDB_QueryVitalsMeta(mongo_connection *conn, char *keyHash);
 int CFDB_QueryMagView2(mongo_connection *conn,char *keyhash,char *monId,time_t start_time,double *qa,double *ea,double *da);

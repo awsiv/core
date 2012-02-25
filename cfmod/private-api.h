@@ -436,11 +436,6 @@ PHP_FUNCTION(cfpr_class_list_soft_distinct_by_name_rx);
  */
 PHP_FUNCTION(cfpr_class_list_distinct_by_name_rx);
 
-/*! \brief A list of host contexts
- * \param userName
- */
-PHP_FUNCTION(cfpr_class_list_hostname);
-
 /*! \brief Query for hosts using some software
  * \param hostKey
  * \param name
