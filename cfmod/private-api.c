@@ -3095,8 +3095,8 @@ PHP_FUNCTION(cfpr_show_topic_leads)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_show_topic_hits)
-
-{ const int bufsize = 100000;
+{
+ const int bufsize = 100000;
  char buffer[bufsize];
  long id;
  char *username;
@@ -3126,14 +3126,26 @@ PHP_FUNCTION(cfpr_show_topic_hits)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_show_topic_category)
-
-{ const int bufsize = 10000;
+{
+ const int bufsize = 10000;
  char buffer[bufsize];
  long id;
+ char *username;
+ int user_len;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l",&id) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sl",
+                           &username, &user_len,
+                           &id) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
+
+ ARGUMENT_CHECK_CONTENTS(user_len);
+
+ if(CFDB_UserIsAdminWhenRBAC(username) != ERRID_SUCCESS)
+    {
+    zend_throw_exception(cfmod_exception_rbac, LABEL_ERROR_RBAC_NOT_ADMIN, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
