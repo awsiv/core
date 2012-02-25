@@ -2968,14 +2968,25 @@ PHP_FUNCTION(cfpr_hosts_with_bundlesseen)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_get_pid_for_topic)
-
-{ char *type,*topic,typed_topic[1024];
- int o_len,y_len;
+{
+ char *username,*type,*topic,typed_topic[1024];
+ int user_len,o_len,y_len;
  long pid;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",&type,&y_len,&topic,&o_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss",
+                           &username, &user_len,
+                           &type, &y_len,
+                           &topic, &o_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
+
+ ARGUMENT_CHECK_CONTENTS(user_len);
+
+ if(CFDB_UserIsAdminWhenRBAC(username) != ERRID_SUCCESS)
+    {
+    zend_throw_exception(cfmod_exception_rbac, LABEL_ERROR_RBAC_NOT_ADMIN, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
