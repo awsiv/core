@@ -2995,19 +2995,28 @@ PHP_FUNCTION(cfpr_get_pid_for_topic)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_search_topics)
-
-//$ret = cfpr_search_topics("leads","string",regex);
-
-{ char *search;
+{
+ char *username, *search;
  char *fsearch;
- int s_len;
+ int user_len, s_len;
  const int bufsize = 100000;
  char buffer[bufsize];
  zend_bool regex;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sb",&search,&s_len,&regex) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssb",
+                           &username, &user_len,
+                           &search, &s_len,
+                           &regex) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
+
+ ARGUMENT_CHECK_CONTENTS(user_len);
+
+ if(CFDB_UserIsAdminWhenRBAC(username) != ERRID_SUCCESS)
+    {
+    zend_throw_exception(cfmod_exception_rbac, LABEL_ERROR_RBAC_NOT_ADMIN, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
@@ -3022,10 +3031,8 @@ PHP_FUNCTION(cfpr_search_topics)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_show_topic)
-
-//$ret = cfpr_search_topics("leads","string",regex);
-
-{ const int bufsize = 100000;
+{
+ const int bufsize = 100000;
  char buffer[bufsize];
  long id;
  char *username;
@@ -3038,6 +3045,8 @@ PHP_FUNCTION(cfpr_show_topic)
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
+
+ ARGUMENT_CHECK_CONTENTS(user_len);
  
  if(CFDB_UserIsAdminWhenRBAC(username) != ERRID_SUCCESS)
     {
