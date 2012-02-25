@@ -14,6 +14,7 @@
 #define LABEL_ERROR_ARGS "Incorrect argument count or types"
 #define LABEL_ERROR_ARGS_EMPTY "Missing argument contents"
 #define LABEL_ERROR_NOTIMPLEMENTED "Not implemented"
+#define LABEL_ERROR_RBAC_NOT_ADMIN "Only members of the admin role has access to this information"
 
 // FIX: symptom of something
 #define CF_WEBBUFFER 7*1024*1024

@@ -4400,18 +4400,29 @@ PHP_FUNCTION(cfpr_environment_by_hostkey)
 
 PHP_FUNCTION(cfpr_get_knowledge_view)
 
-{ char *view;
- int v_len;
+{ char *username, *view;
+ int user_len, v_len;
  const int bufsize = 1000000;
  char buffer[bufsize];
  long pid;
 
- if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ls",&pid,&view,&v_len) == FAILURE)
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sls",
+                           &username, &user_len,
+                           &pid,
+                           &view, &v_len) == FAILURE)
     {
     zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     RETURN_NULL();
     }
 
+ ARGUMENT_CHECK_CONTENTS(username);
+
+ if(CFDB_UserIsAdminWhenRBAC(username) != ERRID_SUCCESS)
+    {
+    zend_throw_exception(cfmod_exception_rbac, LABEL_ERROR_RBAC_NOT_ADMIN, 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
+ 
  buffer[0] = '\0';
  Nova2PHP_get_knowledge_view(pid,view,buffer,100000);
 

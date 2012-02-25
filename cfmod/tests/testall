@@ -53,7 +53,7 @@ runtest()
     
     SECONDS_USED_TEST=$(($TIME_END_TEST - $TIME_START_TEST))
     
-    OUTPUT_VALGRIND=$(valgrind -q --max-stackframe=8000000 --leak-check=full --log-fd=1 php -f $PHPFILE 2>/dev/null)
+    OUTPUT_VALGRIND=$(valgrind -q --main-stacksize=10000000 --max-stackframe=10000000 --leak-check=full --log-fd=1 php -f $PHPFILE 2>/dev/null)
     
     if [ -n "$OUTPUT_VALGRIND" ]
     then

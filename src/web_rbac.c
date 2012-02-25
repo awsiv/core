@@ -507,6 +507,36 @@ cfapi_errid CFDB_UpdateRole(char *updatingUser, char *roleName, char *descriptio
 
 /*****************************************************************************/
 
+cfapi_errid CFDB_UserIsAdminWhenRBAC(char *username)
+{
+ mongo_connection conn;
+
+ if(!CFDB_Open(&conn))
+    {
+    return ERRID_DBCONNECT;
+    }
+
+ cfapi_errid errid;
+ 
+ if(IsRBACOn(&conn))
+    {
+    errid = UserIsRoleAdmin(&conn, username);
+    }
+ else
+    {
+    errid = ERRID_SUCCESS;
+    }
+
+ if(!CFDB_Close(&conn))
+    {
+    errid = ERRID_DBCLOSE;
+    }
+ 
+ return errid;
+}
+
+/*****************************************************************************/
+
 static bool RoleExists(char *name)
 {
  HubQuery *hq = CFDB_GetRoleByName(name);
