@@ -25,6 +25,7 @@ fi
 
 TEST_FAILED_MEMORY=""
 TEST_FAILED_SPEED=""
+TEST_FAILED_FATAL_ERROR=""
 
 # TODO: standardise & loop over these environment variables to cover useful cases
 #CFENGINE_TEST_OVERRIDE_USERNAME="admin"
@@ -66,6 +67,13 @@ runtest()
         echo "Too slow (used $SECONDS_USED_TEST seconds)"
         TEST_FAILED_SPEED="$TEST_FAILED_SPEED $PHPFILE"
     fi
+
+    if [[ "$OUTPUT_PHP" == *"PHP Fatal error"* ]]
+    then
+        echo "Fatal php error:"
+        echo "$OUTPUT_PHP"
+        TEST_FAILED_FATAL_ERROR="$TEST_FAILED_FATAL_ERROR $PHPFILE"
+    fi
     
     echo "--- $PHPFILE ---" >> $LOGFILE
     echo -e "time: $SECONDS_USED_TEST seconds" >> $LOGFILE
@@ -94,3 +102,7 @@ echo "$TEST_FAILED_MEMORY"
 echo "----------------------"
 echo "Failed speed checks:"
 echo "$TEST_FAILED_SPEED"
+
+echo "----------------------"
+echo "Tests giving php fatal error (is test wrong?):"
+echo "$TEST_FAILED_FATAL_ERROR"
