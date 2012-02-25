@@ -37,3 +37,16 @@ HostClassFilterAddClassLists(filter, includeRlist, excludeRlist);
 DeleteRlist(includeRlist);
 DeleteRlist(excludeRlist);
 }
+
+
+JsonElement *JsonObjectWrapper(JsonElement *data, int totalResultCount)
+{ 
+ JsonElement *meta = JsonObjectCreate(1);
+ JsonObjectAppendInteger(meta, "count", totalResultCount);
+ 
+ JsonElement *output = JsonObjectCreate(2);
+ JsonObjectAppendArray(output, "data", data);
+ JsonObjectAppendObject(output, "meta", meta);
+
+ return output;
+}

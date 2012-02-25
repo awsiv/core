@@ -1129,13 +1129,59 @@ PHP_FUNCTION(cfpr_class_list_distinct_by_name_rx)
     }
  DeleteHubQuery(hqClasses, DeleteHubClass);
 
- JsonElement *meta = JsonObjectCreate(1);
- JsonObjectAppendInteger(meta, "count", page.totalResultCount);
+ JsonElement *output = JsonObjectWrapper(data, page.totalResultCount);
+
+ RETURN_JSON(output);
+}
+
+
+/******************************************************************************/
+
+PHP_FUNCTION(cfpr_class_list_time_distinct_by_name_rx)
+{
+ char *userName, *classRx;
+ int user_len, cr_len;
+ PageInfo page = {0};
+
+
+ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssll",
+                           &userName, &user_len,
+                           &classRx, &cr_len,
+                           &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
+    {
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+    RETURN_NULL();
+    }
+
+ ARGUMENT_CHECK_CONTENTS(user_len);
+
+ char *fClassRx = (cr_len == 0) ? NULL : classRx;
+
+ HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+ ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
  
- JsonElement *output = JsonObjectCreate(2);
- JsonObjectAppendArray(output, "data", data);
- JsonObjectAppendObject(output, "meta", meta);
- 
+ mongo_connection conn;
+ DATABASE_OPEN(&conn);
+
+ HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+ HubQuery *hqClasses = CFDB_QueryClassesDistinctSorted(&conn, fClassRx, filter, &page);
+ DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+
+ DATABASE_CLOSE(&conn);
+
+ JsonElement *data = JsonArrayCreate(5000);
+ for (Rlist *rp = hqClasses->records; rp != NULL; rp = rp->next)
+    {
+    HubClass *hubClass = rp->item;
+    if(IsTimeClass(hubClass->class))
+        {
+        JsonArrayAppendString(data, hubClass->class);
+        }
+    }
+ DeleteHubQuery(hqClasses, DeleteHubClass);
+
+ JsonElement *output = JsonObjectWrapper(data, page.totalResultCount);
+
  RETURN_JSON(output);
 }
 

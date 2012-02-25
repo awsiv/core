@@ -66,5 +66,6 @@
 
 
 void HostClassFilterAddIncludeExcludeLists(HostClassFilter *filter, zval *includes, zval *excludes);
+JsonElement *JsonObjectWrapper(JsonElement *data, int totalResultCount);
 
 #endif
