@@ -42,8 +42,6 @@
     RETURN_NULL();                    \
     }
 
-
-
 #define ERRID_RBAC_CHECK(hq, DeleteFunction)           \
  if(hq->errid != ERRID_RBAC_DISABLED && hq->errid != ERRID_SUCCESS)       \
     {                                             \
@@ -65,8 +63,7 @@
    free(JSON_buf); \
    RETURN_STRING(JSON_ebuf, 0);
 
-
-void HostClassFilterAddIncludeExcludeLists(HostClassFilter *filter, zval *includes, zval *excludes);
+void HostClassFilterAddIncludeExcludeLists(HostClassFilter *filter, zval * includes, zval * excludes);
 JsonElement *JsonObjectWrapper(JsonElement *data, int totalResultCount);
 
 #endif

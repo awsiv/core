@@ -6,7 +6,7 @@
 /*
  * Type of callback collecting actual probe data.
  */
-typedef void (*ProbeGatherData)(double *cf_this);
+typedef void (*ProbeGatherData) (double *cf_this);
 
 /*
  * Type of probe initialization function.
@@ -17,7 +17,7 @@ typedef void (*ProbeGatherData)(double *cf_this);
  *
  * Caller does not free data returned in "name" or "error".
  */
-typedef ProbeGatherData (*ProbeInit)(const char **name, const char **error);
+typedef ProbeGatherData(*ProbeInit) (const char **name, const char **error);
 
 /*
  * Existing probes and their identifiers

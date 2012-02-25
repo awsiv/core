@@ -13,25 +13,25 @@
 
 #ifdef HAVE_LIBMONGOC
 
-#define MONGO_ROLES_COLLECTION MONGO_MPBASE ".roles"
-#define MONGO_USERS_INTERNAL_COLLECTION MONGO_MPBASE ".users"
-#define MONGO_USERS_LDAP_COLLECTION MONGO_MPBASE ".ldap_users"
-#define MONGO_MPSETTINGS_COLLECTION MONGO_MPBASE ".appsettings"
+# define MONGO_ROLES_COLLECTION MONGO_MPBASE ".roles"
+# define MONGO_USERS_INTERNAL_COLLECTION MONGO_MPBASE ".users"
+# define MONGO_USERS_LDAP_COLLECTION MONGO_MPBASE ".ldap_users"
+# define MONGO_MPSETTINGS_COLLECTION MONGO_MPBASE ".appsettings"
 
-#define dbkey_mpsettings_rbac "rbac"
-#define dbkey_mpsettings_auth_mode "mode"
+# define dbkey_mpsettings_rbac "rbac"
+# define dbkey_mpsettings_auth_mode "mode"
 
-#define dbkey_user_name "username"
-#define dbkey_user_password "password"
-#define dbkey_user_active "active"
-#define dbkey_user_roles "roles"
+# define dbkey_user_name "username"
+# define dbkey_user_password "password"
+# define dbkey_user_active "active"
+# define dbkey_user_roles "roles"
 
-#define dbkey_role_name "name"
-#define dbkey_role_description "description"
-#define dbkey_role_classrx_include "crxi"
-#define dbkey_role_classrx_exclude "crxx"
-#define dbkey_role_bundlerx_include "brxi"
-#define dbkey_role_bundlerx_exclude "brxx"
+# define dbkey_role_name "name"
+# define dbkey_role_description "description"
+# define dbkey_role_classrx_include "crxi"
+# define dbkey_role_classrx_exclude "crxx"
+# define dbkey_role_bundlerx_include "brxi"
+# define dbkey_role_bundlerx_exclude "brxx"
 
 cfapi_errid CFDB_HasHostAccessFromUserRBAC(char *userName, char *hostKey);
 HubQuery *CFDB_HostClassFilterFromUserRBAC(char *userName);

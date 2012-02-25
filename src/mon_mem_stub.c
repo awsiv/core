@@ -9,7 +9,7 @@
 
 ProbeGatherData MonMemoryInit(const char **name, const char **error)
 {
-*name = "";
-*error = "Not avaliable";
-return NULL;
+    *name = "";
+    *error = "Not avaliable";
+    return NULL;
 }

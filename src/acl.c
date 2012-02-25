@@ -17,77 +17,76 @@
 
 /*****************************************************************************/
 
-void VerifyACL(char *file,Attributes a, Promise *pp)
-
+void VerifyACL(char *file, Attributes a, Promise *pp)
 {
-if (LICENSES == 0)
-   {
-   return;
-   }
+    if (LICENSES == 0)
+    {
+        return;
+    }
 
-if (!CheckACLSyntax(file, a.acl,pp))
-   {
-   cfPS(cf_error,CF_INTERPT,"",pp,a," !! Syntax error in access control list for \"%s\"",file);
-   PromiseRef(cf_error,pp);
-   return;
-   }
+    if (!CheckACLSyntax(file, a.acl, pp))
+    {
+        cfPS(cf_error, CF_INTERPT, "", pp, a, " !! Syntax error in access control list for \"%s\"", file);
+        PromiseRef(cf_error, pp);
+        return;
+    }
 
 // decide which ACL API to use
-switch(a.acl.acl_type)
-   {
-   case cfacl_notype:
-     // fallthrough: acl_type defaults to generic
+    switch (a.acl.acl_type)
+    {
+    case cfacl_notype:
+        // fallthrough: acl_type defaults to generic
 
-   case cfacl_generic:
+    case cfacl_generic:
 
-       switch (VSYSTEMHARDCLASS)
-          {
-          case linuxx:
-	      Nova_CheckPosixLinuxACL(file,a.acl,a,pp);
-              break;
+        switch (VSYSTEMHARDCLASS)
+        {
+        case linuxx:
+            Nova_CheckPosixLinuxACL(file, a.acl, a, pp);
+            break;
 
-	  case mingw:
-	      Nova_CheckNtACL(file,a.acl,a,pp);
-	      break;
+        case mingw:
+            Nova_CheckNtACL(file, a.acl, a, pp);
+            break;
 
-          default:
-              CfOut(cf_inform,"","!! ACLs are not yet supported on this system.");
-              break;
-           }
-       break;
+        default:
+            CfOut(cf_inform, "", "!! ACLs are not yet supported on this system.");
+            break;
+        }
+        break;
 
-   case cfacl_posix:
+    case cfacl_posix:
 
-       switch (VSYSTEMHARDCLASS)
-          {
-          case linuxx:
-              Nova_CheckPosixLinuxACL(file,a.acl,a,pp);
-              break;
+        switch (VSYSTEMHARDCLASS)
+        {
+        case linuxx:
+            Nova_CheckPosixLinuxACL(file, a.acl, a, pp);
+            break;
 
-          default:
-              CfOut(cf_inform,"","!! Posix ACLs are not supported on this system");
-              break;
-           }
-       break;
+        default:
+            CfOut(cf_inform, "", "!! Posix ACLs are not supported on this system");
+            break;
+        }
+        break;
 
-   case cfacl_ntfs:
+    case cfacl_ntfs:
 
-       switch (VSYSTEMHARDCLASS)
-          {
-	  case mingw:
-	      Nova_CheckNtACL(file,a.acl,a,pp);
-	      break;
+        switch (VSYSTEMHARDCLASS)
+        {
+        case mingw:
+            Nova_CheckNtACL(file, a.acl, a, pp);
+            break;
 
-          default:
-              CfOut(cf_inform,"","!! NTFS ACLs are not supported on this system");
-              break;
-           }
-       break;
+        default:
+            CfOut(cf_inform, "", "!! NTFS ACLs are not supported on this system");
+            break;
+        }
+        break;
 
-   default:
-       CfOut(cf_error,"","!! Unknown ACL type - software error");
-       break;
-   }
+    default:
+        CfOut(cf_error, "", "!! Unknown ACL type - software error");
+        break;
+    }
 }
 
 /*****************************************************************************/
@@ -95,91 +94,91 @@ switch(a.acl.acl_type)
 /*****************************************************************************/
 
 int CheckACLSyntax(char *file, Acl acl, Promise *pp)
-
-{ int valid = true;
-  int deny_support = false;
-  int mask_support = false;
-  char *valid_ops = NULL;
-  char *valid_nperms = NULL;
-  Rlist *rp;
+{
+    int valid = true;
+    int deny_support = false;
+    int mask_support = false;
+    char *valid_ops = NULL;
+    char *valid_nperms = NULL;
+    Rlist *rp;
 
 // set unset fields to defautls
-Nova_SetACLDefaults(file, &acl);
+    Nova_SetACLDefaults(file, &acl);
 
 // find valid values for op
 
-switch(acl.acl_method)
-   {
-   case cfacl_overwrite:
-       valid_ops = CF_VALID_OPS_METHOD_OVERWRITE;
-       break;
+    switch (acl.acl_method)
+    {
+    case cfacl_overwrite:
+        valid_ops = CF_VALID_OPS_METHOD_OVERWRITE;
+        break;
 
-   case cfacl_append:
-       valid_ops = CF_VALID_OPS_METHOD_APPEND;
-       break;
+    case cfacl_append:
+        valid_ops = CF_VALID_OPS_METHOD_APPEND;
+        break;
 
-   default:
-       // never executed: should be set to a default value by now
-       break;
-   }
+    default:
+        // never executed: should be set to a default value by now
+        break;
+    }
 
-switch(acl.acl_type)
-   {
-   case cfacl_generic:  // generic ACL type: cannot include native or deny-type permissions
-       valid_nperms = "";
-       deny_support = false;
-       mask_support = false;
-       break;
+    switch (acl.acl_type)
+    {
+    case cfacl_generic:        // generic ACL type: cannot include native or deny-type permissions
+        valid_nperms = "";
+        deny_support = false;
+        mask_support = false;
+        break;
 
-   case cfacl_posix:
-       valid_nperms = CF_VALID_NPERMS_POSIX;
-       deny_support = false;  // posix does not support deny-type permissions
-       mask_support = true;  // mask-ACE is allowed in POSIX
-       break;
+    case cfacl_posix:
+        valid_nperms = CF_VALID_NPERMS_POSIX;
+        deny_support = false;   // posix does not support deny-type permissions
+        mask_support = true;    // mask-ACE is allowed in POSIX
+        break;
 
-   case cfacl_ntfs:
-       valid_nperms = CF_VALID_NPERMS_NTFS;
-       deny_support = true;
-       mask_support = false;
-       break;
+    case cfacl_ntfs:
+        valid_nperms = CF_VALID_NPERMS_NTFS;
+        deny_support = true;
+        mask_support = false;
+        break;
 
-   default:
-     // never executed: should be set to a default value by now
-     break;
-   }
+    default:
+        // never executed: should be set to a default value by now
+        break;
+    }
 
 // check that acl_directory_inherit is set to a valid value
 
-if (!Nova_CheckDirectoryInherit(file, &acl, pp))
-   {
-   return false;
-   }
+    if (!Nova_CheckDirectoryInherit(file, &acl, pp))
+    {
+        return false;
+    }
 
-for (rp = acl.acl_entries; rp != NULL; rp=rp->next)
-   {
-   valid = Nova_CheckACESyntax(ScalarValue(rp),valid_ops,valid_nperms,deny_support,mask_support,pp);
+    for (rp = acl.acl_entries; rp != NULL; rp = rp->next)
+    {
+        valid = Nova_CheckACESyntax(ScalarValue(rp), valid_ops, valid_nperms, deny_support, mask_support, pp);
 
-   if (!valid)  // wrong syntax in this ace
-      {
-      CfOut(cf_error,"","The ACE \"%s\" contains errors", ScalarValue(rp));
-      PromiseRef(cf_error,pp);
-      break;
-      }
-   }
+        if (!valid)             // wrong syntax in this ace
+        {
+            CfOut(cf_error, "", "The ACE \"%s\" contains errors", ScalarValue(rp));
+            PromiseRef(cf_error, pp);
+            break;
+        }
+    }
 
-for (rp = acl.acl_inherit_entries; rp != NULL; rp=rp->next)
-   {
-   valid = Nova_CheckACESyntax(rp->item,valid_ops,valid_nperms,deny_support,mask_support,pp);
+    for (rp = acl.acl_inherit_entries; rp != NULL; rp = rp->next)
+    {
+        valid = Nova_CheckACESyntax(rp->item, valid_ops, valid_nperms, deny_support, mask_support, pp);
 
-   if (!valid)  // wrong syntax in this ace
-      {
-      CfOut(cf_error,"","The ACE \"%s\" contains errors", ScalarValue(rp));
-      PromiseRef(cf_error,pp);
-      break;
-      }
-   }
+        if (!valid)             // wrong syntax in this ace
+        {
+            CfOut(cf_error, "", "The ACE \"%s\" contains errors", ScalarValue(rp));
+            PromiseRef(cf_error, pp);
+            break;
+        }
+    }
 
-return valid;
+    return valid;
 }
 
 /*****************************************************************************/
@@ -189,285 +188,277 @@ return valid;
  **/
 
 void Nova_SetACLDefaults(char *path, Acl *acl)
-
 {
 // default: acl_method => append
 
-if (acl->acl_method == cfacl_nomethod)
-   {
-   acl->acl_method = cfacl_append;
-   }
+    if (acl->acl_method == cfacl_nomethod)
+    {
+        acl->acl_method = cfacl_append;
+    }
 
 // default: acl_type => generic
 
-if (acl->acl_type == cfacl_notype)
-   {
-   acl->acl_type = cfacl_generic;
-   }
-
+    if (acl->acl_type == cfacl_notype)
+    {
+        acl->acl_type = cfacl_generic;
+    }
 
 // default on directories: acl_directory_inherit => parent
 
-if(acl->acl_directory_inherit == cfacl_noinherit && IsDir(path))
-   {
-   acl->acl_directory_inherit = cfacl_nochange;
-   }
+    if (acl->acl_directory_inherit == cfacl_noinherit && IsDir(path))
+    {
+        acl->acl_directory_inherit = cfacl_nochange;
+    }
 }
 
 /*****************************************************************************/
 
 int Nova_CheckDirectoryInherit(char *path, Acl *acl, Promise *pp)
-
 /*
   Checks that acl_directory_inherit is set to a valid value for this acl type.
   Returns true if so, or false otherwise.
 */
+{
+    int valid = false;
 
-{int valid = false;
-
-
-  switch(acl->acl_directory_inherit)
+    switch (acl->acl_directory_inherit)
     {
-    case cfacl_noinherit:  // unset is always valid
-      valid = true;
+    case cfacl_noinherit:      // unset is always valid
+        valid = true;
 
-      break;
+        break;
 
-  case cfacl_specify:  // NOTE: we assume all acls support specify
+    case cfacl_specify:        // NOTE: we assume all acls support specify
 
-   // fallthrough
- case cfacl_parent:
+        // fallthrough
+    case cfacl_parent:
 
-   // fallthrough
- default:
+        // fallthrough
+    default:
 
-    if(IsDir(path))
-      {
-      valid = true;
-      }
-    else
-      {
-      CfOut(cf_error,"","acl_directory_inherit can only be set on directories.");
-      PromiseRef(cf_error,pp);
-      valid = false;
-      }
+        if (IsDir(path))
+        {
+            valid = true;
+        }
+        else
+        {
+            CfOut(cf_error, "", "acl_directory_inherit can only be set on directories.");
+            PromiseRef(cf_error, pp);
+            valid = false;
+        }
 
-    break;
+        break;
     }
 
-  return valid;
+    return valid;
 }
 
 /*****************************************************************************/
 
-int Nova_CheckACESyntax(char *ace,char *valid_ops,char *valid_nperms,int deny_support, int mask_support,Promise *pp)
+int Nova_CheckACESyntax(char *ace, char *valid_ops, char *valid_nperms, int deny_support, int mask_support, Promise *pp)
+{
+    char *str;
+    int chkid;
+    int valid_mode;
+    int valid_permt;
 
-{ char *str;
-  int chkid;
-  int valid_mode;
-  int valid_permt;
-
-str = ace;
-chkid = false;
+    str = ace;
+    chkid = false;
 
 // first element must be "user", "group" or "all"
 
-if (strncmp(str, "user:", 5) == 0)
-   {
-   str += 5;
-   chkid = true;
-   }
-else if(strncmp(str, "group:", 6) == 0)
-   {
-   str += 6;
-   chkid = true;
-   }
-else if(strncmp(str, "all:", 4) == 0)
-   {
-   str += 4;
-   chkid = false;
-   }
-else if(strncmp(str, "mask:", 5) == 0)
-   {
+    if (strncmp(str, "user:", 5) == 0)
+    {
+        str += 5;
+        chkid = true;
+    }
+    else if (strncmp(str, "group:", 6) == 0)
+    {
+        str += 6;
+        chkid = true;
+    }
+    else if (strncmp(str, "all:", 4) == 0)
+    {
+        str += 4;
+        chkid = false;
+    }
+    else if (strncmp(str, "mask:", 5) == 0)
+    {
 
-   if(mask_support)
-     {
-     str += 5;
-     chkid = false;
-     }
-   else
-     {
-     CfOut(cf_error,"","This ACL type does not support mask ACE.");
-     PromiseRef(cf_error,pp);
-     return false;
-     }
+        if (mask_support)
+        {
+            str += 5;
+            chkid = false;
+        }
+        else
+        {
+            CfOut(cf_error, "", "This ACL type does not support mask ACE.");
+            PromiseRef(cf_error, pp);
+            return false;
+        }
 
-   }
-else
-   {
-   CfOut(cf_error,"","ACE '%s' does not start with user:/group:/all", ace);
-   PromiseRef(cf_error,pp);
-   return false;
-   }
+    }
+    else
+    {
+        CfOut(cf_error, "", "ACE '%s' does not start with user:/group:/all", ace);
+        PromiseRef(cf_error, pp);
+        return false;
+    }
 
-if (chkid)  // look for following "id:"
-   {
-   if(*str == ':')
-      {
-      CfOut(cf_error,"","ACE '%s': id cannot be empty or contain ':'", ace);
-      return false;
-      }
+    if (chkid)                  // look for following "id:"
+    {
+        if (*str == ':')
+        {
+            CfOut(cf_error, "", "ACE '%s': id cannot be empty or contain ':'", ace);
+            return false;
+        }
 
-   // skip id-string (no check: allow any id-string)
+        // skip id-string (no check: allow any id-string)
 
-   while (true)
-      {
-      str++;
-      if (*str == ':')
-         {
-         str++;
-         break;
-         }
-      else if(*str == '\0')
-         {
-         CfOut(cf_error,"","Nothing following id string in ACE '%s'", ace);
-         return false;
-         }
-      }
-   }
+        while (true)
+        {
+            str++;
+            if (*str == ':')
+            {
+                str++;
+                break;
+            }
+            else if (*str == '\0')
+            {
+                CfOut(cf_error, "", "Nothing following id string in ACE '%s'", ace);
+                return false;
+            }
+        }
+    }
 
 // check the mode-string (also skips to next field)
-valid_mode = Nova_CheckModeSyntax(&str, valid_ops, valid_nperms,pp);
+    valid_mode = Nova_CheckModeSyntax(&str, valid_ops, valid_nperms, pp);
 
-if (!valid_mode)
-   {
-   CfOut(cf_error,"","Malformed mode-string in ACE '%s'", ace);
-   PromiseRef(cf_error,pp);
-   return false;
-   }
+    if (!valid_mode)
+    {
+        CfOut(cf_error, "", "Malformed mode-string in ACE '%s'", ace);
+        PromiseRef(cf_error, pp);
+        return false;
+    }
 
-if (*str == '\0')  // mode was the last field
-   {
-   return true;
-   }
+    if (*str == '\0')           // mode was the last field
+    {
+        return true;
+    }
 
-str++;
+    str++;
 
 // last field; must be a perm_type field
-valid_permt = Nova_CheckPermTypeSyntax(str,deny_support,pp);
+    valid_permt = Nova_CheckPermTypeSyntax(str, deny_support, pp);
 
-if (!valid_permt)
-   {
-   CfOut(cf_error,"","Malformed perm_type syntax in ACE '%s'", ace);
-   return false;
-   }
+    if (!valid_permt)
+    {
+        CfOut(cf_error, "", "Malformed perm_type syntax in ACE '%s'", ace);
+        return false;
+    }
 
-return true;
+    return true;
 }
 
 /*****************************************************************************/
 
-int Nova_CheckModeSyntax(char **mode_p, char *valid_ops, char *valid_nperms,Promise *pp)
-
+int Nova_CheckModeSyntax(char **mode_p, char *valid_ops, char *valid_nperms, Promise *pp)
 /*
   Checks the syntax of a ':' or NULL terminated mode string.
   Moves the string pointer to the character following the mode
   (i.e. ':' or '\0')
 */
+{
+    char *mode;
+    int valid;
 
-{ char *mode;
-  int valid;
-
-valid = false;
-mode = *mode_p;
+    valid = false;
+    mode = *mode_p;
 
 // mode is allowed to be empty
 
-if (*mode == '\0' || *mode == ':')
-   {
-   return true;
-   }
+    if (*mode == '\0' || *mode == ':')
+    {
+        return true;
+    }
 
-while(true)
-   {
-   mode = ScanPastChars(valid_ops, mode);
+    while (true)
+    {
+        mode = ScanPastChars(valid_ops, mode);
 
-   mode = ScanPastChars(CF_VALID_GPERMS, mode);
+        mode = ScanPastChars(CF_VALID_GPERMS, mode);
 
-   if (*mode == CF_NATIVE_PERMS_SEP_START)
-      {
-      mode++;
+        if (*mode == CF_NATIVE_PERMS_SEP_START)
+        {
+            mode++;
 
-      mode = ScanPastChars(valid_nperms, mode);
-      
-      if (*mode == CF_NATIVE_PERMS_SEP_END)
-         {
-         mode++;
-         }
-      else
-         {
-         CfOut(cf_error,"","Invalid native permission '%c', or missing native end separator", *mode);
-         PromiseRef(cf_error,pp);
-         valid = false;
-         break;
-         }
-      }
+            mode = ScanPastChars(valid_nperms, mode);
 
-   if (*mode == '\0' || *mode == ':')  // end of mode-string
-      {
-      valid = true;
-      break;
-      }
-   else if(*mode == ',')  // one more iteration
-      {
-      mode++;
-      }
-   else
-      {
-      CfOut(cf_error,"","Mode string contains invalid characters");
-      PromiseRef(cf_error,pp);
-      valid = false;
-      break;
-      }
-   }
+            if (*mode == CF_NATIVE_PERMS_SEP_END)
+            {
+                mode++;
+            }
+            else
+            {
+                CfOut(cf_error, "", "Invalid native permission '%c', or missing native end separator", *mode);
+                PromiseRef(cf_error, pp);
+                valid = false;
+                break;
+            }
+        }
 
-*mode_p = mode;  // move pointer to past mode-field
+        if (*mode == '\0' || *mode == ':')      // end of mode-string
+        {
+            valid = true;
+            break;
+        }
+        else if (*mode == ',')  // one more iteration
+        {
+            mode++;
+        }
+        else
+        {
+            CfOut(cf_error, "", "Mode string contains invalid characters");
+            PromiseRef(cf_error, pp);
+            valid = false;
+            break;
+        }
+    }
 
-return valid;
+    *mode_p = mode;             // move pointer to past mode-field
+
+    return valid;
 }
 
 /*****************************************************************************/
 
-int Nova_CheckPermTypeSyntax(char *permt, int deny_support,Promise *pp)
-
+int Nova_CheckPermTypeSyntax(char *permt, int deny_support, Promise *pp)
 /*
   Checks if the given string corresponds to the perm_type syntax.
   Only "allow" or "deny", followed by NULL-termination are valid.
   In addition, "deny" is only valid for ACL types supporting it.
  */
+{
+    int valid;
 
-{ int valid;
+    valid = false;
 
-valid = false;
+    if (strcmp(permt, "allow") == 0)
+    {
+        valid = true;
+    }
+    else if (strcmp(permt, "deny") == 0)
+    {
+        if (deny_support)
+        {
+            valid = true;
+        }
+        else
+        {
+            CfOut(cf_error, "", "Deny permission not supported by this ACL type");
+            PromiseRef(cf_error, pp);
+        }
+    }
 
-if (strcmp(permt,"allow") == 0)
-   {
-   valid = true;
-   }
-else if(strcmp(permt,"deny") == 0)
-   {
-   if (deny_support)
-      {
-      valid = true;
-      }
-   else
-      {
-      CfOut(cf_error,"","Deny permission not supported by this ACL type");
-      PromiseRef(cf_error,pp);
-      }
-   }
-
-return valid;
+    return valid;
 }
-
-

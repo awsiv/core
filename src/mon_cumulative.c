@@ -13,17 +13,17 @@
 typedef struct PrevValue_ PrevValue;
 
 struct PrevValue_
-   {
-   char *name;
-   char *subname;
-   union
-      {
-      unsigned u32;
-      unsigned long long u64;
-      } value;
-   time_t timestamp;
-   PrevValue *next;
-   };
+{
+    char *name;
+    char *subname;
+    union
+    {
+        unsigned u32;
+        unsigned long long u64;
+    } value;
+    time_t timestamp;
+    PrevValue *next;
+};
 
 /* Globals */
 
@@ -33,80 +33,82 @@ static PrevValue *values;
 
 static PrevValue *AppendNewValue(const char *name, const char *subname, time_t timestamp)
 {
-PrevValue *v = xmalloc(sizeof(PrevValue));
-v->name = xstrdup(name);
-v->subname = xstrdup(subname);
-v->timestamp = timestamp;
-v->next = values;
-values = v;
-return v;
+    PrevValue *v = xmalloc(sizeof(PrevValue));
+
+    v->name = xstrdup(name);
+    v->subname = xstrdup(subname);
+    v->timestamp = timestamp;
+    v->next = values;
+    values = v;
+    return v;
 }
 
 unsigned GetInstantUint32Value(const char *name, const char *subname, unsigned value, time_t timestamp)
 {
-PrevValue *v;
+    PrevValue *v;
 
-for (v = values; v; v = v->next)
-   {
-   if (!strcmp(v->name, name) && !strcmp(v->subname, subname))
-      {
-      unsigned diff;
-      unsigned difft;
+    for (v = values; v; v = v->next)
+    {
+        if (!strcmp(v->name, name) && !strcmp(v->subname, subname))
+        {
+            unsigned diff;
+            unsigned difft;
 
-      /* Check for wraparound */
-      if (value < v->value.u32)
-         {
-         diff = INT_MAX - v->value.u32 + value;
-         }
-      else
-         {
-         diff = value - v->value.u32;
-         }
-      difft = timestamp - v->timestamp;
+            /* Check for wraparound */
+            if (value < v->value.u32)
+            {
+                diff = INT_MAX - v->value.u32 + value;
+            }
+            else
+            {
+                diff = value - v->value.u32;
+            }
+            difft = timestamp - v->timestamp;
 
-      v->value.u32 = value;
-      v->timestamp = timestamp;
+            v->value.u32 = value;
+            v->timestamp = timestamp;
 
-      if (difft != 0)
-         {
-         return diff / difft;
-         }
-      else
-         {
-         return (unsigned)-1;
-         }
-      }
-   }
+            if (difft != 0)
+            {
+                return diff / difft;
+            }
+            else
+            {
+                return (unsigned) -1;
+            }
+        }
+    }
 
-AppendNewValue(name, subname, timestamp)->value.u32 = value;
-return (unsigned)-1;
+    AppendNewValue(name, subname, timestamp)->value.u32 = value;
+    return (unsigned) -1;
 }
 
-unsigned long long GetInstantUint64Value(const char *name, const char *subname, unsigned long long value, time_t timestamp)
+unsigned long long GetInstantUint64Value(const char *name, const char *subname, unsigned long long value,
+                                         time_t timestamp)
 {
-PrevValue *v;
+    PrevValue *v;
 
-for (v = values; v; v = v->next)
-   {
-   if (!strcmp(v->name, name) && !strcmp(v->subname, subname))
-      {
-      unsigned long long diff = value - v->value.u64;
-      unsigned difft = timestamp - v->timestamp;
+    for (v = values; v; v = v->next)
+    {
+        if (!strcmp(v->name, name) && !strcmp(v->subname, subname))
+        {
+            unsigned long long diff = value - v->value.u64;
+            unsigned difft = timestamp - v->timestamp;
 
-      v->value.u64 = value;
-      v->timestamp = timestamp;
+            v->value.u64 = value;
+            v->timestamp = timestamp;
 
-      if (difft != 0)
-         {
-         return diff / difft;
-         }
-      else
-         {
-         return (unsigned long long)-1;
-         }
-      }
-   }
+            if (difft != 0)
+            {
+                return diff / difft;
+            }
+            else
+            {
+                return (unsigned long long) -1;
+            }
+        }
+    }
 
-AppendNewValue(name, subname, timestamp)->value.u64 = value;
-return (unsigned long long)-1;
+    AppendNewValue(name, subname, timestamp)->value.u64 = value;
+    return (unsigned long long) -1;
 }

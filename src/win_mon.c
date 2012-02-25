@@ -22,40 +22,41 @@
 static int GetCpuTicks(ULARGE_INTEGER *ticksWork, ULARGE_INTEGER *ticksTotal);
 
 // last measured CPU ticks
-ULARGE_INTEGER ticksWorkLast = {0};
-ULARGE_INTEGER ticksTotalLast = {0};
-
+ULARGE_INTEGER ticksWorkLast = { 0 };
+ULARGE_INTEGER ticksTotalLast = { 0 };
 
 void GatherCPUData(double *CF_THIS)
 {
- ULARGE_INTEGER ticksWork;
- ULARGE_INTEGER ticksTotal;
- double util;
+    ULARGE_INTEGER ticksWork;
+    ULARGE_INTEGER ticksTotal;
+    double util;
 
- if(!GetCpuTicks(&ticksWork, &ticksTotal))
+    if (!GetCpuTicks(&ticksWork, &ticksTotal))
     {
-    CfOut(cf_verbose, "", "Skipping this CPU measure due to lack of data");
-    return;
+        CfOut(cf_verbose, "", "Skipping this CPU measure due to lack of data");
+        return;
     }
 
- // need two samples to find utilisation
- if(ticksTotalLast.QuadPart != 0)
+    // need two samples to find utilisation
+    if (ticksTotalLast.QuadPart != 0)
     {
-    // wrap around
-    if(ticksTotalLast.QuadPart > ticksTotal.QuadPart)
-       {
-       util = 50.0;
-       }
-    else
-       {
-       util = (double)(((ticksWork.QuadPart - ticksWorkLast.QuadPart)*100)/(ticksTotal.QuadPart - ticksTotalLast.QuadPart));
-       }
+        // wrap around
+        if (ticksTotalLast.QuadPart > ticksTotal.QuadPart)
+        {
+            util = 50.0;
+        }
+        else
+        {
+            util =
+                (double) (((ticksWork.QuadPart - ticksWorkLast.QuadPart) * 100) / (ticksTotal.QuadPart -
+                                                                                   ticksTotalLast.QuadPart));
+        }
 
-    CF_THIS[ob_cpuall] = util;
+        CF_THIS[ob_cpuall] = util;
     }
 
- ticksWorkLast.QuadPart = ticksWork.QuadPart;
- ticksTotalLast.QuadPart = ticksTotal.QuadPart;
+    ticksWorkLast.QuadPart = ticksWork.QuadPart;
+    ticksTotalLast.QuadPart = ticksTotal.QuadPart;
 }
 
 /*********************************************************************/
@@ -67,31 +68,30 @@ static int GetCpuTicks(ULARGE_INTEGER *ticksWork, ULARGE_INTEGER *ticksTotal)
  * Returns true on success, false otherwise.
  */
 {
- ULARGE_INTEGER ker, usr, idl;
- FILETIME timeIdle;
- FILETIME timeKernel;
- FILETIME timeUser;
+    ULARGE_INTEGER ker, usr, idl;
+    FILETIME timeIdle;
+    FILETIME timeKernel;
+    FILETIME timeUser;
 
- if(!GetSystemTimes( &timeIdle, &timeKernel, &timeUser))
+    if (!GetSystemTimes(&timeIdle, &timeKernel, &timeUser))
     {
-    CfOut(cf_error, "GetSystemTimes", "!! Could not get CPU ticks");
-    return false;
+        CfOut(cf_error, "GetSystemTimes", "!! Could not get CPU ticks");
+        return false;
     }
 
- // kernel + user is total time, idle is unused fraction
+    // kernel + user is total time, idle is unused fraction
 
- ker.HighPart = timeKernel.dwHighDateTime;
- ker.LowPart = timeKernel.dwLowDateTime;
+    ker.HighPart = timeKernel.dwHighDateTime;
+    ker.LowPart = timeKernel.dwLowDateTime;
 
- usr.HighPart = timeUser.dwHighDateTime;
- usr.LowPart = timeUser.dwLowDateTime;
-  
- idl.HighPart = timeKernel.dwHighDateTime;
- idl.LowPart = timeKernel.dwLowDateTime;
-  
- ticksTotal->QuadPart = ker.QuadPart + usr.QuadPart;
- ticksWork->QuadPart =  ticksTotal->QuadPart - idl.QuadPart;
+    usr.HighPart = timeUser.dwHighDateTime;
+    usr.LowPart = timeUser.dwLowDateTime;
 
- return true;
+    idl.HighPart = timeKernel.dwHighDateTime;
+    idl.LowPart = timeKernel.dwLowDateTime;
+
+    ticksTotal->QuadPart = ker.QuadPart + usr.QuadPart;
+    ticksWork->QuadPart = ticksTotal->QuadPart - idl.QuadPart;
+
+    return true;
 }
-

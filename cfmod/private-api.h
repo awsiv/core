@@ -856,7 +856,6 @@ PHP_FUNCTION(cfpr_environment_by_hostkey);
  */
 PHP_FUNCTION(cfpr_replica_status);
 
-
 /*
  * SVN helper
  */
@@ -879,8 +878,6 @@ PHP_FUNCTION(cfpr_cdp_reportnames);
  * \param pageNumber
  */
 PHP_FUNCTION(cfpr_cdp_report);
-
-
 
 /*
  * Commenting
@@ -927,7 +924,6 @@ PHP_FUNCTION(cfpr_role_update);
 PHP_FUNCTION(cfpr_role_list_all);
 PHP_FUNCTION(cfpr_role_list_by_name);
 
-
 /******************************************************************************/
 /* Mission Tree-Control (Astrolabe)                                           */
 /******************************************************************************/
@@ -935,5 +931,4 @@ PHP_FUNCTION(cfpr_role_list_by_name);
 PHP_FUNCTION(cfpr_astrolabe_host_list);
 PHP_FUNCTION(cfpr_astrolabe_host_count);
 
-
-#endif  /* CFENGINE_CFMOD_PRIVATE_API_H */
+#endif

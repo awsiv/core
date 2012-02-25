@@ -8,7 +8,6 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 
 #ifdef HAVE_LIBMONGOC
 
-
 int Nova_BenchmarkReportStorage(char *reportFilePath, int iterationsToRun)
 /**
  * Take a sample of the report we are simulating (reportFilePath) with
@@ -21,54 +20,55 @@ int Nova_BenchmarkReportStorage(char *reportFilePath, int iterationsToRun)
  *       functions.
  **/
 {
- mongo_connection dbconn;
+    mongo_connection dbconn;
 
- if(!CFDB_Open(&dbconn))
+    if (!CFDB_Open(&dbconn))
     {
-    return false;
+        return false;
     }
 
- FILE *fin = fopen(reportFilePath, "r");
- 
- if (fin == NULL)
-   {
-   CfOut(cf_error,"fopen","!! Cannot open import file %s", reportFilePath);
-   CFDB_Close(&dbconn);
-   return false;
-   }
+    FILE *fin = fopen(reportFilePath, "r");
 
- int i;
- for(i = 0; i < iterationsToRun; i++)
+    if (fin == NULL)
     {
-    // position fp after header -- we generate random digest in header
-    fseek(fin, 0, SEEK_SET);
-    char discardHeader[CF_MAXVARSIZE];
-    CfReadLine(discardHeader, sizeof(discardHeader), fin);
-
-    int randomNumber = rand();
-    char randomString[EVP_MAX_MD_SIZE*4] = {0};
-    unsigned char randomDigest[EVP_MAX_MD_SIZE+1] = {0};
-    snprintf(randomString, sizeof(randomString), "%d", randomNumber);
-    HashString(randomString, sizeof(randomString), randomDigest, cf_sha256);
-    
-    char header[CF_MAXVARSIZE];
-    snprintf(header,sizeof(header),"NOVA_EXPORT full %s 10.10.10.1 generated-hostname-%d",
-             HashPrint(cf_sha256, randomDigest), randomNumber);
-    
-    if(!Nova_ImportHostReportsFromStream(&dbconn, header, fin))
-       {
-       CfOut(cf_error, "", "!! Failed import");
-       }
-    
-    CfOut(cf_cmdout, "", " -> Benchmark-host number %d\n", i);
+        CfOut(cf_error, "fopen", "!! Cannot open import file %s", reportFilePath);
+        CFDB_Close(&dbconn);
+        return false;
     }
 
- fclose(fin);
- CFDB_Close(&dbconn);
+    int i;
 
- return 0;
+    for (i = 0; i < iterationsToRun; i++)
+    {
+        // position fp after header -- we generate random digest in header
+        fseek(fin, 0, SEEK_SET);
+        char discardHeader[CF_MAXVARSIZE];
+
+        CfReadLine(discardHeader, sizeof(discardHeader), fin);
+
+        int randomNumber = rand();
+        char randomString[EVP_MAX_MD_SIZE * 4] = { 0 };
+        unsigned char randomDigest[EVP_MAX_MD_SIZE + 1] = { 0 };
+        snprintf(randomString, sizeof(randomString), "%d", randomNumber);
+        HashString(randomString, sizeof(randomString), randomDigest, cf_sha256);
+
+        char header[CF_MAXVARSIZE];
+
+        snprintf(header, sizeof(header), "NOVA_EXPORT full %s 10.10.10.1 generated-hostname-%d",
+                 HashPrint(cf_sha256, randomDigest), randomNumber);
+
+        if (!Nova_ImportHostReportsFromStream(&dbconn, header, fin))
+        {
+            CfOut(cf_error, "", "!! Failed import");
+        }
+
+        CfOut(cf_cmdout, "", " -> Benchmark-host number %d\n", i);
+    }
+
+    fclose(fin);
+    CFDB_Close(&dbconn);
+
+    return 0;
 }
 
-
-#endif  /* HAVE_LIBMONGOC */
-
+#endif /* HAVE_LIBMONGOC */

@@ -27,152 +27,153 @@
 
 /*****************************************************************************/
 
-static const char *CFCON_VIEWS[] = { "Comp",  // NOTE: must match cfl_view enum
-                        "VirtBundleComp",
-                        "AggrRepaired",
-                        "AggrNotKept",
-                        "AggrRepairedReason",
-                        "AggrNotKeptReason",
-                        "AggrFileChange",
-                        "AggrSoftware",
-                        "AggrClasses",
-                        "Software",
-                        "RepairLog",
-                        "NotKeptLog",
-                        "HubStatus",
-                        "HubMeter",
-                        "ValueGraph",
-                        "HubDetails",             
-                        NULL };
+static const char *CFCON_VIEWS[] = { "Comp",    // NOTE: must match cfl_view enum
+    "VirtBundleComp",
+    "AggrRepaired",
+    "AggrNotKept",
+    "AggrRepairedReason",
+    "AggrNotKeptReason",
+    "AggrFileChange",
+    "AggrSoftware",
+    "AggrClasses",
+    "Software",
+    "RepairLog",
+    "NotKeptLog",
+    "HubStatus",
+    "HubMeter",
+    "ValueGraph",
+    "HubDetails",
+    NULL
+};
 
 /*****************************************************************************/
 
 enum cfl_view Str2View(const char *s)
 {
-int i;
+    int i;
 
-for (i = 0; CFCON_VIEWS[i] != NULL; i++)
-   {
-   if (strcmp(s,CFCON_VIEWS[i]) == 0)
-      {
-      return i;
-      }
-   }
+    for (i = 0; CFCON_VIEWS[i] != NULL; i++)
+    {
+        if (strcmp(s, CFCON_VIEWS[i]) == 0)
+        {
+            return i;
+        }
+    }
 
-return cfl_view_error;
+    return cfl_view_error;
 }
 
 /*********************************************************************/
 
 const char *View2Str(enum cfl_view view)
 {
-if((int)view < 0 || view >= cfl_view_error)
-   {
-   return "VIEWERROR";
-   }
+    if ((int) view < 0 || view >= cfl_view_error)
+    {
+        return "VIEWERROR";
+    }
 
-return CFCON_VIEWS[view];
+    return CFCON_VIEWS[view];
 }
 
 /*****************************************************************************/
 
 #ifdef HAVE_LIBMONGOC
 
-int Nova_GetReportedScalar(char *hostkey,char *scope,char *lval,char *returnval,int bufsize)
+int Nova_GetReportedScalar(char *hostkey, char *scope, char *lval, char *returnval, int bufsize)
+{
+    char buffer[CF_BUFSIZE];
+    HubVariable *hv;
+    HubQuery *hq;
+    Rlist *rp;
+    mongo_connection dbconn;
 
-{ char buffer[CF_BUFSIZE];
- HubVariable *hv;
- HubQuery *hq;
- Rlist *rp;
- mongo_connection dbconn;
+    if (!CFDB_Open(&dbconn))
+    {
+        return false;
+    }
 
-if (!CFDB_Open(&dbconn))
-   {
-   return false;
-   }
+    hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, NULL, NULL, false, NULL);
 
-hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,NULL,NULL,false,NULL);
+    returnval[0] = '\0';
 
-returnval[0] = '\0';
+    for (rp = hq->records; rp != NULL; rp = rp->next)
+    {
+        hv = (HubVariable *) rp->item;
 
-for (rp = hq->records; rp != NULL; rp=rp->next)
-   {
-   hv = (HubVariable *)rp->item;
+        if (strlen(hv->dtype) > 1)      // list
+        {
+            char b[CF_BUFSIZE];
 
-   if (strlen(hv->dtype) > 1) // list
-      {
-      char b[CF_BUFSIZE];
-      b[0] = '\0';
-      PrintRlist(b,CF_BUFSIZE,hv->rval.item);
-      snprintf(returnval,bufsize-1,"%s",b);
-      }
-   else
-      {
-      snprintf(returnval,bufsize-1,"%s",(char *)hv->rval.item);
-      }
-   }
+            b[0] = '\0';
+            PrintRlist(b, CF_BUFSIZE, hv->rval.item);
+            snprintf(returnval, bufsize - 1, "%s", b);
+        }
+        else
+        {
+            snprintf(returnval, bufsize - 1, "%s", (char *) hv->rval.item);
+        }
+    }
 
-if (hq->records == NULL)
-   {
-   snprintf(buffer,sizeof(buffer),"Unknown value");
-   }
+    if (hq->records == NULL)
+    {
+        snprintf(buffer, sizeof(buffer), "Unknown value");
+    }
 
-DeleteHubQuery(hq,DeleteHubVariable);
+    DeleteHubQuery(hq, DeleteHubVariable);
 
-if (!CFDB_Close(&dbconn))
-   {
-   CfOut(cf_verbose,"", "!! Could not close connection to report database");
-   }
+    if (!CFDB_Close(&dbconn))
+    {
+        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+    }
 
-return true;
+    return true;
 }
 
 /*****************************************************************************/
 
-int Nova_GetReportedList(char *hostkey,char *scope,char *lval,Rlist **list)
-
+int Nova_GetReportedList(char *hostkey, char *scope, char *lval, Rlist **list)
 /* This function allocates memory which needs to be deleted afterwards */
-    
-{ char buffer[CF_BUFSIZE];
-  HubVariable *hv;
-  HubQuery *hq;
-  Rlist *rp;
-  mongo_connection dbconn;
+{
+    char buffer[CF_BUFSIZE];
+    HubVariable *hv;
+    HubQuery *hq;
+    Rlist *rp;
+    mongo_connection dbconn;
 
-if (!CFDB_Open(&dbconn))
-   {
-   return false;
-   }
+    if (!CFDB_Open(&dbconn))
+    {
+        return false;
+    }
 
-hq = CFDB_QueryVariables(&dbconn,hostkey,scope,lval,NULL,NULL,false,NULL);
+    hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, NULL, NULL, false, NULL);
 
-for (rp = hq->records; rp != NULL; rp=rp->next)
-   {
-   hv = (HubVariable *)rp->item;
-   
-   if (strlen(hv->dtype) > 1) // list
-      {
-      *list = CopyRvalItem((Rval) { hv->rval.item, CF_LIST }).item;
-      }
-   else
-      {
-      // Shoud not get here      
-      }
-   }
+    for (rp = hq->records; rp != NULL; rp = rp->next)
+    {
+        hv = (HubVariable *) rp->item;
 
-if (hq->records == NULL)
-   {
-   snprintf(buffer,sizeof(buffer),"Unknown value");
-   }
+        if (strlen(hv->dtype) > 1)      // list
+        {
+            *list = CopyRvalItem((Rval) {hv->rval.item, CF_LIST}).item;
+        }
+        else
+        {
+            // Shoud not get here      
+        }
+    }
 
-DeleteHubQuery(hq,DeleteHubVariable);
+    if (hq->records == NULL)
+    {
+        snprintf(buffer, sizeof(buffer), "Unknown value");
+    }
 
-if (!CFDB_Close(&dbconn))
-   {
-   CfOut(cf_verbose,"", "!! Could not close connection to report database");
-   }
+    DeleteHubQuery(hq, DeleteHubVariable);
 
-return true;
+    if (!CFDB_Close(&dbconn))
+    {
+        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+    }
+
+    return true;
 }
 
 #endif

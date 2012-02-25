@@ -6,22 +6,22 @@
 #define CFENGINE_SCORECARDS_H
 
 typedef enum
-   {
-   HOST_COLOUR_BLUE,
-   HOST_COLOUR_RED,
-   HOST_COLOUR_YELLOW,
-   HOST_COLOUR_GREEN
-   } HostColour;
+{
+    HOST_COLOUR_BLUE,
+    HOST_COLOUR_RED,
+    HOST_COLOUR_YELLOW,
+    HOST_COLOUR_GREEN
+} HostColour;
 
 typedef enum
-   {
-   HOST_RANK_METHOD_COMPLIANCE,
-   HOST_RANK_METHOD_ANOMALY,
-   HOST_RANK_METHOD_PERFORMANCE,
-   HOST_RANK_METHOD_LASTSEEN,
-   HOST_RANK_METHOD_MIXED,
-   HOST_RANK_METHOD_NONE
-   } HostRankMethod;
+{
+    HOST_RANK_METHOD_COMPLIANCE,
+    HOST_RANK_METHOD_ANOMALY,
+    HOST_RANK_METHOD_PERFORMANCE,
+    HOST_RANK_METHOD_LASTSEEN,
+    HOST_RANK_METHOD_MIXED,
+    HOST_RANK_METHOD_NONE
+} HostRankMethod;
 
 #ifdef HAVE_LIBMONGOC
 
@@ -40,8 +40,8 @@ Item *Nova_BlueHosts(HostClassFilter *hostClassFilter);
 
 // legacy
 void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, char *buffer, int bufsize);
-void Nova_Meter(bson *query,char *db,char *buffer,int bufsize);
-void Nova_BarMeter(int pos,double kept,double rep,char *name,char *buffer,int bufsize);
+void Nova_Meter(bson *query, char *db, char *buffer, int bufsize);
+void Nova_BarMeter(int pos, double kept, double rep, char *name, char *buffer, int bufsize);
 
 #endif
 

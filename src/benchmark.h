@@ -11,12 +11,10 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-
 #ifdef HAVE_LIBMONGOC
 
 int Nova_BenchmarkReportStorage(char *reportFilePath, int iterationsToRun);
 
-#endif  /* HAVE_LIBMONGOC */
+#endif /* HAVE_LIBMONGOC */
 
-
-#endif  /* NOT CFENGINE_BENCHMARK_H */
+#endif

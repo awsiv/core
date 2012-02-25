@@ -15,235 +15,232 @@
 #define false 0
 #define CF_BUFSIZE 2048
 
-
-char *ToUpperStr (char *str);
-char *ToLowerStr (char *str);
-
+char *ToUpperStr(char *str);
+char *ToLowerStr(char *str);
 
 int main()
+{
+    char *keywords[8000];
+    char *exceptions[] =
+        { "cfengine", "or", "and", "the", "there", "then", "what", "how", "ci", "on", "at", "int", "now", "not", "any",
+"on", "it", "so", NULL };
 
-{ char *keywords[8000];
- char *exceptions[] = { "cfengine","or", "and","the", "there","then", "what", "how", "ci","on","at","int","now","not","any","on","it","so", NULL };
- 
-  char *otherwords[] =  { "convergence", "promise", "scheduling", "workflow","bundles", "hierarchy", "cloud",
-                         "package", "policy", "security", "virtualization", "scalability",
-                         "hierarchies","file",  NULL  };
- char *sp;
- int i,j,k,skip;
- FILE *fp;
- char w1[1024],w2[1024],line[1024],word1[1024],class1[1024],word2[1024],class2[1024];
+    char *otherwords[] = { "convergence", "promise", "scheduling", "workflow", "bundles", "hierarchy", "cloud",
+        "package", "policy", "security", "virtualization", "scalability",
+        "hierarchies", "file", NULL
+    };
+    char *sp;
+    int i, j, k, skip;
+    FILE *fp;
+    char w1[1024], w2[1024], line[1024], word1[1024], class1[1024], word2[1024], class2[1024];
 
-if ((fp = fopen("words","r")) == NULL)
-   {
-   return;
-   }
+    if ((fp = fopen("words", "r")) == NULL)
+    {
+        return;
+    }
 
-i = 0;
+    i = 0;
 
-while(!feof(fp))
-   {
-   memset(line,0,1024);
-   memset(word1,0,1024);
-   memset(class1,0,1024);
-   fgets(word1,1023,fp);
+    while (!feof(fp))
+    {
+        memset(line, 0, 1024);
+        memset(word1, 0, 1024);
+        memset(class1, 0, 1024);
+        fgets(word1, 1023, fp);
 
-   if (strlen(word1) == 0)
-      {
-      continue;
-      }
-   
-   keywords[i] = strdup(word1);
+        if (strlen(word1) == 0)
+        {
+            continue;
+        }
 
-   i++;
+        keywords[i] = strdup(word1);
 
-   if (i >= 8000)
-      {
-      break;
-      }
-   }
+        i++;
 
-keywords[i] = NULL;
-fclose(fp);
-
-
-printf("bundle knowledge substrings\n{\ntopics:\n");
-
-for (k = 0; keywords[k] != NULL; k++)
-   {
-   for (i = 0; keywords[i] != NULL; i++)
-      {
-      //Check for canonified form too
-
-      memset(word1,0,1024);
-      memset(word2,0,1024);
-      memset(class1,0,1024);
-      memset(class2,0,1024);
-      
-      sscanf(keywords[i],"%[^:]::%[^\n]",class1,word1);
-      sscanf(keywords[k],"%[^:]::%[^\n]",class2,word2);
-
-      Chop(keywords[k]);
-      Chop(keywords[i]);
-      
-      strcpy(w1,ToLowerStr(word2));
-      strcpy(w2,ToLowerStr(word1));
-
-      skip = false;
-      
-      for (j = 0; exceptions[j] != NULL; j++)
-         {
-         if (strcmp(word1,exceptions[j]) == 0)
-            {
-            skip = true;
+        if (i >= 8000)
+        {
             break;
-            }
-         }
-      
-      if (skip)
-         {
-         continue;
-         }
-      
-      if (strlen(w1) == 0||strlen(w2)==0)
-         {
-         continue;
-         }
-      
-      if (strcmp(w1,w2) == 0)
-         {
-         continue;
-         }
+        }
+    }
 
-      if (sp = strstr(w1,w2))
-         {
-         // Check for at least one space around the word
-         
-         if ((sp > keywords[k] && *(sp-1) != ' ') || !isspace(*(sp+strlen(keywords[i]))))
+    keywords[i] = NULL;
+    fclose(fp);
+
+    printf("bundle knowledge substrings\n{\ntopics:\n");
+
+    for (k = 0; keywords[k] != NULL; k++)
+    {
+        for (i = 0; keywords[i] != NULL; i++)
+        {
+            //Check for canonified form too
+
+            memset(word1, 0, 1024);
+            memset(word2, 0, 1024);
+            memset(class1, 0, 1024);
+            memset(class2, 0, 1024);
+
+            sscanf(keywords[i], "%[^:]::%[^\n]", class1, word1);
+            sscanf(keywords[k], "%[^:]::%[^\n]", class2, word2);
+
+            Chop(keywords[k]);
+            Chop(keywords[i]);
+
+            strcpy(w1, ToLowerStr(word2));
+            strcpy(w2, ToLowerStr(word1));
+
+            skip = false;
+
+            for (j = 0; exceptions[j] != NULL; j++)
             {
-//            continue;
+                if (strcmp(word1, exceptions[j]) == 0)
+                {
+                    skip = true;
+                    break;
+                }
             }
-         
-         printf(" %s:: \"%s\" association => a(\"seems to refer to\",\"%s\",\"seems to be referred to in\");\n",class1,word1,keywords[k]);
-         }      
-      }
-   }
 
-printf("}");
-return 0;
+            if (skip)
+            {
+                continue;
+            }
+
+            if (strlen(w1) == 0 || strlen(w2) == 0)
+            {
+                continue;
+            }
+
+            if (strcmp(w1, w2) == 0)
+            {
+                continue;
+            }
+
+            if (sp = strstr(w1, w2))
+            {
+                // Check for at least one space around the word
+
+                if ((sp > keywords[k] && *(sp - 1) != ' ') || !isspace(*(sp + strlen(keywords[i]))))
+                {
+//            continue;
+                }
+
+                printf(" %s:: \"%s\" association => a(\"seems to refer to\",\"%s\",\"seems to be referred to in\");\n",
+                       class1, word1, keywords[k]);
+            }
+        }
+    }
+
+    printf("}");
+    return 0;
 }
-
 
 /*********************************************************************/
 /* TOOLKIT : String                                                  */
 /*********************************************************************/
 
-char ToLower (char ch)
-
+char ToLower(char ch)
 {
-if (isdigit((int)ch) || ispunct((int)ch))
-   {
-   return(ch);
-   }
+    if (isdigit((int) ch) || ispunct((int) ch))
+    {
+        return (ch);
+    }
 
-if (islower((int)ch))
-   {
-   return(ch);
-   }
-else
-   {
-   return(ch - 'A' + 'a');
-   }
+    if (islower((int) ch))
+    {
+        return (ch);
+    }
+    else
+    {
+        return (ch - 'A' + 'a');
+    }
 }
-
 
 /*********************************************************************/
 
-char ToUpper (char ch)
-
+char ToUpper(char ch)
 {
-if (isdigit((int)ch) || ispunct((int)ch))
-   {
-   return(ch);
-   }
+    if (isdigit((int) ch) || ispunct((int) ch))
+    {
+        return (ch);
+    }
 
-if (isupper((int)ch))
-   {
-   return(ch);
-   }
-else
-   {
-   return(ch - 'a' + 'A');
-   }
+    if (isupper((int) ch))
+    {
+        return (ch);
+    }
+    else
+    {
+        return (ch - 'a' + 'A');
+    }
 }
 
 /*********************************************************************/
 
-char *ToUpperStr (char *str)
+char *ToUpperStr(char *str)
+{
+    static char buffer[CF_BUFSIZE];
+    int i;
 
-{ static char buffer[CF_BUFSIZE];
-  int i;
+    memset(buffer, 0, CF_BUFSIZE);
 
-memset(buffer,0,CF_BUFSIZE);
-  
-if (strlen(str) >= CF_BUFSIZE)
-   {
-   char *tmp;
-   tmp = malloc(40+strlen(str));
-   return NULL;
-   }
+    if (strlen(str) >= CF_BUFSIZE)
+    {
+        char *tmp;
 
-for (i = 0;  (str[i] != '\0') && (i < CF_BUFSIZE-1); i++)
-   {
-   buffer[i] = ToUpper(str[i]);
-   }
+        tmp = malloc(40 + strlen(str));
+        return NULL;
+    }
 
-buffer[i] = '\0';
+    for (i = 0; (str[i] != '\0') && (i < CF_BUFSIZE - 1); i++)
+    {
+        buffer[i] = ToUpper(str[i]);
+    }
 
-return buffer;
+    buffer[i] = '\0';
+
+    return buffer;
 }
-
 
 /*********************************************************************/
 
-char *ToLowerStr (char *str)
+char *ToLowerStr(char *str)
+{
+    static char buffer[CF_BUFSIZE];
+    int i;
 
-{ static char buffer[CF_BUFSIZE];
-  int i;
+    memset(buffer, 0, CF_BUFSIZE);
 
-memset(buffer,0,CF_BUFSIZE);
+    if (strlen(str) >= CF_BUFSIZE - 1)
+    {
+        char *tmp;
 
-if (strlen(str) >= CF_BUFSIZE-1)
-   {
-   char *tmp;
-   tmp = malloc(40+strlen(str));
-   printf("String too long in ToLowerStr: %s",str);
-   return NULL;
-   }
+        tmp = malloc(40 + strlen(str));
+        printf("String too long in ToLowerStr: %s", str);
+        return NULL;
+    }
 
-for (i = 0; (str[i] != '\0') && (i < CF_BUFSIZE-1); i++)
-   {
-   buffer[i] = ToLower(str[i]);
-   }
+    for (i = 0; (str[i] != '\0') && (i < CF_BUFSIZE - 1); i++)
+    {
+        buffer[i] = ToLower(str[i]);
+    }
 
-buffer[i] = '\0';
+    buffer[i] = '\0';
 
-return buffer;
+    return buffer;
 }
 
 /*************************************************************************/
 
-int Chop(char *str) /* remove trailing spaces */
+int Chop(char *str)             /* remove trailing spaces */
+{
+    int i;
 
-{ int i;
- 
-if ((str == NULL) || (strlen(str) == 0))
-   {
-   return;
-   }
+    if ((str == NULL) || (strlen(str) == 0))
+    {
+        return;
+    }
 
-for (i = strlen(str)-1; i >= 0 && isspace((int)str[i]); i--)
-   {
-   str[i] = '\0';
-   }
+    for (i = strlen(str) - 1; i >= 0 && isspace((int) str[i]); i--)
+    {
+        str[i] = '\0';
+    }
 }
-

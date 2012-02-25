@@ -38,1130 +38,1052 @@ static const char *LABEL_STATE_ANY = "any";
 
 static const char *LABEL_UNKNOWN = "unknown";
 
-
 /************************************************************************************/
-
 
 PHP_FUNCTION(cfmod_resource)
 {
-mongo_connection conn;
-bool db_active = CFDB_Open(&conn);
-if (db_active)
-   {
-   CFDB_Close(&conn);
-   }
+    mongo_connection conn;
+    bool db_active = CFDB_Open(&conn);
 
-JsonElement *info = JsonObjectCreate(4);
-JsonObjectAppendString(info, "apiName", API_NAME);
-JsonObjectAppendString(info, "apiVersion", API_VERSION);
-JsonObjectAppendString(info, "hubVersion", NOVA_VERSION);
-JsonObjectAppendString(info, "database", db_active ? "connected" : "disconnected");
+    if (db_active)
+    {
+        CFDB_Close(&conn);
+    }
 
-RETURN_JSON(info);
+    JsonElement *info = JsonObjectCreate(4);
+
+    JsonObjectAppendString(info, "apiName", API_NAME);
+    JsonObjectAppendString(info, "apiVersion", API_VERSION);
+    JsonObjectAppendString(info, "hubVersion", NOVA_VERSION);
+    JsonObjectAppendString(info, "database", db_active ? "connected" : "disconnected");
+
+    RETURN_JSON(info);
 }
 
 PHP_FUNCTION(cfmod_resource_host)
 {
-char *username = NULL,
-     *hostname = NULL,
-     *ip = NULL;
-int len;
+    char *username = NULL, *hostname = NULL, *ip = NULL;
+    int len;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss",
-      &username, &len,
-      &hostname, &len,
-      &ip, &len) == FAILURE)
-   {
-   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-   }
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sss", &username, &len, &hostname, &len, &ip, &len) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+    }
 
-Rlist *hostkeys = NULL;
-   {
-   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+    Rlist *hostkeys = NULL;
 
-   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+    {
+        HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
-   mongo_connection conn;
-   DATABASE_OPEN(&conn)
+        ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-   hostkeys = CFDB_QueryHostKeys(&conn, hostname, ip, filter);
+        HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
-   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-   DATABASE_CLOSE(&conn)
-   }
+        mongo_connection conn;
 
-JsonElement *output = JsonArrayCreate(1000);
-for (Rlist *rp = hostkeys; rp != NULL; rp = rp->next)
-   {
-   JsonArrayAppendString(output, ScalarValue(rp));
-   }
+        DATABASE_OPEN(&conn) hostkeys = CFDB_QueryHostKeys(&conn, hostname, ip, filter);
 
-DeleteRlist(hostkeys);
+        DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+    DATABASE_CLOSE(&conn)}
 
+    JsonElement *output = JsonArrayCreate(1000);
 
-RETURN_JSON(output);
+    for (Rlist *rp = hostkeys; rp != NULL; rp = rp->next)
+    {
+        JsonArrayAppendString(output, ScalarValue(rp));
+    }
+
+    DeleteRlist(hostkeys);
+
+    RETURN_JSON(output);
 }
-
 
 /************************************************************************************/
 
-
 PHP_FUNCTION(cfmod_resource_host_id)
 {
-char *username = NULL,
-     *hostkey = NULL;
-int len = -1;
+    char *username = NULL, *hostkey = NULL;
+    int len = -1;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss",
-      &username, &len,
-      &hostkey, &len) == FAILURE)
-   {
-   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-   }
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss", &username, &len, &hostkey, &len) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+    }
 
-cfapi_errid erridAccess = CFDB_HasHostAccessFromUserRBAC(username, hostkey);
-if(erridAccess != ERRID_SUCCESS)
-   {
-   zend_throw_exception(cfmod_exception_rbac, (char *)GetErrorDescription(erridAccess), 0 TSRMLS_CC);
-   RETURN_NULL();
-   }
+    cfapi_errid erridAccess = CFDB_HasHostAccessFromUserRBAC(username, hostkey);
 
-HubHost *record = NULL;
-   {
-   mongo_connection conn;
-   DATABASE_OPEN(&conn)
+    if (erridAccess != ERRID_SUCCESS)
+    {
+        zend_throw_exception(cfmod_exception_rbac, (char *) GetErrorDescription(erridAccess), 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
 
-   record = CFDB_GetHostByKey(&conn, hostkey);
+    HubHost *record = NULL;
 
-   DATABASE_CLOSE(&conn)
-   }
+    {
+        mongo_connection conn;
 
-if (record != NULL)
-   {
-   JsonElement *entry = JsonObjectCreate(3);
-   JsonObjectAppendString(entry, LABEL_HOSTKEY, record->keyhash);
-   JsonObjectAppendString(entry, LABEL_NAME, record->hostname);
-   JsonObjectAppendString(entry, LABEL_IP, record->ipaddr);
+        DATABASE_OPEN(&conn) record = CFDB_GetHostByKey(&conn, hostkey);
 
-   RETURN_JSON(entry);
-   }
+    DATABASE_CLOSE(&conn)}
 
-RETURN_NULL();
+    if (record != NULL)
+    {
+        JsonElement *entry = JsonObjectCreate(3);
+
+        JsonObjectAppendString(entry, LABEL_HOSTKEY, record->keyhash);
+        JsonObjectAppendString(entry, LABEL_NAME, record->hostname);
+        JsonObjectAppendString(entry, LABEL_IP, record->ipaddr);
+
+        RETURN_JSON(entry);
+    }
+
+    RETURN_NULL();
 }
-
 
 /************************************************************************************/
 
 static time_t Horizon(long from)
 {
-time_t now = time(NULL);
-from = MIN(now, from);
-return now - from;
+    time_t now = time(NULL);
+
+    from = MIN(now, from);
+    return now - from;
 }
 
 static JsonElement *HostsLastSeen(Rlist *records, LastSeenDirection direction)
 {
-JsonElement *output = JsonArrayCreate(100);
+    JsonElement *output = JsonArrayCreate(100);
 
-for (Rlist *rp = records; rp != NULL; rp = rp->next)
-   {
-   HubLastSeen *record = (HubLastSeen *)rp->item;
+    for (Rlist *rp = records; rp != NULL; rp = rp->next)
+    {
+        HubLastSeen *record = (HubLastSeen *) rp->item;
 
-   if (record->direction == direction)
-      {
-         JsonElement *entry = JsonObjectCreate(4);
+        if (record->direction == direction)
+        {
+            JsonElement *entry = JsonObjectCreate(4);
 
-         JsonObjectAppendString(entry, LABEL_HOSTKEY, record->rhost->keyhash);
-         JsonObjectAppendInteger(entry, LABEL_LASTSEEN, SECONDS_PER_HOUR * record->hrsago);
-         JsonObjectAppendInteger(entry, LABEL_AVERAGE, SECONDS_PER_HOUR * record->hrsavg);
-         JsonObjectAppendInteger(entry, LABEL_STDV, SECONDS_PER_HOUR * record->hrsdev);
+            JsonObjectAppendString(entry, LABEL_HOSTKEY, record->rhost->keyhash);
+            JsonObjectAppendInteger(entry, LABEL_LASTSEEN, SECONDS_PER_HOUR * record->hrsago);
+            JsonObjectAppendInteger(entry, LABEL_AVERAGE, SECONDS_PER_HOUR * record->hrsavg);
+            JsonObjectAppendInteger(entry, LABEL_STDV, SECONDS_PER_HOUR * record->hrsdev);
 
-         JsonArrayAppendObject(output, entry);
-      }
-   }
+            JsonArrayAppendObject(output, entry);
+        }
+    }
 
-return output;
+    return output;
 }
 
 PHP_FUNCTION(cfmod_resource_host_id_seen)
 {
-char *username = NULL,
-     *hostkey = NULL;
-long from = 0;
-int len = -1;
+    char *username = NULL, *hostkey = NULL;
+    long from = 0;
+    int len = -1;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssl",
-      &username, &len,
-      &hostkey, &len,
-      &from) == FAILURE)
-   {
-   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-   RETURN_NULL();
-   }
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssl", &username, &len, &hostkey, &len, &from) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
 
-HubQuery *result = NULL;
-   {
-   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+    HubQuery *result = NULL;
 
-   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+    {
+        HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
-   mongo_connection conn;
-   DATABASE_OPEN(&conn)
+        ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-   result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, from, false, false, filter);
+        HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
-   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-   DATABASE_CLOSE(&conn);
-   }
-assert(result);
+        mongo_connection conn;
 
-JsonElement *output = HostsLastSeen(result->records, LAST_SEEN_DIRECTION_OUTGOING);
+        DATABASE_OPEN(&conn) result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, from, false, false, filter);
 
+        DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+        DATABASE_CLOSE(&conn);
+    }
+    assert(result);
 
-DeleteHubQuery(result, DeleteHubLastSeen);
+    JsonElement *output = HostsLastSeen(result->records, LAST_SEEN_DIRECTION_OUTGOING);
 
-RETURN_JSON(output);
+    DeleteHubQuery(result, DeleteHubLastSeen);
+
+    RETURN_JSON(output);
 }
-
 
 PHP_FUNCTION(cfmod_resource_host_id_seenby)
 {
-char *username = NULL,
-     *hostkey = NULL;
-long from = 0;
-int len = -1;
+    char *username = NULL, *hostkey = NULL;
+    long from = 0;
+    int len = -1;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssl",
-      &username, &len,
-      &hostkey, &len,
-      &from) == FAILURE)
-   {
-   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-   RETURN_NULL();
-   }
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssl", &username, &len, &hostkey, &len, &from) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
 
-HubQuery *result = NULL;
-   {
-   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+    HubQuery *result = NULL;
 
-   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+    {
+        HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
-   mongo_connection conn;
-   DATABASE_OPEN(&conn)
+        ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-   result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL,
-                                         from, false, false, filter);
+        HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
-   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-   DATABASE_CLOSE(&conn)
-   }
-assert(result);
+        mongo_connection conn;
 
-JsonElement *output = HostsLastSeen(result->records, LAST_SEEN_DIRECTION_INCOMING);
+        DATABASE_OPEN(&conn) result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, from, false, false, filter);
 
-DeleteHubQuery(result, DeleteHubLastSeen);
+        DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+    DATABASE_CLOSE(&conn)}
+    assert(result);
 
-RETURN_JSON(output);
+    JsonElement *output = HostsLastSeen(result->records, LAST_SEEN_DIRECTION_INCOMING);
+
+    DeleteHubQuery(result, DeleteHubLastSeen);
+
+    RETURN_JSON(output);
 }
-
 
 /************************************************************************************/
 
-
 static PromiseState PromiseStateFromString(const char *state)
 {
-if (state == NULL)
-   {
-   return PROMISE_STATE_ANY;
-   }
-else if (strcmp(LABEL_STATE_REPAIRED, state) == 0)
-   {
-   return PROMISE_STATE_REPAIRED;
-   }
-else if (strcmp(LABEL_STATE_NOTKEPT, state) == 0)
-   {
-   return PROMISE_STATE_NOTKEPT;
-   }
-else if (strcmp(LABEL_STATE_KEPT, state) == 0)
-   {
-   return PROMISE_STATE_KEPT;
-   }
-else
-   {
-   return PROMISE_STATE_ANY;
-   }
+    if (state == NULL)
+    {
+        return PROMISE_STATE_ANY;
+    }
+    else if (strcmp(LABEL_STATE_REPAIRED, state) == 0)
+    {
+        return PROMISE_STATE_REPAIRED;
+    }
+    else if (strcmp(LABEL_STATE_NOTKEPT, state) == 0)
+    {
+        return PROMISE_STATE_NOTKEPT;
+    }
+    else if (strcmp(LABEL_STATE_KEPT, state) == 0)
+    {
+        return PROMISE_STATE_KEPT;
+    }
+    else
+    {
+        return PROMISE_STATE_ANY;
+    }
 }
 
 static const char *PromiseStateToString(PromiseState state)
 {
-switch (state)
-   {
-   case PROMISE_STATE_REPAIRED:
-      return LABEL_STATE_REPAIRED;
-   case PROMISE_STATE_NOTKEPT:
-      return LABEL_STATE_NOTKEPT;
-   case PROMISE_STATE_KEPT:
-      return LABEL_STATE_KEPT;
-   default:
-   case PROMISE_STATE_ANY:
-      // FIX: probably should never happen, add warning?
-      return LABEL_STATE_ANY;
-   }
+    switch (state)
+    {
+    case PROMISE_STATE_REPAIRED:
+        return LABEL_STATE_REPAIRED;
+    case PROMISE_STATE_NOTKEPT:
+        return LABEL_STATE_NOTKEPT;
+    case PROMISE_STATE_KEPT:
+        return LABEL_STATE_KEPT;
+    default:
+    case PROMISE_STATE_ANY:
+        // FIX: probably should never happen, add warning?
+        return LABEL_STATE_ANY;
+    }
 }
 
 PHP_FUNCTION(cfmod_resource_promise_compliance)
 {
-char *username = NULL,
-     *handle = NULL,
-     *hostkey = NULL,
-     *context = NULL,
-     *state = NULL;
-long from;
-int len;
+    char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL, *state = NULL;
+    long from;
+    int len;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssl",
-      &username, &len,
-      &handle, &len,
-      &hostkey, &len,
-      &context, &len,
-      &state, &len,
-      &from) == FAILURE)
-   {
-   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-   RETURN_NULL();
-   }
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssl",
+                              &username, &len,
+                              &handle, &len, &hostkey, &len, &context, &len, &state, &len, &from) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
 
-HubQuery *result = NULL;
-   {
-   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+    HubQuery *result = NULL;
 
-   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-   HostClassFilterAddClasses(filter, context, NULL);
+    {
+        HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
-   mongo_connection conn;
-   DATABASE_OPEN(&conn)
+        ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-   result = CFDB_QueryPromiseCompliance(&conn, hostkey, handle, PromiseStateFromString(state),
-                                                  true , 0, true, filter);
+        HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
-   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-   DATABASE_CLOSE(&conn)
-   }
-assert(result);
+        HostClassFilterAddClasses(filter, context, NULL);
 
-JsonElement *output = JsonArrayCreate(100);
-for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
-   {
-   HubPromiseCompliance *record = (HubPromiseCompliance *)rp->item;
-   JsonElement *entry = JsonObjectCreate(6);
+        mongo_connection conn;
 
-   JsonObjectAppendString(entry, LABEL_HANDLE, record->handle);
-   JsonObjectAppendString(entry, LABEL_HOSTKEY, record->hh->keyhash);
-   JsonObjectAppendString(entry, LABEL_STATE, PromiseStateToString(record->status));
-   JsonObjectAppendReal(entry, LABEL_AVERAGE, record->e);
-   JsonObjectAppendReal(entry, LABEL_STDV, record->d);
-   JsonObjectAppendInteger(entry, LABEL_TIMESTAMP, record->t);
+        DATABASE_OPEN(&conn)
+            result = CFDB_QueryPromiseCompliance(&conn, hostkey, handle, PromiseStateFromString(state),
+                                                 true, 0, true, filter);
 
-   JsonArrayAppendObject(output, entry);
-   }
+        DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+    DATABASE_CLOSE(&conn)}
+    assert(result);
 
-DeleteHubQuery(result, DeleteHubPromiseCompliance);
+    JsonElement *output = JsonArrayCreate(100);
 
-RETURN_JSON(output)
-}
+    for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
+    {
+        HubPromiseCompliance *record = (HubPromiseCompliance *) rp->item;
+        JsonElement *entry = JsonObjectCreate(6);
 
+        JsonObjectAppendString(entry, LABEL_HANDLE, record->handle);
+        JsonObjectAppendString(entry, LABEL_HOSTKEY, record->hh->keyhash);
+        JsonObjectAppendString(entry, LABEL_STATE, PromiseStateToString(record->status));
+        JsonObjectAppendReal(entry, LABEL_AVERAGE, record->e);
+        JsonObjectAppendReal(entry, LABEL_STDV, record->d);
+        JsonObjectAppendInteger(entry, LABEL_TIMESTAMP, record->t);
+
+        JsonArrayAppendObject(output, entry);
+    }
+
+    DeleteHubQuery(result, DeleteHubPromiseCompliance);
+
+RETURN_JSON(output)}
 
 /************************************************************************************/
 
-
 static const char *PromiseLogStateToString(PromiseLogState state)
 {
-switch (state)
-   {
-   case PROMISE_LOG_STATE_REPAIRED:
-      return LABEL_STATE_REPAIRED;
-   case PROMISE_LOG_STATE_NOTKEPT:
-      return LABEL_STATE_NOTKEPT;
-   default:
-      return LABEL_UNKNOWN;
-   }
+    switch (state)
+    {
+    case PROMISE_LOG_STATE_REPAIRED:
+        return LABEL_STATE_REPAIRED;
+    case PROMISE_LOG_STATE_NOTKEPT:
+        return LABEL_STATE_NOTKEPT;
+    default:
+        return LABEL_UNKNOWN;
+    }
 }
 
 static JsonElement *PromiseLogAsJson(mongo_connection *conn, PromiseLogState state, const char *handle,
-                                   const char *hostkey, const char *context, int from, int to, HostClassFilter *filter)
+                                     const char *hostkey, const char *context, int from, int to,
+                                     HostClassFilter *filter)
 {
-HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from, to, true, filter);
+    HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from, to, true, filter);
 
-JsonElement *output = JsonArrayCreate(100);
-for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
-   {
-   HubPromiseLog *log_entry = (HubPromiseLog *)rp->item;
-   JsonElement *entry = JsonObjectCreate(5);
+    JsonElement *output = JsonArrayCreate(100);
 
-   JsonObjectAppendString(entry, LABEL_HANDLE, log_entry->handle);
-   JsonObjectAppendString(entry, LABEL_HOSTKEY, log_entry->hh->keyhash);
-   JsonObjectAppendString(entry, LABEL_DESCRIPTION, log_entry->cause);
-   JsonObjectAppendString(entry, LABEL_STATE, PromiseLogStateToString(state));
-   JsonObjectAppendInteger(entry, LABEL_TIMESTAMP, log_entry->t);
+    for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
+    {
+        HubPromiseLog *log_entry = (HubPromiseLog *) rp->item;
+        JsonElement *entry = JsonObjectCreate(5);
 
-   JsonArrayAppendObject(output, entry);
-   }
+        JsonObjectAppendString(entry, LABEL_HANDLE, log_entry->handle);
+        JsonObjectAppendString(entry, LABEL_HOSTKEY, log_entry->hh->keyhash);
+        JsonObjectAppendString(entry, LABEL_DESCRIPTION, log_entry->cause);
+        JsonObjectAppendString(entry, LABEL_STATE, PromiseLogStateToString(state));
+        JsonObjectAppendInteger(entry, LABEL_TIMESTAMP, log_entry->t);
 
-DeleteHubQuery(result, DeleteHubPromiseLog);
+        JsonArrayAppendObject(output, entry);
+    }
 
-return output;
+    DeleteHubQuery(result, DeleteHubPromiseLog);
+
+    return output;
 }
 
 PHP_FUNCTION(cfmod_resource_promise_log_repaired)
 {
-char *username = NULL,
-     *handle = NULL,
-     *hostkey = NULL,
-     *context = NULL;
-long from,
-     to;
-int len;
+    char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL;
+    long from, to;
+    int len;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssll",
-      &username, &len,
-      &handle, &len,
-      &hostkey, &len,
-      &context, &len,
-      &to,
-      &from) == FAILURE)
-   {
-   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-   RETURN_NULL();
-   }
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssll",
+                              &username, &len, &handle, &len, &hostkey, &len, &context, &len, &to, &from) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
 
-JsonElement *output = NULL;
-   {
-   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+    JsonElement *output = NULL;
 
-   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-   HostClassFilterAddClasses(filter, context, NULL);
+    {
+        HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
-   mongo_connection conn;
-   DATABASE_OPEN(&conn)
+        ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-   output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to, filter);
-   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-   DATABASE_CLOSE(&conn)
-   }
-assert(output);
+        HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
-RETURN_JSON(output);
+        HostClassFilterAddClasses(filter, context, NULL);
+
+        mongo_connection conn;
+
+        DATABASE_OPEN(&conn)
+            output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to, filter);
+        DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+    DATABASE_CLOSE(&conn)}
+    assert(output);
+
+    RETURN_JSON(output);
 }
 
-
 /************************************************************************************/
-
 
 static JsonElement *PromiseLogSummaryAsJson(mongo_connection *conn, PromiseLogState state, const char *handle,
                                             const char *hostkey, const char *context, int from, int to,
                                             HostClassFilter *filter)
 {
-HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from, to, true, filter);
+    HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from, to, true, filter);
 
 // FIX: wrong on several levels
-Item *summary = NULL;
-for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
-   {
-   HubPromiseLog *log_entry = (HubPromiseLog *)rp->item;
-   Item *ip = IdempPrependItem(&summary, log_entry->handle, log_entry->cause);
-   ip->counter++;
-   }
+    Item *summary = NULL;
 
-DeleteHubQuery(result, DeleteHubPromiseLog);
+    for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
+    {
+        HubPromiseLog *log_entry = (HubPromiseLog *) rp->item;
+        Item *ip = IdempPrependItem(&summary, log_entry->handle, log_entry->cause);
 
-JsonElement *output = JsonArrayCreate(100);
-for (Item *ip = summary; ip != NULL; ip = ip->next)
-   {
-   JsonElement *entry = JsonObjectCreate(4);
+        ip->counter++;
+    }
 
-   JsonObjectAppendString(entry, LABEL_HANDLE, ip->name);
-   JsonObjectAppendString(entry, LABEL_DESCRIPTION, ip->classes);
-   JsonObjectAppendInteger(entry, LABEL_COUNT, ip->counter);
-   JsonObjectAppendString(entry, LABEL_STATE, PromiseLogStateToString(state));
+    DeleteHubQuery(result, DeleteHubPromiseLog);
 
-   JsonArrayAppendObject(output, entry);
-   }
+    JsonElement *output = JsonArrayCreate(100);
 
-DeleteItemList(summary);
+    for (Item *ip = summary; ip != NULL; ip = ip->next)
+    {
+        JsonElement *entry = JsonObjectCreate(4);
 
-return output;
+        JsonObjectAppendString(entry, LABEL_HANDLE, ip->name);
+        JsonObjectAppendString(entry, LABEL_DESCRIPTION, ip->classes);
+        JsonObjectAppendInteger(entry, LABEL_COUNT, ip->counter);
+        JsonObjectAppendString(entry, LABEL_STATE, PromiseLogStateToString(state));
+
+        JsonArrayAppendObject(output, entry);
+    }
+
+    DeleteItemList(summary);
+
+    return output;
 }
-
 
 PHP_FUNCTION(cfmod_resource_promise_log_repaired_summary)
 {
-char *username = NULL,
-     *handle = NULL,
-     *hostkey = NULL,
-     *context = NULL;
-long from,
-     to;
-int len;
+    char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL;
+    long from, to;
+    int len;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssll",
-      &username, &len,
-      &handle, &len,
-      &hostkey, &len,
-      &context, &len,
-      &to,
-      &from) == FAILURE)
-   {
-   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-   RETURN_NULL();
-   }
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssll",
+                              &username, &len, &handle, &len, &hostkey, &len, &context, &len, &to, &from) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
 
-JsonElement *output = NULL;
-   {
-   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+    JsonElement *output = NULL;
 
-   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-   HostClassFilterAddClasses(filter, context, NULL);
+    {
+        HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
-   mongo_connection conn;
-   DATABASE_OPEN(&conn)
+        ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-   output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to, filter);
+        HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
-   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-   DATABASE_CLOSE(&conn)
-   }
-assert(output);
+        HostClassFilterAddClasses(filter, context, NULL);
 
-RETURN_JSON(output);
+        mongo_connection conn;
+
+        DATABASE_OPEN(&conn)
+            output =
+            PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to, filter);
+
+        DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+    DATABASE_CLOSE(&conn)}
+    assert(output);
+
+    RETURN_JSON(output);
 }
 
-
 /************************************************************************************/
-
 
 PHP_FUNCTION(cfmod_resource_promise_log_notkept)
 {
-char *username = NULL,
-     *handle = NULL,
-     *hostkey = NULL,
-     *context = NULL;
-long from,
-     to;
-int len;
+    char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL;
+    long from, to;
+    int len;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssll",
-      &username, &len,
-      &handle, &len,
-      &hostkey, &len,
-      &context, &len,
-      &to,
-      &from) == FAILURE)
-   {
-   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-   RETURN_NULL();
-   }
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssll",
+                              &username, &len, &handle, &len, &hostkey, &len, &context, &len, &to, &from) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
 
-JsonElement *output = NULL;
-   {
-   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+    JsonElement *output = NULL;
 
-   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-   HostClassFilterAddClasses(filter, context, NULL);
+    {
+        HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
-   mongo_connection conn;
-   DATABASE_OPEN(&conn);
+        ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-   output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to, filter);
+        HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
-   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-   DATABASE_CLOSE(&conn);
-   }
-assert(output);
+        HostClassFilterAddClasses(filter, context, NULL);
 
-RETURN_JSON(output);
+        mongo_connection conn;
+
+        DATABASE_OPEN(&conn);
+
+        output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to, filter);
+
+        DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+        DATABASE_CLOSE(&conn);
+    }
+    assert(output);
+
+    RETURN_JSON(output);
 }
 
-
 /************************************************************************************/
-
 
 PHP_FUNCTION(cfmod_resource_promise_log_notkept_summary)
 {
-char *username = NULL,
-     *handle = NULL,
-     *hostkey = NULL,
-     *context = NULL;
-long from,
-     to;
-int len;
+    char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL;
+    long from, to;
+    int len;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssll",
-      &username, &len,
-      &handle, &len,
-      &hostkey, &len,
-      &context, &len,
-      &to,
-      &from) == FAILURE)
-   {
-   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-   RETURN_NULL();
-   }
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssll",
+                              &username, &len, &handle, &len, &hostkey, &len, &context, &len, &to, &from) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
 
-JsonElement *output = NULL;
-   {
-   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+    JsonElement *output = NULL;
 
-   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-   HostClassFilterAddClasses(filter, context, NULL);
+    {
+        HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
-   mongo_connection conn;
-   DATABASE_OPEN(&conn);
+        ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-   output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to, filter);
+        HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
-   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-   DATABASE_CLOSE(&conn);
-   }
-assert(output);
+        HostClassFilterAddClasses(filter, context, NULL);
 
+        mongo_connection conn;
 
-RETURN_JSON(output);
+        DATABASE_OPEN(&conn);
+
+        output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to, filter);
+
+        DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+        DATABASE_CLOSE(&conn);
+    }
+    assert(output);
+
+    RETURN_JSON(output);
 }
-
 
 /************************************************************************************/
 
-
 static const char *DeserializeRvalType(const char *datatype)
 {
-if (strcmp("sl", datatype) == 0)
-   {
-   return "slist";
-   }
-if (strcmp("rl", datatype) == 0)
-   {
-   return "rlist";
-   }
-if (strcmp("il", datatype) == 0)
-   {
-   return "ilist";
-   }
-else if (strcmp("ml", datatype) == 0)
-   {
-   return "mlist";
-   }
+    if (strcmp("sl", datatype) == 0)
+    {
+        return "slist";
+    }
+    if (strcmp("rl", datatype) == 0)
+    {
+        return "rlist";
+    }
+    if (strcmp("il", datatype) == 0)
+    {
+        return "ilist";
+    }
+    else if (strcmp("ml", datatype) == 0)
+    {
+        return "mlist";
+    }
 
-else if (strcmp("s", datatype) == 0)
-   {
-   return "string";
-   }
-else if (strcmp("r", datatype) == 0)
-   {
-   return "real";
-   }
-else if (strcmp("i", datatype) == 0)
-   {
-   return "int";
-   }
-else if (strcmp("m", datatype) == 0)
-   {
-   return "menu";
-   }
+    else if (strcmp("s", datatype) == 0)
+    {
+        return "string";
+    }
+    else if (strcmp("r", datatype) == 0)
+    {
+        return "real";
+    }
+    else if (strcmp("i", datatype) == 0)
+    {
+        return "int";
+    }
+    else if (strcmp("m", datatype) == 0)
+    {
+        return "menu";
+    }
 
-assert(false && "Cannot deserialize rval datatype");
-return "unknown";
+    assert(false && "Cannot deserialize rval datatype");
+    return "unknown";
 }
 
 static const char *SerializeRvalType(const char *str)
 {
-if (strcmp("slist", str) == 0)
-   {
-   return "sl";
-   }
-if (strcmp("rlist", str) == 0)
-   {
-   return "rl";
-   }
-if (strcmp("ilist", str) == 0)
-   {
-   return "il";
-   }
-else if (strcmp("mlist", str) == 0)
-   {
-   return "ml";
-   }
+    if (strcmp("slist", str) == 0)
+    {
+        return "sl";
+    }
+    if (strcmp("rlist", str) == 0)
+    {
+        return "rl";
+    }
+    if (strcmp("ilist", str) == 0)
+    {
+        return "il";
+    }
+    else if (strcmp("mlist", str) == 0)
+    {
+        return "ml";
+    }
 
-else if (strcmp("string", str) == 0)
-   {
-   return "s";
-   }
-else if (strcmp("real", str) == 0)
-   {
-   return "r";
-   }
-else if (strcmp("int", str) == 0)
-   {
-   return "i";
-   }
-else if (strcmp("menu", str) == 0)
-   {
-   return "m";
-   }
+    else if (strcmp("string", str) == 0)
+    {
+        return "s";
+    }
+    else if (strcmp("real", str) == 0)
+    {
+        return "r";
+    }
+    else if (strcmp("int", str) == 0)
+    {
+        return "i";
+    }
+    else if (strcmp("menu", str) == 0)
+    {
+        return "m";
+    }
 
-assert(false && "Cannot serialize rval datatype");
-return NULL; // from core conversion.c
+    assert(false && "Cannot serialize rval datatype");
+    return NULL;                // from core conversion.c
 }
-
 
 PHP_FUNCTION(cfmod_resource_variable)
 {
-char *username = NULL,
-     *hostkey = NULL,
-     *scope = NULL,
-     *name = NULL,
-     *value = NULL,
-     *type = NULL,
-     *context = NULL;
-int len;
+    char *username = NULL, *hostkey = NULL, *scope = NULL, *name = NULL, *value = NULL, *type = NULL, *context = NULL;
+    int len;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssssss",
-      &username, &len,
-      &hostkey, &len,
-      &scope, &len,
-      &name, &len,
-      &value, &len,
-      &type, &len,
-      &context, &len) == FAILURE)
-   {
-   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-   RETURN_NULL();
-   }
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssss",
+                              &username, &len,
+                              &hostkey, &len,
+                              &scope, &len, &name, &len, &value, &len, &type, &len, &context, &len) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
 
-HubQuery *result = NULL;
-   {
-   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+    HubQuery *result = NULL;
 
-   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-   HostClassFilterAddClasses(filter, context, NULL);
+    {
+        HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
-   mongo_connection conn;
-   DATABASE_OPEN(&conn)
+        ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-   result = CFDB_QueryVariables(&conn, hostkey, scope, name, value,
-                                SerializeRvalType(type), true, filter);
+        HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
-   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-   DATABASE_CLOSE(&conn)
-   }
-assert(result);
+        HostClassFilterAddClasses(filter, context, NULL);
 
-JsonElement *values = JsonArrayCreate(100);
-for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
-   {
-   HubVariable *record = (HubVariable *)rp->item;
-   const char *datatype = DeserializeRvalType(record->dtype);
+        mongo_connection conn;
 
-   JsonElement *value_entry = JsonObjectCreate(3);
-   JsonObjectAppendString(value_entry, LABEL_HOSTKEY, record->hh->keyhash);
-   JsonObjectAppendString(value_entry, LABEL_SCOPE, record->scope);
-   JsonObjectAppendString(value_entry, LABEL_NAME, record->lval);
-   JsonObjectAppendString(value_entry, LABEL_TYPE, datatype);
+        DATABASE_OPEN(&conn)
+            result = CFDB_QueryVariables(&conn, hostkey, scope, name, value, SerializeRvalType(type), true, filter);
 
-   if (strstr(datatype, "list"))
-      {
-      JsonObjectAppendArray(value_entry, LABEL_VALUE, RvalToJson(record->rval));
-      }
-   else // FIX: should condition on int/real/menu. possible?
-      {
-      JsonObjectAppendString(value_entry, LABEL_VALUE, (const char *)record->rval.item);
-      }
+        DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+    DATABASE_CLOSE(&conn)}
+    assert(result);
 
-   JsonArrayAppendObject(values, value_entry);
-   }
+    JsonElement *values = JsonArrayCreate(100);
 
-DeleteHubQuery(result, DeleteHubVariable);
+    for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
+    {
+        HubVariable *record = (HubVariable *) rp->item;
+        const char *datatype = DeserializeRvalType(record->dtype);
 
-RETURN_JSON(values);
+        JsonElement *value_entry = JsonObjectCreate(3);
+
+        JsonObjectAppendString(value_entry, LABEL_HOSTKEY, record->hh->keyhash);
+        JsonObjectAppendString(value_entry, LABEL_SCOPE, record->scope);
+        JsonObjectAppendString(value_entry, LABEL_NAME, record->lval);
+        JsonObjectAppendString(value_entry, LABEL_TYPE, datatype);
+
+        if (strstr(datatype, "list"))
+        {
+            JsonObjectAppendArray(value_entry, LABEL_VALUE, RvalToJson(record->rval));
+        }
+        else                    // FIX: should condition on int/real/menu. possible?
+        {
+            JsonObjectAppendString(value_entry, LABEL_VALUE, (const char *) record->rval.item);
+        }
+
+        JsonArrayAppendObject(values, value_entry);
+    }
+
+    DeleteHubQuery(result, DeleteHubVariable);
+
+    RETURN_JSON(values);
 }
-
 
 /************************************************************************************/
 
-
 PHP_FUNCTION(cfmod_resource_context)
 {
-char *username = NULL,
-     *hostkey = NULL,
-     *context = NULL;
-int len;
-long from = 0;
+    char *username = NULL, *hostkey = NULL, *context = NULL;
+    int len;
+    long from = 0;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sssl",
-      &username, &len,
-      &hostkey, &len,
-      &context, &len,
-      &from) == FAILURE)
-   {
-   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-   RETURN_NULL();
-   }
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssl",
+                              &username, &len, &hostkey, &len, &context, &len, &from) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
 
-HubQuery *result = NULL;
-   {
-   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+    HubQuery *result = NULL;
 
-   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-   HostClassFilterAddClasses(filter, context, NULL);
+    {
+        HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
-   mongo_connection conn;
-   DATABASE_OPEN(&conn)
+        ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-   result = CFDB_QueryClasses(&conn, hostkey, NULL, false, Horizon(from), filter, false);
+        HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
-   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-   DATABASE_CLOSE(&conn)
-   }
-assert(result);
+        HostClassFilterAddClasses(filter, context, NULL);
 
-JsonElement *contexts = JsonArrayCreate(100);
-for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
-   {
-   HubClass *record = (HubClass *)rp->item;
-   JsonElement *entry = JsonObjectCreate(5);
+        mongo_connection conn;
 
-   JsonObjectAppendString(entry, LABEL_HOSTKEY, record->hh->keyhash);
-   JsonObjectAppendString(entry, LABEL_CONTEXT, record->class);
-   JsonObjectAppendReal(entry, LABEL_AVERAGE, record->prob);
-   JsonObjectAppendReal(entry, LABEL_STDV, record->dev);
-   JsonObjectAppendInteger(entry, LABEL_LASTSEEN, record->t);
+        DATABASE_OPEN(&conn) result = CFDB_QueryClasses(&conn, hostkey, NULL, false, Horizon(from), filter, false);
 
-   JsonArrayAppendObject(contexts, entry);
-   }
+        DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+    DATABASE_CLOSE(&conn)}
+    assert(result);
 
-DeleteHubQuery(result, DeleteHubClass);
+    JsonElement *contexts = JsonArrayCreate(100);
 
-RETURN_JSON(contexts);
+    for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
+    {
+        HubClass *record = (HubClass *) rp->item;
+        JsonElement *entry = JsonObjectCreate(5);
+
+        JsonObjectAppendString(entry, LABEL_HOSTKEY, record->hh->keyhash);
+        JsonObjectAppendString(entry, LABEL_CONTEXT, record->class);
+        JsonObjectAppendReal(entry, LABEL_AVERAGE, record->prob);
+        JsonObjectAppendReal(entry, LABEL_STDV, record->dev);
+        JsonObjectAppendInteger(entry, LABEL_LASTSEEN, record->t);
+
+        JsonArrayAppendObject(contexts, entry);
+    }
+
+    DeleteHubQuery(result, DeleteHubClass);
+
+    RETURN_JSON(contexts);
 }
-
 
 /************************************************************************************/
 
 static JsonElement *SoftwareHostsEntryCreate(HubSoftware *software)
 {
-JsonElement *entry = JsonObjectCreate(4);
+    JsonElement *entry = JsonObjectCreate(4);
 
-JsonObjectAppendString(entry, LABEL_NAME, software->name);
-JsonObjectAppendString(entry, LABEL_VERSION, software->version);
-JsonObjectAppendString(entry, LABEL_ARCH, Nova_LongArch(software->arch));
+    JsonObjectAppendString(entry, LABEL_NAME, software->name);
+    JsonObjectAppendString(entry, LABEL_VERSION, software->version);
+    JsonObjectAppendString(entry, LABEL_ARCH, Nova_LongArch(software->arch));
 
-JsonElement *hostkeys = JsonArrayCreate(100);
-JsonArrayAppendString(hostkeys, software->hh->keyhash);
-JsonObjectAppendArray(entry, LABEL_HOSTKEYS, hostkeys);
+    JsonElement *hostkeys = JsonArrayCreate(100);
 
-return entry;
+    JsonArrayAppendString(hostkeys, software->hh->keyhash);
+    JsonObjectAppendArray(entry, LABEL_HOSTKEYS, hostkeys);
+
+    return entry;
 }
 
 static JsonElement *SoftwareHostsEntryFind(JsonElement *entries, HubSoftware *software)
 {
-for (size_t i = 0; i < JsonElementLength(entries); i++)
-   {
-   JsonElement *entry = JsonArrayGetAsObject(entries, i);
-   if (strcmp(JsonObjectGetAsString(entry, LABEL_NAME), software->name) == 0 &&
-       strcmp(JsonObjectGetAsString(entry, LABEL_VERSION), software->version) == 0 &&
-       strcmp(JsonObjectGetAsString(entry, LABEL_ARCH), Nova_LongArch(software->arch)) == 0)
-      {
-      return entry;
-      }
-   }
+    for (size_t i = 0; i < JsonElementLength(entries); i++)
+    {
+        JsonElement *entry = JsonArrayGetAsObject(entries, i);
 
-return NULL;
+        if (strcmp(JsonObjectGetAsString(entry, LABEL_NAME), software->name) == 0 &&
+            strcmp(JsonObjectGetAsString(entry, LABEL_VERSION), software->version) == 0 &&
+            strcmp(JsonObjectGetAsString(entry, LABEL_ARCH), Nova_LongArch(software->arch)) == 0)
+        {
+            return entry;
+        }
+    }
+
+    return NULL;
 }
 
 PHP_FUNCTION(cfmod_resource_software)
 {
-char *username = NULL,
-     *hostkey = NULL,
-     *name = NULL,
-     *version = NULL,
-     *arch = NULL,
-     *context = NULL;
-int len;
+    char *username = NULL, *hostkey = NULL, *name = NULL, *version = NULL, *arch = NULL, *context = NULL;
+    int len;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssss",
-      &username, &len,
-      &hostkey, &len,
-      &name, &len,
-      &version, &len,
-      &arch, &len,
-      &context, &len) == FAILURE)
-   {
-   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-   RETURN_NULL();
-   }
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssss",
+                              &username, &len,
+                              &hostkey, &len, &name, &len, &version, &len, &arch, &len, &context, &len) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
 
-HubQuery *result = NULL;
-   {
-   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+    HubQuery *result = NULL;
 
-   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-   HostClassFilterAddClasses(filter, context, NULL);
+    {
+        HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
-   mongo_connection conn;
-   DATABASE_OPEN(&conn)
+        ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-   result = CFDB_QuerySoftware(&conn, hostkey, cfr_software, name, version,
-                               Nova_ShortArch(arch), true, filter,true);
+        HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
-   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-   DATABASE_CLOSE(&conn)
-   }
-assert(result);
+        HostClassFilterAddClasses(filter, context, NULL);
 
-JsonElement *output = JsonArrayCreate(100);
-for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
-   {
-   HubSoftware *record = (HubSoftware *)rp->item;
-   JsonElement *entry = SoftwareHostsEntryFind(output, record);
-   if (entry)
-      {
-      JsonElement *hostkeys = JsonObjectGetAsArray(entry, LABEL_HOSTKEYS);
-      JsonArrayAppendString(hostkeys, record->hh->keyhash);
-      }
-   else
-      {
-      entry = SoftwareHostsEntryCreate(record);
-      JsonArrayAppendObject(output, entry);
-      }
-   }
+        mongo_connection conn;
 
-DeleteHubQuery(result, DeleteHubSoftware);
+        DATABASE_OPEN(&conn)
+            result = CFDB_QuerySoftware(&conn, hostkey, cfr_software, name, version,
+                                        Nova_ShortArch(arch), true, filter, true);
 
-RETURN_JSON(output);
+        DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+    DATABASE_CLOSE(&conn)}
+    assert(result);
+
+    JsonElement *output = JsonArrayCreate(100);
+
+    for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
+    {
+        HubSoftware *record = (HubSoftware *) rp->item;
+        JsonElement *entry = SoftwareHostsEntryFind(output, record);
+
+        if (entry)
+        {
+            JsonElement *hostkeys = JsonObjectGetAsArray(entry, LABEL_HOSTKEYS);
+
+            JsonArrayAppendString(hostkeys, record->hh->keyhash);
+        }
+        else
+        {
+            entry = SoftwareHostsEntryCreate(record);
+            JsonArrayAppendObject(output, entry);
+        }
+    }
+
+    DeleteHubQuery(result, DeleteHubSoftware);
+
+    RETURN_JSON(output);
 }
-
 
 /************************************************************************************/
 
-
 static JsonElement *SetUidHostsEntryCreate(HubSetUid *setuid)
 {
-JsonElement *entry = JsonObjectCreate(2);
-JsonObjectAppendString(entry, LABEL_PATH, setuid->path);
+    JsonElement *entry = JsonObjectCreate(2);
 
-JsonElement *hostkeys = JsonArrayCreate(100);
-JsonArrayAppendString(hostkeys, setuid->hh->keyhash);
-JsonObjectAppendArray(entry, LABEL_HOSTKEYS, hostkeys);
+    JsonObjectAppendString(entry, LABEL_PATH, setuid->path);
 
-return entry;
+    JsonElement *hostkeys = JsonArrayCreate(100);
+
+    JsonArrayAppendString(hostkeys, setuid->hh->keyhash);
+    JsonObjectAppendArray(entry, LABEL_HOSTKEYS, hostkeys);
+
+    return entry;
 }
 
 static JsonElement *SetUidHostsEntryFind(JsonElement *entries, HubSetUid *setuid)
 {
-for (size_t i = 0; i < JsonElementLength(entries); i++)
-   {
-   JsonElement *entry = JsonArrayGetAsObject(entries, i);
-   if (strcmp(JsonObjectGetAsString(entry, LABEL_PATH), setuid->path) == 0)
-      {
-      return entry;
-      }
-   }
+    for (size_t i = 0; i < JsonElementLength(entries); i++)
+    {
+        JsonElement *entry = JsonArrayGetAsObject(entries, i);
 
-return NULL;
+        if (strcmp(JsonObjectGetAsString(entry, LABEL_PATH), setuid->path) == 0)
+        {
+            return entry;
+        }
+    }
+
+    return NULL;
 }
-
 
 PHP_FUNCTION(cfmod_resource_setuid)
 {
-char *username = NULL,
-     *hostkey = NULL,
-     *path = NULL,
-     *context = NULL;
-int len;
+    char *username = NULL, *hostkey = NULL, *path = NULL, *context = NULL;
+    int len;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssss",
-      &username, &len,
-      &hostkey, &len,
-      &path, &len,
-      &context, &len) == FAILURE)
-   {
-   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-   RETURN_NULL();
-   }
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssss",
+                              &username, &len, &hostkey, &len, &path, &len, &context, &len) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
 
-HubQuery *result = NULL;
-   {
-   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+    HubQuery *result = NULL;
 
-   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-   HostClassFilterAddClasses(filter, context, NULL);
+    {
+        HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
-   mongo_connection conn;
-   DATABASE_OPEN(&conn)
+        ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-   result = CFDB_QuerySetuid(&conn, hostkey, path, true, filter);
+        HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
-   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-   DATABASE_CLOSE(&conn)
-   }
-assert(result);
+        HostClassFilterAddClasses(filter, context, NULL);
 
-JsonElement *output = JsonArrayCreate(100);
-for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
-   {
-   HubSetUid *record = (HubSetUid *)rp->item;
-   JsonElement *entry = SetUidHostsEntryFind(output, record);
-   if (entry)
-      {
-      JsonElement *hostkeys = JsonObjectGetAsArray(entry, LABEL_HOSTKEYS);
-      JsonArrayAppendString(hostkeys, record->hh->keyhash);
-      }
-   else
-      {
-      entry = SetUidHostsEntryCreate(record);
-      JsonArrayAppendObject(output, entry);
-      }
-   }
+        mongo_connection conn;
 
-DeleteHubQuery(result, DeleteHubSetUid);
+        DATABASE_OPEN(&conn) result = CFDB_QuerySetuid(&conn, hostkey, path, true, filter);
 
-RETURN_JSON(output);
+        DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+    DATABASE_CLOSE(&conn)}
+    assert(result);
+
+    JsonElement *output = JsonArrayCreate(100);
+
+    for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
+    {
+        HubSetUid *record = (HubSetUid *) rp->item;
+        JsonElement *entry = SetUidHostsEntryFind(output, record);
+
+        if (entry)
+        {
+            JsonElement *hostkeys = JsonObjectGetAsArray(entry, LABEL_HOSTKEYS);
+
+            JsonArrayAppendString(hostkeys, record->hh->keyhash);
+        }
+        else
+        {
+            entry = SetUidHostsEntryCreate(record);
+            JsonArrayAppendObject(output, entry);
+        }
+    }
+
+    DeleteHubQuery(result, DeleteHubSetUid);
+
+    RETURN_JSON(output);
 }
-
 
 /************************************************************************************/
 
-
 bool FileRecordsEqual(HubFileChanges *change_record, HubFileDiff *diff_record)
 {
-if (!change_record || !diff_record)
-   {
-   return false;
-   }
+    if (!change_record || !diff_record)
+    {
+        return false;
+    }
 
-if (strcmp(change_record->hh->keyhash, diff_record->hh->keyhash) != 0)
-   {
-   return false;
-   }
+    if (strcmp(change_record->hh->keyhash, diff_record->hh->keyhash) != 0)
+    {
+        return false;
+    }
 
-return (strcmp(change_record->path, diff_record->path) == 0) &&
-       (change_record->t == diff_record->t);
+    return (strcmp(change_record->path, diff_record->path) == 0) && (change_record->t == diff_record->t);
 }
-
 
 PHP_FUNCTION(cfmod_resource_file)
 {
-char *username = NULL,
-     *hostkey = NULL,
-     *path = NULL,
-     *context = NULL;
-int len;
-long from = 0;
+    char *username = NULL, *hostkey = NULL, *path = NULL, *context = NULL;
+    int len;
+    long from = 0;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssssl",
-      &username, &len,
-      &hostkey, &len,
-      &path, &len,
-      &context, &len,
-      &from) == FAILURE)
-   {
-   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-   RETURN_NULL();
-   }
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssl",
+                              &username, &len, &hostkey, &len, &path, &len, &context, &len, &from) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
 
-HubQuery *change_result = NULL;
-HubQuery *diff_result = NULL;
+    HubQuery *change_result = NULL;
+    HubQuery *diff_result = NULL;
 
-   {
-   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+    {
+        HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
-   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-   HostClassFilterAddClasses(filter, context, NULL);
+        ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-   mongo_connection conn;
-   DATABASE_OPEN(&conn)
+        HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
-   change_result = CFDB_QueryFileChanges(&conn, hostkey, path, true, from, CFDB_GREATERTHANEQ, true, filter, false);
-   diff_result = CFDB_QueryFileDiff(&conn, hostkey, path, NULL, true ,from, CFDB_GREATERTHANEQ, true, filter, false);
+        HostClassFilterAddClasses(filter, context, NULL);
 
-   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-   DATABASE_CLOSE(&conn)
-   }
-assert(change_result);
-assert(diff_result);
+        mongo_connection conn;
 
-JsonElement *output = JsonArrayCreate(1000);
+        DATABASE_OPEN(&conn)
+            change_result =
+            CFDB_QueryFileChanges(&conn, hostkey, path, true, from, CFDB_GREATERTHANEQ, true, filter, false);
+        diff_result =
+            CFDB_QueryFileDiff(&conn, hostkey, path, NULL, true, from, CFDB_GREATERTHANEQ, true, filter, false);
 
-Rlist *changep = change_result->records;
-Rlist *diffp = diff_result->records;
+        DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+    DATABASE_CLOSE(&conn)}
+    assert(change_result);
+    assert(diff_result);
 
-do
-   {
-   HubFileDiff *diff_record = diffp ? (HubFileDiff *)diffp->item : NULL;
+    JsonElement *output = JsonArrayCreate(1000);
 
-   while (changep)
-      {
-      HubFileChanges *change_record = (HubFileChanges *)changep->item;
+    Rlist *changep = change_result->records;
+    Rlist *diffp = diff_result->records;
 
-      JsonElement *entry = JsonObjectCreate(4);
-      JsonObjectAppendString(entry, LABEL_HOSTKEY, change_record->hh->keyhash);
-      JsonObjectAppendString(entry, LABEL_PATH, change_record->path);
-      JsonObjectAppendInteger(entry, LABEL_TIMESTAMP, change_record->t);
+    do
+    {
+        HubFileDiff *diff_record = diffp ? (HubFileDiff *) diffp->item : NULL;
 
-      JsonArrayAppendObject(output, entry);
-      if (FileRecordsEqual(change_record, diff_record))
-         {
-         char diff_buffer[CF_BUFSIZE];
-         diff_buffer[0] = '\0';
-         char diff_type = -1;
-         int line = -1;
-         sscanf(diff_record->diff, "%c,%d,%s", &diff_type, &line, diff_buffer);
+        while (changep)
+        {
+            HubFileChanges *change_record = (HubFileChanges *) changep->item;
 
-         JsonElement *diff_entry = JsonObjectCreate(3);
-         switch (diff_type)
+            JsonElement *entry = JsonObjectCreate(4);
+
+            JsonObjectAppendString(entry, LABEL_HOSTKEY, change_record->hh->keyhash);
+            JsonObjectAppendString(entry, LABEL_PATH, change_record->path);
+            JsonObjectAppendInteger(entry, LABEL_TIMESTAMP, change_record->t);
+
+            JsonArrayAppendObject(output, entry);
+            if (FileRecordsEqual(change_record, diff_record))
             {
-            case '+':
-               JsonObjectAppendString(diff_entry, LABEL_TYPE, LABEL_ADD);
-               break;
-            case '-':
-               JsonObjectAppendString(diff_entry, LABEL_TYPE, LABEL_REMOVE);
-               break;
-            default:
-               JsonObjectAppendString(diff_entry, LABEL_TYPE, LABEL_UNKNOWN);
-               break;
+                char diff_buffer[CF_BUFSIZE];
+
+                diff_buffer[0] = '\0';
+                char diff_type = -1;
+                int line = -1;
+
+                sscanf(diff_record->diff, "%c,%d,%s", &diff_type, &line, diff_buffer);
+
+                JsonElement *diff_entry = JsonObjectCreate(3);
+
+                switch (diff_type)
+                {
+                case '+':
+                    JsonObjectAppendString(diff_entry, LABEL_TYPE, LABEL_ADD);
+                    break;
+                case '-':
+                    JsonObjectAppendString(diff_entry, LABEL_TYPE, LABEL_REMOVE);
+                    break;
+                default:
+                    JsonObjectAppendString(diff_entry, LABEL_TYPE, LABEL_UNKNOWN);
+                    break;
+                }
+
+                JsonObjectAppendInteger(diff_entry, LABEL_LINE_NUMBER, line);
+                JsonObjectAppendString(diff_entry, LABEL_VALUE, diff_buffer);
+
+                JsonObjectAppendObject(entry, LABEL_DIFF, diff_entry);
+                changep = changep->next;
+                break;
             }
+            else
+            {
+                changep = changep->next;
+                continue;
+            }
+        }
 
-         JsonObjectAppendInteger(diff_entry, LABEL_LINE_NUMBER, line);
-         JsonObjectAppendString(diff_entry, LABEL_VALUE, diff_buffer);
+        diffp = diffp ? diffp->next : NULL;
+    }
+    while (diffp);
 
-         JsonObjectAppendObject(entry, LABEL_DIFF, diff_entry);
-         changep = changep->next;
-         break;
-         }
-      else
-         {
-         changep = changep->next;
-         continue;
-         }
-      }
+    DeleteHubQuery(change_result, DeleteHubFileChanges);
+    DeleteHubQuery(diff_result, DeleteHubFileDiff);
 
-   diffp = diffp ? diffp->next : NULL;
-   } while (diffp);
-
-DeleteHubQuery(change_result, DeleteHubFileChanges);
-DeleteHubQuery(diff_result, DeleteHubFileDiff);
-
-RETURN_JSON(output);
+    RETURN_JSON(output);
 }

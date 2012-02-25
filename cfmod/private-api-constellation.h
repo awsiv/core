@@ -29,7 +29,6 @@ PHP_FUNCTION(cfcon_environments_list);
 PHP_FUNCTION(cfcon_promise_popularity);
 PHP_FUNCTION(cfcon_rank_promise_popularity);
 
-
 PHP_FUNCTION(cfcon_list_subscriptions);
 PHP_FUNCTION(cfcon_local_show_subscription_virtualbundle);
 
@@ -37,9 +36,7 @@ PHP_FUNCTION(cfcon_subscribe_software);
 PHP_FUNCTION(cfcon_local_subscribe_virtualbundle);
 PHP_FUNCTION(cfcon_local_delete_subscription_virtualbundle);
 
-
 PHP_FUNCTION(cfcon_subscribe_repairlog);
-
 
 PHP_FUNCTION(cfcon_report_software);
 PHP_FUNCTION(cfcon_local_report_virtualbundle);
@@ -65,7 +62,6 @@ PHP_FUNCTION(cfcon_hubname);
 PHP_FUNCTION(cfcon_ipaddr);
 PHP_FUNCTION(cfcon_delete_hub);
 
-#endif  /* HAVE_CONSTELLATION */
+#endif /* HAVE_CONSTELLATION */
 
-
-#endif /* CFENGINE_CFMOD_PRIVATE_API_CONSTELLATION_H */
+#endif

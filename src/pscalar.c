@@ -16,66 +16,67 @@
 
 /*****************************************************************************/
 
-void Nova_SetPersistentScalar(char *lval,char *rval)
+void Nova_SetPersistentScalar(char *lval, char *rval)
+{
+    CF_DB *dbp;
+    PersistentScalar new;
+    char filename[CF_MAXVARSIZE];
 
-{ CF_DB *dbp;
-  PersistentScalar new;
-  char filename[CF_MAXVARSIZE];
+    snprintf(filename, sizeof(filename), "%s%cstate%c%s", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR, NOVA_PSCALARDB);
 
-snprintf(filename,sizeof(filename),"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_PSCALARDB);
+    strncpy(new.rval, rval, CF_MAXVARSIZE);
+    new.time = time(NULL);
 
-strncpy(new.rval,rval,CF_MAXVARSIZE);
-new.time = time(NULL);
+    if (!OpenDB(filename, &dbp))
+    {
+        return;
+    }
 
-if (!OpenDB(filename,&dbp))
-   {
-   return;
-   }
-
-CfOut(cf_verbose,""," -> Setting persistent hub knowledge: %s =>\"%s\"",lval,rval);
-WriteDB(dbp,lval,&new,sizeof(PersistentScalar));
-CloseDB(dbp);
+    CfOut(cf_verbose, "", " -> Setting persistent hub knowledge: %s =>\"%s\"", lval, rval);
+    WriteDB(dbp, lval, &new, sizeof(PersistentScalar));
+    CloseDB(dbp);
 }
 
 /*****************************************************************************/
 
-int Nova_GetPersistentScalar(char *lval,char *rval,int size,time_t timeout)
+int Nova_GetPersistentScalar(char *lval, char *rval, int size, time_t timeout)
+{
+    CF_DB *dbp;
+    PersistentScalar var;
+    time_t now = time(NULL);
+    char filename[CF_MAXVARSIZE];
 
-{ CF_DB *dbp;
-  PersistentScalar var;
-  time_t now = time(NULL);
-  char filename[CF_MAXVARSIZE];
-  
-snprintf(filename,sizeof(filename),"%s%cstate%c%s",CFWORKDIR,FILE_SEPARATOR,FILE_SEPARATOR,NOVA_PSCALARDB);
+    snprintf(filename, sizeof(filename), "%s%cstate%c%s", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR, NOVA_PSCALARDB);
 
-*rval = '\0';
+    *rval = '\0';
 
-if (!OpenDB(filename,&dbp))
-   {
-   CfOut(cf_verbose,""," -> Unable to open db while looking for persistent scalar");
-   return false;
-   }
+    if (!OpenDB(filename, &dbp))
+    {
+        CfOut(cf_verbose, "", " -> Unable to open db while looking for persistent scalar");
+        return false;
+    }
 
-if (ReadDB(dbp,lval,&var,sizeof(PersistentScalar)))
-   {
-   if (now > var.time + timeout)
-      {
-      DeleteDB(dbp,lval);
-      CfOut(cf_verbose,""," -> Persistent scalar timed out (%jd too late), so looking for default", (intmax_t)now - var.time);
-      CloseDB(dbp);
-      return false;
-      }
-   else
-      {
-      CloseDB(dbp);
-      strncpy(rval,var.rval,size-1);      
-      return true;
-      }
-   }
-else
-   {
-   CloseDB(dbp);
-   CfOut(cf_verbose,""," -> Persistent scalar was not found, so looking for default");
-   return false;
-   }
+    if (ReadDB(dbp, lval, &var, sizeof(PersistentScalar)))
+    {
+        if (now > var.time + timeout)
+        {
+            DeleteDB(dbp, lval);
+            CfOut(cf_verbose, "", " -> Persistent scalar timed out (%jd too late), so looking for default",
+                  (intmax_t) now - var.time);
+            CloseDB(dbp);
+            return false;
+        }
+        else
+        {
+            CloseDB(dbp);
+            strncpy(rval, var.rval, size - 1);
+            return true;
+        }
+    }
+    else
+    {
+        CloseDB(dbp);
+        CfOut(cf_verbose, "", " -> Persistent scalar was not found, so looking for default");
+        return false;
+    }
 }

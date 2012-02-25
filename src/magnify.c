@@ -21,68 +21,65 @@
 /* Magdata                                                            */
 /**********************************************************************/
 
-bool Nova_ReadMagTimeSeries2(mongo_connection *conn, DataView *cfv,char *hostkey,char *vitalId)
+bool Nova_ReadMagTimeSeries2(mongo_connection *conn, DataView *cfv, char *hostkey, char *vitalId)
+{
+    double ry, rq;
+    double q[CF_MAGDATA], e[CF_MAGDATA], d[CF_MAGDATA];
+    int i, have_data = false;
 
-{ double ry,rq;
-  double q[CF_MAGDATA],e[CF_MAGDATA],d[CF_MAGDATA];
-  int i,have_data = false;
+    CFDB_QueryMagView2(conn, hostkey, vitalId, time(NULL) - 4 * 3600, q, e, d);
 
-CFDB_QueryMagView2(conn,hostkey,vitalId,time(NULL) - 4*3600,q,e,d);
+    cfv->max = 0;
+    cfv->min = 99999;
+    cfv->error_scale = 0;
 
-cfv->max = 0;
-cfv->min = 99999;
-cfv->error_scale = 0;      
+    for (i = 0; i < CF_MAGDATA; i++)
+    {
+        cfv->data_E[i] = 0;
+        cfv->data_q[i] = 0;
+        cfv->bars[i] = 0;
+    }
 
-for (i = 0; i < CF_MAGDATA; i++)
-   {
-   cfv->data_E[i] = 0;
-   cfv->data_q[i] = 0;
-   cfv->bars[i] = 0;
-   }
+    for (i = 0; i < CF_MAGDATA; i++)
+    {
+        ry = Num(e[i]);
+        rq = Num(q[i]);
 
-for (i = 0; i < CF_MAGDATA; i++)
-   {
-   ry = Num(e[i]);
-   rq = Num(q[i]);
+        // Num() resets to zero negative numbers
+        if (q[i] >= 0)
+        {
+            have_data++;
+        }
 
-   // Num() resets to zero negative numbers
-   if (q[i] >= 0)
-      {
-      have_data++;
-      }
-   
-   if (rq > cfv->max)
-      {
-      cfv->max = rq;
-      }
+        if (rq > cfv->max)
+        {
+            cfv->max = rq;
+        }
 
-   if (ry > cfv->max)
-      {
-      cfv->max = ry;
-      }
+        if (ry > cfv->max)
+        {
+            cfv->max = ry;
+        }
 
-   if (rq < cfv->min)
-      {
-      cfv->min = rq;
-      }
+        if (rq < cfv->min)
+        {
+            cfv->min = rq;
+        }
 
-   if (ry < cfv->min)
-      {
-      cfv->min = ry;
-      }
-   }
+        if (ry < cfv->min)
+        {
+            cfv->min = ry;
+        }
+    }
 
-if (have_data > 1)
-   {
-   return true;
-   }
-else
-   {
-   return false;
-   }
+    if (have_data > 1)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
-
-#endif  /* HAVE_LIBMONGOC */
-
-
+#endif /* HAVE_LIBMONGOC */
