@@ -430,6 +430,7 @@ PHP_FUNCTION(cfpr_class_list_time_distinct_by_name_rx);
  * \param userName
  */
 PHP_FUNCTION(cfpr_class_list_soft);
+PHP_FUNCTION(cfpr_class_list_soft_distinct_by_name_rx);
 
 /*! \brief A list of all the IP contexts at a host
  * \param userName
