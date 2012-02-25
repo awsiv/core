@@ -274,7 +274,7 @@ class host_model extends Cf_Model {
 
     function getHostCount($username) {
         try {
-            $data = cfpr_host_count($username, NULL, NULL, NULL);
+            $data = cfpr_host_count($username, NULL, array(), array());
             if (is_numeric($data)) {
                 return $data;
             } else {
@@ -288,7 +288,7 @@ class host_model extends Cf_Model {
 
     function getRedHostCount($username) {
         try {
-            $data = cfpr_host_count($username, 'red', NULL, NULL);
+            $data = cfpr_host_count($username, 'red', array(), array());
             if (is_numeric($data)) {
                 return $data;
             } else {
@@ -302,7 +302,7 @@ class host_model extends Cf_Model {
 
     function getYellowHostCount($username) {
         try {
-            $data = cfpr_host_count($username, 'yellow', NULL, NULL);
+            $data = cfpr_host_count($username, 'yellow', array(), array());
             if (is_numeric($data)) {
                 return $data;
             } else {
@@ -316,7 +316,7 @@ class host_model extends Cf_Model {
 
     function getGreenHostCount($username) {
         try {
-            $data = cfpr_host_count($username, 'green', NULL, NULL);
+            $data = cfpr_host_count($username, 'green', array(), array());
             if (is_numeric($data)) {
                 return $data;
             } else {
@@ -330,7 +330,7 @@ class host_model extends Cf_Model {
 
     function getBlueHostCount($username) {
         try {
-            $data = cfpr_host_count($username, 'blue', NULL, NULL);
+            $data = cfpr_host_count($username, 'blue', array(), array());
             if (is_numeric($data)) {
                 return $data;
             } else {
