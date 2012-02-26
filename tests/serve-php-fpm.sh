@@ -5,7 +5,6 @@ SERVICE_NAME="PHP-FPM (+cfmod)"
 ROOT=$(pwd)
 CFMOD=${ROOT}/../cfmod/.libs/cfmod.so
 CONFIG=${ROOT}/conf/php-fpm.conf
-PHPINI=${ROOT}/conf/php.ini
 LOGDIR=${ROOT}/log
 
 mkdir -p $LOGDIR
