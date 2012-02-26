@@ -1,6 +1,16 @@
 #!/bin/bash
 
+ROOT=$(pwd)/..
+CFMOD=${ROOT}/cfmod/.libs/cfmod.so
+
 LOGFILE="test.log"
+
+if [ -n "$CFENGINE_TEST_OVERRIDE_MONGO_PORT" ]
+then
+    CFENGINE_TEST_MONGO_PORT=$CFENGINE_TEST_OVERRRIDE_MONGO_PORT
+else
+    CFENGINE_TEST_MONGO_PORT=27017
+fi
 
 if [ -n "$CFENGINE_TEST_OVERRIDE_USERNAME" ]
 then
@@ -13,14 +23,14 @@ if [ -n "$CFENGINE_TEST_OVERRIDE_HOSTKEY" ]
 then
     CFENGINE_TEST_HOSTKEY=$CFENGINE_TEST_OVERRIDE_HOSTKEY
 else
-    CFENGINE_TEST_HOSTKEY=$(/var/cfengine/bin/mongo cfreport --eval "print(db.hosts.findOne({},{kH:1}).kH)" --quiet)
+    CFENGINE_TEST_HOSTKEY=$(mongo cfreport --eval "print(db.hosts.findOne({},{kH:1}).kH)" --quiet --port ${CFENGINE_TEST_MONGO_PORT})
 fi
 
 if [ -n "$CFENGINE_TEST_OVERRIDE_TEST_FILES" ]
 then
     CFENGINE_TEST_FILES=$CFENGINE_TEST_OVERRIDE_TEST_FILES
 else
-    CFENGINE_TEST_FILES=*.php
+    CFENGINE_TEST_FILES=${ROOT}/cfmod/tests/*.php
 fi
 
 TEST_FAILED_MEMORY=""
@@ -48,12 +58,12 @@ runtest()
     echo "Testing $PHPFILE..."
     
     TIME_START_TEST=$(date +%s)
-    OUTPUT_PHP=$(php -f $PHPFILE 2>&1)
+    OUTPUT_PHP=$(php -n -d extension=$CFMOD -f $PHPFILE 2>&1)
     TIME_END_TEST=$(date +%s)
     
     SECONDS_USED_TEST=$(($TIME_END_TEST - $TIME_START_TEST))
     
-    OUTPUT_VALGRIND=$(valgrind -q --main-stacksize=10000000 --max-stackframe=10000000 --leak-check=full --log-fd=1 php -f $PHPFILE 2>/dev/null)
+    OUTPUT_VALGRIND=$(valgrind -q --main-stacksize=10000000 --max-stackframe=10000000 --leak-check=full --log-fd=1 php -n -d extension=$CFMOD -f $PHPFILE 2>/dev/null)
     
     if [ -n "$OUTPUT_VALGRIND" ]
     then
