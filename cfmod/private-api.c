@@ -3181,11 +3181,9 @@ PHP_FUNCTION(cfpr_host_count)
     ARGUMENT_CHECK_CONTENTS(user_len);
 
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
     HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
     HostClassFilterAddIncludeExcludeLists(filter, includes, excludes);
 
     mongo_connection conn;
@@ -3222,8 +3220,9 @@ PHP_FUNCTION(cfpr_host_count)
         }
     }
 
-    DeleteHostClassFilter(filter);
     DATABASE_CLOSE(&conn);
+
+    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_LONG(count);
 }
