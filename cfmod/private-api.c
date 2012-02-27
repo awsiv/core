@@ -3245,31 +3245,36 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "saa",
                         &username, &username_len,
                         &contextIncludes,
                         &contextExcludes) == FAILURE)
-   {
-   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-   RETURN_NULL();
-   }
+{
+    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+    RETURN_NULL();
+}
 
 ARGUMENT_CHECK_CONTENTS(username_len);
 
+static const time_t horizon = SECONDS_PER_WEEK * 52;
+static const time_t resolution = SECONDS_PER_DAY / 4;
+const time_t from = time(NULL) - horizon;
+
 HubQuery *result = NULL;
-   {
-   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+{
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
+    ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-   HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
+    HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+    HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
 
-   mongo_connection conn;
-   DATABASE_OPEN(&conn)
+    mongo_connection conn;
+    DATABASE_OPEN(&conn);
 
-   result = CFDB_QueryTotalCompliance(&conn, NULL, NULL, time(NULL) - SECONDS_PER_WEEK, -1, -1, -1, CFDB_GREATERTHANEQ, false, filter);
+    result = CFDB_QueryTotalCompliance(&conn, NULL, NULL, from, -1, -1, -1, CFDB_GREATERTHANEQ, false, filter);
 
-   DATABASE_CLOSE(&conn)
-   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-   }
+    DATABASE_CLOSE(&conn);
+    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+}
 
-static size_t num_slots = SECONDS_PER_WEEK / (SECONDS_PER_DAY / 4);
+const size_t num_slots = horizon / resolution;
+assert(num_slots > 0);
 
 size_t kept[num_slots]; memset(kept, 0, num_slots * sizeof(size_t));
 size_t notkept[num_slots]; memset(notkept,0, num_slots * sizeof(size_t));
