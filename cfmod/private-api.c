@@ -3282,39 +3282,37 @@ size_t repaired[num_slots]; memset(repaired, 0, num_slots * sizeof(size_t));
 size_t record_count[num_slots]; memset(record_count, 0, num_slots * sizeof(size_t));
 
 for (const Rlist *rp = result->records; rp; rp = rp->next)
-   {
-   HubTotalCompliance *record = (HubTotalCompliance *)rp->item;
-   size_t slot = (record->t - SECONDS_PER_WEEK) / (SECONDS_PER_DAY / 4);
-   assert(slot >= 0);
-   assert(slot < num_slots);
+{
+    HubTotalCompliance *record = (HubTotalCompliance *)rp->item;
+    assert(record->t > from);
 
-   kept[slot] += record->kept;
-   notkept[slot] += record->notkept;
-   repaired[slot] += record->repaired;
-   record_count[slot] += 1;
-   }
+    size_t slot = (record->t - from) / resolution;
+    assert(slot >= 0);
+    assert(slot < num_slots);
+
+    kept[slot] += record->kept;
+    notkept[slot] += record->notkept;
+    repaired[slot] += record->repaired;
+    record_count[slot] += 1;
+}
 
 JsonElement *output = JsonArrayCreate(num_slots);
 for (size_t slot = 0; slot < num_slots; slot++)
-   {
-   JsonElement *entry = JsonObjectCreate(5);
+{
+    if (record_count[slot] > 0)
+    {
+        JsonElement *entry = JsonObjectCreate(5);
 
-   JsonObjectAppendInteger(entry, LABEL_POSITION, slot);
-   if (record_count[slot] > 0)
-      {
-      JsonObjectAppendReal(entry, LABEL_KEPT, (double)kept[slot] / (double)record_count[slot]);
-      JsonObjectAppendReal(entry, LABEL_NOTKEPT, (double)notkept[slot] / (double)record_count[slot]);
-      JsonObjectAppendReal(entry, LABEL_REPAIRED, (double)repaired[slot] / (double)record_count[slot]);
-      }
-   else
-      {
-      JsonObjectAppendReal(entry, LABEL_KEPT, 0.0);
-      JsonObjectAppendReal(entry, LABEL_NOTKEPT, 0.0);
-      JsonObjectAppendReal(entry, LABEL_REPAIRED, 0.0);
-      }
-   JsonObjectAppendInteger(entry, LABEL_HOST_COUNT, record_count[slot]);
-   JsonArrayAppendObject(output, entry);
-   }
+        JsonObjectAppendInteger(entry, LABEL_POSITION, slot);
+        JsonObjectAppendReal(entry, LABEL_KEPT, (double)kept[slot] / (double)record_count[slot]);
+        JsonObjectAppendReal(entry, LABEL_NOTKEPT, (double)notkept[slot] / (double)record_count[slot]);
+        JsonObjectAppendReal(entry, LABEL_REPAIRED, (double)repaired[slot] / (double)record_count[slot]);
+        JsonObjectAppendInteger(entry, LABEL_HOST_COUNT, record_count[slot]);
+
+        JsonArrayAppendObject(output, entry);
+    }
+}
+
 
 DeleteHubQuery(result, DeleteHubTotalCompliance);
 RETURN_JSON(output);
