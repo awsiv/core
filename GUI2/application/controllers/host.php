@@ -25,7 +25,7 @@ class Host extends Cf_REST_Controller {
         }
     }
     
-    function info_get($hostKey) {
+    function info_get($hostKey = NULL) {
 
         if (is_null($hostKey)) {
             $this->respond_not_found();
@@ -50,4 +50,29 @@ class Host extends Cf_REST_Controller {
 
         $this->respond_ok(json_encode($info));
     }
+    
+    function compliance_get($arg = NULL) 
+    {
+        try
+        {
+            switch ($arg)
+            {
+                case 'timeseries':
+                    $this->respond_ok(cfpr_host_compliance_timeseries($this->username,
+                            $this->param_includes(), $this->param_excludes()));
+                
+                default:
+                    $this->respond_not_found();
+            }
+        }
+        catch (CFModExceptionGeneric $e)
+        {
+            $this->respond_internal_error($e->getMessage());
+        }
+        catch (CFModExceptionRBAC $e)
+        {
+           $this->respond_forbidden();
+        }
+    }
+
 }
