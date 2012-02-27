@@ -2840,7 +2840,7 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
     bson_iterator it1, it2, it3;
     HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL;
-    double rago, ravg, rdev;
+    double rcomp, ravg, rdev;
     char rname[CF_MAXVARSIZE];
     char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], noteid[CF_BUFSIZE];
     int match_name, found = false;
@@ -2912,21 +2912,21 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
 
                     ravg = 0;
                     rdev = 0;
-                    rago = 0;
+                    rcomp = 0;
 
                     while (bson_iterator_next(&it3))
                     {
-                        if (strcmp(bson_iterator_key(&it3), cfr_hrsavg) == 0)
+                        if (strcmp(bson_iterator_key(&it3), cfr_bundleavg) == 0)
                         {
                             ravg = bson_iterator_double(&it3);
                         }
-                        else if (strcmp(bson_iterator_key(&it3), cfr_hrsdev) == 0)
+                        else if (strcmp(bson_iterator_key(&it3), cfr_bundledev) == 0)
                         {
                             rdev = bson_iterator_double(&it3);
                         }
-                        else if (strcmp(bson_iterator_key(&it3), cfr_hrsago) == 0)
+                        else if (strcmp(bson_iterator_key(&it3), cfr_bundlecomp) == 0)
                         {
-                            rago = bson_iterator_double(&it3);
+                            rcomp = bson_iterator_double(&it3);
                         }
                         else if (strcmp(bson_iterator_key(&it3), cfr_time) == 0)
                         {
@@ -2968,7 +2968,7 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(&record_list, NewHubBundleSeen(hh, rname, rago, ravg, rdev, rt, noteid));
+                        PrependRlistAlien(&record_list, NewHubBundleSeen(hh, rname, rcomp, ravg, rdev, rt, noteid));
                     }
                 }
             }
