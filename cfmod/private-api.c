@@ -17,8 +17,9 @@ static JsonElement *ParseRolesToJson(HubQuery *hq);
 /******************************************************************************/
 /* Common response payload keys                                               */
 /******************************************************************************/
-static const char *LABEL_HOSTKEY = "hostkey";
-static const char *LABEL_HOSTNAME = "hostname";
+static const char *LABEL_HOST_KEY = "hostkey";
+static const char *LABEL_HOST_NAME = "hostname";
+static const char *LABEL_HOST_COUNT = "hostcount";
 static const char *LABEL_IP = "ip";
 static const char *LABEL_COLOUR = "colour";
 static const char *LABEL_OS_TYPE = "osType";
@@ -26,6 +27,10 @@ static const char *LABEL_FLAVOUR = "flavour";
 static const char *LABEL_RELEASE = "release";
 static const char *LABEL_LAST_REPORT_UPDATE = "lastReportUpdate";
 static const char *LABEL_LAST_POLICY_UPDATE = "lastPolicyUpdate";
+static const char *LABEL_POSITION = "position";
+static const char *LABEL_KEPT = "kept";
+static const char *LABEL_NOTKEPT = "notkept";
+static const char *LABEL_REPAIRED = "repaired";
 
 /******************************************************************************/
 /* API                                                                        */
@@ -426,8 +431,8 @@ PHP_FUNCTION(cfpr_host_info_get)
 
         HubHost *hh = (HubHost *) result->hosts->item;
 
-        JsonObjectAppendString(infoObject, LABEL_HOSTKEY, hh->keyhash);
-        JsonObjectAppendString(infoObject, LABEL_HOSTNAME, hh->hostname);
+        JsonObjectAppendString(infoObject, LABEL_HOST_KEY, hh->keyhash);
+        JsonObjectAppendString(infoObject, LABEL_HOST_NAME, hh->hostname);
         JsonObjectAppendString(infoObject, LABEL_IP, hh->ipaddr);
         JsonObjectAppendInteger(infoObject, LABEL_LAST_REPORT_UPDATE, last_report_update);
 
@@ -3229,6 +3234,89 @@ PHP_FUNCTION(cfpr_host_count)
 
 /******************************************************************************/
 
+PHP_FUNCTION(cfpr_host_compliance_timeseries)
+{
+char *username = NULL;
+zval *contextIncludes = NULL,
+     *contextExcludes = NULL;
+long username_len = -1;
+
+if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "saa",
+                        &username, &username_len,
+                        &contextIncludes,
+                        &contextExcludes) == FAILURE)
+   {
+   zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+   RETURN_NULL();
+   }
+
+ARGUMENT_CHECK_CONTENTS(username_len);
+
+HubQuery *result = NULL;
+   {
+   HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
+   ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+   HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+   HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
+
+   mongo_connection conn;
+   DATABASE_OPEN(&conn)
+
+   result = CFDB_QueryTotalCompliance(&conn, NULL, NULL, time(NULL) - SECONDS_PER_WEEK, -1, -1, -1, CFDB_GREATERTHANEQ, false, filter);
+
+   DATABASE_CLOSE(&conn)
+   DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+   }
+
+static size_t num_slots = SECONDS_PER_WEEK / (SECONDS_PER_DAY / 4);
+
+size_t kept[num_slots]; memset(kept, 0, num_slots * sizeof(size_t));
+size_t notkept[num_slots]; memset(notkept,0, num_slots * sizeof(size_t));
+size_t repaired[num_slots]; memset(repaired, 0, num_slots * sizeof(size_t));
+size_t record_count[num_slots]; memset(record_count, 0, num_slots * sizeof(size_t));
+
+for (const Rlist *rp = result->records; rp; rp = rp->next)
+   {
+   HubTotalCompliance *record = (HubTotalCompliance *)rp->item;
+   size_t slot = (record->t - SECONDS_PER_WEEK) / (SECONDS_PER_DAY / 4);
+   assert(slot >= 0);
+   assert(slot < num_slots);
+
+   kept[slot] += record->kept;
+   notkept[slot] += record->notkept;
+   repaired[slot] += record->repaired;
+   record_count[slot] += 1;
+   }
+
+JsonElement *output = JsonArrayCreate(num_slots);
+for (size_t slot = 0; slot < num_slots; slot++)
+   {
+   JsonElement *entry = JsonObjectCreate(5);
+
+   JsonObjectAppendInteger(entry, LABEL_POSITION, slot);
+   if (record_count[slot] > 0)
+      {
+      JsonObjectAppendReal(entry, LABEL_KEPT, (double)kept[slot] / (double)record_count[slot]);
+      JsonObjectAppendReal(entry, LABEL_NOTKEPT, (double)notkept[slot] / (double)record_count[slot]);
+      JsonObjectAppendReal(entry, LABEL_REPAIRED, (double)repaired[slot] / (double)record_count[slot]);
+      }
+   else
+      {
+      JsonObjectAppendReal(entry, LABEL_KEPT, 0.0);
+      JsonObjectAppendReal(entry, LABEL_NOTKEPT, 0.0);
+      JsonObjectAppendReal(entry, LABEL_REPAIRED, 0.0);
+      }
+   JsonObjectAppendInteger(entry, LABEL_HOST_COUNT, record_count[slot]);
+   JsonArrayAppendObject(output, entry);
+   }
+
+DeleteHubQuery(result, DeleteHubTotalCompliance);
+RETURN_JSON(output);
+}
+
+/******************************************************************************/
+
 PHP_FUNCTION(cfpr_select_reports)
 {
     const int bufsize = 1000000;
@@ -4900,8 +4988,8 @@ PHP_FUNCTION(cfpr_astrolabe_host_list)
 
         JsonElement *entry = JsonObjectCreate(3);
 
-        JsonObjectAppendString(entry, LABEL_HOSTKEY, record->keyhash);
-        JsonObjectAppendString(entry, LABEL_HOSTNAME, record->hostname);
+        JsonObjectAppendString(entry, LABEL_HOST_KEY, record->keyhash);
+        JsonObjectAppendString(entry, LABEL_HOST_NAME, record->hostname);
         JsonObjectAppendString(entry, LABEL_COLOUR, Nova_HostColourToString(colour));
 
         JsonArrayAppendObject(output, entry);
