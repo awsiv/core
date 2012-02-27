@@ -31,6 +31,7 @@ static const char *LABEL_POSITION = "position";
 static const char *LABEL_KEPT = "kept";
 static const char *LABEL_NOTKEPT = "notkept";
 static const char *LABEL_REPAIRED = "repaired";
+static const char *LABEL_TIMESTAMP = "timestamp";
 
 /******************************************************************************/
 /* API                                                                        */
@@ -3304,6 +3305,7 @@ for (size_t slot = 0; slot < num_slots; slot++)
         JsonElement *entry = JsonObjectCreate(5);
 
         JsonObjectAppendInteger(entry, LABEL_POSITION, slot);
+        JsonObjectAppendInteger(entry, LABEL_TIMESTAMP, from + (resolution * slot));
         JsonObjectAppendReal(entry, LABEL_KEPT, (double)kept[slot] / (double)record_count[slot]);
         JsonObjectAppendReal(entry, LABEL_NOTKEPT, (double)notkept[slot] / (double)record_count[slot]);
         JsonObjectAppendReal(entry, LABEL_REPAIRED, (double)repaired[slot] / (double)record_count[slot]);
@@ -3312,7 +3314,6 @@ for (size_t slot = 0; slot < num_slots; slot++)
         JsonArrayAppendObject(output, entry);
     }
 }
-
 
 DeleteHubQuery(result, DeleteHubTotalCompliance);
 RETURN_JSON(output);
