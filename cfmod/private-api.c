@@ -32,6 +32,10 @@ static const char *LABEL_KEPT = "kept";
 static const char *LABEL_NOTKEPT = "notkept";
 static const char *LABEL_REPAIRED = "repaired";
 static const char *LABEL_TIMESTAMP = "timestamp";
+static const char *LABEL_RESOLUTION = "resolution";
+static const char *LABEL_COUNT = "count";
+static const char *LABEL_FROM = "from";
+static const char *LABEL_DATA = "data";
 
 /******************************************************************************/
 /* API                                                                        */
@@ -3297,22 +3301,30 @@ for (const Rlist *rp = result->records; rp; rp = rp->next)
     record_count[slot] += 1;
 }
 
-JsonElement *output = JsonArrayCreate(num_slots);
-for (size_t slot = 0; slot < num_slots; slot++)
+JsonElement *output = JsonObjectCreate(10);
 {
-    if (record_count[slot] > 0)
+    JsonObjectAppendInteger(output, LABEL_FROM, (int)from);
+    JsonObjectAppendInteger(output, LABEL_RESOLUTION, resolution);
+    JsonObjectAppendInteger(output, LABEL_COUNT, num_slots);
+
+    JsonElement *data = JsonArrayCreate(num_slots);
+    for (size_t slot = 0; slot < num_slots; slot++)
     {
-        JsonElement *entry = JsonObjectCreate(5);
+        if (record_count[slot] > 0)
+        {
+            JsonElement *entry = JsonObjectCreate(5);
 
-        JsonObjectAppendInteger(entry, LABEL_POSITION, slot);
-        JsonObjectAppendInteger(entry, LABEL_TIMESTAMP, from + (resolution * slot));
-        JsonObjectAppendReal(entry, LABEL_KEPT, (double)kept[slot] / (double)record_count[slot]);
-        JsonObjectAppendReal(entry, LABEL_NOTKEPT, (double)notkept[slot] / (double)record_count[slot]);
-        JsonObjectAppendReal(entry, LABEL_REPAIRED, (double)repaired[slot] / (double)record_count[slot]);
-        JsonObjectAppendInteger(entry, LABEL_HOST_COUNT, record_count[slot]);
+            JsonObjectAppendInteger(entry, LABEL_POSITION, slot);
+            JsonObjectAppendInteger(entry, LABEL_TIMESTAMP, from + (resolution * slot));
+            JsonObjectAppendReal(entry, LABEL_KEPT, (double)kept[slot] / (double)record_count[slot]);
+            JsonObjectAppendReal(entry, LABEL_NOTKEPT, (double)notkept[slot] / (double)record_count[slot]);
+            JsonObjectAppendReal(entry, LABEL_REPAIRED, (double)repaired[slot] / (double)record_count[slot]);
+            JsonObjectAppendInteger(entry, LABEL_HOST_COUNT, record_count[slot]);
 
-        JsonArrayAppendObject(output, entry);
+            JsonArrayAppendObject(data, entry);
+        }
     }
+    JsonObjectAppendArray(output, LABEL_DATA, data);
 }
 
 DeleteHubQuery(result, DeleteHubTotalCompliance);
