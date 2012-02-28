@@ -417,4 +417,25 @@ function generate_errormessage($exception){
 	}
     return $message;
 }
+
+
+/**
+* Error Handler with custom template
+*
+* This function lets us invoke the exception class and
+* display errors using the standard error template located
+* in application/errors/errors.php
+* This function will send the error page directly to the
+* browser and exit.
+*
+* @access	public
+* @return	void
+*/
+	function show_error_custom($message, $status_code = 500, $heading = 'An Error Was Encountered', $template = 'error_plain')
+	{
+		$_error =& load_class('Exceptions', 'core');
+		echo $_error->show_error($heading, $message, $template, $status_code);
+		exit;
+	}
+
 ?>
