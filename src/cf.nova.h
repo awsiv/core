@@ -804,6 +804,7 @@ void CFDB_SaveTotalCompliance(mongo_connection *conn, char *kH, Item *data);
 void CFDB_SavePromiseLog(mongo_connection *conn, char *kH, PromiseLogState state, Item *data);
 void CFDB_SaveLastSeen(mongo_connection *conn, char *kH, Item *data);
 void CFDB_SaveMeter(mongo_connection *conn, char *kH, Item *data);
+void CFDB_SaveScore(mongo_connection *conn, char *kH, Item *data, HostRankMethod method);
 void CFDB_SaveSoftwareDates(mongo_connection *conn, char *kH, Item *data);
 void CFDB_SavePerformance(mongo_connection *conn, char *kH, Item *data);
 void CFDB_SaveSetUid(mongo_connection *conn, char *kH, Item *data);

@@ -1132,6 +1132,121 @@ void CFDB_SaveMeter(mongo_connection *conn, char *keyhash, Item *data)
 
 /*****************************************************************************/
 
+/* HostRankMethod can be passed as miltiple option merge opt|opt|opt */
+void CFDB_SaveScore(mongo_connection *conn, char *keyhash, Item *data, HostRankMethod method)
+{
+    bson_buffer bb;
+    bson_buffer *setObj;
+    bson_buffer *sub;
+    bson host_key;  // host description
+    bson setOp;
+
+    /* find right host */
+    bson_buffer_init(&bb);
+    bson_append_string(&bb, cfr_keyhash, keyhash);
+    bson_from_buffer(&host_key, &bb);
+
+    /* build score object */
+    bson_buffer_init(&bb);
+    setObj = bson_append_start_object(&bb, "$set");
+    sub = bson_append_start_object(setObj, cfr_score);
+
+    double kept_full[meter_endmark] = {0};
+    double repaired_full[meter_endmark] = {0};
+
+    /* gather meters for score calculetion from meter report */
+    for (Item *ip = data; ip != NULL; ip = ip->next)
+    {
+        char type;
+        double kept;
+        double repaired;
+
+        sscanf(ip->name,"%c: %lf %lf",&type,&kept,&repaired);
+
+        switch (type)
+        {
+            case cfmeter_hour:
+                kept_full[meter_compliance_hour] = kept;
+                repaired_full[meter_compliance_hour] = repaired;
+                break;
+
+            case cfmeter_day:
+                kept_full[meter_compliance_day] = kept;
+                repaired_full[meter_compliance_day] = repaired;
+                break;
+
+            case cfmeter_week:
+                kept_full[meter_compliance_week] = kept;
+                repaired_full[meter_compliance_week] = repaired;
+                break;
+
+            case cfmeter_perf:
+                kept_full[meter_perf_day] = kept;
+                repaired_full[meter_perf_day] = repaired;
+                break;
+
+            case cfmeter_anomaly:
+                kept_full[meter_anomalies_day] = kept;
+                repaired_full[meter_anomalies_day] = repaired;
+                break;
+
+            case cfmeter_comms:
+                kept_full[meter_comms_hour] = kept;
+                repaired_full[meter_comms_hour] = repaired;
+                break;
+
+            case cfmeter_other:
+                kept_full[meter_other_day] = kept;
+                repaired_full[meter_other_day] = repaired;
+                break;
+        }
+    }
+
+    /* calculate scores and build score db object */
+    int score;
+
+    if (method & HOST_RANK_METHOD_COMPLIANCE)
+    {
+        score = Nova_GetComplianceScore(HOST_RANK_METHOD_COMPLIANCE, kept_full, repaired_full);
+        bson_append_int(sub, cfr_score_comp, score);
+    }
+
+    if (method & HOST_RANK_METHOD_ANOMALY)
+    {
+        score = Nova_GetComplianceScore(HOST_RANK_METHOD_ANOMALY, kept_full, repaired_full);
+        bson_append_int(sub, cfr_score_anom, score);
+    }
+
+    if (method & HOST_RANK_METHOD_PERFORMANCE)
+    {
+        score = Nova_GetComplianceScore(HOST_RANK_METHOD_PERFORMANCE, kept_full, repaired_full);
+        bson_append_int(sub, cfr_score_perf, score);
+    }
+
+    if (method & HOST_RANK_METHOD_LASTSEEN)
+    {
+        score = Nova_GetComplianceScore(HOST_RANK_METHOD_LASTSEEN, kept_full, repaired_full);
+        bson_append_int(sub, cfr_score_lastseen, score);
+    }
+
+    if (method & HOST_RANK_METHOD_MIXED)
+    {
+        score = Nova_GetComplianceScore(HOST_RANK_METHOD_MIXED, kept_full, repaired_full);
+        bson_append_int(sub, cfr_score_mixed, score);
+    }
+
+    bson_append_finish_object(sub);
+    bson_append_finish_object(setObj);
+
+    bson_from_buffer(&setOp, &bb);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+
+    bson_destroy(&setOp);
+    bson_destroy(&host_key);
+}
+
+/*****************************************************************************/
+
 void CFDB_SaveSoftwareDates(mongo_connection *conn, char *keyhash, Item *data)
 {
     bson_buffer bb;
