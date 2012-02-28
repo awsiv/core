@@ -1607,6 +1607,12 @@ typedef struct
 #define cfr_valuereport   "va"
 #define cfr_netmeasure    "ne"
 #define cfr_environment   "env"
+#define cfr_score         "scr"
+#define cfr_score_comp    "C"
+#define cfr_score_anom    "A"
+#define cfr_score_perf    "P"
+#define cfr_score_lastseen "L"
+#define cfr_score_mixed   "M"
 
 #define cfr_netmeasure    "ne"
 #define cfr_lastseen_hosts "lastseen_hosts"
