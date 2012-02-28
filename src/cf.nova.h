@@ -261,6 +261,25 @@ typedef struct
 /* Report DB API Structs                                                     */
 /*****************************************************************************/
 
+typedef enum
+{
+    HOST_RANK_METHOD_COMPLIANCE   = 0x00000001,
+    HOST_RANK_METHOD_ANOMALY      = 0x00000010,
+    HOST_RANK_METHOD_PERFORMANCE  = 0x00000100,
+    HOST_RANK_METHOD_LASTSEEN     = 0x00001000,
+    HOST_RANK_METHOD_MIXED        = 0x00010000,
+    HOST_RANK_METHOD_NONE         = 0x00000000
+} HostRankMethod;
+
+typedef enum
+{
+    HOST_COLOUR_GREEN,
+    HOST_COLOUR_YELLOW,
+    HOST_COLOUR_RED,
+    HOST_COLOUR_BLUE,
+    HOST_COLOUR_BLACK
+} HostColour;
+
 typedef struct
 {
     char *keyhash;
