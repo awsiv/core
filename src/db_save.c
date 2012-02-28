@@ -1476,7 +1476,7 @@ void CFDB_SaveBundles(mongo_connection *conn, char *keyhash, Item *data)
     Item *ip;
     char bundle[CF_MAXVARSIZE];
     char varName[CF_MAXVARSIZE];
-    double ago = 0, average = 0, dev = 0;
+    double compliance = 0, average = 0, dev = 0;
     long fthen = 0;
     time_t then = 0;
 
@@ -1491,16 +1491,16 @@ void CFDB_SaveBundles(mongo_connection *conn, char *keyhash, Item *data)
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
-        sscanf(ip->name, "%250s %ld %lf %lf %lf\n", bundle, &fthen, &ago, &average, &dev);
+        sscanf(ip->name, "%250s %ld %lf %lf %lf\n", bundle, &fthen, &compliance, &average, &dev);
 
         then = (time_t) fthen;
 
         snprintf(varName, sizeof(varName), "%s.%s", cfr_bundles, bundle);
 
         sub = bson_append_start_object(setObj, varName);
-        bson_append_double(sub, cfr_hrsago, ago);
-        bson_append_double(sub, cfr_hrsavg, average);
-        bson_append_double(sub, cfr_hrsdev, dev);
+        bson_append_double(sub, cfr_bundlecomp, compliance);
+        bson_append_double(sub, cfr_bundleavg, average);
+        bson_append_double(sub, cfr_bundledev, dev);
         bson_append_int(sub, cfr_time, then);
         bson_append_finish_object(sub);
     }

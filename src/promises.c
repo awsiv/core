@@ -516,12 +516,12 @@ void TrackValue(char *date, double kept, double repaired, double notkept)
 
 /*****************************************************************************/
 
-void LastSawBundle(char *name)
+void LastSawBundle(char *name,double compliance)
 {
     char filename[CF_BUFSIZE];
     int lsea = LASTSEENEXPIREAFTER;
-    double lastseen, delta2;
-    QPoint q, newq;
+    double lastseen,delta2;
+    Event e, newe;
     time_t now = time(NULL);
     CF_DB *dbp;
 
@@ -530,40 +530,32 @@ void LastSawBundle(char *name)
 
     if (!OpenDB(filename, &dbp))
     {
-        return;
+       return;
     }
-
-    if (ReadDB(dbp, name, &q, sizeof(q)))
+    
+    if (ReadDB(dbp, name, &e, sizeof(e)))
     {
-        lastseen = (double) now - q.q;
-        newq.q = (double) now;  /* Last seen is now-then */
-        newq.expect = GAverage(lastseen, q.expect, 0.7);
-        delta2 = (lastseen - q.expect) * (lastseen - q.expect);
-        newq.var = GAverage(delta2, q.var, 0.7);
-    }
-    else
-    {
-        lastseen = 0.0;
-        newq.q = (double) now;
-        newq.expect = 0.0;
-        newq.var = 0.0;
-    }
-
-    if (lastseen > (double) lsea)
-    {
-        CfOut(cf_verbose, "", " -> Bundle %s expired\n", name);
-        DeleteDB(dbp, name);
+        lastseen = now - e.t;
+        newe.Q.q = compliance;
+        newe.Q.dq = compliance - e.Q.q;
+        newe.Q.expect = GAverage(compliance, e.Q.expect, 0.7);
+        delta2 = (compliance - e.Q.expect) * (compliance - e.Q.expect);
+        newe.Q.var = GAverage(delta2, e.Q.var, 0.7);
     }
     else
     {
-        char timebuffer[26];
+        lastseen = 0;
+        newe.Q.q = compliance;
+        newe.Q.dq = 0.0;
+        newe.Q.expect = 0.0;
+        newe.Q.var = 0.0;
+    }
 
-        CfOut(cf_verbose, "", " -> Bundle \"%s\" promise kept at %s\n", name, cf_strtimestamp_local(now, timebuffer));
-
-        if (THIS_AGENT_TYPE == cf_agent)
-        {
-            WriteDB(dbp, name, &newq, sizeof(newq));
-        }
+    newe.t = now;
+    
+    if (THIS_AGENT_TYPE == cf_agent)
+    {
+        WriteDB(dbp, name, &newe, sizeof(newe));
     }
 
     CloseDB(dbp);
