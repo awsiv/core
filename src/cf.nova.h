@@ -985,6 +985,8 @@ HubHost *NewHubHost(const char *hubkey, const char *keyhash, const char *ipaddr,
 HubHost *CreateEmptyHubHost(void);
 HubHost *UpdateHubHost(HubHost *hubHost, char *keyhash, char *ipaddr, char *hostname);
 HubHost *GetHubHostIn(Rlist *host_list, char *keyhash);
+bool HubHostEqual(const void *hubhost_a, const void *hubhost_b);
+unsigned int HubHostHash(const void *hubhost);
 void DeleteHubHost(HubHost *hp);
 HubSoftware *NewHubSoftware(HubHost *hh, char *name, char *version, char *arch, time_t timeseen);
 void DeleteHubSoftware(HubSoftware *hs);
