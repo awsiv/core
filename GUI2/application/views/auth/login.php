@@ -50,10 +50,6 @@
      * 
      */
     var timezone = jstz.determine_timezone(); // Now you have an instance of the TimeZone object.
-    document.getElementById('timezone').value = timezone.name(); // set the field
-   // alert(timezone.offset()); // Offset in hours and minutes from UTC.
-   // alert(timezone.name()); // Olson database timezone key (ex: Europe/Berlin)
-   //  alert(timezone.dst()); // bool for whether the tz uses daylight saving time
-    
+    document.getElementById('timezone').value = timezone.name(); // set the field    
 </script>
 
