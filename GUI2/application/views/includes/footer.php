@@ -25,21 +25,7 @@
             }, event); // Pass through our original event to qTip
         })
         
-         <?php } ?> 
-        
-        
-        var dateFormat = 'F d, Y H:i:s'; 
-        $('.localtime').each(function(){
-            var dateString = $(this).html();
-            var localDate = Date.parse(dateString);
-            if (localDate) {
-                var d = new Date(localDate);
-                var offset = -d.getTimezoneOffset()/60;
-                if (offset > 0) offset = '+'+offset;
-                var dateDisplay = d.format(dateFormat) + ' (GMT' + offset+')';
-                 $(this).html(dateDisplay);
-            }
-        });
+         <?php } ?>     
     });
 </script>
 </body>

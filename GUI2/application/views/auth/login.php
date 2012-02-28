@@ -4,6 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>CFEngine Mission Portal - Login</title>
 <link media="screen" href="<?php echo get_cssdir().'appstyle.css';?>" rel="stylesheet" type="text/css"></link>
+<script src="<?php echo get_scriptdir() ?>detect_timezone.js"></script>
 </head>
 
 <body>
@@ -31,6 +32,7 @@
                            <?php echo form_submit('submit', '');?>
                            <label for="remember" class="remember">Remember me</label>
                             <?php echo form_checkbox('remember', '1', FALSE);?>
+                            <?php echo form_input($timezone); ?>
                     </p>
                     
                 <?php echo form_close();?>
@@ -42,3 +44,16 @@
     </p>
 </body>
 </html>
+<script type="text/javascript">
+    /**
+     * Detect the browser time zone and submit it as login info to store in session for date conversions
+     * 
+     */
+    var timezone = jstz.determine_timezone(); // Now you have an instance of the TimeZone object.
+    document.getElementById('timezone').value = timezone.name(); // set the field
+   // alert(timezone.offset()); // Offset in hours and minutes from UTC.
+   // alert(timezone.name()); // Olson database timezone key (ex: Europe/Berlin)
+   //  alert(timezone.dst()); // bool for whether the tz uses daylight saving time
+    
+</script>
+

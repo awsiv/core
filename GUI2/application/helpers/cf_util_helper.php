@@ -158,15 +158,16 @@ function getonlineusernames() {
  * @return <string> datetime with wrapped in span with colorclass
  * 
  */
-function getDateStatus($timestamp, $noColor=false,$onlyDate = false) {
+function getDateStatus($timestamp, $noColor = false, $onlyDate = false) {
 
     $timestamp = intval($timestamp, 10);
     // check for 0 val 
     if ($timestamp === 0) {
-         if ($onlyDate) return 0;        
+        if ($onlyDate)
+            return 0;
         return '<span class="red">(never)</span>';
     }
-    
+
     $colorClass = '';
     $now = time();
     // 6 hours
@@ -182,9 +183,26 @@ function getDateStatus($timestamp, $noColor=false,$onlyDate = false) {
     if ($noColor) {
         $colorClass = '';
     }
+
+
+   
+
+    /**
+     * return the date with respect to users time zone set on the session 
+     *  
+     */
+    $script_tz = date_default_timezone_get(); // backup the default timezone
+    $CI = & get_instance();
+    $tz_string = $CI->session->userdata('user_timezone');
+    if (!date_default_timezone_set($tz_string)) {
+         date_default_timezone_set($script_tz); // if not invalid timezone identifier set it.
+    }
     $formattedDate = date('c', $timestamp);
-    if ($onlyDate)
+    date_default_timezone_set($script_tz); // reset back to default timezone
+    if ($onlyDate) {
         return $formattedDate;
+    }
+
     return '<span class="localtime ' . $colorClass . '">' . $formattedDate . '</span>';
 }
 
