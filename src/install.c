@@ -728,7 +728,7 @@ void DeleteHubPromiseCompliance(HubPromiseCompliance *hp)
 
 /*****************************************************************************/
 
-HubBundleSeen *NewHubBundleSeen(HubHost *hh, char *rname, double ago, double avg, double dev, time_t t, char *noteid)
+HubBundleSeen *NewHubBundleSeen(HubHost *hh, char *rname, double comp, double avg, double dev, time_t t, char *noteid)
 {
     HubBundleSeen *hp;
 
@@ -736,9 +736,9 @@ HubBundleSeen *NewHubBundleSeen(HubHost *hh, char *rname, double ago, double avg
 
     hp->hh = hh;
     hp->bundle = xstrdup(rname);
-    hp->hrsago = ago;
-    hp->hrsavg = avg;
-    hp->hrsdev = dev;
+    hp->bundlecomp = comp;
+    hp->bundleavg = avg;
+    hp->bundledev = dev;
     hp->t = t;
     hp->nid = xstrdup(noteid);
     return hp;
