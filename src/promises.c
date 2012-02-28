@@ -545,7 +545,8 @@ void LastSawBundle(char *name,double compliance)
     else
     {
         lastseen = 0;
-        newe.Q.q = (double) now;
+        newe.Q.q = compliance;
+        newe.Q.dq = 0.0;
         newe.Q.expect = 0.0;
         newe.Q.var = 0.0;
     }
