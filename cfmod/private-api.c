@@ -4,15 +4,19 @@
 #include "rlist.h"
 #include "cf.nova.web_api.h"
 #include "web_rbac.h"
+#include "sequence.h"
+#include "map.h"
 
 #define cfr_software     "sw"
 #define cfr_patch_avail  "pa"
 #define cfr_patch_installed "pi"
 
+
 static time_t DeltaHrsConvert(long hrsAgo);
 char **String2StringArray(char *str, char separator);
 void FreeStringArray(char **strs);
 static JsonElement *ParseRolesToJson(HubQuery *hq);
+
 
 /******************************************************************************/
 /* Common response payload keys                                               */
@@ -36,6 +40,7 @@ static const char *LABEL_RESOLUTION = "resolution";
 static const char *LABEL_COUNT = "count";
 static const char *LABEL_FROM = "from";
 static const char *LABEL_DATA = "data";
+static const char *LABEL_SAMPLE_COUNT = "samplecount";
 
 /******************************************************************************/
 /* API                                                                        */
@@ -3239,6 +3244,25 @@ PHP_FUNCTION(cfpr_host_count)
 
 /******************************************************************************/
 
+typedef struct
+{
+    HubHost *host;
+    size_t slot;
+    size_t kept;
+    size_t notkept;
+    size_t repaired;
+    size_t num_samples;
+} TimeseriesHostSlot;
+
+static TimeseriesHostSlot *TimeseriesHostSlotNew(HubHost *host, size_t slot)
+{
+    TimeseriesHostSlot *record = xcalloc(sizeof(TimeseriesHostSlot), 1);
+    record->host = host;
+    record->slot = slot;
+
+    return record;
+}
+
 PHP_FUNCTION(cfpr_host_compliance_timeseries)
 {
 char *username = NULL;
@@ -3257,7 +3281,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "saa",
 
 ARGUMENT_CHECK_CONTENTS(username_len);
 
-static const time_t horizon = SECONDS_PER_WEEK * 52;
+static const time_t horizon = SECONDS_PER_WEEK * 5;
 static const time_t resolution = SECONDS_PER_DAY / 4;
 const time_t from = time(NULL) - horizon;
 
@@ -3281,51 +3305,92 @@ HubQuery *result = NULL;
 const size_t num_slots = horizon / resolution;
 assert(num_slots > 0);
 
-size_t kept[num_slots]; memset(kept, 0, num_slots * sizeof(size_t));
-size_t notkept[num_slots]; memset(notkept,0, num_slots * sizeof(size_t));
-size_t repaired[num_slots]; memset(repaired, 0, num_slots * sizeof(size_t));
-size_t record_count[num_slots]; memset(record_count, 0, num_slots * sizeof(size_t));
-
+// split records into an array indexed by slot
+Sequence *slots[num_slots]; memset(slots, 0, sizeof(Sequence *) * num_slots);
 for (const Rlist *rp = result->records; rp; rp = rp->next)
 {
     HubTotalCompliance *record = (HubTotalCompliance *)rp->item;
-    assert(record->t > from);
-
     size_t slot = (record->t - from) / resolution;
-    assert(slot >= 0);
-    assert(slot < num_slots);
+    Sequence *slot_records = slots[slot];
 
-    kept[slot] += record->kept;
-    notkept[slot] += record->notkept;
-    repaired[slot] += record->repaired;
-    record_count[slot] += 1;
+    if (!slot_records)
+    {
+        slot_records = SequenceCreate(100, NULL);
+    }
+
+    SequenceAppend(slot_records, record);
 }
 
-JsonElement *output = JsonObjectCreate(10);
+JsonElement *data = JsonArrayCreate(num_slots);
+for (size_t slot = 0; slot < num_slots; slot++)
 {
-    JsonObjectAppendInteger(output, LABEL_FROM, (int)from);
-    JsonObjectAppendInteger(output, LABEL_RESOLUTION, resolution);
-    JsonObjectAppendInteger(output, LABEL_COUNT, num_slots);
-
-    JsonElement *data = JsonArrayCreate(num_slots);
-    for (size_t slot = 0; slot < num_slots; slot++)
+    Sequence *slot_records = slots[slot];
+    Map *host_slot_records = MapNew(HubHostHash, HubHostEqual, NULL, free);
+    for (size_t i = 0; i < slot_records->length; i++)
     {
-        if (record_count[slot] > 0)
+        const HubTotalCompliance *record = (const HubTotalCompliance *)slot_records->data[i];
+        TimeseriesHostSlot *host_slot_record = MapGet(host_slot_records, record->hh);
+
+        if (!host_slot_record)
         {
-            JsonElement *entry = JsonObjectCreate(5);
+            host_slot_record = TimeseriesHostSlotNew(record->hh, slot);
+        }
 
-            JsonObjectAppendInteger(entry, LABEL_POSITION, slot);
-            JsonObjectAppendInteger(entry, LABEL_TIMESTAMP, from + (resolution * slot));
-            JsonObjectAppendReal(entry, LABEL_KEPT, (double)kept[slot] / (double)record_count[slot]);
-            JsonObjectAppendReal(entry, LABEL_NOTKEPT, (double)notkept[slot] / (double)record_count[slot]);
-            JsonObjectAppendReal(entry, LABEL_REPAIRED, (double)repaired[slot] / (double)record_count[slot]);
-            JsonObjectAppendInteger(entry, LABEL_HOST_COUNT, record_count[slot]);
+        host_slot_record->kept += record->kept;
+        host_slot_record->notkept += record->notkept;
+        host_slot_record->repaired += record->repaired;
+        host_slot_record->num_samples += 1;
+    }
 
-            JsonArrayAppendObject(data, entry);
+    double kept = 0;
+    double notkept = 0;
+    double repaired = 0;
+    size_t num_samples = 0;
+    size_t num_hosts = 0;
+
+    {
+        MapIterator it = MapIteratorInit(host_slot_records);
+        MapKeyValue *map_entry = NULL;
+        while ((map_entry = MapIteratorNext(&it)))
+        {
+            TimeseriesHostSlot *host_slot_record = map_entry->value;
+
+            kept += (double)host_slot_record->kept / (double)host_slot_record->num_samples;
+            notkept += (double)host_slot_record->notkept / (double)host_slot_record->num_samples;
+            repaired += (double)host_slot_record->repaired / (double)host_slot_record->num_samples;
+
+            num_samples += host_slot_record->num_samples;
+            num_hosts++;
         }
     }
-    JsonObjectAppendArray(output, LABEL_DATA, data);
+
+    MapDestroy(host_slot_records);
+
+    JsonElement *entry = JsonObjectCreate(10);
+    JsonObjectAppendInteger(entry, LABEL_POSITION, slot);
+    JsonObjectAppendInteger(entry, LABEL_TIMESTAMP, from + (resolution * slot));
+    JsonObjectAppendReal(entry, LABEL_KEPT, kept / num_hosts);
+    JsonObjectAppendReal(entry, LABEL_NOTKEPT, notkept / num_hosts);
+    JsonObjectAppendReal(entry, LABEL_REPAIRED, repaired / num_hosts);
+    JsonObjectAppendInteger(entry, LABEL_SAMPLE_COUNT, num_samples);
+    JsonObjectAppendInteger(entry, LABEL_HOST_COUNT, num_hosts);
+
+    JsonArrayAppendObject(data, entry);
 }
+
+for (size_t i = 0; i < num_slots; i++)
+{
+    if (slots[i])
+    {
+        SequenceDestroy(slots[i]);
+    }
+}
+
+JsonElement *output = JsonObjectCreate(4);
+JsonObjectAppendInteger(output, LABEL_FROM, (int)from);
+JsonObjectAppendInteger(output, LABEL_RESOLUTION, resolution);
+JsonObjectAppendInteger(output, LABEL_COUNT, num_slots);
+JsonObjectAppendArray(output, LABEL_DATA, data);
 
 DeleteHubQuery(result, DeleteHubTotalCompliance);
 RETURN_JSON(output);
