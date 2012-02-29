@@ -3305,43 +3305,34 @@ HubQuery *result = NULL;
 const size_t num_slots = horizon / resolution;
 assert(num_slots > 0);
 
-// split records into an array indexed by slot
-Sequence *slots[num_slots]; memset(slots, 0, sizeof(Sequence *) * num_slots);
+Map *slots[num_slots];
+for (size_t slot = 0; slot < num_slots; slot++)
+{
+    slots[slot] = MapNew(HubHostHash, HubHostEqual, NULL, free);
+}
+
 for (const Rlist *rp = result->records; rp; rp = rp->next)
 {
     HubTotalCompliance *record = (HubTotalCompliance *)rp->item;
     size_t slot = (record->t - from) / resolution;
-    Sequence *slot_records = slots[slot];
+    Map *slot_host_records = slots[slot];
 
-    if (!slot_records)
+    TimeseriesHostSlot *slot_host_record = MapGet(slot_host_records, record->hh);
+    if (!slot_host_record)
     {
-        slot_records = SequenceCreate(100, NULL);
+        slot_host_record = TimeseriesHostSlotNew(record->hh, slot);
+        MapInsert(slot_host_records, record->hh, slot_host_record);
     }
 
-    SequenceAppend(slot_records, record);
+    slot_host_record->kept += record->kept;
+    slot_host_record->notkept += record->notkept;
+    slot_host_record->repaired += record->repaired;
+    slot_host_record->num_samples++;
 }
 
 JsonElement *data = JsonArrayCreate(num_slots);
 for (size_t slot = 0; slot < num_slots; slot++)
 {
-    Sequence *slot_records = slots[slot];
-    Map *host_slot_records = MapNew(HubHostHash, HubHostEqual, NULL, free);
-    for (size_t i = 0; i < slot_records->length; i++)
-    {
-        const HubTotalCompliance *record = (const HubTotalCompliance *)slot_records->data[i];
-        TimeseriesHostSlot *host_slot_record = MapGet(host_slot_records, record->hh);
-
-        if (!host_slot_record)
-        {
-            host_slot_record = TimeseriesHostSlotNew(record->hh, slot);
-        }
-
-        host_slot_record->kept += record->kept;
-        host_slot_record->notkept += record->notkept;
-        host_slot_record->repaired += record->repaired;
-        host_slot_record->num_samples += 1;
-    }
-
     double kept = 0;
     double notkept = 0;
     double repaired = 0;
@@ -3349,22 +3340,20 @@ for (size_t slot = 0; slot < num_slots; slot++)
     size_t num_hosts = 0;
 
     {
-        MapIterator it = MapIteratorInit(host_slot_records);
+        MapIterator it = MapIteratorInit(slots[slot]);
         MapKeyValue *map_entry = NULL;
         while ((map_entry = MapIteratorNext(&it)))
         {
-            TimeseriesHostSlot *host_slot_record = map_entry->value;
+            TimeseriesHostSlot *slot_host_record = map_entry->value;
 
-            kept += (double)host_slot_record->kept / (double)host_slot_record->num_samples;
-            notkept += (double)host_slot_record->notkept / (double)host_slot_record->num_samples;
-            repaired += (double)host_slot_record->repaired / (double)host_slot_record->num_samples;
+            kept += (double)slot_host_record->kept / (double)slot_host_record->num_samples;
+            notkept += (double)slot_host_record->notkept / (double)slot_host_record->num_samples;
+            repaired += (double)slot_host_record->repaired / (double)slot_host_record->num_samples;
 
-            num_samples += host_slot_record->num_samples;
+            num_samples += slot_host_record->num_samples;
             num_hosts++;
         }
     }
-
-    MapDestroy(host_slot_records);
 
     JsonElement *entry = JsonObjectCreate(10);
     JsonObjectAppendInteger(entry, LABEL_POSITION, slot);
@@ -3376,14 +3365,7 @@ for (size_t slot = 0; slot < num_slots; slot++)
     JsonObjectAppendInteger(entry, LABEL_HOST_COUNT, num_hosts);
 
     JsonArrayAppendObject(data, entry);
-}
-
-for (size_t i = 0; i < num_slots; i++)
-{
-    if (slots[i])
-    {
-        SequenceDestroy(slots[i]);
-    }
+    MapDestroy(slots[slot]);
 }
 
 JsonElement *output = JsonObjectCreate(4);
