@@ -1051,6 +1051,7 @@ void PromiseFilterAddBundleType(PromiseFilter *filter, const char *bundleTypeInc
 void PromiseFilterAddBundles(PromiseFilter *filter, const char *bundleInclude, const char *bundleExclude);
 void PromiseFilterAddBundlesRx(PromiseFilter *filter, const char *bundleRxInclude, const char *bundleRxExclude);
 void DeletePromiseFilter(PromiseFilter *filter);
+HostColourFilter *NewHostColourFilter(HostRankMethod method, HostColour colours);
 #endif
 HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int hostCount, int totalHostCount,
                                                     double kept, double repaired, double notkept, time_t genTime);
