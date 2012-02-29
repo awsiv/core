@@ -3185,25 +3185,6 @@ void Nova2PHP_show_col_hosts(char *colour, HostClassFilter *hostClassFilter, Pag
 
 /*****************************************************************************/
 
-long Nova2PHP_count_hosts(HostClassFilter *hostClassFilter)
-{
-    mongo_connection dbconn;
-    int count;
-
-    if (!CFDB_Open(&dbconn))
-    {
-        return 0;
-    }
-
-    count = CFDB_CountHosts(&dbconn, hostClassFilter);
-
-    CFDB_Close(&dbconn);
-
-    return count;
-}
-
-/*****************************************************************************/
-
 long Nova2PHP_count_red_hosts(HostClassFilter *hostClassFilter)
 {
     Item *all = Nova_RedHosts(hostClassFilter);

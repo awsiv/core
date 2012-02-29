@@ -201,7 +201,6 @@ int Nova2PHP_show_hosts(char *hostNameRegex, char *ipRegex, HostClassFilter *hos
 void Nova2PHP_select_reports(char *reportId, char *buffer, int bufsize);
 
 int Nova2PHP_get_bluehost_threshold(char *buffer, int bufsize);
-long Nova2PHP_count_hosts(HostClassFilter *hostClassFilter);
 long Nova2PHP_count_blue_hosts(HostClassFilter *hostClassFilter);
 long Nova2PHP_count_red_hosts(HostClassFilter *hostClassFilter);
 long Nova2PHP_count_yellow_hosts(HostClassFilter *hostClassFilter);
