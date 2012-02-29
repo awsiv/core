@@ -19,10 +19,11 @@ class Knowledge extends Cf_Controller {
         $rbac = $this->settings_model->app_settings_get_item('rbac');
         $isAdmin = $this->ion_auth->is_admin();
         if ($rbac && !$isAdmin) {
+            $errorMessage =  $this->lang->line('knowledge_access_denied');
             if (is_ajax()) {                
-                show_error_custom("you dont have permission to access the knowledgemap.", 403);
+                show_error_custom($errorMessage, 403);
             } else {
-                show_error("you dont have permission to access the knowledgemap.", 403);
+                show_error($errorMessage, 403);
             }
         }
         return;
