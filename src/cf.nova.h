@@ -282,6 +282,13 @@ typedef enum
 
 typedef struct
 {
+    HostRankMethod method;
+    HostColour colour;
+    time_t blue_time_horizon;
+} HostColourFilter;
+
+typedef struct
+{
     char *keyhash;
     char *hubkey;
     char *ipaddr;
