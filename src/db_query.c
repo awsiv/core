@@ -3324,13 +3324,14 @@ int CFDB_QueryMonView(mongo_connection *conn, char *keyhash, char *monId, enum m
 
 /*****************************************************************************/
 
-int CFDB_CountHosts(mongo_connection *conn, HostClassFilter *host_class_filter)
+int CFDB_CountHosts(mongo_connection *conn, HostClassFilter *host_class_filter, HostColourFilter *host_colour_filter)
 {
     bson_buffer bb;
 
     bson_buffer_init(&bb);
 
     BsonAppendHostClassFilter(&bb, host_class_filter);
+    BsonAppendHostColourFilter(&bb, host_colour_filter);
 
     bson query;
 

@@ -3258,7 +3258,7 @@ PHP_FUNCTION(cfpr_host_count)
 
     if (NULL_OR_EMPTY(colour))
     {
-        count = CFDB_CountHosts(&conn, filter);
+        count = CFDB_CountHosts(&conn, filter, NULL);
     }
     else
     {
