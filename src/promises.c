@@ -519,7 +519,6 @@ void TrackValue(char *date, double kept, double repaired, double notkept)
 void LastSawBundle(char *name,double compliance)
 {
     char filename[CF_BUFSIZE];
-    int lsea = LASTSEENEXPIREAFTER;
     double lastseen,delta2;
     Event e, newe;
     time_t now = time(NULL);
