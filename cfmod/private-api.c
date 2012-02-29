@@ -4975,11 +4975,11 @@ static JsonElement *ParseRolesToJson(HubQuery *hq)
         JsonElement *role_entry = JsonObjectCreate(10);
 
         JsonObjectAppendString(role_entry, LABEL_ROLE_NAME, record->name);
-        JsonObjectAppendString(role_entry, LABEL_ROLE_DESCRIPTION, record->description);
-        JsonObjectAppendString(role_entry, LABEL_ROLE_CLASSRX_INCLUDE, record->classRxInclude);
-        JsonObjectAppendString(role_entry, LABEL_ROLE_CLASSRX_EXCLUDE, record->classRxExclude);
-        JsonObjectAppendString(role_entry, LABEL_ROLE_BUNDLERX_INCLUDE, record->bundleRxInclude);
-        JsonObjectAppendString(role_entry, LABEL_ROLE_BUNDLERX_EXCLUDE, record->bundleRxExclude);
+        JsonObjectAppendString(role_entry, LABEL_ROLE_DESCRIPTION, NULLStringToEmpty(record->description));
+        JsonObjectAppendString(role_entry, LABEL_ROLE_CLASSRX_INCLUDE, NULLStringToEmpty(record->classRxInclude));
+        JsonObjectAppendString(role_entry, LABEL_ROLE_CLASSRX_EXCLUDE, NULLStringToEmpty(record->classRxExclude));
+        JsonObjectAppendString(role_entry, LABEL_ROLE_BUNDLERX_INCLUDE, NULLStringToEmpty(record->bundleRxInclude));
+        JsonObjectAppendString(role_entry, LABEL_ROLE_BUNDLERX_EXCLUDE, NULLStringToEmpty(record->bundleRxExclude));
 
         JsonArrayAppendObject(roles, role_entry);
     }

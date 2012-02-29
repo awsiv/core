@@ -155,35 +155,39 @@ class Widget extends Cf_Controller {
        
     }
 
-    function filterclass() {
+    function filterclass($page =1,$search =null) {
         $filter = $this->input->post('filter');
         $username = $this->session->userdata('username');
+        $searchLetter = null;
+        if ($search != null) {
+            $searchLetter = urldecode($search).'.*';
+        }else{
+           $searchLetter='.*';
+        }
         $data = "";
-        switch ($filter) {
+        try{
+           switch ($filter) {
             case "time":
-                $data = cfpr_list_time_classes(NULL, NULL, NULL, NULL);
+                $data = $this->class_model->getAllTimeClasses($username,$searchLetter,100,$page);
                 break;
             case "ip":
                 $data = cfpr_list_ip_classes(NULL, NULL, NULL, NULL);
                 break;
             case "soft":
-                $data = cfpr_list_soft_classes(NULL, NULL, NULL, NULL);
+                $data = $this->class_model->getAllSoftClasses($username,$searchLetter,100,$page);
                 break;
             case "all":
-                try {
-                    $classes = $this->class_model->getAllClasses($username, '.*', 100, 1);
-                    echo $classes;
-                } catch (Exception $e) {
-                    $this->output->set_status_header('500', $e->getMessage());
-                    echo($e->getMessage());
-                }
-                exit;
+                $data = $this->class_model->getAllClasses($username, $searchLetter, 100, $page);
                 break;
             case "host":
                 $data = cfpr_list_host_classes(NULL, NULL, NULL, NULL);
                 break;
+        } 
+        echo $data;
+        }catch (Exception $e) {
+              $this->output->set_status_header('500', $e->getMessage());
+              echo($e->getMessage());
         }
-        sanitycheckjson($data);
     }
 
     /* used by host finder */
