@@ -3185,50 +3185,6 @@ void Nova2PHP_show_col_hosts(char *colour, HostClassFilter *hostClassFilter, Pag
 
 /*****************************************************************************/
 
-long Nova2PHP_count_red_hosts(HostClassFilter *hostClassFilter)
-{
-    Item *all = Nova_RedHosts(hostClassFilter);
-    int len = ListLen(all);
-
-    DeleteItemList(all);
-    return (long) len;
-}
-
-/*****************************************************************************/
-
-long Nova2PHP_count_yellow_hosts(HostClassFilter *hostClassFilter)
-{
-    Item *all = Nova_YellowHosts(hostClassFilter);
-    int len = ListLen(all);
-
-    DeleteItemList(all);
-    return (long) len;
-}
-
-/*****************************************************************************/
-
-long Nova2PHP_count_green_hosts(HostClassFilter *hostClassFilter)
-{
-    Item *all = Nova_GreenHosts(hostClassFilter);
-    int len = ListLen(all);
-
-    DeleteItemList(all);
-    return (long) len;
-}
-
-/*****************************************************************************/
-
-long Nova2PHP_count_blue_hosts(HostClassFilter *hostClassFilter)
-{
-    Item *all = Nova_BlueHosts(hostClassFilter);
-    int len = ListLen(all);
-
-    DeleteItemList(all);
-    return (long) len;
-}
-
-/*****************************************************************************/
-
 void Nova2PHP_get_host_colour(char *hostkey, char *buffer, int bufsize)
 {
     int score = Nova_GetHostColour(hostkey);
