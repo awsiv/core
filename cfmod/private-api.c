@@ -3254,35 +3254,35 @@ PHP_FUNCTION(cfpr_host_count)
 
     DATABASE_OPEN(&conn);
 
-    int count = -1;
+    int count = 0;
 
-    if (NULL_OR_EMPTY(colour))
-    {
-        count = CFDB_CountHosts(&conn, filter, NULL);
-    }
-    else
+    HostColourFilter *host_colour_filter = NULL;
+
+    if (!NULL_OR_EMPTY(colour))
     {
         if (strcmp(colour, "green") == 0)
         {
-            count = Nova2PHP_count_green_hosts(filter);
+            host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HOST_COLOUR_GREEN);
         }
         else if (strcmp(colour, "yellow") == 0)
         {
-            count = Nova2PHP_count_yellow_hosts(filter);
+            host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HOST_COLOUR_YELLOW);
         }
         else if (strcmp(colour, "red") == 0)
         {
-            count = Nova2PHP_count_red_hosts(filter);
+            host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HOST_COLOUR_RED);
         }
         else if (strcmp(colour, "blue") == 0)
         {
-            count = Nova2PHP_count_blue_hosts(filter);
+            host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HOST_COLOUR_BLUE);
         }
-        else
+        else if (strcmp(colour, "green_yellow_red") == 0)
         {
-            count = 0;
+            host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HOST_COLOUR_GREEN_YELLOW_RED);
         }
     }
+
+    count = CFDB_CountHosts(&conn, filter, host_colour_filter);
 
     DATABASE_CLOSE(&conn);
 
