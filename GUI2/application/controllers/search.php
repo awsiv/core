@@ -5,6 +5,7 @@ class Search extends Cf_Controller {
     function Search() {
         parent::__construct();
         $this->load->library(array('table', 'cf_table', 'pagination'));
+        $this->load->model(array('report_model'));
         $this->load->helper('form');
         $this->carabiner->js('jquery.tablesorter.min.js');
         $this->carabiner->js('widgets/hostfinder.js');
@@ -24,6 +25,25 @@ class Search extends Cf_Controller {
             }
         }
         return implode('/', $temp);
+    }
+    
+    function __reports_menu(){
+        try{
+            $reportsData = $this->report_model->getAllReports();
+            $reports = $reportsData['data'];
+            $treeview_reports = array();
+            foreach ($reports as $report) {
+                if (key_exists($report['category'], $treeview_reports)) {
+                    array_push($treeview_reports[$report['category']], $report['name']);
+                } else {
+                    $treeview_reports[$report['category']] = array();
+                    array_push($treeview_reports[$report['category']], $report['name']);
+                }
+            }
+            return $treeview_reports;
+          }catch(Exception $e){
+         return array();
+        }
     }
 
     function index() {
@@ -147,7 +167,8 @@ class Search extends Cf_Controller {
             'hostname' => $hostname,
             'hostkey' => $hostkey,
             'resultView' => 'default_result_view',
-            'fromEmail' => $fromEmail
+            'fromEmail' => $fromEmail,
+            'reports_menu'=>$this->__reports_menu()
         );
 
 
@@ -842,5 +863,6 @@ class Search extends Cf_Controller {
         }
         return $table;
     }
+    
 
 }

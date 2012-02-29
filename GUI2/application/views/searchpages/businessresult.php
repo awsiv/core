@@ -1,12 +1,25 @@
 <div id="bodyreport" class="outerdiv grid_12">
 
     <div id="reportpanel" class="innerdiv">
-        <p class="title">
+         <div class="dd_menu">
+            <ul>
+              <?php foreach($reports_menu as $key=>$val){?>
+                <li><?php echo $key ?>
+                    <ul>
+                   <?php foreach ($reports_menu[$key] as $report_names){ ?>
+                          <li><a href="#"><?php echo $report_names ?></a></li>
+                   <?php }?>
+                    </ul>
+                 </li>
+                <?php } ?>
+            </ul>
+        </div>
+        <!--<p class="title">
             <?php
             echo $report_title;
             echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : ""
             ?>
-        </p>
+        </p>-->
         <div class="reporthead">
             <div class="grid_8">
                 <a href="<?php echo $report_link ?>" id="send_mail" class="icons download showqtip" title="Download report"></a>
