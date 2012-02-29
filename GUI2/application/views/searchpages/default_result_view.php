@@ -8,7 +8,7 @@ if (is_array($result) && key_exists('truncated', $result['meta'])) {
     $number_of_rows = $displayed_rows;
 }
 if (count($result['data']) > 0) {
-    echo "Total results found: " . $result['meta']['count'];
+    echo "<span class=\"reportresultcount\">Total results found: " . $result['meta']['count']."</span>";
     $pg = paging($current, $number_of_rows, $result['meta']['count'], 10);
     echo $this->cf_table->generateReportTable($result, $report_title);
     include 'paging_footer.php';

@@ -34,10 +34,10 @@ class Search extends Cf_Controller {
             $treeview_reports = array();
             foreach ($reports as $report) {
                 if (key_exists($report['category'], $treeview_reports)) {
-                    array_push($treeview_reports[$report['category']], $report['name']);
+                    array_push($treeview_reports[$report['category']],$report);
                 } else {
                     $treeview_reports[$report['category']] = array();
-                    array_push($treeview_reports[$report['category']], $report['name']);
+                    array_push($treeview_reports[$report['category']], $report);
                 }
             }
             return $treeview_reports;

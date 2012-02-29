@@ -6,8 +6,8 @@
               <?php foreach($reports_menu as $key=>$val){?>
                 <li><?php echo $key ?>
                     <ul>
-                   <?php foreach ($reports_menu[$key] as $report_names){ ?>
-                          <li><a href="#"><?php echo $report_names ?></a></li>
+                   <?php foreach ($val as $reportdata){ ?>
+                        <li><a href="<?php echo site_url('/search/index/host/All/report').'/'.urlencode($reportdata['id'])?>"><?php echo $reportdata['name'] ?></a></li>
                    <?php }?>
                     </ul>
                  </li>
@@ -24,7 +24,6 @@
             <div class="grid_8">
                 <a href="<?php echo $report_link ?>" id="send_mail" class="icons download showqtip" title="Download report"></a>
                 <?php echo anchor('#', 'Select host', array('id' => 'findhost', 'title' => 'Report for another host', 'class' => 'showqtip')) ?>
-                &nbsp;&nbsp;<?php echo anchor('widget/allreports', 'Select report', array('id' => 'findreport', 'title' => 'Other Reports', 'class' => 'showqtip')) ?>
             </div>
             <div class="grid_4" style="text-align: right;">
                 <div><a href="#" id="savesearch" class="showqtip" title="save this search for future use"><span class="ui-icon-triangle-1-s"></span>Save this search</a></div>
@@ -163,8 +162,6 @@
                                         location.replace('<?php echo site_url() ?>/search/index/host/'+data.selectedhost+'/'+data.report);
                                     }
                                 });
-        
-                                $('#findreport').reportfinder(<?php echo (isset($hostkey) && ($hostkey != "")) ? "{baseUrl:'" . site_url() . "',allhost:false,hostkey:\"$hostkey\"}" : "{baseUrl: '" . site_url() . "'}" ?>);
         
                                 var $dialog = $('#dialog');
         
