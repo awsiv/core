@@ -3287,6 +3287,7 @@ PHP_FUNCTION(cfpr_host_count)
     DATABASE_CLOSE(&conn);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+    free(host_colour_filter);
 
     RETURN_LONG(count);
 }
