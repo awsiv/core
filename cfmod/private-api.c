@@ -3347,9 +3347,12 @@ for (size_t slot = 0; slot < num_slots; slot++)
         {
             TimeseriesHostSlot *slot_host_record = map_entry->value;
 
-            kept += (double)slot_host_record->kept / (double)slot_host_record->num_samples;
-            notkept += (double)slot_host_record->notkept / (double)slot_host_record->num_samples;
-            repaired += (double)slot_host_record->repaired / (double)slot_host_record->num_samples;
+            if (slot_host_record->num_samples > 0)
+            {
+                kept += (double)slot_host_record->kept / (double)slot_host_record->num_samples;
+                notkept += (double)slot_host_record->notkept / (double)slot_host_record->num_samples;
+                repaired += (double)slot_host_record->repaired / (double)slot_host_record->num_samples;
+            }
 
             num_samples += slot_host_record->num_samples;
             num_hosts++;
@@ -3359,9 +3362,18 @@ for (size_t slot = 0; slot < num_slots; slot++)
     JsonElement *entry = JsonObjectCreate(10);
     JsonObjectAppendInteger(entry, LABEL_POSITION, slot);
     JsonObjectAppendInteger(entry, LABEL_TIMESTAMP, from + (resolution * slot));
-    JsonObjectAppendReal(entry, LABEL_KEPT, kept / num_hosts);
-    JsonObjectAppendReal(entry, LABEL_NOTKEPT, notkept / num_hosts);
-    JsonObjectAppendReal(entry, LABEL_REPAIRED, repaired / num_hosts);
+    if (num_hosts > 0)
+    {
+        JsonObjectAppendReal(entry, LABEL_KEPT, kept / num_hosts);
+        JsonObjectAppendReal(entry, LABEL_NOTKEPT, notkept / num_hosts);
+        JsonObjectAppendReal(entry, LABEL_REPAIRED, repaired / num_hosts);
+    }
+    else
+    {
+        JsonObjectAppendReal(entry, LABEL_KEPT, 0.0);
+        JsonObjectAppendReal(entry, LABEL_NOTKEPT, 0.0);
+        JsonObjectAppendReal(entry, LABEL_REPAIRED, 0.0);
+    }
     JsonObjectAppendInteger(entry, LABEL_SAMPLE_COUNT, num_samples);
     JsonObjectAppendInteger(entry, LABEL_HOST_COUNT, num_hosts);
 
