@@ -729,6 +729,7 @@ void Nova_UnPackMeter(mongo_connection *dbconn, char *id, Item *data)
     if (dbconn)
     {
         CFDB_SaveMeter(dbconn, id, data);
+        CFDB_SaveScore(dbconn, id, data, HOST_RANK_METHOD_COMPLIANCE);
     }
 #endif
 
