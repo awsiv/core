@@ -4,7 +4,6 @@
 #include "rlist.h"
 #include "cf.nova.web_api.h"
 #include "web_rbac.h"
-#include "sequence.h"
 #include "map.h"
 
 #define cfr_software     "sw"
@@ -3330,6 +3329,8 @@ for (const Rlist *rp = result->records; rp; rp = rp->next)
     slot_host_record->num_samples++;
 }
 
+DeleteHubQuery(result, DeleteHubTotalCompliance);
+
 JsonElement *data = JsonArrayCreate(num_slots);
 for (size_t slot = 0; slot < num_slots; slot++)
 {
@@ -3374,7 +3375,6 @@ JsonObjectAppendInteger(output, LABEL_RESOLUTION, resolution);
 JsonObjectAppendInteger(output, LABEL_COUNT, num_slots);
 JsonObjectAppendArray(output, LABEL_DATA, data);
 
-DeleteHubQuery(result, DeleteHubTotalCompliance);
 RETURN_JSON(output);
 }
 
