@@ -201,7 +201,7 @@ class host_model extends Cf_Model {
      */
     function getHostVariable($username, $hostkey, $scope, $lval) {
         try {
-            $rawdata = cfpr_report_vars($username, $hostkey, $scope, $lval, NULL, NULL, false, NULL, NULL, "var-name", 1, 1);
+            $rawdata = cfpr_report_vars($username, $hostkey, $scope, $lval, NULL, NULL, false, array(), array(), "var-name",true, 1, 1);
             $data = $this->checkData($rawdata);
             if (is_array($data) && key_exists($scope, $data)) {
                 return $data[$scope]['data'][0][3];
