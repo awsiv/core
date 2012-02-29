@@ -22,6 +22,7 @@ class Auth extends Controller {
         $this->form_validation->set_error_delimiters('<span class="errorlist">', '</span>');
         //$this->load->database();
         $this->load->helper('url');
+    
         $this->config->load('ion_auth', TRUE);
     }
 
@@ -57,6 +58,13 @@ class Auth extends Controller {
             //redirect them to the login page
             redirect('auth/login', 'refresh');
         }
+        
+        $requiredjs = array(
+            array('widgets/classfinderbox.js')            
+        );
+        
+        $this->carabiner->js($requiredjs);   
+        
         $bc = array(
             'title' => $this->lang->line('breadcrumb_admin'),
             'url' => 'auth/admin_page',
@@ -68,6 +76,12 @@ class Auth extends Controller {
         $this->data['title_header'] = "Admin";
         $this->data['username'] = $this->session->userdata('username');
         $this->data['message']  = (validation_errors()) ? '<p class="error">' . validation_errors() . '</p>' : $this->session->flashdata('message');
+        
+        // get system settings to protect "fall_back_for" user from editing
+        $this->load->model('settings_model');
+        $settings = $this->settings_model->get_app_settings();
+        $this->data['fall_back_for'] = $settings->fall_back_for;
+      
         //list the users
         $this->data['users'] = $this->ion_auth->get_users_array();         
         //$this->load->view('auth/index', $this->data);
@@ -675,6 +689,7 @@ class Auth extends Controller {
     }
 
     function __load_role_add_edit($op, $rolename) {
+        $this->load->helper('roles_checkbox_list');
 
         $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
         $this->data['name'] = array('name' => 'name',
@@ -728,8 +743,12 @@ class Auth extends Controller {
             
             $this->data['name']['value']        = $this->form_validation->set_value('name',        $role['name']); 
             $this->data['description']['value'] = $this->form_validation->set_value('description', array_key_exists('description', $role) ? $role['description'] : "");
+            
+            //classes
             $this->data['crxi']['value'] = $this->form_validation->set_value('crxi', array_key_exists('classrxinclude',  $role) ? $role['classrxinclude'] : "");
             $this->data['crxx']['value'] = $this->form_validation->set_value('crxx', array_key_exists('classrxexclude',  $role) ? $role['classrxexclude'] : "");
+            
+            // bundles
             $this->data['brxi']['value'] = $this->form_validation->set_value('brxi', array_key_exists('bundlerxinlcude', $role) ? $role['bundlerxinlcude'] : "");
             $this->data['brxx']['value'] = $this->form_validation->set_value('brxx', array_key_exists('bundlerxexclude', $role) ? $role['bundlerxexclude'] : "");
         }
