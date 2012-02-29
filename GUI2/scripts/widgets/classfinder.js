@@ -110,7 +110,7 @@
 
             self.dialogcontent.parent().delegate('#findmatchedhost','click',$.proxy(self.findmatchedhost,self));
             self.menu=$('<div class="categories"><ul id="classoptions"></ul></div>');
-            self.menu.find('ul').append('<li>All classes</li>');
+            self.menu.find('ul').append('<li>All classes</li><li>Time classes</li><li>soft classes</li>');
             $('<span class="slider"></span>').appendTo(self.menu).bind('click',function(event){
                 self.menu.slideUp();
             });
@@ -158,21 +158,26 @@
             var self=this;
             if (self.scrollingEnd == true || $(listpane).scrollTop()==0 || self.animate==true) return;
             // only do scrolling event when no menu option are selected or all classes is selected.
-            if (self.selectedMenu == null || self.selectedMenu == 'all classes') {
+            if (self.selectedMenu == null ) {
+                self.selectedMenu='all classes';
+            }
+            var filter=self.selectedMenu.toLowerCase().split(" ")[0];
+            
                 if ($(listpane)[0].scrollHeight - ($(listpane).scrollTop()) <= ($(listpane).outerHeight()+50)) {
                     self.animate = true;
-                    var url = self.element.attr('href')+'/'+self.page;   
+                    var url = self.options.baseUrl+self.options.filterhandlerurl+'/'+self.page;   
                     if (self.selectedLetter != null) {
                         url = url + '/' + self.selectedLetter;
                     }
                     self.changeTitle("Loading");
-                    $.getJSON(url, function(data) {
-                        self.loadDataInContainer(data,true);
-                        self.animate = false;
-                    });                              
+                   
+                    $.post(url, {filter:filter},function(data) {                
+                    self.loadDataInContainer(data,true);
+                    self.animate = false;
+                    }, "json");
                     self.page++;              
                 }
-            }
+            
         },
 
         addclassfilter:function(event)
@@ -320,18 +325,21 @@
 
         searchclassinlist:function(event)
         {
-            var self=this;
-            var searchbox= $(event.target);
-            
+            var self=this,
+                searchbox= $(event.target);
+            if (self.selectedMenu == null ) {
+                self.selectedMenu='all classes';
+            }
+            var filter=self.selectedMenu.toLowerCase().split(" ")[0];
+ 
             var searchWord = encodeURIComponent(searchbox.val());
             
             if(event.keyCode == 13) {
-                self.selectedMenu = null;
-                var url = self.element.attr('href')+'/1/'+searchWord;     
+                var url = self.options.baseUrl+self.options.filterhandlerurl+'/1/'+searchWord;     
                 self.selectedLetter = searchWord; 
-                $.getJSON(url, function(data) {                
+                $.post(url, {filter:filter},function(data) {                
                     self.loadDataInContainer(data);
-                });
+                }, "json");
             }          
         },
 
@@ -360,18 +368,21 @@
             sender.addClass('selected').siblings().removeClass('selected');
           
             var clickedLetter = sender.text().toLowerCase();
-            self.selectedLetter = '('+clickedLetter+'|'+sender.text()+')';
+            self.selectedLetter = '['+clickedLetter+'|'+sender.text()+']';
+             if (self.selectedMenu == null ) {
+                self.selectedMenu='all classes';
+            }
             
             self.resetPagination();
             self.resetScrollPosition();
-            var url = self.element.attr('href')+'/1/'+clickedLetter; 
+            var url = self.options.baseUrl+self.options.filterhandlerurl+'/1/'+ self.selectedLetter; 
+            var filter=self.selectedMenu.toLowerCase().split(" ")[0];
             self.changeTitle("Loading");
-            $.getJSON(url, function(data) {
-                self.loadDataInContainer(data);
-            });
+             $.post(url, {filter:filter},function(data) {                
+                    self.loadDataInContainer(data);
+             }, "json");
             
-            if(self.menu.css('display')=='block')
-            {
+            if(self.menu.css('display')=='block'){
                 self.menu.fadeOut(400);
             }
         },
@@ -380,8 +391,7 @@
             var self = this;
             self.page = 2;
             self.scrollingEnd = false;
-            
-        },
+            },
         
         resetSelectedLetter: function() {
             var self = this;            

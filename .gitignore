@@ -27,6 +27,7 @@ tests/test-db
 
 *~
 \#*#
+src/.dir-locals.el
 
 # eclipse
 
