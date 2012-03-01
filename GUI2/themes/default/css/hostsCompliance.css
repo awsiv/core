@@ -1,6 +1,8 @@
 .hostsCompliance .colourEntry
 {
-    padding: 5px;
+    padding: 0px;
+    width: 50%;
+    float: left;
 }
 
 .hostsCompliance .colourEntryIcon
