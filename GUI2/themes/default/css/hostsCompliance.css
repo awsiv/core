@@ -19,6 +19,7 @@
 .hostsCompliance .colourEntryIcon.red
 {
     background: #cc4358;
+    padding: 0px;
 }
 
 .hostsCompliance .colourEntryIcon.green
