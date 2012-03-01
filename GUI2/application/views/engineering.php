@@ -31,8 +31,7 @@
                     <div id="hostsConnectivity"></div>
                 </div>
 
-                <div id="hostInfoContainer" class="hostInfo">
-                    <p class="subTitle"><?php echo $this->lang->line('host_info'); ?></p>
+                <div id="hostInfoContainer" class="hostInfoContainer">
                     <div id="hostInfo"></div>
                 </div>
             </div>
