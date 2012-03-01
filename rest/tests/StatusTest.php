@@ -9,7 +9,7 @@ class StatusTest extends RestBaseTest
         try
         {
             $jsonArray = $this->getResults('/');
-            $this->assertEquals($jsonArray['api-version'], 'v1');
+            $this->assertEquals('v1', $jsonArray['apiVersion']);
         }
         catch (Pest_NotFound $e)
         {
@@ -33,7 +33,7 @@ class StatusTest extends RestBaseTest
             $this->fail('Resource not found');
         }
     }
-    
+
     public function testContentType()
     {
         try
@@ -47,7 +47,7 @@ class StatusTest extends RestBaseTest
             $this->fail('Resource not found');
         }
     }
-    
+
     public function testUnsupportedAccept()
     {
         try
@@ -62,7 +62,7 @@ class StatusTest extends RestBaseTest
         }
         $this->fail('Should not pass');
     }
-    
+
     public function testBadAuth()
     {
         try
