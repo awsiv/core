@@ -26,12 +26,14 @@
                 },
                 xaxis: {
                     show: true,
+                    color: common.colours.white,
                     mode: "time",
                     timeformat: "%b-%d",
                     minTickSize: [1, "day"]
                 },
                 yaxis: {
                     show: true,
+                    color: common.colours.white,
                     minTickSize: 1,
                     tickDecimals: 0
                 },

@@ -37,7 +37,7 @@ $lang['breadcrumb_vital']            ='Vitals';
 $lang['breadcrumb_notes']            ='Notes';
 /**
  * Policy editor related things
- * 
+ *
  */
 $lang['revision_not_known']='unknown';
 $lang['approvals_not_known']='unknown';
@@ -68,23 +68,23 @@ $lang['notes'] = 'Notes';
  */
  $lang['repo_add_sucess']='Repository added sucessfully';
  $lang['proceed_to_editor']='Go to policy editor';
- 
+
  /**
  * Hub status page text
  */
  $lang['hub_status']='Hub replication status';
- 
+
  /**
   * Saved search related text
   */
  $lang['search_save_error']='Error while saving the search';
- 
+
  /**
   * Vital pulse and sign related test
   */
  $lang['vital_no_data']='No data available for this host';
  $lang['vital_no_host']='No host selected';
- 
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -117,6 +117,7 @@ $lang['services_goals']='Services/goals';
 /*
  * Text displayed in the engineering page
  */
+$lang['header_host_compliance_timeseries'] = "Host Compliance";
 $lang['header_host_status'] = "Host status (last known hour)";
 $lang['header_host_connectivity'] = "Host Connectivity (last known hour)";
 $lang['header_promise_compliance'] = "Promise compliance summary for reachable hosts";
@@ -130,7 +131,7 @@ $lang['promises'] = "Promises";
 $lang['reports'] = "Reports";
 $lang['summary_reports'] = "Summary reports";
 $lang['cdp_reports'] = "CDP reports";
- 
+
 
 
 
@@ -162,7 +163,7 @@ $lang['community'] = "Community";
 
 
 /*
- * Host page 
+ * Host page
  */
 
 $lang['header_action'] = "Actions";
@@ -219,8 +220,8 @@ $lang['promise_class_context'] = 'Applies in the class context';
 $lang['promise_defined_file'] = 'Defined in file';
 $lang['promise_body_not_found'] = 'Body definition was not found';
 $lang['promise_other_promise'] = 'Other promises in bundle';
-$lang['promise_other_promiser'] = 'Other promises by promiser'; 
-$lang['promise_other_promiser_type'] = 'Other promises of type'; 
+$lang['promise_other_promiser'] = 'Other promises by promiser';
+$lang['promise_other_promiser_type'] = 'Other promises of type';
 
 
 /*
