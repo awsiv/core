@@ -1,0 +1,22 @@
+.hostInfo
+{
+    padding: 0px;
+    float: left;
+}
+
+.hostInfo .column
+{
+    width: 50%;
+}
+
+.hostInfo .label
+{
+    margin-right: 5px;
+    float: left;
+}
+
+.hostInfo .value
+{
+    padding: 0px;
+    float: left;
+}

@@ -20,7 +20,8 @@
                 </div>
 
                 <div id="hostInfoContainer" class="hostInfoContainer">
-                    <div id="hostInfo"></div>
+                    <div id="hostInfo" class="grid_8"></div>
+                    <div class="clear"></div>
                 </div>
             </div>
         </div>
@@ -50,6 +51,7 @@
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>searchEntry.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>hostsCompliance.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>hostsConnectivity.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>hostInfo.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>jScrollPane.css" />
 
 <script type="text/javascript">
