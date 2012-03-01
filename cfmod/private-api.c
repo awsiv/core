@@ -3280,7 +3280,7 @@ if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "saa",
 
 ARGUMENT_CHECK_CONTENTS(username_len);
 
-static const time_t horizon = SECONDS_PER_WEEK * 5;
+static const time_t horizon = SECONDS_PER_WEEK * 1;
 static const time_t resolution = SECONDS_PER_DAY / 4;
 const time_t from = time(NULL) - horizon;
 

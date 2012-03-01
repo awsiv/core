@@ -1,16 +1,14 @@
 <div id="body">
-    <div class="outerdiv">
+    <div class="engineeringContainer">
         <div class="grid_4">
-            <div id="navigation" class="innerdiv">
+            <div class="engineeringNavigationContainer">
                 <div id="astrolabe"></div>
             </div>
         </div>
         <div class="grid_8">
-            <div class="innerdiv">
-                <div style="padding: 15px">
-                    <div id="astrolabeLocation" class="subTitle"></div>
-                </div>
-                
+            <div class="engineeringContentContainer">
+                <div id="astrolabeLocation"></div>
+
                 <!--
                 <div style="padding: 15px">
                     <p class="subTitle"><?php echo $this->lang->line('header_promise_compliance'); ?></p>
@@ -19,22 +17,21 @@
                     </div>
                 </div>
                 -->
-                <div id="hostsComplianceTimeseriesContainer" style="padding: 15px">
+                <div id="hostsComplianceTimeseriesContainer" class="hostsComplianceTimeseriesContainer">
                     <div id="hostsComplianceTimeseries" style="height: 200px"></div>
                 </div>
 
-                <div id="hostsComplianceContainer" style="padding: 15px">
+                <div id="hostsComplianceContainer" class="hostsComplianceContainer">
                     <p class="subTitle"><?php echo $this->lang->line('header_host_status'); ?></p>
                     <div id="hostsCompliance"></div>
                 </div>
-                
-                <div id="hostsConnectivityContainer" style="padding: 15px">
+
+                <div id="hostsConnectivityContainer" class="hostsConnectivityContainer">
                     <p class="subTitle"><?php echo $this->lang->line('header_host_connectivity'); ?></p>
                     <div id="hostsConnectivity"></div>
                 </div>
-                
-                <div id="hostInfoContainer" style="padding: 15px">
-                    <p class="subTitle"><?php echo $this->lang->line('host_info'); ?></p>
+
+                <div id="hostInfoContainer" class="hostInfoContainer">
                     <div id="hostInfo"></div>
                 </div>
             </div>
@@ -58,6 +55,7 @@
 <script type="text/javascript" src="<?php echo get_scriptdir()?>jquery.mousewheel.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>jquery.contextMenu.js"></script>
 
+<link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>view/engineering.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>astrolabe.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>astrolabeLocation.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>combobox.css" />
@@ -68,11 +66,11 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
-        
+
         var genericOption = {
             baseUrl: '<?php echo site_url() ?>'
         };
-        
+
         var hostFinderOption =   {
             baseUrl:'<?php echo site_url() ?>'
           };
@@ -90,7 +88,7 @@
             $('#hostsMeter').hostsMeter("initialize");
         });
         */
-        
+
         $('#hostsCompliance').hostsCompliance();
         $('#hostsConnectivity').hostsConnectivity();
         $('#hostInfo').hostInfo();
@@ -109,7 +107,7 @@
 
                 $('#astrolabeLocation').astrolabeLocation('setHostName', args.hostName);
             },
-            
+
             nodeSelected: function(event, args) {
                 $('#hostInfoContainer').hide();
 
@@ -119,7 +117,7 @@
                 $('#hostsCompliance').hostsCompliance('setContextPath',
                     args.includes, args.excludes);
                 $('#hostsComplianceContainer').show();
-                
+
                 $('#hostsConnectivity').hostsConnectivity('setContextPath',
                     args.includes, args.excludes);
                 $('#hostsConnectivityContainer').show();
@@ -127,6 +125,6 @@
                 $('#astrolabeLocation').astrolabeLocation('setContextPath', args.path, args.count);
             }
         });
-        
+
     });
 </script>
