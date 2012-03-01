@@ -19,6 +19,9 @@
                     </div>
                 </div>
                 -->
+                <div id="hostsComplianceTimeseriesContainer" style="padding: 15px">
+                    <div id="hostsComplianceTimeseries" style="height: 200px"></div>
+                </div>
 
                 <div id="hostsComplianceContainer" style="padding: 15px">
                     <p class="subTitle"><?php echo $this->lang->line('header_host_status'); ?></p>
@@ -42,13 +45,14 @@
 <div class="clear"></div>
 
 <!-- TODO: move to carabiner later -->
+<script type="text/javascript" src="<?php echo get_scriptdir()?>/common.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/astrolabe.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/astrolabeLocation.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/combobox.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/searchEntry.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostsCompliance.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostsConnectivity.js"></script>
-<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostsMeter.js"></script>
+<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostsComplianceTimeseries.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostInfo.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>jScrollPane.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>jquery.mousewheel.js"></script>
@@ -91,6 +95,7 @@
         $('#hostsConnectivity').hostsConnectivity();
         $('#hostInfo').hostInfo();
         $('#astrolabeLocation').astrolabeLocation();
+        $('#hostsComplianceTimeseries').hostsComplianceTimeseries();
 
         $('#astrolabe').astrolabe({
             hostSelected: function(event, args) {
@@ -107,6 +112,9 @@
             
             nodeSelected: function(event, args) {
                 $('#hostInfoContainer').hide();
+
+                $('#hostsComplianceTimeseries').hostsComplianceTimeseries('setContext',
+                    args.includes, args.excludes);
 
                 $('#hostsCompliance').hostsCompliance('setContextPath',
                     args.includes, args.excludes);

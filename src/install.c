@@ -15,6 +15,7 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+#include "string_lib.h"
 #include <assert.h>
 
 static void DateStrToTime(const char *inStr, time_t *t);
@@ -195,6 +196,27 @@ HubHost *GetHubHostIn(Rlist *host_list, char *keyhash)
     }
 
     return NULL;
+}
+
+bool HubHostEqual(const void *hubhost_a, const void *hubhost_b)
+{
+    assert(hubhost_a);
+    assert(hubhost_b);
+
+    const HubHost *a = (const HubHost *)hubhost_a;
+    const HubHost *b = (const HubHost *)hubhost_b;
+
+    return StringSafeCompare(a->keyhash, b->keyhash);
+}
+
+unsigned int HubHostHash(const void *hubhost)
+{
+    assert(hubhost);
+
+    const HubHost *hh = (const HubHost *)hubhost;
+    assert(hh->keyhash);
+    // TODO: find a real hash function
+    return SafeStringLength(hh->keyhash);
 }
 
 /*****************************************************************************/

@@ -763,6 +763,10 @@ PHP_FUNCTION(cfpr_host_list_by_name_rx);
  */
 PHP_FUNCTION(cfpr_host_compliance_colour);
 
+/*! \brief /host/compliance/timeseries
+*/
+PHP_FUNCTION(cfpr_host_compliance_timeseries);
+
 /*! \brief /host/count
  */
 PHP_FUNCTION(cfpr_host_count);
