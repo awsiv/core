@@ -97,7 +97,10 @@ loadpagebody:function(url){
 
         $(".line_wrapper").delegate("#send","click",  function(event)  {
              event.preventDefault();
-             alert ( $('#send').prop("href"));
+             //alert ( $('#send').prop("href"));
+                 self._trigger("complete",null,{
+                    inccl:self.getUrlParams()
+                });
         });
     
             self.animate=false;
@@ -113,7 +116,7 @@ loadpagebody:function(url){
 },
 
 bindClassfinder: function () {
-        var self= this;
+       var self= this;
        $('.class_selector',$('#contentfindercontainer')).classfinder({
         defaultbehaviour:false,
         
@@ -132,6 +135,17 @@ bindClassfinder: function () {
 },
 getFinderUrl: function() {
             var self= this;
+
+            // constuct url
+            var url = self.options.baseUrl + '/widget/allclasses?';
+            
+            url =  url + self.getUrlParams();
+            
+            return url;
+},
+
+getUrlParams: function () {
+     var self= this;
             //prepare values for finders url
             var includes = new Array();
             var excludes = new Array();
@@ -153,7 +167,7 @@ getFinderUrl: function() {
             });            
           
             // constuct url
-            var url = self.options.baseUrl + '/widget/allclasses?';
+            var url = '';
             
             if (includes.length > 0)
             {
@@ -166,6 +180,7 @@ getFinderUrl: function() {
             }
             return url;
 },
+
 dialogContainer: function() {
             var existing = $("#contentfindercontainer");
             if ( existing.size() > 0) {

@@ -48,7 +48,7 @@
         <div class="line" >
             <div class="item">
                 <input type="text" name="include[]" class="include" value=""> 
-                <a class="class_selector" id="b" href="<?php echo site_url('widget/allclasses') ?>">[+]</a>
+                <a class="class_selector" href="<?php echo site_url('widget/allclasses') ?>">[+]</a>
             </div>
         
             <div class="swap"><a href="#">[<= =>]</a></div>
