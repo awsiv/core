@@ -213,16 +213,18 @@ void MapDestroy(Map *map)
 
 MapIterator MapIteratorInit(Map *map)
 {
+    MapIterator i;
     if (IsArrayMap(map))
     {
-        return (MapIterator) { .is_array = true,
-                               .arraymap_iter = ArrayMapIteratorInit(map->arraymap) };
+        i.is_array = true;
+        i.arraymap_iter = ArrayMapIteratorInit(map->arraymap);
     }
     else
     {
-        return (MapIterator) { .is_array = false,
-                               .hashmap_iter = HashMapIteratorInit(map->hashmap) };
+        i.is_array = false;
+        i.hashmap_iter = HashMapIteratorInit(map->hashmap);
     }
+    return i;
 }
 
 MapKeyValue *MapIteratorNext(MapIterator *i)
