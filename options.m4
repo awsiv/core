@@ -1,4 +1,4 @@
-define([novarevision], [r]esyscmd([sh -c "git describe --always || echo unknown | tr -d '\n'" 2>/dev/null]))dnl
+define([novarevision], esyscmd([sh -c "cd nova && (git describe --always || echo unknown) | tr -d '\n'" 2>/dev/null]))dnl
 
 AC_DEFINE(NOVA_VERSION, "2.2.0.a1.novarevision", "Nova version")
 
