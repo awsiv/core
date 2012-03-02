@@ -1,6 +1,8 @@
-define([novarevision], esyscmd([sh -c "cd nova && (git describe --always || echo unknown) | tr -d '\n'" 2>/dev/null]))dnl
+define([novaversion], [2.2.0.a1.]esyscmd([sh -c "cd nova && (git describe --always || echo unknown) | tr -d '\n'" 2>/dev/null]))dnl
 
-AC_DEFINE(NOVA_VERSION, "2.2.0.a1.novarevision", "Nova version")
+dnl Define shell variable as well to make it easier for buildsystem to pick up
+NOVA_VERSION=novaversion
+AC_DEFINE_UNQUOTED(NOVA_VERSION, "novaversion", "Nova version")
 
 AC_ARG_WITH(nova,
 	AS_HELP_STRING(--without-nova, [disable Nova enterprise extensions (enabled by default)]),[],
