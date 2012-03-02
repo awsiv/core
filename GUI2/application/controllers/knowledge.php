@@ -8,6 +8,7 @@ class Knowledge extends Cf_Controller {
         parent::__construct();
         $this->load->helper('form');
         $this->load->library('table', 'cf_table');
+        $this->load->model('knowledge_model');
         $this->username = $this->session->userdata('username');
     }
 
@@ -77,9 +78,7 @@ class Knowledge extends Cf_Controller {
         $root = getcwd();
         
         $root = $root . '/docs/';
-        $docdata = cfpr_list_documents($root);
-
-        $data['docs'] = json_decode(utf8_encode($docdata), true);
+        $data['docs'] = $this->knowledge_model->listDocuments($root);
 
         $this->template->load('template', 'knowledge/docs', $data);
     }
@@ -94,14 +93,12 @@ class Knowledge extends Cf_Controller {
         $search = isset($getparams['search']) ? urldecode($getparams['search']) : $this->input->post('search');
         $data['search'] = trim($search);
         if ($data['search']) {
-            $searchJson = cfpr_search_topics($this->username, $search, true);
-            $data['searchData'] = json_decode(utf8_encode($searchJson), TRUE);
+            $data['searchData'] = $this->knowledge_model->searchTopics($this->username, $data['search'], true);
             $this->load->view('/knowledge/search_result', $data);
         } else {
             // search for default manuals
-            $pid = cfpr_get_pid_for_topic($this->username, "any", "manuals");
-            $searchJson = cfpr_show_topic_hits($this->username, $pid);
-            $data['searchData'] = json_decode(utf8_encode($searchJson), TRUE);
+            $pid = $this->knowledge_model->getPidForTopic($this->username, "any", "manuals");            
+            $data['searchData'] = $this->knowledge_model->showTopicHits($this->username, $pid);
             $this->load->view('/knowledge/searchmanual', $data);
         }
     }
@@ -126,7 +123,7 @@ class Knowledge extends Cf_Controller {
         // chech for integer
         $pid = intval($pid, 10);
         if (!$pid)
-            $pid = cfpr_get_pid_for_topic("", "system policy");
+            $pid = $this->knowledge_model->getPidForTopic($this->username,"", "system policy");
 
         $breadcrumbs_url = "knowledge/knowledgemap/pid/$pid";
         $bc = array(
@@ -145,20 +142,12 @@ class Knowledge extends Cf_Controller {
             'breadcrumbs' => $this->breadcrumblist->display(),
         );
 
-        $graphdata = cfpr_get_knowledge_view($this->username, $pid, '');
-        $data['graphdata'] = ($graphdata);
+        $data['graphdata'] = $this->knowledge_model->getKnowledgeView($this->username, $pid);
 
-
-        $topicDetail = cfpr_show_topic($this->username, $pid);
-        $topicsData = cfpr_show_topic_hits($this->username, $pid);
-        $topicLeads = cfpr_show_topic_leads($this->username, $pid);
-        $topicCategory = cfpr_show_topic_category($this->username, $pid);
-
-        // json decode the datas
-        $data['topicDetail'] = json_decode($topicDetail, true);
-        $data['topicHits'] = json_decode($topicsData, true);
-        $data['topicLeads'] = json_decode($topicLeads, true);
-        $data['topicCategory'] = json_decode(($topicCategory), true);
+        $data['topicDetail'] = $this->knowledge_model->showTopics($this->username, $pid);
+        $data['topicHits'] =    $this->knowledge_model->showTopicHits($this->username,$pid);
+        $data['topicLeads'] = $this->knowledge_model->showTopicLeads($this->username, $pid);
+        $data['topicCategory'] = $this->knowledge_model->showTopicCategory($this->username, $pid);
 
         $data['showLeads'] = (!is_array($data['topicLeads']) || empty($data['topicLeads'])) ? false : true;
         $data['showTopicHits'] = (!is_array($data['topicHits']) || empty($data['topicHits'])) ? false : true;
@@ -200,11 +189,8 @@ class Knowledge extends Cf_Controller {
             'topic' => $topic,
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_kw_bank'),
             'breadcrumbs' => $this->breadcrumblist->display(),
-        );
-
-        $searchJson = cfpr_search_topics($this->username, strtolower($search), true);
-        $data['searchJson'] = $searchJson;
-        $data['searchData'] = json_decode(utf8_encode($searchJson), TRUE);
+        );        
+        $data['searchData'] =  $this->knowledge_model->searchTopics($this->username, strtolower($search));
 
         // if only one result is found with id redirect to knowledge map else show list
         if (is_array($data['searchData']) && count($data['searchData']) == 1 && isset($data['searchData'][0]['id'])) {
