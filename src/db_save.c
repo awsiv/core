@@ -919,7 +919,7 @@ void CFDB_SaveTotalCompliance(mongo_connection *conn, char *keyhash, Item *data)
 
 void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, PromiseLogState state, Item *data)
 {
-    bson_buffer bb, record;
+    bson_buffer bb;
     bson host_key;              // host description
     bson_buffer *setObj;
     bson setOp;
@@ -932,39 +932,52 @@ void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, PromiseLogState 
     switch (state)
     {
     case PROMISE_LOG_STATE_REPAIRED:
-        collName = MONGO_LOGS_REPAIRED;
+        collName = "logs_rep";
         break;
     case PROMISE_LOG_STATE_NOTKEPT:
-        collName = MONGO_LOGS_NOTKEPT;
+        collName = "logs_nk";
         break;
     default:
         CfOut(cf_error, "", "!! Unknown promise log report type (%d)", state);
         return;
     }
 
-    for (ip = data; ip != NULL; ip = ip->next)
-    {
+    // find right host
+    bson_buffer_init(&bb);
+    bson_append_string(&bb, cfr_keyhash, keyhash);
+    bson_from_buffer(&host_key, &bb);
+
+    bson_buffer_init(&bb);
+    setObj = bson_append_start_object(&bb, "$addToSet");
+    bson_buffer *setColl = bson_append_start_object(setObj, collName);
+    bson_buffer *setEach = bson_append_start_array(setColl, "$each");
+
+    int i = 0;
+    for (i=0, ip = data; ip != NULL; ip = ip->next,i++)
+        {
         sscanf(ip->name, "%ld,%254[^,],%1024[^\n]", &then, handle, reason);
         tthen = (time_t) then;
 
-        // update
-        bson_buffer_init(&bb);
-        setObj = bson_append_start_object(&bb, "$addToSet");
-        bson_append_int(setObj, cfr_time, tthen);
-        bson_append_finish_object(setObj);
-        bson_from_buffer(&setOp, &bb);
+        char varName[CF_BUFSIZE] = { 0 };
+        snprintf(varName, sizeof(varName), "%d", i);
 
-        // find right host and report - key
-        bson_buffer_init(&record);
-        bson_append_string(&record, cfr_keyhash, keyhash);
-        bson_append_string(&record, cfr_promisehandle, handle);
-        bson_append_string(&record, cfr_cause, reason);
-        bson_from_buffer(&host_key, &record);
-        mongo_update(conn, collName, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+        bson_buffer *sub = bson_append_start_object(setEach, varName);
+        bson_append_string(sub, cfr_promisehandle, handle);
+        bson_append_string(sub, cfr_cause, reason);
+        bson_append_int(sub, cfr_time, tthen);
+        bson_append_finish_object(sub);
+        }
 
-        bson_destroy(&setOp);
-        bson_destroy(&host_key);
-    }
+    bson_append_finish_object(setEach);
+    bson_append_finish_object(setColl);
+    bson_append_finish_object(setObj);
+    bson_from_buffer(&setOp, &bb);
+
+    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    MongoCheckForError(conn, "Update failed for : ", keyhash, NULL);
+
+    bson_destroy(&setOp);
+    bson_destroy(&host_key);
 }
 
 /*****************************************************************************/

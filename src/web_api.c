@@ -920,7 +920,7 @@ int Nova2PHP_promiselog(char *hostkey, char *handle, PromiseLogState state, time
         return false;
     }
 
-    hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, from, to, true, hostClassFilter);
+    hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, from, to, true, hostClassFilter,page);
     PageRecords(&(hq->records), page, DeleteHubPromiseLog);
 
     snprintf(header, sizeof(header),
@@ -1013,7 +1013,7 @@ int Nova2PHP_promiselog_summary(char *hostkey, char *handle, PromiseLogState sta
         return false;
     }
 
-    hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, from, to, false, hostClassFilter);
+    hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, from, to, false, hostClassFilter, page);
 
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {

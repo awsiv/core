@@ -2331,163 +2331,155 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname,
 }
 
 /*****************************************************************************/
+bool CompareStringOrRegex(char *value, const char *compareTo, bool regex)
 
+{
+    if (regex)
+    {
+        if (!NULL_OR_EMPTY(compareTo) && !FullTextMatch(compareTo, value))
+        {
+        return false;
+        }
+    }
+    else
+    {
+        if (!NULL_OR_EMPTY(compareTo)  && !strcmp(compareTo, value) != 0)
+        {
+        return false;
+        }
+    }
+    return true;
+}
+/*****************************************************************************/
 HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, PromiseLogState state,
                                const char *lhandle, int regex, time_t from, time_t to, int sort,
-                               HostClassFilter *hostClassFilter)
+                               HostClassFilter *hostClassFilter, PageInfo *page)
 {
     char rhandle[CF_MAXVARSIZE], rcause[CF_BUFSIZE];
     char keyhash[CF_MAXVARSIZE], noteid[CF_MAXVARSIZE], oid[CF_MAXVARSIZE];
-    bson_iterator it1;
     HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL;
     bson query, field;
     char *collName;
+    char *promiseLogKey;
     mongo_cursor *cursor;
     bson_buffer bb;
     time_t rt;
+    bool found = false;
+    int totalCount = page->resultsPerPage * page->pageNum;
+    int count = 0;
+    bool hasMore = false;
+
+    switch (state)
+    {
+    case PROMISE_LOG_STATE_REPAIRED:
+      //collName = MONGO_LOGS_REPAIRED;
+      promiseLogKey = "logs_rep";
+      break;
+    case PROMISE_LOG_STATE_NOTKEPT:
+    default:
+      //collName = MONGO_LOGS_NOTKEPT;
+      promiseLogKey = "logs_nk";
+      break;
+    }
 
     bson_buffer_init(&bb);
 
     if (!NULL_OR_EMPTY(keyHash))
     {
-        bson_append_string(&bb, cfr_keyhash, keyHash);
+      bson_append_string(&bb, cfr_keyhash, keyHash);
     }
 
-    if (!NULL_OR_EMPTY(lhandle))        // promise handle
-    {
-        if (regex)
-        {
-            bson_append_regex(&bb, cfr_promisehandle, lhandle, "");
-        }
-        else
-        {
-            bson_append_string(&bb, cfr_promisehandle, lhandle);
-        }
-
-    }
-
-    AppendHostKeys(conn, &bb, hostClassFilter);
+    BsonAppendHostClassFilter(&bb, hostClassFilter);
 
     bson_from_buffer(&query, &bb);
 
     bson_buffer_init(&bb);
     bson_append_int(&bb, "_id", 1);
     bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_cause, 1);
-    bson_append_int(&bb, cfr_promisehandle, 1);
-    bson_append_int(&bb, cfr_time, 1);
-    bson_append_int(&bb, cfn_nid, 1);
+    bson_append_int(&bb, promiseLogKey, 1);
     bson_from_buffer(&field, &bb);
 
-    switch (state)
-    {
-    case PROMISE_LOG_STATE_REPAIRED:
-        collName = MONGO_LOGS_REPAIRED;
-        break;
-    case PROMISE_LOG_STATE_NOTKEPT:
-    default:
-        collName = MONGO_LOGS_NOTKEPT;
-        break;
-    }
-
-    cursor = mongo_find(conn, collName, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&field);
 
     while (mongo_cursor_next(cursor))
-    {
-        bson_iterator_init(&it1, cursor->current.data);
-
+      {
+        bson_iterator itHostData;
+        bson_iterator_init(&itHostData, cursor->current.data);
+	
         keyhash[0] = '\0';
         rhandle[0] = '\0';
         rcause[0] = '\0';
         noteid[0] = '\0';
         oid[0] = '\0';
         rt = 0;
-
-        Rlist *timestampsList = NULL;
-        bool isTimestampArray = false;
-
-        while (bson_iterator_next(&it1))
+	
+        while (bson_iterator_next(&itHostData))
         {
             snprintf(noteid, sizeof(noteid), "%s", CF_NONOTE);
 
-            if (strcmp(bson_iterator_key(&it1), cfr_keyhash) == 0)
+            if (strcmp(bson_iterator_key(&itHostData), cfr_keyhash) == 0)
             {
-                snprintf(keyhash, sizeof(keyhash), "%s", bson_iterator_string(&it1));
+                snprintf(keyhash, sizeof(keyhash), "%s", bson_iterator_string(&itHostData));
             }
-            else if (strcmp(bson_iterator_key(&it1), cfr_promisehandle) == 0)
+            else if (strcmp(bson_iterator_key(&itHostData), promiseLogKey) == 0)    // new format
             {
-                snprintf(rhandle, sizeof(rhandle), "%s", bson_iterator_string(&it1));
-            }
-            else if (strcmp(bson_iterator_key(&it1), cfr_cause) == 0)
-            {
-                snprintf(rcause, sizeof(rcause), "%s", bson_iterator_string(&it1));
-            }
-            else if (strcmp(bson_iterator_key(&it1), cfn_nid) == 0)
-            {
-                snprintf(noteid, sizeof(noteid), "%s", bson_iterator_string(&it1));
-            }
-            else if (strcmp(bson_iterator_key(&it1), cfr_time) == 0)    // new format
-            {
-                if (bson_iterator_type(&it1) == bson_array)
+                if (bson_iterator_type(&itHostData) == bson_array)
                 {
-                    bson_iterator it2;
+                    bson_iterator iterPromiseLogArray;
+                    bson_iterator_init(&iterPromiseLogArray, bson_iterator_value(&itHostData));
 
-                    isTimestampArray = true;
-                    bson_iterator_init(&it2, bson_iterator_value(&it1));
-
-                    while (bson_iterator_next(&it2))
+                    while (bson_iterator_next(&iterPromiseLogArray))
                     {
-                        rt = bson_iterator_int(&it2);
+                        bson_iterator iterPromiseLogData;
 
-                        if (rt < from && rt > to)
+                        bson_iterator_init(&iterPromiseLogData, bson_iterator_value(&iterPromiseLogArray));
+
+                        while (bson_iterator_next(&iterPromiseLogData))
                         {
-                            continue;
+                            bson objPromiseLogData;
+                            bson_iterator_subobject( &iterPromiseLogData, &objPromiseLogData);
+
+                            BsonStringWrite(rhandle, sizeof(rhandle) - 1, &objPromiseLogData, cfr_promisehandle);
+                            BsonStringWrite(rcause, sizeof(rcause) - 1, &objPromiseLogData, cfr_cause);
+                            rt = BsonIntGet(&objPromiseLogData, cfr_time);
+
+                            if (rt < from && rt > to)
+                            {
+                                continue;
+                            }
                         }
 
-                        char timeString[CF_SMALLBUF] = { 0 };
-                        snprintf(timeString, sizeof(timeString), "%ld", rt);
+                        if(CompareStringOrRegex(rhandle, lhandle, regex))
+                        {
+                            found = true;
+                            count++;
 
-                        PrependRlist(&timestampsList, timeString, CF_SCALAR);
+                            PrependRlistAlien(&record_list, NewHubPromiseLog(hh, rhandle, rcause, rt, noteid, oid));
+                        }
                     }
                 }
-                else            // old format TODO: remove this completely? 
-                {
-                    rt = bson_iterator_int(&it1);
-                }
             }
-            else if (strcmp(bson_iterator_key(&it1), "_id") == 0)
+            else if (strcmp(bson_iterator_key(&itHostData), "_id") == 0)
             {
-                bson_oid_to_string(bson_iterator_oid(&it1), oid);
+                bson_oid_to_string(bson_iterator_oid(&itHostData), oid);
             }
-        }
 
-        hh = GetHubHostIn(host_list, keyhash);
+            hh = GetHubHostIn(host_list, keyhash);
 
-        if (!hh)
-        {
-            hh = NewHubHost(NULL, keyhash, NULL, NULL); // we get more host info later
-            PrependRlistAlien(&host_list, hh);
-        }
-
-        if (isTimestampArray && timestampsList)
-        {
-            Rlist *time = NULL;
-
-            for (time = timestampsList; time != NULL; time = time->next)
+            if (!hh)
             {
-                PrependRlistAlien(&record_list, NewHubPromiseLog(hh, rhandle, rcause, atoi(time->item), noteid, oid));
+                hh = NewHubHost(NULL, keyhash, NULL, NULL); // we get more host info later
+                PrependRlistAlien(&host_list, hh);
             }
-
-            DeleteRlist(timestampsList);
-            timestampsList = NULL;
         }
-        else if (!isTimestampArray)
+        if(totalCount > 0 && count >= totalCount)
         {
-            PrependRlistAlien(&record_list, NewHubPromiseLog(hh, rhandle, rcause, rt, noteid, oid));
+            hasMore = true; // TODO: append it to PageInfo
+            break;
         }
     }
 

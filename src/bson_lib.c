@@ -534,5 +534,4 @@ void BsonAppendSortField(bson_buffer *bb, char *sortField)
     bson_append_finish_object(sort);
 }
 
-
 #endif /* HAVE_LIBMONGOC */
