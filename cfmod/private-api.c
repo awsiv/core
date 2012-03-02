@@ -400,7 +400,7 @@ PHP_FUNCTION(cfpr_host_by_hostkey)
     RETURN_JSON(hostinfo);
 }
 
-PHP_FUNCTION(cfpr_host_info_get)
+PHP_FUNCTION(cfpr_host_info)
 {
     char *username = NULL, *hostKey = NULL;
     int username_len = -1, hostKey_len = -1;
@@ -469,6 +469,11 @@ PHP_FUNCTION(cfpr_host_info_get)
                 }
             }
         }
+
+        int score = Nova_GetHostColour(hh->keyhash);
+        HostColour colour = Nova_HostScoreToColour(score);
+        JsonObjectAppendString(infoObject, LABEL_COLOUR, Nova_HostColourToString(colour));
+
         DeleteHubQuery(result, DeleteHubVariable);
         RETURN_JSON(infoObject);
     }

@@ -14,7 +14,7 @@ class Host extends Cf_REST_Controller {
         try
         {
             $result = cfpr_host_count($this->username,
-                    $this->param('colour'), $this->param_includes(), 
+                    $this->param('colour'), $this->param_includes(),
                     $this->param_excludes());
 
             $this->respond_ok((string)$result);
@@ -24,7 +24,7 @@ class Host extends Cf_REST_Controller {
             $this->respond_forbidden();
         }
     }
-    
+
     function info_get($hostKey = NULL) {
 
         if (is_null($hostKey)) {
@@ -32,8 +32,8 @@ class Host extends Cf_REST_Controller {
         }
 
         try
-        {            
-            $result = cfpr_host_info_get($this->username, $hostKey);
+        {
+            $result = cfpr_host_info($this->username, $hostKey);
             if (!is_null($result))
             {
                 $this->respond_ok($result);
@@ -50,8 +50,8 @@ class Host extends Cf_REST_Controller {
 
         $this->respond_ok(json_encode($info));
     }
-    
-    function compliance_get($arg = NULL) 
+
+    function compliance_get($arg = NULL)
     {
         try
         {
@@ -60,7 +60,7 @@ class Host extends Cf_REST_Controller {
                 case 'timeseries':
                     $this->respond_ok(cfpr_host_compliance_timeseries($this->username,
                             $this->param_includes(), $this->param_excludes()));
-                
+
                 default:
                     $this->respond_not_found();
             }

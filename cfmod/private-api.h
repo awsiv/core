@@ -773,7 +773,7 @@ PHP_FUNCTION(cfpr_host_count);
 
 /*! \brief /host/info
  */
-PHP_FUNCTION(cfpr_host_info_get);
+PHP_FUNCTION(cfpr_host_info);
 
 /*! \brief A summary document of a promise
  * \param promiseHandle
