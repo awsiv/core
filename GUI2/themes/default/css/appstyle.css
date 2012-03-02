@@ -1,4 +1,4 @@
-/* 
+/*
     Document   : appstyle
     Created on : Mar 17, 2011, 5:44:51 PM
     Author     : cfengine
@@ -6,12 +6,12 @@
         Purpose of the stylesheet follows.
 */
 
-/* 
+/*
    TODO customize this sample style
    Syntax recommendation http://www.w3.org/TR/REC-CSS2/
 */
 
-root { 
+root {
     display: block;
 }
 
@@ -24,8 +24,19 @@ root {
 body {
     background: url("../images/bg_tile.png") repeat-x scroll 0 0 #A5ACA2;
     color:#6C695A;
-   
+
     font:13px/21px 'CFE_FONT',arial,Helvetica,sans-serif;
+}
+
+body .tooltip
+{
+    position: absolute;
+    display: none;
+    border: 1px solid #000000;
+    padding: 2px;
+    color: #000;
+    background-color: #cccccc;
+    opacity: 1;
 }
 
 ul li{
@@ -33,7 +44,7 @@ ul li{
 }
 
 div.ui-widget, div.ui-widget-content{
-  
+
     font:13px/19px 'CFE_FONT',arial,Helvetica,sans-serif;
      color:#6C695A;
 }
@@ -72,7 +83,7 @@ div.ui-accordion .ui-accordion-header a{
 }
 
 #header_left .sitetitle
-{ 
+{
     text-transform: uppercase;
     margin-top: 5px;
     padding: 8px 0px 12px 0px;
@@ -265,8 +276,8 @@ label#searchbox input
     width:166px;
 }
 
-@media screen and (-webkit-min-device-pixel-ratio:0) {  
- /*CSS Statements that only apply on webkit-based browsers (Chrome, Safari, etc.) */  
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+ /*CSS Statements that only apply on webkit-based browsers (Chrome, Safari, etc.) */
     label#searchbox input
     {
         padding: 5px 0 0 10px;
@@ -300,7 +311,7 @@ label#searchbox input
     width:296px;
     height:36px;
     padding: 2px 0;
-    
+
 }
 
 #work .header p{
@@ -535,7 +546,7 @@ label#searchbox input
 #tagCloud {
     width:290px; background-color:#575454; text-align:center; padding:5px;
     overflow:auto; font-size:70%; font-family:arial;
-}  
+}
 #tagList { margin:0; padding:0; }
 #tagList li {
     list-style-type:none; float:left; margin:0 10px; height:35px;
@@ -834,7 +845,7 @@ span#today
     margin:0px;
     padding: 0px;
 }
-#environment-list ul {        
+#environment-list ul {
     text-align: center;
 }
 #environment-list ul li {
@@ -928,7 +939,7 @@ span#today
 
 #goals
 {
-  
+
 }
 .statusgoal
 {
@@ -1173,7 +1184,7 @@ div.ui-dialog .ui-dialog-buttonpane{
 
 #classList .action
 {
-    margin: 0 10px; 
+    margin: 0 10px;
 }
 
 #policyList .btn, #classList .btn
@@ -1584,15 +1595,15 @@ div.ui-dialog .ui-dialog-buttonpane{
     overflow:hidden;
     max-width: 450px;
     word-wrap: break-word; /* Internet Explorer 5.5+ */
-    
+
     /*
-    white-space: pre-wrap;  css-3 
-    white-space: -moz-pre-wrap !important; # Mozilla, since 1999 
-    white-space: -pre-wrap;  #Opera 4-6 
-    white-space: -o-pre-wrap; # Opera 7 
-   
+    white-space: pre-wrap;  css-3
+    white-space: -moz-pre-wrap !important; # Mozilla, since 1999
+    white-space: -pre-wrap;  #Opera 4-6
+    white-space: -o-pre-wrap; # Opera 7
+
     white-space: pre;
-    white-space: -hp-pre-wrap; # HP Printers 
+    white-space: -hp-pre-wrap; # HP Printers
     white-space: pre-line;
     */
 }
@@ -1603,7 +1614,7 @@ div.ui-dialog .ui-dialog-buttonpane{
    background-image: url(../images/check.png);
    background-repeat: no-repeat;
    background-position: 90% 50%;
-   
+
 }
 
 .tables tr.odd td
@@ -1829,7 +1840,7 @@ div.ui-dialog .ui-dialog-buttonpane{
 
 #pulseNvitals
 {
-   
+
 }
 .nodata
 {
@@ -1884,11 +1895,11 @@ div.ui-dialog .ui-dialog-buttonpane{
 
 .stylized form label {
     display: block;  /* block float the labels to left column, set a width */
-    float: left; 
-    width: 120px; 
-    padding: 0; 
+    float: left;
+    width: 120px;
+    padding: 0;
     margin: 3px 0 0; /* set top margin same as form input - textarea etc. elements */
-    text-align: right; 
+    text-align: right;
 }
 
 .stylized form fieldset label:first-letter { /* use first-letter pseudo-class to underline accesskey, note that */
@@ -2007,7 +2018,7 @@ div.ui-dialog .ui-dialog-buttonpane{
  * SmartTextBox.css
  *
  * SmartTextBox default styles
- * 
+ *
 */
 
 .smartTextBox{
@@ -2277,7 +2288,7 @@ div.ui-dialog .ui-dialog-buttonpane{
 .bundlelist-table
 {
     padding: 0;
-    margin: 8px;  
+    margin: 8px;
     /*border:1px solid #666 ;*/
     border-collapse: collapse;
     color: #000;
@@ -2301,8 +2312,8 @@ div.ui-dialog .ui-dialog-buttonpane{
 .bundlelist-table th, .bundlelist-table td
 {
     border:0px;
-    border-bottom: 1px dashed #cccccc;  
-    text-align: left;  
+    border-bottom: 1px dashed #cccccc;
+    text-align: left;
 }
 .bundlelist-table th
 {
@@ -2314,7 +2325,7 @@ div.ui-dialog .ui-dialog-buttonpane{
     color: #FFF;
     background-color:#3D453A;
     border-right: 1px solid #666;
-    font-size: 0.9em; 
+    font-size: 0.9em;
     border-bottom: 1px solid #666;
     border-top: 1px solid #666;
 }
@@ -2328,7 +2339,7 @@ div.ui-dialog .ui-dialog-buttonpane{
 
 .bundlelist-table th[scope=host-class]
 {
-    background-color: #009193; 
+    background-color: #009193;
     color: #FFF;
     border-bottom: 1px solid #666;
     border-top: 1px solid #666;
@@ -2336,7 +2347,7 @@ div.ui-dialog .ui-dialog-buttonpane{
 
 table th[scope=red]
 {
-    background-color: #CC4358; 
+    background-color: #CC4358;
     color: #FFF;
     border-bottom: 1px solid #666;
     border-top: 1px solid #666;
@@ -2344,7 +2355,7 @@ table th[scope=red]
 
 table th[scope=yellow]
 {
-    background-color: #F0D76A; 
+    background-color: #F0D76A;
     color: #FFF;
     border-bottom: 1px solid #666;
     border-top: 1px solid #666;
@@ -2353,7 +2364,7 @@ table th[scope=yellow]
 
 .bundlelist-table th[scope=blue]
 {
-    background-color: #009193; 
+    background-color: #009193;
     color: #FFF;
     border-bottom: 1px solid #666;
     border-top: 1px solid #666;
@@ -2361,7 +2372,7 @@ table th[scope=yellow]
 
 .bundlelist-table th[scope=green]
 {
-    background-color: #779A62; 
+    background-color: #779A62;
     color: #FFF;
     border-bottom: 1px solid #666;
     border-top: 1px solid #666;
@@ -2527,7 +2538,7 @@ background-image: url(../images/error.png);
     font-size: 13px;
     padding:3px;
     font-family: "Trebuchet MS",Helvetica, Arial, sans-serif;
-    border:solid 1px #fff 
+    border:solid 1px #fff
 }
 .ui-widget-content .btn a:hover, .btn a:hover, .outerdiv .btn:hover,.ui-widget-content a.btn:hover{
     color:#08A3C1
@@ -2692,7 +2703,7 @@ ul#promisesContainer .removePromise:hover{
     box-shadow: 2px 2px 19px #444444;
     opacity:0.6;
     cursor: pointer;
-}        
+}
 #story .labelClass{
     z-index: 6;
     border: 1px solid #346789;
@@ -2741,7 +2752,7 @@ margin:0;
     border-bottom-right-radius: 6px 6px;
     border-top-left-radius: 6px 6px;
     border-top-right-radius: 6px 6px;
-    padding:40px;  
+    padding:40px;
 }
 
 #login .inner p

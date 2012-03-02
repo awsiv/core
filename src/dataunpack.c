@@ -800,7 +800,7 @@ void Nova_UnPackBundles(mongo_connection *dbconn, char *id, Item *data)
 {
     Item *ip;
     char bundle[CF_SMALLBUF];
-    double ago, average, dev;
+    double compliance, average, dev;
     long fthen;
 
     CfOut(cf_verbose, "", " -> Bundle data...........................");
@@ -814,9 +814,9 @@ void Nova_UnPackBundles(mongo_connection *dbconn, char *id, Item *data)
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
-        sscanf(ip->name, "%25s %ld %lf %lf %lf\n", bundle, &fthen, &ago, &average, &dev);
+        sscanf(ip->name, "%25s %ld %lf %lf %lf\n", bundle, &fthen, &compliance, &average, &dev);
 
-        CfDebug("Bundle: %s done %.2lf hrs ago, av %.2lf +/- %.2lf at %s", bundle, ago, average, dev, cf_ctime(&fthen));
+        CfDebug("Bundle: %s done %.2lf hrs ago, av %.2lf +/- %.2lf at %s", bundle, compliance, average, dev, cf_ctime(&fthen));
     }
 }
 

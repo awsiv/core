@@ -8,6 +8,12 @@
     cursor: pointer;
 }
 
+.astrolabe ul li
+{
+    list-style: none;
+    padding-left: 10px;
+}
+
 .astrolabe .node > .nodeIcon
 {
     height: 13px;

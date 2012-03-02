@@ -1,0 +1,74 @@
+.hostInfo
+{
+    padding: 0px;
+    float: left;
+}
+
+.hostInfo .colourIcon
+{
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+}
+
+.hostInfo .header
+{
+    padding-left: 0px;
+    margin-bottom: 10px;
+}
+
+.hostInfo .headerLabel
+{
+    font: 16px bold;
+    vertical-align: middle;
+    margin-left: 10px;
+}
+
+.hostInfo .colourIcon.red
+{
+    background: #cc4358;
+    padding: 0px;
+}
+
+.hostInfo .colourIcon.green
+{
+    background: #779a62;
+    padding: 0px;
+}
+
+.hostInfo .colourIcon.yellow
+{
+    background: #f0d76a;
+    padding: 0px;
+}
+
+.hostInfo .colourIcon.blue
+{
+    background: #476e8c;
+    padding: 0px;
+}
+
+.hostInfo .colourIcon.black
+{
+    background: #000000;
+    padding: 0px;
+}
+
+.hostInfo .column
+{
+    width: 50%;
+    float: left;
+}
+
+.hostInfo .label
+{
+    margin-right: 5px;
+    float: left;
+}
+
+.hostInfo .value
+{
+    padding: 0px;
+    float: left;
+}

@@ -117,10 +117,16 @@ char *NUMBER_TXT[] =
 
 ReportInfo BASIC_REPORTS[] =
 {
-    {CFRID_BUNDLE_PROFILE, "Policy", "Themes by bundle", "Bundle profile",
-     "Status of promise bundles and when they were last verified"},
-    {CFRID_PROMISE_COMPLIANCE, "Policy", "View compliance", "Compliance by promise",
-     "Compliance of each promise individually"},
+    {CFRID_BUNDLE_PROFILE, "Policy", "Compliance by bundle", "Bundle profile",
+     "Aggregate compliance levels of promise bundles"},
+    {CFRID_PROMISE_COMPLIANCE, "Policy", "Compliance by promise", "Compliance by promise",
+     "Compliance of each individual promise"},
+#ifdef HAVE_CONSTELLATION
+    {CFRID_VIRTUAL_BUNDLES, "Constellation", "Virtual bundles", "Virtual bundles",
+     "Custom collections of promises and their compliance"},
+#endif
+    {CFRID_COMPLIANCE_SUMMARY, "Accounting", "Compliance summary", "Compliance summary",
+     "Total summary of host compliance"},
     {CFRID_PROMISES_REPAIRED_LOG, "Policy", "Promises repaired (log)", "Promises repaired log",
      "Log of actual repairs made to the system"},
     {CFRID_PROMISES_REPAIRED_SUMMARY, "Policy", "Promises repaired (summary)", "Promises repaired summary",
@@ -131,9 +137,9 @@ ReportInfo BASIC_REPORTS[] =
      "Cumulative (histogram) summary of promises not kept"},
 
     {CFRID_CONTEXTS, "System", "Context classes", "Class profile", "User defined classes observed on the system"},
-    {CFRID_NEIGHBORS, "System", "Neighbours", "Last seen hosts",
-     "Log of when neighbouring hosts were last observed online"},
-    {CFRID_VALUES, "System", "Values", "Variables", "Table of variable values last observed"},
+    {CFRID_NEIGHBORS, "System", "Last Saw Neighbours", "Last seen hosts",
+     "When host neighbours were last seen online"},
+    {CFRID_VALUES, "System", "Variables", "Variables", "Table of variable values last observed"},
 
     {CFRID_PATCHES_AVAILABLE, "Software", "Patches available", "Patches available",
      "A list of patches currently claimed to be available by the local package manager"},
@@ -153,12 +159,6 @@ ReportInfo BASIC_REPORTS[] =
     {CFRID_BUSINESS_VALUE, "Accounting", "Business value", "Business value report",
      "Accumulated value of promises kept"},
     {CFRID_BENCHMARKS, "Accounting", "Benchmarks", "Performance", "Execution time used to verify selected promises"},
-    {CFRID_COMPLIANCE_SUMMARY, "Accounting", "Compliance summary", "Compliance summary",
-     "Total summary of host compliance"},
-#ifdef HAVE_CONSTELLATION
-    {CFRID_VIRTUAL_BUNDLES, "Constellation", "Virtual bundles", "Virtual bundles",
-     "Custom collections of promises and their compliance"},
-#endif
     {NULL, NULL, NULL, NULL, NULL}
 };
 

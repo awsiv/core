@@ -2001,13 +2001,12 @@ void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_menu typ
     Item *file = NULL;
     int first = true, ksize, vsize;
     time_t tid = time(NULL);
-    double now = (double) tid, average = 0, var = 0;
-    double ticksperhr = (double) SECONDS_PER_HOUR;
+    double now = (double) tid, average = 0, var = 0, compliance = 0;
     CF_DB *dbp;
     CF_DBC *dbcp;
     char *key;
     void *value;
-    QPoint entry;
+    Event entry;
 
     CfOut(cf_verbose, "", " -> Packing bundle log");
 
@@ -2045,9 +2044,10 @@ void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_menu typ
         {
             memcpy(&entry, value, sizeof(entry));
 
-            then = entry.q;
-            average = (double) entry.expect;
-            var = (double) entry.var;
+            then = entry.t;
+            compliance = (double) entry.Q.q;
+            average = (double) entry.Q.expect;
+            var = (double) entry.Q.var;
         }
         else
         {
@@ -2071,7 +2071,7 @@ void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_menu typ
 
         snprintf(line, sizeof(line), "%s %ld %.2lf %.2lf %.2lf\n",
                  bundle,
-                 (long) fthen, ((double) (now - then)) / ticksperhr, average / ticksperhr, sqrt(var) / ticksperhr);
+                 (long) fthen, compliance, average, sqrt(var));
 
         AppendItem(reply, line, NULL);
     }

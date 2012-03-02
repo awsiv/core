@@ -1959,7 +1959,7 @@ int Nova2PHP_bundle_report(char *hostkey, char *bundle, int regex, HostClassFilt
     PageRecords(&(hq->records), page, DeleteHubBundleSeen);
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d,"
-             "\"header\": {\"Host\":0,\"Bundle\":1,\"Last Verified\":2,\"Hours Ago\":3,\"Avg Interval\":4,\"Uncertainty\":5,"
+             "\"header\": {\"Host\":0,\"Bundle\":1,\"Last Verified\":2,\"Compliance\":3,\"Avg Compliance\":4,\"Uncertainty\":5,"
              "\"Note\":{\"index\":6,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
              "}", page->totalResultCount);
 
@@ -1976,13 +1976,13 @@ int Nova2PHP_bundle_report(char *hostkey, char *bundle, int regex, HostClassFilt
             snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,%.2lf,%.2lf,%.2lf,"
                      "[\"add\",\"%s\",%d,\"%s\",\"\"]],",
                      hb->hh->hostname, hb->bundle, hb->t,
-                     hb->hrsago, hb->hrsavg, hb->hrsdev, hb->hh->keyhash, CFREPORT_BUNDLE, hb->bundle);
+                     hb->bundlecomp, hb->bundleavg, hb->bundledev, hb->hh->keyhash, CFREPORT_BUNDLE, hb->bundle);
         }
         else
         {
             snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,%.2lf,%.2lf,%.2lf,"
                      "[\"show\",\"\",\"\",\"\",\"%s\"]],",
-                     hb->hh->hostname, hb->bundle, hb->t, hb->hrsago, hb->hrsavg, hb->hrsdev, hb->nid);
+                     hb->hh->hostname, hb->bundle, hb->t, hb->bundlecomp, hb->bundleavg, hb->bundledev, hb->nid);
         }
         margin = headerLen + noticeLen + strlen(buffer);
         if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))

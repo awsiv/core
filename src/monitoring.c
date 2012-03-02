@@ -1004,6 +1004,14 @@ Item *NovaReSample(int slot, Attributes a, Promise *pp)
                 CfOut(cf_verbose, "", " !! Programming %s running with umask 0! Use umask= to set\n", pp->promiser);
             }
 
+
+            // Mark: This is strange that we used these wrappers. Currently no way of setting these
+            a.contain.owner = -1;
+            a.contain.group = -1;
+            a.contain.chdir = NULL;
+            a.contain.chroot = NULL;
+            // Mark: they were unset, and would fail for non-root(!)
+            
             if (a.contain.useshell)
             {
                 fin =

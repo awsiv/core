@@ -12,10 +12,13 @@ AM_CFLAGS = $(NOVA_CFLAGS) $(CONSTELLATION_CFLAGS) -I$(top_srcdir)/src -I$(CMOCK
 MOCKERY_SOURCES = $(CMOCKERY_DIR)/cmockery.c
 
 check_PROGRAMS = \
-        logging_test
+        logging_test \
+	map_test
 
 TESTS = $(check_PROGRAMS)
 
 logging_test_SOURCES = $(MOCKERY_SOURCES) logging_test.c
 logging_test_LDADD = $(top_builddir)/src/libpromises.la
 
+map_test_SOURCES = $(MOCKERY_SOURCES) map_test.c
+map_test_LDADD = $(top_builddir)/src/libpromises.la

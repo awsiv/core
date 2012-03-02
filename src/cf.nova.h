@@ -374,9 +374,9 @@ typedef struct
 {
     HubHost *hh;
     char *bundle;
-    double hrsago;
-    double hrsavg;
-    double hrsdev;
+    double bundlecomp;
+    double bundleavg;
+    double bundledev;
     time_t t;
     char *nid;
 } HubBundleSeen;
@@ -985,6 +985,8 @@ HubHost *NewHubHost(const char *hubkey, const char *keyhash, const char *ipaddr,
 HubHost *CreateEmptyHubHost(void);
 HubHost *UpdateHubHost(HubHost *hubHost, char *keyhash, char *ipaddr, char *hostname);
 HubHost *GetHubHostIn(Rlist *host_list, char *keyhash);
+bool HubHostEqual(const void *hubhost_a, const void *hubhost_b);
+unsigned int HubHostHash(const void *hubhost);
 void DeleteHubHost(HubHost *hp);
 HubSoftware *NewHubSoftware(HubHost *hh, char *name, char *version, char *arch, time_t timeseen);
 void DeleteHubSoftware(HubSoftware *hs);
@@ -1612,6 +1614,9 @@ typedef struct
 #define cfr_hrsago        "a"
 #define cfr_hrsavg        "v"
 #define cfr_hrsdev        "d"
+#define cfr_bundlecomp    "bc"
+#define cfr_bundleavg     "bv"
+#define cfr_bundledev     "bd"
 #define cfr_meter         "me"
 #define cfr_meterkept     "K"
 #define cfr_meterrepaired "R"

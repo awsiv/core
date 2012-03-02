@@ -139,6 +139,11 @@ class Cf_REST_Controller extends CI_Controller {
     {
         return $this->respond(403);
     }
+    
+    public function respond_internal_error($message)
+    {
+        return $this->respond(500, $message);
+    }
 
     protected function _detect_method() {
         $method = strtolower($this->input->server('REQUEST_METHOD'));

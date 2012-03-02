@@ -63,7 +63,11 @@ libcfnova_la_SOURCES = \
         topicmap.c \
         install.c \
         files_lib.c \
-        cmd_api.c
+        cmd_api.c \
+        map.c map.h map_common.h \
+        string_map.c string_map.h \
+        array_map.c array_map_priv.h \
+        hash_map.c hash_map_priv.h
 
 if NT
 libcfnova_la_SOURCES += \

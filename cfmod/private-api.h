@@ -763,13 +763,17 @@ PHP_FUNCTION(cfpr_host_list_by_name_rx);
  */
 PHP_FUNCTION(cfpr_host_compliance_colour);
 
+/*! \brief /host/compliance/timeseries
+*/
+PHP_FUNCTION(cfpr_host_compliance_timeseries);
+
 /*! \brief /host/count
  */
 PHP_FUNCTION(cfpr_host_count);
 
 /*! \brief /host/info
  */
-PHP_FUNCTION(cfpr_host_info_get);
+PHP_FUNCTION(cfpr_host_info);
 
 /*! \brief A summary document of a promise
  * \param promiseHandle
