@@ -98,6 +98,9 @@ class Auth extends Controller {
         if ($this->form_validation->run() == true) { //check to see if the user is logging in
             //check for "remember me"
             $remember = (bool) $this->input->post('remember');
+            
+            // add a session variable for the timezone information of the user for date conversion 
+             $this->session->set_userdata('user_timezone', $this->input->post('timezone'));
 
             if ($this->ion_auth->login(trim($this->input->post($identifier)), $this->input->post('password'), $remember)) { //if the login is successful
                 //redirect them back to the home page
@@ -141,6 +144,12 @@ class Auth extends Controller {
             else{
                $this->data['mode']=$this->lang->line('login_mode_not_found');
             }
+            
+            
+            $this->data['timezone'] = array('name' => 'timezone',
+                'id' => 'timezone',
+                'type' => 'hidden',
+            );
 
             $this->load->view('auth/login', $this->data);
         }
