@@ -17,7 +17,7 @@ class Knowledge extends Cf_Controller {
      * if rbac is ON and if the user is not admin then dont give them access to knowledge map 
      */
     function _checkAccess() {
-        $rbac = $this->settings_model->app_settings_get_item('rbac');
+        $rbac = $this->setting_lib->get_rbac_setting();
         $isAdmin = $this->ion_auth->is_admin();
         if ($rbac && !$isAdmin) {
             $errorMessage = $this->lang->line('knowledge_access_denied');

@@ -54,6 +54,17 @@ class Setting_lib
     {
         $this->username = $username;
     }
+    
+    
+    /**
+     * Returns the state of rbac 
+     * (In DB it is set as true or false in string) 
+     * @return boolean  if it is set returns (bool)true else false
+     */
+    public function get_rbac_setting() {
+       return  $this->ci->settings_model->app_settings_get_item('rbac') === "true" ? true : false;
+    }
+    
 
 }
 
