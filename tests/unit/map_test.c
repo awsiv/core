@@ -197,11 +197,3 @@ int main()
 
     return run_tests(tests);
 }
-
-/* Stubs */
-
-void FatalError(char *s, ...)
-{
-    mock_assert(0, "0", __FILE__, __LINE__);
-    abort();
-}
