@@ -1155,7 +1155,7 @@ static bool HostClassFilterMatchInclude(const HostClassFilter *filter, const cha
     bool include = false;
     for (const Rlist *rp = filter->classRxIncludes; rp; rp = rp->next)
     {
-        if (FullTextMatch(ScalarValue(rp), classRx))
+        if (StringMatch(ScalarValue(rp), classRx))
         {
             include = true;
         }
@@ -1172,7 +1172,7 @@ static bool HostClassFilterMatchExclude(const HostClassFilter *filter, const cha
     bool exclude = false;
     for (const Rlist *rp = filter->classRxExcludes; rp; rp = rp->next)
     {
-        if (FullTextMatch(ScalarValue(rp), classRx))
+        if (StringMatch(ScalarValue(rp), classRx))
         {
             exclude = true;
         }
