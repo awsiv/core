@@ -4,6 +4,7 @@
             <div class="engineeringNavigationContainer">
                 <div id="astrolabe"></div>
             </div>
+            <div class="clear"></div>
         </div>
         <div class="grid_8 omega">
             <div class="engineeringContentContainer">

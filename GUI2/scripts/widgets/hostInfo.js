@@ -11,7 +11,6 @@
             $self.element.addClass('hostInfo');
 
             $self._values = {
-                name: $self._createValueElement(),
                 ip: $self._createValueElement(),
                 osType: $self._createValueElement(),
                 flavour: $self._createValueElement(),
@@ -20,12 +19,19 @@
                 lastPolicyUpdate: $self._createValueElement()
             };
 
+            var $header = $('<div>').addClass('header');
+            {
+                $self._colourIcon = $('<span>').addClass('colourIcon');
+                $header.append($self._colourIcon);
+
+                $self._headerLabel = $('<span>').addClass('headerLabel');
+                $header.append($self._headerLabel);
+            }
+            $self.element.append($header);
+            $self.element.append($self._createClear());
+
             var $column1 = $('<div>').addClass('column');
             {
-                $column1.append($self._createLabelElement('Name'));
-                $column1.append($self._values.name);
-                $column1.append($self._createClear());
-
                 $column1.append($self._createLabelElement('IP'));
                 $column1.append($self._values.ip);
                 $column1.append($self._createClear());
@@ -88,7 +94,6 @@
         _clearFields: function() {
             var $self = this;
 
-            $self._values.name.html('unknown');
             $self._values.ip.html('unknown');
             $self._values.osType.html('unknown');
             $self._values.flavour.html('unknown');
@@ -97,14 +102,23 @@
             $self._values.lastPolicyUpdate.html('unknown');
         },
 
+        _setHeader: function(hostname, colour) {
+            var $self = this;
+
+            $self._headerLabel.html(hostname);
+            $self._colourIcon.removeClass('red green yellow blue black');
+            $self._colourIcon.addClass(colour);
+        },
+
         updateHostKey: function(hostKey) {
             var $self = this;
 
             var requestUrl = $self.options.baseUrl + '/host/info/' + hostKey;
 
             $.getJSON(requestUrl, function(host) {
+                $self._setHeader(host.hostname, 'green');
+
                 $self._clearFields();
-                $self._values.name.html(host.hostname);
                 $self._values.ip.html(host.ip);
 
                 if (host.osType !== undefined) {
