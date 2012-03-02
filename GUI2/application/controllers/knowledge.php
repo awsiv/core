@@ -78,8 +78,11 @@ class Knowledge extends Cf_Controller {
         $root = getcwd();
         
         $root = $root . '/docs/';
-        $data['docs'] = $this->knowledge_model->listDocuments($root);
-
+        try {
+            $data['docs'] = $this->knowledge_model->listDocuments($root);
+        } catch(Exception $e) {
+            show_error($e->getMessage(),500);
+        }
         $this->template->load('template', 'knowledge/docs', $data);
     }
 
@@ -92,6 +95,7 @@ class Knowledge extends Cf_Controller {
 
         $search = isset($getparams['search']) ? urldecode($getparams['search']) : $this->input->post('search');
         $data['search'] = trim($search);
+        try {
         if ($data['search']) {
             $data['searchData'] = $this->knowledge_model->searchTopics($this->username, $data['search'], true);
             $this->load->view('/knowledge/search_result', $data);
@@ -100,6 +104,9 @@ class Knowledge extends Cf_Controller {
             $pid = $this->knowledge_model->getPidForTopic($this->username, "any", "manuals");            
             $data['searchData'] = $this->knowledge_model->showTopicHits($this->username, $pid);
             $this->load->view('/knowledge/searchmanual', $data);
+        }
+        } catch(Exception $e) {
+            show_error_custom($e->getMessage(),500);
         }
     }
 
@@ -121,6 +128,7 @@ class Knowledge extends Cf_Controller {
         $topic = isset($getparams['topic']) ? $getparams['topic'] : $this->input->post('topic');
         $pid = isset($getparams['pid']) ? $getparams['pid'] : $this->input->post('pid');
         // chech for integer
+        try {
         $pid = intval($pid, 10);
         if (!$pid)
             $pid = $this->knowledge_model->getPidForTopic($this->username,"", "system policy");
@@ -161,6 +169,9 @@ class Knowledge extends Cf_Controller {
             $data['showStory'] = (!is_array($stories) || empty($stories['F'])) ? false : true;
         }
         $this->template->load('template', 'knowledge/knowledge', $data);
+        } catch (Exception $e) {
+            show_error($e->getMessage(),500);
+        }
     }
 
     function knowledgeSearch() {
@@ -190,7 +201,11 @@ class Knowledge extends Cf_Controller {
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_kw_bank'),
             'breadcrumbs' => $this->breadcrumblist->display(),
         );        
+        try {
         $data['searchData'] =  $this->knowledge_model->searchTopics($this->username, strtolower($search));
+        } catch (Exception $e) {
+            show_error($e->getMessage(),500);
+        }
 
         // if only one result is found with id redirect to knowledge map else show list
         if (is_array($data['searchData']) && count($data['searchData']) == 1 && isset($data['searchData'][0]['id'])) {
