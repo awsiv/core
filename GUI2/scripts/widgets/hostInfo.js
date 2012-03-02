@@ -116,7 +116,7 @@
             var requestUrl = $self.options.baseUrl + '/host/info/' + hostKey;
 
             $.getJSON(requestUrl, function(host) {
-                $self._setHeader(host.hostname, 'green');
+                $self._setHeader(host.hostname, host.colour);
 
                 $self._clearFields();
                 $self._values.ip.html(host.ip);
