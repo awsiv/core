@@ -4,10 +4,10 @@
          <div class="dd_menu">
             <ul>
               <?php foreach($reports_menu as $key=>$val){?>
-                <li><?php echo $key ?>
+                <li class="<?php echo $report_category == $key?"selected":"" ?>"><?php echo $key ?>
                     <ul>
                    <?php foreach ($val as $reportdata){ ?>
-                        <li><a href="<?php echo site_url('/search/index/host/All/report').'/'.urlencode($reportdata['id'])?>"><?php echo $reportdata['name'] ?></a></li>
+                        <li><a href="<?php echo site_url('/search/index/host/All/report').'/'.urlencode($reportdata['id'])?>" class="<?php echo $reportdata['id']==$report_type? "selected":""?>"><?php echo $reportdata['name'] ?></a></li>
                    <?php }?>
                     </ul>
                  </li>
@@ -20,6 +20,7 @@
             echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : ""
             ?>
         </p>-->
+        
         <div class="reporthead">
             <div class="grid_8">
                 <a href="<?php echo $report_link ?>" id="send_mail" class="icons download showqtip" title="Download report"></a>

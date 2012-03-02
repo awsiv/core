@@ -168,7 +168,8 @@ class Search extends Cf_Controller {
             'hostkey' => $hostkey,
             'resultView' => 'default_result_view',
             'fromEmail' => $fromEmail,
-            'reports_menu'=>$this->__reports_menu()
+            'reports_menu'=>$this->__reports_menu(),
+            'report_category'=>$this->report_model->getReportCategory($report_type)
         );
 
 
