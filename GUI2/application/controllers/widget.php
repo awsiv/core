@@ -4,7 +4,7 @@ class Widget extends Cf_Controller {
 
     function Widget() {
         parent::__construct();
-        $this->load->model(array('host_model','class_model'));
+        $this->load->model(array('host_model','class_model','report_model'));
         if (!$this->ion_auth->logged_in()) {
             $this->output->set_status_header('401', 'Not Authenticated');
             echo $this->lang->line('session_expired');
@@ -354,11 +354,8 @@ class Widget extends Cf_Controller {
     }
 
     function allreports() {
-        $data = cfpr_select_reports(null);
-        $reportsData = sanitycheckjson($data, true);
-        // check for error code returned
-        $errorCode = $reportsData['error']['errid'];
-        if ($errorCode == 0) {
+        try{
+            $reportsData = $this->report_model->getAllReports();
             $reports = $reportsData['data'];
             $treeview_reports = array();
             foreach ($reports as $report) {
@@ -371,9 +368,7 @@ class Widget extends Cf_Controller {
             }
             $json = json_encode($treeview_reports);
             echo $json;
-            exit;
-        } else {
-            // we got some error here throw it out 
+          }catch(Exception $e){
             $this->output->set_status_header('500', $reportsData['error']['message']);
             exit;
         }

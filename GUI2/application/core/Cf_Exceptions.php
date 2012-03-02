@@ -35,8 +35,9 @@ class Cf_Exceptions extends CI_Exceptions {
                 $trace = "<h1>Call Trace</h1><pre>" . $e->getTraceAsString() . "<pre>";
                 $err = $trace;
                 $errorMessage =  $e->getMessage() . $err ;
+             
                 
-                echo  parent::show_error($heading,$errorMessage, $template = 'error_general', $status_code);
+                echo  parent::show_error($heading,$errorMessage, $template, $status_code);
 
                 
                 log_message('error', $status_code . ' ' . $heading . '-' . $megetenvssage . ' --> ' . $page);
@@ -47,7 +48,7 @@ class Cf_Exceptions extends CI_Exceptions {
             if (!$page = $path->uri_string()) {
                 $page = 'home';
             }
-            echo parent::show_error($heading, $megetenvssage, $template = 'error_general', $status_code);
+            echo parent::show_error($heading, $megetenvssage, $template, $status_code);
 
             if ($status_code != 404) {
                 log_message('error', $status_code . ' ' . $heading . '-' . $megetenvssage . ' --> ' . $page);

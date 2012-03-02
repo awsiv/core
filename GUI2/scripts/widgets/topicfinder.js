@@ -64,13 +64,45 @@
   
   
         },
+        
+        
+        
+        _displayFailure: function(x,e) {
+            var serverMsg,
+            self=this;
+            switch(x.status) {
+                case 0:
+                    serverMsg='You are offline!!\n Please Check Your Network.';
+                    break;
+                case 404:
+                    serverMsg='Requested URL not found.';
+                    break;
+                case 403:
+                    serverMsg= x.responseText;
+                    break;
+                case 500:
+                    serverMsg='Internel Server Error. '+x.responseText;
+                    break;
+                default:
+                    serverMsg='Unknow Error.\n'+x.responseText;
+                    break;
+            }
+            if(e=='parsererror'){
+                serverMsg='Error.\nParsing JSON Request failed.';
+            }else if(e=='timeout'){
+                serverMsg='Request Time out.';
+            }
+             
+            self.dialogcontent.html("<div class='ui-state-error' style='padding: 1em;width:90%'><p><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span><span>" + serverMsg+"</span></div>");
+           
+        },
 
         loadpagebody:function(){
-            var self=this;
-           
+            var self=this;           
             $.get(self.element.attr('href'), function(data) {
                 self.dialogcontent.html(data);
-            //self.dialogcontent.find("#classList").delegate('a','click',$.proxy(self.classSelected,self));
+            }).error(function(xhr, status, err) {
+                self._displayFailure(xhr,err);
             });
         },
 
@@ -135,7 +167,9 @@
                 },
                 function(data) {
                     self.dialogcontent.html(data);
-                });
+                }).error(function(xhr, status, err) {
+                    self._displayFailure(xhr,err);
+                });;
            
             }
 

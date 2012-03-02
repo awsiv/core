@@ -22,6 +22,7 @@
  //$('#hg').smartTextBox({separator : "|",editOnFocus:true});
 $('#bphghelp').classfinder({
     defaultbehaviour:false,
+    baseUrl:"<?php echo base_url();?>",
     complete:function(event,data){
         //console.log(data.selectedclass);
         //$('#hg') .smartTextBox('add', data.selectedclass);

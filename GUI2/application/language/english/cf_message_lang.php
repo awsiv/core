@@ -271,6 +271,7 @@ $lang['session_expired']= "Session Expired ! Please relogin";
 $lang['svn_update_no_user']="Svn credentials not found for user";
 $lang['rbac_exception']= "User not authorised to access this data";
 $lang['invalid_json']="Invalid json data";
+$lang['invalid_report_id'] = "Invalid report type";
 
 /*
  * Exception messages

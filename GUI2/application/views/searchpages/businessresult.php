@@ -1,17 +1,30 @@
 <div id="bodyreport" class="outerdiv grid_12">
 
     <div id="reportpanel" class="innerdiv">
-        <p class="title">
+         <div class="dd_menu">
+            <ul>
+              <?php foreach($reports_menu as $key=>$val){?>
+                <li class="<?php echo $report_category == $key?"selected":"" ?>"><?php echo $key ?>
+                    <ul>
+                   <?php foreach ($val as $reportdata){ ?>
+                        <li><a href="<?php echo site_url('/search/index/host/All/report').'/'.urlencode($reportdata['id'])?>" class="<?php echo $reportdata['id']==$report_type? "selected":""?>"><?php echo $reportdata['name'] ?></a></li>
+                   <?php }?>
+                    </ul>
+                 </li>
+                <?php } ?>
+            </ul>
+        </div>
+        <!--<p class="title">
             <?php
             echo $report_title;
             echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : ""
             ?>
-        </p>
+        </p>-->
+        
         <div class="reporthead">
             <div class="grid_8">
                 <a href="<?php echo $report_link ?>" id="send_mail" class="icons download showqtip" title="Download report"></a>
                 <?php echo anchor('#', 'Select host', array('id' => 'findhost', 'title' => 'Report for another host', 'class' => 'showqtip')) ?>
-                &nbsp;&nbsp;<?php echo anchor('widget/allreports', 'Select report', array('id' => 'findreport', 'title' => 'Other Reports', 'class' => 'showqtip')) ?>
             </div>
             <div class="grid_4" style="text-align: right;">
                 <div><a href="#" id="savesearch" class="showqtip" title="save this search for future use"><span class="ui-icon-triangle-1-s"></span>Save this search</a></div>
@@ -150,8 +163,6 @@
                                         location.replace('<?php echo site_url() ?>/search/index/host/'+data.selectedhost+'/'+data.report);
                                     }
                                 });
-        
-                                $('#findreport').reportfinder(<?php echo (isset($hostkey) && ($hostkey != "")) ? "{baseUrl:'" . site_url() . "',allhost:false,hostkey:\"$hostkey\"}" : "{baseUrl: '" . site_url() . "'}" ?>);
         
                                 var $dialog = $('#dialog');
         
