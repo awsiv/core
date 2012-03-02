@@ -1,6 +1,7 @@
 <?php
 
-class knowledge_model extends Cf_Model {
+class knowledge_model extends Cf_Model
+{
 
     /**
      * 
@@ -9,16 +10,23 @@ class knowledge_model extends Cf_Model {
      * @param bool $flag
      * @return array 
      */
-    function searchTopics($username, $search, $flag = true) {
-        try {
+    function searchTopics($username, $search, $flag = true)
+    {
+        try
+        {
             $rawdata = cfpr_search_topics($username, $search, $flag);
             $data = $this->checkData($rawdata);
-            if (is_array($data)) {
+            if (is_array($data))
+            {
                 return $data;
-            } else {
+            }
+            else
+            {
                 throw new Exception($this->lang->line('invalid_json'));
             }
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
@@ -31,16 +39,23 @@ class knowledge_model extends Cf_Model {
      * @return array
      * @throws Exception 
      */
-    function showTopicHits($username, $pid) {
-        try {
+    function showTopicHits($username, $pid)
+    {
+        try
+        {
             $rawdata = cfpr_show_topic_hits($username, $pid);
             $data = $this->checkData($rawdata);
-            if (is_array($data)) {
+            if (is_array($data))
+            {
                 return $data;
-            } else {
+            }
+            else
+            {
                 throw new Exception($this->lang->line('invalid_json'));
             }
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
@@ -53,17 +68,24 @@ class knowledge_model extends Cf_Model {
      * @return JSON json representation of the knowledge map
      * 
      */
-    function getKnowledgeView($username, $pid) {
+    function getKnowledgeView($username, $pid)
+    {
 
-        try {
+        try
+        {
             $result = cfpr_get_knowledge_view($username, $pid, '');
             $data = $this->checkData($result);
-            if (is_array($data)) {
+            if (is_array($data))
+            {
                 return $result; // we need the JSON representation
-            } else {
+            }
+            else
+            {
                 throw new Exception($this->lang->line('invalid_json'));
             }
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
@@ -77,11 +99,15 @@ class knowledge_model extends Cf_Model {
      * @return int
      * @throws Exception 
      */
-    function getPidForTopic($username, $context, $topic) {
+    function getPidForTopic($username, $context, $topic)
+    {
 
-        try {
+        try
+        {
             return cfpr_get_pid_for_topic($username, $context, $topic);
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
@@ -94,16 +120,23 @@ class knowledge_model extends Cf_Model {
      * @return array 
      * @throws Exception 
      */
-    function showTopics($username, $pid) {
-        try {
+    function showTopics($username, $pid)
+    {
+        try
+        {
             $result = cfpr_show_topic($username, $pid);
             $data = $this->checkData($result);
-            if (is_array($data)) {
+            if (is_array($data))
+            {
                 return $data;
-            } else {
+            }
+            else
+            {
                 throw new Exception($this->lang->line('invalid_json'));
             }
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
@@ -116,16 +149,23 @@ class knowledge_model extends Cf_Model {
      * @return array 
      * @throws Exception 
      */
-    function showTopicLeads($username, $pid) {
-        try {
+    function showTopicLeads($username, $pid)
+    {
+        try
+        {
             $result = cfpr_show_topic_leads($username, $pid);
             $data = $this->checkData($result);
-            if (is_array($data)) {
+            if (is_array($data))
+            {
                 return $data;
-            } else {
+            }
+            else
+            {
                 throw new Exception($this->lang->line('invalid_json'));
             }
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
@@ -138,35 +178,49 @@ class knowledge_model extends Cf_Model {
      * @return array 
      * @throws Exception 
      */
-    function showTopicCategory($username, $pid) {
-        try {
+    function showTopicCategory($username, $pid)
+    {
+        try
+        {
             $result = cfpr_show_topic_category($username, $pid);
             $data = $this->checkData($result);
-            if (is_array($data)) {
+            if (is_array($data))
+            {
                 return $data;
-            } else {
+            }
+            else
+            {
                 throw new Exception($this->lang->line('invalid_json'));
             }
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
     }
-    
+
     /**
      * 
      */
-    function listDocuments($path='') {
-        
-         try {
+    function listDocuments($path = '')
+    {
+
+        try
+        {
             $result = cfpr_list_documents($path);
             $data = $this->checkData($result);
-            if (is_array($data)) {
+            if (is_array($data))
+            {
                 return $data;
-            } else {
+            }
+            else
+            {
                 throw new Exception($this->lang->line('invalid_json'));
             }
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }

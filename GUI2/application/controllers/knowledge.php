@@ -1,10 +1,12 @@
 <?php
 
-class Knowledge extends Cf_Controller {
+class Knowledge extends Cf_Controller
+{
 
     private $username = "";
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->load->helper('form');
         $this->load->library('table', 'cf_table');
@@ -16,21 +18,27 @@ class Knowledge extends Cf_Controller {
      * Checks if the current user has access to use the functionality 
      * if rbac is ON and if the user is not admin then dont give them access to knowledge map 
      */
-    function _checkAccess() {
+    function _checkAccess()
+    {
         $rbac = $this->setting_lib->get_rbac_setting();
         $isAdmin = $this->ion_auth->is_admin();
-        if ($rbac && !$isAdmin) {
+        if ($rbac && !$isAdmin)
+        {
             $errorMessage = $this->lang->line('knowledge_access_denied');
-            if (is_ajax()) {
+            if (is_ajax())
+            {
                 show_error_custom($errorMessage, 403);
-            } else {
+            }
+            else
+            {
                 show_error($errorMessage, 403);
             }
         }
         return;
     }
 
-    function index() {
+    function index()
+    {
         $bc = array(
             'title' => $this->lang->line('breadcrumb_library'),
             'url' => 'knowledge/index',
@@ -40,7 +48,7 @@ class Knowledge extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
 
         $data = array(
-            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_library'),
+            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_library'),
             'title_header' => "Library",
             'breadcrumbs' => $this->breadcrumblist->display()
         );
@@ -58,7 +66,8 @@ class Knowledge extends Cf_Controller {
     /**
      * Doc links pages
      */
-    function docs() {
+    function docs()
+    {
 
 
         $bc = array(
@@ -70,23 +79,27 @@ class Knowledge extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
 
         $data = array(
-            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_docs'),
+            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_docs'),
             'title_header' => "Docs",
             'breadcrumbs' => $this->breadcrumblist->display()
         );
 
         $root = getcwd();
 
-        $root = $root.'/docs/';
-        try {
+        $root = $root . '/docs/';
+        try
+        {
             $data['docs'] = $this->knowledge_model->listDocuments($root);
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             show_error($e->getMessage(), 500);
         }
         $this->template->load('template', 'knowledge/docs', $data);
     }
 
-    function topicFinder() {
+    function topicFinder()
+    {
 
         $this->_checkAccess();
 
@@ -95,22 +108,29 @@ class Knowledge extends Cf_Controller {
 
         $search = isset($getparams['search']) ? urldecode($getparams['search']) : $this->input->post('search');
         $data['search'] = trim($search);
-        try {
-            if ($data['search']) {
+        try
+        {
+            if ($data['search'])
+            {
                 $data['searchData'] = $this->knowledge_model->searchTopics($this->username, $data['search'], true);
                 $this->load->view('/knowledge/search_result', $data);
-            } else {
+            }
+            else
+            {
                 // search for default manuals
                 $pid = $this->knowledge_model->getPidForTopic($this->username, "any", "manuals");
                 $data['searchData'] = $this->knowledge_model->showTopicHits($this->username, $pid);
                 $this->load->view('/knowledge/searchmanual', $data);
             }
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             show_error_custom($e->getMessage(), 500);
         }
     }
 
-    function knowledgemap() {
+    function knowledgemap()
+    {
 
         $this->_checkAccess();
 
@@ -127,9 +147,11 @@ class Knowledge extends Cf_Controller {
         $topic = isset($getparams['topic']) ? $getparams['topic'] : $this->input->post('topic');
         $pid = isset($getparams['pid']) ? $getparams['pid'] : $this->input->post('pid');
         // chech for integer
-        try {
+        try
+        {
             $pid = intval($pid, 10);
-            if (!$pid) {
+            if (!$pid)
+            {
                 $pid = $this->knowledge_model->getPidForTopic($this->username, "", "system policy");
             }
             $breadcrumbs_url = "knowledge/knowledgemap/pid/$pid";
@@ -145,7 +167,7 @@ class Knowledge extends Cf_Controller {
                 'search' => $search,
                 'topic' => $topic,
                 'pid' => $pid,
-                'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_kw_bank'),
+                'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_kw_bank'),
                 'breadcrumbs' => $this->breadcrumblist->display(),
             );
 
@@ -162,18 +184,22 @@ class Knowledge extends Cf_Controller {
             $data['showSubTopics'] = (!is_array($data['topicCategory']['topic']['sub_topics']) || empty($data['topicCategory']['topic']['sub_topics'])) ? false : true;
 
             //for story generation
-            if (is_constellation()) {
+            if (is_constellation())
+            {
                 $data['story'] = $this->stories_model->getStoryByName($data['topicDetail']['topic']);
                 $stories = json_decode(utf8_encode($data['story']), true);
                 $data['showStory'] = (!is_array($stories) || empty($stories['F'])) ? false : true;
             }
             $this->template->load('template', 'knowledge/knowledge', $data);
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             show_error($e->getMessage(), 500);
         }
     }
 
-    function knowledgeSearch() {
+    function knowledgeSearch()
+    {
 
         $this->_checkAccess();
 
@@ -189,7 +215,8 @@ class Knowledge extends Cf_Controller {
         $search = isset($getparams['search']) ? urldecode($getparams['search']) : $this->input->post('search', true);
         $topic = isset($getparams['topic']) ? urldecode($getparams['topic']) : $this->input->post('topic', true);
 
-        if ($topic) {
+        if ($topic)
+        {
             $search = $topic;
         }
 
@@ -197,18 +224,22 @@ class Knowledge extends Cf_Controller {
         $data = array(
             'search' => htmlspecialchars($search),
             'topic' => $topic,
-            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_kw_bank'),
+            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_kw_bank'),
             'breadcrumbs' => $this->breadcrumblist->display(),
         );
-        try {
+        try
+        {
             $data['searchData'] = $this->knowledge_model->searchTopics($this->username, strtolower($search));
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             show_error($e->getMessage(), 500);
         }
         // if only one result is found with id redirect to knowledge map else show list
-        if (is_array($data['searchData']) && count($data['searchData']) == 1 && isset($data['searchData'][0]['id'])) {
+        if (is_array($data['searchData']) && count($data['searchData']) == 1 && isset($data['searchData'][0]['id']))
+        {
             $pid = $data['searchData'][0]['id'];
-            redirect('/knowledge/knowledgemap/pid/'.$pid);
+            redirect('/knowledge/knowledgemap/pid/' . $pid);
             exit;
         }
 
