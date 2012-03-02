@@ -1150,6 +1150,46 @@ void HostClassFilterAddClassLists(HostClassFilter *filter, const Rlist *classRxI
     }
 }
 
+static bool HostClassFilterMatchInclude(const HostClassFilter *filter, const char *classRx)
+{
+    bool include = false;
+    for (const Rlist *rp = filter->classRxIncludes; rp; rp = rp->next)
+    {
+        if (FullTextMatch(ScalarValue(rp), classRx))
+        {
+            include = true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    return include;
+}
+
+static bool HostClassFilterMatchExclude(const HostClassFilter *filter, const char *classRx)
+{
+    bool exclude = false;
+    for (const Rlist *rp = filter->classRxExcludes; rp; rp = rp->next)
+    {
+        if (FullTextMatch(ScalarValue(rp), classRx))
+        {
+            exclude = true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    return exclude;
+}
+
+bool HostClassFilterMatch(const HostClassFilter *filter, const char *classRx)
+{
+    return HostClassFilterMatchInclude(filter, classRx) &&
+          !HostClassFilterMatchExclude(filter, classRx);
+}
+
 /*****************************************************************************/
 
 void DeleteHostClassFilter(HostClassFilter *filter)

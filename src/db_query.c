@@ -6092,7 +6092,7 @@ void BsonIteratorToString(char *retBuf, int retBufSz, bson_iterator *i, int dept
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryClassesDistinctSorted(mongo_connection *conn, char *classNameRx, HostClassFilter *hostClassFilter,
+HubQuery *CFDB_QueryClassesDistinctSorted(mongo_connection *conn, HostClassFilter *hostClassFilter,
                                           PageInfo *page)
 {
     bson_buffer bb;
@@ -6101,7 +6101,6 @@ HubQuery *CFDB_QueryClassesDistinctSorted(mongo_connection *conn, char *classNam
 
     bson_buffer_init(&bb);
     BsonAppendHostClassFilter(&bb, hostClassFilter);
-    bson_append_regex(&bb, cfr_class_keys, classNameRx, "");    // optimisation only, all classes from a host matching this will get returned
     bson_from_buffer(&query, &bb);
 
     Item *classList = CFDB_QueryDistinct(conn, MONGO_BASE, MONGO_HOSTS_COLLECTION, cfr_class_keys, &query);
@@ -6112,7 +6111,7 @@ HubQuery *CFDB_QueryClassesDistinctSorted(mongo_connection *conn, char *classNam
 
     for (Item *ip = classList; ip != NULL; ip = ip->next)
     {
-        if (!classNameRx || FullTextMatch(classNameRx, ip->name))
+        if (HostClassFilterMatch(hostClassFilter, ip->name))
         {
             PrependRlistAlien(&record_list, NewHubClass(NULL, ip->name, 0, 0, 0));
         }

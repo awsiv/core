@@ -1049,6 +1049,7 @@ HostClassFilter *NewHostClassFilter(const char *classRxInclude, const char *clas
 HostClassFilter *NewHostClassFilterLists(Rlist *classRxInclude, Rlist *classRxExclude);
 void HostClassFilterAddClasses(HostClassFilter *filter, const char *classRxInclude, const char *classRxExclude);
 void HostClassFilterAddClassLists(HostClassFilter *filter, const Rlist *classRxIncludes, const Rlist *classRxExcludes);
+bool HostClassFilterMatch(const HostClassFilter *filter, const char *classRx);
 void DeleteHostClassFilter(HostClassFilter *filter);
 PromiseFilter *NewPromiseFilter(void);
 void PromiseFilterAddPromiseBody(PromiseFilter *filter, const char *handleInclude, const char *promiserInclude);
