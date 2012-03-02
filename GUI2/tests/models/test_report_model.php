@@ -19,5 +19,10 @@ class test_report_model extends CodeIgniterUnitTestCase {
          $this->dump($reports); 
     }
    
+    public function test_getReportCategory(){
+         $report_category = $this->_ci->report_model->getReportCategory('promises-repaired-summary');
+         //$this->assertTrue(is_string($report_category),"Must be a valid name");
+         $this->dump($report_category); 
+    }
 }
 ?>
