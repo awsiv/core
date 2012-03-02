@@ -400,7 +400,7 @@ PHP_FUNCTION(cfpr_host_by_hostkey)
     RETURN_JSON(hostinfo);
 }
 
-PHP_FUNCTION(cfpr_host_info_get)
+PHP_FUNCTION(cfpr_host_info)
 {
     char *username = NULL, *hostKey = NULL;
     int username_len = -1, hostKey_len = -1;
