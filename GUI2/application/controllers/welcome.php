@@ -321,6 +321,7 @@ class Welcome extends Cf_Controller {
             array('widgets/reportfinder.js'),
             array('widgets/cdpreportsfinder.js'),
             array('widgets/notes.js'),
+            array('widgets/contextfinder.js'),
             array('SmartTextBox.js'),
         );
 

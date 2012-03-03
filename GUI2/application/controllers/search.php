@@ -10,6 +10,7 @@ class Search extends Cf_Controller {
         $this->carabiner->js('jquery.tablesorter.min.js');
         $this->carabiner->js('widgets/hostfinder.js');
         $this->carabiner->js('widgets/reportfinder.js');
+        $this->carabiner->js('widgets/contextfinder.js');
     }
 
     /**

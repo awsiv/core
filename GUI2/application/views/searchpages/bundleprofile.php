@@ -4,7 +4,7 @@
      <form method="post" action="<?php echo site_url('search')?>">
          <p>Bundle pattern: (.*+[])<input class="searchfield" type="text" name="name" id="bp" value="<?php echo (is_array($paramArray) && isset($paramArray['name'])) ? trim($paramArray['name']) : ''; ?>"></p>
          <p>Host class: (.*+[]) 
-         <a href="<?php echo site_url('widget/allclasses')?>" id="bphghelp" class="help" title="<?php echo $this->lang->line('report_hostgp_help');?>">Help ?</a>
+         <a href="<?php echo site_url('widget/contextfinder')?>" id="bphghelp" class="help" title="<?php echo $this->lang->line('report_hostgp_help');?>">Help ?</a>
          <input class="searchfield" type="text" name="class_regex" size="80" id="hg" value="<?php echo (is_array($paramArray) && isset($paramArray['class_regex'])) ? trim($paramArray['class_regex']) : ''; ?>"></p>
          <p>Return host names only: <input type="checkbox" name="hosts_only" value="true"></p>
          <p><input class="btn" type="submit" value="Generate report">  <span>       
@@ -19,17 +19,13 @@
 <script type="text/javascript">
  $('.loadsavedsearch').ajaxyDialog({title:'Saved Searches'});
  //$('#hg').smartTextBox({separator : "|",editOnFocus:true});
-$('#bphghelp').classfinder({
-    defaultbehaviour:false,
-    complete:function(event,data){
-        //console.log(data.selectedclass);
-        var val=$('#hg').val()
-        if(val==""){
-             $('#hg').val(data.selectedclass);
-        }else{
-            $('#hg').val(val+'|'+data.selectedclass);
-        }
-       // $('#hg') .smartTextBox('add', data.selectedclass);
-    }
-});
+
+  
+            //baseUrl: '<?php echo site_url() ?>'
+        $('#bphghelp').contextfinder({
+          baseUrl: '<?php echo site_url() ?>',
+          complete:function(event,data){
+              $('#hg').val(data.inccl);
+          }
+        });   
 </script>
