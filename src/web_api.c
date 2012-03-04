@@ -2591,16 +2591,10 @@ int Nova2PHP_bundle_hosts(char *hostkey, char *bundle, int regex, HostClassFilte
 /*****************************************************************************/
 
 int Nova2PHP_filechanges_hosts(char *hostkey, char *file, int regex, time_t t, char *cmp,
-                               HostClassFilter *hostClassFilter, char *returnval, int bufsize)
+                               HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
 {
-    char buffer[CF_BUFSIZE];
-    HubHost *hh;
-    HubQuery *hq;
-    Rlist *rp;
-    int counter = 0, n = 180, icmp;
-    mongo_connection dbconn;
+    int icmp;
 
-/* BEGIN query document */
     switch (*cmp)
     {
     case '<':
@@ -2611,35 +2605,16 @@ int Nova2PHP_filechanges_hosts(char *hostkey, char *file, int regex, time_t t, c
         break;
     }
 
+    mongo_connection dbconn;
+
     if (!CFDB_Open(&dbconn))
     {
         return false;
     }
 
-    hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, t, icmp, false, hostClassFilter, false);
+    HubQuery *hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, t, icmp, false, hostClassFilter, false);
 
-    StartJoin(returnval, "[", bufsize);
-
-    for (rp = hq->hosts; rp != NULL; rp = rp->next)
-    {
-        hh = (HubHost *) rp->item;
-        counter++;
-        snprintf(buffer, CF_MAXVARSIZE, "{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},", hh->keyhash,
-                 hh->hostname, hh->ipaddr);
-
-        if (!Join(returnval, buffer, bufsize))
-        {
-            break;
-        }
-
-        if (counter > n && counter % 6 == 0)
-        {
-            break;
-        }
-    }
-
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
+    CreateJsonHostOnlyReport(&(hq->hosts), page, returnval, bufsize);
 
     DeleteHubQuery(hq, DeleteHubFileChanges);
 
