@@ -2618,11 +2618,13 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_summary)
     int user_len, hk_len, v_len, cmp_len, cr_len;
     long k, nk, r, t;
     char buffer[512 * 1024];
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllllss",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllllssll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
-                              &version, &v_len, &t, &k, &nk, &r, &cmp, &cmp_len, &classreg, &cr_len) == FAILURE)
+                              &version, &v_len, &t, &k, &nk, &r, &cmp, &cmp_len, &classreg, &cr_len,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2644,8 +2646,7 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_summary)
 
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
-    Nova2PHP_compliance_hosts(fhostkey, fversion, (int) t, (int) k, (int) nk, (int) r, cmp, filter, buffer,
-                              sizeof(buffer));
+    Nova2PHP_compliance_hosts(fhostkey, fversion, (int) t, (int) k, (int) nk, (int) r, cmp, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
