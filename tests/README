@@ -1,0 +1,49 @@
+Nova Tests
+==========
+
+Requirements: php5-pfm, mongo, nginx
+Environment assumptions: None
+
+Description
+-----------
+Environment for running tests related to Nova independent of host configuration and data.
+Configuration files, logs and sockets are in the conf/, log/ and var/ subdirectories respectively. Data sets are located in the data/ directory.
+
+Utility scripts
+---------------
+
+  Loading data (load-data.sh)
+  ---------------------------
+  Takes a data directory and loads up the json files it can find there
+  into the test-db directory (a mongo database).
+  Example: ./load-data.sh data/rest
+
+  Serving HTTP (serve-nginx.sh)
+  -----------------------------
+  Serves up nginx with conf/http-nginx.conf configuration. This will
+  run virtual hosts rest (on 8888:/rest, conf/rest-nginx.conf) and mission (on 8080:/,
+  mission-nginx.conf). Should not daemonize.
+
+  Serving PHP (serve-php-fpm.sh)
+  ------------------------------
+  Serves up php5-fpm with conf/php-fpm configuration. Should not daemonize.
+
+  Serving Mongo (serve-mongo.sh)
+  ------------------------------
+  Serves up mongod on default port 27777 with database test-db/. Should not daemonize.
+
+
+Test suites
+-----------
+
+  Unit tests (unit/*_test)
+  ------------------------
+  Code-level tests for various modules.
+
+  CFMod Memory tests (test-cfmod-memory.sh)
+  -----------------------------------------
+  Run the test suite in nova/cfmod/tests, checking memory sanity of cfmod.
+
+  REST tests (test-rest.sh)
+  -------------------------
+  Run the test suite in nova/rest/tests, checking REST API functionality.
