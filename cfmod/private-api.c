@@ -2890,11 +2890,13 @@ PHP_FUNCTION(cfpr_hosts_with_filediffs)
     zend_bool regex;
     long t;
     time_t then;
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssblss",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssblssll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
-                              &file, &j_len, &diff, &d_len, &regex, &t, &cmp, &c_len, &classreg, &cr_len) == FAILURE)
+                              &file, &j_len, &diff, &d_len, &regex, &t, &cmp, &c_len, &classreg, &cr_len,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2918,7 +2920,7 @@ PHP_FUNCTION(cfpr_hosts_with_filediffs)
 
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
-    Nova2PHP_filediffs_hosts(fhostkey, ffile, diff, regex, then, fcmp, filter, buffer, sizeof(buffer));
+    Nova2PHP_filediffs_hosts(fhostkey, ffile, diff, regex, then, fcmp, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);

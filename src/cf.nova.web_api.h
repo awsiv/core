@@ -184,7 +184,7 @@ int Nova2PHP_bundle_hosts(char *hostkey, char *bundle, int regex, HostClassFilte
 int Nova2PHP_filechanges_hosts(char *hostkey, char *file, int regex, time_t t, char *cmp,
                                HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs, int regex, time_t t, char *cmp,
-                             HostClassFilter *hostClassFilter, char *returnval, int bufsize);
+                             HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_promiselog_hosts(char *hostkey, char *handle, PromiseLogState state, time_t from, time_t to,
                               HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *year, HostClassFilter *hostClassFilter,
