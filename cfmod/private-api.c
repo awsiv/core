@@ -2757,10 +2757,12 @@ PHP_FUNCTION(cfpr_hosts_with_performance)
     int user_len, hk_len, j_len, cr_len;
     char buffer[512 * 1024];
     zend_bool regex;
+    PageInfo page = { 0 };
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbs",
                               &userName, &user_len,
-                              &hostkey, &hk_len, &job, &j_len, &regex, &classreg, &cr_len) == FAILURE)
+                              &hostkey, &hk_len, &job, &j_len, &regex, &classreg, &cr_len,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2782,7 +2784,7 @@ PHP_FUNCTION(cfpr_hosts_with_performance)
 
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
-    Nova2PHP_performance_hosts(fhostkey, fjob, regex, filter, buffer, sizeof(buffer));
+    Nova2PHP_performance_hosts(fhostkey, fjob, regex, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
