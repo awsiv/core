@@ -2487,46 +2487,18 @@ int Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status, int regex,
 /*****************************************************************************/
 
 int Nova2PHP_lastseen_hosts(char *hostkey, char *lhash, char *lhost, char *laddress, time_t lago, int lregex,
-                            HostClassFilter *hostClassFilter, char *returnval, int bufsize)
+                            HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
 {
-    char buffer[CF_BUFSIZE];
-    HubHost *hh;
-    HubQuery *hq;
-    Rlist *rp;
-    int counter = 0, n = 180;
     mongo_connection dbconn;
-
-/* BEGIN query document */
 
     if (!CFDB_Open(&dbconn))
     {
         return false;
     }
 
-    hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex, false, hostClassFilter);
+    HubQuery *hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex, false, hostClassFilter);
 
-    StartJoin(returnval, "[", bufsize);
-
-    for (rp = hq->hosts; rp != NULL; rp = rp->next)
-    {
-        hh = (HubHost *) rp->item;
-        counter++;
-        snprintf(buffer, CF_MAXVARSIZE, "{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},", hh->keyhash,
-                 hh->hostname, hh->ipaddr);
-
-        if (!Join(returnval, buffer, bufsize))
-        {
-            break;
-        }
-
-        if (counter > n && counter % 6 == 0)
-        {
-            break;
-        }
-    }
-
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
+    CreateJsonHostOnlyReport(&(hq->hosts), page, returnval, bufsize);
 
     DeleteHubQuery(hq, DeleteHubLastSeen);
 
