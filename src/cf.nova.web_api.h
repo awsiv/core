@@ -165,7 +165,7 @@ int Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, int regex,
 int Nova2PHP_summary_report(char *hostkey, char *handle, char *status, int regex, char *classreg,
                             HostClassFilter *hostClassFilter, char *returnval, int bufsize);
 int Nova2PHP_software_hosts(char *hostkey, char *name, char *value, char *arch, int regex, char *type,
-                            HostClassFilter *hostClassFilter, char *returnval, int bufsize);
+                            HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_classes_hosts(char *hostkey, char *name, int regex, HostClassFilter *hostClassFilter, char *returnval,
                            int bufsize);
 int Nova2PHP_vars_hosts(char *hostkey, char *scope, char *lval, char *rval, char *type, int regex,

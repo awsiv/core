@@ -18,7 +18,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "cf.nova.web_api.h"
 #include "scorecards.h"
 #include "bson_lib.h"
-
+#include <assert.h>
 static const char *CDP_REPORTS[][2] =
 {
     [cdp_acls] = {"ACLs", "File access controls"},
@@ -49,6 +49,7 @@ static const char *ERRID_DESCRIPTION[] =
 
 /*****************************************************************************/
 static cfapi_errid FormatReportInfoAsJson(char *reportId, ReportInfo *reports, char *buf, int bufsize);
+static int CreateJsonHostOnlyReport(Rlist **records_p, PageInfo *page, char *returnval, int bufsize);
 
 /*****************************************************************************/
 #ifndef NDEBUG
@@ -2192,6 +2193,57 @@ int Nova_AddReportHeader(char *header, int truncated, char *buffer, int bufsize)
 /* Search for hosts with property X,Y,Z                                      */
 /*****************************************************************************/
 
+int CreateJsonHostOnlyReport(Rlist **records_p, PageInfo *page, char *returnval, int bufsize)
+{
+    assert(records_p);
+    assert(page);
+    assert(returnval);
+
+    char buffer[CF_BUFSIZE] = { 0 };
+    char header[CF_BUFSIZE] = { 0 };
+    int headerLen = 0;
+    int noticeLen = 0;
+    bool truncated = false;
+
+    Rlist *rp;
+    HubHost *hh;
+
+    PageRecords(records_p, page, DeleteHubHost);
+
+    snprintf(header, sizeof(header), "\"meta\":{\"count\" : %d", page->totalResultCount);
+    headerLen = strlen(header);
+    noticeLen = strlen(CF_NOTICE_TRUNCATED);
+
+    StartJoin(returnval, "{\"data\":[", bufsize);
+
+    for (rp = *records_p; rp != NULL; rp = rp->next)
+    {
+        hh = (HubHost *) rp->item;
+
+        snprintf(buffer, CF_MAXVARSIZE, "{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},", hh->keyhash,
+                 hh->hostname, hh->ipaddr);
+
+        int margin = headerLen + noticeLen + strlen(buffer);
+
+        if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
+        {
+            truncated = true;
+            break;
+        }
+    }
+
+    ReplaceTrailingChar(returnval, ',', '\0');
+    EndJoin(returnval, "]", bufsize);
+
+    Nova_AddReportHeader(header, truncated, buffer, sizeof(buffer) - 1);
+
+    Join(returnval, buffer, bufsize);
+    EndJoin(returnval, "}}\n", bufsize);
+
+    return page->totalResultCount;
+}
+/****************************************************************************/
+
 int Nova2PHP_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int bufsize)
 {
     char buffer1[CF_BUFSIZE], buffer2[CF_BUFSIZE];
@@ -2265,56 +2317,16 @@ int Nova2PHP_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int buf
 int Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *year, HostClassFilter *hostClassFilter,
                          PageInfo *page, char *returnval, int bufsize)
 {
-    HubQuery *hq;
-    Rlist *rp;
     mongo_connection dbconn;    
-    HubHost *hh;
-
-    char buffer[CF_BUFSIZE] = { 0 };
-    char header[CF_BUFSIZE] = { 0 };
-    int headerLen = 0;
-    int noticeLen = 0;
-    bool truncated = false;
-
-/* BEGIN query document */
 
     if (!CFDB_Open(&dbconn))
     {
         return false;
     }
 
-    hq = CFDB_QueryValueReport(&dbconn, hostkey, day, month, year, true, hostClassFilter);
+    HubQuery *hq = CFDB_QueryValueReport(&dbconn, hostkey, day, month, year, true, hostClassFilter);
 
-    PageRecords(&(hq->hosts), page, DeleteHubHost);
-
-    snprintf(header, sizeof(header), "\"meta\":{\"count\" : %d", page->totalResultCount);
-    headerLen = strlen(header);
-    noticeLen = strlen(CF_NOTICE_TRUNCATED);
-    StartJoin(returnval, "{\"data\":[", bufsize);
-
-    for (rp = hq->hosts; rp != NULL; rp = rp->next)
-    {
-        hh = (HubHost *) rp->item;
-
-        snprintf(buffer, CF_MAXVARSIZE, "{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},", hh->keyhash,
-                 hh->hostname, hh->ipaddr);
-
-        int margin = headerLen + noticeLen + strlen(buffer);
-
-        if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
-        {
-            truncated = true;
-            break;
-        }
-    }
-
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
-
-    Nova_AddReportHeader(header, truncated, buffer, sizeof(buffer) - 1);
-
-    Join(returnval, buffer, bufsize);
-    EndJoin(returnval, "}}\n", bufsize);
+    CreateJsonHostOnlyReport(&(hq->hosts), page, returnval, bufsize);
 
     DeleteHubQuery(hq, DeleteHubValue);
 
@@ -2329,13 +2341,8 @@ int Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *year, Host
 /*****************************************************************************/
 
 int Nova2PHP_software_hosts(char *hostkey, char *name, char *value, char *arch, int regex, char *type,
-                            HostClassFilter *hostClassFilter, char *returnval, int bufsize)
+                            HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
 {
-    char buffer[CF_BUFSIZE];
-    HubHost *hh;
-    HubQuery *hq;
-    Rlist *rp;
-    int counter = 0, n = 180;
     mongo_connection dbconn;
 
     if (!CFDB_Open(&dbconn))
@@ -2343,31 +2350,9 @@ int Nova2PHP_software_hosts(char *hostkey, char *name, char *value, char *arch, 
         return false;
     }
 
-    hq = CFDB_QuerySoftware(&dbconn, hostkey, type, name, value, arch, regex, hostClassFilter, false);
+    HubQuery *hq = CFDB_QuerySoftware(&dbconn, hostkey, type, name, value, arch, regex, hostClassFilter, false);
 
-    StartJoin(returnval, "[", bufsize);
-
-    for (rp = hq->hosts; rp != NULL; rp = rp->next)
-    {
-        hh = (HubHost *) rp->item;
-
-        counter++;
-        snprintf(buffer, CF_MAXVARSIZE, "{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},", hh->keyhash,
-                 hh->hostname, hh->ipaddr);
-
-        if (!Join(returnval, buffer, bufsize))
-        {
-            break;
-        }
-
-        if (counter > n && counter % 6 == 0)
-        {
-            break;
-        }
-    }
-
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
+    CreateJsonHostOnlyReport(&(hq->hosts), page, returnval, bufsize);
 
     DeleteHubQuery(hq, DeleteHubSoftware);
 
@@ -2946,53 +2931,16 @@ int Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs, int regex, 
 int Nova2PHP_promiselog_hosts(char *hostkey, char *handle, PromiseLogState state, time_t from, time_t to,
                               HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
 {
-    HubHost *hh;
-    HubQuery *hq;
     mongo_connection dbconn;
-    Rlist *rp;
-
-    char buffer[CF_BUFSIZE];
-    char header[CF_BUFSIZE] = {0};
-    int headerLen = 0;
-    int noticeLen = 0;
-    bool truncated = false;
 
     if (!CFDB_Open(&dbconn))
     {
         return false;
     }
 
-    hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, from, to, false, hostClassFilter);
+    HubQuery *hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, from, to, false, hostClassFilter);
 
-    PageRecords(&(hq->hosts), page, DeleteHubHost);
-
-    snprintf(header, sizeof(header), "\"meta\":{\"count\" : %d", page->totalResultCount);
-    headerLen = strlen(header);
-    noticeLen = strlen(CF_NOTICE_TRUNCATED);
-
-    StartJoin(returnval, "{\"data\":[", bufsize);
-
-    for (rp = hq->hosts; rp != NULL; rp = rp->next)
-    {
-        hh = (HubHost *) rp->item;        
-        snprintf(buffer, CF_MAXVARSIZE, "{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},", hh->keyhash,
-                 hh->hostname, hh->ipaddr);
-
-        int margin = headerLen + noticeLen + strlen(buffer);
-
-        if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
-        {
-            truncated = true;
-            break;
-        }
-    }
-
-    ReplaceTrailingChar(returnval, ',', ']');
-
-    Nova_AddReportHeader(header, truncated, buffer, sizeof(buffer) - 1);
-
-    Join(returnval, buffer, bufsize);
-    EndJoin(returnval, "}}\n", bufsize);
+    CreateJsonHostOnlyReport(&(hq->hosts), page, returnval, bufsize);
 
     DeleteHubQuery(hq, DeleteHubPromiseLog);
 
