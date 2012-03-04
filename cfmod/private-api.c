@@ -2468,11 +2468,13 @@ PHP_FUNCTION(cfpr_hosts_with_repaired)
     char buffer[512 * 1024];
     long hours_deltafrom, hours_deltato;
     time_t from = 0, to = 0;
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssslls",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllsll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
-                              &handle, &h_len, &hours_deltafrom, &hours_deltato, &classreg, &cr_len) == FAILURE)
+                              &handle, &h_len, &hours_deltafrom, &hours_deltato, &classreg, &cr_len,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2498,7 +2500,7 @@ PHP_FUNCTION(cfpr_hosts_with_repaired)
 
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
-    Nova2PHP_promiselog_hosts(fhostkey, fhandle, PROMISE_LOG_STATE_REPAIRED, from, to, filter, buffer, sizeof(buffer));
+    Nova2PHP_promiselog_hosts(fhostkey, fhandle, PROMISE_LOG_STATE_REPAIRED, from, to, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2513,11 +2515,13 @@ PHP_FUNCTION(cfpr_hosts_with_notkept)
     char buffer[512 * 1024];
     long hours_deltafrom, hours_deltato;
     time_t from = 0, to = 0;
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssslls",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllsll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
-                              &handle, &h_len, &hours_deltafrom, &hours_deltato, &classreg, &cr_len) == FAILURE)
+                              &handle, &h_len, &hours_deltafrom, &hours_deltato, &classreg, &cr_len,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2544,7 +2548,7 @@ PHP_FUNCTION(cfpr_hosts_with_notkept)
 
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
-    Nova2PHP_promiselog_hosts(fhostkey, fhandle, PROMISE_LOG_STATE_NOTKEPT, from, to, filter, buffer, sizeof(buffer));
+    Nova2PHP_promiselog_hosts(fhostkey, fhandle, PROMISE_LOG_STATE_NOTKEPT, from, to, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
