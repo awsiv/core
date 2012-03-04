@@ -1095,7 +1095,7 @@ int Nova2PHP_value_report(char *hostkey, char *day, char *month, char *year, Hos
 
     PageRecords(&(hq->records), page, DeleteHubValue);
     snprintf(header, sizeof(header), "\"meta\":{\"count\" : %d,"
-             "\"header\":{\"Host\":0,\"Day\":1,\"Kept\":2,\"Repaired\":3,\"Not Kept\":4,"
+             "\"header\":{\"Host\":0,\"Summary of Day\":1,\"Value of Promises Kept\":2,\"Value of Repairs\":3,\"Loss for Promises Not Kept\":4,"
              "\"Note\":{\"index\":5,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}}",
              page->totalResultCount);
 
@@ -1226,7 +1226,7 @@ int Nova2PHP_software_report(char *hostkey, char *name, char *value, char *arch,
 
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d,"
-             "\"header\": {\"Host\":0,\"Name\":1,\"Version\":2,\"Architecture\":3,\"Last seen\":4"
+             "\"header\": {\"Host\":0,\"Package Name\":1,\"Version\":2,\"Architecture\":3,\"Last seen\":4"
              "}", page->totalResultCount);
 
     headerLen = strlen(header);
@@ -1298,7 +1298,7 @@ int Nova2PHP_classes_report(char *hostkey, char *name, int regex, HostClassFilte
 
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d,"
-             "\"header\": {\"Host\":0,\"Class Context\":1,\"Occurs with Probability\":2,\"Uncertainty\":3,\"Last seen\":4"
+             "\"header\": {\"Host\":0,\"Class or Context\":1,\"in %% runs\":2,\"+/- %%\":3,\"Last occurred\":4"
              "}", page->totalResultCount);
 
     headerLen = strlen(header);
@@ -1309,8 +1309,7 @@ int Nova2PHP_classes_report(char *hostkey, char *name, int regex, HostClassFilte
     {
         hc = (HubClass *) rp->item;
 
-        snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%lf,%lf,%ld],", hc->hh->hostname, hc->class, hc->prob, hc->dev,
-                 hc->t);
+        snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%lf,%lf,%ld],", hc->hh->hostname, hc->class, hc->prob*100.0, hc->dev*100.0, hc->t);
         margin = headerLen + noticeLen + strlen(buffer);
         if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
         {
@@ -1590,7 +1589,7 @@ int Nova2PHP_compliance_report(char *hostkey, char *version, time_t t, int k, in
 
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d,"
-             "\"header\": {\"Host\":0,\"Policy\":1,\"Kept\":2,\"Repaired\":3,\"Not Kept\":4,\"Last seen\":5"
+             "\"header\": {\"Host\":0,\"Policy Version\":1,\"%% Kept\":2,\"%% Repaired\":3,\"%% Not Kept\":4,\"Last verified\":5"
              "}", page->totalResultCount);
 
     headerLen = strlen(header);
@@ -1667,7 +1666,7 @@ int Nova2PHP_compliance_promises(char *hostkey, char *handle, char *status, int 
 
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d,"
-             "\"header\": {\"Host\":0,\"Promise Handle\":1,\"Last Known State\":2,\"Probability Kept\":3,\"Uncertainty\":4,\"Last seen\":5"
+             "\"header\": {\"Host\":0,\"Promise Handle\":1,\"Last Known State\":2,\"%% Runs Kept\":3,\"+/- %%\":4,\"Last verified\":5"
              "}", page->totalResultCount);
 
     headerLen = strlen(header);
@@ -1734,7 +1733,7 @@ int Nova2PHP_lastseen_report(char *hostkey, char *lhash, char *lhost, char *ladd
 
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d,"
-             "\"header\": {\"Host\":0,\"Initiated\":1,\"Remote host name\":2,\"Remote IP address\":3,\"Last seen\":4,\"Hours ago\":5,\"Avg interval\":6,\"Uncertainty\":7,\"Remote host key\":8"
+             "\"header\": {\"Host\":0,\"Comms Initiated\":1,\"Remote host name\":2,\"Remote IP address\":3,\"Was Last Seen At\":4,\"Hrs ago\":5,\"Avg Comms Interval\":6,\"+/- hrs\":7,\"Remote host's key\":8"
              "}", page->totalResultCount);
 
     headerLen = strlen(header);
@@ -1811,7 +1810,7 @@ int Nova2PHP_performance_report(char *hostkey, char *job, int regex, HostClassFi
 
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d,"
-             "\"header\": {\"Host\":0,\"Event\":1,\"Last time\":2,\"Avg Time\":3,\"Uncertainty\":4,\"Last performed\":5,"
+             "\"header\": {\"Host\":0,\"Event or ID\":1,\"Last Completion Time (secs)\":2,\"Avg Completion Time\":3,\"+/- mins\":4,\"Last performed\":5,"
              "\"Note\":{\"index\":6,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
              "}", page->totalResultCount);
 
@@ -1959,7 +1958,7 @@ int Nova2PHP_bundle_report(char *hostkey, char *bundle, int regex, HostClassFilt
     PageRecords(&(hq->records), page, DeleteHubBundleSeen);
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d,"
-             "\"header\": {\"Host\":0,\"Bundle\":1,\"Last Verified\":2,\"Compliance\":3,\"Avg Compliance\":4,\"Uncertainty\":5,"
+             "\"header\": {\"Host\":0,\"Bundle\":1,\"Last Verified\":2,\"%% Compliance\":3,\"Avg %% Compliance\":4,\"+/- %%\":5,"
              "\"Note\":{\"index\":6,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
              "}", page->totalResultCount);
 
@@ -2132,7 +2131,7 @@ int Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, int regex,
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d,"
              "\"header\": {\"Host\":0,\"File\":1,\"Change Detected at\":2,"
-             "\"Change\":{\"index\":3,\"subkeys\":{\"plusminus\":0,\"line\":1,\"diff\":2}}"
+             "\"Change Details\":{\"index\":3,\"subkeys\":{\"plusminus\":0,\"line\":1,\"diff\":2}}"
              "}", page->totalResultCount);
     headerLen = strlen(header);
     noticeLen = strlen(CF_NOTICE_TRUNCATED);
