@@ -168,7 +168,7 @@ int Nova2PHP_software_hosts(char *hostkey, char *name, char *value, char *arch, 
                             HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_classes_hosts(char *hostkey, char *name, int regex, HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_vars_hosts(char *hostkey, char *scope, char *lval, char *rval, char *type, int regex,
-                        HostClassFilter *hostClassFilter, char *returnval, int bufsize);
+                        HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t t, int k, int nk, int rep, char *cmp,
                               HostClassFilter *hostClassFilter, char *returnval, int bufsize);
 int Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status, int regex, HostClassFilter *hostClassFilter,
