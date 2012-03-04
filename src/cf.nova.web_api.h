@@ -189,7 +189,7 @@ int Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs, int regex, 
 int Nova2PHP_promiselog_hosts(char *hostkey, char *handle, PromiseLogState state, time_t from, time_t to,
                               HostClassFilter *hostClassFilter, char *returnval, int bufsize);
 int Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *year, HostClassFilter *hostClassFilter,
-                         char *returnval, int bufsize);
+                         PageInfo *page, char *returnval, int bufsize);
 
 int Nova2PHP_search_topics(char *search, int regex, char *buffer, int bufsize);
 void Nova2PHP_show_topic(int id, char *buffer, int bufsize);

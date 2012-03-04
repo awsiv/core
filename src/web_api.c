@@ -2263,7 +2263,7 @@ int Nova2PHP_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int buf
 /*****************************************************************************/
 
 int Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *year, HostClassFilter *hostClassFilter,
-                         char *returnval, int bufsize)
+                         PageInfo *page, char *returnval, int bufsize)
 {
     HubQuery *hq;
     Rlist *rp;
@@ -2271,6 +2271,10 @@ int Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *year, Host
     char buffer[CF_BUFSIZE] = { 0 };
     int counter = 0, n = 180;
     HubHost *hh;
+    char header[CF_BUFSIZE] = { 0 };
+    int headerLen = 0;
+    int noticeLen = 0;
+    bool truncated = false;
 
 /* BEGIN query document */
 
@@ -2281,7 +2285,12 @@ int Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *year, Host
 
     hq = CFDB_QueryValueReport(&dbconn, hostkey, day, month, year, true, hostClassFilter);
 
-    StartJoin(returnval, "[", bufsize);
+    PageRecords(&(hq->records), page, DeleteHubValue);
+
+    snprintf(header, sizeof(header), "\"meta\":{\"count\" : %d}", page->totalResultCount);
+    headerLen = strlen(header);
+    noticeLen = strlen(CF_NOTICE_TRUNCATED);
+    StartJoin(returnval, "{\"data\"[", bufsize);
 
     for (rp = hq->hosts; rp != NULL; rp = rp->next)
     {
@@ -2291,19 +2300,22 @@ int Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *year, Host
         snprintf(buffer, CF_MAXVARSIZE, "{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},", hh->keyhash,
                  hh->hostname, hh->ipaddr);
 
-        if (!Join(returnval, buffer, bufsize))
-        {
-            break;
-        }
+        int margin = headerLen + noticeLen + strlen(buffer);
 
-        if (counter > n && counter % 6 == 0)
+        if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
         {
+            truncated = true;
             break;
         }
     }
 
     ReplaceTrailingChar(returnval, ',', '\0');
     EndJoin(returnval, "]", bufsize);
+
+    Nova_AddReportHeader(header, truncated, buffer, sizeof(buffer) - 1);
+
+    Join(returnval, buffer, bufsize);
+    EndJoin(returnval, "}}\n", bufsize);
 
     DeleteHubQuery(hq, DeleteHubValue);
 
