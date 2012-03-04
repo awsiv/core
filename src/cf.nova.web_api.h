@@ -177,7 +177,7 @@ int Nova2PHP_lastseen_hosts(char *hostkey, char *lhash, char *lhost, char *laddr
                             HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_performance_hosts(char *hostkey, char *job, int regex, HostClassFilter *hostClassFilter, PageInfo *page, char *returnval,
                                int bufsize);
-int Nova2PHP_setuid_hosts(char *hostkey, char *file, int regex, HostClassFilter *hostClassFilter, char *returnval,
+int Nova2PHP_setuid_hosts(char *hostkey, char *file, int regex, HostClassFilter *hostClassFilter, PageInfo *page, char *returnval,
                           int bufsize);
 int Nova2PHP_bundle_hosts(char *hostkey, char *bundle, int regex, HostClassFilter *hostClassFilter, char *returnval,
                           int bufsize);
