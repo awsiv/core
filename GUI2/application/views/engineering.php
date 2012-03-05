@@ -77,6 +77,9 @@
                 $('#hostInfo').hostInfo('updateHostKey', args.hostKey);
                 $('#hostInfoContainer').show();
 
+                $('#hostsComplianceTimeseries').hostsComplianceTimeseries('setHost',
+                    args.hostKey);
+
                 $('#hostsComplianceContainer').hide();
                 $('#hostsConnectivityContainer').hide();
 
