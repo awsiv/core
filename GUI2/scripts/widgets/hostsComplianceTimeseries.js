@@ -109,6 +109,15 @@
             $self.refresh();
         },
 
+        setHost: function(hostKey) {
+            var $self = this;
+
+            $self._context.includes = [common.canonify('PK_' + hostKey)];
+            $self._context.excludes = [];
+
+            $self.refresh();
+        },
+
         refresh: function() {
             var $self = this;
 

@@ -77,6 +77,9 @@
                 $('#hostInfo').hostInfo('updateHostKey', args.hostKey);
                 $('#hostInfoContainer').show();
 
+                $('#hostsComplianceTimeseries').hostsComplianceTimeseries('setHost',
+                    args.hostKey);
+
                 $('#hostsComplianceContainer').hide();
                 $('#hostsConnectivityContainer').hide();
 
@@ -89,11 +92,11 @@
                 $('#hostsComplianceTimeseries').hostsComplianceTimeseries('setContext',
                     args.includes, args.excludes);
 
-                $('#hostsCompliance').hostsCompliance('setContextPath',
+                $('#hostsCompliance').hostsCompliance('setContext',
                     args.includes, args.excludes);
                 $('#hostsComplianceContainer').show();
 
-                $('#hostsConnectivity').hostsConnectivity('setContextPath',
+                $('#hostsConnectivity').hostsConnectivity('setContext',
                     args.includes, args.excludes);
                 $('#hostsConnectivityContainer').show();
 

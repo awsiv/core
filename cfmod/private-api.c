@@ -3379,25 +3379,21 @@ for (size_t slot = 0; slot < num_slots; slot++)
         }
     }
 
-    JsonElement *entry = JsonObjectCreate(10);
-    JsonObjectAppendInteger(entry, LABEL_POSITION, slot);
-    JsonObjectAppendInteger(entry, LABEL_TIMESTAMP, from + (resolution * slot));
     if (num_hosts > 0)
     {
+        JsonElement *entry = JsonObjectCreate(10);
+
+        JsonObjectAppendInteger(entry, LABEL_POSITION, slot);
+        JsonObjectAppendInteger(entry, LABEL_TIMESTAMP, from + (resolution * slot));
         JsonObjectAppendReal(entry, LABEL_KEPT, kept / num_hosts);
         JsonObjectAppendReal(entry, LABEL_NOTKEPT, notkept / num_hosts);
         JsonObjectAppendReal(entry, LABEL_REPAIRED, repaired / num_hosts);
-    }
-    else
-    {
-        JsonObjectAppendReal(entry, LABEL_KEPT, 0.0);
-        JsonObjectAppendReal(entry, LABEL_NOTKEPT, 0.0);
-        JsonObjectAppendReal(entry, LABEL_REPAIRED, 0.0);
-    }
-    JsonObjectAppendInteger(entry, LABEL_SAMPLE_COUNT, num_samples);
-    JsonObjectAppendInteger(entry, LABEL_HOST_COUNT, num_hosts);
+        JsonObjectAppendInteger(entry, LABEL_SAMPLE_COUNT, num_samples);
+        JsonObjectAppendInteger(entry, LABEL_HOST_COUNT, num_hosts);
 
-    JsonArrayAppendObject(data, entry);
+        JsonArrayAppendObject(data, entry);
+    }
+
     MapDestroy(slots[slot]);
 }
 

@@ -206,7 +206,7 @@ bool HubHostEqual(const void *hubhost_a, const void *hubhost_b)
     const HubHost *a = (const HubHost *)hubhost_a;
     const HubHost *b = (const HubHost *)hubhost_b;
 
-    return StringSafeCompare(a->keyhash, b->keyhash);
+    return StringSafeEqual(a->keyhash, b->keyhash);
 }
 
 unsigned int HubHostHash(const void *hubhost)
