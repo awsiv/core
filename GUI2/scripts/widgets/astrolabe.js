@@ -491,22 +491,29 @@
         },
 
         _saveProfile: function(profileId, refreshNode) {
-            var self = this;
+            var $self = this;
 
-            var nodeDescriptionList = self._serializeContainer(self._nodeContainer($(self._superNode)));
+            var nodeDescriptionList = $self._serializeContainer($self._nodeContainer($self._superNode));
 
-            $.ajax({
-                type: 'PUT',
-                url: self._profileUrl(profileId),
-                contentType: "application/json",
-                data: JSON.stringify(nodeDescriptionList),
+            if (profileId !== null || profileId !== undefined) {
+                $.ajax({
+                    type: 'PUT',
+                    url: $self._profileUrl(profileId),
+                    contentType: "application/json",
+                    data: JSON.stringify(nodeDescriptionList),
 
-                success: function() {
-                    if (refreshNode !== null) {
-                        self._loadNode($(refreshNode));
+                    success: function() {
+                        if (refreshNode !== null) {
+                            $self._loadNode($(refreshNode));
+                        }
                     }
+                });
+            }
+            else {
+                if (refreshNode !== null) {
+                    $self._loadNode($(refreshNode));
                 }
-            });
+            }
         },
 
         _deleteProfile: function(profileId) {
