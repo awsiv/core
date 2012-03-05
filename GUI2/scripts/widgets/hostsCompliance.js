@@ -20,18 +20,27 @@
             $self.element.append($self._yellow);
         },
 
-        setContextPath: function(includes, excludes) {
+        setContext: function(includes, excludes) {
             var $self = this;
 
-            $.getJSON($self._requestUrls.hostCount($self, includes, 'red'),
+            $self._context.includes = includes;
+            $self._context.excludes = excludes;
+
+            $self.refresh();
+        },
+
+        refresh: function() {
+            var $self = this;
+
+            $.getJSON($self._requestUrls.hostCount($self, $self._context.includes, 'red'),
                 function(count) {
                     $self._setHostCount($self._red, count);
                 });
-            $.getJSON($self._requestUrls.hostCount($self, includes, 'green'),
+            $.getJSON($self._requestUrls.hostCount($self, $self._context.includes, 'green'),
                 function(count) {
                     $self._setHostCount($self._green, count);
                 });
-            $.getJSON($self._requestUrls.hostCount($self, includes, 'yellow'),
+            $.getJSON($self._requestUrls.hostCount($self, $self._context.includes, 'yellow'),
                 function(count) {
                     $self._setHostCount($self._yellow, count);
                 });
@@ -62,6 +71,11 @@
             var $entryLabel = $entry.children('.colourEntryLabel');
 
             $entryLabel.html(count + ' hosts known');
+        },
+
+        _context: {
+            includes: [],
+            excludes: []
         },
 
         _requestUrls: {
