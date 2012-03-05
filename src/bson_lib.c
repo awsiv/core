@@ -435,23 +435,23 @@ void BsonAppendHostColourFilter(bson_buffer *query_buffer, HostColourFilter *fil
     switch (filter->method)
     {
         case HOST_RANK_METHOD_COMPLIANCE:
-            xasprintf(&score_method, "%s.%s", cfr_score, cfr_score_comp);
+            xasprintf(&score_method, "%s", cfr_score_comp);
             break;
 
         case HOST_RANK_METHOD_ANOMALY:
-            xasprintf(&score_method, "%s.%s", cfr_score, cfr_score_anom);
+            xasprintf(&score_method, "%s", cfr_score_anom);
             break;
 
         case HOST_RANK_METHOD_PERFORMANCE:
-            xasprintf(&score_method, "%s.%s", cfr_score, cfr_score_perf);
+            xasprintf(&score_method, "%s", cfr_score_perf);
             break;
 
         case HOST_RANK_METHOD_LASTSEEN:
-            xasprintf(&score_method, "%s.%s", cfr_score, cfr_score_lastseen);
+            xasprintf(&score_method, "%s", cfr_score_lastseen);
             break;
 
         case HOST_RANK_METHOD_MIXED:
-            xasprintf(&score_method, "%s.%s", cfr_score, cfr_score_mixed);
+            xasprintf(&score_method, "%s", cfr_score_mixed);
             break;
     }
 

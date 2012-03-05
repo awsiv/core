@@ -1137,7 +1137,6 @@ void CFDB_SaveScore(mongo_connection *conn, char *keyhash, Item *data, HostRankM
 {
     bson_buffer bb;
     bson_buffer *setObj;
-    bson_buffer *sub;
     bson host_key;  // host description
     bson setOp;
 
@@ -1149,7 +1148,6 @@ void CFDB_SaveScore(mongo_connection *conn, char *keyhash, Item *data, HostRankM
     /* build score object */
     bson_buffer_init(&bb);
     setObj = bson_append_start_object(&bb, "$set");
-    sub = bson_append_start_object(setObj, cfr_score);
 
     double kept_full[meter_endmark] = {0};
     double repaired_full[meter_endmark] = {0};
@@ -1208,34 +1206,33 @@ void CFDB_SaveScore(mongo_connection *conn, char *keyhash, Item *data, HostRankM
     if (method & HOST_RANK_METHOD_COMPLIANCE)
     {
         score = Nova_GetComplianceScore(HOST_RANK_METHOD_COMPLIANCE, kept_full, repaired_full);
-        bson_append_int(sub, cfr_score_comp, score);
+        bson_append_int(setObj, cfr_score_comp, score);
     }
 
     if (method & HOST_RANK_METHOD_ANOMALY)
     {
         score = Nova_GetComplianceScore(HOST_RANK_METHOD_ANOMALY, kept_full, repaired_full);
-        bson_append_int(sub, cfr_score_anom, score);
+        bson_append_int(setObj, cfr_score_anom, score);
     }
 
     if (method & HOST_RANK_METHOD_PERFORMANCE)
     {
         score = Nova_GetComplianceScore(HOST_RANK_METHOD_PERFORMANCE, kept_full, repaired_full);
-        bson_append_int(sub, cfr_score_perf, score);
+        bson_append_int(setObj, cfr_score_perf, score);
     }
 
     if (method & HOST_RANK_METHOD_LASTSEEN)
     {
         score = Nova_GetComplianceScore(HOST_RANK_METHOD_LASTSEEN, kept_full, repaired_full);
-        bson_append_int(sub, cfr_score_lastseen, score);
+        bson_append_int(setObj, cfr_score_lastseen, score);
     }
 
     if (method & HOST_RANK_METHOD_MIXED)
     {
         score = Nova_GetComplianceScore(HOST_RANK_METHOD_MIXED, kept_full, repaired_full);
-        bson_append_int(sub, cfr_score_mixed, score);
+        bson_append_int(setObj, cfr_score_mixed, score);
     }
 
-    bson_append_finish_object(sub);
     bson_append_finish_object(setObj);
 
     bson_from_buffer(&setOp, &bb);
