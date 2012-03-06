@@ -17,12 +17,12 @@
                 $self._dt = $('<dt>');
                 {
                     $self._selectedId = null;
-                    
+
                     $self._selectedLabel = $('<span>');
                     $self._selectedLabel.addClass('selectedLabel');
                     $self._selectedLabel.html($self.options.defaultNoneSelectedLabel);
                     $self._dt.append($self._selectedLabel);
-                    
+
                     var $arrowIconBox = $('<div>');
                     $arrowIconBox.addClass('arrowIconBox');
                     {
@@ -32,13 +32,13 @@
                         $arrowIconBox.append($arrowIcon);
                     }
                     $self._dt.append($arrowIconBox);
-                    
+
                 }
                 $self._dt.click(function(event) {
-                   $self._onClickHeader($self, event); 
+                   $self._onClickHeader($self, event);
                 });
                 $dl.append($self._dt);
-                
+
                 $self._dd = $('<dd>');
                 {
                     $self._ul = $('<ul>');
@@ -51,14 +51,14 @@
                             $self._addInput.attr('placeholder', $self.options.defaultAddItemPlaceholder);
                             $self._addInput.attr('maxlength', $self.options.maxLength);
                             $addItem.append($self._addInput);
-                            
+
                             $addButton = $('<img>');
                             $addButton.addClass('addButton');
                             $addButton.attr('src', $self.options.imagesUrl + 'combobox-button-add.png');
                             $addButton.click(function(event) {
                                 var $id = $self._addInput.val();
-                                
-                                if ($id !== undefined && 
+
+                                if ($id !== undefined &&
                                     $id !== null &&
                                     $id.length > 0) {
                                     $self.addItem($id, $id);
@@ -77,34 +77,34 @@
                 }
                 $dl.append($self._dd);
             }
-            
+
             $self._setExpanded(false);
-            
+
             $self.element.append($dl);
         },
-        
+
         clear: function() {
             var $self = this;
             $self._ul.remove('li');
         },
-        
+
         selectItem: function(id) {
             if (id === undefined || id === null) {
-                
+
             }
             else {
-                
+
             }
         },
-    
+
         _setSelectedItem: function($self, id) {
             $self._selectedId = id;
-            $self._selectedLabel.html(id);
-            
+            $self._selectedLabel.html(decodeURIComponent(id));
+
             $self._setExpanded(false);
             $self._trigger("itemSelected", null, {id: id});
         },
-        
+
         addItem: function(id) {
             var $self = this;
 
@@ -131,7 +131,7 @@
             }
             $self._ul.prepend($li);
         },
-        
+
         _onClickHeader: function($self, event) {
             var isExpanded = $self._dd.is(":visible");
             $self._setExpanded(!isExpanded);
@@ -139,7 +139,7 @@
 
         _setExpanded: function(expanded) {
             var $self = this;
-            
+
             if (expanded === true) {
                 $self._addInput.val('');
             }
@@ -152,7 +152,7 @@
         }
 
     });
-    
+
     $.extend($.ui.combobox, {
         instances: []
     });
