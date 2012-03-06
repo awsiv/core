@@ -86,16 +86,23 @@
         //loading the create user page from server to add the user
         $('#add_user').live('click',function(event) {
             event.preventDefault();
-            $("#error_status").html('');            
+            $("#error_status").html('');       
+  
             var path = $(this).attr('href');
-            $("#admin_content").slideUp().load(path).slideDown();;
+            attach_edit_form(this, $(this).attr('form'));
+
         });
 
         //submitting the create user form
         $('#create_user').live('submit',function(event) {
             event.preventDefault();
-            $("#error_status").html('');            
-            $(this).ajaxSubmit(options)
+            $("#error_status").html('');      
+            var options = {
+                success: function () {
+                    bindSortable('roleslist', new Array('roles'));
+                } 
+            };
+            $(this).ajaxSubmit(options);
         });
 
         //load the result from the server after delete page is called
@@ -116,46 +123,68 @@
         //loading the edit page in admin_content of the admin area
         $('a.edit').live('click',function(event){
             event.preventDefault();
-            var tr = $(this).parent().parent(); //get parent element   
-            
-            //delete element
-            if($("#edit_form_wrapper").length) {
-                $("#edit_form_wrapper").remove();
-            }
-            
-            //create element
-            $('<tr id="edit_form_wrapper"><td colspan=3><div id="edit_form"></div></td></tr>').insertAfter(tr);  
-            $("#error_status").html('');
-            var path = $(this).attr('href');
-            $("#edit_form").load(path,function(res){
-                $("#edit_form").html(res).slideDown('slow');
-                var genericOption = {
-                    baseUrl: '<?php echo site_url() ?>',
-                    addSearchBar: true,
-                    addAlphabetFilter: true,
-                    itemId: 'classList',
-                    placeholderId: 'classList_wrapper',
-                    sortable: true,
-                    sortableConnectionClass: 'classlist',
-                    sortableDestinations: new Array('crxi', 'crxx')
-                };
-         
-                $('#classList').classfinderbox(genericOption);
-                 
-                 
-               var genericOption = {
-                    baseUrl: '<?php echo site_url() ?>',
-                    addSearchBar: false,
-                    addAlphabetFilter: false,
-                    itemId: 'bundlessList',
-                    placeholderId: 'bundlessList_wrapper',
-                    sortable: true,
-                    sortableConnectionClass: 'bundlelist',
-                    sortableDestinations: new Array('brxi', 'brxx')                    
-                };
-                 $('#bundlessList').classfinderbox(genericOption);
-            });
+            attach_edit_form(this, $(this).attr('form'));
         });
+
+function attach_edit_form(elem, form) {
+    var parent = $(elem).parent().parent(); //get parent element   
+
+    //delete element
+    if($("#edit_form_wrapper").length) {
+        $("#edit_form_wrapper").remove();
+    }
+
+    //create element with the same type as parent
+    $('<' + $(parent).get(0).tagName + ' id="edit_form_wrapper"><td colspan=3 style="background:#ccc"><div id="edit_form"></div></td></' + $(parent).get(0).tagName +'>').insertAfter(parent);  
+    $("#error_status").html('');
+    var path = $(elem).attr('href');
+    load_edit_form(path, form);
+}
+
+function load_edit_form(path, form) {
+    $("#edit_form").load(path,function(res){
+        $("#edit_form").html(res).slideDown('slow',  function() {
+ 
+            if (form == 'role')
+            {
+                addFinders();
+            }  
+            else {
+                //TODO: refactor this - make independent from classes
+                bindSortable('roleslist', new Array('roles'))
+            }
+        });
+    });
+}
+
+
+function addFinders() {
+            var genericOption = {
+                baseUrl: '<?php echo site_url() ?>',
+                addSearchBar: true,
+                addAlphabetFilter: true,
+                itemId: 'classList',
+                placeholderId: 'classList_wrapper',
+                sortable: true,
+                sortableConnectionClass: 'classlist',
+                sortableDestinations: new Array('crxi', 'crxx')
+            };
+
+            $('#classList').classfinderbox(genericOption);
+
+            var genericOption = {
+                baseUrl: '<?php echo site_url() ?>',
+                addSearchBar: false,
+                addAlphabetFilter: false,
+                itemId: 'bundlessList',
+                placeholderId: 'bundlessList_wrapper',
+                sortable: true,
+                sortableConnectionClass: 'bundlelist',
+                sortableDestinations: new Array('brxi', 'brxx')                    
+            };
+        
+            $('#bundlessList').classfinderbox(genericOption);
+}
 
         //loading the change password in admin_content
         $('a.changepassword').live('click',function(event){
@@ -190,6 +219,7 @@
                     },
                     success:function(responseText, statusText, xhr, $form){
                         $(document).unblock();
+                        bindSortable('roleslist', new Array('roles'));
                     }      
                 });
             });
@@ -212,16 +242,26 @@
             //loading the  role create page in the  admin area ajaxcially
             $('#add_role').live('click',function(event){
                 event.preventDefault();
-                $("#error_status").html('');
-                var path=$(this).attr('href');
-                $("#admin_content").slideUp().load(path).slideDown();
+                attach_edit_form(this, 'role');
             });
 
             //create a new role form the page loaded
             $('#create_role, #edit_role').live('submit',function(event){
                 event.preventDefault();
                 $("#error_status").html('');
-                if (roleValidate() == false)
+                
+                if ($(this).attr('id') == 'create_role') {
+                     if (roleNameValidate() == false) {
+                        var okBtn  = generateCloseBtn('Ok', $confirmation);
+
+                        $confirmation.dialog("option", "buttons", okBtn);
+                        $confirmation.dialog("open");
+                        return
+                     }
+                }
+                
+
+                if (roleIncludeExcludeValidate() == false)
                 {
                     var cancelBtn  = generateCloseBtn('Cancel', $confirmation);
                     var confirmBtn = generateSubmitBtn('Confirm', $(this), $confirmation);
@@ -235,15 +275,22 @@
                 }   
             });
             
-            function roleValidate()
+            function roleNameValidate() {
+                if ($.trim($('#name').val()).length === 0) {
+                    $('#confirmation span').text('You Must add Name to the role.');
+                    return false;
+                }
+            }
+            
+            function roleIncludeExcludeValidate()
             {
-                if ($.trim($('#crxi').val()).length === 0 && $.trim($('#crxx').val()).length === 0)                 
+                if ($('input[name="crxi[]"]:checked').length == 0 && $('input[name="crxx[]"]:checked').length == 0)
                 {
                     $('#confirmation span').text('This role will allow complete reporting permissions for all hosts, is this what you wanted? If not, please fill in a host class regular expression.');
                     return false;
                 }
 
-                if ($.trim($('#brxi').val()).length === 0 && $.trim($('#brxx').val()).length === 0) 
+                if ($('input[name="brxi[]"]:checked').length == 0 && $('input[name="brxx[]"]:checked').length === 0) 
                 {
                     $('#confirmation span').text('This role will allow complete viewing permissions for all promises, is this what you wanted? If not, please fill in a bundle class regular expression.');
                     return false;
@@ -274,45 +321,6 @@
                 $(this).ajaxSubmit(options)
             });
         });
-
-        /* disabled
-        //asign roles on edit user page
-        $('.itemlist li').live('click',function(event) {
-            $(this).toggleClass("selected_item");
-        });
-        */
-
-/*
-        //moving roles
-       $("#move_left").live('click',function(event) {
-            $('#all_roles .selected_item').each(function() {
-                var item_id = $(this).attr('itemid');
-                $('#li_itemid' + item_id).each(function() {this.checked = false;});
-
-                var item_clone = $(this).clone(true);
-                $(item_clone).removeClass('selected_item');
-                $(item_clone).addClass('moved');
-                $(item_clone).find('input:checkbox').attr('checked', 'checked');  
-                $(item_clone).find('input:checkbox').attr('disabled', false);
-                $('#user_roles').append(item_clone);
-                $(this).remove();
-            });
-        });
-        $("#move_right").live('click',function(event) {
-            $('#user_roles .selected_item').each(function() {
-                var item_id = $(this).attr('itemid');
-
-                $('#li_itemid' + item_id).each(function() {this.checked = false;});
-                var item_clone = $(this).clone(true);
-                $(item_clone).removeClass('selected_item');
-                $(item_clone).addClass('moved');
-                $(item_clone).find('input:checkbox').attr('checked', false);
-                $(item_clone).find('input:checkbox').attr('disabled', true);
-                $('#all_roles').append(item_clone);
-                $(this).remove();
-            });
-        });  
-*/
 
 // bind correct mouse behavior
 var selectedClass = 'selected_item';
@@ -361,7 +369,8 @@ function removeCheckbox(el)
 {
     var checkbox = $(el).find('input');
     if(checkbox.length != 0)
-    { // add checkbox
+    { 
+        // add checkbox
         checkbox.remove();
     }
 }
@@ -373,16 +382,17 @@ function bindSortable(bind_css_class_name, destinations_array)
         alert("Can't find element for drag&drop");
     }
     
-   
+    var bind_class = '.' + bind_css_class_name;
+    
+    if($(bind_class).length == 0) {
+        alert("Can't find element for drag&drop");
+    }
     
     var source_elem = '';
     var source_id   = '';    
 
     var destination_elem = '';
     var destination_id = ''; 
-    
-    var bind_class = '.' + bind_css_class_name;
-    
 
           $(bind_class).sortable({
             connectWith: bind_class,
@@ -430,27 +440,27 @@ function bindSortable(bind_css_class_name, destinations_array)
 
                 $(destination_elem).find('li.selected_item').removeClass('selected_item');
                 
+           
                 // add empty element with message
                 if ($(source_elem).children().length == 0)
                 {      
-                    if ($('#' + source_id +' li.empty').length == 0)
+                    if ($('#' + source_id).next('div.empty_list_warning').length == 0)
                     {
-                        $('#' + source_id).append('<li class="empty">No classes assigned</li>');
+                        var el = $('<div class="empty_list_warning">No items assigned</div>');
+                        $('#' + source_id).after(el);
                     }
                     
-                    $('#' + source_id + " .empty").show();
+                    $('#' + source_id).next("div.empty_list_warning").show();
+                    $('#' + source_id).addClass('empty_list');
                 }
                 else
-                    $('#' + destination_id + " .empty").remove();
-                
-                
-                $('#' + source_id).find('.empty').attr('class');
+                { 
+                    $('#' + destination_id).next("div.empty_list_warning").remove();
+                    $('#' + destination_id).removeClass('empty_list');
+                }
+
             },
             activate: function(event, ui) { 
-                /*
-                if(ui.item.hasClass('empty')) {
-                    $(ui.item).parent().sortable( "option", "disabled", true );
-                }*/
             }
 	}).disableSelection();
 }        
@@ -459,11 +469,13 @@ function bindSortable(bind_css_class_name, destinations_array)
      var dest = $(this).attr('dest');
      var sourse = $(this).attr('sourse');
 
+     var destinations_array = new Array("crxi","crxx","brxi", 'brxx', 'roles');
+
         var $group = $('#' + sourse + ' .selected_item');
         
         var destination_elem = $('#' + dest);
-    
-        if (dest == 'crxi' || dest == 'crxx') {
+
+        if ($.inArray( dest, destinations_array) != -1) {
             $group.each(function() {
                 addCheckbox(this, dest);
             });
@@ -484,7 +496,7 @@ function bindSortable(bind_css_class_name, destinations_array)
     
 $("#addClassRegexp" ).live('click', function(e){
     if($('#classRegexpText').val() != '') {
-            $('#classList').prepend('<li class=""><a href="#">' + $('#classRegexpText').val() + '</li>' );  
+            $('#classList').prepend('<li class=""><span>' + $('#classRegexpText').val() + '</span></li>' );  
             $('#classRegexpText').css('border', 'inherit');
         }
         else {
