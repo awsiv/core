@@ -85,6 +85,7 @@
 .astrolabe .host > .red
 {
     background-color: #cc4358;
+    padding: 0px;
 }
 
 .astrolabe .host > .green
