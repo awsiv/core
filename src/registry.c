@@ -1022,3 +1022,60 @@ int GetRegistryValue(char *key, char *name, char *buf, int bufSz)
 }
 
 #endif /* MINGW */
+
+int CheckRegistrySanity(Attributes a, Promise *pp)
+{
+    bool retval = true;
+
+#ifdef NT
+    ValidateRegistryPromiser(pp->promiser, a, pp);
+#endif
+    if (a.database.operation && strcmp(a.database.operation, "create") == 0)
+    {
+        if (a.database.rows == NULL)
+        {
+            CfOut(cf_inform, "", "No row values promised for the MS registry database");
+        }
+
+        if (a.database.columns != NULL)
+        {
+            CfOut(cf_error, "", "Columns are only used to delete promised values for the MS registry database");
+            retval = false;
+        }
+    }
+
+    if (a.database.operation
+        && (strcmp(a.database.operation, "delete") == 0 || strcmp(a.database.operation, "drop") == 0))
+    {
+        if (a.database.columns == NULL)
+        {
+            CfOut(cf_inform, "", "No columns were promised deleted in the MS registry database");
+        }
+
+        if (a.database.rows != NULL)
+        {
+            CfOut(cf_error, "", "Rows cannot be deleted in the MS registry database, only entire columns");
+            retval = false;
+        }
+    }
+
+    for (Rlist *rp = a.database.rows; rp != NULL; rp = rp->next)
+    {
+        if (CountChar(ScalarValue(rp), ',') != 2)
+        {
+            CfOut(cf_error, "", "Registry row format should be NAME,REG_SZ,VALUE, not \"%s\"", ScalarValue(rp));
+            retval = false;
+        }
+    }
+
+    for (Rlist *rp = a.database.columns; rp != NULL; rp = rp->next)
+    {
+        if (CountChar(rp->item, ',') > 0)
+        {
+            CfOut(cf_error, "", "MS registry column format should be NAME only in deletion");
+            retval = false;
+        }
+    }
+
+    return retval;
+}

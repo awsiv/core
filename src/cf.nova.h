@@ -1180,6 +1180,8 @@ void Nova_SetPersistentScalar(char *lval, char *rval);
 
 int Nova_ValidateRegistryPromiser(char *s, Attributes a, Promise *pp);
 
+int CheckRegistrySanity(Attributes a, Promise *pp);
+
 /* reporting.c */
 
 void Nova_SummarizePromiseRepaired(int xml, int html, int csv, int embed, char *stylesheet, char *head, char *foot,
@@ -1222,22 +1224,6 @@ pid_t Nova_StartTwin(int argc, char **argv);
 void Nova_SignalTwin(void);
 void Nova_SignalOther(void);
 void Nova_ReviveOther(int argc, char **argv);
-
-/* sql.c */
-
-int Nova_ValidateSQLTableName(char *table_path, char *db, char *table);
-int VerifyTablePromise(CfdbConn *cfdb, char *table_path, Rlist *columns, Attributes a, Promise *pp);
-int Nova_ValidateSQLTableName(char *table_path, char *db, char *table);
-void Nova_QueryTableColumns(char *s, char *db, char *table);
-int Nova_NewSQLColumns(char *table, Rlist *columns, char ***name_table, char ***type_table, int **size_table,
-                       int **done);
-void Nova_DeleteSQLColumns(char **name_table, char **type_table, int *size_table, int *done, int len);
-void Nova_CreateDBQuery(enum cfdbtype type, char *query);
-int Nova_CreateTableColumns(CfdbConn *cfdb, char *table, Rlist *columns, Attributes a, Promise *pp);
-int NovaCheckSQLDataType(char *type, char *ref_type, Promise *pp);
-int Nova_TableExists(CfdbConn *cfdb, char *name);
-Rlist *Nova_GetSQLTables(CfdbConn *cfdb);
-void Nova_ListTables(int type, char *query);
 
 /* syntax.c */
 
