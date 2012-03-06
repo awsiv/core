@@ -230,6 +230,10 @@ p#userbox a{
     float:left;
 }
 
+.floatright{
+   float:right;
+}
+
 .underline{
     text-decoration: underline;
 }
@@ -2626,10 +2630,6 @@ ul.admin_menu li.current a{
 }
 
 #modifySearchPanel{
-    background: none;
-    border:solid 1px #999;
-    display:none;
-    margin:10px;
     padding:10px;
 }
 
@@ -2870,37 +2870,35 @@ background-image: none;
 }
 
 .dd_menu {
-    background:#3D4439; 
+    background:#51584d; 
     padding:0px;
     margin:0; 
     list-style-type:none; 
-    height:30px;
-    margin-bottom: 20px;
+    height:50px;
+    border-top-left-radius: 5px 5px;
+    border-top-right-radius: 5px 5px;
 }
 .dd_menu li {
     float:left;
-    color:#fff;
-    padding:5px 10px 5px 10px;
-    margin-left: 5px;
+    margin-left: 7px;
+    margin-top: 20px;
+    padding-right: 25px;
+    background:#e6eee3 url('../images/nav_arrows.gif') no-repeat right 2px;
+    border:solid 1px #c8c8c8;
+    color: #1a1a1a;
 }
 
 .dd_menu li.selected {
-    background: none repeat scroll 0 0 #FFFFFF;
-    border-top: 1px solid #3D4439;
-    color: black;
-    padding: 5px 9px;
+    color:#FFF;
+    background:#6e766b url('../images/nav_arrows.gif') no-repeat right -20px;
 }
 
 .dd_menu ul {list-style-type:none;margin-left:30px}
 
 .dd_menu li:hover {
     position:relative; 
-    background:#E6EEE3; 
-    color:#444;
-    border-left:1px solid grey;
-    border-right:1px solid grey;
-    border-top:1px solid grey;
-    padding:5px 9px 5px 9px;
+    color:#FFF;
+    background:#6e766b url('../images/nav_arrows.gif') no-repeat right -20px;
 }
 .dd_menu ul li ul {
     position:absolute;
@@ -2908,46 +2906,81 @@ background-image: none;
     margin:0
 }
 
-.dd_menu li a {
-    padding:9px 20px;
-    display:block; 
-    color:#fff; 
-    /*text-decoration:none; */
-    font:12px arial, verdana, sans-serif; 
-    font-weight: bold;
-}
+
 .dd_menu li:hover a:visited {text-decoration:underline;}
 
 
 .dd_menu li:hover ul {
     left:0px; 
-    top:29px; 
+    top:25px; 
     background-color:#E6EEE3; 
     padding:3px; 
     border-left:1px solid grey;
     border-right:1px solid grey;
     border-bottom:1px solid grey; 
-    width:175px; 
+    width:185px; 
     z-index: 100;
     display:block;
     margin-left: -1px
 }
 .dd_menu li:hover ul li {
-    height:18px; 
     border:none; 
-    padding:0px
+    padding:2px 0px;
+    margin:0px;
+    background: none;
 }
 .dd_menu li:hover ul li a {
-    height:18px; 
-    padding:0px; 
+    
+    padding:1px; 
     display:block; 
-    font-size:11px; 
-    width:168px; 
-    line-height:18px; 
+    width:175px; 
     text-indent:5px; 
     color:#444; 
     background-color:#E6EEE3; 
     text-decoration:none;
+    font-size: 12px;
 }
 
-.dd_menu li:hover ul li a:hover {height:18px; background:silver; color:#000; border:solid 1px #444;}
+.dd_menu li:hover ul li a:hover {background:silver; color:#000; border:solid 1px #444; padding:0}
+
+.dd_menu li:hover ul li a.selected {background:silver; color:#000; border:solid 1px #444; padding:0}
+
+#searchform .panelcontent{
+    background: #E6EEE3;
+    padding:13px 5px;
+    margin-bottom: 10px;
+}
+
+body .outerdiv a.hostcontextddl, .hostcontextddl{
+    padding-left:10px;
+    padding-right: 25px;
+    background:#fff url('../images/nav_arrows.gif') no-repeat right -42px;
+    border:solid 1px #c8c8c8;
+    color: #1a1a1a !important;
+}
+
+.alignrightbuttoncontainer{
+    text-align:right;
+}
+
+#savesearchcontainer .alignrightbuttoncontainer{
+    margin-top: 39px;
+} 
+
+#savesearchcontainer{
+    border-left: solid 1px #fff;
+}
+
+span.green_btn,a.green_btn{
+    background: url("../images/green_button_right.png") no-repeat scroll 100% 0 transparent;
+    color: #FFFFFF !important;
+    padding-right: 3px;
+    padding-bottom: 1px;
+}
+
+a.green_btn span,span.green_btn input{
+    background: url("../images/green_button_left.png") no-repeat scroll 0 0 transparent;
+    padding: 0 6px 1px 9px;
+    color: #FFFFFF !important;
+    border: none;
+}
