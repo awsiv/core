@@ -55,9 +55,9 @@
                 if ($username != $fall_back_for) { // if this is not "admin" user
                         if ($is_admin || ($this->ion_auth->mode != "database" && !$this->ion_auth->is_ldap_user_exists())) {
                             if ($this->ion_auth->mode != "database") {
-                                echo anchor("auth/edit_user_ldap/" . $username, ' ', array('class' => 'edit', 'title' => 'edit user'));
+                                echo anchor("auth/edit_user_ldap/" . $username, ' ', array('class' => 'edit', 'form'=>'edit_user', 'title' => 'edit user'));
                             } else {
-                                echo anchor("auth/edit_user/" . $user['_id']->__toString(), ' ', array('class' => 'edit', 'title' => 'edit user'));
+                                echo anchor("auth/edit_user/" . $user['_id']->__toString(), ' ', array('class' => 'edit', 'form'=>'edit_user', 'title' => 'edit user'));
                             }
 
                             if ($this->ion_auth->mode == "database") {
@@ -83,7 +83,7 @@
 if($this->ion_auth->mode =="database"){
    if($is_admin){?>
 	<p id="btnholder">
-           <span class="btn"> <a id="add_user" href="<?php echo site_url('auth/create_user');?>">Add user +</a></span>
+           <span class="btn"> <a id="add_user" form="user" href="<?php echo site_url('auth/create_user');?>">Add user +</a></span>
         </p>
 <?php }
 }?>
