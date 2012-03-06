@@ -69,15 +69,6 @@
                 });
                 $(menuContainer).append(self._profilesCombo);
 
-                var $searchEntry = $('<div>');
-                $searchEntry.addClass('grid_2');
-                $searchEntry.searchEntry({
-                    onChanged: function(event, args) {
-                        self.setFilter(args.value);
-                    }
-                });
-                $(menuContainer).append($searchEntry);
-
                 var clear = document.createElement('div');
                 $(clear).addClass('clear');
                 $(menuContainer).append(clear);
