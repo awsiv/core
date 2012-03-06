@@ -3,8 +3,8 @@
         options: {
             imagesUrl: '../../themes/default/images/astrolabe/',
             defaultbehaviour: true,
-            defaultNoneSelectedLabel: '(none)',
-            defaultAddItemPlaceholder: 'Add tree',
+            noneSelectedLabel: '(none)',
+            addItemPlaceholder: 'Add tree',
             maxLength: 15
         },
 
@@ -20,7 +20,7 @@
 
                     $self._selectedLabel = $('<span>');
                     $self._selectedLabel.addClass('selectedLabel');
-                    $self._selectedLabel.html($self.options.defaultNoneSelectedLabel);
+                    $self._selectedLabel.html($self.options.noneSelectedLabel);
                     $self._dt.append($self._selectedLabel);
 
                     var $arrowIconBox = $('<div>');
@@ -48,7 +48,7 @@
                         {
                             $self._addInput = $('<input>');
                             $self._addInput.addClass('addInput');
-                            $self._addInput.attr('placeholder', $self.options.defaultAddItemPlaceholder);
+                            $self._addInput.attr('placeholder', $self.options.addItemPlaceholder);
                             $self._addInput.attr('maxlength', $self.options.maxLength);
                             $addItem.append($self._addInput);
 

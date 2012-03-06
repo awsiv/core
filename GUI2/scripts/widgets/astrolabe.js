@@ -54,6 +54,9 @@
                 self._profilesCombo.addClass('grid_1');
                 self._profilesCombo.addClass('profilesCombo');
                 self._profilesCombo.combobox({
+                    noneSelectedLabel: '(All Hosts)',
+                    addItemPlaceholder: 'Add Tree',
+
                     itemSelected: function(event, args) {
                         self._loadProfile(args.id);
                     },
