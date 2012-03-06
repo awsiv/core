@@ -50,7 +50,6 @@ libcfnova_la_SOURCES = \
         processes.c \
         pscalar.c \
         runagent.c \
-        environments.c \
         reporting.c \
         html.c \
         syntax.c \
@@ -62,7 +61,6 @@ libcfnova_la_SOURCES = \
         magnify.c \
         topicmap.c \
         install.c \
-        files_lib.c \
         cmd_api.c \
         map.c map.h map_common.h \
         string_map.c string_map.h \

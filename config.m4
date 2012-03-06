@@ -15,12 +15,6 @@ if test "x$NOVA_SUBDIR" != "x"; then
     AC_MSG_RESULT([ -> LDAP: disabled])
   fi
 
-  if test "x$ac_cv_lib_virt_virConnectOpen" = xyes; then
-    AC_MSG_RESULT([ -> libvirt: $LIBVIRT_PATH])
-  else
-    AC_MSG_RESULT([ -> libvirt: disabled])
-  fi
-
   if test "x$with_cfmod" != xno; then
     AC_MSG_RESULT([ -> cfmod: enabled, using $PHP_CONFIG])
   else

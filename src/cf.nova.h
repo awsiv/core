@@ -31,11 +31,6 @@
 # include <acl/libacl.h>
 #endif
 
-#ifdef HAVE_LIBVIRT
-# include <libvirt/libvirt.h>
-# include <libvirt/virterror.h>
-#endif
-
 #ifdef HAVE_LIBMONGOC
 // WARNING: If changing collection names: grep through source
 # define MONGO_HAVE_STDINT
@@ -917,36 +912,6 @@ void Nova_UnPackMeter(mongo_connection *dbconn, char *id, Item *data);
 void Nova_UnPackSoftwareDates(mongo_connection *dbconn, char *id, Item *data);
 void Nova_UnPackBundles(mongo_connection *dbconn, char *id, Item *data);
 char *Nova_LongArch(char *arch);
-
-/* environments.c */
-
-int Nova_EnvironmentsSanityChecks(Attributes a, Promise *pp);
-void Nova_VerifyEnvironments(Attributes a, Promise *pp);
-void Nova_VerifyEnvironmentsPromise(Promise *pp);
-void Nova_VerifyVirtDomain(char *uri, enum cfhypervisors envtype, Attributes a, Promise *pp);
-void Nova_VerifyVirtNetwork(char *uri, enum cfhypervisors envtype, Attributes a, Promise *pp);
-void Nova_NewEnvironmentsContext(void);
-void Nova_DeleteEnvironmentsContext(void);
-
-#ifdef HAVE_LIBVIRT
-int Nova_CreateVirtDom(virConnectPtr vc, char *uri, Attributes a, Promise *pp);
-int Nova_DeleteVirt(virConnectPtr vc, char *uri, Attributes a, Promise *pp);
-int Nova_DeleteVirt(virConnectPtr vc, char *uri, Attributes a, Promise *pp);
-int Nova_RunningVirt(virConnectPtr vc, char *uri, Attributes a, Promise *pp);
-int Nova_SuspendedVirt(virConnectPtr vc, char *uri, Attributes a, Promise *pp);
-int Nova_DownVirt(virConnectPtr vc, char *uri, Attributes a, Promise *pp);
-int VerifyZone(Attributes a, Promise *pp);
-void Nova_EnvironmentErrorHandler(void);
-void Nova_ShowRunList(virConnectPtr vc);
-void Nova_ShowDormant(virConnectPtr vc);
-void Nova_ShowNetworks(virConnectPtr vc, char **networks);
-int Nova_CreateVirtNetwork(virConnectPtr vc, char **networks, Attributes a, Promise *pp);
-int Nova_DeleteVirtNetwork(virConnectPtr vc, char **networks, Attributes a, Promise *pp);
-#endif
-
-/* files_lib.c */
-
-int FileRead(const char *filename, char *buffer, size_t bufsize);
 
 /* histogram.c */
 

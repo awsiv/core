@@ -60,17 +60,6 @@ if test "x$with_ldap" != xno; then
    ])
 fi
 
-AC_ARG_WITH([libvirt],
-    [AS_HELP_STRING([--with-libvirt[[=PATH]]], [support virtual machine management])],
-    [], [with_libvirt=check])
-
-if test "x$with_libvirt" != xno; then
-   CF3_WITH_LIBRARY(libvirt, [
-      AC_CHECK_LIB(virt, virConnectOpen, [], [if test "x$with_libvirt" != xcheck; then AC_MSG_ERROR(Cannot find libvirt library); fi])
-      AC_CHECK_HEADERS(libvirt/libvirt.h, [], [if test "x$with_libvirt" != xcheck; then AC_MSG_ERROR(Cannot find libvirt library headers); fi])
-   ])
-fi
-
 AC_ARG_WITH([cfmod],
     [AS_HELP_STRING([--with-cfmod[[=PATH]]], [enable cfmod using path to locate php-config])],
     [], [with_cfmod=check])
