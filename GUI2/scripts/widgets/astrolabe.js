@@ -540,17 +540,24 @@
                    url: $self._profileUrl(profileId),
                    success: function(nodeDescriptionList) {
                        $self._createSuperNode($.parseJSON(nodeDescriptionList));
+                       $self._onClickNodeLabel($self, $self._superNode, null);
+                       $self._setNodeExpanded($self._superNode, true);
+                       $self._loadNode($self._superNode);
                    },
                    error: function() {
                        $self._createSuperNode(null);
+                       $self._onClickNodeLabel($self, $self._superNode, null);
+                       $self._setNodeExpanded($self._superNode, true);
+                       $self._loadNode($self._superNode);
                    }
                 });
             }
             else {
                 $self._createSuperNode(null);
+                $self._onClickNodeLabel($self, $self._superNode, null);
+                $self._setNodeExpanded($self._superNode, true);
+                $self._loadNode($self._superNode);
             }
-
-            $self._onClickNodeLabel($self, $self._superNode, null);
         },
 
         _recount: function() {
