@@ -2883,3 +2883,86 @@ ul#promisesContainer .removePromise:hover{
     background: #eee;
 }
 input[readonly] {background: buttonface;}
+
+.dd_menu {
+    background:#3D4439; 
+    padding:0px;
+    margin:0; 
+    list-style-type:none; 
+    height:30px;
+    margin-bottom: 20px;
+}
+.dd_menu li {
+    float:left;
+    color:#fff;
+    padding:5px 10px 5px 10px;
+    margin-left: 5px;
+}
+
+.dd_menu li.selected {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-top: 1px solid #3D4439;
+    color: black;
+    padding: 5px 9px;
+}
+
+.dd_menu ul {list-style-type:none;margin-left:30px}
+
+.dd_menu li:hover {
+    position:relative; 
+    background:#E6EEE3; 
+    color:#444;
+    border-left:1px solid grey;
+    border-right:1px solid grey;
+    border-top:1px solid grey;
+    padding:5px 9px 5px 9px;
+}
+.dd_menu ul li ul {
+    position:absolute;
+    display: none;
+    margin:0
+}
+
+.dd_menu li a {
+    padding:9px 20px;
+    display:block; 
+    color:#fff; 
+    /*text-decoration:none; */
+    font:12px arial, verdana, sans-serif; 
+    font-weight: bold;
+}
+.dd_menu li:hover a:visited {text-decoration:underline;}
+
+
+.dd_menu li:hover ul {
+    left:0px; 
+    top:29px; 
+    background-color:#E6EEE3; 
+    padding:3px; 
+    border-left:1px solid grey;
+    border-right:1px solid grey;
+    border-bottom:1px solid grey; 
+    width:175px; 
+    z-index: 100;
+    display:block;
+    margin-left: -1px
+}
+.dd_menu li:hover ul li {
+    height:18px; 
+    border:none; 
+    padding:0px
+}
+.dd_menu li:hover ul li a {
+    height:18px; 
+    padding:0px; 
+    display:block; 
+    font-size:11px; 
+    width:168px; 
+    line-height:18px; 
+    text-indent:5px; 
+    color:#444; 
+    background-color:#E6EEE3; 
+    text-decoration:none;
+}
+
+.dd_menu li:hover ul li a:hover {height:18px; background:silver; color:#000; border:solid 1px #444;}
