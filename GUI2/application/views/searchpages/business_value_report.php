@@ -1,6 +1,8 @@
 
 <div id="searchform" class="panel">
-    <div class="panelhead"><?php echo $report_type ?> query</div><div class="panelcontent">
+    <div class="panelhead"><?php echo $report_type ?> query</div>
+    
+    <div class="panelcontent searchform">
         <form method="post" action="<?php echo site_url('search') ?>">
             <p>Date:<input class="searchfield" type="text" name="days" value="<?php echo (is_array($paramArray) && isset($paramArray['days'])) ? trim($paramArray['days']) : ''; ?>" ></p>
             <p>Host class: (.*+[])
