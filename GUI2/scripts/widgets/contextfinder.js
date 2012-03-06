@@ -119,7 +119,7 @@ bindClassfinder: function () {
        var self= this;
        $('.class_selector',$('#contentfindercontainer')).classfinder({
         defaultbehaviour:false,
-        
+        baseUrl:self.options.baseUrl,
         complete:function(event,data)
         {
           $(this).parent().find('input').val(data.selectedclass);
@@ -178,7 +178,8 @@ getUrlParams: function () {
             {
                 url = url + 'excludes=' + encodeURIComponent(excludes);
             }
-            return url;
+            //return url;
+            return {incList:includes,exList:excludes}
 },
 
 dialogContainer: function() {
