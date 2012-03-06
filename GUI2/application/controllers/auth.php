@@ -22,7 +22,7 @@ class Auth extends Controller {
         $this->form_validation->set_error_delimiters('<span class="errorlist">', '</span>');
         //$this->load->database();
         $this->load->helper('url');
-    
+        $this->carabiner->css('classfinderbox.css');
         $this->config->load('ion_auth', TRUE);
     }
 
