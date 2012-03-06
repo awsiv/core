@@ -14,39 +14,33 @@
                 <?php } ?>
             </ul>
         </div>
-        <!--<p class="title">
-            <?php
-            echo $report_title;
-            echo (isset($hostname) && ($hostname != "")) ? " for " . $hostname : ""
-            ?>
-        </p>-->
-        
-        <div class="reporthead">
-            <div class="grid_8">
+            <!--<div class="grid_8">
                 <a href="<?php echo $report_link ?>" id="send_mail" class="icons download showqtip" title="Download report"></a>
                 <?php echo anchor('#', 'Select host', array('id' => 'findhost', 'title' => 'Report for another host', 'class' => 'showqtip')) ?>
-            </div>
-            <div class="grid_4" style="text-align: right;">
-                <div><a href="#" id="savesearch" class="showqtip" title="save this search for future use"><span class="ui-icon-triangle-1-s"></span>Save this search</a></div>
-                <div id="savesearchcontainer" style="margin: 5px;display:none;">
+            </div>-->
+           
+                <!--<div><a href="#" id="savesearch" class="showqtip" title="save this search for future use"><span class="ui-icon-triangle-1-s"></span>Save this search</a></div>-->
+                <div id="savesearchcontainer" class="grid_4 floatright" style="disply:none">
+                 
                     <div id="searchSaveError" class="error" style="display:none;"></div>
                     <div id="searchSaveSuccess" class="success" style="display:none;"></div> 
                     <form id="saveform" method="post" action="<?php echo site_url(); ?>/savedsearch/save/">
-                        <label for="search_name">Name</label>   
+                        <p>
+                        <label>Save this search </label> 
                         <input type="input" id="search_name" name="search_name" class="textbox"></input>
+                        <span class="green_btn"><input type="submit" id="submit_search" value="save"/></span>
+                        </p>
                         <input type="hidden" id="search_params" name="search_params" value="<?php echo $params; ?>"></input>
                         <input type="hidden" id="search_url" name="search_url" value="<?php echo site_url() . $breadCrumbUrl; ?>"></input>
                         <input type="hidden" id="report_title" name="report_title" value="<?php echo $report_type; ?>"></input>
-                        <input type="submit" id="submit_search" value="save" class="btn" />
-                    </form>                
+                       
+                    </form>
+                    <div class="alignrightbuttoncontainer">
+                      <a href="<?php echo site_url("/savedsearch/listSavedSearches/$report_type"); ?>"  class="green_btn loadsavedsearch"><span>Load saved searches</span></a>
+                      <a href="<?php echo $report_link ?>" id="send_mail" class="green_btn" title="Download report"><span>Download</span></a>
+                    </div>
                 </div> 
-                <div><a href="#" id="modifySearch" class="showqtip" title="modify search parameters">New search</a></div>
 
-            </div>
-            <div class="clearboth">
-            </div>   
-
-        </div>
         <div id="modifySearchPanel" style="">
 
         </div>
@@ -107,7 +101,7 @@
                         </div>
                         <script type="text/javascript">
                             $(document).ready(function() {
-                                $('#modifySearch').click(function(e) {
+                                /*$('#modifySearch').click(function(e) {
                                     e.preventDefault();  
                                     $('#modifySearchPanel').toggle();
                                     if(!$("#modifySearchPanel").is(":hidden")) {
@@ -117,7 +111,17 @@
                                             $('#modifySearchPanel').html(data);                   
                                         });
                                     }
-                                });
+                                });*/
+                                
+                                        
+                                        $.post('<?php echo site_url(); ?>/search/index',<?php echo json_encode($paramArray); ?>, function(data) {
+                                            var searchfilterbox = $('#modifySearchPanel')
+                                            searchfilterbox.html(data).show();
+                                            searchfilterbox.find('form').addClass('grid_8');
+                                            $('#savesearchcontainer').appendTo(searchfilterbox.find('.panelcontent'));
+                                            searchfilterbox.find('.panelcontent').append('<div class="clear"></div>')
+                                            
+                                        });
 
                                 // for save search 
                                 $('#savesearch').click(function(e) {
