@@ -3,7 +3,7 @@
 require_once APPPATH.'libraries/Cf_REST_Controller.php';
 
 class Astrolabe extends Cf_REST_Controller {
-    
+
     function __construct() {
         parent::__construct();
         $this->load->model('astrolabe_model');
@@ -13,12 +13,12 @@ class Astrolabe extends Cf_REST_Controller {
 
     function host_get()
     {
-        echo cfpr_astrolabe_host_list($this->username, 
+        echo cfpr_astrolabe_host_list($this->username,
                 $this->param_includes(), $this->param_excludes());
     }
-    
+
     function profile_get($id = NULL) {
-        
+
         if (is_null($id)) {
             $profileList = $this->astrolabe_model->profile_list($this->username);
             $this->respond(200, json_encode($profileList));
@@ -35,16 +35,16 @@ class Astrolabe extends Cf_REST_Controller {
             }
         }
     }
-    
+
     function profile_put($id) {
-        
+
         $nodeDescriptionList = json_decode($this->_put_args, true);
-        
+
         $this->astrolabe_model->profile_delete($this->username, $id);
         $result = $this->astrolabe_model->profile_insert($this->username, $id, $nodeDescriptionList);
     }
-    
-    function profile_delete($id) 
+
+    function profile_delete($id)
     {
         if ($this->astrolabe_model->profile_delete($this->username, $id) == true)
         {
@@ -54,15 +54,5 @@ class Astrolabe extends Cf_REST_Controller {
         {
             $this->respond(500, "Error deleting profile");
         }
-        
     }
-    
-    function meters_get($hostKey = NULL)
-    {
-        $rawData = cfpr_host_meter($hostKey);
-        $convertedData = $this->jit_utils->meters_to_jit($rawData);
-        
-        echo json_encode($convertedData);
-    }
-    
 }
