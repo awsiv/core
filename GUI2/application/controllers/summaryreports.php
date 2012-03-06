@@ -10,6 +10,7 @@ class Summaryreports extends Cf_Controller {
         $this->carabiner->js('picnet.jquery.tablefilter.js');
         $this->carabiner->js('jquery.tablesorter.pager.js');
         $this->carabiner->js('widgets/hostfinder.js');
+        $this->username = $this->session->userdata('username');
     }
 
     function search() {
@@ -50,6 +51,7 @@ class Summaryreports extends Cf_Controller {
                     if (!empty($value)) {
                         $breadcrumbs_url .= '/'.$key . '/' . urlencode($value);
                     }
+        $result = cfpr_report_overall_summary($this->username,$host, $handle, $state, $regex, $classRegex);
                 }
          }
         $bc = array(
