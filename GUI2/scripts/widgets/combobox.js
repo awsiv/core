@@ -83,23 +83,26 @@
             $self.element.append($dl);
         },
 
+        _init: function() {
+            var $self = this;
+
+            $self._selectedId = null;
+        },
+
         clear: function() {
             var $self = this;
             $self._ul.remove('li');
         },
 
-        selectItem: function(id) {
-            if (id === undefined || id === null) {
-
-            }
-            else {
-
-            }
-        },
-
         _setSelectedItem: function($self, id) {
             $self._selectedId = id;
-            $self._selectedLabel.html(decodeURIComponent(id));
+
+            if ($self._selectedId === null) {
+                $self._selectedLabel.html($self.options.noneSelectedLabel);
+            }
+            else {
+                $self._selectedLabel.html(decodeURIComponent(id));
+            }
 
             $self._setExpanded(false);
             $self._trigger("itemSelected", null, {id: id});
@@ -115,6 +118,7 @@
                 $deleteIcon.addClass('deleteIcon');
                 $deleteIcon.click(function(event) {
                     $li.remove();
+                    $self._setSelectedItem($self, null);
                     $self._trigger("itemDeleted", null, {id: id});
                     event.stopPropagation();
                 });
