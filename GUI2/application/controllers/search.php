@@ -81,8 +81,10 @@ class Search extends Cf_Controller {
         $hosts_only = isset($getparams['hosts_only']) ? $getparams['hosts_only'] : $this->input->post('hosts_only');
         $state = isset($getparams['state']) ? $getparams['state'] : $this->input->post('state');
         $longterm_data = isset($getparams['long_term']) ? $getparams['long_term'] : $this->input->post('long_term');
+        $incList = isset($getparams['inclist']) ? urldecode($getparams['inclist']): $this->input->post('inclist');
+        $exList = isset($getparams['exlist']) ? urldecode($getparams['exlist']) : $this->input->post('exlist');
         $hostname = "";
-
+        
 
         $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : $this->setting_lib->get_no_of_rows());
         if (is_numeric($rows)) {
@@ -203,7 +205,7 @@ class Search extends Cf_Controller {
                             'class_regex' => $class_regex
                         );
 
-                        $data['report_result'] = cfpr_report_bundlesseen($username, NULL, $name, true, array($class_regex), array(), "last-verified", true, $rows, $page_number);
+                        $data['report_result'] = cfpr_report_bundlesseen($username, NULL, $name, true, explode(',',$incList), explode(',',$exList), "last-verified", true, $rows, $page_number);
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                         $this->template->load('template', 'searchpages/businessresult', $data);
