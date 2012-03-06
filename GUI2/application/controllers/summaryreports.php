@@ -1,8 +1,10 @@
 <?php
 
-class Summaryreports extends Cf_Controller {
+class Summaryreports extends Cf_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->load->library(array('table', 'cf_table', 'pagination'));
         $this->load->helper('form');
@@ -10,14 +12,17 @@ class Summaryreports extends Cf_Controller {
         $this->carabiner->js('picnet.jquery.tablefilter.js');
         $this->carabiner->js('jquery.tablesorter.pager.js');
         $this->carabiner->js('widgets/hostfinder.js');
+        $this->username = $this->session->userdata('username');
     }
 
-    function search() {
+    function search()
+    {
         $data = '';
         $this->load->view('summaryreports/compliance_by_promise', $data);
     }
 
-    function show() {
+    function show()
+    {
 
 
         $requiredjs = array(
@@ -26,41 +31,48 @@ class Summaryreports extends Cf_Controller {
             array('widgets/notes.js'),
             array('SmartTextBox.js'),
         );
-        
+
         $this->carabiner->js($requiredjs);
-        
+
         $getparams = $this->uri->uri_to_assoc(3);
-        $handle = isset($getparams['name']) ? urldecode($getparams['name']):$this->input->post('name');
-        $classRegex = isset($getparams['class_regex']) ? urldecode($getparams['class_regex']):$this->input->post('class_regex');
-        $host =  isset($getparams['host']) ? urldecode($getparams['host']):$this->input->post('host', true);
+        $handle = isset($getparams['name']) ? urldecode($getparams['name']) : $this->input->post('name');
+        $classRegex = isset($getparams['class_regex']) ? urldecode($getparams['class_regex']) : $this->input->post('class_regex');
+        $host = isset($getparams['host']) ? urldecode($getparams['host']) : $this->input->post('host', true);
         $state = 'x';
         $regex = true;
-        $time = isset($getparams['time']) ? urldecode($getparams['time']):$this->input->post('time', true);
+        $time = isset($getparams['time']) ? urldecode($getparams['time']) : $this->input->post('time', true);
 
-        $breadcrumbs_url="";
-        $result = cfpr_report_overall_summary($host, $handle, $state, $regex, $classRegex);
-         if (count($getparams) > 0) {
-               foreach ($getparams as $key => $value) {
-                    if (!empty($value)) {
-                        $breadcrumbs_url.='/'.$key . '/' . $value ;
-                      }
-                } 
-         }else{
-               foreach ($_POST as $key => $value) {
-                    if (!empty($value)) {
-                        $breadcrumbs_url .= '/'.$key . '/' . urlencode($value);
-                    }
+        $breadcrumbs_url = "";
+        $result = cfpr_report_overall_summary($this->username,$host, $handle, $state, $regex, $classRegex);
+        if (count($getparams) > 0)
+        {
+            foreach ($getparams as $key => $value)
+            {
+                if (!empty($value))
+                {
+                    $breadcrumbs_url.='/' . $key . '/' . $value;
                 }
-         }
+            }
+        }
+        else
+        {
+            foreach ($_POST as $key => $value)
+            {
+                if (!empty($value))
+                {
+                    $breadcrumbs_url .= '/' . $key . '/' . urlencode($value);
+                }
+            }
+        }
         $bc = array(
             'title' => $this->lang->line('breadcrumb_summary_report'),
-            'url' => '/summaryreports/show'.$breadcrumbs_url,
+            'url' => '/summaryreports/show' . $breadcrumbs_url,
             'isRoot' => false,
             'replace_existing' => true
         );
         $this->breadcrumb->setBreadCrumb($bc);
         $data = array(
-            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_summary_report'),
+            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_summary_report'),
             'title_header' => "Summary Report",
             'breadcrumbs' => $this->breadcrumblist->display()
         );
