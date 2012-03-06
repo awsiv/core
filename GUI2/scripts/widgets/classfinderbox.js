@@ -23,9 +23,7 @@
         _init: function(){
             var self=this;  
             self.resetPagination();
-
             self.dialogcontent.bind('scroll',$.proxy(self.classlistscrolled,self));
-            
             self.dialogcontent.ajaxError(function(e, jqxhr, settings, exception) {
               self._displayFailure(settings.url,jqxhr,exception);
             });
@@ -34,13 +32,11 @@
             var self=this;
            
             self.dialogcontent = self.dialogContainer();
-                  
             self.addsearchbar();
             if (this.options.addAlphabetFilter == true)
             {
                 self.addalphapager();
             }
-            
             $.ui.classfinderbox.instances.push(this.element);  
             
             self.loadpagebody(); // load dialog
@@ -226,7 +222,6 @@
         loadpagebody:function(){
             var self=this;
             self.changeTitle("Loading");
-            
             $.getJSON(self.element.attr('href'), function(data) {
                 self.loadDataInContainer(data,false);
             });
