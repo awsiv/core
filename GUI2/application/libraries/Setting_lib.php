@@ -55,6 +55,16 @@ class Setting_lib
         $this->username = $username;
     }
 
+    /**
+     * get fall_back_for MP setting
+     *
+     * @return string  (This is username which is set as "admin" example result: admin)
+     */
+    public function get_fall_back_for()
+    {
+        return $this->ci->settings_model->app_settings_get_item('fall_back_for');
+    }
+    
 }
 
 ?>
