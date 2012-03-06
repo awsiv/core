@@ -34,9 +34,10 @@
                       <div class="ui-dialog-titlebar"><h6>Assigned classes</h6></div>
                       <div class="itemwrapper assigneditems" id="">
                           <?php if (!empty($crxi['value'])) { ?>
-                              <?php echo roles_checkbox($crxi['value'], 'crxi', 'classlist itemlist assignedList'); ?>                
+                              <?php echo create_html_list_from_string($crxi['value'], 'crxi[]','crxi', 'classlist itemlist assignedList'); ?>                
                           <?php } else { ?>
-                              <ul id="crxi" class="classlist itemlist assignedList"><li class="empty">No classes assigned</li></ul>
+                              <ul id="crxi" class="classlist itemlist assignedList empty_list"></ul>
+                              <div class="empty_list_warning">No classes assigned</div>
                           <?php } ?>
                       </div>
                   </div>            
@@ -66,15 +67,19 @@
 
                       <div class="itemwrapper excludeditems " id="">
                           <?php if (!empty($crxx['value'])) { ?>
-                              <?php echo roles_checkbox($crxx['value'], 'crxx', 'classlist itemlist excludedList'); ?>                          
+                              <?php echo create_html_list_from_string($crxx['value'], 'crxx[]','crxx', 'classlist itemlist excludedList'); ?>                          
                           <?php } else { ?>
-                              <ul id="crxx" class="classlist itemlist excludedList"><li class="empty">No classes assigned</li></ul>
+                              <ul id="crxx" class="classlist itemlist excludedList empty_list"></ul>
+                              <div class="empty_list_warning">No classes assigned</div>
                           <?php } ?>
                       </div>
                   </div>   
 
               </td>
-              <td></td>
+               <td class="arrows">
+                  <a href="javascript:void(0);" class="move_btn" dest="crxx" sourse="classList">&laquo; Left</a><br /><br />
+                  <a href="javascript:void(0);" class="move_btn" dest="classList" sourse="crxx">Right &raquo;</a><br /><br />
+              </td>
           </tr>
           <tr><td colspan="3"><hr /></td></tr>
           <tr>
@@ -83,9 +88,10 @@
                       <div class="ui-dialog-titlebar"><h6>Assigned bundlerx's</h6></div>
                       <div class="itemwrapper assigneditems" id="">
                           <?php if (!empty($brxi['value'])) { ?>
-                              <?php echo roles_checkbox($brxi['value'], 'brxi', 'bundlelist itemlist assignedList'); ?>                       
+                              <?php echo create_html_list_from_string($brxi['value'], 'brxi[]', 'brxi', 'bundlelist itemlist assignedList'); ?>                       
                           <?php } else { ?>
-                              <ul id="brxi" class="bundlelist itemlist assignedList"><li class="empty">No bundles assigned</li></ul>
+                              <ul id="brxi" class="bundlelist itemlist assignedList empty_list"></ul>
+                              <div class="empty_list_warning">No bundles assigned</div>
                           <?php } ?>
                       </div>
                   </div>            
@@ -115,20 +121,23 @@
                       <div class="ui-dialog-titlebar"><h6>Excluded bundlerx's</h6></div>
                       <div class="itemwrapper assigneditems" id="">
                           <?php if (!empty($brxx['value'])) { ?>
-                              <?php echo roles_checkbox($brxx['value'], 'brxx', 'bundlelist itemlist excludedList'); ?>                       
+                              <?php echo create_html_list_from_string($brxx['value'], 'brxx[]' ,'brxx', 'bundlelist itemlist excludedList'); ?>                       
                           <?php } else { ?>
-                              <ul id="brxi" class="bundlelist itemlist assignedList"><li class="empty">No bundles assigned</li></ul>
+                              <ul id="brxx" class="bundlelist itemlist assignedList empty_list"></ul>
+                              <div class="empty_list_warning">No bundles assigned</div>
                           <?php } ?>
                       </div>
                   </div>            
               </td>
-              
-              <td></td>
+              <td class="arrows">
+                  <a href="javascript:void(0);" class="move_btn" dest="brxx" sourse="bundlesList">&laquo; Left</a><br /><br />
+                  <a href="javascript:void(0);" class="move_btn" dest="bundlesList" sourse="brxx">Right &raquo;</a><br /><br />
+              </td>
           </tr>
           <tr>
               <td colspan="3">
                   <p id="btnholder">
-                      <?php echo form_submit(array('name' => 'submit', 'value' => $operation, 'class' => 'btn')); ?>
+                      <?php echo form_submit(array('name' => 'submit', 'value' => $operation, 'class' => 'btn', 'id'=>strtolower($operation).'_role')); ?>
                   </p>
               </td>
           </tr> 
