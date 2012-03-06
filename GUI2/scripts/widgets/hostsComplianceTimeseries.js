@@ -74,6 +74,9 @@
 
                         $("#tooltip").remove();
 
+                        var start = item.datapoint[0];
+                        var end = start + $self._resolution;
+
                         var kept = $self._plot.getData()[0].data[item.dataIndex][1];
                         var repaired = $self._plot.getData()[1].data[item.dataIndex][1];
                         var notkept = $self._plot.getData()[2].data[item.dataIndex][1];
@@ -86,6 +89,8 @@
                         var percentageNotKept = ((notkept * 100) / hostCount).toFixed(2);
 
                         $self._showTooltip(item.pageX, item.pageY,
+                            'Interval: ' + common.time.formatTimeOfDay(start) + " to " +
+                                common.time.formatTimeOfDay(end) + "<br/>" +
                             'Promises Kept: '+ percentageKept + '%<br/>' +
                             'Promises Repaired: '+ percentageRepaired + '%<br/>' +
                             'Promises Not Kept: '+ percentageNotKept + '%<br/>' +
@@ -129,6 +134,7 @@
                     var repaired = common.arrayWithValue(0, timeseries.count);
                     $self._sampleCounts = common.arrayWithValue(0, timeseries.count);
                     $self._hostCounts = common.arrayWithValue(0, timeseries.count);
+                    $self._resolution = common.unixTimeToJavascriptTime(timeseries.resolution);
                     var i = 0;
 
                     var convertToTimeDomain = function(positionSeries) {
