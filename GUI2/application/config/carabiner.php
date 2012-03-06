@@ -28,9 +28,9 @@ $config['script_dir'] = 'scripts/';
   |
  */
 if(is_constellation()){
-  $config['style_dir'] = 'themes/constellation/css/';  
+  $config['style_dir'] = 'themes/constellation/css/';
 }else{
-  $config['style_dir'] = 'themes/default/css/';   
+  $config['style_dir'] = 'themes/default/css/';
 }
 
 

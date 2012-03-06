@@ -103,7 +103,7 @@ class Widget extends Cf_Controller {
     }
 
     function search_by_class() {
-        
+
     }
 
     function search_by_ipaddress($ipregx=null, $page=1) {
@@ -152,7 +152,7 @@ class Widget extends Cf_Controller {
           $this->output->set_status_header('500', $e->getMessage());
           echo($e->getMessage());
         }
-       
+
     }
 
     function filterclass($page =1,$search =null) {
@@ -182,7 +182,7 @@ class Widget extends Cf_Controller {
             case "host":
                 $data = cfpr_list_host_classes(NULL, NULL, NULL, NULL);
                 break;
-        } 
+        }
         echo $data;
         }catch (Exception $e) {
               $this->output->set_status_header('500', $e->getMessage());
@@ -421,6 +421,13 @@ class Widget extends Cf_Controller {
         sanitycheckjson($data);
     }
 
+    function astrolabeAddNodeDialog($label = NULL, $class = NULL)
+    {
+        $data['label'] = $label;
+        $data['class'] = $class;
+
+        $this->load->view('widgets/astrolabeAddNodeDialog', $data);
+    }
 }
 
 ?>

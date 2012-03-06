@@ -245,22 +245,25 @@
         _createAddNodeDialog: function(parentNode) {
             var $self = this;
 
-            var labelId = 'astrolabe-add-node-label-'+ $self._uniqueIdCounter++;
-            var classRegexId = 'astrolabe-add-node-class-regex-' + $self._uniqueIdCounter;
-
-            var htmlContent = 'Label: <input id="'+ labelId + '" type="text"><br/>' +
-                              'Class: <input id="' + classRegexId + '" type="text">';
-
-            return $('<div>' +
-                '</div>')
-                .html(htmlContent)
+            return $('<div>')
+                .load('/widget/astrolabeAddNodeDialog/')
                 .dialog({
                     autoOpen: false,
                     title: 'Add Class Filter',
+                    width: 415,
                     buttons: {
                         'Add': function() {
-                            var label = $('#' + labelId).val();
-                            var classRegex = $('#' + classRegexId).val();
+                            var label = $('#astrolabe-add-node-label').val();
+                            if (label == "") {
+                                $('#astrolabe-add-node-label').focus();
+                                return;
+                            }
+
+                            var classRegex = $('#astrolabe-add-node-class').val();
+                            if (classRegex == "") {
+                                $('#astrolabe-add-node-class').focus();
+                                return;
+                            }
 
                             var $node = $($self._createNode(label, classRegex, null));
 
@@ -489,7 +492,7 @@
 
             var nodeDescriptionList = $self._serializeContainer($self._nodeContainer($self._superNode));
 
-            if (profileId !== null || profileId !== undefined) {
+            if (profileId !== null && profileId !== undefined) {
                 $.ajax({
                     type: 'PUT',
                     url: $self._profileUrl(profileId),
