@@ -164,8 +164,8 @@
                     notkept = convertToTimeDomain(notkept);
                     repaired = convertToTimeDomain(repaired);
 
-                    $self.options.plot.series.bars.barWidth =
-                        common.unixTimeToJavascriptTime(timeseries.resolution);
+                    $self.options.plot.series.bars.barWidth = $self._resolution -
+                        (0.05 * $self._resolution);
 
                     $self._plot = $.plot($self.element, [
                         {
