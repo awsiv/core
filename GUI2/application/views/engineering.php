@@ -89,15 +89,12 @@
             nodeSelected: function(event, args) {
                 $('#hostInfoContainer').hide();
 
-                $('#hostsComplianceTimeseries').hostsComplianceTimeseries('setContext',
-                    args.includes, args.excludes);
+                $('#hostsComplianceTimeseries').hostsComplianceTimeseries('setContext', args.includes, []);
 
-                $('#hostsCompliance').hostsCompliance('setContext',
-                    args.includes, args.excludes);
+                $('#hostsCompliance').hostsCompliance('setContext', args.includes, []);
                 $('#hostsComplianceContainer').show();
 
-                $('#hostsConnectivity').hostsConnectivity('setContext',
-                    args.includes, args.excludes);
+                $('#hostsConnectivity').hostsConnectivity('setContext', args.includes, []);
                 $('#hostsConnectivityContainer').show();
 
                 $('#astrolabeLocation').astrolabeLocation('setContextPath', args.path, args.count);
