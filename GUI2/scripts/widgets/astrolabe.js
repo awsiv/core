@@ -296,7 +296,7 @@
                     },
                     draggable: false,
                     modal: true,
-                    resizable: false,
+                    resizable: false
                 });
 
             $dialog.keypress(function(event) {

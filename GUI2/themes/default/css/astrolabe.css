@@ -41,6 +41,16 @@
     color: #000000;
 }
 
+.astrolabe .host > .hostLabel:hover
+{
+    color: #f08b37;
+}
+
+.astrolabe .node > .nodeLabel:hover
+{
+    color: #f08b37;
+}
+
 .astrolabe .node.selectedElement > .nodeLabel,
 .astrolabe .host.selectedElement > .hostLabel
 {
@@ -98,10 +108,6 @@
     background-color: #f0d76a;
 }
 
-.astrolabe .rootContainer span:hover {
-    color: #f08b37;
-}
-
 .astrolabe .menu
 {
     background: #51584d;
@@ -117,6 +123,12 @@
 {
     margin-left: 3px;
     color: #6C695A;
+}
+
+.astrolabe .hostCountLabel:hover
+{
+    color: #6C695A;
+    cursor: default;
 }
 
 .astrolabe .menu .search
