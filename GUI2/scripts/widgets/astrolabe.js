@@ -245,7 +245,37 @@
         _createAddNodeDialog: function(parentNode) {
             var $self = this;
 
-            return $('<div>')
+            var addNode = function($dialog) {
+                var label = $('#astrolabe-add-node-label').val();
+                if (label == "") {
+                    $('#astrolabe-add-node-label').focus();
+                    return;
+                }
+
+                var classRegex = $('#astrolabe-add-node-class').val();
+                if (classRegex == "") {
+                    $('#astrolabe-add-node-class').focus();
+                    return;
+                }
+
+                var $node = $($self._createNode(label, classRegex, null));
+
+                var $parentContainer = $($self._rootContainer);
+                if (parentNode !== null) {
+                    $parentContainer = $self._nodeContainer($(parentNode))
+                }
+                $parentContainer.append($node);
+
+                $node.show();
+                $self._saveProfile($self._currentProfile, parentNode);
+
+                $self._countNode($node);
+
+                $dialog.dialog('close');
+                $dialog.dialog('destroy');
+            }
+
+            var $dialog = $('<div>')
                 .load('/widget/astrolabeAddNodeDialog/')
                 .dialog({
                     autoOpen: false,
@@ -253,33 +283,7 @@
                     width: 415,
                     buttons: {
                         'Add': function() {
-                            var label = $('#astrolabe-add-node-label').val();
-                            if (label == "") {
-                                $('#astrolabe-add-node-label').focus();
-                                return;
-                            }
-
-                            var classRegex = $('#astrolabe-add-node-class').val();
-                            if (classRegex == "") {
-                                $('#astrolabe-add-node-class').focus();
-                                return;
-                            }
-
-                            var $node = $($self._createNode(label, classRegex, null));
-
-                            var $parentContainer = $($self._rootContainer);
-                            if (parentNode !== null) {
-                                $parentContainer = $self._nodeContainer($(parentNode))
-                            }
-                            $parentContainer.append($node);
-
-                            $node.show();
-                            $self._saveProfile($self._currentProfile, parentNode);
-
-                            $self._countNode($node);
-
-                            $(this).dialog('close');
-                            $(this).dialog('destroy');
+                            addNode($(this));
                         },
                         'Cancel': function() {
                             $(this).dialog('close');
@@ -290,6 +294,16 @@
                     modal: true,
                     resizable: false
                 });
+
+            $dialog.keypress(function(event) {
+                if (event.keyCode == $.ui.keyCode.ENTER) {
+                    addNode($dialog);
+                    event.preventDefault();
+                    return false;
+                }
+            });
+
+            return $dialog;
         },
 
         _createHost: function(key, name, colour) {
