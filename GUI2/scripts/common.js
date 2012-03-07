@@ -52,6 +52,13 @@ var common = (function(){
             return expression.replace(/[^A-Za-z0-9]+/g, '_');
         },
 
+        randomUUID: function() {
+            var S4 = function() {
+                return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+            };
+            return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+        },
+
         unixTimeToJavascriptTime: function (unixTime) {
             return unixTime * 1000;
         }

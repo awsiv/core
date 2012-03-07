@@ -93,6 +93,7 @@
         _init: function() {
             var $self = this;
 
+            $self._id = common.randomUUID();
             $self._selectedId = null;
         },
 
@@ -152,7 +153,16 @@
             var $self = this;
 
             if (expanded === true) {
+                $('html').bind('click.' + $self._id, function(event) {
+                    if ($(event.target).parents().is($self.element) === false) {
+                        $self._setExpanded(false);
+                    }
+                })
+
                 $self._addInput.val('');
+            }
+            else {
+                $('html').unbind('click.' + $self._id);
             }
 
             $self._dd.toggle(expanded);
