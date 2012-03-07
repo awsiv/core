@@ -2991,15 +2991,22 @@ void Nova2PHP_show_topic_category(int id, char *buffer, int bufsize)
 /* Hosts stats                                                               */
 /*****************************************************************************/
 
-void Nova2PHP_host_compliance_list_all(HostClassFilter *hostClassFilter, PageInfo *page, char *buffer, int bufsize)
+void Nova2PHP_host_compliance_list_all(mongo_connection *conn, HostClassFilter *host_class_filter, PageInfo *page, char *buffer, int bufsize)
 {
-    Item *ip, *clist;
+    Item *clist = NULL;
     char work[CF_BUFSIZE] = { 0 };
-    int startIndex = 0, endIndex = 0, total = 0, count = -1;
+    int startIndex = 0;
+    int endIndex = 0;
+    int count = -1;;
 
     Nova_WebTopicMap_Initialize();
 
-    clist = Nova_ClassifyHostState(hostClassFilter, HOST_RANK_METHOD_COMPLIANCE);
+    HostColourFilter *host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HOST_COLOUR_GREEN_YELLOW_RED);
+    clist = CFDB_GetHostByColour(conn, host_class_filter, host_colour_filter);
+    free(host_colour_filter);
+
+    /* sort by score */
+    clist = SortItemListCounters(clist);
 
     buffer[0] = '\0';
     strcat(buffer, "{\"data\":[");
@@ -3007,21 +3014,14 @@ void Nova2PHP_host_compliance_list_all(HostClassFilter *hostClassFilter, PageInf
     startIndex = page->resultsPerPage * (page->pageNum - 1);
     endIndex = (page->resultsPerPage * page->pageNum) - 1;
 
-    for (ip = clist; (ip != NULL); ip = ip->next)
+    for (Item *ip = clist; (ip != NULL); ip = ip->next)
     {
-        if (Nova_HostScoreToColour(ip->counter) == HOST_COLOUR_BLUE)
-        {
-            continue;
-        }
-        else
-        {
-            count++;            // starts from 0
-            total++;
-        }
+        count++;
 
         if (count >= startIndex && (count <= endIndex || endIndex <= 0))
         {
             work[0] = '\0';
+
             if (Nova_HostScoreToColour(ip->counter) == HOST_COLOUR_GREEN)
             {
                 snprintf(work, sizeof(work), "{ \"colour\": \"green\", \"key\": \"%s\", \"id\": \"%s\"},", ip->name,
@@ -3047,10 +3047,9 @@ void Nova2PHP_host_compliance_list_all(HostClassFilter *hostClassFilter, PageInf
             }
         }
     }
-
     ReplaceTrailingChar(buffer, ',', '\0');
 
-    snprintf(work, sizeof(work), "],\"meta\":{\"count\":%d}}", total);
+    snprintf(work, sizeof(work), "],\"meta\":{\"count\":%d}}", count+1);
     EndJoin(buffer, work, bufsize);
 
     DeleteItemList(clist);

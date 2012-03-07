@@ -3201,7 +3201,7 @@ PHP_FUNCTION(cfpr_host_compliance_list_all)
 {
     char *userName;
     int user_len;
-    char buffer[100000];
+    char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sll",
@@ -3219,8 +3219,14 @@ PHP_FUNCTION(cfpr_host_compliance_list_all)
 
     HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
+    mongo_connection conn;
+
+    DATABASE_OPEN(&conn);
+
     buffer[0] = '\0';
-    Nova2PHP_host_compliance_list_all(filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_host_compliance_list_all(&conn, filter, &page, buffer, sizeof(buffer));
+
+    DATABASE_CLOSE(&conn);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
