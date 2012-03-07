@@ -3124,7 +3124,7 @@ input[readonly] {background: buttonface;}
 }
 
 #edit_form_wrapper, #edit_form td {
-    background: #ccc;
+    background: #ccc !important;
 }
 
 #edit_form .edit_cell {
@@ -3134,7 +3134,8 @@ input[readonly] {background: buttonface;}
 }
 #edit_form .arrows {
     width: 230px;
-    text-align: center
+    text-align: center;
+    padding-top: 60px;
 } 
 
 #edit_form_wrapper .ui-state-highlight {
@@ -3145,7 +3146,7 @@ input[readonly] {background: buttonface;}
     border: 3px solid #dedede
 }
 
- .dragged {
+.dragged {
     list-style: none;
     background: lightskyblue;
     display: block;
@@ -3161,4 +3162,10 @@ input[readonly] {background: buttonface;}
 
 .all_classes  .ui-resizable {
     height: 635px;
+}
+.empty_list {
+    height: 30px;
+}
+.empty_list_warning {
+    text-align: center
 }
