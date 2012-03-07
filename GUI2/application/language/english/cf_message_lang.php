@@ -251,6 +251,7 @@ $lang['knowledge_tab_same_context'] = 'Same context';
 $lang['knowledge_tab_subtopic'] = 'Sub topic';
 $lang['knowledge_copernicus'] = 'Copernicus local cluster view for topic';
 $lang['knowledge_insight_leads'] = 'Insight, leads and perspectives';
+$lang['knowledge_access_denied'] = "You don't have access to knowledgemap";
 
 
 
