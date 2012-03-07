@@ -103,6 +103,8 @@ Item *CFDB_GetDeletedHosts(void);
 Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const char *ip,
                           HostClassFilter *hostClassFilter);
 HubHost *CFDB_GetHostByKey(mongo_connection *conn, const char *hostkey);
+Item *CFDB_GetHostByColour(mongo_connection *conn, HostClassFilter *host_class_filter,
+                           HostColourFilter *host_colour_filter);
 
 #endif
 
