@@ -46,28 +46,35 @@
                         var $addItem = $('<li>');
                         $addItem.addClass('addItem');
                         {
+                            var onAddItem = function(id, event) {
+                                if (id !== undefined &&
+                                    id !== null &&
+                                    id.length > 0) {
+                                    $self.addItem(id, id);
+                                    $self._trigger("itemAdded", null, {id: id});
+
+                                    $self._setSelectedItem($self, id, id);
+                                    $self._trigger("itemSelected", null, {id: id});
+                                }
+                                event.stopPropagation();
+                            }
+
                             $self._addInput = $('<input>');
                             $self._addInput.addClass('addInput');
                             $self._addInput.attr('placeholder', $self.options.addItemPlaceholder);
                             $self._addInput.attr('maxlength', $self.options.maxLength);
+                            $self._addInput.keypress(function(event) {
+                                if (event.which == 13) { // enter key
+                                    onAddItem($self._addInput.val(), event);
+                                }
+                            });
                             $addItem.append($self._addInput);
 
                             $addButton = $('<img>');
                             $addButton.addClass('addButton');
                             $addButton.attr('src', $self.options.imagesUrl + 'combobox-button-add.png');
                             $addButton.click(function(event) {
-                                var $id = $self._addInput.val();
-
-                                if ($id !== undefined &&
-                                    $id !== null &&
-                                    $id.length > 0) {
-                                    $self.addItem($id, $id);
-                                    $self._trigger("itemAdded", null, {id: $id});
-
-                                    $self._setSelectedItem($self, $id, $id);
-                                    $self._trigger("itemSelected", null, {id: $id});
-                                }
-                                event.stopPropagation();
+                                onAddItem($self._addInput.val(), event);
                             });
                             $addItem.append($addButton);
                         }
