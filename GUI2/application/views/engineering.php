@@ -32,9 +32,7 @@
             </div>
             </div>
             <div id="tab-2">
-                <div id="reportInfoContainer" class="reportInfoContainer">
-                    <div id="treeReportContentMenu" class="grid_8"></div>
-                   <div id="treeReportContentMenuFilter" class="grid_8"></div>                  
+                <div id="reportInfoContainer" class="reportInfoContainer">                                   
                     <div class="clear"></div>
                 </div>
             </div>    
@@ -62,6 +60,8 @@
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/notes.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/classfinder.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/contextfinder.js"></script>
+<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/reportUI.js"></script>
+
 
 
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>view/engineering.css" />
@@ -76,31 +76,6 @@
 
 <script type="text/javascript">
     
-    
-        function testReportFunction(context,includes, excludes) {
-        
-            // place the menu here
-            var self = this;
-            $('#treeReportContentMenu').delegate('a','click',function(e) {
-                e.preventDefault();
-               console.log( $(this));
-               // update the filters 
-               var reportId = $(this).attr('id');
-               
-               $('#treeReportContentMenuFilter').load('/search/index', {
-                   'host':'All',
-                   'report':reportId
-                   
-               });
-                
-                
-            });
-        
-            $('#treeReportContentMenu').load('search/generateReportMenu', {
-                includes: includes, 
-                excludes : excludes
-            });       
-        }
     
     $(document).ready(function(){
         
@@ -119,6 +94,8 @@
         $('#hostInfo').hostInfo();
         $('#astrolabeLocation').astrolabeLocation();
         $('#hostsComplianceTimeseries').hostsComplianceTimeseries();
+        $('#reportInfoContainer').reportUI();
+        
 
         $('#astrolabe').astrolabe({
             hostSelected: function(event, args) {
@@ -132,6 +109,7 @@
                 $('#hostsConnectivityContainer').hide();
 
                 $('#astrolabeLocation').astrolabeLocation('setHostName', args.hostName);
+                $('#reportInfoContainer').reportUI('setHostContext',args.hostKey);
             },
 
             nodeSelected: function(event, args) {
@@ -147,7 +125,7 @@
 
                 $('#astrolabeLocation').astrolabeLocation('setContextPath', args.path, args.count);
                 
-               testReportFunction('context',args.includes, args.excludes)
+                $('#reportInfoContainer').reportUI('setContext',args.includes, args.excludes)
             }
         });
 
