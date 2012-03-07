@@ -294,6 +294,10 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
                 break;
             }
         }
+
+        fprintf(fp, "handles::  \"%s\" association => a(\"%s\",\"body_constraints::%s\",\"%s\");\n", promise_id,
+                KM_USES_CERT_F,cp->lval, KM_USES_CERT_B);
+
     }
 
 /* Promisees as topics too */
