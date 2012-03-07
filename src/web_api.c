@@ -3120,7 +3120,8 @@ int Nova2PHP_show_hosts(char *hostNameRegex, char *ipRegex, HostClassFilter *hos
 
 /*****************************************************************************/
 
-void Nova2PHP_show_col_hosts(char *colour, HostClassFilter *hostClassFilter, PageInfo *page, char *buffer, int bufsize)
+void Nova2PHP_show_col_hosts(char *colour, HostClassFilter *host_class_filter,
+                             PageInfo *page, char *buffer, int bufsize)
 {
     Item *ip, *clist;
     char work[CF_MAXVARSIZE], lastseen[CF_MAXVARSIZE] = { 0 };
