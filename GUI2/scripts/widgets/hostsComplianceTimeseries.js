@@ -1,4 +1,4 @@
-(function ($) {
+(function($) {
     $.widget('ui.hostsComplianceTimeseries', {
         options: {
             baseUrl: '../',
@@ -19,7 +19,7 @@
                         steps: false,
                         lineWidth: 0
                     },
-                    shadowSize:  0
+                    shadowSize: 0
                 },
                 legend: {
                     show: false
@@ -27,9 +27,9 @@
                 xaxis: {
                     show: true,
                     color: common.colours.white,
-                    mode: "time",
-                    timeformat: "%b-%d",
-                    minTickSize: [1, "day"]
+                    mode: 'time',
+                    timeformat: '%b-%d',
+                    minTickSize: [1, 'day']
                 },
                 yaxis: {
                     show: true,
@@ -64,15 +64,15 @@
             $self._sampleCounts = null;
             $self._hostCounts = null;
 
-            $self.element.bind('plothover', function (event, pos, item) {
-                $("#x").text(pos.x.toFixed(2));
-                $("#y").text(pos.y.toFixed(2));
+            $self.element.bind('plothover', function(event, pos, item) {
+                $('#x').text(pos.x.toFixed(2));
+                $('#y').text(pos.y.toFixed(2));
 
                 if (item) {
                     if ($self._previousPoint != item.dataIndex) {
                         $self._previousPoint = item.dataIndex;
 
-                        $("#tooltip").remove();
+                        $('#tooltip').remove();
 
                         var start = item.datapoint[0];
                         var end = start + $self._resolution;
@@ -89,17 +89,17 @@
                         var percentageNotKept = ((notkept * 100) / hostCount).toFixed(2);
 
                         $self._showTooltip(item.pageX, item.pageY,
-                            'Interval: ' + common.time.formatTimeOfDay(start) + " to " +
-                                common.time.formatTimeOfDay(end) + "<br/>" +
-                            'Promises Kept: '+ percentageKept + '%<br/>' +
-                            'Promises Repaired: '+ percentageRepaired + '%<br/>' +
-                            'Promises Not Kept: '+ percentageNotKept + '%<br/>' +
-                            'Number of Measurements: '+ sampleCount + '<br/>' +
-                            'Number of Reporting Hosts: '+ hostCount + '<br/>');
+                            'Interval: ' + common.time.formatTimeOfDay(start) + ' to ' +
+                                common.time.formatTimeOfDay(end) + '<br/>' +
+                            'Promises Kept: ' + percentageKept + '%<br/>' +
+                            'Promises Repaired: ' + percentageRepaired + '%<br/>' +
+                            'Promises Not Kept: ' + percentageNotKept + '%<br/>' +
+                            'Number of Measurements: ' + sampleCount + '<br/>' +
+                            'Number of Reporting Hosts: ' + hostCount + '<br/>');
                     }
                 }
                 else {
-                    $("#tooltip").remove();
+                    $('#tooltip').remove();
                     $self._previousPoint = null;
                 }
             });
@@ -138,7 +138,7 @@
                     var i = 0;
 
                     var convertToTimeDomain = function(positionSeries) {
-                        var timeEntry = function (position) {
+                        var timeEntry = function(position) {
                             return common.unixTimeToJavascriptTime(timeseries.from) +
                             (position * common.unixTimeToJavascriptTime(timeseries.resolution));
                         };
@@ -169,15 +169,15 @@
 
                     $self._plot = $.plot($self.element, [
                         {
-                            label: "Promises Kept",
+                            label: 'Promises Kept',
                             data: kept
                         },
                         {
-                            label: "Promises Repaired",
+                            label: 'Promises Repaired',
                             data: repaired
                         },
                         {
-                            label: "Promises Not Kept",
+                            label: 'Promises Not Kept',
                             data: notkept
                         }
                     ], $self.options.plot);

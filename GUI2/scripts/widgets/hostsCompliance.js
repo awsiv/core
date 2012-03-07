@@ -1,11 +1,11 @@
-(function ($) {
+(function($) {
     $.widget('ui.hostsCompliance', {
         options: {
             baseUrl: '../',
             defaultbehaviour: true
         },
 
-        _create: function () {
+        _create: function() {
             var $self = this;
 
             $self.element.addClass('hostsCompliance');

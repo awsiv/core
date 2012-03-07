@@ -1,11 +1,11 @@
-(function ($) {
+(function($) {
     $.widget('ui.hostsConnectivity', {
         options: {
             baseUrl: '../',
             defaultbehaviour: true
         },
 
-        _create: function () {
+        _create: function() {
             var $self = this;
 
             $self.element.addClass('hostsConnectivity');

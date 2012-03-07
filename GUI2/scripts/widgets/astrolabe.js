@@ -1,12 +1,12 @@
 // version 0.1
-(function ($) {
+(function($) {
     $.widget('ui.astrolabe', {
         options: {
             baseUrl: '../',
             defaultbehaviour: true
         },
 
-        _create: function () {
+        _create: function() {
             var $self = this;
 
             $self.element.addClass('astrolabe');
@@ -17,17 +17,15 @@
 
             $self._listContainer = $('<div>');
             $self._listContainer.addClass('listContainer');
-            {
-                $self._rootContainer = $('<ul>');
-                $self._rootContainer.addClass('rootContainer');
+            $self._rootContainer = $('<ul>');
+            $self._rootContainer.addClass('rootContainer');
+            $self._listContainer.append($self._rootContainer);
 
-                $self._listContainer.append($self._rootContainer);
-            }
             $self.element.append($self._listContainer);
             $self._listContainer.jScrollPane({
                 showArrows: true,
                 autoReinitialise: true,
-                verticalArrowPositions: "after"
+                verticalArrowPositions: 'after'
             });
         },
 
@@ -48,34 +46,32 @@
             $(menuContainer).addClass('menu');
             $(menuContainer).addClass('container_2');
 
-            {
-                self._profilesCombo = $('<div>');
-                self._profilesCombo.attr('id', 'astrolabe-profile-list');
-                self._profilesCombo.addClass('grid_1');
-                self._profilesCombo.addClass('profilesCombo');
-                self._profilesCombo.combobox({
-                    noneSelectedLabel: '(All Hosts)',
-                    addItemPlaceholder: 'Add Tree',
+            self._profilesCombo = $('<div>');
+            self._profilesCombo.attr('id', 'astrolabe-profile-list');
+            self._profilesCombo.addClass('grid_1');
+            self._profilesCombo.addClass('profilesCombo');
+            self._profilesCombo.combobox({
+                noneSelectedLabel: '(All Hosts)',
+                addItemPlaceholder: 'Add Tree',
 
-                    itemSelected: function(event, args) {
-                        self._loadProfile(args.id);
-                    },
+                itemSelected: function(event, args) {
+                    self._loadProfile(args.id);
+                },
 
-                    itemAdded: function(event, args) {
-                        self._saveProfile(args.id, []);
-                        self._loadProfile(args.id);
-                    },
+                itemAdded: function(event, args) {
+                    self._saveProfile(args.id, []);
+                    self._loadProfile(args.id);
+                },
 
-                    itemDeleted: function(event, args) {
-                        self._deleteProfile(args.id);
-                    }
-                });
-                $(menuContainer).append(self._profilesCombo);
+                itemDeleted: function(event, args) {
+                    self._deleteProfile(args.id);
+                }
+            });
+            $(menuContainer).append(self._profilesCombo);
 
-                var clear = document.createElement('div');
-                $(clear).addClass('clear');
-                $(menuContainer).append(clear);
-            }
+            var clear = document.createElement('div');
+            $(clear).addClass('clear');
+            $(menuContainer).append(clear);
 
             return menuContainer;
         },
@@ -133,7 +129,7 @@
         _onClickNodeLabel: function($self, $node, event) {
             $self._selectElement($node);
 
-            $self._trigger("nodeSelected", event, {
+            $self._trigger('nodeSelected', event, {
                path: $self._nodeLabels($node).reverse(),
                includes: $self._nodeIncludes($node),
                excludes: $self._nodeExcludes($node),
@@ -171,7 +167,7 @@
         _onClickHost: function($self, $host, event) {
             $self._selectElement($host);
 
-            $self._trigger("hostSelected", event, {
+            $self._trigger('hostSelected', event, {
                hostKey: $host.attr('hostkey'),
                hostName: $host.attr('hostname')
             });
@@ -183,7 +179,7 @@
             var self = this;
 
             var $nodeItem = $('<li>');
-            $nodeItem.addClass("node");
+            $nodeItem.addClass('node');
 
             $nodeItem.attr('label', label);
             $nodeItem.attr('class-regex', classRegex);
@@ -247,13 +243,13 @@
 
             var addNode = function($dialog) {
                 var label = $('#astrolabe-add-node-label').val();
-                if (label == "") {
+                if (label == '') {
                     $('#astrolabe-add-node-label').focus();
                     return;
                 }
 
                 var classRegex = $('#astrolabe-add-node-class').val();
-                if (classRegex == "") {
+                if (classRegex == '') {
                     $('#astrolabe-add-node-class').focus();
                     return;
                 }
@@ -262,7 +258,7 @@
 
                 var $parentContainer = $($self._rootContainer);
                 if (parentNode !== null) {
-                    $parentContainer = $self._nodeContainer($(parentNode))
+                    $parentContainer = $self._nodeContainer($(parentNode));
                 }
                 $parentContainer.append($node);
 
@@ -326,7 +322,7 @@
             });
             $(hostItem).append($hostIcon);
 
-            var $hostLabel = $('<span>')
+            var $hostLabel = $('<span>');
             $hostLabel.addClass('hostLabel');
             $hostLabel.html(name);
             $hostLabel.click(function(event) {
@@ -496,7 +492,7 @@
                     label: $node.attr('label'),
                     classRegex: $node.attr('class-regex'),
                     children: self._serializeContainer($node.children('.container'))
-                }
+                };
             });
         },
 
@@ -514,7 +510,7 @@
                 $.ajax({
                     type: 'PUT',
                     url: $self._profileUrl(profileId),
-                    contentType: "application/json",
+                    contentType: 'application/json',
                     data: JSON.stringify(nodeDescriptionList),
 
                     success: function() {
@@ -585,7 +581,7 @@
             var $self = this;
             var $node = $self._superNode;
 
-            $self._rootContainer.find('.node').each(function (index, value) {
+            $self._rootContainer.find('.node').each(function(index, value) {
                 var $node = $(value);
                 $self._countNode($node);
             });
@@ -649,7 +645,6 @@
         destroy: function() {
             $.Widget.prototype.destroy.call(this);
         }
-
     });
 
     $.extend($.ui.astrolabe, {

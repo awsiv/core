@@ -1,4 +1,4 @@
-(function ($) {
+(function($) {
     $.widget('ui.astrolabeLocation', {
         options: {
             defaultbehaviour: true,
@@ -8,7 +8,7 @@
             defaultValue: '(none)'
         },
 
-        _create: function () {
+        _create: function() {
             var $self = this;
 
             $self.element.addClass('astrolabeLocation');
@@ -35,7 +35,7 @@
             }
 
             if (count !== 0 && count !== undefined) {
-                pathString = pathString + ' (' + count + ')'
+                pathString = pathString + ' (' + count + ')';
             }
 
             $self._value.html(pathString);
