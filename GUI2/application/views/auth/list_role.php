@@ -20,7 +20,7 @@ if (!empty($roles))
              <?php
              if($is_admin && $role['name'] != 'admin')
              {
-              echo anchor("auth/manage_role/edit/".$role['name'], ' ',array('class'=>'edit','title'=>'edit role'));
+              echo anchor("auth/manage_role/edit/".$role['name'], ' ',array('class'=>'edit', 'form' => 'role', 'title'=>'edit role'));
               echo anchor("auth/delete_role/".$role['name'], ' ',array('class'=>'delete','title'=>'delete role'));
              }
              ?>
@@ -33,7 +33,7 @@ if (!empty($roles))
 if($this->ion_auth->mode=="database"){
 if($is_admin){?>
 <p id="btnholder">
-  <span class="btn"><?php echo anchor("auth/manage_role/create", 'Add Role',array('id'=>'add_role'))?></span>
+  <span class="btn"><?php echo anchor("auth/manage_role/create", 'Add Role',array('id'=>'add_role', 'form'=>'role'))?></span>
 </p>
 <?php } }?>
 

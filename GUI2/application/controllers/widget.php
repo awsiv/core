@@ -4,7 +4,7 @@ class Widget extends Cf_Controller {
 
     function Widget() {
         parent::__construct();
-        $this->load->model(array('host_model','class_model','report_model'));
+        $this->load->model(array('host_model','class_model','report_model', 'bundle_model'));
         if (!$this->ion_auth->logged_in()) {
             $this->output->set_status_header('401', 'Not Authenticated');
             echo $this->lang->line('session_expired');
@@ -421,6 +421,7 @@ class Widget extends Cf_Controller {
         sanitycheckjson($data);
     }
 
+
     function astrolabeAddNodeDialog($label = NULL, $class = NULL)
     {
         $data['label'] = $label;
@@ -433,5 +434,76 @@ class Widget extends Cf_Controller {
         $this->load->view('widgets/contextfinder', $data);
     }   
     
+
+    /**
+    * Return all bundles except bundles assigned to the role
+    * 
+    * @param rolename string
+    * 
+    * @return json string
+    * 
+    */ 
+   function bundlesNotAssignedToRole($rolename='') {
+        
+        $username = $this->session->userdata('username');
+
+        try {
+
+            // if rolename not set - return list of all bundles
+            if ($rolename == '') {
+                echo json_encode(array_keys($all_bundles));
+                return;
+            }
+
+            $all_bundles = $brxi = $brxx = array();
+
+            $all_bundles_tmp = json_decode($this->bundle_model->getAllBundles($username));
+
+            if (!empty($all_bundles_tmp)) {
+                // get bundles in normal view - key value array + only single values (like array_unique)
+                // in the end we will get array like $arr[$key] = $key
+                foreach ($all_bundles_tmp as $item) {
+                    $all_bundles[$item[1]] = $item[1]; // $item[1] - bundle name
+                }
+            }
+            unset($all_bundles_tmp);
+
+
+            $role = $this->ion_auth->get_role($this->session->userdata('username'), $rolename);
+
+            $brxi = array_key_exists('bundlerxinlcude', $role) ? $role['bundlerxinlcude'] : "";
+            $brxx = array_key_exists('bundlerxexclude', $role) ? $role['bundlerxexclude'] : "";
+
+            //clean spaces and convert to to array
+            $brxi = str_replace(' ', '', $brxi);
+            $brxi = explode(',', $brxi);
+
+            $brxx = str_replace(' ', '', $brxx);
+            $brxx = explode(',', $brxx);
+
+
+            // do the same for assigned bundles
+            $used_bundles_tmp = array_merge((array) $brxi, (array) $brxx);
+            $used_bundles     = array_combine($used_bundles_tmp, $used_bundles_tmp); // create array as $arr[$key] = $key
+
+            unset($used_bundles_tmp);
+            
+            if (!empty($used_bundles)) {
+                $bundle = arrayRecursiveDiff($all_bundles, $used_bundles);
+            }
+
+            if (!empty($bundle)) {
+                echo json_encode(array_keys($bundle));
+            }
+
+            return;
+        } catch (Exception $e) {
+            $this->output->set_status_header('500', $e->getMessage());
+            echo($e->getMessage());
+        }
+    }   
+    
 }
+
 ?>
+
