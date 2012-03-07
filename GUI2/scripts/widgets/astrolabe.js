@@ -273,10 +273,13 @@
 
                 $dialog.dialog('close');
                 $dialog.dialog('destroy');
+                $dialog.remove();
             }
 
             var $dialog = $('<div>')
-                .load('/widget/astrolabeAddNodeDialog/')
+                .load('/widget/astrolabeAddNodeDialog/', function() {
+                    $('#astrolabe-add-node-label').focus();
+                })
                 .dialog({
                     autoOpen: false,
                     title: 'Add Class Filter',
@@ -288,11 +291,12 @@
                         'Cancel': function() {
                             $(this).dialog('close');
                             $(this).dialog('destroy');
+                            $(this).remove();
                         }
                     },
                     draggable: false,
                     modal: true,
-                    resizable: false
+                    resizable: false,
                 });
 
             $dialog.keypress(function(event) {
