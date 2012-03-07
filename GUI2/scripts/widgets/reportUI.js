@@ -1,12 +1,13 @@
 (function ($) {
     $.widget('ui.reportUI', {
         options: {
-           
+            contextWidgetElement:'hclist',
+            baseUrl:''
         },
         _context: {
             includes: [],
             excludes: []
-        },
+        },       
 
         _create: function () {
             var $element = this.element;
@@ -19,37 +20,37 @@
           
         },
         
-        
+      
         menuItemClicked:function(e) {
             var $self = this;
             e.preventDefault();
             var itemClicked = $(e.currentTarget);  
             // update the filters 
             var reportId = itemClicked.attr('id');
-               
-            $self.filterPane.load('/search/index', {
+            var filterUrl = $self.options.baseUrl + '/search/index';   
+            $self.filterPane.load(filterUrl, {
                 'host':'All',
                 'report':reportId,
                 'inclist': encodeURIComponent($self._context.includes),
                 'exlist': encodeURIComponent($self._context.excludes)   
+            },function(data) {
+                $self.filterPane.find('form').attr('target','_blank');
             });
-        },
-        
-        
+        },     
         
         _modifyContext:function () {
             var $self = this;
             var includes = encodeURIComponent($self._context.includes);
             var excludes = encodeURIComponent($self._context.excludes);
           
-            // just manipulate the hidden fields for context finder for now
-            $self.filterPane.find('input[name=inclist]').val(includes);
-            $self.filterPane.find('input[name=exlist]').val(excludes);
-          
-          
-            
-          
-            console.log('modify',includes,excludes);
+            var contextWidget = $('#'+$self.options.contextWidgetElement).data('contextfinder');
+            if (contextWidget) {
+                // if context finder is initialized
+                // just manipulate the hidden fields for context finder for now
+                // have to access some pulic methods to set the context later
+                $self.filterPane.find('input[name=inclist]').val(includes);
+                $self.filterPane.find('input[name=exlist]').val(excludes);
+            }
         },
         
         setContext: function(includes, excludes) {
@@ -73,11 +74,9 @@
         
         refreshReportMenu: function() {
             var self = this;
-            var menuUrl = 'search/generateReportMenu';
+            var menuUrl = self.options.baseUrl+'/search/generateReportMenu';
             self.menuPane.load(menuUrl);
-        },
-
-       
+        },      
 
         destroy: function() {
             $.Widget.prototype.destroy.call(this);
