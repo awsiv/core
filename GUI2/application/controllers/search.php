@@ -247,7 +247,7 @@ class Search extends Cf_Controller {
                         $data['report_title'] = $report_type;
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                        $data['report_result'] = cfpr_report_value($username, NULL, $days, $months, $years, array($class_regex), array(), "day", true, $rows, $page_number);
+                        $data['report_result'] = cfpr_report_value($username, NULL, $days, $months, $years, explode(',',$incList), explode(',',$exList), "day", true, $rows, $page_number);
                         $this->template->load('template', 'searchpages/businessresult', $data);
                     }
                 } elseif ($hostkey != "") {
@@ -259,7 +259,7 @@ class Search extends Cf_Controller {
                     $data['report_title'] = $report_type;
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                    $data['report_result'] = cfpr_report_value($username, $hostkey, NULL, NULL, NULL, array($class_regex), array(), "day", true, $rows, $page_number);
+                    $data['report_result'] = cfpr_report_value($username, $hostkey, NULL, NULL, NULL, explode(',',$incList), explode(',',$exList), "day", true, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
                     is_ajax() ? $this->load->view('searchpages/business_value_report', $data) : $this->template->load('template', 'searchpages/business_value_report', $data);
@@ -282,7 +282,7 @@ class Search extends Cf_Controller {
 
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                        $data['report_result'] = cfpr_report_classes($username, NULL, $name, true, array($class_regex), array(), "last-seen", true, $rows, $page_number);
+                        $data['report_result'] = cfpr_report_classes($username, NULL, $name, true, explode(',',$incList), explode(',',$exList), "last-seen", true, $rows, $page_number);
                         $this->template->load('template', 'searchpages/businessresult', $data);
                     }
                 } elseif ($hostkey != "") {
@@ -293,7 +293,7 @@ class Search extends Cf_Controller {
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                    $data['report_result'] = cfpr_report_classes($username, $hostkey, $search, true, array($class_regex), array(), "last-seen", true, $rows, $page_number);
+                    $data['report_result'] = cfpr_report_classes($username, $hostkey, $search, true, explode(',',$incList), explode(',',$exList), "last-seen", true, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
                     is_ajax() ? $this->load->view('searchpages/class_profile', $data) : $this->template->load('template', 'searchpages/class_profile', $data);
@@ -350,7 +350,7 @@ class Search extends Cf_Controller {
                         $data['report_title'] = $report_type;
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                        $data['report_result'] = cfpr_report_compliance_summary($username, NULL, NULL, -1, -1, -1, -1, ">", array($class_regex), array(), "last-seen", true, $rows, $page_number);
+                        $data['report_result'] = cfpr_report_compliance_summary($username, NULL, NULL, -1, -1, -1, -1, ">", explode(',',$incList), explode(',',$exList), "last-seen", true, $rows, $page_number);
                         $this->template->load('template', 'searchpages/businessresult', $data);
                     }
                 } elseif ($hostkey != "") {
@@ -360,7 +360,7 @@ class Search extends Cf_Controller {
                     );
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                    $data['report_result'] = cfpr_report_compliance_summary($username, $hostkey, NULL, -1, -1, -1, -1, ">", array($class_regex), array(), "last-seen", true, $rows, $page_number);
+                    $data['report_result'] = cfpr_report_compliance_summary($username, $hostkey, NULL, -1, -1, -1, -1, ">",explode(',',$incList), explode(',',$exList), "last-seen", true, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
                     is_ajax() ? $this->load->view('searchpages/summary_report', $data) : $this->template->load('template', 'searchpages/summary_report', $data);
@@ -382,9 +382,9 @@ class Search extends Cf_Controller {
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                         if ($longterm_data) {
-                            $data['report_result'] = cfpr_report_filechanges_longterm($username, NULL, $name, true, -1, ">", array($class_regex), array(), "time", true, $rows, $page_number);
+                            $data['report_result'] = cfpr_report_filechanges_longterm($username, NULL, $name, true, -1, ">",explode(',',$incList), explode(',',$exList), "time", true, $rows, $page_number);
                         } else {
-                            $data['report_result'] = cfpr_report_filechanges($username, NULL, $name, true, -1, ">", array($class_regex), array(), "time", true, $rows, $page_number);
+                            $data['report_result'] = cfpr_report_filechanges($username, NULL, $name, true, -1, ">",explode(',',$incList), explode(',',$exList), "time", true, $rows, $page_number);
                         }
                         $this->template->load('template', 'searchpages/businessresult', $data);
                     }
@@ -396,7 +396,7 @@ class Search extends Cf_Controller {
                     );
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                    $data['report_result'] = cfpr_report_filechanges($username, $hostkey, $search, true, -1, ">", array($class_regex), array(), "time", true, $rows, $page_number);
+                    $data['report_result'] = cfpr_report_filechanges($username, $hostkey, $search, true, -1, ">", explode(',',$incList), explode(',',$exList), "time", true, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
                     is_ajax() ? $this->load->view('searchpages/file_change_log', $data) : $this->template->load('template', 'searchpages/file_change_log', $data);
@@ -423,9 +423,9 @@ class Search extends Cf_Controller {
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                         if ($longterm_data) {
-                            $data['report_result'] = cfpr_report_filediffs_longterm($username, NULL, $name, $diff, true, $cal, ">", array($class_regex), array(), "time", true, $rows, $page_number);
+                            $data['report_result'] = cfpr_report_filediffs_longterm($username, NULL, $name, $diff, true, $cal, ">", explode(',',$incList), explode(',',$exList), "time", true, $rows, $page_number);
                         } else {
-                            $data['report_result'] = cfpr_report_filediffs($username, NULL, $name, $diff, true, $cal, ">", array($class_regex), array(), "time", true, $rows, $page_number);
+                            $data['report_result'] = cfpr_report_filediffs($username, NULL, $name, $diff, true, $cal, ">", explode(',',$incList), explode(',',$exList), "time", true, $rows, $page_number);
                         }
                         $this->template->load('template', 'searchpages/businessresult', $data);
                     }
@@ -438,7 +438,7 @@ class Search extends Cf_Controller {
                     );
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                    $data['report_result'] = cfpr_report_filediffs($username, $hostkey, $search, NULL, true, $cal, ">", array($class_regex), array(), "time", true, $rows, $page_number);
+                    $data['report_result'] = cfpr_report_filediffs($username, $hostkey, $search, NULL, true, $cal, ">", explode(',',$incList), explode(',',$exList), "time", true, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
                     is_ajax() ? $this->load->view('searchpages/file_change_diffs', $data) : $this->template->load('template', 'searchpages/file_change_diffs', $data);
@@ -466,7 +466,7 @@ class Search extends Cf_Controller {
 
 
 
-                        $data['report_result'] = cfpr_report_lastseen($username, NULL, $key, $name, $address, $ago, true, array($class_regex), array(), "last-seen", true, $rows, $page_number);
+                        $data['report_result'] = cfpr_report_lastseen($username, NULL, $key, $name, $address, $ago, true, explode(',',$incList), explode(',',$exList), "last-seen", true, $rows, $page_number);
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                         $this->template->load('template', 'searchpages/businessresult', $data);
@@ -482,7 +482,7 @@ class Search extends Cf_Controller {
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email/');
-                    $data['report_result'] = cfpr_report_lastseen($username, $hostkey, NULL, $search, NULL, -1, true, array($class_regex), array(), "last-seen", true, $rows, $page_number);
+                    $data['report_result'] = cfpr_report_lastseen($username, $hostkey, NULL, $search, NULL, -1, true, explode(',',$incList), explode(',',$exList), "last-seen", true, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
                     is_ajax() ? $this->load->view('searchpages/last_saw_hosts', $data) : $this->template->load('template', 'searchpages/last_saw_hosts', $data);
@@ -506,7 +506,7 @@ class Search extends Cf_Controller {
                             'search' => $name
                         );
 
-                        $data['report_result'] = cfpr_report_patch_avail($username, NULL, $name, $version, $arch, true, array($class_regex), array(), "hostname", true, $rows, $page_number);
+                        $data['report_result'] = cfpr_report_patch_avail($username, NULL, $name, $version, $arch, true, explode(',',$incList), explode(',',$exList), "hostname", true, $rows, $page_number);
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                         $this->template->load('template', 'searchpages/businessresult', $data);
@@ -522,7 +522,7 @@ class Search extends Cf_Controller {
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                    $data['report_result'] = cfpr_report_patch_avail($username, $hostkey, $search, NULL, NULL, true, array($class_regex), array(), "hostname", true, $rows, $page_number);
+                    $data['report_result'] = cfpr_report_patch_avail($username, $hostkey, $search, NULL, NULL, true, explode(',',$incList), explode(',',$exList), "hostname", true, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
                     is_ajax() ? $this->load->view('searchpages/patches_available', $data) : $this->template->load('template', 'searchpages/patches_available', $data);
@@ -547,7 +547,7 @@ class Search extends Cf_Controller {
                         );
 
 
-                        $data['report_result'] = cfpr_report_patch_in($username, NULL, $name, $version, $arch, true, array($class_regex), array(), "hostname", true, $rows, $page_number);
+                        $data['report_result'] = cfpr_report_patch_in($username, NULL, $name, $version, $arch, true, explode(',',$incList), explode(',',$exList), "hostname", true, $rows, $page_number);
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                         $this->template->load('template', 'searchpages/businessresult', $data);
@@ -562,10 +562,10 @@ class Search extends Cf_Controller {
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                    $data['report_result'] = cfpr_report_patch_in($username, $hostkey, $search, NULL, NULL, true, array($class_regex), array(), "hostname", true, $rows, $page_number);
+                    $data['report_result'] = cfpr_report_patch_in($username, $hostkey, $search, NULL, NULL, true, explode(',',$incList), explode(',',$exList), "hostname", true, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
-                    is_ajax() ? $this->load->view('searchpages/patch_status', $data) : $this->template->load('template', 'searchpages/patch_status', $data);
+                    is_ajax() ? $this->load->view('searchpages/patches_available', $data) : $this->template->load('template', 'searchpages/patches_available', $data);
                 }
                 break;
             case "benchmarks":
@@ -582,7 +582,7 @@ class Search extends Cf_Controller {
                             'search' => $name
                         );
 
-                        $data['report_result'] = cfpr_report_performance($username, NULL, $name, true, array($class_regex), array(), "last-performed", true, $rows, $page_number);
+                        $data['report_result'] = cfpr_report_performance($username, NULL, $name, true, explode(',',$incList), explode(',',$exList), "last-performed", true, $rows, $page_number);
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                         $this->template->load('template', 'searchpages/businessresult', $data);
@@ -595,7 +595,7 @@ class Search extends Cf_Controller {
                     );
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                    $data['report_result'] = cfpr_report_performance($username, $hostkey, $search, true, array($class_regex), array(), "last-performed", true, $rows, $page_number);
+                    $data['report_result'] = cfpr_report_performance($username, $hostkey, $search, true, explode(',',$incList), explode(',',$exList), "last-performed", true, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
                     is_ajax() ? $this->load->view('searchpages/performance', $data) : $this->template->load('template', 'searchpages/performance', $data);
@@ -699,7 +699,7 @@ class Search extends Cf_Controller {
 
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     if ($hosts_only) {
-                        $data['report_result'] = cfpr_hosts_with_setuid($username, NULL, $name, true, $class_regex);
+                        $data['report_result'] = cfpr_hosts_with_setuid($username, NULL, $name, true, explode(',',$incList), explode(',',$exList));
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     } else {
 
@@ -708,7 +708,7 @@ class Search extends Cf_Controller {
                             'search' => $name
                         );
 
-                        $data['report_result'] = cfpr_report_setuid($username, NULL, $name, true, array($class_regex), array(), "hostname", true, $rows, $page_number);
+                        $data['report_result'] = cfpr_report_setuid($username, NULL, $name, true, explode(',',$incList), explode(',',$exList), "hostname", true, $rows, $page_number);
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                         $this->template->load('template', 'searchpages/businessresult', $data);
@@ -722,7 +722,7 @@ class Search extends Cf_Controller {
                     );
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                    $data['report_result'] = cfpr_report_setuid($username, $hostkey, $search, true, array($class_regex), array(), "hostname", true, $rows, $page_number);
+                    $data['report_result'] = cfpr_report_setuid($username, $hostkey, $search, true, explode(',',$incList), explode(',',$exList), "hostname", true, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
                     is_ajax() ? $this->load->view('searchpages/uid_gid_root_programs', $data) : $this->template->load('template', 'searchpages/uid_gid_root_programs', $data);
@@ -735,7 +735,7 @@ class Search extends Cf_Controller {
                     $arch = isset($getparams['arch']) ? urldecode($getparams['arch']) : urldecode($this->input->post('arch'));
 
                     if ($hosts_only) {
-                        $data['report_result'] = cfpr_hosts_with_software_in($username, NULL, $name, $version, $arch, true, array($class_regex), array());
+                        $data['report_result'] = cfpr_hosts_with_software_in($username, NULL, $name, $version, $arch, true, explode(',',$incList), explode(',',$exList));
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     } else {
 
@@ -746,7 +746,7 @@ class Search extends Cf_Controller {
                             'search' => $name
                         );
 
-                        $data['report_result'] = cfpr_report_software_in($username, NULL, $name, $version, $arch, true, array($class_regex), array(), "hostname", true, $rows, $page_number);
+                        $data['report_result'] = cfpr_report_software_in($username, NULL, $name, $version, $arch, true, explode(',',$incList), explode(',',$exList), "hostname", true, $rows, $page_number);
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                         $this->template->load('template', 'searchpages/businessresult', $data);
@@ -765,7 +765,7 @@ class Search extends Cf_Controller {
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                    $data['report_result'] = cfpr_report_software_in($username, $hostkey, $search, $version, $arch, true, $class_regex, "hostname", true, $rows, $page_number);
+                    $data['report_result'] = cfpr_report_software_in($username, $hostkey, $search, $version, $arch, true, explode(',',$incList), explode(',',$exList), "hostname", true, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
                     is_ajax() ? $this->load->view('searchpages/software_installed', $data) : $this->template->load('template', 'searchpages/software_installed', $data);
@@ -792,7 +792,7 @@ class Search extends Cf_Controller {
                             'var_type' => $type
                         );
 
-                        $data['report_result'] = cfpr_report_vars($username, NULL, $scope, $lval, $rval, $type, true, array($class_regex), array(), "var-name", true, $rows, $page_number);
+                        $data['report_result'] = cfpr_report_vars($username, NULL, $scope, $lval, $rval, $type, true, explode(',',$incList), explode(',',$exList), "var-name", true, $rows, $page_number);
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                         $this->template->load('template', 'searchpages/businessresult', $data);
@@ -808,7 +808,7 @@ class Search extends Cf_Controller {
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                    $data['report_result'] = cfpr_report_vars($username, $hostkey, NULL, $search, NULL, NULL, true, array($class_regex), array(), "var-name", true, $rows, $page_number);
+                    $data['report_result'] = cfpr_report_vars($username, $hostkey, NULL, $search, NULL, NULL, true, explode(',',$incList), explode(',',$exList), "var-name", true, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 } else {
                     is_ajax() ? $this->load->view('searchpages/variables', $data) : $this->template->load('template', 'searchpages/variables', $data);
