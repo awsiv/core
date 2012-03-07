@@ -2282,11 +2282,13 @@ PHP_FUNCTION(cfpr_hosts_with_software_in)
     int user_len, hk_len, n_len, v_len, a_len, use_reg, cr_len;
     long regex;
     char buffer[512 * 1024];
+    PageInfo page = {0};
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbs",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbsll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
-                              &name, &n_len, &version, &v_len, &arch, &a_len, &regex, &classreg, &cr_len) == FAILURE)
+                              &name, &n_len, &version, &v_len, &arch, &a_len, &regex, &classreg, &cr_len,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2312,7 +2314,7 @@ PHP_FUNCTION(cfpr_hosts_with_software_in)
 
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
-    Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, use_reg, cfr_software, filter, buffer, sizeof(buffer));
+    Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, use_reg, cfr_software, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2327,11 +2329,13 @@ PHP_FUNCTION(cfpr_hosts_with_value)
     int user_len, hk_len, d_len, m_len, y_len, cr_len;
     const int bufsize = 512 * 1024;
     char buffer[bufsize];
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssss",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssssll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
-                              &day, &d_len, &month, &m_len, &year, &y_len, &classreg, &cr_len) == FAILURE)
+                              &day, &d_len, &month, &m_len, &year, &y_len, &classreg, &cr_len,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2355,7 +2359,7 @@ PHP_FUNCTION(cfpr_hosts_with_value)
 
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
-    Nova2PHP_value_hosts(fhostkey, fday, fmonth, fyear, filter, buffer, bufsize);
+    Nova2PHP_value_hosts(fhostkey, fday, fmonth, fyear, filter, &page, buffer, bufsize);
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2370,11 +2374,13 @@ PHP_FUNCTION(cfpr_hosts_with_patch_in)
     int user_len, hk_len, n_len, v_len, a_len, cr_len;
     long regex;
     char buffer[512 * 1024];
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbs",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbsll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
-                              &name, &n_len, &version, &v_len, &arch, &a_len, &regex, &classreg, &cr_len) == FAILURE)
+                              &name, &n_len, &version, &v_len, &arch, &a_len, &regex, &classreg, &cr_len,
+                              &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2399,8 +2405,7 @@ PHP_FUNCTION(cfpr_hosts_with_patch_in)
 
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
-    Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, regex, cfr_patch_installed, filter, buffer,
-                            sizeof(buffer));
+    Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, regex, cfr_patch_installed, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2415,11 +2420,13 @@ PHP_FUNCTION(cfpr_hosts_with_patch_avail)
     int user_len, hk_len, n_len, v_len, a_len, use_reg, cr_len;
     long regex;
     char buffer[512 * 1024];
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbs",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbsll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
-                              &name, &n_len, &version, &v_len, &arch, &a_len, &regex, &classreg, &cr_len) == FAILURE)
+                              &name, &n_len, &version, &v_len, &arch, &a_len, &regex, &classreg, &cr_len,
+                              &(page.resultsPerPage),&(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2445,7 +2452,7 @@ PHP_FUNCTION(cfpr_hosts_with_patch_avail)
 
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
-    Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, use_reg, cfr_patch_avail, filter, buffer, sizeof(buffer));
+    Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, use_reg, cfr_patch_avail, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2459,10 +2466,12 @@ PHP_FUNCTION(cfpr_hosts_with_classes)
     int user_len, hk_len, n_len, cr_len;
     long regex;
     char buffer[512 * 1024];
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbs",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbsll",
                               &userName, &user_len,
-                              &hostkey, &hk_len, &name, &n_len, &regex, &classreg, &cr_len) == FAILURE)
+                              &hostkey, &hk_len, &name, &n_len, &regex, &classreg, &cr_len,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2484,7 +2493,7 @@ PHP_FUNCTION(cfpr_hosts_with_classes)
 
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
-    Nova2PHP_classes_hosts(fhostkey, fname, regex, filter, buffer, sizeof(buffer));
+    Nova2PHP_classes_hosts(fhostkey, fname, regex, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2500,11 +2509,13 @@ PHP_FUNCTION(cfpr_hosts_with_repaired)
     char buffer[512 * 1024];
     long hours_deltafrom, hours_deltato;
     time_t from = 0, to = 0;
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssslls",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllsll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
-                              &handle, &h_len, &hours_deltafrom, &hours_deltato, &classreg, &cr_len) == FAILURE)
+                              &handle, &h_len, &hours_deltafrom, &hours_deltato, &classreg, &cr_len,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2530,7 +2541,7 @@ PHP_FUNCTION(cfpr_hosts_with_repaired)
 
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
-    Nova2PHP_promiselog_hosts(fhostkey, fhandle, PROMISE_LOG_STATE_REPAIRED, from, to, filter, buffer, sizeof(buffer));
+    Nova2PHP_promiselog_hosts(fhostkey, fhandle, PROMISE_LOG_STATE_REPAIRED, from, to, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2545,11 +2556,13 @@ PHP_FUNCTION(cfpr_hosts_with_notkept)
     char buffer[512 * 1024];
     long hours_deltafrom, hours_deltato;
     time_t from = 0, to = 0;
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssslls",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllsll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
-                              &handle, &h_len, &hours_deltafrom, &hours_deltato, &classreg, &cr_len) == FAILURE)
+                              &handle, &h_len, &hours_deltafrom, &hours_deltato, &classreg, &cr_len,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2576,7 +2589,7 @@ PHP_FUNCTION(cfpr_hosts_with_notkept)
 
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
-    Nova2PHP_promiselog_hosts(fhostkey, fhandle, PROMISE_LOG_STATE_NOTKEPT, from, to, filter, buffer, sizeof(buffer));
+    Nova2PHP_promiselog_hosts(fhostkey, fhandle, PROMISE_LOG_STATE_NOTKEPT, from, to, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2591,12 +2604,14 @@ PHP_FUNCTION(cfpr_hosts_with_vars)
     int user_len, hk_len, s_len, l_len, r_len, t_len, use_reg, cr_len;
     zend_bool regex;
     char buffer[512 * 1024];
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssssbs",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssssbsll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &scope, &s_len,
-                              &lval, &l_len, &rval, &r_len, &type, &t_len, &regex, &classreg, &cr_len) == FAILURE)
+                              &lval, &l_len, &rval, &r_len, &type, &t_len, &regex, &classreg, &cr_len,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2623,7 +2638,7 @@ PHP_FUNCTION(cfpr_hosts_with_vars)
 
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
-    Nova2PHP_vars_hosts(fhostkey, fscope, flval, frval, ftype, use_reg, filter, buffer, sizeof(buffer));
+    Nova2PHP_vars_hosts(fhostkey, fscope, flval, frval, ftype, use_reg, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2637,11 +2652,13 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_summary)
     int user_len, hk_len, v_len, cmp_len, cr_len;
     long k, nk, r, t;
     char buffer[512 * 1024];
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllllss",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllllssll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
-                              &version, &v_len, &t, &k, &nk, &r, &cmp, &cmp_len, &classreg, &cr_len) == FAILURE)
+                              &version, &v_len, &t, &k, &nk, &r, &cmp, &cmp_len, &classreg, &cr_len,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2663,8 +2680,7 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_summary)
 
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
-    Nova2PHP_compliance_hosts(fhostkey, fversion, (int) t, (int) k, (int) nk, (int) r, cmp, filter, buffer,
-                              sizeof(buffer));
+    Nova2PHP_compliance_hosts(fhostkey, fversion, (int) t, (int) k, (int) nk, (int) r, cmp, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2680,11 +2696,13 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_promises)
     char buffer[512 * 1024];
     zend_bool regex;
     int use_reg;
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbs",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbsll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
-                              &handle, &h_len, &status, &s_len, &regex, &classreg, &cr_len) == FAILURE)
+                              &handle, &h_len, &status, &s_len, &regex, &classreg, &cr_len,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2708,7 +2726,7 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_promises)
 
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
-    Nova2PHP_promise_hosts(fhostkey, fhandle, fstatus, use_reg, filter, buffer, sizeof(buffer));
+    Nova2PHP_promise_hosts(fhostkey, fhandle, fstatus, use_reg, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2725,12 +2743,14 @@ PHP_FUNCTION(cfpr_hosts_with_lastseen)
     long ago;
     zend_bool regex;
     int use_reg;
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssslbs",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssslbsll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &hash, &h2_len,
-                              &host, &h_len, &address, &a_len, &ago, &regex, &classreg, &cr_len) == FAILURE)
+                              &host, &h_len, &address, &a_len, &ago, &regex, &classreg, &cr_len,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2756,7 +2776,7 @@ PHP_FUNCTION(cfpr_hosts_with_lastseen)
 
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
-    Nova2PHP_lastseen_hosts(fhostkey, fhash, fhost, faddress, ago, use_reg, filter, buffer, sizeof(buffer));
+    Nova2PHP_lastseen_hosts(fhostkey, fhash, fhost, faddress, ago, use_reg, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2771,10 +2791,12 @@ PHP_FUNCTION(cfpr_hosts_with_performance)
     int user_len, hk_len, j_len, cr_len;
     char buffer[512 * 1024];
     zend_bool regex;
+    PageInfo page = { 0 };
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbs",
                               &userName, &user_len,
-                              &hostkey, &hk_len, &job, &j_len, &regex, &classreg, &cr_len) == FAILURE)
+                              &hostkey, &hk_len, &job, &j_len, &regex, &classreg, &cr_len,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2796,7 +2818,7 @@ PHP_FUNCTION(cfpr_hosts_with_performance)
 
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
-    Nova2PHP_performance_hosts(fhostkey, fjob, regex, filter, buffer, sizeof(buffer));
+    Nova2PHP_performance_hosts(fhostkey, fjob, regex, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2811,10 +2833,12 @@ PHP_FUNCTION(cfpr_hosts_with_setuid)
     int user_len, hk_len, j_len, cr_len;
     char buffer[512 * 1024];
     zend_bool regex;
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbs",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbsll",
                               &userName, &user_len,
-                              &hostkey, &hk_len, &file, &j_len, &regex, &classreg, &cr_len) == FAILURE)
+                              &hostkey, &hk_len, &file, &j_len, &regex, &classreg, &cr_len,
+                              &(page.resultsPerPage), & (page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2836,7 +2860,7 @@ PHP_FUNCTION(cfpr_hosts_with_setuid)
 
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
-    Nova2PHP_setuid_hosts(fhostkey, ffile, regex, filter, buffer, sizeof(buffer));
+    Nova2PHP_setuid_hosts(fhostkey, ffile, regex, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2853,11 +2877,13 @@ PHP_FUNCTION(cfpr_hosts_with_filechanges)
     zend_bool regex;
     long t;
     time_t then;
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssblss",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssblssll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
-                              &file, &j_len, &regex, &t, &cmp, &c_len, &classreg, &cr_len) == FAILURE)
+                              &file, &j_len, &regex, &t, &cmp, &c_len, &classreg, &cr_len,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2881,7 +2907,7 @@ PHP_FUNCTION(cfpr_hosts_with_filechanges)
 
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
-    Nova2PHP_filechanges_hosts(fhostkey, ffile, regex, then, fcmp, filter, buffer, sizeof(buffer));
+    Nova2PHP_filechanges_hosts(fhostkey, ffile, regex, then, fcmp, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2898,11 +2924,13 @@ PHP_FUNCTION(cfpr_hosts_with_filediffs)
     zend_bool regex;
     long t;
     time_t then;
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssblss",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssblssll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
-                              &file, &j_len, &diff, &d_len, &regex, &t, &cmp, &c_len, &classreg, &cr_len) == FAILURE)
+                              &file, &j_len, &diff, &d_len, &regex, &t, &cmp, &c_len, &classreg, &cr_len,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2926,7 +2954,7 @@ PHP_FUNCTION(cfpr_hosts_with_filediffs)
 
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
-    Nova2PHP_filediffs_hosts(fhostkey, ffile, diff, regex, then, fcmp, filter, buffer, sizeof(buffer));
+    Nova2PHP_filediffs_hosts(fhostkey, ffile, diff, regex, then, fcmp, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2941,10 +2969,12 @@ PHP_FUNCTION(cfpr_hosts_with_bundlesseen)
     int user_len, hk_len, j_len, cr_len;
     char buffer[512 * 1024];
     zend_bool regex;
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbs",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbsll",
                               &userName, &user_len,
-                              &hostkey, &hk_len, &bundle, &j_len, &regex, &classreg, &cr_len) == FAILURE)
+                              &hostkey, &hk_len, &bundle, &j_len, &regex, &classreg, &cr_len,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2966,7 +2996,7 @@ PHP_FUNCTION(cfpr_hosts_with_bundlesseen)
 
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
-    Nova2PHP_bundle_hosts(fhostkey, fbundle, regex, filter, buffer, sizeof(buffer));
+    Nova2PHP_bundle_hosts(fhostkey, fbundle, regex, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
