@@ -1295,19 +1295,6 @@ HostColourFilter *NewHostColourFilter(HostRankMethod method, HostColour colours)
         return NULL;
     }
 
-    switch (method)
-    {
-        case HOST_RANK_METHOD_COMPLIANCE:
-        case HOST_RANK_METHOD_ANOMALY:
-        case HOST_RANK_METHOD_PERFORMANCE:
-        case HOST_RANK_METHOD_LASTSEEN:
-        case HOST_RANK_METHOD_MIXED:
-            break;
-
-        default:
-            return NULL;
-    }
-
     HostColourFilter *filter = xmalloc(sizeof(HostColourFilter));
     filter->method = method;
     filter->colour = colours;
