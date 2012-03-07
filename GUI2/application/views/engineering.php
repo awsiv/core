@@ -6,7 +6,12 @@
             </div>
             <div class="clear"></div>
         </div>
-        <div class="grid_8 omega">
+        <div class="grid_8 omega" id="tabs-layout">
+            <ul>
+                <li><a href="#tab-1">Status</a></li>
+                <li><a href="#tab-2">Reports</a></li>
+            </ul>
+            <div id="tab-1">
             <div class="engineeringContentContainer">
                 <div id="astrolabeLocation"></div>
 
@@ -25,6 +30,14 @@
                     <div class="clear"></div>
                 </div>
             </div>
+            </div>
+            <div id="tab-2">
+                <div id="reportInfoContainer" class="reportInfoContainer">
+                    <div id="treeReportContentMenu" class="grid_8"></div>
+                   <div id="treeReportContentMenuFilter" class="grid_8"></div>                  
+                    <div class="clear"></div>
+                </div>
+            </div>    
         </div>
         <div class="clear"></div>
     </div>
@@ -45,6 +58,12 @@
 <script type="text/javascript" src="<?php echo get_scriptdir()?>jquery.mousewheel.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>jquery.contextMenu.js"></script>
 
+
+<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/notes.js"></script>
+<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/classfinder.js"></script>
+<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/contextfinder.js"></script>
+
+
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>view/engineering.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>astrolabe.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>astrolabeLocation.css" />
@@ -56,7 +75,36 @@
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>jScrollPane.css" />
 
 <script type="text/javascript">
+    
+    
+        function testReportFunction(context,includes, excludes) {
+        
+            // place the menu here
+            var self = this;
+            $('#treeReportContentMenu').delegate('a','click',function(e) {
+                e.preventDefault();
+               console.log( $(this));
+               // update the filters 
+               var reportId = $(this).attr('id');
+               
+               $('#treeReportContentMenuFilter').load('/search/index', {
+                   'host':'All',
+                   'report':reportId
+                   
+               });
+                
+                
+            });
+        
+            $('#treeReportContentMenu').load('search/generateReportMenu', {
+                includes: includes, 
+                excludes : excludes
+            });       
+        }
+    
     $(document).ready(function(){
+        
+        $("#tabs-layout").tabs();
 
         var genericOption = {
             baseUrl: '<?php echo site_url() ?>'
@@ -98,6 +146,8 @@
                 $('#hostsConnectivityContainer').show();
 
                 $('#astrolabeLocation').astrolabeLocation('setContextPath', args.path, args.count);
+                
+               testReportFunction('context',args.includes, args.excludes)
             }
         });
 

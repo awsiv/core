@@ -46,6 +46,20 @@ class Search extends Cf_Controller {
          return array();
         }
     }
+    
+    
+    /**
+     * function to generate reports menu  
+     */
+    function generateReportMenu($selectedCat='',$selectedType='') {
+        $reportArray = $this->__reports_menu();
+        $data['reports_menu'] = $reportArray;
+        $data['report_category'] = $selectedCat;
+        $data['report_type'] = $selectedType;
+         $this->load->view('/searchpages/reportsMenu',$data);       
+    }
+    
+    
 
     function index() {
 

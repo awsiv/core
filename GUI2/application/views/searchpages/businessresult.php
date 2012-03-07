@@ -1,19 +1,9 @@
 <div id="bodyreport" class="outerdiv grid_12">
 
     <div id="reportpanel" class="innerdiv">
-         <div class="dd_menu">
-            <ul>
-              <?php foreach($reports_menu as $key=>$val){?>
-                <li class="<?php echo $report_category == $key?"selected":"" ?>"><?php echo $key ?>
-                    <ul>
-                   <?php foreach ($val as $reportdata){ ?>
-                        <li><a href="<?php echo site_url('/search/index/host/All/report').'/'.urlencode($reportdata['id'])?>" class="<?php echo $reportdata['id']==$report_type? "selected":""?>"><?php echo $reportdata['name'] ?></a></li>
-                   <?php }?>
-                    </ul>
-                 </li>
-                <?php } ?>
-            </ul>
-        </div>
+                <?php $this->load->view('/searchpages/reportsMenu'); ?>
+
+       
             <!--<div class="grid_8">
                 <a href="<?php echo $report_link ?>" id="send_mail" class="icons download showqtip" title="Download report"></a>
                 <?php echo anchor('#', 'Select host', array('id' => 'findhost', 'title' => 'Report for another host', 'class' => 'showqtip')) ?>
