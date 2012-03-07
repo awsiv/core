@@ -1,10 +1,5 @@
-<?php /*
-<html>
-<head>
-<script type="text/javascript" src="http://dmitry.cf434lin.test.cfengine.com/scripts/jquery-1.6.1.min.js" charset="UTF-8"></script>
-*/?>
  <style type="text/css">
- 
+ /* this styles only for testing*/
     .line {
         margin-bottom: 20px;
     }
@@ -31,10 +26,6 @@
         margin-left: 20px;
     }
 </style>   
-<?php /*
-</head>
-<body>
-    */?>
    
 <div class="line_wrapper">
   <form id="myform"> 
@@ -52,7 +43,7 @@
              </div>
          
             <a href="#" class="add_line">+ Add line</a>
-            <br clear="all">
+            <div class="clearboth"></div>
     </div> 
         <div class="line" >
             <div class="item">
@@ -68,36 +59,8 @@
              </div>
          
             <a href="#" class="add_line">+ Add line</a>
-            <br clear="all">
+            <div class="clearboth"></div>
     </div> 
  </form>   
 <a id="send" href="#">SEND </a>
 </div>
-
-
-<?php /*
-<script type="text/javascript">
-
-$(".add_line").live("click",  function(event) {
-    console.log('asda');
-  $(this).parent().clone().appendTo('.line_wrapper');
-});
-
-$(".swap").live("click",  function(event) {
-   var tmp=$(this).parent().find('.include').val();
-   $(this).parent().find('.include').val($(this).parent().find('.exclude').val());
-   $(this).parent().find('.exclude').val(tmp)
-});
-
-$('#send').live("click",  function(event)  {
-    alert($('#myform input').serialize());
-});
-
-
-//recursiveEncoded
-
-</script>
-
-</body>
-</html> 
-*/?>

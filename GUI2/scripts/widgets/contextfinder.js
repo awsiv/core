@@ -10,13 +10,11 @@ $.widget('ui.contextfinder',
             hostkey:""
           },
 _init: function(){
-  //   console.log('INIT');
         var self=this;
 
 },
 _create:function(){
         var self=this;
-    //console.log('create');
             self.dialoginit();
         
         self.dialogcontent.dialog({
@@ -35,7 +33,6 @@ _create:function(){
                 self.loadpagebody(self.element.attr('href'));
             
             });
-
 },
 
 
