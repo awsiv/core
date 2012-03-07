@@ -429,12 +429,12 @@ class Widget extends Cf_Controller {
 
         $this->load->view('widgets/astrolabeAddNodeDialog', $data);
     }
+    
     function contextfinder () {
         $data = array();
         $this->load->view('widgets/contextfinder', $data);
     }   
     
-
     /**
     * Return all bundles except bundles assigned to the role
     * 
@@ -504,6 +504,4 @@ class Widget extends Cf_Controller {
     }   
     
 }
-
 ?>
-

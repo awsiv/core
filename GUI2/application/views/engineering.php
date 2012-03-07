@@ -6,7 +6,12 @@
             </div>
             <div class="clear"></div>
         </div>
-        <div class="grid_8 omega">
+        <div class="grid_8 omega" id="tabs-layout">
+            <ul>
+                <li><a href="#tab-1">Status</a></li>
+                <li><a href="#tab-2">Reports</a></li>
+            </ul>
+            <div id="tab-1">
             <div class="engineeringContentContainer">
                 <div id="astrolabeLocation"></div>
 
@@ -25,6 +30,12 @@
                     <div class="clear"></div>
                 </div>
             </div>
+            </div>
+            <div id="tab-2">
+                <div id="reportInfoContainer" class="reportInfoContainer">                                   
+                    <div class="clear"></div>
+                </div>
+            </div>    
         </div>
         <div class="clear"></div>
     </div>
@@ -45,6 +56,14 @@
 <script type="text/javascript" src="<?php echo get_scriptdir()?>jquery.mousewheel.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>jquery.contextMenu.js"></script>
 
+
+<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/notes.js"></script>
+<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/classfinder.js"></script>
+<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/contextfinder.js"></script>
+<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/reportUI.js"></script>
+
+
+
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>view/engineering.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>astrolabe.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>astrolabeLocation.css" />
@@ -56,7 +75,11 @@
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>jScrollPane.css" />
 
 <script type="text/javascript">
+    
+    
     $(document).ready(function(){
+        
+        $("#tabs-layout").tabs();
 
         var genericOption = {
             baseUrl: '<?php echo site_url() ?>'
@@ -71,6 +94,8 @@
         $('#hostInfo').hostInfo();
         $('#astrolabeLocation').astrolabeLocation();
         $('#hostsComplianceTimeseries').hostsComplianceTimeseries();
+        $('#reportInfoContainer').reportUI(genericOption);
+        
 
         $('#astrolabe').astrolabe({
             hostSelected: function(event, args) {
@@ -84,6 +109,7 @@
                 $('#hostsConnectivityContainer').hide();
 
                 $('#astrolabeLocation').astrolabeLocation('setHostName', args.hostName);
+                $('#reportInfoContainer').reportUI('setHostContext',args.hostKey);
             },
 
             nodeSelected: function(event, args) {
@@ -98,6 +124,8 @@
                 $('#hostsConnectivityContainer').show();
 
                 $('#astrolabeLocation').astrolabeLocation('setContextPath', args.path, args.count);
+                
+                $('#reportInfoContainer').reportUI('setContext',args.includes, args.excludes)
             }
         });
 
