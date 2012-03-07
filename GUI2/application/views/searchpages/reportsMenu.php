@@ -2,7 +2,7 @@
     <ul>
         <?php foreach ($reports_menu as $key => $val)
         { ?>
-            <li class="<?php echo $report_category == $key ? "selected" : "" ?>"><?php echo $key ?>
+            <li><span class="<?php echo $report_category == $key ? "selected" : "" ?>"> <?php echo $key ?></span>
                 <ul>
                     <?php foreach ($val as $reportdata)
                     { ?>
