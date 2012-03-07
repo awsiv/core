@@ -149,17 +149,22 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
         FnCall *edit_bundle = (FnCall *) GetConstraintValue("edit_line", pp, CF_FNCALL);
         char *source = GetConstraintValue("source", pp, CF_SCALAR);
 
-        fprintf(fp, "files::\n");
-
         for (rp = servers; rp != NULL; rp = rp->next)
         {
-            fprintf(fp, " \"%s\" association => a(\"might use data from\",\"%s\",\"might provide data for\");  \n",
+            fprintf(fp, "files:: \"%s\" association => a(\"might use data from\",\"%s\",\"might provide data for\");  \n",
                     pp->promiser, (const char *) rp->item);
+
+            fprintf(fp, "class_contexts:: \"%s\" association => a(\"uses data from\",\"hosts::%s\",\"provides data for\");  \n",
+                    pp->classes, (const char *) rp->item);
+
+            fprintf(fp, "class_contexts:: \"%s\" association => a(\"%s\",\"hosts::%s\",\"%s\");  \n",
+                    pp->classes, KM_CONNECTS_UNCERT_F, (const char *) rp->item, KM_CONNECTS_UNCERT_F);
+
         }
 
         if (source)
         {
-            fprintf(fp, " \"%s\" association => a(\"uses data from\",\"%s\",\"provides data for\");  \n", pp->promiser,
+            fprintf(fp, "files:: \"%s\" association => a(\"uses data from\",\"%s\",\"provides data for\");  \n", pp->promiser,
                     source);
         }
 
@@ -169,7 +174,7 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
             {
                 if (edit_bundle->args)  // Single arg
                 {
-                    fprintf(fp, " \"%s\" association => a(\"uses data from\",\"%s\",\"provides data for\");  \n",
+                    fprintf(fp, "files:: \"%s\" association => a(\"uses data from\",\"%s\",\"provides data for\");  \n",
                             pp->promiser, (const char *) edit_bundle->args);
                 }
             }
@@ -240,6 +245,7 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
                         bodyname = (char *) cp->rval.item;
                     }
                     break;
+
                 case CF_FNCALL:
                     fnp = (FnCall *) cp->rval.item;
                     bodyname = fnp->name;
@@ -298,8 +304,12 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
         fprintf(fp, "handles::  \"%s\" association => a(\"%s\",\"body_constraints::%s\",\"%s\");\n", promise_id,
                 KM_USES_CERT_F,cp->lval, KM_USES_CERT_B);
 
+        fprintf(fp, "promisers::  \"%s\" association => a(\"%s\",\"body_constraints::%s\",\"%s\");\n", pp->promiser,
+                KM_AFFECTS_CERT_B,cp->lval, KM_AFFECTS_CERT_F);
+        
     }
 
+    
 /* Promisees as topics too */
 
     switch (pp->promisee.rtype)
