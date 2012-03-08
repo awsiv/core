@@ -37,6 +37,11 @@ var common = (function(){
                 }
 
                 return hours + ":" + mins;
+            },
+
+            format: function(javascriptTimestamp) {
+                return common.time.formatDate(javascriptTimestamp) + ' ' +
+                    common.time.formatTimeOfDay(javascriptTimestamp);
             }
         },
 

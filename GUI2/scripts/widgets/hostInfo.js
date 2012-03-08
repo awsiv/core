@@ -129,11 +129,12 @@
                     $self._values.lastReportUpdate.html('never');
                 }
                 else if (host.lastReportUpdate !== undefined && host.lastReportUpdate >= 0) {
-                    // TODO: print unix time for now, need to agree on formatting
-                    $self._values.lastReportUpdate.html(host.lastReportUpdate);
+                    $self._values.lastReportUpdate.html(
+                        common.time.format(common.unixTimeToJavascriptTime(host.lastReportUpdate)));
                 }
 
                 if (host.lastPolicyUpdate !== undefined) {
+                    // NOTE: lastPolicyUpdate is in text format
                     $self._values.lastPolicyUpdate.html(host.lastPolicyUpdate);
                 }
             });
