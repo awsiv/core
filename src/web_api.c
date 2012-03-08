@@ -3120,43 +3120,55 @@ int Nova2PHP_show_hosts(char *hostNameRegex, char *ipRegex, HostClassFilter *hos
 
 /*****************************************************************************/
 
-void Nova2PHP_show_col_hosts(char *colour, HostClassFilter *host_class_filter,
+void Nova2PHP_show_col_hosts(mongo_connection *conn, char *colour, HostClassFilter *host_class_filter,
                              PageInfo *page, char *buffer, int bufsize)
 {
     Item *ip, *clist;
     char work[CF_MAXVARSIZE], lastseen[CF_MAXVARSIZE] = { 0 };
     int counter = 0, startIndex, endIndex;
 
+    HostColour host_colour;
+
     if (strcmp(colour, "green") == 0)
     {
-        clist = Nova_GreenHosts(hostClassFilter);
+        host_colour = HOST_COLOUR_GREEN;
     }
     else if (strcmp(colour, "yellow") == 0)
     {
-        clist = Nova_YellowHosts(hostClassFilter);
+        host_colour = HOST_COLOUR_YELLOW;
     }
     else if (strcmp(colour, "red") == 0)
     {
-        clist = Nova_RedHosts(hostClassFilter);
+        host_colour = HOST_COLOUR_RED;
+    }
+    else if (strcmp(colour, "blue") == 0)
+    {
+        host_colour = HOST_COLOUR_BLUE;
     }
     else
     {
-        clist = Nova_BlueHosts(hostClassFilter);
+        return;
     }
+
+    HostColourFilter *host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, host_colour);
+    clist = CFDB_GetHostByColour(conn, host_class_filter, host_colour_filter);
+    free(host_colour_filter);
+
+    buffer[0] = '\0';
+    strcat(buffer, "{ \"data\":[");
 
     if (clist)
     {
+        clist = SortItemListNames(clist);
+
         startIndex = page->resultsPerPage * (page->pageNum - 1);
         endIndex = (page->resultsPerPage * page->pageNum) - 1;
-
-        buffer[0] = '\0';
-        strcat(buffer, "{ \"data\":[");
 
         for (ip = clist, counter = 0; ip != NULL; ip = ip->next, counter++)
         {
             if (counter >= startIndex && (counter <= endIndex || endIndex < 0))
             {
-                if (strcmp(colour, "blue") == 0)
+                if (host_colour == HOST_COLOUR_BLUE)
                 {
                     Nova2PHP_getlastupdate(ip->name, lastseen, sizeof(lastseen));
                     snprintf(work, CF_MAXVARSIZE, "{ \"key\": \"%s\", \"id\": \"%s\",\"lastseen\": \"%s\"},", ip->name,
@@ -3173,14 +3185,13 @@ void Nova2PHP_show_col_hosts(char *colour, HostClassFilter *host_class_filter,
                 }
             }
         }
-
-        ReplaceTrailingChar(buffer, ',', '\0');
-
-        snprintf(work, sizeof(work), "],\"meta\":{\"count\":%d}}", counter);
-        Join(buffer, work, bufsize);
-
-        DeleteItemList(clist);
     }
+    ReplaceTrailingChar(buffer, ',', '\0');
+
+    snprintf(work, sizeof(work), "],\"meta\":{\"count\":%d}}", counter);
+    Join(buffer, work, bufsize);
+
+    DeleteItemList(clist);
 }
 
 /*****************************************************************************/
