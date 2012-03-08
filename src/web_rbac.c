@@ -824,21 +824,17 @@ HubQuery *CFDB_GetRoles(bson *query)
 
     while (mongo_cursor_next(cursor))
     {
-        char *name = SafeStringDuplicate(BsonGetString(&(cursor->current), dbkey_role_name));
-        char *desc = SafeStringDuplicate(BsonGetString(&(cursor->current), dbkey_role_description));
-        char *clRxIncl = SafeStringDuplicate(BsonGetString(&(cursor->current), dbkey_role_classrx_include));
-        char *clRxExcl = SafeStringDuplicate(BsonGetString(&(cursor->current), dbkey_role_classrx_exclude));
-        char *bRxIncl = SafeStringDuplicate(BsonGetString(&(cursor->current), dbkey_role_bundlerx_include));
-        char *bRxExcl = SafeStringDuplicate(BsonGetString(&(cursor->current), dbkey_role_bundlerx_exclude));
+	char name[CF_MAXVARSIZE], desc[CF_MAXVARSIZE], clRxIncl[CF_MAXVARSIZE],
+	    clRxExcl[CF_MAXVARSIZE], bRxIncl[CF_MAXVARSIZE], bRxExcl[CF_MAXVARSIZE];
+	
+	BsonStringWrite(name, sizeof(name), &(cursor->current), dbkey_role_name);
+	BsonStringWrite(desc, sizeof(desc), &(cursor->current), dbkey_role_description);
+	BsonStringWrite(clRxIncl, sizeof(clRxIncl), &(cursor->current), dbkey_role_classrx_include);
+	BsonStringWrite(clRxExcl, sizeof(clRxExcl), &(cursor->current), dbkey_role_classrx_exclude);
+	BsonStringWrite(bRxIncl, sizeof(bRxIncl), &(cursor->current), dbkey_role_bundlerx_include);
+	BsonStringWrite(bRxExcl, sizeof(bRxExcl), &(cursor->current), dbkey_role_bundlerx_exclude);
 
         PrependRlistAlien(&(hq->records), NewHubRole(name, desc, clRxIncl, clRxExcl, bRxIncl, bRxExcl));
-
-        free(name);
-        free(desc);
-        free(clRxIncl);
-        free(clRxExcl);
-        free(bRxIncl);
-        free(bRxExcl);
     }
 
     mongo_cursor_destroy(cursor);
