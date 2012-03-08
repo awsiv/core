@@ -16,6 +16,8 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#include <assert.h>
+
 /*****************************************************************************/
 
 void Nova_PrimeGraph(Rlist **semantics)
@@ -36,8 +38,11 @@ void Nova_DrawTribe(int *tribe_id, GraphNode *tribe_node, double tribe_adj[CF_TR
 {
     int i, j;
     double radius;
-    char work[CF_BUFSIZE], url[CF_MAXVARSIZE], shortname[CF_MAXVARSIZE];
-    char longname[CF_BUFSIZE], context[CF_BUFSIZE];
+    char work[CF_BUFSIZE] = { 0 },
+         url[CF_MAXVARSIZE] = { 0 },
+         shortname[CF_MAXVARSIZE] = { 0 },
+         longname[CF_BUFSIZE] = { 0 },
+         context[CF_BUFSIZE] = { 0 };
     char *colour;
 
     Nova_GetMaxEvcNode(tribe_evc, tribe_size);  /* FIXME: unused? */

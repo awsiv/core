@@ -8,6 +8,8 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#include <assert.h>
+
 /*****************************************************************************/
 /*                                                                           */
 /* File: topicmap.c                                                          */
@@ -438,7 +440,7 @@ Item *Nova_ScanLeadsAssociations(int search_id, char *assoc_mask)
   [
    {
    assoc: "is related to",
-   topics: [  { topic: "name", id: 7},   { topic: "name2", id: 8}   ]
+   topics: [  { topic: "name", id: 7},   { topic: "name2", id: 8}   ]
    }, ...
   ]
 
@@ -1105,10 +1107,11 @@ char *Nova_StripString(char *source, char *substring)
 void Nova_PlotTopicCosmos(int topic, char *view, char *buffer, int bufsize)
 /* This assumes that we have the whole graph in a matrix */
 {
-    GraphNode tribe_nodes[CF_TRIBE_SIZE];
-    int tribe_id[CF_TRIBE_SIZE], tribe_size;
+    GraphNode tribe_nodes[CF_TRIBE_SIZE] = { { 0 } };
+    int tribe_id[CF_TRIBE_SIZE] = { 0 },
+        tribe_size = 0;
     double tribe_evc[CF_TRIBE_SIZE] = { 0 };
-    double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE];
+    double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE] = { { 0 } };
 
 /* Count the  number of nodes in the solar system, to max number based on Dunbar's limit */
 
@@ -1137,7 +1140,8 @@ int Nova_GetTribe(int *tribe_id, GraphNode *tribe_nodes, double tribe_adj[CF_TRI
     char topic_name[CF_BUFSIZE], topic_context[CF_BUFSIZE];
     char *a_name, *a_context, view[CF_MAXVARSIZE];
     int a_pid;
-    GraphNode neighbours1[CF_TRIBE_SIZE], neighbours2[CF_TRIBE_SIZE][CF_TRIBE_SIZE];
+    GraphNode neighbours1[CF_TRIBE_SIZE] = { { 0 } },
+              neighbours2[CF_TRIBE_SIZE][CF_TRIBE_SIZE] = { { { 0 } } };
     int tribe_counter = 0, secondary_boundary, tertiary_boundary, i, j;
     Item *ip, *nn = NULL;
 
@@ -1165,7 +1169,10 @@ int Nova_GetTribe(int *tribe_id, GraphNode *tribe_nodes, double tribe_adj[CF_TRI
     tribe_id[0] = pid;
     topic_name[0] = '\0';
     topic_context[0] = '\0';
-    Nova_NewVertex(tribe_nodes, 0, 0, pid, topic_name, topic_context);
+    if (!Nova_NewVertex(tribe_nodes, 0, 0, pid, topic_name, topic_context))
+    {
+        return false;
+    }
 
 /* Probe sub-graph */
 
@@ -1365,7 +1372,7 @@ void Nova_MatrixOperation(double A[CF_TRIBE_SIZE][CF_TRIBE_SIZE], double *v, int
 {
     int i, j;
     double max = 0.000000001;
-    double vp[CF_TRIBE_SIZE];
+    double vp[CF_TRIBE_SIZE] = { 0 };
 
     for (i = 0; i < dim; i++)
     {
@@ -1427,9 +1434,9 @@ void Nova_InitVertex(GraphNode *tribe, int i)
 #ifdef HAVE_LIBMONGOC
 static int Nova_NewVertex(GraphNode *tribe, int node, int distance, int real, char *topic_name, char *topic_context)
 {
-    char sshort[CF_BUFSIZE];
-    char topic_id[CF_BUFSIZE];
-    int j;
+    char sshort[CF_BUFSIZE] = { 0 };
+    char topic_id[CF_BUFSIZE] = { 0 };
+    int j = 0;
 
     CfDebug("NEWVERT(%d,%d,%s:%s)\n", distance, real, topic_context, topic_name);
 
