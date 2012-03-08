@@ -107,6 +107,7 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
     Rlist *rp, *rp2, *depends_on = GetListConstraint("depends_on", pp);
     Rlist *class_list = SplitRegexAsRList(pp->classes, "[.!()|&]+", 100, false);
     char *bundlename = NULL, *bodyname = NULL;
+    Constraint *cp;
 
     if (LICENSES == 0)
     {
@@ -185,7 +186,6 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
 
     if (strcmp(pp->agentsubtype, "methods") == 0)
     {
-        Constraint *cp;
         FnCall *fnp;
 
         // Look at the unexpanded promise to see the variable refs
@@ -300,15 +300,19 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
                 break;
             }
         }
-
-        fprintf(fp, "handles::  \"%s\" association => a(\"%s\",\"body_constraints::%s\",\"%s\");\n", promise_id,
-                KM_USES_CERT_F,cp->lval, KM_USES_CERT_B);
-
-        fprintf(fp, "promisers::  \"%s\" association => a(\"%s\",\"body_constraints::%s\",\"%s\");\n", pp->promiser,
-                KM_AFFECTS_CERT_B,cp->lval, KM_AFFECTS_CERT_F);
-        
     }
 
+
+    for (cp = pp->conlist; cp != NULL; cp = cp->next)
+    {
+       
+       fprintf(fp, "handles::  \"%s\" association => a(\"%s\",\"body_constraints::%s\",\"%s\");\n", promise_id,
+               KM_USES_CERT_F,cp->lval, KM_USES_CERT_B);
+       
+       fprintf(fp, "promisers::  \"%s\" association => a(\"%s\",\"body_constraints::%s\",\"%s\");\n", NovaEscape(pp->promiser),
+               KM_AFFECTS_CERT_B,cp->lval, KM_AFFECTS_CERT_F);
+    }
+    
     
 /* Promisees as topics too */
 
