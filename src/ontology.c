@@ -866,21 +866,6 @@ void ShowTopicRepresentation(FILE *fp)
     fprintf(fp, " \"WinVista\" generalizations => { \"windows\"};");
     fprintf(fp, " \"WinServer2008\" generalizations => { \"windows\"};");
 
-// Check for location descriptors - we need this categorization for hierarchy view / spanning tree
-
-    if (GetVariable("control_common", CFG_CONTROLBODY[cfg_site_classes].lval, &retval) != cf_notype)
-    {
-        Rlist *rp;
-
-        fprintf(fp, "locations::");
-
-        for (rp = retval.item; rp != NULL; rp = rp->next)
-        {
-            fprintf(fp,
-                    "  \"%s\" comment => { \"A hosting location for computers.\" }, generalizations => { \"locations\" }; ",
-                    (char *) rp->item);
-        }
-    }
 
 // Monitoring
 
