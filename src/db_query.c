@@ -26,9 +26,27 @@
 
 static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *filter);
 static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFilter *hostClassFilter);
-
+static bool CFDB_CollectionHasData(mongo_connection *conn, const char *fullCollectionName);
 /*****************************************************************************/
+static bool CFDB_CollectionHasData(mongo_connection *conn, const char *fullCollectionName)
+{
+    bson query;
+    bson field;
+    bson_buffer bb;
+    bson_empty(&query);
 
+    bson_buffer_init(&bb);
+    bson_append_int(&bb, "_id", 1);
+    bson_from_buffer(&field, &bb);
+
+    bool retVal = mongo_find_one(conn,fullCollectionName,&query,&field,NULL);
+
+    bson_destroy(&query);
+    bson_destroy(&field);
+
+    return retVal;
+}
+/*****************************************************************************/
 int CFDB_GetValue(char *lval, char *rval, int size, char *db_name)
 {
     mongo_connection conn;
@@ -1746,8 +1764,8 @@ HubQuery *CFDB_QueryPerformance(mongo_connection *conn, char *keyHash, char *lna
     int match_name, found = false;
     double rsigma, rex, rq;
     time_t rtime;
-
 /* BEGIN query document */
+
     bson_buffer_init(&bb);
 
     if (!NULL_OR_EMPTY(keyHash))
@@ -2351,72 +2369,73 @@ bool CompareStringOrRegex(char *value, const char *compareTo, bool regex)
     return true;
 }
 /*****************************************************************************/
-HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, PromiseLogState state,
-                               const char *lhandle, int regex, time_t from, time_t to, int sort,
-                               HostClassFilter *hostClassFilter, PageInfo *page)
+int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, PromiseLogState state,
+                                 const char *lhandle, int regex, time_t from, time_t to, int sort,
+                                 HostClassFilter *hostClassFilter, PageInfo *page,
+                                 Rlist **host_list, Rlist **record_list)
 {
-    char rhandle[CF_MAXVARSIZE], rcause[CF_BUFSIZE];
-    char keyhash[CF_MAXVARSIZE], noteid[CF_MAXVARSIZE], oid[CF_MAXVARSIZE];
-    HubHost *hh;
-    Rlist *record_list = NULL, *host_list = NULL;
-    bson query, field;
-    char *collName;
     char *promiseLogKey;
-    mongo_cursor *cursor;
-    bson_buffer bb;
-    time_t rt;
-    bool found = false;
-    int totalCount = page->resultsPerPage * page->pageNum;
-    int count = 0;
-    bool hasMore = false;
-
     switch (state)
     {
     case PROMISE_LOG_STATE_REPAIRED:
-      //collName = MONGO_LOGS_REPAIRED;
-      promiseLogKey = "logs_rep";
-      break;
+        promiseLogKey = MONGO_LOGS_REPAIRED_COLL;
+        break;
     case PROMISE_LOG_STATE_NOTKEPT:
     default:
-      //collName = MONGO_LOGS_NOTKEPT;
-      promiseLogKey = "logs_nk";
-      break;
+        promiseLogKey = MONGO_LOGS_NOTKEPT_COLL;
+        break;
     }
 
+    bson_buffer bb;
     bson_buffer_init(&bb);
 
     if (!NULL_OR_EMPTY(keyHash))
     {
-      bson_append_string(&bb, cfr_keyhash, keyHash);
+        bson_append_string(&bb, cfr_keyhash, keyHash);
     }
 
     BsonAppendHostClassFilter(&bb, hostClassFilter);
 
+    bson query;
     bson_from_buffer(&query, &bb);
 
     bson_buffer_init(&bb);
     bson_append_int(&bb, "_id", 1);
     bson_append_int(&bb, cfr_keyhash, 1);
     bson_append_int(&bb, promiseLogKey, 1);
+
+    bson field;
     bson_from_buffer(&field, &bb);
 
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&field);
 
+    char rhandle[CF_MAXVARSIZE] = {0};
+    char rcause[CF_BUFSIZE] = {0};
+    char keyhash[CF_MAXVARSIZE] = {0};
+    char noteid[CF_MAXVARSIZE] = {0};
+    char oid[CF_MAXVARSIZE] = {0};
+
+    HubHost *hh = NULL;
+    int totalCount = page->resultsPerPage * page->pageNum;
+    int count = 0;
+    bool found = false;
+    bool hasMore = false;
+
     while (mongo_cursor_next(cursor))
-      {
+    {
         bson_iterator itHostData;
         bson_iterator_init(&itHostData, cursor->current.data);
-	
+
         keyhash[0] = '\0';
         rhandle[0] = '\0';
         rcause[0] = '\0';
         noteid[0] = '\0';
         oid[0] = '\0';
-        rt = 0;
-	
+        time_t rt = 0;
+
         while (bson_iterator_next(&itHostData))
         {
             snprintf(noteid, sizeof(noteid), "%s", CF_NONOTE);
@@ -2424,6 +2443,14 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
             if (strcmp(bson_iterator_key(&itHostData), cfr_keyhash) == 0)
             {
                 snprintf(keyhash, sizeof(keyhash), "%s", bson_iterator_string(&itHostData));
+
+                hh = GetHubHostIn(*host_list,keyhash);
+
+                if(!hh)
+                {
+                    hh = NewHubHost(NULL,keyhash,NULL,NULL);  // we get more host info later
+                    PrependRlistAlien(host_list,hh);
+                }
             }
             else if (strcmp(bson_iterator_key(&itHostData), promiseLogKey) == 0)    // new format
             {
@@ -2438,19 +2465,16 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
 
                         bson_iterator_init(&iterPromiseLogData, bson_iterator_value(&iterPromiseLogArray));
 
-                        while (bson_iterator_next(&iterPromiseLogData))
+                        bson objPromiseLogData;
+                        bson_iterator_subobject( &iterPromiseLogArray, &objPromiseLogData);
+
+                        BsonStringWrite(rhandle, sizeof(rhandle) - 1, &objPromiseLogData, cfr_promisehandle);
+                        BsonStringWrite(rcause, sizeof(rcause) - 1, &objPromiseLogData, cfr_cause);
+                        rt = BsonIntGet(&objPromiseLogData, cfr_time);
+
+                        if (rt < from && rt > to)
                         {
-                            bson objPromiseLogData;
-                            bson_iterator_subobject( &iterPromiseLogData, &objPromiseLogData);
-
-                            BsonStringWrite(rhandle, sizeof(rhandle) - 1, &objPromiseLogData, cfr_promisehandle);
-                            BsonStringWrite(rcause, sizeof(rcause) - 1, &objPromiseLogData, cfr_cause);
-                            rt = BsonIntGet(&objPromiseLogData, cfr_time);
-
-                            if (rt < from && rt > to)
-                            {
-                                continue;
-                            }
+                            continue;
                         }
 
                         if(CompareStringOrRegex(rhandle, lhandle, regex))
@@ -2458,7 +2482,7 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
                             found = true;
                             count++;
 
-                            PrependRlistAlien(&record_list, NewHubPromiseLog(hh, rhandle, rcause, rt, noteid, oid));
+                            PrependRlistAlien(record_list, NewHubPromiseLog(hh, rhandle, rcause, rt, noteid, oid));
                         }
                     }
                 }
@@ -2467,15 +2491,8 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
             {
                 bson_oid_to_string(bson_iterator_oid(&itHostData), oid);
             }
-
-            hh = GetHubHostIn(host_list, keyhash);
-
-            if (!hh)
-            {
-                hh = NewHubHost(NULL, keyhash, NULL, NULL); // we get more host info later
-                PrependRlistAlien(&host_list, hh);
-            }
         }
+
         if(totalCount > 0 && count >= totalCount)
         {
             hasMore = true; // TODO: append it to PageInfo
@@ -2484,17 +2501,212 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
     }
 
     // now fill in hostnames and ips of the hosts
-
-    QueryInsertHostInfo(conn, host_list);
+    if(found)
+    {
+        QueryInsertHostInfo(conn, *host_list);
+    }
 
     if (sort)
     {
-        record_list = SortRlist(record_list, SortPromiseLog);
+        *record_list = SortRlist(*record_list, SortPromiseLog);
     }
 
     mongo_cursor_destroy(cursor);
 
+    return count;
+}
+
+/*****************************************************************************/
+HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, PromiseLogState state,
+                               const char *lhandle, int regex, time_t from, time_t to, int sort,
+                               HostClassFilter *hostClassFilter, PageInfo *page)
+{
+    Rlist *record_list = NULL;
+    Rlist *host_list = NULL;
+
+    CFDB_QueryPromiseLogFromMain(conn, keyHash, state, lhandle, regex, from, to, sort, hostClassFilter, page, &host_list, &record_list);
+
+    int oldDataCount = CFDB_QueryPromiseLogFromOldColl(conn, keyHash, state, lhandle, regex, from, to, sort, hostClassFilter, page, &host_list, &record_list);
+
+    if(oldDataCount > 0)
+    {
+        record_list = SortRlist(record_list,SortPromiseLog);
+    }
+
     return NewHubQuery(host_list, record_list);
+}
+
+/*****************************************************************************/
+int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash, PromiseLogState state,
+                                    const char *lhandle, int regex, time_t from, time_t to, int sort,
+                                    HostClassFilter *hostClassFilter, PageInfo *page,
+                                    Rlist **host_list, Rlist **record_list)
+{
+    char *collName;
+
+    switch (state)
+    {
+    case PROMISE_LOG_STATE_REPAIRED:
+        collName = MONGO_LOGS_REPAIRED;
+        break;
+    case PROMISE_LOG_STATE_NOTKEPT:
+    default:
+        collName = MONGO_LOGS_NOTKEPT;
+        break;
+    }
+
+    if(!CFDB_CollectionHasData(conn, collName))
+    {
+        CfOut(cf_inform, "", " !! Old (deprecated) Collection \"%s\" is empty.", collName);
+        return 0;
+    }
+
+    bson_buffer bb;
+    bson_buffer_init(&bb);
+
+    if (!NULL_OR_EMPTY(keyHash))
+    {
+        bson_append_string(&bb,cfr_keyhash,keyHash);
+    }
+
+
+    if (!NULL_OR_EMPTY(lhandle))  // promise handle
+    {
+        if(regex)
+        {
+            bson_append_regex(&bb,cfr_promisehandle,lhandle,"");
+        }
+        else
+        {
+            bson_append_string(&bb,cfr_promisehandle,lhandle);
+        }
+    }
+
+    AppendHostKeys(conn, &bb, hostClassFilter);
+
+    bson query;
+    bson_from_buffer(&query, &bb);
+
+    bson_buffer_init(&bb);
+    bson_append_int(&bb,"_id",1);
+    bson_append_int(&bb,cfr_keyhash,1);
+    bson_append_int(&bb,cfr_cause,1);
+    bson_append_int(&bb,cfr_promisehandle,1);
+    bson_append_int(&bb,cfr_time,1);
+    bson_append_int(&bb,cfn_nid,1);
+
+    bson field;
+    bson_from_buffer(&field,&bb);
+
+    mongo_cursor *cursor = mongo_find(conn,collName,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+
+    bson_destroy(&query);
+    bson_destroy(&field);
+
+    int count = 0;
+    bool found = false;
+    HubHost *hh = NULL;
+
+    char rhandle[CF_MAXVARSIZE] = {0};
+    char rcause[CF_BUFSIZE] = {0};
+    char keyhash[CF_MAXVARSIZE] = {0};
+    char noteid[CF_MAXVARSIZE] = {0};
+    char oid[CF_MAXVARSIZE] = {0};
+
+    while (mongo_cursor_next(cursor))
+    {
+        bson_iterator it1;
+        bson_iterator_init(&it1,cursor->current.data);
+
+        keyhash[0] = '\0';
+        rhandle[0] = '\0';
+        rcause[0] = '\0';
+        noteid[0] = '\0';
+        oid[0] = '\0';
+        time_t rt = 0;
+
+        Rlist *timestampsList = NULL;
+        bool isTimestampArray = false;
+
+        while (bson_iterator_next(&it1))
+        {
+            snprintf(noteid,sizeof(noteid),"%s",CF_NONOTE);
+
+            if (strcmp(bson_iterator_key(&it1),cfr_keyhash) == 0)
+            {
+                snprintf(keyhash,sizeof(keyhash),"%s",bson_iterator_string(&it1));
+
+                hh = GetHubHostIn(*host_list,keyhash);
+
+                if(!hh)
+                {
+                    hh = NewHubHost(NULL,keyhash,NULL,NULL);  // we get more host info later
+                    PrependRlistAlien(host_list,hh);
+                }
+            }
+            else if (strcmp(bson_iterator_key(&it1),cfr_promisehandle) == 0)
+            {
+                snprintf(rhandle,sizeof(rhandle),"%s",bson_iterator_string(&it1));
+            }
+            else if (strcmp(bson_iterator_key(&it1),cfr_cause) == 0)
+            {
+                snprintf(rcause,sizeof(rcause),"%s",bson_iterator_string(&it1));
+            }
+            else if (strcmp(bson_iterator_key(&it1),cfn_nid) == 0)
+            {
+                snprintf(noteid,sizeof(noteid),"%s",bson_iterator_string(&it1));
+            }
+            else if (strcmp(bson_iterator_key(&it1),cfr_time) == 0) // new format
+            {
+                if (bson_iterator_type(&it1) == bson_array)
+                {
+                    bson_iterator it2;
+
+                    isTimestampArray = true;
+                    bson_iterator_init(&it2,bson_iterator_value(&it1));
+
+                    while (bson_iterator_next(&it2))
+                    {
+                        rt = bson_iterator_int(&it2);
+
+                        if(rt < from && rt > to)
+                        {
+                            continue;
+                        }
+
+                        char timeString[CF_SMALLBUF] = {0};
+                        snprintf(timeString,sizeof(timeString),"%ld",rt);
+
+                        PrependRlist(&timestampsList,timeString,CF_SCALAR);
+                    }
+                }
+                else // old format TODO: remove this completely?
+                {
+                    rt = bson_iterator_int(&it1);
+                }
+            }
+            else if (strcmp(bson_iterator_key(&it1),"_id") == 0)
+            {
+                bson_oid_to_string(bson_iterator_oid(&it1), oid);
+            }
+        }
+
+        if(CompareStringOrRegex(rhandle, lhandle, regex))
+        {
+            count++;
+            found = true;
+            PrependRlistAlien(record_list,NewHubPromiseLog(hh,rhandle,rcause,rt,noteid,oid));
+        }
+    }
+
+    // now fill in hostnames and ips of the hosts
+    if(found)
+    {
+        QueryInsertHostInfo(conn,*host_list);
+    }
+
+    mongo_cursor_destroy(cursor);
+    return count;
 }
 
 /*****************************************************************************/
