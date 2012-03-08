@@ -3198,8 +3198,8 @@ void Nova2PHP_show_col_hosts(mongo_connection *conn, char *colour, HostClassFilt
 
 void Nova2PHP_get_host_colour(char *hostkey, char *buffer, int bufsize)
 {
-    int score = Nova_GetHostColour(hostkey);
-    HostColour colour = Nova_HostScoreToColour(score);
+    HostColour colour = HOST_COLOUR_BLUE;
+    Nova_GetHostColour(hostkey, HOST_RANK_METHOD_COMPLIANCE, &colour);
 
     strncpy(buffer, Nova_HostColourToString(colour), bufsize);
 }

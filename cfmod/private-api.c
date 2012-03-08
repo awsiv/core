@@ -5027,8 +5027,9 @@ PHP_FUNCTION(cfpr_astrolabe_host_list)
     for (Rlist *rp = result->hosts; rp; rp = rp->next)
     {
         HubHost *record = (HubHost *) rp->item;
-        int score = Nova_GetHostColour(record->keyhash);
-        HostColour colour = Nova_HostScoreToColour(score);
+
+        HostColour colour = HOST_COLOUR_BLUE;
+        Nova_GetHostColour(record->keyhash, HOST_RANK_METHOD_COMPLIANCE, &colour);
 
         JsonElement *entry = JsonObjectCreate(3);
 
