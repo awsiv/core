@@ -35,6 +35,7 @@
                     show: true,
                     color: common.colours.white,
                     minTickSize: 1,
+                    min: 0,
                     tickDecimals: 0
                 },
                 grid: {
@@ -166,6 +167,8 @@
 
                     $self.options.plot.series.bars.barWidth = $self._resolution -
                         (0.05 * $self._resolution);
+
+                    $self.options.plot.yaxis.max = Math.max.apply(Math, $self._hostCounts);
 
                     $self._plot = $.plot($self.element, [
                         {
