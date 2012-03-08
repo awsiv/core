@@ -5,6 +5,8 @@ export CFENGINE_TEST_OVERRIDE_MONGO_PORT=27777
 if [ -n "$1" ]
 then
     export CFENGINE_TEST_OVERRIDE_TEST_FILES=$1
+else
+    export CFENGINE_TEST_OVERRIDE_TEST_FILES=../cfmod/tests/*.php
 fi
 
 MONGO_PID=
@@ -28,6 +30,8 @@ done
 
 # Load Mongo state
 ./load-data.sh data/rest
+
+
 
 # Run tests
 ../cfmod/tests/testall
