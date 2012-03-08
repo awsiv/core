@@ -26,9 +26,9 @@
 
 static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *filter);
 static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFilter *hostClassFilter);
-static bool CFDB_CollectionHasData(mongo_connection *conn, const char *fullCollectionName);
+
 /*****************************************************************************/
-static bool CFDB_CollectionHasData(mongo_connection *conn, const char *fullCollectionName)
+bool CFDB_CollectionHasData(mongo_connection *conn, const char *fullCollectionName)
 {
     bson query;
     bson field;

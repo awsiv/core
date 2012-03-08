@@ -33,7 +33,12 @@ void CFDB_Maintenance(void)
 
     CFDB_EnsureIndices(&dbconn);
     CFDB_PurgeTimestampedReports(&dbconn);
+
+    // support for old DB PromiseLogs format
     CFDB_PurgePromiseLogs(&dbconn, CF_HUB_PURGESECS, time(NULL));
+
+    CFDB_PurgePromiseRepairedLogs(&dbconn, CF_HUB_PURGESECS, time(NULL));
+    CFDB_PurgePromiseNotKeptLogs(&dbconn, CF_HUB_PURGESECS, time(NULL));
 
     CFDB_PurgeTimestampedLongtermReports(&dbconn);
     CFDB_PurgeDeprecatedVitals(&dbconn);
@@ -419,8 +424,41 @@ void CFDB_PurgeTimestampedLongtermReports(mongo_connection *conn)
 }
 
 /*****************************************************************************/
-
 void CFDB_PurgePromiseLogs(mongo_connection *conn, time_t oldThreshold, time_t now)
+/**
+ * Deletes old repair and not kept log entries.
+ **/
+{
+    bson_buffer bb, *sub;
+    time_t oldStamp;
+    bson cond;
+
+    oldStamp = now - oldThreshold;
+
+    bson_buffer_init(&bb);
+
+    sub = bson_append_start_object(&bb,cfr_time);
+    bson_append_int(sub, "$lte", oldStamp);
+    bson_append_finish_object(sub);
+
+    bson_from_buffer(&cond, &bb);
+
+    if(CFDB_CollectionHasData(conn, MONGO_LOGS_REPAIRED))
+    {
+        mongo_remove(conn, MONGO_LOGS_REPAIRED, &cond);
+        MongoCheckForError(conn,"timed delete host from repair logs collection",NULL,NULL);
+    }
+
+    if(CFDB_CollectionHasData(conn, MONGO_LOGS_NOTKEPT))
+    {
+        mongo_remove(conn, MONGO_LOGS_NOTKEPT, &cond);
+        MongoCheckForError(conn,"timed delete host from not kept logs collection",NULL,NULL);
+    }
+    bson_destroy(&cond);
+}
+/*****************************************************************************/
+
+void CFDB_PurgePromiseRepairedLogs(mongo_connection *conn, time_t oldThreshold, time_t now)
 /**
  * Deletes old repair and not kept log entries.
  **/
@@ -428,30 +466,57 @@ void CFDB_PurgePromiseLogs(mongo_connection *conn, time_t oldThreshold, time_t n
     bson_buffer bb;
     time_t oldStamp;
     bson cond;
+    bson empty;
 
     oldStamp = now - oldThreshold;
 
     bson_buffer_init(&bb);
     bson_buffer *pull = bson_append_start_object(&bb, "$pull");
-    bson_buffer *sub = bson_append_start_object(pull, cfr_time);
-
-    bson_append_int(sub, "$lte", oldStamp);
-    bson_append_finish_object(sub);
+    bson_buffer *bbPromiseLog = bson_append_start_object(pull, MONGO_LOGS_REPAIRED_COLL);
+    bson_buffer *bbTimeStamp = bson_append_start_object(bbPromiseLog, cfr_time);
+    bson_append_int(bbTimeStamp, "$lte", oldStamp);
+    bson_append_finish_object(bbTimeStamp);
+    bson_append_finish_object(bbPromiseLog);
     bson_append_finish_object(pull);
-
     bson_from_buffer(&cond, &bb);
 
-    mongo_remove(conn, MONGO_LOGS_REPAIRED, &cond);
+    //  db.hosts.update({},{ $pull : { "logs_rep" : {t:{$lte: 1331219118} } }});
 
-    MongoCheckForError(conn, "timed delete host from repair logs collection", NULL, NULL);
+    mongo_update(conn, MONGO_DATABASE, bson_empty(&empty), &cond, MONGO_UPDATE_MULTI);
 
-    mongo_remove(conn, MONGO_LOGS_NOTKEPT, &cond);
-
-    MongoCheckForError(conn, "timed delete host from not kept logs collection", NULL, NULL);
-
+    MongoCheckForError(conn, "timed delete host from repair logs in hosts collection", NULL, NULL);
     bson_destroy(&cond);
 }
+/*****************************************************************************/
+void CFDB_PurgePromiseNotKeptLogs(mongo_connection *conn, time_t oldThreshold, time_t now)
+/**
+ * Deletes old repair and not kept log entries.
+ **/
+{
+    bson_buffer bb;
+    time_t oldStamp;
+    bson cond;
+    bson empty;
 
+    oldStamp = now - oldThreshold;
+
+    bson_buffer_init(&bb);
+    bson_buffer *pull = bson_append_start_object(&bb, "$pull");
+    bson_buffer *bbPromiseLog = bson_append_start_object(pull, MONGO_LOGS_NOTKEPT_COLL);
+    bson_buffer *bbTimeStamp = bson_append_start_object(bbPromiseLog, cfr_time);
+    bson_append_int(bbTimeStamp, "$lte", oldStamp);
+    bson_append_finish_object(bbTimeStamp);
+    bson_append_finish_object(bbPromiseLog);
+    bson_append_finish_object(pull);
+    bson_from_buffer(&cond, &bb);
+
+    //  db.hosts.update({},{ $pull : { "logs_nk" : {t:{$lte: 1331219118} } }});
+
+    mongo_update(conn, MONGO_DATABASE, bson_empty(&empty), &cond, MONGO_UPDATE_MULTI);
+
+    MongoCheckForError(conn, "timed delete host from notkept logs report in hosts collection", NULL, NULL);
+    bson_destroy(&cond);
+}
 /*****************************************************************************/
 
 void CFDB_PurgeDropReports(mongo_connection *conn)
