@@ -1241,6 +1241,7 @@ void Nova_ImportReports(const char *input_file);
 bool Nova_ExecuteRunagent(AgentConnection *conn, const char *menu);
 
 #include "scorecards.h"
+char *HostRankMethodToMongoCode(HostRankMethod method);
 
 /* server.c */
 

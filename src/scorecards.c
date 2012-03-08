@@ -267,33 +267,7 @@ int Nova_GetHostColour(char *lkeyhash, HostRankMethod method, HostColour *result
     }
     time_t now = time(NULL);
 
-    char *score_field = NULL;
-    switch (method)
-    {
-        case HOST_RANK_METHOD_COMPLIANCE:
-            xasprintf(&score_field, "%s", cfr_score_comp);
-            break;
-
-        case HOST_RANK_METHOD_ANOMALY:
-            xasprintf(&score_field, "%s", cfr_score_anom);
-            break;
-
-        case HOST_RANK_METHOD_PERFORMANCE:
-            xasprintf(&score_field, "%s", cfr_score_perf);
-            break;
-
-        case HOST_RANK_METHOD_LASTSEEN:
-            xasprintf(&score_field, "%s", cfr_score_lastseen);
-            break;
-
-        case HOST_RANK_METHOD_MIXED:
-            xasprintf(&score_field, "%s", cfr_score_mixed);
-            break;
-
-        default:
-            xasprintf(&score_field, "%s", cfr_score_comp);
-            break;
-    }
+    char *score_field = HostRankMethodToMongoCode(method);
 
     mongo_connection conn;
     if (!CFDB_Open(&conn))
@@ -352,6 +326,42 @@ int Nova_GetHostColour(char *lkeyhash, HostRankMethod method, HostColour *result
 
 /*****************************************************************************/
 /* Level                                                                     */
+/*****************************************************************************/
+
+char *HostRankMethodToMongoCode(HostRankMethod method)
+{
+    char *score_field = NULL;
+
+    switch (method)
+    {
+        case HOST_RANK_METHOD_COMPLIANCE:
+            xasprintf(&score_field, "%s", cfr_score_comp);
+            break;
+
+        case HOST_RANK_METHOD_ANOMALY:
+            xasprintf(&score_field, "%s", cfr_score_anom);
+            break;
+
+        case HOST_RANK_METHOD_PERFORMANCE:
+            xasprintf(&score_field, "%s", cfr_score_perf);
+            break;
+
+        case HOST_RANK_METHOD_LASTSEEN:
+            xasprintf(&score_field, "%s", cfr_score_lastseen);
+            break;
+
+        case HOST_RANK_METHOD_MIXED:
+            xasprintf(&score_field, "%s", cfr_score_mixed);
+            break;
+
+        default:
+            xasprintf(&score_field, "%s", cfr_score_comp);
+            break;
+    }
+
+    return score_field;
+}
+
 /*****************************************************************************/
 
 int Nova_GetComplianceScore(HostRankMethod method, double *k, double *r)

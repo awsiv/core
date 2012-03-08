@@ -6484,33 +6484,7 @@ Item *CFDB_GetHostByColour(mongo_connection *conn, HostClassFilter *host_class_f
         method = host_colour_filter->method;
     }
 
-    char *score_field = NULL;
-    switch (method)
-    {
-        case HOST_RANK_METHOD_COMPLIANCE:
-            xasprintf(&score_field, "%s", cfr_score_comp);
-            break;
-
-        case HOST_RANK_METHOD_ANOMALY:
-            xasprintf(&score_field, "%s", cfr_score_anom);
-            break;
-
-        case HOST_RANK_METHOD_PERFORMANCE:
-            xasprintf(&score_field, "%s", cfr_score_perf);
-            break;
-
-        case HOST_RANK_METHOD_LASTSEEN:
-            xasprintf(&score_field, "%s", cfr_score_lastseen);
-            break;
-
-        case HOST_RANK_METHOD_MIXED:
-            xasprintf(&score_field, "%s", cfr_score_mixed);
-            break;
-
-        default:
-            xasprintf(&score_field, "%s", cfr_score_comp);
-            break;
-    }
+    char *score_field = HostRankMethodToMongoCode(method);
 
     bson_buffer bb;
 
