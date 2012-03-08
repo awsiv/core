@@ -470,8 +470,8 @@ PHP_FUNCTION(cfpr_host_info)
             }
         }
 
-        int score = Nova_GetHostColour(hh->keyhash);
-        HostColour colour = Nova_HostScoreToColour(score);
+        HostColour colour = HOST_COLOUR_BLUE;
+        Nova_GetHostColour(hh->keyhash, HOST_RANK_METHOD_COMPLIANCE, &colour);
         JsonObjectAppendString(infoObject, LABEL_COLOUR, Nova_HostColourToString(colour));
 
         DeleteHubQuery(result, DeleteHubVariable);
