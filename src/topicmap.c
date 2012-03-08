@@ -553,7 +553,9 @@ void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
 #ifdef HAVE_LIBMONGOC
     enum representations locator_type;
     Rlist *rp, *frags = NULL, *atoms = NULL, *rrp;
-    char topic_name[CF_BUFSIZE], topic_id[CF_BUFSIZE], topic_context[CF_BUFSIZE];
+    char topic_name[CF_BUFSIZE] = { 0 },
+         topic_id[CF_BUFSIZE] = { 0 },
+         topic_context[CF_BUFSIZE] = { 0 };
     char locator[CF_BUFSIZE], context[CF_BUFSIZE], represents[CF_BUFSIZE], searchstring[CF_BUFSIZE];
     bson_buffer bb;
     bson query, field;
