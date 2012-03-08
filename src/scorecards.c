@@ -254,7 +254,6 @@ void Nova_Meter(bson *query, char *db, char *buffer, int bufsize)
 /*****************************************************************************/
 
 int Nova_GetHostColour(char *lkeyhash)
-/* note the similarities between this fn and ClassifyHostState() */
 {
     bson_buffer b, bb;
     bson field, query;
