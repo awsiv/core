@@ -3465,15 +3465,19 @@ PHP_FUNCTION(cfpr_select_reports)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_host_compliance_list_red)
+PHP_FUNCTION(cfpr_host_compliance_list)
 {
     char *userName;
     int user_len;
     char buffer[CF_WEBBUFFER];
+    char *colour = NULL;
+    int colour_len;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sll",
-                              &userName, &user_len, &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssll",
+                              &userName, &user_len,
+                              &colour, &colour_len,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -3485,109 +3489,21 @@ PHP_FUNCTION(cfpr_host_compliance_list_red)
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-    HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
     buffer[0] = '\0';
-    Nova2PHP_show_col_hosts("red", filter, &page, buffer, sizeof(buffer));
 
-    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-
-    RETURN_STRING(buffer, 1);
-}
-
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_host_compliance_list_yellow)
-{
-    char *userName;
-    int user_len;
-    char buffer[CF_WEBBUFFER];
-    PageInfo page = { 0 };
-
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sll",
-                              &userName, &user_len, &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
+    if (!NULL_OR_EMPTY(colour))
     {
-        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
+        mongo_connection conn;
+
+        HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
+        DATABASE_OPEN(&conn);
+
+        Nova2PHP_show_col_hosts(&conn, colour, filter, &page, buffer, sizeof(buffer));
+
+        DATABASE_CLOSE(&conn);
+        DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
     }
 
-    ARGUMENT_CHECK_CONTENTS(user_len);
-
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
-
-    ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
-
-    HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
-    buffer[0] = '\0';
-    Nova2PHP_show_col_hosts("yellow", filter, &page, buffer, sizeof(buffer));
-
-    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-
-    RETURN_STRING(buffer, 1);
-
-}
-
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_host_compliance_list_green)
-{
-    char *userName;
-    int user_len;
-    char buffer[CF_WEBBUFFER];
-    PageInfo page = { 0 };
-
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sll",
-                              &userName, &user_len, &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
-    {
-        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
-    }
-
-    ARGUMENT_CHECK_CONTENTS(user_len);
-
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
-
-    ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
-
-    HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
-    buffer[0] = '\0';
-    Nova2PHP_show_col_hosts("green", filter, &page, buffer, sizeof(buffer));
-
-    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-
-    RETURN_STRING(buffer, 1);
-}
-
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_host_compliance_list_blue)
-{
-    char *userName;
-    int user_len;
-    char buffer[CF_WEBBUFFER];
-    PageInfo page = { 0 };
-
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sll",
-                              &userName, &user_len, &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
-    {
-        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
-    }
-
-    ARGUMENT_CHECK_CONTENTS(user_len);
-
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
-
-    ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
-
-    HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
-    buffer[0] = '\0';
-    Nova2PHP_show_col_hosts("blue", filter, &page, buffer, sizeof(buffer));
-
-    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
 }
