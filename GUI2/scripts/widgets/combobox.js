@@ -32,8 +32,6 @@
             $arrowIconBox.append($arrowIcon);
 
             $self._dt.append($arrowIconBox);
-
-
             $self._dt.click(function(event) {
                 $self._onClickHeader($self, event);
             });
@@ -124,6 +122,10 @@
             var $self = this;
 
             var $li = $('<li>');
+            $li.click(function(event) {
+                $self._setSelectedItem($self, id);
+                event.stopPropagation();
+            });
 
             var $deleteIcon = $('<img>');
             $deleteIcon.attr('src', $self.options.imagesUrl + 'combobox-button-delete.png');
@@ -141,10 +143,7 @@
             var $labelSpan = $('<span>');
             $labelSpan.addClass('itemLabel');
             $labelSpan.html(decodeURIComponent(id));
-            $labelSpan.click(function(event) {
-                $self._setSelectedItem($self, id);
-                event.stopPropagation();
-            });
+            $labelSpan
             $li.append($labelSpan);
 
             $self._ul.prepend($li);
