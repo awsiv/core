@@ -86,7 +86,7 @@ int QueryInsertHostInfo(mongo_connection *conn, Rlist *host_list);
 void PrintCFDBKey(bson_iterator *it, int depth);
 int CFDB_IteratorNext(bson_iterator *it, bson_type valType);
 int Nova_MagViewOffset(int start_slot, int dbslot, int wrap);
-int CFDB_CountHosts(mongo_connection *conn, HostClassFilter *hostClassFilter);
+int CFDB_CountHosts(mongo_connection *conn, HostClassFilter *host_class_filter, HostColourFilter *host_colour_filter);
 bool CFDB_HasMatchingHost(mongo_connection *conn, char *hostKey, HostClassFilter *hostClassFilter);
 int CFDB_CountHostsGeneric(mongo_connection *conn, bson *query);
 int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int hostNameSz);
@@ -103,6 +103,8 @@ Item *CFDB_GetDeletedHosts(void);
 Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const char *ip,
                           HostClassFilter *hostClassFilter);
 HubHost *CFDB_GetHostByKey(mongo_connection *conn, const char *hostkey);
+Item *CFDB_GetHostByColour(mongo_connection *conn, HostClassFilter *host_class_filter,
+                           HostColourFilter *host_colour_filter);
 
 #endif
 

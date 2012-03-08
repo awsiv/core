@@ -5,24 +5,6 @@
 #ifndef CFENGINE_SCORECARDS_H
 #define CFENGINE_SCORECARDS_H
 
-typedef enum
-{
-    HOST_COLOUR_BLUE,
-    HOST_COLOUR_RED,
-    HOST_COLOUR_YELLOW,
-    HOST_COLOUR_GREEN
-} HostColour;
-
-typedef enum
-{
-    HOST_RANK_METHOD_COMPLIANCE,
-    HOST_RANK_METHOD_ANOMALY,
-    HOST_RANK_METHOD_PERFORMANCE,
-    HOST_RANK_METHOD_LASTSEEN,
-    HOST_RANK_METHOD_MIXED,
-    HOST_RANK_METHOD_NONE
-} HostRankMethod;
-
 #ifdef HAVE_LIBMONGOC
 
 HostColour Nova_HostScoreToColour(int score);
@@ -31,12 +13,7 @@ const char *Nova_HostColourToString(HostColour colour);
 int Nova_GetComplianceScore(HostRankMethod method, double *k, double *rep);
 
 // gets meters from DB, uses GetComplianceScore. rework.
-Item *Nova_ClassifyHostState(HostClassFilter *hostClassFilter, HostRankMethod method);
-int Nova_GetHostColour(char *lkeyhash);
-Item *Nova_GreenHosts(HostClassFilter *hostClassFilter);
-Item *Nova_YellowHosts(HostClassFilter *hostClassFilter);
-Item *Nova_RedHosts(HostClassFilter *hostClassFilter);
-Item *Nova_BlueHosts(HostClassFilter *hostClassFilter);
+int Nova_GetHostColour(char *lkeyhash, HostRankMethod method, HostColour *result);
 
 // legacy
 void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, char *buffer, int bufsize);

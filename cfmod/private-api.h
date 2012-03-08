@@ -706,7 +706,7 @@ PHP_FUNCTION(cfpr_show_topic_category);
  */
 PHP_FUNCTION(cfpr_get_knowledge_view);
 
-/*! \brief Get a list of the top N hosts
+/*! \brief Get a list of the top N hosts (sorted by compliance score)
  * \param resultsPerPage
  * \param pageNumber
  */
@@ -716,29 +716,12 @@ PHP_FUNCTION(cfpr_host_compliance_list_all);
  */
 PHP_FUNCTION(cfpr_select_reports);
 
-/*! \brief A list of red hosts
+/*! \brief A list of hosts by colour (sorted by host name)
+ * \param colour (green/yellow/red/blue)
  * \param resultsPerPage
  * \param pageNumber
  */
-PHP_FUNCTION(cfpr_host_compliance_list_red);
-
-/*! \brief A list of red hosts
- * \param resultsPerPage
- * \param pageNumber
- */
-PHP_FUNCTION(cfpr_host_compliance_list_yellow);
-
-/*! \brief A list of red hosts
- * \param resultsPerPage
- * \param pageNumber
- */
-PHP_FUNCTION(cfpr_host_compliance_list_green);
-
-/*! \brief A list of red hosts
- * \param resultsPerPage
- * \param pageNumber
- */
-PHP_FUNCTION(cfpr_host_compliance_list_blue);
+PHP_FUNCTION(cfpr_host_compliance_list);
 
 /*! \brief The blue hosts current threshold 
  */

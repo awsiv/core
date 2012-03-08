@@ -470,8 +470,8 @@ PHP_FUNCTION(cfpr_host_info)
             }
         }
 
-        int score = Nova_GetHostColour(hh->keyhash);
-        HostColour colour = Nova_HostScoreToColour(score);
+        HostColour colour = HOST_COLOUR_BLUE;
+        Nova_GetHostColour(hh->keyhash, HOST_RANK_METHOD_COMPLIANCE, &colour);
         JsonObjectAppendString(infoObject, LABEL_COLOUR, Nova_HostColourToString(colour));
 
         DeleteHubQuery(result, DeleteHubVariable);
@@ -3201,7 +3201,7 @@ PHP_FUNCTION(cfpr_host_compliance_list_all)
 {
     char *userName;
     int user_len;
-    char buffer[100000];
+    char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sll",
@@ -3219,8 +3219,14 @@ PHP_FUNCTION(cfpr_host_compliance_list_all)
 
     HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
+    mongo_connection conn;
+
+    DATABASE_OPEN(&conn);
+
     buffer[0] = '\0';
-    Nova2PHP_host_compliance_list_all(filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_host_compliance_list_all(&conn, filter, &page, buffer, sizeof(buffer));
+
+    DATABASE_CLOSE(&conn);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -3254,39 +3260,40 @@ PHP_FUNCTION(cfpr_host_count)
 
     DATABASE_OPEN(&conn);
 
-    int count = -1;
+    int count = 0;
 
-    if (NULL_OR_EMPTY(colour))
-    {
-        count = CFDB_CountHosts(&conn, filter);
-    }
-    else
+    HostColourFilter *host_colour_filter = NULL;
+
+    if (!NULL_OR_EMPTY(colour))
     {
         if (strcmp(colour, "green") == 0)
         {
-            count = Nova2PHP_count_green_hosts(filter);
+            host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HOST_COLOUR_GREEN);
         }
         else if (strcmp(colour, "yellow") == 0)
         {
-            count = Nova2PHP_count_yellow_hosts(filter);
+            host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HOST_COLOUR_YELLOW);
         }
         else if (strcmp(colour, "red") == 0)
         {
-            count = Nova2PHP_count_red_hosts(filter);
+            host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HOST_COLOUR_RED);
         }
         else if (strcmp(colour, "blue") == 0)
         {
-            count = Nova2PHP_count_blue_hosts(filter);
+            host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HOST_COLOUR_BLUE);
         }
-        else
+        else if (strcmp(colour, "green_yellow_red") == 0)
         {
-            count = 0;
+            host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HOST_COLOUR_GREEN_YELLOW_RED);
         }
     }
+
+    count = CFDB_CountHosts(&conn, filter, host_colour_filter);
 
     DATABASE_CLOSE(&conn);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+    free(host_colour_filter);
 
     RETURN_LONG(count);
 }
@@ -3458,15 +3465,19 @@ PHP_FUNCTION(cfpr_select_reports)
 
 /******************************************************************************/
 
-PHP_FUNCTION(cfpr_host_compliance_list_red)
+PHP_FUNCTION(cfpr_host_compliance_list)
 {
     char *userName;
     int user_len;
     char buffer[CF_WEBBUFFER];
+    char *colour = NULL;
+    int colour_len;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sll",
-                              &userName, &user_len, &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssll",
+                              &userName, &user_len,
+                              &colour, &colour_len,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -3478,109 +3489,21 @@ PHP_FUNCTION(cfpr_host_compliance_list_red)
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-    HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
     buffer[0] = '\0';
-    Nova2PHP_show_col_hosts("red", filter, &page, buffer, sizeof(buffer));
 
-    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-
-    RETURN_STRING(buffer, 1);
-}
-
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_host_compliance_list_yellow)
-{
-    char *userName;
-    int user_len;
-    char buffer[CF_WEBBUFFER];
-    PageInfo page = { 0 };
-
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sll",
-                              &userName, &user_len, &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
+    if (!NULL_OR_EMPTY(colour))
     {
-        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
+        mongo_connection conn;
+
+        HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
+        DATABASE_OPEN(&conn);
+
+        Nova2PHP_show_col_hosts(&conn, colour, filter, &page, buffer, sizeof(buffer));
+
+        DATABASE_CLOSE(&conn);
+        DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
     }
 
-    ARGUMENT_CHECK_CONTENTS(user_len);
-
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
-
-    ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
-
-    HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
-    buffer[0] = '\0';
-    Nova2PHP_show_col_hosts("yellow", filter, &page, buffer, sizeof(buffer));
-
-    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-
-    RETURN_STRING(buffer, 1);
-
-}
-
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_host_compliance_list_green)
-{
-    char *userName;
-    int user_len;
-    char buffer[CF_WEBBUFFER];
-    PageInfo page = { 0 };
-
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sll",
-                              &userName, &user_len, &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
-    {
-        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
-    }
-
-    ARGUMENT_CHECK_CONTENTS(user_len);
-
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
-
-    ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
-
-    HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
-    buffer[0] = '\0';
-    Nova2PHP_show_col_hosts("green", filter, &page, buffer, sizeof(buffer));
-
-    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-
-    RETURN_STRING(buffer, 1);
-}
-
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_host_compliance_list_blue)
-{
-    char *userName;
-    int user_len;
-    char buffer[CF_WEBBUFFER];
-    PageInfo page = { 0 };
-
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sll",
-                              &userName, &user_len, &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
-    {
-        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
-    }
-
-    ARGUMENT_CHECK_CONTENTS(user_len);
-
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
-
-    ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
-
-    HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
-    buffer[0] = '\0';
-    Nova2PHP_show_col_hosts("blue", filter, &page, buffer, sizeof(buffer));
-
-    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
 }
@@ -5104,8 +5027,9 @@ PHP_FUNCTION(cfpr_astrolabe_host_list)
     for (Rlist *rp = result->hosts; rp; rp = rp->next)
     {
         HubHost *record = (HubHost *) rp->item;
-        int score = Nova_GetHostColour(record->keyhash);
-        HostColour colour = Nova_HostScoreToColour(score);
+
+        HostColour colour = HOST_COLOUR_BLUE;
+        Nova_GetHostColour(record->keyhash, HOST_RANK_METHOD_COMPLIANCE, &colour);
 
         JsonElement *entry = JsonObjectCreate(3);
 

@@ -422,4 +422,88 @@ void BsonToString(char *retBuf, int retBufSz, char *data)
     retBuf[strlen(retBuf) - 2] = 0;     // clear last comma
 }
 
+/*****************************************************************************/
+
+void BsonAppendHostColourFilter(bson_buffer *query_buffer, HostColourFilter *filter)
+{
+    if (filter == NULL)
+    {
+        return;
+    }
+
+    char *score_method = NULL;
+    switch (filter->method)
+    {
+        case HOST_RANK_METHOD_COMPLIANCE:
+            xasprintf(&score_method, "%s", cfr_score_comp);
+            break;
+
+        case HOST_RANK_METHOD_ANOMALY:
+            xasprintf(&score_method, "%s", cfr_score_anom);
+            break;
+
+        case HOST_RANK_METHOD_PERFORMANCE:
+            xasprintf(&score_method, "%s", cfr_score_perf);
+            break;
+
+        case HOST_RANK_METHOD_LASTSEEN:
+            xasprintf(&score_method, "%s", cfr_score_lastseen);
+            break;
+
+        case HOST_RANK_METHOD_MIXED:
+            xasprintf(&score_method, "%s", cfr_score_mixed);
+            break;
+    }
+
+    if (filter->colour == HOST_COLOUR_BLUE)
+    {
+        bson_append_start_object(query_buffer, cfr_day);
+        bson_append_long(query_buffer, "$lt", filter->blue_time_horizon);
+        bson_append_finish_object(query_buffer);
+    }
+
+    if (filter->colour == HOST_COLOUR_GREEN)
+    {
+        bson_append_start_object(query_buffer, score_method);
+        bson_append_int(query_buffer, "$lt", CF_AMBER_THRESHOLD);
+        bson_append_finish_object(query_buffer);
+
+        bson_append_start_object (query_buffer, cfr_day);
+        bson_append_long(query_buffer, "$gte", filter->blue_time_horizon);
+        bson_append_finish_object(query_buffer);
+    }
+
+    if (filter->colour == HOST_COLOUR_YELLOW)
+    {
+        bson_append_start_object(query_buffer, score_method);
+        bson_append_int(query_buffer, "$gte", CF_AMBER_THRESHOLD);
+        bson_append_int(query_buffer, "$lt", CF_RED_THRESHOLD);
+        bson_append_finish_object(query_buffer);
+
+        bson_append_start_object (query_buffer, cfr_day);
+        bson_append_long(query_buffer, "$gte", filter->blue_time_horizon);
+        bson_append_finish_object(query_buffer);
+    }
+
+    if (filter->colour == HOST_COLOUR_RED)
+    {
+        bson_append_start_object(query_buffer, score_method);
+        bson_append_int(query_buffer, "$gte", CF_RED_THRESHOLD);
+        bson_append_finish_object(query_buffer);
+
+        bson_append_start_object (query_buffer, cfr_day);
+        bson_append_long(query_buffer, "$gte", filter->blue_time_horizon);
+        bson_append_finish_object(query_buffer);
+    }
+
+    if (filter->colour == HOST_COLOUR_GREEN_YELLOW_RED) // !BLUE
+    {
+        bson_append_start_object(query_buffer, cfr_day);
+        bson_append_long(query_buffer, "$gte", filter->blue_time_horizon);
+        bson_append_finish_object(query_buffer);
+    }
+
+    free(score_method);
+}
+
 #endif /* HAVE_LIBMONGOC */

@@ -3324,13 +3324,14 @@ int CFDB_QueryMonView(mongo_connection *conn, char *keyhash, char *monId, enum m
 
 /*****************************************************************************/
 
-int CFDB_CountHosts(mongo_connection *conn, HostClassFilter *hostClassFilter)
+int CFDB_CountHosts(mongo_connection *conn, HostClassFilter *host_class_filter, HostColourFilter *host_colour_filter)
 {
     bson_buffer bb;
 
     bson_buffer_init(&bb);
 
-    BsonAppendHostClassFilter(&bb, hostClassFilter);
+    BsonAppendHostClassFilter(&bb, host_class_filter);
+    BsonAppendHostColourFilter(&bb, host_colour_filter);
 
     bson query;
 
@@ -6464,5 +6465,94 @@ HubHost *CFDB_GetHostByKey(mongo_connection *conn, const char *hostkey)
 
     return host;
 }
+
+/*****************************************************************************/
+
+/* for blue host returned score is the score from last reachable recivied report */
+/* returns unsorted data */
+Item *CFDB_GetHostByColour(mongo_connection *conn, HostClassFilter *host_class_filter,
+                           HostColourFilter *host_colour_filter)
+{
+    /* determin rank method */
+    HostRankMethod method;
+    if (host_colour_filter == NULL) // default
+    {
+        method = HOST_RANK_METHOD_COMPLIANCE;
+    }
+    else
+    {
+        method = host_colour_filter->method;
+    }
+
+    char *score_field = HostRankMethodToMongoCode(method);
+
+    bson_buffer bb;
+
+    bson_buffer_init(&bb);
+    bson_buffer * query_buffer = bson_append_start_object( &bb, "$query");
+    BsonAppendHostClassFilter(&bb, host_class_filter);
+    BsonAppendHostColourFilter(&bb, host_colour_filter);
+    bson_append_finish_object(query_buffer);
+
+    bson query;
+    bson_from_buffer(&query, &bb);
+
+    bson fields;
+    bson_buffer_init(&bb);
+    bson_append_int(&bb, cfr_keyhash, 1);
+    bson_append_int(&bb, cfr_ip_array, 1);
+    bson_append_int(&bb, cfr_host_array, 1);
+    bson_append_int(&bb, score_field, 1);
+    bson_from_buffer(&fields, &bb);
+
+    mongo_cursor *cursor = NULL;
+    cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+
+    bson_destroy(&fields);
+    bson_destroy(&query);
+
+    /* process db output */
+    char keyhash[CF_MAXVARSIZE];
+    char hostnames[CF_BUFSIZE];
+    char addresses[CF_BUFSIZE];
+    int score;
+
+    keyhash[0] = '\0';
+    hostnames[0] = '\0';
+    addresses[0] = '\0';
+
+    Item *list = NULL;
+    bson_iterator it1;
+
+    while (mongo_cursor_next(cursor)) // loops over documents
+    {
+        bson_iterator_init(&it1, cursor->current.data);
+
+        keyhash[0] = '\0';
+        hostnames[0] = '\0';
+        addresses[0] = '\0';
+        score = 0;
+
+        while (bson_iterator_next(&it1))
+        {
+            /* Extract the common HubHost data */
+            CFDB_ScanHubHost(&it1, keyhash, addresses, hostnames);
+
+            if (strcmp(bson_iterator_key(&it1), score_field) == 0)
+            {
+                score = (int) bson_iterator_int(&it1);
+            }
+        }
+
+        PrependItem(&list, keyhash, hostnames);
+        SetItemListCounter(list, keyhash, score);
+    }
+
+    mongo_cursor_destroy(cursor);
+    free(score_field);
+
+    return list;
+}
+
 
 #endif /* HAVE LIBMONGOC */

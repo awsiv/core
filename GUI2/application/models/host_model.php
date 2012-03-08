@@ -4,7 +4,7 @@ class host_model extends Cf_Model {
 
     function getRedHost($username, $rows=10, $page=1) {
         try {
-            $rawdata = cfpr_host_compliance_list_red($username, $rows, $page);
+            $rawdata = cfpr_host_compliance_list($username, 'red', $rows, $page);
             $data = $this->checkData($rawdata);
             if ($data) {
                 return $data;
@@ -19,7 +19,7 @@ class host_model extends Cf_Model {
 
     function getGreenHost($username, $rows=10, $page=1) {
         try {
-            $rawdata = cfpr_host_compliance_list_green($username, $rows, $page);
+            $rawdata = cfpr_host_compliance_list($username, 'green', $rows, $page);
             $data = $this->checkData($rawdata);
             if ($data) {
                 return $data;
@@ -34,7 +34,7 @@ class host_model extends Cf_Model {
 
     function getYellowHost($username, $rows=10, $page=1) {
         try {
-            $rawdata = cfpr_host_compliance_list_yellow($username, $rows, $page);
+            $rawdata = cfpr_host_compliance_list($username, 'yellow', $rows, $page);
             $data = $this->checkData($rawdata);
             if ($data) {
                 return $data;
@@ -49,7 +49,7 @@ class host_model extends Cf_Model {
 
     function getBlueHost($username, $rows=10, $page=1) {
         try {
-            $rawdata = cfpr_host_compliance_list_blue($username, $rows, $page);
+            $rawdata = cfpr_host_compliance_list($username, 'blue', $rows, $page);
             $data = $this->checkData($rawdata);
             if ($data) {
                 return $data;

@@ -2188,14 +2188,43 @@ void Nova_SummarizeLicense(char *stylesheet, char *header, char *footer, char *w
 void Nova_ZenossSummary(char *docroot)
 {
     char name[CF_MAXVARSIZE];
-    Item *clist = NULL, *ip;
+    Item *clist = NULL, *ip = NULL;
     FILE *fout;
 
     snprintf(name, sizeof(name), "%s/reports/summary.z", docroot);
     MapName(name);
 
 #ifdef HAVE_LIBMONGOC
-    clist = Nova_ClassifyHostState(NULL, HOST_RANK_METHOD_COMPLIANCE);
+    mongo_connection conn;
+    if (!CFDB_Open(&conn))
+    {
+        return;
+    }
+
+    HostColourFilter *gyr_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE,
+                                                              HOST_COLOUR_GREEN_YELLOW_RED);
+    Item *gyr_list = CFDB_GetHostByColour(&conn, NULL, gyr_colour_filter);
+    free(gyr_colour_filter);
+
+    gyr_list = SortItemListCounters(gyr_list);
+
+    HostColourFilter *blue_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE,
+                                                               HOST_COLOUR_BLUE);
+    Item *b_list = CFDB_GetHostByColour(&conn, NULL, blue_colour_filter);
+    free(blue_colour_filter);
+
+    for (ip = b_list; ip != NULL; ip = ip->next)
+    {
+        ip->counter = CF_CODE_BLUE;
+    }
+
+    clist = gyr_list;
+    (EndOfList(clist))->next = b_list;
+
+    if (!CFDB_Close(&conn))
+    {
+        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+    }
 #endif
 
     if ((fout = fopen(name, "w")))
@@ -2212,6 +2241,11 @@ void Nova_ZenossSummary(char *docroot)
         }
 
         fclose(fout);
+    }
+
+    if (clist != NULL)
+    {
+        DeleteItemList(clist);
     }
 
     chmod(name, 0644);
