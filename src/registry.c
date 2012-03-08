@@ -1028,7 +1028,7 @@ int CheckRegistrySanity(Attributes a, Promise *pp)
     bool retval = true;
 
 #ifdef NT
-    ValidateRegistryPromiser(pp->promiser, a, pp);
+    Nova_ValidateRegistryPromiser(pp->promiser, a, pp);
 #endif
     if (a.database.operation && strcmp(a.database.operation, "create") == 0)
     {
