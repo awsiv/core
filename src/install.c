@@ -1291,6 +1291,7 @@ void DeletePromiseFilter(PromiseFilter *filter)
 
 void HubQuerySortPromiseBundles(HubQuery *hqPromiseBundles)
 {
+    assert(hqPromiseBundles);
     if (hqPromiseBundles->records)
     {
         hqPromiseBundles->records = SortRlist(hqPromiseBundles->records, SortPromiseBundle);

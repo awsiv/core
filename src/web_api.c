@@ -2765,6 +2765,7 @@ int Nova2PHP_bundle_agent_goals(PromiseFilter *filter, char *buffer, int bufsize
     {
         DeleteHubQuery(hqBundles, DeleteHubPromiseBundle);
         CFDB_Close(&dbconn);
+        return false;
     }
 
     HubQuerySortPromiseBundles(hqBundles);
