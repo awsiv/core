@@ -253,177 +253,101 @@ void Nova_Meter(bson *query, char *db, char *buffer, int bufsize)
 
 /*****************************************************************************/
 
-int Nova_GetHostColour(char *lkeyhash)
+int Nova_GetHostColour(char *lkeyhash, HostRankMethod method, HostColour *result)
 {
-    bson_buffer b, bb;
-    bson field, query;
-    mongo_cursor *cursor;
-    bson_iterator it1, it2, it3;
-    double akept[meter_endmark] = { 0 }, arepaired[meter_endmark] = { 0 };
-    double rkept, rrepaired;
-    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rcolumn[CF_SMALLBUF];
-    int result = -1, awol, foundMeter;
-    mongo_connection conn;
-    time_t now = time(NULL);
-    unsigned long bluehost_threshold;
-
     if (lkeyhash == NULL)
     {
         return -1;
     }
 
+    unsigned long bluehost_threshold;
     if (!CFDB_GetBlueHostThreshold(&bluehost_threshold))
     {
         return -1;
     }
+    time_t now = time(NULL);
 
+    char *score_field = NULL;
+    switch (method)
+    {
+        case HOST_RANK_METHOD_COMPLIANCE:
+            xasprintf(&score_field, "%s", cfr_score_comp);
+            break;
+
+        case HOST_RANK_METHOD_ANOMALY:
+            xasprintf(&score_field, "%s", cfr_score_anom);
+            break;
+
+        case HOST_RANK_METHOD_PERFORMANCE:
+            xasprintf(&score_field, "%s", cfr_score_perf);
+            break;
+
+        case HOST_RANK_METHOD_LASTSEEN:
+            xasprintf(&score_field, "%s", cfr_score_lastseen);
+            break;
+
+        case HOST_RANK_METHOD_MIXED:
+            xasprintf(&score_field, "%s", cfr_score_mixed);
+            break;
+
+        default:
+            xasprintf(&score_field, "%s", cfr_score_comp);
+            break;
+    }
+
+    mongo_connection conn;
     if (!CFDB_Open(&conn))
     {
         return -1;
     }
 
-    bson_buffer_init(&b);
-    bson_append_string(&b, cfr_keyhash, lkeyhash);
-    bson_from_buffer(&query, &b);
-
-/* BEGIN RESULT DOCUMENT */
-
+    /* query */
+    bson_buffer bb;
     bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_append_int(&bb, cfr_meter, 1);
+    bson_append_string(&bb, cfr_keyhash, lkeyhash);
+    bson query;
+    bson_from_buffer(&query, &bb);
+
+   /* result document */
+    bson_buffer_init(&bb);
     bson_append_int(&bb, cfr_day, 1);
+    bson_append_int(&bb, cfr_score_comp, 1);
+    bson field;
     bson_from_buffer(&field, &bb);
 
-/* BEGIN SEARCH */
+    bson out;
+    mongo_find_one(&conn, MONGO_DATABASE, &query, &field, &out);
 
-    hostnames[0] = '\0';
-    addresses[0] = '\0';
-
-    cursor = mongo_find(&conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&query);
     bson_destroy(&field);
 
-    while (mongo_cursor_next(cursor))   // loops over documents
+    /* if no records are found it's seen are host with unknown state (blue) */
+    if (&out == NULL)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        *result = HOST_COLOUR_BLUE;
+    }
+    else
+    {
+        time_t then = BsonIntGet(&out, cfr_day);
+        int score = BsonIntGet(&out, cfr_score_comp);
 
-        keyhash[0] = '\0';
-        hostnames[0] = '\0';
-        addresses[0] = '\0';
-        awol = true;
-        foundMeter = false;
-
-        while (bson_iterator_next(&it1))
+        if ((then < (now - bluehost_threshold)) || (score == 0)) // if score not found -> host blue
         {
-            /* Extract the common HubHost data */
-
-            CFDB_ScanHubHost(&it1, keyhash, addresses, hostnames);
-
-            /* Query specific search/marshalling */
-
-            if (strcmp(bson_iterator_key(&it1), cfr_day) == 0)
-            {
-                time_t then;
-
-                then = (time_t) bson_iterator_int(&it1);
-
-                if (now - bluehost_threshold < then)
-                {
-                    awol = false;
-                }
-            }
-
-            if (strcmp(bson_iterator_key(&it1), cfr_meter) == 0)
-            {
-                foundMeter = true;
-
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
-
-                while (bson_iterator_next(&it2))
-                {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
-                    strncpy(rcolumn, bson_iterator_key(&it2), CF_SMALLBUF - 1);
-
-                    rkept = 0;
-                    rrepaired = 0;
-
-                    while (bson_iterator_next(&it3))
-                    {
-                        if (strcmp(bson_iterator_key(&it3), cfr_meterkept) == 0)
-                        {
-                            rkept = bson_iterator_double(&it3);
-                        }
-                        else if (strcmp(bson_iterator_key(&it3), cfr_meterrepaired) == 0)
-                        {
-                            rrepaired = bson_iterator_double(&it3);
-                        }
-                        else
-                        {
-                            CfOut(cf_error, "", " !! Unknown key \"%s\" in last seen", bson_iterator_key(&it3));
-                        }
-                    }
-
-                    switch (*rcolumn)
-                    {
-                    case cfmeter_week:
-                        akept[meter_compliance_week] = rkept;
-                        arepaired[meter_compliance_week] = rrepaired;
-                        break;
-
-                    case cfmeter_hour:
-                        akept[meter_compliance_hour] = rkept;
-                        arepaired[meter_compliance_hour] = rrepaired;
-                        break;
-
-                    case cfmeter_day:
-                        akept[meter_compliance_day] = rkept;
-                        arepaired[meter_compliance_day] = rrepaired;
-                        break;
-
-                    case cfmeter_perf:
-                        akept[meter_perf_day] = rkept;
-                        arepaired[meter_perf_day] = rrepaired;
-                        break;
-
-                    case cfmeter_comms:
-                        akept[meter_comms_hour] = rkept;
-                        arepaired[meter_comms_hour] = rrepaired;
-                        break;
-
-                    case cfmeter_anomaly:
-                        akept[meter_anomalies_day] = rkept;
-                        arepaired[meter_anomalies_day] = rrepaired;
-                        break;
-
-                    case cfmeter_other:
-                        akept[meter_other_day] = rkept;
-                        arepaired[meter_other_day] = rrepaired;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (awol || !foundMeter)
-        {
-            result = CF_CODE_BLUE;
+            *result = HOST_COLOUR_BLUE;
         }
         else
         {
-            result = Nova_GetComplianceScore(HOST_RANK_METHOD_COMPLIANCE, akept, arepaired);
+            *result = Nova_HostScoreToColour(score);
         }
     }
 
-    mongo_cursor_destroy(cursor);
-
+    free(score_field);
     if (!CFDB_Close(&conn))
     {
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    return result;
+    return 0;
 }
 
 /*****************************************************************************/
@@ -537,6 +461,8 @@ int Nova_GetComplianceScore(HostRankMethod method, double *k, double *r)
 
     return result;
 }
+
+/*****************************************************************************/
 
 HostColour Nova_HostScoreToColour(int score)
 {
