@@ -41,7 +41,7 @@ class cf_table {
             'Performance');
 
         // these are the table fields that should be formatted as date and time
-        $this->dateTimeField = array('lastseen', 'last seen', 'time', 'last verified', 'change detected at', 'last performed');
+        $this->dateTimeField = array('lastseen', 'last seen', 'time', 'last verified', 'change detected at', 'last performed', 'last occurred', 'was last seen at');
     }
 
     function generateReportTable($result, $report_title = '') {
