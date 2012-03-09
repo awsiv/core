@@ -34,7 +34,4 @@
           }
   }); 
   
-$('#morefiltertoggle').live('click',function(){
-     $('#morefilters').toggle();
-});
 </script>

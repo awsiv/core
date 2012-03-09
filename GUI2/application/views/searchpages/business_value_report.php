@@ -38,6 +38,11 @@
   }); 
 
 $('#morefiltertoggle').live('click',function(){
+    if($(this).text()=='More filters'){
+       $(this).text('Fewer Filters') 
+    }else if($(this).text()=='Fewer Filters'){
+       $(this).text('More filters') 
+    }
      $('#morefilters').toggle();
 });
 </script>

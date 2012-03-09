@@ -33,7 +33,5 @@ var $incList=$('input:hidden[name=inclist]');
           }
   }); 
 
-$('#morefiltertoggle').live('click',function(){
-     $('#morefilters').toggle();
-});
+
 </script>

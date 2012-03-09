@@ -16,7 +16,7 @@
     
          <p class="alignrightbuttoncontainer">
              <span class="green_btn"><input class="green_btn" type="submit" value="Generate report"></input></span>
-             <a class="green_btn" href="#"><span>More Filters</span></a>
+            
          </p>
          <input type="hidden" name="host" value="All">
          <input type="hidden" name="inclist" value="<?php echo (is_array($paramArray) && isset($paramArray['inclist'])) ? trim($paramArray['inclist']) : ''; ?>">

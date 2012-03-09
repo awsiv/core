@@ -10,7 +10,13 @@
             </div>-->
            
                 <!--<div><a href="#" id="savesearch" class="showqtip" title="save this search for future use"><span class="ui-icon-triangle-1-s"></span>Save this search</a></div>-->
-                <div id="savesearchcontainer" class="grid_4 floatright" style="disply:none">
+                
+
+        <div id="modifySearchPanel" style="">
+            
+          <?php  $this->load->view('searchpages/'.$filter_view);?> 
+            
+          <div id="savesearchcontainer" class="grid_4 floatright" style="disply:none">
                  
                     <div id="searchSaveError" class="error" style="display:none;"></div>
                     <div id="searchSaveSuccess" class="success" style="display:none;"></div> 
@@ -29,10 +35,8 @@
                       <a href="<?php echo site_url("/savedsearch/listSavedSearches/$report_type"); ?>"  class="green_btn loadsavedsearch"><span>Load saved searches</span></a>
                       <a href="<?php echo $report_link ?>" id="send_mail" class="green_btn" title="Download report"><span>Download</span></a>
                     </div>
-                </div> 
-
-        <div id="modifySearchPanel" style="">
-
+          </div> 
+            
         </div>
 
         <div class="reportpanelcontent">
@@ -91,27 +95,19 @@
                         </div>
                         <script type="text/javascript">
                             $(document).ready(function() {
-                                /*$('#modifySearch').click(function(e) {
-                                    e.preventDefault();  
-                                    $('#modifySearchPanel').toggle();
-                                    if(!$("#modifySearchPanel").is(":hidden")) {
-                                        var url = '<?php echo site_url(); ?>/search/index';
-                                        var postData = <?php echo json_encode($paramArray); ?>;
-                                        $.post(url,postData, function(data) {
-                                            $('#modifySearchPanel').html(data);                   
-                                        });
-                                    }
-                                });*/
                                 
-                                        
-                                        $.post('<?php echo site_url(); ?>/search/index',<?php echo json_encode($paramArray); ?>, function(data) {
+                                     var searchfilterbox = $('#modifySearchPanel')
+                                     $("#searchform").find('form').addClass('grid_8');
+                                     $('#savesearchcontainer').appendTo(searchfilterbox.find('.panelcontent'));
+                                     searchfilterbox.find('.panelcontent').append('<div class="clear"></div>')
+                                        /*$.post('<?php echo site_url(); ?>/search/index',<?php echo json_encode($paramArray); ?>, function(data) {
                                             var searchfilterbox = $('#modifySearchPanel')
                                             searchfilterbox.html(data).show();
                                             searchfilterbox.find('form').addClass('grid_8');
                                             $('#savesearchcontainer').appendTo(searchfilterbox.find('.panelcontent'));
                                             searchfilterbox.find('.panelcontent').append('<div class="clear"></div>')
                                             
-                                        });
+                                        });*/
 
                                 // for save search 
                                 $('#savesearch').click(function(e) {

@@ -1,6 +1,11 @@
 <div class="tables tablesfixed">
 <?php
-$result = json_decode($report_result, true);
+if(is_array($report_result)){
+   $result=$report_result;
+}else{
+   $result = json_decode($report_result, true);  
+}
+
 if (is_array($result) && key_exists('truncated', $result['meta'])) {
     $message = $result['meta']['truncated'];
     $displayed_rows = count($result['data']);

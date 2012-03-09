@@ -51,6 +51,12 @@
   }); 
 
 $('#morefiltertoggle').live('click',function(){
+    var textcontainer=$(this).find('span');
+    if( textcontainer.text().toLowerCase()=='more filters'){
+       textcontainer.text('Fewer Filters') 
+    }else {
+        textcontainer.text('More Filters') 
+    }
      $('#morefilters').toggle();
 });
 </script>
