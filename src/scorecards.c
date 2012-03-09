@@ -12,7 +12,6 @@ This file is (C) Cfengine AS. See LICENSE for details.
 
 #if defined(HAVE_LIBMONGOC)
 #include "db_query.h"
-#endif
 
 #include <assert.h>
 
@@ -81,8 +80,6 @@ HostColour HostColourFromString(const char *colour)
         return HOST_COLOUR_GREEN_YELLOW_RED;
     }
 }
-
-#ifdef HAVE_LIBMONGOC
 
 void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, char *buffer, int bufsize)
 // Read the cached compliance summary (either from Hub or
