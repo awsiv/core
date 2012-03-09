@@ -15,6 +15,8 @@
 /*****************************************************************************/
 
 #include "db_query.h"
+#include "db_common.h"
+#include "db_save.h" // WTF: no!
 #include "bson_lib.h"
 #include "web_rbac.h"
 #include <assert.h>

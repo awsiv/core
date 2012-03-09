@@ -8,88 +8,19 @@
 /*                                                                           */
 /*****************************************************************************/
 
+#include "db_save.h"
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+#include "db_common.h"
 
 #ifdef HAVE_LIBMONGOC
-
-/*****************************************************************************/
-
-static const char *MongoHostname()
-{
-    const char *hostname = getenv("CFENGINE_TEST_OVERRIDE_MONGO_HOSTNAME");
-
-    return hostname ? hostname : "127.0.0.1";
-}
-
-static int MongoPort()
-{
-    const char *port = getenv("CFENGINE_TEST_OVERRIDE_MONGO_PORT");
-
-    if (port)
-    {
-        return (int) StringToLong(port);
-    }
-    else
-    {
-        return 27017;
-    }
-}
-
-int CFDB_Open(mongo_connection *conn)
-{
-
-    int result;
-
-# ifdef MONGO_OLD_CONNECT
-    mongo_connection_options connOpts;
-
-    snprintf(connOpts.host, sizeof(connOpts.host), "%s", MongoHostname());
-    connOpts.port = MongoPort();
-
-    result = mongo_connect(conn, &connOpts);
-
-# else
-
-    result = mongo_connect(conn, MongoHostname(), MongoPort());
-
-# endif
-
-    if (result != 0)
-    {
-        mongo_destroy(conn);
-        CfOut(cf_verbose, "mongo_connect", "!! Could not connect to mongo server (got %d)", result);
-        return false;
-    }
-
-    return true;
-}
-
-/*****************************************************************************/
-
-int CFDB_Close(mongo_connection *conn)
-{
-    if (mongo_destroy(conn) != 0)
-    {
-        CfOut(cf_error, "mongo_destroy", "!! Could not disconnect from mongo server");
-        return false;
-    }
-
-    return true;
-}
-
-/*****************************************************************************/
-
-void CFDB_Initialize()
-{
-    //  unused
-}
 
 /*****************************************************************************/
 /* Cache / scratch space                                                     */
 /*****************************************************************************/
 
+// WTF: manages its own connection
 int CFDB_PutValue(char *lval, char *rval, char *db_name)
 {
     bson_buffer bb;
@@ -1889,6 +1820,8 @@ void CFDBRef_AddToRow(mongo_connection *conn, char *coll, bson *query, char *row
 }
 
 /*****************************************************************************/
+
+// WTF: the only db_save function name that does not start with Save. necessary?
 int CFDB_MarkAsDeleted(mongo_connection *dbconn, char *keyHash)
 {
     bson_buffer bb;

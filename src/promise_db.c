@@ -16,11 +16,13 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+#include "db_common.h"
 
 /*****************************************************************************/
 
 #ifdef HAVE_LIBMONGOC
 
+// WTF: hm, you mean CFDB_SaveExpandedPromise?
 void Nova_StoreExpandedPromise(Promise *pp)
 {
     Constraint *cp;

@@ -20,6 +20,7 @@
 /*****************************************************************************/
 
 #include "web_rbac.h"
+#include "db_common.h"
 #include <assert.h>
 
 #ifdef HAVE_LIBMONGOC

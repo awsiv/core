@@ -9,6 +9,8 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "scorecards.h"
 #include "bson_lib.h"
 #include "string_lib.h"
+#include "db_common.h"
+#include "db_query.h"
 
 #include <assert.h>
 

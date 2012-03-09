@@ -7,6 +7,8 @@
 #include "generic_agent.h"
 
 #include "cf.nova.h"
+#include "db_common.h"
+#include "db_save.h"
 
 /*******************************************************************/
 

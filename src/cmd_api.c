@@ -16,6 +16,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#include "db_common.h"
 #include "scorecards.h"
 
 /*****************************************************************************/

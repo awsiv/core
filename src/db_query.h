@@ -2,6 +2,7 @@
 #define CFENGINE_NOVA_DB_QUERY_H
 
 #include "cf.nova.h"
+#include "db_common.h"
 #include "json.h"
 #include "scorecards.h"
 
@@ -44,6 +45,7 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
                                 int sort, HostClassFilter *hostClassFilter, int lookInArchive);
 HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname, char *ldiff, int regex, time_t lt,
                              int cmp, int sort, HostClassFilter *hostClassFilter, int lookInArchive);
+HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *policy, time_t minGenTime);
 
 HubQuery *CFDB_QueryClassesDistinctSorted(mongo_connection *conn, HostClassFilter *hostClassFilter, PageInfo *page);
 

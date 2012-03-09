@@ -24,6 +24,7 @@
 
 #include "cf3.defs.h"
 #include "cf3.extern.h"
+#include "db_common.h" // WTF: conversion functions access database
 
 /*****************************************************************************/
 

@@ -16,6 +16,8 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "cf3.extern.h"
 #include "cf.nova.h"
 #include "cf.nova.web_api.h"
+#include "db_common.h"
+#include "db_save.h"
 #include "scorecards.h"
 #include "bson_lib.h"
 #include <assert.h>
