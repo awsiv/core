@@ -7,8 +7,10 @@
 #include "generic_agent.h"
 
 #include "cf.nova.h"
-#include "db_common.h"
+
+#if defined(HAVE_LIBMONGOC)
 #include "db_save.h"
+#endif
 
 /*******************************************************************/
 

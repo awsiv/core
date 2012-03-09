@@ -2,11 +2,11 @@
 #define CFENGINE_NOVA_DB_QUERY_H
 
 #include "cf.nova.h"
-#include "db_common.h"
 #include "json.h"
 #include "scorecards.h"
 
 #ifdef HAVE_LIBMONGOC
+#include "db_common.h"
 
 int CFDB_GetBlueHostThreshold(unsigned long *threshold);
 void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn, char *db_name);

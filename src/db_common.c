@@ -1,5 +1,8 @@
-#include "db_common.h"
 #include "cf.nova.h"
+
+#if defined(HAVE_LIBMONGOC)
+#include "db_common.h"
+#endif
 
 static const char *MongoHostname()
 {

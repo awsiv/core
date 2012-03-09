@@ -9,10 +9,10 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
-#include "db_common.h"
-#include "db_save.h"
 
 #ifdef HAVE_LIBMONGOC
+#include "db_save.h"
+
 static bool ReportBookHasData(Item **reports);
 static void Nova_RecordNetwork(mongo_connection *dbconnp, time_t now, double datarate, AgentConnection *conn);
 #endif

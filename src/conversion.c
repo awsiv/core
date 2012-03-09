@@ -24,7 +24,11 @@
 
 #include "cf3.defs.h"
 #include "cf3.extern.h"
-#include "db_common.h" // WTF: conversion functions access database
+
+// WTF: conversion functions access database
+#if defined(HAVE_LIBMONGOC)
+#include "db_common.h"
+#endif
 
 /*****************************************************************************/
 
