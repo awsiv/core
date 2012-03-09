@@ -261,31 +261,6 @@ typedef struct
 /* Report DB API Structs                                                     */
 /*****************************************************************************/
 
-typedef enum
-{
-    HOST_RANK_METHOD_COMPLIANCE   = 0x00000001,
-    HOST_RANK_METHOD_ANOMALY      = 0x00000010,
-    HOST_RANK_METHOD_PERFORMANCE  = 0x00000100,
-    HOST_RANK_METHOD_LASTSEEN     = 0x00001000,
-    HOST_RANK_METHOD_MIXED        = 0x00010000
-} HostRankMethod;
-
-typedef enum
-{
-    HOST_COLOUR_GREEN,
-    HOST_COLOUR_YELLOW,
-    HOST_COLOUR_RED,
-    HOST_COLOUR_BLUE,
-    HOST_COLOUR_GREEN_YELLOW_RED
-} HostColour;
-
-typedef struct
-{
-    HostRankMethod method;
-    HostColour colour;
-    time_t blue_time_horizon;
-} HostColourFilter;
-
 typedef struct
 {
     char *keyhash;
@@ -810,6 +785,9 @@ void CFDB_SaveTotalCompliance(mongo_connection *conn, char *kH, Item *data);
 void CFDB_SavePromiseLog(mongo_connection *conn, char *kH, PromiseLogState state, Item *data);
 void CFDB_SaveLastSeen(mongo_connection *conn, char *kH, Item *data);
 void CFDB_SaveMeter(mongo_connection *conn, char *kH, Item *data);
+
+// TODO: factor this out
+#include "scorecards.h"
 void CFDB_SaveScore(mongo_connection *conn, char *kH, Item *data, HostRankMethod method);
 void CFDB_SaveSoftwareDates(mongo_connection *conn, char *kH, Item *data);
 void CFDB_SavePerformance(mongo_connection *conn, char *kH, Item *data);
@@ -1050,7 +1028,6 @@ void PromiseFilterAddBundleType(PromiseFilter *filter, const char *bundleTypeInc
 void PromiseFilterAddBundles(PromiseFilter *filter, const char *bundleInclude, const char *bundleExclude);
 void PromiseFilterAddBundlesRx(PromiseFilter *filter, const char *bundleRxInclude, const char *bundleRxExclude);
 void DeletePromiseFilter(PromiseFilter *filter);
-HostColourFilter *NewHostColourFilter(HostRankMethod method, HostColour colours);
 #endif
 HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int hostCount, int totalHostCount,
                                                     double kept, double repaired, double notkept, time_t genTime);

@@ -12,12 +12,23 @@ This file is (C) Cfengine AS. See LICENSE for details.
 
 #include <assert.h>
 
-#ifdef HAVE_LIBMONGOC
-/*****************************************************************************/
-/*                                                                           */
-/* File: scorecards.c                                                        */
-/*                                                                           */
-/*****************************************************************************/
+HostColourFilter *NewHostColourFilter(HostRankMethod method, HostColour colours)
+{
+    long bluehost_threshold = 0;
+    if (!CFDB_GetBlueHostThreshold(&bluehost_threshold))
+    {
+        return NULL;
+    }
+
+    HostColourFilter *filter = xmalloc(sizeof(HostColourFilter));
+    filter->method = method;
+    filter->colour = colours;
+
+    time_t now = time(NULL);
+    filter->blue_time_horizon = (time_t)(now - bluehost_threshold);
+
+    return filter;
+}
 
 const char *Nova_HostColourToString(HostColour colour)
 {
@@ -66,6 +77,8 @@ HostColour HostColourFromString(const char *colour)
         return HOST_COLOUR_GREEN_YELLOW_RED;
     }
 }
+
+#ifdef HAVE_LIBMONGOC
 
 void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, char *buffer, int bufsize)
 // Read the cached compliance summary (either from Hub or

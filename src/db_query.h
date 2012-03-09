@@ -3,6 +3,7 @@
 
 #include "cf.nova.h"
 #include "json.h"
+#include "scorecards.h"
 
 #ifdef HAVE_LIBMONGOC
 
