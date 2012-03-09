@@ -8,7 +8,9 @@
 #ifdef HAVE_LIBMONGOC
 
 HostColour Nova_HostScoreToColour(int score);
+
 const char *Nova_HostColourToString(HostColour colour);
+HostColour HostColourFromString(const char *colour);
 
 int Nova_GetComplianceScore(HostRankMethod method, double *k, double *rep);
 
