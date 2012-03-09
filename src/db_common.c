@@ -2,7 +2,6 @@
 
 #if defined(HAVE_LIBMONGOC)
 #include "db_common.h"
-#endif
 
 static const char *MongoHostname()
 {
@@ -66,3 +65,4 @@ int CFDB_Close(mongo_connection *conn)
 
     return true;
 }
+#endif
