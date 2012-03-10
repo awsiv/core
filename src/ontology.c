@@ -170,13 +170,15 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
         }
 
         if (edit_bundle)
-        {
+           {
+           fprintf(fp, "bundles:: \"%s\" association => a(KM_USES_CERT_F,\"%s\",KM_USES_CERT_B);  \n", pp->bundle, (const char *) edit_bundle->name);
+        
             if (strcmp(edit_bundle->name, "insert_file") == 0)  // stdlib
             {
                 if (edit_bundle->args)  // Single arg
                 {
-                    fprintf(fp, "files:: \"%s\" association => a(\"uses data from\",\"%s\",\"provides data for\");  \n",
-                            pp->promiser, (const char *) edit_bundle->args);
+                    fprintf(fp, "files:: \"%s\" association => a(\"uses data from\",\"%s\",\"provides data for\");  \n", NovaEscape(pp->promiser), (const char *) edit_bundle->args);
+                    fprintf(fp, "handles:: \"%s\" association => a(\"uses data from\",\"%s\",\"provides data for\");  \n", promise_id, (const char *) edit_bundle->args);                    
                 }
             }
         }
