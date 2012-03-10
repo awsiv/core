@@ -8,6 +8,10 @@
 
 #include "cf.nova.h"
 
+#if defined(HAVE_LIBMONGOC)
+#include "db_save.h"
+#endif
+
 /*******************************************************************/
 
 static const int BIG_UPDATES = 6;

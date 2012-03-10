@@ -8,6 +8,10 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#if defined(HAVE_LIBMONGOC)
+#include "db_common.h"
+#endif
+
 bool Nova_ExecuteRunagent(AgentConnection *conn, const char *menu_str)
 {
 #if defined(HAVE_LIBMONGOC)

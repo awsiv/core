@@ -15,6 +15,10 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#ifdef HAVE_LIBMONGOC
+#include "db_save.h"
+#endif
+
 /*******************************************************************/
 
  /* These should be coordinated with cfreport.c - but not copied */

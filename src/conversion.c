@@ -25,6 +25,11 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 
+// WTF: conversion functions access database
+#if defined(HAVE_LIBMONGOC)
+#include "db_common.h"
+#endif
+
 /*****************************************************************************/
 
 static const char *CFCON_VIEWS[] = { "Comp",    // NOTE: must match cfl_view enum

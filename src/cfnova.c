@@ -9,6 +9,10 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#if defined(HAVE_LIBMONGOC)
+#include "db_save.h"
+#endif
+
 /*****************************************************************************/
 /*                                                                           */
 /* File: cfnova.c                                                            */

@@ -19,6 +19,11 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "scorecards.h"
 #include "bson_lib.h"
 #include <assert.h>
+
+#if defined(HAVE_LIBMONGOC)
+#include "db_save.h"
+#endif
+
 static const char *CDP_REPORTS[][2] =
 {
     [cdp_acls] = {"ACLs", "File access controls"},

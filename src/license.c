@@ -15,6 +15,10 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#ifdef HAVE_LIBMONGOC
+#include "db_save.h"
+#endif
+
 #define LIC_DAY "15"
 #define LIC_MONTH "December"
 #define LIC_YEAR "2001"

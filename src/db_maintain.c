@@ -12,7 +12,10 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+// WTF: this file should not be compiled if !MONGO
+
 #ifdef HAVE_LIBMONGOC
+#include "db_common.h"
 
 static void CFDB_DropAllIndices(mongo_connection *conn);
 #endif

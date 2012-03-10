@@ -14,6 +14,10 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#if defined(HAVE_LIBMONGOC)
+#include "db_save.h"
+#endif
+
 /* From cfknow.c */
 
 int GetTopicPid(char *classified_topic);

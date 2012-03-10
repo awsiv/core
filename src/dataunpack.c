@@ -17,6 +17,10 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#ifdef HAVE_LIBMONGOC
+#include "db_save.h"
+#endif
+
 /*****************************************************************************/
 
 void Nova_UnPackPerformance(mongo_connection *dbconn, char *id, Item *data)

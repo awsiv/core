@@ -14,7 +14,6 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include "db_query.h"
 #include "bson_lib.h"
 #include "web_rbac.h"
 #include <assert.h>
@@ -22,6 +21,8 @@
 /*****************************************************************************/
 
 #ifdef HAVE_LIBMONGOC
+#include "db_query.h"
+#include "db_save.h" // WTF: no!
 
 static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *filter);
 static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFilter *hostClassFilter);
