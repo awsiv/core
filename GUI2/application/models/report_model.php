@@ -1,10 +1,17 @@
 <?php
 class report_model extends Cf_Model {
+    /**
+     *
+     * @return type 
+     */
     function getAllReports() {
         try {
             $rawdata = cfpr_select_reports(null);
             $data = $this->checkData($rawdata);
-            if (is_array($data) && $this->hasErrors()==0) {
+            if (is_array($data)) {
+                if($this->hasErrors()>0){
+                  throw new Exception($this->getErrorsString());
+                }
                 return $data;
             } else {
                 throw new Exception($this->lang->line('invalid_json'));
@@ -15,55 +22,96 @@ class report_model extends Cf_Model {
         }
       }
       
-      function getReportCategory($report_id){
-          try{
-              $rawdata = cfpr_select_reports(null);
-              $data = $this->checkData($rawdata);
-              if (is_array($data) && $this->hasErrors()==0) {
-                  foreach ($data['data'] as $report) {
-                    if($report['id'] == $report_id) return $report['category'];
-                }
-               throw new Exception($this->lang->line('invalid_report_id')); 
-            } else {
-                throw new Exception($this->lang->line('invalid_json'));
-            }
-              
-              }catch (Exception $e){
-                  log_message('error', $e->getMessage()." ".$e->getFile()." line:".$e->getLine());
-                    throw $e; 
-              }
-          
-      }
-      
-      
-      function getReportTitle($report_id){
-        try{
-              $rawdata = cfpr_select_reports($report_id);
-              $data = $this->checkData($rawdata);
-              if (is_array($data) && $this->hasErrors()==0) {
-                 return $data['data'][0]['name'];
-               throw new Exception($this->lang->line('invalid_report_id')); 
-            } else {
-                throw new Exception($this->lang->line('invalid_json'));
-            }
-              
-              }catch (Exception $e){
-                  log_message('error', $e->getMessage()." ".$e->getFile()." line:".$e->getLine());
-                    throw $e; 
-              }
-        
-      }
-      
-      function getReportDescription($report_id)
+      /**
+       *
+       * @param type $report_id
+       * @return type 
+       */
+      function getReportCategory($report_id=NULL)
     {
         try
         {
+            if($report_id==NULL){
+               throw new Exception($this->lang->line('invalid_report_id'));
+            }
+            
             $rawdata = cfpr_select_reports($report_id);
             $data = $this->checkData($rawdata);
-            if (is_array($data) && $this->hasErrors() == 0)
+            if (is_array($data))
             {
+                if ($this->hasErrors()>0)
+                {
+                    throw new Exception($this->getErrorsString());
+                }
+                return $data['data'][0]['category'];
+                
+            } else
+            {
+                throw new Exception($this->lang->line('invalid_json'));
+            }
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        }
+    }
+      
+      /**
+       *
+       * @param type $report_id
+       * @return type 
+       */
+      function getReportTitle($report_id=NUll)
+    {
+        try
+        {
+            if($report_id==NULL){
+               throw new Exception($this->lang->line('invalid_report_id'));
+            }
+            
+            $rawdata = cfpr_select_reports($report_id);
+            $data = $this->checkData($rawdata);
+            if (is_array($data))
+            {
+                if($this->hasErrors()>0){
+                  throw new Exception($this->getErrorsString());
+                }
+                return $data['data'][0]['name'];
+            }
+            else
+            {
+                throw new Exception($this->lang->line('invalid_json'));
+                 
+            }
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        }
+    }
+      /**
+       *
+       * @param type $report_id
+       * @return type 
+       */
+      function getReportDescription($report_id=NULL)
+    {
+        try
+        {  
+            if($report_id==NULL){
+               throw new Exception($this->lang->line('invalid_report_id'));
+            }
+            
+            $rawdata = cfpr_select_reports($report_id);
+            $data = $this->checkData($rawdata);
+            if (is_array($data))
+            {
+                if($this->hasErrors()>0){
+                  throw new Exception($this->getErrorsString());
+                }
                 return $data['data'][0]['description'];
-                throw new Exception($this->lang->line('invalid_report_id'));
             }
             else
             {
@@ -76,17 +124,28 @@ class report_model extends Cf_Model {
             throw $e;
         }
     }
-      
-      function getReportDetail($report_id)
+    
+    
+      /**
+       *
+       * @param type $report_id
+       * @return type 
+       */
+      function getReportDetail($report_id = NULL)
     {
         try
         {
+            if($report_id==NULL){
+               throw new Exception($this->lang->line('invalid_report_id'));
+            }
             $rawdata = cfpr_select_reports($report_id);
             $data = $this->checkData($rawdata);
-            if (is_array($data) && $this->hasErrors() == 0)
+            if (is_array($data))
             {
+                if($this->hasErrors()>0){
+                  throw new Exception($this->getErrorsString());
+                }
                 return $data['data'][0];
-                throw new Exception($this->lang->line('invalid_report_id'));
             }
             else
             {
@@ -100,14 +159,28 @@ class report_model extends Cf_Model {
         }
     }
      
+    /**
+     *
+     * @param type $username
+     * @param type $hostkey
+     * @param type $search
+     * @param type $inclist
+     * @param type $exlist
+     * @param type $rows
+     * @param type $page_number
+     * @return type 
+     */
       function getBundleReport($username, $hostkey, $search, $inclist, $exlist, $rows=50, $page_number=1)
     {
         try
         {
             $rawdata = cfpr_report_bundlesseen($username, $hostkey, $search, true, $inclist, $exlist, "last-verified", true, $rows, $page_number);
             $data = $this->checkData($rawdata);
-            if (is_array($data) && $this->hasErrors() == 0)
+            if (is_array($data))
             {
+               if($this->hasErrors()>0){
+                  throw new Exception($this->getErrorsString());
+                }
                 return $data;
             }
             else
@@ -129,8 +202,11 @@ class report_model extends Cf_Model {
         {
             $rawdata = cfpr_hosts_with_bundlesseen($username, Null, $name, true, $class_regex);
             $data = $this->checkData($rawdata);
-            if (is_array($data) && $this->hasErrors() == 0)
+            if (is_array($data))
             {
+                if($this->hasErrors()>0){
+                  throw new Exception($this->getErrorsString());
+                }
                 return $data;
             }
             else
@@ -162,8 +238,12 @@ class report_model extends Cf_Model {
         {
             $rawdata = cfpr_report_classes($username, $hostkey, $search, true, $inclist, $exlist,"last-seen", true, $rows, $page_number);
             $data = $this->checkData($rawdata);
-            if (is_array($data) && $this->hasErrors() == 0)
+            if (is_array($data))
             {
+                if($this->hasErrors()>0){
+                  throw new Exception($this->getErrorsString());
+                }
+                
                 return $data;
             }
             else
@@ -197,8 +277,11 @@ class report_model extends Cf_Model {
         {
             $rawdata = cfpr_report_value($username, $hostkey, $days, $months, $years, $inclist, $exlist, "day", true, $rows, $page_number);
             $data = $this->checkData($rawdata);
-            if (is_array($data) && $this->hasErrors() == 0)
+            if (is_array($data))
             {
+                if($this->hasErrors()>0){
+                  throw new Exception($this->getErrorsString());
+                }
                 return $data;
             }
             else
@@ -227,8 +310,11 @@ class report_model extends Cf_Model {
         {
             $rawdata =   cfpr_hosts_with_value($username, NULL, $days, $months, $years, $class_regex);
             $data = $this->checkData($rawdata);
-            if (is_array($data) && $this->hasErrors() == 0)
-            {
+            if (is_array($data))
+            {   
+                if($this->hasErrors()>0){
+                  throw new Exception($this->getErrorsString());
+                }
                 return $data;
             }
             else
@@ -260,8 +346,11 @@ class report_model extends Cf_Model {
         {
             $rawdata =   cfpr_report_compliance_promises($username, $hostkey, $search, $state, true, $inclist, $exlist, "last-seen", true, $rows, $page_number);
             $data = $this->checkData($rawdata);
-            if (is_array($data) && $this->hasErrors() == 0)
+            if (is_array($data))
             {
+                if($this->hasErrors()>0){
+                  throw new Exception($this->getErrorsString());
+                }
                 return $data;
             }
             else
@@ -427,6 +516,309 @@ class report_model extends Cf_Model {
             log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
+    }
+    
+    /**
+     *
+     * @param type $username
+     * @param type $hostkey
+     * @param type $search
+     * @param type $version
+     * @param type $arch
+     * @param type $inclist
+     * @param type $exlist
+     * @param type $rows
+     * @param type $page_number
+     * @return type array
+     */
+    function getPatchesInstalled($username, $hostkey, $search, $version, $arch, $inclist,$exlist, $rows = 50, $page_number = 1){
+       try
+        {   
+            $rawdata=cfpr_report_patch_in($username, $hostkey, $search, $version, $arch, true, $inclist,$exlist, "hostname", true, $rows, $page_number);
+            $data = $this->checkData($rawdata);
+            if (is_array($data) && $this->hasErrors() == 0)
+            {
+                return $data;
+            }
+            else
+            {
+                throw new Exception($this->lang->line('invalid_json'));
+            }
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        } 
+    }
+    
+    /**
+     *
+     * @param type $username
+     * @param type $hostkey
+     * @param type $search
+     * @param type $class_regex
+     * @param type $rows
+     * @param type $page_number 
+     */
+    
+    function getPerformance($username, $hostkey, $search, $inclist, $exlist, $rows = 50, $page_number = 1){
+       try
+        {   
+            $rawdata=cfpr_report_performance($username, $hostkey, $search, true, $inclist, $exlist, "last-performed", true, $rows, $page_number);
+            $data = $this->checkData($rawdata);
+            if (is_array($data) && $this->hasErrors() == 0)
+            {
+                return $data;
+            }
+            else
+            {
+                throw new Exception($this->lang->line('invalid_json'));
+            }
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        } 
+    }
+    
+    /**
+     *
+     * @param type $username
+     * @param type $hostkey
+     * @param type $search
+     * @param type $hours_deltafrom
+     * @param type $hours_deltato
+     * @param type $inclist
+     * @param type $exlist
+     * @param type $rows
+     * @param type $page_number
+     * @return type array
+     */
+    
+    function getPromisesRepairedLog($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 50, $page_number = 1){
+         try
+        {   
+            $rawdata=cfpr_report_repaired($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, "time", true, $rows, $page_number);
+            $data = $this->checkData($rawdata);
+            if (is_array($data) && $this->hasErrors() == 0)
+            {
+                return $data;
+            }
+            else
+            {
+                throw new Exception($this->lang->line('invalid_json'));
+            }
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        } 
+    }
+    
+    /**
+     *
+     * @param type $username
+     * @param type $hostkey
+     * @param type $search
+     * @param type $hours_deltafrom
+     * @param type $hours_deltato
+     * @param type $inclist
+     * @param type $exlist
+     * @param type $rows
+     * @param type $page_number
+     * @return type array
+     */
+    function getPromisesRepairedSummary($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 0, $page_number = 0){
+         try
+        {   
+            $rawdata=cfpr_summarize_repaired($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, "time", true, $rows, $page_number);
+            $data = $this->checkData($rawdata);
+            if (is_array($data) && $this->hasErrors() == 0)
+            {
+                return $data;
+            }
+            else
+            {
+                throw new Exception($this->lang->line('invalid_json'));
+            }
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        } 
+    }
+    
+    /**
+     *
+     * @param type $username
+     * @param type $hostkey
+     * @param type $search
+     * @param type $hours_deltafrom
+     * @param type $hours_deltato
+     * @param type $inclist
+     * @param type $exlist
+     * @param type $rows
+     * @param type $page_number
+     * @return type array
+     */
+    function getPromisesNotKeptSummary($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 50, $page_number = 1){
+        try
+        {   
+            $rawdata=cfpr_summarize_notkept($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, "time", true, $rows, $page_number);
+            $data = $this->checkData($rawdata);
+            if (is_array($data) && $this->hasErrors() == 0)
+            {
+                return $data;
+            }
+            else
+            {
+                throw new Exception($this->lang->line('invalid_json'));
+            }
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        } 
+    }
+    
+    /**
+     *
+     * @param type $username
+     * @param type $hostkey
+     * @param type $search
+     * @param type $hours_deltafrom
+     * @param type $hours_deltato
+     * @param type $inclist
+     * @param type $exlist
+     * @param type $rows
+     * @param type $page_number
+     * @return type array
+     */
+     function getPromisesNotKeptLog($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 50, $page_number = 1){
+        try
+        {   
+            $rawdata=cfpr_report_notkept($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, "time", true, $rows, $page_number);
+            $data = $this->checkData($rawdata);
+            if (is_array($data) && $this->hasErrors() == 0)
+            {
+                return $data;
+            }
+            else
+            {
+                throw new Exception($this->lang->line('invalid_json'));
+            }
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        } 
+    }
+    
+    /**
+     *
+     * @param type $username
+     * @param type $hostkey
+     * @param type $search
+     * @param type $inclist
+     * @param type $exlist
+     * @param type $rows
+     * @param type $page_number
+     * @return type array
+     */
+    function getReportSetUid($username, $hostkey, $search, $inclist, $exlist, $rows = 50, $page_number = 1){
+        try
+        {   
+            $rawdata=cfpr_report_setuid($username, $hostkey, $search, true, $inclist, $exlist, "hostname", true, $rows, $page_number);
+            $data = $this->checkData($rawdata);
+            if (is_array($data))
+            {
+                if($this->hasErrors()>0){
+                  throw new Exception($this->getErrorsString());
+                }
+                return $data;
+            }
+            else
+            {
+                throw new Exception($this->lang->line('invalid_json'));
+                
+            }
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        } 
+        
+    }
+    
+    /**
+     *
+     * @param type $username
+     * @param type $hostkey
+     * @param type $search
+     * @param type $version
+     * @param type $arch
+     * @param type $inclist
+     * @param type $exlist
+     * @param type $rows
+     * @param type $page_number
+     * @return type array
+     */
+    function getSoftwareInstalled($username, $hostkey, $search, $version, $arch, $inclist, $exlist, $rows = 50, $page_number = 1){
+         try
+        {   
+            $rawdata=cfpr_report_software_in($username, $hostkey, $search, $version, $arch, true, $inclist, $exlist, "hostname", true, $rows, $page_number);
+            $data = $this->checkData($rawdata);
+            if (is_array($data))
+            {
+                if($this->hasErrors()>0){
+                  throw new Exception($this->getErrorsString());
+                }
+                return $data;
+            }
+            else
+            {
+                throw new Exception($this->lang->line('invalid_json'));
+                
+            }
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        } 
+    }
+    
+    function getVariablesReport($username, $hostkey, $scope, $lval, $rval, $type, $inclist,$exlist, $rows = 50, $page_number =1){
+         try
+        {   
+            $rawdata=cfpr_report_vars($username, $hostkey, $scope, $lval, $rval, $type, true, $inclist,$exlist, "var-name", true, $rows, $page_number);
+            $data = $this->checkData($rawdata);
+            if (is_array($data))
+            {
+                if($this->hasErrors()>0){
+                  throw new Exception($this->getErrorsString());
+                }
+                return $data;
+            }
+            else
+            {
+                throw new Exception($this->lang->line('invalid_json'));
+                
+            }
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        } 
+        
     }
     
     
