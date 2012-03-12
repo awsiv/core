@@ -183,7 +183,7 @@ class pdfreports extends Cf_Controller
                 break;
 
             case "values":
-                $this->rpt_variables($username, $params['hostkey'], $params['search'], $params['scope'], $params['lval'], $params['rval'], $params['var_type'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
+                $this->rpt_variables($username, $params['hostkey'], $params['search'], $params['scope'], $params['lval'], $params['rval'], $params['var_type'], explode(',',$params['inclist']),explode(',',$params['exlist']), $params['rows'], $params['page']);
                 break;
 
             case "file-change-diffs":
