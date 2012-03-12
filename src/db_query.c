@@ -2371,8 +2371,7 @@ bool CompareStringOrRegex(char *value, const char *compareTo, bool regex)
 /*****************************************************************************/
 int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, PromiseLogState state,
                                  const char *lhandle, int regex, time_t from, time_t to, int sort,
-                                 HostClassFilter *hostClassFilter, PageInfo *page,
-                                 Rlist **host_list, Rlist **record_list)
+                                 HostClassFilter *hostClassFilter, Rlist **host_list, Rlist **record_list)
 {
     char *promiseLogKey;
     switch (state)
@@ -2419,10 +2418,8 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
     char oid[CF_MAXVARSIZE] = {0};
 
     HubHost *hh = NULL;
-    int totalCount = page->resultsPerPage * page->pageNum;
-    int count = 0;
     bool found = false;
-    bool hasMore = false;
+    int count = 0;
 
     while (mongo_cursor_next(cursor))
     {
@@ -2479,9 +2476,8 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
 
                         if(CompareStringOrRegex(rhandle, lhandle, regex))
                         {
-                            found = true;
                             count++;
-
+                            found = true;
                             PrependRlistAlien(record_list, NewHubPromiseLog(hh, rhandle, rcause, rt, noteid, oid));
                         }
                     }
@@ -2491,12 +2487,6 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
             {
                 bson_oid_to_string(bson_iterator_oid(&itHostData), oid);
             }
-        }
-
-        if(totalCount > 0 && count >= totalCount)
-        {
-            hasMore = true; // TODO: append it to PageInfo
-            break;
         }
     }
 
@@ -2519,14 +2509,14 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
 /*****************************************************************************/
 HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, PromiseLogState state,
                                const char *lhandle, int regex, time_t from, time_t to, int sort,
-                               HostClassFilter *hostClassFilter, PageInfo *page)
+                               HostClassFilter *hostClassFilter)
 {
     Rlist *record_list = NULL;
     Rlist *host_list = NULL;
 
-    CFDB_QueryPromiseLogFromMain(conn, keyHash, state, lhandle, regex, from, to, sort, hostClassFilter, page, &host_list, &record_list);
+    CFDB_QueryPromiseLogFromMain(conn, keyHash, state, lhandle, regex, from, to, sort, hostClassFilter, &host_list, &record_list);
 
-    int oldDataCount = CFDB_QueryPromiseLogFromOldColl(conn, keyHash, state, lhandle, regex, from, to, sort, hostClassFilter, page, &host_list, &record_list);
+    int oldDataCount = CFDB_QueryPromiseLogFromOldColl(conn, keyHash, state, lhandle, regex, from, to, sort, hostClassFilter, &host_list, &record_list);
 
     if(oldDataCount > 0)
     {
@@ -2539,8 +2529,7 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
 /*****************************************************************************/
 int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash, PromiseLogState state,
                                     const char *lhandle, int regex, time_t from, time_t to, int sort,
-                                    HostClassFilter *hostClassFilter, PageInfo *page,
-                                    Rlist **host_list, Rlist **record_list)
+                                    HostClassFilter *hostClassFilter, Rlist **host_list, Rlist **record_list)
 {
     char *collName;
 
@@ -2625,9 +2614,6 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
         oid[0] = '\0';
         time_t rt = 0;
 
-        Rlist *timestampsList = NULL;
-        bool isTimestampArray = false;
-
         while (bson_iterator_next(&it1))
         {
             snprintf(noteid,sizeof(noteid),"%s",CF_NONOTE);
@@ -2656,34 +2642,9 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
             {
                 snprintf(noteid,sizeof(noteid),"%s",bson_iterator_string(&it1));
             }
-            else if (strcmp(bson_iterator_key(&it1),cfr_time) == 0) // new format
+            else if (strcmp(bson_iterator_key(&it1),cfr_time) == 0)
             {
-                if (bson_iterator_type(&it1) == bson_array)
-                {
-                    bson_iterator it2;
-
-                    isTimestampArray = true;
-                    bson_iterator_init(&it2,bson_iterator_value(&it1));
-
-                    while (bson_iterator_next(&it2))
-                    {
-                        rt = bson_iterator_int(&it2);
-
-                        if(rt < from && rt > to)
-                        {
-                            continue;
-                        }
-
-                        char timeString[CF_SMALLBUF] = {0};
-                        snprintf(timeString,sizeof(timeString),"%ld",rt);
-
-                        PrependRlist(&timestampsList,timeString,CF_SCALAR);
-                    }
-                }
-                else // old format TODO: remove this completely?
-                {
-                    rt = bson_iterator_int(&it1);
-                }
+                rt = bson_iterator_int(&it1);
             }
             else if (strcmp(bson_iterator_key(&it1),"_id") == 0)
             {

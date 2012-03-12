@@ -366,7 +366,7 @@ static JsonElement *PromiseLogAsJson(mongo_connection *conn, PromiseLogState sta
                                      const char *hostkey, const char *context, int from, int to,
                                      HostClassFilter *filter)
 {
-    HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from, to, true, filter,(PageInfo*){0});
+    HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from, to, true, filter);
 
     JsonElement *output = JsonArrayCreate(100);
 
@@ -430,7 +430,7 @@ static JsonElement *PromiseLogSummaryAsJson(mongo_connection *conn, PromiseLogSt
                                             const char *hostkey, const char *context, int from, int to,
                                             HostClassFilter *filter)
 {
-    HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from, to, true, filter, (PageInfo*){0});
+    HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from, to, true, filter);
 
 // FIX: wrong on several levels
     Item *summary = NULL;

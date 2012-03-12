@@ -20,15 +20,13 @@ HubQuery *CFDB_QueryValueReport(mongo_connection *conn, char *keyHash, char *lda
 HubQuery *CFDB_QueryValueGraph(mongo_connection *conn, char *keyHash, char *lday, char *lmonth, char *lyear, int sort,
                                char *classRegex);
 HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, PromiseLogState state, const char *lhandle,
-                               int regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter, PageInfo *page);
+                               int regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter);
 int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash, PromiseLogState state,
                                const char *lhandle, int regex, time_t from, time_t to, int sort,
-                               HostClassFilter *hostClassFilter, PageInfo *page,
-                               Rlist **host_list, Rlist **record_list);
+                               HostClassFilter *hostClassFilter, Rlist **host_list, Rlist **record_list);
 int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, PromiseLogState state,
                                const char *lhandle, int regex, time_t from, time_t to, int sort,
-                               HostClassFilter *hostClassFilter, PageInfo *page,
-                               Rlist **host_list, Rlist **record_list);
+                               HostClassFilter *hostClassFilter, Rlist **host_list, Rlist **record_list);
 HubQuery *CFDB_QuerySoftware(mongo_connection *conn, char *keyHash, char *type, char *lname, char *lver, char *larch,
                              int regex, HostClassFilter *hostClassFilter, int sort);
 HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass, int regex, time_t horizon,
