@@ -86,7 +86,7 @@
 #define MONITOR_CLASS_PREFIX "mXC_"
 #define CF_CHANGE_HORIZON 10
 #define NOVA_EXPORT_HEADER "NOVA_EXPORT"
-#define CF_CODEBOOK_SIZE 29
+#define CF_CODEBOOK_SIZE 30
 #define NOVA_MAXDIFFSIZE (80 * 1024 * 1024)
 #define HOSTKEY_SIZE 100        // length of SHA=....
 
@@ -834,6 +834,7 @@ void Nova_PackNotKeptLog(Item **reply, char *header, time_t date, enum cfd_menu 
 void Nova_PackMeter(Item **reply, char *header, time_t date, enum cfd_menu type);
 void Nova_PackSoftwareDates(Item **reply, char *header, time_t from, enum cfd_menu type);
 void Nova_PackBundles(Item **reply, char *header, time_t date, enum cfd_menu type);
+void Nova_PackExecutionStatus(Item **reply, char *header);
 int Nova_CoarseLaterThan(char *key, char *from);
 int Nova_YearSlot(char *day, char *month, char *lifecycle);
 int Nova_LaterThan(char *bigger, char *smaller);
@@ -869,6 +870,7 @@ void Nova_UnPackNotKeptLog(mongo_connection *dbconn, char *id, Item *data);
 void Nova_UnPackMeter(mongo_connection *dbconn, char *id, Item *data);
 void Nova_UnPackSoftwareDates(mongo_connection *dbconn, char *id, Item *data);
 void Nova_UnPackBundles(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackExecutionStatus(mongo_connection *dbconn, char *id, Item *data);
 char *Nova_LongArch(char *arch);
 
 /* histogram.c */
@@ -1441,6 +1443,9 @@ int CfLDAP_JSON_GetSingleAttributeList(char *uri, char *user, char *basedn, char
 #define CF_CODE_BLUE -1
 #define CF_BLUEHOST_THRESHOLD_DEFAULT 900       // 15 minutes
 
+#define CF_BLACKHOST_THRESHOLD 3 // number of missed averaged schedules
+#define CF_BLACKHOST_THRESHOLD_VARIATION 10 // additional mesurment error tolerance [%]
+
 #define CF_HUB_HORIZON 900      // 15 mins / 3 connection attempts
 #define CF_HUB_PURGESECS 604800 // one week
 
@@ -1507,6 +1512,7 @@ typedef struct
 #define CFR_METER "MET"
 #define CFR_SWDATES "SWD"
 #define CFR_BUNDLES "BUN"
+#define CFR_EXECUTION_STATUS "EXS"
 
 /* Keynames */
 

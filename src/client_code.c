@@ -49,6 +49,7 @@ char *CF_CODEBOOK[CF_CODEBOOK_SIZE] =
     CFR_METER,
     CFR_BUNDLES,
     CFR_SWDATES,
+    CFR_EXECUTION_STATUS,
     NULL
 };
 
@@ -81,7 +82,8 @@ void *CF_CODEBOOK_HANDLER[CF_CODEBOOK_SIZE] =
     Nova_UnPackNotKeptLog,      // DBOK (nopurge)
     Nova_UnPackMeter,           // DBOK
     Nova_UnPackBundles,
-    Nova_UnPackSoftwareDates
+    Nova_UnPackSoftwareDates,
+    Nova_UnPackExecutionStatus
 };
 
 /*********************************************************************/

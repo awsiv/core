@@ -886,3 +886,25 @@ char *Nova_LongArch(char *arch)
 
     return arch;
 }
+
+/*****************************************************************************/
+
+void Nova_UnPackExecutionStatus(mongo_connection *dbconn, char *id, Item *data)
+{
+    CfOut(cf_verbose, "", " -> Execution status...........................");
+
+    char is_blackhost = 'f';
+    long delta_schedule = 0;
+    sscanf(data->name, "%c %ld\n", &is_blackhost, &delta_schedule);
+
+#ifdef HAVE_LIBMONGOC
+    if (dbconn)
+    {
+        CFDB_SaveExecutionStatus(dbconn, id, is_blackhost, delta_schedule);
+    }
+#endif
+
+    CfDebug("Execution status: black %s with agent schedule interval: %ld",
+            (is_blackhost == 't')? "true" : "false", delta_schedule);
+}
+

@@ -240,6 +240,7 @@ void Nova_PackAllReports(Item **reply, time_t from, time_t delta1, enum cfd_menu
         Nova_PackNotKeptLog(reply, CFR_NOTKEPTLOG, from, type);
         Nova_PackMeter(reply, CFR_METER, from, type);
         Nova_PackBundles(reply, CFR_BUNDLES, from, type);
+        Nova_PackExecutionStatus(reply, CFR_EXECUTION_STATUS);
         break;
 
     case cfd_menu_full:
@@ -271,6 +272,7 @@ void Nova_PackAllReports(Item **reply, time_t from, time_t delta1, enum cfd_menu
         Nova_PackMeter(reply, CFR_METER, from, type);
         Nova_PackBundles(reply, CFR_BUNDLES, from, type);
         Nova_PackSoftwareDates(reply, CFR_SWDATES, from, type);
+        Nova_PackExecutionStatus(reply, CFR_EXECUTION_STATUS);
         break;
 
     default:
