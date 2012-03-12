@@ -2714,3 +2714,44 @@ void NoteEfficiency(double e)
     NovaNamedEvent("Configuration model efficiency", e, a, &p);
     CfOut(cf_verbose, "", " -> Configuration model efficiency for %s = %.2lf%%", VUQNAME, e);
 }
+
+/*****************************************************************************/
+
+void Nova_TrackExecution()
+{
+    char *db_name = NULL;
+    CF_DB *dbp = NULL;
+    time_t now = time(NULL);
+    time_t last_exec;
+    double gavr = 0;
+    double trust_level = 0.7; // sensivity of scheduling history -> higher more sensitive
+
+    xasprintf(&db_name, "%s/%s", CFWORKDIR, NOVA_AGENT_EXECUTION);
+
+    /* get last run data */
+    if (!OpenDB(db_name, &dbp))
+    {
+        CfOut(cf_inform, "", " !! Unable to open %s db", NOVA_AGENT_EXECUTION);
+        return;
+    }
+
+    if (!ReadDB(dbp, NOVA_TRACK_LAST_EXEC, &last_exec, sizeof(time_t)))
+    {
+        last_exec = now;
+    }
+
+    if (!ReadDB(dbp, NOVA_TRACK_DELTA_SCHEDULE, &gavr, sizeof(double)))
+    {
+        gavr = (double)(now - last_exec);
+    }
+
+    /* calculate avrage agent scheduling time */
+    gavr = GAverage ((double)(now - last_exec), gavr, trust_level);
+
+    /* save current run data */
+    WriteDB(dbp, NOVA_TRACK_LAST_EXEC, &now, sizeof(time_t));
+    WriteDB(dbp, NOVA_TRACK_DELTA_SCHEDULE, &gavr, sizeof(double));
+
+    CloseDB(dbp);
+    free(db_name);
+}

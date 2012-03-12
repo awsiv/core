@@ -1157,6 +1157,8 @@ int Nova_ImportHostReports(mongo_connection *dbconnp, const char *filePath);
 int Nova_ImportHostReportsFromStream(mongo_connection *dbconn, char *header, FILE *fin);
 #endif
 
+void Nova_TrackExecution();
+
 /* reporting.c */
 
 void Nova_ImportReports(const char *input_file);
@@ -1419,6 +1421,7 @@ int CfLDAP_JSON_GetSingleAttributeList(char *uri, char *user, char *basedn, char
 #define NOVA_NETWORK "nova_network" "." DB_FEXT
 #define NOVA_GLOBALCOUNTERS "nova_counters" "." DB_FEXT
 #define NOVA_BUNDLE_LOG "bundles" "." DB_FEXT
+#define NOVA_AGENT_EXECUTION "nova_agent_execution" "." DB_FEXT
 
 /* end db file names */
 
@@ -1426,6 +1429,9 @@ int CfLDAP_JSON_GetSingleAttributeList(char *uri, char *user, char *basedn, char
 #define NOVA_PATCHES_INSTALLED "software_patch_status.csv"
 #define NOVA_PATCHES_AVAIL "software_patches_avail.csv"
 /* #define NOVA_SOFTWARE_INSTALLED "software_packages.csv" Moved to cf3.defs.h */
+
+#define NOVA_TRACK_LAST_EXEC "last_exec"
+#define NOVA_TRACK_DELTA_SCHEDULE "delta_gavr"
 
 #define CF_BIGNUMBER 999999
 
