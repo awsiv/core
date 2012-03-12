@@ -30,6 +30,7 @@ void BsonAppendRecentQuery(bson_buffer *querybuf, int maxAgeInSeconds);
 void BsonAppendAgedQuery(bson_buffer *querybuf, int maxAgeInSeconds);
 void BsonToString(char *retBuf, int retBufSz, char *data);
 void BsonAppendHostColourFilter(bson_buffer *query_buffer, HostColourFilter *filter);
+void BsonAppendSortField(bson_buffer *bb, char *sortField);
 
 #endif /* HAVE_LIBMONGOC */
 

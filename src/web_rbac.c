@@ -701,11 +701,18 @@ HubQuery *CFDB_GetAllRolesAuth(char *userName)
 
 static HubQuery *CFDB_GetAllRoles(void)
 {
-    bson query;
+    bson_buffer bb;
+    
+    bson query;    
+    bson_buffer_init(&bb);
+    BsonAppendSortField(&bb, dbkey_role_name);
+    bson_from_buffer(&query, &bb);
+    
+    HubQuery *hq = CFDB_GetRoles(&query);
 
-    bson_empty(&query);
+    bson_destroy(&query);
 
-    return CFDB_GetRoles(&query);
+    return hq;
 }
 
 /*****************************************************************************/

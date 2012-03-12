@@ -506,4 +506,33 @@ void BsonAppendHostColourFilter(bson_buffer *query_buffer, HostColourFilter *fil
     free(score_method);
 }
 
+/*****************************************************************************/
+
+void BsonAppendSortField(bson_buffer *bb, char *sortField)
+/* 
+ * usage:
+ * bson_buffer_init(&bb);
+ * ... append query fields ...
+ * bson_append_string(&bb, somekey, someconstraint);
+ * ...
+ * BsonAppendSortField(&bb, fieldtosorton);
+ * bson_from_buffer(&query, &bb);
+ *
+ * Supports sorting ascending on one field currently.
+ * Works with libmongoc v. 0.2, may need adjustment for newer versions.
+ */
+{
+    bson query;
+    bson_from_buffer(&query, bb);
+
+    bson_buffer_init(bb);
+    bson_append_bson(bb, "$query", &query);
+    bson_destroy(&query);
+  
+    bson_buffer *sort = bson_append_start_object(bb, "$orderby");
+    bson_append_int(sort, sortField, -1);
+    bson_append_finish_object(sort);
+}
+
+
 #endif /* HAVE_LIBMONGOC */
