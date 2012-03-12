@@ -900,7 +900,9 @@ void Nova_UnPackExecutionStatus(mongo_connection *dbconn, char *id, Item *data)
 #ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
-        CFDB_SaveExecutionStatus(dbconn, id, is_blackhost, delta_schedule);
+        CFDB_SaveExecutionStatus(dbconn, id,
+                                 (is_blackhost == 't')? true:false,
+                                 delta_schedule);
     }
 #endif
 
