@@ -149,11 +149,6 @@ void CFDB_SaveUnExpandedPromises(Bundle *bundles, Body *bodies)
     char con[CF_MAXVARSIZE];
     const char *sp;
 
-    if (!SHOWREPORTS)
-    {
-        return;
-    }
-
     if (!CFDB_Open(&dbconn))
     {
         return;
