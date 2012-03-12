@@ -11,6 +11,8 @@
 #include "cf.nova.h"
 
 #ifdef HAVE_LIBMONGOC
+#include "db_save.h"
+
 static bool ReportBookHasData(Item **reports);
 static void Nova_RecordNetwork(mongo_connection *dbconnp, time_t now, double datarate, AgentConnection *conn);
 #endif

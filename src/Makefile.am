@@ -29,8 +29,9 @@ libcfnova_la_SOURCES = \
         acl_linux.c \
         acl_nt.c \
         bson_lib.c \
-        db_save.c \
-        db_query.c db_query \
+        db_common.c db_common.h \
+        db_save.c db_save.h \
+        db_query.c db_query.h \
         db_maintain.c \
         ldap.c \
         license.c \

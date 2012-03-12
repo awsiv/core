@@ -1286,27 +1286,6 @@ void DeletePromiseFilter(PromiseFilter *filter)
 }
 
 /*****************************************************************************/
-
-HostColourFilter *NewHostColourFilter(HostRankMethod method, HostColour colours)
-{
-    long bluehost_threshold = 0;
-    if (!CFDB_GetBlueHostThreshold(&bluehost_threshold))
-    {
-        return NULL;
-    }
-
-    HostColourFilter *filter = xmalloc(sizeof(HostColourFilter));
-    filter->method = method;
-    filter->colour = colours;
-
-    time_t now = time(NULL);
-    filter->blue_time_horizon = (time_t)(now - bluehost_threshold);
-
-    return filter;
-}
-
-
-/*****************************************************************************/
 /*                        REPORT SORTING FUNCTIONS                           */
 /*****************************************************************************/
 

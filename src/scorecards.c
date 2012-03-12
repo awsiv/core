@@ -8,13 +8,30 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "cf3.extern.h"
 #include "scorecards.h"
 #include "bson_lib.h"
+#include "string_lib.h"
 
-#ifdef HAVE_LIBMONGOC
-/*****************************************************************************/
-/*                                                                           */
-/* File: scorecards.c                                                        */
-/*                                                                           */
-/*****************************************************************************/
+#if defined(HAVE_LIBMONGOC)
+#include "db_query.h"
+
+#include <assert.h>
+
+HostColourFilter *NewHostColourFilter(HostRankMethod method, HostColour colours)
+{
+    long bluehost_threshold = 0;
+    if (!CFDB_GetBlueHostThreshold(&bluehost_threshold))
+    {
+        return NULL;
+    }
+
+    HostColourFilter *filter = xmalloc(sizeof(HostColourFilter));
+    filter->method = method;
+    filter->colour = colours;
+
+    time_t now = time(NULL);
+    filter->blue_time_horizon = (time_t)(now - bluehost_threshold);
+
+    return filter;
+}
 
 const char *Nova_HostColourToString(HostColour colour)
 {
@@ -28,8 +45,39 @@ const char *Nova_HostColourToString(HostColour colour)
         return "yellow";
     case HOST_COLOUR_GREEN:
         return "green";
+    case HOST_COLOUR_GREEN_YELLOW_RED:
+        return "green_yellow_red";
     default:
         return "unknown";
+    }
+}
+
+HostColour HostColourFromString(const char *colour)
+{
+    if (StringSafeCompare(colour, "blue") == 0)
+    {
+        return HOST_COLOUR_BLUE;
+    }
+    else if (StringSafeCompare(colour, "red") == 0)
+    {
+        return HOST_COLOUR_RED;
+    }
+    else if (StringSafeCompare(colour, "yellow") == 0)
+    {
+        return HOST_COLOUR_YELLOW;
+    }
+    else if (StringSafeCompare(colour, "green") == 0)
+    {
+        return HOST_COLOUR_GREEN;
+    }
+    else if (StringSafeCompare(colour, "green_yellow_red") == 0)
+    {
+        return HOST_COLOUR_GREEN_YELLOW_RED;
+    }
+    else
+    {
+        assert(false && "Could not parse host colour");
+        return HOST_COLOUR_GREEN_YELLOW_RED;
     }
 }
 
@@ -285,7 +333,7 @@ int Nova_GetHostColour(char *lkeyhash, HostRankMethod method, HostColour *result
    /* result document */
     bson_buffer_init(&bb);
     bson_append_int(&bb, cfr_day, 1);
-    bson_append_int(&bb, cfr_score_comp, 1);
+    bson_append_int(&bb, score_field, 1);
     bson field;
     bson_from_buffer(&field, &bb);
 
@@ -303,7 +351,7 @@ int Nova_GetHostColour(char *lkeyhash, HostRankMethod method, HostColour *result
     else
     {
         time_t then = BsonIntGet(&out, cfr_day);
-        int score = BsonIntGet(&out, cfr_score_comp);
+        int score = BsonIntGet(&out, score_field);
 
         if ((then < (now - bluehost_threshold)) || (score == 0)) // if score not found -> host blue
         {

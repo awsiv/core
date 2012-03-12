@@ -3,8 +3,10 @@
 
 #include "cf.nova.h"
 #include "json.h"
+#include "scorecards.h"
 
 #ifdef HAVE_LIBMONGOC
+#include "db_common.h"
 
 int CFDB_GetBlueHostThreshold(unsigned long *threshold);
 void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn, char *db_name);
@@ -43,6 +45,7 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
                                 int sort, HostClassFilter *hostClassFilter, int lookInArchive);
 HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname, char *ldiff, int regex, time_t lt,
                              int cmp, int sort, HostClassFilter *hostClassFilter, int lookInArchive);
+HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *policy, time_t minGenTime);
 
 HubQuery *CFDB_QueryClassesDistinctSorted(mongo_connection *conn, HostClassFilter *hostClassFilter, PageInfo *page);
 

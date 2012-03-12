@@ -1,3 +1,5 @@
+// WTF: it's hard to imagine that any file name *_test.c should be in src
+
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"

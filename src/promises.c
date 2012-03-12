@@ -14,6 +14,10 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#ifdef HAVE_LIBMONGOC
+#include "db_save.h"
+#endif
+
 #ifdef HAVE_ZONE_H
 # include <zone.h>
 #endif

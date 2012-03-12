@@ -5,6 +5,7 @@
 #include "cf.nova.web_api.h"
 #include "web_rbac.h"
 #include "map.h"
+#include "scorecards.h"
 
 #define cfr_software     "sw"
 #define cfr_patch_avail  "pa"
@@ -3263,29 +3264,9 @@ PHP_FUNCTION(cfpr_host_count)
     int count = 0;
 
     HostColourFilter *host_colour_filter = NULL;
-
     if (!NULL_OR_EMPTY(colour))
     {
-        if (strcmp(colour, "green") == 0)
-        {
-            host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HOST_COLOUR_GREEN);
-        }
-        else if (strcmp(colour, "yellow") == 0)
-        {
-            host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HOST_COLOUR_YELLOW);
-        }
-        else if (strcmp(colour, "red") == 0)
-        {
-            host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HOST_COLOUR_RED);
-        }
-        else if (strcmp(colour, "blue") == 0)
-        {
-            host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HOST_COLOUR_BLUE);
-        }
-        else if (strcmp(colour, "green_yellow_red") == 0)
-        {
-            host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HOST_COLOUR_GREEN_YELLOW_RED);
-        }
+        host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HostColourFromString(colour));
     }
 
     count = CFDB_CountHosts(&conn, filter, host_colour_filter);
