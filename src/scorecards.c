@@ -333,7 +333,7 @@ int Nova_GetHostColour(char *lkeyhash, HostRankMethod method, HostColour *result
    /* result document */
     bson_buffer_init(&bb);
     bson_append_int(&bb, cfr_day, 1);
-    bson_append_int(&bb, cfr_score_comp, 1);
+    bson_append_int(&bb, score_field, 1);
     bson field;
     bson_from_buffer(&field, &bb);
 
@@ -351,7 +351,7 @@ int Nova_GetHostColour(char *lkeyhash, HostRankMethod method, HostColour *result
     else
     {
         time_t then = BsonIntGet(&out, cfr_day);
-        int score = BsonIntGet(&out, cfr_score_comp);
+        int score = BsonIntGet(&out, score_field);
 
         if ((then < (now - bluehost_threshold)) || (score == 0)) // if score not found -> host blue
         {
