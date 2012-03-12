@@ -39,11 +39,6 @@ void Nova_StoreExpandedPromise(Promise *pp)
     bson b;
     int j;
 
-    if (!SHOWREPORTS)
-    {
-        return;
-    }
-
 // NOTE: Inefficient to Open/Close DB for each promise,
 // but call is coming from community which may not have DB
 

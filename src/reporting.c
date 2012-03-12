@@ -2379,7 +2379,12 @@ void Nova_ShowPromises(Bundle *bundles, Body *bodies)
 void Nova_ShowPromise(const char *version, Promise *pp, int indent)
 {
 #if defined (HAVE_LIBMONGOC)
-    Nova_StoreExpandedPromise(pp);
+
+    if (SHOWREPORTS)
+    {
+	Nova_StoreExpandedPromise(pp);
+    }
+
     if (FKNOW)
     {
         Nova_MapPromiseToTopic(FKNOW, pp, version);
