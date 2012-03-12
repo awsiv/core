@@ -600,8 +600,12 @@ class Ion_auth
             
             foreach($users as $user){
                 $user_with_roles=$user;
+                
                 $user_details_from_db=$this->get_ldap_user_details_from_local_db($user['name']);
+                
+                if(is_object($user_details_from_db)){
                 $user_with_roles['roles']=$user_details_from_db->roles;
+                }
                 array_push($users_collection, $user_with_roles);
                 
             }
