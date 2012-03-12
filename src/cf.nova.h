@@ -1569,6 +1569,8 @@ typedef struct
 #define cfr_score_perf    "scP"
 #define cfr_score_lastseen "scL"
 #define cfr_score_mixed   "scM"
+#define cfr_schedule      "sch"
+#define cfr_is_black      "bh"
 
 #define cfr_netmeasure    "ne"
 #define cfr_lastseen_hosts "lastseen_hosts"

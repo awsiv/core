@@ -44,6 +44,6 @@ void CFDB_SaveCachedTotalCompliance(mongo_connection *conn, char *policy, int sl
 int CFDB_SaveLastseenCache(Item *lastseen);
 void CFDB_SaveGoalsCache(char *goal_patterns, char *goal_categories);
 int CFDB_MarkAsDeleted(mongo_connection *dbconn, char *keyHash);
-
+void CFDB_SaveExecutionStatus(mongo_connection *conn, char *keyhash, bool is_black, long delta_schedule);
 
 #endif
