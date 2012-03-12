@@ -13,7 +13,12 @@
         </div>
         <div class="tables tablesfixed">
             <?php
-            $data = json_decode($report_result, true);
+            if(!is_array($report_result)){
+               $data = json_decode($report_result, true); 
+            }else{
+                $data=$report_result;
+            }
+            
             if (is_array($data) && !empty($data)) {
                 echo host_only_table($data);
             } else {

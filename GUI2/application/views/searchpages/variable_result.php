@@ -1,6 +1,9 @@
 <?php
-
-$result = json_decode($report_result, true);
+if(is_array($report_result)){
+    $result=$report_result;
+}else{
+    $result = json_decode($report_result, true);
+}
 //$this->table->set_heading(array_keys($result['meta']['header']))
 if (is_array($result['meta']) && key_exists('truncated', $result['meta'])) {
     $message = $result['meta']['truncated'];

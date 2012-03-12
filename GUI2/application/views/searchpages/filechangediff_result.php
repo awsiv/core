@@ -1,6 +1,9 @@
 <?php
-
-$result = json_decode($report_result, true);
+if(is_array($report_result)){
+  $result=$report_result; 
+}else{
+  $result = json_decode($report_result, true);
+}
 if (key_exists('truncated', $result['meta'])) {
     $message = $result['meta']['truncated'];
     echo "<p class=\"info\">$message</p>";
