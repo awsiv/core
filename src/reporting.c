@@ -2368,7 +2368,7 @@ void Nova_OpenCompilationReportFiles(const char *fname)
 void Nova_ShowPromises(Bundle *bundles, Body *bodies)
 {
 #if defined(HAVE_LIBMONGOC)
-    Nova_StoreUnExpandedPromises(bundles, bodies);
+    CFDB_SaveUnExpandedPromises(bundles, bodies);
 #else
     ShowPromisesInReport(bundles, bodies);
 #endif
@@ -2382,7 +2382,7 @@ void Nova_ShowPromise(const char *version, Promise *pp, int indent)
 
     if (SHOWREPORTS)
     {
-	Nova_StoreExpandedPromise(pp);
+	CFDB_SaveExpandedPromise(pp);
     }
 
     if (FKNOW)

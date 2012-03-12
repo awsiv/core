@@ -25,8 +25,7 @@
 
 #ifdef HAVE_LIBMONGOC
 
-// WTF: hm, you mean CFDB_SaveExpandedPromise?
-void Nova_StoreExpandedPromise(Promise *pp)
+void CFDB_SaveExpandedPromise(Promise *pp)
 {
     Constraint *cp;
     char rval_buffer[CF_BUFSIZE];
@@ -132,7 +131,7 @@ void Nova_StoreExpandedPromise(Promise *pp)
 
 /*****************************************************************************/
 
-void Nova_StoreUnExpandedPromises(Bundle *bundles, Body *bodies)
+void CFDB_SaveUnExpandedPromises(Bundle *bundles, Body *bodies)
 {
     Body *bdp;
     Bundle *bp;
@@ -257,7 +256,7 @@ void Nova_StoreUnExpandedPromises(Bundle *bundles, Body *bodies)
 
     for (bdp = bodies; bdp != NULL; bdp = bdp->next)
     {
-        Nova_StoreBody(&dbconn, bdp);
+        CFDB_SaveBody(&dbconn, bdp);
     }
 
     CFDB_Close(&dbconn);
@@ -265,7 +264,7 @@ void Nova_StoreUnExpandedPromises(Bundle *bundles, Body *bodies)
 
 /*****************************************************************************/
 
-void Nova_StoreBody(mongo_connection *dbconn, Body *body)
+void CFDB_SaveBody(mongo_connection *dbconn, Body *body)
 {
     Rlist *rp;
     Constraint *cp;
@@ -340,7 +339,7 @@ void Nova_StoreBody(mongo_connection *dbconn, Body *body)
 
 #else
 
-void Nova_StoreUnExpandedPromises(Bundle *bundles, Body *bodies)
+void CFDB_SaveUnExpandedPromises(Bundle *bundles, Body *bodies)
 {
 }
 

@@ -1110,9 +1110,9 @@ void DeleteFileLine(FileLine **liststart, FileLine *item);
 
 /* promise_db.c */
 
-void Nova_StoreExpandedPromise(Promise *pp);
-void Nova_StoreUnExpandedPromises(Bundle *bundles, Body *bodies);
-void Nova_StoreBody(mongo_connection *dbconn, Body *body);
+void CFDB_SaveExpandedPromise(Promise *pp);
+void CFDB_SaveUnExpandedPromises(Bundle *bundles, Body *bodies);
+void CFDB_SaveBody(mongo_connection *dbconn, Body *body);
 
 /* promises.c */
 
