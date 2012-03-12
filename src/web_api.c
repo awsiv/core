@@ -3004,8 +3004,6 @@ void Nova2PHP_host_compliance_list_all(mongo_connection *conn, HostClassFilter *
     int endIndex = 0;
     int count = -1;;
 
-    Nova_WebTopicMap_Initialize();
-
     HostColourFilter *host_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HOST_COLOUR_GREEN_YELLOW_RED);
     clist = CFDB_GetHostByColour(conn, host_class_filter, host_colour_filter);
     free(host_colour_filter);

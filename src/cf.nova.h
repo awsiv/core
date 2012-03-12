@@ -877,12 +877,6 @@ int Nova_ReadHistogram2(mongo_connection *conn, DataView *cfv, char *hostkey, ch
 Item *Nova_MapHistogram(DataView *cfv, char *keyhash);
 void Nova_AnalyseHistogram(char *keyhash, enum observables obs, char *buffer, int bufsize);
 
-/* html.c */
-void Nova_Footer(char *buffer, int bufsize);
-void Nova_Header(char *title, char *device_type, char *buffer, int bufsize);
-void Nova_TabMenu(char *s, char *buffer, int bufsize);
-void Nova_IncludeFile(char *name, char *buffer, int bufsize);
-
 /* hub.c */
 
 Item *Nova_ScanClients(void);

@@ -50,7 +50,6 @@ libcfnova_la_SOURCES = \
         pscalar.c \
         runagent.c \
         reporting.c \
-        html.c \
         syntax.c \
         scorecards.c scorecards.h \
         copernicus.c \
