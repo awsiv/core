@@ -19,6 +19,10 @@ class Cf_Model extends CI_Model {
     function getErrors($level=self::ERROR) {
         return isset($this->errors[$level]) ? $this->errors[$level] : array();
     }
+    
+    function getErrorsString($level=self::ERROR){
+         return isset($this->errors[$level]) ? implode(',', $this->errors[$level]) : array();
+    }
 
     /**
      * 0 if no errors
@@ -42,6 +46,7 @@ class Cf_Model extends CI_Model {
     function checkData($data) {
         $data_check = json_decode($data, true);
         $returnVal = true;
+       
         if (function_exists("json_last_error")) {
             if (json_last_error() != 0) {
                 $this->setError("Valid Json Data cannot be generated . DATA is :: $data");
