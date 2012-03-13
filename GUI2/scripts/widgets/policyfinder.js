@@ -1,41 +1,41 @@
-(function($){
+(function($) {
     $.widget('ui.policyfinder',
     {
         options: {
             baseUrl: '',
-            filterhandlerurl: "/widget/filterpolicy",
-            width:700,
-            height:600,
-            defaultbehaviour:true,
-            onlyShowHandle:false,
-            showAddButton:false
+            filterhandlerurl: '/widget/filterpolicy',
+            width: 700,
+            height: 600,
+            defaultbehaviour: true,
+            onlyShowHandle: false,
+            showAddButton: false
         },
-        dataLoaded : false,
-        elementtext:"",
-        page:2,
-        selectedLetter:null,
-        scrollingEnd:false,
-        submitUrl:'',
-        ajaxloader:$('<span class="loading2"></span>'),
+        dataLoaded: false,
+        elementtext: '',
+        page: 2,
+        selectedLetter: null,
+        scrollingEnd: false,
+        submitUrl: '',
+        ajaxloader: $('<span class="loading2"></span>'),
         originalTitle: '',
-        animate:false,
-        _init: function(){
-            var self=this;
+        animate: false,
+        _init: function() {
+            var self = this;
             self.resetPagination();
-            $('#'+self.containerID()).bind('scroll',$.proxy(self.policylistscrolled,self));
+            $('#' + self.containerID()).bind('scroll', $.proxy(self.policylistscrolled, self));
         },
 
-        _create:function(){
-            var self=this;
+        _create: function() {
+            var self = this;
             self.addsearchbar();
             self.addalphapager();
             $.ui.policyfinder.instances.push(this.element);
-            $('#'+self.containerID()).delegate('a','click',$.proxy(self.handleSelected,self));
-            $('#'+self.containerID()).delegate('.vblistadd','click',$.proxy(self.addSelected,self));
+            $('#' + self.containerID()).delegate('a', 'click', $.proxy(self.handleSelected, self));
+            $('#' + self.containerID()).delegate('.vblistadd', 'click', $.proxy(self.addSelected, self));
 
         },
 
-        resetPagination:function() {
+        resetPagination: function() {
             var self = this;
             self.page = 2;
             self.selectedLetter = '';
@@ -43,99 +43,99 @@
 
         },
 
-        containerID:function() {
-            return this.element.attr('id') + '-'+'policyListContainer';
+        containerID: function() {
+            return this.element.attr('id') + '-' + 'policyListContainer';
         },
 
         dialogContainer: function() {
             var self = this;
-            var existing = $('#' + self.containerID() );
+            var existing = $('#' + self.containerID());
 
-            if ( existing.length > 0) {
+            if (existing.length > 0) {
                 return existing.first();
             }
             else {
                 //single shared element for modal dialogs
-                var requestDialog = $('<div id="'+self.containerID()+'" style="display:none" class="result" title="Promises"><div id="policyList"><ul id="'+self.containerID()+'-ul"></ul></div></div>').appendTo('body').
+                var requestDialog = $('<div id="' + self.containerID() + '" style="display:none" class="result" title="Promises"><div id="policyList"><ul id="' + self.containerID() + '-ul"></ul></div></div>').appendTo('body').
                     dialog({
                     autoOpen: false,
-                    title:'Promises',
+                    title: 'Promises',
                     beforeClose: function(event, ui) {
                         // self.destroy();
                     }
 
-                }).bind('dialogclose', function(event, ui){
+                }).bind('dialogclose', function(event, ui) {
                     return false;
                 });
-                self.originalTitle =  requestDialog.dialog( "option", "title" );
+                self.originalTitle = requestDialog.dialog('option', 'title');
 
                 return requestDialog;
             }
         },
 
-        policylistscrolled:function(event) {
-            var $listpane=$(event.currentTarget);
-            var self=this;
+        policylistscrolled: function(event) {
+            var $listpane = $(event.currentTarget);
+            var self = this;
             if (self.scrollingEnd == true || self.animate == true) return;
 
 
-            if ($listpane[0].scrollHeight - $listpane.scrollTop() <= ($listpane.outerHeight()+50)) {
+            if ($listpane[0].scrollHeight - $listpane.scrollTop() <= ($listpane.outerHeight() + 50)) {
                 self.animate = true;
-                var url = self.submitUrl+'/'+self.page;
-                self.loadpagebody(url,self.selectedLetter,true);
+                var url = self.submitUrl + '/' + self.page;
+                self.loadpagebody(url, self.selectedLetter, true);
                 self.page++;
             }
         },
 
-        changeTitle:function(text) {
+        changeTitle: function(text) {
             var self = this;
-            $('#'+self.containerID()).dialog('option', 'title', text);
+            $('#' + self.containerID()).dialog('option', 'title', text);
             self.ajaxloader.show();
         },
 
-        revertTitle:function() {
+        revertTitle: function() {
             var self = this;
-            $('#'+self.containerID()).dialog('option', 'title', self.originalTitle);
+            $('#' + self.containerID()).dialog('option', 'title', self.originalTitle);
              self.ajaxloader.hide();
         },
 
 
-        addsearchbar:function(){
-            var self =this;
+        addsearchbar: function() {
+            var self = this;
 
             self.dialogcontent = self.dialogContainer();
             self.dialogcontent.dialog($.extend({},
             $.ui.dialog.prototype.options,
             self.options,
             {
-                autoOpen:false,
-                modal:true
+                autoOpen: false,
+                modal: true
             }
         ));
             self.dialogcontent.parent().addClass('customdlg').removeClass('ui-widget-content');
-            self.titlebar=self.dialogcontent.siblings('div.ui-dialog-titlebar');
+            self.titlebar = self.dialogcontent.siblings('div.ui-dialog-titlebar');
             //self.menuhandler=$('<span id="handle" class="operation">Options</span>');
             //self.titlebar.append(self.menuhandler).delegate('#handle','click',function(){self.menu.slideToggle();});
 
 
             if (!self.options.onlyShowHandle) {
-                self.searchbar=$('<form id="policyfindersearch" action="'+self.options.baseUrl+'/widget/search_by_bundle"><span class="search"><input type="text" name="search" value="Search by bundle"/></span></form>')
+                self.searchbar = $('<form id="policyfindersearch" action="' + self.options.baseUrl + '/widget/search_by_bundle"><span class="search"><input type="text" name="search" value="Search by bundle"/></span></form>');
             } else {
-                self.searchbar=$('<form id="policyfindersearch" action="'+self.options.baseUrl+'/widget/search_by_handle"><span class="search"><input type="text" name="search" value="Search by handle"/></span></form>')
+                self.searchbar = $('<form id="policyfindersearch" action="' + self.options.baseUrl + '/widget/search_by_handle"><span class="search"><input type="text" name="search" value="Search by handle"/></span></form>');
 
             }
 
-            self.titlebar.append(self.searchbar).delegate('form','submit',$.proxy(self.searchpolicyfile,self));
+            self.titlebar.append(self.searchbar).delegate('form', 'submit', $.proxy(self.searchpolicyfile, self));
             self.titlebar.append(self.ajaxloader);
-            self.searchbar.delegate('input[type="text"]','click',function(){
-                $(this).focus().select()
+            self.searchbar.delegate('input[type="text"]', 'click', function() {
+                $(this).focus().select();
             });
-            self.searchbar.delegate('input[type="text"]','focusin',$.proxy(self.searchboxevent,self));
-            self.searchbar.delegate('input[type="text"]','focusout',$.proxy(self.searchboxevent,self));
-            self.searchbar.find('input[type="text"]').data('default',self.searchbar.find('input[type="text"]').val());
-            self.searchbar.delegate('input[type="text"]','keyup',$.proxy(self.searchbarkeyevent,self));
+            self.searchbar.delegate('input[type="text"]', 'focusin', $.proxy(self.searchboxevent, self));
+            self.searchbar.delegate('input[type="text"]', 'focusout', $.proxy(self.searchboxevent, self));
+            self.searchbar.find('input[type="text"]').data('default', self.searchbar.find('input[type="text"]').val());
+            self.searchbar.delegate('input[type="text"]', 'keyup', $.proxy(self.searchbarkeyevent, self));
 
-            self.menu=$('<div class="categories"><ul id="classoptions"></ul></div>');
+            self.menu = $('<div class="categories"><ul id="classoptions"></ul></div>');
 
             if (!self.options.onlyShowHandle) {
                 self.menu.find('ul').append('<li>by bundle</li><li>by handle</li><li>by promiser</li><li>by type</li>');
@@ -143,20 +143,20 @@
                 self.menu.find('ul').append('<li>by handle</li>');
             }
 
-            $('<span class="slider"></span>').appendTo(self.menu).bind('click',function(event){
+            $('<span class="slider"></span>').appendTo(self.menu).bind('click', function(event) {
                 self.menu.slideUp();
             });
             self.menu.appendTo(self.titlebar).hide();
-            self.menu.delegate('li','click',$.proxy(self.menuitemclicked,self));
-            self.element.bind('click',function(event){
+            self.menu.delegate('li', 'click', $.proxy(self.menuitemclicked, self));
+            self.element.bind('click', function(event) {
                 event.preventDefault();
-                self.elementtext=$(this).text();
+                self.elementtext = $(this).text();
                 $(this).text('').append('<span class="loadinggif"> </span>');
 
                 // check if it has already been opened before
                 if (!self.dataLoaded) {
-                    self.submitUrl =  self.options.baseUrl + '/widget/allpolicies'
-                    self.loadpagebody(self.submitUrl,"",true);
+                    self.submitUrl = self.options.baseUrl + '/widget/allpolicies';
+                    self.loadpagebody(self.submitUrl, '', true);
                     self.dialogcontent.dialog('open');
 
                 } else {
@@ -168,19 +168,19 @@
 
         },
 
-        menuitemclicked:function(event){
-            var self=this;
+        menuitemclicked: function(event) {
+            var self = this;
             self.animate = true;
-            var sender=$(event.target);
-            var selected_category=sender.text().toLowerCase();
-            self.searchbar.find('input[type="text"]').val('Search '+sender.text().toLowerCase()).data('default','Search '+sender.text().toLowerCase())
+            var sender = $(event.target);
+            var selected_category = sender.text().toLowerCase();
+            self.searchbar.find('input[type="text"]').val('Search ' + sender.text().toLowerCase()).data('default', 'Search ' + sender.text().toLowerCase());
 
-            self.submitUrl = self.options.baseUrl+"/widget/search_"+selected_category.replace(/\s+/g, "_").toLowerCase();
+            self.submitUrl = self.options.baseUrl + '/widget/search_'+ selected_category.replace(/\s+/g, '_').toLowerCase();
 
-            self.searchbar.attr("action", self.submitUrl);
+            self.searchbar.attr('action', self.submitUrl);
             self.emptyContainer();
             self.resetPagination();
-            self.loadpagebody( self.submitUrl ,"",false) ;
+            self.loadpagebody(self.submitUrl, '', false);
             self.searchbar.find('input[type="text"]').trigger('blur');
             self.alphasearch.find('li').removeClass('selected');
             sender.addClass('selected').siblings().removeClass('selected');
@@ -188,16 +188,16 @@
         },
 
 
-        updateDataInContainer:function(data) {
-            var self = this
+        updateDataInContainer: function(data) {
+            var self = this;
               // To end the scrolling so that no further request is sent
-            if (data.length == 0 || data ==null ) {
+            if (data.length == 0 || data == null) {
                 self.scrollingEnd = true;
                 self.revertTitle();
                 return;
             }
 
-            var containerUlId = self.containerID()+'-ul';
+            var containerUlId = self.containerID() + '-ul';
             document.getElementById(containerUlId).innerHTML += data;
             self.dataLoaded = true;
             self.element.text(self. elementtext);
@@ -207,42 +207,42 @@
 
         emptyContainer: function() {
             var self = this;
-            var containerUlId = self.containerID()+'-ul';
+            var containerUlId = self.containerID() + '-ul';
             document.getElementById(containerUlId).innerHTML = '';
         },
 
-        loadpagebody:function(url,val,escreg){
+        loadpagebody: function(url,val,escreg) {
 
-            var self=this,
+            var self = this,
 
-            submit_url=url,
-            searchval=val;
-            var searchtext=self.searchbar.find('input[type="text"]').val();
-            if(/search\s+by\s+/.test(searchtext)){
-                searchtext='';
-            };
+            submit_url = url,
+            searchval = val;
+            var searchtext = self.searchbar.find('input[type="text"]').val();
+            if (/search\s+by\s+/.test(searchtext)) {
+                searchtext = '';
+            }
             self.changeTitle('Loading');
 
             $.ajax({
-                type: "POST",
+                type: 'POST',
                 url: submit_url,
                 data: {
-                    filter:searchval,
-                    reg:escreg,
-                    type:searchtext,
-                    showButton:self.options.showAddButton,
-                    showOnlyHandle:self.options.onlyShowHandle
+                    filter: searchval,
+                    reg: escreg,
+                    type: searchtext,
+                    showButton: self.options.showAddButton,
+                    showOnlyHandle: self.options.onlyShowHandle
                 },
-                dataType:"html",
+                dataType: 'html',
                 success: function(data) {
                     self.updateDataInContainer(data);
-                    self.animate=false;
+                    self.animate = false;
                 },
-                error:function(jqXHR, textStatus, errorThrown){
-                    var containerUlId = self.containerID()+'-ul';
+                error: function(jqXHR, textStatus, errorThrown) {
+                    var containerUlId = self.containerID() + '-ul';
                     //self.dialogcontent.html($("<ul>").attr("id", self.containerID()));
-                    var li = '<li><span class="type">'+textStatus+'</span><p>'+errorThrown+'</p>';
-                    document.getElementById(containerUlId).innerHTML = li ;
+                    var li = '<li><span class="type">' + textStatus + '</span><p>' + errorThrown + '</p>';
+                    document.getElementById(containerUlId).innerHTML = li;
                     self.revertTitle();
                 }
             });
@@ -250,119 +250,119 @@
 
         },
 
-        handleSelected:function(event){
-            var self=this,
-            sender=$(event.target);
-            if(!self.options.defaultbehaviour)
+        handleSelected: function(event) {
+            var self = this,
+            sender = $(event.target);
+            if (!self.options.defaultbehaviour)
             {
                 event.preventDefault();
-                if(self.options.showAddButton){
-                    self._trigger("handleClicked",event,{
-                        selectedHandleName:sender.parent().parent().find('span.handle').html()
-                    })
-                }else{
-                    self._trigger("handleClicked",event,{
-                        selectedHandleName:sender.html()
-                    })
+                if (self.options.showAddButton) {
+                    self._trigger('handleClicked', event, {
+                        selectedHandleName: sender.parent().parent().find('span.handle').html()
+                    });
+                }else {
+                    self._trigger('handleClicked', event, {
+                        selectedHandleName: sender.html()
+                    });
                 }
             }
         },
 
-        addSelected:function(event){
-            var self=this,
-            sender=$(event.target);
-            self._trigger("handleClicked",event,{
-                selectedHandleName:sender.parent().find('span.handle').html()
-            })
+        addSelected: function(event) {
+            var self = this,
+            sender = $(event.target);
+            self._trigger('handleClicked', event, {
+                selectedHandleName: sender.parent().find('span.handle').html()
+            });
         },
 
-        searchboxevent:function(event)
+        searchboxevent: function(event)
         {
-            var self=this;
-            var searchbox=event.target
-            if(searchbox.value==$(searchbox).data('default') && event.type=='focusin')
+            var self = this;
+            var searchbox = event.target;
+            if (searchbox.value == $(searchbox).data('default') && event.type == 'focusin')
             {
                 self.menu.slideDown();
-                searchbox.value='';
+                searchbox.value = '';
             }
-            if(searchbox.value=='' && event.type=='focusout')
+            if (searchbox.value == '' && event.type == 'focusout')
             {
-                searchbox.value=$(searchbox).data('default');
+                searchbox.value = $(searchbox).data('default');
             }
         },
-        searchpolicyfile:function(event)
+        searchpolicyfile: function(event)
         {
             event.preventDefault();
-            var self=this,
-            sender=$(event.target),
-            searchval=sender.find('input').val();
+            var self = this,
+            sender = $(event.target),
+            searchval = sender.find('input').val();
             self.animate = true;
-            self.submitUrl=sender.attr('action'),
+            self.submitUrl = sender.attr('action'),
             self.emptyContainer();
             self.resetPagination();
             self.selectedLetter = searchval;
-            self.loadpagebody(self.submitUrl,searchval,true);
+            self.loadpagebody(self.submitUrl, searchval, true);
             self.alphasearch.find('li').removeClass('selected');
             self.menu.fadeOut();
         },
 
-        addalphapager:function()
+        addalphapager: function()
         {
-            var self=this;
-            var alphabets="A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z";
-            var alphaarr=alphabets.split(',');
-            self.alphasearch=$("<ul>").attr("class", "alphasearch");
+            var self = this;
+            var alphabets = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z';
+            var alphaarr = alphabets.split(',');
+            self.alphasearch = $('<ul>').attr('class', 'alphasearch');
             $.each(alphaarr, function(i,val) {
-                var li = $("<li>");
-                $("<a>").text(val).attr({
-                    title:val,
-                    href:"#"
+                var li = $('<li>');
+                $('<a>').text(val).attr({
+                    title: val,
+                    href: '#'
                 }).appendTo(li);
                 li.appendTo(self.alphasearch);
             });
             self.alphasearch.appendTo(self.dialogcontent.parent());
-            self.alphasearch.delegate('a','click',$.proxy(self.sorton,self));
+            self.alphasearch.delegate('a', 'click', $.proxy(self.sorton, self));
         },
 
-        sorton:function(event){
+        sorton: function(event) {
             event.preventDefault();
-            var self=this;
-            var sender=$(event.target).parent();
+            var self = this;
+            var sender = $(event.target).parent();
             sender.addClass('selected').siblings().removeClass('selected');
             self.animate = true;
             self.emptyContainer();
             self.resetPagination();
-            self.selectedLetter = "^["+$(event.target).text()+'|'+$(event.target).text().toLowerCase()+']';
-            self.loadpagebody(self.searchbar.attr('action'),self.selectedLetter,false);
-            if(self.menu.css('display')=='block')
+            self.selectedLetter = '^['+ $(event.target).text() + '|' + $(event.target).text().toLowerCase() + ']';
+            self.loadpagebody(self.searchbar.attr('action'), self.selectedLetter, false);
+            if (self.menu.css('display') == 'block')
             {
                 self.menu.fadeOut(400);
             }
         },
 
-        searchbarkeyevent:function(event){
+        searchbarkeyevent: function(event) {
             var self = this,
-            searchbox= $(event.target),
+            searchbox = $(event.target),
             searchWord = searchbox.val();
-            if(searchWord==''&& event.keyCode == 8)
+            if (searchWord == '' && event.keyCode == 8)
             {
                 self.menu.slideDown();
             }
         },
 
-        destroy: function(){
+        destroy: function() {
             // remove this instance from $.ui.mywidget.instances
             var element = this.element,
             position = $.inArray(element, $.ui.classfinder.instances);
             // if this instance was found, splice it off
-            if(position > -1){
+            if (position > -1) {
                 $.ui.classfinder.instances.splice(position, 1);
             }
             // call the original destroy method since we overwrote it
-            $.Widget.prototype.destroy.call( this );
+            $.Widget.prototype.destroy.call(this);
         },
 
-        hideDialog:function() {
+        hideDialog: function() {
             this.dialogContainer().dialog('close');
         }
 
