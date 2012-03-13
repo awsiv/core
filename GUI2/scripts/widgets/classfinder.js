@@ -1,18 +1,18 @@
 (function($){
     var classfinder_animate = false;
-    $.widget('ui.classfinder', 
-    {     
+    $.widget('ui.classfinder',
+    {
         _context:{
             includes: [],
             excludes :[]
         },
-       
+
         options: {
             baseUrl: '',
             filterhandlerurl: "/widget/filterclass",
             defaultbehaviour:true,
             width:700,
-            height:600,         
+            height:600,
              subscribe: ''
         },
         page:2,
@@ -23,36 +23,36 @@
         animate:false,
         ajaxloader:$('<span class="loading2"></span>'),
         _init: function(){
-            var self=this;  
+            var self=this;
             self.resetPagination();
             self.dialogcontent.bind('scroll',$.proxy(self.classlistscrolled,self));
-            
+
             self.dialogcontent.ajaxError(function(e, jqxhr, settings, exception) {
                 self._displayFailure(settings.url,jqxhr,exception);
             });
             self.setContext(self.options.includes,self.options.excludes);
-             
+
         },
         _create:function(){
             var self=this;
             self.addsearchbar();
             self.addalphapager();
-            
+
             self.element.bind('click',function(event){
                 event.preventDefault();
                 self. elementtext=$(this).text();
                 $(this).text('').append('<span class="loadinggif"> </span>');
-               
+
                 self.dialogcontent.dialog('open');
                 self.loadpagebody();
-            
+
             });
-                        
-            $.ui.classfinder.instances.push(this.element);           
+
+            $.ui.classfinder.instances.push(this.element);
         },
-        
-        
-      
+
+
+
         _displayFailure: function(uri,x,e) {
             var serverMsg,
             self=this;
@@ -70,7 +70,7 @@
                 serverMsg='Unknow Error.\n'+x.responseText;
             }
             self.dialogcontent.html("<div class='ui-state-error' style='padding: 1em;width:90%'><p><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span>Sorry, a software error has occured.</p><p>" + x.status + " "  + serverMsg+"</p></div>");
-            self.element.text(self.elementtext); 
+            self.element.text(self.elementtext);
             self.revertTitle();
         },
 
@@ -139,21 +139,21 @@
             });
             self.menu.appendTo(self.titlebar).hide();
             self.menu.delegate('li','click',$.proxy(self.menuitemclicked,self));
-            
+
 
         },
 
         menuitemclicked:function(event){
             var self=this;
             var sender=$(event.target);
-            self.selectedLetter = null; // reset the letter selection 
+            self.selectedLetter = null; // reset the letter selection
             self.resetPagination();
             self.resetScrollPosition();
             self.searchbar.find('input[type="text"]').val('Search on '+sender.text().toLowerCase()).data('default','Search on '+sender.text().toLowerCase())
             self.dialogcontent.html(self.ajaxloader);
             sender.addClass('selected').siblings().removeClass('selected');
             self.selectedMenu = sender.text().toLowerCase();
-            
+
             var params = {
                 'url':self.options.baseUrl+self.options.filterhandlerurl,
                 'data': {
@@ -164,14 +164,14 @@
                 }
             };
             self.sendRequest(params);
-            
-            
+
+
             self.searchbar.find('input[type="text"]').trigger('blur');
-            self.resetSelectedLetter();            
+            self.resetSelectedLetter();
         },
-        
+
         classlistscrolled:function(event) {
-            
+
             var listpane=event.currentTarget;
             var self=this;
 
@@ -181,18 +181,18 @@
                 self.selectedMenu='all classes';
             }
             var filter=self.selectedMenu.toLowerCase().split(" ")[0];
-            
+
             if ($(listpane)[0].scrollHeight - ($(listpane).scrollTop()) <= ($(listpane).outerHeight()+50)) {
                 classfinder_animate = true;
-    
-               
-                var url = self.options.baseUrl+self.options.filterhandlerurl+'/'+self.page;   
+
+
+                var url = self.options.baseUrl+self.options.filterhandlerurl+'/'+self.page;
                 if (self.selectedLetter != null) {
                     url = url + '/' + self.selectedLetter;
                 }
                 self.changeTitle("Loading");
-                   
-                  
+
+
                 var params = {
                     'url':url,
                     'data': {
@@ -203,11 +203,11 @@
                         self.loadDataInContainer(data,true);
                     }
                 };
-                self.sendRequest(params);     
-                        
-                self.page++;              
+                self.sendRequest(params);
+
+                self.page++;
             }
-            
+
         },
 
         addclassfilter:function(event)
@@ -215,14 +215,14 @@
             event.preventDefault();
             var self=this,
             sender=$(event.target),
-            selectedclass = $(sender).attr('title');     
+            selectedclass = $(sender).attr('title');
             var li = $("<li>");
             li.text(selectedclass).data('filter',selectedclass).appendTo(self.filter);
             $("<a>").text("X").appendTo(li)
             self.filter.find('li').delegate('a','click',$.proxy(self.removeclassfilter,self));
             self.gethostbtn.show();
         },
-    
+
         removeclassfilter:function(event)
         {
             event.preventDefault();
@@ -264,20 +264,20 @@
             var previousListElement = document.getElementById('classList');
             var previousList = null;
             if (previousListElement != null && previousListElement.value != '' ) {
-                previousList =previousListElement.innerHTML; 
+                previousList =previousListElement.innerHTML;
             }
-            
+
             var list = [];
             var length = data.length;
-            
+
             // To end the scrolling so that no further request is sent
             if (data.length == 0) {
                 self.scrollingEnd = true;
             }
-          
+
             for(var i=0;i<length;i++) {
                 list.push('<li>');
-                var val = data[i]; 
+                var val = data[i];
                 var viewHostLink = '';
                 var addClassLink = '';
                 var textLink = '<a class="name" title="'+val+'" href="'+ self.options.baseUrl+"/search/index/host/All/report/contexts/name/"+val +'">'+val+'</a>';
@@ -288,11 +288,11 @@
                 list.push(textLink);
                 list.push(viewHostLink);
                 list.push(addClassLink);
-                list.push('</li>');                                                  
+                list.push('</li>');
             }
-            
+
             var ul = '';
-            if (append) {                
+            if (append) {
                 ul=  '<ul id="classList">' +previousList + list.join('') + '</ul>';
             } else {
                 ul=  '<ul id="classList">' + list.join('') + '</ul>';
@@ -329,14 +329,14 @@
                 var requestDialog = $('<div id="classlistcontainer" style="display:none" class="result" title="Classes"><ul id="classList"></ul></div>').appendTo('body').
                 dialog({
                     autoOpen: false,
-                    beforeClose: function(event, ui) { 
+                    beforeClose: function(event, ui) {
                         self.destroy();
                     }
                 });
                 self.originalTitle =  requestDialog.dialog( "option", "title" );
                 return requestDialog;
             }
-           
+
         },
 
         searchboxevent:function(event)
@@ -362,12 +362,12 @@
                 self.selectedMenu='all classes';
             }
             var filter=self.selectedMenu.toLowerCase().split(" ")[0];
- 
+
             var searchWord = encodeURIComponent(searchbox.val());
-            
+
             if(event.keyCode == 13) {
-                var url = self.options.baseUrl+self.options.filterhandlerurl+'/1/'+searchWord;     
-                self.selectedLetter = searchWord; 
+                var url = self.options.baseUrl+self.options.filterhandlerurl+'/1/'+searchWord;
+                self.selectedLetter = searchWord;
                 var params = {
                     'url':url,
                     'data': {
@@ -377,8 +377,8 @@
                         self.loadDataInContainer(data,true);
                     }
                 };
-                self.sendRequest(params);     
-            }          
+                self.sendRequest(params);
+            }
         },
 
         addalphapager:function()
@@ -390,7 +390,7 @@
             $.each(alphaarr, function(i,val) {
                 var li = $("<li>");
                 $("<a>").text(val).attr({
-                    title:val, 
+                    title:val,
                     href:"#"
                 }).appendTo(li);
                 li.appendTo(self.alphasearch);
@@ -404,19 +404,19 @@
             var self=this;
             var sender=$(event.target).parent();
             sender.addClass('selected').siblings().removeClass('selected');
-          
+
             var clickedLetter = sender.text().toLowerCase();
             self.selectedLetter = '['+clickedLetter+'|'+sender.text()+']';
             if (self.selectedMenu == null ) {
                 self.selectedMenu='all classes';
             }
-            
+
             self.resetPagination();
             self.resetScrollPosition();
-            var url = self.options.baseUrl+self.options.filterhandlerurl+'/1/'+ self.selectedLetter; 
+            var url = self.options.baseUrl+self.options.filterhandlerurl+'/1/'+ self.selectedLetter;
             var filter=self.selectedMenu.toLowerCase().split(" ")[0];
             self.changeTitle("Loading");
-            
+
             var params = {
                 'url':url,
                 'data': {
@@ -426,42 +426,42 @@
                     self.loadDataInContainer(data,true);
                 }
             };
-            self.sendRequest(params);  
-            
+            self.sendRequest(params);
+
             if(self.menu.css('display')=='block'){
                 self.menu.fadeOut(400);
             }
         },
-        
+
         resetPagination:function() {
             var self = this;
             self.page = 2;
             self.scrollingEnd = false;
         },
-        
+
         resetSelectedLetter: function() {
-            var self = this;            
+            var self = this;
             self.selectedLetter=null,
-            self.alphasearch.find('li').removeClass('selected');           
+            self.alphasearch.find('li').removeClass('selected');
         },
-        
+
         resetScrollPosition:function(){
             var self=this;
             self.dialogcontent.scrollTop(0);
         },
-        
+
         changeTitle:function(text) {
             var self = this;
             self.dialogcontent.dialog('option', 'title', text);
             self.ajaxloader.show();
         },
-        
+
         revertTitle:function() {
             var self = this;
             self.dialogcontent.dialog('option', 'title', self.originalTitle);
             self.ajaxloader.hide();
         },
-    
+
         destroy: function(){
             // remove the dialog list content before closing
             document.getElementById('classlistcontainer').innerHTML = '';
@@ -479,35 +479,35 @@
             $.Widget.prototype.destroy.call( this );
         },
         beforeRequest: function(params){
-            var self = this; 
+            var self = this;
         },
-        
+
         setContext: function (includes, excludes) {
             var self = this;
             self._context.includes = includes;
             self._context.excludes = excludes;
         },
         sendRequest: function(params) {
-            var self = this; 
+            var self = this;
 
             if (self.options.subscribe) {
                 var par = self.options.subscribe.getContext();
                 self.setContext(par.includes,par.excludes);
             }
-            
+
             var senddata = $.extend(params.data,self._context);
             $.ajax({
                 type: params.type ? params.type  : 'post' ,
                 url: params.url,
                 data: senddata,
                 dataType:params.dataType ? params.dataType : 'json',
-                success: function(data) {           
+                success: function(data) {
                     if ($.isFunction(params.success)) {
                         return $.call(params.success(data))
                     }
                     return data;
                 },
-                error: function(data) {           
+                error: function(data) {
                     if ($.isFunction(params.error)) {
                         return $.call(params.error())
                     }

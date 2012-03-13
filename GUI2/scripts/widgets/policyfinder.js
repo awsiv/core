@@ -20,11 +20,11 @@
         originalTitle: '',
         animate:false,
         _init: function(){
-            var self=this;  
+            var self=this;
             self.resetPagination();
             $('#'+self.containerID()).bind('scroll',$.proxy(self.policylistscrolled,self));
         },
-        
+
         _create:function(){
             var self=this;
             self.addsearchbar();
@@ -32,25 +32,25 @@
             $.ui.policyfinder.instances.push(this.element);
             $('#'+self.containerID()).delegate('a','click',$.proxy(self.handleSelected,self));
             $('#'+self.containerID()).delegate('.vblistadd','click',$.proxy(self.addSelected,self));
-                      
+
         },
-        
+
         resetPagination:function() {
             var self = this;
             self.page = 2;
             self.selectedLetter = '';
             self.scrollingEnd = false;
-            
+
         },
-        
+
         containerID:function() {
             return this.element.attr('id') + '-'+'policyListContainer';
         },
-        
-        dialogContainer: function() {            
+
+        dialogContainer: function() {
             var self = this;
             var existing = $('#' + self.containerID() );
-            
+
             if ( existing.length > 0) {
                 return existing.first();
             }
@@ -60,10 +60,10 @@
                     dialog({
                     autoOpen: false,
                     title:'Promises',
-                    beforeClose: function(event, ui) { 
+                    beforeClose: function(event, ui) {
                         // self.destroy();
                     }
-                    
+
                 }).bind('dialogclose', function(event, ui){
                     return false;
                 });
@@ -72,43 +72,43 @@
                 return requestDialog;
             }
         },
-        
+
         policylistscrolled:function(event) {
             var $listpane=$(event.currentTarget);
             var self=this;
             if (self.scrollingEnd == true || self.animate == true) return;
-            
-            
+
+
             if ($listpane[0].scrollHeight - $listpane.scrollTop() <= ($listpane.outerHeight()+50)) {
                 self.animate = true;
                 var url = self.submitUrl+'/'+self.page;
-                self.loadpagebody(url,self.selectedLetter,true);   
-                self.page++;              
+                self.loadpagebody(url,self.selectedLetter,true);
+                self.page++;
             }
         },
-        
+
         changeTitle:function(text) {
             var self = this;
             $('#'+self.containerID()).dialog('option', 'title', text);
             self.ajaxloader.show();
         },
-        
+
         revertTitle:function() {
             var self = this;
             $('#'+self.containerID()).dialog('option', 'title', self.originalTitle);
              self.ajaxloader.hide();
         },
-        
-        
+
+
         addsearchbar:function(){
             var self =this;
-           
+
             self.dialogcontent = self.dialogContainer();
-            self.dialogcontent.dialog($.extend({}, 
-            $.ui.dialog.prototype.options, 
-            self.options, 
+            self.dialogcontent.dialog($.extend({},
+            $.ui.dialog.prototype.options,
+            self.options,
             {
-                autoOpen:false, 
+                autoOpen:false,
                 modal:true
             }
         ));
@@ -117,14 +117,14 @@
             //self.menuhandler=$('<span id="handle" class="operation">Options</span>');
             //self.titlebar.append(self.menuhandler).delegate('#handle','click',function(){self.menu.slideToggle();});
 
-            
+
             if (!self.options.onlyShowHandle) {
                 self.searchbar=$('<form id="policyfindersearch" action="'+self.options.baseUrl+'/widget/search_by_bundle"><span class="search"><input type="text" name="search" value="Search by bundle"/></span></form>')
             } else {
                 self.searchbar=$('<form id="policyfindersearch" action="'+self.options.baseUrl+'/widget/search_by_handle"><span class="search"><input type="text" name="search" value="Search by handle"/></span></form>')
-                
+
             }
-            
+
             self.titlebar.append(self.searchbar).delegate('form','submit',$.proxy(self.searchpolicyfile,self));
             self.titlebar.append(self.ajaxloader);
             self.searchbar.delegate('input[type="text"]','click',function(){
@@ -136,13 +136,13 @@
             self.searchbar.delegate('input[type="text"]','keyup',$.proxy(self.searchbarkeyevent,self));
 
             self.menu=$('<div class="categories"><ul id="classoptions"></ul></div>');
-            
+
             if (!self.options.onlyShowHandle) {
                 self.menu.find('ul').append('<li>by bundle</li><li>by handle</li><li>by promiser</li><li>by type</li>');
             } else {
                 self.menu.find('ul').append('<li>by handle</li>');
             }
-             
+
             $('<span class="slider"></span>').appendTo(self.menu).bind('click',function(event){
                 self.menu.slideUp();
             });
@@ -152,13 +152,13 @@
                 event.preventDefault();
                 self.elementtext=$(this).text();
                 $(this).text('').append('<span class="loadinggif"> </span>');
-                
-                // check if it has already been opened before 
+
+                // check if it has already been opened before
                 if (!self.dataLoaded) {
-                    self.submitUrl =  self.element.attr('href');
+                    self.submitUrl =  self.options.baseUrl + '/widget/allpolicies'
                     self.loadpagebody(self.submitUrl,"",true);
                     self.dialogcontent.dialog('open');
-           
+
                 } else {
                     // reshow the dialog
                     $('#' + self.containerID()).parent().show();
@@ -174,7 +174,7 @@
             var sender=$(event.target);
             var selected_category=sender.text().toLowerCase();
             self.searchbar.find('input[type="text"]').val('Search '+sender.text().toLowerCase()).data('default','Search '+sender.text().toLowerCase())
-            
+
             self.submitUrl = self.options.baseUrl+"/widget/search_"+selected_category.replace(/\s+/g, "_").toLowerCase();
 
             self.searchbar.attr("action", self.submitUrl);
@@ -186,8 +186,8 @@
             sender.addClass('selected').siblings().removeClass('selected');
             //self.menu.fadeOut();
         },
-        
-        
+
+
         updateDataInContainer:function(data) {
             var self = this
               // To end the scrolling so that no further request is sent
@@ -196,23 +196,23 @@
                 self.revertTitle();
                 return;
             }
-            
+
             var containerUlId = self.containerID()+'-ul';
             document.getElementById(containerUlId).innerHTML += data;
-            self.dataLoaded = true;            
+            self.dataLoaded = true;
             self.element.text(self. elementtext);
-            self.revertTitle();                
+            self.revertTitle();
 
         },
-        
+
         emptyContainer: function() {
-            var self = this;   
+            var self = this;
             var containerUlId = self.containerID()+'-ul';
             document.getElementById(containerUlId).innerHTML = '';
         },
 
         loadpagebody:function(url,val,escreg){
-               
+
             var self=this,
 
             submit_url=url,
@@ -221,7 +221,7 @@
             if(/search\s+by\s+/.test(searchtext)){
                 searchtext='';
             };
-            self.changeTitle('Loading');     
+            self.changeTitle('Loading');
 
             $.ajax({
                 type: "POST",
@@ -231,7 +231,7 @@
                     reg:escreg,
                     type:searchtext,
                     showButton:self.options.showAddButton,
-                    showOnlyHandle:self.options.onlyShowHandle                    
+                    showOnlyHandle:self.options.onlyShowHandle
                 },
                 dataType:"html",
                 success: function(data) {
@@ -246,10 +246,10 @@
                     self.revertTitle();
                 }
             });
-           
-           
+
+
         },
-        
+
         handleSelected:function(event){
             var self=this,
             sender=$(event.target);
@@ -259,23 +259,23 @@
                 if(self.options.showAddButton){
                     self._trigger("handleClicked",event,{
                         selectedHandleName:sender.parent().parent().find('span.handle').html()
-                    })   
+                    })
                 }else{
                     self._trigger("handleClicked",event,{
                         selectedHandleName:sender.html()
                     })
                 }
-            }            
+            }
         },
-        
+
         addSelected:function(event){
             var self=this,
             sender=$(event.target);
             self._trigger("handleClicked",event,{
                 selectedHandleName:sender.parent().find('span.handle').html()
-            })  
+            })
         },
-        
+
         searchboxevent:function(event)
         {
             var self=this;
@@ -296,7 +296,7 @@
             var self=this,
             sender=$(event.target),
             searchval=sender.find('input').val();
-            self.animate = true;    
+            self.animate = true;
             self.submitUrl=sender.attr('action'),
             self.emptyContainer();
             self.resetPagination();
@@ -315,7 +315,7 @@
             $.each(alphaarr, function(i,val) {
                 var li = $("<li>");
                 $("<a>").text(val).attr({
-                    title:val, 
+                    title:val,
                     href:"#"
                 }).appendTo(li);
                 li.appendTo(self.alphasearch);
@@ -330,7 +330,7 @@
             var sender=$(event.target).parent();
             sender.addClass('selected').siblings().removeClass('selected');
             self.animate = true;
-            self.emptyContainer(); 
+            self.emptyContainer();
             self.resetPagination();
             self.selectedLetter = "^["+$(event.target).text()+'|'+$(event.target).text().toLowerCase()+']';
             self.loadpagebody(self.searchbar.attr('action'),self.selectedLetter,false);
@@ -361,7 +361,7 @@
             // call the original destroy method since we overwrote it
             $.Widget.prototype.destroy.call( this );
         },
-        
+
         hideDialog:function() {
             this.dialogContainer().dialog('close');
         }
