@@ -76,10 +76,13 @@
     cursor: pointer;
 }
 
-#astrolabe-menu .profilesCombo
+.astrolabe .menu .profilesCombo
 {
+    position: absolute;
+    top: 14px;
+    left: 10px;
     width: 200px;
-    height: 25px
+    display: inline-block;
 }
 
 .astrolabe .listContainer
@@ -111,7 +114,8 @@
 .astrolabe .menu
 {
     background: #51584d;
-    padding: 10px;
+    height: 55px;
+    position: relative;
 }
 
 .astrolabe .rootContainer
@@ -131,22 +135,63 @@
     cursor: default;
 }
 
-.astrolabe .menu .search
+.astrolabe .findersSpan
 {
-    background: url("../images/searchbar.png") no-repeat center center;
-    display: block;
-    height: 25px;
-    width: 208px;
+    color: #ffffff;
+    margin-left: 5px;
+    display: inline-block;
+    position: absolute;
+    top: 15px;
+    left: 215px;
+    cursor: normal;
 }
 
-.astrolabe .menu .search input
+.astrolabe .classFinderIcon
 {
-    background: none repeat scroll 0 0 transparent;
-    border: medium none;
-    color: #666666;
-    outline: medium none;
-    padding: 5px 0 0 10px;
-    width:166px;
+    background: url("../images/finder_icon_line.png") no-repeat 0px 0px;
+    width: 35px;
+    height: 35px;
+    position: absolute;
+    display: inline-block;
+    top: 10px;
+    left: 275px;
+}
+
+.astrolabe .classFinderIcon:hover
+{
+    background: url("../images/finder_icon_line.png") no-repeat -36px 0px;
+}
+
+.astrolabe .hostFinderIcon
+{
+    background: url("../images/finder_icon_line.png") no-repeat 0px -36px;
+    width: 35px;
+    height: 35px;
+    position: absolute;
+    display: inline-block;
+    top: 10px;
+    left: 315px;
+}
+
+.astrolabe .hostFinderIcon:hover
+{
+    background: url("../images/finder_icon_line.png") no-repeat scroll -36px -36px;
+}
+
+.astrolabe .promiseFinderIcon
+{
+    background: url("../images/finder_icon_line.png") no-repeat 0px -72px;
+    width: 35px;
+    height: 35px;
+    position: absolute;
+    display: inline-block;
+    top: 10px;
+    left: 355px;
+}
+
+.astrolabe .promiseFinderIcon:hover
+{
+    background: url("../images/finder_icon_line.png") no-repeat scroll -36px -72px;
 }
 
 

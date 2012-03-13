@@ -50,6 +50,9 @@
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostsConnectivity.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostsComplianceTimeseries.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostInfo.js"></script>
+<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/classfinder.js"></script>
+<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostfinder.js"></script>
+<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/policyfinder.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>jScrollPane.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>jquery.mousewheel.js"></script>
 <script type="text/javascript" src="<?php echo get_scriptdir()?>jquery.contextMenu.js"></script>
@@ -83,19 +86,17 @@
             baseUrl: '<?php echo site_url() ?>'
         };
 
-        var hostFinderOption =   {
-            baseUrl:'<?php echo site_url() ?>'
-          };
-
-        $('#hostsCompliance').hostsCompliance();
-        $('#hostsConnectivity').hostsConnectivity();
+        $('#hostsCompliance').hostsCompliance(genericOption);
+        $('#hostsConnectivity').hostsConnectivity(genericOption);
         $('#hostInfo').hostInfo(genericOption);
-        $('#astrolabeLocation').astrolabeLocation();
+        $('#astrolabeLocation').astrolabeLocation(genericOption);
         $('#hostsComplianceTimeseries').hostsComplianceTimeseries();
         $('#reportInfoContainer').reportUI(genericOption);
 
 
         $('#astrolabe').astrolabe({
+            baseUrl: '<?php echo site_url() ?>',
+
             hostSelected: function(event, args) {
                 $('#hostInfo').hostInfo('updateHostKey', args.hostKey);
                 $('#hostInfoContainer').show();

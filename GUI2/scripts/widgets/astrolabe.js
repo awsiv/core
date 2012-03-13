@@ -39,41 +39,56 @@
         },
 
         _createMenu: function() {
-            var self = this;
+            var $self = this;
 
-            var menuContainer = document.createElement('div');
-            $(menuContainer).attr('id', 'astrolabe-menu');
-            $(menuContainer).addClass('menu');
-            $(menuContainer).addClass('container_2');
+            var $menuContainer = $('<div>');
+            $menuContainer.addClass('menu');
 
-            self._profilesCombo = $('<div>');
-            self._profilesCombo.attr('id', 'astrolabe-profile-list');
-            self._profilesCombo.addClass('grid_1');
-            self._profilesCombo.addClass('profilesCombo');
-            self._profilesCombo.combobox({
+            $self._profilesCombo = $('<div>');
+            $self._profilesCombo.addClass('profilesCombo');
+            $self._profilesCombo.combobox({
                 noneSelectedLabel: '(All Hosts)',
                 addItemPlaceholder: 'Add Tree',
 
                 itemSelected: function(event, args) {
-                    self._loadProfile(args.id);
+                    $self._loadProfile(args.id);
                 },
 
                 itemAdded: function(event, args) {
-                    self._saveProfile(args.id, []);
-                    self._loadProfile(args.id);
+                    $self._saveProfile(args.id, []);
+                    $self._loadProfile(args.id);
                 },
 
                 itemDeleted: function(event, args) {
-                    self._deleteProfile(args.id);
+                    $self._deleteProfile(args.id);
                 }
             });
-            $(menuContainer).append(self._profilesCombo);
+            $menuContainer.append($self._profilesCombo);
 
-            var clear = document.createElement('div');
-            $(clear).addClass('clear');
-            $(menuContainer).append(clear);
+            var $findersSpan = $('<span>');
+            $findersSpan.addClass('findersSpan');
+            $findersSpan.html('Finders');
+            $menuContainer.append($findersSpan);
 
-            return menuContainer;
+            var $classFinderIcon = $('<span>');
+            $classFinderIcon.addClass('classFinderIcon');
+            $classFinderIcon.html('&nbsp');
+            $classFinderIcon.classfinder({ baseUrl: $self.options.baseUrl} );
+            $menuContainer.append($classFinderIcon);
+
+            var $hostFinderIcon = $('<span>');
+            $hostFinderIcon.addClass('hostFinderIcon');
+            $hostFinderIcon.html('&nbsp');
+            $hostFinderIcon.hostfinder({ baseUrl: $self.options.baseUrl} );
+            $menuContainer.append($hostFinderIcon);
+
+            var $promiseFinderIcon = $('<span>');
+            $promiseFinderIcon.addClass('promiseFinderIcon');
+            $promiseFinderIcon.html('&nbsp');
+            $promiseFinderIcon.policyfinder({ baseUrl: $self.options.baseUrl} );
+            $menuContainer.append($promiseFinderIcon);
+
+            return $menuContainer;
         },
 
         setFilter: function(value) {
