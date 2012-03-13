@@ -1,7 +1,7 @@
 <div id="searchform" class="panel">
    <div class="panelhead"><?php echo $report_type.' query'?> </div>
    <div class="panelcontent">
-     <form method="post" action="<?php echo site_url('search')?>" class="grid_8">
+     <form method="post" action="<?php echo site_url('search')?>">
          <p>Bundle pattern: (.*+[])<input class="searchfield" type="text" name="name" id="bp" value="<?php echo (is_array($paramArray) && isset($paramArray['name'])) ? trim($paramArray['name']) : ''; ?>"></p>
          
          <!--<p>Host class: (.*+[]) 

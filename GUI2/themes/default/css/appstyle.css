@@ -2888,11 +2888,9 @@ background-image: none;
 .dd_menu li span {
     background:#e6eee3 url('../images/nav_arrows.gif') no-repeat right 2px;
     border:solid 1px #c8c8c8;
-    padding-right: 25px;
-    /* background:#e6eee3 url('../images/nav_arrows.gif') no-repeat right 2px; */
-    border:solid 1px #c8c8c8;
     color: #1a1a1a;
-    padding-left: 10px;
+    padding: 2px 25px 2px 10px;
+    
 }
 .dd_menu li span.selected {
     color:#FFF;
@@ -2923,7 +2921,7 @@ background-image: none;
 
 .dd_menu li:hover ul {
     left:0px; 
-    top:23px; 
+    top:25px; 
     background-color:#E6EEE3; 
     padding:3px; 
     border-left:1px solid grey;
@@ -2989,9 +2987,14 @@ span.green_btn,a.green_btn{
     padding-bottom: 1px;
 }
 
-a.green_btn span,span.green_btn input{
+a.green_btn span, span.green_btn input{
     background: url("../images/green_button_left.png") no-repeat scroll 0 0 transparent;
     padding: 0 6px 1px 9px;
     color: #FFFFFF !important;
     border: none;
+    font-size: 12px;
+    font-family:"CFE_FONT",arial,Helvetica,sans-serif;
+}
+a.green_btn span{
+    font-size: 13px
 }
