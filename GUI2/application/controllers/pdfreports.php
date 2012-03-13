@@ -489,7 +489,7 @@ class pdfreports extends Cf_Controller {
     function rpt_promise_repaired_summary($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex = '', $rows = 0, $page_number = 0) {
         $header = array('Promise Handle', 'Report', 'Occurrences');
 
-        $ret = cfpr_summarize_repaired($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, "time", true, $rows, $page_number);
+        $ret = cfpr_summarize_repaired($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), array($class_regex), array(), "time", true, $rows, $page_number);
 
         $jsondata = json_decode($ret, true);
 

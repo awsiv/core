@@ -2229,9 +2229,11 @@ PHP_FUNCTION(cfpr_summarize_notkept)
 
 PHP_FUNCTION(cfpr_summarize_repaired)
 {
-    char *userName, *hostkey, *handle, *classreg;
-    char *fhostkey, *fhandle, *fclassreg;
-    int user_len, hk_len, h_len, cr_len;
+    char *userName, *hostkey, *handle;
+    char *fhostkey, *fhandle;
+    zval *includes = NULL,
+         *excludes = NULL;
+    int user_len, hk_len, h_len;
     char buffer[CF_WEBBUFFER];
     time_t from, to;
     PageInfo page = { 0 };
@@ -2240,13 +2242,16 @@ PHP_FUNCTION(cfpr_summarize_repaired)
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllssbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &handle, &h_len,
-                              &from, &to,
-                              &classreg, &cr_len,
-                              &sortColumnName, &sc_len, &sortDescending,
+                              &from,
+                              &to,
+                              &includes,
+                              &excludes,
+                              &sortColumnName, &sc_len,
+                              &sortDescending,
                               &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -2257,7 +2262,6 @@ PHP_FUNCTION(cfpr_summarize_repaired)
 
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fhandle = (h_len == 0) ? NULL : handle;
-    fclassreg = (cr_len == 0) ? NULL : classreg;
     fsortColumnName = (sc_len == 0) ? NULL : sortColumnName;
 
     buffer[0] = '\0';
@@ -2268,7 +2272,7 @@ PHP_FUNCTION(cfpr_summarize_repaired)
 
     HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
-    HostClassFilterAddClasses(filter, fclassreg, NULL);
+    HostClassFilterAddIncludeExcludeLists(filter, includes, excludes);
 
     Nova2PHP_promiselog_summary(fhostkey, fhandle, PROMISE_LOG_STATE_REPAIRED, from, to, filter, &page, buffer,
                                 sizeof(buffer));

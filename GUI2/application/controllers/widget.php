@@ -1,40 +1,52 @@
 <?php
 
-class Widget extends Cf_Controller {
+class Widget extends Cf_Controller
+{
 
-    function Widget() {
+    function Widget()
+    {
         parent::__construct();
-        $this->load->model(array('host_model','class_model','report_model', 'bundle_model'));
-        if (!$this->ion_auth->logged_in()) {
+        $this->load->model(array('host_model', 'class_model', 'report_model', 'bundle_model'));
+        if (!$this->ion_auth->logged_in())
+        {
             $this->output->set_status_header('401', 'Not Authenticated');
             echo $this->lang->line('session_expired');
             exit;
         }
     }
 
-    function hostfinder($page = 1) {
+    function hostfinder($page = 1)
+    {
 
-        try {
-        $result = $this->host_model->getHostByName($this->session->userdata('username'), '.*', 15, $page);
-        } catch (Exception $e) {
+        try
+        {
+            $result = $this->host_model->getHostByName($this->session->userdata('username'), '.*', 15, $page);
+        }
+        catch (Exception $e)
+        {
             $this->output->set_status_header('500', $e->getMessage());
             echo $e->message();
         }
 
-        if ($page > 1) {
+        if ($page > 1)
+        {
             echo $this->__format_to_html($result, 'hostname');
             return;
         }
-        if (is_array($result)) {
+        if (is_array($result))
+        {
             // $this->data['hostlist']= array_msort($result,array('id'=>SORT_ASC),true);
             $this->data['hostlist'] = array_msort($result['data'], array('0' => SORT_ASC), true);
-        } else {
+        }
+        else
+        {
             $this->data['error'] = "Host list cannot be  generated due to invalid json data";
         }
         $this->load->view('widgets/hostfinder', $this->data);
     }
 
-    function summaryCompliance() {
+    function summaryCompliance()
+    {
         // we will use username for RBAC
         $username = $this->session->userdata('username');
 
@@ -49,45 +61,54 @@ class Widget extends Cf_Controller {
         $environment = $env;
 
         $this->data['notkept'] = json_decode(cfpr_summarize_notkept($username, NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, array($environment), array(), "time", true, 0, 0), true);
-        $this->data['repaired'] = json_decode(cfpr_summarize_repaired($username, NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment, "time", true, 0, 0), true);
-
-
+        $this->data['repaired'] = json_decode(cfpr_summarize_repaired($username, NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, array($environment), array(), "time", true, 0, 0), true);
 
         $this->data['startDate'] = getDateStatus($startDateTimeStamp, true);
         $this->data['stopDate'] = getDateStatus($stopDateTimeStamp, true);
         $this->load->view('widgets/summaryCompliance', $this->data);
     }
 
-    function search_by_hostname($hostname=null, $page = 1) {
+    function search_by_hostname($hostname = null, $page = 1)
+    {
         $hostname = $this->input->post('value') ? $this->input->post('value') : urldecode($hostname);
-        try {
+        try
+        {
             $data = $this->host_model->getHostByName($this->session->userdata('username'), $hostname, 15, $page);
             echo $this->__format_to_html($data, 'hostname');
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             $this->output->set_status_header('500', $e->getMessage());
             echo $e->getMessage();
         }
     }
 
-    function sort_alphabetically_hostname($hostname=null, $page = 1) {
+    function sort_alphabetically_hostname($hostname = null, $page = 1)
+    {
         $hostname = $this->input->post('value') ? $this->input->post('value') : urldecode($hostname);
         $data = "";
         $searchhost = '^[' . $hostname . '|' . strtolower($hostname) . ']';
-        try {
+        try
+        {
             $data = $this->host_model->getHostByName($this->session->userdata('username'), $searchhost, 15, $page);
             echo $this->__format_to_html($data, 'hostname');
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             $this->output->set_status_header('500', $e->getMessage());
             echo $e->getMessage();
         }
     }
 
-    function __format_to_html($result, $display) {
+    function __format_to_html($result, $display)
+    {
         $html = "";
-        if (is_array($result) && key_exists('data', $result) && count($result['data']) > 0) {
+        if (is_array($result) && key_exists('data', $result) && count($result['data']) > 0)
+        {
             $result = array_msort($result['data'], array('0' => SORT_ASC), true);
             // $html.="<ul class=\"result\">";
-            foreach ($result as $row) {
+            foreach ($result as $row)
+            {
                 if ($display == 'hostname' && strlen($row[0]) > 0)
                     $html.="<li><a href=" . site_url('welcome/host') . "/" . $row[2] . " title=" . $row[2] . ">$row[0]</a></li>";
 
@@ -96,118 +117,149 @@ class Widget extends Cf_Controller {
             }
             //$html.="</ul>";
         }
-        else {
+        else
+        {
             $html = "";
         }
         return $html;
     }
 
-    function search_by_class() {
+    function search_by_class()
+    {
 
     }
 
-    function search_by_ipaddress($ipregx=null, $page=1) {
+    function search_by_ipaddress($ipregx = null, $page = 1)
+    {
         $ipaddress = $this->input->post('value') ? $this->input->post('value') : urldecode($ipregx);
-        try {
+        try
+        {
             $data = $this->host_model->getHostByIP($this->session->userdata('username'), $ipaddress, 15, $page);
             echo $this->__format_to_html($data, 'ipaddress');
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             $this->output->set_status_header('500', $e->getMessage());
             echo $e->getMessage();
         }
     }
 
-    function cfclasses() {
+    function cfclasses()
+    {
         $arr = json_decode(cfpr_class_cloud($this->session->userdata('lastclasslist')));
         echo json_encode($arr->classes);
     }
 
-    function ajaxlisthost($currentclass = NULL) {
+    function ajaxlisthost($currentclass = NULL)
+    {
         $filters = $this->input->post('filter');
-        if ($filters) {
+        if ($filters)
+        {
             $classlist = implode(",", $filters);
             $arr = json_decode(cfpr_class_cloud($classlist));
             $this->session->set_userdata('lastclasslist', $classlist);
             // echo  host_only_table( $arr->hosts);
             echo $this->__format_to_html2($arr->hosts);
-        } else {
+        }
+        else
+        {
             $arr = json_decode(cfpr_class_cloud(NULL));
             $this->session->set_userdata('lastclasslist', NULL);
             echo $this->__format_to_html2($arr->hosts);
         }
     }
 
-    function allclasses($page = 1, $alphaSearch = null) {
+    function allclasses($page = 1, $alphaSearch = null)
+    {
         $username = $this->session->userdata('username');
         $searchLetter = null;
-        if ($alphaSearch != null) {
+        if ($alphaSearch != null)
+        {
             $searchLetter = urldecode($alphaSearch) . '.*';
-        }else{
-           $searchLetter='.*';
         }
-        try{
-           $classes=$this->class_model->getAllClasses($username,$searchLetter,100,$page);
+        else
+        {
+            $searchLetter = '.*';
+        }
+        try
+        {
+            $classes = $this->class_model->getAllClasses($username, $searchLetter, 100, $page);
             echo $classes;
-        }catch(Exception $e){
-          $this->output->set_status_header('500', $e->getMessage());
-          echo($e->getMessage());
         }
-
+        catch (Exception $e)
+        {
+            $this->output->set_status_header('500', $e->getMessage());
+            echo($e->getMessage());
+        }
     }
 
-    function filterclass($page =1,$search =null) {
+    function filterclass($page = 1, $search = null)
+    {
         $filter = $this->input->post('filter');
         $username = $this->session->userdata('username');
         $searchLetter = null;
-        if ($search != null) {
-            $searchLetter = urldecode($search).'.*';
-        }else{
-           $searchLetter='.*';
+        if ($search != null)
+        {
+            $searchLetter = urldecode($search) . '.*';
+        }
+        else
+        {
+            $searchLetter = '.*';
         }
         $data = "";
-        try{
-           switch ($filter) {
-            case "time":
-                $data = $this->class_model->getAllTimeClasses($username,$searchLetter,100,$page);
-                break;
-            case "ip":
-                $data = cfpr_list_ip_classes(NULL, NULL, NULL, NULL);
-                break;
-            case "soft":
-                $data = $this->class_model->getAllSoftClasses($username,$searchLetter,100,$page);
-                break;
-            case "all":
-                $data = $this->class_model->getAllClasses($username, $searchLetter, 100, $page);
-                break;
-            case "host":
-                $data = cfpr_list_host_classes(NULL, NULL, NULL, NULL);
-                break;
+        try
+        {
+            switch ($filter)
+            {
+                case "time":
+                    $data = $this->class_model->getAllTimeClasses($username, $searchLetter, 100, $page);
+                    break;
+                case "ip":
+                    $data = cfpr_list_ip_classes(NULL, NULL, NULL, NULL);
+                    break;
+                case "soft":
+                    $data = $this->class_model->getAllSoftClasses($username, $searchLetter, 100, $page);
+                    break;
+                case "all":
+                    $data = $this->class_model->getAllClasses($username, $searchLetter, 100, $page);
+                    break;
+                case "host":
+                    $data = cfpr_list_host_classes(NULL, NULL, NULL, NULL);
+                    break;
+            }
+            echo $data;
         }
-        echo $data;
-        }catch (Exception $e) {
-              $this->output->set_status_header('500', $e->getMessage());
-              echo($e->getMessage());
+        catch (Exception $e)
+        {
+            $this->output->set_status_header('500', $e->getMessage());
+            echo($e->getMessage());
         }
     }
 
     /* used by host finder */
 
-    function __format_to_html2($result) {
+    function __format_to_html2($result)
+    {
         $html = "";
 
-        if (count($result) > 0) {
+        if (count($result) > 0)
+        {
             $html.="<ul class=\"result\">";
-            foreach ($result as $row) {
+            foreach ($result as $row)
+            {
                 $html.="<li><a href=" . site_url('welcome/host') . "/" . $row[1] . " title=" . $row[1] . ">$row[0]</a></li>";
             }
             $html.="</ul>";
-        } else {
+        }
+        else
+        {
             $html = "No Host Found";
         }
         return $html;
     }
 
-    function allpolicies($page = 1) {
+    function allpolicies($page = 1)
+    {
         $data = cfpr_promise_list_by_handle_rx($this->session->userdata('username'), NULL);
 
         $showButton = $this->input->post('showButton');
@@ -228,7 +280,8 @@ class Widget extends Cf_Controller {
         $this->load->view('widgets/allpolicies', $viewdata);
     }
 
-    function search_by_handle($page = 1) {
+    function search_by_handle($page = 1)
+    {
         $handle = $this->input->post('filter');
         $showButton = $this->input->post('showButton');
         $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
@@ -240,10 +293,13 @@ class Widget extends Cf_Controller {
         );
 
         $data = "";
-        if ($handle) {
+        if ($handle)
+        {
             $handle = $handle . '.*';
             $data = cfpr_promise_list_by_handle_rx($this->session->userdata('username'), $handle);
-        } else {
+        }
+        else
+        {
             $data = cfpr_promise_list_by_handle_rx($this->session->userdata('username'), NULL);
         }
         $returnedData = sanitycheckjson($data, true);
@@ -256,7 +312,8 @@ class Widget extends Cf_Controller {
         $this->load->view('widgets/allpolicies', $viewdata);
     }
 
-    function search_by_bundle($page = 1) {
+    function search_by_bundle($page = 1)
+    {
         $bundle = $this->input->post('filter');
         $showButton = $this->input->post('showButton');
         $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
@@ -268,10 +325,13 @@ class Widget extends Cf_Controller {
         );
 
         $data = "";
-        if ($bundle) {
+        if ($bundle)
+        {
             $bundle = $bundle . '.*';
             $data = cfpr_promise_list_by_bundle_rx($this->session->userdata('username'), $bundle);
-        } else {
+        }
+        else
+        {
             $data = cfpr_promise_list_by_bundle_rx($this->session->userdata('username'), NULL);
         }
         $returnedData = sanitycheckjson($data, true);
@@ -284,7 +344,8 @@ class Widget extends Cf_Controller {
         $this->load->view('widgets/allpolicies', $viewdata);
     }
 
-    function search_by_type($page = 1) {
+    function search_by_type($page = 1)
+    {
         $val = $this->input->post('filter');
         $type = $this->input->post('type');
         $showButton = $this->input->post('showButton');
@@ -296,23 +357,31 @@ class Widget extends Cf_Controller {
             'showOnlyHandle' => $showOnlyHandle
         );
 
-        if (preg_match("/^\^\w+/i", $val)) {
+        if (preg_match("/^\^\w+/i", $val))
+        {
             $data = cfpr_promise_list_by_bundle_rx($this->session->userdata('username'), $val);
-        } else {
+        }
+        else
+        {
             $data = cfpr_promise_list_by_bundle_rx($this->session->userdata('username'), NULL);
         }
 
         $return_array = array();
         $promises = sanitycheckjson($data, true);
 
-        if ($type != "") {
-            foreach ($promises as $promise) {
-                if (array_search($type, $promise) !== FALSE) {
+        if ($type != "")
+        {
+            foreach ($promises as $promise)
+            {
+                if (array_search($type, $promise) !== FALSE)
+                {
                     $return_array[] = $promise;
                 }
             }
             $json = json_encode($return_array);
-        } else {
+        }
+        else
+        {
             $ret = array_msort($promises, array('3' => SORT_ASC), true);
             $json = json_encode($ret);
         }
@@ -326,7 +395,8 @@ class Widget extends Cf_Controller {
         $this->load->view('widgets/allpolicies', $viewdata);
     }
 
-    function search_by_promiser($page = 1) {
+    function search_by_promiser($page = 1)
+    {
         $promiser = $this->input->post('filter');
         $showButton = $this->input->post('showButton');
         $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
@@ -337,10 +407,13 @@ class Widget extends Cf_Controller {
             'showOnlyHandle' => $showOnlyHandle
         );
         $data = "";
-        if ($promiser) {
+        if ($promiser)
+        {
             $promiser = $promiser . '.*';
             $data = cfpr_promise_list_by_promiser_rx($this->session->userdata('username'), $promiser);
-        } else {
+        }
+        else
+        {
             $data = cfpr_promise_list_by_promiser_rx($this->session->userdata('username'), NULL);
         }
         $returnedData = sanitycheckjson($data, true);
@@ -353,57 +426,75 @@ class Widget extends Cf_Controller {
         $this->load->view('widgets/allpolicies', $viewdata);
     }
 
-    function allreports() {
-        try{
+    function allreports()
+    {
+        try
+        {
             $reportsData = $this->report_model->getAllReports();
             $reports = $reportsData['data'];
             $treeview_reports = array();
-            foreach ($reports as $report) {
-                if (key_exists($report['category'], $treeview_reports)) {
+            foreach ($reports as $report)
+            {
+                if (key_exists($report['category'], $treeview_reports))
+                {
                     array_push($treeview_reports[$report['category']], $report);
-                } else {
+                }
+                else
+                {
                     $treeview_reports[$report['category']] = array();
                     array_push($treeview_reports[$report['category']], $report);
                 }
             }
             $json = json_encode($treeview_reports);
             echo $json;
-          }catch(Exception $e){
+        }
+        catch (Exception $e)
+        {
             $this->output->set_status_header('500', $reportsData['error']['message']);
             exit;
         }
     }
 
-    function insertworkinglogs() {
+    function insertworkinglogs()
+    {
         $this->load->library('userdata');
         $message = $this->input->post('message');
         $id = $this->userdata->insert_personal_working_log($message);
         $noteshtml = "";
         $working_notes = $this->userdata->get_personal_working_notes($this->session->userdata('username'));
-        foreach ($working_notes as $note) {
+        foreach ($working_notes as $note)
+        {
             $note = $note['working_on'];
             $noteshtml.= "<li><span class=\"wrknoteslblorg\">Me:</span> $note </li>";
         }
         echo $noteshtml;
     }
 
-    function getworkinglatestlogs() {
+    function getworkinglatestlogs()
+    {
         $this->load->library('userdata');
         $users = getonlineusernames();
         $html = "";
-        foreach ($users as $user) {
+        foreach ($users as $user)
+        {
             $html.='<li>' . $user . ' : ' . $this->userdata->get_personal_working_log_latest($user) . '</li>';
         }
         echo $html;
     }
 
-    function tracker() {
+    function tracker()
+    {
         // compliance summary meter
-        try {
+        try
+        {
             $envList = $this->environment_model->getEnvironmentList($this->session->userdata('username'));
-        } catch (CFModExceptionRBAC $e) {
+        }
+        catch (CFModExceptionRBAC $e)
+        {
             show_error($this->lang->line('rbac_exception'), 401);
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             show_error($this->lang->line('cfmod_exception'), 500);
         }
         //$envListArray = json_decode($envList);
@@ -411,16 +502,17 @@ class Widget extends Cf_Controller {
         $this->load->view('widgets/tracker', $data);
     }
 
-    function getbreadcrumbs() {
+    function getbreadcrumbs()
+    {
         $this->breadcrumblist->checkurl($this->input->post('url'));
         echo $this->breadcrumblist->display();
     }
 
-    function cdpreports() {
+    function cdpreports()
+    {
         $data = cfpr_cdp_reportnames();
         sanitycheckjson($data);
     }
-
 
     function astrolabeAddNodeDialog($label = NULL, $class = NULL)
     {
@@ -430,27 +522,31 @@ class Widget extends Cf_Controller {
         $this->load->view('widgets/astrolabeAddNodeDialog', $data);
     }
 
-    function contextfinder () {
+    function contextfinder()
+    {
         $data = array();
         $this->load->view('widgets/contextfinder', $data);
     }
 
     /**
-    * Return all bundles except bundles assigned to the role
-    *
-    * @param rolename string
-    *
-    * @return json string
-    *
-    */
-   function bundlesNotAssignedToRole($rolename='') {
+     * Return all bundles except bundles assigned to the role
+     *
+     * @param rolename string
+     *
+     * @return json string
+     *
+     */
+    function bundlesNotAssignedToRole($rolename = '')
+    {
 
         $username = $this->session->userdata('username');
 
-        try {
+        try
+        {
 
             // if rolename not set - return list of all bundles
-            if ($rolename == '') {
+            if ($rolename == '')
+            {
                 echo json_encode(array_keys($all_bundles));
                 return;
             }
@@ -459,10 +555,12 @@ class Widget extends Cf_Controller {
 
             $all_bundles_tmp = json_decode($this->bundle_model->getAllBundles($username));
 
-            if (!empty($all_bundles_tmp)) {
+            if (!empty($all_bundles_tmp))
+            {
                 // get bundles in normal view - key value array + only single values (like array_unique)
                 // in the end we will get array like $arr[$key] = $key
-                foreach ($all_bundles_tmp as $item) {
+                foreach ($all_bundles_tmp as $item)
+                {
                     $all_bundles[$item[1]] = $item[1]; // $item[1] - bundle name
                 }
             }
@@ -484,24 +582,29 @@ class Widget extends Cf_Controller {
 
             // do the same for assigned bundles
             $used_bundles_tmp = array_merge((array) $brxi, (array) $brxx);
-            $used_bundles     = array_combine($used_bundles_tmp, $used_bundles_tmp); // create array as $arr[$key] = $key
+            $used_bundles = array_combine($used_bundles_tmp, $used_bundles_tmp); // create array as $arr[$key] = $key
 
             unset($used_bundles_tmp);
 
-            if (!empty($used_bundles)) {
+            if (!empty($used_bundles))
+            {
                 $bundle = arrayRecursiveDiff($all_bundles, $used_bundles);
             }
 
-            if (!empty($bundle)) {
+            if (!empty($bundle))
+            {
                 echo json_encode(array_keys($bundle));
             }
 
             return;
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             $this->output->set_status_header('500', $e->getMessage());
             echo($e->getMessage());
         }
     }
 
 }
+
 ?>

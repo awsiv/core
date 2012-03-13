@@ -766,7 +766,7 @@ class Search extends Cf_Controller
                         if ($report_type == "promises-repaired-log")
                             $data['report_result'] = cfpr_report_repaired($username, NULL, $name, intval($hours_deltafrom), intval($hours_deltato), explode(',', $incList), explode(',', $exList), "time", true, $rows, $page_number);
                         if ($report_type == "promises-repaired-summary")
-                            $data['report_result'] = cfpr_summarize_repaired($username, NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex, "promise-handle", true, $rows, $page_number);
+                            $data['report_result'] = cfpr_summarize_repaired($username, NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $array($class_regex), array(), "promise-handle", true, $rows, $page_number);
 
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
@@ -786,7 +786,7 @@ class Search extends Cf_Controller
                     if ($report_type == "promises-repaired-log")
                         $data['report_result'] = cfpr_report_repaired($username, $hostkey, NULL, 0, 0, explode(',', $incList), explode(',', $exList), "time", true, $rows, $page_number);
                     if ($report_type == "promises-repaired-summary")
-                        $data['report_result'] = cfpr_summarize_repaired($username, $hostkey, NULL, NULL, NULL, NULL, "time", true, $rows, $page_number);
+                        $data['report_result'] = cfpr_summarize_repaired($username, $hostkey, NULL, NULL, NULL, array(), array(), "time", true, $rows, $page_number);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                 }
                 else
