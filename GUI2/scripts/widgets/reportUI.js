@@ -27,7 +27,7 @@
             var itemClicked = $(e.currentTarget);  
             // update the filters 
             var reportId = itemClicked.attr('id');
-            var filterUrl = $self.options.baseUrl + '/search/index';   
+            var filterUrl = $self.options.baseUrl + '/search/filterSearchView';   
             $self.filterPane.load(filterUrl, {
                 'host':'All',
                 'report':reportId,

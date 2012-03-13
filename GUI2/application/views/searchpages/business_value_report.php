@@ -4,7 +4,7 @@
     
     <div class="panelcontent searchform">
         <form method="post" action="<?php echo site_url('search') ?>">
-            <p>Date:<input class="searchfield" type="text" name="days" value="<?php echo (is_array($paramArray) && isset($paramArray['days'])) ? trim($paramArray['days']) : ''; ?>" ></p>
+            <p><label>Date:</label><input class="searchfield" type="text" name="date" value="<?php echo (is_array($paramArray) && isset($paramArray['date'])) ? trim($paramArray['date']) : ''; ?>"></p>
             
             <p>
              <a href="<?php echo site_url('widget/contextfinder')?>" id="hclist" class="hostcontextddl floatleft" title="<?php echo $this->lang->line('report_hostgp_help');?>">Hostcontext</a>
@@ -45,4 +45,11 @@ $('#morefiltertoggle').live('click',function(){
     }
      $('#morefilters').toggle();
 });
+
+$( "input:text[name=date]" ).datepicker({ 
+                       dateFormat: 'dd M yy', 
+                       changeMonth: true,
+		       changeYear: true,
+                       showButtonPanel: true
+ });
 </script>

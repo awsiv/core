@@ -60,6 +60,8 @@ class pdfreports extends Cf_Controller
         {
             $report_format = trim($params['rf']);
         }
+        
+        $params=array_map('urldecode',$params);
 
         $params = array_map('urldecode', $params);
 
@@ -123,7 +125,7 @@ class pdfreports extends Cf_Controller
                 break;
 
             case "business-value":
-                $this->rpt_business_value($username, $params['hostkey'], $params['date'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
+                $this->rpt_business_value($username, $params['hostkey'], $params['date'], explode(',',$params['inclist']),explode(',',$params['exlist']), $params['rows'], $params['page']);
                 break;
 
             case "contexts":
@@ -427,12 +429,11 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_business_value($username, $hostkey, $date, $inclist, $exlist, $rows = 0, $page_number = 0)
-    {
-        try
+    function rpt_business_value($username, $hostkey, $date, $inclist, $exlist, $rows = 0, $page_number = 0) {
+       try
         {
-
-            $jsondata = $this->report_model->getBusinessValueReport($username, $hostkey, $date, $inclist, $exlist, $rows, $page_number);
+           
+           $jsondata = $this->report_model->getBusinessValueReport($username, $hostkey, $date, $inclist, $exlist, $rows, $page_number);
 
             $data1 = $jsondata['data'];
             $header = ($jsondata['meta']['header']);

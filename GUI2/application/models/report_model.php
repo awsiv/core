@@ -260,11 +260,11 @@ class report_model extends Cf_Model {
      * @param type $page_number
      * @return type array
      */
-    function getBusinessValueReport($username, $hostkey, $days, $months, $years, $inclist, $exlist, $rows = 50, $page_number = 1)
+    function getBusinessValueReport($username, $hostkey, $date, $inclist, $exlist, $rows = 50, $page_number = 1)
     {
          try
         {
-            $rawdata = cfpr_report_value($username, $hostkey, $days, $months, $years, $inclist, $exlist, "day", true, $rows, $page_number);
+            $rawdata = cfpr_report_value($username, $hostkey, $date, NULL, NULL, $inclist, $exlist, "day", true, $rows, $page_number);
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors()==0)
             {

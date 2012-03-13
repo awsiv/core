@@ -14,6 +14,8 @@ private $filter_view_mappings=array();
         $this->carabiner->js('widgets/hostfinder.js');
         $this->carabiner->js('widgets/reportfinder.js');
         $this->carabiner->js('widgets/contextfinder.js');
+        
+        
         $this->filter_view_mappings=array(
             'bundle-profile'=>'bundleprofile',
             'business-value'=>'business_value_report',
@@ -117,13 +119,12 @@ private $filter_view_mappings=array();
         $fromEmail = ($fromEmail) ? $fromEmail : '';
 
         $getparams = $this->uri->uri_to_assoc(3);
-        $search = isset($getparams['search']) ? $getparams['search'] : $this->input->post('search');
+        $search = isset($getparams['search'])? $getparams['search']:($this->input->post('search')?$this->input->post('search'):NULL);
         $hostkey = "";
         $many = "";
-        $report_type = isset($getparams['report']) ? urldecode($getparams['report']) : urldecode($this->input->post('report'));
+        $report_type = isset($getparams['report']) ? urldecode($getparams['report']) : ($this->input->post('report')?urldecode($this->input->post('report')):NULL);
 
-
-        $host = isset($getparams['host']) ? urldecode(trim($getparams['host'])) : trim($this->input->post('host'));
+        $host = isset($getparams['host']) ? urldecode(trim($getparams['host'])) : ($this->input->post('host')?trim($this->input->post('host')):NULL);
         $hours_deltafrom = isset($getparams['hours_deltafrom']) ? $getparams['hours_deltafrom'] : $this->input->post('hours_deltafrom');
         $hours_deltato = isset($getparams['hours_deltato']) ? $getparams['hours_deltato'] : $this->input->post('hours_deltato');
         $class_regex = isset($getparams['class_regex']) ? urldecode($getparams['class_regex']) : $this->input->post('class_regex');
@@ -265,18 +266,12 @@ private $filter_view_mappings=array();
      try{
         switch ($report_type) {
             case "bundle-profile":
-
-                if ($many)
-                {
-
-                    $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
-                    if ($hosts_only) {// when host only field is checked  to geat a group pf hosts
+                    $name = isset($getparams['name']) ? urldecode($getparams['name']) : ($this->input->post('name')?urldecode($this->input->post('name')):NULL);
+                    if ($hosts_only) {
                         //$data['report_result'] = cfpr_hosts_with_bundlesseen($username, NULL, $name, true, $class_regex);
                         $data['report_result']=$this->report_model->getHostWithBundles($username,$name,$class_regex);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
-                    }
-                    else
-                    {
+                      } else {
 
                         $pdfurlParams = array('type' => $report_type,
                             'search' => $name,
@@ -292,31 +287,21 @@ private $filter_view_mappings=array();
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                         $this->template->load('template', 'searchpages/businessresult', $data);
                     }
-                } else {
-                    //not nothing else is satisfied display extra form for more search paramaters
-
-                    is_ajax() ? $this->load->view('searchpages/bundleprofile', $data) : $this->template->load('template', 'searchpages/bundleprofile', $data);
-                }
+               
                 break;
             case "business-value":
-                if ($many)
-                {
-                    $days = isset($getparams['days']) ? urldecode($getparams['days']) : urldecode($this->input->post('days'));
-                    $months = isset($getparams['months']) ? urldecode($getparams['months']) : urldecode($this->input->post('months'));
-                    $years = isset($getparams['years']) ? urldecode($getparams['years']) : urldecode($this->input->post('years'));
-                    if ($hosts_only)
-                    {
+                    $date = isset($getparams['date']) ? urldecode($getparams['date']) : urldecode($this->input->post('date'));
+                  
+                    if ($hosts_only) {
                         $data['report_title'] = $report_type . " Days: $days<br>Months: $months<br>Years: $years";
                         //$data['report_result'] = cfpr_hosts_with_value($username, NULL, $days, $months, $years, $class_regex);
-                        $data['report_result'] = $this->report_model->getHostsWithBusinessValue($username, $days, $months, $years, $class_regex);
+                        //$data['report_result'] = $this->report_model->getHostsWithBusinessValue($username, $days, $months, $years, $class_regex);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     }
                     else
                     {
                         $pdfurlParams = array('type' => $report_type,
-                            'days' => $days,
-                            'months' => $months,
-                            'year' => $years,
+                            'date' => $date,
                             'inclist' =>$incList,
                             'exlist'=>$exList,
                         );
@@ -325,43 +310,17 @@ private $filter_view_mappings=array();
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                         //$data['report_result'] = cfpr_report_value($username, NULL, $days, $months, $years, explode(',',$incList), explode(',',$exList), "day", true, $rows, $page_number);
-                        $data['report_result']= $this->report_model->getBusinessValueReport($username, $hostkey, $days, $months, $years, explode(',',$incList), explode(',',$exList), $rows, $page_number);
+                        $data['report_result']= $this->report_model->getBusinessValueReport($username, $hostkey, $date, explode(',',$incList), explode(',',$exList), $rows, $page_number);
                         $this->template->load('template', 'searchpages/businessresult', $data);
                     }
-                }
-                elseif ($hostkey != "")
-                {
-
-                    $pdfurlParams = array('type' => $report_type,
-                        'hostKey' => $hostkey,
-                        'inclist' =>$incList,
-                        'exlist'=>$exList,
-                    );
-                    $data['report_title'] = $report_type;
-                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                    //$data['report_result'] = cfpr_report_value($username, $hostkey, NULL, NULL, NULL, explode(',',$incList), explode(',',$exList), "day", true, $rows, $page_number);
-                    $data['report_result']=$data['report_result']= $this->report_model->getBusinessValueReport($username, $hostkey, $days, $months, $years, explode(',',$incList), explode(',',$exList), $rows, $page_number);
-                    $this->template->load('template', 'searchpages/businessresult', $data);
-                }
-                else
-                {
-                    is_ajax() ? $this->load->view('searchpages/business_value_report', $data) : $this->template->load('template', 'searchpages/business_value_report', $data);
-                }
                 break;
             case "contexts":
+                    
                 $name = isset($getparams['name']) ? urldecode($getparams['name']) : $this->input->post('name');
-
-                if ($many)
-                {
-                    if ($hosts_only)
-                    {
+                    if ($hosts_only) {
                         $data['report_result'] = cfpr_hosts_with_classes($username, NULL, $name, true, $class_regex);
-                        is_ajax() ? $this->load->view('searchpages/search_result_group', $data) : $this->template->load('template', 'searchpages/search_result_group', $data);
-                    }
-                    else
-                    {
-
+                        $this->template->load('template', 'searchpages/search_result_group', $data);
+                    } else {
 
                         $pdfurlParams = array('type' => $report_type,
                             'inclist' =>$incList,
@@ -375,26 +334,9 @@ private $filter_view_mappings=array();
                         $data['report_result']=$this->report_model->getClassReport($username, $hostkey, $name, explode(',',$incList), explode(',',$exList), $rows , $page_number);
                         $this->template->load('template', 'searchpages/businessresult', $data);
                     }
-                }
-                elseif ($hostkey != "")
-                {
-                    $pdfurlParams = array('type' => $report_type,
-                        'search' => $name,
-                        'inclist' =>$incList,
-                        'exlist'=>$exList,
-                    );
-
-                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                    //$data['report_result'] = cfpr_report_classes($username, $hostkey, $search, true, explode(',',$incList), explode(',',$exList), "last-seen", true, $rows, $page_number);
-                    $data['report_result']=$this->report_model->getClassReport($username, $hostkey, $search, explode(',',$incList), explode(',',$exList), $rows , $page_number);
-                    $this->template->load('template', 'searchpages/businessresult', $data);
-                }
-                else
-                {
-                    is_ajax() ? $this->load->view('searchpages/class_profile', $data) : $this->template->load('template', 'searchpages/class_profile', $data);
-                }
                 break;
+                
+                
             case "promise-compliance":
                 if ($many)
                 {
@@ -1114,9 +1056,17 @@ private $filter_view_mappings=array();
         return $table;
     }*/
     
-    function filterSearchView($rt_id= null) {
-        $report_id = $rt_id ? $rt_id : $this->input->post('report_id');
-        $data['report_type'] = $reportid;
+    function filterSearchView() {
+        $getparams = $this->uri->uri_to_assoc(3);
+        $report_id = isset($getparams['report']) ? urldecode($getparams['report']) : ($this->input->post('report')?urldecode($this->input->post('report')):NULL);
+       
+        $paramArray = array_merge($getparams, $_POST);
+        $paramArray['report'] = $report_id; // we need this for the ajax queries
+        foreach ($paramArray as $index => $value) {
+            $paramArray[$index] = urldecode($value);
+        }
+        
+        $data=array('report_type'=> $report_id, 'paramArray' => $paramArray);
         $filename = $this->filter_view_mappings[$report_id].".php";
         if (file_exists(APPPATH . '/views/searchpages/' . $filename)) {
             $this->load->view('searchpages/' . $filename, $data);
