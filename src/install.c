@@ -1184,10 +1184,13 @@ static bool HostClassFilterMatchExclude(const HostClassFilter *filter, const cha
     return exclude;
 }
 
-bool HostClassFilterMatch(const HostClassFilter *filter, const char *classRx)
+bool HostClassFilterMatch(const HostClassFilter *filter, const char *class_rx)
 {
-    return HostClassFilterMatchInclude(filter, classRx) &&
-          !HostClassFilterMatchExclude(filter, classRx);
+    char class_rx_anchored[CF_MAXVARSIZE] = { 0 };
+    AnchorRegex(class_rx, class_rx_anchored, sizeof(class_rx_anchored));
+
+    return HostClassFilterMatchInclude(filter, class_rx_anchored) &&
+          !HostClassFilterMatchExclude(filter, class_rx_anchored);
 }
 
 /*****************************************************************************/
