@@ -89,7 +89,7 @@
 
         $('#hostsCompliance').hostsCompliance();
         $('#hostsConnectivity').hostsConnectivity();
-        $('#hostInfo').hostInfo();
+        $('#hostInfo').hostInfo(genericOption);
         $('#astrolabeLocation').astrolabeLocation();
         $('#hostsComplianceTimeseries').hostsComplianceTimeseries();
         $('#reportInfoContainer').reportUI(genericOption);
