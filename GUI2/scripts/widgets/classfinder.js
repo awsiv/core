@@ -1,12 +1,23 @@
 (function($){
+    var classfinder_animate = false;
+
+
     $.widget('ui.classfinder', 
     {     
+
+        _context:{
+            includes: [],
+            excludes :[]
+        },
+       
+        
         options: {
             baseUrl: '',
             filterhandlerurl: "/widget/filterclass",
             defaultbehaviour:true,
             width:700,
-            height:600
+            height:600,         
+             subscribe: ''
         },
         page:2,
         selectedLetter:null,
@@ -19,36 +30,52 @@
             var self=this;  
             self.resetPagination();
             self.dialogcontent.bind('scroll',$.proxy(self.classlistscrolled,self));
+            
             self.dialogcontent.ajaxError(function(e, jqxhr, settings, exception) {
-              self._displayFailure(settings.url,jqxhr,exception);
+                self._displayFailure(settings.url,jqxhr,exception);
             });
+            self.setContext(self.options.includes,self.options.excludes);
+             
         },
         _create:function(){
             var self=this;
             self.addsearchbar();
             self.addalphapager();
+            
+            self.element.bind('click',function(event){
+                event.preventDefault();
+                self. elementtext=$(this).text();
+                $(this).text('').append('<span class="loadinggif"> </span>');
+               
+                self.dialogcontent.dialog('open');
+                self.loadpagebody();
+            
+            });
+                        
             $.ui.classfinder.instances.push(this.element);           
         },
         
+        
+      
         _displayFailure: function(uri,x,e) {
-               var serverMsg,
-                   self=this;
-               if(x.status==0){
-			serverMsg='You are offline!!\n Please Check Your Network.';
-			}else if(x.status==404){
-			serverMsg='Requested URL not found.';
-			}else if(x.status==500){
-			serverMsg='Internel Server Error. '+x.responseText;
-			}else if(e=='parsererror'){
-			serverMsg='Error.\nParsing JSON Request failed.';
-			}else if(e=='timeout'){
-			serverMsg='Request Time out.';
-			}else {
-			serverMsg='Unknow Error.\n'+x.responseText;
-			}
-                self.dialogcontent.html("<div class='ui-state-error' style='padding: 1em;width:90%'><p><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span>Sorry, a software error has occured.</p><p>" + x.status + " "  + serverMsg+"</p></div>");
-                self.element.text(self.elementtext); 
-                self.revertTitle();
+            var serverMsg,
+            self=this;
+            if(x.status==0){
+                serverMsg='You are offline!!\n Please Check Your Network.';
+            }else if(x.status==404){
+                serverMsg='Requested URL not found.';
+            }else if(x.status==500){
+                serverMsg='Internel Server Error. '+x.responseText;
+            }else if(e=='parsererror'){
+                serverMsg='Error.\nParsing JSON Request failed.';
+            }else if(e=='timeout'){
+                serverMsg='Request Time out.';
+            }else {
+                serverMsg='Unknow Error.\n'+x.responseText;
+            }
+            self.dialogcontent.html("<div class='ui-state-error' style='padding: 1em;width:90%'><p><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span>Sorry, a software error has occured.</p><p>" + x.status + " "  + serverMsg+"</p></div>");
+            self.element.text(self.elementtext); 
+            self.revertTitle();
         },
 
         addsearchbar:function(){
@@ -116,15 +143,7 @@
             });
             self.menu.appendTo(self.titlebar).hide();
             self.menu.delegate('li','click',$.proxy(self.menuitemclicked,self));
-            self.element.bind('click',function(event){
-                event.preventDefault();
-                self. elementtext=$(this).text();
-                $(this).text('').append('<span class="loadinggif"> </span>');
-               
-                self.dialogcontent.dialog('open');
-                self.loadpagebody();
             
-            });
 
         },
 
@@ -138,45 +157,60 @@
             self.dialogcontent.html(self.ajaxloader);
             sender.addClass('selected').siblings().removeClass('selected');
             self.selectedMenu = sender.text().toLowerCase();
-            $.ajax({
-                type: "POST",
-                url: self.options.baseUrl+self.options.filterhandlerurl,
-                data: {
+            
+            var params = {
+                'url':self.options.baseUrl+self.options.filterhandlerurl,
+                'data': {
                     filter:sender.text().toLowerCase().split(" ")[0]
                 },
-                dataType:"json",
-                success: function(data) {
-                    self.loadDataInContainer(data); 
+                'success': function (data) {
+                    self.loadDataInContainer(data)
                 }
-            });
+            };
+            self.sendRequest(params);
+            
+            
             self.searchbar.find('input[type="text"]').trigger('blur');
             self.resetSelectedLetter();            
         },
         
         classlistscrolled:function(event) {
+            
             var listpane=event.currentTarget;
             var self=this;
-            if (self.scrollingEnd == true || $(listpane).scrollTop()==0 || self.animate==true) return;
+
+            if (self.scrollingEnd == true || $(listpane).scrollTop()==0 || classfinder_animate==true) return;
             // only do scrolling event when no menu option are selected or all classes is selected.
             if (self.selectedMenu == null ) {
                 self.selectedMenu='all classes';
             }
             var filter=self.selectedMenu.toLowerCase().split(" ")[0];
             
-                if ($(listpane)[0].scrollHeight - ($(listpane).scrollTop()) <= ($(listpane).outerHeight()+50)) {
-                    self.animate = true;
-                    var url = self.options.baseUrl+self.options.filterhandlerurl+'/'+self.page;   
-                    if (self.selectedLetter != null) {
-                        url = url + '/' + self.selectedLetter;
-                    }
-                    self.changeTitle("Loading");
-                   
-                    $.post(url, {filter:filter},function(data) {                
-                    self.loadDataInContainer(data,true);
-                    self.animate = false;
-                    }, "json");
-                    self.page++;              
+            if ($(listpane)[0].scrollHeight - ($(listpane).scrollTop()) <= ($(listpane).outerHeight()+50)) {
+                classfinder_animate = true;
+    
+               
+                var url = self.options.baseUrl+self.options.filterhandlerurl+'/'+self.page;   
+                if (self.selectedLetter != null) {
+                    url = url + '/' + self.selectedLetter;
                 }
+                self.changeTitle("Loading");
+                   
+                  
+                var params = {
+                    'url':url,
+                    'data': {
+                        filter:filter
+                    },
+                    'success': function (data) {
+                        classfinder_animate = false;
+                        self.loadDataInContainer(data,true);
+                    }
+                };
+                self.sendRequest(params);     
+                        
+                self.page++;              
+            }
             
         },
 
@@ -185,7 +219,7 @@
             event.preventDefault();
             var self=this,
             sender=$(event.target),
-            selectedclass= $(sender).attr('title');     
+            selectedclass = $(sender).attr('title');     
             var li = $("<li>");
             li.text(selectedclass).data('filter',selectedclass).appendTo(self.filter);
             $("<a>").text("X").appendTo(li)
@@ -220,9 +254,13 @@
         loadpagebody:function(){
             var self=this;
             self.changeTitle("Loading");
-            $.getJSON(self.element.attr('href'), function(data) {
-                self.loadDataInContainer(data,false);
-            });
+            var params = {
+                'url':self.options.baseUrl + '/widget/allclasses',
+                'success': function (data) {
+                    self.loadDataInContainer(data,false)
+                }
+            };
+            self.sendRequest(params);
         },
 
         loadDataInContainer:function(data,append) {
@@ -326,7 +364,7 @@
         searchclassinlist:function(event)
         {
             var self=this,
-                searchbox= $(event.target);
+            searchbox= $(event.target);
             if (self.selectedMenu == null ) {
                 self.selectedMenu='all classes';
             }
@@ -337,9 +375,25 @@
             if(event.keyCode == 13) {
                 var url = self.options.baseUrl+self.options.filterhandlerurl+'/1/'+searchWord;     
                 self.selectedLetter = searchWord; 
-                $.post(url, {filter:filter},function(data) {                
+                /* $.post(url, {
+                    filter:filter
+                },function(data) {                
                     self.loadDataInContainer(data);
                 }, "json");
+                */
+                var params = {
+                    'url':url,
+                    'data': {
+                        filter:filter
+                    },
+                    'success': function (data) {
+                        self.loadDataInContainer(data,true);
+                    }
+                };
+                self.sendRequest(params);     
+                
+                
+                
             }          
         },
 
@@ -369,7 +423,7 @@
           
             var clickedLetter = sender.text().toLowerCase();
             self.selectedLetter = '['+clickedLetter+'|'+sender.text()+']';
-             if (self.selectedMenu == null ) {
+            if (self.selectedMenu == null ) {
                 self.selectedMenu='all classes';
             }
             
@@ -378,9 +432,22 @@
             var url = self.options.baseUrl+self.options.filterhandlerurl+'/1/'+ self.selectedLetter; 
             var filter=self.selectedMenu.toLowerCase().split(" ")[0];
             self.changeTitle("Loading");
-             $.post(url, {filter:filter},function(data) {                
-                    self.loadDataInContainer(data);
-             }, "json");
+            /*$.post(url, {
+                filter:filter
+            },function(data) {                
+                self.loadDataInContainer(data);
+            }, "json");*/
+            
+            var params = {
+                'url':url,
+                'data': {
+                    filter:filter
+                },
+                'success': function (data) {
+                    self.loadDataInContainer(data,true);
+                }
+            };
+            self.sendRequest(params);  
             
             if(self.menu.css('display')=='block'){
                 self.menu.fadeOut(400);
@@ -391,7 +458,7 @@
             var self = this;
             self.page = 2;
             self.scrollingEnd = false;
-            },
+        },
         
         resetSelectedLetter: function() {
             var self = this;            
@@ -406,14 +473,14 @@
         
         changeTitle:function(text) {
             var self = this;
-             self.dialogcontent.dialog('option', 'title', text);
+            self.dialogcontent.dialog('option', 'title', text);
             self.ajaxloader.show();
         },
         
         revertTitle:function() {
             var self = this;
-             self.dialogcontent.dialog('option', 'title', self.originalTitle);
-             self.ajaxloader.hide();
+            self.dialogcontent.dialog('option', 'title', self.originalTitle);
+            self.ajaxloader.hide();
         },
     
         destroy: function(){
@@ -431,6 +498,43 @@
             }
             // call the original destroy method since we overwrote it
             $.Widget.prototype.destroy.call( this );
+        },
+        beforeRequest: function(params){
+            var self = this; 
+        },
+        
+        setContext: function (includes, excludes) {
+            var self = this;
+            self._context.includes = includes;
+            self._context.excludes = excludes;
+        },
+        sendRequest: function(params) {
+            var self = this; 
+
+            if (self.options.subscribe) {
+                var par = self.options.subscribe.getContext();
+                self.setContext(par.includes,par.excludes);
+            }
+            
+            var senddata = $.extend(params.data,self._context);
+            
+            $.ajax({
+                type: params.type ? params.type  : 'post' ,
+                url: params.url,
+                data: senddata,
+                dataType:params.dataType ? params.dataType : 'json',
+                success: function(data) {           
+                    if ($.isFunction(params.success)) {
+                        return $.call(params.success(data))
+                    }
+                    return data;
+                },
+                error: function(data) {           
+                    if ($.isFunction(params.error)) {
+                        return $.call(params.error())
+                    }
+                }
+            });
         }
 
     });

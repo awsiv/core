@@ -172,18 +172,28 @@ class Widget extends Cf_Controller
     function allclasses($page = 1, $alphaSearch = null)
     {
         $username = $this->session->userdata('username');
+ 
         $searchLetter = null;
         if ($alphaSearch != null)
         {
             $searchLetter = urldecode($alphaSearch) . '.*';
         }
-        else
-        {
-            $searchLetter = '.*';
+
+        $includes = $excludes = array();
+        
+        //$searchLetter is an additional parameter for includes string 
+        $includes[] =  $searchLetter;
+        
+        if($this->input->post('includes') !== FALSE) {
+            $includes = array_merge($includes, $this->input->post('includes', TRUE));
         }
-        try
-        {
-            $classes = $this->class_model->getAllClasses($username, $searchLetter, 100, $page);
+        
+        if($this->input->post('excludes') !== FALSE) {        
+            $excludes = $this->input->post('excludes', TRUE);
+        }
+        
+        try{
+           $classes=$this->class_model->getAllClasses($username, $includes, $excludes, 100,$page);
             echo $classes;
         }
         catch (Exception $e)
@@ -206,7 +216,24 @@ class Widget extends Cf_Controller
         {
             $searchLetter = '.*';
         }
+        
+        //add include/exclude
+        $includes = $excludes = array();
+        
+        //$searchLetter is an additional parameter for includes string 
+        $includes[] =  $searchLetter;
+        
+        if($this->input->post('includes') !== FALSE) {
+            $includes = array_merge($includes, $this->input->post('includes', TRUE));
+        }
+        
+        if($this->input->post('excludes') !== FALSE) {        
+            $excludes = $this->input->post('excludes', TRUE);
+        }
+        
+        
         $data = "";
+<<<<<<< HEAD
         try
         {
             switch ($filter)
@@ -233,6 +260,31 @@ class Widget extends Cf_Controller
         {
             $this->output->set_status_header('500', $e->getMessage());
             echo($e->getMessage());
+=======
+
+        try{
+           switch ($filter) {
+            case "time":
+                $data = $this->class_model->getAllTimeClasses($username, $includes, $excludes, 100,$page);
+                break;
+            case "ip":
+                $data = cfpr_list_ip_classes(NULL, NULL, NULL, NULL);
+                break;
+            case "soft":
+                $data = $this->class_model->getAllSoftClasses($username, $includes, $excludes, 100,$page);
+                break;
+            case "all":
+                $data = $this->class_model->getAllClasses($username, $includes, $excludes, 100, $page);
+                break;
+            case "host":
+                $data = cfpr_list_host_classes(NULL, NULL, NULL, NULL);
+                break;
+        } 
+        echo $data;
+        }catch (Exception $e) {
+              $this->output->set_status_header('500', $e->getMessage());
+              echo($e->getMessage());
+>>>>>>> added support for include/exclude classes
         }
     }
 
@@ -525,6 +577,15 @@ class Widget extends Cf_Controller
     function contextfinder()
     {
         $data = array();
+
+        if($this->input->post('includes') !== FALSE) {
+            $data['includes'] =  $this->input->post('includes', TRUE);
+        }
+        
+        if($this->input->post('excludes') !== FALSE) {        
+            $data['excludes'] = $this->input->post('excludes', TRUE);
+        }
+        
         $this->load->view('widgets/contextfinder', $data);
     }
 

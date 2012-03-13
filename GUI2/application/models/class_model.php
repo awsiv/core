@@ -11,14 +11,15 @@ class class_model extends Cf_Model
      * @param type $page
      * @return type json, plain array
      */
-    function getAllClasses($username, $classRx, $rows = 10, $page = 1)
+    function getAllClasses($username, $includes, $excludes, $rows = 10, $page = 1)
     {
         try
         {
-            $includes = array($classRx);
-            $excludes = array();
-
+            $includes = (array)$includes;
+            $excludes = (array)$excludes;
+           
             $rawdata = cfpr_class_list_distinct_by_name_rx($username, $includes, $excludes, $rows, $page);
+            
             $data = $this->checkData($rawdata);
             if (is_array($data))
             {
@@ -36,12 +37,12 @@ class class_model extends Cf_Model
         }
     }
 
-    function getAllTimeClasses($username, $classRx, $rows = 10, $page = 1)
+    function getAllTimeClasses($username, $includes, $excludes, $rows = 10, $page = 1)
     {
         try
         {
-            $includes = array($classRx);
-            $excludes = array();
+            $includes = (array)$includes;
+            $excludes = (array)$excludes;
 
             $rawdata = cfpr_class_list_time_distinct_by_name_rx($username, $includes, $excludes, $rows, $page);
             $data = $this->checkData($rawdata);
@@ -61,12 +62,12 @@ class class_model extends Cf_Model
         }
     }
 
-    function getAllSoftClasses($username, $classRx, $rows = 10, $page = 1)
+    function getAllSoftClasses($username, $includes, $excludes, $excludes, $rows = 10, $page = 1)
     {
         try
         {
-            $includes = array($classRx);
-            $excludes = array();
+            $includes = (array)$includes;
+            $excludes = (array)$excludes;
 
             $rawdata = cfpr_class_list_soft_distinct_by_name_rx($username, $includes, $excludes, $rows, $page);
             $data = $this->checkData($rawdata);
