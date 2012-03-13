@@ -174,16 +174,18 @@ class Widget extends Cf_Controller
         $username = $this->session->userdata('username');
  
         $searchLetter = null;
-        if ($alphaSearch != null)
-        {
+
+        if ($alphaSearch != null) {
             $searchLetter = urldecode($alphaSearch) . '.*';
+        }else{
+           $searchLetter='.*';
         }
 
         $includes = $excludes = array();
         
         //$searchLetter is an additional parameter for includes string 
         $includes[] =  $searchLetter;
-        
+
         if($this->input->post('includes') !== FALSE) {
             $includes = array_merge($includes, $this->input->post('includes', TRUE));
         }
@@ -191,7 +193,7 @@ class Widget extends Cf_Controller
         if($this->input->post('excludes') !== FALSE) {        
             $excludes = $this->input->post('excludes', TRUE);
         }
-        
+
         try{
            $classes=$this->class_model->getAllClasses($username, $includes, $excludes, 100,$page);
             echo $classes;
@@ -233,34 +235,6 @@ class Widget extends Cf_Controller
         
         
         $data = "";
-<<<<<<< HEAD
-        try
-        {
-            switch ($filter)
-            {
-                case "time":
-                    $data = $this->class_model->getAllTimeClasses($username, $searchLetter, 100, $page);
-                    break;
-                case "ip":
-                    $data = cfpr_list_ip_classes(NULL, NULL, NULL, NULL);
-                    break;
-                case "soft":
-                    $data = $this->class_model->getAllSoftClasses($username, $searchLetter, 100, $page);
-                    break;
-                case "all":
-                    $data = $this->class_model->getAllClasses($username, $searchLetter, 100, $page);
-                    break;
-                case "host":
-                    $data = cfpr_list_host_classes(NULL, NULL, NULL, NULL);
-                    break;
-            }
-            echo $data;
-        }
-        catch (Exception $e)
-        {
-            $this->output->set_status_header('500', $e->getMessage());
-            echo($e->getMessage());
-=======
 
         try{
            switch ($filter) {
@@ -284,7 +258,6 @@ class Widget extends Cf_Controller
         }catch (Exception $e) {
               $this->output->set_status_header('500', $e->getMessage());
               echo($e->getMessage());
->>>>>>> added support for include/exclude classes
         }
     }
 

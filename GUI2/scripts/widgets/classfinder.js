@@ -1,16 +1,12 @@
 (function($){
     var classfinder_animate = false;
-
-
     $.widget('ui.classfinder', 
     {     
-
         _context:{
             includes: [],
             excludes :[]
         },
        
-        
         options: {
             baseUrl: '',
             filterhandlerurl: "/widget/filterclass",
@@ -293,10 +289,7 @@
                 list.push(viewHostLink);
                 list.push(addClassLink);
                 list.push('</li>');                                                  
-               
             }
-         
-           
             
             var ul = '';
             if (append) {                
@@ -375,12 +368,6 @@
             if(event.keyCode == 13) {
                 var url = self.options.baseUrl+self.options.filterhandlerurl+'/1/'+searchWord;     
                 self.selectedLetter = searchWord; 
-                /* $.post(url, {
-                    filter:filter
-                },function(data) {                
-                    self.loadDataInContainer(data);
-                }, "json");
-                */
                 var params = {
                     'url':url,
                     'data': {
@@ -391,9 +378,6 @@
                     }
                 };
                 self.sendRequest(params);     
-                
-                
-                
             }          
         },
 
@@ -432,11 +416,6 @@
             var url = self.options.baseUrl+self.options.filterhandlerurl+'/1/'+ self.selectedLetter; 
             var filter=self.selectedMenu.toLowerCase().split(" ")[0];
             self.changeTitle("Loading");
-            /*$.post(url, {
-                filter:filter
-            },function(data) {                
-                self.loadDataInContainer(data);
-            }, "json");*/
             
             var params = {
                 'url':url,
@@ -517,7 +496,6 @@
             }
             
             var senddata = $.extend(params.data,self._context);
-            
             $.ajax({
                 type: params.type ? params.type  : 'post' ,
                 url: params.url,
