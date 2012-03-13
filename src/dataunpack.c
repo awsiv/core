@@ -654,15 +654,39 @@ void Nova_UnPackTotalCompliance(mongo_connection *dbconn, char *id, Item *data)
         CFDB_SaveTotalCompliance(dbconn, id, data);
     }
 #endif
-
+    time_t agent_last_run_time = 0;
     for (ip = data; ip != NULL; ip = ip->next)
     {
         sscanf(ip->name, "%ld,%127[^,],%d,%d,%d\n", &date, version, &kept, &repaired, &notrepaired);
         then = (time_t) date;
 
         CfDebug("Tcompliance: (%d,%d,%d) for version %s at %ld\n", kept, repaired, notrepaired, version, then);
+
+        if (agent_last_run_time < (time_t)date)
+        {
+            agent_last_run_time = (time_t)date;
+        }
     }
 
+    /* un-updated agent - black status estimation */
+    time_t now = time(NULL);
+
+    int black_threshold = (SECONDS_PER_MINUTE * 5) * CF_BLACKHOST_THRESHOLD; // 5 min assumption
+    black_threshold += black_threshold * (CF_BLACKHOST_THRESHOLD_VARIATION * 0.01);
+    long delta_schedule = (long)(now - agent_last_run_time);
+
+    bool is_blackhost = (delta_schedule > black_threshold)? true:false;
+
+#ifdef HAVE_LIBMONGOC
+    if (dbconn)
+    {
+        /* due to not beeing able to estimate real scheduling interval it is set on 0 */
+        CFDB_SaveExecutionStatus(dbconn, id, is_blackhost, 0);
+    }
+#endif
+
+    CfDebug("Execution status (pre-estimation): black %s with agent schedule interval: %ld",
+            (is_blackhost)? "true" : "false", delta_schedule);
 }
 
 /*****************************************************************************/
