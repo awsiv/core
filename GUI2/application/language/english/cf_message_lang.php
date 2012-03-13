@@ -271,7 +271,7 @@ $lang['cfmod_exception']= "CFMOD Exception caught";
 $lang['session_expired']= "Session Expired ! Please relogin";
 $lang['svn_update_no_user']="Svn credentials not found for user";
 $lang['rbac_exception']= "User not authorised to access this data";
-$lang['invalid_json']="Invalid json data";
+$lang['invalid_json']="Valid json data cannot be generated";
 $lang['invalid_report_id'] = "Invalid report type";
 
 /*

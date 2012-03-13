@@ -49,12 +49,12 @@ class Cf_Model extends CI_Model {
        
         if (function_exists("json_last_error")) {
             if (json_last_error() != 0) {
-                $this->setError("Valid Json Data cannot be generated . DATA is :: $data");
+                $this->setError( $this->lang->line('invalid_json')." DATA is ::". $data);
                 $returnVal = false;
             }
         } else {
             if ($data_check == NULL) {
-                $this->setError('Valid Json Data cannot be generated');
+                $this->setError($this->lang->line('invalid_json')."DATA ::".$data);
                 $returnVal = false;
             }
         }

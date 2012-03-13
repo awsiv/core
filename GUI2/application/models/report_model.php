@@ -4,23 +4,27 @@ class report_model extends Cf_Model {
      *
      * @return type 
      */
-    function getAllReports() {
-        try {
+    function getAllReports()
+    {
+        try
+        {
             $rawdata = cfpr_select_reports(null);
             $data = $this->checkData($rawdata);
-            if (is_array($data)) {
-                if($this->hasErrors()>0){
-                  throw new Exception($this->getErrorsString());
-                }
+            if (is_array($data) && $this->hasErrors() == 0)
+            {
                 return $data;
-            } else {
-                throw new Exception($this->lang->line('invalid_json'));
             }
-        } catch (Exception $e) {
-            log_message('error', $e->getMessage()." ".$e->getFile()." line:".$e->getLine());
+            else
+            {
+                throw new Exception($this->getErrorsString());
+            }
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
-      }
+    }
       
       /**
        *
@@ -37,17 +41,13 @@ class report_model extends Cf_Model {
             
             $rawdata = cfpr_select_reports($report_id);
             $data = $this->checkData($rawdata);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors() == 0)
             {
-                if ($this->hasErrors()>0)
-                {
-                    throw new Exception($this->getErrorsString());
-                }
                 return $data['data'][0]['category'];
                 
             } else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -72,16 +72,13 @@ class report_model extends Cf_Model {
             
             $rawdata = cfpr_select_reports($report_id);
             $data = $this->checkData($rawdata);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors() == 0)
             {
-                if($this->hasErrors()>0){
-                  throw new Exception($this->getErrorsString());
-                }
                 return $data['data'][0]['name'];
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
                  
             }
         }
@@ -106,16 +103,14 @@ class report_model extends Cf_Model {
             
             $rawdata = cfpr_select_reports($report_id);
             $data = $this->checkData($rawdata);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors()==0)
             {
-                if($this->hasErrors()>0){
-                  throw new Exception($this->getErrorsString());
-                }
+              
                 return $data['data'][0]['description'];
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -140,16 +135,13 @@ class report_model extends Cf_Model {
             }
             $rawdata = cfpr_select_reports($report_id);
             $data = $this->checkData($rawdata);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors()==0)
             {
-                if($this->hasErrors()>0){
-                  throw new Exception($this->getErrorsString());
-                }
                 return $data['data'][0];
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -176,16 +168,13 @@ class report_model extends Cf_Model {
         {
             $rawdata = cfpr_report_bundlesseen($username, $hostkey, $search, true, $inclist, $exlist, "last-verified", true, $rows, $page_number);
             $data = $this->checkData($rawdata);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors()==0)
             {
-               if($this->hasErrors()>0){
-                  throw new Exception($this->getErrorsString());
-                }
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -195,6 +184,13 @@ class report_model extends Cf_Model {
         }
     }
     
+    /**
+     *
+     * @param type $username
+     * @param type $search
+     * @param type $class_regx
+     * @return type 
+     */
     function getHostWithBundles($username, $search, $class_regx)
     {
 
@@ -202,16 +198,13 @@ class report_model extends Cf_Model {
         {
             $rawdata = cfpr_hosts_with_bundlesseen($username, Null, $name, true, $class_regex);
             $data = $this->checkData($rawdata);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors()==0)
             {
-                if($this->hasErrors()>0){
-                  throw new Exception($this->getErrorsString());
-                }
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -238,17 +231,13 @@ class report_model extends Cf_Model {
         {
             $rawdata = cfpr_report_classes($username, $hostkey, $search, true, $inclist, $exlist,"last-seen", true, $rows, $page_number);
             $data = $this->checkData($rawdata);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors()==0)
             {
-                if($this->hasErrors()>0){
-                  throw new Exception($this->getErrorsString());
-                }
-                
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -277,16 +266,13 @@ class report_model extends Cf_Model {
         {
             $rawdata = cfpr_report_value($username, $hostkey, $days, $months, $years, $inclist, $exlist, "day", true, $rows, $page_number);
             $data = $this->checkData($rawdata);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors()==0)
             {
-                if($this->hasErrors()>0){
-                  throw new Exception($this->getErrorsString());
-                }
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -310,16 +296,13 @@ class report_model extends Cf_Model {
         {
             $rawdata =   cfpr_hosts_with_value($username, NULL, $days, $months, $years, $class_regex);
             $data = $this->checkData($rawdata);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors()==0)
             {   
-                if($this->hasErrors()>0){
-                  throw new Exception($this->getErrorsString());
-                }
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -346,16 +329,13 @@ class report_model extends Cf_Model {
         {
             $rawdata =   cfpr_report_compliance_promises($username, $hostkey, $search, $state, true, $inclist, $exlist, "last-seen", true, $rows, $page_number);
             $data = $this->checkData($rawdata);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors()==0)
             {
-                if($this->hasErrors()>0){
-                  throw new Exception($this->getErrorsString());
-                }
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -387,7 +367,7 @@ class report_model extends Cf_Model {
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -424,7 +404,7 @@ class report_model extends Cf_Model {
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -464,7 +444,7 @@ class report_model extends Cf_Model {
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -486,7 +466,7 @@ class report_model extends Cf_Model {
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -508,7 +488,7 @@ class report_model extends Cf_Model {
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -542,7 +522,7 @@ class report_model extends Cf_Model {
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -573,7 +553,7 @@ class report_model extends Cf_Model {
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -608,7 +588,7 @@ class report_model extends Cf_Model {
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -642,7 +622,7 @@ class report_model extends Cf_Model {
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -676,7 +656,7 @@ class report_model extends Cf_Model {
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -710,7 +690,7 @@ class report_model extends Cf_Model {
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -736,16 +716,14 @@ class report_model extends Cf_Model {
         {   
             $rawdata=cfpr_report_setuid($username, $hostkey, $search, true, $inclist, $exlist, "hostname", true, $rows, $page_number);
             $data = $this->checkData($rawdata);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors() == 0)
             {
-                if($this->hasErrors()>0){
-                  throw new Exception($this->getErrorsString());
-                }
+
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
                 
             }
         }
@@ -775,16 +753,13 @@ class report_model extends Cf_Model {
         {   
             $rawdata=cfpr_report_software_in($username, $hostkey, $search, $version, $arch, true, $inclist, $exlist, "hostname", true, $rows, $page_number);
             $data = $this->checkData($rawdata);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors() == 0)
             {
-                if($this->hasErrors()>0){
-                  throw new Exception($this->getErrorsString());
-                }
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
                 
             }
         }
@@ -795,21 +770,32 @@ class report_model extends Cf_Model {
         } 
     }
     
+    /**
+     *
+     * @param type $username
+     * @param type $hostkey
+     * @param type $scope
+     * @param type $lval
+     * @param type $rval
+     * @param type $type
+     * @param type $inclist
+     * @param type $exlist
+     * @param type $rows
+     * @param type $page_number
+     * @return type 
+     */
     function getVariablesReport($username, $hostkey, $scope, $lval, $rval, $type, $inclist,$exlist, $rows = 50, $page_number =1){
          try
         {   
             $rawdata=cfpr_report_vars($username, $hostkey, $scope, $lval, $rval, $type, true, $inclist,$exlist, "var-name", true, $rows, $page_number);
             $data = $this->checkData($rawdata);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors() == 0)
             {
-                if($this->hasErrors()>0){
-                  throw new Exception($this->getErrorsString());
-                }
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
                 
             }
         }
