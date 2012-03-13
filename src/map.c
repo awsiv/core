@@ -51,7 +51,7 @@ struct Map_
 
 static unsigned IdentityHashFn(const void *ptr)
 {
-    return (unsigned)ptr;
+    return (unsigned)(uintptr_t)ptr;
 }
 
 static bool IdentityEqualFn(const void *p1, const void *p2)
