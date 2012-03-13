@@ -60,8 +60,6 @@ class pdfreports extends Cf_Controller
         {
             $report_format = trim($params['rf']);
         }
-        
-        $params=array_map('urldecode',$params);
 
         $params = array_map('urldecode', $params);
 
@@ -95,7 +93,6 @@ class pdfreports extends Cf_Controller
             try
             {
                 $pdf->PDFSetReportName($this->report_model->getReportTitle($report_type));
-                
             }
             catch (Exception $e)
             {
@@ -125,7 +122,7 @@ class pdfreports extends Cf_Controller
                 break;
 
             case "business-value":
-                $this->rpt_business_value($username, $params['hostkey'], $params['date'], explode(',',$params['inclist']),explode(',',$params['exlist']), $params['rows'], $params['page']);
+                $this->rpt_business_value($username, $params['hostkey'], $params['date'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
                 break;
 
             case "contexts":
@@ -153,39 +150,39 @@ class pdfreports extends Cf_Controller
                 break;
 
             case "patches-installed":
-                $this->rpt_patch_status($username, $params['hostkey'], $params['search'], $params['version'], $params['arch'], explode(',',$params['inclist']),explode(',',$params['exlist']), $params['rows'], $params['page']);
+                $this->rpt_patch_status($username, $params['hostkey'], $params['search'], $params['version'], $params['arch'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
                 break;
 
             case "benchmarks":
-                $this->rpt_performance($username, $params['hostkey'], $params['search'], explode(',',$params['inclist']),explode(',',$params['exlist']), $params['rows'], $params['page']);
+                $this->rpt_performance($username, $params['hostkey'], $params['search'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
                 break;
 
             case "promises-repaired-summary":
-                $this->rpt_promise_repaired_summary($username, $params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], explode(',',$params['inclist']),explode(',',$params['exlist']), $params['rows'], $params['page']);
+                $this->rpt_promise_repaired_summary($username, $params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
                 break;
 
             case "promises-repaired-log":
-                $this->rpt_repaired_log($username, $params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], explode(',',$params['inclist']),explode(',',$params['exlist']), $params['rows'], $params['page']);
+                $this->rpt_repaired_log($username, $params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
                 break;
 
             case "promises-not-kept-summary":
-                $this->rpt_promise_notkept_summary($username, $params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], explode(',',$params['inclist']),explode(',',$params['exlist']), $params['rows'], $params['page']);
+                $this->rpt_promise_notkept_summary($username, $params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
                 break;
 
             case "promises-not-kept-log":
-                $this->rpt_promise_notkept($username, $params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], explode(',',$params['inclist']),explode(',',$params['exlist']), $params['rows'], $params['page']);
+                $this->rpt_promise_notkept($username, $params['hostkey'], $params['search'], $params['hours_deltafrom'], $params['hours_deltato'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
                 break;
 
             case "setuid-programs":
-                $this->rpt_setuid($username, $params['hostkey'], $params['search'], explode(',',$params['inclist']),explode(',',$params['exlist']), $params['rows'], $params['page']);
+                $this->rpt_setuid($username, $params['hostkey'], $params['search'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
                 break;
 
             case "software-installed":
-                $this->rpt_software_installed($username, $params['hostkey'], $params['search'], $params['version'], $params['arch'], explode(',',$params['inclist']),explode(',',$params['exlist']), $params['rows'], $params['page']);
+                $this->rpt_software_installed($username, $params['hostkey'], $params['search'], $params['version'], $params['arch'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
                 break;
 
             case "values":
-                $this->rpt_variables($username, $params['hostkey'], $params['search'], $params['scope'], $params['lval'], $params['rval'], $params['var_type'], explode(',',$params['inclist']),explode(',',$params['exlist']), $params['rows'], $params['page']);
+                $this->rpt_variables($username, $params['hostkey'], $params['search'], $params['scope'], $params['lval'], $params['rval'], $params['var_type'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
                 break;
 
             case "file-change-diffs":
@@ -429,11 +426,12 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_business_value($username, $hostkey, $date, $inclist, $exlist, $rows = 0, $page_number = 0) {
-       try
+    function rpt_business_value($username, $hostkey, $date, $inclist, $exlist, $rows = 0, $page_number = 0)
+    {
+        try
         {
-           
-           $jsondata = $this->report_model->getBusinessValueReport($username, $hostkey, $date, $inclist, $exlist, $rows, $page_number);
+
+            $jsondata = $this->report_model->getBusinessValueReport($username, $hostkey, $date, $inclist, $exlist, $rows, $page_number);
 
             $data1 = $jsondata['data'];
             $header = ($jsondata['meta']['header']);
@@ -516,14 +514,15 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_promise_notkept($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 0, $page_number = 0) {
+    function rpt_promise_notkept($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 0, $page_number = 0)
+    {
 
         try
         {
             $header = array('Host', 'Promise Handle', 'Report', 'Time');
 
-        //$ret = cfpr_report_notkept($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), array($class_regex), array(),"time", true, $rows, $page_number);
-        $jsondata = $this->report_model->getPromisesNotKeptLog($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows, $page_number);
+            //$ret = cfpr_report_notkept($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), array($class_regex), array(),"time", true, $rows, $page_number);
+            $jsondata = $this->report_model->getPromisesNotKeptLog($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows, $page_number);
 
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
@@ -562,10 +561,12 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_promise_notkept_summary($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 0, $page_number = 0) {
-     try{
-       // $ret = cfpr_summarize_notkept($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, "time", true, $rows, $page_number);
-        $jsondata = $this->report_model->getPromisesNotKeptSummary($username, $hostkey, $name, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows , $page_number);
+    function rpt_promise_notkept_summary($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 0, $page_number = 0)
+    {
+        try
+        {
+            // $ret = cfpr_summarize_notkept($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, "time", true, $rows, $page_number);
+            $jsondata = $this->report_model->getPromisesNotKeptSummary($username, $hostkey, $name, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows, $page_number);
 
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
@@ -602,10 +603,11 @@ class pdfreports extends Cf_Controller
     function rpt_promise_repaired_summary($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex = '', $rows = 0, $page_number = 0)
     {
         $header = array('Promise Handle', 'Report', 'Occurrences');
-        try{
-        //$ret = cfpr_summarize_repaired($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, "time", true, $rows, $page_number);
+        try
+        {
+            //$ret = cfpr_summarize_repaired($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, "time", true, $rows, $page_number);
 
-        $jsondata = $this->report_model->getPromisesRepairedSummary($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows , $page_number );
+            $jsondata = $this->report_model->getPromisesRepairedSummary($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows, $page_number);
 
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
@@ -869,11 +871,13 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_patch_status($username, $hostkey, $search, $version, $arch, $inclist, $exlist, $rows = 0, $page_number = 0) {
+    function rpt_patch_status($username, $hostkey, $search, $version, $arch, $inclist, $exlist, $rows = 0, $page_number = 0)
+    {
 
-        try{
-        //$ret = cfpr_report_patch_in($username, $hostkey, $search, $version, $arch, true, array($class_regex), array(), "hostname", true, $rows, $page_number);
-        $jsondata = $this->report_model->getPatchesInstalled($username, $hostkey, $search, $version, $arch, $inclist, $exlist, $rows, $page_number);
+        try
+        {
+            //$ret = cfpr_report_patch_in($username, $hostkey, $search, $version, $arch, true, array($class_regex), array(), "hostname", true, $rows, $page_number);
+            $jsondata = $this->report_model->getPatchesInstalled($username, $hostkey, $search, $version, $arch, $inclist, $exlist, $rows, $page_number);
 
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
@@ -910,10 +914,12 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_software_installed($username, $hostkey, $search, $version, $arch, $inclist, $exlist, $rows = 0, $page_number = 0) {
-        try{
-        //$ret = cfpr_report_software_in($username, $hostkey, $search, $version, $arch, true, array($class_regex), array(), "hostname", true, $rows, $page_number);
-        $jsondata = $this->report_model->getSoftwareInstalled($username, $hostkey, $search, $version, $arch, $inclist, $exlist, $rows, $page_number);
+    function rpt_software_installed($username, $hostkey, $search, $version, $arch, $inclist, $exlist, $rows = 0, $page_number = 0)
+    {
+        try
+        {
+            //$ret = cfpr_report_software_in($username, $hostkey, $search, $version, $arch, true, array($class_regex), array(), "hostname", true, $rows, $page_number);
+            $jsondata = $this->report_model->getSoftwareInstalled($username, $hostkey, $search, $version, $arch, $inclist, $exlist, $rows, $page_number);
 
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
@@ -951,10 +957,12 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_performance($username, $hostkey, $search, $inclist, $exlist, $rows = 0, $page_number = 0) {
-        try{
-        //$ret = cfpr_report_performance($username, $hostkey, $search, true, array($class_regex), array(), "last-performed", true, $rows, $page_number);
-        $jsondata = $this->report_model->getPerformance($username, $hostkey, $search, $inclist, $exlist, $rows , $page_number);
+    function rpt_performance($username, $hostkey, $search, $inclist, $exlist, $rows = 0, $page_number = 0)
+    {
+        try
+        {
+            //$ret = cfpr_report_performance($username, $hostkey, $search, true, array($class_regex), array(), "last-performed", true, $rows, $page_number);
+            $jsondata = $this->report_model->getPerformance($username, $hostkey, $search, $inclist, $exlist, $rows, $page_number);
 
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
@@ -995,11 +1003,13 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_repaired_log($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 0, $page_number = 0) {
+    function rpt_repaired_log($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 0, $page_number = 0)
+    {
         $header = array('Host', 'Promise Handle', 'Report', 'Time');
-        try{
-        //$ret = cfpr_report_repaired($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), array($class_regex), array(), "time", true, $rows, $page_number);
-        $jsondata = $this->report_model->getPromisesRepairedLog($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows, $page_number);
+        try
+        {
+            //$ret = cfpr_report_repaired($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), array($class_regex), array(), "time", true, $rows, $page_number);
+            $jsondata = $this->report_model->getPromisesRepairedLog($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows, $page_number);
 
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
@@ -1080,17 +1090,19 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_variables($username, $hostkey, $search, $scope, $lval, $rval, $type, $inclist, $exlist, $rows = 0, $page_number = 0) {
+    function rpt_variables($username, $hostkey, $search, $scope, $lval, $rval, $type, $inclist, $exlist, $rows = 0, $page_number = 0)
+    {
         $header = array();
 
-        if ($hostkey == NULL) {
+        if ($hostkey == NULL)
+        {
             //$ret = cfpr_report_vars($username, NULL, $scope, $lval, $rval, $type, true, array($class_regex), array(), "var-name", true, $rows, $page_number);
-           $ret=$this->report_model->getVariablesReport($username, $hostkey, $scope, $lval, $rval, $type, $inclist, $exlist, $rows , $page_number);
-            
-        } else {
+            $ret = $this->report_model->getVariablesReport($username, $hostkey, $scope, $lval, $rval, $type, $inclist, $exlist, $rows, $page_number);
+        }
+        else
+        {
             //$ret = cfpr_report_vars($username, $hostkey, NULL, $search, NULL, NULL, true, array($class_regex), array(), "var-name", true, $rows, $page_number);
-            $ret=$this->report_model->getVariablesReport($username, $hostkey, $scope, $search, $rval, $type, $inclist, $exlist, $rows , $page_number);
-            
+            $ret = $this->report_model->getVariablesReport($username, $hostkey, $scope, $search, $rval, $type, $inclist, $exlist, $rows, $page_number);
         }
 
         $dataArray = $ret;
@@ -1193,27 +1205,10 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_setuid($username, $hostkey, $search, $inclist, $exlist, $rows = 0, $page_number = 0) {
+    function rpt_setuid($username, $hostkey, $search, $inclist, $exlist, $rows = 0, $page_number = 0)
+    {
         $header = array('Host', 'Type', 'Name', 'Value');
         //$ret = cfpr_report_setuid($username, $hostkey, $search, true, array($class_regex), array(), "hostname", true, $rows, $page_number);
-        
-        try{
-        $jsondata = $this->report_model->getReportSetUid($username, $hostkey, $search, $inclist, $exlist, $rows, $page_number);
-
-        $data1 = $jsondata['data'];
-        $header = $jsondata['meta']['header'];
-        $header = array_keys($header);
-        $cols = count($header);
-        $col_len = array(30, 70);
-
-        if ($this->reportGenerator instanceof cf_pdf) {
-            $pdf = $this->reportGenerator;
-            $desc = $this->report_model->getReportDescription($this->report_id);
-            $pdf->PDFSetDescription($desc);
-            $pdf->ReportTitle();
-            $pdf->ReportDescription();
-            $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
-            $pdf->Ln(8);
 
         try
         {
