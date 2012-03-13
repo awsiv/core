@@ -58,9 +58,9 @@ class pdfreports extends Cf_Controller {
 
         $report_download = isset($params['download']) && trim($params['download'] != '') ? $params['download'] : $this->input->post('download');
 
-        // check if its all download or current page download only 
+        // check if its all download or current page download only
         if ($report_download == 1) {
-            // it all download so pagination paramteres are null 
+            // it all download so pagination paramteres are null
             $params['page'] = null;
             $params['rows'] = null;
         } else {
@@ -87,7 +87,7 @@ class pdfreports extends Cf_Controller {
         }
         // we will use username for RBAC
         $username =  $this->session->userdata('username');
-        
+
         switch ($report_type) {
             case "bundle-profile":
                 $this->rpt_bundle_profile($username, $params['hostkey'], $params['search'], $params['class_regex'], $params['rows'], $params['page']);
@@ -176,7 +176,7 @@ class pdfreports extends Cf_Controller {
                 $from = $_POST['from'];
                 $subject = $_POST['subject'];
                 $msg = $_POST['message'];
-                // write the file 
+                // write the file
                 // check for directory
                 $this->checkTempDir();
                 $filename = $this->storeDir . $filename;
@@ -214,7 +214,7 @@ class pdfreports extends Cf_Controller {
     }
 
     /**
-     * Checks if the tmp directory exist and is writable 
+     * Checks if the tmp directory exist and is writable
      * @throws Exception if not writable
      */
     function checkTempDir() {
@@ -287,8 +287,8 @@ class pdfreports extends Cf_Controller {
     }
 
     /**
-     * Checks if there is data truncation warning from the C-API and set the warning  
-     * @param array $result data received from C-API 
+     * Checks if there is data truncation warning from the C-API and set the warning
+     * @param array $result data received from C-API
      */
     function checkForDataTruncation($result) {
         if (is_array($result) && key_exists('truncated', $result['meta'])) {
@@ -298,7 +298,7 @@ class pdfreports extends Cf_Controller {
 
    /**
     * Changes the timestamp to date format
-    * @param array $data 
+    * @param array $data
     * @param type $index array index of the timestamp field
     * @return array
     */
@@ -313,13 +313,13 @@ class pdfreports extends Cf_Controller {
      * Removes notes field from the data
      * @param type $data
      * @param type $header
-     * @return array 
+     * @return array
      */
     function removeNotesField($data, $header) {
         // check for notes if present remove the field from the data
         if (array_key_exists('Note', $header)) {
             $index = $header['Note']['index'];
-            // remove the notes data from the array 
+            // remove the notes data from the array
             foreach ($data as &$row) {
                 unset($row[$index]);
             }
@@ -348,7 +348,7 @@ class pdfreports extends Cf_Controller {
             $pdf->PDFSetDescription($desc);
 
             $cols = count($header);
-            $col_len = array(24, 23, 23, 10, 10, 10); #in percentage    
+            $col_len = array(24, 23, 23, 10, 10, 10); #in percentage
             $pdf->ReportTitle();
             $pdf->ReportDescription();
             $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
@@ -461,7 +461,7 @@ class pdfreports extends Cf_Controller {
 
     function rpt_promise_notkept_summary($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex = '', $rows = 0, $page_number = 0) {
 
-        $ret = cfpr_summarize_notkept($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, "time", true, $rows, $page_number);
+        $ret = cfpr_summarize_notkept($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), array($class_regex), array(), "time", true, $rows, $page_number);
         $jsondata = json_decode($ret, true);
 
         $data1 = $jsondata['data'];

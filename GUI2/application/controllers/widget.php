@@ -48,7 +48,7 @@ class Widget extends Cf_Controller {
         $stopDateTimeStamp = ($stopDate == null) ? ($startDate + (6 * 3600)) : time();
         $environment = $env;
 
-        $this->data['notkept'] = json_decode(cfpr_summarize_notkept($username, NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment, "time", true, 0, 0), true);
+        $this->data['notkept'] = json_decode(cfpr_summarize_notkept($username, NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, array($environment), array(), "time", true, 0, 0), true);
         $this->data['repaired'] = json_decode(cfpr_summarize_repaired($username, NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, $environment, "time", true, 0, 0), true);
 
 
@@ -429,22 +429,22 @@ class Widget extends Cf_Controller {
 
         $this->load->view('widgets/astrolabeAddNodeDialog', $data);
     }
-    
+
     function contextfinder () {
         $data = array();
         $this->load->view('widgets/contextfinder', $data);
-    }   
-    
+    }
+
     /**
     * Return all bundles except bundles assigned to the role
-    * 
+    *
     * @param rolename string
-    * 
+    *
     * @return json string
-    * 
-    */ 
+    *
+    */
    function bundlesNotAssignedToRole($rolename='') {
-        
+
         $username = $this->session->userdata('username');
 
         try {
@@ -487,7 +487,7 @@ class Widget extends Cf_Controller {
             $used_bundles     = array_combine($used_bundles_tmp, $used_bundles_tmp); // create array as $arr[$key] = $key
 
             unset($used_bundles_tmp);
-            
+
             if (!empty($used_bundles)) {
                 $bundle = arrayRecursiveDiff($all_bundles, $used_bundles);
             }
@@ -501,7 +501,7 @@ class Widget extends Cf_Controller {
             $this->output->set_status_header('500', $e->getMessage());
             echo($e->getMessage());
         }
-    }   
-    
+    }
+
 }
 ?>

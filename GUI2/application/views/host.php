@@ -87,7 +87,7 @@ $colour = $this->host_model->getHostColor($this->session->userdata('username'),$
         </div>
         <div class="clear"></div>
         <div id="notkepttable" title="<?php echo $this->lang->line('host_promise_not_kept'); ?>">
-            <?php $report = cfpr_summarize_notkept($this->session->userdata('username'), $hostkey, NULL, NULL, NULL, NULL, "time", true, NULL, NULL); ?>
+            <?php $report = cfpr_summarize_notkept($this->session->userdata('username'), $hostkey, NULL, NULL, NULL, array(), array(), "time", true, NULL, NULL); ?>
                <!--<p class="title">Promises not kept in the past week</p-->
             <div class="bundlelist-table">
                 <?php
@@ -118,7 +118,7 @@ $colour = $this->host_model->getHostColor($this->session->userdata('username'),$
                 $(element).attr('href', '/notes/index/action/show/nid/' + nid);
                 // console.log(nid,element);
             },title:'Add note about this host',dontOverrideTitle:true});
-    
+
         $('#findreport').reportfinder({allhost:false,hostkey:"<?php echo $hostkey; ?>",baseUrl: '<?php echo site_url() ?>'});
 
         var $notkeptbox = $('#notkepttable').dialog({
@@ -134,7 +134,7 @@ $colour = $this->host_model->getHostColor($this->session->userdata('username'),$
                 //$(this).parent().find('.ui-dialog-buttonpane').find('button:first').focus()
             }
         });
-         
+
         $('#notkeptlnk').bind('click',function(event){
             event.preventDefault();
             $notkeptbox.dialog('open');
