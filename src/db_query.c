@@ -6269,11 +6269,6 @@ int CFDB_QueryReplStatus(mongo_connection *conn, char *buffer, int bufsize)
                         {
                             snprintf(work, sizeof(work), "\"name\":\"%s\",", bson_iterator_string(&it3));
                         }
-
-                        if (strcmp(dbkey, "name") == 0)
-                        {
-                            snprintf(work, sizeof(work), "\"name\":\"%s\",", bson_iterator_string(&it3));
-                        }
                         else if (strcmp(dbkey, "health") == 0)
                         {
                             int health = bson_iterator_int(&it3);
