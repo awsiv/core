@@ -27,6 +27,7 @@
    
 </div>
 <script type="text/javascript">
+
  var $incList=$('input:hidden[name=inclist]');
  var $exList=$('input:hidden[name=exlist]');
  $('.loadsavedsearch').ajaxyDialog({title:'Saved Searches'});
@@ -37,13 +38,16 @@
         $('#hclist').contextfinder({
           baseUrl: '<?php echo site_url() ?>',
           complete:function(event,data){
-              $('#hg').data('list',data.inccl).val('includes='+data.inccl.incList+' exclude='+data.inccl.exList);
-               $incList.val(data.inccl.incList);
-               $exList.val(data.inccl.exList);
+            $('#hg').data('list',data).val('includes='+data.includes+' exclude='+data.excludes);
+               $incList.val(data.includes);
+               $exList.val(data.excludes);
+             
           }
         });   
-  /*
-  $('#searchform').live('submit',function(){
+  
+  $('#hclist').contextfinder('setContext',$incList.val().split(','), $exList.val().split(','));
+  
+  /*$('#searchform').live('submit',function(){
       var list=$('#hg').data('list');
       console.log($('input:hidden[name=inclist]').val());
    return false;

@@ -74,6 +74,7 @@
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>hostsConnectivity.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>hostInfo.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>jScrollPane.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>contextfinder.css" />
 
 <script type="text/javascript">
 

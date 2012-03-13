@@ -14,6 +14,7 @@ private $filter_view_mappings=array();
         $this->carabiner->js('widgets/hostfinder.js');
         $this->carabiner->js('widgets/reportfinder.js');
         $this->carabiner->js('widgets/contextfinder.js');
+        $this->carabiner->css('contextfinder.css');
         
         
         $this->filter_view_mappings=array(

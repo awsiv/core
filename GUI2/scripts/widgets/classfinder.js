@@ -1,8 +1,9 @@
 (function($) {
     var classfinder_animate = false;
-    $.widget('ui.classfinder',
-    {
-        _context: {
+    var initator=false;
+    $.widget('ui.classfinder', 
+    {     
+        _context:{
             includes: [],
             excludes: []
         },
@@ -15,30 +16,37 @@
             height: 600,
              subscribe: ''
         },
-        page: 2,
-        selectedLetter: null,
-        scrollingEnd: false,
-        elementtext: '',
-        selectedMenu: null,
-        animate: false,
-        ajaxloader: $('<span class="loading2"></span>'),
-        _init: function() {
-            var self = this;
+        page:2,
+        selectedLetter:null,
+        scrollingEnd:false,
+        elementtext:"",
+        selectedMenu:null,
+        animate:false,
+        init:null,
+        ajaxloader:$('<span class="loading2"></span>'),
+        _init: function(){
+            var self=this;  
             self.resetPagination();
             self.dialogcontent.bind('scroll', $.proxy(self.classlistscrolled, self));
 
             self.dialogcontent.ajaxError(function(e, jqxhr, settings, exception) {
                 self._displayFailure(settings.url, jqxhr, exception);
             });
-            self.setContext(self.options.includes, self.options.excludes);
-
+            self.setContext(self.options.includes,self.options.excludes);
+            
+            //fix to remember the link clicked
+            self.element.bind('click',function(event){
+                 initator=self.element;
+                 self.init=self.element;
+             });
+            
         },
-        _create: function() {
-            var self = this;
-            self.addsearchbar();
-            self.addalphapager();
-
-            self.element.bind('click', function(event) {
+        _create:function(){
+            var self=this;
+             self.addsearchbar();
+             self.addalphapager();
+             
+            self.element.bind('click',function(event){
                 event.preventDefault();
                 self. elementtext = $(this).text();
                 $(this).text('').append('<span class="loadinggif"> </span>');
@@ -74,8 +82,9 @@
             self.revertTitle();
         },
 
-        addsearchbar: function() {
-            var self = this;
+        addsearchbar:function(){
+            var self =this;
+           
             self.dialogcontent = self.dialogContainer();
             self.dialogcontent.dialog({
                 height: self.options.height,
@@ -115,8 +124,8 @@
             self.matchhostfinder.appendTo(self.dialogcontent.parent());
             //self.menuhandler=$('<span id="handle" class="operation">Options</span>');
             //self.titlebar.append(self.menuhandler).delegate('#handle','click',function(){self.menu.slideToggle();});
-
-            self.searchbar = $('<form id="classfindersearch"><span class="search"><input type="text" name="search" value="Search by class (context)"/></span></form>');
+            
+            self.searchbar=$('<form id="classfindersearch"><span class="search"><input type="text" name="search" value="Search by class (context)"/></span></form>')
             self.titlebar.append(self.ajaxloader);
             self.titlebar.append(self.searchbar).delegate('form', 'submit', {
                 ui: self
@@ -126,27 +135,28 @@
             self.searchbar.delegate('input[type="text"]', 'click', function() {
                 $(this).focus().select();
             });
-            self.searchbar.delegate('input[type="text"]', 'focusin', $.proxy(self.searchboxevent, self));
-            self.searchbar.delegate('input[type="text"]', 'focusout', $.proxy(self.searchboxevent, self));
-            self.searchbar.find('input[type="text"]').data('default', self.searchbar.find('input[type="text"]').val());
-            self.searchbar.delegate('input[type="text"]', 'keyup', $.proxy(self.searchclassinlist, self));
-
-            self.dialogcontent.parent().delegate('#findmatchedhost', 'click', $.proxy(self.findmatchedhost, self));
-            self.menu = $('<div class="categories"><ul id="classoptions"></ul></div>');
+            self.searchbar.delegate('input[type="text"]','focusin',$.proxy(self.searchboxevent,self));
+            self.searchbar.delegate('input[type="text"]','focusout',$.proxy(self.searchboxevent,self));
+            self.searchbar.find('input[type="text"]').data('default',self.searchbar.find('input[type="text"]').val());
+            self.searchbar.delegate('input[type="text"]','keyup',$.proxy(self.searchclassinlist,self));
+            
+            self.dialogcontent.parent().delegate('#findmatchedhost','click',$.proxy(self.findmatchedhost,self));
+            self.menu=$('<div class="categories"><ul id="classoptions"></ul></div>');
             self.menu.find('ul').append('<li>All classes</li><li>Time classes</li><li>soft classes</li>');
             $('<span class="slider"></span>').appendTo(self.menu).bind('click', function(event) {
                 self.menu.slideUp();
             });
             self.menu.appendTo(self.titlebar).hide();
-            self.menu.delegate('li', 'click', $.proxy(self.menuitemclicked, self));
-
-
+            self.menu.delegate('li','click',$.proxy(self.menuitemclicked,self));
+           
+            
         },
 
-        menuitemclicked: function(event) {
-            var self = this;
-            var sender = $(event.target);
-            self.selectedLetter = null; // reset the letter selection
+             
+        menuitemclicked:function(event){
+            var self=this;
+            var sender=$(event.target);
+            self.selectedLetter = null; // reset the letter selection 
             self.resetPagination();
             self.resetScrollPosition();
             self.searchbar.find('input[type="text"]').val('Search on ' + sender.text().toLowerCase()).data('default', 'Search on ' + sender.text().toLowerCase());
@@ -169,13 +179,13 @@
             self.searchbar.find('input[type="text"]').trigger('blur');
             self.resetSelectedLetter();
         },
-
-        classlistscrolled: function(event) {
-
-            var listpane = event.currentTarget;
-            var self = this;
-
-            if (self.scrollingEnd == true || $(listpane).scrollTop() == 0 || classfinder_animate == true) return;
+        
+        classlistscrolled:function(event) {
+            
+            var listpane=event.currentTarget;
+            var self=this;
+             //console.log(self.scrollingEnd);
+            if (self.scrollingEnd == true || $(listpane).scrollTop()==0 || classfinder_animate==true) return;
             // only do scrolling event when no menu option are selected or all classes is selected.
             if (self.selectedMenu == null) {
                 self.selectedMenu = 'all classes';
@@ -311,9 +321,10 @@
             if (!self.options.defaultbehaviour)
             {
                 event.preventDefault();
-                self.dialogcontent.dialog('close');
-                self._trigger('complete', null, {
-                    selectedclass: sender.text()
+                self.dialogcontent.dialog('close')
+                self._trigger("complete",null,{
+                    selectedclass:sender.text(),
+                    initator:initator
                 });
             }
         },
@@ -356,10 +367,12 @@
 
         searchclassinlist: function(event)
         {
-            var self = this,
-            searchbox = $(event.target);
-            if (self.selectedMenu == null) {
-                self.selectedMenu = 'all classes';
+            var self=this,
+                searchbox= $(event.target);
+           // console.log(self.selectedMenu);
+            // console.log(self.init);
+            if (self.selectedMenu == null ) {
+                self.selectedMenu='all classes';
             }
             var filter = self.selectedMenu.toLowerCase().split(' ')[0];
 
@@ -373,8 +386,8 @@
                     'data': {
                         filter: filter
                     },
-                    'success': function(data) {
-                        self.loadDataInContainer(data, true);
+                    'success': function (data) {
+                        self.loadDataInContainer(data,false);
                     }
                 };
                 self.sendRequest(params);
@@ -422,8 +435,8 @@
                 'data': {
                     filter: filter
                 },
-                'success': function(data) {
-                    self.loadDataInContainer(data, true);
+                'success': function (data) {
+                    self.loadDataInContainer(data,false);
                 }
             };
             self.sendRequest(params);

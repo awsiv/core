@@ -7,7 +7,7 @@ if (!function_exists('contextfinder_generate_item')) {
         // if something changed here -chnage also in contextfinder.js new_el variable
         echo '<div class="item">
                 <input type="text" name="'.$name.'[]" value="'. $value .'"> 
-                <a class="class_selector" href="#">&nbsp;</a>
+                <a class="class_selector" href="'.site_url('widget/allclasses').'">&nbsp;</a>
                 <a class="delete_condition" href="#">&nbsp;</a>
             </div>';
     }
