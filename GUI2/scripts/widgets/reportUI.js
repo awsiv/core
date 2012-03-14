@@ -16,8 +16,10 @@
         _create: function () {
             var $element = this.element;
             this.menuPane = $('<div>').attr('id','treeReportContentMenu');
+            this.reportTitlePane = $('<div style="margin:5px;">').attr('id','treeReportContentMenuTitle');
             this.filterPane = $('<div>').attr('id','treeReportContentMenuFilter');
             $element.append(this.menuPane);
+            $element.append(this.reportTitlePane);
             $element.append(this.filterPane);
             this.refreshReportMenu();
             this.bindEventForMenuPane();
@@ -28,11 +30,18 @@
         menuItemClicked:function(e) {
             var $self = this;
             e.preventDefault();
-            var itemClicked = $(e.currentTarget);  
-            // update the filters 
-            var reportId = itemClicked.attr('id');
+            var $itemClicked = $(e.currentTarget);
+
+            //remove the previous selected items
+            $self.menuPane.find('.selected').removeClass("selected");
+
+            $itemClicked.addClass('selected');
+            $itemClicked.parents().eq(2).find('span').addClass('selected');
+            var reportId = $itemClicked.attr('id');
+            var reportText = $itemClicked.text();
             var filterUrl = $self.options.baseUrl + '/search/filterSearchView';
             $self.filterPane.html($self.$busyIcon);
+            $self.reportTitlePane.html(reportText);
             $self.filterPane.load(filterUrl, {
                 'host':'All',
                 'report':reportId,
