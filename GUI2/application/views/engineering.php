@@ -11,8 +11,7 @@
                 <li><a href="#tab-1">Status</a></li>
                 <li><a href="#tab-2">Reports</a></li>
             </ul>
-            <div id="tab-1">
-            <div class="engineeringContentContainer">
+            <div id="tab-1" class="engineeringStatusContainer">
                 <div id="astrolabeLocation"></div>
 
                 <div id="hostsComplianceTimeseriesContainer" class="hostsComplianceTimeseriesContainer">
@@ -30,12 +29,11 @@
                     <div class="clear"></div>
                 </div>
             </div>
-            </div>
             <div id="tab-2">
-                <div id="reportInfoContainer" class="reportInfoContainer">                                   
+                <div id="reportInfoContainer" class="reportInfoContainer">
                     <div class="clear"></div>
                 </div>
-            </div>    
+            </div>
         </div>
         <div class="clear"></div>
     </div>
@@ -75,10 +73,10 @@
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>jScrollPane.css" />
 
 <script type="text/javascript">
-    
-    
+
+
     $(document).ready(function(){
-        
+
         $("#tabs-layout").tabs();
 
         var genericOption = {
@@ -95,7 +93,7 @@
         $('#astrolabeLocation').astrolabeLocation();
         $('#hostsComplianceTimeseries').hostsComplianceTimeseries();
         $('#reportInfoContainer').reportUI(genericOption);
-        
+
 
         $('#astrolabe').astrolabe({
             hostSelected: function(event, args) {
@@ -124,7 +122,7 @@
                 $('#hostsConnectivityContainer').show();
 
                 $('#astrolabeLocation').astrolabeLocation('setContextPath', args.path, args.count);
-                
+
                 $('#reportInfoContainer').reportUI('setContext',args.includes, args.excludes)
             }
         });

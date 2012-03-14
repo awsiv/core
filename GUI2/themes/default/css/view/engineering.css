@@ -28,21 +28,15 @@
     padding: 0px;
 }
 
-.engineeringContainer .engineeringContentContainer
+.engineeringContainer .engineeringStatusContainer
 {
-    border: solid 1px #d4d5d0;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    -opera-border-radius: 5px;
-    -khtml-border-radius: 5px;
-    -webkit-border-radius: 5px;
     background: #fff;
     color: #4d4d4d;
     margin: 0px;
     padding: 15px;
 }
 
-.engineeringContainer .engineeringContentContainer .hostsComplianceTimeseriesContainer
+.engineeringContainer .engineeringStatusContainer .hostsComplianceTimeseriesContainer
 {
     margin-top: 15px;
     padding: 15px;
@@ -55,7 +49,7 @@
     background: #4d4d4d;
 }
 
-.engineeringContainer .engineeringContentContainer .hostsComplianceContainer
+.engineeringContainer .engineeringStatusContainer .hostsComplianceContainer
 {
     margin-top: 15px;
     padding: 15px;
@@ -68,13 +62,13 @@
     background: #fff;
 }
 
-.engineeringContainer .engineeringContentContainer .hostsComplianceContainer .hostsCompliance
+.engineeringContainer .engineeringStatusContainer .hostsComplianceContainer .hostsCompliance
 {
     float: left;
 }
 
 
-.engineeringContainer .engineeringContentContainer .hostInfoContainer
+.engineeringContainer .engineeringStatusContainer .hostInfoContainer
 {
     margin-top: 15px;
     padding: 15px;
