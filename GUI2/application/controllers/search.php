@@ -1068,12 +1068,21 @@ private $filter_view_mappings=array();
         }
         
         $data=array('report_type'=> $report_id, 'paramArray' => $paramArray);
-        $filename = $this->filter_view_mappings[$report_id].".php";
-        if (file_exists(APPPATH . '/views/searchpages/' . $filename)) {
+        if (isset($this->filter_view_mappings[$report_id]))
+        {
+            $filename = $this->filter_view_mappings[$report_id] . ".php";
+            if (!file_exists(APPPATH . '/views/searchpages/' . $filename))
+            {
+                show_error_custom("View not found", 400);
+                exit();
+            }
+
             $this->load->view('searchpages/' . $filename, $data);
             return;
-        } else {
-            show_404();
+        }
+        else
+        {
+            show_error_custom("View not found", 400);
         }
     }
 
