@@ -2883,7 +2883,7 @@ background-image: none;
     margin-left: 7px;
     margin-top: 20px;
     list-style:none;
-    padding: 0 0 5px 0 !important;
+    padding: 0 0 10px 0 !important;
 }
 .dd_menu li span {
     background:#e6eee3 url('../images/nav_arrows.gif') no-repeat right 2px;
@@ -2914,8 +2914,9 @@ background-image: none;
     display: none;
     margin:0
 }
-
-
+.dd_menu ul li ul li {
+    padding:2px 0px !important;
+}
 .dd_menu li:hover a:visited {text-decoration:underline;}
 
 
