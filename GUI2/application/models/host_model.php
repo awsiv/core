@@ -4,7 +4,7 @@ class host_model extends Cf_Model {
 
     function getRedHost($username, $rows=10, $page=1) {
         try {
-            $rawdata = cfpr_host_compliance_list($username, 'red', $rows, $page);
+            $rawdata = cfpr_host_compliance_list($username, 'red', array('.*'), array(), $rows, $page);
             $data = $this->checkData($rawdata);
             if ($data) {
                 return $data;
@@ -19,7 +19,7 @@ class host_model extends Cf_Model {
 
     function getGreenHost($username, $rows=10, $page=1) {
         try {
-            $rawdata = cfpr_host_compliance_list($username, 'green', $rows, $page);
+            $rawdata = cfpr_host_compliance_list($username, 'green', array('.*'), array(), $rows, $page);
             $data = $this->checkData($rawdata);
             if ($data) {
                 return $data;
@@ -34,7 +34,7 @@ class host_model extends Cf_Model {
 
     function getYellowHost($username, $rows=10, $page=1) {
         try {
-            $rawdata = cfpr_host_compliance_list($username, 'yellow', $rows, $page);
+            $rawdata = cfpr_host_compliance_list($username, 'yellow', array('.*'), array(), $rows, $page);
             $data = $this->checkData($rawdata);
             if ($data) {
                 return $data;
@@ -49,7 +49,7 @@ class host_model extends Cf_Model {
 
     function getBlueHost($username, $rows=10, $page=1) {
         try {
-            $rawdata = cfpr_host_compliance_list($username, 'blue', $rows, $page);
+            $rawdata = cfpr_host_compliance_list($username, 'blue', array('.*'), array(), $rows, $page);
             $data = $this->checkData($rawdata);
             if ($data) {
                 return $data;
@@ -153,7 +153,7 @@ class host_model extends Cf_Model {
      *
      * @param type $username
      * @param type $hostkey
-     * @return type String Ip address for given hostkey 
+     * @return type String Ip address for given hostkey
      */
     function getHostIp($username, $hostkey) {
         try {
@@ -240,7 +240,7 @@ class host_model extends Cf_Model {
      * @param type $username
      * @param type $rows
      * @param type $page
-     * @return type 
+     * @return type
      */
     function getComplianceList($username, $rows=15, $page=1) {
         try {
@@ -260,7 +260,7 @@ class host_model extends Cf_Model {
 
     /**
      *
-     * @param type $key 
+     * @param type $key
      * deletes the host for supplied hostkey
      */
     function deleteHost($username, $key) {

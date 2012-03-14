@@ -3458,15 +3458,19 @@ PHP_FUNCTION(cfpr_select_reports)
 PHP_FUNCTION(cfpr_host_compliance_list)
 {
     char *userName;
+    zval *includes = NULL,
+         *excludes = NULL;
     int user_len;
     char buffer[CF_WEBBUFFER];
     char *colour = NULL;
     int colour_len;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssaall",
                               &userName, &user_len,
                               &colour, &colour_len,
+                              &includes,
+                              &excludes,
                               &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
@@ -3486,6 +3490,8 @@ PHP_FUNCTION(cfpr_host_compliance_list)
         mongo_connection conn;
 
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
+        HostClassFilterAddIncludeExcludeLists(filter, includes, excludes);
+
         DATABASE_OPEN(&conn);
 
         Nova2PHP_host_compliance_list(&conn, colour, filter, &page, buffer, sizeof(buffer));
