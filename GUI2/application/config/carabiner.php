@@ -164,8 +164,8 @@ $config['groups']['CFEngine'] = array(
         array('jquery.qtip.css', 'screen')
     ),
     'js' => array(
-        array('jquery-1.6.1.min.js', 'jquery-1.6.1.min.js', TRUE, FALSE),
-        array('jquery-ui-1.8.14.custom.min.js', 'jquery-ui-1.8.14.custom.min.js', TRUE, FALSE),
+        array('jquery-1.7.1.min.js', 'jquery-1.7.1.min.js', TRUE, FALSE),
+        array('jquery-ui-1.8.18.custom.min.js', 'jquery-ui-1.8.18.custom.min.js', TRUE, FALSE),
         array('jquery.qtip.min.js', 'jquery.qtip.min.js', TRUE, FALSE),
         array('dateformat.js', 'dateformat.js', TRUE, FALSE)
     )

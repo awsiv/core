@@ -1,6 +1,5 @@
 (function($) {
     var classfinder_animate = false;
-    var initator=false;
     $.widget('ui.classfinder', 
     {     
         _context:{
@@ -14,7 +13,8 @@
             defaultbehaviour: true,
             width: 700,
             height: 600,
-             subscribe: ''
+            subscribe: '',
+            autoopen :false
         },
         page:2,
         selectedLetter:null,
@@ -22,10 +22,29 @@
         elementtext:"",
         selectedMenu:null,
         animate:false,
-        init:null,
         ajaxloader:$('<span class="loading2"></span>'),
         _init: function(){
             var self=this;  
+            
+           if(self.options.autoopen == false){
+               self.element.bind('click',function(event){
+                    event.preventDefault();
+                    self. elementtext = $(this).text();
+                    self.init=self.element
+                    $(this).text('').append('<span class="loadinggif"> </span>');
+                    self.dialogcontent.dialog('open');
+                    self.loadpagebody();
+
+                });
+             }else{
+               self. elementtext = $(this).text();
+                    self.init=self.element
+                    $(this).text('').append('<span class="loadinggif"> </span>');
+                    self.dialogcontent.dialog('open');
+                    self.loadpagebody();
+           }
+            
+           
             self.resetPagination();
             self.dialogcontent.bind('scroll', $.proxy(self.classlistscrolled, self));
 
@@ -33,30 +52,14 @@
                 self._displayFailure(settings.url, jqxhr, exception);
             });
             self.setContext(self.options.includes,self.options.excludes);
-            
-            //fix to remember the link clicked
-            self.element.bind('click',function(event){
-                 initator=self.element;
-                 self.init=self.element;
-             });
-            
+          
         },
         _create:function(){
-            var self=this;
-             self.addsearchbar();
-             self.addalphapager();
-             
-            self.element.bind('click',function(event){
-                event.preventDefault();
-                self. elementtext = $(this).text();
-                $(this).text('').append('<span class="loadinggif"> </span>');
-
-                self.dialogcontent.dialog('open');
-                self.loadpagebody();
-
-            });
-
+            var self=this;   
+            self.addsearchbar();
+            self.addalphapager();
             $.ui.classfinder.instances.push(this.element);
+            
         },
 
 
@@ -83,8 +86,7 @@
         },
 
         addsearchbar:function(){
-            var self =this;
-           
+            var self = this;
             self.dialogcontent = self.dialogContainer();
             self.dialogcontent.dialog({
                 height: self.options.height,
@@ -124,7 +126,7 @@
             self.matchhostfinder.appendTo(self.dialogcontent.parent());
             //self.menuhandler=$('<span id="handle" class="operation">Options</span>');
             //self.titlebar.append(self.menuhandler).delegate('#handle','click',function(){self.menu.slideToggle();});
-            
+           
             self.searchbar=$('<form id="classfindersearch"><span class="search"><input type="text" name="search" value="Search by class (context)"/></span></form>')
             self.titlebar.append(self.ajaxloader);
             self.titlebar.append(self.searchbar).delegate('form', 'submit', {
@@ -139,7 +141,7 @@
             self.searchbar.delegate('input[type="text"]','focusout',$.proxy(self.searchboxevent,self));
             self.searchbar.find('input[type="text"]').data('default',self.searchbar.find('input[type="text"]').val());
             self.searchbar.delegate('input[type="text"]','keyup',$.proxy(self.searchclassinlist,self));
-            
+       
             self.dialogcontent.parent().delegate('#findmatchedhost','click',$.proxy(self.findmatchedhost,self));
             self.menu=$('<div class="categories"><ul id="classoptions"></ul></div>');
             self.menu.find('ul').append('<li>All classes</li><li>Time classes</li><li>soft classes</li>');
@@ -184,7 +186,7 @@
             
             var listpane=event.currentTarget;
             var self=this;
-             //console.log(self.scrollingEnd);
+            
             if (self.scrollingEnd == true || $(listpane).scrollTop()==0 || classfinder_animate==true) return;
             // only do scrolling event when no menu option are selected or all classes is selected.
             if (self.selectedMenu == null) {
@@ -324,7 +326,6 @@
                 self.dialogcontent.dialog('close')
                 self._trigger("complete",null,{
                     selectedclass:sender.text(),
-                    initator:initator
                 });
             }
         },
@@ -369,8 +370,6 @@
         {
             var self=this,
                 searchbox= $(event.target);
-           // console.log(self.selectedMenu);
-            // console.log(self.init);
             if (self.selectedMenu == null ) {
                 self.selectedMenu='all classes';
             }
