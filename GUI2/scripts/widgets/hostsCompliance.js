@@ -34,19 +34,19 @@
 
             $.getJSON($self._requestUrls.hostCount($self, $self._context.includes, 'red'),
                 function(count) {
-                    $self._setHostCount($self._red, count);
+                    $self._setHostCount($self._red, count, '> 20% not compliant');
                 });
             $.getJSON($self._requestUrls.hostCount($self, $self._context.includes, 'green'),
                 function(count) {
-                    $self._setHostCount($self._green, count);
+                    $self._setHostCount($self._green, count, '> 80% compliant');
                 });
             $.getJSON($self._requestUrls.hostCount($self, $self._context.includes, 'yellow'),
                 function(count) {
-                    $self._setHostCount($self._yellow, count);
+                    $self._setHostCount($self._yellow, count, '> 20% repaired, now compliant');
                 });
         },
 
-        _createColourEntry: function(colour) {
+        _createColourEntry: function(colour, info) {
             var $self = this;
 
             var $entry = $('<div>');
@@ -62,15 +62,15 @@
             $entryLabel.addClass('colourEntryLabel');
             $entry.append($entryLabel);
 
-            $self._setHostCount($entry, 0);
+            $self._setHostCount($entry, 0, info);
 
             return $entry;
         },
 
-        _setHostCount: function($entry, count) {
+        _setHostCount: function($entry, count, info) {
             var $entryLabel = $entry.children('.colourEntryLabel');
 
-            $entryLabel.html(count + ' hosts known');
+            $entryLabel.html(count + ' hosts (' + info + ')');
         },
 
         _context: {
