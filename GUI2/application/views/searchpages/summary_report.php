@@ -1,4 +1,4 @@
-<div id="searchform" class="panel"><div class="panelhead"><?php echo $report_type?> query</div>
+<div id="searchform" class="panel">
      <div class="panelcontent">
           <form method="post" action="<?php echo site_url('search')?>">
           <p>Promise by handle: (.*+[])<input class="searchfield" type="text" name="name" value="<?php echo (is_array($paramArray) && isset($paramArray['name'])) ? trim($paramArray['name']) : ''; ?>"></p>
@@ -25,10 +25,11 @@
  $('#hclist').contextfinder({
           baseUrl: '<?php echo site_url() ?>',
           complete:function(event,data){
-              $('#hg').data('list',data.inccl).val('includes='+data.inccl.incList+' exclude='+data.inccl.exList);
-               $incList.val(data.inccl.incList);
-               $exList.val(data.inccl.exList);
+               $incList.val(data.includes);
+               $exList.val(data.excludes);
           }
   }); 
+  
+ $('#hclist').contextfinder('setContext',$incList.val().split(','), $exList.val().split(','));
 
 </script>

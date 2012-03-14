@@ -1,5 +1,4 @@
 <div id="searchform" class="panel">
-   <div class="panelhead"><?php echo $report_type.' query'?> </div>
    <div class="panelcontent">
      <form method="post" action="<?php echo site_url('search')?>">
          <p>Bundle pattern: (.*+[])<input class="searchfield" type="text" name="name" id="bp" value="<?php echo (is_array($paramArray) && isset($paramArray['name'])) ? trim($paramArray['name']) : ''; ?>"></p>
@@ -38,7 +37,6 @@
         $('#hclist').contextfinder({
           baseUrl: '<?php echo site_url() ?>',
           complete:function(event,data){
-          $('#hg').data('list',data).val('includes='+data.includes+' exclude='+data.excludes);
                $incList.val(data.includes);
                $exList.val(data.excludes);
              

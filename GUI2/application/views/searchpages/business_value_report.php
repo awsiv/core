@@ -1,7 +1,5 @@
 
 <div id="searchform" class="panel">
-    <div class="panelhead"><?php echo $report_type ?> query</div>
-    
     <div class="panelcontent searchform">
         <form method="post" action="<?php echo site_url('search') ?>">
             <p><label>Date:</label><input class="searchfield" type="text" name="date" value="<?php echo (is_array($paramArray) && isset($paramArray['date'])) ? trim($paramArray['date']) : ''; ?>"></p>
@@ -31,11 +29,12 @@
  $('#hclist').contextfinder({
           baseUrl: '<?php echo site_url() ?>',
           complete:function(event,data){
-           //$('#hg').data('list',data.inccl).val('includes='+data.inccl.incList+' exclude='+data.inccl.exList);
             $incList.val(data.includes);
-            $exList.val(data.inccl.excludes);
+            $exList.val(data.excludes);
           }
   }); 
+  
+ $('#hclist').contextfinder('setContext',$incList.val().split(','), $exList.val().split(','));
 
 $('#morefiltertoggle').live('click',function(){
     if($(this).text()=='More filters'){

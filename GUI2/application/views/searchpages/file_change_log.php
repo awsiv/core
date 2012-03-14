@@ -1,4 +1,5 @@
-<div id="searchform" class="panel"><div class="panelhead"><?php echo $report_type?> query</div><div class="panelcontent">
+<div id="searchform" class="panel">
+    <div class="panelcontent">
           <form method="post" action="<?php echo site_url('search')?>">
           <p>File name: (.*+[])<input class="searchfield" type="text" name="name" title="Regular expression supported" value="<?php echo (is_array($paramArray) && isset($paramArray['name'])) ? trim($paramArray['name']) : ''; ?>"></p>
           <div id="morefilters" style="display:none">
