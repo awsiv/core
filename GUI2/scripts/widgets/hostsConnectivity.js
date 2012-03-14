@@ -73,7 +73,7 @@
         _setHostCount: function($entry, count) {
             var $entryLabel = $entry.children('.colourEntryLabel');
 
-            $entryLabel.html(count + ' hosts known');
+            $entryLabel.html(count + ' hosts unreachable');
         },
 
         _context: {

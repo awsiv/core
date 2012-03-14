@@ -1,8 +1,8 @@
 .hostsConnectivity .colourEntry
 {
     padding: 0px;
-    width: 50%;
     float: left;
+    width: 100%;
 }
 
 .hostsConnectivity .colourEntryIcon

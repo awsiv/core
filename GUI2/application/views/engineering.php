@@ -18,16 +18,23 @@
                     <div id="hostsComplianceTimeseries" style="height: 200px"></div>
                 </div>
 
-                <div id="hostsComplianceContainer" class="hostsComplianceContainer">
-                    <div id="hostsCompliance" class="grid_4 alpha"></div>
-                    <div id="hostsConnectivity" class="grid_4 omega"></div>
-                    <div class="clear"></div>
+                <div class="hostsInfoContainer">
+                    <div id="hostsComplianceContainer" class="hostsComplianceContainer">
+                        <p style="font-size: 16px">Host Compliance (last hour)</p>
+                        <div id="hostsCompliance"></div>
+                    </div>
+                    <div class="hostsConnectivityContainer">
+                        <p style="font-size: 16px">Host Connectivity</p>
+                        <div id="hostsConnectivity"></div>
+                    </div>
                 </div>
+                <div class="clear"></div>
 
                 <div id="hostInfoContainer" class="hostInfoContainer">
                     <div id="hostInfo" class="grid_8"></div>
                     <div class="clear"></div>
                 </div>
+                <div class="clear"></div>
             </div>
             <div id="tab-2">
                 <div id="reportInfoContainer" class="reportInfoContainer">
