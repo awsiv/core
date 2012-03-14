@@ -41,6 +41,7 @@
         setContext:function(includes,excludes) {
             var self = this;
             console.log(includes);
+            console.log(excludes);
             self._context.includes = includes;
             self._context.excludes = excludes;          
             return;  
@@ -91,16 +92,20 @@
 
                     self.updateDataInContainer(data);
             
-                    self.bindClassfinder();
+                    //self.bindClassfinder();
             
-
+                    $(".contextfinder_wrapper").delegate('.class_selector',"click", function(event) {
+                        event.preventDefault();
+                        
+                        self.bindClassfinder(this);
+                    });
                     //clone items
                     $(".contextfinder_wrapper").delegate('.add_condition',"click", function(event) {
                         event.preventDefault();
                         var destination = $(this).attr('destination');
                         var new_el = self._createNewElement(destination);
                         $(this).before(new_el);
-                        self.bindClassfinder();
+                        //self.bindClassfinder(this);
                     });
 
                     $(".contextfinder_wrapper").delegate('.delete_condition',"click", function(event) {
@@ -159,17 +164,16 @@
             });
         },
 
-        bindClassfinder: function () {
+        bindClassfinder: function (elem) {
             var self= this;
-            $('.class_selector').classfinder({
+            $(elem).classfinder({
                 defaultbehaviour:false,
                 baseUrl:self.options.baseUrl,
                 subscribe : this, // THIS instance of contextfinder, so we can call contextfinder functions from classfinder
-                
+                autoopen:true,
                 complete:function(event,data)
                 {  
-                    //$(this).siblings('input').val(data.selectedclass);
-                    data.initator.siblings('input').val(data.selectedclass);
+                    $(this).siblings('input').val(data.selectedclass);
                     self.getInludeExclude();
                 }
             });
