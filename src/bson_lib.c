@@ -102,6 +102,21 @@ const char *BsonGetString(const bson *b, const char *key)
 
     return NULL;
 }
+/*****************************************************************************/
+
+int BsonBoolGet(const bson *b, const char *key)
+{
+    bson_iterator it;
+
+    if (bson_find(&it, b, key) == bson_bool)
+    {
+        return (int)bson_iterator_bool(&it);
+    }
+
+    CfOut(cf_verbose, "", "BsonBoolGet: No match for \"%s\"", key);
+
+    return -1;
+}
 
 /*****************************************************************************/
 
@@ -455,7 +470,7 @@ void BsonAppendHostColourFilter(bson_buffer *query_buffer, HostColourFilter *fil
             break;
     }
 
-    if (filter->colour == HOST_COLOUR_BLUE)
+    if (filter->colour == HOST_COLOUR_BLUE) // blue overwrites black status
     {
         bson_append_start_object(query_buffer, cfr_day);
         bson_append_long(query_buffer, "$lt", filter->blue_time_horizon);
@@ -471,6 +486,8 @@ void BsonAppendHostColourFilter(bson_buffer *query_buffer, HostColourFilter *fil
         bson_append_start_object (query_buffer, cfr_day);
         bson_append_long(query_buffer, "$gte", filter->blue_time_horizon);
         bson_append_finish_object(query_buffer);
+
+        bson_append_bool(query_buffer, cfr_is_black, false);
     }
 
     if (filter->colour == HOST_COLOUR_YELLOW)
@@ -483,6 +500,8 @@ void BsonAppendHostColourFilter(bson_buffer *query_buffer, HostColourFilter *fil
         bson_append_start_object (query_buffer, cfr_day);
         bson_append_long(query_buffer, "$gte", filter->blue_time_horizon);
         bson_append_finish_object(query_buffer);
+
+        bson_append_bool(query_buffer, cfr_is_black, false);
     }
 
     if (filter->colour == HOST_COLOUR_RED)
@@ -494,6 +513,8 @@ void BsonAppendHostColourFilter(bson_buffer *query_buffer, HostColourFilter *fil
         bson_append_start_object (query_buffer, cfr_day);
         bson_append_long(query_buffer, "$gte", filter->blue_time_horizon);
         bson_append_finish_object(query_buffer);
+
+        bson_append_bool(query_buffer, cfr_is_black, false);
     }
 
     if (filter->colour == HOST_COLOUR_GREEN_YELLOW_RED) // !BLUE
@@ -501,6 +522,17 @@ void BsonAppendHostColourFilter(bson_buffer *query_buffer, HostColourFilter *fil
         bson_append_start_object(query_buffer, cfr_day);
         bson_append_long(query_buffer, "$gte", filter->blue_time_horizon);
         bson_append_finish_object(query_buffer);
+
+        bson_append_bool(query_buffer, cfr_is_black, false);
+    }
+
+    if (filter->colour == HOST_COLOUR_BLACK)
+    {
+        bson_append_start_object (query_buffer, cfr_day);
+        bson_append_long(query_buffer, "$gte", filter->blue_time_horizon);
+        bson_append_finish_object(query_buffer);
+
+        bson_append_bool(query_buffer, cfr_is_black, true);
     }
 
     free(score_method);

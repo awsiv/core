@@ -47,6 +47,8 @@ const char *Nova_HostColourToString(HostColour colour)
         return "green";
     case HOST_COLOUR_GREEN_YELLOW_RED:
         return "green_yellow_red";
+    case HOST_COLOUR_BLACK:
+        return "black";
     default:
         return "unknown";
     }
@@ -73,6 +75,10 @@ HostColour HostColourFromString(const char *colour)
     else if (StringSafeCompare(colour, "green_yellow_red") == 0)
     {
         return HOST_COLOUR_GREEN_YELLOW_RED;
+    }
+    else if (StringSafeCompare(colour, "black") == 0)
+    {
+        return HOST_COLOUR_BLACK;
     }
     else
     {
@@ -334,17 +340,18 @@ int Nova_GetHostColour(char *lkeyhash, HostRankMethod method, HostColour *result
     bson_buffer_init(&bb);
     bson_append_int(&bb, cfr_day, 1);
     bson_append_int(&bb, score_field, 1);
+    bson_append_int(&bb, cfr_is_black, 1);
     bson field;
     bson_from_buffer(&field, &bb);
 
     bson out;
-    mongo_find_one(&conn, MONGO_DATABASE, &query, &field, &out);
+    bson_bool_t found = mongo_find_one(&conn, MONGO_DATABASE, &query, &field, &out);
 
     bson_destroy(&query);
     bson_destroy(&field);
 
     /* if no records are found it's seen are host with unknown state (blue) */
-    if (&out == NULL)
+    if (!found)
     {
         *result = HOST_COLOUR_BLUE;
     }
@@ -353,9 +360,19 @@ int Nova_GetHostColour(char *lkeyhash, HostRankMethod method, HostColour *result
         time_t then = BsonIntGet(&out, cfr_day);
         int score = BsonIntGet(&out, score_field);
 
+        bool is_black;
+        if ((is_black = BsonBoolGet(&out, cfr_is_black)) == -1)
+        {
+            is_black = false;
+        }
+
         if ((then < (now - bluehost_threshold)) || (score == 0)) // if score not found -> host blue
         {
             *result = HOST_COLOUR_BLUE;
+        }
+        else if (is_black)
+        {
+            *result = HOST_COLOUR_BLACK;
         }
         else
         {

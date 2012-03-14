@@ -14,6 +14,7 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 
 Item *BsonGetStringArrayAsItemList(const bson *b, const char *key);
 Rlist *BsonStringArrayAsRlist(const bson *b, const char *key);
+int BsonBoolGet(const bson *b, const char *key);
 int BsonIntGet(const bson *b, const char *key);
 const char *BsonGetString(const bson *b, const char *key);
 void BsonStringWrite(char *dest, int destSz, const bson *b, const char *key);

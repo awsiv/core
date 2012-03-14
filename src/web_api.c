@@ -3148,6 +3148,10 @@ void Nova2PHP_host_compliance_list(mongo_connection *conn, char *colour, HostCla
     {
         host_colour = HOST_COLOUR_BLUE;
     }
+    else if (strcmp(colour, "black") == 0)
+    {
+        host_colour = HOST_COLOUR_BLACK;
+    }
     else
     {
         return;
