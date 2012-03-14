@@ -873,67 +873,59 @@ void Nova_RegistryValueIntegrity(CF_DB *dbp, char *key, char *value, char *data,
 /* Level                                                                     */
 /*****************************************************************************/
 
+static bool Nova_PerformPseudoRegistryComparison(void *value, int vsize, void *ptr, int size, int *cmp)
+{
+    if (ptr == NULL)
+    {
+        *cmp = true;
+        return true;
+    }
+
+    if (vsize != size)
+    {
+        *cmp = false;
+        return true;
+    }
+
+    if (value)
+    {
+        *cmp = memcmp(ptr, value, size) == 0;
+        return true;
+    }
+
+    *cmp = true;
+    return false;
+}
+
 int Nova_ReadCmpPseudoRegistry(CF_DB *dbp, char *dbkey, void *ptr, int size, int *cmp)
 {
-    void *value;
-    int vsize;
-
-    if (RevealDB(dbp, dbkey, &value, &vsize))
+    if (!cmp)
     {
-        if (ptr == NULL)
-        {
-            if (cmp)
-            {
-                *cmp = true;
-            }
+        int dummy;
+        cmp = &dummy;
+    }
 
-            return true;
-        }
+    int vsize = ValueSizeDB(dbp, dbkey, strlen(dbkey));
 
-        if (vsize != size)
-        {
-            if (cmp)
-            {
-                *cmp = false;
-            }
-        }
-        else if (value)
-        {
-            if (memcmp(ptr, value, size) == 0)
-            {
-                if (cmp)
-                {
-                    *cmp = true;
-                }
-            }
-            else
-            {
-                if (cmp)
-                {
-                    *cmp = false;
-                }
-            }
-        }
-        else
-        {
-            if (cmp)
-            {
-                *cmp = true;
-            }
-
-            return false;
-        }
-
-        return true;
+    if (vsize == -1)
+    {
+        *cmp = true;
+        return false;
     }
     else
     {
-        if (cmp)
+        void *value = xcalloc(1, vsize);
+        if (!ReadDB(dbp, dbkey, &value, vsize))
         {
+            free(value);
             *cmp = true;
+            return false;
         }
 
-        return false;
+        bool ret = Nova_PerformPseudoRegistryComparison(value, vsize, ptr, size, cmp);
+
+        free(value);
+        return ret;
     }
 }
 
