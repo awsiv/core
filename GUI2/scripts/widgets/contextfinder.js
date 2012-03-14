@@ -40,8 +40,6 @@
 
         setContext:function(includes,excludes) {
             var self = this;
-            console.log(includes);
-            console.log(excludes);
             self._context.includes = includes;
             self._context.excludes = excludes;          
             return;  
@@ -77,11 +75,11 @@
            return $('<div class="item"><input type="text"  name="' + name + '[]" value=""><a class="class_selector" href="'+self.options.baseUrl+'/widget/allclasses">&nbsp;</a><a class="delete_condition" href="">&nbsp;</a><div class="clearboth"></div></div>');
         },
         loadpagebody:function(url){
-            var self=this;
-            
+            var self=this,
+                submit_url=url;
+                
             self.getInludeExclude(); //call to get context if manually edited
-            console.log( self._context);
-            submit_url=url;
+            
         
             $.ajax({
                 type: "POST",

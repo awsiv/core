@@ -52,10 +52,7 @@
                 self._displayFailure(settings.url, jqxhr, exception);
             });
             self.setContext(self.options.includes,self.options.excludes);
-           // console.log(currentInstance);
-            //fix to remember the link clicked
-            
-            
+          
         },
         _create:function(){
             var self=this;   
@@ -189,7 +186,7 @@
             
             var listpane=event.currentTarget;
             var self=this;
-             //console.log(self.scrollingEnd);
+            
             if (self.scrollingEnd == true || $(listpane).scrollTop()==0 || classfinder_animate==true) return;
             // only do scrolling event when no menu option are selected or all classes is selected.
             if (self.selectedMenu == null) {
