@@ -11,7 +11,7 @@
         $busyIcon: $('<div style="margin:0px auto;width:50%" class="loadinggif">')
                    .html('&nbsp;'),
         $errorDiv: $('<div>').addClass('error'),
-        },       
+       
 
         _create: function () {
             var $element = this.element;
