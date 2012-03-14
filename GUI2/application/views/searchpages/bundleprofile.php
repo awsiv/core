@@ -38,7 +38,7 @@
         $('#hclist').contextfinder({
           baseUrl: '<?php echo site_url() ?>',
           complete:function(event,data){
-            $('#hg').data('list',data).val('includes='+data.includes+' exclude='+data.excludes);
+          $('#hg').data('list',data).val('includes='+data.includes+' exclude='+data.excludes);
                $incList.val(data.includes);
                $exList.val(data.excludes);
              
