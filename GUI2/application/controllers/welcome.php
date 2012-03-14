@@ -45,7 +45,7 @@ class Welcome extends Cf_Controller {
             'pbarvalue' => $pbarvalue,
             'daysleft' =>$daysleft,
         );
-        
+
         if ($this->setting_lib->get_experimental_mode() === TRUE)
         {
             $data['engineering_page'] = 'engineering';
@@ -54,7 +54,7 @@ class Welcome extends Cf_Controller {
         {
             $data['engineering_page'] = 'welcome/engg';
         }
-        
+
         $this->template->load('template', 'index', $data);
     }
 
@@ -80,7 +80,7 @@ class Welcome extends Cf_Controller {
 
 
         $this->breadcrumb->setBreadCrumb($bc);
-       
+
         $data = array(
             'title' => $this->lang->line('mission_portal_title') . "-" . $this->lang->line('breadcrumb_status'),
             'breadcrumbs' => $this->breadcrumblist->display(),
@@ -147,7 +147,7 @@ class Welcome extends Cf_Controller {
             $data['businessValuePie']['repaired'] = 0;
             $data['businessValuePie']['nodata'] = 100;
         }
-        
+
         try{
             $username = &$this->session->userdata('username');
             $data['allHost']    = $this->host_model->getHostCount($username);
@@ -158,7 +158,7 @@ class Welcome extends Cf_Controller {
         }catch(Exception $e){
            show_error($e->getMessage(),500); ;
         }
-       
+
         $this->template->load('template', 'status', $data);
     }
 
@@ -288,13 +288,13 @@ class Welcome extends Cf_Controller {
             $nodataSeries[] = array($time, $nodata);
         }
         $jsonString = sprintf('{"graphdata":[
-        {  
+        {
             "label":"kept",
-            "data": %s         
+            "data": %s
         },
-        {  
+        {
             "label":"repaired",
-            "data": %s            
+            "data": %s
         },
         {   "label":"notkept",
             "data": %s
@@ -335,7 +335,7 @@ class Welcome extends Cf_Controller {
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);
-        
+
         $username = &$this->session->userdata('username');
         try{
         $data = array(
@@ -425,8 +425,8 @@ class Welcome extends Cf_Controller {
         $this->template->load('template', 'goals', $data);
     }
 
-    function hosts($type=NULL) {
-        if ($type == NULL) {
+    function hosts($colour = NULL, $includes = array('.*'), $excludes = array()) {
+        if ($colour == NULL) {
             redirect('welcome/engg');
             return;
         }
@@ -440,22 +440,22 @@ class Welcome extends Cf_Controller {
         }
         $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
         try{
-            switch ($type) {
+            switch ($colour) {
                 case "red":
-                    $result = $this->host_model->getRedHost($this->session->userdata('username'),$rows, $page_number);
+                    $result = $this->host_model->getRedHost($this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
                     break;
                 case "green":
-                    $result = $this->host_model->getGreenHost($this->session->userdata('username'),$rows, $page_number);
+                    $result = $this->host_model->getGreenHost($this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
                     break;
                 case "yellow":
-                    $result = $this->host_model->getYellowHost($this->session->userdata('username'),$rows, $page_number);
+                    $result = $this->host_model->getYellowHost($this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
                     break;
                 case "blue":
-                    $result = $this->host_model->getBlueHost($this->session->userdata('username'),$rows, $page_number);
+                    $result = $this->host_model->getBlueHost($this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
                     break;
             }
         }catch(Exception $e){
-     
+
               show_error($e->getMessage(),500);
         }
 
@@ -467,19 +467,19 @@ class Welcome extends Cf_Controller {
             //array_push($columns,anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'));
             // }
             $list = array_msort($result['data'], array('id' => SORT_ASC), true);
-            $table = $this->cf_table->generateSingleColourHostTable($list, $type);
+            $table = $this->cf_table->generateSingleColourHostTable($list, $colour);
         }
 
         $bc = array(
-            'title' => $this->lang->line($type) . " hosts",
-            'url' => 'welcome/hosts/' . $type,
+            'title' => $this->lang->line($colour) . " hosts",
+            'url' => 'welcome/hosts/' . $colour,
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);
 
         $data = array(
-            'type' => $type,
-            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line($type) . " hosts",
+            'type' => $colour,
+            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line($colour) . " hosts",
             'tabledata' => $table,
             'breadcrumbs' => $this->breadcrumblist->display(),
             'current' => $page_number,
@@ -503,7 +503,7 @@ class Welcome extends Cf_Controller {
         } catch (Exception $e) {
             show_error($e->getMessage(),500);
         }
-        
+
         if (key_exists('type', $getparams)) {
             redirect('welcome/hosts/' . $getparams['type']);
         }
@@ -542,10 +542,10 @@ class Welcome extends Cf_Controller {
         $comment_text = isset($_POST['comment_text']) ? $_POST['comment_text'] : "";
         $is_commented = trim(cfpr_get_host_noteid($hostkey));
         $op = isset($_POST['op']) ? $_POST['op'] : "";
-       
+
         $tempvar=explode("=", $hostkey);
         $hostclass="PK_SHA_".$tempvar[1];
-        
+
         $data = array(
             'hostkey'=>$hostkey,
             'hostclass' => $hostclass,
@@ -606,7 +606,7 @@ class Welcome extends Cf_Controller {
         }catch(Exception $e){
             show_error($e->getMessage(),500);
         }
-      
+
         $data = array(
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_weakest_host'),
             'ret' => $ret,
@@ -699,24 +699,24 @@ class Welcome extends Cf_Controller {
             'ret' => json_decode(cfpr_report_classes($hostkey, $name, $regex, NULL, NULL, "last-seen", true, 1000, 1), true),
             'breadcrumbs' => $this->breadcrumblist->display(),
             'hostname' => $this->host_model->getHostName($this->session->userdata('username'),$hostkey)
-        );  
+        );
             $this->template->load('template', 'classes', $data);
        }catch(Exception $e){
          show_error($e->getMessage(),500);
-       }  
+       }
     }
 
     function cfeditor() {
         redirect('/cfeditor/');
     }
 
-    
+
     function search() {
         $params = $this->uri->uri_to_assoc(3);
         redirect('/search/' . $this->uri->assoc_to_uri($params));
     }
 
-    
+
     function body() {
         $this->carabiner->css('tabs-custom.css');
         $getparams = $this->uri->uri_to_assoc(3);

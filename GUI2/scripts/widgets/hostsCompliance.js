@@ -60,6 +60,11 @@
 
             var $entryLabel = $('<span>');
             $entryLabel.addClass('colourEntryLabel');
+            $entryLabel.click(function () {
+                window.location.href = $self.options.baseUrl + '/welcome/host/' +
+                    colour + '/' + encodeURIComponent($self._context.includes) + '/' +
+                    encodeURIComponent($self._context.excludes);
+            });
             $entry.append($entryLabel);
 
             $self._setHostCount($entry, 0, info);

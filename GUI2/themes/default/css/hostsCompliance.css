@@ -16,6 +16,8 @@
 .hostsCompliance .colourEntryLabel
 {
     padding-left: 5px;
+    color: #476e8c;
+    cursor: pointer;
 }
 
 .hostsCompliance .colourEntryIcon.red
