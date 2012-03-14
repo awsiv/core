@@ -654,6 +654,7 @@ void Nova_UnPackTotalCompliance(mongo_connection *dbconn, char *id, Item *data)
         CFDB_SaveTotalCompliance(dbconn, id, data);
     }
 #endif
+
     time_t agent_last_run_time = 0;
     for (ip = data; ip != NULL; ip = ip->next)
     {
@@ -682,6 +683,10 @@ void Nova_UnPackTotalCompliance(mongo_connection *dbconn, char *id, Item *data)
     {
         /* due to not beeing able to estimate real scheduling interval it is set on 0 */
         CFDB_SaveExecutionStatus(dbconn, id, is_blackhost, 0);
+        char *last_run_str = NULL;
+        xasprintf(&last_run_str, "%lu", (unsigned long)agent_last_run_time);
+        CFDB_PutValue(cfr_last_execution, last_run_str, MONGO_DATABASE);
+        free(last_run_str);
     }
 #endif
 
