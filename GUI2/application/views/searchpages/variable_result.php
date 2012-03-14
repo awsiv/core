@@ -1,17 +1,11 @@
 <?php
-if(is_array($report_result)){
-    $result=$report_result;
-}else{
-    $result = json_decode($report_result, true);
-}
-//$this->table->set_heading(array_keys($result['meta']['header']))
-if (is_array($result['meta']) && key_exists('truncated', $result['meta'])) {
-    $message = $result['meta']['truncated'];
+
+if (is_array($report_result['meta']) && key_exists('truncated', $report_result['meta'])) {
+    $message = $report_result['meta']['truncated'];
     echo "<p class=\"info\">$message</p>";
 }
-if ($result['meta']['count'] > 0) {
-    echo "<h2> Total : " . $result['meta']['count'] . " variables found </h2>";
-    foreach ($result as $bundles => $variables) {
+if ($report_result['meta']['count'] > 0) {
+    foreach ($report_result as $bundles => $variables) {
         if ($bundles != "meta") {
             echo "<h2> bundle $bundles: <i>" . $variables['count'] . " variables</i></h2>";
             $this->table->set_heading(array_keys($variables['header']));
@@ -33,11 +27,7 @@ if ($result['meta']['count'] > 0) {
         }
         $this->table->clear();
     }
-    $pg = paging($current, $number_of_rows, $result['meta']['count'], 10);
-    //echo $report_result .'<br />';
-    //echo json_last_error();
-    // print_r($result);
-    //print_r($heading);
+    $pg = paging($current, $number_of_rows, $report_result['meta']['count'], 10);
     include 'paging_footer.php';
 }
 else {

@@ -1,17 +1,12 @@
 <div id="bodyreport" class="outerdiv grid_12">
 
     <div id="reportpanel" class="innerdiv">
-                <?php $this->load->view('/searchpages/reportsMenu'); ?>
+        <?php $this->load->view('/searchpages/reportsMenu'); ?>
 
-       
-            <!--<div class="grid_8">
-                <a href="<?php echo $report_link ?>" id="send_mail" class="icons download showqtip" title="Download report"></a>
-                <?php echo anchor('#', 'Select host', array('id' => 'findhost', 'title' => 'Report for another host', 'class' => 'showqtip')) ?>
-            </div>-->
-           
-                <!--<div><a href="#" id="savesearch" class="showqtip" title="save this search for future use"><span class="ui-icon-triangle-1-s"></span>Save this search</a></div>-->
-                
-
+        <div class="title">
+            <?php echo $report_title; ?>
+            <div class="clear"></div>
+        </div>
         <div id="modifySearchPanel" style="">
             
           <?php  $this->load->view('searchpages/'.$filter_view);?> 
@@ -40,7 +35,10 @@
         </div>
 
         <div class="reportpanelcontent">
-            <div id="filterdialog" class="hidden"></div>
+            <div id="totalResults" class="push_9 grid_3" style="text-align: right;">
+                Total results found:  <?php echo $report_result['meta']['count']; ?>
+            </div>
+            <div class="clear"></div>
             <div class="tables <?php echo isset($nofix) ? "" : "tablesfixed" ?>">
                 <?php
                 include_once ($resultView . '.php');

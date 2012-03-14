@@ -1,15 +1,10 @@
 <?php
-if(is_array($report_result)){
-  $result=$report_result; 
-}else{
-  $result = json_decode($report_result, true);
-}
-if (key_exists('truncated', $result['meta'])) {
-    $message = $result['meta']['truncated'];
+if (key_exists('truncated', $report_result['meta'])) {
+    $message = $report_result['meta']['truncated'];
     echo "<p class=\"info\">$message</p>";
 }
 $headings = array();
-foreach ($result['meta']['header'] as $key => $value) {
+foreach ($report_result['meta']['header'] as $key => $value) {
     if (strtolower($key) == "change") {
         $column = $key . " Added(+) , Deleted(-) , line No, Content";
         array_push($headings, $column);
@@ -17,15 +12,11 @@ foreach ($result['meta']['header'] as $key => $value) {
         array_push($headings, $key);
     }
 }
-//$this->table->set_heading(array_keys($result['meta']['header']));
 $this->table->set_heading($headings);
-$heading = "";
-if (count($result['data']) > 0) {
-    echo "Total results found : " . $result['meta']['count'];
-    foreach ($result['data'] as $row) {
-        //$this->table->add_row($row);
+if (count($report_result['data']) > 0) {
+    foreach ($report_result['data'] as $row) {
         $temp = array();
-        foreach ($result['meta']['header'] as $key => $value) {
+        foreach ($report_result['meta']['header'] as $key => $value) {
             if (!is_array($value)) {
                 if (strtolower($key) == "change detected at")
                     array_push($temp, getDateStatus ($row[$value],true));
@@ -63,16 +54,7 @@ if (count($result['data']) > 0) {
         $this->table->add_row($temp);
     }
     echo $this->table->generate();
-    $pg = paging($current, $number_of_rows, $result['meta']['count'], 10);
-
-    //$this->table->set_heading($keys);
-    //foreach ($result as $key=>$value)
-    //{
-    //}
-    //echo $report_result . '<br />';
-    //echo json_last_error();
-    // print_r($result);
-    //print_r($heading);
+    $pg = paging($current, $number_of_rows, $report_result['meta']['count'], 10);
     include 'paging_footer.php';
 } else {
     echo"<div class='info'>" . $this->lang->line("no_data") . "</div>";
