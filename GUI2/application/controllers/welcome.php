@@ -543,9 +543,12 @@ class Welcome extends Cf_Controller {
         $is_commented = trim(cfpr_get_host_noteid($hostkey));
         $op = isset($_POST['op']) ? $_POST['op'] : "";
        
-
+        $tempvar=explode("=", $hostkey);
+        $hostclass="PK_SHA_".$tempvar[1];
+        
         $data = array(
-            'hostkey' => $hostkey,
+            'hostkey'=>$hostkey,
+            'hostclass' => $hostclass,
             'title' => $this->lang->line('mission_portal_title') . " - host " . $ipaddr,
             'hostname' => $hostname,
             'ipaddr' => $ipaddr,

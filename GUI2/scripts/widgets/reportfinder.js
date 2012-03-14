@@ -69,25 +69,11 @@ reportselected:function(event){
 event.preventDefault()
 var self=this,
     sender=$(event.target);
-if(self.options.allhost)
-    {
-    self.repdialog.load(self.options.baseUrl+'/search/index', {report: sender.data('id')}, function() {
-               self.repdialog.slideDown();
-               var $closebtn=$("<a class='ui-dialog-titlebar-close ui-corner-all'><span class='ui-icon ui-icon-closethick'></span></a>");
-                $(this).find('.panelhead').append($closebtn);
-                $(this).find('input')[0].focus();
-                 $closebtn.click(function(event){
-                   event.preventDefault();
-                   self.repdialog.fadeOut();
-                 })
 
-        });
-    }
-  else
-      {
-          
+  if(!self.options.allhost)
+      {   
           self.repform.html('<input type="hidden" name="report" value="'+sender.data('id')+'" />');
-          self.repform.append('<input type="hidden" name="host" value="'+self.options.hostkey+'" />');
+          self.repform.append('<input type="hidden" name="inclist" value="'+self.options.incList+'" />');
           self.repform.submit();
       }
  

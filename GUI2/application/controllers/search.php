@@ -148,13 +148,11 @@ private $filter_view_mappings=array();
         
         //necessary for search result view
         //must use site_url for making bread crumbs work
-        if (!is_ajax() && $host == "All") {
+        if ($host == "All") {
             $hostkey = NULL;
-            $many = true;
         }
-        elseif (!is_ajax() && $host != "")
+        elseif ($host != "")
         {
-            $many = false;
             $hostkey = $host;
             $hostname = $this->host_model->getHostName($username, $hostkey);
         }
