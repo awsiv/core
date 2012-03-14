@@ -208,6 +208,7 @@ class Widget extends Cf_Controller
     function filterclass($page = 1, $search = null)
     {
         
+        
         $username = $this->session->userdata('username');
         $searchLetter = null;
         
@@ -220,6 +221,8 @@ class Widget extends Cf_Controller
             $searchLetter = '.*';
         }
         
+        $filter = '';
+        
         //add include/exclude
         $includes = $excludes = array();
         
@@ -227,7 +230,7 @@ class Widget extends Cf_Controller
         $includes[] = $searchLetter;
         
         if($this->input->post('filter') !== FALSE) {        
-            $includes[] =  $this->input->post('filter', TRUE);
+            $filter     =  $this->input->post('filter', TRUE);
         }
         
         if($this->input->post('includes') !== FALSE) {
