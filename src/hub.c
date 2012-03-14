@@ -380,7 +380,7 @@ void SplayLongUpdates()
             printf("Found an unitialized lock time for %s, set to %s\n", key, cf_ctime(&now));
             update.pid = entry.pid;
             update.time = entry.time = now;
-            WriteDB(dbp, key, &update, sizeof(update));
+            DBCursorWriteEntry(dbcp, &update, sizeof(update));
         }
 
         if (entry.time > max)
@@ -1143,17 +1143,14 @@ Item *Nova_ScanClients()
 {
     CF_DB *dbp;
     CF_DBC *dbcp;
-    char *key, name[CF_BUFSIZE];
+    char *key;
     void *value;
     KeyHostSeen entry;
     int ksize, vsize;
     Item *list = NULL;
     time_t now = time(NULL);
 
-    snprintf(name, CF_BUFSIZE - 1, "%s/%s", CFWORKDIR, CF_LASTDB_FILE);
-    MapName(name);
-
-    if (!OpenDB(name, &dbp))
+    if (!OpenDB(&dbp, dbid_lastseen))
     {
         return NULL;
     }

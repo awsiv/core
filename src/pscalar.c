@@ -20,14 +20,11 @@ void Nova_SetPersistentScalar(char *lval, char *rval)
 {
     CF_DB *dbp;
     PersistentScalar new;
-    char filename[CF_MAXVARSIZE];
-
-    snprintf(filename, sizeof(filename), "%s%cstate%c%s", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR, NOVA_PSCALARDB);
 
     strncpy(new.rval, rval, CF_MAXVARSIZE);
     new.time = time(NULL);
 
-    if (!OpenDB(filename, &dbp))
+    if (!OpenDB(&dbp, dbid_scalars))
     {
         return;
     }
@@ -44,13 +41,9 @@ int Nova_GetPersistentScalar(char *lval, char *rval, int size, time_t timeout)
     CF_DB *dbp;
     PersistentScalar var;
     time_t now = time(NULL);
-    char filename[CF_MAXVARSIZE];
-
-    snprintf(filename, sizeof(filename), "%s%cstate%c%s", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR, NOVA_PSCALARDB);
-
     *rval = '\0';
 
-    if (!OpenDB(filename, &dbp))
+    if (!OpenDB(&dbp, dbid_scalars))
     {
         CfOut(cf_verbose, "", " -> Unable to open db while looking for persistent scalar");
         return false;

@@ -285,16 +285,13 @@ void GetObservable(int i, char *name, char *desc)
 void Nova_HistoryUpdate(time_t time, const Averages *newvals)
 {
     CF_DB *dbp;
-    char filename[CF_BUFSIZE];
 
     if (LICENSES == 0)
     {
         return;
     }
 
-    snprintf(filename, CF_BUFSIZE - 1, "%s%cstate%c%s", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR, NOVA_HISTORYDB);
-
-    if (!OpenDB(filename, &dbp))
+    if (!OpenDB(&dbp, dbid_history))
     {
         return;
     }
@@ -447,7 +444,6 @@ static void NovaCloseLifeCycle(int age, FILE **fp)
 void LongHaul(time_t current)
 {
     int y, i, j, k;
-    char filename[CF_BUFSIZE];
     CF_DB *dbp;
 
     if (LICENSES == 0)
@@ -455,9 +451,7 @@ void LongHaul(time_t current)
         return;
     }
 
-    snprintf(filename, CF_BUFSIZE - 1, "%s%cstate%c%s", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR, NOVA_HISTORYDB);
-
-    if (!OpenDB(filename, &dbp))
+    if (!OpenDB(&dbp, dbid_history))
     {
         return;
     }
@@ -512,16 +506,13 @@ void SetMeasurementPromises(Item **classlist)
 {
     CF_DB *dbp;
     CF_DBC *dbcp;
-    char dbname[CF_MAXVARSIZE], eventname[CF_MAXVARSIZE], assignment[CF_BUFSIZE];
+    char eventname[CF_MAXVARSIZE], assignment[CF_BUFSIZE];
     Event entry;
     char *key;
     void *stored;
     int ksize, vsize;
 
-    snprintf(dbname, CF_MAXVARSIZE - 1, "%s%cstate%c%s", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR, NOVA_MEASUREDB);
-    MapName(dbname);
-
-    if (!OpenDB(dbname, &dbp))
+    if (!OpenDB(&dbp, dbid_measure))
     {
         return;
     }
@@ -575,16 +566,13 @@ void LoadSlowlyVaryingObservations()
     char *key;
     void *stored;
     int ksize, vsize;
-    char name[CF_BUFSIZE];
 
     if (THIS_AGENT_TYPE == cf_executor || LOOKUP)
     {
         return;
     }
 
-    snprintf(name, CF_BUFSIZE - 1, "%s%cstate%c%s", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR, NOVA_STATICDB);
-
-    if (!OpenDB(name, &dbp))
+    if (!OpenDB(&dbp, dbid_static))
     {
         return;
     }
@@ -645,20 +633,18 @@ void Nova_DumpSlowlyVaryingObservations()
 {
     CF_DB *dbp;
     CF_DBC *dbcp;
-    char name[CF_BUFSIZE];
     FILE *fout;
     char *key;
     void *stored;
     int ksize, vsize;
+    char name[CF_BUFSIZE];
 
     if (LICENSES == 0)
     {
         return;
     }
 
-    snprintf(name, CF_BUFSIZE - 1, "%s%cstate%c%s", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR, NOVA_STATICDB);
-
-    if (!OpenDB(name, &dbp))
+    if (!OpenDB(&dbp, dbid_static))
     {
         return;
     }
@@ -1317,9 +1303,7 @@ void NovaLogSymbolicValue(char *handle, Item *stream, Attributes a, Promise *pp)
         CF_DB *dbp;
         char id[CF_MAXVARSIZE];
 
-        snprintf(filename, CF_BUFSIZE - 1, "%s%cstate%c%s", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR, NOVA_STATICDB);
-
-        if (!OpenDB(filename, &dbp))
+        if (!OpenDB(&dbp, dbid_static))
         {
             return;
         }
@@ -1334,15 +1318,12 @@ void NovaLogSymbolicValue(char *handle, Item *stream, Attributes a, Promise *pp)
 
 void NovaNamedEvent(char *eventname, double value, Attributes a, Promise *pp)
 {
-    char dbname[CF_BUFSIZE];
     Event ev_new, ev_old;
     time_t now = time(NULL);
     double delta2;
     CF_DB *dbp;
 
-    snprintf(dbname, CF_BUFSIZE - 1, "%s%cstate%c%s", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR, NOVA_MEASUREDB);
-
-    if (!OpenDB(dbname, &dbp))
+    if (!OpenDB(&dbp, dbid_measure))
     {
         return;
     }
@@ -1392,18 +1373,15 @@ void NovaNamedEvent(char *eventname, double value, Attributes a, Promise *pp)
 
 void Nova_SaveFilePosition(char *name, long fileptr)
 {
-    char filename[CF_BUFSIZE];
     CF_DB *dbp;
 
-    snprintf(filename, CF_BUFSIZE - 1, "%s%cstate%c%s", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR, NOVA_STATICDB);
-
-    if (!OpenDB(filename, &dbp))
+    if (!OpenDB(&dbp, dbid_static))
     {
         return;
     }
 
-    CfOut(cf_verbose, "", "Saving state for %s at %ld\n", filename, fileptr);
-    WriteDB(dbp, filename, &fileptr, sizeof(long));
+    CfOut(cf_verbose, "", "Saving state for %s at %ld\n", name, fileptr);
+    WriteDB(dbp, name, &fileptr, sizeof(long));
     CloseDB(dbp);
 }
 
@@ -1411,19 +1389,16 @@ void Nova_SaveFilePosition(char *name, long fileptr)
 
 long Nova_RestoreFilePosition(char *name)
 {
-    char filename[CF_BUFSIZE];
     CF_DB *dbp;
     long fileptr;
 
-    snprintf(filename, CF_BUFSIZE - 1, "%s%cstate%c%s", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR, NOVA_STATICDB);
-
-    if (!OpenDB(filename, &dbp))
+    if (!OpenDB(&dbp, dbid_static))
     {
         return 0L;
     }
 
-    ReadDB(dbp, filename, &fileptr, sizeof(long));
-    CfOut(cf_verbose, "", "Resuming state for %s at %ld\n", filename, fileptr);
+    ReadDB(dbp, name, &fileptr, sizeof(long));
+    CfOut(cf_verbose, "", "Resuming state for %s at %ld\n", name, fileptr);
     CloseDB(dbp);
     return fileptr;
 }

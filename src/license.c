@@ -450,7 +450,7 @@ void Nova_LogLicenseStatus()
 {
     CF_DB *dbp;
     CF_DBC *dbcp;
-    char datestr[CF_MAXVARSIZE], data[CF_MAXVARSIZE], name[CF_BUFSIZE];
+    char datestr[CF_MAXVARSIZE], data[CF_MAXVARSIZE];
     char buffer[CF_BUFSIZE] = { 0 }, work[CF_BUFSIZE] = { 0 };
     Rval retval;
     int licenses = 0, count = 0;
@@ -489,9 +489,7 @@ void Nova_LogLicenseStatus()
         licenses = Str2Int(retval.item);
     }
 
-    snprintf(name, CF_MAXVARSIZE - 1, "%s%c%s", CFWORKDIR, FILE_SEPARATOR, CF_LASTDB_FILE);
-
-    if (OpenDB(name, &dbp))
+    if (OpenDB(&dbp, dbid_lastseen))
     {
         memset(&entry, 0, sizeof(entry));
 
@@ -523,10 +521,7 @@ void Nova_LogLicenseStatus()
 
     CfOut(cf_verbose, "", " -> Detected current number of used licenses at approximately %d/%d\n", count, LICENSES);
 
-    snprintf(name, CF_MAXVARSIZE - 1, "%s%cstate%c%s", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR, NOVA_LICENSE);
-    MapName(name);
-
-    if (!OpenDB(name, &dbp))
+    if (!OpenDB(&dbp, dbid_license))
     {
         DeletePromise(pp);
         YieldCurrentLock(thislock);

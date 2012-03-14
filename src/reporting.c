@@ -556,7 +556,6 @@ void SummarizePerPromiseCompliance(int xml, int html, int csv, int embed, char *
                                    char *web)
 {
     FILE *fout;
-    char name[CF_BUFSIZE];
     double lsea = SECONDS_PER_WEEK * 52;        /* expire after a year */
     Event entry;
     Item *ip, *htmlreport = NULL;
@@ -568,14 +567,13 @@ void SummarizePerPromiseCompliance(int xml, int html, int csv, int embed, char *
 
 /* Open the db */
 
-    snprintf(name, CF_BUFSIZE - 1, "%s/state/%s", CFWORKDIR, NOVA_COMPLIANCE);
-    MapName(name);
-
-    if (!OpenDB(name, &dbp))
+    if (!OpenDB(&dbp, dbid_promise_compliance))
     {
-        CfOut(cf_verbose, "", "!! Could not open database \"%s\"", name);
+        CfOut(cf_verbose, "", "!! Could not open promise compliancedatabase");
         return;
     }
+
+    char name[CF_BUFSIZE];
 
     if (html)
     {
@@ -650,7 +648,7 @@ void SummarizePerPromiseCompliance(int xml, int html, int csv, int embed, char *
         if (then > 0 && lastseen > lsea)
         {
             CfOut(cf_verbose, "", " -> Promise usage record \"%s\" expired, removing...\n", eventname);
-            DeleteDB(dbp, eventname);
+            DBCursorDeleteEntry(dbcp);
         }
         else
         {
@@ -1951,14 +1949,11 @@ void Nova_SummarizeComms()
     int ksize, vsize;
     KeyHostSeen entry;
     double kept = 1, not_kept = 0, repaired = 0, var, average;
-    char name[CF_BUFSIZE], *key;
+    char *key;
     void *value;
     double now = (double) time(NULL), then, resolution = 300;
 
-    snprintf(name, CF_BUFSIZE - 1, "%s/%s", CFWORKDIR, CF_LASTDB_FILE);
-    MapName(name);
-
-    if (!OpenDB(name, &dbp))
+    if (!OpenDB(&dbp, dbid_lastseen))
     {
         return;
     }
@@ -2017,7 +2012,6 @@ void Nova_SummarizeComms()
 
 void SummarizeValue(int xml, int html, int csv, int embed, char *stylesheet, char *head, char *foot, char *web)
 {
-    char name[CF_BUFSIZE];
     CF_DB *dbp;
     CF_DBC *dbcp;
     int ksize, vsize;
@@ -2031,10 +2025,7 @@ void SummarizeValue(int xml, int html, int csv, int embed, char *stylesheet, cha
 
 // Strip out the date resolution so we keep only each day of the year
 
-    snprintf(name, CF_BUFSIZE - 1, "%s/state/%s", CFWORKDIR, NOVA_VALUE);
-    MapName(name);
-
-    if (!OpenDB(name, &dbp))
+    if (!OpenDB(&dbp, dbid_value))
     {
         return;
     }
@@ -2048,12 +2039,14 @@ void SummarizeValue(int xml, int html, int csv, int embed, char *stylesheet, cha
                 continue;
             }
 
+            char name[CF_BUFSIZE];
             memcpy(&pt, value, sizeof(pt));
             snprintf(name, CF_BUFSIZE, "<td>%.4lf</td><td>%.4lf</td><td>%.4lf</td>", pt.kept, pt.repaired, pt.notkept);
             AppendItem(&data, key, name);
         }
     }
 
+    DeleteDBCursor(dbp, dbcp);
     CloseDB(dbp);
 
     if ((fout = fopen("value_report.html", "w")) == NULL)
@@ -2062,6 +2055,7 @@ void SummarizeValue(int xml, int html, int csv, int embed, char *stylesheet, cha
         return;
     }
 
+    char name[CF_BUFSIZE];
     snprintf(name, sizeof(name), "Value return from Cfengine on %s", VFQNAME);
     fprintf(fout, "<div id=\"reporttext\">");
     fprintf(fout, "<p>Last measured on %s", cf_strtimestamp_local(now, timebuffer));
@@ -2090,7 +2084,6 @@ void Nova_SummarizeLicense(char *stylesheet, char *header, char *footer, char *w
     void *value;
     char *key;
     int min = 9999999, max = -1, count, lic1, lic2, i = 0;
-    char name[CF_BUFSIZE];
     long ltime;
     time_t now, dt, then;
     double average, granted, sum_t = 0, ex_t = 0, lic_t = 0;
@@ -2099,14 +2092,11 @@ void Nova_SummarizeLicense(char *stylesheet, char *header, char *footer, char *w
 
     CfOut(cf_verbose, "", " -> Writing license summary");
 
-    snprintf(name, CF_MAXVARSIZE - 1, "%s%cstate%c%s", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR, NOVA_LICENSE);
-    MapName(name);
-
 // Calculate utilization in each dt of the record
 
     then = time(NULL);          // Set this to now for first round
 
-    if (OpenDB(name, &dbp))
+    if (OpenDB(&dbp, dbid_license))
     {
         if (NewDBCursor(dbp, &dbcp))
         {
@@ -2161,6 +2151,7 @@ void Nova_SummarizeLicense(char *stylesheet, char *header, char *footer, char *w
     }
 
     now = time(NULL);
+    char name[CF_BUFSIZE];
     snprintf(name, sizeof(name), "Mean observable license usage");
     fprintf(fout, "<div id=\"reporttext\">");
     fprintf(fout, "<h4>Last measured on %s based on %d samples</h4>", cf_strtimestamp_local(now, timebuffer), i);
@@ -2261,7 +2252,6 @@ void Nova_NoteVarUsageDB(void)
 /* WARNING: Not thread safe (access to VSCOPE) */
 {
     Scope *ptr;
-    char filename[CF_BUFSIZE];
     CF_DB *dbp;
     CF_DBC *dbcp;
     char key[CF_MAXVARSIZE], *keyDb;    // scope.varname
@@ -2276,10 +2266,7 @@ void Nova_NoteVarUsageDB(void)
         return;
     }
 
-    snprintf(filename, sizeof(filename), "%s/state/%s", CFWORKDIR, CF_VARIABLES);
-    MapName(filename);
-
-    if (!OpenDB(filename, &dbp))
+    if (!OpenDB(&dbp, dbid_variables))
     {
         return;
     }
@@ -2335,7 +2322,7 @@ void Nova_NoteVarUsageDB(void)
             if (varDb->e.t < now - varExpireAge)
             {
                 CfDebug("Variable record %s expired\n", keyDb);
-                DeleteDB(dbp, keyDb);
+                DBCursorDeleteEntry(dbcp);
             }
         }
     }
@@ -2719,19 +2706,16 @@ void NoteEfficiency(double e)
 
 void Nova_TrackExecution()
 {
-    char *db_name = NULL;
     CF_DB *dbp = NULL;
     time_t now = time(NULL);
     time_t last_exec;
     double gavr = 0;
     double trust_level = 0.7; // sensivity of scheduling history -> higher more sensitive
 
-    xasprintf(&db_name, "%s/%s", CFWORKDIR, NOVA_AGENT_EXECUTION);
-
     /* get last run data */
-    if (!OpenDB(db_name, &dbp))
+    if (!OpenDB(&dbp, dbid_agent_execution))
     {
-        CfOut(cf_inform, "", " !! Unable to open %s db", NOVA_AGENT_EXECUTION);
+        CfOut(cf_inform, "", " !! Unable to open nova_agent_execution db");
         return;
     }
 
@@ -2753,5 +2737,4 @@ void Nova_TrackExecution()
     WriteDB(dbp, NOVA_TRACK_DELTA_SCHEDULE, &gavr, sizeof(double));
 
     CloseDB(dbp);
-    free(db_name);
 }

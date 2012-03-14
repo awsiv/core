@@ -36,18 +36,15 @@ void Nova_PackPerformance(Item **reply, char *header, time_t from, enum cfd_menu
     void *value;
     time_t now = time(NULL);
     double ticksperminute = 60.0, average = 0, var = 0;
-    char name[CF_BUFSIZE], eventname[CF_BUFSIZE], buffer[CF_BUFSIZE];
+    char eventname[CF_BUFSIZE], buffer[CF_BUFSIZE];
     Event entry;
     int ksize, vsize, first = true, kept = 0, repaired = 0, not_kept = 0;
 
     CfOut(cf_verbose, "", " -> Packing performance data");
 
-    snprintf(name, CF_BUFSIZE - 1, "%s/%s", CFWORKDIR, CF_PERFORMANCE);
-    MapName(name);
-
-    if (!OpenDB(name, &dbp))
+    if (!OpenDB(&dbp, dbid_performance))
     {
-        CfOut(cf_inform, "", " !! Unable to open performance database %s", name);
+        CfOut(cf_inform, "", " !! Unable to open performance database");
         return;
     }
 
@@ -112,14 +109,14 @@ void Nova_PackPerformance(Item **reply, char *header, time_t from, enum cfd_menu
             {
                 if (now - then > SECONDS_PER_WEEK)
                 {
-                    DeleteDB(dbp, key);
+                    DBCursorDeleteEntry(dbcp);
                 }
 
                 CfOut(cf_inform, "", "Deleting expired entry for %s\n", eventname);
 
                 if (measure < 0 || average < 0 || measure > 4 * SECONDS_PER_WEEK)
                 {
-                    DeleteDB(dbp, key);
+                    DBCursorDeleteEntry(dbcp);
                 }
 
                 CfOut(cf_inform, "",
@@ -169,17 +166,14 @@ void Nova_PackClasses(Item **reply, char *header, time_t from, enum cfd_menu typ
     char *key;
     void *value;
     double now = (double) time(NULL), average = 0, var = 0;
-    char name[CF_BUFSIZE], eventname[CF_BUFSIZE], buffer[CF_MAXVARSIZE];
+    char eventname[CF_BUFSIZE], buffer[CF_MAXVARSIZE];
     Event entry;
     CEnt array[1024];
     int i, ksize, vsize, first = true;
 
     CfOut(cf_verbose, "", " -> Packing class data");
 
-    snprintf(name, CF_BUFSIZE - 1, "%s/%s", CFWORKDIR, CF_CLASSUSAGE);
-    MapName(name);
-
-    if (!OpenDB(name, &dbp))
+    if (!OpenDB(&dbp, dbid_classes))
     {
         return;
     }
@@ -220,7 +214,7 @@ void Nova_PackClasses(Item **reply, char *header, time_t from, enum cfd_menu typ
 
             if (now - then > (time_t) SECONDS_PER_WEEK)
             {
-                DeleteDB(dbp, key);
+                DBCursorDeleteEntry(dbcp);
                 CfOut(cf_inform, "", " -> Deleting expired entry for %s\n", eventname);
                 continue;
             }
@@ -523,18 +517,15 @@ void Nova_PackMonitorMg(Item **reply, char *header, time_t from, enum cfd_menu t
     Averages entry, det;
     time_t now, here_and_now;
     double havedata;
-    char timekey[CF_MAXVARSIZE], filename[CF_MAXVARSIZE], buffer[CF_MAXTRANSSIZE];
+    char timekey[CF_MAXVARSIZE], buffer[CF_MAXTRANSSIZE];
     Item *data = { 0 };
     CF_DB *dbp;
 
     CfOut(cf_verbose, "", " -> Packing monitor magnified data");
 
-    snprintf(filename, CF_MAXVARSIZE, "%s/state/%s", CFWORKDIR, CF_AVDB_FILE);
-    MapName(filename);
-
-    if (!OpenDB(filename, &dbp))
+    if (!OpenDB(&dbp, dbid_observations))
     {
-        CfOut(cf_verbose, "", "Couldn't open average database %s\n", filename);
+        CfOut(cf_verbose, "", "Couldn't open average database\n");
         return;
     }
 
@@ -609,19 +600,16 @@ void Nova_PackMonitorWk(Item **reply, char *header, time_t from, enum cfd_menu t
     int its, i, j, slot;
     double kept = 0, not_kept = 0, repaired = 0;
     Averages entry, det;
-    char timekey[CF_MAXVARSIZE], filename[CF_MAXVARSIZE], buffer[CF_MAXTRANSSIZE];
+    char timekey[CF_MAXVARSIZE], buffer[CF_MAXTRANSSIZE];
     Item *data = { 0 };
     time_t now;
     CF_DB *dbp;
 
     CfOut(cf_verbose, "", " -> Packing monitor weekly data");
 
-    snprintf(filename, CF_MAXVARSIZE, "%s/state/%s", CFWORKDIR, CF_AVDB_FILE);
-    MapName(filename);
-
-    if (!OpenDB(filename, &dbp))
+    if (!OpenDB(&dbp, dbid_observations))
     {
-        CfOut(cf_verbose, "", "Couldn't open average database %s\n", filename);
+        CfOut(cf_verbose, "", "Couldn't open average database\n");
         return;
     }
 
@@ -713,7 +701,6 @@ void Nova_PackMonitorWk(Item **reply, char *header, time_t from, enum cfd_menu t
 void Nova_PackMonitorYr(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
     int i, j, k;
-    char filename[CF_BUFSIZE];
     CF_DB *dbp;
     time_t now = CFSTARTTIME;
 
@@ -723,12 +710,9 @@ void Nova_PackMonitorYr(Item **reply, char *header, time_t from, enum cfd_menu t
 
     CfOut(cf_verbose, "", " -> Packing and compressing monitor 3 year data");
 
-    snprintf(filename, CF_BUFSIZE - 1, "%s%cstate%c%s", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR, NOVA_HISTORYDB);
-    MapName(filename);
-
-    if (!OpenDB(filename, &dbp))
+    if (!OpenDB(&dbp, dbid_history))
     {
-        CfOut(cf_verbose, "", "Couldn't open long history database %s", filename);
+        CfOut(cf_verbose, "", "Couldn't open long history database");
         return;
     }
 
@@ -941,7 +925,6 @@ void Nova_PackMonitorHist(Item **reply, char *header, time_t from, enum cfd_menu
 
 void Nova_PackCompliance(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
-    char name[CF_MAXTRANSSIZE];
     double lsea = SECONDS_PER_WEEK;     /* expire after a week */
     Event entry;
     int ksize, vsize, first = true;
@@ -954,12 +937,9 @@ void Nova_PackCompliance(Item **reply, char *header, time_t from, enum cfd_menu 
 
 /* Open the db */
 
-    snprintf(name, sizeof(name), "%s/state/%s", CFWORKDIR, NOVA_COMPLIANCE);
-    MapName(name);
-
-    if (!OpenDB(name, &dbp))
+    if (!OpenDB(&dbp, dbid_promise_compliance))
     {
-        CfOut(cf_verbose, "", "!! Could not open database \"%s\"", name);
+        CfOut(cf_verbose, "", "!! Could not open promise compliance database");
         return;
     }
 
@@ -978,8 +958,8 @@ void Nova_PackCompliance(Item **reply, char *header, time_t from, enum cfd_menu 
         double measure, av, var;
         time_t then, lastseen, now = time(NULL);
         char eventname[CF_BUFSIZE];
+        char name[CF_BUFSIZE] = "";
 
-        name[0] = '\0';
         strcpy(eventname, (char *) key);
         memcpy(&entry, stored, sizeof(entry));
 
@@ -992,7 +972,7 @@ void Nova_PackCompliance(Item **reply, char *header, time_t from, enum cfd_menu 
         if (then > 0 && lastseen > lsea)
         {
             CfOut(cf_verbose, "", " -> Promise usage record \"%s\" expired, removing...\n", eventname);
-            DeleteDB(dbp, eventname);
+            DBCursorDeleteEntry(dbcp);
         }
         else
         {
@@ -1238,7 +1218,6 @@ void Nova_Pack_promise_output_common(Item **reply, char *header, time_t from, en
 
 void Nova_PackValueReport(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
-    char name[CF_MAXTRANSSIZE];
     CF_DB *dbp;
     CF_DBC *dbcp;
     int ksize, vsize, first = true;
@@ -1251,10 +1230,7 @@ void Nova_PackValueReport(Item **reply, char *header, time_t from, enum cfd_menu
 
     CfOut(cf_verbose, "", " -> Packing value data");
 
-    snprintf(name, sizeof(name), "%s/state/%s", CFWORKDIR, NOVA_VALUE);
-    MapName(name);
-
-    if (!OpenDB(name, &dbp))
+    if (!OpenDB(&dbp, dbid_value))
     {
         return;
     }
@@ -1276,6 +1252,7 @@ void Nova_PackValueReport(Item **reply, char *header, time_t from, enum cfd_menu
             }
 
             memcpy(&pt, value, sizeof(pt));
+            char name[CF_BUFSIZE];
             snprintf(name, sizeof(name), "%s,%.4lf,%.4lf,%.4lf\n", key, pt.kept, pt.repaired, pt.notkept);
 
             if (first)
@@ -1298,7 +1275,6 @@ void Nova_PackValueReport(Item **reply, char *header, time_t from, enum cfd_menu
 void Nova_PackVariables2(Item **reply, char *header, time_t from, enum cfd_menu type)
 /* Includes date-stamp of variable (but not avg and stddev). */
 {
-    char filename[CF_MAXVARSIZE];
     char buf[CF_MAXTRANSSIZE];
     CF_DB *dbp;
     CF_DBC *dbcp;
@@ -1312,10 +1288,7 @@ void Nova_PackVariables2(Item **reply, char *header, time_t from, enum cfd_menu 
 
     CfOut(cf_verbose, "", " -> Packing variable data with date stamp");
 
-    snprintf(filename, sizeof(filename), "%s/state/%s", CFWORKDIR, CF_VARIABLES);
-    MapName(filename);
-
-    if (!OpenDB(filename, &dbp))
+    if (!OpenDB(&dbp, dbid_variables))
     {
         return;
     }
@@ -1383,16 +1356,13 @@ void Nova_PackLastSeen(Item **reply, char *header, time_t from, enum cfd_menu ty
     time_t tid = time(NULL);
     double now = (double) tid, average = 0, var = 0;
     double ticksperhr = (double) SECONDS_PER_HOUR;
-    char name[CF_BUFSIZE], hostkey[CF_BUFSIZE], buffer[CF_MAXTRANSSIZE];
+    char hostkey[CF_BUFSIZE], buffer[CF_MAXTRANSSIZE];
     KeyHostSeen entry;
     int ksize, vsize, first = true;
 
     CfOut(cf_verbose, "", " -> Packing last-seen data");
 
-    snprintf(name, CF_BUFSIZE - 1, "%s/%s", CFWORKDIR, CF_LASTDB_FILE);
-    MapName(name);
-
-    if (!OpenDB(name, &dbp))
+    if (!OpenDB(&dbp, dbid_lastseen))
     {
         return;
     }
@@ -1436,7 +1406,7 @@ void Nova_PackLastSeen(Item **reply, char *header, time_t from, enum cfd_menu ty
 
         if (now - then > (double) LASTSEENEXPIREAFTER)
         {
-            DeleteDB(dbp, key);
+            DBCursorDeleteEntry(dbcp);
             CfOut(cf_inform, "", " -> Deleting expired entry for %s\n", hostkey);
             continue;
         }
@@ -1862,7 +1832,7 @@ void Nova_PackSoftwareDates(Item **reply, char *header, time_t from, enum cfd_me
 
 void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_menu type)
 {
-    char name[CF_BUFSIZE], line[CF_MAXTRANSSIZE];
+    char line[CF_MAXTRANSSIZE];
     char bundle[CF_MAXVARSIZE];
     Item *file = NULL;
     int first = true, ksize, vsize;
@@ -1876,10 +1846,7 @@ void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_menu typ
 
     CfOut(cf_verbose, "", " -> Packing bundle log");
 
-    snprintf(name, CF_BUFSIZE - 1, "%s/%s", CFWORKDIR, NOVA_BUNDLE_LOG);
-    MapName(name);
-
-    if (!OpenDB(name, &dbp))
+    if (!OpenDB(&dbp, dbid_bundles))
     {
         return;
     }
@@ -1922,7 +1889,7 @@ void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_menu typ
 
         if (now - then > (double) LASTSEENEXPIREAFTER)
         {
-            DeleteDB(dbp, key);
+            DBCursorDeleteEntry(dbcp);
             CfOut(cf_inform, "", " -> Deleting expired entry for %s\n", bundle);
             continue;
         }
@@ -2093,29 +2060,25 @@ void Nova_PackExecutionStatus(Item **reply, char *header)
 
     CfOut(cf_verbose, "", " -> Packing execution status data");
 
-    char *db_name = NULL;
-    xasprintf (&db_name, "%s/%s", CFWORKDIR, NOVA_AGENT_EXECUTION);
-
-    if (!OpenDB(db_name, &dbp))
+    if (!OpenDB(&dbp, dbid_agent_execution))
     {
-        CfOut(cf_inform, "", " !! Unable to open %s db", NOVA_AGENT_EXECUTION);
+        CfOut(cf_inform, "", " !! Unable to open agent_execution db");
         return;
     }
 
     if (!ReadDB(dbp, NOVA_TRACK_DELTA_SCHEDULE, &avr_interval, sizeof(double)))
     {
-        CfOut(cf_inform, "", " !! Unable to read from %s db", NOVA_AGENT_EXECUTION);
+        CfOut(cf_inform, "", " !! Unable to read from agent_execution db");
         return;
     }
 
     if (!ReadDB(dbp, NOVA_TRACK_LAST_EXEC, &last_execution, sizeof(time_t)))
     {
-        CfOut(cf_inform, "", " !! Unable to read from %s db", NOVA_AGENT_EXECUTION);
+        CfOut(cf_inform, "", " !! Unable to read from agent_execution db");
         return;
     }
 
     CloseDB(dbp);
-    free(db_name);
 
     time_t now = time(NULL);
     double last_exec_interval = (double)(now - last_execution);

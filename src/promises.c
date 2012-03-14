@@ -327,7 +327,7 @@ void NotePromiseCompliance(Promise *pp, double val, PromiseState state, char *re
 {
     CF_DB *dbp;
     FILE *fp;
-    char name[CF_BUFSIZE], promiseHandle[CF_MAXVARSIZE], newNoRepeatId[CF_BUFSIZE];
+    char promiseHandle[CF_MAXVARSIZE], newNoRepeatId[CF_BUFSIZE];
     static char oldNoRepeatId[CF_BUFSIZE] = { 0 };
     Event e, newe;
     time_t now = time(NULL);
@@ -347,9 +347,6 @@ void NotePromiseCompliance(Promise *pp, double val, PromiseState state, char *re
 
     strncpy(oldNoRepeatId, newNoRepeatId, sizeof(oldNoRepeatId) - 1);
 
-    snprintf(name, CF_BUFSIZE - 1, "%s/state/%s", CFWORKDIR, NOVA_COMPLIANCE);
-    MapName(name);
-
     switch (state)
     {
     case PROMISE_STATE_KEPT:
@@ -368,7 +365,7 @@ void NotePromiseCompliance(Promise *pp, double val, PromiseState state, char *re
         return;
     }
 
-    if (!OpenDB(name, &dbp))
+    if (!OpenDB(&dbp, dbid_promise_compliance))
     {
         return;
     }
@@ -402,6 +399,8 @@ void NotePromiseCompliance(Promise *pp, double val, PromiseState state, char *re
     }
 
 /* Now keep the next log */
+
+    char name[CF_BUFSIZE];
 
     switch (state)
     {
@@ -439,19 +438,16 @@ void NotePromiseCompliance(Promise *pp, double val, PromiseState state, char *re
 time_t GetPromiseCompliance(Promise *pp, double *value, double *average, double *var, time_t *lastseen)
 {
     CF_DB *dbp;
-    char name[CF_MAXVARSIZE];
     Event e;
     double lsea = SECONDS_PER_WEEK * 52;        /* expire after a year */
     time_t now = time(NULL);
 
-    snprintf(name, CF_MAXVARSIZE - 1, "%s/state/%s", CFWORKDIR, NOVA_COMPLIANCE);
-    MapName(name);
-
-    if (!OpenDB(name, &dbp))
+    if (!OpenDB(&dbp, dbid_promise_compliance))
     {
         return (time_t) 0;
     }
 
+    char name[CF_BUFSIZE];
     strncpy(name, PromiseID(pp), CF_MAXVARSIZE);
 
     if (ReadDB(dbp, name, &e, sizeof(e)))
@@ -483,7 +479,7 @@ time_t GetPromiseCompliance(Promise *pp, double *value, double *average, double 
 
 void TrackValue(char *date, double kept, double repaired, double notkept)
 {
-    char month[CF_SMALLBUF], day[CF_SMALLBUF], year[CF_SMALLBUF], key[CF_SMALLBUF], name[CF_BUFSIZE];
+    char month[CF_SMALLBUF], day[CF_SMALLBUF], year[CF_SMALLBUF], key[CF_SMALLBUF];
     CF_DB *dbp;
     PromiseValue value, new_value;
 
@@ -492,10 +488,7 @@ void TrackValue(char *date, double kept, double repaired, double notkept)
     sscanf(date, "%*s %s %s %*s %s", month, day, year);
     snprintf(key, CF_SMALLBUF - 1, "%s %s %s", day, month, year);
 
-    snprintf(name, CF_BUFSIZE - 1, "%s/state/%s", CFWORKDIR, NOVA_VALUE);
-    MapName(name);
-
-    if (!OpenDB(name, &dbp))
+    if (!OpenDB(&dbp, dbid_value))
     {
         return;
     }
@@ -522,16 +515,12 @@ void TrackValue(char *date, double kept, double repaired, double notkept)
 
 void LastSawBundle(char *name,double compliance)
 {
-    char filename[CF_BUFSIZE];
     double lastseen,delta2;
     Event e, newe;
     time_t now = time(NULL);
     CF_DB *dbp;
 
-    snprintf(filename, CF_BUFSIZE - 1, "%s/%s", CFWORKDIR, NOVA_BUNDLE_LOG);
-    MapName(filename);
-
-    if (!OpenDB(filename, &dbp))
+    if (!OpenDB(&dbp, dbid_bundles))
     {
        return;
     }

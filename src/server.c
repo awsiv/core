@@ -264,7 +264,6 @@ void Nova_PackAllReports(Item **reply, time_t from, time_t delta1, enum cfd_menu
         Nova_PackPatchStatus(reply, CFR_PATCHSTATUS, from, type);
         Nova_Pack_promise_output_common(reply, CFR_PROMISEOUT, from, type);
         Nova_PackValueReport(reply, CFR_VALUE, from, type);
-        //Nova_PackVariables(reply,CFR_VARS,from,type);  //DEPRECATED
         Nova_PackVariables2(reply, CFR_VARD, from, type);
         Nova_PackLastSeen(reply, CFR_LASTSEEN, from, type);
         Nova_PackRepairLog(reply, CFR_REPAIRLOG, from, type);
@@ -395,15 +394,14 @@ char *GetRemoteScalar(char *proto, char *handle, char *server, int encrypted, ch
 
 void CacheUnreliableValue(char *caller, char *handle, char *buffer)
 {
-    char key[CF_BUFSIZE], name[CF_BUFSIZE];
+    char key[CF_BUFSIZE];
     CF_DB *dbp;
 
     snprintf(key, CF_BUFSIZE - 1, "%s_%s", caller, handle);
-    snprintf(name, CF_BUFSIZE - 1, "%s/%s", CFWORKDIR, NOVA_CACHE);
 
     CfOut(cf_verbose, "", " -> Caching value \"%s\" for fault tolerance", buffer);
 
-    if (!OpenDB(name, &dbp))
+    if (!OpenDB(&dbp, dbid_cache))
     {
         return;
     }
@@ -416,17 +414,16 @@ void CacheUnreliableValue(char *caller, char *handle, char *buffer)
 
 int RetrieveUnreliableValue(char *caller, char *handle, char *buffer)
 {
-    char key[CF_BUFSIZE], name[CF_BUFSIZE];
+    char key[CF_BUFSIZE];
     CF_DB *dbp;
 
     snprintf(key, CF_BUFSIZE - 1, "%s_%s", caller, handle);
-    snprintf(name, CF_BUFSIZE - 1, "%s/%s", CFWORKDIR, NOVA_CACHE);
 
-    CfOut(cf_verbose, "", "Checking cache %s for last available value", name);
+    CfOut(cf_verbose, "", "Checking cache for last available value");
 
     memset(buffer, 0, CF_BUFSIZE);
 
-    if (!OpenDB(name, &dbp))
+    if (!OpenDB(&dbp, dbid_cache))
     {
         return false;
     }
