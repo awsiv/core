@@ -3488,7 +3488,7 @@ PHP_FUNCTION(cfpr_host_compliance_list)
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
         DATABASE_OPEN(&conn);
 
-        Nova2PHP_show_col_hosts(&conn, colour, filter, &page, buffer, sizeof(buffer));
+        Nova2PHP_host_compliance_list(&conn, colour, filter, &page, buffer, sizeof(buffer));
 
         DATABASE_CLOSE(&conn);
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
