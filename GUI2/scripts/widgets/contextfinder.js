@@ -41,7 +41,7 @@
         setContext:function(includes,excludes) {
             var self = this;
             self._context.includes = includes;
-            self._context.excludes = excludes;          
+            self._context.excludes = excludes;      
             return;  
         },
         
@@ -89,23 +89,22 @@
                 success: function(data) {
 
                     self.updateDataInContainer(data);
-            
-                    //self.bindClassfinder();
-            
+           
                     $(".contextfinder_wrapper").delegate('.class_selector',"click", function(event) {
                         event.preventDefault();
-                        
+                        self.getInludeExclude();
                         self.bindClassfinder(this);
                     });
-                    //clone items
+                    
+                    //add another condition field
                     $(".contextfinder_wrapper").delegate('.add_condition',"click", function(event) {
                         event.preventDefault();
                         var destination = $(this).attr('destination');
                         var new_el = self._createNewElement(destination);
                         $(this).before(new_el);
-                        //self.bindClassfinder(this);
                     });
 
+                    //buttons inside input box
                     $(".contextfinder_wrapper").delegate('.delete_condition',"click", function(event) {
                         event.preventDefault();
                         $(this).parent().remove();
@@ -148,7 +147,7 @@
                     $(".contextfinder_wrapper").delegate("#send","click",  function(event)  {
                         event.preventDefault();
                         self.getInludeExclude();
-                         self._trigger("complete",null,self.getInludeExclude());
+                        self._trigger("complete",null,self.getInludeExclude());
                         self.dialogcontent.dialog('close')
                     });
     
@@ -179,15 +178,14 @@
         getInludeExclude: function () {
             var self = this;
 
-            self._context.includes = [];
-            self._context.excludes = [];
+            var includes = [];
+            var excludes = [];
 
- 
             $('input[name="include[]"]').each(function(index)
             {
                 if ($(this).val() != '')
                 {
-                    self._context.includes.push($(this).val());
+                    includes.push($(this).val());
                 }
             });
 
@@ -195,9 +193,17 @@
             {
                 if ($(this).val() != '')
                 {
-                    self._context.excludes.push($(this).val());
+                    excludes.push($(this).val());
                 }
             });            
+
+
+            if (includes.length)
+                self._context.includes = includes;
+            
+            if (excludes.length)
+                self._context.excludes = excludes;           
+
 
             return self._context;
         },
