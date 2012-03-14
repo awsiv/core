@@ -825,7 +825,6 @@ void Nova_PackAvailPatches(Item **reply, char *header, time_t date, enum cfd_men
 void Nova_PackPatchStatus(Item **reply, char *header, time_t date, enum cfd_menu type);
 void Nova_Pack_promise_output_common(Item **reply, char *header, time_t date, enum cfd_menu type);
 void Nova_PackValueReport(Item **reply, char *header, time_t date, enum cfd_menu type);
-void Nova_PackVariables(Item **reply, char *header, time_t date, enum cfd_menu type);
 void Nova_PackVariables2(Item **reply, char *header, time_t from, enum cfd_menu type);
 void Nova_PackLastSeen(Item **reply, char *header, time_t date, enum cfd_menu type);
 void Nova_PackTotalCompliance(Item **reply, char *header, time_t date, enum cfd_menu type);
