@@ -65,11 +65,6 @@
             });
             $menuContainer.append($self._profilesCombo);
 
-            var $findersSpan = $('<span>');
-            $findersSpan.addClass('findersSpan');
-            $findersSpan.html('Finders');
-            $menuContainer.append($findersSpan);
-
             var $classFinderIcon = $('<span>');
             $classFinderIcon.addClass('classFinderIcon');
             $classFinderIcon.html('&nbsp');
