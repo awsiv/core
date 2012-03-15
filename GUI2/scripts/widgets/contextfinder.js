@@ -22,7 +22,7 @@
         _create:function(){
             var self=this;
             self.dialoginit();
-        
+           
             self.dialogcontent.dialog({
                 height: self.options.height,
                 width: self.options.width,
@@ -37,6 +37,8 @@
                 self.dialogcontent.dialog('open');
                 self.loadpagebody(self.element.attr('href'));
             });
+            mediator.installTo(self);
+            console.log(self);
         },
 
         setContext:function(includes,excludes) {
@@ -220,7 +222,7 @@
                 self._context.excludes = excludes;           
             }
 
-
+            self.publish("contextChange",self._context);
             return self._context;
         },
         
