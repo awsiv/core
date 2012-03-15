@@ -21,7 +21,7 @@ $lang['tooltip_redhost'] = 'More than 20% of promises could not be kept at last 
 $lang['tooltip_yellowhost'] = 'More than 20% of promises needed repair at last measurement.';
 $lang['tooltip_greenhost'] = 'More than 80% of promises are stable and kept.';
 $lang['tooltip_bluehost'] = 'Hosts that have not been reachable (their state is unknown) for more than: ';
-$lang['tooltip_blackhost'] = 'Hosts that show an agent schedule failure. (Host skipped it\'s last 3 scheduled executions)';
+$lang['tooltip_blackhost'] = 'Hosts that show an agent schedule failure. (Host skipped its last 3 scheduled executions)';
 
 $lang['tooltip_statusroom'] = 'The status room shows how close you are to an ideal state.';
 $lang['tooltip_engineeringroom'] = 'The engineering room shows the technical status of the managed hosts.';
