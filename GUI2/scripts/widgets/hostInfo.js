@@ -23,7 +23,7 @@
             $self._colourIcon = $('<span>').addClass('colourIcon');
             $header.append($self._colourIcon);
 
-            $self._headerLabel = $('<span>').addClass('headerLabel');
+            $self._headerLabel = $('<a>').addClass('headerLabel');
             $header.append($self._headerLabel);
             $self.element.append($header);
             $self.element.append($self._createClear());
@@ -96,10 +96,11 @@
             $self._values.lastPolicyUpdate.html('unknown');
         },
 
-        _setHeader: function(hostname, colour) {
+        _setHeader: function(hostkey, hostname, colour) {
             var $self = this;
 
             $self._headerLabel.html(hostname);
+            $self._headerLabel.attr('href', $self._requestUrls.hostPage($self, hostkey));
             $self._colourIcon.removeClass('red green yellow blue black');
             $self._colourIcon.addClass(colour);
         },
@@ -110,7 +111,7 @@
             var requestUrl = $self.options.baseUrl + '/host/info/' + hostKey;
 
             $.getJSON(requestUrl, function(host) {
-                $self._setHeader(host.hostname, host.colour);
+                $self._setHeader(hostKey, host.hostname, host.colour);
 
                 $self._clearFields();
                 $self._values.ip.html(host.ip);
@@ -138,6 +139,13 @@
                     $self._values.lastPolicyUpdate.html(host.lastPolicyUpdate);
                 }
             });
+        },
+
+        _requestUrls: {
+
+            hostPage: function(self, key) {
+                return self.options.baseUrl + '/welcome/host/' + key;
+            }
         },
 
         destroy: function() {
