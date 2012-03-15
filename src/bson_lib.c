@@ -8,8 +8,6 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 
 #ifdef HAVE_LIBMONGOC
 
-static const char *BsonGetArrayValue(const bson *b, const char *key);
-
 /*****************************************************************************/
 
 Item *BsonGetStringArrayAsItemList(const bson *b, const char *key)
@@ -122,7 +120,7 @@ void BsonStringWrite(char *dest, int destSz, const bson *b, const char *key)
 
 /*****************************************************************************/
 
-static const char *BsonGetArrayValue(const bson *b, const char *key)
+const char *BsonGetArrayValue(const bson *b, const char *key)
 {
     bson_iterator it;
 

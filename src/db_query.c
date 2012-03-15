@@ -2451,35 +2451,41 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
             }
             else if (strcmp(bson_iterator_key(&itHostData), promiseLogKey) == 0)    // new format
             {
-                if (bson_iterator_type(&itHostData) == bson_array)
+                bson_iterator iterPromiseLogElement;
+                bson_iterator_init(&iterPromiseLogElement, bson_iterator_value(&itHostData));
+
+                while (bson_iterator_next(&iterPromiseLogElement))
                 {
-                    bson_iterator iterPromiseLogArray;
-                    bson_iterator_init(&iterPromiseLogArray, bson_iterator_value(&itHostData));
+                    bson_iterator iterPromiseLogData;
 
-                    while (bson_iterator_next(&iterPromiseLogArray))
+                    bson_iterator_init(&iterPromiseLogData, bson_iterator_value(&iterPromiseLogElement));
+
+                    bson objPromiseLogData;
+                    bson_iterator_subobject( &iterPromiseLogElement, &objPromiseLogData);
+
+                    BsonStringWrite(rhandle, sizeof(rhandle) - 1, &objPromiseLogData, cfr_promisehandle);
+                    BsonStringWrite(rcause, sizeof(rcause) - 1, &objPromiseLogData, cfr_cause);
+
+                    if(!CompareStringOrRegex(rhandle, lhandle, regex))
                     {
-                        bson_iterator iterPromiseLogData;
+                        continue;
+                    }
 
-                        bson_iterator_init(&iterPromiseLogData, bson_iterator_value(&iterPromiseLogArray));
+                    const char *array = BsonGetArrayValue(&objPromiseLogData, cfr_time);
+                    bson_iterator iterTimestamps;
+                    bson_iterator_init(&iterTimestamps, array);
 
-                        bson objPromiseLogData;
-                        bson_iterator_subobject( &iterPromiseLogArray, &objPromiseLogData);
-
-                        BsonStringWrite(rhandle, sizeof(rhandle) - 1, &objPromiseLogData, cfr_promisehandle);
-                        BsonStringWrite(rcause, sizeof(rcause) - 1, &objPromiseLogData, cfr_cause);
-                        rt = BsonIntGet(&objPromiseLogData, cfr_time);
-
+                    while (bson_iterator_next(&iterTimestamps))
+                    {
+                        rt = bson_iterator_int(&iterTimestamps);
                         if (rt < from && rt > to)
                         {
                             continue;
                         }
 
-                        if(CompareStringOrRegex(rhandle, lhandle, regex))
-                        {
-                            count++;
-                            found = true;
-                            PrependRlistAlien(record_list, NewHubPromiseLog(hh, rhandle, rcause, rt, noteid, oid));
-                        }
+                        count++;
+                        found = true;
+                        PrependRlistAlien(record_list, NewHubPromiseLog(hh, rhandle, rcause, rt, noteid, oid));
                     }
                 }
             }
