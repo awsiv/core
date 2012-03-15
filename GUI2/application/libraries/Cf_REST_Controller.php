@@ -13,10 +13,13 @@ class Cf_REST_Controller extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
-        
+
         initializeHub();
-        
-        $this->load->library('security');
+
+        $this->load->library(array(
+            'security',
+            'setting_lib'
+            ));
 
         $this->request->method = $this->_detect_method();
         $this->_get_args = array_merge($this->_get_args, $this->uri->ruri_to_assoc());
@@ -41,7 +44,7 @@ class Cf_REST_Controller extends CI_Controller {
                 break;
         }
     }
-        
+
     public function _remap($object_called, $arguments) {
 
         $controller_method = $object_called . '_' . $this->request->method;
@@ -59,7 +62,7 @@ class Cf_REST_Controller extends CI_Controller {
         header('Content-Length: ' . strlen($data));
         exit($data);
     }
-    
+
     public function respond_ok($data) {
         if (is_null($data)) {
             return $this->respond(204); // No Content
@@ -68,16 +71,16 @@ class Cf_REST_Controller extends CI_Controller {
             return $this->respond(200, $data); // OK
         }
     }
-    
+
     public function respond_not_found() {
         return $this->respond(404);
     }
-    
+
     public function respond_forbidden()
     {
         return $this->respond(403);
     }
-    
+
     public function respond_internal_error($message)
     {
         return $this->respond(500, $message);
@@ -105,7 +108,7 @@ class Cf_REST_Controller extends CI_Controller {
             return array();
         }
     }
-    
+
     protected function param_excludes()
     {
         $value = $this->param_list('excludes', TRUE);
@@ -118,7 +121,7 @@ class Cf_REST_Controller extends CI_Controller {
             return array();
         }
     }
-    
+
     protected function param_list($key, $xss_clean = TRUE)
     {
         $value = $this->param($key, $xss_clean);
@@ -131,7 +134,7 @@ class Cf_REST_Controller extends CI_Controller {
             return FALSE;
         }
     }
-    
+
     protected function param($key, $xss_clean = FALSE)
     {
         switch ($this->request->method)

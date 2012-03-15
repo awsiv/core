@@ -10,13 +10,27 @@
 
             $self.element.addClass('hostsConnectivity');
 
-            $self._blue = $self._createColourEntry('blue');
+            $self._blue = $self._createColourEntry('blue',
+                'Hosts that have not been reached (their state is unknown)');
             $self.element.append($self._blue);
 
-            $self._black = $self._createColourEntry('black');
+            $self._black = $self._createColourEntry('black',
+                'Hosts that show an agent schedule failure. (Host skipped its last 3 scheduled executions)');
             $self.element.append($self._black);
 
             $self.element.append($self._createClear());
+        },
+
+        _init: function() {
+            var $self = this;
+
+            $.getJSON($self._requestUrls.blueHostThreshold($self),
+                function(blueHostThreshold) {
+                    $self._blue.children('.colourEntryLabel').attr('title',
+                        'Hosts that have not been reached ' +
+                        '(their state is unknown) for more than: ' +
+                        blueHostThreshold / 60 + ' minutes');
+                });
         },
 
         setContext: function(includes, excludes) {
@@ -49,7 +63,7 @@
             return $element;
         },
 
-        _createColourEntry: function(colour) {
+        _createColourEntry: function(colour, tooltip) {
             var $self = this;
 
             var $entry = $('<div>');
@@ -61,8 +75,10 @@
             $entryIcon.html('&nbsp;');
             $entry.append($entryIcon);
 
-            var $entryLabel = $('<span>');
+            var $entryLabel = $('<a>');
             $entryLabel.addClass('colourEntryLabel');
+            $entryLabel.addClass('showqtip');
+            $entryLabel.attr('title', tooltip);
             $entryLabel.click(function () {
                 window.location.href = $self.options.baseUrl + '/welcome/host/' +
                     colour + '/' + encodeURIComponent($self._context.includes) + '/' +
@@ -90,9 +106,14 @@
 
             hostCount: function(self, includes, colour) {
 
-                return self.options.baseUrl + 'host/count?' +
+                return self.options.baseUrl + '/host/count?' +
                     'colour=' + colour + '&' +
                     'includes=' + encodeURIComponent(includes);
+            },
+
+            blueHostThreshold: function(self) {
+
+                return self.options.baseUrl + '/appsettings/bluehostthreshold';
             }
         }
     });
