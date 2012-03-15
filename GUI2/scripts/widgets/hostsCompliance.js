@@ -10,13 +10,16 @@
 
             $self.element.addClass('hostsCompliance');
 
-            $self._red = $self._createColourEntry('red');
+            $self._red = $self._createColourEntry('red', '> 20% not compliant',
+                'More than 20% of promises could not be kept at last measurement.');
             $self.element.append($self._red);
 
-            $self._green = $self._createColourEntry('green');
+            $self._green = $self._createColourEntry('green', '> 80% compliant',
+                'More than 80% of promises are stable and kept.');
             $self.element.append($self._green);
 
-            $self._yellow = $self._createColourEntry('yellow');
+            $self._yellow = $self._createColourEntry('yellow', '> 20% repaired, now compliant',
+                'More than 20% of promises needed repair at last measurement.');
             $self.element.append($self._yellow);
         },
 
@@ -46,7 +49,7 @@
                 });
         },
 
-        _createColourEntry: function(colour, info) {
+        _createColourEntry: function(colour, label, tooltip) {
             var $self = this;
 
             var $entry = $('<div>');
@@ -58,8 +61,10 @@
             $entryIcon.html('&nbsp;');
             $entry.append($entryIcon);
 
-            var $entryLabel = $('<span>');
+            var $entryLabel = $('<a>');
             $entryLabel.addClass('colourEntryLabel');
+            $entryLabel.addClass('showqtip');
+            $entryLabel.attr('title', tooltip)
             $entryLabel.click(function () {
                 window.location.href = $self.options.baseUrl + '/welcome/host/' +
                     colour + '/' + encodeURIComponent($self._context.includes) + '/' +
@@ -67,15 +72,15 @@
             });
             $entry.append($entryLabel);
 
-            $self._setHostCount($entry, 0, info);
+            $self._setHostCount($entry, 0, label);
 
             return $entry;
         },
 
-        _setHostCount: function($entry, count, info) {
+        _setHostCount: function($entry, count, label) {
             var $entryLabel = $entry.children('.colourEntryLabel');
 
-            $entryLabel.html(count + ' hosts (' + info + ')');
+            $entryLabel.html(count + ' hosts (' + label + ')');
         },
 
         _context: {
