@@ -289,7 +289,7 @@
             }
 
             var $dialog = $('<div>')
-                .load('/widget/astrolabeAddNodeDialog/', function() {
+                .load($self.options.baseUrl+'/widget/astrolabeAddNodeDialog/', function() {
                     $('#astrolabe-add-node-label').focus();
                 })
                 .dialog({
