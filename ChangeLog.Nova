@@ -1,10 +1,8 @@
-2.1.5
+2.2.0
 	Fixed issue where client would show as green in the Mission Portal when no
 	data was received, e.g. due to access or license error at client.
 	Now correctly shows as blue in these cases.
 
-
-2.1.4
 	Greatly reduced amount of connections from cf-hub
 	to localhost mongodb. Now there is one connection per
 	cf-hub run (max 50), before it was three per client.
@@ -13,6 +11,9 @@
 
 	Software report is much faster on larger data-sets due
 	to removal of autocomplete feature.
+
+	Upgraded mongod from version 1.8.2 to 2.0.3, which increases
+	efficiency on concurrency and reduces memory usage.
 
 2.1.0 
 	New interface with interactive graphs on Nova hub.

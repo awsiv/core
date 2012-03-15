@@ -1,0 +1,19 @@
+2.2.0
+	mongod was upgraded from version 1.8.2 to 2.0.3. This improves
+	concurrency efficiency and reduces memory footprint.
+
+         - We need to add the --nojournal option to the mongod
+	parameters to avoid the extra overhead of journaling. Either
+	replace update.cf with the one distributed in the Nova 2.2.0
+	expansion package, or add the parameter manually where mongod
+	gets started.
+
+        - You can reindex your database collections to get some
+        performance gains (optional). This can be done manually after
+        you start the new mongod, but before starting cf-hub and the
+        rest of the processes, by running "/var/cfengine/bin/cf-hub
+        --index". It may take several minutes to complete, depending
+        on the size of the database.
+
+        - See http://www.mongodb.org/display/DOCS/2.0+Release+Notes
+        for details on the changes in this version.
