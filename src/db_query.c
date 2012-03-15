@@ -6113,10 +6113,7 @@ HubQuery *CFDB_QueryClassesDistinctSorted(mongo_connection *conn, HostClassFilte
 
     for (Item *ip = classList; ip != NULL; ip = ip->next)
     {
-        if (HostClassFilterMatch(hostClassFilter, ip->name))
-        {
-            PrependRlistAlien(&record_list, NewHubClass(NULL, ip->name, 0, 0, 0));
-        }
+        PrependRlistAlien(&record_list, NewHubClass(NULL, ip->name, 0, 0, 0));
     }
 
     DeleteItemList(classList);

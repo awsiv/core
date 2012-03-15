@@ -16,13 +16,13 @@ class knowledge_model extends Cf_Model
         {
             $rawdata = cfpr_search_topics($username, $search, $flag);
             $data = $this->checkData($rawdata);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors() == 0)
             {
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -45,13 +45,13 @@ class knowledge_model extends Cf_Model
         {
             $rawdata = cfpr_show_topic_hits($username, $pid);
             $data = $this->checkData($rawdata);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors() == 0)
             {
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -75,13 +75,13 @@ class knowledge_model extends Cf_Model
         {
             $result = cfpr_get_knowledge_view($username, $pid, '');
             $data = $this->checkData($result);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors() == 0)
             {
                 return $result; // we need the JSON representation
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -126,13 +126,13 @@ class knowledge_model extends Cf_Model
         {
             $result = cfpr_show_topic($username, $pid);
             $data = $this->checkData($result);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors() == 0)
             {
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -155,13 +155,13 @@ class knowledge_model extends Cf_Model
         {
             $result = cfpr_show_topic_leads($username, $pid);
             $data = $this->checkData($result);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors() == 0)
             {
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -184,13 +184,13 @@ class knowledge_model extends Cf_Model
         {
             $result = cfpr_show_topic_category($username, $pid);
             $data = $this->checkData($result);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors() == 0)
             {
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -210,13 +210,13 @@ class knowledge_model extends Cf_Model
         {
             $result = cfpr_list_documents($path);
             $data = $this->checkData($result);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors() == 0)
             {
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)

@@ -18,16 +18,23 @@
                     <div id="hostsComplianceTimeseries" style="height: 200px"></div>
                 </div>
 
-                <div id="hostsComplianceContainer" class="hostsComplianceContainer">
-                    <div id="hostsCompliance" class="grid_4 alpha"></div>
-                    <div id="hostsConnectivity" class="grid_4 omega"></div>
-                    <div class="clear"></div>
+                <div id="hostsInfoContainer" class="hostsInfoContainer">
+                    <div id="hostsComplianceContainer" class="hostsComplianceContainer">
+                        <p style="font-size: 16px">Host Compliance (last hour)</p>
+                        <div id="hostsCompliance"></div>
+                    </div>
+                    <div class="hostsConnectivityContainer">
+                        <p style="font-size: 16px">Host Connectivity</p>
+                        <div id="hostsConnectivity"></div>
+                    </div>
                 </div>
+                <div class="clear"></div>
 
                 <div id="hostInfoContainer" class="hostInfoContainer">
                     <div id="hostInfo" class="grid_8"></div>
                     <div class="clear"></div>
                 </div>
+                <div class="clear"></div>
             </div>
             <div id="tab-2">
                 <div id="reportInfoContainer" class="reportInfoContainer">
@@ -99,14 +106,13 @@
             baseUrl: '<?php echo site_url() ?>',
 
             hostSelected: function(event, args) {
-                $('#hostInfo').hostInfo('updateHostKey', args.hostKey);
                 $('#hostInfoContainer').show();
+                $('#hostsInfoContainer').hide();
+
+                $('#hostInfo').hostInfo('updateHostKey', args.hostKey);
 
                 $('#hostsComplianceTimeseries').hostsComplianceTimeseries('setHost',
                     args.hostKey);
-
-                $('#hostsComplianceContainer').hide();
-                $('#hostsConnectivityContainer').hide();
 
                 $('#astrolabeLocation').astrolabeLocation('setHostName', args.hostName);
                 $('#reportInfoContainer').reportUI('setHostContext',args.hostKey);
@@ -114,14 +120,13 @@
 
             nodeSelected: function(event, args) {
                 $('#hostInfoContainer').hide();
+                $('#hostsInfoContainer').show();
 
                 $('#hostsComplianceTimeseries').hostsComplianceTimeseries('setContext', args.includes, []);
 
                 $('#hostsCompliance').hostsCompliance('setContext', args.includes, []);
-                $('#hostsComplianceContainer').show();
 
                 $('#hostsConnectivity').hostsConnectivity('setContext', args.includes, []);
-                $('#hostsConnectivityContainer').show();
 
                 $('#astrolabeLocation').astrolabeLocation('setContextPath', args.path, args.count);
 

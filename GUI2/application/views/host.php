@@ -119,7 +119,7 @@ $colour = $this->host_model->getHostColor($this->session->userdata('username'),$
                 // console.log(nid,element);
             },title:'Add note about this host',dontOverrideTitle:true});
 
-        $('#findreport').reportfinder({allhost:false,hostkey:"<?php echo $hostkey; ?>",baseUrl: '<?php echo site_url() ?>'});
+        $('#findreport').reportfinder({allhost:false,incList:"<?php echo $hostclass; ?>",baseUrl: '<?php echo site_url() ?>'});
 
         var $notkeptbox = $('#notkepttable').dialog({
             autoOpen: false,

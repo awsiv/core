@@ -65,25 +65,26 @@
             });
             $menuContainer.append($self._profilesCombo);
 
-            var $findersSpan = $('<span>');
-            $findersSpan.addClass('findersSpan');
-            $findersSpan.html('Finders');
-            $menuContainer.append($findersSpan);
-
-            var $classFinderIcon = $('<span>');
+            var $classFinderIcon = $('<a>');
             $classFinderIcon.addClass('classFinderIcon');
+            $classFinderIcon.addClass('showqtip');
+            $classFinderIcon.attr('title', 'Find hosts by the classes they have defined.');
             $classFinderIcon.html('&nbsp');
             $classFinderIcon.classfinder({ baseUrl: $self.options.baseUrl} );
             $menuContainer.append($classFinderIcon);
 
-            var $hostFinderIcon = $('<span>');
+            var $hostFinderIcon = $('<a>');
             $hostFinderIcon.addClass('hostFinderIcon');
+            $hostFinderIcon.addClass('showqtip');
+            $hostFinderIcon.attr('title', 'Find hosts by name or address.');
             $hostFinderIcon.html('&nbsp');
             $hostFinderIcon.hostfinder({ baseUrl: $self.options.baseUrl} );
             $menuContainer.append($hostFinderIcon);
 
-            var $promiseFinderIcon = $('<span>');
+            var $promiseFinderIcon = $('<a>');
             $promiseFinderIcon.addClass('promiseFinderIcon');
+            $promiseFinderIcon.addClass('showqtip');
+            $promiseFinderIcon.attr('title', 'Find promises that make up the policy.');
             $promiseFinderIcon.html('&nbsp');
             $promiseFinderIcon.policyfinder({ baseUrl: $self.options.baseUrl} );
             $menuContainer.append($promiseFinderIcon);
