@@ -16,6 +16,8 @@
 .hostsConnectivity .colourEntryLabel
 {
     padding-left: 5px;
+    color: #476e8c;
+    cursor: pointer;
 }
 
 .hostsConnectivity .colourEntryIcon.blue
