@@ -34,7 +34,7 @@
                              <th scope="col" rowspan="1" style="text-align: center; ">
                                 Total hosts verified</th>  
                             <th scope="col" rowspan="1" style="text-align: center">Unreachable hosts</th>
-                           
+                            <th scope="col" rowspan="1" style="text-align: center">Schedule failing hosts</th>
                             <th scope="col" colspan="1" rowspan="1" style="text-align: center; ">
                                 This was last verified between</th>
                         </tr>
@@ -51,6 +51,8 @@
                                 <?php echo $result['host_count']; ?></td>
                             <td>
                                 <span style="width:15px;display: inline-block" class="bluehost"></span><span style="float: right; clear: both;"> <?php echo $result['code_blue']; ?></span></td>
+                           <td>
+                                <span style="width:15px;display: inline-block" class="blackhost"></span><span style="float: right; clear: both;"> <?php echo $result['code_black']; ?></span></td>
                            
                             <td style="text-align: center; ">
                                  <?php echo getDateStatus($result['start'],true); ?> -  <?php echo getDateStatus($result['end'],true); ?></td>

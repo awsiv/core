@@ -245,7 +245,8 @@
         { label: "green",  data: <?php echo $greenhost; ?>,color:"#779a62"},
         { label: "yellow",  data: <?php echo $yellowhost; ?>,color:"#F0D76A"},
         { label: "red",  data: <?php echo $redhost; ?>,color:"#CC4358"},
-        { label: "blue",  data: <?php echo $bluehost; ?>,color:"#476E8C"}        
+        { label: "blue",  data: <?php echo $bluehost; ?>,color:"#476E8C"},
+        { label: "black",  data: <?php echo $blackhost; ?>,color:"#000000"}         
     ];
     $.plot($("#compliance-now-pie-chart"), complianceNowData,
     {

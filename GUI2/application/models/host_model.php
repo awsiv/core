@@ -90,6 +90,21 @@ class host_model extends Cf_Model
             throw $e;
         }
     }
+    
+    function getBlackHost($username, $rows=10, $page=1) {
+        try {
+            $rawdata = cfpr_host_compliance_list($username, 'black', $rows, $page);
+            $data = $this->checkData($rawdata);
+            if ($data) {
+                return $data;
+            } else {
+                throw new Exception($this->lang->line('invalid_json'));
+            }
+        } catch (Exception $e) {
+            generate_errormessage($e);
+            throw $e;
+        }
+    }
 
     /**
      *
@@ -468,6 +483,20 @@ class host_model extends Cf_Model
         }
         catch (Exception $e)
         {
+            log_message('error', $e->getMessage() . " File: " . $e->getFile() . ' line:' . $e->getLine());
+            throw $e;
+        }
+    }
+    
+    function getBlackHostCount($username) {
+        try {
+            $data = cfpr_host_count($username, 'black', array(), array());
+            if (is_numeric($data)) {
+                return $data;
+            } else {
+                throw new Exception($this->lang->line('invalid_json'));
+            }
+        } catch (Exception $e) {
             log_message('error', $e->getMessage() . " File: " . $e->getFile() . ' line:' . $e->getLine());
             throw $e;
         }

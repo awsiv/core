@@ -155,6 +155,7 @@ class Welcome extends Cf_Controller {
             $data['yellowhost'] = $this->host_model->getYellowHostCount($username);
             $data['greenhost']  = $this->host_model->getGreenHostCount($username);
             $data['bluehost']   = $this->host_model->getBlueHostCount($username);
+            $data['blackhost']   = $this->host_model->getBlackHostCount($username);
         }catch(Exception $e){
            show_error($e->getMessage(),500); ;
         }
@@ -345,7 +346,8 @@ class Welcome extends Cf_Controller {
             'r'   => $this->host_model->getRedHostCount($username),
             'y'   => $this->host_model->getYellowHostCount($username),
             'g'   => $this->host_model->getGreenHostCount($username),
-            'b'   => $this->host_model->getBlueHostCount($username)
+            'b'   => $this->host_model->getBlueHostCount($username),
+            'bl'   => $this->host_model->getBlackHostCount($username)
         );
         }catch(Exception $e){
             show_error($e->getMessage(),500);
@@ -452,6 +454,9 @@ class Welcome extends Cf_Controller {
                     break;
                 case "blue":
                     $result = $this->host_model->getBlueHost($this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
+                    break;
+                case "black":
+                    $result = $this->host_model->getBlackHost($this->session->userdata('username'),$rows, $page_number);
                     break;
             }
         }catch(Exception $e){
