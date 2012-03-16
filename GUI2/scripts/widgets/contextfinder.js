@@ -38,7 +38,9 @@
                 self.loadpagebody(self.element.attr('href'));
             });
             mediator.installTo(self);
-            console.log(self);
+            self.subscribe('contextChange', function(data){
+                      self.setContext(data.includes, data.excludes);
+           });
         },
 
         setContext:function(includes,excludes) {
@@ -81,7 +83,7 @@
             var self=this,
                 submit_url=url;
                 
-            self.getInludeExclude(); //call to get context if manually edited
+            //self.getInludeExclude(); //call to get context if manually edited
             
         
             $.ajax({

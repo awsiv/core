@@ -99,3 +99,13 @@ var mediator = (function(){
     };
  
 }());
+
+var stringToArray=function(commaSeparatedString){
+        var resultfromExplode=commaSeparatedString.split(',');
+        
+        if(resultfromExplode.length==1 && resultfromExplode[0]=="" ){
+          return [];  
+        }else{
+          return  resultfromExplode;
+        }
+};

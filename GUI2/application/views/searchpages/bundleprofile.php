@@ -46,12 +46,14 @@
   //$('#hclist').contextfinder('setContext',$incList.val().split(','), $exList.val().split(','));
 var obj = { name: 'filterview' };
 mediator.installTo(obj);
+
+obj.publish('contextChange', { includes:stringToArray($incList.val()),excludes:stringToArray($exList.val())});
+
  obj.subscribe('contextChange', function(data){
-        console.log(data);
         $incList.val(data.includes);
         $exList.val(data.excludes);
  });
-obj.publish('contextChange', $incList.val().split(','))
+
 
   /*$('#searchform').live('submit',function(){
       var list=$('#hg').data('list');
