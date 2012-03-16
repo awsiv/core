@@ -950,26 +950,31 @@ static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer, Att
 
 // Choose full / delta
 
+    int report_len;
+    char *menu;
+
     if (long_time_no_see)
     {
+        menu = "full";
         time_t last_week = time(0) - (time_t) SECONDS_PER_WEEK;
 
         CfOut(cf_verbose, "", " -> Running FULL sensor sweep of %s", HashPrint(CF_DEFAULT_DIGEST, conn->digest));
-        Nova_QueryClientForReports(dbconn, conn, "full", last_week);
-
-        Nova_HubLog("HUB full sensor sweep of peer %s", peer);
+        report_len = Nova_QueryClientForReports(dbconn, conn, "full", last_week);
 
         YieldCurrentLock(thislock);
     }
     else
     {
+        menu = "delta";
+
         CfOut(cf_verbose, "", " -> Running differential sensor sweep of %s",
               HashPrint(CF_DEFAULT_DIGEST, conn->digest));
-        Nova_QueryClientForReports(dbconn, conn, "delta", now - average_time);
+        report_len = Nova_QueryClientForReports(dbconn, conn, "delta", now - average_time);
 
-        Nova_HubLog("HUB delta sensor sweep of peer %s", peer);
         // don't yield lock here - we never got it
     }
+
+    Nova_HubLog("Got %d bytes of reports from %s with %s menu", report_len, peer, menu);
 
     ServerDisconnection(conn);
     DeleteRlist(aa.copy.servers);
