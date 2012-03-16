@@ -1,4 +1,8 @@
 2.2.0
+        More diagnostics on report collection from cf-hub. Logging more
+        useful information in cf-hub -l, measuring total collection time
+        in benchmarks report, under id "ReportCollectAll".
+        
 	Fixed issue where client would show as green in the Mission Portal when no
 	data was received, e.g. due to access or license error at client.
 	Now correctly shows as blue in these cases.
