@@ -108,7 +108,7 @@
         updateHostKey: function(hostKey) {
             var $self = this;
 
-            var requestUrl = $self.options.baseUrl + '/host/info/' + hostKey;
+            var requestUrl = $self.options.baseUrl + '/hosts/info/' + hostKey;
 
             $.getJSON(requestUrl, function(host) {
                 $self._setHeader(hostKey, host.hostname, host.colour);
@@ -144,7 +144,7 @@
         _requestUrls: {
 
             hostPage: function(self, key) {
-                return self.options.baseUrl + '/welcome/hosts/' + key;
+                return self.options.baseUrl + '/welcome/host/' + key;
             }
         },
 
