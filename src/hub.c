@@ -90,7 +90,7 @@ static const char *HINTS[16] =
     "Run as a foreground processes (do not fork)",
     "Continuous update mode of operation",
     "Rebuild database caches used for efficient query handling (e.g. compliance graphs)",
-    "Enable logging of updates to the promise log",
+    "Enable logging of report collection and maintenance to hub_log in the working directory",
     "Reindex all collections in the CFEngine report database",
     "Splay/load balance full-updates, overriding bootstrap times, assuming a default 5 minute update schedule.",
     NULL
