@@ -725,6 +725,8 @@ static void Nova_Scan(Item *masterlist, Attributes a, Promise *pp)
 {
     Nova_HubLog("Starting report collection");
     
+    time_t time_start = time(NULL);
+    
     if (NO_FORK)
     {
         Nova_SequentialScan(masterlist, a, pp);
@@ -734,7 +736,10 @@ static void Nova_Scan(Item *masterlist, Attributes a, Promise *pp)
         Nova_ParallelizeScan(masterlist, a, pp);
     }
 
-    Nova_HubLog("Finished report collection");
+    time_t time_end = time(NULL);
+
+    Nova_HubLog("Finished report collection -- took %ld seconds, tried %d hosts", 
+                time_end - time_start, ListLen(masterlist));
 }
 
 /********************************************************************/
