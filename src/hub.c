@@ -1236,7 +1236,7 @@ static void Nova_HubLog(const char *fmt, ...)
         return;
     }
 
-    fprintf(fout, "%ld,%ld: ", CFSTARTTIME, now);
+    fprintf(fout, "%ld,%ld [%d]: ", CFSTARTTIME, now, getpid());
     va_list ap;
 
     va_start(ap, fmt);
