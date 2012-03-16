@@ -144,7 +144,7 @@
         _requestUrls: {
 
             hostPage: function(self, key) {
-                return self.options.baseUrl + '/welcome/host/' + key;
+                return self.options.baseUrl + '/welcome/hosts/' + key;
             }
         },
 
