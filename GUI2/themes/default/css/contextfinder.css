@@ -132,3 +132,13 @@ div.contextfinder {
     background: url("../images/contextfinder/add_icon.png") 0 0 no-repeat;
     margin-right: 5px 
 }
+
+#resetConditions {
+    float: left;
+    margin-left: 10px;
+}
+
+#setConditions {
+    float: right;
+    margin-right: 10px;
+}
