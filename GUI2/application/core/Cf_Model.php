@@ -52,8 +52,8 @@ class Cf_Model extends CI_Model {
                 $this->setError( $this->lang->line('invalid_json')." DATA is ::". $data);
                 $returnVal = false;
             }
-        } else {
-            if ($data_check == NULL) {
+         } else {
+            if ($data_check === NULL) {
                 $this->setError($this->lang->line('invalid_json')."DATA ::".$data);
                 $returnVal = false;
             }
