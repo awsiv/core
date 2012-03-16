@@ -3445,7 +3445,7 @@ int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int
 
 /*****************************************************************************/
 
-int CFDB_QueryLastUpdate(mongo_connection *conn, char *db, char *dbkey, char *keyhash, time_t *date)
+int CFDB_QueryLastUpdate(mongo_connection *conn, char *db, char *dbkey, char *keyhash, time_t *date, int *size)
 {
     bson_buffer b, bb;
     bson query, field;
@@ -3464,6 +3464,7 @@ int CFDB_QueryLastUpdate(mongo_connection *conn, char *db, char *dbkey, char *ke
     bson_buffer_init(&bb);
     bson_append_int(&bb, dbkey, 1);
     bson_append_int(&bb, cfr_day, 1);
+    bson_append_int(&bb, cfr_last_update_size, 1);
     bson_from_buffer(&field, &bb);
 
     cursor = mongo_find(conn, db, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
@@ -3481,6 +3482,12 @@ int CFDB_QueryLastUpdate(mongo_connection *conn, char *db, char *dbkey, char *ke
                 *date = (time_t) bson_iterator_int(&it1);
                 ok = true;
             }
+
+            if (strcmp(bson_iterator_key(&it1), cfr_last_update_size) == 0)
+            {
+                *size = bson_iterator_int(&it1);
+            }
+            
         }
     }
 
