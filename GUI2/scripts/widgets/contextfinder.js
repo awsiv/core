@@ -22,7 +22,7 @@
         _create:function(){
             var self=this;
             self.dialoginit();
-        
+           
             self.dialogcontent.dialog({
                 height: self.options.height,
                 width: self.options.width,
@@ -37,6 +37,10 @@
                 self.dialogcontent.dialog('open');
                 self.loadpagebody(self.element.attr('href'));
             });
+            mediator.installTo(self);
+            self.subscribe('contextChange', function(data){
+                      self.setContext(data.includes, data.excludes);
+           });
         },
 
         setContext:function(includes,excludes) {
@@ -79,7 +83,7 @@
             var self=this,
                 submit_url=url;
                 
-            self.getInludeExclude(); //call to get context if manually edited
+            //self.getInludeExclude(); //call to get context if manually edited
             
         
             $.ajax({
@@ -220,7 +224,7 @@
                 self._context.excludes = excludes;           
             }
 
-
+            self.publish("contextChange",self._context);
             return self._context;
         },
         

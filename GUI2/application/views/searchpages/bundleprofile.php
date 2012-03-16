@@ -34,7 +34,7 @@
 
   
             //baseUrl: '<?php echo site_url() ?>'
-        $('#hclist').contextfinder({
+      var $cont= $('#hclist').contextfinder({
           baseUrl: '<?php echo site_url() ?>',
           complete:function(event,data){
                $incList.val(data.includes);
@@ -43,8 +43,18 @@
           }
         });   
   
-  $('#hclist').contextfinder('setContext',$incList.val().split(','), $exList.val().split(','));
-  
+  //$('#hclist').contextfinder('setContext',$incList.val().split(','), $exList.val().split(','));
+var obj = { name: 'filterview' };
+mediator.installTo(obj);
+
+obj.publish('contextChange', { includes:stringToArray($incList.val()),excludes:stringToArray($exList.val())});
+
+ obj.subscribe('contextChange', function(data){
+        $incList.val(data.includes);
+        $exList.val(data.excludes);
+ });
+
+
   /*$('#searchform').live('submit',function(){
       var list=$('#hg').data('list');
       console.log($('input:hidden[name=inclist]').val());
