@@ -137,7 +137,6 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
 <p>
     <label for="rbac">Role based access control <span class="required">*</span></label>
         <?php 
-      
         $elem = array(
                 'name'        => 'rbac',
                 'id'          => 'rbac_on',
@@ -151,7 +150,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
                 'name'        => 'rbac',
                 'id'          => 'rbac_on',
                 'value'       => 'false',
-                'checked'     => (isset($rbac) == 'false' ? TRUE : '')
+                'checked'     => (isset($rbac) && $rbac  == 'false' ? TRUE : '')
             );
         echo form_radio($elem); ?>                
         
