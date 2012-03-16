@@ -725,7 +725,7 @@ static void Nova_Scan(Item *masterlist, Attributes a, Promise *pp)
 {
     Nova_HubLog("Starting report collection");
     
-    time_t time_start = time(NULL);
+    struct timespec measure_start = BeginMeasure();
     
     if (NO_FORK)
     {
@@ -736,10 +736,9 @@ static void Nova_Scan(Item *masterlist, Attributes a, Promise *pp)
         Nova_ParallelizeScan(masterlist, a, pp);
     }
 
-    time_t time_end = time(NULL);
+    EndMeasure("ReportCollectAll", measure_start);
 
-    Nova_HubLog("Finished report collection -- took %ld seconds, tried %d hosts", 
-                time_end - time_start, ListLen(masterlist));
+    Nova_HubLog("Finished report collection -- tried %d hosts", ListLen(masterlist));
 }
 
 /********************************************************************/
