@@ -723,6 +723,8 @@ static void Nova_CollectReports(Attributes a, Promise *pp)
 
 static void Nova_Scan(Item *masterlist, Attributes a, Promise *pp)
 {
+    Nova_HubLog("Starting report collection");
+    
     if (NO_FORK)
     {
         Nova_SequentialScan(masterlist, a, pp);
@@ -731,6 +733,8 @@ static void Nova_Scan(Item *masterlist, Attributes a, Promise *pp)
     {
         Nova_ParallelizeScan(masterlist, a, pp);
     }
+
+    Nova_HubLog("Finished report collection");
 }
 
 /********************************************************************/
@@ -974,7 +978,7 @@ static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer, Att
         // don't yield lock here - we never got it
     }
 
-    Nova_HubLog("Got %d bytes of reports from %s with %s menu", report_len, peer, menu);
+    Nova_HubLog("Received %d bytes of reports from %s with %s menu", report_len, peer, menu);
 
     ServerDisconnection(conn);
     DeleteRlist(aa.copy.servers);
@@ -1235,8 +1239,11 @@ static void Nova_HubLog(const char *fmt, ...)
         CfOut(cf_error, "fopen", "Could not open %s", filename);
         return;
     }
+    
+    char timebuf[26];
+    cf_strtimestamp_local(now, timebuf);
 
-    fprintf(fout, "%ld,%ld [%d]: ", CFSTARTTIME, now, getpid());
+    fprintf(fout, "%s [%d]: ", timebuf, getpid());
     va_list ap;
 
     va_start(ap, fmt);
