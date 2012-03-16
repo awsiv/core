@@ -46,7 +46,6 @@ static bool Nova_CompareRegistryValue(HKEY key_h, DWORD dataType, char *name, ch
 void VerifyRegistryPromise(Attributes a, Promise *pp)
 {
     HKEY key_h;                 // a registry key handle
-    char name[CF_MAXVARSIZE];
     int rr, rw, create = false;
     CF_DB *dbp;
     CfLock thislock;
@@ -99,10 +98,7 @@ void VerifyRegistryPromise(Attributes a, Promise *pp)
     {
         CfOut(cf_verbose, "", " -> Registry key \"%s\" opened...\n", pp->promiser);
 
-        snprintf(name, CF_MAXVARSIZE - 1, "%s/%s", CFWORKDIR, NOVA_REGISTRY);
-        MapName(name);
-
-        if (!OpenDB(name, &dbp))
+        if (!OpenDB(&dbp, dbid_windows_registry))
         {
             RegCloseKey(key_h);
             YieldCurrentLock(thislock);
