@@ -32,7 +32,7 @@ class Auth_Ldap {
         log_message('debug', 'Auth_Ldap initialization commencing...');
 
         // Load the session library
-        $this->ci->load->library('session', 'ion_auth');
+        $this->ci->load->library(array('session', 'ion_auth'));
         $this->ci->load->config('ion_auth', TRUE);
         $this->ci->load->model('settings_model');
         // Load the configuration
@@ -503,7 +503,7 @@ class Auth_Ldap {
     function get_role_for_user_from_localdb($username){
         $roles=array();
         $user=$this->ci->ion_auth->get_ldap_user_details_from_local_db($username);
-        if($user !==NULL){
+        if($user !==NULL && is_object($user)){
         $roles=$user->roles;
         }
         return $roles;
