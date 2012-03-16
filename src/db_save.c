@@ -1679,6 +1679,32 @@ void CFDB_SaveLastUpdate(mongo_connection *conn, char *database, char *keyField,
     bson_destroy(&host_key);
 }
 
+/*****************************************************************************/
+
+void CFDB_SaveLastHostUpdateSize(mongo_connection *conn, char *hostkey, int update_size)
+{
+    bson_buffer bb;
+    bson host_id;
+
+    bson_buffer_init(&bb);
+    bson_append_string(&bb, cfr_keyhash, hostkey);
+    bson_from_buffer(&host_id, &bb);
+
+    bson_buffer_init(&bb);
+
+    bson_buffer *set = bson_append_start_object(&bb, "$set");
+    bson_append_int(set, cfr_last_update_size, update_size);
+    bson_append_finish_object(set);
+
+    bson set_operation;
+    bson_from_buffer(&set_operation, &bb);
+
+    mongo_update(conn, MONGO_DATABASE, &host_id, &set_operation, MONGO_UPDATE_UPSERT);
+
+    bson_destroy(&set_operation);
+    bson_destroy(&host_id);
+}
+
 /*
  * Commenting
  */

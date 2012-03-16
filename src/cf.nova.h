@@ -1559,6 +1559,7 @@ typedef struct
 #define cfr_schedule      "sch"
 #define cfr_is_black      "bh"
 #define cfr_last_execution "lx"
+#define cfr_last_update_size "us"
 
 #define cfr_netmeasure    "ne"
 #define cfr_lastseen_hosts "lastseen_hosts"

@@ -209,9 +209,14 @@ int Nova_QueryClientForReports(mongo_connection *dbconn, AgentConnection *conn, 
     {
         return 0;
     }
+    
+    HashPrintSafe(CF_DEFAULT_DIGEST, conn->digest, keyHash);
 
-    UnpackReportBook(dbconn, HashPrintSafe(CF_DEFAULT_DIGEST, conn->digest, keyHash), reports);
+    UnpackReportBook(dbconn, keyHash, reports);
     DeleteReportBook(reports);
+
+    CFDB_SaveLastHostUpdate(dbconn, keyHash);
+    CFDB_SaveLastHostUpdateSize(dbconn, keyHash, total_plaintext_len);
     
     CfOut(cf_verbose, "", "Received %d bytes of report data", total_plaintext_len);
 
@@ -292,8 +297,6 @@ void UnpackReportBook(mongo_connection *dbconn, char *id, Item **reports)
             (*fnptr) (dbconn, id, reports[i]);
         }
     }
-
-    CFDB_SaveLastHostUpdate(dbconn, id);
 }
 
 #endif
