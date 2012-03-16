@@ -43,8 +43,8 @@
                   </div>            
               </td>
               <td class="arrows">
-                  <a href="javascript:void(0);" class="move_btn" dest="crxi" sourse="classList">&laquo; Left</a><br /><br />
-                  <a href="javascript:void(0);" class="move_btn" dest="classList" sourse="crxi">Right &raquo;</a><br /><br />
+                  <a href="javascript:void(0);" class="move_btn" dest="crxi" source="classList">&laquo; Left</a><br /><br />
+                  <a href="javascript:void(0);" class="move_btn" dest="classList" source="crxi">Right &raquo;</a><br /><br />
               </td>
               <td rowspan="2">
                   <div id="finderWrapper" class="all_classes dialog_box_style DragNDrop">
@@ -77,8 +77,8 @@
 
               </td>
                <td class="arrows">
-                  <a href="javascript:void(0);" class="move_btn" dest="crxx" sourse="classList">&laquo; Left</a><br /><br />
-                  <a href="javascript:void(0);" class="move_btn" dest="classList" sourse="crxx">Right &raquo;</a><br /><br />
+                  <a href="javascript:void(0);" class="move_btn" dest="crxx" source="classList">&laquo; Left</a><br /><br />
+                  <a href="javascript:void(0);" class="move_btn" dest="classList" source="crxx">Right &raquo;</a><br /><br />
               </td>
           </tr>
           <tr><td colspan="3"><hr /></td></tr>
@@ -97,8 +97,8 @@
                   </div>            
               </td>
               <td class="arrows">
-                  <a href="javascript:void(0);" class="move_btn" dest="brxi" sourse="bundlesList">&laquo; Left</a><br /><br />
-                  <a href="javascript:void(0);" class="move_btn" dest="bundlesList" sourse="brxi">Right &raquo;</a><br /><br />
+                  <a href="javascript:void(0);" class="move_btn" dest="brxi" source="bundlesList">&laquo; Left</a><br /><br />
+                  <a href="javascript:void(0);" class="move_btn" dest="bundlesList" source="brxi">Right &raquo;</a><br /><br />
               </td>
               <td rowspan="2">
                   <div id="finderWrapper" class="all_classes dialog_box_style DragNDrop">
@@ -130,8 +130,8 @@
                   </div>            
               </td>
               <td class="arrows">
-                  <a href="javascript:void(0);" class="move_btn" dest="brxx" sourse="bundlesList">&laquo; Left</a><br /><br />
-                  <a href="javascript:void(0);" class="move_btn" dest="bundlesList" sourse="brxx">Right &raquo;</a><br /><br />
+                  <a href="javascript:void(0);" class="move_btn" dest="brxx" source="bundlesList">&laquo; Left</a><br /><br />
+                  <a href="javascript:void(0);" class="move_btn" dest="bundlesList" source="brxx">Right &raquo;</a><br /><br />
               </td>
           </tr>
           <tr>

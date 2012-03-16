@@ -82,14 +82,14 @@
                             echo '</ul>';
                           } else { ?>
                             <ul id="roles" class="roleslist itemlist assignedList empty_list"></ul>
-                            <div class="empty_list_warning">No roles assigned</div>
+                            <div class="empty_list_warning">No items assigned</div>
                         <?php } ?>
                     </div>
                 </div>            
             </td>
             <td class="arrows">
-                <a href="javascript:void(0);" class="move_btn" dest="roles" sourse="all_roles">&laquo; Left</a><br /><br />
-                <a href="javascript:void(0);" class="move_btn" dest="all_roles" sourse="roles">Right &raquo;</a><br /><br />
+                <a href="javascript:void(0);" class="move_btn" dest="roles" source="all_roles">&laquo; Left</a><br /><br />
+                <a href="javascript:void(0);" class="move_btn" dest="all_roles" source="roles">Right &raquo;</a><br /><br />
             </td>
             <td rowspan="2">
                 <div class="DragNDrop assigned dialog_box_style ui-dialog" style="position: relative">
@@ -116,7 +116,7 @@
                   
                             } else { ?>
                             <ul id="all_roles" class="rolelist itemlist assignedList empty_list"></ul>
-                            <div class="empty_list_warning">No roles available </div>
+                            <div class="empty_list_warning">No items available </div>
                       <?php } ?>
                     </div>
                 </div>     
@@ -126,9 +126,9 @@
 
     <p id="btnholder"><?php
         if ($op == 'edit') {
-            echo form_submit(array('name' => 'submit', 'class' => 'btn', 'value' => 'Update'));
+            echo form_submit(array('name' => 'submit', 'class' => 'btn', 'value' => 'Update', 'id' => 'edit_user' ));
         } else {
-            echo form_submit(array('name' => 'submit', 'class' => 'btn', 'value' => 'Create User'));
+            echo form_submit(array('name' => 'submit', 'class' => 'btn', 'value' => 'Create User', 'id' => 'create_user'));
         }
         ?>
     </p>

@@ -197,7 +197,12 @@
                 }
             });            
 
-
+            
+            // if no input elemenst  -reset context
+/*            if ($('input[name="exclude[]"]').length == 0) {
+                
+            }
+*/
             if (includes.length)
                 self._context.includes = includes;
             
@@ -206,6 +211,12 @@
 
 
             return self._context;
+        },
+        
+        resetContext: function () {
+            var self = this;
+            self._context.includes = [];
+            self._context.excludes = [];
         },
         dialogContainer: function() {
             var existing = $("#contentfindercontainer");

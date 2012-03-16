@@ -96,12 +96,12 @@
         //submitting the create user form
         $('#create_user').live('submit',function(event) {
             event.preventDefault();
-            $("#error_status").html('');      
-            var options = {
-                success: function () {
-                    bindSortable('roleslist', new Array('roles'));
+            $("#error_status").html('');    
+            options.success = function () {
+                    if ($('.roleslist').length != '') {
+                        bindSortable('roleslist', new Array('roles'));
+                    }
                 } 
-            };
             $(this).ajaxSubmit(options);
         });
 
@@ -199,7 +199,7 @@ function addFinders() {
                 event.preventDefault();
                 $(this).ajaxSubmit(
                 {
-                    target:'#admin_content',beforeSubmit: function(arr, $form, options)
+                    target: options.target, beforeSubmit: function(arr, $form, options)
                     {
                         $.blockUI
                         (
@@ -370,7 +370,6 @@ function removeCheckbox(el)
     var checkbox = $(el).find('input');
     if(checkbox.length != 0)
     { 
-        // add checkbox
         checkbox.remove();
     }
 }
@@ -424,12 +423,12 @@ function bindSortable(bind_css_class_name, destinations_array)
 
                if ($.inArray( destination_id , destinations_array) != -1)
                 {
-                    //add checkboxes
+                    //add checkboxes when move items to assigned box
                     $group.each(function() {
                         addCheckbox(this, destination_id);
                     });
                 }
-                else { // remove checkboxes
+                else { // remove checkboxes when move items to all items box
                     $group.each(function() {
                         removeCheckbox(this);
                     });
@@ -440,59 +439,81 @@ function bindSortable(bind_css_class_name, destinations_array)
 
                 $(destination_elem).find('li.selected_item').removeClass('selected_item');
                 
-           
-                // add empty element with message
-                if ($(source_elem).children().length == 0)
-                {      
-                    if ($('#' + source_id).next('div.empty_list_warning').length == 0)
-                    {
-                        var el = $('<div class="empty_list_warning">No items assigned</div>');
-                        $('#' + source_id).after(el);
-                    }
-                    
-                    $('#' + source_id).next("div.empty_list_warning").show();
-                    $('#' + source_id).addClass('empty_list');
-                }
-                else
-                { 
-                    $('#' + destination_id).next("div.empty_list_warning").remove();
-                    $('#' + destination_id).removeClass('empty_list');
-                }
-
+                checkEmptyList(source_elem, destination_elem);
+                
+               // checkAssignedCount(dest, destinations_array);
+               
             },
             activate: function(event, ui) { 
             }
 	}).disableSelection();
 }        
 
- $(".move_btn").live('click',function(event) {
-     var dest = $(this).attr('dest');
-     var sourse = $(this).attr('sourse');
+$(".move_btn").live('click',function(event) {
 
-     var destinations_array = new Array("crxi","crxx","brxi", 'brxx', 'roles');
+    var source = $(this).attr('source');
+    var dest   = $(this).attr('dest');
+    
+    var source_elem      = $('#' + source);
+    var destination_elem = $('#' + dest);
 
-        var $group = $('#' + sourse + ' .selected_item');
-        
-        var destination_elem = $('#' + dest);
+    var destinations_array = new Array("crxi","crxx","brxi", 'brxx', 'roles');
 
-        if ($.inArray( dest, destinations_array) != -1) {
-            $group.each(function() {
-                addCheckbox(this, dest);
-            });
-        }
-        else {
-             $group.each(function() {
-                removeCheckbox(this)
-             });
-        }
-        
-        
-        $(destination_elem).prepend($group.clone());
-        $(destination_elem).find('.selected_item').removeClass('selected_item');
+    var $group = $('#' + source + ' .selected_item');
 
-        $group.remove();
+
+    if ($.inArray( dest, destinations_array) != -1) {
+        $group.each(function() {
+            addCheckbox(this, dest);
+        });
+    }
+    else { 
+        $group.each(function() {
+            removeCheckbox(this)
+        });
+    }
+
+    $(destination_elem).prepend($group.clone());
+    $(destination_elem).find('.selected_item').removeClass('selected_item');
+
+    $group.remove();
+    
+    checkEmptyList(source_elem, destination_elem);
+    
+    //checkAssignedCount(dest, destinations_array);
 });
-        
+
+function checkEmptyList(source_elem, destination_elem) {
+    // add empty element with message
+    if ($(source_elem).children().length == 0)
+    {      
+        //if ($('#' + source_id).next('div.empty_list_warning').length == 0)
+        if ($(source_elem).next('div.empty_list_warning').length == 0)                    
+        {
+            var el = $('<div class="empty_list_warning">No items assigned</div>');
+            $(source_elem).after(el);
+        }
+
+        $(source_elem).next("div.empty_list_warning").show();
+        $(source_elem).addClass('empty_list');
+    }
+    else
+    { 
+        $(destination_elem).next("div.empty_list_warning").remove();
+        $(destination_elem).removeClass('empty_list');
+    }
+}
+
+function checkAssignedCount(dest, destinations_array) {
+    //TODO  
+    return;
+    // check count items
+    if ($.inArray( dest, destinations_array) != -1) {
+         if ($('#' + dest).children().length > 3) {
+            $('#confirmation span').text('Too much');
+         }
+    }
+}
     
 $("#addClassRegexp" ).live('click', function(e){
     if($('#classRegexpText').val() != '') {
