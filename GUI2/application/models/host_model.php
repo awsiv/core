@@ -90,21 +90,29 @@ class host_model extends Cf_Model
             throw $e;
         }
     }
-    
-    function getBlackHost($username, $rows=10, $page=1) {
-        try {
-            $rawdata = cfpr_host_compliance_list($username, 'black', $rows, $page);
+
+    function getBlackHost($username, $includes = array('.*'), $excludes = array(), $rows = 10, $page = 1)
+    {
+        try
+        {
+            $rawdata = cfpr_host_compliance_list($username, 'black', $includes, $excludes, $rows, $page);
             $data = $this->checkData($rawdata);
-            if ($data) {
+            if ($data)
+            {
                 return $data;
-            } else {
+            }
+            else
+            {
                 throw new Exception($this->lang->line('invalid_json'));
             }
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             generate_errormessage($e);
             throw $e;
         }
     }
+
 
     /**
      *
@@ -488,15 +496,22 @@ class host_model extends Cf_Model
         }
     }
     
-    function getBlackHostCount($username) {
-        try {
+    function getBlackHostCount($username)
+    {
+        try
+        {
             $data = cfpr_host_count($username, 'black', array(), array());
-            if (is_numeric($data)) {
+            if (is_numeric($data))
+            {
                 return $data;
-            } else {
+            }
+            else
+            {
                 throw new Exception($this->lang->line('invalid_json'));
             }
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             log_message('error', $e->getMessage() . " File: " . $e->getFile() . ' line:' . $e->getLine());
             throw $e;
         }
