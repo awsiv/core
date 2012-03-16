@@ -456,7 +456,7 @@ class Welcome extends Cf_Controller {
                     $result = $this->host_model->getBlueHost($this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
                     break;
                 case "black":
-                    $result = $this->host_model->getBlackHost($this->session->userdata('username'),$rows, $page_number);
+                    $result = $this->host_model->getBlackHost($this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
                     break;
             }
         }catch(Exception $e){
