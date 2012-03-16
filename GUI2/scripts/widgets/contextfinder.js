@@ -13,7 +13,8 @@
             allhost:true,
             autoOpen: false,
             resizable: false,
-            hostkey:""
+            hostkey:"",
+            defaultEmptyElements: 2
         },
         _init: function(){
             var self=this;
@@ -144,7 +145,12 @@
 
                       });
 
-                    $(".contextfinder_wrapper").delegate("#send","click",  function(event)  {
+                    $(".contextfinder_wrapper").delegate("#resetConditions","click",  function(event)  {
+                        event.preventDefault();
+                        self.resetForm();
+                    });
+
+                    $(".contextfinder_wrapper").delegate("#setConditions","click",  function(event)  {
                         event.preventDefault();
                         self.getInludeExclude();
                         self._trigger("complete",null,self.getInludeExclude());
@@ -199,15 +205,20 @@
 
             
             // if no input elemenst  -reset context
-/*            if ($('input[name="exclude[]"]').length == 0) {
-                
+            if ($('input[name="includes[]"]').length == 0) {
+                self._context.includes = [];
             }
-*/
-            if (includes.length)
+            if ($('input[name="exclude[]"]').length == 0) {
+                self._context.excludes = [];
+            }
+
+            if (includes.length) {
                 self._context.includes = includes;
-            
-            if (excludes.length)
+            }
+
+            if (excludes.length) {
                 self._context.excludes = excludes;           
+            }
 
 
             return self._context;
@@ -217,6 +228,17 @@
             var self = this;
             self._context.includes = [];
             self._context.excludes = [];
+        },
+        resetForm: function() {
+            var self = this;
+            self.resetContext();
+            $('td.includes').empty();
+            $('td.excludes').empty();
+            
+            for (var i=0; i<self.options.defaultEmptyElements;i++) {
+              $('td.includes').append(self._createNewElement('include'));
+              $('td.excludes').append(self._createNewElement('exclude'));
+            }
         },
         dialogContainer: function() {
             var existing = $("#contentfindercontainer");

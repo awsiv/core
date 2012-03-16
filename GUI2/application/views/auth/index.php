@@ -98,9 +98,7 @@
             event.preventDefault();
             $("#error_status").html('');    
             options.success = function () {
-                    if ($('.roleslist').length != '') {
-                        bindSortable('roleslist', new Array('roles'));
-                    }
+                 bindSortable('roleslist', new Array('roles'));
                 } 
             $(this).ajaxSubmit(options);
         });
@@ -149,8 +147,8 @@ function load_edit_form(path, form) {
             {
                 addFinders();
             }  
-            else {
-                //TODO: refactor this - make independent from classes
+            else
+            {
                 bindSortable('roleslist', new Array('roles'))
             }
         });
@@ -220,7 +218,7 @@ function addFinders() {
                     success:function(responseText, statusText, xhr, $form){
                         $(document).unblock();
                         bindSortable('roleslist', new Array('roles'));
-                    }      
+                     }      
                 });
             });
 
@@ -377,14 +375,10 @@ function removeCheckbox(el)
 // move element(s) from source to destination        
 function bindSortable(bind_css_class_name, destinations_array)
 {
-    if (bind_css_class_name == '') {
-        alert("Can't find element for drag&drop");
-    }
-    
     var bind_class = '.' + bind_css_class_name;
     
-    if($(bind_class).length == 0) {
-        alert("Can't find element for drag&drop");
+    if (bind_css_class_name == '' || $(bind_class).length == 0 ) {
+        return;
     }
     
     var source_elem = '';
