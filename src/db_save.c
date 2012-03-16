@@ -1682,6 +1682,10 @@ void CFDB_SaveLastUpdate(mongo_connection *conn, char *database, char *keyField,
 /*****************************************************************************/
 
 void CFDB_SaveLastHostUpdateSize(mongo_connection *conn, char *hostkey, int update_size)
+/*
+ * NOTE: it may be more useful to record averages and store in vitals,
+ *       we could then show trends and graphs too (instead of just last sample)
+ **/
 {
     bson_buffer bb;
     bson host_id;
