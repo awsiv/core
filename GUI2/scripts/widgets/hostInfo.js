@@ -29,29 +29,29 @@
             $self.element.append($self._createClear());
 
             var $column1 = $('<div>').addClass('column');
-            $column1.append($self._createLabelElement('IP'));
+            $column1.append($self._createLabelElement('IP:'));
             $column1.append($self._values.ip);
             $column1.append($self._createClear());
 
-            $column1.append($self._createLabelElement('OS Type'));
+            $column1.append($self._createLabelElement('OS Type:'));
             $column1.append($self._values.osType);
             $column1.append($self._createClear());
 
-            $column1.append($self._createLabelElement('Flavour'));
+            $column1.append($self._createLabelElement('Flavour:'));
             $column1.append($self._values.flavour);
             $column1.append($self._createClear());
             $self.element.append($column1);
 
             var $column2 = $('<div>').addClass('column');
-            $column2.append($self._createLabelElement('Release'));
+            $column2.append($self._createLabelElement('Release:'));
             $column2.append($self._values.release);
             $column2.append($self._createClear());
 
-            $column2.append($self._createLabelElement('Last Report'));
+            $column2.append($self._createLabelElement('Last Report:'));
             $column2.append($self._values.lastReportUpdate);
             $column2.append($self._createClear());
 
-            $column2.append($self._createLabelElement('Policy Updated'));
+            $column2.append($self._createLabelElement('Policy Updated:'));
             $column2.append($self._values.lastPolicyUpdate);
             $column2.append($self._createClear());
             $self.element.append($column2);
