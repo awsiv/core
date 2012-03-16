@@ -2,20 +2,28 @@
 
 class host_model extends Cf_Model
 {
-
+    /**
+     *
+     * @param type $username
+     * @param type $includes
+     * @param type $excludes
+     * @param type $rows
+     * @param type $page
+     * @return type array
+     */
     function getRedHost($username, $includes = array('.*'), $excludes = array(), $rows = 10, $page = 1)
     {
         try
         {
             $rawdata = cfpr_host_compliance_list($username, 'red', $includes, $excludes, $rows, $page);
             $data = $this->checkData($rawdata);
-            if ($data)
+            if (is_array($data) && $this->hasErrors()==0)
             {
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -31,13 +39,13 @@ class host_model extends Cf_Model
         {
             $rawdata = cfpr_host_compliance_list($username, 'green', $includes, $excludes, $rows, $page);
             $data = $this->checkData($rawdata);
-            if ($data)
+            if (is_array($data) && $this->hasErrors()==0)
             {
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -53,13 +61,13 @@ class host_model extends Cf_Model
         {
             $rawdata = cfpr_host_compliance_list($username, 'yellow', $includes, $excludes, $rows, $page);
             $data = $this->checkData($rawdata);
-            if ($data)
+            if (is_array($data) && $this->hasErrors()==0)
             {
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -75,13 +83,13 @@ class host_model extends Cf_Model
         {
             $rawdata = cfpr_host_compliance_list($username, 'blue', $includes, $excludes, $rows, $page);
             $data = $this->checkData($rawdata);
-            if ($data)
+            if (is_array($data) && $this->hasErrors()==0)
             {
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -97,13 +105,10 @@ class host_model extends Cf_Model
         {
             $rawdata = cfpr_host_compliance_list($username, 'black', $includes, $excludes, $rows, $page);
             $data = $this->checkData($rawdata);
-            if ($data)
-            {
+            if (is_array($data) && $this->hasErrors()==0) {
                 return $data;
-            }
-            else
-            {
-                throw new Exception($this->lang->line('invalid_json'));
+            } else {
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -128,13 +133,13 @@ class host_model extends Cf_Model
         {
             $rawdata = cfpr_host_list_by_ip_rx($username, $ipregx, $rows, $page);
             $data = $this->checkData($rawdata);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors()==0)
             {
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -158,13 +163,13 @@ class host_model extends Cf_Model
         {
             $rawdata = cfpr_host_list_by_name_rx($username, $hostregx, $rows, $page);
             $data = $this->checkData($rawdata);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors()==0)
             {
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -191,7 +196,7 @@ class host_model extends Cf_Model
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -213,13 +218,13 @@ class host_model extends Cf_Model
         {
             $rawdata = cfpr_host_by_hostkey($username, $hostkey);
             $data = $this->checkData($rawdata);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors()==0)
             {
                 return $data[0];
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -247,7 +252,7 @@ class host_model extends Cf_Model
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -275,7 +280,7 @@ class host_model extends Cf_Model
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -402,7 +407,7 @@ class host_model extends Cf_Model
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -423,7 +428,7 @@ class host_model extends Cf_Model
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -444,7 +449,7 @@ class host_model extends Cf_Model
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -465,7 +470,7 @@ class host_model extends Cf_Model
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -486,7 +491,7 @@ class host_model extends Cf_Model
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -504,10 +509,8 @@ class host_model extends Cf_Model
             if (is_numeric($data))
             {
                 return $data;
-            }
-            else
-            {
-                throw new Exception($this->lang->line('invalid_json'));
+            } else {
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)

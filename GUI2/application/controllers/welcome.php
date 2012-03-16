@@ -498,6 +498,7 @@ class Welcome extends Cf_Controller {
         $hostkey_tobe_deleted = $this->input->post('delhost');
         $username=$this->session->userdata('username');
         $getparams = $this->uri->uri_to_assoc(3);
+        
         try {
             if ($hostkey_tobe_deleted) {
                 $this->host_model->deleteHost($username,$hostkey_tobe_deleted);
@@ -509,11 +510,12 @@ class Welcome extends Cf_Controller {
             show_error($e->getMessage(),500);
         }
 
+        
         if (key_exists('type', $getparams)) {
             redirect('welcome/hosts/' . $getparams['type']);
         }
 
-
+      
         if ($hostkey == NULL) {
             redirect('welcome/engg');
             return;
@@ -536,15 +538,18 @@ class Welcome extends Cf_Controller {
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);
+      
         if (is_null($hostkey)) {
 
             $hostkey = isset($_POST['hostkey']) ? $_POST['hostkey'] : "none";
         }
-        $reports = json_decode(cfpr_select_reports(null));
-        $hostname = $this->host_model->getHostName($username,$hostkey);
-        $ipaddr = $this->host_model->getHostIp($username,$hostkey);;
         $username = isset($_POST['username']) ? $_POST['username'] : "";
         $comment_text = isset($_POST['comment_text']) ? $_POST['comment_text'] : "";
+        //$reports = json_decode(cfpr_select_reports(null));
+        try{
+        $hostname = $this->host_model->getHostName($this->session->userdata('username'),$hostkey);
+        $ipaddr = $this->host_model->getHostIp($this->session->userdata('username'),$hostkey);;
+       
         $is_commented = trim(cfpr_get_host_noteid($hostkey));
         $op = isset($_POST['op']) ? $_POST['op'] : "";
 
@@ -559,9 +564,19 @@ class Welcome extends Cf_Controller {
             'ipaddr' => $ipaddr,
             'is_commented' => $is_commented,
             'op' => $op,
-            'breadcrumbs' => $this->breadcrumblist->display()
+            'breadcrumbs' => $this->breadcrumblist->display(),
+            'last' => $this->host_model->getLastUpdate($this->session->userdata('username'),$hostkey),
+            'class' => $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "sys", "ostype"),
+            'flavour' => $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "sys", "flavour"),
+            'rel' => $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "sys", "release"),
+            'load' => $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "mon", "av_loadavg"),
+            'free' => $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "mon", "av_diskfree"),
+            'speed' => $this->host_model->getNetWorkSpeed($this->session->userdata('username'), $hostkey),
+            'colour' => $this->host_model->getHostColor($this->session->userdata('username'),$hostkey)
         );
-
+        }catch(Exception $e){
+          show_error($e->getMessage(), 500);
+        }
 
         $gdata = cfpr_host_meter($this->session->userdata('username'),$hostkey);
 
