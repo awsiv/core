@@ -1525,6 +1525,11 @@ div.ui-dialog .ui-dialog-buttonpane{
     background: url("../images/green_square.png") no-repeat left center;
 }
 
+.blackhost
+{
+    background: url("../images/black_square.png") no-repeat left center;
+}
+
 .bluehost
 {
     background: url("../images/blue_square.png") no-repeat left center;

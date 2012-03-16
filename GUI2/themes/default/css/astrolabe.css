@@ -95,6 +95,11 @@
     background-color: #476e8c;
 }
 
+.astrolabe .host > .black
+{
+    background-color: #000000;
+}
+
 .astrolabe .host > .red
 {
     background-color: #cc4358;

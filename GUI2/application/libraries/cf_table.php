@@ -185,6 +185,8 @@ class cf_table {
         $lnk = "";
         if ($type == 'blue') {
             $this->CI->table->set_heading('hostname', 'last data', 'Action');
+        } else if ($type == 'black'){
+            $this->CI->table->set_heading('hostname', 'last agent execution', 'Action');
         } else {
             $this->CI->table->set_heading('hostname', 'Action');
         }
@@ -205,6 +207,17 @@ class cf_table {
                     $cell2,
                     $cell3
                 ));
+            } else if ($type == 'black') {
+                $lnk = isset($cols['lastexec'])?getDateStatus($cols['lastexec'],true):"never";
+                $cell2 = array('data' => $lnk, 'class' => 'datecol');
+                $btns = anchor('visual/vital/' . $cols['key'], ' ', array('title' => $this->CI->lang->line('tooltip_vital_signs'), 'class' => 'vitalsbtn showqtip'))
+                        . anchor('welcome/host/delhost/' . $cols['key'] . '/type/' . $type, ' ', array('title' => 'delete host', 'class' => 'deletehostbtn showqtip'));
+                $cell3 = array('data' => $btns, 'class' => 'actioncol');
+                $this->CI->table->add_row(array(
+                    anchor('welcome/host/' . $cols['key'], $title, 'class="imglabel"'),
+                    $cell2,
+                    $cell3
+                ));                
             } else {
                 $lnk = anchor('search/index/report/promises-not-kept-summary/host/' . $cols['key'], ' ', array('title' => 'promises not kept', 'class' => 'promisesnotkeptbtn showqtip'))
                         . anchor('visual/vital/' . $cols['key'], ' ', array('title' => 'pulse and vitals', 'class' => 'vitalsbtn showqtip'))

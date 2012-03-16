@@ -86,7 +86,7 @@
 #define MONITOR_CLASS_PREFIX "mXC_"
 #define CF_CHANGE_HORIZON 10
 #define NOVA_EXPORT_HEADER "NOVA_EXPORT"
-#define CF_CODEBOOK_SIZE 29
+#define CF_CODEBOOK_SIZE 30
 #define NOVA_MAXDIFFSIZE (80 * 1024 * 1024)
 #define HOSTKEY_SIZE 100        // length of SHA=....
 
@@ -834,6 +834,7 @@ void Nova_PackNotKeptLog(Item **reply, char *header, time_t date, enum cfd_menu 
 void Nova_PackMeter(Item **reply, char *header, time_t date, enum cfd_menu type);
 void Nova_PackSoftwareDates(Item **reply, char *header, time_t from, enum cfd_menu type);
 void Nova_PackBundles(Item **reply, char *header, time_t date, enum cfd_menu type);
+void Nova_PackExecutionStatus(Item **reply, char *header);
 int Nova_CoarseLaterThan(char *key, char *from);
 int Nova_YearSlot(char *day, char *month, char *lifecycle);
 int Nova_LaterThan(char *bigger, char *smaller);
@@ -869,6 +870,7 @@ void Nova_UnPackNotKeptLog(mongo_connection *dbconn, char *id, Item *data);
 void Nova_UnPackMeter(mongo_connection *dbconn, char *id, Item *data);
 void Nova_UnPackSoftwareDates(mongo_connection *dbconn, char *id, Item *data);
 void Nova_UnPackBundles(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackExecutionStatus(mongo_connection *dbconn, char *id, Item *data);
 char *Nova_LongArch(char *arch);
 
 /* histogram.c */
@@ -1157,6 +1159,8 @@ int Nova_ImportHostReports(mongo_connection *dbconnp, const char *filePath);
 int Nova_ImportHostReportsFromStream(mongo_connection *dbconn, char *header, FILE *fin);
 #endif
 
+void Nova_TrackExecution();
+
 /* reporting.c */
 
 void Nova_ImportReports(const char *input_file);
@@ -1405,10 +1409,31 @@ int CfLDAP_JSON_GetSingleAttributeList(char *uri, char *user, char *basedn, char
 /* DBs                                                                     */
 /***************************************************************************/
 
+/* db file names*/
+
+#define NOVA_HISTORYDB "history" "." DB_FEXT
+#define NOVA_MEASUREDB "nova_measures" "." DB_FEXT
+#define NOVA_STATICDB  "nova_static" "." DB_FEXT
+#define NOVA_PSCALARDB  "nova_pscalar" "." DB_FEXT
+#define NOVA_COMPLIANCE "promise_compliance" "." DB_FEXT
+#define NOVA_REGISTRY "mswin" "." DB_FEXT
+#define NOVA_CACHE "nova_cache" "." DB_FEXT
+#define NOVA_LICENSE "nova_track" "." DB_FEXT
+#define NOVA_VALUE "nova_value" "." DB_FEXT
+#define NOVA_NETWORK "nova_network" "." DB_FEXT
+#define NOVA_GLOBALCOUNTERS "nova_counters" "." DB_FEXT
+#define NOVA_BUNDLE_LOG "bundles" "." DB_FEXT
+#define NOVA_AGENT_EXECUTION "nova_agent_execution" "." DB_FEXT
+
+/* end db file names */
+
 #define NOVA_DIFF_LOG "nova_diff.log"
 #define NOVA_PATCHES_INSTALLED "software_patch_status.csv"
 #define NOVA_PATCHES_AVAIL "software_patches_avail.csv"
 /* #define NOVA_SOFTWARE_INSTALLED "software_packages.csv" Moved to cf3.defs.h */
+
+#define NOVA_TRACK_LAST_EXEC "last_exec"
+#define NOVA_TRACK_DELTA_SCHEDULE "delta_gavr"
 
 #define CF_BIGNUMBER 999999
 
@@ -1417,6 +1442,9 @@ int CfLDAP_JSON_GetSingleAttributeList(char *uri, char *user, char *basedn, char
 #define CF_GREEN 0
 #define CF_CODE_BLUE -1
 #define CF_BLUEHOST_THRESHOLD_DEFAULT 900       // 15 minutes
+
+#define CF_BLACKHOST_THRESHOLD 3 // number of missed averaged schedules
+#define CF_BLACKHOST_THRESHOLD_VARIATION 10 // additional mesurment error tolerance [%]
 
 #define CF_HUB_HORIZON 900      // 15 mins / 3 connection attempts
 #define CF_HUB_PURGESECS 604800 // one week
@@ -1484,6 +1512,7 @@ typedef struct
 #define CFR_METER "MET"
 #define CFR_SWDATES "SWD"
 #define CFR_BUNDLES "BUN"
+#define CFR_EXECUTION_STATUS "EXS"
 
 /* Keynames */
 
@@ -1546,6 +1575,9 @@ typedef struct
 #define cfr_score_perf    "scP"
 #define cfr_score_lastseen "scL"
 #define cfr_score_mixed   "scM"
+#define cfr_schedule      "sch"
+#define cfr_is_black      "bh"
+#define cfr_last_execution "lx"
 
 #define cfr_netmeasure    "ne"
 #define cfr_lastseen_hosts "lastseen_hosts"

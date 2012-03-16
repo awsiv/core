@@ -2215,3 +2215,56 @@ char *Nova_ShortArch(char *arch)
 
     return arch;
 }
+
+/*****************************************************************************/
+
+void Nova_PackExecutionStatus(Item **reply, char *header)
+{
+    CF_DB *dbp = NULL;
+    double avr_interval = 0;
+    bool is_black = false;
+    time_t last_execution = 0;
+
+    CfOut(cf_verbose, "", " -> Packing execution status data");
+
+    char *db_name = NULL;
+    xasprintf (&db_name, "%s/%s", CFWORKDIR, NOVA_AGENT_EXECUTION);
+
+    if (!OpenDB(db_name, &dbp))
+    {
+        CfOut(cf_inform, "", " !! Unable to open %s db", NOVA_AGENT_EXECUTION);
+        return;
+    }
+
+    if (!ReadDB(dbp, NOVA_TRACK_DELTA_SCHEDULE, &avr_interval, sizeof(double)))
+    {
+        CfOut(cf_inform, "", " !! Unable to read from %s db", NOVA_AGENT_EXECUTION);
+        return;
+    }
+
+    if (!ReadDB(dbp, NOVA_TRACK_LAST_EXEC, &last_execution, sizeof(time_t)))
+    {
+        CfOut(cf_inform, "", " !! Unable to read from %s db", NOVA_AGENT_EXECUTION);
+        return;
+    }
+
+    CloseDB(dbp);
+    free(db_name);
+
+    time_t now = time(NULL);
+    double last_exec_interval = (double)(now - last_execution);
+    double threshold = (avr_interval * CF_BLACKHOST_THRESHOLD);
+    threshold += (double)(threshold * (CF_BLACKHOST_THRESHOLD_VARIATION * 0.01)); // add mesurment error tolerance
+
+    if (last_exec_interval > threshold)
+    {
+    is_black = true;
+    }
+
+    char buffer[CF_MAXTRANSSIZE];
+    snprintf(buffer, sizeof(buffer), "%c %ld\n", (is_black)? 't' : 'f', (long)avr_interval);
+
+    AppendItem(reply, header, NULL);
+    AppendItem (reply, buffer, NULL);
+}
+

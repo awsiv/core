@@ -280,7 +280,7 @@ int Nova2PHP_summary_report(char *hostkey, char *handle, char *status, int regex
     Rlist *rp;
     mongo_connection dbconn;
     time_t now = time(NULL), from = now, to = now - SECONDS_PER_WEEK;
-    int code_blue = 0, tot_hosts;
+    int code_blue = 0, tot_hosts, code_black = 0;
     double n, r, k, n_av, k_av, r_av, tot_promises;
     char *current_host = "x";
     unsigned long bluehost_threshold;
@@ -321,6 +321,18 @@ int Nova2PHP_summary_report(char *hostkey, char *handle, char *status, int regex
             if (current_host && strcmp(hp->hh->keyhash, current_host) != 0)     // New host
             {
                 code_blue++;
+                current_host = hp->hh->keyhash;
+            }
+            continue;
+        }
+
+        HostColour colour;
+        Nova_GetHostColour(hp->hh->keyhash, HOST_RANK_METHOD_COMPLIANCE, &colour);
+        if (colour == HOST_COLOUR_BLACK)
+        {
+            if (current_host && strcmp(hp->hh->keyhash, current_host) != 0)     // New host
+            {
+                code_black++;
                 current_host = hp->hh->keyhash;
             }
             continue;
@@ -385,8 +397,8 @@ int Nova2PHP_summary_report(char *hostkey, char *handle, char *status, int regex
 // Return current best-knowledge of average compliance for the class of hosts and promises selected
 
     snprintf(returnval, bufsize,
-             "{\"kept\":%.2lf,\"not_kept\":%.2lf,\"repaired\":%.2lf,\"host_count\":%d,\"code_blue\":\"%d\",\"class\":\"%s\",\"start\":%ld,\"end\":%ld}",
-             k_av, n_av, r_av, tot_hosts, code_blue, classreg, from, to);
+             "{\"kept\":%.2lf,\"not_kept\":%.2lf,\"repaired\":%.2lf,\"host_count\":%d,\"code_blue\":\"%d\",\"class\":\"%s\",\"start\":%ld,\"end\":%ld,\"code_black\":\"%d\"}",
+             k_av, n_av, r_av, tot_hosts, code_blue, classreg, from, to, code_black);
 
     DeleteHubQuery(hq, DeleteHubPromiseCompliance);
 
@@ -3148,6 +3160,10 @@ void Nova2PHP_host_compliance_list(mongo_connection *conn, char *colour, HostCla
     {
         host_colour = HOST_COLOUR_BLUE;
     }
+    else if (strcmp(colour, "black") == 0)
+    {
+        host_colour = HOST_COLOUR_BLACK;
+    }
     else
     {
         return;
@@ -3176,6 +3192,14 @@ void Nova2PHP_host_compliance_list(mongo_connection *conn, char *colour, HostCla
                     Nova2PHP_getlastupdate(ip->name, lastseen, sizeof(lastseen));
                     snprintf(work, CF_MAXVARSIZE, "{ \"key\": \"%s\", \"id\": \"%s\",\"lastseen\": \"%s\"},", ip->name,
                              ip->classes, lastseen);
+                }
+                else if (host_colour == HOST_COLOUR_BLACK)
+                {
+                    char last_exec_time[CF_SMALLBUF];
+                    last_exec_time[0] = '\0';
+                    CFDB_GetValue(cfr_last_execution, last_exec_time, CF_SMALLBUF, MONGO_DATABASE);
+                    snprintf(work, CF_MAXVARSIZE, "{ \"key\": \"%s\", \"id\": \"%s\",\"lastexec\": \"%s\"},", ip->name,
+                             ip->classes, last_exec_time);
                 }
                 else
                 {

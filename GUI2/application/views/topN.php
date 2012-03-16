@@ -7,6 +7,8 @@
 <div id="body" class="outerdiv grid_12">
             <div id="topn" class="innerdiv tables">
                 <p class="title">Weakest hosts</p>
+                
+                <?php if($ret['meta']['count']> 0){ ?>
                 <table>
                     <thead></thead>
                     <?php foreach ((array)$ret['data'] as $index=>$val) {
@@ -74,6 +76,9 @@
                     ?>
                 </div>
             </div>
+                <?php } else{?>
+                <span class="nodata"><?php echo $this->lang->line('no_data');?></span>
+                 <?php }?>
             </div>
 </div>
 <div class="clear"></div>

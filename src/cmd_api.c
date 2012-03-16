@@ -98,7 +98,7 @@ int Nova2Txt_summary_report(char *hostkey, char *handle, char *status, int regex
     Rlist *rp;
     mongo_connection dbconn;
     time_t now = time(NULL), from = now, to = now - SECONDS_PER_WEEK;
-    int code_blue = 0, tot_hosts;
+    int code_blue = 0, tot_hosts, code_black = 0;
     double n, r, k, n_av, k_av, r_av, tot_promises;
     char *current_host = "x";
 
@@ -137,6 +137,18 @@ int Nova2Txt_summary_report(char *hostkey, char *handle, char *status, int regex
             if (current_host && strcmp(hp->hh->keyhash, current_host) != 0)     // New host
             {
                 code_blue++;
+                current_host = hp->hh->keyhash;
+            }
+            continue;
+        }
+
+        HostColour colour;
+        Nova_GetHostColour(hp->hh->keyhash, HOST_RANK_METHOD_COMPLIANCE, &colour);
+        if (colour == HOST_COLOUR_BLACK)
+        {
+            if (current_host && strcmp(hp->hh->keyhash, current_host) != 0)     // New host
+            {
+                code_black++;
                 current_host = hp->hh->keyhash;
             }
             continue;
@@ -207,10 +219,11 @@ int Nova2Txt_summary_report(char *hostkey, char *handle, char *status, int regex
                "%.2lf,"
                "%d,"
                "%d,"
+               "%d,"
                "%s,"
                "%s,"
                "%s\n",
-               k_av, n_av, r_av, tot_hosts, code_blue, classreg,
+               k_av, n_av, r_av, tot_hosts, code_blue, code_black, classreg,
                cf_strtimestamp_local(from, buf1), cf_strtimestamp_local(to, buf2));
     }
     else
@@ -220,10 +233,11 @@ int Nova2Txt_summary_report(char *hostkey, char *handle, char *status, int regex
                "Hosts with promises repaired %.2lf\n"
                "Total number of hosts: %d\n"
                "Hosts that didn't report status: %d\n"
+               "Hosts that failed to execute agent: %d\n"
                "Search class: %s\n"
                "First reports at: %s\n"
                "Last reports at: %s\n",
-               k_av, n_av, r_av, tot_hosts, code_blue, classreg,
+               k_av, n_av, r_av, tot_hosts, code_blue, code_black, classreg,
                cf_strtimestamp_local(from, buf1), cf_strtimestamp_local(to, buf2));
     }
 
