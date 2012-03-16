@@ -52,28 +52,26 @@
 
                 <td class="actioncol"> 
                 <?php
-                if ($username != $fall_back_for) { // if this is not "admin" user
-                        if ($is_admin || ($this->ion_auth->mode != "database" && !$this->ion_auth->is_ldap_user_exists())) {
-                            if ($this->ion_auth->mode != "database") {
-                                echo anchor("auth/edit_user_ldap/" . $username, ' ', array('class' => 'edit', 'form'=>'edit_user', 'title' => 'edit user'));
-                            } else {
-                                echo anchor("auth/edit_user/" . $user['_id']->__toString(), ' ', array('class' => 'edit', 'form'=>'edit_user', 'title' => 'edit user'));
-                            }
+               
+ if ($is_admin || ($this->ion_auth->mode != "database" && !$this->ion_auth->is_ldap_user_exists())) {
+        if ($this->ion_auth->mode != "database") {
+            echo anchor("auth/edit_user_ldap/" . $username, ' ', array('class' => 'edit', 'form' => 'edit_user', 'title' => 'edit user'));
+        } else {
+            echo anchor("auth/edit_user/" . $user['_id']->__toString(), ' ', array('class' => 'edit', 'form' => 'edit_user', 'title' => 'edit user'));
+        }
 
-                            if ($this->ion_auth->mode == "database") {
-                                if ($user['username'] != $loggedinusername) {
-                                    echo anchor("auth/delete_user/" . $user['_id']->__toString(), ' ', array('class' => 'delete', 'title' => 'delete user'));
-                                } elseif ($user['username'] == $loggedinusername) {
-                                    echo anchor("auth/change_password/" . $user['_id']->__toString(), ' ', array('class' => 'changepassword', 'title' => 'change password'));
-                                    // echo anchor("auth/edit_user/".$user['_id']->__toString(), ' ',array('class'=>'edit','title'=>'edit my details'));
-                                }
-                            }
-                        }
-                    }
-                    else {
-                        echo "You can't edit fall back user";
-                    }
-                 ?>
+        if ($this->ion_auth->mode == "database") {
+            if ($user['username'] != $loggedinusername) {
+                if ($username != $fall_back_for) { // if this is not "admin" user
+                    echo anchor("auth/delete_user/" . $user['_id']->__toString(), ' ', array('class' => 'delete', 'title' => 'delete user'));
+                }
+            } elseif ($user['username'] == $loggedinusername) {
+                echo anchor("auth/change_password/" . $user['_id']->__toString(), ' ', array('class' => 'changepassword', 'title' => 'change password'));
+                // echo anchor("auth/edit_user/".$user['_id']->__toString(), ' ',array('class'=>'edit','title'=>'edit my details'));
+            }
+        }
+    }
+    ?>
                 </td>
                
 			</tr>
