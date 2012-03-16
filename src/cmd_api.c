@@ -25,60 +25,6 @@ This file is (C) Cfengine AS. See LICENSE for details.
 
 /****************************************************************************/
 
-void Nova2Txt_getlastupdate(char *hostkey, char *buffer, int bufsize)
-{
-    time_t then;
-    mongo_connection dbconn;
-
-/* BEGIN query document */
-
-    if (!CFDB_Open(&dbconn))
-    {
-        CfOut(cf_verbose, "", "!! Could not open connection to report database");
-        return;
-    }
-
-    if (hostkey && strlen(hostkey) > 0)
-    {
-        then = 0;
-        CFDB_QueryLastUpdate(&dbconn, MONGO_DATABASE, cfr_keyhash, hostkey, &then);
-
-        if (CSV)
-        {
-            if (then > 0)
-            {
-                printf("%s,%s", hostkey, cf_ctime(&then));
-            }
-            else
-            {
-                printf("%s,never", hostkey);
-            }
-        }
-        else
-        {
-            if (then > 0)
-            {
-                printf("Data from %s last updated %s", hostkey, cf_ctime(&then));
-            }
-            else
-            {
-                printf("Data from %s have never been collected", hostkey);
-            }
-        }
-    }
-    else
-    {
-        printf("No hostkey specified");
-    }
-
-    if (!CFDB_Close(&dbconn))
-    {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
-    }
-}
-
-/****************************************************************************/
-
 void Nova2Txt_getlicense(char *buffer, int bufsize)
 {
     NewClass("am_policy_hub");
@@ -249,56 +195,6 @@ int Nova2Txt_summary_report(char *hostkey, char *handle, char *status, int regex
     }
 
     return true;
-}
-
-/*****************************************************************************/
-/* Vitals functions                                                          */
-/*****************************************************************************/
-
-bool Nova2Txt_vitals_list(char *keyHash, char *buffer, int bufsize)
-{
-    mongo_connection dbconn;
-    bool ret = false;
-    char work[CF_MAXVARSIZE];
-    time_t lastUpdate = 0;
-    char hostName[CF_MAXVARSIZE], ipAddress[CF_MAXVARSIZE];
-    HubVital *res, *hv;
-
-    if (!CFDB_Open(&dbconn))
-    {
-        CfOut(cf_verbose, "", "!! Could not open connection to report database");
-        return false;
-    }
-
-    res = CFDB_QueryVitalsMeta(&dbconn, keyHash);
-
-    strcpy(buffer, "{");
-
-    Nova2Txt_hostinfo(keyHash, hostName, ipAddress, sizeof(hostName));
-    CFDB_QueryLastUpdate(&dbconn, MONGO_DATABASE, cfr_keyhash, keyHash, &lastUpdate);
-
-    CFDB_Close(&dbconn);
-
-    snprintf(work, sizeof(work), "\"hostname\" : \"%s\", \"ip\" : \"%s\", \"ls\" : %ld, \n\"obs\" : [",
-             hostName, ipAddress, lastUpdate);
-
-    Join(buffer, work, bufsize);
-
-    for (hv = res; hv != NULL; hv = hv->next)
-    {
-        snprintf(work, sizeof(work), "{\"id\":\"%s\", \"units\":\"%s\", \"desc\":\"%s\"},",
-                 hv->id, hv->units, hv->description);
-        Join(buffer, work, bufsize);
-
-        ret = true;
-    }
-
-    DeleteHubVital(res);
-
-    ReplaceTrailingChar(buffer, ',', '\0');
-    EndJoin(buffer, "]}", bufsize);
-
-    return ret;
 }
 
 /*****************************************************************************/
