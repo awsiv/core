@@ -34,24 +34,37 @@ final class BreadCrumbList{
 			if($bc->isRoot()){
 				$this->reset();
 			}
-                        if($bc->replaceExisting())
+                        
+                         if($bc->isChildFromRoot()){
+                           for($i=(count($this->breadCrumbs)-1); $i>0; $i-- ){
+                                    array_pop($this->breadCrumbs);
+				}
+                          if(count($this->breadCrumbs)==1){
+                              array_push($this->breadCrumbs, $bc);
+                          }
+		           $_SESSION['breadCrumbList']=$this->breadCrumbs;
+                        }
+                    
+                         if($bc->replaceExisting())
                         {
                             if(!$this->replace_last_with_current($bc->getTitle(), $bc->getUrl())){
-                                $this->breadCrumbs[] = $bc;
+                                array_push($this->breadCrumbs, $bc);
 				$_SESSION['breadCrumbList']=$this->breadCrumbs;
                             }
                             return;
                         }
+                        
                         if(!in_array($bc, $this->breadCrumbs)){
-				$this->breadCrumbs[] = $bc;
+				 array_push($this->breadCrumbs, $bc);
 				$_SESSION['breadCrumbList']=$this->breadCrumbs;
 			}
                         else{
 				// in array, remove objects after index
 				$index = array_search($bc,$this->breadCrumbs);
 				for($i=(count($this->breadCrumbs)-1); $i>=($index+1); $i-- ){
-					unset($this->breadCrumbs[$i]);
+					array_pop($this->breadCrumbs);
 				}
+                                $array=array_values($this->breadCrumbs);
 				$_SESSION['breadCrumbList']=$this->breadCrumbs;
 			}
 	}
@@ -62,7 +75,7 @@ final class BreadCrumbList{
 		foreach((array)$iter as $bc){
 			$uBC = $bc;
 			$del = $i < count($iter)?$this->delimiter:'';
-                        if(!$iter[0]->isRoot())
+                        if(!$iter[0]->isRoot() && !empty($iter))
                         {
                          $bc = array(
                                     'title' => 'cfengine mission portal',
@@ -143,10 +156,11 @@ final class BreadCrumbList{
                 $index++;
             }
           for($i=(count($this->breadCrumbs)-1); $i>=($index+1); $i-- ){
-	    unset($this->breadCrumbs[$i]);
+	      array_pop($this->breadCrumbs);
 	  }
 	$_SESSION['breadCrumbList']=$this->breadCrumbs;
         return $modified;
        }
+   
 }
 ?>
