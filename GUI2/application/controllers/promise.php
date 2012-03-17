@@ -89,7 +89,8 @@ class Promise extends Cf_Controller {
                 'breadcrumbs' => $this->breadcrumblist->display()
             );
         }catch(Exception $e){
-           $data['error']= generate_errormessage($e);
+           //$data['error']= generate_errormessage($e);
+           show_error($e->getMessage(),500);
         }
         if(is_ajax()){
             $this->load->view('promise/promise',$data);
