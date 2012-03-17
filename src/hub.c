@@ -1163,6 +1163,7 @@ Item *Nova_ScanClients()
     int ksize, vsize;
     Item *list = NULL;
     time_t now = time(NULL);
+    int counter = 0;
 
     if (!OpenDB(&dbp, dbid_lastseen))
     {
@@ -1191,8 +1192,14 @@ Item *Nova_ScanClients()
                 continue;
             }
 
+            if (counter++ > LICENSES)
+            {
+                CfOut(cf_error,""," !! This hub is only licensed to support %d clients, so truncating at %d", LICENSES, LICENSES);
+                break;
+            }
+            
             memcpy(&entry, value, sizeof(entry));
-            //IdempPrependItem(&list,key+1,entry.address);
+
             Item *ip = ReturnItemIn(list, key + 1);
 
             if (!ip)

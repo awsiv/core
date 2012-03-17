@@ -20,10 +20,10 @@
 #include "db_query.h"
 #endif
 
-#define LIC_DAY "15"
+#define LIC_DAY "25"
 #define LIC_MONTH "December"
-#define LIC_YEAR "2001"
-#define LIC_COMPANY "PARTNER TEST LICENSE - NOT FOR PRODUCTION"
+#define LIC_YEAR "2222"
+#define LIC_COMPANY "TRIAL LICENSE - NOT FOR PRODUCTION"
 
 static time_t LAST_LICENSE_CHECK_TIMESTAMP;
 static bool RecentlyCheckedLicense(void);
@@ -198,7 +198,7 @@ int EnterpriseExpiry(void)
     else
     {
         CfOut(cf_inform, "", " !! No commercial license file found - falling back on internal expiry\n");
-        LICENSES = 1;
+        LICENSES = MAX_FREE_LICENSES;
         snprintf(company, sizeof(company), "%s", LIC_COMPANY);
         snprintf(name, sizeof(name), "%s/state/am_policy_hub", CFWORKDIR);
         MapName(name);

@@ -66,6 +66,12 @@
 
 #undef PACKAGE
 
+// New licensing policy
+
+#define MAX_FREE_LICENSES 25
+
+//
+
 #define CF_SHADES 25
 #define CF_TIMESERIESDATA 168   /* (24*7) */
 #define CF_MAGDATA 48           /* (4*12) */
