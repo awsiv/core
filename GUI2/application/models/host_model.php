@@ -267,21 +267,15 @@ class host_model extends Cf_Model
      * @param type $username
      * @param type $hostkey
      * @return type timestamp
+     * Need to check empty form the controller side
      */
     function getLastUpdate($username, $hostkey)
     {
         try
         {
             $rawdata = cfpr_getlastupdate($username, $hostkey);
-            $data = $this->checkData($rawdata);
-            if ($data)
-            {
-                return $data;
-            }
-            else
-            {
-                throw new Exception($this->getErrorsString());
-            }
+            //$data = $this->checkData($rawdata);
+            return $rawdata;
         }
         catch (Exception $e)
         {
