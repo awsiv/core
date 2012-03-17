@@ -107,11 +107,12 @@ function autocomplete($report_data, $column) {
 }
 
 function host_only_table($data_array) {
+ 
     $table = "";
     $cells = array();
 
-    if (count($data_array) > 0) {
-        foreach ($data_array as $cols) {
+    if (count($data_array['data']) > 0) {
+        foreach ($data_array['data'] as $cols) {
             //$keys = array_keys($cols); if key valuesupplied in format{"key":"","id":""}
             array_push($cells, anchor('welcome/host/' . $cols['hostkey'], $cols['hostname'], 'class="imglabel"'));
             //use first key as param and second key as text as keys tend to change like key or hostkey, hostname or id etc
