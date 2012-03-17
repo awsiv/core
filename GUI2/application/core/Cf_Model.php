@@ -46,9 +46,11 @@ class Cf_Model extends CI_Model {
     function checkData($data) {
         $data_check = json_decode($data, true);
         $returnVal = true;
-       
         if (function_exists("json_last_error")) {
             if (json_last_error() != 0) {
+                if(ENVIRONMENT=='development'){
+                  $this->_jsoncause(json_last_error());
+                }
                 $this->setError( $this->lang->line('invalid_json')." DATA is ::". $data);
                 $returnVal = false;
             }
@@ -89,6 +91,32 @@ class Cf_Model extends CI_Model {
 
     function _is_error($errId) {
         return ($errId >= 1 && $errId < 99);
+    }
+    
+    function _jsoncause($code){
+       switch (json_last_error()) {
+                case JSON_ERROR_NONE:
+                echo ' - No errors';
+                break;
+                case JSON_ERROR_DEPTH:
+                echo ' - Maximum stack depth exceeded';
+                break;
+                case JSON_ERROR_STATE_MISMATCH:
+                echo ' - Underflow or the modes mismatch';
+                break;
+                case JSON_ERROR_CTRL_CHAR:
+                echo ' - Unexpected control character found';
+                break;
+                case JSON_ERROR_SYNTAX:
+                echo ' - Syntax error, malformed JSON';
+                break;
+                case JSON_ERROR_UTF8:
+                echo ' - Malformed UTF-8 characters, possibly incorrectly encoded';
+                break;
+                default:
+                echo ' - Unknown error';
+                break;
+         }
     }
 
 }
