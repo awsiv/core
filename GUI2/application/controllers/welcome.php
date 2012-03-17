@@ -6,7 +6,7 @@ class Welcome extends Cf_Controller {
         parent::__construct();
         parse_str($_SERVER['QUERY_STRING'], $_GET);
         $this->load->helper('form');
-        $this->load->library('table', 'cf_table');
+        $this->load->library(array('table', 'cf_table'));
         $this->load->model(array('host_model','environment_model'));
     }
 

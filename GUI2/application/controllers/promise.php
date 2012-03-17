@@ -4,6 +4,7 @@ class Promise extends Cf_Controller {
 
     function Promise() {
         parent::__construct();
+         $this->load->model(array('promise_model','knowledge_model'));
     }
 
     function index() {
@@ -32,34 +33,38 @@ class Promise extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
        
 
-
+            $tmp_arr = array();
+            $allhandlespromiser=array();
+            $allhandlesbytype=array();
+            $allhandles=array();
         try{  
-            $mybundle = cfpr_bundle_by_promise_handle($username, $handle);
-
+          
+            $mybundle = $this->promise_model->getBundleByPromiseHandle($username, $handle);
 
             // get promise details
-            $promise  = sanitycheckjson(cfpr_promise_details($this->session->userdata('username'), $handle),true);
-            $promiser = $promise['promiser'];
-            $type     = $promise['promise_type'];
+            $promise  =  $this->promise_model->getPromiseDetails($username, $handle);
+            $promiser = key_exists('promiser', $promise)?$promise['promiser']:"";
+            $type     = key_exists('promise_type', $promise)?$promise['promise_type']:"";
 
 
-            $pid = cfpr_get_pid_for_topic("promises", $handle);
+            //$pid = cfpr_get_pid_for_topic($username,"promises", $handle);
+              $pid = $this->knowledge_model->getPidForTopic($username, "promises", $handle);
 
-            $topicDetail = cfpr_show_topic($pid);
+            //$topicDetail = cfpr_show_topic($username,$pid);
+            $topicDetail= $this->knowledge_model->showTopics($username, $pid);
 
-            $tmp_arr = array();
-            $tmp_arr = json_decode(utf8_encode(cfpr_promise_list_by_promiser($username, $promiser)),TRUE);
+            $tmp_arr = $this->promise_model->getPromiseListByPromiser($username,$promiser);
             foreach($tmp_arr as $item => $value) {
                 $allhandlespromiser[] = $value[0];
             }
             
-            $tmp_arr = json_decode(utf8_encode(cfpr_promise_list_by_promise_type($username, $type)),TRUE);
+            $tmp_arr = $this->promise_model->getPromiseListByType($username,$type);
             foreach($tmp_arr as $item => $value) {
                 $allhandlesbytype[] = $value[0];
             }
      
              
-            $tmp_arr = json_decode(utf8_encode(cfpr_promise_list_by_bundle($username, cfpr_get_bundle_type($mybundle), $mybundle)),TRUE);
+            $tmp_arr = $this->promise_model->getPromiseListByBundle($username,$mybundle);
             foreach($tmp_arr as $item => $value) {
                 $allhandles[] = $value[0];
             }            
@@ -76,10 +81,10 @@ class Promise extends Cf_Controller {
                 'allhandlesbytype'   => $allhandlesbytype,   
                 'allhandles'         => $allhandles,
 
-                'mybundle'    => cfpr_bundle_by_promise_handle($username, $handle),
+                'mybundle'    => $mybundle,
 
-                'topicLeads'  => json_decode(utf8_encode(cfpr_show_topic_leads($pid)),TRUE),
-                'topicDetail' => json_decode(utf8_encode($topicDetail), true),
+                'topicLeads'  => $this->knowledge_model->showTopicLeads($username, $pid),
+                'topicDetail' => $topicDetail,
 
                 'breadcrumbs' => $this->breadcrumblist->display()
             );
