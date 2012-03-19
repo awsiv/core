@@ -311,9 +311,9 @@
 
             var ul = '';
             if (append) {
-                ul = '<ul id="classList">' + previousList + list.join('') + '</ul>';
+                ul = '<ul class="classList">' + previousList + list.join('') + '</ul>';
             } else {
-                ul = '<ul id="classList">' + list.join('') + '</ul>';
+                ul = '<ul class="classList">' + list.join('') + '</ul>';
             }
             document.getElementById(self.dialogId).innerHTML = ul;
 
