@@ -20,7 +20,7 @@
        ?>
       </p>
 
-      <table cellpadding="0" cellspasing ="0" border="1"  id="maintable">
+      <table cellpadding="0" cellspasing ="0" border="0"  id="maintable">
           <tr>
               <td colspan="3">  
                   <h2>Classes</h2>
