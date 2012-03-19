@@ -86,8 +86,10 @@
                 <?php
                 if (is_array($topicLeads) && !empty($topicLeads)) {
                     $this->load->view('knowledge/leads.php');
-                }
+                }else{
                 ?>
+                <span>No topics found</span>
+                <?php } ?>
             </div>
 
             <div id="tabs-3" class="ui-corner-all">

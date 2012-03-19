@@ -37,6 +37,9 @@ class Promise extends Cf_Controller {
             $allhandlespromiser=array();
             $allhandlesbytype=array();
             $allhandles=array();
+            
+            $topicDetail=array();
+            $topicLeads=array();
         try{  
           
             $mybundle = $this->promise_model->getBundleByPromiseHandle($username, $handle);
@@ -48,10 +51,12 @@ class Promise extends Cf_Controller {
 
 
             //$pid = cfpr_get_pid_for_topic($username,"promises", $handle);
-              $pid = $this->knowledge_model->getPidForTopic($username, "promises", $handle);
-
+            $pid = $this->knowledge_model->getPidForTopic($username, "promises", $handle);
             //$topicDetail = cfpr_show_topic($username,$pid);
-            $topicDetail= $this->knowledge_model->showTopics($username, $pid);
+            if($pid!=0){
+                $topicDetail= $this->knowledge_model->showTopics($username, $pid);
+                $topicLeads=$this->knowledge_model->showTopicLeads($username, $pid);
+            }
 
             $tmp_arr = $this->promise_model->getPromiseListByPromiser($username,$promiser);
             foreach($tmp_arr as $item => $value) {
@@ -83,7 +88,7 @@ class Promise extends Cf_Controller {
 
                 'mybundle'    => $mybundle,
 
-                'topicLeads'  => $this->knowledge_model->showTopicLeads($username, $pid),
+                'topicLeads'  => $topicLeads,
                 'topicDetail' => $topicDetail,
 
                 'breadcrumbs' => $this->breadcrumblist->display()
