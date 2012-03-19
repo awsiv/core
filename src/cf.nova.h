@@ -7,10 +7,6 @@
 #ifndef CFENGINE_NOVA_H
 #define CFENGINE_NOVA_H
 
-#ifdef HAVE_CONFIG_H
-# include "conf.h"
-#endif
-
 #include "cf3.defs.h"
 
 #ifdef HAVE_LIBLDAP
