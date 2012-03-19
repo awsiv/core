@@ -1444,7 +1444,7 @@ int Nova2PHP_vars_report(char *hostkey, char *scope, char *lval, char *rval, cha
     HubQuery *hq;
     Rlist *rp;
     mongo_connection dbconn;
-    int first = true, countadded = false;
+    int first = true, countadded = false, found = false;
     int scope_record_count = 0, last_scope_record_count = 0, first_scope_record_count = 0;
     char header[CF_BUFSIZE] = { 0 };
     int margin = 0, noticeLen = 0, headerLen = 0;
@@ -1470,6 +1470,7 @@ int Nova2PHP_vars_report(char *hostkey, char *scope, char *lval, char *rval, cha
 
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {
+        found = true;
         char typestr[CF_SMALLBUF];
 
         hv = (HubVariable *) rp->item;
@@ -1553,10 +1554,16 @@ int Nova2PHP_vars_report(char *hostkey, char *scope, char *lval, char *rval, cha
         returnval[strlen(returnval) - 1] = '\0';
     }
 
-    Nova_AddReportHeader(header, truncated, buffer, sizeof(buffer) - 1);
-
-    Join(returnval, buffer, bufsize);
-    EndJoin(returnval, "}}\n", bufsize);
+    if (found)
+    {
+        Nova_AddReportHeader(header, truncated, buffer, sizeof(buffer) - 1);
+        Join(returnval, buffer, bufsize);
+        EndJoin(returnval, "}}\n", bufsize);
+    }
+    else
+    {
+        snprintf(returnval, bufsize, "{ \"meta\": { \"count\": 0 }}");
+    }
 
     DeleteHubQuery(hq, DeleteHubVariable);
 
