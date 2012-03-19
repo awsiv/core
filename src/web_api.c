@@ -55,6 +55,7 @@ static const char *ERRID_DESCRIPTION[] =
 /*****************************************************************************/
 static cfapi_errid FormatReportInfoAsJson(char *reportId, ReportInfo *reports, char *buf, int bufsize);
 static int CreateJsonHostOnlyReport(Rlist **records_p, PageInfo *page, char *returnval, int bufsize);
+static void WriteDouble2Str_MP(double x, char *buffer, int bufsize);
 
 /*****************************************************************************/
 #ifndef NDEBUG
@@ -944,6 +945,9 @@ int Nova2PHP_promiselog(char *hostkey, char *handle, PromiseLogState state, time
              "\"Note\":{\"index\":4,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}}",
              page->totalResultCount);
 
+    int headerLen = strlen(header);
+    int noticeLen = strlen(CF_NOTICE_TRUNCATED);
+
     StartJoin(returnval, "{\"data\":[", bufsize);
 
     for (rp = hq->records; rp != NULL; rp = rp->next)
@@ -974,7 +978,10 @@ int Nova2PHP_promiselog(char *hostkey, char *handle, PromiseLogState state, time
                      "[ \"show\",\"\",\"\",\"\",\"%s\"]"
                      "],", hp->hh->hostname, hp->handle, jsonEscapedStr, hp->t, hp->nid);
         }
-        if (!Join(returnval, buffer, bufsize))
+
+        int margin = headerLen + noticeLen + strlen(buffer);
+
+        if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
         {
             truncated = true;
             break;
@@ -1698,8 +1705,14 @@ int Nova2PHP_compliance_promises(char *hostkey, char *handle, char *status, int 
     {
         hp = (HubPromiseCompliance *) rp->item;
 
-        snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",\"%s\",%.2lf,%.2lf,%ld],",
-                 hp->hh->hostname, hp->handle, Nova_LongState(hp->status), hp->e, hp->d, hp->t);
+        char E[CF_SMALLBUF];
+        char D[CF_SMALLBUF];
+
+        WriteDouble2Str_MP(hp->e, E, sizeof(E));
+        WriteDouble2Str_MP(hp->d, D, sizeof(D));
+
+        snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%ld],",
+                 hp->hh->hostname, hp->handle, Nova_LongState(hp->status), E, D, hp->t);
 
         margin = headerLen + noticeLen + strlen(buffer);
         if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
@@ -1778,11 +1791,19 @@ int Nova2PHP_lastseen_report(char *hostkey, char *lhash, char *lhost, char *ladd
             break;
         }
 
+        char hrsAgo[CF_SMALLBUF];
+        char hrsAvg[CF_SMALLBUF];
+        char hrsDev[CF_SMALLBUF];
+
+        WriteDouble2Str_MP(hl->hrsago, hrsAgo, sizeof(hrsAgo));
+        WriteDouble2Str_MP(hl->hrsavg, hrsAvg, sizeof(hrsAvg));
+        WriteDouble2Str_MP(hl->hrsdev, hrsDev, sizeof(hrsDev));
+
         snprintf(buffer, sizeof(buffer),
                  "[\"%s\",\"%s\",\"%s\",\"%s\",%ld,"
-                 "%.2lf,%.2lf,%.2lf,\"%s\"],",
+                 "\"%s\",\"%s\",\"%s\",\"%s\"],",
                  hl->hh->hostname, inout, hl->rhost->hostname, hl->rhost->ipaddr, hl->t,
-                 hl->hrsago, hl->hrsavg, hl->hrsdev, hl->rhost->keyhash);
+                 hrsAgo, hrsAvg, hrsDev, hl->rhost->keyhash);
         margin = headerLen + noticeLen + strlen(buffer);
         if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
         {
@@ -1843,20 +1864,28 @@ int Nova2PHP_performance_report(char *hostkey, char *job, int regex, HostClassFi
     {
         hP = (HubPerformance *) rp->item;
 
+        char Q[CF_SMALLBUF];
+        char E[CF_SMALLBUF];
+        char D[CF_SMALLBUF];
+
+        WriteDouble2Str_MP(hP->q, Q, sizeof(Q));
+        WriteDouble2Str_MP(hP->e, E, sizeof(E));
+        WriteDouble2Str_MP(hP->d, D, sizeof(D));
+
         EscapeJson(hP->event, jsonEscapedStr, sizeof(jsonEscapedStr));
 
         if (strcmp(hP->nid, CF_NONOTE) == 0)
         {
-            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%.2lf,%.2lf,%.2lf,%ld,"
+            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%ld,"
                      "[\"add\",\"%s\",%d,\"%s\",\"\"]],",
-                     hP->hh->hostname, jsonEscapedStr, hP->q, hP->e, hP->d, hP->t,
+                     hP->hh->hostname, jsonEscapedStr, Q, E, D, hP->t,
                      hP->hh->keyhash, CFREPORT_PERFORMANCE, hP->handle);
         }
         else
         {
-            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%.2lf,%.2lf,%.2lf,%ld,"
+            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%ld,"
                      "[\"show\",\"\",\"\",\"\",\"%s\"]],",
-                     hP->hh->hostname, jsonEscapedStr, hP->q, hP->e, hP->d, hP->t, hP->nid);
+                     hP->hh->hostname, jsonEscapedStr, Q, E, D, hP->t, hP->nid);
         }
         margin = headerLen + noticeLen + strlen(buffer);
         if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
@@ -1948,6 +1977,25 @@ int Nova2PHP_setuid_report(char *hostkey, char *file, int regex, HostClassFilter
 }
 
 /*****************************************************************************/
+/*
+ * Converts double to str => "%.2lf"
+ * if NaN then writes N/A
+ * Suffix MP = Mission Portal (MP specific foormatting %.2lf)
+ */
+/*****************************************************************************/
+static void WriteDouble2Str_MP(double x, char *buffer, int bufsize)
+{
+    if (isnan(x))
+    {
+        snprintf(buffer, bufsize, "%s", CF_STR_NOT_AVAILABLE);
+    }
+    else
+    {
+        snprintf(buffer, bufsize, "%.2lf", x);
+    }
+}
+
+/*****************************************************************************/
 
 int Nova2PHP_bundle_report(char *hostkey, char *bundle, int regex, HostClassFilter *hostClassFilter, PageInfo *page,
                            char *returnval, int bufsize)
@@ -1990,19 +2038,31 @@ int Nova2PHP_bundle_report(char *hostkey, char *bundle, int regex, HostClassFilt
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {
         hb = (HubBundleSeen *) rp->item;
+        char bundleComp[CF_SMALLBUF];
+        char bundleAvg[CF_SMALLBUF];
+        char bundleDev[CF_SMALLBUF];
+
+        WriteDouble2Str_MP(hb->bundlecomp, bundleComp, sizeof(bundleComp));
+        WriteDouble2Str_MP(hb->bundleavg, bundleAvg, sizeof(bundleAvg));
+        WriteDouble2Str_MP(hb->bundledev, bundleDev, sizeof(bundleDev));
 
         if (strcmp(hb->nid, CF_NONOTE) == 0)
         {
-            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,%.2lf,%.2lf,%.2lf,"
+            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,"
+                     "\"%s\",\"%s\",\"%s\","
                      "[\"add\",\"%s\",%d,\"%s\",\"\"]],",
                      hb->hh->hostname, hb->bundle, hb->t,
-                     hb->bundlecomp, hb->bundleavg, hb->bundledev, hb->hh->keyhash, CFREPORT_BUNDLE, hb->bundle);
+                     bundleComp, bundleAvg, bundleDev,
+                     hb->hh->keyhash, CFREPORT_BUNDLE, hb->bundle);
         }
         else
         {
-            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,%.2lf,%.2lf,%.2lf,"
+            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,"
+                     "\"%s\",\"%s\",\"%s\","
                      "[\"show\",\"\",\"\",\"\",\"%s\"]],",
-                     hb->hh->hostname, hb->bundle, hb->t, hb->bundlecomp, hb->bundleavg, hb->bundledev, hb->nid);
+                     hb->hh->hostname, hb->bundle, hb->t,
+                     bundleComp, bundleAvg, bundleDev,
+                     hb->nid);
         }
         margin = headerLen + noticeLen + strlen(buffer);
         if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
