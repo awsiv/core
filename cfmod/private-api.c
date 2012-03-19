@@ -1044,14 +1044,17 @@ PHP_FUNCTION(cfpr_report_classes)
 
 PHP_FUNCTION(cfpr_class_list_distinct_by_name_rx)
 {
-    char *userName;
+    char *userName = NULL,
+         *class_rx = NULL;
     zval *includes = NULL,
          *excludes = NULL;
-    int user_len;
+    int user_len = 0,
+        class_rx_len = 0;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "saall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssaall",
                               &userName, &user_len,
+                              &class_rx, &class_rx_len,
                               &includes,
                               &excludes,
                               &(page.resultsPerPage),
@@ -1074,7 +1077,7 @@ PHP_FUNCTION(cfpr_class_list_distinct_by_name_rx)
     HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
     HostClassFilterAddIncludeExcludeLists(filter, includes, excludes);
 
-    HubQuery *hqClasses = CFDB_QueryClassesDistinctSorted(&conn, filter, &page);
+    HubQuery *hqClasses = CFDB_QueryClassesDistinctSorted(&conn, class_rx, filter, &page);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1099,14 +1102,17 @@ PHP_FUNCTION(cfpr_class_list_distinct_by_name_rx)
 
 PHP_FUNCTION(cfpr_class_list_time_distinct_by_name_rx)
 {
-    char *userName;
+    char *userName = NULL,
+         *class_rx = NULL;
     zval *includes = NULL,
          *excludes = NULL;
-    int user_len;
+    int user_len = 0,
+        class_rx_len = 0;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "saall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssaall",
                               &userName, &user_len,
+                              &class_rx, &class_rx_len,
                               &includes,
                               &excludes,
                               &(page.resultsPerPage),
@@ -1129,7 +1135,7 @@ PHP_FUNCTION(cfpr_class_list_time_distinct_by_name_rx)
     HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
     HostClassFilterAddIncludeExcludeLists(filter, includes, excludes);
 
-    HubQuery *hqClasses = CFDB_QueryClassesDistinctSorted(&conn, filter, &page);
+    HubQuery *hqClasses = CFDB_QueryClassesDistinctSorted(&conn, class_rx, filter, &page);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1161,14 +1167,17 @@ PHP_FUNCTION(cfpr_class_list_time_distinct_by_name_rx)
 
 PHP_FUNCTION(cfpr_class_list_soft_distinct_by_name_rx)
 {
-    char *userName;
+    char *userName = NULL,
+         *class_rx = NULL;
     zval *includes = NULL,
          *excludes = NULL;
-    int user_len;
+    int user_len = 0,
+        class_rx_len = 0;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "saall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssaall",
                               &userName, &user_len,
+                              &class_rx, &class_rx_len,
                               &includes,
                               &excludes,
                               &(page.resultsPerPage),
@@ -1191,7 +1200,7 @@ PHP_FUNCTION(cfpr_class_list_soft_distinct_by_name_rx)
     HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
     HostClassFilterAddIncludeExcludeLists(filter, includes, excludes);
 
-    HubQuery *hqClasses = CFDB_QueryClassesDistinctSorted(&conn, filter, &page);
+    HubQuery *hqClasses = CFDB_QueryClassesDistinctSorted(&conn, class_rx, filter, &page);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 

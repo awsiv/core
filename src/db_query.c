@@ -6179,8 +6179,8 @@ void BsonIteratorToString(char *retBuf, int retBufSz, bson_iterator *i, int dept
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryClassesDistinctSorted(mongo_connection *conn, HostClassFilter *hostClassFilter,
-                                          PageInfo *page)
+HubQuery *CFDB_QueryClassesDistinctSorted(mongo_connection *conn, const char *class_rx,
+                                          HostClassFilter *hostClassFilter, PageInfo *page)
 {
     bson_buffer bb;
 
@@ -6198,7 +6198,10 @@ HubQuery *CFDB_QueryClassesDistinctSorted(mongo_connection *conn, HostClassFilte
 
     for (Item *ip = classList; ip != NULL; ip = ip->next)
     {
-        PrependRlistAlien(&record_list, NewHubClass(NULL, ip->name, 0, 0, 0));
+        if (!class_rx || StringMatch(class_rx, ip->name))
+        {
+            PrependRlistAlien(&record_list, NewHubClass(NULL, ip->name, 0, 0, 0));
+        }
     }
 
     DeleteItemList(classList);
