@@ -20,42 +20,9 @@
     width: 13px;
     margin-right: 5px;
     display: inline-block;
+    border: 2px solid #ffffff;
     background-image: url('../images/astrolabe/node.png');
     cursor: pointer;
-}
-
-.astrolabe .node.expanded > .busyIcon
-{
-    background-image: url('../images/astrolabe/loader.gif');
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    margin-left: 5px;
-    vertical-align: middle;
-}
-
-.astrolabe .node > .nodeLabel,
-.astrolabe .host > .hostLabel
-{
-    background: #ffffff;
-    color: #000000;
-}
-
-.astrolabe .host > .hostLabel:hover
-{
-    color: #f08b37;
-}
-
-.astrolabe .node > .nodeLabel:hover
-{
-    color: #f08b37;
-}
-
-.astrolabe .node.selectedElement > .nodeLabel,
-.astrolabe .host.selectedElement > .hostLabel
-{
-    background: #6c695a;
-    color: #ffffff;
 }
 
 .astrolabe .node.expanded > .nodeIcon
@@ -65,6 +32,95 @@
     margin-right: 5px;
     display: inline-block;
     background-image: url('../images/astrolabe/node-expanded.png');
+}
+
+.astrolabe .node .nodeHeader
+{
+    display: inline-block;
+    height: 16px;
+    background: #ffffff;
+}
+
+.astrolabe .node.selectedElement > .nodeHeader
+{
+    background: #6c695a;
+}
+
+.astrolabe .node.selectedElement > .nodeHeader > .addNodeButton
+{
+    width: 22px;
+    height: 16px;
+    display: inline-block;
+    background-image: url('../images/astrolabe/add-remove-node-buttons.png');
+    background-position: 0px 0px;
+    cursor: pointer;
+}
+
+.astrolabe .node > .nodeHeader > .addNodeButton
+{
+    display: hidden;
+}
+
+.astrolabe .node.selectedElement > .nodeHeader > .addNodeButton:hover
+{
+    background-position: 0px -21px;
+}
+
+.astrolabe .node.selectedElement > .nodeHeader > .removeNodeButton
+{
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    border-left: 2px solid #ffffff;
+    background-image: url('../images/astrolabe/add-remove-node-buttons.png');
+    background-position: 16px 0px;
+    cursor: pointer;
+}
+
+.astrolabe .node > .nodeHeader > .removeNodeButton
+{
+    display: hidden;
+}
+
+.astrolabe .node.selectedElement > .nodeHeader > .removeNodeButton:hover
+{
+    background-position: 16px -21px;
+}
+
+.astrolabe .node.expanded .nodeHeader > .busyIcon
+{
+    background-image: url('../images/astrolabe/loader.gif');
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-left: 5px;
+    /*vertical-align: middle;*/
+}
+
+.astrolabe .node.selectedElement > .nodeHeader > .nodeLabel
+{
+    color: #ffffff;
+}
+
+.astrolabe .node > .nodeHeader > .nodeLabel
+{
+    color: #6c695a;
+    height: 16px;
+    position: relative;
+    top: -3px;
+    padding-left: 2px;
+}
+
+.astrolabe .host.selectedElement > .hostLabel
+{
+    color: #ffffff;
+    background: #6c695a;
+}
+
+
+.astrolabe .host > .hostLabel:hover
+{
+    color: #f08b37;
 }
 
 .astrolabe .hostIcon
@@ -128,16 +184,20 @@
     padding: 10px;
 }
 
-.astrolabe .hostCountLabel
+.astrolabe .node > .nodeHeader >.hostCountLabel
 {
     margin-left: 3px;
-    color: #6C695A;
+    margin-right: 3px;
+    height: 16px;
+    display: inline-block;
+    cursor: default;
+    position: relative;
+    top: -3px;
 }
 
-.astrolabe .hostCountLabel:hover
+.astrolabe .node.selectedElement > .nodeHeader > .hostCountLabel
 {
-    color: #6C695A;
-    cursor: default;
+    color: #ffffff;
 }
 
 .astrolabe .menu > .classFinderIcon
@@ -222,32 +282,4 @@
     top: 5px;
     right: 5px;
     background: url("../images/contextfinder/class_icon.png") no-repeat;
-}
-
-.context-menu {
- background-color: #646c61;
- color: #ffffff;
-
- border: 2px solid #979e92;
- border-radius: 5px;
-
- list-style-type: none;
- list-style-position: inside;
-}
-
-.context-menu li {
- list-style-type: none;
- list-style-position: inside;
-}
-
-.context-menu a {
- display: block;
- text-decoration: none;
- padding: 3px;
- color: #ffffff;
-}
-
-.context-menu a:hover {
- background-color: #ffffff;
- color: #f08b37;
 }

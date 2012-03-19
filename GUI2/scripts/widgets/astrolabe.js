@@ -191,8 +191,8 @@
             event.stopPropagation();
         },
 
-        _createNode: function(label, classRegex, children) {
-            var self = this;
+        _createNode: function(label, classRegex, children, isRemovable) {
+            var $self = this;
 
             var $nodeItem = $('<li>');
             $nodeItem.addClass('node');
@@ -203,23 +203,44 @@
             var $iconElement = $('<div>');
             $iconElement.addClass('nodeIcon');
             $iconElement.click(function(event) {
-                self._onClickNodeIcon(self, $nodeItem, event);
+                $self._onClickNodeIcon($self, $nodeItem, event);
             });
             $nodeItem.append($iconElement);
+
+            var $nodeHeader = $('<div>');
+            $nodeHeader.addClass('nodeHeader');
+            $nodeItem.append($nodeHeader);
 
             var $labelElement = $('<span>');
             $labelElement.addClass('nodeLabel');
             $labelElement.html(label);
-            var contextMenuId = self.element.attr('id') + '-context-menu-' + self._uniqueIdCounter++;
-            $labelElement.contextMenu(contextMenuId, self._createNodeContextMenu($nodeItem));
             $labelElement.click(function(event) {
-                self._onClickNodeLabel(self, $nodeItem, event);
+                $self._onClickNodeLabel($self, $nodeItem, event);
             });
-            $nodeItem.append($labelElement);
+            $nodeHeader.append($labelElement);
 
             var $hostCountLabelElement = $('<span>');
             $hostCountLabelElement.addClass('hostCountLabel');
-            $nodeItem.append($hostCountLabelElement);
+            $nodeHeader.append($hostCountLabelElement);
+
+            var $addNodeButton = $('<span>');
+            $addNodeButton.addClass('addNodeButton');
+            $addNodeButton.click(function(event) {
+                var $dialog = $self._createAddNodeDialog($nodeItem);
+                $dialog.dialog('open');
+            });
+            $nodeHeader.append($addNodeButton);
+
+            var $removeNodeButton = $('<span>');
+            $removeNodeButton.addClass('removeNodeButton');
+            $removeNodeButton.click(function(event) {
+                var $parentNode = $self._parentNode($nodeItem);
+                $nodeItem.remove();
+                $self._saveProfile($self._currentProfile, $parentNode);
+            });
+            if (isRemovable !== true) {
+                $nodeHeader.append($removeNodeButton);
+            }
 
             var $busyIcon = $('<span>');
             $busyIcon.addClass('busyIcon');
@@ -227,7 +248,7 @@
             $busyIcon.hide();
             $nodeItem.append($busyIcon);
 
-            var $childrenList = self._createContainer(children);
+            var $childrenList = $self._createContainer(children);
             $childrenList.hide();
             $nodeItem.append($childrenList);
 
@@ -365,13 +386,6 @@
             }
 
             return $container;
-        },
-
-        _nodeHostCountLabel: function($node, value) {
-            if (value !== undefined) {
-                $node.children('.hostCountLabel').html(value);
-            }
-            return value;
         },
 
         _nodeContainer: function($node) {
@@ -609,7 +623,7 @@
             var includes = $self._nodeIncludes($node);
             $.getJSON($self._requestUrls.hostCount($self, includes, []), function(count) {
                 $node.attr('count', count);
-                $node.children('.hostCountLabel').html('(' + count + ')');
+                $node.find('.nodeHeader .hostCountLabel').html('(' + count + ')');
             });
         },
 
@@ -620,7 +634,7 @@
             $self._rootContainer.children().remove();
 
             $self._superNode = $self._createNode('All Hosts',
-                            '.*', nodeDescriptionList);
+                            '.*', nodeDescriptionList, true);
 
             $self._rootContainer.append($self._superNode);
 
@@ -648,7 +662,7 @@
 
             hostCount: function(self, includes) {
 
-                var url = self.options.baseUrl + 'host/count?';
+                var url = self.options.baseUrl + '/host/count?';
 
                 if (includes.length > 0) {
                     url = url + 'includes=' + encodeURIComponent(includes);
