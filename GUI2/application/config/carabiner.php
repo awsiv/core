@@ -160,6 +160,7 @@ $config['groups']['CFEngine'] = array(
         array('Base.css', 'screen'),
         array('960.css', 'screen'),
         array('appstyle.css', 'screen'),
+        array('finders.css','screen'),
         array('jquery-ui-1.8.10.custom.css', 'screen'),
         array('jquery.qtip.css', 'screen')
     ),

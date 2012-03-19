@@ -979,12 +979,7 @@ span#today
 }
 
 
-/* host finder control*/
-.loadinggif{
- background: url("../images/small_loader.gif") no-repeat scroll 0 0 transparent;
- margin-left: 3px;
- padding: 0 9px;
-}
+
 span.search
 {
     background: url("../images/searchbar.png") no-repeat scroll 0 0 transparent;
@@ -1100,108 +1095,9 @@ div.ui-dialog .ui-dialog-buttonpane{
     padding:0 0;
 }
 
-.alphasearch{
-    position:absolute;
-    right:25px;
-    top:80px;
-    text-align: center;
-}
 
-
-.result li
-{
-    border-bottom:solid 1px #3d453a;
-    /* height:44px;*/
-    padding:12px 0;
-    width:96.5%;
-    list-style: none;
-    overflow: hidden;
-    word-wrap:break-word;
-    white-space: pre-wrap; /* css-3 */
-    white-space: -moz-pre-wrap !important; /* Mozilla, since 1999 */
-    white-space: -pre-wrap; /* Opera 4-6 */
-    white-space: -o-pre-wrap; /* Opera 7 */
-
-}
-
-.result li:hover
-{
-    background: #f1f1f1;
-}
-
-.result li.smartTextBox-elem
-{
-    border:none;
-    padding:0;
-    width:auto;
-}
-.result li.smartTextBox-box-elem
-{
-    padding:0 5px;
-    background:#50574d;
-}
-
-.result li.smartTextBox-elem-box-focus
-{
-    background:#3d453a;
-}
-
-.result li a
-{
-    display:inline-block;
-}
-
-#policyList li
-{
-    padding:0;
-}
-
-#policyList li a
-{
-    display: inline;
-}
-
-#policyList li p
-{
-    display:inline-block;
-    margin: 0;
-    padding: 6px;
-    width:75%;
-}
 #addpromises-policyList li p{
     width:55%;
-}
-
-#classList a.name
-{
-    width:75%;
-    overflow:hidden;
-}
-
-#classList .action
-{
-    margin: 0 10px;
-}
-
-#policyList .btn, #classList .btn
-{
-    background: none repeat scroll 0 0 #E7EED9;
-    border-radius: 10px 10px 10px 10px;
-    font-size: 10px;
-    padding: 2px 5px;
-    cursor: pointer;
-    font-family: "Trebuchet MS",Helvetica, Arial, sans-serif;
-    color:#222222;
-}
-
-#policyList li:hover .btn, #classList li:hover .btn
-{
-  border:  1px solid #3D453A
-}
-
-#classList  .btn:hover,#policyList .btn:hover
-{
-  color:#ff9900;
 }
 
 #findmatchedhost
@@ -1217,28 +1113,7 @@ div.ui-dialog .ui-dialog-buttonpane{
     z-index: 1;
 }
 
-.alphasearch li
-{
-   /* margin-top: 2px;
-    margin-bottom: 2px;*/
-    list-style: none;
-}
 
-.alphasearch li:hover
-{
-    text-decoration: underline;
-    cursor: pointer;
-}
-
-.alphasearch li.selected
-{
-    background: none repeat scroll 0 0 #4D4D4D;
-    border-radius: 2px;
-    -opera-border-radius:2px;
-    -khtml-border-radius:2px;
-    -webkit-border-radius:2px;
-    color: #FFFFFF;
-}
 
 .unmatched
 {
@@ -2868,10 +2743,10 @@ background-image: none;
 }
 
 .dd_menu {
-    background:#51584d; 
+    background:#51584d;
     padding:0px;
-    margin:0; 
-    list-style-type:none; 
+    margin:0;
+    list-style-type:none;
     height:50px;
     border-top-left-radius: 5px 5px;
     border-top-right-radius: 5px 5px;
@@ -2888,7 +2763,7 @@ background-image: none;
     border:solid 1px #c8c8c8;
     color: #1a1a1a;
     padding: 2px 25px 2px 10px;
-    
+
 }
 .dd_menu li span.selected {
     color:#FFF;
@@ -2919,32 +2794,32 @@ background-image: none;
 
 
 .dd_menu li:hover ul {
-    left:0px; 
-    top:25px; 
-    background-color:#E6EEE3; 
-    padding:3px; 
+    left:0px;
+    top:25px;
+    background-color:#E6EEE3;
+    padding:3px;
     border-left:1px solid grey;
     border-right:1px solid grey;
-    border-bottom:1px solid grey; 
-    width:185px; 
+    border-bottom:1px solid grey;
+    width:185px;
     z-index: 100;
     display:block;
     margin-left: -1px
 }
 .dd_menu li:hover ul li {
-    border:none; 
+    border:none;
     padding:2px 0px;
     margin:0px;
     background: none;
 }
 .dd_menu li:hover ul li a {
-    
-    padding:1px; 
-    display:block; 
-    width:175px; 
-    text-indent:5px; 
-    color:#444; 
-    background-color:#E6EEE3; 
+
+    padding:1px;
+    display:block;
+    width:175px;
+    text-indent:5px;
+    color:#444;
+    background-color:#E6EEE3;
     text-decoration:none;
     font-size: 12px;
 }
@@ -2972,7 +2847,7 @@ body .outerdiv a.hostcontextddl, .hostcontextddl{
 
 #savesearchcontainer .alignrightbuttoncontainer{
     margin-top: 39px;
-} 
+}
 
 #savesearchcontainer{
     border-left: solid 1px #fff;
