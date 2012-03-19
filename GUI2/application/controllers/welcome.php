@@ -444,19 +444,19 @@ class Welcome extends Cf_Controller {
         try{
             switch ($colour) {
                 case "red":
-                    $result = $this->host_model->getRedHost($this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
+                    $result = $this->host_model->getHostByColor('red',$this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
                     break;
                 case "green":
-                    $result = $this->host_model->getGreenHost($this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
+                    $result = $this->host_model->getHostByColor('green',$this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
                     break;
                 case "yellow":
-                    $result = $this->host_model->getYellowHost($this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
+                    $result = $this->host_model->getHostByColor('yellow',$this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
                     break;
                 case "blue":
-                    $result = $this->host_model->getBlueHost($this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
+                    $result = $this->host_model->getHostByColor('blue',$this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
                     break;
                 case "black":
-                    $result = $this->host_model->getBlackHost($this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
+                    $result = $this->host_model->getHostByColor('black',$this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
                     break;
             }
         }catch(Exception $e){
@@ -498,7 +498,7 @@ class Welcome extends Cf_Controller {
         $hostkey_tobe_deleted = $this->input->post('delhost');
         $username=$this->session->userdata('username');
         $getparams = $this->uri->uri_to_assoc(3);
-        
+
         try {
             if ($hostkey_tobe_deleted) {
                 $this->host_model->deleteHost($username,$hostkey_tobe_deleted);
@@ -510,12 +510,12 @@ class Welcome extends Cf_Controller {
             show_error($e->getMessage(),500);
         }
 
-        
+
         if (key_exists('type', $getparams)) {
             redirect('welcome/hosts/' . $getparams['type']);
         }
 
-      
+
         if ($hostkey == NULL) {
             redirect('welcome/engg');
             return;
@@ -538,7 +538,7 @@ class Welcome extends Cf_Controller {
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);
-      
+
         if (is_null($hostkey)) {
 
             $hostkey = isset($_POST['hostkey']) ? $_POST['hostkey'] : "none";
@@ -549,7 +549,7 @@ class Welcome extends Cf_Controller {
         try{
         $hostname = $this->host_model->getHostName($this->session->userdata('username'),$hostkey);
         $ipaddr = $this->host_model->getHostIp($this->session->userdata('username'),$hostkey);;
-       
+
         $is_commented = trim(cfpr_get_host_noteid($hostkey));
         $op = isset($_POST['op']) ? $_POST['op'] : "";
 

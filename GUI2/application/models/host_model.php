@@ -2,108 +2,22 @@
 
 class host_model extends Cf_Model
 {
-    /**
-     *
-     * @param type $username
-     * @param type $includes
-     * @param type $excludes
-     * @param type $rows
-     * @param type $page
-     * @return type array
+     /**
+     * Get the list of host by specified colors
+     * @param string color (green,red,yellow,blue,black)
+     * @param string $usertname
+     * @param string $includes
+     * @param string $excludes
+     * @param string $rows
+     * @param string $page
+     * @return array
+     * @throws Exception
      */
-    function getRedHost($username, $includes = array('.*'), $excludes = array(), $rows = 10, $page = 1)
+    function getHostByColor($color,$username, $includes = array('.*'), $excludes = array(), $rows = 10, $page = 1)
     {
         try
         {
-            $rawdata = cfpr_host_compliance_list($username, 'red', $includes, $excludes, $rows, $page);
-            $data = $this->checkData($rawdata);
-            if (is_array($data) && $this->hasErrors()==0)
-            {
-                return $data;
-            }
-            else
-            {
-                throw new Exception($this->getErrorsString());
-            }
-        }
-        catch (Exception $e)
-        {
-            log_message('error', $e->getMessage() . " File:" . $e->getFile() . " line:" > $e->getLine());
-            throw $e;
-        }
-    }
-
-    function getGreenHost($username, $includes = array('.*'), $excludes = array(), $rows = 10, $page = 1)
-    {
-        try
-        {
-            $rawdata = cfpr_host_compliance_list($username, 'green', $includes, $excludes, $rows, $page);
-            $data = $this->checkData($rawdata);
-            if (is_array($data) && $this->hasErrors()==0)
-            {
-                return $data;
-            }
-            else
-            {
-                throw new Exception($this->getErrorsString());
-            }
-        }
-        catch (Exception $e)
-        {
-            log_message('error', $e->getMessage() . " File:" . $e->getFile() . " line:" > $e->getLine());
-            throw $e;
-        }
-    }
-
-    function getYellowHost($username, $includes = array('.*'), $excludes = array(), $rows = 10, $page = 1)
-    {
-        try
-        {
-            $rawdata = cfpr_host_compliance_list($username, 'yellow', $includes, $excludes, $rows, $page);
-            $data = $this->checkData($rawdata);
-            if (is_array($data) && $this->hasErrors()==0)
-            {
-                return $data;
-            }
-            else
-            {
-                throw new Exception($this->getErrorsString());
-            }
-        }
-        catch (Exception $e)
-        {
-            log_message('error', $e->getMessage() . " File:" . $e->getFile() . " line:" > $e->getLine());
-            throw $e;
-        }
-    }
-
-    function getBlueHost($username, $includes = array('.*'), $excludes = array(), $rows = 10, $page = 1)
-    {
-        try
-        {
-            $rawdata = cfpr_host_compliance_list($username, 'blue', $includes, $excludes, $rows, $page);
-            $data = $this->checkData($rawdata);
-            if (is_array($data) && $this->hasErrors()==0)
-            {
-                return $data;
-            }
-            else
-            {
-                throw new Exception($this->getErrorsString());
-            }
-        }
-        catch (Exception $e)
-        {
-            generate_errormessage($e);
-            throw $e;
-        }
-    }
-
-    function getBlackHost($username, $includes = array('.*'), $excludes = array(), $rows = 10, $page = 1)
-    {
-        try
-        {
-            $rawdata = cfpr_host_compliance_list($username, 'black', $includes, $excludes, $rows, $page);
+            $rawdata = cfpr_host_compliance_list($username, $color, $includes, $excludes, $rows, $page);
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors()==0) {
                 return $data;
@@ -494,7 +408,7 @@ class host_model extends Cf_Model
             throw $e;
         }
     }
-    
+
     function getBlackHostCount($username)
     {
         try
