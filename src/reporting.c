@@ -2730,7 +2730,7 @@ void Nova_TrackExecution()
     }
 
     /* failsafe + promises double execution exeption */
-    if (strcmp("failsafe.cf", VINPUTFILE) == 0) // 30sec
+    if (strcmp("failsafe.cf", VINPUTFILE) == 0)
     {
         return;
     }
