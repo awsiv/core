@@ -2627,7 +2627,8 @@ ul.admin_menu li.current a{
 }
 
 #modifySearchPanel{
-    padding:10px;
+    margin:10px;
+    background: #E6EEE3;
 }
 
 /* for the tool tips text for the input box in span elements*/
@@ -2955,7 +2956,6 @@ background-image: none;
 #searchform .panelcontent{
     background: #E6EEE3;
     padding:13px 5px;
-    margin-bottom: 10px;
 }
 
 body .outerdiv a.hostcontextddl, .hostcontextddl{
@@ -2976,6 +2976,7 @@ body .outerdiv a.hostcontextddl, .hostcontextddl{
 
 #savesearchcontainer{
     border-left: solid 1px #fff;
+    margin:13px 5px;
 }
 
 span.green_btn,a.green_btn{
