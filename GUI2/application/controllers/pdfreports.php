@@ -468,17 +468,17 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_class_profile($username, $hostkey, $search, $class_regex, $rows = 0, $page_number = 0)
+    function rpt_class_profile($username, $hostkey, $search, $inclist,$exlist, $rows = 0, $page_number = 0)
     {
 
         $header = array('Host', 'Class Context', 'Occurs with probability', 'Uncertainty', 'Last seen');
         try
         {
             $ret = $this->report_model->getClassReport($username, $hostkey, $search, $inclist, $exlist, $rows, $page_number);
-            $jsondata = json_decode($ret, true);
 
-            $data1 = $jsondata['data'];
-            $header = $jsondata['meta']['header'];
+
+            $data1 = $ret['data'];
+            $header = $ret['meta']['header'];
 
             $data1 = $this->removeNotesField($data1, $header);
             unset($header['Note']);
@@ -508,7 +508,7 @@ class pdfreports extends Cf_Controller
         }
         catch (Exception $e)
         {
-            $this->output->set_status_header('400', $e->getMessage());
+            $this->output->set_status_header('500', $e->getMessage());
             echo $e->getMessage();
             exit();
         }
