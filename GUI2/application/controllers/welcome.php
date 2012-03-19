@@ -151,11 +151,11 @@ class Welcome extends Cf_Controller {
         try{
             $username = &$this->session->userdata('username');
             $data['allHost']    = $this->host_model->getHostCount($username);
-            $data['redhost']    = $this->host_model->getRedHostCount($username);
-            $data['yellowhost'] = $this->host_model->getYellowHostCount($username);
-            $data['greenhost']  = $this->host_model->getGreenHostCount($username);
-            $data['bluehost']   = $this->host_model->getBlueHostCount($username);
-            $data['blackhost']   = $this->host_model->getBlackHostCount($username);
+            $data['redhost']    = $this->host_model->getHostCount($username,'red');
+            $data['yellowhost'] = $this->host_model->getHostCount($username,'yellow');
+            $data['greenhost']  = $this->host_model->getHostCount($username,'green');
+            $data['bluehost']   = $this->host_model->getHostCount($username,'blue');
+            $data['blackhost']  = $this->host_model->getHostCount($username,'black');
         }catch(Exception $e){
            show_error($e->getMessage(),500); ;
         }
@@ -343,11 +343,11 @@ class Welcome extends Cf_Controller {
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_engineering'),
             'breadcrumbs' => $this->breadcrumblist->display(),
             'all' => $this->host_model->getHostCount($username),
-            'r'   => $this->host_model->getRedHostCount($username),
-            'y'   => $this->host_model->getYellowHostCount($username),
-            'g'   => $this->host_model->getGreenHostCount($username),
-            'b'   => $this->host_model->getBlueHostCount($username),
-            'bl'   => $this->host_model->getBlackHostCount($username)
+            'r'   => $this->host_model->getHostCount($username,'red'),
+            'y'   => $this->host_model->getHostCount($username,'yellow'),
+            'g'   => $this->host_model->getHostCount($username,'green'),
+            'b'   => $this->host_model->getHostCount($username,'blue'),
+            'bl'   => $this->host_model->getHostCount($username,'black')
         );
         }catch(Exception $e){
             show_error($e->getMessage(),500);

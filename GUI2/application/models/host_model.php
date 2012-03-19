@@ -2,7 +2,9 @@
 
 class host_model extends Cf_Model
 {
-     /**
+
+
+    /**
      * Get the list of host by specified colors
      * @param string color (green,red,yellow,blue,black)
      * @param string $usertname
@@ -304,120 +306,24 @@ class host_model extends Cf_Model
         }
     }
 
-    function getHostCount($username)
+    /**
+     * Gets total number of host count of specified color
+     * @param type $username
+     * @param type $color
+     * @return type
+     * @throws Exception
+     */
+    function getHostCount($username,$color=NULL)
     {
         try
         {
-            $data = cfpr_host_count($username, NULL, array(), array());
+            $data = cfpr_host_count($username, $color, array(), array());
             if (is_numeric($data))
             {
                 return $data;
             }
             else
             {
-                throw new Exception($this->getErrorsString());
-            }
-        }
-        catch (Exception $e)
-        {
-            log_message('error', $e->getMessage() . " File: " . $e->getFile() . ' line:' . $e->getLine());
-            throw $e;
-        }
-    }
-
-    function getRedHostCount($username)
-    {
-        try
-        {
-            $data = cfpr_host_count($username, 'red', array(), array());
-            if (is_numeric($data))
-            {
-                return $data;
-            }
-            else
-            {
-                throw new Exception($this->getErrorsString());
-            }
-        }
-        catch (Exception $e)
-        {
-            log_message('error', $e->getMessage() . " File: " . $e->getFile() . ' line:' . $e->getLine());
-            throw $e;
-        }
-    }
-
-    function getYellowHostCount($username)
-    {
-        try
-        {
-            $data = cfpr_host_count($username, 'yellow', array(), array());
-            if (is_numeric($data))
-            {
-                return $data;
-            }
-            else
-            {
-                throw new Exception($this->getErrorsString());
-            }
-        }
-        catch (Exception $e)
-        {
-            log_message('error', $e->getMessage() . " File: " . $e->getFile() . ' line:' . $e->getLine());
-            throw $e;
-        }
-    }
-
-    function getGreenHostCount($username)
-    {
-        try
-        {
-            $data = cfpr_host_count($username, 'green', array(), array());
-            if (is_numeric($data))
-            {
-                return $data;
-            }
-            else
-            {
-                throw new Exception($this->getErrorsString());
-            }
-        }
-        catch (Exception $e)
-        {
-            log_message('error', $e->getMessage() . " File: " . $e->getFile() . ' line:' . $e->getLine());
-            throw $e;
-        }
-    }
-
-    function getBlueHostCount($username)
-    {
-        try
-        {
-            $data = cfpr_host_count($username, 'blue', array(), array());
-            if (is_numeric($data))
-            {
-                return $data;
-            }
-            else
-            {
-                throw new Exception($this->getErrorsString());
-            }
-        }
-        catch (Exception $e)
-        {
-            log_message('error', $e->getMessage() . " File: " . $e->getFile() . ' line:' . $e->getLine());
-            throw $e;
-        }
-    }
-
-    function getBlackHostCount($username)
-    {
-        try
-        {
-            $data = cfpr_host_count($username, 'black', array(), array());
-            if (is_numeric($data))
-            {
-                return $data;
-            } else {
                 throw new Exception($this->getErrorsString());
             }
         }
