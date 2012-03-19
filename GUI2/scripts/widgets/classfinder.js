@@ -325,7 +325,7 @@
                 event.preventDefault();
                 self.dialogcontent.dialog('close')
                 self._trigger("complete",null,{
-                    selectedclass:sender.text(),
+                    selectedclass:sender.text()
                 });
             }
         },
@@ -418,7 +418,7 @@
             sender.addClass('selected').siblings().removeClass('selected');
 
             var clickedLetter = sender.text().toLowerCase();
-            self.selectedLetter = '[' + clickedLetter + '|' + sender.text() + ']';
+            self.selectedLetter = encodeURIComponent('[' + clickedLetter + '|' + sender.text() + ']');
             if (self.selectedMenu == null) {
                 self.selectedMenu = 'all classes';
             }

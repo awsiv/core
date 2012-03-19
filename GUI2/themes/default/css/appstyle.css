@@ -280,14 +280,6 @@ label#searchbox input
     width:166px;
 }
 
-@media screen and (-webkit-min-device-pixel-ratio:0) {
- /*CSS Statements that only apply on webkit-based browsers (Chrome, Safari, etc.) */
-    label#searchbox input
-    {
-        padding: 5px 0 0 10px;
-    }
-}
-
 /*for working pane*/
 #work {
 
@@ -2990,17 +2982,29 @@ span.green_btn,a.green_btn{
     background: url("../images/green_button_right.png") no-repeat scroll 100% 0 transparent;
     color: #FFFFFF !important;
     padding-right: 3px;
-    padding-bottom: 1px;
+    font-size: 13px;
+    font-family:"CFE_FONT",arial,Helvetica,sans-serif;
+
+    /*padding-bottom: 1px;*/
+}
+
+span.green_btn{
+    height:19px;
+    display:inline-block;
 }
 
 a.green_btn span, span.green_btn input{
     background: url("../images/green_button_left.png") no-repeat scroll 0 0 transparent;
-    padding: 0 6px 1px 9px;
+    padding: 0 6px 0px 9px;
     color: #FFFFFF !important;
     border: none;
-    font-size: 12px;
+    font-size: 13px;
     font-family:"CFE_FONT",arial,Helvetica,sans-serif;
 }
-a.green_btn span{
-    font-size: 13px
+
+span.green_btn input{
+    font-size: 12px;
+    height:19px;
+    border:none;
 }
+

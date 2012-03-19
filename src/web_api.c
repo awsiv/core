@@ -234,7 +234,8 @@ void Nova2PHP_getlastupdate(char *hostkey, char *buffer, int bufsize)
     if (hostkey && strlen(hostkey) > 0)
     {
         then = 0;
-        CFDB_QueryLastUpdate(&dbconn, MONGO_DATABASE, cfr_keyhash, hostkey, &then);
+        int size = 0;
+        CFDB_QueryLastUpdate(&dbconn, MONGO_DATABASE, cfr_keyhash, hostkey, &then, &size);
 
         if (then > 0)
         {
@@ -494,7 +495,9 @@ bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize)
     strcpy(buffer, "{");
 
     Nova2PHP_hostinfo(keyHash, hostName, ipAddress, sizeof(hostName));
-    CFDB_QueryLastUpdate(&dbconn, MONGO_DATABASE, cfr_keyhash, keyHash, &lastUpdate);
+
+    int size = 0;
+    CFDB_QueryLastUpdate(&dbconn, MONGO_DATABASE, cfr_keyhash, keyHash, &lastUpdate, &size);
 
     CFDB_Close(&dbconn);
 

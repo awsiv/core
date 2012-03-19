@@ -74,7 +74,8 @@ class Auth extends Controller {
             'title' => $this->lang->line('breadcrumb_admin'),
             'url' => 'auth/admin_page',
             'isRoot' => false,
-           'replace_existing'=>true
+            'replace_existing'=>true,
+            'directchild'=>true,
         );
         $this->breadcrumb->setBreadCrumb($bc);
         $this->data['title'] = $this->lang->line('mission_portal_title')." - ".$this->lang->line('breadcrumb_admin');
@@ -914,11 +915,14 @@ class Auth extends Controller {
             redirect('auth/login', 'refresh');
         }
         $bc = array(
-            'title' => $this->lang->line('breadcrumb_admin'),
+            'title' => $this->lang->line('breadcrumb_setting'),
             'url' => 'auth/setting',
             'isRoot' => false,
-            'replace_existing'=>true
+            'directchild'=>true,
+            'replace_existing'=>true,
         );
+        
+        $this->breadcrumb->setBreadCrumb($bc);
         
         $data = array(
             'title' => $this->lang->line('mission_portal_title')." - Settings",

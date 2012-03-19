@@ -430,8 +430,9 @@ PHP_FUNCTION(cfpr_host_info)
     HubQuery *result = CFDB_QueryVariables(&conn, hostKey, NULL, NULL, NULL, NULL, false, NULL);
 
     time_t last_report_update = -1;
+    int last_update_size = 0;
 
-    CFDB_QueryLastUpdate(&conn, MONGO_DATABASE, cfr_keyhash, hostKey, &last_report_update);
+    CFDB_QueryLastUpdate(&conn, MONGO_DATABASE, cfr_keyhash, hostKey, &last_report_update, &last_update_size);
 
     DATABASE_CLOSE(&conn);
 

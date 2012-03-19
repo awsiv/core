@@ -741,6 +741,16 @@ class Testing extends CI_Controller {
         $this->load->view('testviews/story', $data);
     }
     
+    function testing_jsonempty(){
+        $json='[]';
+        $val=NULL;
+        $array=json_decode($json);
+        if($val===NULL){
+             var_dump($array);
+        }
+      
+    }
+    
 
     
 

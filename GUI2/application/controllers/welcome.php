@@ -6,7 +6,7 @@ class Welcome extends Cf_Controller {
         parent::__construct();
         parse_str($_SERVER['QUERY_STRING'], $_GET);
         $this->load->helper('form');
-        $this->load->library('table', 'cf_table');
+        $this->load->library(array('table', 'cf_table'));
         $this->load->model(array('host_model','environment_model'));
     }
 
@@ -151,11 +151,11 @@ class Welcome extends Cf_Controller {
         try{
             $username = &$this->session->userdata('username');
             $data['allHost']    = $this->host_model->getHostCount($username);
-            $data['redhost']    = $this->host_model->getRedHostCount($username);
-            $data['yellowhost'] = $this->host_model->getYellowHostCount($username);
-            $data['greenhost']  = $this->host_model->getGreenHostCount($username);
-            $data['bluehost']   = $this->host_model->getBlueHostCount($username);
-            $data['blackhost']   = $this->host_model->getBlackHostCount($username);
+            $data['redhost']    = $this->host_model->getHostCount($username,'red');
+            $data['yellowhost'] = $this->host_model->getHostCount($username,'yellow');
+            $data['greenhost']  = $this->host_model->getHostCount($username,'green');
+            $data['bluehost']   = $this->host_model->getHostCount($username,'blue');
+            $data['blackhost']  = $this->host_model->getHostCount($username,'black');
         }catch(Exception $e){
            show_error($e->getMessage(),500); ;
         }
@@ -343,11 +343,11 @@ class Welcome extends Cf_Controller {
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_engineering'),
             'breadcrumbs' => $this->breadcrumblist->display(),
             'all' => $this->host_model->getHostCount($username),
-            'r'   => $this->host_model->getRedHostCount($username),
-            'y'   => $this->host_model->getYellowHostCount($username),
-            'g'   => $this->host_model->getGreenHostCount($username),
-            'b'   => $this->host_model->getBlueHostCount($username),
-            'bl'   => $this->host_model->getBlackHostCount($username)
+            'r'   => $this->host_model->getHostCount($username,'red'),
+            'y'   => $this->host_model->getHostCount($username,'yellow'),
+            'g'   => $this->host_model->getHostCount($username,'green'),
+            'b'   => $this->host_model->getHostCount($username,'blue'),
+            'bl'   => $this->host_model->getHostCount($username,'black')
         );
         }catch(Exception $e){
             show_error($e->getMessage(),500);
@@ -444,19 +444,19 @@ class Welcome extends Cf_Controller {
         try{
             switch ($colour) {
                 case "red":
-                    $result = $this->host_model->getRedHost($this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
+                    $result = $this->host_model->getHostByColor('red',$this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
                     break;
                 case "green":
-                    $result = $this->host_model->getGreenHost($this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
+                    $result = $this->host_model->getHostByColor('green',$this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
                     break;
                 case "yellow":
-                    $result = $this->host_model->getYellowHost($this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
+                    $result = $this->host_model->getHostByColor('yellow',$this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
                     break;
                 case "blue":
-                    $result = $this->host_model->getBlueHost($this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
+                    $result = $this->host_model->getHostByColor('blue',$this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
                     break;
                 case "black":
-                    $result = $this->host_model->getBlackHost($this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
+                    $result = $this->host_model->getHostByColor('black',$this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
                     break;
             }
         }catch(Exception $e){
@@ -498,6 +498,7 @@ class Welcome extends Cf_Controller {
         $hostkey_tobe_deleted = $this->input->post('delhost');
         $username=$this->session->userdata('username');
         $getparams = $this->uri->uri_to_assoc(3);
+
         try {
             if ($hostkey_tobe_deleted) {
                 $this->host_model->deleteHost($username,$hostkey_tobe_deleted);
@@ -508,6 +509,7 @@ class Welcome extends Cf_Controller {
         } catch (Exception $e) {
             show_error($e->getMessage(),500);
         }
+
 
         if (key_exists('type', $getparams)) {
             redirect('welcome/hosts/' . $getparams['type']);
@@ -536,15 +538,18 @@ class Welcome extends Cf_Controller {
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);
+
         if (is_null($hostkey)) {
 
             $hostkey = isset($_POST['hostkey']) ? $_POST['hostkey'] : "none";
         }
-        $reports = json_decode(cfpr_select_reports(null));
-        $hostname = $this->host_model->getHostName($username,$hostkey);
-        $ipaddr = $this->host_model->getHostIp($username,$hostkey);;
         $username = isset($_POST['username']) ? $_POST['username'] : "";
         $comment_text = isset($_POST['comment_text']) ? $_POST['comment_text'] : "";
+        //$reports = json_decode(cfpr_select_reports(null));
+        try{
+        $hostname = $this->host_model->getHostName($this->session->userdata('username'),$hostkey);
+        $ipaddr = $this->host_model->getHostIp($this->session->userdata('username'),$hostkey);;
+
         $is_commented = trim(cfpr_get_host_noteid($hostkey));
         $op = isset($_POST['op']) ? $_POST['op'] : "";
 
@@ -559,9 +564,19 @@ class Welcome extends Cf_Controller {
             'ipaddr' => $ipaddr,
             'is_commented' => $is_commented,
             'op' => $op,
-            'breadcrumbs' => $this->breadcrumblist->display()
+            'breadcrumbs' => $this->breadcrumblist->display(),
+            'last' => $this->host_model->getLastUpdate($this->session->userdata('username'),$hostkey),
+            'class' => $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "sys", "ostype"),
+            'flavour' => $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "sys", "flavour"),
+            'rel' => $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "sys", "release"),
+            'load' => $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "mon", "av_loadavg"),
+            'free' => $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "mon", "av_diskfree"),
+            'speed' => $this->host_model->getNetWorkSpeed($this->session->userdata('username'), $hostkey),
+            'colour' => $this->host_model->getHostColor($this->session->userdata('username'),$hostkey)
         );
-
+        }catch(Exception $e){
+          show_error($e->getMessage(), 500);
+        }
 
         $gdata = cfpr_host_meter($this->session->userdata('username'),$hostkey);
 

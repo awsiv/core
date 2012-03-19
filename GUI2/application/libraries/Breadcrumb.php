@@ -13,7 +13,7 @@ final class BreadCrumb{
 	private $url;
 	private $isRoot;
         private $replace_if_exist;
-
+        private $isChildFromRoot;
 	/*
 	 * No need to set anything up.  I autoload it and
 	 * let the setters mutate the properties through the
@@ -32,6 +32,7 @@ final class BreadCrumb{
 		$this->title=$bcObjArr['title'];
 		$this->url=$bcObjArr['url'];
 		$this->isRoot=$bcObjArr['isRoot'];
+                $this->isChildFromRoot=array_key_exists('directchild', $bcObjArr)?$bcObjArr['directchild']:false;
                 $this->replace_if_exist=array_key_exists('replace_existing', $bcObjArr)?$bcObjArr['replace_existing']:false;
 
 		$CI =& get_Instance();
@@ -61,6 +62,10 @@ final class BreadCrumb{
 
         function replaceExisting(){
             return $this->replace_if_exist;
+        }
+        
+        function isChildFromRoot(){
+            return $this->isChildFromRoot;
         }
 }
 ?>

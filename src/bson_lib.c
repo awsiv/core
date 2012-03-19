@@ -8,8 +8,6 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 
 #ifdef HAVE_LIBMONGOC
 
-static const char *BsonGetArrayValue(const bson *b, const char *key);
-
 /*****************************************************************************/
 
 Item *BsonGetStringArrayAsItemList(const bson *b, const char *key)
@@ -87,6 +85,27 @@ int BsonIntGet(const bson *b, const char *key)
 }
 
 /*****************************************************************************/
+bool BsonIsArrayNonExistentOrEmpty(const bson *b, const char *key)
+{
+    const char *array = BsonGetArrayValue(b, key);
+
+    if (!array)
+    {
+        return true;
+    }
+
+    bson_iterator it;
+
+    bson_iterator_init(&it, array);
+
+    while (bson_iterator_next(&it))
+    {
+        return false;
+    }
+
+    return true;
+}
+/*****************************************************************************/
 
 long BsonLongGet(const bson *b, const char *key)
 {
@@ -153,7 +172,7 @@ void BsonStringWrite(char *dest, int destSz, const bson *b, const char *key)
 
 /*****************************************************************************/
 
-static const char *BsonGetArrayValue(const bson *b, const char *key)
+const char *BsonGetArrayValue(const bson *b, const char *key)
 {
     bson_iterator it;
 
@@ -581,6 +600,5 @@ void BsonAppendSortField(bson_buffer *bb, char *sortField)
     bson_append_int(sort, sortField, -1);
     bson_append_finish_object(sort);
 }
-
 
 #endif /* HAVE_LIBMONGOC */

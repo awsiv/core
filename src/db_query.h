@@ -21,6 +21,12 @@ HubQuery *CFDB_QueryValueGraph(mongo_connection *conn, char *keyHash, char *lday
                                char *classRegex);
 HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, PromiseLogState state, const char *lhandle,
                                int regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter);
+int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash, PromiseLogState state,
+                               const char *lhandle, int regex, time_t from, time_t to, int sort,
+                               HostClassFilter *hostClassFilter, Rlist **host_list, Rlist **record_list);
+int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, PromiseLogState state,
+                               const char *lhandle, int regex, time_t from, time_t to, int sort,
+                               HostClassFilter *hostClassFilter, Rlist **host_list, Rlist **record_list);
 HubQuery *CFDB_QuerySoftware(mongo_connection *conn, char *keyHash, char *type, char *lname, char *lver, char *larch,
                              int regex, HostClassFilter *hostClassFilter, int sort);
 HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass, int regex, time_t horizon,
@@ -58,7 +64,7 @@ int CFDB_QueryMonView(mongo_connection *conn, char *keyhash, char *monId, enum m
                       double *ea, double *da);
 int CFDB_QueryWeekView(mongo_connection *conn, char *keyhash, enum observables obs, double *qa, double *ea, double *da);
 bool CFDB_QueryHistogram(mongo_connection *conn, char *keyhash, char *monId, double *histo);
-int CFDB_QueryLastUpdate(mongo_connection *conn, char *db, char *dbkey, char *keyhash, time_t *date);
+int CFDB_QueryLastUpdate(mongo_connection *conn, char *db, char *dbkey, char *keyhash, time_t *date, int *size);
 
 HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle, char *file, int lineNo);
 int CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, char *attrVal, int attrValSz);

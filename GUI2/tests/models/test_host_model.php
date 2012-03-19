@@ -60,30 +60,37 @@ class test_host_model extends CodeIgniterUnitTestCase {
     }
     
     public function test_getRedHostCount(){
-        $ret = $this->_ci->host_model->getRedHostCount($this->username);
+        $ret = $this->_ci->host_model->getHostCount($this->username,'red');
         $this->assertTrue(is_numeric($ret), 'Count of red host should be a number ');
         $this->dump($ret);
     }
-    
+
     public function test_getYellowHostCount(){
-        $ret = $this->_ci->host_model->getYellowHostCount($this->username);
+        $ret = $this->_ci->host_model->getHostCount($this->username,'yellow');
         $this->assertTrue(is_numeric($ret), 'Count of red host should be a number ');
         $this->dump($ret);
     }
-    
+
     public function test_getGreenHostCount(){
-        $ret = $this->_ci->host_model->getGreenHostCount($this->username);
+        $ret = $this->_ci->host_model->getHostCount($this->username,'green');
         $this->assertTrue(is_numeric($ret), 'Count of red host should be a number ');
         $this->dump($ret);
     }
-    
+
     public function test_getBlueHostCount(){
-        $ret = $this->_ci->host_model->getBlueHostCount($this->username);
+        $ret = $this->_ci->host_model->getHostCount($this->username,'blue');
         $this->assertTrue(is_numeric($ret), 'Count of red host should be a number ');
         $this->dump($ret);
     }
-   
-    
-   
+
+    public function test_getBlackHostCount(){
+        $ret = $this->_ci->host_model->getHostCount($this->username,'black');
+        $this->assertTrue(is_numeric($ret), 'Count of red host should be a number ');
+        $this->dump($ret);
+    }
+
+
+
+
 }
 ?>

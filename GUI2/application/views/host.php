@@ -1,13 +1,3 @@
-<?php
-$last = $this->host_model->getLastUpdate($this->session->userdata('username'),$hostkey);
-$class = $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "sys", "ostype");
-$flavour = $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "sys", "flavour");
-$rel = $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "sys", "release");
-$load = $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "mon", "av_loadavg");
-$free = $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "mon", "av_diskfree");
-$speed = $this->host_model->getNetWorkSpeed($this->session->userdata('username'), $hostkey);
-$colour = $this->host_model->getHostColor($this->session->userdata('username'),$hostkey);
-?>
 <div id="hostview">
     <div class="outerdiv">
         <div class="grid_4">

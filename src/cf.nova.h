@@ -722,7 +722,6 @@ int CFDB_QueryMonView(mongo_connection *conn, char *keyhash, char *monId, enum m
                       double *ea, double *da);
 int CFDB_QueryWeekView(mongo_connection *conn, char *keyhash, enum observables obs, double *qa, double *ea, double *da);
 bool CFDB_QueryHistogram(mongo_connection *conn, char *keyhash, char *monId, double *histo);
-int CFDB_QueryLastUpdate(mongo_connection *conn, char *db, char *dbkey, char *keyhash, time_t *date);
 
 int CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, char *attrVal, int attrValSz);
 Item *CFDB_QueryExpandedPromiseAttr(mongo_connection *conn, char *handle, char *attrKey);
@@ -754,6 +753,7 @@ int Nova_MagViewOffset(int start_slot, int dbslot, int wrap);
 int CFDB_CountHostsGeneric(mongo_connection *conn, bson *query);
 int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int hostNameSz);
 bool MongoCheckForError(mongo_connection *conn, const char *operation, const char *extra, bool *checkUpdate);
+bool CFDB_CollectionHasData(mongo_connection *conn, const char *fullCollectionName);
 
 //replica set
 Item *CFDB_GetLastseenCache(void);
@@ -793,6 +793,7 @@ void CFDB_PurgeDropReports(mongo_connection *conn);
 void CFDB_PurgeTimestampedReports(mongo_connection *conn);
 void CFDB_PurgeTimestampedLongtermReports(mongo_connection *conn);
 void CFDB_PurgePromiseLogs(mongo_connection *conn, time_t oldThreshold, time_t now);
+void CFDB_PurgePromiseLogsFromMain(mongo_connection *conn, char *promiseLogReportKey, time_t oldThreshold, time_t now);
 void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now,
                     Item **purgeKeysPtr, Item **purgeNamesPtr);
 int CFDB_CheckAge(char *var, char *key, bson_iterator *it, time_t now, time_t oldThreshold, Item **purgeKeysPtr,
@@ -1559,6 +1560,7 @@ typedef struct
 #define cfr_schedule      "sch"
 #define cfr_is_black      "bh"
 #define cfr_last_execution "lx"
+#define cfr_last_update_size "us"
 
 #define cfr_netmeasure    "ne"
 #define cfr_lastseen_hosts "lastseen_hosts"

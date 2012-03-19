@@ -66,7 +66,7 @@
             $entryLabel.addClass('showqtip');
             $entryLabel.attr('title', tooltip)
             $entryLabel.click(function () {
-                window.location.href = $self.options.baseUrl + '/welcome/host/' +
+                window.location.href = $self.options.baseUrl + '/welcome/hosts/' +
                     colour + '/' + encodeURIComponent($self._context.includes) + '/' +
                     encodeURIComponent($self._context.excludes);
             });

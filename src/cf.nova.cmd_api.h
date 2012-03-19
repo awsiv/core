@@ -17,7 +17,6 @@
 
 #include <stdbool.h>
 
-bool Nova2Txt_vitals_list(char *keyHash, char *buffer, int bufsize);
 bool Nova2Txt_vitals_view_magnified(char *keyHash, char *vitalId, char *buffer, int bufsize);
 bool Nova2Txt_vitals_view_week(char *keyHash, char *vitalId, char *buffer, int bufsize);
 bool Nova2Txt_vitals_view_year(char *keyHash, char *vitalId, char *buffer, int bufsize);
@@ -38,7 +37,6 @@ char *Nova_LongStateWarn(char s);
 int Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int outStrSz);
 int Nova2Txt_docroot(char *buffer, int bufsize);
 void Nova_EnterpriseModuleTrick(void);
-void Nova2Txt_getlastupdate(char *hostkey, char *buffer, int bufsize);
 void Nova2Txt_get_host_colour(char *hostkey, char *buffer, int bufsize);
 int Nova2Txt_promiselog_summary(char *hostkey, char *handle, PromiseLogState state, time_t from, time_t to,
                                 char *classreg);

@@ -91,6 +91,9 @@ void *CF_CODEBOOK_HANDLER[CF_CODEBOOK_SIZE] =
 #ifdef HAVE_LIBMONGOC
 
 int Nova_QueryClientForReports(mongo_connection *dbconn, AgentConnection *conn, const char *menu, time_t since)
+/*
+ * Returns the number of plaintext bytes received (0 on error).
+ **/
 {
     int tosend, cipherlen = 0;
     char in[CF_BUFSIZE], out[CF_BUFSIZE], workbuf[CF_BUFSIZE], cfchangedstr[265];
@@ -122,8 +125,10 @@ int Nova_QueryClientForReports(mongo_connection *dbconn, AgentConnection *conn, 
     if (SendTransaction(conn->sd, workbuf, tosend, CF_DONE) == -1)
     {
         CfOut(cf_error, "send", "Couldn't send data");
-        return false;
+        return 0;
     }
+    
+    int total_plaintext_len = 0;
 
     while (more)
     {
@@ -132,7 +137,7 @@ int Nova_QueryClientForReports(mongo_connection *dbconn, AgentConnection *conn, 
         if ((cipherlen = ReceiveTransaction(conn->sd, in, &more)) == -1)
         {
             CfOut(cf_error, "recv", " !! Failed to collect data");
-            return false;
+            return 0;
         }
 
         if (strncmp(in, "BAD:", 4) == 0)
@@ -141,7 +146,9 @@ int Nova_QueryClientForReports(mongo_connection *dbconn, AgentConnection *conn, 
             break;
         }
 
-        DecryptString(conn->encryption_type, in, out, conn->session_key, cipherlen);
+        int plaintext_len = DecryptString(conn->encryption_type, in, out, conn->session_key, cipherlen);
+
+        total_plaintext_len += plaintext_len;
 
         // Check the header for timing of response - we can eventually use this to
         // measure the network performance
@@ -157,7 +164,7 @@ int Nova_QueryClientForReports(mongo_connection *dbconn, AgentConnection *conn, 
             if (strcmp(validate, "CFR:") != 0)
             {
                 CfOut(cf_error, "", " !! Invalid report format");
-                return false;
+                return 0;
             }
 
             then = now;
@@ -200,12 +207,20 @@ int Nova_QueryClientForReports(mongo_connection *dbconn, AgentConnection *conn, 
 
     if (!ReportBookHasData(reports))
     {
-        return false;
+        return 0;
     }
+    
+    HashPrintSafe(CF_DEFAULT_DIGEST, conn->digest, keyHash);
 
-    UnpackReportBook(dbconn, HashPrintSafe(CF_DEFAULT_DIGEST, conn->digest, keyHash), reports);
+    UnpackReportBook(dbconn, keyHash, reports);
     DeleteReportBook(reports);
-    return true;
+
+    CFDB_SaveLastHostUpdate(dbconn, keyHash);
+    CFDB_SaveLastHostUpdateSize(dbconn, keyHash, total_plaintext_len);
+    
+    CfOut(cf_verbose, "", "Received %d bytes of report data", total_plaintext_len);
+
+    return total_plaintext_len;
 }
 
 #endif /* HAVE_LIBMONGOC */
@@ -282,8 +297,6 @@ void UnpackReportBook(mongo_connection *dbconn, char *id, Item **reports)
             (*fnptr) (dbconn, id, reports[i]);
         }
     }
-
-    CFDB_SaveLastHostUpdate(dbconn, id);
 }
 
 #endif

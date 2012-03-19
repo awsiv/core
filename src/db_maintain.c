@@ -16,9 +16,14 @@
 
 #ifdef HAVE_LIBMONGOC
 #include "db_common.h"
+#include "bson_lib.h"
 
 static void CFDB_DropAllIndices(mongo_connection *conn);
+static void PurgePromiseLogWithEmptyTimestamps(mongo_connection *conn, char *promiseLogKey);
+static Item *GetUniquePromiseLogEntryKeys(mongo_connection *conn, char *promiseLogKey);
+
 #endif
+
 
 void CFDB_Maintenance(void)
 {
@@ -33,7 +38,12 @@ void CFDB_Maintenance(void)
 
     CFDB_EnsureIndices(&dbconn);
     CFDB_PurgeTimestampedReports(&dbconn);
+
+    // support for old DB PromiseLogs format
     CFDB_PurgePromiseLogs(&dbconn, CF_HUB_PURGESECS, time(NULL));
+
+    CFDB_PurgePromiseLogsFromMain(&dbconn, MONGO_LOGS_NOTKEPT_COLL, CF_HUB_PURGESECS, time(NULL));
+    CFDB_PurgePromiseLogsFromMain(&dbconn, MONGO_LOGS_REPAIRED_COLL, CF_HUB_PURGESECS, time(NULL));
 
     CFDB_PurgeTimestampedLongtermReports(&dbconn);
     CFDB_PurgeDeprecatedVitals(&dbconn);
@@ -133,25 +143,6 @@ void CFDB_EnsureIndices(mongo_connection *conn)
     if (!mongo_create_index(conn, MONGO_ARCHIVE, &b, 0, NULL))
     {
         CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_ARCHIVE);
-    }
-
-    bson_destroy(&b);
-
-    // log collections
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_promisehandle, 1);
-    bson_append_int(&bb, cfr_time, 1);
-    bson_from_buffer(&b, &bb);
-
-    if (!mongo_create_index(conn, MONGO_LOGS_REPAIRED, &b, 0, NULL))
-    {
-        CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_LOGS_REPAIRED);
-    }
-
-    if (!mongo_create_index(conn, MONGO_LOGS_NOTKEPT, &b, 0, NULL))
-    {
-        CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_LOGS_NOTKEPT);
     }
 
     bson_destroy(&b);
@@ -419,8 +410,177 @@ void CFDB_PurgeTimestampedLongtermReports(mongo_connection *conn)
 }
 
 /*****************************************************************************/
-
 void CFDB_PurgePromiseLogs(mongo_connection *conn, time_t oldThreshold, time_t now)
+/**
+ * Deletes old repair and not kept log entries.
+ **/
+{
+    bson_buffer bb, *sub;
+    time_t oldStamp;
+    bson cond;
+
+    oldStamp = now - oldThreshold;
+
+    bson_buffer_init(&bb);
+
+    sub = bson_append_start_object(&bb,cfr_time);
+    bson_append_int(sub, "$lte", oldStamp);
+    bson_append_finish_object(sub);
+
+    bson_from_buffer(&cond, &bb);
+
+    if(CFDB_CollectionHasData(conn, MONGO_LOGS_REPAIRED))
+    {
+        mongo_remove(conn, MONGO_LOGS_REPAIRED, &cond);
+        MongoCheckForError(conn,"timed delete host from repair logs collection",NULL,NULL);
+    }
+
+    if(CFDB_CollectionHasData(conn, MONGO_LOGS_NOTKEPT))
+    {
+        mongo_remove(conn, MONGO_LOGS_NOTKEPT, &cond);
+        MongoCheckForError(conn,"timed delete host from not kept logs collection",NULL,NULL);
+    }
+    bson_destroy(&cond);
+}
+
+/*****************************************************************************/
+
+static Item *GetUniquePromiseLogEntryKeys(mongo_connection *conn, char *promiseLogKey)
+{
+    bson empty;
+    bson field;
+
+    bson_buffer bb;
+    bson_buffer_init(&bb);
+    bson_append_int(&bb, promiseLogKey, 1);
+    bson_from_buffer(&field, &bb);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, bson_empty(&empty), &field, 0, 0, CF_MONGO_SLAVE_OK);
+
+    bson_destroy(&empty);
+    bson_destroy(&field);
+
+    Item *uniquePromiseKeysList = NULL;
+    char rhandle[CF_BUFSIZE] = {0};
+
+    while (mongo_cursor_next(cursor))
+    {
+        bson_iterator itHostData;
+        bson_iterator_init(&itHostData, cursor->current.data);
+
+        rhandle[0] = '\0';
+
+        while (bson_iterator_next(&itHostData))
+        {
+            if (strcmp(bson_iterator_key(&itHostData), promiseLogKey) == 0)
+            {
+                bson_iterator iterPromiseLogElement;
+                bson_iterator_init(&iterPromiseLogElement, bson_iterator_value(&itHostData));
+
+                while (bson_iterator_next(&iterPromiseLogElement))
+                {
+                    snprintf(rhandle, CF_MAXVARSIZE, "%s", bson_iterator_key(&iterPromiseLogElement));
+                    IdempPrependItem(&uniquePromiseKeysList, rhandle, NULL);
+                }
+            }
+        }
+    }
+
+    return uniquePromiseKeysList;
+}
+/*****************************************************************************/
+static void PurgePromiseLogWithEmptyTimestamps(mongo_connection *conn, char *promiseLogKey)
+{
+    bson empty;
+    bson field;
+
+    bson_buffer bb;
+    bson_buffer_init(&bb);
+    bson_append_int(&bb, cfr_keyhash, 1);
+    bson_append_int(&bb, promiseLogKey, 1);
+    bson_from_buffer(&field, &bb);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, bson_empty(&empty), &field, 0, 0, CF_MONGO_SLAVE_OK);
+
+    bson_destroy(&empty);
+    bson_destroy(&field);
+
+    Item *promiseKeysList = NULL;
+    char rhandle[CF_BUFSIZE] = {0};
+    char keyhash[CF_BUFSIZE] = {0};
+
+    while (mongo_cursor_next(cursor))
+    {
+        bson_iterator itHostData;
+        bson_iterator_init(&itHostData, cursor->current.data);
+
+        rhandle[0] = '\0';
+        keyhash[0] = '\0';
+
+        while (bson_iterator_next(&itHostData))
+        {
+            if (strcmp(bson_iterator_key(&itHostData), cfr_keyhash) == 0)
+            {
+                snprintf(keyhash,sizeof(keyhash),"%s",bson_iterator_string(&itHostData));
+            }
+            else if (strcmp(bson_iterator_key(&itHostData), promiseLogKey) == 0)
+            {
+                bson_iterator iterPromiseComplexKey;
+                bson_iterator_init(&iterPromiseComplexKey, bson_iterator_value(&itHostData));
+
+                while (bson_iterator_next(&iterPromiseComplexKey))
+                {
+                    snprintf(rhandle, CF_MAXVARSIZE, "%s", bson_iterator_key(&iterPromiseComplexKey));
+
+                    bson_iterator iterPromiseLogData;
+                    bson_iterator_init(&iterPromiseLogData, bson_iterator_value(&iterPromiseComplexKey));
+
+                    bson objPromiseLogData;
+                    bson_iterator_subobject( &iterPromiseComplexKey, &objPromiseLogData);
+
+                    if(BsonIsArrayNonExistentOrEmpty(&objPromiseLogData,cfr_time))
+                    {
+                        PrependItem(&promiseKeysList,rhandle, NULL);
+                    }
+                }
+            }
+
+            bson hostQuery;
+            bson_buffer_init(&bb);
+            bson_append_string(&bb, cfr_keyhash, keyhash);
+            bson_from_buffer(&hostQuery, &bb);
+
+            bson op;
+            bson_buffer_init(&bb);
+            bson_buffer *unset = bson_append_start_object(&bb, "$unset");
+
+            for (Item *ip = promiseKeysList; ip != NULL; ip = ip->next)
+            {
+                char key[CF_MAXVARSIZE];
+                snprintf(key,sizeof(key),"%s.%s",promiseLogKey,ip->name);
+
+                bson_append_int(unset, key, 1);
+            }
+
+            DeleteItemList(promiseKeysList);
+            promiseKeysList = NULL;
+
+            bson_append_finish_object(unset);
+            bson_from_buffer(&op, &bb);
+
+            mongo_update(conn, MONGO_DATABASE, &hostQuery, &op, 0);
+
+            bson_destroy(&op);
+            bson_destroy(&hostQuery);
+
+            MongoCheckForError(conn, "PurgePromiseLogWithEmptyTimestamps", keyhash, NULL);
+        }
+    }
+}
+
+/*****************************************************************************/
+
+void CFDB_PurgePromiseLogsFromMain(mongo_connection *conn, char *promiseLogReportKey, time_t oldThreshold, time_t now)
 /**
  * Deletes old repair and not kept log entries.
  **/
@@ -428,28 +588,40 @@ void CFDB_PurgePromiseLogs(mongo_connection *conn, time_t oldThreshold, time_t n
     bson_buffer bb;
     time_t oldStamp;
     bson cond;
+    bson query;
+
+    Item *promiseLogComplexKeysList = GetUniquePromiseLogEntryKeys(conn, promiseLogReportKey);
 
     oldStamp = now - oldThreshold;
 
     bson_buffer_init(&bb);
     bson_buffer *pull = bson_append_start_object(&bb, "$pull");
-    bson_buffer *sub = bson_append_start_object(pull, cfr_time);
 
-    bson_append_int(sub, "$lte", oldStamp);
-    bson_append_finish_object(sub);
+    for(Item *ip = promiseLogComplexKeysList; ip != NULL; ip = ip->next)
+    {
+        char timeKey[CF_MAXVARSIZE] = { 0 };
+        snprintf(timeKey, sizeof(timeKey), "%s.%s.%s",promiseLogReportKey,ip->name,cfr_time);
+
+        bson_buffer *bbTimeStamp = bson_append_start_object(pull, timeKey);
+        bson_append_int(bbTimeStamp, "$lte", oldStamp);
+        bson_append_finish_object(bbTimeStamp);
+    }
+
+    DeleteItemList(promiseLogComplexKeysList);
+    promiseLogComplexKeysList = NULL;
+
     bson_append_finish_object(pull);
-
     bson_from_buffer(&cond, &bb);
 
-    mongo_remove(conn, MONGO_LOGS_REPAIRED, &cond);
+    mongo_update(conn, MONGO_DATABASE, bson_empty(&query), &cond, MONGO_UPDATE_MULTI);
 
-    MongoCheckForError(conn, "timed delete host from repair logs collection", NULL, NULL);
-
-    mongo_remove(conn, MONGO_LOGS_NOTKEPT, &cond);
-
-    MongoCheckForError(conn, "timed delete host from not kept logs collection", NULL, NULL);
-
+    MongoCheckForError(conn, "Purge old entries in hosts collection", promiseLogReportKey, NULL);
     bson_destroy(&cond);
+    bson_destroy(&query);
+
+    //now check for empty arrays and remove them
+
+    PurgePromiseLogWithEmptyTimestamps(conn, promiseLogReportKey);
 }
 
 /*****************************************************************************/

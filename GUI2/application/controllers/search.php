@@ -314,7 +314,7 @@ private $filter_view_mappings=array();
                     
                 $name = isset($getparams['name']) ? urldecode($getparams['name']) : $this->input->post('name');
                     if ($hosts_only) {
-                        $data['report_result'] = cfpr_hosts_with_classes($username, NULL, $name, true, $class_regex);
+                        $data['report_result'] = cfpr_hosts_with_classes($username, NULL, $name, true, $class_regex, $rows , $page_number);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     } else {
 

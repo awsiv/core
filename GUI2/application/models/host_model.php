@@ -3,107 +3,28 @@
 class host_model extends Cf_Model
 {
 
-    function getRedHost($username, $includes = array('.*'), $excludes = array(), $rows = 10, $page = 1)
-    {
-        try
-        {
-            $rawdata = cfpr_host_compliance_list($username, 'red', $includes, $excludes, $rows, $page);
-            $data = $this->checkData($rawdata);
-            if ($data)
-            {
-                return $data;
-            }
-            else
-            {
-                throw new Exception($this->lang->line('invalid_json'));
-            }
-        }
-        catch (Exception $e)
-        {
-            log_message('error', $e->getMessage() . " File:" . $e->getFile() . " line:" > $e->getLine());
-            throw $e;
-        }
-    }
 
-    function getGreenHost($username, $includes = array('.*'), $excludes = array(), $rows = 10, $page = 1)
+    /**
+     * Get the list of host by specified colors
+     * @param string color (green,red,yellow,blue,black)
+     * @param string $usertname
+     * @param string $includes
+     * @param string $excludes
+     * @param string $rows
+     * @param string $page
+     * @return array
+     * @throws Exception
+     */
+    function getHostByColor($color,$username, $includes = array('.*'), $excludes = array(), $rows = 10, $page = 1)
     {
         try
         {
-            $rawdata = cfpr_host_compliance_list($username, 'green', $includes, $excludes, $rows, $page);
+            $rawdata = cfpr_host_compliance_list($username, $color, $includes, $excludes, $rows, $page);
             $data = $this->checkData($rawdata);
-            if ($data)
-            {
+            if (is_array($data) && $this->hasErrors()==0) {
                 return $data;
-            }
-            else
-            {
-                throw new Exception($this->lang->line('invalid_json'));
-            }
-        }
-        catch (Exception $e)
-        {
-            log_message('error', $e->getMessage() . " File:" . $e->getFile() . " line:" > $e->getLine());
-            throw $e;
-        }
-    }
-
-    function getYellowHost($username, $includes = array('.*'), $excludes = array(), $rows = 10, $page = 1)
-    {
-        try
-        {
-            $rawdata = cfpr_host_compliance_list($username, 'yellow', $includes, $excludes, $rows, $page);
-            $data = $this->checkData($rawdata);
-            if ($data)
-            {
-                return $data;
-            }
-            else
-            {
-                throw new Exception($this->lang->line('invalid_json'));
-            }
-        }
-        catch (Exception $e)
-        {
-            log_message('error', $e->getMessage() . " File:" . $e->getFile() . " line:" > $e->getLine());
-            throw $e;
-        }
-    }
-
-    function getBlueHost($username, $includes = array('.*'), $excludes = array(), $rows = 10, $page = 1)
-    {
-        try
-        {
-            $rawdata = cfpr_host_compliance_list($username, 'blue', $includes, $excludes, $rows, $page);
-            $data = $this->checkData($rawdata);
-            if ($data)
-            {
-                return $data;
-            }
-            else
-            {
-                throw new Exception($this->lang->line('invalid_json'));
-            }
-        }
-        catch (Exception $e)
-        {
-            generate_errormessage($e);
-            throw $e;
-        }
-    }
-
-    function getBlackHost($username, $includes = array('.*'), $excludes = array(), $rows = 10, $page = 1)
-    {
-        try
-        {
-            $rawdata = cfpr_host_compliance_list($username, 'black', $includes, $excludes, $rows, $page);
-            $data = $this->checkData($rawdata);
-            if ($data)
-            {
-                return $data;
-            }
-            else
-            {
-                throw new Exception($this->lang->line('invalid_json'));
+            } else {
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -128,13 +49,13 @@ class host_model extends Cf_Model
         {
             $rawdata = cfpr_host_list_by_ip_rx($username, $ipregx, $rows, $page);
             $data = $this->checkData($rawdata);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors()==0)
             {
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -158,13 +79,13 @@ class host_model extends Cf_Model
         {
             $rawdata = cfpr_host_list_by_name_rx($username, $hostregx, $rows, $page);
             $data = $this->checkData($rawdata);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors()==0)
             {
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -191,7 +112,7 @@ class host_model extends Cf_Model
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -213,13 +134,13 @@ class host_model extends Cf_Model
         {
             $rawdata = cfpr_host_by_hostkey($username, $hostkey);
             $data = $this->checkData($rawdata);
-            if (is_array($data))
+            if (is_array($data) && $this->hasErrors()==0)
             {
                 return $data[0];
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -247,7 +168,7 @@ class host_model extends Cf_Model
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)
@@ -262,21 +183,15 @@ class host_model extends Cf_Model
      * @param type $username
      * @param type $hostkey
      * @return type timestamp
+     * Need to check empty form the controller side
      */
     function getLastUpdate($username, $hostkey)
     {
         try
         {
             $rawdata = cfpr_getlastupdate($username, $hostkey);
-            $data = $this->checkData($rawdata);
-            if ($data)
-            {
-                return $data;
-            }
-            else
-            {
-                throw new Exception($this->lang->line('invalid_json'));
-            }
+            //$data = $this->checkData($rawdata);
+            return $rawdata;
         }
         catch (Exception $e)
         {
@@ -391,123 +306,25 @@ class host_model extends Cf_Model
         }
     }
 
-    function getHostCount($username)
+    /**
+     * Gets total number of host count of specified color
+     * @param type $username
+     * @param type $color
+     * @return type
+     * @throws Exception
+     */
+    function getHostCount($username,$color=NULL)
     {
         try
         {
-            $data = cfpr_host_count($username, NULL, array(), array());
+            $data = cfpr_host_count($username, $color, array(), array());
             if (is_numeric($data))
             {
                 return $data;
             }
             else
             {
-                throw new Exception($this->lang->line('invalid_json'));
-            }
-        }
-        catch (Exception $e)
-        {
-            log_message('error', $e->getMessage() . " File: " . $e->getFile() . ' line:' . $e->getLine());
-            throw $e;
-        }
-    }
-
-    function getRedHostCount($username)
-    {
-        try
-        {
-            $data = cfpr_host_count($username, 'red', array(), array());
-            if (is_numeric($data))
-            {
-                return $data;
-            }
-            else
-            {
-                throw new Exception($this->lang->line('invalid_json'));
-            }
-        }
-        catch (Exception $e)
-        {
-            log_message('error', $e->getMessage() . " File: " . $e->getFile() . ' line:' . $e->getLine());
-            throw $e;
-        }
-    }
-
-    function getYellowHostCount($username)
-    {
-        try
-        {
-            $data = cfpr_host_count($username, 'yellow', array(), array());
-            if (is_numeric($data))
-            {
-                return $data;
-            }
-            else
-            {
-                throw new Exception($this->lang->line('invalid_json'));
-            }
-        }
-        catch (Exception $e)
-        {
-            log_message('error', $e->getMessage() . " File: " . $e->getFile() . ' line:' . $e->getLine());
-            throw $e;
-        }
-    }
-
-    function getGreenHostCount($username)
-    {
-        try
-        {
-            $data = cfpr_host_count($username, 'green', array(), array());
-            if (is_numeric($data))
-            {
-                return $data;
-            }
-            else
-            {
-                throw new Exception($this->lang->line('invalid_json'));
-            }
-        }
-        catch (Exception $e)
-        {
-            log_message('error', $e->getMessage() . " File: " . $e->getFile() . ' line:' . $e->getLine());
-            throw $e;
-        }
-    }
-
-    function getBlueHostCount($username)
-    {
-        try
-        {
-            $data = cfpr_host_count($username, 'blue', array(), array());
-            if (is_numeric($data))
-            {
-                return $data;
-            }
-            else
-            {
-                throw new Exception($this->lang->line('invalid_json'));
-            }
-        }
-        catch (Exception $e)
-        {
-            log_message('error', $e->getMessage() . " File: " . $e->getFile() . ' line:' . $e->getLine());
-            throw $e;
-        }
-    }
-    
-    function getBlackHostCount($username)
-    {
-        try
-        {
-            $data = cfpr_host_count($username, 'black', array(), array());
-            if (is_numeric($data))
-            {
-                return $data;
-            }
-            else
-            {
-                throw new Exception($this->lang->line('invalid_json'));
+                throw new Exception($this->getErrorsString());
             }
         }
         catch (Exception $e)

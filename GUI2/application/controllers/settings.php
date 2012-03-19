@@ -13,9 +13,10 @@ class Settings extends Cf_Controller {
 
     function manage($op=false, $id=false) {
         $bc = array(
-            'title' => 'settings',
+            'title' => $this->lang->line('breadcrumb_setting'),
             'url' => 'auth/setting',
             'isRoot' => false,
+            'directchild'=>true,
             'replace_existing' => true
         );
         $this->breadcrumb->setBreadCrumb($bc);

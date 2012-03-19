@@ -38,6 +38,7 @@ void Nova_CheckGlobalKnowledgeClass(char *name, char *key);
 bool GetBsonBool(char *data, char *boolKey, bool *val); // WTF: is this doing here?
 void CFDB_SaveLastHostUpdate(mongo_connection *conn, char *hostKey);
 void CFDB_SaveLastUpdate(mongo_connection *conn, char *database, char *keyField, char *keyhash);
+void CFDB_SaveLastHostUpdateSize(mongo_connection *conn, char *hostkey, int update_size);
 
 void CFDB_SaveCachedTotalCompliance(mongo_connection *conn, char *policy, int slot, double kept, double repaired,
                                     double notkept, int count, time_t genTime);

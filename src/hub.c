@@ -90,7 +90,7 @@ static const char *HINTS[16] =
     "Run as a foreground processes (do not fork)",
     "Continuous update mode of operation",
     "Rebuild database caches used for efficient query handling (e.g. compliance graphs)",
-    "Enable logging of updates to the promise log",
+    "Enable logging of report collection and maintenance to hub_log in the working directory",
     "Reindex all collections in the CFEngine report database",
     "Splay/load balance full-updates, overriding bootstrap times, assuming a default 5 minute update schedule.",
     NULL
@@ -723,6 +723,10 @@ static void Nova_CollectReports(Attributes a, Promise *pp)
 
 static void Nova_Scan(Item *masterlist, Attributes a, Promise *pp)
 {
+    Nova_HubLog("Starting report collection");
+    
+    struct timespec measure_start = BeginMeasure();
+    
     if (NO_FORK)
     {
         Nova_SequentialScan(masterlist, a, pp);
@@ -731,6 +735,10 @@ static void Nova_Scan(Item *masterlist, Attributes a, Promise *pp)
     {
         Nova_ParallelizeScan(masterlist, a, pp);
     }
+
+    EndMeasure("ReportCollectAll", measure_start);
+
+    Nova_HubLog("Finished report collection -- tried %d hosts", ListLen(masterlist));
 }
 
 /********************************************************************/
@@ -950,26 +958,31 @@ static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer, Att
 
 // Choose full / delta
 
+    int report_len;
+    char *menu;
+
     if (long_time_no_see)
     {
+        menu = "full";
         time_t last_week = time(0) - (time_t) SECONDS_PER_WEEK;
 
         CfOut(cf_verbose, "", " -> Running FULL sensor sweep of %s", HashPrint(CF_DEFAULT_DIGEST, conn->digest));
-        Nova_QueryClientForReports(dbconn, conn, "full", last_week);
-
-        Nova_HubLog("HUB full sensor sweep of peer %s", peer);
+        report_len = Nova_QueryClientForReports(dbconn, conn, "full", last_week);
 
         YieldCurrentLock(thislock);
     }
     else
     {
+        menu = "delta";
+
         CfOut(cf_verbose, "", " -> Running differential sensor sweep of %s",
               HashPrint(CF_DEFAULT_DIGEST, conn->digest));
-        Nova_QueryClientForReports(dbconn, conn, "delta", now - average_time);
+        report_len = Nova_QueryClientForReports(dbconn, conn, "delta", now - average_time);
 
-        Nova_HubLog("HUB delta sensor sweep of peer %s", peer);
         // don't yield lock here - we never got it
     }
+
+    Nova_HubLog("Received %d bytes of reports from %s with %s menu", report_len, peer, menu);
 
     ServerDisconnection(conn);
     DeleteRlist(aa.copy.servers);
@@ -1230,8 +1243,11 @@ static void Nova_HubLog(const char *fmt, ...)
         CfOut(cf_error, "fopen", "Could not open %s", filename);
         return;
     }
+    
+    char timebuf[26];
+    cf_strtimestamp_local(now, timebuf);
 
-    fprintf(fout, "%ld,%ld: ", CFSTARTTIME, now);
+    fprintf(fout, "%s [%d]: ", timebuf, getpid());
     va_list ap;
 
     va_start(ap, fmt);

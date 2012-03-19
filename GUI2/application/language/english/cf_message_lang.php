@@ -35,6 +35,7 @@ $lang['breadcrumb_report']           ='Report';
 $lang['breadcrumb_summary_report']   ='Summary Report';
 $lang['breadcrumb_vital']            ='Vitals';
 $lang['breadcrumb_notes']            ='Notes';
+$lang['breadcrumb_setting']          ="Settings";
 /**
  * Policy editor related things
  *

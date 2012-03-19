@@ -1,8 +1,8 @@
 <?php
 
 class test_ldap_libraries extends CodeIgniterUnitTestCase {
-private $username='njoshi';//'sudhir';
-private $password='Cf3ng1n3';//'q1w2e3r4t5';//'q1w2e3r4t5'//password//Cf3ng1n3;
+private $username='sudhir';//'sudhir';
+private $password='password';//'q1w2e3r4t5';//'q1w2e3r4t5'//password//Cf3ng1n3;
 private $dn='CN=Sudhir Pandey,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com';
     public function __construct() {
         parent::__construct();
@@ -21,8 +21,8 @@ private $dn='CN=Sudhir Pandey,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com';
    public function setup_ldap(){
        $this->_ci->auth_ldap->set_host('10.0.0.152');
        $this->_ci->auth_ldap->set_basedn('dc=cfengine,dc=com');
-       $this->_ci->auth_ldap->set_login_attr('uid');
-       $this->_ci->auth_ldap->set_user_dir('ou=people;ou=sales');
+       $this->_ci->auth_ldap->set_login_attr('uid'); //uid
+       $this->_ci->auth_ldap->set_user_dir('ou=people');
        //$this->_ci->auth_ldap->set_member_attr('memberUid');
        $this->_ci->auth_ldap->set_mode('ldap');
        $this->password='password';
