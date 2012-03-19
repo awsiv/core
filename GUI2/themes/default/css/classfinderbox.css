@@ -52,6 +52,7 @@ input[readonly] {background: buttonface;}
 
 #admin_content  #maintable td {
     vertical-align: top !important;
+    border: none !important
 }
 /******** finders box style ************/
 .all_classes {
