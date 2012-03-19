@@ -6547,5 +6547,36 @@ Item *CFDB_GetHostByColour(mongo_connection *conn, HostClassFilter *host_class_f
     return list;
 }
 
+/*****************************************************************************/
+
+long CFDB_GetLastAgentExecution(mongo_connection *conn, const char *hostkey)
+{
+    long agent_last_exec = 0;
+    bson_buffer buffer;
+    bson query, field;
+
+    // query
+    bson_buffer_init(&buffer);
+    bson_append_string(&buffer, cfr_keyhash, hostkey);
+    bson_from_buffer(&query, &buffer);
+
+    // projection
+    bson_buffer_init(&buffer);
+    bson_append_int(&buffer, cfr_last_execution, 1);
+    bson_from_buffer(&field, &buffer);
+
+    bson out;
+    bson_bool_t found = mongo_find_one(conn, MONGO_DATABASE, &query, &field, &out);
+
+    if (found)
+    {
+        agent_last_exec = BsonLongGet(&out, cfr_last_execution);
+    }
+
+    bson_destroy(&query);
+    bson_destroy(&field);
+
+    return agent_last_exec;
+}
 
 #endif /* HAVE LIBMONGOC */

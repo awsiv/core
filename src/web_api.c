@@ -3195,10 +3195,9 @@ void Nova2PHP_host_compliance_list(mongo_connection *conn, char *colour, HostCla
                 }
                 else if (host_colour == HOST_COLOUR_BLACK)
                 {
-                    char last_exec_time[CF_SMALLBUF];
-                    last_exec_time[0] = '\0';
-                    CFDB_GetValue(cfr_last_execution, last_exec_time, CF_SMALLBUF, MONGO_DATABASE);
-                    snprintf(work, CF_MAXVARSIZE, "{ \"key\": \"%s\", \"id\": \"%s\",\"lastexec\": \"%s\"},", ip->name,
+                    long last_exec_time = 0;
+                    last_exec_time = CFDB_GetLastAgentExecution(conn, ip->name);
+                    snprintf(work, CF_MAXVARSIZE, "{ \"key\": \"%s\", \"id\": \"%s\",\"lastexec\": \"%ld\"},", ip->name,
                              ip->classes, last_exec_time);
                 }
                 else
