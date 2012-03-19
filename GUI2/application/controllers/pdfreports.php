@@ -600,7 +600,7 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_promise_repaired_summary($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $class_regex = '', $rows = 0, $page_number = 0)
+    function rpt_promise_repaired_summary($username, $hostkey, $search, $hours_deltafrom, $hours_deltato,$inclist,$exlist, $rows = 0, $page_number = 0)
     {
         $header = array('Promise Handle', 'Report', 'Occurrences');
         try
