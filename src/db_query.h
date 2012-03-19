@@ -114,6 +114,7 @@ Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const ch
 HubHost *CFDB_GetHostByKey(mongo_connection *conn, const char *hostkey);
 Item *CFDB_GetHostByColour(mongo_connection *conn, HostClassFilter *host_class_filter,
                            HostColourFilter *host_colour_filter);
+long CFDB_GetLastAgentExecution(mongo_connection *conn, const char *hostkey);
 
 #endif
 
