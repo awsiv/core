@@ -2729,6 +2729,12 @@ void Nova_TrackExecution()
         gavr = (double)(now - last_exec);
     }
 
+    /* failsafe + promises double execution exeption */
+    if (strcmp("failsafe.cf", VINPUTFILE) == 0) // 30sec
+    {
+        return;
+    }
+
     /* calculate avrage agent scheduling time */
     gavr = GAverage ((double)(now - last_exec), gavr, trust_level);
 
