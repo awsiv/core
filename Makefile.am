@@ -1,5 +1,6 @@
 abs_srcdir=@abs_srcdir@
 MKDIR_P=@mkdir_p@
+INSTALL=$(abs_top_srcdir)/install-sh
 
 top_srcdir = $(abs_top_srcdir)
 top_builddir = $(abs_top_builddir)
