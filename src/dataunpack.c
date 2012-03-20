@@ -683,15 +683,12 @@ void Nova_UnPackTotalCompliance(mongo_connection *dbconn, char *id, Item *data)
     {
         /* due to not beeing able to estimate real scheduling interval it is set on 0 */
         CFDB_SaveExecutionStatus(dbconn, id, is_blackhost, 0);
-        char *last_run_str = NULL;
-        xasprintf(&last_run_str, "%lu", (unsigned long)agent_last_run_time);
-        CFDB_PutValue(cfr_last_execution, last_run_str, MONGO_DATABASE);
-        free(last_run_str);
+        CFDB_SaveLastAgentExecution(dbconn, id, (long)agent_last_run_time);
     }
 #endif
 
-    CfDebug("Execution status (pre-estimation): black %s with agent schedule interval: %ld",
-            (is_blackhost)? "true" : "false", delta_schedule);
+    CfDebug("Execution status (pre-estimation): black %s with agent schedule interval: %ld, agent last run time: %ld",
+            (is_blackhost)? "true" : "false", delta_schedule, agent_last_run_time);
 }
 
 /*****************************************************************************/

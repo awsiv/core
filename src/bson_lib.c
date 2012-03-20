@@ -107,6 +107,22 @@ bool BsonIsArrayNonExistentOrEmpty(const bson *b, const char *key)
 }
 /*****************************************************************************/
 
+long BsonLongGet(const bson *b, const char *key)
+{
+    bson_iterator it;
+
+    if (bson_find(&it, b, key) == bson_long)
+    {
+        return bson_iterator_long(&it);
+    }
+
+    CfOut(cf_verbose, "", "BsonFindLong: No match for \"%s\"", key);
+
+    return 0;
+}
+
+/*****************************************************************************/
+
 const char *BsonGetString(const bson *b, const char *key)
 // TOOD: DEPRECATE in favour of BsonStringWrite()
 {

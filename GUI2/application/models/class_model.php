@@ -17,9 +17,9 @@ class class_model extends Cf_Model
         {
             $includes = (array)$includes;
             $excludes = (array)$excludes;
-           
-            $rawdata = cfpr_class_list_distinct_by_name_rx($username, $includes, $excludes, $rows, $page);
-            
+
+            $rawdata = cfpr_class_list_distinct_by_name_rx($username, null, $includes, $excludes, $rows, $page);
+
             $data = $this->checkData($rawdata);
             if (is_array($data))
             {
@@ -44,7 +44,7 @@ class class_model extends Cf_Model
             $includes = (array)$includes;
             $excludes = (array)$excludes;
 
-            $rawdata = cfpr_class_list_time_distinct_by_name_rx($username, $includes, $excludes, $rows, $page);
+            $rawdata = cfpr_class_list_time_distinct_by_name_rx($username, null, $includes, $excludes, $rows, $page);
             $data = $this->checkData($rawdata);
             if (is_array($data))
             {
@@ -69,7 +69,7 @@ class class_model extends Cf_Model
             $includes = (array)$includes;
             $excludes = (array)$excludes;
 
-            $rawdata = cfpr_class_list_soft_distinct_by_name_rx($username, $includes, $excludes, $rows, $page);
+            $rawdata = cfpr_class_list_soft_distinct_by_name_rx($username, null, $includes, $excludes, $rows, $page);
             $data = $this->checkData($rawdata);
             if (is_array($data))
             {

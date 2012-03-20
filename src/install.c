@@ -18,7 +18,9 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #include "string_lib.h"
 #include <assert.h>
 
+#ifdef HAVE_LIBMONGOC
 static void DateStrToTime(const char *inStr, time_t *t);
+#endif
 
 /*****************************************************************************/
 

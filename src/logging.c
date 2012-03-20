@@ -36,12 +36,13 @@ void SetSyslogPort(uint16_t port)
 
 void RemoteSysLog(int log_priority, const char *log_string)
 {
-    int sd, err, rfc3164_len = 1024;
+    int sd, rfc3164_len = 1024;
     char message[CF_BUFSIZE];
     time_t now = time(NULL);
     int pri = log_priority | FACILITY;
 
 #if defined(HAVE_GETADDRINFO)
+    int err;
     struct addrinfo query, *response, *ap;
     char strport[CF_MAXVARSIZE];
 

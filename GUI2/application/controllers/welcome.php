@@ -427,8 +427,10 @@ class Welcome extends Cf_Controller {
         $this->template->load('template', 'goals', $data);
     }
 
-    function hosts($colour = NULL, $includes = array('.*'), $excludes = array()) {
-        if ($colour == NULL) {
+    function hosts($colour = NULL, $includes = null, $excludes = null)
+    {
+        if ($colour == NULL)
+        {
             redirect('welcome/engg');
             return;
         }
@@ -441,6 +443,8 @@ class Welcome extends Cf_Controller {
             $rows = 20;
         }
         $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
+        $includes =  ($includes != null) ? explode(',', $includes) : array('.*');
+        $excludes =  ($excludes != null) ? explode(',', $excludes) : array('');
         try{
             switch ($colour) {
                 case "red":

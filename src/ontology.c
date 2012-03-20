@@ -611,7 +611,6 @@ void ShowTopicRepresentation(FILE *fp)
     int i, j, k, l;
     SubTypeSyntax *ss;
     const BodySyntax *bs, *bs2;
-    Rval retval;
     static char *level[] = { "high", "low", "normal", NULL };
     static char *dev[] = { "dev1", "dev2", "microanomaly", "anomaly", NULL };
 

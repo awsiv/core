@@ -7,12 +7,11 @@
             <?php echo $report_title; ?>
             <div class="clear"></div>
         </div>
-        <div id="modifySearchPanel" style="">
-            
+        <div id="modifySearchPanel">
+            <div class="grid_8">
           <?php  $this->load->view('searchpages/'.$filter_view);?> 
-            
-          <div id="savesearchcontainer" class="grid_4 floatright" style="disply:none">
-                 
+            </div>
+          <div id="savesearchcontainer" class="grid_4 floatright panelcontent"> 
                     <div id="searchSaveError" class="error" style="display:none;"></div>
                     <div id="searchSaveSuccess" class="success" style="display:none;"></div> 
                     <form id="saveform" method="post" action="<?php echo site_url(); ?>/savedsearch/save/">
@@ -31,7 +30,7 @@
                       <a href="<?php echo $report_link ?>" id="send_mail" class="green_btn" title="Download report"><span>Download</span></a>
                     </div>
           </div> 
-            
+           <div class="clear"></div> 
         </div>
 
         <div class="reportpanelcontent">
@@ -94,19 +93,9 @@
                         <script type="text/javascript">
                             $(document).ready(function() {
                                 
-                                     var searchfilterbox = $('#modifySearchPanel')
-                                     $("#searchform").find('form').addClass('grid_8');
-                                     $('#savesearchcontainer').appendTo(searchfilterbox.find('.panelcontent'));
-                                     searchfilterbox.find('.panelcontent').append('<div class="clear"></div>')
-                                        /*$.post('<?php echo site_url(); ?>/search/index',<?php echo json_encode($paramArray); ?>, function(data) {
-                                            var searchfilterbox = $('#modifySearchPanel')
-                                            searchfilterbox.html(data).show();
-                                            searchfilterbox.find('form').addClass('grid_8');
-                                            $('#savesearchcontainer').appendTo(searchfilterbox.find('.panelcontent'));
-                                            searchfilterbox.find('.panelcontent').append('<div class="clear"></div>')
-                                            
-                                        });*/
-
+                                   
+                                     //$("#searchform").addClass('grid_8');
+                                   
                                 // for save search 
                                 $('#savesearch').click(function(e) {
                                     e.preventDefault();            

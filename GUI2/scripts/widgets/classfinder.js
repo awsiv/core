@@ -22,6 +22,8 @@
         elementtext:"",
         selectedMenu:null,
         animate:false,
+        dialogcontent:'',
+        dialogId:'',
         ajaxloader:$('<span class="loading2"></span>'),
         _init: function(){
             var self=this;  
@@ -55,11 +57,15 @@
           
         },
         _create:function(){
-            var self=this;   
+            var self=this;
+            var tempId = new Date().getTime();
+            var id = self.element.attr('id') ? self.element.attr('id') : 'tempId_' + tempId++
+            self.dialogId = 'classlistContainer-'+id;
             self.addsearchbar();
             self.addalphapager();
+            self.dialogcontent.delegate('a.classfinderwiget-classes', 'click', $.proxy(self.classSelected, self));
+            self.dialogcontent.delegate('a.classadd', 'click', $.proxy(self.addclassfilter, self));
             $.ui.classfinder.instances.push(this.element);
-            
         },
 
 
@@ -273,10 +279,10 @@
 
         loadDataInContainer: function(data,append) {
             var self = this;
-            var previousListElement = document.getElementById('classList');
+            var previousListElement = $('#'+self.dialogId).find('ul.classList');
             var previousList = null;
-            if (previousListElement != null && previousListElement.value != '') {
-                previousList = previousListElement.innerHTML;
+            if (previousListElement != null && previousListElement.html() != '') {
+                previousList = previousListElement.html();
             }
 
             var list = [];
@@ -292,7 +298,7 @@
                 var val = data[i];
                 var viewHostLink = '';
                 var addClassLink = '';
-                var textLink = '<a class="name" title="' + val + '" href="' + self.options.baseUrl + '/search/index/host/All/report/contexts/name/'+ val + '">' + val + '</a>';
+                var textLink = '<a class="name classfinderwiget-classes" title="' + val + '" href="' + self.options.baseUrl + '/search/index/host/All/report/contexts/name/'+ val + '">' + val + '</a>';
                 if (self.options.defaultbehaviour) {
                     viewHostLink = '<a class="action btn" title="' + val + '" href="' + self.options.baseUrl + '/search/index/host/All/report/contexts/hosts_only/true/name/'+ val + '">' + 'View hosts' + '</a>';
                     addClassLink = '<a class="classadd btn" title="' + val + '">' + 'add to list' + '</a>';
@@ -305,14 +311,12 @@
 
             var ul = '';
             if (append) {
-                ul = '<ul id="classList">' + previousList + list.join('') + '</ul>';
+                ul = '<ul class="classList">' + previousList + list.join('') + '</ul>';
             } else {
-                ul = '<ul id="classList">' + list.join('') + '</ul>';
+                ul = '<ul class="classList">' + list.join('') + '</ul>';
             }
+            document.getElementById(self.dialogId).innerHTML = ul;
 
-            document.getElementById('classlistcontainer').innerHTML = ul;
-            self.dialogcontent.find('#classList').delegate('a', 'click', $.proxy(self.classSelected, self));
-            self.dialogcontent.find('#classList').delegate('a.classadd', 'click', $.proxy(self.addclassfilter, self));
             self.element.text(self.elementtext);
             self.revertTitle();
         },
@@ -332,13 +336,14 @@
 
         dialogContainer: function() {
             var self = this;
-            var existing = $('#classlistcontainer');
+
+            var existing = $('#'+self.dialogId);
             if (existing.size() > 0) {
                 return existing.first();
             }
             else {
                 //single shared element for modal dialogs
-                var requestDialog = $('<div id="classlistcontainer" style="display:none" class="result" title="Classes"><ul id="classList"></ul></div>').appendTo('body').
+                var requestDialog = $('<div id="'+self.dialogId+'" style="display:none" class="finderwidget  result" title="Classes"><ul class="classList"></ul></div>').appendTo('body').
                 dialog({
                     autoOpen: false,
                     beforeClose: function(event, ui) {
@@ -476,8 +481,9 @@
 
         destroy: function() {
             // remove the dialog list content before closing
-            document.getElementById('classlistcontainer').innerHTML = '';
             var self = this;
+            document.getElementById(self.dialogId).innerHTML = '';
+
             self.resetPagination();
             self.resetSelectedLetter();
             // remove this instance from $.ui.mywidget.instances

@@ -938,8 +938,8 @@ Item *NovaReSample(int slot, Attributes a, Promise *pp)
         DeleteItemList(NOVA_DATA[slot].output);
         NOVA_DATA[slot].output = NULL;
 
-        CfOut(cf_inform, "", " -> Sampling \'%s\' ...(timeout=%d,owner=%d,group=%d)\n", pp->promiser, a.contain.timeout,
-              a.contain.owner, a.contain.group);
+        CfOut(cf_inform, "", " -> Sampling \'%s\' ...(timeout=%d,owner=%ju,group=%ju)\n", pp->promiser, a.contain.timeout,
+              (uintmax_t)a.contain.owner, (uintmax_t)a.contain.group);
 
         start = BeginMeasure();
 
@@ -982,7 +982,7 @@ Item *NovaReSample(int slot, Attributes a, Promise *pp)
         }
         else if (a.measure.stream_type && strcmp(a.measure.stream_type, "pipe") == 0)
         {
-            CfOut(cf_verbose, "", " -> (Setting pipe umask to %o)\n", a.contain.umask);
+            CfOut(cf_verbose, "", " -> (Setting pipe umask to %jo)\n", (uintmax_t)a.contain.umask);
             maskval = umask(a.contain.umask);
 
             if (a.contain.umask == 0)

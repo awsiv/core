@@ -21,11 +21,11 @@
              <span class="green_btn"><input class="green_btn" type="submit" value="Generate report"></input></span>
              <a  id="morefiltertoggle"class="green_btn" href="#"><span>More Filters</span></a>
          </p>
+         
           <input type="hidden" name="host" value="All">
           <input type="hidden" name="inclist" value="<?php echo (is_array($paramArray) && isset($paramArray['inclist'])) ? trim($paramArray['inclist']) : ''; ?>">
           <input type="hidden" name="exlist" value="<?php echo (is_array($paramArray) && isset($paramArray['exlist'])) ? trim($paramArray['exlist']) : ''; ?>">
           <input type="hidden" name="report" value="<?php echo $report_type?>">
-          </p>
           </form>
  </div>
  </div>

@@ -35,7 +35,7 @@ void Nova_PackPerformance(Item **reply, char *header, time_t from, enum cfd_menu
     char *key;
     void *value;
     time_t now = time(NULL);
-    double ticksperminute = 60.0, average = 0, var = 0;
+    double average = 0, var = 0;
     char eventname[CF_BUFSIZE], buffer[CF_BUFSIZE];
     Event entry;
     int ksize, vsize, first = true, kept = 0, repaired = 0, not_kept = 0;
@@ -78,8 +78,8 @@ void Nova_PackPerformance(Item **reply, char *header, time_t from, enum cfd_menu
             memcpy(&entry, value, sizeof(entry));
 
             then = entry.t;
-            measure = entry.Q.q / ticksperminute;
-            average = entry.Q.expect / ticksperminute;
+            measure = entry.Q.q;
+            average = entry.Q.expect;
             var = entry.Q.var;
 
             // Promise: reply with data only after the "from" time
@@ -141,7 +141,7 @@ void Nova_PackPerformance(Item **reply, char *header, time_t from, enum cfd_menu
             }
 
             snprintf(buffer, CF_MAXVARSIZE - 1, "%ld,%7.4lf,%7.4lf,%7.4lf,%s\n", entry.t, measure, average,
-                     sqrt(var) / ticksperminute, eventname);
+                     sqrt(var), eventname);
             AppendItem(reply, buffer, NULL);
         }
         else
