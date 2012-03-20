@@ -2712,6 +2712,12 @@ void Nova_TrackExecution()
     double gavr = 0;
     double trust_level = 0.7; // sensivity of scheduling history -> higher more sensitive
 
+    /* failsafe + promises double execution exeption */
+    if (strcmp("failsafe.cf", VINPUTFILE) == 0)
+    {
+        return;
+    }
+
     /* get last run data */
     if (!OpenDB(&dbp, dbid_agent_execution))
     {
@@ -2727,12 +2733,6 @@ void Nova_TrackExecution()
     if (!ReadDB(dbp, NOVA_TRACK_DELTA_SCHEDULE, &gavr, sizeof(double)))
     {
         gavr = (double)(now - last_exec);
-    }
-
-    /* failsafe + promises double execution exeption */
-    if (strcmp("failsafe.cf", VINPUTFILE) == 0)
-    {
-        return;
     }
 
     /* calculate avrage agent scheduling time */
