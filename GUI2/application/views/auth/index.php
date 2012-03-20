@@ -2,28 +2,39 @@
 
     <div class="innerdiv">
 <!--<p><?php echo "Logged in: $username"; ?>&nbsp;<a href="<?php echo site_url('auth/logout'); ?>">Logout</a></p>-->
-        <ul class="admin_menu">
+       <!--  <ul class="admin_menu">
             <li class="current"><a href="<?php echo site_url('auth/index'); ?>">Users</a></li>
             <li><a href="<?php echo site_url('auth/manage_role'); ?>">Roles</a></li>
-            <!--<li>Settings</li>-->
-        </ul>
+            <!--<li>Settings</li>
+        </ul> -->
+<div class="ui-tabs ui-widget ui-widget-content ui-corner-all">        
+<ul class="admin_menu ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+                <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active ">
+                   <a href="<?php echo site_url('auth/index'); ?>">Users</a>
+                </li>
+                <li class="ui-state-default ui-corner-top">
+                    <a href="<?php echo site_url('auth/manage_role'); ?>">Roles</a>
+                </li>
+            </ul>        
         <div class="holder">
             <div id="error_status"></div>
             <div id="admin_content" class="tables">
                 <?php include 'user_list.php'; ?>
             </div>
-            <a href="" id="test">test</a>
         </div>
+</div>        
+        <!-- <a href="#" onclick="testDialog()">Test dialog</a> -->
     </div>
 </div>
 <div id="confirmation" title="Are you sure"><span></span></div>
 <script src="<?php echo get_scriptdir() ?>jquery.form.js" type="text/javascript"></script>
 <script src="<?php echo get_scriptdir() ?>jquery.blockUI.js" type="text/javascript"></script>
 <script type="text/javascript">
-    $(document).ready(function() {
-        var options = {
+     var options = {
             target:  '#admin_content'  // target element(s) to be updated with server response
         };
+    $(document).ready(function() {
+       
         
 /************************************************************************************/  
 //              Buttons
@@ -40,15 +51,21 @@
 
         });
         
-        //submitting the create user form
-        $('#create_user').live('submit',function(event) {
-            event.preventDefault();
-            $("#error_status").html('');    
-            options.success = function () {
-                 bindSortable('roleslist', new Array('roles'));
-                } 
-            $(this).ajaxSubmit(options);
-        });
+    //submitting the create user form
+    $('#create_user').live('submit',function(event) {
+        event.preventDefault();
+        $("#error_status").html('');   
+        
+
+        var options = {
+            target:  '#edit_form_wrapper'  
+        };
+        console.log(options)        
+        options.success = function () {
+            bindSortable('roleslist', new Array('roles'));
+        } 
+        $(this).ajaxSubmit(options);
+    });
 
 
             //loading the change password in admin_content
@@ -95,7 +112,7 @@
             attach_edit_form(this, $(this).attr('form'));
         });
 
-    $(".move_btn").live('click',function(event) {
+    $(".arrows a").live('click',function(event) {
         
         
         var source = $(this).attr('source');
@@ -137,7 +154,7 @@
                 var path=$(this).attr('href');
                 $("#error_status").html('');
                 $("#admin_content").load(path);
-                $(this).parent().addClass('current').siblings().removeClass('current');
+                $(this).parent().addClass('ui-tabs-selected ui-state-active ').siblings().removeClass('ui-tabs-selected ui-state-active');
             });
 
 
@@ -148,7 +165,8 @@
                 $("#error_status").html('');
                 
                 if ($(this).attr('id') == 'create_role') {
-                     if (roleNameValidate() == false) {
+                     if (roleNameValidate($('#name').val()) == false) {
+                
                         var okBtn  = generateCloseBtn('Ok', $confirmation);
 
                         $confirmation.dialog("option", "buttons", okBtn);
@@ -159,7 +177,7 @@
                 
                 if (roleIncludeExcludeValidate() == false)
                 {
-                    var cancelBtn  = generateCloseBtn('Cancel', $confirmation);
+                    var cancelBtn  = generateCloseBtn('Cancel',   $confirmation);
                     var confirmBtn = generateSubmitBtn('Confirm', $(this), $confirmation);
 
                     $confirmation.dialog("option", "buttons", cancelBtn.concat(confirmBtn) );
@@ -275,12 +293,7 @@ $( ".itemlist li" ).live('mousedown mouseup', function(e) {
 });        
         
 /*********************** common functions  ****************************************************************/        
-function roleNameValidate() {
-    if ($.trim($('#name').val()).length === 0) {
-        $('#confirmation span').text('You Must add Name to the role.');
-        return false;
-    }
-}
+
 
 function roleIncludeExcludeValidate()
 {
@@ -364,12 +377,39 @@ $('#classList').classfinderbox(genericOption);
 $('#bundlessList').classfinderbox(genericOption);
 }
 
+
+/*
+$('.ui-dialog-buttonset').delegate( 'button', 'click', function() {
+    console.log('tvou mat');
+    
+});    */
+
+
+function roleNameValidate(name) {
+    var name = $.trim(name);
+    
+    if (name.length == 0) {
+        $('#confirmation span').text('You Must add Name to the role.');
+        return false;
+    }
+    
+    var roleRegex = /^[A-Za-z0-9_]+$/; //letters, numbers and underscore
+  
+    if (!roleRegex.test(name)) { 
+        $('#confirmation span').text('Please use only letters, numbers and underscore for Role name.');
+        return false; 
+    }
+}
+
+
 });  // end of document.ready
 
 /*-------------------------------------------------------------------------------------------------*/
 /*-------------------------------------------------------------------------------------------------*/
 /*-------------------------------------------------------------------------------------------------*/
 /*-------------------------------------------------------------------------------------------------*/
+
+
 
 // move element(s) from source to destination        
 function bindSortable(bind_css_class_name, destinations_array)
@@ -434,7 +474,11 @@ function bindSortable(bind_css_class_name, destinations_array)
                 
                 checkEmptyList(source_elem, destination_elem);
                 
-                checkAssignedCount(destination_id, destinations_array);
+                // check only for classes
+                var classesArray = ['crxi','crxx'];
+                if ($.inArray(destination_id, classesArray) != -1) {
+                    checkAssignedCount(destination_id, classesArray);
+                }
                
             },
             activate: function(event, ui) { 
@@ -486,12 +530,16 @@ function checkEmptyList(source_elem, destination_elem) {
 
 function checkAssignedCount(dest, destinations_array) {
     // check count items
+    var maxAllowed = 2;
     if ($.inArray( dest, destinations_array) != -1) {
-         if ($('#' + dest).children().length > 2) {
-            $('#confirmation span').text('Too much');
-                   $confirmation.dialog("open");
+         if ($('#' + dest).children().length > maxAllowed) {
+            $('#confirmation span').text('Please use less than ' + maxAllowed +' classes. Using more classes could affect system productivity');
+            //var okBtn  = generateCloseBtn('Ok', $confirmation);
+            var cancelBtn   = generateDialogBtn('Cancel',   $confirmation, function(){return false});
+            var continueBtn = generateDialogBtn('Continue', $confirmation, function(){return true});            
+            $confirmation.dialog("option", "buttons", okBtn);
+            $confirmation.dialog("open");
          }
-        
     }
 
 }
@@ -500,17 +548,44 @@ function checkAssignedCount(dest, destinations_array) {
 
 /****************************** DIALOG **********************************************/    
 
+function testDialog() {
+    var maxAllowed = 2;
+            $('#confirmation span').text('Please use less than ' + maxAllowed +' classes. Using more classes could affect system productivity');
+            //var okBtn  = generateCloseBtn('Ok', $confirmation);
+            var result = false;
+            var cancelBtn   = generateDialogBtn('Cancel',   $confirmation, function(){ result = true; return false});
+            var continueBtn = generateDialogBtn('Continue', $confirmation, function(){ result = false; return true});            
+            $confirmation.dialog("option", "buttons", cancelBtn.concat(continueBtn));
+/*$confirmation.dialog({
+beforeClose: function(event, ui) { 
+        /*console.log(this); 
+        console.log($confirmation);
+    console.log(event); 
+    console.log(ui);
+    console.log(event.target) 
+    }
+});*/
+            $confirmation.dialog("open");
+            console.log($confirmation);
+            console.log("result: " + result);
+            
+            console.log('CONFIRMATION');
+            console.log($confirmation);
+}
+
       // buttons wrapper, just set label, action (if needed), and dialog object
         function generateCloseBtn(label,dialogObj) {
            var btn = [{
                         text: label,
                         click: function() {
                                 dialogObj.dialog('close');
+                                console.log('CALLBACK');
+                                dialogCallback(false);
                             }
            }];
            return btn;
         }
-        
+ 
         function generateLoadBtn(label, link, dialogObj) {
             var btn = [{
                         text: label,
@@ -525,7 +600,7 @@ function checkAssignedCount(dest, destinations_array) {
                                             $('#error_status').html('<p class="error">' + responseText + '</p>');
                                             break;
                                         default:
-                                            $('#error_status').html('<p class="error">' + '<?php //echo $this->lang->line('500_error'); ?>' +  '</p>');
+                                            $('#error_status').html('<p class="error">' + '<?php echo $this->lang->line('500_error'); ?>' +  '</p>');
                                             break;
                                         }
                                     }
@@ -543,36 +618,60 @@ function checkAssignedCount(dest, destinations_array) {
                             {
                                 form.ajaxSubmit(options);
                                 dialogObj.dialog('close');
+                                dialogCallback(true);
                             }
                 }];
             return btn;
         }
         
+        function dialogCallback(param) {
+        console.log('Callback: ' + param );
+        
+        }
         
         
+function getDialogBtnValue() {
+    console.log('Element name = ', this.attr('name'));
+}        
+
+
+
         
+            function generateDialogBtn(label, dialogObj, callbackFnc) {
+                var btn = [{
+                        text: label,
+                        value: label,
+                        name: label,
+                        click: function()
+                        {
+                            dialogObj.dialog('close');
+                                                        //form.ajaxSubmit(options);
+                            if ($.isFunction(callbackFnc)) {
+                                callbackFnc.call(this);
+                                console.log(this);
+                            }
+                        }
+                    }];
+                return btn;
+            }
         
         //dialog object                
         var $confirmation = $('#confirmation').dialog({
             autoOpen: false,
             modal: true,
+            data: '',
             resizable: false,
+            beforeClose: '',
             buttons: [],
-                open: function() 
+            create: function(event, ui) {
+                // weird way to get clicked button
+                $(".ui-dialog-buttonset button").live("click", function(event, self){ 
+                    $confirmation.dialog.data = {clicked: $(this).attr('name')};
+                }); 
+            },
+            open: function() 
                     {
                         $(this).parent().find('.ui-dialog-buttonpane').find('button:last').focus()
-                    },
-            createSubmitButton:function(label, formObj) {
-                var self = this;
-                var btn = [{
-                        text: label,
-                        click: function()
-                            {
-                                formObj.ajaxSubmit(options);
-                                self.dialog('close');
-                            }
-                }];
-            return btn;
-            }
+                    }
         });        
 </script>
