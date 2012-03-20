@@ -103,7 +103,7 @@ $lang['green']='Compliant';
 $lang['blue']='Unreachable';
 $lang['yellow']='Repaired';
 $lang['red']='Non compliant';
-$lang['black'] = 'Schedule failure';
+$lang['black'] = 'Scheduling deviation';
 $lang['not_hub_master_msg']='This is not a hub master, please click on the link below to navigate to the Mission Portal hosting the hubmaster<br />
                                              Link :: ';
 /**
@@ -141,7 +141,7 @@ $lang['not_compliant'] = "hosts ( > 20% not compliant)";
 $lang['now_compliant'] = "hosts ( > 20% repaired, now compliant)";
 $lang['compliant'] = "hosts ( > 80% compliant)";
 $lang['unreachable'] = "hosts unreachable";
-$lang['not_executing'] = "hosts with agent sheduling failure";
+$lang['not_executing'] = "hosts with scheduling deviation";
 
 /*
  * Planning page

@@ -10,12 +10,12 @@
 
             $self.element.addClass('hostsConnectivity');
 
-            $self._blue = $self._createColourEntry('blue',
+            $self._blue = $self._createColourEntry('blue', 'hosts unreachable',
                 'Hosts that have not been reached (their state is unknown)');
             $self.element.append($self._blue);
 
-            $self._black = $self._createColourEntry('black',
-                'Hosts that show an agent schedule failure. (Host skipped its last 3 scheduled executions)');
+            $self._black = $self._createColourEntry('black', 'hosts with scheduling deviation',
+                'Hosts failed to execute their agents for last 3 scheduled rounds.');
             $self.element.append($self._black);
 
             $self.element.append($self._createClear());
@@ -47,11 +47,11 @@
 
             $.getJSON($self._requestUrls.hostCount($self, $self._context.includes, 'blue'),
                 function(count) {
-                    $self._setHostCount($self._blue, count);
+                    $self._setHostCount($self._blue, count, 'hosts unreachable');
                 });
             $.getJSON($self._requestUrls.hostCount($self, $self._context.includes, 'black'),
                 function(count) {
-                    $self._setHostCount($self._black, count);
+                    $self._setHostCount($self._black, count, 'hosts with scheduling deviation');
                 });
         },
 
@@ -63,7 +63,7 @@
             return $element;
         },
 
-        _createColourEntry: function(colour, tooltip) {
+        _createColourEntry: function(colour, label, tooltip) {
             var $self = this;
 
             var $entry = $('<div>');
@@ -86,15 +86,15 @@
             });
             $entry.append($entryLabel);
 
-            $self._setHostCount($entry, 0);
+            $self._setHostCount($entry, 0, label);
 
             return $entry;
         },
 
-        _setHostCount: function($entry, count) {
+        _setHostCount: function($entry, count, label) {
             var $entryLabel = $entry.children('.colourEntryLabel');
 
-            $entryLabel.html(count + ' hosts unreachable');
+            $entryLabel.html(count + ' ' + label);
         },
 
         _context: {
