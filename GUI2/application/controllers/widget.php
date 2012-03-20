@@ -173,19 +173,16 @@ class Widget extends Cf_Controller
     {
         $username = $this->session->userdata('username');
  
-        $searchLetter = null;
+        $searchletter = null;
 
         if ($alphaSearch != null) {
-            $searchLetter = urldecode($alphaSearch) . '.*';
+            $searchletter = urldecode($alphaSearch) . '.*';
         }else{
-           $searchLetter='.*';
+           $searchletter='.*';
         }
 
         $includes = $excludes = array();
         
-        //$searchLetter is an additional parameter for includes string 
-        $includes[] =  $searchLetter;
-
         if($this->input->post('includes') !== FALSE) {
             $includes = array_merge($includes, $this->input->post('includes', TRUE));
         }
@@ -195,7 +192,7 @@ class Widget extends Cf_Controller
         }
 
         try{
-           $classes=$this->class_model->getAllClasses($username, $includes, $excludes, 100,$page);
+           $classes=$this->class_model->getAllClasses($username, $searchletter, $includes, $excludes, 100,$page);
             echo $classes;
         }
         catch (Exception $e)
@@ -210,24 +207,21 @@ class Widget extends Cf_Controller
         
         
         $username = $this->session->userdata('username');
-        $searchLetter = null;
+        $searchletter = null;
         
         if ($search != null)
         {
-            $searchLetter = urldecode($search) . '.*';
+            $searchletter = urldecode($search) . '.*';
         }
         else
         {
-            $searchLetter = '.*';
+            $searchletter = '.*';
         }
         
         $filter = '';
         
         //add include/exclude
         $includes = $excludes = array();
-        
-        //$searchLetter is an additional parameter for includes string 
-        $includes[] = $searchLetter;
         
         if($this->input->post('filter') !== FALSE) {        
             $filter     =  $this->input->post('filter', TRUE);
@@ -247,16 +241,16 @@ class Widget extends Cf_Controller
         try{
            switch ($filter) {
             case "time":
-                $data = $this->class_model->getAllTimeClasses($username, $includes, $excludes, 100,$page);
+                $data = $this->class_model->getAllTimeClasses($username, $searchletter, $includes, $excludes, 100,$page);
                 break;
             case "ip":
                 $data = cfpr_list_ip_classes(NULL, NULL, NULL, NULL);
                 break;
             case "soft":
-                $data = $this->class_model->getAllSoftClasses($username, $includes, $excludes, 100,$page);
+                $data = $this->class_model->getAllSoftClasses($username, $searchletter, $includes, $excludes, 100,$page);
                 break;
             case "all":
-                $data = $this->class_model->getAllClasses($username, $includes, $excludes, 100, $page);
+                $data = $this->class_model->getAllClasses($username, $searchletter, $includes, $excludes, 100, $page);
                 break;
             case "host":
                 $data = cfpr_list_host_classes(NULL, NULL, NULL, NULL);
