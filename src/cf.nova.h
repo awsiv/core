@@ -88,6 +88,7 @@
 
 // for pdf reports
 #define CF_NOTICE_TRUNCATED "Data truncated due to internal buffer limit"
+#define CF_STR_NOT_AVAILABLE "N/A"
 
 /*****************************************************************************/
 
