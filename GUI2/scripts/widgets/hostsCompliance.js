@@ -92,7 +92,7 @@
 
             hostCount: function(self, includes, colour) {
 
-                return self.options.baseUrl + 'host/count?' +
+                return self.options.baseUrl + '/host/count?' +
                     'colour=' + colour + '&' +
                     'includes=' + encodeURIComponent(includes);
             }
