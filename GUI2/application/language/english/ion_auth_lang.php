@@ -86,3 +86,4 @@ $lang['login_mode_not_found']='Cannot find backend';
 
 // permission
 $lang['no_permission'] = "You don't have right permission to complete this operation.";
+$lang['no_access'] = "The given user has no access to this data";
