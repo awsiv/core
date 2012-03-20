@@ -3465,7 +3465,7 @@ int Nova2PHP_promise_details(PromiseFilter *filter, char *returnval, int bufsize
         snprintf(commentText, sizeof(commentText), "%s", hp->comment);
     }
 
-    snprintf(work, sizeof(work), "\"comment\":\"%s\",", commentText);
+    snprintf(work, sizeof(work), "\"comment\":\"%s\",", EscapeJson(commentText, escaped, sizeof(escaped)));
     Join(returnval, work, bufsize);
 
     snprintf(work, sizeof(work), "\"promise_type\":\"%s\",", hp->promiseType);
