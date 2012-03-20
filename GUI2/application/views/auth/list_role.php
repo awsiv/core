@@ -33,7 +33,13 @@ if (!empty($roles))
 if($this->ion_auth->mode=="database"){
 if($is_admin){?>
 <p id="btnholder">
-  <span class="btn"><?php echo anchor("auth/manage_role/create", 'Add Role',array('id'=>'add_role', 'form'=>'role'))?></span>
+    
+    <a class="green_btn" id="add_role" href="<?php echo site_url("auth/manage_role/create") ?>" form="role">
+        <span>Add Role</span>
+    </a>
+    
+    
+  
 </p>
 <?php } }?>
 
