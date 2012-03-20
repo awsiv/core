@@ -24,7 +24,7 @@
                         <div id="hostsCompliance"></div>
                     </div>
                     <div class="hostsConnectivityContainer">
-                        <p style="font-size: 16px">Host Connectivity</p>
+                        <p style="font-size: 16px">Host Operations</p>
                         <div id="hostsConnectivity"></div>
                     </div>
                 </div>
