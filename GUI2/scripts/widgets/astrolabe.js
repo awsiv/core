@@ -623,7 +623,7 @@
             var includes = $self._nodeIncludes($node);
             $.getJSON($self._requestUrls.hostCount($self, includes, []), function(count) {
                 $node.attr('count', count);
-                $node.find('.nodeHeader .hostCountLabel').html('(' + count + ')');
+                $node.children('.nodeHeader').children('.hostCountLabel').html('(' + count + ')');
             });
         },
 
