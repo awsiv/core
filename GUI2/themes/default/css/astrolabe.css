@@ -252,12 +252,14 @@
 {
     float: left;
     display: inline-block;
+    width: 50%;
 }
 
 .astrolabe.addNodeDialog .rightColumn
 {
     float: right;
     display: inline-block;
+    width: 50%;
 }
 
 .astrolabe.addNodeDialog .classInputContainer
@@ -271,6 +273,11 @@
 {
     height: 20px;
     padding-right: 20px;
+}
+
+.astrolabe.addNodeDialog .astrolabeAddNodeDialogError
+{
+    color: #cc4358;
 }
 
 .astrolabe.addNodeDialog .rightColumn .classInputContainer > .classFinderIcon
