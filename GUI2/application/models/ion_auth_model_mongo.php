@@ -681,7 +681,9 @@ class Ion_auth_model_mongo extends CI_Model
                 $this->ion_auth->set_error('no_permission');
 		return FALSE; 
             }
+            
                 try {
+                
                     $ret = json_decode(cfpr_role_list_all($username), TRUE);
 
                     return $ret;
@@ -690,7 +692,7 @@ class Ion_auth_model_mongo extends CI_Model
                     log_message('error', $e->getMessage());
                     throw $e;
                 }
-		$this->ion_auth->set_error('role_delete_unsuccessful');
+		$this->ion_auth->set_error('no_access');
 		return FALSE; 
   	}
 

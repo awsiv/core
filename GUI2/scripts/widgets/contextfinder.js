@@ -105,8 +105,12 @@
                     $(".contextfinder_wrapper").delegate('.add_condition',"click", function(event) {
                         event.preventDefault();
                         var destination = $(this).attr('destination');
-                        var new_el = self._createNewElement(destination);
-                        $(this).before(new_el);
+                        var fieldname   = $(this).attr('fieldname');
+                        var $new_el = $(self._createNewElement(fieldname));
+                        
+                        $('td.' +destination).prepend($new_el);
+                        $new_el.find('input').focus();
+                        self.refreshTabindex();
                     });
 
                     //buttons inside input box
@@ -170,7 +174,21 @@
                 }
             });
         },
-
+        refreshTabindex: function() {
+            var self = this;
+            var tabindex=1;
+            $('input[name="include[]"]').each(function(index)
+            {
+                $(this).attr('tabindex', tabindex);
+                tabindex++;
+                
+            });
+            $('input[name="exclude[]"]').each(function(index)
+            {
+                $(this).attr('tabindex', tabindex);
+                tabindex++;
+            });
+        },
         bindClassfinder: function (elem) {
             var self= this;
             $(elem).classfinder({

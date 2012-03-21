@@ -1,3 +1,4 @@
+<div id="edit_form">
 <div id="infoMessage"><?php echo $message;?></div>
 <div class="form">
     <?php echo form_open("auth/manage_role/".$this->uri->segment(3).'/'.$this->uri->segment(4),array('id'=>  strtolower($operation).'_role'));?>
@@ -20,7 +21,7 @@
        ?>
       </p>
 
-      <table cellpadding="0" cellspasing ="0" border="1"  id="maintable">
+      <table cellpadding="0" cellspasing ="0" border="0"  id="maintable">
           <tr>
               <td colspan="3">  
                   <h2>Classes</h2>
@@ -43,8 +44,8 @@
                   </div>            
               </td>
               <td class="arrows">
-                  <a href="javascript:void(0);" class="move_btn" dest="crxi" source="classList">&laquo; Left</a><br /><br />
-                  <a href="javascript:void(0);" class="move_btn" dest="classList" source="crxi">Right &raquo;</a><br /><br />
+                  <a href="javascript:void(0);" class="left" dest="crxi" source="classList" title="&laquo; Left">&nbsp;</a>
+                  <a href="javascript:void(0);" class="right" dest="classList" source="crxi" title="Right &raquo;">&nbsp;</a>
               </td>
               <td rowspan="2">
                   <div id="finderWrapper" class="all_classes dialog_box_style DragNDrop">
@@ -77,8 +78,8 @@
 
               </td>
                <td class="arrows">
-                  <a href="javascript:void(0);" class="move_btn" dest="crxx" source="classList">&laquo; Left</a><br /><br />
-                  <a href="javascript:void(0);" class="move_btn" dest="classList" source="crxx">Right &raquo;</a><br /><br />
+                  <a href="javascript:void(0);" class="left" dest="crxx" source="classList" title="&laquo; Left">&nbsp;</a>
+                  <a href="javascript:void(0);" class="right" dest="classList" source="crxx" title="Right &raquo;">&nbsp;</a>
               </td>
           </tr>
           <tr><td colspan="3"><hr /></td></tr>
@@ -97,8 +98,8 @@
                   </div>            
               </td>
               <td class="arrows">
-                  <a href="javascript:void(0);" class="move_btn" dest="brxi" source="bundlesList">&laquo; Left</a><br /><br />
-                  <a href="javascript:void(0);" class="move_btn" dest="bundlesList" source="brxi">Right &raquo;</a><br /><br />
+                  <a href="javascript:void(0);" class="left" dest="brxi" source="bundlessList" title="&laquo; Left">&nbsp;</a>
+                  <a href="javascript:void(0);" class="right" dest="bundlessList" source="brxi" title="Right &raquo;">&nbsp;</a>
               </td>
               <td rowspan="2">
                   <div id="finderWrapper" class="all_classes dialog_box_style DragNDrop">
@@ -130,14 +131,17 @@
                   </div>            
               </td>
               <td class="arrows">
-                  <a href="javascript:void(0);" class="move_btn" dest="brxx" source="bundlesList">&laquo; Left</a><br /><br />
-                  <a href="javascript:void(0);" class="move_btn" dest="bundlesList" source="brxx">Right &raquo;</a><br /><br />
+                  <a href="javascript:void(0);" class="left" dest="brxx" source="bundlessList" title="&laquo; Left"></a>
+                  <a href="javascript:void(0);" class="right" dest="bundlessList" source="brxx" title="Right &raquo;"></a>
               </td>
           </tr>
           <tr>
               <td colspan="3">
                   <p id="btnholder">
-                      <?php echo form_submit(array('name' => 'submit', 'value' => $operation, 'class' => 'btn', 'id'=>strtolower($operation).'_role')); ?>
+           
+                      <span class="green_btn">
+                          <input type="submit" value="<?php echo $operation ?>" class="green_btn" id="<?php echo strtolower($operation).'_role'?>">
+                      </span>
                   </p>
               </td>
           </tr> 
@@ -145,4 +149,5 @@
 
 
     <?php echo form_close();?>
+</div>
 </div>

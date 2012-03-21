@@ -3,10 +3,10 @@
 // and used only here, so don't move it to helper please
 
 if (!function_exists('contextfinder_generate_item')) {
-    function contextfinder_generate_item($name, $value = '') {
+    function contextfinder_generate_item($name, $tabindex,  $value = '') {
         // if something changed here -chnage also in contextfinder.js new_el variable
         echo '<div class="item">
-                <input type="text" name="'.$name.'[]" value="'. $value .'"> 
+                <input tabindex="'.$tabindex.'" type="text" name="'.$name.'[]" value="'. $value .'"> 
                 <a class="class_selector" href="'.site_url('widget/allclasses').'">&nbsp;</a>
                 <a class="delete_condition" href="#">&nbsp;</a>
             </div>';
@@ -24,43 +24,48 @@ if (!function_exists('contextfinder_generate_item')) {
         <table celpadding="0" cellspacing="0">
         <thead>    
             <tr>
-                <td class="col1">Includes (.*+[])</td>
+                <td class="col1">Includes (.*+[])  <a class="add_condition" destination="includes" fieldname="include" href="#">Add condition <span>&nbsp;</span></a></td>
                 <td class="col2">&nbsp;</td>   
-                <td class="col1">Excludes (.*+[])</td>
+                <td class="col1">Excludes (.*+[])  <a class="add_condition" destination="excludes" fieldname="exclude" href="#">Add condition <span>&nbsp;</span></a></td>
             </tr>
         </thead>
         <tbody>
         <tr>
             <td class="col1 includes">
-            <?php        
-            if ((isset($includes)) && count($includes)) {
-                    foreach ($includes as $item => $value) {
-                        echo contextfinder_generate_item('include', $value);
+<?php $tabindex = 1; ?>
+                <?php        
+                if ((isset($includes)) && count($includes)) {
+                        foreach ($includes as $item => $value) {
+                            echo contextfinder_generate_item('include', $tabindex, $value);
+                            $tabindex++;
+                        }
                     }
-                }
-                else {
-                    for ($i=0; $i<$empty_items_on_page; $i++) {
-                    echo contextfinder_generate_item('include', '');
-                    }
-                } 
-                ?>
-                <a class="add_condition" destination="includes" href="#">Add condition</a>
+                    else {
+                        for ($i=0; $i<$empty_items_on_page; $i++) {
+                            echo contextfinder_generate_item('include', $tabindex, '');
+                            $tabindex ++;
+                        }
+                    } 
+                    ?>
             </td>
             <td class="col2"><a class="invert" href="#">&nbsp;</a></td>    
             <td class="col1 excludes">   
-            <?php        
-            if ((isset($excludes)) && count($excludes)) {
-                    foreach ($excludes as $item => $value) {
-                        echo contextfinder_generate_item('exclude', $value);
+               
+                <?php        
+                if ((isset($excludes)) && count($excludes)) {
+                        foreach ($excludes as $item => $value) {
+                            echo contextfinder_generate_item('exclude', $tabindex, $value);
+                            $tabindex ++;
+                        }
                     }
-                }
-                else {
-                    for ($i=0; $i<$empty_items_on_page; $i++) {
-                    echo contextfinder_generate_item('exclude', '');
-                    }
-                } 
-                ?>
-                <a class="add_condition" destination="excludes" href="#">Add condition</a>
+                    else {
+                        for ($i=0; $i<$empty_items_on_page; $i++) {
+                            echo contextfinder_generate_item('exclude',$tabindex, '');
+                            $tabindex ++;
+                        }
+                    } 
+                    ?>
+                
             </td>
         </tr>
         </tbody>
