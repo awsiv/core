@@ -52,7 +52,7 @@
 
                 <td class="actioncol"> 
                 <?php
-               
+         
  if ($is_admin || ($this->ion_auth->mode != "database" && !$this->ion_auth->is_ldap_user_exists())) {
         if ($this->ion_auth->mode != "database") {
             echo anchor("auth/edit_user_ldap/" . $username, ' ', array('class' => 'edit', 'form' => 'edit_user', 'title' => 'edit user'));
@@ -81,7 +81,7 @@
 if($this->ion_auth->mode =="database"){
    if($is_admin){?>
 	<p id="btnholder">
-           <span class="btn"> <a id="add_user" form="user" href="<?php echo site_url('auth/create_user');?>">Add user +</a></span>
+           <a href="<?php echo site_url('auth/create_user');?>" id="add_user" class="green_btn"><span>Add user +</span></a>
         </p>
 <?php }
 }?>

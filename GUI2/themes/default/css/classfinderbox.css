@@ -44,14 +44,14 @@
     padding-top: 150px;
 }
 .selected_item {
-    background: blue !important;
-    border: 1px solid red !important;
+    background: #d9d9d2 !important;
 }
 input[readonly] {background: buttonface;}
 
 
 #admin_content  #maintable td {
     vertical-align: top !important;
+    border: none !important
 }
 /******** finders box style ************/
 .all_classes {
@@ -101,6 +101,9 @@ input[readonly] {background: buttonface;}
     -ms-overflow-x: hidden; /*ie*/
 }
 
+edit_form_wrapper td {
+    border: none !important;
+}
 #edit_form_wrapper, #edit_form td {
     background: #ccc !important;
 }
@@ -122,6 +125,12 @@ input[readonly] {background: buttonface;}
     display: block;
     color: green;
     border: 3px solid #dedede
+}
+
+#edit_form_wrapper #maintable tr:last-child td,
+#edit_form_wrapper #maintable tr:nth-child(2n) td {
+    background: none !important;
+    background-color: #ccc
 }
 
 .dragged {
@@ -146,4 +155,35 @@ input[readonly] {background: buttonface;}
 }
 .empty_list_warning {
     text-align: center
+}
+
+.holder #admin_content  tbody tr td {
+    border: none !important;
+    border-collapse: colapse;
+}
+
+
+.arrows a {
+    width: 24px;
+    height: 22px;
+    display: inline-block;
+    background-image: url("../images/move_arrow.png");
+    background-repeat: no-repeat;
+    font-size: 0px;
+}
+
+arrows a.left {
+    background-position: 0 0;
+}
+
+.arrows a.left:hover {
+    background-position: -25px 0;
+}
+
+.arrows a.right {
+    background-position: -50px 0;
+}
+
+.arrows a.right:hover {
+    background-position: -75px 0;
 }

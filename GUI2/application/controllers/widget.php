@@ -576,19 +576,10 @@ class Widget extends Cf_Controller
     {
 
         $username = $this->session->userdata('username');
-
+        $all_bundles = $brxi = $brxx = array();
+        
         try
         {
-
-            // if rolename not set - return list of all bundles
-            if ($rolename == '')
-            {
-                echo json_encode(array_keys($all_bundles));
-                return;
-            }
-
-            $all_bundles = $brxi = $brxx = array();
-
             $all_bundles_tmp = json_decode($this->bundle_model->getAllBundles($username));
 
             if (!empty($all_bundles_tmp))
@@ -600,9 +591,14 @@ class Widget extends Cf_Controller
                     $all_bundles[$item[1]] = $item[1]; // $item[1] - bundle name
                 }
             }
-            unset($all_bundles_tmp);
 
+            // if rolename is empty - return all avilable bundles
+            if ($rolename == '') {
+                echo json_encode(array_keys($all_bundles));
+                return;
+            }
 
+          
             $role = $this->ion_auth->get_role($this->session->userdata('username'), $rolename);
 
             $brxi = array_key_exists('bundlerxinlcude', $role) ? $role['bundlerxinlcude'] : "";
