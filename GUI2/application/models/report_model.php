@@ -191,12 +191,12 @@ class report_model extends Cf_Model {
      * @param type $class_regx
      * @return type 
      */
-    function getHostWithBundles($username, $search, $class_regx)
+    function getHostWithBundles($username, $name, $inclist, $exlist, $rows, $page_number)
     {
 
         try
         {
-            $rawdata = cfpr_hosts_with_bundlesseen($username, Null, $name, true, $class_regex);
+            $rawdata = cfpr_hosts_with_bundlesseen($username, Null, $name, true, $inclist, $exlist, $rows, $page_number);
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors()==0)
             {
@@ -291,10 +291,10 @@ class report_model extends Cf_Model {
      * @param type $class_regex
      * @return type array
      */
-    function getHostsWithBusinessValue($username,$days,$months,$years,$class_regex){   
+    function getHostsWithBusinessValue($username, $date , $inclist, $exlist, $raws, $page_number){
      try
         {
-            $rawdata =   cfpr_hosts_with_value($username, NULL, $days, $months, $years, $class_regex);
+            $rawdata =   cfpr_hosts_with_value($username, NULL, $date, NULL, NULL, $inclist, $exlist, $raws, $page_number);
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors()==0)
             {   

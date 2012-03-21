@@ -266,7 +266,7 @@ private $filter_view_mappings=array();
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : ($this->input->post('name')?urldecode($this->input->post('name')):NULL);
                     if ($hosts_only) {
                         //$data['report_result'] = cfpr_hosts_with_bundlesseen($username, NULL, $name, true, $class_regex);
-                        $data['report_result']=$this->report_model->getHostWithBundles($username,$name,$class_regex);
+                        $data['report_result'] = $this->report_model->getHostWithBundles($username, $name, explode(',', $incList), explode(',', $exList), $rows, $page_number);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                       } else {
 
@@ -289,9 +289,9 @@ private $filter_view_mappings=array();
                     $date = isset($getparams['date']) ? urldecode($getparams['date']) : urldecode($this->input->post('date'));
                   
                     if ($hosts_only) {
-                        $data['report_title'] = $report_type . " Days: $days<br>Months: $months<br>Years: $years";
+                        //$data['report_title'] = $report_type . " Days: $days<br>Months: $months<br>Years: $years";
                         //$data['report_result'] = cfpr_hosts_with_value($username, NULL, $days, $months, $years, $class_regex);
-                        //$data['report_result'] = $this->report_model->getHostsWithBusinessValue($username, $days, $months, $years, $class_regex);
+                        $data['report_result'] = $this->report_model->getHostsWithBusinessValue($username, $date, explode(',', $incList), explode(',', $exList), $rows, $page_number);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     }
                     else
@@ -314,7 +314,7 @@ private $filter_view_mappings=array();
                     
                 $name = isset($getparams['name']) ? urldecode($getparams['name']) : $this->input->post('name');
                     if ($hosts_only) {
-                        $data['report_result'] = cfpr_hosts_with_classes($username, NULL, $name, true, $class_regex, $rows , $page_number);
+                        $data['report_result'] = cfpr_hosts_with_classes($username, NULL, $name, true, explode(',',$incList), explode(',',$exList), $rows , $page_number);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     } else {
 
@@ -340,7 +340,7 @@ private $filter_view_mappings=array();
 
                     if ($hosts_only)
                     {
-                        $data['report_result'] = cfpr_hosts_with_compliance_promises($username, NULL, $name, $state, true, $class_regex);
+                        $data['report_result'] = cfpr_hosts_with_compliance_promises($username, NULL, $name, $state, true, explode(',',$incList), explode(',',$exList), $rows, $page_number);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     }
                     else
@@ -363,7 +363,7 @@ private $filter_view_mappings=array();
             case "compliance-summary":
                     if ($hosts_only)
                     {
-                        $data['report_result'] = cfpr_hosts_with_compliance_summary($username, $hostkey, NULL, -1, -1, -1, -1, ">", $class_regex);
+                        $data['report_result'] = cfpr_hosts_with_compliance_summary($username, $hostkey, NULL, -1, -1, -1, -1, ">", explode(',',$incList), explode(',',$exList), $rows, $page_number);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     }
                     else
@@ -389,7 +389,7 @@ private $filter_view_mappings=array();
                     
                     if ($hosts_only)
                     {
-                        $data['report_result'] = cfpr_hosts_with_filechanges($username, NULL, $name, true, -1, ">", $class_regex);
+                        $data['report_result'] = cfpr_hosts_with_filechanges($username, NULL, $name, true, -1, ">", explode(',',$incList), explode(',',$exList), $rows, $page_number);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     }
                     else
@@ -418,7 +418,7 @@ private $filter_view_mappings=array();
                 
                 if ($hosts_only)
                     {
-                        $data['report_result'] = cfpr_hosts_with_filediffs($username, NULL, $name, $diff, true, $cal, ">", $class_regex);
+                        $data['report_result'] = cfpr_hosts_with_filediffs($username, NULL, $name, $diff, true, $cal, ">", explode(',',$incList), explode(',',$exList), $rows, $page_number);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     }
                     else
@@ -450,7 +450,7 @@ private $filter_view_mappings=array();
                     $ago = $ago == 0 ? -1 : $ago;
                     if ($hosts_only)
                     {// when host only field is checked  to geat a group pf hosts
-                        $data['report_result'] = cfpr_hosts_with_lastseen($username, NULL, $key, $name, $address, $ago, true, $class_regex);
+                        $data['report_result'] = cfpr_hosts_with_lastseen($username, NULL, $key, $name, $address, $ago, true, explode(',',$incList), explode(',',$exList), $rows, $page_number);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     }
                     else
@@ -478,7 +478,7 @@ private $filter_view_mappings=array();
                     $arch = isset($getparams['arch']) ? urldecode($getparams['arch']) : urldecode($this->input->post('arch'));
                     if ($hosts_only)
                     {
-                        $data['report_result'] = cfpr_hosts_with_patch_avail($username, NULL, $name, $version, $arch, true, $class_regex);
+                        $data['report_result'] = cfpr_hosts_with_patch_avail($username, NULL, $name, $version, $arch, true, explode(',',$incList), explode(',',$exList), $rows, $page_number);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     }
                     else
@@ -508,7 +508,7 @@ private $filter_view_mappings=array();
 
                     if ($hosts_only)
                     {
-                        $data['report_result'] = cfpr_hosts_with_patch_in($username, NULL, $name, $version, $arch, true, $class_regex);
+                        $data['report_result'] = cfpr_hosts_with_patch_in($username, NULL, $name, $version, $arch, true, explode(',',$incList), explode(',',$exList), $rows, $page_number);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     }
                     else
@@ -535,7 +535,7 @@ private $filter_view_mappings=array();
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     if ($hosts_only)
                     {
-                        $data['report_result'] = cfpr_hosts_with_performance($username, NULL, $name, true, $class_regex);
+                        $data['report_result'] = cfpr_hosts_with_performance($username, NULL, $name, true, explode(',',$incList), explode(',',$exList), $rows, $page_number);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     }
                     else
@@ -564,7 +564,7 @@ private $filter_view_mappings=array();
               
                     if ($hosts_only)
                     {
-                        $data['report_result'] = cfpr_hosts_with_repaired($username, NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex);
+                        $data['report_result'] = cfpr_hosts_with_repaired($username, NULL, $name, intval($hours_deltafrom), intval($hours_deltato), explode(',',$incList), explode(',',$exList), $rows, $page_number);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     }
                     else
@@ -599,7 +599,7 @@ private $filter_view_mappings=array();
                
                     if ($hosts_only)
                     {
-                        $data['report_result'] = cfpr_hosts_with_notkept($username, NULL, $name, intval($hours_deltafrom), intval($hours_deltato), $class_regex);
+                        $data['report_result'] = cfpr_hosts_with_notkept($username, NULL, $name, intval($hours_deltafrom), intval($hours_deltato), explode(',',$incList), explode(',',$exList), $rows, $page_number);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     }
                     else
@@ -630,7 +630,7 @@ private $filter_view_mappings=array();
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     if ($hosts_only)
                     {
-                        $data['report_result'] = cfpr_hosts_with_setuid($username, NULL, $name, true, explode(',', $incList), explode(',', $exList));
+                        $data['report_result'] = cfpr_hosts_with_setuid($username, NULL, $name, true, explode(',',$incList), explode(',',$exList), $rows, $page_number);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     }
                     else
@@ -658,7 +658,7 @@ private $filter_view_mappings=array();
 
                     if ($hosts_only)
                     {
-                        $data['report_result'] = cfpr_hosts_with_software_in($username, NULL, $name, $version, $arch, true, explode(',', $incList), explode(',', $exList));
+                        $data['report_result'] = cfpr_hosts_with_software_in($username, NULL, $name, $version, $arch, true, explode(',',$incList), explode(',',$exList), $rows, $page_number);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     }
                     else
@@ -689,7 +689,7 @@ private $filter_view_mappings=array();
                     $type = isset($getparams['type']) ? urldecode($getparams['type']) : urldecode($this->input->post('type'));
                     if ($hosts_only)
                     {
-                        $data['report_result'] = cfpr_hosts_with_vars($username, NULL, $scope, $lval, $rval, $type, true, $class_regex);
+                        $data['report_result'] = cfpr_hosts_with_vars($username, NULL, $scope, $lval, $rval, $type, true, explode(',',$incList), explode(',',$exList), $rows, $page_number);
                         $this->template->load('template', 'searchpages/search_result_group', $data);
                     }
                     else
