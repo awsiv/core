@@ -1883,10 +1883,13 @@ int Nova2PHP_performance_report(char *hostkey, char *job, int regex, HostClassFi
 
         if (strcmp(hP->nid, CF_NONOTE) == 0)
         {
+            char jsonPerfHandle[CF_MAXVARSIZE] = {0};
+            EscapeJson(hP->handle, jsonPerfHandle, sizeof(jsonPerfHandle));
+            
             snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%ld,"
                      "[\"add\",\"%s\",%d,\"%s\",\"\"]],",
                      hP->hh->hostname, jsonEscapedStr, Q, E, D, hP->t,
-                     hP->hh->keyhash, CFREPORT_PERFORMANCE, hP->handle);
+                     hP->hh->keyhash, CFREPORT_PERFORMANCE, jsonPerfHandle);
         }
         else
         {
