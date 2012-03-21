@@ -175,11 +175,15 @@ class Widget extends Cf_Controller
  
         $searchletter = null;
 
-        if ($alphaSearch != null) {
-            $searchletter = urldecode($alphaSearch) . '.*';
-        }else{
-           $searchletter='.*';
+        if ($alphaSearch != null)
+        {
+            $searchletter = "^" . urldecode($alphaSearch) . '.*';
+        } 
+        else
+        {
+            $searchletter = '.*';
         }
+
 
         $includes = $excludes = array();
         
@@ -204,20 +208,18 @@ class Widget extends Cf_Controller
 
     function filterclass($page = 1, $search = null)
     {
-        
-        
         $username = $this->session->userdata('username');
         $searchletter = null;
         
         if ($search != null)
         {
-            $searchletter = urldecode($search) . '.*';
+            $searchletter = "^".urldecode($search) . '.*';
         }
         else
         {
             $searchletter = '.*';
         }
-        
+              
         $filter = '';
         
         //add include/exclude
@@ -238,28 +240,30 @@ class Widget extends Cf_Controller
         
         $data = "";
 
-        try{
-           switch ($filter) {
-            case "time":
-                $data = $this->class_model->getAllTimeClasses($username, $searchletter, $includes, $excludes, 100,$page);
-                break;
-            case "ip":
-                $data = cfpr_list_ip_classes(NULL, NULL, NULL, NULL);
-                break;
-            case "soft":
-                $data = $this->class_model->getAllSoftClasses($username, $searchletter, $includes, $excludes, 100,$page);
-                break;
-            case "all":
-                $data = $this->class_model->getAllClasses($username, $searchletter, $includes, $excludes, 100, $page);
-                break;
-            case "host":
-                $data = cfpr_list_host_classes(NULL, NULL, NULL, NULL);
-                break;
-        } 
-        echo $data;
-        }catch (Exception $e) {
-              $this->output->set_status_header('500', $e->getMessage());
-              echo($e->getMessage());
+        try {
+            switch ($filter) {
+                case "time":
+                    $data = $this->class_model->getAllTimeClasses($username, $searchletter, $includes, $excludes, 100, $page);
+                    break;
+                case "ip":
+                    $data = cfpr_list_ip_classes(NULL, NULL, NULL, NULL);
+                    break;
+                case "soft":
+                    $data = $this->class_model->getAllSoftClasses($username, $searchletter, $includes, $excludes, 100, $page);
+                    break;
+                case "all":
+                    $data = $this->class_model->getAllClasses($username, $searchletter, $includes, $excludes, 100, $page);
+                    break;
+                case "host":
+                    $data = cfpr_list_host_classes(NULL, NULL, NULL, NULL);
+                    break;
+            }
+            
+            echo $data;
+            
+        } catch (Exception $e) {
+            $this->output->set_status_header('500', $e->getMessage());
+            echo($e->getMessage());
         }
     }
 
