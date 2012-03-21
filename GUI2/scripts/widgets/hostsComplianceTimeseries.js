@@ -55,6 +55,18 @@
             var $self = this;
 
             $self.element.addClass('hostsComplianceTimeseries');
+
+            var $header = $('<div>');
+            $header.addClass('header');
+            $self.element.append($header);
+
+            $self._$loader = $('<span>');
+            $self._$loader.addClass('loader');
+            $header.append($self._$loader);
+
+            $self._$graph = $('<div>');
+            $self._$graph.css('height', '200px');
+            $self.element.append($self._$graph);
         },
 
         _init: function() {
@@ -65,7 +77,7 @@
             $self._sampleCounts = null;
             $self._hostCounts = null;
 
-            $self.element.bind('plothover', function(event, pos, item) {
+            $self._$graph.bind('plothover', function(event, pos, item) {
                 $('#x').text(pos.x.toFixed(2));
                 $('#y').text(pos.y.toFixed(2));
 
@@ -104,6 +116,8 @@
                     $self._previousPoint = null;
                 }
             });
+
+            $self._$loader.hide();
         },
 
         setContext: function(includes, excludes) {
@@ -127,9 +141,13 @@
         refresh: function() {
             var $self = this;
 
-            $.getJSON($self._requestUrls.timeseries($self),
-                function(timeseries) {
+            $self._$loader.show();
 
+            $.ajax({
+                url: $self._requestUrls.timeseries($self),
+                dataType: 'json',
+
+                success: function(timeseries) {
                     var kept = common.arrayWithValue(0, timeseries.count);
                     var notkept = common.arrayWithValue(0, timeseries.count);
                     var repaired = common.arrayWithValue(0, timeseries.count);
@@ -170,7 +188,7 @@
 
                     $self.options.plot.yaxis.max = Math.max.apply(Math, $self._hostCounts);
 
-                    $self._plot = $.plot($self.element, [
+                    $self._plot = $.plot($self._$graph, [
                         {
                             label: 'Promises Kept',
                             data: kept
@@ -184,7 +202,12 @@
                             data: notkept
                         }
                     ], $self.options.plot);
-                });
+                },
+
+                complete: function() {
+                    $self._$loader.hide();
+                }
+            });
         },
 
         _showTooltip: function(x, y, contents) {

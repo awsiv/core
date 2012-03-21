@@ -1,3 +1,15 @@
-.hostsComplianceTimeseries
+.hostsComplianceTimeseries .header
 {
+    height: 16px;
+    padding-left: 10px;
+    padding-bottom: 5px;
+}
+
+.hostsComplianceTimeseries .header .loader
+{
+    background: url("../images/small_loader_dark.gif") no-repeat;
+    width:16px;
+    height:16px;
+    display: inline-block;
+    margin-left: 5px;
 }

@@ -15,7 +15,8 @@
                 <div id="astrolabeLocation"></div>
 
                 <div id="hostsComplianceTimeseriesContainer" class="hostsComplianceTimeseriesContainer">
-                    <div id="hostsComplianceTimeseries" style="height: 200px"></div>
+                    <span id="hostsComplianceTimeseriesLoader" class="loading"></span>
+                    <div id="hostsComplianceTimeseries"></div>
                 </div>
 
                 <div id="hostsInfoContainer" class="hostsInfoContainer">
@@ -79,6 +80,7 @@
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>searchEntry.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>hostsCompliance.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>hostsConnectivity.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>hostsComplianceTimeseries.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>hostInfo.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>jScrollPane.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>contextfinder.css" />
