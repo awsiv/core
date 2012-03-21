@@ -291,10 +291,10 @@ class report_model extends Cf_Model {
      * @param type $class_regex
      * @return type array
      */
-    function getHostsWithBusinessValue($username, $date , $inclist, $exlist, $raws, $page_number){
+    function getHostsWithBusinessValue($username, $date , $inclist, $exlist, $rows, $page_number){
      try
         {
-            $rawdata =   cfpr_hosts_with_value($username, NULL, $date, NULL, NULL, $inclist, $exlist, $raws, $page_number);
+            $rawdata =   cfpr_hosts_with_value($username, NULL, $date, NULL, NULL, $inclist, $exlist, $rows, $page_number);
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors()==0)
             {   
