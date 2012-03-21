@@ -9,7 +9,7 @@ div.contextfinder {
     -webkit-box-shadow: 5px 5px 5px #888;
     box-shadow: 5px 5px 5px #888; 
 }
- 
+
 	div.contextfinder .ui-widget-header {
             background: none; 
         }
@@ -43,10 +43,6 @@ div.contextfinder {
         }
  
 	div.contextfinder .ui-dialog-titlebar-close .ui-icon-closethick {
-            background: url("../images/contextfinder/close_icon.png") no-repeat;
-            height: 16px;
-            width: 16px;
-            display: block;
             margin: 0;
             padding: 0; 
         }
@@ -92,47 +88,6 @@ div.contextfinder {
             height: 20px 
         }
  
-.class_selector, 
-.delete_condition {
-    width: 16px;
-    height: 16px;
-    position: absolute;
-    top: 5px;
-    float: left;
-    font-size: 0;
-    text-decoration: none; 
-}
- 
-.class_selector {
-    right: 25px;
-    background: url("../images/contextfinder/class_icon.png") no-repeat; 
-}
- 
-.delete_condition {
-    right: 5px;
-    background: url("../images/contextfinder/close_icon.png") no-repeat; 
-}
- 
-.class_selector:hover, 
-.delete_condition:hover { 
-    text-decoration: none; 
-}
- 
-.invert {
-    height: 25px;
-    width: 25px;
-    background: url("../images/contextfinder/invert_icon.png") no-repeat;
-    display: inline-block;
-    margin-bottom: 30px; 
-}
- 
-.add_condition {
-    float: right;
-    padding-left: 20px;
-    background: url("../images/contextfinder/add_icon.png") 0 0 no-repeat;
-    margin-right: 5px 
-}
-
 #resetConditions {
     float: left;
     margin-left: 10px;
@@ -142,3 +97,90 @@ div.contextfinder {
     float: right;
     margin-right: 10px;
 }
+
+/*-------------------------- buttons ---------------------------------*/
+div.contextfinder .ui-dialog-titlebar-close .ui-icon-closethick,
+.class_selector,
+.add_condition span,
+.delete_condition,
+.invert {
+    background-image: url("../images/contextfinder/icon_buttons.png");
+    background-repeat: no-repeat;
+    display: block;
+    text-decoration: none; 
+}
+
+div.contextfinder .ui-dialog-titlebar-close .ui-icon-closethick,
+.class_selector, 
+.delete_condition {
+    position: absolute;
+    float: left;
+    height: 16px;
+    width: 16px;
+    font-size: 0;
+} 
+
+.class_selector {
+    top: 5px;
+    right: 25px;
+    background-position: 0 -51px;
+}
+    .class_selector:hover {
+        background-position: -21px -51px;
+    }
+ 
+.add_condition {
+    margin-right: 9px;
+    float: right;
+    text-decoration: none;
+    color: #6C695A !important;
+    font-size: 1em;
+}
+    
+.add_condition span {
+    top: 5px;
+    background-position: 0 -72px;      
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+    .add_condition:hover span {
+        background-position: -21px -72px;  
+        text-decoration: none;
+    }
+    
+div.contextfinder .ui-dialog-titlebar-close .ui-icon-closethick,    
+.delete_condition {
+    background-position: 0 -30px;
+}
+
+    div.contextfinder .ui-dialog-titlebar-close .ui-icon-closethick:hover,
+    .delete_condition:hover {
+        background-position: -21px -30px;
+    }
+     
+.delete_condition {   
+    top: 5px;
+    right: 5px;    
+}
+
+.invert {
+    display: block;
+    height: 25px;
+    width: 25px;
+    display: inline-block;
+    margin-bottom: 30px; 
+    font-size: 0;
+}
+
+    .invert:hover {
+        background-position: -30px 0;
+    }
+
+.class_selector:hover, 
+.delete_condition:hover,
+.invert:hover 
+{ 
+    text-decoration: none; 
+}
+/*---------------------------------------------------------------------*/
