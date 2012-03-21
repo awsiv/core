@@ -72,6 +72,6 @@ if (!function_exists('contextfinder_generate_item')) {
         </table>
  </form>   
 
-<a class="green_btn" id="resetConditions" href="#"><span>Reset conditions</span></a>    
+<a class="green_btn" id="resetConditions" href="#"><span>Reset</span></a>    
 <a class="green_btn" id="setConditions" href="#"><span>Set conditions</span></a>
 </div>
