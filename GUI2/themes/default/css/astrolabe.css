@@ -281,5 +281,11 @@
     height: 16px;
     top: 5px;
     right: 5px;
-    background: url("../images/contextfinder/class_icon.png") no-repeat;
+    background: url("../images/contextfinder/icon_buttons.png") no-repeat;
+    background-position: 0px -51px;
+}
+
+.astrolabe.addNodeDialog .rightColumn .classInputContainer > .classFinderIcon:hover
+{
+    background-position: -21px -51px;
 }
