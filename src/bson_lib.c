@@ -280,13 +280,19 @@ bool BsonAppendIncludeRxList(bson_buffer *queryBuffer, char *includeKey, Rlist *
         return false;
     }
 
-    for (Rlist *rp = includeRxValues; rp; rp = rp->next)
+    bson_buffer *includeClassArray = bson_append_start_array(queryBuffer, "$and");
+
+    for (Rlist *rp = includeRxValues; rp != NULL; rp = rp->next)
     {
+        bson_buffer *includeClassBuffer = bson_append_start_object(includeClassArray, includeKey);
         char anchoredRx[CF_BUFSIZE];
 
         AnchorRegex(ScalarValue(rp), anchoredRx, sizeof(anchoredRx));
-        bson_append_regex(queryBuffer, includeKey, anchoredRx, "");
+        bson_append_regex(includeClassArray, includeKey, anchoredRx, "");
+        bson_append_finish_object(includeClassBuffer);
     }
+
+    bson_append_finish_object(includeClassArray);
 
     return true;
 }
