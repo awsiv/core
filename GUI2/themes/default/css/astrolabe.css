@@ -87,7 +87,7 @@
     background-position: 16px -21px;
 }
 
-.astrolabe .node.expanded .nodeHeader > .busyIcon
+.astrolabe .node.expanded > .busyIcon
 {
     background-image: url('../images/astrolabe/loader.gif');
     display: inline-block;
