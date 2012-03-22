@@ -5076,7 +5076,6 @@ PHP_FUNCTION(cfpr_astrolabe_host_list)
     }
 
     HubQuery *result = NULL;
-
     {
         HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
@@ -5087,13 +5086,13 @@ PHP_FUNCTION(cfpr_astrolabe_host_list)
         HostClassFilterAddIncludeExcludeLists(filter, includes, excludes);
 
         mongo_connection conn;
-
         DATABASE_OPEN(&conn);
 
-        result = CFDB_QueryHostsByAddress(&conn, NULL, NULL, filter);
+        result = CFDB_QueryColour(&conn, HOST_RANK_METHOD_COMPLIANCE, filter);
 
-        DeleteHostClassFilter(filter);
         DATABASE_CLOSE(&conn);
+
+        DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
     }
     assert(result);
 
@@ -5101,20 +5100,18 @@ PHP_FUNCTION(cfpr_astrolabe_host_list)
 
     for (Rlist *rp = result->hosts; rp; rp = rp->next)
     {
-        HubHost *record = (HubHost *) rp->item;
-
-        HostColour colour = HOST_COLOUR_BLUE;
-        Nova_GetHostColour(record->keyhash, HOST_RANK_METHOD_COMPLIANCE, &colour);
+        HubHost *host = (HubHost *) rp->item;
 
         JsonElement *entry = JsonObjectCreate(3);
 
-        JsonObjectAppendString(entry, LABEL_HOST_KEY, record->keyhash);
-        JsonObjectAppendString(entry, LABEL_HOST_NAME, record->hostname);
-        JsonObjectAppendString(entry, LABEL_COLOUR, Nova_HostColourToString(colour));
+        JsonObjectAppendString(entry, LABEL_HOST_KEY, host->keyhash);
+        JsonObjectAppendString(entry, LABEL_HOST_NAME, host->hostname);
+        JsonObjectAppendString(entry, LABEL_COLOUR, Nova_HostColourToString(host->colour));
 
         JsonArrayAppendObject(output, entry);
     }
 
-    DeleteHubQuery(result, DeleteHubClass);
+    DeleteHubQuery(result, NULL);
 
-RETURN_JSON(output)}
+    RETURN_JSON(output)
+}

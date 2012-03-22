@@ -539,6 +539,30 @@ int Nova_GetComplianceScore(HostRankMethod method, double *k, double *r)
 
 /*****************************************************************************/
 
+HostColour HostColourFromScore(time_t now, time_t last_report, time_t blue_horizon, int score, bool is_black)
+{
+    if ((last_report < (now - blue_horizon)) || (score <= 0))
+    {
+        return HOST_COLOUR_BLUE;
+    }
+    if (is_black)
+    {
+        return HOST_COLOUR_BLACK;
+    }
+    else if (score < CF_AMBER_THRESHOLD)
+    {
+        return HOST_COLOUR_GREEN;
+    }
+    else if (score >= CF_AMBER_THRESHOLD && score < CF_RED_THRESHOLD)
+    {
+        return HOST_COLOUR_YELLOW;
+    }
+    else
+    {
+        return HOST_COLOUR_RED;
+    }
+}
+
 HostColour Nova_HostScoreToColour(int score)
 {
     if (score == CF_CODE_BLUE)
