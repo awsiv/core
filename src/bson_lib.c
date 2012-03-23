@@ -273,26 +273,29 @@ bool BsonAppendIncludeList(bson_buffer *queryBuffer, char *includeKey, Rlist *in
 
 /*****************************************************************************/
 
-bool BsonAppendIncludeRxList(bson_buffer *queryBuffer, char *includeKey, Rlist *includeRxValues)
+bool BsonAppendIncludeRxList(bson_buffer *queryBuffer, char *include_key, Rlist *includeRxValues)
 {
     if (!includeRxValues)
     {
         return false;
     }
 
-    bson_buffer *includeClassArray = bson_append_start_array(queryBuffer, "$and");
+    bson_buffer *include_class_query = bson_append_start_object(queryBuffer, include_key);
+    bson_buffer *include_class_array = bson_append_start_array(include_class_query, "$all");
 
-    for (Rlist *rp = includeRxValues; rp != NULL; rp = rp->next)
+    int i = 0;
+    for (Rlist *rp = includeRxValues; rp != NULL; rp = rp->next, i++)
     {
-        bson_buffer *includeClassBuffer = bson_append_start_object(includeClassArray, includeKey);
-        char anchoredRx[CF_BUFSIZE];
-
+        char anchoredRx[CF_BUFSIZE] = { 0 };
         AnchorRegex(ScalarValue(rp), anchoredRx, sizeof(anchoredRx));
-        bson_append_regex(includeClassArray, includeKey, anchoredRx, "");
-        bson_append_finish_object(includeClassBuffer);
+
+        char index_str[32] = { 0 };
+        snprintf(index_str, sizeof(index_str), "%d", i);
+        bson_append_regex(include_class_array, "index_str", anchoredRx, "");
     }
 
-    bson_append_finish_object(includeClassArray);
+    bson_append_finish_object(include_class_array);
+    bson_append_finish_object(include_class_query);
 
     return true;
 }
