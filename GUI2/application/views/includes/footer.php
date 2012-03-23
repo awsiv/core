@@ -10,18 +10,20 @@
         
         <?php if ($this->setting_lib->get_tooltips_status()) { ?> 
         
-        $('a.showqtip,a.help').live('mouseover', function(event) {
+        $('.showqtip,a.help').live('mouseover', function(event) {
             // Bind the qTip within the event handler
             $(this).qtip({
-                overwrite: false, // Make sure the tooltip won't be overridden once created
                 position: {
-                    my:'top left',
+                    my:'top center',
                     at:'bottom  center'
                 },
                 show: {
                     event: event.type, // Use the same show event as the one that triggered the event handler
                     ready: true // Show the tooltip as soon as it's bound, vital so it shows up the first time you hover!
-                }
+                },
+              style: {
+	            classes: 'ui-tooltip-shadow ui-tooltip-' + 'dark'
+	      }
             }, event); // Pass through our original event to qTip
         })
         
