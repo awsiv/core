@@ -21,8 +21,14 @@
                 <div class="Paging">
                 <div class="pages">
                     <div class="inside">
-                        <a href="<?php echo  site_url('welcome/hosts/'.$type.'/' . $pg['first']) ?>" title="Go to First Page" class="first"><span>First</span></a>
-                        <a href="<?php echo  site_url('welcome/hosts/'.$type.'/' . $pg['prev']) ?>" title="Go to Previous Page" class="prev"><span><</span></a>
+                        <?php 
+                        $first = site_url("welcome/hosts/$type/$params/rows/$number_of_rows/page/" . $pg['first']);
+                        $prev = site_url("welcome/hosts/$type/$params/rows/$number_of_rows/page/". $pg['prev']);
+                        $next = site_url("welcome/hosts/$type/$params/rows/$number_of_rows/page/" . $pg['next']);
+                        $last= site_url("welcome/hosts/$type/$params/rows/$number_of_rows/page/" . $pg['last']);
+                        ?>
+                        <a href="<?php echo $first?>" title="Go to First Page" class="first"><span>First</span></a>
+                        <a href="<?php echo $prev?>" title="Go to Previous Page" class="prev"><span><</span></a>
 
                         <?php
                         for ($i = $pg['start']; $i <= $pg['end']; $i++) {
@@ -31,17 +37,17 @@
                                 $selected="";
                         ?>
 
-                            <a href="<?php echo  site_url("welcome/hosts/$type/rows/$number_of_rows/page/$i") ?>" title="Go to Page <?php echo  $i ?>" class="page <?php echo  $selected ?>"><span><?php echo  $i ?></span></a>
+                            <a href="<?php echo  site_url("welcome/hosts/$type/$params/rows/$number_of_rows/page/$i") ?>" title="Go to Page <?php echo  $i ?>" class="page <?php echo  $selected ?>"><span><?php echo  $i ?></span></a>
 
                         <?php  } ?>
 
-                        <a href="<?php echo  site_url("welcome/hosts/$type/rows/$number_of_rows/page/" . $pg['next']) ?>" title="Go to Next Page" class="next"><span>></span></a>
-                        <a href="<?php echo  site_url("welcome/hosts/$type/rows/$number_of_rows/page/" . $pg['last']) ?>" title="Go to Last Page" class="last"><span>Last</span></a>
+                        <a href="<?php echo $next ?>" title="Go to Next Page" class="next"><span>></span></a>
+                        <a href="<?php echo $last ?>" title="Go to Last Page" class="last"><span>Last</span></a>
                     </div>
                 </div>
                 <div>
                     <?php
-                    echo form_open('welcome/hosts/'.$type);
+                    echo form_open('welcome/hosts/'.$type.'/'.$params);
                     echo form_input('rows', $number_of_rows);
                     echo "Rows/Page";
                     echo form_close();

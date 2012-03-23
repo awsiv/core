@@ -469,4 +469,20 @@ function generate_errormessage($exception){
     return $aReturn;
 }
 
+ function get_parameters_without_paging($array)
+    {
+        $temp = array();
+        foreach ((array) $array as $key => $val)
+        {
+            if ($key <> "page" && $key <> "rows" && trim($val))
+            {
+                $temp[] = $key;
+                $temp[] = urlencode($val);
+            }
+        }
+        return implode('/', $temp);
+    }
+
+
+
 ?>

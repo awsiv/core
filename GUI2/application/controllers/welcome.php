@@ -494,7 +494,8 @@ class Welcome extends Cf_Controller {
             'breadcrumbs' => $this->breadcrumblist->display(),
             'current' => $page_number,
             'number_of_rows' => $rows,
-            'count' => $count
+            'count' => $count,
+            'params'=>  get_parameters_without_paging($getparams)
         );
         $this->template->load('template', 'hosts', $data);
     }
