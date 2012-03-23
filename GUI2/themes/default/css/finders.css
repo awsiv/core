@@ -124,7 +124,7 @@
 
 /* host finder control*/
 .loadinggif{
- background: url("../images/small_loader.gif") no-repeat scroll 0 0 transparent;
+ background: url("../images/small_loader.gif") no-repeat scroll 0 50% transparent;
  margin-left: 3px;
  padding: 0 9px;
 }
