@@ -443,8 +443,8 @@ class Welcome extends Cf_Controller {
             $rows = 20;
         }
         $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
-        $includes =  isset($getparams['includes']) ? explode(',', urldecode($getparams['includes'])) : array();
-        $excludes =  isset($getparams['excludes']) ? explode(',', urldecode($getparams['excludes'])) : array();
+        $includes =  isset($getparams['includes']) ? explode(',', urldecode($getparams['includes'])) : array('.*');
+        $excludes =  isset($getparams['excludes']) ? explode(',', urldecode($getparams['excludes'])) : array('');
         
         try{
             switch ($colour) {
