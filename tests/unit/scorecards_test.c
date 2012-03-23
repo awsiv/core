@@ -6,8 +6,6 @@
 static void test_colour_from_score(void **state)
 {
     assert_int_equal(HOST_COLOUR_BLUE, HostColourFromScore(10, 7, 2, 500, false));
-    assert_int_equal(HOST_COLOUR_BLUE, HostColourFromScore(10, 7, 5, -1, false));
-    assert_int_equal(HOST_COLOUR_BLUE, HostColourFromScore(10, 7, 5, 0, false));
     assert_int_equal(HOST_COLOUR_BLUE, HostColourFromScore(10, 7, 2, 300, true));
 
     assert_int_equal(HOST_COLOUR_GREEN, HostColourFromScore(10, 7, 5, 50, false));
