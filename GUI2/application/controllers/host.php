@@ -32,7 +32,6 @@ class Host extends Cf_REST_Controller {
                   "green"=>$this->host_model->getHostCount($this->username,'green',$this->param_includes(),$this->param_excludes()),
                   "yellow"=>$this->host_model->getHostCount($this->username,'yellow',$this->param_includes(),$this->param_excludes())
          );
-         sleep(10);
          echo json_encode($hostcount);
          }catch(Exception $e){
           show_error_custom($e->getMessage(), $e->getCode());
@@ -45,7 +44,6 @@ class Host extends Cf_REST_Controller {
                   "blue"=> $this->host_model->getHostCount($this->username,'blue',$this->param_includes(),$this->param_excludes()),
                   "black"=>$this->host_model->getHostCount($this->username,'black',$this->param_includes(),$this->param_excludes())
          );
-         sleep(10);
          echo json_encode($hostcount);
          }catch(Exception $e){
           show_error_custom($e->getMessage(), $e->getCode());
