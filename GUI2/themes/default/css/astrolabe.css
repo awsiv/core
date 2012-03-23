@@ -46,7 +46,8 @@
     background: #6c695a;
 }
 
-.astrolabe .node.selectedElement > .nodeHeader > .addNodeButton
+.astrolabe .node.selectedElement > .nodeHeader > .addNodeButton,
+.astrolabe .node > .nodeHeader:hover > .addNodeButton
 {
     width: 22px;
     height: 16px;
@@ -61,12 +62,14 @@
     display: hidden;
 }
 
-.astrolabe .node.selectedElement > .nodeHeader > .addNodeButton:hover
+.astrolabe .node.selectedElement > .nodeHeader > .addNodeButton:hover,
+.astrolabe .node > .nodeHeader:hover > .addNodeButton:hover
 {
     background-position: 0px -21px;
 }
 
-.astrolabe .node.selectedElement > .nodeHeader > .removeNodeButton
+.astrolabe .node.selectedElement > .nodeHeader > .removeNodeButton,
+.astrolabe .node > .nodeHeader:hover > .removeNodeButton
 {
     width: 16px;
     height: 16px;
@@ -82,7 +85,8 @@
     display: hidden;
 }
 
-.astrolabe .node.selectedElement > .nodeHeader > .removeNodeButton:hover
+.astrolabe .node.selectedElement > .nodeHeader > .removeNodeButton:hover,
+.astrolabe .node > .nodeHeader:hover > .removeNodeButton:hover
 {
     background-position: 16px -21px;
 }
