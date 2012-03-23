@@ -346,17 +346,15 @@ class pdfreports extends Cf_Controller
 
     /**
      * Changes the timestamp to date format
-     * @param array $data 
+     * @param array $data
      * @param type $index array index of the timestamp field
-     * @return array
      */
-    function changeDateFields($data, $index)
+    function changeDateFields(&$data, $index)
     {
-        foreach ($data as &$row)
-        {
-            $row[$index] = getDateStatus($row[$index], false, true);
-        }
-        return $data;
+       $count = count($data);
+       for ($i = 0;$i<$count;$i++) {
+           $data[$i][$index] =  getDateStatus($data[$i][$index], false, true);
+       }
     }
 
     /**
@@ -394,7 +392,7 @@ class pdfreports extends Cf_Controller
             $data1 = $this->removeNotesField($data1, $header);
             unset($header['Note']);
             $header = array_keys($header);
-            $data1 = $this->changeDateFields($data1, 2);
+            $this->changeDateFields($data1, 2);
 
             if ($this->reportGenerator instanceof cf_pdf)
             {
@@ -483,7 +481,7 @@ class pdfreports extends Cf_Controller
             $data1 = $this->removeNotesField($data1, $header);
             unset($header['Note']);
             $header = array_keys($header);
-            $data1 = $this->changeDateFields($data1, 4);
+            $this->changeDateFields($data1, 4);
 
 
             if ($this->reportGenerator instanceof cf_pdf)
@@ -530,7 +528,7 @@ class pdfreports extends Cf_Controller
             $data1 = $this->removeNotesField($data1, $header);
             unset($header['Note']);
             $header = array_keys($header);
-            $data1 = $this->changeDateFields($data1, 3);
+            $this->changeDateFields($data1, 3);
 
 
             if ($this->reportGenerator instanceof cf_pdf)
@@ -654,7 +652,7 @@ class pdfreports extends Cf_Controller
             $header = $jsondata['meta']['header'];
 
             $header = array_keys($header);
-            $data1 = $this->changeDateFields($data1, 5);
+            $this->changeDateFields($data1, 5);
 
             $cols = count($header);
             $col_len = array(21, 24, 14, 14, 12, 15);
@@ -702,7 +700,7 @@ class pdfreports extends Cf_Controller
             $header = $jsondata['meta']['header'];
 
             $header = array_keys($header);
-            $data1 = $this->changeDateFields($data1, 5);
+            $this->changeDateFields($data1, 5);
 
             $cols = count($header);
             $col_len = array(25, 33, 8, 8, 8, 18);
@@ -738,14 +736,6 @@ class pdfreports extends Cf_Controller
         $cols = 3;
         $col_len = array(33, 34, 33);
         $header = array('Host', 'File', 'Time of Change');
-
-        /* if ($longterm_data) {
-          $data['report_result'] = cfpr_report_filechanges_longterm($username, $hostkey, $search, true, -1, ">", array($class_regex), array(), "time", true, $rows, $page_number);
-          } else {
-          $data['report_result'] = cfpr_report_filechanges($username, $hostkey, $search, true, -1, ">", array($class_regex), array(), "time", true, $rows, $page_number);
-          }
-
-          $ret = $data['report_result']; */
         try
         {
             $jsondata = $this->report_model->getFileChangeLog($username, $hostkey, $search, $inclist, $exlist, $longterm_data, $rows, $page_number);
@@ -757,7 +747,7 @@ class pdfreports extends Cf_Controller
             unset($header['Note']);
 
             $header = array_keys($header);
-            $data1 = $this->changeDateFields($data1, 2);
+            $this->changeDateFields($data1, 2);
 
 
             if ($this->reportGenerator instanceof cf_pdf)
@@ -797,7 +787,7 @@ class pdfreports extends Cf_Controller
             $header = $jsondata['meta']['header'];
 
             $header = array_keys($header);
-            $data1 = $this->changeDateFields($data1, 4);
+            $this->changeDateFields($data1, 4);
 
             $cols = count($header);
             $col_len = array(14, 8, 10, 14, 12, 7, 7, 7, 21);
@@ -837,7 +827,7 @@ class pdfreports extends Cf_Controller
 
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
-            $data1 = $this->changeDateFields($data1, 4);
+            $this->changeDateFields($data1, 4);
 
             $header = array_keys($header);
 
@@ -883,7 +873,7 @@ class pdfreports extends Cf_Controller
             $header = $jsondata['meta']['header'];
 
             $header = array_keys($header);
-            $data1 = $this->changeDateFields($data1, 4);
+            $this->changeDateFields($data1, 4);
 
             $cols = count($header);
             $col_len = array(30, 30, 10, 10, 20);
@@ -925,7 +915,7 @@ class pdfreports extends Cf_Controller
             $header = $jsondata['meta']['header'];
 
             $header = array_keys($header);
-            $data1 = $this->changeDateFields($data1, 4);
+            $this->changeDateFields($data1, 4);
 
 
 
@@ -970,7 +960,7 @@ class pdfreports extends Cf_Controller
             $data1 = $this->removeNotesField($data1, $header);
             unset($header['Note']);
             $header = array_keys($header);
-            $data1 = $this->changeDateFields($data1, 5);
+            $this->changeDateFields($data1, 5);
 
 
             $cols = count($header);
@@ -1018,7 +1008,7 @@ class pdfreports extends Cf_Controller
             $data1 = $this->removeNotesField($data1, $header);
             unset($header['Note']);
             $header = array_keys($header);
-            $data1 = $this->changeDateFields($data1, 3);
+            $this->changeDateFields($data1, 3);
 
 
             $cols = count($header);
@@ -1117,7 +1107,7 @@ class pdfreports extends Cf_Controller
             $newArray[][] = $topic;
             $newArray[] = $head;
             // change the time stamp
-            $subtopic['data'] = $this->changeDateFields($subtopic['data'], 4);
+            $this->changeDateFields($subtopic['data'], 4);
 
             $newArray = array_merge($newArray, $subtopic['data']);
         }
@@ -1149,12 +1139,6 @@ class pdfreports extends Cf_Controller
     function rpt_filediffs($username, $hostkey, $search, $diff, $cal, $inclist, $exlist, $longterm, $rows, $page_number)
     {
 
-        /* if ($longterm) {
-          $data['report_result'] = cfpr_report_filediffs_longterm($username, NULL, $search, $diff, true, $cal, ">", array($class_regex), array(), "time", true, $page, $rows);
-          } else {
-          $data['report_result'] = cfpr_report_filediffs($username, NULL, $search, $diff, true, $cal, ">", array($class_regex), array(), "time", true, $page, $rows);
-          }
-          $result = json_decode($data['report_result'], true); */
         try
         {
             $result = $this->report_model->getFileChangeDiff($username, $hostkey, $search, $diff, $cal, $inclist, $exlist, $longterm, $rows, $page_number);
