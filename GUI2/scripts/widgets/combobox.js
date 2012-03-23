@@ -44,6 +44,11 @@
             var $addItem = $('<li>');
             $addItem.addClass('addItem');
 
+            $self._addInput = $('<input>');
+            $self._addInput.addClass('addInput');
+            $self._addInput.attr('placeholder', $self.options.addItemPlaceholder);
+            $self._addInput.attr('maxlength', $self.options.maxLength);
+
             var onAddItem = function(id, event) {
                 if (id !== undefined &&
                     id !== null &&
@@ -58,13 +63,12 @@
                         id: id
                     });
                 }
+                else {
+                    $self._addInput.focus();
+                }
                 event.stopPropagation();
             }
 
-            $self._addInput = $('<input>');
-            $self._addInput.addClass('addInput');
-            $self._addInput.attr('placeholder', $self.options.addItemPlaceholder);
-            $self._addInput.attr('maxlength', $self.options.maxLength);
             $self._addInput.keypress(function(event) {
                 if (event.which == 13) { // enter key
                     onAddItem($self._addInput.val(), event);
