@@ -310,6 +310,10 @@
             }
 
             var ul = '';
+            // check for empty list and give a message
+            if (list.length == 0 && !append) {
+                list.push('<li style="border:0"><p class="info">No classes found</p></li>');
+            }
             if (append) {
                 ul = '<ul class="classList">' + previousList + list.join('') + '</ul>';
             } else {

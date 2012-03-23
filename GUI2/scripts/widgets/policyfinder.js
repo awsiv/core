@@ -19,6 +19,7 @@
         ajaxloader: $('<span class="loading2"></span>'),
         originalTitle: '',
         animate: false,
+        tempId: '',
         _init: function() {
             var self = this;
             self.resetPagination();
@@ -27,6 +28,8 @@
 
         _create: function() {
             var self = this;
+            var date = new Date().getTime();
+            self.tempId =  'tempId_' + date++
             self.addsearchbar();
             self.addalphapager();
             $.ui.policyfinder.instances.push(this.element);
@@ -44,7 +47,9 @@
         },
 
         containerID: function() {
-            return this.element.attr('id') + '-' + 'policyListContainer';
+            var self = this;
+            var id = self.element.attr('id') ? self.element.attr('id') : self.tempId;
+            return id + '-' + 'policyListContainer';
         },
 
         dialogContainer: function() {
@@ -190,14 +195,19 @@
 
         updateDataInContainer: function(data) {
             var self = this;
+            var containerUlId = self.containerID() + '-ul';
               // To end the scrolling so that no further request is sent
             if (data.length == 0 || data == null) {
                 self.scrollingEnd = true;
                 self.revertTitle();
+                // append empty message if no data is returned and theres no previous data in container
+                if (!document.getElementById(containerUlId).innerHTML) {
+                    document.getElementById(containerUlId).innerHTML += '<li style="border:0"><div class="info">No data found</div></li>';
+                }
+
                 return;
             }
 
-            var containerUlId = self.containerID() + '-ul';
             document.getElementById(containerUlId).innerHTML += data;
             self.dataLoaded = true;
             self.element.text(self. elementtext);
