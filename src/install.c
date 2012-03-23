@@ -105,10 +105,13 @@ void DeleteHubQuery(HubQuery *hq, void (*fnptr) ())
 
     DeleteRlist(hq->hosts);
 
-    for (rp = hq->records; rp != NULL; rp = rp->next)
+    if (fnptr)
     {
-        (*fnptr) (rp->item);
-        rp->item = NULL;
+        for (rp = hq->records; rp != NULL; rp = rp->next)
+        {
+            (*fnptr) (rp->item);
+            rp->item = NULL;
+        }
     }
 
     DeleteRlist(hq->records);
@@ -153,6 +156,7 @@ HubHost *NewHubHost(const char *hubkey, const char *keyhash, const char *ipaddr,
     hp->keyhash = SafeStringDuplicate(keyhash);
     hp->ipaddr = SafeStringDuplicate(ipaddr);
     hp->hostname = SafeStringDuplicate(hostname);
+    hp->colour = HOST_COLOUR_BLUE;
 
     return hp;
 }

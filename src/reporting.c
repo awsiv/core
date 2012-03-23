@@ -2713,8 +2713,9 @@ void Nova_TrackExecution()
     double trust_level = 0.7; // sensivity of scheduling history -> higher more sensitive
 
     /* failsafe + promises double execution exeption */
-    if (strcmp("failsafe.cf", VINPUTFILE) == 0)
+    if (strstr(VINPUTFILE, "failsafe.cf") != NULL)
     {
+        CfDebug("TrackExecution: policy file %s SKIPPED\n", VINPUTFILE);
         return;
     }
 
@@ -2739,8 +2740,16 @@ void Nova_TrackExecution()
     gavr = GAverage ((double)(now - last_exec), gavr, trust_level);
 
     /* save current run data */
-    WriteDB(dbp, NOVA_TRACK_LAST_EXEC, &now, sizeof(time_t));
-    WriteDB(dbp, NOVA_TRACK_DELTA_SCHEDULE, &gavr, sizeof(double));
+    if (!WriteDB(dbp, NOVA_TRACK_LAST_EXEC, &now, sizeof(time_t)))
+    {
+        CfOut(cf_inform, "", " !! Unable to write to nova_agent_execution db");
+    }
+    if (!WriteDB(dbp, NOVA_TRACK_DELTA_SCHEDULE, &gavr, sizeof(double)))
+    {
+        CfOut(cf_inform, "", " !! Unable to write to nova_agent_execution db");
+    }
 
     CloseDB(dbp);
+
+    CfDebug("TrackExecution: policy file: %s, last_exec: %ld, avr: %g PASSED\n", VINPUTFILE, last_exec, gavr);
 }

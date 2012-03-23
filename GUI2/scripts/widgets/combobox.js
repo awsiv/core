@@ -5,7 +5,7 @@
             defaultbehaviour: true,
             noneSelectedLabel: '(none)',
             addItemPlaceholder: 'Add tree',
-            maxLength: 15
+            maxLength: 256
         },
 
         _create: function() {

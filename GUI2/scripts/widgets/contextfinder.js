@@ -111,6 +111,7 @@
                         $('td.' +destination).prepend($new_el);
                         $new_el.find('input').focus();
                         self.refreshTabindex();
+                        self.setFocusFirstElement(destination);
                     });
 
                     //buttons inside input box
@@ -129,42 +130,44 @@
                     //swap values
                     $(".contextfinder_wrapper").delegate(".invert","click",  function(event) {
                         event.preventDefault();    
-                         
+     
                         // try to create copy of all elements..
-                        var elem_includes   = $('td.includes .item');
+                        var elem_includes   = $(self.dialogcontent.find('td.includes .item'));
                         var cloned_includes = elem_includes.clone(true);
                         
-                        var elem_excludes   = $('td.excludes .item');
+                        var elem_excludes   = $(self.dialogcontent.find('td.excludes .item'));
                         var cloned_excludes = elem_excludes.clone(true);
                         
                         //rename includes
                         $.each(cloned_includes, function() { 
-                            $(this).find('input').attr('name', 'exclude[]');
+                            self.dialogcontent.find('input').attr('name', 'exclude[]');
                         });
                         
                         //rename excludes
                         $.each(cloned_excludes, function() { 
-                            $(this).find('input').attr('name', 'include[]');
+                            self.dialogcontent.find('input').attr('name', 'include[]');
                         });
                         
                         // replace current includes/excludes with cloned 
-                        $('td.includes .item').replaceWith(cloned_excludes);
-                        $('td.excludes .item').replaceWith(cloned_includes);
+                        self.dialogcontent.find('td.includes .item').replaceWith(cloned_excludes);
+                        self.dialogcontent.find('td.excludes .item').replaceWith(cloned_includes);
 
                       });
 
-                    $(".contextfinder_wrapper").delegate("#resetConditions","click",  function(event)  {
+                    self.dialogcontent.find(".contextfinder_wrapper").delegate("#resetConditions","click",  function(event)  {
                         event.preventDefault();
                         self.resetForm();
+                        self.refreshTabindex();
                     });
 
-                    $(".contextfinder_wrapper").delegate("#setConditions","click",  function(event)  {
+                    self.dialogcontent.find(".contextfinder_wrapper").delegate("#setConditions","click",  function(event)  {
                         event.preventDefault();
                         self.getInludeExclude();
                         self._trigger("complete",null,self.getInludeExclude());
                         self.dialogcontent.dialog('close')
                     });
-    
+                    
+                    self.setFocusFirstElement();
                     self.animate=false;
                 },
                 error:function(jqXHR, textStatus, errorThrown){
@@ -177,17 +180,28 @@
         refreshTabindex: function() {
             var self = this;
             var tabindex=1;
-            $('input[name="include[]"]').each(function(index)
+            self.dialogcontent.find('input[name="include[]"]').each(function(index)
             {
                 $(this).attr('tabindex', tabindex);
                 tabindex++;
                 
             });
-            $('input[name="exclude[]"]').each(function(index)
+            self.dialogcontent.find('input[name="exclude[]"]').each(function(index)
             {
                 $(this).attr('tabindex', tabindex);
                 tabindex++;
             });
+        },
+        setFocusFirstElement: function(column) {
+            var self= this;
+            if(column == null)
+            {
+                self.dialogcontent.find('input').first().focus();
+            }
+            else 
+            {
+                self.dialogcontent.find('.'+ column + ' input').first().focus();
+            }
         },
         bindClassfinder: function (elem) {
             var self= this;
@@ -209,7 +223,7 @@
             var includes = [];
             var excludes = [];
 
-            $('input[name="include[]"]').each(function(index)
+            self.dialogcontent.find('input[name="include[]"]').each(function(index)
             {
                 if ($(this).val() != '')
                 {
@@ -217,20 +231,19 @@
                 }
             });
 
-            $('input[name="exclude[]"]').each(function(index)
+            self.dialogcontent.find('input[name="exclude[]"]').each(function(index)
             {
                 if ($(this).val() != '')
                 {
                     excludes.push($(this).val());
                 }
             });            
-
             
             // if no input elemenst  -reset context
-            if ($('input[name="includes[]"]').length == 0) {
+            if (self.dialogcontent.find('input[name="includes[]"]').length == 0) {
                 self._context.includes = [];
             }
-            if ($('input[name="exclude[]"]').length == 0) {
+            if (self.dialogcontent.find('input[name="exclude[]"]').length == 0) {
                 self._context.excludes = [];
             }
 
@@ -261,8 +274,10 @@
               $('td.includes').append(self._createNewElement('include'));
               $('td.excludes').append(self._createNewElement('exclude'));
             }
+            self.setFocusFirstElement();
         },
         dialogContainer: function() {
+            var self = this;
             var existing = $("#contentfindercontainer");
             if ( existing.size() > 0) {
                 return existing.first();
@@ -271,10 +286,12 @@
                 //single shared element for modal dialogs
                 var requestDialog = $('<div id="contentfindercontainer" style="display:none" class="result"></div>').appendTo('body').
                 dialog({
-                    autoOpen: false
+                    autoOpen: false,
+                     beforeClose: function(event, ui) {
+                        self.getInludeExclude();
+                    }
                 });
                 return requestDialog;
-               
             }
         },
         containerID:function() {
@@ -306,7 +323,6 @@
             // call the original destroy method since we overwrote it
             $.Widget.prototype.destroy.call( this );
         }
-
     });
 
     $.extend($.ui.contextfinder, {

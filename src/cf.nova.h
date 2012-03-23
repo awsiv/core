@@ -258,12 +258,15 @@ typedef struct
 /* Report DB API Structs                                                     */
 /*****************************************************************************/
 
+#include "scorecards.h"
+
 typedef struct
 {
     char *keyhash;
     char *hubkey;
     char *ipaddr;
     char *hostname;
+    HostColour colour;
 } HubHost;
 
 typedef struct
