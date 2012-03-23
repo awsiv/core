@@ -295,12 +295,6 @@
                     $('#astrolabe-add-node-class-error').html('Class expression cannot be empty');
                     return;
                 }
-                else if (common.canonify(classRegex) !== classRegex) {
-                    $('#astrolabe-add-node-class').focus();
-                    $('#astrolabe-add-node-class-error').html('Class expression is invalid, suggestion: ' +
-                        common.canonify(classRegex));
-                    return;
-                }
 
                 var $node = $($self._createNode(label, classRegex, null));
 
@@ -658,7 +652,7 @@
 
             hosts: function(self, includes, excludes) {
 
-                var url = self.options.baseUrl + 'astrolabe/host?';
+                var url = self.options.baseUrl + '/astrolabe/host?';
 
                 if (includes.length > 0) {
                     url = url + 'includes=' + encodeURIComponent(includes) + '&';
