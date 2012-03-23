@@ -313,7 +313,7 @@ class host_model extends Cf_Model
      * @return type
      * @throws Exception
      */
-    function getHostCount($username,$color=NULL)
+    function getHostCount($username,$color=NULL,$includes=array(),$excludes=array())
     {
         try
         {
