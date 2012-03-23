@@ -279,15 +279,26 @@
             var $self = this;
 
             var addNode = function($dialog) {
+                $('#astrolabe-add-node-label-error').html('');
+                $('#astrolabe-add-node-class-error').html('');
+
                 var label = $('#astrolabe-add-node-label').val();
                 if (label == '') {
                     $('#astrolabe-add-node-label').focus();
+                    $('#astrolabe-add-node-label-error').html('Label cannot be empty');
                     return;
                 }
 
                 var classRegex = $('#astrolabe-add-node-class').val();
                 if (classRegex == '') {
                     $('#astrolabe-add-node-class').focus();
+                    $('#astrolabe-add-node-class-error').html('Class expression cannot be empty');
+                    return;
+                }
+                else if (common.canonify(classRegex) !== classRegex) {
+                    $('#astrolabe-add-node-class').focus();
+                    $('#astrolabe-add-node-class-error').html('Class expression is invalid, suggestion: ' +
+                        common.canonify(classRegex));
                     return;
                 }
 
@@ -623,7 +634,7 @@
             var includes = $self._nodeIncludes($node);
             $.getJSON($self._requestUrls.hostCount($self, includes, []), function(count) {
                 $node.attr('count', count);
-                $node.find('.nodeHeader .hostCountLabel').html('(' + count + ')');
+                $node.children('.nodeHeader').children('.hostCountLabel').html('(' + count + ')');
             });
         },
 

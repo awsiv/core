@@ -5,7 +5,7 @@ if (key_exists('truncated', $report_result['meta'])) {
 }
 $headings = array();
 foreach ($report_result['meta']['header'] as $key => $value) {
-    if (strtolower($key) == "change") {
+    if (strtolower($key) == "change details") {
         $column = $key . " Added(+) , Deleted(-) , line No, Content";
         array_push($headings, $column);
     } else {
@@ -24,7 +24,7 @@ if (count($report_result['data']) > 0) {
                     array_push($temp, $row[$value]);
             }
             else {
-                if (strtolower($key) == "change") {
+                if (strtolower($key) == "change details") {
                     $table = "<table>"; /* generate subkeys for inner table */;
                     $subindexs = array_values($value['subkeys']);
                     $index = $value['index'];

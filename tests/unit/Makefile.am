@@ -13,7 +13,8 @@ MOCKERY_SOURCES = $(CMOCKERY_DIR)/cmockery.c
 
 check_PROGRAMS = \
         logging_test \
-	map_test
+        map_test \
+        scorecards_test
 
 TESTS = $(check_PROGRAMS)
 
@@ -22,3 +23,6 @@ logging_test_LDADD = $(top_builddir)/src/libpromises.la
 
 map_test_SOURCES = $(MOCKERY_SOURCES) map_test.c
 map_test_LDADD = $(top_builddir)/src/libpromises.la
+
+scorecards_test_SOURCES = $(MOCKERY_SOURCES) scorecards_test.c
+scorecards_test_LDADD = $(top_builddir)/src/libpromises.la

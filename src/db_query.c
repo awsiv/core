@@ -477,6 +477,74 @@ HubQuery *CFDB_QueryHostByHostKey(mongo_connection *conn, char *hostKey)
 
 /*****************************************************************************/
 
+HubQuery *CFDB_QueryColour(mongo_connection *conn, HostRankMethod method, HostClassFilter *host_class_filter)
+{
+    unsigned long blue_horizon;
+    if (!CFDB_GetBlueHostThreshold(&blue_horizon))
+    {
+        assert(false && "Could not determine blue horizon");
+        blue_horizon = CF_BLUEHOST_THRESHOLD_DEFAULT;
+    }
+
+    bson_buffer bb;
+    bson_buffer_init(&bb);
+    BsonAppendHostClassFilter(&bb, host_class_filter);
+    bson query;
+    bson_from_buffer(&query, &bb);
+
+    // TODO: why dynamically allocated?
+    char *score_field = HostRankMethodToMongoCode(method);
+
+    bson_buffer_init(&bb);
+    bson_append_int(&bb, cfr_keyhash, 1);
+    bson_append_int(&bb, cfr_ip_array, 1);
+    bson_append_int(&bb, cfr_host_array, 1);
+    bson_append_int(&bb, cfr_day, 1);
+    bson_append_int(&bb, score_field, 1);
+    bson_append_int(&bb, cfr_is_black, 1);
+    bson field;
+    bson_from_buffer(&field, &bb);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+
+    bson_destroy(&query);
+    bson_destroy(&field);
+
+    time_t now = time(NULL);
+
+    Rlist *host_list = NULL;
+    while (mongo_cursor_next(cursor))
+    {
+        HubHost *host = NULL;
+        {
+            Item *host_names = BsonGetStringArrayAsItemList(&cursor->current, cfr_host_array);
+            Item *ip_addresses = BsonGetStringArrayAsItemList(&cursor->current, cfr_ip_array);
+
+            host = NewHubHost(NULL, BsonGetString(&cursor->current, cfr_keyhash), ip_addresses->name, host_names->name);
+
+            DeleteItemList(host_names);
+            DeleteItemList(ip_addresses);
+        }
+        assert(host);
+
+        bool is_black = false;
+        if ((is_black = BsonBoolGet(&cursor->current, cfr_is_black)) == -1)
+        {
+            is_black = false;
+        }
+
+        time_t last_report = BsonIntGet(&cursor->current, cfr_day);
+        int score = BsonIntGet(&cursor->current, score_field);
+
+        host->colour = HostColourFromScore(now, last_report, blue_horizon, score, is_black);
+        PrependRlistAlien(&host_list, host);
+    }
+
+    free(score_field);
+    mongo_cursor_destroy(cursor);
+    return NewHubQuery(host_list, NULL);
+}
+
 HubQuery *CFDB_QuerySoftware(mongo_connection *conn, char *keyHash, char *type, char *lname, char *lver, char *larch,
                              int regex, HostClassFilter *hostClassFilter, int sort)
 // NOTE: needs to return report from one host before next - not mixed (for Constellation)

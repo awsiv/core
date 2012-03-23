@@ -16,10 +16,10 @@ typedef enum
 
 typedef enum
 {
+    HOST_COLOUR_BLUE = 0,
     HOST_COLOUR_GREEN,
     HOST_COLOUR_YELLOW,
     HOST_COLOUR_RED,
-    HOST_COLOUR_BLUE,
     HOST_COLOUR_GREEN_YELLOW_RED,
     HOST_COLOUR_BLACK
 } HostColour;
@@ -34,11 +34,13 @@ typedef struct
 HostColourFilter *NewHostColourFilter(HostRankMethod method, HostColour colours);
 
 #ifdef HAVE_LIBMONGOC
-
-HostColour Nova_HostScoreToColour(int score);
+#include <bson.h>
 
 const char *Nova_HostColourToString(HostColour colour);
 HostColour HostColourFromString(const char *colour);
+
+HostColour HostColourFromScoreForConnectedHost(int score);
+HostColour HostColourFromScore(time_t now, time_t last_report, time_t blue_horizon, int score, bool is_black);
 
 int Nova_GetComplianceScore(HostRankMethod method, double *k, double *rep);
 

@@ -238,7 +238,6 @@
                     excludes.push($(this).val());
                 }
             });            
-
             
             // if no input elemenst  -reset context
             if (self.dialogcontent.find('input[name="includes[]"]').length == 0) {
@@ -278,6 +277,7 @@
             self.setFocusFirstElement();
         },
         dialogContainer: function() {
+            var self = this;
             var existing = $("#contentfindercontainer");
             if ( existing.size() > 0) {
                 return existing.first();
@@ -286,10 +286,12 @@
                 //single shared element for modal dialogs
                 var requestDialog = $('<div id="contentfindercontainer" style="display:none" class="result"></div>').appendTo('body').
                 dialog({
-                    autoOpen: false
+                    autoOpen: false,
+                     beforeClose: function(event, ui) {
+                        self.getInludeExclude();
+                    }
                 });
                 return requestDialog;
-               
             }
         },
         containerID:function() {
@@ -321,7 +323,6 @@
             // call the original destroy method since we overwrote it
             $.Widget.prototype.destroy.call( this );
         }
-
     });
 
     $.extend($.ui.contextfinder, {

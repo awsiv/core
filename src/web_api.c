@@ -3110,17 +3110,17 @@ void Nova2PHP_host_compliance_list_all(mongo_connection *conn, HostClassFilter *
         {
             work[0] = '\0';
 
-            if (Nova_HostScoreToColour(ip->counter) == HOST_COLOUR_GREEN)
+            if (HostColourFromScoreForConnectedHost(ip->counter) == HOST_COLOUR_GREEN)
             {
                 snprintf(work, sizeof(work), "{ \"colour\": \"green\", \"key\": \"%s\", \"id\": \"%s\"},", ip->name,
                          ip->classes);
             }
-            else if (Nova_HostScoreToColour(ip->counter) == HOST_COLOUR_YELLOW)
+            else if (HostColourFromScoreForConnectedHost(ip->counter) == HOST_COLOUR_YELLOW)
             {
                 snprintf(work, sizeof(work), "{ \"colour\": \"yellow\", \"key\": \"%s\", \"id\": \"%s\"},", ip->name,
                          ip->classes);
             }
-            else if (Nova_HostScoreToColour(ip->counter) == HOST_COLOUR_RED)
+            else if (HostColourFromScoreForConnectedHost(ip->counter) == HOST_COLOUR_RED)
             {
                 snprintf(work, sizeof(work), "{ \"colour\": \"red\", \"key\": \"%s\", \"id\": \"%s\"},", ip->name,
                          ip->classes);

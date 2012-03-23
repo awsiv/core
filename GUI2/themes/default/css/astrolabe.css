@@ -87,7 +87,7 @@
     background-position: 16px -21px;
 }
 
-.astrolabe .node.expanded .nodeHeader > .busyIcon
+.astrolabe .node.expanded > .busyIcon
 {
     background-image: url('../images/astrolabe/loader.gif');
     display: inline-block;
@@ -252,12 +252,14 @@
 {
     float: left;
     display: inline-block;
+    width: 50%;
 }
 
 .astrolabe.addNodeDialog .rightColumn
 {
     float: right;
     display: inline-block;
+    width: 50%;
 }
 
 .astrolabe.addNodeDialog .classInputContainer
@@ -273,6 +275,11 @@
     padding-right: 20px;
 }
 
+.astrolabe.addNodeDialog .astrolabeAddNodeDialogError
+{
+    color: #cc4358;
+}
+
 .astrolabe.addNodeDialog .rightColumn .classInputContainer > .classFinderIcon
 {
     position: absolute;
@@ -281,5 +288,11 @@
     height: 16px;
     top: 5px;
     right: 5px;
-    background: url("../images/contextfinder/class_icon.png") no-repeat;
+    background: url("../images/contextfinder/icon_buttons.png") no-repeat;
+    background-position: 0px -51px;
+}
+
+.astrolabe.addNodeDialog .rightColumn .classInputContainer > .classFinderIcon:hover
+{
+    background-position: -21px -51px;
 }
