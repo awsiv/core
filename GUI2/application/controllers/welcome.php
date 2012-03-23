@@ -427,7 +427,7 @@ class Welcome extends Cf_Controller {
         $this->template->load('template', 'goals', $data);
     }
 
-    function hosts($colour = NULL, $includes = null, $excludes = null)
+    function hosts($colour = NULL)
     {
         if ($colour == NULL)
         {
@@ -443,8 +443,9 @@ class Welcome extends Cf_Controller {
             $rows = 20;
         }
         $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
-        $includes =  ($includes != null) ? explode(',', $includes) : array('.*');
-        $excludes =  ($excludes != null) ? explode(',', $excludes) : array('');
+        $includes =  isset($getparams['includes']) ? explode(',', urldecode($getparams['includes'])) : array();
+        $excludes =  isset($getparams['excludes']) ? explode(',', urldecode($getparams['excludes'])) : array();
+        
         try{
             switch ($colour) {
                 case "red":

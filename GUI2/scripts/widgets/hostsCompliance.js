@@ -66,9 +66,14 @@
             $entryLabel.addClass('showqtip');
             $entryLabel.attr('title', tooltip)
             $entryLabel.click(function () {
-                window.location.href = $self.options.baseUrl + '/welcome/hosts/' +
-                    colour + '/' + encodeURIComponent($self._context.includes) + '/' +
-                    encodeURIComponent($self._context.excludes);
+                var redirectUrl=$self.options.baseUrl + '/welcome/hosts/' +colour ;
+                if($self._context.includes.length > 0){
+                    redirectUrl +='/includes/' + encodeURIComponent($self._context.includes) 
+                }
+                if($self._context.excludes.length > 0){
+                    redirectUrl+='/excludes/' + encodeURIComponent($self._context.excludes);
+                }
+                window.location.href = redirectUrl;
             });
             $entry.append($entryLabel);
 
