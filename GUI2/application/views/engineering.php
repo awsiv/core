@@ -21,15 +21,14 @@
 
                 <div id="hostsInfoContainer" class="hostsInfoContainer">
                     <div id="hostsComplianceContainer" class="hostsComplianceContainer">
-                        <p style="font-size: 16px">Host Compliance (last hour)</p>
-                        <div id="hostsCompliance"></div>
+                      <div id="hostsCompliance" class="hostsCompliance"></div>
                     </div>
                     <div class="hostsConnectivityContainer">
-                        <p style="font-size: 16px">Host Operations</p>
-                        <div id="hostsConnectivity"></div>
+                        <div id="hostsConnectivity" class="hostsConnectivity"></div>
                     </div>
+                     <div class="clear"></div>
                 </div>
-                <div class="clear"></div>
+              
 
                 <div id="hostInfoContainer" class="hostInfoContainer">
                     <div id="hostInfo" class="grid_8"></div>
@@ -102,7 +101,6 @@
         $('#astrolabeLocation').astrolabeLocation(genericOption);
         $('#hostsComplianceTimeseries').hostsComplianceTimeseries();
         $('#reportInfoContainer').reportUI(genericOption);
-
 
         $('#astrolabe').astrolabe({
             baseUrl: '<?php echo site_url() ?>',
