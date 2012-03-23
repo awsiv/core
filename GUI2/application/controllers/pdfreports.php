@@ -430,6 +430,7 @@ class pdfreports extends Cf_Controller
         {
 
             $jsondata = $this->report_model->getBusinessValueReport($username, $hostkey, $date, $inclist, $exlist, $rows, $page_number);
+            $this->checkForDataTruncation($jsondata);
 
             $data1 = $jsondata['data'];
             $header = ($jsondata['meta']['header']);
@@ -473,6 +474,7 @@ class pdfreports extends Cf_Controller
         try
         {
             $ret = $this->report_model->getClassReport($username, $hostkey, $search, $inclist, $exlist, $rows, $page_number);
+            $this->checkForDataTruncation($ret);
 
 
             $data1 = $ret['data'];
@@ -521,6 +523,7 @@ class pdfreports extends Cf_Controller
 
             //$ret = cfpr_report_notkept($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), array($class_regex), array(),"time", true, $rows, $page_number);
             $jsondata = $this->report_model->getPromisesNotKeptLog($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows, $page_number);
+            $this->checkForDataTruncation($jsondata);
 
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
@@ -565,6 +568,7 @@ class pdfreports extends Cf_Controller
         {
             // $ret = cfpr_summarize_notkept($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, "time", true, $rows, $page_number);
             $jsondata = $this->report_model->getPromisesNotKeptSummary($username, $hostkey, $name, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows, $page_number);
+            $this->checkForDataTruncation($jsondata);
 
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
@@ -606,6 +610,7 @@ class pdfreports extends Cf_Controller
             //$ret = cfpr_summarize_repaired($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $class_regex, "time", true, $rows, $page_number);
 
             $jsondata = $this->report_model->getPromisesRepairedSummary($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows, $page_number);
+            $this->checkForDataTruncation($jsondata);
 
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
@@ -647,6 +652,7 @@ class pdfreports extends Cf_Controller
         try
         {
             $jsondata = $this->report_model->getPromiseCompliance($username, $hostkey, $search, $state, $inclist, $exlist, $rows, $page_number);
+            $this->checkForDataTruncation($jsondata);
 
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
@@ -695,6 +701,7 @@ class pdfreports extends Cf_Controller
         try
         {
             $jsondata = $this->report_model->getComplianceSummary($username, $hostkey, $incList, $exList, $rows, $page_number);
+            $this->checkForDataTruncation($jsondata);
 
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
@@ -739,6 +746,7 @@ class pdfreports extends Cf_Controller
         try
         {
             $jsondata = $this->report_model->getFileChangeLog($username, $hostkey, $search, $inclist, $exlist, $longterm_data, $rows, $page_number);
+            $this->checkForDataTruncation($jsondata);
 
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
@@ -782,6 +790,7 @@ class pdfreports extends Cf_Controller
         try
         {
             $jsondata = $this->report_model->getLastSeenReport($username, $hostkey, $key, $name, $address, $ago, $inclist, $exlist, $rows, $page_number);
+            $this->checkForDataTruncation($jsondata);
 
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
@@ -824,6 +833,7 @@ class pdfreports extends Cf_Controller
         {
             //$ret = cfpr_report_patch_avail($username, $hostkey, $search, $version, $arch, true, array($class_regex), "hostname", true, $rows, $page_number);
             $jsondata = $this->report_model->getPatchesAvailable($username, $hostkey, $search, $version, $arch, $inclist, $exlist, $rows, $page_number);
+            $this->checkForDataTruncation($jsondata);
 
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
@@ -868,6 +878,7 @@ class pdfreports extends Cf_Controller
         {
             //$ret = cfpr_report_patch_in($username, $hostkey, $search, $version, $arch, true, array($class_regex), array(), "hostname", true, $rows, $page_number);
             $jsondata = $this->report_model->getPatchesInstalled($username, $hostkey, $search, $version, $arch, $inclist, $exlist, $rows, $page_number);
+            $this->checkForDataTruncation($jsondata);
 
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
@@ -910,6 +921,7 @@ class pdfreports extends Cf_Controller
         {
             //$ret = cfpr_report_software_in($username, $hostkey, $search, $version, $arch, true, array($class_regex), array(), "hostname", true, $rows, $page_number);
             $jsondata = $this->report_model->getSoftwareInstalled($username, $hostkey, $search, $version, $arch, $inclist, $exlist, $rows, $page_number);
+            $this->checkForDataTruncation($jsondata);
 
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
@@ -953,6 +965,7 @@ class pdfreports extends Cf_Controller
         {
             //$ret = cfpr_report_performance($username, $hostkey, $search, true, array($class_regex), array(), "last-performed", true, $rows, $page_number);
             $jsondata = $this->report_model->getPerformance($username, $hostkey, $search, $inclist, $exlist, $rows, $page_number);
+            $this->checkForDataTruncation($jsondata);
 
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
@@ -1000,6 +1013,7 @@ class pdfreports extends Cf_Controller
         {
             //$ret = cfpr_report_repaired($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), array($class_regex), array(), "time", true, $rows, $page_number);
             $jsondata = $this->report_model->getPromisesRepairedLog($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows, $page_number);
+            $this->checkForDataTruncation($jsondata);
 
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
@@ -1095,6 +1109,7 @@ class pdfreports extends Cf_Controller
             $ret = $this->report_model->getVariablesReport($username, $hostkey, $scope, $search, $rval, $type, $inclist, $exlist, $rows, $page_number);
         }
 
+        $this->checkForDataTruncation($ret);
         $dataArray = $ret;
 
         $data1 = $dataArray;
@@ -1142,6 +1157,7 @@ class pdfreports extends Cf_Controller
         try
         {
             $result = $this->report_model->getFileChangeDiff($username, $hostkey, $search, $diff, $cal, $inclist, $exlist, $longterm, $rows, $page_number);
+            $this->checkForDataTruncation($result);
             $newFormat = array();
             foreach ($result['data'] as $parentIndex => $data)
             {
@@ -1197,6 +1213,7 @@ class pdfreports extends Cf_Controller
         try
         {
             $jsondata = $this->report_model->getReportSetUid($username, $hostkey, $search, $inclist, $exlist, $rows, $page_number);
+            $this->checkForDataTruncation($jsondata);
 
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
