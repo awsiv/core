@@ -16,11 +16,19 @@ static void test_colour_from_score(void **state)
     assert_int_equal(HOST_COLOUR_BLACK, HostColourFromScore(10, 7, 5, 50, true));
 }
 
+static void test_colour_from_score_for_connected_host(void **state)
+{
+    assert_int_equal(HOST_COLOUR_RED, HostColourFromScoreForConnectedHost(1000));
+    assert_int_equal(HOST_COLOUR_YELLOW, HostColourFromScoreForConnectedHost(100));
+    assert_int_equal(HOST_COLOUR_GREEN, HostColourFromScoreForConnectedHost(10));
+}
+
 int main()
 {
     const UnitTest tests[] =
     {
         unit_test(test_colour_from_score),
+        unit_test(test_colour_from_score_for_connected_host)
     };
 
     return run_tests(tests);

@@ -366,18 +366,7 @@ int Nova_GetHostColour(char *lkeyhash, HostRankMethod method, HostColour *result
             is_black = false;
         }
 
-        if ((then < (now - bluehost_threshold)) || (score == 0)) // if score not found -> host blue
-        {
-            *result = HOST_COLOUR_BLUE;
-        }
-        else if (is_black)
-        {
-            *result = HOST_COLOUR_BLACK;
-        }
-        else
-        {
-            *result = Nova_HostScoreToColour(score);
-        }
+        *result = HostColourFromScore(now, then, bluehost_threshold, score, is_black);
     }
 
     free(score_field);
@@ -563,25 +552,9 @@ HostColour HostColourFromScore(time_t now, time_t last_report, time_t blue_horiz
     }
 }
 
-HostColour Nova_HostScoreToColour(int score)
+HostColour HostColourFromScoreForConnectedHost(int score)
 {
-    if (score == CF_CODE_BLUE)
-    {
-        return HOST_COLOUR_BLUE;
-    }
-    else if (score < CF_AMBER_THRESHOLD)
-    {
-        return HOST_COLOUR_GREEN;
-    }
-    else if (score >= CF_AMBER_THRESHOLD && score < CF_RED_THRESHOLD)
-    {
-        return HOST_COLOUR_YELLOW;
-    }
-    else
-    {
-        return HOST_COLOUR_RED;
-    }
-
+    return HostColourFromScore(1, 1, 1, score, false);
 }
 
 /*****************************************************************************/

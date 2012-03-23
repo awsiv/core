@@ -39,8 +39,7 @@ HostColourFilter *NewHostColourFilter(HostRankMethod method, HostColour colours)
 const char *Nova_HostColourToString(HostColour colour);
 HostColour HostColourFromString(const char *colour);
 
-// TODO: deprecate Nova_HostScoreToColour
-HostColour Nova_HostScoreToColour(int score);
+HostColour HostColourFromScoreForConnectedHost(int score);
 HostColour HostColourFromScore(time_t now, time_t last_report, time_t blue_horizon, int score, bool is_black);
 
 int Nova_GetComplianceScore(HostRankMethod method, double *k, double *rep);
