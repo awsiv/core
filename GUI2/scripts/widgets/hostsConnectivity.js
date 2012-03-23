@@ -4,12 +4,14 @@
             baseUrl: '../',
             defaultbehaviour: true
         },
-
+        ajaxloader:$('<span class="loadinggif"></span>'),
+        header:$('<p class="title">Host Operations</p>'),
         _create: function() {
             var $self = this;
-
-            $self.element.addClass('hostsConnectivity');
-
+            
+            $self.element.append($self.header);
+            $self.ajaxloader.appendTo($self.header);
+            
             $self._blue = $self._createColourEntry('blue', 'hosts unreachable',
                 'Hosts that have not been reached (their state is unknown)');
             $self.element.append($self._blue);
@@ -44,15 +46,22 @@
 
         refresh: function() {
             var $self = this;
-
-            $.getJSON($self._requestUrls.hostCount($self, $self._context.includes, 'blue'),
+            $self.ajaxloader.show();
+            $self.element.find('.colourEntryLabel').html('');
+            $.getJSON($self._requestUrls.hostCountAll($self, $self._context.includes),
+                function(data) {
+                    $self._setHostCount($self._blue, data.blue, 'hosts unreachable');
+                    $self._setHostCount($self._black, data.black, 'hosts with scheduling deviation');
+                    $self.ajaxloader.hide();
+                });
+            /*$.getJSON($self._requestUrls.hostCount($self, $self._context.includes, 'blue'),
                 function(count) {
                     $self._setHostCount($self._blue, count, 'hosts unreachable');
                 });
             $.getJSON($self._requestUrls.hostCount($self, $self._context.includes, 'black'),
                 function(count) {
                     $self._setHostCount($self._black, count, 'hosts with scheduling deviation');
-                });
+                });*/
         },
 
         _createClear: function() {
@@ -66,19 +75,15 @@
         _createColourEntry: function(colour, label, tooltip) {
             var $self = this;
 
-            var $entry = $('<div>');
+           var $entry = $('<div>');
             $entry.addClass('colourEntry');
 
             var $entryIcon = $('<span>');
-            $entryIcon.addClass('colourEntryIcon');
-            $entryIcon.addClass(colour);
-            $entryIcon.html('&nbsp;');
-            $entry.append($entryIcon);
+            $entryIcon.addClass('colourEntryIcon '+colour).html('&nbsp;').appendTo($entry);
 
             var $entryLabel = $('<a>');
-            $entryLabel.addClass('colourEntryLabel');
-            $entryLabel.addClass('showqtip');
-            $entryLabel.attr('title', tooltip);
+            $entryLabel.addClass('colourEntryLabel showqtip').attr('title', tooltip)
+            
             $entryLabel.click(function () {
                 window.location.href = $self.options.baseUrl + '/welcome/hosts/' +
                     colour + '/' + encodeURIComponent($self._context.includes) + '/' +
@@ -104,16 +109,13 @@
 
         _requestUrls: {
 
-            hostCount: function(self, includes, colour) {
-
-                return self.options.baseUrl + '/host/count?' +
-                    'colour=' + colour + '&' +
-                    'includes=' + encodeURIComponent(includes);
-            },
-
             blueHostThreshold: function(self) {
 
                 return self.options.baseUrl + '/appsettings/bluehostthreshold';
+            },
+            
+            hostCountAll:function(self,includes){
+                 return self.options.baseUrl + '/host/countConnectivity?' +'includes=' + encodeURIComponent(includes);
             }
         }
     });
@@ -123,3 +125,6 @@
     });
 
 })(jQuery);
+
+
+

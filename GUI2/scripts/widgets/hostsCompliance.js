@@ -4,12 +4,14 @@
             baseUrl: '../',
             defaultbehaviour: true
         },
-
+        ajaxloader:$('<span class="loadinggif"></span>'),
+        header:$('<p class="title">Host Compliance (last hour)</p>'),
         _create: function() {
             var $self = this;
 
-            $self.element.addClass('hostsCompliance');
-
+           
+            $self.element.append($self.header);
+            $self.ajaxloader.appendTo($self.header);
             $self._red = $self._createColourEntry('red', '> 20% not compliant',
                 'More than 20% of promises could not be kept at last measurement.');
             $self.element.append($self._red);
@@ -21,6 +23,9 @@
             $self._yellow = $self._createColourEntry('yellow', '> 20% repaired, now compliant',
                 'More than 20% of promises needed repair at last measurement.');
             $self.element.append($self._yellow);
+            
+          
+            
         },
 
         setContext: function(includes, excludes) {
@@ -34,19 +39,16 @@
 
         refresh: function() {
             var $self = this;
+            $self.ajaxloader.show();
+            $self.element.find('.colourEntryLabel').html('');
+            $.getJSON($self._requestUrls.hostCountAll($self, $self._context.includes),
+                function(data) {
+                    $self._setHostCount($self._red, data.red, '> 20% not compliant');
+                    $self._setHostCount($self._green, data.green, '> 80% compliant');
+                    $self._setHostCount($self._yellow, data.yellow, '> 20% repaired, now compliant');
+                    $self.ajaxloader.hide();
+             });
 
-            $.getJSON($self._requestUrls.hostCount($self, $self._context.includes, 'red'),
-                function(count) {
-                    $self._setHostCount($self._red, count, '> 20% not compliant');
-                });
-            $.getJSON($self._requestUrls.hostCount($self, $self._context.includes, 'green'),
-                function(count) {
-                    $self._setHostCount($self._green, count, '> 80% compliant');
-                });
-            $.getJSON($self._requestUrls.hostCount($self, $self._context.includes, 'yellow'),
-                function(count) {
-                    $self._setHostCount($self._yellow, count, '> 20% repaired, now compliant');
-                });
         },
 
         _createColourEntry: function(colour, label, tooltip) {
@@ -56,15 +58,10 @@
             $entry.addClass('colourEntry');
 
             var $entryIcon = $('<span>');
-            $entryIcon.addClass('colourEntryIcon');
-            $entryIcon.addClass(colour);
-            $entryIcon.html('&nbsp;');
-            $entry.append($entryIcon);
+            $entryIcon.addClass('colourEntryIcon '+colour).html('&nbsp;').appendTo($entry);
 
             var $entryLabel = $('<a>');
-            $entryLabel.addClass('colourEntryLabel');
-            $entryLabel.addClass('showqtip');
-            $entryLabel.attr('title', tooltip)
+            $entryLabel.addClass('colourEntryLabel showqtip').attr('title', tooltip)
             $entryLabel.click(function () {
                 var redirectUrl=$self.options.baseUrl + '/welcome/hosts/' +colour ;
                 if($self._context.includes.length > 0){
@@ -84,7 +81,6 @@
 
         _setHostCount: function($entry, count, label) {
             var $entryLabel = $entry.children('.colourEntryLabel');
-
             $entryLabel.html(count + ' hosts (' + label + ')');
         },
 
@@ -100,7 +96,12 @@
                 return self.options.baseUrl + '/host/count?' +
                     'colour=' + colour + '&' +
                     'includes=' + encodeURIComponent(includes);
+            },
+            
+            hostCountAll:function(self,includes){
+                 return self.options.baseUrl + '/host/countCompliance?' +'includes=' + encodeURIComponent(includes);
             }
+            
         }
     });
 
