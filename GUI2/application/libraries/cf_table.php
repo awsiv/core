@@ -221,7 +221,7 @@ class cf_table {
             } else {
                 $lnk = anchor('search/index/report/promises-not-kept-summary/host/' . $cols['key'], ' ', array('title' => 'promises not kept', 'class' => 'promisesnotkeptbtn showqtip'))
                         . anchor('visual/vital/' . $cols['key'], ' ', array('title' => 'pulse and vitals', 'class' => 'vitalsbtn showqtip'))
-                        . anchor('welcome/host/delhost/' . $cols['key'] . '/type/' . $type, ' ', array('title' => 'delete host', 'class' => 'deletehostbtn showqtip'));
+                        . anchor('welcome/host/delhost/' . $cols['key'] . '/type/' . $type, ' ', array('title'=>tooltip('tool_tip_host_delete'), 'class' => 'deletehostbtn showqtip'));
                 $cell = array('data' => $lnk, 'class' => 'actioncol');
                 $this->CI->table->add_row(array(
                     anchor('welcome/host/' . $cols['key'], $title, 'class=""'),

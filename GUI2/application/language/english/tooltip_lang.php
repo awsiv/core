@@ -49,7 +49,7 @@ $lang['tooltip_ad_domain_name']="The domain named used by the active directory e
 $lang['tooltip_fall_back']="Members of the selected group will be able to log in if the directory server is down";
 $lang['tooltip_admin_grp']="Members of the selected group will be administrators of the Mission Portal";
 $lang['tooltip_bluehost_threshold']="Blue-state threshold is an amount of time after which host state is considered to be unknown. Range: 5 minutes - 5 weeks";
-
+$lang['tool_tip_host_delete']='Delete this host from the report database. Note the host will automatically reappear if CFEngine is still running on it. To avoid this stop all CFEngine processes on the concerned host before deletion.';
 
 
 

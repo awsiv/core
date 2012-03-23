@@ -100,7 +100,7 @@
        
    */
 
-    $("a.deletehostbtn").bind("click", function(e){
+    $("a.deletehostbtn").bind("click", function(event){
          var a = this; 
           $('#hostdelconfirmation').dialog({
                modal: true,
@@ -108,11 +108,11 @@
                resizable:false,
                 buttons: {
                   "Yes": function() {
-                            window.location = a.href; 
                             $(this).dialog('close');
+                            window.location = a.href; 
                   },
                   'NO': function() {
-	         $(this).dialog('close');
+	               $(this).dialog('close');
 	         }
                  }
             }); 
