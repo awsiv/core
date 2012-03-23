@@ -2,6 +2,7 @@
 
 #if defined(HAVE_LIBMONGOC)
 #include "db_common.h"
+#include "bson_lib.h"
 
 static const char *MongoHostname()
 {
@@ -26,8 +27,7 @@ static int MongoPort()
 
 int CFDB_Open(mongo_connection *conn)
 {
-
-    int result;
+    int result = 0;
 
 # ifdef MONGO_OLD_CONNECT
     mongo_connection_options connOpts;
@@ -53,7 +53,6 @@ int CFDB_Open(mongo_connection *conn)
     return true;
 }
 
-/*****************************************************************************/
 
 int CFDB_Close(mongo_connection *conn)
 {
@@ -65,4 +64,45 @@ int CFDB_Close(mongo_connection *conn)
 
     return true;
 }
+
+
+bool MongoCheckForError(mongo_connection *conn, const char *operation, const char *extra, bool *checkUpdate)
+/**
+ * NOTE: This has performance penalties, and should not be widely used.
+ *       It has the side-effect of guaranteeing that the previous operation finishes before returning.
+ */
+{
+    char dbErr[CF_MAXVARSIZE];
+    bson b;
+
+    if (!extra)
+    {
+        extra = "";
+    }
+
+    bson_empty(&b);
+
+    if (mongo_cmd_get_last_error(conn, MONGO_BASE, &b))
+    {
+        BsonToString(dbErr, sizeof(dbErr), b.data);
+        CfOut(cf_error, "", "!! Database error on %s (%s): %s", operation, extra, dbErr);
+        bson_destroy(&b);
+        return false;
+    }
+
+    if (checkUpdate)
+    {
+        if (!BsonBoolGet(&b, "updatedExisting", checkUpdate))
+        {
+            CfOut(cf_error, "", "!! Unable to determine if update happened on %s (%s)", operation, extra);
+            bson_destroy(&b);
+            return false;
+        }
+    }
+
+    bson_destroy(&b);
+
+    return true;
+}
+
 #endif

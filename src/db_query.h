@@ -2,14 +2,15 @@
 #define CFENGINE_NOVA_DB_QUERY_H
 
 #include "cf.nova.h"
-#include "json.h"
 #include "scorecards.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_common.h"
 
-int CFDB_GetBlueHostThreshold(unsigned long *threshold);
-void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn, char *db_name);
+//*****************************************************************************
+// Set Queries
+//*****************************************************************************
+
 HubQuery *CFDB_QueryHostsInClassContext(mongo_connection *conn, char *expression, time_t horizon, int sort);
 HubQuery *CFDB_QueryHosts(mongo_connection *conn, char *db, char *dbkey, bson *query);
 HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, char *ipRegex,
@@ -56,7 +57,6 @@ HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *policy, 
 
 HubQuery *CFDB_QueryClassesDistinctSorted(mongo_connection *conn, const char *class_rx, HostClassFilter *hostClassFilter, PageInfo *page);
 
-//int CFDB_QueryMagView(mongo_connection *conn,char *keyhash,enum observables obs,time_t start_time,double *qa,double *ea,double *da);
 Item *CFDB_QueryVitalIds(mongo_connection *conn, char *keyHash);
 HubVital *CFDB_QueryVitalsMeta(mongo_connection *conn, char *keyHash);
 int CFDB_QueryMagView2(mongo_connection *conn, char *keyhash, char *monId, time_t start_time, double *qa, double *ea,
@@ -75,10 +75,8 @@ HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char 
 HubQuery *CFDB_QueryHandlesForBundlesWithComments(mongo_connection *conn, char *bType, char *bName);
 HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle, char *promiser, char *bName, int escRegex);
 Item *CFDB_QueryBundles(mongo_connection *conn, char *bTypeRegex, char *bNameRegex);
-Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, PromiseFilter *filter);;
+Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, PromiseFilter *filter);
 Item *CFDB_QueryBundlesUsing(mongo_connection *conn, PromiseFilter *promiseFilter, char *bNameReferenced);
-int CFDB_QueryBundleCount(mongo_connection *conn);
-int CFDB_QueryPromiseCount(mongo_connection *conn);
 HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name);
 Item *CFDB_QueryAllBodies(mongo_connection *conn, char *bTypeRegex, char *bNameRegex);
 Item *CFDB_QueryCdpAcls(mongo_connection *conn, char *sep);
@@ -89,33 +87,46 @@ int CFDB_QueryLastFileChange(mongo_connection *conn, char *keyHash, char *report
 Item *CFDB_QueryCdpRegistry(mongo_connection *conn, char *sep);
 Item *CFDB_QueryCdpServices(mongo_connection *conn, char *sep);
 Item *CFDB_QueryCdpCompliance(mongo_connection *conn, char *handle);
+Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const char *ip, HostClassFilter *hostClassFilter);
+Item *CFDB_GetDeletedHosts(void);
+Item *CFDB_GetLastseenCache(void);
 
-void CFDB_ListEverything(mongo_connection *conn);
-void CFDB_ScanHubHost(bson_iterator *it, char *keyhash, char *ipaddr, char *hostnames);
-int QueryInsertHostInfo(mongo_connection *conn, Rlist *host_list);
-void PrintCFDBKey(bson_iterator *it, int depth);
-int CFDB_IteratorNext(bson_iterator *it, bson_type valType);
-int Nova_MagViewOffset(int start_slot, int dbslot, int wrap);
+
+
+
+//*****************************************************************************
+// Singleton Queries
+//*****************************************************************************
+int CFDB_QueryBundleCount(mongo_connection *conn);
+int CFDB_QueryPromiseCount(mongo_connection *conn);
 int CFDB_CountHosts(mongo_connection *conn, HostClassFilter *host_class_filter, HostColourFilter *host_colour_filter);
 bool CFDB_HasMatchingHost(mongo_connection *conn, char *hostKey, HostClassFilter *hostClassFilter);
 int CFDB_CountHostsGeneric(mongo_connection *conn, bson *query);
 int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int hostNameSz);
-bool MongoCheckForError(mongo_connection *conn, const char *operation, const char *extra, bool *checkUpdate);
+HubHost *CFDB_GetHostByKey(mongo_connection *conn, const char *hostkey);
 
-//replica set
-Item *CFDB_GetLastseenCache(void);
+
+
+//*****************************************************************************
+// Utility Queries
+//*****************************************************************************
+long CFDB_GetLastAgentExecution(mongo_connection *conn, const char *hostkey);
+int CFDB_GetBlueHostThreshold(unsigned long *threshold);
+void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn, char *db_name);
 int CFDB_QueryIsMaster(void);
 int CFDB_QueryMasterIP(char *buffer, int bufsize);
 int CFDB_QueryReplStatus(mongo_connection *conn, char *buffer, int bufsize);
-Item *CFDB_GetDeletedHosts(void);
 
-// host
-Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const char *ip,
-                          HostClassFilter *hostClassFilter);
-HubHost *CFDB_GetHostByKey(mongo_connection *conn, const char *hostkey);
-Item *CFDB_GetHostByColour(mongo_connection *conn, HostClassFilter *host_class_filter,
-                           HostColourFilter *host_colour_filter);
-long CFDB_GetLastAgentExecution(mongo_connection *conn, const char *hostkey);
+
+
+//*****************************************************************************
+// General Utilities / Deprecation Candidates
+//*****************************************************************************
+void CFDB_ScanHubHost(bson_iterator *it, char *keyhash, char *ipaddr, char *hostnames);
+void CFDB_ListEverything(mongo_connection *conn);
+void PrintCFDBKey(bson_iterator *it, int depth);
+Item *CFDB_GetHostByColour(mongo_connection *conn, HostClassFilter *host_class_filter, HostColourFilter *host_colour_filter);
+
 
 #endif
 

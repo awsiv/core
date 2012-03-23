@@ -153,18 +153,19 @@ const char *BsonGetString(const bson *b, const char *key)
 }
 /*****************************************************************************/
 
-int BsonBoolGet(const bson *b, const char *key)
+bool BsonBoolGet(const bson *b, const char *key, bool *out)
 {
     bson_iterator it;
 
     if (bson_find(&it, b, key) == bson_bool)
     {
-        return (int)bson_iterator_bool(&it);
+        *out = (int)bson_iterator_bool(&it);
+        return true;
     }
 
     CfOut(cf_verbose, "", "BsonBoolGet: No match for \"%s\"", key);
 
-    return -1;
+    return false;
 }
 
 /*****************************************************************************/

@@ -528,10 +528,7 @@ HubQuery *CFDB_QueryColour(mongo_connection *conn, HostRankMethod method, HostCl
         assert(host);
 
         bool is_black = false;
-        if ((is_black = BsonBoolGet(&cursor->current, cfr_is_black)) == -1)
-        {
-            is_black = false;
-        }
+        BsonBoolGet(&cursor->current, cfr_is_black, &is_black);
 
         time_t last_report = 0;
         BsonTimeGet(&cursor->current, cfr_day, &last_report);
@@ -2445,7 +2442,73 @@ bool CompareStringOrRegex(char *value, const char *compareTo, bool regex)
     }
     return true;
 }
-/*****************************************************************************/
+
+static int QueryInsertHostInfo(mongo_connection *conn, Rlist *host_list)
+/**
+ * Do a db lookup from keyhash to (hostname,ip) for all hosts in the list.
+ **/
+{
+    bson_buffer bb;
+    bson query, field;
+    HubHost *hh;
+    mongo_cursor *cursor;
+    bson_iterator it1;
+    char keyHash[CF_MAXVARSIZE], hostNames[CF_MAXVARSIZE], ipAddrs[CF_MAXVARSIZE];
+
+    if (host_list == NULL)
+    {
+        return false;
+    }
+
+    // use empty query for now - filter result manually
+
+    bson_empty(&query);
+
+    bson_buffer_init(&bb);
+    bson_append_int(&bb, cfr_keyhash, 1);
+    bson_append_int(&bb, cfr_ip_array, 1);
+    bson_append_int(&bb, cfr_host_array, 1);
+    bson_from_buffer(&field, &bb);
+
+    cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+
+    bson_destroy(&field);
+
+    while (mongo_cursor_next(cursor))
+    {
+        keyHash[0] = '\0';
+        ipAddrs[0] = '\0';
+        hostNames[0] = '\0';
+
+        bson_iterator_init(&it1, cursor->current.data);
+
+        while (bson_iterator_next(&it1))
+        {
+            CFDB_ScanHubHost(&it1, keyHash, ipAddrs, hostNames);
+        }
+
+        hh = GetHubHostIn(host_list, keyHash);
+
+        if (hh)
+        {
+            if (*ipAddrs != '\0')
+            {
+                hh->ipaddr = xstrdup(ipAddrs);
+            }
+
+            if (*hostNames != '\0')
+            {
+                hh->hostname = xstrdup(hostNames);
+            }
+        }
+    }
+
+    mongo_cursor_destroy(cursor);
+
+    return true;
+}
+
+
 int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, PromiseLogState state,
                                  const char *lhandle, int regex, time_t from, time_t to, int sort,
                                  HostClassFilter *hostClassFilter, Rlist **host_list, Rlist **record_list)
@@ -3339,6 +3402,22 @@ HubVital *CFDB_QueryVitalsMeta(mongo_connection *conn, char *keyHash)
 
 /*****************************************************************************/
 
+static int Nova_MagViewOffset(int start_slot, int db_slot, int wrap)
+{
+    int offset = CF_MAX_SLOTS - start_slot;
+
+// Offset is the non-wrapped data size
+
+    if (wrap >= 0 && db_slot < start_slot)
+    {
+        return offset + db_slot;        // assumes db_slot is now < CF_MAGDATA
+    }
+    else
+    {
+        return db_slot - start_slot;
+    }
+}
+
 int CFDB_QueryMagView2(mongo_connection *conn, char *keyhash, char *monId, time_t start_time, double *qa, double *ea,
                        double *da)
 {
@@ -3449,24 +3528,6 @@ int CFDB_QueryMagView2(mongo_connection *conn, char *keyhash, char *monId, time_
 
     mongo_cursor_destroy(cursor);
     return ok;
-}
-
-/*****************************************************************************/
-
-int Nova_MagViewOffset(int start_slot, int db_slot, int wrap)
-{
-    int offset = CF_MAX_SLOTS - start_slot;
-
-// Offset is the non-wrapped data size
-
-    if (wrap >= 0 && db_slot < start_slot)
-    {
-        return offset + db_slot;        // assumes db_slot is now < CF_MAGDATA
-    }
-    else
-    {
-        return db_slot - start_slot;
-    }
 }
 
 /*****************************************************************************/
@@ -5340,92 +5401,6 @@ static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFil
 
 /*****************************************************************************/
 
-int QueryInsertHostInfo(mongo_connection *conn, Rlist *host_list)
-/**
- * Do a db lookup from keyhash to (hostname,ip) for all hosts in the list.
- **/
-{
-    bson_buffer bb;
-    bson query, field;
-    HubHost *hh;
-    mongo_cursor *cursor;
-    bson_iterator it1;
-    char keyHash[CF_MAXVARSIZE], hostNames[CF_MAXVARSIZE], ipAddrs[CF_MAXVARSIZE];
-
-    if (host_list == NULL)
-    {
-        return false;
-    }
-
-    // use empty query for now - filter result manually
-
-    bson_empty(&query);
-
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_from_buffer(&field, &bb);
-
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
-
-    bson_destroy(&field);
-
-    while (mongo_cursor_next(cursor))
-    {
-        keyHash[0] = '\0';
-        ipAddrs[0] = '\0';
-        hostNames[0] = '\0';
-
-        bson_iterator_init(&it1, cursor->current.data);
-
-        while (bson_iterator_next(&it1))
-        {
-            CFDB_ScanHubHost(&it1, keyHash, ipAddrs, hostNames);
-        }
-
-        hh = GetHubHostIn(host_list, keyHash);
-
-        if (hh)
-        {
-            if (*ipAddrs != '\0')
-            {
-                hh->ipaddr = xstrdup(ipAddrs);
-            }
-
-            if (*hostNames != '\0')
-            {
-                hh->hostname = xstrdup(hostNames);
-            }
-        }
-    }
-
-    mongo_cursor_destroy(cursor);
-
-    return true;
-}
-
-/*****************************************************************************/
-
-int CFDB_IteratorNext(bson_iterator *it, bson_type valType)
-{
-    if (bson_iterator_next(it))
-    {
-        if (bson_iterator_type(it) != valType)
-        {
-            CfOut(cf_verbose, "", "!! CFDB value of unexpected type (was=%d,expected=%d)", bson_iterator_type(it),
-                  valType);
-            return false;
-        }
-
-        return true;
-    }
-
-    return false;
-}
-
-/*****************************************************************************/
-
 void PrintCFDBKey(bson_iterator *it1, int depth)
 {
     bson_iterator it2;
@@ -5472,75 +5447,6 @@ void PrintCFDBKey(bson_iterator *it1, int depth)
         printf("(type %d)\n", bson_iterator_type(it1));
         break;
     }
-}
-
-/*****************************************************************************/
-
-bool GetBsonBool(char *data, char *boolKey, bool *val)
-/* Returns true if the bson object has the correct structure (contains
- * key and key is bool), false otherwise.
- * If true is returned, the value of the boolean is written to val.
- * data = (bson *)b->data
- */
-{
-    bson_iterator i;
-
-    bson_iterator_init(&i, data);
-    bool found = false;
-
-    while (bson_iterator_next(&i))
-    {
-        if ((bson_iterator_type(&i) == bson_bool) && (strcmp(bson_iterator_key(&i), boolKey) == 0))
-        {
-
-            *val = bson_iterator_bool(&i);
-            found = true;
-            break;
-        }
-    }
-
-    return found;
-}
-
-/*****************************************************************************/
-
-bool MongoCheckForError(mongo_connection *conn, const char *operation, const char *extra, bool *checkUpdate)
-/**
- * NOTE: This has performance penalties, and should not be widely used.
- *       It has the side-effect of guaranteeing that the previous operation finishes before returning.
- */
-{
-    char dbErr[CF_MAXVARSIZE];
-    bson b;
-
-    if (!extra)
-    {
-        extra = "";
-    }
-
-    bson_empty(&b);
-
-    if (mongo_cmd_get_last_error(conn, MONGO_BASE, &b))
-    {
-        BsonToString(dbErr, sizeof(dbErr), b.data);
-        CfOut(cf_error, "", "!! Database error on %s (%s): %s", operation, extra, dbErr);
-        bson_destroy(&b);
-        return false;
-    }
-
-    if (checkUpdate)
-    {
-        if (!GetBsonBool(b.data, "updatedExisting", checkUpdate))
-        {
-            CfOut(cf_error, "", "!! Unable to determine if update happened on %s (%s)", operation, extra);
-            bson_destroy(&b);
-            return false;
-        }
-    }
-
-    bson_destroy(&b);
-
-    return true;
 }
 
 /*****************************************************************************/

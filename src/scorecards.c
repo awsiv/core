@@ -361,10 +361,7 @@ int Nova_GetHostColour(char *lkeyhash, HostRankMethod method, HostColour *result
         BsonTimeGet(&out, cfr_day, &then);
 
         bool is_black;
-        if ((is_black = BsonBoolGet(&out, cfr_is_black)) == -1)
-        {
-            is_black = false;
-        }
+        BsonBoolGet(&out, cfr_is_black, &is_black);
 
         int score = 0;
         if (BsonIntGet(&out, score_field, &score))
