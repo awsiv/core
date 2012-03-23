@@ -822,7 +822,6 @@ PHP_FUNCTION(cfpr_report_software_in)
     char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
     char *sortColumnName;
-    char *fsortColumnName;
     int sc_len;
     bool sortDescending;
 
@@ -850,7 +849,6 @@ PHP_FUNCTION(cfpr_report_software_in)
     fname = (n_len == 0) ? NULL : name;
     fversion = (v_len == 0) ? NULL : version;
     farch = (a_len == 0) ? NULL : arch;
-    fsortColumnName = (sc_len == 0) ? NULL : sortColumnName;
 
     buffer[0] = '\0';
 
@@ -881,7 +879,6 @@ PHP_FUNCTION(cfpr_report_patch_in)
     char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
     char *sortColumnName;
-    char *fsortColumnName;
     int sc_len;
     bool sortDescending;
 
@@ -909,7 +906,6 @@ PHP_FUNCTION(cfpr_report_patch_in)
     fname = (n_len == 0) ? NULL : name;
     fversion = (v_len == 0) ? NULL : version;
     farch = (a_len == 0) ? NULL : arch;
-    fsortColumnName = (sc_len == 0) ? NULL : sortColumnName;
 
     buffer[0] = '\0';
 
@@ -940,7 +936,6 @@ PHP_FUNCTION(cfpr_report_patch_avail)
     char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
     char *sortColumnName;
-    char *fsortColumnName;
     int sc_len;
     bool sortDescending;
 
@@ -968,7 +963,6 @@ PHP_FUNCTION(cfpr_report_patch_avail)
     fname = (n_len == 0) ? NULL : name;
     fversion = (v_len == 0) ? NULL : version;
     farch = (a_len == 0) ? NULL : arch;
-    fsortColumnName = (sc_len == 0) ? NULL : sortColumnName;
 
     buffer[0] = '\0';
 
@@ -1000,7 +994,6 @@ PHP_FUNCTION(cfpr_report_classes)
     char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
     char *sortColumnName;
-    char *fsortColumnName;
     int sc_len;
     bool sortDescending;
 
@@ -1022,7 +1015,6 @@ PHP_FUNCTION(cfpr_report_classes)
 
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fname = (n_len == 0) ? NULL : name;
-    fsortColumnName = (sc_len == 0) ? NULL : sortColumnName;
 
     buffer[0] = '\0';
 
@@ -1267,7 +1259,6 @@ PHP_FUNCTION(cfpr_report_vars)
     char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
     char *sortColumnName;
-    char *fsortColumnName;
     int sc_len;
     bool sortDescending;
 
@@ -1297,7 +1288,6 @@ PHP_FUNCTION(cfpr_report_vars)
     flval = (l_len == 0) ? NULL : lval;
     frval = (r_len == 0) ? NULL : rval;
     ftype = (t_len == 0) ? NULL : type;
-    fsortColumnName = (sc_len == 0) ? NULL : sortColumnName;
 
     buffer[0] = '\0';
 
@@ -1350,7 +1340,6 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
     char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
     char *sortColumnName;
-    char *fsortColumnName;
     int sc_len;
     bool sortDescending;
 
@@ -1376,7 +1365,6 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
 
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fversion = (v_len == 0) ? NULL : version;
-    fsortColumnName = (sc_len == 0) ? NULL : sortColumnName;
 
     buffer[0] = '\0';
 
@@ -1408,7 +1396,6 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
     int user_len, use_reg;
     PageInfo page = { 0 };
     char *sortColumnName;
-    char *fsortColumnName;
     int sc_len;
     bool sortDescending;
 
@@ -1433,7 +1420,6 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fhandle = (h_len == 0) ? NULL : handle;
     fstatus = (s_len == 0) ? NULL : status;
-    fsortColumnName = (sc_len == 0) ? NULL : sortColumnName;
 
     buffer[0] = '\0';
 
@@ -1511,7 +1497,6 @@ PHP_FUNCTION(cfpr_report_lastseen)
     int use_reg;
     PageInfo page = { 0 };
     char *sortColumnName;
-    char *fsortColumnName;
     int sc_len;
     bool sortDescending;
 
@@ -1541,7 +1526,6 @@ PHP_FUNCTION(cfpr_report_lastseen)
     fhash = (h2_len == 0) ? NULL : hash;
     fhost = (h_len == 0) ? NULL : host;
     faddress = (a_len == 0) ? NULL : address;
-    fsortColumnName = (sc_len == 0) ? NULL : sortColumnName;
 
     buffer[0] = '\0';
 
@@ -1572,7 +1556,6 @@ PHP_FUNCTION(cfpr_report_performance)
     zend_bool regex;
     PageInfo page = { 0 };
     char *sortColumnName;
-    char *fsortColumnName;
     int sc_len;
     bool sortDescending;
 
@@ -1594,7 +1577,6 @@ PHP_FUNCTION(cfpr_report_performance)
 
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fjob = (j_len == 0) ? NULL : job;
-    fsortColumnName = (sc_len == 0) ? NULL : sortColumnName;
 
     buffer[0] = '\0';
 
@@ -1624,7 +1606,6 @@ PHP_FUNCTION(cfpr_report_setuid)
     zend_bool regex;
     PageInfo page = { 0 };
     char *sortColumnName;
-    char *fsortColumnName;
     int sc_len;
     bool sortDescending;
 
@@ -1646,7 +1627,6 @@ PHP_FUNCTION(cfpr_report_setuid)
 
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     ffile = (j_len == 0) ? NULL : file;
-    fsortColumnName = (sc_len == 0) ? NULL : sortColumnName;
 
     buffer[0] = '\0';
 
@@ -1678,7 +1658,6 @@ PHP_FUNCTION(cfpr_report_filechanges)
     time_t then;
     PageInfo page = { 0 };
     char *sortColumnName;
-    char *fsortColumnName;
     int sc_len;
     bool sortDescending;
 
@@ -1703,7 +1682,6 @@ PHP_FUNCTION(cfpr_report_filechanges)
     then = (time_t) t;
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     ffile = (f_len == 0) ? NULL : file;
-    fsortColumnName = (sc_len == 0) ? NULL : sortColumnName;
 // NOT THIS fcmp =  (c_len == 0) ? NULL : cmp;
 
     buffer[0] = '\0';
@@ -1737,7 +1715,6 @@ PHP_FUNCTION(cfpr_report_filediffs)
     time_t then;
     PageInfo page = { 0 };
     char *sortColumnName;
-    char *fsortColumnName;
     int sc_len;
     bool sortDescending;
 
@@ -1765,7 +1742,6 @@ PHP_FUNCTION(cfpr_report_filediffs)
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     ffile = (f_len == 0) ? NULL : file;
     fdiff = (d_len == 0) ? NULL : diff;
-    fsortColumnName = (sc_len == 0) ? NULL : sortColumnName;
 // NOT THIS fcmp =  (c_len == 0) ? NULL : cmp;
 
     buffer[0] = '\0';
@@ -1798,7 +1774,6 @@ PHP_FUNCTION(cfpr_report_filechanges_longterm)
     time_t then;
     PageInfo page = { 0 };
     char *sortColumnName;
-    char *fsortColumnName;
     int sc_len;
     bool sortDescending;
 
@@ -1823,7 +1798,6 @@ PHP_FUNCTION(cfpr_report_filechanges_longterm)
     then = (time_t) t;
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     ffile = (f_len == 0) ? NULL : file;
-    fsortColumnName = (sc_len == 0) ? NULL : sortColumnName;
 // NOT THIS fcmp =  (c_len == 0) ? NULL : cmp;
 
     buffer[0] = '\0';
@@ -1857,7 +1831,6 @@ PHP_FUNCTION(cfpr_report_filediffs_longterm)
     time_t then;
     PageInfo page = { 0 };
     char *sortColumnName;
-    char *fsortColumnName;
     int sc_len;
     bool sortDescending;
 
@@ -1885,7 +1858,6 @@ PHP_FUNCTION(cfpr_report_filediffs_longterm)
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     ffile = (f_len == 0) ? NULL : file;
     fdiff = (d_len == 0) ? NULL : diff;
-    fsortColumnName = (sc_len == 0) ? NULL : sortColumnName;
 // NOT THIS fcmp =  (c_len == 0) ? NULL : cmp;
 
     buffer[0] = '\0';
@@ -1949,7 +1921,6 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
     int use_reg;
     PageInfo page = { 0 };
     char *sortColumnName;
-    char *fsortColumnName;
     int sc_len;
     bool sortDescending;
 
@@ -1972,7 +1943,6 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
     use_reg = (int) regex;
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fbundle = (j_len == 0) ? NULL : bundle;
-    fsortColumnName = (sc_len == 0) ? NULL : sortColumnName;
 
     buffer[0] = '\0';
 
@@ -2001,7 +1971,6 @@ PHP_FUNCTION(cfpr_report_value)
     char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
     char *sortColumnName;
-    char *fsortColumnName;
     int sc_len;
     bool sortDescending;
 
@@ -2026,7 +1995,6 @@ PHP_FUNCTION(cfpr_report_value)
     fday = (d_len == 0) ? NULL : day;
     fmonth = (m_len == 0) ? NULL : month;
     fyear = (y_len == 0) ? NULL : year;
-    fsortColumnName = (sc_len == 0) ? NULL : sortColumnName;
 
     buffer[0] = '\0';
 
@@ -2075,7 +2043,6 @@ PHP_FUNCTION(cfpr_report_notkept)
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
     char *sortColumnName;
-    char *fsortColumnName;
     int sc_len;
     bool sortDescending;
 
@@ -2102,7 +2069,6 @@ PHP_FUNCTION(cfpr_report_notkept)
 
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fhandle = (h_len == 0) ? NULL : handle;
-    fsortColumnName = (sc_len == 0) ? NULL : sortColumnName;
 
     buffer[0] = '\0';
 
@@ -2133,7 +2099,6 @@ PHP_FUNCTION(cfpr_report_repaired)
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
     char *sortColumnName;
-    char *fsortColumnName;
     int sc_len;
     bool sortDescending;
 
@@ -2155,7 +2120,6 @@ PHP_FUNCTION(cfpr_report_repaired)
 
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fhandle = (h_len == 0) ? NULL : handle;
-    fsortColumnName = (sc_len == 0) ? NULL : sortColumnName;
 
 // convert delta hours to absolute time (deltato is oldest)
 
@@ -2191,7 +2155,6 @@ PHP_FUNCTION(cfpr_summarize_notkept)
     time_t from, to;
     PageInfo page = { 0 };
     char *sortColumnName;
-    char *fsortColumnName;
     int sc_len;
     bool sortDescending;
 
@@ -2216,7 +2179,6 @@ PHP_FUNCTION(cfpr_summarize_notkept)
 
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fhandle = (h_len == 0) ? NULL : handle;
-    fsortColumnName = (sc_len == 0) ? NULL : sortColumnName;
 
     buffer[0] = '\0';
 
@@ -2248,7 +2210,6 @@ PHP_FUNCTION(cfpr_summarize_repaired)
     time_t from, to;
     PageInfo page = { 0 };
     char *sortColumnName;
-    char *fsortColumnName;
     int sc_len;
     bool sortDescending;
 
@@ -2272,7 +2233,6 @@ PHP_FUNCTION(cfpr_summarize_repaired)
 
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fhandle = (h_len == 0) ? NULL : handle;
-    fsortColumnName = (sc_len == 0) ? NULL : sortColumnName;
 
     buffer[0] = '\0';
 
