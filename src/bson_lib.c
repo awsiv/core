@@ -287,29 +287,52 @@ bool BsonAppendIncludeList(bson_buffer *queryBuffer, char *includeKey, Rlist *in
 
 /*****************************************************************************/
 
-bool BsonAppendIncludeRxList(bson_buffer *queryBuffer, char *include_key, Rlist *includeRxValues)
+static void BsonAppendArrayRx(bson_buffer *buffer, const char *key, Rlist *rx_values)
 {
-    if (!includeRxValues)
-    {
-        return false;
-    }
-
-    bson_buffer *include_class_query = bson_append_start_object(queryBuffer, include_key);
-    bson_buffer *include_class_array = bson_append_start_array(include_class_query, "$all");
+    bson_buffer *array = bson_append_start_array(buffer, key);
 
     int i = 0;
-    for (Rlist *rp = includeRxValues; rp != NULL; rp = rp->next, i++)
+    for (Rlist *rp = rx_values; rp != NULL; rp = rp->next, i++)
     {
         char anchoredRx[CF_BUFSIZE] = { 0 };
         AnchorRegex(ScalarValue(rp), anchoredRx, sizeof(anchoredRx));
 
         char index_str[32] = { 0 };
         snprintf(index_str, sizeof(index_str), "%d", i);
-        bson_append_regex(include_class_array, "index_str", anchoredRx, "");
+        bson_append_regex(array, index_str, anchoredRx, "");
     }
 
-    bson_append_finish_object(include_class_array);
+    bson_append_finish_object(array);
+}
+
+bool BsonAppendIncludeRxList(bson_buffer *query_buffer, char *include_key, Rlist *include_rx_values)
+{
+    if (!include_rx_values)
+    {
+        return false;
+    }
+
+    bson_buffer *include_class_query = bson_append_start_object(query_buffer, include_key);
+    BsonAppendArrayRx(include_class_query, "$all", include_rx_values);
     bson_append_finish_object(include_class_query);
+
+    return true;
+}
+
+bool BsonAppendExcludeRxList(bson_buffer *query_buffer, char *exclude_key, Rlist *exclude_rx_values)
+{
+    if (!exclude_rx_values)
+    {
+        return false;
+    }
+
+    bson_buffer *exclude_class_buffer = bson_append_start_object(query_buffer, exclude_key);
+    {
+        bson_buffer *not_buffer = bson_append_start_object(exclude_class_buffer, "$not");
+        BsonAppendArrayRx(not_buffer, "$all", exclude_rx_values);
+        bson_append_finish_object(not_buffer);
+    }
+    bson_append_finish_object(exclude_class_buffer);
 
     return true;
 }
@@ -324,37 +347,11 @@ bool BsonAppendExcludeList(bson_buffer *queryBuffer, char *excludeKey, Rlist *ex
     }
 
     bson_buffer *excludeClassBuffer = bson_append_start_object(queryBuffer, excludeKey);
-    bson_buffer *excludeClassArray = bson_append_start_array(excludeClassBuffer, "$nin");
+    bson_buffer *excludeClassArray = bson_append_start_array(excludeClassBuffer, "$not");
 
     for (Rlist *rp = excludeValues; rp != NULL; rp = rp->next)
     {
         bson_append_string(excludeClassArray, excludeKey, ScalarValue(rp));
-    }
-
-    bson_append_finish_object(excludeClassArray);
-    bson_append_finish_object(excludeClassBuffer);
-
-    return true;
-}
-
-/*****************************************************************************/
-
-bool BsonAppendExcludeRxList(bson_buffer *queryBuffer, char *excludeKey, Rlist *excludeRxValues)
-{
-    if (!excludeRxValues)
-    {
-        return false;
-    }
-
-    bson_buffer *excludeClassBuffer = bson_append_start_object(queryBuffer, excludeKey);
-    bson_buffer *excludeClassArray = bson_append_start_array(excludeClassBuffer, "$nin");
-
-    for (Rlist *rp = excludeRxValues; rp != NULL; rp = rp->next)
-    {
-        char anchoredRx[CF_BUFSIZE];
-
-        AnchorRegex(ScalarValue(rp), anchoredRx, sizeof(anchoredRx));
-        bson_append_regex(excludeClassArray, excludeKey, anchoredRx, "");
     }
 
     bson_append_finish_object(excludeClassArray);

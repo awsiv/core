@@ -70,7 +70,7 @@
             $classFinderIcon.addClass('showqtip');
             $classFinderIcon.attr('title', 'Find hosts by the classes they have defined.');
             $classFinderIcon.html('&nbsp');
-            $classFinderIcon.classfinder({ baseUrl: $self.options.baseUrl} );
+            $classFinderIcon.classfinder({baseUrl: $self.options.baseUrl});
             $menuContainer.append($classFinderIcon);
 
             var $hostFinderIcon = $('<a>');
@@ -78,7 +78,7 @@
             $hostFinderIcon.addClass('showqtip');
             $hostFinderIcon.attr('title', 'Find hosts by name or address.');
             $hostFinderIcon.html('&nbsp');
-            $hostFinderIcon.hostfinder({ baseUrl: $self.options.baseUrl} );
+            $hostFinderIcon.hostfinder({baseUrl: $self.options.baseUrl});
             $menuContainer.append($hostFinderIcon);
 
             var $promiseFinderIcon = $('<a>');
@@ -86,7 +86,7 @@
             $promiseFinderIcon.addClass('showqtip');
             $promiseFinderIcon.attr('title', 'Find promises that make up the policy.');
             $promiseFinderIcon.html('&nbsp');
-            $promiseFinderIcon.policyfinder({ baseUrl: $self.options.baseUrl} );
+            $promiseFinderIcon.policyfinder({baseUrl: $self.options.baseUrl});
             $menuContainer.append($promiseFinderIcon);
 
             return $menuContainer;
@@ -315,7 +315,7 @@
             }
 
             var $dialog = $('<div>')
-                .load($self.options.baseUrl+'/widget/astrolabeAddNodeDialog/', function() {
+                .load($self.options.baseUrl + '/widget/astrolabeAddNodeDialog/', function() {
                     $('#astrolabe-add-node-label').focus();
                 })
                 .dialog({
@@ -469,7 +469,7 @@
             self._subHosts(node).remove();
 
             var includes = self._nodeIncludes(node);
-            var excludes = self._nodeExcludes(node);
+            var excludes = self._nodeExcludes(node).join('|');
 
             self._loadHosts(node, includes, excludes);
         },
