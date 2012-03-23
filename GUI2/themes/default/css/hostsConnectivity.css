@@ -1,8 +1,5 @@
 .hostsConnectivity .colourEntry
 {
-    padding: 0px;
-    float: left;
-    width: 100%;
 }
 
 .hostsConnectivity .colourEntryIcon
@@ -28,4 +25,11 @@
 .hostsConnectivity .colourEntryIcon.black
 {
     background: #000000;
+}
+
+/*same as hostsCompliance*/
+.hostsConnectivity .title
+{
+   padding:0;
+   margin-right: 5px;
 }
