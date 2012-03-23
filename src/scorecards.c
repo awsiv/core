@@ -357,8 +357,8 @@ int Nova_GetHostColour(char *lkeyhash, HostRankMethod method, HostColour *result
     }
     else
     {
-        time_t then = BsonIntGet(&out, cfr_day);
-        int score = BsonIntGet(&out, score_field);
+        time_t then = 0;
+        BsonTimeGet(&out, cfr_day, &then);
 
         bool is_black;
         if ((is_black = BsonBoolGet(&out, cfr_is_black)) == -1)
@@ -366,7 +366,16 @@ int Nova_GetHostColour(char *lkeyhash, HostRankMethod method, HostColour *result
             is_black = false;
         }
 
-        *result = HostColourFromScore(now, then, bluehost_threshold, score, is_black);
+        int score = 0;
+        if (BsonIntGet(&out, score_field, &score))
+        {
+            *result = HostColourFromScore(now, then, bluehost_threshold, score, is_black);
+        }
+        else
+        {
+            // special case: could not find the score, return blue
+            *result = HOST_COLOUR_BLUE;
+        }
     }
 
     free(score_field);
@@ -530,7 +539,7 @@ int Nova_GetComplianceScore(HostRankMethod method, double *k, double *r)
 
 HostColour HostColourFromScore(time_t now, time_t last_report, time_t blue_horizon, int score, bool is_black)
 {
-    if ((last_report < (now - blue_horizon)) || (score <= 0))
+    if (last_report < (now - blue_horizon))
     {
         return HOST_COLOUR_BLUE;
     }

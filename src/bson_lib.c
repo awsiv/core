@@ -70,18 +70,32 @@ Rlist *BsonStringArrayAsRlist(const bson *b, const char *key)
 
 /*****************************************************************************/
 
-int BsonIntGet(const bson *b, const char *key)
+bool BsonIntGet(const bson *b, const char *key, int *out)
 {
     bson_iterator it;
 
     if (bson_find(&it, b, key) == bson_int)
     {
-        return bson_iterator_int(&it);
+        *out = bson_iterator_int(&it);
+        return true;
     }
 
     CfOut(cf_verbose, "", "BsonFindInt: No match for \"%s\"", key);
+    return false;
+}
 
-    return 0;                   // TODO: handle this better?
+bool BsonTimeGet(const bson *b, const char *key, time_t *out)
+{
+    int value = 0;
+    if (BsonIntGet(b, key, &value))
+    {
+        *out = (time_t)value;
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 /*****************************************************************************/

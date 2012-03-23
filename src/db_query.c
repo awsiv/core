@@ -533,10 +533,19 @@ HubQuery *CFDB_QueryColour(mongo_connection *conn, HostRankMethod method, HostCl
             is_black = false;
         }
 
-        time_t last_report = BsonIntGet(&cursor->current, cfr_day);
-        int score = BsonIntGet(&cursor->current, score_field);
+        time_t last_report = 0;
+        BsonTimeGet(&cursor->current, cfr_day, &last_report);
 
-        host->colour = HostColourFromScore(now, last_report, blue_horizon, score, is_black);
+        int score = 0;
+        if (BsonIntGet(&cursor->current, score_field, &score))
+        {
+            host->colour = HostColourFromScore(now, last_report, blue_horizon, score, is_black);
+        }
+        else
+        {
+            // special case: could not find a score, mark as blue
+            host->colour = HOST_COLOUR_BLUE;
+        }
         PrependRlistAlien(&host_list, host);
     }
 
@@ -611,7 +620,7 @@ HubQuery *CFDB_QuerySoftware(mongo_connection *conn, char *keyHash, char *type, 
 
         if (strcmp(type, cfr_software) == 0)
         {
-            lastSeen = (time_t) BsonIntGet(&(cursor->current), cfr_software_t);
+            BsonTimeGet(&(cursor->current), cfr_software_t, &lastSeen);
         }
 
         while (bson_iterator_next(&it1))
@@ -4145,7 +4154,8 @@ HubQuery *CFDB_QueryPromises(mongo_connection *conn, PromiseFilter *filter)
         BsonStringWrite(classContext, sizeof(classContext), &(cursor->current), cfp_classcontext);
         BsonStringWrite(file, sizeof(file), &(cursor->current), cfp_file);
 
-        int lineNumber = BsonIntGet(&(cursor->current), cfp_lineno);
+        int lineNumber = 0;
+        BsonIntGet(&(cursor->current), cfp_lineno, &lineNumber);
 
         Rlist *bundleArgs = BsonStringArrayAsRlist(&(cursor->current), cfp_bundleargs);
         Rlist *constraints = BsonStringArrayAsRlist(&(cursor->current), cfp_constraints);
