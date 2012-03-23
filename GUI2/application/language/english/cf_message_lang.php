@@ -198,7 +198,6 @@ $lang['host_not_discovered'] = '(Not discovered yet)';
 $lang['host_delete'] = 'Delete this host';
 $lang['host_delete_confirm'] = ' The host will be deleted from the report database on the hub.
         The hub will still try to pull it for reports, and it may thus <strong>Reappear</strong>.Are you sure you want to delete this host?';
-
 $lang['host_promise_not_kept'] = 'Promises not kept in the past week';
 
 /*

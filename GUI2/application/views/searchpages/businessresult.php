@@ -27,7 +27,7 @@
                     </form>
                     <div class="alignrightbuttoncontainer">
                       <a href="<?php echo site_url("/savedsearch/listSavedSearches/$report_type"); ?>"  class="green_btn loadsavedsearch"><span>Load saved searches</span></a>
-                      <a href="<?php echo $report_link ?>" id="send_mail" class="green_btn" title="Download report"><span>Download</span></a>
+                      <a href="<?php echo $report_link ?>" id="send_mail" class="green_btn showqtip" title="<?php echo $this->lang->line('tool_tip_download_report')?>"><span>Download</span></a>
                     </div>
           </div> 
            <div class="clear"></div> 
