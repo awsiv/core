@@ -32,10 +32,7 @@
         complete: function(event,data)
         {
             var $classInput = $('#astrolabe-add-node-class');
-            var value = $.trim($classInput.val());
-            if (value) {
-               value = value + '|';
-            }
+            var value = $classInput.val();
             $classInput.val(value + data.selectedclass);
         }
     });
