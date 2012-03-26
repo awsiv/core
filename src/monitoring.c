@@ -724,13 +724,7 @@ for (i = 1; i < 20; i++)
 
 double NovaShiftAverage(double new, double old)
 {
-    double av, forgetrate = 0.01;
-    double wnew, wold;
-
-    wnew = forgetrate;
-    wold = (1.0 - forgetrate);
-
-    av = (wnew * new + wold * old);
+    double av = forgetrate * new + (1.0 - forgetrate) * old;
 
     if (av < 0)
     {
