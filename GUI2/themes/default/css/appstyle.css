@@ -2846,23 +2846,52 @@ body .outerdiv a.hostcontextddl, .hostcontextddl{
 }
 
 #savesearchcontainer .alignrightbuttoncontainer{
-    margin-top: 39px;
+    margin: 36px 9px 0 0 ;
 }
 
 #savesearchcontainer{
     border-left: solid 1px #fff;
-    margin:13px 5px;
+    margin:13px 0px;
+    padding: 0 13px;
 }
 
-span.green_btn,a.green_btn{
-    background: url("../images/green_button_right.png") no-repeat scroll 100% 0 transparent;
+#savesearchcontainer #search_name {
+    border: 1px solid #CECECE;
+    display: block;
+    margin-top: 2px;
+    padding-top: 2px;
+    font-size: 1em;        
+    width: 60%;
+    z-index: auto !important;
+    float: left;
+}
+#savesearchcontainer label {
+    float: none;
+    display: block;
+}
+
+ #savesearchcontainer span.green_btn {
+    float:left;
+    margin: 2px 0 0 10px !important;    
+}
+
+span.green_btn, a.green_btn {
+    background-image: url("../images/mp_buttons.png");
+    background-repeat: no-repeat;
+    background-position: 100% 0;
     color: #FFFFFF !important;
     padding-right: 3px;
     font-size: 13px;
     font-family:"CFE_FONT",arial,Helvetica,sans-serif;
-
-    /*padding-bottom: 1px;*/
+    display: inline-block;
+    line-height: 19px;
+    height: 19px;
 }
+
+    span.green_btn:hover, a.green_btn:hover {
+        background-position: 100% -60px;
+        color: #3d4439 !important;
+    }
 
 span.green_btn{
     height:19px;
@@ -2870,14 +2899,23 @@ span.green_btn{
 }
 
 a.green_btn span, span.green_btn input{
-    background: url("../images/green_button_left.png") no-repeat scroll 0 0 transparent;
+    background-image: url("../images/mp_buttons.png");
+    background-repeat: no-repeat;
+    background-position: 0 0;
     padding: 0 6px 0px 9px;
     color: #FFFFFF !important;
     border: none;
     font-size: 13px;
     font-family:"CFE_FONT",arial,Helvetica,sans-serif;
+    display: inline-block;
 }
 
+    a.green_btn span:hover, span.green_btn input:hover {
+        background-position: 0 -20px;
+        color: #3d4439 !important;
+        cursor: pointer;
+    }
+    
 span.green_btn input{
     font-size: 12px;
     height:19px;
@@ -2888,6 +2926,7 @@ span.green_btn input{
     padding: 0 !important;
     margin-top: 20px;
     background: url("../images/grey_1x1.gif") repeat-x 0 50%;
+    cursor: pointer;
 }
 
 #reportpanel .title div {
@@ -2924,3 +2963,4 @@ span.green_btn input{
 #reportpanel .collapsed:hover em {
     background-position: -20px 0 !important;
 }
+

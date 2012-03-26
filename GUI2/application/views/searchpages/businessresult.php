@@ -14,11 +14,11 @@
             });
         </script>    
         <div id="modifySearchPanel">
-            <div class="grid_8">
+            <div class="grid_7">
                 <?php $this->load->view('searchpages/' . $filter_view); ?> 
 
             </div>
-            <div id="savesearchcontainer" class="grid_4 floatright panelcontent"> 
+            <div id="savesearchcontainer" class="grid_5 floatright panelcontent"> 
                 <div id="searchSaveError" class="error" style="display:none;"></div>
                 <div id="searchSaveSuccess" class="success" style="display:none;"></div> 
                 <form id="saveform" method="post" action="<?php echo site_url(); ?>/savedsearch/save/">
@@ -26,12 +26,14 @@
                         <label>Save this search </label> 
                         <input type="input" id="search_name" name="search_name" class="textbox"></input>
                         <span class="green_btn"><input type="submit" id="submit_search" value="save"/></span>
+                        <span class="clear"></span>
                     </p>
                     <input type="hidden" id="search_params" name="search_params" value="<?php echo $params; ?>"></input>
                     <input type="hidden" id="search_url" name="search_url" value="<?php echo site_url() . $breadCrumbUrl; ?>"></input>
                     <input type="hidden" id="report_title" name="report_title" value="<?php echo $report_type; ?>"></input>
 
                 </form>
+          
                 <div class="alignrightbuttoncontainer">
                     <a href="<?php echo site_url("/savedsearch/listSavedSearches/$report_type"); ?>"  class="green_btn loadsavedsearch"><span>Load saved searches</span></a>
                     <a href="<?php echo $report_link ?>" id="send_mail" class="green_btn showqtip" title="<?php echo $this->lang->line('tool_tip_download_report') ?>"><span>Download</span></a>
