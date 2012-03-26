@@ -331,7 +331,6 @@ void NotePromiseCompliance(Promise *pp, double val, PromiseState state, char *re
     static char oldNoRepeatId[CF_BUFSIZE] = { 0 };
     Event e, newe;
     time_t now = time(NULL);
-    double delta2;
     double vstatus;             /* end with a rough probability */
 
     CfDebug("Note Promise Compliance\n");
@@ -375,10 +374,7 @@ void NotePromiseCompliance(Promise *pp, double val, PromiseState state, char *re
     if (ReadDB(dbp, promiseHandle, &e, sizeof(e)))
     {
         newe.t = now;
-        newe.Q.q = vstatus;
-        newe.Q.expect = GAverage(vstatus, e.Q.expect, 0.5);
-        delta2 = (vstatus - e.Q.expect) * (vstatus - e.Q.expect);
-        newe.Q.var = GAverage(delta2, e.Q.var, 0.5);
+        newe.Q = QAverage(e.Q, vstatus, 0.5);
     }
     else
     {
@@ -515,7 +511,7 @@ void TrackValue(char *date, double kept, double repaired, double notkept)
 
 void LastSawBundle(char *name,double compliance)
 {
-    double lastseen,delta2;
+    double lastseen;
     Event e, newe;
     time_t now = time(NULL);
     CF_DB *dbp;
@@ -528,19 +524,12 @@ void LastSawBundle(char *name,double compliance)
     if (ReadDB(dbp, name, &e, sizeof(e)))
     {
         lastseen = now - e.t;
-        newe.Q.q = compliance;
-        newe.Q.dq = compliance - e.Q.q;
-        newe.Q.expect = GAverage(compliance, e.Q.expect, 0.7);
-        delta2 = (compliance - e.Q.expect) * (compliance - e.Q.expect);
-        newe.Q.var = GAverage(delta2, e.Q.var, 0.7);
+        newe.Q = QAverage(e.Q, compliance, 0.7);
     }
     else
     {
         lastseen = 0;
-        newe.Q.q = compliance;
-        newe.Q.dq = 0.0;
-        newe.Q.expect = 0.0;
-        newe.Q.var = 0.0;
+        newe.Q = QDefinite(compliance);
     }
 
     newe.t = now;

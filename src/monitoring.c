@@ -311,12 +311,7 @@ void Nova_UpdateShiftAverage(Averages *shift_value, Averages *newvals)
 
     for (i = 0; i < CF_OBSERVABLES; i++)
     {
-        double delta2;
-
-        shift_value->Q[i].q = newvals->Q[i].q;
-        shift_value->Q[i].expect = GAverage(newvals->Q[i].q, shift_value->Q[i].expect, 0.01);
-        delta2 = (newvals->Q[i].q - shift_value->Q[i].expect) * (newvals->Q[i].q - shift_value->Q[i].expect);
-        shift_value->Q[i].var = GAverage(delta2, shift_value->Q[i].var, 0.01);
+        shift_value->Q[i] = QAverage(shift_value->Q[i], newvals->Q[i].q, 0.01);
     }
 }
 
@@ -328,9 +323,7 @@ void Nova_ResetShiftAverage(Averages *shift_value)
 
     for (i = 0; i < CF_OBSERVABLES; i++)
     {
-        shift_value->Q[i].q = 0.0;
-        shift_value->Q[i].var = 0.0;
-        shift_value->Q[i].expect = 0.0;
+        shift_value->Q[i] = QDefinite(0.0);
     }
 }
 
@@ -1302,7 +1295,6 @@ void NovaNamedEvent(char *eventname, double value, Attributes a, Promise *pp)
 {
     Event ev_new, ev_old;
     time_t now = time(NULL);
-    double delta2;
     CF_DB *dbp;
 
     if (!OpenDB(&dbp, dbid_measure))
@@ -1310,36 +1302,25 @@ void NovaNamedEvent(char *eventname, double value, Attributes a, Promise *pp)
         return;
     }
 
+    ev_new.t = now;
+
     if (ReadDB(dbp, eventname, &ev_old, sizeof(ev_old)))
     {
-        ev_new.t = now;
-        ev_new.Q.q = value;
-
         if (isnan(ev_old.Q.expect))
         {
-            ev_new.Q.expect = value;
-        }
-        else
-        {
-            ev_new.Q.expect = GAverage(value, ev_old.Q.expect, FORGETRATE);
+            ev_old.Q.expect = value;
         }
 
         if (isnan(ev_old.Q.var))
         {
-            ev_new.Q.var = 0.0;
+            ev_old.Q.var = 0;
         }
-        else
-        {
-            delta2 = (value - ev_new.Q.expect) * (value - ev_new.Q.expect);
-            ev_new.Q.var = GAverage(delta2, ev_old.Q.var, FORGETRATE);
-        }
+
+        ev_new.Q = QAverage(ev_old.Q, value, FORGETRATE);
     }
     else
     {
-        ev_new.t = now;
-        ev_new.Q.q = value;
-        ev_new.Q.expect = value;
-        ev_new.Q.var = 0.0;
+        ev_new.Q = QDefinite(value);
     }
 
     CfOut(cf_verbose, "", " -> Wrote scalar named event \"%s\" = (%.2lf,%.2lf,%.2lf)", eventname, ev_new.Q.q,

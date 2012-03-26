@@ -327,12 +327,9 @@ static void Nova_RecordNetwork(mongo_connection *dbconnp, time_t now, double dat
     bson_buffer bb, *setObj;
     bson query, field, update;
     Event e = { 0 }, newe = { 0 };
-    double delta;
 
     newe.t = now;
-    newe.Q.q = 0;
-    newe.Q.expect = 0;
-    newe.Q.var = 0;
+    newe.Q = QDefinite(0);
 
 // query
 
@@ -365,10 +362,7 @@ static void Nova_RecordNetwork(mongo_connection *dbconnp, time_t now, double dat
                 {
                     memcpy(&e, bson_iterator_bin_data(&it), sizeof(e));
                     newe.t = now;
-                    newe.Q.q = datarate;
-                    newe.Q.expect = GAverage(datarate, e.Q.expect, 0.5);
-                    delta = (datarate - e.Q.expect) * (datarate - e.Q.expect);
-                    newe.Q.var = GAverage(delta, e.Q.var, 0.5);
+                    newe.Q = QAverage(e.Q, datarate, 0.5);
                 }
                 else
                 {
