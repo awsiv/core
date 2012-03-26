@@ -14,22 +14,8 @@
              <span class="clear"></span>
           </p>
           
-          <p class="alignrightbuttoncontainer">
-             <span class="green_btn"><input class="green_btn" type="submit" value="Generate report"></input></span>
-             <a  id="morefiltertoggle"class="green_btn" href="#"><span>More Filters</span></a>
-          </p>
+            <?php $this->load->view('searchpages/buttons_for_filter', array('morefilters' => true)); ?> 
             <?php $this->load->view('searchpages/hidden_fields_for_set_context'); ?>   
         </form>
     </div>
  </div>
-<script type="text/javascript">
-$('#morefiltertoggle').live('click',function(){
-     var textcontainer=$(this).find('span');
-    if( textcontainer.text().toLowerCase()=='more filters'){
-       textcontainer.text('Fewer Filters') 
-    }else {
-        textcontainer.text('More Filters') 
-    }
-     $('#morefilters').toggle();
-});
-</script>
