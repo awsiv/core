@@ -33,6 +33,8 @@ HostColourFilter *NewHostColourFilter(HostRankMethod method, HostColour colours)
     return filter;
 }
 
+/*****************************************************************************/
+
 const char *Nova_HostColourToString(HostColour colour)
 {
     switch (colour)
@@ -53,6 +55,8 @@ const char *Nova_HostColourToString(HostColour colour)
         return "unknown";
     }
 }
+
+/*****************************************************************************/
 
 HostColour HostColourFromString(const char *colour)
 {
@@ -86,6 +90,8 @@ HostColour HostColourFromString(const char *colour)
         return HOST_COLOUR_GREEN_YELLOW_RED;
     }
 }
+
+/*****************************************************************************/
 
 void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, char *buffer, int bufsize)
 // Read the cached compliance summary (either from Hub or
@@ -384,8 +390,6 @@ int Nova_GetHostColour(char *lkeyhash, HostRankMethod method, HostColour *result
     return 0;
 }
 
-/*****************************************************************************/
-/* Level                                                                     */
 /*****************************************************************************/
 
 char *HostRankMethodToMongoCode(HostRankMethod method)
