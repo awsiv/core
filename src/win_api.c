@@ -470,5 +470,3 @@ int NovaWin_uname(struct utsname *buf)
 
     return 0;
 }
-
-fixme
