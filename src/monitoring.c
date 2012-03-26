@@ -314,9 +314,9 @@ void Nova_UpdateShiftAverage(Averages *shift_value, Averages *newvals)
         double delta2;
 
         shift_value->Q[i].q = newvals->Q[i].q;
-        shift_value->Q[i].expect = NovaShiftAverage(newvals->Q[i].q, shift_value->Q[i].expect);
+        shift_value->Q[i].expect = GAverage(newvals->Q[i].q, shift_value->Q[i].expect, 0.01);
         delta2 = (newvals->Q[i].q - shift_value->Q[i].expect) * (newvals->Q[i].q - shift_value->Q[i].expect);
-        shift_value->Q[i].var = NovaShiftAverage(delta2, shift_value->Q[i].var);
+        shift_value->Q[i].var = GAverage(delta2, shift_value->Q[i].var, 0.01);
     }
 }
 
@@ -721,11 +721,6 @@ for (i = 1; i < 20; i++)
 }
 
 */
-
-double NovaShiftAverage(double new, double old)
-{
-    return forgetrate * new + (1.0 - forgetrate) * old;
-}
 
 /*****************************************************************************/
 /* Level                                                                     */

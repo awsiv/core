@@ -1022,7 +1022,6 @@ void Nova_BodyNode(FILE *fp, char *body, int calltype);
 void Nova_DependencyGraph(Topic *map);
 void Nova_PlotTopicDependencies(int topic, double **adj, char **names, int dim);
 void Nova_MapClassParameterAssociations(FILE *fp, Promise *pp, char *promise_id);
-double NovaShiftAverage(double new, double old);
 double NovaExtractValueFromStream(char *handle, Item *stream, Attributes a, Promise *pp);
 void NovaLogSymbolicValue(char *handle, Item *stream, Attributes a, Promise *pp);
 void Nova_ShowBundleDependence(FILE *fp);
