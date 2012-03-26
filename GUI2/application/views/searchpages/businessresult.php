@@ -2,37 +2,67 @@
 
     <div id="reportpanel" class="innerdiv">
         <?php $this->load->view('/searchpages/reportsMenu'); ?>
-
-        <div class="title">
-            <?php echo $report_title; ?>
+        <div class="title expanded" style="text-align:center" id="show_fileter_form">
+            <div><em>&nbsp;</em><span><?php echo $report_title; ?></span><em>&nbsp;</em></div>
             <div class="clear"></div>
         </div>
+        <script type="text/javascript">
+            $('#show_fileter_form').click(function() {
+                $('#modifySearchPanel').toggle('', function(){
+                    $('#reportpanel .title').toggleClass('collapsed');
+                });
+            });
+        </script>    
         <div id="modifySearchPanel">
             <div class="grid_8">
-          <?php  $this->load->view('searchpages/'.$filter_view);?> 
+                <?php $this->load->view('searchpages/' . $filter_view); ?> 
+
             </div>
-          <div id="savesearchcontainer" class="grid_4 floatright panelcontent"> 
-                    <div id="searchSaveError" class="error" style="display:none;"></div>
-                    <div id="searchSaveSuccess" class="success" style="display:none;"></div> 
-                    <form id="saveform" method="post" action="<?php echo site_url(); ?>/savedsearch/save/">
-                        <p>
+            <div id="savesearchcontainer" class="grid_4 floatright panelcontent"> 
+                <div id="searchSaveError" class="error" style="display:none;"></div>
+                <div id="searchSaveSuccess" class="success" style="display:none;"></div> 
+                <form id="saveform" method="post" action="<?php echo site_url(); ?>/savedsearch/save/">
+                    <p>
                         <label>Save this search </label> 
                         <input type="input" id="search_name" name="search_name" class="textbox"></input>
                         <span class="green_btn"><input type="submit" id="submit_search" value="save"/></span>
-                        </p>
-                        <input type="hidden" id="search_params" name="search_params" value="<?php echo $params; ?>"></input>
-                        <input type="hidden" id="search_url" name="search_url" value="<?php echo site_url() . $breadCrumbUrl; ?>"></input>
-                        <input type="hidden" id="report_title" name="report_title" value="<?php echo $report_type; ?>"></input>
-                       
-                    </form>
-                    <div class="alignrightbuttoncontainer">
-                      <a href="<?php echo site_url("/savedsearch/listSavedSearches/$report_type"); ?>"  class="green_btn loadsavedsearch"><span>Load saved searches</span></a>
-                      <a href="<?php echo $report_link ?>" id="send_mail" class="green_btn showqtip" title="<?php echo $this->lang->line('tool_tip_download_report')?>"><span>Download</span></a>
-                    </div>
-          </div> 
-           <div class="clear"></div> 
-        </div>
+                    </p>
+                    <input type="hidden" id="search_params" name="search_params" value="<?php echo $params; ?>"></input>
+                    <input type="hidden" id="search_url" name="search_url" value="<?php echo site_url() . $breadCrumbUrl; ?>"></input>
+                    <input type="hidden" id="report_title" name="report_title" value="<?php echo $report_type; ?>"></input>
 
+                </form>
+                <div class="alignrightbuttoncontainer">
+                    <a href="<?php echo site_url("/savedsearch/listSavedSearches/$report_type"); ?>"  class="green_btn loadsavedsearch"><span>Load saved searches</span></a>
+                    <a href="<?php echo $report_link ?>" id="send_mail" class="green_btn showqtip" title="<?php echo $this->lang->line('tool_tip_download_report') ?>"><span>Download</span></a>
+                </div>
+            </div> 
+            <div class="clear"></div> 
+        </div>
+        <a href="<?php echo site_url('widget/contextfinder') ?>" id="hclist" class="hostcontextddl floatleft" title="<?php echo $this->lang->line('report_hostgp_help'); ?>">Hostcontext</a>
+        <script type="text/javascript">
+            var $incList = $('#searchform input:hidden[name=inclist]');
+            var $exList  = $('#searchform input:hidden[name=exlist]');
+            $('#hclist').contextfinder({
+                baseUrl: '<?php echo site_url() ?>',
+                complete:function(event,data){
+                    $incList.val(data.includes);
+                    $exList.val(data.excludes);
+                }
+            }); 
+  
+            $('#hclist').contextfinder('setContext',$incList.val().split(','), $exList.val().split(','));
+
+            var obj = { name: 'filterview' };
+            mediator.installTo(obj); 
+            obj.publish('contextChange', { includes:stringToArray($incList.val()),excludes:stringToArray($exList.val())});
+
+            obj.subscribe('contextChange', function(data){
+                $incList.val(data.includes);
+                $exList.val(data.excludes);
+            });
+
+        </script>  
         <div class="reportpanelcontent">
             <div id="totalResults" class="push_9 grid_3" style="text-align: right;">
                 Total results found:  <?php echo $report_result['meta']['count']; ?>
@@ -40,7 +70,7 @@
             <div class="clear"></div>
             <div class="tables <?php echo isset($nofix) ? "" : "tablesfixed" ?>">
                 <?php
-                include_once ($resultView . '.php');
+                    include_once ($resultView . '.php');
                 ?> 
             </div>
         </div>
@@ -90,142 +120,142 @@
                         <div id="tempdiv" style="display: none;" ></div>
 
                         </div>
-                        <script type="text/javascript">
-                            $(document).ready(function() {
-                                
-                                   
-                                     //$("#searchform").addClass('grid_8');
-                                   
-                                // for save search 
-                                $('#savesearch').click(function(e) {
-                                    e.preventDefault();            
-                                    $('#savesearchcontainer').toggle('slow',function() {
-                
-                                        if (!$('#savesearchcontainer').is(':visible')) {
-                                            $('#searchSaveSuccess').html(' ').hide();
-                                            $('#searchSaveError').html(' ').hide();
-                                        }
-                                    });
-           
-                                    return false;
-                                });
-        
-        
-                                $('.loadsavedsearch').ajaxyDialog({title:'Saved Searches'});
-        
-        
-        
-                                $('#saveform').ajaxForm(
-                                {
-                                    target:        '#searchSaveSuccess',
-                                    success:function(data) {
-                                        $('#searchSaveSuccess').show();
-                                        $('#searchSaveError').hide();
+<script type="text/javascript">
+    $(document).ready(function() {
 
-                                    },
-                                    error:function(xhr, ajaxOptions, thrownError) {
-                                        $('#searchSaveSuccess').hide()
-                                        $('#searchSaveError').html(xhr.responseText);
-                                        $('#searchSaveError').show();
-                                    }
-                                }
-                            );
-        
-        
-                                $('#findhost').hostfinder({
-                                    'defaultbehaviour':false,
-                                    'baseUrl':'<?php echo site_url() ?>',
-                                    'report':'<?php echo $hostfinderparams ?>',
-                                    complete:function(event,data){
-                                        location.replace('<?php echo site_url() ?>/search/index/host/'+data.selectedhost+'/'+data.report);
-                                    }
-                                });
-        
-                                var $dialog = $('#dialog');
-        
-                                $dialog.dialog({
-                                    autoOpen: false,
-                                    modal: true,
-                                    width: 'auto',
-                                    buttons: {
-                                        'Ok': function() {
-                                            $('#tempdiv').html(''); 
-                                            $('#loading').show();                                            
-                                            
-                                            $.ajax({
-                                                type: "POST",
-                                                url: $('#parameters',$dialog).val(),
-                                                data:
-                                                    {
-                                                    'rf':$('#type',$dialog).val(),
-                                                    'to':$('#to_contacts',$dialog).val(),
-                                                    'subject':$('#mail_subject',$dialog).val(),
-                                                    'message':$('#mail_desc',$dialog).val(),
-                                                    'from':$('#from_contacts',$dialog).val(),
-                                                    'pdfaction': $('#sendemail',$dialog).is(':checked') ? $('#sendemail',$dialog).val() : null, 
-                                                    'page':'<?php echo $current; ?>',
-                                                    'rows':'<?php echo $number_of_rows; ?>',
-                                                    'download':$('#report_download',$dialog).val()
-                                                    },
-                                                dataType:'json',
-                                                async: true,
-                                                success: function(data){
-                                                    $('#loading',$dialog).slideUp(); 
-                                                    $('#tempdiv',$dialog).show().removeClass('error');
-                                                    $('#tempdiv',$dialog).addClass('info');
-                                                    $('#tempdiv',$dialog).append(data.message); 
-                                                    $(":button:contains('Send')").hide();
-                                                    $('#tempdiv').find('a').live('click',function() {
-                                                        $dialog.dialog('close');
-                                                    }); 
-                           
-                                                },
-                                                error: function(jqXHR, textStatus, errorThrown){
-                                                    $('#loading',$dialog).slideUp(); 
-                                                    $('#tempdiv',$dialog).removeClass('info');
-                                                    $('#tempdiv',$dialog).addClass('error');                                
-                                                    $('#tempdiv',$dialog).show().html(errorThrown);
-                                                }
-                                            });
-                   
-                                        },
-                                        'Cancel': function() {
-                                            $('#loading',$dialog).hide(); 
-                                            $('#tempdiv',$dialog).html('');
-                                            $('#tempdiv',$dialog).addClass('info');
-                                            $(this).dialog('close');
-                                        }
-                                    },
-                                    open: function() {
-                                        $('form',$dialog).show();
-                                        $('#to_contacts',$dialog).focus();
-                                        $('#tempdiv',$dialog).html('').hide();
-                                        $(":button:contains('Send')").show();
-                                        $(":button:contains('Cancel')").show();
-                                        $(":button:contains('Ok')").show();
-                                    },
-                                    close: function() {
 
-                                    }
-                                });
+        //$("#searchform").addClass('grid_8');
 
-                                $('a#send_mail').click(function(e){
-                                    e.preventDefault();
-                                    $('#parameters',$dialog).val($(this).attr('href'));
-                                    $dialog.dialog('open');
-                                });
+        // for save search 
+        $('#savesearch').click(function(e) {
+            e.preventDefault();            
+            $('#savesearchcontainer').toggle('slow',function() {
+
+                if (!$('#savesearchcontainer').is(':visible')) {
+                    $('#searchSaveSuccess').html(' ').hide();
+                    $('#searchSaveError').html(' ').hide();
+                }
+            });
+
+            return false;
+        });
+
+
+        $('.loadsavedsearch').ajaxyDialog({title:'Saved Searches'});
 
 
 
-                                $('.note').ajaxyDialog({
-                                    title:'Notes',
-                                    dontOverrideTitle:true,
-                                    change:function(nid,element) {
+        $('#saveform').ajaxForm(
+        {
+            target:        '#searchSaveSuccess',
+            success:function(data) {
+                $('#searchSaveSuccess').show();
+                $('#searchSaveError').hide();
 
-                                        // change the url
-                                        $(element).attr('href', '/notes/index/action/show/nid/' + nid);
-                                        // console.log(nid,element);
-                                    }});
-       
-                            });
-                        </script>
+            },
+            error:function(xhr, ajaxOptions, thrownError) {
+                $('#searchSaveSuccess').hide()
+                $('#searchSaveError').html(xhr.responseText);
+                $('#searchSaveError').show();
+            }
+        }
+    );
+
+
+        $('#findhost').hostfinder({
+            'defaultbehaviour':false,
+            'baseUrl':'<?php echo site_url() ?>',
+            'report':'<?php echo $hostfinderparams ?>',
+            complete:function(event,data){
+                location.replace('<?php echo site_url() ?>/search/index/host/'+data.selectedhost+'/'+data.report);
+            }
+        });
+
+        var $dialog = $('#dialog');
+
+        $dialog.dialog({
+            autoOpen: false,
+            modal: true,
+            width: 'auto',
+            buttons: {
+                'Ok': function() {
+                    $('#tempdiv').html(''); 
+                    $('#loading').show();                                            
+
+                    $.ajax({
+                        type: "POST",
+                        url: $('#parameters',$dialog).val(),
+                        data:
+                            {
+                            'rf':$('#type',$dialog).val(),
+                            'to':$('#to_contacts',$dialog).val(),
+                            'subject':$('#mail_subject',$dialog).val(),
+                            'message':$('#mail_desc',$dialog).val(),
+                            'from':$('#from_contacts',$dialog).val(),
+                            'pdfaction': $('#sendemail',$dialog).is(':checked') ? $('#sendemail',$dialog).val() : null, 
+                            'page':'<?php echo $current; ?>',
+                            'rows':'<?php echo $number_of_rows; ?>',
+                            'download':$('#report_download',$dialog).val()
+                        },
+                        dataType:'json',
+                        async: true,
+                        success: function(data){
+                            $('#loading',$dialog).slideUp(); 
+                            $('#tempdiv',$dialog).show().removeClass('error');
+                            $('#tempdiv',$dialog).addClass('info');
+                            $('#tempdiv',$dialog).append(data.message); 
+                            $(":button:contains('Send')").hide();
+                            $('#tempdiv').find('a').live('click',function() {
+                                $dialog.dialog('close');
+                            }); 
+
+                        },
+                        error: function(jqXHR, textStatus, errorThrown){
+                            $('#loading',$dialog).slideUp(); 
+                            $('#tempdiv',$dialog).removeClass('info');
+                            $('#tempdiv',$dialog).addClass('error');                                
+                            $('#tempdiv',$dialog).show().html(errorThrown);
+                        }
+                    });
+
+                },
+                'Cancel': function() {
+                    $('#loading',$dialog).hide(); 
+                    $('#tempdiv',$dialog).html('');
+                    $('#tempdiv',$dialog).addClass('info');
+                    $(this).dialog('close');
+                }
+            },
+            open: function() {
+                $('form',$dialog).show();
+                $('#to_contacts',$dialog).focus();
+                $('#tempdiv',$dialog).html('').hide();
+                $(":button:contains('Send')").show();
+                $(":button:contains('Cancel')").show();
+                $(":button:contains('Ok')").show();
+            },
+            close: function() {
+
+            }
+        });
+
+        $('a#send_mail').click(function(e){
+            e.preventDefault();
+            $('#parameters',$dialog).val($(this).attr('href'));
+            $dialog.dialog('open');
+        });
+
+
+
+        $('.note').ajaxyDialog({
+            title:'Notes',
+            dontOverrideTitle:true,
+            change:function(nid,element) {
+
+                // change the url
+                $(element).attr('href', '/notes/index/action/show/nid/' + nid);
+                // console.log(nid,element);
+            }});
+
+    });
+</script>
