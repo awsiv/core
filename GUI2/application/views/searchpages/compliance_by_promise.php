@@ -21,7 +21,7 @@
                 <a  id="morefiltertoggle"class="green_btn" href="#"><span>More Filters</span></a>
             </p>
              
-            <?php $this->load->view('searchpages/hidden_form_for_set_context'); ?>   
+            <?php $this->load->view('searchpages/hidden_fields_for_set_context'); ?>   
         </form>
     </div>
 </div>

@@ -14,7 +14,8 @@
             <p class="alignrightbuttoncontainer">
                 <span class="green_btn"><input class="green_btn" type="submit" value="Generate report"></input></span>
             </p>
-            <?php $this->load->view('searchpages/hidden_form_for_set_context');?>     
+            <?php $this->load->view('searchpages/hidden_fields_for_set_context');?>     
+            <?php $this->load->view('searchpages/hidden_fields_for_set_context');?>     
         </form>
     </div>
 </div>
