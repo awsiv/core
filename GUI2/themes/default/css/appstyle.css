@@ -2884,3 +2884,43 @@ span.green_btn input{
     border:none;
 }
 
+#reportpanel .title {
+    padding: 0 !important;
+    margin-top: 20px;
+    background: url("../images/grey_1x1.gif") repeat-x 0 50%;
+}
+
+#reportpanel .title div {
+    padding: 0 0px; 
+    background: #fff;
+    display: inline-block;    
+}
+
+
+#reportpanel .title div span {
+    margin: 0 10px;
+}
+#reportpanel .title em,  
+#reportpanel .collapsed em {
+    background-image: url("../images/expand_collapse_buttons.png");
+    background-repeat: no-repeat;
+    width: 15px;
+    height: 15px;    
+    display: inline-block;
+    line-height: 16px;
+    margin: 0 10px;
+}
+
+ #reportpanel .title em  {
+    background-position: -0px -40px;
+ }
+ #reportpanel .title:hover em {
+    background-position: -20px -40px;     
+ }
+ #reportpanel .collapsed em {
+    background-position: 0 0 !important;
+}
+
+#reportpanel .collapsed:hover em {
+    background-position: -20px 0 !important;
+}
