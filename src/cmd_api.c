@@ -21,7 +21,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 /*****************************************************************************/
 
 #ifdef HAVE_LIBMONGOC
-#include "db_common.h"
+#include "db_query.h"
 
 /****************************************************************************/
 

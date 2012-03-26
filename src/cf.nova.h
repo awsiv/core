@@ -712,53 +712,10 @@ void Nova_BoundaryCheck(DataView *cfv, int *x1, int *y1, int *x2, int *y2);
 
 #ifdef HAVE_LIBMONGOC
 
-# include "db_query.h"
+//# include "db_query.h"
 
-Item *CFDB_QueryVitalIds(mongo_connection *conn, char *keyHash);
-HubVital *CFDB_QueryVitalsMeta(mongo_connection *conn, char *keyHash);
-int CFDB_QueryMagView2(mongo_connection *conn, char *keyhash, char *monId, time_t start_time, double *qa, double *ea,
-                       double *da);
-int CFDB_QueryMonView(mongo_connection *conn, char *keyhash, char *monId, enum monitord_rep rep_type, double *qa,
-                      double *ea, double *da);
-int CFDB_QueryWeekView(mongo_connection *conn, char *keyhash, enum observables obs, double *qa, double *ea, double *da);
-bool CFDB_QueryHistogram(mongo_connection *conn, char *keyhash, char *monId, double *histo);
-
-int CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, char *attrVal, int attrValSz);
-Item *CFDB_QueryExpandedPromiseAttr(mongo_connection *conn, char *handle, char *attrKey);
-HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char *promiserType, char *bType, char *bName,
-                                   int regex, bool filter);
-HubQuery *CFDB_QueryHandlesForBundlesWithComments(mongo_connection *conn, char *bType, char *bName);
-HubQuery *CFDB_QueryPromises(mongo_connection *conn, PromiseFilter *filter);
-HubQuery *CFDB_QueryPromiseBundles(mongo_connection *conn, PromiseFilter *filter);
-int CFDB_QueryBundleCount(mongo_connection *conn);
-int CFDB_QueryPromiseCount(mongo_connection *conn);
-HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name);
-Item *CFDB_QueryAllBodies(mongo_connection *conn, char *bTypeRegex, char *bNameRegex);
-Item *CFDB_QueryCdpAcls(mongo_connection *conn, char *sep);
-Item *CFDB_QueryCdpCommands(mongo_connection *conn, char *sep);
-Item *CFDB_QueryCdpPromiser(mongo_connection *conn, char *sep, char *bundleName, char *promiseType);
-int CFDB_QueryLastFileChange(mongo_connection *conn, char *keyHash, char *reportType, char *fileName, char *outBuf,
-                             int outBufSz);
-Item *CFDB_QueryCdpRegistry(mongo_connection *conn, char *sep);
-Item *CFDB_QueryCdpServices(mongo_connection *conn, char *sep);
-Item *CFDB_QueryCdpCompliance(mongo_connection *conn, char *handle);
-
-void CFDB_ListEverything(mongo_connection *conn);
-void CFDB_ScanHubHost(bson_iterator *it, char *keyhash, char *ipaddr, char *hostnames);
-int QueryHostsWithClass(mongo_connection *conn, bson_buffer *bb, char *classRegex);
-void PrintCFDBKey(bson_iterator *it, int depth);
-int CFDB_CountHostsGeneric(mongo_connection *conn, bson *query);
-int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int hostNameSz);
-bool MongoCheckForError(mongo_connection *conn, const char *operation, const char *extra, bool *checkUpdate);
-bool CFDB_CollectionHasData(mongo_connection *conn, const char *fullCollectionName);
-
-//replica set
-Item *CFDB_GetLastseenCache(void);
-int CFDB_QueryIsMaster(void);
-int CFDB_QueryMasterIP(char *buffer, int bufsize);
-int CFDB_QueryReplStatus(mongo_connection *conn, char *buffer, int bufsize);
-Item *CFDB_GetDeletedHosts(void);
 #endif
+
 
 #ifdef HAVE_LIBMONGOC
 
@@ -778,32 +735,7 @@ void BsonIteratorToString(char *retBuf, int retBufSz, bson_iterator *i, int dept
 void GetReportKeyMapping(int reportType, char *key, char *retBuf, int retBufSz);
 #endif /* HAVE_LIBMONGOC */
 
-/* db_maintain.c */
-
-void CFDB_Maintenance(void);
-void CFDB_ReIndexAll(void);
-void CFDB_ConnectAndEnsureIndices(void);
-
-#ifdef HAVE_LIBMONGOC
-void CFDB_EnsureIndices(mongo_connection *conn);
-void CFDB_PurgeDropReports(mongo_connection *conn);
-void CFDB_PurgeTimestampedReports(mongo_connection *conn);
-void CFDB_PurgeTimestampedLongtermReports(mongo_connection *conn);
-void CFDB_PurgePromiseLogs(mongo_connection *conn, time_t oldThreshold, time_t now);
-void CFDB_PurgePromiseLogsFromMain(mongo_connection *conn, char *promiseLogReportKey, time_t oldThreshold, time_t now);
-void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now,
-                    Item **purgeKeysPtr, Item **purgeNamesPtr);
-int CFDB_CheckAge(char *var, char *key, bson_iterator *it, time_t now, time_t oldThreshold, Item **purgeKeysPtr,
-                  Item **purgeNamesPtr);
-void CFDB_PurgeScanStrTime(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now,
-                           Item **purgeKeysPtr);
-void DeleteFromBsonArray(bson_buffer *bb, char *arrName, Item *elements);
-void CFDB_PurgeHost(mongo_connection *conn, char *keyHash);
-void CFDB_PurgeDeprecatedVitals(mongo_connection *conn);
-
-void CFDB_RemoveTestData(char *db, char *keyhash);
-int CFDB_PurgeDeletedHosts(void);
-#endif /* HAVE_LIBMONGOC */
+#include "db_maintain.h"
 
 /* datapackaging.c */
 

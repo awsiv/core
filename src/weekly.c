@@ -15,6 +15,7 @@
 /*****************************************************************************/
 
 #ifdef HAVE_LIBMONGOC
+#include "db_query.h"
 
 double Num(double x)
 {

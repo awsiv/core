@@ -32,7 +32,7 @@ libcfnova_la_SOURCES = \
         db_common.c db_common.h \
         db_save.c db_save.h \
         db_query.c db_query.h \
-        db_maintain.c \
+        db_maintain.c db_maintain.h \
         ldap.c \
         license.c \
         registry.c \

@@ -28,6 +28,7 @@
 // WTF: conversion functions access database
 #if defined(HAVE_LIBMONGOC)
 #include "db_common.h"
+#include "db_query.h"
 #endif
 
 /*****************************************************************************/

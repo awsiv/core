@@ -54,8 +54,9 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
 HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname, char *ldiff, int regex, time_t lt,
                              int cmp, int sort, HostClassFilter *hostClassFilter, int lookInArchive);
 HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *policy, time_t minGenTime);
-
 HubQuery *CFDB_QueryClassesDistinctSorted(mongo_connection *conn, const char *class_rx, HostClassFilter *hostClassFilter, PageInfo *page);
+HubQuery *CFDB_QueryPromiseBundles(mongo_connection *conn, PromiseFilter *filter);
+HubQuery *CFDB_QueryPromises(mongo_connection *conn, PromiseFilter *filter);
 
 Item *CFDB_QueryVitalIds(mongo_connection *conn, char *keyHash);
 HubVital *CFDB_QueryVitalsMeta(mongo_connection *conn, char *keyHash);
@@ -90,7 +91,6 @@ Item *CFDB_QueryCdpCompliance(mongo_connection *conn, char *handle);
 Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const char *ip, HostClassFilter *hostClassFilter);
 Item *CFDB_GetDeletedHosts(void);
 Item *CFDB_GetLastseenCache(void);
-
 
 
 

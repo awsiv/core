@@ -16,6 +16,7 @@
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"
+#include "db_query.h"
 #endif
 
 #ifdef HAVE_ZONE_H

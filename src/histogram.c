@@ -16,6 +16,7 @@
 /*****************************************************************************/
 
 #ifdef HAVE_LIBMONGOC
+#include "db_query.h"
 
 int Nova_ReadHistogram2(mongo_connection *conn, DataView *cfv, char *hostkey, char *monId)
 {

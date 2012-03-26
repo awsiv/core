@@ -16,6 +16,7 @@
 /*****************************************************************************/
 
 #ifdef HAVE_LIBMONGOC
+#include "db_query.h"
 
 int Nova_ReadYearTimeSeries(mongo_connection *conn, DataView *cfv, char *keyhash, char *monId)
 {

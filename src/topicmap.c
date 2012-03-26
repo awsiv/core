@@ -10,6 +10,10 @@
 
 #include <assert.h>
 
+#ifdef HAVE_LIBMONGOC
+#include "db_query.h"
+#endif
+
 /*****************************************************************************/
 /*                                                                           */
 /* File: topicmap.c                                                          */

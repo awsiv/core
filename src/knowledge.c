@@ -16,6 +16,7 @@
 
 #if defined(HAVE_LIBMONGOC)
 #include "db_save.h"
+#include "db_query.h"
 #endif
 
 /* From cfknow.c */

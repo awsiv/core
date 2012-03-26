@@ -23,7 +23,7 @@
 #include <assert.h>
 
 #ifdef HAVE_LIBMONGOC
-#include "db_common.h"
+#include "db_query.h"
 
 static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles);
 static char *StringAppendRealloc2(char *start, char *append1, char *append2);
