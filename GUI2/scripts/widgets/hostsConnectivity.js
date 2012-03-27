@@ -82,7 +82,7 @@
             $entryIcon.addClass('colourEntryIcon '+colour).html('&nbsp;').appendTo($entry);
 
             var $entryLabel = $('<a>');
-            $entryLabel.addClass('colourEntryLabel showqtip').attr('title', tooltip)
+            $entryLabel.addClass('colourEntryLabel showqtip').attr('title', tooltip).data({my:'left center', at:'right center'})
             
             $entryLabel.click(function () {
                 window.location.href = $self.options.baseUrl + '/welcome/hosts/' +

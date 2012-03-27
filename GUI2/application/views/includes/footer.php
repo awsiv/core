@@ -12,10 +12,13 @@
         
         $('.showqtip,a.help').live('mouseover', function(event) {
             // Bind the qTip within the event handler
+
+            var pointer=$(this).data('my')?$(this).data('my'):'top center';
+            var body=$(this).data('at')?$(this).data('at'):'bottom center';
             $(this).qtip({
                 position: {
-                    my:'top center',
-                    at:'bottom  center'
+                    my:pointer,
+                    at:body
                 },
                 show: {
                     event: event.type, // Use the same show event as the one that triggered the event handler
