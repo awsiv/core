@@ -288,8 +288,8 @@ label#searchbox input
 
 }
 .outerdiv a.licenseinfo{
-      background: none repeat scroll 0 0 #009193 /*#3D4439*/;
-     border-radius: 3px 3px 3px 3px;
+    background: none repeat scroll 0 0 #009193 /*#3D4439*/;
+    border-radius: 3px 3px 3px 3px;
     color: #FFFFFF;
     padding: 0 4px;
     color: #FFFFFF;
@@ -1580,8 +1580,12 @@ div.ui-dialog .ui-dialog-buttonpane{
 
 
 #reportpanel{
-    margin:15px;
-    padding:10px;
+    /*margin:15px;*/
+    /*padding:10px;*/
+}
+
+#bodyreport .innerdiv {
+    padding: 0;
 }
 
 .reporthead
@@ -2931,7 +2935,7 @@ span.green_btn input{
 
 #reportpanel .title {
     padding: 0 !important;
-    margin-top: 20px;
+    margin: 20px 10px 0 10px;
     background: url("../images/grey_1x1.gif") repeat-x 0 50%;
     cursor: pointer;
 }
@@ -2939,7 +2943,7 @@ span.green_btn input{
 #reportpanel .title div {
     padding: 0 0px; 
     background: #fff;
-    display: inline-block;    
+    display: inline-block; 
 }
 
 
@@ -3012,9 +3016,9 @@ margin-right: 20px;
 
 /************************************************/
 .engineeringContainer .ui-widget-header {
-        background: #51584d;
+    background: #51584d;
     height: 53px;
-    
+
     -moz-border-radius: 4px 4px 0 0;
     border-radius: 4px 4px 0 0;
     -opera-border-radius: 4px 4px 0 0;
@@ -3027,6 +3031,7 @@ margin-right: 20px;
 
 .engineeringContainer .ui-tabs {
     padding: 0;
+    margin-left: 12px; /*hack*/
 }
 .engineeringContainer  .ui-widget-header {
     border: none !important
@@ -3034,6 +3039,11 @@ margin-right: 20px;
 
 .engineeringContainer .ui-tabs .ui-tabs-nav li {
     top: 21px;
+    margin-left: 5px;
+}
+
+.engineeringContainer .ui-tabs-nav li.first {
+    margin-left: 10px;
 }
 
 .engineeringContainer .ui-state-default, 
@@ -3085,7 +3095,7 @@ margin-right: 20px;
 .engineeringContainer #astrolabe .listContainer {
     height: 456px;
 }
-
+*/
 .engineeringContainer .ui-tabs-panel {
-    height: 425px;
-} */
+    background: #fff !important;
+} 
