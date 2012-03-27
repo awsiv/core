@@ -41,6 +41,17 @@
 
             $self._ul = $('<ul>');
 
+            var $noneItem = $('<li>');
+            $noneItem.click(function(event) {
+                $self._setSelectedItem($self, null);
+                event.stopPropagation();
+            });
+            var $noneItemLabelSpan = $('<span>');
+            $noneItemLabelSpan.addClass('itemLabel');
+            $noneItemLabelSpan.html($self.options.noneSelectedLabel);
+            $noneItem.append($noneItemLabelSpan);
+            $self._ul.prepend($noneItem);
+
             var $addItem = $('<li>');
             $addItem.addClass('addItem');
 
@@ -147,7 +158,6 @@
             var $labelSpan = $('<span>');
             $labelSpan.addClass('itemLabel');
             $labelSpan.html(decodeURIComponent(id));
-            $labelSpan
             $li.append($labelSpan);
 
             $self._ul.prepend($li);
