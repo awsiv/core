@@ -947,7 +947,7 @@ void ThisHashString(char *str, char *buffer, int len, unsigned char digest[EVP_M
 
 /* license.c */
 
-int Nova_HashKey(char *filename, char *buffer, unsigned char digest[EVP_MAX_MD_SIZE + 1], char *hash);
+int Nova_HashKey(char *filename, char *buffer, char *hash);
 int Nova_EnterpriseModuleExpiry(char *day, char *month, char *year);
 void Nova_LogLicenseStatus(void);
 int Nova_CheckLicenseWin(char *pos);

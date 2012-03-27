@@ -28,9 +28,7 @@ void test_hashing(void **state)
 
     char header[] = "January-1777.1 Nova 3001 Test Company";
 
-    unsigned char digest[EVP_MAX_MD_SIZE + 1];
-
-    assert_int_equal(Nova_HashKey(pubkey_filename, header, digest, EXPECTED_HASH), 1);
+    assert_int_equal(Nova_HashKey(pubkey_filename, header, EXPECTED_HASH), 1);
 }
 
 void test_wrong_hashing(void **state)
@@ -39,7 +37,7 @@ void test_wrong_hashing(void **state)
 
     unsigned char digest[EVP_MAX_MD_SIZE + 1];
 
-    assert_int_equal(Nova_HashKey(pubkey_filename, header, digest, EXPECTED_HASH), 0);
+    assert_int_equal(Nova_HashKey(pubkey_filename, header, EXPECTED_HASH), 0);
 }
 
 static void setup(void)

@@ -58,7 +58,6 @@ int EnterpriseExpiry(void)
     char f_day[16], f_month[16], f_year[16];
     char u_day[16], u_month[16], u_year[16];
     char edition = 'N';
-    unsigned char digest[EVP_MAX_MD_SIZE + 1] = { 0 };
     char serverdig[CF_MAXVARSIZE] = "";
     FILE *fp;
     RSA *serverrsa;
@@ -165,9 +164,7 @@ int EnterpriseExpiry(void)
             return false;
         }
 
-        memset(digest, 0, sizeof(digest));
-
-        if (Nova_HashKey(CFPUBKEYFILE, name, digest, hash))
+        if (Nova_HashKey(CFPUBKEYFILE, name, hash))
         {
             strcpy(u_day, f_day);
             strcpy(u_month, f_month);
@@ -179,7 +176,7 @@ int EnterpriseExpiry(void)
 #endif
             NewClass("am_policy_hub");
         }
-        else if (memset(digest, 0, sizeof(digest)) && Nova_HashKey(serverkey, name, digest, hash))
+        else if (Nova_HashKey(serverkey, name, hash))
         {
             strcpy(u_day, f_day);
             strcpy(u_month, f_month);
@@ -309,7 +306,7 @@ static bool RecentlyCheckedLicense(void)
 /* Level                                                                     */
 /*****************************************************************************/
 
-int Nova_HashKey(char *filename, char *buffer, unsigned char digest[EVP_MAX_MD_SIZE + 1], char *hash)
+int Nova_HashKey(char *filename, char *buffer, char *hash)
 {
     EVP_MD_CTX context;
     const EVP_MD *md = NULL;
@@ -317,6 +314,7 @@ int Nova_HashKey(char *filename, char *buffer, unsigned char digest[EVP_MAX_MD_S
     unsigned int md_len;
     bool result = false;
     char fbuf[CF_BUFSIZE];
+    unsigned char digest[EVP_MAX_MD_SIZE + 1];
 
     md = EVP_get_digestbyname("sha256");
 
