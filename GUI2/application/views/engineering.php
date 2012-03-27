@@ -1,4 +1,4 @@
-<div id="body">
+<div id="body" class="outerdiv">
     <div class="engineeringContainer">
         <div class="grid_4 alpha">
             <div class="engineeringNavigationContainer">
@@ -8,7 +8,7 @@
         </div>
         <div class="grid_8 omega" id="tabs-layout">
             <ul>
-                <li><a href="#tab-1">Status</a></li>
+                <li class="first"><a href="#tab-1">Status</a></li>
                 <li><a href="#tab-2">Reports</a></li>
             </ul>
             <div id="tab-1" class="engineeringStatusContainer">
@@ -44,6 +44,7 @@
         </div>
         <div class="clear"></div>
     </div>
+    <div class="clear"></div>
 </div>
 <div class="clear"></div>
 
