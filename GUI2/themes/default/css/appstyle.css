@@ -1552,13 +1552,19 @@ div.ui-dialog .ui-dialog-buttonpane{
 .pages{
     margin-bottom: 15px;
 }
-.innerdiv .pages a,.pages a
+.innerdiv .pages a, .pages a
 {
     background: #e6eee3;
     color:#3D453A;
     padding:2px 7px;
-
 }
+
+.innerdiv .pages a:hover, .pages a:hover
+{
+    background: #3D4439;
+    color:#fff;
+}
+
 .pages a.current
 {
     background: #3d4439;
@@ -2846,7 +2852,7 @@ body .outerdiv a.hostcontextddl, .hostcontextddl{
 }
 
 #savesearchcontainer .alignrightbuttoncontainer{
-    margin: 36px 9px 0 0 ;
+    margin: 36px 14px 0 0 ;
 }
 
 #savesearchcontainer{
@@ -2964,3 +2970,41 @@ span.green_btn input{
     background-position: -20px 0 !important;
 }
 
+
+a.green_btn em.download_ico {
+   width:  14px;
+   height: 19px;
+   background-image: url("../images/download_arrow.gif");
+   background-repeat: no-repeat;   
+   background-position: 0 0;
+   padding: 0;
+   margin: 0 9px 0 0px;
+   display: inline-block;
+}
+
+    a.green_btn:hover em.download_ico {
+        background-position: 0 -19px;
+    }
+
+
+#count_hosts, #total_result {
+margin-right: 20px;
+}
+
+.Paging { margin-top: 10px;}
+
+.page_counter {
+    display: inline-block;
+    width: 200px;
+    margin-left: 20px;
+}
+
+
+.page_counter input {width: 100px}
+
+.page_counter span {color: #a1a89e}
+
+
+.report_result tbody tr:hover td {
+    background-color: #efefef;
+}
