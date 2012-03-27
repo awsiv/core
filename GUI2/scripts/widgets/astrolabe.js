@@ -15,18 +15,24 @@
             $self.element.append($self._menuContainer);
             $self._loadProfileList();
 
+
+            $self._containerWrapper = $('<div class="containerWrapper">');
+
             $self._listContainer = $('<div>');
             $self._listContainer.addClass('listContainer');
             $self._rootContainer = $('<ul>');
             $self._rootContainer.addClass('rootContainer');
-            $self._listContainer.append($self._rootContainer);
+            
 
-            $self.element.append($self._listContainer);
+            $self._listContainer.append($self._rootContainer);
+            $self._containerWrapper.append($self._listContainer);            
+
+            $self.element.append($self._containerWrapper);            
             $self._listContainer.jScrollPane({
                 showArrows: true,
                 autoReinitialise: true,
-                verticalArrowPositions: 'after'
-            });
+                verticalArrowPositions: 'split'
+            }); 
         },
 
         _init: function() {
