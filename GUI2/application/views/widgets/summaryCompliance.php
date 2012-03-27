@@ -12,7 +12,7 @@
                     //  var_dump($notkept['meta']['header']);
                     $notkept['meta']['header']['Hosts'] = 3;
                     foreach ($notkept['data'] as &$d) {
-                        $link = sprintf('%s/search/index/name/%s/host/All/report/Promises+not+kept+summary/hosts_only/true', site_url(), $d[0]);
+                        $link = sprintf('%s/search/index/name/%s/host/All/report/promises-not-kept-summary/hosts_only/true', site_url(), $d[0]);
                         $d[] = sprintf('<a href="%s" target="_self" rel="%s" class="summary-report-host">show</a>', $link, $d[0]);
                     }
                     echo $this->cf_table->generateReportTable($notkept);
