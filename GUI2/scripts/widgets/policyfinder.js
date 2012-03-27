@@ -20,6 +20,7 @@
         originalTitle: '',
         animate: false,
         tempId: '',
+        dialogcontent :'',
         _init: function() {
             var self = this;
             self.resetPagination();
@@ -221,6 +222,28 @@
             document.getElementById(containerUlId).innerHTML = '';
         },
 
+
+         _displayFailure: function(jqXHR,textStatus, errorThrown) {
+            var serverMsg,
+            self = this;
+            if (jqXHR.status == 0) {
+                serverMsg = 'You are offline!!\n Please Check Your Network.';
+            }else if (jqXHR.status == 404) {
+                serverMsg = 'Requested URL not found.';
+            }else if (jqXHR.status == 500) {
+                serverMsg = 'Internel Server Error. ' + jqXHR.responseText;
+            }else if (errorThrown == 'parsererror') {
+                serverMsg = 'Error.\nParsing JSON Request failed.';
+            }else if (errorThrown == 'timeout') {
+                serverMsg = 'Request Time out.';
+            }else {
+                serverMsg = 'Unknow Error.\n' + jqXHR.responseText;
+            }
+            self.dialogcontent.html("<div class='ui-state-error' style='padding: 1em;width:90%'><p><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span>"  + ' ' + serverMsg + '</p></div>');
+            self.element.text(self.elementtext);
+            self.revertTitle();
+        },
+
         loadpagebody: function(url,val,escreg) {
 
             var self = this,
@@ -249,11 +272,7 @@
                     self.animate = false;
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-                    var containerUlId = self.containerID() + '-ul';
-                    //self.dialogcontent.html($("<ul>").attr("id", self.containerID()));
-                    var li = '<li><span class="type">' + textStatus + '</span><p>' + errorThrown + '</p>';
-                    document.getElementById(containerUlId).innerHTML = li;
-                    self.revertTitle();
+                     self._displayFailure(jqXHR,textStatus, errorThrown);
                 }
             });
 

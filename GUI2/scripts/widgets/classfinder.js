@@ -50,9 +50,6 @@
             self.resetPagination();
             self.dialogcontent.bind('scroll', $.proxy(self.classlistscrolled, self));
 
-            self.dialogcontent.ajaxError(function(e, jqxhr, settings, exception) {
-                self._displayFailure(settings.url, jqxhr, exception);
-            });
             self.setContext(self.options.includes,self.options.excludes);
           
         },
@@ -70,23 +67,23 @@
 
 
 
-        _displayFailure: function(uri,x,e) {
+        _displayFailure: function(jqXHR,textStatus, errorThrown) {
             var serverMsg,
             self = this;
-            if (x.status == 0) {
+            if (jqXHR.status == 0) {
                 serverMsg = 'You are offline!!\n Please Check Your Network.';
-            }else if (x.status == 404) {
+            }else if (jqXHR.status == 404) {
                 serverMsg = 'Requested URL not found.';
-            }else if (x.status == 500) {
-                serverMsg = 'Internel Server Error. ' + x.responseText;
-            }else if (e == 'parsererror') {
+            }else if (jqXHR.status == 500) {
+                serverMsg = 'Internel Server Error. ' + jqXHR.responseText;
+            }else if (errorThrown == 'parsererror') {
                 serverMsg = 'Error.\nParsing JSON Request failed.';
-            }else if (e == 'timeout') {
+            }else if (errorThrown == 'timeout') {
                 serverMsg = 'Request Time out.';
             }else {
-                serverMsg = 'Unknow Error.\n' + x.responseText;
+                serverMsg = 'Unknow Error.\n' + jqXHR.responseText;
             }
-            self.dialogcontent.html("<div class='ui-state-error' style='padding: 1em;width:90%'><p><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span>Sorry, a software error has occured.</p><p>" + x.status + ' ' + serverMsg + '</p></div>');
+            self.dialogcontent.html("<div class='ui-state-error' style='padding: 1em;width:90%'><p><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span>" + ' ' + serverMsg + '</p></div>');
             self.element.text(self.elementtext);
             self.revertTitle();
         },
@@ -529,10 +526,11 @@
                     }
                     return data;
                 },
-                error: function(data) {
+                error: function(jqXHR, textStatus, errorThrown) {
                     if ($.isFunction(params.error)) {
                         return $.call(params.error());
                     }
+                    self._displayFailure(jqXHR,textStatus, errorThrown);
                 }
             });
         }
