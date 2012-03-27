@@ -2,7 +2,9 @@
     <div class="outerdiv">
         <?php if(isset($error)){ ?>
         <div class="innerdiv">
+            <div class="info" style="margin:10px">
            <?php echo $error ?>
+            </div>
         </div>
        <?php }else{ ?>
         <div id="custom-tabs" style="margin:15px;">

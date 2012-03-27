@@ -3,6 +3,11 @@
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
+ * 
+ */
+
+/**
+ * Code returned as http status codes
  */
 class promise_model extends Cf_Model {
     
@@ -21,7 +26,7 @@ class promise_model extends Cf_Model {
             if(is_string($rawdata) && $rawdata!=""){
                 return $rawdata;
             }else{
-                throw new Exception("Empty promise returned for given handle");
+                throw new Exception($this->lang->line('promise_body_null'),204);
             }
             
         }

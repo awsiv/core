@@ -43,6 +43,7 @@ class Promise extends Cf_Controller {
         try{  
           
             $mybundle = $this->promise_model->getBundleByPromiseHandle($username, $handle);
+            
 
             // get promise details
             $promise  =  $this->promise_model->getPromiseDetails($username, $handle);
@@ -93,14 +94,25 @@ class Promise extends Cf_Controller {
 
                 'breadcrumbs' => $this->breadcrumblist->display()
             );
-        }catch(Exception $e){
-           //$data['error']= generate_errormessage($e);
-           show_error($e->getMessage(),500);
-        }
-        if(is_ajax()){
+         if(is_ajax()){
             $this->load->view('promise/promise',$data);
         }else{
             $this->template->load('template', 'promise/promise', $data);
+             }
+        }catch(Exception $e){
+            if ($e->getCode()==204)
+            {
+                $data = array(
+                    'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_promise') . " " . $handle,
+                    'breadcrumbs' => $this->breadcrumblist->display(),
+                    'error' => $e->getMessage()
+                );
+                $this->template->load('template', 'promise/promise', $data);
+            }
+            else
+            {
+                show_error($e->getMessage(), 500);
+            }
         }
         
     }
