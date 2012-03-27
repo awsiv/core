@@ -509,7 +509,7 @@
         _loadProfileList: function() {
             var self = this;
 
-            var requestUrl = self.options.baseUrl + 'astrolabe/profile/';
+            var requestUrl = self.options.baseUrl + '/astrolabe/profile/';
 
             $.getJSON(requestUrl, function(profileList) {
 
@@ -539,7 +539,7 @@
 
         _profileUrl: function(profileId) {
             var self = this;
-            return self.options.baseUrl + 'astrolabe/profile/' + profileId;
+            return self.options.baseUrl + '/astrolabe/profile/' + profileId;
         },
 
         _saveProfile: function(profileId, refreshNode) {
