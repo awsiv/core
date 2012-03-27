@@ -16,22 +16,24 @@
 
 .astrolabe .node > .nodeIcon
 {
-    height: 13px;
-    width: 13px;
+    height: 8px;
+    width: 9px;
     margin-right: 5px;
     display: inline-block;
     border: 2px solid #ffffff;
-    background-image: url('../images/astrolabe/node.png');
+    background-image: url('../images/astrolabe/arrow-icons.png');
+    background-position: -9px 0px;
     cursor: pointer;
 }
 
 .astrolabe .node.expanded > .nodeIcon
 {
-    height: 13px;
-    width: 13px;
+    height: 8px;
+    width: 9px;
     margin-right: 5px;
     display: inline-block;
-    background-image: url('../images/astrolabe/node-expanded.png');
+    background-image: url('../images/astrolabe/arrow-icons.png');
+    background-position: 0px 0px;
 }
 
 .astrolabe .node .nodeHeader
@@ -181,7 +183,7 @@
     background: #51584d;
     height: 55px;
     position: relative;
-    
+
     -moz-border-radius: 4px 4px 0 0;
     border-radius: 4px 4px 0 0;
     -opera-border-radius: 4px 4px 0 0;
