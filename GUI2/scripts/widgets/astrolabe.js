@@ -15,18 +15,24 @@
             $self.element.append($self._menuContainer);
             $self._loadProfileList();
 
+
+            $self._containerWrapper = $('<div class="containerWrapper">');
+
             $self._listContainer = $('<div>');
             $self._listContainer.addClass('listContainer');
             $self._rootContainer = $('<ul>');
             $self._rootContainer.addClass('rootContainer');
-            $self._listContainer.append($self._rootContainer);
+            
 
-            $self.element.append($self._listContainer);
+            $self._listContainer.append($self._rootContainer);
+            $self._containerWrapper.append($self._listContainer);            
+
+            $self.element.append($self._containerWrapper);            
             $self._listContainer.jScrollPane({
                 showArrows: true,
                 autoReinitialise: true,
-                verticalArrowPositions: 'after'
-            });
+                verticalArrowPositions: 'split'
+            }); 
         },
 
         _init: function() {
@@ -503,7 +509,7 @@
         _loadProfileList: function() {
             var self = this;
 
-            var requestUrl = self.options.baseUrl + 'astrolabe/profile/';
+            var requestUrl = self.options.baseUrl + '/astrolabe/profile/';
 
             $.getJSON(requestUrl, function(profileList) {
 
@@ -533,7 +539,7 @@
 
         _profileUrl: function(profileId) {
             var self = this;
-            return self.options.baseUrl + 'astrolabe/profile/' + profileId;
+            return self.options.baseUrl + '/astrolabe/profile/' + profileId;
         },
 
         _saveProfile: function(profileId, refreshNode) {

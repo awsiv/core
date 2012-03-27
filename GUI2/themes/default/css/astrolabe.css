@@ -147,7 +147,7 @@
 
 .astrolabe .listContainer
 {
-    height: 420px;
+    height: 430px;
 }
 
 .astrolabe .host > .blue
@@ -191,7 +191,7 @@
 
 .astrolabe .rootContainer
 {
-    padding: 10px;
+    padding: 10px 10px 10px 0px;
 }
 
 .astrolabe .node > .nodeHeader >.hostCountLabel
@@ -305,4 +305,8 @@
 .astrolabe.addNodeDialog .rightColumn .classInputContainer > .classFinderIcon:hover
 {
     background-position: -21px -51px;
+}
+
+.astrolabe .containerWrapper {
+    padding: 10px 0 0 0;
 }
