@@ -14,6 +14,10 @@ foreach ($report_result['meta']['header'] as $key => $value) {
 }
 $this->table->set_heading($headings);
 if (count($report_result['data']) > 0) {
+    
+   $pg = paging($current, $number_of_rows, $report_result['meta']['count'], 10);
+    include 'paging_footer.php';    
+    
     foreach ($report_result['data'] as $row) {
         $temp = array();
         foreach ($report_result['meta']['header'] as $key => $value) {
@@ -53,8 +57,8 @@ if (count($report_result['data']) > 0) {
         }
         $this->table->add_row($temp);
     }
-    echo $this->table->generate();
-    $pg = paging($current, $number_of_rows, $report_result['meta']['count'], 10);
+    echo '<div class="report_result">'.$this->table->generate().'</div>';
+    
     include 'paging_footer.php';
 } else {
     echo"<div class='info'>" . $this->lang->line("no_data") . "</div>";

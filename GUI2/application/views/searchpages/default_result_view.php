@@ -9,7 +9,10 @@ if (is_array($report_result) && key_exists('truncated', $report_result['meta']))
 
 if (count($report_result['data']) > 0) {
     $pg = paging($current, $number_of_rows, $report_result['meta']['count'], 10);
-    echo $this->cf_table->generateReportTable($report_result, $report_title);
+    include 'paging_footer.php';
+    echo '<div class="report_result">';
+        echo $this->cf_table->generateReportTable($report_result, $report_title);
+    echo '</div>';        
     include 'paging_footer.php';
 } else {
     echo"<div class=\"clearboth\"></div><div class='info'>" . $this->lang->line("no_data") . "</div>";

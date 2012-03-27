@@ -8,7 +8,8 @@
     <?php if (isset($morefilters) && $morefilters == true) { ?>
         <a  id="morefiltertoggle"class="green_btn" href="#"><span>More Filters</span></a>
         <script type="text/javascript">
-            $('#morefiltertoggle').on('click',function(){
+            $('#morefiltertoggle').on('click',function(e){
+                e.preventDefault();
                 var textcontainer = $(this).find('span');
                 if( textcontainer.text().toLowerCase()=='more filters'){
                     textcontainer.text('Fewer Filters') 

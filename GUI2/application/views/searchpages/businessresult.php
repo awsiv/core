@@ -36,42 +36,46 @@
           
                 <div class="alignrightbuttoncontainer">
                     <a href="<?php echo site_url("/savedsearch/listSavedSearches/$report_type"); ?>"  class="green_btn loadsavedsearch"><span>Load saved searches</span></a>
-                    <a href="<?php echo $report_link ?>" id="send_mail" class="green_btn showqtip" title="<?php echo $this->lang->line('tool_tip_download_report') ?>"><span>Download</span></a>
                 </div>
             </div> 
             <div class="clear"></div> 
         </div>
-        <a href="<?php echo site_url('widget/contextfinder') ?>" id="hclist" class="hostcontextddl floatleft" title="<?php echo $this->lang->line('report_hostgp_help'); ?>">Hostcontext</a>
-        <script type="text/javascript">
-            var $incList = $('#searchform input:hidden[name=inclist]');
-            var $exList  = $('#searchform input:hidden[name=exlist]');
-            $('#hclist').contextfinder({
-                baseUrl: '<?php echo site_url() ?>',
-                complete:function(event,data){
-                    $incList.val(data.includes);
-                    $exList.val(data.excludes);
-                }
-            }); 
-  
-            $('#hclist').contextfinder('setContext',$incList.val().split(','), $exList.val().split(','));
-
-            var obj = { name: 'filterview' };
-            mediator.installTo(obj); 
-            obj.publish('contextChange', { includes:stringToArray($incList.val()),excludes:stringToArray($exList.val())});
-
-            obj.subscribe('contextChange', function(data){
-                $incList.val(data.includes);
-                $exList.val(data.excludes);
-            });
-
-        </script>  
+ 
         <div class="reportpanelcontent">
-            <div id="totalResults" class="push_9 grid_3" style="text-align: right;">
-                Total results found:  <?php echo $report_result['meta']['count']; ?>
+            <div class="grid_7">
+                <span id="count_hosts">Report for XXXX hosts</span>
+                <a href="<?php echo site_url('widget/contextfinder') ?>" id="hclist" class="green_btn" title="<?php echo $this->lang->line('report_hostgp_help'); ?>"><span>Hostcontext</span></a>
+                <script type="text/javascript">
+                    var $incList = $('#searchform input:hidden[name=inclist]');
+                    var $exList  = $('#searchform input:hidden[name=exlist]');
+                    $('#hclist').contextfinder({
+                        baseUrl: '<?php echo site_url() ?>',
+                        complete:function(event,data){
+                            $incList.val(data.includes);
+                            $exList.val(data.excludes);
+                        }
+                    }); 
+
+                    $('#hclist').contextfinder('setContext',$incList.val().split(','), $exList.val().split(','));
+
+                    var obj = { name: 'filterview' };
+                    mediator.installTo(obj); 
+                    obj.publish('contextChange', { includes:stringToArray($incList.val()),excludes:stringToArray($exList.val())});
+
+                    obj.subscribe('contextChange', function(data){
+                        $incList.val(data.includes);
+                        $exList.val(data.excludes);
+                    });
+
+                </script> 
+            </div>    
+            <div id="totalResults" class=" grid_5" style="text-align: right;">
+                <span id="total_result">Total results found: <?php echo $report_result['meta']['count']; ?></span>
+                <a href="<?php echo $report_link ?>" id="send_mail" class="green_btn showqtip" title="<?php echo $this->lang->line('tool_tip_download_report') ?>"><span><em class="download_ico">&nbsp;</em>Download</span></a>
             </div>
             <div class="clear"></div>
             <div class="tables <?php echo isset($nofix) ? "" : "tablesfixed" ?>">
-                <?php
+                <?php 
                     include_once ($resultView . '.php');
                 ?> 
             </div>
