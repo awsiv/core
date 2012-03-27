@@ -1,7 +1,7 @@
 (function($) {
     $.widget('ui.combobox', {
         options: {
-            imagesUrl: '../../themes/default/images/astrolabe/',
+            imagesUrl: '../themes/default/images/astrolabe/',
             defaultbehaviour: true,
             noneSelectedLabel: '(none)',
             addItemPlaceholder: 'Add tree',
