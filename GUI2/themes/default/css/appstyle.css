@@ -2759,7 +2759,8 @@ background-image: none;
 }
 .dd_menu li {
     float:left;
-    margin-left: 7px;
+    /*margin-left: 7px; */
+    margin-right: 7px;
     margin-top: 20px;
     list-style:none;
     padding: 0 0 10px 0 !important;
@@ -3008,3 +3009,83 @@ margin-right: 20px;
 .report_result tbody tr:hover td {
     background-color: #efefef;
 }
+
+/************************************************/
+.engineeringContainer .ui-widget-header {
+        background: #51584d;
+    height: 53px;
+    
+    -moz-border-radius: 4px 4px 0 0;
+    border-radius: 4px 4px 0 0;
+    -opera-border-radius: 4px 4px 0 0;
+    -khtml-border-radius: 4px 4px 0 0;
+    -webkit-border-radius: 4px 4px 0 0;
+}
+.engineeringContainer .ui-widget-content {
+    background: transparent
+}
+
+.engineeringContainer .ui-tabs {
+    padding: 0;
+}
+.engineeringContainer  .ui-widget-header {
+    border: none !important
+}
+
+.engineeringContainer .ui-tabs .ui-tabs-nav li {
+    top: 21px;
+}
+
+.engineeringContainer .ui-state-default, 
+.engineeringContainer .ui-widget-content .ui-state-default, 
+.engineeringContainer .ui-widget-header .ui-state-default {
+    background: #798075 !important;
+    border-top: 1px solid #979e93 !important;
+    border-left: 1px solid #979e93 !important;
+    border-right: 1px solid #979e93 !important;    
+    color: #fff !important;    
+}
+
+.engineeringContainer .ui-state-default a, 
+.engineeringContainer .ui-state-default a:link, 
+.engineeringContainer .ui-state-default a:visited {
+    color: #fff;
+}
+
+.engineeringContainer .ui-state-hover, 
+.engineeringContainer .ui-widget-content .ui-state-hover, 
+.engineeringContainer .ui-widget-header .ui-state-hover,
+.engineeringContainer .ui-state-active, 
+.engineeringContainer .ui-widget-content .ui-state-active, 
+.engineeringContainer .ui-widget-header .ui-state-active
+{
+    background: #fff !important;
+    border-top: 1px solid #979e93 !important;
+    border-left: 1px solid #979e93 !important;
+    border-right: 1px solid #979e93 !important;
+    color: #000 !important;    
+}
+
+.engineeringContainer .ui-state-active a, 
+.engineeringContainer .ui-state-hover a {
+    color: #000 !important;
+}
+
+
+.engineeringContainer .dd_menu {
+    background: none !important;
+}
+
+.engineeringContainer .dd_menu ul {
+    margin: 0;
+}
+
+/**/
+/*
+.engineeringContainer #astrolabe .listContainer {
+    height: 456px;
+}
+
+.engineeringContainer .ui-tabs-panel {
+    height: 425px;
+} */
