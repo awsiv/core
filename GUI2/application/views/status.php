@@ -78,22 +78,22 @@
     
     var startData = [
         {   //first series
-            label:"kept",
+            label:"Kept",
             data: d1
-         
+
         },
         {   //second series
-            label:"repaired",
+            label:"Repaired",
             data: d2
-            
+
         },
         {   //3rd series
-            label:"notkept",
+            label:"Notkept",
             data: d3
-           
-        },  
+
+        },
         {   //4th series
-            label:"nodata",
+            label:"No data",
             data: d4
            
         }
@@ -159,9 +159,9 @@
                    
                 var c = countTrack[key];
                      
-                var tooltip = item.series.label + ": "+ actualvalue + '<br /> Local time : ' + start + '-' + stop
-                    + ' <br />Count :: ' + c;
-                   
+
+                var tooltip = item.series.label + " : "+ actualvalue + '<br /> Local time : ' + start + '-' + stop
+                    + ' <br />Count : ' + c;
                 showTooltip(item.pageX, item.pageY,tooltip);
                 
             }   
@@ -179,7 +179,14 @@
     
     $("#compliance_summary_graph").bind("plotclick", function (event, pos, item) {
         if (item) {
-            var element = $('<a href="<?php echo site_url(); ?>/widget/summaryCompliance/start/'+ (item.datapoint[0] /1000)+ '/env/' + graphEnvironment+ '" title="overview" />');
+            var start = (item.datapoint[0] );
+            var startDate = new Date(start );
+            var start = startDate.getHours() + ':00';
+            var stopDate = new Date(startDate);
+            stopDate.setHours(stopDate.getHours() + 6);
+            var stop =stopDate.getHours() + ':00';
+            var sendDate = item.datapoint[0] /1000;
+            var element = $('<a href="<?php echo site_url(); ?>/widget/summaryCompliance/start/'+ sendDate + '/env/' + graphEnvironment+ '" title="Overview : Promises not kept or repaired ( '+ start + ' - ' + stop + ' )" />');
             var option = {'width':'1025','height':'445'};
             element.ajaxyDialog(option).ajaxyDialog("open");
         }
@@ -210,10 +217,10 @@
     
    
     var businessValueData =  [
-        { label: "kept",  data: <?php echo $businessValuePie['kept']; ?>,color:"#779a62"},
-        { label: "notkept",  data: <?php echo $businessValuePie['notkept']; ?>,color:"#CC4358"},
-        { label: "repaired",  data: <?php echo $businessValuePie['repaired']; ?>,color:"#F0D76A"},
-        { label: "No Data",  data: <?php echo $businessValuePie['nodata']; ?>,color:"#000000"}
+        { label: "Kept",  data: <?php echo $businessValuePie['kept']; ?>,color:"#779a62"},
+        { label: "Not kept",  data: <?php echo $businessValuePie['notkept']; ?>,color:"#CC4358"},
+        { label: "Repaired",  data: <?php echo $businessValuePie['repaired']; ?>,color:"#F0D76A"},
+        { label: "No data",  data: <?php echo $businessValuePie['nodata']; ?>,color:"#000000"}
     ];
 
     $.plot($("#business-value-pie-chart"), businessValueData,
@@ -242,11 +249,11 @@
 
 
     var complianceNowData =  [
-        { label: "green",  data: <?php echo $greenhost; ?>,color:"#779a62"},
-        { label: "yellow",  data: <?php echo $yellowhost; ?>,color:"#F0D76A"},
-        { label: "red",  data: <?php echo $redhost; ?>,color:"#CC4358"},
-        { label: "blue",  data: <?php echo $bluehost; ?>,color:"#476E8C"},
-        { label: "black",  data: <?php echo $blackhost; ?>,color:"#000000"}         
+        { label: "Green",  data: <?php echo $greenhost; ?>,color:"#779a62"},
+        { label: "Yellow",  data: <?php echo $yellowhost; ?>,color:"#F0D76A"},
+        { label: "Red",  data: <?php echo $redhost; ?>,color:"#CC4358"},
+        { label: "Blue",  data: <?php echo $bluehost; ?>,color:"#476E8C"},
+        { label: "Black",  data: <?php echo $blackhost; ?>,color:"#000000"}
     ];
     $.plot($("#compliance-now-pie-chart"), complianceNowData,
     {
@@ -296,37 +303,13 @@
             var  percent = parseFloat(item.series.percent).toFixed(2);
             var index = item.dataIndex;
             var value = item.series.data[index][1];
-            var content = '<span>'+item.series.label+' ('+percent+'%) <br /> Value:: '+value+' '+event.data.unit+' '+ '</span>';
+            var content = '<span>'+item.series.label+' ('+percent+'%) <br /> Value: '+value+' '+event.data.unit+' '+ '</span>';
             showTooltip(pos.pageX, pos.pageY, content);
         } else {
             plot.unhighlight();
             $("#tooltip").remove();
             previousPost = $(this).data('previous-post', -1);
         }
-        
-        
-        /*
-        
-        if (obj) {
-          
-            console.log(obj);
-            if (event.data.previousPoint.val != obj.dataIndex) {
-                event.data.previousPoint.val = obj.dataIndex;
-                   
-                percent = parseFloat(obj.series.percent).toFixed(2);
-        
-                var index = obj.dataIndex;
-                var value = obj.series.data[index][1];
-                var content = '<span>'+obj.series.label+' ('+percent+'%) <br /> Value:: '+value+' '+event.data.unit+' '+ '</span>';
-                $("#tooltip").remove();
-                showTooltip(pos.pageX, pos.pageY, content);
-            }
-        } else {
-            $("#tooltip").remove();
-            event.data.previousPoint.val = null;
-            return;
-        }
-         */
     }
 
 
