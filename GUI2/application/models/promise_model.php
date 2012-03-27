@@ -161,6 +161,92 @@ class promise_model extends Cf_Model {
             throw $e;
         }
     }
+
+    /**
+     * List of promise searching by bundle
+     * @param string $username
+     * @param string $bundle
+     * @return array
+     */
+    function getPromiseListByBundleRx($username, $bundle)
+    {
+
+        try
+        {
+            $rawdata = cfpr_promise_list_by_bundle_rx($username, $bundle);
+            $data = $this->checkData($rawdata);
+            if (is_array($data) && $this->hasErrors() == 0)
+            {
+                return $data;
+            }
+            else
+            {
+                throw new Exception($this->getErrorsString());
+            }
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        }
+    }
+
+    /**
+     * List of promise by handle
+     * @param String $username
+     * @param string $handle
+     * @return array
+     */
+    function getPromiseListByHandleRx($username, $handle = '.*')
+    {
+        try
+        {
+            $rawdata = cfpr_promise_list_by_handle_rx($username, $handle);
+            $data = $this->checkData($rawdata);
+            if (is_array($data) && $this->hasErrors() == 0)
+            {
+                return $data;
+            }
+            else
+            {
+                throw new Exception($this->getErrorsString());
+            }
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        }
+    }
+
+ /**
+     * List of promise by promiser
+     * @param String $username
+     * @param string $promiser
+     * @return array
+     */
+    function getPromiseListByPromiserRx($username, $promiser = null)
+    {
+        try
+        {
+            $rawdata =  cfpr_promise_list_by_promiser_rx($username, $promiser);
+            $data = $this->checkData($rawdata);
+            if (is_array($data) && $this->hasErrors() == 0)
+            {
+                return $data;
+            }
+            else
+            {
+                throw new Exception($this->getErrorsString());
+            }
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        }
+    }
+
     
     /**
      *

@@ -6,7 +6,7 @@ class Widget extends Cf_Controller
     function Widget()
     {
         parent::__construct();
-        $this->load->model(array('host_model', 'class_model', 'report_model', 'bundle_model'));
+        $this->load->model(array('host_model', 'class_model', 'report_model', 'bundle_model','promise_model'));
         if (!$this->ion_auth->logged_in())
         {
             $this->output->set_status_header('401', 'Not Authenticated');
@@ -291,24 +291,29 @@ class Widget extends Cf_Controller
 
     function allpolicies($page = 1)
     {
-        $data = cfpr_promise_list_by_handle_rx($this->session->userdata('username'), NULL);
+        try
+        {
+            $returnedData = $this->promise_model->getPromiseListByHandleRx($this->session->userdata('username'), NULL);
 
-        $showButton = $this->input->post('showButton');
-        $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
-        $viewdata = array(
-            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
-            'breadcrumbs' => $this->breadcrumblist->display(),
-            'showButton' => $showButton,
-            'showOnlyHandle' => $showOnlyHandle
-        );
-        $returnedData = sanitycheckjson($data, true);
-        $chunkSize = 100;
-        $startOffset = ($page - 1) * $chunkSize;
-        $returnedData = array_slice($returnedData, $startOffset, $chunkSize);
+            $showButton = $this->input->post('showButton');
+            $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
+            $viewdata = array(
+                'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
+                'breadcrumbs' => $this->breadcrumblist->display(),
+                'showButton' => $showButton,
+                'showOnlyHandle' => $showOnlyHandle
+            );
+            $chunkSize = 100;
+            $startOffset = ($page - 1) * $chunkSize;
+            $returnedData = array_slice($returnedData, $startOffset, $chunkSize);
 
-        $viewdata['viewdata'] = $returnedData;
-        //sleep(10);
-        $this->load->view('widgets/allpolicies', $viewdata);
+            $viewdata['viewdata'] = $returnedData;
+            $this->load->view('widgets/allpolicies', $viewdata);
+        }
+        catch (Exception $e)
+        {
+            show_error_custom($e->getMessage());
+        }
     }
 
     function search_by_handle($page = 1)
@@ -323,24 +328,23 @@ class Widget extends Cf_Controller
             'showOnlyHandle' => $showOnlyHandle
         );
 
-        $data = "";
-        if ($handle)
-        {
-            $handle = $handle . '.*';
-            $data = cfpr_promise_list_by_handle_rx($this->session->userdata('username'), $handle);
-        }
-        else
-        {
-            $data = cfpr_promise_list_by_handle_rx($this->session->userdata('username'), NULL);
-        }
-        $returnedData = sanitycheckjson($data, true);
+        $handle = ($handle) ? $handle . '.*' : '.*';
 
-        $chunkSize = 100;
-        $startOffset = ($page - 1) * $chunkSize;
-        $returnedData = array_slice($returnedData, $startOffset, $chunkSize);
+        try
+        {
+            $returnedData = $this->promise_model->getPromiseListByHandleRx($this->session->userdata('username'), $handle);
 
-        $viewdata['viewdata'] = $returnedData;
-        $this->load->view('widgets/allpolicies', $viewdata);
+            $chunkSize = 100;
+            $startOffset = ($page - 1) * $chunkSize;
+            $returnedData = array_slice($returnedData, $startOffset, $chunkSize);
+
+            $viewdata['viewdata'] = $returnedData;
+            $this->load->view('widgets/allpolicies', $viewdata);
+        }
+        catch (Exception $e)
+        {
+            show_error_custom($e->getMessage());
+        }
     }
 
     function search_by_bundle($page = 1)
@@ -356,23 +360,20 @@ class Widget extends Cf_Controller
         );
 
         $data = "";
-        if ($bundle)
+        $bundle = ($bundle) ? $bundle . '.*' : NULL;
+        try
         {
-            $bundle = $bundle . '.*';
-            $data = cfpr_promise_list_by_bundle_rx($this->session->userdata('username'), $bundle);
+            $data = $this->promise_model->getPromiseListByBundleRx($this->session->userdata('username'), $bundle);
+            $chunkSize = 100;
+            $startOffset = ($page - 1) * $chunkSize;
+            $returnedData = array_slice($data, $startOffset, $chunkSize);
+            $viewdata['viewdata'] = $returnedData;
+            $this->load->view('widgets/allpolicies', $viewdata);
         }
-        else
+        catch (Exception $e)
         {
-            $data = cfpr_promise_list_by_bundle_rx($this->session->userdata('username'), NULL);
+            show_error_custom($e->getMessage());
         }
-        $returnedData = sanitycheckjson($data, true);
-
-        $chunkSize = 100;
-        $startOffset = ($page - 1) * $chunkSize;
-        $returnedData = array_slice($returnedData, $startOffset, $chunkSize);
-
-        $viewdata['viewdata'] = $returnedData;
-        $this->load->view('widgets/allpolicies', $viewdata);
     }
 
     function search_by_type($page = 1)
@@ -388,42 +389,41 @@ class Widget extends Cf_Controller
             'showOnlyHandle' => $showOnlyHandle
         );
 
-        if (preg_match("/^\^\w+/i", $val))
-        {
-            $data = cfpr_promise_list_by_bundle_rx($this->session->userdata('username'), $val);
-        }
-        else
-        {
-            $data = cfpr_promise_list_by_bundle_rx($this->session->userdata('username'), NULL);
-        }
 
-        $return_array = array();
-        $promises = sanitycheckjson($data, true);
-
-        if ($type != "")
+        try
         {
-            foreach ($promises as $promise)
+            $promises = $this->promise_model->getPromiseListByBundleRx($this->session->userdata('username'), null);
+
+            $returnedData = array();
+
+            if ($type != "" && $val)
             {
-                if (array_search($type, $promise) !== FALSE)
+                $reg = '/' . $val . '/';
+
+                foreach ($promises as $promise)
                 {
-                    $return_array[] = $promise;
+                    // only check for type field
+                    if (preg_match($reg, $promise[3]))
+                    {
+                        $returnedData[] = $promise;
+                    }
                 }
             }
-            $json = json_encode($return_array);
+            else
+            {
+                $returnedData = array_msort($promises, array('3' => SORT_ASC), true);
+            }
+
+            $chunkSize = 100;
+            $startOffset = ($page - 1) * $chunkSize;
+            $returnedData = array_slice($returnedData, $startOffset, $chunkSize);
+            $viewdata['viewdata'] = $returnedData;
+            $this->load->view('widgets/allpolicies', $viewdata);
         }
-        else
+        catch (Exception $e)
         {
-            $ret = array_msort($promises, array('3' => SORT_ASC), true);
-            $json = json_encode($ret);
+            show_error_custom($e->getMessage());
         }
-
-        $returnedData = sanitycheckjson($json, true);
-
-        $chunkSize = 100;
-        $startOffset = ($page - 1) * $chunkSize;
-        $returnedData = array_slice($returnedData, $startOffset, $chunkSize);
-        $viewdata['viewdata'] = $returnedData;
-        $this->load->view('widgets/allpolicies', $viewdata);
     }
 
     function search_by_promiser($page = 1)
@@ -437,24 +437,22 @@ class Widget extends Cf_Controller
             'showButton' => $showButton,
             'showOnlyHandle' => $showOnlyHandle
         );
-        $data = "";
-        if ($promiser)
+        try
         {
-            $promiser = $promiser . '.*';
-            $data = cfpr_promise_list_by_promiser_rx($this->session->userdata('username'), $promiser);
+            $promiser = ($promiser) ? $promiser . '.*' : null;
+            $returnedData = $this->promise_model->getPromiseListByPromiserRx($this->session->userdata('username'), $promiser);
+
+            $chunkSize = 100;
+            $startOffset = ($page - 1) * $chunkSize;
+            $returnedData = array_slice($returnedData, $startOffset, $chunkSize);
+
+            $viewdata['viewdata'] = $returnedData;
+            $this->load->view('widgets/allpolicies', $viewdata);
         }
-        else
+        catch (Exception $e)
         {
-            $data = cfpr_promise_list_by_promiser_rx($this->session->userdata('username'), NULL);
+            show_error_custom($e->getMessage());
         }
-        $returnedData = sanitycheckjson($data, true);
-
-        $chunkSize = 100;
-        $startOffset = ($page - 1) * $chunkSize;
-        $returnedData = array_slice($returnedData, $startOffset, $chunkSize);
-
-        $viewdata['viewdata'] = $returnedData;
-        $this->load->view('widgets/allpolicies', $viewdata);
     }
 
     function allreports()
