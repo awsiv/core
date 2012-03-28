@@ -643,8 +643,8 @@ class report_model extends Cf_Model {
      * @return type array
      */
     
-      function getPromisesRepairedLog($username, $hostkey, $search, $cause_rx, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 50, $page_number = 1){
-         try
+    function getPromisesRepairedLog($username, $hostkey, $search, $cause_rx, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 50, $page_number = 1, $hosts_only=false){
+        try
         {   
             if ($hosts_only)
             {
@@ -686,12 +686,12 @@ class report_model extends Cf_Model {
      * @return type array
      */
 
-function getPromisesRepairedSummary($username, $hostkey, $search, $cause_rx, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 0, $page_number = 0){
+function getPromisesRepairedSummary($username, $hostkey, $search, $cause_rx, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 0, $page_number = 0,$hosts_only=false){
          try
         {   
              if ($hosts_only)
             {
-                $rawdata = cfpr_hosts_with_repaired($username, NULL, $search, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, $rows, $page_number);
+                $rawdata = cfpr_hosts_with_repaired($username, NULL, $search, $cause_rx, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, $rows, $page_number);
             }
             else
             {
@@ -728,7 +728,7 @@ function getPromisesRepairedSummary($username, $hostkey, $search, $cause_rx, $ho
      * @param type $page_number
      * @return type array
      */
-    function getPromisesNotKeptSummary($username, $hostkey, $search, $cause_rx, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 50, $page_number = 1){
+    function getPromisesNotKeptSummary($username, $hostkey, $search, $cause_rx, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 50, $page_number = 1, $hosts_only=false){
         try
         {   if ($hosts_only)
             {
@@ -769,7 +769,7 @@ function getPromisesRepairedSummary($username, $hostkey, $search, $cause_rx, $ho
      * @param type $page_number
      * @return type array
      */
-    function getPromisesNotKeptLog($username, $hostkey, $search, $cause_rx, $cause_rx, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 50, $page_number = 1){
+ function getPromisesNotKeptLog($username, $hostkey, $search, $cause_rx, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 50, $page_number = 1,$hosts_only=false){
         try
         {   
             if ($hosts_only)
@@ -778,7 +778,7 @@ function getPromisesRepairedSummary($username, $hostkey, $search, $cause_rx, $ho
             }
             else
             {
-                $rawdata = cfpr_report_notkept($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, "time", true, $rows, $page_number);
+                $rawdata = cfpr_report_notkept($username, $hostkey, $search, $cause_rx, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, "time", true, $rows, $page_number);
             }
 
             $data = $this->checkData($rawdata);
