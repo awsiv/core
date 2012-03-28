@@ -22,9 +22,11 @@ root {
     src: local('☺'), url("../fonts/ttf/opensans-regular-webfont.ttf") format("truetype"), url("../fonts/svg/opensans-regular-webfont.svg") format("svg");
 }
 body {
-    background: url("../images/bg_tile.png") repeat-x scroll 0 0 #A5ACA2;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#51584d', endColorstr='#979e93'); /* for IE */
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#51584d), to(#979e93));
+    background: -moz-linear-gradient(top, #51584d, #979e93) repeat scroll 0 0 transparent;
+    background: -o-linear-gradient(90deg, #51584d, #979e93) repeat scroll 0 0 transparent;
     color:#6C695A;
-
     font:13px/21px 'CFE_FONT',arial,Helvetica,sans-serif;
 }
 
@@ -3037,6 +3039,7 @@ margin-right: 20px;
 .engineeringContainer .ui-tabs .ui-tabs-nav li {
     top: 21px;
     margin-left: 5px;
+    height: 30px;
 }
 
 .engineeringContainer .ui-tabs-nav li.first {
