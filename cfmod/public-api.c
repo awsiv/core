@@ -362,11 +362,11 @@ static const char *PromiseLogStateToString(PromiseLogState state)
     }
 }
 
-static JsonElement *PromiseLogAsJson(mongo_connection *conn, PromiseLogState state, const char *handle,
+static JsonElement *PromiseLogAsJson(mongo_connection *conn, PromiseLogState state, const char *handle, const char *cause_rx,
                                      const char *hostkey, const char *context, int from, int to,
                                      HostClassFilter *filter)
 {
-    HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from, to, true, filter);
+    HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, cause_rx, from, to, true, filter);
 
     JsonElement *output = JsonArrayCreate(100);
 
@@ -391,12 +391,12 @@ static JsonElement *PromiseLogAsJson(mongo_connection *conn, PromiseLogState sta
 
 PHP_FUNCTION(cfmod_resource_promise_log_repaired)
 {
-    char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL;
+    char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL, *cause_rx = NULL;
     long from, to;
     int len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssll",
-                              &username, &len, &handle, &len, &hostkey, &len, &context, &len, &to, &from) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssll",
+                              &username, &len, &handle, &len, &cause_rx, &len, &hostkey, &len, &context, &len, &to, &from) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -416,7 +416,7 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired)
         mongo_connection conn;
 
         DATABASE_OPEN(&conn)
-            output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to, filter);
+            output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, cause_rx, hostkey, context, from, to, filter);
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
     DATABASE_CLOSE(&conn)}
     assert(output);
@@ -426,11 +426,11 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired)
 
 /************************************************************************************/
 
-static JsonElement *PromiseLogSummaryAsJson(mongo_connection *conn, PromiseLogState state, const char *handle,
+static JsonElement *PromiseLogSummaryAsJson(mongo_connection *conn, PromiseLogState state, const char *handle, const char *cause_rx,
                                             const char *hostkey, const char *context, int from, int to,
                                             HostClassFilter *filter)
 {
-    HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, from, to, true, filter);
+    HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, cause_rx, from, to, true, filter);
 
 // FIX: wrong on several levels
     Item *summary = NULL;
@@ -466,12 +466,12 @@ static JsonElement *PromiseLogSummaryAsJson(mongo_connection *conn, PromiseLogSt
 
 PHP_FUNCTION(cfmod_resource_promise_log_repaired_summary)
 {
-    char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL;
+    char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL, *cause_rx = NULL;
     long from, to;
     int len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssll",
-                              &username, &len, &handle, &len, &hostkey, &len, &context, &len, &to, &from) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssll",
+                              &username, &len, &handle, &len, &cause_rx, &len, &hostkey, &len, &context, &len, &to, &from) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -492,7 +492,7 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired_summary)
 
         DATABASE_OPEN(&conn)
             output =
-            PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, hostkey, context, from, to, filter);
+            PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, cause_rx, hostkey, context, from, to, filter);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
     DATABASE_CLOSE(&conn)}
@@ -505,12 +505,12 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired_summary)
 
 PHP_FUNCTION(cfmod_resource_promise_log_notkept)
 {
-    char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL;
+    char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL, *cause_rx = NULL;
     long from, to;
     int len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssll",
-                              &username, &len, &handle, &len, &hostkey, &len, &context, &len, &to, &from) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssll",
+                              &username, &len, &handle, &len, &cause_rx, &len, &hostkey, &len, &context, &len, &to, &from) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -531,7 +531,7 @@ PHP_FUNCTION(cfmod_resource_promise_log_notkept)
 
         DATABASE_OPEN(&conn);
 
-        output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to, filter);
+        output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, cause_rx, hostkey, context, from, to, filter);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
         DATABASE_CLOSE(&conn);
@@ -545,12 +545,12 @@ PHP_FUNCTION(cfmod_resource_promise_log_notkept)
 
 PHP_FUNCTION(cfmod_resource_promise_log_notkept_summary)
 {
-    char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL;
+    char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL, *cause_rx = NULL;
     long from, to;
     int len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssll",
-                              &username, &len, &handle, &len, &hostkey, &len, &context, &len, &to, &from) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssll",
+                              &username, &len, &handle, &len, &cause_rx, &len, &hostkey, &len, &context, &len, &to, &from) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -571,7 +571,7 @@ PHP_FUNCTION(cfmod_resource_promise_log_notkept_summary)
 
         DATABASE_OPEN(&conn);
 
-        output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, hostkey, context, from, to, filter);
+        output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, cause_rx, hostkey, context, from, to, filter);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
         DATABASE_CLOSE(&conn);

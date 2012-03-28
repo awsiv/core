@@ -38,9 +38,9 @@ int Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int o
 int Nova2Txt_docroot(char *buffer, int bufsize);
 void Nova_EnterpriseModuleTrick(void);
 void Nova2Txt_get_host_colour(char *hostkey, char *buffer, int bufsize);
-int Nova2Txt_promiselog_summary(char *hostkey, char *handle, PromiseLogState state, time_t from, time_t to,
+int Nova2Txt_promiselog_summary(char *hostkey, char *handle, char *cause, PromiseLogState state, time_t from, time_t to,
                                 char *classreg);
-int Nova2Txt_promiselog(char *hostkey, char *handle, PromiseLogState state, time_t from, time_t to, char *classreg,
+int Nova2Txt_promiselog(char *hostkey, char *handle, char *cause, PromiseLogState state, time_t from, time_t to, char *classreg,
                         PageInfo *page, char *returnval, int bufsize);
 int Nova2Txt_value_report(char *hostkey, char *day, char *month, char *year, char *classreg, PageInfo *page,
                           char *buffer, int bufsize);
@@ -83,7 +83,7 @@ int Nova2Txt_filechanges_hosts(char *hostkey, char *file, int regex, time_t t, c
                                char *returnval, int bufsize);
 int Nova2Txt_filediffs_hosts(char *hostkey, char *file, char *diffs, int regex, time_t t, char *cmp, char *classreg,
                              char *returnval, int bufsize);
-int Nova2Txt_promiselog_hosts(char *hostkey, char *handle, PromiseLogState state, time_t from, time_t to,
+int Nova2Txt_promiselog_hosts(char *hostkey, char *handle, char *cause, PromiseLogState state, time_t from, time_t to,
                               char *classreg, char *returnval, int bufsize);
 int Nova2Txt_value_hosts(char *hostkey, char *day, char *month, char *year, char *classreg, char *returnval,
                          int bufsize);

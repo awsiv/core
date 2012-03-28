@@ -915,13 +915,13 @@ bool Nova2PHP_vitals_analyse_histogram(char *hostkey, char *vitalId, char *buffe
 /* Search for answers                                                        */
 /*****************************************************************************/
 
-int Nova2PHP_promiselog(char *hostkey, char *handle, PromiseLogState state, time_t from, time_t to,
+int Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogState state, time_t from, time_t to,
                         HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
 {
 # ifndef NDEBUG
     if (IsEnvMissionPortalTesting())
     {
-        return Nova2PHP_promiselog_test(hostkey, handle, state, from, to, hostClassFilter, page, returnval, bufsize);
+        return Nova2PHP_promiselog_test(hostkey, handle, causeRx, state, from, to, hostClassFilter, page, returnval, bufsize);
     }
 # endif
 
@@ -938,7 +938,8 @@ int Nova2PHP_promiselog(char *hostkey, char *handle, PromiseLogState state, time
         return false;
     }
 
-    hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, from, to, true, hostClassFilter);
+    hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, causeRx, from, to, true, hostClassFilter);
+
     PageRecords(&(hq->records), page, DeleteHubPromiseLog);
 
     snprintf(header, sizeof(header),
@@ -1010,13 +1011,13 @@ int Nova2PHP_promiselog(char *hostkey, char *handle, PromiseLogState state, time
 
 /*****************************************************************************/
 
-int Nova2PHP_promiselog_summary(char *hostkey, char *handle, PromiseLogState state, time_t from, time_t to,
+int Nova2PHP_promiselog_summary(char *hostkey, char *handle, char *causeRx, PromiseLogState state, time_t from, time_t to,
                                 HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
 {
 # ifndef NDEBUG
     if (IsEnvMissionPortalTesting())
     {
-        return Nova2PHP_promiselog_summary_test(hostkey, handle, state, from, to, hostClassFilter, page, returnval,
+        return Nova2PHP_promiselog_summary_test(hostkey, handle, causeRx, state, from, to, hostClassFilter, page, returnval,
                                                 bufsize);
     }
 # endif
@@ -1037,8 +1038,7 @@ int Nova2PHP_promiselog_summary(char *hostkey, char *handle, PromiseLogState sta
         return false;
     }
 
-    hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, from, to, false, hostClassFilter);
-
+    hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, causeRx, from, to, false, hostClassFilter);
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {
         hp = (HubPromiseLog *) rp->item;
@@ -2754,7 +2754,7 @@ int Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs, int regex, 
 
 /*****************************************************************************/
 
-int Nova2PHP_promiselog_hosts(char *hostkey, char *handle, PromiseLogState state, time_t from, time_t to,
+int Nova2PHP_promiselog_hosts(char *hostkey, char *handle, char *causeRx, PromiseLogState state, time_t from, time_t to,
                               HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
 {
     mongo_connection dbconn;
@@ -2764,7 +2764,7 @@ int Nova2PHP_promiselog_hosts(char *hostkey, char *handle, PromiseLogState state
         return false;
     }
 
-    HubQuery *hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, from, to, false, hostClassFilter);
+    HubQuery *hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, causeRx, from, to, false, hostClassFilter);
 
     CreateJsonHostOnlyReport(&(hq->hosts), page, returnval, bufsize);
 

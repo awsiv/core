@@ -348,7 +348,7 @@ int Nova2PHP_bundle_report_test(char *hostkey, char *bundle, int regex, HostClas
  * cfpr_report_notkept ( sssllssbll )
  * cfpr_report_repaired ( sssllssbll )
 */
-int Nova2PHP_promiselog_test(char *hostkey, char *handle, PromiseLogState state, time_t from, time_t to,
+int Nova2PHP_promiselog_test(char *hostkey, char *handle, char *cause, PromiseLogState state, time_t from, time_t to,
                              HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
 {
     char work[CF_BUFSIZE] = { 0 };
@@ -424,7 +424,7 @@ int Nova2PHP_promiselog_test(char *hostkey, char *handle, PromiseLogState state,
  * cfpr_summarize_notkept ( sssllssbll )
  * cfpr_summarize_repaired ( sssllssbll )
 */
-int Nova2PHP_promiselog_summary_test(char *hostkey, char *handle, PromiseLogState state, time_t from, time_t to,
+int Nova2PHP_promiselog_summary_test(char *hostkey, char *handle, char *cause, PromiseLogState state, time_t from, time_t to,
                                      HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
 {
     char work[CF_BUFSIZE];

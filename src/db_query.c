@@ -20,13 +20,12 @@
 
 /*****************************************************************************/
 
-#ifdef HAVE_LIBMONGOC
 #include "db_query.h"
 #include "db_save.h" // WTF: no!
 
 static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *filter);
 static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFilter *hostClassFilter);
-
+static bool CompareStringOrRegex(char *value, const char *compareTo, bool regex);
 /*****************************************************************************/
 bool CFDB_CollectionHasData(mongo_connection *conn, const char *fullCollectionName)
 {
@@ -2443,8 +2442,7 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname,
 }
 
 /*****************************************************************************/
-bool CompareStringOrRegex(char *value, const char *compareTo, bool regex)
-
+static bool CompareStringOrRegex(char *value, const char *compareTo, bool regex)
 {
     if (regex)
     {
@@ -2530,9 +2528,10 @@ static int QueryInsertHostInfo(mongo_connection *conn, Rlist *host_list)
 
 
 int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, PromiseLogState state,
-                                 const char *lhandle, int regex, time_t from, time_t to, int sort,
+                                 const char *lhandle, int regex, const char *lcause_rx, time_t from, time_t to, int sort,
                                  HostClassFilter *hostClassFilter, Rlist **host_list, Rlist **record_list)
 {
+
     char *promiseLogKey;
     switch (state)
     {
@@ -2546,6 +2545,7 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
     }
 
     bson_buffer bb;
+
     bson_buffer_init(&bb);
 
     if (!NULL_OR_EMPTY(keyHash))
@@ -2578,7 +2578,6 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
     char oid[CF_MAXVARSIZE] = {0};
 
     HubHost *hh = NULL;
-    bool found = false;
     int count = 0;
 
     while (mongo_cursor_next(cursor))
@@ -2626,7 +2625,7 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
                     BsonStringWrite(rhandle, sizeof(rhandle) - 1, &objPromiseLogData, cfr_promisehandle);
                     BsonStringWrite(rcause, sizeof(rcause) - 1, &objPromiseLogData, cfr_cause);
 
-                    if(!CompareStringOrRegex(rhandle, lhandle, regex))
+                    if(!CompareStringOrRegex(rhandle, lhandle, regex) || !CompareStringOrRegex(rcause, lcause_rx, regex))
                     {
                         continue;
                     }
@@ -2638,13 +2637,12 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
                     while (bson_iterator_next(&iterTimestamps))
                     {
                         rt = bson_iterator_int(&iterTimestamps);
-                        if (rt < from && rt > to)
+                        if (rt >= from && rt <= to)
                         {
                             continue;
                         }
 
                         count++;
-                        found = true;
                         PrependRlistAlien(record_list, NewHubPromiseLog(hh, rhandle, rcause, rt, noteid, oid));
                     }
                 }
@@ -2656,15 +2654,15 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
         }
     }
 
-    // now fill in hostnames and ips of the hosts
-    if(found)
+    // now fill in hostnames and ips of the hosts and sort by time
+    if(count > 0)
     {
         QueryInsertHostInfo(conn, *host_list);
-    }
 
-    if (sort)
-    {
-        *record_list = SortRlist(*record_list, SortPromiseLog);
+        if (sort)
+        {
+            *record_list = SortRlist(*record_list, SortPromiseLog);
+        }
     }
 
     mongo_cursor_destroy(cursor);
@@ -2674,15 +2672,15 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
 
 /*****************************************************************************/
 HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, PromiseLogState state,
-                               const char *lhandle, int regex, time_t from, time_t to, int sort,
+                               const char *lhandle, int regex, const char *lcause_rx, time_t from, time_t to, int sort,
                                HostClassFilter *hostClassFilter)
 {
     Rlist *record_list = NULL;
     Rlist *host_list = NULL;
 
-    CFDB_QueryPromiseLogFromMain(conn, keyHash, state, lhandle, regex, from, to, sort, hostClassFilter, &host_list, &record_list);
+    CFDB_QueryPromiseLogFromMain(conn, keyHash, state, lhandle, regex, lcause_rx, from, to, sort, hostClassFilter, &host_list, &record_list);
 
-    int oldDataCount = CFDB_QueryPromiseLogFromOldColl(conn, keyHash, state, lhandle, regex, from, to, sort, hostClassFilter, &host_list, &record_list);
+    int oldDataCount = CFDB_QueryPromiseLogFromOldColl(conn, keyHash, state, lhandle, regex, lcause_rx, from, to, sort, hostClassFilter, &host_list, &record_list);
 
     if(oldDataCount > 0)
     {
@@ -2694,7 +2692,7 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
 
 /*****************************************************************************/
 int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash, PromiseLogState state,
-                                    const char *lhandle, int regex, time_t from, time_t to, int sort,
+                                    const char *lhandle, int regex, const char *lcause_rx, time_t from, time_t to, int sort,
                                     HostClassFilter *hostClassFilter, Rlist **host_list, Rlist **record_list)
 {
     char *collName;
@@ -2737,6 +2735,23 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
         }
     }
 
+    if(from || to)
+        {
+        bson_buffer *timeRange = bson_append_start_object(&bb, cfr_time);
+
+        if(from)
+           {
+           bson_append_int(timeRange, "$gte",from);
+           }
+
+        if(to)
+           {
+           bson_append_int(timeRange, "$lte",to);
+           }
+
+        bson_append_finish_object(timeRange);
+        }
+
     AppendHostKeys(conn, &bb, hostClassFilter);
 
     bson query;
@@ -2759,7 +2774,6 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
     bson_destroy(&field);
 
     int count = 0;
-    bool found = false;
     HubHost *hh = NULL;
 
     char rhandle[CF_MAXVARSIZE] = {0};
@@ -2818,16 +2832,15 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
             }
         }
 
-        if(CompareStringOrRegex(rhandle, lhandle, regex))
+        if(CompareStringOrRegex(rhandle, lhandle, regex) && CompareStringOrRegex(rcause, lcause_rx, true))
         {
             count++;
-            found = true;
             PrependRlistAlien(record_list,NewHubPromiseLog(hh,rhandle,rcause,rt,noteid,oid));
         }
     }
 
     // now fill in hostnames and ips of the hosts
-    if(found)
+    if(count > 0)
     {
         QueryInsertHostInfo(conn,*host_list);
     }
@@ -6737,4 +6750,3 @@ bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour 
     return 0;
 }
 
-#endif /* HAVE LIBMONGOC */
