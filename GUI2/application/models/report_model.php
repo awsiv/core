@@ -226,10 +226,14 @@ class report_model extends Cf_Model {
      * @return type array
      */
     
-    function getClassReport($username, $hostkey, $search, $inclist,$exlist, $rows = 50, $page_number = 1){
+    function getClassReport($username, $hostkey, $search, $inclist,$exlist, $rows = 50, $page_number = 1,$host_only=false){
         try
         {
-            $rawdata = cfpr_report_classes($username, $hostkey, $search, true, $inclist, $exlist,"last-seen", true, $rows, $page_number);
+            if($host_only){
+                $rawdata = cfpr_hosts_with_classes($username, NULL, $search, true, $inclist, $exlist, $rows , $page_number);
+            }else{
+                $rawdata = cfpr_report_classes($username, $hostkey, $search, true, $inclist, $exlist,"last-seen", true, $rows, $page_number); 
+            }
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors()==0)
             {
@@ -323,11 +327,16 @@ class report_model extends Cf_Model {
      * @param type $page_number
      * @return type array
      */
-    function getPromiseCompliance($username, $hostkey, $search, $state, $inclist, $exlist, $rows = 50, $page_number = 1)
+    function getPromiseCompliance($username, $hostkey, $search, $state, $inclist, $exlist, $rows = 50, $page_number = 1,$host_only=false)
     {
          try
         {
-            $rawdata =   cfpr_report_compliance_promises($username, $hostkey, $search, $state, true, $inclist, $exlist, "last-seen", true, $rows, $page_number);
+            if($host_only){
+               $rawdata = cfpr_hosts_with_compliance_promises($username, NULL, $search, $state, true, $inclist, $exlist, $rows, $page_number);
+             }else{
+                $rawdata = cfpr_report_compliance_promises($username, $hostkey, $search, $state, true, $inclist, $exlist, "last-seen", true, $rows, $page_number);    
+             }
+         
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors()==0)
             {
@@ -355,11 +364,16 @@ class report_model extends Cf_Model {
      * @param type $page_number
      * @return type array
      */
-    function getComplianceSummary($username, $hostkey, $inclist, $exlist, $rows = 50, $page_number = 1)
+    function getComplianceSummary($username, $hostkey, $inclist, $exlist, $rows = 50, $page_number = 1,$host_only=false)
     {
         try
         {
-            $rawdata = cfpr_report_compliance_summary($username, $hostkey, NULL, -1, -1, -1, -1, ">", $inclist, $exlist, "last-seen", true, $rows, $page_number);
+            if($host_only){
+               $rawdata = cfpr_hosts_with_compliance_summary($username, $hostkey, NULL, -1, -1, -1, -1, ">", $inclist, $exlist, $rows, $page_number);
+            }else{
+               $rawdata = cfpr_report_compliance_summary($username, $hostkey, NULL, -1, -1, -1, -1, ">", $inclist, $exlist, "last-seen", true, $rows, $page_number); 
+            }
+            
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {
@@ -389,14 +403,25 @@ class report_model extends Cf_Model {
      * @param type $page_number
      * @return type 
      */
-    function getFileChangeLog($username, $hostkey, $search, $inclist , $exlist, $longterm_data, $rows=50, $page_number=1){
+    function getFileChangeLog($username, $hostkey, $search, $inclist , $exlist, $longterm_data, $rows=50, $page_number=1,$hosts_only=false){
         try
-        {   
-          if ($longterm_data) {
-            $rawdata =   cfpr_report_filechanges_longterm($username, $hostkey, $search, true, -1, ">", $inclist, $exlist, "time", true, $rows, $page_number);
-          }else{
-            $rawdata =  cfpr_report_filechanges($username, $hostkey, $search, true, -1, ">", $inclist, $exlist, "time", true, $rows, $page_number);
-          }
+        {  
+            if ($hosts_only)
+            {
+                $rawdata = cfpr_hosts_with_filechanges($username, NULL, $search, true, -1, ">", $inclist, $exlist, $rows, $page_number);
+            }
+            else
+            {
+                if ($longterm_data)
+                {
+                    $rawdata = cfpr_report_filechanges_longterm($username, $hostkey, $search, true, -1, ">", $inclist, $exlist, "time", true, $rows, $page_number);
+                }
+                else
+                {
+                    $rawdata = cfpr_report_filechanges($username, $hostkey, $search, true, -1, ">", $inclist, $exlist, "time", true, $rows, $page_number);
+                }
+            }
+          
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {
@@ -429,14 +454,26 @@ class report_model extends Cf_Model {
      * @param type $page_number
      * @return type array
      */
-    function getFileChangeDiff($username, $hostkey, $search, $diff, $cal, $inclist, $exlist, $longterm, $rows = 50, $page_number = 1){
+    function getFileChangeDiff($username, $hostkey, $search, $diff, $cal, $inclist, $exlist, $longterm, $rows = 50, $page_number = 1,$hosts_only=false){
        try
-        {   
-          if ($longterm) {
-            $rawdata =   cfpr_report_filediffs_longterm($username, NULL, $search, $diff, true, $cal, ">", $inclist, $exlist, "time", true, $rows, $page_number);
-          }else{
-            $rawdata =  cfpr_report_filediffs($username, NULL, $search, $diff, true, $cal, ">", $inclist, $exlist, "time", true, $rows, $page_number);
-          }
+        {  
+           if ($hosts_only)
+            {
+                $rawdata = cfpr_hosts_with_filediffs($username, NULL, $search, $diff, true, $cal, ">", $inclist, $exlist, $rows, $page_number);
+            }
+            else
+            {
+                if ($longterm)
+                {
+                    $rawdata = cfpr_report_filediffs_longterm($username, NULL, $search, $diff, true, $cal, ">", $inclist, $exlist, "time", true, $rows, $page_number);
+                }
+                else
+                {
+                    $rawdata = cfpr_report_filediffs($username, NULL, $search, $diff, true, $cal, ">", $inclist, $exlist, "time", true, $rows, $page_number);
+                }
+            }
+          
+         
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {
@@ -455,10 +492,17 @@ class report_model extends Cf_Model {
         
     }
     
-    function getLastSeenReport($username, $hostkey, $key, $name, $address, $ago, $inclist, $exlist, $rows = 50, $page_number = 1){
+    function getLastSeenReport($username, $hostkey, $key, $name, $address, $ago, $inclist, $exlist, $rows = 50, $page_number = 1,$hosts_only=false){
         try
-        {   
-            $rawdata=cfpr_report_lastseen($username, $hostkey, $key, $name, $address, $ago, true, $inclist, $exlist, "last-seen", true, $rows, $page_number);
+        {   if ($hosts_only)
+            {
+                $rawdata = cfpr_hosts_with_lastseen($username, NULL, $key, $name, $address, $ago, true, $inclist, $exlist, $rows, $page_number);
+            }
+            else
+            {
+                $rawdata = cfpr_report_lastseen($username, $hostkey, $key, $name, $address, $ago, true, $inclist, $exlist, "last-seen", true, $rows, $page_number);
+            }
+            
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {
@@ -477,10 +521,17 @@ class report_model extends Cf_Model {
     }
     
     
-    function getPatchesAvailable($username, $hostkey, $search, $version, $arch, $inclist, $exlist, $rows = 50, $page_number = 1){
+    function getPatchesAvailable($username, $hostkey, $search, $version, $arch, $inclist, $exlist, $rows = 50, $page_number = 1,$hosts_only=false){
       try
-        {   
-            $rawdata=cfpr_report_patch_avail($username, $hostkey, $search, $version, $arch, true, $inclist, $exlist, "hostname", true, $rows, $page_number);
+        {   if ($hosts_only)
+            {
+                $rawdata = cfpr_hosts_with_patch_avail($username, NULL, $search, $version, $arch, true, $inclist, $exlist, $rows, $page_number);
+            }
+            else
+            {
+                $rawdata = cfpr_report_patch_avail($username, $hostkey, $search, $version, $arch, true, $inclist, $exlist, "hostname", true, $rows, $page_number);
+            }
+            
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {
@@ -511,10 +562,18 @@ class report_model extends Cf_Model {
      * @param type $page_number
      * @return type array
      */
-    function getPatchesInstalled($username, $hostkey, $search, $version, $arch, $inclist,$exlist, $rows = 50, $page_number = 1){
+    function getPatchesInstalled($username, $hostkey, $search, $version, $arch, $inclist,$exlist, $rows = 50, $page_number = 1, $hosts_only=false){
        try
-        {   
-            $rawdata=cfpr_report_patch_in($username, $hostkey, $search, $version, $arch, true, $inclist,$exlist, "hostname", true, $rows, $page_number);
+        {    
+           if ($hosts_only)
+            {
+                $rawdata = cfpr_hosts_with_patch_in($username, NULL, $search, $version, $arch, true, $inclist, $exlist, $rows, $page_number);
+            }
+            else
+            {
+                $rawdata = cfpr_report_patch_in($username, $hostkey, $search, $version, $arch, true, $inclist, $exlist, "hostname", true, $rows, $page_number);
+            }
+           
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {
@@ -542,10 +601,17 @@ class report_model extends Cf_Model {
      * @param type $page_number 
      */
     
-    function getPerformance($username, $hostkey, $search, $inclist, $exlist, $rows = 50, $page_number = 1){
+    function getPerformance($username, $hostkey, $search, $inclist, $exlist, $rows = 50, $page_number = 1,$hosts_only=false){
        try
-        {   
-            $rawdata=cfpr_report_performance($username, $hostkey, $search, true, $inclist, $exlist, "last-performed", true, $rows, $page_number);
+        {    if ($hosts_only)
+            {
+                $rawdata = cfpr_hosts_with_performance($username, NULL, $search, true, $inclist, $exlist, $rows, $page_number);
+            }
+            else
+            {
+                $rawdata = cfpr_report_performance($username, $hostkey, $search, true, $inclist, $exlist, "last-performed", true, $rows, $page_number);
+            }
+            
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {
@@ -577,10 +643,17 @@ class report_model extends Cf_Model {
      * @return type array
      */
     
-    function getPromisesRepairedLog($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 50, $page_number = 1){
+    function getPromisesRepairedLog($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 50, $page_number = 1, $hosts_only=false){
          try
         {   
-            $rawdata=cfpr_report_repaired($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, "time", true, $rows, $page_number);
+            if ($hosts_only)
+            {
+                $rawdata = cfpr_hosts_with_repaired($username, NULL, $search, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, $rows, $page_number);
+            }
+            else
+            {
+                $rawdata = cfpr_report_repaired($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, "time", true, $rows, $page_number);
+            }
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {
@@ -611,10 +684,17 @@ class report_model extends Cf_Model {
      * @param type $page_number
      * @return type array
      */
-    function getPromisesRepairedSummary($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 0, $page_number = 0){
+    function getPromisesRepairedSummary($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 0, $page_number = 0,$hosts_only=false){
          try
         {   
+             if ($hosts_only)
+            {
+                $rawdata = cfpr_hosts_with_repaired($username, NULL, $search, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, $rows, $page_number);
+            }
+            else
+            {
             $rawdata=cfpr_summarize_repaired($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, "time", true, $rows, $page_number);
+            }
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {
@@ -645,10 +725,16 @@ class report_model extends Cf_Model {
      * @param type $page_number
      * @return type array
      */
-    function getPromisesNotKeptSummary($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 50, $page_number = 1){
+    function getPromisesNotKeptSummary($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 50, $page_number = 1, $hosts_only=false){
         try
-        {   
-            $rawdata=cfpr_summarize_notkept($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, "time", true, $rows, $page_number);
+        {   if ($hosts_only)
+            {
+                $rawdata = cfpr_hosts_with_notkept($username, NULL, $search, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, $rows, $page_number);
+            }
+            else
+            {
+                $rawdata = cfpr_summarize_notkept($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, "time", true, $rows, $page_number);
+            }
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {
@@ -679,10 +765,17 @@ class report_model extends Cf_Model {
      * @param type $page_number
      * @return type array
      */
-     function getPromisesNotKeptLog($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 50, $page_number = 1){
+     function getPromisesNotKeptLog($username, $hostkey, $search, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 50, $page_number = 1,$hosts_only=false){
         try
         {   
-            $rawdata=cfpr_report_notkept($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, "time", true, $rows, $page_number);
+            if ($hosts_only)
+            {
+                $rawdata = cfpr_hosts_with_notkept($username, NULL, $search, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, $rows, $page_number);
+            }
+            else
+            {
+                $rawdata = cfpr_report_notkept($username, $hostkey, $search, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, "time", true, $rows, $page_number);
+            }
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {
@@ -711,10 +804,18 @@ class report_model extends Cf_Model {
      * @param type $page_number
      * @return type array
      */
-    function getReportSetUid($username, $hostkey, $search, $inclist, $exlist, $rows = 50, $page_number = 1){
+    function getReportSetUid($username, $hostkey, $search, $inclist, $exlist, $rows = 50, $page_number = 1,$hosts_only=false){
         try
         {   
-            $rawdata=cfpr_report_setuid($username, $hostkey, $search, true, $inclist, $exlist, "hostname", true, $rows, $page_number);
+            if ($hosts_only)
+            {
+                $rawdata = cfpr_hosts_with_setuid($username, NULL, $search, true, $inclist, $exlist, $rows, $page_number);
+            }
+            else
+            {
+                $rawdata = cfpr_report_setuid($username, $hostkey, $search, true, $inclist, $exlist, "hostname", true, $rows, $page_number);
+            }
+           
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {
@@ -748,10 +849,17 @@ class report_model extends Cf_Model {
      * @param type $page_number
      * @return type array
      */
-    function getSoftwareInstalled($username, $hostkey, $search, $version, $arch, $inclist, $exlist, $rows = 50, $page_number = 1){
+    function getSoftwareInstalled($username, $hostkey, $search, $version, $arch, $inclist, $exlist, $rows = 50, $page_number = 1, $hosts_only=false){
          try
         {   
-            $rawdata=cfpr_report_software_in($username, $hostkey, $search, $version, $arch, true, $inclist, $exlist, "hostname", true, $rows, $page_number);
+             if ($hosts_only)
+            {
+                $rawdata = cfpr_hosts_with_software_in($username, NULL, $search, $version, $arch, true, $inclist, $exlist, $rows, $page_number);
+            }
+            else
+            {
+                $rawdata = cfpr_report_software_in($username, $hostkey, $search, $version, $arch, true, $inclist, $exlist, "hostname", true, $rows, $page_number);
+            }
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {
@@ -770,6 +878,7 @@ class report_model extends Cf_Model {
         } 
     }
     
+    
     /**
      *
      * @param type $username
@@ -782,12 +891,20 @@ class report_model extends Cf_Model {
      * @param type $exlist
      * @param type $rows
      * @param type $page_number
-     * @return type 
+     * @param type $hosts_only
+     * @return type array
      */
-    function getVariablesReport($username, $hostkey, $scope, $lval, $rval, $type, $inclist,$exlist, $rows = 50, $page_number =1){
+    function getVariablesReport($username, $hostkey, $scope, $lval, $rval, $type, $inclist,$exlist, $rows = 50, $page_number =1,$hosts_only=false){
          try
-        {   
-            $rawdata=cfpr_report_vars($username, $hostkey, $scope, $lval, $rval, $type, true, $inclist,$exlist, "var-name", true, $rows, $page_number);
+        {            
+          if ($hosts_only)
+            {
+                $rawdata = cfpr_hosts_with_vars($username, NULL, $scope, $lval, $rval, $type, true, $inclist, $exlist, $rows, $page_number);
+            }
+            else
+            {
+                $rawdata = cfpr_report_vars($username, $hostkey, $scope, $lval, $rval, $type, true, $inclist, $exlist, "var-name", true, $rows, $page_number);
+            }
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {
