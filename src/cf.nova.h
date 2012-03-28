@@ -660,10 +660,6 @@ int Nova_StoreIncomingReports(char *reply, Item **reports, int current_report);
 void NewReportBook(Item **reports);
 void DeleteReportBook(Item **reports);
 
-/* cmd_api.c */
-
-#include "cf.nova.cmd_api.h"
-
 /* conversion.c */
 
 enum cfl_view Str2View(const char *s);
@@ -956,10 +952,6 @@ int Nova_EnterpriseModuleExpiry(char *day, char *month, char *year);
 void Nova_LogLicenseStatus(void);
 int Nova_CheckLicenseWin(char *pos);
 char *Nova_LicenseOwner(void);
-
-/* logging.c */
-
-#include "logging.h"
 
 /* magnify.c */
 
