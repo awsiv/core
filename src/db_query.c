@@ -477,41 +477,31 @@ HubQuery *CFDB_QueryHostByHostKey(mongo_connection *conn, char *hostKey)
 
 /*****************************************************************************/
 
-static char *HostRankMethodToMongoCode(HostRankMethod method)
+static const char *HostRankMethodToMongoCode(HostRankMethod method)
 {
-    char *score_field = NULL;
-
     switch (method)
     {
         case HOST_RANK_METHOD_COMPLIANCE:
-            xasprintf(&score_field, "%s", cfr_score_comp);
-            break;
+            return cfr_score_comp;
 
         case HOST_RANK_METHOD_ANOMALY:
-            xasprintf(&score_field, "%s", cfr_score_anom);
-            break;
+            return cfr_score_anom;
 
         case HOST_RANK_METHOD_PERFORMANCE:
-            xasprintf(&score_field, "%s", cfr_score_perf);
-            break;
+            return cfr_score_perf;
 
         case HOST_RANK_METHOD_LASTSEEN:
-            xasprintf(&score_field, "%s", cfr_score_lastseen);
-            break;
+            return cfr_score_lastseen;
 
         case HOST_RANK_METHOD_MIXED:
-            xasprintf(&score_field, "%s", cfr_score_mixed);
-            break;
+            return cfr_score_mixed;
 
         default:
-            xasprintf(&score_field, "%s", cfr_score_comp);
-            break;
+            return cfr_score_comp;
     }
-
-    return score_field;
 }
 
-HubQuery *CFDB_QueryColour(mongo_connection *conn, HostRankMethod method, HostClassFilter *host_class_filter)
+HubQuery *CFDB_QueryColour(mongo_connection *conn, const HostRankMethod method, HostClassFilter *host_class_filter)
 {
     unsigned long blue_horizon;
     if (!CFDB_GetBlueHostThreshold(&blue_horizon))
@@ -526,15 +516,12 @@ HubQuery *CFDB_QueryColour(mongo_connection *conn, HostRankMethod method, HostCl
     bson query;
     bson_from_buffer(&query, &bb);
 
-    // TODO: why dynamically allocated?
-    char *score_field = HostRankMethodToMongoCode(method);
-
     bson_buffer_init(&bb);
     bson_append_int(&bb, cfr_keyhash, 1);
     bson_append_int(&bb, cfr_ip_array, 1);
     bson_append_int(&bb, cfr_host_array, 1);
     bson_append_int(&bb, cfr_day, 1);
-    bson_append_int(&bb, score_field, 1);
+    bson_append_int(&bb, HostRankMethodToMongoCode(method), 1);
     bson_append_int(&bb, cfr_is_black, 1);
     bson field;
     bson_from_buffer(&field, &bb);
@@ -568,7 +555,7 @@ HubQuery *CFDB_QueryColour(mongo_connection *conn, HostRankMethod method, HostCl
         BsonTimeGet(&cursor->current, cfr_day, &last_report);
 
         int score = 0;
-        if (BsonIntGet(&cursor->current, score_field, &score))
+        if (BsonIntGet(&cursor->current, HostRankMethodToMongoCode(method), &score))
         {
             host->colour = HostColourFromScore(now, last_report, blue_horizon, score, is_black);
         }
@@ -580,7 +567,6 @@ HubQuery *CFDB_QueryColour(mongo_connection *conn, HostRankMethod method, HostCl
         PrependRlistAlien(&host_list, host);
     }
 
-    free(score_field);
     mongo_cursor_destroy(cursor);
     return NewHubQuery(host_list, NULL);
 }
@@ -6575,18 +6561,7 @@ HubHost *CFDB_GetHostByKey(mongo_connection *conn, const char *hostkey)
 Item *CFDB_GetHostByColour(mongo_connection *conn, HostClassFilter *host_class_filter,
                            HostColourFilter *host_colour_filter)
 {
-    /* determin rank method */
-    HostRankMethod method;
-    if (host_colour_filter == NULL) // default
-    {
-        method = HOST_RANK_METHOD_COMPLIANCE;
-    }
-    else
-    {
-        method = host_colour_filter->method;
-    }
-
-    char *score_field = HostRankMethodToMongoCode(method);
+    const HostRankMethod method = host_colour_filter ? HOST_RANK_METHOD_COMPLIANCE : host_colour_filter->method;
 
     bson_buffer bb;
 
@@ -6604,7 +6579,7 @@ Item *CFDB_GetHostByColour(mongo_connection *conn, HostClassFilter *host_class_f
     bson_append_int(&bb, cfr_keyhash, 1);
     bson_append_int(&bb, cfr_ip_array, 1);
     bson_append_int(&bb, cfr_host_array, 1);
-    bson_append_int(&bb, score_field, 1);
+    bson_append_int(&bb, HostRankMethodToMongoCode(method), 1);
     bson_from_buffer(&fields, &bb);
 
     mongo_cursor *cursor = NULL;
@@ -6640,7 +6615,7 @@ Item *CFDB_GetHostByColour(mongo_connection *conn, HostClassFilter *host_class_f
             /* Extract the common HubHost data */
             CFDB_ScanHubHost(&it1, keyhash, addresses, hostnames);
 
-            if (strcmp(bson_iterator_key(&it1), score_field) == 0)
+            if (strcmp(bson_iterator_key(&it1), HostRankMethodToMongoCode(method)) == 0)
             {
                 score = (int) bson_iterator_int(&it1);
             }
@@ -6651,7 +6626,6 @@ Item *CFDB_GetHostByColour(mongo_connection *conn, HostClassFilter *host_class_f
     }
 
     mongo_cursor_destroy(cursor);
-    free(score_field);
 
     return list;
 }
@@ -6689,7 +6663,7 @@ long CFDB_GetLastAgentExecution(mongo_connection *conn, const char *hostkey)
 }
 
 
-bool CFDB_GetHostColour(char *lkeyhash, HostRankMethod method, HostColour *result)
+bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour *result)
 {
     if (lkeyhash == NULL)
     {
@@ -6702,8 +6676,6 @@ bool CFDB_GetHostColour(char *lkeyhash, HostRankMethod method, HostColour *resul
         return false;
     }
     time_t now = time(NULL);
-
-    char *score_field = HostRankMethodToMongoCode(method);
 
     mongo_connection conn;
     if (!CFDB_Open(&conn))
@@ -6721,7 +6693,7 @@ bool CFDB_GetHostColour(char *lkeyhash, HostRankMethod method, HostColour *resul
    /* result document */
     bson_buffer_init(&bb);
     bson_append_int(&bb, cfr_day, 1);
-    bson_append_int(&bb, score_field, 1);
+    bson_append_int(&bb, HostRankMethodToMongoCode(method), 1);
     bson_append_int(&bb, cfr_is_black, 1);
     bson field;
     bson_from_buffer(&field, &bb);
@@ -6746,7 +6718,7 @@ bool CFDB_GetHostColour(char *lkeyhash, HostRankMethod method, HostColour *resul
         BsonBoolGet(&out, cfr_is_black, &is_black);
 
         int score = 0;
-        if (BsonIntGet(&out, score_field, &score))
+        if (BsonIntGet(&out, HostRankMethodToMongoCode(method), &score))
         {
             *result = HostColourFromScore(now, then, bluehost_threshold, score, is_black);
         }
@@ -6757,7 +6729,6 @@ bool CFDB_GetHostColour(char *lkeyhash, HostRankMethod method, HostColour *resul
         }
     }
 
-    free(score_field);
     if (!CFDB_Close(&conn))
     {
         CfOut(cf_verbose, "", "!! Could not close connection to report database");

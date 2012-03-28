@@ -28,7 +28,7 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
 int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, PromiseLogState state,
                                const char *lhandle, int regex, time_t from, time_t to, int sort,
                                HostClassFilter *hostClassFilter, Rlist **host_list, Rlist **record_list);
-HubQuery *CFDB_QueryColour(mongo_connection *conn, HostRankMethod method, HostClassFilter *host_class_filter);
+HubQuery *CFDB_QueryColour(mongo_connection *conn, const HostRankMethod method, HostClassFilter *host_class_filter);
 HubQuery *CFDB_QuerySoftware(mongo_connection *conn, char *keyHash, char *type, char *lname, char *lver, char *larch,
                              int regex, HostClassFilter *hostClassFilter, int sort);
 HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass, int regex, time_t horizon,
@@ -109,7 +109,7 @@ bool CFDB_HasMatchingHost(mongo_connection *conn, char *hostKey, HostClassFilter
 int CFDB_CountHostsGeneric(mongo_connection *conn, bson *query);
 int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int hostNameSz);
 HubHost *CFDB_GetHostByKey(mongo_connection *conn, const char *hostkey);
-bool CFDB_GetHostColour(char *lkeyhash, HostRankMethod method, HostColour *result);
+bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour *result);
 
 
 //*****************************************************************************
