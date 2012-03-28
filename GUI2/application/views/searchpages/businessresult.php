@@ -77,9 +77,11 @@
                 
             </div>
             <div class="clear"></div> 
+            <div id="mainResultTable">
                 <?php 
                     include_once ($resultView . '.php');
                 ?> 
+            </div>    
         </div>
     </div>
 </div>
@@ -254,15 +256,18 @@
 
 
 
-        $('.note').ajaxyDialog({
-            title:'Notes',
-            dontOverrideTitle:true,
-            change:function(nid,element) {
-
-                // change the url
-                $(element).attr('href', '/notes/index/action/show/nid/' + nid);
-                // console.log(nid,element);
-            }});
+        $("#mainResultTable").on("click","a.note", function(event) {
+                                event.preventDefault();
+                                $(this).ajaxyDialog({
+                                title:'Notes',
+                                dontOverrideTitle:true,
+                                change:function(nid,element) {
+                                            // change the url
+                                        $(element).attr('href', '/notes/index/action/show/nid/' + nid);
+                                        }
+                                 });
+                                 $(this).ajaxyDialog("open");
+          });
 
     });
 </script>
