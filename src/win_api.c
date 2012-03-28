@@ -470,3 +470,41 @@ int NovaWin_uname(struct utsname *buf)
 
     return 0;
 }
+
+int ExclusiveLockFile(int fd)
+{
+    OVERLAPPED ol = {
+        .Offset = INT_MAX,
+        .OffsetHigh = 0,
+        .hEvent = 0
+    };
+
+    HANDLE fh = (HANDLE)_get_osfhandle(fd);
+
+    if (!LockFileEx(fh, LOCKFILE_EXCLUSIVE_LOCK, 0, 1, 0, &ol))
+    {
+        return -1;
+    }
+
+    return 0;
+}
+
+int ExclusiveUnlockFile(int fd)
+{
+    OVERLAPPED ol = {
+        .Offset = INT_MAX,
+        .OffsetHigh = 0,
+        .hEvent = 0
+    };
+
+    HANDLE fh = (HANDLE)_get_osfhandle(fd);
+
+    if (!UnlockFileEx(fh, 0, 1, 0, &ol))
+    {
+        close(fd);
+        return -1;
+    }
+
+    close(fd);
+    return 0;
+}
