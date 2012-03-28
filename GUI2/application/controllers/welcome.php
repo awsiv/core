@@ -7,7 +7,7 @@ class Welcome extends Cf_Controller {
         parse_str($_SERVER['QUERY_STRING'], $_GET);
         $this->load->helper('form');
         $this->load->library(array('table', 'cf_table'));
-        $this->load->model(array('host_model','environment_model'));
+        $this->load->model(array('host_model','environment_model','report_model'));
     }
 
     function index() {
@@ -578,7 +578,8 @@ class Welcome extends Cf_Controller {
             'load' => $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "mon", "av_loadavg"),
             'free' => $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "mon", "av_diskfree"),
             'speed' => $this->host_model->getNetWorkSpeed($this->session->userdata('username'), $hostkey),
-            'colour' => $this->host_model->getHostColor($this->session->userdata('username'),$hostkey)
+            'colour' => $this->host_model->getHostColor($this->session->userdata('username'),$hostkey),
+            'tableData'=>$this->report_model->getPromisesNotKeptSummary($this->session->userdata('username'), $hostkey, NULL, ".*", NULL, NULL, array(), array(),NULL,NULL)
         );
         }catch(Exception $e){
           show_error($e->getMessage(), 500);

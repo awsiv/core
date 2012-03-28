@@ -476,15 +476,16 @@ private $filter_view_mappings=array();
                 $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                 $hours_deltafrom = isset($getparams['hours_deltafrom']) ? $getparams['hours_deltafrom'] : $this->input->post('hours_deltafrom');
                 $hours_deltato = isset($getparams['hours_deltato']) ? $getparams['hours_deltato'] : $this->input->post('hours_deltato');
-                $cause_rx = ".*"; // TODO: This is just a default value. Take the filter params from the UI instead
-              
+                $cause_rx = isset($getparams['cause']) ? $getparams['cause'] : $this->input->post('cause');
+                $cause_rx = $cause_rx===false?".*":$cause_rx;
 
                         $pdfurlParams = array('type' => $report_type,
                             'inclist' =>$incList,
                             'exlist'=>$exList,
                             'search' => $name,
                             'hours_deltafrom' => $hours_deltafrom,
-                            'hours_deltato' => $hours_deltato
+                            'hours_deltato' => $hours_deltato,
+                            'cause' => $cause_rx
                         );
                        
                         if ($report_type == "promises-repaired-log")
@@ -502,8 +503,8 @@ private $filter_view_mappings=array();
                 $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                 $hours_deltafrom = isset($getparams['hours_deltafrom']) ? $getparams['hours_deltafrom'] : $this->input->post('hours_deltafrom');
                 $hours_deltato = isset($getparams['hours_deltato']) ? $getparams['hours_deltato'] : $this->input->post('hours_deltato');
-                $cause_rx = ".*"; // TODO: This is the default value. Take the filter params from the UI instead
-               
+                $cause_rx = isset($getparams['cause']) ? $getparams['cause'] : $this->input->post('cause');
+                $cause_rx = $cause_rx===false?".*":$cause_rx;
                
                         if ($report_type == "promises-not-kept-summary")
                              $data['report_result']= $this->report_model->getPromisesNotKeptSummary($username, $hostkey, $name, $cause_rx, $hours_deltafrom, $hours_deltato, explode(',',$incList), explode(',',$exList), $rows, $page_number, $hosts_only);
@@ -514,7 +515,8 @@ private $filter_view_mappings=array();
                             'exlist'=>$exList,
                             'search' => $name,
                             'hours_deltafrom' => $hours_deltafrom,
-                            'hours_deltato' => $hours_deltato
+                            'hours_deltato' => $hours_deltato,
+                            'cause' => $cause_rx
                         );
                         
 

@@ -77,11 +77,10 @@
         </div>
         <div class="clear"></div>
         <div id="notkepttable" title="<?php echo $this->lang->line('host_promise_not_kept'); ?>">
-            <?php $report = cfpr_summarize_notkept($this->session->userdata('username'), $hostkey, NULL, NULL, NULL, array(), array(), "time", true, NULL, NULL); ?>
+         
                <!--<p class="title">Promises not kept in the past week</p-->
             <div class="bundlelist-table">
                 <?php
-                $tableData = json_decode($report, true);
                 if (is_array($tableData)) {
                     echo $this->cf_table->generateReportTable($tableData);
                 } else {
