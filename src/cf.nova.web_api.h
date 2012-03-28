@@ -126,9 +126,9 @@ int Nova2PHP_docroot(char *buffer, int bufsize);
 void Nova_EnterpriseModuleTrick(void);
 void Nova2PHP_getlastupdate(char *hostkey, char *buffer, int bufsize);
 void Nova2PHP_get_host_colour(char *hostkey, char *buffer, int bufsize);
-int Nova2PHP_promiselog_summary(char *hostkey, char *handle, PromiseLogState state, time_t from, time_t to,
+int Nova2PHP_promiselog_summary(char *hostkey, char *handle, char *causeRx, PromiseLogState state, time_t from, time_t to,
                                 HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
-int Nova2PHP_promiselog(char *hostkey, char *handle, PromiseLogState state, time_t from, time_t to,
+int Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogState state, time_t from, time_t to,
                         HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_value_report(char *hostkey, char *day, char *month, char *year, HostClassFilter *hostClassFilter,
                           PageInfo *page, char *buffer, int bufsize);
@@ -185,7 +185,7 @@ int Nova2PHP_filechanges_hosts(char *hostkey, char *file, int regex, time_t t, c
                                HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs, int regex, time_t t, char *cmp,
                              HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
-int Nova2PHP_promiselog_hosts(char *hostkey, char *handle, PromiseLogState state, time_t from, time_t to,
+int Nova2PHP_promiselog_hosts(char *hostkey, char *handle, char *cause, PromiseLogState state, time_t from, time_t to,
                               HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *year, HostClassFilter *hostClassFilter,
                          PageInfo *page, char *returnval, int bufsize);
@@ -292,9 +292,9 @@ int Nova2PHP_show_hosts_test(char *hostNameRegex, char *ipRegex, char *classRege
                              int bufsize);
 int Nova2PHP_bundle_report_test(char *hostkey, char *bundle, int regex, HostClassFilter *hostClassFilter,
                                 PageInfo *page, char *returnval, int bufsize);
-int Nova2PHP_promiselog_test(char *hostkey, char *handle, PromiseLogState state, time_t from, time_t to,
+int Nova2PHP_promiselog_test(char *hostkey, char *handle, char *cause, PromiseLogState state, time_t from, time_t to,
                              HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
-int Nova2PHP_promiselog_summary_test(char *hostkey, char *handle, PromiseLogState state, time_t from, time_t to,
+int Nova2PHP_promiselog_summary_test(char *hostkey, char *handle, char *cause, PromiseLogState state, time_t from, time_t to,
                                      HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_value_report_test(char *hostkey, char *day, char *month, char *year, HostClassFilter *hostClassFilter,
                                PageInfo *page, char *returnval, int bufsize);

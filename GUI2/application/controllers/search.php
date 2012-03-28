@@ -476,7 +476,9 @@ private $filter_view_mappings=array();
                 $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                 $hours_deltafrom = isset($getparams['hours_deltafrom']) ? $getparams['hours_deltafrom'] : $this->input->post('hours_deltafrom');
                 $hours_deltato = isset($getparams['hours_deltato']) ? $getparams['hours_deltato'] : $this->input->post('hours_deltato');
-             
+                $cause_rx = ".*"; // TODO: This is just a default value. Take the filter params from the UI instead
+              
+
                         $pdfurlParams = array('type' => $report_type,
                             'inclist' =>$incList,
                             'exlist'=>$exList,
@@ -486,10 +488,9 @@ private $filter_view_mappings=array();
                         );
                        
                         if ($report_type == "promises-repaired-log")
-                              $data['report_result']=$this->report_model->getPromisesRepairedLog($username, $hostkey, $name, $hours_deltafrom, $hours_deltato, explode(',',$incList), explode(',',$exList), $rows, $page_number,$hosts_only);
-                            if ($report_type == "promises-repaired-summary")
-                               $data['report_result']= $this->report_model->getPromisesRepairedSummary($username, $hostkey, $name, $hours_deltafrom, $hours_deltato, explode(',',$incList), explode(',',$exList), $rows , $page_number,$hosts_only);
-                           
+                              $data['report_result']=$this->report_model->getPromisesRepairedLog($username, $hostkey, $name, $cause_rx, $hours_deltafrom, $hours_deltato, explode(',',$incList), explode(',',$exList), $rows, $page_number);
+                        if ($report_type == "promises-repaired-summary")
+                              $data['report_result']= $this->report_model->getPromisesRepairedSummary($username, $hostkey, $name, $cause_rx, $hours_deltafrom, $hours_deltato, explode(',',$incList), explode(',',$exList), $rows , $page_number );
 
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
@@ -501,12 +502,13 @@ private $filter_view_mappings=array();
                 $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                 $hours_deltafrom = isset($getparams['hours_deltafrom']) ? $getparams['hours_deltafrom'] : $this->input->post('hours_deltafrom');
                 $hours_deltato = isset($getparams['hours_deltato']) ? $getparams['hours_deltato'] : $this->input->post('hours_deltato');
+                $cause_rx = ".*"; // TODO: This is the default value. Take the filter params from the UI instead
                
                
                         if ($report_type == "promises-not-kept-summary")
-                             $data['report_result']= $this->report_model->getPromisesNotKeptSummary($username, $hostkey, $name, $hours_deltafrom, $hours_deltato, explode(',',$incList), explode(',',$exList), $rows , $page_number,$hosts_only);
+                             $data['report_result']= $this->report_model->getPromisesNotKeptSummary($username, $hostkey, $name, $cause_rx, $hours_deltafrom, $hours_deltato, explode(',',$incList), explode(',',$exList), $rows , $page_number);
                        if ($report_type == "promises-not-kept-log")
-                             $data['report_result']=$this->report_model->getPromisesNotKeptLog($username, $hostkey, $name, $hours_deltafrom, $hours_deltato, explode(',',$incList), explode(',',$exList), $rows, $page_number,$hosts_only);
+                             $data['report_result']=$this->report_model->getPromisesNotKeptLog($username, $hostkey, $name, $cause_rx, $hours_deltafrom, $hours_deltato, explode(',',$incList), explode(',',$exList), $rows, $page_number);
                         $pdfurlParams = array('type' => $report_type,
                             'inclist' =>$incList,
                             'exlist'=>$exList,

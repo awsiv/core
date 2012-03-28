@@ -2034,10 +2034,9 @@ PHP_FUNCTION(cfpr_get_value_graph)
 
 PHP_FUNCTION(cfpr_report_notkept)
 {
-    char *userName, *hostkey, *handle;
-    char *fhostkey, *fhandle;
+    char *userName, *hostkey, *handle, *cause_rx;
     zval *context_includes = NULL, *context_excludes = NULL;
-    int user_len, hk_len, h_len;
+    int user_len, hk_len, h_len, c_len;
     char buffer[CF_WEBBUFFER];
     long hours_deltafrom, hours_deltato;
     time_t from = 0, to = 0;
@@ -2046,10 +2045,11 @@ PHP_FUNCTION(cfpr_report_notkept)
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssllaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &handle, &h_len,
+                              &cause_rx, &c_len,
                               &hours_deltafrom,
                               &hours_deltato,
                               &context_includes,
@@ -2067,8 +2067,9 @@ PHP_FUNCTION(cfpr_report_notkept)
     from = DeltaHrsConvert(hours_deltato);
     to = DeltaHrsConvert(hours_deltafrom);
 
-    fhostkey = (hk_len == 0) ? NULL : hostkey;
-    fhandle = (h_len == 0) ? NULL : handle;
+    char *fhostkey = (hk_len == 0) ? NULL : hostkey;
+    char *fhandle = (h_len == 0) ? NULL : handle;
+    char *fcause_rx = (c_len == 0) ? NULL : cause_rx;
 
     buffer[0] = '\0';
 
@@ -2080,7 +2081,7 @@ PHP_FUNCTION(cfpr_report_notkept)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_promiselog(fhostkey, fhandle, PROMISE_LOG_STATE_NOTKEPT, from, to, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_promiselog(fhostkey, fhandle, fcause_rx, PROMISE_LOG_STATE_NOTKEPT, from, to, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2090,10 +2091,9 @@ PHP_FUNCTION(cfpr_report_notkept)
 
 PHP_FUNCTION(cfpr_report_repaired)
 {
-    char *userName, *hostkey, *handle;
-    char *fhostkey, *fhandle;
+    char *userName, *hostkey, *handle, *cause_rx;
     zval *context_includes = NULL, *context_excludes = NULL;
-    int user_len, hk_len, h_len;
+    int user_len, hk_len, h_len, c_len;
     char buffer[CF_WEBBUFFER];
     long hours_deltafrom, hours_deltato;
     time_t from = 0, to = 0;
@@ -2102,10 +2102,11 @@ PHP_FUNCTION(cfpr_report_repaired)
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssllaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &handle, &h_len,
+                              &cause_rx, &c_len,
                               &hours_deltafrom, &hours_deltato,
                               &context_includes,
                               &context_excludes,
@@ -2118,8 +2119,9 @@ PHP_FUNCTION(cfpr_report_repaired)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    fhostkey = (hk_len == 0) ? NULL : hostkey;
-    fhandle = (h_len == 0) ? NULL : handle;
+    char *fhostkey = (hk_len == 0) ? NULL : hostkey;
+    char *fhandle = (h_len == 0) ? NULL : handle;
+    char *fcause_rx = (c_len == 0) ? NULL : cause_rx;
 
 // convert delta hours to absolute time (deltato is oldest)
 
@@ -2136,7 +2138,7 @@ PHP_FUNCTION(cfpr_report_repaired)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_promiselog(fhostkey, fhandle, PROMISE_LOG_STATE_REPAIRED, from, to, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_promiselog(fhostkey, fhandle, fcause_rx, PROMISE_LOG_STATE_REPAIRED, from, to, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2146,11 +2148,11 @@ PHP_FUNCTION(cfpr_report_repaired)
 
 PHP_FUNCTION(cfpr_summarize_notkept)
 {
-    char *userName, *hostkey, *handle;
-    char *fhostkey, *fhandle;
+    char *userName, *hostkey, *handle, *cause_rx;
     zval *includes = NULL,
          *excludes = NULL;
-    int user_len, hk_len, h_len;
+    int user_len, hk_len, h_len, c_len;
+
     char buffer[CF_WEBBUFFER];
     time_t from, to;
     PageInfo page = { 0 };
@@ -2158,10 +2160,11 @@ PHP_FUNCTION(cfpr_summarize_notkept)
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssllaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &handle, &h_len,
+                              &cause_rx, &c_len,
                               &from,
                               &to,
                               &includes,
@@ -2177,8 +2180,9 @@ PHP_FUNCTION(cfpr_summarize_notkept)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    fhostkey = (hk_len == 0) ? NULL : hostkey;
-    fhandle = (h_len == 0) ? NULL : handle;
+    char *fhostkey = (hk_len == 0) ? NULL : hostkey;
+    char *fhandle = (h_len == 0) ? NULL : handle;
+    char *fcause_rx = (c_len == 0) ? NULL : cause_rx;
 
     buffer[0] = '\0';
 
@@ -2190,8 +2194,7 @@ PHP_FUNCTION(cfpr_summarize_notkept)
 
     HostClassFilterAddIncludeExcludeLists(filter, includes, excludes);
 
-    Nova2PHP_promiselog_summary(fhostkey, fhandle, PROMISE_LOG_STATE_NOTKEPT, from, to, filter, &page, buffer,
-                                sizeof(buffer));
+    Nova2PHP_promiselog_summary(fhostkey, fhandle, fcause_rx, PROMISE_LOG_STATE_NOTKEPT, from, to, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2201,11 +2204,10 @@ PHP_FUNCTION(cfpr_summarize_notkept)
 
 PHP_FUNCTION(cfpr_summarize_repaired)
 {
-    char *userName, *hostkey, *handle;
-    char *fhostkey, *fhandle;
+    char *userName, *hostkey, *handle, *cause_rx;
     zval *includes = NULL,
          *excludes = NULL;
-    int user_len, hk_len, h_len;
+    int user_len, hk_len, h_len, c_len;
     char buffer[CF_WEBBUFFER];
     time_t from, to;
     PageInfo page = { 0 };
@@ -2213,10 +2215,11 @@ PHP_FUNCTION(cfpr_summarize_repaired)
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssllaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &handle, &h_len,
+                              &cause_rx, &c_len,
                               &from,
                               &to,
                               &includes,
@@ -2231,8 +2234,9 @@ PHP_FUNCTION(cfpr_summarize_repaired)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    fhostkey = (hk_len == 0) ? NULL : hostkey;
-    fhandle = (h_len == 0) ? NULL : handle;
+    char *fhostkey = (hk_len == 0) ? NULL : hostkey;
+    char *fhandle = (h_len == 0) ? NULL : handle;
+    char *fcause_rx = (c_len == 0) ? NULL : cause_rx;
 
     buffer[0] = '\0';
 
@@ -2244,8 +2248,7 @@ PHP_FUNCTION(cfpr_summarize_repaired)
 
     HostClassFilterAddIncludeExcludeLists(filter, includes, excludes);
 
-    Nova2PHP_promiselog_summary(fhostkey, fhandle, PROMISE_LOG_STATE_REPAIRED, from, to, filter, &page, buffer,
-                                sizeof(buffer));
+    Nova2PHP_promiselog_summary(fhostkey, fhandle, fcause_rx, PROMISE_LOG_STATE_REPAIRED, from, to, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2505,18 +2508,19 @@ PHP_FUNCTION(cfpr_hosts_with_classes)
 PHP_FUNCTION(cfpr_hosts_with_repaired)
 //$ret = cfpr_hosts_with_repaired($hostkey,$name,$hours_deltafrom,$hours_deltato,$class_regex);
 {
-    char *userName, *hostkey, *handle;
-    int user_len, hk_len, h_len;
+    char *userName, *hostkey, *handle, *cause_rx;
+    int user_len, hk_len, h_len, c_len;
     char buffer[512 * 1024];
     zval *context_includes = NULL, *context_excludes = NULL;
     long hours_deltafrom, hours_deltato;
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllaall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssllaall",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &handle, &h_len,
+                              &cause_rx, &c_len,
                               &hours_deltafrom,
                               &hours_deltato,
                               &context_includes,
@@ -2535,6 +2539,7 @@ PHP_FUNCTION(cfpr_hosts_with_repaired)
 
     char *fhostkey = (hk_len == 0) ? NULL : hostkey;
     char *fhandle = (h_len == 0) ? NULL : handle;
+    char *fcause_rx = (c_len == 0) ? NULL : cause_rx;
 
     buffer[0] = '\0';
 
@@ -2546,7 +2551,8 @@ PHP_FUNCTION(cfpr_hosts_with_repaired)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_promiselog_hosts(fhostkey, fhandle, PROMISE_LOG_STATE_REPAIRED, from, to, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_promiselog_hosts(fhostkey, fhandle, fcause_rx, PROMISE_LOG_STATE_REPAIRED, from, to, filter, &page, buffer, sizeof(buffer));
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2556,18 +2562,20 @@ PHP_FUNCTION(cfpr_hosts_with_repaired)
 
 PHP_FUNCTION(cfpr_hosts_with_notkept)
 {
-    char *userName, *hostkey, *handle;
-    int user_len, hk_len, h_len;
+    char *userName, *hostkey, *handle, *cause_rx;
+    int user_len, hk_len, h_len, c_len;
     zval *context_includes = NULL, *context_excludes = NULL;
+
     char buffer[512 * 1024];
     long hours_deltafrom, hours_deltato;
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllaall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssllaall",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &handle, &h_len,
+                              &cause_rx, &c_len,
                               &hours_deltafrom,
                               &hours_deltato,
                               &context_includes,
@@ -2587,6 +2595,7 @@ PHP_FUNCTION(cfpr_hosts_with_notkept)
 
     char *fhostkey = (hk_len == 0) ? NULL : hostkey;
     char *fhandle = (h_len == 0) ? NULL : handle;
+    char *fcause_rx = (c_len == 0) ? NULL : cause_rx;
 
     buffer[0] = '\0';
 
@@ -2598,7 +2607,7 @@ PHP_FUNCTION(cfpr_hosts_with_notkept)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_promiselog_hosts(fhostkey, fhandle, PROMISE_LOG_STATE_NOTKEPT, from, to, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_promiselog_hosts(fhostkey, fhandle, fcause_rx, PROMISE_LOG_STATE_NOTKEPT, from, to, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
