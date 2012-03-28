@@ -21,18 +21,12 @@ libcfnova_la_LDFLAGS = -no-undefined
 # Separate out a library
 
 libcfnova_la_SOURCES = \
-        benchmark.c \
         cfnova.c \
         conversion.c \
         logging.c logging.h \
         acl.c \
         acl_linux.c \
         acl_nt.c \
-        bson_lib.c \
-        db_common.c db_common.h \
-        db_save.c db_save.h \
-        db_query.c db_query.h \
-        db_maintain.c db_maintain.h \
         ldap.c \
         license.c \
         registry.c \
@@ -40,8 +34,6 @@ libcfnova_la_SOURCES = \
         ontology.c \
         server.c \
         datapackaging.c \
-        dataunpack.c \
-        client_code.c \
         outputs.c \
         promises.c \
         promise_db.c \
@@ -51,15 +43,8 @@ libcfnova_la_SOURCES = \
         runagent.c \
         reporting.c \
         syntax.c \
-        scorecards.c scorecards.h \
         copernicus.c \
-        histogram.c \
-        yearly.c \
-        weekly.c \
-        magnify.c \
-        topicmap.c \
         install.c \
-        cmd_api.c \
         map.c map.h map_common.h \
         string_map.c string_map.h \
         array_map.c array_map_priv.h \
@@ -88,8 +73,23 @@ endif
 
 if MONGO
 libcfnova_la_SOURCES += \
+        benchmark.c benchmark.h \
+        bson_lib.c bson_lib.h \
+        client_code.c \
+        cmd_api.c cf.nova.cmd_api.h \
+        dataunpack.c \
+        db_common.c db_common.h \
+        db_maintain.c db_maintain.h \
+        db_query.c db_query.h \
+        db_save.c db_save.h \
+        histogram.c \
+        magnify.c \
+        scorecards.c scorecards.h \
+        topicmap.c \
         web_api.c \
-        web_rbac.c
+        web_rbac.c \
+        weekly.c \
+        yearly.c
 endif
 
 if !NDEBUG
@@ -135,7 +135,7 @@ libcfknow_la_SOURCES = \
 #
 
 noinst_HEADERS = \
-        win_disphelper.h cf.nova.h cf.nova.web_api.h cf.nova.cmd_api.h bson_lib.h benchmark.h
+        win_disphelper.h cf.nova.h cf.nova.web_api.h
 
 #
 # Some basic clean ups

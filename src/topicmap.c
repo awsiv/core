@@ -10,9 +10,7 @@
 
 #include <assert.h>
 
-#ifdef HAVE_LIBMONGOC
 #include "db_query.h"
-#endif
 
 /*****************************************************************************/
 /*                                                                           */
@@ -20,13 +18,10 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#ifdef HAVE_LIBMONGOC
 static int Nova_NewVertex(GraphNode *tribe, int node, int distance, int real, char *name, char *context);
-#endif
 
 /*****************************************************************************/
 
-#ifdef HAVE_LIBMONGOC
 void Nova_WebTopicMap_Initialize()
 {
     char retval[CF_MAXVARSIZE];
@@ -37,15 +32,12 @@ void Nova_WebTopicMap_Initialize()
     CfDebug("Loaded values: docroot=%s\n", DOCROOT);
 }
 
-#endif
-
 /*****************************************************************************/
 /* The main panels                                                           */
 /*****************************************************************************/
 
 void Nova_DumpTopics()
 {
-#ifdef HAVE_LIBMONGOC
     bson_buffer bb;
     bson query, field;
     mongo_cursor *cursor;
@@ -126,12 +118,10 @@ void Nova_DumpTopics()
 
     mongo_cursor_destroy(cursor);
     CFDB_Close(&conn);
-#endif
 }
 
 /*****************************************************************************/
 
-#ifdef HAVE_LIBMONGOC
 int Nova_GetTopicIdForTopic(char *typed_topic)
 {
     char topic[CF_BUFSIZE], type[CF_BUFSIZE];
@@ -194,11 +184,9 @@ int Nova_GetTopicIdForTopic(char *typed_topic)
 
     return topic_id;
 }
-#endif
 
 /*****************************************************************************/
 
-#ifdef HAVE_LIBMONGOC
 int Nova_GetTopicByTopicId(int search_id, char *topic_name, char *topic_id, char *topic_context)
 {
     bson_buffer bb;
@@ -266,11 +254,9 @@ int Nova_GetTopicByTopicId(int search_id, char *topic_name, char *topic_id, char
     CFDB_Close(&conn);
     return topicid;
 }
-#endif
 
 /*********************************************************************/
 
-#ifdef HAVE_LIBMONGOC
 int Nova_SearchTopicMap(char *search_topic, char *buffer, int bufsize)
 {
     bson_buffer bb;
@@ -371,14 +357,12 @@ int Nova_SearchTopicMap(char *search_topic, char *buffer, int bufsize)
     CFDB_Close(&conn);
     return true;
 }
-#endif
 
 /*****************************************************************************/
 
 void Nova_ScanTheRest(int pid, char *buffer, int bufsize)
 /* Find other topics in the same context */
 {
-#ifdef HAVE_LIBMONGOC
     char this_name[CF_BUFSIZE], this_id[CF_BUFSIZE], this_context[CF_BUFSIZE];
     Item *worklist, *ip;
     char work[CF_BUFSIZE];
@@ -432,12 +416,10 @@ void Nova_ScanTheRest(int pid, char *buffer, int bufsize)
 
     ReplaceTrailingChar(buffer, ',', '\0');
     EndJoin(buffer, "]}", bufsize);
-#endif
 }
 
 /*****************************************************************************/
 
-#ifdef HAVE_LIBMONGOC
 Item *Nova_ScanLeadsAssociations(int search_id, char *assoc_mask)
 /* Look for neighbours and retain/sort link names - return JSON array
 
@@ -548,13 +530,11 @@ Item *Nova_ScanLeadsAssociations(int search_id, char *assoc_mask)
     CFDB_Close(&conn);
     return list;
 }
-#endif
 
 /*****************************************************************************/
 
 void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
 {
-#ifdef HAVE_LIBMONGOC
     enum representations locator_type;
     Rlist *rp, *frags = NULL, *atoms = NULL, *rrp;
     char topic_name[CF_BUFSIZE] = { 0 },
@@ -702,14 +682,13 @@ void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
     }
 
     buffer[strlen(buffer) - 1] = ']';
-#endif
 }
 
 /*************************************************************************/
 
+/* FIXME: returned false when !MONGO */
 int Nova_GetReportDescription(int this_id, char *buffer, int bufsize)
 {
-#ifdef HAVE_LIBMONGOC
     char topic_name[CF_BUFSIZE], topic_id[CF_BUFSIZE], topic_context[CF_BUFSIZE];
     char searchstring[CF_BUFSIZE];
     bson query, field;
@@ -768,13 +747,10 @@ int Nova_GetReportDescription(int this_id, char *buffer, int bufsize)
     }
     mongo_cursor_destroy(cursor);
     return false;
-#endif
-    return false;
 }
 
 /*************************************************************************/
 
-#ifdef HAVE_LIBMONGOC
 Item *Nova_GetBusinessGoals(char *handle)
 {
     char querytopic[CF_BUFSIZE];
@@ -794,11 +770,9 @@ Item *Nova_GetBusinessGoals(char *handle)
     worklist = SortItemListNames(worklist);
     return worklist;
 }
-#endif
 
 /*************************************************************************/
 
-#ifdef HAVE_LIBMONGOC
 int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 {
     Rlist *rp, *rp2;
@@ -903,7 +877,6 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 
     return true;
 }
-#endif
 
 /*************************************************************************/
 /* Level                                                                 */
@@ -933,7 +906,6 @@ char *Nova_URL(char *s, char *rep)
 
 void Nova_FillInGoalComment(Item *ip)
 {
-#ifdef HAVE_LIBMONGOC
     Rlist *rp;
     char searchstring[CF_MAXVARSIZE], work[CF_MAXVARSIZE];
     bson_buffer bb;
@@ -1013,12 +985,10 @@ void Nova_FillInGoalComment(Item *ip)
 
     mongo_cursor_destroy(cursor);
     ip->classes = xstrdup("No description found");
-#endif
 }
 
 /*************************************************************************/
 
-#ifdef HAVE_LIBMONGOC
 char *Nova_GetBundleComment(char *bundle)
 {
     static char buf[CF_BUFSIZE];
@@ -1074,7 +1044,6 @@ char *Nova_GetBundleComment(char *bundle)
     mongo_cursor_destroy(cursor);
     return "";
 }
-#endif
 
 /*********************************************************************/
 
@@ -1109,7 +1078,6 @@ char *Nova_StripString(char *source, char *substring)
 /* Plot cosmos                                                               */
 /*****************************************************************************/
 
-#ifdef HAVE_LIBMONGOC
 void Nova_PlotTopicCosmos(int topic, char *view, char *buffer, int bufsize)
 /* This assumes that we have the whole graph in a matrix */
 {
@@ -1131,13 +1099,11 @@ void Nova_PlotTopicCosmos(int topic, char *view, char *buffer, int bufsize)
 
     Join(buffer, "]", bufsize);
 }
-#endif
 
 /*************************************************************************/
 /* Local patch computation                                               */
 /*************************************************************************/
 
-#ifdef HAVE_LIBMONGOC
 int Nova_GetTribe(int *tribe_id, GraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE], int pid,
                   char *view_pattern)
 /* This function generates a breadth-first connected sub-graph of the full graph
@@ -1332,7 +1298,6 @@ int Nova_GetTribe(int *tribe_id, GraphNode *tribe_nodes, double tribe_adj[CF_TRI
 
     return tribe_counter;
 }
-#endif
 
 /*************************************************************************/
 /* Level                                                                 */
@@ -1437,7 +1402,6 @@ void Nova_InitVertex(GraphNode *tribe, int i)
 
 /*************************************************************************/
 
-#ifdef HAVE_LIBMONGOC
 static int Nova_NewVertex(GraphNode *tribe, int node, int distance, int real, char *topic_name, char *topic_context)
 {
     char sshort[CF_BUFSIZE] = { 0 };
@@ -1448,12 +1412,10 @@ static int Nova_NewVertex(GraphNode *tribe, int node, int distance, int real, ch
 
 /* If more than a few nodes, don't waste visual space on repeated topics */
 
-# ifdef HAVE_LIBMONGOC
     if (strlen(topic_name) == 0)
     {
         Nova_GetTopicByTopicId(real, topic_name, topic_id, topic_context);
     }
-# endif
 
     sscanf(topic_name, "%32[^\n]", sshort);
 
@@ -1481,11 +1443,9 @@ static int Nova_NewVertex(GraphNode *tribe, int node, int distance, int real, ch
     tribe[node].distance_from_centre = distance;
     return true;
 }
-#endif
 
 /*********************************************************************/
 
-#ifdef HAVE_LIBMONGOC
 Item *Nova_NearestNeighbours(int search_id, char *assoc_mask)
 {
     bson_buffer bb;
@@ -1596,11 +1556,9 @@ Item *Nova_NearestNeighbours(int search_id, char *assoc_mask)
     CFDB_Close(&conn);
     return list;
 }
-#endif
 
 /*********************************************************************/
 
-#ifdef HAVE_LIBMONGOC
 Item *Nova_GetTopicsInContext(char *context)
 {
     bson_buffer bb;
@@ -1671,7 +1629,6 @@ Item *Nova_GetTopicsInContext(char *context)
     CFDB_Close(&conn);
     return list;
 }
-#endif
 
 /*********************************************************************/
 // Copy from ontology.c because of a linker bug

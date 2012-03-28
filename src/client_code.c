@@ -10,12 +10,10 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#ifdef HAVE_LIBMONGOC
 #include "db_save.h"
 
 static bool ReportBookHasData(Item **reports);
 static void Nova_RecordNetwork(mongo_connection *dbconnp, time_t now, double datarate, AgentConnection *conn);
-#endif
 
 /*****************************************************************************/
 
@@ -87,8 +85,6 @@ void *CF_CODEBOOK_HANDLER[CF_CODEBOOK_SIZE] =
 };
 
 /*********************************************************************/
-
-#ifdef HAVE_LIBMONGOC
 
 int Nova_QueryClientForReports(mongo_connection *dbconn, AgentConnection *conn, const char *menu, time_t since)
 /*
@@ -223,8 +219,6 @@ int Nova_QueryClientForReports(mongo_connection *dbconn, AgentConnection *conn, 
     return total_plaintext_len;
 }
 
-#endif /* HAVE_LIBMONGOC */
-
 /*********************************************************************/
 
 int Nova_StoreIncomingReports(char *reply, Item **reports, int current_report)
@@ -265,7 +259,6 @@ void NewReportBook(Item **reports)
 
 /*********************************************************************/
 
-#ifdef HAVE_LIBMONGOC
 static bool ReportBookHasData(Item **reports)
 {
     for (int i = 0; i < CF_CODEBOOK_SIZE; i++)
@@ -278,11 +271,8 @@ static bool ReportBookHasData(Item **reports)
 
     return false;
 }
-#endif
 
 /*********************************************************************/
-
-#ifdef HAVE_LIBMONGOC
 
 void UnpackReportBook(mongo_connection *dbconn, char *id, Item **reports)
 {
@@ -298,8 +288,6 @@ void UnpackReportBook(mongo_connection *dbconn, char *id, Item **reports)
         }
     }
 }
-
-#endif
 
 /*********************************************************************/
 
@@ -317,8 +305,6 @@ void DeleteReportBook(Item **reports)
 }
 
 /*********************************************************************/
-
-#ifdef HAVE_LIBMONGOC
 
 static void Nova_RecordNetwork(mongo_connection *dbconnp, time_t now, double datarate, AgentConnection *conn)
 // NOTE: NOT Thread-safe (use of HashPrint())
@@ -389,5 +375,3 @@ static void Nova_RecordNetwork(mongo_connection *dbconnp, time_t now, double dat
     bson_destroy(&query);
     bson_destroy(&update);
 }
-
-#endif /* HAVE_LIBMONGOC */

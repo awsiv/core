@@ -14,7 +14,6 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#ifdef HAVE_LIBMONGOC
 #include "db_query.h"
 
 double Num(double x)
@@ -167,4 +166,3 @@ bool Nova_ReadWeekTimeSeries2(mongo_connection *conn, DataView *cfv, char *keyha
     }
 }
 
-#endif /* HAVE_LIBMONGOC */

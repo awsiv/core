@@ -6,10 +6,6 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 
 #include "bson_lib.h"
 
-#ifdef HAVE_LIBMONGOC
-
-/*****************************************************************************/
-
 Item *BsonGetStringArrayAsItemList(const bson *b, const char *key)
 // TODO: Deprecate in favour of BsonStringArrayAsRlist()
 {
@@ -621,5 +617,3 @@ void BsonAppendSortField(bson_buffer *bb, char *sortField)
     bson_append_int(sort, sortField, -1);
     bson_append_finish_object(sort);
 }
-
-#endif /* HAVE_LIBMONGOC */

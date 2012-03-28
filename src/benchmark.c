@@ -6,7 +6,6 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 
 #include "benchmark.h"
 
-#ifdef HAVE_LIBMONGOC
 #include "db_save.h"
 
 int Nova_BenchmarkReportStorage(char *reportFilePath, int iterationsToRun)
@@ -71,5 +70,3 @@ int Nova_BenchmarkReportStorage(char *reportFilePath, int iterationsToRun)
 
     return 0;
 }
-
-#endif /* HAVE_LIBMONGOC */

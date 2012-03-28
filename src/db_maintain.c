@@ -12,9 +12,6 @@
 #include "cf3.extern.h"
 #include "db_maintain.h"
 
-// WTF: this file should not be compiled if !MONGO
-
-#ifdef HAVE_LIBMONGOC
 #include "db_common.h"
 #include "bson_lib.h"
 
@@ -22,13 +19,9 @@ static void CFDB_DropAllIndices(mongo_connection *conn);
 static void PurgePromiseLogWithEmptyTimestamps(mongo_connection *conn, char *promiseLogKey);
 static Item *GetUniquePromiseLogEntryKeys(mongo_connection *conn, char *promiseLogKey);
 
-#endif
-
 
 void CFDB_Maintenance(void)
 {
-#ifdef HAVE_LIBMONGOC
-
     mongo_connection dbconn;
 
     if (!CFDB_Open(&dbconn))
@@ -49,8 +42,6 @@ void CFDB_Maintenance(void)
     CFDB_PurgeDeprecatedVitals(&dbconn);
 
     CFDB_Close(&dbconn);
-
-#endif /* HAVE_LIBMONGOC */
 }
 
 /*****************************************************************************/
@@ -62,8 +53,6 @@ void CFDB_ReIndexAll(void)
  *           e.g. due to Nova upgrade.
  */
 {
-#ifdef HAVE_LIBMONGOC
-
     mongo_connection dbconn;
 
     if (!CFDB_Open(&dbconn))
@@ -75,16 +64,12 @@ void CFDB_ReIndexAll(void)
     CFDB_EnsureIndices(&dbconn);
 
     CFDB_Close(&dbconn);
-
-#endif /* HAVE_LIBMONGOC */
 }
 
 /*****************************************************************************/
 
 void CFDB_ConnectAndEnsureIndices(void)
 {
-#ifdef HAVE_LIBMONGOC
-
     mongo_connection dbconn;
 
     if (!CFDB_Open(&dbconn))
@@ -95,13 +80,9 @@ void CFDB_ConnectAndEnsureIndices(void)
     CFDB_EnsureIndices(&dbconn);
 
     CFDB_Close(&dbconn);
-
-#endif /* HAVE_LIBMONGOC */
 }
 
 /*****************************************************************************/
-
-#ifdef HAVE_LIBMONGOC
 
 void CFDB_EnsureIndices(mongo_connection *conn)
 /**
@@ -997,4 +978,4 @@ int CFDB_PurgeDeletedHosts(void)
 
     return true;
 }
-#endif /* HAVE_LIBMONGOC */
+

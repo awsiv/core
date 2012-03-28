@@ -12,7 +12,6 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#ifdef HAVE_LIBMONGOC
 #include "db_save.h"
 
 /*****************************************************************************/
@@ -2012,7 +2011,3 @@ void CFDB_SaveLastAgentExecution(mongo_connection *conn, char *keyhash, long las
     bson_destroy(&set_op);
     bson_destroy(&host_key);
 }
-
-/*****************************************************************************/
-
-#endif /* HAVE_LIBMONGOC */

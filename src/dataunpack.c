@@ -17,11 +17,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#ifdef HAVE_LIBMONGOC
 #include "db_save.h"
-#endif
-
-/*****************************************************************************/
 
 void Nova_UnPackPerformance(mongo_connection *dbconn, char *id, Item *data)
 {
@@ -32,12 +28,10 @@ void Nova_UnPackPerformance(mongo_connection *dbconn, char *id, Item *data)
 
     CfOut(cf_verbose, "", " -> Performance data ...................");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SavePerformance(dbconn, id, data);
     }
-#endif
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
@@ -59,12 +53,10 @@ void Nova_UnPackClasses(mongo_connection *dbconn, char *id, Item *data)
 
     CfOut(cf_verbose, "", " -> Class data .................");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SaveClasses(dbconn, id, data);
     }
-#endif
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
@@ -82,12 +74,10 @@ void Nova_UnPackSetuid(mongo_connection *dbconn, char *id, Item *data)
 
     CfOut(cf_verbose, "", " -> setuid data ......................");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SaveSetUid(dbconn, id, data);
     }
-#endif
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
@@ -106,12 +96,10 @@ void Nova_UnPackFileChanges(mongo_connection *dbconn, char *id, Item *data)
 
     CfOut(cf_verbose, "", " -> File change data....................");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SaveFileChanges(dbconn, id, data);
     }
-#endif
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
@@ -133,12 +121,10 @@ void Nova_UnPackDiffs(mongo_connection *dbconn, char *id, Item *data)
 
     CfOut(cf_verbose, "", " -> File diff data...................");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SaveFileDiffs(dbconn, id, data);
     }
-#endif
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
@@ -295,12 +281,10 @@ void Nova_UnPackMonitorHg(mongo_connection *dbconn, char *id, Item *data)
 
     CfOut(cf_verbose, "", " -> Monitor histogram data.....................");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SaveMonitorHistograms(dbconn, id, data);
     }
-#endif
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
@@ -316,12 +300,10 @@ void Nova_UnPackMonitorMg(mongo_connection *dbconn, char *id, Item *data)
 
     CfOut(cf_verbose, "", " -> Monitor magnified data.....................");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SaveMonitorData2(dbconn, id, mon_rep_mag, data);
     }
-#endif
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
@@ -337,12 +319,10 @@ void Nova_UnPackMonitorWk(mongo_connection *dbconn, char *id, Item *data)
 
     CfOut(cf_verbose, "", " -> Monitor weekly data.....................");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SaveMonitorData2(dbconn, id, mon_rep_week, data);
     }
-#endif
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
@@ -359,12 +339,10 @@ void Nova_UnPackMonitorYr(mongo_connection *dbconn, char *id, Item *data)
 
     CfOut(cf_verbose, "", " -> Monitor year data.....................");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SaveMonitorData2(dbconn, id, mon_rep_yr, data);
     }
-#endif
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
@@ -383,12 +361,10 @@ void Nova_UnPackCompliance(mongo_connection *dbconn, char *id, Item *data)
 
     CfOut(cf_verbose, "", " -> Promise Compliance data..............");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SavePromiseCompliance(dbconn, id, data);
     }
-#endif
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
@@ -422,12 +398,10 @@ void Nova_UnPackSoftware(mongo_connection *dbconn, char *id, Item *data)
 
     CfOut(cf_verbose, "", " -> Installed software data...............");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SaveSoftware(dbconn, sw_rep_installed, id, data);
     }
-#endif
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
@@ -448,12 +422,10 @@ void Nova_UnPackAvailPatches(mongo_connection *dbconn, char *id, Item *data)
 
     CfOut(cf_verbose, "", " -> Available patch data...................");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SaveSoftware(dbconn, sw_rep_patch_avail, id, data);
     }
-#endif
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
@@ -474,12 +446,10 @@ void Nova_UnPackPatchStatus(mongo_connection *dbconn, char *id, Item *data)
 
     CfOut(cf_verbose, "", " -> Patches installed data.......................");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SaveSoftware(dbconn, sw_rep_patch_installed, id, data);
     }
-#endif
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
@@ -515,12 +485,10 @@ void Nova_UnPackValueReport(mongo_connection *dbconn, char *id, Item *data)
 
     CfOut(cf_verbose, "", " -> Value data..............................");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SaveValueReport(dbconn, id, data);
     }
-#endif
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
@@ -542,12 +510,10 @@ void Nova_UnPackVariables(mongo_connection *dbconn, char *id, Item *data)
     CfOut(cf_inform, "",
           "!! Deprecated variable data format - response from Nova 2.0.4 or earlier (some features unavailible)");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SaveVariables(dbconn, id, data);
     }
-#endif
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
@@ -577,12 +543,10 @@ void Nova_UnPackVariables2(mongo_connection *dbconn, char *id, Item *data)
 
     CfOut(cf_verbose, "", " -> Variable data with date stamp...........");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SaveVariables2(dbconn, id, data);
     }
-#endif
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
@@ -612,12 +576,10 @@ void Nova_UnPackLastSeen(mongo_connection *dbconn, char *id, Item *data)
 
     CfOut(cf_verbose, "", " -> Last-seen data..........................");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SaveLastSeen(dbconn, id, data);
     }
-#endif
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
@@ -648,12 +610,10 @@ void Nova_UnPackTotalCompliance(mongo_connection *dbconn, char *id, Item *data)
 
     CfOut(cf_verbose, "", " -> Total Compliance data......................");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SaveTotalCompliance(dbconn, id, data);
     }
-#endif
 
     time_t agent_last_run_time = 0;
     for (ip = data; ip != NULL; ip = ip->next)
@@ -678,14 +638,12 @@ void Nova_UnPackTotalCompliance(mongo_connection *dbconn, char *id, Item *data)
 
     bool is_blackhost = (delta_schedule > black_threshold)? true:false;
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         /* due to not beeing able to estimate real scheduling interval it is set on 0 */
         CFDB_SaveExecutionStatus(dbconn, id, is_blackhost, 0);
         CFDB_SaveLastAgentExecution(dbconn, id, (long)agent_last_run_time);
     }
-#endif
 
     CfDebug("Execution status (pre-estimation): black %s with agent schedule interval: %ld, agent last run time: %ld",
             (is_blackhost)? "true" : "false", delta_schedule, agent_last_run_time);
@@ -702,12 +660,10 @@ void Nova_UnPackRepairLog(mongo_connection *dbconn, char *id, Item *data)
 
     CfOut(cf_verbose, "", " -> Repair log data........................");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SavePromiseLog(dbconn, id, PROMISE_LOG_STATE_REPAIRED, data);
     }
-#endif
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
@@ -729,12 +685,10 @@ void Nova_UnPackNotKeptLog(mongo_connection *dbconn, char *id, Item *data)
 
     CfOut(cf_verbose, "", " -> Not kept data...........................");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SavePromiseLog(dbconn, id, PROMISE_LOG_STATE_NOTKEPT, data);
     }
-#endif
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
@@ -755,13 +709,11 @@ void Nova_UnPackMeter(mongo_connection *dbconn, char *id, Item *data)
 
     CfOut(cf_verbose, "", " -> Meter data...........................");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SaveMeter(dbconn, id, data);
         CFDB_SaveScore(dbconn, id, data, HOST_RANK_METHOD_COMPLIANCE);
     }
-#endif
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
@@ -803,12 +755,10 @@ void Nova_UnPackSoftwareDates(mongo_connection *dbconn, char *id, Item *data)
 
     CfOut(cf_verbose, "", " -> Software dates data...........................");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SaveSoftwareDates(dbconn, id, data);
     }
-#endif
 
     time_t t;
 
@@ -836,12 +786,10 @@ void Nova_UnPackBundles(mongo_connection *dbconn, char *id, Item *data)
 
     CfOut(cf_verbose, "", " -> Bundle data...........................");
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SaveBundles(dbconn, id, data);
     }
-#endif
 
     for (ip = data; ip != NULL; ip = ip->next)
     {
@@ -923,14 +871,12 @@ void Nova_UnPackExecutionStatus(mongo_connection *dbconn, char *id, Item *data)
     long delta_schedule = 0;
     sscanf(data->name, "%c %ld\n", &is_blackhost, &delta_schedule);
 
-#ifdef HAVE_LIBMONGOC
     if (dbconn)
     {
         CFDB_SaveExecutionStatus(dbconn, id,
                                  (is_blackhost == 't')? true:false,
                                  delta_schedule);
     }
-#endif
 
     CfDebug("Execution status: black %s with agent schedule interval: %ld",
             (is_blackhost == 't')? "true" : "false", delta_schedule);

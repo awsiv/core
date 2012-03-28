@@ -17,13 +17,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "cf.nova.h"
 
 #include "scorecards.h"
-
-/*****************************************************************************/
-
-#ifdef HAVE_LIBMONGOC
 #include "db_query.h"
-
-/****************************************************************************/
 
 void Nova2Txt_getlicense(char *buffer, int bufsize)
 {
@@ -2241,5 +2235,3 @@ int Nova2Txt_validate_policy(char *file, char *buffer, int bufsize)
     retVal = cf_pclose(pp);
     return retVal;              // 0 on success
 }
-
-#endif

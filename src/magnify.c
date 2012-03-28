@@ -9,7 +9,6 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#ifdef HAVE_LIBMONGOC
 #include "db_query.h"
 
 /*****************************************************************************/
@@ -82,5 +81,3 @@ bool Nova_ReadMagTimeSeries2(mongo_connection *conn, DataView *cfv, char *hostke
         return false;
     }
 }
-
-#endif /* HAVE_LIBMONGOC */

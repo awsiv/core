@@ -1,6 +1,5 @@
 #include "cf.nova.h"
 
-#if defined(HAVE_LIBMONGOC)
 #include "db_common.h"
 #include "bson_lib.h"
 
@@ -104,5 +103,3 @@ bool MongoCheckForError(mongo_connection *conn, const char *operation, const cha
 
     return true;
 }
-
-#endif

@@ -10,7 +10,6 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "bson_lib.h"
 #include "string_lib.h"
 
-#if defined(HAVE_LIBMONGOC)
 #include "db_query.h"
 
 #include <assert.h>
@@ -463,5 +462,3 @@ void Nova_BarMeter(int pos, double kept, double rep, char *name, char *buffer, i
              kept, rep, 100 - kept - rep);
     Join(buffer, work, bufsize);
 }
-
-#endif

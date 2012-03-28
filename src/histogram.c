@@ -1,4 +1,3 @@
-
 /*
 
  This file is (C) Cfengine AS. See LICENSE for details.
@@ -15,7 +14,6 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#ifdef HAVE_LIBMONGOC
 #include "db_query.h"
 
 int Nova_ReadHistogram2(mongo_connection *conn, DataView *cfv, char *hostkey, char *monId)
@@ -120,7 +118,3 @@ Item *Nova_MapHistogram(DataView *cfv, char *keyhash)
     }
     return maxima;
 }
-
-/*******************************************************************/
-
-#endif /* HAVE_LIBMONGOC */
