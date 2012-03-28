@@ -72,17 +72,13 @@
 
 //
 
-#define CF_SHADES 25
 #define CF_TIMESERIESDATA 168   /* (24*7) */
 #define CF_MAGDATA 48           /* (4*12) */
 #define CF_MAX_SLOTS 2016       /* (24*7*12) */
 #define CF_LHISTORYDATA 1464
 #define CF_MAG_SLOTS (12*24*7)
 #define CF_YEAR_SLOTS (3*52)
-#define CF_MAGMARGIN 0
-#define CF_LHISTORYMARGIN 0
 #define CF_TRIBE_SIZE 25
-#define CF_MAX_ERROR_LIMIT 50
 #define CF_MAX_LIMIT 999999
 #define CF_N_CODE '\07'
 #define MONITOR_CLASS_PREFIX "mXC_"
@@ -90,7 +86,6 @@
 #define NOVA_EXPORT_HEADER "NOVA_EXPORT"
 #define CF_CODEBOOK_SIZE 30
 #define NOVA_MAXDIFFSIZE (80 * 1024 * 1024)
-#define HOSTKEY_SIZE 100        // length of SHA=....
 
 // for pdf reports
 #define CF_NOTICE_TRUNCATED "Data truncated due to internal buffer limit"
@@ -672,45 +667,8 @@ int Nova_GetReportedList(char *hostkey, char *scope, char *lval, Rlist **list);
 
 /* copernicus.c */
 
-void Nova_PrimeGraph(Rlist **semantic);
-void Nova_DrawTribe_PNG(char *filename, int *tribe_id, GraphNode *tribe_node,
-                        double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE], int tribe_size, double *tribe_evc, int topic,
-                        char *buffer, int bufsize);
 void Nova_DrawTribe(int *tribe_id, GraphNode *tribe_node, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],
                     int tribe_size, double *tribe_evc, int topic, char *buffer, int bufsize);
-int Nova_GetMaxEvcNode(double *evc, int tribe_size);
-int Nova_GetAdjacent(int i, double adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE], int size, GraphNode *tribe,
-                     GraphNode *neighbours);
-int Nova_SplayAdjacent(int i, double adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE], int tribe_size, GraphNode *tribe, int *trail,
-                       GraphNode *neighbours);
-void Nova_CopyNeighbours2(GraphNode *from, int tribe_size, GraphNode to[CF_TRIBE_SIZE][CF_TRIBE_SIZE], int index1);
-void Nova_CopyNeighbours3(GraphNode *from, int tribe_size, GraphNode to[CF_TRIBE_SIZE][CF_TRIBE_SIZE][CF_TRIBE_SIZE],
-                          int index1, int index2);
-int Nova_GetEvcTops(double **adj, int size, double *evc, int *tops);
-void Nova_CentreScale(DataView *cfv, double min_x, double max_x, double min_y, double max_y);
-int Nova_X(DataView cfv, double x);
-int Nova_Y(DataView cfv, double y);
-int Nova_TribeUnion(int *array1, GraphNode *array2, int size1, int size2);
-void Nova_ClearTrail(int *array);
-void Nova_AnchorTrail(int *array, int node);
-int Nova_InTrail(int *trail, int node);
-void Nova_Line(DataView cfv, double x1, double y1, double x2, double y2, int colour);
-void Nova_Disc(DataView cfv, double x1, double y1, double radius, int colour);
-void Nova_Print(DataView cfv, double x, double y, char *s, int colour);
-void Nova_BigPrint(DataView cfv, double x, double y, char *s, int colour);
-double Nova_SignPerturbation(int i);
-void Nova_ColdBall(DataView cfv, double x, double y, double radius, int *shade);
-void Nova_HotBall(DataView cfv, double x, double y, double radius, int *shade);
-void Nova_AlignmentCorrection(double *x, double *y, double cx, double cy);
-void Nova_MapHorizon(DataView cfv, double x, double y, double *min_x, double *min_y, double *max_x, double *max_y);
-double Nova_Orbit(DataView cfv, double radius, double min_x, double max_x, double min_y, double max_y);
-void Nova_MapBall(DataView cfv, GraphNode n, char *buffer, int bufsize);
-void Nova_Annealing(GraphNode neighbours1[CF_TRIBE_SIZE], GraphNode neighbours2[CF_TRIBE_SIZE][CF_TRIBE_SIZE],
-                    GraphNode neighbours3[CF_TRIBE_SIZE][CF_TRIBE_SIZE][CF_TRIBE_SIZE], int size1,
-                    int size2[CF_TRIBE_SIZE], int size3[CF_TRIBE_SIZE][CF_TRIBE_SIZE], int tribe_size);
-int Overlap(double x1, double y1, double x2, double y2);
-int Nova_InRange(DataView cfv, int x, int y);
-void Nova_BoundaryCheck(DataView *cfv, int *x1, int *y1, int *x2, int *y2);
 
 /* datapackaging.c */
 
@@ -1268,12 +1226,6 @@ int CfLDAP_JSON_GetSeveralAttributes(char *uri, char *user, char *basedn, char *
 int CfLDAP_JSON_GetSingleAttributeList(char *uri, char *user, char *basedn, char *filter, char *name, char *scopes,
                                        char *sec, char *passwd, bool starttls, int page, int linesperpage, char *buffer,
                                        int bufsize, const char **const errstr);
-
-/***************************************************************************/
-
-#define CF_METER_HEIGHT 80
-#define CF_METER_WIDTH  500
-#define CF_METER_MARGIN 5
 
 /***************************************************************************/
 /* Knowledge relationships                                                 */

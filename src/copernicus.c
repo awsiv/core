@@ -18,21 +18,6 @@
 
 #include <assert.h>
 
-/*****************************************************************************/
-
-void Nova_PrimeGraph(Rlist **semantics)
-{
-    PrependRScalar(semantics, NOVA_GIVES, CF_SCALAR);
-    PrependRScalar(semantics, NOVA_USES, CF_SCALAR);
-    PrependRScalar(semantics, NOVA_IMPACTS, CF_SCALAR);
-    PrependRScalar(semantics, NOVA_ISIMPACTED, CF_SCALAR);
-    PrependRScalar(semantics, NOVA_BUNDLE_DATA, CF_SCALAR);
-    PrependRScalar(semantics, NOVA_BUNDLE_DATA_INV_B, CF_SCALAR);
-    PrependRScalar(semantics, NOVA_BUNDLE_DATA_INV_P, CF_SCALAR);
-}
-
-/*****************************************************************************/
-
 void Nova_DrawTribe(int *tribe_id, GraphNode *tribe_node, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],
                     int tribe_size, double *tribe_evc, int topic, char *buffer, int bufsize)
 {
@@ -44,8 +29,6 @@ void Nova_DrawTribe(int *tribe_id, GraphNode *tribe_node, double tribe_adj[CF_TR
          longname[CF_BUFSIZE] = { 0 },
          context[CF_BUFSIZE] = { 0 };
     char *colour;
-
-    Nova_GetMaxEvcNode(tribe_evc, tribe_size);  /* FIXME: unused? */
 
     for (i = 0; i < tribe_size; i++)
     {
@@ -139,23 +122,4 @@ void Nova_DrawTribe(int *tribe_id, GraphNode *tribe_node, double tribe_adj[CF_TR
             free(tribe_node[i].context);
         }
     }
-}
-
-/*****************************************************************************/
-
-int Nova_GetMaxEvcNode(double *evc, int tribe_size)
-{
-    int i, imax = 0;
-    double max = 0;
-
-    for (i = 0; i < tribe_size; i++)
-    {
-        if (evc[i] > max)
-        {
-            max = evc[i];
-            imax = i;
-        }
-    }
-
-    return imax;
 }
