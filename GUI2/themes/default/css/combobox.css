@@ -85,15 +85,24 @@
     position: absolute;
     border: 0px none;
     left: 5px;
-    right: 0px;
+    right: 40px;
     height: 100%;
     background: transparent;
+    color: #ffffff;
+}
+
+.combobox ul .addItem .addInput::-webkit-input-placeholder
+{
     color: #ffffff;
 }
 
 .combobox ul .addItem .addButton
 {
     position: absolute;
+    width: 27px;
+    height: 13px;
     top: 6px;
     right: 5px;
+    display: inline-block;
+    background: url("../images/astrolabe/combobox-button-add.png");
 }

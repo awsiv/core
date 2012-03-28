@@ -87,9 +87,8 @@
             });
             $addItem.append($self._addInput);
 
-            $addButton = $('<img>');
+            $addButton = $('<span>');
             $addButton.addClass('addButton');
-            $addButton.attr('src', $self.options.imagesUrl + 'combobox-button-add.png');
             $addButton.click(function(event) {
                 onAddItem($self._addInput.val(), event);
             });
