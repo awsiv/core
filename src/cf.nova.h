@@ -1319,6 +1319,7 @@ int CfLDAP_JSON_GetSingleAttributeList(char *uri, char *user, char *basedn, char
 #define CF_AMBER_THRESHOLD 100
 #define CF_GREEN 0
 #define CF_CODE_BLUE -1
+#define CF_CODE_BLACK -2
 #define CF_BLUEHOST_THRESHOLD_DEFAULT 900       // 15 minutes
 
 #define CF_BLACKHOST_THRESHOLD 3 // number of missed averaged schedules
