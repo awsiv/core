@@ -90,8 +90,18 @@
 
     $(document).ready(function(){
 
-        $("#tabs-layout").tabs();
-
+        var $tabs=$("#tabs-layout");
+                  $tabs.tabs({
+                       show: function(event, ui) {
+                           if(ui.index == 0){
+                               if($(this).data('context')=='node')
+                                 $('#hostsComplianceTimeseries').hostsComplianceTimeseries('setContext', $(this).data('args').includes, []);
+                               if($(this).data('context')=='host')
+                                 $('#hostsComplianceTimeseries').hostsComplianceTimeseries('setHost',$(this).data('args').hostKey);
+                            }   
+                       }
+                  });
+                  
         var genericOption = {
             baseUrl: '<?php echo site_url() ?>'
         };
@@ -107,6 +117,7 @@
             baseUrl: '<?php echo site_url() ?>',
 
             hostSelected: function(event, args) {
+                 $tabs.data({context:'host',args:args});
                 $('#hostInfoContainer').show();
                 $('#hostsInfoContainer').hide();
 
@@ -120,9 +131,10 @@
             },
 
             nodeSelected: function(event, args) {
+                $tabs.data({context:'node',args:args});
                 $('#hostInfoContainer').hide();
                 $('#hostsInfoContainer').show();
-
+                
                 $('#hostsComplianceTimeseries').hostsComplianceTimeseries('setContext', args.includes, []);
 
                 $('#hostsCompliance').hostsCompliance('setContext', args.includes, []);
