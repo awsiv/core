@@ -310,6 +310,23 @@ class cf_table {
         }
         return $return;
     }
+    
+  function host_only_table($data) {
+   $this->CI->table->set_heading('hostname', 'Action');
+  
+        foreach ((array) $data['data'] as $rows)
+        {
+            $lnk = anchor('search/index/report/promises-not-kept-summary/host/' . $rows['hostkey'], ' ', array('title' => 'promises not kept', 'class' => 'promisesnotkeptbtn showqtip'))
+                    . anchor('visual/vital/' . $rows['hostkey'], ' ', array('title' => 'pulse and vitals', 'class' => 'vitalsbtn showqtip'));
+                    
+            $cell = array('data' => $lnk, 'class' => 'actioncol');
+            $this->CI->table->add_row(array(
+                anchor('welcome/host/' . $rows['hostkey'], $rows['hostname'], 'class=""'),
+                $cell,
+            ));
+        }
+        return $this->CI->table->generate();
+     }
 
 }
 
