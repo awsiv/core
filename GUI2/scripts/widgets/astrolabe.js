@@ -22,17 +22,17 @@
             $self._listContainer.addClass('listContainer');
             $self._rootContainer = $('<ul>');
             $self._rootContainer.addClass('rootContainer');
-            
+
 
             $self._listContainer.append($self._rootContainer);
-            $self._containerWrapper.append($self._listContainer);            
+            $self._containerWrapper.append($self._listContainer);
 
-            $self.element.append($self._containerWrapper);            
+            $self.element.append($self._containerWrapper);
             $self._listContainer.jScrollPane({
                 showArrows: true,
                 autoReinitialise: true,
                 verticalArrowPositions: 'split'
-            }); 
+            });
         },
 
         _init: function() {
@@ -299,6 +299,11 @@
                 if (classRegex == '') {
                     $('#astrolabe-add-node-class').focus();
                     $('#astrolabe-add-node-class-error').html('Class expression cannot be empty');
+                    return;
+                }
+                else if (!common.isValidClassExpression(classRegex)) {
+                    $('#astrolabe-add-node-class').focus();
+                    $('#astrolabe-add-node-class-error').html('Invalid class expression');
                     return;
                 }
 

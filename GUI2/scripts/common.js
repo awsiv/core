@@ -57,6 +57,10 @@ var common = (function(){
             return expression.replace(/[^A-Za-z0-9]+/g, '_');
         },
 
+        isValidClassExpression: function(expression) {
+            return !/,/.test(expression);
+        },
+
         randomUUID: function() {
             var S4 = function() {
                 return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
@@ -77,7 +81,7 @@ var mediator = (function(){
         mediator.channels[channel].push({ context: this, callback: fn });
         return this;
     },
- 
+
     publish = function(channel){
         if (!mediator.channels[channel]) return false;
         var args = Array.prototype.slice.call(arguments, 1);
@@ -87,7 +91,7 @@ var mediator = (function(){
         }
         return this;
     };
- 
+
     return {
         channels: {},
         publish: publish,
@@ -97,14 +101,14 @@ var mediator = (function(){
             obj.publish = publish;
         }
     };
- 
+
 }());
 
 var stringToArray=function(commaSeparatedString){
         var resultfromExplode=commaSeparatedString.split(',');
-        
+
         if(resultfromExplode.length==1 && resultfromExplode[0]=="" ){
-          return [];  
+          return [];
         }else{
           return  resultfromExplode;
         }
