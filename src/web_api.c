@@ -3032,7 +3032,7 @@ void Nova2PHP_show_topic_leads(int id, char *buffer, int bufsize)
 {
     Item *ip;
     Item *list = Nova_ScanLeadsAssociations(id, NULL);
-    char work[CF_BUFSIZE];
+    char work[CF_BUFSIZE], jsonEscapedStr[CF_BUFSIZE] = { 0 };
 
     buffer[0] = '\0';
     strcpy(buffer, "[ ");
@@ -3045,17 +3045,20 @@ void Nova2PHP_show_topic_leads(int id, char *buffer, int bufsize)
     {
         if (ip == list)
         {
-            snprintf(work, CF_BUFSIZE, "{ \"assoc\": \"%s\", \"topics\": [", ip->name);
+            EscapeJson(ip->name, jsonEscapedStr, sizeof(jsonEscapedStr));
+            snprintf(work, CF_BUFSIZE, "{ \"assoc\": \"%s\", \"topics\": [", jsonEscapedStr);
             Join(buffer, work, bufsize);
         }
 
-        snprintf(work, CF_BUFSIZE, "{ \"topic\": \"%s\", \"id\": %d },", ip->classes, ip->counter);
+        EscapeJson(ip->classes, jsonEscapedStr, sizeof(jsonEscapedStr));
+        snprintf(work, CF_BUFSIZE, "{ \"topic\": \"%s\", \"id\": %d },", jsonEscapedStr, ip->counter);
         Join(buffer, work, bufsize);
 
         if (ip->next && strcmp(ip->name, ip->next->name) != 0)
         {
             strcpy(buffer + strlen(buffer) - 1, "]},");
-            snprintf(work, CF_BUFSIZE, "{ \"assoc\": \"%s\", \"topics\": [", ip->next->name);
+            EscapeJson(ip->next->name, jsonEscapedStr, sizeof(jsonEscapedStr));
+            snprintf(work, CF_BUFSIZE, "{ \"assoc\": \"%s\", \"topics\": [", jsonEscapedStr);
             Join(buffer, work, bufsize);
         }
     }
