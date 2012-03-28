@@ -30,9 +30,10 @@
 
 .engineeringContainer .engineeringStatusContainer
 {
-    /*background: #fff;*/
     color: #4d4d4d;
     margin: 0px;
+}
+.engineeringContainer .ui-tabs .ui-tabs-panel {
     padding: 15px;
 }
 
