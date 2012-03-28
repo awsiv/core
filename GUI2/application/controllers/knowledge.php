@@ -217,7 +217,7 @@ class Knowledge extends Cf_Controller
 
         if ($topic)
         {
-            $search = $topic;
+            $search = "^".$topic."$";
         }
 
 
