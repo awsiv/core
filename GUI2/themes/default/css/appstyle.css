@@ -1867,11 +1867,11 @@ div.ui-dialog .ui-dialog-buttonpane{
     width:190px;
 }
 
-#colorhostlist th,td
+.hostlist th,td
 {
     border:none;
 }
-#colorhostlist.tables tr td
+.hostlist tr td
 {
     border-left: none;
     border-right:none;

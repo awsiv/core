@@ -5,7 +5,7 @@
 ?>
          
      <div id="body" class="outerdiv grid_12">
-                <div id="colorhostlist"class="innerdiv tables">
+                <div id="" class="innerdiv tables hostlist">
                    
 
       <?php
