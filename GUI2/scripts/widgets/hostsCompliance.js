@@ -16,15 +16,13 @@
                 'More than 20% of promises could not be kept at last measurement.');
             $self.element.append($self._red);
 
-            $self._green = $self._createColourEntry('green', '> 80% compliant',
-                'More than 80% of promises are stable and kept.');
-            $self.element.append($self._green);
-
             $self._yellow = $self._createColourEntry('yellow', '> 20% repaired, now compliant',
                 'More than 20% of promises needed repair at last measurement.');
             $self.element.append($self._yellow);
             
-          
+            $self._green = $self._createColourEntry('green', '> 80% compliant',
+                'More than 80% of promises are stable and kept.');
+            $self.element.append($self._green);
             
         },
 
@@ -44,8 +42,8 @@
             $.getJSON($self._requestUrls.hostCountAll($self, $self._context.includes),
                 function(data) {
                     $self._setHostCount($self._red, data.red, '> 20% not compliant');
-                    $self._setHostCount($self._green, data.green, '> 80% compliant');
                     $self._setHostCount($self._yellow, data.yellow, '> 20% repaired, now compliant');
+                    $self._setHostCount($self._green, data.green, '> 80% compliant');
                     $self.ajaxloader.hide();
              });
 
