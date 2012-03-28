@@ -30,7 +30,7 @@
                 </div>
               
 
-                <div id="hostInfoContainer" class="hostInfoContainer">
+                <div id="hostInfoContainer" class="hostsInfoContainer">
                     <div id="hostInfo" class="grid_8"></div>
                     <div class="clear"></div>
                 </div>

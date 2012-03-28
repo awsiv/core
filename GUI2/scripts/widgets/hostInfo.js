@@ -4,7 +4,7 @@
             baseUrl: '',
             defaultbehaviour: true
         },
-
+        header:$('<div class="header">'),
         _create: function() {
             var $self = this;
 
@@ -19,81 +19,59 @@
                 lastPolicyUpdate: $self._createValueElement()
             };
 
-            var $header = $('<div>').addClass('header');
+            $self.element.append($self.header);
             $self._colourIcon = $('<span>').addClass('colourIcon');
-            $header.append($self._colourIcon);
+            $self.header.append($self._colourIcon);
 
             $self._headerLabel = $('<a>').addClass('headerLabel');
-            $header.append($self._headerLabel);
-            $self.element.append($header);
-            $self.element.append($self._createClear());
-
+            $self.header.append($self._headerLabel);
+               
             var $column1 = $('<div>').addClass('column');
-            $column1.append($self._createLabelElement('IP:'));
-            $column1.append($self._values.ip);
-            $column1.append($self._createClear());
-
-            $column1.append($self._createLabelElement('OS Type:'));
-            $column1.append($self._values.osType);
-            $column1.append($self._createClear());
-
-            $column1.append($self._createLabelElement('Flavour:'));
-            $column1.append($self._values.flavour);
-            $column1.append($self._createClear());
-            $self.element.append($column1);
+                $column1.append($self._createDivWrapper($self._createLabelElement('IP: '),$self._values.ip));
+                $column1.append($self._createDivWrapper($self._createLabelElement('OS Type: '),$self._values.osType));
+                $column1.append($self._createDivWrapper($self._createLabelElement('Flavour: '),$self._values.flavour));
+            
 
             var $column2 = $('<div>').addClass('column');
-            $column2.append($self._createLabelElement('Release:'));
-            $column2.append($self._values.release);
-            $column2.append($self._createClear());
+                $column2.append($self._createDivWrapper($self._createLabelElement('Release: '),$self._values.release));
+                $column2.append($self._createDivWrapper($self._createLabelElement('Last Report: '),$self._values.lastReportUpdate));
+                $column2.append($self._createDivWrapper($self._createLabelElement('Policy Updated: '),$self._values.lastPolicyUpdate));
 
-            $column2.append($self._createLabelElement('Last Report:'));
-            $column2.append($self._values.lastReportUpdate);
-            $column2.append($self._createClear());
-
-            $column2.append($self._createLabelElement('Policy Updated:'));
-            $column2.append($self._values.lastPolicyUpdate);
-            $column2.append($self._createClear());
-            $self.element.append($column2);
+        
+            $self.element.append($column1).append($column2);
 
             $.ui.hostInfo.instances.push($self.element);
         },
-
-        _createClear: function() {
+        
+        _createDivWrapper:function(){
             var $element = $('<div>');
-
-            $element.addClass('clear');
-
-            return $element;
+             for (var i = 0, j = arguments.length; i < j; i++){
+               $element.append(arguments[i]);
+             }
+            return $element; 
         },
 
         _createLabelElement: function(label) {
             var $element = $('<span>');
-
-            $element.addClass('label');
             $element.html(label);
-
             return $element;
         },
 
         _createValueElement: function() {
             var $element = $('<span>');
-
-            $element.addClass('value');
             $element.html('&nbsp;');
-
             return $element;
         },
 
         _clearFields: function() {
             var $self = this;
-
-            $self._values.ip.html('unknown');
-            $self._values.osType.html('unknown');
-            $self._values.flavour.html('unknown');
-            $self._values.release.html('unknown');
-            $self._values.lastReportUpdate.html('unknown');
-            $self._values.lastPolicyUpdate.html('unknown');
+            $self._headerLabel.html('');
+            $self._values.ip.html('');
+            $self._values.osType.html('');
+            $self._values.flavour.html('');
+            $self._values.release.html('');
+            $self._values.lastReportUpdate.html('');
+            $self._values.lastPolicyUpdate.html('');
         },
 
         _setHeader: function(hostkey, hostname, colour) {
@@ -107,13 +85,12 @@
 
         updateHostKey: function(hostKey) {
             var $self = this;
-
+          
             var requestUrl = $self.options.baseUrl + '/host/info/' + hostKey;
-
+            $self._clearFields();
+            $self._ajaxLoader.show($self);
             $.getJSON(requestUrl, function(host) {
                 $self._setHeader(hostKey, host.hostname, host.colour);
-
-                $self._clearFields();
                 $self._values.ip.html(host.ip);
 
                 if (host.osType !== undefined) {
@@ -138,9 +115,20 @@
                     // NOTE: lastPolicyUpdate is in text format
                     $self._values.lastPolicyUpdate.html(host.lastPolicyUpdate);
                 }
+                $self._ajaxLoader.hide($self);
             });
         },
 
+        _ajaxLoader:{
+           show:function($self){
+                $self._colourIcon.removeClass('colourIcon').addClass('loadinggif'); 
+           },
+           hide:function($self){
+                $self._colourIcon.removeClass('loadinggif').addClass('colourIcon');
+           }
+                 
+        },
+        
         _requestUrls: {
 
             hostPage: function(self, key) {
