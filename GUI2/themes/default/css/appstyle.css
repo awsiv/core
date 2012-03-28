@@ -2806,16 +2806,13 @@ background-image: none;
 
 .dd_menu li:hover ul {
     left:0px;
-    top:25px;
+    top:22px;
     background-color:#E6EEE3;
     padding:3px;
-    border-left:1px solid grey;
-    border-right:1px solid grey;
-    border-bottom:1px solid grey;
+    border: 1px solid #C8C8C8;
     width:185px;
     z-index: 100;
     display:block;
-    margin-left: -1px
 }
 .dd_menu li:hover ul li {
     border:none;
