@@ -488,9 +488,9 @@ private $filter_view_mappings=array();
                         );
                        
                         if ($report_type == "promises-repaired-log")
-                              $data['report_result']=$this->report_model->getPromisesRepairedLog($username, $hostkey, $name, $cause_rx, $hours_deltafrom, $hours_deltato, explode(',',$incList), explode(',',$exList), $rows, $page_number);
+                              $data['report_result']=$this->report_model->getPromisesRepairedLog($username, $hostkey, $name, $cause_rx, $hours_deltafrom, $hours_deltato, explode(',',$incList), explode(',',$exList), $rows, $page_number, $hosts_only);
                         if ($report_type == "promises-repaired-summary")
-                              $data['report_result']= $this->report_model->getPromisesRepairedSummary($username, $hostkey, $name, $cause_rx, $hours_deltafrom, $hours_deltato, explode(',',$incList), explode(',',$exList), $rows , $page_number );
+                              $data['report_result']= $this->report_model->getPromisesRepairedSummary($username, $hostkey, $name, $cause_rx, $hours_deltafrom, $hours_deltato, explode(',',$incList), explode(',',$exList), $rows , $page_number, $hosts_only);
 
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
@@ -506,9 +506,9 @@ private $filter_view_mappings=array();
                
                
                         if ($report_type == "promises-not-kept-summary")
-                             $data['report_result']= $this->report_model->getPromisesNotKeptSummary($username, $hostkey, $name, $cause_rx, $hours_deltafrom, $hours_deltato, explode(',',$incList), explode(',',$exList), $rows , $page_number);
+                             $data['report_result']= $this->report_model->getPromisesNotKeptSummary($username, $hostkey, $name, $cause_rx, $hours_deltafrom, $hours_deltato, explode(',',$incList), explode(',',$exList), $rows, $page_number, $hosts_only);
                        if ($report_type == "promises-not-kept-log")
-                             $data['report_result']=$this->report_model->getPromisesNotKeptLog($username, $hostkey, $name, $cause_rx, $hours_deltafrom, $hours_deltato, explode(',',$incList), explode(',',$exList), $rows, $page_number);
+                             $data['report_result']=$this->report_model->getPromisesNotKeptLog($username, $hostkey, $name, $cause_rx, $hours_deltafrom, $hours_deltato, explode(',',$incList), explode(',',$exList), $rows, $page_number, $hosts_only);
                         $pdfurlParams = array('type' => $report_type,
                             'inclist' =>$incList,
                             'exlist'=>$exList,
