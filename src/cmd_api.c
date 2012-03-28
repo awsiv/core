@@ -89,7 +89,7 @@ int Nova2Txt_summary_report(char *hostkey, char *handle, char *status, int regex
         }
 
         HostColour colour;
-        Nova_GetHostColour(hp->hh->keyhash, HOST_RANK_METHOD_COMPLIANCE, &colour);
+        CFDB_GetHostColour(hp->hh->keyhash, HOST_RANK_METHOD_COMPLIANCE, &colour);
         if (colour == HOST_COLOUR_BLACK)
         {
             if (current_host && strcmp(hp->hh->keyhash, current_host) != 0)     // New host

@@ -331,7 +331,7 @@ int Nova2PHP_summary_report(char *hostkey, char *handle, char *status, int regex
         }
 
         HostColour colour;
-        Nova_GetHostColour(hp->hh->keyhash, HOST_RANK_METHOD_COMPLIANCE, &colour);
+        CFDB_GetHostColour(hp->hh->keyhash, HOST_RANK_METHOD_COMPLIANCE, &colour);
         if (colour == HOST_COLOUR_BLACK)
         {
             if (current_host && strcmp(hp->hh->keyhash, current_host) != 0)     // New host
@@ -3300,7 +3300,7 @@ void Nova2PHP_host_compliance_list(mongo_connection *conn, char *colour, HostCla
 void Nova2PHP_get_host_colour(char *hostkey, char *buffer, int bufsize)
 {
     HostColour colour = HOST_COLOUR_BLUE;
-    Nova_GetHostColour(hostkey, HOST_RANK_METHOD_COMPLIANCE, &colour);
+    CFDB_GetHostColour(hostkey, HOST_RANK_METHOD_COMPLIANCE, &colour);
 
     strncpy(buffer, Nova_HostColourToString(colour), bufsize);
 }

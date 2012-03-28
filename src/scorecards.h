@@ -44,9 +44,6 @@ HostColour HostColourFromScore(time_t now, time_t last_report, time_t blue_horiz
 
 int Nova_GetComplianceScore(HostRankMethod method, double *k, double *rep);
 
-// gets meters from DB, uses GetComplianceScore. rework.
-int Nova_GetHostColour(char *lkeyhash, HostRankMethod method, HostColour *result);
-
 // legacy
 void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, char *buffer, int bufsize);
 void Nova_Meter(bson *query, char *db, char *buffer, int bufsize);
