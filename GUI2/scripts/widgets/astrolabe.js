@@ -227,6 +227,9 @@
 
             var $hostCountLabelElement = $('<span>');
             $hostCountLabelElement.addClass('hostCountLabel');
+            $hostCountLabelElement.click(function(event) {
+                $self._onClickNodeLabel($self, $nodeItem, event);
+            });
             $nodeHeader.append($hostCountLabelElement);
 
             var $addNodeButton = $('<span>');

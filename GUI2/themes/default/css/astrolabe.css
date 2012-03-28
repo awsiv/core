@@ -206,6 +206,7 @@
     cursor: default;
     position: relative;
     top: -3px;
+    cursor: pointer;
 }
 
 .astrolabe .node.selectedElement > .nodeHeader > .hostCountLabel
