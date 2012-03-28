@@ -8,7 +8,7 @@
         </div>
         <script type="text/javascript">
             $('#show_fileter_form').click(function() {
-                $('#modifySearchPanel').toggle('', function(){
+                $('#modifySearchPanel').toggle(0,function(){
                     $('#reportpanel .title').toggleClass('collapsed');
                 });
             });
