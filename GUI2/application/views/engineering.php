@@ -47,44 +47,6 @@
     <div class="clear"></div>
 </div>
 <div class="clear"></div>
-
-<!-- TODO: move to carabiner later -->
-<script type="text/javascript" src="<?php echo get_scriptdir()?>/common.js"></script>
-<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/astrolabe.js"></script>
-<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/astrolabeLocation.js"></script>
-<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/combobox.js"></script>
-<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/searchEntry.js"></script>
-<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostsCompliance.js"></script>
-<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostsConnectivity.js"></script>
-<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostsComplianceTimeseries.js"></script>
-<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostInfo.js"></script>
-<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/classfinder.js"></script>
-<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/hostfinder.js"></script>
-<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/policyfinder.js"></script>
-<script type="text/javascript" src="<?php echo get_scriptdir()?>jScrollPane.js"></script>
-<script type="text/javascript" src="<?php echo get_scriptdir()?>jquery.mousewheel.js"></script>
-<script type="text/javascript" src="<?php echo get_scriptdir()?>jquery.contextMenu.js"></script>
-
-
-<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/notes.js"></script>
-<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/classfinder.js"></script>
-<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/contextfinder.js"></script>
-<script type="text/javascript" src="<?php echo get_scriptdir()?>/widgets/reportUI.js"></script>
-
-
-
-<link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>view/engineering.css" />
-<link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>astrolabe.css" />
-<link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>astrolabeLocation.css" />
-<link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>combobox.css" />
-<link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>searchEntry.css" />
-<link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>hostsCompliance.css" />
-<link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>hostsConnectivity.css" />
-<link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>hostsComplianceTimeseries.css" />
-<link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>hostInfo.css" />
-<link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>jScrollPane.css" />
-<link rel="stylesheet" type="text/css" href="<?php echo get_cssdir()?>contextfinder.css" />
-
 <script type="text/javascript">
 
 
