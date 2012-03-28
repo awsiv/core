@@ -26,7 +26,7 @@ if ($report_result['meta']['count'] > 0) {
                 $this->table->add_row($temp);
             }
 
-            echo '<div class="report_result">'.$this->table->generate().'</div>';
+            echo '<div class="tables tablesfixed report_result">'.$this->table->generate().'</div>';
         }
         $this->table->clear();
     }

@@ -13,7 +13,7 @@
                 </p>
             </div>
             <p>
-                <span class="floatright"> Return host names only: <input type="checkbox" name="hosts_only" value="true"></span>
+                <span class="floatright"> Return host names only: <input type="checkbox" name="hosts_only" value="true"  <?php echo (is_array($paramArray) && isset($paramArray['hosts_only'])) ? 'checked' : ''; ?>></span>
                 <span class="clear"></span>
             </p>
             <?php $this->load->view('searchpages/buttons_for_filter', array('morefilters' => true)); ?> 

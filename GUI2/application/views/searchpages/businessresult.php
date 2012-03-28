@@ -71,14 +71,15 @@
             </div>    
             <div id="totalResults" class=" grid_5" style="text-align: right;">
                 <span id="total_result">Total results found: <?php echo $report_result['meta']['count']; ?></span>
-                <a href="<?php echo $report_link ?>" id="send_mail" class="green_btn showqtip" title="<?php echo $this->lang->line('tool_tip_download_report') ?>"><span><em class="download_ico">&nbsp;</em>Download</span></a>
+                <?php if(is_array($paramArray) && !isset($paramArray['hosts_only'])){?>
+                    <a href="<?php echo $report_link ?>" id="send_mail" class="green_btn showqtip" title="<?php echo $this->lang->line('tool_tip_download_report') ?>"><span><em class="download_ico">&nbsp;</em>Download</span></a>
+               <?php }?>
+                
             </div>
-            <div class="clear"></div>
-            <div class="tables <?php echo isset($nofix) ? "" : "tablesfixed" ?>">
+            <div class="clear"></div> 
                 <?php 
                     include_once ($resultView . '.php');
                 ?> 
-            </div>
         </div>
     </div>
 </div>

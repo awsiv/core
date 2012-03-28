@@ -57,7 +57,7 @@ if (count($report_result['data']) > 0) {
         }
         $this->table->add_row($temp);
     }
-    echo '<div class="report_result">'.$this->table->generate().'</div>';
+    echo '<div class="tables report_result">'.$this->table->generate().'</div>';
     
     include 'paging_footer.php';
 } else {
