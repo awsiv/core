@@ -44,7 +44,144 @@ class cf_table {
         $this->dateTimeField = array('lastseen', 'last seen', 'time', 'last verified', 'change detected at', 'last performed', 'last occurred', 'was last seen at');
     }
 
-    function generateReportTable($result, $report_title = '') {
+    function generateHeadings($header)
+    {
+
+        $heading = '<tr>';
+        foreach ($header as $title)
+        {
+            $heading .= '<th>' . $title . '</th>';
+        }
+        $heading .= '</tr>';
+        return $heading;
+    }
+
+    function generateRows($row)
+    {
+        if (!is_array($row)) {
+            $rowArray['data'] = $row;
+        } else {
+            $rowArray = $row;
+        }
+
+        $tr = '<tr>';
+        $attributes = '';
+        foreach ($rowArray as $td)
+        {
+            if (is_array($td) && array_key_exists('data', $td)) {
+                $value = $td['data'];
+               foreach ($td as $key=>$val) {
+                   if ($key != 'data') {
+                   $attributes .= sprintf('%s="%s" ',$key,$val);
+                   }
+               }
+            } else {
+                $value = $td;
+            }
+
+            $tr .= sprintf('<td %s>%s</td>',$attributes,  $value);
+        }
+        $tr .= '</tr>';
+        return $tr;
+    }
+
+    /**
+     * Optimized for less memory usage, doesnt uses CI table generator
+     * @param type $result
+     * @param type $report_title
+     * @return type
+     */
+    function generateReportTableModified($result, $report_title = '')
+    {
+        $return = '';
+        $this->CI->table->clear();
+
+        if (is_array($result))
+        {
+            $tableHeader = $this->generateHeadings(array_keys($result['meta']['header']));
+            $tableBody = '';
+            $heading = "";
+            if (count($result['data']) > 0)
+            {
+                foreach ($result['data'] as $row)
+                {
+                    $temp = array();
+                    foreach ($result['meta']['header'] as $key => $value)
+                    {
+                        if (!is_array($value))
+                        {
+                            if (in_array(strtolower($key), $this->dateTimeField))
+                            {
+                                $color = in_array(trim($report_title), $this->ignoreDateColor);
+                                array_push($temp, getDateStatus($row[$value], $color));
+                            }
+                            else
+                            {
+
+                                $tempValue = $row[$value];
+                                // make link to bundle and promises
+                                if (strtolower($key) == 'promise handle')
+                                {
+                                    $tempValue = sprintf('<a target="_self" href="%s/promise/details/%s">%s</a>', site_url(), urlencode($tempValue), $tempValue);
+                                }
+                                else if (strtolower($key) == 'bundle')
+                                {
+                                    $tempValue = sprintf('<a target="_self" href="%s/bundle/details/bundle/%s">%s</a>', site_url(), urlencode($tempValue), $tempValue);
+                                }
+                                else if (strtolower($key) == 'virtual bundle')
+                                {
+                                    $tempValue = sprintf('<a target="_self" href="%s/virtualbundle/details/%s">%s</a>', site_url(), trim(urlencode($tempValue)), $tempValue);
+                                }
+
+
+                                array_push($temp, $tempValue);
+                            }
+                        }
+                        else
+                        {
+                            if (strtolower($key) == "note")
+                            {
+                                $link = site_url("notes") . '/index/';
+                                $data_index = $value['index'];
+                                $notesAlreadyPresent = false;
+                                foreach ($value['subkeys'] as $subkey => $subval)
+                                {
+                                    $data = trim($row[$data_index][$subval]);
+
+
+
+                                    if ($subkey == 'rid')
+                                    {
+                                        $data = urlencode((utf8_encode($data)));
+                                    }
+                                    if ($data != '')
+                                    {
+                                        $link.="$subkey/$data/";
+                                        // if subval action is show we can indicate it visually there are some comments
+                                        if ($subkey == 'action' && $data == 'show')
+                                            $notesAlreadyPresent = true;
+                                    }
+                                }
+                                $addClass = $notesAlreadyPresent ? 'notes-highlight' : '';
+                                $c = array(
+                                    'data' => anchor($link, 'notes', array('class' => 'note')),
+                                    'class' => $addClass);
+                                array_push($temp, $c);
+                            }
+                        }
+                    }
+                    //$this->CI->table->add_row($temp);
+                    $tableBody .= $this->generateRows($temp);
+
+                }
+            }
+            $return = sprintf('<table><thead>%s</thead><tbody>%s</tbody></table>',$tableHeader,$tableBody);
+        }
+        return $return;
+    }
+
+    function generateReportTable($result, $report_title = '')
+    {
         $return = '';
         $this->CI->table->clear();
 
