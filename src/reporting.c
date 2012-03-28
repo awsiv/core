@@ -2208,16 +2208,46 @@ void Nova_ZenossSummary(char *docroot)
 
     HostColourFilter *blue_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE,
                                                                HOST_COLOUR_BLUE);
-    Item *b_list = CFDB_GetHostByColour(&conn, NULL, blue_colour_filter);
+    Item *blue_list = CFDB_GetHostByColour(&conn, NULL, blue_colour_filter);
     free(blue_colour_filter);
 
-    for (ip = b_list; ip != NULL; ip = ip->next)
+    for (ip = blue_list; ip != NULL; ip = ip->next)
     {
         ip->counter = CF_CODE_BLUE;
     }
 
+    HostColourFilter *black_colour_filter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE,
+                                                               HOST_COLOUR_BLACK);
+    Item *black_list = CFDB_GetHostByColour(&conn, NULL, black_colour_filter);
+    free(black_colour_filter);
+
+    for (ip = black_list; ip != NULL; ip = ip->next)
+    {
+        ip->counter = CF_CODE_BLACK;
+    }
+
+    if (gyr_list != NULL)
+    {
     clist = gyr_list;
-    (EndOfList(clist))->next = b_list;
+    }
+
+    if (clist == NULL)
+    {
+        clist = blue_list;
+    }
+    else
+    {
+        (EndOfList(clist))->next = blue_list;
+    }
+
+    if (clist == NULL)
+    {
+        clist = black_list;
+    }
+    else
+    {
+        (EndOfList(clist))->next = black_list;
+    }
 
     if (!CFDB_Close(&conn))
     {
