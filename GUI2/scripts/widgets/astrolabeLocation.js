@@ -33,7 +33,7 @@
             var firstPath = true;
             for (var i in path) {
                 if (!firstPath)
-                    pathString = pathString + '->';
+                    pathString = pathString + ' &raquo; ';
                 pathString = pathString + path[i];
                 firstPath = false;
             }
