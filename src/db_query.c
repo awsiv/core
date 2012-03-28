@@ -5811,6 +5811,201 @@ Rlist *CFDB_QueryNoteId(mongo_connection *conn, bson *query)
 
 /*****************************************************************************/
 
+static void GetReportKeyMapping(int reportType, char *key, char *retBuf, int retBufSz)
+{
+    switch (reportType)
+    {
+    case CFREPORT_REPAIRED:
+    case CFREPORT_NOTKEPT:
+        if (strcmp(key, cfr_keyhash) == 0)
+        {
+            snprintf(retBuf, retBufSz, "hostkey");
+        }
+        else if (strcmp(key, cfr_cause) == 0)
+        {
+            snprintf(retBuf, retBufSz, "Report");
+        }
+        else if (strcmp(key, cfr_promisehandle) == 0)
+        {
+            snprintf(retBuf, retBufSz, "Promise Handle");
+        }
+        else if (strcmp(key, cfr_time) == 0)
+        {
+            snprintf(retBuf, retBufSz, "Time");
+        }
+        break;
+
+    case CFREPORT_VALUE:
+        if (strcmp(key, cfr_keyhash) == 0)
+        {
+            snprintf(retBuf, retBufSz, "hostkey");
+        }
+        else if (strcmp(key, cfr_time) == 0)
+        {
+            snprintf(retBuf, retBufSz, "Day");
+        }
+        else if (strcmp(key, cfr_kept) == 0)
+        {
+            snprintf(retBuf, retBufSz, "Kept");
+        }
+        else if (strcmp(key, cfr_repaired) == 0)
+        {
+            snprintf(retBuf, retBufSz, "Repaired");
+        }
+        else if (strcmp(key, cfr_notkept) == 0)
+        {
+            snprintf(retBuf, retBufSz, "Not Kept");
+        }
+        break;
+
+    case CFREPORT_BUNDLE:
+        if (strcmp(key, cfr_keyhash) == 0)
+        {
+            snprintf(retBuf, retBufSz, "hostkey");
+        }
+        else if (strcmp(key, cfr_hrsago) == 0)
+        {
+            snprintf(retBuf, retBufSz, "Hours Ago");
+        }
+        else if (strcmp(key, cfr_hrsavg) == 0)
+        {
+            snprintf(retBuf, retBufSz, "Average Interval");
+        }
+        else if (strcmp(key, cfr_hrsdev) == 0)
+        {
+            snprintf(retBuf, retBufSz, "Uncertainty");
+        }
+        else if (strcmp(key, cfr_time) == 0)
+        {
+            snprintf(retBuf, retBufSz, "Time");
+        }
+        break;
+
+    case CFREPORT_PERFORMANCE:
+        if (strcmp(key, cfr_keyhash) == 0)
+        {
+            snprintf(retBuf, retBufSz, "hostkey");
+        }
+        else if (strcmp(key, cfr_perf_event) == 0)
+        {
+            snprintf(retBuf, retBufSz, "Event");
+        }
+        else if (strcmp(key, cfr_obs_q) == 0)
+        {
+            snprintf(retBuf, retBufSz, "Last Time");
+        }
+        else if (strcmp(key, cfr_obs_E) == 0)
+        {
+            snprintf(retBuf, retBufSz, "Average Time");
+        }
+        else if (strcmp(key, cfr_obs_sigma) == 0)
+        {
+            snprintf(retBuf, retBufSz, "Uncertainty");
+        }
+        break;
+
+    case CFREPORT_PRSUMMARY:
+
+        break;
+
+    case CFREPORT_FILECHANGES:
+        if (strcmp(key, cfr_time) == 0)
+        {
+            snprintf(retBuf, retBufSz, "Time");
+        }
+        else if (strcmp(key, cfr_name) == 0)
+        {
+            snprintf(retBuf, retBufSz, "File");
+        }
+        break;
+    default:
+        break;
+    }
+}
+
+static void BsonIteratorToString(char *retBuf, int retBufSz, bson_iterator *i, int depth, int reportType)
+/* NOTE: Only depth 1 is implemented */
+{
+    const char *key;
+    char oidhex[25];
+    char buf[CF_MAXVARSIZE];
+    char header[CF_MAXVARSIZE] = { 0 };
+
+    memset(retBuf, 0, retBufSz);
+
+    while (bson_iterator_next(i))
+    {
+
+        bson_type t = bson_iterator_type(i);
+
+        if (t == 0)
+        {
+            break;
+        }
+
+        key = bson_iterator_key(i);
+
+        header[0] = '\0';
+        GetReportKeyMapping(reportType, (char *) key, header, sizeof(header));
+
+        if (strlen(header) < 1)
+        {
+            snprintf(header, sizeof(header), "%s", key);
+        }
+
+        switch (t)
+        {
+        case bson_int:
+            snprintf(buf, sizeof(buf), "%s : ", header);
+            Join(retBuf, buf, retBufSz);
+            snprintf(buf, sizeof(buf), "%d, ", bson_iterator_int(i));
+            break;
+
+        case bson_double:
+            snprintf(buf, sizeof(buf), "%s : ", header);
+            Join(retBuf, buf, retBufSz);
+            snprintf(buf, sizeof(buf), "%f, ", bson_iterator_double(i));
+            break;
+
+        case bson_bool:
+            snprintf(buf, sizeof(buf), "%s : ", header);
+            Join(retBuf, buf, retBufSz);
+            snprintf(buf, sizeof(buf), "%s, ", bson_iterator_bool(i) ? "true" : "false");
+            break;
+        case bson_string:
+            snprintf(buf, sizeof(buf), "%s : ", header);
+            Join(retBuf, buf, retBufSz);
+            snprintf(buf, sizeof(buf), "%s, ", bson_iterator_string(i));
+            break;
+
+        case bson_null:
+            snprintf(buf, sizeof(buf), "%s : ", header);
+            Join(retBuf, buf, retBufSz);
+            snprintf(buf, sizeof(buf), "null, ");
+            break;
+
+        case bson_oid:
+            snprintf(buf, sizeof(buf), "%s : ", header);
+            Join(retBuf, buf, retBufSz);
+            bson_oid_to_string(bson_iterator_oid(i), oidhex);
+            snprintf(buf, sizeof(buf), "%s, ", oidhex);
+            break;
+
+        case bson_object:
+        case bson_array:
+            memset(buf, 0, sizeof(buf));
+            break;
+
+        default:
+            break;
+        }
+        Join(retBuf, buf, retBufSz);
+        //      Join(retBuf,", ",retBufSz);
+    }
+
+    retBuf[strlen(retBuf) - 2] = '\0';  // clear last comma
+}
+
 int CFDB_GetRow(mongo_connection *conn, char *db, int reportType, bson *query, char *rowname, char *row, int rowSz,
                 int level)
 {
@@ -5964,202 +6159,11 @@ Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collectio
 }
 
 /******************************************************************/
-void GetReportKeyMapping(int reportType, char *key, char *retBuf, int retBufSz)
-{
-    switch (reportType)
-    {
-    case CFREPORT_REPAIRED:
-    case CFREPORT_NOTKEPT:
-        if (strcmp(key, cfr_keyhash) == 0)
-        {
-            snprintf(retBuf, retBufSz, "hostkey");
-        }
-        else if (strcmp(key, cfr_cause) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Report");
-        }
-        else if (strcmp(key, cfr_promisehandle) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Promise Handle");
-        }
-        else if (strcmp(key, cfr_time) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Time");
-        }
-        break;
 
-    case CFREPORT_VALUE:
-        if (strcmp(key, cfr_keyhash) == 0)
-        {
-            snprintf(retBuf, retBufSz, "hostkey");
-        }
-        else if (strcmp(key, cfr_time) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Day");
-        }
-        else if (strcmp(key, cfr_kept) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Kept");
-        }
-        else if (strcmp(key, cfr_repaired) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Repaired");
-        }
-        else if (strcmp(key, cfr_notkept) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Not Kept");
-        }
-        break;
-
-    case CFREPORT_BUNDLE:
-        if (strcmp(key, cfr_keyhash) == 0)
-        {
-            snprintf(retBuf, retBufSz, "hostkey");
-        }
-        else if (strcmp(key, cfr_hrsago) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Hours Ago");
-        }
-        else if (strcmp(key, cfr_hrsavg) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Average Interval");
-        }
-        else if (strcmp(key, cfr_hrsdev) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Uncertainty");
-        }
-        else if (strcmp(key, cfr_time) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Time");
-        }
-        break;
-
-    case CFREPORT_PERFORMANCE:
-        if (strcmp(key, cfr_keyhash) == 0)
-        {
-            snprintf(retBuf, retBufSz, "hostkey");
-        }
-        else if (strcmp(key, cfr_perf_event) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Event");
-        }
-        else if (strcmp(key, cfr_obs_q) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Last Time");
-        }
-        else if (strcmp(key, cfr_obs_E) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Average Time");
-        }
-        else if (strcmp(key, cfr_obs_sigma) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Uncertainty");
-        }
-        break;
-
-    case CFREPORT_PRSUMMARY:
-
-        break;
-
-    case CFREPORT_FILECHANGES:
-        if (strcmp(key, cfr_time) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Time");
-        }
-        else if (strcmp(key, cfr_name) == 0)
-        {
-            snprintf(retBuf, retBufSz, "File");
-        }
-        break;
-    default:
-        break;
-    }
-}
 
 /******************************************************************/
 
-void BsonIteratorToString(char *retBuf, int retBufSz, bson_iterator *i, int depth, int reportType)
-/* NOTE: Only depth 1 is implemented */
-{
-    const char *key;
-    char oidhex[25];
-    char buf[CF_MAXVARSIZE];
-    char header[CF_MAXVARSIZE] = { 0 };
 
-    memset(retBuf, 0, retBufSz);
-
-    while (bson_iterator_next(i))
-    {
-
-        bson_type t = bson_iterator_type(i);
-
-        if (t == 0)
-        {
-            break;
-        }
-
-        key = bson_iterator_key(i);
-
-        header[0] = '\0';
-        GetReportKeyMapping(reportType, (char *) key, header, sizeof(header));
-
-        if (strlen(header) < 1)
-        {
-            snprintf(header, sizeof(header), "%s", key);
-        }
-
-        switch (t)
-        {
-        case bson_int:
-            snprintf(buf, sizeof(buf), "%s : ", header);
-            Join(retBuf, buf, retBufSz);
-            snprintf(buf, sizeof(buf), "%d, ", bson_iterator_int(i));
-            break;
-
-        case bson_double:
-            snprintf(buf, sizeof(buf), "%s : ", header);
-            Join(retBuf, buf, retBufSz);
-            snprintf(buf, sizeof(buf), "%f, ", bson_iterator_double(i));
-            break;
-
-        case bson_bool:
-            snprintf(buf, sizeof(buf), "%s : ", header);
-            Join(retBuf, buf, retBufSz);
-            snprintf(buf, sizeof(buf), "%s, ", bson_iterator_bool(i) ? "true" : "false");
-            break;
-        case bson_string:
-            snprintf(buf, sizeof(buf), "%s : ", header);
-            Join(retBuf, buf, retBufSz);
-            snprintf(buf, sizeof(buf), "%s, ", bson_iterator_string(i));
-            break;
-
-        case bson_null:
-            snprintf(buf, sizeof(buf), "%s : ", header);
-            Join(retBuf, buf, retBufSz);
-            snprintf(buf, sizeof(buf), "null, ");
-            break;
-
-        case bson_oid:
-            snprintf(buf, sizeof(buf), "%s : ", header);
-            Join(retBuf, buf, retBufSz);
-            bson_oid_to_string(bson_iterator_oid(i), oidhex);
-            snprintf(buf, sizeof(buf), "%s, ", oidhex);
-            break;
-
-        case bson_object:
-        case bson_array:
-            memset(buf, 0, sizeof(buf));
-            break;
-
-        default:
-            break;
-        }
-        Join(retBuf, buf, retBufSz);
-        //      Join(retBuf,", ",retBufSz);
-    }
-
-    retBuf[strlen(retBuf) - 2] = '\0';  // clear last comma
-}
 
 /*****************************************************************************/
 
@@ -6198,7 +6202,6 @@ HubQuery *CFDB_QueryClassesDistinctSorted(mongo_connection *conn, const char *cl
 
 /*****************************************************************************/
 
-/*************************************************/
 int CFDB_QueryIsMaster(void)
 {
     bson_buffer bb;

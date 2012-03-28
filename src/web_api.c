@@ -23,6 +23,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #if defined(HAVE_LIBMONGOC)
 #include "db_save.h"
 #include "db_query.h"
+#include "db_maintain.h"
 #endif
 
 static const char *CDP_REPORTS[][2] =

@@ -716,33 +716,6 @@ int Overlap(double x1, double y1, double x2, double y2);
 int Nova_InRange(DataView cfv, int x, int y);
 void Nova_BoundaryCheck(DataView *cfv, int *x1, int *y1, int *x2, int *y2);
 
-#ifdef HAVE_LIBMONGOC
-
-//# include "db_query.h"
-
-#endif
-
-
-#ifdef HAVE_LIBMONGOC
-
-/*
- * commenting
- */
-int CFDB_AddNote(mongo_connection *conn, char *keyhash, int reportType, char *nid, char *reportData, Item *data);
-Rlist *CFDB_QueryNotes(mongo_connection *conn, char *keyhash, char *nid, Item *data);
-Rlist *CFDB_QueryNoteId(mongo_connection *conn, bson *query);
-void CFDBRef_AddToRow(mongo_connection *conn, char *coll, bson *query, char *row_name, char *cid);
-int CFDB_GetRow(mongo_connection *conn, char *db, int reportType, bson *query, char *rowname, char *row, int rowSz,
-                int level);
-Item *CFDB_QueryDistinctStr(mongo_connection *conn, char *database, char *collection, char *dKey, char *qKey,
-                            char *qVal);
-Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collection, char *dKey, bson *queryBson);
-void BsonIteratorToString(char *retBuf, int retBufSz, bson_iterator *i, int depth, int reportType);
-void GetReportKeyMapping(int reportType, char *key, char *retBuf, int retBufSz);
-#endif /* HAVE_LIBMONGOC */
-
-#include "db_maintain.h"
-
 /* datapackaging.c */
 
 void Nova_PackPerformance(Item **reply, char *header, time_t date, enum cfd_menu type);

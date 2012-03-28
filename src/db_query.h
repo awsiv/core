@@ -91,8 +91,13 @@ Item *CFDB_QueryCdpCompliance(mongo_connection *conn, char *handle);
 Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const char *ip, HostClassFilter *hostClassFilter);
 Item *CFDB_GetDeletedHosts(void);
 Item *CFDB_GetLastseenCache(void);
-
-
+Rlist *CFDB_QueryNotes(mongo_connection *conn, char *keyhash, char *nid, Item *data);
+Rlist *CFDB_QueryNoteId(mongo_connection *conn, bson *query);
+Item *CFDB_QueryDistinctStr(mongo_connection *conn, char *database, char *collection, char *dKey, char *qKey,
+                            char *qVal);
+Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collection, char *dKey, bson *queryBson);
+int CFDB_GetRow(mongo_connection *conn, char *db, int reportType, bson *query, char *rowname, char *row, int rowSz,
+                int level);
 
 //*****************************************************************************
 // Singleton Queries
