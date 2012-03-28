@@ -158,7 +158,6 @@ class Widget extends Cf_Controller
             $classlist = implode(",", $filters);
             $arr = json_decode(cfpr_class_cloud($classlist));
             $this->session->set_userdata('lastclasslist', $classlist);
-            // echo  host_only_table( $arr->hosts);
             echo $this->__format_to_html2($arr->hosts);
         }
         else
