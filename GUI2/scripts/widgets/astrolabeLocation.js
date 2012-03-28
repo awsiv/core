@@ -30,8 +30,12 @@
             $self._label.html($self.options.defaultContextPathLabel);
 
             var pathString = '';
+            var firstPath = true;
             for (var i in path) {
-                pathString = pathString + '/' + path[i];
+                if (!firstPath)
+                    pathString = pathString + '->';
+                pathString = pathString + path[i];
+                firstPath = false;
             }
 
             if (count !== 0 && count !== undefined) {
