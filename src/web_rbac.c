@@ -22,7 +22,6 @@
 #include "web_rbac.h"
 #include <assert.h>
 
-#ifdef HAVE_LIBMONGOC
 #include "db_query.h"
 
 static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles);
@@ -874,5 +873,3 @@ static cfapi_errid UserIsRoleAdmin(mongo_connection *conn, char *userName)
 
     return errid;
 }
-
-#endif

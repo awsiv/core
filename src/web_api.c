@@ -18,13 +18,10 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "cf.nova.web_api.h"
 #include "scorecards.h"
 #include "bson_lib.h"
-#include <assert.h>
-
-#if defined(HAVE_LIBMONGOC)
 #include "db_save.h"
 #include "db_query.h"
 #include "db_maintain.h"
-#endif
+#include <assert.h>
 
 static const char *CDP_REPORTS[][2] =
 {
@@ -64,7 +61,6 @@ static void WriteDouble2Str_MP(double x, char *buffer, int bufsize);
 static bool IsEnvMissionPortalTesting(void);
 #endif
 /*****************************************************************************/
-#ifdef HAVE_LIBMONGOC
 
 /*****************************************************************************/
 /* Helper functions                                                          */
@@ -4890,8 +4886,6 @@ void EndJsonBuffer(char *buf, int bufsize, cfapi_errid errid)
     EndJoin(buf, work, bufsize);
     EndJoin(buf, "}", bufsize);
 }
-
-#endif /* HAVE_LIBMONGOC */
 
 /*****************************************************************************/
 #ifndef NDEBUG

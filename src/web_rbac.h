@@ -11,8 +11,6 @@
 #include "cf.nova.web_api.h"
 #include "bson_lib.h"
 
-#ifdef HAVE_LIBMONGOC
-
 # define MONGO_ROLES_COLLECTION MONGO_MPBASE ".roles"
 # define MONGO_USERS_INTERNAL_COLLECTION MONGO_MPBASE ".users"
 # define MONGO_USERS_LDAP_COLLECTION MONGO_MPBASE ".ldap_users"
@@ -46,7 +44,5 @@ cfapi_errid CFDB_UpdateRole(char *updatingUser, char *roleName, char *descriptio
 cfapi_errid CFDB_UserIsAdminWhenRBAC(char *username);
 HubQuery *CFDB_GetAllRolesAuth(char *userName);
 HubQuery *CFDB_GetRoleByNameAuth(char *userName, char *roleName);
-
-#endif
 
 #endif

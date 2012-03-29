@@ -5,6 +5,8 @@
 #ifndef CFENGINE_SCORECARDS_H
 #define CFENGINE_SCORECARDS_H
 
+#include <bson.h>
+
 typedef enum
 {
     HOST_RANK_METHOD_COMPLIANCE   = 0x00000001,
@@ -32,10 +34,6 @@ typedef struct
 } HostColourFilter;
 
 HostColourFilter *NewHostColourFilter(HostRankMethod method, HostColour colours);
-
-#ifdef HAVE_LIBMONGOC
-#include <bson.h>
-
 const char *Nova_HostColourToString(HostColour colour);
 HostColour HostColourFromString(const char *colour);
 
@@ -49,6 +47,5 @@ void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, 
 void Nova_Meter(bson *query, char *db, char *buffer, int bufsize);
 void Nova_BarMeter(int pos, double kept, double rep, char *name, char *buffer, int bufsize);
 
-#endif
 
 #endif

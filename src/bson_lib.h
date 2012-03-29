@@ -10,8 +10,6 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 
-#ifdef HAVE_LIBMONGOC
-
 Item *BsonGetStringArrayAsItemList(const bson *b, const char *key);
 Rlist *BsonStringArrayAsRlist(const bson *b, const char *key);
 bool BsonBoolGet(const bson *b, const char *key, bool *out);
@@ -36,7 +34,5 @@ void BsonAppendHostColourFilter(bson_buffer *query_buffer, HostColourFilter *fil
 void BsonAppendSortField(bson_buffer *bb, char *sortField);
 long BsonLongGet(const bson *b, const char *key);
 const char *BsonGetArrayValue(const bson *b, const char *key);
-
-#endif /* HAVE_LIBMONGOC */
 
 #endif

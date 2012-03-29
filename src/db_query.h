@@ -3,8 +3,6 @@
 
 #include "cf.nova.h"
 #include "scorecards.h"
-
-#ifdef HAVE_LIBMONGOC
 #include "db_common.h"
 
 //*****************************************************************************
@@ -131,8 +129,5 @@ void CFDB_ScanHubHost(bson_iterator *it, char *keyhash, char *ipaddr, char *host
 void CFDB_ListEverything(mongo_connection *conn);
 void PrintCFDBKey(bson_iterator *it, int depth);
 Item *CFDB_GetHostByColour(mongo_connection *conn, HostClassFilter *host_class_filter, HostColourFilter *host_colour_filter);
-
-
-#endif
 
 #endif

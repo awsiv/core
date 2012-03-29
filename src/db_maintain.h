@@ -4,8 +4,6 @@
 void CFDB_Maintenance(void);
 void CFDB_ReIndexAll(void);
 void CFDB_ConnectAndEnsureIndices(void);
-
-#ifdef HAVE_LIBMONGOC
 void CFDB_EnsureIndices(mongo_connection *conn);
 void CFDB_PurgeDropReports(mongo_connection *conn);
 void CFDB_PurgeTimestampedReports(mongo_connection *conn);
@@ -26,7 +24,5 @@ void CFDB_RemoveTestData(char *db, char *keyhash);
 int CFDB_PurgeDeletedHosts(void);
 
 bool CFDB_CollectionHasData(mongo_connection *conn, const char *fullCollectionName);
-
-#endif
 
 #endif
