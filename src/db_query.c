@@ -736,12 +736,13 @@ HubQuery *CFDB_QuerySoftware(mongo_connection *conn, char *keyHash, char *type, 
         }
     }
 
+    mongo_cursor_destroy(cursor);
+
     if (sort)
     {
         record_list = SortRlist(record_list, SortSoftware);
     }
 
-    mongo_cursor_destroy(cursor);
     return NewHubQuery(host_list, record_list);
 }
 
@@ -877,12 +878,13 @@ HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass,
         }
     }
 
+    mongo_cursor_destroy(cursor);
+
     if (sort)
     {
         record_list = SortRlist(record_list, SortClasses);
     }
 
-    mongo_cursor_destroy(cursor);
     return NewHubQuery(host_list, record_list);
 }
 
@@ -1178,12 +1180,13 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn, char *keyHash, char 
         }
     }
 
+    mongo_cursor_destroy(cursor);
+
     if (sort)
     {
         record_list = SortRlist(record_list, SortTotalCompliance);
     }
 
-    mongo_cursor_destroy(cursor);
     return NewHubQuery(host_list, record_list);
 }
 
@@ -1548,12 +1551,13 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
         }
     }
 
+    mongo_cursor_destroy(cursor);
+
     if (sort)
     {
         record_list = SortRlist(record_list, SortPromiseCompliance);
     }
 
-    mongo_cursor_destroy(cursor);
     return NewHubQuery(host_list, record_list);
 }
 
@@ -1734,12 +1738,13 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash,
         }
     }
 
+    mongo_cursor_destroy(cursor);
+
     if (sort)
     {
         record_list = SortRlist(record_list, SortLastSeen);
     }
 
-    mongo_cursor_destroy(cursor);
     return NewHubQuery(host_list, record_list);
 }
 
@@ -1988,12 +1993,13 @@ HubQuery *CFDB_QueryPerformance(mongo_connection *conn, char *keyHash, char *lna
         }
     }
 
+    mongo_cursor_destroy(cursor);
+
     if (sort)
     {
         record_list = SortRlist(record_list, SortPerformance);
     }
 
-    mongo_cursor_destroy(cursor);
     return NewHubQuery(host_list, record_list);
 }
 
@@ -2253,12 +2259,13 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
         }
     }
 
+    mongo_cursor_destroy(cursor);
+
     if (sort)
     {
         record_list = SortRlist(record_list, SortFileChanges);
     }
 
-    mongo_cursor_destroy(cursor);
     return NewHubQuery(host_list, record_list);
 }
 
@@ -2410,12 +2417,13 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname,
         }
     }
 
+    mongo_cursor_destroy(cursor);
+
     if (sort)
     {
         record_list = SortRlist(record_list, SortFileDiff);
     }
 
-    mongo_cursor_destroy(cursor);
     return NewHubQuery(host_list, record_list);
 }
 
@@ -2632,6 +2640,8 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
         }
     }
 
+    mongo_cursor_destroy(cursor);
+
     // now fill in hostnames and ips of the hosts and sort by time
     if(count > 0)
     {
@@ -2642,9 +2652,6 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
             *record_list = SortRlist(*record_list, SortPromiseLog);
         }
     }
-
-    mongo_cursor_destroy(cursor);
-
     return count;
 }
 
@@ -2817,13 +2824,14 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
         }
     }
 
+    mongo_cursor_destroy(cursor);
+
     // now fill in hostnames and ips of the hosts
     if(count > 0)
     {
         QueryInsertHostInfo(conn,*host_list);
     }
 
-    mongo_cursor_destroy(cursor);
     return count;
 }
 
@@ -2973,12 +2981,13 @@ HubQuery *CFDB_QueryValueReport(mongo_connection *conn, char *keyHash, char *lda
         }
     }
 
+    mongo_cursor_destroy(cursor);
+
     if (sort)
     {
         record_list = SortRlist(record_list, SortBusinessValue);
     }
 
-    mongo_cursor_destroy(cursor);
     return NewHubQuery(host_list, record_list);
 }
 
@@ -3143,12 +3152,13 @@ HubQuery *CFDB_QueryValueGraph(mongo_connection *conn, char *keyHash, char *lday
         }
     }
 
+    mongo_cursor_destroy(cursor);
+
     if (sort)
     {
         record_list = SortRlist(record_list, SortBusinessValue);
     }
 
-    mongo_cursor_destroy(cursor);
     return NewHubQuery(host_list, record_list);
 }
 
@@ -3304,12 +3314,13 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
         }
     }
 
+    mongo_cursor_destroy(cursor);
+
     if (sort)
     {
         record_list = SortRlist(record_list, SortBundleSeen);
     }
 
-    mongo_cursor_destroy(cursor);
     return NewHubQuery(host_list, record_list);
 }
 
