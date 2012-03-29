@@ -184,6 +184,16 @@ void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, 
 
 /*****************************************************************************/
 
+static void Nova_BarMeter(int pos, double kept, double rep, char *name, char *buffer, int bufsize)
+{
+    char work[CF_BUFSIZE];
+
+    snprintf(work, CF_BUFSIZE,
+             "{ \"title\": \"%s\", \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf }", name, pos,
+             kept, rep, 100 - kept - rep);
+    Join(buffer, work, bufsize);
+}
+
 void Nova_Meter(bson *query, char *db, char *buffer, int bufsize)
 {
     double kept = 0, repaired = 0;
@@ -451,14 +461,3 @@ HostColour HostColourFromScoreForConnectedHost(int score)
     return HostColourFromScore(1, 1, 1, score, false);
 }
 
-/*****************************************************************************/
-
-void Nova_BarMeter(int pos, double kept, double rep, char *name, char *buffer, int bufsize)
-{
-    char work[CF_BUFSIZE];
-
-    snprintf(work, CF_BUFSIZE,
-             "{ \"title\": \"%s\", \"position\": %d, \"kept\": %lf, \"repaired\": %lf, \"notkept\": %lf }", name, pos,
-             kept, rep, 100 - kept - rep);
-    Join(buffer, work, bufsize);
-}
