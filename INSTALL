@@ -1,0 +1,11 @@
+== cfmod ==
+
+In order to manually install cfmod to the machine, you'll need to do the following:
+
+1) Make a symlink from php library directory (typically something like
+/usr/lib/php5/20100525) to $installdir/lib/php/cfmod.so
+
+2) Put a configuration file (with .ini extension) to php configuration directory
+(typically something like /etc/php5/conf.d):
+
+extension=cfmod.so
