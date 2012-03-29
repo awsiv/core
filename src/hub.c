@@ -12,7 +12,7 @@
 #include "db_save.h"
 #include "db_query.h"
 #include "db_maintain.h"
-#endif
+#include "lastseen.h"
 
 /*******************************************************************/
 
@@ -561,7 +561,7 @@ void Nova_UpdateMongoHostList(Item **list)
             // remove from the local lastseen db
             // TODO: remove the public keys also?
 
-            removed = (removed && RemoveHostFromLastSeen(NULL, ip->name));
+            removed = (removed && RemoveHostFromLastSeen(ip->name));
         }
 
         // if all hosts marked as "deleted" were removed from cf_lastseen.tcdb
@@ -1160,7 +1160,6 @@ Item *Nova_ScanClients()
     CF_DBC *dbcp;
     char *key;
     void *value;
-    KeyHostSeen entry;
     int ksize, vsize;
     Item *list = NULL;
     time_t now = time(NULL);
@@ -1178,43 +1177,55 @@ Item *Nova_ScanClients()
         return NULL;
     }
 
-    /* Initialize the key/data return pair. */
-
-    memset(&entry, 0, sizeof(entry));
-
     /* Walk through the database and print out the key/data pairs. */
 
     while (NextDB(dbp, dbcp, &key, &ksize, &value, &vsize))
     {
-        if (value != NULL)
+        /* Only read the 'quality of connection' entries */
+
+        if (key[0] != 'q')
         {
-            if (strcmp(value, CF_UNKNOWN_IP) == 0)
-            {
-                continue;
-            }
+            continue;
+        }
+
+        bool incoming = (*key == 'i');
+        char hostkey[CF_BUFSIZE];
+        strlcpy(hostkey, (char *)key + 1, CF_BUFSIZE);
+
+        KeyHostSeen *q = value;
+
+        /* Resolve address */
+
+        char hostkey_key[CF_BUFSIZE];
+        snprintf(hostkey_key, CF_BUFSIZE, "k%s", hostkey);
+
+        char address[CF_BUFSIZE];
+
+        if (ReadDB(dbp, hostkey_key, address, sizeof(address)) == false)
+        {
+            continue;
+        }
+
+        /* Put the data into a list */
+
+        Item *ip = ReturnItemIn(list, hostkey);
+
+        if (!ip)
+        {
+            char hostkey_direction[CF_BUFSIZE];
+            snprintf(hostkey_direction, "%c%s", incoming ? '-' : '+', hostkey);
+
+            ip = PrependItem(&list, hostkey_direction, address);
 
             if (counter++ > LICENSES)
             {
                 CfOut(cf_error,""," !! This hub is only licensed to support %d clients, so truncating at %d", LICENSES, LICENSES);
                 break;
             }
-            
-            memcpy(&entry, value, sizeof(entry));
 
-            Item *ip = ReturnItemIn(list, key + 1);
-
-            if (!ip)
-            {
-                ip = PrependItem(&list, key + 1, entry.address);
-            }
-
-            time_t lastseen = now - (time_t) entry.Q.q;
-
-            if (ip->time < lastseen)
-            {
-                ip->time = lastseen;
-            }
         }
+
+        ip->time = MAX(ip->time, now - q->lastseen);
     }
 
     DeleteDBCursor(dbp, dbcp);

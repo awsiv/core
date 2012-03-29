@@ -15,6 +15,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 #include "cf.nova.cmd_api.h"
+#include "lastseen.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"

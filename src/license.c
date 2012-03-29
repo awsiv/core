@@ -14,6 +14,7 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+#include "lastseen.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"
@@ -146,7 +147,7 @@ int EnterpriseExpiry(void)
 
         // This next step requires a pre-existing binding
 
-        IPString2KeyDigest(policy_server, serverdig);
+        Address2Hostkey(policy_server, serverdig);
 
         snprintf(serverkey, sizeof(name), "%s/ppkeys/%s-%s.pub", CFWORKDIR, "root", serverdig);
         CfOut(cf_verbose, "", " -> Look for server %s's key file\n", policy_server);

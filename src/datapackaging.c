@@ -16,6 +16,7 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+#include "lastseen.h"
 
 /* For sorting */
 typedef struct
@@ -1356,7 +1357,7 @@ void Nova_PackLastSeen(Item **reply, char *header, time_t from, enum cfd_menu ty
     time_t tid = time(NULL);
     double now = (double) tid, average = 0, var = 0;
     double ticksperhr = (double) SECONDS_PER_HOUR;
-    char hostkey[CF_BUFSIZE], buffer[CF_MAXTRANSSIZE];
+    char buffer[CF_MAXTRANSSIZE];
     KeyHostSeen entry;
     int ksize, vsize, first = true;
 
@@ -1388,7 +1389,16 @@ void Nova_PackLastSeen(Item **reply, char *header, time_t from, enum cfd_menu ty
         time_t fthen;
         char addr[CF_BUFSIZE];
 
-        strncpy(hostkey, (char *) key, ksize);
+        /* Only read the 'quality of connection' entries */
+
+        if (key[0] != 'q')
+        {
+            continue;
+        }
+
+        bool incoming = (*key == 'i');
+        char hostkey[CF_BUFSIZE];
+        strlcpy(hostkey, (char *) key + 1, CF_BUFSIZE);
 
         if (value != NULL)
         {
@@ -1397,7 +1407,12 @@ void Nova_PackLastSeen(Item **reply, char *header, time_t from, enum cfd_menu ty
             then = entry.Q.q;
             average = (double) entry.Q.expect;
             var = (double) entry.Q.var;
-            strncpy(addr, entry.address, CF_MAXVARSIZE);
+
+            /* Resolve address */
+
+            char hostkey_key[CF_BUFSIZE];
+            snprintf(hostkey_key, CF_BUFSIZE, "k%s", hostkey);
+            ReadDB(dbp, hostkey_key, &addr, CF_BUFSIZE);
         }
         else
         {
@@ -1420,8 +1435,8 @@ void Nova_PackLastSeen(Item **reply, char *header, time_t from, enum cfd_menu ty
         }
 
         snprintf(buffer, sizeof(buffer), "%c %s %s %ld %.2lf %.2lf %.2lf\n",
-                 *hostkey,
-                 hostkey + 1,
+                 incoming ? '+' : '-',
+                 hostkey,
                  addr,
                  (long) fthen, ((double) (now - then)) / ticksperhr, average / ticksperhr, sqrt(var) / ticksperhr);
 
