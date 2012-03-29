@@ -3031,11 +3031,18 @@ void Nova2PHP_show_topic_leads(int id, char *buffer, int bufsize)
     char work[CF_BUFSIZE], jsonEscapedStr[CF_BUFSIZE] = { 0 };
 
     buffer[0] = '\0';
-    strcpy(buffer, "[ ");
+
+    if (list == NULL)
+    {
+        strcpy(buffer, "{ }");
+        return;
+    }
 
 // name contains the association
 // classes contains the related topic
 // counter contains the topic id
+
+    strcpy(buffer, "[ ");
 
     for (ip = list; ip != NULL; ip = ip->next)
     {
@@ -3059,7 +3066,7 @@ void Nova2PHP_show_topic_leads(int id, char *buffer, int bufsize)
         }
     }
 
-    strcpy(buffer + strlen(buffer) - 1, "]} ]");
+    strcpy(buffer + strlen(buffer) - 1, "]}]");
 }
 
 /*****************************************************************************/
