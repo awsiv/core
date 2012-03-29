@@ -926,7 +926,7 @@ int Nova2Txt_filechanges_report(char *hostkey, char *file, int regex, time_t t, 
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, t, icmp, true, filter, false);
+    hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, t, icmp, true, filter);
     DeleteHostClassFilter(filter);
 
     if (!CSV)
@@ -996,7 +996,7 @@ int Nova2Txt_filediffs_report(char *hostkey, char *file, char *diffs, int regex,
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, t, icmp, true, filter, false);
+    hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, t, icmp, true, filter);
     DeleteHostClassFilter(filter);
 
     for (rp = hq->records; rp != NULL; rp = rp->next)
@@ -1717,7 +1717,7 @@ int Nova2Txt_filechanges_hosts(char *hostkey, char *file, int regex, time_t t, c
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, t, icmp, false, filter, false);
+    hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, t, icmp, false, filter);
     DeleteHostClassFilter(filter);
 
     StartJoin(returnval, "[", bufsize);
@@ -1780,7 +1780,7 @@ int Nova2Txt_filediffs_hosts(char *hostkey, char *file, char *diffs, int regex, 
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, t, icmp, false, filter, false);
+    hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, t, icmp, false, filter);
     DeleteHostClassFilter(filter);
 
     StartJoin(returnval, "[", bufsize);

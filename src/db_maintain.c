@@ -853,6 +853,10 @@ void CFDB_PurgeHost(mongo_connection *conn, char *keyHash)
 
         MongoCheckForError(conn, "delete host from main collection", ScalarValue(rp), NULL);
 
+        mongo_remove(conn, MONGO_ARCHIVE, &cond);
+
+        MongoCheckForError(conn, "delete host from archive collection", ScalarValue(rp), NULL);
+
         mongo_remove(conn, MONGO_DATABASE_MON_MG, &cond);
 
         MongoCheckForError(conn, "delete host from mag monitord collection", ScalarValue(rp), NULL);

@@ -614,7 +614,7 @@ void CFDB_SaveClasses(mongo_connection *conn, char *keyhash, Item *data)
  *  Replacing existing class entry, but not deleting "old" entries (purging)
  */
 {
-    bson_buffer bb, *setObj, *clObj, *keyArr, *keyAdd, *keyArrField;
+    bson_buffer bb, *setObj, *clObj, *keyArr, *keyArrField;
     bson host_key;              // host description
     bson setOp;
     Item *ip;
@@ -628,6 +628,31 @@ void CFDB_SaveClasses(mongo_connection *conn, char *keyhash, Item *data)
     bson_buffer_init(&bb);
     bson_append_string(&bb, cfr_keyhash, keyhash);
     bson_from_buffer(&host_key, &bb);
+
+    bson classKeys;
+
+    bson_buffer bbClassKeys;
+    bson_buffer_init(&bbClassKeys);
+    keyArrField = bson_append_start_object(&bbClassKeys, cfr_class_keys);
+    keyArr = bson_append_start_array(keyArrField, "$each");
+
+    for (ip = data, i = 0; ip != NULL; ip = ip->next, i++)
+    {
+        sscanf(ip->name, "%[^,],%ld,%lf,%lf\n", name, &t, &e, &dev);
+        snprintf(iStr, sizeof(iStr), "%d", i);
+        bson_append_string(keyArr, iStr, name);
+    }
+
+    bson_append_finish_object(keyArr);
+    bson_append_finish_object(keyArrField);
+    bson_from_buffer(&classKeys, &bbClassKeys);
+    
+    bson_buffer_init(&bb);
+    bson_append_bson(&bb, "$addToSet", &classKeys);
+    bson_from_buffer(&setOp, &bb);
+
+    mongo_update(conn, MONGO_ARCHIVE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    bson_destroy(&setOp);
 
     bson_buffer_init(&bb);
 
@@ -651,30 +676,17 @@ void CFDB_SaveClasses(mongo_connection *conn, char *keyhash, Item *data)
     bson_append_finish_object(setObj);
 
 // insert keys into numbered key array - needed for efficient regexes
-
-    keyAdd = bson_append_start_object(&bb, "$addToSet");
-    keyArrField = bson_append_start_object(keyAdd, cfr_class_keys);
-    keyArr = bson_append_start_array(keyAdd, "$each");
-
-    for (ip = data, i = 0; ip != NULL; ip = ip->next, i++)
-    {
-        sscanf(ip->name, "%[^,],%ld,%lf,%lf\n", name, &t, &e, &dev);
-        snprintf(iStr, sizeof(iStr), "%d", i);
-        bson_append_string(keyArr, iStr, name);
-    }
-
-    bson_append_finish_object(keyArr);
-    bson_append_finish_object(keyArrField);
-    bson_append_finish_object(keyAdd);
+    bson_append_bson(&bb, "$addToSet", &classKeys);
+    bson_destroy(&classKeys);
 
     bson_from_buffer(&setOp, &bb);
     mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
     MongoCheckForError(conn, "SaveClasses", keyhash, NULL);
 
-    CFDB_SaveEnvironment(conn, keyhash, data);
-
     bson_destroy(&setOp);
     bson_destroy(&host_key);
+
+    CFDB_SaveEnvironment(conn, keyhash, data);
 }
 
 /*****************************************************************************/
@@ -1508,9 +1520,7 @@ void CFDB_SaveFileChanges(mongo_connection *conn, char *keyhash, Item *data)
     bson_append_finish_object(setObj);
 
     bson_from_buffer(&setOp, &bb);
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
-// Add to longterm db
     mongo_update(conn, MONGO_ARCHIVE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
     bson_destroy(&setOp);
@@ -1570,9 +1580,7 @@ void CFDB_SaveFileDiffs(mongo_connection *conn, char *keyhash, Item *data)
     bson_append_finish_object(setObj);
 
     bson_from_buffer(&setOp, &bb);
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
-// Add to archive
     mongo_update(conn, MONGO_ARCHIVE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
 
     bson_destroy(&setOp);

@@ -157,11 +157,9 @@ int Nova2PHP_setuid_report(char *hostkey, char *file, int regex, HostClassFilter
 int Nova2PHP_bundle_report(char *hostkey, char *bundle, int regex, HostClassFilter *hostClassFilter, PageInfo *page,
                            char *returnval, int bufsize);
 int Nova2PHP_filechanges_report(char *hostkey, char *file, int regex, time_t t, char *cmp,
-                                HostClassFilter *hostClassFilter, PageInfo *page, int lookInArchive, char *returnval,
-                                int bufsize);
+                                HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, int regex, time_t t, char *cmp,
-                              HostClassFilter *hostClassFilter, PageInfo *page, int lookInArchive, char *returnval,
-                              int bufsize);
+                              HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_summary_report(char *hostkey, char *handle, char *status, int regex, char *classreg,
                             HostClassFilter *hostClassFilter, char *returnval, int bufsize);
 int Nova2PHP_software_hosts(char *hostkey, char *name, char *value, char *arch, int regex, char *type,

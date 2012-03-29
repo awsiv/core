@@ -412,14 +412,7 @@ class report_model extends Cf_Model {
             }
             else
             {
-                if ($longterm_data)
-                {
-                    $rawdata = cfpr_report_filechanges_longterm($username, $hostkey, $search, true, -1, ">", $inclist, $exlist, "time", true, $rows, $page_number);
-                }
-                else
-                {
-                    $rawdata = cfpr_report_filechanges($username, $hostkey, $search, true, -1, ">", $inclist, $exlist, "time", true, $rows, $page_number);
-                }
+	        $rawdata = cfpr_report_filechanges($username, $hostkey, $search, true, -1, ">", $inclist, $exlist, "time", true, $rows, $page_number);
             }
           
             $data = $this->checkData($rawdata);
@@ -463,17 +456,9 @@ class report_model extends Cf_Model {
             }
             else
             {
-                if ($longterm)
-                {
-                    $rawdata = cfpr_report_filediffs_longterm($username, NULL, $search, $diff, true, $cal, ">", $inclist, $exlist, "time", true, $rows, $page_number);
-                }
-                else
-                {
-                    $rawdata = cfpr_report_filediffs($username, NULL, $search, $diff, true, $cal, ">", $inclist, $exlist, "time", true, $rows, $page_number);
-                }
+                $rawdata = cfpr_report_filediffs($username, NULL, $search, $diff, true, $cal, ">", $inclist, $exlist, "time", true, $rows, $page_number);
             }
           
-         
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {

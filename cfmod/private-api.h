@@ -387,35 +387,6 @@ PHP_FUNCTION(cfpr_report_filediffs);
 
 PHP_FUNCTION(cfpr_report_bundlesseen);
 
-/*! \brief Query for changed files at a host since the beginning of time
- * \param hostKey
- * \param file
- * \param useRegularExpressions
- * \param time
- * \param comparator
- * \param contextExpression
- * \param sortColumnName
- * \param sortDescending
- * \param resultsPerPage
- * \param pageNumber
- */
-PHP_FUNCTION(cfpr_report_filechanges_longterm);
-
-/*! \brief Query for file diffs since the beginning of time
- * \param hostKey
- * \param file
- * \param diff
- * \param useRegularExpressions
- * \param time
- * \param comparator
- * \param contextExpression
- * \param sortColumnName
- * \param sortDescending
- * \param resultsPerPage
- * \param pageNumber
- */
-PHP_FUNCTION(cfpr_report_filediffs_longterm);
-
 /*! \brief A list of all the library documents
  * \param filePath
  */

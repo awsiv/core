@@ -2110,7 +2110,7 @@ HubQuery *CFDB_QuerySetuid(mongo_connection *conn, char *keyHash, char *lname, i
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lname, int regex, time_t lt, int cmp,
-                                int sort, HostClassFilter *hostClassFilter, int lookInArchive)
+                                int sort, HostClassFilter *hostClassFilter)
 {
     bson_buffer bb;
     bson query, field;
@@ -2123,18 +2123,7 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
     int match_name, match_t, found = false;
     time_t rt;
 
-    char collectionName[CF_MAXVARSIZE];
-
 /* BEGIN query document */
-
-    if (lookInArchive)
-    {
-        snprintf(collectionName, CF_MAXVARSIZE, "%s", MONGO_ARCHIVE);
-    }
-    else
-    {
-        snprintf(collectionName, CF_MAXVARSIZE, "%s", MONGO_DATABASE);
-    }
 
     bson_buffer_init(&bb);
 
@@ -2162,7 +2151,7 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    cursor = mongo_find(conn, collectionName, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    cursor = mongo_find(conn, MONGO_ARCHIVE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&field);
@@ -2276,7 +2265,7 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname, char *ldiff, int regex, time_t lt,
-                             int cmp, int sort, HostClassFilter *hostClassFilter, int lookInArchive)
+                             int cmp, int sort, HostClassFilter *hostClassFilter)
 {
     bson_buffer bb;
     bson query, field;
@@ -2288,18 +2277,7 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname,
     int match_name, match_t, match_diff, found = false;
     time_t rt = 0;
 
-    char collectionName[CF_MAXVARSIZE];
-
 /* BEGIN query document */
-
-    if (lookInArchive)
-    {
-        snprintf(collectionName, CF_MAXVARSIZE, "%s", MONGO_ARCHIVE);
-    }
-    else
-    {
-        snprintf(collectionName, CF_MAXVARSIZE, "%s", MONGO_DATABASE);
-    }
 
     bson_buffer_init(&bb);
 
@@ -2322,7 +2300,7 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname,
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    cursor = mongo_find(conn, collectionName, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    cursor = mongo_find(conn, MONGO_ARCHIVE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&field);
