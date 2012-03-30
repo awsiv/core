@@ -29,6 +29,39 @@ PromiseIdent *PROMISER_REGEXES = NULL;
 
 /*****************************************************************************/
 
+static void PrependPromiserList(PromiseIdent **list, char *s, Promise *pp)
+{
+    PromiseIdent *ptr;
+
+    for (ptr = *list; ptr != NULL; ptr = ptr->next)
+    {
+        if (pp->offset.line == ptr->line_number)
+        {
+            if (strcmp(pp->audit->filename, ptr->filename) == 0)
+            {
+                return;
+            }
+        }
+    }
+
+    ptr = xmalloc(sizeof(PromiseIdent));
+    ptr->filename = xstrdup(pp->audit->filename);
+
+    if (ptr->classes)
+    {
+        ptr->classes = xstrdup(pp->classes);
+    }
+    else
+    {
+        ptr->classes = xstrdup("any");
+    }
+
+    ptr->line_number = pp->offset.line;
+    ptr->handle = xstrdup(s);
+    ptr->next = *list;
+    *list = ptr;
+}
+
 void NewPromiser(Promise *pp)
 {
     int hash;
