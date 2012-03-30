@@ -452,11 +452,11 @@ class report_model extends Cf_Model {
         {
            if ($hosts_only)
             {
-                $rawdata = cfpr_hosts_with_filediffs($username, NULL, $search, $diff, true, $cal, ">", $inclist, $exlist, $rows, $page_number);
+                $rawdata = cfpr_hosts_with_filediffs($username, NULL, $search, $diff, true, $cal, $inclist, $exlist, $rows, $page_number);
             }
             else
             {
-                $rawdata = cfpr_report_filediffs($username, NULL, $search, $diff, true, $cal, ">", $inclist, $exlist, "time", true, $rows, $page_number);
+                $rawdata = cfpr_report_filediffs($username, NULL, $search, $diff, true, $cal, $inclist, $exlist, "time", true, $rows, $page_number);
             }
 
             $data = $this->checkData($rawdata);

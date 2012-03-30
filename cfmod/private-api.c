@@ -1700,28 +1700,26 @@ PHP_FUNCTION(cfpr_report_filechanges)
 
 PHP_FUNCTION(cfpr_report_filediffs)
 {
-    char *userName, *hostkey, *file, *cmp, *diff;
+    char *userName, *hostkey, *file, *diff;
     char *fhostkey, *ffile, *fdiff;
     zval *context_includes = NULL, *context_excludes = NULL;
-    int user_len, hk_len, f_len, c_len, d_len;
+    int user_len, hk_len, f_len, d_len;
     char buffer[CF_WEBBUFFER];
     zend_bool regex;
     int use_reg;
-    long t;
-    time_t then;
+    long from;
     PageInfo page = { 0 };
     char *sortColumnName;
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssblsaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssblaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &file, &f_len,
                               &diff, &d_len,
                               &regex,
-                              &t,
-                              &cmp, &c_len,
+                              &from,
                               &context_includes,
                               &context_excludes,
                               &sortColumnName, &sc_len, &sortDescending,
@@ -1734,11 +1732,9 @@ PHP_FUNCTION(cfpr_report_filediffs)
     ARGUMENT_CHECK_CONTENTS(user_len);
 
     use_reg = (int) regex;
-    then = (time_t) t;
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     ffile = (f_len == 0) ? NULL : file;
     fdiff = (d_len == 0) ? NULL : diff;
-// NOT THIS fcmp =  (c_len == 0) ? NULL : cmp;
 
     buffer[0] = '\0';
 
@@ -1750,7 +1746,7 @@ PHP_FUNCTION(cfpr_report_filediffs)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_filediffs_report(fhostkey, ffile, fdiff, use_reg, then, cmp, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_filediffs_report(fhostkey, ffile, fdiff, use_reg, from, time(NULL), filter, &page, buffer, sizeof(buffer));
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2844,23 +2840,22 @@ PHP_FUNCTION(cfpr_hosts_with_filechanges)
 
 PHP_FUNCTION(cfpr_hosts_with_filediffs)
 {
-    char *userName, *hostkey, *file, *cmp, *diff;
-    char *fhostkey, *ffile, *fcmp;
-    int user_len, hk_len, j_len, c_len, d_len;
+    char *userName, *hostkey, *file, *diff;
+    char *fhostkey, *ffile;
+    int user_len, hk_len, j_len, d_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     char buffer[512 * 1024];
     zend_bool regex;
-    long t;
-    time_t then;
+    long from;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssblsaall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssblaall",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &file, &j_len,
                               &diff, &d_len,
-                              &regex, &t,
-                              &cmp, &c_len,
+                              &regex,
+                              &from,
                               &context_includes,
                               &context_excludes,
                               &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
@@ -2871,10 +2866,8 @@ PHP_FUNCTION(cfpr_hosts_with_filediffs)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    then = (time_t) t;
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     ffile = (j_len == 0) ? NULL : file;
-    fcmp = (c_len == 0) ? NULL : cmp;
 
     buffer[0] = '\0';
 
@@ -2886,7 +2879,7 @@ PHP_FUNCTION(cfpr_hosts_with_filediffs)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_filediffs_hosts(fhostkey, ffile, diff, regex, then, fcmp, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_filediffs_hosts(fhostkey, ffile, diff, regex, (time_t)from, time(NULL), filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);

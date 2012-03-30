@@ -959,23 +959,12 @@ int Nova2Txt_filechanges_report(char *hostkey, char *file, int regex, time_t fro
 
 /*****************************************************************************/
 
-int Nova2Txt_filediffs_report(char *hostkey, char *file, char *diffs, int regex, time_t t, char *cmp, char *classreg)
+int Nova2Txt_filediffs_report(char *hostkey, char *file, char *diffs, int regex, time_t from, time_t to, char *classreg)
 {
     HubFileDiff *hd;
     HubQuery *hq;
     Rlist *rp;
-    int icmp;
     mongo_connection dbconn;
-
-    switch (*cmp)
-    {
-    case '<':
-        icmp = CFDB_LESSTHANEQ;
-        break;
-    default:
-        icmp = CFDB_GREATERTHANEQ;
-        break;
-    }
 
     if (!CFDB_Open(&dbconn))
     {
@@ -985,7 +974,7 @@ int Nova2Txt_filediffs_report(char *hostkey, char *file, char *diffs, int regex,
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, t, icmp, true, filter);
+    hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, from, to, true, filter);
     DeleteHostClassFilter(filter);
 
     for (rp = hq->records; rp != NULL; rp = rp->next)
@@ -1666,74 +1655,6 @@ int Nova2Txt_bundle_hosts(char *hostkey, char *bundle, int regex, char *classreg
     EndJoin(returnval, "]", bufsize);
 
     DeleteHubQuery(hq, DeleteHubBundleSeen);
-
-    if (!CFDB_Close(&dbconn))
-    {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
-    }
-
-    return true;
-}
-
-/*****************************************************************************/
-
-int Nova2Txt_filediffs_hosts(char *hostkey, char *file, char *diffs, int regex, time_t t, char *cmp, char *classreg,
-                             char *returnval, int bufsize)
-{
-    char buffer[CF_BUFSIZE];
-    HubHost *hh;
-    HubQuery *hq;
-    Rlist *rp;
-    int counter = 0, n = 180, icmp;
-    mongo_connection dbconn;
-
-    switch (*cmp)
-    {
-    case '<':
-        icmp = CFDB_LESSTHANEQ;
-        break;
-    default:
-        icmp = CFDB_GREATERTHANEQ;
-        break;
-    }
-
-    if (!CFDB_Open(&dbconn))
-    {
-        CfOut(cf_verbose, "", "!! Could not open connection to report database");
-        return false;
-    }
-
-    HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
-
-    hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, t, icmp, false, filter);
-    DeleteHostClassFilter(filter);
-
-    StartJoin(returnval, "[", bufsize);
-
-    for (rp = hq->hosts; rp != NULL; rp = rp->next)
-    {
-        hh = (HubHost *) rp->item;
-        counter++;
-        snprintf(buffer, CF_MAXVARSIZE, "{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},", hh->keyhash,
-                 hh->hostname, hh->ipaddr);
-
-        if (!Join(returnval, buffer, bufsize))
-        {
-            break;
-        }
-
-        if (counter > n && counter % 6 == 0)
-        {
-            break;
-        }
-    }
-    if (returnval[strlen(returnval) - 1] == ',')
-    {
-        returnval[strlen(returnval) - 1] = '\0';
-    }
-
-    EndJoin(returnval, "]\n", bufsize);
-    DeleteHubQuery(hq, DeleteHubFileDiff);
 
     if (!CFDB_Close(&dbconn))
     {

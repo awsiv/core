@@ -2665,7 +2665,7 @@ void Nova_CommandAPI(char *lsdata, char *name, char *phandle, char *hostkey, cha
     }
     else if (strcmp(lsdata, "file_diffs") == 0)
     {
-        Nova2Txt_filediffs_report(hostkey, name, NULL, true, -1, ">", classregex);
+        Nova2Txt_filediffs_report(hostkey, name, NULL, true, 0, time(NULL), classregex);
         return;
     }
     else if (strcmp(lsdata, "setuid") == 0)

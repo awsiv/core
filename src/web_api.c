@@ -2172,7 +2172,7 @@ int Nova2PHP_filechanges_report(char *hostkey, char *file, int regex, time_t fro
 
 /*****************************************************************************/
 
-int Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, int regex, time_t t, char *cmp,
+int Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, int regex, time_t from, time_t to,
                               HostClassFilter *hostClassFilter, PageInfo *page, char *returnval,
                               int bufsize)
 {
@@ -2180,29 +2180,18 @@ int Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, int regex,
     HubFileDiff *hd;
     HubQuery *hq;
     Rlist *rp;
-    int icmp;
     mongo_connection dbconn;
     char header[CF_BUFSIZE] = { 0 };
     int margin = 0, headerLen = 0, noticeLen = 0;
     int truncated = false;
     char jsonEscapedStr[CF_BUFSIZE] = { 0 };
 
-    switch (*cmp)
-    {
-    case '<':
-        icmp = CFDB_LESSTHANEQ;
-        break;
-    default:
-        icmp = CFDB_GREATERTHANEQ;
-        break;
-    }
-
     if (!CFDB_Open(&dbconn))
     {
         return false;
     }
 
-    hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, t, icmp, true, hostClassFilter);
+    hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, from, to, true, hostClassFilter);
     PageRecords(&(hq->records), page, DeleteHubFileDiff);
 
     snprintf(header, sizeof(header),
@@ -2688,21 +2677,9 @@ int Nova2PHP_filechanges_hosts(char *hostkey, char *file, int regex, time_t from
 
 /*****************************************************************************/
 
-int Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs, int regex, time_t t, char *cmp,
+int Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs, int regex, time_t from, time_t to,
                              HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
 {
-    int icmp;
-
-    switch (*cmp)
-    {
-    case '<':
-        icmp = CFDB_LESSTHANEQ;
-        break;
-    default:
-        icmp = CFDB_GREATERTHANEQ;
-        break;
-    }
-
     mongo_connection dbconn;
 
     if (!CFDB_Open(&dbconn))
@@ -2710,7 +2687,7 @@ int Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs, int regex, 
         return false;
     }
 
-    HubQuery *hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, t, icmp, false, hostClassFilter);
+    HubQuery *hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, from, to, false, hostClassFilter);
 
     CreateJsonHostOnlyReport(&(hq->hosts), page, returnval, bufsize);
 
