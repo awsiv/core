@@ -156,7 +156,7 @@ int Nova2PHP_setuid_report(char *hostkey, char *file, int regex, HostClassFilter
                            char *returnval, int bufsize);
 int Nova2PHP_bundle_report(char *hostkey, char *bundle, int regex, HostClassFilter *hostClassFilter, PageInfo *page,
                            char *returnval, int bufsize);
-int Nova2PHP_filechanges_report(char *hostkey, char *file, int regex, time_t t, char *cmp,
+int Nova2PHP_filechanges_report(char *hostkey, char *file, int regex, time_t from, time_t to,
                                 HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, int regex, time_t t, char *cmp,
                               HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
@@ -179,7 +179,7 @@ int Nova2PHP_setuid_hosts(char *hostkey, char *file, int regex, HostClassFilter 
                           int bufsize);
 int Nova2PHP_bundle_hosts(char *hostkey, char *bundle, int regex, HostClassFilter *hostClassFilter, PageInfo *page,
                           char *returnval, int bufsize);
-int Nova2PHP_filechanges_hosts(char *hostkey, char *file, int regex, time_t t, char *cmp,
+int Nova2PHP_filechanges_hosts(char *hostkey, char *file, int regex, time_t from, time_t to,
                                HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs, int regex, time_t t, char *cmp,
                              HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);

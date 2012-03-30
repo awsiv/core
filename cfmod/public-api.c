@@ -1031,13 +1031,13 @@ PHP_FUNCTION(cfmod_resource_file)
 
         mongo_connection conn;
 
-        DATABASE_OPEN(&conn)
+        DATABASE_OPEN(&conn);
 
-        change_result = CFDB_QueryFileChanges(&conn, hostkey, path, true, from, CFDB_GREATERTHANEQ, true, filter);
+        change_result = CFDB_QueryFileChanges(&conn, hostkey, path, true, (time_t)from, time(NULL), true, filter);
         diff_result = CFDB_QueryFileDiff(&conn, hostkey, path, NULL, true, from, CFDB_GREATERTHANEQ, true, filter);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-	DATABASE_CLOSE(&conn)
+        DATABASE_CLOSE(&conn);
     }
 
     assert(change_result);

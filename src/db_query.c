@@ -2022,7 +2022,7 @@ HubQuery *CFDB_QuerySetuid(mongo_connection *conn, char *keyHash, char *lname, i
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lname, int regex, time_t lt, int cmp,
+HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lname, int regex, time_t from, time_t to,
                                 int sort, HostClassFilter *hostClassFilter)
 {
     bson_buffer bb;
@@ -2034,7 +2034,6 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
     char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rname[CF_BUFSIZE], handle[CF_MAXVARSIZE],
         noteid[CF_MAXVARSIZE];
     int match_name, match_t, found = false;
-    time_t rt;
 
 /* BEGIN query document */
 
@@ -2088,7 +2087,7 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
                 bson_iterator_init(&it2, bson_iterator_value(&it1));
 
                 rname[0] = '\0';
-                rt = 0;
+                time_t timestamp = 0;
 
                 while (bson_iterator_next(&it2))
                 {
@@ -2104,7 +2103,7 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
                         }
                         else if (strcmp(bson_iterator_key(&it3), cfr_time) == 0)
                         {
-                            rt = bson_iterator_int(&it3);
+                            timestamp = bson_iterator_int(&it3);
                         }
                         else if (strcmp(bson_iterator_key(&it3), cfn_nid) == 0)
                         {
@@ -2114,19 +2113,9 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
 
                     match_name = match_t = true;
 
-                    if (cmp == CFDB_GREATERTHANEQ)
+                    if (timestamp < from || timestamp > to)
                     {
-                        if (lt != -1 && lt > rt)
-                        {
-                            match_t = false;
-                        }
-                    }
-                    else        // CFDB_LESSTHANEQ
-                    {
-                        if (lt != -1 && lt < rt)
-                        {
-                            match_t = false;
-                        }
+                        match_t = false;
                     }
 
                     if (regex)
@@ -2153,7 +2142,7 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(&record_list, NewHubFileChanges(hh, rname, rt, noteid, handle));
+                        PrependRlistAlien(&record_list, NewHubFileChanges(hh, rname, timestamp, noteid, handle));
                     }
                 }
             }

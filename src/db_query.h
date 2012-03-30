@@ -46,7 +46,7 @@ HubQuery *CFDB_QuerySetuid(mongo_connection *conn, char *keyHash, char *lname, i
                            HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lname, int regex,
                                HostClassFilter *hostClassFilter, int sort);
-HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lname, int regex, time_t lt, int cmp,
+HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lname, int regex, time_t from, time_t to,
                                 int sort, HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname, char *ldiff, int regex, time_t lt,
                              int cmp, int sort, HostClassFilter *hostClassFilter);

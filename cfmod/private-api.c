@@ -1648,26 +1648,24 @@ PHP_FUNCTION(cfpr_report_setuid)
 
 PHP_FUNCTION(cfpr_report_filechanges)
 {
-    char *userName, *hostkey, *file, *cmp;
+    char *userName, *hostkey, *file;
     char *fhostkey, *ffile;
     zval *context_includes = NULL, *context_excludes = NULL;
-    int user_len, hk_len, f_len, c_len;
+    int user_len, hk_len, f_len;
     char buffer[CF_WEBBUFFER];
     zend_bool regex;
-    long t;
-    time_t then;
+    long from;
     PageInfo page = { 0 };
     char *sortColumnName;
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssblsaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssblaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &file, &f_len,
                               &regex,
-                              &t,
-                              &cmp, &c_len,
+                              &from,
                               &context_includes,
                               &context_excludes,
                               &sortColumnName, &sc_len, &sortDescending,
@@ -1679,10 +1677,8 @@ PHP_FUNCTION(cfpr_report_filechanges)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    then = (time_t) t;
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     ffile = (f_len == 0) ? NULL : file;
-// NOT THIS fcmp =  (c_len == 0) ? NULL : cmp;
 
     buffer[0] = '\0';
 
@@ -1694,7 +1690,7 @@ PHP_FUNCTION(cfpr_report_filechanges)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_filechanges_report(fhostkey, ffile, regex, then, cmp, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_filechanges_report(fhostkey, ffile, regex, (time_t)from, time(NULL), filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2800,22 +2796,21 @@ PHP_FUNCTION(cfpr_hosts_with_setuid)
 
 PHP_FUNCTION(cfpr_hosts_with_filechanges)
 {
-    char *userName, *hostkey, *file, *cmp;
-    char *fhostkey, *ffile, *fcmp;
-    int user_len, hk_len, j_len, c_len;
+    char *userName, *hostkey, *file;
+    char *fhostkey, *ffile;
+    int user_len, hk_len, j_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     char buffer[512 * 1024];
     zend_bool regex;
-    long t;
-    time_t then;
+    long from;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssblsaall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssblaall",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &file, &j_len,
-                              &regex, &t,
-                              &cmp, &c_len,
+                              &regex,
+                              &from,
                               &context_includes,
                               &context_excludes,
                               &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
@@ -2826,10 +2821,8 @@ PHP_FUNCTION(cfpr_hosts_with_filechanges)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    then = (time_t) t;
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     ffile = (j_len == 0) ? NULL : file;
-    fcmp = (c_len == 0) ? NULL : cmp;
 
     buffer[0] = '\0';
 
@@ -2841,7 +2834,7 @@ PHP_FUNCTION(cfpr_hosts_with_filechanges)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_filechanges_hosts(fhostkey, ffile, regex, then, fcmp, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_filechanges_hosts(fhostkey, ffile, regex, (time_t)from, time(NULL), filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
