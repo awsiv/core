@@ -8,7 +8,7 @@ class File extends Resource
     function get($request)
     {
         Utils::checkValidQueryParams(array('hostkey', 'path', 'context'));
-        
+
         $username = $_SERVER['PHP_AUTH_USER'];
         $hostkey = Utils::queryParam('hostkey');
         $path = Utils::queryParam('path');
@@ -16,7 +16,8 @@ class File extends Resource
 
         $response = new Response($request);
         $payload = cfmod_resource_file($username,
-                $hostkey, $path, $context, DefaultParameters::from());
+                $hostkey, $path, $context,
+                DefaultParameters::from(), DefaultParameters::to());
 
         if (is_null($payload))
         {
@@ -25,7 +26,7 @@ class File extends Resource
             $response->body = $id;
             return $response;
         }
-        
+
         $response->body = $payload;
         $response->code = Response::OK;
 

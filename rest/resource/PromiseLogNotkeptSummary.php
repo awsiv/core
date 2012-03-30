@@ -8,20 +8,20 @@ class PromiseLogNotKeptSummary extends Resource
     function get($request)
     {
         Utils::checkValidQueryParams(array('hostkey', 'handle', 'context',
-            'cause', 'to'));
+            'cause'));
 
         $username = $_SERVER['PHP_AUTH_USER'];
         $hostkey = Utils::queryParam('hostkey');
         $handle = Utils::queryParam('handle');
         $context = Utils::queryParam('context');
         $cause = Utils::queryParam('cause');
-        $to = Utils::checkInteger(Utils::queryParam('to'), 'to');
 
         try
         {
             $response = new Response($request);
             $response->body = cfmod_resource_promise_log_notkept_summary($username,
-                    $handle, $cause, $hostkey, $context, $to, DefaultParameters::from());
+                    $handle, $cause, $hostkey, $context,
+                    DefaultParameters::from(), DefaultParameters::to());
             return $response;
         }
         catch (Exception $e)
