@@ -14,8 +14,15 @@ MOCKERY_SOURCES = $(CMOCKERY_DIR)/cmockery.c
 check_PROGRAMS = \
         logging_test \
         map_test \
-        scorecards_test \
         license_test
+
+if MONGO
+check_PROGRAMS += scorecards_test
+
+scorecards_test_SOURCES = $(MOCKERY_SOURCES) scorecards_test.c
+scorecards_test_LDADD = $(top_builddir)/src/libpromises.la
+
+endif
 
 TESTS = $(check_PROGRAMS)
 
@@ -24,9 +31,6 @@ logging_test_LDADD = $(top_builddir)/src/libpromises.la
 
 map_test_SOURCES = $(MOCKERY_SOURCES) map_test.c
 map_test_LDADD = $(top_builddir)/src/libpromises.la
-
-scorecards_test_SOURCES = $(MOCKERY_SOURCES) scorecards_test.c
-scorecards_test_LDADD = $(top_builddir)/src/libpromises.la
 
 license_test_SOURCES = $(MOCKERY_SOURCES) license_test.c
 license_test_LDADD = $(top_builddir)/src/libpromises.la
