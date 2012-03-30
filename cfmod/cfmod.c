@@ -15,7 +15,7 @@
 
 /* True global resources - no need for thread safety here */
 
-static function_entry cfmod_functions[] =
+static zend_function_entry cfmod_functions[] =
 {
     // public API
     PHP_FE(cfmod_resource, NULL)
