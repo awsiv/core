@@ -97,6 +97,7 @@ Rlist *KeyInRlist(Rlist *list, char *key);
 Rlist *PrependRlist(Rlist **start, void *item, char type);
 Rlist *SplitStringAsRList(char *string, char sep);
 int SubStrnCopyChr(char *to, char *from, int len, char sep);
+int AddKeyAssociations(TopicAssociation **a, char *s, char *url,Item **script);
 
 /*****************************************************************************/
 
@@ -144,6 +145,7 @@ void ProcessFile(char *document, FILE *fin, char *context, char *prefix)
 {
     char tmp[2048], line[2048], type[2048], url[2048], title[2048], *sp;
     char chapter[2048], section[2048], subsection[2048], script[2048], doctitle[2048];
+    char ref[2048];
     Topic *tp, *topics = NULL;
     Item *ip, *scriptlog = NULL;
     int lineno = 0;
@@ -159,19 +161,17 @@ void ProcessFile(char *document, FILE *fin, char *context, char *prefix)
         if (sp = strstr(line, "<dt>&lsquo;<samp><code>"))
         {
             sscanf(sp + strlen("<dt>&lsquo;<samp><code>"), "%[^<]", title);
-            sprintf(script, "%s::\n", CanonifyName(title));
-            AppendItem(&scriptlog, script);
-            sprintf(script, " \"%s%s.html#%s\"\n", prefix, document, url);
-            AppendItem(&scriptlog, script);
-            sprintf(script, "  represents => { \"document\" };\n");
+            sprintf(ref, " \"%s%s.html#%s\"\n", prefix, document, url);
+            AppendItem(&scriptlog, ref);
+            sprintf(script, "  represents => { \"Official CFEngine document\" }, about_topics => { \"%s\"};\n",ToLowerStr(title));
             AppendItem(&scriptlog, script);
 
-            AddTopic(&topics, title, "documentation", lineno);
+            AddTopic(&topics, ToLowerStr(title), "documentation", lineno);
 
             if (tp = GetTopic(topics, title))
             {
                 AddTopicAssociation(&(tp->associations), "is contained in", "contains", "files", document, true);
-                AddKeyAssociations(&(tp->associations), document);
+                AddKeyAssociations(&(tp->associations), document,ref,&scriptlog);
             }
 
         }
@@ -191,28 +191,22 @@ void ProcessFile(char *document, FILE *fin, char *context, char *prefix)
 
             if (strncmp(document, "st-", 3) == 0)
             {
-                sprintf(script, "special_topics_guides::\n");
-                AppendItem(&scriptlog, script);
-                sprintf(script, " \"%s%s.html\"\n", prefix, document);
-                AppendItem(&scriptlog, script);
-                sprintf(script, "  represents => { \"%s\" };\n", title);
+                sprintf(ref, " \"%s%s.html\"\n", prefix, document);
+                AppendItem(&scriptlog, ref);
+                sprintf(script, "  represents => { \"Special Topics Guide\" }, about_topics => { \"%s\" };\n", ToLowerStr(title));
                 AppendItem(&scriptlog, script);
             }
             else
             {
-                sprintf(script, "manuals::\n");
-                AppendItem(&scriptlog, script);
-                sprintf(script, " \"%s%s.html\"\n", prefix, document);
-                AppendItem(&scriptlog, script);
-                sprintf(script, "  represents => { \"%s\" };\n", title);
+                sprintf(ref, " \"%s%s.html\"\n", prefix, document);
+                AppendItem(&scriptlog, ref);
+                sprintf(script, "  represents => { \"Official CFEngine document\"},  about_topics => { \"%s\" };\n", ToLowerStr(title));
                 AppendItem(&scriptlog, script);
             }
 
-            sprintf(script, "%s::\n", CanonifyName(title));
-            AppendItem(&scriptlog, script);
-            sprintf(script, " \"%s%s.html\"\n", prefix, document);
-            AppendItem(&scriptlog, script);
-            sprintf(script, "  represents => { \"special topics guide\" };\n", title);
+            sprintf(ref, " \"%s%s.html\"\n", prefix, document);
+            AppendItem(&scriptlog, ref);
+            sprintf(script, "  represents => { \"Special Topics Guide\"},  about_topics => { \"%s\" };\n", ToLowerStr(title));            
             AppendItem(&scriptlog, script);
         }
 
@@ -224,11 +218,9 @@ void ProcessFile(char *document, FILE *fin, char *context, char *prefix)
             if (strstr(type, "unnumbered") || strstr(type, "unnumberedsec"))
             {
                 strcpy(title, GetTitle(sp, type));
-                sprintf(script, "%s::\n", CanonifyName(title));
-                AppendItem(&scriptlog, script);
-                sprintf(script, " \"%s%s.html#%s\"\n", prefix, document, url);
-                AppendItem(&scriptlog, script);
-                sprintf(script, "  represents => { \"Text section\" };\n");
+                sprintf(ref, " \"%s%s.html#%s\"\n", prefix, document, url);
+                AppendItem(&scriptlog, ref);
+                sprintf(script, "  represents => { \"Text section\" }, about_topics => { \"%s\" };\n", ToLowerStr(title));
                 AppendItem(&scriptlog, script);
                 strcpy(subsection, title);
 
@@ -238,7 +230,7 @@ void ProcessFile(char *document, FILE *fin, char *context, char *prefix)
                 {
                     AddTopicAssociation(&(tp->associations), "discusses", "is discussed in", "short topic", doctitle,
                                         true);
-                    AddKeyAssociations(&(tp->associations), section);
+                    AddKeyAssociations(&(tp->associations), section, ref, &scriptlog);
                 }
             }
 
@@ -246,11 +238,9 @@ void ProcessFile(char *document, FILE *fin, char *context, char *prefix)
             {
                 strcpy(title, GetTitle(sp, type));
 
-                sprintf(script, "%s::\n", CanonifyName(title));
-                AppendItem(&scriptlog, script);
-                sprintf(script, " \"%s%s.html#%s\"\n", prefix, document, url);
-                AppendItem(&scriptlog, script);
-                sprintf(script, "  represents => { \"manual %s\" };\n", type);
+                sprintf(ref, " \"%s%s.html#%s\"\n", prefix, document, url);
+                AppendItem(&scriptlog, ref);
+                sprintf(script, "  represents => { \"manual %s\" }, about_topics => { \"%s\"};\n", type,ToLowerStr(title));
                 AppendItem(&scriptlog, script);
                 strcpy(subsection, title);
 
@@ -259,20 +249,18 @@ void ProcessFile(char *document, FILE *fin, char *context, char *prefix)
 
                 if ((tp = GetTopic(topics, subsection)) && (strlen(section) > 0))
                 {
-                    AddTopicAssociation(&(tp->associations), "is a subsection of", "has subsection", "manual", section,
+                    AddTopicAssociation(&(tp->associations), "is a subsection of", "has subs Nova2Txt_search_topicsection", "manual", section,
                                         true);
-                    AddKeyAssociations(&(tp->associations), section);
+                    AddKeyAssociations(&(tp->associations), section, ref, &scriptlog);
                 }
             }
 
             if (strstr(type, "section"))
             {
                 strcpy(title, GetTitle(sp, type));
-                sprintf(script, "%s::\n", CanonifyName(title));
-                AppendItem(&scriptlog, script);
-                sprintf(script, " \"%s%s.html#%s\"\n", prefix, document, url);
-                AppendItem(&scriptlog, script);
-                sprintf(script, "  represents => { \"manual section %s\" };\n", title);
+                sprintf(ref, " \"%s%s.html#%s\"\n", prefix, document, url);
+                AppendItem(&scriptlog, ref);
+                sprintf(script, "  represents => { \"manual section\" }, about_topics => { \"%s\"};\n", ToLowerStr(title));
                 AppendItem(&scriptlog, script);
 
                 script[0] = '\0';
@@ -285,7 +273,7 @@ void ProcessFile(char *document, FILE *fin, char *context, char *prefix)
                     if (tp = GetTopic(topics, subsection))
                     {
                         AddTopicAssociation(&(tp->associations), "discussed in", "discusses", "manual", chapter, true);
-                        AddKeyAssociations(&(tp->associations), chapter);
+                        AddKeyAssociations(&(tp->associations), chapter, ref, &scriptlog);
                     }
                 }
 
@@ -295,12 +283,10 @@ void ProcessFile(char *document, FILE *fin, char *context, char *prefix)
             if (strstr(type, "chapter"))
             {
                 strcpy(title, GetTitle(sp, type));
-                sprintf(script, "%s::\n", CanonifyName(title));
-                AppendItem(&scriptlog, script);
-                sprintf(script, " \"%s%s.html#%s\"\n", prefix, document, url);
-                AppendItem(&scriptlog, script);
+                sprintf(ref, " \"%s%s.html#%s\"\n", prefix, document, url);
+                AppendItem(&scriptlog, ref);
 
-                sprintf(script, "  represents => { \"manual chapter\" };\n");
+                sprintf(script, "  represents => { \"manual chapter\" }, about_topics => { \"%s\"};\n",ToLowerStr(title));
                 AppendItem(&scriptlog, script);
 
                 strcpy(chapter, title);
@@ -314,7 +300,7 @@ void ProcessFile(char *document, FILE *fin, char *context, char *prefix)
                     {
                         AddTopicAssociation(&(tp->associations), "discussed in", "discusses", "Documentation", title,
                                             true);
-                        AddKeyAssociations(&(tp->associations), section);
+                        AddKeyAssociations(&(tp->associations), section, ref,&scriptlog);
                     }
                 }
 
@@ -340,11 +326,10 @@ void ProcessFile(char *document, FILE *fin, char *context, char *prefix)
                     strcpy(title, chapter);
                 }
 
-                sprintf(script, "%s::\n", CanonifyName(title));
+                sprintf(script, "examples:: \"%s%s.html#%s\"\n", prefix, document, url);
                 AppendItem(&scriptlog, script);
-                sprintf(script, " \"%s%s.html#%s\"\n", prefix, document, url);
+                sprintf(script, " about_topics => { \"%s\" },\n", title);
                 AppendItem(&scriptlog, script);
-
                 sprintf(script, "  represents => { \"code example\" };\n");
                 AppendItem(&scriptlog, script);
                 continue;
@@ -534,7 +519,7 @@ void AddTopic(Topic **list, char *name, char *type, int nr)
 
 /*****************************************************************************/
 
-int AddKeyAssociations(TopicAssociation **a, char *s)
+int AddKeyAssociations(TopicAssociation **a, char *s, char *url,Item **occur)
 {
     char *keywords[8000];
     char *exceptions[] = { "or", "and", "the", "there", "then", "what", "how", "ci", "at", NULL };
@@ -755,7 +740,7 @@ void AppendItem(Item **liststart, char *itemstring)
 
 char ToLower(char ch)
 {
-    if (isdigit((int) ch) || ispunct((int) ch))
+ if (isdigit((int) ch) || ispunct((int) ch) || isspace((int)ch))
     {
         return (ch);
     }
@@ -774,7 +759,7 @@ char ToLower(char ch)
 
 char ToUpper(char ch)
 {
-    if (isdigit((int) ch) || ispunct((int) ch))
+    if (isdigit((int) ch) || ispunct((int) ch) || isspace((int)ch))
     {
         return (ch);
     }

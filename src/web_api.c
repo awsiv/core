@@ -2991,11 +2991,26 @@ int Nova2PHP_docroot(char *buffer, int bufsize)
 
 int Nova2PHP_search_topics(char *search, int regex, char *buffer, int bufsize)
 {
-    int pid;
-
-    if ((pid = Nova_SearchTopicMap(search, buffer, bufsize)))
+    Item *ip,*results = NULL;
+    char work[CF_BUFSIZE],jsonEscapedStr[CF_BUFSIZE];
+    
+    if ((results = Nova_SearchTopicMap(search,CF_SEARCH_REGEX)))
     {
-        return true;
+
+    strcpy(buffer, "[ ");
+    results = SortItemListNames(results);
+
+    for (ip = results; ip != NULL; ip = ip->next)
+    {
+        EscapeJson(ip->name, jsonEscapedStr, CF_BUFSIZE - 1);
+        snprintf(work, CF_BUFSIZE, "{ \"context\": \"%s\", \"topic\": \"%s\", \"id\": %d },", ip->classes,
+                 jsonEscapedStr, ip->counter);
+        Join(buffer, work, CF_BUFSIZE);
+    }
+
+    buffer[strlen(buffer) - 1] = ']';
+
+    return true;
     }
 
     return false;

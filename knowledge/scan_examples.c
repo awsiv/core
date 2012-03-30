@@ -169,8 +169,8 @@ void ProcessFile(char *file, FILE *fin)
             }
 
             printf("Processing %s\n", file);
-            fprintf(FOUT, "occurrences:\n   %s::\n \"/showexample/example/%s\" represents => { \"%s\" };\n",
-                    CanonifyName(topic), file, subtype);
+            fprintf(FOUT, "occurrences:\n   examples::\n \"/showexample/example/%s\" represents => { \"%s\" }, about_topics => { \"%s\"};\n",
+                    file, subtype, topic);
             continue;
         }
 
@@ -225,8 +225,8 @@ void DocumentFile(char *filename, char *outname)
                 strcpy(topic, qtopic);
             }
 
-            fprintf(FOUT, "occurrences:\n   %s::\n \"/showexample/example/%s\" represents => { \"%s\" };\n",
-                    CanonifyName(topic), outname, subtype);
+            fprintf(FOUT, "occurrences:\n   examples::\n \"/showexample/example/%s\" represents => { \"%s\" }, about_topics => { \"%s\"};\n",
+                    outname, subtype, topic);
             continue;
         }
     }

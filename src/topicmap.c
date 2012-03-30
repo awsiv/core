@@ -122,6 +122,42 @@ void Nova_DumpTopics()
 
 /*****************************************************************************/
 
+void Nova_ShowTopic(char *qualified_topic)
+{
+    char topic_name[CF_BUFSIZE], topic_context[CF_BUFSIZE],buffer[CF_BUFSIZE];
+    char reconstructed[CF_BUFSIZE];
+    Item *ip,*ip2,*candidates,*list;
+    int id;
+
+    Nova_DeClassifyTopic(ToLowerStr(qualified_topic), topic_name, topic_context);
+        
+    candidates = Nova_SearchTopicMap(topic_name,CF_SEARCH_REGEX);
+    
+    for (ip = candidates; ip != NULL; ip=ip->next)
+       {
+       snprintf(reconstructed,CF_BUFSIZE,"%s::%s",ip->classes,ip->name);
+       id = Nova_GetTopicIdForTopic(reconstructed);
+
+       printf("Found: \"%s\" in the context of: \"%s\" (%d)\n", ip->name,ip->classes,id);       
+
+       list = Nova_ScanLeadsAssociations(id, NULL);
+       
+       for (ip2 = list; ip2!= NULL; ip2 = ip2->next)
+          {
+          printf(" assoc: %s %s (@ %d)\n",ip2->name,ip2->classes,ip2->counter);
+          }
+       
+       DeleteItemList(list);
+       
+       Nova_ScanOccurrences(id, buffer,CF_BUFSIZE);
+       printf("Occurrences: %s\n\n",buffer);
+       }
+
+    DeleteItemList(candidates);
+}
+
+/*****************************************************************************/
+
 int Nova_GetTopicIdForTopic(char *typed_topic)
 {
     char topic[CF_BUFSIZE], type[CF_BUFSIZE];
@@ -257,36 +293,53 @@ int Nova_GetTopicByTopicId(int search_id, char *topic_name, char *topic_id, char
 
 /*********************************************************************/
 
-int Nova_SearchTopicMap(char *search_topic, char *buffer, int bufsize)
+Item *Nova_SearchTopicMap(char *search_topic,int search_type)
 {
     bson_buffer bb;
     bson query, field;
     mongo_cursor *cursor;
     bson_iterator it1;
     mongo_connection conn;
-    char topic_name[CF_BUFSIZE], jsonEscapedStr[CF_BUFSIZE];
+    char topic_name[CF_BUFSIZE];
     char topic_context[CF_BUFSIZE];
     int topic_id;
-    char work[CF_BUFSIZE];
-    Item *ip, *list = NULL;
+    Item *list = NULL;
 
     if (!CFDB_Open(&conn))
     {
-        return false;
+        return NULL;
     }
 
 /* BEGIN query document */
 
     bson_buffer_init(&bb);
 
-    if (!NULL_OR_EMPTY(search_topic))
-    {
-        Nova_DeClassifyTopic(search_topic, topic_name, topic_context);
+    Nova_DeClassifyTopic(search_topic, topic_name, topic_context);
 
-        bson_append_regex(&bb, cfk_topicname, topic_name, "");
-        bson_append_regex(&bb, cfk_topiccontext, topic_context, "");
-    }
+    if (search_type == CF_SEARCH_REGEX)
+       {
+       if (!NULL_OR_EMPTY(search_topic))
+          {          
+          bson_append_regex(&bb, cfk_topicname, topic_name, "");
 
+          if (strcmp(topic_context,"any") != 0)
+             {
+             bson_append_regex(&bb, cfk_topiccontext, topic_context, "");
+             }
+          }
+       }
+    else // CF_SEARCH_EXACT
+       {
+       if (!NULL_OR_EMPTY(search_topic))
+          {          
+          bson_append_string(&bb, cfk_topicname, topic_name);
+          if (strcmp(topic_context,"any") != 0)
+             {
+             bson_append_string(&bb, cfk_topiccontext, topic_context);
+             }
+          }       
+       }
+    
     bson_from_buffer(&query, &bb);
 
 /* BEGIN RESULT DOCUMENT */
@@ -307,8 +360,6 @@ int Nova_SearchTopicMap(char *search_topic, char *buffer, int bufsize)
 
     bson_destroy(&query);
     bson_destroy(&field);
-
-    strcpy(buffer, "[ ");
 
     while (mongo_cursor_next(cursor))   // loops over documents
     {
@@ -341,21 +392,10 @@ int Nova_SearchTopicMap(char *search_topic, char *buffer, int bufsize)
         PrependFullItem(&list, topic_name, topic_context, topic_id, 0);
     }
 
-    list = SortItemListNames(list);
-
-    for (ip = list; ip != NULL; ip = ip->next)
-    {
-        EscapeJson(ip->name, jsonEscapedStr, CF_BUFSIZE - 1);
-        snprintf(work, CF_BUFSIZE, "{ \"context\": \"%s\", \"topic\": \"%s\", \"id\": %d },", ip->classes,
-                 jsonEscapedStr, ip->counter);
-        Join(buffer, work, CF_BUFSIZE);
-    }
-
-    buffer[strlen(buffer) - 1] = ']';
-
     mongo_cursor_destroy(cursor);
     CFDB_Close(&conn);
-    return true;
+
+    return list;
 }
 
 /*****************************************************************************/
@@ -540,7 +580,7 @@ void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
     char topic_name[CF_BUFSIZE] = { 0 },
          topic_id[CF_BUFSIZE] = { 0 },
          topic_context[CF_BUFSIZE] = { 0 };
-    char locator[CF_BUFSIZE], context[CF_BUFSIZE], represents[CF_BUFSIZE], searchstring[CF_BUFSIZE];
+         char locator[CF_BUFSIZE], context[CF_BUFSIZE], represents[CF_BUFSIZE], topic[CF_BUFSIZE], text[CF_BUFSIZE];
     bson_buffer bb;
     bson query, field;
     mongo_cursor *cursor;
@@ -560,21 +600,18 @@ void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
         return;
     }
 
-/* BEsnprintf(searchstring,CF_BUFSIZE,".*\.*%s\.*.*",topic);GIN query document */
-
     Nova_GetTopicByTopicId(this_id, topic_name, topic_id, topic_context);
 
-    if (strcmp("any", topic_context) == 0)
-    {
-        snprintf(searchstring, CF_BUFSIZE, ".*\\.*%s\\.*.*", topic_id);
-    }
-    else
-    {
-        snprintf(searchstring, CF_BUFSIZE, "%s", topic_id);
-    }
-
+    // Using a regex here is greedy, but it helps to brainstorm
+    
     bson_buffer_init(&bb);
-    bson_append_regex(&bb, cfk_occurcontext, searchstring, "");
+    bson_append_regex(&bb, cfk_occurtopic, topic_name, "");
+
+    if (strcmp("any", topic_context) != 0)
+       {
+       //bson_append_string(&bb, cfk_occurtopic, topic_context);
+       }
+    
     bson_from_buffer(&query, &bb);
 
 /* BEGIN RESULT DOCUMENT */
@@ -584,6 +621,7 @@ void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
     bson_append_int(&bb, cfk_occurlocator, 1);
     bson_append_int(&bb, cfk_occurtype, 1);
     bson_append_int(&bb, cfk_occurrep, 1);
+    bson_append_int(&bb, cfk_occurtopic, 1);
     bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
@@ -600,6 +638,7 @@ void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
         bson_iterator_init(&it1, cursor->current.data);
 
         locator[0] = '\0';
+        topic[0] = '\0';
         context[0] = '\0';
         represents[0] = '\0';
         locator_type = cfk_literal;
@@ -623,6 +662,11 @@ void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
                 strncpy(represents, bson_iterator_string(&it1), CF_BUFSIZE - 1);
             }
 
+            if (strcmp(bson_iterator_key(&it1), cfk_occurtopic) == 0)
+            {
+                strncpy(topic, bson_iterator_string(&it1), CF_BUFSIZE - 1);
+            }
+            
             if (strcmp(bson_iterator_key(&it1), cfk_occurtype) == 0)
             {
                 locator_type = (int) bson_iterator_int(&it1);
@@ -635,47 +679,11 @@ void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
         frags = SplitStringAsRList(context, '|');
         frags = AlphaSortRListNames(frags);
 
+        snprintf(text,CF_BUFSIZE,"%s about %s",represents,topic);
+        
         for (rp = frags; rp != NULL; rp = rp->next)
         {
-            if (strcmp(rp->item, topic_id) == 0)
-            {
-                Nova_AddOccurrenceBuffer("any/all", locator, locator_type, represents, buffer, bufsize);
-                continue;
-            }
-            else
-            {
-                atoms = SplitRegexAsRList(context, "[.&()]", 10, false);
-
-                for (rrp = atoms; rrp != NULL; rrp = rrp->next)
-                {
-                    char *stripped = rrp->item;
-
-                    // Try to strip out the common topic string
-
-                    stripped = Nova_StripString(rrp->item, topic_id);
-
-                    if (strcmp(rrp->item, topic_id) == 0)
-                    {
-                        if (strlen(stripped) == 0)
-                        {
-                            Nova_AddOccurrenceBuffer("any/all", locator, locator_type, represents, buffer, bufsize);
-                        }
-                        else
-                        {
-                            Nova_AddOccurrenceBuffer(stripped, locator, locator_type, represents, buffer, bufsize);
-                        }
-
-                        free(stripped);
-                        break;
-                    }
-                    else
-                    {
-                        free(stripped);
-                    }
-                }
-
-                DeleteRlist(atoms);
-            }
+            Nova_AddOccurrenceBuffer(rp->item, locator, locator_type, text, buffer, bufsize);
         }
 
         DeleteRlist(frags);
@@ -1660,5 +1668,10 @@ void Nova_DeClassifyTopic(char *classified_topic, char *topic, char *context)
     else
     {
         strncpy(topic, classified_topic, CF_MAXVARSIZE - 1);
+    }
+
+    if (strlen(context) == 0)
+    {
+        strcpy(context,"any");
     }
 }

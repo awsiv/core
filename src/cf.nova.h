@@ -89,6 +89,10 @@
 #define CF_NOTICE_TRUNCATED "Data truncated due to internal buffer limit"
 #define CF_STR_NOT_AVAILABLE "N/A"
 
+//Search
+#define CF_SEARCH_REGEX 1
+#define CF_SEARCH_EXACT 2
+
 /*****************************************************************************/
 
 enum cfl_view
@@ -1055,11 +1059,12 @@ void Nova_Indent(int i);
 void Nova_DumpTopics(void);
 void Nova_FillInGoalComment(Item *ip);
 char *Nova_GetBundleComment(char *bundle);
+void Nova_ShowTopic(char *qualified_topic);
 
 void Nova_WebTopicMap_Initialize(void);
 void Nova_LookupUniqueAssoc(int pid, char *buffer, int bufsize);
 void Nova_ScanTheRest(int pid, char *buffer, int bufsize);
-int Nova_SearchTopicMap(char *typed_topic, char *buffer, int bufsize);
+Item *Nova_SearchTopicMap(char *typed_topic,int type);
 Item *Nova_ScanLeadsAssociations(int pid, char *view);
 void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize);
 int Nova_GetReportDescription(int this_id, char *buffer, int bufsize);
@@ -1508,6 +1513,7 @@ typedef struct
 #define cfk_occurlocator "ol"
 #define cfk_occurtype "ot"
 #define cfk_occurrep "or"
+#define cfk_occurtopic "oT"
 
 #define cfk_precedent "p"
 #define cfk_qualifier "q"

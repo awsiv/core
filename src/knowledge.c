@@ -113,23 +113,27 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
 
     for (op = occurrences; op != NULL; op = op->next)
     {
-        Rlist *rp;
-
-        for (rp = op->represents; rp != NULL; rp = rp->next)
+    Rlist *rp1,*rp2;
+    
+        for (rp1 = op->represents; rp1 != NULL; rp1 = rp1->next)
         {
+            for (rp2 = op->about_topics; rp2 != NULL; rp2 = rp2->next)
+            {
             CfDebug("Add occurrence (context,locator,locator_type,subtype) values ('%s','%s','%d','%s')\n",
-                    op->occurrence_context, op->locator, op->rep_type, (const char *) rp->item);
+                    op->occurrence_context, op->locator, op->rep_type, (const char *) rp1->item);
 
             bson_buffer_init(&bbuf);
             bson_append_new_oid(&bbuf, "_id");
             bson_append_string(&bbuf, cfk_occurlocator, op->locator);
             bson_append_string(&bbuf, cfk_occurcontext, op->occurrence_context);
             bson_append_int(&bbuf, cfk_occurtype, op->rep_type);
-            bson_append_string(&bbuf, cfk_occurrep, rp->item);
+            bson_append_string(&bbuf, cfk_occurrep, rp1->item);
+            bson_append_string(&bbuf, cfk_occurtopic, rp2->item);
 
             bson_from_buffer(&b, &bbuf);
             mongo_insert(&dbconn, MONGO_KM_OCCURRENCES, &b);
             bson_destroy(&b);
+            }
         }
     }
 

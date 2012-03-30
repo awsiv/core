@@ -1951,20 +1951,6 @@ int Nova2Txt_docroot(char *buffer, int bufsize)
 
 /*****************************************************************************/
 
-int Nova2Txt_search_topics(char *search, int regex, char *buffer, int bufsize)
-{
-    int pid;
-
-    if ((pid = Nova_SearchTopicMap(search, buffer, bufsize)))
-    {
-        return true;
-    }
-
-    return false;
-}
-
-/*****************************************************************************/
-
 void Nova2Txt_show_topic(int id, char *buffer, int bufsize)
 {
     char topic_name[CF_BUFSIZE], topic_id[CF_BUFSIZE], topic_context[CF_BUFSIZE];

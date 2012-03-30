@@ -275,7 +275,8 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
                 if (pp->ref)
                 {
                     fprintf(fp, "occurrences: \n\n");
-                    fprintf(fp, " %s:: \"%s\"  representation => \"literal\",\n", bundlename, pp->ref);
+                    fprintf(fp, " bundles:: \"%s\"  representation => \"literal\",\n", pp->ref);
+                    fprintf(fp, " about_topics => { \"%s\"},",bundlename);
                     fprintf(fp, "   represents => { \"description\" }; \ntopics:\n");
                 }
 
@@ -443,13 +444,14 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
 
     fprintf(fp, "\n occurrences:\n");
 
-    fprintf(fp, "%s::\n", promise_id);
-
+    fprintf(fp, "handles::\n");
     fprintf(fp, "\"/promise/details/%s\",\n", promise_id);
+    fprintf(fp, "   about_topics => { \"handles::%s\" },\n", promise_id);
     fprintf(fp, "   represents => { \"definition\" };\n\n");
 
-    fprintf(fp, "system_policy.bundles.%s::\n", pp->bundle);
+    fprintf(fp, "bundles::\n");
     fprintf(fp, "\"/bundle/details/bundle/%s\"\n", pp->bundle);
+    fprintf(fp, "   about_topics => { \"bundles::%s\" },\n", pp->bundle);
     fprintf(fp, "   represents => { \"parent bundle\" };\n\n");
 
 /*  Now we should analyze the classes to look for dependents and dependencies */
@@ -739,8 +741,8 @@ void ShowTopicRepresentation(FILE *fp)
         for (j = 0; ss[j].btype != NULL; j++)
         {
             fprintf(fp,
-                    "occurrences: %s:: \"/docs/cf3-reference.html#%s-in-agent-promises\" represents => { \"manual reference %s\" }; \n",
-                    CanonifyName(ss[j].subtype), ss[j].subtype, ss[j].subtype);
+                    "occurrences:  \"/docs/cf3-reference.html#%s-in-agent-promises\" represents => { \"manual reference %s\" }, about_topics => { \"%s\"}; \n",
+                    ss[j].subtype, ss[j].subtype,ss[j].subtype);
 
             if (ss[j].bs != NULL)       /* In a bundle */
             {
@@ -1010,8 +1012,8 @@ void Nova_MapClassParameterAssociations(FILE *fp, Promise *pp, char *promise_id)
 
     if (promise_id)
     {
-        fprintf(fp, "occurrences: %s::  \"/promise/details/%s\", represents => { \"definition\" }; \n",
-                CanonifyName(promise_id), promise_id);
+        fprintf(fp, "occurrences:  \"/promise/details/%s\", represents => { \"definition\" }, about_topics => {\"handles::%s\" }; \n",
+                promise_id, promise_id);
     }
 
 /* For activated classes we can assume that no one will */
