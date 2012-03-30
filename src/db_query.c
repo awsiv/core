@@ -447,7 +447,10 @@ HubQuery *CFDB_QueryColour(mongo_connection *conn, const HostRankMethod method, 
             Item *host_names = BsonGetStringArrayAsItemList(&cursor->current, cfr_host_array);
             Item *ip_addresses = BsonGetStringArrayAsItemList(&cursor->current, cfr_ip_array);
 
-            host = NewHubHost(NULL, BsonGetString(&cursor->current, cfr_keyhash), ip_addresses->name, host_names->name);
+            char *hostkey = NULL;
+            assert(BsonStringGet(&cursor->current, cfr_keyhash, &hostkey));
+
+            host = NewHubHost(NULL, hostkey, ip_addresses->name, host_names->name);
 
             DeleteItemList(host_names);
             DeleteItemList(ip_addresses);
@@ -6360,22 +6363,23 @@ static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *fil
 
 /*****************************************************************************/
 
-Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const char *ip,
+Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const char *ip, time_t from, time_t to,
                           HostClassFilter *hostClassFilter)
 {
     bson_buffer buffer;
     bson query, field;
 
-// query
+    // query
     bson_buffer_init(&buffer);
     bson_append_regex(&buffer, cfr_host_array, hostname, "");
     bson_append_regex(&buffer, cfr_ip_array, ip, "");
     BsonAppendHostClassFilter(&buffer, hostClassFilter);
     bson_from_buffer(&query, &buffer);
 
-// projection
+    // projection
     bson_buffer_init(&buffer);
     bson_append_int(&buffer, cfr_keyhash, 1);
+    bson_append_int(&buffer, cfr_day, 1);
     bson_from_buffer(&field, &buffer);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
@@ -6387,17 +6391,18 @@ Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const ch
 
     while (mongo_cursor_next(cursor))
     {
-        bson_iterator iter;
+        char *hostkey = NULL;
+        assert(BsonStringGet(&cursor->current, cfr_keyhash, &hostkey));
 
-        bson_iterator_init(&iter, cursor->current.data);
+        time_t timestamp = 0;
+        assert(BsonTimeGet(&cursor->current, cfr_day, &timestamp));
 
-        while (bson_iterator_next(&iter))
+        if (timestamp < from || timestamp > to)
         {
-            if (strcmp(bson_iterator_key(&iter), cfr_keyhash) == 0)
-            {
-                AppendRlist(&hostkeys, (char *) bson_iterator_string(&iter), CF_SCALAR);
-            }
+            continue;
         }
+
+        AppendRlist(&hostkeys, hostkey, CF_SCALAR);
     }
 
     mongo_cursor_destroy(cursor);
@@ -6432,7 +6437,10 @@ HubHost *CFDB_GetHostByKey(mongo_connection *conn, const char *hostkey)
         Item *host_names = BsonGetStringArrayAsItemList(&out, cfr_host_array);
         Item *ip_addresses = BsonGetStringArrayAsItemList(&out, cfr_ip_array);
 
-        host = NewHubHost(NULL, BsonGetString(&out, cfr_keyhash), ip_addresses->name, host_names->name);
+        char *hostkey = NULL;
+        assert(BsonStringGet(&out, cfr_keyhash, &hostkey));
+
+        host = NewHubHost(NULL, hostkey, ip_addresses->name, host_names->name);
 
         DeleteItemList(host_names);
         DeleteItemList(ip_addresses);

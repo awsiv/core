@@ -15,8 +15,8 @@ class Host extends Resource
         $context = Utils::queryParam('context');
 
         $response = new Response($request);
-        $response->body = cfmod_resource_host($username,
-                $hostname, $ip);
+        $response->body = cfmod_resource_host($username, $hostname, $ip,
+                DefaultParameters::from(), DefaultParameters::to());
         $response->code = Response::OK;
 
         return $response;

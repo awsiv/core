@@ -63,9 +63,16 @@ PHP_FUNCTION(cfmod_resource)
 PHP_FUNCTION(cfmod_resource_host)
 {
     char *username = NULL, *hostname = NULL, *ip = NULL;
+    long from = 0,
+         to = 0;
     int len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sss", &username, &len, &hostname, &len, &ip, &len) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssll",
+                              &username, &len,
+                              &hostname, &len,
+                              &ip, &len,
+                              &from,
+                              &to) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     }
@@ -81,7 +88,7 @@ PHP_FUNCTION(cfmod_resource_host)
 
         mongo_connection conn;
 
-        DATABASE_OPEN(&conn) hostkeys = CFDB_QueryHostKeys(&conn, hostname, ip, filter);
+        DATABASE_OPEN(&conn) hostkeys = CFDB_QueryHostKeys(&conn, hostname, ip, from, to, filter);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
     DATABASE_CLOSE(&conn)}

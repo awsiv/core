@@ -85,7 +85,7 @@ int CFDB_QueryLastFileChange(mongo_connection *conn, char *keyHash, char *report
 Item *CFDB_QueryCdpRegistry(mongo_connection *conn, char *sep);
 Item *CFDB_QueryCdpServices(mongo_connection *conn, char *sep);
 Item *CFDB_QueryCdpCompliance(mongo_connection *conn, char *handle);
-Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const char *ip, HostClassFilter *hostClassFilter);
+Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const char *ip, time_t from, time_t to, HostClassFilter *hostClassFilter);
 Item *CFDB_GetDeletedHosts(void);
 Item *CFDB_GetLastseenCache(void);
 Rlist *CFDB_QueryNotes(mongo_connection *conn, char *keyhash, char *nid, Item *data);

@@ -126,26 +126,26 @@ long BsonLongGet(const bson *b, const char *key)
         return bson_iterator_long(&it);
     }
 
-    CfOut(cf_verbose, "", "BsonFindLong: No match for \"%s\"", key);
+    CfOut(cf_verbose, "", "BsonLongGet: No match for \"%s\"", key);
 
     return 0;
 }
 
 /*****************************************************************************/
 
-const char *BsonGetString(const bson *b, const char *key)
-// TOOD: DEPRECATE in favour of BsonStringWrite()
+bool BsonStringGet(const bson *b, const char *key, char **out)
 {
     bson_iterator it;
 
     if (bson_find(&it, b, key) == bson_string)
     {
-        return bson_iterator_string(&it);
+        *out = bson_iterator_string(&it);
+        return true;
     }
 
-    CfOut(cf_verbose, "", "BsonGetString: No match for \"%s\"", key);
+    CfOut(cf_verbose, "", "BsonStringGet: No match for \"%s\"", key);
 
-    return NULL;
+    return false;
 }
 /*****************************************************************************/
 
