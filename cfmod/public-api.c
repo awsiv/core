@@ -143,14 +143,6 @@ PHP_FUNCTION(cfmod_resource_host_id)
 
 /************************************************************************************/
 
-static time_t Horizon(long from)
-{
-    time_t now = time(NULL);
-
-    from = MIN(now, from);
-    return now - from;
-}
-
 static JsonElement *HostsLastSeen(Rlist *records, LastSeenDirection direction)
 {
     JsonElement *output = JsonArrayCreate(100);
@@ -765,10 +757,15 @@ PHP_FUNCTION(cfmod_resource_context)
 {
     char *username = NULL, *hostkey = NULL, *context = NULL;
     int len;
-    long from = 0;
+    long from = 0,
+         to = 0;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssl",
-                              &username, &len, &hostkey, &len, &context, &len, &from) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssll",
+                              &username, &len,
+                              &hostkey, &len,
+                              &context, &len,
+                              &from,
+                              &to) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -778,19 +775,20 @@ PHP_FUNCTION(cfmod_resource_context)
 
     {
         HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-
         ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-        HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
+        HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
         HostClassFilterAddClasses(filter, context, NULL);
 
         mongo_connection conn;
+        DATABASE_OPEN(&conn);
 
-        DATABASE_OPEN(&conn) result = CFDB_QueryClasses(&conn, hostkey, NULL, false, Horizon(from), filter, false);
+        result = CFDB_QueryClasses(&conn, hostkey, NULL, false, from, to, filter, false);
+
+        DATABASE_CLOSE(&conn);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-    DATABASE_CLOSE(&conn)}
+    }
     assert(result);
 
     JsonElement *contexts = JsonArrayCreate(100);

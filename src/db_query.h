@@ -28,7 +28,7 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
 HubQuery *CFDB_QueryColour(mongo_connection *conn, const HostRankMethod method, HostClassFilter *host_class_filter);
 HubQuery *CFDB_QuerySoftware(mongo_connection *conn, char *keyHash, char *type, char *lname, char *lver, char *larch,
                              int regex, HostClassFilter *hostClassFilter, int sort);
-HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass, int regex, time_t horizon,
+HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass, int regex, time_t from, time_t to,
                             HostClassFilter *hostClassFilter, int sort);
 HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes);
 HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn, char *keyHash, char *lversion, time_t lt, int lkept,

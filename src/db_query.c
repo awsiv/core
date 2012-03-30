@@ -655,7 +655,7 @@ HubQuery *CFDB_QuerySoftware(mongo_connection *conn, char *keyHash, char *type, 
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass, int regex, time_t horizon,
+HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass, int regex, time_t from, time_t to,
                             HostClassFilter *hostClassFilter, int sort)
 {
     bson_buffer bb;
@@ -664,7 +664,6 @@ HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass,
     bson_iterator it1, it2, it3;
     HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL;
-    time_t rtime, now = time(NULL);
     double rsigma, rex;
     char rclass[CF_MAXVARSIZE];
     char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE];
@@ -724,7 +723,7 @@ HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass,
 
                     rex = 0;
                     rsigma = 0;
-                    rtime = 0;
+                    time_t timestamp = 0;
 
                     while (bson_iterator_next(&it3))
                     {
@@ -738,7 +737,7 @@ HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass,
                         }
                         else if (strcmp(bson_iterator_key(&it3), cfr_time) == 0)
                         {
-                            rtime = bson_iterator_int(&it3);
+                            timestamp = bson_iterator_int(&it3);
                         }
                         else
                         {
@@ -763,7 +762,12 @@ HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass,
                         }
                     }
 
-                    if (match_class && (now - rtime < horizon))
+                    if (timestamp < from || timestamp > to)
+                    {
+                        match_class = false;
+                    }
+
+                    if (match_class)
                     {
                         found = true;
 
@@ -772,7 +776,7 @@ HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass,
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(&record_list, NewHubClass(hh, rclass, rex, rsigma, rtime));
+                        PrependRlistAlien(&record_list, NewHubClass(hh, rclass, rex, rsigma, timestamp));
                     }
                 }
             }

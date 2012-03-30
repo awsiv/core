@@ -1318,7 +1318,8 @@ int Nova2PHP_classes_report(char *hostkey, char *name, int regex, HostClassFilte
         return false;
     }
 
-    hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, (time_t) SECONDS_PER_WEEK, hostClassFilter, true);
+    time_t now = time(NULL);
+    hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, now - (time_t)SECONDS_PER_WEEK, now, hostClassFilter, true);
     PageRecords(&(hq->records), page, DeleteHubClass);
 
     snprintf(header, sizeof(header),
@@ -2439,7 +2440,8 @@ int Nova2PHP_classes_hosts(char *hostkey, char *name, int regex, HostClassFilter
         return false;
     }
 
-    HubQuery *hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, (time_t) SECONDS_PER_WEEK, hostClassFilter, false);
+    time_t now = time(NULL);
+    HubQuery *hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, now - (time_t)SECONDS_PER_WEEK, now, hostClassFilter, false);
 
     CreateJsonHostOnlyReport(&(hq->hosts), page, returnval, bufsize);
 
@@ -3706,7 +3708,8 @@ int Nova2PHP_countclasses(char *hostkey, char *name, int regex, HostClassFilter 
         return false;
     }
 
-    hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, (time_t) bluehost_threshold, hostClassFilter, false);
+    time_t now = time(NULL);
+    hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, now - (time_t)bluehost_threshold, now, hostClassFilter, false);
 
     returnval[0] = '\0';
 

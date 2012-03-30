@@ -399,7 +399,8 @@ int Nova2Txt_classes_report(char *hostkey, char *name, int regex, char *classreg
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, (time_t) SECONDS_PER_WEEK, filter, true);
+    time_t now = time(NULL);
+    hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, now - (time_t)SECONDS_PER_WEEK, now, filter, true);
     DeleteHostClassFilter(filter);
 
     if (!CSV)
@@ -1219,7 +1220,8 @@ int Nova2Txt_classes_hosts(char *hostkey, char *name, int regex, char *classreg,
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, (time_t) SECONDS_PER_WEEK, filter, false);
+    time_t now = time(NULL);
+    hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, now - (time_t)SECONDS_PER_WEEK, now, filter, false);
     DeleteHostClassFilter(filter);
 
     StartJoin(returnval, "[", bufsize);
