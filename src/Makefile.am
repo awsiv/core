@@ -44,7 +44,6 @@ libcfnova_la_SOURCES = \
         reporting.c \
         syntax.c \
         copernicus.c \
-        install.c \
         map.c map.h map_common.h \
         string_map.c string_map.h \
         array_map.c array_map_priv.h \
@@ -83,6 +82,7 @@ libcfnova_la_SOURCES += \
         db_query.c db_query.h \
         db_save.c db_save.h \
         histogram.c \
+        install.c \
         magnify.c \
         scorecards.c scorecards.h \
         topicmap.c \

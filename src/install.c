@@ -18,15 +18,8 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #include "string_lib.h"
 #include <assert.h>
 
-#ifdef HAVE_LIBMONGOC
 static void DateStrToTime(const char *inStr, time_t *t);
-#endif
 
-/*****************************************************************************/
-
-/*****************************************************************************/
-
-#ifdef HAVE_LIBMONGOC
 HubQuery *NewHubQuery(Rlist *hosts, Rlist *records)
 {
     HubQuery *hq;
@@ -108,10 +101,6 @@ void *HubQueryGetFirstRecord(HubQuery *hq)
 
     return hq->records->item;
 }
-
-#endif
-
-/*****************************************************************************/
 
 HubHost *NewHubHost(const char *hubkey, const char *keyhash, const char *ipaddr, const char *hostname)
 {
@@ -1066,9 +1055,6 @@ void DeleteHubRole(HubRole *role)
     free(role);
 }
 
-/*****************************************************************************/
-
-#ifdef HAVE_LIBMONGOC
 HostClassFilter *NewHostClassFilter(const char *classRxInclude, const char *classRxExclude)
 {
     Rlist *classRxIncludes = NULL;
@@ -1319,9 +1305,6 @@ int SortBusinessValue(void *p1, void *p2)
         return false;
     }
 }
-#endif
-
-/*****************************************************************************/
 
 int SortTotalCompliance(void *p1, void *p2)
 /**

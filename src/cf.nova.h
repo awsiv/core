@@ -259,6 +259,7 @@ typedef struct
 /* Report DB API Structs                                                     */
 /*****************************************************************************/
 
+#ifdef HAVE_LIBMONGOC
 #include "scorecards.h"
 
 typedef struct
@@ -551,6 +552,7 @@ typedef struct
     char *bundleRxInclude;
     char *bundleRxExclude;
 } HubRole;
+#endif
 
 /*****************************************************************************/
 
@@ -759,7 +761,6 @@ HubQuery *NewHubQueryErrid(Rlist *hosts, Rlist *records, cfapi_errid errid);
 void DeleteHubQuery(HubQuery *hq, void (*fnptr) ());
 int CountRecords(HubQuery *hq);
 void *HubQueryGetFirstRecord(HubQuery *hq);
-#endif
 HubHost *NewHubHost(const char *hubkey, const char *keyhash, const char *ipaddr, const char *hostname);
 HubHost *CreateEmptyHubHost(void);
 HubHost *UpdateHubHost(HubHost *hubHost, char *keyhash, char *ipaddr, char *hostname);
@@ -823,7 +824,7 @@ HubRole *NewHubRole(char *name, char *description,
                     char *classRxInclude, char *classRxExclude, char *bundleRxInclude, char *bundleRxExclude);
 void DeleteHubRole(HubRole *role);
 
-#ifdef HAVE_LIBMONGOC
+
 HostClassFilter *NewHostClassFilter(const char *classRxInclude, const char *classRxExclude);
 HostClassFilter *NewHostClassFilterLists(Rlist *classRxInclude, Rlist *classRxExclude);
 void HostClassFilterAddClasses(HostClassFilter *filter, const char *classRxInclude, const char *classRxExclude);
@@ -838,13 +839,13 @@ void PromiseFilterAddBundleType(PromiseFilter *filter, const char *bundleTypeInc
 void PromiseFilterAddBundles(PromiseFilter *filter, const char *bundleInclude, const char *bundleExclude);
 void PromiseFilterAddBundlesRx(PromiseFilter *filter, const char *bundleRxInclude, const char *bundleRxExclude);
 void DeletePromiseFilter(PromiseFilter *filter);
-#endif
+
 HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int hostCount, int totalHostCount,
                                                     double kept, double repaired, double notkept, time_t genTime);
 void DeleteHubCacheTotalCompliance(HubCacheTotalCompliance *tc);
 
-#ifdef HAVE_LIBMONGOC
 void HubQuerySortPromiseBundles(HubQuery *hqPromiseBundles);
+
 #endif
 int SortPromiseLog(void *p1, void *p2);
 int SortBusinessValue(void *p1, void *p2);
@@ -861,7 +862,10 @@ int SortBundleSeen(void *p1, void *p2);
 int SortPromisePopularAscending(void *p1, void *p2);
 int SortPromisePopularDescending(void *p1, void *p2);
 int SortPromiseBundle(void *p1, void *p2);
+
+#ifdef HAVE_LIBMONGOC
 HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(Rlist *records, int slot);
+#endif
 
 int PageRecords(Rlist **records_p, PageInfo *page, void (*fnptr) ());
 void CountMarginRecordsVars(Rlist **records_p, PageInfo *page, int *start_count, int *end_count);
