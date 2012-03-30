@@ -60,8 +60,6 @@
 # define MONGO_ARCHIVE MONGO_BASE ".archive"
 # define CF_MONGO_SLAVE_OK 4
 # include <mongo.h>
-#else
-# define mongo_connection char
 #endif
 
 #undef PACKAGE
@@ -651,11 +649,11 @@ bool BootstrapAllowed(void);
 #ifdef HAVE_LIBMONGOC
 int Nova_QueryClientForReports(mongo_connection *dbconn, AgentConnection *conn, const char *menu, time_t since);
 void UnpackReportBook(mongo_connection *dbconn, char *id, Item **reports);
-#endif
 
 int Nova_StoreIncomingReports(char *reply, Item **reports, int current_report);
 void NewReportBook(Item **reports);
 void DeleteReportBook(Item **reports);
+#endif
 
 /* conversion.c */
 
@@ -706,6 +704,7 @@ char *Nova_ShortArch(char *arch);
 
 /* dataunpack.c */
 
+#ifdef HAVE_LIBMONGOC
 void Nova_UnPackPerformance(mongo_connection *dbconn, char *id, Item *data);
 void Nova_UnPackClasses(mongo_connection *dbconn, char *id, Item *data);
 void Nova_UnPackSetuid(mongo_connection *dbconn, char *id, Item *data);
@@ -755,7 +754,6 @@ void Nova_UpdateMongoHostList(Item **list);
 
 /* install.c */
 
-#ifdef HAVE_LIBMONGOC
 HubQuery *NewHubQuery(Rlist *hosts, Rlist *records);
 HubQuery *NewHubQueryErrid(Rlist *hosts, Rlist *records, cfapi_errid errid);
 void DeleteHubQuery(HubQuery *hq, void (*fnptr) ());
@@ -846,7 +844,6 @@ void DeleteHubCacheTotalCompliance(HubCacheTotalCompliance *tc);
 
 void HubQuerySortPromiseBundles(HubQuery *hqPromiseBundles);
 
-#endif
 int SortPromiseLog(void *p1, void *p2);
 int SortBusinessValue(void *p1, void *p2);
 int SortTotalCompliance(void *p1, void *p2);
@@ -863,7 +860,6 @@ int SortPromisePopularAscending(void *p1, void *p2);
 int SortPromisePopularDescending(void *p1, void *p2);
 int SortPromiseBundle(void *p1, void *p2);
 
-#ifdef HAVE_LIBMONGOC
 HubCacheTotalCompliance *GetHubCacheTotalComplianceSlot(Rlist *records, int slot);
 #endif
 
@@ -915,7 +911,9 @@ char *Nova_LicenseOwner(void);
 
 /* magnify.c */
 
+#ifdef HAVE_LIBMONGOC
 bool Nova_ReadMagTimeSeries2(mongo_connection *conn, DataView *cfv, char *hostkey, char *vitalId);
+#endif
 
 /* monitoring.c */
 
@@ -971,9 +969,11 @@ void DeleteFileLine(FileLine **liststart, FileLine *item);
 
 /* promise_db.c */
 
+#ifdef HAVE_LIBMONGOC
 void CFDB_SaveExpandedPromise(Promise *pp);
 void CFDB_SaveUnExpandedPromises(Bundle *bundles, Body *bodies);
 void CFDB_SaveBody(mongo_connection *dbconn, Body *body);
+#endif
 
 /* promises.c */
 
@@ -1051,13 +1051,12 @@ void Nova_Indent(int i);
 
 /* topicmap.c */
 
+#ifdef HAVE_LIBMONGOC
 void Nova_DumpTopics(void);
 void Nova_FillInGoalComment(Item *ip);
 char *Nova_GetBundleComment(char *bundle);
 
-#ifdef HAVE_LIBMONGOC
 void Nova_WebTopicMap_Initialize(void);
-#endif
 void Nova_LookupUniqueAssoc(int pid, char *buffer, int bufsize);
 void Nova_ScanTheRest(int pid, char *buffer, int bufsize);
 int Nova_SearchTopicMap(char *typed_topic, char *buffer, int bufsize);
@@ -1088,11 +1087,14 @@ int Nova_AlreadyInTribe(int node, int *tribe_id);
 void Nova_InitVertex(GraphNode *tribe, int i);
 char *Nova_StripString(char *source, char *substring);
 void Nova_DeClassifyTopic(char *typed_topic, char *topic, char *type);
+#endif
 
 /* weekly.c */
 
+#ifdef HAVE_LIBMONGOC
 double Num(double x);
 bool Nova_ReadWeekTimeSeries2(mongo_connection *conn, DataView *cfv, char *keyhash, char *vitalId);
+#endif
 
 #ifdef MINGW
 /* win_api.c */
@@ -1216,9 +1218,11 @@ int NovaWin_WmiDeInitialize(void);
 
 /* yearly.c */
 
+#ifdef HAVE_LIBMONGOC
 int Nova_ReadYearTimeSeries(mongo_connection *conn, DataView *cfv, char *keyhash, char *monId);
 void Nova_DrawLongHAxes(DataView *cfv, int col);
 void Nova_AnalyseLongHistory(char *keyname, enum observables obs, char *buffer, int bufsize);
+#endif
 
 /* ldap.c */
 bool CfLDAPAuthenticate(char *uri, char *basedn, char *passwd, bool starttls, const char **const errstr);
