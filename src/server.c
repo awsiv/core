@@ -241,6 +241,9 @@ void Nova_PackAllReports(Item **reply, time_t from, time_t delta1, enum cfd_menu
         Nova_PackMeter(reply, CFR_METER, from, type);
         Nova_PackBundles(reply, CFR_BUNDLES, from, type);
         Nova_PackExecutionStatus(reply, CFR_EXECUTION_STATUS);
+        Nova_PackSoftware(reply, CFR_SOFTWARE, from, type);
+        Nova_PackAvailPatches(reply, CFR_AVAILPATCH, from, type);
+        Nova_PackPatchStatus(reply, CFR_PATCHSTATUS, from, type);
         break;
 
     case cfd_menu_full:

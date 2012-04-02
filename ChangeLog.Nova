@@ -1,8 +1,8 @@
 2.2.0
-        More diagnostics on report collection from cf-hub. Logging more
-        useful information in cf-hub -l, measuring total collection time
-        in benchmarks report, under id "ReportCollectAll".
-        
+	More diagnostics on report collection from cf-hub. Logging more
+	useful information in cf-hub -l, measuring total collection time
+	in benchmarks report, under id "ReportCollectAll".
+
 	Fixed issue where client would show as green in the Mission Portal when no
 	data was received, e.g. due to access or license error at client.
 	Now correctly shows as blue in these cases.
@@ -12,6 +12,10 @@
 	cf-hub run (max 50), before it was three per client.
 	
 	Software and variable report now contains end-node discovery time.
+
+	Software and patches available/status reports contain maximum 5-minute old data,
+	improved from 6 hours in last release. This will only apply to clients
+	that are upgraded to 2.2.0.
 
 	Software report is much faster on larger data-sets due
 	to removal of autocomplete feature.

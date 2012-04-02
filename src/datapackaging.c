@@ -1025,6 +1025,22 @@ void Nova_PackSoftware(Item **reply, char *header, time_t from, enum cfd_menu ty
     snprintf(name, CF_MAXVARSIZE - 1, "%s/state/%s", CFWORKDIR, SOFTWARE_PACKAGES_CACHE);
     MapName(name);
 
+    struct stat sb;
+    
+    if(stat(name, &sb) == -1)
+    {
+        CfOut(cf_inform, "stat", "Cannot access software report file");
+        return;
+    }
+    
+    if(sb.st_mtime < from)
+    {
+        char timebuf[26];
+        CfOut(cf_inform, "", "Software report is unchanged since %s -- skipping", 
+              cf_strtimestamp_local(sb.st_mtime, timebuf));
+        return;
+    }
+
     if ((fin = fopen(name, "r")) == NULL)
     {
         CfOut(cf_inform, "fopen",
@@ -1090,6 +1106,23 @@ void Nova_PackAvailPatches(Item **reply, char *header, time_t from, enum cfd_men
     snprintf(name, CF_MAXVARSIZE - 1, "%s/state/%s", CFWORKDIR, NOVA_PATCHES_AVAIL);
     MapName(name);
 
+    struct stat sb;
+    
+    if(stat(name, &sb) == -1)
+    {
+        CfOut(cf_inform, "stat", "Cannot access patches available file");
+        return;
+    }
+    
+    if(sb.st_mtime < from)
+    {
+        char timebuf[26];
+        CfOut(cf_inform, "", "Patches available is unchanged since %s -- skipping", 
+              cf_strtimestamp_local(sb.st_mtime, timebuf));
+        return;
+    }
+
+
     if ((fin = fopen(name, "r")) == NULL)
     {
         CfOut(cf_inform, "fopen",
@@ -1154,6 +1187,23 @@ void Nova_PackPatchStatus(Item **reply, char *header, time_t from, enum cfd_menu
 
     snprintf(name, sizeof(name), "%s/state/%s", CFWORKDIR, NOVA_PATCHES_INSTALLED);
     MapName(name);
+
+    struct stat sb;
+    
+    if(stat(name, &sb) == -1)
+    {
+        CfOut(cf_inform, "stat", "Cannot access patch status file");
+        return;
+    }
+    
+    if(sb.st_mtime < from)
+    {
+        char timebuf[26];
+        CfOut(cf_inform, "", "Patch status is unchanged since %s -- skipping", 
+              cf_strtimestamp_local(sb.st_mtime, timebuf));
+        return;
+    }
+
 
     if ((fin = fopen(name, "r")) == NULL)
     {
