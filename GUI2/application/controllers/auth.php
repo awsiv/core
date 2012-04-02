@@ -434,7 +434,14 @@ class Auth extends Controller {
                 // get system settings to protect "fall_back_for" user from editing
                 $this->data['fall_back_for'] = $this->setting_lib->get_fall_back_for();
                 
-                $this->load->view('auth/user_list', $this->data);
+                // on success - return json - we will  not redraw entire form
+                $data['status'] = 'all_ok';
+                $data['responseText'] = $this->load->view('auth/user_list', $this->data, true);
+                
+                $result = json_encode ($data);
+                echo $result;
+                return;
+
             } else {
                 $this->session->set_flashdata('message', "User Created");
                 redirect("auth", 'refresh');
@@ -442,7 +449,18 @@ class Auth extends Controller {
         } else { //display the create user form
             //set the flash data error message if there is one
             $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
-
+           
+            // on error - return json - we will  not redraw entire form
+            if ($this->data['message'] != '') {
+                $data['status'] = 'validation_error';
+                $data['responseText'] = $this->data['message'];
+                
+                $result = json_encode ($data);
+                echo $result;
+                return;
+            }
+            
+            
             $this->data['user_name'] = array('name' => 'user_name',
                 'id' => 'user_name',
                 'type' => 'text',
@@ -574,7 +592,15 @@ class Auth extends Controller {
                 // get system settings to protect "fall_back_for" user from editing
                 $this->data['fall_back_for'] = $this->setting_lib->get_fall_back_for();
                 
-                $this->load->view('auth/user_list', $this->data);
+                // on success - return json - we will  not redraw entire form
+                $data['status'] = 'all_ok';
+                $data['responseText'] = $this->load->view('auth/user_list', $this->data, true);
+                
+                $result = json_encode ($data);
+                echo $result;
+                return;
+                
+                
             } else {
                 $this->session->set_flashdata('message', "User Updated");
                 redirect("auth", 'refresh');
@@ -582,6 +608,17 @@ class Auth extends Controller {
         } else { //display the edit user form
             //set the flash data error message if there is one
             $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
+            
+            // on error - return json - we will  not redraw entire form
+            if ($this->data['message'] != '') {
+                $data['status'] = 'validation_error';
+                $data['responseText'] = $this->data['message'];
+                
+                $result = json_encode ($data);
+                echo $result;
+                return;
+            }
+            
             $user = $this->ion_auth->get_user($id);
 
             $this->data['user_name'] = array('name' => 'user_name',
@@ -642,7 +679,6 @@ class Auth extends Controller {
                 $roles = arrayRecursiveDiff($roles_tmp, $selected_roles_tmp);
             }
 
-            
             foreach ($roles as $role) {
                 $this->data['roles'][$role['name']] = array(
                     'value' => $role['name'],
@@ -654,7 +690,7 @@ class Auth extends Controller {
         }
     }
     
-     function edit_user_ldap($username) {
+    function edit_user_ldap($username) {
         $this->data['title'] = "Edit User";
        
         //validate form input
@@ -786,13 +822,24 @@ class Auth extends Controller {
         $this->load->helper('create_html_list_from_string');
 
         $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
+       
+        // on error - return json - we will  not redraw entire form
+        if ($this->data['message'] != '') {
+            $data['status'] = 'validation_error';
+            $data['responseText'] = $this->data['message'];
+
+            $result = json_encode ($data);
+            echo $result;
+            return;
+        }
+        
         $this->data['name'] = array('name' => 'name',
             'id'    => 'name',
             'type'  => 'text',
             'value' => $this->form_validation->set_value('name'),
         );
         $this->data['description'] = array('name' => 'description',
-            'id'    => 'last_name',
+            'id'    => 'description',
             'type'  => 'text',
             'rows'  => '3',
             'cols'  => '20',
@@ -937,7 +984,7 @@ class Auth extends Controller {
         * 
         * if not ajax - redirect to no_permission page, with some message
         */
-        function permission_deny($message = '') {
+    function permission_deny($message = '') {
             if ($message == '') {
                 $message = $this->lang->line('no_permission');
             }
