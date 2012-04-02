@@ -1027,7 +1027,7 @@ int Nova2PHP_promiselog_summary(char *hostkey, char *handle, char *causeRx, Prom
     int startIndex = 0, endIndex = 0, i = 0;
     bool truncated = false;
 
-/* BEGIN query document */
+    /* BEGIN query document */
 
     if (!CFDB_Open(&dbconn))
     {
@@ -1049,43 +1049,42 @@ int Nova2PHP_promiselog_summary(char *hostkey, char *handle, char *causeRx, Prom
     startIndex = page->resultsPerPage * (page->pageNum - 1);
     endIndex = (page->resultsPerPage * page->pageNum) - 1;
 
+    summary = SortItemListCounters(summary);
+    snprintf(header, sizeof(header),
+             "\"meta\":{\"count\" : %d,"
+             "\"header\":{\"Promise Handle\":0,\"Report\":1,\"Occurrences\":2}", ListLen(summary));
+
     if (summary == NULL)
     {
-        snprintf(returnval, bufsize, "No data to report on");
+        snprintf(returnval, bufsize, "{\"meta\":{\"count\":0},\"data\":[]}");
+        return true;
     }
-    else
+
+    StartJoin(returnval, "{\"data\":[", bufsize);
+
+    for (ip = summary; ip != NULL; ip = ip->next, i++)
     {
-        summary = SortItemListCounters(summary);
-        snprintf(header, sizeof(header),
-                 "\"meta\":{\"count\" : %d,"
-                 "\"header\":{\"Promise Handle\":0,\"Report\":1,\"Occurrences\":2}", ListLen(summary));
-
-        StartJoin(returnval, "{\"data\":[", bufsize);
-
-        for (ip = summary; ip != NULL; ip = ip->next, i++)
+        if (i >= startIndex && (i <= endIndex || endIndex < 0))
         {
-            if (i >= startIndex && (i <= endIndex || endIndex < 0))
-            {
-                EscapeJson(ip->classes, jsonEscapedStr, sizeof(jsonEscapedStr));
-                snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%d],", ip->name, jsonEscapedStr, ip->counter);
+            EscapeJson(ip->classes, jsonEscapedStr, sizeof(jsonEscapedStr));
+            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%d],", ip->name, jsonEscapedStr, ip->counter);
 
-                if (!Join(returnval, buffer, bufsize))
-                {
-                    truncated = true;
-                    break;
-                }
+            if (!Join(returnval, buffer, bufsize))
+            {
+                truncated = true;
+                break;
             }
         }
-
-        ReplaceTrailingChar(returnval, ',', '\0');
-        EndJoin(returnval, "]", bufsize);
-
-        Nova_AddReportHeader(header, truncated, buffer, sizeof(buffer) - 1);
-
-        Join(returnval, buffer, bufsize);
-        EndJoin(returnval, "}}\n", bufsize);
-        DeleteItemList(summary);
     }
+
+    ReplaceTrailingChar(returnval, ',', '\0');
+    EndJoin(returnval, "]", bufsize);
+
+    Nova_AddReportHeader(header, truncated, buffer, sizeof(buffer) - 1);
+
+    Join(returnval, buffer, bufsize);
+    EndJoin(returnval, "}}\n", bufsize);
+    DeleteItemList(summary);
 
     return true;
 }
