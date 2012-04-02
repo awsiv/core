@@ -45,6 +45,7 @@ $lang['tooltip_login_attr']="The attribute used by directory server to match the
 $lang['tooltip_user_dir']="The directory used by the server to store users information  e.g cn=users or ou=people, If this directory is under sub directory specify its name as well eg cn=users,ou=sales";
 $lang['tooltip_member_attr']="The attribute used to connect a user with group e.g memberUid";
 $lang['tooltip_ad_domain_name']="The domain named used by the active directory e.g test.cfengine.com";
+$lang['tooltip_external_admin_username']="This user will have full privileges when external authentication is used";
 
 $lang['tooltip_fall_back']="Members of the selected group will be able to log in if the directory server is down";
 $lang['tooltip_admin_grp']="Members of the selected group will be administrators of the Mission Portal";

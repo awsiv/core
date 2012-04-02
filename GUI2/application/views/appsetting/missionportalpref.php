@@ -126,6 +126,11 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
                    <input id="sec3" name="encryption" type="radio" class="" value="start_tls" <?php echo (isset($start_tls))?$start_tls:$this->form_validation->set_radio('encryption', 'start_tls') ; ?> />
                   <label for="encryption" class="">STARTTLS</label>
 </p>
+<p>
+   <label for="external_admin_username">External admin user name<span class="required">*</span></label>
+        <?php echo tooltip('tooltip_external_admin_username','',true); ?>
+        <input id="external_admin_username" type="text" name="external_admin_username" value="<?php echo (isset($external_admin_username) ? $external_admin_username : '')  ?>" />
+</p>
 
 <p><label></label> <a class="btn testldap" id="testsettings" href="<?php echo site_url('settings/ldaptest')?>">Test settings</a></p>
 </fieldset>
