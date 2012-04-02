@@ -62,15 +62,7 @@ void Nova_SaveDocumentRoot(void)
         CFDB_PutValue("document_root", "/var/www", MONGO_SCRATCH);
     }
 #endif
-}
 
-/*****************************************************************************/
-
-void WebCache(char *s, char *t)
-{
-#if defined(HAVE_LIBMONGOC)
-    CFDB_PutValue(s, t, MONGO_SCRATCH);
-#endif
 }
 
 /*****************************************************************************/
