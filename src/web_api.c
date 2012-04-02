@@ -1857,7 +1857,7 @@ int Nova2PHP_performance_report(char *hostkey, char *job, int regex, HostClassFi
 
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d,"
-             "\"header\": {\"Host\":0,\"Event or ID\":1,\"Last Completion Time (secs)\":2,\"Avg Completion Time\":3,\"+/- mins\":4,\"Last performed\":5,"
+             "\"header\": {\"Host\":0,\"Event\":1,\"Last completion time (seconds)\":2,\"Avg completion time (seconds)\":3,\"+/- seconds\":4,\"Last performed\":5,"
              "\"Note\":{\"index\":6,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
              "}", page->totalResultCount);
 
