@@ -1,5 +1,5 @@
 <div id="edit_form">
-<div id="infoMessage"><?php echo $message;?></div>
+<div id="formInfoMessage"><?php echo $message; ?></div>
 <div class="form">
     <?php echo form_open("auth/manage_role/".$this->uri->segment(3).'/'.$this->uri->segment(4),array('id'=>  strtolower($operation).'_role'));?>
       <p>
@@ -16,7 +16,7 @@
       
       <p>
       <?php  
-        echo form_label('Description',$description['name'],array('class'=>'aligntop'));
+        echo form_label('Description', $description['name'],array('class'=>'aligntop'));
         echo form_textarea($description);
        ?>
       </p>
