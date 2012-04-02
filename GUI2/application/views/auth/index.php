@@ -7,6 +7,8 @@
             <li><a href="<?php echo site_url('auth/manage_role'); ?>">Roles</a></li>
             <!--<li>Settings</li>
         </ul> -->
+
+<div id="infoMessage"><?php echo $message;?></div>            
 <div class="ui-tabs ui-widget ui-widget-content ui-corner-all">        
 <ul class="admin_menu ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
                 <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active ">
@@ -33,6 +35,42 @@
      var options = {
             target:  '#admin_content'  // target element(s) to be updated with server response
         };
+        
+     var edit_form_options =  {
+                target:  '#edit_form_wrapper',
+                dataType: 'json',
+                beforeSubmit: function(arr, $form, options)
+                    {
+                        $.blockUI({ css:{
+                                        border: 'none',
+                                        padding: '15px',
+                                        backgroundColor: '#000',
+                                        '-webkit-border-radius': '10px',
+                                        '-moz-border-radius': '10px',
+                                        opacity: .5,
+                                        color: '#fff'
+                                        },
+                                    message: '<h1><img src="<?php echo get_imagedir() ?>ajax_loader2.gif" />Please wait...</h1>'
+                                });
+                    },
+             success: function (responseObj, statusText, xhr, $form) {
+                
+                if (responseObj.status == 'all_ok')
+                {
+                    $('#admin_content').html(responseObj.responseText);
+                    $('#edit_form_wrapper').remove();
+                }
+                else
+                {
+                    $("#formInfoMessage").html(responseObj.responseText);
+                    $("#formInfoMessage").show();
+                    window.scrollTo(null, ($('#formInfoMessage').position().top - 20));
+                }
+                $('.blockUI').hide();                
+                return;
+            }   
+            };
+        
     $(document).ready(function() {
        
         
@@ -41,33 +79,55 @@
 /************************************************************************************/ 
 
         //loading the create user page from server to add the user
-        $('#add_user').live('click',function(event) {
+    $('#add_user').live('click',function(event) {
 
-            event.preventDefault();
-            $("#error_status").html('');       
-  
-            var path = $(this).attr('href');
-            attach_edit_form(this, $(this).attr('form'));
+        event.preventDefault();
+        $("#error_status").html('');       
 
-        });
+        var path = $(this).attr('href');
+        attach_edit_form(this, $(this).attr('form'));
+
+    });
         
     //submitting the create user form
-    $('#create_user').live('submit',function(event) {
+    $('#create_user, #edit_user').live('submit',function(event) {
         event.preventDefault();
         $("#error_status").html('');   
         
-
-        var options = {
-            target:  '#edit_form_wrapper'  
-        };
-        console.log(options)        
-        options.success = function () {
-            bindSortable('roleslist', new Array('roles'));
-        } 
-        $(this).ajaxSubmit(options);
+        
+        $(this).ajaxSubmit(edit_form_options);
     });
-
-
+/*
+            //submitting the form ajaxically to the page in form action and loading the result in admin_content
+            $('#edit_user').live('submit',function(event)
+            {
+                $(this).ajaxSubmit(
+                {
+                    target: options.target,
+                    beforeSubmit: function(arr, $form, options) {
+                        $.blockUI
+                        (
+                        { css:
+                            {
+                                border: 'none',
+                                padding: '15px',
+                                backgroundColor: '#000',
+                                '-webkit-border-radius': '10px',
+                                '-moz-border-radius': '10px',
+                                opacity: .5,
+                                color: '#fff'
+                            },
+                            message: '<h1><img src="<?php echo get_imagedir() ?>ajax_loader2.gif" />Please wait...</h1>'
+                        }
+                        );
+                    },
+                    success:function(responseText, statusText, xhr, $form){
+                        $(document).unblock();
+                        bindSortable('roleslist', new Array('roles'));
+                     }      
+                });
+            });
+*/
             //loading the change password in admin_content
         $('a.changepassword').live('click',function(event){
             event.preventDefault();
@@ -153,41 +213,43 @@
                 event.preventDefault();
                 var path=$(this).attr('href');
                 $("#error_status").html('');
+                $('#edit_form_wrapper').html('');
                 $("#admin_content").load(path);
                 $(this).parent().addClass('ui-tabs-selected ui-state-active ').siblings().removeClass('ui-tabs-selected ui-state-active');
             });
 
 
 
-            //create a new role form the page loaded
-            $('#create_role, #edit_role').live('submit',function(event){
-                event.preventDefault();
-                $("#error_status").html('');
+    //create a new role form the page loaded
+    $('#create_role, #edit_role').live('submit',function(event){
+        event.preventDefault();
+        $("#error_status").html('');
+ 
+        
+        if ($(this).attr('id') == 'create_role') {
+            if (roleNameValidate($('#name').val()) == false || roleDescriptionValidate($('#description').val())==false) {
                 
-                if ($(this).attr('id') == 'create_role') {
-                     if (roleNameValidate($('#name').val()) == false) {
+                var okBtn  = generateCloseBtn('Ok', $confirmation);
                 
-                        var okBtn  = generateCloseBtn('Ok', $confirmation);
-
-                        $confirmation.dialog("option", "buttons", okBtn);
-                        $confirmation.dialog("open");
-                        return
-                     }
-                }
-                
-                if (roleIncludeExcludeValidate() == false)
-                {
-                    var cancelBtn  = generateCloseBtn('Cancel',   $confirmation);
-                    var confirmBtn = generateSubmitBtn('Confirm', $(this), $confirmation);
-
-                    $confirmation.dialog("option", "buttons", cancelBtn.concat(confirmBtn) );
-                    $confirmation.dialog("open");
-                }
-                else
-                {   
-                    $(this).ajaxSubmit(options);
-                }  
-            });
+                $confirmation.dialog("option", "buttons", okBtn);
+                $confirmation.dialog("open");
+                return
+            }
+        }
+        
+        if (roleIncludeExcludeValidate() == false)
+        {
+            var cancelBtn  = generateCloseBtn('Cancel',   $confirmation);
+            var confirmBtn = generateSubmitBtn('Confirm', $(this), $confirmation, edit_form_options);
+            
+            $confirmation.dialog("option", "buttons", cancelBtn.concat(confirmBtn) );
+            $confirmation.dialog("open");
+        }
+        else
+        {   
+            $(this).ajaxSubmit(edit_form_options);
+        }  
+    });
 
 
             $('.activate').live('click',function(event){
@@ -220,40 +282,11 @@
 /************************************************************************************/ 
 
 
-            //submitting the form ajaxically to the page in form action and loading the result in admin_content
-            $('#edit_user').live('submit',function(event)
-            {
-                $(this).ajaxSubmit(
-                {
-                    target: options.target, beforeSubmit: function(arr, $form, options)
-                    {
-                        $.blockUI
-                        (
-                        { css:
-                            {
-                                border: 'none',
-                                padding: '15px',
-                                backgroundColor: '#000',
-                                '-webkit-border-radius': '10px',
-                                '-moz-border-radius': '10px',
-                                opacity: .5,
-                                color: '#fff'
-                            },
-                            message: '<h1><img src="<?php echo get_imagedir() ?>ajax_loader2.gif" />Please wait...</h1>'
-                        }
-                        );
-                    },
-                    success:function(responseText, statusText, xhr, $form){
-                        $(document).unblock();
-                        bindSortable('roleslist', new Array('roles'));
 
-                     }      
-                });
-            });
 
             $(document).ajaxStop(function(){
                 setTimeout(function() {
-                    $("#infoMessage").fadeOut(500)
+                    $("#infoMessage, #formInfoMessage").fadeOut(500)
                 }, 10000);
             });
 
@@ -401,6 +434,21 @@ function roleNameValidate(name) {
     }
 }
 
+function roleDescriptionValidate(name) {
+    var name = $.trim(name);
+    
+    if (name.length == 0) {
+        $('#confirmation span').text('You Must add Description to the role.');
+        return false;
+    }    
+}
+
+
+
+
+
+
+
 
 });  // end of document.ready
 
@@ -450,22 +498,27 @@ function bindSortable(bind_css_class_name, destinations_array)
                 source_id   = ui.item.parent().attr('id');
             },  
             stop: function(e, ui) {
-                var $group = $('.selected_item');//.not(ui.item);
+                //return false;
+                var $group = $('.selected_item');
                 destination_elem = $(ui.item).parent();
                 destination_id = destination_elem.attr('id');
 
-               if ($.inArray( destination_id , destinations_array) != -1)
+                // move from available to assigned
+                if ($.inArray( destination_id , destinations_array) != -1)
                 {
                     //add checkboxes when move items to assigned box
                     $group.each(function() {
                         addCheckbox(this, destination_id);
                     });
                 }
-                else { // remove checkboxes when move items to all items box
+                else {   // move from  assigned to available
+                    // remove checkboxes when move items to all items box
                     $group.each(function() {
                         removeCheckbox(this);
                     });
                 }
+
+
                 $group.clone().insertAfter($(ui.item));
  
                 $group.remove();
@@ -529,6 +582,9 @@ function checkEmptyList(source_elem, destination_elem) {
 
 
 function checkAssignedCount(dest, destinations_array) {
+    
+    //console.log('checkAssignedCount');
+    
     // check count items
     var maxAllowed = 2;
     if ($.inArray( dest, destinations_array) != -1) {
@@ -537,7 +593,9 @@ function checkAssignedCount(dest, destinations_array) {
             //var okBtn  = generateCloseBtn('Ok', $confirmation);
             var cancelBtn   = generateDialogBtn('Cancel',   $confirmation, function(){return false});
             var continueBtn = generateDialogBtn('Continue', $confirmation, function(){return true});            
-            $confirmation.dialog("option", "buttons", okBtn);
+           // $confirmation.dialog("option", "buttons", okBtn);
+           $confirmation.dialog("option", "buttons", cancelBtn.concat(continueBtn));
+           
             $confirmation.dialog("open");
          }
     }
@@ -579,9 +637,10 @@ beforeClose: function(event, ui) {
                         text: label,
                         click: function() {
                                 dialogObj.dialog('close');
-                                console.log('CALLBACK');
+                              //  console.log('CALLBACK');
                                 dialogCallback(false);
                             }
+
            }];
            return btn;
         }
@@ -611,7 +670,7 @@ beforeClose: function(event, ui) {
              return btn;
          }
             
-        function generateSubmitBtn(label, form, dialogObj) {
+        function generateSubmitBtn(label, form, dialogObjm, options) {
             var btn = [{
                         text: label,
                         click: function()
@@ -625,7 +684,8 @@ beforeClose: function(event, ui) {
         }
         
         function dialogCallback(param) {
-        console.log('Callback: ' + param );
+        
+        //console.log('Callback: ' + param );
         
         }
         
@@ -648,7 +708,7 @@ function getDialogBtnValue() {
                                                         //form.ajaxSubmit(options);
                             if ($.isFunction(callbackFnc)) {
                                 callbackFnc.call(this);
-                                console.log(this);
+                               // console.log(this);
                             }
                         }
                     }];
