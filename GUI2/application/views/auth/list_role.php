@@ -6,14 +6,13 @@ if (!empty($roles))
         <tr>
                 <th>Name</th>
                 <th>Description</th>
-       <?php if($this->ion_auth->mode=="database"){ ?> <th>Action</th><?php }?>
+       <?php if($is_admin===true){ ?> <th>Action</th><?php }?>
         </tr>
         <?php foreach ((array)$roles as $role){ 
         ?>
         <tr>
           <td><?php echo isset($role['name'])?$role['name']:$role['displayname']?></td>
           <td><?php if(array_key_exists('description', $role))  echo $role['description']?></td>
-         <?php if($this->ion_auth->mode=="database"){ ?>
           <td class="actioncol">
              <?php
              if($is_admin && $role['name'] != 'admin')
@@ -23,12 +22,11 @@ if (!empty($roles))
              }
              ?>
           </td>
-          <?php } ?>
+         
         </tr>
 		<?php }?>
   </table>
 <?php 
-if($this->ion_auth->mode=="database"){
 if($is_admin){?>
 <p id="btnholder">
     
@@ -39,7 +37,7 @@ if($is_admin){?>
     
   
 </p>
-<?php } }?>
+<?php } ?>
 
 <?php } else { ?>
 
