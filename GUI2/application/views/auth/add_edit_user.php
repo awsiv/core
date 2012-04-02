@@ -1,6 +1,7 @@
 <div id="edit_form">
     <div id="formInfoMessage"><?php echo $message; ?></div>
     <div class="form">
+<?php if($user_type == 'internal') { ?>
 
         <?php
         if ($op == 'edit')
@@ -42,6 +43,17 @@
                 <input type=checkbox name="reset_password"> 
             </p>
     <?php } ?>
+<?php } elseif ($user_type == 'external')  { ?>
+
+    <?php echo form_open("auth/edit_user_ldap/".$this->uri->segment(3),array('id'=>'edit_user_form'));?>
+        <p>
+            <?php
+            echo form_label('User Name', $user_name['name']);
+            echo form_input(array('name' => $user_name['name'], 'readonly' => true, 'value' => $user_name['value'] ));
+            ?>
+        </p>
+            
+<?php } ?>
 
         <table cellpadding="0" cellspasing ="0" border="1"  id="maintable">
             <tr>
@@ -65,7 +77,7 @@
                                 echo '<ul id="roles" class="roleslist itemlist assignedList">';
 
                                 foreach ($user_roles as $item) {
-                                    echo '<li " ' . ($first === TRUE ? $fist_item_class : "") . ' >';
+                                    echo '<li ' . ($first === TRUE ? $fist_item_class : '') . ' >';
                                     $data = array(
                                         'name' => $item['name'],
                                         'id' => $item['value'],
@@ -107,7 +119,7 @@
                                 echo '<ul id="all_roles" class="roleslist itemlist assignedList">';
 
                                 foreach ($roles as $item) {
-                                    echo '<li " ' . ($first === true ? $fist_item_class : "") . ' >';
+                                    echo '<li ' . ($first === true ? $fist_item_class : '') . ' >';
                                     echo '<span>' . $item['value'] . '</span>';
                                     echo "</li>";
                                     $i++;

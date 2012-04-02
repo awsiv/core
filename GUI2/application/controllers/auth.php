@@ -404,6 +404,8 @@ class Auth extends Controller {
     //create a new user
     function create_user() {
         $this->data['title'] = "Create User";
+        $this->data['user_type'] = 'internal';        
+
 
         if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
             redirect('auth', 'refresh');
@@ -559,8 +561,9 @@ class Auth extends Controller {
     }
 
     function edit_user($id) {
-
         $this->data['title'] = "Edit User";
+        $this->data['user_type'] = 'internal';   
+                
         if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
             redirect('auth', 'refresh');
         }
@@ -635,12 +638,13 @@ class Auth extends Controller {
 
             //get user roles
             $tmp = $this->ion_auth->get_users_role($id);
-            $selected_roles = $tmp[0]['roles'];
+            $assigned_roles = $tmp[0]['roles'];
+
 
             
             // create data for checkbox
-            if (!empty($selected_roles)) {
-                foreach ($selected_roles as $role) {
+            if (!empty($assigned_roles)) {
+                foreach ($assigned_roles as $role) {
                     $this->data['user_roles'][$role] = array('name' => 'roles[]',
                         'value' => $role,
                         'checked' => $this->form_validation->set_checkbox('roles[]', $role)
@@ -651,8 +655,9 @@ class Auth extends Controller {
                 $this->data['user_roles'] = '';
             }
                         
+            $this->data['roles'] = $this->_get_roles_not_assigned_to_user($assigned_roles);
             
-            $roles = $this->ion_auth->get_roles($this->session->userdata('username'));
+/*            $roles = $this->ion_auth->get_roles($this->session->userdata('username'));
             
            
             // get roles list, only roles which NOT assigned to user
@@ -684,7 +689,7 @@ class Auth extends Controller {
                     'value' => $role['name'],
                 );
             }
-            
+*/            
             $this->data['op'] = 'edit';
             $this->load->view('auth/add_edit_user', $this->data);
         }
@@ -692,6 +697,8 @@ class Auth extends Controller {
     
     function edit_user_ldap($username) {
         $this->data['title'] = "Edit User";
+        $this->data['user_type'] = 'external';
+        
        
         //validate form input
         $this->form_validation->set_rules('user_name', 'First Name', 'required|xss_clean');
@@ -734,6 +741,7 @@ class Auth extends Controller {
             $roles = $this->ion_auth->get_roles($this->session->userdata('username'));
           
             $user = $this->ion_auth->get_ldap_user_details_from_local_db($username);
+            /*
             $user_roles=array();
             if($user !==NULL){
                 $user_roles=$user->roles;
@@ -745,12 +753,73 @@ class Auth extends Controller {
                     'checked' => $this->form_validation->set_checkbox('role[]', $role['name'], (in_array($role['name'], $user_roles)) ? TRUE : FALSE)
                 );
             }
-
+*/
+            
+            
+            $assigned_roles = array();
+            if($user !==NULL){
+                $assigned_roles = $user->roles;
+            }
+            
+            // create data for checkbox
+            if (!empty($assigned_roles)) {
+                foreach ($assigned_roles as $role) {
+                    $this->data['user_roles'][$role] = array('name' => 'roles[]',
+                        'value' => $role,
+                        'checked' => $this->form_validation->set_checkbox('roles[]', $role)
+                    );
+                }
+            }
+            else {
+                $this->data['user_roles'] = '';
+            }
+            
+            $this->data['roles'] = $this->_get_roles_not_assigned_to_user($assigned_roles);
+            
+            $this->data['op'] = 'edit';
+            
             //$this->data['role']=array('name'=>'role','options'=>$options,'default'=>set_value('role', $user->role_id));
-            $this->load->view('auth/edit_user_ldap', $this->data);
+            $this->load->view('auth/edit_user', $this->data);
         }
     }
+    
+    function _get_roles_not_assigned_to_user($assignedRoles = array()) {
 
+        $roles = $this->ion_auth->get_roles($this->session->userdata('username'));
+
+        // get roles list, only roles which NOT assigned to user
+        if (!empty($assignedRoles)) {
+            //prepare data
+            $assignedRoles_tmp = array();
+
+            foreach ($assignedRoles as $role) {
+                $assignedRoles_tmp[$role] = array(
+                    'name' => $role,
+                );
+            }
+            //create roles array, which will look as [key] = value
+            $roles_tmp = array();
+            foreach ($roles as $item => $role) {
+                //$roles_tmp[$role['name']] = $role['name'];
+                $roles_tmp[$role['name']] = array(
+                    'name' => $role['name'],
+                );
+            }
+
+            //diff data
+            $roles = arrayRecursiveDiff($roles_tmp, $assignedRoles_tmp);
+        }
+
+        $available_roles = array();
+
+        foreach ($roles as $role) {
+            $available_roles[$role['name']] = array(
+                'value' => $role['name'],
+            );
+        }
+        return $available_roles;
+    }
+    
     function manage_role($op=false, $rolename=false) {
 
         if (!$this->ion_auth->logged_in()) {
