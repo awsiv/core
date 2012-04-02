@@ -1044,7 +1044,7 @@ int Nova2Txt_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int buf
     bson_append_string(&bb, cfr_keyhash, hostkey);
     bson_from_buffer(&query, &bb);
 
-    hq = CFDB_QueryHosts(&dbconn, MONGO_DATABASE, cfr_keyhash, &query);
+    hq = CFDB_QueryHosts(&dbconn, MONGO_DATABASE, &query);
     bson_destroy(&query);
 
     hostnameOut[0] = '\0';

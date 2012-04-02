@@ -278,7 +278,7 @@ void CFDB_ListEverything(mongo_connection *conn)
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryHosts(mongo_connection *conn, char *db, char *dbkey, bson *query)
+HubQuery *CFDB_QueryHosts(mongo_connection *conn, char *db, bson *query)
 {
     bson_buffer bb;
     bson field;
@@ -291,7 +291,6 @@ HubQuery *CFDB_QueryHosts(mongo_connection *conn, char *db, char *dbkey, bson *q
 /* BEGIN RESULT DOCUMENT */
 
     bson_buffer_init(&bb);
-    bson_append_int(&bb, dbkey, 1);
     bson_append_int(&bb, cfr_ip_array, 1);
     bson_append_int(&bb, cfr_host_array, 1);
     bson_from_buffer(&field, &bb);
@@ -353,7 +352,7 @@ HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, 
 
     bson_from_buffer(&query, &bb);
 
-    hq = CFDB_QueryHosts(conn, MONGO_DATABASE, cfr_keyhash, &query);
+    hq = CFDB_QueryHosts(conn, MONGO_DATABASE, &query);
 
     bson_destroy(&query);
 
@@ -374,7 +373,7 @@ HubQuery *CFDB_QueryHostByHostKey(mongo_connection *conn, char *hostKey)
     bson_append_string(&bb, cfr_keyhash, hostKey);
     bson_from_buffer(&query, &bb);
 
-    hq = CFDB_QueryHosts(conn, MONGO_DATABASE, cfr_keyhash, &query);
+    hq = CFDB_QueryHosts(conn, MONGO_DATABASE, &query);
 
     bson_destroy(&query);
 

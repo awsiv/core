@@ -2338,7 +2338,7 @@ int Nova2PHP_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int buf
         return false;
     }
 
-    hq = CFDB_QueryHosts(&dbconn, MONGO_DATABASE, cfr_keyhash, &query);
+    hq = CFDB_QueryHosts(&dbconn, MONGO_DATABASE, &query);
     bson_destroy(&query);
 
     hostnameOut[0] = '\0';

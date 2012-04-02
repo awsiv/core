@@ -9,7 +9,7 @@
 // Set Queries
 //*****************************************************************************
 
-HubQuery *CFDB_QueryHosts(mongo_connection *conn, char *db, char *dbkey, bson *query);
+HubQuery *CFDB_QueryHosts(mongo_connection *conn, char *db, bson *query);
 HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, char *ipRegex,
                                    HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryHostByHostKey(mongo_connection *conn, char *hostKey);
