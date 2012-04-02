@@ -1460,7 +1460,7 @@ int Nova2PHP_vars_report(char *hostkey, char *scope, char *lval, char *rval, cha
         return false;
     }
 
-    hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, rval, type, regex, hostClassFilter);
+    hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, rval, type, regex, 0, time(NULL), hostClassFilter);
 
     CountMarginRecordsVars(&(hq->records), page, &first_scope_record_count, &last_scope_record_count);
     PageRecords(&(hq->records), page, DeleteHubVariable);
@@ -2467,7 +2467,7 @@ int Nova2PHP_vars_hosts(char *hostkey, char *scope, char *lval, char *rval, char
         return false;
     }
 
-    HubQuery *hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, rval, type, regex, hostClassFilter);
+    HubQuery *hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, rval, type, regex, 0, time(NULL), hostClassFilter);
 
     CreateJsonHostOnlyReport(&(hq->hosts), page, returnval, bufsize);
 

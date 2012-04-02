@@ -1107,7 +1107,7 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn, char *keyHash, char 
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscope, char *llval, char *lrval,
-                              const char *ltype, int regex, HostClassFilter *hostClassFilter)
+                              const char *ltype, int regex, time_t from, time_t to, HostClassFilter *hostClassFilter)
 {
     bson_buffer bb;
     bson query, field;
@@ -1116,11 +1116,10 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
     HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL, *newlist = NULL;
     int found = false;
-    int match_type, match_scope, match_lval, match_rval;
+    bool match_type, match_scope, match_lval, match_rval, match_time;
     char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE];
     char rscope[CF_MAXVARSIZE], rlval[CF_MAXVARSIZE], dtype[CF_MAXVARSIZE], rtype;
     void *rrval;
-    time_t rt;
 
     bson_buffer_init(&bb);
 
@@ -1183,7 +1182,7 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
                         rrval = NULL;
                         newlist = NULL;
                         dtype[0] = '\0';
-                        rt = 0;
+                        time_t timestamp = 0;
 
                         bson_iterator_init(&it4, bson_iterator_value(&it3));
 
@@ -1220,7 +1219,7 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
                             }
                             else if (strcmp(bson_iterator_key(&it4), cfr_time) == 0)
                             {
-                                rt = bson_iterator_int(&it4);
+                                timestamp = bson_iterator_int(&it4);
                             }
                             else
                             {
@@ -1230,7 +1229,7 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
 
                         // Now do selection
 
-                        match_type = match_scope = match_lval = match_rval = true;
+                        match_type = match_scope = match_lval = match_rval = match_time = true;
 
                         if (regex)
                         {
@@ -1277,10 +1276,15 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
                             }
                         }
 
+                        if (timestamp < from || timestamp > to)
+                        {
+                            match_time = false;
+                        }
+
                         Rval rval = (Rval) { rrval, rtype };
 
                         // NOTE: rrval's ownership (deallocation) is either transferred, or it is freed here
-                        if (match_type && match_scope && match_lval && match_rval)
+                        if (match_type && match_scope && match_lval && match_rval && match_time)
                         {
                             found = true;
 
@@ -1289,7 +1293,7 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
                                 hh = CreateEmptyHubHost();
                             }
 
-                            PrependRlistAlien(&record_list, NewHubVariable(hh, dtype, rscope, rlval, rval, rt));
+                            PrependRlistAlien(&record_list, NewHubVariable(hh, dtype, rscope, rlval, rval, timestamp));
                         }
                         else
                         {

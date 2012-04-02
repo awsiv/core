@@ -424,10 +424,9 @@ PHP_FUNCTION(cfpr_host_info)
     }
 
     mongo_connection conn;
-
     DATABASE_OPEN(&conn);
 
-    HubQuery *result = CFDB_QueryVariables(&conn, hostKey, NULL, NULL, NULL, NULL, false, NULL);
+    HubQuery *result = CFDB_QueryVariables(&conn, hostKey, NULL, NULL, NULL, NULL, false, 0, time(NULL), NULL);
 
     time_t last_report_update = -1;
     int last_update_size = 0;

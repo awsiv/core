@@ -446,7 +446,7 @@ int Nova2Txt_vars_report(char *hostkey, char *scope, char *lval, char *rval, cha
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, rval, type, regex, filter);
+    hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, rval, type, regex, 0, time(NULL), filter);
     DeleteHostClassFilter(filter);
 
     if (!CSV)
@@ -1278,7 +1278,7 @@ int Nova2Txt_vars_hosts(char *hostkey, char *scope, char *lval, char *rval, char
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, rval, type, regex, filter);
+    hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, rval, type, regex, 0, time(NULL), filter);
     DeleteHostClassFilter(filter);
 
     StartJoin(returnval, "[", bufsize);

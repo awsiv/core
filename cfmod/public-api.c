@@ -705,12 +705,20 @@ static const char *SerializeRvalType(const char *str)
 PHP_FUNCTION(cfmod_resource_variable)
 {
     char *username = NULL, *hostkey = NULL, *scope = NULL, *name = NULL, *value = NULL, *type = NULL, *context = NULL;
+    long from = 0,
+         to = 0;
     int len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssss",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssssll",
                               &username, &len,
                               &hostkey, &len,
-                              &scope, &len, &name, &len, &value, &len, &type, &len, &context, &len) == FAILURE)
+                              &scope, &len,
+                              &name, &len,
+                              &value, &len,
+                              &type, &len,
+                              &context, &len,
+                              &from,
+                              &to) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -720,20 +728,20 @@ PHP_FUNCTION(cfmod_resource_variable)
 
     {
         HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-
         ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
         HostClassFilterAddClasses(filter, context, NULL);
 
         mongo_connection conn;
+        DATABASE_OPEN(&conn);
 
-        DATABASE_OPEN(&conn)
-            result = CFDB_QueryVariables(&conn, hostkey, scope, name, value, SerializeRvalType(type), true, filter);
+        result = CFDB_QueryVariables(&conn, hostkey, scope, name, value, SerializeRvalType(type), true, from, to, filter);
+
+        DATABASE_CLOSE(&conn);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-    DATABASE_CLOSE(&conn)}
+    }
     assert(result);
 
     JsonElement *values = JsonArrayCreate(100);
