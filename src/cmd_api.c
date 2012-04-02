@@ -55,7 +55,7 @@ int Nova2Txt_summary_report(char *hostkey, char *handle, char *status, int regex
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, false, filter);
+    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), false, filter);
     DeleteHostClassFilter(filter);
 
     n = k = r = 0;
@@ -597,7 +597,7 @@ int Nova2Txt_compliance_promises(char *hostkey, char *handle, char *status, int 
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, true, filter);
+    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), true, filter);
     DeleteHostClassFilter(filter);
 
     if (!CSV)
@@ -1405,7 +1405,7 @@ int Nova2Txt_promise_hosts(char *hostkey, char *handle, char *status, int regex,
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, false, filter);
+    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), false, filter);
     DeleteHostClassFilter(filter);
 
     StartJoin(returnval, "[", bufsize);

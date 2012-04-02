@@ -300,7 +300,7 @@ int Nova2PHP_summary_report(char *hostkey, char *handle, char *status, int regex
         status = "x";
     }
 
-    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, false, hostClassFilter);
+    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), false, hostClassFilter);
 
     n = k = r = 0;
     n_av = k_av = r_av = 0;
@@ -1694,7 +1694,7 @@ int Nova2PHP_compliance_promises(char *hostkey, char *handle, char *status, int 
         status = "x";
     }
 
-    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, true, hostClassFilter);
+    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), true, hostClassFilter);
     PageRecords(&(hq->records), page, DeleteHubPromiseCompliance);
 
     snprintf(header, sizeof(header),
@@ -2536,7 +2536,7 @@ int Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status, int regex,
         status = "x";
     }
 
-    HubQuery *hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, false, hostClassFilter);
+    HubQuery *hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), false, hostClassFilter);
 
     CreateJsonHostOnlyReport(&(hq->hosts), page, returnval, bufsize);
 

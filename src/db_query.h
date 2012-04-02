@@ -36,7 +36,7 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn, char *keyHash, char 
 HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscope, char *llval, char *lrval,
                               const char *ltype, int regex, HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, char *lhandle, PromiseState lstatus,
-                                      int regex, time_t minTime, int sort, HostClassFilter *hostClassFilter);
+                                      int regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash, char *lhost, char *laddr, time_t lago,
                              int regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryMeter(mongo_connection *conn, bson *query, char *db);

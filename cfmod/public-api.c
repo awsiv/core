@@ -303,40 +303,39 @@ static const char *PromiseStateToString(PromiseState state)
 PHP_FUNCTION(cfmod_resource_promise_compliance)
 {
     char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL, *state = NULL;
-    long from;
+    long from = 0,
+         to = 0;
     int len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssl",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssll",
                               &username, &len,
                               &handle, &len,
                               &hostkey, &len,
                               &context, &len,
                               &state, &len,
-                              &from) == FAILURE)
+                              &from,
+                              &to) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
     }
 
     HubQuery *result = NULL;
-
     {
         HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-
         ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
         HostClassFilterAddClasses(filter, context, NULL);
 
         mongo_connection conn;
+        DATABASE_OPEN(&conn);
 
-        DATABASE_OPEN(&conn)
-            result = CFDB_QueryPromiseCompliance(&conn, hostkey, handle, PromiseStateFromString(state),
-                                                 true, 0, true, filter);
+        result = CFDB_QueryPromiseCompliance(&conn, hostkey, handle, PromiseStateFromString(state),
+                                             true, from, to, true, filter);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-        DATABASE_CLOSE(&conn)
+        DATABASE_CLOSE(&conn);
     }
     assert(result);
 

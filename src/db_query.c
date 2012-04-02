@@ -1314,7 +1314,7 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, char *lhandle, PromiseState lstatus,
-                                      int regex, time_t minTime, int sort, HostClassFilter *hostClassFilter)
+                                      int regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter)
 // status = c (compliant), r (repaired) or n (not kept), x (any)
 {
     bson_buffer bb;
@@ -1323,7 +1323,6 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
     bson_iterator it1, it2, it3;
     HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL;
-    time_t rtime;
     double rsigma, rex;
     char rhandle[CF_MAXVARSIZE], rstatus, *prstat;
     char keyHashDb[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE];
@@ -1385,7 +1384,7 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
 
                     rex = 0;
                     rsigma = 0;
-                    rtime = 0;
+                    time_t timestamp = 0;
                     rstatus = 'x';
 
                     while (bson_iterator_next(&it3))
@@ -1400,7 +1399,7 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
                         }
                         else if (strcmp(bson_iterator_key(&it3), cfr_time) == 0)
                         {
-                            rtime = bson_iterator_int(&it3);
+                            timestamp = bson_iterator_int(&it3);
                         }
                         else if (strcmp(bson_iterator_key(&it3), cfr_promisestatus) == 0)
                         {
@@ -1438,7 +1437,7 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
                         match_status = false;
                     }
 
-                    if (minTime != 0 && rtime < minTime)
+                    if (timestamp < from || timestamp > to)
                     {
                         match_time = false;
                     }
@@ -1452,7 +1451,7 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(&record_list, NewHubCompliance(hh, rhandle, rstatus, rex, rsigma, rtime));
+                        PrependRlistAlien(&record_list, NewHubCompliance(hh, rhandle, rstatus, rex, rsigma, timestamp));
                     }
                 }
             }
