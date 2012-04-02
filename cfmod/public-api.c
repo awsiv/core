@@ -177,10 +177,15 @@ static JsonElement *HostsLastSeen(Rlist *records, LastSeenDirection direction)
 PHP_FUNCTION(cfmod_resource_host_id_seen)
 {
     char *username = NULL, *hostkey = NULL;
-    long from = 0;
+    long from = 0,
+         to = 0;
     int len = -1;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssl", &username, &len, &hostkey, &len, &from) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssll",
+                              &username, &len,
+                              &hostkey, &len,
+                              &from,
+                              &to) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -197,7 +202,7 @@ PHP_FUNCTION(cfmod_resource_host_id_seen)
 
         mongo_connection conn;
 
-        DATABASE_OPEN(&conn) result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, from, false, false, filter);
+        DATABASE_OPEN(&conn) result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, 0, false, from, to, false, filter);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
         DATABASE_CLOSE(&conn);
@@ -214,10 +219,15 @@ PHP_FUNCTION(cfmod_resource_host_id_seen)
 PHP_FUNCTION(cfmod_resource_host_id_seenby)
 {
     char *username = NULL, *hostkey = NULL;
-    long from = 0;
+    long from = 0,
+         to = 0;
     int len = -1;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssl", &username, &len, &hostkey, &len, &from) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssll",
+                              &username, &len,
+                              &hostkey, &len,
+                              &from,
+                              &to) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -234,7 +244,7 @@ PHP_FUNCTION(cfmod_resource_host_id_seenby)
 
         mongo_connection conn;
 
-        DATABASE_OPEN(&conn) result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, from, false, false, filter);
+        DATABASE_OPEN(&conn) result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, 0, false, from, to, false, filter);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
     DATABASE_CLOSE(&conn)}

@@ -1767,7 +1767,7 @@ int Nova2PHP_lastseen_report(char *hostkey, char *lhash, char *lhost, char *ladd
     {
         return false;
     }
-    hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex, true, hostClassFilter);
+    hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex, 0, time(NULL), true, hostClassFilter);
     PageRecords(&(hq->records), page, DeleteHubLastSeen);
 
     snprintf(header, sizeof(header),
@@ -2562,7 +2562,7 @@ int Nova2PHP_lastseen_hosts(char *hostkey, char *lhash, char *lhost, char *laddr
         return false;
     }
 
-    HubQuery *hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex, false, hostClassFilter);
+    HubQuery *hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex, 0, time(NULL), false, hostClassFilter);
 
     CreateJsonHostOnlyReport(&(hq->hosts), page, returnval, bufsize);
 

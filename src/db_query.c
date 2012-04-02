@@ -1478,7 +1478,7 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash, char *lhost, char *laddr, time_t lago,
-                             int regex, int sort, HostClassFilter *hostClassFilter)
+                             int regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter)
 {
     bson_buffer bb;
     bson query, field;
@@ -1489,8 +1489,7 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash,
     double rago, ravg, rdev;
     char rhash[CF_MAXVARSIZE], rhost[CF_MAXVARSIZE], raddr[CF_MAXVARSIZE];
     char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE];
-    int match_host, match_hash, match_addr, match_ago, found = false;
-    time_t rt;
+    bool match_host, match_hash, match_addr, match_ago, match_timestamp, found = false;
 
 /* BEGIN query document */
     bson_buffer_init(&bb);
@@ -1550,7 +1549,7 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash,
                     ravg = 0;
                     rdev = 0;
                     rago = 0;
-                    rt = 0;
+                    time_t timestamp = 0;
 
                     while (bson_iterator_next(&it3))
                     {
@@ -1576,7 +1575,7 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash,
                         }
                         else if (strcmp(bson_iterator_key(&it3), cfr_time) == 0)
                         {
-                            rt = (time_t) bson_iterator_int(&it3);
+                            timestamp = (time_t) bson_iterator_int(&it3);
                         }
                         else
                         {
@@ -1584,7 +1583,7 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash,
                         }
                     }
 
-                    match_host = match_addr = match_hash = match_ago = true;
+                    match_host = match_addr = match_hash = match_ago = match_timestamp = true;
 
                     if (regex)
                     {
@@ -1627,7 +1626,12 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash,
                         match_ago = false;
                     }
 
-                    if (match_hash && match_host && match_addr && match_ago)
+                    if (timestamp < from || timestamp > to)
+                    {
+                        match_timestamp = false;
+                    }
+
+                    if (match_hash && match_host && match_addr && match_ago && match_timestamp)
                     {
                         found = true;
 
@@ -1639,7 +1643,7 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash,
                         LastSeenDirection direction = *rhash;
 
                         PrependRlistAlien(&record_list,
-                                          NewHubLastSeen(hh, direction, rhash + 1, rhost, raddr, rago, ravg, rdev, rt));
+                                          NewHubLastSeen(hh, direction, rhash + 1, rhost, raddr, rago, ravg, rdev, timestamp));
                     }
                 }
             }
