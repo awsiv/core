@@ -66,7 +66,8 @@
                     $("#formInfoMessage").show();
                     window.scrollTo(null, ($('#formInfoMessage').position().top - 20));
                 }
-                $('.blockUI').hide();                
+                $('.blockUI').hide();   
+                $(document).unblock();
                 return;
             }   
             };
