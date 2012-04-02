@@ -44,7 +44,8 @@
     padding-top: 150px;
 }
 .selected_item {
-    background: #d9d9d2 !important;
+    background: #acd2e1 !important;
+    border-bottom: 1px solid #FFF;
 }
 input[readonly] {background: buttonface;}
 
@@ -105,7 +106,7 @@ edit_form_wrapper td {
     border: none !important;
 }
 #edit_form_wrapper, #edit_form td {
-    background: #ccc !important;
+    background: #d2dacf !important;
 }
 
 #edit_form .edit_cell {
