@@ -43,6 +43,8 @@ class Settings extends Cf_Controller {
         //$this->form_validation->set_rules('member_attribute', 'memberof attribute', 'xss_clean|trim');
         $this->form_validation->set_rules('fall_back_for', 'valid role', 'callback_required_valid_role');
         $this->form_validation->set_rules('admin_role', 'valid role');
+        $this->form_validation->set_rules('external_admin_username', 'External admin user name', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
+        
         $this->form_validation->set_rules('encryption', 'Encryption mode', 'xss_clean|trim' . $required_if_ldap . $required_if_ad);
         $this->form_validation->set_rules('bluehost_threshold_global', 'Blue host horizon', 'callback_validate_bluehost_threshold');
         $this->form_validation->set_error_delimiters('<span>', '</span><br/>');
@@ -131,6 +133,7 @@ class Settings extends Cf_Controller {
                     //'users_directory[]' => set_value('users_directory[]'),
                     //'active_directory' => set_value('active_directory'),
                     'active_directory_domain' => set_value('active_directory_domain'),
+                    
                     //'member_attribute' => set_value('member_attribute'),
                     'encryption' => set_value('encryption')
                 );
@@ -156,6 +159,8 @@ class Settings extends Cf_Controller {
                 'fall_back_for' => $this->input->post('fall_back_for'),
                 'admin_role' => $this->input->post('admin_role'),
                 'encryption' => set_value('encryption'),
+                'external_admin_username' => $this->input->post('external_admin_username'),
+                
                 'rbac'=>set_value('rbac'),
                 'bluehost_threshold_global' => "$bluehost_threshold_min",
                 'experimental' => $this->input->post('experimental') === '1',
@@ -169,6 +174,17 @@ class Settings extends Cf_Controller {
             } else {
                 $inserted = $this->settings_model->insert_app_settings($form_data);
             }
+            
+            // check auth mode and create admin user in ldap_users
+            if ($form_data['mode'] == 'ldap') {
+                //create external admin username user with fallback role
+                $external_admin_username = $form_data['external_admin_username'];
+                $admin_role              = (array) $form_data['admin_role'];
+                
+                $this->ion_auth->update_ldap_users($external_admin_username, $admin_role);
+            }
+            
+
             
             if ($inserted) {// the information has therefore been successfully saved in the db
 //redirect('settings/success');   

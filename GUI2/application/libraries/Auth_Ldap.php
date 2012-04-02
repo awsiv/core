@@ -153,7 +153,7 @@ class Auth_Ldap {
                 'user_id' => $username,
                 'username' => $username,
                 'cn' => $user_info['cn'],
-                'role' => $user_info['role'],
+                'roles' => $user_info['role'],
                 'dn'=>$user_info['dn']
             );
             return $customdata;
