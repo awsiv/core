@@ -55,7 +55,7 @@ int Nova2Txt_summary_report(char *hostkey, char *handle, char *status, int regex
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, false, filter);
+    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), false, filter);
     DeleteHostClassFilter(filter);
 
     n = k = r = 0;
@@ -399,7 +399,8 @@ int Nova2Txt_classes_report(char *hostkey, char *name, int regex, char *classreg
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, (time_t) SECONDS_PER_WEEK, filter, true);
+    time_t now = time(NULL);
+    hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, now - (time_t)SECONDS_PER_WEEK, now, filter, true);
     DeleteHostClassFilter(filter);
 
     if (!CSV)
@@ -445,7 +446,7 @@ int Nova2Txt_vars_report(char *hostkey, char *scope, char *lval, char *rval, cha
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, rval, type, regex, filter);
+    hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, rval, type, regex, 0, time(NULL), filter);
     DeleteHostClassFilter(filter);
 
     if (!CSV)
@@ -596,7 +597,7 @@ int Nova2Txt_compliance_promises(char *hostkey, char *handle, char *status, int 
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, true, filter);
+    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), true, filter);
     DeleteHostClassFilter(filter);
 
     if (!CSV)
@@ -651,7 +652,7 @@ int Nova2Txt_lastseen_report(char *hostkey, char *lhash, char *lhost, char *ladd
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex, true, filter);
+    hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex, 0, time(NULL), true, filter);
     DeleteHostClassFilter(filter);
 
     if (!CSV)
@@ -716,7 +717,7 @@ int Nova2Txt_deadclient_report(char *hostkey, char *lhash, char *lhost, char *la
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex, true, filter);
+    hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex, 0, time(NULL), true, filter);
     DeleteHostClassFilter(filter);
 
     if (!CSV)
@@ -899,24 +900,13 @@ int Nova2Txt_bundle_report(char *hostkey, char *bundle, int regex, char *classre
 
 /*****************************************************************************/
 
-int Nova2Txt_filechanges_report(char *hostkey, char *file, int regex, time_t t, char *cmp, char *classreg)
+int Nova2Txt_filechanges_report(char *hostkey, char *file, int regex, time_t from, time_t to, char *classreg)
 {
     char buffer[CF_SMALLBUF];
     HubFileChanges *hC;
     HubQuery *hq;
     Rlist *rp;
-    int icmp;
     mongo_connection dbconn;
-
-    switch (*cmp)
-    {
-    case '<':
-        icmp = CFDB_LESSTHANEQ;
-        break;
-    default:
-        icmp = CFDB_GREATERTHANEQ;
-        break;
-    }
 
     if (!CFDB_Open(&dbconn))
     {
@@ -926,7 +916,7 @@ int Nova2Txt_filechanges_report(char *hostkey, char *file, int regex, time_t t, 
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, t, icmp, true, filter);
+    hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, from, to, true, filter);
     DeleteHostClassFilter(filter);
 
     if (!CSV)
@@ -970,23 +960,12 @@ int Nova2Txt_filechanges_report(char *hostkey, char *file, int regex, time_t t, 
 
 /*****************************************************************************/
 
-int Nova2Txt_filediffs_report(char *hostkey, char *file, char *diffs, int regex, time_t t, char *cmp, char *classreg)
+int Nova2Txt_filediffs_report(char *hostkey, char *file, char *diffs, int regex, time_t from, time_t to, char *classreg)
 {
     HubFileDiff *hd;
     HubQuery *hq;
     Rlist *rp;
-    int icmp;
     mongo_connection dbconn;
-
-    switch (*cmp)
-    {
-    case '<':
-        icmp = CFDB_LESSTHANEQ;
-        break;
-    default:
-        icmp = CFDB_GREATERTHANEQ;
-        break;
-    }
 
     if (!CFDB_Open(&dbconn))
     {
@@ -996,7 +975,7 @@ int Nova2Txt_filediffs_report(char *hostkey, char *file, char *diffs, int regex,
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, t, icmp, true, filter);
+    hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, from, to, true, filter);
     DeleteHostClassFilter(filter);
 
     for (rp = hq->records; rp != NULL; rp = rp->next)
@@ -1241,7 +1220,8 @@ int Nova2Txt_classes_hosts(char *hostkey, char *name, int regex, char *classreg,
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, (time_t) SECONDS_PER_WEEK, filter, false);
+    time_t now = time(NULL);
+    hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, now - (time_t)SECONDS_PER_WEEK, now, filter, false);
     DeleteHostClassFilter(filter);
 
     StartJoin(returnval, "[", bufsize);
@@ -1298,7 +1278,7 @@ int Nova2Txt_vars_hosts(char *hostkey, char *scope, char *lval, char *rval, char
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, rval, type, regex, filter);
+    hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, rval, type, regex, 0, time(NULL), filter);
     DeleteHostClassFilter(filter);
 
     StartJoin(returnval, "[", bufsize);
@@ -1425,7 +1405,7 @@ int Nova2Txt_promise_hosts(char *hostkey, char *handle, char *status, int regex,
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, false, filter);
+    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), false, filter);
     DeleteHostClassFilter(filter);
 
     StartJoin(returnval, "[", bufsize);
@@ -1483,7 +1463,7 @@ int Nova2Txt_lastseen_hosts(char *hostkey, char *lhash, char *lhost, char *laddr
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex, false, filter);
+    hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex, 0, time(NULL), false, filter);
     DeleteHostClassFilter(filter);
 
     StartJoin(returnval, "[", bufsize);
@@ -1677,138 +1657,6 @@ int Nova2Txt_bundle_hosts(char *hostkey, char *bundle, int regex, char *classreg
     EndJoin(returnval, "]", bufsize);
 
     DeleteHubQuery(hq, DeleteHubBundleSeen);
-
-    if (!CFDB_Close(&dbconn))
-    {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
-    }
-
-    return true;
-}
-
-/*****************************************************************************/
-
-int Nova2Txt_filechanges_hosts(char *hostkey, char *file, int regex, time_t t, char *cmp, char *classreg,
-                               char *returnval, int bufsize)
-{
-    char buffer[CF_BUFSIZE];
-    HubHost *hh;
-    HubQuery *hq;
-    Rlist *rp;
-    int counter = 0, n = 180, icmp;
-    mongo_connection dbconn;
-
-/* BEGIN query document */
-    switch (*cmp)
-    {
-    case '<':
-        icmp = CFDB_LESSTHANEQ;
-        break;
-    default:
-        icmp = CFDB_GREATERTHANEQ;
-        break;
-    }
-
-    if (!CFDB_Open(&dbconn))
-    {
-        CfOut(cf_verbose, "", "!! Could not open connection to report database");
-        return false;
-    }
-
-    HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
-
-    hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, t, icmp, false, filter);
-    DeleteHostClassFilter(filter);
-
-    StartJoin(returnval, "[", bufsize);
-
-    for (rp = hq->hosts; rp != NULL; rp = rp->next)
-    {
-        hh = (HubHost *) rp->item;
-        counter++;
-        snprintf(buffer, CF_MAXVARSIZE, "{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},", hh->keyhash,
-                 hh->hostname, hh->ipaddr);
-
-        if (!Join(returnval, buffer, bufsize))
-        {
-            break;
-        }
-
-        if (counter > n && counter % 6 == 0)
-        {
-            break;
-        }
-    }
-
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
-
-    DeleteHubQuery(hq, DeleteHubFileChanges);
-
-    CFDB_Close(&dbconn);
-
-    return true;
-}
-
-/*****************************************************************************/
-
-int Nova2Txt_filediffs_hosts(char *hostkey, char *file, char *diffs, int regex, time_t t, char *cmp, char *classreg,
-                             char *returnval, int bufsize)
-{
-    char buffer[CF_BUFSIZE];
-    HubHost *hh;
-    HubQuery *hq;
-    Rlist *rp;
-    int counter = 0, n = 180, icmp;
-    mongo_connection dbconn;
-
-    switch (*cmp)
-    {
-    case '<':
-        icmp = CFDB_LESSTHANEQ;
-        break;
-    default:
-        icmp = CFDB_GREATERTHANEQ;
-        break;
-    }
-
-    if (!CFDB_Open(&dbconn))
-    {
-        CfOut(cf_verbose, "", "!! Could not open connection to report database");
-        return false;
-    }
-
-    HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
-
-    hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, t, icmp, false, filter);
-    DeleteHostClassFilter(filter);
-
-    StartJoin(returnval, "[", bufsize);
-
-    for (rp = hq->hosts; rp != NULL; rp = rp->next)
-    {
-        hh = (HubHost *) rp->item;
-        counter++;
-        snprintf(buffer, CF_MAXVARSIZE, "{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},", hh->keyhash,
-                 hh->hostname, hh->ipaddr);
-
-        if (!Join(returnval, buffer, bufsize))
-        {
-            break;
-        }
-
-        if (counter > n && counter % 6 == 0)
-        {
-            break;
-        }
-    }
-    if (returnval[strlen(returnval) - 1] == ',')
-    {
-        returnval[strlen(returnval) - 1] = '\0';
-    }
-
-    EndJoin(returnval, "]\n", bufsize);
-    DeleteHubQuery(hq, DeleteHubFileDiff);
 
     if (!CFDB_Close(&dbconn))
     {

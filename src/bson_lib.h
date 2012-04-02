@@ -12,11 +12,11 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 
 Item *BsonGetStringArrayAsItemList(const bson *b, const char *key);
 Rlist *BsonStringArrayAsRlist(const bson *b, const char *key);
+bool BsonStringGet(const bson *b, const char *key, char **out);
 bool BsonBoolGet(const bson *b, const char *key, bool *out);
 bool BsonIntGet(const bson *b, const char *key, int *out);
 bool BsonTimeGet(const bson *b, const char *key, time_t *out);
 bool BsonIsArrayNonExistentOrEmpty(const bson *b, const char *key);
-const char *BsonGetString(const bson *b, const char *key);
 void BsonStringWrite(char *dest, int destSz, const bson *b, const char *key);
 bool BsonAppendStringSafe(bson_buffer *bb, char *key, char *value);
 bool BsonAppendRegexSafe(bson_buffer *bb, char *key, char *rxValue);

@@ -447,7 +447,10 @@ HubQuery *CFDB_QueryColour(mongo_connection *conn, const HostRankMethod method, 
             Item *host_names = BsonGetStringArrayAsItemList(&cursor->current, cfr_host_array);
             Item *ip_addresses = BsonGetStringArrayAsItemList(&cursor->current, cfr_ip_array);
 
-            host = NewHubHost(NULL, BsonGetString(&cursor->current, cfr_keyhash), ip_addresses->name, host_names->name);
+            char *hostkey = NULL;
+            assert(BsonStringGet(&cursor->current, cfr_keyhash, &hostkey));
+
+            host = NewHubHost(NULL, hostkey, ip_addresses->name, host_names->name);
 
             DeleteItemList(host_names);
             DeleteItemList(ip_addresses);
@@ -655,7 +658,7 @@ HubQuery *CFDB_QuerySoftware(mongo_connection *conn, char *keyHash, char *type, 
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass, int regex, time_t horizon,
+HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass, int regex, time_t from, time_t to,
                             HostClassFilter *hostClassFilter, int sort)
 {
     bson_buffer bb;
@@ -664,7 +667,6 @@ HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass,
     bson_iterator it1, it2, it3;
     HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL;
-    time_t rtime, now = time(NULL);
     double rsigma, rex;
     char rclass[CF_MAXVARSIZE];
     char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE];
@@ -724,7 +726,7 @@ HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass,
 
                     rex = 0;
                     rsigma = 0;
-                    rtime = 0;
+                    time_t timestamp = 0;
 
                     while (bson_iterator_next(&it3))
                     {
@@ -738,7 +740,7 @@ HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass,
                         }
                         else if (strcmp(bson_iterator_key(&it3), cfr_time) == 0)
                         {
-                            rtime = bson_iterator_int(&it3);
+                            timestamp = bson_iterator_int(&it3);
                         }
                         else
                         {
@@ -763,7 +765,12 @@ HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass,
                         }
                     }
 
-                    if (match_class && (now - rtime < horizon))
+                    if (timestamp < from || timestamp > to)
+                    {
+                        match_class = false;
+                    }
+
+                    if (match_class)
                     {
                         found = true;
 
@@ -772,7 +779,7 @@ HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass,
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(&record_list, NewHubClass(hh, rclass, rex, rsigma, rtime));
+                        PrependRlistAlien(&record_list, NewHubClass(hh, rclass, rex, rsigma, timestamp));
                     }
                 }
             }
@@ -1100,7 +1107,7 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn, char *keyHash, char 
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscope, char *llval, char *lrval,
-                              const char *ltype, int regex, HostClassFilter *hostClassFilter)
+                              const char *ltype, int regex, time_t from, time_t to, HostClassFilter *hostClassFilter)
 {
     bson_buffer bb;
     bson query, field;
@@ -1109,11 +1116,10 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
     HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL, *newlist = NULL;
     int found = false;
-    int match_type, match_scope, match_lval, match_rval;
+    bool match_type, match_scope, match_lval, match_rval, match_time;
     char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE];
     char rscope[CF_MAXVARSIZE], rlval[CF_MAXVARSIZE], dtype[CF_MAXVARSIZE], rtype;
     void *rrval;
-    time_t rt;
 
     bson_buffer_init(&bb);
 
@@ -1176,7 +1182,7 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
                         rrval = NULL;
                         newlist = NULL;
                         dtype[0] = '\0';
-                        rt = 0;
+                        time_t timestamp = 0;
 
                         bson_iterator_init(&it4, bson_iterator_value(&it3));
 
@@ -1213,7 +1219,7 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
                             }
                             else if (strcmp(bson_iterator_key(&it4), cfr_time) == 0)
                             {
-                                rt = bson_iterator_int(&it4);
+                                timestamp = bson_iterator_int(&it4);
                             }
                             else
                             {
@@ -1223,7 +1229,7 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
 
                         // Now do selection
 
-                        match_type = match_scope = match_lval = match_rval = true;
+                        match_type = match_scope = match_lval = match_rval = match_time = true;
 
                         if (regex)
                         {
@@ -1270,10 +1276,15 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
                             }
                         }
 
+                        if (timestamp < from || timestamp > to)
+                        {
+                            match_time = false;
+                        }
+
                         Rval rval = (Rval) { rrval, rtype };
 
                         // NOTE: rrval's ownership (deallocation) is either transferred, or it is freed here
-                        if (match_type && match_scope && match_lval && match_rval)
+                        if (match_type && match_scope && match_lval && match_rval && match_time)
                         {
                             found = true;
 
@@ -1282,7 +1293,7 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
                                 hh = CreateEmptyHubHost();
                             }
 
-                            PrependRlistAlien(&record_list, NewHubVariable(hh, dtype, rscope, rlval, rval, rt));
+                            PrependRlistAlien(&record_list, NewHubVariable(hh, dtype, rscope, rlval, rval, timestamp));
                         }
                         else
                         {
@@ -1307,7 +1318,7 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, char *lhandle, PromiseState lstatus,
-                                      int regex, time_t minTime, int sort, HostClassFilter *hostClassFilter)
+                                      int regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter)
 // status = c (compliant), r (repaired) or n (not kept), x (any)
 {
     bson_buffer bb;
@@ -1316,7 +1327,6 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
     bson_iterator it1, it2, it3;
     HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL;
-    time_t rtime;
     double rsigma, rex;
     char rhandle[CF_MAXVARSIZE], rstatus, *prstat;
     char keyHashDb[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE];
@@ -1378,7 +1388,7 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
 
                     rex = 0;
                     rsigma = 0;
-                    rtime = 0;
+                    time_t timestamp = 0;
                     rstatus = 'x';
 
                     while (bson_iterator_next(&it3))
@@ -1393,7 +1403,7 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
                         }
                         else if (strcmp(bson_iterator_key(&it3), cfr_time) == 0)
                         {
-                            rtime = bson_iterator_int(&it3);
+                            timestamp = bson_iterator_int(&it3);
                         }
                         else if (strcmp(bson_iterator_key(&it3), cfr_promisestatus) == 0)
                         {
@@ -1431,7 +1441,7 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
                         match_status = false;
                     }
 
-                    if (minTime != 0 && rtime < minTime)
+                    if (timestamp < from || timestamp > to)
                     {
                         match_time = false;
                     }
@@ -1445,7 +1455,7 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(&record_list, NewHubCompliance(hh, rhandle, rstatus, rex, rsigma, rtime));
+                        PrependRlistAlien(&record_list, NewHubCompliance(hh, rhandle, rstatus, rex, rsigma, timestamp));
                     }
                 }
             }
@@ -1471,7 +1481,7 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash, char *lhost, char *laddr, time_t lago,
-                             int regex, int sort, HostClassFilter *hostClassFilter)
+                             int regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter)
 {
     bson_buffer bb;
     bson query, field;
@@ -1482,8 +1492,7 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash,
     double rago, ravg, rdev;
     char rhash[CF_MAXVARSIZE], rhost[CF_MAXVARSIZE], raddr[CF_MAXVARSIZE];
     char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE];
-    int match_host, match_hash, match_addr, match_ago, found = false;
-    time_t rt;
+    bool match_host, match_hash, match_addr, match_ago, match_timestamp, found = false;
 
 /* BEGIN query document */
     bson_buffer_init(&bb);
@@ -1543,7 +1552,7 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash,
                     ravg = 0;
                     rdev = 0;
                     rago = 0;
-                    rt = 0;
+                    time_t timestamp = 0;
 
                     while (bson_iterator_next(&it3))
                     {
@@ -1569,7 +1578,7 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash,
                         }
                         else if (strcmp(bson_iterator_key(&it3), cfr_time) == 0)
                         {
-                            rt = (time_t) bson_iterator_int(&it3);
+                            timestamp = (time_t) bson_iterator_int(&it3);
                         }
                         else
                         {
@@ -1577,7 +1586,7 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash,
                         }
                     }
 
-                    match_host = match_addr = match_hash = match_ago = true;
+                    match_host = match_addr = match_hash = match_ago = match_timestamp = true;
 
                     if (regex)
                     {
@@ -1620,7 +1629,12 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash,
                         match_ago = false;
                     }
 
-                    if (match_hash && match_host && match_addr && match_ago)
+                    if (timestamp < from || timestamp > to)
+                    {
+                        match_timestamp = false;
+                    }
+
+                    if (match_hash && match_host && match_addr && match_ago && match_timestamp)
                     {
                         found = true;
 
@@ -1632,7 +1646,7 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash,
                         LastSeenDirection direction = *rhash;
 
                         PrependRlistAlien(&record_list,
-                                          NewHubLastSeen(hh, direction, rhash + 1, rhost, raddr, rago, ravg, rdev, rt));
+                                          NewHubLastSeen(hh, direction, rhash + 1, rhost, raddr, rago, ravg, rdev, timestamp));
                     }
                 }
             }
@@ -2022,7 +2036,7 @@ HubQuery *CFDB_QuerySetuid(mongo_connection *conn, char *keyHash, char *lname, i
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lname, int regex, time_t lt, int cmp,
+HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lname, int regex, time_t from, time_t to,
                                 int sort, HostClassFilter *hostClassFilter)
 {
     bson_buffer bb;
@@ -2034,7 +2048,6 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
     char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rname[CF_BUFSIZE], handle[CF_MAXVARSIZE],
         noteid[CF_MAXVARSIZE];
     int match_name, match_t, found = false;
-    time_t rt;
 
 /* BEGIN query document */
 
@@ -2088,7 +2101,7 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
                 bson_iterator_init(&it2, bson_iterator_value(&it1));
 
                 rname[0] = '\0';
-                rt = 0;
+                time_t timestamp = 0;
 
                 while (bson_iterator_next(&it2))
                 {
@@ -2104,7 +2117,7 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
                         }
                         else if (strcmp(bson_iterator_key(&it3), cfr_time) == 0)
                         {
-                            rt = bson_iterator_int(&it3);
+                            timestamp = bson_iterator_int(&it3);
                         }
                         else if (strcmp(bson_iterator_key(&it3), cfn_nid) == 0)
                         {
@@ -2114,19 +2127,9 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
 
                     match_name = match_t = true;
 
-                    if (cmp == CFDB_GREATERTHANEQ)
+                    if (timestamp < from || timestamp > to)
                     {
-                        if (lt != -1 && lt > rt)
-                        {
-                            match_t = false;
-                        }
-                    }
-                    else        // CFDB_LESSTHANEQ
-                    {
-                        if (lt != -1 && lt < rt)
-                        {
-                            match_t = false;
-                        }
+                        match_t = false;
                     }
 
                     if (regex)
@@ -2153,7 +2156,7 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(&record_list, NewHubFileChanges(hh, rname, rt, noteid, handle));
+                        PrependRlistAlien(&record_list, NewHubFileChanges(hh, rname, timestamp, noteid, handle));
                     }
                 }
             }
@@ -2178,8 +2181,8 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname, char *ldiff, int regex, time_t lt,
-                             int cmp, int sort, HostClassFilter *hostClassFilter)
+HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname, char *ldiff, int regex,
+                             time_t from, time_t to, int sort, HostClassFilter *hostClassFilter)
 {
     bson_buffer bb;
     bson query, field;
@@ -2189,7 +2192,6 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname,
     Rlist *record_list = NULL, *host_list = NULL;
     char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rname[CF_MAXVARSIZE], rdiff[CF_BUFSIZE];
     int match_name, match_t, match_diff, found = false;
-    time_t rt = 0;
 
 /* BEGIN query document */
 
@@ -2238,7 +2240,7 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname,
                 bson_iterator_init(&it2, bson_iterator_value(&it1));
 
                 rname[0] = '\0';
-                rt = 0;
+                time_t timestamp = 0;
 
                 while (bson_iterator_next(&it2))
                 {
@@ -2256,25 +2258,15 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname,
                         }
                         else if (strcmp(bson_iterator_key(&it3), cfr_time) == 0)
                         {
-                            rt = bson_iterator_int(&it3);
+                            timestamp = bson_iterator_int(&it3);
                         }
                     }
 
                     match_name = match_diff = match_t = true;
 
-                    if (cmp == CFDB_GREATERTHANEQ)
+                    if (timestamp < from || timestamp > to)
                     {
-                        if (lt != -1 && lt > rt)
-                        {
-                            match_t = false;
-                        }
-                    }
-                    else        // CFDB_LESSTHANEQ
-                    {
-                        if (lt != -1 && lt < rt)
-                        {
-                            match_t = false;
-                        }
+                        match_t = false;
                     }
 
                     if (regex)
@@ -2311,7 +2303,7 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname,
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(&record_list, NewHubFileDiff(hh, rname, rdiff, rt));
+                        PrependRlistAlien(&record_list, NewHubFileDiff(hh, rname, rdiff, timestamp));
                     }
                 }
             }
@@ -6378,22 +6370,23 @@ static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *fil
 
 /*****************************************************************************/
 
-Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const char *ip,
+Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const char *ip, time_t from, time_t to,
                           HostClassFilter *hostClassFilter)
 {
     bson_buffer buffer;
     bson query, field;
 
-// query
+    // query
     bson_buffer_init(&buffer);
     bson_append_regex(&buffer, cfr_host_array, hostname, "");
     bson_append_regex(&buffer, cfr_ip_array, ip, "");
     BsonAppendHostClassFilter(&buffer, hostClassFilter);
     bson_from_buffer(&query, &buffer);
 
-// projection
+    // projection
     bson_buffer_init(&buffer);
     bson_append_int(&buffer, cfr_keyhash, 1);
+    bson_append_int(&buffer, cfr_day, 1);
     bson_from_buffer(&field, &buffer);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
@@ -6405,17 +6398,18 @@ Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const ch
 
     while (mongo_cursor_next(cursor))
     {
-        bson_iterator iter;
+        char *hostkey = NULL;
+        assert(BsonStringGet(&cursor->current, cfr_keyhash, &hostkey));
 
-        bson_iterator_init(&iter, cursor->current.data);
+        time_t timestamp = 0;
+        assert(BsonTimeGet(&cursor->current, cfr_day, &timestamp));
 
-        while (bson_iterator_next(&iter))
+        if (timestamp < from || timestamp > to)
         {
-            if (strcmp(bson_iterator_key(&iter), cfr_keyhash) == 0)
-            {
-                AppendRlist(&hostkeys, (char *) bson_iterator_string(&iter), CF_SCALAR);
-            }
+            continue;
         }
+
+        AppendRlist(&hostkeys, hostkey, CF_SCALAR);
     }
 
     mongo_cursor_destroy(cursor);
@@ -6450,7 +6444,10 @@ HubHost *CFDB_GetHostByKey(mongo_connection *conn, const char *hostkey)
         Item *host_names = BsonGetStringArrayAsItemList(&out, cfr_host_array);
         Item *ip_addresses = BsonGetStringArrayAsItemList(&out, cfr_ip_array);
 
-        host = NewHubHost(NULL, BsonGetString(&out, cfr_keyhash), ip_addresses->name, host_names->name);
+        char *hostkey = NULL;
+        assert(BsonStringGet(&out, cfr_keyhash, &hostkey));
+
+        host = NewHubHost(NULL, hostkey, ip_addresses->name, host_names->name);
 
         DeleteItemList(host_names);
         DeleteItemList(ip_addresses);

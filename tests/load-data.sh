@@ -28,5 +28,6 @@ load_data phpcfengine appsettings
 load_data cfreport hosts
 load_data cfreport logs_rep
 load_data cfreport logs_nk
+load_data cfreport archive
 
 echo "Importing data complete"

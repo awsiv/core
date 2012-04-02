@@ -98,7 +98,7 @@ int Nova_GetReportedScalar(char *hostkey, char *scope, char *lval, char *returnv
         return false;
     }
 
-    hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, NULL, NULL, false, NULL);
+    hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, NULL, NULL, false, 0, time(NULL), NULL);
 
     returnval[0] = '\0';
 
@@ -151,7 +151,7 @@ int Nova_GetReportedList(char *hostkey, char *scope, char *lval, Rlist **list)
         return false;
     }
 
-    hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, NULL, NULL, false, NULL);
+    hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, NULL, NULL, false, 0, time(NULL), NULL);
 
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {

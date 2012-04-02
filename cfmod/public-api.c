@@ -63,9 +63,16 @@ PHP_FUNCTION(cfmod_resource)
 PHP_FUNCTION(cfmod_resource_host)
 {
     char *username = NULL, *hostname = NULL, *ip = NULL;
+    long from = 0,
+         to = 0;
     int len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sss", &username, &len, &hostname, &len, &ip, &len) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssll",
+                              &username, &len,
+                              &hostname, &len,
+                              &ip, &len,
+                              &from,
+                              &to) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     }
@@ -81,7 +88,7 @@ PHP_FUNCTION(cfmod_resource_host)
 
         mongo_connection conn;
 
-        DATABASE_OPEN(&conn) hostkeys = CFDB_QueryHostKeys(&conn, hostname, ip, filter);
+        DATABASE_OPEN(&conn) hostkeys = CFDB_QueryHostKeys(&conn, hostname, ip, from, to, filter);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
     DATABASE_CLOSE(&conn)}
@@ -143,14 +150,6 @@ PHP_FUNCTION(cfmod_resource_host_id)
 
 /************************************************************************************/
 
-static time_t Horizon(long from)
-{
-    time_t now = time(NULL);
-
-    from = MIN(now, from);
-    return now - from;
-}
-
 static JsonElement *HostsLastSeen(Rlist *records, LastSeenDirection direction)
 {
     JsonElement *output = JsonArrayCreate(100);
@@ -178,10 +177,15 @@ static JsonElement *HostsLastSeen(Rlist *records, LastSeenDirection direction)
 PHP_FUNCTION(cfmod_resource_host_id_seen)
 {
     char *username = NULL, *hostkey = NULL;
-    long from = 0;
+    long from = 0,
+         to = 0;
     int len = -1;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssl", &username, &len, &hostkey, &len, &from) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssll",
+                              &username, &len,
+                              &hostkey, &len,
+                              &from,
+                              &to) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -198,7 +202,7 @@ PHP_FUNCTION(cfmod_resource_host_id_seen)
 
         mongo_connection conn;
 
-        DATABASE_OPEN(&conn) result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, from, false, false, filter);
+        DATABASE_OPEN(&conn) result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, 0, false, from, to, false, filter);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
         DATABASE_CLOSE(&conn);
@@ -215,10 +219,15 @@ PHP_FUNCTION(cfmod_resource_host_id_seen)
 PHP_FUNCTION(cfmod_resource_host_id_seenby)
 {
     char *username = NULL, *hostkey = NULL;
-    long from = 0;
+    long from = 0,
+         to = 0;
     int len = -1;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssl", &username, &len, &hostkey, &len, &from) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssll",
+                              &username, &len,
+                              &hostkey, &len,
+                              &from,
+                              &to) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -235,7 +244,7 @@ PHP_FUNCTION(cfmod_resource_host_id_seenby)
 
         mongo_connection conn;
 
-        DATABASE_OPEN(&conn) result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, from, false, false, filter);
+        DATABASE_OPEN(&conn) result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, 0, false, from, to, false, filter);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
     DATABASE_CLOSE(&conn)}
@@ -294,36 +303,40 @@ static const char *PromiseStateToString(PromiseState state)
 PHP_FUNCTION(cfmod_resource_promise_compliance)
 {
     char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL, *state = NULL;
-    long from;
+    long from = 0,
+         to = 0;
     int len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssl",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssll",
                               &username, &len,
-                              &handle, &len, &hostkey, &len, &context, &len, &state, &len, &from) == FAILURE)
+                              &handle, &len,
+                              &hostkey, &len,
+                              &context, &len,
+                              &state, &len,
+                              &from,
+                              &to) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
     }
 
     HubQuery *result = NULL;
-
     {
         HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-
         ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
         HostClassFilterAddClasses(filter, context, NULL);
 
         mongo_connection conn;
+        DATABASE_OPEN(&conn);
 
-        DATABASE_OPEN(&conn)
-            result = CFDB_QueryPromiseCompliance(&conn, hostkey, handle, PromiseStateFromString(state),
-                                                 true, 0, true, filter);
+        result = CFDB_QueryPromiseCompliance(&conn, hostkey, handle, PromiseStateFromString(state),
+                                             true, from, to, true, filter);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-    DATABASE_CLOSE(&conn)}
+        DATABASE_CLOSE(&conn);
+    }
     assert(result);
 
     JsonElement *output = JsonArrayCreate(100);
@@ -392,11 +405,18 @@ static JsonElement *PromiseLogAsJson(mongo_connection *conn, PromiseLogState sta
 PHP_FUNCTION(cfmod_resource_promise_log_repaired)
 {
     char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL, *cause_rx = NULL;
-    long from, to;
+    long from = 0,
+         to = 0;
     int len;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssll",
-                              &username, &len, &handle, &len, &cause_rx, &len, &hostkey, &len, &context, &len, &to, &from) == FAILURE)
+                              &username, &len,
+                              &handle, &len,
+                              &cause_rx, &len,
+                              &hostkey, &len,
+                              &context, &len,
+                              &from,
+                              &to) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -406,19 +426,20 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired)
 
     {
         HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-
         ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
         HostClassFilterAddClasses(filter, context, NULL);
 
         mongo_connection conn;
+        DATABASE_OPEN(&conn);
 
-        DATABASE_OPEN(&conn)
-            output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, cause_rx, hostkey, context, from, to, filter);
+        output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, cause_rx, hostkey, context, from, to, filter);
+
+        DATABASE_CLOSE(&conn);
+
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-    DATABASE_CLOSE(&conn)}
+    }
     assert(output);
 
     RETURN_JSON(output);
@@ -467,11 +488,18 @@ static JsonElement *PromiseLogSummaryAsJson(mongo_connection *conn, PromiseLogSt
 PHP_FUNCTION(cfmod_resource_promise_log_repaired_summary)
 {
     char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL, *cause_rx = NULL;
-    long from, to;
+    long from = 0,
+         to = 0;
     int len;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssll",
-                              &username, &len, &handle, &len, &cause_rx, &len, &hostkey, &len, &context, &len, &to, &from) == FAILURE)
+                              &username, &len,
+                              &handle, &len,
+                              &cause_rx, &len,
+                              &hostkey, &len,
+                              &context, &len,
+                              &from,
+                              &to) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -481,21 +509,20 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired_summary)
 
     {
         HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-
         ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
         HostClassFilterAddClasses(filter, context, NULL);
 
         mongo_connection conn;
+        DATABASE_OPEN(&conn);
 
-        DATABASE_OPEN(&conn)
-            output =
-            PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, cause_rx, hostkey, context, from, to, filter);
+        output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, cause_rx, hostkey, context, from, to, filter);
+
+        DATABASE_CLOSE(&conn);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-    DATABASE_CLOSE(&conn)}
+    }
     assert(output);
 
     RETURN_JSON(output);
@@ -506,11 +533,18 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired_summary)
 PHP_FUNCTION(cfmod_resource_promise_log_notkept)
 {
     char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL, *cause_rx = NULL;
-    long from, to;
+    long from = 0,
+         to = 0;
     int len;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssll",
-                              &username, &len, &handle, &len, &cause_rx, &len, &hostkey, &len, &context, &len, &to, &from) == FAILURE)
+                              &username, &len,
+                              &handle, &len,
+                              &cause_rx, &len,
+                              &hostkey, &len,
+                              &context, &len,
+                              &from,
+                              &to) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -546,11 +580,18 @@ PHP_FUNCTION(cfmod_resource_promise_log_notkept)
 PHP_FUNCTION(cfmod_resource_promise_log_notkept_summary)
 {
     char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL, *cause_rx = NULL;
-    long from, to;
+    long from = 0,
+         to = 0;
     int len;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssll",
-                              &username, &len, &handle, &len, &cause_rx, &len, &hostkey, &len, &context, &len, &to, &from) == FAILURE)
+                              &username, &len,
+                              &handle, &len,
+                              &cause_rx, &len,
+                              &hostkey, &len,
+                              &context, &len,
+                              &from,
+                              &to) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -560,21 +601,19 @@ PHP_FUNCTION(cfmod_resource_promise_log_notkept_summary)
 
     {
         HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-
         ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
         HostClassFilterAddClasses(filter, context, NULL);
 
         mongo_connection conn;
-
         DATABASE_OPEN(&conn);
 
         output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, cause_rx, hostkey, context, from, to, filter);
 
-        DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
         DATABASE_CLOSE(&conn);
+
+        DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
     }
     assert(output);
 
@@ -666,12 +705,20 @@ static const char *SerializeRvalType(const char *str)
 PHP_FUNCTION(cfmod_resource_variable)
 {
     char *username = NULL, *hostkey = NULL, *scope = NULL, *name = NULL, *value = NULL, *type = NULL, *context = NULL;
+    long from = 0,
+         to = 0;
     int len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssss",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssssll",
                               &username, &len,
                               &hostkey, &len,
-                              &scope, &len, &name, &len, &value, &len, &type, &len, &context, &len) == FAILURE)
+                              &scope, &len,
+                              &name, &len,
+                              &value, &len,
+                              &type, &len,
+                              &context, &len,
+                              &from,
+                              &to) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -681,20 +728,20 @@ PHP_FUNCTION(cfmod_resource_variable)
 
     {
         HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-
         ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
         HostClassFilterAddClasses(filter, context, NULL);
 
         mongo_connection conn;
+        DATABASE_OPEN(&conn);
 
-        DATABASE_OPEN(&conn)
-            result = CFDB_QueryVariables(&conn, hostkey, scope, name, value, SerializeRvalType(type), true, filter);
+        result = CFDB_QueryVariables(&conn, hostkey, scope, name, value, SerializeRvalType(type), true, from, to, filter);
+
+        DATABASE_CLOSE(&conn);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-    DATABASE_CLOSE(&conn)}
+    }
     assert(result);
 
     JsonElement *values = JsonArrayCreate(100);
@@ -734,10 +781,15 @@ PHP_FUNCTION(cfmod_resource_context)
 {
     char *username = NULL, *hostkey = NULL, *context = NULL;
     int len;
-    long from = 0;
+    long from = 0,
+         to = 0;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssl",
-                              &username, &len, &hostkey, &len, &context, &len, &from) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssll",
+                              &username, &len,
+                              &hostkey, &len,
+                              &context, &len,
+                              &from,
+                              &to) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -747,19 +799,20 @@ PHP_FUNCTION(cfmod_resource_context)
 
     {
         HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-
         ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-        HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
+        HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
         HostClassFilterAddClasses(filter, context, NULL);
 
         mongo_connection conn;
+        DATABASE_OPEN(&conn);
 
-        DATABASE_OPEN(&conn) result = CFDB_QueryClasses(&conn, hostkey, NULL, false, Horizon(from), filter, false);
+        result = CFDB_QueryClasses(&conn, hostkey, NULL, false, from, to, filter, false);
+
+        DATABASE_CLOSE(&conn);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-    DATABASE_CLOSE(&conn)}
+    }
     assert(result);
 
     JsonElement *contexts = JsonArrayCreate(100);
@@ -985,10 +1038,16 @@ PHP_FUNCTION(cfmod_resource_file)
 {
     char *username = NULL, *hostkey = NULL, *path = NULL, *context = NULL;
     int len;
-    long from = 0;
+    long from = 0,
+         to = 0;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssl",
-                              &username, &len, &hostkey, &len, &path, &len, &context, &len, &from) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssll",
+                              &username, &len,
+                              &hostkey, &len,
+                              &path, &len,
+                              &context, &len,
+                              &from,
+                              &to) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -1008,14 +1067,13 @@ PHP_FUNCTION(cfmod_resource_file)
 
         mongo_connection conn;
 
-        DATABASE_OPEN(&conn)
-            change_result =
-            CFDB_QueryFileChanges(&conn, hostkey, path, true, from, CFDB_GREATERTHANEQ, true, filter);
-        diff_result =
-            CFDB_QueryFileDiff(&conn, hostkey, path, NULL, true, from, CFDB_GREATERTHANEQ, true, filter);
+        DATABASE_OPEN(&conn);
+
+        change_result = CFDB_QueryFileChanges(&conn, hostkey, path, true, (time_t)from, (time_t)to, true, filter);
+        diff_result = CFDB_QueryFileDiff(&conn, hostkey, path, NULL, true, (time_t)from, (time_t)to, true, filter);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-	DATABASE_CLOSE(&conn)
+        DATABASE_CLOSE(&conn);
     }
 
     assert(change_result);

@@ -1,0 +1,2017 @@
+[ { "B" : { "QUERY" : { "a" : 0.029999999999999999,
+			"d" : 0.01,
+			"t" : 1327653377,
+			"v" : 0.080000000000000002
+		      },
+            "cdp" : { "a" : 0.029999999999999999,
+		      "d" : 0.01,
+		      "t" : 1327653377,
+		      "v" : 0.080000000000000002
+		    },
+            "cdp_acls" : { "a" : 0.029999999999999999,
+			   "d" : 0.01,
+			   "t" : 1327653377,
+			   "v" : 0.080000000000000002
+			 },
+            "cdp_commands" : { "a" : 0.029999999999999999,
+			       "d" : 0.01,
+			       "t" : 1327653377,
+			       "v" : 0.080000000000000002
+			     },
+            "cdp_file_changes" : { "a" : 0.029999999999999999,
+				   "d" : 0.01,
+				   "t" : 1327653377,
+				   "v" : 0.080000000000000002
+				 },
+            "cdp_file_diffs" : { "a" : 0.029999999999999999,
+				 "d" : 0.01,
+				 "t" : 1327653377,
+				 "v" : 0.080000000000000002
+			       },
+            "cdp_registry" : { "a" : 0.029999999999999999,
+			       "d" : 0.01,
+			       "t" : 1327653377,
+			       "v" : 0.080000000000000002
+			     },
+            "cdp_services" : { "a" : 0.029999999999999999,
+			       "d" : 0.01,
+			       "t" : 1327653377,
+			       "v" : 0.080000000000000002
+			     },
+            "cfengine_correct_cftwin" : { "a" : 0.029999999999999999,
+					  "d" : 0.01,
+					  "t" : 1327653377,
+					  "v" : 0.080000000000000002
+					},
+            "cfengine_limit_robot_agents" : { "a" : 0.029999999999999999,
+					      "d" : 0.01,
+					      "t" : 1327653377,
+					      "v" : 0.080000000000000002
+					    },
+            "cfengine_management" : { "a" : 0.029999999999999999,
+				      "d" : 0.01,
+				      "t" : 1327653377,
+				      "v" : 0.080000000000000002
+				    },
+            "change_management" : { "a" : 0.029999999999999999,
+				    "d" : 0.01,
+				    "t" : 1327653377,
+				    "v" : 0.080000000000000002
+				  },
+            "def" : { "a" : 0.029999999999999999,
+		      "d" : 0.01,
+		      "t" : 1327653377,
+		      "v" : 0.080000000000000002
+		    },
+            "environments" : { "a" : 0.029999999999999999,
+			       "d" : 0.01,
+			       "t" : 1327653377,
+			       "v" : 0.080000000000000002
+			     },
+            "garbage_collection" : { "a" : 0.029999999999999999,
+				     "d" : 0.01,
+				     "t" : 1327653377,
+				     "v" : 0.080000000000000002
+				   },
+            "service_catalogue" : { "a" : 0.029999999999999999,
+				    "d" : 0.01,
+				    "t" : 1327653377,
+				    "v" : 0.080000000000000002
+				  },
+            "update" : { "a" : 0.029999999999999999,
+			 "d" : 0.01,
+			 "t" : 1327653377,
+			 "v" : 0.080000000000000002
+		       },
+            "update_bins" : { "a" : 0.029999999999999999,
+			      "d" : 0.01,
+			      "t" : 1327653377,
+			      "v" : 0.080000000000000002
+			    }
+	  },
+    "IP" : [ "10.0.0.150" ],
+    "_id" : { "$oid" : "4ed4fe1abbe9a1839970e750" },
+    "ck" : [ "ubuntu",
+             "policy_test_cfengine_com",
+             "policy",
+             "nova_edition",
+             "net_iface_eth0",
+             "linux_x86_64_2_6_32_28_server",
+             "ubuntu_10",
+             "linux_x86_64_2_6_32_28_server__55_Ubuntu_SMP_Mon_Jan_10_23_57_16_UTC_2011",
+             "linux_x86_64",
+             "linux_2_6_32_28_server",
+             "linux",
+             "ipv4_10_0_0_150",
+             "ipv4_10_0_0",
+             "ipv4_10_0",
+             "ipv4_10",
+             "have_aptitude",
+             "fe80__a00_27ff_fef1_e531",
+             "entropy_wwws_out_low",
+             "entropy_wwws_in_low",
+             "entropy_www_out_low",
+             "entropy_www_in_low",
+             "entropy_udp_out_low",
+             "entropy_udp_in_low",
+             "entropy_tcpsyn_out_low",
+             "entropy_tcpsyn_in_low",
+             "entropy_tcpfin_out_low",
+             "entropy_tcpfin_in_low",
+             "entropy_tcpack_out_low",
+             "entropy_tcpack_in_low",
+             "entropy_ssh_out_low",
+             "entropy_ssh_in_low",
+             "entropy_smtp_out_low",
+             "entropy_smtp_in_low",
+             "entropy_nfsd_out_low",
+             "entropy_nfsd_in_low",
+             "entropy_netbiosssn_out_low",
+             "entropy_netbiosssn_in_low",
+             "entropy_netbiosns_out_low",
+             "entropy_netbiosns_in_low",
+             "entropy_netbiosdgm_out_low",
+             "entropy_netbiosdgm_in_low",
+             "entropy_misc_out_low",
+             "entropy_misc_in_low",
+             "entropy_irc_out_low",
+             "entropy_irc_in_low",
+             "entropy_icmp_out_low",
+             "entropy_icmp_in_low",
+             "entropy_ftp_out_low",
+             "entropy_ftp_in_low",
+             "entropy_dns_out_low",
+             "ubuntu_10_4",
+             "test_cfengine_com",
+             "x86_64",
+             "entropy_dns_in_low",
+             "entropy_cfengine_out_low",
+             "entropy_cfengine_in_low",
+             "debian_squeeze",
+             "debian",
+             "compiled_on_linux_gnu",
+             "commercial_customer",
+             "com",
+             "cfengine_com",
+             "cfengine_3_3_0a1",
+             "cfengine_3_3",
+             "cfengine_3",
+             "cfengine",
+             "agent",
+             "PK_SHA_305658693b94e003e765956f1609731419cbc0e5c9caa09e230df5e005f1f283",
+             "64_bit",
+             "10_0_0_150",
+             "syslog_low_normal",
+             "loadavg_high_ldt",
+             "report_failed",
+             "mem_freeswap_low_normal",
+             "cfengine_3_3_0a1_r3110",
+             "mem_cached_high_ldt",
+             "io_readdata_high_ldt",
+             "io_reads_high_ldt",
+             "cpu_high_ldt",
+             "cpu0_high_ldt",
+             "io_writes_high_ldt",
+             "syslog_high_ldt",
+             "syslog_high_normal",
+             "cfengine_out_high_ldt",
+             "rootprocs_high_ldt",
+             "syslog_low_dev1",
+             "syslog_high_dev1",
+             "mem_cached_high_microanomaly",
+             "rootprocs_high_microanomaly",
+             "io_writes_low_normal",
+             "messages_low_normal",
+             "messages_high_dev1",
+             "mem_free_high_ldt",
+             "syslog_low_dev2",
+             "messages_high_ldt",
+             "messages_high_dev2",
+             "io_reads_high_dev2",
+             "io_reads_high_dev1",
+             "io_reads_low_normal",
+             "io_writtendata_high_ldt",
+             "io_writes_high_dev2",
+             "mem_cached_normal_microanomaly",
+             "mem_free_low_microanomaly",
+             "Lcycle_2",
+             "io_writes_high_dev1",
+             "cfengine_in_high_ldt",
+             "io_reads_high_microanomaly",
+             "mem_free_high_dev1",
+             "mem_cached_high_dev1",
+             "mem_free_high_dev2",
+             "mem_cached_high_normal"
+	   ],
+    "cl" : { "10_0_0_150" : { "d" : 0.8367,
+			      "e" : 0.69999999999999996,
+			      "t" : 1327653377
+			    },
+             "64_bit" : { "d" : 0.8367,
+			  "e" : 0.69999999999999996,
+			  "t" : 1327653377
+			},
+             "Lcycle_2" : { "d" : 0.8367,
+			    "e" : 0.69999999999999996,
+			    "t" : 1327653377
+			  },
+             "PK_SHA_305658693b94e003e765956f1609731419cbc0e5c9caa09e230df5e005f1f283" : { "d" : 0.8367,
+											   "e" : 0.69999999999999996,
+											   "t" : 1327653377
+											 },
+             "agent" : { "d" : 0.8367,
+			 "e" : 0.69999999999999996,
+			 "t" : 1327653377
+		       },
+             "cfengine" : { "d" : 0.8367,
+			    "e" : 0.69999999999999996,
+			    "t" : 1327653377
+			  },
+             "cfengine_3" : { "d" : 0.8367,
+			      "e" : 0.69999999999999996,
+			      "t" : 1327653377
+			    },
+             "cfengine_3_3" : { "d" : 0.8367,
+				"e" : 0.69999999999999996,
+				"t" : 1327653377
+			      },
+             "cfengine_3_3_0a1" : { "d" : 0.8367,
+				    "e" : 0.69999999999999996,
+				    "t" : 1327653377
+				  },
+             "cfengine_3_3_0a1_r3110" : { "d" : 0.8367,
+					  "e" : 0.69999999999999996,
+					  "t" : 1327653377
+					},
+             "cfengine_com" : { "d" : 0.8367,
+				"e" : 0.69999999999999996,
+				"t" : 1327653377
+			      },
+             "cfengine_in_high_ldt" : { "d" : 0.0051000000000000004,
+					"e" : 0,
+					"t" : 1327581041
+				      },
+             "cfengine_out_high_ldt" : { "d" : 0.0051000000000000004,
+					 "e" : 0,
+					 "t" : 1327647028
+				       },
+             "com" : { "d" : 0.8367,
+		       "e" : 0.69999999999999996,
+		       "t" : 1327653377
+		     },
+             "commercial_customer" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1327653377
+				     },
+             "compiled_on_linux_gnu" : { "d" : 0.8367,
+					 "e" : 0.69999999999999996,
+					 "t" : 1327653377
+				       },
+             "cpu0_high_ldt" : { "d" : 0.0051000000000000004,
+				 "e" : 0,
+				 "t" : 1327643780
+			       },
+             "cpu_high_ldt" : { "d" : 0.0051000000000000004,
+				"e" : 0,
+				"t" : 1327643780
+			      },
+             "debian" : { "d" : 0.8367,
+			  "e" : 0.69999999999999996,
+			  "t" : 1327653377
+			},
+             "debian_squeeze" : { "d" : 0.8367,
+				  "e" : 0.69999999999999996,
+				  "t" : 1327653377
+				},
+             "entropy_cfengine_in_low" : { "d" : 0.8367,
+					   "e" : 0.69999999999999996,
+					   "t" : 1327653377
+					 },
+             "entropy_cfengine_out_low" : { "d" : 0.0051000000000000004,
+					    "e" : 0,
+					    "t" : 1327649145
+					  },
+             "entropy_dns_in_low" : { "d" : 0.8367,
+				      "e" : 0.69999999999999996,
+				      "t" : 1327653377
+				    },
+             "entropy_dns_out_low" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1327653377
+				     },
+             "entropy_ftp_in_low" : { "d" : 0.8367,
+				      "e" : 0.69999999999999996,
+				      "t" : 1327653377
+				    },
+             "entropy_ftp_out_low" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1327653377
+				     },
+             "entropy_icmp_in_low" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1327653377
+				     },
+             "entropy_icmp_out_low" : { "d" : 0.8367,
+					"e" : 0.69999999999999996,
+					"t" : 1327653377
+				      },
+             "entropy_irc_in_low" : { "d" : 0.8367,
+				      "e" : 0.69999999999999996,
+				      "t" : 1327653377
+				    },
+             "entropy_irc_out_low" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1327653377
+				     },
+             "entropy_misc_in_low" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1327653377
+				     },
+             "entropy_misc_out_low" : { "d" : 0.8367,
+					"e" : 0.69999999999999996,
+					"t" : 1327653377
+				      },
+             "entropy_netbiosdgm_in_low" : { "d" : 0.8367,
+					     "e" : 0.69999999999999996,
+					     "t" : 1327653377
+					   },
+             "entropy_netbiosdgm_out_low" : { "d" : 0.8367,
+					      "e" : 0.69999999999999996,
+					      "t" : 1327653377
+					    },
+             "entropy_netbiosns_in_low" : { "d" : 0.8367,
+					    "e" : 0.69999999999999996,
+					    "t" : 1327653377
+					  },
+             "entropy_netbiosns_out_low" : { "d" : 0.8367,
+					     "e" : 0.69999999999999996,
+					     "t" : 1327653377
+					   },
+             "entropy_netbiosssn_in_low" : { "d" : 0.8367,
+					     "e" : 0.69999999999999996,
+					     "t" : 1327653377
+					   },
+             "entropy_netbiosssn_out_low" : { "d" : 0.8367,
+					      "e" : 0.69999999999999996,
+					      "t" : 1327653377
+					    },
+             "entropy_nfsd_in_low" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1327653377
+				     },
+             "entropy_nfsd_out_low" : { "d" : 0.8367,
+					"e" : 0.69999999999999996,
+					"t" : 1327653377
+				      },
+             "entropy_smtp_in_low" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1327653377
+				     },
+             "entropy_smtp_out_low" : { "d" : 0.8367,
+					"e" : 0.69999999999999996,
+					"t" : 1327653377
+				      },
+             "entropy_ssh_in_low" : { "d" : 0.8367,
+				      "e" : 0.69999999999999996,
+				      "t" : 1327653377
+				    },
+             "entropy_ssh_out_low" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1327653377
+				     },
+             "entropy_tcpack_in_low" : { "d" : 0.8367,
+					 "e" : 0.69999999999999996,
+					 "t" : 1327653377
+				       },
+             "entropy_tcpack_out_low" : { "d" : 0.8367,
+					  "e" : 0.69999999999999996,
+					  "t" : 1327653377
+					},
+             "entropy_tcpfin_in_low" : { "d" : 0.8367,
+					 "e" : 0.69999999999999996,
+					 "t" : 1327653377
+				       },
+             "entropy_tcpfin_out_low" : { "d" : 0.8367,
+					  "e" : 0.69999999999999996,
+					  "t" : 1327653377
+					},
+             "entropy_tcpsyn_in_low" : { "d" : 0.8367,
+					 "e" : 0.69999999999999996,
+					 "t" : 1327653377
+				       },
+             "entropy_tcpsyn_out_low" : { "d" : 0.8367,
+					  "e" : 0.69999999999999996,
+					  "t" : 1327653377
+					},
+             "entropy_udp_in_low" : { "d" : 0.8367,
+				      "e" : 0.69999999999999996,
+				      "t" : 1327653377
+				    },
+             "entropy_udp_out_low" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1327653377
+				     },
+             "entropy_www_in_low" : { "d" : 0.8367,
+				      "e" : 0.69999999999999996,
+				      "t" : 1327653377
+				    },
+             "entropy_www_out_low" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1327653377
+				     },
+             "entropy_wwws_in_low" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1327653377
+				     },
+             "entropy_wwws_out_low" : { "d" : 0.8367,
+					"e" : 0.69999999999999996,
+					"t" : 1327653377
+				      },
+             "fe80__a00_27ff_fef1_e531" : { "d" : 0.8367,
+					    "e" : 0.69999999999999996,
+					    "t" : 1327653377
+					  },
+             "have_aptitude" : { "d" : 0.8367,
+				 "e" : 0.69999999999999996,
+				 "t" : 1327653377
+			       },
+             "io_readdata_high_ldt" : { "d" : 0.0051000000000000004,
+					"e" : 0,
+					"t" : 1327646432
+				      },
+             "io_reads_high_dev1" : { "d" : 0.0051000000000000004,
+				      "e" : 0,
+				      "t" : 1327643453
+				    },
+             "io_reads_high_dev2" : { "d" : 0.0051000000000000004,
+				      "e" : 0,
+				      "t" : 1327643780
+				    },
+             "io_reads_high_ldt" : { "d" : 0.0051000000000000004,
+				     "e" : 0,
+				     "t" : 1327643780
+				   },
+             "io_reads_high_microanomaly" : { "d" : 0.0051000000000000004,
+					      "e" : 0,
+					      "t" : 1327642260
+					    },
+             "io_reads_low_normal" : { "d" : 0.0051000000000000004,
+				       "e" : 0,
+				       "t" : 1327642260
+				     },
+             "io_writes_high_dev1" : { "d" : 0.0051000000000000004,
+				       "e" : 0,
+				       "t" : 1327643453
+				     },
+             "io_writes_high_dev2" : { "d" : 0.0051000000000000004,
+				       "e" : 0,
+				       "t" : 1327643780
+				     },
+             "io_writes_high_ldt" : { "d" : 0.0051000000000000004,
+				      "e" : 0,
+				      "t" : 1327643780
+				    },
+             "io_writes_low_normal" : { "d" : 0.0051000000000000004,
+					"e" : 0,
+					"t" : 1327643184
+				      },
+             "io_writtendata_high_ldt" : { "d" : 0.0051000000000000004,
+					   "e" : 0,
+					   "t" : 1327643780
+					 },
+             "ipv4_10" : { "d" : 0.8367,
+			   "e" : 0.69999999999999996,
+			   "t" : 1327653377
+			 },
+             "ipv4_10_0" : { "d" : 0.8367,
+			     "e" : 0.69999999999999996,
+			     "t" : 1327653377
+			   },
+             "ipv4_10_0_0" : { "d" : 0.8367,
+			       "e" : 0.69999999999999996,
+			       "t" : 1327653377
+			     },
+             "ipv4_10_0_0_150" : { "d" : 0.8367,
+				   "e" : 0.69999999999999996,
+				   "t" : 1327653377
+				 },
+             "linux" : { "d" : 0.8367,
+			 "e" : 0.69999999999999996,
+			 "t" : 1327653377
+		       },
+             "linux_2_6_32_28_server" : { "d" : 0.8367,
+					  "e" : 0.69999999999999996,
+					  "t" : 1327653377
+					},
+             "linux_x86_64" : { "d" : 0.8367,
+				"e" : 0.69999999999999996,
+				"t" : 1327653377
+			      },
+             "linux_x86_64_2_6_32_28_server" : { "d" : 0.8367,
+						 "e" : 0.69999999999999996,
+						 "t" : 1327653377
+					       },
+             "linux_x86_64_2_6_32_28_server__55_Ubuntu_SMP_Mon_Jan_10_23_57_16_UTC_2011" : { "d" : 0.8367,
+											     "e" : 0.69999999999999996,
+											     "t" : 1327653377
+											   },
+             "loadavg_high_ldt" : { "d" : 0.0051000000000000004,
+				    "e" : 0,
+				    "t" : 1327649473
+				  },
+             "mem_cached_high_dev1" : { "d" : 0.0051000000000000004,
+					"e" : 0,
+					"t" : 1327648549
+				      },
+             "mem_cached_high_ldt" : { "d" : 0.0051000000000000004,
+				       "e" : 0,
+				       "t" : 1327642260
+				     },
+             "mem_cached_high_microanomaly" : { "d" : 0.0051000000000000004,
+						"e" : 0,
+						"t" : 1327642588
+					      },
+             "mem_cached_high_normal" : { "d" : 0.0051000000000000004,
+					  "e" : 0,
+					  "t" : 1327644376
+					},
+             "mem_cached_normal_microanomaly" : { "d" : 0.0051000000000000004,
+						  "e" : 0,
+						  "t" : 1327642260
+						},
+             "mem_free_high_dev1" : { "d" : 0.8367,
+				      "e" : 0.69999999999999996,
+				      "t" : 1327653377
+				    },
+             "mem_free_high_dev2" : { "d" : 0.0051000000000000004,
+				      "e" : 0,
+				      "t" : 1327650337
+				    },
+             "mem_free_high_ldt" : { "d" : 0.0051000000000000004,
+				     "e" : 0,
+				     "t" : 1327651261
+				   },
+             "mem_free_low_microanomaly" : { "d" : 0.0051000000000000004,
+					     "e" : 0,
+					     "t" : 1327575676
+					   },
+             "mem_freeswap_low_normal" : { "d" : 0.8367,
+					   "e" : 0.69999999999999996,
+					   "t" : 1327653377
+					 },
+             "messages_high_dev1" : { "d" : 0.0051000000000000004,
+				      "e" : 0,
+				      "t" : 1327643453
+				    },
+             "messages_high_dev2" : { "d" : 0.0051000000000000004,
+				      "e" : 0,
+				      "t" : 1327643780
+				    },
+             "messages_high_ldt" : { "d" : 0.0051000000000000004,
+				     "e" : 0,
+				     "t" : 1327643780
+				   },
+             "messages_low_normal" : { "d" : 0.0051000000000000004,
+				       "e" : 0,
+				       "t" : 1327643184
+				     },
+             "net_iface_eth0" : { "d" : 0.8367,
+				  "e" : 0.69999999999999996,
+				  "t" : 1327653377
+				},
+             "nova_edition" : { "d" : 0.8367,
+				"e" : 0.69999999999999996,
+				"t" : 1327653377
+			      },
+             "policy" : { "d" : 0.8367,
+			  "e" : 0.69999999999999996,
+			  "t" : 1327653377
+			},
+             "policy_test_cfengine_com" : { "d" : 0.8367,
+					    "e" : 0.69999999999999996,
+					    "t" : 1327653377
+					  },
+             "report_failed" : { "d" : 0.8367,
+				 "e" : 0.69999999999999996,
+				 "t" : 1327653377
+			       },
+             "rootprocs_high_ldt" : { "d" : 0.0051000000000000004,
+				      "e" : 0,
+				      "t" : 1327642260
+				    },
+             "rootprocs_high_microanomaly" : { "d" : 0.0051000000000000004,
+					       "e" : 0,
+					       "t" : 1327642260
+					     },
+             "syslog_high_dev1" : { "d" : 0.0051000000000000004,
+				    "e" : 0,
+				    "t" : 1327651529
+				  },
+             "syslog_high_ldt" : { "d" : 0.0051000000000000004,
+				   "e" : 0,
+				   "t" : 1327652781
+				 },
+             "syslog_high_normal" : { "d" : 0.0051000000000000004,
+				      "e" : 0,
+				      "t" : 1327650337
+				    },
+             "syslog_low_dev1" : { "d" : 0.8367,
+				   "e" : 0.69999999999999996,
+				   "t" : 1327653377
+				 },
+             "syslog_low_dev2" : { "d" : 0.0051000000000000004,
+				   "e" : 0,
+				   "t" : 1327643780
+				 },
+             "syslog_low_normal" : { "d" : 0.0051000000000000004,
+				     "e" : 0,
+				     "t" : 1327649473
+				   },
+             "test_cfengine_com" : { "d" : 0.8367,
+				     "e" : 0.69999999999999996,
+				     "t" : 1327653377
+				   },
+             "ubuntu" : { "d" : 0.8367,
+			  "e" : 0.69999999999999996,
+			  "t" : 1327653377
+			},
+             "ubuntu_10" : { "d" : 0.8367,
+			     "e" : 0.69999999999999996,
+			     "t" : 1327653377
+			   },
+             "ubuntu_10_4" : { "d" : 0.8367,
+			       "e" : 0.69999999999999996,
+			       "t" : 1327653377
+			     },
+             "x86_64" : { "d" : 0.8367,
+			  "e" : 0.69999999999999996,
+			  "t" : 1327653377
+			}
+	   },
+    "ha" : [ "hostA" ],
+    "kH" : "SHA=305658693b94e003e765956f1609731419cbc0e5c9caa09e230df5e005f1f283",
+    "ls" : { "+SHA=33736d45041e2a9407be8cf449aeffa95114bef661c20deaca1bbcfbc2922856" : { "a" : 0.029999999999999999,
+											 "d" : 0.050000000000000003,
+											 "i" : "10.0.0.29",
+											 "t" : 1327653377,
+											 "v" : 0.029999999999999999
+										       },
+             "-SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df" : { "a" : 0,
+											 "d" : 0,
+											 "i" : "10.0.0.29",
+											 "t" : 1327653481,
+											 "v" : 0.080000000000000002
+										       }
+	   },
+    "me" : { "A" : { "K" : 99.849599999999995,
+		     "R" : 0.15040000000000001
+		   },
+             "C" : { "K" : 100,
+		     "R" : 0
+		   },
+             "D" : { "K" : 85.066699999999997,
+		     "R" : 2.1334
+		   },
+             "H" : { "K" : 85.066800000000001,
+		     "R" : 2.1332
+		   },
+             "P" : { "K" : 100,
+		     "R" : 0
+		   },
+             "S" : { "K" : 100,
+		     "R" : 0
+		   },
+             "W" : { "K" : 75,
+		     "R" : 10.666700000000001
+		   }
+	   },
+    "ne" : { "$binary" : "6lsiTwAAAAAAAAAAAAAAAAAAAADCUdkwACC4ApAIJDI=",
+             "$type" : "20"
+	   },
+    "pc" : { "cdp_cmd_c__windows_system32_cmd_exe__c__echo_hello_succeeded___c__reportfile_txt___hello_failed" : { "d" : 0,
+														   "e" : 0,
+														   "s" : "n",
+														   "t" : 1327653377
+														 },
+             "cfengine_correct_cftwin_files_cftwin" : { "d" : 0,
+							"e" : 100,
+							"s" : "c",
+							"t" : 1327653377
+						      },
+             "cfengine_correct_cftwin_files_libtwin" : { "d" : 0,
+							 "e" : 0,
+							 "s" : "n",
+							 "t" : 1327653377
+						       },
+             "cfengine_limit_robot_agents_processes_check_cf_execd" : { "d" : 0,
+									"e" : 100,
+									"s" : "c",
+									"t" : 1327653377
+								      },
+             "cfengine_limit_robot_agents_processes_check_cf_monitord" : { "d" : 0,
+									   "e" : 100,
+									   "s" : "c",
+									   "t" : 1327653377
+									 },
+             "cfengine_management_correct_cftwin" : { "d" : 0,
+						      "e" : 100,
+						      "s" : "c",
+						      "t" : 1327653377
+						    },
+             "cfengine_management_limit_cfe_agents" : { "d" : 0,
+							"e" : 100,
+							"s" : "c",
+							"t" : 1327653377
+						      },
+             "change_management_files_watch_files" : { "d" : 0,
+						       "e" : 100,
+						       "s" : "c",
+						       "t" : 1327653377
+						     },
+             "check_valid_update" : { "d" : 0,
+				      "e" : 100,
+				      "s" : "c",
+				      "t" : 1327653377
+				    },
+             "garbage_collection_files_tidy_outputs" : { "d" : 0,
+							 "e" : 50,
+							 "s" : "r",
+							 "t" : 1327653377
+						       },
+             "promise_cdp_cf_11" : { "d" : 0,
+				     "e" : 100,
+				     "s" : "c",
+				     "t" : 1327653377
+				   },
+             "promise_cdp_cf_12" : { "d" : 0,
+				     "e" : 100,
+				     "s" : "c",
+				     "t" : 1327653377
+				   },
+             "promise_cdp_cf_13" : { "d" : 0,
+				     "e" : 100,
+				     "s" : "c",
+				     "t" : 1327653377
+				   },
+             "promise_cdp_cf_14" : { "d" : 0,
+				     "e" : 100,
+				     "s" : "c",
+				     "t" : 1327653377
+				   },
+             "promise_cdp_cf_15" : { "d" : 0,
+				     "e" : 100,
+				     "s" : "c",
+				     "t" : 1327653377
+				   },
+             "promise_cdp_cf_16" : { "d" : 0,
+				     "e" : 100,
+				     "s" : "c",
+				     "t" : 1327653377
+				   },
+             "promise_promises_cf_154" : { "d" : 0,
+					   "e" : 100,
+					   "s" : "c",
+					   "t" : 1327653377
+					 },
+             "promise_promises_cf_160" : { "d" : 0,
+					   "e" : 100,
+					   "s" : "c",
+					   "t" : 1327653377
+					 },
+             "update_files_sys_workdir_bin" : { "d" : 0,
+						"e" : 100,
+						"s" : "c",
+						"t" : 1327653377
+					      },
+             "update_files_usr_local_sbin" : { "d" : 0,
+					       "e" : 100,
+					       "s" : "c",
+					       "t" : 1327653377
+					     },
+             "update_processes_cf_execd" : { "d" : 0,
+					     "e" : 100,
+					     "s" : "c",
+					     "t" : 1327653377
+					   },
+             "update_processes_cf_monitord" : { "d" : 0,
+						"e" : 100,
+						"s" : "c",
+						"t" : 1327653377
+					      },
+             "update_processes_cf_serverd" : { "d" : 0,
+					       "e" : 100,
+					       "s" : "c",
+					       "t" : 1327653377
+					     },
+             "update_processes_kill_cf_hub_on_clients" : { "d" : 0,
+							   "e" : 100,
+							   "s" : "c",
+							   "t" : 1327653377
+							 }
+	   },
+    "pck" : [ "cfengine_correct_cftwin_files_libtwin",
+              "promise_cdp_cf_11",
+              "promise_cdp_cf_12",
+              "cfengine_management_limit_cfe_agents",
+              "change_management_files_watch_files",
+              "promise_promises_cf_160",
+              "promise_promises_cf_154",
+              "cdp_cmd_c__windows_system32_cmd_exe__c__echo_hello_succeeded___c__reportfile_txt___hello_failed",
+              "promise_cdp_cf_14",
+              "promise_cdp_cf_13",
+              "cfengine_management_correct_cftwin",
+              "cfengine_correct_cftwin_files_cftwin",
+              "garbage_collection_files_tidy_outputs",
+              "promise_cdp_cf_15",
+              "update_processes_cf_execd",
+              "update_processes_cf_monitord",
+              "update_processes_cf_serverd",
+              "update_files_usr_local_sbin",
+              "update_files_sys_workdir_bin",
+              "promise_cdp_cf_16",
+              "check_valid_update",
+              "cfengine_limit_robot_agents_processes_check_cf_monitord",
+              "cfengine_limit_robot_agents_processes_check_cf_execd",
+              "update_processes_kill_cf_hub_on_clients"
+	    ],
+    "pf" : { "Copy(10_0_0_29:/var/cfengine/master_software_updates/ubuntu_10_x86_64 > /var/cfengine/software_updates/ubuntu_10_x86_64)" : { "P" : "Copy(10.0.0.29:/var/cfengine/master_software_updates/ubuntu_10_x86_64 > /var/cfengine/software_updates/ubuntu_10_x86_64)",
+																	    "d" : 0,
+																	    "e" : 0,
+																	    "q" : 0,
+																	    "t" : 1327653377
+																	  },
+             "Copy(10_0_0_29:/var/cfengine/masterfiles/cf_promises_validated > /var/cfengine/inputs/cf_promises_validated)" : { "P" : "Copy(10.0.0.29:/var/cfengine/masterfiles/cf_promises_validated > /var/cfengine/inputs/cf_promises_validated)",
+																"d" : 0,
+																"e" : 0,
+																"q" : 0,
+																"t" : 1327653377
+															      },
+             "Copy(localhost:/var/cfengine/bin > /usr/local/sbin)" : { "P" : "Copy(localhost:/var/cfengine/bin > /usr/local/sbin)",
+								       "d" : 0.00029999999999999997,
+								       "e" : 0.0005999999999999999,
+								       "q" : 0.0005999999999999999,
+								       "t" : 1327653377
+								     },
+             "Copy(localhost:/var/cfengine/bin/cf-agent > /var/cfengine/bin/cf-twin)" : { "P" : "Copy(localhost:/var/cfengine/bin/cf-agent > /var/cfengine/bin/cf-twin)",
+											  "d" : 0,
+											  "e" : 0,
+											  "q" : 0,
+											  "t" : 1327653377
+											}
+	   },
+    "su" : [ "/usr/bin/arping",
+             "/usr/bin/bsd-write",
+             "/usr/bin/chage",
+             "/usr/bin/chfn",
+             "/usr/bin/chsh",
+             "/usr/bin/crontab",
+             "/usr/bin/dotlockfile",
+             "/usr/bin/expiry",
+             "/usr/bin/gpasswd",
+             "/usr/bin/mail-lock",
+             "/usr/bin/mail-touchlock",
+             "/usr/bin/mail-unlock",
+             "/usr/bin/mlocate",
+             "/usr/bin/mtr",
+             "/usr/bin/newgrp",
+             "/usr/bin/passwd",
+             "/usr/bin/screen",
+             "/usr/bin/ssh-agent",
+             "/usr/bin/sudo",
+             "/usr/bin/sudoedit",
+             "/usr/bin/traceroute6.iputils",
+             "/usr/bin/wall",
+             "/usr/lib/eject/dmcrypt-get-device",
+             "/usr/lib/openssh/ssh-keysign",
+             "/usr/lib/pt_chown",
+             "/usr/sbin/pppd"
+	   ],
+    "sw" : [ { "a" : "d",
+               "n" : "adduser",
+               "v" : "3.112ubuntu1"
+             },
+             { "a" : "d",
+               "n" : "apparmor",
+               "v" : "2.5.1-0ubuntu0.10.04.3"
+             },
+             { "a" : "d",
+               "n" : "apparmor-utils",
+               "v" : "2.5.1-0ubuntu0.10.04.3"
+             }
+	   ],
+    "t" : 1327651818,
+    "tc" : { "Fri:Hr00:Min00_05" : { "N" : 10,
+				     "k" : 88,
+				     "r" : 2,
+				     "t" : 1327622469,
+				     "v" : " Failsafe.cf 2.1.0 (agent-0)<br> Promises.cf 2.1.0 (agent-0)"
+				   },
+             "Fri:Hr00:Min05_10" : { "N" : 10,
+				     "k" : 90,
+				     "r" : 0,
+				     "t" : 1327622737,
+				     "v" : " Failsafe.cf 2.1.0 (agent-0)<br> Promises.cf 2.1.0 (agent-0)"
+				   },
+             "Fri:Hr00:Min10_15" : { "N" : 10,
+				     "k" : 88,
+				     "r" : 2,
+				     "t" : 1327623065,
+				     "v" : " Failsafe.cf 2.1.0 (agent-0)<br> Promises.cf 2.1.0 (agent-0)"
+				   }
+	   },
+    "va" : { 
+    	"27 Jan 2012" : { "N" : -720,
+			  "k" : 6624,
+			  "r" : 35.5,
+			  "t" : "27 Jan 2012"
+			} 
+    },
+    "fc" : {
+	"/etc/passwd@1234567" : {
+	    "t" : 1234567,
+	    "n" : "/etc/passwd"
+	},
+
+	"/etc/group@1234567" : {
+	    "t" : 1234567,
+	    "n" : "/etc/group"
+	}
+    },
+    "fd" : {
+	"/etc/group@1234567" : {
+	    "t" : 1234567,
+	    "n" : "/etc/group",
+	    "FD" : "+,5,sambashare:x:124:a10021"
+	}
+    },
+    "vr" : {
+    	"sys" : {
+	    "ostype" : {
+		"T" : "s",
+		"V" : "ubuntu_10_0_4_x86",
+		"t" : 1327640143
+	    }
+	},
+        "cfengine_update_folders" : { 
+	    "dirs" : { 
+		"T" : "sl",
+                "V" : [ "ubuntu_10_i686",
+			"ubuntu_10_x86_64",
+			"ubuntu_11_i686",
+			"ubuntu_11_x86_64",
+			"centos_5_i686",
+			"centos_5_x86_64",
+			"redhat_5_i686",
+			"redhat_5_x86_64",
+			"redhat_6_i686",
+			"redhat_6_x86_64",
+			"SuSE_11_i686",
+			"SuSE_11_x86_64",
+			"debian_5_i686",
+			"debian_5_x86_64",
+			"debian_6_i686",
+			"debian_6_x86_64",
+			"debian_wheezy_i686",
+			"debian_wheeyz_x86_64"
+                      ],
+                "t" : 1327640143
+            } 
+	},
+        "control_agent" : { 
+	    "environment" : {
+		"T" : "sl",
+                "V" : [ "DEBIAN_FRONTEND=noninteractive" ],
+                "t" : 1327640143
+            },
+            "ifelapsed" : { "T" : "i",
+			    "V" : "1",
+			    "t" : 1327640143
+			  },
+            "skipidentify" : { "T" : "m",
+			       "V" : "true",
+			       "t" : 1327640143
+			     },
+            "track_value" : { "T" : "m",
+			      "V" : "true",
+			      "t" : 1327640143
+			    }
+        }
+    }
+  },
+  { "B" : { "QUERY" : { "a" : 0.02,
+			"d" : 0.01,
+			"t" : 1328194134,
+			"v" : 0.080000000000000002
+		      },
+            "access_rules" : { "a" : 77.76000000000001,
+			       "d" : 0,
+			       "t" : 1327914274,
+			       "v" : 0
+			     },
+            "cdp" : { "a" : 0.02,
+		      "d" : 0.01,
+		      "t" : 1328194134,
+		      "v" : 0.080000000000000002
+		    },
+            "cdp_acls" : { "a" : 0.02,
+			   "d" : 0.01,
+			   "t" : 1328194134,
+			   "v" : 0.080000000000000002
+			 },
+            "cdp_commands" : { "a" : 0.02,
+			       "d" : 0.01,
+			       "t" : 1328194134,
+			       "v" : 0.080000000000000002
+			     },
+            "cdp_file_changes" : { "a" : 0.02,
+				   "d" : 0.01,
+				   "t" : 1328194134,
+				   "v" : 0.080000000000000002
+				 },
+            "cdp_file_diffs" : { "a" : 0.02,
+				 "d" : 0.01,
+				 "t" : 1328194134,
+				 "v" : 0.080000000000000002
+			       },
+            "cdp_registry" : { "a" : 0.02,
+			       "d" : 0.01,
+			       "t" : 1328194134,
+			       "v" : 0.080000000000000002
+			     },
+            "cdp_services" : { "a" : 0.02,
+			       "d" : 0.01,
+			       "t" : 1328194134,
+			       "v" : 0.080000000000000002
+			     },
+            "cfengine_correct_cftwin" : { "a" : 0.02,
+					  "d" : 0.01,
+					  "t" : 1328194134,
+					  "v" : 0.080000000000000002
+					},
+            "cfengine_limit_robot_agents" : { "a" : 0.02,
+					      "d" : 0.01,
+					      "t" : 1328194134,
+					      "v" : 0.080000000000000002
+					    },
+            "cfengine_management" : { "a" : 0.02,
+				      "d" : 0.01,
+				      "t" : 1328194134,
+				      "v" : 0.080000000000000002
+				    },
+            "change_management" : { "a" : 0.02,
+				    "d" : 0.01,
+				    "t" : 1328194134,
+				    "v" : 0.080000000000000002
+				  },
+            "def" : { "a" : 0.02,
+		      "d" : 0.01,
+		      "t" : 1328194134,
+		      "v" : 0.080000000000000002
+		    },
+            "environments" : { "a" : 0.02,
+			       "d" : 0.01,
+			       "t" : 1328194134,
+			       "v" : 0.080000000000000002
+			     },
+            "garbage_collection" : { "a" : 0.02,
+				     "d" : 0.01,
+				     "t" : 1328194134,
+				     "v" : 0.080000000000000002
+				   },
+            "service_catalogue" : { "a" : 0.02,
+				    "d" : 0.01,
+				    "t" : 1328194134,
+				    "v" : 0.080000000000000002
+				  },
+            "update" : { "a" : 0.02,
+			 "d" : 0.01,
+			 "t" : 1328194132,
+			 "v" : 0.080000000000000002
+		       },
+            "update_bins" : { "a" : 0.02,
+			      "d" : 0.01,
+			      "t" : 1328194131,
+			      "v" : 0.080000000000000002
+			    }
+	  },
+    "IP" : [ "10.0.0.153" ],
+    "_id" : { "$oid" : "4ed4fe1dbbe9a1839970e8de" },
+    "ck" : [ "x86_64",
+             "test_cfengine_com",
+             "redhat_s_5_6",
+             "redhat_s_5",
+             "redhat_s",
+             "redhat_5_6",
+             "redhat_5",
+             "redhat1_test_cfengine_com",
+             "redhat1",
+             "redhat",
+             "nova_edition",
+             "net_iface_eth0",
+             "localhost_localdomain",
+             "localhost",
+             "linux_x86_64_2_6_18_238_el5__1_SMP_Sun_Dec_19_14_22_44_EST_2010",
+             "linux_x86_64_2_6_18_238_el5",
+             "linux_x86_64",
+             "linux_2_6_18_238_el5",
+             "linux",
+             "ipv4_10_0_0_153",
+             "ipv4_10_0_0",
+             "ipv4_10_0",
+             "ipv4_10",
+             "entropy_wwws_out_low",
+             "entropy_wwws_in_low",
+             "entropy_www_out_low",
+             "entropy_www_in_low",
+             "entropy_udp_out_low",
+             "entropy_udp_in_low",
+             "entropy_tcpsyn_out_low",
+             "entropy_tcpsyn_in_low",
+             "entropy_tcpfin_out_low",
+             "entropy_tcpfin_in_low",
+             "entropy_tcpack_out_low",
+             "entropy_tcpack_in_low",
+             "entropy_ssh_out_low",
+             "entropy_ssh_in_low",
+             "entropy_smtp_out_low",
+             "entropy_smtp_in_low",
+             "entropy_nfsd_out_low",
+             "entropy_nfsd_in_low",
+             "entropy_netbiosssn_out_low",
+             "entropy_netbiosssn_in_low",
+             "entropy_netbiosns_out_low",
+             "entropy_netbiosns_in_low",
+             "entropy_netbiosdgm_out_low",
+             "entropy_netbiosdgm_in_low",
+             "entropy_misc_out_low",
+             "entropy_misc_in_low",
+             "entropy_irc_out_low",
+             "entropy_irc_in_low",
+             "entropy_icmp_out_low",
+             "entropy_icmp_in_low",
+             "entropy_ftp_out_low",
+             "entropy_ftp_in_low",
+             "entropy_dns_out_low",
+             "entropy_dns_in_low",
+             "entropy_cfengine_out_low",
+             "entropy_cfengine_in_low",
+             "compiled_on_linux_gnu",
+             "commercial_customer",
+             "com",
+             "cfengine_com",
+             "cfengine_3_2_1",
+             "cfengine_3_2",
+             "cfengine_3",
+             "cfengine",
+             "agent",
+             "PK_SHA_33736d45041e2a9407be8cf449aeffa95114bef661c20deaca1bbcfbc2922856",
+             "64_bit",
+             "10_0_0_153",
+             "messages_low_normal",
+             "report_failed",
+             "io_reads_high_ldt",
+             "io_readdata_high_ldt",
+             "cpu_high_ldt",
+             "cpu0_high_ldt",
+             "loadavg_high_ldt",
+             "io_writes_high_ldt",
+             "io_reads_low_normal",
+             "mem_cached_high_ldt",
+             "io_writtendata_high_ldt",
+             "mem_free_high_ldt",
+             "mem_free_low_microanomaly",
+             "messages_high_normal",
+             "rootprocs_high_ldt",
+             "cfengine_out_high_ldt",
+             "messages_high_ldt",
+             "io_reads_high_dev1",
+             "Lcycle_2",
+             "messages_low_dev1",
+             "messages_low_dev2",
+             "io_writes_high_dev1",
+             "mem_cached_high_microanomaly",
+             "mem_cached_high_dev1",
+             "cpu_high_dev1",
+             "cpu0_high_dev1",
+             "io_reads_high_dev2",
+             "mem_total_high_microanomaly",
+             "mem_freeswap_high_microanomaly",
+             "mem_free_high_dev1",
+             "diskfree_high_microanomaly",
+             "rootprocs_normal_microanomaly",
+             "messages_normal_normal",
+             "mem_swap_high_microanomaly",
+             "io_reads_high_microanomaly",
+             "mem_cached_high_dev2",
+             "io_writes_high_dev2",
+             "cpu0_high_dev2",
+             "cpu_high_dev2",
+             "cfengine_in_high_ldt",
+             "io_reads_normal_normal",
+             "mem_cached_high_normal"
+	   ],
+    "cl" : { "10_0_0_153" : { "d" : 0.8367,
+			      "e" : 0.69999999999999996,
+			      "t" : 1328194134
+			    },
+             "64_bit" : { "d" : 0.8367,
+			  "e" : 0.69999999999999996,
+			  "t" : 1328194134
+			},
+             "Lcycle_2" : { "d" : 0.8367,
+			    "e" : 0.69999999999999996,
+			    "t" : 1328194134
+			  },
+             "PK_SHA_33736d45041e2a9407be8cf449aeffa95114bef661c20deaca1bbcfbc2922856" : { "d" : 0.8367,
+											   "e" : 0.69999999999999996,
+											   "t" : 1328194134
+											 },
+             "agent" : { "d" : 0.8367,
+			 "e" : 0.69999999999999996,
+			 "t" : 1328194134
+		       },
+             "cfengine" : { "d" : 0.8367,
+			    "e" : 0.69999999999999996,
+			    "t" : 1328194134
+			  },
+             "cfengine_3" : { "d" : 0.8367,
+			      "e" : 0.69999999999999996,
+			      "t" : 1328194134
+			    },
+             "cfengine_3_2" : { "d" : 0.8367,
+				"e" : 0.69999999999999996,
+				"t" : 1328194134
+			      },
+             "cfengine_3_2_1" : { "d" : 0.8367,
+				  "e" : 0.69999999999999996,
+				  "t" : 1328194134
+				},
+             "cfengine_com" : { "d" : 0.8367,
+				"e" : 0.69999999999999996,
+				"t" : 1328194134
+			      },
+             "cfengine_in_high_ldt" : { "d" : 0.0051000000000000004,
+					"e" : 0,
+					"t" : 1328108944
+				      },
+             "cfengine_out_high_ldt" : { "d" : 0.0051000000000000004,
+					 "e" : 0,
+					 "t" : 1328045331
+				       },
+             "com" : { "d" : 0.8367,
+		       "e" : 0.69999999999999996,
+		       "t" : 1328194134
+		     },
+             "commercial_customer" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1328194134
+				     },
+             "compiled_on_linux_gnu" : { "d" : 0.8367,
+					 "e" : 0.69999999999999996,
+					 "t" : 1328194134
+				       },
+             "cpu0_high_dev1" : { "d" : 0,
+				  "e" : 0.5,
+				  "t" : 1327918730
+				},
+             "cpu0_high_dev2" : { "d" : 0.0051000000000000004,
+				  "e" : 0,
+				  "t" : 1327919047
+				},
+             "cpu0_high_ldt" : { "d" : 0.0051000000000000004,
+				 "e" : 0,
+				 "t" : 1327928022
+			       },
+             "cpu_high_dev1" : { "d" : 0,
+				 "e" : 0.5,
+				 "t" : 1327918730
+			       },
+             "cpu_high_dev2" : { "d" : 0.0051000000000000004,
+				 "e" : 0,
+				 "t" : 1327919047
+			       },
+             "cpu_high_ldt" : { "d" : 0.0051000000000000004,
+				"e" : 0,
+				"t" : 1327928022
+			      },
+             "diskfree_high_microanomaly" : { "d" : 0.0051000000000000004,
+					      "e" : 0,
+					      "t" : 1327914849
+					    },
+             "entropy_cfengine_in_low" : { "d" : 0.8367,
+					   "e" : 0.69999999999999996,
+					   "t" : 1328194134
+					 },
+             "entropy_cfengine_out_low" : { "d" : 0.8367,
+					    "e" : 0.69999999999999996,
+					    "t" : 1328194134
+					  },
+             "entropy_dns_in_low" : { "d" : 0.8367,
+				      "e" : 0.69999999999999996,
+				      "t" : 1328194134
+				    },
+             "entropy_dns_out_low" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1328194134
+				     },
+             "entropy_ftp_in_low" : { "d" : 0.8367,
+				      "e" : 0.69999999999999996,
+				      "t" : 1328194134
+				    },
+             "entropy_ftp_out_low" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1328194134
+				     },
+             "entropy_icmp_in_low" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1328194134
+				     },
+             "entropy_icmp_out_low" : { "d" : 0.8367,
+					"e" : 0.69999999999999996,
+					"t" : 1328194134
+				      },
+             "entropy_irc_in_low" : { "d" : 0.8367,
+				      "e" : 0.69999999999999996,
+				      "t" : 1328194134
+				    },
+             "entropy_irc_out_low" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1328194134
+				     },
+             "entropy_misc_in_low" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1328194134
+				     },
+             "entropy_misc_out_low" : { "d" : 0.8367,
+					"e" : 0.69999999999999996,
+					"t" : 1328194134
+				      },
+             "entropy_netbiosdgm_in_low" : { "d" : 0.8367,
+					     "e" : 0.69999999999999996,
+					     "t" : 1328194134
+					   },
+             "entropy_netbiosdgm_out_low" : { "d" : 0.8367,
+					      "e" : 0.69999999999999996,
+					      "t" : 1328194134
+					    },
+             "entropy_netbiosns_in_low" : { "d" : 0.8367,
+					    "e" : 0.69999999999999996,
+					    "t" : 1328194134
+					  },
+             "entropy_netbiosns_out_low" : { "d" : 0.8367,
+					     "e" : 0.69999999999999996,
+					     "t" : 1328194134
+					   },
+             "entropy_netbiosssn_in_low" : { "d" : 0.8367,
+					     "e" : 0.69999999999999996,
+					     "t" : 1328194134
+					   },
+             "entropy_netbiosssn_out_low" : { "d" : 0.8367,
+					      "e" : 0.69999999999999996,
+					      "t" : 1328194134
+					    },
+             "entropy_nfsd_in_low" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1328194134
+				     },
+             "entropy_nfsd_out_low" : { "d" : 0.8367,
+					"e" : 0.69999999999999996,
+					"t" : 1328194134
+				      },
+             "entropy_smtp_in_low" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1328194134
+				     },
+             "entropy_smtp_out_low" : { "d" : 0.8367,
+					"e" : 0.69999999999999996,
+					"t" : 1328194134
+				      },
+             "entropy_ssh_in_low" : { "d" : 0.8367,
+				      "e" : 0.69999999999999996,
+				      "t" : 1328194134
+				    },
+             "entropy_ssh_out_low" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1328194134
+				     },
+             "entropy_tcpack_in_low" : { "d" : 0.8367,
+					 "e" : 0.69999999999999996,
+					 "t" : 1328194134
+				       },
+             "entropy_tcpack_out_low" : { "d" : 0.8367,
+					  "e" : 0.69999999999999996,
+					  "t" : 1328194134
+					},
+             "entropy_tcpfin_in_low" : { "d" : 0.8367,
+					 "e" : 0.69999999999999996,
+					 "t" : 1328194134
+				       },
+             "entropy_tcpfin_out_low" : { "d" : 0.8367,
+					  "e" : 0.69999999999999996,
+					  "t" : 1328194134
+					},
+             "entropy_tcpsyn_in_low" : { "d" : 0.8367,
+					 "e" : 0.69999999999999996,
+					 "t" : 1328194134
+				       },
+             "entropy_tcpsyn_out_low" : { "d" : 0.8367,
+					  "e" : 0.69999999999999996,
+					  "t" : 1328194134
+					},
+             "entropy_udp_in_low" : { "d" : 0.8367,
+				      "e" : 0.69999999999999996,
+				      "t" : 1328194134
+				    },
+             "entropy_udp_out_low" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1328194134
+				     },
+             "entropy_www_in_low" : { "d" : 0.8367,
+				      "e" : 0.69999999999999996,
+				      "t" : 1328194134
+				    },
+             "entropy_www_out_low" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1328194134
+				     },
+             "entropy_wwws_in_low" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1328194134
+				     },
+             "entropy_wwws_out_low" : { "d" : 0.8367,
+					"e" : 0.69999999999999996,
+					"t" : 1328194134
+				      },
+             "io_readdata_high_ldt" : { "d" : 0.0051000000000000004,
+					"e" : 0,
+					"t" : 1328152138
+				      },
+             "io_reads_high_dev1" : { "d" : 0.0051000000000000004,
+				      "e" : 0,
+				      "t" : 1327918730
+				    },
+             "io_reads_high_dev2" : { "d" : 0.0051000000000000004,
+				      "e" : 0,
+				      "t" : 1327918730
+				    },
+             "io_reads_high_ldt" : { "d" : 0.0051000000000000004,
+				     "e" : 0,
+				     "t" : 1328152138
+				   },
+             "io_reads_high_microanomaly" : { "d" : 0.0051000000000000004,
+					      "e" : 0,
+					      "t" : 1327915106
+					    },
+             "io_reads_low_normal" : { "d" : 0.0051000000000000004,
+				       "e" : 0,
+				       "t" : 1328151821
+				     },
+             "io_reads_normal_normal" : { "d" : 0,
+					  "e" : 0.5,
+					  "t" : 1327979032
+					},
+             "io_writes_high_dev1" : { "d" : 0.0051000000000000004,
+				       "e" : 0,
+				       "t" : 1327918730
+				     },
+             "io_writes_high_dev2" : { "d" : 0.0051000000000000004,
+				       "e" : 0,
+				       "t" : 1327918730
+				     },
+             "io_writes_high_ldt" : { "d" : 0.0051000000000000004,
+				      "e" : 0,
+				      "t" : 1328159020
+				    },
+             "io_writtendata_high_ldt" : { "d" : 0.0051000000000000004,
+					   "e" : 0,
+					   "t" : 1328152138
+					 },
+             "ipv4_10" : { "d" : 0.8367,
+			   "e" : 0.69999999999999996,
+			   "t" : 1328194134
+			 },
+             "ipv4_10_0" : { "d" : 0.8367,
+			     "e" : 0.69999999999999996,
+			     "t" : 1328194134
+			   },
+             "ipv4_10_0_0" : { "d" : 0.8367,
+			       "e" : 0.69999999999999996,
+			       "t" : 1328194134
+			     },
+             "ipv4_10_0_0_153" : { "d" : 0.8367,
+				   "e" : 0.69999999999999996,
+				   "t" : 1328194134
+				 },
+             "linux" : { "d" : 0.8367,
+			 "e" : 0.69999999999999996,
+			 "t" : 1328194134
+		       },
+             "linux_2_6_18_238_el5" : { "d" : 0.8367,
+					"e" : 0.69999999999999996,
+					"t" : 1328194134
+				      },
+             "linux_x86_64" : { "d" : 0.8367,
+				"e" : 0.69999999999999996,
+				"t" : 1328194134
+			      },
+             "linux_x86_64_2_6_18_238_el5" : { "d" : 0.8367,
+					       "e" : 0.69999999999999996,
+					       "t" : 1328194134
+					     },
+             "linux_x86_64_2_6_18_238_el5__1_SMP_Sun_Dec_19_14_22_44_EST_2010" : { "d" : 0.8367,
+										   "e" : 0.69999999999999996,
+										   "t" : 1328194134
+										 },
+             "loadavg_high_ldt" : { "d" : 0.0051000000000000004,
+				    "e" : 0,
+				    "t" : 1328190827
+				  },
+             "localhost" : { "d" : 0.8367,
+			     "e" : 0.69999999999999996,
+			     "t" : 1328194134
+			   },
+             "localhost_localdomain" : { "d" : 0.8367,
+					 "e" : 0.69999999999999996,
+					 "t" : 1328194134
+				       },
+             "mem_cached_high_dev1" : { "d" : 0.0051000000000000004,
+					"e" : 0,
+					"t" : 1328151821
+				      },
+             "mem_cached_high_dev2" : { "d" : 0.0051000000000000004,
+					"e" : 0,
+					"t" : 1327915106
+				      },
+             "mem_cached_high_ldt" : { "d" : 0.0051000000000000004,
+				       "e" : 0,
+				       "t" : 1328153029
+				     },
+             "mem_cached_high_microanomaly" : { "d" : 0.0051000000000000004,
+						"e" : 0,
+						"t" : 1327914849
+					      },
+             "mem_cached_high_normal" : { "d" : 0.8367,
+					  "e" : 0.69999999999999996,
+					  "t" : 1328194134
+					},
+             "mem_free_high_dev1" : { "d" : 0.0051000000000000004,
+				      "e" : 0,
+				      "t" : 1327918156
+				    },
+             "mem_free_high_ldt" : { "d" : 0.0051000000000000004,
+				     "e" : 0,
+				     "t" : 1328116708
+				   },
+             "mem_free_low_microanomaly" : { "d" : 0.0051000000000000004,
+					     "e" : 0,
+					     "t" : 1327649755
+					   },
+             "mem_freeswap_high_microanomaly" : { "d" : 0.0051000000000000004,
+						  "e" : 0,
+						  "t" : 1327915740
+						},
+             "mem_swap_high_microanomaly" : { "d" : 0.0051000000000000004,
+					      "e" : 0,
+					      "t" : 1327915740
+					    },
+             "mem_total_high_microanomaly" : { "d" : 0.0051000000000000004,
+					       "e" : 0,
+					       "t" : 1327915740
+					     },
+             "messages_high_ldt" : { "d" : 0.0051000000000000004,
+				     "e" : 0,
+				     "t" : 1327920512
+				   },
+             "messages_high_normal" : { "d" : 0.0051000000000000004,
+					"e" : 0,
+					"t" : 1327651262
+				      },
+             "messages_low_dev1" : { "d" : 0.0051000000000000004,
+				     "e" : 0,
+				     "t" : 1328193500
+				   },
+             "messages_low_dev2" : { "d" : 0.0051000000000000004,
+				     "e" : 0,
+				     "t" : 1327918730
+				   },
+             "messages_low_normal" : { "d" : 0.8367,
+				       "e" : 0.69999999999999996,
+				       "t" : 1328194134
+				     },
+             "messages_normal_normal" : { "d" : 0,
+					  "e" : 0.5,
+					  "t" : 1327914534
+					},
+             "net_iface_eth0" : { "d" : 0.8367,
+				  "e" : 0.69999999999999996,
+				  "t" : 1328194134
+				},
+             "nova_edition" : { "d" : 0.8367,
+				"e" : 0.69999999999999996,
+				"t" : 1328194134
+			      },
+             "redhat" : { "d" : 0.8367,
+			  "e" : 0.69999999999999996,
+			  "t" : 1328194134
+			},
+             "redhat1" : { "d" : 0.8367,
+			   "e" : 0.69999999999999996,
+			   "t" : 1328194134
+			 },
+             "redhat1_test_cfengine_com" : { "d" : 0.8367,
+					     "e" : 0.69999999999999996,
+					     "t" : 1328194134
+					   },
+             "redhat_5" : { "d" : 0.8367,
+			    "e" : 0.69999999999999996,
+			    "t" : 1328194134
+			  },
+             "redhat_5_6" : { "d" : 0.8367,
+			      "e" : 0.69999999999999996,
+			      "t" : 1328194134
+			    },
+             "redhat_s" : { "d" : 0.8367,
+			    "e" : 0.69999999999999996,
+			    "t" : 1328194134
+			  },
+             "redhat_s_5" : { "d" : 0.8367,
+			      "e" : 0.69999999999999996,
+			      "t" : 1328194134
+			    },
+             "redhat_s_5_6" : { "d" : 0.8367,
+				"e" : 0.69999999999999996,
+				"t" : 1328194134
+			      },
+             "report_failed" : { "d" : 0.8367,
+				 "e" : 0.69999999999999996,
+				 "t" : 1328194134
+			       },
+             "rootprocs_high_ldt" : { "d" : 0.0051000000000000004,
+				      "e" : 0,
+				      "t" : 1327932851
+				    },
+             "rootprocs_normal_microanomaly" : { "d" : 0.0051000000000000004,
+						 "e" : 0,
+						 "t" : 1327914849
+					       },
+             "test_cfengine_com" : { "d" : 0.8367,
+				     "e" : 0.69999999999999996,
+				     "t" : 1328194134
+				   },
+             "x86_64" : { "d" : 0.8367,
+			  "e" : 0.69999999999999996,
+			  "t" : 1328194134
+			}
+	   },
+    "ha" : [ "hostB" ],
+    "kH" : "SHA=33736d45041e2a9407be8cf449aeffa95114bef661c20deaca1bbcfbc2922856",
+    "ls" : { "+SHA=305658693b94e003e765956f1609731419cbc0e5c9caa09e230df5e005f1f283" : { "a" : 0.02,
+											 "d" : 0.050000000000000003,
+											 "i" : "10.0.0.29",
+											 "t" : 1328194132,
+											 "v" : 0.029999999999999999
+										       },
+             "-SHA=bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df" : { "a" : 0,
+											 "d" : 0.01,
+											 "i" : "10.0.0.29",
+											 "t" : 1328194207,
+											 "v" : 0.080000000000000002
+										       }
+	   },
+    "me" : { "A" : { "K" : 99.790700000000001,
+		     "R" : 0.20930000000000001
+		   },
+             "C" : { "K" : 100,
+		     "R" : 0
+		   },
+             "D" : { "K" : 93.33329999999999,
+		     "R" : 0.66669999999999996
+		   },
+             "H" : { "K" : 93.33329999999999,
+		     "R" : 0.66669999999999996
+		   },
+             "P" : { "K" : 100,
+		     "R" : 0
+		   },
+             "S" : { "K" : 100,
+		     "R" : 0
+		   },
+             "W" : { "K" : 93.335300000000004,
+		     "R" : 0.67249999999999999
+		   }
+	   },
+    "ne" : { "$binary" : "paIqTwAAAAAAAAAAAIiVQBRXhX35GpZAb0TSshj4z0A=",
+             "$type" : "20"
+	   },
+    "pc" : { "cdp_cmd_c__windows_system32_cmd_exe__c__echo_hello_succeeded___c__reportfile_txt___hello_failed" : { "d" : 0,
+														   "e" : 0,
+														   "s" : "n",
+														   "t" : 1328194134
+														 },
+             "cfengine_correct_cftwin_files_cftwin" : { "d" : 0,
+							"e" : 100,
+							"s" : "c",
+							"t" : 1328194134
+						      },
+             "cfengine_correct_cftwin_files_libtwin" : { "d" : 0,
+							 "e" : 100,
+							 "s" : "c",
+							 "t" : 1328194134
+						       },
+             "cfengine_limit_robot_agents_processes_check_cf_execd" : { "d" : 0,
+									"e" : 100,
+									"s" : "c",
+									"t" : 1328194134
+								      },
+             "cfengine_limit_robot_agents_processes_check_cf_monitord" : { "d" : 0,
+									   "e" : 100,
+									   "s" : "c",
+									   "t" : 1328194134
+									 },
+             "cfengine_management_correct_cftwin" : { "d" : 0,
+						      "e" : 100,
+						      "s" : "c",
+						      "t" : 1328194134
+						    },
+             "cfengine_management_limit_cfe_agents" : { "d" : 0,
+							"e" : 100,
+							"s" : "c",
+							"t" : 1328194134
+						      },
+             "change_management_files_watch_files" : { "d" : 0,
+						       "e" : 100,
+						       "s" : "c",
+						       "t" : 1328194134
+						     },
+             "check_valid_update" : { "d" : 0,
+				      "e" : 100,
+				      "s" : "c",
+				      "t" : 1328194132
+				    },
+             "garbage_collection_files_tidy_bz" : { "d" : 0,
+						    "e" : 100,
+						    "s" : "c",
+						    "t" : 1328194134
+						  },
+             "garbage_collection_files_tidy_gz" : { "d" : 0,
+						    "e" : 100,
+						    "s" : "c",
+						    "t" : 1328194134
+						  },
+             "garbage_collection_files_tidy_outputs" : { "d" : 0,
+							 "e" : 50,
+							 "s" : "r",
+							 "t" : 1328194134
+						       },
+             "garbage_collection_files_tidy_tmp" : { "d" : 15.300000000000001,
+						     "e" : 43.799999999999997,
+						     "s" : "r",
+						     "t" : 1328173715
+						   },
+             "promise_cdp_cf_11" : { "d" : 0,
+				     "e" : 100,
+				     "s" : "c",
+				     "t" : 1328194134
+				   },
+             "promise_cdp_cf_12" : { "d" : 0,
+				     "e" : 100,
+				     "s" : "c",
+				     "t" : 1328194134
+				   },
+             "promise_cdp_cf_13" : { "d" : 0,
+				     "e" : 100,
+				     "s" : "c",
+				     "t" : 1328194134
+				   },
+             "promise_cdp_cf_14" : { "d" : 0,
+				     "e" : 100,
+				     "s" : "c",
+				     "t" : 1328194134
+				   },
+             "promise_cdp_cf_15" : { "d" : 0,
+				     "e" : 100,
+				     "s" : "c",
+				     "t" : 1328194134
+				   },
+             "promise_cdp_cf_16" : { "d" : 0,
+				     "e" : 100,
+				     "s" : "c",
+				     "t" : 1328194134
+				   },
+             "promise_promises_cf_154" : { "d" : 0,
+					   "e" : 100,
+					   "s" : "c",
+					   "t" : 1328194134
+					 },
+             "promise_promises_cf_160" : { "d" : 0,
+					   "e" : 100,
+					   "s" : "c",
+					   "t" : 1328194134
+					 },
+             "unlabelled_promise" : { "d" : 0,
+				      "e" : 50,
+				      "s" : "c",
+				      "t" : 1327914271
+				    },
+             "update_bins_files_pkg_copy" : { "d" : 0,
+					      "e" : 100,
+					      "s" : "c",
+					      "t" : 1328194132
+					    },
+             "update_files_sys_workdir_bin" : { "d" : 0,
+						"e" : 100,
+						"s" : "c",
+						"t" : 1328194132
+					      },
+             "update_files_sys_workdir_lib" : { "d" : 0,
+						"e" : 100,
+						"s" : "c",
+						"t" : 1328194132
+					      },
+             "update_files_usr_local_sbin" : { "d" : 0,
+					       "e" : 100,
+					       "s" : "c",
+					       "t" : 1328194132
+					     },
+             "update_processes_cf_execd" : { "d" : 0,
+					     "e" : 100,
+					     "s" : "c",
+					     "t" : 1328194132
+					   },
+             "update_processes_cf_monitord" : { "d" : 0,
+						"e" : 100,
+						"s" : "c",
+						"t" : 1328194132
+					      },
+             "update_processes_cf_serverd" : { "d" : 0,
+					       "e" : 100,
+					       "s" : "c",
+					       "t" : 1328194132
+					     },
+             "update_processes_kill_cf_hub_on_clients" : { "d" : 0,
+							   "e" : 100,
+							   "s" : "c",
+							   "t" : 1328194132
+							 }
+	   },
+    "pck" : [ "cdp_cmd_c__windows_system32_cmd_exe__c__echo_hello_succeeded___c__reportfile_txt___hello_failed",
+              "garbage_collection_files_tidy_gz",
+              "garbage_collection_files_tidy_bz",
+              "promise_cdp_cf_11",
+              "promise_cdp_cf_12",
+              "change_management_files_watch_files",
+              "cfengine_management_limit_cfe_agents",
+              "cfengine_limit_robot_agents_processes_check_cf_monitord",
+              "cfengine_limit_robot_agents_processes_check_cf_execd",
+              "cfengine_management_correct_cftwin",
+              "cfengine_correct_cftwin_files_cftwin",
+              "cfengine_correct_cftwin_files_libtwin",
+              "update_processes_cf_execd",
+              "update_processes_cf_monitord",
+              "update_processes_cf_serverd",
+              "update_files_usr_local_sbin",
+              "update_files_sys_workdir_lib",
+              "update_files_sys_workdir_bin",
+              "check_valid_update",
+              "promise_cdp_cf_15",
+              "garbage_collection_files_tidy_outputs",
+              "promise_cdp_cf_16",
+              "update_bins_files_pkg_copy",
+              "promise_promises_cf_160",
+              "promise_cdp_cf_13",
+              "promise_cdp_cf_14",
+              "promise_promises_cf_154",
+              "update_processes_kill_cf_hub_on_clients",
+              "unlabelled_promise",
+              "garbage_collection_files_tidy_tmp"
+	    ],
+    "pf" : { "Copy(10_0_0_29:/var/cfengine/master_software_updates/redhat_5_x86_64 > /var/cfengine/software_updates/redhat_5_x86_64)" : { "P" : "Copy(10.0.0.29:/var/cfengine/master_software_updates/redhat_5_x86_64 > /var/cfengine/software_updates/redhat_5_x86_64)",
+																	  "d" : 0.00050000000000000001,
+																	  "e" : 0.0014,
+																	  "q" : 0.0012999999999999999,
+																	  "t" : 1328194132
+																	},
+             "Copy(10_0_0_29:/var/cfengine/masterfiles/cf_promises_validated > /var/cfengine/inputs/cf_promises_validated)" : { "P" : "Copy(10.0.0.29:/var/cfengine/masterfiles/cf_promises_validated > /var/cfengine/inputs/cf_promises_validated)",
+																"d" : 0,
+																"e" : 0,
+																"q" : 0,
+																"t" : 1328194132
+															      },
+             "Copy(localhost:/var/cfengine/bin > /usr/local/sbin)" : { "P" : "Copy(localhost:/var/cfengine/bin > /usr/local/sbin)",
+								       "d" : 0.00029999999999999997,
+								       "e" : 0.00050000000000000001,
+								       "q" : 0.00040000000000000002,
+								       "t" : 1328194132
+								     },
+             "Copy(localhost:/var/cfengine/bin/cf-agent > /var/cfengine/bin/cf-twin)" : { "P" : "Copy(localhost:/var/cfengine/bin/cf-agent > /var/cfengine/bin/cf-twin)",
+											  "d" : 0,
+											  "e" : 0,
+											  "q" : 0,
+											  "t" : 1328194134
+											},
+             "Copy(localhost:/var/cfengine/lib > /var/cfengine/lib-twin)" : { "P" : "Copy(localhost:/var/cfengine/lib > /var/cfengine/lib-twin)",
+									      "d" : 0.0001,
+									      "e" : 0.0001,
+									      "q" : 0.0001,
+									      "t" : 1328194134
+									    }
+	   },
+    "sw" : [
+        { "a" : "x",
+          "n" : "sed",
+          "v" : "4.1.5-5.fc6"
+        },
+        { "a" : "x",
+          "n" : "cyrus-sasl-lib",
+          "v" : "2.1.22-5.el5_4.3"
+        },
+        { "a" : "x",
+          "n" : "procps",
+          "v" : "3.2.7-16.el5"
+        }
+    ],
+    "t" : 1328194213,
+    "tc" : { "Fri:Hr00:Min00_05" : { "N" : 5,
+				     "k" : 95,
+				     "r" : 1,
+				     "t" : 1327622481,
+				     "v" : " Failsafe.cf 2.1.0 (agent-0)<br> Promises.cf 2.1.0 (agent-0)"
+				   },
+             "Fri:Hr00:Min05_10" : { "N" : 5,
+				     "k" : 95,
+				     "r" : 1,
+				     "t" : 1327622770,
+				     "v" : " Failsafe.cf 2.1.0 (agent-0)<br> Promises.cf 2.1.0 (agent-0)"
+				   },
+             "Fri:Hr00:Min10_15" : { "N" : 5,
+				     "k" : 95,
+				     "r" : 1,
+				     "t" : 1327623059,
+				     "v" : " Failsafe.cf 2.1.0 (agent-0)<br> Promises.cf 2.1.0 (agent-0)"
+				   }
+	   },
+    "va" : { "1 Feb 2012" : { "N" : -2592,
+			      "k" : 47520,
+			      "r" : 144,
+			      "t" : "1 Feb 2012"
+			    },
+             "2 Feb 2012" : { "N" : -1125,
+			      "k" : 20625,
+			      "r" : 64,
+			      "t" : "2 Feb 2012"
+			    },
+             "27 Jan 2012" : { "N" : -999,
+			       "k" : 18315,
+			       "r" : 55.5,
+			       "t" : "27 Jan 2012"
+			     },
+             "30 Jan 2012" : { "N" : -1503,
+			       "k" : 27555,
+			       "r" : 519.5,
+			       "t" : "30 Jan 2012"
+			     },
+             "31 Jan 2012" : { "N" : -2583,
+			       "k" : 47355,
+			       "r" : 144,
+			       "t" : "31 Jan 2012"
+			     }
+	   },
+    "vr" : { 
+    	"control_monitor" : { 
+	    "forgetrate" : { 
+		"T" : "r",
+		"V" : "0.7",
+                "t" : 1328174606
+            },
+            "histograms" : { "T" : "m",
+			     "V" : "true",
+			     "t" : 1328174606
+			   }
+        },
+        "control_reporter" : { 
+	    "build_directory" : { "T" : "s",
+				  "V" : "/var/cfengine/reports",
+				  "t" : 1328174606
+				},
+            "report_output" : { "T" : "m",
+				"V" : "html",
+				"t" : 1328174606
+			      },
+            "reports" : { "T" : "ml",
+			  "V" : [ "all" ],
+			  "t" : 1328174606
+			},
+            "style_sheet" : { "T" : "s",
+			      "V" : "/cf_enterprise.css",
+			      "t" : 1328174606
+			    }
+        },
+        "control_runagent" : { 
+	    "hosts" : { "T" : "sl",
+			"V" : [ "127.0.0.1" ],
+			"t" : 1328174606
+		      } 
+	}
+    }
+  }
+]
