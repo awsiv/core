@@ -36,24 +36,41 @@
             target:  '#admin_content'  // target element(s) to be updated with server response
         };
         
+        // common options for ajax requests
+        $.ajaxSetup({
+            beforeSend: function() {
+                $.blockUI({ css:{
+                        border: 'none',
+                        padding: '15px',
+                        backgroundColor: '#000',
+                        '-webkit-border-radius': '10px',
+                        '-moz-border-radius': '10px',
+                        opacity: .5,
+                        color: '#fff'
+                    },
+                    message: '<h1><img src="<?php echo get_imagedir() ?>ajax_loader2.gif" />Please wait...</h1>'
+                });
+            },
+            complete: function(){
+                $('.blockUI').hide();   
+                $(document).unblock();
+                $.unblockUI();
+            },
+            success: function() {
+                $('.blockUI').hide();   
+                $(document).unblock();
+                $.unblockUI();
+
+            }
+        });        
+        
      var edit_form_options =  {
                 target:  '#edit_form_wrapper',
                 dataType: 'json',
                 beforeSubmit: function(arr, $form, options)
                     {
-                        $.blockUI({ css:{
-                                        border: 'none',
-                                        padding: '15px',
-                                        backgroundColor: '#000',
-                                        '-webkit-border-radius': '10px',
-                                        '-moz-border-radius': '10px',
-                                        opacity: .5,
-                                        color: '#fff'
-                                        },
-                                    message: '<h1><img src="<?php echo get_imagedir() ?>ajax_loader2.gif" />Please wait...</h1>'
-                                });
                     },
-             success: function (responseObj, statusText, xhr, $form) {
+                success: function (responseObj, statusText, xhr, $form) {
                 
                 if (responseObj.status == 'all_ok')
                 {
@@ -66,8 +83,6 @@
                     $("#formInfoMessage").show();
                     window.scrollTo(null, ($('#formInfoMessage').position().top - 20));
                 }
-                $('.blockUI').hide();   
-                $(document).unblock();
                 return;
             }   
             };
@@ -79,15 +94,15 @@
 //              Buttons
 /************************************************************************************/ 
 
+
         //loading the create user page from server to add the user
     $('#add_user').live('click',function(event) {
-
         event.preventDefault();
         $("#error_status").html('');       
 
         var path = $(this).attr('href');
+                               
         attach_edit_form(this, $(this).attr('form'));
-
     });
         
     //submitting the create user form
@@ -98,37 +113,7 @@
         
         $(this).ajaxSubmit(edit_form_options);
     });
-/*
-            //submitting the form ajaxically to the page in form action and loading the result in admin_content
-            $('#edit_user').live('submit',function(event)
-            {
-                $(this).ajaxSubmit(
-                {
-                    target: options.target,
-                    beforeSubmit: function(arr, $form, options) {
-                        $.blockUI
-                        (
-                        { css:
-                            {
-                                border: 'none',
-                                padding: '15px',
-                                backgroundColor: '#000',
-                                '-webkit-border-radius': '10px',
-                                '-moz-border-radius': '10px',
-                                opacity: .5,
-                                color: '#fff'
-                            },
-                            message: '<h1><img src="<?php echo get_imagedir() ?>ajax_loader2.gif" />Please wait...</h1>'
-                        }
-                        );
-                    },
-                    success:function(responseText, statusText, xhr, $form){
-                        $(document).unblock();
-                        bindSortable('roleslist', new Array('roles'));
-                     }      
-                });
-            });
-*/
+
             //loading the change password in admin_content
         $('a.changepassword').live('click',function(event){
             event.preventDefault();
@@ -207,8 +192,6 @@
        
     });
     
-
-
             //loading all the pages in admin content after clicking the items in admin index menu
             $('.admin_menu li a').click(function(event){
                 event.preventDefault();
@@ -247,7 +230,7 @@
             $confirmation.dialog("open");
         }
         else
-        {   
+        {  // console.log(admin_content)
             $(this).ajaxSubmit(edit_form_options);
         }  
     });
@@ -357,10 +340,10 @@ if ($(parent).get(0).tagName.toLowerCase() == 'tr')
 {
     var colspan = $(parent).children('td').length;
     //create element with the same type as parent
-    $('<tr id="edit_form_wrapper"><td colspan="' + colspan +'" style="background:#ccc"><div id="edit_form"></div></td></tr>').insertAfter(parent);  
+    $('<tr id="edit_form_wrapper"><td colspan="' + colspan +'"><div id="edit_form"></div></td></tr>').insertAfter(parent);  
 }
 else  {
-    $('<div id="edit_form_wrapper" style="background:#ccc"><div id="edit_form"></div></div>').insertAfter(parent);  
+    $('<div id="edit_form_wrapper"><div id="edit_form"></div></div>').insertAfter(parent);  
 }
     $("#error_status").html('');
     var path = $(elem).attr('href');
@@ -368,6 +351,7 @@ else  {
 }
 
 function load_edit_form(path, form) {
+
     $("#edit_form").load(path,function(res){
         $("#edit_form").html(res).slideDown('slow',  function() {
  
@@ -499,11 +483,50 @@ function bindSortable(bind_css_class_name, destinations_array)
                 source_id   = ui.item.parent().attr('id');
             },  
             stop: function(e, ui) {
+                var self = this;
+
                 //return false;
-                var $group = $('.selected_item');
+                
                 destination_elem = $(ui.item).parent();
                 destination_id = destination_elem.attr('id');
 
+                var classesArray = ['crxi','crxx'];
+
+                if ($.inArray(destination_id, classesArray) != -1) {
+                    var args = [];
+                    args.event = e;
+                    args.ui = ui;
+                    args.destination_elem = destination_elem;
+                    args.destinations_array = destinations_array;
+                    args.source_elem = source_elem;
+                    if (checkAssignedCount(destination_id, classesArray, args) == true) {
+                        moveItem(e, ui, destination_id,destination_elem, destinations_array, source_elem );
+                    }
+                    else
+                      return false;  
+                    
+                }
+                else
+                {
+                    moveItem(e, ui, destination_id,destination_elem, destinations_array, source_elem );
+                }
+            },
+           
+            activate: function(event, ui) { 
+            }
+	}).disableSelection();
+}
+
+function prepareMove(args) {
+console.log(args);
+console.log('prepare move');
+moveItem(args.e, args.ui, args.destination_id, args.destination_elem, args.destinations_array, args.source_elem);
+}
+
+function moveItem(e, ui, destination_id, destination_elem, destinations_array,source_elem ) {
+
+                var $group = $('.selected_item');
+                console.log('moveItem');
                 // move from available to assigned
                 if ($.inArray( destination_id , destinations_array) != -1)
                 {
@@ -519,26 +542,16 @@ function bindSortable(bind_css_class_name, destinations_array)
                     });
                 }
 
-
+    
                 $group.clone().insertAfter($(ui.item));
  
                 $group.remove();
 
                 $(destination_elem).find('li.selected_item').removeClass('selected_item');
                 
-                checkEmptyList(source_elem, destination_elem);
-                
                 // check only for classes
-                var classesArray = ['crxi','crxx'];
-                if ($.inArray(destination_id, classesArray) != -1) {
-                    checkAssignedCount(destination_id, classesArray);
-                }
-               
-            },
-            activate: function(event, ui) { 
+                checkEmptyList(source_elem, destination_elem);
             }
-	}).disableSelection();
-}
 
 function addCheckbox(el, destination_id)
 {
@@ -581,8 +594,8 @@ function checkEmptyList(source_elem, destination_elem) {
 }
 
 
-
-function checkAssignedCount(dest, destinations_array) {
+//, okCallbackFnc, cancelCallbackFnc
+function checkAssignedCount(dest, destinations_array, args) {
     
     //console.log('checkAssignedCount');
     
@@ -592,14 +605,16 @@ function checkAssignedCount(dest, destinations_array) {
          if ($('#' + dest).children().length > maxAllowed) {
             $('#confirmation span').text('Please use less than ' + maxAllowed +' classes. Using more classes could affect system productivity');
             //var okBtn  = generateCloseBtn('Ok', $confirmation);
-            var cancelBtn   = generateDialogBtn('Cancel',   $confirmation, function(){return false});
-            var continueBtn = generateDialogBtn('Continue', $confirmation, function(){return true});            
+            var cancelBtn   = generateDialogBtn('Cancel',   $confirmation, function(){return false} );
+            var continueBtn = generateDialogBtn('Continue', $confirmation, prepareMove, args);            
            // $confirmation.dialog("option", "buttons", okBtn);
-           $confirmation.dialog("option", "buttons", cancelBtn.concat(continueBtn));
+            $confirmation.dialog("option", "buttons", cancelBtn.concat(continueBtn));
            
             $confirmation.dialog("open");
+            return false;
          }
     }
+    return true;
 
 }
 
@@ -671,7 +686,7 @@ beforeClose: function(event, ui) {
              return btn;
          }
             
-        function generateSubmitBtn(label, form, dialogObjm, options) {
+        function generateSubmitBtn(label, form, dialogObj, options) {
             var btn = [{
                         text: label,
                         click: function()
@@ -696,9 +711,11 @@ function getDialogBtnValue() {
 }        
 
 
-
+function test1(args) {
+    console.log(args);
+}
         
-            function generateDialogBtn(label, dialogObj, callbackFnc) {
+            function generateDialogBtn(label, dialogObj, callbackFnc, args) {
                 var btn = [{
                         text: label,
                         value: label,
@@ -708,7 +725,8 @@ function getDialogBtnValue() {
                             dialogObj.dialog('close');
                                                         //form.ajaxSubmit(options);
                             if ($.isFunction(callbackFnc)) {
-                                callbackFnc.call(this);
+                                console.log('Calling callback');
+                                callbackFnc.call(this, args);
                                // console.log(this);
                             }
                         }
