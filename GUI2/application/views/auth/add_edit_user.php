@@ -1,5 +1,5 @@
 <div id="edit_form">
-    <div id="infoMessage"><?php echo $message; ?></div>
+    <div id="formInfoMessage"><?php echo $message; ?></div>
     <div class="form">
 
         <?php
@@ -129,12 +129,12 @@
         <p id="btnholder"><?php
             if ($op == 'edit') { ?>
                <span class="green_btn">
-                    <input type="submit" value="Update User" class="green_btn" id="edit_user">
+                    <input type="submit" value="Update User" class="green_btn">
                </span>
              <?php
             } else { ?>
                <span class="green_btn">
-                    <input type="submit" value="Create User" class="green_btn" id="create_user">
+                    <input type="submit" value="Create User" class="green_btn">
                </span>            
             <?php }  ?>
         </p>
