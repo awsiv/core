@@ -1,5 +1,3 @@
-
-<div id="infoMessage"><?php echo $message;?></div>
 <?php
 if (!empty($roles))
 { ?>
