@@ -741,21 +741,7 @@ class Auth extends Controller {
             $roles = $this->ion_auth->get_roles($this->session->userdata('username'));
           
             $user = $this->ion_auth->get_ldap_user_details_from_local_db($username);
-            /*
-            $user_roles=array();
-            if($user !==NULL){
-                $user_roles=$user->roles;
-            }
-            foreach ($roles as $role) {
-                $this->data['roles'][$role['name']] = array('name' => 'role[]',
-                    'id' => $role['name'],
-                    'value' => $role['name'],
-                    'checked' => $this->form_validation->set_checkbox('role[]', $role['name'], (in_array($role['name'], $user_roles)) ? TRUE : FALSE)
-                );
-            }
-*/
-            
-            
+
             $assigned_roles = array();
             if($user !==NULL){
                 $assigned_roles = $user->roles;
@@ -831,7 +817,7 @@ class Auth extends Controller {
         }
                      
        $this->data['is_admin'] = $this->ion_auth->is_admin();
-        
+       
         if (!empty($op)) {
             $this->data['title'] = "Create role";
             $this->data['operation'] = "Create";
@@ -871,7 +857,15 @@ class Auth extends Controller {
                     $this->data['message'] = $this->ion_auth->messages();
                     $this->data['roles']   = $this->ion_auth->get_roles($this->session->userdata('username'));
                     
-                    $this->load->view('auth/list_role', $this->data);
+                   
+                    // on success - return json - we will  not redraw entire form
+                    $data['status'] = 'all_ok';
+                    $data['responseText'] = $this->load->view('auth/list_role', $this->data, true);
+
+                    $result = json_encode ($data);
+                    echo $result;
+                    return;
+                    
                 } else {
                     $this->session->set_flashdata('message', $this->ion_auth->messages());
                     redirect("auth/manage_role", 'refresh');
