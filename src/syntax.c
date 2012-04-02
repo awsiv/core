@@ -10,7 +10,18 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-void SyntaxTree2JavaScript()
+/* FIXME: only for cf-report */
+
+static void Nova_ShowBundleTypes(void);
+static void Nova_ShowControlBodies(void);
+static void Nova_ShowPromiseTypesFor(char *s, SubTypeSyntax *commonMerge);
+static void Nova_ShowBodyParts(const BodySyntax *bs, int i);
+static void Nova_ShowRange(char *s, enum cfdatatype type);
+static void Nova_ShowBuiltinFunctions(void);
+static void Nova_Indent(int i);
+
+
+void SyntaxTree2JavaScript(void)
 {
 
     Nova_ShowBundleTypes();
@@ -29,7 +40,7 @@ void SyntaxTree2JavaScript()
 /* Level 2                                                         */
 /*******************************************************************/
 
-void Nova_ShowBundleTypes()
+static void Nova_ShowBundleTypes(void)
 {
     int i;
     SubTypeSyntax *st;
@@ -101,7 +112,7 @@ void Nova_ShowBundleTypes()
 
 /*******************************************************************/
 
-void Nova_ShowControlBodies()
+static void Nova_ShowControlBodies(void)
 {
     int i;
     int closeBrack = false;
@@ -127,7 +138,7 @@ void Nova_ShowControlBodies()
 
 /*******************************************************************/
 
-void Nova_ShowPromiseTypesFor(char *s, SubTypeSyntax *commonMerge)
+static void Nova_ShowPromiseTypesFor(char *s, SubTypeSyntax *commonMerge)
 {
     int i, j;
     SubTypeSyntax *st;
@@ -169,7 +180,7 @@ void Nova_ShowPromiseTypesFor(char *s, SubTypeSyntax *commonMerge)
 
 /*******************************************************************/
 
-void Nova_ShowBodyParts(const BodySyntax *bs, int indent)
+static void Nova_ShowBodyParts(const BodySyntax *bs, int indent)
 {
     int i;
     int closeBrack = false;
@@ -242,7 +253,7 @@ void Nova_ShowBodyParts(const BodySyntax *bs, int indent)
 
 /*******************************************************************/
 
-void Nova_ShowRange(char *s, enum cfdatatype type)
+static void Nova_ShowRange(char *s, enum cfdatatype type)
 {
     char *sp;
 
@@ -298,7 +309,7 @@ void Nova_ShowRange(char *s, enum cfdatatype type)
 
 /*******************************************************************/
 
-void Nova_ShowBuiltinFunctions()
+static void Nova_ShowBuiltinFunctions(void)
 {
     int i;
 
@@ -329,7 +340,7 @@ void Nova_ShowBuiltinFunctions()
 
 /*******************************************************************/
 
-void Nova_Indent(int i)
+static void Nova_Indent(int i)
 {
     int j;
 

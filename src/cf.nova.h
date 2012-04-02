@@ -1045,13 +1045,6 @@ void Nova_ReviveOther(int argc, char **argv);
 /* syntax.c */
 
 void SyntaxTree2JavaScript(void);
-void Nova_ShowBundleTypes(void);
-void Nova_ShowControlBodies(void);
-void Nova_ShowPromiseTypesFor(char *s, SubTypeSyntax *commonMerge);
-void Nova_ShowBodyParts(const BodySyntax *bs, int i);
-void Nova_ShowRange(char *s, enum cfdatatype type);
-void Nova_ShowBuiltinFunctions(void);
-void Nova_Indent(int i);
 
 /* topicmap.c */
 
