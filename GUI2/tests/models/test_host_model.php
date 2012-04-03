@@ -88,6 +88,13 @@ class test_host_model extends CodeIgniterUnitTestCase {
         $this->assertTrue(is_numeric($ret), 'Count of red host should be a number ');
         $this->dump($ret);
     }
+    
+    public function test_getHostByName(){
+        $ret = $this->_ci->host_model->getHostByName($this->username,'.*');
+        
+        $this->assertTrue(is_array($ret), 'hostname list ');
+        $this->dump($ret);
+    }
 
 
 
