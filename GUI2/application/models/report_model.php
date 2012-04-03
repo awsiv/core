@@ -672,7 +672,7 @@ class report_model extends Cf_Model {
      * @param type $hosts_only
      * @return type
      */
-function getPromisesRepairedSummary($username, $hostkey, $search, $cause_rx, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 0, $page_number = 0,$hosts_only=false){
+function getPromisesRepairedSummary($username, $hostkey, $search, $cause_rx, $hours_deltafrom, $hours_deltato, $inclist=array(), $exlist=array(), $rows = 0, $page_number = 0,$hosts_only=false){
          try
         {
              if ($hosts_only)
@@ -716,7 +716,7 @@ function getPromisesRepairedSummary($username, $hostkey, $search, $cause_rx, $ho
      * @param type $hosts_only
      * @return type
      */
-    function getPromisesNotKeptSummary($username, $hostkey, $search, $cause_rx, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 50, $page_number = 1, $hosts_only=false){
+    function getPromisesNotKeptSummary($username, $hostkey, $search, $cause_rx, $hours_deltafrom, $hours_deltato, $inclist=array(), $exlist=array(), $rows = 50, $page_number = 1, $hosts_only=false){
         try
         {   if ($hosts_only)
             {

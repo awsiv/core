@@ -60,9 +60,9 @@ class Widget extends Cf_Controller
         $stopDateTimeStamp = ($stopDate == null) ? ($startDate + (6 * 3600)) : time();
         $environment = $env;
 
-        $this->data['notkept'] = json_decode(cfpr_summarize_notkept($username, NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, array($environment), array(), "time", true, 0, 0), true);
-        $this->data['repaired'] = json_decode(cfpr_summarize_repaired($username, NULL, NULL, $startDateTimeStamp, $stopDateTimeStamp, array($environment), array(), "time", true, 0, 0), true);
-
+        $this->data['notkept']= $this->report_model->getPromisesNotKeptSummary($username,NULL,NULL,'.*',$startDateTimeStamp, $stopDateTimeStamp, array($environment), array());
+        $this->data['repaired']= $this->report_model->getPromisesRepairedSummary($username,NULL,NULL,'.*',$startDateTimeStamp, $stopDateTimeStamp, array($environment), array());
+        
         $this->data['startDate'] = getDateStatus($startDateTimeStamp, true);
         $this->data['stopDate'] = getDateStatus($stopDateTimeStamp, true);
         $this->load->view('widgets/summaryCompliance', $this->data);
