@@ -184,8 +184,8 @@ $config['groups']['CFEngineEditor'] = array(
         array('jquery.jnotify.css', 'screen')
     ),
     'js' => array(
-        array('jquery-1.6.1.min.js', 'jquery-1.6.1.min.js', FALSE),
-        array('jquery-ui-1.8.14.custom.min.js', 'jquery-ui-1.8.14.custom.min.js', FALSE),
+        array('jquery-1.7.1.min.js', 'jquery-1.7.1.min.js', FALSE),
+        array('jquery-ui-1.8.18.custom.min.js', 'jquery-ui-1.8.18.custom.min.js', FALSE),
         array('Cfeditor/jquery.layout.min-1.2.0.js','Cfeditor/jquery.layout.min-1.2.0.js'),
         array('jquery.tablesorter.min.js','jquery.tablesorter.min.js'),
         array('jqueryFileTree.js','jqueryFileTree.js'),
