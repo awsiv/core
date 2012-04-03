@@ -25,7 +25,7 @@
                     <p>
                         <label>Save this search </label> 
                         <input type="input" id="search_name" name="search_name" class="textbox"></input>
-                        <span class="green_btn"><input type="submit" id="submit_search" value="save"/></span>
+                        <span class="green_btn"><input type="submit" id="submit_search" value="Save Search"/></span>
                         <span class="clear"></span>
                     </p>
                     <input type="hidden" id="search_params" name="search_params" value="<?php echo $params; ?>"></input>
@@ -35,7 +35,7 @@
                 </form>
           
                 <div class="alignrightbuttoncontainer">
-                    <a href="<?php echo site_url("/savedsearch/listSavedSearches/$report_type"); ?>"  class="green_btn loadsavedsearch"><span>Load saved searches</span></a>
+                    <a href="<?php echo site_url("/savedsearch/listSavedSearches/$report_type"); ?>"  class="green_btn loadsavedsearch"><span>Load Saved Searches</span></a>
                 </div>
             </div> 
             <div class="clear"></div> 
@@ -44,7 +44,7 @@
         <div class="reportpanelcontent">
             <div class="grid_7">
                 <span id="count_hosts">Report for XXXX hosts</span>
-                <a href="<?php echo site_url('widget/contextfinder') ?>" id="hclist" class="green_btn" title="<?php echo $this->lang->line('report_hostgp_help'); ?>"><span>Hostcontext</span></a>
+                <a href="<?php echo site_url('widget/contextfinder') ?>" id="hclist" class="green_btn" title="<?php echo $this->lang->line('report_hostgp_help'); ?>"><span>Host Context</span></a>
                 <script type="text/javascript">
                     var $incList = $('#searchform input:hidden[name=inclist]');
                     var $exList  = $('#searchform input:hidden[name=exlist]');
