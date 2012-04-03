@@ -2,7 +2,7 @@
 
 class host_model extends Cf_Model
 {
-
+    
 
     /**
      * Get the list of host by specified colors
@@ -79,6 +79,7 @@ class host_model extends Cf_Model
         {
             $rawdata = cfpr_host_list_by_name_rx($username, $hostregx, $rows, $page);
             $data = $this->checkData($rawdata);
+           
             if (is_array($data) && $this->hasErrors()==0)
             {
                 return $data;
@@ -317,7 +318,7 @@ class host_model extends Cf_Model
     {
         try
         {
-            $data = cfpr_host_count($username, $color, array(), array());
+            $data = cfpr_host_count($username, $color, $includes, $excludes);
             if (is_numeric($data))
             {
                 return $data;
