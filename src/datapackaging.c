@@ -2134,12 +2134,14 @@ void Nova_PackExecutionStatus(Item **reply, char *header)
     if (!ReadDB(dbp, NOVA_TRACK_DELTA_SCHEDULE, &avr_interval, sizeof(double)))
     {
         CfOut(cf_inform, "", " !! Unable to read from agent_execution db");
+        CloseDB(dbp);
         return;
     }
 
     if (!ReadDB(dbp, NOVA_TRACK_LAST_EXEC, &last_execution, sizeof(time_t)))
     {
         CfOut(cf_inform, "", " !! Unable to read from agent_execution db");
+        CloseDB(dbp);
         return;
     }
 
