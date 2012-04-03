@@ -191,6 +191,7 @@ int Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *year, Host
 int Nova2PHP_search_topics(char *search, int regex, char *buffer, int bufsize);
 void Nova2PHP_show_topic(int id, char *buffer, int bufsize);
 void Nova2PHP_show_topic_leads(int id, char *buffer, int bufsize);
+void Nova2PHP_show_all_context_leads(char *unqualified_topic, char *buffer, int bufsize);
 void Nova2PHP_show_topic_hits(int id, char *buffer, int bufsize);
 void Nova2PHP_show_topic_category(int id, char *buffer, int bufsize);
 void Nova2PHP_host_compliance_list(mongo_connection *conn, char *colour, HostClassFilter *host_class_filter, PageInfo *page, char *buffer, int bufsize);

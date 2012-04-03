@@ -3062,6 +3062,39 @@ PHP_FUNCTION(cfpr_show_topic_leads)
     RETURN_STRING(buffer, 1);
 }
 
+
+/******************************************************************************/
+
+PHP_FUNCTION(cfpr_show_all_context_leads)
+{
+    const int bufsize = 1000000;
+    char buffer[bufsize];
+    char *username;
+    char *unqualified_topic;
+    int user_len, topic_len;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss", &username, &user_len, &unqualified_topic, &topic_len) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(user_len);
+    ARGUMENT_CHECK_CONTENTS(topic_len);
+
+    if (CFDB_UserIsAdminWhenRBAC(username) != ERRID_SUCCESS)
+    {
+        zend_throw_exception(cfmod_exception_rbac, LABEL_ERROR_RBAC_NOT_ADMIN, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+    buffer[0] = '\0';
+
+    Nova2PHP_show_all_context_leads(unqualified_topic, buffer, bufsize);
+    RETURN_STRING(buffer, 1);
+}
+
+
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_show_topic_hits)

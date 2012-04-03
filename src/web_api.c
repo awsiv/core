@@ -2994,6 +2994,71 @@ void Nova2PHP_show_topic(int id, char *buffer, int bufsize)
 
 /*****************************************************************************/
 
+void Nova2PHP_show_all_context_leads(char *unqualified_topic, char *buffer, int bufsize)
+{
+    char reconstructed[CF_BUFSIZE];
+    Item *ip,*ip2,*candidates,*list;
+    int id;
+    char work[CF_BUFSIZE], jsonEscapedStr[CF_BUFSIZE] = { 0 };
+    
+    buffer[0] = '\0';
+
+    candidates = Nova_SearchTopicMap(unqualified_topic,CF_SEARCH_EXACT);
+    
+    for (ip = candidates; ip != NULL; ip=ip->next)
+       {
+       snprintf(reconstructed,CF_BUFSIZE,"%s::%s",ip->classes,ip->name);
+       id = Nova_GetTopicIdForTopic(reconstructed);
+
+       //printf("Found: \"%s\" in the context of: \"%s\" (%d)\n", ip->name,ip->classes,id);       
+
+       // ip->name is the same as the unqualified_topic arg
+       // ip->classes will be the context
+       
+       list = Nova_ScanLeadsAssociations(id, NULL);
+
+       if (list == NULL)
+          {
+          strcpy(buffer, "{ }");
+          return;
+          }
+
+       for (ip2 = list; ip2!= NULL; ip2 = ip2->next)
+          {
+          if (ip2 == list)
+             {
+             EscapeJson(ip2->name, jsonEscapedStr, sizeof(jsonEscapedStr));
+             snprintf(work, CF_BUFSIZE, "{ \"context\": \"%s\",\"assoc\": \"%s\", \"topics\": [",
+                      ip->classes, jsonEscapedStr);
+             Join(buffer, work, bufsize);
+             }
+          
+          EscapeJson(ip2->classes, jsonEscapedStr, sizeof(jsonEscapedStr));
+          snprintf(work, CF_BUFSIZE, "{ \"topic\": \"%s\", \"id\": %d },", jsonEscapedStr, ip2->counter);
+          Join(buffer, work, bufsize);
+          
+          if (ip2->next && strcmp(ip2->name, ip2->next->name) != 0)
+             {
+             strcpy(buffer + strlen(buffer) - 1, "]},");
+             EscapeJson(ip2->next->name, jsonEscapedStr, sizeof(jsonEscapedStr));
+             snprintf(work, CF_BUFSIZE, "{  \"context\": \"%s\", \"assoc\": \"%s\", \"topics\": [", ip->classes, jsonEscapedStr);
+             Join(buffer, work, bufsize);
+             }
+          
+          }
+       
+       DeleteItemList(list);
+       
+       Nova_ScanOccurrences(id, buffer,CF_BUFSIZE);
+       printf("Occurrences: %s\n\n",buffer);
+       }
+
+    DeleteItemList(candidates);
+    strcpy(buffer + strlen(buffer) - 1, "]}]"); 
+}
+
+/*****************************************************************************/
+
 void Nova2PHP_show_topic_leads(int id, char *buffer, int bufsize)
 {
     Item *ip;
@@ -3012,11 +3077,13 @@ void Nova2PHP_show_topic_leads(int id, char *buffer, int bufsize)
 // classes contains the related topic
 // counter contains the topic id
 
+// Aggregate all contexts
+    
     strcpy(buffer, "[ ");
 
     for (ip = list; ip != NULL; ip = ip->next)
     {
-        if (ip == list)
+         if (ip == list)
         {
             EscapeJson(ip->name, jsonEscapedStr, sizeof(jsonEscapedStr));
             snprintf(work, CF_BUFSIZE, "{ \"assoc\": \"%s\", \"topics\": [", jsonEscapedStr);

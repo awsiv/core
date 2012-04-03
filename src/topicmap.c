@@ -131,7 +131,7 @@ void Nova_ShowTopic(char *qualified_topic)
 
     Nova_DeClassifyTopic(ToLowerStr(qualified_topic), topic_name, topic_context);
         
-    candidates = Nova_SearchTopicMap(topic_name,CF_SEARCH_REGEX);
+    candidates = Nova_SearchTopicMap(topic_name,CF_SEARCH_EXACT);
     
     for (ip = candidates; ip != NULL; ip=ip->next)
        {
@@ -155,6 +155,7 @@ void Nova_ShowTopic(char *qualified_topic)
 
     DeleteItemList(candidates);
 }
+
 
 /*****************************************************************************/
 
@@ -576,7 +577,6 @@ Item *Nova_ScanLeadsAssociations(int search_id, char *assoc_mask)
 void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
 {
     enum representations locator_type;
-    Rlist *rp, *frags = NULL, *atoms = NULL, *rrp;
     char topic_name[CF_BUFSIZE] = { 0 },
          topic_id[CF_BUFSIZE] = { 0 },
          topic_context[CF_BUFSIZE] = { 0 };
@@ -609,7 +609,8 @@ void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
 
     if (strcmp("any", topic_context) != 0)
        {
-       //bson_append_string(&bb, cfk_occurtopic, topic_context);
+       // We no longer search for a specific context, but rather aggregate all contexts
+       // bson_append_string(&bb, cfk_occurtopic, topic_context);
        }
     
     bson_from_buffer(&query, &bb);
@@ -673,20 +674,7 @@ void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
             }
         }
 
-        // Now, for each plausible occurrence, see if it overlaps with the current topic in
-        // any of its component parts. We do some `lifting' here to infer potential relevance
-
-        frags = SplitStringAsRList(context, '|');
-        frags = AlphaSortRListNames(frags);
-
-        snprintf(text,CF_BUFSIZE,"%s about %s",represents,topic);
-        
-        for (rp = frags; rp != NULL; rp = rp->next)
-        {
-            Nova_AddOccurrenceBuffer(rp->item, locator, locator_type, text, buffer, bufsize);
-        }
-
-        DeleteRlist(frags);
+        Nova_AddOccurrenceBuffer(context, locator, locator_type, text, buffer, bufsize);
     }
 
     buffer[strlen(buffer) - 1] = ']';

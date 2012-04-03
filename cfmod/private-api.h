@@ -662,9 +662,16 @@ PHP_FUNCTION(cfpr_search_topics);
  */
 PHP_FUNCTION(cfpr_show_topic_leads);
 
-/*! \brief Get hits for a topic
+/*! \brief Get associations for a topic
  * \param topicId
  */
+
+PHP_FUNCTION(cfpr_show_all_context_leads);
+
+/*! \brief Get all associationss for an unqualified topic
+ * \param topicName
+ */
+
 PHP_FUNCTION(cfpr_show_topic_hits);
 
 /*! \brief Get the cateogry of a topic
