@@ -51,20 +51,16 @@ void LogFileChange(char *file, int change, Attributes a, Promise *pp)
         return;
     }
 
-    if (!GetRepositoryPath(file, a, destination))
+    if (GetRepositoryPath(file, a, destination))
     {
-        strlcpy(destination, file, CF_BUFSIZE);
+        JoinPath(destination, CanonifyName(file));
+        MakeParentDirectory(destination, a.move_obstructions);
+    }
+    else
+    {
+        snprintf(destination, sizeof(destination), "%s_cfchanges", file);
     }
 
-    if (!JoinPath(destination, "_cfchanges"))
-    {
-        CfOut(cf_error, "", "Buffer overflow for long filename\n");
-        return;
-    }
-
-    if (!MakeParentDirectory(destination, a.move_obstructions))
-    {
-    }
 
 /* Check if the file already exists, if so do a diff */
 
