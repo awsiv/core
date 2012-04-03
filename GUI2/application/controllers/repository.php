@@ -66,9 +66,9 @@ class Repository extends Cf_Controller {
 
 
 
-            $this->load->library('cfsvn', $params);
             $errorArray = array();
             try {
+                $this->load->library('cfsvn', $params);
                 $data = $this->cfsvn->cfsvn_checkout();
             } catch (Exception $e) {
                 $errorArray = array('message' => $e->getMessage());
@@ -109,13 +109,19 @@ class Repository extends Cf_Controller {
         $data = array();
         
         $params = array(
-                'workingdir' => get_policiesdir() . $this->session->userdata('username')
-            );
-         $this->load->library('cfsvn', $params);
-         
-        $url = $this->cfsvn->get_current_repository();
+            'workingdir' => get_policiesdir() . $this->session->userdata('username')
+        );
+
         $currentUser = $this->session->userdata('username');
-        $obj = $this->repository_model->get_specific_repository($currentUser, $url);
+
+        try {
+            $return = $this->load->library('cfsvn', $params);
+            $url = $this->cfsvn->get_current_repository();
+            $obj = $this->repository_model->get_specific_repository($currentUser, $url);
+        } catch (Exception $e) {
+            // if we get errors from svn status
+            $obj = null;
+        }
         $alreadyCheckedOut = is_svn_checked_out('./policies/', $this->session->userdata('username'));
 
         // check if it is already checked out  checked out 
