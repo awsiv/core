@@ -1216,10 +1216,7 @@ Item *Nova_ScanClients()
 
         if (!ip)
         {
-            char hostkey_direction[CF_BUFSIZE];
-            snprintf(hostkey_direction, sizeof(hostkey_direction), "%c%s", incoming ? '-' : '+', hostkey);
-
-            ip = PrependItem(&list, hostkey_direction, address);
+            ip = PrependItem(&list, hostkey, address);
 
             if (counter++ > LICENSES)
             {
