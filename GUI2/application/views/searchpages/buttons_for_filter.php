@@ -4,7 +4,7 @@
  * 
  *  */ ?>
 <p class="alignrightbuttoncontainer">
-    <span class="green_btn"><input class="green_btn" type="submit" value="Generate report"></input></span>
+    <span class="green_btn"><input class="green_btn" type="submit" value="Generate Report"></input></span>
     <?php if (isset($morefilters) && $morefilters == true) { ?>
         <a  id="morefiltertoggle"class="green_btn" href="#"><span>More Filters</span></a>
         <script type="text/javascript">
