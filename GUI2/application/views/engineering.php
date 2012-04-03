@@ -6,6 +6,7 @@
             </div>
             <div class="clear"></div>
         </div>
+        <div id="darktabs">
         <div class="grid_8 omega" id="tabs-layout">
             <ul>
                 <li class="first"><a href="#tab-1">Status</a></li>
@@ -42,6 +43,7 @@
                 </div>
             </div>
         </div>
+    </div>
         <div class="clear"></div>
     </div>
     <div class="clear"></div>

@@ -34,6 +34,92 @@
 #custom-tabs .ui-tabs-panel a,.custom-tabs .ui-tabs-panel a {color:#08A3C1;}
 
 
+#darktabs .ui-widget-header {
+    background: #51584d;
+    height: 53px;
+
+    -moz-border-radius: 4px 4px 0 0;
+    border-radius: 4px 4px 0 0;
+    -opera-border-radius: 4px 4px 0 0;
+    -khtml-border-radius: 4px 4px 0 0;
+    -webkit-border-radius: 4px 4px 0 0;
+}
+#darktabs .ui-widget-content {
+    background: transparent
+}
+
+#darktabs .ui-tabs {
+    padding: 0;
+    margin-left: 12px; /*hack*/
+}
+#darktabs  .ui-widget-header {
+    border: none !important
+}
+
+#darktabs .ui-tabs .ui-tabs-nav li {
+    top: 21px;
+    margin-left: 5px;
+    height: 30px;
+}
+
+#darktabs .ui-tabs-nav li.first {
+    margin-left: 10px;
+}
+
+#darktabs .ui-state-default, 
+#darktabs .ui-widget-content .ui-state-default, 
+#darktabs .ui-widget-header .ui-state-default {
+    background: #798075 !important;
+    border-top: 1px solid #979e93 !important;
+    border-left: 1px solid #979e93 !important;
+    border-right: 1px solid #979e93 !important;    
+    color: #fff !important;    
+}
+
+#darktabs .ui-state-default a, 
+#darktabs .ui-state-default a:link, 
+#darktabs .ui-state-default a:visited {
+    color: #fff;
+}
+
+#darktabs .ui-state-hover, 
+#darktabs .ui-widget-content .ui-state-hover, 
+#darktabs .ui-widget-header .ui-state-hover,
+#darktabs .ui-state-active, 
+#darktabs .ui-widget-content .ui-state-active, 
+#darktabs .ui-widget-header .ui-state-active
+{
+    background: #fff !important;
+    border-top: 1px solid #979e93 !important;
+    border-left: 1px solid #979e93 !important;
+    border-right: 1px solid #979e93 !important;
+    color: #000 !important;    
+}
+
+#darktabs .ui-state-active a, 
+#darktabs .ui-state-hover a {
+    color: #000 !important;
+}
+
+
+#darktabs .dd_menu {
+    background: none !important;
+}
+
+#darktabs .dd_menu ul {
+    margin: 0;
+}
+
+/**/
+/*
+#darktabs #astrolabe .listContainer {
+    height: 456px;
+}
+*/
+#darktabs .ui-tabs-panel {
+    background: #fff !important;
+} 
+
 
 .ui-accordion { width: 100%; }
 .ui-accordion .ui-accordion-header { cursor: pointer; position: relative; margin-top: 1px; zoom: 1; }

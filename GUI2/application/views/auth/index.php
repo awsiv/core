@@ -8,23 +8,25 @@
             <!--<li>Settings</li>
         </ul> -->
 
-<div id="infoMessage"><?php echo $message;?></div>            
-<div class="ui-tabs ui-widget ui-widget-content ui-corner-all">        
-<ul class="admin_menu ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
-                <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active ">
-                   <a href="<?php echo site_url('auth/index'); ?>">Users</a>
-                </li>
-                <li class="ui-state-default ui-corner-top">
-                    <a href="<?php echo site_url('auth/manage_role'); ?>">Roles</a>
-                </li>
-            </ul>        
-        <div class="holder">
-            <div id="error_status"></div>
-            <div id="admin_content" class="tables">
-                <?php include 'user_list.php'; ?>
+<div id="infoMessage"><?php echo $message;?></div> 
+<div id="darktabs">
+    <div class="ui-tabs ui-widget ui-widget-content ui-corner-all">        
+    <ul class="admin_menu ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+                    <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active ">
+                       <a href="<?php echo site_url('auth/index'); ?>">Users</a>
+                    </li>
+                    <li class="ui-state-default ui-corner-top">
+                        <a href="<?php echo site_url('auth/manage_role'); ?>">Roles</a>
+                    </li>
+                </ul>        
+            <div class="holder">
+                <div id="error_status"></div>
+                <div id="admin_content" class="tables">
+                    <?php include 'user_list.php'; ?>
+                </div>
             </div>
-        </div>
-</div>        
+    </div>
+<div>
         <!-- <a href="#" onclick="testDialog()">Test dialog</a> -->
     </div>
 </div>

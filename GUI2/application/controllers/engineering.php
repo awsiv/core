@@ -50,7 +50,8 @@ class Engineering extends Cf_Controller
                     array('hostsComplianceTimeseries.css'),
                     array('hostInfo.css'),
                     array('jScrollPane.css'),
-                    array('contextfinder.css'),   
+                    array('contextfinder.css'),
+                    array('tabs-custom.css')
                     )
             );        
 
@@ -58,6 +59,7 @@ class Engineering extends Cf_Controller
         $jsIE = array('flot/excanvas.min.js');
         $this->carabiner->group('iefix', array('js' => $jsIE));
         $this->carabiner->js($requiredjs);
+     
 
         $data = array(
             'title' => $this->lang->line('mission_portal_title'),
