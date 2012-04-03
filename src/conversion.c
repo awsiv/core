@@ -24,6 +24,7 @@
 
 #include "cf3.defs.h"
 #include "cf3.extern.h"
+#include <assert.h>
 
 // WTF: conversion functions access database
 #if defined(HAVE_LIBMONGOC)
@@ -51,6 +52,8 @@ static const char *CFCON_VIEWS[] = { "Comp",    // NOTE: must match cfl_view enu
     "HubDetails",
     NULL
 };
+
+static Rlist *HubHostListToRlist(Rlist *hub_host_list, char *return_format);
 
 /*****************************************************************************/
 
@@ -182,4 +185,82 @@ int Nova_GetReportedList(char *hostkey, char *scope, char *lval, Rlist **list)
     return true;
 }
 
+/*****************************************************************************/
+
+bool CFDB_HostsWithClass(Rlist **return_list, char *class_name, char *return_format)
+{
+    if(!IsDefinedClass("am_policy_hub"))
+    {
+        CfOut(cf_error, "", "!! Listing hosts with a class is only available locally on Nova hubs (not running as a hub)");
+        return false;
+    }
+    
+    mongo_connection conn;
+    
+    if(!CFDB_Open(&conn))
+    {
+        return false;
+    }
+    
+    HostClassFilter *filter = NewHostClassFilter(NULL, NULL);
+    HostClassFilterAddClasses(filter, class_name, NULL);
+    
+    HubQuery *hq = CFDB_QueryHostsByHostClassFilter(&conn, filter);
+
+    DeleteHostClassFilter(filter);
+    CFDB_Close(&conn);
+
+    *return_list = HubHostListToRlist(hq->hosts, return_format);
+
+    DeleteHubQuery(hq, NULL);
+    
+    return true;
+}
+
+#else   /* NOT HAVE_LIBMONGOC */
+
+bool CFDB_HostsWithClass(Rlist **return_list, char *class_name, char *return_format)
+{
+    CfOut(cf_error, "", "!! Listing hosts with a class is only available locally on Nova hubs (no binary support)");
+    return false;
+}
+
 #endif
+
+/*****************************************************************************/
+
+static Rlist *HubHostListToRlist(Rlist *hub_host_list, char *return_format)
+{
+    bool return_ip_address;
+
+    if(strcmp(return_format, "address") == 0)
+    {
+        return_ip_address = true;
+    }
+    else if(strcmp(return_format, "name") == 0)
+    {
+        return_ip_address = false;
+    }
+    else
+    {
+        FatalError("HubHostListToRlist: Unknown return format %s", return_format);
+    }
+    
+    Rlist *return_list = NULL;
+    
+    for(Rlist *rp = hub_host_list; rp != NULL; rp = rp->next)
+    {
+        HubHost *hh = (HubHost *)rp->item;
+
+        if(return_ip_address)
+        {
+            PrependRScalar(&return_list, hh->ipaddr, CF_SCALAR);
+        }
+        else
+        {
+            PrependRScalar(&return_list, hh->hostname, CF_SCALAR);
+        }
+    }
+    
+    return return_list;
+}
