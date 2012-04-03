@@ -6,7 +6,7 @@ class Widget extends Cf_Controller
     function Widget()
     {
         parent::__construct();
-        $this->load->model(array('host_model', 'class_model', 'report_model', 'bundle_model','promise_model'));
+        $this->load->model(array('host_model', 'class_model', 'report_model', 'bundle_model','promise_model','environment_model'));
         if (!$this->ion_auth->logged_in())
         {
             $this->output->set_status_header('401', 'Not Authenticated');
