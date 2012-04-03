@@ -495,6 +495,7 @@ static int ScheduleRun()
     CfGetInterfaceInfo(cf_executor);
     Get3Environment();
     OSClasses();
+    BuiltinClasses();
     SetReferenceTime(true);
     ThreadUnlock(cft_system);
 
