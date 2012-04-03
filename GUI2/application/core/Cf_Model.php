@@ -44,6 +44,7 @@ class Cf_Model extends CI_Model {
      * @param array $data parsed else false if error 
      */
     function checkData($data) {
+        $this->clearErrors(); //make sure that no error exist as only one instance is loaded.
         $data_check = json_decode($data, true);
         $returnVal = true;
         if (function_exists("json_last_error")) {
