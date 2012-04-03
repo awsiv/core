@@ -12,6 +12,7 @@
 HubQuery *CFDB_QueryHosts(mongo_connection *conn, char *db, bson *query);
 HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, char *ipRegex,
                                    HostClassFilter *hostClassFilter);
+HubQuery *CFDB_QueryHostsByHostClassFilter(mongo_connection *conn, HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryHostByHostKey(mongo_connection *conn, char *hostKey);
 HubQuery *CFDB_QueryValueReport(mongo_connection *conn, char *keyHash, char *lday, char *lmonth, char *lyear, int sort,
                                 HostClassFilter *hostClassFilter);
