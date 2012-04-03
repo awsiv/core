@@ -361,6 +361,25 @@ HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, 
 
 /*****************************************************************************/
 
+HubQuery *CFDB_QueryHostsByHostClassFilter(mongo_connection *conn, HostClassFilter *hostClassFilter)
+{
+    bson_buffer bb;
+    bson query;
+    HubQuery *hq;
+
+    bson_buffer_init(&bb);
+    BsonAppendHostClassFilter(&bb, hostClassFilter);
+    bson_from_buffer(&query, &bb);
+
+    hq = CFDB_QueryHosts(conn, MONGO_DATABASE, &query);
+
+    bson_destroy(&query);
+
+    return hq;
+}
+
+/*****************************************************************************/
+
 HubQuery *CFDB_QueryHostByHostKey(mongo_connection *conn, char *hostKey)
 {
     bson_buffer bb;
