@@ -100,7 +100,6 @@ private $filter_view_mappings=array();
 
     function index()
     {
-
         $this->load->model('settings_model');
         $this->load->model('host_model');
         // we will use username for RBAC
