@@ -91,7 +91,6 @@ class test_host_model extends CodeIgniterUnitTestCase {
     
     public function test_getHostByName(){
         $ret = $this->_ci->host_model->getHostByName($this->username,'.*');
-        
         $this->assertTrue(is_array($ret), 'hostname list ');
         $this->dump($ret);
     }

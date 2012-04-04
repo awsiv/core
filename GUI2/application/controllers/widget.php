@@ -110,10 +110,10 @@ class Widget extends Cf_Controller
             foreach ($result as $row)
             {
                 if ($display == 'hostname' && strlen($row[0]) > 0)
-                    $html.="<li><a href=" . site_url('welcome/host') . "/" . $row[2] . " title=" . $row[2] . ">$row[0]</a></li>";
+                    $html.="<li><a href=" . site_url('welcome/host') . "/" . $row[0] . " title=" . $row[1] . ">$row[1]</a></li>";
 
                 if ($display == 'ipaddress' && strlen($row[1]) > 0)
-                    $html.="<li><a href=" . site_url('welcome/host') . "/" . $row[2] . " title=" . $row[2] . ">$row[1] ($row[0])</a></li>";
+                    $html.="<li><a href=" . site_url('welcome/host') . "/" . $row[0] . " title=" . $row[1] . ">$row[2] ($row[1])</a></li>";
             }
             //$html.="</ul>";
         }

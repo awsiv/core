@@ -32,7 +32,7 @@
                     foreach($hostlist as $host)
                     {
                        //echo "<li><a href=".site_url('welcome/host')."/".$host['key']." title=".$host['key'].">".$host['id']."</a></li>";
-                        echo "<li><a href=".site_url('welcome/host')."/".$host[2]." title=".$host[2].">".$host[0]."</a></li>";
+                        echo "<li><a href=".site_url('welcome/host')."/".$host[0]." title=".$host[1].">".$host[1]."</a></li>";
                     }
                 }else{
                      echo "<li>$error</li>";
