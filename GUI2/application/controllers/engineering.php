@@ -29,6 +29,7 @@ class Engineering extends Cf_Controller
             array('jScrollPane.js'),
             array('jquery.mousewheel.js'),
             array('jquery.contextMenu.js'),
+            array('jquery.blockUI.js'),            
 
 
             array('widgets/notes.js'),
