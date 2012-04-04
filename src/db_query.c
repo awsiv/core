@@ -291,6 +291,7 @@ HubQuery *CFDB_QueryHosts(mongo_connection *conn, char *db, bson *query)
 /* BEGIN RESULT DOCUMENT */
 
     bson_buffer_init(&bb);
+    bson_append_int(&bb, cfr_keyhash, 1);
     bson_append_int(&bb, cfr_ip_array, 1);
     bson_append_int(&bb, cfr_host_array, 1);
     bson_from_buffer(&field, &bb);

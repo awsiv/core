@@ -3230,7 +3230,7 @@ int Nova2PHP_show_hosts(char *hostNameRegex, char *ipRegex, HostClassFilter *hos
     {
         hh = (HubHost *) rp->item;
 
-        snprintf(work, sizeof(work), "[\"%s\", \"%s\", \"%s\"]\n,", hh->hostname, hh->ipaddr, hh->keyhash);
+        snprintf(work, sizeof(work), "[\"%s\", \"%s\", \"%s\"]\n,", hh->keyhash, hh->hostname, hh->ipaddr);
 
         if (!Join(buf, work, bufsize))
         {
