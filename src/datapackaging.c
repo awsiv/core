@@ -1454,7 +1454,7 @@ void Nova_PackLastSeen(Item **reply, char *header, time_t from, enum cfd_menu ty
         {
             memcpy(&entry, value, sizeof(entry));
 
-            then = entry.Q.q;
+            then = entry.lastseen;
             average = (double) entry.Q.expect;
             var = (double) entry.Q.var;
 
