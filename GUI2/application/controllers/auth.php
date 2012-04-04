@@ -640,7 +640,6 @@ class Auth extends Controller {
             $tmp = $this->ion_auth->get_users_role($id);
             $assigned_roles = $tmp[0]['roles'];
 
-
             
             // create data for checkbox
             if (!empty($assigned_roles)) {
@@ -654,42 +653,9 @@ class Auth extends Controller {
             else {
                 $this->data['user_roles'] = '';
             }
-                        
+
             $this->data['roles'] = $this->_get_roles_not_assigned_to_user($assigned_roles);
-            
-/*            $roles = $this->ion_auth->get_roles($this->session->userdata('username'));
-            
-           
-            // get roles list, only roles which NOT assigned to user
-           if (!empty($selected_roles))
-           {
-               //prepare data
-                $selected_roles_tmp = array();
-                
-                foreach($selected_roles as $role) {
-                    $selected_roles_tmp[$role] = array(
-                            'name' => $role,
-                        );
-                }
-                //create roles array, which will look as [key] = value
-                $roles_tmp = array();
-                foreach ($roles as $item => $role) {
-                   //$roles_tmp[$role['name']] = $role['name'];
-                    $roles_tmp[$role['name']] =  array(
-                        'name' => $role['name'],
-                    );
-                }
 
-                //diff data
-                $roles = arrayRecursiveDiff($roles_tmp, $selected_roles_tmp);
-            }
-
-            foreach ($roles as $role) {
-                $this->data['roles'][$role['name']] = array(
-                    'value' => $role['name'],
-                );
-            }
-*/            
             $this->data['op'] = 'edit';
             $this->load->view('auth/add_edit_user', $this->data);
         }
@@ -699,13 +665,16 @@ class Auth extends Controller {
         $this->data['title'] = "Edit User";
         $this->data['user_type'] = 'external';
         
-       
+        if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+            redirect('auth', 'refresh');
+        }
+
         //validate form input
         $this->form_validation->set_rules('user_name', 'First Name', 'required|xss_clean');
-        $this->form_validation->set_rules('role[]', 'role', 'required|xss_clean');
+        $this->form_validation->set_rules('roles[]', 'Role', 'required|xss_clean');
 
 
-        if ($this->form_validation->run() == true && $this->ion_auth->update_ldap_users($username, $this->input->post('role'))) { //check to see if we are creating the user
+        if ($this->form_validation->run() == true && $this->ion_auth->update_ldap_users($username, $this->input->post('roles'))) { //check to see if we are creating the user
             //redirect them back to the admin page
             $user = $this->ion_auth->get_ldap_user_details_from_local_db($username);
             $user_roles=array();
@@ -716,13 +685,18 @@ class Auth extends Controller {
             if (is_ajax ()) {
                 $this->data['message'] = $this->ion_auth->messages();
                 $this->data['users'] = $this->ion_auth->get_users_array();
-                $this->data['userrole'] = $this->session->userdata('role');
+                $this->data['userrole'] = $this->session->userdata('roles');
                 $this->data['is_admin'] = $this->ion_auth->is_admin();
                 
                 // get system settings to protect "fall_back_for" user from editing
                 $this->data['fall_back_for'] = $this->setting_lib->get_fall_back_for();
+                 
+                $data['status'] = 'all_ok';
+                $data['responseText'] = $this->load->view('auth/user_list', $this->data, true);
                 
-                $this->load->view('auth/user_list', $this->data);
+                $result = json_encode ($data);
+                echo $result;
+                return;
             } else {
                
                 $this->session->set_flashdata('message', "User Updated");
@@ -731,6 +705,16 @@ class Auth extends Controller {
         } else { //display the create user form
             //set the flash data error message if there is one
             $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
+            // on error - return json - we will  not redraw entire form
+            if ($this->data['message'] != '') {
+                $data['status'] = 'validation_error';
+                $data['responseText'] = $this->data['message'];
+                
+                $result = json_encode ($data);
+                echo $result;
+                return;
+            }
+
             
             //$phone=explode('-',$user->phone);
             $this->data['user_name'] = array('name' => 'user_name',
@@ -738,7 +722,9 @@ class Auth extends Controller {
                 'type' => 'text',
                 'value' => $this->form_validation->set_value('user_name', $username),
             );
+           
             $roles = $this->ion_auth->get_roles($this->session->userdata('username'));
+
           
             $user = $this->ion_auth->get_ldap_user_details_from_local_db($username);
 
@@ -759,20 +745,19 @@ class Auth extends Controller {
             else {
                 $this->data['user_roles'] = '';
             }
-            
+
             $this->data['roles'] = $this->_get_roles_not_assigned_to_user($assigned_roles);
             
             $this->data['op'] = 'edit';
-            
+
             //$this->data['role']=array('name'=>'role','options'=>$options,'default'=>set_value('role', $user->role_id));
-            $this->load->view('auth/edit_user', $this->data);
+            $this->load->view('auth/add_edit_user', $this->data);
         }
     }
     
     function _get_roles_not_assigned_to_user($assignedRoles = array()) {
 
         $roles = $this->ion_auth->get_roles($this->session->userdata('username'));
-
         // get roles list, only roles which NOT assigned to user
         if (!empty($assignedRoles)) {
             //prepare data

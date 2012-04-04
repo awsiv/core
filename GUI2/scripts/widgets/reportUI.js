@@ -41,7 +41,17 @@
             var reportId = $itemClicked.attr('id');
             var reportText = $itemClicked.text();
             var filterUrl = $self.options.baseUrl + '/search/filterSearchView';
-            $self.filterPane.html($self.$busyIcon);
+              $.blockUI({ css:{
+                        border: 'none',
+                        padding: '15px',
+                        backgroundColor: '#000',
+                        '-webkit-border-radius': '10px',
+                        '-moz-border-radius': '10px',
+                        opacity: .5,
+                        color: '#fff'
+                    },
+                    message: '<h1 class="ajaxloader2">Please wait...</h1>'
+                });
             $self.reportTitlePane.html(reportText);
             $self.filterPane.load(filterUrl, {
                 'host':'All',
@@ -50,6 +60,10 @@
                 'exlist': encodeURIComponent($self._context.excludes)
             },function(response, status, xhr) {
 
+                $('.blockUI').hide();   
+                $(document).unblock();
+                $.unblockUI();
+
                 if (status == 'error') {
                     $self.$errorDiv.html(response);
                      $self.filterPane.html($self.$errorDiv);
@@ -57,21 +71,16 @@
                 }
                 $self.filterPane.find('form').attr('target', '_blank');
                 $self.filterPane.find('#hclist').hide();
+                
+                
             });
         },
         _modifyContext:function () {
             var $self = this;
             var includes = encodeURIComponent($self._context.includes);
             var excludes = encodeURIComponent($self._context.excludes);
-          
-            var contextWidget = $('#'+$self.options.contextWidgetElement).data('contextfinder');
-            if (contextWidget) {
-                // if context finder is initialized
-                // just manipulate the hidden fields for context finder for now
-                // have to access some pulic methods to set the context later
-                $self.filterPane.find('input[name=inclist]').val(includes);
-                $self.filterPane.find('input[name=exlist]').val(excludes);
-            }
+            $self.filterPane.find('input[name=inclist]').val(includes);
+            $self.filterPane.find('input[name=exlist]').val(excludes);
         },
         
         setContext: function(includes, excludes) {
