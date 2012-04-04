@@ -124,12 +124,12 @@ void Nova_DumpTopics()
 
 void Nova_ShowTopic(char *qualified_topic)
 {
-    char topic_name[CF_BUFSIZE], topic_context[CF_BUFSIZE],buffer[CF_BUFSIZE];
+    char topic_name[CF_BUFSIZE], topic_context[CF_BUFSIZE],buffer[1000000];
     char reconstructed[CF_BUFSIZE];
-    Item *ip,*ip2,*candidates,*list;
+    Item *ip,*candidates;
     int id;
 
-    Nova_DeClassifyTopic(ToLowerStr(qualified_topic), topic_name, topic_context);
+    Nova_DeClassifyTopic(qualified_topic, topic_name, topic_context);
         
     candidates = Nova_SearchTopicMap(topic_name,CF_SEARCH_EXACT);
     
@@ -140,17 +140,11 @@ void Nova_ShowTopic(char *qualified_topic)
 
        printf("Found: \"%s\" in the context of: \"%s\" (%d)\n", ip->name,ip->classes,id);       
 
-       list = Nova_ScanLeadsAssociations(id, NULL);
+       Nova2PHP_show_all_context_leads(topic_name,buffer,1000000);
+       printf("\nAssociations: %s\n",buffer);
        
-       for (ip2 = list; ip2!= NULL; ip2 = ip2->next)
-          {
-          printf(" assoc: %s %s (@ %d)\n",ip2->name,ip2->classes,ip2->counter);
-          }
-       
-       DeleteItemList(list);
-       
-       Nova_ScanOccurrences(id, buffer,CF_BUFSIZE);
-       printf("Occurrences: %s\n\n",buffer);
+       Nova_ScanOccurrences(id, buffer,1000000);
+       printf("\nOccurrences: %s\n\n",buffer);
        }
 
     DeleteItemList(candidates);
@@ -854,7 +848,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
             if (strcmp(bson_iterator_key(&it1), cfk_occurlocator) == 0)
             {
                 snprintf(work, CF_BUFSIZE, "{\"desc\": \"%s\",", bson_iterator_string(&it1));
-                Join(buffer, work, CF_BUFSIZE);
+                Join(buffer, work, bufsize);
             }
             if (strcmp(bson_iterator_key(&it1), cfk_occurcontext) == 0)
             {
@@ -862,14 +856,14 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
                 strncpy(topic_name, goals + 6, strlen(goals));
                 topic_id = Nova_GetTopicIdForTopic(topic_name);
                 snprintf(goals, CF_MAXVARSIZE, "\"name\":\"%s\",\"pid\":%d},", topic_name, topic_id);
-                Join(buffer, goals, CF_BUFSIZE);
+                Join(buffer, goals, bufsize);
             }
         }
     }
 
     ReplaceTrailingChar(buffer, ',', '\0');
 
-    EndJoin(buffer, "]", CF_BUFSIZE);
+    EndJoin(buffer, "]", bufsize);
     mongo_cursor_destroy(cursor);
     CFDB_Close(&conn);
 
