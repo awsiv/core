@@ -467,7 +467,8 @@ HubQuery *CFDB_QueryColour(mongo_connection *conn, const HostRankMethod method, 
             Item *ip_addresses = BsonGetStringArrayAsItemList(&cursor->current, cfr_ip_array);
 
             char *hostkey = NULL;
-            assert(BsonStringGet(&cursor->current, cfr_keyhash, &hostkey));
+            BsonStringGet(&cursor->current, cfr_keyhash, &hostkey);
+            assert(hostkey);
 
             host = NewHubHost(NULL, hostkey, ip_addresses->name, host_names->name);
 
@@ -6418,10 +6419,11 @@ Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const ch
     while (mongo_cursor_next(cursor))
     {
         char *hostkey = NULL;
-        assert(BsonStringGet(&cursor->current, cfr_keyhash, &hostkey));
+        BsonStringGet(&cursor->current, cfr_keyhash, &hostkey);
+        assert(hostkey);
 
         time_t timestamp = 0;
-        assert(BsonTimeGet(&cursor->current, cfr_day, &timestamp));
+        BsonTimeGet(&cursor->current, cfr_day, &timestamp);
 
         if (timestamp < from || timestamp > to)
         {
@@ -6464,7 +6466,8 @@ HubHost *CFDB_GetHostByKey(mongo_connection *conn, const char *hostkey)
         Item *ip_addresses = BsonGetStringArrayAsItemList(&out, cfr_ip_array);
 
         char *hostkey = NULL;
-        assert(BsonStringGet(&out, cfr_keyhash, &hostkey));
+        BsonStringGet(&out, cfr_keyhash, &hostkey);
+        assert(hostkey);
 
         host = NewHubHost(NULL, hostkey, ip_addresses->name, host_names->name);
 

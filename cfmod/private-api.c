@@ -4950,11 +4950,9 @@ PHP_FUNCTION(cfpr_astrolabe_host_list)
     HubQuery *result = NULL;
     {
         HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-
         ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
         HostClassFilterAddIncludeExcludeLists(filter, includes, excludes);
 
         mongo_connection conn;
@@ -4977,7 +4975,7 @@ PHP_FUNCTION(cfpr_astrolabe_host_list)
         JsonElement *entry = JsonObjectCreate(3);
 
         JsonObjectAppendString(entry, LABEL_HOST_KEY, host->keyhash);
-        JsonObjectAppendString(entry, LABEL_HOST_NAME, host->hostname);
+        JsonObjectAppendString(entry, LABEL_HOST_NAME, NULLStringToEmpty(host->hostname));
         JsonObjectAppendString(entry, LABEL_COLOUR, Nova_HostColourToString(host->colour));
 
         JsonArrayAppendObject(output, entry);
