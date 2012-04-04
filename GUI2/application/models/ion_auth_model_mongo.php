@@ -681,9 +681,9 @@ class Ion_auth_model_mongo extends CI_Model
                 $this->ion_auth->set_error('no_permission');
 		return FALSE; 
             }
-            
+           
                 try {
-                
+              
                     $ret = json_decode(cfpr_role_list_all($username), TRUE);
 
                     return $ret;
@@ -743,14 +743,14 @@ class Ion_auth_model_mongo extends CI_Model
 	{
 	    if (array_key_exists($this->identity_column, $data) && $this->identity_check($data[$this->identity_column]))
 	    {
-                 $user=$this->get_user_by_col($this->identity_column, $data[$this->identity_column]);
+                $user=$this->get_user_by_col($this->identity_column, $data[$this->identity_column]);
                 if($user->_id->__toString() != $id)
                 {
 		$this->ion_auth->set_error('account_creation_duplicate_'.$this->identity_column);
 		return FALSE;
                 }
 	    }
-
+                 
 	    if (array_key_exists('username', $data) || array_key_exists('password', $data) || array_key_exists('email', $data))
 	    {
 		if (array_key_exists('password', $data))
@@ -771,7 +771,7 @@ class Ion_auth_model_mongo extends CI_Model
          * @param type $data 
          * for updating the roles and related things for ldap user in local db
          */
-         public function update_ldap_user($username,$data){
+         public function update_ldap_user($username, $data){
                $this->mongo_db->where(array('username' => $username));
                $this->mongo_db->update('ldap_users', $data);
          }
@@ -1014,4 +1014,15 @@ class Ion_auth_model_mongo extends CI_Model
            return $this->mongo_db->where(array('roles'=>$rolename))->count('users');
        }
 
+       /**
+        * Unset field in ldap_users item
+        * @param type $id
+        * @param type $fieldname 
+        */
+       function unset_field_ldap_user($id, $fieldname) {
+           $this->mongo_db->clear();
+           $this->mongo_db->where(array('_id' => new MongoId($id)));
+           $this->mongo_db->update_remove_field('ldap_users', $fieldname);
+           $this->mongo_db->clear();
+       }
 }
