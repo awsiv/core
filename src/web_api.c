@@ -2983,7 +2983,7 @@ void Nova2PHP_show_topic(int id, char *buffer, int bufsize)
 
     if (Nova_GetTopicByTopicId(id, topic_name, topic_id, topic_context))
     {
-        snprintf(buffer, bufsize, "{\"topic\":\"%s\",\"context\":\"%s\"}", EscapeJson(topic_name, work, CF_BUFSIZE - 1),
+        snprintf(buffer, bufsize, " {\"topic\":\"%s\",\"context\":\"%s\"}", EscapeJson(topic_name, work, CF_BUFSIZE - 1),
                  topic_context);
     }
     else
@@ -2997,69 +2997,40 @@ void Nova2PHP_show_topic(int id, char *buffer, int bufsize)
 void Nova2PHP_show_all_context_leads(char *unqualified_topic, char *buffer, int bufsize)
 {
     char reconstructed[CF_BUFSIZE];
-    Item *ip,*ip2,*candidates,*list;
+    Item *ip,*candidates;
     int id;
     char work[CF_BUFSIZE], jsonEscapedStr[CF_BUFSIZE] = { 0 };
     
-    buffer[0] = '\0';
-    strcpy(buffer, "[ ");
+    buffer[0] = '[';
 
     candidates = Nova_SearchTopicMap(unqualified_topic,CF_SEARCH_EXACT);
 
     if (candidates == NULL)
        {
-       strcpy(buffer, "{ }");
+       strcpy(buffer, "[]");
        return;
        }
-    
+
     for (ip = candidates; ip != NULL; ip=ip->next)
        {
+       snprintf(work,CF_BUFSIZE, "\n{ \"context\": \"%s\", \"leads\": ",ip->classes);
+       Join(buffer, work, bufsize);
+
        snprintf(reconstructed,CF_BUFSIZE,"%s::%s",ip->classes,ip->name);
        id = Nova_GetTopicIdForTopic(reconstructed);
 
-       //printf("Found: \"%s\" in the context of: \"%s\" (%d)\n", ip->name,ip->classes,id);       
+       Nova2PHP_show_topic_leads(id, buffer, bufsize);
 
-       // ip->name is the same as the unqualified_topic arg
-       // ip->classes will be the context
-       
-       list = Nova_ScanLeadsAssociations(id, NULL);
-
-       if (list == NULL)
+       if (ip->next)
           {
-          strcpy(buffer, "{ }");
-          return;
+          Join(buffer,"\n},",bufsize); 
           }
-
-       for (ip2 = list; ip2!= NULL; ip2 = ip2->next)
-          {
-          if (ip2 == list)
-             {
-             EscapeJson(ip2->name, jsonEscapedStr, sizeof(jsonEscapedStr));
-             snprintf(work, CF_BUFSIZE, "{ \"context\": \"%s\",\"assoc\": \"%s\", \"topics\": [",
-                      ip->classes, jsonEscapedStr);
-             Join(buffer, work, bufsize);
-             }
-          
-          EscapeJson(ip2->classes, jsonEscapedStr, sizeof(jsonEscapedStr));
-          snprintf(work, CF_BUFSIZE, "{ \"topic\": \"%s\", \"id\": %d },", jsonEscapedStr, ip2->counter);
-          Join(buffer, work, bufsize);
-          
-          if (ip2->next && strcmp(ip2->name, ip2->next->name) != 0)
-             {
-             strcpy(buffer + strlen(buffer) - 1, "]},");
-             EscapeJson(ip2->next->name, jsonEscapedStr, sizeof(jsonEscapedStr));
-             snprintf(work, CF_BUFSIZE, "{  \"context\": \"%s\", \"assoc\": \"%s\", \"topics\": [", ip->classes, jsonEscapedStr);
-             Join(buffer, work, bufsize);
-             }
-          
-          }
-
-       strcpy(buffer + strlen(buffer) - 1, "]"); 
-       DeleteItemList(list);
        }
-
+    
     DeleteItemList(candidates);
-    strcpy(buffer + strlen(buffer) - 1, "}]"); 
+
+    //Chop off trailing command and terminate
+    strcpy(buffer + strlen(buffer) - 1, "\n}\n]\n"); 
 }
 
 /*****************************************************************************/
@@ -3070,11 +3041,9 @@ void Nova2PHP_show_topic_leads(int id, char *buffer, int bufsize)
     Item *list = Nova_ScanLeadsAssociations(id, NULL);
     char work[CF_BUFSIZE], jsonEscapedStr[CF_BUFSIZE] = { 0 };
 
-    buffer[0] = '\0';
-
     if (list == NULL)
     {
-        strcpy(buffer, "{ }");
+        Join(buffer,"[]",bufsize);
         return;
     }
 
@@ -3084,31 +3053,38 @@ void Nova2PHP_show_topic_leads(int id, char *buffer, int bufsize)
 
 // Aggregate all contexts
     
-    strcpy(buffer, "[ ");
+    Join(buffer, "\n[ ", bufsize);
 
     for (ip = list; ip != NULL; ip = ip->next)
     {
-         if (ip == list)
+        if (ip == list)
         {
             EscapeJson(ip->name, jsonEscapedStr, sizeof(jsonEscapedStr));
-            snprintf(work, CF_BUFSIZE, "{ \"assoc\": \"%s\", \"topics\": [", jsonEscapedStr);
+            snprintf(work, CF_BUFSIZE, " \n{ \"assoc\": \"%s\", \"topics\": [", jsonEscapedStr);
             Join(buffer, work, bufsize);
         }
 
+        // nest a topic subservient to an association
+        
         EscapeJson(ip->classes, jsonEscapedStr, sizeof(jsonEscapedStr));
-        snprintf(work, CF_BUFSIZE, "{ \"topic\": \"%s\", \"id\": %d },", jsonEscapedStr, ip->counter);
+        snprintf(work, CF_BUFSIZE, "\n {\"topic\": \"%s\", \"id\": %d },", jsonEscapedStr, ip->counter);
         Join(buffer, work, bufsize);
+
+        // Check end of this association list
 
         if (ip->next && strcmp(ip->name, ip->next->name) != 0)
         {
-            strcpy(buffer + strlen(buffer) - 1, "]},");
+           // New association, strip trailing comma and terminate
+           strcpy(buffer + strlen(buffer) - 1, "]},");
+
             EscapeJson(ip->next->name, jsonEscapedStr, sizeof(jsonEscapedStr));
-            snprintf(work, CF_BUFSIZE, "{ \"assoc\": \"%s\", \"topics\": [", jsonEscapedStr);
+            snprintf(work, CF_BUFSIZE, "\n{ \n\"assoc\": \"%s\", \"topics\": [", jsonEscapedStr);
             Join(buffer, work, bufsize);
         }
     }
 
-    strcpy(buffer + strlen(buffer) - 1, "]}]");
+    // Chop off trailing comma
+    strcpy(buffer + strlen(buffer) - 1, "]}]\n");
 }
 
 /*****************************************************************************/

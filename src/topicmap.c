@@ -126,28 +126,21 @@ void Nova_ShowTopic(char *qualified_topic)
 {
     char topic_name[CF_BUFSIZE], topic_context[CF_BUFSIZE],buffer[1000000];
     char reconstructed[CF_BUFSIZE];
-    Item *ip,*candidates;
     int id;
 
     Nova_DeClassifyTopic(qualified_topic, topic_name, topic_context);
+    id = Nova_GetTopicIdForTopic(qualified_topic);
         
-    candidates = Nova_SearchTopicMap(topic_name,CF_SEARCH_EXACT);
-    
-    for (ip = candidates; ip != NULL; ip=ip->next)
-       {
-       snprintf(reconstructed,CF_BUFSIZE,"%s::%s",ip->classes,ip->name);
-       id = Nova_GetTopicIdForTopic(reconstructed);
+    printf("Found: \"%s\" \n", topic_name);       
 
-       printf("Found: \"%s\" in the context of: \"%s\" (%d)\n", ip->name,ip->classes,id);       
+    buffer[0] = '\0';
+    Nova2PHP_show_all_context_leads(topic_name,buffer,1000000);
+    printf("\nAssociations: %s\n",buffer);
 
-       Nova2PHP_show_all_context_leads(topic_name,buffer,1000000);
-       printf("\nAssociations: %s\n",buffer);
-       
-       Nova_ScanOccurrences(id, buffer,1000000);
-       printf("\nOccurrences: %s\n\n",buffer);
-       }
+    buffer[0] = '\0';
+    Nova_ScanOccurrences(id, buffer,1000000);
+    printf("\nOccurrences: %s\n\n",buffer);
 
-    DeleteItemList(candidates);
 }
 
 
@@ -576,7 +569,7 @@ void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
     char topic_name[CF_BUFSIZE] = { 0 },
          topic_id[CF_BUFSIZE] = { 0 },
          topic_context[CF_BUFSIZE] = { 0 };
-         char locator[CF_BUFSIZE], context[CF_BUFSIZE], represents[CF_BUFSIZE], topic[CF_BUFSIZE];
+    char locator[CF_BUFSIZE], context[CF_BUFSIZE], represents[CF_BUFSIZE], topic[CF_BUFSIZE], text[CF_BUFSIZE];
     bson_buffer bb;
     bson query, field;
     mongo_cursor *cursor;
@@ -598,9 +591,18 @@ void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
 
     Nova_GetTopicByTopicId(this_id, topic_name, topic_id, topic_context);
 
+    if (strlen(topic_name) == 0)
+       {
+       return;
+       }
+    
     // Using a regex here is greedy, but it helps to brainstorm
     
     bson_buffer_init(&bb);
+
+    // The following search is greedy, but probably best, else we could try for a distinct word
+    // snprintf(searchstr,CF_BUFSIZE,"^%s$|\\s+%s\\s+",topic_name,topic_name);
+
     bson_append_regex(&bb, cfk_occurtopic, topic_name, "");
 
     if (strcmp("any", topic_context) != 0)
@@ -670,7 +672,8 @@ void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
             }
         }
 
-        Nova_AddOccurrenceBuffer(context, locator, locator_type, represents, buffer, bufsize);
+        snprintf(text,CF_BUFSIZE,"%s about %s",represents,topic);
+        Nova_AddOccurrenceBuffer(context, locator, locator_type, text, buffer, bufsize);
     }
 
     buffer[strlen(buffer) - 1] = ']';
