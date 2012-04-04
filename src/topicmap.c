@@ -582,7 +582,7 @@ void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
     char topic_name[CF_BUFSIZE] = { 0 },
          topic_id[CF_BUFSIZE] = { 0 },
          topic_context[CF_BUFSIZE] = { 0 };
-         char locator[CF_BUFSIZE], context[CF_BUFSIZE], represents[CF_BUFSIZE], topic[CF_BUFSIZE], text[CF_BUFSIZE];
+         char locator[CF_BUFSIZE], context[CF_BUFSIZE], represents[CF_BUFSIZE], topic[CF_BUFSIZE];
     bson_buffer bb;
     bson query, field;
     mongo_cursor *cursor;
@@ -676,7 +676,7 @@ void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
             }
         }
 
-        Nova_AddOccurrenceBuffer(context, locator, locator_type, text, buffer, bufsize);
+        Nova_AddOccurrenceBuffer(context, locator, locator_type, represents, buffer, bufsize);
     }
 
     buffer[strlen(buffer) - 1] = ']';
