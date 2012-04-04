@@ -43,8 +43,8 @@
  
         <div class="reportpanelcontent">
             <div class="grid_7">
-                <span id="count_hosts">Report for XXXX hosts</span>
-                <a href="<?php echo site_url('widget/contextfinder') ?>" id="hclist" class="green_btn" title="<?php echo $this->lang->line('report_hostgp_help'); ?>"><span>Host Context</span></a>
+                <span id="count_hosts">Report for <?php echo $hostcount ?> hosts</span>
+                <a href="<?php echo site_url('widget/contextfinder') ?>" id="hclist" class="green_btn showqtip" title="<?php echo $this->lang->line('report_hostgp_help'); ?>"><span>Host Context</span></a>
                 <script type="text/javascript">
                     var $incList = $('#searchform input:hidden[name=inclist]');
                     var $exList  = $('#searchform input:hidden[name=exlist]');

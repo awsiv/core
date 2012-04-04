@@ -12,10 +12,13 @@
 */
 
 body {
-    background: url("../images/icons/bg_tile.png") repeat-x scroll 0 0 #A5ACA2;
-    font-family: "Trebuchet MS",Helvetica, Arial, sans-serif;
-    font-size: 12px;
-    line-height: 16px;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#51584d', endColorstr='#979e93'); /* for IE */
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#51584d), to(#979e93));
+    background: -moz-linear-gradient(top, #51584d, #979e93) repeat scroll 0 0 transparent;
+    background: -o-linear-gradient(90deg, #51584d, #979e93) repeat scroll 0 0 transparent;
+    color:#6C695A;
+    font:13px/21px 'CFE_FONT',arial,Helvetica,sans-serif;
+    background-attachment: fixed;
     /*text-shadow: white 0px 1px 0px;*/
 }
 

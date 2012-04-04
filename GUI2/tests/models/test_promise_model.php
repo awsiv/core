@@ -6,7 +6,7 @@
  */
 class test_promise_model extends CodeIgniterUnitTestCase {
 public $username="sudhir";
-public $handle="cfengine_update_web_dir"; //"change_management_files_watch_files"
+public $handle="change_management_files_watch_files"; //"change_management_files_watch_files"
     public function __construct() {
         parent::__construct();
     }

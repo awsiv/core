@@ -62,6 +62,11 @@
                             <td><?php echo $this->lang->line('promise_defined_file'); ?></td>
                             <td><?php echo $promise['file']; ?></td>
                         </tr>
+                        
+                        <tr>
+                            <td><?php echo $this->lang->line('promise_defined_line'); ?></td>
+                            <td><?php echo $promise['line_num']; ?></td>
+                        </tr>
 
                         <tr >
                             <th scope="blue" colspan="2"><?php echo $this->lang->line('header_body_promise'); ?></th>

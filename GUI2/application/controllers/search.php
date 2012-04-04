@@ -237,7 +237,8 @@ private $filter_view_mappings=array();
             'fromEmail' => $fromEmail,
             'reports_menu'=>$this->__reports_menu(),
             'report_category'=>$this->report_model->getReportCategory($report_type),
-            'filter_view'=>$this->filter_view_mappings[$report_type]
+            'filter_view'=>$this->filter_view_mappings[$report_type],
+            'hostcount'=>$this->host_model->getHostCount($username,NULL,explode(',', $incList), explode(',', $exList))
         );
         }catch(Exception $e){
             show_error($e->getMessage(), 500);

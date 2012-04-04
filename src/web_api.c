@@ -3002,8 +3002,15 @@ void Nova2PHP_show_all_context_leads(char *unqualified_topic, char *buffer, int 
     char work[CF_BUFSIZE], jsonEscapedStr[CF_BUFSIZE] = { 0 };
     
     buffer[0] = '\0';
+    strcpy(buffer, "[ ");
 
     candidates = Nova_SearchTopicMap(unqualified_topic,CF_SEARCH_EXACT);
+
+    if (candidates == NULL)
+       {
+       strcpy(buffer, "{ }");
+       return;
+       }
     
     for (ip = candidates; ip != NULL; ip=ip->next)
        {
@@ -3046,12 +3053,13 @@ void Nova2PHP_show_all_context_leads(char *unqualified_topic, char *buffer, int 
              }
           
           }
-       
+
+       strcpy(buffer + strlen(buffer) - 1, "]"); 
        DeleteItemList(list);
        }
 
     DeleteItemList(candidates);
-    strcpy(buffer + strlen(buffer) - 1, "]}]"); 
+    strcpy(buffer + strlen(buffer) - 1, "}]"); 
 }
 
 /*****************************************************************************/

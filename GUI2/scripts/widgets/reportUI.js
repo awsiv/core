@@ -31,10 +31,11 @@
             var $self = this;
             e.preventDefault();
             var $itemClicked = $(e.currentTarget);
-
             //remove the previous selected items
             $self.menuPane.find('.selected').removeClass("selected");
-
+            //hide submenu after clicked
+            $itemClicked.parent().parent().hide();
+            
             $itemClicked.addClass('selected');
             $itemClicked.parents().eq(2).find('span').addClass('selected');
             var reportId = $itemClicked.attr('id');
@@ -88,7 +89,16 @@
         },
         
         bindEventForMenuPane: function() {
-            this.menuPane.delegate('a','click',$.proxy(this.menuItemClicked,this));            
+            var self =this;
+            this.menuPane.delegate('a','click',$.proxy(this.menuItemClicked,this));  
+            //for showing up the hidden sub menus
+            self.menuPane.hover(
+             function(){
+                self.menuPane.find('ul').removeAttr("style")
+             },
+             function(){
+                 self.menuPane.find('ul').removeAttr("style")
+             });
         },
         
         
@@ -96,7 +106,7 @@
             var self = this;
             var menuUrl = self.options.baseUrl+'/search/generateReportMenu';
             self.menuPane.load(menuUrl);
-        },      
+        },
 
         destroy: function() {
             $.Widget.prototype.destroy.call(this);
