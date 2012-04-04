@@ -3053,12 +3053,13 @@ void Nova2PHP_show_all_context_leads(char *unqualified_topic, char *buffer, int 
              }
           
           }
-       
+
+       strcpy(buffer + strlen(buffer) - 1, "]"); 
        DeleteItemList(list);
        }
 
     DeleteItemList(candidates);
-    strcpy(buffer + strlen(buffer) - 1, "]}]"); 
+    strcpy(buffer + strlen(buffer) - 1, "}]"); 
 }
 
 /*****************************************************************************/
