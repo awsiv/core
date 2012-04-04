@@ -212,7 +212,7 @@
         $("#error_status").html('');
  
         
-        if ($(this).attr('id') == 'create_role') {
+       // if ($(this).attr('id') == 'create_role') {
             if (roleNameValidate($('#name').val()) == false || roleDescriptionValidate($('#description').val())==false) {
                 
                 var okBtn  = generateCloseBtn('Ok', $confirmation);
@@ -221,7 +221,7 @@
                 $confirmation.dialog("open");
                 return
             }
-        }
+       // }
         
         if (roleIncludeExcludeValidate() == false)
         {
@@ -285,9 +285,23 @@ var clickDelay = 600;     // click time (milliseconds)
 var lastClick=0;
 var diffClick=0; // timestamps
 var changeOnClick = false;
+var lastParentClicked = '';
 
+$(".itemlist li" ).live('mousedown mouseup', function(e) {
 
-$( ".itemlist li" ).live('mousedown mouseup', function(e) {
+    // do not aloow to select items from 2 lists
+    if (lastParentClicked == '') {
+        lastParentClicked = $(this).parent().attr('id');
+    }
+    else
+    {
+        if (lastParentClicked != $(this).parent().attr('id'))
+        {
+            $("#" + lastParentClicked + ' li.' + selectedClass).removeClass(selectedClass);
+            lastParentClicked = $(this).parent().attr('id');
+        }    
+    }    
+    
     if (e.type=="mousedown") {
         lastClick = e.timeStamp; // get mousedown time */
         //$(this).toggleClass(selectedClass);
@@ -409,7 +423,7 @@ function roleNameValidate(name) {
     var name = $.trim(name);
     
     if (name.length == 0) {
-        $('#confirmation span').text('You Must add Name to the role.');
+        $('#confirmation span').text('You must add Name to the role.');
         return false;
     }
     
@@ -425,7 +439,7 @@ function roleDescriptionValidate(name) {
     var name = $.trim(name);
     
     if (name.length == 0) {
-        $('#confirmation span').text('You Must add Description to the role.');
+        $('#confirmation span').text('You must add Description to the role.');
         return false;
     }    
 }
@@ -485,32 +499,54 @@ function bindSortable(bind_css_class_name, destinations_array)
                 source_id   = ui.item.parent().attr('id');
             },  
             stop: function(e, ui) {
-                var self = this;
 
                 //return false;
                 
                 destination_elem = $(ui.item).parent();
                 destination_id = destination_elem.attr('id');
 
+
                 var classesArray = ['crxi','crxx'];
 
-                if ($.inArray(destination_id, classesArray) != -1) {
+                if ($.inArray(destination_id, classesArray) != -1 && destination_id != source_id) {
                     var args = [];
                     args.event = e;
                     args.ui = ui;
+                    args.destination_id = destination_id;
                     args.destination_elem = destination_elem;
                     args.destinations_array = destinations_array;
                     args.source_elem = source_elem;
+
+               
+                    
                     if (checkAssignedCount(destination_id, classesArray, args) == true) {
                         moveItem(e, ui, destination_id,destination_elem, destinations_array, source_elem );
                     }
                     else
-                      return false;  
-                    
+                        {
+                        e.preventDefault(); 
+              
+                     
+            $('#confirmation span').text('Please use less than 2 classes. Using more classes could affect system productivity');
+            
+            //var okBtn  = generateCloseBtn('Ok', $confirmation);
+            var cancelBtn   = generateDialogBtn('Cancel',   $confirmation, function(){return false} );
+
+            var continueBtn = generateDialogBtn('Continue', $confirmation, prepareMove, args);    
+             
+           // $confirmation.dialog("option", "buttons", okBtn);
+            $confirmation.dialog("option", "buttons", [continueBtn,cancelBtn]);
+                             
+            $confirmation.dialog("open");                        
+
+                      //return true;  
+                        }
+
                 }
                 else
                 {
-                    moveItem(e, ui, destination_id,destination_elem, destinations_array, source_elem );
+
+                    moveItem(e, ui, destination_id,destination_elem, destinations_array, source_elem);
                 }
             },
            
@@ -520,15 +556,14 @@ function bindSortable(bind_css_class_name, destinations_array)
 }
 
 function prepareMove(args) {
-console.log(args);
-console.log('prepare move');
 moveItem(args.e, args.ui, args.destination_id, args.destination_elem, args.destinations_array, args.source_elem);
 }
 
-function moveItem(e, ui, destination_id, destination_elem, destinations_array,source_elem ) {
+function moveItem(e, ui, destination_id, destination_elem, destinations_array, source_elem ) {
 
-                var $group = $('.selected_item');
-                console.log('moveItem');
+//'#'+$(source_elem).attr('id')+
+                var $group = $('li.selected_item');
+               
                 // move from available to assigned
                 if ($.inArray( destination_id , destinations_array) != -1)
                 {
@@ -543,14 +578,19 @@ function moveItem(e, ui, destination_id, destination_elem, destinations_array,so
                         removeCheckbox(this);
                     });
                 }
+            
+            var el = $group.clone();
 
-    
-                $group.clone().insertAfter($(ui.item));
+            
+                //$group.clone().insertAfter($(ui.item));
+                $('#'+ destination_id).append(el);
+ 
+                  //  $group.clone().insertAfter($('#'+destination_id + ' li.ui-state-hightlight'));
  
                 $group.remove();
 
                 $(destination_elem).find('li.selected_item').removeClass('selected_item');
-                
+
                 // check only for classes
                 checkEmptyList(source_elem, destination_elem);
             }
@@ -605,14 +645,7 @@ function checkAssignedCount(dest, destinations_array, args) {
     var maxAllowed = 2;
     if ($.inArray( dest, destinations_array) != -1) {
          if ($('#' + dest).children().length > maxAllowed) {
-            $('#confirmation span').text('Please use less than ' + maxAllowed +' classes. Using more classes could affect system productivity');
-            //var okBtn  = generateCloseBtn('Ok', $confirmation);
-            var cancelBtn   = generateDialogBtn('Cancel',   $confirmation, function(){return false} );
-            var continueBtn = generateDialogBtn('Continue', $confirmation, prepareMove, args);            
-           // $confirmation.dialog("option", "buttons", okBtn);
-            $confirmation.dialog("option", "buttons", cancelBtn.concat(continueBtn));
            
-            $confirmation.dialog("open");
             return false;
          }
     }
@@ -624,31 +657,38 @@ function checkAssignedCount(dest, destinations_array, args) {
 
 /****************************** DIALOG **********************************************/    
 
-function testDialog() {
-    var maxAllowed = 2;
-            $('#confirmation span').text('Please use less than ' + maxAllowed +' classes. Using more classes could affect system productivity');
-            //var okBtn  = generateCloseBtn('Ok', $confirmation);
-            var result = false;
-            var cancelBtn   = generateDialogBtn('Cancel',   $confirmation, function(){ result = true; return false});
-            var continueBtn = generateDialogBtn('Continue', $confirmation, function(){ result = false; return true});            
-            $confirmation.dialog("option", "buttons", cancelBtn.concat(continueBtn));
-/*$confirmation.dialog({
-beforeClose: function(event, ui) { 
-        /*console.log(this); 
-        console.log($confirmation);
-    console.log(event); 
-    console.log(ui);
-    console.log(event.target) 
-    }
-});*/
-            $confirmation.dialog("open");
-            console.log($confirmation);
-            console.log("result: " + result);
-            
-            console.log('CONFIRMATION');
-            console.log($confirmation);
-}
+               //dialog object                
+        var $confirmation = $('#confirmation').dialog({
+            autoOpen: false,
+            modal: true,
+            data: '',
+            resizable: false,
+            beforeClose: '',
+            buttons: [],
+            create: function(event, ui) {
+                // weird way to get clicked button
+                $(".ui-dialog-buttonset button").live("click", function(event, self){ 
+                    $confirmation.dialog.data = {clicked: $(this).attr('name')};
+                }); 
+            },
+            open: function() 
+                    {
+                        $(this).parent().find('.ui-dialog-buttonpane').find('button:last').focus()
+                    }
+        });    
 
+        function generateSubmitBtn(label, form, dialogObj, options) {
+            var btn = [{
+                        text: label,
+                        click: function()
+                            {
+                                form.ajaxSubmit(options);
+                                dialogObj.dialog('close');
+                                dialogCallback(true);
+                            }
+                }];
+            return btn;
+        }
       // buttons wrapper, just set label, action (if needed), and dialog object
         function generateCloseBtn(label,dialogObj) {
            var btn = [{
@@ -662,8 +702,7 @@ beforeClose: function(event, ui) {
            }];
            return btn;
         }
- 
-        function generateLoadBtn(label, link, dialogObj) {
+                function generateLoadBtn(label, link, dialogObj) {
             var btn = [{
                         text: label,
                         click: function()
@@ -687,38 +726,9 @@ beforeClose: function(event, ui) {
              }];
              return btn;
          }
-            
-        function generateSubmitBtn(label, form, dialogObj, options) {
-            var btn = [{
-                        text: label,
-                        click: function()
-                            {
-                                form.ajaxSubmit(options);
-                                dialogObj.dialog('close');
-                                dialogCallback(true);
-                            }
-                }];
-            return btn;
-        }
-        
-        function dialogCallback(param) {
-        
-        //console.log('Callback: ' + param );
-        
-        }
-        
-        
-function getDialogBtnValue() {
-    console.log('Element name = ', this.attr('name'));
-}        
-
-
-function test1(args) {
-    console.log(args);
-}
         
             function generateDialogBtn(label, dialogObj, callbackFnc, args) {
-                var btn = [{
+                var btn = {
                         text: label,
                         value: label,
                         name: label,
@@ -727,32 +737,13 @@ function test1(args) {
                             dialogObj.dialog('close');
                                                         //form.ajaxSubmit(options);
                             if ($.isFunction(callbackFnc)) {
-                                console.log('Calling callback');
                                 callbackFnc.call(this, args);
                                // console.log(this);
                             }
                         }
-                    }];
+                    };
                 return btn;
             }
         
-        //dialog object                
-        var $confirmation = $('#confirmation').dialog({
-            autoOpen: false,
-            modal: true,
-            data: '',
-            resizable: false,
-            beforeClose: '',
-            buttons: [],
-            create: function(event, ui) {
-                // weird way to get clicked button
-                $(".ui-dialog-buttonset button").live("click", function(event, self){ 
-                    $confirmation.dialog.data = {clicked: $(this).attr('name')};
-                }); 
-            },
-            open: function() 
-                    {
-                        $(this).parent().find('.ui-dialog-buttonpane').find('button:last').focus()
-                    }
-        });        
+     
 </script>
