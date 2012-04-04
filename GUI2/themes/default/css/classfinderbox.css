@@ -105,7 +105,7 @@ input[readonly] {background: buttonface;}
 edit_form_wrapper td {
     border: none !important;
 }
-#edit_form_wrapper, #edit_form td {
+#edit_form_wrapper, #edit_form_wrapper td, #edit_form td {
     background: #d2dacf !important;
 }
 
