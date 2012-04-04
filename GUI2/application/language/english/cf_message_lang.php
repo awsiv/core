@@ -93,7 +93,7 @@ $lang['notes'] = 'Notes';
 $lang['no_data'] 	         = 'Sorry, this report is empty.';
 $lang['license_to']               ='This edition is licensed to ';
 $lang['front_greeting']          ='CFEngine 3 Nova';
-$lang['report_hostgp_help']    ='SOFT CLASSES or  HARD CLASSES with combination of regular expression as input, To open <strong>classfinder</strong> click me!';
+$lang['report_hostgp_help']    ='A set of classes to include and exclude to get a list of desired hosts';
 $lang['no_revisions'] ='No revisions exist for the selected repository. Operation halted,
                                    Please checkout, update or commit using the system for selected repository';
 $lang['no_repos'] = "No repositories are defined.";
@@ -220,6 +220,7 @@ $lang['promise_comment_intention'] = 'Comment on original intention';
 $lang['promise_about'] = 'Promise is about';
 $lang['promise_class_context'] = 'Applies in the class context';
 $lang['promise_defined_file'] = 'Defined in file';
+$lang['promise_defined_line'] = 'On Line number';
 $lang['promise_body_not_found'] = 'Body definition was not found';
 $lang['promise_other_promise'] = 'Other promises in bundle';
 $lang['promise_other_promiser'] = 'Other promises by promiser';
