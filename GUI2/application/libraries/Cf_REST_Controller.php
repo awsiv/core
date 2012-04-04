@@ -78,6 +78,8 @@ class Cf_REST_Controller extends CI_Controller
         header('HTTP/1.1: ' . $http_code);
         header('Status: ' . $http_code);
         header('Content-Length: ' . strlen($data));
+        header('Cache-Control: no-cache');
+        header('Pragma: no-cache');
         exit($data);
     }
 
