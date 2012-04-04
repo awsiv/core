@@ -8,7 +8,7 @@
             includes: [],
             excludes: []
         },
-        $busyIcon: $('<div style="margin:0px auto;width:50%" class="loadinggif">')
+        $busyIcon: $('<span class="loadinggif" style="display:none">')
                    .html('&nbsp;'),
         $errorDiv: $('<div>').addClass('error'),
        
@@ -16,7 +16,7 @@
         _create: function () {
             var $element = this.element;
             this.menuPane = $('<div>').attr('id','treeReportContentMenu');
-            this.reportTitlePane = $('<div style="margin:5px;">').attr('id','treeReportContentMenuTitle');
+            this.reportTitlePane = $('<div style="margin:5px;"><span class="name"><span>').attr('id','treeReportContentMenuTitle').append(this.$busyIcon);
             this.filterPane = $('<div>').attr('id','treeReportContentMenuFilter');
             $element.append(this.menuPane);
             $element.append(this.reportTitlePane);
@@ -41,29 +41,17 @@
             var reportId = $itemClicked.attr('id');
             var reportText = $itemClicked.text();
             var filterUrl = $self.options.baseUrl + '/search/filterSearchView';
-              $.blockUI({ css:{
-                        border: 'none',
-                        padding: '15px',
-                        backgroundColor: '#000',
-                        '-webkit-border-radius': '10px',
-                        '-moz-border-radius': '10px',
-                        opacity: .5,
-                        color: '#fff'
-                    },
-                    message: '<h1 class="ajaxloader2">Please wait...</h1>'
-                });
-            $self.reportTitlePane.html(reportText);
+            
+            $self.reportTitlePane.find('span.name').html(reportText);
+            $self.$busyIcon.show();
+            $self.filterPane.html('');
             $self.filterPane.load(filterUrl, {
                 'host':'All',
                 'report':reportId,
                 'inclist': encodeURIComponent($self._context.includes),
                 'exlist': encodeURIComponent($self._context.excludes)
             },function(response, status, xhr) {
-
-                $('.blockUI').hide();   
-                $(document).unblock();
-                $.unblockUI();
-
+                 $self.$busyIcon.hide();
                 if (status == 'error') {
                     $self.$errorDiv.html(response);
                      $self.filterPane.html($self.$errorDiv);
