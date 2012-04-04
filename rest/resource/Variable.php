@@ -20,7 +20,8 @@ class Variable extends Resource
         $response = new Response($request);
         $payload = $response->body = cfmod_resource_variable($username,
                 $hostkey, $scope, $name, $value, $type, $context,
-                DefaultParameters::from(), DefaultParameters::to());
+                DefaultParameters::from(), DefaultParameters::to(),
+                DefaultParameters::page(), DefaultParameters::count());
         if (is_null($payload))
         {
             $response = new Response($request);

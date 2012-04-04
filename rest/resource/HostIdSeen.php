@@ -13,7 +13,8 @@ class HostIdSeen extends Resource
 
         $response = new Response($request);
         $payload = cfmod_resource_host_id_seen($username, $id,
-                DefaultParameters::from(), DefaultParameters::to());
+                DefaultParameters::from(), DefaultParameters::to(),
+                DefaultParameters::page(), DefaultParameters::count());
         if (is_null($payload))
         {
             $response = new Response($request);

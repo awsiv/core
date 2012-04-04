@@ -17,7 +17,8 @@ class File extends Resource
         $response = new Response($request);
         $payload = cfmod_resource_file($username,
                 $hostkey, $path, $context,
-                DefaultParameters::from(), DefaultParameters::to());
+                DefaultParameters::from(), DefaultParameters::to(),
+                DefaultParameters::page(), DefaultParameters::count());
 
         if (is_null($payload))
         {

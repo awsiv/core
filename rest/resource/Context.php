@@ -16,7 +16,8 @@ class Context extends Resource
         $response = new Response($request);
         $payload = cfmod_resource_context($username,
                 $hostkey, $context,
-                DefaultParameters::from(), DefaultParameters::to());
+                DefaultParameters::from(), DefaultParameters::to(),
+                DefaultParameters::page(), DefaultParameters::count());
 
         if (is_null($payload))
         {

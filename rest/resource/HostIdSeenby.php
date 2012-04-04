@@ -12,8 +12,9 @@ class HostIdSeenBy extends Resource
         $username = $_SERVER['PHP_AUTH_USER'];
 
         $response = new Response($request);
-        $payload = cfmod_resource_host_id_seenby($username,
-                $id, DefaultParameters::from(), DefaultParameters::to());
+        $payload = cfmod_resource_host_id_seenby($username, $id,
+                DefaultParameters::from(), DefaultParameters::to(),
+                DefaultParameters::page(), DefaultParameters::count());
         if (is_null($payload))
         {
             $response = new Response($request);

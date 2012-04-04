@@ -9,7 +9,7 @@ class StatusTest extends RestBaseTest
         try
         {
             $jsonArray = $this->getResults('/');
-            $this->assertEquals('v1', $jsonArray['apiVersion']);
+            $this->assertEquals('v1', $jsonArray[0]['apiVersion']);
         }
         catch (Pest_NotFound $e)
         {
@@ -22,11 +22,10 @@ class StatusTest extends RestBaseTest
         try
         {
             $jsonArray = $this->pest->get('/');
-            $this->assertEquals('ok', $jsonArray['status']);
-            $this->assertEquals(50, $jsonArray['count']);
-            $this->assertEquals(1, $jsonArray['page']);
-            $this->assertEquals(1, $jsonArray['total']);
-            $this->assertGreaterThan(0, $jsonArray['timestamp']);
+            $this->assertEquals(1, $jsonArray['meta']['count']);
+            $this->assertEquals(1, $jsonArray['meta']['page']);
+            $this->assertEquals(1, $jsonArray['meta']['total']);
+            $this->assertGreaterThan(0, $jsonArray['meta']['timestamp']);
         }
         catch (Pest_NotFound $e)
         {

@@ -19,7 +19,8 @@ class Software extends Resource
 
         $response = new Response($request);
         $payload = cfmod_resource_software($username,
-                $hostkey, $name, $version, $arch, $context);
+                $hostkey, $name, $version, $arch, $context,
+                DefaultParameters::page(), DefaultParameters::count());
 
         if (is_null($payload))
         {
@@ -28,7 +29,7 @@ class Software extends Resource
             $response->body = $id;
             return $response;
         }
-        
+
         $response->body = $payload;
         $response->code = Response::OK;
 

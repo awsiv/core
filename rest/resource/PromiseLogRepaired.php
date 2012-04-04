@@ -21,7 +21,8 @@ class PromiseLogRepaired extends Resource
             $response = new Response($request);
             $response->body = cfmod_resource_promise_log_repaired($username,
                     $handle, $cause, $hostkey, $context,
-                    DefaultParameters::from(), DefaultParameters::to());
+                    DefaultParameters::from(), DefaultParameters::to(),
+                    DefaultParameters::page(), DefaultParameters::count());
             return $response;
         }
         catch (Exception $e)

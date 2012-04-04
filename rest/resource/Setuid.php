@@ -16,7 +16,8 @@ class Setuid extends Resource
 
         $response = new Response($request);
         $payload = cfmod_resource_setuid($username,
-                $hostkey, $name, $context);
+                $hostkey, $name, $context,
+                DefaultParameters::page(), DefaultParameters::count());
 
         if (is_null($payload))
         {
@@ -25,7 +26,7 @@ class Setuid extends Resource
             $response->body = $id;
             return $response;
         }
-        
+
         $response->body = $payload;
         $response->code = Response::OK;
 

@@ -16,7 +16,8 @@ class Host extends Resource
 
         $response = new Response($request);
         $response->body = cfmod_resource_host($username, $hostname, $ip,
-                DefaultParameters::from(), DefaultParameters::to());
+                DefaultParameters::from(), DefaultParameters::to(),
+                DefaultParameters::page(), DefaultParameters::count());
         $response->code = Response::OK;
 
         return $response;

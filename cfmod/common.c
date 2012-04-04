@@ -38,11 +38,45 @@ void HostClassFilterAddIncludeExcludeLists(HostClassFilter *filter, zval * inclu
     DeleteRlist(excludeRlist);
 }
 
-JsonElement *JsonObjectWrapper(JsonElement *data, int totalResultCount)
+JsonElement *PackageResult(JsonElement *data_array, size_t page, size_t count)
 {
-    JsonElement *meta = JsonObjectCreate(1);
+    size_t total = JsonElementLength(data_array);
+    size_t start = MAX(count * (page - 1), 0);
+    size_t end = MIN((count * page) - 1, total - 1);
 
-    JsonObjectAppendInteger(meta, "count", totalResultCount);
+    if (start < end)
+    {
+        if (start > 0)
+        {
+            //JsonArrayRemoveRange(data_array, 0, start - 1);
+        }
+
+        if (end < total - 1)
+        {
+            //JsonArrayRemoveRange(data_array, end + 1, total - 1);
+        }
+    }
+
+    JsonElement *meta = JsonObjectCreate(4);
+    JsonObjectAppendInteger(meta, "total", total);
+    JsonObjectAppendInteger(meta, "page", page);
+    JsonObjectAppendInteger(meta, "count", JsonElementLength(data_array));
+    JsonObjectAppendInteger(meta, "timestamp", time(NULL));
+
+    JsonElement *output = JsonObjectCreate(2);
+    JsonObjectAppendObject(output, "meta", meta);
+    JsonObjectAppendArray(output, "data",data_array);
+
+    return output;
+}
+
+JsonElement *JsonObjectWrapper(JsonElement *data, int total_result_count)
+{
+    assert(data);
+
+    JsonElement *meta = JsonObjectCreate(2);
+
+    JsonObjectAppendInteger(meta, "count", total_result_count);
 
     JsonElement *output = JsonObjectCreate(2);
 

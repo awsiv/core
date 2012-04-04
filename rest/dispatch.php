@@ -3,7 +3,6 @@
 require_once 'lib/Tonic.php';
 require_once 'lib/Utils.php';
 require_once 'lib/DefaultParameters.php';
-require_once 'lib/ResponsePackaging.php';
 
 // load resources
 require_once 'resource/Context.php';
@@ -37,17 +36,17 @@ try
     {
         $format = $request->mostAcceptable(array(DefaultParameters::format()));
     }
-    
+
     switch ($format)
     {
         case 'json-v1':
             break;
-        
+
         default:
             throw new ResponseException("Unsupported format or version requested",
                     Response::NOTACCEPTABLE);
     }
-    
+
     if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW']) ||
         !cfpr_user_authenticate($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']))
     {
@@ -59,7 +58,7 @@ try
     $resource = $request->loadResource();
     $response = $resource->exec($request);
 }
-catch (ResponseException $e) 
+catch (ResponseException $e)
 {
     switch ($e->getCode())
     {
@@ -88,5 +87,6 @@ catch (Exception $e)
     $response->code = Response::INTERNALSERVERERROR;
 }
 
-ResponsePackaging::package($response)->output();
+$response->addHeader('Content-type', 'application/vnd.cfengine.nova-v1+json');
+$response->output();
 return;
