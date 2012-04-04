@@ -23,6 +23,10 @@
 	Upgraded mongod from version 1.8.2 to 2.0.3, which increases
 	efficiency on concurrency and reduces memory usage.
 
+	The bundled failsafe.cf policy now has trustkey=false to avoid IP spoofing
+	attacks in default policy
+
+
 2.1.0 
 	New interface with interactive graphs on Nova hub.
 
