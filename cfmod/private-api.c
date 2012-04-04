@@ -4976,9 +4976,9 @@ PHP_FUNCTION(cfpr_astrolabe_host_list)
 
         JsonElement *entry = JsonObjectCreate(3);
 
-        JsonObjectAppendString(entry, LABEL_HOST_KEY, NULLStringToEmpty(host->keyhash));
-        JsonObjectAppendString(entry, LABEL_HOST_NAME, NULLStringToEmpty(host->hostname));
-        JsonObjectAppendString(entry, LABEL_COLOUR, NULLStringToEmpty(Nova_HostColourToString(host->colour)));
+        JsonObjectAppendString(entry, LABEL_HOST_KEY, host->keyhash);
+        JsonObjectAppendString(entry, LABEL_HOST_NAME, host->hostname);
+        JsonObjectAppendString(entry, LABEL_COLOUR, Nova_HostColourToString(host->colour));
 
         JsonArrayAppendObject(output, entry);
     }
