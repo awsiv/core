@@ -53,8 +53,9 @@ static const char *CFCON_VIEWS[] = { "Comp",    // NOTE: must match cfl_view enu
     NULL
 };
 
+#ifdef HAVE_LIBMONGOC
 static Rlist *HubHostListToRlist(Rlist *hub_host_list, char *return_format);
-
+#endif
 /*****************************************************************************/
 
 enum cfl_view Str2View(const char *s)
@@ -228,6 +229,7 @@ bool CFDB_HostsWithClass(Rlist **return_list, char *class_name, char *return_for
 #endif
 
 /*****************************************************************************/
+#ifdef HAVE_LIBMONGOC
 
 static Rlist *HubHostListToRlist(Rlist *hub_host_list, char *return_format)
 {
@@ -264,3 +266,4 @@ static Rlist *HubHostListToRlist(Rlist *hub_host_list, char *return_format)
     
     return return_list;
 }
+#endif
