@@ -1182,51 +1182,46 @@ Item *Nova_ScanClients()
 
     while (NextDB(dbp, dbcp, &key, &ksize, &value, &vsize))
     {
-        /* Only read the 'quality of connection' entries */
+        /* Only read the hostkey entries */
 
-        if (key[0] != 'q')
+        if (key[0] != 'k')
         {
             continue;
         }
 
-        /* 0123456789... */
-        /* qiSHA=....... */
-
-        bool incoming = (key[1] == 'i');
         char hostkey[CF_BUFSIZE];
-        strlcpy(hostkey, (char *)key + 2, CF_BUFSIZE);
+        strlcpy(hostkey, (char *)key + 1, CF_BUFSIZE);
+        const char *address = value;
 
-        KeyHostSeen *q = value;
+        /* Get the last seen timestamp */
 
-        /* Resolve address */
+        time_t timestamp = 0;
 
-        char hostkey_key[CF_BUFSIZE];
-        snprintf(hostkey_key, CF_BUFSIZE, "k%s", hostkey);
+        char quality_key[CF_BUFSIZE];
+        snprintf(quality_key, CF_BUFSIZE, "qi%s", hostkey);
 
-        char address[CF_BUFSIZE];
+        KeyHostSeen quality;
 
-        if (ReadDB(dbp, hostkey_key, address, sizeof(address)) == false)
+        if (ReadDB(dbp, quality_key, &quality, sizeof(quality)) == true)
         {
-            continue;
+            timestamp = MAX(timestamp, now - quality.lastseen);
         }
 
-        /* Put the data into a list */
+        snprintf(quality_key, CF_BUFSIZE, "qo%s", hostkey);
 
-        Item *ip = ReturnItemIn(list, hostkey);
-
-        if (!ip)
+        if (ReadDB(dbp, quality_key, &quality, sizeof(quality)) == true)
         {
-            ip = PrependItem(&list, hostkey, address);
-
-            if (counter++ > LICENSES)
-            {
-                CfOut(cf_error,""," !! This hub is only licensed to support %d clients, so truncating at %d", LICENSES, LICENSES);
-                break;
-            }
-
+            timestamp = MAX(timestamp, now - quality.lastseen);
         }
 
-        ip->time = MAX(ip->time, now - q->lastseen);
+        Item *ip = PrependItem(&list, hostkey, address);
+        ip->time = timestamp;
+
+        if (counter++ > LICENSES)
+        {
+            CfOut(cf_error,""," !! This hub is only licensed to support %d clients, so truncating at %d", LICENSES, LICENSES);
+            break;
+        }
     }
 
     DeleteDBCursor(dbp, dbcp);
