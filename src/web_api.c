@@ -3050,7 +3050,6 @@ void Nova2PHP_show_all_context_leads(char *unqualified_topic, char *buffer, int 
        DeleteItemList(list);
        
        Nova_ScanOccurrences(id, buffer,CF_BUFSIZE);
-       printf("Occurrences: %s\n\n",buffer);
        }
 
     DeleteItemList(candidates);

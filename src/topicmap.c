@@ -422,9 +422,11 @@ void Nova_ScanTheRest(int pid, char *buffer, int bufsize)
 
     worklist = Nova_GetTopicsInContext(this_id);
 
+    EscapeJson(this_name, name, CF_BUFSIZE);
+    
     snprintf(buffer, CF_BUFSIZE,
              "{ \"topic\" : { \"context\" : \"%s\", \"name\" : \"%s\", \"id\" : %d, \"sub_topics\" : [",
-             this_context, this_name, id);
+             this_context, name, id);
 
     for (ip = worklist; ip != NULL; ip = ip->next)
     {
