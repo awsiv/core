@@ -2026,9 +2026,8 @@ int Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFil
     PageRecords(&(hq->records), page, DeleteHubBundleSeen);
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d,"
-             "\"header\": {\"Host\":0,\"Bundle\":1,\"Last Verified\":2,\"%% Compliance\":3,\"Avg %% Compliance\":4,\"+/- %%\":5,"
-             "\"Note\":{\"index\":6,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
-             "}", page->totalResultCount);
+             "\"header\": {\"Host\":0,\"Bundle\":1,\"Last Verified\":2,\"%% Compliance\":3,\"Avg %% Compliance\":4,\"+/- %%\":5}",
+             page->totalResultCount);
 
     headerLen = strlen(header);
     noticeLen = strlen(CF_NOTICE_TRUNCATED);
@@ -2045,24 +2044,10 @@ int Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFil
         WriteDouble2Str_MP(hb->bundleavg, bundleAvg, sizeof(bundleAvg));
         WriteDouble2Str_MP(hb->bundledev, bundleDev, sizeof(bundleDev));
 
-        if (strcmp(hb->nid, CF_NONOTE) == 0)
-        {
-            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,"
-                     "\"%s\",\"%s\",\"%s\","
-                     "[\"add\",\"%s\",%d,\"%s\",\"\"]],",
-                     hb->hh->hostname, hb->bundle, hb->t,
-                     bundleComp, bundleAvg, bundleDev,
-                     hb->hh->keyhash, CFREPORT_BUNDLE, hb->bundle);
-        }
-        else
-        {
-            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,"
-                     "\"%s\",\"%s\",\"%s\","
-                     "[\"show\",\"\",\"\",\"\",\"%s\"]],",
-                     hb->hh->hostname, hb->bundle, hb->t,
-                     bundleComp, bundleAvg, bundleDev,
-                     hb->nid);
-        }
+        snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,\"%s\",\"%s\",\"%s\"],",
+                 hb->hh->hostname, hb->bundle, hb->t,
+                 bundleComp, bundleAvg, bundleDev);
+
         margin = headerLen + noticeLen + strlen(buffer);
         if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
         {

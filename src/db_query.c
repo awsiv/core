@@ -3138,7 +3138,7 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
     Rlist *record_list = NULL, *host_list = NULL;
     double rcomp, ravg, rdev;
     char rname[CF_MAXVARSIZE];
-    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], noteid[CF_BUFSIZE];
+    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE];
     int match_name, found = false;
     time_t rt;
 
@@ -3204,8 +3204,6 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
                         continue;
                     }
 
-                    snprintf(noteid, CF_MAXVARSIZE, "%s", CF_NONOTE);
-
                     ravg = 0;
                     rdev = 0;
                     rcomp = 0;
@@ -3227,10 +3225,6 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
                         else if (strcmp(bson_iterator_key(&it3), cfr_time) == 0)
                         {
                             rt = bson_iterator_int(&it3);
-                        }
-                        else if (strcmp(bson_iterator_key(&it3), cfn_nid) == 0)
-                        {
-                            snprintf(noteid, CF_MAXVARSIZE, "%s", bson_iterator_string(&it3));
                         }
                         else
                         {
@@ -3264,7 +3258,7 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(&record_list, NewHubBundleSeen(hh, rname, rcomp, ravg, rdev, rt, noteid));
+                        PrependRlistAlien(&record_list, NewHubBundleSeen(hh, rname, rcomp, ravg, rdev, rt));
                     }
                 }
             }

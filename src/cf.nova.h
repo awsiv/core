@@ -386,7 +386,6 @@ typedef struct
     double bundleavg;
     double bundledev;
     time_t t;
-    char *nid;
 } HubBundleSeen;
 
 typedef struct
@@ -797,7 +796,7 @@ HubSetUid *NewHubSetUid(HubHost *hh, char *file);
 void DeleteHubSetUid(HubSetUid *hp);
 HubPromiseCompliance *NewHubCompliance(HubHost *hh, char *handle, PromiseState status, double e, double d, time_t t);
 void DeleteHubPromiseCompliance(HubPromiseCompliance *hp);
-HubBundleSeen *NewHubBundleSeen(HubHost *hh, char *rname, double ago, double avg, double dev, time_t t, char *noteid);
+HubBundleSeen *NewHubBundleSeen(HubHost *hh, char *rname, double ago, double avg, double dev, time_t t);
 void DeleteHubBundleSeen(HubBundleSeen *hp);
 HubFileChanges *NewHubFileChanges(HubHost *hh, char *file, time_t t, char *noteid, char *handle);
 void DeleteHubFileChanges(HubFileChanges *hp);
