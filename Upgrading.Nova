@@ -1,5 +1,5 @@
 2.2.0
-	mongod was upgraded from version 1.8.2 to 2.0.3. This improves
+	mongod was upgraded from version 1.8.2 to 2.0.4. This improves
 	concurrency efficiency and reduces memory footprint.
 
          - We need to add the --nojournal option to the mongod

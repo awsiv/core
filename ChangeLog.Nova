@@ -17,11 +17,14 @@
 	improved from 6 hours in last release. This will only apply to clients
 	that are upgraded to 2.2.0.
 
-	Software report is much faster on larger data-sets due
+	Software report query from Mission Portal is much faster on larger data-sets due
 	to removal of autocomplete feature.
 
-	Upgraded mongod from version 1.8.2 to 2.0.3, which increases
+	Upgraded mongod from version 1.8.2 to 2.0.4, which increases
 	efficiency on concurrency and reduces memory usage.
+
+	New function hostswithclass() that generates a list of hosts in a given class
+	on the hub.
 
 	The bundled failsafe.cf policy now has trustkey=false to avoid IP spoofing
 	attacks in default policy
