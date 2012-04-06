@@ -59,10 +59,12 @@ class Auth extends Controller {
     }
 
     function admin_page() {
-         if (!$this->ion_auth->logged_in()) {
+        if (!$this->ion_auth->logged_in()) {
             //redirect them to the login page
             redirect('auth/login', 'refresh');
         }
+
+        $this->_check_admin_permissions();
         
         $requiredjs = array(
             array('widgets/classfinderbox.js')            
@@ -410,7 +412,9 @@ class Auth extends Controller {
         if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
             redirect('auth', 'refresh');
         }
-
+        
+        $this->_check_admin_permissions();
+        
         //validate form input
         $this->form_validation->set_rules('user_name', 'User Name', 'required|xss_clean|unique[users.username]');
         $this->form_validation->set_rules('email', 'Email Address', 'required|valid_email|unique[users.email]');
@@ -567,6 +571,9 @@ class Auth extends Controller {
         if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
             redirect('auth', 'refresh');
         }
+        
+        $this->_check_admin_permissions();
+        
         //validate form input
         $this->form_validation->set_rules('user_name', 'First Name',    'required|xss_clean');
         $this->form_validation->set_rules('email',     'Email Address', 'required|valid_email');
@@ -723,9 +730,7 @@ class Auth extends Controller {
                 'value' => $this->form_validation->set_value('user_name', $username),
             );
            
-            $roles = $this->ion_auth->get_roles($this->session->userdata('username'));
-
-          
+         
             $user = $this->ion_auth->get_ldap_user_details_from_local_db($username);
 
             $assigned_roles = array();
@@ -796,6 +801,8 @@ class Auth extends Controller {
         if (!$this->ion_auth->logged_in()) {
             redirect('auth', 'refresh');
         }
+        
+        $this->_check_admin_permissions();
 
         if ($this->ion_auth->is_admin() === false) {
             $this->permission_deny($this->lang->line('no_permission'));
@@ -867,6 +874,8 @@ class Auth extends Controller {
     }
 
     function __load_role_add_edit($op, $rolename) {
+        $this->_check_admin_permissions();
+        
         $this->load->helper('create_html_list_from_string');
 
         $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
@@ -1059,4 +1068,35 @@ class Auth extends Controller {
                 $this->template->load('template', 'auth/no_permission', $this->data);
             }
       }     
+      
+    /**
+     *  Show page with explanation about permission for local admin
+     * 
+     */  
+    function no_permission_for_local_admin() {
+        
+        $this->data['title']       = $this->lang->line('mission_portal_title');
+        $this->data['message'] = $this->lang->line('no_permission');
+        
+        $mode = $this->setting_lib->get_authentication_mode();
+        
+        switch ($mode) {
+            case 'ldap': $this->data['current_auth_mode'] = 'LDAP'; break;
+            case 'active_directory': $this->data['current_auth_mode'] = 'Active Directory'; break;
+            default: $this->data['current_auth_mode'] = $mode;
+        }
+        
+        $this->template->load('template', 'auth/no_permission_for_local_admin',  $this->data);
+    }
+    
+    /**
+     * check if current admin user has permissions to work with users and roles 
+     */
+    function _check_admin_permissions() {
+        // if user auhenticated as database, and curremt MP mode is LDAP or AD  - show message that he CAN'T work with users
+        if ($this->session->userdata('mode') == 'database' && $this->setting_lib->get_authentication_mode() != 'database') {
+            redirect('auth/no_permission_for_local_admin', 'location', 302);
+        }
+    }
+      
 }   
