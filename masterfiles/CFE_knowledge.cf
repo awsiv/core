@@ -176,7 +176,7 @@ bundle agent cfengine_setup_knowledge
    "$(sys.doc_root)/docs"
            comment => "Copy the basic knowledge base configuration from the installation to doc root",
             handle => "knowledge_files_doc_root_docs",
-         copy_from => local_cp("$(sys.workdir)/share/doc/cfnova/KnowledgeBase"),
+         copy_from => local_cp("$(sys.workdir)/share/KnowledgeBase"),
       depth_search => recurse("inf"),
              perms => mo("644","root"),
        file_select => knowledge_files;
@@ -184,7 +184,7 @@ bundle agent cfengine_setup_knowledge
    "$(sys.doc_root)"
            comment => "Copy the basic knowledge base configuration from the installation to doc root",
             handle => "knowledge_files_doc_root_1",
-         copy_from => local_cp("$(sys.workdir)/share/doc/cfnova/GUI"),
+         copy_from => local_cp("$(sys.workdir)/share/GUI"),
       depth_search => recurse("inf");
 
    "$(sys.doc_root)/hub/."
@@ -232,10 +232,10 @@ bundle agent cfengine_setup_knowledge
 
   init_mongo::
 
-   "$(sys.workdir)/bin/mongorestore -d phpcfengine phpcfenginenova"
-      contain => silent_in_dir("$(sys.doc_root)"),
+   "$(sys.workdir)/bin/mongo phpcfengine $(sys.workdir)/share/GUI/phpcfenginenova/export.js"
+      contain => silent_in_dir("$(sys.workdir)"),
       comment => "Initialise mongo authentication to access Nova Mission Portal 2.1.0 ++",
-       handle => "knowledge_commands_mongorestore";
+       handle => "knowledge_commands_mongo_exportjs";
 
   init_knowledge|(am_policy_hub.kn_update)::
 
