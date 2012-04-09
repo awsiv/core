@@ -125,7 +125,7 @@ class vitals_model extends Cf_Model {
      */
      function getVitalsYearAnalysis($username, $hostkey, $observables) {
         try {
-            return json_decode(cfpr_vitals_analyse_magnified($username, $hostkey, $observables), true);
+            return json_decode(cfpr_vitals_analyse_year($username, $hostkey, $observables), true);
         } catch (Exception $e) {
             $error = generate_errormessage($e);
             return $error;
