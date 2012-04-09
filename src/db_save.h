@@ -42,7 +42,7 @@ void CFDB_SaveLastHostUpdateSize(mongo_connection *conn, char *hostkey, int upda
 void CFDB_SaveCachedTotalCompliance(mongo_connection *conn, char *policy, int slot, double kept, double repaired,
                                     double notkept, int count, time_t genTime);
 int CFDB_SaveLastseenCache(Item *lastseen);
-void CFDB_SaveGoalsCache(char *goal_patterns, char *goal_categories);
+void CFDB_SaveGoalsCache(char *goal_patterns);
 int CFDB_MarkAsDeleted(mongo_connection *dbconn, char *keyHash);
 void CFDB_SaveExecutionStatus(mongo_connection *conn, char *keyhash, bool is_black, long delta_schedule);
 void CFDB_SaveLastAgentExecution(mongo_connection *conn, char *keyhash, long last_agent_exec);

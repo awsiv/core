@@ -105,7 +105,7 @@ int CFDB_SaveLastseenCache(Item *lastseen)
 
 /*****************************************************************************/
 
-void CFDB_SaveGoalsCache(char *goal_patterns, char *goal_categories)
+void CFDB_SaveGoalsCache(char *goal_patterns)
 {
     bson_buffer bb;
     bson_buffer *setObj;
@@ -126,7 +126,6 @@ void CFDB_SaveGoalsCache(char *goal_patterns, char *goal_categories)
     bson_buffer_init(&bb);
     setObj = bson_append_start_object(&bb, "$set");
     bson_append_string(setObj, "goal_patterns", goal_patterns);
-    bson_append_string(setObj, "goal_categories", goal_categories);
     bson_append_finish_object(setObj);
 
     bson_from_buffer(&setOp, &bb);

@@ -600,10 +600,10 @@ int Nova_ClassesIntersect(Rlist *contexts1, Rlist *contexts2)
 
 /*****************************************************************************/
 
-void AddGoalsToDB(char *goal_patterns, char *goal_categories)
+void AddGoalsToDB(char *goal_patterns)
 {
 #ifdef HAVE_LIBMONGOC
-    CFDB_SaveGoalsCache(goal_patterns, goal_categories);
+    CFDB_SaveGoalsCache(goal_patterns);
 #endif
 }
 
