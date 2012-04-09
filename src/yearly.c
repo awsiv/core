@@ -20,14 +20,13 @@
 int Nova_ReadYearTimeSeries(mongo_connection *conn, DataView *cfv, char *keyhash, char *monId)
 {
     double ry, rq, rs;
-    double max, min;
     int i, have_data = false;
     double q[CF_YEAR_SLOTS] = { 0 }, e[CF_YEAR_SLOTS] = { 0 }, d[CF_YEAR_SLOTS] = { 0 };
 
     CFDB_QueryMonView(conn, keyhash, monId, mon_rep_yr, q, e, d);
 
-    max = 0;
-    min = 99999;
+    cfv->max = 0;
+    cfv->min = 99999;
     cfv->error_scale = 0;
 
     for (i = 0; i < CF_YEAR_SLOTS; i++)
@@ -41,18 +40,18 @@ int Nova_ReadYearTimeSeries(mongo_connection *conn, DataView *cfv, char *keyhash
             have_data = true;
         }
 
-        if (ry > max)
+        if (rq > cfv->max)
         {
-            max = ry;
+            cfv->max = rq;
         }
 
         cfv->error_scale = (cfv->error_scale + rs) / 2;
 
-        if (ry < min)
+        if (rq < cfv->min)
         {
-            min = ry;
+            cfv->min = rq;
         }
-
+        
         cfv->data_E[i] = ry;
         cfv->data_q[i] = rq;
         cfv->bars[i] = rs;
