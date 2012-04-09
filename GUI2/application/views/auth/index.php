@@ -68,6 +68,7 @@ var li_pos = '';  // LI position to insert on drag
 var ul_pos = '';  // UL position to insert on drag
 
 var maxAllowedClasses = 5;
+var classesArray = ['crxi','crxx'];
    
 // options for edit forms
 var edit_form_options =  {
@@ -94,8 +95,24 @@ var edit_form_options =  {
 };
         
 $(document).ready(function() {
-       
-        
+
+
+// check if usr manually check/uncheck items
+$("ul#crxi input, ul#crxx input").live("click", function(){ 
+    if ($(this).is(':checked')) {
+        var parentId = $(this).parent().parent().attr('id');
+
+        if($('#' + parentId + ' input[type="checkbox"]:checked').length > maxAllowedClasses) {
+            var el = $(this);
+
+            $('#confirmation span').text('Please use less than ' + maxAllowedClasses + ' classes. Using more classes could affect system productivity');
+            var cancelBtn   = generateDialogBtn('Cancel',   $confirmation, function(){el.attr('checked', false); return false} );
+            var continueBtn = generateDialogBtn('Continue', $confirmation, function(){el.attr('checked', true); return false});    
+            $confirmation.dialog("option", "buttons", [continueBtn,cancelBtn]);
+            $confirmation.dialog("open"); 
+        }
+    }
+});  
 /************************************************************************************/  
 //              Buttons
 /************************************************************************************/ 
@@ -163,29 +180,32 @@ $(document).ready(function() {
     });
 
     $(".arrows a").live('click',function(event) {
-        var source = $(this).attr('source');
-        var dest   = $(this).attr('dest');
+        var source_id = $(this).attr('source');
+        var destination_id   = $(this).attr('dest');
         
-        var source_elem      = $('#' + source);
-        var destination_elem = $('#' + dest);
+        var source_elem      = $('#' + source_id);
+        var destination_elem = $('#' + destination_id);
         
         var destinations_array = new Array("crxi","crxx", "brxi", 'brxx', 'roles');
         
-        if ($.inArray( dest, destinations_array) != -1) {
-            $group.each(function() {
-                addCheckbox(this, dest);
-            });
-        }
-        else { 
-            $group.each(function() {
-                removeCheckbox(this)
-            });
+        //check if we are trying to move into same block
+        if ($('#'+ source_id + ' .selected_item').length == 0)
+        {
+            return false;
         }
         
-        $(destination_elem).prepend($group.clone());
-        $(destination_elem).find('.selected_item').removeClass('selected_item');
+        li_pos = ul_pos = '';
+        var args = [];
+        args.destination_id = destination_id;
+        args.destination_elem = destination_elem;
+        args.destinations_array = destinations_array;
+        args.source_id = source_id;
+        args.source_elem = source_elem;
+        args.e = event;
         
-        $group.remove();
+
+        checkAndMove(args);
+
         
         checkEmptyList(source_elem, destination_elem);
        
@@ -257,6 +277,7 @@ $(document).ready(function() {
             $('#classRegexpText').css('border', '1px solid red');
         }
     });
+    
 /************************************************************************************/    
 
 
@@ -364,7 +385,22 @@ function load_edit_form(path, form) {
     });
 }
 
+function getSelectedCheckboxes(parentId) {
+    var res = [];
+    $('#' + parentId + ' input[type="checkbox"]:checked').each(function() { 
+        res.push($(this).val());
+    });
+    
+    return res;
+}
+
 function addFinders() {
+/*for (x in $.ui.classfinderbox.instances)
+{
+    $.ui.classfinderbox.instances[x] = '';
+} */
+
+          
     var genericOption = {
         baseUrl: '<?php echo site_url() ?>',
         addSearchBar: true,
@@ -373,11 +409,12 @@ function addFinders() {
         placeholderId: 'classList_wrapper',
         sortable: true,
         sortableConnectionClass: 'classlist',
-        sortableDestinations: new Array('crxi', 'crxx')
+        sortableDestinations: new Array('crxi', 'crxx'),
+        defaultContext: [getSelectedCheckboxes('crxi'), getSelectedCheckboxes('crxx')]
     };
 
 $('#classList').classfinderbox(genericOption);
-
+  var genericOption = '';
     var genericOption = {
         baseUrl: '<?php echo site_url() ?>',
         addSearchBar: false,
@@ -438,9 +475,6 @@ function bindSortable(bind_css_class_name, destinations_array)
     var destination_id = ''; 
     
 
-    
-  //  var $group = '';
-
           $(bind_class).sortable({
             connectWith: bind_class,
             connectToSortable: '.classlist',
@@ -485,50 +519,28 @@ function bindSortable(bind_css_class_name, destinations_array)
                 {
                     return false;
                 }    
+                var args = [];
+                args.destination_id     = destination_id;
+                args.destination_elem   = destination_elem;
+                args.destinations_array = destinations_array;
+                
+                args.source_id   = source_id;
+                args.source_elem = source_elem;
+                args.e = e;
 
-                var classesArray = ['crxi','crxx'];
-
-                if ($.inArray(destination_id, classesArray) != -1 && destination_id != source_id) {
-                    var args = [];
-                    args.e = e;
-                    args.ui = ui;
-                    args.destination_id = destination_id;
-                    args.destination_elem = destination_elem;
-                    args.destinations_array = destinations_array;
-                    args.source_elem = source_elem;
-
-               
-                    
-                    if (checkAssignedCount(destination_id, classesArray, args) == true) {
-                        moveItem(e, ui, destination_id,destination_elem, destinations_array, source_elem );
-                    }
-                    else
-                        {
-                            e.preventDefault(); 
-                            $('#confirmation span').text('Please use less than ' + maxAllowedClasses + ' classes. Using more classes could affect system productivity');
-
-                            var cancelBtn   = generateDialogBtn('Cancel',   $confirmation, function(){return false} );
-                            var continueBtn = generateDialogBtn('Continue', $confirmation, prepareMove, args);    
-
-                            $confirmation.dialog("option", "buttons", [continueBtn,cancelBtn]);
-
-                            $confirmation.dialog("open");                        
-                        }
-                }
-                else
-                {
-                    moveItem(e, ui, destination_id,destination_elem, destinations_array, source_elem);
-                }
+                
+                checkAndMove(args);
               
             }
 	}).disableSelection();
 }
 
 function prepareMove(args) {
-    moveItem(args.e, args.ui, args.destination_id, args.destination_elem, args.destinations_array, args.source_elem, args.group);
+    moveItem(args.destination_id, args.destination_elem, args.destinations_array, args.source_elem, args.group);
 }
 
-function moveItem(e, ui, destination_id, destination_elem, destinations_array, source_elem ) {
+function moveItem(destination_id, destination_elem, destinations_array, source_elem ) {
+    
                 // move from available to assigned
                 if ($.inArray( destination_id , destinations_array) != -1)
                 {
@@ -548,21 +560,30 @@ function moveItem(e, ui, destination_id, destination_elem, destinations_array, s
                 if (li_pos.length != 0) {
                     li_pos.after($group.clone());
                 }
-                else if(ul_pos != 0)
+                else if(ul_pos.length != 0)
                 {
                     ul_pos.prepend($group.clone());
                 }
                 else
-                $(destination_elem).append($group.clone());
+                {
+                    el = $group.clone();
+                    destination_elem.append(el);
+                }
  
                   //  $group.clone().insertAfter($('#'+destination_id + ' li.ui-state-hightlight'));
  
                 $group.remove();
 
                 $(destination_elem).find('li.selected_item').removeClass('selected_item');
+                $(source_elem).find('li.selected_item').removeClass('selected_item');
 
                 // check only for classes
                 checkEmptyList(source_elem, destination_elem);
+               
+               //reset positions
+               li_pos = ul_pos = '';
+               $group = [];
+               
             }
 
 function addCheckbox(el, destination_id)
@@ -607,13 +628,39 @@ function checkEmptyList(source_elem, destination_elem) {
 
 function checkAssignedCount(dest, destinations_array, args) {
     // check count items
-    if ($.inArray( dest, destinations_array) != -1) {
-         if ($('#' + dest).children().length > maxAllowedClasses) {
+        if ($.inArray(dest, destinations_array) != -1) {
+         if ($('#' + dest + ' input[type="checkbox"]:checked').length + $group.length > maxAllowedClasses) {
+            $('#confirmation span').text('Please use less than ' + maxAllowedClasses + ' classes. Using more classes could affect system productivity');
+            var cancelBtn   = generateDialogBtn('Cancel',   $confirmation, function(){$(args.destination_elem).find('li.selected_item').removeClass('selected_item'); return false} );
+            var continueBtn = generateDialogBtn('Continue', $confirmation, prepareMove, args);    
+            $confirmation.dialog("option", "buttons", [continueBtn,cancelBtn]);
+            $confirmation.dialog("open"); 
             return false;
          }
     }
     return true;
 }
+
+
+function checkAndMove(args) {
+    if ($.inArray(args.destination_id, classesArray) != -1 && args.destination_id != args.source_id)
+    {
+        if (checkAssignedCount(args.destination_id, classesArray, args) == true) {
+            moveItem(args.destination_id,args.destination_elem, args.destinations_array, args.source_elem );
+        }
+        else
+        {
+            args.e.preventDefault(); 
+        }
+    }
+    else
+    {
+        moveItem( args.destination_id, args.destination_elem, args.destinations_array, args.source_elem);
+    }
+}
+
+
+
 
 function loadContent(args) {
         $(args.domElementId).load(args.link, 
@@ -671,5 +718,8 @@ function loadContent(args) {
                     };
                 return btn;
             }       
-     
+
+
+
+
 </script>
