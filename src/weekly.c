@@ -80,17 +80,7 @@ bool Nova_ReadWeekTimeSeries2(mongo_connection *conn, DataView *cfv, char *keyha
             rs = Num(d[i]);
             rq = Num(q[i]);
 
-            if (ry > cfv->max)
-            {
-                cfv->max = ry;
-            }
-
             cfv->error_scale = (cfv->error_scale + rs) / 2;
-
-            if (ry < cfv->min)
-            {
-                cfv->min = ry;
-            }
 
             cfv->data_E[i] = ry;
             cfv->bars[i] = rs;

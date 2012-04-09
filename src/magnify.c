@@ -56,19 +56,9 @@ bool Nova_ReadMagTimeSeries2(mongo_connection *conn, DataView *cfv, char *hostke
             cfv->max = rq;
         }
 
-        if (ry > cfv->max)
-        {
-            cfv->max = ry;
-        }
-
         if (rq < cfv->min)
         {
             cfv->min = rq;
-        }
-
-        if (ry < cfv->min)
-        {
-            cfv->min = ry;
         }
     }
 
