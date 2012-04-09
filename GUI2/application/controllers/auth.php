@@ -227,7 +227,7 @@ class Auth extends Controller {
                             ->get_object('users');
 
             $username = $result->username;
-            $oldPass = $result->password;
+            $oldPass  = $result->password;
             $this->load->model('repository_model');
             $userInfo = array('userId'=>$username);
             $oldKey = $this->repository_model->get_key($userInfo); // have to have old pass key before change
@@ -270,6 +270,7 @@ class Auth extends Controller {
                     'type' => 'password',
                     'value' => $this->form_validation->set_value('new_confirm')
                 );
+                
                 $this->load->view('auth/change_password', $this->data);
             }
         }
@@ -566,6 +567,31 @@ class Auth extends Controller {
         }
     }
 
+    
+    function view_profile() {
+       // var_dump($this->session->userdata('id'));
+        $userdata = $this->ion_auth->get_user($this->session->userdata('id'));
+        $this->data['user'] = $userdata;
+       // var_dump($userdata);
+        
+        $bc = array(
+            'title' => 'Profile',
+            'url' => 'auth/view_profile',
+            'isRoot' => false,
+            'replace_existing'=>true,
+            'directchild'=>true,
+        );
+        $this->breadcrumb->setBreadCrumb($bc);
+        
+        $this->data['title'] = $this->lang->line('mission_portal_title')." - Profile";
+        $this->data['title_header'] = "Profile";
+        $this->data['username'] = $this->session->userdata('username');
+        $this->data['breadcrumbs'] = $this->breadcrumblist->display();
+        
+        $this->template->load('template', 'auth/view_profile', $this->data);        
+        // $this->load->view('auth/view_profile', $this->data);
+    }
+    
     function edit_user($id) {
         $this->data['title'] = "Edit User";
         $this->data['user_type'] = 'internal';   
