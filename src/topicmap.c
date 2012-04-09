@@ -125,7 +125,6 @@ void Nova_DumpTopics()
 void Nova_ShowTopic(char *qualified_topic)
 {
     char topic_name[CF_BUFSIZE], topic_context[CF_BUFSIZE],buffer[1000000];
-    char reconstructed[CF_BUFSIZE];
     int id;
 
     Nova_DeClassifyTopic(qualified_topic, topic_name, topic_context);
@@ -770,7 +769,7 @@ Item *Nova_GetBusinessGoals(char *handle)
 
 int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 {
-    Rlist *rp, *rp2;
+    Rlist *rp;
     bson_buffer bb;
     bson query, field;
     mongo_cursor *cursor;
@@ -782,27 +781,18 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
     char work[CF_BUFSIZE] = { 0 };
     char goals[CF_MAXVARSIZE] = { 0 };
     char searchstring[CF_BUFSIZE] = { 0 };
-    Rlist *goal_categories = NULL, *goal_patterns = NULL;
+    Rlist *goal_patterns = NULL;
     char db_goal_patterns[CF_BUFSIZE] = { 0 };
-    char db_goal_categories[CF_BUFSIZE] = { 0 };
 
     if (CFDB_GetValue("goal_patterns", db_goal_patterns, sizeof(db_goal_patterns), MONGO_SCRATCH))
     {
         goal_patterns = SplitStringAsRList(db_goal_patterns, ',');
     }
 
-    if (CFDB_GetValue("goal_categories", db_goal_categories, sizeof(db_goal_categories), MONGO_SCRATCH))
+    for (rp = goal_patterns; rp != NULL; rp = rp->next)
     {
-        goal_categories = SplitStringAsRList(db_goal_categories, ',');
-    }
-
-    for (rp = goal_categories; rp != NULL; rp = rp->next)
-    {
-        for (rp2 = goal_patterns; rp2 != NULL; rp2 = rp2->next)
-        {
-            snprintf(work, CF_MAXVARSIZE - 1, "%s\\.%s|", (char *) rp->item, (const char *) rp2->item);
-            strcat(searchstring, work);
-        }
+        snprintf(work, CF_MAXVARSIZE - 1, "%s|", (char *) rp->item);
+        strcat(searchstring, work);
     }
 
     if (strlen(searchstring) > 1)
@@ -811,7 +801,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
     }
     else
     {
-        snprintf(searchstring, CF_MAXVARSIZE - 1, "goals\\.goal_.*");
+        snprintf(searchstring, CF_MAXVARSIZE - 1, "goal.*");
     }
 
     if (!CFDB_Open(&conn))
@@ -823,6 +813,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 
     bson_buffer_init(&bb);
     bson_append_regex(&bb, cfk_occurcontext, searchstring, "");
+    bson_append_regex(&bb, cfk_occurtopic, searchstring, "");
     bson_from_buffer(&query, &bb);
 
 /* BEGIN RESULT DOCUMENT */
@@ -908,33 +899,14 @@ void Nova_FillInGoalComment(Item *ip)
     mongo_cursor *cursor;
     bson_iterator it1;
     mongo_connection conn;
-    Rlist *goal_categories = NULL;
-    char db_goal_categories[CF_BUFSIZE] = { 0 };
     char canonified_goal[CF_BUFSIZE] = { 0 };
 
 // Get comment goals.* or targets.%s etc
 
     searchstring[0] = '\0';
     ReplaceChar(ip->name, canonified_goal, CF_BUFSIZE, ' ', '_');
-    if (CFDB_GetValue("goal_categories", db_goal_categories, sizeof(db_goal_categories), MONGO_SCRATCH))
-    {
-        goal_categories = SplitStringAsRList(db_goal_categories, ',');
-    }
 
-    for (rp = goal_categories; rp != NULL; rp = rp->next)
-    {
-        snprintf(work, CF_MAXVARSIZE - 1, "%s\\.%s|", (char *) rp->item, canonified_goal);
-        strcat(searchstring, work);
-    }
-
-    if (strlen(searchstring) > 1)
-    {
-        searchstring[strlen(searchstring) - 1] = '\0';
-    }
-    else
-    {
-        snprintf(searchstring, CF_MAXVARSIZE - 1, "%s", canonified_goal);
-    }
+    snprintf(searchstring, CF_MAXVARSIZE - 1, "%s|%s", ip->name, canonified_goal);
 
     if (!CFDB_Open(&conn))
     {
@@ -943,6 +915,7 @@ void Nova_FillInGoalComment(Item *ip)
 
     bson_buffer_init(&bb);
     bson_append_regex(&bb, cfk_occurcontext, searchstring, "");
+    bson_append_regex(&bb, cfk_occurtopic, searchstring, "");
     bson_from_buffer(&query, &bb);
 
 /* BEGIN RESULT DOCUMENT */
@@ -951,6 +924,7 @@ void Nova_FillInGoalComment(Item *ip)
     bson_append_int(&bb, cfk_occurcontext, 1);
     bson_append_int(&bb, cfk_occurlocator, 1);
     bson_append_int(&bb, cfk_occurtype, 1);
+    bson_append_int(&bb, cfk_occurtopic, 1);
     bson_append_int(&bb, cfk_occurrep, 1);
     bson_from_buffer(&field, &bb);
 
