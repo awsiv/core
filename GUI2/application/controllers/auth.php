@@ -67,7 +67,9 @@ class Auth extends Controller {
         $this->_check_admin_permissions();
         
         $requiredjs = array(
-            array('widgets/classfinderbox.js')            
+            array('widgets/classfinderbox.js'),            
+            array('jquery.form.js'),
+            array('jquery.blockUI.js'),            
         );
         
         $this->carabiner->js($requiredjs);   
