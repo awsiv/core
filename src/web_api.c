@@ -745,6 +745,8 @@ bool Nova2PHP_vitals_analyse_week(char *hostkey, char *vitalId, char *buffer, in
     Join(buffer, work, bufsize);
     snprintf(work, CF_BUFSIZE - 1, "\"Minimum value %.2lf\",", cfv.min);
     Join(buffer, work, bufsize);
+    snprintf(work, CF_BUFSIZE, "\"Average variability: %.2lf\",", cfv.error_scale);
+    Join(buffer, work, bufsize);
     x = 100 * (double) cfv.over / (double) CF_TIMESERIESDATA;
     snprintf(work, CF_BUFSIZE - 1, "\"Percentage over average/normal: %.2lf%%\",", x);
     Join(buffer, work, bufsize);
