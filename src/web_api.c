@@ -702,11 +702,11 @@ bool Nova2PHP_vitals_analyse_magnified(char *hostkey, char *vitalId, char *buffe
         Join(buffer, work, bufsize);
     }
 
-    snprintf(work, sizeof(work), "\"Maximum value: %lf\",", cfv.max);
+    snprintf(work, sizeof(work), "\"Maximum value: %.2lf\",", cfv.max);
     Join(buffer, work, bufsize);
-    snprintf(work, sizeof(work), "\"Minimum value: %lf\",", cfv.min);
+    snprintf(work, sizeof(work), "\"Minimum value: %.2lf\",", cfv.min);
     Join(buffer, work, bufsize);
-    snprintf(work, sizeof(work), "\"Average variability: %lf\",", cfv.error_scale);
+    snprintf(work, sizeof(work), "\"Average variability: %.2lf\",", cfv.error_scale);
     Join(buffer, work, bufsize);
 
     ReplaceTrailingChar(buffer, ',', '\0');
@@ -741,27 +741,27 @@ bool Nova2PHP_vitals_analyse_week(char *hostkey, char *vitalId, char *buffer, in
 
     strcpy(buffer, "[");
 
-    snprintf(work, CF_BUFSIZE - 1, "\"Maximum value: %lf\",", cfv.max);
+    snprintf(work, CF_BUFSIZE - 1, "\"Maximum value: %.2lf\",", cfv.max);
     Join(buffer, work, bufsize);
-    snprintf(work, CF_BUFSIZE - 1, "\"Minimum value %lf\",", cfv.min);
+    snprintf(work, CF_BUFSIZE - 1, "\"Minimum value %.2lf\",", cfv.min);
     Join(buffer, work, bufsize);
     x = 100 * (double) cfv.over / (double) CF_TIMESERIESDATA;
-    snprintf(work, CF_BUFSIZE - 1, "\"Percentage over average/normal: %lf%%\",", x);
+    snprintf(work, CF_BUFSIZE - 1, "\"Percentage over average/normal: %.2lf%%\",", x);
     Join(buffer, work, bufsize);
     x = 100 * (double) cfv.under / (double) CF_TIMESERIESDATA;
-    snprintf(work, CF_BUFSIZE - 1, "\"Percentage under average/normal: %lf%%\",", x);
+    snprintf(work, CF_BUFSIZE - 1, "\"Percentage under average/normal: %.2lf%%\",", x);
     Join(buffer, work, bufsize);
     x = 100 * (double) cfv.over_dev1 / (double) CF_TIMESERIESDATA;
-    snprintf(work, CF_BUFSIZE - 1, "\"Percentage 1 deviation over mean: %lf%%\",", x);
+    snprintf(work, CF_BUFSIZE - 1, "\"Percentage 1 deviation over mean: %.2lf%%\",", x);
     Join(buffer, work, bufsize);
     x = 100 * (double) cfv.under_dev1 / (double) CF_TIMESERIESDATA;
-    snprintf(work, CF_BUFSIZE - 1, "\"Percentage 1 deviation under mean: %lf%%\",", x);
+    snprintf(work, CF_BUFSIZE - 1, "\"Percentage 1 deviation under mean: %.2lf%%\",", x);
     Join(buffer, work, bufsize);
     x = 100 * (double) cfv.over_dev2 / (double) CF_TIMESERIESDATA;
-    snprintf(work, CF_BUFSIZE - 1, "\"Percentage 2 deviations over mean: %lf%%\",", x);
+    snprintf(work, CF_BUFSIZE - 1, "\"Percentage 2 deviations over mean: %.2lf%%\",", x);
     Join(buffer, work, bufsize);
     x = 100 * (double) cfv.under_dev2 / (double) CF_TIMESERIESDATA;
-    snprintf(work, CF_BUFSIZE - 1, "\"Percentage 2 deviations under mean: %lf%%\",", x);
+    snprintf(work, CF_BUFSIZE - 1, "\"Percentage 2 deviations under mean: %.2lf%%\",", x);
     Join(buffer, work, bufsize);
 
     ReplaceTrailingChar(buffer, ',', '\0');
@@ -799,7 +799,7 @@ bool Nova2PHP_vitals_analyse_year(char *hostkey, char *vitalId, char *buffer, in
     Join(buffer, work, bufsize);
     snprintf(work, CF_BUFSIZE, "\"Minimum value: %.2lf\",", cfv.min);
     Join(buffer, work, bufsize);
-    snprintf(work, CF_BUFSIZE, "\"Average variability: %lf\",", cfv.error_scale);
+    snprintf(work, CF_BUFSIZE, "\"Average variability: %.2lf\",", cfv.error_scale);
     Join(buffer, work, bufsize);
 
     ReplaceTrailingChar(buffer, ',', '\0');
