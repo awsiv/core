@@ -1,43 +1,30 @@
 <div class="outerdiv grid_12">
 
     <div class="innerdiv">
-<!--<p><?php echo "Logged in: $username"; ?>&nbsp;<a href="<?php echo site_url('auth/logout'); ?>">Logout</a></p>-->
-       <!--  <ul class="admin_menu">
-            <li class="current"><a href="<?php echo site_url('auth/index'); ?>">Users</a></li>
-            <li><a href="<?php echo site_url('auth/manage_role'); ?>">Roles</a></li>
-            <!--<li>Settings</li>
-        </ul> -->
-
-<div id="infoMessage"><?php echo $message;?></div> 
-<div id="darktabs">
-    <div class="ui-tabs ui-widget ui-widget-content ui-corner-all">        
-    <ul class="admin_menu ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+        <div id="infoMessage"><?php echo $message;?></div> 
+        <div id="darktabs">
+            <div class="ui-tabs ui-widget ui-widget-content ui-corner-all" style="margin-left: 0px;">        
+                <ul class="admin_menu ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
                     <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active ">
-                       <a href="<?php echo site_url('auth/index'); ?>">Users</a>
+                        <a href="<?php echo site_url('auth/index'); ?>">Users</a>
                     </li>
                     <li class="ui-state-default ui-corner-top">
                         <a href="<?php echo site_url('auth/manage_role'); ?>">Roles</a>
                     </li>
                 </ul>        
-            <div class="holder">
-                <div id="error_status"></div>
-                <div id="admin_content" class="tables">
-                    <?php include 'user_list.php'; ?>
+                <div class="holder">
+                    <div id="error_status"></div>
+                    <div id="admin_content" class="tables">
+                        <?php include 'user_list.php'; ?>
+                    </div>
                 </div>
             </div>
+
+        </div>
+        <div id="confirmation" title="Are you sure"><span></span></div>
     </div>
-<div>
-        <!-- <a href="#" onclick="testDialog()">Test dialog</a> -->
-    </div>
-</div>
-<div id="confirmation" title="Are you sure"><span></span></div>
-<script src="<?php echo get_scriptdir() ?>jquery.form.js" type="text/javascript"></script>
-<script src="<?php echo get_scriptdir() ?>jquery.blockUI.js" type="text/javascript"></script>
+</div>    
 <script type="text/javascript">
-     var options = {
-            target:  '#admin_content'  // target element(s) to be updated with server response
-        };
-        
         // common options for ajax requests
         $.ajaxSetup({
             beforeSend: function() {
@@ -62,34 +49,51 @@
                 $('.blockUI').hide();   
                 $(document).unblock();
                 $.unblockUI();
-
             }
-        });        
+        });     
         
-     var edit_form_options =  {
-                target:  '#edit_form_wrapper',
-                dataType: 'json',
-                beforeSubmit: function(arr, $form, options)
-                    {
-                    },
-                success: function (responseObj, statusText, xhr, $form) {
-                
-                if (responseObj.status == 'all_ok')
-                {
-                    $('#admin_content').html(responseObj.responseText);
-                    $('#edit_form_wrapper').remove();
-                }
-                else
-                {
-                    $("#formInfoMessage").html(responseObj.responseText);
-                    $("#formInfoMessage").show();
-                    window.scrollTo(null, ($('#formInfoMessage').position().top - 20));
-                }
-                return;
-            }   
-            };
+        $(document).ajaxStop(function(){
+            setTimeout(function() {
+                $("#infoMessage, #formInfoMessage").fadeOut(500)
+            }, 10000);
+        });
         
-    $(document).ready(function() {
+// global variables for ajax and drag&drop
+var options = {
+    target:  '#admin_content'  // target element(s) to be updated with server response
+};
+        
+var $group = '';  //items with .selected_item class       
+var li_pos = '';  // LI position to insert on drag
+var ul_pos = '';  // UL position to insert on drag
+
+var maxAllowedClasses = 5;
+   
+// options for edit forms
+var edit_form_options =  {
+    target:  '#edit_form_wrapper',
+    dataType: 'json',
+    beforeSubmit: function(arr, $form, options)
+    {
+    },
+    success: function (responseObj, statusText, xhr, $form) {
+        
+        if (responseObj.status == 'all_ok')
+        {
+            $('#admin_content').html(responseObj.responseText);
+            $('#edit_form_wrapper').remove();
+        }
+        else
+        {
+            $("#formInfoMessage").html(responseObj.responseText);
+            $("#formInfoMessage").show();
+            window.scrollTo(null, ($('#formInfoMessage').position().top - 20));
+        }
+        return;
+    }   
+};
+        
+$(document).ready(function() {
        
         
 /************************************************************************************/  
@@ -101,9 +105,6 @@
     $('#add_user').live('click',function(event) {
         event.preventDefault();
         $("#error_status").html('');       
-
-        var path = $(this).attr('href');
-                               
         attach_edit_form(this, $(this).attr('form'));
     });
         
@@ -111,68 +112,64 @@
     $('#create_user, #edit_user').live('submit',function(event) {
         event.preventDefault();
         $("#error_status").html('');   
-        
-        
         $(this).ajaxSubmit(edit_form_options);
     });
 
-            //loading the change password in admin_content
-        $('a.changepassword').live('click',function(event){
-            event.preventDefault();
-            $("#error_status").html('');
-            var path=$(this).attr('href');
-            $("#admin_content").load(path);
-        });
+        //loading the change password in admin_content
+    $('a.changepassword').live('click',function(event){
+        event.preventDefault();
+        $("#error_status").html('');
+        var path=$(this).attr('href');
+        $("#admin_content").load(path);
+    });
 
-        //submitting the form ajaxically to the page in form action and loading the result in admin_content
-        $('#change_password').live('submit',function(event){
-            event.preventDefault();
-            $(this).ajaxSubmit(options);
-        });
-
-
-        //loading the  role create page in the  admin area ajaxcially
-        $('#add_role').live('click',function(event){
-            event.preventDefault();
-            attach_edit_form(this, 'role');
-        });
+    //submitting the form ajaxically to the page in form action and loading the result in admin_content
+    $('#change_password').live('submit',function(event){
+        event.preventDefault();
+        $(this).ajaxSubmit(options);
+    });
 
 
+    //loading the  role create page in the  admin area ajaxcially
+    $('#add_role').live('click',function(event){
+        event.preventDefault();
+        attach_edit_form(this, 'role');
+    });
 
-        //load the result from the server after delete page is called
-        $('a.delete').live('click',function(event){
-            event.preventDefault();
-            $("#error_status").html('');
-            var path = $(this).attr('href');
-            $('#confirmation span').text('Do you want to continue deleting..');
+    //load the result from the server after delete page is called
+    $('a.delete').live('click',function(event){
+        event.preventDefault();
+        $("#error_status").html('');
+       
+        $('#confirmation span').text('Do you want to continue deleting..');
 
-            // create buttons - cancel and confirm
-            var cancelBtn  = generateCloseBtn('Cancel', $confirmation);
-            var confirmBtn = generateLoadBtn('Confirm', path, $confirmation);
+        // create buttons - cancel and confirm
+        var cancelBtn  = generateDialogBtn('Cancel', $confirmation);
+        
+        var args=[];
+        args.domElementId = options.target;
+        args.link = $(this).attr('href');
+        
+        var confirmBtn = generateDialogBtn('Confirm', $confirmation, loadContent, args);
 
-            $confirmation.dialog("option", "buttons", cancelBtn.concat(confirmBtn) );
-            $confirmation.dialog("open");
-        });
+        $confirmation.dialog("option", "buttons", [cancelBtn,confirmBtn] );
+        $confirmation.dialog("open");
+    });
 
-        //loading the edit page in admin_content of the admin area
-        $('a.edit').live('click',function(event){
-            event.preventDefault();
-            attach_edit_form(this, $(this).attr('form'));
-        });
+    //loading the edit page in admin_content of the admin area
+    $('a.edit').live('click',function(event){
+        event.preventDefault();
+        attach_edit_form(this, $(this).attr('form'));
+    });
 
     $(".arrows a").live('click',function(event) {
-        
-        
         var source = $(this).attr('source');
         var dest   = $(this).attr('dest');
         
         var source_elem      = $('#' + source);
         var destination_elem = $('#' + dest);
         
-        var destinations_array = new Array("crxi","crxx","brxi", 'brxx', 'roles');
-        
-        var $group = $('#' + source + ' .selected_item');
-        
+        var destinations_array = new Array("crxi","crxx", "brxi", 'brxx', 'roles');
         
         if ($.inArray( dest, destinations_array) != -1) {
             $group.each(function() {
@@ -194,15 +191,15 @@
        
     });
     
-            //loading all the pages in admin content after clicking the items in admin index menu
-            $('.admin_menu li a').click(function(event){
-                event.preventDefault();
-                var path=$(this).attr('href');
-                $("#error_status").html('');
-                $('#edit_form_wrapper').html('');
-                $("#admin_content").load(path);
-                $(this).parent().addClass('ui-tabs-selected ui-state-active ').siblings().removeClass('ui-tabs-selected ui-state-active');
-            });
+    //loading all the pages in admin content after clicking the items in admin index menu
+    $('.admin_menu li a').click(function(event){
+        event.preventDefault();
+        var path=$(this).attr('href');
+        $("#error_status").html('');
+        $('#edit_form_wrapper').html('');
+        $("#admin_content").load(path);
+        $(this).parent().addClass('ui-tabs-selected ui-state-active ').siblings().removeClass('ui-tabs-selected ui-state-active');
+    });
 
 
 
@@ -210,74 +207,58 @@
     $('#create_role, #edit_role').live('submit',function(event){
         event.preventDefault();
         $("#error_status").html('');
- 
-        
-       // if ($(this).attr('id') == 'create_role') {
+
             if (roleNameValidate($('#name').val()) == false || roleDescriptionValidate($('#description').val())==false) {
-                
-                var okBtn  = generateCloseBtn('Ok', $confirmation);
-                
-                $confirmation.dialog("option", "buttons", okBtn);
+                var okBtn = generateDialogBtn('Ok', $confirmation);
+                $confirmation.dialog("option", "buttons", [okBtn]);
                 $confirmation.dialog("open");
                 return
             }
-       // }
         
         if (roleIncludeExcludeValidate() == false)
         {
-            var cancelBtn  = generateCloseBtn('Cancel',   $confirmation);
-            var confirmBtn = generateSubmitBtn('Confirm', $(this), $confirmation, edit_form_options);
-            
-            $confirmation.dialog("option", "buttons", cancelBtn.concat(confirmBtn) );
-            $confirmation.dialog("open");
+           var $form = $(this);
+           var cancelBtn  = generateDialogBtn('Cancel', $confirmation);
+           var confirmBtn = generateDialogBtn('Confirm', $confirmation, function(){$form.ajaxSubmit(edit_form_options);});
+
+           $confirmation.dialog("option", "buttons", [cancelBtn,confirmBtn] );
+           $confirmation.dialog("open");
         }
         else
-        {  // console.log(admin_content)
+        {
             $(this).ajaxSubmit(edit_form_options);
         }  
     });
 
 
-            $('.activate').live('click',function(event){
-                event.preventDefault();
-                var path=$(this).attr('href');
-                $("#admin_content").load(path);
-            });
+    $('.activate').live('click',function(event){
+        event.preventDefault();
+        var path=$(this).attr('href');
+        $("#admin_content").load(path);
+    });
 
-            $('.inactivate').live('click',function(event){
-                event.preventDefault();
-                var path=$(this).attr('href');
-                $("#admin_content").load(path);
-            });
- 
-            $('#deactivate_user').live('submit',function(event) {
-                event.preventDefault();
-                $(this).ajaxSubmit(options)
-            });
-            
-            $("#addClassRegexp" ).live('click', function(e){
-                if($('#classRegexpText').val() != '') {
-                    $('#classList').prepend('<li class=""><span>' + $('#classRegexpText').val() + '</span></li>' );  
-                    $('#classRegexpText').css('border', 'inherit');
-                }
-                else {
-                    $('#classRegexpText').css('border', '1px solid red');
-                }
-            });
+    $('.inactivate').live('click',function(event){
+        event.preventDefault();
+        var path=$(this).attr('href');
+        $("#admin_content").load(path);
+    });
+
+    $('#deactivate_user').live('submit',function(event) {
+        event.preventDefault();
+        $(this).ajaxSubmit(options)
+    });
+
+    $("#addClassRegexp" ).live('click', function(e){
+        if($('#classRegexpText').val() != '') {
+            $('#classList').prepend('<li class=""><span>' + $('#classRegexpText').val() + '</span></li>' );  
+            $('#classRegexpText').css('border', 'inherit');
+        }
+        else {
+            $('#classRegexpText').css('border', '1px solid red');
+        }
+    });
 /************************************************************************************/    
-/************************************************************************************/ 
 
-
-
-
-            $(document).ajaxStop(function(){
-                setTimeout(function() {
-                    $("#infoMessage, #formInfoMessage").fadeOut(500)
-                }, 10000);
-            });
-
-
-/******* Click event on box list items ********************/
 
 // bind correct mouse behavior
 var selectedClass = 'selected_item';
@@ -288,7 +269,6 @@ var changeOnClick = false;
 var lastParentClicked = '';
 
 $(".itemlist li" ).live('mousedown mouseup', function(e) {
-
     // do not aloow to select items from 2 lists
     if (lastParentClicked == '') {
         lastParentClicked = $(this).parent().attr('id');
@@ -304,9 +284,10 @@ $(".itemlist li" ).live('mousedown mouseup', function(e) {
     
     if (e.type=="mousedown") {
         lastClick = e.timeStamp; // get mousedown time */
-        //$(this).toggleClass(selectedClass);
+
         if (!$(this).hasClass(selectedClass)) {
             $(this).addClass(selectedClass);
+            $group = $('.selected_item');
             changeOnClick  = false;
         }
         else
@@ -319,6 +300,7 @@ $(".itemlist li" ).live('mousedown mouseup', function(e) {
             // add selected class to group draggable objects
             if (changeOnClick == true) {
                 $(this).toggleClass(selectedClass);
+                $group = $('.selected_item');
             }
            changeOnClick  = false;
         }
@@ -343,7 +325,6 @@ function roleIncludeExcludeValidate()
     }
     return true;
 }
-
 
 function attach_edit_form(elem, form) {
     var parent = $(elem).parent().parent(); //get parent element   
@@ -411,14 +392,6 @@ $('#classList').classfinderbox(genericOption);
 $('#bundlessList').classfinderbox(genericOption);
 }
 
-
-/*
-$('.ui-dialog-buttonset').delegate( 'button', 'click', function() {
-    console.log('tvou mat');
-    
-});    */
-
-
 function roleNameValidate(name) {
     var name = $.trim(name);
     
@@ -444,20 +417,9 @@ function roleDescriptionValidate(name) {
     }    
 }
 
-
-
-
-
-
-
-
 });  // end of document.ready
 
 /*-------------------------------------------------------------------------------------------------*/
-/*-------------------------------------------------------------------------------------------------*/
-/*-------------------------------------------------------------------------------------------------*/
-/*-------------------------------------------------------------------------------------------------*/
-
 
 
 // move element(s) from source to destination        
@@ -474,13 +436,20 @@ function bindSortable(bind_css_class_name, destinations_array)
 
     var destination_elem = '';
     var destination_id = ''; 
+    
+
+    
+  //  var $group = '';
 
           $(bind_class).sortable({
             connectWith: bind_class,
+            connectToSortable: '.classlist',
             placeholder: "ui-state-highlight",
             dropOnEmpty: true,
             cursor: 'pointer',
             cancel: 'empty',
+            addClasses: true,
+            
             helper: function(){ 
                 var selected = $('.selected_item');
                 if (selected.length === 0) { 
@@ -493,24 +462,35 @@ function bindSortable(bind_css_class_name, destinations_array)
                 
                 return container;  
             },
-            
+           beforeStop: function(event, ui) {
+               // Find correct placeholder
+               // if insert inside list - get position inside LI
+               li_pos = ui.item.prev('li');
+               if(li_pos.length == 0) // this mean that we are trying to insert as first element of li
+               {
+                   ul_pos =  ui.item.parent(); //
+               }    
+           },
             start: function(event, ui) { 
                 source_elem = ui.item.parent(); // save parent id before drag
                 source_id   = ui.item.parent().attr('id');
+                
             },  
             stop: function(e, ui) {
-
-                //return false;
-                
                 destination_elem = $(ui.item).parent();
                 destination_id = destination_elem.attr('id');
-
+                
+                // do not move items if source and destination is the same items
+                if(destination_id == source_id)
+                {
+                    return false;
+                }    
 
                 var classesArray = ['crxi','crxx'];
 
                 if ($.inArray(destination_id, classesArray) != -1 && destination_id != source_id) {
                     var args = [];
-                    args.event = e;
+                    args.e = e;
                     args.ui = ui;
                     args.destination_id = destination_id;
                     args.destination_elem = destination_elem;
@@ -524,46 +504,31 @@ function bindSortable(bind_css_class_name, destinations_array)
                     }
                     else
                         {
-                        e.preventDefault(); 
-              
-                     
-            $('#confirmation span').text('Please use less than 2 classes. Using more classes could affect system productivity');
-            
-            //var okBtn  = generateCloseBtn('Ok', $confirmation);
-            var cancelBtn   = generateDialogBtn('Cancel',   $confirmation, function(){return false} );
+                            e.preventDefault(); 
+                            $('#confirmation span').text('Please use less than ' + maxAllowedClasses + ' classes. Using more classes could affect system productivity');
 
-            var continueBtn = generateDialogBtn('Continue', $confirmation, prepareMove, args);    
-             
-           // $confirmation.dialog("option", "buttons", okBtn);
-            $confirmation.dialog("option", "buttons", [continueBtn,cancelBtn]);
-                             
-            $confirmation.dialog("open");                        
+                            var cancelBtn   = generateDialogBtn('Cancel',   $confirmation, function(){return false} );
+                            var continueBtn = generateDialogBtn('Continue', $confirmation, prepareMove, args);    
 
-                      //return true;  
+                            $confirmation.dialog("option", "buttons", [continueBtn,cancelBtn]);
+
+                            $confirmation.dialog("open");                        
                         }
-
                 }
                 else
                 {
-
                     moveItem(e, ui, destination_id,destination_elem, destinations_array, source_elem);
                 }
-            },
-           
-            activate: function(event, ui) { 
+              
             }
 	}).disableSelection();
 }
 
 function prepareMove(args) {
-moveItem(args.e, args.ui, args.destination_id, args.destination_elem, args.destinations_array, args.source_elem);
+    moveItem(args.e, args.ui, args.destination_id, args.destination_elem, args.destinations_array, args.source_elem, args.group);
 }
 
 function moveItem(e, ui, destination_id, destination_elem, destinations_array, source_elem ) {
-
-//'#'+$(source_elem).attr('id')+
-                var $group = $('li.selected_item');
-               
                 // move from available to assigned
                 if ($.inArray( destination_id , destinations_array) != -1)
                 {
@@ -578,12 +543,17 @@ function moveItem(e, ui, destination_id, destination_elem, destinations_array, s
                         removeCheckbox(this);
                     });
                 }
-            
-            var el = $group.clone();
 
-            
-                //$group.clone().insertAfter($(ui.item));
-                $('#'+ destination_id).append(el);
+                // append elements depend on position
+                if (li_pos.length != 0) {
+                    li_pos.after($group.clone());
+                }
+                else if(ul_pos != 0)
+                {
+                    ul_pos.prepend($group.clone());
+                }
+                else
+                $(destination_elem).append($group.clone());
  
                   //  $group.clone().insertAfter($('#'+destination_id + ' li.ui-state-hightlight'));
  
@@ -597,7 +567,7 @@ function moveItem(e, ui, destination_id, destination_elem, destinations_array, s
 
 function addCheckbox(el, destination_id)
 {
-    
+
     if($(el).find('input').length == 0)
     { // add checkbox
         $(el).prepend('<input type="checkbox" id="" value="'+ $(el).find('span').text() + '" checked="true">');
@@ -606,14 +576,14 @@ function addCheckbox(el, destination_id)
     $(el).find('input').attr({'checked':true, 'disabled':false, "name": destination_id + "[]" });
 }
         
-function removeCheckbox(el)
-{
+function removeCheckbox(el) {
     var checkbox = $(el).find('input');
     if(checkbox.length != 0)
     { 
         checkbox.remove();
     }
 }
+
 function checkEmptyList(source_elem, destination_elem) {
     // add empty element with message
     if ($(source_elem).children().length == 0)
@@ -635,25 +605,32 @@ function checkEmptyList(source_elem, destination_elem) {
     }
 }
 
-
-//, okCallbackFnc, cancelCallbackFnc
 function checkAssignedCount(dest, destinations_array, args) {
-    
-    //console.log('checkAssignedCount');
-    
     // check count items
-    var maxAllowed = 2;
     if ($.inArray( dest, destinations_array) != -1) {
-         if ($('#' + dest).children().length > maxAllowed) {
-           
+         if ($('#' + dest).children().length > maxAllowedClasses) {
             return false;
          }
     }
     return true;
-
 }
 
-
+function loadContent(args) {
+        $(args.domElementId).load(args.link, 
+        function(responseText, textStatus, XMLHttpRequest) {
+            switch (XMLHttpRequest.status) {
+                case 200: break;
+                case 401:
+                case 404:
+                    $('#error_status').html('<p class="error">' + responseText + '</p>');
+                    break;
+                default:
+                    $('#error_status').html('<p class="error">' + '<?php echo $this->lang->line('500_error'); ?>' +  '</p>');
+                    break;
+                }
+            }
+        );
+}
 
 /****************************** DIALOG **********************************************/    
 
@@ -677,57 +654,8 @@ function checkAssignedCount(dest, destinations_array, args) {
                     }
         });    
 
-        function generateSubmitBtn(label, form, dialogObj, options) {
-            var btn = [{
-                        text: label,
-                        click: function()
-                            {
-                                form.ajaxSubmit(options);
-                                dialogObj.dialog('close');
-                                dialogCallback(true);
-                            }
-                }];
-            return btn;
-        }
-      // buttons wrapper, just set label, action (if needed), and dialog object
-        function generateCloseBtn(label,dialogObj) {
-           var btn = [{
-                        text: label,
-                        click: function() {
-                                dialogObj.dialog('close');
-                              //  console.log('CALLBACK');
-                                dialogCallback(false);
-                            }
 
-           }];
-           return btn;
-        }
-                function generateLoadBtn(label, link, dialogObj) {
-            var btn = [{
-                        text: label,
-                        click: function()
-                            {
-                                $("#admin_content").load(link, 
-                                function(responseText, textStatus, XMLHttpRequest) {
-                                    switch (XMLHttpRequest.status) {
-                                        case 200: break;
-                                        case 401:
-                                        case 404:
-                                            $('#error_status').html('<p class="error">' + responseText + '</p>');
-                                            break;
-                                        default:
-                                            $('#error_status').html('<p class="error">' + '<?php echo $this->lang->line('500_error'); ?>' +  '</p>');
-                                            break;
-                                        }
-                                    }
-                                );
-                                dialogObj.dialog('close');
-                            }
-             }];
-             return btn;
-         }
-        
-            function generateDialogBtn(label, dialogObj, callbackFnc, args) {
+    function generateDialogBtn(label, dialogObj, callbackFnc, args) {
                 var btn = {
                         text: label,
                         value: label,
@@ -736,14 +664,12 @@ function checkAssignedCount(dest, destinations_array, args) {
                         {
                             dialogObj.dialog('close');
                                                         //form.ajaxSubmit(options);
-                            if ($.isFunction(callbackFnc)) {
+                            if (callbackFnc != '' && $.isFunction(callbackFnc)) {
                                 callbackFnc.call(this, args);
-                               // console.log(this);
                             }
                         }
                     };
                 return btn;
-            }
-        
+            }       
      
 </script>
