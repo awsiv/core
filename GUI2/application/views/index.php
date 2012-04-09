@@ -7,6 +7,31 @@
                       </h1>
                   </div>
                   <div class="clear"></div>
+                  <?php if ($user_auth_mode != $mp_auth_mode) { ?>
+                  <?php 
+                  
+                        switch ($mp_auth_mode) {
+                            case 'ldap': $mp_auth_mode = 'LDAP';
+                                break;
+                            case 'active_directory': $mp_auth_mode = 'Active Directory';
+                                break;
+                            default: $mp_auth_mode = 'Database';
+                        }
+
+                        switch ($user_auth_mode) {
+                            case 'ldap': $user_auth_mode = 'LDAP';
+                                break;
+                            case 'active_directory': $user_auth_mode = 'Active Directory';
+                                break;
+                            default: $user_auth_mode = 'Database';
+                        }
+                  ?>
+                  <div class="info" style="width: 50%; margin: 20px auto; text-align: center">
+                      <p>Warning. We can't authenticate you with <?php echo $mp_auth_mode ?> authentication.</p>
+                      <p>Fallback authentication method (<?php echo $user_auth_mode ?>) is used.</p>
+                  </div>
+                  
+                  <?php } ?>
                   <div class ="grid_8 push_2 dash">
                       <ul>
                           <li><?php echo anchor('welcome/status','Status',array('class'=>'status showqtip','title'=>tooltip('tooltip_statusroom')));?></li>

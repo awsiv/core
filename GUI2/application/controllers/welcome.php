@@ -16,6 +16,11 @@ class Welcome extends Cf_Controller {
             'url' => 'welcome/index',
             'isRoot' => true
         );
+        
+        
+
+        
+        
         $this->breadcrumb->setBreadCrumb($bc);
         $this->carabiner->js('widgets/licensemeter.js');
         try {
@@ -41,9 +46,11 @@ class Welcome extends Cf_Controller {
 
         $data = array(
             'title' => $this->lang->line('mission_portal_title'),
-            'breadcrumbs' => $this->breadcrumblist->display(),
-            'pbarvalue' => $pbarvalue,
-            'daysleft' =>$daysleft,
+            'breadcrumbs'    => $this->breadcrumblist->display(),
+            'pbarvalue'      => $pbarvalue,
+            'daysleft'       => $daysleft,
+            'mp_auth_mode'   => $this->setting_lib->get_authentication_mode(),
+            'user_auth_mode' => $this->session->userdata('mode')
         );
 
         if ($this->setting_lib->get_experimental_mode() === TRUE)
