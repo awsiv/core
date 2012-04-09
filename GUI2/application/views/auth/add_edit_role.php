@@ -48,7 +48,7 @@
                   <a href="javascript:void(0);" class="right" dest="classList" source="crxi" title="Right &raquo;">&nbsp;</a>
               </td>
               <td rowspan="2">
-                  <div id="finderWrapper" class="all_classes dialog_box_style DragNDrop">
+                  <div  class="all_classes dialog_box_style DragNDrop">
                       <div id="clfres" class="ui-dialog">
                           <div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"><h6>Available classes</h6></div>
                           <div class="formItem addRegex"><input id="classRegexpText" type="text"> <a href="javascript:void(0);" id="addClassRegexp" style="font-size: 26px">+</a></div>
@@ -102,10 +102,9 @@
                   <a href="javascript:void(0);" class="right" dest="bundlessList" source="brxi" title="Right &raquo;">&nbsp;</a>
               </td>
               <td rowspan="2">
-                  <div id="finderWrapper" class="all_classes dialog_box_style DragNDrop">
+                  <div class="all_classes dialog_box_style DragNDrop">
                       <div id="" class="ui-dialog">
                           <div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"><h6>Available Bundles</h6></div>
-                          <div class="formItem addRegex"><input id="classRegexpText" type="text"> <a href="javascript:void(0);" id="addClassRegexp" style="font-size: 26px">+</a></div>
                           <div id="bundlessList_wrapper" style="display:block" class="result ui-dialog-content" title="Classes">
                               <div id=""><?php echo anchor('widget/bundlesNotAssignedToRole/' . $name['value'], $this->lang->line('class'), array('class' => 'classes ', 'id' => 'bundlessList')); ?></div>
                           </div>
@@ -149,5 +148,5 @@
 
 
     <?php echo form_close();?>
-</div>
+</div>  
 </div>
