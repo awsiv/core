@@ -45,7 +45,7 @@
 }
 .selected_item {
     background: #acd2e1 !important;
-    border-bottom: 1px solid #FFF;
+    border-bottom: 1px solid #FFF !important;
 }
 input[readonly] {background: buttonface;}
 
