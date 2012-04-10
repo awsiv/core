@@ -42,6 +42,7 @@ default username:admin     password:admin
 
 after creating restoring the database from dumpfiles inside phpcfenginenova we can remove the directory phpcfenginenova directory
 
+New mechanism now in place , database also can be created by ./mongo phpcfengine <phpcgenginenova>/export.js
 
 There should also be a policies directories inside the www root folder of application where it can make  the working directory for various users.
 Also we need directory named temp to make temporary storage to do a pdf calculation and emailing that pdf file.
