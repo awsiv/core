@@ -325,12 +325,13 @@
         classSelected: function(event) {
             var self = this,
             sender = $(event.target);
+            var selectedClass = sender.text();
             if (!self.options.defaultbehaviour)
             {
                 event.preventDefault();
                 self.dialogcontent.dialog('close')
-                self._trigger("complete",null,{
-                    selectedclass:sender.text()
+                self._trigger("complete",null,{                    
+                    'selectedclass': selectedClass
                 });
             }
         },
