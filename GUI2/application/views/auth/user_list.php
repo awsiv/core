@@ -19,25 +19,16 @@
 			<tr>
 				<td><?php echo $username ?></td>
 				<td><?php echo isset($user['email'])?$user['email'] : "";?></td>
-                     
-                                <td><?php if(isset($user['roles'])&&is_array($user['roles'])){
-//TODO: refactor this - implode?                                   
-                                    $no_of_elements=count($user['roles']);
-                                      foreach ($user['roles'] as $role) {
-
-                                        $no_of_elements=$no_of_elements-1;
-                                        if($no_of_elements==0)
-                                            echo $role;
-                                        else
-                                             echo $role.", ";
-                                    }
-                                }
-                                else
+                                <?php 
+                                $roles_str = '';
+                                if(isset($user['roles'])&&is_array($user['roles']))
                                 {
-                                    echo isset($user['roles'])?$user['roles']:"";
-                                 }
-                                    ;?></td>
-                           <?php  if($this->ion_auth->mode=="database"){?>
+                                    $roles_str = implode(', ', $user['roles']);
+                                } 
+                                ?>                     
+                                <td class="showqtip" title="<?php echo $roles_str ?>"><?php echo getCuttedText($roles_str, 5, 60) ?></td>
+                          
+                                <?php  if($this->ion_auth->mode=="database"){?>
 				<td><?php
                                     if($is_admin) {
                                         echo ($user['active']) ? anchor("auth/deactivate/".$user['_id']->__toString(), 'Active', array('class'=>'activate')) : anchor("auth/activate/". $user['_id'], 'Inactive',array('class'=>'inactivate'));
@@ -65,7 +56,6 @@
                 }
             } elseif ($user['username'] == $loggedinusername) {
                 echo anchor("auth/change_password/" . $user['_id']->__toString(), ' ', array('class' => 'changepassword', 'title' => 'change password'));
-                // echo anchor("auth/edit_user/".$user['_id']->__toString(), ' ',array('class'=>'edit','title'=>'edit my details'));
             }
         }
     }
