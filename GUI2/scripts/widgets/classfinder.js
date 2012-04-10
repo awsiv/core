@@ -130,7 +130,7 @@
             //self.menuhandler=$('<span id="handle" class="operation">Options</span>');
             //self.titlebar.append(self.menuhandler).delegate('#handle','click',function(){self.menu.slideToggle();});
            
-            self.searchbar=$('<form id="classfindersearch"><span class="search"><input type="text" name="search" value="Search by class (context)"/></span></form>')
+            self.searchbar=$('<form id="classfindersearch"><span class="search"><input type="text" name="search" value="Search by class (context)" title="Regx supported"/></span></form>')
             self.titlebar.append(self.ajaxloader);
             self.titlebar.append(self.searchbar).delegate('form', 'submit', {
                 ui: self
