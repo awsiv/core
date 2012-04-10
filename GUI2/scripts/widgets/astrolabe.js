@@ -370,7 +370,7 @@
             $(hostItem).attr('hostkey', key);
             $(hostItem).attr('hostname', name);
 
-            var $hostIcon = $('<div>');
+            var $hostIcon = $('<span>');
             $hostIcon.addClass('hostIcon');
             $hostIcon.addClass(colour);
             $hostIcon.click(function(event) {

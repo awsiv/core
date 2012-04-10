@@ -12,6 +12,7 @@
 {
     list-style: none;
     padding-left: 10px;
+    width:100%;
 }
 
 .astrolabe .node > .nodeIcon
@@ -313,4 +314,11 @@
 
 .astrolabe .containerWrapper {
     padding: 10px 0 0 0;
+}
+
+.astrolabe span.hostLabel{
+    overflow:hidden;
+    max-width: 93%;
+    display:inline-block;
+    line-height:16px;
 }
