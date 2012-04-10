@@ -60,13 +60,20 @@ if($this->agent->is_browser('Safari')){
                  </ul>
                </p>
                </div>
-
+              
               <div id="header_right"class="grid_4">
                        <p id="userbox">
 	                Hello  <?php echo $this->session->userdata('username');?>
                         &nbsp;| &nbsp;
                         <a href="<?php echo site_url('auth/logout'); ?>" title="logout">logout</a>
                         <span class="online_users"> Online users: <strong id="ttlonlinenum"><?php echo $this->onlineusers->total_users()?></strong></span>
+                        <br /><span class="online_users">you are logged in with <?php 
+                        switch ($this->session->userdata('mode')) {
+                            case 'ldap':             echo 'LDAP authentication'; break;
+                            case 'active_directory': echo 'Active directory authentication'; break;
+                            default:                 echo 'Internal authentication'; 
+                        }
+                        ?></span> 
                        </p>
                       <p class="clearright"></p>
                       <div id="webadmin">
@@ -79,7 +86,12 @@ if($this->agent->is_browser('Safari')){
                           </form>
                           </div>
                              <?php //if($this->ion_auth->mode == "database") { echo anchor('auth/admin_page',' ',array('class'=>'adminbtn'));}
-                              echo anchor('auth/admin_page',' ',array('class'=>'adminbtn'));
+                             if ($this->ion_auth->is_admin() == true ) { 
+                                echo anchor('auth/admin_page',' ',array('class'=>'adminbtn'));
+                             }
+                             else{
+                                echo anchor('auth/view_profile',array('class'=>'adminbtn'));
+                             }
                               echo anchor('auth/setting',' ',array('class'=>'settingbtn'));?>
                       </div>
                       <p class="clearright"></p>

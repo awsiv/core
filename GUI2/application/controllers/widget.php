@@ -195,7 +195,7 @@ class Widget extends Cf_Controller
         }
 
         try{
-           $classes=$this->class_model->getAllClasses($username, $searchletter, $includes, $excludes, 100,$page);
+           $classes=$this->class_model->getAllClasses($username, $searchletter, $includes, $excludes, 100, $page);
             echo $classes;
         }
         catch (Exception $e)

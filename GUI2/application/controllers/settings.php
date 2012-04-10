@@ -181,18 +181,23 @@ class Settings extends Cf_Controller {
                     && (trim($settings->external_admin_username) != trim($form_data['external_admin_username']))
                ) {
                 
+                $user = array();
+                
                 // load model
                 $this->load->model('ion_auth_model_mongo');
                 
-                $old_external_admin_username =  trim($settings->external_admin_username);    
+                $old_external_admin_username = trim($settings->external_admin_username);   
                 
-                //create external admin username user with fallback role
-                  $new_external_admin_username = trim($form_data['external_admin_username']);
-                  $admin_role              = (array)$form_data['admin_role'];
+                if ($old_external_admin_username != '')
+                {
+                    $user = $this->ion_auth->get_ldap_user_details_from_local_db($old_external_admin_username);
+                }    
                 
+                // check if we have info about old user
+                if (!empty($user) )
+                {
                   //1. delete external_admin and admin role from old user
-                  $user = $this->ion_auth->get_ldap_user_details_from_local_db($old_external_admin_username);  
-                  
+               
                     //1.1 delete admin role (all admin roles, in case user has more than 1)
                         if (isset($user->roles)) {
 
@@ -209,33 +214,42 @@ class Settings extends Cf_Controller {
                     
                     //1.2 delete external_admin field
                     $this->ion_auth_model_mongo->unset_field_ldap_user($user->_id, array('external_admin' => 1));
-                  
+                }
+
+                //create external admin username user with fallback role
+                  $new_external_admin_username = trim($form_data['external_admin_username']);
                  
                   //2. Set admin role and external_admin field
-                  $user = $this->ion_auth->get_ldap_user_details_from_local_db(trim($form_data['external_admin_username']));  
+                  $user  = $this->ion_auth->get_ldap_user_details_from_local_db($new_external_admin_username);  
+                  $roles = array();
                   
-                    //2.1 add admin role
-                        if (isset($user->roles))
-                        {
-                            // delete admin role if exist
-                            $positions = array_keys((array) $user->roles, $form_data['fall_back_for']);
-                            if (count($positions)) {
-                                foreach ($positions as $index) {
-                                    unset($user->roles[$index]);
+                    if (!empty($user))
+                    {
+                        //2.1 delete  admin roles if that user has one or many
+                            if (isset($user->roles))
+                            {
+                                // delete admin role if exist
+                                $positions = array_keys((array) $user->roles, $form_data['fall_back_for']);
+                                if (count($positions)) {
+                                    foreach ($positions as $index) {
+                                        unset($user->roles[$index]);
+                                    }
                                 }
                             }
-                        }
-                        else
-                        {
-                            $user->roles = array();
-                        }
+                            else
+                            {
+                                $user->roles = array();
+                            }
+                       
+                            $roles = $user->roles;
+                    }
                     
-                        //add roles to new user + delete all nul, empty or false values
-                        $this->ion_auth->update_ldap_users($user->username, array_filter(array_merge((array)$user->roles, (array)$form_data['admin_role'])));
+                    //add roles to new user + delete all null, empty or false values in roles array
+                    $this->ion_auth->update_ldap_users($new_external_admin_username, array_filter(array_merge((array)$roles, (array)$form_data['admin_role'])));
                     
                     
                     //2.2 add external_admin field
-                    $this->ion_auth_model_mongo->update_ldap_user($user->username, array('external_admin' => true) );
+                    $this->ion_auth_model_mongo->update_ldap_user($new_external_admin_username, array('external_admin' => true) );
             }
             
 

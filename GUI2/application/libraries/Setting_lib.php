@@ -80,6 +80,14 @@ class Setting_lib
     {
         return $this->ci->settings_model->app_settings_get_item('fall_back_for');
     }
+    
+    /**
+     *  return current authentication mode.
+     * @return type Example results: database, ldap, active_directory
+     */
+    public function get_authentication_mode() {
+        return $this->ci->settings_model->app_settings_get_item('mode');
+    }
 
 }
 
