@@ -211,14 +211,26 @@ class Widget extends Cf_Controller
         $searchletter = null;
         
         if ($search != null)
-        {
-            $searchletter = "^".urldecode($search) . '.*';
+        {  
+            $searched=urldecode($search);
+            if(preg_match('/^\[\w\|\w\]$/',$searched))
+            {
+              $searchletter = "^" . $searched . '.*';
+            }
+            elseif(preg_match('/.*\W+.*/', $search))
+            {
+                $searchletter = $searched;
+            }else
+            {
+                $searchletter = '.*'.$searched . '.*';
+            }
+           
         }
         else
         {
             $searchletter = '.*';
         }
-              
+      
         $filter = '';
         
         //add include/exclude
@@ -235,8 +247,7 @@ class Widget extends Cf_Controller
         if($this->input->post('excludes') !== FALSE) {        
             $excludes = $this->input->post('excludes', TRUE);
         }
-        
-        
+
         $data = "";
 
         try {
@@ -257,7 +268,7 @@ class Widget extends Cf_Controller
                     $data = cfpr_list_host_classes(NULL, NULL, NULL, NULL);
                     break;
             }
-            
+           
             echo $data;
             
         } catch (Exception $e) {
