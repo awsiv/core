@@ -195,6 +195,33 @@ static void CFDB_DropAllIndices(mongo_connection *conn)
 
 /*****************************************************************************/
 
+// TODO: looks like something pre BSON-lib era
+static void DeleteFromBsonArray(bson_buffer *bb, char *arrName, Item *elements)
+{
+    Item *ip = NULL;
+    bson_buffer *pullAll, *arr;
+    char iStr[64];
+    int i;
+
+    if (!elements)
+    {
+        return;
+    }
+
+    pullAll = bson_append_start_object(bb, "$pullAll");
+    arr = bson_append_start_array(pullAll, arrName);
+
+    for (ip = elements, i = 0; ip != NULL; ip = ip->next, i++)
+    {
+        snprintf(iStr, sizeof(iStr), "%d", i);
+        bson_append_string(arr, iStr, ip->name);
+    }
+
+    bson_append_finish_object(arr);
+    bson_append_finish_object(pullAll);
+
+}
+
 void CFDB_PurgeTimestampedReports(mongo_connection *conn)
 /**
  * Remove old data from reports with timestamp Usually "old" means one week.
@@ -804,34 +831,6 @@ void CFDB_PurgeScanStrTime(mongo_connection *conn, bson_iterator *itp, char *rep
             }
         }
     }
-}
-
-/*****************************************************************************/
-
-void DeleteFromBsonArray(bson_buffer *bb, char *arrName, Item *elements)
-{
-    Item *ip = NULL;
-    bson_buffer *pullAll, *arr;
-    char iStr[64];
-    int i;
-
-    if (!elements)
-    {
-        return;
-    }
-
-    pullAll = bson_append_start_object(bb, "$pullAll");
-    arr = bson_append_start_array(pullAll, arrName);
-
-    for (ip = elements, i = 0; ip != NULL; ip = ip->next, i++)
-    {
-        snprintf(iStr, sizeof(iStr), "%d", i);
-        bson_append_string(arr, iStr, ip->name);
-    }
-
-    bson_append_finish_object(arr);
-    bson_append_finish_object(pullAll);
-
 }
 
 /*****************************************************************************/

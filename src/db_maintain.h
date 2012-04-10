@@ -16,7 +16,6 @@ int CFDB_CheckAge(char *var, char *key, bson_iterator *it, time_t now, time_t ol
                   Item **purgeNamesPtr);
 void CFDB_PurgeScanStrTime(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now,
                            Item **purgeKeysPtr);
-void DeleteFromBsonArray(bson_buffer *bb, char *arrName, Item *elements);
 void CFDB_PurgeHost(mongo_connection *conn, char *keyHash);
 void CFDB_PurgeDeprecatedVitals(mongo_connection *conn);
 
