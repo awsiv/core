@@ -648,7 +648,7 @@ void DeleteHubSetUid(HubSetUid *hp)
 
 /*****************************************************************************/
 
-HubFileChanges *NewHubFileChanges(HubHost *hh, char *file, time_t t, char *noteid, char *handle)
+HubFileChanges *NewHubFileChanges(HubHost *hh, char *file, time_t t, char *handle)
 {
     HubFileChanges *hp;
 
@@ -658,7 +658,6 @@ HubFileChanges *NewHubFileChanges(HubHost *hh, char *file, time_t t, char *notei
     hp->path = xstrdup(file);
     hp->t = t;
     hp->handle = xstrdup(handle);
-    hp->nid = xstrdup(noteid);
     return hp;
 }
 
@@ -668,7 +667,6 @@ void DeleteHubFileChanges(HubFileChanges *hp)
 {
     free(hp->path);
     free(hp->handle);
-    free(hp->nid);
     free(hp);
 }
 

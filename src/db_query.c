@@ -2091,8 +2091,7 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
     bson_iterator it1, it2, it3;
     HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL;
-    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rname[CF_BUFSIZE], handle[CF_MAXVARSIZE],
-        noteid[CF_MAXVARSIZE];
+    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rname[CF_BUFSIZE], handle[CF_MAXVARSIZE];
     int match_name, match_t, found = false;
 
 /* BEGIN query document */
@@ -2115,7 +2114,6 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
     bson_append_int(&bb, cfr_ip_array, 1);
     bson_append_int(&bb, cfr_host_array, 1);
     bson_append_int(&bb, cfr_filechanges, 1);
-    bson_append_int(&bb, cfn_nid, 1);
     bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
@@ -2152,7 +2150,6 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
                 while (bson_iterator_next(&it2))
                 {
                     snprintf(handle, CF_MAXVARSIZE, "%s", bson_iterator_key(&it2));
-                    snprintf(noteid, CF_MAXVARSIZE, "%s", CF_NONOTE);
                     bson_iterator_init(&it3, bson_iterator_value(&it2));
 
                     while (bson_iterator_next(&it3))
@@ -2164,10 +2161,6 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
                         else if (strcmp(bson_iterator_key(&it3), cfr_time) == 0)
                         {
                             timestamp = bson_iterator_int(&it3);
-                        }
-                        else if (strcmp(bson_iterator_key(&it3), cfn_nid) == 0)
-                        {
-                            snprintf(noteid, CF_MAXVARSIZE, "%s", bson_iterator_string(&it3));
                         }
                     }
 
@@ -2202,7 +2195,7 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(&record_list, NewHubFileChanges(hh, rname, timestamp, noteid, handle));
+                        PrependRlistAlien(&record_list, NewHubFileChanges(hh, rname, timestamp, handle));
                     }
                 }
             }

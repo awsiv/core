@@ -278,7 +278,6 @@ typedef struct
     HubHost *hh;
     char *path;
     time_t t;
-    char *nid;
     char *handle;
 } HubFileChanges;
 
@@ -794,7 +793,7 @@ HubPromiseCompliance *NewHubCompliance(HubHost *hh, char *handle, PromiseState s
 void DeleteHubPromiseCompliance(HubPromiseCompliance *hp);
 HubBundleSeen *NewHubBundleSeen(HubHost *hh, char *rname, double ago, double avg, double dev, time_t t);
 void DeleteHubBundleSeen(HubBundleSeen *hp);
-HubFileChanges *NewHubFileChanges(HubHost *hh, char *file, time_t t, char *noteid, char *handle);
+HubFileChanges *NewHubFileChanges(HubHost *hh, char *file, time_t t, char *handle);
 void DeleteHubFileChanges(HubFileChanges *hp);
 HubFileDiff *NewHubFileDiff(HubHost *hh, char *file, char *diff, time_t t);
 void DeleteHubFileDiff(HubFileDiff *hp);

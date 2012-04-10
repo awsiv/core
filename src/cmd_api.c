@@ -879,7 +879,7 @@ int Nova2Txt_filechanges_report(char *hostkey, char *file, bool regex, time_t fr
 
     if (!CSV)
     {
-        printf("%s,%s,%s,%s\n", "Host", "File", "Changed-on", "Note");
+        printf("%s,%s,%s\n", "Host", "File", "Changed-on");
     }
 
     for (rp = hq->records; rp != NULL; rp = rp->next)
@@ -888,26 +888,11 @@ int Nova2Txt_filechanges_report(char *hostkey, char *file, bool regex, time_t fr
 
         if (CSV)
         {
-            if (strcmp(hC->nid, CF_NONOTE) == 0)
-            {
-                printf("%s,%s,%s\n", hC->hh->hostname, hC->path, cf_strtimestamp_local(hC->t, buffer));
-            }
-            else
-            {
-                printf("%s,%s,%s,%s\n", hC->hh->hostname, hC->path, cf_strtimestamp_local(hC->t, buffer), hC->nid);
-            }
+            printf("%s,%s,%s\n", hC->hh->hostname, hC->path, cf_strtimestamp_local(hC->t, buffer));
         }
         else
         {
-            if (strcmp(hC->nid, CF_NONOTE) == 0)
-            {
-                printf("%25s %40s  %20s\n", hC->hh->hostname, hC->path, cf_strtimestamp_local(hC->t, buffer));
-            }
-            else
-            {
-                printf("%25s %40s %20s %s\n", hC->hh->hostname, hC->path, cf_strtimestamp_local(hC->t, buffer),
-                       hC->nid);
-            }
+            printf("%25s %40s  %20s\n", hC->hh->hostname, hC->path, cf_strtimestamp_local(hC->t, buffer));
         }
     }
 

@@ -2051,9 +2051,9 @@ int Nova2PHP_filechanges_report(char *hostkey, char *file, bool regex, time_t fr
 
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d,"
-             "\"header\": {\"Host\":0,\"File\":1,\"Change Detected at\":2,"
-             "\"Note\":{\"index\":3,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
+             "\"header\": {\"Host\":0,\"File\":1,\"Change Detected at\":2"
              "}", page->totalResultCount);
+
     headerLen = strlen(header);
     noticeLen = strlen(CF_NOTICE_TRUNCATED);
     StartJoin(returnval, "{\"data\":[", bufsize);
@@ -2064,17 +2064,8 @@ int Nova2PHP_filechanges_report(char *hostkey, char *file, bool regex, time_t fr
 
         EscapeJson(hC->path, jsonEscapedStr, sizeof(jsonEscapedStr));
 
-        if (strcmp(hC->nid, CF_NONOTE) == 0)
-        {
-            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,"
-                     "[\"add\",\"%s\",%d,\"%s\",\"\"]],",
-                     hC->hh->hostname, jsonEscapedStr, hC->t, hC->hh->keyhash, CFREPORT_FILECHANGES, hC->handle);
-        }
-        else
-        {
-            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,"
-                     "[\"show\",\"\",\"\",\"\",\"%s\"]],", hC->hh->hostname, jsonEscapedStr, hC->t, hC->nid);
-        }
+        snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld ],",
+                 hC->hh->hostname, jsonEscapedStr, hC->t);
 
         margin = headerLen + noticeLen + strlen(buffer);
         if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
