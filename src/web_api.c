@@ -3013,7 +3013,7 @@ void Nova2PHP_show_all_context_leads(char *unqualified_topic, char *buffer, int 
        return;
        }
 
-    buffer[0] = '[';
+    strcpy(buffer,"[");
 
     for (ip = candidates; ip != NULL; ip=ip->next)
        {
