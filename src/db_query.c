@@ -1831,7 +1831,7 @@ HubQuery *CFDB_QueryPerformance(mongo_connection *conn, char *keyHash, char *lna
     HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL;
     char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rname[CF_MAXVARSIZE],
-        noteid[CF_MAXVARSIZE], rhandle[CF_MAXVARSIZE];
+        rhandle[CF_MAXVARSIZE];
     int match_name, found = false;
     double rsigma, rex, rq;
     time_t rtime;
@@ -1853,7 +1853,6 @@ HubQuery *CFDB_QueryPerformance(mongo_connection *conn, char *keyHash, char *lna
     bson_append_int(&bb, cfr_ip_array, 1);
     bson_append_int(&bb, cfr_host_array, 1);
     bson_append_int(&bb, cfr_performance, 1);
-    bson_append_int(&bb, cfn_nid, 1);
     bson_from_buffer(&field, &bb);
 
     hostnames[0] = '\0';
@@ -1886,7 +1885,6 @@ HubQuery *CFDB_QueryPerformance(mongo_connection *conn, char *keyHash, char *lna
                 {
                     bson_iterator_init(&it3, bson_iterator_value(&it2));
                     snprintf(rhandle, CF_MAXVARSIZE, "%s", bson_iterator_key(&it2));
-                    snprintf(noteid, CF_MAXVARSIZE, "%s", CF_NONOTE);
 
                     snprintf(rname, sizeof(rname), "(unknown)");
                     rex = 0;
@@ -1915,10 +1913,6 @@ HubQuery *CFDB_QueryPerformance(mongo_connection *conn, char *keyHash, char *lna
                         else if (strcmp(bson_iterator_key(&it3), cfr_time) == 0)
                         {
                             rtime = bson_iterator_int(&it3);
-                        }
-                        else if (strcmp(bson_iterator_key(&it1), cfn_nid) == 0)
-                        {
-                            snprintf(noteid, CF_MAXVARSIZE, "%s", bson_iterator_string(&it3));
                         }
                         else
                         {
@@ -1953,7 +1947,7 @@ HubQuery *CFDB_QueryPerformance(mongo_connection *conn, char *keyHash, char *lna
                         }
 
                         PrependRlistAlien(&record_list,
-                                          NewHubPerformance(hh, rname, rtime, rq, rex, rsigma, noteid, rhandle));
+                                          NewHubPerformance(hh, rname, rtime, rq, rex, rsigma, rhandle));
                     }
                 }
             }

@@ -1814,8 +1814,7 @@ int Nova2PHP_performance_report(char *hostkey, char *job, bool regex, HostClassF
 
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d,"
-             "\"header\": {\"Host\":0,\"Event\":1,\"Last completion time (seconds)\":2,\"Avg completion time (seconds)\":3,\"+/- seconds\":4,\"Last performed\":5,"
-             "\"Note\":{\"index\":6,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
+             "\"header\": {\"Host\":0,\"Event\":1,\"Last completion time (seconds)\":2,\"Avg completion time (seconds)\":3,\"+/- seconds\":4,\"Last performed\":5"
              "}", page->totalResultCount);
 
     headerLen = strlen(header);
@@ -1836,22 +1835,9 @@ int Nova2PHP_performance_report(char *hostkey, char *job, bool regex, HostClassF
 
         EscapeJson(hP->event, jsonEscapedStr, sizeof(jsonEscapedStr));
 
-        if (strcmp(hP->nid, CF_NONOTE) == 0)
-        {
-            char jsonPerfHandle[CF_MAXVARSIZE] = {0};
-            EscapeJson(hP->handle, jsonPerfHandle, sizeof(jsonPerfHandle));
-            
-            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%ld,"
-                     "[\"add\",\"%s\",%d,\"%s\",\"\"]],",
-                     hP->hh->hostname, jsonEscapedStr, Q, E, D, hP->t,
-                     hP->hh->keyhash, CFREPORT_PERFORMANCE, jsonPerfHandle);
-        }
-        else
-        {
-            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%ld,"
-                     "[\"show\",\"\",\"\",\"\",\"%s\"]],",
-                     hP->hh->hostname, jsonEscapedStr, Q, E, D, hP->t, hP->nid);
-        }
+        snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%ld ],",
+                 hP->hh->hostname, jsonEscapedStr, Q, E, D, hP->t);
+
         margin = headerLen + noticeLen + strlen(buffer);
         if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
         {

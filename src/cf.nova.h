@@ -422,7 +422,6 @@ typedef struct
     double e;
     double d;
     time_t t;
-    char *nid;
     char *handle;
 } HubPerformance;
 
@@ -787,8 +786,7 @@ HubLastSeen *NewHubLastSeen(HubHost *hh, LastSeenDirection direction, char *kh, 
 void DeleteHubLastSeen(HubLastSeen *hp);
 HubMeter *NewHubMeter(HubHost *hh, char type, double kept, double repaired);
 void DeleteHubMeter(HubMeter *hp);
-HubPerformance *NewHubPerformance(HubHost *hh, char *event, time_t t, double q, double e, double d, char *noteid,
-                                  char *handle);
+HubPerformance *NewHubPerformance(HubHost *hh, char *event, time_t t, double q, double e, double d, char *handle);
 void DeleteHubPerformance(HubPerformance *hp);
 HubSetUid *NewHubSetUid(HubHost *hh, char *file);
 void DeleteHubSetUid(HubSetUid *hp);

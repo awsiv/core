@@ -600,8 +600,7 @@ void DeleteHubValue(HubValue *hp)
 
 /*****************************************************************************/
 
-HubPerformance *NewHubPerformance(HubHost *hh, char *event, time_t t, double q, double e, double d, char *noteid,
-                                  char *handle)
+HubPerformance *NewHubPerformance(HubHost *hh, char *event, time_t t, double q, double e, double d, char *handle)
 {
     HubPerformance *hp;
 
@@ -613,7 +612,6 @@ HubPerformance *NewHubPerformance(HubHost *hh, char *event, time_t t, double q, 
     hp->e = e;
     hp->d = d;
     hp->t = t;
-    hp->nid = xstrdup(noteid);
     hp->handle = xstrdup(handle);
     return hp;
 }
@@ -623,7 +621,6 @@ HubPerformance *NewHubPerformance(HubHost *hh, char *event, time_t t, double q, 
 void DeleteHubPerformance(HubPerformance *hp)
 {
     free(hp->event);
-    free(hp->nid);
     free(hp->handle);
     free(hp);
 }
