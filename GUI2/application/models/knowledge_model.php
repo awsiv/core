@@ -141,6 +141,37 @@ class knowledge_model extends Cf_Model
             throw $e;
         }
     }
+    
+    
+     /**
+     * Topics for knowledge map with topic name
+     * @param string $username
+     * @param int $topicname
+     * @return array 
+     * @throws Exception 
+     */
+    function showTopicLeadsWithName($username, $topicname)
+    {
+        try
+        {
+            $result = cfpr_show_all_context_leads($username, $topicname);
+            $data = $this->checkData($result);
+            if (is_array($data) && $this->hasErrors() == 0)
+            {
+                return $data;
+            }
+            else
+            {
+                throw new Exception($this->getErrorsString());
+            }
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        }
+    }
+
 
     /**
      * Topics for knowledge map

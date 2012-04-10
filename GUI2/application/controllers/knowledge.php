@@ -173,9 +173,14 @@ class Knowledge extends Cf_Controller
 
             $data['graphdata'] = $this->knowledge_model->getKnowledgeView($this->username, $pid);
 
-            $data['topicDetail'] = $this->knowledge_model->showTopics($this->username, $pid);
             $data['topicHits'] = $this->knowledge_model->showTopicHits($this->username, $pid);
-            $data['topicLeads'] = $this->knowledge_model->showTopicLeads($this->username, $pid);
+            //$data['topicLeads'] = $this->knowledge_model->showTopicLeads($this->username, $pid);
+            
+            $data['topicDetail'] = $this->knowledge_model->showTopics($this->username, $pid);
+            
+            $data['topicLeads'] = $this->knowledge_model->showTopicLeadsWithName($this->username, $data['topicDetail']['topic']);
+            
+            
             $data['topicCategory'] = $this->knowledge_model->showTopicCategory($this->username, $pid);
 
             $data['showLeads'] = (!is_array($data['topicLeads']) || empty($data['topicLeads'])) ? false : true;

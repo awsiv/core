@@ -2,11 +2,22 @@
     <h1><b><?php echo $this->lang->line('knowledge_insight_leads'); ?>:</b></h1>
     <div style="margin-left: 12px;">
         <ul>
-            <?php foreach ((array) $topicLeads as $lead) {
+            <?php foreach ((array) $topicLeads as $allLeads) {
                 ?>
-            <li style="list-style: none;"><span style="color: #212121;"><?php echo $topicDetail['topic']; ?> (as referred to in the context of <?php echo $topicDetail['context']; ?> ) "<?php echo $lead['assoc']; ?>"</span></li>
-                <ul style="padding: 15px;">
-                    <?php foreach ((array) $lead['topics'] as $l) { ?>
+            <li style="list-style: none;">
+            
+                <?php $searchContext =  ($topicDetail['context'] === $allLeads['context'])? true:false; ?>
+                
+                <span style="color: #212121;">In the context of <?php echo $allLeads['context'] ?> <?php echo $topicDetail['topic']; ?></span><?php if ($searchContext) { ?> (Searched context)<?php } ?>
+            
+            </li>
+                
+            <ul style="padding: 15px;">
+                    <?php 
+   
+                    foreach ((array) $allLeads['leads'] as $lead) { 
+                    foreach ((array) $lead['topics'] as $l) {                        
+                        ?>
                         <li>
                             <?php
                             $split = explode('::', $l['topic']);
@@ -15,10 +26,11 @@
                             } else if (is_array($split) && !empty($split) && $split[0] == 'any') {
                                 $output = sprintf("<a href='%s/knowledge/knowledgemap/pid/%s'>%s </a>",  site_url(), $l['id'], $split['1']);
                             }
-                            echo $output;
+                            
+                            echo sprintf("%s %s",$lead['assoc'],$output);
                             ?>
                         </li>
-                    <?php } ?>
+                    <?php } }?>
                 </ul>
             <?php } ?>
         </ul>
