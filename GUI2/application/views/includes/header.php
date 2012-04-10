@@ -90,7 +90,7 @@ if($this->agent->is_browser('Safari')){
                                 echo anchor('auth/admin_page',' ',array('class'=>'adminbtn'));
                              }
                              else{
-                                echo anchor('auth/view_profile',array('class'=>'adminbtn'));
+                                echo anchor('auth/view_profile',' ',array('class'=>'adminbtn'));
                              }
                               echo anchor('auth/setting',' ',array('class'=>'settingbtn'));?>
                       </div>
