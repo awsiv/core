@@ -718,8 +718,4 @@ function loadContent(args) {
                     };
                 return btn;
             }       
-
-
-
-
 </script>
