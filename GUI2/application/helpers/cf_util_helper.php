@@ -456,6 +456,27 @@ function generate_errormessage($exception){
         return implode('/', $temp);
     }
 
+    function getCuttedText($text, $maxwords = 30, $maxchar = 300) {
+        $sep = "'/ /'";
+        $words = preg_split($sep, $text);
 
+        $char = iconv_strlen($text, 'utf-8');
+        $bigger = false;
+
+        if (count($words) > $maxwords) {
+            $text = join($sep, array_slice($words, 0, $maxwords));
+            $bigger = true;
+        }
+
+        if ($char > $maxchar) {
+            $text = iconv_substr($text, 0, $maxchar, 'utf-8');
+            $bigger = true;
+        }
+
+        if ($bigger == true)
+            $text .= '...';
+
+        return $text;
+    }
 
 ?>
