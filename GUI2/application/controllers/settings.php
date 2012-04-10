@@ -178,7 +178,7 @@ class Settings extends Cf_Controller {
             // check auth mode and create admin user in ldap_users
             if ($form_data['mode'] == 'ldap' 
                     && (trim($form_data['external_admin_username']) != '')
-                    && (trim($settings->external_admin_username) != trim($form_data['external_admin_username']))
+                  //  && (trim($settings->external_admin_username) != trim($form_data['external_admin_username']))
                ) {
                 
                 $user = array();
