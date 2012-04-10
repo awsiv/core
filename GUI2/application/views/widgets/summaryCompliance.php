@@ -6,7 +6,7 @@
         <tr>       
             <td id="promise-not-kept" class="bundlelist-table">
                 <?php
-                if (is_array($notkept)) {
+                if (is_array($notkept) && $notkept['meta']['count']>0) {
 
                     // modify the header and data to add icons 
                     //  var_dump($notkept['meta']['header']);
@@ -26,7 +26,7 @@
         <tr>
             <td id ="promise-repaired" class="bundlelist-table">
                 <?php
-                if (is_array($repaired)) {
+                if (is_array($repaired) && $notkept['meta']['count']>0) {
 
                     $repaired['meta']['header']['Hosts'] = 3;
                     foreach ($repaired['data'] as &$r) {

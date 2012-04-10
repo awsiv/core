@@ -51,17 +51,18 @@ class Widget extends Cf_Controller
         $username = $this->session->userdata('username');
 
         $getparams = $this->uri->uri_to_assoc(3);
-        $startDate = isset($getparams['start']) ? $getparams['start'] : -1;
+        $startDate = isset($getparams['start']) ? $getparams['start'] : 0;
         $env = $getparams['env'];
         $stopDate = isset($getparams['stop']) ? $getparams['stop'] : null;
 
+      
         $this->load->library('cf_table');
         $startDateTimeStamp = $startDate;
         $stopDateTimeStamp = ($stopDate == null) ? ($startDate + (6 * 3600)) : time();
         $environment = $env;
 
         $this->data['notkept']= $this->report_model->getPromisesNotKeptSummary($username,NULL,NULL,'.*',$startDateTimeStamp, $stopDateTimeStamp, array($environment), array());
-        $this->data['repaired']= $this->report_model->getPromisesRepairedSummary($username,NULL,NULL,'.*',$startDateTimeStamp, $stopDateTimeStamp, array($environment), array());
+        $this->data['repaired']= $this->report_model->getPromisesRepairedSummary($username,NULL,NULL,'.*',$startDateTimeStamp, $stopDateTimeStamp, array(), array());
         
         $this->data['startDate'] = getDateStatus($startDateTimeStamp, true);
         $this->data['stopDate'] = getDateStatus($stopDateTimeStamp, true);
