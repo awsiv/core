@@ -55,16 +55,7 @@
     $(document).ready(function(){
 
         var $tabs=$("#tabs-layout");
-                  $tabs.tabs({
-                       show: function(event, ui) {
-                           if(ui.index == 0){
-                               if($(this).data('context')=='node')
-                                 $('#hostsComplianceTimeseries').hostsComplianceTimeseries('setContext', $(this).data('args').includes, []);
-                               if($(this).data('context')=='host')
-                                 $('#hostsComplianceTimeseries').hostsComplianceTimeseries('setHost',$(this).data('args').hostKey);
-                            }   
-                       }
-                  });
+            $tabs.tabs({});
                   
         var genericOption = {
             baseUrl: '<?php echo site_url() ?>'

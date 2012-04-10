@@ -52,6 +52,15 @@
     padding: 0;
     margin-left: 12px; /*hack*/
 }
+#darktabs .ui-tabs .ui-tabs-hide{
+    /* for jquery flot , 
+    Error is thrown if display is none by flot while drawing graph
+    */
+    display: block !important;
+    left:-10000000px;
+    position: absolute;
+    
+}
 #darktabs  .ui-widget-header {
     border: none !important
 }
