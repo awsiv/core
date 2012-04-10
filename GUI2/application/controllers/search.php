@@ -297,7 +297,6 @@ private $filter_view_mappings=array();
                             'inclist' =>$incList,
                             'exlist'=>$exList,
                         );
-                      $data['report_title'] = $report_type;
                       $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                       $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                       $this->template->load('template', 'searchpages/businessresult', $data);
@@ -342,7 +341,6 @@ private $filter_view_mappings=array();
                             'exlist'=>$exList,
                             'hostkey' => $hostkey
                         );
-                        $data['report_title'] = $report_type;
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                         $data['report_result']= $this->report_model->getComplianceSummary($username, $hostkey, explode(',',$incList), explode(',',$exList), $rows, $page_number,$hosts_only);
