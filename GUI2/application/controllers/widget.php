@@ -62,7 +62,7 @@ class Widget extends Cf_Controller
         $environment = $env;
 
         $this->data['notkept']= $this->report_model->getPromisesNotKeptSummary($username,NULL,NULL,'.*',$startDateTimeStamp, $stopDateTimeStamp, array($environment), array());
-        $this->data['repaired']= $this->report_model->getPromisesRepairedSummary($username,NULL,NULL,'.*',$startDateTimeStamp, $stopDateTimeStamp, array(), array());
+        $this->data['repaired']= $this->report_model->getPromisesRepairedSummary($username,NULL,NULL,'.*',$startDateTimeStamp, $stopDateTimeStamp, array($environment), array());
         
         $this->data['startDate'] = getDateStatus($startDateTimeStamp, true);
         $this->data['stopDate'] = getDateStatus($stopDateTimeStamp, true);
@@ -304,8 +304,8 @@ class Widget extends Cf_Controller
     {
         try
         {
+           
             $returnedData = $this->promise_model->getPromiseListByHandleRx($this->session->userdata('username'), NULL);
-
             $showButton = $this->input->post('showButton');
             $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
             $viewdata = array(
@@ -319,6 +319,7 @@ class Widget extends Cf_Controller
             $returnedData = array_slice($returnedData, $startOffset, $chunkSize);
 
             $viewdata['viewdata'] = $returnedData;
+           
             $this->load->view('widgets/allpolicies', $viewdata);
         }
         catch (Exception $e)

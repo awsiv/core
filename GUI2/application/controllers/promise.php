@@ -56,7 +56,7 @@ class Promise extends Cf_Controller {
             //$topicDetail = cfpr_show_topic($username,$pid);
             if($pid!=0){
                 $topicDetail= $this->knowledge_model->showTopics($username, $pid);
-                $topicLeads=$this->knowledge_model->showTopicLeads($username, $pid);
+                $topicLeads=$this->knowledge_model->showTopicLeadsWithName($username,$handle);
             }
 
             $tmp_arr = $this->promise_model->getPromiseListByPromiser($username,$promiser);
