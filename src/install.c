@@ -574,7 +574,7 @@ void DeleteHubMeter(HubMeter *hp)
 
 /*****************************************************************************/
 
-HubValue *NewHubValue(HubHost *hh, char *day, double kept, double repaired, double notkept, char *noteid, char *handle)
+HubValue *NewHubValue(HubHost *hh, char *day, double kept, double repaired, double notkept, char *handle)
 {
     HubValue *hp;
 
@@ -585,7 +585,6 @@ HubValue *NewHubValue(HubHost *hh, char *day, double kept, double repaired, doub
     hp->kept = kept;
     hp->repaired = repaired;
     hp->notkept = notkept;
-    hp->nid = xstrdup(noteid);
     hp->handle = xstrdup(handle);
     return hp;
 }
@@ -595,7 +594,6 @@ HubValue *NewHubValue(HubHost *hh, char *day, double kept, double repaired, doub
 void DeleteHubValue(HubValue *hp)
 {
     free(hp->day);
-    free(hp->nid);
     free(hp->handle);
     free(hp);
 }

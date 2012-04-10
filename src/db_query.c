@@ -2800,8 +2800,7 @@ HubQuery *CFDB_QueryValueReport(mongo_connection *conn, char *keyHash, char *lda
     Rlist *record_list = NULL, *host_list = NULL;
     double rkept, rnotkept, rrepaired;
     char rday[CF_MAXVARSIZE], rmonth[CF_MAXVARSIZE], ryear[CF_MAXVARSIZE];
-    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rhandle[CF_MAXVARSIZE],
-        noteid[CF_MAXVARSIZE];
+    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rhandle[CF_MAXVARSIZE];
     int match_day, match_month, match_year, found = false;
 
     bson_buffer_init(&bb);
@@ -2856,7 +2855,6 @@ HubQuery *CFDB_QueryValueReport(mongo_connection *conn, char *keyHash, char *lda
 
                 while (bson_iterator_next(&it2))
                 {
-                    snprintf(noteid, CF_MAXVARSIZE, "%s", CF_NONOTE);
                     snprintf(rhandle, CF_MAXVARSIZE, "%s", bson_iterator_key(&it2));
                     bson_iterator_init(&it3, bson_iterator_value(&it2));
 
@@ -2882,10 +2880,6 @@ HubQuery *CFDB_QueryValueReport(mongo_connection *conn, char *keyHash, char *lda
                         else if (strcmp(bson_iterator_key(&it3), cfr_repaired) == 0)
                         {
                             rrepaired = bson_iterator_double(&it3);
-                        }
-                        else if (strcmp(bson_iterator_key(&it3), cfn_nid) == 0)
-                        {
-                            snprintf(noteid, CF_MAXVARSIZE, "%s", bson_iterator_string(&it3));
                         }
                         else
                         {
@@ -2920,7 +2914,7 @@ HubQuery *CFDB_QueryValueReport(mongo_connection *conn, char *keyHash, char *lda
                         }
 
                         PrependRlistAlien(&record_list,
-                                          NewHubValue(hh, rday, rkept, rrepaired, rnotkept, noteid, rhandle));
+                                          NewHubValue(hh, rday, rkept, rrepaired, rnotkept, rhandle));
                     }
                 }
             }
@@ -3091,7 +3085,7 @@ HubQuery *CFDB_QueryValueGraph(mongo_connection *conn, char *keyHash, char *lday
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(&record_list, NewHubValue(hh, rday, rkept, rrepaired, rnotkept, "", ""));
+                        PrependRlistAlien(&record_list, NewHubValue(hh, rday, rkept, rrepaired, rnotkept, ""));
                     }
                 }
             }

@@ -394,7 +394,6 @@ typedef struct
     double kept;
     double repaired;
     double notkept;
-    char *nid;
     char *handle;
 } HubValue;
 
@@ -801,7 +800,7 @@ HubFileChanges *NewHubFileChanges(HubHost *hh, char *file, time_t t, char *notei
 void DeleteHubFileChanges(HubFileChanges *hp);
 HubFileDiff *NewHubFileDiff(HubHost *hh, char *file, char *diff, time_t t);
 void DeleteHubFileDiff(HubFileDiff *hp);
-HubValue *NewHubValue(HubHost *hh, char *day, double kept, double repaired, double notkept, char *noteid, char *handle);
+HubValue *NewHubValue(HubHost *hh, char *day, double kept, double repaired, double notkept, char *handle);
 void DeleteHubValue(HubValue *hp);
 HubPromise *NewHubPromise(char *bn, char *bt, Rlist *ba, char *pt, char *pr, char *pe, char *cl, char *ha, char *co,
                           char *fn, int lno, Rlist *cons);

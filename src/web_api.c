@@ -1100,8 +1100,7 @@ int Nova2PHP_value_report(char *hostkey, char *day, char *month, char *year, Hos
 
     PageRecords(&(hq->records), page, DeleteHubValue);
     snprintf(header, sizeof(header), "\"meta\":{\"count\" : %d,"
-             "\"header\":{\"Host\":0,\"Summary of Day\":1,\"Value of Promises Kept\":2,\"Value of Repairs\":3,\"Loss for Promises Not Kept\":4,"
-             "\"Note\":{\"index\":5,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}}",
+             "\"header\":{\"Host\":0,\"Summary of Day\":1,\"Value of Promises Kept\":2,\"Value of Repairs\":3,\"Loss for Promises Not Kept\":4}",
              page->totalResultCount);
 
     headerLen = strlen(header);
@@ -1112,21 +1111,10 @@ int Nova2PHP_value_report(char *hostkey, char *day, char *month, char *year, Hos
     {
         hp = (HubValue *) rp->item;
 
-        if (strcmp(hp->nid, CF_NONOTE) == 0)
-        {
-            snprintf(buffer, sizeof(buffer),
-                     "[\"%s\",\"%s\",%.1lf,%.1lf,%.1lf,"
-                     "[\"add\",\"%s\",%d,\"%s\",\"\"]],",
-                     hp->hh->hostname, hp->day, hp->kept, hp->repaired, hp->notkept,
-                     hp->hh->keyhash, CFREPORT_VALUE, hp->handle);
-        }
-        else
-        {
-            snprintf(buffer, sizeof(buffer),
-                     "[\"%s\",\"%s\",%.1lf,%.1lf,%.1lf,"
-                     "[\"show\",\"\",\"\",\"\",\"%s\"]],",
-                     hp->hh->hostname, hp->day, hp->kept, hp->repaired, hp->notkept, hp->nid);
-        }
+        snprintf(buffer, sizeof(buffer),
+                 "[\"%s\",\"%s\",%.1lf,%.1lf,%.1lf ],",
+                 hp->hh->hostname, hp->day, hp->kept, hp->repaired, hp->notkept);
+
         margin = headerLen + noticeLen + strlen(buffer);
 
         if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
