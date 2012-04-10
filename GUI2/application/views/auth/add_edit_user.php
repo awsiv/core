@@ -1,4 +1,4 @@
-<div id="edit_form">
+<!-- <div id="edit_form"> -->
     <div id="formInfoMessage"><?php echo $message; ?></div>
     <div class="form">
 <?php if($user_type == 'internal') { ?>
@@ -45,7 +45,7 @@
     <?php } ?>
 <?php } elseif ($user_type == 'external')  { ?>
 
-    <?php echo form_open("auth/edit_user_ldap/".$this->uri->segment(3),array('id'=>'edit_user_form'));?>
+    <?php echo form_open("auth/edit_user_ldap/".$this->uri->segment(3),array('id'=>'edit_user'));?>
         <p>
             <?php
             echo form_label('User Name', $user_name['name']);
@@ -152,4 +152,4 @@
         </p>
             <?php echo form_close(); ?>
     </div>
-</div>    
+<!-- </div>    -->
