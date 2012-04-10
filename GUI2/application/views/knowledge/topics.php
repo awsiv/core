@@ -14,7 +14,7 @@
                     <td>
                         <?php
                           $target = '';
-                        if (strtolower($topic['represents']) == 'description') {
+                        if (strtolower($topic['represents']) == 'description' || $topic['type'] === 4) {
                             echo sprintf("%s (%s) ", $topic['ref'], $topic['represents']);
                         } else {
                             $strPattern = "/^(http|https|ftp):\/\/([A-Z0-9][A-Z0-9_-]*(?:\.[A-Z0-9][A-Z0-9_-]*)+):?(\d+)?\/?/i";
@@ -27,8 +27,6 @@
                             if (preg_match('/^\/docs/', $topic['ref']) ||preg_match('/^\/showexample/', $topic['ref']) ) {
                                 $target = '_blank'; // no need to append if its full web url
                             }
-                            
-                            
                             echo sprintf("<a href='%s' target='%s'>%s</a> (URL)", $appendPath.$topic['ref'],$target, $topic['represents']);
                         }
                         ?>
