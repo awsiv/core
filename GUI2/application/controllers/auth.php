@@ -32,7 +32,6 @@ class Auth extends Controller {
             //redirect them to the login page
             redirect('auth/login', 'refresh');
         }
-        else {           
             $this->data['title']     = $this->lang->line('mission_portal_title')." - Admin";
             $this->data['username']  = $this->session->userdata('username');
             //list the users
@@ -54,8 +53,9 @@ class Auth extends Controller {
             else
             {
                 redirect($this->config->item('base_url'), 'refresh');
-            }           
-        }
+            }                   
+
+
     }
 
     function admin_page() {
@@ -64,6 +64,10 @@ class Auth extends Controller {
             redirect('auth/login', 'refresh');
         }
 
+        if ($this->ion_auth->is_admin(true) === false) {
+             redirect('auth/permission_deny', 'refresh');
+        }
+        
         $this->_check_admin_permissions();
         
         $requiredjs = array(
@@ -246,7 +250,25 @@ class Auth extends Controller {
                     // get system settings to protect "fall_back_for" user from editing
                     $this->data['fall_back_for'] = $this->setting_lib->get_fall_back_for();
         
-                    $this->load->view('auth/user_list', $this->data);
+                    
+                    $this->data['old_password'] = array('name' => 'old',
+                        'id' => 'old',
+                        'type' => 'password',
+                        'value' => ''
+                    );
+                    $this->data['new_password'] = array('name' => 'new',
+                        'id' => 'new',
+                        'type' => 'password',
+                        'value' => ''
+                    );
+                    $this->data['new_password_confirm'] = array('name' => 'new_confirm',
+                        'id' => 'new_confirm',
+                        'type' => 'password',
+                        'value' => ''
+                    );
+                    
+                    $this->load->view('auth/change_password', $this->data);
+                    
                 } else {
                     $this->session->set_flashdata('message', $this->ion_auth->messages());
                     redirect('auth/index', 'refresh');
@@ -569,11 +591,21 @@ class Auth extends Controller {
 
     
     function view_profile() {
-       // var_dump($this->session->userdata('id'));
-        $userdata = $this->ion_auth->get_user($this->session->userdata('id'));
-        $this->data['user'] = $userdata;
-       // var_dump($userdata);
+        if($this->setting_lib->get_authentication_mode() != 'database') {
+            $userdata = $this->ion_auth->get_ldap_user_details_from_local_db($this->session->userdata('user_id'));
+        }
+        else {
+            $userdata = $this->ion_auth->get_user($this->session->userdata('_id'));
+        }
         
+        $this->data['user'] = $userdata;
+
+        $requiredjs = array(
+            array('jquery.form.js'),
+            array('jquery.blockUI.js'),            
+        );
+        
+        $this->carabiner->js($requiredjs);
         $bc = array(
             'title' => 'Profile',
             'url' => 'auth/view_profile',
@@ -589,15 +621,18 @@ class Auth extends Controller {
         $this->data['breadcrumbs'] = $this->breadcrumblist->display();
         
         $this->template->load('template', 'auth/view_profile', $this->data);        
-        // $this->load->view('auth/view_profile', $this->data);
     }
     
     function edit_user($id) {
         $this->data['title'] = "Edit User";
         $this->data['user_type'] = 'internal';   
                 
-        if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+        if (!$this->ion_auth->logged_in()) {
             redirect('auth', 'refresh');
+        }
+        
+        if ($this->ion_auth->is_admin(true) === false) {
+             redirect('auth/permission_deny', 'refresh');
         }
         
         $this->_check_admin_permissions();
@@ -624,7 +659,7 @@ class Auth extends Controller {
             if (is_ajax ()) {
                 $this->data['message']   = $this->ion_auth->messages();
                 $this->data['users']     = $this->ion_auth->get_users_array();
-                $this->data['userroles'] = $this->session->userdata('roles');
+               // $this->data['userroles'] = $this->session->userdata('roles');
                 $this->data['is_admin']  = $this->ion_auth->is_admin();
                 
                 // get system settings to protect "fall_back_for" user from editing
@@ -700,8 +735,13 @@ class Auth extends Controller {
         $this->data['title'] = "Edit User";
         $this->data['user_type'] = 'external';
         
-        if (!$this->ion_auth->logged_in() || !$this->ion_auth->is_admin()) {
+        
+        if (!$this->ion_auth->logged_in()) {
             redirect('auth', 'refresh');
+        }
+        
+        if ($this->ion_auth->is_admin(true) === false) {
+             redirect('auth/permission_deny', 'refresh');
         }
 
         //validate form input
@@ -711,16 +751,16 @@ class Auth extends Controller {
 
         if ($this->form_validation->run() == true && $this->ion_auth->update_ldap_users($username, $this->input->post('roles'))) { //check to see if we are creating the user
             //redirect them back to the admin page
-            $user = $this->ion_auth->get_ldap_user_details_from_local_db($username);
+            /*$user = $this->ion_auth->get_ldap_user_details_from_local_db($username);
             $user_roles=array();
             if($user !==NULL){
                 $user_roles=$user->roles;
             }
-            $this->session->set_userdata('role',$user_roles);
+            */
             if (is_ajax ()) {
                 $this->data['message'] = $this->ion_auth->messages();
                 $this->data['users'] = $this->ion_auth->get_users_array();
-                $this->data['userrole'] = $this->session->userdata('roles');
+
                 $this->data['is_admin'] = $this->ion_auth->is_admin();
                 
                 // get system settings to protect "fall_back_for" user from editing
@@ -832,11 +872,11 @@ class Auth extends Controller {
         
         $this->_check_admin_permissions();
 
-        if ($this->ion_auth->is_admin() === false) {
-            $this->permission_deny($this->lang->line('no_permission'));
+        if ($this->ion_auth->is_admin(true) === false) {
+            redirect('auth/permission_deny', 'refresh');
         }
                      
-       $this->data['is_admin'] = $this->ion_auth->is_admin();
+        $this->data['is_admin'] = $this->ion_auth->is_admin();
        
         if (!empty($op)) {
             $this->data['title'] = "Create role";
@@ -1022,7 +1062,7 @@ class Auth extends Controller {
             $this->permission_deny($this->lang->line('admin_role_delete_forbidden'));
         }
         
-        if ($this->ion_auth->is_admin() === false) {
+        if ($this->ion_auth->is_admin(true) === false) {
             $this->permission_deny($this->lang->line('no_permission'));
         }
         
@@ -1073,7 +1113,7 @@ class Auth extends Controller {
             if ($message == '') {
                 $message = $this->lang->line('no_permission');
             }
-            
+
             if (is_ajax()) {
                 $this->output->set_status_header(401, $message);
                 echo $message;
