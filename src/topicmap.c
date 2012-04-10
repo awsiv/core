@@ -801,7 +801,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
     }
     else
     {
-        snprintf(searchstring, CF_MAXVARSIZE - 1, "goal.*");
+        snprintf(searchstring, CF_MAXVARSIZE - 1, "g.*");
     }
 
     if (!CFDB_Open(&conn))
@@ -822,6 +822,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
     bson_append_int(&bb, cfk_occurlocator, 1);
     bson_append_int(&bb, cfk_occurtype, 1);
     bson_append_int(&bb, cfk_occurrep, 1);
+    bson_append_int(&bb, cfk_occurtopic, 1);
     bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
@@ -844,10 +845,9 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
                 snprintf(work, CF_BUFSIZE, "{\"desc\": \"%s\",", bson_iterator_string(&it1));
                 Join(buffer, work, bufsize);
             }
-            if (strcmp(bson_iterator_key(&it1), cfk_occurcontext) == 0)
+            if (strcmp(bson_iterator_key(&it1), cfk_occurtopic) == 0)
             {
-                snprintf(goals, CF_MAXVARSIZE, "%s", bson_iterator_string(&it1));
-                strncpy(topic_name, goals + 6, strlen(goals));
+                snprintf(topic_name, CF_MAXVARSIZE, "%s", bson_iterator_string(&it1));
                 topic_id = Nova_GetTopicIdForTopic(topic_name);
                 snprintf(goals, CF_MAXVARSIZE, "\"name\":\"%s\",\"pid\":%d},", topic_name, topic_id);
                 Join(buffer, goals, bufsize);
@@ -892,8 +892,7 @@ char *Nova_URL(char *s, char *rep)
 
 void Nova_FillInGoalComment(Item *ip)
 {
-    Rlist *rp;
-    char searchstring[CF_MAXVARSIZE], work[CF_MAXVARSIZE];
+    char searchstring[CF_MAXVARSIZE];
     bson_buffer bb;
     bson query, field;
     mongo_cursor *cursor;
