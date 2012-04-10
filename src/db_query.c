@@ -2535,14 +2535,12 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
         char hostnames[CF_MAXVARSIZE] = {0};
         char rhandle[CF_MAXVARSIZE] = {0};
         char rcause[CF_BUFSIZE] = {0};
-        char noteid[CF_MAXVARSIZE] = {0};
         char oid[CF_MAXVARSIZE] = {0};
         time_t rt = 0;
         bool found = false;
 
         while (bson_iterator_next(&itHostData))
         {
-            snprintf(noteid, sizeof(noteid), "%s", CF_NONOTE);
 
             CFDB_ScanHubHost(&itHostData, keyhash, addresses, hostnames);
 
@@ -2591,7 +2589,7 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(record_list, NewHubPromiseLog(hh, rhandle, rcause, rt, noteid, oid));
+                        PrependRlistAlien(record_list, NewHubPromiseLog(hh, rhandle, rcause, rt, oid));
                     }
                 }
             }
@@ -2711,7 +2709,6 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
     bson_append_int(&bb,cfr_cause,1);
     bson_append_int(&bb,cfr_promisehandle,1);
     bson_append_int(&bb,cfr_time,1);
-    bson_append_int(&bb,cfn_nid,1);
 
     bson field;
     bson_from_buffer(&field,&bb);
@@ -2727,7 +2724,6 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
     char rhandle[CF_MAXVARSIZE] = {0};
     char rcause[CF_BUFSIZE] = {0};
     char keyhash[CF_MAXVARSIZE] = {0};
-    char noteid[CF_MAXVARSIZE] = {0};
     char oid[CF_MAXVARSIZE] = {0};
 
     while (mongo_cursor_next(cursor))
@@ -2738,14 +2734,11 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
         keyhash[0] = '\0';
         rhandle[0] = '\0';
         rcause[0] = '\0';
-        noteid[0] = '\0';
         oid[0] = '\0';
         time_t rt = 0;
 
         while (bson_iterator_next(&it1))
         {
-            snprintf(noteid,sizeof(noteid),"%s",CF_NONOTE);
-
             if (strcmp(bson_iterator_key(&it1),cfr_keyhash) == 0)
             {
                 snprintf(keyhash,sizeof(keyhash),"%s",bson_iterator_string(&it1));
@@ -2766,10 +2759,6 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
             {
                 snprintf(rcause,sizeof(rcause),"%s",bson_iterator_string(&it1));
             }
-            else if (strcmp(bson_iterator_key(&it1),cfn_nid) == 0)
-            {
-                snprintf(noteid,sizeof(noteid),"%s",bson_iterator_string(&it1));
-            }
             else if (strcmp(bson_iterator_key(&it1),cfr_time) == 0)
             {
                 rt = bson_iterator_int(&it1);
@@ -2783,7 +2772,7 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
         if(CompareStringOrRegex(rhandle, lhandle, regex) && CompareStringOrRegex(rcause, lcause_rx, true))
         {
             count++;
-            PrependRlistAlien(record_list,NewHubPromiseLog(hh,rhandle,rcause,rt,noteid,oid));
+            PrependRlistAlien(record_list,NewHubPromiseLog(hh,rhandle,rcause,rt,oid));
         }
     }
 

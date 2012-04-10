@@ -458,7 +458,7 @@ void DeleteHubVariable(HubVariable *hv)
 
 /*****************************************************************************/
 
-HubPromiseLog *NewHubPromiseLog(HubHost *hh, char *handle, char *cause, time_t t, char *noteId, char *oid)
+HubPromiseLog *NewHubPromiseLog(HubHost *hh, char *handle, char *cause, time_t t, char *oid)
 {
     HubPromiseLog *hp;
 
@@ -467,7 +467,6 @@ HubPromiseLog *NewHubPromiseLog(HubHost *hh, char *handle, char *cause, time_t t
     hp->hh = hh;
     hp->handle = xstrdup(handle);
     hp->cause = xstrdup(cause);
-    hp->nid = xstrdup(noteId);
     hp->oid = xstrdup(oid);
     hp->t = t;
     return hp;
@@ -479,7 +478,6 @@ void DeleteHubPromiseLog(HubPromiseLog *hp)
 {
     free(hp->handle);
     free(hp->cause);
-    free(hp->nid);
     free(hp->oid);
     free(hp);
 }

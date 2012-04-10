@@ -352,7 +352,6 @@ typedef struct
     char *handle;
     char *cause;
     time_t t;
-    char *nid;
     char *oid;
 } HubPromiseLog;
 
@@ -780,7 +779,7 @@ HubHostComplianceShifts *NewHubHostComplianceShifts(const char *hostkey);
 void DeleteHubHostComplianceShifts(HubHostComplianceShifts *record);
 HubVariable *NewHubVariable(HubHost *hh, char *type, char *scope, char *lval, Rval rval, time_t t);
 void DeleteHubVariable(HubVariable *hv);
-HubPromiseLog *NewHubPromiseLog(HubHost *hh, char *handle, char *cause, time_t t, char *noteId, char *oid);
+HubPromiseLog *NewHubPromiseLog(HubHost *hh, char *handle, char *cause, time_t t, char *oid);
 void DeleteHubPromiseLog(HubPromiseLog *hp);
 HubPromiseSum *NewHubPromiseSum(HubHost *hh, char *handle, char *cause, int occurences, int hostOccurences);
 void DeleteHubPromiseSum(HubPromiseSum *hs);

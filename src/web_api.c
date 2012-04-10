@@ -927,7 +927,6 @@ int Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogSt
     HubPromiseLog *hp;
     HubQuery *hq;
     Rlist *rp;
-    int reportType;
     mongo_connection dbconn;
     bool truncated = false;
 
@@ -942,8 +941,7 @@ int Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogSt
 
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d,"
-             "\"header\":{\"Host\":0,\"Promise Handle\":1,\"Report\":2,\"Time\":3,"
-             "\"Note\":{\"index\":4,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}}",
+             "\"header\":{\"Host\":0,\"Promise Handle\":1,\"Report\":2,\"Time\":3}",
              page->totalResultCount);
 
     int headerLen = strlen(header);
@@ -955,30 +953,10 @@ int Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogSt
     {
         hp = (HubPromiseLog *) rp->item;
         EscapeJson(hp->cause, jsonEscapedStr, sizeof(jsonEscapedStr));
-        if (strcmp(hp->nid, CF_NONOTE) == 0)
-        {
-            switch (state)
-            {
-            case PROMISE_LOG_STATE_REPAIRED:
-                reportType = CFREPORT_REPAIRED;
-                break;
-            case PROMISE_LOG_STATE_NOTKEPT:
-            default:
-                reportType = CFREPORT_NOTKEPT;
-                break;
-            }
-            snprintf(buffer, sizeof(buffer),
-                     "[ \"%s\",\"%s\",\"%s\",%ld,"
-                     "[ \"add\",\"%s\",%d,\"%s\",\"\"]"
-                     "],", hp->hh->hostname, hp->handle, jsonEscapedStr, hp->t, hp->hh->keyhash, reportType, hp->oid);
-        }
-        else
-        {
-            snprintf(buffer, sizeof(buffer),
-                     "[ \"%s\",\"%s\",\"%s\",%ld,"
-                     "[ \"show\",\"\",\"\",\"\",\"%s\"]"
-                     "],", hp->hh->hostname, hp->handle, jsonEscapedStr, hp->t, hp->nid);
-        }
+
+        snprintf(buffer, sizeof(buffer),
+                 "[ \"%s\",\"%s\",\"%s\",%ld ],",
+                 hp->hh->hostname, hp->handle, jsonEscapedStr, hp->t);
 
         int margin = headerLen + noticeLen + strlen(buffer);
 
