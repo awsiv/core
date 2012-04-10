@@ -23,12 +23,9 @@
 	Upgraded mongod from version 1.8.2 to 2.0.4, which increases
 	efficiency on concurrency and reduces memory usage.
 
-<<<<<<< HEAD
 	New function hostswithclass() that generates a list of hosts in a given class
 	on the hub.
 
-=======
->>>>>>> set trustkey=false in default failsafe policy to avoid spoofing attacks
 	The bundled failsafe.cf policy now has trustkey=false to avoid IP spoofing
 	attacks in default policy
 
