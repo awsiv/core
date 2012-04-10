@@ -345,10 +345,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
                     viewport:$(window)
             },
             show:{ event: 'foucs mouseenter'},
-            hide: { event: 'mouseout'},
-            style:{
-              tip: false
-            }
+            hide: { event: 'mouseout'}
         });
     }); 
    <?php } ?>
