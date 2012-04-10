@@ -2952,8 +2952,13 @@ int Nova2PHP_search_topics(char *search, int regex, char *buffer, int bufsize)
     Item *ip,*results = NULL;
     char work[CF_BUFSIZE],jsonEscapedStr[CF_BUFSIZE];
     
-    if ((results = Nova_SearchTopicMap(search,CF_SEARCH_REGEX)))
+    results = Nova_SearchTopicMap(search,CF_SEARCH_REGEX);
+
+    if (!results)
     {
+       strcpy(buffer, "[]");
+       return false;
+    }
 
     strcpy(buffer, "[ ");
     results = SortItemListNames(results);
@@ -2969,9 +2974,6 @@ int Nova2PHP_search_topics(char *search, int regex, char *buffer, int bufsize)
     buffer[strlen(buffer) - 1] = ']';
 
     return true;
-    }
-
-    return false;
 }
 
 /*****************************************************************************/
@@ -2990,7 +2992,7 @@ void Nova2PHP_show_topic(int id, char *buffer, int bufsize)
     }
     else
     {
-        snprintf(buffer, bufsize, "No such topic\n");
+        snprintf(buffer, bufsize, "[]");
     }
 }
 
@@ -3001,9 +3003,7 @@ void Nova2PHP_show_all_context_leads(char *unqualified_topic, char *buffer, int 
     char reconstructed[CF_BUFSIZE];
     Item *ip,*candidates;
     int id;
-    char work[CF_BUFSIZE], jsonEscapedStr[CF_BUFSIZE] = { 0 };
-    
-    buffer[0] = '[';
+    char work[CF_BUFSIZE], jsonEscapedStr[CF_BUFSIZE] = { 0 };        
 
     candidates = Nova_SearchTopicMap(unqualified_topic,CF_SEARCH_EXACT);
 
@@ -3012,6 +3012,8 @@ void Nova2PHP_show_all_context_leads(char *unqualified_topic, char *buffer, int 
        strcpy(buffer, "[]");
        return;
        }
+
+    buffer[0] = '[';
 
     for (ip = candidates; ip != NULL; ip=ip->next)
        {
