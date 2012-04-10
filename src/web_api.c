@@ -3047,7 +3047,7 @@ void Nova2PHP_show_topic_leads(int id, char *buffer, int bufsize)
 
     if (list == NULL)
     {
-        Join(buffer,"[]",bufsize);
+        Join(buffer,"[] ",bufsize);
         return;
     }
 
