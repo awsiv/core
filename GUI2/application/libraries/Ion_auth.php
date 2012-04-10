@@ -395,6 +395,7 @@ class Ion_auth
               if($this->mode!='database')
               {
                  $ret=$this->ci->auth_ldap->login($identity,$password);
+
                      if(is_array($ret))
                      {
                       $this->ci->session->set_userdata($ret);
@@ -476,20 +477,39 @@ class Ion_auth
 	 * @return bool
 	 * @author Ben Edmunds
 	 **/
-	public function is_admin()
+	public function is_admin($check_real_assigned_roles = false)
 	{
-                 $admin_role=$this->ci->settings_model->app_settings_get_item('admin_role');
-        
-                 if($admin_role===False){
-                     $admin_role = $this->ci->config->item('admin_role', 'ion_auth');
-                 }
-                 $user_role = $this->ci->session->userdata('roles');
+                $admin_role=$this->ci->settings_model->app_settings_get_item('admin_role');
 
-                       if($user_role===False ||empty($user_role)){
-                        return false;
-                      }
+                if($admin_role===False){
+                    $admin_role = $this->ci->config->item('admin_role', 'ion_auth');
+                }
+
+                if ($check_real_assigned_roles == false) {
+                    $user_role = $this->ci->session->userdata('roles');  
+                }
+                else
+                {
+                    if ($this->ci->settings_model->app_settings_get_item('mode') == 'database' || $this->ci->session->userdata('mode') == 'database')
+                    {
+                        $tmp = $this->get_user_role($this->ci->session->userdata('id'));
+                        $user_role = $tmp[0]['roles'];
+                    }
+                    else
+                    {
+                        $tmp = $this->get_ldap_user_details_from_local_db($this->ci->session->userdata('user_id'));
+                        $user_role = $tmp->roles;
+                    }
+                }
+
+                if($user_role === False || empty($user_role)){
+                    return false;
+                }
+                
                 return in_array($admin_role, $user_role);
 	}
+        
+             
 
         /**
 	 * is_in_fallback_role
