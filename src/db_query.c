@@ -2937,8 +2937,7 @@ HubQuery *CFDB_QueryValueGraph(mongo_connection *conn, char *keyHash, char *lday
     Rlist *record_list = NULL, *host_list = NULL;
     double rkept, rnotkept, rrepaired;
     char rday[CF_MAXVARSIZE], rmonth[CF_MAXVARSIZE], ryear[CF_MAXVARSIZE];
-    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rhandle[CF_MAXVARSIZE],
-        noteid[CF_MAXVARSIZE];
+    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rhandle[CF_MAXVARSIZE];
     int match_day, match_month, match_year, found = false;
     char classRegexAnch[CF_MAXVARSIZE];
     struct tm tm = { 0 };
@@ -3001,7 +3000,6 @@ HubQuery *CFDB_QueryValueGraph(mongo_connection *conn, char *keyHash, char *lday
 
                 while (bson_iterator_next(&it2))
                 {
-                    snprintf(noteid, CF_MAXVARSIZE, "%s", CF_NONOTE);
                     snprintf(rhandle, CF_MAXVARSIZE, "%s", bson_iterator_key(&it2));
                     bson_iterator_init(&it3, bson_iterator_value(&it2));
 
@@ -3035,10 +3033,6 @@ HubQuery *CFDB_QueryValueGraph(mongo_connection *conn, char *keyHash, char *lday
                         else if (strcmp(bson_iterator_key(&it3), cfr_repaired) == 0)
                         {
                             rrepaired = bson_iterator_double(&it3);
-                        }
-                        else if (strcmp(bson_iterator_key(&it3), cfn_nid) == 0)
-                        {
-                            snprintf(noteid, CF_MAXVARSIZE, "%s", bson_iterator_string(&it3));
                         }
                         else
                         {
