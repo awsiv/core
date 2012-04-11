@@ -445,7 +445,7 @@ class Auth extends Controller {
         $this->form_validation->set_rules('email', 'Email Address', 'required|valid_email|unique[users.email]');
         $this->form_validation->set_rules('password', 'Password', 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|max_length[' . $this->config->item('max_password_length', 'ion_auth') . ']|matches[password_confirm]');
         $this->form_validation->set_rules('password_confirm', 'Password Confirmation', 'required');
-        $this->form_validation->set_rules('roles[]', 'role', 'required|xss_clean');
+        $this->form_validation->set_rules('roles[]', 'role', 'xss_clean');
 
         if ($this->form_validation->run() == true) {
             $username = strtolower($this->input->post('user_name'));
@@ -640,7 +640,7 @@ class Auth extends Controller {
         //validate form input
         $this->form_validation->set_rules('user_name', 'First Name',    'required|xss_clean');
         $this->form_validation->set_rules('email',     'Email Address', 'required|valid_email');
-        $this->form_validation->set_rules('roles[]',   'Role',          'required|xss_clean');
+        $this->form_validation->set_rules('roles[]',   'Role',          'xss_clean');
 
         
         if ($this->form_validation->run() == true) {
