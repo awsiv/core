@@ -69,8 +69,18 @@ class Cf_REST_Controller extends CI_Controller
         {
             $this->respond(array('status' => false, 'error' => 'Unknown method.'), 404);
         }
-
-        call_user_func_array(array($this, $controller_method), $arguments);
+        
+        try
+        {
+            call_user_func_array(array($this, $controller_method), $arguments);
+        }
+        catch (CFModExceptionRBAC $e)
+        {
+             return $this->respond(401);
+        }
+        catch(Exception $e){
+             return $this->respond(500, $e->getMessage());
+        }
     }
 
     public function respond($http_code, $data = NULL)
