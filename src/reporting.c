@@ -2612,7 +2612,7 @@ void Nova_CommandAPI(char *lsdata, char *name, char *phandle, char *hostkey, cha
     }
     else if (strcmp(lsdata, "compliance") == 0)
     {
-        Nova2Txt_compliance_report(hostkey, name, -1, -1, -1, -1, ">", classregex);
+        Nova2Txt_compliance_report(hostkey, name, 0, time(NULL), -1, -1, -1, classregex);
         return;
     }
     else if (strcmp(lsdata, "summary") == 0)

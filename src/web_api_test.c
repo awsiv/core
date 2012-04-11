@@ -713,12 +713,11 @@ int Nova2PHP_vars_report_test(char *hostkey, char *scope, char *lval, char *rval
 
 /*****************************************************************************/
 
-int Nova2PHP_compliance_report_test(char *hostkey, char *version, time_t t, int k, int nk, int rep, char *cmp,
+int Nova2PHP_compliance_report_test(char *hostkey, char *version, time_t t, int k, int nk, int rep,
                                     HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
 {
     char work[CF_BUFSIZE];
 
-    //  int icmp;
     char header[CF_BUFSIZE] = { 0 };
     //  int margin = 0;
     int headerLen = 0;

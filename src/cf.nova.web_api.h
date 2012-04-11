@@ -146,7 +146,7 @@ int Nova2PHP_countclasses(char *hostkey, char *name, int regex, HostClassFilter 
                           int bufsize);
 int Nova2PHP_vars_report(char *hostkey, char *scope, char *lval, char *rval, char *type, int regex,
                          HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
-int Nova2PHP_compliance_report(char *hostkey, char *version, time_t t, int k, int nk, int rep, char *cmp,
+int Nova2PHP_compliance_report(char *hostkey, char *version, time_t from, time_t to, int k, int nk, int rep,
                                HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_compliance_promises(char *hostkey, char *handle, char *status, int regex, HostClassFilter *hostClassFilter,
                                  PageInfo *page, char *returnval, int bufsize);
@@ -169,7 +169,7 @@ int Nova2PHP_software_hosts(char *hostkey, char *name, char *value, char *arch, 
 int Nova2PHP_classes_hosts(char *hostkey, char *name, int regex, HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_vars_hosts(char *hostkey, char *scope, char *lval, char *rval, char *type, int regex,
                         HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
-int Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t t, int k, int nk, int rep, char *cmp,
+int Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t from, time_t to, int k, int nk, int rep,
                               HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status, int regex, HostClassFilter *hostClassFilter, PageInfo *page,
                            char *returnval, int bufsize);
@@ -303,7 +303,7 @@ int Nova2PHP_software_report_test(char *hostkey, char *name, char *value, char *
                                   HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_vars_report_test(char *hostkey, char *scope, char *lval, char *rval, char *type, int regex,
                               HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
-int Nova2PHP_compliance_report_test(char *hostkey, char *version, time_t t, int k, int nk, int rep, char *cmp,
+int Nova2PHP_compliance_report_test(char *hostkey, char *version, time_t t, int k, int nk, int rep,
                                     HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_compliance_promises_test(char *hostkey, char *handle, char *status, int regex,
                                       HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);

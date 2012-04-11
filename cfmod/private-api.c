@@ -1331,26 +1331,25 @@ PHP_FUNCTION(cfpr_compliance_summary_graph)
 
 PHP_FUNCTION(cfpr_report_compliance_summary)
 {
-    char *userName, *hostkey, *version, *cmp;
+    char *userName, *hostkey, *version;
     char *fhostkey, *fversion;
     zval *contextIncludes = NULL, *contextExcludes = NULL;
-    int user_len, hk_len, v_len, cmp_len;
-    long k, nk, r, t;
+    int user_len, hk_len, v_len;
+    long k, nk, r, from;
     char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
     char *sortColumnName;
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllllsaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllllaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &version, &v_len,
-                              &t,
+                              &from,
                               &k,
                               &nk,
                               &r,
-                              &cmp, &cmp_len,
                               &contextIncludes,
                               &contextExcludes,
                               &sortColumnName, &sc_len, &sortDescending,
@@ -1375,7 +1374,7 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
 
     HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
 
-    Nova2PHP_compliance_report(fhostkey, fversion, (time_t) t, (int) k, (int) nk, (int) r, cmp, filter, &page, buffer,
+    Nova2PHP_compliance_report(fhostkey, fversion, (time_t) from, time(NULL), (int) k, (int) nk, (int) r, filter, &page, buffer,
                                sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -2547,20 +2546,19 @@ PHP_FUNCTION(cfpr_hosts_with_vars)
 
 PHP_FUNCTION(cfpr_hosts_with_compliance_summary)
 {
-    char *userName, *hostkey, *version, *cmp;
-    int user_len, hk_len, v_len, cmp_len;
+    char *userName, *hostkey, *version;
+    int user_len, hk_len, v_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     long k, nk, r, t;
     char buffer[512 * 1024];
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllllsaall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllllaall",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &version, &v_len,
                               &t,
                               &k, &nk, &r,
-                              &cmp, &cmp_len,
                               &context_includes,
                               &context_excludes,
                               &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
@@ -2584,7 +2582,7 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_summary)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_compliance_hosts(fhostkey, fversion, (int) t, (int) k, (int) nk, (int) r, cmp, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_compliance_hosts(fhostkey, fversion, (int) t, time(NULL), (int) k, (int) nk, (int) r, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);

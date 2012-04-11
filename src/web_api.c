@@ -1583,13 +1583,13 @@ int Nova2PHP_vars_report(char *hostkey, char *scope, char *lval, char *rval, cha
 }
 
 /*****************************************************************************/
-int Nova2PHP_compliance_report(char *hostkey, char *version, time_t t, int k, int nk, int rep, char *cmp,
+int Nova2PHP_compliance_report(char *hostkey, char *version, time_t from, time_t to, int k, int nk, int rep,
                                HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
 {
 # ifndef NDEBUG
     if (IsEnvMissionPortalTesting())
     {
-        return Nova2PHP_compliance_report_test(hostkey, version, t, k, nk, rep, cmp, hostClassFilter, page, returnval,
+        return Nova2PHP_compliance_report_test(hostkey, version, from, k, nk, rep, hostClassFilter, page, returnval,
                                                bufsize);
     }
 # endif
@@ -1598,28 +1598,17 @@ int Nova2PHP_compliance_report(char *hostkey, char *version, time_t t, int k, in
     HubTotalCompliance *ht;
     HubQuery *hq;
     Rlist *rp;
-    int icmp;
     mongo_connection dbconn;
     char header[CF_BUFSIZE] = { 0 };
     int margin = 0, headerLen = 0, noticeLen = 0;
     int truncated = false;
-
-    switch (*cmp)
-    {
-    case '<':
-        icmp = CFDB_LESSTHANEQ;
-        break;
-    default:
-        icmp = CFDB_GREATERTHANEQ;
-        break;
-    }
 
     if (!CFDB_Open(&dbconn))
     {
         return false;
     }
 
-    hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, t, k, nk, rep, icmp, true, hostClassFilter);
+    hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to, k, nk, rep, true, hostClassFilter);
     PageRecords(&(hq->records), page, DeleteHubTotalCompliance);
 
     snprintf(header, sizeof(header),
@@ -2485,21 +2474,9 @@ int Nova2PHP_vars_hosts(char *hostkey, char *scope, char *lval, char *rval, char
 
 /*****************************************************************************/
 
-int Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t t, int k, int nk, int rep, char *cmp,
+int Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t from, time_t to, int k, int nk, int rep,
                               HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
 {
-    int icmp;
-
-    switch (*cmp)
-    {
-    case '<':
-        icmp = CFDB_LESSTHANEQ;
-        break;
-    default:
-        icmp = CFDB_GREATERTHANEQ;
-        break;
-    }
-
     mongo_connection dbconn;
 
     if (!CFDB_Open(&dbconn))
@@ -2507,7 +2484,7 @@ int Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t t, int k, int
         return false;
     }
 
-    HubQuery *hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, t, k, nk, rep, icmp, false, hostClassFilter);
+    HubQuery *hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to, k, nk, rep, false, hostClassFilter);
 
     CreateJsonHostOnlyReport(&(hq->hosts), page, returnval, bufsize);
 

@@ -369,9 +369,9 @@ class report_model extends Cf_Model {
         try
         {
             if($host_only){
-               $rawdata = cfpr_hosts_with_compliance_summary($username, $hostkey, NULL, -1, -1, -1, -1, ">", $inclist, $exlist, $rows, $page_number);
+               $rawdata = cfpr_hosts_with_compliance_summary($username, $hostkey, NULL, -1, -1, -1, -1, $inclist, $exlist, $rows, $page_number);
             }else{
-               $rawdata = cfpr_report_compliance_summary($username, $hostkey, NULL, -1, -1, -1, -1, ">", $inclist, $exlist, "last-seen", true, $rows, $page_number);
+               $rawdata = cfpr_report_compliance_summary($username, $hostkey, NULL, -1, -1, -1, -1, $inclist, $exlist, "last-seen", true, $rows, $page_number);
             }
 
             $data = $this->checkData($rawdata);

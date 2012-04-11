@@ -1081,17 +1081,12 @@ static void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, 
 
     HostClassFilter *filter = NewHostClassFilter(envClass, NULL);
 
-    hq = CFDB_QueryTotalCompliance(conn, NULL, NULL, start, -1, -1, -1, CFDB_GREATERTHANEQ, false, filter);
+    hq = CFDB_QueryTotalCompliance(conn, NULL, NULL, start, end, -1, -1, -1, false, filter);
     DeleteHostClassFilter(filter);
 
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {
         ht = (HubTotalCompliance *) rp->item;
-
-        if (ht->t >= end)
-        {
-            continue;
-        }
 
         kept += ht->kept;
         repaired += ht->repaired;

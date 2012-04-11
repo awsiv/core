@@ -943,8 +943,8 @@ HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes)
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn, char *keyHash, char *lversion, time_t lt, int lkept,
-                                    int lnotkept, int lrepaired, int cmp, int sort, HostClassFilter *hostClassFilter)
+HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn, char *keyHash, char *lversion, time_t from, time_t to, int lkept,
+                                    int lnotkept, int lrepaired, int sort, HostClassFilter *hostClassFilter)
 {
     bson_buffer bb;
     bson query, field;
@@ -955,7 +955,6 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn, char *keyHash, char 
     int rkept, rnotkept, rrepaired, found = false;
     int match_kept, match_notkept, match_repaired, match_version, match_t;
     char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rversion[CF_MAXVARSIZE];
-    time_t rt;
 
     bson_buffer_init(&bb);
 
@@ -1009,7 +1008,7 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn, char *keyHash, char 
                     rrepaired = -1;
                     rnotkept = -1;
                     rversion[0] = '\0';
-                    rt = 0;
+                    time_t timestamp = 0;
 
                     while (bson_iterator_next(&it3))
                     {
@@ -1027,7 +1026,7 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn, char *keyHash, char 
                         }
                         else if (strcmp(bson_iterator_key(&it3), cfr_time) == 0)
                         {
-                            rt = bson_iterator_int(&it3);
+                            timestamp = bson_iterator_int(&it3);
                         }
                         else if (strcmp(bson_iterator_key(&it3), cfr_version) == 0)
                         {
@@ -1046,49 +1045,24 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn, char *keyHash, char 
                         match_version = false;
                     }
 
-                    if (cmp == CFDB_GREATERTHANEQ)
+                    if (timestamp < from || timestamp > to)
                     {
-                        if (lt != -1 && lt > rt)
-                        {
-                            match_t = false;
-                        }
-
-                        if (lkept != -1 && lkept < rkept)
-                        {
-                            match_kept = false;
-                        }
-
-                        if (lnotkept != -1 && lnotkept < rnotkept)
-                        {
-                            match_notkept = false;
-                        }
-
-                        if (lrepaired != -1 && lrepaired < rrepaired)
-                        {
-                            match_repaired = false;
-                        }
+                        match_t = false;
                     }
-                    else        // CFDB_LESSTHANEQ
+
+                    if (lkept != -1 && lkept < rkept)
                     {
-                        if (lt != -1 && lt < rt)
-                        {
-                            match_t = false;
-                        }
+                        match_kept = false;
+                    }
 
-                        if (lkept != -1 && lkept > rkept)
-                        {
-                            match_kept = false;
-                        }
+                    if (lnotkept != -1 && lnotkept < rnotkept)
+                    {
+                        match_notkept = false;
+                    }
 
-                        if (lnotkept != -1 && lnotkept > rnotkept)
-                        {
-                            match_notkept = false;
-                        }
-
-                        if (lrepaired != -1 && lrepaired > rrepaired)
-                        {
-                            match_repaired = false;
-                        }
+                    if (lrepaired != -1 && lrepaired < rrepaired)
+                    {
+                        match_repaired = false;
                     }
 
                     if (match_kept && match_notkept && match_repaired && match_t && match_version)
@@ -1101,7 +1075,7 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn, char *keyHash, char 
                         }
 
                         PrependRlistAlien(&record_list,
-                                          NewHubTotalCompliance(hh, rt, rversion, rkept, rrepaired, rnotkept));
+                                          NewHubTotalCompliance(hh, timestamp, rversion, rkept, rrepaired, rnotkept));
                     }
                 }
             }
