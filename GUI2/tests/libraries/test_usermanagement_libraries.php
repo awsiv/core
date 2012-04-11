@@ -108,7 +108,10 @@ class test_usermanagement_libraries extends CodeIgniterUnitTestCase {
      */
 
     public function test_cfpr_role_delete() {
-        $username = 'admin';
+        $username    = 'admin';
+        $ret         = false;
+        $create_role = false;
+        
         $data = array(
             'name' => "test_role_" . date("d_M_Y_H_i_s") . '_' . rand(0, 2345) . '_' . time(),
             'description'     => "Test role. Created at: " . date("d/M/Y H:i:s"),
@@ -118,9 +121,11 @@ class test_usermanagement_libraries extends CodeIgniterUnitTestCase {
             'brxx' => 'brxx'
         );
 
-        $ret = $this->_ci->ion_auth->create_role($username, $data);
-
-        if ($ret === true) {
+        $create_role = $this->_ci->ion_auth->create_role($username, $data);
+        $this->assertTrue($create_role, 'Role  ' . $data['name'] . ' created for delete');
+        
+        
+        if ($create_role === true) {
             $ret = $this->_ci->ion_auth->delete_role($username, $data['name']);
         }
 
