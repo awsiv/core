@@ -1026,7 +1026,15 @@ class Auth extends Controller {
     }
 
     function delete_user($id) {
-        $this->ion_auth->delete_user($id);
+
+         try {
+            $this->ion_auth->delete_user($id);
+        } 
+        catch (Exception $e) {
+   
+            $this->ion_auth->set_error($e->getMessage());
+        }
+        
         if (is_ajax ()) {
             $this->data['message'] = $this->ion_auth->errors()?$this->ion_auth->errors():$this->ion_auth->messages();
             $this->data['users'] = $this->ion_auth->get_users_array();
@@ -1065,15 +1073,19 @@ class Auth extends Controller {
         if ($this->ion_auth->is_admin(true) === false) {
             $this->permission_deny($this->lang->line('no_permission'));
         }
-        
 
-        $this->ion_auth->delete_role($this->session->userdata('username'), $name); 
-                
+        try {
+            $this->ion_auth->delete_role($this->session->userdata('username'), $name);
+        } 
+        catch (Exception $e) {
+            $this->ion_auth->set_error($e->getMessage());
+        }
+
         if (is_ajax ()) {
             $this->data['message']  = $this->ion_auth->errors()?$this->ion_auth->errors():$this->ion_auth->messages();
             $this->data['roles']    = $this->ion_auth->get_roles($this->session->userdata('username'));     
             $this->data['is_admin'] = $this->ion_auth->is_admin();
-            
+
             $this->load->view('auth/list_role', $this->data);
         } else {
             $this->session->set_flashdata('message', $this->ion_auth->messages());

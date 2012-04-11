@@ -799,10 +799,13 @@ class Ion_auth_model_mongo extends CI_Model
 	 **/
 	public function delete_user($id)
 	{
-
+            $res = $this->get_user($id);
+            if (empty($res)) {
+                throw new Exception("User doesn't exist");
+            } 
+           
 	    return $this->mongo_db->where(array('_id'=>new MongoId($id)))->delete('users');
-	    
-	}
+ 	}
 
         /**
 	 * delete_role
@@ -816,22 +819,22 @@ class Ion_auth_model_mongo extends CI_Model
 
         public function delete_role($username, $name)
         {
-          try {
-                    // cfpr_role_delete - return 1 if everything ok
-                    $ret = cfpr_role_delete($username, $name);
+            try {
+                // cfpr_role_delete - return 1 if everything ok
+                $ret = cfpr_role_delete($username, $name);
 
-                    if ($ret === 1 ) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                } catch (Exception $e) {
-                    log_message('error', $e->getMessage());
-                    throw $e;
+                if ($ret === 1) {
+                    return true;
+                } else {
+                    return false;
                 }
+            } catch (Exception $e) {
+                log_message('error', $e->getMessage());
+                throw $e;
+            }
         
-		$this->set_error('role_delete_unsuccessful');
-		return FALSE; 
+            $this->set_error('role_delete_unsuccessful');
+            return FALSE; 
         }
 
 

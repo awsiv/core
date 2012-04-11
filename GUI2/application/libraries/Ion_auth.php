@@ -998,7 +998,10 @@ class Ion_auth
 		$_output = '';
 		foreach ($this->errors as $error)
 		{
+                    if ($this->ci->lang->line($error) != '')
 			$_output .= $this->error_start_delimiter . $this->ci->lang->line($error) . $this->error_end_delimiter;
+                    else
+                        $_output .= $this->error_start_delimiter . $error . $this->error_end_delimiter;
 		}
 
 		return $_output;

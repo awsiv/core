@@ -49,7 +49,14 @@
                 $('.blockUI').hide();   
                 $(document).unblock();
                 $.unblockUI();
+            },
+            error: 
+                function() {
+                $('.blockUI').hide();   
+                $(document).unblock();
+                $.unblockUI();
             }
+            
         });     
         
         $(document).ajaxStop(function(){
@@ -664,19 +671,19 @@ function checkAndMove(args) {
 
 function loadContent(args) {
         $(args.domElementId).load(args.link, 
-        function(responseText, textStatus, XMLHttpRequest) {
-            switch (XMLHttpRequest.status) {
-                case 200: break;
-                case 401:
-                case 404:
-                    $('#error_status').html('<p class="error">' + responseText + '</p>');
-                    break;
-                default:
-                    $('#error_status').html('<p class="error">' + '<?php echo $this->lang->line('500_error'); ?>' +  '</p>');
-                    break;
+            function(responseText, textStatus, XMLHttpRequest) {
+                switch (XMLHttpRequest.status) {
+                    case 200: break;
+                    case 401:
+                    case 404:
+                        $('#error_status').html('<p class="error">' + responseText + '</p>');
+                        break;
+                    default:
+                        $('#error_status').html('<p class="error">' + '<?php echo $this->lang->line('500_error'); ?>' + '</p>');
+                        break;
+                    }
                 }
-            }
-        );
+            );
 }
 
 /****************************** DIALOG **********************************************/    

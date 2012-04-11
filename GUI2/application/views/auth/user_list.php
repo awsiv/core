@@ -1,4 +1,5 @@
-	<table cellpadding=0 cellspacing=10>
+<div id="formInfoMessage"><?php echo $message; ?></div>
+<table cellpadding=0 cellspacing=10>
 		<tr>
 			<th>Users</th>
 			<th>Email</th>
@@ -26,7 +27,7 @@
                                     $roles_str = implode(', ', $user['roles']);
                                 } 
                                 ?>                     
-                                <td class="showqtip" title="<?php echo $roles_str ?>"><?php echo getCuttedText($roles_str, 5, 60) ?></td>
+                                <td class="<?php if(!empty($roles_str)) { ?>showqtip <?php } ?>" title="<?php echo $roles_str ?>"><?php echo getCuttedText($roles_str, 5, 60) ?></td>
                           
                                 <?php  if($this->ion_auth->mode=="database"){?>
 				<td><?php
