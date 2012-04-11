@@ -65,7 +65,9 @@ typedef struct
     char *promiserInclude;
     char *promiserRxInclude;
     char *promiseTypeInclude;
+    char *promiseTypeRxInclude;
     char *bundleTypeInclude;
+    char *bundleTypeRxInclude;
     Rlist *bundleIncludes;
     Rlist *bundleRxIncludes;
     Rlist *bundleExcludes;

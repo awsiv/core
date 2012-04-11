@@ -3786,14 +3786,14 @@ PHP_FUNCTION(cfpr_promise_list_by_bundle)
 
 PHP_FUNCTION(cfpr_promise_list_by_bundle_rx)
 {
-    char *userName, *bundleNameRx, *bundleType;
+    char *userName, *bundleNameRx, *bundleTypeRx;
     int user_len, b_len, btype_len;
     char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssll",
                               &userName , &user_len,
-                              &bundleType, &btype_len,
+                              &bundleTypeRx, &btype_len,
                               &bundleNameRx, &b_len,
                               &(page.resultsPerPage),
                               &(page.pageNum)) == FAILURE)
@@ -3805,7 +3805,7 @@ PHP_FUNCTION(cfpr_promise_list_by_bundle_rx)
     ARGUMENT_CHECK_CONTENTS(user_len);
 
     char *fBundleNameRx = (b_len == 0) ? NULL : bundleNameRx;
-    char *fBundleType = (btype_len == 0) ? NULL : bundleType;
+    char *fBundleTypeRx = (btype_len == 0) ? NULL : bundleTypeRx;
 
     buffer[0] = '\0';
 
@@ -3815,7 +3815,7 @@ PHP_FUNCTION(cfpr_promise_list_by_bundle_rx)
 
     PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
 
-    PromiseFilterAddBundleType(filter, fBundleType);
+    PromiseFilterAddBundleTypeRx(filter, fBundleTypeRx);
     PromiseFilterAddBundlesRx(filter, fBundleNameRx, NULL);
 
     Nova2PHP_promise_list(filter, buffer, sizeof(buffer), &page);

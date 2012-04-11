@@ -838,6 +838,8 @@ void PromiseFilterAddPromiseBody(PromiseFilter *filter, const char *handleInclud
 void PromiseFilterAddPromiseBodyRx(PromiseFilter *filter, const char *handleRxInclude, const char *promiserRxInclude);
 void PromiseFilterAddPromiseType(PromiseFilter *filter, const char *promiseTypeInclude);
 void PromiseFilterAddBundleType(PromiseFilter *filter, const char *bundleTypeInclude);
+void PromiseFilterAddPromiseTypeRx(PromiseFilter *filter, const char *promiseTypeRxInclude);
+void PromiseFilterAddBundleTypeRx(PromiseFilter *filter, const char *bundleTypeRxInclude);
 void PromiseFilterAddBundles(PromiseFilter *filter, const char *bundleInclude, const char *bundleExclude);
 void PromiseFilterAddBundlesRx(PromiseFilter *filter, const char *bundleRxInclude, const char *bundleRxExclude);
 void DeletePromiseFilter(PromiseFilter *filter);

@@ -1196,11 +1196,25 @@ void PromiseFilterAddPromiseType(PromiseFilter *filter, const char *promiseTypeI
     filter->promiseTypeInclude = SafeStringDuplicate(promiseTypeInclude);
 }
 
+void PromiseFilterAddPromiseTypeRx(PromiseFilter *filter, const char *promiseTypeRxInclude)
+{
+    assert(!filter->promiseTypeRxInclude && "PromiseFilterAddPromiseTypeRx: promiseTypeRxInclude is already set");
+
+    filter->promiseTypeRxInclude = SafeStringDuplicate(promiseTypeRxInclude);
+}
+
 void PromiseFilterAddBundleType(PromiseFilter *filter, const char *bundleTypeInclude)
 {
     assert(!filter->bundleTypeInclude && "PromiseFilterAddBundleType: bundleTypeInclude is already set");
 
     filter->bundleTypeInclude = SafeStringDuplicate(bundleTypeInclude);
+}
+
+void PromiseFilterAddBundleTypeRx(PromiseFilter *filter, const char *bundleTypeRxInclude)
+{
+    assert(!filter->bundleTypeRxInclude && "PromiseFilterAddBundleTypeRx: bundleTypeRxInclude is already set");
+
+    filter->bundleTypeRxInclude = SafeStringDuplicate(bundleTypeRxInclude);
 }
 
 void PromiseFilterAddBundles(PromiseFilter *filter, const char *bundleInclude, const char *bundleExclude)
