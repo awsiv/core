@@ -12,7 +12,7 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 
 Item *BsonGetStringArrayAsItemList(const bson *b, const char *key);
 Rlist *BsonStringArrayAsRlist(const bson *b, const char *key);
-bool BsonStringGet(const bson *b, const char *key, char **out);
+bool BsonStringGet(const bson *b, const char *key, const char **out);
 bool BsonBoolGet(const bson *b, const char *key, bool *out);
 bool BsonIntGet(const bson *b, const char *key, int *out);
 bool BsonTimeGet(const bson *b, const char *key, time_t *out);

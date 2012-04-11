@@ -133,7 +133,7 @@ long BsonLongGet(const bson *b, const char *key)
 
 /*****************************************************************************/
 
-bool BsonStringGet(const bson *b, const char *key, char **out)
+bool BsonStringGet(const bson *b, const char *key, const char **out)
 {
     bson_iterator it;
 

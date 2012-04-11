@@ -466,7 +466,7 @@ HubQuery *CFDB_QueryColour(mongo_connection *conn, const HostRankMethod method, 
             Item *host_names = BsonGetStringArrayAsItemList(&cursor->current, cfr_host_array);
             Item *ip_addresses = BsonGetStringArrayAsItemList(&cursor->current, cfr_ip_array);
 
-            char *hostkey = NULL;
+            const char *hostkey = NULL;
             BsonStringGet(&cursor->current, cfr_keyhash, &hostkey);
             assert(hostkey);
 
@@ -6393,7 +6393,7 @@ Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const ch
 
     while (mongo_cursor_next(cursor))
     {
-        char *hostkey = NULL;
+        const char *hostkey = NULL;
         BsonStringGet(&cursor->current, cfr_keyhash, &hostkey);
         assert(hostkey);
 
@@ -6440,7 +6440,7 @@ HubHost *CFDB_GetHostByKey(mongo_connection *conn, const char *hostkey)
         Item *host_names = BsonGetStringArrayAsItemList(&out, cfr_host_array);
         Item *ip_addresses = BsonGetStringArrayAsItemList(&out, cfr_ip_array);
 
-        char *hostkey = NULL;
+        const char *hostkey = NULL;
         BsonStringGet(&out, cfr_keyhash, &hostkey);
         assert(hostkey);
 
