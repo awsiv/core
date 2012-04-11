@@ -38,6 +38,10 @@
             $('#' + self.containerID()).delegate('.vblistadd', 'click', $.proxy(self.addSelected, self));
 
         },
+        resetSearchBar: function() {
+            var self = this;
+            self.searchbar.find('input[type="text"]').val(self.searchbar.find('input[type="text"]').data('default'));
+        },
 
         resetPagination: function() {
             var self = this;
@@ -120,10 +124,6 @@
         ));
             self.dialogcontent.parent().addClass('customdlg').removeClass('ui-widget-content');
             self.titlebar = self.dialogcontent.siblings('div.ui-dialog-titlebar');
-            //self.menuhandler=$('<span id="handle" class="operation">Options</span>');
-            //self.titlebar.append(self.menuhandler).delegate('#handle','click',function(){self.menu.slideToggle();});
-
-
             if (!self.options.onlyShowHandle) {
                 self.searchbar = $('<form id="policyfindersearch" action="' + self.options.baseUrl + '/widget/search_by_bundle"><span class="search"><input type="text" name="search" value="Search by bundle"/></span></form>');
             } else {
@@ -144,7 +144,7 @@
             self.menu = $('<div class="categories"><ul id="classoptions"></ul></div>');
 
             if (!self.options.onlyShowHandle) {
-                self.menu.find('ul').append('<li>by bundle</li><li>by handle</li><li>by promiser</li><li>by type</li>');
+                self.menu.find('ul').append('<li>by bundle</li><li>by handle</li><li>by promiser</li><li>by bundle type</li>');
             } else {
                 self.menu.find('ul').append('<li>by handle</li>');
             }
@@ -186,6 +186,7 @@
             self.searchbar.attr('action', self.submitUrl);
             self.emptyContainer();
             self.resetPagination();
+            self.resetSearchBar();
             self.loadpagebody(self.submitUrl, '', false);
             self.searchbar.find('input[type="text"]').trigger('blur');
             self.alphasearch.find('li').removeClass('selected');
@@ -361,6 +362,7 @@
             self.animate = true;
             self.emptyContainer();
             self.resetPagination();
+            self.resetSearchBar();
             self.selectedLetter = '^['+ $(event.target).text() + '|' + $(event.target).text().toLowerCase() + ']';
             self.loadpagebody(self.searchbar.attr('action'), self.selectedLetter, false);
             if (self.menu.css('display') == 'block')

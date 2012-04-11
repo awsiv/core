@@ -60,18 +60,18 @@ class Promise extends Cf_Controller {
             }
 
             $tmp_arr = $this->promise_model->getPromiseListByPromiser($username,$promiser);
-            foreach($tmp_arr as $item => $value) {
+            foreach((array)$tmp_arr['data'] as $item => $value) {
                 $allhandlespromiser[] = $value[0];
             }
             
             $tmp_arr = $this->promise_model->getPromiseListByType($username,$type);
-            foreach($tmp_arr as $item => $value) {
+            foreach((array)$tmp_arr['data'] as $item => $value) {
                 $allhandlesbytype[] = $value[0];
             }
      
              
             $tmp_arr = $this->promise_model->getPromiseListByBundle($username,$mybundle);
-            foreach($tmp_arr as $item => $value) {
+            foreach((array)$tmp_arr['data'] as $item => $value) {
                 $allhandles[] = $value[0];
             }            
 

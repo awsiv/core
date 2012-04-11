@@ -67,7 +67,7 @@ class promise_model extends Cf_Model {
         }
     }
     
-    function getPromiseListByPromiser($username,$promiser="")
+    function getPromiseListByPromiser($username,$promiser="",$resultPerPage=0,$page=0)
     {
         if($promiser==""){
             return array();
@@ -75,7 +75,7 @@ class promise_model extends Cf_Model {
         
         try
         {
-            $rawdata =  cfpr_promise_list_by_promiser($username, $promiser);
+            $rawdata =  cfpr_promise_list_by_promiser($username, $promiser,$resultPerPage,$page);
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {
@@ -101,7 +101,7 @@ class promise_model extends Cf_Model {
     * @return type array
     */
             
-    function getPromiseListByType($username,$type="")
+    function getPromiseListByType($username,$type="",$resultPerPage=0,$page=0)
     {
         if($type==""){
             return array();
@@ -109,7 +109,7 @@ class promise_model extends Cf_Model {
         
         try
         {
-            $rawdata =   cfpr_promise_list_by_promise_type($username, $type);
+            $rawdata =   cfpr_promise_list_by_promise_type($username, $type,$resultPerPage,$page);
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {
@@ -135,7 +135,7 @@ class promise_model extends Cf_Model {
      * @return type array
      */
    
-    function getPromiseListByBundle($username,$bundle)
+    function getPromiseListByBundle($username,$bundle,$resultPerPage=0,$page=0)
     {
         if($bundle==""){
             return array();
@@ -143,7 +143,7 @@ class promise_model extends Cf_Model {
         
         try
         {   $bundle_type=$this->getBundleType($bundle);
-            $rawdata = cfpr_promise_list_by_bundle($username,$bundle_type,$bundle);
+            $rawdata = cfpr_promise_list_by_bundle($username,$bundle_type,$bundle,$resultPerPage,$page);
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {
@@ -168,12 +168,12 @@ class promise_model extends Cf_Model {
      * @param string $bundle
      * @return array
      */
-    function getPromiseListByBundleRx($username, $bundle)
+    function getPromiseListByBundleRx($username,$bundleType,$bundle,$resultPerPage=0,$page=0)
     {
 
         try
         {
-            $rawdata = cfpr_promise_list_by_bundle_rx($username, $bundle);
+            $rawdata = cfpr_promise_list_by_bundle_rx($username,$bundleType,$bundle,$resultPerPage,$page);
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {
@@ -197,11 +197,11 @@ class promise_model extends Cf_Model {
      * @param string $handle
      * @return array
      */
-    function getPromiseListByHandleRx($username, $handle = '.*')
+    function getPromiseListByHandleRx($username, $handle = '.*',$resultPerPage=0,$page=0)
     {
         try
         {
-            $rawdata = cfpr_promise_list_by_handle_rx($username, $handle);
+            $rawdata = cfpr_promise_list_by_handle_rx($username, $handle,$resultPerPage,$page);
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {
@@ -225,11 +225,11 @@ class promise_model extends Cf_Model {
      * @param string $promiser
      * @return array
      */
-    function getPromiseListByPromiserRx($username, $promiser = null)
+    function getPromiseListByPromiserRx($username, $promiser = null,$resultPerPage=0,$page=0)
     {
         try
         {
-            $rawdata =  cfpr_promise_list_by_promiser_rx($username, $promiser);
+            $rawdata =  cfpr_promise_list_by_promiser_rx($username, $promiser,$resultPerPage,$page);
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {

@@ -1,5 +1,4 @@
 <?php
-
 class Widget extends Cf_Controller
 {
 
@@ -305,18 +304,15 @@ class Widget extends Cf_Controller
         try
         {
            
-            $returnedData = $this->promise_model->getPromiseListByHandleRx($this->session->userdata('username'), NULL);
+            $returnedData = $this->promise_model->getPromiseListByHandleRx($this->session->userdata('username'), NULL,50,$page);
             $showButton = $this->input->post('showButton');
             $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
             $viewdata = array(
                 'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
-                'breadcrumbs' => $this->breadcrumblist->display(),
                 'showButton' => $showButton,
                 'showOnlyHandle' => $showOnlyHandle
             );
-            $chunkSize = 100;
-            $startOffset = ($page - 1) * $chunkSize;
-            $returnedData = array_slice($returnedData, $startOffset, $chunkSize);
+          
 
             $viewdata['viewdata'] = $returnedData;
            
@@ -335,7 +331,6 @@ class Widget extends Cf_Controller
         $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
         $viewdata = array(
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
-            'breadcrumbs' => $this->breadcrumblist->display(),
             'showButton' => $showButton,
             'showOnlyHandle' => $showOnlyHandle
         );
@@ -344,12 +339,7 @@ class Widget extends Cf_Controller
 
         try
         {
-            $returnedData = $this->promise_model->getPromiseListByHandleRx($this->session->userdata('username'), $handle);
-
-            $chunkSize = 100;
-            $startOffset = ($page - 1) * $chunkSize;
-            $returnedData = array_slice($returnedData, $startOffset, $chunkSize);
-
+            $returnedData = $this->promise_model->getPromiseListByHandleRx($this->session->userdata('username'), $handle,50,$page);
             $viewdata['viewdata'] = $returnedData;
             $this->load->view('widgets/allpolicies', $viewdata);
         }
@@ -366,7 +356,6 @@ class Widget extends Cf_Controller
         $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
         $viewdata = array(
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
-            'breadcrumbs' => $this->breadcrumblist->display(),
             'showButton' => $showButton,
             'showOnlyHandle' => $showOnlyHandle
         );
@@ -375,11 +364,8 @@ class Widget extends Cf_Controller
         $bundle = ($bundle) ? $bundle . '.*' : NULL;
         try
         {
-            $data = $this->promise_model->getPromiseListByBundleRx($this->session->userdata('username'), $bundle);
-            $chunkSize = 100;
-            $startOffset = ($page - 1) * $chunkSize;
-            $returnedData = array_slice($data, $startOffset, $chunkSize);
-            $viewdata['viewdata'] = $returnedData;
+            $data = $this->promise_model->getPromiseListByBundleRx($this->session->userdata('username'),'.*', $bundle,50,$page);
+            $viewdata['viewdata'] = $data;
             $this->load->view('widgets/allpolicies', $viewdata);
         }
         catch (Exception $e)
@@ -388,7 +374,7 @@ class Widget extends Cf_Controller
         }
     }
 
-    function search_by_type($page = 1)
+    function search_by_bundle_type($page = 1)
     {
         $val = $this->input->post('filter');
         $type = $this->input->post('type');
@@ -396,7 +382,6 @@ class Widget extends Cf_Controller
         $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
         $viewdata = array(
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
-            'breadcrumbs' => $this->breadcrumblist->display(),
             'showButton' => $showButton,
             'showOnlyHandle' => $showOnlyHandle
         );
@@ -404,32 +389,9 @@ class Widget extends Cf_Controller
 
         try
         {
-            $promises = $this->promise_model->getPromiseListByBundleRx($this->session->userdata('username'), null);
-
-            $returnedData = array();
-
-            if ($type != "" && $val)
-            {
-                $reg = '/' . $val . '/';
-
-                foreach ($promises as $promise)
-                {
-                    // only check for type field
-                    if (preg_match($reg, $promise[3]))
-                    {
-                        $returnedData[] = $promise;
-                    }
-                }
-            }
-            else
-            {
-                $returnedData = array_msort($promises, array('3' => SORT_ASC), true);
-            }
-
-            $chunkSize = 100;
-            $startOffset = ($page - 1) * $chunkSize;
-            $returnedData = array_slice($returnedData, $startOffset, $chunkSize);
-            $viewdata['viewdata'] = $returnedData;
+            $val = ($val) ? $val . '.*' : ".*";
+            $promises = $this->promise_model->getPromiseListByBundleRx($this->session->userdata('username'),$val,null,100,$page);
+            $viewdata['viewdata'] = $promises;
             $this->load->view('widgets/allpolicies', $viewdata);
         }
         catch (Exception $e)
@@ -445,19 +407,13 @@ class Widget extends Cf_Controller
         $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
         $viewdata = array(
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
-            'breadcrumbs' => $this->breadcrumblist->display(),
             'showButton' => $showButton,
             'showOnlyHandle' => $showOnlyHandle
         );
         try
         {
             $promiser = ($promiser) ? $promiser . '.*' : null;
-            $returnedData = $this->promise_model->getPromiseListByPromiserRx($this->session->userdata('username'), $promiser);
-
-            $chunkSize = 100;
-            $startOffset = ($page - 1) * $chunkSize;
-            $returnedData = array_slice($returnedData, $startOffset, $chunkSize);
-
+            $returnedData = $this->promise_model->getPromiseListByPromiserRx($this->session->userdata('username'), $promiser,100,$page);
             $viewdata['viewdata'] = $returnedData;
             $this->load->view('widgets/allpolicies', $viewdata);
         }
