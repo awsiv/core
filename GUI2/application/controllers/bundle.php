@@ -9,35 +9,6 @@ class Bundle extends Cf_Controller
         $this->load->model(array('promise_model', 'bundle_model', 'report_model'));
     }
 
-    function index()
-    {
-        $this->blist();
-    }
-
-    function blist($key = NULL)
-    {
-        $hostkey = $key;
-        $name = ".*";
-        $regex = 1;
-        $hash = NULL;
-        $host = NULL;
-        $addr = NULL;
-        $tago = 0;
-        $bc = array(
-            'title' => $this->lang->line('breadcrumb_bundle'),
-            'url' => 'bundle',
-            'isRoot' => false
-        );
-        $this->breadcrumb->setBreadCrumb($bc);
-        $username = $this->session->userdata('username');
-        $data = array(
-            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_bundle'),
-            'bundle_list' => $this->report_model->getBundleReport($username, $hostkey, $name, array(), array(), 0, 0),
-            'breadcrumbs' => $this->breadcrumblist->display()
-        );
-        $this->template->load('template', 'bundle/bundle_list', $data);
-    }
-
     function details()
     {
         $this->carabiner->css('tabs-custom.css');
