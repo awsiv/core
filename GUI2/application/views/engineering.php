@@ -13,7 +13,7 @@
                 <li><a href="#tab-2">Reports</a></li>
             </ul>
             <div id="tab-1" class="engineeringStatusContainer">
-                <div id="astrolabeLocation"></div>
+                <div class="astrolabeLocation"></div>
 
                 <div id="hostsComplianceTimeseriesContainer" class="hostsComplianceTimeseriesContainer">
                     <span id="hostsComplianceTimeseriesLoader" class="loading"></span>
@@ -38,6 +38,7 @@
                 <div class="clear"></div>
             </div>
             <div id="tab-2">
+                    <div class="astrolabeLocation"></div>
                 <div id="reportInfoContainer" class="reportInfoContainer">
                     <div class="clear"></div>
                 </div>
@@ -64,7 +65,7 @@
         $('#hostsCompliance').hostsCompliance(genericOption);
         $('#hostsConnectivity').hostsConnectivity(genericOption);
         $('#hostInfo').hostInfo(genericOption);
-        $('#astrolabeLocation').astrolabeLocation(genericOption);
+        $('.astrolabeLocation').astrolabeLocation(genericOption);
         $('#hostsComplianceTimeseries').hostsComplianceTimeseries();
         $('#reportInfoContainer').reportUI(genericOption);
 
@@ -81,7 +82,7 @@
                 $('#hostsComplianceTimeseries').hostsComplianceTimeseries('setHost',
                     args.hostKey);
 
-                $('#astrolabeLocation').astrolabeLocation('setHostName', args.hostName);
+                $('.astrolabeLocation').astrolabeLocation('setHostName', args.hostName);
                 $('#reportInfoContainer').reportUI('setHostContext',args.hostKey);
             },
 
@@ -96,7 +97,7 @@
 
                 $('#hostsConnectivity').hostsConnectivity('setContext', args.includes, []);
 
-                $('#astrolabeLocation').astrolabeLocation('setContextPath', args.path, args.count);
+                $('.astrolabeLocation').astrolabeLocation('setContextPath', args.path, args.count);
 
                 $('#reportInfoContainer').reportUI('setContext',args.includes, args.excludes)
             }
