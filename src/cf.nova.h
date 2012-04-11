@@ -746,16 +746,6 @@ int Nova_ReadHistogram2(mongo_connection *conn, DataView *cfv, char *hostkey, ch
 Item *Nova_MapHistogram(DataView *cfv, char *keyhash);
 void Nova_AnalyseHistogram(char *keyhash, enum observables obs, char *buffer, int bufsize);
 
-/* hub.c */
-
-Item *Nova_ScanClients(void);
-void Nova_CountMonitoredClasses(void);
-void Nova_CacheTotalCompliance(bool allSlots);
-void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, char *envClass, int slot, time_t start,
-                                  time_t now);
-int Nova_ShiftChange(void);
-void Nova_UpdateMongoHostList(Item **list);
-
 /* install.c */
 
 HubQuery *NewHubQuery(Rlist *hosts, Rlist *records);

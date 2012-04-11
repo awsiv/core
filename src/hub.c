@@ -50,9 +50,14 @@ static void SplayLongUpdates(void);
 static void ScheduleRunMaintenanceJobs(void);
 static pid_t Nova_Maintain(pid_t maintainer_pid);
 static bool IsMaintainerProcRunning(pid_t maintainer_pid);
-
+static void Nova_UpdateMongoHostList(Item **list);
 static void Nova_CreateHostID(mongo_connection *dbconnp, char *hostID, char *ipaddr);
 static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer, Attributes a, Promise *pp);
+static void Nova_CacheTotalCompliance(bool allSlots);
+static Item *Nova_ScanClients();
+static void Nova_CountMonitoredClasses();
+static void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, char *envClass, int slot,
+                                         time_t start, time_t now);
 
 /*******************************************************************/
 /* Command line options                                            */
@@ -515,7 +520,7 @@ static int ScheduleRun()
 
 /*****************************************************************************/
 
-void Nova_UpdateMongoHostList(Item **list)
+static void Nova_UpdateMongoHostList(Item **list)
 {
     Item *ip = NULL, *lastseen = NULL, *ip2 = NULL, *new_lastseen = NULL;
     Item *deleted_hosts = NULL;
@@ -993,7 +998,7 @@ static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer, Att
 
 /*********************************************************************/
 
-void Nova_CacheTotalCompliance(bool allSlots)
+static void Nova_CacheTotalCompliance(bool allSlots)
 /*
  * Caches the current slot of total compliance.
  * WARNING: Must be run every 6 hrs (otherwise no data is show in the
@@ -1057,8 +1062,8 @@ void Nova_CacheTotalCompliance(bool allSlots)
 
 /*********************************************************************/
 
-void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, char *envClass, int slot, time_t start,
-                                  time_t now)
+static void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, char *envClass, int slot,
+                                         time_t start, time_t now)
 {
     HubQuery *hq;
     HubTotalCompliance *ht;
@@ -1108,7 +1113,7 @@ void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, char *e
 
 /*********************************************************************/
 
-void Nova_CountMonitoredClasses()
+static void Nova_CountMonitoredClasses()
 {
     char work[CF_BUFSIZE];
     HubQuery *hq;
@@ -1155,7 +1160,7 @@ void Nova_CountMonitoredClasses()
 /* Hub control                                                       */
 /*********************************************************************/
 
-Item *Nova_ScanClients()
+static Item *Nova_ScanClients()
 {
     CF_DB *dbp;
     CF_DBC *dbcp;
