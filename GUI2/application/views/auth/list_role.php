@@ -1,7 +1,7 @@
 <?php
 if (!empty($roles))
 { ?>
-    
+    <div id="formInfoMessage"><?php echo $message; ?></div>
   <table cellpadding=0 cellspacing=10>
         <tr>
                 <th>Name</th>
