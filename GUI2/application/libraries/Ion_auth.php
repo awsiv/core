@@ -294,12 +294,12 @@ class Ion_auth
 
 			if ($this->ci->email->send())
 			{
-				$this->set_message('password_change_successful');
+				$this->set_message('forgot_password_successful');
 				return TRUE;
 			}
 			else
 			{
-				$this->set_error('password_change_unsuccessful');
+				$this->set_error('forgot_password_unsuccessful');
 				return FALSE;
 			}
 		}
