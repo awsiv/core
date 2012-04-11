@@ -17,7 +17,7 @@ class test_finder_libraries extends CodeIgniterUnitTestCase {
     }
 
     public function cfpr_promise_list_by_promiser_rx() {
-        $data = cfpr_promise_list_by_promiser_rx($this->username, NULL);
+        $data = cfpr_promise_list_by_promiser_rx($this->username, NULL,0,0);
         $array = json_decode(utf8_encode($data), true);
         $retValue = json_last_error();
         $this->assertTrue(is_array($array), "Should Return a valid array");
@@ -27,7 +27,7 @@ class test_finder_libraries extends CodeIgniterUnitTestCase {
     }
 
      public function test_cfpr_promise_list_by_promiser_rx_using_somevalue() {
-        $data = cfpr_promise_list_by_promiser_rx($this->username, 'dir');
+        $data = cfpr_promise_list_by_promiser_rx($this->username, 'dir',0,0);
         $array = json_decode(utf8_encode($data), true);
         $retValue = json_last_error();
         $this->assertTrue(is_array($array), "Should Return a valid array");
@@ -37,7 +37,7 @@ class test_finder_libraries extends CodeIgniterUnitTestCase {
     }
 
     public function test_cfpr_promise_list_by_promiser_rx_using_regx() {
-        $data = cfpr_promise_list_by_promiser_rx($this->username, '^D');
+        $data = cfpr_promise_list_by_promiser_rx($this->username, '^D',0,0);
         $array = json_decode(utf8_encode($data), true);
         $retValue = json_last_error();
         $this->assertTrue(is_array($array), "Should Return a valid array");
@@ -47,7 +47,7 @@ class test_finder_libraries extends CodeIgniterUnitTestCase {
     }
     
     public function test_cfpr_promise_list_by_bundle_rx() {
-        $data = cfpr_promise_list_by_bundle_rx($this->username, NULL);
+        $data = cfpr_promise_list_by_bundle_rx($this->username,".*", NULL,0,0);
         $array = json_decode(utf8_encode($data), true);
         $retValue = json_last_error();
         $this->assertTrue(is_array($array), "Should Return a valid array");
@@ -57,7 +57,7 @@ class test_finder_libraries extends CodeIgniterUnitTestCase {
     }
     
      public function test_cfpr_promise_list_by_bundle_rx_usingsomevalue(){
-        $data = cfpr_promise_list_by_bundle_rx($this->username, 'def');
+        $data = cfpr_promise_list_by_bundle_rx($this->username,".*", 'def',0,0);
         $array = json_decode(utf8_encode($data), true);
         $retValue = json_last_error();
         $this->assertTrue(is_array($array), "Should Return a valid array");
@@ -67,7 +67,7 @@ class test_finder_libraries extends CodeIgniterUnitTestCase {
     }
 
     public function test_cfpr_promise_list_by_bundle_rx_using_regex() {
-        $data = cfpr_promise_list_by_bundle_rx($this->username, '^m');
+        $data = cfpr_promise_list_by_bundle_rx($this->username,".*", '^m',0,0);
         $array = json_decode(utf8_encode($data), true);
         $retValue = json_last_error();
         $this->assertTrue(is_array($array), "Should Return a valid array");
@@ -77,7 +77,7 @@ class test_finder_libraries extends CodeIgniterUnitTestCase {
     }
 
     public function test_cfpr_promise_list_by_bundle_rx_using_regex_for_empty_results() {
-        $data = cfpr_promise_list_by_bundle_rx($this->username, '^testetets212dxxxx');
+        $data = cfpr_promise_list_by_bundle_rx($this->username,".*", '^testetets212dxxxx',0,0);
         $array = json_decode(utf8_encode($data), true);
         $retValue = json_last_error();
         $this->assertTrue(is_array($array), "Should Return a valid array");
@@ -87,7 +87,7 @@ class test_finder_libraries extends CodeIgniterUnitTestCase {
     }
 
     public function test_cfpr_promise_list_by_handle_rx() {
-        $data = cfpr_promise_list_by_handle_rx($this->username, NULL);
+        $data = cfpr_promise_list_by_handle_rx($this->username, NULL,0,0);
         $array = json_decode(utf8_encode($data), true);
         $retValue = json_last_error();
         $this->assertTrue(is_array($array), "Should Return a valid array");
@@ -97,7 +97,7 @@ class test_finder_libraries extends CodeIgniterUnitTestCase {
     }
 
     public function test_cfpr_promise_list_by_handle_rx_usingsomevalue() {
-        $data = cfpr_promise_list_by_handle_rx($this->username, 'cfengine');
+        $data = cfpr_promise_list_by_handle_rx($this->username, 'cfengine',0,0);
         $array = json_decode(utf8_encode($data), true);
         $retValue = json_last_error();
         $this->assertTrue(is_array($array), "Should Return a valid array");
@@ -107,7 +107,7 @@ class test_finder_libraries extends CodeIgniterUnitTestCase {
     }
     
     public function test_cfpr_promise_list_by_handle_rx_using_regex() {
-        $data = cfpr_promise_list_by_handle_rx($this->username, '^k');
+        $data = cfpr_promise_list_by_handle_rx($this->username, '^k',0,0);
         $array = json_decode(utf8_encode($data), true);
         $retValue = json_last_error();
         $this->assertTrue(is_array($array), "Should Return a valid array");
