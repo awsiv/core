@@ -3592,8 +3592,13 @@ PHP_FUNCTION(cfpr_promise_list_by_handle_rx)
     char *userName, *handle;
     int user_len, h_len;
     char buffer[CF_WEBBUFFER];
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss", &userName, &user_len, &handle, &h_len) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssll",
+                              &userName, &user_len,
+                              &handle, &h_len,
+                              &(page.resultsPerPage),
+                              &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -3613,7 +3618,7 @@ PHP_FUNCTION(cfpr_promise_list_by_handle_rx)
 
     PromiseFilterAddPromiseBodyRx(filter, fhandle, NULL);
 
-    Nova2PHP_promise_list(filter, buffer, sizeof(buffer));
+    Nova2PHP_promise_list(filter, buffer, sizeof(buffer), &page);
 
     DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 
@@ -3627,8 +3632,13 @@ PHP_FUNCTION(cfpr_promise_list_by_promiser)
     char *userName, *promiser;
     int user_len, pr_len;
     char buffer[CF_WEBBUFFER];
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss", &userName, &user_len, &promiser, &pr_len) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssll",
+                              &userName, &user_len,
+                              &promiser, &pr_len,
+                              &(page.resultsPerPage),
+                              &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -3648,7 +3658,7 @@ PHP_FUNCTION(cfpr_promise_list_by_promiser)
 
     PromiseFilterAddPromiseBody(filter, NULL, fpromiser);
 
-    Nova2PHP_promise_list(filter, buffer, sizeof(buffer));
+    Nova2PHP_promise_list(filter, buffer, sizeof(buffer), &page);
 
     DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 
@@ -3662,8 +3672,13 @@ PHP_FUNCTION(cfpr_promise_list_by_promiser_rx)
     char *userName, *promiser;
     int user_len, pr_len;
     char buffer[CF_WEBBUFFER];
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss", &userName, &user_len, &promiser, &pr_len) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssll",
+                              &userName, &user_len,
+                              &promiser, &pr_len,
+                              &(page.resultsPerPage),
+                              &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -3683,7 +3698,7 @@ PHP_FUNCTION(cfpr_promise_list_by_promiser_rx)
 
     PromiseFilterAddPromiseBodyRx(filter, NULL, fpromiser);
 
-    Nova2PHP_promise_list(filter, buffer, sizeof(buffer));
+    Nova2PHP_promise_list(filter, buffer, sizeof(buffer), &page);
 
     DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 
@@ -3697,8 +3712,13 @@ PHP_FUNCTION(cfpr_promise_list_by_promise_type)
     char *userName, *promiseType;
     int user_len, pt_len;
     char buffer[CF_WEBBUFFER];
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss", &userName, &user_len, &promiseType, &pt_len) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssll",
+                              &userName, &user_len,
+                              &promiseType, &pt_len,
+                              &(page.resultsPerPage),
+                              &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -3716,7 +3736,7 @@ PHP_FUNCTION(cfpr_promise_list_by_promise_type)
 
     PromiseFilterAddPromiseType(filter, promiseType);
 
-    Nova2PHP_promise_list(filter, buffer, sizeof(buffer));
+    Nova2PHP_promise_list(filter, buffer, sizeof(buffer), &page);
 
     DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 
@@ -3730,9 +3750,14 @@ PHP_FUNCTION(cfpr_promise_list_by_bundle)
     char *userName, *bundleType, *bundleName;
     int user_len, btype_len, bname_len;
     char buffer[CF_WEBBUFFER];
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sss",
-                              &userName, &user_len, &bundleType, &btype_len, &bundleName, &bname_len) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssll",
+                              &userName, &user_len,
+                              &bundleType, &btype_len,
+                              &bundleName, &bname_len,
+                              &(page.resultsPerPage),
+                              &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -3750,7 +3775,7 @@ PHP_FUNCTION(cfpr_promise_list_by_bundle)
     PromiseFilterAddBundles(filter, bundleName, NULL);
 
     buffer[0] = '\0';
-    Nova2PHP_promise_list(filter, buffer, sizeof(buffer));
+    Nova2PHP_promise_list(filter, buffer, sizeof(buffer), &page);
 
     DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 
@@ -3764,8 +3789,13 @@ PHP_FUNCTION(cfpr_promise_list_by_bundle_rx)
     char *userName, *bundle;
     int user_len, b_len;
     char buffer[CF_WEBBUFFER];
+    PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss", &userName, &user_len, &bundle, &b_len) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssll",
+                              &userName, &user_len,
+                              &bundle, &b_len,
+                              &(page.resultsPerPage),
+                              &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -3785,7 +3815,7 @@ PHP_FUNCTION(cfpr_promise_list_by_bundle_rx)
 
     PromiseFilterAddBundlesRx(filter, fbundle, NULL);
 
-    Nova2PHP_promise_list(filter, buffer, sizeof(buffer));
+    Nova2PHP_promise_list(filter, buffer, sizeof(buffer), &page);
 
     DeleteHubQuery(hqPromiseFilter, DeletePromiseFilter);
 

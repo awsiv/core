@@ -4740,7 +4740,7 @@ int Nova2PHP_community_version(char *buf, int bufsize)
 
 /*****************************************************************************/
 
-int Nova2PHP_promise_list(PromiseFilter *promiseFilter, char *returnval, int bufsize)
+int Nova2PHP_promise_list(PromiseFilter *promiseFilter, char *returnval, int bufsize, PageInfo *page)
 {
 # ifndef NDEBUG
     if (IsEnvMissionPortalTesting())
@@ -4765,33 +4765,56 @@ int Nova2PHP_promise_list(PromiseFilter *promiseFilter, char *returnval, int buf
 
     hq = CFDB_QueryPromises(&dbconn, promiseFilter);
 
-    if (hq)
+    CFDB_Close(&dbconn);
+
+    if (!hq)
     {
-        StartJoin(returnval, "[", bufsize);
-        for (rp = hq->records; rp != NULL; rp = rp->next)
-        {
-            hp = (HubPromise *) rp->item;
-            snprintf(work, sizeof(work), "[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"],",
-                     (char *) hp->handle,
-                     (char *) hp->promiseType,
-                     (char *) hp->bundleName,
-                     (char *) hp->bundleType, (char *) EscapeJson(hp->promiser, promiserJson, sizeof(promiserJson)));
-            Join(returnval, work, bufsize);
-        }
-
-        CFDB_Close(&dbconn);
-
-        ReplaceTrailingChar(returnval, ',', '\0');
-        EndJoin(returnval, "]", bufsize);
-
-        DeleteHubQuery(hq, DeleteHubPromise);
-        return true;
-    }
-    else                        // no result
-    {
-        CFDB_Close(&dbconn);
+        // no results
+        snprintf(returnval, sizeof(returnval),"{\"meta\":{\"count\" : 0},\"data\":[]}");
         return false;
     }
+
+    PageRecords(&(hq->records), page, DeleteHubPromise);
+
+    char header[CF_MAXVARSIZE] = { 0 };
+    snprintf(header, sizeof(header), "\"meta\":{\"count\" : %d}", page->totalResultCount);
+
+    int headerLen = strlen(header);
+    int noticeLen = strlen(CF_NOTICE_TRUNCATED);
+    bool truncated = false;
+
+    StartJoin(returnval, "{\"data\":[", bufsize);
+
+    for (rp = hq->records; rp != NULL; rp = rp->next)
+    {
+        hp = (HubPromise *) rp->item;
+        snprintf(work, sizeof(work), "[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"],",
+                 (char *) hp->handle,
+                 (char *) hp->promiseType,
+                 (char *) hp->bundleName,
+                 (char *) hp->bundleType, (char *) EscapeJson(hp->promiser, promiserJson, sizeof(promiserJson)));
+
+        int margin = headerLen + noticeLen + strlen(work);
+
+        if (!JoinMargin(returnval, work, NULL, bufsize, margin))
+        {
+            truncated = true;
+            break;
+        }
+    }
+
+
+    ReplaceTrailingChar(returnval, ',', '\0');
+    EndJoin(returnval, "]", bufsize);
+
+    Nova_AddReportHeader(header, truncated, work, sizeof(work) - 1);
+
+    Join(returnval, work, bufsize);
+    EndJoin(returnval, "}\n", bufsize);
+
+    DeleteHubQuery(hq, DeleteHubPromise);
+
+    return true;
 }
 
 /*****************************************************************************/
