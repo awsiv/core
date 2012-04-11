@@ -121,7 +121,7 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
     int c;
     GenericAgentConfig config = GenericAgentDefaultConfig(cf_hub);
 
-    while ((c = getopt_long(argc, argv, "cd:vKf:VhFlMaisn", OPTIONS, &optindex)) != EOF)
+    while ((c = getopt_long(argc, argv, "cdvKf:VhFlMaisn", OPTIONS, &optindex)) != EOF)
     {
         switch ((char) c)
         {
