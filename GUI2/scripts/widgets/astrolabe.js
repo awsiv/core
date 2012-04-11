@@ -130,7 +130,6 @@
 
             if ($node === null || $node === undefined)
                 return;
-
             if (self._isNodeExpanded($node)) {
                 if (expanded === false) {
                     $node.removeClass('expanded');
@@ -202,23 +201,26 @@
 
             var $nodeItem = $('<li>');
             $nodeItem.addClass('node');
-
             $nodeItem.attr('label', label);
             $nodeItem.attr('class-regex', classRegex);
 
-            var $iconElement = $('<div>');
+            var $wrapperElement=$('<div>').addClass('showqtip').data({my:'right center', at:'left center'});
+            $wrapperElement.attr('title', classRegex);
+            $nodeItem.append($wrapperElement);
+            
+            var $iconElement = $('<span>');
             $iconElement.addClass('nodeIcon');
             $iconElement.click(function(event) {
                 $self._onClickNodeIcon($self, $nodeItem, event);
             });
-            $nodeItem.append($iconElement);
+            $wrapperElement.append($iconElement);
 
             var $nodeHeader = $('<div>');
             $nodeHeader.addClass('nodeHeader');
-            $nodeItem.append($nodeHeader);
+            $wrapperElement.append($nodeHeader);
 
             var $labelElement = $('<span>');
-            $labelElement.addClass('nodeLabel');
+            $labelElement.addClass('nodeLabel')
             $labelElement.html(label);
             $labelElement.click(function(event) {
                 $self._onClickNodeLabel($self, $nodeItem, event);
@@ -256,8 +258,9 @@
             $busyIcon.html('&nbsp;');
             $busyIcon.hide();
             $nodeItem.append($busyIcon);
-
             var $childrenList = $self._createContainer(children);
+            
+            
             $childrenList.hide();
             $nodeItem.append($childrenList);
 
