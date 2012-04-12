@@ -3,6 +3,24 @@
 #include "scorecards.h"
 
 #ifdef HAVE_LIBMONGOC
+static void test_host_compliance_score(void **state)
+{
+    int score = HostComplianceScore(100, 0);
+    assert_int_equal(HostColourFromScoreForConnectedHost(score), HOST_COLOUR_GREEN);
+
+    score = HostComplianceScore(81, 19);
+    assert_int_equal(HostColourFromScoreForConnectedHost(score), HOST_COLOUR_GREEN);
+
+    score = HostComplianceScore(79, 21);
+    assert_int_equal(HostColourFromScoreForConnectedHost(score), HOST_COLOUR_YELLOW);
+
+    score = HostComplianceScore(60, 19);
+    assert_int_equal(HostColourFromScoreForConnectedHost(score), HOST_COLOUR_RED);
+
+    score = HostComplianceScore(79, 0);
+    assert_int_equal(HostColourFromScoreForConnectedHost(score), HOST_COLOUR_RED);
+}
+
 static void test_colour_from_score(void **state)
 {
     assert_int_equal(HOST_COLOUR_BLUE, HostColourFromScore(10, 7, 2, 500, false));
@@ -28,6 +46,7 @@ int main()
     const UnitTest tests[] =
     {
 #ifdef HAVE_LIBMONGOC
+        unit_test(test_host_compliance_score),
         unit_test(test_colour_from_score),
         unit_test(test_colour_from_score_for_connected_host)
 #endif

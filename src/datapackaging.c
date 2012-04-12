@@ -17,6 +17,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 #include "lastseen.h"
+#include "granules.h"
 
 /* For sorting */
 typedef struct

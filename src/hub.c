@@ -12,6 +12,7 @@
 #include "db_query.h"
 #include "db_maintain.h"
 #include "lastseen.h"
+#include "granules.h"
 
 /*******************************************************************/
 

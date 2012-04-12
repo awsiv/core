@@ -27,9 +27,9 @@
                 xaxis: {
                     show: true,
                     color: common.colours.white,
-                    mode: 'time',
-                    timeformat: '%b-%d',
-                    minTickSize: [1, 'day']
+                    mode: 'time'
+                    //timeformat: '%b-%d',
+                    //minTickSize: [1, 'day']
                 },
                 yaxis: {
                     show: true,
@@ -75,7 +75,6 @@
             $self._plot = null;
             $self._previousPoint = null;
             $self._sampleCounts = null;
-            $self._hostCounts = null;
 
             $self._$graph.bind('plothover', function(event, pos, item) {
                 $('#x').text(pos.x.toFixed(2));
@@ -90,25 +89,16 @@
                         var start = item.datapoint[0];
                         var end = start + $self._resolution;
 
-                        var kept = $self._plot.getData()[0].data[item.dataIndex][1];
-                        var repaired = $self._plot.getData()[1].data[item.dataIndex][1];
-                        var notkept = $self._plot.getData()[2].data[item.dataIndex][1];
-
-                        var hostCount = $self._hostCounts[item.dataIndex];
-                        var sampleCount = $self._sampleCounts[item.dataIndex];
-
-                        var percentageKept = ((kept * 100) / hostCount).toFixed(2);
-                        var percentageRepaired = ((repaired * 100) / hostCount).toFixed(2);
-                        var percentageNotKept = ((notkept * 100) / hostCount).toFixed(2);
+                        var green = $self._plot.getData()[0].data[item.dataIndex][1];
+                        var yellow = $self._plot.getData()[1].data[item.dataIndex][1];
+                        var red = $self._plot.getData()[2].data[item.dataIndex][1];
 
                         $self._showTooltip(item.pageX, item.pageY,
                             'Interval: ' + common.time.formatTimeOfDay(start) + ' to ' +
                                 common.time.formatTimeOfDay(end) + '<br/>' +
-                            'Promises Kept: ' + percentageKept + '%<br/>' +
-                            'Promises Repaired: ' + percentageRepaired + '%<br/>' +
-                            'Promises Not Kept: ' + percentageNotKept + '%<br/>' +
-                            'Number of Measurements: ' + sampleCount + '<br/>' +
-                            'Number of Reporting Hosts: ' + hostCount + '<br/>');
+                            'Green Hosts: ' + green + '<br/>' +
+                            'Yellow Hosts: ' + yellow + '<br/>' +
+                            'Red Hosts: ' + red + '<br/>');
                     }
                 }
                 else {
@@ -148,11 +138,9 @@
                 dataType: 'json',
 
                 success: function(timeseries) {
-                    var kept = common.arrayWithValue(0, timeseries.count);
-                    var notkept = common.arrayWithValue(0, timeseries.count);
-                    var repaired = common.arrayWithValue(0, timeseries.count);
-                    $self._sampleCounts = common.arrayWithValue(0, timeseries.count);
-                    $self._hostCounts = common.arrayWithValue(0, timeseries.count);
+                    var green = common.arrayWithValue(0, timeseries.count);
+                    var red = common.arrayWithValue(0, timeseries.count);
+                    var yellow = common.arrayWithValue(0, timeseries.count);
                     $self._resolution = common.unixTimeToJavascriptTime(timeseries.resolution);
                     var i = 0;
 
@@ -172,34 +160,32 @@
                     for (i = 0; i < timeseries.data.length; i++) {
                         var entry = timeseries.data[i];
 
-                        kept[entry.position] = (entry.kept / 100) * entry.hostcount;
-                        notkept[entry.position] = (entry.notkept / 100) * entry.hostcount;
-                        repaired[entry.position] = (entry.repaired / 100) * entry.hostcount;
-                        $self._sampleCounts[entry.position] = entry.samplecount;
-                        $self._hostCounts[entry.position] = entry.hostcount;
+                        green[entry.position] = entry.green;
+                        red[entry.position] = entry.red;
+                        yellow[entry.position] = entry.yellow;
                     }
 
-                    kept = convertToTimeDomain(kept);
-                    notkept = convertToTimeDomain(notkept);
-                    repaired = convertToTimeDomain(repaired);
+                    green = convertToTimeDomain(green);
+                    red = convertToTimeDomain(red);
+                    yellow = convertToTimeDomain(yellow);
 
                     $self.options.plot.series.bars.barWidth = $self._resolution -
                         (0.05 * $self._resolution);
 
-                    $self.options.plot.yaxis.max = Math.max.apply(Math, $self._hostCounts);
+                    //$self.options.plot.yaxis.max = Math.max.apply(Math, $self._sampleCounts);
 
                     $self._plot = $.plot($self._$graph, [
                         {
-                            label: 'Promises Kept',
-                            data: kept
+                            label: 'Green Hosts',
+                            data: green
                         },
                         {
-                            label: 'Promises Repaired',
-                            data: repaired
+                            label: 'Yellow Hosts',
+                            data: yellow
                         },
                         {
-                            label: 'Promises Not Kept',
-                            data: notkept
+                            label: 'Red Hosts',
+                            data: red
                         }
                     ], $self.options.plot);
                 },

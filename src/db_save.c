@@ -13,6 +13,9 @@
 #include "cf.nova.h"
 
 #include "db_save.h"
+#include "granules.h"
+
+#include <assert.h>
 
 /*****************************************************************************/
 /* Cache / scratch space                                                     */
@@ -1684,6 +1687,45 @@ void CFDB_SaveValueReport(mongo_connection *conn, char *keyhash, Item *data)
 
 /*****************************************************************************/
 
+void CFDB_SaveTotalComplianceShift(mongo_connection *conn, const char *hostkey, int num_kept, int num_repaired,
+                                   int num_notkept, int num_samples, int shift_slot)
+{
+    assert(shift_slot < SHIFTS_PER_WEEK);
+
+    bson_buffer bb;
+
+    bson cond;
+    bson_buffer_init(&bb);
+    bson_append_string(&bb, cfr_keyhash, hostkey);
+    bson_from_buffer(&cond, &bb);
+
+    bson op;
+    bson_buffer_init(&bb);
+    bson_buffer *set = bson_append_start_object(&bb, "$set");
+    {
+        char slot_key[CF_MAXVARSIZE] = { 0 };
+        snprintf(slot_key, sizeof(slot_key), "%s.%d", cfr_total_compliance_shifts, shift_slot);
+
+        bson_buffer *slot = bson_append_start_object(set, slot_key);
+        {
+            bson_append_int(&bb, cfr_kept, num_kept);
+            bson_append_int(&bb, cfr_repaired, num_repaired);
+            bson_append_int(&bb, cfr_kept, num_notkept);
+            bson_append_int(&bb, cfr_count, num_samples);
+            bson_append_int(&bb, cfr_time, time(NULL));
+        }
+        bson_append_finish_object(slot);
+    }
+    bson_append_finish_object(set);
+    bson_from_buffer(&op, &bb);
+
+    mongo_update(conn, MONGO_DATABASE, &cond, &op, MONGO_UPDATE_UPSERT);
+
+    bson_destroy(&cond);
+    bson_destroy(&op);
+}
+
+// TODO: deprecation candidate
 void CFDB_SaveCachedTotalCompliance(mongo_connection *conn, char *policy, int slot, double kept, double repaired,
                                     double notkept, int count, time_t genTime)
 {

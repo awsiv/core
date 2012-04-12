@@ -380,6 +380,24 @@ void DeleteHubTotalCompliance(HubTotalCompliance *ht)
     free(ht);
 }
 
+HubTotalComplianceShifts *NewHubTotalComplianceShifts(const char *hostkey)
+{
+    HubTotalComplianceShifts *record = xmalloc(sizeof(HubTotalComplianceShifts));
+
+    record->hostkey = SafeStringDuplicate(hostkey);
+
+    return record;
+}
+
+void DeleteHubTotalComplianceShifts(HubTotalComplianceShifts *record)
+{
+    if (record)
+    {
+        free(record->hostkey);
+    }
+    free(record);
+}
+
 /*****************************************************************************/
 
 HubCacheTotalCompliance *NewHubCacheTotalCompliance(char *policy, int slot, int hostCount, int totalHostCount,

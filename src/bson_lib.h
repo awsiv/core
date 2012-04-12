@@ -16,6 +16,7 @@ bool BsonStringGet(const bson *b, const char *key, const char **out);
 bool BsonBoolGet(const bson *b, const char *key, bool *out);
 bool BsonIntGet(const bson *b, const char *key, int *out);
 bool BsonTimeGet(const bson *b, const char *key, time_t *out);
+bool BsonArrayGet(const bson *b, const char *key, const bson **out);
 bool BsonIsArrayNonExistentOrEmpty(const bson *b, const char *key);
 void BsonStringWrite(char *dest, int destSz, const bson *b, const char *key);
 bool BsonAppendStringSafe(bson_buffer *bb, char *key, char *value);

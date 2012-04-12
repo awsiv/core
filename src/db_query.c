@@ -21,7 +21,8 @@
 /*****************************************************************************/
 
 #include "db_query.h"
-#include "db_save.h" // WTF: no!
+#include "db_save.h"
+#include "granules.h"
 
 static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *filter);
 static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFilter *hostClassFilter);

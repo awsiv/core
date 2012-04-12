@@ -94,6 +94,21 @@ bool BsonTimeGet(const bson *b, const char *key, time_t *out)
     }
 }
 
+bool BsonArrayGet(const bson *b, const char *key, const bson **out)
+{
+    bson_iterator it;
+
+    if (bson_find(&it, b, key) == bson_array)
+    {
+        *out = bson_iterator_value(&it);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 /*****************************************************************************/
 bool BsonIsArrayNonExistentOrEmpty(const bson *b, const char *key)
 {

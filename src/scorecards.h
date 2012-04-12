@@ -40,6 +40,7 @@ HostColour HostColourFromString(const char *colour);
 HostColour HostColourFromScoreForConnectedHost(int score);
 HostColour HostColourFromScore(time_t now, time_t last_report, time_t blue_horizon, int score, bool is_black);
 
+int HostComplianceScore(double kept, double repaired);
 int Nova_GetComplianceScore(HostRankMethod method, double *k, double *rep);
 
 // legacy

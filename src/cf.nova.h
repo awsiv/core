@@ -327,6 +327,15 @@ typedef struct
 
 typedef struct
 {
+    char *hostkey;
+    int num_kept[SHIFTS_PER_WEEK];
+    int num_repaired[SHIFTS_PER_WEEK];
+    int num_notkept[SHIFTS_PER_WEEK];
+    int num_samples[SHIFTS_PER_WEEK];
+} HubTotalComplianceShifts;
+
+typedef struct
+{
     HubHost *hh;
     char *scope;
     char *lval;
@@ -768,6 +777,8 @@ HubClassSum *NewHubClassSum(HubHost *hh, char *class, int frequency);
 void DeleteHubClassSum(HubClassSum *hc);
 HubTotalCompliance *NewHubTotalCompliance(HubHost *hh, time_t t, char *v, int k, int r, int n);
 void DeleteHubTotalCompliance(HubTotalCompliance *ht);
+HubTotalComplianceShifts *NewHubTotalComplianceShifts(const char *hostkey);
+void DeleteHubTotalComplianceShifts(HubTotalComplianceShifts *record);
 HubVariable *NewHubVariable(HubHost *hh, char *type, char *scope, char *lval, Rval rval, time_t t);
 void DeleteHubVariable(HubVariable *hv);
 HubPromiseLog *NewHubPromiseLog(HubHost *hh, char *handle, char *cause, time_t t, char *noteId, char *oid);
@@ -1357,6 +1368,7 @@ typedef struct
 #define cfr_class_keys   "ck"
 #define cfr_class_jobs   "cj"
 #define cfr_total_compliance "tc"
+#define cfr_total_compliance_shifts "tcShifts"
 #define cfr_time          "t"
 #define cfr_version       "v"
 #define cfr_name          "n"
@@ -1406,6 +1418,7 @@ typedef struct
 #define cfr_is_black      "bh"
 #define cfr_last_execution "lx"
 #define cfr_last_update_size "us"
+#define cfr_count "cn"
 
 #define cfr_netmeasure    "ne"
 #define cfr_lastseen_hosts "lastseen_hosts"

@@ -6,6 +6,7 @@
 #include "web_rbac.h"
 #include "map.h"
 #include "scorecards.h"
+#include "granules.h"
 
 #define cfr_software     "sw"
 #define cfr_patch_avail  "pa"
@@ -23,7 +24,6 @@ static JsonElement *ParseRolesToJson(HubQuery *hq);
 /******************************************************************************/
 static const char *LABEL_HOST_KEY = "hostkey";
 static const char *LABEL_HOST_NAME = "hostname";
-static const char *LABEL_HOST_COUNT = "hostcount";
 static const char *LABEL_IP = "ip";
 static const char *LABEL_COLOUR = "colour";
 static const char *LABEL_OS_TYPE = "osType";
@@ -32,15 +32,14 @@ static const char *LABEL_RELEASE = "release";
 static const char *LABEL_LAST_REPORT_UPDATE = "lastReportUpdate";
 static const char *LABEL_LAST_POLICY_UPDATE = "lastPolicyUpdate";
 static const char *LABEL_POSITION = "position";
-static const char *LABEL_KEPT = "kept";
-static const char *LABEL_NOTKEPT = "notkept";
-static const char *LABEL_REPAIRED = "repaired";
 static const char *LABEL_TIMESTAMP = "timestamp";
 static const char *LABEL_RESOLUTION = "resolution";
 static const char *LABEL_COUNT = "count";
 static const char *LABEL_FROM = "from";
 static const char *LABEL_DATA = "data";
-static const char *LABEL_SAMPLE_COUNT = "samplecount";
+static const char *LABEL_GREEN = "green";
+static const char *LABEL_RED = "red";
+static const char *LABEL_YELLOW = "yellow";
 
 /******************************************************************************/
 /* API                                                                        */
@@ -3239,148 +3238,125 @@ PHP_FUNCTION(cfpr_host_count)
 
 /******************************************************************************/
 
-typedef struct
+char *StringFromLong(long l)
 {
-    HubHost *host;
-    size_t slot;
-    size_t kept;
-    size_t notkept;
-    size_t repaired;
-    size_t num_samples;
-} TimeseriesHostSlot;
+    char *str;
+    xasprintf(&str, "%ld", l);
+    return str;
+}
 
-static TimeseriesHostSlot *TimeseriesHostSlotNew(HubHost *host, size_t slot)
+char *StringFromTime(time_t time)
 {
-    TimeseriesHostSlot *record = xcalloc(sizeof(TimeseriesHostSlot), 1);
-    record->host = host;
-    record->slot = slot;
+    char *str = xmalloc(64);
+    char timebuf[26];
 
-    return record;
+    snprintf(str, sizeof(str), "%s", cf_strtimestamp_utc(time, timebuf));
+    return str;
 }
 
 PHP_FUNCTION(cfpr_host_compliance_timeseries)
 {
-char *username = NULL;
-zval *contextIncludes = NULL,
-     *contextExcludes = NULL;
-long username_len = -1;
+    char *username = NULL;
+    zval *contextIncludes = NULL,
+         *contextExcludes = NULL;
+    long username_len = -1;
 
-if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "saa",
-                        &username, &username_len,
-                        &contextIncludes,
-                        &contextExcludes) == FAILURE)
-{
-    zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-    RETURN_NULL();
-}
-
-ARGUMENT_CHECK_CONTENTS(username_len);
-
-static const time_t horizon = SECONDS_PER_WEEK * 1;
-static const time_t resolution = SECONDS_PER_DAY / 4;
-const time_t from = time(NULL) - horizon;
-
-HubQuery *result = NULL;
-{
-    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
-    ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
-
-    HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
-    HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
-
-    mongo_connection conn;
-    DATABASE_OPEN(&conn);
-
-    result = CFDB_QueryTotalCompliance(&conn, NULL, NULL, from, time(NULL), -1, -1, -1, false, filter);
-
-    DATABASE_CLOSE(&conn);
-    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
-}
-
-const size_t num_slots = horizon / resolution;
-assert(num_slots > 0);
-
-Map *slots[num_slots];
-for (size_t slot = 0; slot < num_slots; slot++)
-{
-    slots[slot] = MapNew(HubHostHash, HubHostEqual, NULL, free);
-}
-
-for (const Rlist *rp = result->records; rp; rp = rp->next)
-{
-    HubTotalCompliance *record = (HubTotalCompliance *)rp->item;
-    size_t slot = (record->t - from) / resolution;
-    Map *slot_host_records = slots[slot];
-
-    TimeseriesHostSlot *slot_host_record = MapGet(slot_host_records, record->hh);
-    if (!slot_host_record)
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "saa",
+                              &username, &username_len,
+                              &contextIncludes,
+                              &contextExcludes) == FAILURE)
     {
-        slot_host_record = TimeseriesHostSlotNew(record->hh, slot);
-        MapInsert(slot_host_records, record->hh, slot_host_record);
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
     }
 
-    slot_host_record->kept += record->kept;
-    slot_host_record->notkept += record->notkept;
-    slot_host_record->repaired += record->repaired;
-    slot_host_record->num_samples++;
-}
+    ARGUMENT_CHECK_CONTENTS(username_len);
 
-DeleteHubQuery(result, DeleteHubTotalCompliance);
+    static const time_t horizon = SECONDS_PER_HOUR * 6;
+    static const time_t resolution = CF_MEASURE_INTERVAL;
+    const time_t from = MeasurementSlotStart(time(NULL) - horizon);
 
-JsonElement *data = JsonArrayCreate(num_slots);
-for (size_t slot = 0; slot < num_slots; slot++)
-{
-    double kept = 0;
-    double notkept = 0;
-    double repaired = 0;
-    size_t num_samples = 0;
-    size_t num_hosts = 0;
-
+    HubQuery *result = NULL;
     {
-        MapIterator it = MapIteratorInit(slots[slot]);
-        MapKeyValue *map_entry = NULL;
-        while ((map_entry = MapIteratorNext(&it)))
+        HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
+        ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+        HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+        HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
+
+        mongo_connection conn;
+        DATABASE_OPEN(&conn);
+
+        result = CFDB_QueryTotalCompliance(&conn, NULL, NULL, from, time(NULL), -1, -1, -1, false, filter);
+
+        DATABASE_CLOSE(&conn);
+        DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+    }
+
+    const size_t num_slots = horizon / resolution;
+    assert(num_slots > 0);
+
+    size_t green[num_slots]; memset(green, 0, sizeof(size_t) * num_slots);
+    size_t red[num_slots]; memset(red, 0, sizeof(size_t) * num_slots);
+    size_t yellow[num_slots]; memset(yellow, 0, sizeof(size_t) * num_slots);
+
+    for (const Rlist *rp = result->records; rp; rp = rp->next)
+    {
+        const HubTotalCompliance *record = (const HubTotalCompliance *)rp->item;
+        size_t slot = (record->t - from) / resolution;
+
+        if (slot < 0 || slot >= num_slots)
         {
-            TimeseriesHostSlot *slot_host_record = map_entry->value;
+            // TODO: log shit
+            continue;
+        }
 
-            if (slot_host_record->num_samples > 0)
-            {
-                kept += (double)slot_host_record->kept / (double)slot_host_record->num_samples;
-                notkept += (double)slot_host_record->notkept / (double)slot_host_record->num_samples;
-                repaired += (double)slot_host_record->repaired / (double)slot_host_record->num_samples;
-            }
+        int score = HostComplianceScore(record->kept, record->repaired);
+        switch (HostColourFromScoreForConnectedHost(score))
+        {
+        case HOST_COLOUR_GREEN:
+            green[slot]++;
+            break;
 
-            num_samples += slot_host_record->num_samples;
-            num_hosts++;
+        case HOST_COLOUR_RED:
+            red[slot]++;
+            break;
+
+        case HOST_COLOUR_YELLOW:
+            yellow[slot]++;
+            break;
+
+        default:
+            // TODO: log shit
+            continue;
         }
     }
 
-    if (num_hosts > 0)
+    DeleteHubQuery(result, DeleteHubTotalCompliance);
+
+    JsonElement *data = JsonArrayCreate(num_slots);
+    for (size_t slot = 0; slot < num_slots; slot++)
     {
         JsonElement *entry = JsonObjectCreate(10);
 
         JsonObjectAppendInteger(entry, LABEL_POSITION, slot);
         JsonObjectAppendInteger(entry, LABEL_TIMESTAMP, from + (resolution * slot));
-        JsonObjectAppendReal(entry, LABEL_KEPT, kept / num_hosts);
-        JsonObjectAppendReal(entry, LABEL_NOTKEPT, notkept / num_hosts);
-        JsonObjectAppendReal(entry, LABEL_REPAIRED, repaired / num_hosts);
-        JsonObjectAppendInteger(entry, LABEL_SAMPLE_COUNT, num_samples);
-        JsonObjectAppendInteger(entry, LABEL_HOST_COUNT, num_hosts);
+        JsonObjectAppendInteger(entry, LABEL_GREEN, green[slot]);
+        JsonObjectAppendInteger(entry, LABEL_RED, red[slot]);
+        JsonObjectAppendInteger(entry, LABEL_YELLOW, yellow[slot]);
 
         JsonArrayAppendObject(data, entry);
     }
 
-    MapDestroy(slots[slot]);
+    JsonElement *output = JsonObjectCreate(4);
+    JsonObjectAppendInteger(output, LABEL_FROM, (int)from);
+    JsonObjectAppendInteger(output, LABEL_RESOLUTION, resolution);
+    JsonObjectAppendInteger(output, LABEL_COUNT, num_slots);
+    JsonObjectAppendArray(output, LABEL_DATA, data);
+
+    RETURN_JSON(output);
 }
 
-JsonElement *output = JsonObjectCreate(4);
-JsonObjectAppendInteger(output, LABEL_FROM, (int)from);
-JsonObjectAppendInteger(output, LABEL_RESOLUTION, resolution);
-JsonObjectAppendInteger(output, LABEL_COUNT, num_slots);
-JsonObjectAppendArray(output, LABEL_DATA, data);
-
-RETURN_JSON(output);
-}
 
 /******************************************************************************/
 

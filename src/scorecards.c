@@ -9,6 +9,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "scorecards.h"
 #include "bson_lib.h"
 #include "string_lib.h"
+#include "granules.h"
 
 #include "db_query.h"
 
@@ -321,6 +322,26 @@ void Nova_Meter(bson *query, char *db, char *buffer, int bufsize)
 }
 
 /*****************************************************************************/
+
+int HostComplianceScore(double kept, double repaired)
+{
+    int result = CF_GREEN;
+    double notkept = 100.0 - kept - repaired;
+
+    if (notkept > 20)
+    {
+        result = CF_RED_THRESHOLD + 100 + notkept;
+    }
+
+    if (repaired > 20)
+    {
+        result = CF_AMBER_THRESHOLD + 100 + repaired;
+    }
+
+    result -= kept;
+
+    return result;
+}
 
 int Nova_GetComplianceScore(HostRankMethod method, double *k, double *r)
 {
