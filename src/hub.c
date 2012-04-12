@@ -30,6 +30,8 @@ static Item *EXCLUDE_HOSTS = NULL;
 
 static bool CFH_ZENOSS = false;
 
+static pid_t MAINTAINER_CHILD_PID = -1;
+
 /*******************************************************************/
 
 static void ThisAgentInit(void);
@@ -49,8 +51,8 @@ static void Nova_SequentialScan(Item *masterlist, Attributes a);
 static void Nova_ParallelizeScan(Item *masterlist, Attributes a);
 static void SplayLongUpdates(void);
 static void ScheduleRunMaintenanceJobs(void);
-static pid_t Nova_Maintain(pid_t maintainer_pid);
-static bool IsMaintainerProcRunning(pid_t maintainer_pid);
+static void Nova_Maintain(void);
+static bool IsProcRunning(pid_t pid);
 static void Nova_UpdateMongoHostList(Item **list);
 static void Nova_CreateHostID(mongo_connection *dbconnp, char *hostID, char *ipaddr);
 static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer, Attributes a);
@@ -631,7 +633,6 @@ static void StartHub(void)
     Promise *pp = NewPromise("hub_cfengine", "the aggregator");
     Attributes a = { {0} };
     CfLock thislock;
-    pid_t maintainer_pid = CF_UNDEFINED;
 
     Banner("Starting hub core");
 
@@ -682,7 +683,7 @@ static void StartHub(void)
             if (!FEDERATION && CFDB_QueryIsMaster())    // FEDERATION is for Constellation Mission Observatory
             {
                 Nova_CollectReports(a);
-                maintainer_pid = Nova_Maintain(maintainer_pid);
+                Nova_Maintain();
             }
 
 #ifdef HAVE_CONSTELLATION
@@ -691,11 +692,6 @@ static void StartHub(void)
                 Constellation_CollectFederatedReports(FEDERATION);
             }
 #endif
-        }
-
-        if (!IsMaintainerProcRunning(maintainer_pid))
-        {
-            maintainer_pid = CF_UNDEFINED;
         }
 
         CfOut(cf_verbose, "", "Sleeping...");
@@ -1279,38 +1275,48 @@ static void Nova_HubLog(const char *fmt, ...)
 
 /*********************************************************************/
 
-static pid_t Nova_Maintain(pid_t maintainer_pid)
+static void Nova_Maintain(void)
 {
-    pid_t child_id = maintainer_pid;;
-
-    if (IsMaintainerProcRunning(child_id))
+    if (MAINTAINER_CHILD_PID != -1)
     {
-        return child_id;
-    }
-
-    if (ShiftChange())
-    {
-        NewClass("am_policy_hub");
-
-        child_id = fork();
-
-        if (child_id == 0)
+        if (IsProcRunning(MAINTAINER_CHILD_PID))
         {
-            ALARM_PID = -1;
-
-            ScheduleRunMaintenanceJobs();
-            _exit(0);
+            return;
         }
         else
         {
-            CfOut(cf_verbose, "", " -> Started new Maintainer process (pid = %d)", child_id);
-
-            Nova_HubLog("-> Started new Maintainer process (pid = %d)\n", child_id);
-            return child_id;
+            MAINTAINER_CHILD_PID = -1;
         }
     }
 
-    return CF_UNDEFINED;        // NO ShiftChange and Maintainer process is NOT running
+    if (!ShiftChange())
+    {
+        return;
+    }
+
+    pid_t pid = fork();
+
+    if (pid == -1)
+    {
+        CfOut(cf_error, "fork", "Unable to start database maintenance process");
+        return;
+    }
+
+    if (pid == 0)
+    {
+        NewClass("am_policy_hub");
+        ALARM_PID = -1;
+
+        ScheduleRunMaintenanceJobs();
+        _exit(0);
+    }
+    else
+    {
+        MAINTAINER_CHILD_PID = pid;
+
+        CfOut(cf_verbose, "", " -> Started new Maintainer process (pid = %d)", pid);
+        Nova_HubLog("-> Started new Maintainer process (pid = %d)\n", pid);
+    }
 }
 
 /*********************************************************************/
@@ -1328,24 +1334,12 @@ static void ScheduleRunMaintenanceJobs(void)
 
 /********************************************************************/
 
-static bool IsMaintainerProcRunning(pid_t maintainer_pid)
+static bool IsProcRunning(pid_t pid)
 {
-    pid_t pid;
-    int status = 0;
-    bool retval = false;
+    bool running = waitpid(pid, NULL, WNOHANG) == 0;
 
-    if (maintainer_pid > 0)
-    {
-        pid = waitpid(maintainer_pid, &status, WNOHANG);
+    Nova_HubLog("Checking if maintainer process %d is running: %s\n", pid,
+                running ? "yes" : "no");
 
-        if (pid == 0)
-        {
-            retval = true;
-        }
-
-        Nova_HubLog("Checking if Maintainer process is running (pid:running(0/1)?) = (%d:%d)\n", maintainer_pid,
-                    retval);
-    }
-
-    return retval;
+    return running;
 }
