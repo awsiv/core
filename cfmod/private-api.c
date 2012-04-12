@@ -3291,7 +3291,7 @@ HubQuery *result = NULL;
     mongo_connection conn;
     DATABASE_OPEN(&conn);
 
-    result = CFDB_QueryTotalCompliance(&conn, NULL, NULL, from, -1, -1, -1, CFDB_GREATERTHANEQ, false, filter);
+    result = CFDB_QueryTotalCompliance(&conn, NULL, NULL, from, time(NULL), -1, -1, -1, false, filter);
 
     DATABASE_CLOSE(&conn);
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
