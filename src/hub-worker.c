@@ -10,9 +10,9 @@
 #include "hub.h"
 
 static void Nova_CreateHostID(mongo_connection *dbconnp, char *hostID, char *ipaddr);
-static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer, Attributes a);
+static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer);
 
-void Nova_SequentialScan(Item *masterlist, Attributes a)
+void Nova_SequentialScan(Item *masterlist)
 {
     mongo_connection dbconn;
     Item *ip;
@@ -24,13 +24,13 @@ void Nova_SequentialScan(Item *masterlist, Attributes a)
 
     for (ip = masterlist; ip != NULL; ip = ip->next)
     {
-        Nova_HailPeer(&dbconn, ip->name, ip->classes, a);
+        Nova_HailPeer(&dbconn, ip->name, ip->classes);
     }
 
     CFDB_Close(&dbconn);
 }
 
-static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer, Attributes a)
+static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer)
 {
     AgentConnection *conn;
     time_t average_time = 600, now = time(NULL);

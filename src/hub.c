@@ -39,14 +39,14 @@ static void ThisAgentInit(void);
 static GenericAgentConfig CheckOpts(int argc, char **argv);
 
 static void StartHub(void);
-static void Nova_CollectReports(Attributes a);
+static void Nova_CollectReports(void);
 static int ScheduleRun(void);
 static void Nova_RemoveExcludedHosts(Item **list, Item *hosts_exclude);
 static void KeepPromises(GenericAgentConfig config);
 
-static void Nova_Scan(Item *masterlist, Attributes a);
-static pid_t Nova_ScanList(Item *list, Attributes a);
-static void Nova_ParallelizeScan(Item *masterlist, Attributes a);
+static void Nova_Scan(Item *masterlist);
+static pid_t Nova_ScanList(Item *list);
+static void Nova_ParallelizeScan(Item *masterlist);
 static void SplayLongUpdates(void);
 static void Nova_UpdateMongoHostList(Item **list);
 static Item *Nova_ScanClients(void);
@@ -662,7 +662,7 @@ static void StartHub(void)
             NewClass("am_policy_hub");
             if (!FEDERATION && CFDB_QueryIsMaster())    // FEDERATION is for Constellation Mission Observatory
             {
-                Nova_CollectReports(a);
+                Nova_CollectReports();
                 Nova_Maintain();
             }
 
@@ -685,11 +685,11 @@ static void StartHub(void)
 /* level                                                            */
 /********************************************************************/
 
-static void Nova_CollectReports(Attributes a)
+static void Nova_CollectReports(void)
 {
     Item *masterhostlist = Nova_ScanClients();
 
-    Nova_Scan(masterhostlist, a);
+    Nova_Scan(masterhostlist);
     DeleteItemList(masterhostlist);
 
     if (CFH_ZENOSS && IsDefinedClass("Min00_05"))
@@ -702,7 +702,7 @@ static void Nova_CollectReports(Attributes a)
 
 /********************************************************************/
 
-static void Nova_Scan(Item *masterlist, Attributes a)
+static void Nova_Scan(Item *masterlist)
 {
     Nova_HubLog("Starting report collection");
     
@@ -710,11 +710,11 @@ static void Nova_Scan(Item *masterlist, Attributes a)
     
     if (NO_FORK)
     {
-        Nova_SequentialScan(masterlist, a);
+        Nova_SequentialScan(masterlist);
     }
     else
     {
-        Nova_ParallelizeScan(masterlist, a);
+        Nova_ParallelizeScan(masterlist);
     }
 
     EndMeasure("ReportCollectAll", measure_start);
@@ -776,7 +776,7 @@ static void DistributeScanTasks(Item *scanhosts, Item **queues, int nqueues)
 
 /********************************************************************/
 
-static void Nova_ParallelizeScan(Item *masterlist, Attributes a)
+static void Nova_ParallelizeScan(Item *masterlist)
 {
 #define SCAN_CHILDREN 50
 
@@ -795,7 +795,7 @@ static void Nova_ParallelizeScan(Item *masterlist, Attributes a)
     {
         if (list[i])
         {
-            pid_t child = Nova_ScanList(list[i], a);
+            pid_t child = Nova_ScanList(list[i]);
 
             children[nchildren++] = child;
             CfOut(cf_verbose, "", "Started new hostscan subprocess, %d/%d, pid %d", nchildren, SCAN_CHILDREN, child);
@@ -831,7 +831,7 @@ static void Nova_ParallelizeScan(Item *masterlist, Attributes a)
 
 /********************************************************************/
 
-static pid_t Nova_ScanList(Item *list, Attributes a)
+static pid_t Nova_ScanList(Item *list)
 {
     Item *ip;
     pid_t child_id;
@@ -853,7 +853,7 @@ static pid_t Nova_ScanList(Item *list, Attributes a)
         // Am child
         ALARM_PID = -1;
 
-        Nova_SequentialScan(list, a);
+        Nova_SequentialScan(list);
 
         exit(0);
     }
