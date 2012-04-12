@@ -627,7 +627,6 @@ static void Nova_RemoveExcludedHosts(Item **listp, Item *hosts_exclude)
 
 static void StartHub(void)
 {
-    int time_to_run = false;
     time_t now = time(NULL);
     Promise *pp = NewPromise("hub_cfengine", "the aggregator");
     Attributes a = { {0} };
@@ -675,9 +674,7 @@ static void StartHub(void)
 
     while (true)
     {
-        time_to_run = ScheduleRun();
-
-        if (time_to_run)
+        if (ScheduleRun())
         {
             CfOut(cf_verbose, "", " -> Wake up");
 
@@ -1186,8 +1183,6 @@ static Item *Nova_ScanClients()
         CfOut(cf_inform, "", " !! Unable to scan last-seen database");
         return NULL;
     }
-
-    /* Walk through the database and print out the key/data pairs. */
 
     while (NextDB(dbp, dbcp, &key, &ksize, &value, &vsize))
     {
