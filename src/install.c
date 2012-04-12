@@ -1253,6 +1253,8 @@ void DeletePromiseFilter(PromiseFilter *filter)
     free(filter->promiserRxInclude);
     free(filter->promiseTypeInclude);
     free(filter->bundleTypeInclude);
+    free(filter->promiseTypeRxInclude);
+    free(filter->bundleTypeRxInclude);
     DeleteRlist(filter->bundleIncludes);
     DeleteRlist(filter->bundleRxIncludes);
     DeleteRlist(filter->bundleExcludes);
