@@ -57,8 +57,8 @@ static void Nova_UpdateMongoHostList(Item **list);
 static void Nova_CreateHostID(mongo_connection *dbconnp, char *hostID, char *ipaddr);
 static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer, Attributes a);
 static void Nova_CacheTotalCompliance(bool allSlots);
-static Item *Nova_ScanClients();
-static void Nova_CountMonitoredClasses();
+static Item *Nova_ScanClients(void);
+static void Nova_CountMonitoredClasses(void);
 static void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, char *envClass, int slot,
                                          time_t start, time_t now);
 
@@ -344,7 +344,7 @@ void KeepPromises(GenericAgentConfig config)
 
 /*****************************************************************************/
 
-void SplayLongUpdates()
+void SplayLongUpdates(void)
 {
     CF_DB *dbp;
     LockData entry, update;
@@ -473,7 +473,7 @@ void SplayLongUpdates()
 /* Level                                                                     */
 /*****************************************************************************/
 
-static int ScheduleRun()
+static int ScheduleRun(void)
 {
     Item *ip;
 
@@ -1110,7 +1110,7 @@ static void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, 
 
 /*********************************************************************/
 
-static void Nova_CountMonitoredClasses()
+static void Nova_CountMonitoredClasses(void)
 {
     char work[CF_BUFSIZE];
     HubQuery *hq;
@@ -1157,7 +1157,7 @@ static void Nova_CountMonitoredClasses()
 /* Hub control                                                       */
 /*********************************************************************/
 
-static Item *Nova_ScanClients()
+static Item *Nova_ScanClients(void)
 {
     CF_DB *dbp;
     CF_DBC *dbcp;
