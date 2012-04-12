@@ -8,11 +8,14 @@
 
 #include "cf.nova.h"
 
-#include "db_save.h"
-#include "db_query.h"
+#include "hub.h"
 #include "db_maintain.h"
+#include "db_query.h"
+#include "db_save.h"
 #include "lastseen.h"
 #include "granules.h"
+#include "hub-maintenance.h"
+#include "hub-worker.h"
 
 /*******************************************************************/
 
@@ -30,14 +33,10 @@ static Item *EXCLUDE_HOSTS = NULL;
 
 static bool CFH_ZENOSS = false;
 
-static pid_t MAINTAINER_CHILD_PID = -1;
-
 /*******************************************************************/
 
 static void ThisAgentInit(void);
 static GenericAgentConfig CheckOpts(int argc, char **argv);
-
-static void Nova_HubLog(const char *s, ...) FUNC_ATTR_FORMAT(printf, 1, 2);
 
 static void StartHub(void);
 static void Nova_CollectReports(Attributes a);
@@ -47,20 +46,11 @@ static void KeepPromises(GenericAgentConfig config);
 
 static void Nova_Scan(Item *masterlist, Attributes a);
 static pid_t Nova_ScanList(Item *list, Attributes a);
-static void Nova_SequentialScan(Item *masterlist, Attributes a);
 static void Nova_ParallelizeScan(Item *masterlist, Attributes a);
 static void SplayLongUpdates(void);
-static void ScheduleRunMaintenanceJobs(void);
-static void Nova_Maintain(void);
-static bool IsProcRunning(pid_t pid);
 static void Nova_UpdateMongoHostList(Item **list);
-static void Nova_CreateHostID(mongo_connection *dbconnp, char *hostID, char *ipaddr);
-static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer, Attributes a);
-static void Nova_CacheTotalCompliance(bool allSlots);
 static Item *Nova_ScanClients(void);
 static void Nova_CountMonitoredClasses(void);
-static void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, char *envClass, int slot,
-                                         time_t start, time_t now);
 
 /*******************************************************************/
 /* Command line options                                            */
@@ -594,16 +584,6 @@ static void Nova_UpdateMongoHostList(Item **list)
 
 /*****************************************************************************/
 
-/* Make sure an entry for the given keyhash,ip exists */
-
-static void Nova_CreateHostID(mongo_connection *dbconn, char *hostID, char *ipaddr)
-{
-    CFDB_SaveHostID(dbconn, MONGO_DATABASE, cfr_keyhash, hostID, ipaddr, NULL);
-    CFDB_SaveHostID(dbconn, MONGO_ARCHIVE, cfr_keyhash, hostID, ipaddr, NULL);
-}
-
-/*****************************************************************************/
-
 static void Nova_RemoveExcludedHosts(Item **listp, Item *hosts_exclude)
 {
     Item *ip;
@@ -744,26 +724,6 @@ static void Nova_Scan(Item *masterlist, Attributes a)
 
 /********************************************************************/
 
-static void Nova_SequentialScan(Item *masterlist, Attributes a)
-{
-    mongo_connection dbconn;
-    Item *ip;
-
-    if (!CFDB_Open(&dbconn))
-    {
-        return;
-    }
-
-    for (ip = masterlist; ip != NULL; ip = ip->next)
-    {
-        Nova_HailPeer(&dbconn, ip->name, ip->classes, a);
-    }
-
-    CFDB_Close(&dbconn);
-}
-
-/********************************************************************/
-
 static bool RemoveFinishedPid(pid_t finished, pid_t *children, int *nchildren)
 {
     int i;
@@ -895,217 +855,12 @@ static pid_t Nova_ScanList(Item *list, Attributes a)
 
         Nova_SequentialScan(list, a);
 
-        exit(0);                // Should be _exit(0)? MB
+        exit(0);
     }
     else
     {
         return child_id;
     }
-}
-
-/********************************************************************/
-
-static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer, Attributes a)
-{
-    AgentConnection *conn;
-    time_t average_time = 600, now = time(NULL);
-    int long_time_no_see = false;
-    CfLock thislock;
-    Promise *ppp = NewPromise("hail", "open");
-    Attributes aa = { {0} };
-
-    aa.restart_class = "nonce";
-    aa.transaction.ifelapsed = 60 * BIG_UPDATES;
-    aa.transaction.expireafter = CF_INFINITY;
-
-    thislock = AcquireLock(ppp->promiser, CanonifyName(peer), now, aa, ppp, true);
-
-    if (thislock.lock != NULL)
-    {
-        long_time_no_see = true;
-    }
-
-    aa.copy.portnumber = (short) atoi(STR_CFENGINEPORT);
-
-    CfOut(cf_inform, "", "...........................................................................\n");
-    CfOut(cf_inform, "", " * Hailing %s : %u\n", peer, (int) aa.copy.portnumber);
-    CfOut(cf_inform, "", "...........................................................................\n");
-
-// record client host id (from lastseen) immediately so we can track failed connection attempts
-// the timestamp is updated when we get response - see UnpackReportBook
-
-    Nova_CreateHostID(dbconn, hostID, peer);
-
-/* Check trust interaction*/
-
-    aa.copy.trustkey = true;
-    aa.copy.servers = SplitStringAsRList(peer, '*');
-    ppp->cache = NULL;
-
-    conn = NewServerConnection(aa, ppp);
-    DeletePromise(ppp);
-
-    if (conn == NULL)
-    {
-        CfOut(cf_verbose, "", " !! Peer \"%s\" did not respond to hail\n", peer);
-
-        if (thislock.lock != NULL)
-        {
-            YieldCurrentLock(thislock);
-        }
-
-        return false;
-    }
-
-// Choose full / delta
-
-    int report_len;
-    char *menu;
-
-    if (long_time_no_see)
-    {
-        menu = "full";
-        time_t last_week = time(0) - (time_t) SECONDS_PER_WEEK;
-
-        CfOut(cf_verbose, "", " -> Running FULL sensor sweep of %s", HashPrint(CF_DEFAULT_DIGEST, conn->digest));
-        report_len = Nova_QueryClientForReports(dbconn, conn, "full", last_week);
-
-        YieldCurrentLock(thislock);
-    }
-    else
-    {
-        menu = "delta";
-
-        CfOut(cf_verbose, "", " -> Running differential sensor sweep of %s",
-              HashPrint(CF_DEFAULT_DIGEST, conn->digest));
-        report_len = Nova_QueryClientForReports(dbconn, conn, "delta", now - average_time);
-
-        // don't yield lock here - we never got it
-    }
-
-    Nova_HubLog("Received %d bytes of reports from %s with %s menu", report_len, peer, menu);
-
-    ServerDisconnection(conn);
-    DeleteRlist(aa.copy.servers);
-    return true;
-}
-
-/*********************************************************************/
-
-static void Nova_CacheTotalCompliance(bool allSlots)
-/*
- * Caches the current slot of total compliance.
- * WARNING: Must be run every 6 hrs (otherwise no data is show in the
- * graph slot).
- */
-{
-    time_t curr, now = time(NULL);
-    mongo_connection dbconn;
-    EnvironmentsList *env, *ep;
-    int slot;
-    char envName[CF_SMALLBUF];
-    char envClass[CF_SMALLBUF];
-
-// Query all hosts in one time slot
-// ht->hh->hostname,ht->kept,ht->repaired,ht->notkept,ht->t;
-// Divide each day into 4 lifecycle units 3600 * 24 / 4 seconds
-
-    now = time(NULL);
-
-    if (allSlots)
-    {
-        curr = GetShiftSlotStart(now - SECONDS_PER_WEEK);
-    }
-    else
-    {
-        curr = GetShiftSlotStart(now - SECONDS_PER_SHIFT);
-    }
-
-    if (!CFDB_Open(&dbconn))
-    {
-        return;
-    }
-
-    if (!Nova2PHP_environment_list(&env, NULL))
-    {
-        CfOut(cf_error, "", "!! Unable to query list of environments");
-        CFDB_Close(&dbconn);
-        return;
-    }
-
-    for (; curr + (3600 * 6) < now; curr += SECONDS_PER_SHIFT)  // in case of all slots
-    {
-        slot = GetShiftSlot(curr);
-
-        // first any environment, then environment-specific
-
-        Nova_CacheTotalComplianceEnv(&dbconn, "any", NULL, slot, curr, now);
-
-        for (ep = env; ep != NULL; ep = ep->next)
-        {
-            snprintf(envName, sizeof(envName), "%s", ep->name);
-            snprintf(envClass, sizeof(envClass), "environment_%s", ep->name);
-
-            Nova_CacheTotalComplianceEnv(&dbconn, envName, envClass, slot, curr, now);
-        }
-    }
-
-    FreeEnvironmentsList(env);
-
-    Rlist *hostkeys = CFDB_QueryHostKeys(&dbconn, NULL, NULL, now - (2 * SECONDS_PER_SHIFT), now, NULL);
-    for (const Rlist *rp = hostkeys; rp; rp = rp->next)
-    {
-        CFDB_RefreshLastHostComplianceShift(&dbconn, ScalarValue(rp));
-    }
-    DeleteRlist(hostkeys);
-
-    CFDB_Close(&dbconn);
-}
-
-/*********************************************************************/
-
-static void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, char *envClass, int slot,
-                                         time_t start, time_t now)
-{
-    HubQuery *hq;
-    HubTotalCompliance *ht;
-    Rlist *rp;
-    double kept, repaired, notkept;
-    int count;
-    time_t end;
-
-    kept = 0;
-    repaired = 0;
-    notkept = 0;
-    count = 0;
-
-    end = start + SECONDS_PER_SHIFT;
-
-    HostClassFilter *filter = NewHostClassFilter(envClass, NULL);
-
-    hq = CFDB_QueryTotalCompliance(conn, NULL, NULL, start, end, -1, -1, -1, false, filter);
-    DeleteHostClassFilter(filter);
-
-    for (rp = hq->records; rp != NULL; rp = rp->next)
-    {
-        ht = (HubTotalCompliance *) rp->item;
-
-        kept += ht->kept;
-        repaired += ht->repaired;
-        notkept += ht->notkept;
-        count++;
-    }
-
-    DeleteHubQuery(hq, DeleteHubTotalCompliance);
-
-    if (count > 0)
-    {
-        kept = kept / count;
-        repaired = repaired / count;
-        notkept = notkept / count;
-    }
-
-    CFDB_SaveCachedTotalCompliance(conn, envName, slot, kept, repaired, notkept, count, now);
 }
 
 /*********************************************************************/
@@ -1241,7 +996,7 @@ static Item *Nova_ScanClients(void)
 
 /*********************************************************************/
 
-static void Nova_HubLog(const char *fmt, ...)
+void Nova_HubLog(const char *fmt, ...)
 {
     if (!LOGGING)
     {
@@ -1271,75 +1026,4 @@ static void Nova_HubLog(const char *fmt, ...)
     va_end(ap);
     fprintf(fout, "\n");
     fclose(fout);
-}
-
-/*********************************************************************/
-
-static void Nova_Maintain(void)
-{
-    if (MAINTAINER_CHILD_PID != -1)
-    {
-        if (IsProcRunning(MAINTAINER_CHILD_PID))
-        {
-            return;
-        }
-        else
-        {
-            MAINTAINER_CHILD_PID = -1;
-        }
-    }
-
-    if (!ShiftChange())
-    {
-        return;
-    }
-
-    pid_t pid = fork();
-
-    if (pid == -1)
-    {
-        CfOut(cf_error, "fork", "Unable to start database maintenance process");
-        return;
-    }
-
-    if (pid == 0)
-    {
-        NewClass("am_policy_hub");
-        ALARM_PID = -1;
-
-        ScheduleRunMaintenanceJobs();
-        _exit(0);
-    }
-    else
-    {
-        MAINTAINER_CHILD_PID = pid;
-
-        CfOut(cf_verbose, "", " -> Started new Maintainer process (pid = %d)", pid);
-        Nova_HubLog("-> Started new Maintainer process (pid = %d)\n", pid);
-    }
-}
-
-/*********************************************************************/
-
-static void ScheduleRunMaintenanceJobs(void)
-{
-    time_t now = time(NULL);
-
-    CfOut(cf_verbose, "", " -> Scanning total compliance cache and doing db maintenance");
-    Nova_CacheTotalCompliance(true);
-    CFDB_Maintenance();
-
-    Nova_HubLog("Last maintenance took %ld seconds", time(NULL) - now);
-}
-
-/********************************************************************/
-
-static bool IsProcRunning(pid_t pid)
-{
-    bool running = waitpid(pid, NULL, WNOHANG) == 0;
-
-    Nova_HubLog("Checking if maintainer process %d is running: %s\n", pid,
-                running ? "yes" : "no");
-
-    return running;
 }

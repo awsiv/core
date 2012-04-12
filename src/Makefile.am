@@ -122,7 +122,9 @@ if MONGO
 noinst_LTLIBRARIES += libcfhub.la
 
 libcfhub_la_SOURCES = \
-        hub.c
+        hub.c \
+        hub-maintenance.c \
+        hub-worker.c
 endif
 
 noinst_LTLIBRARIES += libcfknow.la
