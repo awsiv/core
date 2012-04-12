@@ -38,22 +38,22 @@ static GenericAgentConfig CheckOpts(int argc, char **argv);
 static void Nova_HubLog(const char *s, ...) FUNC_ATTR_FORMAT(printf, 1, 2);
 
 static void StartHub(void);
-static void Nova_CollectReports(Attributes a, Promise *pp);
+static void Nova_CollectReports(Attributes a);
 static int ScheduleRun(void);
 static void Nova_RemoveExcludedHosts(Item **list, Item *hosts_exclude);
 static void KeepPromises(GenericAgentConfig config);
 
-static void Nova_Scan(Item *masterlist, Attributes a, Promise *pp);
-static pid_t Nova_ScanList(Item *list, Attributes a, Promise *pp);
-static void Nova_SequentialScan(Item *masterlist, Attributes a, Promise *pp);
-static void Nova_ParallelizeScan(Item *masterlist, Attributes a, Promise *pp);
+static void Nova_Scan(Item *masterlist, Attributes a);
+static pid_t Nova_ScanList(Item *list, Attributes a);
+static void Nova_SequentialScan(Item *masterlist, Attributes a);
+static void Nova_ParallelizeScan(Item *masterlist, Attributes a);
 static void SplayLongUpdates(void);
 static void ScheduleRunMaintenanceJobs(void);
 static pid_t Nova_Maintain(pid_t maintainer_pid);
 static bool IsMaintainerProcRunning(pid_t maintainer_pid);
 static void Nova_UpdateMongoHostList(Item **list);
 static void Nova_CreateHostID(mongo_connection *dbconnp, char *hostID, char *ipaddr);
-static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer, Attributes a, Promise *pp);
+static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer, Attributes a);
 static void Nova_CacheTotalCompliance(bool allSlots);
 static Item *Nova_ScanClients();
 static void Nova_CountMonitoredClasses();
@@ -681,7 +681,7 @@ static void StartHub(void)
             NewClass("am_policy_hub");
             if (!FEDERATION && CFDB_QueryIsMaster())    // FEDERATION is for Constellation Mission Observatory
             {
-                Nova_CollectReports(a, pp);
+                Nova_CollectReports(a);
                 maintainer_pid = Nova_Maintain(maintainer_pid);
             }
 
@@ -709,11 +709,11 @@ static void StartHub(void)
 /* level                                                            */
 /********************************************************************/
 
-static void Nova_CollectReports(Attributes a, Promise *pp)
+static void Nova_CollectReports(Attributes a)
 {
     Item *masterhostlist = Nova_ScanClients();
 
-    Nova_Scan(masterhostlist, a, pp);
+    Nova_Scan(masterhostlist, a);
     DeleteItemList(masterhostlist);
 
     if (CFH_ZENOSS && IsDefinedClass("Min00_05"))
@@ -726,7 +726,7 @@ static void Nova_CollectReports(Attributes a, Promise *pp)
 
 /********************************************************************/
 
-static void Nova_Scan(Item *masterlist, Attributes a, Promise *pp)
+static void Nova_Scan(Item *masterlist, Attributes a)
 {
     Nova_HubLog("Starting report collection");
     
@@ -734,11 +734,11 @@ static void Nova_Scan(Item *masterlist, Attributes a, Promise *pp)
     
     if (NO_FORK)
     {
-        Nova_SequentialScan(masterlist, a, pp);
+        Nova_SequentialScan(masterlist, a);
     }
     else
     {
-        Nova_ParallelizeScan(masterlist, a, pp);
+        Nova_ParallelizeScan(masterlist, a);
     }
 
     EndMeasure("ReportCollectAll", measure_start);
@@ -748,7 +748,7 @@ static void Nova_Scan(Item *masterlist, Attributes a, Promise *pp)
 
 /********************************************************************/
 
-static void Nova_SequentialScan(Item *masterlist, Attributes a, Promise *pp)
+static void Nova_SequentialScan(Item *masterlist, Attributes a)
 {
     mongo_connection dbconn;
     Item *ip;
@@ -760,7 +760,7 @@ static void Nova_SequentialScan(Item *masterlist, Attributes a, Promise *pp)
 
     for (ip = masterlist; ip != NULL; ip = ip->next)
     {
-        Nova_HailPeer(&dbconn, ip->name, ip->classes, a, pp);
+        Nova_HailPeer(&dbconn, ip->name, ip->classes, a);
     }
 
     CFDB_Close(&dbconn);
@@ -820,7 +820,7 @@ static void DistributeScanTasks(Item *scanhosts, Item **queues, int nqueues)
 
 /********************************************************************/
 
-static void Nova_ParallelizeScan(Item *masterlist, Attributes a, Promise *pp)
+static void Nova_ParallelizeScan(Item *masterlist, Attributes a)
 {
 #define SCAN_CHILDREN 50
 
@@ -839,7 +839,7 @@ static void Nova_ParallelizeScan(Item *masterlist, Attributes a, Promise *pp)
     {
         if (list[i])
         {
-            pid_t child = Nova_ScanList(list[i], a, pp);
+            pid_t child = Nova_ScanList(list[i], a);
 
             children[nchildren++] = child;
             CfOut(cf_verbose, "", "Started new hostscan subprocess, %d/%d, pid %d", nchildren, SCAN_CHILDREN, child);
@@ -875,7 +875,7 @@ static void Nova_ParallelizeScan(Item *masterlist, Attributes a, Promise *pp)
 
 /********************************************************************/
 
-static pid_t Nova_ScanList(Item *list, Attributes a, Promise *pp)
+static pid_t Nova_ScanList(Item *list, Attributes a)
 {
     Item *ip;
     pid_t child_id;
@@ -897,7 +897,7 @@ static pid_t Nova_ScanList(Item *list, Attributes a, Promise *pp)
         // Am child
         ALARM_PID = -1;
 
-        Nova_SequentialScan(list, a, pp);
+        Nova_SequentialScan(list, a);
 
         exit(0);                // Should be _exit(0)? MB
     }
@@ -909,7 +909,7 @@ static pid_t Nova_ScanList(Item *list, Attributes a, Promise *pp)
 
 /********************************************************************/
 
-static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer, Attributes a, Promise *pp)
+static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer, Attributes a)
 {
     AgentConnection *conn;
     time_t average_time = 600, now = time(NULL);
