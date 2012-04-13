@@ -2450,6 +2450,8 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
     bson_buffer_init(&bb);
     bson_append_int(&bb, "_id", 1);
     bson_append_int(&bb, cfr_keyhash, 1);
+    bson_append_int(&bb, cfr_ip_array, 1);
+    bson_append_int(&bb, cfr_host_array, 1);
     bson_append_int(&bb, promiseLogKey, 1);
 
     bson field;
