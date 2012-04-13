@@ -13,7 +13,6 @@
             <ul>
                 <li><?php echo $this->lang->line('host_known'); ?>: <strong><?php echo $all ?></strong></li>
                 <li><a href="weakest_host"><?php echo $this->lang->line('worst_host'); ?></a></li>
-                <li><a href="<?php echo site_url() ?>/hubstatus/status" title="See the status of the hub replication" class="showqtip"><?php echo $this->lang->line('hub_replication_status'); ?></a></li>
             </ul>
         </div>
         <div id="summarymetereng" class="minwidth70 innerdiv">

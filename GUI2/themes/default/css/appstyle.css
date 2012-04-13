@@ -340,12 +340,37 @@ label#searchbox input
     padding:20px;
 }
 
-#work .dash ul li a, #library.dash ul li a{
+ #library.dash ul li a{
     width:85px;
     display:block;
     padding: 85px 1px 0 0;
     font-size: 14px;
     color:#717171;
+}
+
+
+#work .dash ul li {
+    padding: 0 !important;
+    margin: 20px !important;
+}
+
+#work .dash ul li a.ico {
+    width:87px;
+    height: 87px;
+    display:block;
+    padding: 0;
+    font-size: 14px;
+    color:#717171;
+    background-image: url("../images/welcome_page_icons.png");
+    background-repeat: no-repeat;    
+    background-color: transparent;
+}
+
+#work .dash ul li a.text {
+    font-size: 14px;
+    color:#717171;
+    width: auto;
+    padding: 0; 
 }
 
 .dash ul li a{
@@ -357,45 +382,43 @@ label#searchbox input
 }
 
 
-#work .dash a.status{
-    background: url("../images/status.png") no-repeat;
+#work .dash li.status a{
+    background-position: 0 0;
 }
-#work .dash a.status:hover{
-    background: url("../images/status_hover.png") no-repeat;
-    width:86px;
-    padding: 85px 0 0 0;
+#work .dash li.status:hover a.ico{
+    background-position: -90px 0px;
+}
+#work .dash li.status:hover a {
     color:#596E99;
 }
 
-#work .dash a.library{
-    background: url("../images/library.png") no-repeat;
+#work .dash li.library a.ico{
+    background-position: -543px 0;  
 }
-#work .dash a.library:hover{
-     background: url("../images/library_hover.png") no-repeat;
-     width:86px;
-     padding: 85px 0 0 0;
-     color:#D3BE4A;
+#work .dash li.library:hover a.ico{
+    background-position: -633px 0;  
 }
-
-#work .dash a.engineering{
-    background: url("../images/engineering.png") no-repeat;
+#work .dash li.library:hover a {
+    color:#D3BE4A; 
 }
 
-#work .dash a.engineering:hover{
-    background: url("../images/engineering_hover.png") no-repeat;
-    width:86px;
-    padding: 85px 0 0 0;
+#work .dash li.engineering a.ico{
+    background-position: -181px 0;
+}
+#work .dash li.engineering:hover a.ico{
+    background-position: -271px 0; 
+}
+#work .dash li.engineering:hover a {
     color:#F68E36
 }
 
-#work .dash a.planning{
-    background: url("../images/planning.png") no-repeat;
+#work .dash li.planning a.ico{
+    background-position: -362px 0; 
 }
-
-#work .dash a.planning:hover{
-    background: url("../images/planning_hover.png") no-repeat;
-    width:86px;
-    padding: 85px 0 0 0;
+#work .dash li.planning:hover a.ico{
+    background-position: -452px 0;    
+}
+#work .dash li.planning:hover a {
     color:#009193;
 }
 
@@ -449,6 +472,7 @@ label#searchbox input
     background: url("../images/cdp_reports_hover.png") no-repeat;
 }
 
+/*Todo delete if not used*/
 .dash a.savedsearch{
     background: url("../images/list_of_saved.png") no-repeat;
 }
@@ -472,6 +496,73 @@ label#searchbox input
 .dash a.preference:hover{
     background: url("../images/my_preferences_hover.png") no-repeat;
 }
+/*end*/
+
+
+ul.icons_66 li {
+    float: left;
+    clear: both;
+    line-height: 67px;
+    margin:0 0 10px 20px;
+    padding: 0 !important
+}
+
+ul.icons_66 li a.ico {
+    width: 67px;
+    height: 67px;
+    display:block;
+    float: left;
+    padding: 0;
+    font-size: 14px;
+    color:#717171;
+    background-repeat: no-repeat;    
+    background-color: transparent;
+}
+
+ul.icons_66 li a.txt {
+    margin-left: 10px;
+    display: inline-block;
+    height: 67px;
+} 
+
+ul.icons_66 li:hover a {
+    color: #f68e36
+}
+
+ul.icons_66 li.savedsearch a.ico {
+    background-image: url("../images/list_of_saved_joined.png");
+    background-position: 0 0;
+}
+ul.icons_66 li.savedsearch:hover a.ico {
+    background-position: -71px 0;
+}
+
+
+ul.icons_66 li.portalsettings a.ico {
+    background-image: url("../images/mission_portal_settings_joined.png");
+    background-position: 0 0;
+}
+ul.icons_66 li.portalsettings:hover a.ico {
+    background-position: -71px 0;
+}
+
+ul.icons_66 li.preference a.ico {
+    background-image: url("../images/my_preferences_joined.png");
+    background-position: 0 0;
+}
+ul.icons_66 li.preference:hover a.ico {
+    background-position: -71px 0;
+}
+
+
+ul.icons_66 li.hub_replication a.ico {
+    background-image: url("../images/hub_replication_joined.png");
+    background-position: 0 0;
+}
+ul.icons_66 li.hub_replication:hover a.ico {
+    background-position: -71px 0;
+}
+
 
 #plandash.dash a:hover{
    color:#009193;
