@@ -3,30 +3,30 @@
     <div class="innerdiv">
 
 <div id="admin_content">
-<h1>Profile Info:</h1>
+<h1>Your profile</h1>
 <?php if (empty($user)) { ?>
 <p>We don't have any information about you.</p>
 <?php } else { ?>
 
         <table cellspasing="5" style="width:30%; float: left">
             <tr>
-                <td>User name:</td>
+                <td>User name</td>
                 <td><?php echo $user->username ?></td>
             </tr>
            <?php if ($this->session->userdata('mode') == 'database') { ?>
             <tr>
-                <td>Email:</td>
+                <td>Email</td>
                 <td><?php echo $user->email ?></td>
             </tr>
             <tr>
-                <td>Change password:</td>
+                <td>Change password</td>
                 <td>
                     <?php  echo anchor("auth/change_password/" . $user->_id->__toString(), ' ', array('class' => 'changepassword', 'title' => 'change password')); ?>
                 </td>
             </tr>
             <?php } ?>
             <tr>
-                <td colspan="2">Assigned Roles:</td>
+                <td colspan="2">Role memberships</td>
             </tr>
             <tr>
                 <td colspan="2"><div class="DragNDrop assigned dialog_box_style ui-dialog"  style="position: relative">
