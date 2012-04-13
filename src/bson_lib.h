@@ -35,5 +35,6 @@ void BsonAppendHostColourFilter(bson_buffer *query_buffer, HostColourFilter *fil
 void BsonAppendSortField(bson_buffer *bb, char *sortField);
 long BsonLongGet(const bson *b, const char *key);
 const char *BsonGetArrayValue(const bson *b, const char *key);
+bool BsonIsKeyCorrupt(const char *key);
 
 #endif

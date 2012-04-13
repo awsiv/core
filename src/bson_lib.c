@@ -632,3 +632,31 @@ void BsonAppendSortField(bson_buffer *bb, char *sortField)
     bson_append_int(sort, sortField, -1);
     bson_append_finish_object(sort);
 }
+
+/*****************************************************************************/
+bool BsonIsKeyCorrupt(const char *key)
+{
+    if(NULL_OR_EMPTY(key))
+    {
+        return true;
+    }
+
+    // fieldname cannot start with a '$'
+    if(key[0] == '$')
+    {
+        return true;
+    }
+
+    const char *sp;
+    // fieldname must not contain '.'
+    for (sp = key; *sp != '\0'; sp++)
+    {
+        if (*sp == '.')
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+/*****************************************************************************/

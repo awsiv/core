@@ -1168,7 +1168,13 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
                 {
                     bson_iterator_init(&it3, bson_iterator_value(&it2));
 
-                    strncpy(rscope, bson_iterator_key(&it2), CF_MAXVARSIZE);
+                    strncpy(rscope, bson_iterator_key(&it2), CF_MAXVARSIZE);                    
+
+                    if(BsonIsKeyCorrupt(rscope))
+                    {
+                        CfOut(cf_inform, "", " !! Corrupted field name scope = \"%s\" in variables", rscope);
+                        continue;
+                    }
 
                     while (bson_iterator_next(&it3))
                     {
@@ -1187,6 +1193,7 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
                         {
                             if (strcmp(bson_iterator_key(&it4), cfr_rval) == 0)
                             {
+
                                 switch (bson_iterator_type(&it4))
                                 {
                                 case bson_array:
