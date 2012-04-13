@@ -2326,16 +2326,16 @@ static bool CompareStringOrRegex(const char *value, const char *compareTo, bool 
 {
     if (regex)
     {
-        if (!NULL_OR_EMPTY(compareTo) && !FullTextMatch(compareTo, value))
+        if (!NULL_OR_EMPTY(compareTo) && !StringMatch(compareTo, value))
         {
-        return false;
+            return false;
         }
     }
     else
     {
         if (!NULL_OR_EMPTY(compareTo)  && !strcmp(compareTo, value) != 0)
         {
-        return false;
+            return false;
         }
     }
     return true;
@@ -6630,6 +6630,8 @@ bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour 
             // special case: could not find the score, return blue
             *result = HOST_COLOUR_BLUE;
         }
+
+        bson_destroy(&out);
     }
 
     if (!CFDB_Close(&conn))

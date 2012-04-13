@@ -957,7 +957,7 @@ void Nova_FillInGoalComment(Item *ip)
 
 /*************************************************************************/
 
-char *Nova_GetBundleComment(char *bundle)
+const char *Nova_GetBundleComment(char *bundle)
 {
     static char buf[CF_BUFSIZE];
     bson_buffer bb;
@@ -1511,7 +1511,7 @@ Item *Nova_NearestNeighbours(int search_id, char *assoc_mask)
                     CfDebug(" - NEIGH topic %d has association %s %s::%s (%d)\n", topic_id, afwd, assoc_context,
                             assoc_name, assoc_id);
 
-                    if (assoc_mask == NULL || FullTextMatch(assoc_mask, afwd))
+                    if (assoc_mask == NULL || StringMatch(assoc_mask, afwd))
                     {
                         PrependFullItem(&list, assoc_name, assoc_context, assoc_id, 0);
                     }

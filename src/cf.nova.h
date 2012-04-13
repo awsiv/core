@@ -1054,7 +1054,7 @@ void SyntaxTree2JavaScript(void);
 #ifdef HAVE_LIBMONGOC
 void Nova_DumpTopics(void);
 void Nova_FillInGoalComment(Item *ip);
-char *Nova_GetBundleComment(char *bundle);
+const char *Nova_GetBundleComment(char *bundle);
 void Nova_ShowTopic(char *qualified_topic);
 
 void Nova_WebTopicMap_Initialize(void);
