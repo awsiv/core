@@ -1688,6 +1688,11 @@ static void NewHit(Hit **list,char *context, char *locator, enum representations
 static void DeleteHitList(Hit *hp)
 
 {
+ if (hp == NULL)
+    {
+    return;
+    }
+ 
  if (hp->next)
     {
     DeleteHitList(hp->next);
