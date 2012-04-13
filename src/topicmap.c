@@ -20,6 +20,21 @@
 
 static int Nova_NewVertex(GraphNode *tribe, int node, int distance, int real, char *name, char *context);
 
+typedef struct Hit_ Hit;
+
+struct Hit_
+{
+    char *occurrence_context;
+    char *locator;                 /* Promiser */
+    enum representations rep_type;
+    char *represents;
+    Hit *next;
+};
+
+static void NewHit(Hit **list,char *context, char *locator, enum representations locator_type, char *represents);
+static void DeleteHitList(Hit *list);
+static Hit *HitExists(Hit *list, char *locator, enum representations rep_type, char *context);
+
 /*****************************************************************************/
 
 void Nova_WebTopicMap_Initialize()
@@ -574,6 +589,7 @@ void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
     mongo_cursor *cursor;
     bson_iterator it1;
     mongo_connection conn;
+    Hit *hits = NULL, *hp;
 
 // Do we want to prune using the topic context?
 
@@ -671,10 +687,20 @@ void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
             }
         }
 
-        snprintf(text,CF_BUFSIZE,"%s about %s",represents,topic);
-        Nova_AddOccurrenceBuffer(context, locator, locator_type, text, buffer, bufsize);
+        snprintf(text,CF_BUFSIZE,"%s -- %s",represents,topic);
+//        Nova_AddOccurrenceBuffer(context, locator, locator_type, text, buffer, bufsize);
+        NewHit(&hits,context, locator, locator_type, text);
+
+
     }
 
+    for (hp = hits; hp != NULL; hp= hp->next)
+       {
+       Nova_AddOccurrenceBuffer(hp->occurrence_context, hp->locator, hp->rep_type, hp->represents, buffer, bufsize);
+       }
+
+
+    DeleteHitList(hits);
     buffer[strlen(buffer) - 1] = ']';
 }
 
@@ -1635,3 +1661,70 @@ void Nova_DeClassifyTopic(char *classified_topic, char *topic, char *context)
         strcpy(context,"any");
     }
 }
+
+
+/*****************************************************************************/
+
+static void NewHit(Hit **list,char *context, char *locator, enum representations locator_type, char *represents)
+{
+    Hit *hp = NULL;
+
+    if ((hp = HitExists(*list, locator, locator_type, context)) == NULL)
+    {
+        hp = xcalloc(1, sizeof(Hit));
+
+        hp->occurrence_context = xstrdup(ToLowerStr(context));
+        hp->locator = xstrdup(locator);
+        hp->represents = xstrdup(represents);
+        hp->rep_type = locator_type;
+        hp->next = *list;
+        *list = hp;
+    }
+
+}
+
+/*****************************************************************************/
+
+static void DeleteHitList(Hit *hp)
+
+{
+ if (hp->next)
+    {
+    DeleteHitList(hp->next);
+    }
+
+ free(hp->occurrence_context);
+ free(hp->locator);
+ free(hp->represents);
+ free(hp);
+}
+
+/*****************************************************************************/
+
+static Hit *HitExists(Hit *list, char *locator, enum representations rep_type, char *context)
+{
+    Hit *hp;
+
+    for (hp = list; hp != NULL; hp = hp->next)
+    {
+        if (strcmp(locator, hp->locator) == 0)
+        {
+        if (strstr(hp->occurrence_context,context) == NULL)
+           {
+           // This context is unknown, but same reference
+           char *replace = xmalloc(strlen(hp->occurrence_context)+strlen(", .")+strlen(context));
+
+           strcpy(replace,hp->occurrence_context);
+           strcat(replace,", ");
+           strcat(replace,context);
+           free(hp->occurrence_context);
+           hp->occurrence_context = replace;
+           }
+        
+            return hp;
+        }
+    }
+
+    return NULL;
+}
+
