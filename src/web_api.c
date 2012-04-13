@@ -2980,7 +2980,7 @@ void Nova2PHP_show_all_context_leads(char *unqualified_topic, char *buffer, int 
     char reconstructed[CF_BUFSIZE];
     Item *ip,*candidates;
     int id;
-    char work[CF_BUFSIZE], jsonEscapedStr[CF_BUFSIZE] = { 0 };        
+    char work[CF_BUFSIZE];
 
     memset(buffer,0,bufsize);
     
