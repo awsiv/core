@@ -5,19 +5,19 @@
 
       <p>
       <?php
-      echo form_label('Old Password');
+      echo form_label('Old password');
       echo form_input($old_password);?>
       </p>
       
       <p>
       <?php
-     echo form_label(' New Password');
+     echo form_label(' New password');
       echo form_input($new_password);?>
       </p>
       
       <p>
       <?php
-      echo form_label('Confirm New Password');
+      echo form_label('Confirm new password');
       echo form_input($new_password_confirm);?>
       </p>
 
