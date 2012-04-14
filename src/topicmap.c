@@ -34,6 +34,7 @@ struct Hit_
 static void NewHit(Hit **list,char *context, char *locator, enum representations locator_type, char *represents);
 static void DeleteHitList(Hit *list);
 static Hit *HitExists(Hit *list, char *locator, enum representations rep_type, char *context);
+static int MergeExistingContexts(Item **list, char *topic_name, char *topic_context);
 
 /*****************************************************************************/
 
@@ -141,7 +142,7 @@ void Nova_ShowTopic(char *qualified_topic)
 {
     char topic_name[CF_BUFSIZE], topic_context[CF_BUFSIZE],buffer[1000000];
     int id;
-
+    
     Nova_DeClassifyTopic(qualified_topic, topic_name, topic_context);
     id = Nova_GetTopicIdForTopic(qualified_topic);
         
@@ -391,7 +392,10 @@ Item *Nova_SearchTopicMap(char *search_topic,int search_type)
             }
         }
 
-        PrependFullItem(&list, topic_name, topic_context, topic_id, 0);
+        if (!MergeExistingContexts(&list, topic_name, topic_context))
+        {
+            PrependFullItem(&list, topic_name, topic_context, topic_id, 0);
+        }
     }
 
     mongo_cursor_destroy(cursor);
@@ -1662,7 +1666,29 @@ void Nova_DeClassifyTopic(char *classified_topic, char *topic, char *context)
     }
 }
 
+/*****************************************************************************/
 
+static int MergeExistingContexts(Item **list, char *name, char *context)
+{
+    Item *ip;
+ 
+    if ((ip = ReturnItemIn(*list,name)))
+    {
+        char *replace = xmalloc(strlen(ip->classes)+strlen(", .")+strlen(context));
+        strcpy(replace,ip->classes);
+        strcat(replace,", ");
+        strcat(replace,context);
+        free(ip->classes);
+        ip->classes = replace;
+
+        return true;
+    }
+
+    return false;
+}
+
+/*****************************************************************************/
+/* The Hit Lists                                                             */
 /*****************************************************************************/
 
 static void NewHit(Hit **list,char *context, char *locator, enum representations locator_type, char *represents)
