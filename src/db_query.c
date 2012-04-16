@@ -27,6 +27,8 @@
 static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *filter);
 static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFilter *hostClassFilter);
 static bool CompareStringOrRegex(const char *value, const char *compareTo, bool regex);
+static bool IsTimeWithinRange(time_t from, time_t to, time_t t);
+
 /*****************************************************************************/
 bool CFDB_CollectionHasData(mongo_connection *conn, const char *fullCollectionName)
 {
@@ -2416,6 +2418,16 @@ static int QueryInsertHostInfo(mongo_connection *conn, Rlist *host_list)
 }
 
 /*****************************************************************************/
+static bool IsTimeWithinRange(time_t from, time_t to, time_t t)
+{
+    if (t < from || t > to)
+    {
+        return false;
+    }
+
+    return true;
+}
+/*****************************************************************************/
 int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, PromiseLogState state,
                                  const char *lhandle, int regex, const char *lcause_rx, time_t from, time_t to, int sort,
                                  HostClassFilter *hostClassFilter, Rlist **host_list, Rlist **record_list)
@@ -2517,7 +2529,8 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
                     while (bson_iterator_next(&iterTimestamps))
                     {
                         rt = bson_iterator_int(&iterTimestamps);
-                        if (rt >= from && rt <= to)
+
+                        if(!IsTimeWithinRange(from, to, rt))
                         {
                             continue;
                         }

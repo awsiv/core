@@ -619,8 +619,8 @@ class report_model extends Cf_Model {
      * @param type $username
      * @param type $hostkey
      * @param type $search
-     * @param type $hours_deltafrom
-     * @param type $hours_deltato
+     * @param type $from
+     * @param type $to
      * @param type $inclist
      * @param type $exlist
      * @param type $rows
@@ -628,16 +628,16 @@ class report_model extends Cf_Model {
      * @return type array
      */
 
-    function getPromisesRepairedLog($username, $hostkey, $search, $cause_rx, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 50, $page_number = 1, $hosts_only=false){
+    function getPromisesRepairedLog($username, $hostkey, $search, $cause_rx, $from, $to, $inclist, $exlist, $rows = 50, $page_number = 1, $hosts_only=false){
         try
         {
             if ($hosts_only)
             {
-                $rawdata = cfpr_hosts_with_repaired($username, NULL, $search, $cause_rx, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, $rows, $page_number);
+                $rawdata = cfpr_hosts_with_repaired($username, NULL, $search, $cause_rx, intval($from), intval($to), $inclist, $exlist, $rows, $page_number);
             }
             else
             {
-                $rawdata = cfpr_report_repaired($username, $hostkey, $search, $cause_rx, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, "time", true, $rows, $page_number);
+                $rawdata = cfpr_report_repaired($username, $hostkey, $search, $cause_rx, intval($from), intval($to), $inclist, $exlist, "time", true, $rows, $page_number);
             }
 
             $data = $this->checkData($rawdata);
@@ -663,8 +663,8 @@ class report_model extends Cf_Model {
      * @param type $hostkey
      * @param type $search
      * @param type $cause_rx
-     * @param type $hours_deltafrom
-     * @param type $hours_deltato
+     * @param type $from
+     * @param type $to
      * @param type $inclist
      * @param type $exlist
      * @param type $rows
@@ -672,16 +672,16 @@ class report_model extends Cf_Model {
      * @param type $hosts_only
      * @return type
      */
-function getPromisesRepairedSummary($username, $hostkey, $search, $cause_rx, $hours_deltafrom, $hours_deltato, $inclist=array(), $exlist=array(), $rows = 0, $page_number = 0,$hosts_only=false){
+function getPromisesRepairedSummary($username, $hostkey, $search, $cause_rx, $from, $to, $inclist=array(), $exlist=array(), $rows = 0, $page_number = 0,$hosts_only=false){
          try
         {
              if ($hosts_only)
             {
-                $rawdata = cfpr_hosts_with_repaired($username, NULL, $search, $cause_rx, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, $rows, $page_number);
+                $rawdata = cfpr_hosts_with_repaired($username, NULL, $search, $cause_rx, intval($from), intval($to), $inclist, $exlist, $rows, $page_number);
             }
             else
             {
-            $rawdata=cfpr_summarize_repaired($username, $hostkey, $search, $cause_rx, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, "time", true, $rows, $page_number);
+            $rawdata=cfpr_summarize_repaired($username, $hostkey, $search, $cause_rx, intval($from), intval($to), $inclist, $exlist, "time", true, $rows, $page_number);
             }
 
             $data = $this->checkData($rawdata);
@@ -707,8 +707,8 @@ function getPromisesRepairedSummary($username, $hostkey, $search, $cause_rx, $ho
      * @param type $hostkey
      * @param type $search
      * @param type $cause_rx
-     * @param type $hours_deltafrom
-     * @param type $hours_deltato
+     * @param type $from
+     * @param type $to
      * @param type $inclist
      * @param type $exlist
      * @param type $rows
@@ -716,15 +716,15 @@ function getPromisesRepairedSummary($username, $hostkey, $search, $cause_rx, $ho
      * @param type $hosts_only
      * @return type
      */
-    function getPromisesNotKeptSummary($username, $hostkey, $search, $cause_rx, $hours_deltafrom, $hours_deltato, $inclist=array(), $exlist=array(), $rows = 50, $page_number = 1, $hosts_only=false){
+    function getPromisesNotKeptSummary($username, $hostkey, $search, $cause_rx, $from, $to, $inclist=array(), $exlist=array(), $rows = 50, $page_number = 1, $hosts_only=false){
         try
         {   if ($hosts_only)
             {
-                $rawdata = cfpr_hosts_with_notkept($username, NULL, $search, $cause_rx, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, $rows, $page_number);
+                $rawdata = cfpr_hosts_with_notkept($username, NULL, $search, $cause_rx, intval($from), intval($to), $inclist, $exlist, $rows, $page_number);
             }
             else
             {
-                $rawdata = cfpr_summarize_notkept($username, $hostkey, $search, $cause_rx, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, "time", true, $rows, $page_number);
+                $rawdata = cfpr_summarize_notkept($username, $hostkey, $search, $cause_rx, intval($from), intval($to), $inclist, $exlist, "time", true, $rows, $page_number);
             }
 
             $data = $this->checkData($rawdata);
@@ -749,24 +749,24 @@ function getPromisesRepairedSummary($username, $hostkey, $search, $cause_rx, $ho
      * @param type $username
      * @param type $hostkey
      * @param type $search
-     * @param type $hours_deltafrom
-     * @param type $hours_deltato
+     * @param type $from
+     * @param type $to
      * @param type $inclist
      * @param type $exlist
      * @param type $rows
      * @param type $page_number
      * @return type array
      */
- function getPromisesNotKeptLog($username, $hostkey, $search, $cause_rx, $hours_deltafrom, $hours_deltato, $inclist, $exlist, $rows = 50, $page_number = 1,$hosts_only=false){
+ function getPromisesNotKeptLog($username, $hostkey, $search, $cause_rx, $from, $to, $inclist, $exlist, $rows = 50, $page_number = 1,$hosts_only=false){
         try
         {
             if ($hosts_only)
             {
-                $rawdata = cfpr_hosts_with_notkept($username, NULL, $search, $cause_rx, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, $rows, $page_number);
+                $rawdata = cfpr_hosts_with_notkept($username, NULL, $search, $cause_rx, intval($from), intval($to), $inclist, $exlist, $rows, $page_number);
             }
             else
             {
-                $rawdata = cfpr_report_notkept($username, $hostkey, $search, $cause_rx, intval($hours_deltafrom), intval($hours_deltato), $inclist, $exlist, "time", true, $rows, $page_number);
+                $rawdata = cfpr_report_notkept($username, $hostkey, $search, $cause_rx, intval($from), intval($to), $inclist, $exlist, "time", true, $rows, $page_number);
             }
 
             $data = $this->checkData($rawdata);

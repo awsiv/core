@@ -5,8 +5,9 @@ $classIncludes = array();
 $classExcludes = array();
 $rows = 200;
 $page_number = 1;
+$version = "";
 
-$res = cfpr_hosts_with_compliance_summary($userName, $hostKey, -1, -1, -1, -1, ">", $classIncludes, $classExcludes, $rows, $page_number);
+$res = cfpr_hosts_with_compliance_summary($userName, $hostKey, $version, -1, -1, -1, -1, $classIncludes, $classExcludes, $rows, $page_number);
 fwrite(STDERR, $res);
 
 ?>
