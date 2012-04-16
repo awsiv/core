@@ -165,7 +165,7 @@ $("ul#crxi input, ul#crxx input").live("click", function(){
         event.preventDefault();
         $("#error_status").html('');
        
-        $('#confirmation span').text('Do you want to continue deleting..');
+        $('#confirmation span').text('Do you want to continue deleting?');
 
         // create buttons - cancel and confirm
         var cancelBtn  = generateDialogBtn('Cancel', $confirmation);
