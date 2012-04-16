@@ -2980,7 +2980,7 @@ body .outerdiv a.hostcontextddl, .hostcontextddl{
 span.green_btn, a.green_btn {
     background-image: url("../images/mp_buttons.png");
     background-repeat: no-repeat;
-    background-position: 100% 0;
+    background-position: 100% -40px;
     color: #FFFFFF !important;
     padding-right: 3px;
     font-size: 13px;
