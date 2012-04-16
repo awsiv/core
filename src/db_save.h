@@ -53,6 +53,5 @@ void CFDB_SaveExecutionStatus(mongo_connection *conn, char *keyhash, bool is_bla
 void CFDB_SaveLastAgentExecution(mongo_connection *conn, char *keyhash, long last_agent_exec);
 
 int CFDB_AddNote(mongo_connection *conn, char *keyhash, int reportType, char *nid, char *reportData, Item *data);
-void CFDBRef_AddToRow(mongo_connection *conn, char *coll, bson *query, char *row_name, char *cid);
 
 #endif

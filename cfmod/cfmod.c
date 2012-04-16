@@ -150,7 +150,6 @@ static zend_function_entry cfmod_functions[] =
          * Commenting
          */
     PHP_FE(cfpr_add_note, NULL)
-    PHP_FE(cfpr_new_note, NULL)
     PHP_FE(cfpr_query_note, NULL) PHP_FE(cfpr_get_host_noteid, NULL) PHP_FE(cfpr_delete_host, NULL)
         /*
          * Replica sets

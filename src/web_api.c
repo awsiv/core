@@ -22,6 +22,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "db_query.h"
 #include "db_maintain.h"
 #include <assert.h>
+#include "web_rbac.h"
 
 static const char *CDP_REPORTS[][2] =
 {
@@ -4282,179 +4283,62 @@ void FreeHostsList(HostsList *list)
 /* for commenting functionality */
 /*****************************************************************************/
 
-int Nova2PHP_add_note(char *noteid, char *username, time_t datetime, char *note, char *returnval, int bufsize)
+int Nova2PHP_add_note(char *noteid, char *keyhash, char *username, time_t datetime, char *note, char *returnval, int bufsize)
 {
-    Item *data = NULL;
-    char msg[CF_BUFSIZE] = { 0 }, nid[CF_MAXVARSIZE] = { 0 };
-    mongo_connection dbconn;
-    int ret = 0;
-
+    int is_new = false;
     if (!noteid || strlen(noteid) == 0)
     {
-        CfOut(cf_verbose, "", "!! Noteid is empty");
-        return false;
+        if (!keyhash || strlen(keyhash) == 0 )
+        {
+            CfOut(cf_verbose, "", "!! Hostkey and noteid is not given. Nothing to look for");
+            return false;
+        }
+        is_new = true;
     }
 
+    mongo_connection dbconn;
     if (!CFDB_Open(&dbconn))
     {
         return false;
     }
 
-    snprintf(nid, CF_MAXVARSIZE, "%s", noteid);
+    Item *data = NULL;
+    char msg[CF_BUFSIZE] = { 0 };
+    char nid[CF_MAXVARSIZE] = { 0 };
+
     snprintf(msg, CF_BUFSIZE, "%s,%ld,%s", username, datetime, note);
     AppendItem(&data, msg, NULL);
 
-    ret = CFDB_AddNote(&dbconn, NULL, 0, nid, NULL, data);
-    CFDB_Close(&dbconn);
-    snprintf(returnval, bufsize, "%d", ret);
+    int ret;
+    if (is_new) // create a new note with entry
+    {
+        char report_data[CF_SMALLBUF] = { 0 };
+        snprintf(report_data, CF_SMALLBUF, "%d", CFREPORT_HOSTS);
+        ret = CFDB_AddNote(&dbconn, keyhash, CFREPORT_HOSTS, nid, report_data, data);
+    }
+    else // add entry to existing note
+    {
+        snprintf(nid, CF_MAXVARSIZE, "%s", noteid);
+        ret = CFDB_AddNote(&dbconn, NULL, 0, nid, NULL, data);
+    }
 
     if (ret)
     {
         snprintf(returnval, bufsize, "%s", nid);
     }
-
-    return ret;
-}
-
-/*****************************************************************************/
-/*for commenting functionality */
-/*****************************************************************************/
-
-int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *username, time_t datetime, char *note,
-                          char *returnval, int bufsize)
-{
-    Item *data = NULL;
-    char msg[CF_BUFSIZE] = { 0 };
-    char row[CF_BUFSIZE] = { 0 };
-    char noteId[CF_MAXVARSIZE] = { 0 };
-    mongo_connection dbconn;
-    bson query;
-    bson_buffer bb;
-    bson_oid_t oid;
-
-    char row_name[CF_MAXVARSIZE] = { 0 }, row_add[CF_MAXVARSIZE] = { 0 }, db[CF_MAXVARSIZE] = { 0 };
-    int level = 0, getrow = false, ret;
-
-    snprintf(msg, CF_BUFSIZE, "%s,%ld,%s", username, datetime, note);
-    AppendItem(&data, msg, NULL);
-
-    if (!keyhash || strlen(keyhash) == 0 || !repid || strlen(repid) == 0)
+    else
     {
-        CfOut(cf_verbose, "", "!! Hostkey and report id not given. Nothing to look for");
-        return false;
+        snprintf(returnval, bufsize, "%d", ret);
     }
 
-    //  snprintf(objectId, CF_MAXVARSIZE, "%s",repid);
-
-    if (!CFDB_Open(&dbconn))
-    {
-        return false;
-    }
-
-    //create query
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&query, &bb);
-
-    //get report
-    switch (reportType)
-    {
-    case CFREPORT_HOSTS:
-        level = 2;
-        snprintf(row_name, sizeof(row_name), "%s", cfr_ip_array);       // taking the IP addresses
-        snprintf(db, sizeof(db), "%s", MONGO_DATABASE);
-        getrow = CFDB_GetRow(&dbconn, db, reportType, &query, row_name, row, sizeof(row), level);
-        snprintf(row_add, sizeof(row_add), "%s", cfn_nid);
-        break;
-
-    case CFREPORT_REPAIRED:
-        level = 1;
-        snprintf(db, sizeof(db), "%s", MONGO_LOGS_REPAIRED);
-        bson_oid_from_string(&oid, repid);
-        bson_buffer_init(&bb);
-        bson_append_oid(&bb, "_id", &oid);
-        bson_from_buffer(&query, &bb);
-        getrow = CFDB_GetRow(&dbconn, db, reportType, &query, "*", row, sizeof(row), level);
-        snprintf(row_add, sizeof(row_add), "%s", cfn_nid);
-        break;
-
-    case CFREPORT_PERFORMANCE:
-        level = 3;
-        snprintf(row_name, sizeof(row_name), "%s.%s", cfr_performance, repid);
-        snprintf(db, sizeof(db), "%s", MONGO_DATABASE);
-        getrow = CFDB_GetRow(&dbconn, db, reportType, &query, row_name, row, sizeof(row), level);
-        snprintf(row_add, sizeof(row_add), "%s.%s", row_name, cfn_nid);
-        break;
-
-    case CFREPORT_VALUE:       /*value report */
-        level = 3;
-        snprintf(row_name, sizeof(row_name), "%s.%s", cfr_valuereport, repid);
-        snprintf(db, sizeof(db), "%s", MONGO_DATABASE);
-        getrow = CFDB_GetRow(&dbconn, db, reportType, &query, row_name, row, sizeof(row), level);
-        snprintf(row_add, sizeof(row_add), "%s.%s", row_name, cfn_nid);
-        break;
-    case CFREPORT_FILECHANGES:
-        level = 3;
-        snprintf(row_name, sizeof(row_name), "%s.%s", cfr_filechanges, repid);
-        snprintf(db, sizeof(db), "%s", MONGO_DATABASE);
-        getrow = CFDB_GetRow(&dbconn, db, reportType, &query, row_name, row, sizeof(row), level);
-        snprintf(row_add, sizeof(row_add), "%s.%s", row_name, cfn_nid);
-        break;
-/*
-  case CFREPORT_FILEDIFFS:  
-  snprintf(row_name, sizeof(row_name), "%s.%s",cfr_filediffs,repid);
-  snprintf(db, sizeof(db), "%s",MONGO_DATABASE);
-  getrow = CFDB_GetRow(&dbconn, db, &query, row_name, row, sizeof(row), level);
-  snprintf(row_add, sizeof(row_add), "%s.%s",row_name,cfn_nid);
-  break;
-*/
-    case CFREPORT_BUNDLE:
-        level = 3;
-        snprintf(row_name, sizeof(row_name), "%s.%s", cfr_bundles, repid);
-        snprintf(db, sizeof(db), "%s", MONGO_DATABASE);
-        getrow = CFDB_GetRow(&dbconn, db, reportType, &query, row_name, row, sizeof(row), level);
-        snprintf(row_add, sizeof(row_add), "%s.%s", row_name, cfn_nid);
-        break;
-
-    case CFREPORT_NOTKEPT:
-        level = 1;
-        snprintf(db, sizeof(db), "%s", MONGO_LOGS_NOTKEPT);
-
-        bson_oid_from_string(&oid, repid);
-        bson_buffer_init(&bb);
-        bson_append_oid(&bb, "_id", &oid);
-        bson_from_buffer(&query, &bb);
-        getrow = CFDB_GetRow(&dbconn, db, reportType, &query, "*", row, sizeof(row), level);
-        snprintf(row_add, sizeof(row_add), "%s", cfn_nid);
-        break;
-    }
-
-    if (!getrow)
-    {
-        CfOut(cf_verbose, "", "!! Could not find report for: hostkey = %s, report ID = %s", keyhash, repid);
-        bson_destroy(&query);
-        return false;
-    }
-    // add note
-    ret = CFDB_AddNote(&dbconn, keyhash, reportType, noteId, row, data);
-    //add DBRef
-    snprintf(returnval, bufsize, "%d", ret);
-    if (strlen(noteId) > 0 && ret)
-    {
-        CFDBRef_AddToRow(&dbconn, db, &query, row_add, noteId);
-        snprintf(returnval, bufsize, "%s", noteId);
-    }
-    //TODO: delete comment if addtorow fails?
-    bson_destroy(&query);
     CFDB_Close(&dbconn);
-    return ret;
+
+    return true;
 }
 
 /*****************************************************************************/
-/*  Commenting                                                               */
-/*****************************************************************************/
 
-int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, time_t from, time_t to, PageInfo *page,
+int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, char *filter_username, time_t from, time_t to, PageInfo *page,
                        char *returnval, int bufsize)
 {
     Item *data = NULL;
@@ -4473,9 +4357,9 @@ int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, time_t from, ti
     char jsonEscapedMsg[CF_BUFSIZE] = { 0 };
     int startIndex = 0, endIndex = 0, count = 0;
 
-    if (username)
+    if (filter_username)
     {
-        snprintf(fuser, CF_MAXVARSIZE, "%s", username);
+        snprintf(fuser, CF_MAXVARSIZE, "%s", filter_username);
     }
 
     if (keyhash)
@@ -4509,20 +4393,23 @@ int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, time_t from, ti
 
         EscapeJson(hni->report, jsonEscapedReport, sizeof(jsonEscapedReport));
 
-        for (hn = hni->note; hn != NULL; hn = hn->next, count++)
+        if (CFDB_HasHostAccessFromUserRBAC(username, hni->hh->keyhash) == ERRID_SUCCESS)
         {
-            if (count >= startIndex && (count <= endIndex || endIndex < 0))
+            for (hn = hni->note; hn != NULL; hn = hn->next, count++)
             {
-                EscapeJson(hn->msg, jsonEscapedMsg, sizeof(jsonEscapedMsg));
-                ReplaceTrailingChar(jsonEscapedMsg, '\n', '\0');
-
-                snprintf(buffer, sizeof(buffer),
-                         "{\"user\":\"%s\",\"date\":%ld,\"message\":\"%s\",\"report\":\"%s\",\"report_type\":%d, \"host\":{\"name\":\"%s\",\"ip\":\"%s\",\"kh\":\"%s\"}},",
-                         hn->user, hn->t, jsonEscapedMsg, jsonEscapedReport, hni->reportType, hni->hh->hostname,
-                         hni->hh->ipaddr, hni->hh->keyhash);
-                if (!Join(returnval, buffer, bufsize))
+                if (count >= startIndex && (count <= endIndex || endIndex < 0))
                 {
-                    break;
+                    EscapeJson(hn->msg, jsonEscapedMsg, sizeof(jsonEscapedMsg));
+                    ReplaceTrailingChar(jsonEscapedMsg, '\n', '\0');
+
+                    snprintf(buffer, sizeof(buffer),
+                             "{\"user\":\"%s\",\"date\":%ld,\"message\":\"%s\",\"report\":\"%s\",\"report_type\":%d, \"host\":{\"name\":\"%s\",\"ip\":\"%s\",\"kh\":\"%s\"}},",
+                             hn->user, hn->t, jsonEscapedMsg, jsonEscapedReport, hni->reportType, hni->hh->hostname,
+                             hni->hh->ipaddr, hni->hh->keyhash);
+                    if (!Join(returnval, buffer, bufsize))
+                    {
+                        break;
+                    }
                 }
             }
         }
@@ -4560,7 +4447,8 @@ int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize)
     }
 
     bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, hostkey);
+    bson_append_string(&bb, cfn_keyhash, hostkey);
+    bson_append_int(&bb, cfn_reporttype, CFREPORT_HOSTS);
     bson_from_buffer(&query, &bb);
 
     if (!CFDB_Open(&dbconn))
@@ -4574,6 +4462,11 @@ int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize)
     bson_destroy(&query);
     returnval[0] = '\0';
 
+    if (!CFDB_Close(&dbconn))
+    {
+        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+    }
+
     if (!result)
     {
         return false;
@@ -4583,11 +4476,6 @@ int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize)
     {
         snprintf(buffer, CF_MAXVARSIZE, "%s", (char *) rp->item);
         snprintf(returnval, CF_MAXVARSIZE, "%s ", buffer);
-    }
-
-    if (!CFDB_Close(&dbconn))
-    {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
     return true;

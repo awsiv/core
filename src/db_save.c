@@ -1908,7 +1908,7 @@ int CFDB_AddNote(mongo_connection *conn, char *keyhash, int reportType, char *ni
 
     if (newnote)
     {
-        // get the objectid                                                                                                                                                                         
+        // get the objectid
         bson_buffer_init(&bb);
         bson_append_int(&bb, "_id", 1);
         bson_from_buffer(&field, &bb);
@@ -1946,26 +1946,6 @@ int CFDB_AddNote(mongo_connection *conn, char *keyhash, int reportType, char *ni
     }
     bson_destroy(&host_key);
     return retval;
-}
-
-/*****************************************************************************/
-
-void CFDBRef_AddToRow(mongo_connection *conn, char *coll, bson *query, char *row_name, char *nid)
-{
-    bson_buffer bb;
-    bson_buffer *setObj;
-    bson setOp;
-    char varName[CF_MAXVARSIZE];
-
-    bson_buffer_init(&bb);
-    setObj = bson_append_start_object(&bb, "$set");
-    snprintf(varName, sizeof(varName), "%s", row_name);
-    bson_append_string(setObj, varName, nid);
-    bson_append_finish_object(setObj);
-    bson_from_buffer(&setOp, &bb);
-
-    mongo_update(conn, coll, query, &setOp, 0);
-    bson_destroy(&setOp);
 }
 
 /*****************************************************************************/
