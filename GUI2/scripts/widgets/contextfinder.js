@@ -32,8 +32,6 @@
         
             self.element.bind('click',function(event){
                 event.preventDefault();
-                self.elementtext=$(this).text();
-                $(this).text('').append('');
                 self.dialogcontent.dialog('open');
                 self.loadpagebody(self.element.attr('href'));
             });
@@ -304,12 +302,11 @@
                 self.scrollingEnd = true;
                 return;
             }
-            
+        
             var containerUlId = self.containerID();
             document.getElementById('contentfindercontainer').innerHTML = data;
             
             self.dataLoaded = true;            
-            self.element.text(self.elementtext);
         },
    
         destroy: function(){
