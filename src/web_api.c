@@ -269,7 +269,7 @@ void Nova2PHP_summary_meter(char *buffer, int bufsize)
 
 /*****************************************************************************/
 
-int Nova2PHP_summary_report(char *hostkey, char *handle, char *status, int regex, char *classreg,
+int Nova2PHP_summary_report(char *hostkey, char *handle, char *status, bool regex, char *classreg,
                             HostClassFilter *hostClassFilter, char *returnval, int bufsize)
 /*
   Return current best-knowledge of average compliance for the class of hosts and promises selected
@@ -1224,7 +1224,7 @@ int Nova2PHP_get_value_graph(char *hostkey, char *day, char *month, char *year, 
 
 /*****************************************************************************/
 
-int Nova2PHP_software_report(char *hostkey, char *name, char *value, char *arch, int regex, char *type,
+int Nova2PHP_software_report(char *hostkey, char *name, char *value, char *arch, bool regex, char *type,
                              HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
 {
 # ifndef NDEBUG
@@ -1295,7 +1295,7 @@ int Nova2PHP_software_report(char *hostkey, char *name, char *value, char *arch,
 
 /*****************************************************************************/
 
-int Nova2PHP_classes_report(char *hostkey, char *name, int regex, HostClassFilter *hostClassFilter, PageInfo *page,
+int Nova2PHP_classes_report(char *hostkey, char *name, bool regex, HostClassFilter *hostClassFilter, PageInfo *page,
                             char *returnval, int bufsize)
 {
 # ifndef NDEBUG
@@ -1434,7 +1434,7 @@ int Nova2PHP_classes_summary(char **classes, char *buf, int bufsize)
 
 /*****************************************************************************/
 
-int Nova2PHP_vars_report(char *hostkey, char *scope, char *lval, char *rval, char *type, int regex,
+int Nova2PHP_vars_report(char *hostkey, char *scope, char *lval, char *rval, char *type, bool regex,
                          HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
 {
 # ifndef NDEBUG
@@ -1656,7 +1656,7 @@ int Nova2PHP_compliance_report(char *hostkey, char *version, time_t from, time_t
 
 /*****************************************************************************/
 
-int Nova2PHP_compliance_promises(char *hostkey, char *handle, char *status, int regex, HostClassFilter *hostClassFilter,
+int Nova2PHP_compliance_promises(char *hostkey, char *handle, char *status, bool regex, HostClassFilter *hostClassFilter,
                                  PageInfo *page, char *returnval, int bufsize)
 {
 # ifndef NDEBUG
@@ -1824,7 +1824,7 @@ int Nova2PHP_lastseen_report(char *hostkey, char *lhash, char *lhost, char *ladd
 }
 
 /*****************************************************************************/
-int Nova2PHP_performance_report(char *hostkey, char *job, int regex, HostClassFilter *hostClassFilter, PageInfo *page,
+int Nova2PHP_performance_report(char *hostkey, char *job, bool regex, HostClassFilter *hostClassFilter, PageInfo *page,
                                 char *returnval, int bufsize)
 {
     char buffer[CF_BUFSIZE];
@@ -1914,7 +1914,7 @@ int Nova2PHP_performance_report(char *hostkey, char *job, int regex, HostClassFi
 
 /*****************************************************************************/
 
-int Nova2PHP_setuid_report(char *hostkey, char *file, int regex, HostClassFilter *hostClassFilter, PageInfo *page,
+int Nova2PHP_setuid_report(char *hostkey, char *file, bool regex, HostClassFilter *hostClassFilter, PageInfo *page,
                            char *returnval, int bufsize)
 {
     char buffer[CF_BUFSIZE];
@@ -1996,7 +1996,7 @@ static void WriteDouble2Str_MP(double x, char *buffer, int bufsize)
 
 /*****************************************************************************/
 
-int Nova2PHP_bundle_report(char *hostkey, char *bundle, int regex, HostClassFilter *hostClassFilter, PageInfo *page,
+int Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFilter *hostClassFilter, PageInfo *page,
                            char *returnval, int bufsize)
 {
 # ifndef NDEBUG
@@ -2090,7 +2090,7 @@ int Nova2PHP_bundle_report(char *hostkey, char *bundle, int regex, HostClassFilt
 
 /*****************************************************************************/
 
-int Nova2PHP_filechanges_report(char *hostkey, char *file, int regex, time_t from, time_t to,
+int Nova2PHP_filechanges_report(char *hostkey, char *file, bool regex, time_t from, time_t to,
                                 HostClassFilter *hostClassFilter, PageInfo *page, char *returnval,
                                 int bufsize)
 {
@@ -2164,7 +2164,7 @@ int Nova2PHP_filechanges_report(char *hostkey, char *file, int regex, time_t fro
 
 /*****************************************************************************/
 
-int Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, int regex, time_t from, time_t to,
+int Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, bool regex, time_t from, time_t to,
                               HostClassFilter *hostClassFilter, PageInfo *page, char *returnval,
                               int bufsize)
 {
@@ -2396,7 +2396,7 @@ int Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *year, Host
 
 /*****************************************************************************/
 
-int Nova2PHP_software_hosts(char *hostkey, char *name, char *value, char *arch, int regex, char *type,
+int Nova2PHP_software_hosts(char *hostkey, char *name, char *value, char *arch, bool regex, char *type,
                             HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
 {
     mongo_connection dbconn;
@@ -2422,7 +2422,7 @@ int Nova2PHP_software_hosts(char *hostkey, char *name, char *value, char *arch, 
 
 /*****************************************************************************/
 
-int Nova2PHP_classes_hosts(char *hostkey, char *name, int regex, HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
+int Nova2PHP_classes_hosts(char *hostkey, char *name, bool regex, HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
 {    
     mongo_connection dbconn;
 
@@ -2448,7 +2448,7 @@ int Nova2PHP_classes_hosts(char *hostkey, char *name, int regex, HostClassFilter
 
 /*****************************************************************************/
 
-int Nova2PHP_vars_hosts(char *hostkey, char *scope, char *lval, char *rval, char *type, int regex,
+int Nova2PHP_vars_hosts(char *hostkey, char *scope, char *lval, char *rval, char *type, bool regex,
                         HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
 {
     mongo_connection dbconn;
@@ -2500,7 +2500,7 @@ int Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t from, time_t 
 
 /*****************************************************************************/
 
-int Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status, int regex, HostClassFilter *hostClassFilter, PageInfo *page,
+int Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status, bool regex, HostClassFilter *hostClassFilter, PageInfo *page,
                            char *returnval, int bufsize)
 {
     mongo_connection dbconn;
@@ -2557,7 +2557,7 @@ int Nova2PHP_lastseen_hosts(char *hostkey, char *lhash, char *lhost, char *laddr
 
 /*****************************************************************************/
 
-int Nova2PHP_performance_hosts(char *hostkey, char *job, int regex, HostClassFilter *hostClassFilter, PageInfo *page, char *returnval,
+int Nova2PHP_performance_hosts(char *hostkey, char *job, bool regex, HostClassFilter *hostClassFilter, PageInfo *page, char *returnval,
                                int bufsize)
 {
     mongo_connection dbconn;
@@ -2583,7 +2583,7 @@ int Nova2PHP_performance_hosts(char *hostkey, char *job, int regex, HostClassFil
 
 /*****************************************************************************/
 
-int Nova2PHP_setuid_hosts(char *hostkey, char *file, int regex, HostClassFilter *hostClassFilter, PageInfo *page, char *returnval,
+int Nova2PHP_setuid_hosts(char *hostkey, char *file, bool regex, HostClassFilter *hostClassFilter, PageInfo *page, char *returnval,
                           int bufsize)
 {
     mongo_connection dbconn;
@@ -2609,7 +2609,7 @@ int Nova2PHP_setuid_hosts(char *hostkey, char *file, int regex, HostClassFilter 
 
 /*****************************************************************************/
 
-int Nova2PHP_bundle_hosts(char *hostkey, char *bundle, int regex, HostClassFilter *hostClassFilter, PageInfo *page, char *returnval,
+int Nova2PHP_bundle_hosts(char *hostkey, char *bundle, bool regex, HostClassFilter *hostClassFilter, PageInfo *page, char *returnval,
                           int bufsize)
 {
     mongo_connection dbconn;
@@ -2635,7 +2635,7 @@ int Nova2PHP_bundle_hosts(char *hostkey, char *bundle, int regex, HostClassFilte
 
 /*****************************************************************************/
 
-int Nova2PHP_filechanges_hosts(char *hostkey, char *file, int regex, time_t from, time_t to,
+int Nova2PHP_filechanges_hosts(char *hostkey, char *file, bool regex, time_t from, time_t to,
                                HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
 {
     mongo_connection dbconn;
@@ -2658,7 +2658,7 @@ int Nova2PHP_filechanges_hosts(char *hostkey, char *file, int regex, time_t from
 
 /*****************************************************************************/
 
-int Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs, int regex, time_t from, time_t to,
+int Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs, bool regex, time_t from, time_t to,
                              HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
 {
     mongo_connection dbconn;
@@ -2924,7 +2924,7 @@ int Nova2PHP_docroot(char *buffer, int bufsize)
 
 /*****************************************************************************/
 
-int Nova2PHP_search_topics(char *search, int regex, char *buffer, int bufsize)
+int Nova2PHP_search_topics(char *search, bool regex, char *buffer, int bufsize)
 {
     Item *ip,*results = NULL;
     char work[CF_BUFSIZE],jsonEscapedStr[CF_BUFSIZE];
@@ -3717,7 +3717,7 @@ void Nova2PHP_network_speed(char *hostkey, char *buffer, int bufsize)
 
 /*****************************************************************************/
 
-int Nova2PHP_countclasses(char *hostkey, char *name, int regex, HostClassFilter *hostClassFilter, char *returnval,
+int Nova2PHP_countclasses(char *hostkey, char *name, bool regex, HostClassFilter *hostClassFilter, char *returnval,
                           int bufsize)
 {
     HubQuery *hq;

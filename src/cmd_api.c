@@ -27,7 +27,7 @@ void Nova2Txt_getlicense(char *buffer, int bufsize)
 
 /*****************************************************************************/
 
-int Nova2Txt_summary_report(char *hostkey, char *handle, char *status, int regex, char *classreg)
+int Nova2Txt_summary_report(char *hostkey, char *handle, char *status, bool regex, char *classreg)
 /*
   Return current best-knowledge of average compliance for the class of hosts and promises selected
  */
@@ -335,7 +335,7 @@ int Nova2Txt_promiselog_summary(char *hostkey, char *handle, char *cause, Promis
 
 /*****************************************************************************/
 
-int Nova2Txt_software_report(char *hostkey, char *name, char *value, char *arch, int regex, char *type, char *classreg)
+int Nova2Txt_software_report(char *hostkey, char *name, char *value, char *arch, bool regex, char *type, char *classreg)
 {
     HubSoftware *hs;
     HubQuery *hq;
@@ -382,7 +382,7 @@ int Nova2Txt_software_report(char *hostkey, char *name, char *value, char *arch,
 
 /*****************************************************************************/
 
-int Nova2Txt_classes_report(char *hostkey, char *name, int regex, char *classreg)
+int Nova2Txt_classes_report(char *hostkey, char *name, bool regex, char *classreg)
 {
     HubClass *hc;
     HubQuery *hq;
@@ -430,7 +430,7 @@ int Nova2Txt_classes_report(char *hostkey, char *name, int regex, char *classreg
 
 /*****************************************************************************/
 
-int Nova2Txt_vars_report(char *hostkey, char *scope, char *lval, char *rval, char *type, int regex, char *classreg)
+int Nova2Txt_vars_report(char *hostkey, char *scope, char *lval, char *rval, char *type, bool regex, char *classreg)
 {
     char rvalBuf[CF_MAXVARSIZE];
     HubVariable *hv;
@@ -565,7 +565,7 @@ int Nova2Txt_compliance_report(char *hostkey, char *version, time_t from, time_t
 
 /*****************************************************************************/
 
-int Nova2Txt_compliance_promises(char *hostkey, char *handle, char *status, int regex, char *classreg)
+int Nova2Txt_compliance_promises(char *hostkey, char *handle, char *status, bool regex, char *classreg)
 {
     char buffer[CF_BUFSIZE];
     HubPromiseCompliance *hp;
@@ -755,7 +755,7 @@ int Nova2Txt_deadclient_report(char *hostkey, char *lhash, char *lhost, char *la
 
 /*****************************************************************************/
 
-int Nova2Txt_setuid_report(char *hostkey, char *file, int regex, char *classreg)
+int Nova2Txt_setuid_report(char *hostkey, char *file, bool regex, char *classreg)
 {
     HubSetUid *hS;
     HubQuery *hq;
@@ -804,7 +804,7 @@ int Nova2Txt_setuid_report(char *hostkey, char *file, int regex, char *classreg)
 
 /*****************************************************************************/
 
-int Nova2Txt_bundle_report(char *hostkey, char *bundle, int regex, char *classreg, PageInfo *page, char *returnval,
+int Nova2Txt_bundle_report(char *hostkey, char *bundle, bool regex, char *classreg, PageInfo *page, char *returnval,
                            int bufsize)
 {
     char buffer[CF_BUFSIZE] = { 0 };
@@ -889,7 +889,7 @@ int Nova2Txt_bundle_report(char *hostkey, char *bundle, int regex, char *classre
 
 /*****************************************************************************/
 
-int Nova2Txt_filechanges_report(char *hostkey, char *file, int regex, time_t from, time_t to, char *classreg)
+int Nova2Txt_filechanges_report(char *hostkey, char *file, bool regex, time_t from, time_t to, char *classreg)
 {
     char buffer[CF_SMALLBUF];
     HubFileChanges *hC;
@@ -949,7 +949,7 @@ int Nova2Txt_filechanges_report(char *hostkey, char *file, int regex, time_t fro
 
 /*****************************************************************************/
 
-int Nova2Txt_filediffs_report(char *hostkey, char *file, char *diffs, int regex, time_t from, time_t to, char *classreg)
+int Nova2Txt_filediffs_report(char *hostkey, char *file, char *diffs, bool regex, time_t from, time_t to, char *classreg)
 {
     HubFileDiff *hd;
     HubQuery *hq;
@@ -1133,7 +1133,7 @@ int Nova2Txt_value_hosts(char *hostkey, char *day, char *month, char *year, char
 
 /*****************************************************************************/
 
-int Nova2Txt_software_hosts(char *hostkey, char *name, char *value, char *arch, int regex, char *type, char *classreg,
+int Nova2Txt_software_hosts(char *hostkey, char *name, char *value, char *arch, bool regex, char *type, char *classreg,
                             char *returnval, int bufsize)
 {
     char buffer[CF_BUFSIZE];
@@ -1190,7 +1190,7 @@ int Nova2Txt_software_hosts(char *hostkey, char *name, char *value, char *arch, 
 
 /*****************************************************************************/
 
-int Nova2Txt_classes_hosts(char *hostkey, char *name, int regex, char *classreg, char *returnval, int bufsize)
+int Nova2Txt_classes_hosts(char *hostkey, char *name, bool regex, char *classreg, char *returnval, int bufsize)
 {
     char buffer[CF_BUFSIZE];
     HubHost *hh;
@@ -1249,7 +1249,7 @@ int Nova2Txt_classes_hosts(char *hostkey, char *name, int regex, char *classreg,
 
 /*****************************************************************************/
 
-int Nova2Txt_vars_hosts(char *hostkey, char *scope, char *lval, char *rval, char *type, int regex, char *classreg,
+int Nova2Txt_vars_hosts(char *hostkey, char *scope, char *lval, char *rval, char *type, bool regex, char *classreg,
                         char *returnval, int bufsize)
 {
     char buffer[CF_BUFSIZE];
@@ -1305,7 +1305,7 @@ int Nova2Txt_vars_hosts(char *hostkey, char *scope, char *lval, char *rval, char
 
 /*****************************************************************************/
 
-int Nova2Txt_promise_hosts(char *hostkey, char *handle, char *status, int regex, char *classreg, char *returnval,
+int Nova2Txt_promise_hosts(char *hostkey, char *handle, char *status, bool regex, char *classreg, char *returnval,
                            int bufsize)
 {
     char buffer[CF_BUFSIZE];
@@ -1424,7 +1424,7 @@ int Nova2Txt_lastseen_hosts(char *hostkey, char *lhash, char *lhost, char *laddr
 
 /*****************************************************************************/
 
-int Nova2Txt_performance_hosts(char *hostkey, char *job, int regex, char *classreg, char *returnval, int bufsize)
+int Nova2Txt_performance_hosts(char *hostkey, char *job, bool regex, char *classreg, char *returnval, int bufsize)
 {
     char buffer[CF_BUFSIZE];
     HubHost *hh;
@@ -1479,7 +1479,7 @@ int Nova2Txt_performance_hosts(char *hostkey, char *job, int regex, char *classr
 
 /*****************************************************************************/
 
-int Nova2Txt_setuid_hosts(char *hostkey, char *file, int regex, char *classreg, char *returnval, int bufsize)
+int Nova2Txt_setuid_hosts(char *hostkey, char *file, bool regex, char *classreg, char *returnval, int bufsize)
 {
     char buffer[CF_BUFSIZE];
     HubHost *hh;
@@ -1534,7 +1534,7 @@ int Nova2Txt_setuid_hosts(char *hostkey, char *file, int regex, char *classreg, 
 
 /*****************************************************************************/
 
-int Nova2Txt_bundle_hosts(char *hostkey, char *bundle, int regex, char *classreg, char *returnval, int bufsize)
+int Nova2Txt_bundle_hosts(char *hostkey, char *bundle, bool regex, char *classreg, char *returnval, int bufsize)
 {
     char buffer[CF_BUFSIZE];
     HubHost *hh;

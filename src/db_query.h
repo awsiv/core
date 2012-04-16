@@ -20,38 +20,38 @@ HubQuery *CFDB_QueryValueReport(mongo_connection *conn, char *keyHash, char *lda
 HubQuery *CFDB_QueryValueGraph(mongo_connection *conn, char *keyHash, char *lday, char *lmonth, char *lyear, int sort,
                                char *classRegex);
 HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, PromiseLogState state, const char *lhandle,
-                               int regex, const char *lcause, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter);
+                               bool regex, const char *lcause, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter);
 int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash, PromiseLogState state,
-                               const char *lhandle, int regex, const char *lcause, time_t from, time_t to, int sort,
+                               const char *lhandle, bool regex, const char *lcause, time_t from, time_t to, int sort,
                                HostClassFilter *hostClassFilter, Rlist **host_list, Rlist **record_list);
 int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, PromiseLogState state,
-                               const char *lhandle, int regex, const char *lcause, time_t from, time_t to, int sort,
+                               const char *lhandle, bool regex, const char *lcause, time_t from, time_t to, int sort,
                                HostClassFilter *hostClassFilter, Rlist **host_list, Rlist **record_list);
 HubQuery *CFDB_QueryColour(mongo_connection *conn, const HostRankMethod method, HostClassFilter *host_class_filter);
 HubQuery *CFDB_QuerySoftware(mongo_connection *conn, char *keyHash, char *type, char *lname, char *lver, char *larch,
-                             int regex, HostClassFilter *hostClassFilter, int sort);
-HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass, int regex, time_t from, time_t to,
+                             bool regex, HostClassFilter *hostClassFilter, int sort);
+HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass, bool regex, time_t from, time_t to,
                             HostClassFilter *hostClassFilter, int sort);
 HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes);
 HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn, char *keyHash, char *lversion, time_t from, time_t to, int lkept,
                                     int lnotkept, int lrepaired, int sort, HostClassFilter *hostClassFilter);
 Sequence *CFDB_QueryTotalComplianceShifts(mongo_connection *conn, HostClassFilter *host_class_filter);
 HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscope, char *llval, char *lrval,
-                              const char *ltype, int regex, time_t from, time_t to, HostClassFilter *hostClassFilter);
+                              const char *ltype, bool regex, time_t from, time_t to, HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, char *lhandle, PromiseState lstatus,
-                                      int regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter);
+                                      bool regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash, char *lhost, char *laddr, time_t lago,
-                             int regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter);
+                             bool regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryMeter(mongo_connection *conn, bson *query, char *db);
-HubQuery *CFDB_QueryPerformance(mongo_connection *conn, char *keyHash, char *lname, int regex, int sort,
+HubQuery *CFDB_QueryPerformance(mongo_connection *conn, char *keyHash, char *lname, bool regex, int sort,
                                 HostClassFilter *hostClassFilter);
-HubQuery *CFDB_QuerySetuid(mongo_connection *conn, char *keyHash, char *lname, int regex,
+HubQuery *CFDB_QuerySetuid(mongo_connection *conn, char *keyHash, char *lname, bool regex,
                            HostClassFilter *hostClassFilter);
-HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lname, int regex,
+HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lname, bool regex,
                                HostClassFilter *hostClassFilter, int sort);
-HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lname, int regex, time_t from, time_t to,
+HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lname, bool regex, time_t from, time_t to,
                                 int sort, HostClassFilter *hostClassFilter);
-HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname, char *ldiff, int regex,
+HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname, char *ldiff, bool regex,
                              time_t from, time_t to, int sort, HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *policy, time_t minGenTime);
 HubQuery *CFDB_QueryClassesDistinctSorted(mongo_connection *conn, const char *class_rx, HostClassFilter *hostClassFilter, PageInfo *page);
@@ -72,7 +72,7 @@ HubPromise *CFDB_QueryPromise(mongo_connection *conn, char *handle, char *file, 
 int CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, char *attrVal, int attrValSz);
 Item *CFDB_QueryExpandedPromiseAttr(mongo_connection *conn, char *handle, char *attrKey);
 HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char *promiserType, char *bType, char *bName,
-                                   int regex, bool filter);
+                                   bool regex, bool filter);
 HubQuery *CFDB_QueryHandlesForBundlesWithComments(mongo_connection *conn, char *bType, char *bName);
 HubQuery *CFDB_QueryPolicyFinderData(mongo_connection *conn, char *handle, char *promiser, char *bName, int escRegex);
 Item *CFDB_QueryBundles(mongo_connection *conn, char *bTypeRegex, char *bNameRegex);

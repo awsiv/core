@@ -47,42 +47,42 @@ int Nova2Txt_value_report(char *hostkey, char *day, char *month, char *year, cha
 void Nova2Txt_summary_meter(char *buffer, int bufsize);
 void Nova2Txt_meter(char *hostkey, char *buffer, int bufsize);
 int Nova2Txt_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int bufsize);
-int Nova2Txt_software_report(char *key, char *name, char *value, char *arch, int regex, char *type, char *classreg);
-int Nova2Txt_classes_report(char *hostkey, char *name, int regex, char *classreg);
-int Nova2Txt_vars_report(char *hostkey, char *scope, char *lval, char *rval, char *type, int regex, char *classreg);
+int Nova2Txt_software_report(char *key, char *name, char *value, char *arch, bool regex, char *type, char *classreg);
+int Nova2Txt_classes_report(char *hostkey, char *name, bool regex, char *classreg);
+int Nova2Txt_vars_report(char *hostkey, char *scope, char *lval, char *rval, char *type, bool regex, char *classreg);
 int Nova2Txt_compliance_report(char *hostkey, char *version, time_t from, time_t to, int k, int nk, int rep,
                                char *classreg);
-int Nova2Txt_compliance_promises(char *hostkey, char *handle, char *status, int regex, char *classreg);
+int Nova2Txt_compliance_promises(char *hostkey, char *handle, char *status, bool regex, char *classreg);
 int Nova2Txt_lastseen_report(char *hostkey, char *lhash, char *lhost, char *laddr, time_t lago, int lregex,
                              char *classreg);
 int Nova2Txt_deadclient_report(char *hostkey, char *lhash, char *lhost, char *laddress, time_t lago, int lregex,
                                char *classreg);
-int Nova2Txt_setuid_report(char *hostkey, char *file, int regex, char *classreg);
-int Nova2Txt_bundle_report(char *hostkey, char *bundle, int regex, char *classreg, PageInfo *page, char *returnval,
+int Nova2Txt_setuid_report(char *hostkey, char *file, bool regex, char *classreg);
+int Nova2Txt_bundle_report(char *hostkey, char *bundle, bool regex, char *classreg, PageInfo *page, char *returnval,
                            int bufsize);
-int Nova2Txt_filechanges_report(char *hostkey, char *file, int regex, time_t from, time_t to, char *classreg);
-int Nova2Txt_filediffs_report(char *hostkey, char *file, char *diffs, int regex, time_t from, time_t to, char *classreg);
+int Nova2Txt_filechanges_report(char *hostkey, char *file, bool regex, time_t from, time_t to, char *classreg);
+int Nova2Txt_filediffs_report(char *hostkey, char *file, char *diffs, bool regex, time_t from, time_t to, char *classreg);
 
-int Nova2Txt_summary_report(char *hostkey, char *handle, char *status, int regex, char *classreg);
+int Nova2Txt_summary_report(char *hostkey, char *handle, char *status, bool regex, char *classreg);
 
-int Nova2Txt_software_hosts(char *hostkey, char *name, char *value, char *arch, int regex, char *type, char *classreg,
+int Nova2Txt_software_hosts(char *hostkey, char *name, char *value, char *arch, bool regex, char *type, char *classreg,
                             char *returnval, int bufsize);
-int Nova2Txt_classes_hosts(char *hostkey, char *name, int regex, char *classreg, char *returnval, int bufsize);
-int Nova2Txt_vars_hosts(char *hostkey, char *scope, char *lval, char *rval, char *type, int regex, char *classreg,
+int Nova2Txt_classes_hosts(char *hostkey, char *name, bool regex, char *classreg, char *returnval, int bufsize);
+int Nova2Txt_vars_hosts(char *hostkey, char *scope, char *lval, char *rval, char *type, bool regex, char *classreg,
                         char *returnval, int bufsize);
-int Nova2Txt_promise_hosts(char *hostkey, char *handle, char *status, int regex, char *classreg, char *returnval,
+int Nova2Txt_promise_hosts(char *hostkey, char *handle, char *status, bool regex, char *classreg, char *returnval,
                            int bufsize);
 int Nova2Txt_lastseen_hosts(char *hostkey, char *lhash, char *lhost, char *laddress, time_t lago, int lregex,
                             char *classreg, char *returnval, int bufsize);
-int Nova2Txt_performance_hosts(char *hostkey, char *job, int regex, char *classreg, char *returnval, int bufsize);
-int Nova2Txt_setuid_hosts(char *hostkey, char *file, int regex, char *classreg, char *returnval, int bufsize);
-int Nova2Txt_bundle_hosts(char *hostkey, char *bundle, int regex, char *classreg, char *returnval, int bufsize);
+int Nova2Txt_performance_hosts(char *hostkey, char *job, bool regex, char *classreg, char *returnval, int bufsize);
+int Nova2Txt_setuid_hosts(char *hostkey, char *file, bool regex, char *classreg, char *returnval, int bufsize);
+int Nova2Txt_bundle_hosts(char *hostkey, char *bundle, bool regex, char *classreg, char *returnval, int bufsize);
 int Nova2Txt_promiselog_hosts(char *hostkey, char *handle, char *cause, PromiseLogState state, time_t from, time_t to,
                               char *classreg, char *returnval, int bufsize);
 int Nova2Txt_value_hosts(char *hostkey, char *day, char *month, char *year, char *classreg, char *returnval,
                          int bufsize);
 
-int Nova2Txt_search_topics(char *search, int regex, char *buffer, int bufsize);
+int Nova2Txt_search_topics(char *search, bool regex, char *buffer, int bufsize);
 void Nova2Txt_show_topic(int id, char *buffer, int bufsize);
 void Nova2Txt_show_topic_leads(int id, char *buffer, int bufsize);
 void Nova2Txt_show_topic_hits(int id, char *buffer, int bufsize);

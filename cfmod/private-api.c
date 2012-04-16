@@ -815,8 +815,7 @@ PHP_FUNCTION(cfpr_report_software_in)
     char *fhostkey, *fname, *fversion, *farch;
     zval *contextIncludes = NULL, *contextExcludes = NULL;
     int user_len, hk_len, n_len, v_len, a_len;
-    long regex;
-    int use_reg;
+    zend_bool regex;
     char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
     char *sortColumnName;
@@ -841,8 +840,6 @@ PHP_FUNCTION(cfpr_report_software_in)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    use_reg = (int) regex;
-
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fname = (n_len == 0) ? NULL : name;
     fversion = (v_len == 0) ? NULL : version;
@@ -858,7 +855,7 @@ PHP_FUNCTION(cfpr_report_software_in)
 
     HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
 
-    Nova2PHP_software_report(fhostkey, fname, fversion, farch, use_reg, cfr_software, filter, &page, buffer,
+    Nova2PHP_software_report(fhostkey, fname, fversion, farch, (bool) regex, cfr_software, filter, &page, buffer,
                              sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -872,8 +869,8 @@ PHP_FUNCTION(cfpr_report_patch_in)
     char *userName, *hostkey, *name, *version, *arch;
     char *fhostkey, *fname, *fversion, *farch;
     zval *contextIncludes = NULL, *contextExcludes = NULL;
-    int user_len, hk_len, n_len, v_len, a_len, use_reg;
-    long regex;
+    int user_len, hk_len, n_len, v_len, a_len;
+    zend_bool regex;
     char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
     char *sortColumnName;
@@ -898,8 +895,6 @@ PHP_FUNCTION(cfpr_report_patch_in)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    use_reg = (int) regex;
-
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fname = (n_len == 0) ? NULL : name;
     fversion = (v_len == 0) ? NULL : version;
@@ -915,7 +910,7 @@ PHP_FUNCTION(cfpr_report_patch_in)
 
     HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
 
-    Nova2PHP_software_report(fhostkey, fname, fversion, farch, use_reg, cfr_patch_installed, filter, &page, buffer,
+    Nova2PHP_software_report(fhostkey, fname, fversion, farch, (bool) regex, cfr_patch_installed, filter, &page, buffer,
                              sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -929,8 +924,8 @@ PHP_FUNCTION(cfpr_report_patch_avail)
     char *userName, *hostkey, *name, *version, *arch;
     char *fhostkey, *fname, *fversion, *farch;
     zval *contextIncludes = NULL, *contextExcludes = NULL;
-    int user_len, hk_len, n_len, v_len, a_len, use_reg;
-    long regex;
+    int user_len, hk_len, n_len, v_len, a_len;
+    zend_bool regex;
     char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
     char *sortColumnName;
@@ -955,8 +950,6 @@ PHP_FUNCTION(cfpr_report_patch_avail)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    use_reg = (int) regex;
-
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fname = (n_len == 0) ? NULL : name;
     fversion = (v_len == 0) ? NULL : version;
@@ -972,8 +965,7 @@ PHP_FUNCTION(cfpr_report_patch_avail)
 
     HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
 
-    Nova2PHP_software_report(fhostkey, fname, fversion, farch, use_reg, cfr_patch_avail, filter, &page, buffer,
-                             sizeof(buffer));
+    Nova2PHP_software_report(fhostkey, fname, fversion, farch, (bool) regex, cfr_patch_avail, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -988,7 +980,7 @@ PHP_FUNCTION(cfpr_report_classes)
     zval *contextIncludes = NULL, *contextExcludes = NULL;
 
     int user_len, hk_len, n_len;
-    long regex;
+    zend_bool regex;
     char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
     char *sortColumnName;
@@ -1024,7 +1016,7 @@ PHP_FUNCTION(cfpr_report_classes)
 
     HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
 
-    Nova2PHP_classes_report(fhostkey, fname, regex, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_classes_report(fhostkey, fname, (bool) regex, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -1252,7 +1244,7 @@ PHP_FUNCTION(cfpr_report_vars)
     char *userName, *hostkey, *scope, *lval, *rval, *type;
     char *fhostkey, *fscope, *flval, *frval, *ftype;
     zval *contextIncludes = NULL, *contextExcludes = NULL;
-    int user_len, hk_len, s_len, l_len, r_len, t_len, use_reg;
+    int user_len, hk_len, s_len, l_len, r_len, t_len;
     zend_bool regex;
     char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
@@ -1279,8 +1271,6 @@ PHP_FUNCTION(cfpr_report_vars)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    use_reg = (int) regex;
-
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fscope = (s_len == 0) ? NULL : scope;
     flval = (l_len == 0) ? NULL : lval;
@@ -1297,7 +1287,7 @@ PHP_FUNCTION(cfpr_report_vars)
 
     HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
 
-    Nova2PHP_vars_report(fhostkey, fscope, flval, frval, ftype, use_reg, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_vars_report(fhostkey, fscope, flval, frval, ftype, (bool) regex, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -1390,7 +1380,7 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
     int hk_len, h_len, s_len;
     char buffer[CF_WEBBUFFER];
     zend_bool regex;
-    int user_len, use_reg;
+    int user_len;
     PageInfo page = { 0 };
     char *sortColumnName;
     int sc_len;
@@ -1413,7 +1403,6 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    use_reg = (int) regex;
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fhandle = (h_len == 0) ? NULL : handle;
     fstatus = (s_len == 0) ? NULL : status;
@@ -1428,7 +1417,7 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_compliance_promises(fhostkey, fhandle, fstatus, use_reg, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_compliance_promises(fhostkey, fhandle, fstatus, (bool) regex, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -1443,7 +1432,6 @@ PHP_FUNCTION(cfpr_report_overall_summary)
     int user_len, hk_len, h_len, s_len, cr_len;
     char buffer[CF_WEBBUFFER];
     zend_bool regex;
-    int use_reg;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbs",
                               &userName, &user_len,
@@ -1455,8 +1443,6 @@ PHP_FUNCTION(cfpr_report_overall_summary)
     }
 
     ARGUMENT_CHECK_CONTENTS(user_len);
-
-    use_reg = (int) regex;
 
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fhandle = (h_len == 0) ? NULL : handle;
@@ -1472,7 +1458,7 @@ PHP_FUNCTION(cfpr_report_overall_summary)
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
     buffer[0] = '\0';
-    Nova2PHP_summary_report(fhostkey, fhandle, fstatus, use_reg, fclassreg, filter, buffer, sizeof(buffer));
+    Nova2PHP_summary_report(fhostkey, fhandle, fstatus, (bool) regex, fclassreg, filter, buffer, sizeof(buffer));
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1491,7 +1477,6 @@ PHP_FUNCTION(cfpr_report_lastseen)
     long ago;
     time_t tago;
     zend_bool regex;
-    int use_reg;
     PageInfo page = { 0 };
     char *sortColumnName;
     int sc_len;
@@ -1517,7 +1502,6 @@ PHP_FUNCTION(cfpr_report_lastseen)
     ARGUMENT_CHECK_CONTENTS(user_len);
 
     tago = (time_t) ago;
-    use_reg = (int) regex;
 
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fhash = (h2_len == 0) ? NULL : hash;
@@ -1534,7 +1518,7 @@ PHP_FUNCTION(cfpr_report_lastseen)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_lastseen_report(fhostkey, fhash, fhost, faddress, tago, use_reg, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_lastseen_report(fhostkey, fhash, fhost, faddress, tago, (bool) regex, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -1585,7 +1569,7 @@ PHP_FUNCTION(cfpr_report_performance)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_performance_report(fhostkey, fjob, regex, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_performance_report(fhostkey, fjob, (bool) regex, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -1635,7 +1619,7 @@ PHP_FUNCTION(cfpr_report_setuid)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_setuid_report(fhostkey, ffile, regex, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_setuid_report(fhostkey, ffile, (bool) regex, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -1687,7 +1671,7 @@ PHP_FUNCTION(cfpr_report_filechanges)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_filechanges_report(fhostkey, ffile, regex, (time_t)from, time(NULL), filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_filechanges_report(fhostkey, ffile, (bool) regex, (time_t)from, time(NULL), filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -1703,7 +1687,6 @@ PHP_FUNCTION(cfpr_report_filediffs)
     int user_len, hk_len, f_len, d_len;
     char buffer[CF_WEBBUFFER];
     zend_bool regex;
-    int use_reg;
     long from;
     PageInfo page = { 0 };
     char *sortColumnName;
@@ -1728,7 +1711,6 @@ PHP_FUNCTION(cfpr_report_filediffs)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    use_reg = (int) regex;
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     ffile = (f_len == 0) ? NULL : file;
     fdiff = (d_len == 0) ? NULL : diff;
@@ -1743,7 +1725,7 @@ PHP_FUNCTION(cfpr_report_filediffs)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_filediffs_report(fhostkey, ffile, fdiff, use_reg, from, time(NULL), filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_filediffs_report(fhostkey, ffile, fdiff, (bool) regex, from, time(NULL), filter, &page, buffer, sizeof(buffer));
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1792,7 +1774,6 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
     int user_len, hk_len, j_len;
     char buffer[CF_WEBBUFFER];
     zend_bool regex;
-    int use_reg;
     PageInfo page = { 0 };
     char *sortColumnName;
     int sc_len;
@@ -1814,7 +1795,6 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    use_reg = (int) regex;
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fbundle = (j_len == 0) ? NULL : bundle;
 
@@ -1828,7 +1808,7 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_bundle_report(fhostkey, fbundle, use_reg, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_bundle_report(fhostkey, fbundle, (bool) regex, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2136,9 +2116,9 @@ PHP_FUNCTION(cfpr_hosts_with_software_in)
 {
     char *userName, *hostkey, *name, *version, *arch;
     char *fhostkey, *fname, *fversion, *farch;
-    int user_len, hk_len, n_len, v_len, a_len, use_reg;
+    int user_len, hk_len, n_len, v_len, a_len;
     zval *context_includes = NULL, *context_excludes = NULL;
-    long regex;
+    zend_bool regex;
     char buffer[512 * 1024];
     PageInfo page = {0};
 
@@ -2159,8 +2139,6 @@ PHP_FUNCTION(cfpr_hosts_with_software_in)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    use_reg = (int) regex;
-
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fname = (n_len == 0) ? NULL : name;
     fversion = (v_len == 0) ? NULL : version;
@@ -2176,7 +2154,7 @@ PHP_FUNCTION(cfpr_hosts_with_software_in)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, use_reg, cfr_software, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, (bool) regex, cfr_software, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2238,7 +2216,7 @@ PHP_FUNCTION(cfpr_hosts_with_patch_in)
     char *userName, *hostkey, *name, *version, *arch;
     int user_len, hk_len, n_len, v_len, a_len;
     zval *context_includes = NULL, *context_excludes = NULL;
-    long regex;
+    zend_bool regex;
     char buffer[512 * 1024];
     PageInfo page = { 0 };
 
@@ -2274,7 +2252,7 @@ PHP_FUNCTION(cfpr_hosts_with_patch_in)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, regex, cfr_patch_installed, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, (bool) regex, cfr_patch_installed, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2286,9 +2264,9 @@ PHP_FUNCTION(cfpr_hosts_with_patch_avail)
 {
     char *userName, *hostkey, *name, *version, *arch;
     char *fhostkey, *fname, *fversion, *farch;
-    int user_len, hk_len, n_len, v_len, a_len, use_reg;
+    int user_len, hk_len, n_len, v_len, a_len;
     zval *context_includes = NULL, *context_excludes = NULL;
-    long regex;
+    zend_bool regex;
     char buffer[512 * 1024];
     PageInfo page = { 0 };
 
@@ -2309,8 +2287,6 @@ PHP_FUNCTION(cfpr_hosts_with_patch_avail)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    use_reg = (int) regex;
-
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fname = (n_len == 0) ? NULL : name;
     fversion = (v_len == 0) ? NULL : version;
@@ -2326,7 +2302,7 @@ PHP_FUNCTION(cfpr_hosts_with_patch_avail)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, use_reg, cfr_patch_avail, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, (bool) regex, cfr_patch_avail, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2339,7 +2315,7 @@ PHP_FUNCTION(cfpr_hosts_with_classes)
     char *userName, *hostkey, *name;
     int user_len, hk_len, n_len;
     zval *context_includes = NULL, *context_excludes = NULL;
-    long regex;
+    zend_bool regex;
     char buffer[512 * 1024];
     PageInfo page = { 0 };
 
@@ -2371,7 +2347,7 @@ PHP_FUNCTION(cfpr_hosts_with_classes)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_classes_hosts(fhostkey, fname, regex, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_classes_hosts(fhostkey, fname, (bool) regex, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2493,7 +2469,7 @@ PHP_FUNCTION(cfpr_hosts_with_vars)
 {
     char *userName, *hostkey, *scope, *lval, *rval, *type;
     char *fhostkey, *fscope, *flval, *frval, *ftype;
-    int user_len, hk_len, s_len, l_len, r_len, t_len, use_reg;
+    int user_len, hk_len, s_len, l_len, r_len, t_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     zend_bool regex;
     char buffer[512 * 1024];
@@ -2517,8 +2493,6 @@ PHP_FUNCTION(cfpr_hosts_with_vars)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    use_reg = (int) regex;
-
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fscope = (s_len == 0) ? NULL : scope;
     flval = (l_len == 0) ? NULL : lval;
@@ -2535,7 +2509,7 @@ PHP_FUNCTION(cfpr_hosts_with_vars)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_vars_hosts(fhostkey, fscope, flval, frval, ftype, use_reg, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_vars_hosts(fhostkey, fscope, flval, frval, ftype, (bool) regex, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2597,7 +2571,6 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_promises)
     zval *context_includes = NULL, *context_excludes = NULL;
     char buffer[512 * 1024];
     zend_bool regex;
-    int use_reg;
     PageInfo page = { 0 };
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbaall",
@@ -2616,7 +2589,6 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_promises)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    use_reg = (int) regex;
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fhandle = (h_len == 0) ? NULL : handle;
     fstatus = (s_len == 0) ? NULL : status;
@@ -2631,7 +2603,7 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_promises)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_promise_hosts(fhostkey, fhandle, fstatus, use_reg, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_promise_hosts(fhostkey, fhandle, fstatus, (bool) regex, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2648,7 +2620,6 @@ PHP_FUNCTION(cfpr_hosts_with_lastseen)
     char buffer[512 * 1024];
     long ago;
     zend_bool regex;
-    int use_reg;
     PageInfo page = { 0 };
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssslbaall",
@@ -2669,8 +2640,6 @@ PHP_FUNCTION(cfpr_hosts_with_lastseen)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    use_reg = (int) regex;
-
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fhash = (h2_len == 0) ? NULL : hash;
     fhost = (h_len == 0) ? NULL : host;
@@ -2686,7 +2655,7 @@ PHP_FUNCTION(cfpr_hosts_with_lastseen)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_lastseen_hosts(fhostkey, fhash, fhost, faddress, ago, use_reg, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_lastseen_hosts(fhostkey, fhash, fhost, faddress, ago, (bool) regex, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2732,7 +2701,7 @@ PHP_FUNCTION(cfpr_hosts_with_performance)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_performance_hosts(fhostkey, fjob, regex, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_performance_hosts(fhostkey, fjob, (bool) regex, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2778,7 +2747,7 @@ PHP_FUNCTION(cfpr_hosts_with_setuid)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_setuid_hosts(fhostkey, ffile, regex, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_setuid_hosts(fhostkey, ffile, (bool) regex, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2826,7 +2795,7 @@ PHP_FUNCTION(cfpr_hosts_with_filechanges)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_filechanges_hosts(fhostkey, ffile, regex, (time_t)from, time(NULL), filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_filechanges_hosts(fhostkey, ffile, (bool) regex, (time_t)from, time(NULL), filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2875,7 +2844,7 @@ PHP_FUNCTION(cfpr_hosts_with_filediffs)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_filediffs_hosts(fhostkey, ffile, diff, regex, (time_t)from, time(NULL), filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_filediffs_hosts(fhostkey, ffile, diff, (bool) regex, (time_t)from, time(NULL), filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2921,7 +2890,7 @@ PHP_FUNCTION(cfpr_hosts_with_bundlesseen)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_bundle_hosts(fhostkey, fbundle, regex, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_bundle_hosts(fhostkey, fbundle, (bool) regex, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2994,7 +2963,7 @@ PHP_FUNCTION(cfpr_search_topics)
     fsearch = (s_len == 0) ? NULL : search;
 
     buffer[0] = '\0';
-    Nova2PHP_search_topics(fsearch, regex, buffer, bufsize);
+    Nova2PHP_search_topics(fsearch, (bool) regex, buffer, bufsize);
 
     RETURN_STRING(buffer, 1);
 }
