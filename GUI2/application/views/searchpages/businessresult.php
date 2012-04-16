@@ -24,7 +24,7 @@
                 <form id="saveform" method="post" action="<?php echo site_url(); ?>/savedsearch/save/">
                     <p>
                         <label>Save this search </label> 
-                        <input type="input" id="search_name" name="search_name" class="textbox"></input>
+                        <input type="text" id="search_name" name="search_name" class="textbox"></input>
                         <span class="green_btn"><input type="submit" id="submit_search" value="Save Search"/></span>
                         <span class="clear"></span>
                     </p>
