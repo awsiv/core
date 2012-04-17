@@ -14,7 +14,7 @@
             });
         </script>    
         <div id="modifySearchPanel">
-            <div class="grid_7">
+            <div class="grid_7 reportForm">
                 <?php $this->load->view('searchpages/' . $filter_view); ?> 
 
             </div>
@@ -50,6 +50,9 @@
                     var $exList  = $('#searchform input:hidden[name=exlist]');
                     $('#hclist').contextfinder({
                         baseUrl: '<?php echo site_url() ?>',
+                        setContextClbkFnc:function() { 
+                            $('.reportForm form').submit();
+                        }, 
                         complete:function(event,data){
                             $incList.val(data.includes);
                             $exList.val(data.excludes);
@@ -131,10 +134,6 @@
                         </div>
 <script type="text/javascript">
     $(document).ready(function() {
-
-
-        //$("#searchform").addClass('grid_8');
-
         // for save search 
         $('#savesearch').click(function(e) {
             e.preventDefault();            

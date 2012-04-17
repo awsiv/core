@@ -279,8 +279,8 @@ label#searchbox input
     border: medium none;
     color: #666666;
     outline: medium none;
-    padding: 5px 0 0 10px;
-    width:166px;
+    padding: 0px 0 0 10px;
+    width:171px;
 }
 
 /*for working pane*/
@@ -1435,7 +1435,6 @@ div.ui-dialog .ui-dialog-buttonpane{
     display:block;
     width:100%;
     border:solid 1px #cecece;
-    padding-top:4px;
     margin-top:2px;
     z-index: auto !important
 }
@@ -2506,10 +2505,7 @@ background-image: url(../images/error.png);
     margin:0;
 }
 
-.outerdiv input.textbox{
-    padding:2px;
-    border:solid 1px #999;
-}
+
 
 .ui-widget-content .btn a, .btn a, .btn, .outerdiv .btn,.ui-widget-content a.btn
 {
@@ -2961,8 +2957,6 @@ body .outerdiv a.hostcontextddl, .hostcontextddl{
     border: 1px solid #CECECE;
     display: block;
     margin-top: 2px;
-    padding-top: 2px;
-    font-size: 1em;        
     width: 60%;
     z-index: auto !important;
     float: left;
@@ -3143,4 +3137,5 @@ select {
     padding:0 0 0 5px;
     font-size: 12px;
     height: 23px;
+    line-height: 23px;
 }

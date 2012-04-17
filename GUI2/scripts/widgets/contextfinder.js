@@ -5,6 +5,13 @@
             includes: [],
             excludes: []
         },
+        // this is temporal context. We use it for store values for "seans", 
+        // if user click on set context then _context = _tmpcontext, 
+        // otherwise _context won't be changed
+        _tmpcontext:{
+            includes: [],
+            excludes: []
+        },        
         
         options: {
             baseUrl:'',
@@ -14,7 +21,11 @@
             autoOpen: false,
             resizable: false,
             hostkey:"",
-            defaultEmptyElements: 2
+            defaultEmptyElements: 2,
+            
+            setContextClbkFnc: '',
+            setContextClbkParam: ''
+            
         },
         _init: function(){
             var self=this;
@@ -44,14 +55,14 @@
         setContext:function(includes,excludes) {
             var self = this;
             self._context.includes = includes;
-            self._context.excludes = excludes;      
+            self._context.excludes = excludes;   
             return;  
         },
         
         getContext:function() { // we use it when call contextfinder from clasfinder
             var self = this;
             self.getInludeExclude(); //call to get context if manually edited
-            return self._context;
+            return self._tmpcontext;
         },
 
         dialoginit:function(){
@@ -73,17 +84,29 @@
             });
             self.repdialog.appendTo(self.dialogcontent).hide();
         },
+        _dialogSubmit: function (event, dialogObj) {
+            var self = dialogObj;            
+            event.preventDefault();
+            self.getInludeExclude();
+            self._trigger("complete",null,self.getInludeExclude());
+            self.setContext(self._tmpcontext.includes, self._tmpcontext.excludes)
+
+            self.publish("contextChange",self._context);
+            
+            // call callback if set
+            if (self.options.setContextClbkFnc != '' && $.isFunction(self.options.setContextClbkFnc)) {
+                self.options.setContextClbkFnc.call(self, self.options.setContextClbkParam);
+            }
+            
+            self.dialogcontent.dialog('close')
+        },
         _createNewElement: function (name) { //create new item
-            var self=this;
+           var self=this;
            return $('<div class="item"><input type="text"  name="' + name + '[]" value=""><a class="class_selector" href="'+self.options.baseUrl+'/widget/allclasses">&nbsp;</a><a class="delete_condition" href="">&nbsp;</a><div class="clearboth"></div></div>');
         },
         loadpagebody:function(url){
             var self=this,
                 submit_url=url;
-                
-            //self.getInludeExclude(); //call to get context if manually edited
-            
-        
             $.ajax({
                 type: "POST",
                 url: submit_url,
@@ -92,13 +115,12 @@
                 success: function(data) {
 
                     self.updateDataInContainer(data);
-           
                     $(".contextfinder_wrapper").delegate('.class_selector',"click", function(event) {
                         event.preventDefault();
                         self.getInludeExclude();
                         self.bindClassfinder(this);
                     });
-                    
+
                     //add another condition field
                     $(".contextfinder_wrapper").delegate('.add_condition',"click", function(event) {
                         event.preventDefault();
@@ -118,13 +140,7 @@
                         $(this).parent().remove();
                         self.getInludeExclude();
                     });                    
-                    
-                    $(".contextfinder_wrapper").delegate('.class_selector',"click",  function(event) {
-                        event.preventDefault();
-                        self.getInludeExclude();
-                     });
-      
-        
+    
                     //swap values
                     $(".contextfinder_wrapper").delegate(".invert","click",  function(event) {
                         event.preventDefault();    
@@ -138,18 +154,27 @@
                         
                         //rename includes
                         $.each(cloned_includes, function() { 
-                            self.dialogcontent.find('input').attr('name', 'exclude[]');
+                            cloned_includes.find('input').attr('name', 'exclude[]');
                         });
-                        
                         //rename excludes
                         $.each(cloned_excludes, function() { 
-                            self.dialogcontent.find('input').attr('name', 'include[]');
+                            cloned_excludes.find('input').attr('name', 'include[]');                            
                         });
                         
                         // replace current includes/excludes with cloned 
-                        self.dialogcontent.find('td.includes .item').replaceWith(cloned_excludes);
-                        self.dialogcontent.find('td.excludes .item').replaceWith(cloned_includes);
-
+                        if (self.dialogcontent.find('td.includes .item').length>0) {
+                            self.dialogcontent.find('td.includes .item').replaceWith(cloned_excludes);
+                        }
+                        else {
+                            self.dialogcontent.find('td.includes').append(cloned_excludes);
+                        }
+                        
+                        if (self.dialogcontent.find('td.excludes .item').length > 0) {
+                            self.dialogcontent.find('td.excludes .item').replaceWith(cloned_includes);
+                        }
+                        else {
+                            self.dialogcontent.find('td.excludes').append(cloned_includes);
+                        }
                       });
 
                     self.dialogcontent.find(".contextfinder_wrapper").delegate("#resetConditions","click",  function(event)  {
@@ -158,15 +183,20 @@
                         self.refreshTabindex();
                     });
 
+                    // bind enter(return)
+                    self.dialogcontent.delegate(".contextfinder_wrapper", "keypress", function(event) {
+                        if (event.keyCode == 13) {
+                             self._dialogSubmit(event, self);
+                        }
+                    });
                     self.dialogcontent.find(".contextfinder_wrapper").delegate("#setConditions","click",  function(event)  {
-                        event.preventDefault();
-                        self.getInludeExclude();
-                        self._trigger("complete",null,self.getInludeExclude());
-                        self.dialogcontent.dialog('close')
+                        self._dialogSubmit(event, self);
                     });
                     
                     self.setFocusFirstElement();
                     self.animate=false;
+                    
+                    self.getInludeExclude();
                 },
                 error:function(jqXHR, textStatus, errorThrown){
                     var containerUlId = self.containerID();
@@ -239,28 +269,22 @@
             
             // if no input elemenst  -reset context
             if (self.dialogcontent.find('input[name="includes[]"]').length == 0) {
-                self._context.includes = [];
+                self._tmpcontext.includes = [];
             }
             if (self.dialogcontent.find('input[name="exclude[]"]').length == 0) {
-                self._context.excludes = [];
+                self._tmpcontext.excludes = [];
             }
 
-            if (includes.length) {
-                self._context.includes = includes;
-            }
+          
+            self._tmpcontext.includes = includes;
+            self._tmpcontext.excludes = excludes;               
 
-            if (excludes.length) {
-                self._context.excludes = excludes;           
-            }
-
-            self.publish("contextChange",self._context);
-            return self._context;
-        },
-        
+            return self._tmpcontext;
+        },        
         resetContext: function () {
             var self = this;
-            self._context.includes = [];
-            self._context.excludes = [];
+            self._tmpcontext.includes = [];
+            self._tmpcontext.excludes = [];
         },
         resetForm: function() {
             var self = this;
@@ -286,7 +310,6 @@
                 dialog({
                     autoOpen: false,
                      beforeClose: function(event, ui) {
-                        self.getInludeExclude();
                     }
                 });
                 return requestDialog;
