@@ -4584,7 +4584,7 @@ PHP_FUNCTION(cfpr_add_note)
 
     returnval[0] = '\0';
 
-    Nova2PHP_add_note(hostkey, nid, fuser, datetime, fnote, returnval, sizeof(returnval));
+    Nova2PHP_add_note(nid, hostkey, fuser, datetime, fnote, returnval, sizeof(returnval));
 
     RETURN_STRING(returnval, 1);
 }
