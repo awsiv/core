@@ -32,7 +32,7 @@ class cf_table {
         $this->CI = &get_instance();
         $this->CI->load->library('table');
 
-        // these array are the report titles where date should not be coloured 
+        // these array are the report titles where date should not be coloured
         $this->ignoreDateColor = array('Promises not kept log',
             'Promises repaired log',
             'Compliance summary',
@@ -212,37 +212,11 @@ class cf_table {
                                  else if (strtolower($key) == 'virtual bundle') {
                                     $tempValue = sprintf('<a target="_self" href="%s/virtualbundle/details/%s">%s</a>', site_url(), trim(urlencode($tempValue)), $tempValue);
                                 }
-                                
+
 
                                 array_push($temp, $tempValue);
                             }
-                        } else {
-                            if (strtolower($key) == "note") {
-                                $link = site_url("notes") . '/index/';
-                                $data_index = $value['index'];
-                                $notesAlreadyPresent = false;
-                                foreach ($value['subkeys'] as $subkey => $subval) {
-                                    $data = trim($row[$data_index][$subval]);
-
-
-
-                                    if ($subkey == 'rid') {
-                                        $data = urlencode((utf8_encode($data)));
-                                    }
-                                    if ($data != '') {
-                                        $link.="$subkey/$data/";
-                                        // if subval action is show we can indicate it visually there are some comments
-                                        if ($subkey == 'action' && $data == 'show')
-                                            $notesAlreadyPresent = true;
-                                    }
-                                }
-                                $addClass = $notesAlreadyPresent ? 'notes-highlight' : '';
-                                $c = array(
-                                    'data' => anchor($link, 'notes', array('class'=>'note')),
-                                    'class' => $addClass);
-                                  array_push($temp, $c );
-                            }
-                        }
+                        } 
                     }
                     $this->CI->table->add_row($temp);
                 }
@@ -252,9 +226,9 @@ class cf_table {
         return $return;
     }
 
-    
-    
-    
+
+
+
     function generate_nested_table($result, $title='') {
         foreach ((array) $result['data'] as $row) {
             //$this->table->add_row($row);
@@ -354,7 +328,7 @@ class cf_table {
                     anchor('welcome/host/' . $cols['key'], $title, 'class="imglabel"'),
                     $cell2,
                     $cell3
-                ));                
+                ));
             } else {
                 $lnk = anchor('search/index/report/promises-not-kept-summary/host/' . $cols['key'], ' ', array('title' => 'promises not kept', 'class' => 'promisesnotkeptbtn showqtip'))
                         . anchor('visual/vital/' . $cols['key'], ' ', array('title' => 'pulse and vitals', 'class' => 'vitalsbtn showqtip'))
@@ -411,7 +385,7 @@ class cf_table {
             return $this->CI->table->generate();
         }
     }
-    
+
     function generateVirtualbundleTable($result){
         $return = '';
         $this->CI->table->clear();
@@ -432,7 +406,7 @@ class cf_table {
                                     $tempValue=anchor('virtualbundle/details/'.urlencode($handle),$handle);
                                 }
                                 else{
-                                  $tempValue = $row[$value];   
+                                  $tempValue = $row[$value];
                                 }
                                 array_push($temp, $tempValue);
                         }
@@ -447,15 +421,15 @@ class cf_table {
         }
         return $return;
     }
-    
+
   function host_only_table($data) {
    $this->CI->table->set_heading('hostname', 'Action');
-  
+
         foreach ((array) $data['data'] as $rows)
         {
             $lnk = anchor('search/index/report/promises-not-kept-summary/host/' . $rows['hostkey'], ' ', array('title' => 'promises not kept', 'class' => 'promisesnotkeptbtn showqtip'))
                     . anchor('visual/vital/' . $rows['hostkey'], ' ', array('title' => 'pulse and vitals', 'class' => 'vitalsbtn showqtip'));
-                    
+
             $cell = array('data' => $lnk, 'class' => 'actioncol');
             $this->CI->table->add_row(array(
                 anchor('welcome/host/' . $rows['hostkey'], $rows['hostname'], 'class=""'),
