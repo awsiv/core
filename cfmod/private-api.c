@@ -12,8 +12,6 @@
 #define cfr_patch_avail  "pa"
 #define cfr_patch_installed "pi"
 
-
-static time_t DeltaHrsConvert(long hrsAgo);
 char **String2StringArray(char *str, char separator);
 void FreeStringArray(char **strs);
 static JsonElement *ParseRolesToJson(HubQuery *hq);
@@ -1892,7 +1890,6 @@ PHP_FUNCTION(cfpr_report_notkept)
     zval *context_includes = NULL, *context_excludes = NULL;
     int user_len, hk_len, h_len, c_len;
     char buffer[CF_WEBBUFFER];
-    long hours_deltafrom, hours_deltato;
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
     char *sortColumnName;
@@ -1904,8 +1901,8 @@ PHP_FUNCTION(cfpr_report_notkept)
                               &hostkey, &hk_len,
                               &handle, &h_len,
                               &cause_rx, &c_len,
-                              &hours_deltafrom,
-                              &hours_deltato,
+                              &from,
+                              &to,
                               &context_includes,
                               &context_excludes,
                               &sortColumnName, &sc_len, &sortDescending,
@@ -1915,11 +1912,7 @@ PHP_FUNCTION(cfpr_report_notkept)
         RETURN_NULL();
     }
 
-    ARGUMENT_CHECK_CONTENTS(user_len);
-
-    // convert delta hours to absolute time (deltato is oldest)
-    from = DeltaHrsConvert(hours_deltato);
-    to = DeltaHrsConvert(hours_deltafrom);
+    ARGUMENT_CHECK_CONTENTS(user_len);    
 
     char *fhostkey = (hk_len == 0) ? NULL : hostkey;
     char *fhandle = (h_len == 0) ? NULL : handle;
@@ -1949,7 +1942,6 @@ PHP_FUNCTION(cfpr_report_repaired)
     zval *context_includes = NULL, *context_excludes = NULL;
     int user_len, hk_len, h_len, c_len;
     char buffer[CF_WEBBUFFER];
-    long hours_deltafrom, hours_deltato;
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
     char *sortColumnName;
@@ -1961,7 +1953,8 @@ PHP_FUNCTION(cfpr_report_repaired)
                               &hostkey, &hk_len,
                               &handle, &h_len,
                               &cause_rx, &c_len,
-                              &hours_deltafrom, &hours_deltato,
+                              &from,
+                              &to,
                               &context_includes,
                               &context_excludes,
                               &sortColumnName, &sc_len, &sortDescending,
@@ -1976,11 +1969,6 @@ PHP_FUNCTION(cfpr_report_repaired)
     char *fhostkey = (hk_len == 0) ? NULL : hostkey;
     char *fhandle = (h_len == 0) ? NULL : handle;
     char *fcause_rx = (c_len == 0) ? NULL : cause_rx;
-
-// convert delta hours to absolute time (deltato is oldest)
-
-    from = DeltaHrsConvert(hours_deltato);
-    to = DeltaHrsConvert(hours_deltafrom);
 
     buffer[0] = '\0';
 
@@ -2008,7 +1996,7 @@ PHP_FUNCTION(cfpr_summarize_notkept)
     int user_len, hk_len, h_len, c_len;
 
     char buffer[CF_WEBBUFFER];
-    time_t from, to;
+    time_t from = 0, to = 0;
     PageInfo page = { 0 };
     char *sortColumnName;
     int sc_len;
@@ -2063,7 +2051,7 @@ PHP_FUNCTION(cfpr_summarize_repaired)
          *excludes = NULL;
     int user_len, hk_len, h_len, c_len;
     char buffer[CF_WEBBUFFER];
-    time_t from, to;
+    time_t from = 0, to = 0;
     PageInfo page = { 0 };
     char *sortColumnName;
     int sc_len;
@@ -2356,13 +2344,12 @@ PHP_FUNCTION(cfpr_hosts_with_classes)
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_hosts_with_repaired)
-//$ret = cfpr_hosts_with_repaired($hostkey,$name,$hours_deltafrom,$hours_deltato,$class_regex);
+//$ret = cfpr_hosts_with_repaired($hostkey,$name,$from,$to,$class_regex);
 {
     char *userName, *hostkey, *handle, *cause_rx;
     int user_len, hk_len, h_len, c_len;
     char buffer[512 * 1024];
     zval *context_includes = NULL, *context_excludes = NULL;
-    long hours_deltafrom, hours_deltato;
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
 
@@ -2371,8 +2358,8 @@ PHP_FUNCTION(cfpr_hosts_with_repaired)
                               &hostkey, &hk_len,
                               &handle, &h_len,
                               &cause_rx, &c_len,
-                              &hours_deltafrom,
-                              &hours_deltato,
+                              &from,
+                              &to,
                               &context_includes,
                               &context_excludes,
                               &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
@@ -2382,10 +2369,6 @@ PHP_FUNCTION(cfpr_hosts_with_repaired)
     }
 
     ARGUMENT_CHECK_CONTENTS(user_len);
-
-// convert delta hours to absolute time (deltato is oldest)
-    from = DeltaHrsConvert(hours_deltato);
-    to = DeltaHrsConvert(hours_deltafrom);
 
     char *fhostkey = (hk_len == 0) ? NULL : hostkey;
     char *fhandle = (h_len == 0) ? NULL : handle;
@@ -2417,7 +2400,6 @@ PHP_FUNCTION(cfpr_hosts_with_notkept)
     zval *context_includes = NULL, *context_excludes = NULL;
 
     char buffer[512 * 1024];
-    long hours_deltafrom, hours_deltato;
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
 
@@ -2426,8 +2408,8 @@ PHP_FUNCTION(cfpr_hosts_with_notkept)
                               &hostkey, &hk_len,
                               &handle, &h_len,
                               &cause_rx, &c_len,
-                              &hours_deltafrom,
-                              &hours_deltato,
+                              &from,
+                              &to,
                               &context_includes,
                               &context_excludes,
                               &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
@@ -2437,11 +2419,6 @@ PHP_FUNCTION(cfpr_hosts_with_notkept)
     }
 
     ARGUMENT_CHECK_CONTENTS(user_len);
-
-// convert delta hours to absolute time (deltato is oldest)
-
-    from = DeltaHrsConvert(hours_deltato);
-    to = DeltaHrsConvert(hours_deltafrom);
 
     char *fhostkey = (hk_len == 0) ? NULL : hostkey;
     char *fhandle = (h_len == 0) ? NULL : handle;
@@ -4492,25 +4469,6 @@ PHP_FUNCTION(cfpr_get_knowledge_view)
     Nova2PHP_get_knowledge_view(pid, view, buffer, 100000);
 
     RETURN_STRING(buffer, 1);
-}
-
-/***** Local helpers ******/
-
-static time_t DeltaHrsConvert(long hrsAgo)
-{
-    time_t now, absTime;
-
-    if (hrsAgo == 0)
-    {
-        return 0;
-    }
-
-    now = time(NULL);
-
-    absTime = now - (hrsAgo * 3600);
-
-    return absTime;
-
 }
 
 /******************************************************************************/

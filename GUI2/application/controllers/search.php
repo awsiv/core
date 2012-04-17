@@ -472,8 +472,8 @@ private $filter_view_mappings=array();
             case "promises-repaired-summary":
                 
                 $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
-                $hours_deltafrom = isset($getparams['hours_deltafrom']) ? $getparams['hours_deltafrom'] : $this->input->post('hours_deltafrom');
-                $hours_deltato = isset($getparams['hours_deltato']) ? $getparams['hours_deltato'] : $this->input->post('hours_deltato');
+                $from = isset($getparams['from']) ? $getparams['from'] : $this->input->post('from');
+                $to = isset($getparams['to']) ? $getparams['to'] : $this->input->post('to');
                 $cause_rx = isset($getparams['cause']) ? $getparams['cause'] : $this->input->post('cause');
                 $cause_rx = $cause_rx===false?".*":$cause_rx;
 
@@ -481,15 +481,15 @@ private $filter_view_mappings=array();
                             'inclist' =>$incList,
                             'exlist'=>$exList,
                             'search' => $name,
-                            'hours_deltafrom' => $hours_deltafrom,
-                            'hours_deltato' => $hours_deltato,
+                            'from' => $from,
+                            'to' => $to,
                             'cause' => $cause_rx
                         );
                        
                         if ($report_type == "promises-repaired-log")
-                              $data['report_result']=$this->report_model->getPromisesRepairedLog($username, $hostkey, $name, $cause_rx, $hours_deltafrom, $hours_deltato, explode(',',$incList), explode(',',$exList), $rows, $page_number, $hosts_only);
+                              $data['report_result']=$this->report_model->getPromisesRepairedLog($username, $hostkey, $name, $cause_rx, $from, $to, explode(',',$incList), explode(',',$exList), $rows, $page_number, $hosts_only);
                         if ($report_type == "promises-repaired-summary")
-                              $data['report_result']= $this->report_model->getPromisesRepairedSummary($username, $hostkey, $name, $cause_rx, $hours_deltafrom, $hours_deltato, explode(',',$incList), explode(',',$exList), $rows , $page_number, $hosts_only);
+                              $data['report_result']= $this->report_model->getPromisesRepairedSummary($username, $hostkey, $name, $cause_rx, $from, $to, explode(',',$incList), explode(',',$exList), $rows , $page_number, $hosts_only);
 
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                         $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
@@ -499,27 +499,27 @@ private $filter_view_mappings=array();
             case "promises-not-kept-summary":
             case "promises-not-kept-log":
                 $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
-                $hours_deltafrom = isset($getparams['hours_deltafrom']) ? $getparams['hours_deltafrom'] : $this->input->post('hours_deltafrom');
-                $hours_deltato = isset($getparams['hours_deltato']) ? $getparams['hours_deltato'] : $this->input->post('hours_deltato');
+                $from = isset($getparams['from']) ? $getparams['from'] : $this->input->post('from');
+                $to = isset($getparams['to']) ? $getparams['to'] : $this->input->post('to');
                 $cause_rx = isset($getparams['cause']) ? $getparams['cause'] : $this->input->post('cause');
                 $cause_rx = $cause_rx===false?".*":$cause_rx;
                
                         if ($report_type == "promises-not-kept-summary")
-                             $data['report_result']= $this->report_model->getPromisesNotKeptSummary($username, $hostkey, $name, $cause_rx, $hours_deltafrom, $hours_deltato, explode(',',$incList), explode(',',$exList), $rows, $page_number, $hosts_only);
+                             $data['report_result']= $this->report_model->getPromisesNotKeptSummary($username, $hostkey, $name, $cause_rx, $from, $to, explode(',',$incList), explode(',',$exList), $rows, $page_number, $hosts_only);
                        if ($report_type == "promises-not-kept-log")
-                             $data['report_result']=$this->report_model->getPromisesNotKeptLog($username, $hostkey, $name, $cause_rx, $hours_deltafrom, $hours_deltato, explode(',',$incList), explode(',',$exList), $rows, $page_number, $hosts_only);
+                             $data['report_result']=$this->report_model->getPromisesNotKeptLog($username, $hostkey, $name, $cause_rx, $from, $to, explode(',',$incList), explode(',',$exList), $rows, $page_number, $hosts_only);
                         $pdfurlParams = array('type' => $report_type,
                             'inclist' =>$incList,
                             'exlist'=>$exList,
                             'search' => $name,
-                            'hours_deltafrom' => $hours_deltafrom,
-                            'hours_deltato' => $hours_deltato,
+                            'from' => $from,
+                            'to' => $to,
                             'cause' => $cause_rx
                         );
                         
 
                         $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                        $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email' . $hours_deltafrom . '/hours_deltato/' . $hours_deltato);
+                        $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email' . $from . '/to/' . $to);
                         $this->template->load('template', 'searchpages/businessresult', $data);
                 break;
             case "setuid-programs":
