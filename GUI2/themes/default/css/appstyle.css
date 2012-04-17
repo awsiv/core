@@ -2602,7 +2602,7 @@ ul.admin_menu li.current a{
 
 #modifySearchPanel{
     margin:10px;
-    background: #E6EEE3;
+    background: #D2DACF;
 }
 
 /* for the tool tips text for the input box in span elements*/
@@ -2926,7 +2926,7 @@ background-image: none;
 .dd_menu li:hover ul li a.selected {background:silver; color:#000; border:solid 1px #444; padding:0}
 
 #searchform .panelcontent{
-    background: #E6EEE3;
+    background: #D2DACF;
     padding:13px 5px;
 }
 
