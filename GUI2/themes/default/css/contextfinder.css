@@ -121,7 +121,7 @@ div.contextfinder .ui-dialog-titlebar-close .ui-icon-closethick,
 } 
 
 .class_selector {
-    top: 5px;
+    top: 3px;
     right: 25px;
     background-position: 0 -51px;
 }
@@ -160,7 +160,7 @@ div.contextfinder .ui-dialog-titlebar-close .ui-icon-closethick,
     }
      
 .delete_condition {   
-    top: 5px;
+    top: 3px;
     right: 5px;    
 }
 
