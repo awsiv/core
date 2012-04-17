@@ -104,18 +104,15 @@ class bundle_model extends Cf_Model
             $rawdata = cfpr_bundle_list_by_bundle_usage($username, $bundle);
 
             $data = $this->checkData($rawdata);
-            if ($data == null)
+            /* dont throw error if invalid data
+             * return empty array
+             */
+            if (!$data)
             {
                 $data = array();
             }
-            if (is_array($data) && $this->hasErrors() == 0)
-            {
-                return $data;
-            }
-            else
-            {
-                throw new Exception($this->getErrorsString());
-            }
+            return $data;
+
         }
         catch (Exception $e)
         {
