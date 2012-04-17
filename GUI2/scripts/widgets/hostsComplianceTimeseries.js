@@ -73,6 +73,9 @@
             $shortTermRadio.attr('id', 'timeModeShort')
             $shortTermRadio.click(function() {
                 $self._resource = 'host/compliance/timeseries';
+                $self.options.plot.xaxis.tickFormatter = function(value) {
+                    return common.time.formatTimeOfDay(value);
+                };
                 $self.refresh();
             });
             $self.element.append($shortTermRadio);
@@ -91,6 +94,9 @@
             $longTermRadio.html('Last Week');
             $longTermRadio.click(function() {
                 $self._resource = 'host/compliance/timeseries_shifts';
+                $self.options.plot.xaxis.tickFormatter = function(value) {
+                    return common.time.formatDate(value);
+                };
                 $self.refresh();
             });
             $self.element.append($longTermRadio);
