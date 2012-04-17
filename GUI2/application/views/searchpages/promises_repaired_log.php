@@ -8,10 +8,8 @@
                 Cause: (.*+[])<input type="text" name="cause" class="searchfield" value="<?php echo (is_array($paramArray) && isset($paramArray['cause'])) ? trim($paramArray['cause']) : ''; ?>">
             </p>
             <p>
-                From <input type="text" name="from" size="15" value="<?php echo (is_array($paramArray) && isset($paramArray['from'])) ? trim($paramArray['from']) : ''; ?>">
-            </p>
-            <p>
-                To <input type="text" name="to" size="15" value="<?php echo (is_array($paramArray) && isset($paramArray['to'])) ? trim($paramArray['to']) : ''; ?>">
+                From <input type="text" name="from" size="25" value="<?php echo (is_array($paramArray) && isset($paramArray['from'])) ? trim($paramArray['from']) : ''; ?>">
+                To <input type="text" name="to" size="25" value="<?php echo (is_array($paramArray) && isset($paramArray['to'])) ? trim($paramArray['to']) : ''; ?>">
             </p>
             
         </div>

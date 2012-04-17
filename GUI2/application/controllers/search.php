@@ -11,7 +11,6 @@ private $filter_view_mappings=array();
         $this->load->model(array('report_model'));
         $this->load->helper('form');
         //$this->carabiner->js('jquery.tablesorter.min.js');
-        $this->carabiner->js('jquery-ui-timepicker-addon.js');
         $this->carabiner->js('widgets/hostfinder.js');
         $this->carabiner->js('widgets/reportfinder.js');
         $this->carabiner->js('widgets/contextfinder.js');
@@ -473,11 +472,10 @@ private $filter_view_mappings=array();
             case "promises-repaired-summary":
                 
                 $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
-                $from = isset($getparams['from']) ? $getparams['from'] : $this->input->post('from');
-                $to = isset($getparams['to']) ? $getparams['to'] : $this->input->post('to');
+                $from = isset($getparams['from']) ? urldecode($getparams['from']) : $this->input->post('from');
+                $to = isset($getparams['to']) ? urldecode($getparams['to']) : $this->input->post('to');
                 $cause_rx = isset($getparams['cause']) ? $getparams['cause'] : $this->input->post('cause');
                 $cause_rx = $cause_rx===false?".*":$cause_rx;
-
                         $pdfurlParams = array('type' => $report_type,
                             'inclist' =>$incList,
                             'exlist'=>$exList,
@@ -500,8 +498,8 @@ private $filter_view_mappings=array();
             case "promises-not-kept-summary":
             case "promises-not-kept-log":
                 $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
-                $from = isset($getparams['from']) ? $getparams['from'] : $this->input->post('from');
-                $to = isset($getparams['to']) ? $getparams['to'] : $this->input->post('to');
+                $from = isset($getparams['from']) ? urldecode($getparams['from']) : $this->input->post('from');
+                $to = isset($getparams['to']) ? urldecode($getparams['to']) : $this->input->post('to');
                 $cause_rx = isset($getparams['cause']) ? $getparams['cause'] : $this->input->post('cause');
                 $cause_rx = $cause_rx===false?".*":$cause_rx;
                
