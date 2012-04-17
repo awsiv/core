@@ -49,6 +49,7 @@
                     var $incList = $('#searchform input:hidden[name=inclist]');
                     var $exList  = $('#searchform input:hidden[name=exlist]');
                     $('#hclist').contextfinder({
+                        title: '<?php echo $this->lang->line('report_hostgp_help'); ?>',
                         baseUrl: '<?php echo site_url() ?>',
                         setContextClbkFnc:function() { 
                             $('.reportForm form').submit();

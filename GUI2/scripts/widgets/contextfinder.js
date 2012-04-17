@@ -14,7 +14,8 @@
         },        
         
         options: {
-            baseUrl:'',
+            title: '',
+            baseUrl: '',
             width:590,
             height:300,
             allhost:true,
@@ -33,14 +34,16 @@
         _create:function(){
             var self=this;
             self.dialoginit();
-           
+         
             self.dialogcontent.dialog({
                 height: self.options.height,
                 width: self.options.width,
                 autoOpen: false,
                 modal: true
             });
-        
+            
+            self.dialogcontent.dialog('option', 'title', self.options.title);   
+            
             self.element.bind('click',function(event){
                 event.preventDefault();
                 self.dialogcontent.dialog('open');
