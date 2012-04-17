@@ -19,6 +19,7 @@ if (!function_exists('contextfinder_generate_item')) {
     $empty_items_on_page = 2; 
 ?>
 <div class="contextfinder_wrapper">
+    
   <form id="contextfinder"> 
      
         <table celpadding="0" cellspacing="0">
@@ -48,7 +49,7 @@ if (!function_exists('contextfinder_generate_item')) {
                     } 
                     ?>
             </td>
-            <td class="col2"><a class="invert" href="#">&nbsp;</a></td>    
+            <td class="col2"><a class="invert showqtip" title="Swap conditions" href="#">&nbsp;</a></td>    
             <td class="col1 excludes">   
                
                 <?php        

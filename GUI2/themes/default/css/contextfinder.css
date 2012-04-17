@@ -20,7 +20,8 @@ div.contextfinder {
         }
  
 	div.contextfinder div.ui-dialog .ui-widget-header .ui-dialog-title {
-            display: none; 
+            color: #6C695A !important;
+            font-size: 12px;
         }
  
 	div.contextfinder .ui-dialog-titlebar {
@@ -28,7 +29,8 @@ div.contextfinder {
         }
  
             div.contextfinder .ui-dialog-titlebar span { 
-                display: none; 
+                color: #6C695A !important;
+                font-size: 12px !important;
             }
  
 	div.contextfinder .ui-widget-header .ui-dialog-titlebar-close {
@@ -59,10 +61,14 @@ div.contextfinder {
                     background: none;
                 }
  
-.ui-dialog .ui-dialog-titlebar-close span { 
+div.contextfinder .ui-dialog .ui-dialog-titlebar-close span { 
     margin: 0 !important; 
 }
  
+div.contextfinder .ui-dialog-content {
+    clear: both;
+}
+
 /* internal styles */
 .col1 {
     width: 240px;
