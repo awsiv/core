@@ -98,15 +98,15 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function() {
-        // $('.tables table').tableFilter();
-        //$('.tables table').tablesorter({widgets: ['zebra']});
-
-        $('.note').ajaxyDialog({change:function(nid,element) {
-
-                // change the url
-                $(element).attr('href', '/notes/index/action/show/nid/' + nid);
-                // console.log(nid,element);
-            },title:'Add note about this host',dontOverrideTitle:true});
+        $('.note').ajaxyDialog(
+        {
+            noteidfound:function(event,data)
+            {
+                var url = '<?php echo site_url() ?>';
+                $(data.element).attr('href', url+'/notes/index/action/show/nid/' + data.nid);
+            },
+            title:'Add note about this host',
+            dontOverrideTitle:true});
 
         $('#findreport').reportfinder({allhost:false,incList:"<?php echo $hostclass; ?>",baseUrl: '<?php echo site_url() ?>'});
 
