@@ -1,15 +1,18 @@
 <?php
 
-class Notes extends Cf_Controller {
+class Notes extends Cf_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->load->model('note_model');
         $this->load->library('form_validation');
         $this->form_validation->set_error_delimiters('<span class="errorlist">', '</span>');
     }
 
-    function index() {
+    function index()
+    {
 
         $params = $this->uri->uri_to_assoc(3);
         $action = isset($params['action']) ? $params['action'] : "";
@@ -19,62 +22,80 @@ class Notes extends Cf_Controller {
         $reportType = isset($params['reporttype']) ? $params['reporttype'] : "";
         $hostKey = isset($params['hostkey']) ? $params['hostkey'] : "";
         $nid = isset($params['nid']) ? $params['nid'] : "";
+        $username = $this->session->userdata('username');
 
         $this->data['nid'] = $nid;
         $this->data['rid'] = $rid;
         $this->data['hostkey'] = $hostKey;
         $this->data['reporttype'] = $reportType;
 
-        if ($action == "show") {
+        if ($action == "show")
+        {
 
             $filter = array('hostname' => $hostkey,
                 'noteId' => $nid,
                 'userId' => NULL,
                 'dateFrom' => -1,
-                'dateTo' => -1
+                'dateTo' => -1,
+                'loggedUser' => $username
             );
             $this->data['data'] = $this->note_model->getAllNotes($filter);
             $this->data['form_url'] = site_url() . '/notes/addnote';
-        } else if ($action == "add") {
+        }
+        else if ($action == "add")
+        {
             $this->data['data'] = array();
-            $this->data['form_url'] = site_url() . '/notes/addnewnote';
+            $this->data['form_url'] = site_url() . '/notes/addnote';
         }
         $this->load->view('/notes/view_notes', $this->data);
     }
 
-    function addnote() {
+    function addnote()
+    {
 
-        $nid = $this->input->post('nid');
+        $nid = $this->input->post('nid') ? $this->input->post('nid') : null;
         $message = trim($this->input->post('Message'));
         $username = $this->session->userdata('username');
+        $hostkey = $this->input->post('hostkey');
         $date = strtotime("now");
         $ret = false;
         $this->data['nid'] = $nid;
-        $this->data['rid'] = '';
-        $this->data['hostkey'] = '';
-        $this->data['reporttype'] = '';
+        $this->data['hostkey'] = $hostkey;
         $this->data['form_url'] = site_url() . '/notes/addnote';
 
 
-        if (trim($message) != null) {
-            $ret = $this->note_model->addNote($nid, $username, $date, $message);
-
-// return the same view with comments
-            if (!$ret) {
-// SOMETHING WENT WRONG WHILE ADDITION
-                $this->output->set_status_header('400', 'Cannot insert the note.');
-                echo $ret;
-                exit;
+        try
+        {
+            if (trim($message) != null && (strpos($message, '\\') === false))
+            {
+                $ret = $this->note_model->addNote($nid, $hostkey, $username, $date, $message);
+                // return the same view with comments
+                if (!$ret)
+                {
+                    $this->data['updateMessage'] = "Notes not added";
+                }
+                else
+                {
+                    $this->data['nid'] = $ret;
+                    $this->data['successMessage'] = "Notes sucessfully added";
+                }
             }
-        } else {
-            $this->data['updateMessage'] = $this->lang->line('note_empty_insert');
+            else
+            {
+                $this->data['updateMessage'] = $this->lang->line('note_empty_insert');
+            }
+        }
+        catch (Exception $e)
+        {
+            $this->data['updateMessage'] = "Something went wrong while adding notes." . $e->getMessage();
         }
 
-        $filter = array('hostname' => NULL,
-            'noteId' => $nid,
+        $filter = array('hostname' => $hostkey,
+            'noteId' => $this->data['nid'],
             'userId' => NULL,
             'dateFrom' => -1,
-            'dateTo' => -1
+            'dateTo' => -1,
+            'loggedUser' => $username
         );
 
         $this->data['data'] = $this->note_model->getAllNotes($filter);
@@ -82,97 +103,17 @@ class Notes extends Cf_Controller {
         return;
     }
 
-    function addnewnote() {
-
-        $rid = trim($this->input->post('rid')) ? $this->input->post('rid') : "none";
-        $message = trim($this->input->post('Message'));
-        $report_type = trim($this->input->post('reporttype')) ? $this->input->post('reporttype') : 1;
-        $keyhash = $this->input->post('hash');
-        $username = $this->session->userdata('username');
-        $date = strtotime("now");
-        $ret = false;
-
-        $this->data['nid'] = $ret;
-        $this->data['rid'] = $rid;
-        $this->data['hostkey'] = $keyhash;
-        $this->data['reporttype'] = $report_type;
-        $this->data['form_url'] = site_url() . '/notes/addnewnote';
-
-        if (trim($message) != null) {
-            $ret = $this->note_model->addNewNote($keyhash, $rid, $report_type, $username, $date, $message);
-            if (!$ret) {
-                // SOMETHING WENT WRONG WHILE ADDITION
-                $this->data['data'] = array();
-                $this->data['updateMessage'] = $this->lang->line('note_insert_error');
-                $this->load->view('/notes/view_notes', $this->data);
-                return;
-            }
-        } else {
-            $this->data['updateMessage'] = "Cannot insert empty message.";
-        }
-
-
-
-
-
-
-        $filter = array('hostname' => NULL,
-            'noteId' => $ret,
-            'userId' => NULL,
-            'dateFrom' => -1,
-            'dateTo' => -1
-        );
-
-        // if we have valid insert get that notes else leave it blank 
-        if ($ret) {
-            $this->data['form_url'] = site_url() . '/notes/addnote';
-            $this->data['nid'] = $ret;
-            $this->data['data'] = $this->note_model->getAllNotes($filter);
-        } else {
-            //$this->data['data'] = array();
-        $this->data['nid'] = $ret;
-        $this->data['rid'] = $rid;
-        $this->data['hostkey'] = $keyhash;
-        $this->data['reporttype'] = $report_type;
-            
-            
-        }
-
-        $this->load->view('/notes/view_notes', $this->data);
-    }
-
-    function showNotes() {
+    function showNotes()
+    {
 
         $this->load->helper(array('form', 'url'));
         $this->load->library('form_validation');
         $params = $this->uri->uri_to_assoc(3);
+        $loggedUser = $this->session->userdata('username');
 
-
-        $userId = ($this->input->post('username', TRUE) !== FALSE) ? $this->input->post('username', TRUE) : $this->session->userdata('search_username');
-        $dateFrom = ($this->input->post('date_from', TRUE) !== FALSE) ? strtotime($this->input->post('date_from', TRUE)) : $this->session->userdata('search_datefrom');
-        $dateTo = ($this->input->post('date_to', TRUE) !== FALSE) ? strtotime($this->input->post('date_to', TRUE)) : $this->session->userdata('search_dateto');
-
-        $searchSession = array(
-            'search_username' => $userId,
-            'search_dateFrom' => ($dateFrom !== FALSE ) ? $dateFrom : -1,
-            'search_dateto' => ($dateTo !== FALSE) ? $dateTo : -1
-        );
-
-        $this->session->set_userdata($searchSession);
-
-        if ($searchSession['search_dateFrom'] && $searchSession['search_dateFrom'] != -1) {
-            //we have a start date so set the end date as well
-            if ($searchSession['search_dateto'] == -1) {
-                $searchSession['search_dateto'] = time();
-            }
-        }
-
-
-        if ($searchSession['search_dateFrom'] == -1 && $searchSession['search_dateto'] != -1) {
-            $searchSession['search_dateFrom'] = 0;
-        }
-
-
+        $userId = isset($params['userId']) ? $params['userId'] : $this->input->post('userId', TRUE);
+        $dateFrom = isset($params['dateFrom']) ? $params['dateFrom'] : strtotime($this->input->post('dateFrom', TRUE));
+        $dateTo = isset($params['dateTo']) ? $params['dateTo'] : strtotime($this->input->post('dateTo', TRUE));
 
         $bc = array(
             'title' => $this->lang->line('breadcrumb_notes'),
@@ -183,26 +124,51 @@ class Notes extends Cf_Controller {
         $this->breadcrumb->setBreadCrumb($bc);
 
         $data = array(
-            'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('notes'),
+            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('notes'),
             'breadcrumbs' => $this->breadcrumblist->display()
         );
 
         $data['currentPage'] = isset($params['page']) ? intval($params['page'], 10) : 1;
         $filter = array(
-            'userId' => $searchSession['search_username'],
-            'dateFrom' => $searchSession['search_dateFrom'],
-            'dateTo' => $searchSession['search_dateto'],
+            'userId' => $userId,
+            'dateFrom' => $dateFrom ? $dateFrom : -1,
+            'dateTo' => $dateTo ? $dateTo : -1,
             'noOfRows' => 10,
-            'pageNo' => $data['currentPage']
+            'pageNo' => $data['currentPage'],
+            'loggedUser' => $loggedUser
         );
-
 
         $comments = $this->note_model->getAllNotes($filter);
         $data['data'] = $comments;
         $data['totalNotes'] = $this->note_model->getTotalNoteCount();
+        // change the date for js display
+        $data['display_dateFrom'] = ($filter['dateFrom'] != -1) ? date("m/d/Y", $dateFrom) : null;
+        $data['display_dateTo'] = ($filter['dateTo'] != -1) ? date("m/d/Y", $dateTo) : null;
+
+
+
         $data['filters'] = $filter;
+        $data['pagingParam'] = $this->generatePagingParams($filter);
 
         $this->template->load('template', '/notes/show_notes', $data);
+    }
+
+    /**
+     * generate parameters for pagination
+     * @param type $filter
+     */
+    function generatePagingParams($filter)
+    {
+        $filterString = '';
+        $pagingArray = array('userId', 'dateFrom', 'dateTo');
+        foreach ($filter as $key => $value)
+        {
+            if (in_array($key, $pagingArray) && ($value != null))
+            {
+                $filterString .= '/' . $key . '/' . $value;
+            }
+        }
+        return $filterString;
     }
 
 }

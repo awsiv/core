@@ -43,7 +43,7 @@ class CF_Note {
     }
 
     function getMessage() {
-        return $this->message;
+        return nl2br($this->message);
     }
 
     function getDate() {

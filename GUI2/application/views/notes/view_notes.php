@@ -35,13 +35,15 @@
             <?php if ( isset($updateMessage)) { ?>
            <div id="message-update" class="error"> <?php echo  $updateMessage; ?>  </div>
            <?php } ?>
+            <?php if ( isset($successMessage)) { ?>
+           <div id="message-update" class="success"> <?php echo  $successMessage; ?>  </div>
+           <?php } ?>
+
   
             <legend> Add a note </legend>
             <textarea cols="70" rows="6" name="Message"></textarea>
-            <input type="hidden" name="rid" value="<?php echo $rid; ?>"/>
             <input type="hidden" name="nid" value="<?php echo $nid; ?>"/>
-            <input type="hidden" name="reporttype" value="<?php echo $reporttype; ?>"/>
-            <input type="hidden" name="hash" value="<?php echo $hostkey; ?>"/>
+            <input type="hidden" name="hostkey" value="<?php echo $hostkey; ?>"/>
             <br />
             <input type="submit" name="submitButton" value="Add note">
         </fieldset>    

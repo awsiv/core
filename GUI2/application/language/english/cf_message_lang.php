@@ -60,7 +60,7 @@ $lang['graph_data_not_available']='No data available.';
 /**
  * notescontroller text
  */
-$lang['note_empty_insert']="Cannot insert empty message";
+$lang['note_empty_insert']="Cannot insert empty message or message with special characters.";
 $lang['note_insert_error']="An error occured while inserting the note";
 $lang['notes'] = 'Notes';
 
