@@ -8,8 +8,10 @@
                 Cause: (.*+[])<input type="text" name="cause" class="searchfield" value="<?php echo (is_array($paramArray) && isset($paramArray['cause'])) ? trim($paramArray['cause']) : ''; ?>">
             </p>
             <p>
-                From minimum age <input type="text" name="hours_deltafrom" size="2" value="<?php echo (is_array($paramArray) && isset($paramArray['hours_deltafrom'])) ? trim($paramArray['hours_deltafrom']) : ''; ?>">
-                hours to maximum age <input type="text" name="hours_deltato" size="2" value="<?php echo (is_array($paramArray) && isset($paramArray['hours_deltato'])) ? trim($paramArray['hours_deltato']) : ''; ?>"> hours old.
+                From <input type="text" name="from" size="15" value="<?php echo (is_array($paramArray) && isset($paramArray['from'])) ? trim($paramArray['from']) : ''; ?>">
+            </p>
+            <p>
+                To <input type="text" name="to" size="15" value="<?php echo (is_array($paramArray) && isset($paramArray['to'])) ? trim($paramArray['to']) : ''; ?>">
             </p>
             
         </div>
@@ -24,3 +26,11 @@
         </form>
     </div>
 </div>
+<script type="text/javascript">
+$( "input:text[name=from]" ).datetimepicker({
+      dateFormat: 'yy-mm-dd'
+});
+$( "input:text[name=to]" ).datetimepicker({
+      dateFormat: 'yy-mm-dd'
+});
+</script>
