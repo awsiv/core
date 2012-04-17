@@ -52,16 +52,6 @@ class Welcome extends Cf_Controller {
             'mp_auth_mode'   => $this->setting_lib->get_authentication_mode(),
             'user_auth_mode' => $this->session->userdata('mode')
         );
-
-        if ($this->setting_lib->get_experimental_mode() === TRUE)
-        {
-            $data['engineering_page'] = 'engineering';
-        }
-        else
-        {
-            $data['engineering_page'] = 'welcome/engg';
-        }
-
         $this->template->load('template', 'index', $data);
     }
 
@@ -320,54 +310,6 @@ class Welcome extends Cf_Controller {
         return;
     }
 
-    function engg() {
-        $requiredjs = array(
-            array('jit/jit-yc.js'),
-            array('widgets/hostfinder.js'),
-            array('widgets/classfinder.js'),
-            array('widgets/policyfinder.js'),
-            array('widgets/reportfinder.js'),
-            array('widgets/cdpreportsfinder.js'),
-            array('widgets/notes.js'),
-            array('widgets/contextfinder.js'),
-            array('SmartTextBox.js'),
-        );
-
-        $jsIE = array('jit/Extras/excanvas.js');
-        $this->carabiner->group('iefix', array('js' => $jsIE));
-        $this->carabiner->js($requiredjs);
-
-        $bc = array(
-            'title' => $this->lang->line('breadcrumb_engineering'),
-            'url' => 'welcome/engg',
-            'isRoot' => false
-        );
-        $this->breadcrumb->setBreadCrumb($bc);
-
-        $username = &$this->session->userdata('username');
-        try{
-        $data = array(
-            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_engineering'),
-            'breadcrumbs' => $this->breadcrumblist->display(),
-            'all' => $this->host_model->getHostCount($username),
-            'r'   => $this->host_model->getHostCount($username,'red'),
-            'y'   => $this->host_model->getHostCount($username,'yellow'),
-            'g'   => $this->host_model->getHostCount($username,'green'),
-            'b'   => $this->host_model->getHostCount($username,'blue'),
-            'bl'   => $this->host_model->getHostCount($username,'black')
-        );
-        }catch(Exception $e){
-            show_error($e->getMessage(),500);
-        }
-
-        // Summary meter for host
-        $gdata = cfpr_summary_meter(null);
-        $returnedData = $this->_convert_summary_compliance_graph($gdata);
-        $data = array_merge($data, $returnedData);
-
-        $this->template->load('template', 'engg', $data);
-    }
-
     function workingNotes() {
         $this->load->library('userdata');
         $params = $this->uri->uri_to_assoc(3);
@@ -438,7 +380,7 @@ class Welcome extends Cf_Controller {
     {
         if ($colour == NULL)
         {
-            redirect('welcome/engg');
+            redirect('engineering');
             return;
         }
         $this->carabiner->js('jquery.tablesorter.min.js');
@@ -530,7 +472,7 @@ class Welcome extends Cf_Controller {
 
 
         if ($hostkey == NULL) {
-            redirect('welcome/engg');
+            redirect('engineering');
             return;
         }
         $this->load->library('cf_table');

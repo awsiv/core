@@ -35,7 +35,7 @@
                   <div class="grid_8 push_2 dash">
                       <ul>
                           <li class="showqtip status" title="<?php echo tooltip('tooltip_statusroom') ?>"><?php echo anchor('welcome/status',' ',array('class'=>'ico'));?><?php echo anchor('welcome/status','Status',array('class'=>'text'));?></li>
-                          <li class="showqtip engineering" title="<?php echo tooltip('tooltip_engineeringroom')?>"><?php echo anchor($engineering_page,' ',array('class'=>'ico'));?><?php echo anchor($engineering_page,'Engineering',array('class'=>'text'));?></li>
+                          <li class="showqtip engineering" title="<?php echo tooltip('tooltip_engineeringroom')?>"><?php echo anchor('engineering',' ',array('class'=>'ico'));?><?php echo anchor('engineering','Engineering',array('class'=>'text'));?></li>
                           <li class="showqtip planning" title="<?php echo tooltip('tooltip_planningroom')?>"><?php echo anchor('welcome/planning',' ',array('class'=>'ico'));?><?php echo anchor('welcome/planning','Planning',array('class'=>'text'));?> </li>
                           <li class="showqtip library" title="<?php echo tooltip('tooltip_libraryroom')?>"><?php echo anchor('knowledge/index',' ',array('class'=>'ico'));?><?php echo anchor('knowledge/index','Library',array('class'=>'text'));?></li>
                           <p class="clearleft"></p>
