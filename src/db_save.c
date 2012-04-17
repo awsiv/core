@@ -1687,11 +1687,9 @@ void CFDB_SaveValueReport(mongo_connection *conn, char *keyhash, Item *data)
 
 /*****************************************************************************/
 
-void CFDB_SaveTotalComplianceShift(mongo_connection *conn, const char *hostkey, int num_kept, int num_repaired,
-                                   int num_notkept, int num_samples, int shift_slot)
+void CFDB_SaveHostComplianceShift(mongo_connection *conn, const char *hostkey, int kept, int repaired,
+                                  int notkept, int num_samples, time_t shift_start)
 {
-    assert(shift_slot < SHIFTS_PER_WEEK);
-
     bson_buffer bb;
 
     bson cond;
@@ -1704,15 +1702,16 @@ void CFDB_SaveTotalComplianceShift(mongo_connection *conn, const char *hostkey, 
     bson_buffer *set = bson_append_start_object(&bb, "$set");
     {
         char slot_key[CF_MAXVARSIZE] = { 0 };
-        snprintf(slot_key, sizeof(slot_key), "%s.%d", cfr_total_compliance_shifts, shift_slot);
+        int shift_slot = GetShiftSlot(shift_start);
+        snprintf(slot_key, sizeof(slot_key), "%s.%d", cfr_compliance_shifts, shift_slot);
 
         bson_buffer *slot = bson_append_start_object(set, slot_key);
         {
-            bson_append_int(&bb, cfr_kept, num_kept);
-            bson_append_int(&bb, cfr_repaired, num_repaired);
-            bson_append_int(&bb, cfr_kept, num_notkept);
+            bson_append_int(&bb, cfr_kept, kept);
+            bson_append_int(&bb, cfr_repaired, repaired);
+            bson_append_int(&bb, cfr_notkept, notkept);
             bson_append_int(&bb, cfr_count, num_samples);
-            bson_append_int(&bb, cfr_time, time(NULL));
+            bson_append_int(&bb, cfr_time, shift_start);
         }
         bson_append_finish_object(slot);
     }

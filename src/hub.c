@@ -1058,6 +1058,14 @@ static void Nova_CacheTotalCompliance(bool allSlots)
     }
 
     FreeEnvironmentsList(env);
+
+    Rlist *hostkeys = CFDB_QueryHostKeys(&dbconn, NULL, NULL, now - (2 * SECONDS_PER_SHIFT), now, NULL);
+    for (const Rlist *rp = hostkeys; rp; rp = rp->next)
+    {
+        CFDB_RefreshLastHostComplianceShift(&dbconn, ScalarValue(rp));
+    }
+    DeleteRlist(hostkeys);
+
     CFDB_Close(&dbconn);
 }
 

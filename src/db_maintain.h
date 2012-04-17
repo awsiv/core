@@ -24,4 +24,10 @@ int CFDB_PurgeDeletedHosts(void);
 
 bool CFDB_CollectionHasData(mongo_connection *conn, const char *fullCollectionName);
 
+/*
+  Reads the total-compliance subrecord for a host for the last shift interval, and adds
+  the aggregated result in the compliance-shifts subrecord.
+*/
+void CFDB_RefreshLastHostComplianceShift(mongo_connection *conn, const char *hostkey);
+
 #endif

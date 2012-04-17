@@ -727,6 +727,7 @@ PHP_FUNCTION(cfpr_host_compliance_colour);
 /*! \brief /host/compliance/timeseries
 */
 PHP_FUNCTION(cfpr_host_compliance_timeseries);
+PHP_FUNCTION(cfpr_host_compliance_timeseries_shifts);
 
 /*! \brief /host/count
  */

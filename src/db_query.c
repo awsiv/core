@@ -946,7 +946,7 @@ HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes)
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn, char *keyHash, char *lversion, time_t from, time_t to, int lkept,
+HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn, const char *keyHash, char *lversion, time_t from, time_t to, int lkept,
                                     int lnotkept, int lrepaired, int sort, HostClassFilter *hostClassFilter)
 {
     bson_buffer bb;
@@ -1099,6 +1099,78 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn, char *keyHash, char 
     }
 
     return NewHubQuery(host_list, record_list);
+}
+
+Sequence *CFDB_QueryHostComplianceShifts(mongo_connection *conn, HostClassFilter *host_class_filter)
+{
+    bson_buffer bb;
+    bson_buffer_init(&bb);
+    BsonAppendHostClassFilter(&bb, host_class_filter);
+    bson query;
+    bson_from_buffer(&query, &bb);
+
+    bson_buffer_init(&bb);
+    bson_append_int(&bb, cfr_keyhash, 1);
+    bson_append_int(&bb, cfr_compliance_shifts, 1);
+    bson field;
+    bson_from_buffer(&field, &bb);
+
+    time_t to = GetShiftSlotStart(time(NULL));
+    time_t from = to - (SHIFTS_PER_WEEK * SECONDS_PER_SHIFT);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+
+    Sequence *records = SequenceCreate(5000, DeleteHubHostComplianceShifts);
+    while (mongo_cursor_next(cursor))
+    {
+        const char *hostkey = NULL;
+        BsonStringGet(&cursor->current, cfr_keyhash, &hostkey);
+        assert(hostkey);
+
+        const char *compliance_shifts = NULL;
+        BsonObjectGet(&cursor->current, cfr_compliance_shifts, &compliance_shifts);
+        if (compliance_shifts)
+        {
+            HubHostComplianceShifts *record = NewHubHostComplianceShifts(hostkey);
+
+            bson_iterator compliance_shifts_iter;
+            bson_iterator_init(&compliance_shifts_iter, compliance_shifts);
+
+            while (bson_iterator_next(&compliance_shifts_iter))
+            {
+                const char *shift_slot_str = bson_iterator_key(&compliance_shifts_iter);
+                assert(shift_slot_str);
+
+                int shift_slot = StringToLong(shift_slot_str);
+                if (shift_slot < 0 || shift_slot >= SHIFTS_PER_WEEK)
+                {
+                    // TODO: log error
+                    continue;
+                }
+
+                bson entry;
+                bson_iterator_subobject(&compliance_shifts_iter, &entry);
+
+                time_t timestamp = 0;
+                BsonTimeGet(&entry, cfr_time, &timestamp);
+                if (timestamp < from || timestamp > to)
+                {
+                    continue;
+                }
+
+                BsonIntGet(&entry, cfr_kept, &record->kept[shift_slot]);
+                BsonIntGet(&entry, cfr_repaired, &record->repaired[shift_slot]);
+                BsonIntGet(&entry, cfr_notkept, &record->notkept[shift_slot]);
+                BsonIntGet(&entry, cfr_count, &record->num_samples[shift_slot]);
+            }
+
+            SequenceAppend(records, record);
+        }
+    }
+
+    mongo_cursor_destroy(cursor);
+
+    return records;
 }
 
 /*****************************************************************************/
@@ -6395,8 +6467,14 @@ Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const ch
 
     // query
     bson_buffer_init(&buffer);
-    bson_append_regex(&buffer, cfr_host_array, hostname, "");
-    bson_append_regex(&buffer, cfr_ip_array, ip, "");
+    if (hostname)
+    {
+        bson_append_regex(&buffer, cfr_host_array, hostname, "");
+    }
+    if (ip)
+    {
+        bson_append_regex(&buffer, cfr_ip_array, ip, "");
+    }
     BsonAppendHostClassFilter(&buffer, hostClassFilter);
     bson_from_buffer(&query, &buffer);
 

@@ -39,8 +39,8 @@ void CFDB_SaveLastHostUpdate(mongo_connection *conn, char *hostKey);
 void CFDB_SaveLastUpdate(mongo_connection *conn, char *database, char *keyField, char *keyhash);
 void CFDB_SaveLastHostUpdateSize(mongo_connection *conn, char *hostkey, int update_size);
 
-void CFDB_SaveTotalComplianceShift(mongo_connection *conn, const char *hostkey, int num_kept, int num_repaired,
-                                   int num_notkept, int num_samples, int shift_slot);
+void CFDB_SaveHostComplianceShift(mongo_connection *conn, const char *hostkey, int kept, int repaired,
+                                  int notkept, int num_samples, time_t shift_start);
 
 // TODO: deprecate
 void CFDB_SaveCachedTotalCompliance(mongo_connection *conn, char *policy, int slot, double kept, double repaired,

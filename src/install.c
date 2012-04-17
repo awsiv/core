@@ -380,16 +380,16 @@ void DeleteHubTotalCompliance(HubTotalCompliance *ht)
     free(ht);
 }
 
-HubTotalComplianceShifts *NewHubTotalComplianceShifts(const char *hostkey)
+HubHostComplianceShifts *NewHubHostComplianceShifts(const char *hostkey)
 {
-    HubTotalComplianceShifts *record = xmalloc(sizeof(HubTotalComplianceShifts));
+    HubHostComplianceShifts *record = xcalloc(sizeof(HubHostComplianceShifts), 1);
 
     record->hostkey = SafeStringDuplicate(hostkey);
 
     return record;
 }
 
-void DeleteHubTotalComplianceShifts(HubTotalComplianceShifts *record)
+void DeleteHubHostComplianceShifts(HubHostComplianceShifts *record)
 {
     if (record)
     {
