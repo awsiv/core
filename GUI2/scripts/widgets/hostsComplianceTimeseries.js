@@ -28,8 +28,6 @@
                     show: true,
                     color: common.colours.white,
                     mode: 'time'
-                    //timeformat: '%b-%d',
-                    //minTickSize: [1, 'day']
                 },
                 yaxis: {
                     show: true,
@@ -201,6 +199,14 @@
                         yellow[entry.position] = entry.yellow;
                     }
 
+                    var maxValue = 1;
+                    for (i = 0; i < timeseries.count; i++) {
+                        var count = green[i] + yellow[i] + red[i];
+                        if (count > maxValue) {
+                            maxValue = count;
+                        }
+                    }
+
                     green = convertToTimeDomain(green);
                     red = convertToTimeDomain(red);
                     yellow = convertToTimeDomain(yellow);
@@ -208,7 +214,7 @@
                     $self.options.plot.series.bars.barWidth = $self._resolution -
                         (0.05 * $self._resolution);
 
-                    //$self.options.plot.yaxis.max = Math.max.apply(Math, $self._sampleCounts);
+                    $self.options.plot.yaxis.max = maxValue;
 
                     $self._plot = $.plot($self._$graph, [
                         {
