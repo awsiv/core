@@ -358,27 +358,6 @@ class pdfreports extends Cf_Controller
        }
     }
 
-    /**
-     * Removes notes field from the data
-     * @param type $data
-     * @param type $header
-     * @return array 
-     */
-    function removeNotesField($data, $header)
-    {
-        // check for notes if present remove the field from the data
-        if (array_key_exists('Note', $header))
-        {
-            $index = $header['Note']['index'];
-            // remove the notes data from the array 
-            foreach ($data as &$row)
-            {
-                unset($row[$index]);
-            }
-        }
-        return $data;
-    }
-
     function rpt_bundle_profile($username, $hostkey, $search, $inclist, $exlist, $rows = 0, $page_number = 0)
     {
 
@@ -390,7 +369,6 @@ class pdfreports extends Cf_Controller
             $data1 = $ret['data'];
             $header = ($ret['meta']['header']);
 
-            $data1 = $this->removeNotesField($data1, $header);
             unset($header['Note']);
             $header = array_keys($header);
             $this->changeDateFields($data1, 2);
@@ -436,7 +414,6 @@ class pdfreports extends Cf_Controller
             $data1 = $jsondata['data'];
             $header = ($jsondata['meta']['header']);
 
-            $data1 = $this->removeNotesField($data1, $header);
             unset($header['Note']);
             $header = array_keys($header);
 
@@ -481,7 +458,6 @@ class pdfreports extends Cf_Controller
             $data1 = $ret['data'];
             $header = $ret['meta']['header'];
 
-            $data1 = $this->removeNotesField($data1, $header);
             unset($header['Note']);
             $header = array_keys($header);
             $this->changeDateFields($data1, 4);
@@ -529,7 +505,6 @@ class pdfreports extends Cf_Controller
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
 
-            $data1 = $this->removeNotesField($data1, $header);
             unset($header['Note']);
             $header = array_keys($header);
             $this->changeDateFields($data1, 3);
@@ -749,7 +724,6 @@ class pdfreports extends Cf_Controller
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
 
-            $data1 = $this->removeNotesField($data1, $header);
             unset($header['Note']);
 
             $header = array_keys($header);
@@ -968,7 +942,6 @@ class pdfreports extends Cf_Controller
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
 
-            $data1 = $this->removeNotesField($data1, $header);
             unset($header['Note']);
             $header = array_keys($header);
             $this->changeDateFields($data1, 5);
@@ -1017,7 +990,6 @@ class pdfreports extends Cf_Controller
             $header = $jsondata['meta']['header'];
 
 
-            $data1 = $this->removeNotesField($data1, $header);
             unset($header['Note']);
             $header = array_keys($header);
             $this->changeDateFields($data1, 3);
