@@ -124,6 +124,9 @@ private $filter_view_mappings=array();
         $many = "";
         
         $report_type = isset($getparams['report']) ? urldecode($getparams['report']) : ($this->input->post('report')?urldecode($this->input->post('report')):NULL);
+        if(!$report_type){
+         redirect('engineering');
+        }
         $host = isset($getparams['host']) ? urldecode(trim($getparams['host'])) : ($this->input->post('host')?trim($this->input->post('host')):NULL);
         $class_regex = isset($getparams['class_regex']) ? urldecode($getparams['class_regex']) : $this->input->post('class_regex');
         $hosts_only = isset($getparams['hosts_only']) ? $getparams['hosts_only'] : $this->input->post('hosts_only');
