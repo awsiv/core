@@ -2994,6 +2994,8 @@ span.green_btn, a.green_btn {
         background-position: 100% -60px;
         color: #3d4439 !important;
     }
+    
+  
 
 span.green_btn{
     height:19px;
@@ -3012,7 +3014,8 @@ a.green_btn span, span.green_btn input{
     display: inline-block;
 }
 
-    a.green_btn span:hover, span.green_btn input:hover {
+   
+    a.green_btn:hover span, span.green_btn:hover input {
         background-position: 0 -20px;
         color: #3d4439 !important;
         cursor: pointer;
