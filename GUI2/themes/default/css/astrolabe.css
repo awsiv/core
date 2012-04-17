@@ -57,8 +57,9 @@
 
 .astrolabe .node  .nodeHeader:hover  .addNodeButton
 {
-    background: url('../images/astrolabe/add-remove-node-buttons.png') transparent;
+    background-image: url('../images/astrolabe/add_remove_edit_icons.png') ;
     background-position: 0px 0px;
+    background-repeat: no-repeat;
 }
 
 .astrolabe .node  .nodeHeader  .addNodeButton
@@ -66,7 +67,7 @@
     width: 22px;
     height: 16px;
     display: inline-block;
-    background: #ffffff;
+    
     cursor: pointer;
 }
 
@@ -74,13 +75,11 @@
 {
     background-position: 0px -21px;
 }
-
 .astrolabe .node  .nodeHeader:hover > .removeNodeButton
 {
-
-    background-image: url('../images/astrolabe/add-remove-node-buttons.png');
-    background-position: 16px 0px;
-
+    background-image: url('../images/astrolabe/add_remove_edit_icons.png');
+    background-position: -28px 0px;
+     background-repeat: no-repeat;
 }
 
 .astrolabe .node  .nodeHeader > .removeNodeButton
@@ -89,14 +88,37 @@
     height: 16px;
     display: inline-block;
     border-left: 2px solid #ffffff;
-    background: #ffffff;
+    
     cursor: pointer;
 }
 
 .astrolabe .node  .nodeHeader:hover > .removeNodeButton:hover
 {
-    background-position: 16px -21px;
+    background-position: -28px -21px;
 }
+
+.astrolabe .node  .nodeHeader:hover  .editNodeButton
+{
+    background-image: url('../images/astrolabe/add_remove_edit_icons.png');
+    background-position: -50px 0px;
+    background-repeat: no-repeat;
+}
+
+.astrolabe .node  .nodeHeader  .editNodeButton
+{
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    border-left: 2px solid #ffffff;
+    
+    cursor: pointer;
+}
+
+.astrolabe .node  .nodeHeader:hover > .editNodeButton:hover
+{
+    background-position: -50px -21px;
+}
+
 
 .astrolabe .node.expanded > .busyIcon
 {

@@ -237,7 +237,7 @@
             var $addNodeButton = $('<span>');
             $addNodeButton.addClass('addNodeButton');
             $addNodeButton.click(function(event) {
-                var $dialog = $self._createAddNodeDialog($nodeItem);
+                var $dialog = $self._nodeDialog($nodeItem,'add');
                 $dialog.dialog('open');
             });
             $nodeHeader.append($addNodeButton);
@@ -249,9 +249,21 @@
                 $nodeItem.remove();
                 $self._saveProfile($self._currentProfile, $parentNode);
             });
+            
+            var $editNodeButton = $('<span>');
+            $editNodeButton.addClass('editNodeButton');
+            $editNodeButton.click(function(event) {
+                var $parentNode = $self._parentNode($nodeItem);
+                var $dialog = $self._nodeDialog($nodeItem,'update');
+              
+                $dialog.dialog('open');
+            });
+            
             if (isRemovable !== true) {
                 $nodeHeader.append($removeNodeButton);
+                $nodeHeader.append($editNodeButton)
             }
+            
 
             var $busyIcon = $('<span>');
             $busyIcon.addClass('busyIcon');
@@ -273,7 +285,7 @@
             return {
                 'Add Node': {
                     click: function() {
-                        var $dialog = self._createAddNodeDialog(nodeItem);
+                        var $dialog = self._nodeDialog(nodeItem);
                         $dialog.dialog('open');
                     }
                 },
@@ -287,34 +299,42 @@
             };
         },
 
-        _createAddNodeDialog: function(parentNode) {
+        _nodeDialog: function(parentNode,operation) {
             var $self = this;
-
-            var addNode = function($dialog) {
-                $('#astrolabe-add-node-label-error').html('');
-                $('#astrolabe-add-node-class-error').html('');
-
+            
+            var validation = function(){
                 var label = $('#astrolabe-add-node-label').val();
                 if (label == '') {
                     $('#astrolabe-add-node-label').focus();
                     $('#astrolabe-add-node-label-error').html('Label cannot be empty');
-                    return;
+                    return false;
                 }
 
                 var classRegex = $('#astrolabe-add-node-class').val();
                 if (classRegex == '') {
                     $('#astrolabe-add-node-class').focus();
                     $('#astrolabe-add-node-class-error').html('Class expression cannot be empty');
-                    return;
+                    return false;
                 }
                 else if (!common.isValidClassExpression(classRegex)) {
                     $('#astrolabe-add-node-class').focus();
                     $('#astrolabe-add-node-class-error').html('Invalid class expression');
-                    return;
+                    return false;
                 }
+                
+                return {
+                      label:label,
+                      classRegex:classRegex
+                  }
+            }
 
-                var $node = $($self._createNode(label, classRegex, null));
-
+            var addNode = function($dialog) {
+                $('#astrolabe-add-node-label-error').html('');
+                $('#astrolabe-add-node-class-error').html('');
+                var nodeprop=validation();
+                if(nodeprop === false){return;}
+                
+                var $node = $($self._createNode(nodeprop.label, nodeprop.classRegex, null));
                 var $parentContainer = $($self._rootContainer);
                 if (parentNode !== null) {
                     $parentContainer = $self._nodeContainer($(parentNode));
@@ -330,30 +350,53 @@
                 $dialog.dialog('destroy');
                 $dialog.remove();
             }
-
+            
+            var updateNode =function($dialog){
+                $('#astrolabe-add-node-label-error').html('');
+                $('#astrolabe-add-node-class-error').html('');
+                var nodeprop=validation();
+                if(nodeprop === false){return;}
+                $(parentNode).attr('label',nodeprop.label);
+                $(parentNode).attr('class-regex',nodeprop.classRegex);
+                $(parentNode).find('div.showqtip').first().find('span.nodeLabel').text(nodeprop.label);
+                $self._saveProfile($self._currentProfile, parentNode);
+                $dialog.dialog('close');
+                $dialog.dialog('destroy');
+                $dialog.remove();
+            }
+            
+           var btns= {};
+           btns[operation]=function() {
+                            if(operation=='update'){
+                               updateNode($(this));
+                            }else{
+                               addNode($(this));  
+                            };
+           }
+           btns['cancel']=function() {
+                            $(this).dialog('close');
+                            $(this).dialog('destroy');
+                            $(this).remove();
+                        }
+                        
             var $dialog = $('<div>')
                 .load($self.options.baseUrl + '/widget/astrolabeAddNodeDialog/', function() {
                     $('#astrolabe-add-node-label').focus();
+                    if(operation=='update'){
+                      $('#astrolabe-add-node-label').val($(parentNode).attr('label'));
+                      $('#astrolabe-add-node-class').val($(parentNode).attr('class-regex'))
+                    }
                 })
                 .dialog({
                     autoOpen: false,
                     title: 'Add Class Filter',
                     width: 415,
-                    buttons: {
-                        'Add': function() {
-                            addNode($(this));
-                        },
-                        'Cancel': function() {
-                            $(this).dialog('close');
-                            $(this).dialog('destroy');
-                            $(this).remove();
-                        }
-                    },
+                    buttons: btns,
                     draggable: false,
                     modal: true,
                     resizable: false
                 });
-
+            
             $dialog.keypress(function(event) {
                 if (event.keyCode == $.ui.keyCode.ENTER) {
                     addNode($dialog);
