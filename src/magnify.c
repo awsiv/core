@@ -25,7 +25,8 @@ bool Nova_ReadMagTimeSeries2(mongo_connection *conn, DataView *cfv, char *hostke
 {
     double ry, rq, rs;
     double q[CF_MAGDATA], e[CF_MAGDATA], d[CF_MAGDATA];
-    int i, have_data = false;
+    int i;
+    bool hasData = false;
 
     CFDB_QueryMagView2(conn, hostkey, vitalId, time(NULL) - 4 * 3600, q, e, d);
 
@@ -35,22 +36,15 @@ bool Nova_ReadMagTimeSeries2(mongo_connection *conn, DataView *cfv, char *hostke
 
     for (i = 0; i < CF_MAGDATA; i++)
     {
-        cfv->data_E[i] = 0;
-        cfv->data_q[i] = 0;
-        cfv->bars[i] = 0;
-    }
-
-    for (i = 0; i < CF_MAGDATA; i++)
-    {
-        ry = Num(e[i]);
-        rq = Num(q[i]);
-        rs = Num(d[i]);
-
-        // Num() resets to zero negative numbers
         if (q[i] >= 0)
         {
-            have_data++;
+            hasData |= true;
         }
+
+        // Num() resets negative numbers to zero
+        ry = cfv->data_E[i] = Num(e[i]);
+        rq = cfv->data_q[i] = Num(q[i]);
+        rs = cfv->bars[i] = Num(d[i]);
 
         if (rq > cfv->max)
         {
@@ -65,12 +59,5 @@ bool Nova_ReadMagTimeSeries2(mongo_connection *conn, DataView *cfv, char *hostke
         cfv->error_scale = (cfv->error_scale + rs) / 2;
     }
 
-    if (have_data > 1)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+   return hasData;
 }
