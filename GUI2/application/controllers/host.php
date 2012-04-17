@@ -24,7 +24,7 @@ class Host extends Cf_REST_Controller {
             $this->respond_forbidden();
         }
     }
-    
+
     function countCompliance_get(){
       try{
          $hostcount=array(
@@ -37,7 +37,7 @@ class Host extends Cf_REST_Controller {
           show_error_custom($e->getMessage(), $e->getCode());
        }
     }
-    
+
     function countConnectivity_get(){
         try{
          $hostcount=array(
@@ -47,7 +47,7 @@ class Host extends Cf_REST_Controller {
         $this->respond_ok(json_encode($hostcount));
          }catch(Exception $e){
           show_error_custom($e->getMessage(), $e->getCode());
-       } 
+       }
     }
 
     function info_get($hostKey = NULL) {
@@ -84,6 +84,10 @@ class Host extends Cf_REST_Controller {
             {
                 case 'timeseries':
                     $this->respond_ok(cfpr_host_compliance_timeseries($this->username,
+                            $this->param_includes(), $this->param_excludes()));
+
+                case 'timeseries_shifts':
+                    $this->respond_ok(cfpr_host_compliance_timeseries_shifts($this->username,
                             $this->param_includes(), $this->param_excludes()));
 
                 default:

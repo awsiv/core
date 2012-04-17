@@ -12,8 +12,12 @@
 #include "cf3.extern.h"
 #include "db_maintain.h"
 
-#include "db_common.h"
+#include "db_query.h"
+#include "db_save.h"
 #include "bson_lib.h"
+#include "granules.h"
+
+#include <assert.h>
 
 static void CFDB_DropAllIndices(mongo_connection *conn);
 static void PurgePromiseLogWithEmptyTimestamps(mongo_connection *conn, char *promiseLogKey);
@@ -982,3 +986,40 @@ int CFDB_PurgeDeletedHosts(void)
     return true;
 }
 
+void CFDB_RefreshLastHostComplianceShift(mongo_connection *conn, const char *hostkey)
+{
+    assert(hostkey);
+
+    time_t now = time(NULL);
+    time_t to = GetShiftSlotStart(now);
+    time_t from = to - SECONDS_PER_SHIFT;
+
+    HubQuery *result = CFDB_QueryTotalCompliance(conn, hostkey, NULL, from, to, -1, -1, -1, false, NULL);
+
+    if (!result->records)
+    {
+        return;
+    }
+
+    int kept = 0, repaired = 0, notkept = 0, num_samples = 0;
+    int shift_slot = GetShiftSlot(from);
+
+    for (const Rlist *rp = result->records; rp; rp = rp->next)
+    {
+        const HubTotalCompliance *record = (const HubTotalCompliance *)rp->item;
+        assert(GetShiftSlot(record->t) == shift_slot);
+
+        kept += record->kept;
+        repaired += record->repaired;
+        notkept += record->notkept;
+        num_samples++;
+    }
+
+    DeleteHubQuery(result, DeleteHubTotalCompliance);
+
+    kept /= num_samples;
+    repaired /= num_samples;
+    notkept /= num_samples;
+
+    CFDB_SaveHostComplianceShift(conn, hostkey, kept, repaired, notkept, num_samples, from);
+}

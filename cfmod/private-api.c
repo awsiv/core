@@ -7,6 +7,7 @@
 #include "map.h"
 #include "scorecards.h"
 #include "granules.h"
+#include "misc_lib.h"
 
 #define cfr_software     "sw"
 #define cfr_patch_avail  "pa"
@@ -3184,22 +3185,6 @@ PHP_FUNCTION(cfpr_host_count)
 
 /******************************************************************************/
 
-char *StringFromLong(long l)
-{
-    char *str;
-    xasprintf(&str, "%ld", l);
-    return str;
-}
-
-char *StringFromTime(time_t time)
-{
-    char *str = xmalloc(64);
-    char timebuf[26];
-
-    snprintf(str, sizeof(str), "%s", cf_strtimestamp_utc(time, timebuf));
-    return str;
-}
-
 PHP_FUNCTION(cfpr_host_compliance_timeseries)
 {
     char *username = NULL;
@@ -3302,6 +3287,109 @@ PHP_FUNCTION(cfpr_host_compliance_timeseries)
 
     RETURN_JSON(output);
 }
+
+PHP_FUNCTION(cfpr_host_compliance_timeseries_shifts)
+{
+    char *username = NULL;
+    zval *contextIncludes = NULL,
+         *contextExcludes = NULL;
+    long username_len = -1;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "saa",
+                              &username, &username_len,
+                              &contextIncludes,
+                              &contextExcludes) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(username_len);
+
+    Sequence *records = NULL;
+    {
+        HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
+        ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+        HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
+        HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
+
+        mongo_connection conn;
+        DATABASE_OPEN(&conn);
+
+        records = CFDB_QueryHostComplianceShifts(&conn, filter);
+
+        DATABASE_CLOSE(&conn);
+        DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+    }
+
+    size_t green[SHIFTS_PER_WEEK] = { 0 };
+    size_t red[SHIFTS_PER_WEEK] = { 0 };
+    size_t yellow[SHIFTS_PER_WEEK] = { 0 };
+
+    for (size_t host_index = 0; host_index < records->length; host_index++)
+    {
+        const HubHostComplianceShifts *record = (const HubHostComplianceShifts *)records->data[host_index];
+
+        for (size_t shift_index = 0; shift_index < SHIFTS_PER_WEEK; shift_index++)
+        {
+            if (record->num_samples[shift_index] <= 0)
+            {
+                continue;
+            }
+
+            int score = HostComplianceScore(record->kept[shift_index], record->repaired[shift_index]);
+            switch (HostColourFromScoreForConnectedHost(score))
+            {
+            case HOST_COLOUR_GREEN:
+                green[shift_index]++;
+                break;
+
+            case HOST_COLOUR_RED:
+                red[shift_index]++;
+                break;
+
+            case HOST_COLOUR_YELLOW:
+                yellow[shift_index]++;
+                break;
+
+            default:
+                // TODO: log shit
+                continue;
+            }
+        }
+    }
+
+    SequenceDestroy(records);
+
+    time_t to = GetShiftSlotStart(time(NULL));
+    time_t from = to - (SHIFTS_PER_WEEK * SECONDS_PER_SHIFT);
+    int most_recent_shift = GetShiftSlot(to);
+
+    JsonElement *data = JsonArrayCreate(SHIFTS_PER_WEEK);
+    for (int pos = 0; pos < SHIFTS_PER_WEEK; pos++)
+    {
+        JsonElement *entry = JsonObjectCreate(10);
+
+        int shift_index = UnsignedModulus(most_recent_shift + pos + 1, SHIFTS_PER_WEEK);
+
+        JsonObjectAppendInteger(entry, LABEL_POSITION, pos);
+        JsonObjectAppendInteger(entry, LABEL_GREEN, green[shift_index]);
+        JsonObjectAppendInteger(entry, LABEL_RED, red[shift_index]);
+        JsonObjectAppendInteger(entry, LABEL_YELLOW, yellow[shift_index]);
+
+        JsonArrayAppendObject(data, entry);
+    }
+
+    JsonElement *output = JsonObjectCreate(4);
+    JsonObjectAppendInteger(output, LABEL_FROM, (int)from);
+    JsonObjectAppendInteger(output, LABEL_RESOLUTION, SECONDS_PER_SHIFT);
+    JsonObjectAppendInteger(output, LABEL_COUNT, SHIFTS_PER_WEEK);
+    JsonObjectAppendArray(output, LABEL_DATA, data);
+
+    RETURN_JSON(output);
+}
+
 
 
 /******************************************************************************/

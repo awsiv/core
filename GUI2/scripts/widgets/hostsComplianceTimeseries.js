@@ -67,6 +67,41 @@
             $self._$graph = $('<div>');
             $self._$graph.css('height', '200px');
             $self.element.append($self._$graph);
+
+            $shortTermRadio = $('<input>');
+            $shortTermRadio.attr('type', 'radio');
+            $shortTermRadio.attr('name', 'timeMode');
+            $shortTermRadio.attr('value', 'short');
+            $shortTermRadio.attr('id', 'timeModeShort')
+            $shortTermRadio.click(function() {
+                $self._resource = 'host/compliance/timeseries';
+                $self.refresh();
+            });
+            $self.element.append($shortTermRadio);
+            $shortTermRadio.attr('checked', true);
+
+            $shortTermLabel = $('<label>');
+            $shortTermLabel.attr('for', 'timeModeShort');
+            $shortTermLabel.html('Last 6 Hours');
+            $self.element.append($shortTermLabel);
+
+            $longTermRadio = $('<input>');
+            $longTermRadio.attr('type', 'radio');
+            $longTermRadio.attr('name', 'timeMode');
+            $longTermRadio.attr('value', 'long');
+            $longTermRadio.attr('id', 'timeModeLong')
+            $longTermRadio.html('Last Week');
+            $longTermRadio.click(function() {
+                $self._resource = 'host/compliance/timeseries_shifts';
+                $self.refresh();
+            });
+            $self.element.append($longTermRadio);
+
+            $longTermLabel = $('<label>');
+            $longTermLabel.attr('for', 'timeModeLong');
+            $longTermLabel.html('Last Week');
+            $self.element.append($longTermLabel);
+
         },
 
         _init: function() {
@@ -75,6 +110,7 @@
             $self._plot = null;
             $self._previousPoint = null;
             $self._sampleCounts = null;
+            $self._resource = 'host/compliance/timeseries';
 
             $self._$graph.bind('plothover', function(event, pos, item) {
                 $('#x').text(pos.x.toFixed(2));
@@ -210,7 +246,7 @@
 
         _requestUrls: {
             timeseries: function($self) {
-                var url = $self.options.baseUrl + 'host/compliance/timeseries?';
+                var url = $self.options.baseUrl + $self._resource + '?';
 
                 if ($self._context.includes.length > 0) {
                     url = url + 'includes=' + encodeURIComponent($self._context.includes) + '&';
