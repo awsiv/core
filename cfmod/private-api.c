@@ -4579,8 +4579,6 @@ PHP_FUNCTION(cfpr_add_note)
         RETURN_NULL();
     }
 
-    ARGUMENT_CHECK_CONTENTS(nid_len && hk_len);
-
     fuser = (u_len == 0) ? NULL : user;
     fnote = (n_len == 0) ? NULL : note;
 
