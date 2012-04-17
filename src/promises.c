@@ -545,7 +545,6 @@ void TrackValue(char *date, double kept, double repaired, double notkept)
 
 void LastSawBundle(char *name,double compliance)
 {
-    double lastseen;
     Event e, newe;
     time_t now = time(NULL);
     CF_DB *dbp;
@@ -557,12 +556,10 @@ void LastSawBundle(char *name,double compliance)
     
     if (ReadDB(dbp, name, &e, sizeof(e)))
     {
-        lastseen = now - e.t;
         newe.Q = QAverage(e.Q, compliance, 0.7);
     }
     else
     {
-        lastseen = 0;
         newe.Q = QDefinite(compliance);
     }
 
