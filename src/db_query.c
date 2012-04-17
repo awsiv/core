@@ -1120,6 +1120,9 @@ Sequence *CFDB_QueryHostComplianceShifts(mongo_connection *conn, HostClassFilter
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
+    bson_destroy(&query);
+    bson_destroy(&field);
+
     Sequence *records = SequenceCreate(5000, DeleteHubHostComplianceShifts);
     while (mongo_cursor_next(cursor))
     {
