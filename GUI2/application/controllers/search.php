@@ -160,7 +160,7 @@ private $filter_view_mappings=array();
         $params = '';
         $breadcrumbs_url = "search/index/";
         $hostfinderparams = "";
-
+       
         if (!is_ajax())
         {
 
@@ -185,7 +185,7 @@ private $filter_view_mappings=array();
             }
             else
             {
-
+                
                 foreach ($_POST as $key => $value)
                 {
                     if (!empty($value))
@@ -237,7 +237,9 @@ private $filter_view_mappings=array();
             'reports_menu'=>$this->__reports_menu(),
             'report_category'=>$this->report_model->getReportCategory($report_type),
             'filter_view'=>$this->filter_view_mappings[$report_type],
-            'hostcount'=>$this->host_model->getHostCount($username,NULL,explode(',', $incList), explode(',', $exList))
+            'hostcount'=>$this->host_model->getHostCount($username,NULL,explode(',', $incList), explode(',', $exList)),
+            'incList' => $incList,
+            'exList'  => $exList
         );
         }catch(Exception $e){
             show_error($e->getMessage(), 500);
