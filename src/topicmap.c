@@ -560,7 +560,7 @@ Item *Nova_ScanLeadsAssociations(int search_id, char *assoc_mask)
                         }
                     }
 
-                    if (assoc_mask == NULL || FullTextMatch(assoc_mask, afwd))
+                    if (assoc_mask == NULL || StringMatch(assoc_mask, afwd))
                     {
                         char qualified[CF_BUFSIZE];
 

@@ -43,7 +43,7 @@ int GetInstalledPkgsRpath(PackageItem ** pkgList, Attributes a, Promise *pp)
         line[0] = '\0';
         CfReadLine(line, sizeof(line), fin);
 
-        if (FullTextMatch(a.packages.package_installed_regex, line))
+        if (StringMatch(a.packages.package_installed_regex, line))
         {
             CfDebug("READPKGINST(rpath)=%s\n", line);
             PrependListPackageItem(pkgList, line, a, pp);

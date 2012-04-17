@@ -337,7 +337,7 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
 
         for (rp = GOALS; rp != NULL; rp = rp->next)
         {
-            if (FullTextMatch(rp->item, pp->promisee.item))
+            if (StringMatch(rp->item, pp->promisee.item))
             {
                 fprintf(fp, "promises::\n\n");
                 fprintf(fp, "  \"%s\"\n", promise_id);
@@ -369,7 +369,7 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
             fprintf(fp, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, promise_id, NOVA_GIVES_PR);
             for (rp2 = GOALS; rp2 != NULL; rp2 = rp2->next)
             {
-                if (FullTextMatch(rp2->item, rp->item))
+                if (StringMatch(rp2->item, rp->item))
                 {
                     fprintf(fp, "promises::\n\n");
                     fprintf(fp, "  \"%s\"\n", promise_id);

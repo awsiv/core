@@ -177,7 +177,7 @@ void AnalyzePromiseConflicts(void)
 
             for (p1 = PROMISER_REGEXES; p1 != NULL; p1 = p1->next)
             {
-                if (FullTextMatch(p1->handle, PROMISER_LIST[i]->handle))
+                if (StringMatch(p1->handle, PROMISER_LIST[i]->handle))
                 {
                     CfOut(cf_inform, "", " ! promiser \"%s\" might conflict with \"%s\" in file %s near line %d\n",
                           p1->handle, PROMISER_LIST[i]->handle, PROMISER_LIST[i]->filename,
