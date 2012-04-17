@@ -5,6 +5,17 @@
     padding-bottom: 5px;
 }
 
+.hostsComplianceTimeseries label
+{
+    padding-left: 5px;
+    color: #ffffff;
+}
+
+.hostsComplianceTimeseries input
+{
+    margin-left: 10px;
+}
+
 .hostsComplianceTimeseries .header .loader
 {
     background: url("../images/small_loader_dark.gif") no-repeat;
