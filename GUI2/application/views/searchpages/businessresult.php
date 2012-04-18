@@ -2,22 +2,21 @@
 
     <div id="reportpanel" class="innerdiv">
         <?php $this->load->view('/searchpages/reportsMenu'); ?>
-        <div class="title expanded showqtip collapsed" style="text-align:center" id="show_fileter_form" title="Click to display more filters">
+        <div class="title expanded showqtip collapsed" style="text-align:center" id="show_fileter_form" title="Click to toggle more filters">
             <div><em>&nbsp;</em><span><?php echo $report_title; ?></span><em>&nbsp;</em></div>
             <div class="clear"></div>
-        </div>
-        <script type="text/javascript">
+        </div>  
+        <div id="modifySearchPanel">
+            <div class="grid_7 reportForm">
+                <?php $this->load->view('searchpages/' . $filter_view); ?> 
+            </div>
+            <script type="text/javascript">
             $('#show_fileter_form').click(function() {
                 $('#modifySearchPanel').toggle(0,function(){
                     $('#reportpanel .title').toggleClass('collapsed');
                 });
             });
-        </script>    
-        <div id="modifySearchPanel" style="display:none">
-            <div class="grid_7 reportForm">
-                <?php $this->load->view('searchpages/' . $filter_view); ?> 
-
-            </div>
+           </script>  
             <div id="savesearchcontainer" class="grid_5 floatright panelcontent"> 
                 <div id="searchSaveError" class="error" style="display:none;"></div>
                 <div id="searchSaveSuccess" class="success" style="display:none;"></div> 
@@ -44,7 +43,7 @@
         <div class="reportpanelcontent">
             <div class="grid_7">
                 <span id="count_hosts">Report for <?php echo $hostcount ?> hosts</span>
-                <a href="<?php echo site_url('widget/contextfinder') ?>" id="hclist" class="green_btn showqtip" title="<?php echo $this->lang->line('report_hostgp_help'); ?>"><span>Host Context</span></a>
+                <a href="<?php echo site_url('widget/contextfinder') ?>" id="hclist" class="green_btn" title="<?php echo $this->lang->line('report_hostgp_help'); ?>"><span>Host Context</span></a>
                 <script type="text/javascript">
                     var $incList = $('#searchform input:hidden[name=inclist]');
                     var $exList  = $('#searchform input:hidden[name=exlist]');

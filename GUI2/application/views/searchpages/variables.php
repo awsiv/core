@@ -3,7 +3,7 @@
         <form method="post" action="<?php echo site_url('search') ?>">
             <p><label>Scope or bundle: (.*+[])</label><input class="searchfield" type="text" name="scope" value="<?php echo (is_array($paramArray) && isset($paramArray['scope'])) ? trim($paramArray['scope']) : ''; ?>"></p>
                 
-            <div id="morefilters" style="display:none">
+            
                 <p><label>Lvalue or name: (.*+[])</label><input class="searchfield" type="text" name="lval" value="<?php echo (is_array($paramArray) && isset($paramArray['lval'])) ? trim($paramArray['lval']) : ''; ?>"></p>
                 <p><label>Rvalue or content: (.*+[])</label><input class="searchfield" type="text" name="rval" value="<?php echo (is_array($paramArray) && isset($paramArray['rval'])) ? trim($paramArray['rval']) : ''; ?>"></p>
                 <p><label>Type:</label>
@@ -15,7 +15,7 @@
                         <option value="r" <?php echo (is_array($paramArray) && isset($paramArray['type']) && $paramArray['type'] == 'r') ? 'selected' : ''; ?>>Real</option>
                         <option value="rl" <?php echo (is_array($paramArray) && isset($paramArray['type']) && $paramArray['type'] == 'rl') ? 'selected' : ''; ?>>Real list</option>
                     </select>
-            </div>
+        
                 
             <p>
                 <a href="<?php echo site_url('widget/contextfinder') ?>" id="hclist" class="hostcontextddl floatleft" title="<?php echo $this->lang->line('report_hostgp_help'); ?>">Hostcontext</a>
