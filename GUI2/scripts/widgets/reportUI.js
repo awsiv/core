@@ -31,6 +31,13 @@
             var $self = this;
             e.preventDefault();
             var $itemClicked = $(e.currentTarget);
+            if ($itemClicked.hasClass('savesearch-url')) {
+                // check if savedsearch is clicked
+                // load the url in different tab
+                var url = $itemClicked.attr('href');
+                window.open(url, '_blank');
+                return;
+            }
             //remove the previous selected items
             $self.menuPane.find('.selected').removeClass("selected");
             //hide submenu after clicked

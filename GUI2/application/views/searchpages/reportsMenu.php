@@ -14,23 +14,24 @@
         <?php if (isset($saved_search_menu))
         { ?>
 
-            <li><span>Saved Searches</span>
-                <ul>
-                    <?php
-                    foreach ((array) $saved_search_menu as $cat => $searches)
-                    {
-                        ?>
-                        <h1><?php echo $cat; ?></h1>
-                        <?php foreach ($searches as $searchObj)
-                        { ?>
-                            <p><a href="<?php echo $searchObj->getUrl(); ?>" class=""><?php echo$searchObj->getLabel(); ?></a></p>
+            <li id="saved-searches"><span>Saved Searches</span>
+                <ul><li>
+                        <?php
+                        foreach ((array) $saved_search_menu as $cat => $searches)
+                        {
+                            ?>
+                            <p><?php echo $cat; ?></p>
+                            <?php foreach ($searches as $searchObj)
+                            { ?>
+                                <a href="<?php echo $searchObj->getUrl(); ?>" class="savesearch-url"><?php echo$searchObj->getLabel(); ?></a>
+                            <?php } ?>
+
+
                         <?php } ?>
-
-
-            <?php } ?>
+                    </li>
                 </ul>
             </li>
-<?php } ?>
+        <?php } ?>
 
 
 
