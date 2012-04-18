@@ -343,9 +343,7 @@
 
                 $node.show();
                 $self._saveProfile($self._currentProfile, parentNode);
-
                 $self._countNode($node);
-
                 $dialog.dialog('close');
                 $dialog.dialog('destroy');
                 $dialog.remove();
@@ -689,7 +687,7 @@
             var includes = $self._nodeIncludes($node);
             $.getJSON($self._requestUrls.hostCount($self, includes, []), function(count) {
                 $node.attr('count', count);
-                $node.children('.nodeHeader').children('.hostCountLabel').html('(' + count + ')');
+                $node.find('div.showqtip').first().find('div.nodeHeader').children('span.hostCountLabel').html('(' + count + ')');
             });
         },
 

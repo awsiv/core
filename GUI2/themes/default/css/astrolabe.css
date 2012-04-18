@@ -50,9 +50,14 @@
     color: #ffffff;
 }
 
-.astrolabe .node .selectedElement  .nodeHeader
+.astrolabe .node .selectedElement > .showqtip > .nodeHeader
 {
-    background: #ffffff; /* grey: #6c695a; */
+    color:#F08B37;
+}
+
+.astrolabe .node .selectedElement > .showqtip > .nodeHeader:hover
+{
+    color:#ffffff;
 }
 
 .astrolabe .node  .nodeHeader:hover  .addNodeButton
@@ -220,22 +225,17 @@
     padding: 10px 10px 10px 0px;
 }
 
-.astrolabe .node > .nodeHeader >.hostCountLabel
+.astrolabe .node  .nodeHeader >.hostCountLabel
 {
     margin-left: 3px;
     margin-right: 3px;
     height: 16px;
     display: inline-block;
-    cursor: default;
     position: relative;
     top: -3px;
     cursor: pointer;
 }
 
-.astrolabe .node.selectedElement > .nodeHeader > .hostCountLabel
-{
-    color: #f08b37;
-}
 
 .astrolabe .menu > .classFinderIcon
 {

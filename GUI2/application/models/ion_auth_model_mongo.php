@@ -574,7 +574,7 @@ class Ion_auth_model_mongo extends CI_Model
 			$this->mongo_db->limit($limit);
             if(isset($offset))
                  $this->mongo_db->offset($offset);
-
+            $this->mongo_db->order_by(array('username'=>'asc'));
 	    return $this->mongo_db->get('users');
 	}
 
