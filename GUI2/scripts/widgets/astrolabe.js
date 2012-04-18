@@ -358,8 +358,9 @@
                 if(nodeprop === false){return;}
                 $(parentNode).attr('label',nodeprop.label);
                 $(parentNode).attr('class-regex',nodeprop.classRegex);
-                $(parentNode).find('div.showqtip').first().find('span.nodeLabel').text(nodeprop.label);
+                $(parentNode).find('div.showqtip').first().attr('oldtitle',nodeprop.classRegex);
                 $self._saveProfile($self._currentProfile, parentNode);
+                $self._loadNode($self._superNode);
                 $dialog.dialog('close');
                 $dialog.dialog('destroy');
                 $dialog.remove();
