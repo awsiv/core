@@ -97,6 +97,7 @@ class Ion_auth
                 $this->ci->lang->load('ion_auth');
                 $this->ci->load->model('ion_auth_model_mongo');
                 $this->ci->load->model('settings_model');
+                $this->ci->load->model('astrolabe_model');
                 $this->ci->load->helper('cookie');
 
                 $this->messages = array();
@@ -110,11 +111,11 @@ class Ion_auth
                 $this->info_end_delimiter =$this->ci->config->item('info_end_delimiter', 'ion_auth');
                 //load the mode of authentication
                 $this->mode=$this->ci->settings_model->app_settings_get_item('mode');
-                
+
                 if(!$this->mode){
                     $this->set_error('backend_error');
                     log_message('info', 'cannot find any mode switching to internal database');
-                    $this->mode='database';	    
+                    $this->mode='database';
                    //return FALSE;
                 }
                 if($this->ci->config->item('auth_mode') &&$this->ci->config->item('auth_mode') !=''){
@@ -130,7 +131,11 @@ class Ion_auth
 		//auto-login the user if they are remembered
 		if (!$this->logged_in() && get_cookie('identity') && get_cookie('remember_code'))
 		{
-			$this->ci->ion_auth_model_mongo->login_remembered_user();
+			if ($this->ci->ion_auth_model_mongo->login_remembered_user() == TRUE)
+                        {
+                            $username = $this->ci->session->userdata('username');
+                            $this->on_login_successful($username);
+                        }
 		}
                 $this->email=$this->ci->settings_model->app_settings_get_item('appemail');
                 if(!($this->email || empty($this->email))){
@@ -400,6 +405,8 @@ class Ion_auth
                      {
                       $this->ci->session->set_userdata($ret);
                       $this->ci->session->set_userdata('pwd', $password);
+
+                      $this->on_login_successful($identity);
                       return TRUE;
                      }
                       foreach((array)$this->ci->auth_ldap->get_unformatted_error() as $error){
@@ -412,21 +419,45 @@ class Ion_auth
                        $this->set_mode('database');
                        $this->ci->session->set_userdata('mode','database');
 		       $this->set_message('login_successful');
+                       $this->on_login_successful($identity);
 		       return TRUE;
 		    }
                 //$this->set_error('login_unsuccessful');
 		return FALSE;
              }
-               
+
 		if ($this->ci->ion_auth_model_mongo->login($identity, $password, $remember))
 		{
 			$this->set_message('login_successful');
+                        $this->on_login_successful($identity);
 			return TRUE;
 		}
 
 		$this->set_error('login_unsuccessful');
 		return FALSE;
 	}
+
+        protected function on_login_successful($username)
+        {
+            if ($this->mode != 'database')
+            {
+                if ($this->ci->ion_auth_model_mongo->is_first_login_ldap())
+                {
+                    $this->ci->astrolabe_model->add_builtin_profiles($username);
+                }
+
+                $this->ci->ion_auth_model_mongo->update_last_login_ldap($username);
+            }
+            else
+            {
+                if ($this->ci->ion_auth_model_mongo->is_first_login())
+                {
+                    $this->ci->astrolabe_model->add_builtin_profiles($username);
+                }
+
+                $this->ci->ion_auth_model_mongo->update_last_login($username);
+            }
+        }
 
 	/**
 	 * logout
@@ -486,7 +517,7 @@ class Ion_auth
                 }
 
                 if ($check_real_assigned_roles == false) {
-                    $user_role = $this->ci->session->userdata('roles');  
+                    $user_role = $this->ci->session->userdata('roles');
                 }
                 else
                 {
@@ -505,11 +536,11 @@ class Ion_auth
                 if($user_role === False || empty($user_role)){
                     return false;
                 }
-                
+
                 return in_array($admin_role, $user_role);
 	}
-        
-             
+
+
 
         /**
 	 * is_in_fallback_role
@@ -591,7 +622,7 @@ class Ion_auth
         {
             return $this->ci->ion_auth_model_mongo->get_users_role($id);
         }
-        
+
         public function get_user_rolelist($id){
             $roles= $this->ci->ion_auth_model_mongo->get_users_role($id);
             if(!empty ($roles)&&$roles!==False){
@@ -613,21 +644,21 @@ class Ion_auth
             }
             if($this->ci->session->userdata('dn')){
                 $this->ci->auth_ldap->set_user_dn($this->ci->session->userdata('dn'));
-            }      
-           
+            }
+
             $users=$this->ci->auth_ldap->get_all_ldap_users($this->ci->session->userdata('username'), $this->ci->session->userdata('pwd'));
             $users_collection=array();
-            
+
             foreach($users as $user){
                 $user_with_roles=$user;
-                
+
                 $user_details_from_db=$this->get_ldap_user_details_from_local_db($user['name']);
-                
+
                 if(is_object($user_details_from_db)){
                 $user_with_roles['roles']=$user_details_from_db->roles;
                 }
                 array_push($users_collection, $user_with_roles);
-                
+
             }
             //var_dump($users_collection);
             return $users_collection;
@@ -759,26 +790,26 @@ class Ion_auth
 		$this->set_error('update_unsuccessful');
 		return FALSE;
 	}
-        
+
        public function is_ldap_user_exists(){
-           
+
            $number=$this->ci->ion_auth_model_mongo->total_ldap_users_cached();
              if($number>0){
                  return true;
              }
              return false;
        }
-        
+
        /**
         *
         * @param type $username
-        * @return type get the details of cached ldap user 
+        * @return type get the details of cached ldap user
         */
         public function get_ldap_user_details_from_local_db($username){
-            return $this->ci->ion_auth_model_mongo->get_ldap_user_by_col("username",$username); 
+            return $this->ci->ion_auth_model_mongo->get_ldap_user_by_col("username",$username);
         }
-       
-       
+
+
         /**
          *
          * @param type $username
@@ -786,18 +817,18 @@ class Ion_auth
          */
         public function ldap_user_role_entry_exits($username)
         {
-           $user=$this->ci->ion_auth_model_mongo->get_ldap_user_by_col("username",$username); 
+           $user=$this->ci->ion_auth_model_mongo->get_ldap_user_by_col("username",$username);
            if(is_null($user)){
-             return FALSE;  
+             return FALSE;
            }
            return TRUE;
         }
-        
+
         /**
          *
          * @param type $username
          * @param type $data which contains all the things as well as roles
-         * @return type 
+         * @return type
          */
         public function update_ldap_users($username,$data){
             $user_entry=array("username"=>$username,"roles"=>$data);
@@ -844,7 +875,7 @@ class Ion_auth
 
         /**
          *Delete role
-         * 
+         *
          * @param type $name role name
          * @return type bool
          */
@@ -1055,7 +1086,7 @@ class Ion_auth
 	 {
 		 return $this->ci->ion_auth_model_mongo->get_roles();
 	 }
-	 
+
 	 /**
 	 *get_role
 	 * particular get role in the system
@@ -1063,12 +1094,12 @@ class Ion_auth
 	 *@return object
 	 *@author sudhir
 	 **/
-	 
+
 	 public function get_role($username = NULL, $rolename = NULL)
 	 {
 		 return $this->ci->ion_auth_model_mongo->get_role($username, $rolename);
 	 }
-	 
+
 	 /**
 	 *create_role
 	 *Update the role
@@ -1076,11 +1107,11 @@ class Ion_auth
 	 *@return object
 	 *@author sudhir
 	 **/
-	 
+
 	 public function create_role($username, $data)
 	 {
             $id = $this->ci->ion_auth_model_mongo->create_role($username, $data);
-            
+
             if ($id !== FALSE)
             {
                 $this->set_message('role_creation_successful');
@@ -1095,15 +1126,15 @@ class Ion_auth
 	 /**
 	 *update_role
 	 *Update the role
-	 *@param 
+	 *@param
           * username - current logged user
           * rolename - name of the role
           * data - new values
-         * 
+         *
 	 *@return bool
 	 *@author sudhir
 	 **/
-	 
+
 	 public function update_role($username, $data)
 	  {
 	    if ($this->ci->ion_auth_model_mongo->update_role($username, $data))
@@ -1116,5 +1147,5 @@ class Ion_auth
           public function set_mode($mode){
               $this->mode=$mode;
           }
-          
+
 }

@@ -10,7 +10,7 @@
 *
 * Created:  03.01.2011
 *
-* 
+*
 * Requirements: PHP5 or above
 *
 */
@@ -55,7 +55,7 @@ class Ion_auth_model_mongo extends CI_Model
 	 * @var string
 	 **/
 	public $identity;
-        
+
 
 	public function __construct()
 	{
@@ -125,7 +125,7 @@ class Ion_auth_model_mongo extends CI_Model
 	    {
 		return FALSE;
 	    }
-            
+
 	    if ($this->store_salt)
 	    {
 		return sha1($password . $result->salt);
@@ -174,7 +174,7 @@ class Ion_auth_model_mongo extends CI_Model
                               ->where(array('activation_code' => $code))
                               ->limit(1)
                               ->get('users');
-		
+
 
 		if (count($result)!== 1)
 		{
@@ -239,12 +239,12 @@ class Ion_auth_model_mongo extends CI_Model
 	 **/
 	public function change_password($identity, $old, $new)
 	{
-         
+
              $result=$this->mongo_db->select(array('password','username'))
                               ->where(array('_id' => new MongoId($identity)))
                               ->limit(1)
                               ->get_object('users');
-            
+
 	    //$result = $query->row();
 
 	    $db_password = $result->password;
@@ -336,7 +336,7 @@ class Ion_auth_model_mongo extends CI_Model
 	    $key = $this->hash_password(microtime().$email);
 
 	    $this->forgotten_password_code = $key;
-            
+
 	    $this->mongo_db->where(array('email' => $email))->update('users', array('forgotten_password_code' => $key));
 
 	    return true;
@@ -428,7 +428,7 @@ class Ion_auth_model_mongo extends CI_Model
 		return $this->mongo_db->where(array($this->identity_column=>$identity))->get_object('users');
 	    }
 
-           
+
 	}
 
 	/**
@@ -471,7 +471,7 @@ class Ion_auth_model_mongo extends CI_Model
 		}
 	    }
 
-	   
+
 	    // IP Address
 	    $ip_address = $this->input->ip_address();
 	    $salt	= $this->store_salt ? $this->salt() : FALSE;
@@ -510,11 +510,11 @@ class Ion_auth_model_mongo extends CI_Model
 	    {
 		return FALSE;
 	    }
-         
+
            if($ldap_fallback){
                $this->load->model('settings_model');
                $role=$this->settings_model->app_settings_get_item('fall_back_for');
-               
+
                $this->mongo_db->select(array($this->identity_column,'id', 'password','roles'));
                $this->mongo_db->where(array($this->identity_column => $identity,'active' => 1,'roles'=>$role));
            }else{
@@ -524,15 +524,13 @@ class Ion_auth_model_mongo extends CI_Model
 
             $result= $this->mongo_db ->limit(1)
                            ->get_object('users');
-            
+
 	    if ($result != NULL)
 	    {
 		$password = $this->hash_password_db($identity, $password);
 
 		if ($result->password === $password)
 		{
-		    $this->update_last_login($result->_id);
-
 		    $session_data = array(
 					$this->identity_column => $result->{$this->identity_column},
 					'id'                   => $result->_id, //kept for backwards compatibility
@@ -618,6 +616,16 @@ class Ion_auth_model_mongo extends CI_Model
 	    return $this->mongo_db->get_where_object('users',array('_id'=>new MongoId($id)),1);
 	}
 
+        public function get_user_ldap($id = false)
+	{
+	    //if no id was passed use the current users id
+	    if (empty($id))
+	    {
+		$id = $this->session->userdata('user_id');
+	    }
+	    return $this->mongo_db->get_where_object('users_ldap',array('_id'=>new MongoId($id)),1);
+	}
+
 	/**
 	 * get_user_by_email
 	 *
@@ -633,7 +641,7 @@ class Ion_auth_model_mongo extends CI_Model
         {
             return $this->mongo_db->get_where_object('users',array($col=>$col_val),1);
         }
-        
+
          public function get_ldap_user_by_col($col,$col_val)
         {
             return $this->mongo_db->get_where_object('ldap_users',array($col=>$col_val),1);
@@ -665,7 +673,7 @@ class Ion_auth_model_mongo extends CI_Model
 
 	    return $this->mongo_db->select(array('roles'))
 			    ->where(array('_id'=>new MongoId($id)))
-			    ->get('users');		    
+			    ->get('users');
 	}
 
 	/**
@@ -679,11 +687,11 @@ class Ion_auth_model_mongo extends CI_Model
             if (trim($username) == '')
             {
                 $this->ion_auth->set_error('no_permission');
-		return FALSE; 
+		return FALSE;
             }
-           
+
                 try {
-              
+
                     $ret = json_decode(cfpr_role_list_all($username), TRUE);
 
                     return $ret;
@@ -693,7 +701,7 @@ class Ion_auth_model_mongo extends CI_Model
                     throw $e;
                 }
 		$this->ion_auth->set_error('no_access');
-		return FALSE; 
+		return FALSE;
   	}
 
 	/**
@@ -706,9 +714,9 @@ class Ion_auth_model_mongo extends CI_Model
   	{
             $ret = json_decode(cfpr_role_list_by_name($username, $rolename), true);
             if (count($ret) >0)
-            {    
-                return $ret[0];			    
-            } 
+            {
+                return $ret[0];
+            }
             return false;
   	}
 
@@ -750,7 +758,7 @@ class Ion_auth_model_mongo extends CI_Model
 		return FALSE;
                 }
 	    }
-                 
+
 	    if (array_key_exists('username', $data) || array_key_exists('password', $data) || array_key_exists('email', $data))
 	    {
 		if (array_key_exists('password', $data))
@@ -768,29 +776,29 @@ class Ion_auth_model_mongo extends CI_Model
         /**
          *
          * @param type $username
-         * @param type $data 
+         * @param type $data
          * for updating the roles and related things for ldap user in local db
          */
          public function update_ldap_user($username, $data){
                $this->mongo_db->where(array('username' => $username));
                $this->mongo_db->update('ldap_users', $data);
          }
-         
+
          /**
           *
-          * @param type $data 
+          * @param type $data
           * for caching the ldap username for RBAC implemetation
           */
          public function cache_ldap_user($data){
              $id=$this->mongo_db->insert('ldap_users', $data);
              return $id;
          }
-         
-         
+
+
          public function total_ldap_users_cached(){
              return $this->mongo_db->count('ldap_users');
          }
-         
+
 	/**
 	 * delete_user
 	 *
@@ -802,8 +810,8 @@ class Ion_auth_model_mongo extends CI_Model
             $res = $this->get_user($id);
             if (empty($res)) {
                 throw new Exception("User doesn't exist");
-            } 
-           
+            }
+
 	    return $this->mongo_db->where(array('_id'=>new MongoId($id)))->delete('users');
  	}
 
@@ -812,7 +820,7 @@ class Ion_auth_model_mongo extends CI_Model
 	 *@param
          * $username - admin by default
          * $name - role name
-         * 
+         *
 	 * @return bool
 	 * @author Sudhir Pandey
 	 **/
@@ -832,26 +840,50 @@ class Ion_auth_model_mongo extends CI_Model
                 log_message('error', $e->getMessage());
                 throw $e;
             }
-        
+
             $this->set_error('role_delete_unsuccessful');
-            return FALSE; 
+            return FALSE;
         }
 
 
-	/**
-	 * update_last_login
-	 *
-	 * @return bool
-	 * @author Ben Edmunds
-	 **/
-	public function update_last_login($id)
+	public function update_last_login($username)
 	{
 	    $this->load->helper('date');
-            $this->mongo_db->where( array('_id' => new MongoId($id)));
+            $this->mongo_db->where(array('username' => $username));
 	    $this->mongo_db->update('users', array('last_login' => now()));
 	    return TRUE;
 	}
 
+        public function update_last_login_ldap($username)
+        {
+            if ($this->mongo_db->where(array('username' => $username))->count('ldap_users') <= 0)
+            {
+                $this->cache_ldap_user(array('username' => $username));
+            }
+
+            $this->load->helper('date');
+            $this->update_ldap_user($username, array('last_login' => now()));
+        }
+
+        public function is_first_login()
+        {
+            $user = $this->get_user();
+            if ($user)
+            {
+                return !array_key_exists('last_login', $user);
+            }
+            return true;
+        }
+
+        public function is_first_login_ldap()
+        {
+            $user = $this->get_user_ldap();
+            if ($user)
+            {
+                return !array_key_exists('last_login', $user);
+            }
+            return true;
+        }
 
 	/**
 	 * set_lang
@@ -893,8 +925,6 @@ class Ion_auth_model_mongo extends CI_Model
 	    if (is_object($result))
 	    {
 		$user = $result;
-
-		$this->update_last_login($user->_id);
 
 		$session_data = array(
 				    $this->identity_column => $result->{$this->identity_column},
@@ -975,9 +1005,9 @@ class Ion_auth_model_mongo extends CI_Model
                     log_message('error', $e->getMessage());
                     throw $e;
                 }
-        
+
 		$this->set_error('role_creation_unsuccessful');
-		return FALSE; 
+		return FALSE;
 	}
 
 
@@ -1003,9 +1033,9 @@ class Ion_auth_model_mongo extends CI_Model
                     log_message('error', $e->getMessage());
                     throw $e;
                 }
-        
+
 		$this->set_error('role_update_unsuccessful');
-		return FALSE; 
+		return FALSE;
 	}
 
         function random_text($code_length = 10){
@@ -1020,7 +1050,7 @@ class Ion_auth_model_mongo extends CI_Model
        /**
         * Unset field in ldap_users item
         * @param type $id
-        * @param type $fieldname 
+        * @param type $fieldname
         */
        function unset_field_ldap_user($id, $fieldname) {
            $this->mongo_db->clear();

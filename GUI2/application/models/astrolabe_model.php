@@ -6,41 +6,50 @@ function profile_id($profile)
     return $profile['profileId'];
 }
 
-class Astrolabe_Model extends CI_Model {
+class Astrolabe_Model extends CI_Model
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->load->library('mongo_db');
     }
 
-    function profile_list($username) {
-        if (is_null($username)) {
+    function profile_list($username)
+    {
+        if (is_null($username))
+        {
             return NULL;
         }
 
         $data = $this->mongo_db->select(array('profileId'))->
-                                 where(array('username' => $username))->
-                                 get('astrolabe.profile');
+                where(array('username' => $username))->
+                get('astrolabe.profile');
 
         return array_map("profile_id", $data);
     }
 
-    function profile_get($username, $profileId) {
-        if (!is_null($username) && !is_null($profileId)) {
+    function profile_get($username, $profileId)
+    {
+        if (!is_null($username) && !is_null($profileId))
+        {
             $data = $this->mongo_db->where(
-                    array('username' => $username,
-                          'profileId' => $profileId))->
+                            array('username' => $username,
+                                'profileId' => $profileId))->
                     limit(1)->
                     get_object('astrolabe.profile');
-            if (is_object($data)){
+            if (is_object($data))
+            {
                 return $data;
             }
         }
         return null;
     }
 
-    function profile_insert($username, $profileId, $nodeDescriptionList) {
-        if (is_null($username) || is_null($profileId) && is_null($nodeDescriptionList)) {
+    function profile_insert($username, $profileId, $nodeDescriptionList)
+    {
+        if (is_null($username) || is_null($profileId) && is_null($nodeDescriptionList))
+        {
             return false;
         }
 
@@ -52,8 +61,74 @@ class Astrolabe_Model extends CI_Model {
         return $id !== NULL;
     }
 
-    function profile_delete($username, $profileId) {
-        if (is_null($username) || is_null($profileId)) {
+    /*
+     * [
+	{
+		"label" : "Linux",
+		"classRegex" : "linux",
+		"children" : [
+			{
+				"label" : "CentOS",
+				"classRegex" : "centos",
+				"children" : [ ]
+			},
+			{
+				"label" : "Ubuntu",
+				"classRegex" : "ubuntu",
+				"children" : [ ]
+			}
+		]
+	},
+	{
+		"label" : "Solaris",
+		"classRegex" : "solaris.*",
+		"children" : [ ]
+	},
+	{
+		"label" : "Windows",
+		"classRegex" : "windows",
+		"children" : [ ]
+	}
+] }
+
+     */
+
+    function add_builtin_profiles($username)
+    {
+        $this->profile_insert($username, 'OS', array(
+            array(
+                'label' => 'Linux',
+                'classRegex' => 'linux',
+                'children' => array(
+                    array(
+                        'label' => 'CentOS',
+                        'classRegex' => 'centos',
+                        'children' => array()
+                    ),
+                    array(
+                        'label' => 'Ubuntu',
+                        'classRegex' => 'ubuntu',
+                        'children' => array()
+                    )
+                )
+            ),
+            array(
+                'label' => 'Solaris',
+                'classRegex' => 'solaris.*',
+                'children' => array()
+            ),
+            array(
+                'label' => 'Windows',
+                'classRegex' => 'windows',
+                'children' => array()
+            )
+        ));
+    }
+
+    function profile_delete($username, $profileId)
+    {
+        if (is_null($username) || is_null($profileId))
+        {
             return false;
         }
 
@@ -64,6 +139,7 @@ class Astrolabe_Model extends CI_Model {
 
         return true;
     }
+
 }
 
 ?>
