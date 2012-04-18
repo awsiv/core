@@ -4302,24 +4302,20 @@ int Nova2PHP_add_note(char *noteid, char *keyhash, char *username, time_t dateti
         return false;
     }
 
-    Item *data = NULL;
-    char msg[CF_BUFSIZE] = { 0 };
     char nid[CF_MAXVARSIZE] = { 0 };
-
-    snprintf(msg, CF_BUFSIZE, "%s,%ld,%s", username, datetime, note);
-    AppendItem(&data, msg, NULL);
 
     int ret;
     if (is_new) // create a new note with entry
     {
         char report_data[CF_SMALLBUF] = { 0 };
         snprintf(report_data, CF_SMALLBUF, "%d", CFREPORT_HOSTS);
-        ret = CFDB_AddNote(&dbconn, keyhash, CFREPORT_HOSTS, nid, report_data, data);
+        ret = CFDB_AddNote(&dbconn, keyhash, CFREPORT_HOSTS, nid, report_data,
+                           username, datetime, note);
     }
     else // add entry to existing note
     {
         snprintf(nid, CF_MAXVARSIZE, "%s", noteid);
-        ret = CFDB_AddNote(&dbconn, NULL, 0, nid, NULL, data);
+        ret = CFDB_AddNote(&dbconn, NULL, 0, nid, NULL, username, datetime, note);
     }
 
     if (ret)
