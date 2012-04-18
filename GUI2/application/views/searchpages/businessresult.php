@@ -2,7 +2,7 @@
 
     <div id="reportpanel" class="innerdiv">
         <?php $this->load->view('/searchpages/reportsMenu'); ?>
-        <div class="title expanded showqtip collapsed" style="text-align:center" id="show_fileter_form" title="Click to toggle more filters">
+        <div class="title expanded showqtip" style="text-align:center" id="show_fileter_form" title="Click to toggle more filters">
             <div><em>&nbsp;</em><span><?php echo $report_title; ?></span><em>&nbsp;</em></div>
             <div class="clear"></div>
         </div>  
