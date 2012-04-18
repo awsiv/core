@@ -359,6 +359,7 @@
                 $(parentNode).find('div.showqtip').first().attr('oldtitle',nodeprop.classRegex);
                 $self._saveProfile($self._currentProfile, parentNode);
                 $self._loadNode($self._superNode);
+                $self._recount();
                 $dialog.dialog('close');
                 $dialog.dialog('destroy');
                 $dialog.remove();
