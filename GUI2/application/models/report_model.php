@@ -364,14 +364,14 @@ class report_model extends Cf_Model {
      * @param type $page_number
      * @return type array
      */
-    function getComplianceSummary($username, $hostkey, $inclist, $exlist, $rows = 50, $page_number = 1,$host_only=false)
+    function getComplianceSummary($username, $hostkey,$version, $inclist, $exlist, $rows = 50, $page_number = 1,$host_only=false)
     {
         try
         {
             if($host_only){
-               $rawdata = cfpr_hosts_with_compliance_summary($username, $hostkey, NULL, -1, -1, -1, -1, $inclist, $exlist, $rows, $page_number);
+               $rawdata = cfpr_hosts_with_compliance_summary($username, $hostkey, $version, -1, -1, -1, -1, $inclist, $exlist, $rows, $page_number);
             }else{
-               $rawdata = cfpr_report_compliance_summary($username, $hostkey, NULL, -1, -1, -1, -1, $inclist, $exlist, "last-seen", true, $rows, $page_number);
+               $rawdata = cfpr_report_compliance_summary($username, $hostkey, $version, -1, -1, -1, -1, $inclist, $exlist, "last-seen", true, $rows, $page_number);
             }
 
             $data = $this->checkData($rawdata);

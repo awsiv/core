@@ -135,7 +135,7 @@ class pdfreports extends Cf_Controller
                 break;
 
             case "compliance-summary":
-                $this->rpt_compliance_summary($username, $params['hostkey'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
+                $this->rpt_compliance_summary($username, $params['hostkey'],$params['version'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
                 break;
 
             case "file-change-log":
@@ -692,16 +692,13 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_compliance_summary($username, $hostkey, $incList, $exList, $rows = 0, $page_number = 0)
+    function rpt_compliance_summary($username, $hostkey,$version, $incList, $exList, $rows = 0, $page_number = 0)
     {
         $header = array('Host', 'Policy', 'Kept', 'Repaired', 'Not kept', 'Last seen');
 
-
-        //$ret = cfpr_report_compliance_summary($username, $hostkey, NULL, -1, -1, -1, -1, ">", array($class_regex), array(), "last-seen", true, $rows, $page_number);
-        //$jsondata = json_decode($ret, true);
         try
         {
-            $jsondata = $this->report_model->getComplianceSummary($username, $hostkey, $incList, $exList, $rows, $page_number);
+            $jsondata = $this->report_model->getComplianceSummary($username, $hostkey,$version,$incList, $exList, $rows, $page_number);
             $this->checkForDataTruncation($jsondata);
 
             $data1 = $jsondata['data'];
