@@ -5587,7 +5587,13 @@ Rlist *CFDB_QueryNotes(mongo_connection *conn, char *keyhash, char *nid, Item *d
                         {
                             continue;
                         }
-                        if (!(datetime <= to && datetime >= from) && from >= 0 && to >= 0)
+
+                        if (!(datetime <= to) && (to >= 0))
+                        {
+                            continue;
+                        }
+
+                        if (!(datetime >= from) && (from >= 0))
                         {
                             continue;
                         }

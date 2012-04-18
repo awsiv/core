@@ -4334,8 +4334,8 @@ int Nova2PHP_add_note(char *noteid, char *keyhash, char *username, time_t dateti
 
 /*****************************************************************************/
 
-int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, char *filter_username, time_t from, time_t to, PageInfo *page,
-                       char *returnval, int bufsize)
+int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, char *filter_username,
+                       time_t from, time_t to, PageInfo *page, char *returnval, int bufsize)
 {
     Item *data = NULL;
     char msg[CF_BUFSIZE] = { 0 };
