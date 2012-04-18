@@ -28,7 +28,7 @@
                         <span class="clear"></span>
                     </p>
                     <input type="hidden" id="search_params" name="search_params" value="<?php echo $params; ?>"></input>
-                    <input type="hidden" id="search_url" name="search_url" value="<?php echo site_url() . $breadCrumbUrl; ?>"></input>
+                    <input type="hidden" id="search_url" name="search_url" value="<?php echo $breadCrumbUrl; ?>"></input>
                     <input type="hidden" id="report_title" name="report_title" value="<?php echo $report_type; ?>"></input>
 
                 </form>

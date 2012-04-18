@@ -24,7 +24,7 @@ class CF_Search {
     }
 
     function getUrl() {
-        return ($this->url);
+        return site_url().'/'.$this->url;
     }
 
     function getDate() {

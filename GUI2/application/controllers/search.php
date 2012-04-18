@@ -86,13 +86,38 @@ private $filter_view_mappings=array();
         }
     }
 
+    function _integrateSaveSearches() {
+        $this->load->model('search_save_model');
+
+        $username = $this->session->userdata('username');
+
+        $filter = array('username' => $username,
+        );
+
+
+
+        $result = $this->search_save_model->get_all_search($filter);
+
+         /* group by report type */
+        $group = array();
+        foreach ($result as $obj) {
+            $title = $obj->getReportType();
+            $group[$title][] = $obj;
+        }
+
+        return $group;
+
+
+    }
     /**
      * function to generate reports menu
      */
     function generateReportMenu($selectedCat = '', $selectedType = '')
     {
         $reportArray = $this->__reports_menu();
+        $savedSearchReport = $this->_integrateSaveSearches();
         $data['reports_menu'] = $reportArray;
+        $data['saved_search_menu'] = $savedSearchReport;
         $data['report_category'] = $selectedCat;
         $data['report_type'] = $selectedType;
         $this->load->view('/searchpages/reportsMenu', $data);
@@ -238,6 +263,7 @@ private $filter_view_mappings=array();
             'resultView' => $hosts_only?'search_result_group':'default_result_view',
             'fromEmail' => $fromEmail,
             'reports_menu'=>$this->__reports_menu(),
+            'saved_search_menu' => $this->_integrateSaveSearches(),
             'report_category'=>$this->report_model->getReportCategory($report_type),
             'filter_view'=>$this->filter_view_mappings[$report_type],
             'hostcount'=>$this->host_model->getHostCount($username,NULL,explode(',', $incList), explode(',', $exList)),
