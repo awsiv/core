@@ -18,7 +18,6 @@
         
                 
             <p>
-                <a href="<?php echo site_url('widget/contextfinder') ?>" id="hclist" class="hostcontextddl floatleft" title="<?php echo $this->lang->line('report_hostgp_help'); ?>">Hostcontext</a>
                 <span class="floatright"> Return host names only: <input type="checkbox" name="hosts_only" value="true"  <?php echo (is_array($paramArray) && isset($paramArray['hosts_only'])) ? 'checked' : ''; ?>></span>
                 <span class="clear"></span>
             </p>
