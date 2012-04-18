@@ -90,8 +90,7 @@
             $longTermRadio.attr('type', 'radio');
             $longTermRadio.attr('name', 'timeMode');
             $longTermRadio.attr('value', 'long');
-            $longTermRadio.attr('id', 'timeModeLong')
-            $longTermRadio.html('Last Week');
+            $longTermRadio.attr('id', 'timeModeLong');
             $longTermRadio.click(function() {
                 $self._resource = 'host/compliance/timeseries_shifts';
                 $self.options.plot.xaxis.tickFormatter = function(value) {
