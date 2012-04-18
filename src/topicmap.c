@@ -649,8 +649,6 @@ void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
     bson_destroy(&query);
     bson_destroy(&field);
 
-    strcpy(buffer, "[ ");
-
     while (mongo_cursor_next(cursor))   // loops over documents
     {
         bson_iterator_init(&it1, cursor->current.data);
@@ -692,20 +690,25 @@ void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
         }
 
         snprintf(text,CF_BUFSIZE,"%s -- %s",represents,topic);
-//        Nova_AddOccurrenceBuffer(context, locator, locator_type, text, buffer, bufsize);
         NewHit(&hits,context, locator, locator_type, text);
-
-
     }
+
+    JsonElement *json_array = JsonArrayCreate(10);
 
     for (hp = hits; hp != NULL; hp= hp->next)
        {
-       Nova_AddOccurrenceBuffer(hp->occurrence_context, hp->locator, hp->rep_type, hp->represents, buffer, bufsize);
+       JsonArrayAppendObject(json_array, Nova_AddOccurrenceBuffer(hp->occurrence_context,
+                                                                 hp->locator, hp->rep_type,
+                                                                 hp->represents));
        }
 
-
     DeleteHitList(hits);
-    buffer[strlen(buffer) - 1] = ']';
+    Writer *writer_tmp = StringWriter();
+
+    JsonElementPrint(writer_tmp, json_array, 1);
+    JsonElementDestroy(json_array);
+
+    strncpy(buffer, StringWriterClose(writer_tmp),bufsize);
 }
 
 /*************************************************************************/
@@ -895,17 +898,16 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 }
 
 /*************************************************************************/
-/* Level                                                                 */
-/*************************************************************************/
 
-void Nova_AddOccurrenceBuffer(char *context, char *locator, enum representations locator_type, char *represents,
-                              char *buffer, int bufsize)
+JsonElement *Nova_AddOccurrenceBuffer(char *context, char *locator, enum representations locator_type, char *represents)
 {
-    char work[CF_BUFSIZE];
+    JsonElement *json_obj = JsonObjectCreate(4);
+    JsonObjectAppendString(json_obj, "context", context);
+    JsonObjectAppendString(json_obj, "ref", locator);
+    JsonObjectAppendString(json_obj, "represents", represents);
+    JsonObjectAppendInteger(json_obj, "type", locator_type);
 
-    snprintf(work, CF_BUFSIZE - 1, "{ \"context\": \"%s\", \"ref\": \"%s\", \"represents\": \"%s\", \"type\": %d},",
-             context, locator, represents, locator_type);
-    Join(buffer, work, bufsize);
+    return json_obj;
 }
 
 /*************************************************************************/
