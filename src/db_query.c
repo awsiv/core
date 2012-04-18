@@ -3766,13 +3766,13 @@ int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int
 
 /*****************************************************************************/
 
-int CFDB_QueryLastUpdate(mongo_connection *conn, char *db, char *dbkey, char *keyhash, time_t *date, int *size)
+bool CFDB_QueryLastUpdate(mongo_connection *conn, char *db, char *dbkey, char *keyhash, time_t *date, int *size)
 {
     bson_buffer b, bb;
     bson query, field;
     mongo_cursor *cursor;
     bson_iterator it1;
-    int ok = false;
+    bool ok = false;
 
 /* BEGIN query document */
 

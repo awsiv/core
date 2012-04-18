@@ -401,19 +401,20 @@ PHP_FUNCTION(cfpr_host_by_hostkey)
 
 PHP_FUNCTION(cfpr_host_info)
 {
-    char *username = NULL, *hostKey = NULL;
-    int username_len = -1, hostKey_len = -1;
+    char *username = NULL, *hostkey = NULL;
+    int username_len = -1, hostkey_len = -1;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
-                              &username, &username_len, &hostKey, &hostKey_len) == FAILURE)
+                              &username, &username_len,
+                              &hostkey, &hostkey_len) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
     }
 
-    ARGUMENT_CHECK_CONTENTS(username_len && hostKey_len);
+    ARGUMENT_CHECK_CONTENTS(username_len && hostkey_len);
 
-    cfapi_errid erridAccess = CFDB_HasHostAccessFromUserRBAC(username, hostKey);
+    cfapi_errid erridAccess = CFDB_HasHostAccessFromUserRBAC(username, hostkey);
 
     if (erridAccess != ERRID_SUCCESS)
     {
@@ -424,63 +425,60 @@ PHP_FUNCTION(cfpr_host_info)
     mongo_connection conn;
     DATABASE_OPEN(&conn);
 
-    HubQuery *result = CFDB_QueryVariables(&conn, hostKey, NULL, NULL, NULL, NULL, false, 0, time(NULL), NULL);
+    HubHost *host = CFDB_GetHostByKey(&conn, hostkey);
+    if (!host) {
+        RETURN_NULL();
+    }
+
+    HubQuery *result = CFDB_QueryVariables(&conn, hostkey, NULL, NULL, NULL, NULL, false, 0, time(NULL), NULL);
 
     time_t last_report_update = -1;
     int last_update_size = 0;
 
-    CFDB_QueryLastUpdate(&conn, MONGO_DATABASE, cfr_keyhash, hostKey, &last_report_update, &last_update_size);
+    CFDB_QueryLastUpdate(&conn, MONGO_DATABASE, cfr_keyhash, hostkey, &last_report_update, &last_update_size);
 
     DATABASE_CLOSE(&conn);
 
-    if (result->hosts && result->hosts->item)
+    JsonElement *infoObject = JsonObjectCreate(10);
+
+    JsonObjectAppendString(infoObject, LABEL_HOST_KEY, host->keyhash);
+    JsonObjectAppendString(infoObject, LABEL_HOST_NAME, host->hostname);
+    JsonObjectAppendString(infoObject, LABEL_IP, host->ipaddr);
+    JsonObjectAppendInteger(infoObject, LABEL_LAST_REPORT_UPDATE, last_report_update);
+
+    for (Rlist *rp = result->records; rp; rp = rp->next)
     {
-        JsonElement *infoObject = JsonObjectCreate(10);
+        HubVariable *var = (HubVariable *) rp->item;
 
-        HubHost *hh = (HubHost *) result->hosts->item;
-
-        JsonObjectAppendString(infoObject, LABEL_HOST_KEY, hh->keyhash);
-        JsonObjectAppendString(infoObject, LABEL_HOST_NAME, hh->hostname);
-        JsonObjectAppendString(infoObject, LABEL_IP, hh->ipaddr);
-        JsonObjectAppendInteger(infoObject, LABEL_LAST_REPORT_UPDATE, last_report_update);
-
-        for (Rlist *rp = result->records; rp; rp = rp->next)
+        if (var && strcmp(var->scope, "sys") == 0)
         {
-            HubVariable *var = (HubVariable *) rp->item;
-
-            if (var && strcmp(var->scope, "sys") == 0)
+            if (strcmp(var->lval, "ostype") == 0)
             {
-                if (strcmp(var->lval, "ostype") == 0)
-                {
-                    JsonObjectAppendString(infoObject, LABEL_OS_TYPE, ScalarRvalValue(var->rval));
-                }
-                else if (strcmp(var->lval, "flavour") == 0)
-                {
-                    JsonObjectAppendString(infoObject, LABEL_FLAVOUR, ScalarRvalValue(var->rval));
-                }
-                else if (strcmp(var->lval, "release") == 0)
-                {
-                    JsonObjectAppendString(infoObject, LABEL_RELEASE, ScalarRvalValue(var->rval));
-                }
-                else if (strcmp(var->lval, "last_policy_update") == 0)
-                {
-                    JsonObjectAppendString(infoObject, LABEL_LAST_POLICY_UPDATE, ScalarRvalValue(var->rval));
-                }
+                JsonObjectAppendString(infoObject, LABEL_OS_TYPE, ScalarRvalValue(var->rval));
+            }
+            else if (strcmp(var->lval, "flavour") == 0)
+            {
+                JsonObjectAppendString(infoObject, LABEL_FLAVOUR, ScalarRvalValue(var->rval));
+            }
+            else if (strcmp(var->lval, "release") == 0)
+            {
+                JsonObjectAppendString(infoObject, LABEL_RELEASE, ScalarRvalValue(var->rval));
+            }
+            else if (strcmp(var->lval, "last_policy_update") == 0)
+            {
+                JsonObjectAppendString(infoObject, LABEL_LAST_POLICY_UPDATE, ScalarRvalValue(var->rval));
             }
         }
-
-        HostColour colour = HOST_COLOUR_BLUE;
-        CFDB_GetHostColour(hh->keyhash, HOST_RANK_METHOD_COMPLIANCE, &colour);
-        JsonObjectAppendString(infoObject, LABEL_COLOUR, Nova_HostColourToString(colour));
-
-        DeleteHubQuery(result, DeleteHubVariable);
-        RETURN_JSON(infoObject);
     }
-    else
-    {
-        DeleteHubQuery(result, DeleteHubVariable);
-        RETURN_NULL();
-    }
+
+    HostColour colour = HOST_COLOUR_BLUE;
+    CFDB_GetHostColour(host->keyhash, HOST_RANK_METHOD_COMPLIANCE, &colour);
+    JsonObjectAppendString(infoObject, LABEL_COLOUR, Nova_HostColourToString(colour));
+
+    DeleteHubHost(host);
+    DeleteHubQuery(result, DeleteHubVariable);
+
+    RETURN_JSON(infoObject);
 }
 
 /******************************************************************************/
