@@ -66,7 +66,8 @@
 <div id="hostdelconfirmation" title="Proceed Host Deletion" style="display:none">
     <span>
         The host will be deleted from the report database of the hub.
-        The hub will still try to pull it for reports, and it may thus <strong>Reappear</strong>.Are you sure you want to delete this host?
+        The hub will still try to pull it for reports, and it may thus <strong>reappear</strong>.
+        Are you sure you want to delete this host?
     </span>
 </div>
 <script type="text/javascript">
