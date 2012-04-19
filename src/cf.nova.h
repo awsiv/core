@@ -886,7 +886,6 @@ void Nova_BodyNode(FILE *fp, char *body, int calltype);
 void Nova_DependencyGraph(Topic *map);
 void Nova_PlotTopicDependencies(int topic, double **adj, char **names, int dim);
 void Nova_MapClassParameterAssociations(FILE *fp, Promise *pp, char *promise_id);
-double NovaExtractValueFromStream(char *handle, Item *stream, Attributes a, Promise *pp);
 void NovaLogSymbolicValue(char *handle, Item *stream, Attributes a, Promise *pp);
 void Nova_ShowBundleDependence(FILE *fp);
 char *NovaEscape(const char *s);        /* Thread-unsafe */
@@ -918,9 +917,6 @@ bool Nova_ReadMagTimeSeries2(mongo_connection *conn, DataView *cfv, char *hostke
 
 /* monitoring.c */
 
-void Nova_HistoryUpdate(time_t time, const Averages *newvals);
-void Nova_UpdateShiftAverage(Averages *shift_value, Averages *newvals);
-void Nova_ResetShiftAverage(Averages *shift_value);
 double ShiftAverage(double new, double old);
 int NovaRegisterSlot(const char *name, const char *description, const char *units,
                      double expected_minimum, double expected_maximum, bool consolidable);
@@ -931,10 +927,7 @@ const char *NovaGetSlotUnits(int index);
 double NovaGetSlotExpectedMinimum(int index);
 double NovaGetSlotExpectedMaximum(int index);
 bool NovaIsSlotConsolidable(int index);
-Item *NovaGetMeasurementStream(Attributes a, Promise *pp);
-Item *NovaReSample(int slot, Attributes a, Promise *pp);
 void NovaNamedEvent(char *eventname, double value, Attributes a, Promise *pp);
-void Nova_DumpSlowlyVaryingObservations(void);
 void Nova_MonOtherInit(void);
 void Nova_MonOtherGatherData(double *cf_this);
 void Nova_SaveFilePosition(char *filename, long fileptr);
@@ -956,24 +949,11 @@ unsigned GetInstantUint32Value(const char *name, const char *subname, unsigned v
 unsigned long long GetInstantUint64Value(const char *name, const char *subname, unsigned long long value,
                                          time_t timestamp);
 
-/* processes.c */
-
-void Nova_DoFileDiff(char *file, char *destination, struct stat sb, struct stat dsb);
-int Nova_GetFirstChangePosition(char *file, char *destination);
-int Nova_FileIsBinary(char *name, int size, int maxsize);
-void Nova_ReportFileChange(FILE *fp, char *file, char *destination, int maxsize);
-int Nova_LoadFileHunks(char *file, char *destination, FileLine **list1, FileLine **list2, int *l1, int *l2,
-                       int maxsize);
-FileLine *AppendFileLine(FileLine **liststart, char *item, int pos);
-void DeleteAllFileLines(FileLine *item);
-void DeleteFileLine(FileLine **liststart, FileLine *item);
-
 /* promise_db.c */
 
 #ifdef HAVE_LIBMONGOC
 void CFDB_SaveExpandedPromise(Promise *pp);
 void CFDB_SaveUnExpandedPromises(Bundle *bundles, Body *bodies);
-void CFDB_SaveBody(mongo_connection *dbconn, Body *body);
 #endif
 
 /* promises.c */
@@ -983,7 +963,6 @@ const char *Nova_NameVersion(void);
 
 void Nova_EnterpriseDiscovery(void);
 int Nova_ClassesIntersect(Rlist *contexts1, Rlist *contexts2);
-void Nova_DefineHubMaster(void);
 
 /* pscalar.c */
 

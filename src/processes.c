@@ -22,6 +22,16 @@
 # include <zone.h>
 #endif
 
+static void Nova_DoFileDiff(char *file, char *destination, struct stat sb, struct stat dsb);
+static int Nova_GetFirstChangePosition(char *file, char *destination);
+static int Nova_FileIsBinary(char *name, int size, int maxsize);
+static void Nova_ReportFileChange(FILE *fp, char *file, char *destination, int maxsize);
+static int Nova_LoadFileHunks(char *file, char *destination, FileLine **list1, FileLine **list2, int *len1, int *len2,
+                              int maxsize);
+static FileLine *AppendFileLine(FileLine **liststart, char *item, int pos);
+static void DeleteFileLine(FileLine **liststart, FileLine *item);
+static void DeleteAllFileLines(FileLine *list);
+
 /*****************************************************************************/
 
 void LogFileChange(char *file, int change, Attributes a, Promise *pp)
@@ -99,7 +109,7 @@ void LogFileChange(char *file, int change, Attributes a, Promise *pp)
 /* Level                                                                     */
 /*****************************************************************************/
 
-void Nova_DoFileDiff(char *file, char *destination, struct stat sb, struct stat dsb)
+static void Nova_DoFileDiff(char *file, char *destination, struct stat sb, struct stat dsb)
 {
     int pos;
     time_t now = time(NULL);
@@ -154,7 +164,7 @@ void Nova_DoFileDiff(char *file, char *destination, struct stat sb, struct stat 
 /* Level                                                                     */
 /*****************************************************************************/
 
-int Nova_GetFirstChangePosition(char *file, char *destination)
+static int Nova_GetFirstChangePosition(char *file, char *destination)
 {
     FILE *fin1, *fin2;
     int pos = 0;
@@ -197,7 +207,7 @@ int Nova_GetFirstChangePosition(char *file, char *destination)
 
 /*****************************************************************************/
 
-int Nova_FileIsBinary(char *name, int size, int maxsize)
+static int Nova_FileIsBinary(char *name, int size, int maxsize)
 {
     char *file_buffer, *sp;
     int hasbinary = false, hasnewline = 1;
@@ -240,7 +250,7 @@ int Nova_FileIsBinary(char *name, int size, int maxsize)
 
 /*****************************************************************************/
 
-void Nova_ReportFileChange(FILE *fp, char *file, char *destination, int maxsize)
+static void Nova_ReportFileChange(FILE *fp, char *file, char *destination, int maxsize)
 {
     FileLine *list1 = NULL, *list2 = NULL;
     FileLine *it1 = NULL, *it2 = NULL;
@@ -315,8 +325,8 @@ void Nova_ReportFileChange(FILE *fp, char *file, char *destination, int maxsize)
 /* Level                                                                     */
 /*****************************************************************************/
 
-int Nova_LoadFileHunks(char *file, char *destination, FileLine **list1, FileLine **list2, int *len1, int *len2,
-                       int maxsize)
+static int Nova_LoadFileHunks(char *file, char *destination, FileLine **list1, FileLine **list2, int *len1, int *len2,
+                              int maxsize)
 {
     int pos = 0, size = 0, read1, read2, c1, c2;
     FILE *fin1, *fin2;
@@ -428,7 +438,7 @@ int Nova_LoadFileHunks(char *file, char *destination, FileLine **list1, FileLine
 
 /*****************************************************************************/
 
-FileLine *AppendFileLine(FileLine **liststart, char *item, int pos)
+static FileLine *AppendFileLine(FileLine **liststart, char *item, int pos)
 {
     FileLine *ip, *lp, *prev = NULL;
 
@@ -462,7 +472,7 @@ FileLine *AppendFileLine(FileLine **liststart, char *item, int pos)
 
 /*****************************************************************************/
 
-void DeleteAllFileLines(FileLine *list)
+static void DeleteAllFileLines(FileLine *list)
 {
     FileLine *flp, *next = list;
 
@@ -481,7 +491,7 @@ void DeleteAllFileLines(FileLine *list)
 
 /*********************************************************************/
 
-void DeleteFileLine(FileLine **liststart, FileLine *item)
+static void DeleteFileLine(FileLine **liststart, FileLine *item)
 {
     FileLine *ip, *sp;
 

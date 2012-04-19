@@ -106,6 +106,14 @@ static MonitoringSlot *SLOTS[CF_OBSERVABLES - ob_spare];
 static Averages SHIFT_VALUE;
 static char CURRENT_SHIFT[CF_MAXVARSIZE];
 
+static void Nova_HistoryUpdate(time_t time, const Averages *newvals);
+static void Nova_UpdateShiftAverage(Averages *shift_value, Averages *newvals);
+static void Nova_ResetShiftAverage(Averages *shift_value);
+static void Nova_DumpSlowlyVaryingObservations(void);
+static Item *NovaGetMeasurementStream(Attributes a, Promise *pp);
+static Item *NovaReSample(int slot, Attributes a, Promise *pp);
+static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes a, Promise *pp);
+
 /*****************************************************************************/
 
 static void Nova_FreeSlot(MonitoringSlot *slot)
@@ -282,7 +290,7 @@ void GetObservable(int i, char *name, char *desc)
 
 /*****************************************************************************/
 
-void Nova_HistoryUpdate(time_t time, const Averages *newvals)
+static void Nova_HistoryUpdate(time_t time, const Averages *newvals)
 {
     CF_DB *dbp;
 
@@ -305,7 +313,7 @@ void Nova_HistoryUpdate(time_t time, const Averages *newvals)
 
 /*****************************************************************************/
 
-void Nova_UpdateShiftAverage(Averages *shift_value, Averages *newvals)
+static void Nova_UpdateShiftAverage(Averages *shift_value, Averages *newvals)
 {
     int i;
 
@@ -317,7 +325,7 @@ void Nova_UpdateShiftAverage(Averages *shift_value, Averages *newvals)
 
 /*****************************************************************************/
 
-void Nova_ResetShiftAverage(Averages *shift_value)
+static void Nova_ResetShiftAverage(Averages *shift_value)
 {
     int i;
 
@@ -622,7 +630,7 @@ void LoadSlowlyVaryingObservations()
 
 /*****************************************************************************/
 
-void Nova_DumpSlowlyVaryingObservations()
+static void Nova_DumpSlowlyVaryingObservations(void)
 {
     CF_DB *dbp;
     CF_DBC *dbcp;
@@ -823,7 +831,7 @@ bool NovaIsSlotConsolidable(int idx)
 
 /*****************************************************************************/
 
-Item *NovaGetMeasurementStream(Attributes a, Promise *pp)
+static Item *NovaGetMeasurementStream(Attributes a, Promise *pp)
 {
     int i;
 
@@ -848,7 +856,7 @@ Item *NovaGetMeasurementStream(Attributes a, Promise *pp)
 
 /*****************************************************************************/
 
-Item *NovaReSample(int slot, Attributes a, Promise *pp)
+static Item *NovaReSample(int slot, Attributes a, Promise *pp)
 {
     CfLock thislock;
     char line[CF_BUFSIZE], eventname[CF_BUFSIZE];
@@ -1049,7 +1057,7 @@ Item *NovaReSample(int slot, Attributes a, Promise *pp)
 
 /*****************************************************************************/
 
-double NovaExtractValueFromStream(char *handle, Item *stream, Attributes a, Promise *pp)
+static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes a, Promise *pp)
 {
     char value[CF_MAXVARSIZE];
     int count = 1, found = false, match_count = 0;

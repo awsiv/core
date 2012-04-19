@@ -21,6 +21,8 @@
 #include "db_common.h"
 #endif
 
+static void CFDB_SaveBody(mongo_connection *dbconn, Body *body);
+
 /*****************************************************************************/
 
 #ifdef HAVE_LIBMONGOC
@@ -259,7 +261,7 @@ void CFDB_SaveUnExpandedPromises(Bundle *bundles, Body *bodies)
 
 /*****************************************************************************/
 
-void CFDB_SaveBody(mongo_connection *dbconn, Body *body)
+static void CFDB_SaveBody(mongo_connection *dbconn, Body *body)
 {
     Rlist *rp;
     Constraint *cp;

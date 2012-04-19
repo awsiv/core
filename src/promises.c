@@ -27,6 +27,8 @@ PromiseIdent *PROMISER_LIST[CF_HASHTABLESIZE] = { NULL };
 
 PromiseIdent *PROMISER_REGEXES = NULL;
 
+static void Nova_DefineHubMaster(void);
+
 /*****************************************************************************/
 
 static void PrependPromiserList(PromiseIdent **list, char *s, Promise *pp)
@@ -225,7 +227,7 @@ void EnterpriseContext(void)
 }
 
 /*****************************************************************************/
-void Nova_DefineHubMaster()
+static void Nova_DefineHubMaster(void)
 {
 #ifdef HAVE_LIBMONGOC
     char master[CF_MAXVARSIZE] = { 0 };
@@ -463,49 +465,6 @@ void NotePromiseCompliance(Promise *pp, double val, PromiseState state, char *re
     chmod(name, 0644);
 }
 
-/***************************************************************/
-
-time_t GetPromiseCompliance(Promise *pp, double *value, double *average, double *var, time_t *lastseen)
-{
-    CF_DB *dbp;
-    Event e;
-    double lsea = SECONDS_PER_WEEK * 52;        /* expire after a year */
-    time_t now = time(NULL);
-
-    if (!OpenDB(&dbp, dbid_promise_compliance))
-    {
-        return (time_t) 0;
-    }
-
-    char name[CF_BUFSIZE];
-    strncpy(name, PromiseID(pp), CF_MAXVARSIZE);
-
-    if (ReadDB(dbp, name, &e, sizeof(e)))
-    {
-        *lastseen = e.t;
-        *value = e.Q.q;
-        *average = e.Q.expect;
-        *var = e.Q.var;
-    }
-    else
-    {
-        *lastseen = 0;
-        *value = 0;
-        *average = 0;
-        *var = 0;
-    }
-
-    if (*lastseen > 0 && (now - *lastseen) > lsea)
-    {
-        CfOut(cf_verbose, "", "Promise record \"%s\" expired ... removing\n", name);
-        DeleteDB(dbp, name);
-    }
-
-    CloseDB(dbp);
-    return *lastseen;
-}
-
-/***************************************************************/
 
 void TrackValue(char *date, double kept, double repaired, double notkept)
 {
