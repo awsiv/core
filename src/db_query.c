@@ -252,34 +252,7 @@ void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *con
     mongo_cursor_destroy(cursor);
 }
 
-/*****************************************************************************/
-/* Level                                                                     */
-/*****************************************************************************/
 
-void CFDB_ListEverything(mongo_connection *conn)
-{
-    mongo_cursor *cursor;
-    bson_iterator it;
-    bson b, *query;
-
-    query = bson_empty(&b);
-
-    cursor = mongo_find(conn, MONGO_DATABASE, query, 0, 0, 0, CF_MONGO_SLAVE_OK);
-
-    while (mongo_cursor_next(cursor))
-    {
-        bson_iterator_init(&it, cursor->current.data);
-
-        while (bson_iterator_next(&it))
-        {
-            PrintCFDBKey(&it, 1);
-        }
-    }
-
-    mongo_cursor_destroy(cursor);
-}
-
-/*****************************************************************************/
 
 HubQuery *CFDB_QueryHosts(mongo_connection *conn, char *db, bson *query)
 {
@@ -5411,57 +5384,7 @@ static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFil
     return true;
 }
 
-/*****************************************************************************/
 
-void PrintCFDBKey(bson_iterator *it1, int depth)
-{
-    bson_iterator it2;
-    char hex_oid[25];
-    int i;
-
-    for (i = 0; i < depth; i++)
-    {
-        printf("\t");
-    }
-
-    printf("key: %s - ", bson_iterator_key(it1));
-
-    switch (bson_iterator_type(it1))
-    {
-    case bson_double:
-        printf("(double) %f\n", bson_iterator_double(it1));
-        break;
-    case bson_int:
-        printf("(int) %d\n", bson_iterator_int(it1));
-        break;
-    case bson_string:
-        printf("(string) \"%s\"\n", bson_iterator_string(it1));
-        break;
-    case bson_oid:
-        bson_oid_to_string(bson_iterator_oid(it1), hex_oid);
-        printf("(oid) \"%s\"\n", hex_oid);
-        break;
-
-    case bson_object:
-    case bson_array:
-
-        printf("(subobject/array):\n");
-        bson_iterator_init(&it2, bson_iterator_value(it1));
-
-        while (bson_iterator_next(&it2))
-        {
-            PrintCFDBKey(&it2, depth + 1);
-        }
-
-        break;
-
-    default:
-        printf("(type %d)\n", bson_iterator_type(it1));
-        break;
-    }
-}
-
-/*****************************************************************************/
 
 HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *policy, time_t minGenTime)
 {

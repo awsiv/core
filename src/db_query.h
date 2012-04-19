@@ -128,8 +128,6 @@ int CFDB_QueryReplStatus(mongo_connection *conn, char *buffer, int bufsize);
 // General Utilities / Deprecation Candidates
 //*****************************************************************************
 void CFDB_ScanHubHost(bson_iterator *it, char *keyhash, char *ipaddr, char *hostnames);
-void CFDB_ListEverything(mongo_connection *conn);
-void PrintCFDBKey(bson_iterator *it, int depth);
 Item *CFDB_GetHostByColour(mongo_connection *conn, HostClassFilter *host_class_filter, HostColourFilter *host_colour_filter);
 
 #endif
