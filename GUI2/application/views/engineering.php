@@ -29,7 +29,7 @@
                     </div>
                      <div class="clear"></div>
                 </div>
-              
+
 
                 <div id="hostInfoContainer" class="hostsInfoContainer">
                     <div id="hostInfo" class="grid_8"></div>
@@ -57,7 +57,7 @@
 
         var $tabs=$("#tabs-layout");
             $tabs.tabs({});
-                  
+
         var genericOption = {
             baseUrl: '<?php echo site_url() ?>'
         };
@@ -90,7 +90,7 @@
                 $tabs.data({context:'node',args:args});
                 $('#hostInfoContainer').hide();
                 $('#hostsInfoContainer').show();
-                
+
                 $('#hostsComplianceTimeseries').hostsComplianceTimeseries('setContext', args.includes, []);
 
                 $('#hostsCompliance').hostsCompliance('setContext', args.includes, []);
@@ -99,7 +99,7 @@
 
                 $('.astrolabeLocation').astrolabeLocation('setContextPath', args.path, args.count);
 
-                $('#reportInfoContainer').reportUI('setContext',args.includes, args.excludes)
+                $('#reportInfoContainer').reportUI('setContext',args.includes, []);
             }
         });
 
