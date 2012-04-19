@@ -16,6 +16,7 @@
 #include "cf.nova.h"
 
 Rlist *SERVER_KEYRING = NULL;
+static int Nova_ParseHostname(char *name, char *hostname);
 
 /*****************************************************************************/
 
@@ -440,7 +441,7 @@ int RetrieveUnreliableValue(char *caller, char *handle, char *buffer)
 /* Level                                                            */
 /********************************************************************/
 
-int Nova_ParseHostname(char *name, char *hostname)
+static int Nova_ParseHostname(char *name, char *hostname)
 {
     int port = (int) ntohs(SHORT_CFENGINEPORT);
 

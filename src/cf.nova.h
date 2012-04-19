@@ -1015,7 +1015,6 @@ void Nova_CommandAPI(char *lsdata, char *name, char *handle, char *hostkey, char
 #ifdef HAVE_LIBMONGOC
 void Nova_ImportReports(const char *input_file);
 
-int Nova_ImportHostReports(mongo_connection *dbconnp, const char *filePath);
 int Nova_ImportHostReportsFromStream(mongo_connection *dbconn, char *header, FILE *fin);
 #endif
 
@@ -1032,7 +1031,6 @@ bool Nova_ExecuteRunagent(AgentConnection *conn, const char *menu);
 /* server.c */
 
 void Nova_PackAllReports(Item **reply, time_t from, time_t delta1, enum cfd_menu type);
-int Nova_ParseHostname(char *name, char *hostname);
 
 pid_t Nova_StartTwin(int argc, char **argv);
 void Nova_SignalTwin(void);
