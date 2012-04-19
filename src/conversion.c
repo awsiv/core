@@ -26,7 +26,6 @@
 #include "cf3.extern.h"
 #include <assert.h>
 
-// WTF: conversion functions access database
 #if defined(HAVE_LIBMONGOC)
 #include "db_common.h"
 #include "db_query.h"

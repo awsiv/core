@@ -19,13 +19,10 @@
 
 #if defined(HAVE_LIBMONGOC)
 #include "db_common.h"
-#endif
 
 static void CFDB_SaveBody(mongo_connection *dbconn, Body *body);
 
 /*****************************************************************************/
-
-#ifdef HAVE_LIBMONGOC
 
 void CFDB_SaveExpandedPromise(Promise *pp)
 {

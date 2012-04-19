@@ -90,11 +90,11 @@ libcfnova_la_SOURCES += \
         web_rbac.c \
         weekly.c \
         yearly.c
-endif
 
 if !NDEBUG
 libcfnova_la_SOURCES += \
         web_api_test.c
+endif
 endif
 
 libcfmonitord_la_SOURCES = \
