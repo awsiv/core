@@ -2495,7 +2495,6 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
     bson_from_buffer(&query, &bb);
 
     bson_buffer_init(&bb);
-    bson_append_int(&bb, "_id", 1);
     bson_append_int(&bb, cfr_keyhash, 1);
     bson_append_int(&bb, cfr_ip_array, 1);
     bson_append_int(&bb, cfr_host_array, 1);
@@ -2522,7 +2521,6 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
         char hostnames[CF_MAXVARSIZE] = {0};
         char rhandle[CF_MAXVARSIZE] = {0};
         char rcause[CF_BUFSIZE] = {0};
-        char oid[CF_MAXVARSIZE] = {0};
         time_t rt = 0;
         bool found = false;
 
@@ -2576,13 +2574,9 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(record_list, NewHubPromiseLog(hh, rhandle, rcause, rt, oid));
+                        PrependRlistAlien(record_list, NewHubPromiseLog(hh, rhandle, rcause, rt));
                     }
                 }
-            }
-            else if (strcmp(bson_iterator_key(&itHostData), "_id") == 0)
-            {
-                bson_oid_to_string(bson_iterator_oid(&itHostData), oid);
             }
         }
 
@@ -2691,7 +2685,6 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
     bson_from_buffer(&query, &bb);
 
     bson_buffer_init(&bb);
-    bson_append_int(&bb,"_id",1);
     bson_append_int(&bb,cfr_keyhash,1);
     bson_append_int(&bb,cfr_cause,1);
     bson_append_int(&bb,cfr_promisehandle,1);
@@ -2711,7 +2704,6 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
     char rhandle[CF_MAXVARSIZE] = {0};
     char rcause[CF_BUFSIZE] = {0};
     char keyhash[CF_MAXVARSIZE] = {0};
-    char oid[CF_MAXVARSIZE] = {0};
 
     while (mongo_cursor_next(cursor))
     {
@@ -2721,7 +2713,6 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
         keyhash[0] = '\0';
         rhandle[0] = '\0';
         rcause[0] = '\0';
-        oid[0] = '\0';
         time_t rt = 0;
 
         while (bson_iterator_next(&it1))
@@ -2750,16 +2741,12 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
             {
                 rt = bson_iterator_int(&it1);
             }
-            else if (strcmp(bson_iterator_key(&it1),"_id") == 0)
-            {
-                bson_oid_to_string(bson_iterator_oid(&it1), oid);
-            }
         }
 
         if(CompareStringOrRegex(rhandle, lhandle, regex) && CompareStringOrRegex(rcause, lcause_rx, true))
         {
             count++;
-            PrependRlistAlien(record_list,NewHubPromiseLog(hh,rhandle,rcause,rt,oid));
+            PrependRlistAlien(record_list,NewHubPromiseLog(hh,rhandle,rcause,rt));
         }
     }
 
