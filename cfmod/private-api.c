@@ -4558,91 +4558,70 @@ PHP_FUNCTION(cfpr_get_knowledge_view)
 }
 
 /******************************************************************************/
-/*
- * commenting
- */
-/******************************************************************************/
+
 PHP_FUNCTION(cfpr_add_note)
 {
-    char *user, *note, *nid;
+    char *user, *note, *nid, *hostkey;
     char *fuser, *fnote;
-    int u_len, n_len, nid_len;
+    int u_len, n_len, nid_len, hk_len;
     time_t datetime;
     const int bufsize = 1000;
     char returnval[bufsize];
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssls", &nid, &nid_len, &user, &u_len, &datetime, &note, &n_len)
-        == FAILURE)
-    {
-        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
-        RETURN_NULL();
-    }
-
-    ARGUMENT_CHECK_CONTENTS(nid_len);
-
-    fuser = (u_len == 0) ? NULL : user;
-    fnote = (n_len == 0) ? NULL : note;
-
-    returnval[0] = '\0';
-    Nova2PHP_add_note(nid, fuser, datetime, fnote, returnval, bufsize);
-    RETURN_STRING(returnval, 1);
-}
-
-/******************************************************************************/
-
-PHP_FUNCTION(cfpr_new_note)
-{
-    char *hostkey, *user, *note, *repid;
-    char *fuser, *fnote;
-    int hk_len, u_len, n_len, rid_len;
-    int report_type;
-    time_t datetime;
-    char returnval[1000];
-
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sslsls",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssls",
+                              &nid, &nid_len,
                               &hostkey, &hk_len,
-                              &repid, &rid_len, &report_type, &user, &u_len, &datetime, &note, &n_len) == FAILURE)
+                              &user, &u_len,
+                              &datetime,
+                              &note, &n_len) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
     }
 
-    ARGUMENT_CHECK_CONTENTS(hk_len && rid_len);
-
     fuser = (u_len == 0) ? NULL : user;
     fnote = (n_len == 0) ? NULL : note;
 
     returnval[0] = '\0';
-    Nova2PHP_add_new_note(hostkey, repid, report_type, fuser, datetime, fnote, returnval, sizeof(returnval));
+
+    Nova2PHP_add_note(nid, hostkey, fuser, datetime, fnote, returnval, sizeof(returnval));
+
     RETURN_STRING(returnval, 1);
 }
 
 /******************************************************************************/
+
 PHP_FUNCTION(cfpr_query_note)
 {
-    char *hostkey = { 0 }, *user, *nid;
+    char *hostkey = { 0 }, *user, *nid, *filter_user;
     char *fhostkey, *fuser, *fnid;
-    int hk_len, u_len, nid_len;
+    int hk_len, u_len, nid_len, fus_len;
     const int bufsize = 1000000;
     long from, to;
     PageInfo page = { 0 };
 
     char buffer[bufsize];
 
-    if (zend_parse_parameters
-        (ZEND_NUM_ARGS()TSRMLS_CC, "sssllll", &hostkey, &hk_len, &nid, &nid_len, &user, &u_len, &from, &to,
-         &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssllll",
+                              &hostkey, &hk_len,
+                              &nid, &nid_len,
+                              &user, &u_len,
+                              &filter_user, &fus_len,
+                              &from,
+                              &to,
+                              &(page.resultsPerPage),
+                              &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
     }
 
     fhostkey = (hk_len == 0) ? NULL : hostkey;
-    fuser = (u_len == 0) ? NULL : user;
+    fuser = (fus_len == 0) ? NULL : filter_user;
     fnid = (nid_len == 0) ? NULL : nid;
 
     buffer[0] = '\0';
-    Nova2PHP_get_notes(fhostkey, fnid, fuser, from, to, &page, buffer, bufsize);
+    Nova2PHP_get_notes(fhostkey, fnid, user, fuser, from, to, &page, buffer, bufsize);
     RETURN_STRING(buffer, 1);
 }
 

@@ -106,8 +106,8 @@
                     if (xhr.status != 0) {
                         var callback = self.options.change;
                         var nid = $(resp).find('input[name=nid]').val();
-                        if ($.isFunction(callback) && nid) {
-                            callback(nid,self.options.originalElement);
+                        if (nid) {
+                            self._trigger('noteidfound',null,{'element':self.options.originalElement,'nid':nid});
                         }
                         else if($.isFunction(callback) && self._checkJson(resp)) {
                            self.dialogContainer().dialog('close');

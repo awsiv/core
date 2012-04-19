@@ -849,28 +849,20 @@ PHP_FUNCTION(cfpr_cdp_report);
  * Commenting
  */
 
-/*! \brief Add to an existing note
- * \param noteId
+/*! \brief Add note
+ * \param noteId for add note
+ * \param hostKey for add and create note
  * \param user
  * \param date
  * \param note
  */
 PHP_FUNCTION(cfpr_add_note);
 
-/*! \brief Create a new note for a report
- * \param hostKey
- * \param reportId
- * \param reportType
- * \param user
- * \param date
- * \param note
- */
-PHP_FUNCTION(cfpr_new_note);
-
 /*! \brief Query for a note
  * \param hostKey
  * \param noteId
  * \param user
+ * \param filter_user
  * \param fromDate
  * \param toDate
  * \param resultsPerPage

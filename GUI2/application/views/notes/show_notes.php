@@ -6,15 +6,15 @@
                 <div id="notes-filter" style="padding:5px;">
                     <div class="stylized">
                         <form action="<?php echo site_url(); ?>/notes/shownotes" method="POST">
-                            <fieldset>                           
-                                <label id="Username" for="username">User name: </label>
-                                <input type="text" name="username" value="<?php echo set_value('username'); ?>" size="50" />
+                            <fieldset>
+                                <label id="Username" for="userId">User name: </label>
+                                <input type="text" name="userId" value="<?php echo $filters['userId']; ?>" size="50" />
 
-                                <label for="date_from">Date from: </label>
-                                <input autocomplete="off" id="date_from" type="text" name="date_from" value="<?php echo set_value('date_from'); ?>" size="50" />
+                                <label for="dateFrom">Date from: </label>
+                                <input autocomplete="off" id="dateFrom" type="text" name="dateFrom" value="<?php echo $display_dateFrom; ?>" size="50" />
 
-                                <label for="date_to">Date to: </label>
-                                <input autocomplete="off" id="date_to" type="text" name="date_to" value="<?php echo set_value('date_to'); ?>" size="50" />
+                                <label for="dateTo">Date to: </label>
+                                <input autocomplete="off" id="dateTo" type="text" name="dateTo" value="<?php echo $display_dateTo; ?>" size="50" />
                                 <label for="submit"></label>
                                 <input type="submit" value="search" name="submit" />
                             </fieldset>
@@ -25,40 +25,6 @@
                 </div>
             </div>
         </div>
-        <?php if ($filters['userId'] != '' || $filters['dateFrom'] != '-1' || $filters['dateTo'] != '-1') { ?>
-            <div class="info">
-                Current Filters applied:<br />
-                <?php
-                if ($filters['userId'] != '') {
-                    echo "Username :: " . $filters['userId'];
-                }
-                ?> 
-                <br />
-
-                <?php
-                if ($filters['dateFrom'] != '-1') {
-                    echo "Date From :: " . date('m/d/Y', $filters['dateFrom']);
-                }
-                ?> 
-                <br />
-                <?php
-                if ($filters['dateTo'] != '-1') {
-                    echo "Date To :: " . date('m/d/Y', $filters['dateTo']);
-                }
-                ?> 
-                <br />    
-                <form action="<?php echo site_url(); ?>/notes/shownotes" method="POST">
-                    <input type="hidden" name="username" value="" size="" />
-
-                    <input autocomplete="off" id="date_from" type="hidden" name="date_from" value="" size="50" />
-                    <input autocomplete="off" id="date_to" type="hidden" name="date_to" value="" size="50" />
-
-                    <input type="submit" value="Reset" name="submit" />
-                </form>  
-            </div>    
-        <?php } ?>
-
-        <div class="innerdiv">              
             <div style="max-height: 400px;overflow: auto;">
                 <table id="notes-table" class="bundlelist-table">                   
                     <tr>
@@ -134,8 +100,8 @@
             <div class="Paging">
                 <div class="pages">
                     <div class="inside">
-                        <a href="<?php echo site_url('notes/shownotes/' . 'rows/' . $number_of_rows . '/page/' . $pg['first']); ?>" title="Go to First Page" class="first"><span>First</span></a>
-                        <a href="<?php echo site_url('notes/shownotes/' . 'rows/' . $number_of_rows . '/page/' . $pg['prev']); ?>" title="Go to Previous Page" class="prev"><span><</span></a>
+                        <a href="<?php echo site_url('notes/shownotes' .$pagingParam. '/rows/' . $number_of_rows . '/page/' . $pg['first']); ?>" title="Go to First Page" class="first"><span>First</span></a>
+                        <a href="<?php echo site_url('notes/shownotes' .$pagingParam. '/rows/' . $number_of_rows . '/page/' . $pg['prev']); ?>" title="Go to Previous Page" class="prev"><span><</span></a>
 
                         <?php
                         for ($i = $pg['start']; $i <= $pg['end']; $i++) {
@@ -144,12 +110,12 @@
                                 $current = "";
                             ?>
 
-                            <a href="<?php echo site_url("notes/shownotes/" . "page/$i") ?>" title="Go to Page <?php echo $i; ?>" class="page <?php echo $current; ?>"><span><?php echo $i; ?></span></a>
+                            <a href="<?php echo site_url("notes/shownotes".$pagingParam. "/rows/" . $number_of_rows."/page/$i") ?>" title="Go to Page <?php echo $i; ?>" class="page <?php echo $current; ?>"><span><?php echo $i; ?></span></a>
 
                         <?php } ?>
 
-                        <a href="<?php echo site_url('notes/shownotes/' . 'rows/' . $number_of_rows . '/page/' . $pg['next']) ?>" title="Go to Next Page" class="next"><span>></span></a>
-                        <a href="<?php echo site_url('notes/shownotes/' . 'rows/' . $number_of_rows . '/page/' . $pg['last']) ?>" title="Go to Last Page" class="last"><span>Last</span></a>
+                        <a href="<?php echo site_url('notes/shownotes' . $pagingParam.'/rows/' . $number_of_rows . '/page/' . $pg['next']) ?>" title="Go to Next Page" class="next"><span>></span></a>
+                        <a href="<?php echo site_url('notes/shownotes' . $pagingParam. '/rows/' . $number_of_rows . '/page/' . $pg['last']) ?>" title="Go to Last Page" class="last"><span>Last</span></a>
                     </div>
                 </div>
 
@@ -160,13 +126,13 @@
 </div>
 <script type="text/javascript">
     $(function() {
-        var dates = $( "#date_from, #date_to" ).datepicker({
+        var dates = $( "#dateFrom, #dateTo" ).datepicker({
             defaultDate: "+1w",
             changeMonth: true,
             changeYear: true,
             numberOfMonths: 1,
             onSelect: function( selectedDate ) {
-                var option = this.id == "date_from" ? "minDate" : "maxDate",
+                var option = this.id == "dateFrom" ? "minDate" : "maxDate",
                 instance = $( this ).data( "datepicker" ),
                 date = $.datepicker.parseDate(
                 instance.settings.dateFormat ||

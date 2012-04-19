@@ -114,9 +114,8 @@ void EnterpriseModuleTrick()
         /*
          * commenting
          */
-        Nova2PHP_add_new_note(NULL, NULL, -1, NULL, -1, NULL, NULL, 100);
-        Nova2PHP_add_note(NULL, NULL, -1, NULL, NULL, 100);
-        Nova2PHP_get_notes(NULL, NULL, NULL, -1, -1, NULL, NULL, 10000);
+        Nova2PHP_add_note(NULL, NULL, NULL, -1, NULL, NULL, 100);
+        Nova2PHP_get_notes(NULL, NULL, NULL, NULL, -1, -1, NULL, NULL, 10000);
         Nova2PHP_get_host_noteid(NULL, NULL, 4096);
 
         Nova2PHP_get_knowledge_view(0, NULL, NULL, 999);

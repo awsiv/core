@@ -458,7 +458,7 @@ void DeleteHubVariable(HubVariable *hv)
 
 /*****************************************************************************/
 
-HubPromiseLog *NewHubPromiseLog(HubHost *hh, char *handle, char *cause, time_t t, char *noteId, char *oid)
+HubPromiseLog *NewHubPromiseLog(HubHost *hh, char *handle, char *cause, time_t t)
 {
     HubPromiseLog *hp;
 
@@ -467,8 +467,6 @@ HubPromiseLog *NewHubPromiseLog(HubHost *hh, char *handle, char *cause, time_t t
     hp->hh = hh;
     hp->handle = xstrdup(handle);
     hp->cause = xstrdup(cause);
-    hp->nid = xstrdup(noteId);
-    hp->oid = xstrdup(oid);
     hp->t = t;
     return hp;
 }
@@ -479,8 +477,6 @@ void DeleteHubPromiseLog(HubPromiseLog *hp)
 {
     free(hp->handle);
     free(hp->cause);
-    free(hp->nid);
-    free(hp->oid);
     free(hp);
 }
 
@@ -576,7 +572,7 @@ void DeleteHubMeter(HubMeter *hp)
 
 /*****************************************************************************/
 
-HubValue *NewHubValue(HubHost *hh, char *day, double kept, double repaired, double notkept, char *noteid, char *handle)
+HubValue *NewHubValue(HubHost *hh, char *day, double kept, double repaired, double notkept, char *handle)
 {
     HubValue *hp;
 
@@ -587,7 +583,6 @@ HubValue *NewHubValue(HubHost *hh, char *day, double kept, double repaired, doub
     hp->kept = kept;
     hp->repaired = repaired;
     hp->notkept = notkept;
-    hp->nid = xstrdup(noteid);
     hp->handle = xstrdup(handle);
     return hp;
 }
@@ -597,15 +592,13 @@ HubValue *NewHubValue(HubHost *hh, char *day, double kept, double repaired, doub
 void DeleteHubValue(HubValue *hp)
 {
     free(hp->day);
-    free(hp->nid);
     free(hp->handle);
     free(hp);
 }
 
 /*****************************************************************************/
 
-HubPerformance *NewHubPerformance(HubHost *hh, char *event, time_t t, double q, double e, double d, char *noteid,
-                                  char *handle)
+HubPerformance *NewHubPerformance(HubHost *hh, char *event, time_t t, double q, double e, double d, char *handle)
 {
     HubPerformance *hp;
 
@@ -617,7 +610,6 @@ HubPerformance *NewHubPerformance(HubHost *hh, char *event, time_t t, double q, 
     hp->e = e;
     hp->d = d;
     hp->t = t;
-    hp->nid = xstrdup(noteid);
     hp->handle = xstrdup(handle);
     return hp;
 }
@@ -627,7 +619,6 @@ HubPerformance *NewHubPerformance(HubHost *hh, char *event, time_t t, double q, 
 void DeleteHubPerformance(HubPerformance *hp)
 {
     free(hp->event);
-    free(hp->nid);
     free(hp->handle);
     free(hp);
 }
@@ -655,7 +646,7 @@ void DeleteHubSetUid(HubSetUid *hp)
 
 /*****************************************************************************/
 
-HubFileChanges *NewHubFileChanges(HubHost *hh, char *file, time_t t, char *noteid, char *handle)
+HubFileChanges *NewHubFileChanges(HubHost *hh, char *file, time_t t, char *handle)
 {
     HubFileChanges *hp;
 
@@ -665,7 +656,6 @@ HubFileChanges *NewHubFileChanges(HubHost *hh, char *file, time_t t, char *notei
     hp->path = xstrdup(file);
     hp->t = t;
     hp->handle = xstrdup(handle);
-    hp->nid = xstrdup(noteid);
     return hp;
 }
 
@@ -675,7 +665,6 @@ void DeleteHubFileChanges(HubFileChanges *hp)
 {
     free(hp->path);
     free(hp->handle);
-    free(hp->nid);
     free(hp);
 }
 
@@ -730,7 +719,7 @@ void DeleteHubPromiseCompliance(HubPromiseCompliance *hp)
 
 /*****************************************************************************/
 
-HubBundleSeen *NewHubBundleSeen(HubHost *hh, char *rname, double comp, double avg, double dev, time_t t, char *noteid)
+HubBundleSeen *NewHubBundleSeen(HubHost *hh, char *rname, double comp, double avg, double dev, time_t t)
 {
     HubBundleSeen *hp;
 
@@ -742,7 +731,6 @@ HubBundleSeen *NewHubBundleSeen(HubHost *hh, char *rname, double comp, double av
     hp->bundleavg = avg;
     hp->bundledev = dev;
     hp->t = t;
-    hp->nid = xstrdup(noteid);
     return hp;
 }
 
@@ -751,7 +739,6 @@ HubBundleSeen *NewHubBundleSeen(HubHost *hh, char *rname, double comp, double av
 void DeleteHubBundleSeen(HubBundleSeen *hp)
 {
     free(hp->bundle);
-    free(hp->nid);
     free(hp);
 }
 

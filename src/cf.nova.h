@@ -278,7 +278,6 @@ typedef struct
     HubHost *hh;
     char *path;
     time_t t;
-    char *nid;
     char *handle;
 } HubFileChanges;
 
@@ -352,7 +351,6 @@ typedef struct
     char *handle;
     char *cause;
     time_t t;
-    char *nid;
     char *oid;
 } HubPromiseLog;
 
@@ -386,7 +384,6 @@ typedef struct
     double bundleavg;
     double bundledev;
     time_t t;
-    char *nid;
 } HubBundleSeen;
 
 typedef struct
@@ -396,7 +393,6 @@ typedef struct
     double kept;
     double repaired;
     double notkept;
-    char *nid;
     char *handle;
 } HubValue;
 
@@ -425,7 +421,6 @@ typedef struct
     double e;
     double d;
     time_t t;
-    char *nid;
     char *handle;
 } HubPerformance;
 
@@ -781,7 +776,7 @@ HubHostComplianceShifts *NewHubHostComplianceShifts(const char *hostkey);
 void DeleteHubHostComplianceShifts(HubHostComplianceShifts *record);
 HubVariable *NewHubVariable(HubHost *hh, char *type, char *scope, char *lval, Rval rval, time_t t);
 void DeleteHubVariable(HubVariable *hv);
-HubPromiseLog *NewHubPromiseLog(HubHost *hh, char *handle, char *cause, time_t t, char *noteId, char *oid);
+HubPromiseLog *NewHubPromiseLog(HubHost *hh, char *handle, char *cause, time_t t);
 void DeleteHubPromiseLog(HubPromiseLog *hp);
 HubPromiseSum *NewHubPromiseSum(HubHost *hh, char *handle, char *cause, int occurences, int hostOccurences);
 void DeleteHubPromiseSum(HubPromiseSum *hs);
@@ -790,20 +785,19 @@ HubLastSeen *NewHubLastSeen(HubHost *hh, LastSeenDirection direction, char *kh, 
 void DeleteHubLastSeen(HubLastSeen *hp);
 HubMeter *NewHubMeter(HubHost *hh, char type, double kept, double repaired);
 void DeleteHubMeter(HubMeter *hp);
-HubPerformance *NewHubPerformance(HubHost *hh, char *event, time_t t, double q, double e, double d, char *noteid,
-                                  char *handle);
+HubPerformance *NewHubPerformance(HubHost *hh, char *event, time_t t, double q, double e, double d, char *handle);
 void DeleteHubPerformance(HubPerformance *hp);
 HubSetUid *NewHubSetUid(HubHost *hh, char *file);
 void DeleteHubSetUid(HubSetUid *hp);
 HubPromiseCompliance *NewHubCompliance(HubHost *hh, char *handle, PromiseState status, double e, double d, time_t t);
 void DeleteHubPromiseCompliance(HubPromiseCompliance *hp);
-HubBundleSeen *NewHubBundleSeen(HubHost *hh, char *rname, double ago, double avg, double dev, time_t t, char *noteid);
+HubBundleSeen *NewHubBundleSeen(HubHost *hh, char *rname, double ago, double avg, double dev, time_t t);
 void DeleteHubBundleSeen(HubBundleSeen *hp);
-HubFileChanges *NewHubFileChanges(HubHost *hh, char *file, time_t t, char *noteid, char *handle);
+HubFileChanges *NewHubFileChanges(HubHost *hh, char *file, time_t t, char *handle);
 void DeleteHubFileChanges(HubFileChanges *hp);
 HubFileDiff *NewHubFileDiff(HubHost *hh, char *file, char *diff, time_t t);
 void DeleteHubFileDiff(HubFileDiff *hp);
-HubValue *NewHubValue(HubHost *hh, char *day, double kept, double repaired, double notkept, char *noteid, char *handle);
+HubValue *NewHubValue(HubHost *hh, char *day, double kept, double repaired, double notkept, char *handle);
 void DeleteHubValue(HubValue *hp);
 HubPromise *NewHubPromise(char *bn, char *bt, Rlist *ba, char *pt, char *pr, char *pe, char *cl, char *ha, char *co,
                           char *fn, int lno, Rlist *cons);

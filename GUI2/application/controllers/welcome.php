@@ -453,6 +453,7 @@ class Welcome extends Cf_Controller {
         $hostkey_tobe_deleted = $this->input->post('delhost');
         $username=$this->session->userdata('username');
         $getparams = $this->uri->uri_to_assoc(3);
+        $this->load->model('note_model');
 
         try {
             if ($hostkey_tobe_deleted) {
@@ -505,7 +506,7 @@ class Welcome extends Cf_Controller {
         $hostname = $this->host_model->getHostName($this->session->userdata('username'),$hostkey);
         $ipaddr = $this->host_model->getHostIp($this->session->userdata('username'),$hostkey);;
 
-        $is_commented = trim(cfpr_get_host_noteid($hostkey));
+        $is_commented = trim($this->note_model->hasNotes($hostkey));
         $op = isset($_POST['op']) ? $_POST['op'] : "";
 
         $tempvar=explode("=", $hostkey);

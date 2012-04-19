@@ -1831,7 +1831,7 @@ HubQuery *CFDB_QueryPerformance(mongo_connection *conn, char *keyHash, char *lna
     HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL;
     char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rname[CF_MAXVARSIZE],
-        noteid[CF_MAXVARSIZE], rhandle[CF_MAXVARSIZE];
+        rhandle[CF_MAXVARSIZE];
     int match_name, found = false;
     double rsigma, rex, rq;
     time_t rtime;
@@ -1853,7 +1853,6 @@ HubQuery *CFDB_QueryPerformance(mongo_connection *conn, char *keyHash, char *lna
     bson_append_int(&bb, cfr_ip_array, 1);
     bson_append_int(&bb, cfr_host_array, 1);
     bson_append_int(&bb, cfr_performance, 1);
-    bson_append_int(&bb, cfn_nid, 1);
     bson_from_buffer(&field, &bb);
 
     hostnames[0] = '\0';
@@ -1886,7 +1885,6 @@ HubQuery *CFDB_QueryPerformance(mongo_connection *conn, char *keyHash, char *lna
                 {
                     bson_iterator_init(&it3, bson_iterator_value(&it2));
                     snprintf(rhandle, CF_MAXVARSIZE, "%s", bson_iterator_key(&it2));
-                    snprintf(noteid, CF_MAXVARSIZE, "%s", CF_NONOTE);
 
                     snprintf(rname, sizeof(rname), "(unknown)");
                     rex = 0;
@@ -1915,10 +1913,6 @@ HubQuery *CFDB_QueryPerformance(mongo_connection *conn, char *keyHash, char *lna
                         else if (strcmp(bson_iterator_key(&it3), cfr_time) == 0)
                         {
                             rtime = bson_iterator_int(&it3);
-                        }
-                        else if (strcmp(bson_iterator_key(&it1), cfn_nid) == 0)
-                        {
-                            snprintf(noteid, CF_MAXVARSIZE, "%s", bson_iterator_string(&it3));
                         }
                         else
                         {
@@ -1953,7 +1947,7 @@ HubQuery *CFDB_QueryPerformance(mongo_connection *conn, char *keyHash, char *lna
                         }
 
                         PrependRlistAlien(&record_list,
-                                          NewHubPerformance(hh, rname, rtime, rq, rex, rsigma, noteid, rhandle));
+                                          NewHubPerformance(hh, rname, rtime, rq, rex, rsigma, rhandle));
                     }
                 }
             }
@@ -2097,8 +2091,7 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
     bson_iterator it1, it2, it3;
     HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL;
-    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rname[CF_BUFSIZE], handle[CF_MAXVARSIZE],
-        noteid[CF_MAXVARSIZE];
+    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rname[CF_BUFSIZE], handle[CF_MAXVARSIZE];
     int match_name, match_t, found = false;
 
 /* BEGIN query document */
@@ -2121,7 +2114,6 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
     bson_append_int(&bb, cfr_ip_array, 1);
     bson_append_int(&bb, cfr_host_array, 1);
     bson_append_int(&bb, cfr_filechanges, 1);
-    bson_append_int(&bb, cfn_nid, 1);
     bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
@@ -2158,7 +2150,6 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
                 while (bson_iterator_next(&it2))
                 {
                     snprintf(handle, CF_MAXVARSIZE, "%s", bson_iterator_key(&it2));
-                    snprintf(noteid, CF_MAXVARSIZE, "%s", CF_NONOTE);
                     bson_iterator_init(&it3, bson_iterator_value(&it2));
 
                     while (bson_iterator_next(&it3))
@@ -2170,10 +2161,6 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
                         else if (strcmp(bson_iterator_key(&it3), cfr_time) == 0)
                         {
                             timestamp = bson_iterator_int(&it3);
-                        }
-                        else if (strcmp(bson_iterator_key(&it3), cfn_nid) == 0)
-                        {
-                            snprintf(noteid, CF_MAXVARSIZE, "%s", bson_iterator_string(&it3));
                         }
                     }
 
@@ -2208,7 +2195,7 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(&record_list, NewHubFileChanges(hh, rname, timestamp, noteid, handle));
+                        PrependRlistAlien(&record_list, NewHubFileChanges(hh, rname, timestamp, handle));
                     }
                 }
             }
@@ -2508,7 +2495,6 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
     bson_from_buffer(&query, &bb);
 
     bson_buffer_init(&bb);
-    bson_append_int(&bb, "_id", 1);
     bson_append_int(&bb, cfr_keyhash, 1);
     bson_append_int(&bb, cfr_ip_array, 1);
     bson_append_int(&bb, cfr_host_array, 1);
@@ -2535,14 +2521,11 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
         char hostnames[CF_MAXVARSIZE] = {0};
         char rhandle[CF_MAXVARSIZE] = {0};
         char rcause[CF_BUFSIZE] = {0};
-        char noteid[CF_MAXVARSIZE] = {0};
-        char oid[CF_MAXVARSIZE] = {0};
         time_t rt = 0;
         bool found = false;
 
         while (bson_iterator_next(&itHostData))
         {
-            snprintf(noteid, sizeof(noteid), "%s", CF_NONOTE);
 
             CFDB_ScanHubHost(&itHostData, keyhash, addresses, hostnames);
 
@@ -2591,13 +2574,9 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(record_list, NewHubPromiseLog(hh, rhandle, rcause, rt, noteid, oid));
+                        PrependRlistAlien(record_list, NewHubPromiseLog(hh, rhandle, rcause, rt));
                     }
                 }
-            }
-            else if (strcmp(bson_iterator_key(&itHostData), "_id") == 0)
-            {
-                bson_oid_to_string(bson_iterator_oid(&itHostData), oid);
             }
         }
 
@@ -2706,12 +2685,10 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
     bson_from_buffer(&query, &bb);
 
     bson_buffer_init(&bb);
-    bson_append_int(&bb,"_id",1);
     bson_append_int(&bb,cfr_keyhash,1);
     bson_append_int(&bb,cfr_cause,1);
     bson_append_int(&bb,cfr_promisehandle,1);
     bson_append_int(&bb,cfr_time,1);
-    bson_append_int(&bb,cfn_nid,1);
 
     bson field;
     bson_from_buffer(&field,&bb);
@@ -2727,8 +2704,6 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
     char rhandle[CF_MAXVARSIZE] = {0};
     char rcause[CF_BUFSIZE] = {0};
     char keyhash[CF_MAXVARSIZE] = {0};
-    char noteid[CF_MAXVARSIZE] = {0};
-    char oid[CF_MAXVARSIZE] = {0};
 
     while (mongo_cursor_next(cursor))
     {
@@ -2738,14 +2713,10 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
         keyhash[0] = '\0';
         rhandle[0] = '\0';
         rcause[0] = '\0';
-        noteid[0] = '\0';
-        oid[0] = '\0';
         time_t rt = 0;
 
         while (bson_iterator_next(&it1))
         {
-            snprintf(noteid,sizeof(noteid),"%s",CF_NONOTE);
-
             if (strcmp(bson_iterator_key(&it1),cfr_keyhash) == 0)
             {
                 snprintf(keyhash,sizeof(keyhash),"%s",bson_iterator_string(&it1));
@@ -2766,24 +2737,16 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
             {
                 snprintf(rcause,sizeof(rcause),"%s",bson_iterator_string(&it1));
             }
-            else if (strcmp(bson_iterator_key(&it1),cfn_nid) == 0)
-            {
-                snprintf(noteid,sizeof(noteid),"%s",bson_iterator_string(&it1));
-            }
             else if (strcmp(bson_iterator_key(&it1),cfr_time) == 0)
             {
                 rt = bson_iterator_int(&it1);
-            }
-            else if (strcmp(bson_iterator_key(&it1),"_id") == 0)
-            {
-                bson_oid_to_string(bson_iterator_oid(&it1), oid);
             }
         }
 
         if(CompareStringOrRegex(rhandle, lhandle, regex) && CompareStringOrRegex(rcause, lcause_rx, true))
         {
             count++;
-            PrependRlistAlien(record_list,NewHubPromiseLog(hh,rhandle,rcause,rt,noteid,oid));
+            PrependRlistAlien(record_list,NewHubPromiseLog(hh,rhandle,rcause,rt));
         }
     }
 
@@ -2811,8 +2774,7 @@ HubQuery *CFDB_QueryValueReport(mongo_connection *conn, char *keyHash, char *lda
     Rlist *record_list = NULL, *host_list = NULL;
     double rkept, rnotkept, rrepaired;
     char rday[CF_MAXVARSIZE], rmonth[CF_MAXVARSIZE], ryear[CF_MAXVARSIZE];
-    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rhandle[CF_MAXVARSIZE],
-        noteid[CF_MAXVARSIZE];
+    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rhandle[CF_MAXVARSIZE];
     int match_day, match_month, match_year, found = false;
 
     bson_buffer_init(&bb);
@@ -2867,7 +2829,6 @@ HubQuery *CFDB_QueryValueReport(mongo_connection *conn, char *keyHash, char *lda
 
                 while (bson_iterator_next(&it2))
                 {
-                    snprintf(noteid, CF_MAXVARSIZE, "%s", CF_NONOTE);
                     snprintf(rhandle, CF_MAXVARSIZE, "%s", bson_iterator_key(&it2));
                     bson_iterator_init(&it3, bson_iterator_value(&it2));
 
@@ -2893,10 +2854,6 @@ HubQuery *CFDB_QueryValueReport(mongo_connection *conn, char *keyHash, char *lda
                         else if (strcmp(bson_iterator_key(&it3), cfr_repaired) == 0)
                         {
                             rrepaired = bson_iterator_double(&it3);
-                        }
-                        else if (strcmp(bson_iterator_key(&it3), cfn_nid) == 0)
-                        {
-                            snprintf(noteid, CF_MAXVARSIZE, "%s", bson_iterator_string(&it3));
                         }
                         else
                         {
@@ -2931,7 +2888,7 @@ HubQuery *CFDB_QueryValueReport(mongo_connection *conn, char *keyHash, char *lda
                         }
 
                         PrependRlistAlien(&record_list,
-                                          NewHubValue(hh, rday, rkept, rrepaired, rnotkept, noteid, rhandle));
+                                          NewHubValue(hh, rday, rkept, rrepaired, rnotkept, rhandle));
                     }
                 }
             }
@@ -2967,8 +2924,7 @@ HubQuery *CFDB_QueryValueGraph(mongo_connection *conn, char *keyHash, char *lday
     Rlist *record_list = NULL, *host_list = NULL;
     double rkept, rnotkept, rrepaired;
     char rday[CF_MAXVARSIZE], rmonth[CF_MAXVARSIZE], ryear[CF_MAXVARSIZE];
-    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rhandle[CF_MAXVARSIZE],
-        noteid[CF_MAXVARSIZE];
+    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rhandle[CF_MAXVARSIZE];
     int match_day, match_month, match_year, found = false;
     char classRegexAnch[CF_MAXVARSIZE];
     struct tm tm = { 0 };
@@ -3031,7 +2987,6 @@ HubQuery *CFDB_QueryValueGraph(mongo_connection *conn, char *keyHash, char *lday
 
                 while (bson_iterator_next(&it2))
                 {
-                    snprintf(noteid, CF_MAXVARSIZE, "%s", CF_NONOTE);
                     snprintf(rhandle, CF_MAXVARSIZE, "%s", bson_iterator_key(&it2));
                     bson_iterator_init(&it3, bson_iterator_value(&it2));
 
@@ -3066,10 +3021,6 @@ HubQuery *CFDB_QueryValueGraph(mongo_connection *conn, char *keyHash, char *lday
                         {
                             rrepaired = bson_iterator_double(&it3);
                         }
-                        else if (strcmp(bson_iterator_key(&it3), cfn_nid) == 0)
-                        {
-                            snprintf(noteid, CF_MAXVARSIZE, "%s", bson_iterator_string(&it3));
-                        }
                         else
                         {
                             CfOut(cf_inform, "", " !! Unknown key \"%s\" in value report", bson_iterator_key(&it3));
@@ -3102,7 +3053,7 @@ HubQuery *CFDB_QueryValueGraph(mongo_connection *conn, char *keyHash, char *lday
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(&record_list, NewHubValue(hh, rday, rkept, rrepaired, rnotkept, "", ""));
+                        PrependRlistAlien(&record_list, NewHubValue(hh, rday, rkept, rrepaired, rnotkept, ""));
                     }
                 }
             }
@@ -3138,7 +3089,7 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
     Rlist *record_list = NULL, *host_list = NULL;
     double rcomp, ravg, rdev;
     char rname[CF_MAXVARSIZE];
-    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], noteid[CF_BUFSIZE];
+    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE];
     int match_name, found = false;
     time_t rt;
 
@@ -3204,8 +3155,6 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
                         continue;
                     }
 
-                    snprintf(noteid, CF_MAXVARSIZE, "%s", CF_NONOTE);
-
                     ravg = 0;
                     rdev = 0;
                     rcomp = 0;
@@ -3227,10 +3176,6 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
                         else if (strcmp(bson_iterator_key(&it3), cfr_time) == 0)
                         {
                             rt = bson_iterator_int(&it3);
-                        }
-                        else if (strcmp(bson_iterator_key(&it3), cfn_nid) == 0)
-                        {
-                            snprintf(noteid, CF_MAXVARSIZE, "%s", bson_iterator_string(&it3));
                         }
                         else
                         {
@@ -3264,7 +3209,7 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(&record_list, NewHubBundleSeen(hh, rname, rcomp, ravg, rdev, rt, noteid));
+                        PrependRlistAlien(&record_list, NewHubBundleSeen(hh, rname, rcomp, ravg, rdev, rt));
                     }
                 }
             }
@@ -5629,7 +5574,13 @@ Rlist *CFDB_QueryNotes(mongo_connection *conn, char *keyhash, char *nid, Item *d
                         {
                             continue;
                         }
-                        if (!(datetime <= to && datetime >= from) && from >= 0 && to >= 0)
+
+                        if (!(datetime <= to) && (to >= 0))
+                        {
+                            continue;
+                        }
+
+                        if (!(datetime >= from) && (from >= 0))
                         {
                             continue;
                         }
@@ -5690,15 +5641,13 @@ Rlist *CFDB_QueryNoteId(mongo_connection *conn, bson *query)
 /* BEGIN RESULT DOCUMENT */
 
     bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfn_nid, 1);
-//bson_append_int(&bb,cfr_ip_array,1);
-//bson_append_int(&bb,cfr_host_array,1);
+    bson_append_int(&bb, cfn_keyhash, 1);
+    bson_append_int(&bb, "_id", 1);
     bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-    cursor = mongo_find(conn, MONGO_DATABASE, query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    cursor = mongo_find(conn, MONGO_NOTEBOOK, query, &field, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&field);
 
     if (!cursor)
@@ -5717,16 +5666,12 @@ Rlist *CFDB_QueryNoteId(mongo_connection *conn, bson *query)
             switch (bson_iterator_type(&it1))
             {
             case bson_oid:
-
+                bson_oid_to_string(bson_iterator_oid(&it1), noteId);
                 break;
             case bson_string:
                 if (strcmp(bson_iterator_key(&it1), cfn_keyhash) == 0)
                 {
                     strncpy(keyhash, bson_iterator_string(&it1), CF_MAXVARSIZE - 1);
-                }
-                else if (strcmp(bson_iterator_key(&it1), cfn_nid) == 0)
-                {
-                    strncpy(noteId, bson_iterator_string(&it1), CF_MAXVARSIZE - 1);
                 }
                 break;
             default:
@@ -5745,277 +5690,6 @@ Rlist *CFDB_QueryNoteId(mongo_connection *conn, bson *query)
 }
 
 /*****************************************************************************/
-
-static void GetReportKeyMapping(int reportType, char *key, char *retBuf, int retBufSz)
-{
-    switch (reportType)
-    {
-    case CFREPORT_REPAIRED:
-    case CFREPORT_NOTKEPT:
-        if (strcmp(key, cfr_keyhash) == 0)
-        {
-            snprintf(retBuf, retBufSz, "hostkey");
-        }
-        else if (strcmp(key, cfr_cause) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Report");
-        }
-        else if (strcmp(key, cfr_promisehandle) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Promise Handle");
-        }
-        else if (strcmp(key, cfr_time) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Time");
-        }
-        break;
-
-    case CFREPORT_VALUE:
-        if (strcmp(key, cfr_keyhash) == 0)
-        {
-            snprintf(retBuf, retBufSz, "hostkey");
-        }
-        else if (strcmp(key, cfr_time) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Day");
-        }
-        else if (strcmp(key, cfr_kept) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Kept");
-        }
-        else if (strcmp(key, cfr_repaired) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Repaired");
-        }
-        else if (strcmp(key, cfr_notkept) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Not Kept");
-        }
-        break;
-
-    case CFREPORT_BUNDLE:
-        if (strcmp(key, cfr_keyhash) == 0)
-        {
-            snprintf(retBuf, retBufSz, "hostkey");
-        }
-        else if (strcmp(key, cfr_hrsago) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Hours Ago");
-        }
-        else if (strcmp(key, cfr_hrsavg) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Average Interval");
-        }
-        else if (strcmp(key, cfr_hrsdev) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Uncertainty");
-        }
-        else if (strcmp(key, cfr_time) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Time");
-        }
-        break;
-
-    case CFREPORT_PERFORMANCE:
-        if (strcmp(key, cfr_keyhash) == 0)
-        {
-            snprintf(retBuf, retBufSz, "hostkey");
-        }
-        else if (strcmp(key, cfr_perf_event) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Event");
-        }
-        else if (strcmp(key, cfr_obs_q) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Last Time");
-        }
-        else if (strcmp(key, cfr_obs_E) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Average Time");
-        }
-        else if (strcmp(key, cfr_obs_sigma) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Uncertainty");
-        }
-        break;
-
-    case CFREPORT_PRSUMMARY:
-
-        break;
-
-    case CFREPORT_FILECHANGES:
-        if (strcmp(key, cfr_time) == 0)
-        {
-            snprintf(retBuf, retBufSz, "Time");
-        }
-        else if (strcmp(key, cfr_name) == 0)
-        {
-            snprintf(retBuf, retBufSz, "File");
-        }
-        break;
-    default:
-        break;
-    }
-}
-
-static void BsonIteratorToString(char *retBuf, int retBufSz, bson_iterator *i, int depth, int reportType)
-/* NOTE: Only depth 1 is implemented */
-{
-    const char *key;
-    char oidhex[25];
-    char buf[CF_MAXVARSIZE];
-    char header[CF_MAXVARSIZE] = { 0 };
-
-    memset(retBuf, 0, retBufSz);
-
-    while (bson_iterator_next(i))
-    {
-
-        bson_type t = bson_iterator_type(i);
-
-        if (t == 0)
-        {
-            break;
-        }
-
-        key = bson_iterator_key(i);
-
-        header[0] = '\0';
-        GetReportKeyMapping(reportType, (char *) key, header, sizeof(header));
-
-        if (strlen(header) < 1)
-        {
-            snprintf(header, sizeof(header), "%s", key);
-        }
-
-        switch (t)
-        {
-        case bson_int:
-            snprintf(buf, sizeof(buf), "%s : ", header);
-            Join(retBuf, buf, retBufSz);
-            snprintf(buf, sizeof(buf), "%d, ", bson_iterator_int(i));
-            break;
-
-        case bson_double:
-            snprintf(buf, sizeof(buf), "%s : ", header);
-            Join(retBuf, buf, retBufSz);
-            snprintf(buf, sizeof(buf), "%f, ", bson_iterator_double(i));
-            break;
-
-        case bson_bool:
-            snprintf(buf, sizeof(buf), "%s : ", header);
-            Join(retBuf, buf, retBufSz);
-            snprintf(buf, sizeof(buf), "%s, ", bson_iterator_bool(i) ? "true" : "false");
-            break;
-        case bson_string:
-            snprintf(buf, sizeof(buf), "%s : ", header);
-            Join(retBuf, buf, retBufSz);
-            snprintf(buf, sizeof(buf), "%s, ", bson_iterator_string(i));
-            break;
-
-        case bson_null:
-            snprintf(buf, sizeof(buf), "%s : ", header);
-            Join(retBuf, buf, retBufSz);
-            snprintf(buf, sizeof(buf), "null, ");
-            break;
-
-        case bson_oid:
-            snprintf(buf, sizeof(buf), "%s : ", header);
-            Join(retBuf, buf, retBufSz);
-            bson_oid_to_string(bson_iterator_oid(i), oidhex);
-            snprintf(buf, sizeof(buf), "%s, ", oidhex);
-            break;
-
-        case bson_object:
-        case bson_array:
-            memset(buf, 0, sizeof(buf));
-            break;
-
-        default:
-            break;
-        }
-        Join(retBuf, buf, retBufSz);
-        //      Join(retBuf,", ",retBufSz);
-    }
-
-    retBuf[strlen(retBuf) - 2] = '\0';  // clear last comma
-}
-
-int CFDB_GetRow(mongo_connection *conn, char *db, int reportType, bson *query, char *rowname, char *row, int rowSz,
-                int level)
-{
-    bson_buffer bb;
-    bson field;
-    bson_iterator it1, it2, it3;
-    mongo_cursor *cursor;
-    char buffer[CF_BUFSIZE] = { 0 };
-    bson_type t;
-
-    if (strcmp(rowname, "*") == 0)
-    {
-        bson_empty(&field);
-    }
-    else
-    {
-        bson_buffer_init(&bb);
-        bson_append_int(&bb, rowname, 1);
-        bson_from_buffer(&field, &bb);
-    }
-
-    cursor = mongo_find(conn, db, query, &field, 0, 0, CF_MONGO_SLAVE_OK);
-
-    bson_destroy(&field);
-
-    while (mongo_cursor_next(cursor))
-    {
-        bson_iterator_init(&it1, cursor->current.data);
-        if (level == 1)
-        {
-            BsonIteratorToString(buffer, sizeof(buffer), &it1, 1, reportType);
-            snprintf(row, rowSz, "%s", buffer);
-            return true;
-        }
-        if (level > 1)
-        {
-            while (bson_iterator_next(&it1))
-            {
-                t = bson_iterator_type(&it1);
-                if ((t == bson_object || t == bson_array))
-                {
-                    bson_iterator_init(&it2, bson_iterator_value(&it1));
-                    buffer[0] = '\0';
-                    if (level == 2)
-                    {
-                        BsonIteratorToString(buffer, sizeof(buffer), &it2, 1, reportType);
-                        snprintf(row, rowSz, "%s", buffer);
-                        return true;
-                    }
-                    if (level > 2)
-                    {
-                        while (bson_iterator_next(&it2))
-                        {
-                            t = bson_iterator_type(&it2);
-                            if ((t == bson_object || t == bson_array))
-                            {
-                                bson_iterator_init(&it3, bson_iterator_value(&it2));
-                                buffer[0] = '\0';
-                                if (level == 3)
-                                {
-                                    BsonIteratorToString(buffer, sizeof(buffer), &it3, 1, reportType);
-                                    snprintf(row, rowSz, "%s", buffer);
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return false;
-}
-
-/******************************************************************/
 
 Item *CFDB_QueryDistinctStr(mongo_connection *conn, char *database, char *collection, char *dKey, char *qKey,
                             char *qVal)

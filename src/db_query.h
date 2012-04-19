@@ -96,8 +96,6 @@ Rlist *CFDB_QueryNoteId(mongo_connection *conn, bson *query);
 Item *CFDB_QueryDistinctStr(mongo_connection *conn, char *database, char *collection, char *dKey, char *qKey,
                             char *qVal);
 Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collection, char *dKey, bson *queryBson);
-int CFDB_GetRow(mongo_connection *conn, char *db, int reportType, bson *query, char *rowname, char *row, int rowSz,
-                int level);
 
 //*****************************************************************************
 // Singleton Queries

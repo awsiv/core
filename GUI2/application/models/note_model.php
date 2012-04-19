@@ -19,8 +19,8 @@ class Note_model extends CI_Model {
         $pageNo = isset($filter['pageNo']) ? $filter['pageNo'] : 0;
         
         
-        $commentsJson = cfpr_query_note($hostFilter, $noteId, $userId, $dateFrom, $dateTo,$noOfRows,$pageNo);
-        $commentsJson = str_replace(array("\r\n", "\n", "\r"), '<br />', (trim($commentsJson)));
+        $loggedUser = isset($filter['loggedUser']) ? $filter['loggedUser'] : null;
+        $commentsJson = cfpr_query_note($hostFilter, $noteId, $loggedUser, $userId, $dateFrom, $dateTo, $noOfRows, $pageNo);
         $comments = json_decode($commentsJson, TRUE);
         $note = array();
         foreach ((array)$comments['data'] as $comment) {
@@ -38,8 +38,24 @@ class Note_model extends CI_Model {
     
     
 
-    function addNote($nid, $username, $date, $message) {
-        return cfpr_add_note($nid, $username, $date, $message);
+    function addNote($nid, $hostkey, $username, $date, $message)
+    {
+
+        try
+        {
+            $noteID = cfpr_add_note($nid, $hostkey, $username, $date, $message);
+
+            return trim($noteID) ? $noteID : null;
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        }
+    }
+    function hasNotes($hostkey)
+    {
+        return cfpr_get_host_noteid($hostkey);
     }
 
     function addNewNote($keyhash, $rid, $report_type, $username, $date, $message) {

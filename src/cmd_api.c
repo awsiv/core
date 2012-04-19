@@ -202,7 +202,6 @@ int Nova2Txt_promiselog(char *hostkey, char *handle, char *cause, PromiseLogStat
     HubPromiseLog *hp;
     HubQuery *hq;
     Rlist *rp;
-    int reportType;
     mongo_connection dbconn;
 
     if (!CFDB_Open(&dbconn))
@@ -221,7 +220,6 @@ int Nova2Txt_promiselog(char *hostkey, char *handle, char *cause, PromiseLogStat
     snprintf(buffer, sizeof(buffer),
              "{\"meta\":{\"count\" : %d,"
              "\"header\":{\"Host\":0,\"Promise Handle\":1,\"Report\":2,\"Time\":3,"
-             "\"Note\":{\"index\":4,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
              "}},\"data\":[", page->totalResultCount);
     StartJoin(returnval, buffer, bufsize);
 
@@ -229,30 +227,11 @@ int Nova2Txt_promiselog(char *hostkey, char *handle, char *cause, PromiseLogStat
     {
         hp = (HubPromiseLog *) rp->item;
         EscapeJson(hp->cause, canonifiedCause, sizeof(canonifiedCause));
-        if (strcmp(hp->nid, CF_NONOTE) == 0)
-        {
-            switch (state)
-            {
-            case PROMISE_LOG_STATE_REPAIRED:
-                reportType = CFREPORT_REPAIRED;
-                break;
-            case PROMISE_LOG_STATE_NOTKEPT:
-            default:
-                reportType = CFREPORT_NOTKEPT;
-                break;
-            }
-            snprintf(buffer, sizeof(buffer),
-                     "[ \"%s\",\"%s\",\"%s\",%ld,"
-                     "[ \"add\",\"%s\",%d,\"%s\",\"\"]"
-                     "],", hp->hh->hostname, hp->handle, canonifiedCause, hp->t, hp->hh->keyhash, reportType, hp->oid);
-        }
-        else
-        {
-            snprintf(buffer, sizeof(buffer),
-                     "[ \"%s\",\"%s\",\"%s\",%ld,"
-                     "[ \"show\",\"\",\"\",\"\",\"%s\"]"
-                     "],", hp->hh->hostname, hp->handle, canonifiedCause, hp->t, hp->nid);
-        }
+
+        snprintf(buffer, sizeof(buffer),
+                 "[ \"%s\",\"%s\",\"%s\",%ld,"
+                 "],", hp->hh->hostname, hp->handle, canonifiedCause, hp->t);
+
         if (!Join(returnval, buffer, bufsize))
         {
             break;
@@ -832,9 +811,8 @@ int Nova2Txt_bundle_report(char *hostkey, char *bundle, bool regex, char *classr
     PageRecords(&(hq->records), page, DeleteHubBundleSeen);
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d,"
-             "\"header\": {\"Host\":0,\"Bundle\":1,\"Last Verified\":2,\"Compliance\":3,\"Avg Compliance\":4,\"Uncertainty\":5,"
-             "\"Note\":{\"index\":6,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
-             "}", page->totalResultCount);
+             "\"header\": {\"Host\":0,\"Bundle\":1,\"Last Verified\":2,\"Compliance\":3,\"Avg Compliance\":4,\"Uncertainty\":5}",
+             page->totalResultCount);
 
     headerLen = strlen(header);
     noticeLen = strlen(CF_NOTICE_TRUNCATED);
@@ -849,19 +827,10 @@ int Nova2Txt_bundle_report(char *hostkey, char *bundle, bool regex, char *classr
             continue;
         }
 
-        if (strcmp(hb->nid, CF_NONOTE) == 0)
-        {
-            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,%.2lf,%.2lf,%.2lf,"
-                     "[\"add\",\"%s\",%d,\"%s\",\"\"]],",
-                     hb->hh->hostname, hb->bundle, hb->t,
-                     hb->bundlecomp, hb->bundleavg, hb->bundledev, hb->hh->keyhash, CFREPORT_BUNDLE, hb->bundle);
-        }
-        else
-        {
-            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,%.2lf,%.2lf,%.2lf,"
-                     "[\"show\",\"\",\"\",\"\",\"%s\"]],",
-                     hb->hh->hostname, hb->bundle, hb->t, hb->bundlecomp, hb->bundleavg, hb->bundledev, hb->nid);
-        }
+        snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,%.2lf,%.2lf,%.2lf],",
+                hb->hh->hostname, hb->bundle, hb->t,
+                hb->bundlecomp, hb->bundleavg, hb->bundledev);
+
         margin = headerLen + noticeLen + strlen(buffer);
         if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
         {
@@ -910,7 +879,7 @@ int Nova2Txt_filechanges_report(char *hostkey, char *file, bool regex, time_t fr
 
     if (!CSV)
     {
-        printf("%s,%s,%s,%s\n", "Host", "File", "Changed-on", "Note");
+        printf("%s,%s,%s\n", "Host", "File", "Changed-on");
     }
 
     for (rp = hq->records; rp != NULL; rp = rp->next)
@@ -919,26 +888,11 @@ int Nova2Txt_filechanges_report(char *hostkey, char *file, bool regex, time_t fr
 
         if (CSV)
         {
-            if (strcmp(hC->nid, CF_NONOTE) == 0)
-            {
-                printf("%s,%s,%s\n", hC->hh->hostname, hC->path, cf_strtimestamp_local(hC->t, buffer));
-            }
-            else
-            {
-                printf("%s,%s,%s,%s\n", hC->hh->hostname, hC->path, cf_strtimestamp_local(hC->t, buffer), hC->nid);
-            }
+            printf("%s,%s,%s\n", hC->hh->hostname, hC->path, cf_strtimestamp_local(hC->t, buffer));
         }
         else
         {
-            if (strcmp(hC->nid, CF_NONOTE) == 0)
-            {
-                printf("%25s %40s  %20s\n", hC->hh->hostname, hC->path, cf_strtimestamp_local(hC->t, buffer));
-            }
-            else
-            {
-                printf("%25s %40s %20s %s\n", hC->hh->hostname, hC->path, cf_strtimestamp_local(hC->t, buffer),
-                       hC->nid);
-            }
+            printf("%25s %40s  %20s\n", hC->hh->hostname, hC->path, cf_strtimestamp_local(hC->t, buffer));
         }
     }
 

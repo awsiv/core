@@ -22,6 +22,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "db_query.h"
 #include "db_maintain.h"
 #include <assert.h>
+#include "web_rbac.h"
 
 static const char *CDP_REPORTS[][2] =
 {
@@ -927,7 +928,6 @@ int Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogSt
     HubPromiseLog *hp;
     HubQuery *hq;
     Rlist *rp;
-    int reportType;
     mongo_connection dbconn;
     bool truncated = false;
 
@@ -942,8 +942,7 @@ int Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogSt
 
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d,"
-             "\"header\":{\"Host\":0,\"Promise Handle\":1,\"Report\":2,\"Time\":3,"
-             "\"Note\":{\"index\":4,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}}",
+             "\"header\":{\"Host\":0,\"Promise Handle\":1,\"Report\":2,\"Time\":3}",
              page->totalResultCount);
 
     int headerLen = strlen(header);
@@ -955,30 +954,10 @@ int Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogSt
     {
         hp = (HubPromiseLog *) rp->item;
         EscapeJson(hp->cause, jsonEscapedStr, sizeof(jsonEscapedStr));
-        if (strcmp(hp->nid, CF_NONOTE) == 0)
-        {
-            switch (state)
-            {
-            case PROMISE_LOG_STATE_REPAIRED:
-                reportType = CFREPORT_REPAIRED;
-                break;
-            case PROMISE_LOG_STATE_NOTKEPT:
-            default:
-                reportType = CFREPORT_NOTKEPT;
-                break;
-            }
-            snprintf(buffer, sizeof(buffer),
-                     "[ \"%s\",\"%s\",\"%s\",%ld,"
-                     "[ \"add\",\"%s\",%d,\"%s\",\"\"]"
-                     "],", hp->hh->hostname, hp->handle, jsonEscapedStr, hp->t, hp->hh->keyhash, reportType, hp->oid);
-        }
-        else
-        {
-            snprintf(buffer, sizeof(buffer),
-                     "[ \"%s\",\"%s\",\"%s\",%ld,"
-                     "[ \"show\",\"\",\"\",\"\",\"%s\"]"
-                     "],", hp->hh->hostname, hp->handle, jsonEscapedStr, hp->t, hp->nid);
-        }
+
+        snprintf(buffer, sizeof(buffer),
+                 "[ \"%s\",\"%s\",\"%s\",%ld ],",
+                 hp->hh->hostname, hp->handle, jsonEscapedStr, hp->t);
 
         int margin = headerLen + noticeLen + strlen(buffer);
 
@@ -1122,8 +1101,7 @@ int Nova2PHP_value_report(char *hostkey, char *day, char *month, char *year, Hos
 
     PageRecords(&(hq->records), page, DeleteHubValue);
     snprintf(header, sizeof(header), "\"meta\":{\"count\" : %d,"
-             "\"header\":{\"Host\":0,\"Summary of Day\":1,\"Value of Promises Kept\":2,\"Value of Repairs\":3,\"Loss for Promises Not Kept\":4,"
-             "\"Note\":{\"index\":5,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}}",
+             "\"header\":{\"Host\":0,\"Summary of Day\":1,\"Value of Promises Kept\":2,\"Value of Repairs\":3,\"Loss for Promises Not Kept\":4}",
              page->totalResultCount);
 
     headerLen = strlen(header);
@@ -1134,21 +1112,10 @@ int Nova2PHP_value_report(char *hostkey, char *day, char *month, char *year, Hos
     {
         hp = (HubValue *) rp->item;
 
-        if (strcmp(hp->nid, CF_NONOTE) == 0)
-        {
-            snprintf(buffer, sizeof(buffer),
-                     "[\"%s\",\"%s\",%.1lf,%.1lf,%.1lf,"
-                     "[\"add\",\"%s\",%d,\"%s\",\"\"]],",
-                     hp->hh->hostname, hp->day, hp->kept, hp->repaired, hp->notkept,
-                     hp->hh->keyhash, CFREPORT_VALUE, hp->handle);
-        }
-        else
-        {
-            snprintf(buffer, sizeof(buffer),
-                     "[\"%s\",\"%s\",%.1lf,%.1lf,%.1lf,"
-                     "[\"show\",\"\",\"\",\"\",\"%s\"]],",
-                     hp->hh->hostname, hp->day, hp->kept, hp->repaired, hp->notkept, hp->nid);
-        }
+        snprintf(buffer, sizeof(buffer),
+                 "[\"%s\",\"%s\",%.1lf,%.1lf,%.1lf ],",
+                 hp->hh->hostname, hp->day, hp->kept, hp->repaired, hp->notkept);
+
         margin = headerLen + noticeLen + strlen(buffer);
 
         if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
@@ -1848,8 +1815,7 @@ int Nova2PHP_performance_report(char *hostkey, char *job, bool regex, HostClassF
 
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d,"
-             "\"header\": {\"Host\":0,\"Event\":1,\"Last completion time (seconds)\":2,\"Avg completion time (seconds)\":3,\"+/- seconds\":4,\"Last performed\":5,"
-             "\"Note\":{\"index\":6,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
+             "\"header\": {\"Host\":0,\"Event\":1,\"Last completion time (seconds)\":2,\"Avg completion time (seconds)\":3,\"+/- seconds\":4,\"Last performed\":5"
              "}", page->totalResultCount);
 
     headerLen = strlen(header);
@@ -1870,22 +1836,9 @@ int Nova2PHP_performance_report(char *hostkey, char *job, bool regex, HostClassF
 
         EscapeJson(hP->event, jsonEscapedStr, sizeof(jsonEscapedStr));
 
-        if (strcmp(hP->nid, CF_NONOTE) == 0)
-        {
-            char jsonPerfHandle[CF_MAXVARSIZE] = {0};
-            EscapeJson(hP->handle, jsonPerfHandle, sizeof(jsonPerfHandle));
-            
-            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%ld,"
-                     "[\"add\",\"%s\",%d,\"%s\",\"\"]],",
-                     hP->hh->hostname, jsonEscapedStr, Q, E, D, hP->t,
-                     hP->hh->keyhash, CFREPORT_PERFORMANCE, jsonPerfHandle);
-        }
-        else
-        {
-            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%ld,"
-                     "[\"show\",\"\",\"\",\"\",\"%s\"]],",
-                     hP->hh->hostname, jsonEscapedStr, Q, E, D, hP->t, hP->nid);
-        }
+        snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%ld ],",
+                 hP->hh->hostname, jsonEscapedStr, Q, E, D, hP->t);
+
         margin = headerLen + noticeLen + strlen(buffer);
         if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
         {
@@ -2026,9 +1979,8 @@ int Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFil
     PageRecords(&(hq->records), page, DeleteHubBundleSeen);
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d,"
-             "\"header\": {\"Host\":0,\"Bundle\":1,\"Last Verified\":2,\"%% Compliance\":3,\"Avg %% Compliance\":4,\"+/- %%\":5,"
-             "\"Note\":{\"index\":6,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
-             "}", page->totalResultCount);
+             "\"header\": {\"Host\":0,\"Bundle\":1,\"Last Verified\":2,\"%% Compliance\":3,\"Avg %% Compliance\":4,\"+/- %%\":5}",
+             page->totalResultCount);
 
     headerLen = strlen(header);
     noticeLen = strlen(CF_NOTICE_TRUNCATED);
@@ -2045,24 +1997,10 @@ int Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFil
         WriteDouble2Str_MP(hb->bundleavg, bundleAvg, sizeof(bundleAvg));
         WriteDouble2Str_MP(hb->bundledev, bundleDev, sizeof(bundleDev));
 
-        if (strcmp(hb->nid, CF_NONOTE) == 0)
-        {
-            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,"
-                     "\"%s\",\"%s\",\"%s\","
-                     "[\"add\",\"%s\",%d,\"%s\",\"\"]],",
-                     hb->hh->hostname, hb->bundle, hb->t,
-                     bundleComp, bundleAvg, bundleDev,
-                     hb->hh->keyhash, CFREPORT_BUNDLE, hb->bundle);
-        }
-        else
-        {
-            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,"
-                     "\"%s\",\"%s\",\"%s\","
-                     "[\"show\",\"\",\"\",\"\",\"%s\"]],",
-                     hb->hh->hostname, hb->bundle, hb->t,
-                     bundleComp, bundleAvg, bundleDev,
-                     hb->nid);
-        }
+        snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,\"%s\",\"%s\",\"%s\"],",
+                 hb->hh->hostname, hb->bundle, hb->t,
+                 bundleComp, bundleAvg, bundleDev);
+
         margin = headerLen + noticeLen + strlen(buffer);
         if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
         {
@@ -2114,9 +2052,9 @@ int Nova2PHP_filechanges_report(char *hostkey, char *file, bool regex, time_t fr
 
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d,"
-             "\"header\": {\"Host\":0,\"File\":1,\"Change Detected at\":2,"
-             "\"Note\":{\"index\":3,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
+             "\"header\": {\"Host\":0,\"File\":1,\"Change Detected at\":2"
              "}", page->totalResultCount);
+
     headerLen = strlen(header);
     noticeLen = strlen(CF_NOTICE_TRUNCATED);
     StartJoin(returnval, "{\"data\":[", bufsize);
@@ -2127,17 +2065,8 @@ int Nova2PHP_filechanges_report(char *hostkey, char *file, bool regex, time_t fr
 
         EscapeJson(hC->path, jsonEscapedStr, sizeof(jsonEscapedStr));
 
-        if (strcmp(hC->nid, CF_NONOTE) == 0)
-        {
-            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,"
-                     "[\"add\",\"%s\",%d,\"%s\",\"\"]],",
-                     hC->hh->hostname, jsonEscapedStr, hC->t, hC->hh->keyhash, CFREPORT_FILECHANGES, hC->handle);
-        }
-        else
-        {
-            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,"
-                     "[\"show\",\"\",\"\",\"\",\"%s\"]],", hC->hh->hostname, jsonEscapedStr, hC->t, hC->nid);
-        }
+        snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld ],",
+                 hC->hh->hostname, jsonEscapedStr, hC->t);
 
         margin = headerLen + noticeLen + strlen(buffer);
         if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
@@ -4354,180 +4283,59 @@ void FreeHostsList(HostsList *list)
 /* for commenting functionality */
 /*****************************************************************************/
 
-int Nova2PHP_add_note(char *noteid, char *username, time_t datetime, char *note, char *returnval, int bufsize)
+int Nova2PHP_add_note(char *noteid, char *keyhash, char *username, time_t datetime, char *note, char *returnval, int bufsize)
 {
-    Item *data = NULL;
-    char msg[CF_BUFSIZE] = { 0 }, nid[CF_MAXVARSIZE] = { 0 };
-    mongo_connection dbconn;
-    int ret = 0;
-
+    int is_new = false;
     if (!noteid || strlen(noteid) == 0)
     {
-        CfOut(cf_verbose, "", "!! Noteid is empty");
-        return false;
+        if (!keyhash || strlen(keyhash) == 0 )
+        {
+            CfOut(cf_verbose, "", "!! Hostkey and noteid is not given. Nothing to look for");
+            return false;
+        }
+        is_new = true;
     }
 
+    mongo_connection dbconn;
     if (!CFDB_Open(&dbconn))
     {
         return false;
     }
 
-    snprintf(nid, CF_MAXVARSIZE, "%s", noteid);
-    snprintf(msg, CF_BUFSIZE, "%s,%ld,%s", username, datetime, note);
-    AppendItem(&data, msg, NULL);
+    char nid[CF_MAXVARSIZE] = { 0 };
 
-    ret = CFDB_AddNote(&dbconn, NULL, 0, nid, NULL, data);
-    CFDB_Close(&dbconn);
-    snprintf(returnval, bufsize, "%d", ret);
+    int ret;
+    if (is_new) // create a new note with entry
+    {
+        char report_data[CF_SMALLBUF] = { 0 };
+        snprintf(report_data, CF_SMALLBUF, "%d", CFREPORT_HOSTS);
+        ret = CFDB_AddNote(&dbconn, keyhash, CFREPORT_HOSTS, nid, report_data,
+                           username, datetime, note);
+    }
+    else // add entry to existing note
+    {
+        snprintf(nid, CF_MAXVARSIZE, "%s", noteid);
+        ret = CFDB_AddNote(&dbconn, NULL, 0, nid, NULL, username, datetime, note);
+    }
 
     if (ret)
     {
         snprintf(returnval, bufsize, "%s", nid);
     }
-
-    return ret;
-}
-
-/*****************************************************************************/
-/*for commenting functionality */
-/*****************************************************************************/
-
-int Nova2PHP_add_new_note(char *keyhash, char *repid, int reportType, char *username, time_t datetime, char *note,
-                          char *returnval, int bufsize)
-{
-    Item *data = NULL;
-    char msg[CF_BUFSIZE] = { 0 };
-    char row[CF_BUFSIZE] = { 0 };
-    char noteId[CF_MAXVARSIZE] = { 0 };
-    mongo_connection dbconn;
-    bson query;
-    bson_buffer bb;
-    bson_oid_t oid;
-
-    char row_name[CF_MAXVARSIZE] = { 0 }, row_add[CF_MAXVARSIZE] = { 0 }, db[CF_MAXVARSIZE] = { 0 };
-    int level = 0, getrow = false, ret;
-
-    snprintf(msg, CF_BUFSIZE, "%s,%ld,%s", username, datetime, note);
-    AppendItem(&data, msg, NULL);
-
-    if (!keyhash || strlen(keyhash) == 0 || !repid || strlen(repid) == 0)
+    else
     {
-        CfOut(cf_verbose, "", "!! Hostkey and report id not given. Nothing to look for");
-        return false;
+        snprintf(returnval, bufsize, "%d", ret);
     }
 
-    //  snprintf(objectId, CF_MAXVARSIZE, "%s",repid);
-
-    if (!CFDB_Open(&dbconn))
-    {
-        return false;
-    }
-
-    //create query
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&query, &bb);
-
-    //get report
-    switch (reportType)
-    {
-    case CFREPORT_HOSTS:
-        level = 2;
-        snprintf(row_name, sizeof(row_name), "%s", cfr_ip_array);       // taking the IP addresses
-        snprintf(db, sizeof(db), "%s", MONGO_DATABASE);
-        getrow = CFDB_GetRow(&dbconn, db, reportType, &query, row_name, row, sizeof(row), level);
-        snprintf(row_add, sizeof(row_add), "%s", cfn_nid);
-        break;
-
-    case CFREPORT_REPAIRED:
-        level = 1;
-        snprintf(db, sizeof(db), "%s", MONGO_LOGS_REPAIRED);
-        bson_oid_from_string(&oid, repid);
-        bson_buffer_init(&bb);
-        bson_append_oid(&bb, "_id", &oid);
-        bson_from_buffer(&query, &bb);
-        getrow = CFDB_GetRow(&dbconn, db, reportType, &query, "*", row, sizeof(row), level);
-        snprintf(row_add, sizeof(row_add), "%s", cfn_nid);
-        break;
-
-    case CFREPORT_PERFORMANCE:
-        level = 3;
-        snprintf(row_name, sizeof(row_name), "%s.%s", cfr_performance, repid);
-        snprintf(db, sizeof(db), "%s", MONGO_DATABASE);
-        getrow = CFDB_GetRow(&dbconn, db, reportType, &query, row_name, row, sizeof(row), level);
-        snprintf(row_add, sizeof(row_add), "%s.%s", row_name, cfn_nid);
-        break;
-
-    case CFREPORT_VALUE:       /*value report */
-        level = 3;
-        snprintf(row_name, sizeof(row_name), "%s.%s", cfr_valuereport, repid);
-        snprintf(db, sizeof(db), "%s", MONGO_DATABASE);
-        getrow = CFDB_GetRow(&dbconn, db, reportType, &query, row_name, row, sizeof(row), level);
-        snprintf(row_add, sizeof(row_add), "%s.%s", row_name, cfn_nid);
-        break;
-    case CFREPORT_FILECHANGES:
-        level = 3;
-        snprintf(row_name, sizeof(row_name), "%s.%s", cfr_filechanges, repid);
-        snprintf(db, sizeof(db), "%s", MONGO_DATABASE);
-        getrow = CFDB_GetRow(&dbconn, db, reportType, &query, row_name, row, sizeof(row), level);
-        snprintf(row_add, sizeof(row_add), "%s.%s", row_name, cfn_nid);
-        break;
-/*
-  case CFREPORT_FILEDIFFS:  
-  snprintf(row_name, sizeof(row_name), "%s.%s",cfr_filediffs,repid);
-  snprintf(db, sizeof(db), "%s",MONGO_DATABASE);
-  getrow = CFDB_GetRow(&dbconn, db, &query, row_name, row, sizeof(row), level);
-  snprintf(row_add, sizeof(row_add), "%s.%s",row_name,cfn_nid);
-  break;
-*/
-    case CFREPORT_BUNDLE:
-        level = 3;
-        snprintf(row_name, sizeof(row_name), "%s.%s", cfr_bundles, repid);
-        snprintf(db, sizeof(db), "%s", MONGO_DATABASE);
-        getrow = CFDB_GetRow(&dbconn, db, reportType, &query, row_name, row, sizeof(row), level);
-        snprintf(row_add, sizeof(row_add), "%s.%s", row_name, cfn_nid);
-        break;
-
-    case CFREPORT_NOTKEPT:
-        level = 1;
-        snprintf(db, sizeof(db), "%s", MONGO_LOGS_NOTKEPT);
-
-        bson_oid_from_string(&oid, repid);
-        bson_buffer_init(&bb);
-        bson_append_oid(&bb, "_id", &oid);
-        bson_from_buffer(&query, &bb);
-        getrow = CFDB_GetRow(&dbconn, db, reportType, &query, "*", row, sizeof(row), level);
-        snprintf(row_add, sizeof(row_add), "%s", cfn_nid);
-        break;
-    }
-
-    if (!getrow)
-    {
-        CfOut(cf_verbose, "", "!! Could not find report for: hostkey = %s, report ID = %s", keyhash, repid);
-        bson_destroy(&query);
-        return false;
-    }
-    // add note
-    ret = CFDB_AddNote(&dbconn, keyhash, reportType, noteId, row, data);
-    //add DBRef
-    snprintf(returnval, bufsize, "%d", ret);
-    if (strlen(noteId) > 0 && ret)
-    {
-        CFDBRef_AddToRow(&dbconn, db, &query, row_add, noteId);
-        snprintf(returnval, bufsize, "%s", noteId);
-    }
-    //TODO: delete comment if addtorow fails?
-    bson_destroy(&query);
     CFDB_Close(&dbconn);
-    return ret;
+
+    return true;
 }
 
 /*****************************************************************************/
-/*  Commenting                                                               */
-/*****************************************************************************/
 
-int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, time_t from, time_t to, PageInfo *page,
-                       char *returnval, int bufsize)
+int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, char *filter_username,
+                       time_t from, time_t to, PageInfo *page, char *returnval, int bufsize)
 {
     Item *data = NULL;
     char msg[CF_BUFSIZE] = { 0 };
@@ -4545,9 +4353,9 @@ int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, time_t from, ti
     char jsonEscapedMsg[CF_BUFSIZE] = { 0 };
     int startIndex = 0, endIndex = 0, count = 0;
 
-    if (username)
+    if (filter_username)
     {
-        snprintf(fuser, CF_MAXVARSIZE, "%s", username);
+        snprintf(fuser, CF_MAXVARSIZE, "%s", filter_username);
     }
 
     if (keyhash)
@@ -4581,20 +4389,23 @@ int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, time_t from, ti
 
         EscapeJson(hni->report, jsonEscapedReport, sizeof(jsonEscapedReport));
 
-        for (hn = hni->note; hn != NULL; hn = hn->next, count++)
+        if (CFDB_HasHostAccessFromUserRBAC(username, hni->hh->keyhash) == ERRID_SUCCESS)
         {
-            if (count >= startIndex && (count <= endIndex || endIndex < 0))
+            for (hn = hni->note; hn != NULL; hn = hn->next, count++)
             {
-                EscapeJson(hn->msg, jsonEscapedMsg, sizeof(jsonEscapedMsg));
-                ReplaceTrailingChar(jsonEscapedMsg, '\n', '\0');
-
-                snprintf(buffer, sizeof(buffer),
-                         "{\"user\":\"%s\",\"date\":%ld,\"message\":\"%s\",\"report\":\"%s\",\"report_type\":%d, \"host\":{\"name\":\"%s\",\"ip\":\"%s\",\"kh\":\"%s\"}},",
-                         hn->user, hn->t, jsonEscapedMsg, jsonEscapedReport, hni->reportType, hni->hh->hostname,
-                         hni->hh->ipaddr, hni->hh->keyhash);
-                if (!Join(returnval, buffer, bufsize))
+                if (count >= startIndex && (count <= endIndex || endIndex < 0))
                 {
-                    break;
+                    EscapeJson(hn->msg, jsonEscapedMsg, sizeof(jsonEscapedMsg));
+                    ReplaceTrailingChar(jsonEscapedMsg, '\n', '\0');
+
+                    snprintf(buffer, sizeof(buffer),
+                             "{\"user\":\"%s\",\"date\":%ld,\"message\":\"%s\",\"report\":\"%s\",\"report_type\":%d, \"host\":{\"name\":\"%s\",\"ip\":\"%s\",\"kh\":\"%s\"}},",
+                             hn->user, hn->t, jsonEscapedMsg, jsonEscapedReport, hni->reportType, hni->hh->hostname,
+                             hni->hh->ipaddr, hni->hh->keyhash);
+                    if (!Join(returnval, buffer, bufsize))
+                    {
+                        break;
+                    }
                 }
             }
         }
@@ -4632,7 +4443,8 @@ int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize)
     }
 
     bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, hostkey);
+    bson_append_string(&bb, cfn_keyhash, hostkey);
+    bson_append_int(&bb, cfn_reporttype, CFREPORT_HOSTS);
     bson_from_buffer(&query, &bb);
 
     if (!CFDB_Open(&dbconn))
@@ -4646,6 +4458,11 @@ int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize)
     bson_destroy(&query);
     returnval[0] = '\0';
 
+    if (!CFDB_Close(&dbconn))
+    {
+        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+    }
+
     if (!result)
     {
         return false;
@@ -4655,11 +4472,6 @@ int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize)
     {
         snprintf(buffer, CF_MAXVARSIZE, "%s", (char *) rp->item);
         snprintf(returnval, CF_MAXVARSIZE, "%s ", buffer);
-    }
-
-    if (!CFDB_Close(&dbconn))
-    {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
     return true;
