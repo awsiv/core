@@ -113,6 +113,10 @@ static void Nova_DumpSlowlyVaryingObservations(void);
 static Item *NovaGetMeasurementStream(Attributes a, Promise *pp);
 static Item *NovaReSample(int slot, Attributes a, Promise *pp);
 static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes a, Promise *pp);
+static void NovaLogSymbolicValue(char *handle, Item *stream, Attributes a, Promise *pp);
+static void Nova_SaveFilePosition(char *name, long fileptr);
+static long Nova_RestoreFilePosition(char *name);
+static void PutRecordForTime(CF_DB *db, time_t time, const Averages *values);
 
 /*****************************************************************************/
 
@@ -1168,7 +1172,7 @@ static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes 
 
 /*****************************************************************************/
 
-void NovaLogSymbolicValue(char *handle, Item *stream, Attributes a, Promise *pp)
+static void NovaLogSymbolicValue(char *handle, Item *stream, Attributes a, Promise *pp)
 {
     char value[CF_BUFSIZE], sdate[CF_MAXVARSIZE], filename[CF_BUFSIZE], *v;
     int count = 1, found = false, match_count = 0;
@@ -1342,7 +1346,7 @@ void NovaNamedEvent(char *eventname, double value, Attributes a, Promise *pp)
 /* Level                                                                     */
 /*****************************************************************************/
 
-void Nova_SaveFilePosition(char *name, long fileptr)
+static void Nova_SaveFilePosition(char *name, long fileptr)
 {
     CF_DB *dbp;
 
@@ -1358,7 +1362,7 @@ void Nova_SaveFilePosition(char *name, long fileptr)
 
 /*****************************************************************************/
 
-long Nova_RestoreFilePosition(char *name)
+static long Nova_RestoreFilePosition(char *name)
 {
     CF_DB *dbp;
     long fileptr;
@@ -1440,7 +1444,7 @@ bool GetRecordForTime(CF_DB *db, time_t time, Averages *result)
 
 /****************************************************************************/
 
-void PutRecordForTime(CF_DB *db, time_t time, const Averages *values)
+static void PutRecordForTime(CF_DB *db, time_t time, const Averages *values)
 {
     char timekey[CF_MAXVARSIZE];
 

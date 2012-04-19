@@ -886,7 +886,6 @@ void Nova_BodyNode(FILE *fp, char *body, int calltype);
 void Nova_DependencyGraph(Topic *map);
 void Nova_PlotTopicDependencies(int topic, double **adj, char **names, int dim);
 void Nova_MapClassParameterAssociations(FILE *fp, Promise *pp, char *promise_id);
-void NovaLogSymbolicValue(char *handle, Item *stream, Attributes a, Promise *pp);
 void Nova_ShowBundleDependence(FILE *fp);
 char *NovaEscape(const char *s);        /* Thread-unsafe */
 void NovaShowValues(FILE *fp, BodySyntax bs);
@@ -930,8 +929,6 @@ bool NovaIsSlotConsolidable(int index);
 void NovaNamedEvent(char *eventname, double value, Attributes a, Promise *pp);
 void Nova_MonOtherInit(void);
 void Nova_MonOtherGatherData(double *cf_this);
-void Nova_SaveFilePosition(char *filename, long fileptr);
-long Nova_RestoreFilePosition(char *filename);
 void Nova_LookupAggregateClassName(int n, char *name, char *desc);
 
 /* - date-related functions - */
@@ -940,7 +937,6 @@ time_t WeekBegin(time_t time);
 time_t SubtractWeeks(time_t time, int weeks);
 time_t NextShift(time_t time);
 bool GetRecordForTime(CF_DB *db, time_t time, Averages *result);
-void PutRecordForTime(CF_DB *db, time_t time, const Averages *values);
 double BoundedValue(double value, double defval);
 
 /* mon_cumulative.c */
