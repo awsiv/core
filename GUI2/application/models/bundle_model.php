@@ -112,7 +112,6 @@ class bundle_model extends Cf_Model
                 $data = array();
             }
             return $data;
-
         }
         catch (Exception $e)
         {

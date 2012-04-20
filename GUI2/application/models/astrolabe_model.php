@@ -63,33 +63,33 @@ class Astrolabe_Model extends CI_Model
 
     /*
      * [
-	{
-		"label" : "Linux",
-		"classRegex" : "linux",
-		"children" : [
-			{
-				"label" : "CentOS",
-				"classRegex" : "centos",
-				"children" : [ ]
-			},
-			{
-				"label" : "Ubuntu",
-				"classRegex" : "ubuntu",
-				"children" : [ ]
-			}
-		]
-	},
-	{
-		"label" : "Solaris",
-		"classRegex" : "solaris.*",
-		"children" : [ ]
-	},
-	{
-		"label" : "Windows",
-		"classRegex" : "windows",
-		"children" : [ ]
-	}
-] }
+      {
+      "label" : "Linux",
+      "classRegex" : "linux",
+      "children" : [
+      {
+      "label" : "CentOS",
+      "classRegex" : "centos",
+      "children" : [ ]
+      },
+      {
+      "label" : "Ubuntu",
+      "classRegex" : "ubuntu",
+      "children" : [ ]
+      }
+      ]
+      },
+      {
+      "label" : "Solaris",
+      "classRegex" : "solaris.*",
+      "children" : [ ]
+      },
+      {
+      "label" : "Windows",
+      "classRegex" : "windows",
+      "children" : [ ]
+      }
+      ] }
 
      */
 

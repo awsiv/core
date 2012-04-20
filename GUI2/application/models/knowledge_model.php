@@ -4,11 +4,11 @@ class knowledge_model extends Cf_Model
 {
 
     /**
-     * 
+     *
      * @param string $username
      * @param string $search search term
      * @param bool $flag
-     * @return array 
+     * @return array
      */
     function searchTopics($username, $search, $flag = true)
     {
@@ -37,7 +37,7 @@ class knowledge_model extends Cf_Model
      * @param string $username
      * @param string $pid pid of the topic
      * @return array
-     * @throws Exception 
+     * @throws Exception
      */
     function showTopicHits($username, $pid)
     {
@@ -66,7 +66,7 @@ class knowledge_model extends Cf_Model
      * @param type $username
      * @param int $pid  topic id
      * @return JSON json representation of the knowledge map
-     * 
+     *
      */
     function getKnowledgeView($username, $pid)
     {
@@ -97,7 +97,7 @@ class knowledge_model extends Cf_Model
      * @param string $context
      * @param string $topic
      * @return int
-     * @throws Exception 
+     * @throws Exception
      */
     function getPidForTopic($username, $context, $topic)
     {
@@ -117,8 +117,8 @@ class knowledge_model extends Cf_Model
      * Topics for knowledge map
      * @param string $username
      * @param int $pid
-     * @return array 
-     * @throws Exception 
+     * @return array
+     * @throws Exception
      */
     function showTopics($username, $pid)
     {
@@ -141,14 +141,13 @@ class knowledge_model extends Cf_Model
             throw $e;
         }
     }
-    
-    
-     /**
+
+    /**
      * Topics for knowledge map with topic name
      * @param string $username
      * @param int $topicname
-     * @return array 
-     * @throws Exception 
+     * @return array
+     * @throws Exception
      */
     function showTopicLeadsWithName($username, $topicname)
     {
@@ -172,13 +171,12 @@ class knowledge_model extends Cf_Model
         }
     }
 
-
     /**
      * Topics for knowledge map
      * @param string $username
      * @param int $pid
-     * @return array 
-     * @throws Exception 
+     * @return array
+     * @throws Exception
      */
     function showTopicLeads($username, $pid)
     {
@@ -206,8 +204,8 @@ class knowledge_model extends Cf_Model
      * Topic category for knowledge map
      * @param string $username
      * @param int $pid
-     * @return array 
-     * @throws Exception 
+     * @return array
+     * @throws Exception
      */
     function showTopicCategory($username, $pid)
     {
@@ -232,7 +230,7 @@ class knowledge_model extends Cf_Model
     }
 
     /**
-     * 
+     *
      */
     function listDocuments($path = '')
     {

@@ -2,7 +2,6 @@
 
 class host_model extends Cf_Model
 {
-    
 
     /**
      * Get the list of host by specified colors
@@ -15,15 +14,18 @@ class host_model extends Cf_Model
      * @return array
      * @throws Exception
      */
-    function getHostByColor($color,$username, $includes = array('.*'), $excludes = array(), $rows = 10, $page = 1)
+    function getHostByColor($color, $username, $includes = array('.*'), $excludes = array(), $rows = 10, $page = 1)
     {
         try
         {
             $rawdata = cfpr_host_compliance_list($username, $color, $includes, $excludes, $rows, $page);
             $data = $this->checkData($rawdata);
-            if (is_array($data) && $this->hasErrors()==0) {
+            if (is_array($data) && $this->hasErrors() == 0)
+            {
                 return $data;
-            } else {
+            }
+            else
+            {
                 throw new Exception($this->getErrorsString());
             }
         }
@@ -33,7 +35,6 @@ class host_model extends Cf_Model
             throw $e;
         }
     }
-
 
     /**
      *
@@ -49,7 +50,7 @@ class host_model extends Cf_Model
         {
             $rawdata = cfpr_host_list_by_ip_rx($username, $ipregx, $rows, $page);
             $data = $this->checkData($rawdata);
-            if (is_array($data) && $this->hasErrors()==0)
+            if (is_array($data) && $this->hasErrors() == 0)
             {
                 return $data;
             }
@@ -79,8 +80,8 @@ class host_model extends Cf_Model
         {
             $rawdata = cfpr_host_list_by_name_rx($username, $hostregx, $rows, $page);
             $data = $this->checkData($rawdata);
-           
-            if (is_array($data) && $this->hasErrors()==0)
+
+            if (is_array($data) && $this->hasErrors() == 0)
             {
                 return $data;
             }
@@ -135,7 +136,7 @@ class host_model extends Cf_Model
         {
             $rawdata = cfpr_host_by_hostkey($username, $hostkey);
             $data = $this->checkData($rawdata);
-            if (is_array($data) && $this->hasErrors()==0)
+            if (is_array($data) && $this->hasErrors() == 0)
             {
                 return $data[0];
             }
@@ -314,7 +315,7 @@ class host_model extends Cf_Model
      * @return type
      * @throws Exception
      */
-    function getHostCount($username,$color=NULL,$includes=array(),$excludes=array())
+    function getHostCount($username, $color = NULL, $includes = array(), $excludes = array())
     {
         try
         {

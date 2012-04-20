@@ -44,7 +44,7 @@ class Settings_model extends CI_Model
         return false;
     }
 
-    function update_app_settings($data, $id=null)
+    function update_app_settings($data, $id = null)
     {
         if (!is_null($id))
         {
@@ -68,7 +68,7 @@ class Settings_model extends CI_Model
      * For saving  and retriving user preferences
      * @return <type>
      */
-    function get_user_settings($username=null)
+    function get_user_settings($username = null)
     {
         $data = $this->mongo_db->where(array('username' => $username))->limit(1)->get_object($this->usersSettings);
         if (is_object($data))
@@ -93,7 +93,7 @@ class Settings_model extends CI_Model
         return false;
     }
 
-    function update_user_settings($data, $id=null)
+    function update_user_settings($data, $id = null)
     {
         if (!is_null($id))
         {
