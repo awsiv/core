@@ -5,6 +5,7 @@
             defaultbehaviour: true,
             noneSelectedLabel: '(none)',
             addItemPlaceholder: 'Add tree',
+            itemExistsError: 'Item already exists in list',
             maxLength: 256
         },
 
@@ -64,15 +65,16 @@
                 if (id !== undefined &&
                     id !== null &&
                     id.length > 0) {
-                    $self.addItem(id, id);
-                    $self._trigger('itemAdded', null, {
-                        id: id
-                    });
+                    if ($self.addItem(id, id) === true) {
+                        $self._trigger('itemAdded', null, {
+                            id: id
+                        });
 
-                    $self._setSelectedItem($self, id, id);
-                    $self._trigger('itemSelected', null, {
-                        id: id
-                    });
+                        $self._setSelectedItem($self, id, id);
+                        $self._trigger('itemSelected', null, {
+                            id: id
+                        });
+                    }
                 }
                 else {
                     $self._addInput.focus();
@@ -132,10 +134,28 @@
             $self._trigger('itemSelected', null, {id: id});
         },
 
+        _itemExists: function(id) {
+            var $self = this;
+
+            var found = false;
+            $self._ul.find('li').each(function(index, item) {
+                if ($(item).attr('itemId') == id) {
+                    found = true;
+                }
+            });
+            return found;
+        },
+
         addItem: function(id) {
             var $self = this;
 
+            if ($self._itemExists(id)) {
+                alert($self.options.itemExistsError);
+                return false;
+            }
+
             var $li = $('<li>');
+            $li.attr('itemId', id);
             $li.click(function(event) {
                 $self._setSelectedItem($self, id);
                 event.stopPropagation();
@@ -160,6 +180,7 @@
             $li.append($labelSpan);
 
             $self._ul.prepend($li);
+            return true;
         },
 
         _onClickHeader: function($self, event) {

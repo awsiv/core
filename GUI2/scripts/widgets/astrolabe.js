@@ -55,6 +55,7 @@
             $self._profilesCombo.combobox({
                 noneSelectedLabel: '(All Hosts)',
                 addItemPlaceholder: 'Add Tree',
+                itemExistsError: 'Tree already exists, please choose a different name',
 
                 itemSelected: function(event, args) {
                     $self._loadProfile(args.id);
@@ -207,7 +208,7 @@
             var $wrapperElement=$('<div>').addClass('showqtip').data({my:'right center', at:'left center'});
             $wrapperElement.attr('title', classRegex);
             $nodeItem.append($wrapperElement);
-            
+
             var $iconElement = $('<span>');
             $iconElement.addClass('nodeIcon');
             $iconElement.click(function(event) {
@@ -249,21 +250,21 @@
                 $nodeItem.remove();
                 $self._saveProfile($self._currentProfile, $parentNode);
             });
-            
+
             var $editNodeButton = $('<span>');
             $editNodeButton.addClass('editNodeButton');
             $editNodeButton.click(function(event) {
                 var $parentNode = $self._parentNode($nodeItem);
                 var $dialog = $self._nodeDialog($nodeItem,'update');
-              
+
                 $dialog.dialog('open');
             });
-            
+
             if (isRemovable !== true) {
                 $nodeHeader.append($removeNodeButton);
                 $nodeHeader.append($editNodeButton)
             }
-            
+
 
             var $busyIcon = $('<span>');
             $busyIcon.addClass('busyIcon');
@@ -271,8 +272,8 @@
             $busyIcon.hide();
             $nodeItem.append($busyIcon);
             var $childrenList = $self._createContainer(children);
-            
-            
+
+
             $childrenList.hide();
             $nodeItem.append($childrenList);
 
@@ -301,7 +302,7 @@
 
         _nodeDialog: function(parentNode,operation) {
             var $self = this;
-            
+
             var validation = function(){
                 var label = $('#astrolabe-add-node-label').val();
                 if (label == '') {
@@ -321,7 +322,7 @@
                     $('#astrolabe-add-node-class-error').html('Invalid class expression');
                     return false;
                 }
-                
+
                 return {
                       label:label,
                       classRegex:classRegex
@@ -333,7 +334,7 @@
                 $('#astrolabe-add-node-class-error').html('');
                 var nodeprop=validation();
                 if(nodeprop === false){return;}
-                
+
                 var $node = $($self._createNode(nodeprop.label, nodeprop.classRegex, null));
                 var $parentContainer = $($self._rootContainer);
                 if (parentNode !== null) {
@@ -348,7 +349,7 @@
                 $dialog.dialog('destroy');
                 $dialog.remove();
             }
-            
+
             var updateNode =function($dialog){
                 $('#astrolabe-add-node-label-error').html('');
                 $('#astrolabe-add-node-class-error').html('');
@@ -364,13 +365,13 @@
                 $dialog.dialog('destroy');
                 $dialog.remove();
             }
-            
+
            var btns= {};
            btns[operation]=function() {
                             if(operation=='update'){
                                updateNode($(this));
                             }else{
-                               addNode($(this));  
+                               addNode($(this));
                             };
            }
            btns['cancel']=function() {
@@ -378,7 +379,7 @@
                             $(this).dialog('destroy');
                             $(this).remove();
                         }
-                        
+
             var $dialog = $('<div>')
                 .load($self.options.baseUrl + '/widget/astrolabeAddNodeDialog/', function() {
                     $('#astrolabe-add-node-label').focus();
@@ -396,7 +397,7 @@
                     modal: true,
                     resizable: false
                 });
-            
+
             $dialog.keypress(function(event) {
                 if (event.keyCode == $.ui.keyCode.ENTER) {
                     addNode($dialog);
