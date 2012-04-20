@@ -71,10 +71,10 @@ class pdfreports extends Cf_Controller
 
         $report_download = isset($params['download']) && trim($params['download'] != '') ? $params['download'] : $this->input->post('download');
 
-        // check if its all download or current page download only 
+        // check if its all download or current page download only
         if ($report_download == 1)
         {
-            // it all download so pagination paramteres are null 
+            // it all download so pagination paramteres are null
             $params['page'] = null;
             $params['rows'] = null;
         }
@@ -135,7 +135,7 @@ class pdfreports extends Cf_Controller
                 break;
 
             case "compliance-summary":
-                $this->rpt_compliance_summary($username, $params['hostkey'],$params['version'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
+                $this->rpt_compliance_summary($username, $params['hostkey'], $params['version'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
                 break;
 
             case "file-change-log":
@@ -159,19 +159,19 @@ class pdfreports extends Cf_Controller
                 break;
 
             case "promises-repaired-summary":
-                $this->rpt_promise_repaired_summary($username, $params['hostkey'], $params['search'],$params['cause'], $params['from'], $params['to'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
+                $this->rpt_promise_repaired_summary($username, $params['hostkey'], $params['search'], $params['cause'], $params['from'], $params['to'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
                 break;
 
             case "promises-repaired-log":
-                $this->rpt_repaired_log($username, $params['hostkey'], $params['search'],$params['cause'], $params['from'], $params['to'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
+                $this->rpt_repaired_log($username, $params['hostkey'], $params['search'], $params['cause'], $params['from'], $params['to'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
                 break;
 
             case "promises-not-kept-summary":
-                $this->rpt_promise_notkept_summary($username, $params['hostkey'], $params['search'],$params['cause'], $params['from'], $params['to'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
+                $this->rpt_promise_notkept_summary($username, $params['hostkey'], $params['search'], $params['cause'], $params['from'], $params['to'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
                 break;
 
             case "promises-not-kept-log":
-                $this->rpt_promise_notkept($username, $params['hostkey'], $params['search'], $params['cause'],$params['from'], $params['to'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
+                $this->rpt_promise_notkept($username, $params['hostkey'], $params['search'], $params['cause'], $params['from'], $params['to'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
                 break;
 
             case "setuid-programs":
@@ -207,7 +207,7 @@ class pdfreports extends Cf_Controller
                 $from = $_POST['from'];
                 $subject = $_POST['subject'];
                 $msg = $_POST['message'];
-                // write the file 
+                // write the file
                 // check for directory
                 $this->checkTempDir();
                 $filename = $this->storeDir . $filename;
@@ -253,7 +253,7 @@ class pdfreports extends Cf_Controller
     }
 
     /**
-     * Checks if the tmp directory exist and is writable 
+     * Checks if the tmp directory exist and is writable
      * @throws Exception if not writable
      */
     function checkTempDir()
@@ -334,8 +334,8 @@ class pdfreports extends Cf_Controller
     }
 
     /**
-     * Checks if there is data truncation warning from the C-API and set the warning  
-     * @param array $result data received from C-API 
+     * Checks if there is data truncation warning from the C-API and set the warning
+     * @param array $result data received from C-API
      */
     function checkForDataTruncation($result)
     {
@@ -352,10 +352,11 @@ class pdfreports extends Cf_Controller
      */
     function changeDateFields(&$data, $index)
     {
-       $count = count($data);
-       for ($i = 0;$i<$count;$i++) {
-           $data[$i][$index] =  getDateStatus($data[$i][$index], false, true);
-       }
+        $count = count($data);
+        for ($i = 0; $i < $count; $i++)
+        {
+            $data[$i][$index] = getDateStatus($data[$i][$index], false, true);
+        }
     }
 
     function rpt_bundle_profile($username, $hostkey, $search, $inclist, $exlist, $rows = 0, $page_number = 0)
@@ -381,7 +382,7 @@ class pdfreports extends Cf_Controller
                 $pdf->PDFSetDescription($desc);
 
                 $cols = count($header);
-                $col_len = array(24, 23, 23, 10, 10, 10); #in percentage    
+                $col_len = array(24, 23, 23, 10, 10, 10); #in percentage
                 $pdf->ReportTitle();
                 $pdf->ReportDescription();
                 $pdf->RptTableTitle($pdf->tabletitle, $pdf->GetY() + 5);
@@ -445,7 +446,7 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_class_profile($username, $hostkey, $search, $inclist,$exlist, $rows = 0, $page_number = 0)
+    function rpt_class_profile($username, $hostkey, $search, $inclist, $exlist, $rows = 0, $page_number = 0)
     {
 
         $header = array('Host', 'Class Context', 'Occurs with probability', 'Uncertainty', 'Last seen');
@@ -491,7 +492,7 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_promise_notkept($username, $hostkey, $search, $cause,$from, $to, $inclist, $exlist, $rows = 0, $page_number = 0)
+    function rpt_promise_notkept($username, $hostkey, $search, $cause, $from, $to, $inclist, $exlist, $rows = 0, $page_number = 0)
     {
 
         try
@@ -499,7 +500,7 @@ class pdfreports extends Cf_Controller
             $header = array('Host', 'Promise Handle', 'Report', 'Time');
 
             //$ret = cfpr_report_notkept($username, $hostkey, $search, intval($from), intval($to), array($class_regex), array(),"time", true, $rows, $page_number);
-            $jsondata = $this->report_model->getPromisesNotKeptLog($username, $hostkey, $search,$cause, $from, $to, $inclist, $exlist, $rows, $page_number);
+            $jsondata = $this->report_model->getPromisesNotKeptLog($username, $hostkey, $search, $cause, $from, $to, $inclist, $exlist, $rows, $page_number);
             $this->checkForDataTruncation($jsondata);
 
             $data1 = $jsondata['data'];
@@ -538,12 +539,12 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_promise_notkept_summary($username, $hostkey, $search,$cause, $from, $to, $inclist, $exlist, $rows = 0, $page_number = 0)
+    function rpt_promise_notkept_summary($username, $hostkey, $search, $cause, $from, $to, $inclist, $exlist, $rows = 0, $page_number = 0)
     {
         try
         {
             // $ret = cfpr_summarize_notkept($username, $hostkey, $search, intval($from), intval($to), $class_regex, "time", true, $rows, $page_number);
-            $jsondata = $this->report_model->getPromisesNotKeptSummary($username, $hostkey, $search,$cause, $from, $to, $inclist, $exlist, $rows, $page_number);
+            $jsondata = $this->report_model->getPromisesNotKeptSummary($username, $hostkey, $search, $cause, $from, $to, $inclist, $exlist, $rows, $page_number);
             $this->checkForDataTruncation($jsondata);
 
             $data1 = $jsondata['data'];
@@ -578,14 +579,14 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_promise_repaired_summary($username, $hostkey, $search,$cause,$from, $to,$inclist,$exlist, $rows = 0, $page_number = 0)
+    function rpt_promise_repaired_summary($username, $hostkey, $search, $cause, $from, $to, $inclist, $exlist, $rows = 0, $page_number = 0)
     {
         $header = array('Promise Handle', 'Report', 'Occurrences');
         try
         {
             //$ret = cfpr_summarize_repaired($username, $hostkey, $search, intval($from), intval($to), $class_regex, "time", true, $rows, $page_number);
 
-            $jsondata = $this->report_model->getPromisesRepairedSummary($username, $hostkey, $search,$cause,$from, $to, $inclist, $exlist, $rows, $page_number);
+            $jsondata = $this->report_model->getPromisesRepairedSummary($username, $hostkey, $search, $cause, $from, $to, $inclist, $exlist, $rows, $page_number);
             $this->checkForDataTruncation($jsondata);
 
             $data1 = $jsondata['data'];
@@ -667,13 +668,13 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_compliance_summary($username, $hostkey,$version, $incList, $exList, $rows = 0, $page_number = 0)
+    function rpt_compliance_summary($username, $hostkey, $version, $incList, $exList, $rows = 0, $page_number = 0)
     {
         $header = array('Host', 'Policy', 'Kept', 'Repaired', 'Not kept', 'Last seen');
 
         try
         {
-            $jsondata = $this->report_model->getComplianceSummary($username, $hostkey,$version,$incList, $exList, $rows, $page_number);
+            $jsondata = $this->report_model->getComplianceSummary($username, $hostkey, $version, $incList, $exList, $rows, $page_number);
             $this->checkForDataTruncation($jsondata);
 
             $data1 = $jsondata['data'];
@@ -977,13 +978,13 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_repaired_log($username, $hostkey, $search,$cause,$from, $to, $inclist, $exlist, $rows = 0, $page_number = 0)
+    function rpt_repaired_log($username, $hostkey, $search, $cause, $from, $to, $inclist, $exlist, $rows = 0, $page_number = 0)
     {
         $header = array('Host', 'Promise Handle', 'Report', 'Time');
         try
         {
             //$ret = cfpr_report_repaired($username, $hostkey, $search, intval($from), intval($to), array($class_regex), array(), "time", true, $rows, $page_number);
-            $jsondata = $this->report_model->getPromisesRepairedLog($username, $hostkey, $search,$cause, $from, $to, $inclist, $exlist, $rows, $page_number);
+            $jsondata = $this->report_model->getPromisesRepairedLog($username, $hostkey, $search, $cause, $from, $to, $inclist, $exlist, $rows, $page_number);
             $this->checkForDataTruncation($jsondata);
 
             $data1 = $jsondata['data'];

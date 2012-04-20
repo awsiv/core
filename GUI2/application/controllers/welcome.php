@@ -1,61 +1,68 @@
 <?php
 
-class Welcome extends Cf_Controller {
+class Welcome extends Cf_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         parse_str($_SERVER['QUERY_STRING'], $_GET);
         $this->load->helper('form');
         $this->load->library(array('table', 'cf_table'));
-        $this->load->model(array('host_model','environment_model','report_model'));
+        $this->load->model(array('host_model', 'environment_model', 'report_model'));
     }
 
-    function index() {
+    function index()
+    {
         $bc = array(
             'title' => $this->lang->line('mission_portal_title'),
             'url' => 'welcome/index',
             'isRoot' => true
         );
-        
-        
 
-        
-        
         $this->breadcrumb->setBreadCrumb($bc);
         $this->carabiner->js('widgets/licensemeter.js');
-        try {
+        try
+        {
             $expirydate = strtotime(cfpr_getlicense_expiry());
             $startDate = cfpr_getlicense_installtime();
             //echo date('D F d h:m:s Y',cfpr_getlicense_installtime())."\n";
             $datediff = $expirydate - $startDate;
-            if($datediff>0){
+            if ($datediff > 0)
+            {
                 $totaldays = floor($datediff / (60 * 60 * 24));
                 $dayspassed = floor((time() - $startDate) / (60 * 60 * 24));
                 $pbarvalue = "";
-                if ($totaldays > 0) {
+                if ($totaldays > 0)
+                {
                     $pbarvalue = floor(($dayspassed / $totaldays) * 100);
                 }
-                $daysleft= $totaldays - $dayspassed;
-            }else{
-                $pbarvalue=100;
-                $daysleft=0;
+                $daysleft = $totaldays - $dayspassed;
             }
-        } catch (Exception $e) {
+            else
+            {
+                $pbarvalue = 100;
+                $daysleft = 0;
+            }
+        }
+        catch (Exception $e)
+        {
             log_message('license error:' . $e->getMessage());
         }
 
         $data = array(
             'title' => $this->lang->line('mission_portal_title'),
-            'breadcrumbs'    => $this->breadcrumblist->display(),
-            'pbarvalue'      => $pbarvalue,
-            'daysleft'       => $daysleft,
-            'mp_auth_mode'   => $this->setting_lib->get_authentication_mode(),
+            'breadcrumbs' => $this->breadcrumblist->display(),
+            'pbarvalue' => $pbarvalue,
+            'daysleft' => $daysleft,
+            'mp_auth_mode' => $this->setting_lib->get_authentication_mode(),
             'user_auth_mode' => $this->session->userdata('mode')
         );
         $this->template->load('template', 'index', $data);
     }
 
-    function status() {
+    function status()
+    {
         $bc = array(
             'title' => $this->lang->line('breadcrumb_status'),
             'url' => 'welcome/status',
@@ -92,21 +99,25 @@ class Welcome extends Cf_Controller {
 
         // compliance summary meter
         //$envList = cfpr_environments_list();
-        try{
-        $envList=$this->environment_model->getEnvironmentList($this->session->userdata('username'));
+        try
+        {
+            $envList = $this->environment_model->getEnvironmentList($this->session->userdata('username'));
         }
-        catch(CFModExceptionRBAC $e){
+        catch (CFModExceptionRBAC $e)
+        {
             show_error($this->lang->line('rbac_exception'), 401);
         }
-        catch(Exception $e){
-            show_error($e->getMessage(),500);
+        catch (Exception $e)
+        {
+            show_error($e->getMessage(), 500);
         }
         //$envListArray = json_decode($envList);
 
         $data['envList'] = $envList;
 
         $cdata = cfpr_compliance_summary_graph(NULL);
-        if ($cdata) {
+        if ($cdata)
+        {
             $graphData['compliance_summary'] = $this->_convert_summary_compliance_graph_status($cdata);
             $data = array_merge($data, $graphData);
         }
@@ -122,12 +133,14 @@ class Welcome extends Cf_Controller {
 // make data ready for pie
 
 
-        if (is_array($businessValuePieArray) && !empty($businessValuePieArray)) {
+        if (is_array($businessValuePieArray) && !empty($businessValuePieArray))
+        {
             $kept = 0;
             $notkept = 0;
             $repaired = 0;
 
-            foreach ($businessValuePieArray as $val) {
+            foreach ($businessValuePieArray as $val)
+            {
 
 
                 $kept+=$val[1];
@@ -138,29 +151,36 @@ class Welcome extends Cf_Controller {
             $data['businessValuePie']['notkept'] = abs($notkept);
             $data['businessValuePie']['repaired'] = abs($repaired);
             $data['businessValuePie']['nodata'] = 0;
-        } else {
+        }
+        else
+        {
             $data['businessValuePie']['kept'] = 0;
             $data['businessValuePie']['notkept'] = 0;
             $data['businessValuePie']['repaired'] = 0;
             $data['businessValuePie']['nodata'] = 100;
         }
 
-        try{
+        try
+        {
             $username = &$this->session->userdata('username');
-            $data['allHost']    = $this->host_model->getHostCount($username);
-            $data['redhost']    = $this->host_model->getHostCount($username,'red');
-            $data['yellowhost'] = $this->host_model->getHostCount($username,'yellow');
-            $data['greenhost']  = $this->host_model->getHostCount($username,'green');
-            $data['bluehost']   = $this->host_model->getHostCount($username,'blue');
-            $data['blackhost']  = $this->host_model->getHostCount($username,'black');
-        }catch(Exception $e){
-           show_error($e->getMessage(),500); ;
+            $data['allHost'] = $this->host_model->getHostCount($username);
+            $data['redhost'] = $this->host_model->getHostCount($username, 'red');
+            $data['yellowhost'] = $this->host_model->getHostCount($username, 'yellow');
+            $data['greenhost'] = $this->host_model->getHostCount($username, 'green');
+            $data['bluehost'] = $this->host_model->getHostCount($username, 'blue');
+            $data['blackhost'] = $this->host_model->getHostCount($username, 'black');
+        }
+        catch (Exception $e)
+        {
+            show_error($e->getMessage(), 500);
+            ;
         }
 
         $this->template->load('template', 'status', $data);
     }
 
-    function _convert_summary_compliance_graph_status($rawData) {
+    function _convert_summary_compliance_graph_status($rawData)
+    {
         $convertedData = json_decode($rawData, true);
 
         $values = array();
@@ -172,17 +192,20 @@ class Welcome extends Cf_Controller {
         $repairedSeries = array();
         $notKeptSeries = array();
         $nodataSeries = array();
-        foreach ($convertedData as $key => $graphData) {
+        foreach ($convertedData as $key => $graphData)
+        {
             $nodata = (isset($graphData['nodata'])) ? $graphData['nodata'] : 0;
             $values[] = array('label' => $graphData['title'],
                 'values' => array($graphData['kept'], $graphData['repaired'], $graphData['notkept'], $nodata));
 
 // track the count parameter
 // because we cannot directly pass the custom data in barChart of infovis
-            if (isset($graphData['count'])) {
+            if (isset($graphData['count']))
+            {
                 $count[$graphData['start']] = $graphData['count'];
             }
-            if (isset($graphData['start'])) {
+            if (isset($graphData['start']))
+            {
                 $start[$graphData['title']] = $graphData['start'];
             }
 
@@ -203,17 +226,20 @@ class Welcome extends Cf_Controller {
 
 
         // these are two extra parameters that has to be accessible in the bar chart graph
-        if (is_array($count) && !empty($count)) {
+        if (is_array($count) && !empty($count))
+        {
             $data['graphSeries']['count'] = json_encode($count);
         }
 
-        if (is_array($start) && !empty($start)) {
+        if (is_array($start) && !empty($start))
+        {
             $data['graphSeries']['start'] = json_encode($start);
         }
         return $data;
     }
 
-    function _convert_summary_compliance_graph($rawData) {
+    function _convert_summary_compliance_graph($rawData)
+    {
         $convertedData = json_decode($rawData, true);
 
         $values = array();
@@ -221,17 +247,20 @@ class Welcome extends Cf_Controller {
         $labels = array('kept', 'repaired', 'not kept', 'no data');
         $count = array(); // for keeping tracks of each count
         $start = array(); // the timestamp passed of each node starttime.
-        foreach ($convertedData as $key => $graphData) {
+        foreach ($convertedData as $key => $graphData)
+        {
             $nodata = (isset($graphData['nodata'])) ? $graphData['nodata'] : 0;
             $values[] = array('label' => $graphData['title'],
                 'values' => array($graphData['kept'], $graphData['repaired'], $graphData['notkept'], $nodata));
 
 // track the count parameter
 // because we cannot directly pass the custom data in barChart of infovis
-            if (isset($graphData['count'])) {
+            if (isset($graphData['count']))
+            {
                 $count[$graphData['title']] = $graphData['count'];
             }
-            if (isset($graphData['start'])) {
+            if (isset($graphData['start']))
+            {
                 $start[$graphData['title']] = $graphData['start'];
             }
         }
@@ -241,11 +270,13 @@ class Welcome extends Cf_Controller {
         $data['graphSeries']['values'] = json_encode($values);
 
         // these are two extra parameters that has to be accessible in the bar chart graph
-        if (is_array($count) && !empty($count)) {
+        if (is_array($count) && !empty($count))
+        {
             $data['graphSeries']['count'] = json_encode($count);
         }
 
-        if (is_array($start) && !empty($start)) {
+        if (is_array($start) && !empty($start))
+        {
             $data['graphSeries']['start'] = json_encode($start);
         }
         return $data;
@@ -255,7 +286,8 @@ class Welcome extends Cf_Controller {
      * returns JSON data object for compliance summary graph
      * @param <type> $env environment for the comliance summary graph
      */
-    function getJsonComplianceSummary($env=NULL) {
+    function getJsonComplianceSummary($env = NULL)
+    {
         $cdata = cfpr_compliance_summary_graph($env);
         $convertedData = json_decode($cdata, true);
         $labels = array('kept', 'repaired', 'not kept', 'no data');
@@ -265,17 +297,20 @@ class Welcome extends Cf_Controller {
         $repairedSeries = array();
         $notKeptSeries = array();
         $nodataSeries = array();
-        foreach ($convertedData as $key => $graphData) {
+        foreach ($convertedData as $key => $graphData)
+        {
             $nodata = (isset($graphData['nodata'])) ? $graphData['nodata'] : 0;
             $values[] = array('label' => $graphData['title'],
                 'values' => array($graphData['kept'], $graphData['repaired'], $graphData['notkept'], $nodata));
 
             // track the count parameter
             // because we cannot directly pass the custom data in barChart of infovis
-            if (isset($graphData['count'])) {
+            if (isset($graphData['count']))
+            {
                 $count[$graphData['start']] = $graphData['count'];
             }
-            if (isset($graphData['start'])) {
+            if (isset($graphData['start']))
+            {
                 $start[$graphData['title']] = $graphData['start'];
             }
 
@@ -310,13 +345,17 @@ class Welcome extends Cf_Controller {
         return;
     }
 
-    function workingNotes() {
+    function workingNotes()
+    {
         $this->load->library('userdata');
         $params = $this->uri->uri_to_assoc(3);
         $rows = isset($params['rows']) ? $params['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : $this->setting_lib->get_no_of_rows());
-        if (is_numeric($rows)) {
+        if (is_numeric($rows))
+        {
             $rows = (int) $rows;
-        } else {
+        }
+        else
+        {
             $rows = 20;
         }
         $page = isset($params['page']) ? intval($params['page'], 10) : 1;
@@ -335,7 +374,8 @@ class Welcome extends Cf_Controller {
         $this->template->load('template', 'notes/view_working_on_notes', $data);
     }
 
-    function planning() {
+    function planning()
+    {
 
         $bc = array(
             'title' => $this->lang->line('breadcrumb_planning'),
@@ -361,7 +401,8 @@ class Welcome extends Cf_Controller {
         $this->template->load('template', 'planning', $data);
     }
 
-    function goals() {
+    function goals()
+    {
         $bc = array(
             'title' => $this->lang->line('breadcrumb_goals'),
             'url' => 'welcome/goals',
@@ -388,39 +429,45 @@ class Welcome extends Cf_Controller {
         $this->load->library(array('cf_table'));
         $getparams = $this->uri->uri_to_assoc(4);
         $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : $this->setting_lib->get_no_of_rows());
-        if (!is_numeric($rows)) {
+        if (!is_numeric($rows))
+        {
             $rows = 20;
         }
         $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
-        $includes =  isset($getparams['includes']) ? explode(',', urldecode($getparams['includes'])) : array('.*');
-        $excludes =  isset($getparams['excludes']) ? explode(',', urldecode($getparams['excludes'])) : array('');
-        
-        try{
-            switch ($colour) {
+        $includes = isset($getparams['includes']) ? explode(',', urldecode($getparams['includes'])) : array('.*');
+        $excludes = isset($getparams['excludes']) ? explode(',', urldecode($getparams['excludes'])) : array('');
+
+        try
+        {
+            switch ($colour)
+            {
                 case "red":
-                    $result = $this->host_model->getHostByColor('red',$this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
+                    $result = $this->host_model->getHostByColor('red', $this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
                     break;
                 case "green":
-                    $result = $this->host_model->getHostByColor('green',$this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
+                    $result = $this->host_model->getHostByColor('green', $this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
                     break;
                 case "yellow":
-                    $result = $this->host_model->getHostByColor('yellow',$this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
+                    $result = $this->host_model->getHostByColor('yellow', $this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
                     break;
                 case "blue":
-                    $result = $this->host_model->getHostByColor('blue',$this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
+                    $result = $this->host_model->getHostByColor('blue', $this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
                     break;
                 case "black":
-                    $result = $this->host_model->getHostByColor('black',$this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
+                    $result = $this->host_model->getHostByColor('black', $this->session->userdata('username'), $includes, $excludes, $rows, $page_number);
                     break;
             }
-        }catch(Exception $e){
+        }
+        catch (Exception $e)
+        {
 
-              show_error($e->getMessage(),500);
+            show_error($e->getMessage(), 500);
         }
 
         $table = "";
         $count = $result['meta']['count'];
-        if ($count > 0) {
+        if ($count > 0)
+        {
             //foreach ($result as $cols) {
             //array_push($columns, img(array('src' => 'images/' . $type . '.png', 'class' => 'align')) . anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'));
             //array_push($columns,anchor('welcome/host/' . $cols['key'], $cols['id'], 'class="imglabel"'));
@@ -444,35 +491,43 @@ class Welcome extends Cf_Controller {
             'current' => $page_number,
             'number_of_rows' => $rows,
             'count' => $count,
-            'params'=>  get_parameters_without_paging($getparams)
+            'params' => get_parameters_without_paging($getparams)
         );
         $this->template->load('template', 'hosts', $data);
     }
 
-    function host($hostkey=NULL) {
+    function host($hostkey = NULL)
+    {
         $hostkey_tobe_deleted = $this->input->post('delhost');
-        $username=$this->session->userdata('username');
+        $username = $this->session->userdata('username');
         $getparams = $this->uri->uri_to_assoc(3);
         $this->load->model('note_model');
 
-        try {
-            if ($hostkey_tobe_deleted) {
-                $this->host_model->deleteHost($username,$hostkey_tobe_deleted);
+        try
+        {
+            if ($hostkey_tobe_deleted)
+            {
+                $this->host_model->deleteHost($username, $hostkey_tobe_deleted);
             }
-            if (key_exists('delhost', $getparams)) {
-                $this->host_model->deleteHost($username,$getparams['delhost']);
+            if (key_exists('delhost', $getparams))
+            {
+                $this->host_model->deleteHost($username, $getparams['delhost']);
             }
-        } catch (Exception $e) {
-            show_error($e->getMessage(),500);
+        }
+        catch (Exception $e)
+        {
+            show_error($e->getMessage(), 500);
         }
 
 
-        if (key_exists('type', $getparams)) {
+        if (key_exists('type', $getparams))
+        {
             redirect('welcome/hosts/' . $getparams['type']);
         }
 
 
-        if ($hostkey == NULL) {
+        if ($hostkey == NULL)
+        {
             redirect('engineering');
             return;
         }
@@ -495,47 +550,52 @@ class Welcome extends Cf_Controller {
         );
         $this->breadcrumb->setBreadCrumb($bc);
 
-        if (is_null($hostkey)) {
+        if (is_null($hostkey))
+        {
 
             $hostkey = isset($_POST['hostkey']) ? $_POST['hostkey'] : "none";
         }
         $username = isset($_POST['username']) ? $_POST['username'] : "";
         $comment_text = isset($_POST['comment_text']) ? $_POST['comment_text'] : "";
         //$reports = json_decode(cfpr_select_reports(null));
-        try{
-        $hostname = $this->host_model->getHostName($this->session->userdata('username'),$hostkey);
-        $ipaddr = $this->host_model->getHostIp($this->session->userdata('username'),$hostkey);;
+        try
+        {
+            $hostname = $this->host_model->getHostName($this->session->userdata('username'), $hostkey);
+            $ipaddr = $this->host_model->getHostIp($this->session->userdata('username'), $hostkey);
+            ;
 
-        $is_commented = trim($this->note_model->hasNotes($hostkey));
-        $op = isset($_POST['op']) ? $_POST['op'] : "";
+            $is_commented = trim($this->note_model->hasNotes($hostkey));
+            $op = isset($_POST['op']) ? $_POST['op'] : "";
 
-        $tempvar=explode("=", $hostkey);
-        $hostclass="PK_SHA_".$tempvar[1];
+            $tempvar = explode("=", $hostkey);
+            $hostclass = "PK_SHA_" . $tempvar[1];
 
-        $data = array(
-            'hostkey'=>$hostkey,
-            'hostclass' => $hostclass,
-            'title' => $this->lang->line('mission_portal_title') . " - host " . $ipaddr,
-            'hostname' => $hostname,
-            'ipaddr' => $ipaddr,
-            'is_commented' => $is_commented,
-            'op' => $op,
-            'breadcrumbs' => $this->breadcrumblist->display(),
-            'last' => $this->host_model->getLastUpdate($this->session->userdata('username'),$hostkey),
-            'class' => $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "sys", "ostype"),
-            'flavour' => $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "sys", "flavour"),
-            'rel' => $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "sys", "release"),
-            'load' => $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "mon", "av_loadavg"),
-            'free' => $this->host_model->getHostVariable($this->session->userdata('username'),$hostkey, "mon", "av_diskfree"),
-            'speed' => $this->host_model->getNetWorkSpeed($this->session->userdata('username'), $hostkey),
-            'colour' => $this->host_model->getHostColor($this->session->userdata('username'),$hostkey),
-            'tableData'=>$this->report_model->getPromisesNotKeptSummary($this->session->userdata('username'), $hostkey, NULL, ".*", NULL, NULL, array(), array(),NULL,NULL)
-        );
-        }catch(Exception $e){
-          show_error($e->getMessage(), 500);
+            $data = array(
+                'hostkey' => $hostkey,
+                'hostclass' => $hostclass,
+                'title' => $this->lang->line('mission_portal_title') . " - host " . $ipaddr,
+                'hostname' => $hostname,
+                'ipaddr' => $ipaddr,
+                'is_commented' => $is_commented,
+                'op' => $op,
+                'breadcrumbs' => $this->breadcrumblist->display(),
+                'last' => $this->host_model->getLastUpdate($this->session->userdata('username'), $hostkey),
+                'class' => $this->host_model->getHostVariable($this->session->userdata('username'), $hostkey, "sys", "ostype"),
+                'flavour' => $this->host_model->getHostVariable($this->session->userdata('username'), $hostkey, "sys", "flavour"),
+                'rel' => $this->host_model->getHostVariable($this->session->userdata('username'), $hostkey, "sys", "release"),
+                'load' => $this->host_model->getHostVariable($this->session->userdata('username'), $hostkey, "mon", "av_loadavg"),
+                'free' => $this->host_model->getHostVariable($this->session->userdata('username'), $hostkey, "mon", "av_diskfree"),
+                'speed' => $this->host_model->getNetWorkSpeed($this->session->userdata('username'), $hostkey),
+                'colour' => $this->host_model->getHostColor($this->session->userdata('username'), $hostkey),
+                'tableData' => $this->report_model->getPromisesNotKeptSummary($this->session->userdata('username'), $hostkey, NULL, ".*", NULL, NULL, array(), array(), NULL, NULL)
+            );
+        }
+        catch (Exception $e)
+        {
+            show_error($e->getMessage(), 500);
         }
 
-        $gdata = cfpr_host_meter($this->session->userdata('username'),$hostkey);
+        $gdata = cfpr_host_meter($this->session->userdata('username'), $hostkey);
 
         $returnedData = $this->_convert_summary_compliance_graph($gdata);
         $data = array_merge($data, $returnedData);
@@ -543,7 +603,8 @@ class Welcome extends Cf_Controller {
         $this->template->load('template', 'host', $data);
     }
 
-    function weakest_host() {
+    function weakest_host()
+    {
 
         $requiredjs = array(
             array('jit/jit-yc.js'),
@@ -558,9 +619,12 @@ class Welcome extends Cf_Controller {
 
         $getparams = $this->uri->uri_to_assoc(3);
         $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : $this->setting_lib->get_no_of_rows());
-        if (is_numeric($rows)) {
+        if (is_numeric($rows))
+        {
             $rows = (int) $rows;
-        } else {
+        }
+        else
+        {
             $rows = 20;
         }
         $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
@@ -571,17 +635,22 @@ class Welcome extends Cf_Controller {
         );
         $this->breadcrumb->setBreadCrumb($bc);
 
-        try{
-        $ret = $this->host_model->getComplianceList($this->session->userdata('username'),$rows,$page_number);
-        if (is_array($ret)) {
-            foreach ($ret['data'] as $index => $val) {
-                $rawData = cfpr_host_meter($this->session->userdata('username'),$val['key']);
-                $graphData = $this->_convert_summary_compliance_graph($rawData);
-                $ret['data'][$index] = array_merge($ret['data'][$index], $graphData);
+        try
+        {
+            $ret = $this->host_model->getComplianceList($this->session->userdata('username'), $rows, $page_number);
+            if (is_array($ret))
+            {
+                foreach ($ret['data'] as $index => $val)
+                {
+                    $rawData = cfpr_host_meter($this->session->userdata('username'), $val['key']);
+                    $graphData = $this->_convert_summary_compliance_graph($rawData);
+                    $ret['data'][$index] = array_merge($ret['data'][$index], $graphData);
+                }
             }
         }
-        }catch(Exception $e){
-            show_error($e->getMessage(),500);
+        catch (Exception $e)
+        {
+            show_error($e->getMessage(), 500);
         }
 
         $data = array(
@@ -594,7 +663,8 @@ class Welcome extends Cf_Controller {
         $this->template->load('template', 'topN', $data);
     }
 
-    function services() {
+    function services()
+    {
         $bc = array(
             'title' => $this->lang->line('breadcrumb_service_catalogue'),
             'url' => 'welcome/services',
@@ -611,7 +681,8 @@ class Welcome extends Cf_Controller {
         $this->template->load('template', 'services', $data);
     }
 
-    function license() {
+    function license()
+    {
         $this->carabiner->js('/widgets/licensemeter.js');
         $bc = array(
             'title' => $this->lang->line('breadcrumb_license'),
@@ -620,24 +691,31 @@ class Welcome extends Cf_Controller {
         );
 
         $this->breadcrumb->setBreadCrumb($bc);
-        try {
+        try
+        {
             $expirydate = strtotime(cfpr_getlicense_expiry());
             $startDate = cfpr_getlicense_installtime();
             //echo date('D F d h:m:s Y',cfpr_getlicense_installtime())."\n";
             $datediff = $expirydate - $startDate;
-            if($datediff>0){
-            $totaldays = floor($datediff / (60 * 60 * 24));
-            $dayspassed = floor((time() - $startDate) / (60 * 60 * 24));
-            $pbarvalue = "";
-                if (!($totaldays < 0)) {
+            if ($datediff > 0)
+            {
+                $totaldays = floor($datediff / (60 * 60 * 24));
+                $dayspassed = floor((time() - $startDate) / (60 * 60 * 24));
+                $pbarvalue = "";
+                if (!($totaldays < 0))
+                {
                     $pbarvalue = floor(($dayspassed / $totaldays) * 100);
                 }
-            $daysleft= $totaldays - $dayspassed;
-            }else{
-                $pbarvalue=100;
-                $daysleft=0;
+                $daysleft = $totaldays - $dayspassed;
             }
-        } catch (Exception $e) {
+            else
+            {
+                $pbarvalue = 100;
+                $daysleft = 0;
+            }
+        }
+        catch (Exception $e)
+        {
             log_message('license error:' . $e->getMessage());
         }
 
@@ -655,7 +733,8 @@ class Welcome extends Cf_Controller {
         $this->template->load('template', 'license', $data);
     }
 
-    function classes($key = NULL) {
+    function classes($key = NULL)
+    {
         $bc = array(
             'title' => $this->lang->line('breadcrumb_classes'),
             'url' => 'welcome/classes/' . $key,
@@ -669,32 +748,36 @@ class Welcome extends Cf_Controller {
         $host = NULL;
         $addr = NULL;
         $tago = 0;
-      try{
-           $data = array(
-            'title_header' => "classes",
-            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_classes'),
-            'ret' => json_decode(cfpr_report_classes($hostkey, $name, $regex, NULL, NULL, "last-seen", true, 1000, 1), true),
-            'breadcrumbs' => $this->breadcrumblist->display(),
-            'hostname' => $this->host_model->getHostName($this->session->userdata('username'),$hostkey)
-        );
+        try
+        {
+            $data = array(
+                'title_header' => "classes",
+                'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_classes'),
+                'ret' => json_decode(cfpr_report_classes($hostkey, $name, $regex, NULL, NULL, "last-seen", true, 1000, 1), true),
+                'breadcrumbs' => $this->breadcrumblist->display(),
+                'hostname' => $this->host_model->getHostName($this->session->userdata('username'), $hostkey)
+            );
             $this->template->load('template', 'classes', $data);
-       }catch(Exception $e){
-         show_error($e->getMessage(),500);
-       }
+        }
+        catch (Exception $e)
+        {
+            show_error($e->getMessage(), 500);
+        }
     }
 
-    function cfeditor() {
+    function cfeditor()
+    {
         redirect('/cfeditor/');
     }
 
-
-    function search() {
+    function search()
+    {
         $params = $this->uri->uri_to_assoc(3);
         redirect('/search/' . $this->uri->assoc_to_uri($params));
     }
 
-
-    function body() {
+    function body()
+    {
         $this->carabiner->css('tabs-custom.css');
         $getparams = $this->uri->uri_to_assoc(3);
         $body = isset($getparams['body']) ? $getparams['body'] : $this->input->post('search');
@@ -703,11 +786,11 @@ class Welcome extends Cf_Controller {
         $this->load->library('cf_table');
 
         $data = array(
-            'title'       => $this->lang->line('mission_portal_title') . " - Promise Body ",
-            'status'      => "current",
-            'allbodies'   => json_decode(utf8_encode(cfpr_body_list($type, ".*")), TRUE),
-            'def'         => json_decode(utf8_encode(cfpr_body_details($type, $body)), TRUE),
-            'type'        => $type,
+            'title' => $this->lang->line('mission_portal_title') . " - Promise Body ",
+            'status' => "current",
+            'allbodies' => json_decode(utf8_encode(cfpr_body_list($type, ".*")), TRUE),
+            'def' => json_decode(utf8_encode(cfpr_body_details($type, $body)), TRUE),
+            'type' => $type,
             'breadcrumbs' => $this->breadcrumblist->display()
         );
         $this->template->load('template', 'body', $data);

@@ -43,7 +43,7 @@ class Summaryreports extends Cf_Controller
         $time = isset($getparams['time']) ? urldecode($getparams['time']) : $this->input->post('time', true);
 
         $breadcrumbs_url = "";
-        $result = cfpr_report_overall_summary($this->username,$host, $handle, $state, $regex, $classRegex);
+        $result = cfpr_report_overall_summary($this->username, $host, $handle, $state, $regex, $classRegex);
         if (count($getparams) > 0)
         {
             foreach ($getparams as $key => $value)

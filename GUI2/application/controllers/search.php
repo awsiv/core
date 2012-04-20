@@ -1,8 +1,9 @@
 <?php
 
-class Search extends Cf_Controller {
+class Search extends Cf_Controller
+{
 
-private $filter_view_mappings=array();
+    private $filter_view_mappings = array();
 
     function Search()
     {
@@ -17,28 +18,27 @@ private $filter_view_mappings=array();
         $this->carabiner->css('contextfinder.css');
 
 
-        $this->filter_view_mappings=array(
-            'bundle-profile'=>'bundleprofile',
-            'business-value'=>'business_value_report',
-            'contexts'=>'class_profile',
-            'promise-compliance'=>'compliance_by_promise',
-            'compliance-summary'=>'summary_report',
-            'file-change-log'=>'file_change_log',
-            'file-change-diffs'=>'file_change_diffs',
-            'neighbors'=>'last_saw_hosts',
-            'patches-available'=>'patches_available',
-            'patches-installed'=>'patches_available',
-            'benchmarks'=>'performance',
-            'promises-repaired-log'=>'promises_repaired_log',
-            'promises-repaired-summary'=>'promises_repaired_log',
-            'promises-not-kept-summary'=>'promises_not_kept',
-            'promises-not-kept-log'=>'promises_not_kept',
-            'setuid-programs'=>'uid_gid_root_programs',
-            'software-installed'=>'software_installed',
-            'values'=>'variables',
-            'virtual-bundles'=>'virtualbundles'
+        $this->filter_view_mappings = array(
+            'bundle-profile' => 'bundleprofile',
+            'business-value' => 'business_value_report',
+            'contexts' => 'class_profile',
+            'promise-compliance' => 'compliance_by_promise',
+            'compliance-summary' => 'summary_report',
+            'file-change-log' => 'file_change_log',
+            'file-change-diffs' => 'file_change_diffs',
+            'neighbors' => 'last_saw_hosts',
+            'patches-available' => 'patches_available',
+            'patches-installed' => 'patches_available',
+            'benchmarks' => 'performance',
+            'promises-repaired-log' => 'promises_repaired_log',
+            'promises-repaired-summary' => 'promises_repaired_log',
+            'promises-not-kept-summary' => 'promises_not_kept',
+            'promises-not-kept-log' => 'promises_not_kept',
+            'setuid-programs' => 'uid_gid_root_programs',
+            'software-installed' => 'software_installed',
+            'values' => 'variables',
+            'virtual-bundles' => 'virtualbundles'
         );
-
     }
 
     /**
@@ -86,7 +86,8 @@ private $filter_view_mappings=array();
         }
     }
 
-    function _integrateSaveSearches() {
+    function _integrateSaveSearches()
+    {
         $this->load->model('search_save_model');
 
         $username = $this->session->userdata('username');
@@ -98,17 +99,17 @@ private $filter_view_mappings=array();
 
         $result = $this->search_save_model->get_all_search($filter);
 
-         /* group by report type */
+        /* group by report type */
         $group = array();
-        foreach ($result as $obj) {
+        foreach ($result as $obj)
+        {
             $title = $obj->getReportType();
             $group[$title][] = $obj;
         }
 
         return $group;
-
-
     }
+
     /**
      * function to generate reports menu
      */
@@ -144,15 +145,16 @@ private $filter_view_mappings=array();
         $fromEmail = ($fromEmail) ? $fromEmail : '';
 
         $getparams = $this->uri->uri_to_assoc(3);
-        $search = isset($getparams['search'])? $getparams['search']:($this->input->post('search')?$this->input->post('search'):NULL);
+        $search = isset($getparams['search']) ? $getparams['search'] : ($this->input->post('search') ? $this->input->post('search') : NULL);
         $hostkey = "";
         $many = "";
 
-        $report_type = isset($getparams['report']) ? urldecode($getparams['report']) : ($this->input->post('report')?urldecode($this->input->post('report')):NULL);
-        if(!$report_type){
-         redirect('engineering');
+        $report_type = isset($getparams['report']) ? urldecode($getparams['report']) : ($this->input->post('report') ? urldecode($this->input->post('report')) : NULL);
+        if (!$report_type)
+        {
+            redirect('engineering');
         }
-        $host = isset($getparams['host']) ? urldecode(trim($getparams['host'])) : ($this->input->post('host')?trim($this->input->post('host')):NULL);
+        $host = isset($getparams['host']) ? urldecode(trim($getparams['host'])) : ($this->input->post('host') ? trim($this->input->post('host')) : NULL);
         $class_regex = isset($getparams['class_regex']) ? urldecode($getparams['class_regex']) : $this->input->post('class_regex');
         $hosts_only = isset($getparams['hosts_only']) ? $getparams['hosts_only'] : $this->input->post('hosts_only');
 
@@ -175,7 +177,8 @@ private $filter_view_mappings=array();
 
         //necessary for search result view
         //must use site_url for making bread crumbs work
-        if ($host == "All") {
+        if ($host == "All")
+        {
             $hostkey = NULL;
         }
         elseif ($host != "")
@@ -245,32 +248,35 @@ private $filter_view_mappings=array();
             $paramArray[$index] = urldecode($value);
         }
 
-        try{
-        $data = array(
-            'report_type' => $report_type,
-            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
-            'report_title' => $this->report_model->getReportTitle($report_type),
-            'breadcrumbs' => $this->breadcrumblist->display(),
-            'current' => $page_number,
-            'number_of_rows' => $rows,
-            'params' => $params,
-            'paramArray' => $paramArray,
-            'classregex' => $class_regex,
-            'hostfinderparams' => $hostfinderparams,
-            'breadCrumbUrl' => isset($breadcrumbs_url) ? $breadcrumbs_url : '',
-            'hostname' => $hostname,
-            'hostkey' => $hostkey,
-            'resultView' => $hosts_only?'search_result_group':'default_result_view',
-            'fromEmail' => $fromEmail,
-            'reports_menu'=>$this->__reports_menu(),
-            'saved_search_menu' => $this->_integrateSaveSearches(),
-            'report_category'=>$this->report_model->getReportCategory($report_type),
-            'filter_view'=>$this->filter_view_mappings[$report_type],
-            'hostcount'=>$this->host_model->getHostCount($username,NULL,explode(',', $incList), explode(',', $exList)),
-            'incList' => $incList,
-            'exList'  => $exList
-        );
-        }catch(Exception $e){
+        try
+        {
+            $data = array(
+                'report_type' => $report_type,
+                'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
+                'report_title' => $this->report_model->getReportTitle($report_type),
+                'breadcrumbs' => $this->breadcrumblist->display(),
+                'current' => $page_number,
+                'number_of_rows' => $rows,
+                'params' => $params,
+                'paramArray' => $paramArray,
+                'classregex' => $class_regex,
+                'hostfinderparams' => $hostfinderparams,
+                'breadCrumbUrl' => isset($breadcrumbs_url) ? $breadcrumbs_url : '',
+                'hostname' => $hostname,
+                'hostkey' => $hostkey,
+                'resultView' => $hosts_only ? 'search_result_group' : 'default_result_view',
+                'fromEmail' => $fromEmail,
+                'reports_menu' => $this->__reports_menu(),
+                'saved_search_menu' => $this->_integrateSaveSearches(),
+                'report_category' => $this->report_model->getReportCategory($report_type),
+                'filter_view' => $this->filter_view_mappings[$report_type],
+                'hostcount' => $this->host_model->getHostCount($username, NULL, explode(',', $incList), explode(',', $exList)),
+                'incList' => $incList,
+                'exList' => $exList
+            );
+        }
+        catch (Exception $e)
+        {
             show_error($e->getMessage(), 500);
         }
 
@@ -291,138 +297,145 @@ private $filter_view_mappings=array();
         }
 
 
-     try{
-        switch ($report_type) {
-            case "bundle-profile":
-                    $name = isset($getparams['name']) ? urldecode($getparams['name']) : ($this->input->post('name')?urldecode($this->input->post('name')):NULL);
-                    if ($hosts_only) {
+        try
+        {
+            switch ($report_type)
+            {
+                case "bundle-profile":
+                    $name = isset($getparams['name']) ? urldecode($getparams['name']) : ($this->input->post('name') ? urldecode($this->input->post('name')) : NULL);
+                    if ($hosts_only)
+                    {
                         $data['report_result'] = $this->report_model->getHostWithBundles($username, $name, explode(',', $incList), explode(',', $exList), $rows, $page_number);
-                        } else {
-                        $data['report_result'] = $this->report_model->getBundleReport($username,$hostkey,$name,explode(',',$incList), explode(',',$exList),$rows, $page_number);
+                    }
+                    else
+                    {
+                        $data['report_result'] = $this->report_model->getBundleReport($username, $hostkey, $name, explode(',', $incList), explode(',', $exList), $rows, $page_number);
                     }
 
                     $pdfurlParams = array('type' => $report_type,
-                            'search' => $name,
-                            'inclist' =>$incList,
-                            'exlist'=>$exList,
-                            'hostkey' => $hostkey
+                        'search' => $name,
+                        'inclist' => $incList,
+                        'exlist' => $exList,
+                        'hostkey' => $hostkey
                     );
-                   $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                   $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                   $this->template->load('template', 'searchpages/businessresult', $data);
+                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $this->template->load('template', 'searchpages/businessresult', $data);
 
 
-                break;
-            case "business-value":
+                    break;
+                case "business-value":
                     $date = isset($getparams['date']) ? urldecode($getparams['date']) : urldecode($this->input->post('date'));
 
-                    if ($hosts_only) {
+                    if ($hosts_only)
+                    {
                         $data['report_result'] = $this->report_model->getHostsWithBusinessValue($username, $date, explode(',', $incList), explode(',', $exList), $rows, $page_number);
-                     }
+                    }
                     else
                     {
-                        $data['report_result']= $this->report_model->getBusinessValueReport($username, $hostkey, $date, explode(',',$incList), explode(',',$exList), $rows, $page_number);
+                        $data['report_result'] = $this->report_model->getBusinessValueReport($username, $hostkey, $date, explode(',', $incList), explode(',', $exList), $rows, $page_number);
                     }
-                      $pdfurlParams = array('type' => $report_type,
-                            'date' => $date,
-                            'inclist' =>$incList,
-                            'exlist'=>$exList,
-                        );
-                      $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                      $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                      $this->template->load('template', 'searchpages/businessresult', $data);
-                break;
-            case "contexts":
+                    $pdfurlParams = array('type' => $report_type,
+                        'date' => $date,
+                        'inclist' => $incList,
+                        'exlist' => $exList,
+                    );
+                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $this->template->load('template', 'searchpages/businessresult', $data);
+                    break;
+                case "contexts":
 
-                $name = isset($getparams['name']) ? urldecode($getparams['name']) : $this->input->post('name');
-                $data['report_result']=$this->report_model->getClassReport($username, $hostkey, $name, explode(',',$incList), explode(',',$exList), $rows , $page_number,$hosts_only);
+                    $name = isset($getparams['name']) ? urldecode($getparams['name']) : $this->input->post('name');
+                    $data['report_result'] = $this->report_model->getClassReport($username, $hostkey, $name, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
 
-                     $pdfurlParams = array('type' => $report_type,
-                            'inclist' =>$incList,
-                            'exlist'=>$exList,
-                            'search' => $name
-                        );
+                    $pdfurlParams = array('type' => $report_type,
+                        'inclist' => $incList,
+                        'exlist' => $exList,
+                        'search' => $name
+                    );
 
-                $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                $this->template->load('template', 'searchpages/businessresult', $data);
-                break;
+                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $this->template->load('template', 'searchpages/businessresult', $data);
+                    break;
 
 
-            case "promise-compliance":
+                case "promise-compliance":
 
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     $state = isset($getparams['state']) ? urldecode($getparams['state']) : urldecode($this->input->post('state'));
-                        $pdfurlParams = array('type' => $report_type,
-                            'inclist' =>$incList,
-                            'exlist'=>$exList,
-                            'search' => $name,
-                            'state' => $state
-                        );
+                    $pdfurlParams = array('type' => $report_type,
+                        'inclist' => $incList,
+                        'exlist' => $exList,
+                        'search' => $name,
+                        'state' => $state
+                    );
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                    $data['report_result']=$this->report_model->getPromiseCompliance($username, $hostkey, $name, $state, explode(',',$incList), explode(',',$exList), $rows, $page_number,$hosts_only);
+                    $data['report_result'] = $this->report_model->getPromiseCompliance($username, $hostkey, $name, $state, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
                     $this->template->load('template', 'searchpages/businessresult', $data);
-             break;
+                    break;
 
-            case "compliance-summary":
+                case "compliance-summary":
 
-                        $version = isset($getparams['version']) ? urldecode($getparams['version']) : urldecode($this->input->post('version'));
+                    $version = isset($getparams['version']) ? urldecode($getparams['version']) : urldecode($this->input->post('version'));
 
-                        $pdfurlParams = array('type' => $report_type,
-                            'inclist' =>$incList,
-                            'exlist'=>$exList,
-                            'hostkey' => $hostkey,
-                            'version' => $version
-                        );
-                        $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                        $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                        $data['report_result']= $this->report_model->getComplianceSummary($username, $hostkey, $version,explode(',',$incList), explode(',',$exList), $rows, $page_number,$hosts_only);
-                        $this->template->load('template', 'searchpages/businessresult', $data);
+                    $pdfurlParams = array('type' => $report_type,
+                        'inclist' => $incList,
+                        'exlist' => $exList,
+                        'hostkey' => $hostkey,
+                        'version' => $version
+                    );
+                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $data['report_result'] = $this->report_model->getComplianceSummary($username, $hostkey, $version, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
+                    $this->template->load('template', 'searchpages/businessresult', $data);
 
 
-                break;
-            case "file-change-log":
+                    break;
+                case "file-change-log":
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     $longterm_data = isset($getparams['long_term']) ? $getparams['long_term'] : $this->input->post('long_term');
-                        $pdfurlParams = array('type' => $report_type,
-                           'inclist' =>$incList,
-                            'exlist'=>$exList,
-                            'hostkey' => $hostkey,
-                            'search' => $name,
-                            'long_term' => $longterm_data
-                        );
+                    $pdfurlParams = array('type' => $report_type,
+                        'inclist' => $incList,
+                        'exlist' => $exList,
+                        'hostkey' => $hostkey,
+                        'search' => $name,
+                        'long_term' => $longterm_data
+                    );
 
-                        $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                        $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                        $data['report_result']=$this->report_model->getFileChangeLog($username, $hostkey, $name, explode(',',$incList), explode(',',$exList), $longterm_data, $rows , $page_number,$hosts_only);
-                        $this->template->load('template', 'searchpages/businessresult', $data);
-                break;
-            case "file-change-diffs":
-                if(!$hosts_only){
-                $data['resultView'] = 'filechangediff_result';
-                $data['nofix'] = true;
-                }
-                $cal = -1;
-                $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
-                $diff = isset($getparams['diff']) ? urldecode($getparams['diff']) : urldecode($this->input->post('diff'));
-                $longterm_data = isset($getparams['long_term']) ? $getparams['long_term'] : $this->input->post('long_term');
+                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $data['report_result'] = $this->report_model->getFileChangeLog($username, $hostkey, $name, explode(',', $incList), explode(',', $exList), $longterm_data, $rows, $page_number, $hosts_only);
+                    $this->template->load('template', 'searchpages/businessresult', $data);
+                    break;
+                case "file-change-diffs":
+                    if (!$hosts_only)
+                    {
+                        $data['resultView'] = 'filechangediff_result';
+                        $data['nofix'] = true;
+                    }
+                    $cal = -1;
+                    $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
+                    $diff = isset($getparams['diff']) ? urldecode($getparams['diff']) : urldecode($this->input->post('diff'));
+                    $longterm_data = isset($getparams['long_term']) ? $getparams['long_term'] : $this->input->post('long_term');
 
-                        $pdfurlParams = array('type' => $report_type,
-                            'inclist' =>$incList,
-                            'exlist'=>$exList,
-                            'diff' => $diff,
-                            'cal' => $cal,
-                            'search' => $name,
-                            'long_term' => $longterm_data
-                        );
+                    $pdfurlParams = array('type' => $report_type,
+                        'inclist' => $incList,
+                        'exlist' => $exList,
+                        'diff' => $diff,
+                        'cal' => $cal,
+                        'search' => $name,
+                        'long_term' => $longterm_data
+                    );
 
-                        $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                        $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                        $data['report_result']=$this->report_model->getFileChangeDiff($username, $hostkey, $name, $diff, $cal, explode(',',$incList), explode(',',$exList), $longterm_data, $rows, $page_number,$hosts_only);
-                        $this->template->load('template', 'searchpages/businessresult', $data);
-                break;
-            case "neighbors":
+                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $data['report_result'] = $this->report_model->getFileChangeDiff($username, $hostkey, $name, $diff, $cal, explode(',', $incList), explode(',', $exList), $longterm_data, $rows, $page_number, $hosts_only);
+                    $this->template->load('template', 'searchpages/businessresult', $data);
+                    break;
+                case "neighbors":
 
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     $address = isset($getparams['address']) ? urldecode($getparams['address']) : urldecode($this->input->post('address'));
@@ -431,192 +444,193 @@ private $filter_view_mappings=array();
 
                     $ago = $ago == 0 ? -1 : $ago;
 
-                        $pdfurlParams = array('type' => $report_type,
-                            'inclist' =>$incList,
-                            'exlist'=>$exList,
-                            'key' => $key,
-                            'address' => $address,
-                            'ago' => $ago,
-                            'search' => $name
-                        );
+                    $pdfurlParams = array('type' => $report_type,
+                        'inclist' => $incList,
+                        'exlist' => $exList,
+                        'key' => $key,
+                        'address' => $address,
+                        'ago' => $ago,
+                        'search' => $name
+                    );
 
 
-                        $data['report_result'] =$this->report_model->getLastSeenReport($username, $hostkey, $key, $name, $address, $ago, explode(',',$incList), explode(',',$exList), $rows , $page_number,$hosts_only);
-                        $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                        $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                        $this->template->load('template', 'searchpages/businessresult', $data);
+                    $data['report_result'] = $this->report_model->getLastSeenReport($username, $hostkey, $key, $name, $address, $ago, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
+                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $this->template->load('template', 'searchpages/businessresult', $data);
 
-                break;
-            case "patches-available":
+                    break;
+                case "patches-available":
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     $version = isset($getparams['version']) ? urldecode($getparams['version']) : urldecode($this->input->post('version'));
                     $arch = isset($getparams['arch']) ? urldecode($getparams['arch']) : urldecode($this->input->post('arch'));
 
-                        $pdfurlParams = array('type' => $report_type,
-                           'inclist' =>$incList,
-                            'exlist'=>$exList,
-                            'version' => $version,
-                            'arch' => $arch,
-                            'search' => $name
-                        );
+                    $pdfurlParams = array('type' => $report_type,
+                        'inclist' => $incList,
+                        'exlist' => $exList,
+                        'version' => $version,
+                        'arch' => $arch,
+                        'search' => $name
+                    );
 
 
-                        $data['report_result']=$this->report_model->getPatchesAvailable($username, $hostkey, $name, $version, $arch, explode(',',$incList), explode(',',$exList), $rows , $page_number,$hosts_only);
-                        $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                        $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                        $this->template->load('template', 'searchpages/businessresult', $data);
-                break;
-            case "patches-installed":
-
-                    $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
-                    $version = isset($getparams['version']) ? urldecode($getparams['version']) : urldecode($this->input->post('version'));
-                    $arch = isset($getparams['arch']) ? urldecode($getparams['arch']) : urldecode($this->input->post('arch'));
-
-                        $pdfurlParams = array('type' => $report_type,
-                            'inclist' =>$incList,
-                            'exlist'=>$exList,
-                            'version' => $version,
-                            'arch' => $arch,
-                            'search' => $name
-                        );
-
-                        $data['report_result']= $this->report_model->getPatchesInstalled($username, $hostkey, $name, $version, $arch, explode(',',$incList), explode(',',$exList), $rows, $page_number, $hosts_only);
-                        $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                        $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                        $this->template->load('template', 'searchpages/businessresult', $data);
-
-                break;
-            case "benchmarks":
-                    $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
-
-                        $pdfurlParams = array('type' => $report_type,
-                            'inclist' =>$incList,
-                            'exlist'=>$exList,
-                            'search' => $name,
-                            );
-                        $pdfurlParams = array_map('urlencode', $pdfurlParams);
-                        //$data['report_result'] = cfpr_report_performance($username, NULL, $name, true, explode(',',$incList), explode(',',$exList), "last-performed", true, $rows, $page_number);
-                        $data['report_result']=$this->report_model->getPerformance($username, $hostkey, $name, explode(',',$incList), explode(',',$exList), $rows , $page_number,$hosts_only);
-                        $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                        $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                        $this->template->load('template', 'searchpages/businessresult', $data);
-
-                break;
-            case "promises-repaired-log":
-            case "promises-repaired-summary":
-
-                $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
-                $from = isset($getparams['from']) ? urldecode($getparams['from']) : $this->input->post('from');
-                $to = isset($getparams['to']) ? urldecode($getparams['to']) : $this->input->post('to');
-                $cause_rx = isset($getparams['cause']) ? $getparams['cause'] : $this->input->post('cause');
-                $cause_rx = $cause_rx===false?".*":$cause_rx;
-                        $pdfurlParams = array('type' => $report_type,
-                            'inclist' =>$incList,
-                            'exlist'=>$exList,
-                            'search' => $name,
-                            'from' => $from,
-                            'to' => $to,
-                            'cause' => $cause_rx
-                        );
-
-                        if ($report_type == "promises-repaired-log")
-                              $data['report_result']=$this->report_model->getPromisesRepairedLog($username, $hostkey, $name, $cause_rx, $from, $to, explode(',',$incList), explode(',',$exList), $rows, $page_number, $hosts_only);
-                        if ($report_type == "promises-repaired-summary")
-                              $data['report_result']= $this->report_model->getPromisesRepairedSummary($username, $hostkey, $name, $cause_rx, $from, $to, explode(',',$incList), explode(',',$exList), $rows , $page_number, $hosts_only);
-
-                        $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                        $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                        $this->template->load('template', 'searchpages/businessresult', $data);
-
-                break;
-            case "promises-not-kept-summary":
-            case "promises-not-kept-log":
-                $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
-                $from = isset($getparams['from']) ? urldecode($getparams['from']) : $this->input->post('from');
-                $to = isset($getparams['to']) ? urldecode($getparams['to']) : $this->input->post('to');
-                $cause_rx = isset($getparams['cause']) ? $getparams['cause'] : $this->input->post('cause');
-                $cause_rx = $cause_rx===false?".*":$cause_rx;
-
-                        if ($report_type == "promises-not-kept-summary")
-                             $data['report_result']= $this->report_model->getPromisesNotKeptSummary($username, $hostkey, $name, $cause_rx, $from, $to, explode(',',$incList), explode(',',$exList), $rows, $page_number, $hosts_only);
-                       if ($report_type == "promises-not-kept-log")
-                             $data['report_result']=$this->report_model->getPromisesNotKeptLog($username, $hostkey, $name, $cause_rx, $from, $to, explode(',',$incList), explode(',',$exList), $rows, $page_number, $hosts_only);
-                        $pdfurlParams = array('type' => $report_type,
-                            'inclist' =>$incList,
-                            'exlist'=>$exList,
-                            'search' => $name,
-                            'from' => $from,
-                            'to' => $to,
-                            'cause' => $cause_rx
-                        );
-
-
-                        $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                        $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email' . $from . '/to/' . $to);
-                        $this->template->load('template', 'searchpages/businessresult', $data);
-                break;
-            case "setuid-programs":
-
-                    $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
-                        $pdfurlParams = array('type' => $report_type , # changed / into -
-                           'inclist' =>$incList,
-                           'exlist'=>$exList,
-                            'search' => $name
-                        );
-
-                        $data['report_result']= $this->report_model->getReportSetUid($username, $hostkey, $name, explode(',',$incList), explode(',',$exList), $rows, $page_number,$hosts_only);
-                        $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                        $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                        $this->template->load('template', 'searchpages/businessresult', $data);
-                break;
-            case "software-installed":
+                    $data['report_result'] = $this->report_model->getPatchesAvailable($username, $hostkey, $name, $version, $arch, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
+                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $this->template->load('template', 'searchpages/businessresult', $data);
+                    break;
+                case "patches-installed":
 
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     $version = isset($getparams['version']) ? urldecode($getparams['version']) : urldecode($this->input->post('version'));
                     $arch = isset($getparams['arch']) ? urldecode($getparams['arch']) : urldecode($this->input->post('arch'));
 
-                        $pdfurlParams = array('type' => $report_type,
-                            'inclist' =>$incList,
-                            'exlist'=>$exList,
-                            'version' => $version,
-                            'arch' => $arch,
-                            'search' => $name
-                        );
+                    $pdfurlParams = array('type' => $report_type,
+                        'inclist' => $incList,
+                        'exlist' => $exList,
+                        'version' => $version,
+                        'arch' => $arch,
+                        'search' => $name
+                    );
 
-                        $data['report_result']=$this->report_model->getSoftwareInstalled($username, $hostkey, $name, $version, $arch, explode(',',$incList), explode(',',$exList), $rows, $page_number, $hosts_only);
-                        $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                        $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                        $this->template->load('template', 'searchpages/businessresult', $data);
+                    $data['report_result'] = $this->report_model->getPatchesInstalled($username, $hostkey, $name, $version, $arch, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
+                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $this->template->load('template', 'searchpages/businessresult', $data);
 
-                break;
-            case "values":
-                if(!$hosts_only){
-                $data['resultView'] = 'variable_result';
-                }
+                    break;
+                case "benchmarks":
+                    $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
+
+                    $pdfurlParams = array('type' => $report_type,
+                        'inclist' => $incList,
+                        'exlist' => $exList,
+                        'search' => $name,
+                    );
+                    $pdfurlParams = array_map('urlencode', $pdfurlParams);
+                    //$data['report_result'] = cfpr_report_performance($username, NULL, $name, true, explode(',',$incList), explode(',',$exList), "last-performed", true, $rows, $page_number);
+                    $data['report_result'] = $this->report_model->getPerformance($username, $hostkey, $name, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
+                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $this->template->load('template', 'searchpages/businessresult', $data);
+
+                    break;
+                case "promises-repaired-log":
+                case "promises-repaired-summary":
+
+                    $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
+                    $from = isset($getparams['from']) ? urldecode($getparams['from']) : $this->input->post('from');
+                    $to = isset($getparams['to']) ? urldecode($getparams['to']) : $this->input->post('to');
+                    $cause_rx = isset($getparams['cause']) ? $getparams['cause'] : $this->input->post('cause');
+                    $cause_rx = $cause_rx === false ? ".*" : $cause_rx;
+                    $pdfurlParams = array('type' => $report_type,
+                        'inclist' => $incList,
+                        'exlist' => $exList,
+                        'search' => $name,
+                        'from' => $from,
+                        'to' => $to,
+                        'cause' => $cause_rx
+                    );
+
+                    if ($report_type == "promises-repaired-log")
+                        $data['report_result'] = $this->report_model->getPromisesRepairedLog($username, $hostkey, $name, $cause_rx, $from, $to, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
+                    if ($report_type == "promises-repaired-summary")
+                        $data['report_result'] = $this->report_model->getPromisesRepairedSummary($username, $hostkey, $name, $cause_rx, $from, $to, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
+
+                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $this->template->load('template', 'searchpages/businessresult', $data);
+
+                    break;
+                case "promises-not-kept-summary":
+                case "promises-not-kept-log":
+                    $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
+                    $from = isset($getparams['from']) ? urldecode($getparams['from']) : $this->input->post('from');
+                    $to = isset($getparams['to']) ? urldecode($getparams['to']) : $this->input->post('to');
+                    $cause_rx = isset($getparams['cause']) ? $getparams['cause'] : $this->input->post('cause');
+                    $cause_rx = $cause_rx === false ? ".*" : $cause_rx;
+
+                    if ($report_type == "promises-not-kept-summary")
+                        $data['report_result'] = $this->report_model->getPromisesNotKeptSummary($username, $hostkey, $name, $cause_rx, $from, $to, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
+                    if ($report_type == "promises-not-kept-log")
+                        $data['report_result'] = $this->report_model->getPromisesNotKeptLog($username, $hostkey, $name, $cause_rx, $from, $to, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
+                    $pdfurlParams = array('type' => $report_type,
+                        'inclist' => $incList,
+                        'exlist' => $exList,
+                        'search' => $name,
+                        'from' => $from,
+                        'to' => $to,
+                        'cause' => $cause_rx
+                    );
+
+
+                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email' . $from . '/to/' . $to);
+                    $this->template->load('template', 'searchpages/businessresult', $data);
+                    break;
+                case "setuid-programs":
+
+                    $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
+                    $pdfurlParams = array('type' => $report_type, # changed / into -
+                        'inclist' => $incList,
+                        'exlist' => $exList,
+                        'search' => $name
+                    );
+
+                    $data['report_result'] = $this->report_model->getReportSetUid($username, $hostkey, $name, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
+                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $this->template->load('template', 'searchpages/businessresult', $data);
+                    break;
+                case "software-installed":
+
+                    $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
+                    $version = isset($getparams['version']) ? urldecode($getparams['version']) : urldecode($this->input->post('version'));
+                    $arch = isset($getparams['arch']) ? urldecode($getparams['arch']) : urldecode($this->input->post('arch'));
+
+                    $pdfurlParams = array('type' => $report_type,
+                        'inclist' => $incList,
+                        'exlist' => $exList,
+                        'version' => $version,
+                        'arch' => $arch,
+                        'search' => $name
+                    );
+
+                    $data['report_result'] = $this->report_model->getSoftwareInstalled($username, $hostkey, $name, $version, $arch, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
+                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $this->template->load('template', 'searchpages/businessresult', $data);
+
+                    break;
+                case "values":
+                    if (!$hosts_only)
+                    {
+                        $data['resultView'] = 'variable_result';
+                    }
 
                     $scope = isset($getparams['scope']) ? urldecode($getparams['scope']) : urldecode($this->input->post('scope'));
                     $lval = isset($getparams['lval']) ? urldecode($getparams['lval']) : urldecode($this->input->post('lval'));
                     $rval = isset($getparams['rval']) ? urldecode($getparams['rval']) : urldecode($this->input->post('rval'));
                     $type = isset($getparams['type']) ? urldecode($getparams['type']) : urldecode($this->input->post('type'));
 
-                        $pdfurlParams = array('type' => $report_type,
-                            'inclist' =>$incList,
-                            'exlist'=>$exList,
-                            'scope' => $scope,
-                            'lval' => $lval,
-                            'rval' => $rval,
-                            'var_type' => $type
-                        );
+                    $pdfurlParams = array('type' => $report_type,
+                        'inclist' => $incList,
+                        'exlist' => $exList,
+                        'scope' => $scope,
+                        'lval' => $lval,
+                        'rval' => $rval,
+                        'var_type' => $type
+                    );
 
-                        $data['report_result']=$this->report_model->getVariablesReport($username, $hostkey, $scope, $lval, $rval, $type,explode(',',$incList), explode(',',$exList), $rows , $page_number,$hosts_only);
-                        $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                        $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                        $this->template->load('template', 'searchpages/businessresult', $data);
+                    $data['report_result'] = $this->report_model->getVariablesReport($username, $hostkey, $scope, $lval, $rval, $type, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
+                    $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
+                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
+                    $this->template->load('template', 'searchpages/businessresult', $data);
 
-                break;
+                    break;
 
-            case "virtual-bundles":
-                $allUsers = isset($getparams['all_user']) ? urldecode($getparams['all_user']) : urldecode($this->input->post('all_user'));
+                case "virtual-bundles":
+                    $allUsers = isset($getparams['all_user']) ? urldecode($getparams['all_user']) : urldecode($this->input->post('all_user'));
 
                     $username = (trim($allUsers) == '') ? $this->session->userdata('username') : null;
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
@@ -636,26 +650,29 @@ private $filter_view_mappings=array();
 
 
 
-            default:
-                $this->template->load('template', 'searchpages/nodata', $data);
+                default:
+                    $this->template->load('template', 'searchpages/nodata', $data);
+            }
         }
-     }
-     catch(Exception $e){
-      show_error($e->getMessage(), 500);
-     }
-  }
+        catch (Exception $e)
+        {
+            show_error($e->getMessage(), 500);
+        }
+    }
 
-    function filterSearchView() {
+    function filterSearchView()
+    {
         $getparams = $this->uri->uri_to_assoc(3);
-        $report_id = isset($getparams['report']) ? urldecode($getparams['report']) : ($this->input->post('report')?urldecode($this->input->post('report')):NULL);
+        $report_id = isset($getparams['report']) ? urldecode($getparams['report']) : ($this->input->post('report') ? urldecode($this->input->post('report')) : NULL);
 
         $paramArray = array_merge($getparams, $_POST);
         $paramArray['report'] = $report_id; // we need this for the ajax queries
-        foreach ($paramArray as $index => $value) {
+        foreach ($paramArray as $index => $value)
+        {
             $paramArray[$index] = urldecode($value);
         }
 
-        $data=array('report_type'=> $report_id, 'paramArray' => $paramArray);
+        $data = array('report_type' => $report_id, 'paramArray' => $paramArray);
         if (isset($this->filter_view_mappings[$report_id]))
         {
             $filename = $this->filter_view_mappings[$report_id] . ".php";
@@ -673,7 +690,5 @@ private $filter_view_mappings=array();
             show_error_custom("View not found", 400);
         }
     }
-
-
 
 }

@@ -1,8 +1,10 @@
 <?php
 
-class Cfeditor extends Cf_Controller {
+class Cfeditor extends Cf_Controller
+{
 
-    function Cfeditor() {
+    function Cfeditor()
+    {
         parent::__construct();
         $this->load->library('jcryption');
         $this->load->model('repository_model');
@@ -11,26 +13,30 @@ class Cfeditor extends Cf_Controller {
         //session_start();
     }
 
-    function index() {
+    function index()
+    {
         $working_dir = get_policiesdir() . $this->session->userdata('username');
         $params = array(
             'workingdir' => $working_dir
         );
         $this->load->model('repository_model');
         $this->load->library('cfsvn', $params);
-        try {
+        try
+        {
             $rev = $this->cfsvn->get_working_revision();
             $current_repo = $this->cfsvn->get_current_repository();
             $total_approvals = $this->repository_model->get_total_approval_count($current_repo);
             $data = array(
-                'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('policy_editor'),
+                'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('policy_editor'),
                 'revision' => $rev,
                 'total_approvals' => $total_approvals,
                 'curreny_repo' => $current_repo
             );
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             $data = array(
-                'title' => $this->lang->line('mission_portal_title')." - ".$this->lang->line('policy_editor'),
+                'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('policy_editor'),
                 'revision' => $this->lang->line('revision_not_knowne'),
                 'total_approvals' => $this->lang->line('approvals_not_known'),
                 'curreny_repo' => $this->lang->line('repo_not_known')
@@ -43,11 +49,14 @@ class Cfeditor extends Cf_Controller {
     }
 
     //controller function to see if the session have been previously checked out or not
-    function is_checked_out() {
-        if (file_exists(get_policiesdir() . $this->session->userdata('username') . '/')) {
+    function is_checked_out()
+    {
+        if (file_exists(get_policiesdir() . $this->session->userdata('username') . '/'))
+        {
             $files = scandir(get_policiesdir() . $this->session->userdata('username') . '/');
             natcasesort($files);
-            if (count($files) > 2) {
+            if (count($files) > 2)
+            {
                 $checked = true;
             }
         }
@@ -55,25 +64,32 @@ class Cfeditor extends Cf_Controller {
         return;
     }
 
-    function get_list() {
+    function get_list()
+    {
         $path = $this->input->post('dir') ? $this->input->post('dir') : get_policiesdir() . $this->session->userdata('username') . '/';
         $inconttext = basename($path);
         echo "<ul class=\"jqueryFileTree\">";
-        if (file_exists($path)) {
+        if (file_exists($path))
+        {
             $files = scandir($path);
             natcasesort($files);
-            if (count($files) > 2) {
+            if (count($files) > 2)
+            {
                 // All dirs
-                foreach ($files as $file) {
-                    if (file_exists($path . $file) && $file != '.' && $file != '..' && $file != '.svn' && is_dir($path . $file)) {
+                foreach ($files as $file)
+                {
+                    if (file_exists($path . $file) && $file != '.' && $file != '..' && $file != '.svn' && is_dir($path . $file))
+                    {
                         echo "<li id=\"$inconttext\" class=\"directory collapsed\"><a href=\"#\" rel=\"" . htmlentities($path . $file) . "/\">" . htmlentities($file) . "</a></li>";
                     }
                 }
                 // All files
                 // All files
                 $i = 1;
-                foreach ($files as $file) {
-                    if (file_exists($path . $file) && $file != '.' && $file != '..' && !is_dir($path . $file)) {
+                foreach ($files as $file)
+                {
+                    if (file_exists($path . $file) && $file != '.' && $file != '..' && !is_dir($path . $file))
+                    {
                         $ext = preg_replace('/^.*\./', '', $file);
                         echo "<li class=\"file ext_$ext\"><a href=\"#\" rel=\"" . htmlentities($path . $file) . "\" id=\"$inconttext" . "_policy_" . $i . "\">" . htmlentities($file) . "</a></li>";
                         $i++;
@@ -85,13 +101,15 @@ class Cfeditor extends Cf_Controller {
     }
 
     //function for clearing the files in working directory as effect of double checkout
-    function clear_dir() {
+    function clear_dir()
+    {
         $this->load->helper('directory');
         $ret = deleteAll(get_policiesdir() . $this->session->userdata('username') . '/', true);
         echo $ret;
     }
 
-    function get_keys() {
+    function get_keys()
+    {
         $keyLength = 256;
         $keys = $this->jcryption->generateKeypair($keyLength);
         $_SESSION["e"] = array("int" => $keys["e"], "hex" => $this->jcryption->dec2string($keys["e"], 16));
@@ -102,7 +120,8 @@ class Cfeditor extends Cf_Controller {
     }
 
     //controller function to handle the check out
-    function checkout() {
+    function checkout()
+    {
         $password = $this->jcryption->decrypt($this->input->post('passwd'), $_SESSION["d"]["int"], $_SESSION["n"]["int"]);
         $params = array(
             'username' => $this->input->post('user'),
@@ -112,39 +131,50 @@ class Cfeditor extends Cf_Controller {
         );
         $this->load->library('cfsvn', $params);
         $data = array();
-        try {
+        try
+        {
             $data = $this->cfsvn->cfsvn_checkout();
             //if check out was sucessfull
-            if ($data['status']) {
+            if ($data['status'])
+            {
                 $data['total_approvals'] = $this->repository_model->get_total_approval_count($this->input->post('repo'));
                 $this->repository_model->insert_svn_log($this->session->userdata('username'), $this->input->post('repo'), $data['rev'], 'checkout');
             }
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             $data['status'] = false;
             $data['message'] = $e->getMessage();
-            log_message("Error", $e->getMessage()." ".$e->getFile()." line:".$e->getLine());
+            log_message("Error", $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
         }
         echo json_encode($data);
     }
 
-    function commit() {
+    function commit()
+    {
         $data = "";
         $currentUser = $this->session->userdata('username');
         $working_dir = get_policiesdir() . $this->session->userdata('username');
         $this->load->library('cfsvn', array('workingdir' => $working_dir));
 
-        try {
+        try
+        {
             $current_repo = $this->cfsvn->get_current_repository();
             $obj = $this->repository_model->get_specific_repository($currentUser, $current_repo);
-            if ($obj != NULL) {
+            if ($obj != NULL)
+            {
                 $info = array('userId' => $obj->userId, 'password' => $obj->password);
                 $username = $obj->username;
-                if ($this->settings_model->app_settings_get_item('mode') != 'database') {
+                if ($this->settings_model->app_settings_get_item('mode') != 'database')
+                {
                     $password = $this->repository_model->decrypt_password($info, $this->session->userdata('pwd'));
-                } else {
+                }
+                else
+                {
                     $password = $this->repository_model->decrypt_password($info);
                 }
-                if (!$this->input->post('file')) {
+                if (!$this->input->post('file'))
+                {
                     $working_dir = $working_dir . '/' . $this->input->post('file');
                 }
                 $params = array(
@@ -155,41 +185,55 @@ class Cfeditor extends Cf_Controller {
                 $this->cfsvn->addcredentials($params);
                 $cdetails = $this->cfsvn->cfsvn_commit($this->input->post('comments'));
                 //on sucessfull commit of files make a record in data base svnlogs [revision,date,username] in cdetails
-                if (is_array($cdetails) && $cdetails[0] > 0) {
+                if (is_array($cdetails) && $cdetails[0] > 0)
+                {
                     $this->repository_model->insert_svn_log($this->session->userdata('username'), $current_repo, $cdetails[0], 'commit');
                     $data = array('status' => true, 'rev' => $cdetails[0]);
-                } else {
+                }
+                else
+                {
                     $data = array('status' => false, 'message' => $this->lang->line('not_comitted_no_changes'));
                 }
-            }else{
-                 log_message("Error", $e->getMessage()." ".$e->getFile()." line:".$e->getLine());
-                 $data = array('status' => false, 'message' => $this->input->post('file') . $this->lang->line('single_file_commit_fail'));
             }
-        } catch (Exception $e) {
+            else
+            {
+                log_message("Error", $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+                $data = array('status' => false, 'message' => $this->input->post('file') . $this->lang->line('single_file_commit_fail'));
+            }
+        }
+        catch (Exception $e)
+        {
             $data = array('status' => false, 'message' => $e->getMessage());
         }
         //$password=$this->jcryption->decrypt($this->input->post('passwd'),$_SESSION["d"]["int"],$_SESSION["n"]["int"]);
         // echo json_encode ($cdetails);
-        if ($data == "") {
+        if ($data == "")
+        {
             $data = array('status' => false, 'message' => $this->input->post('file') . $this->lang->line('single_file_commit_fail'));
         }
         echo json_encode($data);
     }
 
-    function update() {
+    function update()
+    {
         $data = "";
         $currentUser = $this->session->userdata('username');
         $this->load->library('cfsvn', array('workingdir' => get_policiesdir() . $this->session->userdata('username')));
-        try {
+        try
+        {
             $current_repo = $this->cfsvn->get_current_repository();
             $obj = $this->repository_model->get_specific_repository($currentUser, $current_repo);
-            if ($obj != NULL) {
+            if ($obj != NULL)
+            {
 
                 $info = array('userId' => $obj->userId, 'password' => $obj->password);
                 $username = $obj->username;
-                if ($this->settings_model->app_settings_get_item('mode') != 'database') {
+                if ($this->settings_model->app_settings_get_item('mode') != 'database')
+                {
                     $password = $this->repository_model->decrypt_password($info, $this->session->userdata('pwd'));
-                } else {
+                }
+                else
+                {
                     $password = $this->repository_model->decrypt_password($info);
                 }
                 $params = array(
@@ -203,38 +247,49 @@ class Cfeditor extends Cf_Controller {
                 $current_repo = $this->cfsvn->get_current_repository();
                 $total_approvals = $this->repository_model->get_total_approval_count($current_repo);
                 //make a entry in svn log records in our db
-                if ($cdetails) {
+                if ($cdetails)
+                {
                     $this->repository_model->insert_svn_log($this->session->userdata('username'), $current_repo, $cdetails, 'update');
                 }
                 $data = array('status' => true, 'rev' => $cdetails, 'total_approvals' => $total_approvals);
-            }else{
-                $data = array('status' => false, 'message' => $this->lang->line('svn_update_no_user')." ".$currentUser); 
-                log_message("Error", $this->lang->line('svn_update_no_user')." ".$currentUser);
             }
-        } catch (Exception $e) {
+            else
+            {
+                $data = array('status' => false, 'message' => $this->lang->line('svn_update_no_user') . " " . $currentUser);
+                log_message("Error", $this->lang->line('svn_update_no_user') . " " . $currentUser);
+            }
+        }
+        catch (Exception $e)
+        {
             $data = array('status' => false, 'message' => $e->getMessage());
-            log_message("Error", $e->getMessage()." ".$e->getFile()." line:".$e->getLine());
+            log_message("Error", $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
         }
         echo json_encode($data);
     }
 
-    function svnlogs() {
+    function svnlogs()
+    {
         $no_of_records = 50;
         //$password=$this->jcryption->decrypt($this->input->post('passwd'),$_SESSION["d"]["int"],$_SESSION["n"]["int"]);
         $data = "";
         $currentUser = $this->session->userdata('username');
         $this->load->library('cfsvn', array('workingdir' => get_policiesdir() . $this->session->userdata('username')));
 
-        try {
+        try
+        {
             $current_repo = $this->cfsvn->get_current_repository();
             $obj = $this->repository_model->get_specific_repository($currentUser, $current_repo);
 
-            if ($obj != NULL) {
+            if ($obj != NULL)
+            {
                 $info = array('userId' => $obj->userId, 'password' => $obj->password);
                 $username = $obj->username;
-                if ($this->settings_model->app_settings_get_item('mode') != 'database') {
+                if ($this->settings_model->app_settings_get_item('mode') != 'database')
+                {
                     $password = $this->repository_model->decrypt_password($info, $this->session->userdata('pwd'));
-                } else {
+                }
+                else
+                {
                     $password = $this->repository_model->decrypt_password($info);
                 }
 
@@ -248,11 +303,15 @@ class Cfeditor extends Cf_Controller {
                 $this->cfsvn->addcredentials($params);
                 $data = array('logs' => $this->cfsvn->cfsvn_log($no_of_records));
                 $this->load->view('cfeditor/svnlogs', $data);
-            }else{
-              log_message("Error", $e->getMessage()." ".$e->getFile()." line:".$e->getLine());
             }
-        } catch (Exception $e) {
-            log_message("Error", $e->getMessage()." ".$e->getFile()." line:".$e->getLine());
+            else
+            {
+                log_message("Error", $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            }
+        }
+        catch (Exception $e)
+        {
+            log_message("Error", $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
             echo $e->getMessage();
         }
 
@@ -264,7 +323,8 @@ class Cfeditor extends Cf_Controller {
         //echo json_encode ($logs);
     }
 
-    function get_contents() {
+    function get_contents()
+    {
         $file_path = $this->input->post('file_path');
         $filename = basename($file_path);
         $contents = file_get_contents(realpath($file_path));
@@ -275,7 +335,8 @@ class Cfeditor extends Cf_Controller {
         echo json_encode($details);
     }
 
-    function compare_contents() {
+    function compare_contents()
+    {
         $status = "unchanged";
         //$file_path=get_policiesdir().$this->session->userdata('username').'/'.$this->input->post('file');
         $file_path = $this->input->post('file');
@@ -285,10 +346,12 @@ class Cfeditor extends Cf_Controller {
 //                $newcontents=str_replace('\\"', '"' , $newcontents);
         $newcontent = str_replace('&gt;', '>', $newcontents);
 
-        if ($this->input->post('agent') == 'webkit') {
+        if ($this->input->post('agent') == 'webkit')
+        {
             //$newcontents=substr($newcontents, 0, -3);
         }
-        if (strcmp($contents, $newcontents)) {
+        if (strcmp($contents, $newcontents))
+        {
             $status = "changed";
         }
         $data = array(
@@ -299,38 +362,53 @@ class Cfeditor extends Cf_Controller {
         echo json_encode($data);
     }
 
-    function save_contents() {
+    function save_contents()
+    {
         $working_dir = get_policiesdir() . $this->session->userdata('username');
-        if (!file_exists($working_dir)) {
+        if (!file_exists($working_dir))
+        {
             mkdir($working_dir, 0700);
         }
         //$filetobesaved=$working_dir.'/'.$this->input->post('file');
         $filetobesaved = $this->input->post('file');
-        if ($this->input->post('filestats') == 'new') {
+        if ($this->input->post('filestats') == 'new')
+        {
             $filetobesaved = $working_dir . '/' . $this->input->post('file');
         }
         $msg = "";
         $written = false;
-        if (file_exists($filetobesaved) && $this->input->post('filestats') == 'old') {
+        if (file_exists($filetobesaved) && $this->input->post('filestats') == 'old')
+        {
             //open file for writng and place pointer at the end
-            try {
+            try
+            {
                 $this->load->helper('directory');
                 $written = write_savefile($filetobesaved, $this->input->post('content'));
                 $msg = $this->lang->line('write_file_success');
-            } catch (Exception $e) {
+            }
+            catch (Exception $e)
+            {
                 $written = false;
                 $msg = $this->lang->line('write_file_error');
             }
-        } elseif (file_exists($filetobesaved) && $this->input->post('filestats') == 'new') {
-            $msg = $this->lang->line('same_file_exist')." <i>$filetobesaved</i>,";
-        } else {
-            try {
+        }
+        elseif (file_exists($filetobesaved) && $this->input->post('filestats') == 'new')
+        {
+            $msg = $this->lang->line('same_file_exist') . " <i>$filetobesaved</i>,";
+        }
+        else
+        {
+            try
+            {
                 $this->load->helper('directory');
                 $written = write_savefile($filetobesaved, $this->input->post('content'));
-                $msg = $this->lang->line('write_file_success');;
-            } catch (Exception $e) {
+                $msg = $this->lang->line('write_file_success');
+                ;
+            }
+            catch (Exception $e)
+            {
                 $written = false;
-                $msg =  $this->lang->line('write_file_error');
+                $msg = $this->lang->line('write_file_error');
             }
         }
         $details = array(
@@ -343,12 +421,13 @@ class Cfeditor extends Cf_Controller {
         echo json_encode($details);
     }
 
-    function check_syntax() {
+    function check_syntax()
+    {
         $path = get_policiesdir() . $this->session->userdata('username') . '/promises.cf';
         if (file_exists($path))
             $result = cfpr_validate_policy($path);
         else
-            $result = $this->lang-line('promise_file_not_exist');
+            $result = $this->lang - line('promise_file_not_exist');
         $details = array(
             'result' => $result
         );

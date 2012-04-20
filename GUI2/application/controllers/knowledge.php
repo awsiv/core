@@ -15,8 +15,8 @@ class Knowledge extends Cf_Controller
     }
 
     /**
-     * Checks if the current user has access to use the functionality 
-     * if rbac is ON and if the user is not admin then dont give them access to knowledge map 
+     * Checks if the current user has access to use the functionality
+     * if rbac is ON and if the user is not admin then dont give them access to knowledge map
      */
     function _checkAccess()
     {
@@ -175,12 +175,12 @@ class Knowledge extends Cf_Controller
 
             $data['topicHits'] = $this->knowledge_model->showTopicHits($this->username, $pid);
             //$data['topicLeads'] = $this->knowledge_model->showTopicLeads($this->username, $pid);
-            
+
             $data['topicDetail'] = $this->knowledge_model->showTopics($this->username, $pid);
-            
+
             $data['topicLeads'] = $this->knowledge_model->showTopicLeadsWithName($this->username, $data['topicDetail']['topic']);
-            
-            
+
+
             $data['topicCategory'] = $this->knowledge_model->showTopicCategory($this->username, $pid);
 
             $data['showLeads'] = (!is_array($data['topicLeads']) || empty($data['topicLeads'])) ? false : true;
@@ -222,7 +222,7 @@ class Knowledge extends Cf_Controller
 
         if ($topic)
         {
-            $search = "^".$topic."$";
+            $search = "^" . $topic . "$";
         }
 
 

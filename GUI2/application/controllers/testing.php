@@ -1,19 +1,24 @@
 <?php
 
-class Testing extends CI_Controller {
+class Testing extends CI_Controller
+{
+
     var $username = 'admin';
-    
-    function Testing() {
+
+    function Testing()
+    {
         parent::__construct();
         initializeHub();
         $this->load->library('mongo_db');
     }
-    
-    function index() {
-        
+
+    function index()
+    {
+
     }
 
-    function mongodbtest() {
+    function mongodbtest()
+    {
 
         $output = $this->mongo_db->insert('app_logs', array(
             // Server Info
@@ -32,7 +37,8 @@ class Testing extends CI_Controller {
         echo $output;
     }
 
-    function mongodbselect() {
+    function mongodbselect()
+    {
         $this->load->library('mongo_db');
 
         //$result=$this->mongo_db->get('users');
@@ -43,7 +49,8 @@ class Testing extends CI_Controller {
         //$result=$this->mongo_db->get('work_logs');
         //$result=$this->mongo_db->select(array('username'))->get_where('users',array('group'=>'admin'));
         //print_r($result) ;
-        foreach ($result as $docs) {
+        foreach ($result as $docs)
+        {
             //print_r($value)  ;
             $obj = (object) $docs;
             /* foreach/media/Work/working projects ($docs as $key => $value) {
@@ -64,7 +71,8 @@ class Testing extends CI_Controller {
         }
     }
 
-    function mongodbinput() {
+    function mongodbinput()
+    {
         $this->load->library('ion_auth');
         $this->load->model('ion_auth_model_mongo');
         $result1 = $this->ion_auth_model_mongo->register('admin', 'admin', ' ', array('admin'));
@@ -72,32 +80,37 @@ class Testing extends CI_Controller {
         echo $result1 . ' ' . $result2;
     }
 
-    function pwdtest() {
+    function pwdtest()
+    {
         $this->load->model('ion_auth_model_mongo');
         $hased = $this->ion_auth_model_mongo->hash_password_db('test', '2a70c656eb');
         echo $hased;
     }
 
-    function mongodbupdate() {
+    function mongodbupdate()
+    {
         $this->load->library('mongo_db');
         $this->mongo_db->where(array('_id' => new MongoId('4d36a0424a235a8024000000')));
         $result = $this->mongo_db->update('users', array('password' => 'password'));
         print_r($result);
     }
 
-    function mysqltest() {
+    function mysqltest()
+    {
         $this->load->database();
-        //$dbhandle = mysql_connect("localhost", "root", "") 
+        //$dbhandle = mysql_connect("localhost", "root", "")
         // or die("Unable to connect to MySQL");
         echo "Connected to MySQL<br>";
     }
 
-    function deleteonlineusers() {
+    function deleteonlineusers()
+    {
         $this->load->library('mongo_db');
         $this->mongo_db->delete('onlineusers');
     }
 
-    function logintest() {
+    function logintest()
+    {
         /* $this->load->config('ion_auth', TRUE);
           $this->identity_column = $this->config->item('identity', 'ion_auth');
           $this->load->library('mongo_db');
@@ -112,14 +125,16 @@ class Testing extends CI_Controller {
         echo $result;
     }
 
-    function isadmintest() {
+    function isadmintest()
+    {
         $this->load->library('ion_auth');
         $result = $this->ion_auth->login('administrator', 'password');
         if ($result)
             echo $this->ion_auth->is_admin();
     }
 
-    function get_users() {
+    function get_users()
+    {
         $this->load->library('ion_auth');
         //$user=$this->ion_auth->get_user('4d36a0424a235a8024000000');
         $result = $this->ion_auth->get_users_array();
@@ -128,13 +143,15 @@ class Testing extends CI_Controller {
         // print_r ($user->_id);
     }
 
-    function remove_user() {
+    function remove_user()
+    {
         $this->load->library('ion_auth');
         $result = $this->ion_auth->delete_user('4d3846c14a235a755f000008');
         print_r($result);
     }
 
-    function test_group() {
+    function test_group()
+    {
         $this->load->library('ion_auth');
         //$result=$this->ion_auth->create_group(array('name'=>'manager'));
         $result = $this->ion_auth->get_groups();
@@ -145,7 +162,8 @@ class Testing extends CI_Controller {
         print_r($result);
     }
 
-    function test_update() {
+    function test_update()
+    {
         $this->load->library('mongo_db');
         $this->mongo_db->where(array('group' => 'faculties'));
         $this->mongo_db->update('users', array('group.$' => "faculty"));
@@ -154,14 +172,16 @@ class Testing extends CI_Controller {
         print_r($result);
     }
 
-    function update_remove() {
+    function update_remove()
+    {
         $this->load->library('mongo_db');
         $this->mongo_db->where(array('group' => 'faculties'));
         $result = $this->mongo_db->update_remove_field('users', array('groups' => 1));
         print_r($result);
     }
 
-    function test_update_group() {
+    function test_update_group()
+    {
         $this->load->model('ion_auth_model_mongo');
         $this->load->library('ion_auth');
         //$result=$this->ion_auth->create_group(array('name'=>'manager'));
@@ -169,13 +189,15 @@ class Testing extends CI_Controller {
         //echo $result.$this->ion_auth->messages();
 
         $result = $this->ion_auth_model_mongo->get_group($group->_id != $id);
-        if ($result_id != '4d3b187a4a235a5366000015') {
+        if ($result_id != '4d3b187a4a235a5366000015')
+        {
             $this->ion_auth->set_error('group_creation_duplicate');
         }
         echo $this->ion_auth->errors();
     }
 
-    function test_login_remmembered() {
+    function test_login_remmembered()
+    {
         $this->load->helper('cookie');
         $this->load->library('mongo_db');
         $result = $this->mongo_db->select(array($this->identity_column, '_id', 'group'))
@@ -185,7 +207,8 @@ class Testing extends CI_Controller {
         print_r($result);
     }
 
-    function mail_test() {
+    function mail_test()
+    {
         $this->load->library('email');
         $this->email->from('Sudhir.Pandey@cfengine.com', 'cfengine');
         $this->email->to('sudhir2pandey@gmail.com');
@@ -198,7 +221,8 @@ class Testing extends CI_Controller {
         echo $this->email->print_debugger();
     }
 
-    function mongoextensiontest() {
+    function mongoextensiontest()
+    {
         $connection = new Mongo('localhost:27017');
         // Select a database
         $db = $connection->blog;
@@ -211,16 +235,19 @@ class Testing extends CI_Controller {
         print_r($result);
     }
 
-    function mongoclasstest() {
+    function mongoclasstest()
+    {
         $this->load->library('mongo_db');
     }
 
-    function test_json() {
+    function test_json()
+    {
         $string = cfpr_show_green_hosts("green");
         $jsonarr = json_decode($string, true);
         $host = array();
 
-        foreach ($jsonarr as $data) {
+        foreach ($jsonarr as $data)
+        {
             //array_push(&$keys,$data['key'])
             //array_push(&$names,$data['id'])
             $host[$data['key']] = $data['id'];
@@ -236,28 +263,33 @@ class Testing extends CI_Controller {
         print_r($host);
     }
 
-    function allhostjson() {
+    function allhostjson()
+    {
         $result = cfpr_select_reports(null);
         print_r(json_decode($result));
     }
 
-    function virtualdesktop() {
+    function virtualdesktop()
+    {
         $this->load->view('testviews/MUI_test/virtual_desktop');
     }
 
-    function loadreports() {
+    function loadreports()
+    {
         $this->load->helper('html');
         $this->load->view('testviews/MUI_test/reportslist');
     }
 
-    function jsondata() {
+    function jsondata()
+    {
         $reports = json_decode(cfpr_select_reports(null));
         $adjacencies = array();
         $rootnode = array("id" => "node0", "name" => "", "data" => array("\$type" => "none"));
         $control = array();
 
         $i = 1;
-        foreach ($reports as $report) {
+        foreach ($reports as $report)
+        {
             $node = array(
                 'nodeTo' => 'node' . $i,
                 'data' => array("\$type" => 'none')
@@ -269,7 +301,8 @@ class Testing extends CI_Controller {
         array_push($control, $rootnode);
 
         $i = 1;
-        foreach ($reports as $report) {
+        foreach ($reports as $report)
+        {
             $node_property = array(
                 'id' => 'node' . $i,
                 'name' => $report,
@@ -285,36 +318,45 @@ class Testing extends CI_Controller {
         //print_r(json_encode($control));
     }
 
-    function software_installed_autocomplete($column) {
+    function software_installed_autocomplete($column)
+    {
         $data = cfpr_report_software_in($this->username, NULL, NULL, NULL, NULL, true, NULL, NULL, NULL);
         $decoded_data = json_decode($data);
         $column_index = $decoded_data->meta->header->$column;
         $column = array();
-        foreach ($decoded_data->data as $rows) {
+        foreach ($decoded_data->data as $rows)
+        {
             array_push($column, $rows[$column_index]);
         }
         $unique_value = array_unique($column);
 
-        if (is_array($unique_value)) {
+        if (is_array($unique_value))
+        {
             $val = array_values($unique_value);
             echo json_encode($val);
-        } else {
+        }
+        else
+        {
             echo json_encode($unique_value);
         }
     }
 
-    function host_availabe() {
+    function host_availabe()
+    {
         $result = json_decode(cfpr_select_hosts("none", ".*", 100));
         $allhosts = array();
-        if (count($result) > 0) {
-            foreach ($result as $cols) {
+        if (count($result) > 0)
+        {
+            foreach ($result as $cols)
+            {
                 $allhosts[$cols->id] = $cols->key;
             }
         }
         print_r($allhosts);
     }
 
-    function newui() {
+    function newui()
+    {
         //$this->view->load('testviews/indexnew');
         $this->lang->load('cf_message');
         $this->load->library(array('breadcrumb', 'breadcrumblist'));
@@ -330,50 +372,61 @@ class Testing extends CI_Controller {
         $this->load->view('testviews/indexnew', $this->data);
     }
 
-    function filterhost() {
+    function filterhost()
+    {
         $this->load->view('testviews/test');
     }
 
-    function cfclasses() {
-        
+    function cfclasses()
+    {
+
         //$this->load->library('session');
         //$arr=json_decode(cfpr_class_cloud($this->session->userdata('lastclasslist')));
         echo cfpr_report_classes($this->username, NULL, NULL, true, NULL, NULL, NULL, NULL);
         ///echo json_encode($arr->classes);
     }
 
-    function listHost() {
+    function listHost()
+    {
 
         var_dump($_POST);
     }
 
-    function buildfilter($recentfilter) {
+    function buildfilter($recentfilter)
+    {
         //function call applying recent filter;
         $this->load->library('session');
         $listhost = "sds";
         $this->session->set_userdata('resulthostlist', $listhost);
-        if (is_set($this->session->userdata('resulthostlist'))) {
+        if (is_set($this->session->userdata('resulthostlist')))
+        {
             //function call
             $classes = "";
-        } else {
+        }
+        else
+        {
             //function call
             $classes = "";
         }
         return $classes;
     }
 
-    function classCloud() {
+    function classCloud()
+    {
         echo base_url() . '/logs/onlineusers.tmp';
     }
 
-    function goals() {
+    function goals()
+    {
         $goals = json_decode(cfpr_list_business_goals());
-        foreach ($goals as $goal) {
+        foreach ($goals as $goal)
+        {
             echo $goal->desc;
         }
     }
 
-    function license() {
+    function license()
+    {
         $expirydate = strtotime(cfpr_getlicense_expiry());
         $startDate = cfpr_getlicense_installtime();
         //echo date('D F d h:m:s Y',cfpr_getlicense_installtime())."\n";
@@ -388,23 +441,28 @@ class Testing extends CI_Controller {
         //echo $pbarvalue;
     }
 
-    function topn() {
+    function topn()
+    {
         print_r(json_decode(cfpr_host_compliance_list_all(10, 1), true));
     }
 
-    function bluehost() {
+    function bluehost()
+    {
         echo cfpr_show_blue_hosts(20, 1);
     }
 
-    function getonlineuserwork() {
+    function getonlineuserwork()
+    {
         $this->load->library('userdata');
         $users = getonlineusernames();
-        foreach ($users as $user) {
+        foreach ($users as $user)
+        {
             echo $user . ' : ' . $this->userdata->get_personal_working_log_latest($user) . '<br/>';
         }
     }
 
-    function insert_work() {
+    function insert_work()
+    {
         $this->load->library('userdata');
         //$this->userdata->insert_personal_working_log("working on test");
         //var_dump($this->userdata->get_personal_working_log_latest('sudhir'));
@@ -413,7 +471,8 @@ class Testing extends CI_Controller {
         var_dump($workinon);
     }
 
-    function svnstat() {
+    function svnstat()
+    {
         // echo svn_client_version();
         $status = svn_status('./policies/sudhir', SVN_ALL);
         //print_r(svn_status('./policies/sudhir',SVN_ALL));
@@ -423,25 +482,30 @@ class Testing extends CI_Controller {
           echo  $status[$i]['revision'];
           } */
         $modified_files = array();
-        foreach ($status as $file) {
-            if ($file['text_status'] == 8) {
+        foreach ($status as $file)
+        {
+            if ($file['text_status'] == 8)
+            {
                 array_push($modified_files, $file['name']);
             }
         }
         print_r($modified_files);
     }
 
-    function viewlogs() {
+    function viewlogs()
+    {
         $this->load->model('repository_model');
         var_dump($this->repository_model->get_svn_logs('https://c.cfengine.com/svn/sudhir'));
     }
 
-    function viewrev() {
+    function viewrev()
+    {
         $this->load->model('repository_model');
         var_dump($this->repository_model->get_revisions('https://c.cfengine.com/svn/sudhir'));
     }
 
-    function currepo() {
+    function currepo()
+    {
         $params = array(
             'workingdir' => get_policiesdir() . $this->session->userdata('username')
         );
@@ -449,7 +513,8 @@ class Testing extends CI_Controller {
         echo $this->cfsvn->get_current_repository();
     }
 
-    function currentversion() {
+    function currentversion()
+    {
         $params = array(
             'workingdir' => get_policiesdir() . $this->session->userdata('username')
         );
@@ -457,13 +522,15 @@ class Testing extends CI_Controller {
         echo $this->cfsvn->get_working_revision();
     }
 
-    function getapprovedpolicies() {
+    function getapprovedpolicies()
+    {
         $this->load->library('mongo_db');
         var_dump($this->mongo_db->get('approvedpolicies'));
         // var_dump($this->repository_model->get_all_approved_policies('https://c.cfengine.com/svn/sudhir'));
     }
 
-    function getapprovedpoliciescount() {
+    function getapprovedpoliciescount()
+    {
         $params = array(
             'workingdir' => get_policiesdir() . $this->session->userdata('username')
         );
@@ -473,10 +540,12 @@ class Testing extends CI_Controller {
         echo $this->repository_model->get_total_approval_count($current_repo);
     }
 
-    function svn_logs() {
+    function svn_logs()
+    {
 
         $this->load->model('repository_model');
-        try {
+        try
+        {
             $params = array(
                 'workingdir' => get_policiesdir() . $this->session->userdata('username')
             );
@@ -485,7 +554,8 @@ class Testing extends CI_Controller {
             $current_repo = $this->cfsvn->get_current_repository();
             $obj = $this->repository_model->get_specific_repository($currentUser, $current_repo);
 
-            if ($obj != NULL) {
+            if ($obj != NULL)
+            {
                 $info = array('userId' => $obj->userId, 'password' => $obj->password);
                 $username = $obj->username;
                 $password = $this->repository_model->decrypt_password($info);
@@ -500,12 +570,15 @@ class Testing extends CI_Controller {
             //var_dump($this->cfsvn->get_current_repository());
             // echo $this->cfsvn->get_current_repository();
             var_dump($this->cfsvn->cfsvn_log(10));
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             var_dump($e);
         }
     }
 
-    function vitals_week_test() {
+    function vitals_week_test()
+    {
         /* $ret_host = cfpr_vitals_list("SHA=38c5642ccb0dc74bc754aa1a63e81760869e1b3405bf9e43ad85c99822628e8e");
           echo $ret_host."/n";
           $ret_old=cfpr_performance_analysis("SHA=bec807800ab8c723adb027a97171ceffb2572738e492a2d5949f3dc82371400e");
@@ -521,17 +594,20 @@ class Testing extends CI_Controller {
         echo cfpr_vitals_view_week("SHA=bec807800ab8c723adb027a97171ceffb2572738e492a2d5949f3dc82371400e", "wwws_out") . "<br/>";
     }
 
-    function vitals_list_test() {
+    function vitals_list_test()
+    {
         $list = cfpr_vitals_list(NULL);
         echo $list;
         $newlist = json_decode($list, true);
         var_dump($newlist);
     }
 
-    function testcurl() {
+    function testcurl()
+    {
         $_data = array("name" => "sudhir", "login" => true);
         $data = array();
-        while (list($n, $v) = each($_data)) {
+        while (list($n, $v) = each($_data))
+        {
             $data[] = urlencode($n) . "=" . urlencode($v);
         }
         $data = implode('&', $data);
@@ -549,7 +625,8 @@ class Testing extends CI_Controller {
         curl_close($ch);
     }
 
-    function notifier_test() {
+    function notifier_test()
+    {
         $this->load->library('onlineUsers');
         $_data = array('event_loggedin' => true, 'ttlusr' => $this->onlineusers->total_users());
         $url = get_nodehost_from_server() . '/userloggedin';
@@ -557,7 +634,8 @@ class Testing extends CI_Controller {
         notifier($url, $_data);
     }
 
-    function get_keys() {
+    function get_keys()
+    {
         $this->load->model('repository_model');
         $currentUser = $this->session->userdata('username');
         echo "getting repositoriy info <br/>";
@@ -574,18 +652,23 @@ class Testing extends CI_Controller {
         echo $password;
     }
 
-    function version() {
+    function version()
+    {
         echo cfpr_enterprise_version();
     }
 
-    function timezoneset($offset) {
+    function timezoneset($offset)
+    {
         $offset = $offset * 60 * 60;
         $abbrarray = timezone_abbreviations_list();
-        foreach ($abbrarray as $abbr) {
+        foreach ($abbrarray as $abbr)
+        {
             //echo $abbr."<br>";
-            foreach ($abbr as $city) {
+            foreach ($abbr as $city)
+            {
                 //echo $city['offset']." $offset<br>";
-                if ($city['offset'] == $offset) { // remember to multiply $offset by -1 if you're getting it from js
+                if ($city['offset'] == $offset)
+                { // remember to multiply $offset by -1 if you're getting it from js
                     date_default_timezone_set($city['timezone_id']);
                     $data = date_default_timezone_get();
                     var_dump($data);
@@ -595,53 +678,65 @@ class Testing extends CI_Controller {
         }
     }
 
-    function testldap() {
+    function testldap()
+    {
         $this->load->library('Auth_Ldap');
         $result = $this->auth_ldap->login('sudhir', 'Cf3ng1n3');
-        if ($result) {
+        if ($result)
+        {
             print_r($result);
             echo "logged in";
-        } else {
+        }
+        else
+        {
             echo "not ";
         }
     }
 
-    function load_ldap_users() {
+    function load_ldap_users()
+    {
         $this->load->library('Auth_Ldap');
         //$values=$this->auth_ldap-> getallLdapUsers();
         $values = $this->auth_ldap->get_all_ldap_users('sudhir', 'Cf3ng1n3');
         print_r($values);
     }
 
-    function load_ldap_groups() {
+    function load_ldap_groups()
+    {
         $this->load->library('Auth_Ldap');
         //$values=$this->auth_ldap-> getallLdapUsers();
         $values = $this->auth_ldap->get_all_ldap_groups('sudhir', 'q1w2e3r4t5');
         print_r($values);
     }
 
-    function setting_get_item() {
+    function setting_get_item()
+    {
         $this->load->model('settings_model');
         var_dump($this->settings_model->get_app_settings());
     }
 
-    function test_cfpr_ldap() {
-        if (function_exists("cfpr_ldap_authenticate")) {
+    function test_cfpr_ldap()
+    {
+        if (function_exists("cfpr_ldap_authenticate"))
+        {
             //$result=cfpr_ldap_authenticate('ldaps://cf022osx.cfengine.com:636','uid=sudhir,cn=users,dc=cf022osx,dc=cfengine,dc=com','q1w2e3r4t5');
-            $result=cfpr_ldap_authenticate('ldap://10.0.0.152','uid=njoshi,ou=sales,dc=cfengine,dc=com','password');
+            $result = cfpr_ldap_authenticate('ldap://10.0.0.152', 'uid=njoshi,ou=sales,dc=cfengine,dc=com', 'password');
             //$result = cfpr_ldap_authenticate('ldap://10.0.0.35', 'sudhir@windows1.test.cfengine.com', 'Cf3ng1n3');
             var_dump($result);
         }
     }
 
-    function test_cfpr_ldap_attr() {
+    function test_cfpr_ldap_attr()
+    {
         //$result=cfpr_ldap_get_several_attributes("ldap://10.0.0.100","uid=sudhir,cn=users,dc=cf022osx,dc=cfengine,dc=com","cn=users,dc=cf022osx,dc=cfengine,dc=com","(|(objectClass=organizationalPerson)(objectClass=inetOrgPerson))","uid,mail,sn,altSecurityIdentities","subtree","sasl","q1w2e3r4t5","2",100);
         $result = cfpr_ldap_get_several_attributes("ldap://10.0.0.152", "uid=sudhir", "ou=people,dc=cfengine,dc=com", "(|(objectClass=organizationalPerson)(objectClass=inetOrgPerson))", "uid,cn,mail", "subtree", "sasl", "password", 1, 100);
         $users = json_decode($result, true);
         $ret = array();
-        foreach ($users['data'] as $user) {
+        foreach ($users['data'] as $user)
+        {
             $row = array();
-            foreach ($users['keys'] as $key => $value) {
+            foreach ($users['keys'] as $key => $value)
+            {
                 $row[$key] = $user[$value];
             }
             array_push($ret, $row);
@@ -649,17 +744,20 @@ class Testing extends CI_Controller {
         var_dump($ret);
     }
 
-    function test_cfpr_ldap_single_attr() {
+    function test_cfpr_ldap_single_attr()
+    {
         $result = cfpr_ldap_get_single_attribute_list("ldap://10.0.0.152", "uid=sudhir,ou=people,dc=cfengine,dc=com", "ou=people,dc=cfengine,dc=com", "(uid=sudhir)", "mail", "subtree", "sasl", "password", 1, 100);
         var_dump($result);
     }
-    
-    function test_cfpr_ldap_single_attr_ssl() {
+
+    function test_cfpr_ldap_single_attr_ssl()
+    {
         $result = cfpr_ldap_get_single_attribute_list("ldaps://10.0.0.100:636", "uid=sudhir,cn=users,dc=cf022osx,dc=cfengine,dc=com", "cn=users,dc=cf022osx,dc=cfengine,dc=com", "(uid=sudhir)", "cn", "subtree", "sasl", "q1w2e3r4t5", 1, 100);
         var_dump($result);
     }
 
-    function test_get_groups() {
+    function test_get_groups()
+    {
         $this->load->library('Auth_Ldap');
         //$values=$this->auth_ldap-> getallLdapUsers();
         $values = $this->auth_ldap->get_role_for_user('sudhir', 'Cf3ng1n3');
@@ -667,54 +765,51 @@ class Testing extends CI_Controller {
         //var_dump($result);
     }
 
-    function test_get_details_ldap_users() {
-        $result = cfpr_ldap_get_several_attributes("ldap://10.0.0.35", 
-                    "sudhir@windows1.test.cfengine.com", 
-                    "dc=windows1,dc=test,dc=cfengine,dc=com", 
-                    "(samaccountname=sudhir)", 
-                   "sAMAccountName,cn,distinguishedName",
-                   "subtree", "sasl", "Cf3ng1n3", 
-                 1, 100);
+    function test_get_details_ldap_users()
+    {
+        $result = cfpr_ldap_get_several_attributes("ldap://10.0.0.35", "sudhir@windows1.test.cfengine.com", "dc=windows1,dc=test,dc=cfengine,dc=com", "(samaccountname=sudhir)", "sAMAccountName,cn,distinguishedName", "subtree", "sasl", "Cf3ng1n3", 1, 100);
         /* $this->load->library('Auth_Ldap');
           $result=$this->auth_ldap->get_details_for_user('sudhir','Cf3ng1n3'); */
         var_dump($result);
     }
 
-    function test_get_all_adgroups() {
-        try{
-        $result = cfpr_ldap_get_several_attributes("ldaps://10.0.0.35:636", 
-                "sudhir@windows1.test.cfengine.com", 
-               // "CN=jon henrik,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com",
-                "dc=windows1,dc=test,dc=cfengine,dc=com", 
-                "(&(objectClass=user))", 
-                "sAMAccountName", "subtree", "sasl", "Cf3ng1n3", 1, 100);
-        var_dump($result);
+    function test_get_all_adgroups()
+    {
+        try
+        {
+            $result = cfpr_ldap_get_several_attributes("ldaps://10.0.0.35:636", "sudhir@windows1.test.cfengine.com",
+                    // "CN=jon henrik,CN=Users,DC=windows1,DC=test,DC=cfengine,DC=com",
+                    "dc=windows1,dc=test,dc=cfengine,dc=com", "(&(objectClass=user))", "sAMAccountName", "subtree", "sasl", "Cf3ng1n3", 1, 100);
+            var_dump($result);
         }
-        catch(Exception $e){
+        catch (Exception $e)
+        {
             echo $e->getMessage();
         }
     }
 
-    function test_get_all_ldapusers(){
-        try{
-            $result=cfpr_ldap_get_several_attributes("ldap://10.0.0.100",
-                     "uid=sudhir,cn=users,dc=cf022osx,dc=cfengine,dc=com",
-                     "dc=cf022osx,dc=cfengine,dc=com",
-                     "(|(objectClass=organizationalPerson)(objectClass=inetOrgPerson))",
-                     "uid,cn","subtree", "sasl", "q1w2e3r4t5", 1, 100);
+    function test_get_all_ldapusers()
+    {
+        try
+        {
+            $result = cfpr_ldap_get_several_attributes("ldap://10.0.0.100", "uid=sudhir,cn=users,dc=cf022osx,dc=cfengine,dc=com", "dc=cf022osx,dc=cfengine,dc=com", "(|(objectClass=organizationalPerson)(objectClass=inetOrgPerson))", "uid,cn", "subtree", "sasl", "q1w2e3r4t5", 1, 100);
             var_dump($result);
-             }catch(Exception $e){
-                  echo $e->getMessage();
+        }
+        catch (Exception $e)
+        {
+            echo $e->getMessage();
         }
     }
-    
-    function test_get_users_by_group() {
+
+    function test_get_users_by_group()
+    {
         $this->load->model('ion_auth_model_mongo');
         $result = $this->ion_auth_model_mongo->get_users_by_group('manager');
         var_dump($result);
     }
 
-    function newlogin() {
+    function newlogin()
+    {
         $this->load->helper('form');
         $data['lbl_identifier'] = 'Username';
         $data['identifier'] = array('name' => 'name',
@@ -728,31 +823,29 @@ class Testing extends CI_Controller {
         );
         $this->load->view('auth/loginnew', $data);
     }
-    
-    
+
     //constellation story test
-    function story_sample(){
+    function story_sample()
+    {
         $this->load->view('testviews/test');
     }
-    
-     function story_sample1() {
+
+    function story_sample1()
+    {
         $this->load->model('stories_model');
         $data['story'] = $this->stories_model->getStoryByName('webserver');
         $this->load->view('testviews/story', $data);
     }
-    
-    function testing_jsonempty(){
-        $json='[]';
-        $val=NULL;
-        $array=json_decode($json);
-        if($val===NULL){
-             var_dump($array);
+
+    function testing_jsonempty()
+    {
+        $json = '[]';
+        $val = NULL;
+        $array = json_decode($json);
+        if ($val === NULL)
+        {
+            var_dump($array);
         }
-      
     }
-    
-
-    
-
 
 }

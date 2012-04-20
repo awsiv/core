@@ -1,8 +1,10 @@
 <?php
 
-class Visual extends Cf_Controller {
+class Visual extends Cf_Controller
+{
 
-    function Visual() {
+    function Visual()
+    {
         parent::__construct();
         // inject the required js files
         $this->carabiner->js('flot/jquery.flot.js');
@@ -13,7 +15,8 @@ class Visual extends Cf_Controller {
         $this->load->model('vitals_model');
     }
 
-    function vital($hostkey = NULL) {
+    function vital($hostkey = NULL)
+    {
         $hostkey = isset($_POST['hostkey']) ? $_POST['hostkey'] : $hostkey;
         $username = $this->session->userdata('username');
 
@@ -30,16 +33,22 @@ class Visual extends Cf_Controller {
             'hostKey' => $hostkey
         );
 
-        if ($hostkey != 'none') {
+        if ($hostkey != 'none')
+        {
             $convertData = $this->vitals_model->getVitalsList($username, $hostkey);
-            if (is_array($convertData) && array_key_exists('obs', $convertData) && !empty($convertData['obs'])) {
+            if (is_array($convertData) && array_key_exists('obs', $convertData) && !empty($convertData['obs']))
+            {
                 $data['performanceData'] = $convertData;
                 $this->template->load('template', 'visualization/vital', $data);
-            } else {
+            }
+            else
+            {
                 $data['noDataMessage'] = "No data available for this host";
                 $this->template->load('template', '/visualization/nohost', $data);
             }
-        } else {
+        }
+        else
+        {
             $data['noDataMessage'] = "No host selected";
             $this->template->load('template', '/visualization/nohost', $data);
         }

@@ -1,8 +1,10 @@
 <?php
 
-class Graph extends CF_Controller {
+class Graph extends CF_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
 
 
@@ -18,15 +20,17 @@ class Graph extends CF_Controller {
 
     /**
      * replace special characters for javascript support such as ':'
-     * @param type $obs 
+     * @param type $obs
      */
-    function canonifyObservables($obs) {
+    function canonifyObservables($obs)
+    {
         $replaceArray = array('!', '"', '#', '$', '%', '&', '(', ')', '*', '+', ',', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '`', '{', '|', '}', '~');
 
         return str_replace($replaceArray, '', $obs);
     }
 
-    function summary($hostKey = null) {
+    function summary($hostKey = null)
+    {
 
         $requiredjs = array(
             array('flot/jquery.flot.highlighter.js'),
@@ -58,7 +62,8 @@ class Graph extends CF_Controller {
         $values = array();
         $this->data['graphSeries'] = array();
         $labels = array('kept', 'not kept', 'repaired');
-        foreach ($convertedData as $key => $graphData) {
+        foreach ($convertedData as $key => $graphData)
+        {
 
             $keptSeries[] = array($key, $graphData['kept']);
             $notKeptSeries[] = array($key, $graphData['notkept']);
@@ -78,7 +83,8 @@ class Graph extends CF_Controller {
         $this->template->load('template', 'graph/summaryCompliance', $this->data);
     }
 
-    function magnifiedView($parameter) {
+    function magnifiedView($parameter)
+    {
 
         $getparams = $this->uri->uri_to_assoc(3);
 
@@ -88,7 +94,8 @@ class Graph extends CF_Controller {
         $username = $this->session->userdata('username');
         $graphData = $this->vitals_model->getVitalsMagnifiedViewJson($username, $hostKey, $observables);
         $manipulatedSeriesData = json_decode($graphData, true);
-        if ($graphData !== null && $manipulatedSeriesData !== false && !empty($manipulatedSeriesData)) {
+        if ($graphData !== null && $manipulatedSeriesData !== false && !empty($manipulatedSeriesData))
+        {
 
             $this->data['graphLastUpdated'] = $this->vitals_model->getVitalsLastUpdate($username, $hostKey);
             $this->data['graphDetails'] = $this->vitals_model->getVitalsMagnifiedAnalysis($username, $hostKey, $observables);
@@ -102,7 +109,8 @@ class Graph extends CF_Controller {
             $tempMaxValue = array();
             $tempMinValue = array();
 
-            foreach ($manipulatedSeriesData as $points => $values) {
+            foreach ($manipulatedSeriesData as $points => $values)
+            {
                 $lineSeries1[] = array($values[0], $values[1]);
                 $lineSeries2[] = array($values[0], $values[2]);
                 $tempMaxValue[] = ($values[2] + $values[3]);
@@ -123,7 +131,8 @@ class Graph extends CF_Controller {
             echo $this->lang->line('graph_data_not_available');
     }
 
-    function weekView() {
+    function weekView()
+    {
 
         $getparams = $this->uri->uri_to_assoc(3);
 
@@ -134,7 +143,8 @@ class Graph extends CF_Controller {
         $username = $this->session->userdata('username');
         $graphData = $this->vitals_model->getVitalsWeekViewJson($username, $hostKey, $observables);
         $manipulatedSeriesData = json_decode($graphData, true);
-        if ($graphData !== null && $manipulatedSeriesData !== false && !empty($manipulatedSeriesData)) {
+        if ($graphData !== null && $manipulatedSeriesData !== false && !empty($manipulatedSeriesData))
+        {
 
             $this->data['graphLastUpdated'] = $this->vitals_model->getVitalsLastUpdate($username, $hostKey);
             $this->data['graphDetails'] = $this->vitals_model->getVitalsWeekAnalysis($username, $hostKey, $observables);
@@ -146,7 +156,8 @@ class Graph extends CF_Controller {
             $tempMaxValue = array();
             $tempMinValue = array();
 
-            foreach ($manipulatedSeriesData as $points => $values) {
+            foreach ($manipulatedSeriesData as $points => $values)
+            {
                 $lineSeries1[] = array($values[0], $values[1]);
                 $lineSeries2[] = array($values[0], $values[2]);
                 $tempMaxValue[] = ($values[2] + $values[3]);
@@ -169,7 +180,8 @@ class Graph extends CF_Controller {
             echo $this->lang->line('graph_data_not_available');
     }
 
-    function yearView() {
+    function yearView()
+    {
 
         $getparams = $this->uri->uri_to_assoc(3);
 
@@ -181,7 +193,8 @@ class Graph extends CF_Controller {
         $username = $this->session->userdata('username');
         $graphData = $this->vitals_model->getVitalsYearViewJson($username, $hostKey, $observables);
         $manipulatedSeriesData = json_decode($graphData, true);
-        if ($graphData !== null && $manipulatedSeriesData !== false && !empty($manipulatedSeriesData)) {
+        if ($graphData !== null && $manipulatedSeriesData !== false && !empty($manipulatedSeriesData))
+        {
 
             $this->data['graphLastUpdated'] = $this->vitals_model->getVitalsLastUpdate($username, $hostKey);
             $this->data['graphDetails'] = $this->vitals_model->getVitalsYearAnalysis($username, $hostKey, $observables);
@@ -192,7 +205,8 @@ class Graph extends CF_Controller {
             $tempMaxValue = array();
             $tempMinValue = array();
 
-            foreach ($manipulatedSeriesData as $points => $values) {
+            foreach ($manipulatedSeriesData as $points => $values)
+            {
                 $lineSeries1[] = array($values[0], $values[1]);
                 $lineSeries2[] = array($values[0], $values[2]);
                 $tempMaxValue[] = ($values[2] + $values[3]);
@@ -215,7 +229,8 @@ class Graph extends CF_Controller {
             echo $this->lang->line('graph_data_not_available');
     }
 
-    function histogramView() {
+    function histogramView()
+    {
 
         $getparams = $this->uri->uri_to_assoc(3);
 
@@ -228,13 +243,14 @@ class Graph extends CF_Controller {
         $username = $this->session->userdata('username');
         $graphData = $this->vitals_model->getVitalsHistogramViewJson($username, $hostKey, $observables);
         $manipulatedSeriesData = json_decode($graphData, true);
-        if ($graphData !== null && $manipulatedSeriesData !== false && !empty($manipulatedSeriesData)) {
+        if ($graphData !== null && $manipulatedSeriesData !== false && !empty($manipulatedSeriesData))
+        {
 
             /*
-            $lastUpdated = $this->vitals_model->getVitalsLastUpdate($username, $hostKey);
-            $lastUpdated = strtotime($lastUpdated) * 1000;
-            $this->data['graphLastUpdated'] = $lastUpdated;
-            */
+              $lastUpdated = $this->vitals_model->getVitalsLastUpdate($username, $hostKey);
+              $lastUpdated = strtotime($lastUpdated) * 1000;
+              $this->data['graphLastUpdated'] = $lastUpdated;
+             */
             $this->data['graphDetails'] = $this->vitals_model->getVitalsYearAnalysis($username, $hostKey, $observables);
             $this->data['graphdata'] = $graphData;
             $this->data['observable'] = $this->canonifyObservables($observables);

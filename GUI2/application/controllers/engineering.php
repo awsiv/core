@@ -2,6 +2,7 @@
 
 class Engineering extends Cf_Controller
 {
+
     function index()
     {
         $breadcrumb = array(
@@ -28,18 +29,16 @@ class Engineering extends Cf_Controller
             array('jScrollPane.js'),
             array('jquery.mousewheel.js'),
             array('jquery.contextMenu.js'),
-            array('jquery.blockUI.js'),            
-
-
+            array('jquery.blockUI.js'),
             array('widgets/notes.js'),
             array('widgets/classfinder.js'),
             array('widgets/contextfinder.js'),
             array('widgets/reportUI.js')
-    );
-        
+        );
+
         $this->carabiner->css(
                 array(
-                    array('classfinderbox.css'), 
+                    array('classfinderbox.css'),
                     array('view/engineering.css'),
                     array('astrolabe.css'),
                     array('astrolabeLocation.css'),
@@ -52,14 +51,14 @@ class Engineering extends Cf_Controller
                     array('jScrollPane.css'),
                     array('contextfinder.css'),
                     array('tabs-custom.css')
-                    )
-            );        
+                )
+        );
 
-        
+
         $jsIE = array('flot/excanvas.min.js');
         $this->carabiner->group('iefix', array('js' => $jsIE));
         $this->carabiner->js($requiredjs);
-     
+
 
         $data = array(
             'title' => $this->lang->line('mission_portal_title'),
@@ -68,5 +67,6 @@ class Engineering extends Cf_Controller
 
         $this->template->load('template', 'engineering', $data);
     }
+
 }
 

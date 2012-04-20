@@ -1,11 +1,12 @@
 <?php
+
 class Widget extends Cf_Controller
 {
 
     function Widget()
     {
         parent::__construct();
-        $this->load->model(array('host_model', 'class_model', 'report_model', 'bundle_model','promise_model','environment_model'));
+        $this->load->model(array('host_model', 'class_model', 'report_model', 'bundle_model', 'promise_model', 'environment_model'));
         if (!$this->ion_auth->logged_in())
         {
             $this->output->set_status_header('401', 'Not Authenticated');
@@ -78,8 +79,8 @@ class Widget extends Cf_Controller
             }
         }
 
-        $this->data['notkept']= $this->report_model->getPromisesNotKeptSummary($username,NULL,NULL,'.*',$startDateTimeStamp, $stopDateTimeStamp, $includes, $excludes);
-        $this->data['repaired']= $this->report_model->getPromisesRepairedSummary($username,NULL,NULL,'.*',$startDateTimeStamp, $stopDateTimeStamp, $includes, $excludes);
+        $this->data['notkept'] = $this->report_model->getPromisesNotKeptSummary($username, NULL, NULL, '.*', $startDateTimeStamp, $stopDateTimeStamp, $includes, $excludes);
+        $this->data['repaired'] = $this->report_model->getPromisesRepairedSummary($username, NULL, NULL, '.*', $startDateTimeStamp, $stopDateTimeStamp, $includes, $excludes);
 
         $this->data['startDate'] = getDateStatus($startDateTimeStamp, true);
         $this->data['stopDate'] = getDateStatus($stopDateTimeStamp, true);
@@ -204,16 +205,19 @@ class Widget extends Cf_Controller
 
         $includes = $excludes = array();
 
-        if($this->input->post('includes') !== FALSE) {
+        if ($this->input->post('includes') !== FALSE)
+        {
             $includes = array_merge($includes, $this->input->post('includes', TRUE));
         }
 
-        if($this->input->post('excludes') !== FALSE) {
+        if ($this->input->post('excludes') !== FALSE)
+        {
             $excludes = $this->input->post('excludes', TRUE);
         }
 
-        try{
-           $classes=$this->class_model->getAllClasses($username, $searchletter, $includes, $excludes, 100, $page);
+        try
+        {
+            $classes = $this->class_model->getAllClasses($username, $searchletter, $includes, $excludes, 100, $page);
             echo $classes;
         }
         catch (Exception $e)
@@ -230,19 +234,19 @@ class Widget extends Cf_Controller
 
         if ($search != null)
         {
-            $searched=urldecode($search);
-            if(preg_match('/^\[\w\|\w\]$/',$searched))
+            $searched = urldecode($search);
+            if (preg_match('/^\[\w\|\w\]$/', $searched))
             {
-              $searchletter = "^" . $searched . '.*';
+                $searchletter = "^" . $searched . '.*';
             }
-            elseif(preg_match('/.*\W+.*/', $search))
+            elseif (preg_match('/.*\W+.*/', $search))
             {
                 $searchletter = $searched;
-            }else
-            {
-                $searchletter = '.*'.$searched . '.*';
             }
-
+            else
+            {
+                $searchletter = '.*' . $searched . '.*';
+            }
         }
         else
         {
@@ -254,22 +258,27 @@ class Widget extends Cf_Controller
         //add include/exclude
         $includes = $excludes = array();
 
-        if($this->input->post('filter') !== FALSE) {
-            $filter     =  $this->input->post('filter', TRUE);
+        if ($this->input->post('filter') !== FALSE)
+        {
+            $filter = $this->input->post('filter', TRUE);
         }
 
-        if($this->input->post('includes') !== FALSE) {
+        if ($this->input->post('includes') !== FALSE)
+        {
             $includes = array_merge($includes, $this->input->post('includes', TRUE));
         }
 
-        if($this->input->post('excludes') !== FALSE) {
+        if ($this->input->post('excludes') !== FALSE)
+        {
             $excludes = $this->input->post('excludes', TRUE);
         }
 
         $data = "";
 
-        try {
-            switch ($filter) {
+        try
+        {
+            switch ($filter)
+            {
                 case "time":
                     $data = $this->class_model->getAllTimeClasses($username, $searchletter, $includes, $excludes, 100, $page);
                     break;
@@ -288,8 +297,9 @@ class Widget extends Cf_Controller
             }
 
             echo $data;
-
-        } catch (Exception $e) {
+        }
+        catch (Exception $e)
+        {
             $this->output->set_status_header('500', $e->getMessage());
             echo($e->getMessage());
         }
@@ -322,7 +332,7 @@ class Widget extends Cf_Controller
         try
         {
 
-            $returnedData = $this->promise_model->getPromiseListByHandleRx($this->session->userdata('username'), NULL,50,$page);
+            $returnedData = $this->promise_model->getPromiseListByHandleRx($this->session->userdata('username'), NULL, 50, $page);
             $showButton = $this->input->post('showButton');
             $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
             $viewdata = array(
@@ -357,7 +367,7 @@ class Widget extends Cf_Controller
 
         try
         {
-            $returnedData = $this->promise_model->getPromiseListByHandleRx($this->session->userdata('username'), $handle,50,$page);
+            $returnedData = $this->promise_model->getPromiseListByHandleRx($this->session->userdata('username'), $handle, 50, $page);
             $viewdata['viewdata'] = $returnedData;
             $this->load->view('widgets/allpolicies', $viewdata);
         }
@@ -382,7 +392,7 @@ class Widget extends Cf_Controller
         $bundle = ($bundle) ? $bundle . '.*' : NULL;
         try
         {
-            $data = $this->promise_model->getPromiseListByBundleRx($this->session->userdata('username'),'.*', $bundle,50,$page);
+            $data = $this->promise_model->getPromiseListByBundleRx($this->session->userdata('username'), '.*', $bundle, 50, $page);
             $viewdata['viewdata'] = $data;
             $this->load->view('widgets/allpolicies', $viewdata);
         }
@@ -408,7 +418,7 @@ class Widget extends Cf_Controller
         try
         {
             $val = ($val) ? $val . '.*' : ".*";
-            $promises = $this->promise_model->getPromiseListByBundleRx($this->session->userdata('username'),$val,null,100,$page);
+            $promises = $this->promise_model->getPromiseListByBundleRx($this->session->userdata('username'), $val, null, 100, $page);
             $viewdata['viewdata'] = $promises;
             $this->load->view('widgets/allpolicies', $viewdata);
         }
@@ -431,7 +441,7 @@ class Widget extends Cf_Controller
         try
         {
             $promiser = ($promiser) ? $promiser . '.*' : null;
-            $returnedData = $this->promise_model->getPromiseListByPromiserRx($this->session->userdata('username'), $promiser,100,$page);
+            $returnedData = $this->promise_model->getPromiseListByPromiserRx($this->session->userdata('username'), $promiser, 100, $page);
             $viewdata['viewdata'] = $returnedData;
             $this->load->view('widgets/allpolicies', $viewdata);
         }
@@ -541,11 +551,13 @@ class Widget extends Cf_Controller
     {
         $data = array();
 
-        if($this->input->post('includes') !== FALSE) {
-            $data['includes'] =  $this->input->post('includes', TRUE);
+        if ($this->input->post('includes') !== FALSE)
+        {
+            $data['includes'] = $this->input->post('includes', TRUE);
         }
 
-        if($this->input->post('excludes') !== FALSE) {
+        if ($this->input->post('excludes') !== FALSE)
+        {
             $data['excludes'] = $this->input->post('excludes', TRUE);
         }
 
@@ -581,7 +593,8 @@ class Widget extends Cf_Controller
             }
 
             // if rolename is empty - return all avilable bundles
-            if ($rolename == '') {
+            if ($rolename == '')
+            {
                 echo json_encode(array_keys($all_bundles));
                 return;
             }

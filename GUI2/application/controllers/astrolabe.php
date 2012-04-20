@@ -1,10 +1,12 @@
 <?php
 
-require_once APPPATH.'libraries/Cf_REST_Controller.php';
+require_once APPPATH . 'libraries/Cf_REST_Controller.php';
 
-class Astrolabe extends Cf_REST_Controller {
+class Astrolabe extends Cf_REST_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->load->model('astrolabe_model');
         $this->load->library('JIT_Utils');
@@ -13,17 +15,19 @@ class Astrolabe extends Cf_REST_Controller {
 
     function host_get()
     {
-        echo cfpr_astrolabe_host_list($this->username,
-                $this->param_includes(), $this->param_excludes());
+        echo cfpr_astrolabe_host_list($this->username, $this->param_includes(), $this->param_excludes());
     }
 
-    function profile_get($id = NULL) {
+    function profile_get($id = NULL)
+    {
 
-        if (is_null($id)) {
+        if (is_null($id))
+        {
             $profileList = $this->astrolabe_model->profile_list($this->username);
             $this->respond(200, json_encode($profileList));
         }
-        else {
+        else
+        {
             $profile = $this->astrolabe_model->profile_get($this->username, $id);
             if ($profile !== null)
             {
@@ -36,7 +40,8 @@ class Astrolabe extends Cf_REST_Controller {
         }
     }
 
-    function profile_put($id) {
+    function profile_put($id)
+    {
 
         $nodeDescriptionList = json_decode($this->_put_args, true);
 
@@ -55,4 +60,5 @@ class Astrolabe extends Cf_REST_Controller {
             $this->respond(500, "Error deleting profile");
         }
     }
+
 }
