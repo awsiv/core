@@ -205,7 +205,7 @@
             $nodeItem.attr('label', label);
             $nodeItem.attr('class-regex', classRegex);
 
-            var $wrapperElement=$('<div>').addClass('showqtip').data({my:'right center', at:'left center'});
+            var $wrapperElement = $('<div>').addClass('showqtip').data({my: 'right center', at: 'left center'});
             $wrapperElement.attr('title', classRegex);
             $nodeItem.append($wrapperElement);
 
@@ -221,7 +221,7 @@
             $wrapperElement.append($nodeHeader);
 
             var $labelElement = $('<span>');
-            $labelElement.addClass('nodeLabel')
+            $labelElement.addClass('nodeLabel');
             $labelElement.html(label);
             $labelElement.click(function(event) {
                 $self._onClickNodeLabel($self, $nodeItem, event);
@@ -238,7 +238,7 @@
             var $addNodeButton = $('<span>');
             $addNodeButton.addClass('addNodeButton');
             $addNodeButton.click(function(event) {
-                var $dialog = $self._nodeDialog($nodeItem,'add');
+                var $dialog = $self._nodeDialog($nodeItem, 'add');
                 $dialog.dialog('open');
             });
             $nodeHeader.append($addNodeButton);
@@ -255,14 +255,14 @@
             $editNodeButton.addClass('editNodeButton');
             $editNodeButton.click(function(event) {
                 var $parentNode = $self._parentNode($nodeItem);
-                var $dialog = $self._nodeDialog($nodeItem,'update');
+                var $dialog = $self._nodeDialog($nodeItem, 'update');
 
                 $dialog.dialog('open');
             });
 
             if (isRemovable !== true) {
                 $nodeHeader.append($removeNodeButton);
-                $nodeHeader.append($editNodeButton)
+                $nodeHeader.append($editNodeButton);
             }
 
 
@@ -303,7 +303,7 @@
         _nodeDialog: function(parentNode,operation) {
             var $self = this;
 
-            var validation = function(){
+            var validation = function() {
                 var label = $('#astrolabe-add-node-label').val();
                 if (label == '') {
                     $('#astrolabe-add-node-label').focus();
@@ -324,16 +324,16 @@
                 }
 
                 return {
-                      label:label,
-                      classRegex:classRegex
-                  }
+                      label: label,
+                      classRegex: classRegex
+                  };
             }
 
             var addNode = function($dialog) {
                 $('#astrolabe-add-node-label-error').html('');
                 $('#astrolabe-add-node-class-error').html('');
-                var nodeprop=validation();
-                if(nodeprop === false){return;}
+                var nodeprop = validation();
+                if (nodeprop === false) {return;}
 
                 var $node = $($self._createNode(nodeprop.label, nodeprop.classRegex, null));
                 var $parentContainer = $($self._rootContainer);
@@ -350,14 +350,14 @@
                 $dialog.remove();
             }
 
-            var updateNode =function($dialog){
+            var updateNode = function($dialog) {
                 $('#astrolabe-add-node-label-error').html('');
                 $('#astrolabe-add-node-class-error').html('');
-                var nodeprop=validation();
-                if(nodeprop === false){return;}
-                $(parentNode).attr('label',nodeprop.label);
-                $(parentNode).attr('class-regex',nodeprop.classRegex);
-                $(parentNode).find('div.showqtip').first().attr('oldtitle',nodeprop.classRegex);
+                var nodeprop = validation();
+                if (nodeprop === false) {return;}
+                $(parentNode).attr('label', nodeprop.label);
+                $(parentNode).attr('class-regex', nodeprop.classRegex);
+                $(parentNode).find('div.showqtip').first().attr('oldtitle', nodeprop.classRegex);
                 $self._saveProfile($self._currentProfile, parentNode);
                 $self._loadNode($self._superNode);
                 $self._recount();
@@ -366,15 +366,15 @@
                 $dialog.remove();
             }
 
-           var btns= {};
-           btns[operation]=function() {
-                            if(operation=='update'){
+           var btns = {};
+           btns[operation] = function() {
+                            if (operation == 'update') {
                                updateNode($(this));
-                            }else{
+                            }else {
                                addNode($(this));
-                            };
+                            }
            }
-           btns['cancel']=function() {
+           btns['cancel'] = function() {
                             $(this).dialog('close');
                             $(this).dialog('destroy');
                             $(this).remove();
@@ -383,9 +383,9 @@
             var $dialog = $('<div>')
                 .load($self.options.baseUrl + '/widget/astrolabeAddNodeDialog/', function() {
                     $('#astrolabe-add-node-label').focus();
-                    if(operation=='update'){
+                    if (operation == 'update') {
                       $('#astrolabe-add-node-label').val($(parentNode).attr('label'));
-                      $('#astrolabe-add-node-class').val($(parentNode).attr('class-regex'))
+                      $('#astrolabe-add-node-class').val($(parentNode).attr('class-regex'));
                     }
                 })
                 .dialog({
