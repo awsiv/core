@@ -146,6 +146,12 @@
                 }
             });
 
+            $self._$graph.bind('plotclick', function (event, pos, item) {
+                if (item) {
+                    $self._onGraphClick($self, item);
+                }
+            });
+
             $self._$loader.hide();
         },
 
@@ -241,6 +247,23 @@
                     $self._$loader.hide();
                 }
             });
+        },
+
+        _onGraphClick: function($self, item) {
+            var from = item.datapoint[0];
+            var to = from + $self._resolution;
+
+            var element = $('<a href="' + $self.options.baseUrl + '/widget/summaryCompliance' +
+                '/start/'+ common.javascriptTimeToUnixTime(from) +
+                '/stop/' + common.javascriptTimeToUnixTime(to) +
+                '/includes/' + encodeURIComponent($self._context.includes) +
+                '" title="Overview : Promises not kept or repaired ( ' +
+                common.time.format(from) +
+                ' - ' +
+                common.time.format(to) +
+                ' )" />');
+            var option = {'width':'1025','height':'445'};
+            element.ajaxyDialog(option).ajaxyDialog("open");
         },
 
         _showTooltip: function(x, y, contents) {

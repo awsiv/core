@@ -51,18 +51,36 @@ class Widget extends Cf_Controller
 
         $getparams = $this->uri->uri_to_assoc(3);
         $startDate = isset($getparams['start']) ? $getparams['start'] : 0;
-        $env = $getparams['env'];
+        $env = $this->input->post('env', TRUE);
         $stopDate = isset($getparams['stop']) ? $getparams['stop'] : null;
 
-      
         $this->load->library('cf_table');
         $startDateTimeStamp = $startDate;
         $stopDateTimeStamp = ($stopDate == null) ? ($startDate + (6 * 3600)) : time();
-        $environment = $env;
 
-        $this->data['notkept']= $this->report_model->getPromisesNotKeptSummary($username,NULL,NULL,'.*',$startDateTimeStamp, $stopDateTimeStamp, array($environment), array());
-        $this->data['repaired']= $this->report_model->getPromisesRepairedSummary($username,NULL,NULL,'.*',$startDateTimeStamp, $stopDateTimeStamp, array($environment), array());
-        
+        $includes = array();
+        $excludes = array();
+
+        if ($env)
+        {
+            $includes = array($env);
+        }
+        else
+        {
+            if ($this->input->post('includes') !== FALSE)
+            {
+                $includes = array_merge($includes, $this->input->post('includes', TRUE));
+            }
+
+            if ($this->input->post('excludes') !== FALSE)
+            {
+                $excludes = $this->input->post('excludes', TRUE);
+            }
+        }
+
+        $this->data['notkept']= $this->report_model->getPromisesNotKeptSummary($username,NULL,NULL,'.*',$startDateTimeStamp, $stopDateTimeStamp, $includes, $excludes);
+        $this->data['repaired']= $this->report_model->getPromisesRepairedSummary($username,NULL,NULL,'.*',$startDateTimeStamp, $stopDateTimeStamp, $includes, $excludes);
+
         $this->data['startDate'] = getDateStatus($startDateTimeStamp, true);
         $this->data['stopDate'] = getDateStatus($stopDateTimeStamp, true);
         $this->load->view('widgets/summaryCompliance', $this->data);
@@ -171,13 +189,13 @@ class Widget extends Cf_Controller
     function allclasses($page = 1, $alphaSearch = null)
     {
         $username = $this->session->userdata('username');
- 
+
         $searchletter = null;
 
         if ($alphaSearch != null)
         {
             $searchletter = "^" . urldecode($alphaSearch) . '.*';
-        } 
+        }
         else
         {
             $searchletter = '.*';
@@ -185,12 +203,12 @@ class Widget extends Cf_Controller
 
 
         $includes = $excludes = array();
-        
+
         if($this->input->post('includes') !== FALSE) {
             $includes = array_merge($includes, $this->input->post('includes', TRUE));
         }
-        
-        if($this->input->post('excludes') !== FALSE) {        
+
+        if($this->input->post('excludes') !== FALSE) {
             $excludes = $this->input->post('excludes', TRUE);
         }
 
@@ -209,9 +227,9 @@ class Widget extends Cf_Controller
     {
         $username = $this->session->userdata('username');
         $searchletter = null;
-        
+
         if ($search != null)
-        {  
+        {
             $searched=urldecode($search);
             if(preg_match('/^\[\w\|\w\]$/',$searched))
             {
@@ -224,27 +242,27 @@ class Widget extends Cf_Controller
             {
                 $searchletter = '.*'.$searched . '.*';
             }
-           
+
         }
         else
         {
             $searchletter = '.*';
         }
-      
+
         $filter = '';
-        
+
         //add include/exclude
         $includes = $excludes = array();
-        
-        if($this->input->post('filter') !== FALSE) {        
+
+        if($this->input->post('filter') !== FALSE) {
             $filter     =  $this->input->post('filter', TRUE);
         }
-        
+
         if($this->input->post('includes') !== FALSE) {
             $includes = array_merge($includes, $this->input->post('includes', TRUE));
         }
-        
-        if($this->input->post('excludes') !== FALSE) {        
+
+        if($this->input->post('excludes') !== FALSE) {
             $excludes = $this->input->post('excludes', TRUE);
         }
 
@@ -268,9 +286,9 @@ class Widget extends Cf_Controller
                     $data = cfpr_list_host_classes(NULL, NULL, NULL, NULL);
                     break;
             }
-           
+
             echo $data;
-            
+
         } catch (Exception $e) {
             $this->output->set_status_header('500', $e->getMessage());
             echo($e->getMessage());
@@ -303,7 +321,7 @@ class Widget extends Cf_Controller
     {
         try
         {
-           
+
             $returnedData = $this->promise_model->getPromiseListByHandleRx($this->session->userdata('username'), NULL,50,$page);
             $showButton = $this->input->post('showButton');
             $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
@@ -312,10 +330,10 @@ class Widget extends Cf_Controller
                 'showButton' => $showButton,
                 'showOnlyHandle' => $showOnlyHandle
             );
-          
+
 
             $viewdata['viewdata'] = $returnedData;
-           
+
             $this->load->view('widgets/allpolicies', $viewdata);
         }
         catch (Exception $e)
@@ -526,11 +544,11 @@ class Widget extends Cf_Controller
         if($this->input->post('includes') !== FALSE) {
             $data['includes'] =  $this->input->post('includes', TRUE);
         }
-        
-        if($this->input->post('excludes') !== FALSE) {        
+
+        if($this->input->post('excludes') !== FALSE) {
             $data['excludes'] = $this->input->post('excludes', TRUE);
         }
-        
+
         $this->load->view('widgets/contextfinder', $data);
     }
 
@@ -547,7 +565,7 @@ class Widget extends Cf_Controller
 
         $username = $this->session->userdata('username');
         $all_bundles = $brxi = $brxx = array();
-        
+
         try
         {
             $all_bundles_tmp = json_decode($this->bundle_model->getAllBundles($username));
@@ -568,7 +586,7 @@ class Widget extends Cf_Controller
                 return;
             }
 
-          
+
             $role = $this->ion_auth->get_role($this->session->userdata('username'), $rolename);
 
             $brxi = array_key_exists('bundlerxinlcude', $role) ? $role['bundlerxinlcude'] : "";

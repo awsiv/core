@@ -68,8 +68,12 @@ var common = (function(){
             return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
         },
 
-        unixTimeToJavascriptTime: function (unixTime) {
+        unixTimeToJavascriptTime: function(unixTime) {
             return unixTime * 1000;
+        },
+
+        javascriptTimeToUnixTime: function(javascriptTime) {
+            return javascriptTime / 1000;
         }
     };
 })();
