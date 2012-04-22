@@ -144,7 +144,7 @@ int NovaWin_cf_pclose_def(FILE *pfp, Attributes a, Promise *pp)
     if (!GetExitCodeProcess(procHandle, &exitCode))
     {
         CfOut(cf_error, "GetExitCodeProcess", "!! Error getting exit code");
-        cfPS(cf_error, CF_FAIL, "", pp, a, " !! Could not get exit code of process\n", pp->promiser);
+        cfPS(cf_error, CF_FAIL, "", pp, a, " !! Could not get exit code of process %s", pp->promiser);
         return -1;
     }
 
@@ -164,10 +164,9 @@ int NovaWin_cf_pclose_def(FILE *pfp, Attributes a, Promise *pp)
 }
 
 /* Starts a new process in startDir (NULL means current), inside a
- * shell environment if specified.  If type is "r", we wait for the
- * process to finish, and return a pipe that has the STDOUT and STDERR
- * of the process. If type is "w", we do not wait for the process to
- * finish, but return a pipe to the process' STDIN.
+ * shell environment if specified.  If type is "r" we return a pipe
+ * that has the STDOUT and STDERR of the process. If type is "w", we
+ * return a pipe to the process' STDIN.
  **/
 static FILE *OpenProcessPipe(char *comm, int useshell, char *startDir, char *type, int background)
 {
@@ -209,28 +208,17 @@ static FILE *OpenProcessPipe(char *comm, int useshell, char *startDir, char *typ
     // wait for process to exit if we are reading from the pipe
     if (*type == 'r')
     {
+      CloseHandle(childInRead);
+      CloseHandle(childOutWrite);
+      CloseHandle(childInWrite);
+
         if (background)
         {
-            CloseHandle(childInRead);
-            CloseHandle(childOutWrite);
-            CloseHandle(childInWrite);
             CloseHandle(childOutRead);
         }
         else
         {
-            CfOut(cf_verbose, "", "Waiting for command \"%s\" to finish (background=false)", comm);
-
-            CloseHandle(childInRead);
-            CloseHandle(childOutWrite);
-            CloseHandle(childInWrite);
             retPipe = childOutRead;
-
-            if (WaitForSingleObject(childProcess, INFINITE) == WAIT_FAILED)
-            {
-                CfOut(cf_error, "WaitForSingleObject", "!! Error waiting for process to finish");
-                return NULL;
-            }
-
         }
     }
     else                        // *type == 'w'
