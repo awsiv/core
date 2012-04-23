@@ -4,6 +4,8 @@
 #include <setjmp.h>
 #include <cmockery.h>
 
+int Nova_HashKey(char *filename, char *buffer, char *hash);
+
 char *pubkey_filename;
 
 static const char *PUBLIC_KEY =

@@ -28,7 +28,7 @@
 
 static time_t LAST_LICENSE_CHECK_TIMESTAMP;
 static bool RecentlyCheckedLicense(void);
-static int Nova_HashKey(char *filename, char *buffer, char *hash);
+int Nova_HashKey(char *filename, char *buffer, char *hash);
 static void Nova_LogLicenseStatus(void);
 
 /*****************************************************************************/
@@ -302,7 +302,8 @@ static bool RecentlyCheckedLicense(void)
 /* Level                                                                     */
 /*****************************************************************************/
 
-static int Nova_HashKey(char *filename, char *buffer, char *hash)
+/* Not a static as being tested by unit tests */
+int Nova_HashKey(char *filename, char *buffer, char *hash)
 {
     EVP_MD_CTX context;
     const EVP_MD *md = NULL;
