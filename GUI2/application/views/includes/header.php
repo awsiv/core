@@ -44,7 +44,9 @@ if($this->agent->is_browser('Safari')){
 
 <body>
 <!--[if lte IE 7]><script src="<?php echo get_scriptdir() ?>/ieupgrade/warning.js"></script><script>window.onload=function(){e("<?php echo get_scriptdir() ?>/ieupgrade/")}</script><![endif]-->
-  <div id="wrapper" class="container_12">
+  
+      <?php if (!isset ($hide_header) || $hide_header !== true) { ?>
+        <div id="wrapper" class="container_12">
           <div id="header">
               <div id="header_left"class="grid_8">
                <p class="sitetitle">
@@ -99,3 +101,6 @@ if($this->agent->is_browser('Safari')){
              </div>
              <div class="clear"></div>
           </div><!--end of header-->
+      <?php } else { ?>       
+          <div id="wrapper" class="container_12 no_website_header">
+      <?php } ?>
