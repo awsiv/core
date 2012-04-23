@@ -871,10 +871,6 @@ void CountMarginRecordsVars(Rlist **records_p, PageInfo *page, int *start_count,
 
 char *Name2Id(char *s);
 void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *inferences);
-void Nova_ListAgents(void);
-void Nova_ListFunctions(void);
-void Nova_ListFunction(const FnCallType *f, int full);
-void Nova_ListPromiseTypes(void);
 
 void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version);
 void Nova_BundleReference(FILE *fp, char *bundle);
@@ -896,15 +892,11 @@ void Nova_RegisterDoc(Item **list, char *dir, char *doc);
 void Nova_GenerateTestData(int count);
 void Nova_RemoveTestData(void);
 void Nova_UpdateTestData(void);
-Rlist *Nova_GetTestMachines(void);
 char *ThisHashPrint(unsigned char digest[EVP_MAX_MD_SIZE + 1]);
 void ThisHashString(char *str, char *buffer, int len, unsigned char digest[EVP_MAX_MD_SIZE + 1]);
 
 /* license.c */
 
-int Nova_HashKey(char *filename, char *buffer, char *hash);
-int Nova_EnterpriseModuleExpiry(char *day, char *month, char *year);
-void Nova_LogLicenseStatus(void);
 int Nova_CheckLicenseWin(char *pos);
 char *Nova_LicenseOwner(void);
 

@@ -28,13 +28,8 @@
 
 static time_t LAST_LICENSE_CHECK_TIMESTAMP;
 static bool RecentlyCheckedLicense(void);
-
-/*****************************************************************************/
-
-int Nova_EnterpriseModuleExpiry(char *day, char *month, char *year)
-{
-    return false;
-}
+static int Nova_HashKey(char *filename, char *buffer, char *hash);
+static void Nova_LogLicenseStatus(void);
 
 /*****************************************************************************/
 
@@ -307,7 +302,7 @@ static bool RecentlyCheckedLicense(void)
 /* Level                                                                     */
 /*****************************************************************************/
 
-int Nova_HashKey(char *filename, char *buffer, char *hash)
+static int Nova_HashKey(char *filename, char *buffer, char *hash)
 {
     EVP_MD_CTX context;
     const EVP_MD *md = NULL;
@@ -446,7 +441,7 @@ void CheckLicenses(void)
 
 /*****************************************************************************/
 
-void Nova_LogLicenseStatus()
+static void Nova_LogLicenseStatus(void)
 {
     CF_DB *dbp;
     CF_DBC *dbcp;

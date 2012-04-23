@@ -20,9 +20,14 @@
 #include "db_maintain.h"
 #endif
 
-/* From cfknow.c */
-
+/* From cfknow.c */ // FIX
 int GetTopicPid(char *classified_topic);
+
+static void Nova_ListAgents(void);
+static void Nova_ListFunctions(void);
+static void Nova_ListFunction(const FnCallType *f, int full);
+static void Nova_ListPromiseTypes();
+static Rlist *Nova_GetTestMachines(void);
 
 /*****************************************************************************/
 #define CF_TEST_HOSTNAME "cfengine_auto_test"
@@ -320,7 +325,7 @@ void SyntaxCompletion(char *s)
 /* Level                                                                     */
 /*****************************************************************************/
 
-void Nova_ListAgents()
+static void Nova_ListAgents()
 {
     int i;
 
@@ -334,7 +339,7 @@ void Nova_ListAgents()
 
 /*****************************************************************************/
 
-void Nova_ListFunctions()
+static void Nova_ListFunctions()
 {
     int i;
 
@@ -348,7 +353,7 @@ void Nova_ListFunctions()
 
 /*****************************************************************************/
 
-void Nova_ListFunction(const FnCallType *f, int full)
+static void Nova_ListFunction(const FnCallType *f, int full)
 {
     int j;
     const FnCallArg *args = f->args;
@@ -403,7 +408,7 @@ void Nova_ListFunction(const FnCallType *f, int full)
 
 /*****************************************************************************/
 
-void Nova_ListPromiseTypes()
+static void Nova_ListPromiseTypes()
 {
     int i;
 
@@ -575,7 +580,7 @@ void Nova_GenerateTestData(int count)
 }
 
 /*********************************************************************/
-Rlist *Nova_GetTestMachines(void)
+static Rlist *Nova_GetTestMachines(void)
 {
 #ifdef HAVE_LIBMONGOC
     mongo_cursor *cursor;

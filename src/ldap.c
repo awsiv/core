@@ -17,16 +17,16 @@
 
 #ifdef HAVE_LIBLDAP
 
-/* Prototypes */
-LDAP *NovaLDAPConnect(char *uri, bool starttls, const char **errstr);
-int NovaLDAPAuthenticate(LDAP *ldap, const char *basedn, const char *sec, const char *pwd);
 void *CfLDAPValue(char *uri, char *basedn, char *filter, char *name, char *scopes, char *sec);
 void *CfLDAPList(char *uri, char *basedn, char *filter, char *name, char *scopes, char *sec);
 void *CfLDAPArray(char *array, char *uri, char *basedn, char *filter, char *scopes, char *sec);
 void *CfRegLDAP(char *uri, char *basedn, char *filter, char *name, char *scopes, char *regex, char *sec);
 
-int NovaStr2Scope(char *scope);
-Rlist *LDAPKeyInRlist(Rlist *list, char *key);
+static LDAP *NovaLDAPConnect(char *uri, bool starttls, const char **errstr);
+static int NovaLDAPAuthenticate(LDAP *ldap, const char *basedn, const char *sec, const char *pwd);
+static int NovaStr2Scope(char *scope);
+static Rlist *LDAPKeyInRlist(Rlist *list, char *key);
+
 #endif
 
 /*****************************************************************************/
@@ -1374,7 +1374,7 @@ int CfLDAP_JSON_GetSingleAttributeList(char *uri, char *user, char *basedn, char
 
 #ifdef HAVE_LIBLDAP
 
-LDAP *NovaLDAPConnect(char *uri, bool starttls, const char **const errstr)
+static LDAP *NovaLDAPConnect(char *uri, bool starttls, const char **const errstr)
 {
     LDAP *ld;
     int ret, version;
@@ -1463,7 +1463,7 @@ LDAP *NovaLDAPConnect(char *uri, bool starttls, const char **const errstr)
 
 /*****************************************************************************/
 
-int NovaLDAPAuthenticate(LDAP *ld, const char *basedn, const char *sec, const char *password)
+static int NovaLDAPAuthenticate(LDAP *ld, const char *basedn, const char *sec, const char *password)
 {
     int pwdLen = 0;
     int ret;
@@ -1494,7 +1494,7 @@ int NovaLDAPAuthenticate(LDAP *ld, const char *basedn, const char *sec, const ch
 
 /*****************************************************************************/
 
-int NovaStr2Scope(char *scope)
+static int NovaStr2Scope(char *scope)
 {
     if (strcmp(scope, "subtree") == 0)
     {
@@ -1516,7 +1516,7 @@ int NovaStr2Scope(char *scope)
 
 /*******************************************************************/
 
-Rlist *LDAPKeyInRlist(Rlist *list, char *key)
+static Rlist *LDAPKeyInRlist(Rlist *list, char *key)
 {
     Rlist *rp;
     CfAssoc *ap;
