@@ -92,10 +92,7 @@ class Search extends Cf_Controller
 
         $username = $this->session->userdata('username');
 
-        $filter = array('username' => $username,
-        );
-
-
+        $filter = array('username' => $username);
 
         $result = $this->search_save_model->get_all_search($filter);
 
@@ -138,7 +135,7 @@ class Search extends Cf_Controller
             array('widgets/classfinder.js')
         );
         $this->carabiner->js($requiredjs);
-        $virtualBundleModel = $this->load->model('virtual_bundle_model');
+        
 
 
         $fromEmail = trim($this->settings_model->app_settings_get_item('appemail'));
@@ -255,13 +252,16 @@ class Search extends Cf_Controller
                 'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
                 'report_title' => $this->report_model->getReportTitle($report_type),
                 'breadcrumbs' => $this->breadcrumblist->display(),
+                'breadCrumbUrl' => isset($breadcrumbs_url) ? $breadcrumbs_url : '',
+                'hide_header' => true,
+                
                 'current' => $page_number,
                 'number_of_rows' => $rows,
                 'params' => $params,
                 'paramArray' => $paramArray,
                 'classregex' => $class_regex,
                 'hostfinderparams' => $hostfinderparams,
-                'breadCrumbUrl' => isset($breadcrumbs_url) ? $breadcrumbs_url : '',
+
                 'hostname' => $hostname,
                 'hostkey' => $hostkey,
                 'resultView' => $hosts_only ? 'search_result_group' : 'default_result_view',
