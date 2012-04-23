@@ -41,19 +41,22 @@ void HostClassFilterAddIncludeExcludeLists(HostClassFilter *filter, zval * inclu
 JsonElement *PackageResult(JsonElement *data_array, size_t page, size_t count)
 {
     size_t total = JsonElementLength(data_array);
-    size_t start = MAX(count * (page - 1), 0);
-    size_t end = MIN((count * page) - 1, total - 1);
-
-    if (start < end)
+    if (total > 0)
     {
-        if (start > 0)
-        {
-            //JsonArrayRemoveRange(data_array, 0, start - 1);
-        }
+        size_t start = MAX(count * (page - 1), 0);
+        size_t end = MIN((count * page) - 1, total - 1);
 
-        if (end < total - 1)
+        if (start < end)
         {
-            //JsonArrayRemoveRange(data_array, end + 1, total - 1);
+            if (start > 0)
+            {
+                JsonArrayRemoveRange(data_array, 0, start - 1);
+            }
+
+            if (end < total - 1)
+            {
+                JsonArrayRemoveRange(data_array, end + 1, total - 1);
+            }
         }
     }
 
