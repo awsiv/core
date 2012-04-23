@@ -55,13 +55,16 @@
 #include "json.h"
 
 #define RETURN_JSON(json) \
-   Writer *writer = StringWriter(); \
-   JsonElementPrint(writer, json, 0); \
-   JsonElementDestroy(json); \
-   char *JSON_buf = StringWriterClose(writer); \
-   char *JSON_ebuf = estrdup(JSON_buf); \
-   free(JSON_buf); \
-   RETURN_STRING(JSON_ebuf, 0);
+{ \
+   JsonElement *__return_json_json = json; \
+   Writer *__return_json_writer = StringWriter(); \
+   JsonElementPrint(__return_json_writer, __return_json_json, 0); \
+   JsonElementDestroy(__return_json_json); \
+   char *__return_json_output = StringWriterClose(__return_json_writer); \
+   char *__return_json_output_php = estrdup(__return_json_output); \
+   free(__return_json_output); \
+   RETURN_STRING(__return_json_output_php, 0); \
+}
 
 void HostClassFilterAddIncludeExcludeLists(HostClassFilter *filter, zval * includes, zval * excludes);
 

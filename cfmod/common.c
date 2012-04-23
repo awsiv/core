@@ -68,7 +68,7 @@ JsonElement *PackageResult(JsonElement *data_array, size_t page, size_t count)
 
     JsonElement *output = JsonObjectCreate(2);
     JsonObjectAppendObject(output, "meta", meta);
-    JsonObjectAppendArray(output, "data",data_array);
+    JsonObjectAppendArray(output, "data", data_array);
 
     return output;
 }

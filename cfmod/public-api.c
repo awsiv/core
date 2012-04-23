@@ -156,6 +156,7 @@ PHP_FUNCTION(cfmod_resource_host_id)
         JsonObjectAppendString(entry, LABEL_IP, record->ipaddr);
 
         JsonArrayAppendObject(output, entry);
+        DeleteHubHost(record);
     }
 
     RETURN_JSON(PackageResult(output, 1, 1));
