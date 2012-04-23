@@ -49,7 +49,7 @@ if (!function_exists('contextfinder_generate_item')) {
                     } 
                     ?>
             </td>
-            <td class="col2"><a class="invert showqtip" title="Swap conditions" href="#">&nbsp;</a></td>    
+            <td class="col2"><a class="invert" href="#">&nbsp;</a></td>    
             <td class="col1 excludes">   
                
                 <?php        
@@ -75,4 +75,4 @@ if (!function_exists('contextfinder_generate_item')) {
 
 <a class="green_btn" id="resetConditions" href="#"><span>Reset</span></a>    
 <a class="green_btn" id="setConditions" href="#"><span>Set conditions</span></a>
-</div>
+</div> 

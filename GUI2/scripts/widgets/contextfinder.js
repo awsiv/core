@@ -196,6 +196,47 @@
                         self._dialogSubmit(event, self);
                     });
                     
+                    
+                    //add tooltips
+                    var tooltip_classes = 'ui-tooltip-shadow ui-tooltip-dark';
+
+                    self.dialogcontent.find('.add_condition').qtip({
+                        content: {
+                            text: 'Add condition'
+                        },
+                        style: {
+                            classes: tooltip_classes
+                        }
+                    });  
+                    
+                    self.dialogcontent.find('.class_selector').qtip({
+                        content: {
+                            text: 'Select class'
+                        },
+                        style: {
+                            classes: tooltip_classes
+                        }
+                    });  
+                    
+                    self.dialogcontent.find('.delete_condition').qtip({
+                        content: {
+                            text: 'Delete condition'
+                        },
+                        style: {
+                            classes: tooltip_classes
+                        }
+                    });    
+                    
+                    self.dialogcontent.find('.invert').qtip({
+                        content: {
+                            text: 'Swap conditions'
+                        },
+                        style: {
+                            classes: tooltip_classes
+                        }
+                    });      
+                                        
+                    
                     self.setFocusFirstElement();
                     self.animate=false;
                     
