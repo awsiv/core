@@ -625,14 +625,14 @@ class Ion_auth_model_mongo extends CI_Model
         return $this->mongo_db->get_where_object('users', array('_id' => new MongoId($id)), 1);
     }
 
-    public function get_user_ldap($id = false)
+    public function get_user_ldap($username = false)
     {
         //if no id was passed use the current users id
-        if (empty($id))
+        if (empty($username))
         {
-            $id = $this->session->userdata('user_id');
+            $username = $this->session->userdata('user_id');
         }
-        return $this->mongo_db->get_where_object('users_ldap', array('_id' => new MongoId($id)), 1);
+        return $this->mongo_db->get_where_object('ldap_users', array('username' => $username), 1);
     }
 
     /**
