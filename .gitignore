@@ -8,6 +8,7 @@ Makefile.in
 *.pid
 *.log
 
+*.DS_Store
 # Tags
 
 TAGS
@@ -47,3 +48,4 @@ nova.creator
 nova.creator.user
 nova.files
 nova.includes
+
