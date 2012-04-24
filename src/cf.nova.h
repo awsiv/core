@@ -675,8 +675,8 @@ int Nova_GetReportedList(char *hostkey, char *scope, char *lval, Rlist **list);
 
 /* copernicus.c */
 
-void Nova_DrawTribe(int *tribe_id, GraphNode *tribe_node, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],
-                    int tribe_size, double *tribe_evc, int topic, char *buffer, int bufsize);
+JsonElement *Nova_DrawTribe(int *tribe_id, GraphNode *tribe_node, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],
+                            int tribe_size, double *tribe_evc, int topic);
 
 /* datapackaging.c */
 
@@ -1018,10 +1018,10 @@ void Nova_ShowTopic(char *qualified_topic);
 
 void Nova_WebTopicMap_Initialize(void);
 void Nova_LookupUniqueAssoc(int pid, char *buffer, int bufsize);
-void Nova_ScanTheRest(int pid, char *buffer, int bufsize);
+JsonElement *Nova_ScanTheRest(int pid);
 Item *Nova_SearchTopicMap(char *typed_topic,int type);
 Item *Nova_ScanLeadsAssociations(int pid, char *view);
-void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize);
+JsonElement *Nova_ScanOccurrences(int this_id);
 int Nova_GetReportDescription(int this_id, char *buffer, int bufsize);
 
 int Nova_GetTopicByTopicId(int pid, char *topic_name, char *topic_id, char *topic_type);
@@ -1037,7 +1037,7 @@ Item *Nova_GetTopicsInContext(char *context);
 Item *Nova_GetBusinessGoals(char *handle);
 int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize);
 
-void Nova_PlotTopicCosmos(int topic, char *view, char *buf, int size);
+JsonElement *Nova_PlotTopicCosmos(int topic, char *view);
 int Nova_GetTribe(int *tribe_id, GraphNode *tribe_nodes, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE], int pid,
                   char *v);
 void Nova_EigenvectorCentrality(double A[CF_TRIBE_SIZE][CF_TRIBE_SIZE], double *v, int dim);
