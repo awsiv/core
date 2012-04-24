@@ -13,8 +13,6 @@
 <div class="tables hostlist">
             <?php
             if (is_array($report_result) && !empty($report_result['data'])) {
-                $pg = paging($current, $number_of_rows, $report_result['meta']['count'], 10);
-                include 'paging_footer.php';
                 echo  $this->cf_table->host_only_table($report_result);
                 include 'paging_footer.php';
             } else {

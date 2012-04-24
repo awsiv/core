@@ -4,10 +4,6 @@ if (is_array($report_result['meta']) && key_exists('truncated', $report_result['
     echo "<p class=\"info\">$message</p>";
 }
 if ($report_result['meta']['count'] > 0) {
-    
-    $pg = paging($current, $number_of_rows, $report_result['meta']['count'], 10);    
-    include 'paging_footer.php';
-    
     foreach ($report_result as $bundles => $variables) {
         if ($bundles != "meta") {
             echo "<h2> bundle $bundles: <i>" . $variables['count'] . " variables</i></h2>";

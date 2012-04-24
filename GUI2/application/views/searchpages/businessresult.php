@@ -2,12 +2,18 @@
 
     <div id="reportpanel" class="innerdiv">
         <?php $this->load->view('/searchpages/reportsMenu'); ?>
-        <div class="title expanded showqtip" style="text-align:center" id="show_fileter_form" title="Click to toggle more filters">
-            <div><em>&nbsp;</em><span><?php echo $report_title; ?></span><em>&nbsp;</em></div>
+        <div class="title expanded" >
+            <div>
+                <span id="count_hosts">Report for <?php echo $hostcount ?> hosts</span> 
+                <a href="<?php echo site_url('widget/contextfinder') ?>" id="hclist" class="host_context_btn" title="<?php echo $this->lang->line('report_hostgp_help'); ?>"></a>
+            </div>
+            <div id="show_fileter_form" class="showqtip" style="margin-left:150px" title="Click to toggle more filters">
+                   <em class="front">&nbsp;</em><span style="font-weight:bold"><?php echo $report_title; ?></span><em  class='back'>&nbsp;</em>
+            </div>
             <div class="clear"></div>
         </div>  
         <div id="modifySearchPanel">
-            <div class="grid_7 reportForm">
+            <div class="grid_8 reportForm">
                 <?php $this->load->view('searchpages/' . $filter_view); ?> 
             </div>
             <script type="text/javascript">
@@ -17,14 +23,14 @@
                 });
             });
            </script>  
-            <div id="savesearchcontainer" class="grid_5 floatright panelcontent"> 
+            <div id="savesearchcontainer" class="floatright panelcontent"> 
                 <div id="searchSaveError" class="error" style="display:none;"></div>
                 <div id="searchSaveSuccess" class="success" style="display:none;"></div> 
                 <form id="saveform" method="post" action="<?php echo site_url(); ?>/savedsearch/save/">
                     <p>
                         <label>Save this search </label> 
                         <input type="text" id="search_name" name="search_name" class="textbox"></input>
-                        <span class="green_btn"><input type="submit" id="submit_search" value="Save Search"/></span>
+                        <span class="green_btn"><input type="submit" id="submit_search" value="Save"/></span>
                         <span class="clear"></span>
                     </p>
                     <input type="hidden" id="search_params" name="search_params" value="<?php echo $params; ?>"></input>
@@ -32,52 +38,21 @@
                     <input type="hidden" id="report_title" name="report_title" value="<?php echo $report_type; ?>"></input>
 
                 </form>
-          
-                <div class="alignrightbuttoncontainer">
-                    <a href="<?php echo site_url("/savedsearch/listSavedSearches/$report_type"); ?>"  class="green_btn loadsavedsearch"><span>Load Saved Searches</span></a>
-                </div>
             </div> 
             <div class="clear"></div> 
         </div>
  
         <div class="reportpanelcontent">
-            <div class="grid_7">
-                <span id="count_hosts">Report for <?php echo $hostcount ?> hosts</span>
-                <a href="<?php echo site_url('widget/contextfinder') ?>" id="hclist" class="green_btn" title="<?php echo $this->lang->line('report_hostgp_help'); ?>"><span>Host Context</span></a>
-                <script type="text/javascript">
-                    var $incList = $('#searchform input:hidden[name=inclist]');
-                    var $exList  = $('#searchform input:hidden[name=exlist]');
-                    $('#hclist').contextfinder({
-                        title: '<?php echo $this->lang->line('report_hostgp_help'); ?>',
-                        baseUrl: '<?php echo site_url() ?>',
-                        setContextClbkFnc:function() { 
-                            $('.reportForm form').submit();
-                        }, 
-                        complete:function(event,data){
-                            $incList.val(data.includes);
-                            $exList.val(data.excludes);
-                        }
-                    }); 
-
-                    $('#hclist').contextfinder('setContext',$incList.val().split(','), $exList.val().split(','));
-
-                    var obj = { name: 'filterview' };
-                    mediator.installTo(obj); 
-                    obj.publish('contextChange', { includes:stringToArray($incList.val()),excludes:stringToArray($exList.val())});
-
-                    obj.subscribe('contextChange', function(data){
-                        $incList.val(data.includes);
-                        $exList.val(data.excludes);
-                    });
-
-                </script> 
+            <div class="grid_3">
+              <span id="total_result">Total results: <?php echo $report_result['meta']['count']; ?></span>
             </div>    
-            <div id="totalResults" class=" grid_5" style="text-align: right;">
-                <span id="total_result">Total results found: <?php echo $report_result['meta']['count']; ?></span>
-                <?php if(is_array($paramArray) && !isset($paramArray['hosts_only'])){?>
-                    <a href="<?php echo $report_link ?>" id="send_mail" class="green_btn showqtip" title="<?php echo $this->lang->line('tool_tip_download_report') ?>"><span><em class="download_ico">&nbsp;</em>Download</span></a>
-               <?php }?>
-                
+            <div id="totalResults" style="text-align: right;">
+               <?php if ($report_result['meta']['count'] > 0 ) {
+                  $pg = paging($current, $number_of_rows, $report_result['meta']['count'], 10);
+                  include 'paging_footer.php';
+                  if(is_array($paramArray) && !isset($paramArray['hosts_only'])){?>
+                     <a href="<?php echo $report_link ?>" id="send_mail" class="showqtip" title="<?php echo $this->lang->line('tool_tip_download_report') ?>"><span><em class="download_ico">&nbsp;</em></span></a>
+               <?php } } ?>
             </div>
             <div class="clear"></div> 
             <div id="mainResultTable">
@@ -267,6 +242,31 @@
                                  });
                                  $(this).ajaxyDialog("open");
           });
+          
+            var $incList = $('#searchform input:hidden[name=inclist]');
+                    var $exList  = $('#searchform input:hidden[name=exlist]');
+                    $('#hclist').contextfinder({
+                        title: '<?php echo $this->lang->line('report_hostgp_help'); ?>',
+                        baseUrl: '<?php echo site_url() ?>',
+                        setContextClbkFnc:function() { 
+                            $('.reportForm form').submit();
+                        }, 
+                        complete:function(event,data){
+                            $incList.val(data.includes);
+                            $exList.val(data.excludes);
+                        }
+                    }); 
+
+                    $('#hclist').contextfinder('setContext',$incList.val().split(','), $exList.val().split(','));
+
+                    var obj = { name: 'filterview' };
+                    mediator.installTo(obj); 
+                    obj.publish('contextChange', { includes:stringToArray($incList.val()),excludes:stringToArray($exList.val())});
+
+                    obj.subscribe('contextChange', function(data){
+                        $incList.val(data.includes);
+                        $exList.val(data.excludes);
+                    });
 
     });
 </script>

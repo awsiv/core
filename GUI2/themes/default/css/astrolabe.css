@@ -22,7 +22,7 @@
     margin-right: 5px;
     display: inline-block;
     border: 2px solid #ffffff;
-    background-image: url('../images/astrolabe/arrow-icons.png') !important;
+    background-image: url('../images/arrow-icons.png') !important;
     background-position: -9px 0px;
     cursor: pointer;
 }
@@ -33,7 +33,7 @@
     width: 9px;
     margin-right: 5px;
     display: inline-block;
-    background-image: url('../images/astrolabe/arrow-icons.png');
+    background-image: url('../images/arrow-icons.png');
     background-position: 0px 0px;
 }
 

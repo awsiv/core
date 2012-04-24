@@ -1433,7 +1433,7 @@ div.ui-dialog .ui-dialog-buttonpane{
 .panelcontent input.searchfield
 {
     display:block;
-    width:100%;
+    width:99%;
     margin-top:2px;
     z-index: auto !important
 }
@@ -1688,6 +1688,7 @@ div.ui-dialog .ui-dialog-buttonpane{
 .reportpanelcontent
 {
     padding:0 10px;
+    margin-top:20px;
 }
 
 .reporthead .icons
@@ -2930,6 +2931,11 @@ background-image: none;
     padding:13px 5px;
 }
 
+#searchform .panelcontent label{
+  margin-right: 5px;
+}
+
+
 body .outerdiv a.hostcontextddl, .hostcontextddl{
     padding-left:10px;
     padding-right: 25px;
@@ -2949,8 +2955,13 @@ body .outerdiv a.hostcontextddl, .hostcontextddl{
 #savesearchcontainer{
     border-left: solid 1px #fff;
     margin:13px 0px;
-    padding: 0 13px;
+    padding: 20px 22px;
 }
+#savesearchcontainer form{
+    background: #E6EEE3;
+    padding: 10px 10px;
+}
+
 
 #savesearchcontainer #search_name {
     border: 1px solid #CECECE;
@@ -2967,7 +2978,7 @@ body .outerdiv a.hostcontextddl, .hostcontextddl{
 
  #savesearchcontainer span.green_btn {
     float:left;
-    margin: 2px 0 0 10px !important;    
+    margin: 5px 0 0 10px !important;    
 }
 
 span.green_btn, a.green_btn {
@@ -2988,8 +2999,6 @@ span.green_btn, a.green_btn {
         color: #3d4439 !important;
     }
     
-  
-
 span.green_btn{
     height:19px;
     display:inline-block;
@@ -3020,75 +3029,87 @@ span.green_btn input{
     border:none;
 }
 
-#reportpanel .title {
+#reportpanel div.title {
     padding: 0 !important;
     margin: 20px 10px 0 10px;
     background: url("../images/grey_1x1.gif") repeat-x 0 50%;
     cursor: pointer;
+    font-size:1em;
 }
 
-#reportpanel .title div {
+#reportpanel div.title div {
     padding: 0 0px; 
     background: #fff;
     display: inline-block; 
 }
 
-
-#reportpanel .title div span {
-    margin: 0 10px;
-}
-#reportpanel .title em,  
+#reportpanel div.title em,  
 #reportpanel .collapsed em {
-    background-image: url("../images/expand_collapse_buttons.png");
+    background-image: url("../images/arrow-icons.png");
     background-repeat: no-repeat;
-    width: 15px;
-    height: 15px;    
+    width: 9px;
+    height: 8px;    
     display: inline-block;
-    line-height: 16px;
+    line-height: 6px;
     margin: 0 10px;
 }
 
- #reportpanel .title em  {
-    background-position: -0px -40px;
+ #reportpanel div.title em  {
+    background-position: 0 0;
  }
- #reportpanel .title:hover em {
-    background-position: -20px -40px;     
- }
- #reportpanel .collapsed em {
-    background-position: 0 0 !important;
+
+ #reportpanel .collapsed em.front {
+    background-position: -10px 0 !important;
 }
 
-#reportpanel .collapsed:hover em {
-    background-position: -20px 0 !important;
+ #reportpanel .collapsed em.back {
+    background-position: -23px 0 !important;
+}
+
+.host_context_btn{
+    background-image: url("../images/host_context_button.png");
+    height: 21px;
+    width: 32px;
+    background-repeat: no-repeat;   
+    background-position: 0 0;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right:10px;
+}
+
+a.host_context_btn:hover{
+   background-position: -35px 0;  
 }
 
 
-a.green_btn em.download_ico {
-   width:  14px;
+ a em.download_ico {
+   width:  32px;
    height: 19px;
-   background-image: url("../images/download_arrow.gif");
+   background-image: url("../images/download_button.png");
    background-repeat: no-repeat;   
    background-position: 0 0;
    padding: 0;
-   margin: 0 9px 0 0px;
+   margin: 0 0 0 10px;
    display: inline-block;
 }
 
-    a.green_btn:hover em.download_ico {
-        background-position: 0 -19px;
+    a:hover em.download_ico {
+        background-position: -35px 0;
     }
 
 
 #count_hosts, #total_result {
-margin-right: 20px;
+ margin: 0 10px 0 5px;
 }
 
-.Paging { margin-top: 10px;}
+.Paging {
+    display:inline-block;
+}
 
 .page_counter {
     display: inline-block;
-    width: 200px;
-    margin-left: 20px;
+    /*width: 200px;*/
+    margin-left: 10px;
 }
 
 
@@ -3140,6 +3161,9 @@ select {
     line-height: 23px;
 }
 
+input[type="checkbox"]{
+    height:13px;
+}
 .no_website_header {
     margin-top: 30px !important;
 }

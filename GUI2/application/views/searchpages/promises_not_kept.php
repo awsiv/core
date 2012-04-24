@@ -1,23 +1,21 @@
  <div id="searchform" class="panel">
      <div class="panelcontent">
           <form method="post" action="<?php echo site_url('search')?>">
-          <p>Promise handles: (.*+[])<input class="searchfield" type="text" name="name" value="<?php echo (is_array($paramArray) && isset($paramArray['name'])) ? trim($paramArray['name']) : ''; ?>"></p>
+          <p>Promise handles: (.*+[])
+              <span class="floatright"> Return host names only: <input type="checkbox" name="hosts_only" value="true"  <?php echo (is_array($paramArray) && isset($paramArray['hosts_only'])) ? 'checked' : ''; ?>></span>
+               <span class="clear"></span>
+              <input class="searchfield" type="text" name="name" value="<?php echo (is_array($paramArray) && isset($paramArray['name'])) ? trim($paramArray['name']) : ''; ?>"></p>
      
          
             <p>
                 Cause: (.*+[])<input type="text" name="cause" class="searchfield" value="<?php echo (is_array($paramArray) && isset($paramArray['cause'])) ? trim($paramArray['cause']) : ''; ?>">
             </p>
-            <p>
-                From <input type="text" name="from" size="25" value="<?php echo (is_array($paramArray) && isset($paramArray['from'])) ? trim($paramArray['from']) : ''; ?>">
-                To <input type="text" name="to" size="25" value="<?php echo (is_array($paramArray) && isset($paramArray['to'])) ? trim($paramArray['to']) : ''; ?>">
+            <p style="padding-top:15px">
+                <label>From </label> <input type="text" name="from" size="20" value="<?php echo (is_array($paramArray) && isset($paramArray['from'])) ? trim($paramArray['from']) : ''; ?>">
+                <label style="margin-left:10px">To </label> <input type="text" name="to" size="20" value="<?php echo (is_array($paramArray) && isset($paramArray['to'])) ? trim($paramArray['to']) : ''; ?>">
+                <span class="green_btn floatright" style="margin-top: 5px"><input class="green_btn" type="submit" value="Generate Report"></input></span>
+                <span class="clear"></span>
             </p>
-          
-           <p>
-             <span class="floatright"> Return host names only: <input type="checkbox" name="hosts_only" value="true"  <?php echo (is_array($paramArray) && isset($paramArray['hosts_only'])) ? 'checked' : ''; ?>></span>
-             <span class="clear"></span>
-          </p>
-          
-            <?php $this->load->view('searchpages/buttons_for_filter', array('morefilters' => true)); ?> 
             <?php $this->load->view('searchpages/hidden_fields_for_set_context'); ?>   
           </form>
       </div>

@@ -7,9 +7,7 @@ if (is_array($report_result) && key_exists('truncated', $report_result['meta']))
     $number_of_rows = $displayed_rows;
 }
 
-if (count($report_result['data']) > 0) {
-    $pg = paging($current, $number_of_rows, $report_result['meta']['count'], 10);
-    include 'paging_footer.php';
+if ($report_result['meta']['count'] > 0) {
     echo '<div class="report_result">';
     echo $this->cf_table->generateReportTableModified($report_result, $report_title);
     echo '</div>';
