@@ -15,7 +15,9 @@ class Astrolabe extends Cf_REST_Controller
 
     function host_get()
     {
-        echo cfpr_astrolabe_host_list($this->username, $this->param_includes(), $this->param_excludes());
+        echo cfpr_astrolabe_host_list($this->username,
+                $this->param_includes(), $this->param_excludes());
+        
     }
 
     function profile_get($id = NULL)

@@ -523,19 +523,23 @@ class Search extends Cf_Controller
                     $to = isset($getparams['to']) ? urldecode($getparams['to']) : $this->input->post('to');
                     $cause_rx = isset($getparams['cause']) ? $getparams['cause'] : $this->input->post('cause');
                     $cause_rx = $cause_rx === false ? ".*" : $cause_rx;
+                    
+                     $from_timestamp = strtotime($from);
+                     $to_timestamp = strtotime($to);
+                    
                     $pdfurlParams = array('type' => $report_type,
                         'inclist' => $incList,
                         'exlist' => $exList,
                         'search' => $name,
-                        'from' => $from,
-                        'to' => $to,
+                        'from' => $from_timestamp,
+                        'to' => $from_timestamp,
                         'cause' => $cause_rx
                     );
 
                     if ($report_type == "promises-repaired-log")
-                        $data['report_result'] = $this->report_model->getPromisesRepairedLog($username, $hostkey, $name, $cause_rx, $from, $to, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
+                        $data['report_result'] = $this->report_model->getPromisesRepairedLog($username, $hostkey, $name, $cause_rx, $from_timestamp, $to_timestamp, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
                     if ($report_type == "promises-repaired-summary")
-                        $data['report_result'] = $this->report_model->getPromisesRepairedSummary($username, $hostkey, $name, $cause_rx, $from, $to, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
+                        $data['report_result'] = $this->report_model->getPromisesRepairedSummary($username, $hostkey, $name, $cause_rx, $from_timestamp, $to_timestamp, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
@@ -550,16 +554,19 @@ class Search extends Cf_Controller
                     $cause_rx = isset($getparams['cause']) ? $getparams['cause'] : $this->input->post('cause');
                     $cause_rx = $cause_rx === false ? ".*" : $cause_rx;
 
+                    $from_timestamp = strtotime($from);
+                    $to_timestamp = strtotime($to);
+                    
                     if ($report_type == "promises-not-kept-summary")
-                        $data['report_result'] = $this->report_model->getPromisesNotKeptSummary($username, $hostkey, $name, $cause_rx, $from, $to, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
+                        $data['report_result'] = $this->report_model->getPromisesNotKeptSummary($username, $hostkey, $name, $cause_rx, $from_timestamp, $to_timestamp, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
                     if ($report_type == "promises-not-kept-log")
-                        $data['report_result'] = $this->report_model->getPromisesNotKeptLog($username, $hostkey, $name, $cause_rx, $from, $to, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
+                        $data['report_result'] = $this->report_model->getPromisesNotKeptLog($username, $hostkey, $name, $cause_rx, $from_timestamp, $to_timestamp, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
                     $pdfurlParams = array('type' => $report_type,
                         'inclist' => $incList,
                         'exlist' => $exList,
                         'search' => $name,
-                        'from' => $from,
-                        'to' => $to,
+                        'from' => $from_timestamp,
+                        'to' => $to_timestamp,
                         'cause' => $cause_rx
                     );
 

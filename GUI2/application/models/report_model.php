@@ -653,8 +653,6 @@ class report_model extends Cf_Model
     {
         try
         {
-            $from = strtotime($from);
-            $to = strtotime($to);
             if (!$to)
             {
                 $to = time();
@@ -705,8 +703,6 @@ class report_model extends Cf_Model
     {
         try
         {
-            $from = strtotime($from);
-            $to = strtotime($to);
             if (!$to)
             {
                 $to = time();
@@ -757,8 +753,6 @@ class report_model extends Cf_Model
     {
         try
         {
-            $from = strtotime($from);
-            $to = strtotime($to);
             if (!$to)
             {
                 $to = time();
@@ -807,8 +801,6 @@ class report_model extends Cf_Model
     {
         try
         {
-            $from = strtotime($from);
-            $to = strtotime($to);
             if (!$to)
             {
                 $to = time();

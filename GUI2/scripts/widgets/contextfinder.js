@@ -356,6 +356,15 @@
                      beforeClose: function(event, ui) {
                     }
                 });
+                
+              requestDialog.keypress(function(event) {
+                if (event.keyCode == $.ui.keyCode.ENTER) {
+                    //self.publish("contextChange",self._context);
+                    $(this).dialog('close');
+                    event.preventDefault();
+                    return false;
+                  }
+                });
                 return requestDialog;
             }
         },
