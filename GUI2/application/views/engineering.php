@@ -37,7 +37,7 @@
                 </div>
                 <div class="clear"></div>
             </div>
-            <div id="tab-2">
+            <div id="tab-2" style="padding-right: 0">
                     <div class="astrolabeLocation"></div>
                 <div id="reportInfoContainer" class="reportInfoContainer">
                     <div class="clear"></div>

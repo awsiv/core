@@ -2926,6 +2926,112 @@ background-image: none;
 
 .dd_menu li:hover ul li a.selected {background:silver; color:#000; border:solid 1px #444; padding:0}
 
+#saved-searches{
+   margin-left:5px; 
+}
+
+#treeReportContentMenu #saved-searches{
+    margin-left:0px
+}
+
+#saved-searches span{
+   font-weight: bold;
+   margin-left:10px;
+}
+
+#treeReportContentMenu #saved-searches span{
+   font-weight: normal;
+   margin-left:0;
+}
+
+#saved-searches .separater{
+    border-left: solid 1px #c8c8c8;
+}
+
+#treeReportContentMenu #saved-searches .separater{
+    border:none;
+}
+
+#saved-searches ul, #saved-searches li ,#saved-searches a{
+    background: #fff;
+}
+
+#saved-searches ul{
+    width: 250px;
+}
+
+#saved-searches:hover ul{
+     left:10px;
+}
+
+#treeReportContentMenu #saved-searches:hover ul{
+    left:0
+}
+
+#saved-searches:hover ul span{
+    background: #fff;
+    border:none;
+    padding:0;
+}
+
+#searchaccordian a{
+    padding:0;
+}
+
+#searchaccordian a:hover{
+    border: none;
+    margin:0;
+    padding:0;
+    text-decoration: underline;
+}
+
+
+#searchaccordian h3.head{
+   color:#3D4439;
+   font-weight: normal;
+   font-size: 13px;
+   border-top: solid 1px #838A7F;
+   margin:0;
+   padding:2px 0;
+   display:block;
+   width:250px;
+}
+#searchaccordian h3.head:nth-child(1){
+ border:none;
+}
+    #searchaccordian h3.head em{
+        background-image: url("../images/dropdown_icons.png");
+        background-repeat: no-repeat;
+        background-position: -24px 0;
+        width: 9px;
+        height: 8px;    
+        display: inline-block;
+        line-height: 6px;
+        margin: 0 4px; 
+        
+    }
+    
+    #searchaccordian h3.expanded em {
+    background-position:0 0 !important;
+    }
+    
+#searchaccordian div{
+    padding-left: 15px;
+}
+
+#searchaccordian h3:hover{
+    background: #51584d;
+    color:#fff;
+   
+}
+#searchaccordian h3:hover em{
+ background-position:-34px 0 !important;
+}
+#searchaccordian h3.expanded:hover em{
+    background-position:-13px 0 !important;
+}
+
+
 #searchform .panelcontent{
     background: #D2DACF;
     padding:13px 5px;
