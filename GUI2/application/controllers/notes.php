@@ -7,7 +7,7 @@ class Notes extends Cf_Controller
     {
         parent::__construct();
         $this->load->model('note_model');
-        $this->load->library('form_validation');
+        $this->load->library('form_validation', 'Setting_lib');
         $this->form_validation->set_error_delimiters('<span class="errorlist">', '</span>');
     }
 
@@ -128,12 +128,13 @@ class Notes extends Cf_Controller
             'breadcrumbs' => $this->breadcrumblist->display()
         );
 
-        $data['currentPage'] = isset($params['page']) ? intval($params['page'], 10) : 1;
+        $data['currentPage'] = isset($params['page']) ? intval($params['page'], 10) : 1;   
+        $data['number_of_rows'] = isset($params['rows']) ? intval($params['rows'], 10):$this->setting_lib->get_no_of_rows();
         $filter = array(
             'userId' => $userId,
             'dateFrom' => $dateFrom ? $dateFrom : -1,
             'dateTo' => $dateTo ? $dateTo : -1,
-            'noOfRows' => 10,
+            'noOfRows' => $data['number_of_rows'],
             'pageNo' => $data['currentPage'],
             'loggedUser' => $loggedUser
         );
@@ -144,7 +145,6 @@ class Notes extends Cf_Controller
         // change the date for js display
         $data['display_dateFrom'] = ($filter['dateFrom'] != -1) ? date("m/d/Y", $dateFrom) : null;
         $data['display_dateTo'] = ($filter['dateTo'] != -1) ? date("m/d/Y", $dateTo) : null;
-
 
 
         $data['filters'] = $filter;

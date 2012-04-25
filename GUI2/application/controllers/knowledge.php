@@ -169,6 +169,7 @@ class Knowledge extends Cf_Controller
                 'pid' => $pid,
                 'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_kw_bank'),
                 'breadcrumbs' => $this->breadcrumblist->display(),
+                'pagingParam' => $breadcrumbs_url
             );
 
             $data['graphdata'] = $this->knowledge_model->getKnowledgeView($this->username, $pid);
@@ -187,6 +188,9 @@ class Knowledge extends Cf_Controller
             $data['showTopicHits'] = (!is_array($data['topicHits']) || empty($data['topicHits'])) ? false : true;
             $data['showSameContext'] = (!is_array($data['topicCategory']['other_topics']) || empty($data['topicCategory']['other_topics'])) ? false : true;
             $data['showSubTopics'] = (!is_array($data['topicCategory']['topic']['sub_topics']) || empty($data['topicCategory']['topic']['sub_topics'])) ? false : true;
+
+            $data['currentPage'] = isset($getparams['page']) ? intval($getparams['page'], 10) : 1;   
+            $data['number_of_rows'] = isset($getparams['rows']) ? intval($getparams['rows'], 10):$this->setting_lib->get_no_of_rows();
 
             //for story generation
             if (is_constellation())
