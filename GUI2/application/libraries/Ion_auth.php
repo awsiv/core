@@ -656,7 +656,7 @@ class Ion_auth
 
                 if (is_object($user_details_from_db)) {
 
-                    $user_with_roles['roles'] = (!empty($user_details_from_db->roles) ? $user_details_from_db->roles : '');
+                    $user_with_roles['roles'] = $this->ci->auth_ldap->get_role_for_user_from_localdb($user['name']);
                 }
                 array_push($users_collection, $user_with_roles);
             }
