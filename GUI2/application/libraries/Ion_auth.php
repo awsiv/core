@@ -649,16 +649,16 @@ class Ion_auth
             $users=$this->ci->auth_ldap->get_all_ldap_users($this->ci->session->userdata('username'), $this->ci->session->userdata('pwd'));
             $users_collection=array();
 
-            foreach($users as $user){
-                $user_with_roles=$user;
+            foreach ($users as $user) {
+                $user_with_roles = $user;
 
-                $user_details_from_db=$this->get_ldap_user_details_from_local_db($user['name']);
+                $user_details_from_db = $this->get_ldap_user_details_from_local_db($user['name']);
 
-                if(is_object($user_details_from_db)){
-                $user_with_roles['roles']=$user_details_from_db->roles;
+                if (is_object($user_details_from_db)) {
+
+                    $user_with_roles['roles'] = (!empty($user_details_from_db->roles) ? $user_details_from_db->roles : '');
                 }
                 array_push($users_collection, $user_with_roles);
-
             }
             //var_dump($users_collection);
             return $users_collection;
