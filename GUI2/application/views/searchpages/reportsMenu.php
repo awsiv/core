@@ -14,26 +14,40 @@
         <?php if (isset($saved_search_menu))
         { ?>
 
-            <li id="saved-searches"><span>Saved Searches</span>
+            <li id="saved-searches"><em class="separater"></em><span>Saved Searches</span>
                 <ul><li>
+                        <div id="searchaccordian">
+                        
                         <?php
                         foreach ((array) $saved_search_menu as $cat => $searches)
                         {
                             ?>
-                            <p><?php echo $cat; ?></p>
+                            <h3 class="head"><em>&nbsp;</em><?php echo $cat; ?></h3>
+                            <div>
                             <?php foreach ($searches as $searchObj)
                             { ?>
                                 <a href="<?php echo $searchObj->getUrl(); ?>" class="savesearch-url"><?php echo$searchObj->getLabel(); ?></a>
                             <?php } ?>
+                            </div>
 
 
                         <?php } ?>
+                       </div>
                     </li>
                 </ul>
             </li>
         <?php } ?>
 
-
-
     </ul>
 </div>
+
+<script type="text/javascript">
+	jQuery(document).ready(function(){
+	$('#searchaccordian .head').click(function() {
+                var self=this;
+		$(this).next().toggle();
+                $(this).toggleClass('expanded');
+		return false;
+	}).next().hide();
+});
+</script>
