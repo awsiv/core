@@ -10,7 +10,8 @@ SUBDIRS = src docs GUI2 tests/unit
 
 EXTRA_DIST = acconfig.h COPYING ChangeLog LICENSE
 
-doc_DATA = ChangeLog.Nova
+docsdir = $(projdocdir)
+docs_DATA = ChangeLog.Nova
 
 #
 # Some basic clean ups
