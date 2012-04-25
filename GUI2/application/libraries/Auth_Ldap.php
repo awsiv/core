@@ -503,7 +503,7 @@ class Auth_Ldap {
     function get_role_for_user_from_localdb($username){
         $roles=array();
         $user=$this->ci->ion_auth->get_ldap_user_details_from_local_db($username);
-        if($user !==NULL && is_object($user)){
+        if($user !==NULL && is_object($user) && property_exists($user,'roles')){
         $roles=$user->roles;
         }
         return $roles;
