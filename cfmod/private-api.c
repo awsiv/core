@@ -2883,7 +2883,9 @@ PHP_FUNCTION(cfpr_get_pid_for_topic)
     long pid;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sss",
-                              &username, &user_len, &type, &y_len, &topic, &o_len) == FAILURE)
+                              &username, &user_len,
+                              &type, &y_len,
+                              &topic, &o_len) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2917,12 +2919,12 @@ PHP_FUNCTION(cfpr_search_topics)
     char *username, *search;
     char *fsearch;
     int user_len, s_len;
-    const int bufsize = 100000;
-    char buffer[bufsize];
     zend_bool regex;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssb",
-                              &username, &user_len, &search, &s_len, &regex) == FAILURE)
+                              &username, &user_len,
+                              &search, &s_len,
+                              &regex) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2938,23 +2940,23 @@ PHP_FUNCTION(cfpr_search_topics)
 
     fsearch = (s_len == 0) ? NULL : search;
 
-    buffer[0] = '\0';
-    Nova2PHP_search_topics(fsearch, (bool) regex, buffer, bufsize);
+    JsonElement *out = NULL;
+    out = Nova2PHP_search_topics(fsearch, (bool) regex);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(out);
 }
 
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_show_topic)
 {
-    const int bufsize = 100000;
-    char buffer[bufsize];
     long id;
     char *username;
     int user_len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sl", &username, &user_len, &id) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sl",
+                              &username, &user_len,
+                              &id) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2968,23 +2970,23 @@ PHP_FUNCTION(cfpr_show_topic)
         RETURN_NULL();
     }
 
-    buffer[0] = '\0';
-    Nova2PHP_show_topic((int) id, buffer, bufsize);
+    JsonElement *out = NULL;
+    out = Nova2PHP_show_topic((int) id);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(out);
 }
 
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_show_topic_leads)
 {
-    const int bufsize = 100000;
-    char buffer[bufsize];
     long id;
     char *username;
     int user_len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sl", &username, &user_len, &id) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sl",
+                              &username, &user_len,
+                              &id) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -2998,10 +3000,10 @@ PHP_FUNCTION(cfpr_show_topic_leads)
         RETURN_NULL();
     }
 
-    buffer[0] = '\0';
-    Nova2PHP_show_topic_leads((int) id, buffer, bufsize);
+    JsonElement *out = NULL;
+    out = Nova2PHP_show_topic_leads((int) id);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(out);
 }
 
 
@@ -3009,13 +3011,13 @@ PHP_FUNCTION(cfpr_show_topic_leads)
 
 PHP_FUNCTION(cfpr_show_all_context_leads)
 {
-    const int bufsize = 1000000;
-    char buffer[bufsize];
     char *username;
     char *unqualified_topic;
     int user_len, topic_len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss", &username, &user_len, &unqualified_topic, &topic_len) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
+                              &username, &user_len,
+                              &unqualified_topic, &topic_len) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -3030,10 +3032,10 @@ PHP_FUNCTION(cfpr_show_all_context_leads)
         RETURN_NULL();
     }
 
-    buffer[0] = '\0';
+    JsonElement *out = NULL;
+    out = Nova2PHP_show_all_context_leads(unqualified_topic);
 
-    Nova2PHP_show_all_context_leads(unqualified_topic, buffer, bufsize);
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(out);
 }
 
 
@@ -3041,13 +3043,13 @@ PHP_FUNCTION(cfpr_show_all_context_leads)
 
 PHP_FUNCTION(cfpr_show_topic_hits)
 {
-    const int bufsize = 100000;
-    char buffer[bufsize];
     long id;
     char *username;
     int user_len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sl", &username, &user_len, &id) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sl",
+                              &username, &user_len,
+                              &id) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -3061,22 +3063,23 @@ PHP_FUNCTION(cfpr_show_topic_hits)
         RETURN_NULL();
     }
 
-    buffer[0] = '\0';
-    Nova2PHP_show_topic_hits((int) id, buffer, bufsize);
-    RETURN_STRING(buffer, 1);
+    JsonElement *out = NULL;
+    out = Nova2PHP_show_topic_hits((int) id);
+
+    RETURN_JSON(out);
 }
 
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_show_topic_category)
 {
-    const int bufsize = 10000;
-    char buffer[bufsize];
     long id;
     char *username;
     int user_len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sl", &username, &user_len, &id) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sl",
+                              &username, &user_len,
+                              &id) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -3090,10 +3093,10 @@ PHP_FUNCTION(cfpr_show_topic_category)
         RETURN_NULL();
     }
 
-    buffer[0] = '\0';
-    Nova2PHP_show_topic_category((int) id, buffer, bufsize);
+    JsonElement *out = NULL;
+    out = Nova2PHP_show_topic_category((int) id);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(out);
 }
 
 /******************************************************************************/
@@ -4533,11 +4536,12 @@ PHP_FUNCTION(cfpr_get_knowledge_view)
 {
     char *username, *view;
     int user_len, v_len;
-    const int bufsize = 1000000;
-    char buffer[bufsize];
     long pid;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sls", &username, &user_len, &pid, &view, &v_len) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sls",
+                              &username, &user_len,
+                              &pid,
+                              &view, &v_len) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -4551,10 +4555,10 @@ PHP_FUNCTION(cfpr_get_knowledge_view)
         RETURN_NULL();
     }
 
-    buffer[0] = '\0';
-    Nova2PHP_get_knowledge_view(pid, view, buffer, 100000);
+    JsonElement *out = NULL;
+    out = Nova2PHP_get_knowledge_view(pid, view);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(out);
 }
 
 /******************************************************************************/

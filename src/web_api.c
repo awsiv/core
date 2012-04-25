@@ -212,9 +212,9 @@ void Nova2PHP_GetLibraryDocuments(char *path, char *buffer, int bufsize)
 
 /****************************************************************************/
 
-void Nova2PHP_get_knowledge_view(int pid, char *view, char *buffer, int bufsize)
+JsonElement *Nova2PHP_get_knowledge_view(int pid, char *view)
 {
-    Nova_PlotTopicCosmos(pid, view, buffer, bufsize);
+    return Nova_PlotTopicCosmos(pid, view);
 }
 
 /****************************************************************************/
@@ -2853,110 +2853,98 @@ int Nova2PHP_docroot(char *buffer, int bufsize)
 
 /*****************************************************************************/
 
-int Nova2PHP_search_topics(char *search, bool regex, char *buffer, int bufsize)
+JsonElement *Nova2PHP_search_topics(char *search, bool regex)
 {
     Item *ip,*results = NULL;
-    char work[CF_BUFSIZE],jsonEscapedStr[CF_BUFSIZE];
-    
-    results = Nova_SearchTopicMap(search,CF_SEARCH_REGEX);
+    JsonElement *json_array_out = JsonArrayCreate(100);
 
+    results = Nova_SearchTopicMap(search,CF_SEARCH_REGEX);
     if (!results)
     {
-       strcpy(buffer, "[]");
-       return false;
+        return json_array_out;
     }
 
-    strcpy(buffer, "[ ");
     results = SortItemListNames(results);
 
     for (ip = results; ip != NULL; ip = ip->next)
     {
-        EscapeJson(ip->name, jsonEscapedStr, CF_BUFSIZE - 1);
-        snprintf(work, CF_BUFSIZE, "{ \"context\": \"%s\", \"topic\": \"%s\", \"id\": %d },", ip->classes,
-                 jsonEscapedStr, ip->counter);
-        Join(buffer, work, CF_BUFSIZE);
+        JsonElement *json_obj = JsonObjectCreate(3);
+        JsonObjectAppendString(json_obj, "context", ip->classes);
+        JsonObjectAppendString(json_obj, "topic", ip->name);
+        JsonObjectAppendInteger(json_obj, "id", ip->counter);
+
+        JsonArrayAppendObject(json_array_out, json_obj);
     }
 
-    buffer[strlen(buffer) - 1] = ']';
-
-    return true;
+    return json_array_out;
 }
 
 /*****************************************************************************/
 
-void Nova2PHP_show_topic(int id, char *buffer, int bufsize)
+JsonElement *Nova2PHP_show_topic(int id)
 {
     char topic_name[CF_BUFSIZE], topic_id[CF_BUFSIZE], topic_context[CF_BUFSIZE];
-    char work[CF_BUFSIZE];
-
-    buffer[0] = '\0';
+    JsonElement *json_out = NULL;
 
     if (Nova_GetTopicByTopicId(id, topic_name, topic_id, topic_context))
     {
-        snprintf(buffer, bufsize, " {\"topic\":\"%s\",\"context\":\"%s\"}", EscapeJson(topic_name, work, CF_BUFSIZE - 1),
-                 topic_context);
+        json_out = JsonObjectCreate(2);
+        JsonObjectAppendString(json_out, "topic", topic_name);
+        JsonObjectAppendString(json_out, "context", topic_context);
     }
     else
     {
-        snprintf(buffer, bufsize, "[]");
+        json_out = JsonArrayCreate(1);
     }
+    return json_out;
 }
 
 /*****************************************************************************/
 
-void Nova2PHP_show_all_context_leads(char *unqualified_topic, char *buffer, int bufsize)
+JsonElement *Nova2PHP_show_all_context_leads(char *unqualified_topic)
 {
     char reconstructed[CF_BUFSIZE];
     Item *ip,*candidates;
     int id;
-    char work[CF_BUFSIZE];
 
-    memset(buffer,0,bufsize);
-    
+    JsonElement *json_array_out = JsonArrayCreate(100);
+
     candidates = Nova_SearchTopicMap(unqualified_topic,CF_SEARCH_EXACT);
-
     if (candidates == NULL)
-       {
-       strcpy(buffer, "[]");
-       return;
-       }
-
-    strcpy(buffer,"[");
+    {
+       return json_array_out;
+    }
 
     for (ip = candidates; ip != NULL; ip=ip->next)
-       {
-       snprintf(work,CF_BUFSIZE, "\n{ \"context\": \"%s\", \"leads\": ",ip->classes);
-       Join(buffer, work, bufsize);
+    {
+        JsonElement *json_obj = JsonObjectCreate(2);
+        JsonObjectAppendString(json_obj, "context", ip->classes);
 
-       snprintf(reconstructed,CF_BUFSIZE,"%s::%s",ip->classes,ip->name);
-       id = Nova_GetTopicIdForTopic(reconstructed);
+        snprintf(reconstructed,CF_BUFSIZE,"%s::%s",ip->classes,ip->name);
+        id = Nova_GetTopicIdForTopic(reconstructed);
 
-       Nova2PHP_show_topic_leads(id, buffer, bufsize);
+        JsonElement *json_array_topic = Nova2PHP_show_topic_leads(id);
+        JsonObjectAppendArray(json_obj, "leads", json_array_topic);
 
-       if (ip->next)
-          {
-          Join(buffer,"\n},",bufsize); 
-          }
-       }
+        JsonArrayAppendObject(json_array_out, json_obj);
+    }
     
     DeleteItemList(candidates);
 
-    //Chop off trailing command and terminate
-    strcpy(buffer + strlen(buffer) - 1, "\n}\n]\n"); 
+    return json_array_out;
 }
 
 /*****************************************************************************/
 
-void Nova2PHP_show_topic_leads(int id, char *buffer, int bufsize)
+JsonElement *Nova2PHP_show_topic_leads(int id)
 {
     Item *ip;
     Item *list = Nova_ScanLeadsAssociations(id, NULL);
-    char work[CF_BUFSIZE], jsonEscapedStr[CF_BUFSIZE] = { 0 };
 
+    JsonElement *json_array_out = JsonArrayCreate(100);
     if (list == NULL)
     {
-        Join(buffer,"[] ",bufsize);
-        return;
+        return json_array_out;
     }
 
 // name contains the association
@@ -2964,55 +2952,55 @@ void Nova2PHP_show_topic_leads(int id, char *buffer, int bufsize)
 // counter contains the topic id
 
 // Aggregate all contexts
-    
-    Join(buffer, "\n[ ", bufsize);
 
+    char *last_name = NULL;
     for (ip = list; ip != NULL; ip = ip->next)
     {
-        if (ip == list)
+        if (StringSafeCompare(ip->name, last_name) == 0)
         {
-            EscapeJson(ip->name, jsonEscapedStr, sizeof(jsonEscapedStr));
-            snprintf(work, CF_BUFSIZE, " \n{ \"assoc\": \"%s\", \"topics\": [", jsonEscapedStr);
-            Join(buffer, work, bufsize);
+            last_name = ip->name;
+            continue;
+        }
+        last_name = ip->name;
+
+        JsonElement *json_obj = JsonObjectCreate(2);
+        JsonObjectAppendString(json_obj, "assoc", ip->name);
+
+        JsonElement *json_topic_arr = JsonArrayCreate(10);
+
+        for (Item *ip2 = ip; ip2 != NULL; ip2 = ip2->next)
+        {
+            if (StringSafeCompare(ip->name, ip2->name) == 0)
+            {
+                JsonElement *json_topic_obj = JsonObjectCreate(2);
+                JsonObjectAppendString(json_topic_obj, "topic", ip2->classes);
+                JsonObjectAppendInteger(json_topic_obj, "id", ip2->counter);
+
+                JsonArrayAppendObject(json_topic_arr, json_topic_obj);
+            }
         }
 
-        // nest a topic subservient to an association
-        
-        EscapeJson(ip->classes, jsonEscapedStr, sizeof(jsonEscapedStr));
-        snprintf(work, CF_BUFSIZE, "\n {\"topic\": \"%s\", \"id\": %d },", jsonEscapedStr, ip->counter);
-        Join(buffer, work, bufsize);
-
-        // Check end of this association list
-
-        if (ip->next && strcmp(ip->name, ip->next->name) != 0)
-        {
-           // New association, strip trailing comma and terminate
-           strcpy(buffer + strlen(buffer) - 1, "]},");
-
-            EscapeJson(ip->next->name, jsonEscapedStr, sizeof(jsonEscapedStr));
-            snprintf(work, CF_BUFSIZE, "\n{ \n\"assoc\": \"%s\", \"topics\": [", jsonEscapedStr);
-            Join(buffer, work, bufsize);
-        }
+        JsonObjectAppendArray(json_obj, "topics", json_topic_arr);
+        JsonArrayAppendObject(json_array_out, json_obj);
     }
 
-    // Chop off trailing comma
-    strcpy(buffer + strlen(buffer) - 1, "]}]\n");
+    DeleteItemList(list);
+
+    return json_array_out;
 }
 
 /*****************************************************************************/
 
-void Nova2PHP_show_topic_hits(int id, char *buffer, int bufsize)
+JsonElement *Nova2PHP_show_topic_hits(int id)
 {
-    buffer[0] = '\0';
-    Nova_ScanOccurrences(id, buffer, bufsize);
+    return Nova_ScanOccurrences(id);
 }
 
 /*****************************************************************************/
 
-void Nova2PHP_show_topic_category(int id, char *buffer, int bufsize)
+JsonElement *Nova2PHP_show_topic_category(int id)
 {
-    buffer[0] = '\0';
-    Nova_ScanTheRest(id, buffer, bufsize);
+    return Nova_ScanTheRest(id);
 }
 
 /*****************************************************************************/

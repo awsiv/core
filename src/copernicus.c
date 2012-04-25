@@ -18,17 +18,24 @@
 
 #include <assert.h>
 
-void Nova_DrawTribe(int *tribe_id, GraphNode *tribe_node, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],
-                    int tribe_size, double *tribe_evc, int topic, char *buffer, int bufsize)
+JsonElement *Nova_DrawTribe(int *tribe_id, GraphNode *tribe_node, double tribe_adj[CF_TRIBE_SIZE][CF_TRIBE_SIZE],
+                            int tribe_size, double *tribe_evc, int topic)
+/* FORMAT
+    [{
+    "id": "graphnode0",
+    "name": "Host Portal",
+    "adjacencies": [ {"nodeTo": "graphnode1"}, {"nodeFrom": "graphnode3"}  ],
+    "data": {
+        '$color':'#FFCC33',
+        '$dim': 30,
+        "$type": "gradientCircle"}
+    },{}]
+ */
 {
     int i, j;
     double radius;
-    char work[CF_BUFSIZE] = { 0 },
-         url[CF_MAXVARSIZE] = { 0 },
-         shortname[CF_MAXVARSIZE] = { 0 },
-         longname[CF_BUFSIZE] = { 0 },
-         context[CF_BUFSIZE] = { 0 };
     char *colour;
+    JsonElement *json_arr_out = JsonArrayCreate(10);
 
     for (i = 0; i < tribe_size; i++)
     {
@@ -58,55 +65,45 @@ void Nova_DrawTribe(int *tribe_id, GraphNode *tribe_node, double tribe_adj[CF_TR
             }
         }
 
-        /* FORMAT
-           {
-           "id": "graphnode0",
-           "name": "Host Portal",
-           "adjacencies": [ "nodeTo": "graphnode1", "nodeFrom": "graphnode3"  ],
-           "data": {
-           '$color':'#FFCC33',
-           '$dim': 30,
-           "$type": "gradientCircle"
-           }
-           },
-         */
+        Writer *url = StringWriter();
+        WriterWriteF(url, "/knowledge/knowledgemap/pid/%d", tribe_node[i].real_id);
+        Writer *id = StringWriter();
+        WriterWriteF(id, "g%d", i);
+        Writer *rad = StringWriter();
+        WriterWriteF(rad, "%.1lf", radius);
 
-        snprintf(url, CF_MAXVARSIZE, "/knowledge/knowledgemap/pid/%d", tribe_node[i].real_id);
-        EscapeJson(tribe_node[i].shortname, shortname, CF_MAXVARSIZE - 1);
-        EscapeJson(tribe_node[i].fullname, longname, CF_MAXVARSIZE - 1);
-        EscapeJson(tribe_node[i].context, context, CF_MAXVARSIZE - 1);
+        JsonElement *json_obj_data = JsonObjectCreate(6);
+        JsonObjectAppendString(json_obj_data, "$color", colour);
+        JsonObjectAppendString(json_obj_data, "$dim", StringWriterClose(rad));
+        JsonObjectAppendString(json_obj_data, "$type", "gradientCircle");
+        JsonObjectAppendString(json_obj_data, "context", tribe_node[i].context);
+        JsonObjectAppendString(json_obj_data, "fullname", tribe_node[i].fullname);
+        JsonObjectAppendString(json_obj_data, "link", StringWriterClose(url));
 
-        snprintf(work, CF_BUFSIZE,
-                 "{ "
-                 "\"id\": \"g%d\",\n"
-                 "\"name\": \"%s\",\n"
-                 " \"data\": "
-                 "{ "
-                 "\"$color\":\"%s\", "
-                 "\"$dim\": %.1lf, "
-                 "\"$type\": \"gradientCircle\","
-                 "\"context\": \"%s\","
-                 "\"fullname\": \"%s\","
-                 "\"link\": \"%s\"" "},\n" "\"adjacencies\": [ ", i, shortname, colour, radius, context, longname, url);
+        JsonElement *json_obj = JsonObjectCreate(5);
+        JsonObjectAppendString(json_obj, "id", StringWriterClose(id));
+        JsonObjectAppendString(json_obj, "name", tribe_node[i].shortname);
+        JsonObjectAppendObject(json_obj, "data", json_obj_data);
 
-        Join(buffer, work, bufsize);
-
+        JsonElement *json_array_adjacencies = JsonArrayCreate(10);
         for (j = 0; j < tribe_size; j++)
         {
             if (tribe_adj[i][j])
             {
-                snprintf(work, CF_BUFSIZE, "{\"nodeTo\":\"g%d\"},", j);
-                Join(buffer, work, bufsize);
+                Writer *tmp = StringWriter();
+                WriterWriteF(tmp, "g%d", j);
+
+                JsonElement *json_obj_nodeto = JsonObjectCreate(10);
+                JsonObjectAppendString(json_obj_nodeto, "nodeTo", StringWriterClose(tmp));
+                JsonArrayAppendObject(json_array_adjacencies, json_obj_nodeto);
             }
         }
-        buffer[strlen(buffer) - 1] = ']';
+        JsonObjectAppendArray(json_obj, "adjacencies", json_array_adjacencies);
 
-        Join(buffer, "\n},", bufsize);
+        JsonArrayAppendObject(json_arr_out, json_obj);
     }
-    buffer[strlen(buffer) - 1] = '\0';
 
-// Cleanup
-
+    // Cleanup
     for (i = 0; i < tribe_size; i++)
     {
         if (tribe_node[i].fullname)
@@ -122,4 +119,6 @@ void Nova_DrawTribe(int *tribe_id, GraphNode *tribe_node, double tribe_adj[CF_TR
             free(tribe_node[i].context);
         }
     }
+
+    return json_arr_out;
 }

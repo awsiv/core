@@ -116,7 +116,7 @@ int Nova2PHP_get_value_graph(char *hostkey, char *day, char *month, char *year, 
                              int bufsize);
 int Nova2PHP_list_all_goals(char *buffer, int bufsize);
 
-void Nova2PHP_get_knowledge_view(int pid, char *view, char *buffer, int bufsize);
+JsonElement *Nova2PHP_get_knowledge_view(int pid, char *view);
 char *Nova_FormatDiff(char *s);
 void Nova2PHP_network_speed(char *hostkey, char *buffer, int bufsize);
 void Nova2PHP_GetPromiseBody(char *name, char *type, char *returnval, int bufsize);
@@ -190,12 +190,12 @@ int Nova2PHP_promiselog_hosts(char *hostkey, char *handle, char *cause, PromiseL
 int Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *year, HostClassFilter *hostClassFilter,
                          PageInfo *page, char *returnval, int bufsize);
 
-int Nova2PHP_search_topics(char *search, bool regex, char *buffer, int bufsize);
-void Nova2PHP_show_topic(int id, char *buffer, int bufsize);
-void Nova2PHP_show_topic_leads(int id, char *buffer, int bufsize);
-void Nova2PHP_show_all_context_leads(char *unqualified_topic, char *buffer, int bufsize);
-void Nova2PHP_show_topic_hits(int id, char *buffer, int bufsize);
-void Nova2PHP_show_topic_category(int id, char *buffer, int bufsize);
+JsonElement *Nova2PHP_search_topics(char *search, bool regex);
+JsonElement *Nova2PHP_show_topic(int id);
+JsonElement *Nova2PHP_show_topic_leads(int id);
+JsonElement *Nova2PHP_show_all_context_leads(char *unqualified_topic);
+JsonElement *Nova2PHP_show_topic_hits(int id);
+JsonElement *Nova2PHP_show_topic_category(int id);
 void Nova2PHP_host_compliance_list(mongo_connection *conn, char *colour, HostClassFilter *host_class_filter, PageInfo *page, char *buffer, int bufsize);
 void Nova2PHP_host_compliance_list_all(mongo_connection *conn, HostClassFilter *host_class_filter, PageInfo *page, char *buffer, int bufsize);
 int Nova2PHP_show_hosts(char *hostNameRegex, char *ipRegex, HostClassFilter *hostClassFilter, PageInfo *page, char *buf,

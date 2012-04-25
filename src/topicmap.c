@@ -140,22 +140,27 @@ void Nova_DumpTopics()
 
 void Nova_ShowTopic(char *qualified_topic)
 {
-    char topic_name[CF_BUFSIZE], topic_context[CF_BUFSIZE],buffer[1000000];
+    char topic_name[CF_BUFSIZE], topic_context[CF_BUFSIZE];
     int id;
-    
+    Writer *writer = NULL;
+    JsonElement *json = NULL;
+
     Nova_DeClassifyTopic(qualified_topic, topic_name, topic_context);
     id = Nova_GetTopicIdForTopic(qualified_topic);
         
-    printf("Found: \"%s\" \n", topic_name);       
+    printf("Found: \"%s\" \n", topic_name);
 
-    buffer[0] = '\0';
-    Nova2PHP_show_all_context_leads(topic_name,buffer,1000000);
-    printf("\nAssociations: %s\n",buffer);
+    writer = StringWriter();
+    json = Nova2PHP_show_all_context_leads(topic_name);
+    JsonElementPrint(writer, json, 1);
+    JsonElementDestroy(json);
+    printf("\nAssociations: %s\n", StringWriterClose(writer));
 
-    buffer[0] = '\0';
-    Nova_ScanOccurrences(id, buffer,1000000);
-    printf("\nOccurrences: %s\n\n",buffer);
-
+    writer = StringWriter();
+    json = Nova_ScanOccurrences(id);
+    JsonElementPrint(writer, json, 1);
+    JsonElementDestroy(json);
+    printf("\nOccurrences: %s\n\n", StringWriterClose(writer));
 }
 
 
@@ -406,64 +411,60 @@ Item *Nova_SearchTopicMap(char *search_topic,int search_type)
 
 /*****************************************************************************/
 
-void Nova_ScanTheRest(int pid, char *buffer, int bufsize)
+JsonElement *Nova_ScanTheRest(int pid)
 /* Find other topics in the same context */
 {
     char this_name[CF_BUFSIZE], this_id[CF_BUFSIZE], this_context[CF_BUFSIZE];
     Item *worklist, *ip;
-    char work[CF_BUFSIZE];
-    char name[CF_BUFSIZE] = { 0 };
     int id = 0;
+    JsonElement *json_obj_out = JsonObjectCreate(2);
 
     id = Nova_GetTopicByTopicId(pid, this_name, this_id, this_context);
-
     if (!id)
     {
-        snprintf(buffer, bufsize, "No such topic was found");
-        return;
+        return json_obj_out;
     }
 
-// Find other topics that have this topic as their category (sub topics)
-
+    // Find other topics that have this topic as their category (sub topics)
     worklist = Nova_GetTopicsInContext(this_id);
 
-    EscapeJson(this_name, name, CF_BUFSIZE);
-    
-    snprintf(buffer, CF_BUFSIZE,
-             "{ \"topic\" : { \"context\" : \"%s\", \"name\" : \"%s\", \"id\" : %d, \"sub_topics\" : [",
-             this_context, name, id);
-
+    JsonElement *json_arr_subtopics = JsonArrayCreate(100);
     for (ip = worklist; ip != NULL; ip = ip->next)
     {
-        EscapeJson(ip->name, name, CF_BUFSIZE);
+        JsonElement *json_obj_subtopic = JsonObjectCreate(3);
+        JsonObjectAppendString(json_obj_subtopic, "context", ip->classes);
+        JsonObjectAppendString(json_obj_subtopic, "topic", ip->name);
+        JsonObjectAppendInteger(json_obj_subtopic, "id", ip->counter);
 
-        snprintf(work, CF_BUFSIZE, "{ \"context\" : \"%s\", \"topic\" : \"%s\", \"id\" : %d},",
-                 ip->classes, name, ip->counter);
-
-        Join(buffer, work, bufsize);
+        JsonArrayAppendObject(json_arr_subtopics, json_obj_subtopic);
     }
+    DeleteItemList(worklist);
 
-    ReplaceTrailingChar(buffer, ',', '\0');
-
-    Join(buffer, "]}, \"other_topics\" : [", bufsize);
-    name[0] = '\0';
-
-// Find other topics in the same context
-
+    // Find other topics in the same context
     worklist = Nova_GetTopicsInContext(this_context);
 
+    JsonElement *json_arr_othertopics = JsonArrayCreate(100);
     for (ip = worklist; ip != NULL; ip = ip->next)
     {
-        EscapeJson(ip->name, name, CF_BUFSIZE);
+        JsonElement *json_obj_othertopic = JsonObjectCreate(3);
+        JsonObjectAppendString(json_obj_othertopic, "context", ip->classes);
+        JsonObjectAppendString(json_obj_othertopic, "topic", ip->name);
+        JsonObjectAppendInteger(json_obj_othertopic, "id", ip->counter);
 
-        snprintf(work, CF_BUFSIZE, "{ \"context\" : \"%s\", \"topic\" : \"%s\", \"id\" : %d },",
-                 ip->classes, name, ip->counter);
-
-        Join(buffer, work, bufsize);
+        JsonArrayAppendObject(json_arr_othertopics, json_obj_othertopic);
     }
+    DeleteItemList(worklist);
 
-    ReplaceTrailingChar(buffer, ',', '\0');
-    EndJoin(buffer, "]}", bufsize);
+    JsonElement *json_obj_topic = JsonObjectCreate(4);
+    JsonObjectAppendString(json_obj_topic, "context", this_context);
+    JsonObjectAppendString(json_obj_topic, "name", this_name);
+    JsonObjectAppendInteger(json_obj_topic, "id", id);
+    JsonObjectAppendArray(json_obj_topic, "sub_topics", json_arr_subtopics);
+
+    JsonObjectAppendObject(json_obj_out, "topic", json_obj_topic);
+    JsonObjectAppendArray(json_obj_out, "other_topics", json_arr_othertopics);
+
+    return json_obj_out;
 }
 
 /*****************************************************************************/
@@ -581,7 +582,7 @@ Item *Nova_ScanLeadsAssociations(int search_id, char *assoc_mask)
 
 /*****************************************************************************/
 
-void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
+JsonElement *Nova_ScanOccurrences(int this_id)
 {
     enum representations locator_type;
     char topic_name[CF_BUFSIZE] = { 0 },
@@ -605,14 +606,14 @@ void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
 
     if (!CFDB_Open(&conn))
     {
-        return;
+        return NULL;
     }
 
     Nova_GetTopicByTopicId(this_id, topic_name, topic_id, topic_context);
 
     if (strlen(topic_name) == 0)
        {
-       return;
+       return NULL;
        }
     
     // Using a regex here is greedy, but it helps to brainstorm
@@ -703,12 +704,8 @@ void Nova_ScanOccurrences(int this_id, char *buffer, int bufsize)
        }
 
     DeleteHitList(hits);
-    Writer *writer_tmp = StringWriter();
 
-    JsonElementPrint(writer_tmp, json_array, 1);
-    JsonElementDestroy(json_array);
-
-    strncpy(buffer, StringWriterClose(writer_tmp),bufsize);
+    return json_array;
 }
 
 /*************************************************************************/
@@ -1078,7 +1075,7 @@ char *Nova_StripString(char *source, char *substring)
 /* Plot cosmos                                                               */
 /*****************************************************************************/
 
-void Nova_PlotTopicCosmos(int topic, char *view, char *buffer, int bufsize)
+JsonElement *Nova_PlotTopicCosmos(int topic, char *view)
 /* This assumes that we have the whole graph in a matrix */
 {
     GraphNode tribe_nodes[CF_TRIBE_SIZE] = { { 0 } };
@@ -1089,15 +1086,16 @@ void Nova_PlotTopicCosmos(int topic, char *view, char *buffer, int bufsize)
 
 /* Count the  number of nodes in the solar system, to max number based on Dunbar's limit */
 
-    snprintf(buffer, bufsize, "[");
-
     if ((tribe_size = Nova_GetTribe(tribe_id, tribe_nodes, tribe_adj, topic, view)))
     {
         Nova_EigenvectorCentrality(tribe_adj, tribe_evc, CF_TRIBE_SIZE);
-        Nova_DrawTribe(tribe_id, tribe_nodes, tribe_adj, tribe_size, tribe_evc, topic, buffer, bufsize);
+        return Nova_DrawTribe(tribe_id, tribe_nodes, tribe_adj, tribe_size, tribe_evc, topic);
     }
-
-    Join(buffer, "]", bufsize);
+    else
+    {
+        JsonElement *json_out = JsonArrayCreate(0);
+        return json_out;
+    }
 }
 
 /*************************************************************************/

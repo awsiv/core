@@ -1736,7 +1736,13 @@ void Nova2Txt_show_topic_leads(int id, char *buffer, int bufsize)
 void Nova2Txt_show_topic_hits(int id, char *buffer, int bufsize)
 {
     buffer[0] = '\0';
-    Nova_ScanOccurrences(id, buffer, bufsize);
+    Writer *writer = StringWriter();
+    JsonElement *json = Nova_ScanOccurrences(id);
+
+    JsonElementPrint(writer,json, 1);
+    JsonElementDestroy(json);
+
+    strncpy(buffer, StringWriterClose(writer), bufsize);
 }
 
 /*****************************************************************************/
@@ -1744,7 +1750,19 @@ void Nova2Txt_show_topic_hits(int id, char *buffer, int bufsize)
 void Nova2Txt_show_topic_category(int id, char *buffer, int bufsize)
 {
     buffer[0] = '\0';
-    Nova_ScanTheRest(id, buffer, bufsize);
+    JsonElement *json = Nova_ScanTheRest(id);
+
+    if (JsonElementLength(json) > 0)
+    {
+        Writer *writer = StringWriter();
+        JsonElementPrint(writer,json, 1);
+        JsonElementDestroy(json);
+        strncpy(buffer, StringWriterClose(writer), bufsize);
+    }
+    else
+    {
+        strncpy(buffer, "No such topic was found", bufsize);
+    }
 }
 
 /*****************************************************************************/
