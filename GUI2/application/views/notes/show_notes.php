@@ -91,7 +91,6 @@
             </div>
 
             <?php
-            $number_of_rows = 10;
             $current = $currentPage;
             $total = $totalNotes;
             $pg = paging($current, $number_of_rows, $total, 10);
