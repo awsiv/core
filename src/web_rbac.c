@@ -118,7 +118,8 @@ cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, si
     if (found)
     {
         const char *db_password = NULL;
-        assert(BsonStringGet(&record, dbkey_user_password, &db_password));
+        BsonStringGet(&record, dbkey_user_password, &db_password);
+        assert(db_password);
 
         if (db_password)
         {
