@@ -11,6 +11,7 @@
 #include "cf.nova.h"
 
 #include "db_save.h"
+#include "crypto.h"
 
 static bool ReportBookHasData(Item **reports);
 static void Nova_RecordNetwork(mongo_connection *dbconnp, time_t now, double datarate, AgentConnection *conn);
