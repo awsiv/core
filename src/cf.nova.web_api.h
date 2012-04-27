@@ -35,6 +35,8 @@ typedef enum cfapi_errid
     ERRID_RBAC_DISABLED,
     ERRID_RBAC_ACCESS_DENIED,
     ERRID_CONSTELLATION_LICENSE,
+    ERRID_DATA_UNAVAILABLE,
+    ERRID_HOST_NOT_FOUND,
     ERRID_MAX
 } cfapi_errid;
 
@@ -118,7 +120,7 @@ int Nova2PHP_list_all_goals(char *buffer, int bufsize);
 
 JsonElement *Nova2PHP_get_knowledge_view(int pid, char *view);
 char *Nova_FormatDiff(char *s);
-void Nova2PHP_network_speed(char *hostkey, char *buffer, int bufsize);
+JsonElement *Nova2PHP_network_speed(char *hostkey);
 void Nova2PHP_GetPromiseBody(char *name, char *type, char *returnval, int bufsize);
 int Nova2PHP_body_list(char *name, char *type, char *returnval, int bufsize);
 char *Nova_LongState(char s);

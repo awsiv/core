@@ -49,13 +49,17 @@ static const char *ERRID_DESCRIPTION[] =
     [ERRID_RBAC_DISABLED] = "Role-based access control is disabled",
     [ERRID_RBAC_ACCESS_DENIED] = "The given user has no access to this data",
     [ERRID_CONSTELLATION_LICENSE] = "This functionality requires a Constellation license",
+    [ERRID_DATA_UNAVAILABLE] = "Insufficient data / Data unavailable",
+    [ERRID_HOST_NOT_FOUND] = "Host not found",
     [ERRID_MAX] = "Unknown error - description out of bounds",
 };
 
 /*****************************************************************************/
+// deprecate in favour of JSONErrorFromId
 static cfapi_errid FormatReportInfoAsJson(char *reportId, ReportInfo *reports, char *buf, int bufsize);
 static int CreateJsonHostOnlyReport(Rlist **records_p, PageInfo *page, char *returnval, int bufsize);
 static void WriteDouble2Str_MP(double x, char *buffer, int bufsize);
+JsonElement *JSONErrorFromId(cfapi_errid errid);
 
 /*****************************************************************************/
 #ifndef NDEBUG
@@ -3566,7 +3570,23 @@ int Nova2PHP_list_promise_handles_with_comments(char *bundle, char *btype, char 
 
 /*****************************************************************************/
 
-void Nova2PHP_network_speed(char *hostkey, char *buffer, int bufsize)
+JsonElement *JSONErrorFromId(cfapi_errid errid)
+{
+    if (errid >= ERRID_MAX)
+    {
+        CfOut(cf_error, "", "!! JSONErrorFromId: errid out of bounds");
+        errid = ERRID_MAX;
+    }
+
+    JsonElement *jsonError = JsonObjectCreate(2);
+    JsonObjectAppendInteger(jsonError, "errid", errid);
+    JsonObjectAppendString(jsonError, "msg", ERRID_DESCRIPTION[errid]);
+
+    return jsonError;
+}
+/*****************************************************************************/
+
+JsonElement *Nova2PHP_network_speed(char *hostkey)
 {
     mongo_connection dbconn;
     mongo_cursor *cursor;
@@ -3575,8 +3595,8 @@ void Nova2PHP_network_speed(char *hostkey, char *buffer, int bufsize)
     Event e;
 
     if (!CFDB_Open(&dbconn))
-    {
-        return;
+    {        
+        return JSONErrorFromId(ERRID_DBCONNECT);
     }
 
     bson query;
@@ -3594,6 +3614,8 @@ void Nova2PHP_network_speed(char *hostkey, char *buffer, int bufsize)
     cursor = mongo_find(&dbconn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&query);
     bson_destroy(&field);
+
+    cfapi_errid errid = ERRID_SUCCESS;
 
     if (mongo_cursor_next(cursor))      // not more than one record
     {
@@ -3617,19 +3639,39 @@ void Nova2PHP_network_speed(char *hostkey, char *buffer, int bufsize)
             }
         }
     }
+    else
+    {
+        errid = ERRID_HOST_NOT_FOUND;
+    }
 
     mongo_cursor_destroy(cursor);
 
-    CFDB_Close(&dbconn);
+    if (!CFDB_Close(&dbconn))
+    {
+        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+    }
+
+    char work[CF_MAXVARSIZE] = {0};
 
     if (found)
     {
-        snprintf(buffer, bufsize, "%.2lf &Delta; %.2lf bytes/s", e.Q.expect, sqrt(e.Q.var));
+        // should send this as a JSON object instead
+        // { 'data':{'expect':0.2. 'delta': 0.1} }
+
+        snprintf(work, sizeof(work), "\"%.2lf &Delta; %.2lf bytes/s\"", e.Q.expect, sqrt(e.Q.var));
+        errid = ERRID_SUCCESS;
     }
-    else
+    else if(errid != ERRID_HOST_NOT_FOUND)
     {
-        snprintf(buffer, bufsize, "Insufficient data");
+        errid = ERRID_DATA_UNAVAILABLE;
     }
+
+    JsonElement *jsonNetworkSpeed = JsonObjectCreate(2);
+    JsonObjectAppendString(jsonNetworkSpeed, "data", work);
+
+    JsonObjectAppendObject(jsonNetworkSpeed, "error", JSONErrorFromId(errid));
+
+    return jsonNetworkSpeed;
 }
 
 /*****************************************************************************/

@@ -4271,7 +4271,6 @@ PHP_FUNCTION(cfpr_network_speed)
 {
     char *userName, *hostKey;
     int user_len, hostkey_len;
-    char buffer[1000000];
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss", &userName, &user_len, &hostKey, &hostkey_len) == FAILURE)
     {
@@ -4289,10 +4288,9 @@ PHP_FUNCTION(cfpr_network_speed)
         RETURN_NULL();
     }
 
-    buffer[0] = '\0';
-    Nova2PHP_network_speed(hostKey, buffer, sizeof(buffer));
+    JsonElement *out = Nova2PHP_network_speed(hostKey);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(out);
 }
 
 /******************************************************************************/
