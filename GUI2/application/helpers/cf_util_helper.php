@@ -31,6 +31,11 @@ function paging($page, $rp, $total, $limit) {
 
     $mid = floor($limit / 2);
 
+    // if row per page == 0 - set it to 1
+    if (empty($rp)) {
+        $rp = 1;
+    }
+    
     if ($total > $rp)
         $numpages = ceil($total / $rp);
     else
