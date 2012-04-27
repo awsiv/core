@@ -45,7 +45,9 @@
             <input type="hidden" name="nid" value="<?php echo $nid; ?>"/>
             <input type="hidden" name="hostkey" value="<?php echo $hostkey; ?>"/>
             <br />
-            <input type="submit" name="submitButton" value="Add note">
+            <span class="green_btn">
+                <input type="submit" name="submitButton" class="green_btn" value="Add note">
+            </span>
         </fieldset>    
     </form>
 </div>

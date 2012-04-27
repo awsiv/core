@@ -63,7 +63,9 @@
                 <p class="title"> <img src= "<?php echo get_imagedir() . $colour ?>_square_little.png" class="hoststatcolorsquare"/><?php echo $this->lang->line('header_host_details'); ?></p>
                 <form  id="delform"method="post" action=<?php echo site_url("/welcome/host") ?>>
                     <input type="hidden" name="delhost" id="delhost" value="<?php echo $hostkey ?>"/>
-                    <input class="btn showqtip" title="<?php echo tooltip('tool_tip_host_delete')?>" type="submit" id="btnsubmit"  value="<?php echo $this->lang->line('host_delete'); ?>"/>
+                    <span class="green_btn">
+                        <input class="green_btn showqtip" title="<?php echo tooltip('tool_tip_host_delete')?>" type="submit" id="btnsubmit"  value="<?php echo $this->lang->line('host_delete'); ?>"/>
+                    </span>                    
                 </form>
                 <br class="clear">
                 <p><label><?php echo $this->lang->line('host_alias'); ?>: </label><label ><?php echo ($hostname == "") ? $this->lang->line('host_not_discovered') : $hostname ?></label></p>
@@ -78,7 +80,6 @@
         <div class="clear"></div>
         <div id="notkepttable" title="<?php echo $this->lang->line('host_promise_not_kept'); ?>">
          
-               <!--<p class="title">Promises not kept in the past week</p-->
             <div class="bundlelist-table">
                 <?php
                 if (is_array($tableData)) {
@@ -139,20 +140,13 @@
                     $(this).dialog('close');
                     $("#delform").submit();
                 },
-                'NO': function() {
+                'No': function() {
                     $(this).dialog('close');
                 }
             },
             open: function() {
-                //$(this).parent().find('.ui-dialog-buttonpane').find('button:first').focus()
-
             }
         });
-
-        /*$("#delform").submit(function(event){
-        event.preventDefault();
-        $hostdelconfirm.dialog('open');
-    });*/
 
         $("[type=submit]").bind("click", function(e){
             e.preventDefault();

@@ -3135,6 +3135,15 @@ span.green_btn input{
     border:none;
 }
 
+.stylized span.green_btn {
+    margin: 10px 0 0 10px !important;
+}
+
+.stylized span.green_btn input {
+    margin: 0 !important;
+}
+
+
 #reportpanel div.title {
     padding: 0 !important;
     margin: 20px 10px 0 10px;
