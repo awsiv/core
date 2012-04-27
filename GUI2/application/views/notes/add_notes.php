@@ -12,7 +12,9 @@
       </p>
                         
       <p id="btnholder">
-      <?php echo form_submit(array('name'=>'submit','value'=>'comment','class'=>'btn'));?>
+      <span class="green_btn">    
+        <?php echo form_submit(array('name'=>'submit','value'=>'comment','class'=>'green_btn'));?>
+      </span>    
       </p>
 </div>
 
