@@ -8,6 +8,7 @@
 #include "public-api.h"
 #include "private-api.h"
 #include "private-api-constellation.h"
+#include "crypto.h"
 
 /* If you declare any globals in php_cfmod.h uncomment this:
    ZEND_DECLARE_MODULE_GLOBALS(cfmod)
@@ -278,6 +279,8 @@ PHP_MINIT_FUNCTION(cfmod)
                                                               exception_class_entry, NULL TSRMLS_CC);
 
     AM_PHP_MODULE = 1;
+
+    CryptoInitialize();
 
     return SUCCESS;
 }
