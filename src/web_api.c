@@ -2858,7 +2858,7 @@ JsonElement *Nova2PHP_search_topics(char *search, bool regex)
     Item *ip,*results = NULL;
     JsonElement *json_array_out = JsonArrayCreate(100);
 
-    results = Nova_SearchTopicMap(search,CF_SEARCH_REGEX);
+    results = Nova_SearchTopicMap(search,CF_SEARCH_REGEX,true);
     if (!results)
     {
         return json_array_out;
@@ -2909,7 +2909,7 @@ JsonElement *Nova2PHP_show_all_context_leads(char *unqualified_topic)
 
     JsonElement *json_array_out = JsonArrayCreate(100);
 
-    candidates = Nova_SearchTopicMap(unqualified_topic,CF_SEARCH_EXACT);
+    candidates = Nova_SearchTopicMap(unqualified_topic,CF_SEARCH_EXACT,false);
     if (candidates == NULL)
     {
        return json_array_out;

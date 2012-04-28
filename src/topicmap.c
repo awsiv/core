@@ -34,7 +34,7 @@ struct Hit_
 static void NewHit(Hit **list,char *context, char *locator, enum representations locator_type, char *represents);
 static void DeleteHitList(Hit *list);
 static Hit *HitExists(Hit *list, char *locator, enum representations rep_type, char *context);
-static int MergeExistingContexts(Item **list, char *topic_name, char *topic_context);
+static int MergeExistingContexts(Item **list, char *topic_name, char *topic_context, int merge);
 
 /*****************************************************************************/
 
@@ -301,7 +301,7 @@ int Nova_GetTopicByTopicId(int search_id, char *topic_name, char *topic_id, char
 
 /*********************************************************************/
 
-Item *Nova_SearchTopicMap(char *search_topic,int search_type)
+Item *Nova_SearchTopicMap(char *search_topic,int search_type,int merge)
 {
     bson_buffer bb;
     bson query, field;
@@ -397,7 +397,7 @@ Item *Nova_SearchTopicMap(char *search_topic,int search_type)
             }
         }
 
-        if (!MergeExistingContexts(&list, topic_name, topic_context))
+        if (!MergeExistingContexts(&list, topic_name, topic_context,merge))
         {
             PrependFullItem(&list, topic_name, topic_context, topic_id, 0);
         }
@@ -1668,10 +1668,15 @@ void Nova_DeClassifyTopic(char *classified_topic, char *topic, char *context)
 
 /*****************************************************************************/
 
-static int MergeExistingContexts(Item **list, char *name, char *context)
+static int MergeExistingContexts(Item **list, char *name, char *context, int merge)
 {
     Item *ip;
- 
+
+    if (!merge)
+    {
+        return false;
+    }
+    
     if ((ip = ReturnItemIn(*list,name)))
     {
         char *replace = xmalloc(strlen(ip->classes)+strlen(", .")+strlen(context));

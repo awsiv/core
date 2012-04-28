@@ -1019,7 +1019,7 @@ void Nova_ShowTopic(char *qualified_topic);
 void Nova_WebTopicMap_Initialize(void);
 void Nova_LookupUniqueAssoc(int pid, char *buffer, int bufsize);
 JsonElement *Nova_ScanTheRest(int pid);
-Item *Nova_SearchTopicMap(char *typed_topic,int type);
+Item *Nova_SearchTopicMap(char *typed_topic,int type,int merge);
 Item *Nova_ScanLeadsAssociations(int pid, char *view);
 JsonElement *Nova_ScanOccurrences(int this_id);
 int Nova_GetReportDescription(int this_id, char *buffer, int bufsize);
