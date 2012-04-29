@@ -1,5 +1,5 @@
 <div>
-    <h1><b><?php echo $this->lang->line('knowledge_insight_leads'); ?>:</b></h1>
+    <h1><b><?php echo $this->lang->line('knowledge_insight_leads'); ?> <?php echo $topicDetail['topic']; ?>:</b></h1>
     <div style="margin-left: 12px;">
         <ul>
             <?php foreach ((array) $topicLeads as $allLeads) {
@@ -8,7 +8,7 @@
             
                 <?php $searchContext =  ($topicDetail['context'] === $allLeads['context'])? true:false; ?>
                 
-                <span style="color: #212121;">In the context of <?php echo $allLeads['context'] ?> <?php echo $topicDetail['topic']; ?></span><?php if ($searchContext) { ?> (Searched context)<?php } ?>
+                <span style="color: #212121;">In the context of <?php echo $allLeads['context'] ?><?php if ($searchContext) { ?> (Searched context)<?php } ?>, <?php echo $topicDetail['topic']; ?></span>
             
             </li>
                 
