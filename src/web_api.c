@@ -3651,14 +3651,15 @@ JsonElement *Nova2PHP_network_speed(char *hostkey)
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    char work[CF_MAXVARSIZE] = {0};
+    JsonElement *jsonNetworkSpeed = JsonObjectCreate(2);
 
     if (found)
     {
-        // should send this as a JSON object instead
-        // { 'data':{'expect':0.2. 'delta': 0.1} }
+        JsonElement *jsonNetworkData = JsonObjectCreate(2);
+        JsonObjectAppendReal(jsonNetworkData, "speed", e.Q.expect);
+        JsonObjectAppendReal(jsonNetworkData, "delta", sqrt(e.Q.var));
+        JsonObjectAppendObject(jsonNetworkSpeed, "data", jsonNetworkData);
 
-        snprintf(work, sizeof(work), "\"%.2lf &Delta; %.2lf bytes/s\"", e.Q.expect, sqrt(e.Q.var));
         errid = ERRID_SUCCESS;
     }
     else if(errid != ERRID_HOST_NOT_FOUND)
@@ -3666,8 +3667,6 @@ JsonElement *Nova2PHP_network_speed(char *hostkey)
         errid = ERRID_DATA_UNAVAILABLE;
     }
 
-    JsonElement *jsonNetworkSpeed = JsonObjectCreate(2);
-    JsonObjectAppendString(jsonNetworkSpeed, "data", work);
 
     JsonObjectAppendObject(jsonNetworkSpeed, "error", JSONErrorFromId(errid));
 
