@@ -2998,10 +2998,13 @@ background-image: none;
    padding:2px 0;
    display:block;
    width:250px;
+   cursor: pointer;
 }
+
 #searchaccordian h3.head:nth-child(1){
  border:none;
 }
+
     #searchaccordian h3.head em{
         background-image: url("../images/dropdown_icons.png");
         background-repeat: no-repeat;
