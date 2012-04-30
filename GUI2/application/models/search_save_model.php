@@ -19,7 +19,7 @@ class Search_save_model extends CI_Model
         if (trim($data['label']) == '')
         {
             $valid = false;
-            $this->setError('Label is empty');
+            $this->setError('Provide a name to this search');
         }
 
         if (trim($data['url']) == '')
