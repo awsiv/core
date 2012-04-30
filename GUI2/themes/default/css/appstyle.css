@@ -2930,17 +2930,20 @@ background-image: none;
    margin-left:5px; 
 }
 
+#reportpanel #saved_searches_wrapper {
+    float: right; 
+    margin-right: 24px
+}
 #treeReportContentMenu #saved-searches{
     margin-left:0px
 }
 
-#saved-searches span{
-   font-weight: bold;
+#reportpanel #saved-searches span{
    margin-left:10px;
+   
 }
 
 #treeReportContentMenu #saved-searches span{
-   font-weight: normal;
    margin-left:0;
 }
 

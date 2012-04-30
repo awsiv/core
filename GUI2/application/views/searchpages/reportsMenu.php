@@ -11,9 +11,11 @@
                 </ul>
             </li>
         <?php } ?>
-        <?php if (isset($saved_search_menu))
-        { ?>
+        
 
+    </ul>
+    <?php if (isset($saved_search_menu)) { ?>    
+    <ul id="saved_searches_wrapper">
             <li id="saved-searches"><em class="separater"></em><span>Saved Searches</span>
                 <ul><li>
                         <div id="searchaccordian">
@@ -36,9 +38,8 @@
                     </li>
                 </ul>
             </li>
-        <?php } ?>
-
-    </ul>
+     </ul>
+       <?php } ?>    
 </div>
 
 <script type="text/javascript">
