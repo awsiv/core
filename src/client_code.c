@@ -195,6 +195,10 @@ int Nova_QueryClientForReports(mongo_connection *dbconn, AgentConnection *conn, 
 
             Nova_RecordNetwork(dbconn, now, datarate, conn);
         }
+        else if(strncmp ("QUERY complete", out, strlen("QUERY complete")) == 0)
+        {
+            continue;
+        }
         else
         {
             // Put data into a separate linked list for each code
