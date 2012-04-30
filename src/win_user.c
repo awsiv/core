@@ -20,30 +20,30 @@
 
 /* Finds the security identifier corresponding to a user name 
  * (locally or remotely - use "domain_name\user_name" if a specific domain is desired),
- * and puts a pointer to it in the preallocated sid-variable. If shouldExist is true,
+ * and puts a pointer to it in the preallocated sid-variable. If should_exist is true,
  * nonexisting user account is treated as an error.
  * Returns true on success, false otherwise.  */
-int NovaWin_UserNameToSid(char *userName, SID *sid, DWORD sidSz, int shouldExist)
+int NovaWin_UserNameToSid(char *user_name, SID *sid, DWORD sid_sz, int should_exist)
 {
-    DWORD sidSzCp = sidSz;      // to avoid writing to the size parameter
-    char domName[CF_BUFSIZE];   // we are forced to receive the domain name it is found
-    DWORD domNameSz = sizeof(domName);
-    SID_NAME_USE accType;
+    DWORD sid_sz_cp = sid_sz;      // to avoid writing to the size parameter
+    char dom_name[CF_BUFSIZE];   // we are forced to receive the domain name it is found
+    DWORD dom_name_sz = sizeof(dom_name);
+    SID_NAME_USE acc_type;
 
-    if (!LookupAccountName(NULL, userName, sid, &sidSzCp, domName, &domNameSz, &accType))
+    if (!LookupAccountName(NULL, user_name, sid, &sid_sz_cp, dom_name, &dom_name_sz, &acc_type))
     {
-        // nonexisting user is not an error if shouldExist is true
-        if (shouldExist || (GetLastError() != ERROR_NONE_MAPPED))
+        // nonexisting user is not an error if should_exist is true
+        if (should_exist || (GetLastError() != ERROR_NONE_MAPPED))
         {
-            CfOut(cf_error, "LookupAccountName", "!! Could not look up user name \"%s\"", userName);
+            CfOut(cf_error, "LookupAccountName", "!! Could not look up user name \"%s\"", user_name);
         }
 
         return false;
     }
 
-    if (accType == SidTypeGroup)        // TODO: Better test ?
+    if (acc_type == SidTypeGroup)        // TODO: Better test ?
     {
-        if (shouldExist)
+        if (should_exist)
         {
             CfOut(cf_error, "", "!! SID type is expected to be user, but is group");
         }
@@ -58,30 +58,30 @@ int NovaWin_UserNameToSid(char *userName, SID *sid, DWORD sidSz, int shouldExist
 
 /* Finds the security identifier corresponding to a group name 
  * (locally or remotely - use "domain_name\user_name" if a specific domain is desired),
- * and puts a pointer to it in the preallocated sid-variable. If shouldExist is true,
+ * and puts a pointer to it in the preallocated sid-variable. If should_exist is true,
  * nonexisting group account is treated as an error.
  * Returns true on success, false otherwise.  */
-int NovaWin_GroupNameToSid(char *groupName, SID *sid, DWORD sidSz, int shouldExist)
+int NovaWin_GroupNameToSid(char *group_name, SID *sid, DWORD sid_sz, int should_exist)
 {
-    DWORD sidSzCp = sidSz;      // to avoid writing to the size parameter
-    char domName[CF_BUFSIZE];   // we are forced to receive the domain name it is found
-    DWORD domNameSz = sizeof(domName);
-    SID_NAME_USE accType;
+    DWORD sid_sz_cp = sid_sz;      // to avoid writing to the size parameter
+    char dom_name[CF_BUFSIZE];   // we are forced to receive the domain name it is found
+    DWORD dom_name_sz = sizeof(dom_name);
+    SID_NAME_USE acc_type;
 
-    if (!LookupAccountName(NULL, groupName, sid, &sidSzCp, domName, &domNameSz, &accType))
+    if (!LookupAccountName(NULL, group_name, sid, &sid_sz_cp, dom_name, &dom_name_sz, &acc_type))
     {
-        // nonexisting group is not an error if shouldExist is true
-        if (shouldExist || (GetLastError() != ERROR_NONE_MAPPED))
+        // nonexisting group is not an error if should_exist is true
+        if (should_exist || (GetLastError() != ERROR_NONE_MAPPED))
         {
-            CfOut(cf_error, "LookupAccountName", "!! Could not look up group name \"%s\"", groupName);
+            CfOut(cf_error, "LookupAccountName", "!! Could not look up group name \"%s\"", group_name);
         }
 
         return false;
     }
 
-    if (accType == SidTypeUser) // TODO: Better test ?
+    if (acc_type == SidTypeUser) // TODO: Better test ?
     {
-        if (shouldExist)
+        if (should_exist)
         {
             CfOut(cf_error, "", "!! SID type is expected to be group, but is user");
         }
@@ -94,14 +94,14 @@ int NovaWin_GroupNameToSid(char *groupName, SID *sid, DWORD sidSz, int shouldExi
 
 /*******************************************************************/
 
-int NovaWin_NameToSid(char *name, SID *sid, DWORD sidSz)
+int NovaWin_NameToSid(char *name, SID *sid, DWORD sid_sz)
 {
-    DWORD sidSzCp = sidSz;      // to avoid writing to the size parameter
-    char domName[CF_BUFSIZE];   // we are forced to receive the domain name it is found
-    DWORD domNameSz = sizeof(domName);
-    SID_NAME_USE accType;
+    DWORD sid_sz_cp = sid_sz;      // to avoid writing to the size parameter
+    char dom_name[CF_BUFSIZE];   // we are forced to receive the domain name it is found
+    DWORD dom_name_sz = sizeof(dom_name);
+    SID_NAME_USE acc_type;
 
-    if (!LookupAccountName(NULL, name, sid, &sidSzCp, domName, &domNameSz, &accType))
+    if (!LookupAccountName(NULL, name, sid, &sid_sz_cp, dom_name, &dom_name_sz, &acc_type))
     {
         CfOut(cf_error, "LookupAccountName", "!! Could not look up name \"%s\"", name);
         return false;
@@ -113,15 +113,15 @@ int NovaWin_NameToSid(char *name, SID *sid, DWORD sidSz)
 /*******************************************************************/
 
 /* Converts a sid to a user/group name, and writes it to 'name'
- * of size 'nameSz' */
-int NovaWin_SidToName(SID *sid, char *name, int nameSz)
+ * of size 'name_sz' */
+int NovaWin_SidToName(SID *sid, char *name, int name_sz)
 {
-    SID_NAME_USE sidNameUse;
-    char domName[CF_BUFSIZE];
-    DWORD reqNameSz = (DWORD) nameSz;
-    DWORD reqDomSz = (DWORD) sizeof(domName);
+    SID_NAME_USE sid_name_use;
+    char dom_name[CF_BUFSIZE];
+    DWORD req_name_sz = (DWORD) name_sz;
+    DWORD req_dom_sz = (DWORD) sizeof(dom_name);
 
-    if (!LookupAccountSid(NULL, sid, name, &reqNameSz, domName, &reqDomSz, &sidNameUse))
+    if (!LookupAccountSid(NULL, sid, name, &req_name_sz, dom_name, &req_dom_sz, &sid_name_use))
     {
         CfOut(cf_error, "LookupAccountSid", "!! Could not find name corresponding to sid");
         return false;
@@ -133,28 +133,28 @@ int NovaWin_SidToName(SID *sid, char *name, int nameSz)
 /*******************************************************************/
 
 /* Converts a SID to a string representation. The string must be preallocated. */
-int NovaWin_SidToString(SID *sid, char *stringSid, int stringSz)
+int NovaWin_SidToString(SID *sid, char *string_sid, int stringSz)
 {
-    char *stringAlloc;
-    int stringAllocSz;
+    char *string_alloc;
+    int string_alloc_sz;
 
-    if (!ConvertSidToStringSid(sid, &stringAlloc))
+    if (!ConvertSidToStringSid(sid, &string_alloc))
     {
         CfOut(cf_error, "ConvertSidToStringSid", "Could not convert SID to string");
         return false;
     }
 
-    stringAllocSz = strlen(stringAlloc);
+    string_alloc_sz = strlen(string_alloc);
 
-    if (stringAllocSz >= stringSz)
+    if (string_alloc_sz >= stringSz)
     {
         CfOut(cf_error, "", "String buffer is too small");
-        LocalFree(stringAlloc);
+        LocalFree(string_alloc);
         return false;
     }
 
-    strcpy(stringSid, stringAlloc);
-    LocalFree(stringAlloc);
+    strcpy(string_sid, string_alloc);
+    LocalFree(string_alloc);
 
     return true;
 }
@@ -162,29 +162,29 @@ int NovaWin_SidToString(SID *sid, char *stringSid, int stringSz)
 /*******************************************************************/
 
 /* Converts a SID to a string representation. The string must be preallocated. */
-int NovaWin_StringToSid(char *stringSid, SID *sid, int sidSz)
+int NovaWin_StringToSid(char *string_sid, SID *sid, int sid_sz)
 {
-    SID *sidAlloc;
-    size_t sidLen;
+    SID *sid_alloc;
+    size_t sid_len;
 
-    if (!ConvertStringSidToSid(stringSid, (PSID *) & sidAlloc))
+    if (!ConvertStringSidToSid(string_sid, (PSID *) & sid_alloc))
     {
-        CfOut(cf_error, "ConvertStringSidToSid", "Could not obtain SID \"%s\"", stringSid);
+        CfOut(cf_error, "ConvertStringSidToSid", "Could not obtain SID \"%s\"", string_sid);
         return false;
     }
 
-    sidLen = (size_t) GetLengthSid(sidAlloc);
+    sid_len = (size_t) GetLengthSid(sid_alloc);
 
-    if (sidLen > sidSz)
+    if (sid_len > sid_sz)
     {
         CfOut(cf_error, "", "SID buffer is too small");
-        LocalFree(sidAlloc);
+        LocalFree(sid_alloc);
         return false;
     }
 
-    memcpy(sid, sidAlloc, sidLen);
+    memcpy(sid, sid_alloc, sid_len);
 
-    LocalFree(sidAlloc);
+    LocalFree(sid_alloc);
 
     return true;
 }
@@ -193,16 +193,14 @@ int NovaWin_StringToSid(char *stringSid, SID *sid, int sidSz)
 
 UidList *NovaWin_Rlist2SidList(Rlist *uidnames, Promise *pp)
 {
-    UidList *uidlist, *currEl;
+    UidList *uidlist = NULL, *curr_el = NULL;
     Rlist *rp;
-    char sidBuf[CF_MAXSIDSIZE];
+    char sid_buf[CF_MAXSIDSIZE];
 
-    currEl = NULL;
-    uidlist = NULL;
 
     for (rp = uidnames; rp != NULL; rp = rp->next)
     {
-        if (NovaWin_NameToSid(rp->item, (SID *) sidBuf, sizeof(sidBuf)))
+        if (NovaWin_NameToSid(rp->item, (SID *) sid_buf, sizeof(sid_buf)))
         {
             // allocate new element
 
@@ -210,16 +208,16 @@ UidList *NovaWin_Rlist2SidList(Rlist *uidnames, Promise *pp)
             {
                 uidlist = xcalloc(1, sizeof(UidList));
 
-                currEl = uidlist;
+                curr_el = uidlist;
             }
             else                // not first element
             {
-                currEl->next = xcalloc(1, sizeof(UidList));
+                curr_el->next = xcalloc(1, sizeof(UidList));
 
-                currEl = currEl->next;
+                curr_el = curr_el->next;
             }
 
-            memcpy(currEl->sid, sidBuf, CF_MAXSIDSIZE);
+            memcpy(curr_el->sid, sid_buf, CF_MAXSIDSIZE);
         }
     }
 
@@ -235,11 +233,11 @@ UidList *NovaWin_Rlist2SidList(Rlist *uidnames, Promise *pp)
 
 FnCallResult FnCallUserExists(FnCall *fp, Rlist *finalargs)
 {
-    char userSid[CF_MAXSIDSIZE];
+    char user_sid[CF_MAXSIDSIZE];
     char buffer[CF_BUFSIZE];
     char *arg = finalargs->item;
 
-    if (NovaWin_UserNameToSid(arg, (SID *) userSid, sizeof(userSid), false))
+    if (NovaWin_UserNameToSid(arg, (SID *) user_sid, sizeof(user_sid), false))
     {
         strcpy(buffer, CF_ANYCLASS);
     }
@@ -255,11 +253,11 @@ FnCallResult FnCallUserExists(FnCall *fp, Rlist *finalargs)
 
 FnCallResult FnCallGroupExists(FnCall *fp, Rlist *finalargs)
 {
-    char groupSid[CF_MAXSIDSIZE];
+    char group_sid[CF_MAXSIDSIZE];
     char buffer[CF_BUFSIZE];
     char *arg = finalargs->item;
 
-    if (NovaWin_GroupNameToSid(arg, (SID *) groupSid, sizeof(groupSid), false))
+    if (NovaWin_GroupNameToSid(arg, (SID *) group_sid, sizeof(group_sid), false))
     {
         strcpy(buffer, CF_ANYCLASS);
     }
