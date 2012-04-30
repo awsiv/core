@@ -44,19 +44,14 @@ JsonElement *PackageResult(JsonElement *data_array, size_t page, size_t count)
     if (total > 0)
     {
         size_t start = MAX(count * (page - 1), 0);
-        size_t end = MIN((count * page) - 1, total - 1);
-
-        if (start < end)
+        if (start > 0)
         {
-            if (start > 0)
-            {
-                JsonArrayRemoveRange(data_array, 0, start - 1);
-            }
+            JsonArrayRemoveRange(data_array, 0, MIN(start, JsonElementLength(data_array)) - 1);
+        }
 
-            if (end < total - 1)
-            {
-                JsonArrayRemoveRange(data_array, end + 1, total - 1);
-            }
+        if (JsonElementLength(data_array) > count)
+        {
+            JsonArrayRemoveRange(data_array, count, JsonElementLength(data_array) - 1);
         }
     }
 

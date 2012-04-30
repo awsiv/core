@@ -6,7 +6,7 @@ class PromiseLogNotKeptTest extends RestBaseTest
 {
 
     /**
-     * test valid json response 
+     * test valid json response
      */
     public function testAllPromiseLogNotKept()
     {
@@ -22,7 +22,7 @@ class PromiseLogNotKeptTest extends RestBaseTest
     }
 
     /**
-     * Test PromiseLogNotKept with host key parameter 
+     * Test PromiseLogNotKept with host key parameter
      */
     public function testWithHostKey()
     {
@@ -39,7 +39,7 @@ class PromiseLogNotKeptTest extends RestBaseTest
     }
 
     /**
-     * Test PromiseLogNotKept with handle 
+     * Test PromiseLogNotKept with handle
      */
     public function testWithHandle()
     {
@@ -57,7 +57,7 @@ class PromiseLogNotKeptTest extends RestBaseTest
     }
 
     /**
-     * Test  PromiseLogNotKept with context 
+     * Test  PromiseLogNotKept with context
      */
     public function testWithContext()
     {
@@ -75,4 +75,120 @@ class PromiseLogNotKeptTest extends RestBaseTest
         }
     }
 
+    public function testPaginationEven()
+    {
+        $page = $this->getResults('/promise/log/notkept?count=2&page=1');
+        $this->assertValidJson($page);
+        $this->assertEquals(2, sizeof($page));
+        $this->assertEquals(1327576540, $page[0]['timestamp']);
+        $this->assertEquals(1327576540, $page[1]['timestamp']);
+
+        $page = $this->getResults('/promise/log/notkept?count=2&page=2');
+        $this->assertValidJson($page);
+        $this->assertEquals(2, sizeof($page));
+        $this->assertEquals(1327576272, $page[0]['timestamp']);
+        $this->assertEquals(1327576272, $page[1]['timestamp']);
+
+        $page = $this->getResults('/promise/log/notkept?count=2&page=3');
+        $this->assertValidJson($page);
+        $this->assertEquals(2, sizeof($page));
+        $this->assertEquals(1327575944, $page[0]['timestamp']);
+        $this->assertEquals(1327575944, $page[1]['timestamp']);
+
+        $page = $this->getResults('/promise/log/notkept?count=2&page=4');
+        $this->assertValidJson($page);
+        $this->assertEquals(2, sizeof($page));
+        $this->assertEquals(1327575676, $page[0]['timestamp']);
+        $this->assertEquals(1327575676, $page[1]['timestamp']);
+
+        $page = $this->getResults('/promise/log/notkept?count=2&page=5');
+        $this->assertValidJson($page);
+        $this->assertEquals(0, sizeof($page));
+    }
+
+    public function testPaginationOdd()
+    {
+        $page = $this->getResults('/promise/log/notkept?count=3&page=1');
+        $this->assertValidJson($page);
+        $this->assertEquals(3, sizeof($page));
+        $this->assertEquals(1327576540, $page[0]['timestamp']);
+        $this->assertEquals(1327576540, $page[1]['timestamp']);
+        $this->assertEquals(1327576272, $page[2]['timestamp']);
+
+        $page = $this->getResults('/promise/log/notkept?count=3&page=2');
+        $this->assertValidJson($page);
+        $this->assertEquals(3, sizeof($page));
+        $this->assertEquals(1327576272, $page[0]['timestamp']);
+        $this->assertEquals(1327575944, $page[1]['timestamp']);
+        $this->assertEquals(1327575944, $page[2]['timestamp']);
+
+        $page = $this->getResults('/promise/log/notkept?count=3&page=3');
+        $this->assertValidJson($page);
+        $this->assertEquals(2, sizeof($page));
+        $this->assertEquals(1327575676, $page[0]['timestamp']);
+        $this->assertEquals(1327575676, $page[1]['timestamp']);
+
+        $page = $this->getResults('/promise/log/notkept?count=3&page=4');
+        $this->assertValidJson($page);
+        $this->assertEquals(0, sizeof($page));
+    }
+
+    public function testPaginationSingle()
+    {
+        $page = $this->getResults('/promise/log/notkept?count=1&page=1');
+        $this->assertValidJson($page);
+        $this->assertEquals(1, sizeof($page));
+        $this->assertEquals(1327576540, $page[0]['timestamp']);
+
+        $page = $this->getResults('/promise/log/notkept?count=1&page=2');
+        $this->assertValidJson($page);
+        $this->assertEquals(1, sizeof($page));
+        $this->assertEquals(1327576540, $page[0]['timestamp']);
+
+        $page = $this->getResults('/promise/log/notkept?count=1&page=3');
+        $this->assertValidJson($page);
+        $this->assertEquals(1, sizeof($page));
+        $this->assertEquals(1327576272, $page[0]['timestamp']);
+
+        $page = $this->getResults('/promise/log/notkept?count=1&page=4');
+        $this->assertValidJson($page);
+        $this->assertEquals(1, sizeof($page));
+        $this->assertEquals(1327576272, $page[0]['timestamp']);
+
+        $page = $this->getResults('/promise/log/notkept?count=1&page=5');
+        $this->assertValidJson($page);
+        $this->assertEquals(1, sizeof($page));
+        $this->assertEquals(1327575944, $page[0]['timestamp']);
+
+        $page = $this->getResults('/promise/log/notkept?count=1&page=6');
+        $this->assertValidJson($page);
+        $this->assertEquals(1, sizeof($page));
+        $this->assertEquals(1327575944, $page[0]['timestamp']);
+
+        $page = $this->getResults('/promise/log/notkept?count=1&page=7');
+        $this->assertValidJson($page);
+        $this->assertEquals(1, sizeof($page));
+        $this->assertEquals(1327575676, $page[0]['timestamp']);
+
+        $page = $this->getResults('/promise/log/notkept?count=1&page=8');
+        $this->assertValidJson($page);
+        $this->assertEquals(1, sizeof($page));
+        $this->assertEquals(1327575676, $page[0]['timestamp']);
+
+        $page = $this->getResults('/promise/log/notkept?count=3&page=4');
+        $this->assertValidJson($page);
+        $this->assertEquals(0, sizeof($page));
+    }
+
+    public function testPaginationFull()
+    {
+        $page = $this->getResults('/promise/log/notkept?count=8&page=1');
+        $this->assertValidJson($page);
+        $this->assertEquals(8, sizeof($page));
+        $this->assertEquals(1327576540, $page[0]['timestamp']);
+
+        $page = $this->getResults('/promise/log/notkept?count=8&page=2');
+        $this->assertValidJson($page);
+        $this->assertEquals(0, sizeof($page));
+    }
 }
