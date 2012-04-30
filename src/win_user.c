@@ -4,21 +4,13 @@
 
 */
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: win_user.c                                                          */
-/*                                                                           */
-/* Created: Mon Sep 28 13:07:28 2009                                         */
-/*                                                                           */
-/*****************************************************************************/
-
 /* Functions related to windows user and group management. */
 
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-/* Finds the security identifier corresponding to a user name 
+/* Finds the security identifier corresponding to a user name
  * (locally or remotely - use "domain_name\user_name" if a specific domain is desired),
  * and puts a pointer to it in the preallocated sid-variable. If should_exist is true,
  * nonexisting user account is treated as an error.
@@ -56,7 +48,7 @@ int NovaWin_UserNameToSid(char *user_name, SID *sid, DWORD sid_sz, int should_ex
 
 /*******************************************************************/
 
-/* Finds the security identifier corresponding to a group name 
+/* Finds the security identifier corresponding to a group name
  * (locally or remotely - use "domain_name\user_name" if a specific domain is desired),
  * and puts a pointer to it in the preallocated sid-variable. If should_exist is true,
  * nonexisting group account is treated as an error.
