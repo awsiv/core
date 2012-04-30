@@ -45,7 +45,7 @@ class SoftwareTest extends RestBaseTest
     {
 
         $handle = "apparmor";
-        $jsonArray = $this->getResults('/software?name=' . $handle);
+        $jsonArray = $this->getResults('/software?name=' . $handle . '$');
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
         foreach ((array) $jsonArray as $data)
@@ -83,7 +83,7 @@ class SoftwareTest extends RestBaseTest
     {
 
         $handle = "apparmor";
-        $jsonArray = $this->getResults('/software?name=' . $handle);
+        $jsonArray = $this->getResults('/software?name=' . $handle . '$');
         $this->assertValidJson($jsonArray);
         $this->assertFalse(empty($jsonArray), "Should not return empty result.");
         foreach ((array) $jsonArray as $data)
