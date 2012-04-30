@@ -351,8 +351,7 @@ void SplayLongUpdates(void)
         return;
     }
 
-// Key format lock.internal_bundle.hail.handle.-MY_HOST.open_6424_SHA=36651898d78d40...
-// lock.internal_bundle.hail.handle.-10_0_0]
+// key format: "last.internal_bundle.hail.HOSTIP"
 
     if (!NewDBCursor(dbp, &dbcp))
     {
@@ -364,13 +363,19 @@ void SplayLongUpdates(void)
     {
         // Just look at the hail promise locks
 
-        if (strncmp(key, "last.internal_bundle.hail.", strlen("last.internal_bundle.hail.")) != 0)
+        if(BEGINSWITH(key, LOCK_HAIL_PREFIX "handle"))
         {
+            // DEPRECATED: old format before Nova 2.2.0, will get purged by PurgeLocks() eventually
             continue;
         }
 
+        if (!BEGINSWITH(key, LOCK_HAIL_PREFIX))
+        {
+            continue;
+        }
+        
         count++;
-
+        
         memcpy(&entry, value, sizeof(entry));
 
         if (entry.time < 0 || entry.time > now + 300)
@@ -428,7 +433,13 @@ void SplayLongUpdates(void)
 
     while (NextDB(dbp, dbcp, &key, &ksize, (void *) &entry, &vsize))
     {
-        if (strncmp(key, "last.internal_bundle.hail.", strlen("last.internal_bundle.hail.")) != 0)
+        if(BEGINSWITH(key, LOCK_HAIL_PREFIX "handle"))
+        {
+            // DEPRECATED: old format before Nova 2.2.0, will get purged by PurgeLocks() eventually
+            continue;
+        }
+
+        if (!BEGINSWITH(key, LOCK_HAIL_PREFIX))
         {
             continue;
         }

@@ -7,6 +7,8 @@
 #ifndef CFENGINE_HUB_H
 #define CFENGINE_HUB_H
 
+#define LOCK_HAIL_PREFIX "last.internal_bundle.hail."
+
 void Nova_HubLog(const char *s, ...) FUNC_ATTR_FORMAT(printf, 1, 2);
 
 #endif

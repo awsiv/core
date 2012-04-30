@@ -17,3 +17,8 @@
 
         - See http://www.mongodb.org/display/DOCS/2.0+Release+Notes
         for details on the changes in this version.
+
+        The format of locks for checking full/delta updates have
+        changed. This means that after upgrading, the new cf-hub
+        will do a full query against all hosts. After this has finished,
+        cf-hub --splay_updates may be run to splay it again.

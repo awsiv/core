@@ -8,6 +8,8 @@
 #include "db_query.h"
 #include "db_save.h"
 #include "hub.h"
+#include "transaction.h"
+
 
 static void Nova_CreateHostID(mongo_connection *dbconnp, char *hostID, char *ipaddr);
 static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer);
@@ -32,23 +34,22 @@ void Nova_SequentialScan(Item *masterlist)
 
 static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer)
 {
+#define MINUTES_PER_HOUR 60
+
     AgentConnection *conn;
-    time_t average_time = 600, now = time(NULL);
     int long_time_no_see = false;
-    CfLock thislock;
-    Promise *ppp = NewPromise("hail", "open");
-    Attributes aa = { {0} };
 
-    aa.restart_class = "nonce";
-    aa.transaction.ifelapsed = 60 * 6;
-    aa.transaction.expireafter = CF_INFINITY;
+    char lock_id[CF_MAXVARSIZE];
+    snprintf(lock_id, sizeof(lock_id), "%s%s", LOCK_HAIL_PREFIX, CanonifyName(peer));
 
-    thislock = AcquireLock(ppp->promiser, CanonifyName(peer), now, aa, ppp, true);
-
-    if (thislock.lock != NULL)
+    // FIXME: unhandled error condition here: if the function fails we do delta query (but do not report)
+    if (AcquireLockByID(lock_id, 6 * MINUTES_PER_HOUR))
     {
         long_time_no_see = true;
     }
+
+    Promise *pp = NewPromise("hail", "open");
+    Attributes aa = { {0} };
 
     aa.copy.portnumber = (short) atoi(STR_CFENGINEPORT);
 
@@ -65,20 +66,25 @@ static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer)
 
     aa.copy.trustkey = true;
     aa.copy.servers = SplitStringAsRList(peer, '*');
-    ppp->cache = NULL;
+    pp->cache = NULL;
 
-    conn = NewServerConnection(aa, ppp);
-    DeletePromise(ppp);
+    conn = NewServerConnection(aa, pp);
+    DeletePromise(pp);
 
     if (conn == NULL)
     {
-        CfOut(cf_verbose, "", " !! Peer \"%s\" did not respond to hail\n", peer);
-
-        if (thislock.lock != NULL)
+        CfOut(cf_verbose, "", " !! Peer \"%s\" did not respond to hail", peer);
+        
+        if(long_time_no_see)
         {
-            YieldCurrentLock(thislock);
-        }
+            CfOut(cf_verbose, "", "Invalidating full query timelock since connection failed this time");
 
+            if(!InvalidateLockTime(lock_id))
+            {
+                CfOut(cf_error, "", "!! Could not remove full query lock %s", lock_id);
+            }
+        }
+        
         return false;
     }
 
@@ -94,8 +100,16 @@ static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer)
 
         CfOut(cf_verbose, "", " -> Running FULL sensor sweep of %s", HashPrint(CF_DEFAULT_DIGEST, conn->digest));
         report_len = Nova_QueryClientForReports(dbconn, conn, "full", last_week);
-
-        YieldCurrentLock(thislock);
+        
+        if(report_len <= 0)
+        {
+            CfOut(cf_verbose, "", "Invalidating full query timelock since no data was received this time");
+            
+            if(!InvalidateLockTime(lock_id))
+            {
+                CfOut(cf_error, "", "!! Could not remove full query lock %s", lock_id);
+            }
+        }
     }
     else
     {
@@ -103,9 +117,7 @@ static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer)
 
         CfOut(cf_verbose, "", " -> Running differential sensor sweep of %s",
               HashPrint(CF_DEFAULT_DIGEST, conn->digest));
-        report_len = Nova_QueryClientForReports(dbconn, conn, "delta", now - average_time);
-
-        // don't yield lock here - we never got it
+        report_len = Nova_QueryClientForReports(dbconn, conn, "delta", time(NULL) - SECONDS_PER_MINUTE * 10);
     }
 
     Nova_HubLog("Received %d bytes of reports from %s with %s menu", report_len, peer, menu);
