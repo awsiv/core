@@ -5,7 +5,7 @@
         <div class="title expanded" >
             <div>
                 <span id="count_hosts">Report for <?php echo $hostcount ?> hosts</span> 
-                <a href="<?php echo site_url('widget/contextfinder') ?>" id="hclist" class="host_context_btn" title="<?php echo $this->lang->line('report_hostgp_help'); ?>"></a>
+                <a href="<?php echo site_url('widget/contextfinder') ?>" id="hclist" class="showqtip host_context_btn" title="<?php echo $this->lang->line('report_hostgp_help'); ?>"></a>
             </div>
             <div id="show_fileter_form" class="showqtip" style="margin-left:150px" title="Click to toggle more filters">
                    <em class="front">&nbsp;</em><span style="font-weight:bold"><?php echo $report_title; ?></span><em  class='back'>&nbsp;</em>
