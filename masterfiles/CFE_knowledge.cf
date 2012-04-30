@@ -214,12 +214,28 @@ bundle agent cfengine_setup_knowledge
       depth_search => recurse_basedir("inf"),
              perms => mog("644","$(owner[$(flavour)])","$(group[$(flavour)])");
 
-   "$(sys.workdir)/fonts"
-           comment => "Make sure font folder has right permision",
+   "$(sys.doc_root)/docs/fonts"
+           comment => "Ensure we copy font folder",
             handle => "knowledge_files_workdir_fonts",
-      depth_search => recurse_basedir("inf"),
-             perms => m("644");
+         copy_from => local_cp("$(sys.workdir)/share/KnowledgeBase/fonts"),
+      depth_search => recurse("inf"),
+             perms => mo("644","root");
 
+   "$(sys.doc_root)/rest"
+           comment => "Put REST api to webroot directory",
+            handle => "knowledge_files_workdir_rest",
+         copy_from => local_cp("$(sys.workdir)/share/rest"),
+      depth_search => recurse_basedir("inf"),
+             perms => mo("644","root");
+  
+   "$(sys.doc_root)/rest/.htaccess"
+            comment => "Create HTACCESS file for REST",
+             handle => "knowledge_files_rest_htaccess",
+             create => "true",
+          edit_line => rest_htaccess,
+      edit_defaults => empty,
+              perms => mog("644","root","root");
+ 
    "$(sys.doc_root)"
            comment => "Make sure knowledge files are accessible to webserver",
             handle => "knowledge_files_doc_root_docs_2",
@@ -292,3 +308,17 @@ body depth_search recurse_exclude(d,folder1,folder2)
 }
 
 ############################################################################
+
+bundle edit_line rest_htaccess
+{
+ insert_lines:
+  any::
+"<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_URI} !dispatch\.php$(const.dollar)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule .* dispatch.php [L,QSA]
+</IfModule>"
+   comment => "REST's htaccess file content",
+    handle => "rest_htaccess_insert_lines";
+}
