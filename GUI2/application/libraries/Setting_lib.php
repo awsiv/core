@@ -46,12 +46,14 @@ class Setting_lib
 
     public function get_no_of_rows()
     {
+        $default_rows=20;
         $value = $this->ci->settings_model->user_settings_get_item($this->username, 'num_rows');
-        if ($value !== False)
+        if ($value !== False || $value > 0)
         {
             return $value;
         }
-        return false;
+        return $default_rows;
+          
     }
 
     //for testing
