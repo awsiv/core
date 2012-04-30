@@ -11,8 +11,8 @@
                 Cause: (.*+[])<input type="text" name="cause" class="searchfield" value="<?php echo (is_array($paramArray) && isset($paramArray['cause'])) ? trim($paramArray['cause']) : ''; ?>">
             </p>
             <p style="padding-top:15px">
-                <label>From </label> <input type="text" name="from" size="20" value="<?php echo (is_array($paramArray) && isset($paramArray['from'])) ? trim($paramArray['from']) : ''; ?>">
-                <label style="margin-left:10px">To </label> <input type="text" name="to" size="20" value="<?php echo (is_array($paramArray) && isset($paramArray['to'])) ? trim($paramArray['to']) : ''; ?>">
+                <label>From </label> <input type="text" name="from" size="17" value="<?php echo (is_array($paramArray) && isset($paramArray['from'])) ? trim($paramArray['from']) : ''; ?>">
+                <label style="margin-left:10px">To </label> <input type="text" name="to" size="17" value="<?php echo (is_array($paramArray) && isset($paramArray['to'])) ? trim($paramArray['to']) : ''; ?>">
                 <span class="green_btn floatright" style="margin-top: 5px"><input class="green_btn" type="submit" value="Generate Report"></input></span>
                 <span class="clear"></span>
             </p>

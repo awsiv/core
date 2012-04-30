@@ -1,7 +1,10 @@
 <div id="searchform" class="panel">
     <div class="panelcontent">
         <form method="post" action="<?php echo site_url('search') ?>">
-            <p><label>Scope or bundle: (.*+[])</label><input class="searchfield" type="text" name="scope" value="<?php echo (is_array($paramArray) && isset($paramArray['scope'])) ? trim($paramArray['scope']) : ''; ?>"></p>
+            <p><label>Scope or bundle: (.*+[])</label>
+                <span class="floatright"> Return host names only: <input type="checkbox" name="hosts_only" value="true"  <?php echo (is_array($paramArray) && isset($paramArray['hosts_only'])) ? 'checked' : ''; ?>></span>
+                <span class="clear"></span>
+                <input class="searchfield" type="text" name="scope" value="<?php echo (is_array($paramArray) && isset($paramArray['scope'])) ? trim($paramArray['scope']) : ''; ?>"></p>
                 
             
                 <p><label>Lvalue or name: (.*+[])</label><input class="searchfield" type="text" name="lval" value="<?php echo (is_array($paramArray) && isset($paramArray['lval'])) ? trim($paramArray['lval']) : ''; ?>"></p>
@@ -15,11 +18,9 @@
                         <option value="r" <?php echo (is_array($paramArray) && isset($paramArray['type']) && $paramArray['type'] == 'r') ? 'selected' : ''; ?>>Real</option>
                         <option value="rl" <?php echo (is_array($paramArray) && isset($paramArray['type']) && $paramArray['type'] == 'rl') ? 'selected' : ''; ?>>Real list</option>
                     </select>
-                <span class="floatright"> Return host names only: <input type="checkbox" name="hosts_only" value="true"  <?php echo (is_array($paramArray) && isset($paramArray['hosts_only'])) ? 'checked' : ''; ?>></span>
-                <span class="clear"></span>
+                     <span class="green_btn floatright" style="margin-top: 5px"><input class="green_btn" type="submit" value="Generate Report"></input></span>
+                     <span class="clear"></span>
                 </p>
-               
-            <?php $this->load->view('searchpages/buttons_for_filter', array('morefilters' => true)); ?> 
             <?php $this->load->view('searchpages/hidden_fields_for_set_context'); ?>   
                 
         </form>

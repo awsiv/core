@@ -13,7 +13,7 @@
             <div class="clear"></div>
         </div>  
         <div id="modifySearchPanel">
-            <div class="grid_7 reportForm">
+            <div class="grid_7_omega reportForm">
                 <?php $this->load->view('searchpages/' . $filter_view); ?> 
             </div>
             <script type="text/javascript">
@@ -23,13 +23,14 @@
                 });
             });
            </script>  
-            <div id="savesearchcontainer" class="floatright panelcontent"> 
+            <div id="savesearchcontainer" class="grid_5_alpha"> 
+                <div style="border-left:solid 1px #fff; padding:0 0 0 15px">
                 <div id="searchSaveError" class="error" style="display:none;"></div>
                 <div id="searchSaveSuccess" class="success" style="display:none;"></div> 
                 <form id="saveform" method="post" action="<?php echo site_url(); ?>/savedsearch/save/">
                     <p>
                         <label>Save this search </label> 
-                        <input type="text" id="search_name" name="search_name" class="textbox" size="30"></input>
+                        <input type="text" id="search_name" name="search_name" class="textbox" size="31"></input>
                         <span class="green_btn"><input type="submit" id="submit_search" value="Save"/></span>
                         <span class="clear"></span>
                     </p>
@@ -38,6 +39,7 @@
                     <input type="hidden" id="report_title" name="report_title" value="<?php echo $report_title; ?>"></input>
 
                 </form>
+               </div>
             </div> 
             <div class="clear"></div> 
         </div>
