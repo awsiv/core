@@ -13,7 +13,7 @@
             <div class="clear"></div>
         </div>  
         <div id="modifySearchPanel">
-            <div class="grid_8 reportForm">
+            <div class="grid_7 reportForm">
                 <?php $this->load->view('searchpages/' . $filter_view); ?> 
             </div>
             <script type="text/javascript">
@@ -29,7 +29,7 @@
                 <form id="saveform" method="post" action="<?php echo site_url(); ?>/savedsearch/save/">
                     <p>
                         <label>Save this search </label> 
-                        <input type="text" id="search_name" name="search_name" class="textbox"></input>
+                        <input type="text" id="search_name" name="search_name" class="textbox" size="30"></input>
                         <span class="green_btn"><input type="submit" id="submit_search" value="Save"/></span>
                         <span class="clear"></span>
                     </p>
