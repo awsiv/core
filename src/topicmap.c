@@ -158,9 +158,12 @@ void Nova_ShowTopic(char *qualified_topic)
 
     writer = StringWriter();
     json = Nova_ScanOccurrences(id);
-    JsonElementPrint(writer, json, 1);
-    JsonElementDestroy(json);
-    printf("\nOccurrences: %s\n\n", StringWriterClose(writer));
+    if (json)
+    {
+        JsonElementPrint(writer, json, 1);
+        JsonElementDestroy(json);
+        printf("\nOccurrences: %s\n\n", StringWriterClose(writer));
+    }
 }
 
 
