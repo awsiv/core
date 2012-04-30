@@ -204,7 +204,7 @@ void NovaWin_CloseNetwork()
 
 /* TODO: move the functions below to other files ? */
 
-char *NovaWin_GetErrorStr(void)
+const char *GetErrorStr(void)
 {
     static char errbuf[CF_BUFSIZE];
     int len;
