@@ -176,9 +176,13 @@ table.cartouche {
 }
 
  .cartouche td  {
-    background-color: #ddd;
+    background: none !important;
+    border: none !important;
+    padding: 5px; 
+
+/*    background-color: #ddd;
     border: 1px solid #ccc;
-    padding: 5px;
+    padding: 5px;*/
 }
 
 A:link { color: #2c2e70 }
@@ -300,12 +304,12 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#dir">(dir)</a>
 <li><a href="#Deleting-lines-exception">3.28 Deleting lines exception</a>
 <li><a href="#Editing-files">3.29 Editing files</a>
 <li><a href="#Editing-tabular-files">3.30 Editing tabular files</a>
-<li><a href="#Environment-_0028virtual_0029">3.31 Environments (virtual)</a>
-<li><a href="#Environment-variables">3.32 Environment variables</a>
-<li><a href="#Execresult-example">3.33 Execresult example</a>
-<li><a href="#Inserting-lines-in-a-file">3.34 Inserting lines in a file</a>
-<li><a href="#Get-a-list-of-users">3.35 Get a list of users</a>
-<li><a href="#Global-classes">3.36 Global classes</a>
+<li><a href="#Environment-variables">3.31 Environment variables</a>
+<li><a href="#Execresult-example">3.32 Execresult example</a>
+<li><a href="#Inserting-lines-in-a-file">3.33 Inserting lines in a file</a>
+<li><a href="#Get-a-list-of-users">3.34 Get a list of users</a>
+<li><a href="#Global-classes">3.35 Global classes</a>
+<li><a href="#Guest-environments">3.36 Guest environments</a>
 <li><a href="#Hello-world">3.37 Hello world</a>
 <li><a href="#LDAP-interactions">3.38 LDAP interactions</a>
 <li><a href="#Linking-files">3.39 Linking files</a>
@@ -1380,7 +1384,7 @@ Examples for yum based systems:
 <span class="red">body common control
 </span>{
 <span class="red">bundlesequence </span>=> { "packages" };
-<span class="red">inputs </span>=> { "cfengine_stdlib.cf" }
+<span class="red">inputs </span>=> { "cfengine_stdlib.cf" };
 }
 
 <span class="comment">#############################################
@@ -1422,7 +1426,7 @@ SuSE Linux's package manager zypper is the most powerful alternative:
 <span class="red">body common control
 </span>{
 <span class="red">bundlesequence </span>=> { "packages" };
-<span class="red">inputs </span>=> { "cfengine_stdlib.cf" }
+<span class="red">inputs </span>=> { "cfengine_stdlib.cf" };
 }
 
 <span class="comment">#############################################
@@ -1770,12 +1774,6 @@ behind it. For simplicity, we assume that all hosts are on network
 
 <span class="red">    perms </span>=><span class="blue"> system("600"),</span>
 <span class="red">    copy_from </span>=> remote_cp("$(master_location)",$(policy_server)),
-<span class="red">    depth_search </span>=><span class="blue"> recurse("inf");</span>
-
-  "$(sys.workdir)/bin" 
-
-<span class="red">    perms </span>=><span class="blue"> system("700"),</span>
-<span class="red">    copy_from </span>=><span class="blue"> remote_cp("/usr/local/sbin","localhost"),</span>
 <span class="red">    depth_search </span>=><span class="blue"> recurse("inf");</span>
 }
 
@@ -3735,12 +3733,12 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Top">Top</a>
 <li><a href="#Deleting-lines-exception">Deleting lines exception</a>
 <li><a href="#Editing-files">Editing files</a>
 <li><a href="#Editing-tabular-files">Editing tabular files</a>
-<li><a href="#Environment-_0028virtual_0029">Environment (virtual)</a>
 <li><a href="#Environment-variables">Environment variables</a>
 <li><a href="#Execresult-example">Execresult example</a>
 <li><a href="#Inserting-lines-in-a-file">Inserting lines in a file</a>
 <li><a href="#Get-a-list-of-users">Get a list of users</a>
 <li><a href="#Global-classes">Global classes</a>
+<li><a href="#Guest-environments">Guest environments</a>
 <li><a href="#Hello-world">Hello world</a>
 <li><a href="#LDAP-interactions">LDAP interactions</a>
 <li><a href="#Linking-files">Linking files</a>
@@ -5271,15 +5269,6 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 <span class="red">    file_select </span>=><span class="blue"> input_files,</span>
 <span class="red">    action </span>=><span class="blue"> immediate;</span>
 
-  "/var/cfengine/bin" 
-
-<span class="red">    perms </span>=><span class="blue"> m("700"),</span>
-<span class="red">    copy_from </span>=><span class="blue"> u_scp("/usr/local/sbin","localhost"),</span>
-<span class="red">    depth_search </span>=><span class="blue"> recurse("inf"),</span>
-<span class="red">    file_select </span>=><span class="blue"> cf3_files,</span>
-<span class="red">    action </span>=><span class="blue"> immediate,</span>
-<span class="red">    classes </span>=> on_change("reload");
-
 </pre>
 
 <ul class="menu">
@@ -5575,28 +5564,6 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 <h3 class="section">3.26 Database creation</h3>
 
 <pre class="verbatim">
-<span class="red">body common control
-</span>{
-<span class="red">bundlesequence </span>=> { "dummy" };
-}
-
-<span class="red">body knowledge</span> <span class="blue">control</span>
-
-{
-<span class="comment">#sql_database => "postgres";
-</span>
-<span class="red">sql_owner </span>=><span class="green"> "postgres";</span>
-<span class="red">sql_passwd </span>=><span class="green"> ""; # No passwd</span>
-<span class="red">sql_type </span>=><span class="green"> "postgres";</span>
-}
-
-<span class="red">bundle knowledge</span> <span class="blue">dummy</span>
-{
-<span class="red">topics:
-</span>}
-</pre>
-
-<pre class="verbatim">
 
 <span class="red">body common control
 </span>{
@@ -5606,15 +5573,6 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 <span class="red">bundle agent</span> <span class="blue">databases</span>
 
 {
-<span class="comment">#commands:
-</span>
-
-<span class="comment">#  "/usr/bin/createdb cf_topic_maps",
-</span>
-
-<span class="comment">#        contain => as_user("mysql");
-</span>
-
 <span class="red">databases:
 </span>
   "knowledge_bank/topics"
@@ -5622,21 +5580,19 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 <span class="red">    database_operation </span>=><span class="green"> "create",</span>
 <span class="red">    database_type </span>=><span class="green"> "sql",</span>
 <span class="red">    database_columns </span>=> { 
-                        "topic_name,varchar,256",
-                        "topic_comment,varchar,1024",
-                        "topic_id,varchar,256",
-                        "topic_type,varchar,256",
-                        "topic_extra,varchar,26" 
+                        "demo_name,varchar,256",
+                        "demo_comment,varchar,1024",
+                        "demo_id,varchar,256",
+                        "demo_type,varchar,256",
+                        "demo_extra,varchar,26" 
                         },
 
 <span class="red">    database_server </span>=><span class="blue"> myserver;</span>
-
-
-
 }
 
 <span class="comment">################################################
 </span>
+
 
 <span class="red">body database_server</span> <span class="blue">myserver</span>
 {
@@ -5654,10 +5610,10 @@ any::
 <span class="red"> db_server_connection_db </span>=><span class="green"> "mysql";</span>
 }
 
-<span class="red">body contain</span> <span class="blue">as_user(x)</span>
-{
-<span class="red">exec_owner </span>=><span class="green"> "$(x)";</span>
-}
+
+</pre>
+
+<pre class="verbatim">
 </pre>
 
 <div class="node">
@@ -5886,7 +5842,7 @@ Editing a file can be complex or simple, depending on needs.
 <div class="node">
 <a name="Editing-tabular-files"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Environment-_0028virtual_0029">Environment (virtual)</a>,
+Next:&nbsp;<a rel="next" accesskey="n" href="#Guest-environments">Guest environments</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="#Editing-files">Editing files</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
@@ -6012,12 +5968,12 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 </pre>
 
 <ul class="menu">
-<li><a accesskey="1" href="#Environment-_0028virtual_0029">Environment (virtual)</a>
-<li><a accesskey="2" href="#Environment-variables">Environment variables</a>
-<li><a accesskey="3" href="#Execresult-example">Execresult example</a>
-<li><a accesskey="4" href="#Inserting-lines-in-a-file">Inserting lines in a file</a>
-<li><a accesskey="5" href="#Get-a-list-of-users">Get a list of users</a>
-<li><a accesskey="6" href="#Global-classes">Global classes</a>
+<li><a accesskey="1" href="#Environment-variables">Environment variables</a>
+<li><a accesskey="2" href="#Execresult-example">Execresult example</a>
+<li><a accesskey="3" href="#Inserting-lines-in-a-file">Inserting lines in a file</a>
+<li><a accesskey="4" href="#Get-a-list-of-users">Get a list of users</a>
+<li><a accesskey="5" href="#Global-classes">Global classes</a>
+<li><a accesskey="6" href="#Guest-environments">Guest environments</a>
 <li><a accesskey="7" href="#Hello-world">Hello world</a>
 <li><a accesskey="8" href="#LDAP-interactions">LDAP interactions</a>
 <li><a accesskey="9" href="#Linking-files">Linking files</a>
@@ -6031,156 +5987,28 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 </ul>
 
 <div class="node">
-<a name="Environment-(virtual)"></a>
-<a name="Environment-_0028virtual_0029"></a>
-<p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Environment-variables">Environment variables</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Editing-tabular-files">Editing tabular files</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
-
-</div>
-
-<h3 class="section">3.31 Environments (virtual)</h3>
-
-<pre class="verbatim">
-<span class="comment">#######################################################
-</span>
-<span class="comment">#
-</span>
-<span class="comment"># Virtual environments
-</span>
-<span class="comment">#
-</span>
-<span class="comment">#######################################################
-</span>
-
-<span class="red">body common control
-</span>
-{
-<span class="red">bundlesequence  </span>=> { "my_vm_cloud" };   
-}
-
-<span class="comment">#######################################################
-</span>
-
-<span class="red">bundle agent</span> <span class="blue">my_vm_cloud</span>
-
-{
-<span class="red">vars:
-</span>
-  "vms[atlas]"<span class="red"> slist </span>=> { "guest1", "guest2", "guest3" };
-
-<span class="red">environments:
-</span>
- scope||any::  # These should probably be in class "any" to ensure uniqueness
-
-   "$(vms[$(sys.host)])"
-
-<span class="red">       environment_resources </span>=><span class="blue"> virt_xml("$(xmlfile[$(this.promiser)])"),</span>
-<span class="red">       environment_interface </span>=><span class="blue"> vnet("eth0,192.168.1.100/24"),</span>
-<span class="red">       environment_type      </span>=><span class="green"> "test",</span>
-<span class="red">       environment_host      </span>=><span class="green"> "atlas";</span>
-
-<span class="comment">      # default environment_state => "create" on host, and "suspended elsewhere"
-</span>
-}
-
-<span class="comment">#######################################################
-</span>
-
-<span class="red">body environment_resources</span> <span class="blue">virt_xml(specfile)</span>
-{
-<span class="red">env_spec_file </span>=><span class="green"> "$(specfile)";</span>
-}
-
-<span class="comment">#######################################################
-</span>
-
-<span class="red">body environment_interface</span> <span class="blue">vnet(primary)</span>
-{
-<span class="red">env_name      </span>=><span class="green"> "$(this.promiser)";</span>
-<span class="red">env_addresses </span>=> { "$(primary)" };
-
-host1::
-
-<span class="red">  env_network </span>=><span class="green"> "default_vnet1";</span>
-
-host2::
-
-<span class="red">  env_network </span>=><span class="green"> "default_vnet2";</span>
-
-}
-</pre>
-
-<div class="node">
 <a name="Environment-variables"></a>
 <p><hr>
 Next:&nbsp;<a rel="next" accesskey="n" href="#Execresult-example">Execresult example</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Environment-_0028virtual_0029">Environment (virtual)</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Guest-environments">Guest environments</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.32 Environment variables</h3>
+<h3 class="section">3.31 Environment variables</h3>
 
 <pre class="verbatim"></pre>
-
-<pre class="verbatim">
-<span class="comment">#######################################################
-</span>
-<span class="comment">#
-</span>
-<span class="comment"># Virtual environments
-</span>
-<span class="comment">#
-</span>
-<span class="comment">#######################################################
-</span>
-
-<span class="red">body common control
-</span>
-{
-<span class="red">bundlesequence  </span>=> { "my_vm_cloud" };   
-}
-
-<span class="comment">#######################################################
-</span>
-
-<span class="red">bundle agent</span> <span class="blue">my_vm_cloud</span>
-
-{
-<span class="red">environments:
-</span>
-   "centos5"
-
-<span class="red">       environment_resources </span>=><span class="blue"> virt_xml,</span>
-<span class="red">       environment_type      </span>=><span class="green"> "xen",</span>
-<span class="red">       environment_host      </span>=><span class="green"> "ursa-minor";</span>
-
-<span class="comment">      # default environment_state => "create" on host, and "suspended elsewhere"
-</span>
-}
-
-<span class="comment">#######################################################
-</span>
-
-<span class="red">body environment_resources</span> <span class="blue">virt_xml</span>
-{
-<span class="red">env_spec_file </span>=><span class="green"> "/srv/xen/centos5-libvirt-create.xml";</span>
-}
-
-</pre>
 
 <div class="node">
 <a name="Execresult-example"></a>
 <p><hr>
-Next:&nbsp;<a rel="next" accesskey="n" href="#Inserting-lines-in-a-file">Inserting lines in a file</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="#Environment-variables">Environment variables</a>,
-Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
-
+<span class="red">Next:&nbsp;<a rel="next" accesskey="n" href="#Inserting-lines-in-a-file">Inserting lines in a file</a>,
+</span><span class="red">Previous:&nbsp;<a rel="previous" accesskey="p" href="#Environment-variables">Environment variables</a>,
+</span><span class="red">Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+</span>
 </div>
 
-<h3 class="section">3.33 Execresult example</h3>
+<h3 class="section">3.32 Execresult example</h3>
 
 <pre class="verbatim">
 
@@ -6220,7 +6048,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.34 Inserting lines in a file</h3>
+<h3 class="section">3.33 Inserting lines in a file</h3>
 
 <pre class="verbatim">
 
@@ -6448,7 +6276,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.35 Get a list of users</h3>
+<h3 class="section">3.34 Get a list of users</h3>
 
 <pre class="verbatim">
 <span class="comment">#######################################################
@@ -6500,7 +6328,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 </div>
 
-<h3 class="section">3.36 Global classes</h3>
+<h3 class="section">3.35 Global classes</h3>
 
 <pre class="verbatim">
 
@@ -6551,6 +6379,114 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
 
 <span class="comment">#################################
 </span>
+</pre>
+
+<div class="node">
+<a name="Guest-environments"></a>
+<p><hr>
+Next:&nbsp;<a rel="next" accesskey="n" href="#Environment-variables">Environment variables</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="#Editing-tabular-files">Editing tabular files</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="#Low-level">Low level</a>
+
+</div>
+
+<h3 class="section">3.36 Guest environments</h3>
+
+<pre class="verbatim">
+</pre>
+
+<pre class="verbatim">
+<span class="comment">#######################################################
+</span>
+<span class="comment">#
+</span>
+<span class="comment"># Guest environments
+</span>
+<span class="comment">#
+</span>
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body common control
+</span>
+{
+<span class="red">bundlesequence  </span>=> { "my_vm_cloud" };   
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">bundle agent</span> <span class="blue">my_vm_cloud</span>
+
+{
+<span class="red">guest_environments:
+</span>
+ scope||any::  # These should probably be in class "any" to ensure uniqueness
+
+   "test2"
+
+<span class="red">       environment_resources </span>=> my_environment,
+<span class="red">       environment_interface </span>=><span class="blue"> vnet("eth0,192.168.1.100/24"),</span>
+<span class="red">       environment_type      </span>=><span class="green"> "test",</span>
+<span class="red">       environment_state     </span>=><span class="green"> "create",</span>
+<span class="red">       environment_host      </span>=><span class="green"> "atlas";</span>
+
+
+   "test2"
+
+<span class="red">       environment_resources </span>=> my_environment,
+<span class="red">       environment_interface </span>=><span class="blue"> vnet("eth0,192.168.1.101/24"),</span>
+<span class="red">       environment_type      </span>=><span class="green"> "test",</span>
+<span class="red">       environment_state     </span>=><span class="green"> "delete",</span>
+<span class="red">       environment_host      </span>=><span class="green"> "atlas";</span>
+
+
+   "test4"
+
+<span class="red">       environment_resources </span>=> my_environment,
+<span class="red">       environment_interface </span>=><span class="blue"> vnet("eth0,192.168.1.102/24"),</span>
+<span class="red">       environment_type      </span>=><span class="green"> "test",</span>
+<span class="red">       environment_state     </span>=><span class="green"> "create",</span>
+<span class="red">       environment_host      </span>=><span class="green"> "atlas";</span>
+
+    "network1"
+<span class="red">       environment_type      </span>=><span class="green"> "test_net",</span>
+<span class="red">       environment_state     </span>=><span class="green"> "create",</span>
+<span class="red">       environment_host      </span>=><span class="green"> "atlas";</span>
+
+
+<span class="comment">      # default environment_state => "create" on host, and "suspended elsewhere"
+</span>
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body environment_resources</span> <span class="blue">my_environment</span>
+{
+<span class="red">env_cpus </span>=><span class="green"> "2";</span>
+<span class="red">env_memory </span>=><span class="green"> "512"; # in KB</span>
+<span class="red">env_disk </span>=><span class="green"> "1024";  # in MB</span>
+}
+
+<span class="comment">#######################################################
+</span>
+
+<span class="red">body environment_interface</span> <span class="blue">vnet(primary)</span>
+{
+<span class="red">env_name      </span>=><span class="green"> "$(this.promiser)";</span>
+<span class="red">env_addresses </span>=> { "$(primary)" };
+
+host1::
+
+<span class="red">  env_network </span>=><span class="green"> "default_vnet1";</span>
+
+host2::
+
+<span class="red">  env_network </span>=><span class="green"> "default_vnet2";</span>
+
+}
+
 </pre>
 
 <!--  -->
@@ -8475,8 +8411,8 @@ yum update
 mkdir -p /root/CFEngine_init
 cd /root/CFEngine_init
 <span class="red">wget -nd -r http://192.168.0.1/CFEngine/inputs/
-</span>/usr/local/sbin/cf-agent -B
-/usr/local/sbin/cf-agent
+</span>/var/cfengine/bin/cf-agent -B
+/var/cfengine/bin/cf-agent
         ";
 
 <span class="comment">   # File contains of PXElinux boot menu

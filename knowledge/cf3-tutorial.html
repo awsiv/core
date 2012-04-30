@@ -176,9 +176,13 @@ table.cartouche {
 }
 
  .cartouche td  {
-    background-color: #ddd;
+    background: none !important;
+    border: none !important;
+    padding: 5px; 
+
+/*    background-color: #ddd;
     border: 1px solid #ccc;
-    padding: 5px;
+    padding: 5px;*/
 }
 
 A:link { color: #2c2e70 }
@@ -583,7 +587,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-components-of-CFEngine">The compon
 
      <dl>
 <dt><b>OpenSSL</b><dd>Open source Secure Sockets Layer for encryption.<br>URL: <a href="http://www.openssl.org">http://www.openssl.org</a>
-<br><dt><b>BerkeleyDB</b><span class="roman"> (version 3.2 or later)</span><dd>Light-weight flat-file database system.<br>URL: <a href="http://www.oracle.com/technology/products/berkeley-db/index.html">http://www.oracle.com/technology/products/berkeley-db/index.html</a>
+<br><dt><b>Tokyo Cabinet</b><span class="roman"> (version 1.4.42 or later)</span><dd>Lightweight flat-file database system.<br>URL: <a href="http://fallabs.com/tokyocabinet/">http://fallabs.com/tokyocabinet/</a>
 <br><dt><b>PCRE</b><dd>Perl Compatible Regular Expression library.<br>URL: <a href="http://www.pcre.org/">http://www.pcre.org/</a>
 
      <br><dt><dd>On Windows machines, you need to install the basic Cygwin DLL from
@@ -610,7 +614,7 @@ and <code>bison</code>.
      make
      make install
 </pre>
-   <p class="noindent">This results in binaries being installed in <samp><span class="file">/usr/local/sbin</span></samp>.
+   <p class="noindent">This results in binaries being installed in <samp><span class="file">/var/cfengine/bin</span></samp>.
 
 <div class="node">
 <a name="Work-directory"></a>
@@ -881,6 +885,13 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-components-of-CFEngine">The compon
 
 <p>The quickest way to get started with CFEngine is to download and install binary packages, available from <a href="http://cfengine.com/inside/myspace">http://cfengine.com/inside/myspace</a>. Installing and bootstrapping these is a trivial operation, putting you two steps away from testing your first CFEngine policies.
 
+   <p><table class="cartouche" summary="cartouche" border="1"><tr><td>
+Note: There is a bug in Community 3.3.0 where the default policy files are not copied to <code>/var/cfengine/masterfiles</code> upon bootstrap. Workaround consists in manually copying these files before bootstrapping:
+<pre class="verbatim">cp /var/cfengine/share/CoreBase/*.cf /var/cfengine/masterfiles/
+</pre>
+This will be corrected in a bugfix release coming soon. 
+</td></tr></table>
+
    <p>This procedure applies to all hosts, but you should bootstrap the hub (policy server) first. Find the hostname or IP address of the hub, here we assume the address is '123.456.789.123' (do not bootstrap with a localhost address).
 <pre class="verbatim">
    host# /var/cfengine/bin/cf-agent --bootstrap --policy-server 123.456.789.123
@@ -895,7 +906,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#The-components-of-CFEngine">The compon
 </pre>
 
    <p>As an alternative to installing binary packages, the following steps outline the procedure when you have built from source (available from <a href="http://cfengine.com/source_code">http://cfengine.com/source_code</a>). You will then need to copy the distributed policy files that were installed in
-<samp><span class="file">/usr/local/share/doc/CFEngine/</span></samp> to a policy distribution point, like
+<samp><span class="file">/var/cfengine/share/CoreBase/</span></samp> to a policy distribution point, like
 this:
 
      <ol type=1 start=1>
@@ -904,9 +915,8 @@ this:
      <li>Become root or Administrator on that server.
 
      <li>Create the policy source directory and populate the cache:
-     <pre class="smallexample">             host# /usr/local/sbin/cf-key
-             host# cp /usr/local/sbin/cf-* /var/cfengine/bin/
-             host# cp /usr/local/share/cfengine/masterfiles/*.cf /var/cfengine/masterfiles/
+     <pre class="smallexample">             host# /var/cfengine/bin/cf-key
+             host# cp /var/cfengine/share/CoreBase/*.cf /var/cfengine/masterfiles/
              host# /var/cfengine/bin/cf-agent --bootstrap --policy-server 123.456.789.123
 </pre>
      </ol>
@@ -1209,8 +1219,8 @@ experimenting with small examples before setting out to configure a
 system. To do that you should log onto your system as a regular
 unprivileged user and set up:
 
-<pre class="smallexample">     host$ /usr/local/sbin/cf-key
-     host$ cp /usr/local/sbin/cf-* ~/.cfagent/bin
+<pre class="smallexample">     host$ /var/cfengine/bin/cf-key
+     host$ cp /var/cfengine/bin/cf-* ~/.cfagent/bin
 </pre>
    <p class="noindent">CFEngine wants to see copies of its binaries in its
 work directory. For a regular user this lies in <samp><span class="file">~/.cfagent</span></samp>
@@ -1269,11 +1279,11 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#First-promises">First promises</a>
 <p class="noindent">Type this in to a file, e.g. &lsquo;<samp><span class="samp">emacs ~/test.cf</span></samp>&rsquo;. Then
 check
 the syntax like this
-<pre class="smallexample">     /usr/local/sbin/cf-promises -f ~/test.cf
+<pre class="smallexample">     /var/cfengine/bin/cf-promises -f ~/test.cf
 </pre>
    <p>If all is well there should be no output. 
 Now execute as follows:
-<pre class="smallexample">     /usr/local/sbin/cf-agent -f ~/test.cf
+<pre class="smallexample">     /var/cfengine/bin/cf-agent -f ~/test.cf
 </pre>
    <p>You should see this:
 <pre class="smallexample">     R: Hello world
@@ -1293,7 +1303,7 @@ wait
 a minute, it will work again. Run the command in verbose mode (use the
 <code>-v</code> or the <code>--verbose</code> switch) to see  why:
 
-<pre class="smallexample">     /usr/local/sbin/cf-agent --verbose -f ~/test.cf
+<pre class="smallexample">     /var/cfengine/bin/cf-agent --verbose -f ~/test.cf
 </pre>
    <p>Now you will see:
 <pre class="smallexample">     cf3&gt;    =========================================================
@@ -1428,7 +1438,7 @@ terms of standard templates.
    </td></tr></table>
 
    <p>Now execute <code>cf-agent</code> with this promise:
-<pre class="smallexample">     <b>host$</b> /usr/local/sbin/cf-agent -f /tmp/test.cf -I
+<pre class="smallexample">     <b>host$</b> /var/cfengine/bin/cf-agent -f /tmp/test.cf -I
      -&gt; Object /tmp/testfile had permission 600, changed it to 612
      
      <b>host$</b> ls -l /tmp/testfile
@@ -1444,7 +1454,7 @@ the permissions appropriately. Now try to change the permissions:
      <b>host$</b> ls -l /tmp/testfile
      -r-------- 1 mark users 33 2009-06-30 06:06 /tmp/testfile
      
-     <b>host$</b> /usr/local/sbin/cf-agent -f /tmp/test.cf -I
+     <b>host$</b> /var/cfengine/bin/cf-agent -f /tmp/test.cf -I
      -&gt; Object /tmp/testfile had permission 400, changed it to 612
      
      <b>host$</b> ls -l /tmp/testfile
@@ -1532,13 +1542,6 @@ This is a simple example of system provisioning, with automated update.
 <span class="red">  perms </span>=><span class="blue"> u_m("600"),</span>
 <span class="red">  copy_from </span>=> u_cp("$(master_location)","localhost"),
 <span class="red">  depth_search </span>=><span class="blue"> u_recurse("inf");</span>
-
-"/var/cfengine/bin"
-
-<span class="red">  comment </span>=><span class="green"> "Update the cached binaries from installation",</span>
-<span class="red">  perms </span>=><span class="blue"> u_m("700"),</span>
-<span class="red">  copy_from </span>=><span class="blue"> u_cp("/usr/local/sbin","localhost"),</span>
-<span class="red">  depth_search </span>=><span class="blue"> u_recurse("2");</span>
 }
 
 </pre>
@@ -1596,7 +1599,7 @@ Up:&nbsp;<a rel="up" accesskey="u" href="#First-promises">First promises</a>
 configured
 using control parameters described in the next chapter. Try:
 
-<pre class="verbatim">host$ /usr/local/sbin/cf-reports
+<pre class="verbatim">host$ /var/cfengine/bin/cf-reports
 host$ ls ~/.cfagent/reports
 host$ mywebbrowser ~/.cfagent/reports/performance.html
 </pre>
@@ -1624,7 +1627,7 @@ with its default policy.
 
    <p>You can try running it in the foreground:
 
-<pre class="verbatim">host$ /usr/local/sbin/cf-execd -F
+<pre class="verbatim">host$ /var/cfengine/bin/cf-execd -F
 </pre>
 
    <p>When you run CFEngine like this, any output that comes from CFEngine
@@ -2330,7 +2333,7 @@ cfengine_3::
 </pre>
 The output looks something like this:
 <pre class="smallexample">     
-     /usr/local/sbin/cf-agent -f ./unit_loops.cf -K
+     /var/cfengine/bin/cf-agent -f ./unit_loops.cf -K
      
      R: cf-monitord is The monitor
      R: cf-serverd is The server
@@ -2481,7 +2484,7 @@ file onto every host on your network:
 <pre class="smallexample">     #
      # Global Cron file
      #
-     */5 * * * * /usr/local/sbin/cf-execd -F
+     */5 * * * * /var/cfengine/bin/cf-execd -F
      
 </pre>
    </td></tr></table>

@@ -11,344 +11,232 @@ Special_Topics_Guide::
 
 occurrences:
 
-manuals::
  "/docs/cf3-solutions.html"
-  represents => { "CFEngine Solutions" };
-CFEngine_Solutions::
+  represents => { "Official CFEngine document"},  about_topics => { "cfengine solutions" };
  "/docs/cf3-solutions.html"
-  represents => { "special topics guide" };
-CFEngine_Solutions::
+  represents => { "Special Topics Guide"},  about_topics => { "cfengine solutions" };
  "/docs/cf3-solutions.html#Top"
-  represents => { "Text section" };
-Introduction::
+  represents => { "Text section" }, about_topics => { "cfengine-solutions" };
  "/docs/cf3-solutions.html#Introduction"
-  represents => { "manual chapter" };
-Begin___Get_Started::
+  represents => { "manual chapter" }, about_topics => { "introduction"};
  "/docs/cf3-solutions.html#Begin-_002d-Get-started"
-  represents => { "manual section Begin - Get Started" };
-Create_files_and_directories::
+  represents => { "manual section" }, about_topics => { "begin - get started"};
  "/docs/cf3-solutions.html#Create-files-and-directories"
-  represents => { "manual section Create files and directories" };
-Copy_single_files::
+  represents => { "manual section" }, about_topics => { "create files and directories"};
  "/docs/cf3-solutions.html#Copy-single-files"
-  represents => { "manual section Copy single files" };
-Copy_directory_trees::
+  represents => { "manual section" }, about_topics => { "copy single files"};
  "/docs/cf3-solutions.html#Copy-directory-trees"
-  represents => { "manual section Copy directory trees" };
-Editing_password_or_group_files::
+  represents => { "manual section" }, about_topics => { "copy directory trees"};
  "/docs/cf3-solutions.html#Editing-password-or-group-files"
-  represents => { "manual section Editing password or group files" };
-Editing_password_or_group_files_custom::
+  represents => { "manual section" }, about_topics => { "editing password or group files"};
  "/docs/cf3-solutions.html#Editing-password-or-group-files-custom"
-  represents => { "manual section Editing password or group files custom" };
-Disabling_and_rotating_files::
+  represents => { "manual section" }, about_topics => { "editing password or group files custom"};
  "/docs/cf3-solutions.html#Disabling-and-rotating-files"
-  represents => { "manual section Disabling and rotating files" };
-Hashing_for_change_detection::
+  represents => { "manual section" }, about_topics => { "disabling and rotating files"};
  "/docs/cf3-solutions.html#Hashing-for-change-detection-_002d-tripwire"
-  represents => { "manual section Hashing for change detection" };
-Command_or_script_execution::
+  represents => { "manual section" }, about_topics => { "hashing for change detection"};
  "/docs/cf3-solutions.html#Command-or-script-execution"
-  represents => { "manual section Command or script execution" };
-Kill_process::
+  represents => { "manual section" }, about_topics => { "command or script execution"};
  "/docs/cf3-solutions.html#Kill-process"
-  represents => { "manual section Kill process" };
-Restart_process::
+  represents => { "manual section" }, about_topics => { "kill process"};
  "/docs/cf3-solutions.html#Restart-process"
-  represents => { "manual section Restart process" };
-Check_filesystem_space::
+  represents => { "manual section" }, about_topics => { "restart process"};
  "/docs/cf3-solutions.html#Check-filesystem-space"
-  represents => { "manual section Check filesystem space" };
-Mount_a_filesystem::
+  represents => { "manual section" }, about_topics => { "check filesystem space"};
  "/docs/cf3-solutions.html#Mount-a-filesystem"
-  represents => { "manual section Mount a filesystem" };
-Software_and_patch_installation::
+  represents => { "manual section" }, about_topics => { "mount a filesystem"};
  "/docs/cf3-solutions.html#Software-and-patch-installation"
-  represents => { "manual section Software and patch installation" };
-High_level::
+  represents => { "manual section" }, about_topics => { "software and patch installation"};
  "/docs/cf3-solutions.html#High-level"
-  represents => { "manual chapter" };
-Centralized_Management::
+  represents => { "manual chapter" }, about_topics => { "high level"};
  "/docs/cf3-solutions.html#Centralized-Management"
-  represents => { "manual section Centralized Management" };
-All_hosts_the_same::
+  represents => { "manual section" }, about_topics => { "centralized management"};
  "/docs/cf3-solutions.html#All-hosts-the-same"
-  represents => { "manual section All hosts the same" };
-Variation_in_hosts::
+  represents => { "manual section" }, about_topics => { "all hosts the same"};
  "/docs/cf3-solutions.html#Variation-in-hosts"
-  represents => { "manual section Variation in hosts" };
-Updating_from_a_central_hub::
+  represents => { "manual section" }, about_topics => { "variation in hosts"};
  "/docs/cf3-solutions.html#Updating-from-a-central-hub"
-  represents => { "manual section Updating from a central hub" };
-Change_detection::
+  represents => { "manual section" }, about_topics => { "updating from a central hub"};
  "/docs/cf3-solutions.html#Change-detection"
-  represents => { "manual section Change detection" };
-Garbage_collection::
+  represents => { "manual section" }, about_topics => { "change detection"};
  "/docs/cf3-solutions.html#Garbage-collection"
-  represents => { "manual section Garbage collection" };
-Distribute_root_passwords::
+  represents => { "manual section" }, about_topics => { "garbage collection"};
  "/docs/cf3-solutions.html#Distribute-root-passwords"
-  represents => { "manual section Distribute root passwords" };
-Distribute_ssh_keys::
+  represents => { "manual section" }, about_topics => { "distribute root passwords"};
  "/docs/cf3-solutions.html#Distribute-ssh-keys"
-  represents => { "manual section Distribute ssh keys" };
-Laptop_support_configuration::
+  represents => { "manual section" }, about_topics => { "distribute ssh keys"};
  "/docs/cf3-solutions.html#Laptop-support-configuration"
-  represents => { "manual section Laptop support configuration" };
-Find_the_MAC_address::
+  represents => { "manual section" }, about_topics => { "laptop support configuration"};
  "/docs/cf3-solutions.html#Find-MAC-address"
-  represents => { "manual section Find the MAC address" };
-Log_rotation::
+  represents => { "manual section" }, about_topics => { "find the mac address"};
  "/docs/cf3-solutions.html#Log-rotation"
-  represents => { "manual section Log rotation" };
-Manage_a_system_file::
+  represents => { "manual section" }, about_topics => { "log rotation"};
  "/docs/cf3-solutions.html#Manage-a-system-file"
-  represents => { "manual section Manage a system file" };
-Simple_template::
+  represents => { "manual section" }, about_topics => { "manage a system file"};
  "/docs/cf3-solutions.html#Simple-template"
-  represents => { "manual section Simple template" };
-Simple_versioned_template::
+  represents => { "manual section" }, about_topics => { "simple template"};
  "/docs/cf3-solutions.html#Simple-versioned-template"
-  represents => { "manual section Simple versioned template" };
-Macro_template::
+  represents => { "manual section" }, about_topics => { "simple versioned template"};
  "/docs/cf3-solutions.html#Macro-template"
-  represents => { "manual section Macro template" };
-Macro_template::
- "/docs/cf3-solutions.html#Macro-template"
+  represents => { "manual section" }, about_topics => { "macro template"};
+examples:: "/docs/cf3-solutions.html#Macro-template"
+ about_topics => { "Macro template" },
   represents => { "code example" };
-Custom_editing::
  "/docs/cf3-solutions.html#Custom-editing"
-  represents => { "manual section Custom editing" };
-Manage_a_system_process::
+  represents => { "manual section" }, about_topics => { "custom editing"};
  "/docs/cf3-solutions.html#Manage-a-system-process"
-  represents => { "manual section Manage a system process" };
-Ensure_running::
+  represents => { "manual section" }, about_topics => { "manage a system process"};
  "/docs/cf3-solutions.html#Ensure-running"
-  represents => { "manual section Ensure running" };
-Ensure_not_running::
+  represents => { "manual section" }, about_topics => { "ensure running"};
  "/docs/cf3-solutions.html#Ensure-not-running"
-  represents => { "manual section Ensure not running" };
-Prune_processes::
+  represents => { "manual section" }, about_topics => { "ensure not running"};
  "/docs/cf3-solutions.html#Prune-processes"
-  represents => { "manual section Prune processes" };
-Manage_users::
+  represents => { "manual section" }, about_topics => { "prune processes"};
  "/docs/cf3-solutions.html#Manage-users"
-  represents => { "manual section Manage users" };
-Add_users::
+  represents => { "manual section" }, about_topics => { "manage users"};
  "/docs/cf3-solutions.html#Add-users"
-  represents => { "manual section Add users" };
-Remove_users::
+  represents => { "manual section" }, about_topics => { "add users"};
  "/docs/cf3-solutions.html#Remove-users"
-  represents => { "manual section Remove users" };
-Postfix_mail_configuration::
+  represents => { "manual section" }, about_topics => { "remove users"};
  "/docs/cf3-solutions.html#Postfix-mail-configuration"
-  represents => { "manual section Postfix mail configuration" };
-Set_up_HPC_clusters::
+  represents => { "manual section" }, about_topics => { "postfix mail configuration"};
  "/docs/cf3-solutions.html#Set-up-HPC-clusters"
-  represents => { "manual section Set up HPC clusters" };
-Set_up_name_resolution::
+  represents => { "manual section" }, about_topics => { "set up hpc clusters"};
  "/docs/cf3-solutions.html#Set-up-name-resolution"
-  represents => { "manual section Set up name resolution" };
-Set_up_sudo::
+  represents => { "manual section" }, about_topics => { "set up name resolution"};
  "/docs/cf3-solutions.html#Set-up-sudo"
-  represents => { "manual section Set up sudo" };
-Set_up_a_web_server::
+  represents => { "manual section" }, about_topics => { "set up sudo"};
  "/docs/cf3-solutions.html#Set-up-a-web-server"
-  represents => { "manual section Set up a web server" };
-Templating::
+  represents => { "manual section" }, about_topics => { "set up a web server"};
  "/docs/cf3-solutions.html#Templating"
-  represents => { "manual section Templating" };
-Low_level::
+  represents => { "manual section" }, about_topics => { "templating"};
  "/docs/cf3-solutions.html#Low-level"
-  represents => { "manual chapter" };
-Aborting_execution::
+  represents => { "manual chapter" }, about_topics => { "low level"};
  "/docs/cf3-solutions.html#Aborting-execution"
-  represents => { "manual section Aborting execution" };
-ACL_file_example::
+  represents => { "manual section" }, about_topics => { "aborting execution"};
  "/docs/cf3-solutions.html#ACL-file-example"
-  represents => { "manual section ACL file example" };
-ACL_generic_example::
+  represents => { "manual section" }, about_topics => { "acl file example"};
  "/docs/cf3-solutions.html#ACL-generic-example"
-  represents => { "manual section ACL generic example" };
-ACL_secret_example::
+  represents => { "manual section" }, about_topics => { "acl generic example"};
  "/docs/cf3-solutions.html#ACL-secret-example"
-  represents => { "manual section ACL secret example" };
-Active_directory_example::
+  represents => { "manual section" }, about_topics => { "acl secret example"};
  "/docs/cf3-solutions.html#Active-directory-example"
-  represents => { "manual section Active directory example" };
-Active_list_users_directory_example::
+  represents => { "manual section" }, about_topics => { "active directory example"};
  "/docs/cf3-solutions.html#Active-list-users-directory-example"
-  represents => { "manual section Active list users directory example" };
-Active_directory_show_users_example::
+  represents => { "manual section" }, about_topics => { "active list users directory example"};
  "/docs/cf3-solutions.html#Active-directory-show-users-example"
-  represents => { "manual section Active directory show users example" };
-Add_lines_to_a_file::
+  represents => { "manual section" }, about_topics => { "active directory show users example"};
  "/docs/cf3-solutions.html#Add-lines-to-a-file"
-  represents => { "manual section Add lines to a file" };
-Add_users_to_passwd_and_group::
+  represents => { "manual section" }, about_topics => { "add lines to a file"};
  "/docs/cf3-solutions.html#Add-users-to-passwd-and-group"
-  represents => { "manual section Add users to passwd and group" };
-Add_software_packages_to_the_system::
+  represents => { "manual section" }, about_topics => { "add users to passwd and group"};
  "/docs/cf3-solutions.html#Add-software-packages-to-the-system"
-  represents => { "manual section Add software packages to the system" };
-Add_variable_definitions_to_a_file_e_g___etc_system::
+  represents => { "manual section" }, about_topics => { "add software packages to the system"};
  "/docs/cf3-solutions.html#Add-variable-definitions-to-a-file"
-  represents => { "manual section Add variable definitions to a file e.g. /etc/system" };
-Application_baseline::
+  represents => { "manual section" }, about_topics => { "add variable definitions to a file e.g. /etc/system"};
  "/docs/cf3-solutions.html#Application-baseline"
-  represents => { "manual section Application baseline" };
-Array_example::
+  represents => { "manual section" }, about_topics => { "application baseline"};
  "/docs/cf3-solutions.html#Array-example"
-  represents => { "manual section Array example" };
-Backreferences_in_filenames::
+  represents => { "manual section" }, about_topics => { "array example"};
  "/docs/cf3-solutions.html#Back-references-in-filenames"
-  represents => { "manual section Backreferences in filenames" };
-BSD_flags::
+  represents => { "manual section" }, about_topics => { "backreferences in filenames"};
  "/docs/cf3-solutions.html#BSD-flags"
-  represents => { "manual section BSD flags" };
-Change_directory_for_command::
+  represents => { "manual section" }, about_topics => { "bsd flags"};
  "/docs/cf3-solutions.html#Change-directory-for-command"
-  represents => { "manual section Change directory for command" };
-Check_file_or_directory_permissions::
+  represents => { "manual section" }, about_topics => { "change directory for command"};
  "/docs/cf3-solutions.html#Check-file-or-directory-permissions"
-  represents => { "manual section Check file or directory permissions" };
-Class_match_example::
+  represents => { "manual section" }, about_topics => { "check file or directory permissions"};
  "/docs/cf3-solutions.html#Class-match-example"
-  represents => { "manual section Class match example" };
-Client_server_example::
+  represents => { "manual section" }, about_topics => { "class match example"};
  "/docs/cf3-solutions.html#Client_002dserver-example"
-  represents => { "manual section Client-server example" };
-Commands_example::
+  represents => { "manual section" }, about_topics => { "client-server example"};
  "/docs/cf3-solutions.html#Commands-example"
-  represents => { "manual section Commands example" };
-Commenting_lines_in_a_file::
+  represents => { "manual section" }, about_topics => { "commands example"};
  "/docs/cf3-solutions.html#Commenting-lines-in-a-file"
-  represents => { "manual section Commenting lines in a file" };
-Copy_files::
+  represents => { "manual section" }, about_topics => { "commenting lines in a file"};
  "/docs/cf3-solutions.html#Copy-files"
-  represents => { "manual section Copy files" };
-Copy_and_flatten_directory::
+  represents => { "manual section" }, about_topics => { "copy files"};
  "/docs/cf3-solutions.html#Copy-and-flatten-directory"
-  represents => { "manual section Copy and flatten directory" };
-Copy_then_edit_a_file_convergently::
+  represents => { "manual section" }, about_topics => { "copy and flatten directory"};
  "/docs/cf3-solutions.html#Copy-then-edit"
-  represents => { "manual section Copy then edit a file convergently" };
-Creating_files_and_directories::
+  represents => { "manual section" }, about_topics => { "copy then edit a file convergently"};
  "/docs/cf3-solutions.html#Creating-files-and-directories"
-  represents => { "manual section Creating files and directories" };
-Database_creation::
+  represents => { "manual section" }, about_topics => { "creating files and directories"};
  "/docs/cf3-solutions.html#Database-creation"
-  represents => { "manual section Database creation" };
-Deleting_lines_from_a_file::
+  represents => { "manual section" }, about_topics => { "database creation"};
  "/docs/cf3-solutions.html#Deleting-lines-from-a-file"
-  represents => { "manual section Deleting lines from a file" };
-Deleting_lines_exception::
+  represents => { "manual section" }, about_topics => { "deleting lines from a file"};
  "/docs/cf3-solutions.html#Deleting-lines-exception"
-  represents => { "manual section Deleting lines exception" };
-Editing_files::
+  represents => { "manual section" }, about_topics => { "deleting lines exception"};
  "/docs/cf3-solutions.html#Editing-files"
-  represents => { "manual section Editing files" };
-Editing_tabular_files::
+  represents => { "manual section" }, about_topics => { "editing files"};
  "/docs/cf3-solutions.html#Editing-tabular-files"
-  represents => { "manual section Editing tabular files" };
-Environments::
- "/docs/cf3-solutions.html#Environment-_0028virtual_0029"
-  represents => { "manual section Environments" };
-Environment_variables::
+  represents => { "manual section" }, about_topics => { "editing tabular files"};
  "/docs/cf3-solutions.html#Environment-variables"
-  represents => { "manual section Environment variables" };
-Execresult_example::
+  represents => { "manual section" }, about_topics => { "environment variables"};
  "/docs/cf3-solutions.html#Execresult-example"
-  represents => { "manual section Execresult example" };
-Inserting_lines_in_a_file::
+  represents => { "manual section" }, about_topics => { "execresult example"};
  "/docs/cf3-solutions.html#Inserting-lines-in-a-file"
-  represents => { "manual section Inserting lines in a file" };
-Get_a_list_of_users::
+  represents => { "manual section" }, about_topics => { "inserting lines in a file"};
  "/docs/cf3-solutions.html#Get-a-list-of-users"
-  represents => { "manual section Get a list of users" };
-Global_classes::
+  represents => { "manual section" }, about_topics => { "get a list of users"};
  "/docs/cf3-solutions.html#Global-classes"
-  represents => { "manual section Global classes" };
-Hello_world::
+  represents => { "manual section" }, about_topics => { "global classes"};
+ "/docs/cf3-solutions.html#Guest-environments"
+  represents => { "manual section" }, about_topics => { "guest environments"};
  "/docs/cf3-solutions.html#Hello-world"
-  represents => { "manual section Hello world" };
-LDAP_interactions::
+  represents => { "manual section" }, about_topics => { "hello world"};
  "/docs/cf3-solutions.html#LDAP-interactions"
-  represents => { "manual section LDAP interactions" };
-Linking_files::
+  represents => { "manual section" }, about_topics => { "ldap interactions"};
  "/docs/cf3-solutions.html#Linking-files"
-  represents => { "manual section Linking files" };
-Listing_files_pattern_in_a_directory::
+  represents => { "manual section" }, about_topics => { "linking files"};
  "/docs/cf3-solutions.html#Listing-files_002dpattern-in-a-directory"
-  represents => { "manual section Listing files-pattern in a directory" };
-Locate_and_transform_files::
+  represents => { "manual section" }, about_topics => { "listing files-pattern in a directory"};
  "/docs/cf3-solutions.html#Locate-and-transform-files"
-  represents => { "manual section Locate and transform files" };
-Logging::
+  represents => { "manual section" }, about_topics => { "locate and transform files"};
  "/docs/cf3-solutions.html#Logging"
-  represents => { "manual section Logging" };
-Measurements::
+  represents => { "manual section" }, about_topics => { "logging"};
  "/docs/cf3-solutions.html#Measurements"
-  represents => { "manual section Measurements" };
-Methods::
+  represents => { "manual section" }, about_topics => { "measurements"};
  "/docs/cf3-solutions.html#Methods"
-  represents => { "manual section Methods" };
-Method_validation::
+  represents => { "manual section" }, about_topics => { "methods"};
  "/docs/cf3-solutions.html#Method-validation"
-  represents => { "manual section Method validation" };
-Mount_NFS_filesystem::
+  represents => { "manual section" }, about_topics => { "method validation"};
  "/docs/cf3-solutions.html#Mount-NFS-filesystem"
-  represents => { "manual section Mount NFS filesystem" };
-Ordering_promises::
+  represents => { "manual section" }, about_topics => { "mount nfs filesystem"};
  "/docs/cf3-solutions.html#Ordering-promises"
-  represents => { "manual section Ordering promises" };
-Process_management::
+  represents => { "manual section" }, about_topics => { "ordering promises"};
  "/docs/cf3-solutions.html#Process-management"
-  represents => { "manual section Process management" };
-Read_from_a_TCP_socket::
+  represents => { "manual section" }, about_topics => { "process management"};
  "/docs/cf3-solutions.html#Read-from-a-TCP-socket"
-  represents => { "manual section Read from a TCP socket" };
-Resolver_management::
+  represents => { "manual section" }, about_topics => { "read from a tcp socket"};
  "/docs/cf3-solutions.html#Resolver-management"
-  represents => { "manual section Resolver management" };
-Search_and_replace_text::
+  represents => { "manual section" }, about_topics => { "resolver management"};
  "/docs/cf3-solutions.html#Search-and-replace-text"
-  represents => { "manual section Search and replace text" };
-Selecting_a_region_in_a_file::
+  represents => { "manual section" }, about_topics => { "search and replace text"};
  "/docs/cf3-solutions.html#Selecting-a-region-in-a-file"
-  represents => { "manual section Selecting a region in a file" };
-Service_management::
+  represents => { "manual section" }, about_topics => { "selecting a region in a file"};
  "/docs/cf3-solutions.html#Service-management-_0028windows_0029"
-  represents => { "manual section Service management" };
-Set_up_a_PXE_boot_server::
+  represents => { "manual section" }, about_topics => { "service management"};
  "/docs/cf3-solutions.html#Set-up-a-PXE-boot-server"
-  represents => { "manual section Set up a PXE boot server" };
-Tidying_garbage_files::
+  represents => { "manual section" }, about_topics => { "set up a pxe boot server"};
  "/docs/cf3-solutions.html#Tidying-garbage-files"
-  represents => { "manual section Tidying garbage files" };
-Software_distribution::
+  represents => { "manual section" }, about_topics => { "tidying garbage files"};
  "/docs/cf3-solutions.html#Software-distribution"
-  represents => { "manual section Software distribution" };
-Trigger_classes::
+  represents => { "manual section" }, about_topics => { "software distribution"};
  "/docs/cf3-solutions.html#Trigger-classes"
-  represents => { "manual section Trigger classes" };
-Unmount_NFS_filesystem::
+  represents => { "manual section" }, about_topics => { "trigger classes"};
  "/docs/cf3-solutions.html#Unmount-NFS-filesystem"
-  represents => { "manual section Unmount NFS filesystem" };
-Web_server_modules::
+  represents => { "manual section" }, about_topics => { "unmount nfs filesystem"};
  "/docs/cf3-solutions.html#Web-server-modules"
-  represents => { "manual section Web server modules" };
-Warn_if_matching_line_in_file::
+  represents => { "manual section" }, about_topics => { "web server modules"};
  "/docs/cf3-solutions.html#Warn-if-matching-line-in-file"
-  represents => { "manual section Warn if matching line in file" };
-Windows_registry::
+  represents => { "manual section" }, about_topics => { "warn if matching line in file"};
  "/docs/cf3-solutions.html#Windows-registry"
-  represents => { "manual section Windows registry" };
-unit_registry_cache_cf::
+  represents => { "manual section" }, about_topics => { "windows registry"};
  "/docs/cf3-solutions.html#unit_005fregistry_005fcache_002ecf"
-  represents => { "manual section unit_registry_cache.cf" };
-unit_registry_cf::
+  represents => { "manual section" }, about_topics => { "unit_registry_cache.cf"};
  "/docs/cf3-solutions.html#unit_005fregistry_002ecf"
-  represents => { "manual section unit_registry.cf" };
+  represents => { "manual section" }, about_topics => { "unit_registry.cf"};
 }
 

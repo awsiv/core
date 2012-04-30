@@ -11,14 +11,11 @@ Special_Topics_Guide::
 
 occurrences:
 
-manuals::
  "/docs/cf3-glossary.html"
-  represents => { "CFEngine Glossary" };
-CFEngine_Glossary::
+  represents => { "Official CFEngine document"},  about_topics => { "cfengine glossary" };
  "/docs/cf3-glossary.html"
-  represents => { "special topics guide" };
-CFEngine_Glossary::
+  represents => { "Special Topics Guide"},  about_topics => { "cfengine glossary" };
  "/docs/cf3-glossary.html#Top"
-  represents => { "Text section" };
+  represents => { "Text section" }, about_topics => { "cfengine glossary" };
 }
 

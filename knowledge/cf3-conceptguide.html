@@ -176,9 +176,13 @@ table.cartouche {
 }
 
  .cartouche td  {
-    background-color: #ddd;
+    background: none !important;
+    border: none !important;
+    padding: 5px; 
+
+/*    background-color: #ddd;
     border: 1px solid #ccc;
-    padding: 5px;
+    padding: 5px;*/
 }
 
 A:link { color: #2c2e70 }
@@ -1185,7 +1189,7 @@ promise one of the promisees, like this:
 <span class="red">    comment </span>=><span class="green"> "Update the configuration from a master server",</span>
 <span class="red">    handle     </span>=><span class="green"> "update_policy",</span>
 
-<span class="red">    depends_on </span>=><span class="green"> "serve_updates",</span>
+<span class="red">    depends_on </span>=> {"serve_updates"},
 
 <span class="red">    perms </span>=><span class="blue"> system("600"),</span>
 <span class="red">    copy_from </span>=> mycopy("$(master_location)","$(policy_server)"),
@@ -1996,7 +2000,7 @@ cfengine_3::
 </pre>
 The output looks something like this:
 <pre class="smallexample">     
-     /usr/local/sbin/cf-agent -f ./unit_loops.cf -K
+     /var/cfengine/bin/cf-agent -f ./unit_loops.cf -K
      
      R: cf-monitord is The monitor
      R: cf-serverd is The server
