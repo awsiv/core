@@ -3285,3 +3285,8 @@ input[type="checkbox"]{
 .no_website_header {
     margin-top: 30px !important;
 }
+
+.text_error {
+    font-size: 10px;
+    font-style: italic;
+}

@@ -47,9 +47,8 @@
                 <p class="title"> <img src= "<?php echo get_imagedir() . $colour ?>_square_little.png" class="hoststatcolorsquare"/><?php echo $this->lang->line('header_status'); ?></p>
 
                 <p><label class="width_20"><?php echo $this->lang->line('host_average_load') ?>: </label><label ><?php echo $load ?>%</label></p>
-                <p> <label class="width_20"><?php echo $this->lang->line('host_free_disk') ?>: </label><label><?php echo $free ?>%</label></p>
-                <p><label class="width_20"><?php echo $this->lang->line('host_network_speed') ?>: </label><label><?php echo $speed ?></label></p>
-
+                <p><label class="width_20"><?php echo $this->lang->line('host_free_disk') ?>: </label><label><?php echo $free ?>%</label></p>
+                <p><label class="width_20"><?php echo $this->lang->line('host_network_speed') ?>: </label><label><?php echo  (isset($speed['data']) ? $speed['data']['speed'] .' / delta: '.$speed['data']['delta']. ' bytes/s' : '<span class="text_error">'.$speed['error']['msg'].'</span>' ) ?></label></p>
             </div>
         </div>
         <div id="hostviewerrightpanes" class="grid_8">
