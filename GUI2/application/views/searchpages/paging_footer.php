@@ -5,9 +5,14 @@ $path = isset($url) ? $url : 'search/index/';
 <div class="Paging">
     <div class="pages">
         <div class="inside">
+            <?php if($pg['page']> $pg['first'] && $pg['start'] >  $pg['first']){?>
             <a href="<?php echo site_url($path . $params . 'rows/' . $number_of_rows . '/page/' . $pg['first']) ?>" title="Go to First Page" class="first"><span>First</span></a>
-            <a href="<?php echo site_url($path . $params . 'rows/' . $number_of_rows . '/page/' . $pg['prev']) ?>" title="Go to Previous Page" class="prev"><span><</span></a>
-
+            <?php }?>
+            
+            <?php if($pg['page']> $pg['first'] && $pg['start'] >  $pg['first']){?>
+            <a href="<?php echo site_url($path . $params . 'rows/' . $number_of_rows . '/page/' .$pg['prevSet'] ) ?>" title="Go to Previous Page <?php echo $pg['prevSet'] ?>" class="prev"><span><</span></a>
+            <?php }?>
+            
             <?php
             for ($i = $pg['start']; $i <= $pg['end']; $i++) {
                 if ($i == $pg['page']) {
@@ -20,10 +25,15 @@ $path = isset($url) ? $url : 'search/index/';
                 <a href="<?php echo site_url($path . $params . 'rows/' . $number_of_rows . "/page/$i") ?>" title="Go to Page <?php echo $i ?>" class="page <?php echo $current_class; ?>"><span><?php echo $i; ?></span></a>
 
             <?php } ?>
-
-            <a href="<?php echo site_url($path . $params . 'rows/' . $number_of_rows . '/page/' . $pg['next']) ?>" title="Go to Next Page" class="next"><span>></span></a>
+            
+             <?php if($pg['page'] != $pg['last'] && $pg['end']< $pg['last']){?>
+            <a href="<?php echo site_url($path . $params . 'rows/' . $number_of_rows . '/page/' . $pg['nextSet']) ?>" title="Go to page <?php echo $pg['nextSet'] ?>" class="next"><span>></span></a>
+             <?php } ?>
+            
+            <?php if($pg['page'] != $pg['last'] && $pg['end']< $pg['last']){?>
             <a href="<?php echo site_url($path . $params . 'rows/' . $number_of_rows . '/page/' . $pg['last']) ?>" title="Go to Last Page" class="last"><span>Last</span></a>
-        
+            <?php } ?>
+            
            <div class="page_counter">
         <?php
         echo form_open($path . $params);
