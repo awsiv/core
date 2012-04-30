@@ -609,15 +609,15 @@ JsonElement *Nova_ScanOccurrences(int this_id)
 
     if (!CFDB_Open(&conn))
     {
-        return NULL;
+        return JsonArrayCreate(1);
     }
 
     Nova_GetTopicByTopicId(this_id, topic_name, topic_id, topic_context);
 
     if (strlen(topic_name) == 0)
-       {
-       return NULL;
-       }
+        {
+            return JsonArrayCreate(1);
+        }
     
     // Using a regex here is greedy, but it helps to brainstorm
     
