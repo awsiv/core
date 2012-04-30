@@ -139,14 +139,15 @@
         {
             target:        '#searchSaveSuccess',
             success:function(data) {
-                $('#searchSaveSuccess').show();
-                $('#searchSaveError').hide();
+                $('#searchSaveSuccess').show().delay(10000).fadeOut(400);
+                $('#searchSaveError').hide().delay(10000).fadeOut(400);
+                $('#search_name').val('');
 
             },
             error:function(xhr, ajaxOptions, thrownError) {
-                $('#searchSaveSuccess').hide()
+                $('#searchSaveSuccess').hide().delay(10000).fadeOut(400);
                 $('#searchSaveError').html(xhr.responseText);
-                $('#searchSaveError').show();
+                $('#searchSaveError').show().delay(10000).fadeOut(400);
             }
         }
     );
