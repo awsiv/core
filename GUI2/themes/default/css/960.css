@@ -36,7 +36,7 @@
 .grid_9,
 .grid_10,
 .grid_11,
-.grid_12,.grid_12{
+.grid_12,.grid_12,.grid_7_omega,.grid_5_alpha{
 	display:inline;
 	float: left;
 	position: relative;
@@ -1240,4 +1240,17 @@
 
 .clearfix {
 	display: block;
+}
+
+.grid_12 .grid_7_omega{
+    width:57.3333333333%;
+    margin-left: 1%;
+    margin-right:0;
+  
+}
+
+.grid_12 .grid_5_alpha{
+     width:40.6666666667%;
+     margin-right: 1%;
+     margin-left:0;
 }
