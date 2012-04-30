@@ -14,7 +14,7 @@
         
 
     </ul>
-    <?php if (isset($saved_search_menu)) { ?>    
+    <?php if (isset($saved_search_menu) && !empty ($saved_search_menu)) { ?>    
     <ul id="saved_searches_wrapper">
             <li id="saved-searches"><em class="separater"></em><span>Saved Searches</span>
                 <ul><li>
