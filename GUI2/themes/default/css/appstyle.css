@@ -3153,22 +3153,32 @@ span.green_btn input{
     margin: 0 !important;
 }
 
-
-#reportpanel div.title {
-    padding: 0 !important;
-    margin: 20px 10px 0 10px;
-    background: url("../images/grey_1x1.gif") repeat-x 0 50%;
-    cursor: pointer;
-    font-size:1em;
-}
-
-#reportpanel div.title div {
+#show_filter_form div {
     padding: 0 0px; 
-    background: #fff;
     display: inline-block; 
 }
 
-#reportpanel div.title em,  
+.title {
+    background: #fff;
+    font-size:1em;
+}
+
+#show_filter_form  {
+    text-align: center;
+    background: url("../images/grey_1x1.gif") repeat-x 0 50%;
+    cursor: pointer;       
+}
+
+.reports_header {
+     margin: 10px;
+}
+
+.no_wrap {
+    white-space: nowrap;
+    overflow: visible;
+}
+
+#reportpanel .title em,  
 #reportpanel .collapsed em {
     background-image: url("../images/arrow-icons.png");
     background-repeat: no-repeat;
@@ -3179,7 +3189,7 @@ span.green_btn input{
     margin: 0 10px;
 }
 
- #reportpanel div.title em  {
+ #reportpanel .title em  {
     background-position: 0 0;
  }
 

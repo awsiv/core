@@ -2,22 +2,27 @@
 
     <div id="reportpanel" class="innerdiv">
         <?php $this->load->view('/searchpages/reportsMenu'); ?>
-        <div class="title expanded" >
-            <div>
-                <span id="count_hosts">Report for <?php echo $hostcount ?> hosts</span> 
-                <a href="<?php echo site_url('widget/contextfinder') ?>" id="hclist" class="showqtip host_context_btn" title="<?php echo $this->lang->line('report_hostgp_help'); ?>"></a>
-            </div>
-            <div id="show_fileter_form" class="showqtip" style="margin-left:150px" title="Click to toggle more filters">
-                   <em class="front">&nbsp;</em><span style="font-weight:bold"><?php echo $report_title; ?></span><em  class='back'>&nbsp;</em>
-            </div>
-            <div class="clear"></div>
-        </div>  
+        <table class="grid_12 reports_header" style="margin: 10px">
+            <tr>
+                <td width="150" class="no_wrap">
+                    <span id="count_hosts">Report for <?php echo $hostcount ?> hosts</span> 
+                    <a href="<?php echo site_url('widget/contextfinder') ?>" id="hclist" class="showqtip host_context_btn" title="<?php echo $this->lang->line('report_hostgp_help'); ?>"></a>
+                </td>
+                <td id="show_filter_form" class="showqtip" title="Click to toggle more filters" style="width: 89%">
+                    <div class="title">
+                        <em class="front">&nbsp;</em><span style="font-weight:bold"><?php echo $report_title; ?></span><em  class='back'>&nbsp;</em>
+                    </div>  
+                </td>
+            </tr>                
+        </table>     
+       
+        <div class="clear"></div>
         <div id="modifySearchPanel">
             <div class="grid_7_omega reportForm">
                 <?php $this->load->view('searchpages/' . $filter_view); ?> 
             </div>
             <script type="text/javascript">
-            $('#show_fileter_form').click(function() {
+            $('#show_filter_form').click(function() {
                 $('#modifySearchPanel').toggle(0,function(){
                     $('#reportpanel .title').toggleClass('collapsed');
                 });
