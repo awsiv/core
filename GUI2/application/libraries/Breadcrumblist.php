@@ -68,42 +68,45 @@ final class BreadCrumbList{
 				$_SESSION['breadCrumbList']=$this->breadCrumbs;
 			}
 	}
-	function display(){
-		$iter = isset($_SESSION['breadCrumbList']) ? $_SESSION['breadCrumbList'] : array() ;
-		$i=1;
-		$return_str='';
-		foreach((array)$iter as $bc){
-			$uBC = $bc;
-			$del = $i < count($iter)?$this->delimiter:'';
-                        if(!$iter[0]->isRoot() && !empty($iter))
-                        {
-                         $bc = array(
-                                    'title' => 'cfengine mission portal',
-                                    'url' => 'welcome/index',
-                                    'isRoot' => true
-                                );
-                         $CI =& get_Instance();
-                        $CI->breadcrumb->setBreadCrumb($bc);
-                        }
-			if($i < count($iter)){
-                                if ($uBC->isRoot())
-                                 $return_str .= "<li>".anchor($uBC->getUrl(),$uBC->getTitle(), array('class'=>'activeBreadCrumbs'))."<span class=\"front\"></span></li>";
-                                else
-                                    $return_str .= "<li><span class=\"back\"></span>".anchor($uBC->getUrl(),$uBC->getTitle(), array('class'=>'activeBreadCrumbs'))."<span class=\"front\"></span></li>";     
-			}else{
-				//$return_str .= "<li><span class=\"current\">".$uBC->getTitle().'</span> '.$del."</li>";
-                                 //$return_str .= "<li>".anchor($uBC->getUrl(),$uBC->getTitle(), array('class'=>'current')).' '.$del."</li>";
-                                   if ($uBC->isRoot())
-                                     $return_str .= "<li>".anchor($uBC->getUrl(),$uBC->getTitle(), array('class'=>'current'))."<span class=\"front\"></span></li>";
-                                   else
-                                    $return_str .= "<li><span class=\"back\"></span>".anchor($uBC->getUrl(),$uBC->getTitle(), array('class'=>'current'))."<span class=\"front\"></span></li>";
-                               
-			}
-		$i++;
-		}
-		return $return_str;
-	}
-	function getBreadCrumbs(){
+        
+	function display() {
+            $iter = isset($_SESSION['breadCrumbList']) ? $_SESSION['breadCrumbList'] : array();
+            $i = 1;
+            $return_str = '';
+            
+            foreach ((array) $iter as $bc) {
+                $uBC = $bc;
+                $del = $i < count($iter) ? $this->delimiter : '';
+                
+                if (!$iter[0]->isRoot() && !empty($iter)) {
+                    $bc = array(
+                        'title' => 'cfengine mission portal',
+                        'url' => 'welcome/index',
+                        'isRoot' => true
+                    );
+                    $CI = & get_Instance();
+                    $CI->breadcrumb->setBreadCrumb($bc);
+                }
+
+                if ($i < count($iter)) {
+                    if ($uBC->isRoot())
+                        $return_str .= "<li>" . anchor($uBC->getUrl(), $uBC->getTitle(), array('class' => 'activeBreadCrumbs')) . "<span class=\"front\"></span></li>";
+                    else
+                        $return_str .= "<li><span class=\"back\"></span>" . anchor($uBC->getUrl(), $uBC->getTitle(), array('class' => 'activeBreadCrumbs')) . "<span class=\"front\"></span></li>";
+                }else {
+                    //$return_str .= "<li><span class=\"current\">".$uBC->getTitle().'</span> '.$del."</li>";
+                    //$return_str .= "<li>".anchor($uBC->getUrl(),$uBC->getTitle(), array('class'=>'current')).' '.$del."</li>";
+                    if ($uBC->isRoot())
+                        $return_str .= '<li><span class="current">' . $uBC->getTitle() . "</span><span class=\"front\"></span></li>";
+                    else
+                        $return_str .= '<li><span class="back"></span><span class="current">' . $uBC->getTitle() . "</span><span class=\"front\"></span></li>";
+                }
+                $i++;
+            }
+        return $return_str;
+    }
+
+        function getBreadCrumbs(){
 		return $this->breadCrumbs;
 	}
 	function setBreadCrumbs($b){

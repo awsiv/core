@@ -89,12 +89,12 @@ if($this->agent->is_browser('Safari')){
                           </div>
                              <?php //if($this->ion_auth->mode == "database") { echo anchor('auth/admin_page',' ',array('class'=>'adminbtn'));}
                              if ($this->ion_auth->is_admin() == true ) { 
-                                echo anchor('auth/admin_page', ' ', array('class'=>'adminbtn'));
+                                echo anchor('auth/admin_page', ' ', array('class'=>'btn adminbtn'));
                              }
                              else {
-                                echo anchor('auth/view_profile', ' ', array('class'=>'adminbtn'));
+                                echo anchor('auth/view_profile', ' ', array('class'=>'btn adminbtn'));
                              }
-                              echo anchor('auth/setting',' ',array('class'=>'settingbtn'));?>
+                              echo anchor('auth/setting',' ',array('class'=>'btn settingbtn'));?>
                       </div>
                       <p class="clearright"></p>
 

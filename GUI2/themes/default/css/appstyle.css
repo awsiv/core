@@ -166,7 +166,7 @@ p#userbox a{
     float: left;
 }
 
-#breadcrumb li a{
+#breadcrumb li a, #breadcrumb li span.current {
     text-transform: uppercase;
     color:#000000;
     background: url("../images/breadcrumb_body.png") repeat scroll 0 0 transparent;
@@ -178,42 +178,44 @@ p#userbox a{
     padding-right:5px;
 }
 
+
+#breadcrumb li a:hover {
+    color: #f1a713;
+}
+
 #webadmin
 {
     float:right;
     width:100%;
 }
 
+#webadmin .btn {
+    background-image: url("../images/admin_settings.png");
+    background-repeat: no-repeat;
+    background-color: transparent;
+    border: none;
+    display: block;
+    width: 26px;
+    height: 26px;
+    float: right;
+    margin: 0 10px 10px 0px;  
+    padding: 0;
+}
+
 .adminbtn{
-    background: url("../images/admin.png") no-repeat;
-    width:25px;
-    height:25px;
-    display:block;
-    margin: 0 10px 10px 0px;
-    float:right;
+    background-position: 0 0 !important;
 }
 
 .adminbtn:hover{
-    background: url("../images/admin_hover.png") no-repeat;
-    margin: 0 9px 9px 0px;
-    width:26px;
-    height:26px;
+    background-position: 0 -30px !important;
 }
 
 .settingbtn{
-    background: url("../images/settings.png") no-repeat;
-    width:25px;
-    height:25px;
-    display:block;
-    float:right;
-    margin: 0 10px 10px 0px;
+    background-position: 0 -60px !important;
 }
 
 .settingbtn:hover{
-    background: url("../images/settings_hover.png") no-repeat;
-    margin: 0 9px 9px 0px;
-    width:26px;
-    height:26px;
+    background-position: 0 -90px !important;
 }
 
 .clearright{
@@ -498,6 +500,91 @@ label#searchbox input
 }
 /*end*/
 
+/*host page*/
+#hostviewerbtn ul li a {
+    width: 67px;
+    background-color: transparent;
+    background-image: url("../images/host_page_icons.png");
+    background-repeat: no-repeat;
+    display: block;
+    color: #717171;
+    padding-top: 67px;
+}
+
+#hostviewerbtn ul li a.report {
+    background-position: 0 0;
+}
+#hostviewerbtn ul li a.report:hover {
+    background-position: -73px 0; 
+}
+
+#hostviewerbtn ul li a.note {
+    background-position: -146px 0;
+}
+#hostviewerbtn ul li a.note:hover {
+    background-position: -219px 0; 
+}
+
+#hostviewerbtn ul li a.pulseNvitals {
+    background-position: -292px 0;
+}
+#hostviewerbtn ul li a.pulseNvitals:hover {
+    background-position: -365px 0; 
+}
+
+#hostviewerbtn ul li a.problems {
+    background-position: -292px 0;
+}
+#hostviewerbtn ul li a.problems:hover {
+    background-position: -365px 0; 
+}
+/* end */
+
+
+
+/* library page icons */
+#library ul li a {
+    width: 87px;
+    background-color: transparent;
+    background-image: url("../images/library_page_icons.png");
+    background-repeat: no-repeat;
+    display: block;
+    color: #717171;
+    padding-top: 87px;
+}
+#library ul li a:hover {
+    color: #d2bd49
+}
+
+#library ul li a.docs {
+    background-position: 0 0 !important;
+}
+#library ul li a.docs:hover {
+    background-position: -92px 0 !important;
+}
+
+#library ul li a.topic {
+    background-position: -184px 0 !important;
+}
+#library ul li a.topic:hover {
+    background-position: -276px 0 !important;
+}
+
+#library ul li a.knowledge-message {
+    background-position: -368px 0 !important;
+}
+#library ul li a.knowledge-message:hover {
+    background-position: -460px 0 !important;
+}
+
+#library ul li a.forum {
+    background-position: -552px 0 !important;
+}
+#library ul li a.forum:hover {
+    background-position: -644px 0 !important;
+}
+/* end */
+
 
 ul.icons_66 li {
     float: left;
@@ -597,39 +684,6 @@ ul.icons_66 li.hub_replication:hover a.ico {
 
 .dash a.service:hover{
      background: url("../images/service_catalogue_hover.png") no-repeat;
-}
-
-#library.dash a:hover{
-     color:#D3BE4A;
-}
-
-#library  a.docs{
-    background: url("../images/docs.png") no-repeat;
-}
-
-#library  a.docs:hover{
-    background: url("../images/docs_hover.png") no-repeat;
-}
-
-#library  a.topic{
-    background: url("../images/find_topic.png") no-repeat;
-}
-#library  a.topic:hover{
-    background: url("../images/find_topic_hover.png") no-repeat;
-}
-
-#library  a.knowledge-message{
-    background: url("../images/message_archive.png") no-repeat;
-}
-#library  a.knowledge-message:hover{
-    background: url("../images/message_archive_hover.png") no-repeat;
-}
-
-#library  a.forum{
-    background: url("../images/community.png") no-repeat;
-}
-#library  a.forum:hover{
-    background: url("../images/community_hover.png") no-repeat;
 }
 
 
@@ -2798,20 +2852,24 @@ border-color: #A60303;
 margin: 0px;
 }
 
-#login input[type="submit"], #login a.submit {
-background: url('../images/login_button.png') no-repeat transparent center center;
-border:none;
-width: 62px;
-height: 26px;
-cursor: pointer;
-display:block;
+#login input[type="submit"], 
+#login a.submit {
+    background-image: url('../images/login_button_joined.png');
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    background-color: transparent;
+    border:none;
+    width: 62px;
+    height: 26px;
+    cursor: pointer;
+    display:block;
 }
 
 
 #login input[type="submit"]:hover, #login a.submit:hover {
-background: url('../images/login_button_hover.png') no-repeat transparent center center;
-width: 62px;
-height: 26px;
+    background-position: 0 -31px;
+    width: 62px;
+    height: 26px;
 }
 
 #login p.error{
