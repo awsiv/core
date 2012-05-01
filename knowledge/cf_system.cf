@@ -20,8 +20,6 @@ topics:
 
   "computing environment" comment => "Various ways of interacting with computer systems.";
 
- files::
-
   ".c files"   comment => "C compiler source files";
   ".a files"   comment => "ld library static archive";   
   ".l files"   comment => "Lex/Flex lexer input file";
@@ -53,7 +51,6 @@ topics:
   "passwd"  association => a("see also","/etc/passwd","see also");
   "shadow"  association => a("see also","shadow","see also");
 
- computing_environment::
 
   "shells";
   "system processes";
@@ -64,7 +61,6 @@ topics:
   "distributed system";
   "environment variables";
 
- networking::
 
    "IP tables";
    "IP chains" association => a("$(tm.same[f])","IP tables","$(tm.same[f])");
@@ -74,12 +70,9 @@ topics:
    "dynamic addresses";
    "IP address";
 
- services::
 
   "application services";
   "network services";
-
- network_services::
 
    "NAT" comment => "Network Address Translation";
 
@@ -94,7 +87,7 @@ topics:
    "NFS"     comment => "Network File System",
           association => a("$(tm.inst[f])","Filesystem","$(tm.inst[b])");
 
- application_services::
+
 
    "web services"   association => a("$(tm.impl[b])","webserver","$(tm.impl[f])");
    "email";
@@ -152,34 +145,25 @@ topics:
 occurrences:
 
 
-   copernicus::
-       "Cfengine's topic map viewer places topics in the centre and show you the universe of concepts in orbit..."
-            represents => { "definitions" },
-            representation => "literal";
-
-  _c_files::
-
      "A file containing source code in the C programming language."
-            represents => { "definitions" },
-            representation => "literal";
-
-  _o_files::
+            represents => { "definition" },
+            representation => "literal",
+            about_topics => { ".c files" };
 
      "A file containing object code which will later be linked into an executable program."
             represents => { "definitions" },
-            representation => "literal";
-
-  _y_files::
+            representation => "literal",
+            about_topics => { ".o files" };
 
      "A file containing a description of language grammar, usually part of a C program."
             represents => { "definitions" },
-            representation => "literal";
+            representation => "literal",
+            about_topics => { ".y files" };
 
-
-  cfengine::
      "A software system for automated system configuration, and the reference implementation of Promise Theory technology."
             represents => { "definitions" },
-            representation => "literal";
+            representation => "literal",
+            about_topics => { "cfengine" };
 
  # cf2-remotecomm.html
 
