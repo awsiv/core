@@ -55,7 +55,7 @@
             </div>    
             <div id="totalResults" style="text-align: right;">
                <?php if ($report_result['meta']['count'] > 0 ) {
-                  $pg = paging($current, $number_of_rows, $report_result['meta']['count'], 10);
+                  $pg = paging($current, $number_of_rows, $report_result['meta']['count'], 5);
                   include 'paging_footer.php';
                   if(is_array($paramArray) && !isset($paramArray['hosts_only'])){?>
                      <a href="<?php echo $report_link ?>" id="send_mail" class="showqtip" title="<?php echo $this->lang->line('tool_tip_download_report') ?>"><span><em class="download_ico">&nbsp;</em></span></a>
@@ -139,14 +139,15 @@
         {
             target:        '#searchSaveSuccess',
             success:function(data) {
-                $('#searchSaveSuccess').show();
-                $('#searchSaveError').hide();
+                $('#searchSaveSuccess').show().delay(10000).fadeOut(400);
+                $('#searchSaveError').hide().delay(10000).fadeOut(400);
+                $('#search_name').val('');
 
             },
             error:function(xhr, ajaxOptions, thrownError) {
-                $('#searchSaveSuccess').hide()
+                $('#searchSaveSuccess').hide().delay(10000).fadeOut(400);
                 $('#searchSaveError').html(xhr.responseText);
-                $('#searchSaveError').show();
+                $('#searchSaveError').show().delay(10000).fadeOut(400);
             }
         }
     );

@@ -7,8 +7,8 @@
 .hostInfo .colourIcon
 {
     display: inline-block;
-    width: 24px;
-    height: 24px;
+    width: 15px;
+    height: 15px;
     vertical-align: middle;
 }
 
@@ -21,7 +21,6 @@
 .hostInfo .headerLabel
 {
     font-size: 16px;
-    font-weight: bold;
     vertical-align: middle;
     margin-left: 10px;
     color: #476e8c;

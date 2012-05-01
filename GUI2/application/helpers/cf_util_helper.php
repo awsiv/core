@@ -82,7 +82,10 @@ function paging($page, $rp, $total, $limit) {
     $paging['total'] = $total;
     $paging['iend'] = $page * $rp;
     $paging['istart'] = ($page * $rp) - $rp + 1;
-
+    
+    $paging['nextSet']=$lastpage+1;
+    $paging['prevSet']=$npage-1;
+    
     if (($page * $rp) > $total)
         $paging['iend'] = $total;
 

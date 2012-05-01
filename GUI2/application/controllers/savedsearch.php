@@ -42,12 +42,9 @@ class savedsearch extends Cf_Controller
         else
         {
             $this->output->set_status_header('404', 'Cannot save the search');
-            $output = $this->lang->line('search_save_error') . '<br />';
+            $output = $this->lang->line('search_save_error') . ' ';
             $errors = $this->search_save_model->getErrors();
-            foreach ($errors as $e)
-            {
-                $output .= $e . '<br />';
-            }
+            $output=implode(', ', $errors);
             echo $output;
             return;
         }
