@@ -438,6 +438,17 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
                 NovaEscape(rp->item), NOVA_GIVES_PR);
     }
 
+    fprintf(fp," class_contexts::\n");
+
+    // Register which classes affect class expressions
+    
+    for (rp = class_list; rp != NULL; rp = rp->next)
+    {
+        fprintf(fp, "  \"%s\"\n", pp->classes);
+        fprintf(fp, "      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", KM_AFFECTS_CERT_B,
+                rp->item, KM_AFFECTS_CERT_F);
+    }
+    
     DeleteRlist(class_list);
 
 /* Now pointers to the policy compilation */
