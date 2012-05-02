@@ -532,7 +532,7 @@ class Search extends Cf_Controller
                         'exlist' => $exList,
                         'search' => $name,
                         'from' => $from_timestamp,
-                        'to' => $from_timestamp,
+                        'to' => $to_timestamp,
                         'cause' => $cause_rx
                     );
 
