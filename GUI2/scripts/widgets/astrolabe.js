@@ -546,8 +546,7 @@
                     var colourOrder = ['blue', 'red', 'yellow', 'green'];
 
                     hostDescriptionList.sort(function(a, b) {
-                       return colourOrder.indexOf(a.colour) -
-                           colourOrder.indexOf(b.colour);
+                        return $.inArray(a.colour,colourOrder)-$.inArray(b.colour, colourOrder)
                     });
 
                     $.each(hostDescriptionList, function() {
