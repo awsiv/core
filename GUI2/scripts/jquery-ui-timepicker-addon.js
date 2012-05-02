@@ -209,6 +209,7 @@ $.extend(Timepicker.prototype, {
 			tp_inst._defaults.maxDate = new Date(tp_inst._defaults.maxDateTime.getTime());
 		return tp_inst;
 	},
+        
 
 	//########################################################################
 	// add our sliders to the calendar
@@ -222,6 +223,7 @@ $.extend(Timepicker.prototype, {
 		this._limitMinMaxDateTime(dp_inst, false);
 		this._injectTimePicker();
 	},
+        
 
 	//########################################################################
 	// parse the time string from input value or _setTime
@@ -615,6 +617,7 @@ $.extend(Timepicker.prototype, {
 			}
 
 			var $buttonPanel = $dp.find('.ui-datepicker-buttonpane');
+                        
 			if ($buttonPanel.length) $buttonPanel.before($tp);
 			else $dp.append($tp);
 
@@ -998,6 +1001,18 @@ $.datepicker._selectDate = function (id, dateStr) {
 	else this._base_selectDate(id, dateStr);
 };
 
+//#######################################################################
+ //add Clear button hack to inject clear button
+ //#######################################################################
+ $.datepicker._addClearButton=function(dp_inst){
+            var $dp=dp_inst.dpDiv;
+            var $buttonPanel = $dp.find('.ui-datepicker-buttonpane');
+            $("<button type='button' class='ui-datepicker-clean ui-state-default ui-priority-primary ui-corner-all'>Clear</button>").appendTo($buttonPanel).click(function(ev) {
+               $.datepicker._clearDate(dp_inst.input);
+               $.datepicker._hideDatepicker(); 
+            });
+     };
+
 //#############################################################################################
 // second bad hack :/ override datepicker so it triggers an event when changing the input field
 // and does not redraw the datepicker on every selectDate event
@@ -1022,6 +1037,7 @@ $.datepicker._updateDatepicker = function(inst) {
 		var tp_inst = this._get(inst, 'timepicker');
 		if(tp_inst) tp_inst._addTimePicker(inst);
 	}
+      $.datepicker._addClearButton(inst); 
 };
 
 //#######################################################################################
@@ -1307,6 +1323,8 @@ $.datepicker._optionDatepicker = function(target, name, value) {
 		return this._base_optionDatepicker(target, name);
 	return this._base_optionDatepicker(target, name, value);
 };
+
+ 
 
 //#######################################################################################
 // jQuery extend now ignores nulls!
