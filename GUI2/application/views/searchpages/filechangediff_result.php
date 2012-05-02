@@ -14,10 +14,7 @@ foreach ($report_result['meta']['header'] as $key => $value) {
 }
 $this->table->set_heading($headings);
 if (count($report_result['data']) > 0) {
-    
-   $pg = paging($current, $number_of_rows, $report_result['meta']['count'], 10);
-    include 'paging_footer.php';    
-    
+ 
     foreach ($report_result['data'] as $row) {
         $temp = array();
         foreach ($report_result['meta']['header'] as $key => $value) {
