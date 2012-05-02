@@ -40,6 +40,7 @@
 
 .hostsCompliance .title
 {
-   padding:0;
-   margin-right: 5px;
+   padding:0 !important;
+   margin-right: 5px !important;
+   font-size: 1em !important;
 }
