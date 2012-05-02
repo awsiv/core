@@ -22,13 +22,13 @@
 
 #define RUN_QUERY(col,q) (!FAILED(dhGetValue(L"%o", &col, wmiSvc, L".ExecQuery(%S)",  L ## q)))
 
-static int NovaWin_WmiGetInstalledPkgs(PackageItem ** pkgList, Attributes a, Promise *pp);
+static bool PackageListInstalledFromWMI(PackageItem ** pkgList, Attributes a, Promise *pp);
 
 DISPATCH_OBJ(wmiSvc);
 
-int NovaWin_GetInstalledPkgs(PackageItem ** pkgList, Attributes a, Promise *pp)
+int NovaWin_PackageListInstalledFromAPI(PackageItem ** pkgList, Attributes a, Promise *pp)
 {
-    int res;
+    CfOut(cf_verbose, "", " Using Win32 API to list installed packages");
 
     if (!NovaWin_WmiInitialize())       // deinitialized before agents exit
     {
@@ -36,16 +36,14 @@ int NovaWin_GetInstalledPkgs(PackageItem ** pkgList, Attributes a, Promise *pp)
         return false;
     }
 
-    res = NovaWin_WmiGetInstalledPkgs(pkgList, a, pp);
-
-    return res;
+    return PackageListInstalledFromWMI(pkgList, a, pp);;
 }
 
 /*****************************************************************************/
 /*                             WMI FUNCTIONS                                 */
 /*****************************************************************************/
 
-static int NovaWin_WmiGetInstalledPkgs(PackageItem ** pkgList, Attributes a, Promise *pp)
+static bool PackageListInstalledFromWMI(PackageItem ** pkgList, Attributes a, Promise *pp)
 /* For Windows Server 2003 R2, Windows XP and earlier.
  * Less accurate since it does not get .msi file names, only
  * the Caption (fiendly name) of the packages and canonifies those.
