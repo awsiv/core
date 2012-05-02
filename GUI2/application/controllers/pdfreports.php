@@ -500,7 +500,9 @@ class pdfreports extends Cf_Controller
         {
             $header = array('Host', 'Promise Handle', 'Report', 'Time');
 
-            //$ret = cfpr_report_notkept($username, $hostkey, $search, intval($from), intval($to), array($class_regex), array(),"time", true, $rows, $page_number);
+            $to = (!(int) ($to)) ? time() : $to;
+            $from = (!(int) ($from)) ? 0 : $from;
+
             $jsondata = $this->report_model->getPromisesNotKeptLog($username, $hostkey, $search, $cause, $from, $to, $inclist, $exlist, $rows, $page_number);
             $this->checkForDataTruncation($jsondata);
 
@@ -544,7 +546,10 @@ class pdfreports extends Cf_Controller
     {
         try
         {
-            // $ret = cfpr_summarize_notkept($username, $hostkey, $search, intval($from), intval($to), $class_regex, "time", true, $rows, $page_number);
+
+            $to = (!(int) ($to)) ? time() : $to;
+            $from = (!(int) ($from)) ? 0 : $from;
+
             $jsondata = $this->report_model->getPromisesNotKeptSummary($username, $hostkey, $search, $cause, $from, $to, $inclist, $exlist, $rows, $page_number);
             $this->checkForDataTruncation($jsondata);
 
@@ -585,7 +590,8 @@ class pdfreports extends Cf_Controller
         $header = array('Promise Handle', 'Report', 'Occurrences');
         try
         {
-            //$ret = cfpr_summarize_repaired($username, $hostkey, $search, intval($from), intval($to), $class_regex, "time", true, $rows, $page_number);
+            $to = (!(int) ($to)) ? time() : $to;
+            $from = (!(int) ($from)) ? 0 : $from;
 
             $jsondata = $this->report_model->getPromisesRepairedSummary($username, $hostkey, $search, $cause, $from, $to, $inclist, $exlist, $rows, $page_number);
             $this->checkForDataTruncation($jsondata);
@@ -984,7 +990,8 @@ class pdfreports extends Cf_Controller
         $header = array('Host', 'Promise Handle', 'Report', 'Time');
         try
         {
-            //$ret = cfpr_report_repaired($username, $hostkey, $search, intval($from), intval($to), array($class_regex), array(), "time", true, $rows, $page_number);
+            $to = (!(int)$to) ? time() : $to;
+            $from = (!(int)$from) ? 0 : $from;
             $jsondata = $this->report_model->getPromisesRepairedLog($username, $hostkey, $search, $cause, $from, $to, $inclist, $exlist, $rows, $page_number);
             $this->checkForDataTruncation($jsondata);
 
