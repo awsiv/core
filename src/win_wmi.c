@@ -22,9 +22,7 @@
 
 #define RUN_QUERY(col,q) (!FAILED(dhGetValue(L"%o", &col, wmiSvc, L".ExecQuery(%S)",  L ## q)))
 
-/* static prototypes */
-static int NovaWin_WmiGetInstalledPkgsNew(PackageItem ** pkgList, Attributes a, Promise *pp);
-static int NovaWin_WmiGetInstalledPkgsOld(PackageItem ** pkgList, Attributes a, Promise *pp);
+static int NovaWin_WmiGetInstalledPkgs(PackageItem ** pkgList, Attributes a, Promise *pp);
 
 DISPATCH_OBJ(wmiSvc);
 
@@ -38,21 +36,7 @@ int NovaWin_GetInstalledPkgs(PackageItem ** pkgList, Attributes a, Promise *pp)
         return false;
     }
 
-    // NOTE: Win2008+ supports querying msi-name directly,
-    // but sw is not always installed from msi-package.
-
-    res = NovaWin_WmiGetInstalledPkgsOld(pkgList, a, pp);
-
-    /*
-       if (WINVER_MAJOR < 6) // 2003/XP or earlier versions
-       {
-       res = NovaWin_WmiGetInstalledPkgsOld(pkgList, a, pp);
-       }
-       else
-       {
-       res = NovaWin_WmiGetInstalledPkgsNew(pkgList, a, pp);
-       }
-     */
+    res = NovaWin_WmiGetInstalledPkgs(pkgList, a, pp);
 
     return res;
 }
@@ -61,81 +45,7 @@ int NovaWin_GetInstalledPkgs(PackageItem ** pkgList, Attributes a, Promise *pp)
 /*                             WMI FUNCTIONS                                 */
 /*****************************************************************************/
 
-static int NovaWin_WmiGetInstalledPkgsNew(PackageItem ** pkgList, Attributes a, Promise *pp)
-{
-    char *pkgName = NULL;
-    char name[CF_MAXVARSIZE], version[CF_MAXVARSIZE];
-    char *nameRegex, *versionRegex;
-
-    DISPATCH_OBJ(colSoftware);
-
-    CfDebug("NovaWin_WmiGetInstalledPkgsNew()\n");
-
-    // default to user-defined name and version regex
-    if (a.packages.package_name_regex != NULL)
-    {
-        nameRegex = a.packages.package_name_regex;
-    }
-    else
-    {
-        nameRegex = "^(\\S+)-(\\d+\\.?)+";
-    }
-
-    if (a.packages.package_version_regex != NULL)
-    {
-        versionRegex = a.packages.package_version_regex;
-    }
-    else
-    {
-        versionRegex = "^\\S+-((\\d+\\.?)+)";
-    }
-
-    if (!RUN_QUERY(colSoftware, "SELECT PackageName FROM Win32_Product"))
-    {
-        NovaWin_PrintWmiError
-            ("Could not execute query 'SELECT PackageName FROM Win32_Product' in 'NovaWin_WmiGetInstalledPkgsNew'");
-
-        SAFE_RELEASE(colSoftware);
-        return false;
-    }
-
-    FOR_EACH(softwareItem, colSoftware, NULL)
-    {
-        dhGetValue(L"%s", &pkgName, softwareItem, L".PackageName");
-
-        if (pkgName == NULL)
-        {
-            CfOut(cf_error, "", "!! Empty package name for installed package");
-        }
-        else
-        {
-            CfDebug("pkgname=\"%s\"\n", pkgName);
-
-            snprintf(name, sizeof(name), "%s", ExtractFirstReference(nameRegex, pkgName));
-            snprintf(version, sizeof(version), "%s", ExtractFirstReference(versionRegex, pkgName));
-
-            CfDebug("regex_pkgname=\"%s\", regex_pkgver=\"%s\"\n", name, version);
-
-            if (!PrependPackageItem(pkgList, name, version, VSYSNAME.machine, a, pp))
-            {
-                CfOut(cf_error, "", "!! Could not prepend package name to list");
-            }
-
-            dhFreeString(pkgName);
-            pkgName = NULL;
-        }
-
-    }
-    NEXT(softwareItem);
-
-    SAFE_RELEASE(colSoftware);
-
-    return true;
-}
-
-/*****************************************************************************/
-
-static int NovaWin_WmiGetInstalledPkgsOld(PackageItem ** pkgList, Attributes a, Promise *pp)
+static int NovaWin_WmiGetInstalledPkgs(PackageItem ** pkgList, Attributes a, Promise *pp)
 /* For Windows Server 2003 R2, Windows XP and earlier.
  * Less accurate since it does not get .msi file names, only
  * the Caption (fiendly name) of the packages and canonifies those.
