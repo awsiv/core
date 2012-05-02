@@ -57,7 +57,7 @@ class Widget extends Cf_Controller
 
         $this->load->library('cf_table');
         $startDateTimeStamp = $startDate;
-        $stopDateTimeStamp = ($stopDate == null) ? ($startDate + (6 * 3600)) : time();
+        $stopDateTimeStamp = ($stopDate == null) ? ($startDate + (6 * 3600)) : $stopDate;
 
         $includes = array();
         $excludes = array();
