@@ -46,7 +46,8 @@ class pdfreports extends Cf_Controller
             'inclist',
             'exlist',
             'date',
-            'cause'
+            'cause',
+            'var_type'
         );
     }
 
