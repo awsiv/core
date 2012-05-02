@@ -11,6 +11,7 @@
    Syntax recommendation http://www.w3.org/TR/REC-CSS2/
 */
 
+
 root {
     display: block;
 }
@@ -21,14 +22,20 @@ root {
     font-weight: normal;
     src: local('☺'), url("../fonts/ttf/opensans-regular-webfont.ttf") format("truetype"), url("../fonts/svg/opensans-regular-webfont.svg") format("svg");
 }
+
 body {
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#51584d', endColorstr='#979e93'); /* for IE */
+    /*filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#51584d', endColorstr='#979e93'); /* for IE */
+    background: #979e93;
     background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#51584d), to(#979e93));
     background: -moz-linear-gradient(top, #51584d, #979e93) repeat scroll 0 0 transparent;
     background: -o-linear-gradient(90deg, #51584d, #979e93) repeat scroll 0 0 transparent;
     color:#6C695A;
     font:13px/21px 'CFE_FONT',arial,Helvetica,sans-serif;
     background-attachment: fixed;
+    min-height: 100%;
+    margin:0;
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#51584d', endColorstr='#979e93',GradientType=0 ); /* IE6-9 */
+   
 }
 
 body .tooltip
@@ -3216,7 +3223,7 @@ span.green_btn input{
     display: inline-block; 
 }
 
-.title {
+#show_filter_form .title {
     background: #fff;
     font-size:1em;
 }
