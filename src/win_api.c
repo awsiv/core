@@ -473,11 +473,8 @@ int NovaWin_uname(struct utsname *buf)
 
 int ExclusiveLockFile(int fd)
 {
-    OVERLAPPED ol = {
-        .Offset = INT_MAX,
-        .OffsetHigh = 0,
-        .hEvent = 0
-    };
+    OVERLAPPED ol = { 0 };
+    ol.Offset = INT_MAX;
 
     HANDLE fh = (HANDLE)_get_osfhandle(fd);
 
@@ -491,11 +488,8 @@ int ExclusiveLockFile(int fd)
 
 int ExclusiveUnlockFile(int fd)
 {
-    OVERLAPPED ol = {
-        .Offset = INT_MAX,
-        .OffsetHigh = 0,
-        .hEvent = 0
-    };
+    OVERLAPPED ol = { 0 };
+    ol.Offset = INT_MAX;
 
     HANDLE fh = (HANDLE)_get_osfhandle(fd);
 
