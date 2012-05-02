@@ -471,6 +471,31 @@ HubPromiseLog *NewHubPromiseLog(HubHost *hh, char *handle, char *cause, time_t t
     return hp;
 }
 
+unsigned int HubPromiseLogHash(const void *record)
+{
+    const HubPromiseLog *record_a = (const HubPromiseLog *)record;
+
+    unsigned int hash = 0;
+    if (record_a->handle)
+    {
+        hash += OatHash(record_a->handle);
+    }
+    if (record_a->cause)
+    {
+        hash += OatHash(record_a->cause);
+    }
+    return hash;
+}
+
+bool HubPromiseLogEqual(const void *a, const void *b)
+{
+    const HubPromiseLog *record_a = (const HubPromiseLog *)a;
+    const HubPromiseLog *record_b = (const HubPromiseLog *)b;
+
+    return StringSafeEqual(record_a->handle, record_b->handle) &&
+            StringSafeEqual(record_a->cause, record_b->cause);
+}
+
 /*****************************************************************************/
 
 void DeleteHubPromiseLog(HubPromiseLog *hp)

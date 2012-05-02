@@ -27,6 +27,9 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
 int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, PromiseLogState state,
                                const char *lhandle, bool regex, const char *lcause, time_t from, time_t to, int sort,
                                HostClassFilter *hostClassFilter, Rlist **host_list, Rlist **record_list);
+HubQuery *CFDB_QueryPromiseLogSummary(mongo_connection *conn, const char *hostkey, PromiseLogState state, const char *handle,
+                                      bool regex, const char *cause, time_t from, time_t to, bool sort, HostClassFilter *host_class_filter);
+
 HubQuery *CFDB_QueryColour(mongo_connection *conn, const HostRankMethod method, HostClassFilter *host_class_filter);
 HubQuery *CFDB_QuerySoftware(mongo_connection *conn, char *keyHash, char *type, char *lname, char *lver, char *larch,
                              bool regex, HostClassFilter *hostClassFilter, int sort);

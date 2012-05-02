@@ -23,6 +23,7 @@
 #include "db_query.h"
 #include "db_save.h"
 #include "granules.h"
+#include "map.h"
 
 static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *filter);
 static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFilter *hostClassFilter);
@@ -2597,7 +2598,46 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
     return count;
 }
 
-/*****************************************************************************/
+
+HubQuery *CFDB_QueryPromiseLogSummary(mongo_connection *conn, const char *hostkey, PromiseLogState state, const char *handle,
+                                      bool regex, const char *cause, time_t from, time_t to, bool sort, HostClassFilter *host_class_filter)
+{
+    HubQuery *hq = CFDB_QueryPromiseLog(conn, hostkey, state, handle, regex, cause, from, to, sort, host_class_filter);
+
+    Map *log_counts = MapNew(HubPromiseLogHash, HubPromiseLogEqual, NULL, free);
+    for (const Rlist *rp = hq->records; rp; rp = rp->next)
+    {
+        HubPromiseLog *record = (HubPromiseLog *)rp->item;
+        int *count = MapGet(log_counts, record);
+
+        if (!count)
+        {
+            count = xmalloc(sizeof(int));
+            *count = 0;
+            MapInsert(log_counts, record, count);
+        }
+
+        *count = *count + 1;
+    }
+
+    DeleteRlist(hq->records);
+    hq->records = NULL;
+
+    MapIterator iter = MapIteratorInit(log_counts);
+    MapKeyValue *item;
+    while ((item = MapIteratorNext(&iter)))
+    {
+        const HubPromiseLog *record = (const HubPromiseLog *)item->key;
+        const int *count = (const int *)item->value;
+        PrependRlistAlien(&hq->records, NewHubPromiseSum(NULL, record->handle, record->cause, *count, 0));
+    }
+
+    MapDestroy(log_counts);
+
+    return hq;
+}
+
+
 HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, PromiseLogState state,
                                const char *lhandle, bool regex, const char *lcause_rx, time_t from, time_t to, int sort,
                                HostClassFilter *hostClassFilter)

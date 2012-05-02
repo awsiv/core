@@ -484,36 +484,23 @@ static JsonElement *PromiseLogSummaryAsJson(mongo_connection *conn, PromiseLogSt
                                             const char *hostkey, const char *context, int from, int to,
                                             HostClassFilter *filter)
 {
-    HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, cause_rx, from, to, true, filter);
-
-// FIX: wrong on several levels
-    Item *summary = NULL;
-
-    for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
-    {
-        HubPromiseLog *log_entry = (HubPromiseLog *) rp->item;
-        Item *ip = IdempPrependItem(&summary, log_entry->handle, log_entry->cause);
-
-        ip->counter++;
-    }
-
-    DeleteHubQuery(result, DeleteHubPromiseLog);
+    HubQuery *result = CFDB_QueryPromiseLogSummary(conn, hostkey, state, handle, true, cause_rx, from, to, true, filter);
 
     JsonElement *output = JsonArrayCreate(100);
-
-    for (Item *ip = summary; ip != NULL; ip = ip->next)
+    for (const Rlist *rp = result->records; rp; rp = rp->next)
     {
+        const HubPromiseSum *record = (const HubPromiseSum *)rp->item;
         JsonElement *entry = JsonObjectCreate(4);
 
-        JsonObjectAppendString(entry, LABEL_HANDLE, ip->name);
-        JsonObjectAppendString(entry, LABEL_DESCRIPTION, ip->classes);
-        JsonObjectAppendInteger(entry, LABEL_COUNT, ip->counter);
+        JsonObjectAppendString(entry, LABEL_HANDLE, record->handle);
+        JsonObjectAppendString(entry, LABEL_DESCRIPTION, record->cause);
+        JsonObjectAppendInteger(entry, LABEL_COUNT, record->occurences);
         JsonObjectAppendString(entry, LABEL_STATE, PromiseLogStateToString(state));
 
         JsonArrayAppendObject(output, entry);
     }
 
-    DeleteItemList(summary);
+    DeleteHubQuery(result, DeleteHubPromiseSum);
 
     return output;
 }

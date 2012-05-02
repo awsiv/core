@@ -1,7 +1,7 @@
 <?php
 
 class Utils {
-    
+
     public static function queryParam($name, $defaultValue = NULL)
     {
         if (!array_key_exists($name, $_GET))
@@ -13,11 +13,11 @@ class Utils {
             return $_GET[$name];
         }
     }
-    
+
     public static function checkValidQueryParams($queryParams)
     {
-        $defaultParams = array('from', 'count', 'page');
-        
+        $defaultParams = array('from', 'to', 'count', 'page');
+
         foreach (array_keys($_GET) as $value)
         {
             if (!in_array($value, $queryParams, true) && !in_array($value, $defaultParams, true))
@@ -47,7 +47,7 @@ class Utils {
             return NULL;
         }
     }
-    
+
     public static function checkPromiseState($state)
     {
         if (!is_null($state) && !in_array($state, array('kept', 'notkept', 'repaired')))
