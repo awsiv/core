@@ -919,7 +919,6 @@ HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes)
 }
 
 /*****************************************************************************/
-
 HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn, const char *keyHash, char *lversion, time_t from, time_t to, int lkept,
                                     int lnotkept, int lrepaired, int sort, HostClassFilter *hostClassFilter)
 {
@@ -1367,23 +1366,90 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
     mongo_cursor_destroy(cursor);
     return NewHubQuery(host_list, record_list);
 }
-
 /*****************************************************************************/
+bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle, bool regex, PromiseState lstatus, time_t from, time_t to, time_t blueHorizonTime, HubHost *hh, Rlist **record_list )
+{
+    char keyHashDb[CF_MAXVARSIZE] = {0};
+    char hostnames[CF_MAXVARSIZE] = {0};
+    char addresses[CF_MAXVARSIZE] = {0};
 
+    HostColour colour = HOST_COLOUR_GREEN_YELLOW_RED;
+    time_t last_report = 0;
+    bool found = false;
+
+    while (bson_iterator_next(it))
+    {
+        CFDB_ScanHubHost(it, keyHashDb, addresses, hostnames);
+
+        if (strcmp(bson_iterator_key(it), cfr_is_black) == 0)
+        {
+            if(bson_iterator_bool(it))
+            {
+                colour = HOST_COLOUR_BLACK;
+            }
+        }
+        else if (strcmp(bson_iterator_key(it), cfr_time) == 0)
+        {
+            last_report = bson_iterator_int(it);
+            if(last_report < blueHorizonTime)
+            {
+                colour = HOST_COLOUR_BLUE;
+            }
+        }
+        else if (strcmp(bson_iterator_key(it), cfr_promisecompl) == 0)
+        {
+            bson_iterator it2;
+            bson_iterator_init(&it2, bson_iterator_value(it));
+
+            while (bson_iterator_next(&it2))
+            {
+                char rhandle[CF_MAXVARSIZE] = {0};
+                strncpy(rhandle, bson_iterator_key(&it2), CF_MAXVARSIZE - 1);
+
+                bson_iterator it3;
+                bson_iterator_init(&it3, bson_iterator_value(&it2));
+                HubPromiseCompliance *hp = BsonIteratorGetPromiseCompliance(&it3, hh, rhandle);
+
+                bool matched = true;
+                matched &=  CompareStringOrRegex(hp->handle, lhandle, regex);
+                matched &= IsTimeWithinRange(from, to, hp->t);
+
+                if (lstatus != PROMISE_STATE_ANY && lstatus != hp->status)
+                {
+                    matched = false;
+                }
+
+                if (matched)
+                {
+                    found = true;
+                    PrependRlistAlien(record_list, hp);
+                }
+            }
+        }
+    }
+
+    if (found)
+    {
+        UpdateHubHost(hh, keyHashDb, addresses, hostnames);
+        hh->colour = colour;
+    }
+
+    return found;
+}
+/*****************************************************************************/
 HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, char *lhandle, PromiseState lstatus,
                                       bool regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter)
 // status = c (compliant), r (repaired) or n (not kept), x (any)
 {
+    unsigned long blue_horizon;
+    if (!CFDB_GetBlueHostThreshold(&blue_horizon))
+    {
+        assert(false && "Could not determine blue horizon");
+        blue_horizon = CF_BLUEHOST_THRESHOLD_DEFAULT;
+    }
+
     bson_buffer bb;
     bson query, field;
-    mongo_cursor *cursor;
-    bson_iterator it1, it2, it3;
-    HubHost *hh;
-    Rlist *record_list = NULL, *host_list = NULL;
-    double rsigma, rex;
-    char rhandle[CF_MAXVARSIZE], rstatus, *prstat;
-    char keyHashDb[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE];
-    int match_handle, match_status, found;
 
     bson_buffer_init(&bb);
 
@@ -1403,121 +1469,39 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
     bson_append_int(&bb, cfr_ip_array, 1);
     bson_append_int(&bb, cfr_host_array, 1);
     bson_append_int(&bb, cfr_promisecompl, 1);
+    bson_append_int(&bb, cfr_day, 1);
+    bson_append_int(&bb, cfr_is_black, 1);
     bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
-    hostnames[0] = '\0';
-    addresses[0] = '\0';
-
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&field);
 
+    Rlist *record_list = NULL,
+          *host_list = NULL;
+
+    time_t blueHorizonTime = time(NULL) - blue_horizon;
+
     while (mongo_cursor_next(cursor))
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator it;
+        bson_iterator_init(&it, cursor->current.data);
 
-        keyHashDb[0] = '\0';
-        hostnames[0] = '\0';
-        addresses[0] = '\0';
-        rhandle[0] = '\0';
-        found = false;
-        hh = NULL;
+        HubHost *hh = CreateEmptyHubHost();
 
-        while (bson_iterator_next(&it1))
-        {
-            CFDB_ScanHubHost(&it1, keyHashDb, addresses, hostnames);
-
-            if (strcmp(bson_iterator_key(&it1), cfr_promisecompl) == 0)
-            {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
-
-                while (bson_iterator_next(&it2))
-                {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
-                    strncpy(rhandle, bson_iterator_key(&it2), CF_MAXVARSIZE - 1);
-
-                    rex = 0;
-                    rsigma = 0;
-                    time_t timestamp = 0;
-                    rstatus = 'x';
-
-                    while (bson_iterator_next(&it3))
-                    {
-                        if (strcmp(bson_iterator_key(&it3), cfr_obs_E) == 0)
-                        {
-                            rex = bson_iterator_double(&it3);
-                        }
-                        else if (strcmp(bson_iterator_key(&it3), cfr_obs_sigma) == 0)
-                        {
-                            rsigma = bson_iterator_double(&it3);
-                        }
-                        else if (strcmp(bson_iterator_key(&it3), cfr_time) == 0)
-                        {
-                            timestamp = bson_iterator_int(&it3);
-                        }
-                        else if (strcmp(bson_iterator_key(&it3), cfr_promisestatus) == 0)
-                        {
-                            prstat = (char *) bson_iterator_string(&it3);
-                            rstatus = *prstat;
-                        }
-                        else
-                        {
-                            CfOut(cf_inform, "", " !! Unknown key \"%s\" in promise compliance",
-                                  bson_iterator_key(&it3));
-                        }
-                    }
-
-                    bool match_time;
-
-                    match_handle = match_status = match_time = true;
-
-                    if (regex)
-                    {
-                        if (!NULL_OR_EMPTY(lhandle) && !StringMatch(lhandle, rhandle))
-                        {
-                            match_handle = false;
-                        }
-                    }
-                    else
-                    {
-                        if (!NULL_OR_EMPTY(lhandle) && (strcmp(lhandle, rhandle) != 0))
-                        {
-                            match_handle = false;
-                        }
-                    }
-
-                    if (lstatus != PROMISE_STATE_ANY && lstatus != rstatus)
-                    {
-                        match_status = false;
-                    }
-
-                    if (timestamp < from || timestamp > to)
-                    {
-                        match_time = false;
-                    }
-
-                    if (match_handle && match_status && match_time)
-                    {
-                        found = true;
-
-                        if (!hh)
-                        {
-                            hh = CreateEmptyHubHost();
-                        }
-
-                        PrependRlistAlien(&record_list, NewHubCompliance(hh, rhandle, rstatus, rex, rsigma, timestamp));
-                    }
-                }
-            }
-        }
+        bool found = BsonIterGetPromiseComplianceDetails(&it, lhandle, regex, lstatus, from, to, blueHorizonTime, hh, &record_list );
 
         if (found)
         {
-            UpdateHubHost(hh, keyHashDb, addresses, hostnames);
             PrependRlistAlien(&host_list, hh);
+        }
+        else
+        {
+            DeleteHubHost(hh);
+            hh = NULL;
         }
     }
 
@@ -1530,7 +1514,169 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
 
     return NewHubQuery(host_list, record_list);
 }
+/*****************************************************************************/
 
+HubQuery *CFDB_QueryWeightedPromiseCompliance(mongo_connection *conn, char *keyHash, char *lhandle, PromiseState lstatus,
+                                      bool regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter, HostColourFilter *hostColourFilter)
+// status = c (compliant), r (repaired) or n (not kept), x (any)
+{
+    unsigned long blue_horizon;
+    if (!CFDB_GetBlueHostThreshold(&blue_horizon))
+    {
+       // assert(false && "Could not determine blue horizon");
+        blue_horizon = CF_BLUEHOST_THRESHOLD_DEFAULT;
+    }
+
+    bson_buffer bb;
+    bson query, field;
+
+    bson_buffer_init(&bb);
+
+    if (!NULL_OR_EMPTY(keyHash))
+    {
+        bson_append_string(&bb, cfr_keyhash, keyHash);
+    }
+
+    BsonAppendHostClassFilter(&bb, hostClassFilter);
+
+    bson_from_buffer(&query, &bb);
+
+/* BEGIN RESULT DOCUMENT */
+
+    bson_buffer_init(&bb);
+    bson_append_int(&bb, cfr_keyhash, 1);
+    bson_append_int(&bb, cfr_ip_array, 1);
+    bson_append_int(&bb, cfr_host_array, 1);
+    bson_append_int(&bb, cfr_promisecompl, 1);
+    bson_append_int(&bb, cfr_day, 1);
+    bson_append_int(&bb, cfr_score_comp, 1);
+    bson_append_int(&bb, cfr_is_black, 1);
+    bson_from_buffer(&field, &bb);
+
+/* BEGIN SEARCH */
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+
+    bson_destroy(&query);
+    bson_destroy(&field);
+
+    Rlist *record_list = NULL,
+            *host_list = NULL;
+
+    time_t blueHorizonTime = time(NULL) - blue_horizon;
+
+    while (mongo_cursor_next(cursor))
+    {
+        bson_iterator it;
+        bson_iterator_init(&it, cursor->current.data);
+
+        Rlist *record_list_single_host = NULL;
+        HubHost *hh = CreateEmptyHubHost();
+        bool found = BsonIterGetPromiseComplianceDetails(&it, lhandle, regex, lstatus, from, to, blueHorizonTime, hh, &record_list_single_host );
+
+        HubQuery *hq = NewHubQuery(NULL, record_list_single_host);
+
+        bool hostDataAdded = false;
+
+        if(found)
+        {
+            long totalNotKept = 0,
+                 totalKept = 0,
+                 totalRepaired = 0,
+                 totalCount = 0;
+
+
+            if(hh->colour == HOST_COLOUR_GREEN_YELLOW_RED)
+            {
+                /* count total kept/notkept/repaired for current host */
+
+                for(Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+                {
+                    HubPromiseCompliance *hp = (HubPromiseCompliance *) rp->item;
+
+                    switch(hp->status)
+                    {
+                    case PROMISE_STATE_NOTKEPT:
+                        totalNotKept++;
+                        break;
+
+                    case PROMISE_STATE_REPAIRED:
+                        totalRepaired++;
+                        break;
+
+                    case PROMISE_STATE_KEPT:
+                        totalKept++;
+                        break;
+
+                    default:
+                        totalCount--;
+                        break;
+                    }
+
+                    totalCount++;
+                }
+
+                /* Evaluate compliance level based on the most recent data */
+                if(totalCount)
+                {
+                    double avgKept = totalKept / totalCount,
+                            avgRepaired = totalRepaired / totalCount;
+
+                    int score = HostComplianceScore(avgKept * 100, avgRepaired * 100);
+                    HostColour colour = HostColourFromScoreForConnectedHost(score);
+
+                    hh->colour = colour;
+                }
+
+                if(!hostColourFilter ||  (hostColourFilter && (hostColourFilter->colour == hh->colour)))
+                {
+                    for(Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+                    {
+                        HubPromiseCompliance *hp = (HubPromiseCompliance *) rp->item;
+
+                        /*  Don't include entries past blue horizon for connected hosts */
+                        if(hp->t < blueHorizonTime)
+                        {
+                            continue;
+                        }
+
+                        PrependRlistAlien(&record_list, NewHubCompliance(hp->hh, hp->handle, hp->status, hp->e, hp->d, hp->t));
+                        hostDataAdded = true;
+                    }
+                }
+            }
+            else if( !hostColourFilter || (hostColourFilter && hostColourFilter->colour == hh->colour))  // blue and black hosts
+            {
+                for(Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+                {
+                    HubPromiseCompliance *hp = (HubPromiseCompliance *) rp->item;
+
+                    PrependRlistAlien(&record_list, NewHubCompliance(hp->hh, hp->handle, hp->status, hp->e, hp->d, hp->t));
+                    hostDataAdded = true;
+                }
+            }
+        }
+
+        /* Cleanup */
+        DeleteHubQuery(hq, DeleteHubPromiseCompliance);
+        hq = NULL;
+        record_list_single_host = NULL;
+
+        if(!hostDataAdded)
+        {
+            DeleteHubHost(hh);
+            hh = NULL;
+        }
+        else
+        {
+            PrependRlistAlien(&host_list, hh);
+        }
+    }
+
+    mongo_cursor_destroy(cursor);
+
+    return NewHubQuery(host_list, record_list);
+}
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash, char *lhost, char *laddr, time_t lago,
@@ -2378,7 +2524,7 @@ static bool CompareStringOrRegex(const char *value, const char *compareTo, bool 
     }
     else
     {
-        if (!NULL_OR_EMPTY(compareTo)  && !strcmp(compareTo, value) != 0)
+        if (!NULL_OR_EMPTY(compareTo)  && strcmp(compareTo, value) != 0)
         {
             return false;
         }
@@ -2455,7 +2601,7 @@ static int QueryInsertHostInfo(mongo_connection *conn, Rlist *host_list)
 
 /*****************************************************************************/
 static bool IsTimeWithinRange(time_t from, time_t to, time_t t)
-{
+{     
     if (t < from || t > to)
     {
         return false;
@@ -3121,23 +3267,165 @@ HubQuery *CFDB_QueryValueGraph(mongo_connection *conn, char *keyHash, char *lday
 
     return NewHubQuery(host_list, record_list);
 }
+/*****************************************************************************/
+bool BsonIterGetBundleReportDetails(bson_iterator *it, char *lname, bool regex, time_t blueHorizonTime, HubHost *hh, Rlist **record_list )
+{
+    char keyhash[CF_MAXVARSIZE] = {0},
+         hostnames[CF_MAXVARSIZE] = {0},
+         addresses[CF_MAXVARSIZE] = {0},
+         rname[CF_MAXVARSIZE] = {0};
 
+    HostColour colour = HOST_COLOUR_GREEN_YELLOW_RED;
+    time_t last_report = 0;
+    bool found = false;
+
+    while (bson_iterator_next(it))
+    {
+        CFDB_ScanHubHost(it, keyhash, addresses, hostnames);
+
+        if (strcmp(bson_iterator_key(it), cfr_is_black) == 0)
+        {
+            if(bson_iterator_bool(it))
+            {
+                colour = HOST_COLOUR_BLACK;
+            }
+        }
+        else if (strcmp(bson_iterator_key(it), cfr_time) == 0)
+        {
+            last_report = bson_iterator_int(it);
+            if(last_report < blueHorizonTime)
+            {
+                colour = HOST_COLOUR_BLUE;
+            }
+        }
+        else if (strcmp(bson_iterator_key(it), cfr_bundles) == 0)
+        {
+            bson_iterator iterAllBundles;
+            bson_iterator_init(&iterAllBundles, bson_iterator_value(it));
+
+            while (bson_iterator_next(&iterAllBundles))
+            {
+                strncpy(rname, bson_iterator_key(&iterAllBundles), CF_MAXVARSIZE - 1);
+
+                if (strcmp(rname, "QUERY") == 0)
+                {
+                    continue;
+                }
+
+                bson_iterator iterBundleData;
+                bson_iterator_init(&iterBundleData, bson_iterator_value(&iterAllBundles));
+
+                HubBundleSeen *hb = BsonIteratorGetBundleSeen(&iterBundleData, hh, rname);
+
+                if(CompareStringOrRegex(hb->bundle, lname, regex))
+                {
+                    found = true;
+                    PrependRlistAlien(record_list, hb);
+                }
+            }
+        }
+    }
+
+    if (found)
+    {
+        UpdateHubHost(hh, keyhash, addresses, hostnames);
+        hh->colour = colour;
+    }
+
+    return found;
+}
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lname, bool regex,
                                HostClassFilter *hostClassFilter, int sort)
 {
+    unsigned long blue_horizon;
+    if (!CFDB_GetBlueHostThreshold(&blue_horizon))
+    {
+        assert(false && "Could not determine blue horizon");
+        blue_horizon = CF_BLUEHOST_THRESHOLD_DEFAULT;
+    }
+
+    /* BEGIN query document */
+    bson_buffer bb;    
+    bson_buffer_init(&bb);
+
+    if (!NULL_OR_EMPTY(keyHash))
+    {
+        bson_append_string(&bb, cfr_keyhash, keyHash);
+    }
+
+    BsonAppendHostClassFilter(&bb, hostClassFilter);
+    bson query;
+    bson_from_buffer(&query, &bb);
+
+    /* BEGIN RESULT DOCUMENT */
+
+    bson_buffer_init(&bb);
+    bson_append_int(&bb, cfr_keyhash, 1);
+    bson_append_int(&bb, cfr_ip_array, 1);
+    bson_append_int(&bb, cfr_host_array, 1);
+    bson_append_int(&bb, cfr_bundles, 1);
+    bson_append_int(&bb, cfr_time, 1);
+    bson_append_int(&bb, cfr_is_black, 1);
+    bson field;
+    bson_from_buffer(&field, &bb);
+
+    /* BEGIN SEARCH */
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+
+    bson_destroy(&query);
+    bson_destroy(&field);
+
+    Rlist *record_list = NULL,
+            *host_list = NULL;
+
+    time_t blueHorizonTimestamp = time(NULL) - blue_horizon;
+
+    while (mongo_cursor_next(cursor))
+    {        
+        bson_iterator it1;
+        bson_iterator_init(&it1, cursor->current.data);
+
+        HubHost *hh = CreateEmptyHubHost();
+        bool found = BsonIterGetBundleReportDetails(&it1, lname, regex, blueHorizonTimestamp, hh, &record_list );
+
+        if (found)
+        {           
+            PrependRlistAlien(&host_list, hh);
+        }
+        else
+        {
+            DeleteHubHost(hh);
+            hh = NULL;
+        }
+    }
+
+    mongo_cursor_destroy(cursor);
+
+    if (sort)
+    {
+        record_list = SortRlist(record_list, SortBundleSeen);
+    }
+
+    return NewHubQuery(host_list, record_list);
+}
+
+/*****************************************************************************/
+
+HubQuery *CFDB_QueryWeightedBundleSeen(mongo_connection *conn, char *keyHash, char *lname, bool regex,
+                               HostClassFilter *hostClassFilter, HostColourFilter *hostColourFilter, int sort)
+{
+    unsigned long blue_horizon;
+    if (!CFDB_GetBlueHostThreshold(&blue_horizon))
+    {
+        assert(false && "Could not determine blue horizon");
+        blue_horizon = CF_BLUEHOST_THRESHOLD_DEFAULT;
+    }
+
     bson_buffer bb;
     bson query, field;
-    mongo_cursor *cursor;
-    bson_iterator it1, it2, it3;
-    HubHost *hh;
-    Rlist *record_list = NULL, *host_list = NULL;
-    double rcomp, ravg, rdev;
-    char rname[CF_MAXVARSIZE];
-    char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE];
-    int match_name, found = false;
-    time_t rt;
 
 /* BEGIN query document */
 
@@ -3159,126 +3447,129 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
     bson_append_int(&bb, cfr_ip_array, 1);
     bson_append_int(&bb, cfr_host_array, 1);
     bson_append_int(&bb, cfr_bundles, 1);
+    bson_append_int(&bb, cfr_time, 1);
+    bson_append_int(&bb, cfr_is_black, 1);
     bson_from_buffer(&field, &bb);
 
-/* BEGIN SEARCH */
+    /* BEGIN SEARCH */
 
-    hostnames[0] = '\0';
-    addresses[0] = '\0';
-
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&field);
 
+    Rlist *record_list = NULL,
+            *host_list = NULL;
+
+    time_t blueHorizonTimestamp = time(NULL) - blue_horizon;
+
     while (mongo_cursor_next(cursor))
     {
+        bson_iterator it1;
         bson_iterator_init(&it1, cursor->current.data);
 
-        keyhash[0] = '\0';
-        hostnames[0] = '\0';
-        addresses[0] = '\0';
-        rname[0] = '\0';
-        found = false;
-        rt = 0;
-        hh = NULL;
+        Rlist *record_list_single_host = NULL;
 
-        while (bson_iterator_next(&it1))
+        HubHost *hh = CreateEmptyHubHost();
+        bool found = BsonIterGetBundleReportDetails(&it1, lname, regex, blueHorizonTimestamp, hh, &record_list_single_host );
+
+        HubQuery *hq = NewHubQuery(NULL, record_list_single_host);
+
+        bool hostDataAdded = false;
+
+        if(found)
         {
-            CFDB_ScanHubHost(&it1, keyhash, addresses, hostnames);
+            long totalKept = 0;
+            long totalRelevantBundlesInHost = 0;
 
-            if (strcmp(bson_iterator_key(&it1), cfr_bundles) == 0)
+            if(hh->colour == HOST_COLOUR_GREEN_YELLOW_RED)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                /* count bundles for current host */
+                Rlist *rp = NULL;
 
-                while (bson_iterator_next(&it2))
+                for(rp = hq->records; rp != NULL; rp = rp->next)
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
-                    strncpy(rname, bson_iterator_key(&it2), CF_MAXVARSIZE - 1);
+                    HubBundleSeen *hbTemp = (HubBundleSeen *) rp->item;
 
-                    if (strcmp(rname, "QUERY") == 0)
+                    if(hbTemp->t > blueHorizonTimestamp) /* discard data past blue_horizon */
                     {
-                        continue;
+                        if(Num(hbTemp->bundlecomp) > 0.8)
+                        {
+                            totalKept++;
+                        }
+                        totalRelevantBundlesInHost++;
+                    }
+                }
+
+                /* calculate average bundle compliance for current host */
+
+                if(totalRelevantBundlesInHost)
+                {
+                    HostColour colour = HOST_COLOUR_RED;
+                    double avgCompliance = totalKept / totalRelevantBundlesInHost;
+
+                    if(avgCompliance > 0.8)
+                    {
+                        colour = HOST_COLOUR_GREEN;
                     }
 
-                    ravg = 0;
-                    rdev = 0;
-                    rcomp = 0;
+                    hh->colour = colour;
+                }
 
-                    while (bson_iterator_next(&it3))
+                if(!hostColourFilter ||  (hostColourFilter && (hostColourFilter->colour == hh->colour)))
+                {
+                    for(Rlist *rp = hq->records; rp != NULL; rp = rp->next)
                     {
-                        if (strcmp(bson_iterator_key(&it3), cfr_bundleavg) == 0)
+                        HubBundleSeen *hbTemp = (HubBundleSeen *) rp->item;
+
+                        /*  Don't include entries past blue horizon for connected hosts */
+                        if(hbTemp->t < blueHorizonTimestamp)
                         {
-                            ravg = bson_iterator_double(&it3);
+                            continue;
                         }
-                        else if (strcmp(bson_iterator_key(&it3), cfr_bundledev) == 0)
-                        {
-                            rdev = bson_iterator_double(&it3);
-                        }
-                        else if (strcmp(bson_iterator_key(&it3), cfr_bundlecomp) == 0)
-                        {
-                            rcomp = bson_iterator_double(&it3);
-                        }
-                        else if (strcmp(bson_iterator_key(&it3), cfr_time) == 0)
-                        {
-                            rt = bson_iterator_int(&it3);
-                        }
-                        else
-                        {
-                            CfOut(cf_inform, "", " !! Unknown key \"%s\" in bundle seen", bson_iterator_key(&it3));
-                        }
+
+                        PrependRlistAlien(&record_list, NewHubBundleSeen(hbTemp->hh, hbTemp->bundle, hbTemp->bundlecomp, hbTemp->bundleavg, hbTemp->bundledev, hbTemp->t));
+                        hostDataAdded = true;
                     }
-
-                    match_name = true;
-
-                    if (regex)
+                }
+            }
+            else if((hh->colour == HOST_COLOUR_BLUE || hh->colour == HOST_COLOUR_BLACK))
+            {
+                if(!hostColourFilter ||  (hostColourFilter && (hostColourFilter->colour == hh->colour)))
+                {
+                    for(Rlist *rp = hq->records; rp != NULL; rp = rp->next)
                     {
-                        if (!NULL_OR_EMPTY(lname) && !StringMatch(lname, rname))
-                        {
-                            match_name = false;
-                        }
-                    }
-                    else
-                    {
-                        if (!NULL_OR_EMPTY(lname) && (strcmp(lname, rname) != 0))
-                        {
-                            match_name = false;
-                        }
-                    }
-
-                    if (match_name)
-                    {
-                        found = true;
-
-                        if (!hh)
-                        {
-                            hh = CreateEmptyHubHost();
-                        }
-
-                        PrependRlistAlien(&record_list, NewHubBundleSeen(hh, rname, rcomp, ravg, rdev, rt));
+                        HubBundleSeen *hbTemp = (HubBundleSeen *) rp->item;
+                        PrependRlistAlien(&record_list, NewHubBundleSeen(hbTemp->hh, hbTemp->bundle, hbTemp->bundlecomp, hbTemp->bundleavg, hbTemp->bundledev, hbTemp->t));
+                        hostDataAdded = true;
                     }
                 }
             }
         }
 
-        if (found)
+        /* cleanup */
+
+        DeleteHubQuery(hq, DeleteHubBundleSeen);
+        hq = NULL;
+        record_list_single_host = NULL;
+
+        if(!hostDataAdded)
         {
-            UpdateHubHost(hh, keyhash, addresses, hostnames);
+            DeleteHubHost(hh);
+            hh = NULL;
+        }
+        else
+        {
             PrependRlistAlien(&host_list, hh);
         }
     }
 
     mongo_cursor_destroy(cursor);
 
-    if (sort)
-    {
-        record_list = SortRlist(record_list, SortBundleSeen);
-    }
-
     return NewHubQuery(host_list, record_list);
 }
 
- /*****************************************************************************/
+/*****************************************************************************/
 
 Item *CFDB_QueryVitalIds(mongo_connection *conn, char *keyHash)
 /**

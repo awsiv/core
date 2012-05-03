@@ -99,6 +99,8 @@ PHP_FUNCTION(cfpr_host_meter);
 \endverbatim
  */
 PHP_FUNCTION(cfpr_report_overall_summary);
+PHP_FUNCTION(cfpr_hosts_compliance_for_bundles);
+PHP_FUNCTION(cfpr_hosts_compliance_for_promises);
 
 /*! \brief A list of vitals descriptions for a host
  * \param hostKey
@@ -317,6 +319,18 @@ PHP_FUNCTION(cfpr_compliance_summary_graph);
  */
 PHP_FUNCTION(cfpr_report_compliance_promises);
 
+/*! \brief Query for lastknown promise compliance report, given a promise handle expression and hostcolour
+ * \param hostKey
+ * \param hostcolour
+ * \param handle
+ * \param status
+ * \param useRegularExpressions
+ * \param contextExpression
+ * \param resultsPerPage
+ * \param pageNumber
+ */
+PHP_FUNCTION(cfpr_report_lastknown_compliance_promises);
+
 /*! \brief Query for a report of when hosts were last seen
  * \param hostKey
  * \param hubKey
@@ -385,7 +399,20 @@ PHP_FUNCTION(cfpr_report_filechanges);
  */
 PHP_FUNCTION(cfpr_report_filediffs);
 
+/*! \brief Query for bundles
+ * \param hostKey
+ * \param bundle
+ * \param contextExpression
+ */
 PHP_FUNCTION(cfpr_report_bundlesseen);
+
+/*! \brief Query for bundles for the last run. NULL hostcolour gives results for red, green and yellow hosts
+ * \param hostKey
+ * \param hostColour
+ * \param bundle
+ * \param contextExpression
+ */
+PHP_FUNCTION(cfpr_report_lastknown_bundlesseen);
 
 /*! \brief A list of all the library documents
  * \param filePath
@@ -476,6 +503,16 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_summary);
  */
 PHP_FUNCTION(cfpr_hosts_with_compliance_promises);
 
+/*! \brief Query for hosts with a given promise compliance and lastknown compliance status
+ * \param hostKey
+ * \param hostcolour
+ * \param handle
+ * \param status
+ * \param useRegularExpressions
+ * \param contextExpression
+ */
+PHP_FUNCTION(cfpr_hosts_with_lastknown_compliance_promises);
+
 /*! \brief Query for hosts with a given promise compliance
  * \param hostKey
  * \param hubKey
@@ -546,6 +583,14 @@ PHP_FUNCTION(cfpr_hosts_with_notkept);
  * \param contextExpression
  */
 PHP_FUNCTION(cfpr_hosts_with_bundlesseen);
+
+/*! \brief Query for hosts with bundle during the last run, for specific colour (optional). NULL returns hosts with red,green, yellow compliance levels
+ * \param hostKey
+ * \param hostColour
+ * \param bundle
+ * \param contextExpression
+ */
+PHP_FUNCTION(cfpr_hosts_with_lastknown_bundlesseen);
 
 /*! \brief Query for hosts with business value
  * \param hostKey

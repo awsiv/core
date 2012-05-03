@@ -31,7 +31,9 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfmod_resource_promise_log_notkept_summary, NULL)
     PHP_FE(cfmod_resource_variable, NULL)
     PHP_FE(cfmod_resource_context, NULL)
-    PHP_FE(cfmod_resource_software, NULL) PHP_FE(cfmod_resource_setuid, NULL) PHP_FE(cfmod_resource_file, NULL)
+    PHP_FE(cfmod_resource_software, NULL)
+    PHP_FE(cfmod_resource_setuid, NULL)
+    PHP_FE(cfmod_resource_file, NULL)
         // private API
     PHP_FE(cfpr_enterprise_version, NULL)
     PHP_FE(cfpr_community_version, NULL)
@@ -47,6 +49,8 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_summary_meter, NULL)
     PHP_FE(cfpr_host_meter, NULL)
     PHP_FE(cfpr_report_overall_summary, NULL)
+    PHP_FE(cfpr_hosts_compliance_for_bundles, NULL)
+    PHP_FE(cfpr_hosts_compliance_for_promises, NULL)
     PHP_FE(cfpr_ldap_authenticate, NULL)
     PHP_FE(cfpr_ldap_get_single_attribute_list, NULL)
     PHP_FE(cfpr_ldap_get_several_attributes, NULL)
@@ -57,7 +61,8 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_vitals_view_histogram, NULL)
     PHP_FE(cfpr_vitals_analyse_magnified, NULL)
     PHP_FE(cfpr_vitals_analyse_week, NULL)
-    PHP_FE(cfpr_vitals_analyse_year, NULL) PHP_FE(cfpr_vitals_analyse_histogram, NULL)
+    PHP_FE(cfpr_vitals_analyse_year, NULL)
+    PHP_FE(cfpr_vitals_analyse_histogram, NULL)
         /* POLICY */
         // RBAC-IFIED
     PHP_FE(cfpr_promise_list_by_handle_rx, NULL)
@@ -71,11 +76,13 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_bundle_agent_goals, NULL)
     PHP_FE(cfpr_bundle_arguments, NULL)
     PHP_FE(cfpr_bundle_by_promise_handle, NULL)
-    PHP_FE(cfpr_bundle_classes_used, NULL) PHP_FE(cfpr_bundle_list_by_bundle_usage, NULL)
+    PHP_FE(cfpr_bundle_classes_used, NULL)
+    PHP_FE(cfpr_bundle_list_by_bundle_usage, NULL)
         // PromiseFilter-IFIED
     PHP_FE(cfpr_get_bundle_type, NULL)      // TODO: DEPRECATE??
         // Not part of RBAC
-    PHP_FE(cfpr_body_list, NULL) PHP_FE(cfpr_body_details, NULL)
+    PHP_FE(cfpr_body_list, NULL)
+    PHP_FE(cfpr_body_details, NULL)
         /* END POLICY */
     PHP_FE(cfpr_getlastupdate, NULL)
     PHP_FE(cfpr_list_business_goals, NULL)
@@ -88,12 +95,14 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_report_compliance_summary, NULL)
     PHP_FE(cfpr_compliance_summary_graph, NULL)
     PHP_FE(cfpr_report_compliance_promises, NULL)
+    PHP_FE(cfpr_report_lastknown_compliance_promises, NULL)
     PHP_FE(cfpr_report_lastseen, NULL)
     PHP_FE(cfpr_report_performance, NULL)
     PHP_FE(cfpr_report_setuid, NULL)
     PHP_FE(cfpr_report_filechanges, NULL)
     PHP_FE(cfpr_report_filediffs, NULL)
     PHP_FE(cfpr_report_bundlesseen, NULL)
+    PHP_FE(cfpr_report_lastknown_bundlesseen, NULL)
     PHP_FE(cfpr_class_list_distinct_by_name_rx, NULL)
     PHP_FE(cfpr_class_list_time_distinct_by_name_rx, NULL)
     PHP_FE(cfpr_class_list_soft_distinct_by_name_rx, NULL)
@@ -121,6 +130,7 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_hosts_with_vars, NULL)
     PHP_FE(cfpr_hosts_with_compliance_summary, NULL)
     PHP_FE(cfpr_hosts_with_compliance_promises, NULL)
+    PHP_FE(cfpr_hosts_with_lastknown_compliance_promises, NULL)
     PHP_FE(cfpr_hosts_with_lastseen, NULL)
     PHP_FE(cfpr_hosts_with_performance, NULL)
     PHP_FE(cfpr_hosts_with_setuid, NULL)
@@ -129,6 +139,7 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_hosts_with_repaired, NULL)
     PHP_FE(cfpr_hosts_with_notkept, NULL)
     PHP_FE(cfpr_hosts_with_bundlesseen, NULL)
+    PHP_FE(cfpr_hosts_with_lastknown_bundlesseen, NULL)
     PHP_FE(cfpr_hosts_with_value, NULL)
     PHP_FE(cfpr_host_by_hostkey, NULL)
     PHP_FE(cfpr_host_info, NULL)
@@ -138,7 +149,9 @@ static zend_function_entry cfmod_functions[] =
     PHP_FE(cfpr_show_all_context_leads, NULL)
     PHP_FE(cfpr_show_topic_hits, NULL)
     PHP_FE(cfpr_show_topic_category, NULL)
-    PHP_FE(cfpr_get_pid_for_topic, NULL) PHP_FE(cfpr_report_description, NULL) PHP_FE(cfpr_list_documents, NULL)
+    PHP_FE(cfpr_get_pid_for_topic, NULL)
+    PHP_FE(cfpr_report_description, NULL)
+    PHP_FE(cfpr_list_documents, NULL)
         /*
          * SVN helper
          */
@@ -146,12 +159,15 @@ static zend_function_entry cfmod_functions[] =
         /*
          *  CDP reports
          */
-    PHP_FE(cfpr_cdp_reportnames, NULL) PHP_FE(cfpr_cdp_report, NULL)
+    PHP_FE(cfpr_cdp_reportnames, NULL)
+    PHP_FE(cfpr_cdp_report, NULL)
         /*
          * Commenting
          */
     PHP_FE(cfpr_add_note, NULL)
-    PHP_FE(cfpr_query_note, NULL) PHP_FE(cfpr_get_host_noteid, NULL) PHP_FE(cfpr_delete_host, NULL)
+    PHP_FE(cfpr_query_note, NULL)
+    PHP_FE(cfpr_get_host_noteid, NULL)
+    PHP_FE(cfpr_delete_host, NULL)
         /*
          * Replica sets
          */
@@ -161,14 +177,18 @@ static zend_function_entry cfmod_functions[] =
          */
     PHP_FE(cfpr_environment_list, NULL)
     PHP_FE(cfpr_host_list_by_environment, NULL)
-    PHP_FE(cfpr_environment_by_hostkey, NULL) PHP_FE(cfpr_hub_key, NULL) PHP_FE(cfpr_get_hub_master, NULL)
+    PHP_FE(cfpr_environment_by_hostkey, NULL)
+    PHP_FE(cfpr_hub_key, NULL)
+    PHP_FE(cfpr_get_hub_master, NULL)
         /*
          * Role-Based Access Control
          */
     PHP_FE(cfpr_user_authenticate, NULL)
     PHP_FE(cfpr_role_create, NULL)
     PHP_FE(cfpr_role_delete, NULL)
-    PHP_FE(cfpr_role_update, NULL) PHP_FE(cfpr_role_list_all, NULL) PHP_FE(cfpr_role_list_by_name, NULL)
+    PHP_FE(cfpr_role_update, NULL)
+    PHP_FE(cfpr_role_list_all, NULL)
+    PHP_FE(cfpr_role_list_by_name, NULL)
         /*
          * Mission Tree-Control (Astrolabe)
          */

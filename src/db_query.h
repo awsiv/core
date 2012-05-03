@@ -43,6 +43,8 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
                               const char *ltype, bool regex, time_t from, time_t to, HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, char *lhandle, PromiseState lstatus,
                                       bool regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter);
+HubQuery *CFDB_QueryWeightedPromiseCompliance(mongo_connection *conn, char *keyHash, char *lhandle, PromiseState lstatus,
+                                      bool regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter, HostColourFilter *hostColourFilter);
 HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash, char *lhost, char *laddr, time_t lago,
                              bool regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryMeter(mongo_connection *conn, bson *query, char *db);
@@ -52,6 +54,8 @@ HubQuery *CFDB_QuerySetuid(mongo_connection *conn, char *keyHash, char *lname, b
                            HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lname, bool regex,
                                HostClassFilter *hostClassFilter, int sort);
+HubQuery *CFDB_QueryWeightedBundleSeen(mongo_connection *conn, char *keyHash, char *lname, bool regex,
+                               HostClassFilter *hostClassFilter, HostColourFilter *hostColourFilter, int sort);
 HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lname, bool regex, time_t from, time_t to,
                                 int sort, HostClassFilter *hostClassFilter);
 HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname, char *ldiff, bool regex,
@@ -123,6 +127,12 @@ int CFDB_QueryIsMaster(void);
 int CFDB_QueryMasterIP(char *buffer, int bufsize);
 int CFDB_QueryReplStatus(mongo_connection *conn, char *buffer, int bufsize);
 
+//*****************************************************************************
+// Probably into separate db_utils.h
+//*****************************************************************************
+/* CFE report details per host */
+bool BsonIterGetBundleReportDetails(bson_iterator *it, char *lname, bool regex, time_t blueHorizonTime, HubHost *hh, Rlist **record_list );
+bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle, bool regex, PromiseState lstatus, time_t from, time_t to, time_t blueHorizonTime, HubHost *hh, Rlist **record_list );
 
 
 //*****************************************************************************

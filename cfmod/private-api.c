@@ -1360,8 +1360,8 @@ PHP_FUNCTION(cfpr_report_compliance_summary)
 
     HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
 
-    Nova2PHP_compliance_report(fhostkey, fversion, (time_t) from, time(NULL), (int) k, (int) nk, (int) r, filter, &page, buffer,
-                               sizeof(buffer));
+    Nova2PHP_compliance_report(fhostkey, fversion, (time_t) from, time(NULL), (int) k, (int) nk, (int) r, filter, &page, buffer, sizeof(buffer));
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -1374,10 +1374,9 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
     char *userName, *hostkey, *handle, *status;
     char *fhostkey, *fhandle, *fstatus;
     zval *context_includes = NULL, *context_excludes = NULL;
-    int hk_len, h_len, s_len;
+    int hk_len, h_len, s_len, user_len;
     char buffer[CF_WEBBUFFER];
     zend_bool regex;
-    int user_len;
     PageInfo page = { 0 };
     char *sortColumnName;
     int sc_len;
@@ -1411,15 +1410,76 @@ PHP_FUNCTION(cfpr_report_compliance_promises)
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
     HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_compliance_promises(fhostkey, fhandle, fstatus, (bool) regex, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_compliance_promises(fhostkey, fhandle, fstatus, (bool) regex, filter, NULL, false, &page, buffer, sizeof(buffer));
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
 }
 
+/******************************************************************************/
+
+PHP_FUNCTION(cfpr_report_lastknown_compliance_promises)
+{
+    char *userName, *hostkey, *handle, *status, *hostcolour;
+    char *fhostkey, *fhandle, *fstatus;
+    zval *context_includes = NULL, *context_excludes = NULL;
+    int hk_len, h_len, s_len, hc_len;
+    char buffer[CF_WEBBUFFER];
+    zend_bool regex;
+    int user_len;
+    PageInfo page = { 0 };
+    char *sortColumnName;
+    int sc_len;
+    bool sortDescending;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbaasbll",
+                              &userName, &user_len,
+                              &hostkey, &hk_len,
+                              &hostcolour, &hc_len,
+                              &handle, &h_len,
+                              &status, &s_len,
+                              &regex,
+                              &context_includes,
+                              &context_excludes,
+                              &sortColumnName, &sc_len, &sortDescending,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(user_len);
+
+    fhostkey = (hk_len == 0) ? NULL : hostkey;
+    fhandle = (h_len == 0) ? NULL : handle;
+    fstatus = (s_len == 0) ? NULL : status;
+
+    buffer[0] = '\0';
+
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+
+    ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+    HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
+
+    HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
+
+    HostColourFilter *hostColourFilter = NULL;
+    if (!NULL_OR_EMPTY(hostcolour))
+    {
+        hostColourFilter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HostColourFromString(hostcolour));
+    }
+
+    Nova2PHP_compliance_promises(fhostkey, fhandle, fstatus, (bool) regex, filter, hostColourFilter, true, &page, buffer, sizeof(buffer));
+
+    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+    free(hostColourFilter);
+
+    RETURN_STRING(buffer, 1);
+}
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_report_overall_summary)
@@ -1454,8 +1514,8 @@ PHP_FUNCTION(cfpr_report_overall_summary)
 
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
-    buffer[0] = '\0';
-    Nova2PHP_summary_report(fhostkey, fhandle, fstatus, (bool) regex, fclassreg, filter, buffer, sizeof(buffer));
+    buffer[0] = '\0';    
+    Nova2PHP_promise_compliance_summary(fhostkey, fhandle, fstatus, (bool) regex, filter, buffer, sizeof(buffer));
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1464,6 +1524,98 @@ PHP_FUNCTION(cfpr_report_overall_summary)
 
 /******************************************************************************/
 
+PHP_FUNCTION(cfpr_hosts_compliance_for_promises)
+{
+    char *userName, *hostkey, *handle, *status;
+    char *fhostkey, *fhandle, *fstatus;
+    int user_len, hk_len, h_len, s_len;
+    char buffer[CF_WEBBUFFER];
+    zend_bool regex;
+    zval *context_includes = NULL, *context_excludes = NULL;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbaa",
+                              &userName, &user_len,
+                              &hostkey, &hk_len,
+                              &handle, &h_len,
+                              &status, &s_len,
+                              &regex,
+                              &context_includes,
+                              &context_excludes) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(user_len);
+
+    fhostkey = (hk_len == 0) ? NULL : hostkey;
+    fhandle = (h_len == 0) ? NULL : handle;
+    fstatus = (s_len == 0) ? NULL : status;
+
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+
+    ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+    HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
+
+    HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
+
+    buffer[0] = '\0';
+    Nova2PHP_promise_compliance_summary(fhostkey, fhandle, fstatus, (bool) regex, filter, buffer, sizeof(buffer));
+
+    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+
+    RETURN_STRING(buffer, 1);
+}
+
+
+
+/******************************************************************************/
+
+PHP_FUNCTION(cfpr_hosts_compliance_for_bundles)
+{
+    char *userName, *hostkey, *bundle;
+    char *fhostkey, *fbundle;
+    int user_len, hk_len, b_len;
+    char buffer[CF_WEBBUFFER];
+    zend_bool regex;
+    zval *context_includes = NULL, *context_excludes = NULL;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbaa",
+                              &userName, &user_len,
+                              &hostkey, &hk_len,
+                              &bundle, &b_len,
+                              &regex,
+                              &context_includes,
+                              &context_excludes) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(user_len);
+
+    fhostkey = (hk_len == 0) ? NULL : hostkey;
+    fbundle = (b_len == 0) ? NULL : bundle;
+
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+
+    ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+    HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
+
+    HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
+
+    buffer[0] = '\0';
+
+    Nova2PHP_bundle_compliance_summary(fhostkey, fbundle, (bool) regex, filter, buffer, sizeof(buffer));
+
+    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+
+    RETURN_STRING(buffer, 1);
+}
+
+/******************************************************************************/
 PHP_FUNCTION(cfpr_report_lastseen)
 {
     char *userName, *hostkey, *host, *address, *hash;
@@ -1478,7 +1630,6 @@ PHP_FUNCTION(cfpr_report_lastseen)
     char *sortColumnName;
     int sc_len;
     bool sortDescending;
-
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssslbaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
@@ -1766,7 +1917,6 @@ PHP_FUNCTION(cfpr_promise_details)
 PHP_FUNCTION(cfpr_report_bundlesseen)
 {
     char *userName, *hostkey, *bundle;
-    char *fhostkey, *fbundle;
     zval *context_includes = NULL, *context_excludes = NULL;
     int user_len, hk_len, j_len;
     char buffer[CF_WEBBUFFER];
@@ -1792,8 +1942,8 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
 
     ARGUMENT_CHECK_CONTENTS(user_len);
 
-    fhostkey = (hk_len == 0) ? NULL : hostkey;
-    fbundle = (j_len == 0) ? NULL : bundle;
+    char *fhostkey = (hk_len == 0) ? NULL : hostkey;
+    char *fbundle = (j_len == 0) ? NULL : bundle;
 
     buffer[0] = '\0';
 
@@ -1805,12 +1955,70 @@ PHP_FUNCTION(cfpr_report_bundlesseen)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_bundle_report(fhostkey, fbundle, (bool) regex, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_bundle_report(fhostkey, fbundle, (bool) regex, filter, NULL, false, &page, buffer, sizeof(buffer));
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
 }
 
+/******************************************************************************/
+
+PHP_FUNCTION(cfpr_report_lastknown_bundlesseen)
+{
+    char *userName, *hostkey, *bundle, *hostcolour;
+    zval *context_includes = NULL, *context_excludes = NULL;
+    int user_len, hk_len, j_len, hc_len;
+    char buffer[CF_WEBBUFFER];
+    zend_bool regex;
+    PageInfo page = { 0 };
+    char *sortColumnName;
+    int sc_len;
+    bool sortDescending;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbaasbll",
+                              &userName, &user_len,
+                              &hostkey, &hk_len,
+                              &hostcolour, &hc_len,
+                              &bundle, &j_len,
+                              &regex,
+                              &context_includes,
+                              &context_excludes,
+                              &sortColumnName, &sc_len, &sortDescending,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(user_len);
+
+    char *fhostkey = (hk_len == 0) ? NULL : hostkey;
+    char *fbundle = (j_len == 0) ? NULL : bundle;
+
+    buffer[0] = '\0';
+
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+
+    ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+    HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
+
+    HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
+
+    HostColourFilter *hostColourFilter = NULL;
+
+    if (!NULL_OR_EMPTY(hostcolour))
+    {
+        hostColourFilter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HostColourFromString(hostcolour));
+    }
+    Nova2PHP_bundle_report(fhostkey, fbundle, (bool) regex, filter, hostColourFilter, true, &page, buffer, sizeof(buffer));
+
+    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+    free(hostColourFilter);
+
+    RETURN_STRING(buffer, 1);
+}
 /******************************************************************************/
 
 PHP_FUNCTION(cfpr_report_value)
@@ -2526,6 +2734,7 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_summary)
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
     Nova2PHP_compliance_hosts(fhostkey, fversion, (int) t, time(NULL), (int) k, (int) nk, (int) r, filter, &page, buffer, sizeof(buffer));
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -2573,8 +2782,63 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_promises)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_promise_hosts(fhostkey, fhandle, fstatus, (bool) regex, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_promise_hosts(fhostkey, fhandle, fstatus, (bool) regex, filter, NULL, false, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+
+    RETURN_STRING(buffer, 1);
+}
+
+/******************************************************************************/
+PHP_FUNCTION(cfpr_hosts_with_lastknown_compliance_promises)
+{
+    char *userName, *hostkey, *handle, *status, *hostcolour;
+    char *fhostkey, *fhandle, *fstatus;
+    int user_len, hk_len, h_len, s_len, hc_len;
+    zval *context_includes = NULL, *context_excludes = NULL;
+    char buffer[512 * 1024];
+    zend_bool regex;
+    PageInfo page = { 0 };
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbaall",
+                              &userName, &user_len,
+                              &hostkey, &hk_len,
+                              &hostcolour, &hc_len,
+                              &handle, &h_len,
+                              &status, &s_len,
+                              &regex,
+                              &context_includes,
+                              &context_excludes,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(user_len);
+
+    fhostkey = (hk_len == 0) ? NULL : hostkey;
+    fhandle = (h_len == 0) ? NULL : handle;
+    fstatus = (s_len == 0) ? NULL : status;
+
+    buffer[0] = '\0';
+
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+
+    ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+    HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
+
+    HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
+
+    HostColourFilter *hostColourFilter = NULL;
+    if(!NULL_OR_EMPTY(hostcolour))
+    {
+        hostColourFilter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HostColourFromString(hostcolour));
+    }
+
+    Nova2PHP_promise_hosts(fhostkey, fhandle, fstatus, (bool) regex, filter, hostColourFilter, true, &page, buffer, sizeof(buffer));
+    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+    free(hostColourFilter);
 
     RETURN_STRING(buffer, 1);
 }
@@ -2860,8 +3124,65 @@ PHP_FUNCTION(cfpr_hosts_with_bundlesseen)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_bundle_hosts(fhostkey, fbundle, (bool) regex, filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_bundle_hosts(fhostkey, fbundle, (bool) regex, filter, NULL, false, &page, buffer, sizeof(buffer));
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+
+    RETURN_STRING(buffer, 1);
+}
+
+/******************************************************************************/
+
+PHP_FUNCTION(cfpr_hosts_with_lastknown_bundlesseen)
+{
+    char *userName, *hostkey, *bundle, *hostcolour;
+    char *fhostkey, *fbundle;
+    zval *context_includes = NULL, *context_excludes = NULL;
+    int user_len, hk_len, j_len, hc_len;
+    char buffer[512 * 1024];
+    zend_bool regex;
+    PageInfo page = { 0 };
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbaall",
+                              &userName, &user_len,
+                              &hostkey, &hk_len,
+                              &hostcolour, &hc_len,
+                              &bundle, &j_len,
+                              &regex,
+                              &context_includes,
+                              &context_excludes,
+                              &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
+    {
+        zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(user_len);
+
+    fhostkey = (hk_len == 0) ? NULL : hostkey;
+    fbundle = (j_len == 0) ? NULL : bundle;
+
+    buffer[0] = '\0';
+
+    HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
+
+    ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
+
+    HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
+
+    HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
+
+    HostColourFilter *hostColourFilter = NULL;
+
+    if (!NULL_OR_EMPTY(hostcolour))
+    {
+        hostColourFilter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HostColourFromString(hostcolour));
+    }
+
+    Nova2PHP_bundle_hosts(fhostkey, fbundle, (bool) regex, filter, hostColourFilter, true, &page, buffer, sizeof(buffer));
+
+    DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
+    free(hostColourFilter);
 
     RETURN_STRING(buffer, 1);
 }

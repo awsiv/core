@@ -449,6 +449,7 @@ int Nova2Txt_compliance_report(char *hostkey, char *version, time_t from, time_t
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
     hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to, k, nk, rep, true, filter);
+
     DeleteHostClassFilter(filter);
 
     if (!CSV)
@@ -726,17 +727,7 @@ int Nova2Txt_setuid_report(char *hostkey, char *file, bool regex, char *classreg
 int Nova2Txt_bundle_report(char *hostkey, char *bundle, bool regex, char *classreg, PageInfo *page, char *returnval,
                            int bufsize)
 {
-    char buffer[CF_BUFSIZE] = { 0 };
-    HubBundleSeen *hb;
-    HubQuery *hq;
-    Rlist *rp;
     mongo_connection dbconn;
-    char header[CF_BUFSIZE] = { 0 };
-    int margin = 0, headerLen = 0, noticeLen = 0;
-    int truncated = false;
-
-/* BEGIN query document */
-
     if (!CFDB_Open(&dbconn))
     {
         CfOut(cf_verbose, "", "!! Could not open connection to report database");
@@ -745,22 +736,28 @@ int Nova2Txt_bundle_report(char *hostkey, char *bundle, bool regex, char *classr
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, regex, filter, true);
+    HubQuery *hq = CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, regex, filter, true);
     DeleteHostClassFilter(filter);
 
     PageRecords(&(hq->records), page, DeleteHubBundleSeen);
+
+    char header[CF_BUFSIZE] = { 0 };
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d,"
              "\"header\": {\"Host\":0,\"Bundle\":1,\"Last Verified\":2,\"Compliance\":3,\"Avg Compliance\":4,\"Uncertainty\":5}",
              page->totalResultCount);
 
-    headerLen = strlen(header);
-    noticeLen = strlen(CF_NOTICE_TRUNCATED);
     StartJoin(returnval, "{\"data\":[", bufsize);
 
+    int headerLen = strlen(header);
+    int noticeLen = strlen(CF_NOTICE_TRUNCATED);
+    int truncated = false;
+    char buffer[CF_BUFSIZE] = { 0 };
+
+    Rlist *rp;
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {
-        hb = (HubBundleSeen *) rp->item;
+        HubBundleSeen *hb = (HubBundleSeen *) rp->item;
 
         if (strcmp(hb->bundle, "QUERY") == 0)
         {
@@ -771,7 +768,7 @@ int Nova2Txt_bundle_report(char *hostkey, char *bundle, bool regex, char *classr
                 hb->hh->hostname, hb->bundle, hb->t,
                 hb->bundlecomp, hb->bundleavg, hb->bundledev);
 
-        margin = headerLen + noticeLen + strlen(buffer);
+        int margin = headerLen + noticeLen + strlen(buffer);
         if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
         {
             truncated = true;
@@ -1199,8 +1196,7 @@ int Nova2Txt_vars_hosts(char *hostkey, char *scope, char *lval, char *rval, char
 
 /*****************************************************************************/
 
-int Nova2Txt_promise_hosts(char *hostkey, char *handle, char *status, bool regex, char *classreg, char *returnval,
-                           int bufsize)
+int Nova2Txt_promise_hosts(char *hostkey, char *handle, char *status, bool regex, char *classreg, char *returnval, int bufsize)
 {
     char buffer[CF_BUFSIZE];
     HubHost *hh;
@@ -1430,15 +1426,7 @@ int Nova2Txt_setuid_hosts(char *hostkey, char *file, bool regex, char *classreg,
 
 int Nova2Txt_bundle_hosts(char *hostkey, char *bundle, bool regex, char *classreg, char *returnval, int bufsize)
 {
-    char buffer[CF_BUFSIZE];
-    HubHost *hh;
-    HubQuery *hq;
-    Rlist *rp;
-    int counter = 0, n = 180;
     mongo_connection dbconn;
-
-/* BEGIN query document */
-
     if (!CFDB_Open(&dbconn))
     {
         CfOut(cf_verbose, "", "!! Could not open connection to report database");
@@ -1447,14 +1435,19 @@ int Nova2Txt_bundle_hosts(char *hostkey, char *bundle, bool regex, char *classre
 
     HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
 
-    hq = CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, regex, filter, false);
+    HubQuery *hq = CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, regex, filter, false);
     DeleteHostClassFilter(filter);
 
     StartJoin(returnval, "[", bufsize);
 
+    char buffer[CF_BUFSIZE] = {0};
+
+    // TODO: this returns only 186 hosts, fix this
+    int counter = 0, n = 180;
+    Rlist *rp;
     for (rp = hq->hosts; rp != NULL; rp = rp->next)
     {
-        hh = (HubHost *) rp->item;
+        HubHost *hh = (HubHost *) rp->item;
         counter++;
         snprintf(buffer, CF_MAXVARSIZE, "{\"hostkey\":\"%s\",\"hostname\":\"%s\",\"ip\":\"%s\"},", hh->keyhash,
                  hh->hostname, hh->ipaddr);

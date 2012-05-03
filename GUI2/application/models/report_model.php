@@ -168,11 +168,18 @@ class report_model extends Cf_Model
      * @param type $page_number
      * @return type
      */
-    function getBundleReport($username, $hostkey, $search, $inclist, $exlist, $rows = 50, $page_number = 1)
+    function getBundleReport($username, $hostkey, $search, $inclist, $exlist, $rows = 50, $page_number = 1, $complianceLevel=false)
     {
         try
         {
-            $rawdata = cfpr_report_bundlesseen($username, $hostkey, $search, true, $inclist, $exlist, "last-verified", true, $rows, $page_number);
+            if ($complianceLevel !== false && $complianceLevel != null)
+            {
+                $rawdata = cfpr_report_lastknown_bundlesseen($username, $hostkey, $complianceLevel, $search, true, $inclist, $exlist,"last-verified", true, $rows, $page_number);
+            }
+            else
+            {
+                $rawdata = cfpr_report_bundlesseen($username, $hostkey, $search, true, $inclist, $exlist, "last-verified", true, $rows, $page_number);
+            }
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {
@@ -197,12 +204,19 @@ class report_model extends Cf_Model
      * @param type $class_regx
      * @return type
      */
-    function getHostWithBundles($username, $name, $inclist, $exlist, $rows, $page_number)
+    function getHostWithBundles($username, $name, $inclist, $exlist, $rows, $page_number, $complianceLevel=false)
     {
 
         try
         {
-            $rawdata = cfpr_hosts_with_bundlesseen($username, Null, $name, true, $inclist, $exlist, $rows, $page_number);
+            if ($complianceLevel !== false && $complianceLevel != null)
+            {
+                $rawdata = cfpr_hosts_with_lastknown_bundlesseen($username, NULL, $complianceLevel, $name, true, $inclist, $exlist, $rows, $page_number);
+            }
+            else
+            {
+                $rawdata = cfpr_hosts_with_bundlesseen($username, NULL, $name, true, $inclist, $exlist, $rows, $page_number);
+            }
             $data = $this->checkData($rawdata);
             if (is_array($data) && $this->hasErrors() == 0)
             {
@@ -338,17 +352,32 @@ class report_model extends Cf_Model
      * @param type $page_number
      * @return type array
      */
-    function getPromiseCompliance($username, $hostkey, $search, $state, $inclist, $exlist, $rows = 50, $page_number = 1, $host_only = false)
+    function getPromiseCompliance($username, $hostkey, $search, $state, $inclist, $exlist, $rows = 50, $page_number = 1, $host_only = false, $complianceLevel=false)
     {
         try
         {
             if ($host_only)
             {
-                $rawdata = cfpr_hosts_with_compliance_promises($username, NULL, $search, $state, true, $inclist, $exlist, $rows, $page_number);
+
+                if ($complianceLevel !== false && $complianceLevel != null)
+                {
+                    $rawdata = cfpr_hosts_with_lastknown_compliance_promises($username, NULL, $complianceLevel, $search, $state, true, $inclist, $exlist, $rows, $page_number);
+                }
+                else
+                {
+                    $rawdata = cfpr_hosts_with_compliance_promises($username, NULL, $search, $state, true, $inclist, $exlist, $rows, $page_number);
+                }
             }
             else
             {
-                $rawdata = cfpr_report_compliance_promises($username, $hostkey, $search, $state, true, $inclist, $exlist, "last-seen", true, $rows, $page_number);
+                if ($complianceLevel !== false && $complianceLevel != null)
+                {
+                    $rawdata = cfpr_report_lastknown_compliance_promises($username, $hostkey,$complianceLevel,$search, $state, true, $inclist, $exlist, "last-seen", true, $rows, $page_number);
+                }
+                else
+                {
+                    $rawdata = cfpr_report_compliance_promises($username, $hostkey, $search, $state, true, $inclist, $exlist, "last-seen", true, $rows, $page_number);
+                }
             }
 
             $data = $this->checkData($rawdata);

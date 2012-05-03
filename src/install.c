@@ -1290,14 +1290,43 @@ void PromiseFilterAddBundlesRx(PromiseFilter *filter, const char *bundleRxInclud
 
 void DeletePromiseFilter(PromiseFilter *filter)
 {
-    free(filter->handleInclude);
-    free(filter->handleRxInclude);
-    free(filter->promiserInclude);
-    free(filter->promiserRxInclude);
-    free(filter->promiseTypeInclude);
-    free(filter->bundleTypeInclude);
-    free(filter->promiseTypeRxInclude);
-    free(filter->bundleTypeRxInclude);
+    if(filter->handleInclude)
+    {
+        free(filter->handleInclude);
+    }
+    if(filter->handleRxInclude)
+    {
+        free(filter->handleRxInclude);
+    }
+    if(filter->promiserInclude)
+    {
+        free(filter->promiserInclude);
+    }
+    if(filter->promiserRxInclude)
+    {
+        free(filter->promiserRxInclude);
+    }
+    if(filter->promiseTypeInclude)
+    {
+        free(filter->promiseTypeInclude);
+    }
+    if(filter->promiseTypeRxInclude)
+    {
+        free(filter->promiseTypeRxInclude);
+    }
+    if(filter->bundleTypeRxInclude)
+    {
+        free(filter->bundleTypeRxInclude);
+    }
+    if(filter->bundleTypeInclude)
+    {
+        free(filter->bundleTypeInclude);
+    }
+    if(filter->promiseTypeRxInclude)
+    {
+        free(filter->promiseTypeRxInclude);
+    }
+
     DeleteRlist(filter->bundleIncludes);
     DeleteRlist(filter->bundleRxIncludes);
     DeleteRlist(filter->bundleExcludes);

@@ -417,6 +417,154 @@ int Nova2PHP_summary_report(char *hostkey, char *handle, char *status, bool rege
 
 /*****************************************************************************/
 
+int Nova2PHP_promise_compliance_summary (char *hostkey, char *handle, char *status, bool regex,
+                            HostClassFilter *hostClassFilter, char *returnval, int bufsize)
+/*
+  Return current best-knowledge of average compliance for the class of hosts and promises selected
+ */
+{
+    mongo_connection dbconn;
+    char *current_host = "x";
+
+    if (!CFDB_Open(&dbconn))
+    {
+        return false;
+    }
+
+    if (!status)                // any
+    {
+        status = "x";
+    }
+
+    HubQuery *hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), false, hostClassFilter, NULL);
+
+    int blue_hosts = 0,
+        tot_hosts = 0,
+        black_hosts = 0,
+        red_hosts = 0,
+        green_hosts = 0,
+        yellow_hosts = 0;
+
+    for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+    {
+        HubPromiseCompliance *hp = (HubPromiseCompliance *) rp->item;
+
+        if (current_host && strcmp(hp->hh->keyhash, current_host) != 0)     // New host
+        {
+            switch(hp->hh->colour)
+            {
+            case HOST_COLOUR_BLUE:
+                blue_hosts++;
+                break;
+
+            case HOST_COLOUR_BLACK:
+                black_hosts++;
+                break;
+
+            case HOST_COLOUR_GREEN:
+                green_hosts++;
+                break;
+
+            case HOST_COLOUR_RED:
+                red_hosts++;
+                break;
+
+            default:
+                tot_hosts--;
+                break;
+            }
+            tot_hosts++;
+            current_host = hp->hh->keyhash;
+        }
+    }
+
+    snprintf(returnval, bufsize,
+             "{\"green\":%d,\"yellow\":%d,\"red\":%d,\"host_count\":%d,\"blue_hosts\":\"%d\",\"black_hosts\":\"%d\"}",
+             green_hosts, yellow_hosts, red_hosts, tot_hosts, blue_hosts, black_hosts);
+
+    DeleteHubQuery(hq, DeleteHubPromiseCompliance);
+
+    if (!CFDB_Close(&dbconn))
+    {
+        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+    }
+
+    return true;
+}
+
+/*****************************************************************************/
+
+int Nova2PHP_bundle_compliance_summary (char *hostkey, char *bundle, bool regex,
+                            HostClassFilter *hostClassFilter, char *returnval, int bufsize)
+/*
+  Return current best-knowledge of average compliance for the class of hosts and promises selected
+ */
+{
+    mongo_connection dbconn;
+    if (!CFDB_Open(&dbconn))
+    {
+        return false;
+    }
+
+    HubQuery *hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle, regex, hostClassFilter,NULL, false);
+
+    int tot_hosts = 0;
+    int blue_hosts = 0,
+        black_hosts = 0,
+        red_hosts = 0,
+        green_hosts = 0,
+        yellow_hosts = 0;
+    char *current_host = "x";
+
+    for (Rlist *rp = hq->records; rp != NULL; rp = rp->next)
+    {
+        HubBundleSeen *hb = (HubBundleSeen *) rp->item;
+
+        if (current_host && strcmp(hb->hh->keyhash, current_host) != 0)     // New host
+        {
+            switch(hb->hh->colour)
+            {
+            case HOST_COLOUR_BLUE:
+                blue_hosts++;
+                break;
+
+            case HOST_COLOUR_BLACK:
+                black_hosts++;
+                break;
+
+            case HOST_COLOUR_GREEN:
+                green_hosts++;
+                break;
+
+            case HOST_COLOUR_RED:
+                red_hosts++;
+                break;
+
+            default:
+                tot_hosts--;
+                break;
+            }
+            tot_hosts++;
+            current_host = hb->hh->keyhash;
+        }
+    }
+
+    snprintf(returnval, bufsize,
+             "{\"green\":%d,\"yellow\":%d,\"red\":%d,\"host_count\":%d,\"blue_hosts\":\"%d\",\"black_hosts\":\"%d\"}",
+             green_hosts, yellow_hosts, red_hosts, tot_hosts, blue_hosts, black_hosts);
+
+    DeleteHubQuery(hq, DeleteHubBundleSeen);
+
+    if (!CFDB_Close(&dbconn))
+    {
+        CfOut(cf_verbose, "", "!! Could not close connection to report database");
+    }
+
+    return true;
+}
+
+/*****************************************************************************/
+
 void Nova2PHP_meter(char *hostkey, char *buffer, int bufsize)
 {
     bson_buffer bb;
@@ -1540,8 +1688,7 @@ int Nova2PHP_compliance_report(char *hostkey, char *version, time_t from, time_t
 # ifndef NDEBUG
     if (IsEnvMissionPortalTesting())
     {
-        return Nova2PHP_compliance_report_test(hostkey, version, from, k, nk, rep, hostClassFilter, page, returnval,
-                                               bufsize);
+        return Nova2PHP_compliance_report_test(hostkey, version, from, k, nk, rep, hostClassFilter, page, returnval, bufsize);
     }
 # endif
 
@@ -1608,12 +1755,12 @@ int Nova2PHP_compliance_report(char *hostkey, char *version, time_t from, time_t
 /*****************************************************************************/
 
 int Nova2PHP_compliance_promises(char *hostkey, char *handle, char *status, bool regex, HostClassFilter *hostClassFilter,
-                                 PageInfo *page, char *returnval, int bufsize)
+                                 HostColourFilter *hostColourFilter, bool lastRunOnly, PageInfo *page, char *returnval, int bufsize)
 {
 # ifndef NDEBUG
     if (IsEnvMissionPortalTesting())
     {
-        return Nova2PHP_compliance_promises(hostkey, handle, status, regex, hostClassFilter, page, returnval, bufsize);
+        return Nova2PHP_compliance_promises_test(hostkey, handle, status, regex, hostClassFilter, page, returnval, bufsize);
     }
 # endif
 
@@ -1636,7 +1783,15 @@ int Nova2PHP_compliance_promises(char *hostkey, char *handle, char *status, bool
         status = "x";
     }
 
-    hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), true, hostClassFilter);
+    if(lastRunOnly)
+    {
+        hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), false, hostClassFilter, hostColourFilter);
+    }
+    else
+    {
+        hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), true, hostClassFilter);
+    }
+
     PageRecords(&(hq->records), page, DeleteHubPromiseCompliance);
 
     snprintf(header, sizeof(header),
@@ -1678,6 +1833,7 @@ int Nova2PHP_compliance_promises(char *hostkey, char *handle, char *status, bool
     EndJoin(returnval, "}}\n", bufsize);
 
     DeleteHubQuery(hq, DeleteHubPromiseCompliance);
+    hq = NULL;
 
     if (!CFDB_Close(&dbconn))
     {
@@ -1933,7 +2089,7 @@ static void WriteDouble2Str_MP(double x, char *buffer, int bufsize)
 
 /*****************************************************************************/
 
-int Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFilter *hostClassFilter, PageInfo *page,
+int Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFilter *hostClassFilter, HostColourFilter *hostColourFilter, bool lastRunOnly, PageInfo *page,
                            char *returnval, int bufsize)
 {
 # ifndef NDEBUG
@@ -1943,36 +2099,43 @@ int Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFil
     }
 # endif
 
-    char buffer[CF_BUFSIZE] = { 0 };
-    HubBundleSeen *hb;
-    HubQuery *hq;
-    Rlist *rp;
     mongo_connection dbconn;
-    char header[CF_BUFSIZE] = { 0 };
-    int margin = 0, headerLen = 0, noticeLen = 0;
-    int truncated = false;
-
-/* BEGIN query document */
 
     if (!CFDB_Open(&dbconn))
     {
         return false;
     }
 
-    hq = CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, regex, hostClassFilter, true);
+    HubQuery *hq;
+
+    if(lastRunOnly)
+    {        
+        hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle, regex, hostClassFilter,hostColourFilter, false);
+    }
+    else
+    {
+        hq = CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, regex, hostClassFilter, true);
+    }
+
     PageRecords(&(hq->records), page, DeleteHubBundleSeen);
+
+    char header[CF_BUFSIZE] = { 0 };
     snprintf(header, sizeof(header),
              "\"meta\":{\"count\" : %d,"
              "\"header\": {\"Host\":0,\"Bundle\":1,\"Last Verified\":2,\"%% Compliance\":3,\"Avg %% Compliance\":4,\"+/- %%\":5}",
              page->totalResultCount);
 
-    headerLen = strlen(header);
-    noticeLen = strlen(CF_NOTICE_TRUNCATED);
+    int headerLen = strlen(header);
+    int noticeLen = strlen(CF_NOTICE_TRUNCATED);
     StartJoin(returnval, "{\"data\":[", bufsize);
 
+    int truncated = false;
+    char buffer[CF_BUFSIZE] = { 0 };
+
+    Rlist *rp;
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {
-        hb = (HubBundleSeen *) rp->item;
+        HubBundleSeen *hb = (HubBundleSeen *) rp->item;
         char bundleComp[CF_SMALLBUF];
         char bundleAvg[CF_SMALLBUF];
         char bundleDev[CF_SMALLBUF];
@@ -1985,7 +2148,7 @@ int Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFil
                  hb->hh->hostname, hb->bundle, hb->t,
                  bundleComp, bundleAvg, bundleDev);
 
-        margin = headerLen + noticeLen + strlen(buffer);
+        int margin = headerLen + noticeLen + strlen(buffer);
         if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
         {
             truncated = true;
@@ -2413,8 +2576,8 @@ int Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t from, time_t 
 
 /*****************************************************************************/
 
-int Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status, bool regex, HostClassFilter *hostClassFilter, PageInfo *page,
-                           char *returnval, int bufsize)
+int Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status, bool regex, HostClassFilter *hostClassFilter,
+                           HostColourFilter *hostColourFilter, bool lastRunOnly, PageInfo *page, char *returnval, int bufsize)
 {
     mongo_connection dbconn;
 
@@ -2428,7 +2591,16 @@ int Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status, bool regex
         status = "x";
     }
 
-    HubQuery *hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), false, hostClassFilter);
+    HubQuery *hq = NULL;
+
+    if(lastRunOnly)
+    {
+        hq = CFDB_QueryWeightedPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), false, hostClassFilter, hostColourFilter);
+    }
+    else
+    {
+        hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), false, hostClassFilter);
+    }
 
     CreateJsonHostOnlyReport(&(hq->hosts), page, returnval, bufsize);
 
@@ -2522,8 +2694,7 @@ int Nova2PHP_setuid_hosts(char *hostkey, char *file, bool regex, HostClassFilter
 
 /*****************************************************************************/
 
-int Nova2PHP_bundle_hosts(char *hostkey, char *bundle, bool regex, HostClassFilter *hostClassFilter, PageInfo *page, char *returnval,
-                          int bufsize)
+int Nova2PHP_bundle_hosts(char *hostkey, char *bundle, bool regex, HostClassFilter *hostClassFilter, HostColourFilter *hostColourFilter, bool lastRunOnly, PageInfo *page, char *returnval, int bufsize)
 {
     mongo_connection dbconn;
 
@@ -2532,7 +2703,16 @@ int Nova2PHP_bundle_hosts(char *hostkey, char *bundle, bool regex, HostClassFilt
         return false;
     }
 
-    HubQuery *hq = CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, regex, hostClassFilter, false);
+    HubQuery *hq;
+
+    if(lastRunOnly)
+    {
+        hq = CFDB_QueryWeightedBundleSeen(&dbconn, hostkey, bundle, regex, hostClassFilter, hostColourFilter, false);
+    }
+    else
+    {
+        hq = CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, regex, hostClassFilter, true);
+    }
 
     CreateJsonHostOnlyReport(&(hq->hosts), page, returnval, bufsize);
 
@@ -4755,3 +4935,4 @@ bool IsEnvMissionPortalTesting()
 }
 #endif // NDEBUG
 /*****************************************************************************/
+

@@ -135,7 +135,7 @@ class Search extends Cf_Controller
             array('widgets/classfinder.js')
         );
         $this->carabiner->js($requiredjs);
-        
+
 
 
         $fromEmail = trim($this->settings_model->app_settings_get_item('appemail'));
@@ -254,14 +254,12 @@ class Search extends Cf_Controller
                 'breadcrumbs' => $this->breadcrumblist->display(),
                 'breadCrumbUrl' => isset($breadcrumbs_url) ? $breadcrumbs_url : '',
                 'hide_header' => true,
-                
                 'current' => $page_number,
                 'number_of_rows' => $rows,
                 'params' => $params,
                 'paramArray' => $paramArray,
                 'classregex' => $class_regex,
                 'hostfinderparams' => $hostfinderparams,
-
                 'hostname' => $hostname,
                 'hostkey' => $hostkey,
                 'resultView' => $hosts_only ? 'search_result_group' : 'default_result_view',
@@ -303,20 +301,38 @@ class Search extends Cf_Controller
             {
                 case "bundle-profile":
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : ($this->input->post('name') ? urldecode($this->input->post('name')) : NULL);
+                    $clevel = isset($getparams['clevel']) ? urldecode($getparams['clevel']) : false;
                     if ($hosts_only)
                     {
-                        $data['report_result'] = $this->report_model->getHostWithBundles($username, $name, explode(',', $incList), explode(',', $exList), $rows, $page_number);
+
+                        $res = cfpr_hosts_compliance_for_bundles($username, null, $name, true, explode(',', $incList), explode(',', $exList));
+                        $complianceData = json_decode($res, true);
+                        $data['c_data'] = $complianceData;
+                        $data['show_host_summary'] = true;
+
+                        $tempParamArray = $data['paramArray'];
+                        unset($tempParamArray['hosts_only']);
+                        unset($tempParamArray['clevel']);
+                        unset($tempParamArray['page']);
+                        unset($tempParamArray['rows']);
+
+                        $data['detail_result_url'] = $this->assoc_to_uri($tempParamArray);
+                        $data['clevel'] = $clevel;
+
+                        $data['report_result'] = $this->report_model->getHostWithBundles($username, $name, explode(',', $incList), explode(',', $exList), $rows, $page_number, $clevel);
+                        $data['resultView'] = 'search_result_group_with_summary';
                     }
                     else
                     {
-                        $data['report_result'] = $this->report_model->getBundleReport($username, $hostkey, $name, explode(',', $incList), explode(',', $exList), $rows, $page_number);
+                        $data['report_result'] = $this->report_model->getBundleReport($username, $hostkey, $name, explode(',', $incList), explode(',', $exList), $rows, $page_number, $clevel);
                     }
 
                     $pdfurlParams = array('type' => $report_type,
                         'search' => $name,
                         'inclist' => $incList,
                         'exlist' => $exList,
-                        'hostkey' => $hostkey
+                        'hostkey' => $hostkey,
+                        'clevel' => $clevel
                     );
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
@@ -365,15 +381,35 @@ class Search extends Cf_Controller
 
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     $state = isset($getparams['state']) ? urldecode($getparams['state']) : urldecode($this->input->post('state'));
+                    $clevel = isset($getparams['clevel']) ? urldecode($getparams['clevel']) : false;
+
                     $pdfurlParams = array('type' => $report_type,
                         'inclist' => $incList,
                         'exlist' => $exList,
                         'search' => $name,
-                        'state' => $state
+                        'state' => $state,
+                        'clevel' => $clevel
                     );
+
+                    if ($hosts_only)
+                    {
+                        $res = cfpr_hosts_compliance_for_promises($username, NULL, $name, $state, true, explode(',', $incList), explode(',', $exList));
+                        $complianceData = json_decode($res, true);
+                        $data['c_data'] = $complianceData;
+                        $data['show_host_summary'] = true;
+                        $data['clevel'] = $clevel;
+                        $tempParamArray = $data['paramArray'];
+                        unset($tempParamArray['hosts_only']);
+                        unset($tempParamArray['clevel']);
+                        unset($tempParamArray['page']);
+                        unset($tempParamArray['rows']);
+                        $data['detail_result_url'] = $this->assoc_to_uri($tempParamArray);
+                        $data['resultView'] = 'search_result_group_with_summary';
+                    }
+
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                    $data['report_result'] = $this->report_model->getPromiseCompliance($username, $hostkey, $name, $state, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
+                    $data['report_result'] = $this->report_model->getPromiseCompliance($username, $hostkey, $name, $state, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only, $clevel);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                     break;
 
@@ -523,10 +559,10 @@ class Search extends Cf_Controller
                     $to = isset($getparams['to']) ? urldecode($getparams['to']) : $this->input->post('to');
                     $cause_rx = isset($getparams['cause']) ? $getparams['cause'] : $this->input->post('cause');
                     $cause_rx = $cause_rx === false ? ".*" : $cause_rx;
-                    
-                     $from_timestamp = strtotime($from);
-                     $to_timestamp = strtotime($to);
-                    
+
+                    $from_timestamp = strtotime($from);
+                    $to_timestamp = strtotime($to);
+
                     $pdfurlParams = array('type' => $report_type,
                         'inclist' => $incList,
                         'exlist' => $exList,
@@ -556,7 +592,7 @@ class Search extends Cf_Controller
 
                     $from_timestamp = strtotime($from);
                     $to_timestamp = strtotime($to);
-                    
+
                     if ($report_type == "promises-not-kept-summary")
                         $data['report_result'] = $this->report_model->getPromisesNotKeptSummary($username, $hostkey, $name, $cause_rx, $from_timestamp, $to_timestamp, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
                     if ($report_type == "promises-not-kept-log")

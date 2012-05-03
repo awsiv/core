@@ -48,6 +48,7 @@ class pdfreports extends Cf_Controller
             'date',
             'cause',
             'var_type'
+            'clevel'
         );
     }
 
@@ -120,7 +121,7 @@ class pdfreports extends Cf_Controller
         switch ($report_type)
         {
             case "bundle-profile":
-                $this->rpt_bundle_profile($username, $params['hostkey'], $params['search'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
+                $this->rpt_bundle_profile($username, $params['hostkey'], $params['search'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page'],$params['clevel']);
                 break;
 
             case "business-value":
@@ -136,7 +137,7 @@ class pdfreports extends Cf_Controller
                 break;
 
             case "compliance-summary":
-                $this->rpt_compliance_summary($username, $params['hostkey'], $params['version'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page']);
+                $this->rpt_compliance_summary($username, $params['hostkey'], $params['version'], explode(',', $params['inclist']), explode(',', $params['exlist']), $params['rows'], $params['page'],$params['clevel']);
                 break;
 
             case "file-change-log":
@@ -360,13 +361,13 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_bundle_profile($username, $hostkey, $search, $inclist, $exlist, $rows = 0, $page_number = 0)
+    function rpt_bundle_profile($username, $hostkey, $search, $inclist, $exlist, $rows = 0, $page_number = 0,$clevel=false)
     {
 
         $header = array('Host', 'Bundle', 'Last verified', 'Hours Ago', 'Avg interval', 'Uncertainty');
         try
         {
-            $ret = $this->report_model->getBundleReport($username, $hostkey, $search, $inclist, $exlist, $rows, $page_number);
+            $ret = $this->report_model->getBundleReport($username, $hostkey, $search, $inclist, $exlist, $rows, $page_number,$clevel);
             $this->checkForDataTruncation($ret);
             $data1 = $ret['data'];
             $header = ($ret['meta']['header']);
@@ -627,7 +628,7 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_compliance_promises($username, $hostkey, $search, $state, $inclist, $exlist, $rows = 0, $page_number = 0)
+    function rpt_compliance_promises($username, $hostkey, $search, $state, $inclist, $exlist, $rows = 0, $page_number = 0,$clevel=false)
     {
         $header = array('Host', 'Promise Handle', 'Last known state', 'Probability kept', 'Uncertainty', 'Last seen');
 
@@ -635,9 +636,8 @@ class pdfreports extends Cf_Controller
         //$jsondata = json_decode($ret, true);
         try
         {
-            $jsondata = $this->report_model->getPromiseCompliance($username, $hostkey, $search, $state, $inclist, $exlist, $rows, $page_number);
+            $jsondata = $this->report_model->getPromiseCompliance($username, $hostkey, $search, $state, $inclist, $exlist, $rows, $page_number,false,$clevel);
             $this->checkForDataTruncation($jsondata);
-
             $data1 = $jsondata['data'];
             $header = $jsondata['meta']['header'];
 

@@ -481,4 +481,4 @@ HostColour HostColourFromScoreForConnectedHost(int score)
 {
     return HostColourFromScore(1, 1, 1, score, false);
 }
-
+/*****************************************************************************/

@@ -1,6 +1,6 @@
 
        <!-- <p class="title">
-            <strong><?php echo $report_title ?> Report</strong>  
+            <strong><?php echo $report_title ?> Report</strong>
         </p>
         <div style="padding-left: 10px;">
             <?php if ($classregex) { ?>
