@@ -424,13 +424,9 @@ int Nova2PHP_promiselog_test(char *hostkey, char *handle, char *cause, PromiseLo
  * cfpr_summarize_notkept ( sssllssbll )
  * cfpr_summarize_repaired ( sssllssbll )
 */
-int Nova2PHP_promiselog_summary_test(char *hostkey, char *handle, char *cause, PromiseLogState state, time_t from, time_t to,
-                                     HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
+JsonElement *Nova2PHP_promiselog_summary_test(char *hostkey, char *handle, char *cause, PromiseLogState state, time_t from, time_t to,
+                                              HostClassFilter *hostClassFilter, PageInfo *page)
 {
-    char work[CF_BUFSIZE];
-    char header[CF_BUFSIZE] = { 0 };
-    bool truncated = false;
-
     int startIndex = page->resultsPerPage * (page->pageNum - 1);
     int endIndex = page->resultsPerPage * page->pageNum;
     int total = GetTotalCount(endIndex);
@@ -440,12 +436,20 @@ int Nova2PHP_promiselog_summary_test(char *hostkey, char *handle, char *cause, P
         endIndex = total;
     }
 
-    snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d," "\"header\":{\"Promise Handle\":0,\"Report\":1,\"Occurrences\":2}", total);
+    JsonElement *meta = JsonObjectCreate(2);
+    {
+        JsonObjectAppendInteger(meta, "count", total);
 
-    char *p = returnval;
+        JsonElement *header = JsonObjectCreate(3);
 
-    StartJoin(returnval, "{\"data\":[", bufsize);
+        JsonObjectAppendInteger(header, "Promise Handle", 0);
+        JsonObjectAppendInteger(header, "Report", 1);
+        JsonObjectAppendInteger(header, "Occurrences", 2);
+
+        JsonObjectAppendObject(meta, "header", header);
+    }
+
+    JsonElement *data = JsonArrayCreate(1000);
 
     for (int i = startIndex; i < endIndex; i++)
     {
@@ -455,20 +459,18 @@ int Nova2PHP_promiselog_summary_test(char *hostkey, char *handle, char *cause, P
         RandomizeString(REPORT_LEN, report, sizeof(report));
         RandomizeString(HANDLE_LEN, handle, sizeof(handle));
 
-        snprintf(work, sizeof(work), "[\"%s\",\"%s\",%d],", handle, report, total - i);
+        JsonElement *entry = JsonArrayCreate(3);
 
-        p = strcatUnsafe(p, work);
+        JsonArrayAppendString(entry, handle);
+        JsonArrayAppendString(entry, report);
+        JsonArrayAppendInteger(entry, total - i);
     }
 
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
+    JsonElement *output = JsonObjectCreate(2);
+    JsonObjectAppendObject(output, "meta", meta);
+    JsonObjectAppendArray(output, "data", data);
 
-    Nova_AddReportHeader(header, truncated, work, sizeof(work) - 1);
-
-    Join(returnval, work, bufsize);
-    EndJoin(returnval, "}}\n", bufsize);
-
-    return true;
+    return output;
 }
 
 /*****************************************************************************/

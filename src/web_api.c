@@ -995,16 +995,12 @@ int Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogSt
 JsonElement *Nova2PHP_promiselog_summary(char *hostkey, char *handle, char *causeRx, PromiseLogState state, time_t from, time_t to,
                                          HostClassFilter *hostClassFilter, PageInfo *page)
 {
-// TODO: need to fix this
-/*
 # ifndef NDEBUG
     if (IsEnvMissionPortalTesting())
     {
-        return Nova2PHP_promiselog_summary_test(hostkey, handle, causeRx, state, from, to, hostClassFilter, page, returnval,
-                                                bufsize);
+        return Nova2PHP_promiselog_summary_test(hostkey, handle, causeRx, state, from, to, hostClassFilter, page);
     }
 # endif
-*/
 
     mongo_connection dbconn;
     if (!CFDB_Open(&dbconn))
@@ -1019,7 +1015,7 @@ JsonElement *Nova2PHP_promiselog_summary(char *hostkey, char *handle, char *caus
     int startIndex = page->resultsPerPage * (page->pageNum - 1);
     int endIndex = (page->resultsPerPage * page->pageNum) - 1;
 
-    JsonElement *meta = JsonObjectCreate(1);
+    JsonElement *meta = JsonObjectCreate(2);
     {
         JsonObjectAppendInteger(meta, "count", RlistLen(hq->records));
 

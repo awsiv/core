@@ -295,8 +295,8 @@ int Nova2PHP_bundle_report_test(char *hostkey, char *bundle, bool regex, HostCla
                                 PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_promiselog_test(char *hostkey, char *handle, char *cause, PromiseLogState state, time_t from, time_t to,
                              HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
-int Nova2PHP_promiselog_summary_test(char *hostkey, char *handle, char *cause, PromiseLogState state, time_t from, time_t to,
-                                     HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
+JsonElement *Nova2PHP_promiselog_summary_test(char *hostkey, char *handle, char *cause, PromiseLogState state, time_t from, time_t to,
+                                     HostClassFilter *hostClassFilter, PageInfo *page);
 int Nova2PHP_value_report_test(char *hostkey, char *day, char *month, char *year, HostClassFilter *hostClassFilter,
                                PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_software_report_test(char *hostkey, char *name, char *value, char *arch, bool regex, char *type,
