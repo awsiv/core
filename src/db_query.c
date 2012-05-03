@@ -2630,6 +2630,11 @@ HubQuery *CFDB_QueryPromiseLogSummary(mongo_connection *conn, const char *hostke
         PrependRlistAlien(&sum_records, NewHubPromiseSum(NULL, record->handle, record->cause, *count, 0));
     }
 
+    for (Rlist *rp = hq->records; rp; rp = rp->next)
+    {
+        DeleteHubPromiseLog(rp->item);
+        rp->item = NULL;
+    }
     DeleteRlist(hq->records);
     MapDestroy(log_counts);
 
