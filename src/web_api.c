@@ -417,8 +417,8 @@ int Nova2PHP_summary_report(char *hostkey, char *handle, char *status, bool rege
 
 /*****************************************************************************/
 
-int Nova2PHP_promise_compliance_summary (char *hostkey, char *handle, char *status, bool regex,
-                            HostClassFilter *hostClassFilter, char *returnval, int bufsize)
+JsonElement *Nova2PHP_promise_compliance_summary (char *hostkey, char *handle, char *status, bool regex,
+                            HostClassFilter *hostClassFilter)
 /*
   Return current best-knowledge of average compliance for the class of hosts and promises selected
  */
@@ -478,10 +478,6 @@ int Nova2PHP_promise_compliance_summary (char *hostkey, char *handle, char *stat
         }
     }
 
-    snprintf(returnval, bufsize,
-             "{\"green\":%d,\"yellow\":%d,\"red\":%d,\"host_count\":%d,\"blue_hosts\":\"%d\",\"black_hosts\":\"%d\"}",
-             green_hosts, yellow_hosts, red_hosts, tot_hosts, blue_hosts, black_hosts);
-
     DeleteHubQuery(hq, DeleteHubPromiseCompliance);
 
     if (!CFDB_Close(&dbconn))
@@ -489,13 +485,21 @@ int Nova2PHP_promise_compliance_summary (char *hostkey, char *handle, char *stat
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    return true;
+    JsonElement *jsonRetval = JsonObjectCreate(6);
+    JsonObjectAppendInteger(jsonRetval,"green", green_hosts);
+    JsonObjectAppendInteger(jsonRetval, "yellow", yellow_hosts);
+    JsonObjectAppendInteger(jsonRetval, "red", red_hosts);
+    JsonObjectAppendInteger(jsonRetval, "blue_hosts", blue_hosts);
+    JsonObjectAppendInteger(jsonRetval, "black_hosts", black_hosts);
+    JsonObjectAppendInteger(jsonRetval, "host_count", tot_hosts);
+
+    return jsonRetval;
 }
 
 /*****************************************************************************/
 
-int Nova2PHP_bundle_compliance_summary (char *hostkey, char *bundle, bool regex,
-                            HostClassFilter *hostClassFilter, char *returnval, int bufsize)
+JsonElement *Nova2PHP_bundle_compliance_summary (char *hostkey, char *bundle, bool regex,
+                            HostClassFilter *hostClassFilter)
 /*
   Return current best-knowledge of average compliance for the class of hosts and promises selected
  */
@@ -549,10 +553,6 @@ int Nova2PHP_bundle_compliance_summary (char *hostkey, char *bundle, bool regex,
         }
     }
 
-    snprintf(returnval, bufsize,
-             "{\"green\":%d,\"yellow\":%d,\"red\":%d,\"host_count\":%d,\"blue_hosts\":\"%d\",\"black_hosts\":\"%d\"}",
-             green_hosts, yellow_hosts, red_hosts, tot_hosts, blue_hosts, black_hosts);
-
     DeleteHubQuery(hq, DeleteHubBundleSeen);
 
     if (!CFDB_Close(&dbconn))
@@ -560,7 +560,15 @@ int Nova2PHP_bundle_compliance_summary (char *hostkey, char *bundle, bool regex,
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    return true;
+    JsonElement *jsonRetval = JsonObjectCreate(6);
+    JsonObjectAppendInteger(jsonRetval,"green", green_hosts);
+    JsonObjectAppendInteger(jsonRetval, "yellow", yellow_hosts);
+    JsonObjectAppendInteger(jsonRetval, "red", red_hosts);
+    JsonObjectAppendInteger(jsonRetval, "blue_hosts", blue_hosts);
+    JsonObjectAppendInteger(jsonRetval, "black_hosts", black_hosts);
+    JsonObjectAppendInteger(jsonRetval, "host_count", tot_hosts);
+
+    return jsonRetval;
 }
 
 /*****************************************************************************/

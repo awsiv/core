@@ -1515,7 +1515,7 @@ PHP_FUNCTION(cfpr_report_overall_summary)
     HostClassFilterAddClasses(filter, fclassreg, NULL);
 
     buffer[0] = '\0';    
-    Nova2PHP_promise_compliance_summary(fhostkey, fhandle, fstatus, (bool) regex, filter, buffer, sizeof(buffer));
+    Nova2PHP_summary_report(fhostkey, fhandle, fstatus, (bool) regex, fclassreg, filter, buffer, sizeof(buffer));
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
@@ -1529,7 +1529,6 @@ PHP_FUNCTION(cfpr_hosts_compliance_for_promises)
     char *userName, *hostkey, *handle, *status;
     char *fhostkey, *fhandle, *fstatus;
     int user_len, hk_len, h_len, s_len;
-    char buffer[CF_WEBBUFFER];
     zend_bool regex;
     zval *context_includes = NULL, *context_excludes = NULL;
 
@@ -1560,15 +1559,12 @@ PHP_FUNCTION(cfpr_hosts_compliance_for_promises)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    buffer[0] = '\0';
-    Nova2PHP_promise_compliance_summary(fhostkey, fhandle, fstatus, (bool) regex, filter, buffer, sizeof(buffer));
+    JsonElement *out = Nova2PHP_promise_compliance_summary(fhostkey, fhandle, fstatus, (bool) regex, filter);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(out);
 }
-
-
 
 /******************************************************************************/
 
@@ -1577,7 +1573,6 @@ PHP_FUNCTION(cfpr_hosts_compliance_for_bundles)
     char *userName, *hostkey, *bundle;
     char *fhostkey, *fbundle;
     int user_len, hk_len, b_len;
-    char buffer[CF_WEBBUFFER];
     zend_bool regex;
     zval *context_includes = NULL, *context_excludes = NULL;
 
@@ -1606,13 +1601,11 @@ PHP_FUNCTION(cfpr_hosts_compliance_for_bundles)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    buffer[0] = '\0';
-
-    Nova2PHP_bundle_compliance_summary(fhostkey, fbundle, (bool) regex, filter, buffer, sizeof(buffer));
+    JsonElement *out = Nova2PHP_bundle_compliance_summary(fhostkey, fbundle, (bool) regex, filter);
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(out);
 }
 
 /******************************************************************************/
