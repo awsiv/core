@@ -1994,7 +1994,6 @@ PHP_FUNCTION(cfpr_summarize_notkept)
          *excludes = NULL;
     int user_len, hk_len, h_len, c_len;
 
-    char buffer[CF_WEBBUFFER];
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
     char *sortColumnName;
@@ -2025,8 +2024,6 @@ PHP_FUNCTION(cfpr_summarize_notkept)
     char *fhandle = (h_len == 0) ? NULL : handle;
     char *fcause_rx = (c_len == 0) ? NULL : cause_rx;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -2035,10 +2032,10 @@ PHP_FUNCTION(cfpr_summarize_notkept)
 
     HostClassFilterAddIncludeExcludeLists(filter, includes, excludes);
 
-    Nova2PHP_promiselog_summary(fhostkey, fhandle, fcause_rx, PROMISE_LOG_STATE_NOTKEPT, from, to, filter, &page, buffer, sizeof(buffer));
+    JsonElement *output = Nova2PHP_promiselog_summary(fhostkey, fhandle, fcause_rx, PROMISE_LOG_STATE_NOTKEPT, from, to, filter, &page);
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(output);
 }
 
 /******************************************************************************/
@@ -2049,7 +2046,6 @@ PHP_FUNCTION(cfpr_summarize_repaired)
     zval *includes = NULL,
          *excludes = NULL;
     int user_len, hk_len, h_len, c_len;
-    char buffer[CF_WEBBUFFER];
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
     char *sortColumnName;
@@ -2079,8 +2075,6 @@ PHP_FUNCTION(cfpr_summarize_repaired)
     char *fhandle = (h_len == 0) ? NULL : handle;
     char *fcause_rx = (c_len == 0) ? NULL : cause_rx;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -2089,10 +2083,10 @@ PHP_FUNCTION(cfpr_summarize_repaired)
 
     HostClassFilterAddIncludeExcludeLists(filter, includes, excludes);
 
-    Nova2PHP_promiselog_summary(fhostkey, fhandle, fcause_rx, PROMISE_LOG_STATE_REPAIRED, from, to, filter, &page, buffer, sizeof(buffer));
+    JsonElement *output = Nova2PHP_promiselog_summary(fhostkey, fhandle, fcause_rx, PROMISE_LOG_STATE_REPAIRED, from, to, filter, &page);
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(output);
 }
 
 /******************************************************************************/

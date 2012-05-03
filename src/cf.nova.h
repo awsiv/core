@@ -781,6 +781,7 @@ unsigned int HubPromiseLogHash(const void *hp_record);
 bool HubPromiseLogEqual(const void *hp_record_a, const void *hp_record_b);
 void DeleteHubPromiseLog(HubPromiseLog *hp);
 HubPromiseSum *NewHubPromiseSum(HubHost *hh, char *handle, char *cause, int occurences, int hostOccurences);
+int HubPromiseSumCompare(void *hps_a, void *hps_b);
 void DeleteHubPromiseSum(HubPromiseSum *hs);
 HubLastSeen *NewHubLastSeen(HubHost *hh, LastSeenDirection direction, char *kh, char *rhost, char *ip, double ago,
                             double avg, double dev, time_t t);

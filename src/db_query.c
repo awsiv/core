@@ -2602,7 +2602,7 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
 HubQuery *CFDB_QueryPromiseLogSummary(mongo_connection *conn, const char *hostkey, PromiseLogState state, const char *handle,
                                       bool regex, const char *cause, time_t from, time_t to, bool sort, HostClassFilter *host_class_filter)
 {
-    HubQuery *hq = CFDB_QueryPromiseLog(conn, hostkey, state, handle, regex, cause, from, to, sort, host_class_filter);
+    HubQuery *hq = CFDB_QueryPromiseLog(conn, hostkey, state, handle, regex, cause, from, to, false, host_class_filter);
 
     Map *log_counts = MapNew(HubPromiseLogHash, HubPromiseLogEqual, NULL, free);
     for (const Rlist *rp = hq->records; rp; rp = rp->next)
@@ -2620,19 +2620,20 @@ HubQuery *CFDB_QueryPromiseLogSummary(mongo_connection *conn, const char *hostke
         *count = *count + 1;
     }
 
-    DeleteRlist(hq->records);
-    hq->records = NULL;
-
+    Rlist *sum_records = NULL;
     MapIterator iter = MapIteratorInit(log_counts);
     MapKeyValue *item;
     while ((item = MapIteratorNext(&iter)))
     {
         const HubPromiseLog *record = (const HubPromiseLog *)item->key;
         const int *count = (const int *)item->value;
-        PrependRlistAlien(&hq->records, NewHubPromiseSum(NULL, record->handle, record->cause, *count, 0));
+        PrependRlistAlien(&sum_records, NewHubPromiseSum(NULL, record->handle, record->cause, *count, 0));
     }
 
+    DeleteRlist(hq->records);
     MapDestroy(log_counts);
+
+    hq->records = sort ? SortRlist(sum_records, HubPromiseSumCompare) : sum_records;
 
     return hq;
 }

@@ -254,66 +254,6 @@ int Nova2Txt_promiselog(char *hostkey, char *handle, char *cause, PromiseLogStat
 
 /*****************************************************************************/
 
-int Nova2Txt_promiselog_summary(char *hostkey, char *handle, char *cause, PromiseLogState state, time_t from, time_t to,
-                                char *classreg)
-{
-    HubPromiseLog *hp;
-    HubQuery *hq;
-    Rlist *rp;
-    mongo_connection dbconn;
-    Item *ip, *summary = NULL;
-    int i = 0;
-
-/* BEGIN query document */
-
-    if (!CFDB_Open(&dbconn))
-    {
-        CfOut(cf_verbose, "", "!! Could not open connection to report database");
-        return false;
-    }
-
-    HostClassFilter *filter = NewHostClassFilter(classreg, NULL);
-
-    hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, cause, from, to, false, filter);
-    DeleteHostClassFilter(filter);
-
-    for (rp = hq->records; rp != NULL; rp = rp->next)
-    {
-        hp = (HubPromiseLog *) rp->item;
-        ip = IdempPrependItem(&summary, hp->handle, hp->cause);
-        ip->counter++;
-    }
-
-    DeleteHubQuery(hq, DeleteHubPromiseLog);
-
-    CFDB_Close(&dbconn);
-
-    if (summary == NULL)
-    {
-        printf("No data to report\n");
-    }
-    else
-    {
-        summary = SortItemListCounters(summary);
-
-        printf("{\"meta\":{\"count\" : %d,"
-               "\"header\":{\"Promise Handle\":0,\"Report\":1,\"Occurrences\":2" "}},\"data\":[", ListLen(summary));
-
-        printf("Promise Handle       Frequency  Report");
-
-        for (ip = summary; ip != NULL; ip = ip->next, i++)
-        {
-            printf("%20.20s %10d %s\n", ip->name, ip->counter, ip->classes);
-        }
-
-        DeleteItemList(summary);
-    }
-
-    return true;
-}
-
-/*****************************************************************************/
-
 int Nova2Txt_software_report(char *hostkey, char *name, char *value, char *arch, bool regex, char *type, char *classreg)
 {
     HubSoftware *hs;

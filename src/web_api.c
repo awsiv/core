@@ -992,9 +992,11 @@ int Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogSt
 
 /*****************************************************************************/
 
-int Nova2PHP_promiselog_summary(char *hostkey, char *handle, char *causeRx, PromiseLogState state, time_t from, time_t to,
-                                HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize)
+JsonElement *Nova2PHP_promiselog_summary(char *hostkey, char *handle, char *causeRx, PromiseLogState state, time_t from, time_t to,
+                                         HostClassFilter *hostClassFilter, PageInfo *page)
 {
+// TODO: need to fix this
+/*
 # ifndef NDEBUG
     if (IsEnvMissionPortalTesting())
     {
@@ -1002,76 +1004,58 @@ int Nova2PHP_promiselog_summary(char *hostkey, char *handle, char *causeRx, Prom
                                                 bufsize);
     }
 # endif
+*/
 
-    char buffer[CF_BUFSIZE], jsonEscapedStr[CF_BUFSIZE] = { 0 }, header[CF_BUFSIZE] = { 0 };
-    HubPromiseLog *hp;
-    HubQuery *hq;
-    Rlist *rp;
     mongo_connection dbconn;
-    Item *ip, *summary = NULL;
-    int startIndex = 0, endIndex = 0, i = 0;
-    bool truncated = false;
-
-    /* BEGIN query document */
-
     if (!CFDB_Open(&dbconn))
     {
-        return false;
+        return NULL;
     }
 
-    hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, causeRx, from, to, false, hostClassFilter);
-    for (rp = hq->records; rp != NULL; rp = rp->next)
-    {
-        hp = (HubPromiseLog *) rp->item;
-        ip = IdempPrependItem(&summary, hp->handle, hp->cause);
-        ip->counter++;
-    }
-
-    DeleteHubQuery(hq, DeleteHubPromiseLog);
+    HubQuery *hq = CFDB_QueryPromiseLogSummary(&dbconn, hostkey, state, handle, true, causeRx, from, to, true, hostClassFilter);
 
     CFDB_Close(&dbconn);
 
-    startIndex = page->resultsPerPage * (page->pageNum - 1);
-    endIndex = (page->resultsPerPage * page->pageNum) - 1;
+    int startIndex = page->resultsPerPage * (page->pageNum - 1);
+    int endIndex = (page->resultsPerPage * page->pageNum) - 1;
 
-    summary = SortItemListCounters(summary);
-    snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d,"
-             "\"header\":{\"Promise Handle\":0,\"Report\":1,\"Occurrences\":2}", ListLen(summary));
-
-    if (summary == NULL)
+    JsonElement *meta = JsonObjectCreate(1);
     {
-        snprintf(returnval, bufsize, "{\"meta\":{\"count\":0},\"data\":[]}");
-        return true;
+        JsonObjectAppendInteger(meta, "count", RlistLen(hq->records));
+
+        JsonElement *header = JsonObjectCreate(3);
+
+        JsonObjectAppendInteger(header, "Promise Handle", 0);
+        JsonObjectAppendInteger(header, "Report", 1);
+        JsonObjectAppendInteger(header, "Occurences", 2);
+
+        JsonObjectAppendObject(meta, "header", header);
     }
 
-    StartJoin(returnval, "{\"data\":[", bufsize);
-
-    for (ip = summary; ip != NULL; ip = ip->next, i++)
+    JsonElement *data = JsonArrayCreate(1000);
+    int i = 0;
+    for (const Rlist *rp = hq->records; rp; rp = rp->next, i++)
     {
         if (i >= startIndex && (i <= endIndex || endIndex < 0))
         {
-            EscapeJson(ip->classes, jsonEscapedStr, sizeof(jsonEscapedStr));
-            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%d],", ip->name, jsonEscapedStr, ip->counter);
+            const HubPromiseSum *record = (const HubPromiseSum *)rp->item;
 
-            if (!Join(returnval, buffer, bufsize))
-            {
-                truncated = true;
-                break;
-            }
+            JsonElement *entry = JsonArrayCreate(3);
+            JsonArrayAppendString(entry, record->handle);
+            JsonArrayAppendString(entry, record->cause);
+            JsonArrayAppendInteger(entry, record->occurences);
+
+            JsonArrayAppendArray(data, entry);
         }
     }
 
-    ReplaceTrailingChar(returnval, ',', '\0');
-    EndJoin(returnval, "]", bufsize);
+    DeleteHubQuery(hq, DeleteHubPromiseSum);
 
-    Nova_AddReportHeader(header, truncated, buffer, sizeof(buffer) - 1);
+    JsonElement *output = JsonObjectCreate(2);
+    JsonObjectAppendObject(output, "meta", meta);
+    JsonObjectAppendArray(output, "data", data);
 
-    Join(returnval, buffer, bufsize);
-    EndJoin(returnval, "}}\n", bufsize);
-    DeleteItemList(summary);
-
-    return true;
+    return output;
 }
 
 /*****************************************************************************/

@@ -531,7 +531,20 @@ HubPromiseSum *NewHubPromiseSum(HubHost *hh, char *handle, char *cause, int occu
     return hs;
 }
 
-/*****************************************************************************/
+// NOTE: non-standard compare function returns true (1) if a < b
+int HubPromiseSumCompare(void *hps_a, void *hps_b)
+{
+    const HubPromiseSum *a = (const HubPromiseSum *)hps_a;
+    const HubPromiseSum *b = (const HubPromiseSum *)hps_b;
+
+    if (!(a && b))
+    {
+        return 0;
+    }
+
+    return a->occurences > b->occurences;
+}
+
 
 void DeleteHubPromiseSum(HubPromiseSum *hs)
 {
