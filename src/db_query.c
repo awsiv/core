@@ -6368,6 +6368,37 @@ long CFDB_GetLastAgentExecution(mongo_connection *conn, const char *hostkey)
     return agent_last_exec;
 }
 
+/*****************************************************************************/
+
+long CFDB_GetDeltaAgentExecution(mongo_connection *conn, const char *hostkey)
+{
+    long delta = 0;
+    bson_buffer buffer;
+    bson query, field;
+
+    // query
+    bson_buffer_init(&buffer);
+    bson_append_string(&buffer, cfr_keyhash, hostkey);
+    bson_from_buffer(&query, &buffer);
+
+    // projection
+    bson_buffer_init(&buffer);
+    bson_append_int(&buffer, cfr_schedule, 1);
+    bson_from_buffer(&field, &buffer);
+
+    bson out;
+    bson_bool_t found = mongo_find_one(conn, MONGO_DATABASE, &query, &field, &out);
+
+    if (found)
+    {
+        delta = BsonLongGet(&out, cfr_schedule);
+    }
+
+    bson_destroy(&query);
+    bson_destroy(&field);
+
+    return delta;
+}
 
 bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour *result)
 {

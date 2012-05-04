@@ -1971,7 +1971,7 @@ int CFDB_MarkAsDeleted(mongo_connection *dbconn, char *keyHash)
 
 /*****************************************************************************/
 
-void CFDB_SaveExecutionStatus(mongo_connection *conn, char *keyhash, bool is_black, long delta_schedule)
+void CFDB_SaveExecutionStatus(mongo_connection *conn, char *keyhash, bool is_black)
 {
     bson_buffer bb;
     bson host_key;  // host description
@@ -1986,9 +1986,7 @@ void CFDB_SaveExecutionStatus(mongo_connection *conn, char *keyhash, bool is_bla
     bson_append_start_object(&bb, "$set");
 
     /* save report to mongo */
-    bson_append_long(&bb, cfr_schedule, delta_schedule);
     bson_append_bool(&bb, cfr_is_black, is_black);
-
     bson_append_finish_object(&bb);
 
     bson_from_buffer(&set_op, &bb);
@@ -2017,6 +2015,33 @@ void CFDB_SaveLastAgentExecution(mongo_connection *conn, char *keyhash, long las
     /* save report to mongo */
     bson_append_long(&bb, cfr_last_execution, last_agent_exec);
 
+    bson_append_finish_object(&bb);
+
+    bson_from_buffer(&set_op, &bb);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT);
+
+    bson_destroy(&set_op);
+    bson_destroy(&host_key);
+}
+
+/*****************************************************************************/
+
+void CFDB_SaveDeltaAgentExecution(mongo_connection *conn, char *keyhash, long delta_schedule)
+{
+    bson_buffer bb;
+    bson host_key;  // host description
+    bson set_op;
+
+    /* find right host */
+    bson_buffer_init(&bb);
+    bson_append_string(&bb, cfr_keyhash, keyhash);
+    bson_from_buffer(&host_key, &bb);
+
+    bson_buffer_init(&bb);
+    bson_append_start_object(&bb, "$set");
+
+    /* save report to mongo */
+    bson_append_long(&bb, cfr_schedule, delta_schedule);
     bson_append_finish_object(&bb);
 
     bson_from_buffer(&set_op, &bb);

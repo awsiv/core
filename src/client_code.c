@@ -11,6 +11,7 @@
 #include "cf.nova.h"
 
 #include "db_save.h"
+#include "db_query.h"
 #include "crypto.h"
 
 static bool ReportBookHasData(Item **reports);
@@ -279,6 +280,27 @@ static bool ReportBookHasData(Item **reports)
 
 /*********************************************************************/
 
+static void BlackStatusFlagRefresh(mongo_connection *dbconn, char *id)
+{
+    long delta_schedule = CFDB_GetDeltaAgentExecution(dbconn, id);
+    time_t agent_last_run_time = CFDB_GetLastAgentExecution(dbconn, id);
+
+    if (delta_schedule == 0)
+    {
+        time_t now = time(NULL);
+
+        int black_threshold = (SECONDS_PER_MINUTE * 5) * CF_BLACKHOST_THRESHOLD; // 5 min assumption
+        black_threshold += black_threshold * (CF_BLACKHOST_THRESHOLD_VARIATION * 0.01);
+        delta_schedule = (long)(now - agent_last_run_time);
+        bool is_blackhost = (delta_schedule > black_threshold)? true:false;
+
+        CFDB_SaveExecutionStatus(dbconn, id, is_blackhost);
+
+        CfDebug("Execution status (pre-estimation): black %s, agent last run time: %ld",
+                (is_blackhost)? "true" : "false", agent_last_run_time);
+    }
+}
+
 void UnpackReportBook(mongo_connection *dbconn, char *id, Item **reports)
 {
     int i;
@@ -291,6 +313,12 @@ void UnpackReportBook(mongo_connection *dbconn, char *id, Item **reports)
 
             (*fnptr) (dbconn, id, reports[i]);
         }
+    }
+
+    /* nova agent < 2.2 - black status estimation */
+    if (dbconn)
+    {
+        BlackStatusFlagRefresh(dbconn, id);
     }
 }
 
