@@ -16,6 +16,7 @@
 #include "cf.nova.h"
 #include "lastseen.h"
 #include "crypto.h"
+#include "files_names.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"

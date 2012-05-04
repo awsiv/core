@@ -1,9 +1,8 @@
-// WTF: it's hard to imagine that any file name *_test.c should be in src
-
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
 #include "cf.nova.web_api.h"
+#include "files_names.h"
 
 #define WORD_LEN  10
 #define HOSTNAME_LEN  30

@@ -4,27 +4,17 @@
 
 */
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: db_query.c                                                          */
-/*                                                                           */
-/* Created: Wed Jul 16 14:41:22 2010                                         */
-/*                                                                           */
-/* MongoDB implementation of report query drivers.                           */
-/*                                                                           */
-/*****************************************************************************/
+#include "db_query.h"
 
 #include "bson_lib.h"
 #include "web_rbac.h"
-#include <assert.h>
-
-/*****************************************************************************/
-
-#include "db_query.h"
 #include "db_save.h"
 #include "granules.h"
 #include "map.h"
 #include "bson_hub_conversion.h"
+#include "files_names.h"
+
+#include <assert.h>
 
 static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *filter);
 static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFilter *hostClassFilter);

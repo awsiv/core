@@ -8,15 +8,10 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#include <assert.h>
-
+#include "files_names.h"
 #include "db_query.h"
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: topicmap.c                                                          */
-/*                                                                           */
-/*****************************************************************************/
+#include <assert.h>
 
 static int Nova_NewVertex(GraphNode *tribe, int node, int distance, int real, char *name, char *context);
 

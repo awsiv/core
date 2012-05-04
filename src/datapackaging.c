@@ -18,6 +18,7 @@
 #include "cf.nova.h"
 #include "lastseen.h"
 #include "granules.h"
+#include "files_names.h"
 
 /* For sorting */
 typedef struct

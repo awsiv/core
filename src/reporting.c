@@ -16,6 +16,7 @@
 #include "cf.nova.h"
 #include "cf.nova.cmd_api.h"
 #include "lastseen.h"
+#include "files_names.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"

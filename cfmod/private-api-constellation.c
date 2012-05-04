@@ -1,5 +1,7 @@
 #include "private-api-constellation.h"
+
 #include "common.h"
+#include "files_names.h"
 
 #ifdef HAVE_CONSTELLATION
 

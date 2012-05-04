@@ -20,9 +20,12 @@
 /*****************************************************************************/
 
 #include "web_rbac.h"
-#include <assert.h>
 
 #include "db_query.h"
+#include "files_names.h"
+
+#include <assert.h>
+
 
 static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles);
 static char *StringAppendRealloc2(char *start, char *append1, char *append2);

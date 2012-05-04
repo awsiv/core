@@ -17,6 +17,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 #include "files_lib.h"
+#include "files_names.h"
 
 #ifdef HAVE_ZONE_H
 # include <zone.h>

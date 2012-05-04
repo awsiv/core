@@ -21,8 +21,10 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "db_save.h"
 #include "db_query.h"
 #include "db_maintain.h"
-#include <assert.h>
 #include "web_rbac.h"
+#include "files_names.h"
+
+#include <assert.h>
 
 static const char *CDP_REPORTS[][2] =
 {
