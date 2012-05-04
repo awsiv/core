@@ -38,8 +38,4 @@ long BsonLongGet(const bson *b, const char *key);
 const char *BsonGetArrayValue(const bson *b, const char *key);
 bool BsonIsKeyCorrupt(const char *key);
 
-/* CFE data structures */
-HubPromiseCompliance *BsonIteratorGetPromiseCompliance(bson_iterator *it, HubHost *hh, char *rhandle);
-HubBundleSeen *BsonIteratorGetBundleSeen(bson_iterator *it, HubHost *hh, char *rname);
-
 #endif

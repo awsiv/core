@@ -128,14 +128,6 @@ int CFDB_QueryMasterIP(char *buffer, int bufsize);
 int CFDB_QueryReplStatus(mongo_connection *conn, char *buffer, int bufsize);
 
 //*****************************************************************************
-// Probably into separate db_utils.h
-//*****************************************************************************
-/* CFE report details per host */
-bool BsonIterGetBundleReportDetails(bson_iterator *it, char *lname, bool regex, time_t blueHorizonTime, HubHost *hh, Rlist **record_list );
-bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle, bool regex, PromiseState lstatus, time_t from, time_t to, time_t blueHorizonTime, HubHost *hh, Rlist **record_list );
-
-
-//*****************************************************************************
 // General Utilities / Deprecation Candidates
 //*****************************************************************************
 void CFDB_ScanHubHost(bson_iterator *it, char *keyhash, char *ipaddr, char *hostnames);
