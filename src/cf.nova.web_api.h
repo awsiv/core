@@ -216,7 +216,6 @@ int Nova2PHP_get_bluehost_threshold(char *buffer, int bufsize);
 int Nova2PHP_list_promise_handles_with_comments(char *bundle, char *btype, char *returnval, int bufsize);
 int Nova2PHP_promise_list(PromiseFilter *promiseFilter, char *returnval, int bufsize, PageInfo *page);
 
-char *Nova_HostProfile(char *key);
 int Nova2PHP_promise_details(PromiseFilter *filter, char *returnval, int bufsize);
 
 char *Nova2PHP_GetPromiseComment(char *handle);

@@ -3397,17 +3397,6 @@ void Nova2PHP_get_host_colour(char *hostkey, char *buffer, int bufsize)
 
 /*****************************************************************************/
 
-char *Nova_HostProfile(char *key)
-{
-    static char buffer[CF_BUFSIZE];
-
-    snprintf(buffer, CF_BUFSIZE,
-             "{\"hostkey\" : \"%s\", \"profiles\":[\"Bundles\",\"Classes\",\"Goals\",\"Promises\"]}", key);
-    return buffer;
-}
-
-/*****************************************************************************/
-
 char *Nova2PHP_GetPromiseComment(char *handle)
 {
     static char buffer[CF_BUFSIZE];
