@@ -2148,9 +2148,9 @@ int Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFil
         char bundleAvg[CF_SMALLBUF];
         char bundleDev[CF_SMALLBUF];
 
-        WriteDouble2Str_MP(hb->bundlecomp, bundleComp, sizeof(bundleComp));
-        WriteDouble2Str_MP(hb->bundleavg, bundleAvg, sizeof(bundleAvg));
-        WriteDouble2Str_MP(hb->bundledev, bundleDev, sizeof(bundleDev));
+        WriteDouble2Str_MP(hb->bundlecomp * 100, bundleComp, sizeof(bundleComp));
+        WriteDouble2Str_MP(hb->bundleavg * 100, bundleAvg, sizeof(bundleAvg));
+        WriteDouble2Str_MP(hb->bundledev * 100, bundleDev, sizeof(bundleDev));
 
         snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,\"%s\",\"%s\",\"%s\"],",
                  hb->hh->hostname, hb->bundle, hb->t,
