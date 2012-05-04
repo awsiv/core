@@ -47,8 +47,9 @@ void CFDB_SaveCachedTotalCompliance(mongo_connection *conn, char *policy, int sl
 int CFDB_SaveLastseenCache(Item *lastseen);
 void CFDB_SaveGoalsCache(char *goal_patterns);
 int CFDB_MarkAsDeleted(mongo_connection *dbconn, char *keyHash);
-void CFDB_SaveExecutionStatus(mongo_connection *conn, char *keyhash, bool is_black, long delta_schedule);
+void CFDB_SaveExecutionStatus(mongo_connection *conn, char *keyhash, bool is_black);
 void CFDB_SaveLastAgentExecution(mongo_connection *conn, char *keyhash, long last_agent_exec);
+void CFDB_SaveDeltaAgentExecution(mongo_connection *conn, char *keyhash, long delta);
 
 int CFDB_AddNote(mongo_connection *conn, char *keyhash, int reportType, char *nid,
                  char *reportData, char *username, long datetime, char *msg);
