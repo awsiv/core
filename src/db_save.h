@@ -6,8 +6,6 @@
 
 #include <mongo.h>
 
-void CFDB_Initialize(void);
-
 int CFDB_PutValue(char *lval, char *rval, char *db_name);
 
 void CFDB_SaveSoftware(mongo_connection *conn, enum software_rep sw, char *kH, Item *data);

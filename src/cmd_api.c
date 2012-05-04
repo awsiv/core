@@ -4,14 +4,6 @@ This file is (C) Cfengine AS. See LICENSE for details.
 
 */
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: cmd_api.c                                                           */
-/*                                                                           */
-/* Created: Mon Aug 8 10:44:14 2011                                          */
-/*                                                                           */
-/*****************************************************************************/
-
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
