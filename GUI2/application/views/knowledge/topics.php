@@ -23,7 +23,6 @@
                                 $appendPath = ''; // no need to append if its full web url
                                 $target = '_blank';
                             }
-                          
                             if (preg_match('/^\/docs/', $topic['ref']) ||preg_match('/^\/showexample/', $topic['ref']) ) {
                                 $target = '_blank'; // no need to append if its full web url
                             }
@@ -33,8 +32,8 @@
                     </td>
                 </tr>
             <?php } ?>
-        </table> 
+        </table>
     <?php } else { ?>
-        <div>No information found on this topic.</div>
+        <div><?php echo $this->lang->line('knowledge_topic_not_found'); ?></div>
     <?php } ?>
 </div>

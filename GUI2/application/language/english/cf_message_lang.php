@@ -255,6 +255,7 @@ $lang['knowledge_tab_subtopic'] = 'Sub topic';
 $lang['knowledge_copernicus'] = 'Copernicus local cluster view for topic';
 $lang['knowledge_insight_leads'] = 'Other perspectives on';
 $lang['knowledge_access_denied'] = "You don't have access to knowledgemap";
+$lang['knowledge_topic_not_found'] = "No related topics found.";
 
 
 
