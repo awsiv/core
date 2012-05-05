@@ -249,7 +249,7 @@ Monitoring_extensions::
 occurrences:
 
     "/docs/cf3-conceptguide#The-policy-decision-flow"
-         about_topics => { "desired state" }
+         about_topics => { "desired state" };
 
  
      "/docs/cfnova.html#Business-value-reports"
