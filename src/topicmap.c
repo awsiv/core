@@ -135,15 +135,24 @@ void Nova_DumpTopics()
 
 void Nova_ShowTopic(char *qualified_topic)
 {
-    char topic_name[CF_BUFSIZE], topic_context[CF_BUFSIZE];
+    char topic_name[CF_BUFSIZE], topic_context[CF_BUFSIZE], topic_id[CF_BUFSIZE];
     int id;
     Writer *writer = NULL;
     JsonElement *json = NULL;
 
     Nova_DeClassifyTopic(qualified_topic, topic_name, topic_context);
     id = Nova_GetTopicIdForTopic(qualified_topic);
-        
-    printf("Found: \"%s\" \n", topic_name);
+
+    printf("Search: %s\n",topic_name);
+
+    if (id == 0)
+       {
+       printf("Found nothing\n");
+       return;
+       }
+
+    Nova_GetTopicByTopicId(id, topic_name, topic_id, topic_context);
+    printf("Found (%d): \"%s::%s = %s\" \n", id, topic_context, topic_name, topic_id);
 
     writer = StringWriter();
     json = Nova2PHP_show_all_context_leads(topic_name);
@@ -159,6 +168,7 @@ void Nova_ShowTopic(char *qualified_topic)
         JsonElementDestroy(json);
         printf("\nOccurrences: %s\n\n", StringWriterClose(writer));
     }
+
 }
 
 
@@ -819,7 +829,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 
     for (rp = goal_patterns; rp != NULL; rp = rp->next)
     {
-        snprintf(work, CF_MAXVARSIZE - 1, "%s|", (char *) rp->item);
+        snprintf(work, CF_MAXVARSIZE - 1, "promisers::%s|%s|", (char *) rp->item, CanonifyName((char *) rp->item));
         strcat(searchstring, work);
     }
 
@@ -838,9 +848,8 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
     }
 
 /* BEGIN query document */
-
+    
     bson_buffer_init(&bb);
-    bson_append_regex(&bb, cfk_occurcontext, searchstring, "");
     bson_append_regex(&bb, cfk_occurtopic, searchstring, "");
     bson_from_buffer(&query, &bb);
 
