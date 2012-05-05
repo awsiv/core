@@ -207,7 +207,7 @@ $lang['header_promise_definition'] = 'Promise definition';
 $lang['header_body_promise'] = 'Body of the promise';
 
 $lang['promise_tab_definition'] = 'Definition';
-$lang['promise_tab_leads'] = 'Leads';
+$lang['promise_tab_leads'] = 'See also';
 $lang['promise_tab_same_bundle'] = 'Same bundle';
 $lang['promise_tab_same_promiser'] = 'Same promiser';
 $lang['promise_tab_same_type'] = 'Same type';
@@ -247,13 +247,13 @@ $lang['bundle_bundle'] = 'Bundles';
 /*
  * Knowledge map
  */
-$lang['knowledge_tab_map'] = 'Map';
-$lang['knowledge_tab_leads'] = 'Leads';
-$lang['knowledge_tab_references'] = 'References';
-$lang['knowledge_tab_same_context'] = 'Same context';
+$lang['knowledge_tab_map'] = 'Visual';
+$lang['knowledge_tab_leads'] = 'See also';
+$lang['knowledge_tab_references'] = 'Documents and notes';
+$lang['knowledge_tab_same_context'] = 'Also in context';
 $lang['knowledge_tab_subtopic'] = 'Sub topic';
 $lang['knowledge_copernicus'] = 'Copernicus local cluster view for topic';
-$lang['knowledge_insight_leads'] = 'Perspectives on';
+$lang['knowledge_insight_leads'] = 'Other perspectives on';
 $lang['knowledge_access_denied'] = "You don't have access to knowledgemap";
 
 
