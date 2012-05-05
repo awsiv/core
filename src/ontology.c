@@ -172,7 +172,7 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
 
         if (edit_bundle)
            {
-           fprintf(fp, "bundles:: \"%s\" association => a(KM_USES_CERT_F,\"%s\",KM_USES_CERT_B);  \n", pp->bundle, (const char *) edit_bundle->name);
+           fprintf(fp, "bundles:: \"%s\" association => a(\"%s\",\"%s\",\"%s\");  \n", pp->bundle, KM_USES_CERT_F, (const char *) edit_bundle->name,KM_USES_CERT_B);
         
             if (strcmp(edit_bundle->name, "insert_file") == 0)  // stdlib
             {
