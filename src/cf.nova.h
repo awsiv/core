@@ -1214,8 +1214,8 @@ int CfLDAP_JSON_GetSingleAttributeList(char *uri, char *user, char *basedn, char
 #define NOVA_HANDLE "is the promise handle affecting"
 #define NOVA_HANDLE_INV "makes a promise with handle"
 #define NOVA_SYNONYM KM_SYNONYM
-#define NOVA_GOAL "contributes to business goal"
-#define NOVA_GOAL_INV "is supported by a promise"
+#define NOVA_GOAL "contributes to goal"
+#define NOVA_GOAL_INV "is a goal supported by promise"
 #define NOVA_GEN "is derived from"
 #define NOVA_REPORTED "are reported in"
 #define NOVA_SEEALSO "might also refer to"

@@ -336,6 +336,9 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
         fprintf(fp, "      association => a(\"%s\",\"%s\",\"%s\");\n", KM_AFFECTS_CERT_B, NovaEscape(pp->promiser),
                 KM_AFFECTS_CERT_F);
 
+        fprintf(fp, "  \"%s\"\n", (const char *) pp->promisee.item);
+        fprintf(fp, "      association => a(\"is a promisee for\",\"%s\",\"has promisee\");\n", NovaEscape(pp->promiser));
+
         for (rp = GOALS; rp != NULL; rp = rp->next)
         {
             if (StringMatch(rp->item, pp->promisee.item))
@@ -368,6 +371,10 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
                     NOVA_GIVES_PR);
             fprintf(fp, "  \"%s\"\n", (const char *) rp->item);
             fprintf(fp, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_USES_PR, promise_id, NOVA_GIVES_PR);
+
+            fprintf(fp, "  \"%s\"\n", (const char *) rp->item);
+            fprintf(fp, "      association => a(\"is a promisee for\",\"%s\",\"has promisee\");\n", NovaEscape(pp->promiser));
+
             for (rp2 = GOALS; rp2 != NULL; rp2 = rp2->next)
             {
                 if (StringMatch(rp2->item, rp->item))
@@ -377,6 +384,9 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
                     fprintf(fp, "      association => a(\"%s\",\"%s\",\"%s\");\n", NOVA_IMPACTS,
                             (const char *) rp2->item, NOVA_ISIMPACTED);
 
+                    fprintf(fp, "  \"%s\"  association => a(\"%s\",\"goals::%s\",\"%s\");", promise_id, NOVA_GOAL,
+                                (const char *) rp->item, NOVA_GOAL_INV);
+                    
                     if (bundlename)
                     {
                         fprintf(fp, "bundles::\n\n");
