@@ -250,7 +250,14 @@ class Search extends Cf_Controller
             $paramArray[$index] = urldecode($value);
         }
 
-        try
+       // do a redirect here if it is a post
+       // fix for back button with Post/Redirect/Get
+       if (strtolower($_SERVER["REQUEST_METHOD"]) === "post") {
+           // redirect with correct params
+           redirect('search/index/'.$this->assoc_to_uri($paramArray));
+       }
+
+       try
         {
             $data = array(
                 'report_type' => $report_type,
