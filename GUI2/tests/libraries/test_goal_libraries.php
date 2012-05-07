@@ -23,5 +23,11 @@ class test_goal_libraries extends CodeIgniterUnitTestCase {
         $this->assertFalse($retValue, "This should return 0 in case of no error, returned value is $retValue");
         $this->assertTrue(!empty ($array),"Is  Empty ". count($array) ."items");
     }
+    
+    public function test_business_goals(){
+        $data =cfpr_list_business_goals();
+        $array = json_decode(utf8_encode($data), true);
+        $this->dump($data);
+    }
 }
 ?>
