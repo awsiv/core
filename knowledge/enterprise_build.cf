@@ -18,10 +18,8 @@ bundlesequence  => {
                    "substrings",
                    "CfengineSiteConfiguration",
                    "enterprise_knowledge",
-
-
-
-
+                   "questions",
+                   "error_messages",
 
                    # Add your own knowledge here
 
@@ -37,6 +35,7 @@ inputs         => {
                   "cf_associations.cf",
                   "cf_system.cf",
                   "examples.cf",
+                  "error_topics.cf",
                   "scan_solutions.cf",
                   "scan_substrings.cf",
                   "$(sys.workdir)/promise_knowledge.cf",
