@@ -916,7 +916,7 @@ bundle agent cfengine_web_server(state)
   web_servers.disable_selinux::
 
    "/usr/sbin/setenforce 0"
-      comment => "Disable SELINUX",
+      comment => "Disable SELINUX every hour",
        handle => "cfengine_web_server_commands_disable_selinux",
 #      classes => cmd_repair("0", "cmd_fixed_setenforce"),
        action => if_elapsed("60");
@@ -972,8 +972,9 @@ bundle agent cfengine_web_server(state)
   disable_selinux::
 
    " NB - Disabling SELinux to allow PHP to function",
-      comment => "Alert message on screen",
-       handle => "cfengine_web_server_reports_disable_selinux";
+      comment => "Alert message on screen once a day",
+       handle => "cfengine_web_server_reports_disable_selinux",
+       action => if_elapsed("1440");
 
 }
 
