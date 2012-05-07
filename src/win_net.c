@@ -15,6 +15,7 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+#include "files_names.h"
 
 #define WORKING_BUFFER_SIZE 15000
 #define MAX_ALLOCTRIES 3
