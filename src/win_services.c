@@ -9,6 +9,7 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+#include "files_names.h"
 
 static int CountArgs(const char **args);
 static int NovaWin_CheckServiceStatus(char *srvName, enum cf_srv_policy policy, char *argStr, int onlyCheckDeps,
