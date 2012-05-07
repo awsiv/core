@@ -73,7 +73,6 @@ void Nova_PackPerformance(Item **reply, char *header, time_t from, enum cfd_menu
         time_t then;
         char tbuf[CF_BUFSIZE];
 
-        memcpy(&then, value, sizeof(then));
         strncpy(eventname, (char *) key, ksize);
 
         if (value != NULL)
@@ -1937,7 +1936,6 @@ void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_menu typ
         double then;
         time_t fthen;
 
-        memcpy(&then, value, sizeof(then));
         strncpy(bundle, (char *) key, ksize);
 
         if (value != NULL)
