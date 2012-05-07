@@ -791,6 +791,8 @@ bool CfLDAPAuthenticate(const char *uri, const char *basedn, const char *passwd,
 
     int ret = NovaLDAPAuthenticate(ld, basedn, "sasl", passwd);
 
+    ldap_unbind(ld);
+
     if (ret == LDAP_SUCCESS)
     {
         return true;
@@ -1477,7 +1479,7 @@ static int NovaLDAPAuthenticate(LDAP *ld, const char *basedn, const char *sec, c
 
     if (strcmp(sec, "sasl") == 0)
     {
-        struct berval *servcred;
+        struct berval *servcred = NULL;
 
         ret = ldap_sasl_bind_s(ld, basedn, LDAP_SASL_SIMPLE, &passwd, NULL, NULL, &servcred);
     }
