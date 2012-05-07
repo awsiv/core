@@ -97,7 +97,7 @@ void Nova2PHP_GetLibraryDocuments(char *path, char *buffer, int bufsize)
         {
             Nova_RegisterDoc(&others, namedir, dirp->d_name);
         }
-        else if (StringMatch("st-.*\\.html", dirp->d_name))
+        else if (StringMatch("SpecialTopic_.*\\.html", dirp->d_name))
         {
             Nova_RegisterDoc(&guides, namedir, dirp->d_name);
         }
