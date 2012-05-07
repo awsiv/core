@@ -789,12 +789,12 @@ promise_theory::
   "promise-type"      association => a("describes the nature (or category) of a","promise","is qualified by its");
   "promise-type"      association => a("has instances","@(all_actions)","is an instance of");
 
-  "promise body"      association => a("has attribute","body-type","is an attribute of");
-  "promise body"      association => a("has attribute","body-constraint","is an attribute of");
-  "body-type"         association => a("describes the subject (nature or quality) of a","body-constraint","is qualified by its");
-  "body-constraint"   association => a("describes the extent (or quantity) of a","promise","is quantified by its");
+  "promise body"      association => a("has attribute","body type","is an attribute of");
+  "promise body"      association => a("has attribute","body constraint","is an attribute of");
+  "body type"         association => a("describes the subject (nature or quality) of a","body constraint","is qualified by its");
+  "body constraint"   association => a("describes the extent (or quantity) of a","promise","is quantified by its");
 
-  "topic-types";
+  "topic types";
   "topics"            association => a("can talk about","promises","can be represented as");
   "topics"            association => a("can be combined into","stories","can be broken down into");
   "topics"            association => a("can be classified into disjoint","topic types","are disjoint classes of");

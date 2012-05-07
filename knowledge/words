@@ -124,9 +124,8 @@ any::black, grey and white box encapsulation in cfengine
 system_policy::bodies
 any::body changes detect_all_change
 any::body constraints
-promise_theory::body-constaint
-promise_theory::body-constraint
-promise_theory::body-type
+promise_theory::body constraint
+promise_theory::body type
 values::boolean
 any::boot services
 boot_services::bootp

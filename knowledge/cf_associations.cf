@@ -123,7 +123,7 @@ topics:
 
   promise_theory::
 
-    "body-constaint" association => a("is realized in","body constraints","are examples of");
+    "body constraint" association => a("is realized in","body constraints","are examples of");
 
   models_of_system_administration::
 
@@ -249,6 +249,7 @@ Monitoring_extensions::
 occurrences:
 
     "/docs/cf3-conceptguide#The-policy-decision-flow"
+      represents => { "Manual section" },
          about_topics => { "desired state" };
 
  
@@ -258,7 +259,7 @@ occurrences:
 
 
    "/docs/cfnova.html#Nova-attends-to-business-goals"
-      represents => { "manual section Nova" },
+      represents => { "manual section" },
     about_topics => { "business value", "business goals" };
 
 
