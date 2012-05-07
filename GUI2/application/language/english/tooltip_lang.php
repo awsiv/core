@@ -23,7 +23,7 @@ $lang['tooltip_greenhost'] = 'More than 80% of promises are stable and kept.';
 $lang['tooltip_bluehost'] = 'Hosts that have not been reachable (their state is unknown) for more than: ';
 $lang['tooltip_blackhost'] = 'Hosts failed to execute their agents for last 3 scheduled rounds.';
 
-$lang['tooltip_statusroom'] = 'The status room shows how close you are to an ideal state.';
+$lang['tooltip_statusroom'] = 'The business summary room shows how close you are to an ideal state.';
 $lang['tooltip_engineeringroom'] = 'The engineering room shows the technical status of the managed hosts.';
 $lang['tooltip_planningroom'] = 'The planning room contains tools for collaboration, planning and policy changes.';
 $lang['tooltip_libraryroom'] = 'The library room contains knowledge and documentation about CFEngine and your policy.';
