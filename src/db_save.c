@@ -1610,6 +1610,12 @@ void CFDB_SaveBundles(mongo_connection *conn, char *keyhash, Item *data)
 
         then = (time_t) fthen;
 
+        // ignore values with corrupted timestamps
+        if(!cf_ctime(&then))
+        {
+            continue;
+        }
+
         snprintf(varName, sizeof(varName), "%s.%s", cfr_bundles, bundle);
 
         sub = bson_append_start_object(setObj, varName);
