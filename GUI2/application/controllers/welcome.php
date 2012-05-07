@@ -88,12 +88,26 @@ class Welcome extends Cf_Controller
 
 
         $this->breadcrumb->setBreadCrumb($bc);
+        $goals = array();
+        $goalsError = false;
+        try
+        {
+            $goals = $this->goals_model->getAllGoals();
+        }
+        catch (Exception $e)
+        {
+            // if exception is thrown here just pass a empty array to goals
+            // errors are already logged from the model
+            $goalsError = true;
+        }
+
         try
         {
             $data = array(
                 'title' => $this->lang->line('mission_portal_title') . "-" . $this->lang->line('breadcrumb_status'),
                 'breadcrumbs' => $this->breadcrumblist->display(),
-                'goals' => $this->goals_model->getAllGoals()
+                'goals' => $goals,
+                'goalsError' => $goalsError
             );
 
             // Summary meter for host
@@ -247,12 +261,24 @@ class Welcome extends Cf_Controller
         );
         $this->carabiner->js($requiredjs);
         $this->carabiner->css('tabs-custom.css');
+        $goals = array();
+        $goalsError = false;
+        try
+        {
+            $goals = $this->goals_model->getAllGoals();
+        }
+        catch (Exception $e)
+        {
+            // errors are already logged from the model
+            $goalsError = true;
+        }
         $data = array(
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_planning'),
             'breadcrumbs' => $this->breadcrumblist->display(),
             'users' => getonlineusernames(),
             'working_notes' => $this->userdata->get_personal_working_notes(),
-            'goals' => json_decode(cfpr_list_business_goals(), true)
+            'goals' => $goals,
+            'goalsError' => $goalsError
         );
         $this->template->load('template', 'planning', $data);
     }
@@ -265,10 +291,23 @@ class Welcome extends Cf_Controller
             'isRoot' => false
         );
         $this->breadcrumb->setBreadCrumb($bc);
+
+        $goals = array();
+        $goalsError = false;
+        try
+        {
+            $goals = $this->goals_model->getAllGoals();
+        }
+        catch (Exception $e)
+        {
+            // errors are already logged from the model
+            $goalsError = true;
+        }
         $data = array(
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_goals'),
             'breadcrumbs' => $this->breadcrumblist->display(),
-            'goals' => json_decode(cfpr_list_business_goals(), true)
+            'goals' => $goals,
+            'goalsError' => $goalsError
         );
         $this->template->load('template', 'goals', $data);
     }

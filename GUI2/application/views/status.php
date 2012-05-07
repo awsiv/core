@@ -41,26 +41,7 @@
 
         <div id="goals" class="innerdiv statusgoal">
             <p class="title">Services/goals</p>
-            <ul>
-                <?php
-                $limit = 0;
-                $goalsorted = array_msort($goals, array('name' => SORT_ASC), true);
-                foreach ((array) $goalsorted as $goal) {
-                    if ($limit == 5) {
-                        break;
-                    }
-                    $words = explode("::", $goal['name']);
-                    if (!array_key_exists(1, $words)) {
-                        $text = $words[0];
-                    } else {
-                        $text = $words[1];
-                    }
-                    echo "<li><span class=\"goal\">$text</span> - <span>" . $goal['desc'] . "</span><span class=\"check\"></span></li>";
-                    $limit++;
-                }
-                ?>
-            </ul>
-            <p class="morebtnpane"><span class="morebtn"><?php echo anchor('welcome/goals', 'More...') ?></span></p>
+            <?php require_once('goals-template.php'); ?>
         </div>
     </div>
     <div class="clear"></div>
