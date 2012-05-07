@@ -113,13 +113,18 @@ class Search extends Cf_Controller
     function generateReportMenu($selectedCat = '', $selectedType = '')
     {
         $reportArray = $this->__reports_menu();
-        $savedSearchReport = $this->_integrateSaveSearches();
         $data['reports_menu'] = $reportArray;
-        $data['saved_search_menu'] = $savedSearchReport;
         $data['report_category'] = $selectedCat;
         $data['report_type'] = $selectedType;
         $this->load->view('/searchpages/reportsMenu', $data);
     }
+
+    // generate the save search menu for the reports menu
+    function generateSaveSearchMenu(){
+    $data['saved_search_menu'] = $this->_integrateSaveSearches();
+    $this->load->view('/searchpages/saveSearchMenu', $data);
+    }
+
 
     function index()
     {
