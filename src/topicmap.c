@@ -1170,11 +1170,11 @@ int Nova_GetTribe(int *tribe_id, GraphNode *tribe_nodes, double tribe_adj[CF_TRI
     {
         Item *backup, *ip;
         Nova_GetTopicByTopicId(pid, topic_name, topic_id, topic_context);
-        backup = Nova_ScanLeadsAssociations(pid, view_pattern);
+        backup = Nova_SearchTopicMap(topic_name,CF_SEARCH_EXACT,false);
 
         for (ip = backup; ip != NULL; ip=ip->next)
         {
-            PrependFullItem(&nn, ip->classes, "any", ip->counter, 0);
+            PrependFullItem(&nn, "see also", "any", ip->counter, 0);
         }
         
         DeleteItemList(backup);
