@@ -1,25 +1,42 @@
 <?php $displayText = ($report_type == "promise-compliance") ? 'promise' : 'bundle'; ?>
 <?php if (isset($show_host_summary) && ($show_host_summary == true)){ ?>
-            <div id="hostsInfoContainer" class="hostsInfoContainer innerdiv grid_12" style="">
-
-                <div id="hostsComplianceContainer" class="hostsComplianceContainer grid_7">
+            <div id="hostgrpsummary">
+                <div class="grid_6" style="margin:0 1%">
                     <div class="hostsCompliance">
                         <p class="title">Red, Yellow and Green compliance in regard to specified <?php echo $displayText; ?>(s).</p>
-                        <div class="colourEntry"> <a href="<?php echo site_url( "/search/index/" . $detail_result_url . "/hosts_only/true/clevel/red/"); ?>" title="" class="redhost showqtip hoststatuslist"><?php echo $c_data['red']; ?> <?php echo $this->lang->line('not_compliant'); ?></a> <a href="<?php echo site_url("/search/index/" . $detail_result_url . "/clevel/red"); ?>" title="" >Show detail report</a></div>
-                        <div class="colourEntry"><a href="<?php echo site_url("search/index/" . $detail_result_url. "/hosts_only/true/clevel/yellow/"); ?>" title=""  class="yellowhost showqtip hoststatuslist "><?php echo $c_data['yellow'] ?> <?php echo $this->lang->line('now_compliant'); ?></a> <a href="<?php echo site_url("/search/index/" . $detail_result_url . "/clevel/yellow"); ?>" title="">Show detail reports</a></div>
-                        <div class="colourEntry"><a href="<?php echo site_url("search/index/".  $detail_result_url .  "/hosts_only/true/clevel/green/"); ?>" title="" class="greenhost showqtip hoststatuslist "><?php echo $c_data['green'] ?> <?php echo $this->lang->line('compliant'); ?> </a> <a href="<?php echo site_url("/search/index/" . $detail_result_url . "/clevel/green"); ?>" title="" >Show detail reports</a></div>
+                        <div class="colourEntry"> 
+                            <span class="colourEntryIcon red"></span>
+                            <a href="<?php echo site_url( "/search/index/" . $detail_result_url . "/hosts_only/true/clevel/red/"); ?>" title="" class="hostlink"><?php echo $c_data['red']; ?> <?php echo $this->lang->line('not_compliant'); ?></a> 
+                            <a href="<?php echo site_url("/search/index/" . $detail_result_url . "/clevel/red"); ?>" title="" class="reportlink" >&lt; Show detail report &gt;</a>
+                        </div>
+                        <div class="colourEntry">
+                            <span class="colourEntryIcon yellow"></span>
+                            <a href="<?php echo site_url("search/index/" . $detail_result_url. "/hosts_only/true/clevel/yellow/"); ?>" title=""  class="hostlink"><?php echo $c_data['yellow'] ?> <?php echo $this->lang->line('now_compliant'); ?></a>
+                            <a href="<?php echo site_url("/search/index/" . $detail_result_url . "/clevel/yellow"); ?>" title="" class="reportlink">&lt; Show detail report &gt;</a>
+                        </div>
+                        <div class="colourEntry">
+                            <span class="colourEntryIcon green"></span>
+                            <a href="<?php echo site_url("search/index/".  $detail_result_url .  "/hosts_only/true/clevel/green/"); ?>" title="" class="hostlink"><?php echo $c_data['green'] ?> <?php echo $this->lang->line('compliant'); ?> </a> 
+                            <a href="<?php echo site_url("/search/index/" . $detail_result_url . "/clevel/green"); ?>" title="" class="reportlink">&lt; Show detail report &gt;</a>
+                        </div>
                     </div>
                 </div>
-                <div class="hostsConnectivityContainer grid_5">
-                    <div id="hostsConnectivity" class="hostsConnectivity">
+                <div class="grid_6" style="margin:0 1%">
+                    <div class="hostsConnectivity">
                         <p class="title">Blue and Black host  in regard to specified  <?php echo $displayText; ?>(s).</p>
                         <div class="colourEntry">
-                            <a href="<?php echo site_url("/search/index/" . $detail_result_url . "/hosts_only/true/clevel/black/"); ?>" title="" class="blackhost showqtip hoststatuslist"><?php echo $c_data['black_hosts']; ?> <?php echo $this->lang->line('not_compliant'); ?></a> <a href="<?php echo site_url("/search/index/" . $detail_result_url . "/clevel/black"); ?>" title="" >Show detail report</a>
-                            <a href="<?php echo site_url("/search/index/" . $detail_result_url. "/hosts_only/true/clevel/blue/"); ?>" title=""  class="bluehost showqtip hoststatuslist "><?php echo $c_data['blue_hosts'] ?> <?php echo $this->lang->line('now_compliant'); ?> </a> <a href="<?php echo site_url("/search/index/" . $detail_result_url . "/clevel/blue"); ?>" title="" >Show detail report</a>
+                             <span class="colourEntryIcon black"></span>
+                            <a href="<?php echo site_url("/search/index/" . $detail_result_url . "/hosts_only/true/clevel/black/"); ?>" title="" class="hostlink"><?php echo $c_data['black_hosts']; ?> <?php echo $this->lang->line('not_compliant'); ?></a> 
+                            <a href="<?php echo site_url("/search/index/" . $detail_result_url . "/clevel/black"); ?>" title="" class="reportlink">&lt; Show detail report &gt;</a>
                         </div>
-                        <div class="clear"></div>
+                        <div class="colourEntry">
+                             <span class="colourEntryIcon blue"></span>
+                            <a href="<?php echo site_url("/search/index/" . $detail_result_url. "/hosts_only/true/clevel/blue/"); ?>" title=""  class="hostlink"><?php echo $c_data['blue_hosts'] ?> <?php echo $this->lang->line('now_compliant'); ?> </a> 
+                            <a href="<?php echo site_url("/search/index/" . $detail_result_url . "/clevel/blue"); ?>" title="" class="reportlink">&lt; Show detail report &gt;</a>
+                        </div>
                     </div>
                 </div>
+                <div class="clear"></div>
             </div>
         <?php } ?>
 

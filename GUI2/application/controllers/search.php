@@ -16,6 +16,8 @@ class Search extends Cf_Controller
         $this->carabiner->js('widgets/reportfinder.js');
         $this->carabiner->js('widgets/contextfinder.js');
         $this->carabiner->css('contextfinder.css');
+        $this->carabiner->css('hostsCompliance.css');
+        $this->carabiner->css('hostsConnectivity.css');
 
 
         $this->filter_view_mappings = array(

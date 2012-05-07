@@ -1567,7 +1567,6 @@ div.ui-dialog .ui-dialog-buttonpane{
 }
 .hoststatuslist
 {
-    display:block;
     padding:5px 25px;
 }
 
@@ -3378,4 +3377,41 @@ input[type="checkbox"]{
 .text_error {
     font-size: 10px;
     font-style: italic;
+}
+
+#hostgrpsummary .title{
+    margin-bottom:12px;
+    font-size:15px !important;
+    padding:0;
+}
+
+#hostgrpsummary a{
+    display:inline-block;
+}
+
+#hostgrpsummary a.hostlink{
+  margin-right:24px;
+}
+
+#hostgrpsummary a.reportlink{
+  font-size: 0.85em;
+}
+
+#hostgrpsummary a.reportlink:hover{
+  text-decoration: underline;
+}
+
+#hostgrpsummary .colourEntry{
+    margin:2px 0;
+}
+
+#hostgrpsummary{
+   border: solid 1px #d4d5d0;
+    -moz-border-radius: 5px;
+    border-radius:5px;
+    -opera-border-radius:5px;
+    -khtml-border-radius:5px;
+    -webkit-border-radius:5px;
+  padding:12px 0;
+  margin:10px 0;
 }
