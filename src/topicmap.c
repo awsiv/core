@@ -833,7 +833,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 
     for (rp = goal_patterns; rp != NULL; rp = rp->next)
     {
-        snprintf(work, CF_MAXVARSIZE - 1, "promisers::%s|", (char *) rp->item, CanonifyName((char *) rp->item));
+        snprintf(work, CF_MAXVARSIZE - 1, "promisers::%s|", (char *) rp->item);
         strcat(searchstring, work);
     }
 
@@ -1118,7 +1118,7 @@ int Nova_GetTribe(int *tribe_id, GraphNode *tribe_nodes, double tribe_adj[CF_TRI
 /* This function generates a breadth-first connected sub-graph of the full graph
    and identifies the orbits and distances, up to a maximum of Dunbar's tribe-size */
 {
-    char topic_name[CF_BUFSIZE], topic_context[CF_BUFSIZE];
+ char topic_name[CF_BUFSIZE], topic_context[CF_BUFSIZE], topic_id[CF_BUFSIZE];
     char *a_name, *a_context, view[CF_MAXVARSIZE];
     int a_pid;
     GraphNode neighbours1[CF_TRIBE_SIZE] = { { 0 } },
@@ -1150,6 +1150,7 @@ int Nova_GetTribe(int *tribe_id, GraphNode *tribe_nodes, double tribe_adj[CF_TRI
     tribe_id[0] = pid;
     topic_name[0] = '\0';
     topic_context[0] = '\0';
+    
     if (!Nova_NewVertex(tribe_nodes, 0, 0, pid, topic_name, topic_context))
     {
         return false;
@@ -1163,6 +1164,22 @@ int Nova_GetTribe(int *tribe_id, GraphNode *tribe_nodes, double tribe_adj[CF_TRI
 
     nn = Nova_NearestNeighbours(pid, view);
 
+    // If there are no neighbours in the current context, look for other contexts    
+
+    if (nn == NULL)
+    {
+        Item *backup, *ip;
+        Nova_GetTopicByTopicId(pid, topic_name, topic_id, topic_context);
+        backup = Nova_ScanLeadsAssociations(pid, view_pattern);
+
+        for (ip = backup; ip != NULL; ip=ip->next)
+        {
+            PrependFullItem(&nn, ip->classes, "any", ip->counter, 0);
+        }
+        
+        DeleteItemList(backup);
+    }
+    
     for (ip = nn; ip != NULL; ip = ip->next)
     {
         a_name = ip->name;
@@ -1456,6 +1473,9 @@ static int Nova_NewVertex(GraphNode *tribe, int node, int distance, int real, ch
 /*********************************************************************/
 
 Item *Nova_NearestNeighbours(int search_id, char *assoc_mask)
+
+/* This function is like ScanLeads, except different output */
+
 {
     bson_buffer bb;
     bson query, field;
@@ -1469,8 +1489,6 @@ Item *Nova_NearestNeighbours(int search_id, char *assoc_mask)
     char assoc_context[CF_BUFSIZE];
     int assoc_id;
 
-    return Nova_ScanLeadsAssociations(search_id,assoc_mask);
-    
     if (!CFDB_Open(&conn))
     {
         return false;
