@@ -264,9 +264,21 @@
 
         loadpagebody: function() {
             var self = this;
+            
+
+            var url = '';
+            if (self.element.attr('href') != '') {
+                url  = self.element.attr('href');
+            }
+            else
+            {
+                url = self.options.baseUrl + '/widget/allclasses';
+            }
+            
             self.changeTitle('Loading');
             var params = {
-                'url': self.options.baseUrl + '/widget/allclasses',
+                //'url': self.options.baseUrl + '/widget/allclasses',
+                'url': url,
                 'success': function(data) {
                     self.loadDataInContainer(data, false);
                 }
