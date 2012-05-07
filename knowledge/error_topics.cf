@@ -32,34 +32,34 @@ things:
 occurrences:
 
      "/docs/SpecialTopic_MenuDrivenConfig.html#What-is-menu_002ddriven-configuration"
-         represents => { "special topics guide" },
+         represents => { "special topics guide on menu driven configuration" },
        about_topics => { "how" };
 
      "/docs/SpecialTopic_Modules.html"
-         represents => { "special topics guide" },
+         represents => { "special topics guide on orchestration" },
        about_topics => { "how", "ordering operations in cfengine" };
 
 
     "/docs/SpecialTopic_Knowledge.html#How-should-you-begin_003f"
-         represents => { "special topics guide" },
+         represents => { "special topics guide on knowledge management" },
        about_topics => { "why" };
 
     "/docs/SpecialTopic_Hierarchy.html"
-         represents => { "special topics guide" },
+         represents => { "special topics guide on hierarchies" },
        about_topics => { "when", "where" };
 
 
     "/docs/cf3-reference.html#When-and-where-are-promises-made_003f"
-         represents => { "special topics guide" },
+         represents => { "reference - when and where are promises made?" },
        about_topics => { "when", "where" };
 
 
     "/docs/cf3-tutorial.html#The-policy-decision-flow"
-         represents => { "reference manual" },
+         represents => { "tutorial on policy decision flow" },
        about_topics => { "how" };
 
     "/docs/cf3-reference.html#Decisions"
-         represents => { "reference manual" },
+         represents => { "reference manual on decision making" },
        about_topics => { "when", "where" };
 
 
