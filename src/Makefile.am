@@ -27,7 +27,7 @@ libcfnova_la_SOURCES = \
         acl.c \
         acl_linux.c \
         acl_nt.c \
-        ldap.c \
+        ldap_lib.c ldap_lib.h \
         license.c \
         registry.c \
         monitoring.c \

@@ -18,6 +18,11 @@
 
 # define dbkey_mpsettings_rbac "rbac"
 # define dbkey_mpsettings_auth_mode "mode"
+# define dbkey_mpsettings_encryption "encryption"
+# define dbkey_mpsettings_login_attribute "login_attribute"
+# define dbkey_mpsettings_base_dn "base_dn"
+# define dbkey_mpsettings_users_directory "users_directory"
+# define dbkey_mpsettings_host "host"
 
 # define dbkey_user_name "username"
 # define dbkey_user_password "password"

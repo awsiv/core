@@ -123,7 +123,7 @@ bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour 
 long CFDB_GetLastAgentExecution(mongo_connection *conn, const char *hostkey);
 long CFDB_GetDeltaAgentExecution(mongo_connection *conn, const char *hostkey);
 int CFDB_GetBlueHostThreshold(unsigned long *threshold);
-void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn, char *db_name);
+bool CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn, char *db_name);
 int CFDB_QueryIsMaster(void);
 int CFDB_QueryMasterIP(char *buffer, int bufsize);
 int CFDB_QueryReplStatus(mongo_connection *conn, char *buffer, int bufsize);

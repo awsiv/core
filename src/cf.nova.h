@@ -1185,14 +1185,7 @@ void Nova_DrawLongHAxes(DataView *cfv, int col);
 void Nova_AnalyseLongHistory(char *keyname, enum observables obs, char *buffer, int bufsize);
 #endif
 
-/* ldap.c */
-bool CfLDAPAuthenticate(char *uri, char *basedn, char *passwd, bool starttls, const char **const errstr);
-int CfLDAP_JSON_GetSeveralAttributes(char *uri, char *user, char *basedn, char *filter, Rlist *names, char *scopes,
-                                     char *sec, char *passwd, bool starttls, int page, int linesperpage, char *buffer,
-                                     int bufsize, const char **const errstr);
-int CfLDAP_JSON_GetSingleAttributeList(char *uri, char *user, char *basedn, char *filter, char *name, char *scopes,
-                                       char *sec, char *passwd, bool starttls, int page, int linesperpage, char *buffer,
-                                       int bufsize, const char **const errstr);
+#include "ldap_lib.h"
 
 /***************************************************************************/
 /* Knowledge relationships                                                 */
