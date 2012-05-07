@@ -169,6 +169,10 @@ void Nova_ShowTopic(char *qualified_topic)
         printf("\nOccurrences: %s\n\n", StringWriterClose(writer));
     }
 
+    char buffer[CF_BUFSIZE];
+    Nova_GetUniqueBusinessGoals(buffer, CF_BUFSIZE);
+    printf("GOALS: %s\n",buffer);
+
 }
 
 
@@ -829,7 +833,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 
     for (rp = goal_patterns; rp != NULL; rp = rp->next)
     {
-        snprintf(work, CF_MAXVARSIZE - 1, "promisers::%s|%s|", (char *) rp->item, CanonifyName((char *) rp->item));
+        snprintf(work, CF_MAXVARSIZE - 1, "promisers::%s|", (char *) rp->item, CanonifyName((char *) rp->item));
         strcat(searchstring, work);
     }
 
@@ -839,7 +843,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
     }
     else
     {
-        snprintf(searchstring, CF_MAXVARSIZE - 1, "g.*");
+        snprintf(searchstring, CF_MAXVARSIZE - 1, "goal.*");
     }
 
     if (!CFDB_Open(&conn))
