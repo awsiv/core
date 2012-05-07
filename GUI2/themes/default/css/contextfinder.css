@@ -84,6 +84,7 @@ div.contextfinder .ui-dialog-content {
 .item {
     position: relative;
     float: left;
+    clear: both;
     margin-bottom: 10px; 
 }
  
@@ -93,7 +94,17 @@ div.contextfinder .ui-dialog-content {
             float: left;
             height: 20px 
         }
+        
+.embedded .item  {
+    width: 98%;
+    
+}
  
+
+.embedded .item input {
+    width: 98% !important;
+}
+
 #resetConditions {
     float: left;
     margin-left: 10px;
