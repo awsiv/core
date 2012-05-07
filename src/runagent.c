@@ -8,13 +8,10 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
-#if defined(HAVE_LIBMONGOC)
 #include "db_common.h"
-#endif
 
 bool Nova_ExecuteRunagent(AgentConnection *conn, const char *menu_str)
 {
-#if defined(HAVE_LIBMONGOC)
     mongo_connection dbconn;
 
     if (!CFDB_Open(&dbconn))
@@ -49,7 +46,4 @@ bool Nova_ExecuteRunagent(AgentConnection *conn, const char *menu_str)
     }
 
     CFDB_Close(&dbconn);
-
-#endif /* HAVE_LIBMONGOC */
-    return true;
 }

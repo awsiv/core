@@ -22,7 +22,6 @@ libcfnova_la_LDFLAGS = -no-undefined
 
 libcfnova_la_SOURCES = \
         cfnova.c \
-        conversion.c \
         logging.c logging.h \
         acl.c \
         acl_linux.c \
@@ -38,7 +37,6 @@ libcfnova_la_SOURCES = \
         promises.c \
         processes.c \
         pscalar.c \
-        runagent.c \
         reporting.c \
         syntax.c \
         copernicus.c \
@@ -75,6 +73,7 @@ libcfnova_la_SOURCES += \
         bson_lib.c bson_lib.h \
         client_code.c \
         cmd_api.c cf.nova.cmd_api.h \
+        conversion.c \
         dataunpack.c \
         db_common.c db_common.h \
         db_maintain.c db_maintain.h \
@@ -84,6 +83,7 @@ libcfnova_la_SOURCES += \
         install.c \
         magnify.c \
         promise_db.c \
+        runagent.c \
         scorecards.c scorecards.h \
         topicmap.c \
         web_api.c \
@@ -95,6 +95,10 @@ if !NDEBUG
 libcfnova_la_SOURCES += \
         web_api_test.c
 endif
+
+else # !MONGO
+libcfnova_la_SOURCES += \
+	stubs.c
 endif
 
 libcfmonitord_la_SOURCES = \

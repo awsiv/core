@@ -26,67 +26,11 @@
 #include "cf3.extern.h"
 #include <assert.h>
 
-#if defined(HAVE_LIBMONGOC)
 #include "db_common.h"
 #include "db_query.h"
-#endif
 
-/*****************************************************************************/
-
-static const char *CFCON_VIEWS[] = { "Comp",    // NOTE: must match cfl_view enum
-    "VirtBundleComp",
-    "AggrRepaired",
-    "AggrNotKept",
-    "AggrRepairedReason",
-    "AggrNotKeptReason",
-    "AggrFileChange",
-    "AggrSoftware",
-    "AggrClasses",
-    "Software",
-    "RepairLog",
-    "NotKeptLog",
-    "HubStatus",
-    "HubMeter",
-    "ValueGraph",
-    "HubDetails",
-    NULL
-};
-
-#ifdef HAVE_LIBMONGOC
 static Rlist *HubHostListToRlist(Rlist *hub_host_list, char *return_format);
-#endif
-/*****************************************************************************/
 
-enum cfl_view Str2View(const char *s)
-{
-    int i;
-
-    for (i = 0; CFCON_VIEWS[i] != NULL; i++)
-    {
-        if (strcmp(s, CFCON_VIEWS[i]) == 0)
-        {
-            return i;
-        }
-    }
-
-    return cfl_view_error;
-}
-
-/*********************************************************************/
-
-const char *View2Str(enum cfl_view view)
-{
-    if ((int) view < 0 || view >= cfl_view_error)
-    {
-        return "VIEWERROR";
-    }
-
-    return CFCON_VIEWS[view];
-}
-
-/*****************************************************************************/
-
-#ifdef HAVE_LIBMONGOC
 
 int Nova_GetReportedScalar(char *hostkey, char *scope, char *lval, char *returnval, int bufsize)
 {
@@ -217,19 +161,6 @@ bool CFDB_HostsWithClass(Rlist **return_list, char *class_name, char *return_for
     return true;
 }
 
-#else   /* NOT HAVE_LIBMONGOC */
-
-bool CFDB_HostsWithClass(Rlist **return_list, char *class_name, char *return_format)
-{
-    CfOut(cf_error, "", "!! Listing hosts with a class is only available locally on Nova hubs (no binary support)");
-    return false;
-}
-
-#endif
-
-/*****************************************************************************/
-#ifdef HAVE_LIBMONGOC
-
 static Rlist *HubHostListToRlist(Rlist *hub_host_list, char *return_format)
 {
     bool return_ip_address;
@@ -265,4 +196,3 @@ static Rlist *HubHostListToRlist(Rlist *hub_host_list, char *return_format)
     
     return return_list;
 }
-#endif
