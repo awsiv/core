@@ -1933,8 +1933,7 @@ void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_menu typ
 
     while (NextDB(dbp, dbcp, &key, &ksize, &value, &vsize))
     {
-        double then;
-        time_t fthen;
+        time_t then;
 
         strncpy(bundle, (char *) key, ksize);
 
@@ -1959,8 +1958,6 @@ void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_menu typ
             continue;
         }
 
-        fthen = (time_t) then;  /* format date */
-
         if (first)
         {
             first = false;
@@ -1969,7 +1966,7 @@ void Nova_PackBundles(Item **reply, char *header, time_t from, enum cfd_menu typ
 
         snprintf(line, sizeof(line), "%s %ld %.2lf %.2lf %.2lf\n",
                  bundle,
-                 (long) fthen, compliance, average, sqrt(var));
+                 (long) then, compliance, average, sqrt(var));
 
         AppendItem(reply, line, NULL);
     }
