@@ -8,7 +8,7 @@ things:
         is_determined_by => { "promiser", "promise type", "bundles" },
                certainty => "possible";
 
-  "when"  comment => "Where promises are kept is determined by the context classes and the executor schedule",
+  "when"  comment => "When promises are kept is determined by the context classes and the executor schedule",
         is_determined_by => { "classes", "contexts", "class contexts" },
                certainty => "possible";
 
@@ -20,12 +20,19 @@ things:
         is_determined_by => { "body constraints", "body type" },
                certainty => "possible";
 
-  "why" comment => "Why should be represented by the comment field of a promise",
+  "why" comment => "Why promises are made should be represented by the comment field of a promise",
         is_determined_by => { "comments", "body_constraints::comment" },
                certainty => "possible";
 
   "who" comment => "Who made changes is a question for your revision control system",
         is_determined_by => { "promisee" },
+               certainty => "possible";
+
+
+security::
+
+  "tripwire"  comment => "A cryptographic hash used to detect the presence of intrusion or change",
+        is_determined_by => { "detect_all_changes", "body_constraints::changes" },
                certainty => "possible";
 
 
@@ -42,7 +49,7 @@ occurrences:
 
     "/docs/SpecialTopic_Knowledge.html#How-should-you-begin_003f"
          represents => { "special topics guide on knowledge management" },
-       about_topics => { "why" };
+       about_topics => { "why", "how" };
 
     "/docs/SpecialTopic_Hierarchy.html"
          represents => { "special topics guide on hierarchies" },
@@ -62,6 +69,22 @@ occurrences:
          represents => { "reference manual on decision making" },
        about_topics => { "when", "where" };
 
+    "/docs/SpecialTopic_MissionCritical.html#What-are-Mission-Critical-Operations_003f"
+         represents => { "special topics guide on mission critical operations" },
+       about_topics => { "what" };
+
+    "/docs/cf3-tutorial#What-services_003f"
+         represents => { "special topics guide on mission critical operations" },
+       about_topics => { "what" };
+
+
+     "/docs/SpecialTopic_Change.html#What-is-change-management_003f"
+         represents => { "special topics guide on change management" },
+       about_topics => { "what", "change management" };
+
+     "docs/SpecialTopic_Scan.html"
+         represents => { "special topics guide on security scanning" },
+       about_topics => { "what", "security", "tripwires" };
 
 
 }
@@ -71,6 +94,8 @@ occurrences:
 bundle knowledge error_messages
 {
 things:
+
+error_messages::
 
 "Cannot mix CIDR notation with xxx-yyy range notation"
         is_caused_by => { "unknown" },
