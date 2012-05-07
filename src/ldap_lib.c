@@ -5,11 +5,7 @@
 
 */
 
-/*****************************************************************************/
-/*                                                                           */
-/* File: ldap.c                                                              */
-/*                                                                           */
-/*****************************************************************************/
+#include "ldap_lib.h"
 
 #include "cf3.defs.h"
 #include "cf3.extern.h"
@@ -23,7 +19,7 @@ void *CfLDAPList(char *uri, char *basedn, char *filter, char *name, char *scopes
 void *CfLDAPArray(char *array, char *uri, char *basedn, char *filter, char *scopes, char *sec);
 void *CfRegLDAP(char *uri, char *basedn, char *filter, char *name, char *scopes, char *regex, char *sec);
 
-static LDAP *NovaLDAPConnect(char *uri, bool starttls, const char **errstr);
+static LDAP *NovaLDAPConnect(const char *uri, bool starttls, const char **errstr);
 static int NovaLDAPAuthenticate(LDAP *ldap, const char *basedn, const char *sec, const char *pwd);
 static int NovaStr2Scope(char *scope);
 static Rlist *LDAPKeyInRlist(Rlist *list, char *key);
@@ -784,7 +780,7 @@ void *CfRegLDAP(char *uri, char *basedn, char *filter, char *name, char *scopes,
 
 #ifdef HAVE_LIBLDAP
 
-bool CfLDAPAuthenticate(char *uri, char *basedn, char *passwd, bool starttls, const char **const errstr)
+bool CfLDAPAuthenticate(const char *uri, const char *basedn, const char *passwd, bool starttls, const char **const errstr)
 {
     LDAP *ld = NovaLDAPConnect(uri, starttls, errstr);
 
@@ -1375,7 +1371,7 @@ int CfLDAP_JSON_GetSingleAttributeList(char *uri, char *user, char *basedn, char
 
 #ifdef HAVE_LIBLDAP
 
-static LDAP *NovaLDAPConnect(char *uri, bool starttls, const char **const errstr)
+static LDAP *NovaLDAPConnect(const char *uri, bool starttls, const char **const errstr)
 {
     LDAP *ld;
     int ret, version;

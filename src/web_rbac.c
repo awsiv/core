@@ -23,6 +23,7 @@
 
 #include "db_query.h"
 #include "files_names.h"
+#include "rlist.h"
 
 #include <assert.h>
 
@@ -82,38 +83,102 @@ static bool VerifyPasswordIonAuth(const char *password, size_t password_len, con
 
 /*****************************************************************************/
 
-cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, size_t password_len)
+#ifdef HAVE_LIBLDAP
+static cfapi_errid LDAPAuthenticate(mongo_connection *conn, const char *username, const char *password, size_t password_len)
 {
-// query
-    bson_buffer buffer;
+    char encryption[1024] = { 0 };
+    if (!CFDB_HandleGetValue(dbkey_mpsettings_encryption, encryption, sizeof(encryption), conn, MONGO_MPSETTINGS_COLLECTION))
+    {
+        strcpy(encryption, "plain");
+    }
 
+    char ldap_server[1024] = { 0 };
+    if (!CFDB_HandleGetValue(dbkey_mpsettings_host, ldap_server, sizeof(ldap_server), conn, MONGO_MPSETTINGS_COLLECTION))
+    {
+        return ERRID_HOST_NOT_FOUND;
+    }
+
+    char ldap_url[2048] = { 0 };
+    if (strcmp(encryption, "ssl") == 0)
+    {
+        strcat(ldap_url, "ldaps://");
+    }
+    else
+    {
+        strcat(ldap_url, "ldap://");
+    }
+    strcat(ldap_url, ldap_server);
+
+    bool start_tls = false;
+    if (strcmp(encryption, "start_tls") == 0)
+    {
+        start_tls = true;
+    }
+
+    char login_attribute[1024] = { 0 };
+    if (!CFDB_HandleGetValue(dbkey_mpsettings_login_attribute, login_attribute, sizeof(login_attribute), conn, MONGO_MPSETTINGS_COLLECTION))
+    {
+        strcpy(login_attribute, "uid");
+    }
+
+    char base_dn[1024] = { 0 };
+    if (!CFDB_HandleGetValue(dbkey_mpsettings_base_dn, base_dn, sizeof(login_attribute), conn, MONGO_MPSETTINGS_COLLECTION))
+    {
+        return ERRID_DATA_UNAVAILABLE;
+    }
+
+    char user_directories[1024] = { 0 };
+    if (!CFDB_HandleGetValue(dbkey_mpsettings_users_directory, user_directories, sizeof(user_directories), conn, MONGO_MPSETTINGS_COLLECTION))
+    {
+        return ERRID_DATA_UNAVAILABLE;
+    }
+
+    cfapi_errid result = ERRID_RBAC_ACCESS_DENIED;
+    Rlist *user_directory_values = SplitStringAsRList(user_directories, ';');
+    for (const Rlist *rp = user_directory_values; rp; rp = rp->next)
+    {
+        const char *user_directory = ScalarValue(rp);
+
+        char bind_dn[4096] = { 0 };
+        strcat(bind_dn, login_attribute);
+        strcat(bind_dn, "=");
+        strcat(bind_dn, username);
+        strcat(bind_dn, ",");
+        strcat(bind_dn, user_directory);
+        strcat(bind_dn, ",");
+        strcat(bind_dn, base_dn);
+
+        const char *errmsg = NULL;
+        if (CfLDAPAuthenticate(ldap_url, bind_dn, password, start_tls, &errmsg))
+        {
+            result = ERRID_SUCCESS;
+            break;
+        }
+    }
+    DeleteRlist(user_directory_values);
+
+    return result;
+}
+#endif
+
+static cfapi_errid IonAuthenticate(mongo_connection *conn, const char *username, const char *password, size_t password_len)
+{
+    bson_buffer buffer;
     bson_buffer_init(&buffer);
     bson_append_string(&buffer, dbkey_user_name, username);
     bson_append_int(&buffer, dbkey_user_active, 1);
 
     bson query;
-
     bson_from_buffer(&query, &buffer);
 
-// projection
     bson_buffer_init(&buffer);
     bson_append_int(&buffer, dbkey_user_password, 1);
 
     bson field;
-
     bson_from_buffer(&field, &buffer);
 
-    mongo_connection conn;
-
-    if (!CFDB_Open(&conn))
-    {
-        bson_destroy(&query);
-        bson_destroy(&field);
-        return ERRID_DBCONNECT;
-    }
-
     bson record;
-    bson_bool_t found = mongo_find_one(&conn, GetUsersCollection(&conn), &query, &field, &record);
+    bson_bool_t found = mongo_find_one(conn, GetUsersCollection(conn), &query, &field, &record);
 
     bson_destroy(&query);
     bson_destroy(&field);
@@ -126,26 +191,45 @@ cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, si
 
         if (db_password)
         {
-            if (!IsLDAPOn(&conn))
+            if (VerifyPasswordIonAuth(password, password_len, db_password))
             {
-                CFDB_Close(&conn);
-
-                if (VerifyPasswordIonAuth(password, password_len, db_password))
-                {
-                    return ERRID_SUCCESS;
-                }
-                else
-                {
-                    return ERRID_RBAC_ACCESS_DENIED;
-                }
+                return ERRID_SUCCESS;
             }
-
+            else
+            {
+                return ERRID_RBAC_ACCESS_DENIED;
+            }
         }
     }
 
-    CFDB_Close(&conn);
-
     return ERRID_RBAC_ACCESS_DENIED;
+
+}
+
+cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, size_t password_len)
+{
+    mongo_connection conn;
+    if (!CFDB_Open(&conn))
+    {
+        return ERRID_DBCONNECT;
+    }
+
+    bool ldap = IsLDAPOn(&conn);
+    cfapi_errid result = ERRID_RBAC_ACCESS_DENIED;
+
+    if (ldap)
+    {
+#ifdef HAVE_LIBLDAP
+        result = LDAPAuthenticate(&conn, username, password, password_len);
+#endif
+    }
+    else
+    {
+        result = IonAuthenticate(&conn, username, password, password_len);
+    }
+
+    CFDB_Close(&conn);
+    return result;
 }
 
 /*****************************************************************************/

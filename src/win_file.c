@@ -18,6 +18,7 @@
 
 #include "dir.h"
 #include "dir_priv.h"
+#include "files_names.h"
 
 /* _mkdir(3) */
 #include <direct.h>

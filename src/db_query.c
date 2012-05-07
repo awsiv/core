@@ -215,7 +215,7 @@ Item *CFDB_GetDeletedHosts(void)
 
 /*****************************************************************************/
 
-void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn, char *db_name)
+bool CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn, char *db_name)
 {
     bson query;
     bson_iterator it1;
@@ -240,6 +240,8 @@ void CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *con
     }
 
     mongo_cursor_destroy(cursor);
+
+    return rval[0] != '\0';
 }
 
 
