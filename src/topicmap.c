@@ -1469,6 +1469,8 @@ Item *Nova_NearestNeighbours(int search_id, char *assoc_mask)
     char assoc_context[CF_BUFSIZE];
     int assoc_id;
 
+    return Nova_ScanLeadsAssociations(search_id,assoc_mask);
+    
     if (!CFDB_Open(&conn))
     {
         return false;
