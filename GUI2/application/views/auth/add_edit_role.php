@@ -20,7 +20,84 @@
         echo form_textarea($description);
        ?>
       </p>
+      
+<?php
+      function get_array_from_string($value) {
+          if(empty($value))
+              return null;
+          
+            $value = str_replace(' ', '', $value);
+            $arr = explode(',', $value);
+         return $arr;
+      }
+       
+      
+      
+      $partial_data = array();
+      
+      $partial_data['html_id'] = 'classes_inc_exc';
+            
+      
+      $partial_data['embedded'] = true;  
+      
+      
+      $partial_data['doNotShowButtons'] = true;      
+      
+      
+      $partial_data['fields']['left']['name']  = 'crxi';
+      
+      if (!empty($crxi['value'])) {
+          $partial_data['fields']['left']['values'] = get_array_from_string($crxi['value']);
+      }
+  
+      
+      $partial_data['fields']['right']['name'] = 'crxx';    
+      
+      if (!empty($crxi['value'])) {
+          $partial_data['fields']['right']['values'] = get_array_from_string($crxx['value']);
+      }
+      
 
+      
+      ?>
+<div id="classes_inc_exc">
+<?php $this->load->view('widgets/contextfinder', $partial_data); ?>
+</div>
+      
+<?php       
+      
+      $partial_data = array();
+      
+      $partial_data['html_id'] = 'bundles_inc_exc';
+      $partial_data['embedded'] = true;     
+      $partial_data['doNotShowButtons'] = true;
+      
+      
+      $partial_data['fields']['left']['name']  = 'brxi';
+      
+      $partial_data['fields']['left']['href'] = 'widget/bundlesNotAssignedToRole/' . $name['value'];
+      
+      if (!empty($brxi['value'])) {
+          $partial_data['fields']['left']['values'] = get_array_from_string($brxi['value']);
+      }
+  
+      
+      $partial_data['fields']['right']['name'] = 'brxx';    
+      
+      $partial_data['fields']['right']['href'] = 'widget/bundlesNotAssignedToRole/' . $name['value'];
+      
+      if (!empty($brxi['value'])) {
+          $partial_data['fields']['right']['values'] = get_array_from_string($brxx['value']);
+      }
+      
+
+      
+      ?>
+<div id="bundles_inc_exc">
+<?php  $this->load->view('widgets/contextfinder', $partial_data); ?>
+</div>
+      
+<?php /*
       <table cellpadding="0" cellspasing ="0" border="0"  id="maintable">
           <tr>
               <td colspan="3">  
@@ -145,7 +222,7 @@
               </td>
           </tr> 
       </table>
-
+*/ ?>
 
     <?php echo form_close();?>
 </div>  
