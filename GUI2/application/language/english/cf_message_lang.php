@@ -11,7 +11,7 @@ $lang['cons_logo_link_text']='Constellation mission portal';
 /**
  * Bread crumbs text
  */
-$lang['breadcrumb_status']           ='Status';
+$lang['breadcrumb_status']           ='Business';
 $lang['breadcrumb_engineering']      ='Engineering';
 $lang['breadcrumb_planning']         ='Planning';
 $lang['breadcrumb_goals']            ='Company goals';

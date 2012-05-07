@@ -23,6 +23,7 @@
 # define dbkey_mpsettings_base_dn "base_dn"
 # define dbkey_mpsettings_users_directory "users_directory"
 # define dbkey_mpsettings_host "host"
+# define dbkey_mpsettings_ad_domain "ad_domain"
 
 # define dbkey_user_name "username"
 # define dbkey_user_password "password"

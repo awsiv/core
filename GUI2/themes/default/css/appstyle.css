@@ -1999,6 +1999,13 @@ div.ui-dialog .ui-dialog-buttonpane{
     display:inline-block;
 }
 
+.hostbtn {
+    background: url("../images/host_small.png") no-repeat scroll 0 0 transparent;
+    padding:10px;
+    padding:10px 15px;
+    display:inline-block;
+}
+
 .vitalsbtn
 {
     background: url("../images/vitals_button.png") no-repeat scroll 0 0 transparent;

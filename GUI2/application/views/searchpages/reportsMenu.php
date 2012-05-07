@@ -11,44 +11,39 @@
                 </ul>
             </li>
         <?php } ?>
-        
-
     </ul>
-    <?php if (isset($saved_search_menu) && !empty ($saved_search_menu)) { ?>    
+
     <ul id="saved_searches_wrapper">
-            <li id="saved-searches"><em class="separater"></em><span>Saved Searches</span>
-                <ul><li>
-                        <div id="searchaccordian">
-                        
-                        <?php
-                        foreach ((array) $saved_search_menu as $cat => $searches)
-                        {
-                            ?>
-                            <h3 class="head"><em>&nbsp;</em><?php echo $cat; ?></h3>
-                            <div>
-                            <?php foreach ($searches as $searchObj)
-                            { ?>
-                                <a href="<?php echo $searchObj->getUrl(); ?>" class="savesearch-url"><?php echo$searchObj->getLabel(); ?></a>
-                            <?php } ?>
-                            </div>
+        <li id="saved-searches"><em class="separater"></em><span>Saved Searches</span>
+            <ul><li>
+                    <div id="searchaccordian">
 
-
-                        <?php } ?>
-                       </div>
-                    </li>
-                </ul>
-            </li>
-     </ul>
-       <?php } ?>    
+                    </div>
+                </li>
+            </ul>
+        </li>
+    </ul>
 </div>
-
 <script type="text/javascript">
-	jQuery(document).ready(function(){
-	$('#searchaccordian .head').click(function() {
-                var self=this;
-		$(this).next().toggle();
-                $(this).toggleClass('expanded');
-		return false;
-	}).next().hide();
-});
+    jQuery(document).ready(function(){
+
+
+        $("#saved-searches").bind("mouseenter",function(){
+
+
+            var menuUrl = '<?php echo site_url(); ?>'+'/search/generateSaveSearchMenu';
+            $("#searchaccordian").html('loading ....');
+            $("#searchaccordian").load(menuUrl,"", function(responseText, textStatus, XMLHttpRequest) {
+                if(textStatus == 'error') {
+                    $('#searchaccordian').html('Cannot load saved searches.');
+                } else {
+                    $('#searchaccordian .head').click(function() {
+                        $(this).next().toggle();
+                        $(this).toggleClass('expanded');
+                        return false;
+                    }).next().hide();
+                }
+            });
+        });
+    });
 </script>

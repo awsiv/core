@@ -9,7 +9,7 @@ class Welcome extends Cf_Controller
         parse_str($_SERVER['QUERY_STRING'], $_GET);
         $this->load->helper('form');
         $this->load->library(array('table', 'cf_table'));
-        $this->load->model(array('host_model', 'environment_model', 'report_model'));
+        $this->load->model(array('host_model', 'environment_model', 'report_model','goals_model','summary_model'));
     }
 
     function index()
@@ -61,6 +61,10 @@ class Welcome extends Cf_Controller
         $this->template->load('template', 'index', $data);
     }
 
+    /**
+     * Status Page related code
+     */
+    
     function status()
     {
         $bc = array(
@@ -84,24 +88,43 @@ class Welcome extends Cf_Controller
 
 
         $this->breadcrumb->setBreadCrumb($bc);
-
-        $data = array(
-            'title' => $this->lang->line('mission_portal_title') . "-" . $this->lang->line('breadcrumb_status'),
-            'breadcrumbs' => $this->breadcrumblist->display(),
-            'goals' => json_decode(cfpr_list_business_goals(), true)
-        );
-
-        // Summary meter for host
-        $gdata = cfpr_summary_meter(null);
-        $returnedData = $this->_convert_summary_compliance_graph($gdata);
-        $data = array_merge($data, $returnedData);
-
-
-        // compliance summary meter
-        //$envList = cfpr_environments_list();
         try
         {
+            $data = array(
+                'title' => $this->lang->line('mission_portal_title') . "-" . $this->lang->line('breadcrumb_status'),
+                'breadcrumbs' => $this->breadcrumblist->display(),
+                'goals' => $this->goals_model->getAllGoals()
+            );
+
+            // Summary meter for host
+            $gdata = $this->summary_model->getSummaryMeter();
+            $returnedData = $this->summary_model->getConvertedSummaryComplianceGraphData($gdata);
+            $data = array_merge($data, $returnedData);
+
             $envList = $this->environment_model->getEnvironmentList($this->session->userdata('username'));
+
+            //$envListArray = json_decode($envList);
+
+            $data['envList'] = $envList;
+
+            $cdata = $this->summary_model->getComplianceSummaryData();
+            if ($cdata)
+            {
+                $graphData['compliance_summary'] = $this->summary_model->getConvertedSummaryComplianceGraphStatus($cdata);
+                $data = array_merge($data, $graphData);
+            }
+            
+            
+            $pieChartData = $this->summary_model->getBusinessPieChartData();
+            $data = array_merge($data, $pieChartData);
+
+            $username = &$this->session->userdata('username');
+            $data['allHost'] = $this->host_model->getHostCount($username);
+            $data['redhost'] = $this->host_model->getHostCount($username, 'red');
+            $data['yellowhost'] = $this->host_model->getHostCount($username, 'yellow');
+            $data['greenhost'] = $this->host_model->getHostCount($username, 'green');
+            $data['bluehost'] = $this->host_model->getHostCount($username, 'blue');
+            $data['blackhost'] = $this->host_model->getHostCount($username, 'black');
         }
         catch (CFModExceptionRBAC $e)
         {
@@ -111,175 +134,8 @@ class Welcome extends Cf_Controller
         {
             show_error($e->getMessage(), 500);
         }
-        //$envListArray = json_decode($envList);
-
-        $data['envList'] = $envList;
-
-        $cdata = cfpr_compliance_summary_graph(NULL);
-        if ($cdata)
-        {
-            $graphData['compliance_summary'] = $this->_convert_summary_compliance_graph_status($cdata);
-            $data = array_merge($data, $graphData);
-        }
-
-
-
-
-
-        $businessValuePieData = cfpr_get_value_graph();
-        $businessValuePieArray = json_decode($businessValuePieData);
-
-
-// make data ready for pie
-
-
-        if (is_array($businessValuePieArray) && !empty($businessValuePieArray))
-        {
-            $kept = 0;
-            $notkept = 0;
-            $repaired = 0;
-
-            foreach ($businessValuePieArray as $val)
-            {
-
-
-                $kept+=$val[1];
-                $notkept+=$val[3];
-                $repaired+=$val[2];
-            }
-            $data['businessValuePie']['kept'] = abs($kept);
-            $data['businessValuePie']['notkept'] = abs($notkept);
-            $data['businessValuePie']['repaired'] = abs($repaired);
-            $data['businessValuePie']['nodata'] = 0;
-        }
-        else
-        {
-            $data['businessValuePie']['kept'] = 0;
-            $data['businessValuePie']['notkept'] = 0;
-            $data['businessValuePie']['repaired'] = 0;
-            $data['businessValuePie']['nodata'] = 100;
-        }
-
-        try
-        {
-            $username = &$this->session->userdata('username');
-            $data['allHost'] = $this->host_model->getHostCount($username);
-            $data['redhost'] = $this->host_model->getHostCount($username, 'red');
-            $data['yellowhost'] = $this->host_model->getHostCount($username, 'yellow');
-            $data['greenhost'] = $this->host_model->getHostCount($username, 'green');
-            $data['bluehost'] = $this->host_model->getHostCount($username, 'blue');
-            $data['blackhost'] = $this->host_model->getHostCount($username, 'black');
-        }
-        catch (Exception $e)
-        {
-            show_error($e->getMessage(), 500);
-            ;
-        }
 
         $this->template->load('template', 'status', $data);
-    }
-
-    function _convert_summary_compliance_graph_status($rawData)
-    {
-        $convertedData = json_decode($rawData, true);
-
-        $values = array();
-        $data['graphSeries'] = array();
-        $labels = array('kept', 'repaired', 'not kept', 'no data');
-        $count = array(); // for keeping tracks of each count
-        $start = array(); // the timestamp passed of each node starttime.
-        $keptSeries = array();
-        $repairedSeries = array();
-        $notKeptSeries = array();
-        $nodataSeries = array();
-        foreach ($convertedData as $key => $graphData)
-        {
-            $nodata = (isset($graphData['nodata'])) ? $graphData['nodata'] : 0;
-            $values[] = array('label' => $graphData['title'],
-                'values' => array($graphData['kept'], $graphData['repaired'], $graphData['notkept'], $nodata));
-
-// track the count parameter
-// because we cannot directly pass the custom data in barChart of infovis
-            if (isset($graphData['count']))
-            {
-                $count[$graphData['start']] = $graphData['count'];
-            }
-            if (isset($graphData['start']))
-            {
-                $start[$graphData['title']] = $graphData['start'];
-            }
-
-            $time = $graphData['start'] * 1000;
-            $keptSeries[] = array($time, $graphData['kept']);
-            $repairedSeries[] = array($time, $graphData['repaired']);
-            $notKeptSeries[] = array($time, $graphData['notkept']);
-            $nodataSeries[] = array($time, $nodata);
-        }
-
-
-        $data['graphSeries']['labels'] = json_encode($labels);
-        $data['graphSeries']['values'] = json_encode($values);
-        $data['graphSeries']['keptseries'] = json_encode($keptSeries);
-        $data['graphSeries']['repairedseries'] = json_encode($repairedSeries);
-        $data['graphSeries']['notkeptseries'] = json_encode($notKeptSeries);
-        $data['graphSeries']['nodataseries'] = json_encode($nodataSeries);
-
-
-        // these are two extra parameters that has to be accessible in the bar chart graph
-        if (is_array($count) && !empty($count))
-        {
-            $data['graphSeries']['count'] = json_encode($count);
-        }
-
-        if (is_array($start) && !empty($start))
-        {
-            $data['graphSeries']['start'] = json_encode($start);
-        }
-        return $data;
-    }
-
-    function _convert_summary_compliance_graph($rawData)
-    {
-        $convertedData = json_decode($rawData, true);
-
-        $values = array();
-        $data['graphSeries'] = array();
-        $labels = array('kept', 'repaired', 'not kept', 'no data');
-        $count = array(); // for keeping tracks of each count
-        $start = array(); // the timestamp passed of each node starttime.
-        foreach ($convertedData as $key => $graphData)
-        {
-            $nodata = (isset($graphData['nodata'])) ? $graphData['nodata'] : 0;
-            $values[] = array('label' => $graphData['title'],
-                'values' => array($graphData['kept'], $graphData['repaired'], $graphData['notkept'], $nodata));
-
-// track the count parameter
-// because we cannot directly pass the custom data in barChart of infovis
-            if (isset($graphData['count']))
-            {
-                $count[$graphData['title']] = $graphData['count'];
-            }
-            if (isset($graphData['start']))
-            {
-                $start[$graphData['title']] = $graphData['start'];
-            }
-        }
-
-
-        $data['graphSeries']['labels'] = json_encode($labels);
-        $data['graphSeries']['values'] = json_encode($values);
-
-        // these are two extra parameters that has to be accessible in the bar chart graph
-        if (is_array($count) && !empty($count))
-        {
-            $data['graphSeries']['count'] = json_encode($count);
-        }
-
-        if (is_array($start) && !empty($start))
-        {
-            $data['graphSeries']['start'] = json_encode($start);
-        }
-        return $data;
     }
 
     /**
@@ -595,9 +451,8 @@ class Welcome extends Cf_Controller
             show_error($e->getMessage(), 500);
         }
 
-        $gdata = cfpr_host_meter($this->session->userdata('username'), $hostkey);
-
-        $returnedData = $this->_convert_summary_compliance_graph($gdata);
+        $gdata=$this->host_model->getHostMeter($this->session->userdata('username'), $hostkey);
+        $returnedData= $this->summary_model->getConvertedSummaryComplianceGraphData($gdata);
         $data = array_merge($data, $returnedData);
 
         $this->template->load('template', 'host', $data);
@@ -642,8 +497,8 @@ class Welcome extends Cf_Controller
             {
                 foreach ($ret['data'] as $index => $val)
                 {
-                    $rawData = cfpr_host_meter($this->session->userdata('username'), $val['key']);
-                    $graphData = $this->_convert_summary_compliance_graph($rawData);
+                    $rawData=$this->host_model->getHostMeter($this->session->userdata('username'), $val['key']);
+                    $graphData = $this->summary_model->getConvertedSummaryComplianceGraphData($rawData);
                     $ret['data'][$index] = array_merge($ret['data'][$index], $graphData);
                 }
             }

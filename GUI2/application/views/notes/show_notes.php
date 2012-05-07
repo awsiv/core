@@ -1,4 +1,3 @@
-<div id="body">
     <div class="outerdiv">
         <div class="innerdiv">
             <div id="collapse">
@@ -24,9 +23,9 @@
                     </div>
                 </div>
             </div>
-        </div>
+             <?php if (!empty($data)) { ?>
             <div style="max-height: 400px;overflow: auto;">
-                <table id="notes-table" class="bundlelist-table">                   
+                <table id="notes-table" class="bundlelist-table">
                     <tr>
                         <th scope="col">User</th>
                         <th scope="col">Date</th>
@@ -36,7 +35,7 @@
                     </tr>
 
                     <tbody>
-                        <?php if (!empty($data)) { ?>
+
                             <?php foreach ($data as $notes) { ?>
                                 <tr>
                                     <td><?php echo $notes->getuserId(); ?></td>
@@ -60,7 +59,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr> 
+                                                    <tr>
                                                         <?php $hostArray = $notes->getHost(); ?>
                                                         <td><a href="<?php echo site_url();?>/welcome/host/<?php echo $hostArray['kh'];?>"><?php echo $hostArray['name']; ?></a></td>
                                                         <td><?php echo $hostArray['ip']; ?></td>
@@ -77,11 +76,6 @@
                                     </td>
                                 </tr>
                             <?php } ?>
-                        <?php } else { ?>
-                            <tr id="no-data-row">
-                                <td colspan="4">No notes available</td>
-                            </tr>
-                        <?php } ?>
                     </tbody>
                 </table>
 
@@ -119,10 +113,13 @@
                 </div>
 
             </div>
+             <?php } else { ?>
+                     <div class="info">No notes available</div>
+             <?php } ?>
         </div>
-    </div>
+
     <div id="detailsDialog"></div>
-</div>
+    </div>
 <script type="text/javascript">
     $(function() {
         var dates = $( "#dateFrom, #dateTo" ).datepicker({

@@ -10,7 +10,6 @@
 #include "cf.nova.h"
 #include "files_names.h"
 
-#if defined(HAVE_LIBMONGOC)
 #include "db_common.h"
 
 static void CFDB_SaveBody(mongo_connection *dbconn, Body *body);
@@ -323,11 +322,3 @@ static void CFDB_SaveBody(mongo_connection *dbconn, Body *body)
     bson_destroy(&query);
     bson_destroy(&b);
 }
-
-#else
-
-void CFDB_SaveUnExpandedPromises(Bundle *bundles, Body *bodies)
-{
-}
-
-#endif

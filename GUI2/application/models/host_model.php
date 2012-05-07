@@ -335,6 +335,29 @@ class host_model extends Cf_Model
             throw $e;
         }
     }
+    
+    
+    function getHostMeter($username,$hostkey){
+         try
+        {
+            $rawdata = cfpr_host_meter($username, $hostkey);
+            $data = $this->checkData($rawdata);
+            if (is_array($data) && $this->hasErrors() == 0)
+            {
+                return $data;
+            }
+            else
+            {
+                throw new Exception($this->getErrorsString());
+            }
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " File: " . $e->getFile() . ' line:' . $e->getLine());
+            throw $e;
+        }
+        
+    }
 
 }
 

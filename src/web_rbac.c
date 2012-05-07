@@ -27,6 +27,12 @@
 
 #include <assert.h>
 
+typedef enum
+{
+    AUTHENTICATION_MODE_INTERNAL,
+    AUTHENTICATION_MODE_LDAP,
+    AUTHENTICATION_MODE_AD
+} AuthenticationMode;
 
 static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles);
 static char *StringAppendRealloc2(char *start, char *append1, char *append2);
@@ -36,7 +42,7 @@ static Item *CFDB_GetRolesForUser(mongo_connection *conn, char *userName);
 static HubQuery *CFDB_GetRolesByMultipleNames(Item *names);
 static HubQuery *CFDB_GetRoles(bson *query);
 static const char *GetUsersCollection(mongo_connection *conn);
-static bool IsLDAPOn(mongo_connection *conn);
+static AuthenticationMode GetAuthenticationMode(mongo_connection *conn);
 static bool IsRBACOn(mongo_connection *conn);
 static HubQuery *CFDB_GetAllRoles(void);
 static HubQuery *CFDB_GetRoleByName(char *name);
@@ -81,40 +87,15 @@ static bool VerifyPasswordIonAuth(const char *password, size_t password_len, con
     return authenticated;
 }
 
-/*****************************************************************************/
-
 #ifdef HAVE_LIBLDAP
-static cfapi_errid LDAPAuthenticate(mongo_connection *conn, const char *username, const char *password, size_t password_len)
+
+static cfapi_errid LDAPAuthenticatePlain(mongo_connection *conn,
+                                         const char *ldap_url,
+                                         bool start_tls,
+                                         const char *username,
+                                         const char *password,
+                                         size_t password_len)
 {
-    char encryption[1024] = { 0 };
-    if (!CFDB_HandleGetValue(dbkey_mpsettings_encryption, encryption, sizeof(encryption), conn, MONGO_MPSETTINGS_COLLECTION))
-    {
-        strcpy(encryption, "plain");
-    }
-
-    char ldap_server[1024] = { 0 };
-    if (!CFDB_HandleGetValue(dbkey_mpsettings_host, ldap_server, sizeof(ldap_server), conn, MONGO_MPSETTINGS_COLLECTION))
-    {
-        return ERRID_HOST_NOT_FOUND;
-    }
-
-    char ldap_url[2048] = { 0 };
-    if (strcmp(encryption, "ssl") == 0)
-    {
-        strcat(ldap_url, "ldaps://");
-    }
-    else
-    {
-        strcat(ldap_url, "ldap://");
-    }
-    strcat(ldap_url, ldap_server);
-
-    bool start_tls = false;
-    if (strcmp(encryption, "start_tls") == 0)
-    {
-        start_tls = true;
-    }
-
     char login_attribute[1024] = { 0 };
     if (!CFDB_HandleGetValue(dbkey_mpsettings_login_attribute, login_attribute, sizeof(login_attribute), conn, MONGO_MPSETTINGS_COLLECTION))
     {
@@ -124,7 +105,7 @@ static cfapi_errid LDAPAuthenticate(mongo_connection *conn, const char *username
     char base_dn[1024] = { 0 };
     if (!CFDB_HandleGetValue(dbkey_mpsettings_base_dn, base_dn, sizeof(login_attribute), conn, MONGO_MPSETTINGS_COLLECTION))
     {
-        return ERRID_DATA_UNAVAILABLE;
+        return ERRID_RBAC_ACCESS_DENIED;
     }
 
     char user_directories[1024] = { 0 };
@@ -159,6 +140,92 @@ static cfapi_errid LDAPAuthenticate(mongo_connection *conn, const char *username
 
     return result;
 }
+
+static cfapi_errid LDAPAuthenticateAD(mongo_connection *conn,
+                                      const char *ldap_url,
+                                      bool start_tls,
+                                      const char *username,
+                                      const char *password,
+                                      size_t password_len)
+{
+    char ad_domain[1024] = { 0 };
+    if (!CFDB_HandleGetValue(dbkey_mpsettings_ad_domain, ad_domain, sizeof(ad_domain), conn, MONGO_MPSETTINGS_COLLECTION))
+    {
+        return ERRID_RBAC_ACCESS_DENIED;
+    }
+
+    char bind_dn[4096] = { 0 };
+    if (StringMatch("/^(\\w+\\.)+\\w{2,5}$/", ad_domain))
+    {
+        strcat(bind_dn, username);
+        strcat(bind_dn, "@");
+        strcat(bind_dn, ad_domain);
+    }
+    else
+    {
+        strcat(bind_dn, ad_domain);
+        strcat(bind_dn, "\\");
+        strcat(bind_dn, username);
+    }
+
+    const char *errmsg = NULL;
+    if (CfLDAPAuthenticate(ldap_url, bind_dn, password, start_tls, &errmsg))
+    {
+        return ERRID_SUCCESS;
+    }
+    else
+    {
+        return ERRID_RBAC_ACCESS_DENIED;
+    }
+}
+
+static cfapi_errid LDAPAuthenticate(mongo_connection *conn, const char *username, const char *password, size_t password_len, bool active_directory)
+{
+    char encryption[1024] = { 0 };
+    if (!CFDB_HandleGetValue(dbkey_mpsettings_encryption, encryption, sizeof(encryption), conn, MONGO_MPSETTINGS_COLLECTION))
+    {
+        strcpy(encryption, "plain");
+    }
+
+    char ldap_server[1024] = { 0 };
+    if (!CFDB_HandleGetValue(dbkey_mpsettings_host, ldap_server, sizeof(ldap_server), conn, MONGO_MPSETTINGS_COLLECTION))
+    {
+        return ERRID_HOST_NOT_FOUND;
+    }
+
+    char ldap_url[2048] = { 0 };
+    if (strcmp(encryption, "ssl") == 0)
+    {
+        strcat(ldap_url, "ldaps://");
+    }
+    else
+    {
+        strcat(ldap_url, "ldap://");
+    }
+    strcat(ldap_url, ldap_server);
+
+    bool start_tls = false;
+    if (strcmp(encryption, "start_tls") == 0)
+    {
+        start_tls = true;
+    }
+
+    if (active_directory)
+    {
+        return LDAPAuthenticateAD(conn, ldap_url, start_tls, username, password, password_len);
+    }
+    else
+    {
+        return LDAPAuthenticatePlain(conn, ldap_url, start_tls, username, password, password_len);
+    }
+}
+#else
+static cfapi_errid LDAPAuthenticate(mongo_connection *conn, const char *username, const char *password, size_t password_len)
+{
+    assert(false && "Tried to authenticate using LDAP on a non-LDAP build");
+    return ERRID_RBAC_ACCESS_DENIED;
+}
+
 #endif
 
 static cfapi_errid IonAuthenticate(mongo_connection *conn, const char *username, const char *password, size_t password_len)
@@ -214,18 +281,21 @@ cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, si
         return ERRID_DBCONNECT;
     }
 
-    bool ldap = IsLDAPOn(&conn);
     cfapi_errid result = ERRID_RBAC_ACCESS_DENIED;
 
-    if (ldap)
+    switch (GetAuthenticationMode(&conn))
     {
-#ifdef HAVE_LIBLDAP
-        result = LDAPAuthenticate(&conn, username, password, password_len);
-#endif
-    }
-    else
-    {
+    case AUTHENTICATION_MODE_LDAP:
+        result = LDAPAuthenticate(&conn, username, password, password_len, false);
+        break;
+
+    case AUTHENTICATION_MODE_AD:
+        result = LDAPAuthenticate(&conn, username, password, password_len, true);
+        break;
+
+    case AUTHENTICATION_MODE_INTERNAL:
         result = IonAuthenticate(&conn, username, password, password_len);
+        break;
     }
 
     CFDB_Close(&conn);
@@ -683,30 +753,38 @@ static void DeAssociateUsersFromRole(mongo_connection *conn, char *roleName)
 
 static const char *GetUsersCollection(mongo_connection *conn)
 {
-    if (IsLDAPOn(conn))
+    switch (GetAuthenticationMode(conn))
     {
+    case AUTHENTICATION_MODE_LDAP:
+    case AUTHENTICATION_MODE_AD:
         return MONGO_USERS_LDAP_COLLECTION;
-    }
-    else
-    {
+
+    default:
+    case AUTHENTICATION_MODE_INTERNAL:
         return MONGO_USERS_INTERNAL_COLLECTION;
     }
 }
 
 /*****************************************************************************/
 
-static bool IsLDAPOn(mongo_connection *conn)
+static AuthenticationMode GetAuthenticationMode(mongo_connection *conn)
 {
     char result[32] = { 0 };
 
     CFDB_HandleGetValue(dbkey_mpsettings_auth_mode, result, sizeof(result), conn, MONGO_MPSETTINGS_COLLECTION);
 
-    if (strcmp(result, "ldap") == 0 || strcmp(result, "active_directory") == 0)
+    if (StringSafeEqual(result, "ldap"))
     {
-        return true;
+        return AUTHENTICATION_MODE_LDAP;
     }
-
-    return false;
+    else if (StringSafeEqual(result, "active_directory"))
+    {
+        return AUTHENTICATION_MODE_LDAP;
+    }
+    else
+    {
+        return AUTHENTICATION_MODE_INTERNAL;
+    }
 }
 
 /*****************************************************************************/
