@@ -36,7 +36,6 @@ libcfnova_la_SOURCES = \
         datapackaging.c \
         outputs.c \
         promises.c \
-        promise_db.c \
         processes.c \
         pscalar.c \
         runagent.c \
@@ -84,6 +83,7 @@ libcfnova_la_SOURCES += \
         histogram.c \
         install.c \
         magnify.c \
+        promise_db.c \
         scorecards.c scorecards.h \
         topicmap.c \
         web_api.c \
