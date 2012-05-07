@@ -550,7 +550,7 @@ class Widget extends Cf_Controller
     function contextfinder()
     {
         $data = array();
-
+/*
         if ($this->input->post('includes') !== FALSE)
         {
             $data['includes'] = $this->input->post('includes', TRUE);
@@ -560,7 +560,42 @@ class Widget extends Cf_Controller
         {
             $data['excludes'] = $this->input->post('excludes', TRUE);
         }
+*/        
+        if($this->input->post('html_id') !== FALSE) {
+            $data['html_id'] = $this->input->post('html_id', TRUE);
+        }
+        
+        if($this->input->post('doNotShowButtons') !== FALSE) {
+            if (strtolower($this->input->post('doNotShowButtons', TRUE)) == 'false')
+                $data['doNotShowButtons'] = false;        
+            else
+                $data['doNotShowButtons'] = true;
+        }
+        
+        if($this->input->post('embedded') !== FALSE) {
+            if (strtolower($this->input->post('emdedded', TRUE)) == 'false')
+                $data['embedded'] = false;        
+            else
+                $data['embedded'] = true;
+        }        
+        
+        if($this->input->post('include_field_name') !== FALSE) {
+            $data['include_field_name'] = $this->input->post('include_field_name', TRUE);
+        }
+        
+        if ($this->input->post('includes') !== FALSE) {
+           $data['fields']['left']['values'] = $this->input->post('includes');
+        }
+        
+        if($this->input->post('exclude_field_name') !== FALSE) {
+            $data['include_field_name'] = $this->input->post('include_field_name', TRUE);
+        }
+        
+        if ($this->input->post('excludes') !== FALSE) {
+           $data['fields']['right']['values'] = $this->input->post('excludes');
+        }
 
+        
         $this->load->view('widgets/contextfinder', $data);
     }
 
@@ -577,10 +612,10 @@ class Widget extends Cf_Controller
 
         $username = $this->session->userdata('username');
         $all_bundles = $brxi = $brxx = array();
-
+        
         try
         {
-            $all_bundles_tmp = json_decode($this->bundle_model->getAllBundles($username));
+            $all_bundles_tmp = $this->bundle_model->getAllBundles($username);
 
             if (!empty($all_bundles_tmp))
             {
