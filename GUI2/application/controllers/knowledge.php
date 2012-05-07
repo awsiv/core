@@ -108,20 +108,14 @@ class Knowledge extends Cf_Controller
 
         $search = isset($getparams['search']) ? urldecode($getparams['search']) : $this->input->post('search');
         $data['search'] = trim($search);
+        if (!$data['search']) {
+            $data['search'] = 'questions::.*'; // default topic
+        }
         try
         {
-            if ($data['search'])
-            {
                 $data['searchData'] = $this->knowledge_model->searchTopics($this->username, $data['search'], true);
                 $this->load->view('/knowledge/search_result', $data);
-            }
-            else
-            {
-                // search for default manuals
-                $pid = $this->knowledge_model->getPidForTopic($this->username, "any", "manuals");
-                $data['searchData'] = $this->knowledge_model->showTopicHits($this->username, $pid);
-                $this->load->view('/knowledge/searchmanual', $data);
-            }
+
         }
         catch (Exception $e)
         {
@@ -189,7 +183,7 @@ class Knowledge extends Cf_Controller
             $data['showSameContext'] = (!is_array($data['topicCategory']['other_topics']) || empty($data['topicCategory']['other_topics'])) ? false : true;
             $data['showSubTopics'] = (!is_array($data['topicCategory']['topic']['sub_topics']) || empty($data['topicCategory']['topic']['sub_topics'])) ? false : true;
 
-            $data['currentPage'] = isset($getparams['page']) ? intval($getparams['page'], 10) : 1;   
+            $data['currentPage'] = isset($getparams['page']) ? intval($getparams['page'], 10) : 1;
             $data['number_of_rows'] = isset($getparams['rows']) ? intval($getparams['rows'], 10):$this->setting_lib->get_no_of_rows();
 
             //for story generation
