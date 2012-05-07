@@ -26,7 +26,12 @@ class Auth extends Controller
         $this->form_validation->set_error_delimiters('<span class="errorlist">', '</span>');
         //$this->load->database();
         $this->load->helper('url');
-        $this->carabiner->css(array(array('classfinderbox.css'), array('tabs-custom.css')));
+        $this->carabiner->css(
+                array(
+                    array('contextfinder.css'),
+                    array('tabs-custom.css')
+                    )
+                );
         $this->config->load('ion_auth', TRUE);
     }
 
@@ -78,7 +83,10 @@ class Auth extends Controller
         $this->_check_admin_permissions();
 
         $requiredjs = array(
-            array('widgets/classfinderbox.js'),
+            //array('widgets/classfinderbox.js'),
+            array('widgets/contextfinder.js'),
+array('widgets/classfinder.js'),        
+array('widgets/bundlefinder.js'),                   
             array('jquery.form.js'),
             array('jquery.blockUI.js'),
         );
