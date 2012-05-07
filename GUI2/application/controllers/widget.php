@@ -580,7 +580,7 @@ class Widget extends Cf_Controller
 
         try
         {
-            $all_bundles_tmp = json_decode($this->bundle_model->getAllBundles($username));
+            $all_bundles_tmp = $this->bundle_model->getAllBundles($username);
 
             if (!empty($all_bundles_tmp))
             {
