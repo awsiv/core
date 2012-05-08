@@ -16,6 +16,7 @@
 #include "cf.nova.h"
 #include "crypto.h"
 #include "files_names.h"
+#include "vars.h"
 
 Rlist *SERVER_KEYRING = NULL;
 static int Nova_ParseHostname(char *name, char *hostname);
