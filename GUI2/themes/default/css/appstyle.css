@@ -2629,6 +2629,7 @@ ul.admin_menu li.current a{
     padding: 2px;
    font-size: 14px;
    border-bottom: #D4D5D0 1px dashed;
+   margin-right: 15px;
 }
 
 .knowledgesearch li:last-child

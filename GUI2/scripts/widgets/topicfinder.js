@@ -129,7 +129,7 @@
             }
             else {
                 //single shared element for modal dialogs
-                var requestDialog = $('<div id="topiclistcontainer" style="display:none" class="result" title="topics"></div>').appendTo('body').
+                var requestDialog = $('<div id="topiclistcontainer" style="display:none" class="" title="topics"></div>').appendTo('body').
                 dialog({
                     autoOpen: false
                 });
