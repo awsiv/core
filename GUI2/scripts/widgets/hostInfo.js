@@ -25,30 +25,30 @@
 
             $self._headerLabel = $('<a>').addClass('headerLabel');
             $self.header.append($self._headerLabel);
-               
+
             var $column1 = $('<div>').addClass('column');
                 $column1.append($self._createDivWrapper($self._createLabelElement('IP: '),$self._values.ip));
                 $column1.append($self._createDivWrapper($self._createLabelElement('OS Type: '),$self._values.osType));
                 $column1.append($self._createDivWrapper($self._createLabelElement('Flavour: '),$self._values.flavour));
-            
+
 
             var $column2 = $('<div>').addClass('column');
                 $column2.append($self._createDivWrapper($self._createLabelElement('Release: '),$self._values.release));
                 $column2.append($self._createDivWrapper($self._createLabelElement('Last Report: '),$self._values.lastReportUpdate));
                 $column2.append($self._createDivWrapper($self._createLabelElement('Policy Updated: '),$self._values.lastPolicyUpdate));
 
-        
+
             $self.element.append($column1).append($column2);
 
             $.ui.hostInfo.instances.push($self.element);
         },
-        
+
         _createDivWrapper:function(){
             var $element = $('<div>');
              for (var i = 0, j = arguments.length; i < j; i++){
                $element.append(arguments[i]);
              }
-            return $element; 
+            return $element;
         },
 
         _createLabelElement: function(label) {
@@ -85,7 +85,7 @@
 
         updateHostKey: function(hostKey) {
             var $self = this;
-          
+
             var requestUrl = $self.options.baseUrl + '/host/info/' + hostKey;
             $self._clearFields();
             $self._ajaxLoader.show($self);
@@ -113,7 +113,7 @@
 
                 if (host.lastPolicyUpdate !== undefined) {
                     // NOTE: lastPolicyUpdate is in text format
-                    $self._values.lastPolicyUpdate.html(host.lastPolicyUpdate);
+                    $self._values.lastPolicyUpdate.html(host.lastPolicyUpdate + ' (agent timezone)');
                 }
                 $self._ajaxLoader.hide($self);
             });
@@ -121,14 +121,14 @@
 
         _ajaxLoader:{
            show:function($self){
-                $self._colourIcon.removeClass('colourIcon').addClass('loadinggif'); 
+                $self._colourIcon.removeClass('colourIcon').addClass('loadinggif');
            },
            hide:function($self){
                 $self._colourIcon.removeClass('loadinggif').addClass('colourIcon');
            }
-                 
+
         },
-        
+
         _requestUrls: {
 
             hostPage: function(self, key) {
