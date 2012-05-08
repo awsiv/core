@@ -8,6 +8,7 @@
         },
 
         options: {
+            title: 'Classes',
             baseUrl: '',
             filterhandlerurl: '/widget/filterclass',
             defaultbehaviour: true,
@@ -264,21 +265,10 @@
 
         loadpagebody: function() {
             var self = this;
-            
 
-            var url = '';
-            if (self.element.attr('href') != '') {
-                url  = self.element.attr('href');
-            }
-            else
-            {
-                url = self.options.baseUrl + '/widget/allclasses';
-            }
-            
             self.changeTitle('Loading');
             var params = {
-                //'url': self.options.baseUrl + '/widget/allclasses',
-                'url': url,
+                'url': self.options.baseUrl + '/widget/allclasses',
                 'success': function(data) {
                     self.loadDataInContainer(data, false);
                 }
@@ -357,7 +347,7 @@
             }
             else {
                 //single shared element for modal dialogs
-                var requestDialog = $('<div id="'+self.dialogId+'" style="display:none" class="finderwidget  result" title="Classes"><ul class="classList"></ul></div>').appendTo('body').
+                var requestDialog = $('<div id="'+self.dialogId+'" style="display:none" class="finderwidget  result" title="'+ self.options.title +'"><ul class="classList"></ul></div>').appendTo('body').
                 dialog({
                     autoOpen: false,
                     beforeClose: function(event, ui) {
