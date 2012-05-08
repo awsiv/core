@@ -30,7 +30,7 @@
 
                     $repaired['meta']['header']['Hosts'] = 3;
                     foreach ($repaired['data'] as &$r) {
-                        $link = sprintf('%s/search/index/name/%s/host/All/report/Promises+repaired+summary/hosts_only/true', site_url(), $r[0]);
+                        $link = sprintf('%s/search/index/name/%s/host/All/report/promises-repaired-summary/hosts_only/true', site_url(), $r[0]);
                         $r[] = sprintf('<a href="%s" target="_self" rel="%s" class="summary-report-host">show</a>', $link, $r[0]);
                     }
 
