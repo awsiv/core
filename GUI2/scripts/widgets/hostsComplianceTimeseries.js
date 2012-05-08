@@ -114,6 +114,9 @@
             $self._previousPoint = null;
             $self._sampleCounts = null;
             $self._resource = 'host/compliance/timeseries';
+            $self.options.plot.xaxis.tickFormatter = function(value) {
+                return common.time.formatTimeOfDay(value);
+            };
 
             $self._$graph.bind('plothover', function(event, pos, item) {
                 $('#x').text(pos.x.toFixed(2));
