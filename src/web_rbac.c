@@ -179,7 +179,8 @@ static cfapi_errid LDAPAuthenticateAD(mongo_connection *conn,
     }
 }
 
-static cfapi_errid LDAPAuthenticate(mongo_connection *conn, const char *username, const char *password, size_t password_len, bool active_directory)
+static cfapi_errid LDAPAuthenticate(mongo_connection *conn, const char *username, const char *password, size_t password_len,
+                                    bool active_directory)
 {
     char encryption[1024] = { 0 };
     if (!CFDB_HandleGetValue(dbkey_mpsettings_encryption, encryption, sizeof(encryption), conn, MONGO_MPSETTINGS_COLLECTION))
@@ -220,7 +221,8 @@ static cfapi_errid LDAPAuthenticate(mongo_connection *conn, const char *username
     }
 }
 #else
-static cfapi_errid LDAPAuthenticate(mongo_connection *conn, const char *username, const char *password, size_t password_len)
+static cfapi_errid LDAPAuthenticate(mongo_connection *conn, const char *username, const char *password, size_t password_len,
+                                    bool active_directory)
 {
     assert(false && "Tried to authenticate using LDAP on a non-LDAP build");
     return ERRID_RBAC_ACCESS_DENIED;
