@@ -38,10 +38,14 @@ var common = (function(){
 
                 return hours + ":" + mins;
             },
+            formatGMTOffset:function(javascriptTimestamp) {
+                var date = new Date(javascriptTimestamp);
+                return date.format('P');
+            },
 
             format: function(javascriptTimestamp) {
                 return common.time.formatDate(javascriptTimestamp) + ' ' +
-                    common.time.formatTimeOfDay(javascriptTimestamp);
+                    common.time.formatTimeOfDay(javascriptTimestamp) + ' (GMT ' + common.time.formatGMTOffset(javascriptTimestamp) + ')';
             }
         },
 
