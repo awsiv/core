@@ -25,7 +25,7 @@
         var d = new Date();
         d.setTime( actualDate  * 1000 );
         // getday sunday is 0 .. so we need to align this with the current data
-        var weekday=new Array(7);
+        var weekday=new Array();
         weekday[0]=144;
         weekday[1]=0;
         weekday[2]=24;
@@ -85,7 +85,8 @@
         o = plot.pointOffset({ x: alignX, y: <?php echo $graphdatamax; ?>});
         // we just append it to the placeholder which Flot already uses
         // for positioning
-        var labelDate = d.toGMTString();
+        //var labelDate = d.toGMTString();
+        var labelDate = common.time.format(common.unixTimeToJavascriptTime(actualDate));
         placeholder.append('<div style="position:absolute;left:' + (o.left + 14) + 'px;top:' + (o.top+5) + 'px;color:#666;font-size:smaller">'+labelDate+'</div>');
         // draw a little arrow on top of the last label to demonstrate
         // canvas drawing
