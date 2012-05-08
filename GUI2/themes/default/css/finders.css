@@ -107,11 +107,10 @@
 }
 
 
-.result li
+.result li, #policyList li.only_bundle
 {
     border-bottom:solid 1px #3d453a;
-    /* height:44px;*/
-    padding:12px 0;
+    padding:12px 0 !important;
     width:96.5%;
     list-style: none;
     overflow: hidden;
@@ -120,6 +119,10 @@
     white-space: -moz-pre-wrap !important; /* Mozilla, since 1999 */
     white-space: -pre-wrap; /* Opera 4-6 */
     white-space: -o-pre-wrap; /* Opera 7 */
+}
+
+#policyList li.only_bundle {
+    cursor: pointer;
 }
 
 /* host finder control*/

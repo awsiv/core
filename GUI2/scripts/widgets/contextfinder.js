@@ -12,7 +12,7 @@
             includes: [],
             excludes: []
         },        
-        
+        HTML_element : '', // html element for widget
         options: {
             title: '',
             baseUrl: '',
@@ -25,8 +25,24 @@
             defaultEmptyElements: 2,
             
             setContextClbkFnc: '',
-            setContextClbkParam: ''
+            setContextClbkParam: '',
             
+            embedded: false,
+            HTML_ID: '',
+            doNotShowButtons: false,
+            
+            include_field_name: 'include',
+            exclude_field_name: 'exclude',
+            
+            useFinder: 'classfinder',
+            
+            tooltips: {
+                select_item: 'Select class',
+                add_conditions: 'Add conditions',
+                delete_condition: 'Delete condition',
+                swap_conditions: 'Swap conditions'
+            }
+
         },
         _init: function(){
             var self=this;
@@ -34,21 +50,33 @@
         _create:function(){
             var self=this;
             self.dialoginit();
-         
-            self.dialogcontent.dialog({
-                height: self.options.height,
-                width: self.options.width,
-                autoOpen: false,
-                modal: true
-            });
             
-            self.dialogcontent.dialog('option', 'title', self.options.title);   
+        
+                if (self.options.embedded == false) {
+                    self.dialogcontent.dialog({
+                        height: self.options.height,
+                        width: self.options.width,
+                        autoOpen: false,
+                        modal: true
+                    });
             
-            self.element.bind('click',function(event){
-                event.preventDefault();
-                self.dialogcontent.dialog('open');
-                self.loadpagebody(self.element.attr('href'));
-            });
+                    self.dialogcontent.dialog('option', 'title', self.options.title);   
+            
+                    self.element.bind('click',function(event){
+                        event.preventDefault();
+                        self.dialogcontent.dialog('open');
+                        self.loadpagebody(self.element.attr('href'));
+                        
+                    });
+                }
+                else {
+                    self.dialogcontent.dialog({});
+                    self._setHTMLScope();
+                    self._bindMouseEvents();
+                    self._bindKeyboardEvents();
+                    self._addTooltips();
+                }
+           
             mediator.installTo(self);
             self.subscribe('contextChange', function(data){
                       self.setContext(data.includes, data.excludes);
@@ -70,25 +98,32 @@
 
         dialoginit:function(){
             var self =this;
-            self.ajaxloader=$('');
-            self.repdialog=$('');
+            self.ajaxloader = $('');
+            self.repdialog  = $('');
             self.dialogcontent = self.dialogContainer();
-            self.dialogcontent.dialog({
-                height: self.options.height,
-                width: self.options.width,
-                autoOpen: false,
-                modal: true
-            });
-
+            
+            if (self.options.embedded == false) {
+                self.dialogcontent.dialog({
+                    height: self.options.height,
+                    width: self.options.width,
+                    autoOpen: false,
+                    modal: true
+                });
+                
+                self.element.bind('click',function(event){
+                    event.preventDefault();
+                    self.dialogcontent.dialog('open')
+                });
+                self.repdialog.appendTo(self.dialogcontent).hide();
+                
+            }
+           
             self.dialogcontent.parent().addClass('customdlg contextfinder').removeClass('ui-widget-content');
-            self.element.bind('click',function(event){
-                event.preventDefault();
-                self.dialogcontent.dialog('open')
-            });
-            self.repdialog.appendTo(self.dialogcontent).hide();
+
         },
         _dialogSubmit: function (event, dialogObj) {
             var self = dialogObj;            
+     
             event.preventDefault();
             self.getInludeExclude();
             self._trigger("complete",null,self.getInludeExclude());
@@ -107,137 +142,45 @@
            var self=this;
            return $('<div class="item"><input type="text"  name="' + name + '[]" value=""><a class="class_selector" href="'+self.options.baseUrl+'/widget/allclasses">&nbsp;</a><a class="delete_condition" href="">&nbsp;</a><div class="clearboth"></div></div>');
         },
+        _getDataForPost:function() {
+            var self = this;
+            var data = {};
+            
+            data.include_field_name = self.options.include_field_name;
+            data.includes =  self._context.includes;
+            
+            data.exclude_field_name = self.options.exclude_field_name;
+            data.excludes =  self._context.excludes;     
+            
+            data.html_id = self.options.HTML_ID;
+            
+            data.doNotShowButtons = self.options.doNotShowButtons;
+            data.embedded = self.options.embedded;
+            
+            return data;            
+        },
         loadpagebody:function(url){
             var self=this,
                 submit_url=url;
             $.ajax({
                 type: "POST",
                 url: submit_url,
-                data: self._context,
+                data: self._getDataForPost(),
                 dataType:"html",
                 success: function(data) {
 
                     self.updateDataInContainer(data);
-                    $(".contextfinder_wrapper").delegate('.class_selector',"click", function(event) {
-                        event.preventDefault();
-                        self.getInludeExclude();
-                        self.bindClassfinder(this);
-                    });
 
-                    //add another condition field
-                    $(".contextfinder_wrapper").delegate('.add_condition',"click", function(event) {
-                        event.preventDefault();
-                        var destination = $(this).attr('destination');
-                        var fieldname   = $(this).attr('fieldname');
-                        var $new_el = $(self._createNewElement(fieldname));
-                        
-                        $('td.' +destination).prepend($new_el);
-                        $new_el.find('input').focus();
-                        self.refreshTabindex();
-                        self.setFocusFirstElement(destination);
-                    });
+                    self._setHTMLScope();
 
-                    //buttons inside input box
-                    $(".contextfinder_wrapper").delegate('.delete_condition',"click", function(event) {
-                        event.preventDefault();
-                        $(this).parent().remove();
-                        self.getInludeExclude();
-                    });                    
-    
-                    //swap values
-                    $(".contextfinder_wrapper").delegate(".invert","click",  function(event) {
-                        event.preventDefault();    
-     
-                        // try to create copy of all elements..
-                        var elem_includes   = $(self.dialogcontent.find('td.includes .item'));
-                        var cloned_includes = elem_includes.clone(true);
-                        
-                        var elem_excludes   = $(self.dialogcontent.find('td.excludes .item'));
-                        var cloned_excludes = elem_excludes.clone(true);
-                        
-                        //rename includes
-                        $.each(cloned_includes, function() { 
-                            cloned_includes.find('input').attr('name', 'exclude[]');
-                        });
-                        //rename excludes
-                        $.each(cloned_excludes, function() { 
-                            cloned_excludes.find('input').attr('name', 'include[]');                            
-                        });
-                        
-                        // replace current includes/excludes with cloned 
-                        if (self.dialogcontent.find('td.includes .item').length>0) {
-                            self.dialogcontent.find('td.includes .item').replaceWith(cloned_excludes);
-                        }
-                        else {
-                            self.dialogcontent.find('td.includes').append(cloned_excludes);
-                        }
-                        
-                        if (self.dialogcontent.find('td.excludes .item').length > 0) {
-                            self.dialogcontent.find('td.excludes .item').replaceWith(cloned_includes);
-                        }
-                        else {
-                            self.dialogcontent.find('td.excludes').append(cloned_includes);
-                        }
-                      });
+                    self._bindMouseEvents();
+                    
+                    self._bindKeyboardEvents();
+                    self._addTooltips();
+                    
 
-                    self.dialogcontent.find(".contextfinder_wrapper").delegate("#resetConditions","click",  function(event)  {
-                        event.preventDefault();
-                        self.resetForm();
-                        self.refreshTabindex();
-                    });
-
-                    // bind enter(return)
-                    self.dialogcontent.delegate(".contextfinder_wrapper", "keypress", function(event) {
-                        if (event.keyCode == 13) {
-                             self._dialogSubmit(event, self);
-                        }
-                    });
-                    self.dialogcontent.find(".contextfinder_wrapper").delegate("#setConditions","click",  function(event)  {
-                        self._dialogSubmit(event, self);
-                    });
-                    
-                    
-                    //add tooltips
-                    var tooltip_classes = 'ui-tooltip-shadow ui-tooltip-dark';
-
-                    self.dialogcontent.find('.add_condition').qtip({
-                        content: {
-                            text: 'Add condition'
-                        },
-                        style: {
-                            classes: tooltip_classes
-                        }
-                    });  
-                    
-                    self.dialogcontent.find('.class_selector').qtip({
-                        content: {
-                            text: 'Select class'
-                        },
-                        style: {
-                            classes: tooltip_classes
-                        }
-                    });  
-                    
-                    self.dialogcontent.find('.delete_condition').qtip({
-                        content: {
-                            text: 'Delete condition'
-                        },
-                        style: {
-                            classes: tooltip_classes
-                        }
-                    });    
-                    
-                    self.dialogcontent.find('.invert').qtip({
-                        content: {
-                            text: 'Swap conditions'
-                        },
-                        style: {
-                            classes: tooltip_classes
-                        }
-                    });      
-                                        
-                    
                     self.setFocusFirstElement();
+                    
                     self.animate=false;
                     
                     self.getInludeExclude();
@@ -249,35 +192,198 @@
                 }
             });
         },
+        _setHTMLScope: function() {
+            var self=this;  
+            if (self.options.HTML_ID == '')
+            {
+                self.HTML_element = $(".contextfinder_wrapper");
+            }
+            else 
+            {
+                self.HTML_element  = $("#" + self.options.HTML_ID);
+            }
+        },
+        
+        _bindMouseEvents: function() {
+             var self=this;
+                    self.HTML_element.delegate('.class_selector',"click", function(event) {
+                        event.preventDefault();
+                        self.getInludeExclude();
+                        self.bindFinder(this);
+                       
+                    });
+
+                    //add another condition field
+
+                    self.HTML_element.delegate('.add_condition',"click", function(event) {
+
+                        event.preventDefault();
+                        var destination = $(this).attr('destination');
+                        var fieldname   = $(this).attr('fieldname');
+                        var $new_el = $(self._createNewElement(fieldname));
+                        
+                        self.HTML_element.find('td.' +destination).prepend($new_el);
+                        $new_el.find('input').focus();
+                        self.refreshTabindex();
+                        self.setFocusFirstElement(destination);
+                    });
+
+                    //buttons inside input box
+                    self.HTML_element.delegate('.delete_condition',"click", function(event) {
+                        event.preventDefault();
+                        $(this).parent().remove();
+                        self.getInludeExclude();
+                    });                    
+    
+                    //swap values
+                    self.HTML_element.delegate(".invert","click",  function(event) {
+                        event.preventDefault();    
+     
+                        // try to create copy of all elements..
+                        var elem_includes   = $(self.HTML_element.find('td.includes .item'));
+                        var cloned_includes = elem_includes.clone(true);
+                        
+                        var elem_excludes   = $(self.HTML_element.find('td.excludes .item'));
+                        var cloned_excludes = elem_excludes.clone(true);
+                        
+                        //rename includes
+                        $.each(cloned_includes, function() { 
+                            cloned_includes.find('input').attr('name', self.options.exclude_field_name + '[]');
+                        });
+                        //rename excludes
+                        $.each(cloned_excludes, function() { 
+                            cloned_excludes.find('input').attr('name', self.options.include_field_name + '[]');                            
+                        });
+                        
+                        // replace current includes/excludes with cloned 
+                        if (self.HTML_element.find('td.includes .item').length>0) {
+                            self.HTML_element.find('td.includes .item').replaceWith(cloned_excludes);
+                        }
+                        else {
+                            self.HTML_element.find('td.includes').append(cloned_excludes);
+                        }
+                        
+                        if (self.HTML_element.find('td.excludes .item').length > 0) {
+                            self.HTML_element.find('td.excludes .item').replaceWith(cloned_includes);
+                        }
+                        else {
+                            self.HTML_element.find('td.excludes').append(cloned_includes);
+                        }
+                      });
+                    
+                    // this buttons could be disabled for some views
+                    self.HTML_element.delegate("#resetConditions","click",  function(event)  {
+                        event.preventDefault();
+                        self.resetForm();
+                        self.refreshTabindex();
+                    });
+
+
+                    self.HTML_element.delegate("#setConditions","click",  function(event)  {
+                        self._dialogSubmit(event, self);
+                    });
+                      
+        },
+        _bindKeyboardEvents: function() {
+            var self=this
+            // bind enter(return)
+            self.dialogcontent.delegate('.contextfinder_wrapper', "keypress", function(event) {
+                if (event.keyCode == 13) {
+                    self._dialogSubmit(event, self);
+                }
+            });
+        },
+        
+        _addTooltips: function () {
+             var self=this           
+              //add tooltips
+                    var tooltip_classes = 'ui-tooltip-shadow ui-tooltip-dark';
+
+                    self.HTML_element.find('.add_condition').qtip({
+                        content: {
+                            text: self.options.tooltips.add_conditions
+                        },
+                        style: {
+                            classes: tooltip_classes
+                        }
+                    });  
+                    
+                    self.HTML_element.find('.class_selector').qtip({
+                        content: {
+                            text: self.options.tooltips.select_item
+                        },
+                        style: {
+                            classes: tooltip_classes
+                        }
+                    });  
+                    
+                    self.HTML_element.find('.delete_condition').qtip({
+                        content: {
+                            text: self.options.tooltips.delete_condition
+                        },
+                        style: {
+                            classes: tooltip_classes
+                        }
+                    });    
+                    
+                    self.HTML_element.find('.invert').qtip({
+                        content: {
+                            text: self.options.tooltips.swap_conditions
+                        },
+                        style: {
+                            classes: tooltip_classes
+                        }
+                    });      
+                                        
+        },
+        
         refreshTabindex: function() {
             var self = this;
             var tabindex=1;
-            self.dialogcontent.find('input[name="include[]"]').each(function(index)
+            self.HTML_element.find('input[name="'+self.options.include_field_name+'[]"]').each(function(index)
             {
                 $(this).attr('tabindex', tabindex);
                 tabindex++;
                 
             });
-            self.dialogcontent.find('input[name="exclude[]"]').each(function(index)
+            self.HTML_element.find('input[name="'+self.options.exclude_field_name+'[]"]').each(function(index)
             {
                 $(this).attr('tabindex', tabindex);
                 tabindex++;
             });
+
+            $('#setConditions').attr('tabindex', tabindex);
+            tabindex++;
+
+            
         },
         setFocusFirstElement: function(column) {
             var self= this;
             if(column == null)
             {
-                self.dialogcontent.find('input').first().focus();
+               self.HTML_element.find('input').first().focus();
             }
             else 
             {
-                self.dialogcontent.find('.'+ column + ' input').first().focus();
+                self.HTML_element.find('.'+ column + ' input').first().focus();
             }
         },
+        
+        bindFinder: function (elem) {
+            var self= this;
+            if (self.options.useFinder == 'classfinder') {
+                self.bindClassfinder(elem);
+            }
+            else if  (self.options.useFinder == 'policyfinder') {
+                self.bindPolicyfinder(elem);
+            }
+            
+        },
+        
         bindClassfinder: function (elem) {
             var self= this;
             $(elem).classfinder({
+                title: self.options.finder_title,
                 defaultbehaviour:false,
                 baseUrl:self.options.baseUrl,
                 subscribe : this, // THIS instance of contextfinder, so we can call contextfinder functions from classfinder
@@ -286,16 +392,40 @@
                 {  
                     $(this).siblings('input').val(data.selectedclass);
                     self.getInludeExclude();
+                    // set focus to the element
+                    $(elem).parent().find('input').focus();
+                    
                 }
             });
         },
+        bindPolicyfinder: function(elem) {
+            var self= this;
+            $(elem).policyfinder({
+                defaultbehaviour:false,
+                onlyShowHandle: false,
+                onlyShowBundle: true,
+                baseUrl:self.options.baseUrl,
+                default_policy_url: $(elem).attr('href'),
+                autoopen:false,
+                complete:function(event,data)
+                {  
+                    $(this).siblings('input').val(data.selectedbundle);
+                    // set focus to the element
+                    $(elem).parent().find('input').focus();
+                }
+            });
+            
+            $(elem).policyfinder('openFinder');
+            
+        },
+        
         getInludeExclude: function () {
             var self = this;
 
             var includes = [];
             var excludes = [];
 
-            self.dialogcontent.find('input[name="include[]"]').each(function(index)
+            self.dialogcontent.find('input[name="'+self.options.include_field_name+'[]"]').each(function(index)
             {
                 if ($(this).val() != '')
                 {
@@ -303,7 +433,7 @@
                 }
             });
 
-            self.dialogcontent.find('input[name="exclude[]"]').each(function(index)
+            self.dialogcontent.find('input[name="'+self.options.exclude_field_name+'[]"]').each(function(index)
             {
                 if ($(this).val() != '')
                 {
@@ -312,10 +442,10 @@
             });            
             
             // if no input elemenst  -reset context
-            if (self.dialogcontent.find('input[name="includes[]"]').length == 0) {
+            if (self.dialogcontent.find('input[name="'+self.options.include_field_name+'[]"]').length == 0) {
                 self._tmpcontext.includes = [];
             }
-            if (self.dialogcontent.find('input[name="exclude[]"]').length == 0) {
+            if (self.dialogcontent.find('input[name="'+self.options.exclude_field_name+'[]"]').length == 0) {
                 self._tmpcontext.excludes = [];
             }
 
@@ -337,8 +467,8 @@
             $('td.excludes').empty();
             
             for (var i=0; i<self.options.defaultEmptyElements;i++) {
-              $('td.includes').append(self._createNewElement('include'));
-              $('td.excludes').append(self._createNewElement('exclude'));
+              $('td.includes').append(self._createNewElement(self.options.include_field_name));
+              $('td.excludes').append(self._createNewElement(self.options.exclude_field_name));
             }
             self.setFocusFirstElement();
         },
@@ -382,7 +512,7 @@
             var containerUlId = self.containerID();
             document.getElementById('contentfindercontainer').innerHTML = data;
             
-            self.dataLoaded = true;            
+            self.dataLoaded = true; 
         },
    
         destroy: function(){
