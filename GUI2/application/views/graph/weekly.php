@@ -34,10 +34,10 @@
         weekday[5]=96;
         weekday[6]=120;
         
-        var alignX = weekday[d.getDay()] + d.getHours();
         
         
         
+        var alignX = weekday[d.getDay()] + d.getHours() + d.getMinutes()/60;
         var markings = [
           
             { color: '#000', lineWidth: 1, xaxis: { from: alignX, to: alignX } }
