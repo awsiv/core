@@ -3186,7 +3186,7 @@ span.green_btn{
 }
 
 a.green_btn span, span.green_btn input{
-    background-image: url("../images/mp_buttons.png");
+    background-image: url("../images/mp_buttons.png") !important;
     background-repeat: no-repeat;
     background-position: 0 0;
     padding: 0 6px 0px 9px;
@@ -3360,6 +3360,22 @@ select {
     height: 23px;
     line-height: 23px;
 }
+
+textarea {
+    -webkit-box-shadow: #AAA 0px -1px 3px;
+    -moz-box-shadow:0 -1px 3px #AAA;
+    box-shadow:0 -1px 3px #AAA;
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EEE), color-stop(0.2, white), to(white));
+    border: 1px solid #E6E6E6;
+    border-bottom-left-radius: 3px 3px;
+    border-bottom-right-radius: 3px 3px;
+    border-top-left-radius: 3px 3px;
+    border-top-right-radius: 3px 3px;
+    color: #000;
+    padding:0 0 0 5px;
+    font-size: 12px !important;
+}
+
 
 input[type="checkbox"]{
     height:13px;
