@@ -3,8 +3,8 @@
     <?php if (isset($topicHits) && !empty($topicHits)) { ?>
         <table class="bundlelist-table">
             <tr>
-                <th scope="col">Context</th>
-                <th scope="col">Results</th>
+                <th scope="col">In the context of</th>
+                <th scope="col">"<?php echo $topicDetail['topic']; ?>" is explained by</th>
             </tr>
             <?php foreach ((array) $topicHits as $topic) { ?>
                 <tr>
