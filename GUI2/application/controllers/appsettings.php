@@ -13,7 +13,7 @@ class AppSettings extends Cf_REST_Controller
 
     function bluehostthreshold_get()
     {
-        $this->respond_ok($this->setting_lib->get_blue_host_threshold());
+        $this->respond_ok(time_diff_conv($this->setting_lib->get_blue_host_threshold()));
     }
 
 }

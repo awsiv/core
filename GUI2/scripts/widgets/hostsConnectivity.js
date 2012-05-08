@@ -26,12 +26,12 @@
         _init: function() {
             var $self = this;
 
-            $.getJSON($self._requestUrls.blueHostThreshold($self),
+            $.get($self._requestUrls.blueHostThreshold($self),
                 function(blueHostThreshold) {
                     $self._blue.children('.colourEntryLabel').attr('title',
                         'Hosts that have not been reached ' +
                         '(their state is unknown) for more than: ' +
-                        blueHostThreshold / 60 + ' minutes');
+                        blueHostThreshold);
                 });
         },
 
