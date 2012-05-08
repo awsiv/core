@@ -3288,6 +3288,22 @@ HubQuery *CFDB_QueryWeightedBundleSeen(mongo_connection *conn, char *keyHash, ch
 
     BsonAppendHostClassFilter(&bb, hostClassFilter);
 
+    /* Ignore data from client versions < 3.3.0
+     * Old clients reported time (hours ago),
+     * whereas from version 3.3.0 the clients report compliance level
+     *
+     * NOTE: this check can be removed after all clients are upgraded to version >= 3.3.0
+     */
+    {
+        Rlist *old_client_versions = NULL;
+
+        bson_buffer *ignoreClassBuffer = bson_append_start_object(&bb, cfr_class_keys);
+        BsonAppendArrayRx(ignoreClassBuffer, "$nin", GetOldClientVersions(old_client_versions));
+        bson_append_finish_object(ignoreClassBuffer);
+
+        DeleteRlist(old_client_versions);
+    }
+
     bson_from_buffer(&query, &bb);
 
     /* BEGIN RESULT DOCUMENT */
