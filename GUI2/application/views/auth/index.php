@@ -2,7 +2,7 @@
 
     <div class="innerdiv">
         <div id="infoMessage"><?php echo $message; ?></div> 
-        <div id="darktabs">
+        <div id="darktabs" class="user_roles_management">
             <div class="ui-tabs ui-widget ui-widget-content ui-corner-all" style="margin-left: 0px;">        
                 <ul class="admin_menu ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
                     <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active ">
@@ -193,7 +193,7 @@
             var source_elem      = $('#' + source_id);
             var destination_elem = $('#' + destination_id);
         
-            var destinations_array = new Array("crxi","crxx", "brxi", 'brxx', 'roles');
+            var destinations_array = new Array('roles');
         
             //check if we are trying to move into same block
             if ($('#'+ source_id + ' .selected_item').length == 0)
@@ -241,7 +241,14 @@
                 $confirmation.dialog("open");
                 return
             }
-        
+            
+            if (includeClassValidate() == false) {
+                var okBtn = generateDialogBtn('Ok', $confirmation);
+                $confirmation.dialog("option", "buttons", [okBtn]);
+                $confirmation.dialog("open");
+                return
+            }
+           
             if (roleIncludeExcludeValidate() == false)
             {
                 var $form = $(this);
@@ -337,20 +344,29 @@
         
         /*********************** common functions  ****************************************************************/        
 
-
+        
+        function includeClassValidate() {
+            if (getInputValues('#classes_inc_exc .includes').length == 0 )
+            {
+                $('#confirmation span').html('Role must have at least one <b>include</b> class.');
+                return false;
+            }
+        }
+        
         function roleIncludeExcludeValidate()
         {
-            if ($('input[name="crxi[]"]:checked').length == 0 && $('input[name="crxx[]"]:checked').length == 0)
+           if (getInputValues('#classes_inc_exc .includes').length == 0 && getInputValues('#classes_inc_exc .excludes').length == 0)
             {
                 $('#confirmation span').text('This role will allow complete reporting permissions for all hosts, is this what you wanted? If not, please fill in a host class regular expression.');
                 return false;
             }
 
-            if ($('input[name="brxi[]"]:checked').length == 0 && $('input[name="brxx[]"]:checked').length === 0) 
+            if (getInputValues('#bundles_inc_exc .includes').length == 0 && getInputValues('#bundles_inc_exc .excludes').length == 0)
             {
                 $('#confirmation span').text('This role will allow complete viewing permissions for all promises, is this what you wanted? If not, please fill in a bundle class regular expression.');
                 return false;
             }
+    
             return true;
         }
 
@@ -400,78 +416,46 @@
     
             return res;
         }
-
+        
+        function getInputValues(selector) {
+            var res = [];
+             $(selector + ' input[type="text"]').each(function() { 
+                 if($(this).val() != '')
+                    res.push($(this).val());
+            });
+            return res;
+        }
+        
         function addFinders() {
-            /*for (x in $.ui.classfinderbox.instances)
-{
-    $.ui.classfinderbox.instances[x] = '';
-} */
-
-          /*
-            var genericOption = {
-                baseUrl: '<?php echo site_url() ?>',
-                addSearchBar: true,
-                addAlphabetFilter: true,
-                itemId: 'classList',
-                placeholderId: 'classList_wrapper',
-                sortable: true,
-                sortableConnectionClass: 'classlist',
-                sortableDestinations: new Array('crxi', 'crxx'),
-                defaultContext: [getSelectedCheckboxes('crxi'), getSelectedCheckboxes('crxx')]
-            };
-
-            $('#classList').classfinderbox(genericOption);
-            var genericOption = '';
-            var genericOption = {
-                baseUrl: '<?php echo site_url() ?>',
-                addSearchBar: false,
-                addAlphabetFilter: false,
-                itemId: 'bundlessList',
-                placeholderId: 'bundlessList_wrapper',
-                sortable: true,
-                sortableConnectionClass: 'bundlelist',
-                sortableDestinations: new Array('brxi', 'brxx')                    
-            };
-
-            $('#bundlessList').classfinderbox(genericOption); 
-                */
-               
             $('#classes_inc_exc').contextfinder({
-                title: '<?php echo $this->lang->line('report_hostgp_help'); ?>',
+                finder_title: 'Classes',
                 baseUrl: '<?php echo site_url() ?>',
                 embedded: true,
                 
                 include_field_name: 'crxi',
                 exclude_field_name: 'crxx',
+                useFinder: 'classfinder',                
                 
                 HTML_ID: 'classes_inc_exc',
                 setContextClbkFnc:function() { 
-                   // $('.reportForm form').submit();
                 }, 
                 complete:function(event,data){
-                    //$incList.val(data.includes);
-                    //$exList.val(data.excludes);
                 }
             }); 
-            
-            
-            
-            
+           
             $('#bundles_inc_exc').contextfinder({
-                title: '<?php echo $this->lang->line('report_hostgp_help'); ?>',
+                finder_title: 'Bundles',
                 baseUrl: '<?php echo site_url() ?>',
                 embedded: true,
 
                 include_field_name: 'brxi',
                 exclude_field_name: 'brxx',
+                useFinder: 'policyfinder',
                 
                 HTML_ID: 'bundles_inc_exc',
                 setContextClbkFnc:function() { 
-                   // $('.reportForm form').submit();
                 }, 
                 complete:function(event,data){
-                    //$incList.val(data.includes);
-                    //$exList.val(data.excludes);
                 }
             });         
             
@@ -617,9 +601,7 @@
             el = $group.clone();
             destination_elem.append(el);
         }
- 
-        //  $group.clone().insertAfter($('#'+destination_id + ' li.ui-state-hightlight'));
- 
+
         $group.remove();
 
         $(destination_elem).find('li.selected_item').removeClass('selected_item');
@@ -654,13 +636,22 @@
     }
 
     function checkEmptyList(source_elem, destination_elem) {
+        console.log('source=' + source_elem);
+        console.log('destination=' + destination_elem.attr('id'));
+        
         // add empty element with message
         if ($(source_elem).children().length == 0)
         {      
             //if ($('#' + source_id).next('div.empty_list_warning').length == 0)
             if ($(source_elem).next('div.empty_list_warning').length == 0)                    
             {
-                var el = $('<div class="empty_list_warning">No items assigned</div>');
+                //if (source_elem.id)
+                var el = '';
+                if (source_elem.attr('id') == 'roles')
+                    el = $('<div class="empty_list_warning">No items assigned</div>');
+                else
+                    el = $('<div class="empty_list_warning">No roles left</div>');
+                
                 $(source_elem).after(el);
             }
 
@@ -706,9 +697,6 @@
             moveItem( args.destination_id, args.destination_elem, args.destinations_array, args.source_elem);
         }
     }
-
-
-
 
     function loadContent(args) {
         $(args.domElementId).load(args.link, 
