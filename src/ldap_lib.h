@@ -3,7 +3,7 @@
 
 #include "cf3.defs.h"
 #include "rlist.h"
-#include "prototypes3.h"
+#include "vars.h"
 
 bool CfLDAPAuthenticate(const char *uri, const char *basedn, const char *passwd, bool starttls, const char **const errstr);
 
