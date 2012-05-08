@@ -130,7 +130,7 @@
             //self.menuhandler=$('<span id="handle" class="operation">Options</span>');
             //self.titlebar.append(self.menuhandler).delegate('#handle','click',function(){self.menu.slideToggle();});
            
-            self.searchbar=$('<form id="classfindersearch"><span class="search"><input type="text" name="search" value="Search by class (context)" title="Regx supported"/></span></form>')
+            self.searchbar=$('<span class="search"><form id="classfindersearch"><input type="text" name="search" value="Search by class (context)" title="Regx supported"/><a href="#" class="searchsubmit" role="button">&nbsp;</a></form></span>')
             self.titlebar.append(self.ajaxloader);
             self.titlebar.append(self.searchbar).delegate('form', 'submit', {
                 ui: self
@@ -144,7 +144,8 @@
             self.searchbar.delegate('input[type="text"]','focusout',$.proxy(self.searchboxevent,self));
             self.searchbar.find('input[type="text"]').data('default',self.searchbar.find('input[type="text"]').val());
             self.searchbar.delegate('input[type="text"]','keyup',$.proxy(self.searchclassinlist,self));
-       
+            self.searchbar.delegate('a.searchsubmit','click',$.proxy(self.searchclassinlist,self));
+            
             self.dialogcontent.parent().delegate('#findmatchedhost','click',$.proxy(self.findmatchedhost,self));
             self.menu=$('<div class="categories"><ul id="classoptions"></ul></div>');
             self.menu.find('ul').append('<li>All classes</li><li>Time classes</li><li>soft classes</li>');
@@ -377,14 +378,19 @@
         {
             var self=this,
                 searchbox= $(event.target);
+                
+            if(event.type=='click'){
+                 searchbox =$(event.target).siblings('input')
+            }
+            
             if (self.selectedMenu == null ) {
                 self.selectedMenu='all classes';
             }
             var filter = self.selectedMenu.toLowerCase().split(' ')[0];
 
             var searchWord = encodeURIComponent(searchbox.val());
-
-            if (event.keyCode == 13) {
+            
+            if (event.keyCode == 13 || event.type =='click') {
                 var url = self.options.baseUrl + self.options.filterhandlerurl + '/1/' + searchWord;
                 self.selectedLetter = searchWord;
                 var params = {

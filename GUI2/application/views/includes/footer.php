@@ -30,7 +30,12 @@
             }, event); // Pass through our original event to qTip
         })
         
-         <?php } ?>     
+         <?php } ?>   
+             
+             $('a.searchsubmit').live('click',function(){
+                 $(this).parents("form").submit();
+                 return false; 
+             })
     });
 </script>
 </body>

@@ -125,9 +125,9 @@
             self.dialogcontent.parent().addClass('customdlg').removeClass('ui-widget-content');
             self.titlebar = self.dialogcontent.siblings('div.ui-dialog-titlebar');
             if (!self.options.onlyShowHandle) {
-                self.searchbar = $('<form id="policyfindersearch" action="' + self.options.baseUrl + '/widget/search_by_bundle"><span class="search"><input type="text" name="search" value="Search by bundle"/></span></form>');
+                self.searchbar = $('<span class="search"><form id="policyfindersearch" action="' + self.options.baseUrl + '/widget/search_by_bundle"><input type="text" name="search" value="Search by bundle"/><a href="#" class="searchsubmit" role="button">&nbsp;</a></form></span>');
             } else {
-                self.searchbar = $('<form id="policyfindersearch" action="' + self.options.baseUrl + '/widget/search_by_handle"><span class="search"><input type="text" name="search" value="Search by handle"/></span></form>');
+                self.searchbar = $('<span class="search"><form id="policyfindersearch" action="' + self.options.baseUrl + '/widget/search_by_handle"><input type="text" name="search" value="Search by handle"/><a href="#" class="searchsubmit" role="button">&nbsp;</a></form></span>');
 
             }
 
@@ -140,6 +140,7 @@
             self.searchbar.delegate('input[type="text"]', 'focusout', $.proxy(self.searchboxevent, self));
             self.searchbar.find('input[type="text"]').data('default', self.searchbar.find('input[type="text"]').val());
             self.searchbar.delegate('input[type="text"]', 'keyup', $.proxy(self.searchbarkeyevent, self));
+            self.searchbar.delegate('a.searchsubmit', 'click', function(){$(this).parent('form').submit()});
 
             self.menu = $('<div class="categories"><ul id="classoptions"></ul></div>');
 

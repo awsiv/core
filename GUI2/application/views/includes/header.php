@@ -80,12 +80,11 @@ if($this->agent->is_browser('Safari')){
                       <p class="clearright"></p>
                       <div id="webadmin">
 
-                          <div id="searcharea">
-                          <form action="<?php echo site_url('knowledge/knowledgeSearch')?>" method="post">
-                              <label id="searchbox">
-                                  <input type="text" name="search" placeholder="Search in knowledge map" value="<?php echo  !isset($search) ? "":$search ?>" />
-                              </label>
-                          </form>
+                          <div id="searcharea" class="searchbox">
+                              <form action="<?php echo site_url('knowledge/knowledgeSearch')?>" method="post">
+                                      <input type="text" name="search" placeholder="Search in knowledge map" value="<?php echo  !isset($search) ? "":$search ?>" />
+                                      <a href="#" class="searchsubmit">&nbsp;</a>
+                              </form>
                           </div>
                              <?php //if($this->ion_auth->mode == "database") { echo anchor('auth/admin_page',' ',array('class'=>'adminbtn'));}
                              if ($this->ion_auth->is_admin() == true ) { 

@@ -13,7 +13,7 @@
         <form id="searchhost" action="<?php echo site_url('widget/search_by_hostname');?>">
             <span class="search">
             <input type="text" name="search" value="Search by hostname"/>
-            <input class="hidden" type="submit" value="" />
+            <a href="#" class="searchsubmit" role='button'>&nbsp;</a>
             </span>
         </form>
 

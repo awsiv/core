@@ -44,7 +44,7 @@
             // load the view and then save make a dialog out of it
             self.temp = $('<div style="display:hidden" title="Find Host" id="hostfinderctrl"></div>').appendTo('body');
             $.ajaxSetup({
-              error: function(jqxhr,exception) { self.displayFailure(jqxhr, exception);}
+              error: function(jqxhr,exception) {self.displayFailure(jqxhr, exception);}
              });
             $.ajax({
                 type: 'POST',
@@ -55,7 +55,7 @@
                 success: function(data) {
                     self.temp.html(data);
                 },
-                error: function(jqxhr,exception) { self.displayFailure(jqxhr, exception);}
+                error: function(jqxhr,exception) {self.displayFailure(jqxhr, exception);}
             });
 
                     self.cfui.categories = self.temp.find('#searchby');
@@ -108,9 +108,15 @@
             self.cfui.searchform.delegate('input[type="text"]', 'focusout', {
                 ui: self
             },self.searchboxevent);
+            
             self.cfui.searchform.delegate('input[type="text"]', 'keyup', {
                 ui: self
             },self.searchboxkeyup);
+            
+             self.cfui.searchform.delegate('a.searchsubmit', 'click', {
+                ui: self
+            },function(){$(this).parent().parent('form').submit()});
+            
             self.cfui.searchform.find('input[type="text"]').data('default', self.cfui.searchform.find('input[type="text"]').val());
 
             self.cfui.resultpane.delegate('a', 'click', $.proxy(self.hostselected, self));

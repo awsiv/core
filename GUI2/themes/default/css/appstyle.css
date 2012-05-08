@@ -145,7 +145,7 @@ p#userbox a{
 
 #breadcrumb
 {
-    margin-top: 10px;
+    margin-top: 31px;
     margin-bottom:10px;
     font-family: "Trebuchet MS",Helvetica, Arial, sans-serif;
     font-size: 11px;
@@ -274,22 +274,23 @@ p#userbox a{
     width: 208px;
 }
 
-#searchbox
+.searchbox
 {
     background: url("../images/searchbar.png") no-repeat center center;
     display: block;
     height: 25px;
     width: 208px;
+   
 }
 
-label#searchbox input
-{
-    background: none repeat scroll 0 0 transparent;
-    border: medium none;
-    color: #666666;
-    outline: medium none;
-    padding: 0px 0 0 10px;
-    width:171px;
+.searchbox input{
+    width:174px; 
+    color: #666666 !important;
+}
+
+.searchsubmit{
+  display:inline-block;
+  width:21px; 
 }
 
 /*for working pane*/
@@ -316,7 +317,7 @@ label#searchbox input
 {
     margin: 0 auto;
     background: url("../images/mp_title.png") no-repeat center;
-    width:296px;
+    width:400px;
     height:36px;
     padding: 2px 0;
 
@@ -824,26 +825,29 @@ ul.icons_66 li.hub_replication:hover a.ico {
 }
 
 
-#searchclass span.search
+
+span.search
 {
     background: url("../images/searchbar.png") no-repeat scroll 0 0 transparent;
     position:absolute;
-    top:10%;
+    top:30%;
     right:5%;
     display:block;
     width:220px;
     height:25px;
 }
-#searchclass span.search input
+
+span.search input
 {
     background: none repeat scroll 0 0 transparent;
-    font:9pt Helvetica,Arial,Tahoma,sans-serif;
+    border-radius:6px 1px 1px 6px;
     border: medium none;
     color: #666666;
     outline: medium none;
-    padding: 4px;
-    width:170px;
+    padding: 1px 0 1px 8px;
+    width:174px;
 }
+
 /*
 styles for status page may be mergerd in the future
 */
@@ -1131,29 +1135,6 @@ span#today
     width:10px;
     height:17px;
     display:inline-block
-}
-
-
-
-span.search
-{
-    background: url("../images/searchbar.png") no-repeat scroll 0 0 transparent;
-    position:absolute;
-    top:30%;
-    right:5%;
-    display:block;
-    width:220px;
-    height:25px;
-}
-span.search input
-{
-    background: none repeat scroll 0 0 transparent;
-    font:9pt Helvetica,Arial,Tahoma,sans-serif;
-    border: medium none;
-    color: #666666;
-    outline: medium none;
-    padding: 4px;
-    width:170px;
 }
 
 div.ui-dialog, .customdlg
@@ -2757,7 +2738,7 @@ ul#promisesContainer .removePromise:hover{
 /* for login page */
 
 #login h1.logo{
-	background: url('../images/cf_heading.png') no-repeat;
+	background: url('../images/cf_login_header.png') no-repeat;
                 height: 31px;
                 margin: 25px 0 21px;
 }
@@ -3416,3 +3397,4 @@ input[type="checkbox"]{
   padding:12px 0;
   margin:10px 0;
 }
+
