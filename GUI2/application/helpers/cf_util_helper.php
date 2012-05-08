@@ -180,6 +180,9 @@ function getDateStatus($timestamp, $noColor = false, $onlyDate = false) {
          date_default_timezone_set($script_tz); // if not invalid timezone identifier set it.
     }
     $formattedDate = date('M jS Y H:i', $timestamp);
+    // add time zone info
+    $timeZoneinfo = date ('P',$timestamp);
+    $formattedDate = $formattedDate.sprintf(" (GMT %s)",$timeZoneinfo);
     date_default_timezone_set($script_tz); // reset back to default timezone
     if ($onlyDate) {
         return $formattedDate;
