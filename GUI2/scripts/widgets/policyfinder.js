@@ -8,7 +8,10 @@
             height: 600,
             defaultbehaviour: true,
             onlyShowHandle: false,
-            showAddButton: false
+            onlyShowBundle:false,            
+            showAddButton: false,
+            autoopen: false,
+            default_policy_url: '/widget/allpolicies'
         },
         dataLoaded: false,
         elementtext: '',
@@ -24,11 +27,28 @@
         _init: function() {
             var self = this;
             self.resetPagination();
-            $('#' + self.containerID()).bind('scroll', $.proxy(self.policylistscrolled, self));
+
+            if (self.options.onlyShowBundle != true) {
+                $('#' + self.containerID()).bind('scroll', $.proxy(self.policylistscrolled, self));
+            }
+            
+
         },
 
         _create: function() {
             var self = this;
+            
+            var url = '';
+            if (self.element.attr('href') != '' &&  self.element.attr('href') != undefined) {
+                url  = self.element.attr('href');
+            }
+            else
+            {
+                url = self.options.baseUrl +  self.options.default_policy_url;
+            }
+                
+           self.main_url = url;
+           
             var date = new Date().getTime();
             self.tempId =  'tempId_' + date++
             self.addsearchbar();
@@ -36,6 +56,7 @@
             $.ui.policyfinder.instances.push(this.element);
             $('#' + self.containerID()).delegate('a', 'click', $.proxy(self.handleSelected, self));
             $('#' + self.containerID()).delegate('.vblistadd', 'click', $.proxy(self.addSelected, self));
+            $('#' + self.containerID()).delegate('.only_bundle', 'click',    $.proxy(self.bundleSelected, self));
 
         },
         resetSearchBar: function() {
@@ -68,7 +89,7 @@
                 //single shared element for modal dialogs
                 var requestDialog = $('<div id="' + self.containerID() + '" style="display:none" class="result" title="Promises"><div id="policyList"><ul id="' + self.containerID() + '-ul"></ul></div></div>').appendTo('body').
                     dialog({
-                    autoOpen: false,
+                    autoOpen: self.options.autoopen,
                     title: 'Promises',
                     beforeClose: function(event, ui) {
                         // self.destroy();
@@ -118,14 +139,17 @@
             $.ui.dialog.prototype.options,
             self.options,
             {
-                autoOpen: false,
+                autoOpen: self.options.autoopen,
                 modal: true
             }
         ));
             self.dialogcontent.parent().addClass('customdlg').removeClass('ui-widget-content');
             self.titlebar = self.dialogcontent.siblings('div.ui-dialog-titlebar');
-            if (!self.options.onlyShowHandle) {
+            
+            if (!self.options.onlyShowHandle && !self.options.onlyShowBundle) {
                 self.searchbar = $('<form id="policyfindersearch" action="' + self.options.baseUrl + '/widget/search_by_bundle"><span class="search"><input type="text" name="search" value="Search by bundle"/></span></form>');
+            }else if (self.options.onlyShowBundle == true) {
+                self.searchbar = $('<form id="policyfindersearch" action="' + self.main_url +'"><span class="search"><input type="text" name="search" value="Search by bundle"/></span></form>');
             } else {
                 self.searchbar = $('<form id="policyfindersearch" action="' + self.options.baseUrl + '/widget/search_by_handle"><span class="search"><input type="text" name="search" value="Search by handle"/></span></form>');
 
@@ -143,11 +167,17 @@
 
             self.menu = $('<div class="categories"><ul id="classoptions"></ul></div>');
 
-            if (!self.options.onlyShowHandle) {
+   
+            if (!self.options.onlyShowHandle && !self.options.onlyShowBundle) {
                 self.menu.find('ul').append('<li>by bundle</li><li>by handle</li><li>by promiser</li><li>by bundle type</li>');
+            }
+            else if (self.options.onlyShowBundle == true) {
+                  self.menu.find('ul').append('<li>by bundle</li>');
+                   
             } else {
                 self.menu.find('ul').append('<li>by handle</li>');
             }
+   
 
             $('<span class="slider"></span>').appendTo(self.menu).bind('click', function(event) {
                 self.menu.slideUp();
@@ -156,12 +186,24 @@
             self.menu.delegate('li', 'click', $.proxy(self.menuitemclicked, self));
             self.element.bind('click', function(event) {
                 event.preventDefault();
-                self.elementtext = $(this).text();
-                $(this).text('').append('<span class="loadinggif"> </span>');
+                self.openFinder();
+            });
+
+        },
+        
+        
+        openFinder: function () {
+            var self = this;
+
+            self.elementtext = self.element.text();
+                self.element.text('').append('<span class="loadinggif"> </span>');
 
                 // check if it has already been opened before
                 if (!self.dataLoaded) {
-                    self.submitUrl = self.options.baseUrl + '/widget/allpolicies';
+                    
+
+                    
+                    self.submitUrl = self.main_url;
                     self.loadpagebody(self.submitUrl, '', true);
                     self.dialogcontent.dialog('open');
 
@@ -169,9 +211,7 @@
                     // reshow the dialog
                     $('#' + self.containerID()).parent().show();
                 }
-                $(this).text(self.elementtext);
-            });
-
+                self.element.text(self.elementtext);
         },
 
         menuitemclicked: function(event) {
@@ -265,7 +305,8 @@
                     reg: escreg,
                     type: searchtext,
                     showButton: self.options.showAddButton,
-                    showOnlyHandle: self.options.onlyShowHandle
+                    showOnlyHandle: self.options.onlyShowHandle,
+                    showOnlyBundle: self.options.onlyShowBundle                   
                 },
                 dataType: 'html',
                 success: function(data) {
@@ -304,6 +345,19 @@
             self._trigger('handleClicked', event, {
                 selectedHandleName: sender.parent().find('span.handle').html()
             });
+        },
+
+        bundleSelected: function(event) {
+            var self = this,
+            sender = $(event.target);
+            var selectedBundle = sender.text();
+
+                event.preventDefault();
+                self.dialogcontent.dialog('close')
+                self._trigger("complete", null,{                    
+                    'selectedbundle': selectedBundle
+                });
+     
         },
 
         searchboxevent: function(event)
@@ -364,7 +418,14 @@
             self.resetPagination();
             self.resetSearchBar();
             self.selectedLetter = '^['+ $(event.target).text() + '|' + $(event.target).text().toLowerCase() + ']';
-            self.loadpagebody(self.searchbar.attr('action'), self.selectedLetter, false);
+            
+            if (self.options.onlyShowBundle == false) {
+                self.loadpagebody(self.searchbar.attr('action'), self.selectedLetter, false);
+            }
+            else  {
+                self.loadpagebody(self.main_url, self.selectedLetter, false);
+            }
+            
             if (self.menu.css('display') == 'block')
             {
                 self.menu.fadeOut(400);
