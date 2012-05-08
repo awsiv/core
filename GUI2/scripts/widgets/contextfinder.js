@@ -32,7 +32,9 @@
             doNotShowButtons: false,
             
             include_field_name: 'include',
-            exclude_field_name: 'exclude'
+            exclude_field_name: 'exclude',
+            
+            useFinder: 'classfinder'
 
             
         },
@@ -201,14 +203,14 @@
                     self.HTML_element.delegate('.class_selector',"click", function(event) {
                         event.preventDefault();
                         self.getInludeExclude();
-                        self.bindClassfinder(this);
-                       //self.bindBundleFinder(this);
+                        self.bindFinder(this);
+                       
                     });
 
                     //add another condition field
-                    //$('#'+self.options.my_param).delegate('.add_condition',"click", function(event) {
-self.HTML_element.delegate('.add_condition',"click", function(event) {
-//self.dialogcontent.find('.contextfinder_wrapper').delegate('.add_condition',"click", function(event) {
+
+                    self.HTML_element.delegate('.add_condition',"click", function(event) {
+
                         event.preventDefault();
                         var destination = $(this).attr('destination');
                         var fieldname   = $(this).attr('fieldname');
@@ -360,9 +362,22 @@ self.HTML_element.delegate('.add_condition',"click", function(event) {
                 self.HTML_element.find('.'+ column + ' input').first().focus();
             }
         },
+        
+        bindFinder: function (elem) {
+            var self= this;
+            if (self.options.useFinder == 'classfinder') {
+                self.bindClassfinder(elem);
+            }
+            else if  (self.options.useFinder == 'policyfinder') {
+                self.bindPolicyfinder(elem);
+            }
+            
+        },
+        
         bindClassfinder: function (elem) {
             var self= this;
             $(elem).classfinder({
+                title: self.options.finder_title,
                 defaultbehaviour:false,
                 baseUrl:self.options.baseUrl,
                 subscribe : this, // THIS instance of contextfinder, so we can call contextfinder functions from classfinder
@@ -377,22 +392,25 @@ self.HTML_element.delegate('.add_condition',"click", function(event) {
                 }
             });
         },
-        bindBundleFinder: function(elem) {
+        bindPolicyfinder: function(elem) {
             var self= this;
-            $(elem).bundlefinder({
+            $(elem).policyfinder({
                 defaultbehaviour:false,
+                onlyShowHandle: false,
+                onlyShowBundle: true,
                 baseUrl:self.options.baseUrl,
-                subscribe : this, // THIS instance of contextfinder, so we can call contextfinder functions from classfinder
-                autoopen:true,
+                default_policy_url: $(elem).attr('href'),
+                autoopen:false,
                 complete:function(event,data)
                 {  
-                    $(this).siblings('input').val(data.selectedclass);
-                    self.getInludeExclude();
+                    $(this).siblings('input').val(data.selectedbundle);
                     // set focus to the element
                     $(elem).parent().find('input').focus();
-                    
                 }
             });
+            
+            $(elem).policyfinder('openFinder');
+            
         },
         
         getInludeExclude: function () {
