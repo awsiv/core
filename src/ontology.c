@@ -1157,7 +1157,7 @@ void Nova_MapClassParameterAssociations(FILE *fp, Promise *pp, char *promise_id)
                     {
                         fprintf(fp, "class_contexts::");
                         fprintf(fp, "  \"%s\"\n", pp->classes);
-                        fprintf(fp, "      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", NOVA_ACTIVATED,
+                        fprintf(fp, "      association => a(\"%s\",\"class_contexts::%s\",\"%s\");\n", NOVA_ACTIVATES,
                                 NovaEscape(rp->item), NOVA_ACTIVATES);
                     }
                 }
