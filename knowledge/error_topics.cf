@@ -1,3 +1,8 @@
+
+#
+# The six basic questions about a system
+#
+
 bundle knowledge questions
 {
 things:
@@ -328,7 +333,7 @@ cf_serverd:: "couldn't get socket address"
            certainty => "possible";
 
 cf_serverd:: "...requires encrypt connection...will not serve"
-        is_caused_by => { "if_encrypted" },
+        is_caused_by => { "ifencrypted" },
            certainty => "possible";
 
 cf_serverd:: "private decrypt failed"
@@ -514,8 +519,8 @@ occurrences:
 
 
   "/docs/cf3-reference.html#ifencrypted-in-access"
-     represents => { "reference manual on if_encrypted" },
-   about_topics => {"if_encrypted", "encryption", "...requires encrypt connection...will not serve" };
+     represents => { "reference manual on ifencrypted" },
+   about_topics => {"ifencrypted", "encryption", "...requires encrypt connection...will not serve" };
 
 
 }
