@@ -8,6 +8,7 @@ div.contextfinder {
     -moz-box-shadow: 5px 5px 5px #888;
     -webkit-box-shadow: 5px 5px 5px #888;
     box-shadow: 5px 5px 5px #888; 
+    margin: 10px;
 }
 
 	div.contextfinder .ui-widget-header {
@@ -93,16 +94,18 @@ div.contextfinder .ui-dialog-content {
             padding-right: 40px;
             float: left;
             height: 20px 
+                
         }
         
 .embedded .item  {
-    width: 98%;
+    width: 100%;
     
 }
  
 
 .embedded .item input {
-    width: 98% !important;
+    width: 99% !important;
+    padding: 0 0 0 3px;
 }
 
 #resetConditions {
@@ -154,6 +157,10 @@ div.contextfinder .ui-dialog-titlebar-close .ui-icon-closethick,
     font-size: 1em;
 }
     
+.embedded .add_condition {
+     margin-right: 5px;
+}
+
 .add_condition span {
     top: 5px;
     background-position: 0 -72px;      
