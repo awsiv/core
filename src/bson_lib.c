@@ -315,7 +315,7 @@ bool BsonAppendIncludeList(bson_buffer *queryBuffer, char *includeKey, Rlist *in
 
 /*****************************************************************************/
 
-static void BsonAppendArrayRx(bson_buffer *buffer, const char *key, Rlist *rx_values)
+void BsonAppendArrayRx(bson_buffer *buffer, const char *key, Rlist *rx_values)
 {
     bson_buffer *array = bson_append_start_array(buffer, key);
 

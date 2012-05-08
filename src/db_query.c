@@ -3160,6 +3160,14 @@ HubQuery *CFDB_QueryValueGraph(mongo_connection *conn, char *keyHash, char *lday
 }
 /*****************************************************************************/
 
+static Rlist *GetOldClientVersions(Rlist *rp)
+{
+    AppendRScalar(&rp, (void *) "cfengine_3_2.*", CF_SCALAR);
+    AppendRScalar(&rp, (void *) "cfengine_3_1.*", CF_SCALAR);
+    AppendRScalar(&rp, (void *) "cfengine_3_0.*", CF_SCALAR);
+    return rp;
+}
+/*****************************************************************************/
 
 HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lname, bool regex,
                                HostClassFilter *hostClassFilter, int sort)
@@ -3181,6 +3189,23 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
     }
 
     BsonAppendHostClassFilter(&bb, hostClassFilter);
+
+    /* Ignore data from client versions < 3.3.0
+     * Old clients reported time (hours ago),
+     * whereas from version 3.3.0 the clients report compliance level
+     *
+     * NOTE: this check can be removed after all clients are upgraded to version >= 3.3.0
+     */
+    {
+        Rlist *old_client_versions = NULL;
+
+        bson_buffer *ignoreClassBuffer = bson_append_start_object(&bb, cfr_class_keys);
+        BsonAppendArrayRx(ignoreClassBuffer, "$nin", GetOldClientVersions(old_client_versions));
+        bson_append_finish_object(ignoreClassBuffer);
+
+        DeleteRlist(old_client_versions);
+    }
+
     bson query;
     bson_from_buffer(&query, &bb);
 
