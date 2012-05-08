@@ -34,9 +34,15 @@
             include_field_name: 'include',
             exclude_field_name: 'exclude',
             
-            useFinder: 'classfinder'
-
+            useFinder: 'classfinder',
             
+            tooltips: {
+                select_item: 'Select class',
+                add_conditions: 'Add conditions',
+                delete_condition: 'Delete condition',
+                swap_conditions: 'Swap conditions'
+            }
+
         },
         _init: function(){
             var self=this;
@@ -295,7 +301,7 @@
 
                     self.HTML_element.find('.add_condition').qtip({
                         content: {
-                            text: 'Add condition'
+                            text: self.options.tooltips.add_conditions
                         },
                         style: {
                             classes: tooltip_classes
@@ -304,7 +310,7 @@
                     
                     self.HTML_element.find('.class_selector').qtip({
                         content: {
-                            text: 'Select class'
+                            text: self.options.tooltips.select_item
                         },
                         style: {
                             classes: tooltip_classes
@@ -313,7 +319,7 @@
                     
                     self.HTML_element.find('.delete_condition').qtip({
                         content: {
-                            text: 'Delete condition'
+                            text: self.options.tooltips.delete_condition
                         },
                         style: {
                             classes: tooltip_classes
@@ -322,7 +328,7 @@
                     
                     self.HTML_element.find('.invert').qtip({
                         content: {
-                            text: 'Swap conditions'
+                            text: self.options.tooltips.swap_conditions
                         },
                         style: {
                             classes: tooltip_classes
