@@ -26,7 +26,13 @@ class Auth extends Controller
         $this->form_validation->set_error_delimiters('<span class="errorlist">', '</span>');
         //$this->load->database();
         $this->load->helper('url');
-        $this->carabiner->css(array(array('classfinderbox.css'), array('tabs-custom.css')));
+        $this->carabiner->css(
+                array(
+                    array('contextfinder.css'),
+                    array('users_roles.css'),                    
+                    array('tabs-custom.css')
+                    )
+                );
         $this->config->load('ion_auth', TRUE);
     }
 
@@ -78,7 +84,10 @@ class Auth extends Controller
         $this->_check_admin_permissions();
 
         $requiredjs = array(
-            array('widgets/classfinderbox.js'),
+            //array('widgets/classfinderbox.js'),
+            array('widgets/contextfinder.js'),
+            array('widgets/classfinder.js'),   
+            array('widgets/policyfinder.js'),            
             array('jquery.form.js'),
             array('jquery.blockUI.js'),
         );
@@ -1006,20 +1015,22 @@ class Auth extends Controller
                 $this->form_validation->set_rules('name', 'Name', 'required|xss_clean');
 
             $this->form_validation->set_rules('description', 'Description', 'required|xss_clean|trim');
-            $this->form_validation->set_rules('crxi', 'Include classes', 'xss_clean');
+            
+            $this->form_validation->set_rules('crxi', 'Include classes', 'required|xss_clean|callback_includeClassValidate');
+            
             $this->form_validation->set_rules('crxx', 'Exclude classes', 'xss_clean');
             $this->form_validation->set_rules('brxi', 'Include bundlers', 'xss_clean');
             $this->form_validation->set_rules('brxx', 'Include bundlers', 'xss_clean');
 
-
+            
             if ($this->form_validation->run() == true)
             {
                 $data = array('name' => $this->input->post('name'),
                     'description' => $this->input->post('description'),
-                    'crxi' => implode(",", array_unique((array) $this->input->post('crxi'))),
-                    'crxx' => implode(",", array_unique((array) $this->input->post('crxx'))),
-                    'brxi' => implode(",", array_unique((array) $this->input->post('brxi'))),
-                    'brxx' => implode(",", array_unique((array) $this->input->post('brxx')))
+                    'crxi' => implode(",", array_filter(array_unique((array) $this->input->post('crxi')))),
+                    'crxx' => implode(",", array_filter(array_unique((array) $this->input->post('crxx')))),
+                    'brxi' => implode(",", array_filter(array_unique((array) $this->input->post('brxi')))),
+                    'brxx' => implode(",", array_filter(array_unique((array) $this->input->post('brxx'))))
                 );
 
                 if (($op == 'edit' && !$this->ion_auth->update_role($this->session->userdata('username'), $data)))
@@ -1067,7 +1078,26 @@ class Auth extends Controller
             $this->load->view('auth/list_role', $this->data);
         }
     }
+    /**
+     *Function to validate include classes for roles. Each role MUST have one class into include(crxi) list
+     * @param type $crxi
+     * @return boolean 
+     */
+    function includeClassValidate($crxi) {
+        $crxi = array_filter(array_unique($crxi));
 
+        foreach($crxi as $item => $value)
+        {
+            if (!empty($value))
+            {
+                return true;
+            }
+        }
+
+        $this->form_validation->set_message('includeClassValidate', 'Role must have at least one include class');        
+        return false;
+    }
+    
     function __load_role_add_edit($op, $rolename)
     {
         $this->_check_admin_permissions();

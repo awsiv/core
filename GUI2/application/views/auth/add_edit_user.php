@@ -1,4 +1,4 @@
-<!-- <div id="edit_form"> -->
+<div id="users_roles_form"> 
     <div id="formInfoMessage"><?php echo $message; ?></div>
     <div class="form">
 <?php if($user_type == 'internal') { ?>
@@ -105,7 +105,7 @@
                     <a href="javascript:void(0);" class="left" dest="roles" source="all_roles" title="&laquo; Left">&nbsp;</a>
                     <a href="javascript:void(0);" class="right" dest="all_roles" source="roles" title="Right &raquo;">&nbsp;</a>
                 </td>
-                <td rowspan="2">
+                <td class="edit_cell">
                     <div class="DragNDrop assigned dialog_box_style ui-dialog" style="position: relative">
                         <div class="ui-dialog-titlebar"><h6>Available</h6></div>
                         <div class="itemwrapper assigneditems" id="">
@@ -152,4 +152,4 @@
         </p>
             <?php echo form_close(); ?>
     </div>
-<!-- </div>    -->
+</div> 

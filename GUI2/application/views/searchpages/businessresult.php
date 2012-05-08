@@ -252,10 +252,14 @@
           });
           
             var $incList = $('#searchform input:hidden[name=inclist]');
-                    var $exList  = $('#searchform input:hidden[name=exlist]');
+            var $exList  = $('#searchform input:hidden[name=exlist]');
+                    
                     $('#hclist').contextfinder({
                         title: '<?php echo $this->lang->line('report_hostgp_help'); ?>',
                         baseUrl: '<?php echo site_url() ?>',
+                        include_field_name: 'include',
+                        exclude_field_name: 'exclude',
+                        
                         setContextClbkFnc:function() { 
                             $('.reportForm form').submit();
                         }, 
