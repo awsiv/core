@@ -452,6 +452,8 @@
                 exclude_field_name: 'brxx',
                 useFinder: 'policyfinder',
                 
+                tooltips:{select_item: 'Select bundle'},
+                
                 HTML_ID: 'bundles_inc_exc',
                 setContextClbkFnc:function() { 
                 }, 
