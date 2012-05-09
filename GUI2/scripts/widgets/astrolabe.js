@@ -3,7 +3,14 @@
     $.widget('ui.astrolabe', {
         options: {
             baseUrl: '../',
-            defaultbehaviour: true
+            defaultbehaviour: true,
+            scrollPaneOptions: {
+                showArrows: true,
+                autoReinitialise: false,
+                verticalArrowPositions: 'split'
+            }
+            
+            
         },
 
         _create: function() {
@@ -28,12 +35,7 @@
             $self._containerWrapper.append($self._listContainer);
 
             $self.element.append($self._containerWrapper);
-            $self._listContainer.jScrollPane({
-                showArrows: true,
-                autoReinitialise: true,
-                verticalArrowPositions: 'split'
-            });
-        },
+          },
 
         _init: function() {
             var $self = this;
@@ -140,6 +142,7 @@
             else {
                 if (expanded === true) {
                     $node.addClass('expanded');
+                    
 
                     self._setNodeExpanded(self._parentNode($node), true);
 
@@ -150,7 +153,6 @@
 
         _onClickNodeLabel: function($self, $node, event) {
             $self._selectElement($node);
-
             $self._trigger('nodeSelected', event, {
                path: $self._nodeLabels($node).reverse(),
                includes: $self._nodeIncludes($node),
@@ -554,6 +556,8 @@
                             this.hostname, this.colour);
                         $(container).append(hostItem);
                     });
+                    
+                    self._listContainer.jScrollPane(self.options.scrollPaneOptions);
                 }
 
                 $node.children('.busyIcon').hide();

@@ -23,8 +23,6 @@ if (!function_exists('contextfinder_generate_item')) {
 ?>
 
 <div <?php (isset($html_id) ? 'id="'.$html_id.'"' : '') ?> class="contextfinder_wrapper <?php echo ( (isset($embedded) && $embedded==true) ? 'embedded' : '') ?>">
-    
-  <!-- <form id="contextfinder"> -->
   <?php
                 $left_name = 'include';  
                 
@@ -32,7 +30,7 @@ if (!function_exists('contextfinder_generate_item')) {
                     $left_name = $fields['left']['name'];   
                 }
                 
-                $right_name = 'include';  
+                $right_name = 'exclude';  
                 
                 if (isset($fields['right']['name']) && $fields['right']['name'] != '') {
                     $right_name = $fields['right']['name'];   
@@ -102,7 +100,6 @@ if (!function_exists('contextfinder_generate_item')) {
         </tr>
         </tbody>
         </table>
- <!-- </form>   -->
 <?php if ( isset($doNotShowButtons) && $doNotShowButtons != true) { ?>
         <a class="green_btn" id="resetConditions" href="#"><span>Reset</span></a>    
         <a class="green_btn" id="setConditions" href="#"><span>Set conditions</span></a>
