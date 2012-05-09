@@ -33,7 +33,7 @@ dialoginit:function(){
   self.titlebar=self.dialogcontent.siblings('div.ui-dialog-titlebar');
   self.repdialog.appendTo(self.dialogcontent).hide();
   if(!self.options.allhost){
-      self.repform=$('<form>').attr('action',self.options.baseUrl+'/search/').attr('method','post');
+      self.repform=$('<form>').attr('action',self.options.baseUrl+'/search/').attr({'method':'post','target': '_blank'});
       self.repform.appendTo(self.dialogcontent);
   }
 },
