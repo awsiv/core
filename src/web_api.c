@@ -93,15 +93,15 @@ void Nova2PHP_GetLibraryDocuments(char *path, char *buffer, int bufsize)
         {
             Nova_RegisterDoc(&refs, namedir, dirp->d_name);
         }
-        else if (StringMatch("cf3.*\\.html", dirp->d_name))
+        else if (FullTextMatch("cf3.*\\.html", dirp->d_name))
         {
             Nova_RegisterDoc(&others, namedir, dirp->d_name);
         }
-        else if (StringMatch("SpecialTopic_.*\\.html", dirp->d_name))
+        else if (FullTextMatch("st-.*\\.html", dirp->d_name))
         {
             Nova_RegisterDoc(&guides, namedir, dirp->d_name);
         }
-        else if (StringMatch(".*\\.png", dirp->d_name))
+        else if (FullTextMatch(".*\\.png", dirp->d_name))
         {
             Nova_RegisterImg(&pics, namedir, dirp->d_name);
         }
@@ -4700,14 +4700,14 @@ void Nova2PHP_enterprise_version(char *buf, int bufsize)
         retErrid = ERRID_SUCCESS;       /* not error to have Nova only */
         /* fallthrough */
     default:
-        name = "Nova";
+        name = "Enterprise";
         version = Nova_Version();
         break;
     }
 
 # else
 
-    name = "Nova";
+    name = "Enterprise";
     version = Nova_Version();
 
 # endif

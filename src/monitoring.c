@@ -1077,7 +1077,7 @@ static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes 
             match_count++;
         }
 
-        if (a.measure.select_line_matching && StringMatch(a.measure.select_line_matching, ip->name))
+        if (a.measure.select_line_matching && FullTextMatch(a.measure.select_line_matching, ip->name))
         {
             CfOut(cf_verbose, "", " ?? Look for %s regex %s\n", handle, a.measure.select_line_matching);
             found = true;
@@ -1218,7 +1218,7 @@ static void NovaLogSymbolicValue(char *handle, Item *stream, Attributes a, Promi
             break;
         }
 
-        if (a.measure.select_line_matching && StringMatch(a.measure.select_line_matching, ip->name))
+        if (a.measure.select_line_matching && FullTextMatch(a.measure.select_line_matching, ip->name))
         {
             CfOut(cf_verbose, "", "Found line %d by pattern...\n", count);
             found = true;
