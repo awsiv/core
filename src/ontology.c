@@ -341,7 +341,7 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
 
         for (rp = GOALS; rp != NULL; rp = rp->next)
         {
-            if (StringMatch(rp->item, pp->promisee.item))
+            if (FullTextMatch(rp->item, pp->promisee.item))
             {
                 fprintf(fp, "promises::\n\n");
                 fprintf(fp, "  \"%s\"\n", promise_id);
@@ -377,7 +377,7 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
 
             for (rp2 = GOALS; rp2 != NULL; rp2 = rp2->next)
             {
-                if (StringMatch(rp2->item, rp->item))
+                if (FullTextMatch(rp2->item, rp->item))
                 {
                     fprintf(fp, "promises::\n\n");
                     fprintf(fp, "  \"%s\"\n", promise_id);
