@@ -565,7 +565,13 @@ class Widget extends Cf_Controller
             $data['html_id'] = $this->input->post('html_id', TRUE);
         }
         
-       
+        if($this->input->post('doNotShowButtons') !== FALSE) {
+            if (strtolower($this->input->post('doNotShowButtons', TRUE)) == 'false' || $this->input->post('doNotShowButtons', TRUE) == '')
+                $data['doNotShowButtons'] = false;        
+            else
+                $data['doNotShowButtons'] = true;
+        }
+        
         if($this->input->post('embedded') !== FALSE) {
             if (strtolower($this->input->post('emdedded', TRUE)) == 'false' || $this->input->post('emdedded', TRUE) == '')
                 $data['embedded'] = false;        
@@ -589,16 +595,7 @@ class Widget extends Cf_Controller
            $data['fields']['right']['values'] = $this->input->post('excludes');
         }
      
-        if($this->input->post('html_id') !== FALSE) {
-            $data['html_id'] = $this->input->post('html_id', TRUE);
-        }
-        
-        if($this->input->post('doNotShowButtons') !== FALSE) {
-            if (strtolower($this->input->post('doNotShowButtons', TRUE)) == 'false')
-                $data['doNotShowButtons'] = false;        
-            else
-                $data['doNotShowButtons'] = true;
-        }
+
         
         $this->load->view('widgets/contextfinder', $data);
     }
