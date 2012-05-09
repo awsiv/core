@@ -3515,6 +3515,7 @@ PHP_FUNCTION(cfpr_host_compliance_timeseries)
     static const time_t horizon = SECONDS_PER_HOUR * 6;
     static const time_t resolution = CF_MEASURE_INTERVAL;
     const time_t from = MeasurementSlotStart(time(NULL) - horizon);
+    const time_t to = from + horizon;
 
     HubQuery *result = NULL;
     {
@@ -3527,7 +3528,7 @@ PHP_FUNCTION(cfpr_host_compliance_timeseries)
         mongo_connection conn;
         DATABASE_OPEN(&conn);
 
-        result = CFDB_QueryTotalCompliance(&conn, NULL, NULL, from, time(NULL), -1, -1, -1, false, filter);
+        result = CFDB_QueryTotalCompliance(&conn, NULL, NULL, from, to, -1, -1, -1, false, filter);
 
         DATABASE_CLOSE(&conn);
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
