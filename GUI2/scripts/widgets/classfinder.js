@@ -298,7 +298,7 @@
                 var val = data[i];
                 var viewHostLink = '';
                 var addClassLink = '';
-                var textLink = '<a class="name classfinderwiget-classes" title="' + val + '" href="' + self.options.baseUrl + '/search/index/host/All/report/contexts/name/'+ val + '">' + val + '</a>';
+                var textLink = '<a class="name classfinderwiget-classes" target="_blank" title="' + val + '" href="' + self.options.baseUrl + '/search/index/host/All/report/contexts/name/'+ val + '">' + val + '</a>';
                 if (self.options.defaultbehaviour) {
                     viewHostLink = '<a class="action btn" title="' + val + '" href="' + self.options.baseUrl + '/search/index/host/All/report/contexts/hosts_only/true/name/'+ val + '">' + 'View hosts' + '</a>';
                     addClassLink = '<a class="classadd btn" title="' + val + '">' + 'add to list' + '</a>';
@@ -329,6 +329,7 @@
             var self = this,
             sender = $(event.target);
             var selectedClass = sender.text();
+               
             if (!self.options.defaultbehaviour)
             {
                 event.preventDefault();

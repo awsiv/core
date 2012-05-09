@@ -21,7 +21,7 @@
                             <td><?php echo $search->getParameters(); ?> </td>
                             <td><?php echo $search->getDate(); ?></td>
                             <td>
-                                <a href="<?php echo  $search->getUrl(); ?>" target="_self"> Run this search</a>
+                                <a href="<?php echo  $search->getUrl(); ?>" target="_blank"> Run this search</a>
                             </td>
                             <td>
                                 <a class="jDelete" href="<?php echo site_url() . "/savedsearch/delete/" . $search->getId(); ?>" target="_self">Delete this search</a>
