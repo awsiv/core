@@ -92,7 +92,7 @@ $lang['notes'] = 'Notes';
  */
 $lang['no_data'] 	         = 'Sorry, this report is empty.';
 $lang['license_to']               ='This edition is licensed to ';
-$lang['front_greeting']          ='CFEngine 3 Nova';
+$lang['front_greeting']          ='CFEngine 3 Enterprise';
 $lang['report_hostgp_help']    ='A set of classes to include and exclude to get a list of desired hosts';
 $lang['no_revisions'] ='No revisions exist for the selected repository. Operation halted,
                                    Please checkout, update or commit using the system for selected repository';

@@ -24,7 +24,7 @@ function initializeHub() {
     $ishubmaster = cfpr_get_hub_master();
      $CI = &get_instance();
     if (!trim($ishubmaster)) {
-        show_error('Database connection failure. Please ensure that CFEngine Nova is running correctly, by issuing the following command on the hub.
+        show_error('Database connection failure. Please ensure that CFEngine Enterprise is running correctly, by issuing the following command on the hub.
                 <br/>
                 # /var/cfengine/bin/cf-twin -Kf failsafe.cf');
     } elseif ($ishubmaster == 'am_hub_master') {
@@ -34,7 +34,7 @@ function initializeHub() {
         //define('HUB_MASTER', $ishubmaster);
         //preg_match('/(\d+).(\d+).(\d+).(\d+)/', $ishubmaster)
         $errorMessage = sprintf("Not a hub master, please click on the link below to navigate to 
-                                             the CFEngine 3 Nova Mission Portal <br />
+                                             the CFEngine 3 Enterprise Mission Portal <br />
                                              Link ::<a href=\"http://%s/\">%s</a>", $ishubmaster, $ishubmaster);
 
         show_error($errorMessage);

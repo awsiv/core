@@ -62,7 +62,7 @@ class Auth_Ldap {
           } */
 
         if (!function_exists('cfpr_ldap_authenticate')) {
-            show_error('LDAP functionality not present. Ldap support module in Nova is not loaded.');
+            show_error('LDAP functionality not present. Ldap support module in Mission Portal is not loaded.');
             log_message('error', 'LDAP functionality not present in php.');
         }
 
