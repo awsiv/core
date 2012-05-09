@@ -594,8 +594,9 @@ class Widget extends Cf_Controller
         if ($this->input->post('excludes') !== FALSE) {
            $data['fields']['right']['values'] = $this->input->post('excludes');
         }
+     
 
-       
+        
         $this->load->view('widgets/contextfinder', $data);
     }
 
