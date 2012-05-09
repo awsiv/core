@@ -165,7 +165,7 @@
             event.preventDefault();
             $("#error_status").html('');
        
-            $('#confirmation span').text('Do you want to continue deleting?');
+            $('#confirmation span').text('Are you sure you want to delete this role?');
 
             // create buttons - cancel and confirm
             var cancelBtn  = generateDialogBtn('Cancel', $confirmation);

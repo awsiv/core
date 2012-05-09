@@ -1163,7 +1163,7 @@ class Auth extends Controller
 
             $role = $this->ion_auth->get_role($this->session->userdata('username'), $rolename);
 
-            $this->data['title'] = "Edit role";
+            $this->data['title'] = "Update Role";
             $this->data['operation'] = "Edit";
             $this->data['name']['enable'] = 'enable';
 
