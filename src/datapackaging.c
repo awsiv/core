@@ -56,6 +56,7 @@ void Nova_PackPerformance(Item **reply, char *header, time_t from, enum cfd_menu
     if (!NewDBCursor(dbp, &dbcp))
     {
         CfOut(cf_inform, "", " !! Unable to scan performance database");
+        CloseDB(dbp);
         return;
     }
 
@@ -183,6 +184,7 @@ void Nova_PackClasses(Item **reply, char *header, time_t from, enum cfd_menu typ
     if (!NewDBCursor(dbp, &dbcp))
     {
         CfOut(cf_inform, "", " !! Unable to scan class db");
+        CloseDB(dbp);
         return;
     }
 
@@ -950,6 +952,7 @@ void Nova_PackCompliance(Item **reply, char *header, time_t from, enum cfd_menu 
     if (!NewDBCursor(dbp, &dbcp))
     {
         CfOut(cf_inform, "", " !! Unable to scan class db");
+        CloseDB(dbp);
         return;
     }
 
