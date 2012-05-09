@@ -256,10 +256,15 @@
             var from = item.datapoint[0];
             var to = from + $self._resolution;
 
+            var includes = '';
+            if ($self._context.includes.length > 0) {
+                includes = '/includes/' + encodeURIComponent($self._context.includes);
+            }
+
             var element = $('<a href="' + $self.options.baseUrl + '/widget/summaryCompliance' +
                 '/start/'+ common.javascriptTimeToUnixTime(from) +
                 '/stop/' + common.javascriptTimeToUnixTime(to) +
-                '/includes/' + encodeURIComponent($self._context.includes) +
+                includes +
                 '" title="Overview : Promises not kept or repaired ( ' +
                 common.time.format(from) +
                 ' - ' +
