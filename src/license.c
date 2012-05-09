@@ -17,6 +17,7 @@
 #include "lastseen.h"
 #include "crypto.h"
 #include "files_names.h"
+#include "vars.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"

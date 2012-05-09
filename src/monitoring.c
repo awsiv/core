@@ -10,6 +10,7 @@
 #include "cf.nova.h"
 #include "probes.h"
 #include "files_names.h"
+#include "vars.h"
 
 /* Structs */
 

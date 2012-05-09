@@ -1447,9 +1447,9 @@ void Nova_PackLastSeen(Item **reply, char *header, time_t from, enum cfd_menu ty
             continue;
         }
 
-        bool incoming = (*key == 'i');
+        bool incoming = (*(key + 1) == 'i');
         char hostkey[CF_BUFSIZE];
-        strlcpy(hostkey, (char *) key + 1, CF_BUFSIZE);
+        strlcpy(hostkey, (char *) key + 2, CF_BUFSIZE);
 
         if (value != NULL)
         {
