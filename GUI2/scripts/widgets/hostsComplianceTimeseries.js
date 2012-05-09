@@ -72,7 +72,7 @@
             $shortTermRadio.attr('value', 'short');
             $shortTermRadio.attr('id', 'timeModeShort')
             $shortTermRadio.click(function() {
-                $self._resource = 'host/compliance/timeseries';
+                $self._resource = $self.options.baseUrl + '/host/compliance/timeseries';
                 $self.options.plot.xaxis.tickFormatter = function(value) {
                     return common.time.formatTimeOfDay(value);
                 };
@@ -92,7 +92,7 @@
             $longTermRadio.attr('value', 'long');
             $longTermRadio.attr('id', 'timeModeLong');
             $longTermRadio.click(function() {
-                $self._resource = 'host/compliance/timeseries_shifts';
+                $self._resource = $self.options.baseUrl  + '/host/compliance/timeseries_shifts';
                 $self.options.plot.xaxis.tickFormatter = function(value) {
                     return common.time.formatDate(value);
                 };
@@ -113,7 +113,7 @@
             $self._plot = null;
             $self._previousPoint = null;
             $self._sampleCounts = null;
-            $self._resource = 'host/compliance/timeseries';
+            $self._resource = '/host/compliance/timeseries';
             $self.options.plot.xaxis.tickFormatter = function(value) {
                 return common.time.formatTimeOfDay(value);
             };
