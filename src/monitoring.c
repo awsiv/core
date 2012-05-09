@@ -521,6 +521,7 @@ void SetMeasurementPromises(Item **classlist)
     if (!NewDBCursor(dbp, &dbcp))
     {
         CfOut(cf_inform, "", " !! Unable to scan class db");
+        CloseDB(dbp);
         return;
     }
 
@@ -583,6 +584,7 @@ void LoadSlowlyVaryingObservations()
     if (!NewDBCursor(dbp, &dbcp))
     {
         CfOut(cf_inform, "", " !! Unable to scan class db");
+        CloseDB(dbp);
         return;
     }
 
@@ -655,6 +657,7 @@ static void Nova_DumpSlowlyVaryingObservations(void)
     if ((fout = fopen(name, "w")) == NULL)
     {
         CfOut(cf_error, "fopen", "Unable to save discovery data in %s\n", name);
+        CloseDB(dbp);
         return;
     }
 
@@ -663,6 +666,7 @@ static void Nova_DumpSlowlyVaryingObservations(void)
     if (!NewDBCursor(dbp, &dbcp))
     {
         CfOut(cf_inform, "", " !! Unable to scan class db");
+        CloseDB(dbp);
         return;
     }
 
