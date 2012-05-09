@@ -1,3 +1,0 @@
-#cop purge,example
-#cop synchronizing files,example
-#cop synchronizing files,copy_from

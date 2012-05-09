@@ -1,3 +1,0 @@
-#cop HashUnCommentLinesMatching,in cf3
-#cop back references,commenting
-#cop bundle edit_line comment_lines_matching(regex,comment),stdlib

@@ -1,3 +1,0 @@
-#cop cancel_repaired,example
-#cop cancel_kept,example
-#cop cancel_notkept,example
