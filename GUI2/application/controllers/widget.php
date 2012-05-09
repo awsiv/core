@@ -565,13 +565,7 @@ class Widget extends Cf_Controller
             $data['html_id'] = $this->input->post('html_id', TRUE);
         }
         
-        if($this->input->post('doNotShowButtons') !== FALSE) {
-            if (strtolower($this->input->post('doNotShowButtons', TRUE)) == 'false' || $this->input->post('doNotShowButtons', TRUE) == '')
-                $data['doNotShowButtons'] = false;        
-            else
-                $data['doNotShowButtons'] = true;
-        }
-        
+       
         if($this->input->post('embedded') !== FALSE) {
             if (strtolower($this->input->post('emdedded', TRUE)) == 'false' || $this->input->post('emdedded', TRUE) == '')
                 $data['embedded'] = false;        
@@ -594,7 +588,7 @@ class Widget extends Cf_Controller
         if ($this->input->post('excludes') !== FALSE) {
            $data['fields']['right']['values'] = $this->input->post('excludes');
         }
-*/        
+     
         if($this->input->post('html_id') !== FALSE) {
             $data['html_id'] = $this->input->post('html_id', TRUE);
         }
@@ -606,30 +600,6 @@ class Widget extends Cf_Controller
                 $data['doNotShowButtons'] = true;
         }
         
-        if($this->input->post('embedded') !== FALSE) {
-            if (strtolower($this->input->post('emdedded', TRUE)) == 'false')
-                $data['embedded'] = false;        
-            else
-                $data['embedded'] = true;
-        }        
-        
-        if($this->input->post('include_field_name') !== FALSE) {
-            $data['include_field_name'] = $this->input->post('include_field_name', TRUE);
-        }
-        
-        if ($this->input->post('includes') !== FALSE) {
-           $data['fields']['left']['values'] = $this->input->post('includes');
-        }
-        
-        if($this->input->post('exclude_field_name') !== FALSE) {
-            $data['include_field_name'] = $this->input->post('include_field_name', TRUE);
-        }
-        
-        if ($this->input->post('excludes') !== FALSE) {
-           $data['fields']['right']['values'] = $this->input->post('excludes');
-        }
-
-       
         $this->load->view('widgets/contextfinder', $data);
     }
 
