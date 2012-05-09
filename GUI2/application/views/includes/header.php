@@ -48,7 +48,7 @@ if($this->agent->is_browser('Safari')){
       <?php if (!isset ($hide_header) || $hide_header !== true) { ?>
         <div id="wrapper" class="container_12">
           <div id="header">
-              <div id="header_left"class="grid_8">
+              <div id="header_left" class="grid_8">
                <p class="sitetitle">
                   <?php 
                   $text=is_constellation()?$this->lang->line('cons_logo_link_text'):$this->lang->line('nova_logo_link_text');
@@ -63,7 +63,7 @@ if($this->agent->is_browser('Safari')){
                </p>
                </div>
               
-              <div id="header_right"class="grid_4">
+              <div id="header_right" class="grid_4">
                        <p id="userbox">
 	                Hello  <?php echo $this->session->userdata('username');?>
                         &nbsp;| &nbsp;
