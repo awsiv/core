@@ -40,17 +40,6 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin:/var/cfengine/bin
 # Has the package been 'removed' but not purged?
 test -f $CFEXECD || exit 0
 
-# default control file
-DEFAULT=/etc/sysconfig/cfengine3
-if [ -f $DEFAULT ]; then
-	. $DEFAULT
-else
-	RUN_CF_EXECD=1
-	RUN_CF_SERVERD=1
-	RUN_CF_MONITORD=1
-	RUN_CF_HUB=0
-fi
-
 # defualt is no OS
 SUSE=0
 REDHAT=0
@@ -76,6 +65,23 @@ if [ -f /usr/bin/apt-get ]; then
 else
 	DEBIAN=0
 fi
+
+# default control file
+if [ "$DEBIAN" = "1" ]; then
+	DEFAULT=/etc/default/cfengine3
+else
+	DEFAULT=/etc/sysconfig/cfengine3
+fi
+
+if [ -f $DEFAULT ]; then
+	. $DEFAULT
+else
+	RUN_CF_EXECD=1
+	RUN_CF_SERVERD=1
+	RUN_CF_MONITORD=1
+	RUN_CF_HUB=0
+fi
+
 
 # Source function library. (Redhat/Centos/Fedora)
 if [ -f /usr/bin/yum ] && [ -f /etc/rc.d/init.d/functions ]; then
