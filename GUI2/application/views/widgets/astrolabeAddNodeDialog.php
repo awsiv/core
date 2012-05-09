@@ -11,7 +11,7 @@
     <div class="clear"></div>
     <div>
         <div class="leftColumn">
-            <label for="astrolabe-add-node-class">Class Expression</label>
+            <label for="astrolabe-add-node-class">Class Pattern (.*+[])</label>
         </div>
         <div class="rightColumn">
             <div class="classInputContainer">
