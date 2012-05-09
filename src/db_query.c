@@ -19,6 +19,18 @@
 static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *filter);
 static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFilter *hostClassFilter);
 
+Rlist *PrependRlistAlienUnlocked(Rlist **start, void *item)
+{
+    Rlist *rp = xmalloc(sizeof(Rlist));
+
+    rp->next = *start;
+    *start = rp;
+
+    rp->item = item;
+    rp->type = CF_SCALAR;
+    return rp;
+}
+
 /*****************************************************************************/
 bool CFDB_CollectionHasData(mongo_connection *conn, const char *fullCollectionName)
 {
@@ -287,7 +299,7 @@ HubQuery *CFDB_QueryHosts(mongo_connection *conn, char *db, bson *query)
         }
 
         hh = NewHubHost(NULL, keyhash, addresses, hostnames);
-        PrependRlistAlien(&host_list, hh);
+        PrependRlistAlienUnlocked(&host_list, hh);
     }
 
     bson_destroy(&field);
@@ -461,7 +473,7 @@ HubQuery *CFDB_QueryColour(mongo_connection *conn, const HostRankMethod method, 
             // special case: could not find a score, mark as blue
             host->colour = HOST_COLOUR_BLUE;
         }
-        PrependRlistAlien(&host_list, host);
+        PrependRlistAlienUnlocked(&host_list, host);
     }
 
     mongo_cursor_destroy(cursor);
@@ -620,7 +632,7 @@ HubQuery *CFDB_QuerySoftware(mongo_connection *conn, char *keyHash, char *type, 
                                 hh = CreateEmptyHubHost();
                             }
 
-                            PrependRlistAlien(&record_list, NewHubSoftware(hh, rname, rversion, rarch, lastSeen));
+                            PrependRlistAlienUnlocked(&record_list, NewHubSoftware(hh, rname, rversion, rarch, lastSeen));
                         }
                     }
                 }
@@ -630,7 +642,7 @@ HubQuery *CFDB_QuerySoftware(mongo_connection *conn, char *keyHash, char *type, 
         if (found)
         {
             UpdateHubHost(hh, keyhash, addresses, hostnames);
-            PrependRlistAlien(&host_list, hh);
+            PrependRlistAlienUnlocked(&host_list, hh);
         }
     }
 
@@ -767,7 +779,7 @@ HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass,
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(&record_list, NewHubClass(hh, rclass, rex, rsigma, timestamp));
+                        PrependRlistAlienUnlocked(&record_list, NewHubClass(hh, rclass, rex, rsigma, timestamp));
                     }
                 }
             }
@@ -776,7 +788,7 @@ HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass,
         if (found)
         {
             UpdateHubHost(hh, keyhash, addresses, hostnames);
-            PrependRlistAlien(&host_list, hh);
+            PrependRlistAlienUnlocked(&host_list, hh);
         }
     }
 
@@ -860,7 +872,7 @@ HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes)
 
         if (!NULL_OR_EMPTY(keyhash))
         {
-            PrependRlistAlien(&hostList, NewHubHost(NULL, keyhash, addresses, hostnames));
+            PrependRlistAlienUnlocked(&hostList, NewHubHost(NULL, keyhash, addresses, hostnames));
             CfDebug("matched host %s,%s\n", keyhash, addresses);
         }
     }
@@ -897,7 +909,7 @@ HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes)
 
         CfDebug("class (%s,%d)\n", ip->name, classFrequency);
 
-        PrependRlistAlien(&recordList, NewHubClassSum(NULL, ip->name, classFrequency));
+        PrependRlistAlienUnlocked(&recordList, NewHubClassSum(NULL, ip->name, classFrequency));
 
         bson_destroy(&query);
     }
@@ -1041,7 +1053,7 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn, const char *keyHash,
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(&record_list,
+                        PrependRlistAlienUnlocked(&record_list,
                                           NewHubTotalCompliance(hh, timestamp, rversion, rkept, rrepaired, rnotkept));
                     }
                 }
@@ -1051,7 +1063,7 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn, const char *keyHash,
         if (found)
         {
             UpdateHubHost(hh, keyhash, addresses, hostnames);
-            PrependRlistAlien(&host_list, hh);
+            PrependRlistAlienUnlocked(&host_list, hh);
         }
     }
 
@@ -1336,7 +1348,7 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
                                 hh = CreateEmptyHubHost();
                             }
 
-                            PrependRlistAlien(&record_list, NewHubVariable(hh, dtype, rscope, rlval, rval, timestamp));
+                            PrependRlistAlienUnlocked(&record_list, NewHubVariable(hh, dtype, rscope, rlval, rval, timestamp));
                         }
                         else
                         {
@@ -1350,7 +1362,7 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
         if (found)
         {
             UpdateHubHost(hh, keyhash, addresses, hostnames);
-            PrependRlistAlien(&host_list, hh);
+            PrependRlistAlienUnlocked(&host_list, hh);
         }
     }
 
@@ -1417,7 +1429,7 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
 
         if (found)
         {
-            PrependRlistAlien(&host_list, hh);
+            PrependRlistAlienUnlocked(&host_list, hh);
         }
         else
         {
@@ -1561,7 +1573,7 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(mongo_connection *conn, char *keyH
                             continue;
                         }
 
-                        PrependRlistAlien(&record_list, NewHubCompliance(hp->hh, hp->handle, hp->status, hp->e, hp->d, hp->t));
+                        PrependRlistAlienUnlocked(&record_list, NewHubCompliance(hp->hh, hp->handle, hp->status, hp->e, hp->d, hp->t));
                         hostDataAdded = true;
                     }
                 }
@@ -1572,7 +1584,7 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(mongo_connection *conn, char *keyH
                 {
                     HubPromiseCompliance *hp = (HubPromiseCompliance *) rp->item;
 
-                    PrependRlistAlien(&record_list, NewHubCompliance(hp->hh, hp->handle, hp->status, hp->e, hp->d, hp->t));
+                    PrependRlistAlienUnlocked(&record_list, NewHubCompliance(hp->hh, hp->handle, hp->status, hp->e, hp->d, hp->t));
                     hostDataAdded = true;
                 }
             }
@@ -1590,7 +1602,7 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(mongo_connection *conn, char *keyH
         }
         else
         {
-            PrependRlistAlien(&host_list, hh);
+            PrependRlistAlienUnlocked(&host_list, hh);
         }
     }
 
@@ -1765,7 +1777,7 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash,
 
                         LastSeenDirection direction = *rhash;
 
-                        PrependRlistAlien(&record_list,
+                        PrependRlistAlienUnlocked(&record_list,
                                           NewHubLastSeen(hh, direction, rhash + 1, rhost, raddr, rago, ravg, rdev, timestamp));
                     }
                 }
@@ -1775,7 +1787,7 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash,
         if (found)
         {
             UpdateHubHost(hh, keyhash, addresses, hostnames);
-            PrependRlistAlien(&host_list, hh);
+            PrependRlistAlienUnlocked(&host_list, hh);
         }
     }
 
@@ -1870,7 +1882,7 @@ HubQuery *CFDB_QueryMeter(mongo_connection *conn, bson *query, char *db)
                         hh = CreateEmptyHubHost();
                     }
 
-                    PrependRlistAlien(&record_list, NewHubMeter(hh, *rcolumn, rkept, rrepaired));
+                    PrependRlistAlienUnlocked(&record_list, NewHubMeter(hh, *rcolumn, rkept, rrepaired));
                 }
             }
         }
@@ -1878,7 +1890,7 @@ HubQuery *CFDB_QueryMeter(mongo_connection *conn, bson *query, char *db)
         if (found)
         {
             UpdateHubHost(hh, keyhash, addresses, hostnames);
-            PrependRlistAlien(&host_list, hh);
+            PrependRlistAlienUnlocked(&host_list, hh);
         }
     }
 
@@ -2014,7 +2026,7 @@ HubQuery *CFDB_QueryPerformance(mongo_connection *conn, char *keyHash, char *lna
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(&record_list,
+                        PrependRlistAlienUnlocked(&record_list,
                                           NewHubPerformance(hh, rname, rtime, rq, rex, rsigma, rhandle));
                     }
                 }
@@ -2024,7 +2036,7 @@ HubQuery *CFDB_QueryPerformance(mongo_connection *conn, char *keyHash, char *lna
         if (found)
         {
             UpdateHubHost(hh, keyhash, addresses, hostnames);
-            PrependRlistAlien(&host_list, hh);
+            PrependRlistAlienUnlocked(&host_list, hh);
         }
     }
 
@@ -2131,7 +2143,7 @@ HubQuery *CFDB_QuerySetuid(mongo_connection *conn, char *keyHash, char *lname, b
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(&record_list, NewHubSetUid(hh, rname));
+                        PrependRlistAlienUnlocked(&record_list, NewHubSetUid(hh, rname));
                     }
                 }
             }
@@ -2140,7 +2152,7 @@ HubQuery *CFDB_QuerySetuid(mongo_connection *conn, char *keyHash, char *lname, b
         if (found)
         {
             UpdateHubHost(hh, keyhash, addresses, hostnames);
-            PrependRlistAlien(&host_list, hh);
+            PrependRlistAlienUnlocked(&host_list, hh);
         }
     }
 
@@ -2263,7 +2275,7 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(&record_list, NewHubFileChanges(hh, rname, timestamp, handle));
+                        PrependRlistAlienUnlocked(&record_list, NewHubFileChanges(hh, rname, timestamp, handle));
                     }
                 }
             }
@@ -2272,7 +2284,7 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
         if (found)
         {
             UpdateHubHost(hh, keyhash, addresses, hostnames);
-            PrependRlistAlien(&host_list, hh);
+            PrependRlistAlienUnlocked(&host_list, hh);
         }
     }
 
@@ -2410,7 +2422,7 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname,
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(&record_list, NewHubFileDiff(hh, rname, rdiff, timestamp));
+                        PrependRlistAlienUnlocked(&record_list, NewHubFileDiff(hh, rname, rdiff, timestamp));
                     }
                 }
             }
@@ -2419,7 +2431,7 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname,
         if (found)
         {
             UpdateHubHost(hh, keyhash, addresses, hostnames);
-            PrependRlistAlien(&host_list, hh);
+            PrependRlistAlienUnlocked(&host_list, hh);
         }
     }
 
@@ -2612,7 +2624,7 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(record_list, NewHubPromiseLog(hh, rhandle, rcause, rt));
+                        PrependRlistAlienUnlocked(record_list, NewHubPromiseLog(hh, rhandle, rcause, rt));
                     }
                 }
             }
@@ -2621,7 +2633,7 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
         if(found)
         {
             UpdateHubHost(hh, keyhash, addresses, hostnames);
-            PrependRlistAlien(host_list, hh);
+            PrependRlistAlienUnlocked(host_list, hh);
         }
     }
 
@@ -2664,7 +2676,7 @@ HubQuery *CFDB_QueryPromiseLogSummary(mongo_connection *conn, const char *hostke
     {
         const HubPromiseLog *record = (const HubPromiseLog *)item->key;
         const int *count = (const int *)item->value;
-        PrependRlistAlien(&sum_records, NewHubPromiseSum(NULL, record->handle, record->cause, *count, 0));
+        PrependRlistAlienUnlocked(&sum_records, NewHubPromiseSum(NULL, record->handle, record->cause, *count, 0));
     }
 
     for (Rlist *rp = hq->records; rp; rp = rp->next)
@@ -2809,7 +2821,7 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
                 if(!hh)
                 {
                     hh = NewHubHost(NULL,keyhash,NULL,NULL);  // we get more host info later
-                    PrependRlistAlien(host_list,hh);
+                    PrependRlistAlienUnlocked(host_list,hh);
                 }
             }
             else if (strcmp(bson_iterator_key(&it1),cfr_promisehandle) == 0)
@@ -2829,7 +2841,7 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
         if(CompareStringOrRegex(rhandle, lhandle, regex) && CompareStringOrRegex(rcause, lcause_rx, true))
         {
             count++;
-            PrependRlistAlien(record_list,NewHubPromiseLog(hh,rhandle,rcause,rt));
+            PrependRlistAlienUnlocked(record_list,NewHubPromiseLog(hh,rhandle,rcause,rt));
         }
     }
 
@@ -2970,7 +2982,7 @@ HubQuery *CFDB_QueryValueReport(mongo_connection *conn, char *keyHash, char *lda
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(&record_list,
+                        PrependRlistAlienUnlocked(&record_list,
                                           NewHubValue(hh, rday, rkept, rrepaired, rnotkept, rhandle));
                     }
                 }
@@ -2980,7 +2992,7 @@ HubQuery *CFDB_QueryValueReport(mongo_connection *conn, char *keyHash, char *lda
         if (found)
         {
             UpdateHubHost(hh, keyhash, addresses, hostnames);
-            PrependRlistAlien(&host_list, hh);
+            PrependRlistAlienUnlocked(&host_list, hh);
         }
     }
 
@@ -3136,7 +3148,7 @@ HubQuery *CFDB_QueryValueGraph(mongo_connection *conn, char *keyHash, char *lday
                             hh = CreateEmptyHubHost();
                         }
 
-                        PrependRlistAlien(&record_list, NewHubValue(hh, rday, rkept, rrepaired, rnotkept, ""));
+                        PrependRlistAlienUnlocked(&record_list, NewHubValue(hh, rday, rkept, rrepaired, rnotkept, ""));
                     }
                 }
             }
@@ -3145,7 +3157,7 @@ HubQuery *CFDB_QueryValueGraph(mongo_connection *conn, char *keyHash, char *lday
         if (found)
         {
             UpdateHubHost(hh, keyhash, addresses, hostnames);
-            PrependRlistAlien(&host_list, hh);
+            PrependRlistAlienUnlocked(&host_list, hh);
         }
     }
 
@@ -3243,7 +3255,7 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
 
         if (found)
         {           
-            PrependRlistAlien(&host_list, hh);
+            PrependRlistAlienUnlocked(&host_list, hh);
         }
         else
         {
@@ -3394,7 +3406,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(mongo_connection *conn, char *keyHash, ch
                             continue;
                         }
 
-                        PrependRlistAlien(&record_list, NewHubBundleSeen(hbTemp->hh, hbTemp->bundle, hbTemp->bundlecomp, hbTemp->bundleavg, hbTemp->bundledev, hbTemp->t));
+                        PrependRlistAlienUnlocked(&record_list, NewHubBundleSeen(hbTemp->hh, hbTemp->bundle, hbTemp->bundlecomp, hbTemp->bundleavg, hbTemp->bundledev, hbTemp->t));
                         hostDataAdded = true;
                     }
                 }
@@ -3406,7 +3418,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(mongo_connection *conn, char *keyHash, ch
                     for(Rlist *rp = hq->records; rp != NULL; rp = rp->next)
                     {
                         HubBundleSeen *hbTemp = (HubBundleSeen *) rp->item;
-                        PrependRlistAlien(&record_list, NewHubBundleSeen(hbTemp->hh, hbTemp->bundle, hbTemp->bundlecomp, hbTemp->bundleavg, hbTemp->bundledev, hbTemp->t));
+                        PrependRlistAlienUnlocked(&record_list, NewHubBundleSeen(hbTemp->hh, hbTemp->bundle, hbTemp->bundlecomp, hbTemp->bundleavg, hbTemp->bundledev, hbTemp->t));
                         hostDataAdded = true;
                     }
                 }
@@ -3426,7 +3438,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(mongo_connection *conn, char *keyHash, ch
         }
         else
         {
-            PrependRlistAlien(&host_list, hh);
+            PrependRlistAlienUnlocked(&host_list, hh);
         }
     }
 
@@ -4172,7 +4184,7 @@ HubQuery *CFDB_QueryHandlesForBundlesWithComments(mongo_connection *conn, char *
 
         if (strlen(handle) > 0 || strlen(comment) > 0)
         {
-            PrependRlistAlien(&recordList,
+            PrependRlistAlienUnlocked(&recordList,
                               NewHubPromise(NULL, NULL, NULL, NULL, NULL, NULL, NULL, handle, comment, NULL, 0, NULL));
         }
     }
@@ -4277,7 +4289,7 @@ HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char 
         {
             if (strcmp(bson_iterator_key(&it1), cfp_handle) == 0)
             {
-                PrependRlistAlien(&recordList,
+                PrependRlistAlienUnlocked(&recordList,
                                   NewHubPromise(NULL, NULL, NULL, NULL, NULL, NULL, NULL,
                                                 (char *) bson_iterator_string(&it1), NULL, NULL, 0, NULL));
             }
@@ -4354,7 +4366,7 @@ HubQuery *CFDB_QueryPromises(mongo_connection *conn, PromiseFilter *filter)
         Rlist *bundleArgs = BsonStringArrayAsRlist(&(cursor->current), cfp_bundleargs);
         Rlist *constraints = BsonStringArrayAsRlist(&(cursor->current), cfp_constraints);
 
-        PrependRlistAlien(&recordList, NewHubPromise(bundleName, bundleType, bundleArgs,
+        PrependRlistAlienUnlocked(&recordList, NewHubPromise(bundleName, bundleType, bundleArgs,
                                                      promiseType, promiser, promisee,
                                                      classContext, promiseHandle, comment,
                                                      file, lineNumber, constraints));
@@ -4407,7 +4419,7 @@ HubQuery *CFDB_QueryPromiseBundles(mongo_connection *conn, PromiseFilter *filter
         {
             Rlist *bundleArgs = BsonStringArrayAsRlist(&(cursor->current), cfp_bundleargs);
 
-            PrependRlistAlien(&recordList, NewHubPromiseBundle(bundleName, bundleType, bundleArgs));
+            PrependRlistAlienUnlocked(&recordList, NewHubPromiseBundle(bundleName, bundleType, bundleArgs));
 
             PrependItem(&bundlesFound, bundleName, bundleType);
         }
@@ -5557,7 +5569,7 @@ HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *policy, 
                 }
                 if (genTime >= minGenTime)
                 {
-                    PrependRlistAlien(&record_list,
+                    PrependRlistAlienUnlocked(&record_list,
                                       NewHubCacheTotalCompliance(policyDB, slot, count, -1, kept, repaired, notkept,
                                                                  genTime));
                 }
@@ -5735,7 +5747,7 @@ Rlist *CFDB_QueryNotes(mongo_connection *conn, char *keyhash, char *nid, Item *d
                     if (hci == NULL)
                     {
                         hh = NewHubHost(NULL, kh, NULL, NULL);
-                        PrependRlistAlien(&host_list, hh);
+                        PrependRlistAlienUnlocked(&host_list, hh);
                         QueryInsertHostInfo(conn, host_list);
                         hci = NewHubNoteInfo(hh, noteId, username, note, datetime, rptData, reportType);
                         firstComment = true;
@@ -5827,7 +5839,7 @@ Rlist *CFDB_QueryNoteId(mongo_connection *conn, bson *query)
         }
         if (strlen(noteId) > 15)
         {
-            PrependRlistAlien(&host_list, noteId);
+            PrependRlistAlienUnlocked(&host_list, noteId);
         }
     }
 
@@ -5943,7 +5955,7 @@ HubQuery *CFDB_QueryClassesDistinctSorted(mongo_connection *conn, const char *cl
     {
         if (!class_rx || StringMatch(class_rx, ip->name))
         {
-            PrependRlistAlien(&record_list, NewHubClass(NULL, ip->name, 0, 0, 0));
+            PrependRlistAlienUnlocked(&record_list, NewHubClass(NULL, ip->name, 0, 0, 0));
         }
     }
 
