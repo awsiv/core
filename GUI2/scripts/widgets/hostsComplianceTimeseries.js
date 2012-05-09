@@ -92,7 +92,7 @@
             $longTermRadio.attr('value', 'long');
             $longTermRadio.attr('id', 'timeModeLong');
             $longTermRadio.click(function() {
-                $self._resource = $self.options.baseUrl  + '/host/compliance/timeseries_shifts';
+                $self._resource = $self.options.baseUrl + '/host/compliance/timeseries_shifts';
                 $self.options.plot.xaxis.tickFormatter = function(value) {
                     return common.time.formatDate(value);
                 };
@@ -113,7 +113,7 @@
             $self._plot = null;
             $self._previousPoint = null;
             $self._sampleCounts = null;
-            $self._resource = '/host/compliance/timeseries';
+            $self._resource = $self.options.baseUrl + '/host/compliance/timeseries';
             $self.options.plot.xaxis.tickFormatter = function(value) {
                 return common.time.formatTimeOfDay(value);
             };
@@ -283,7 +283,7 @@
 
         _requestUrls: {
             timeseries: function($self) {
-                var url = $self.options.baseUrl + $self._resource + '?';
+                var url = $self._resource + '?';
 
                 if ($self._context.includes.length > 0) {
                     url = url + 'includes=' + encodeURIComponent($self._context.includes) + '&';
