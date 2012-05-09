@@ -1352,10 +1352,21 @@ int Nova2PHP_software_report(char *hostkey, char *name, char *value, char *arch,
     hq = CFDB_QuerySoftware(&dbconn, hostkey, type, name, value, arch, regex, hostClassFilter, true);
     PageRecords(&(hq->records), page, DeleteHubSoftware);
 
-    snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d,"
-             "\"header\": {\"Host\":0,\"Package Name\":1,\"Version\":2,\"Architecture\":3,\"Last seen\":4"
-             "}", page->totalResultCount);
+    if(strcmp(type, cfr_software) == 0)
+    {
+        snprintf(header, sizeof(header),
+                 "\"meta\":{\"count\" : %d,"
+                 "\"header\": {\"Host\":0,\"Package Name\":1,\"Version\":2,\"Architecture\":3,\"Last seen\":4"
+                 "}", page->totalResultCount);
+    }
+    else
+    {
+        // Patches installed and patches available reports don't have timestamps
+        snprintf(header, sizeof(header),
+                 "\"meta\":{\"count\" : %d,"
+                 "\"header\": {\"Host\":0,\"Package Name\":1,\"Version\":2,\"Architecture\":3"
+                 "}", page->totalResultCount);
+    }
 
     headerLen = strlen(header);
     noticeLen = strlen(CF_NOTICE_TRUNCATED);
@@ -1365,9 +1376,18 @@ int Nova2PHP_software_report(char *hostkey, char *name, char *value, char *arch,
     for (rp = hq->records; rp != NULL; rp = rp->next)
     {
         hs = (HubSoftware *) rp->item;
-        snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",\"%s\",\"%s\",%ld],",
-                 hs->hh->hostname, hs->name, hs->version, Nova_LongArch(hs->arch), hs->t);
 
+        if(strcmp(type, cfr_software) == 0)
+        {
+            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",\"%s\",\"%s\",%ld],",
+                     hs->hh->hostname, hs->name, hs->version, Nova_LongArch(hs->arch), hs->t);
+        }
+        else
+        {
+            // Patches installed and patches available reports don't have timestamps
+            snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",\"%s\",\"%s\"],",
+                     hs->hh->hostname, hs->name, hs->version, Nova_LongArch(hs->arch));
+        }
         margin = headerLen + noticeLen + strlen(buffer);
         if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
         {
