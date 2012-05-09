@@ -66,7 +66,7 @@
         $('#hostsConnectivity').hostsConnectivity(genericOption);
         $('#hostInfo').hostInfo(genericOption);
         $('.astrolabeLocation').astrolabeLocation(genericOption);
-        $('#hostsComplianceTimeseries').hostsComplianceTimeseries();
+        $('#hostsComplianceTimeseries').hostsComplianceTimeseries({baseUrl: '<?php echo site_url() ?>'});
         $('#reportInfoContainer').reportUI(genericOption);
 
         $('#astrolabe').astrolabe({
