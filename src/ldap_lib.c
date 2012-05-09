@@ -651,7 +651,7 @@ void *CfRegLDAP(char *uri, char *basedn, char *filter, char *name, char *scopes,
                 {
                     for (i = 0; vals[i] != NULL; i++)
                     {
-                        if (strcmp(a, name) == 0 && StringMatch(regex, (char *) vals[i]->bv_val))
+                        if (strcmp(a, name) == 0 && FullTextMatch(regex, (char *) vals[i]->bv_val))
                         {
                             CfOut(cf_verbose, "", " -> Located regex matching LDAP value %s => %s\n", a,
                                   (char *) vals[i]->bv_val);
