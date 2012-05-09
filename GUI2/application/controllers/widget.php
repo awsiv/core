@@ -59,8 +59,8 @@ class Widget extends Cf_Controller
         $startDateTimeStamp = $startDate;
         $stopDateTimeStamp = ($stopDate == null) ? ($startDate + (6 * 3600)) : $stopDate;
 
-        $includes = array();
-        $excludes = array();
+        $includes = isset($getparams['includes']) ? explode(',', urldecode($getparams['includes'])) : array();
+        $excludes = isset($getparams['excludes']) ? explode(',', urldecode($getparams['includes'])) : array();
 
         if ($env)
         {
@@ -359,12 +359,12 @@ class Widget extends Cf_Controller
         $handle = $this->input->post('filter');
         $showButton = $this->input->post('showButton');
         $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
-        $showOnlyBundle = trim($this->input->post('showOnlyBundle')) === 'false' ? false : true;        
+        $showOnlyBundle = trim($this->input->post('showOnlyBundle')) === 'false' ? false : true;
         $viewdata = array(
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
             'showButton' => $showButton,
             'showOnlyHandle' => $showOnlyHandle,
-            'showOnlyBundle' => $showOnlyBundle            
+            'showOnlyBundle' => $showOnlyBundle
         );
 
         $handle = ($handle) ? $handle . '.*' : '.*';
@@ -386,12 +386,12 @@ class Widget extends Cf_Controller
         $bundle = $this->input->post('filter');
         $showButton = $this->input->post('showButton');
         $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
-        $showOnlyBundle = trim($this->input->post('showOnlyBundle')) === 'false' ? false : true;           
+        $showOnlyBundle = trim($this->input->post('showOnlyBundle')) === 'false' ? false : true;
         $viewdata = array(
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
             'showButton' => $showButton,
             'showOnlyHandle' => $showOnlyHandle,
-            'showOnlyBundle' => $showOnlyBundle            
+            'showOnlyBundle' => $showOnlyBundle
         );
 
         $data = "";
@@ -414,12 +414,12 @@ class Widget extends Cf_Controller
         $type = $this->input->post('type');
         $showButton = $this->input->post('showButton');
         $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
-        $showOnlyBundle = trim($this->input->post('showOnlyBundle')) === 'false' ? false : true;           
+        $showOnlyBundle = trim($this->input->post('showOnlyBundle')) === 'false' ? false : true;
         $viewdata = array(
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
             'showButton' => $showButton,
             'showOnlyHandle' => $showOnlyHandle,
-            'showOnlyBundle' => $showOnlyBundle 
+            'showOnlyBundle' => $showOnlyBundle
         );
 
 
@@ -441,12 +441,12 @@ class Widget extends Cf_Controller
         $promiser = $this->input->post('filter');
         $showButton = $this->input->post('showButton');
         $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
-        $showOnlyBundle = trim($this->input->post('showOnlyBundle')) === 'false' ? false : true;                   
+        $showOnlyBundle = trim($this->input->post('showOnlyBundle')) === 'false' ? false : true;
         $viewdata = array(
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_report'),
             'showButton' => $showButton,
             'showOnlyHandle' => $showOnlyHandle,
-            'showOnlyBundle' => $showOnlyBundle             
+            'showOnlyBundle' => $showOnlyBundle
         );
         try
         {
@@ -560,43 +560,41 @@ class Widget extends Cf_Controller
     function contextfinder()
     {
         $data = array();
- 
+
         if($this->input->post('html_id') !== FALSE) {
             $data['html_id'] = $this->input->post('html_id', TRUE);
         }
-        
+
         if($this->input->post('doNotShowButtons') !== FALSE) {
             if (strtolower($this->input->post('doNotShowButtons', TRUE)) == 'false' || $this->input->post('doNotShowButtons', TRUE) == '')
-                $data['doNotShowButtons'] = false;        
+                $data['doNotShowButtons'] = false;
             else
                 $data['doNotShowButtons'] = true;
         }
-        
+
         if($this->input->post('embedded') !== FALSE) {
             if (strtolower($this->input->post('emdedded', TRUE)) == 'false' || $this->input->post('emdedded', TRUE) == '')
-                $data['embedded'] = false;        
+                $data['embedded'] = false;
             else
                 $data['embedded'] = true;
-        }        
-        
+        }
+
         if($this->input->post('include_field_name') !== FALSE) {
             $data['include_field_name'] = $this->input->post('include_field_name', TRUE);
         }
-        
+
         if ($this->input->post('includes') !== FALSE) {
            $data['fields']['left']['values'] = $this->input->post('includes');
         }
-        
+
         if($this->input->post('exclude_field_name') !== FALSE) {
             $data['include_field_name'] = $this->input->post('include_field_name', TRUE);
         }
-        
+
         if ($this->input->post('excludes') !== FALSE) {
            $data['fields']['right']['values'] = $this->input->post('excludes');
         }
-     
 
-        
         $this->load->view('widgets/contextfinder', $data);
     }
 
@@ -611,10 +609,10 @@ class Widget extends Cf_Controller
     function bundlesNotAssignedToRole($rolename = '')
     {
         $filter = $this->input->post('filter');
-        
+
         $username = $this->session->userdata('username');
         $all_bundles = $brxi = $brxx = array();
-        
+
         try
         {
             $all_bundles_tmp = $this->bundle_model->getAllBundles($username);
@@ -660,13 +658,13 @@ class Widget extends Cf_Controller
                     $bundle = arrayRecursiveDiff($all_bundles, $used_bundles);
                 }
             }
-           
+
                // echo json_encode(array_keys($bundle));
             $showButton = $this->input->post('showButton');
             $showOnlyHandle = trim($this->input->post('showOnlyHandle')) === 'false' ? false : true;
             $showOnlyBundle = trim($this->input->post('showOnlyBundle')) === 'false' ? false : true;
             $viewdata = array(
-                
+
                 'showButton' => $showButton,
                 'showOnlyHandle' => $showOnlyHandle,
                 'showOnlyBundle' => $showOnlyBundle
@@ -677,8 +675,8 @@ class Widget extends Cf_Controller
             {
                 $bundle = preg_grep ('/'.$filter.'/', $bundle);
             }
-            
-            
+
+
             $viewdata['viewdata'] = array_keys($bundle);
 
             $this->load->view('widgets/allpolicies', $viewdata);
