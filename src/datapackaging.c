@@ -1883,11 +1883,18 @@ void Nova_PackSoftwareDates(Item **reply, char *header, time_t from, enum cfd_me
     if (cfstat(path, &sb) != 0)
     {
         CfOut(cf_verbose, "", "Nova_PackSoftwareDates: Could not stat %s", path);
+        return;
+    }
+
+    time_t lastSeenSw = sb.st_mtime;
+
+    if (lastSeenSw == 0)
+    {
+        CfOut(cf_verbose, "", "Software cache has been invalidated - skipping\n");
+        return;
     }
 
     AppendItem(reply, header, NULL);
-
-    time_t lastSeenSw = sb.st_mtime;
 
     snprintf(line, sizeof(line), "S:%ld\n", lastSeenSw);
     AppendItem(reply, line, NULL);
