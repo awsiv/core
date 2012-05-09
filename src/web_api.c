@@ -4700,14 +4700,14 @@ void Nova2PHP_enterprise_version(char *buf, int bufsize)
         retErrid = ERRID_SUCCESS;       /* not error to have Nova only */
         /* fallthrough */
     default:
-        name = "Nova";
+        name = "Enterprise";
         version = Nova_Version();
         break;
     }
 
 # else
 
-    name = "Nova";
+    name = "Enterprise";
     version = Nova_Version();
 
 # endif
