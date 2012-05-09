@@ -638,9 +638,7 @@
     }
 
     function checkEmptyList(source_elem, destination_elem) {
-        console.log('source=' + source_elem);
-        console.log('destination=' + destination_elem.attr('id'));
-        
+       
         // add empty element with message
         if ($(source_elem).children().length == 0)
         {      
