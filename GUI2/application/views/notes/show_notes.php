@@ -15,7 +15,7 @@
                                 <label for="dateTo">Date to: </label>
                                 <input autocomplete="off" id="dateTo" type="text" name="dateTo" value="<?php echo $display_dateTo; ?>" size="50" />
                                 <label for="submit"></label>
-                                <input type="submit" value="search" name="submit" />
+                                <span class="green_btn"><input type="submit" value="search" class="green_btn" name="submit" /></span>
                             </fieldset>
 
                             <br />
