@@ -555,8 +555,32 @@ void BsonAppendHostColourFilter(bson_buffer *query_buffer, HostColourFilter *fil
 
     if (filter->colour == HOST_COLOUR_BLUE) // blue overwrites black status
     {
-        bson_append_start_object(query_buffer, cfr_day);
-        bson_append_long(query_buffer, "$lt", filter->blue_time_horizon);
+        bson_buffer *arr = bson_append_start_array(query_buffer, "$or");
+
+        bson_append_start_object(arr, "0");
+        bson_append_start_object(arr, cfr_day);
+        bson_append_long(arr, "$lt", filter->blue_time_horizon);
+        bson_append_finish_object(arr);
+        bson_append_finish_object(arr);
+
+        bson_append_start_object(arr, "1");
+        bson_append_start_object(arr, cfr_day);
+        bson_append_bool(arr, "$exists", false);
+        bson_append_finish_object(arr);
+        bson_append_finish_object(arr);
+
+        bson_append_start_object(arr, "2");
+        bson_append_start_object(arr, score_method);
+        bson_append_bool(arr, "$exists", false);
+        bson_append_finish_object(arr);
+        bson_append_finish_object(arr);
+
+        bson_append_start_object(arr, "3");
+        bson_append_start_object(arr, cfr_is_black);
+        bson_append_bool(arr, "$exists", false);
+        bson_append_finish_object(arr);
+        bson_append_finish_object(arr);
+
         bson_append_finish_object(query_buffer);
     }
 
