@@ -258,7 +258,6 @@
             $editNodeButton.click(function(event) {
                 var $parentNode = $self._parentNode($nodeItem);
                 var $dialog = $self._nodeDialog($nodeItem, 'update');
-
                 $dialog.dialog('open');
             });
 
@@ -386,8 +385,9 @@
                 .load($self.options.baseUrl + '/widget/astrolabeAddNodeDialog/', function() {
                     $('#astrolabe-add-node-label').focus();
                     if (operation == 'update') {
-                      $('#astrolabe-add-node-label').val($(parentNode).attr('label'));
-                      $('#astrolabe-add-node-class').val($(parentNode).attr('class-regex'));
+                        
+                      $(this).find('#astrolabe-add-node-label').val($(parentNode).attr('label'));
+                      $(this).find('#astrolabe-add-node-class').val($(parentNode).attr('class-regex'));
                     }
                 })
                 .dialog({
