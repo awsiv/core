@@ -570,10 +570,11 @@ class Search extends Cf_Controller
 
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     $from = isset($getparams['from']) ? urldecode($getparams['from']) : $this->input->post('from');
-                    $to = isset($getparams['to']) ? urldecode($getparams['to']) : $this->input->post('to');
-                    $cause_rx = isset($getparams['cause']) ? $getparams['cause'] : $this->input->post('cause');
+                    $to   = isset($getparams['to'])   ? urldecode($getparams['to'])   : $this->input->post('to');
+                    
+                    $cause_rx = isset($getparams['cause']) ? urldecode($getparams['cause']) : $this->input->post('cause');
                     $cause_rx = $cause_rx === false ? ".*" : $cause_rx;
-
+               
                     $from_timestamp = strtotime($from);
                     $to_timestamp = strtotime($to);
 
@@ -600,13 +601,14 @@ class Search extends Cf_Controller
                 case "promises-not-kept-log":
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     $from = isset($getparams['from']) ? urldecode($getparams['from']) : $this->input->post('from');
-                    $to = isset($getparams['to']) ? urldecode($getparams['to']) : $this->input->post('to');
-                    $cause_rx = isset($getparams['cause']) ? $getparams['cause'] : $this->input->post('cause');
+                    $to   = isset($getparams['to'])   ? urldecode($getparams['to'])   : $this->input->post('to');
+                    
+                    $cause_rx = isset($getparams['cause']) ? urldecode($getparams['cause']) : $this->input->post('cause');
                     $cause_rx = $cause_rx === false ? ".*" : $cause_rx;
 
                     $from_timestamp = strtotime($from);
                     $to_timestamp = strtotime($to);
-
+                    
                     if ($report_type == "promises-not-kept-summary")
                         $data['report_result'] = $this->report_model->getPromisesNotKeptSummary($username, $hostkey, $name, $cause_rx, $from_timestamp, $to_timestamp, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
                     if ($report_type == "promises-not-kept-log")
@@ -622,7 +624,7 @@ class Search extends Cf_Controller
 
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
-                    $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email' . $from . '/to/' . $to);
+                    $data['email_link']  = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email' . $from . '/to/' . $to);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                     break;
                 case "setuid-programs":
