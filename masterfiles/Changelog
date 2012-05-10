@@ -1,5 +1,6 @@
 February 2012
 *update.cf*
+- Use u_rcp instead of u_dcp to copy cf_promises_validated, robust to clock skew
 - Ignore .git directory as well for downloads
 
 November 2011
