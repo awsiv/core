@@ -556,6 +556,7 @@ void SetMeasurementPromises(Item **classlist)
         }
     }
 
+    DeleteDBCursor(dbp, dbcp);
     CloseDB(dbp);
 }
 
