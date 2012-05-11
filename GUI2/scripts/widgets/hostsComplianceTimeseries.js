@@ -158,11 +158,13 @@
             $self._$loader.hide();
         },
 
-        setContext: function(includes, excludes) {
+        setContext: function(includes, excludes, totalHostCount) {
             var $self = this;
 
             $self._context.includes = includes;
             $self._context.excludes = excludes;
+
+            $self.options.plot.yaxis.max = totalHostCount;
 
             $self.refresh();
         },
@@ -172,6 +174,8 @@
 
             $self._context.includes = [common.canonify('PK_' + hostKey)];
             $self._context.excludes = [];
+
+            $self.options.plot.yaxis.max = 1;
 
             $self.refresh();
         },
@@ -213,22 +217,12 @@
                         yellow[entry.position] = entry.yellow;
                     }
 
-                    var maxValue = 1;
-                    for (i = 0; i < timeseries.count; i++) {
-                        var count = green[i] + yellow[i] + red[i];
-                        if (count > maxValue) {
-                            maxValue = count;
-                        }
-                    }
-
                     green = convertToTimeDomain(green);
                     red = convertToTimeDomain(red);
                     yellow = convertToTimeDomain(yellow);
 
                     $self.options.plot.series.bars.barWidth = $self._resolution -
                         (0.05 * $self._resolution);
-
-                    $self.options.plot.yaxis.max = maxValue;
 
                     $self._plot = $.plot($self._$graph, [
                         {
