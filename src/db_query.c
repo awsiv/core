@@ -1515,6 +1515,7 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(mongo_connection *conn, char *keyH
         {
             long promiseCount = 0;
             double totalCompliance = 0.0;
+            bool blueOrBlackHost = true;
 
             if(hh->colour == HOST_COLOUR_GREEN_YELLOW_RED)
             {
@@ -1550,6 +1551,12 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(mongo_connection *conn, char *keyH
 
                         hh->colour = HOST_COLOUR_RED;
                     }
+
+                    blueOrBlackHost = false;
+                }
+                else
+                {
+                    hh->colour = HOST_COLOUR_BLUE;
                 }
 
                 if(!hostColourFilter ||  (hostColourFilter && (hostColourFilter->colour == hh->colour)))
@@ -1558,7 +1565,7 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(mongo_connection *conn, char *keyH
                     {
                         HubPromiseCompliance *hp = (HubPromiseCompliance *) rp->item;
 
-                        /*  Don't include entries past blue horizon for connected hosts */
+                        /*  Don't include entries past blue horizon for connected hosts and nan values */
                         if(hp->t < blueHorizonTime || isnan(hp->e))
                         {
                             continue;
@@ -1569,7 +1576,8 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(mongo_connection *conn, char *keyH
                     }
                 }
             }
-            else if( !hostColourFilter || (hostColourFilter && hostColourFilter->colour == hh->colour))  // blue and black hosts
+
+            if(blueOrBlackHost)  // blue and black hosts
             {
                 for(Rlist *rp = hq->records; rp != NULL; rp = rp->next)
                 {
@@ -3350,6 +3358,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(mongo_connection *conn, char *keyHash, ch
         {
             long totalKept = 0;
             long totalRelevantBundlesInHost = 0;
+            bool blueOrBlackHost = true;
 
             if(hh->colour == HOST_COLOUR_GREEN_YELLOW_RED)
             {
@@ -3375,7 +3384,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(mongo_connection *conn, char *keyHash, ch
                 /* calculate average bundle compliance for current host */
 
                 if(totalRelevantBundlesInHost)
-                {
+                {                    
                     HostColour colour = HOST_COLOUR_RED;
                     double avgCompliance = totalKept / totalRelevantBundlesInHost;
 
@@ -3385,6 +3394,14 @@ HubQuery *CFDB_QueryWeightedBundleSeen(mongo_connection *conn, char *keyHash, ch
                     }
 
                     hh->colour = colour;
+
+                    blueOrBlackHost = false;
+                }
+                else
+                {
+                     /* If host has no data within the blue_horizon, mark it as blue */
+
+                    hh->colour = HOST_COLOUR_BLUE;
                 }
 
                 if(!hostColourFilter ||  (hostColourFilter && (hostColourFilter->colour == hh->colour)))
@@ -3404,7 +3421,8 @@ HubQuery *CFDB_QueryWeightedBundleSeen(mongo_connection *conn, char *keyHash, ch
                     }
                 }
             }
-            else if((hh->colour == HOST_COLOUR_BLUE || hh->colour == HOST_COLOUR_BLACK))
+
+            if(blueOrBlackHost)
             {
                 if(!hostColourFilter ||  (hostColourFilter && (hostColourFilter->colour == hh->colour)))
                 {
