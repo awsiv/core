@@ -3330,7 +3330,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(mongo_connection *conn, char *keyHash, ch
     Rlist *record_list = NULL,
             *host_list = NULL;
 
-    time_t blueHorizonTimestamp = time(NULL) - blue_horizon;
+    time_t blueHorizonTime = time(NULL) - blue_horizon;
 
     while (mongo_cursor_next(cursor))
     {
@@ -3340,7 +3340,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(mongo_connection *conn, char *keyHash, ch
         Rlist *record_list_single_host = NULL;
 
         HubHost *hh = CreateEmptyHubHost();
-        bool found = BsonIterGetBundleReportDetails(&it1, lname, regex, blueHorizonTimestamp, hh, &record_list_single_host );
+        bool found = BsonIterGetBundleReportDetails(&it1, lname, regex, blueHorizonTime, hh, &record_list_single_host );
 
         HubQuery *hq = NewHubQuery(NULL, record_list_single_host);
 
@@ -3360,14 +3360,16 @@ HubQuery *CFDB_QueryWeightedBundleSeen(mongo_connection *conn, char *keyHash, ch
                 {
                     HubBundleSeen *hbTemp = (HubBundleSeen *) rp->item;
 
-                    if(hbTemp->t > blueHorizonTimestamp) /* discard data past blue_horizon */
+                    if(hbTemp->t < blueHorizonTime) /* discard data past blue_horizon */
                     {
-                        if(Num(hbTemp->bundlecomp) > 0.8)
-                        {
-                            totalKept++;
-                        }
-                        totalRelevantBundlesInHost++;
+                        continue;
                     }
+
+                    if(Num(hbTemp->bundlecomp) > 0.8)
+                    {
+                        totalKept++;
+                    }
+                    totalRelevantBundlesInHost++;
                 }
 
                 /* calculate average bundle compliance for current host */
@@ -3392,7 +3394,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(mongo_connection *conn, char *keyHash, ch
                         HubBundleSeen *hbTemp = (HubBundleSeen *) rp->item;
 
                         /*  Don't include entries past blue horizon for connected hosts */
-                        if(hbTemp->t < blueHorizonTimestamp)
+                        if(hbTemp->t < blueHorizonTime)
                         {
                             continue;
                         }
