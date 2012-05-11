@@ -91,7 +91,8 @@
                 $('#hostInfoContainer').hide();
                 $('#hostsInfoContainer').show();
 
-                $('#hostsComplianceTimeseries').hostsComplianceTimeseries('setContext', args.includes, []);
+                $('#hostsComplianceTimeseries').hostsComplianceTimeseries('setContext',
+                    args.includes, [], args.count);
 
                 $('#hostsCompliance').hostsCompliance('setContext', args.includes, []);
 
