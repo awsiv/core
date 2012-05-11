@@ -10,9 +10,6 @@
                 <p><label>Match content: (.*+[])</label> 
                   <input class="searchfield" type="text" name="diff" size="80" value="<?php echo (is_array($paramArray) && isset($paramArray['diff'])) ? trim($paramArray['diff']) : ''; ?>"></p>
                 <p>
-                    <label>Show long term data: </label>
-                    <input type="checkbox" name="long_term" value="true" <?php echo (is_array($paramArray) && isset($paramArray['long_term']) && $paramArray['long_term'] == 'true') ? 'checked' : ''; ?> />
-                    
                     <span class="green_btn floatright" style="margin-top: 2px"><input class="green_btn" type="submit" value="Generate Report"></input></span>
                     <span class="clear"></span>
                 </p>

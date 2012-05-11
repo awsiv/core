@@ -446,18 +446,16 @@ class Search extends Cf_Controller
                     break;
                 case "file-change-log":
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
-                    $longterm_data = isset($getparams['long_term']) ? $getparams['long_term'] : $this->input->post('long_term');
                     $pdfurlParams = array('type' => $report_type,
                         'inclist' => $incList,
                         'exlist' => $exList,
                         'hostkey' => $hostkey,
-                        'search' => $name,
-                        'long_term' => $longterm_data
+                        'search' => $name
                     );
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                    $data['report_result'] = $this->report_model->getFileChangeLog($username, $hostkey, $name, explode(',', $incList), explode(',', $exList), $longterm_data, $rows, $page_number, $hosts_only);
+                    $data['report_result'] = $this->report_model->getFileChangeLog($username, $hostkey, $name, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                     break;
                 case "file-change-diffs":
@@ -469,20 +467,18 @@ class Search extends Cf_Controller
                     $cal = -1;
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     $diff = isset($getparams['diff']) ? urldecode($getparams['diff']) : urldecode($this->input->post('diff'));
-                    $longterm_data = isset($getparams['long_term']) ? $getparams['long_term'] : $this->input->post('long_term');
 
                     $pdfurlParams = array('type' => $report_type,
                         'inclist' => $incList,
                         'exlist' => $exList,
                         'diff' => $diff,
                         'cal' => $cal,
-                        'search' => $name,
-                        'long_term' => $longterm_data
+                        'search' => $name
                     );
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                    $data['report_result'] = $this->report_model->getFileChangeDiff($username, $hostkey, $name, $diff, $cal, explode(',', $incList), explode(',', $exList), $longterm_data, $rows, $page_number, $hosts_only);
+                    $data['report_result'] = $this->report_model->getFileChangeDiff($username, $hostkey, $name, $diff, $cal, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                     break;
                 case "neighbors":

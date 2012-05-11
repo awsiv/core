@@ -444,12 +444,11 @@ class report_model extends Cf_Model
      * @param type $search
      * @param type $inclist
      * @param type $exlist
-     * @param type $longterm_data
      * @param type $rows
      * @param type $page_number
      * @return type
      */
-    function getFileChangeLog($username, $hostkey, $search, $inclist, $exlist, $longterm_data, $rows = 50, $page_number = 1, $hosts_only = false)
+    function getFileChangeLog($username, $hostkey, $search, $inclist, $exlist, $rows = 50, $page_number = 1, $hosts_only = false)
     {
         try
         {
@@ -488,12 +487,11 @@ class report_model extends Cf_Model
      * @param type $cal
      * @param type $inclist
      * @param type $exlist
-     * @param type $longterm
      * @param type $rows
      * @param type $page_number
      * @return type array
      */
-    function getFileChangeDiff($username, $hostkey, $search, $diff, $cal, $inclist, $exlist, $longterm, $rows = 50, $page_number = 1, $hosts_only = false)
+    function getFileChangeDiff($username, $hostkey, $search, $diff, $cal, $inclist, $exlist, $rows = 50, $page_number = 1, $hosts_only = false)
     {
         try
         {
