@@ -96,7 +96,7 @@ int MONITOR_RESTARTED = true;
 char *MEASUREMENTS[CF_DUNBAR_WORK];
 CustomMeasurement NOVA_DATA[CF_DUNBAR_WORK];
 
-static bool slots_loaded;
+static time_t slots_load_time = 0;
 static MonitoringSlot *SLOTS[CF_OBSERVABLES - ob_spare];
 
 static Averages SHIFT_VALUE;
@@ -148,14 +148,21 @@ static void Nova_LoadSlots(void)
     char filename[CF_BUFSIZE];
     int i;
 
-    if (slots_loaded)
+    snprintf(filename, CF_BUFSIZE - 1, "%s%cstate%cts_key", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR);
+
+    struct stat sb;
+
+    if(cfstat(filename, &sb) != 0)
     {
         return;
     }
 
-    slots_loaded = true;
+    if(sb.st_mtime <= slots_load_time)
+    {
+        return;
+    }
 
-    snprintf(filename, CF_BUFSIZE - 1, "%s%cstate%cts_key", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR);
+    slots_load_time = sb.st_mtime;
 
     if ((f = fopen(filename, "r")) == NULL)
     {
