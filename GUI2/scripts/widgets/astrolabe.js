@@ -9,8 +9,8 @@
                 autoReinitialise: false,
                 verticalArrowPositions: 'split'
             }
-            
-            
+
+
         },
 
         _create: function() {
@@ -142,7 +142,7 @@
             else {
                 if (expanded === true) {
                     $node.addClass('expanded');
-                    
+
 
                     self._setNodeExpanded(self._parentNode($node), true);
 
@@ -169,7 +169,7 @@
             self._setNodeExpanded(node, !self._isNodeExpanded(node));
 
             if (self._isNodeExpanded(node)) {
-                self._loadNode(node);
+                self._loadNode(node, true);
             }
 
             if (event !== null && event !== undefined) {
@@ -360,7 +360,7 @@
                 $(parentNode).attr('class-regex', nodeprop.classRegex);
                 $(parentNode).find('div.showqtip').first().attr('oldtitle', nodeprop.classRegex);
                 $self._saveProfile($self._currentProfile, parentNode);
-                $self._loadNode($self._superNode);
+                $self._loadNode($self._superNode, false);
                 $self._recount();
                 $dialog.dialog('close');
                 $dialog.dialog('destroy');
@@ -385,7 +385,7 @@
                 .load($self.options.baseUrl + '/widget/astrolabeAddNodeDialog/', function() {
                     $('#astrolabe-add-node-label').focus();
                     if (operation == 'update') {
-                        
+
                       $(this).find('#astrolabe-add-node-label').val($(parentNode).attr('label'));
                       $(this).find('#astrolabe-add-node-class').val($(parentNode).attr('class-regex'));
                     }
@@ -526,7 +526,7 @@
             return excludes;
         },
 
-        _loadNode: function(node) {
+        _loadNode: function(node, selectAfterLoad) {
             var self = this;
 
             self._subHosts(node).remove();
@@ -534,16 +534,16 @@
             var includes = self._nodeIncludes(node);
             var excludes = self._nodeExcludes(node).join('|');
 
-            self._loadHosts(node, includes, excludes);
+            self._loadHosts(node, includes, excludes, selectAfterLoad);
         },
 
-        _loadHosts: function($node, includes, excludes) {
-            var self = this;
+        _loadHosts: function($node, includes, excludes, selectAfterLoad) {
+            var $self = this;
 
-            var container = self._nodeContainer($node);
+            var container = $self._nodeContainer($node);
             $node.children('.busyIcon').css('display', 'inline-block');
 
-            $.getJSON(self._requestUrls.hosts(self, includes, excludes), function(hostDescriptionList) {
+            $.getJSON($self._requestUrls.hosts($self, includes, excludes), function(hostDescriptionList) {
                 if (hostDescriptionList !== null) {
                     var colourOrder = ['blue', 'red', 'yellow', 'green'];
 
@@ -552,15 +552,19 @@
                     });
 
                     $.each(hostDescriptionList, function() {
-                        var hostItem = self._createHost(this.hostkey,
+                        var hostItem = $self._createHost(this.hostkey,
                             this.hostname, this.colour);
                         $(container).append(hostItem);
                     });
-                    
-                    self._listContainer.jScrollPane(self.options.scrollPaneOptions);
+
+                    $self._listContainer.jScrollPane($self.options.scrollPaneOptions);
                 }
 
                 $node.children('.busyIcon').hide();
+
+                if (selectAfterLoad === true) {
+                    $self._onClickNodeLabel($self, $node, null);
+                }
             });
         },
 
@@ -614,14 +618,14 @@
 
                     success: function() {
                         if (refreshNode !== null) {
-                            $self._loadNode($(refreshNode));
+                            $self._loadNode($(refreshNode), false);
                         }
                     }
                 });
             }
             else {
                 if (refreshNode !== null) {
-                    $self._loadNode($(refreshNode));
+                    $self._loadNode($(refreshNode), false);
                 }
             }
         },
@@ -656,23 +660,20 @@
                    url: $self._profileUrl(profileId),
                    success: function(nodeDescriptionList) {
                        $self._createSuperNode($.parseJSON(nodeDescriptionList));
-                       $self._onClickNodeLabel($self, $self._superNode, null);
                        $self._setNodeExpanded($self._superNode, true);
-                       $self._loadNode($self._superNode);
+                       $self._loadNode($self._superNode, true);
                    },
                    error: function() {
                        $self._createSuperNode(null);
-                       $self._onClickNodeLabel($self, $self._superNode, null);
                        $self._setNodeExpanded($self._superNode, true);
-                       $self._loadNode($self._superNode);
+                       $self._loadNode($self._superNode, true);
                    }
                 });
             }
             else {
                 $self._createSuperNode(null);
-                $self._onClickNodeLabel($self, $self._superNode, null);
                 $self._setNodeExpanded($self._superNode, true);
-                $self._loadNode($self._superNode);
+                $self._loadNode($self._superNode, true);
             }
         },
 
