@@ -1513,52 +1513,43 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(mongo_connection *conn, char *keyH
 
         if(found)
         {
-            long totalNotKept = 0,
-                 totalKept = 0,
-                 totalRepaired = 0,
-                 totalCount = 0;
-
+            long promiseCount = 0;
+            double totalCompliance = 0.0;
 
             if(hh->colour == HOST_COLOUR_GREEN_YELLOW_RED)
             {
-                /* count total kept/notkept/repaired for current host */
+                /* Calculate compliance score for current host */
 
                 for(Rlist *rp = hq->records; rp != NULL; rp = rp->next)
                 {
                     HubPromiseCompliance *hp = (HubPromiseCompliance *) rp->item;
 
-                    switch(hp->status)
+                    if(hp->t < blueHorizonTime)
                     {
-                    case PROMISE_STATE_NOTKEPT:
-                        totalNotKept++;
-                        break;
-
-                    case PROMISE_STATE_REPAIRED:
-                        totalRepaired++;
-                        break;
-
-                    case PROMISE_STATE_KEPT:
-                        totalKept++;
-                        break;
-
-                    default:
-                        totalCount--;
-                        break;
+                        continue;
                     }
 
-                    totalCount++;
+                    totalCompliance += hp->e;
+                    promiseCount++;
                 }
 
                 /* Evaluate compliance level based on the most recent data */
-                if(totalCount)
+                if(promiseCount)
                 {
-                    double avgKept = totalKept / totalCount,
-                            avgRepaired = totalRepaired / totalCount;
+                    double avgCompliance = totalCompliance / promiseCount;
 
-                    int score = HostComplianceScore(avgKept * 100, avgRepaired * 100);
-                    HostColour colour = HostColourFromScoreForConnectedHost(score);
+                    if (avgCompliance > 0.8)
+                    {
+                        // Compliant
+                        hh->colour = HOST_COLOUR_GREEN;
+                    }
+                    else
+                    {
+                        // Non-compliant
+                        // Repaired state cannot be determined from the compliance percentage for now
 
-                    hh->colour = colour;
+                        hh->colour = HOST_COLOUR_RED;
+                    }
                 }
 
                 if(!hostColourFilter ||  (hostColourFilter && (hostColourFilter->colour == hh->colour)))
