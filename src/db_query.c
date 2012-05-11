@@ -1524,7 +1524,7 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(mongo_connection *conn, char *keyH
                 {
                     HubPromiseCompliance *hp = (HubPromiseCompliance *) rp->item;
 
-                    if(hp->t < blueHorizonTime)
+                    if(hp->t < blueHorizonTime || isnan(hp->e))
                     {
                         continue;
                     }
@@ -1559,7 +1559,7 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(mongo_connection *conn, char *keyH
                         HubPromiseCompliance *hp = (HubPromiseCompliance *) rp->item;
 
                         /*  Don't include entries past blue horizon for connected hosts */
-                        if(hp->t < blueHorizonTime)
+                        if(hp->t < blueHorizonTime || isnan(hp->e))
                         {
                             continue;
                         }
@@ -3360,7 +3360,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(mongo_connection *conn, char *keyHash, ch
                 {
                     HubBundleSeen *hbTemp = (HubBundleSeen *) rp->item;
 
-                    if(hbTemp->t < blueHorizonTime) /* discard data past blue_horizon */
+                    if(hbTemp->t < blueHorizonTime || isnan(hbTemp->bundlecomp)) /* discard data past blue_horizon and nan values*/
                     {
                         continue;
                     }
@@ -3394,7 +3394,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(mongo_connection *conn, char *keyHash, ch
                         HubBundleSeen *hbTemp = (HubBundleSeen *) rp->item;
 
                         /*  Don't include entries past blue horizon for connected hosts */
-                        if(hbTemp->t < blueHorizonTime)
+                        if(hbTemp->t < blueHorizonTime || isnan(hbTemp->bundlecomp))
                         {
                             continue;
                         }
