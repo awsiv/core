@@ -571,6 +571,9 @@ typedef struct
 
 /* acl.c */
 
+int CheckACLSyntax(char *file, Acl acl, Promise *pp);
+void SyntaxCompletion(char *s);
+
 void Nova_SetACLDefaults(char *path, Acl *acl);
 int Nova_CheckACESyntax(char *ace, char *valid_nperms, char *valid_ops, int deny_support, int mask_support,
                         Promise *pp);
