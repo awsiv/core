@@ -1092,12 +1092,13 @@ int Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogSt
 
     hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, causeRx, from, to, true, hostClassFilter);
 
+    int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubPromiseLog);
 
     snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d,"
+             "\"meta\":{\"count\" : %d, \"related\" : %d, "
              "\"header\":{\"Host\":0,\"Promise Handle\":1,\"Report\":2,\"Time\":3}",
-             page->totalResultCount);
+             page->totalResultCount, related_host_cnt);
 
     int headerLen = strlen(header);
     int noticeLen = strlen(CF_NOTICE_TRUNCATED);
@@ -1168,6 +1169,7 @@ JsonElement *Nova2PHP_promiselog_summary(char *hostkey, char *handle, char *caus
     JsonElement *meta = JsonObjectCreate(2);
     {
         JsonObjectAppendInteger(meta, "count", RlistLen(hq->records));
+        JsonObjectAppendInteger(meta, "related", RlistLen(hq->hosts));
 
         JsonElement *header = JsonObjectCreate(3);
 
@@ -1233,10 +1235,12 @@ int Nova2PHP_value_report(char *hostkey, char *day, char *month, char *year, Hos
 
     hq = CFDB_QueryValueReport(&dbconn, hostkey, day, month, year, true, hostClassFilter);
 
+    int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubValue);
-    snprintf(header, sizeof(header), "\"meta\":{\"count\" : %d,"
+
+    snprintf(header, sizeof(header), "\"meta\":{\"count\" : %d, \"related\" : %d, "
              "\"header\":{\"Host\":0,\"Summary of Day\":1,\"Value of Promises Kept\":2,\"Value of Repairs\":3,\"Loss for Promises Not Kept\":4}",
-             page->totalResultCount);
+             page->totalResultCount, related_host_cnt);
 
     headerLen = strlen(header);
     noticeLen = strlen(CF_NOTICE_TRUNCATED);
@@ -1350,22 +1354,24 @@ int Nova2PHP_software_report(char *hostkey, char *name, char *value, char *arch,
     }
 
     hq = CFDB_QuerySoftware(&dbconn, hostkey, type, name, value, arch, regex, hostClassFilter, true);
+
+    int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubSoftware);
 
     if(strcmp(type, cfr_software) == 0)
     {
         snprintf(header, sizeof(header),
-                 "\"meta\":{\"count\" : %d,"
+                 "\"meta\":{\"count\" : %d, \"related\" : %d, "
                  "\"header\": {\"Host\":0,\"Package Name\":1,\"Version\":2,\"Architecture\":3,\"Last seen\":4"
-                 "}", page->totalResultCount);
+                 "}", page->totalResultCount, related_host_cnt);
     }
     else
     {
         // Patches installed and patches available reports don't have timestamps
         snprintf(header, sizeof(header),
-                 "\"meta\":{\"count\" : %d,"
+                 "\"meta\":{\"count\" : %d, \"related\" : %d, "
                  "\"header\": {\"Host\":0,\"Package Name\":1,\"Version\":2,\"Architecture\":3"
-                 "}", page->totalResultCount);
+                 "}", page->totalResultCount, related_host_cnt);
     }
 
     headerLen = strlen(header);
@@ -1443,12 +1449,14 @@ int Nova2PHP_classes_report(char *hostkey, char *name, bool regex, HostClassFilt
 
     time_t now = time(NULL);
     hq = CFDB_QueryClasses(&dbconn, hostkey, name, regex, now - (time_t)SECONDS_PER_WEEK, now, hostClassFilter, true);
+
+    int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubClass);
 
     snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d,"
+             "\"meta\":{\"count\" : %d, \"related\" : %d, "
              "\"header\": {\"Host\":0,\"Class or Context\":1,\"in %% runs\":2,\"+/- %%\":3,\"Last occurred\":4"
-             "}", page->totalResultCount);
+             "}", page->totalResultCount, related_host_cnt);
 
     headerLen = strlen(header);
     noticeLen = strlen(CF_NOTICE_TRUNCATED);
@@ -1585,12 +1593,14 @@ int Nova2PHP_vars_report(char *hostkey, char *scope, char *lval, char *rval, cha
 
     hq = CFDB_QueryVariables(&dbconn, hostkey, scope, lval, rval, type, regex, 0, time(NULL), hostClassFilter);
 
+    int related_host_cnt = RlistLen(hq->hosts);
     CountMarginRecordsVars(&(hq->records), page, &first_scope_record_count, &last_scope_record_count);
     PageRecords(&(hq->records), page, DeleteHubVariable);
 
     lscope[0] = '\0';
 
-    snprintf(header, sizeof(header), "\"meta\":{\"count\":%d", page->totalResultCount);
+    snprintf(header, sizeof(header), "\"meta\":{\"count\":%d, \"related\" : %d ",
+             page->totalResultCount, related_host_cnt);
 
     headerLen = strlen(header);
     noticeLen = strlen(CF_NOTICE_TRUNCATED);
@@ -1729,12 +1739,14 @@ int Nova2PHP_compliance_report(char *hostkey, char *version, time_t from, time_t
     }
 
     hq = CFDB_QueryTotalCompliance(&dbconn, hostkey, version, from, to, k, nk, rep, true, hostClassFilter);
+
+    int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubTotalCompliance);
 
     snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d,"
+             "\"meta\":{\"count\" : %d, \"related\" : %d, "
              "\"header\": {\"Host\":0,\"Policy Version\":1,\"%% Kept\":2,\"%% Repaired\":3,\"%% Not Kept\":4,\"Last verified\":5"
-             "}", page->totalResultCount);
+             "}", page->totalResultCount, related_host_cnt);
 
     headerLen = strlen(header);
     noticeLen = strlen(CF_NOTICE_TRUNCATED);
@@ -1814,12 +1826,13 @@ int Nova2PHP_compliance_promises(char *hostkey, char *handle, char *status, bool
         hq = CFDB_QueryPromiseCompliance(&dbconn, hostkey, handle, *status, regex, 0, time(NULL), true, hostClassFilter);
     }
 
+    int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubPromiseCompliance);
 
     snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d,"
+             "\"meta\":{\"count\" : %d, \"related\" : %d, "
              "\"header\": {\"Host\":0,\"Promise Handle\":1,\"Last Known State\":2,\"%% Runs Kept\":3,\"+/- %%\":4,\"Last verified\":5"
-             "}", page->totalResultCount);
+             "}", page->totalResultCount, related_host_cnt);
 
     headerLen = strlen(header);
     noticeLen = strlen(CF_NOTICE_TRUNCATED);
@@ -1888,12 +1901,14 @@ int Nova2PHP_lastseen_report(char *hostkey, char *lhash, char *lhost, char *ladd
         return false;
     }
     hq = CFDB_QueryLastSeen(&dbconn, hostkey, lhash, lhost, laddress, lago, lregex, 0, time(NULL), true, hostClassFilter);
+
+    int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubLastSeen);
 
     snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d,"
+             "\"meta\":{\"count\" : %d, \"related\" : %d, "
              "\"header\": {\"Host\":0,\"Comms Initiated\":1,\"Remote host name\":2,\"Remote IP address\":3,\"Was Last Seen At\":4,\"Hrs ago\":5,\"Avg Comms Interval\":6,\"+/- hrs\":7,\"Remote host's key\":8"
-             "}", page->totalResultCount);
+             "}", page->totalResultCount, related_host_cnt);
 
     headerLen = strlen(header);
     noticeLen = strlen(CF_NOTICE_TRUNCATED);
@@ -1973,12 +1988,13 @@ int Nova2PHP_performance_report(char *hostkey, char *job, bool regex, HostClassF
 
     hq = CFDB_QueryPerformance(&dbconn, hostkey, job, regex, true, hostClassFilter);
 
+    int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubPerformance);
 
     snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d,"
+             "\"meta\":{\"count\" : %d, \"related\" : %d, "
              "\"header\": {\"Host\":0,\"Event\":1,\"Last completion time (seconds)\":2,\"Avg completion time (seconds)\":3,\"+/- seconds\":4,\"Last performed\":5"
-             "}", page->totalResultCount);
+             "}", page->totalResultCount, related_host_cnt);
 
     headerLen = strlen(header);
     noticeLen = strlen(CF_NOTICE_TRUNCATED);
@@ -2048,10 +2064,14 @@ int Nova2PHP_setuid_report(char *hostkey, char *file, bool regex, HostClassFilte
     }
 
     hq = CFDB_QuerySetuid(&dbconn, hostkey, file, regex, hostClassFilter);
+
+    int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubSetUid);
 
     snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d," "\"header\": {\"Host\":0,\"File\":1" "}", page->totalResultCount);
+             "\"meta\":{\"count\" : %d, \"related\" : %d, "
+             "\"header\": {\"Host\":0,\"File\":1" "}",
+             page->totalResultCount, related_host_cnt);
 
     headerLen = strlen(header);
     noticeLen = strlen(CF_NOTICE_TRUNCATED);
@@ -2139,13 +2159,14 @@ int Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFil
         hq = CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, regex, hostClassFilter, true);
     }
 
+    int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubBundleSeen);
 
     char header[CF_BUFSIZE] = { 0 };
     snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d,"
+             "\"meta\":{\"count\" : %d, \"related\" : %d, "
              "\"header\": {\"Host\":0,\"Bundle\":1,\"Last Verified\":2,\"%% Compliance\":3,\"Avg %% Compliance\":4,\"+/- %%\":5}",
-             page->totalResultCount);
+             page->totalResultCount, related_host_cnt);
 
     int headerLen = strlen(header);
     int noticeLen = strlen(CF_NOTICE_TRUNCATED);
@@ -2217,12 +2238,14 @@ int Nova2PHP_filechanges_report(char *hostkey, char *file, bool regex, time_t fr
     }
 
     hq = CFDB_QueryFileChanges(&dbconn, hostkey, file, regex, from, to, true, hostClassFilter);
+
+    int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubFileChanges);
 
     snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d,"
+             "\"meta\":{\"count\" : %d, \"related\" : %d, "
              "\"header\": {\"Host\":0,\"File\":1,\"Change Detected at\":2"
-             "}", page->totalResultCount);
+             "}", page->totalResultCount, related_host_cnt);
 
     headerLen = strlen(header);
     noticeLen = strlen(CF_NOTICE_TRUNCATED);
@@ -2282,13 +2305,16 @@ int Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, bool regex
     }
 
     hq = CFDB_QueryFileDiff(&dbconn, hostkey, file, diffs, regex, from, to, true, hostClassFilter);
+
+    int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubFileDiff);
 
     snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d,"
+             "\"meta\":{\"count\" : %d, \"related\" : %d, "
              "\"header\": {\"Host\":0,\"File\":1,\"Change Detected at\":2,"
              "\"Change Details\":{\"index\":3,\"subkeys\":{\"plusminus\":0,\"line\":1,\"diff\":2}}"
-             "}", page->totalResultCount);
+             "}", page->totalResultCount, related_host_cnt);
+
     headerLen = strlen(header);
     noticeLen = strlen(CF_NOTICE_TRUNCATED);
     StartJoin(returnval, "{\"data\":[", bufsize);
@@ -2364,7 +2390,9 @@ int CreateJsonHostOnlyReport(Rlist **records_p, PageInfo *page, char *returnval,
 
     PageRecords(records_p, page, DeleteHubHost);
 
-    snprintf(header, sizeof(header), "\"meta\":{\"count\" : %d", page->totalResultCount);
+    snprintf(header, sizeof(header), "\"meta\":{\"count\" : %d, \"related\" : %d",
+             page->totalResultCount, page->totalResultCount);
+
     headerLen = strlen(header);
     noticeLen = strlen(CF_NOTICE_TRUNCATED);
 

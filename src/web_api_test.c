@@ -81,7 +81,7 @@ int Nova2PHP_classes_report_test(char *hostkey, char *name, bool regex, HostClas
     }
 
     snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d,"
+             "\"meta\":{\"count\" : %d, \"related\" : 1, "
              "\"header\": {\"Host\":0,\"Class Context\":1,\"Occurs with Probability\":2,\"Uncertainty\":3,\"Last seen\":4"
              "}", total);
 
@@ -248,7 +248,7 @@ int Nova2PHP_show_hosts_test(char *hostNameRegex, char *ipRegex, char *classRege
     char *p = returnval;
 
     snprintf(work, sizeof(work),
-             "{\"meta\":{\"count\" : %d,"
+             "{\"meta\":{\"count\" : %d, \"related\" : 1, "
              "\"header\": {\"Key Hash\":0,\"Host name\":1,\"IP address\":2" "}},\n\"data\":[", total);
 
     StartJoin(returnval, work, bufsize);
@@ -301,7 +301,7 @@ int Nova2PHP_bundle_report_test(char *hostkey, char *bundle, bool regex, HostCla
     }
 
     snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d,"
+             "\"meta\":{\"count\" : %d, \"related\" : 1, "
              "\"header\": {\"Host\":0,\"Bundle\":1,\"Last Verified\":2,\"Hours Ago\":3,\"Avg Interval\":4,\"Uncertainty\":5,"
              "\"Note\":{\"index\":6,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}"
              "}", total);
@@ -365,7 +365,7 @@ int Nova2PHP_promiselog_test(char *hostkey, char *handle, char *cause, PromiseLo
     }
 
     snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d,"
+             "\"meta\":{\"count\" : %d, \"related\" : 1, "
              "\"header\":{\"Host\":0,\"Promise Handle\":1,\"Report\":2,\"Time\":3,"
              "\"Note\":{\"index\":4,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}}",
              total);
@@ -438,6 +438,7 @@ JsonElement *Nova2PHP_promiselog_summary_test(char *hostkey, char *handle, char 
     JsonElement *meta = JsonObjectCreate(2);
     {
         JsonObjectAppendInteger(meta, "count", total);
+        JsonObjectAppendInteger(meta, "related", 1);
 
         JsonElement *header = JsonObjectCreate(3);
 
@@ -495,7 +496,7 @@ int Nova2PHP_value_report_test(char *hostkey, char *day, char *month, char *year
         endIndex = total;
     }
 
-    snprintf(header, sizeof(header), "\"meta\":{\"count\" : %d,"
+    snprintf(header, sizeof(header), "\"meta\":{\"count\" : %d, \"related\" : 1, "
              "\"header\":{\"Host\":0,\"Day\":1,\"Kept\":2,\"Repaired\":3,\"Not Kept\":4,"
              "\"Note\":{\"index\":5,\"subkeys\":{\"action\":0,\"hostkey\":1,\"reporttype\":2,\"rid\":3,\"nid\":4}}}",
              total);
@@ -568,7 +569,7 @@ int Nova2PHP_software_report_test(char *hostkey, char *name, char *value, char *
     }
 
     snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d,"
+             "\"meta\":{\"count\" : %d, \"related\" : 1, "
              "\"header\": {\"Host\":0,\"Name\":1,\"Version\":2,\"Architecture\":3,\"Last seen\":4" "}", total);
 
     headerLen = strlen(header);
@@ -635,7 +636,7 @@ int Nova2PHP_vars_report_test(char *hostkey, char *scope, char *lval, char *rval
 
     lscope[0] = '\0';
 
-    snprintf(header, sizeof(header), "\"meta\":{\"count\":%d", total);
+    snprintf(header, sizeof(header), "\"meta\":{\"count\":%d,  \"related\" : 1", total);
 
     headerLen = strlen(header);
     noticeLen = strlen(CF_NOTICE_TRUNCATED);
@@ -735,7 +736,7 @@ int Nova2PHP_compliance_report_test(char *hostkey, char *version, time_t t, int 
     }
 
     snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d,"
+             "\"meta\":{\"count\" : %d, \"related\" : 1, "
              "\"header\": {\"Host\":0,\"Policy\":1,\"Kept\":2,\"Repaired\":3,\"Not Kept\":4,\"Last seen\":5"
              "}", total);
 
@@ -794,7 +795,7 @@ int Nova2PHP_compliance_promises_test(char *hostkey, char *handle, char *status,
     }
 
     snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d,"
+             "\"meta\":{\"count\" : %d, \"related\" : 1, "
              "\"header\": {\"Host\":0,\"Promise Handle\":1,\"Last Known State\":2,\"Probability Kept\":3,\"Uncertainty\":4,\"Last seen\":5"
              "}", total);
 
