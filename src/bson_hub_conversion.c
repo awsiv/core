@@ -299,7 +299,7 @@ bool CompareStringOrRegex(const char *value, const char *compareTo, bool regex)
 {
     if (regex)
     {
-        if (!NULL_OR_EMPTY(compareTo) && !FullTextMatch(compareTo, value))
+        if (!NULL_OR_EMPTY(compareTo) && !StringMatchFull(compareTo, value))
         {
             return false;
         }

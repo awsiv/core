@@ -93,15 +93,15 @@ void Nova2PHP_GetLibraryDocuments(char *path, char *buffer, int bufsize)
         {
             Nova_RegisterDoc(&refs, namedir, dirp->d_name);
         }
-        else if (FullTextMatch("cf3.*\\.html", dirp->d_name))
+        else if (StringMatchFull("cf3.*\\.html", dirp->d_name))
         {
             Nova_RegisterDoc(&others, namedir, dirp->d_name);
         }
-        else if (FullTextMatch("st-.*\\.html", dirp->d_name))
+        else if (StringMatchFull("st-.*\\.html", dirp->d_name))
         {
             Nova_RegisterDoc(&guides, namedir, dirp->d_name);
         }
-        else if (FullTextMatch(".*\\.png", dirp->d_name))
+        else if (StringMatchFull(".*\\.png", dirp->d_name))
         {
             Nova_RegisterImg(&pics, namedir, dirp->d_name);
         }
