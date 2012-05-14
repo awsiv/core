@@ -676,6 +676,9 @@ int Nova2Txt_filediffs_report(char *hostkey, char *file, char *diffs, bool regex
     {
         hd = (HubFileDiff *) rp->item;
 
+        char diff[CF_BUFSIZE] = {0};
+        Nova_FormatDiff(hd->diff, diff, sizeof(diff) - 1);
+
         if (CSV)
         {
             char *sp;
@@ -690,11 +693,11 @@ int Nova2Txt_filediffs_report(char *hostkey, char *file, char *diffs, bool regex
                 }
             }
 
-            printf("%s,%s,%ld,%s\n", hd->hh->hostname, hd->path, hd->t, Nova_FormatDiff(hd->diff));
+            printf("%s,%s,%ld,%s\n", hd->hh->hostname, hd->path, hd->t, diff);
         }
         else
         {
-            printf("%s file %s changed on %ld\n%s\n", hd->hh->hostname, hd->path, hd->t, Nova_FormatDiff(hd->diff));
+            printf("%s file %s changed on %ld\n%s\n", hd->hh->hostname, hd->path, hd->t, diff);
         }
     }
 
