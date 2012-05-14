@@ -592,16 +592,16 @@ HubQuery *CFDB_QuerySoftware(mongo_connection *conn, char *keyHash, char *type, 
 
                         if (regex)
                         {
-                            if (!NULL_OR_EMPTY(lname) && !FullTextMatch(lname, rname))
+                            if (!NULL_OR_EMPTY(lname) && !StringMatchFull(lname, rname))
                             {
                                 match_name = false;
                             }
 
-                            if (!NULL_OR_EMPTY(lver) && !FullTextMatch(lver, rversion))
+                            if (!NULL_OR_EMPTY(lver) && !StringMatchFull(lver, rversion))
                             {
                                 match_version = false;
                             }
-                            if (!NULL_OR_EMPTY(larch) && !FullTextMatch(arch, rarch))
+                            if (!NULL_OR_EMPTY(larch) && !StringMatchFull(arch, rarch))
                             {
                                 match_arch = false;
                             }
@@ -752,7 +752,7 @@ HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass,
 
                     if (regex)
                     {
-                        if (!NULL_OR_EMPTY(lclass) && !FullTextMatch(lclass, rclass))
+                        if (!NULL_OR_EMPTY(lclass) && !StringMatchFull(lclass, rclass))
                         {
                             match_class = false;
                         }
@@ -1019,7 +1019,7 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn, const char *keyHash,
 
                     match_version = match_t = match_kept = match_notkept = match_repaired = true;
 
-                    if (!NULL_OR_EMPTY(lversion) && !FullTextMatch(lversion, rversion))
+                    if (!NULL_OR_EMPTY(lversion) && !StringMatchFull(lversion, rversion))
                     {
                         match_version = false;
                     }
@@ -1288,22 +1288,22 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
 
                         if (regex)
                         {
-                            if (!NULL_OR_EMPTY(llval) && !FullTextMatch(llval, rlval))
+                            if (!NULL_OR_EMPTY(llval) && !StringMatchFull(llval, rlval))
                             {
                                 match_lval = false;
                             }
 
-                            if (!NULL_OR_EMPTY(lrval) && !FullTextMatch(lrval, rrval))
+                            if (!NULL_OR_EMPTY(lrval) && !StringMatchFull(lrval, rrval))
                             {
                                 match_rval = false;
                             }
 
-                            if (!NULL_OR_EMPTY(lscope) && !FullTextMatch(lscope, rscope))
+                            if (!NULL_OR_EMPTY(lscope) && !StringMatchFull(lscope, rscope))
                             {
                                 match_scope = false;
                             }
 
-                            if (!NULL_OR_EMPTY(ltype) && !FullTextMatch(ltype, dtype))
+                            if (!NULL_OR_EMPTY(ltype) && !StringMatchFull(ltype, dtype))
                             {
                                 match_type = false;
                             }
@@ -1721,7 +1721,7 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash,
 
                     if (regex)
                     {
-                        if (!NULL_OR_EMPTY(lhost) && !FullTextMatch(lhost, rhost))
+                        if (!NULL_OR_EMPTY(lhost) && !StringMatchFull(lhost, rhost))
                         {
                             match_host = false;
                         }
@@ -1732,7 +1732,7 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash,
                             match_hash = false;
                         }
 
-                        if (!NULL_OR_EMPTY(laddr) && !FullTextMatch(laddr, raddr))
+                        if (!NULL_OR_EMPTY(laddr) && !StringMatchFull(laddr, raddr))
                         {
                             match_addr = false;
                         }
@@ -2003,7 +2003,7 @@ HubQuery *CFDB_QueryPerformance(mongo_connection *conn, char *keyHash, char *lna
 
                     if (regex)
                     {
-                        if (!NULL_OR_EMPTY(lname) && !FullTextMatch(lname, rname))
+                        if (!NULL_OR_EMPTY(lname) && !StringMatchFull(lname, rname))
                         {
                             match_name = false;
                         }
@@ -2120,7 +2120,7 @@ HubQuery *CFDB_QuerySetuid(mongo_connection *conn, char *keyHash, char *lname, b
 
                     if (regex)
                     {
-                        if (!NULL_OR_EMPTY(lname) && !FullTextMatch(lname, rname))
+                        if (!NULL_OR_EMPTY(lname) && !StringMatchFull(lname, rname))
                         {
                             match_name = false;
                         }
