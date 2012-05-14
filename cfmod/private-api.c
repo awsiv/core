@@ -2992,15 +2992,16 @@ PHP_FUNCTION(cfpr_hosts_with_filechanges)
     zval *context_includes = NULL, *context_excludes = NULL;
     char buffer[512 * 1024];
     zend_bool regex;
-    long from;
+    time_t from, to;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssblaall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbllaall",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &file, &j_len,
                               &regex,
                               &from,
+                              &to,
                               &context_includes,
                               &context_excludes,
                               &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
@@ -3024,7 +3025,7 @@ PHP_FUNCTION(cfpr_hosts_with_filechanges)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_filechanges_hosts(fhostkey, ffile, (bool) regex, (time_t)from, time(NULL), filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_filechanges_hosts(fhostkey, ffile, (bool) regex, from, to, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -3040,16 +3041,17 @@ PHP_FUNCTION(cfpr_hosts_with_filediffs)
     zval *context_includes = NULL, *context_excludes = NULL;
     char buffer[512 * 1024];
     zend_bool regex;
-    long from;
+    time_t from, to;
     PageInfo page = { 0 };
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssblaall",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbllaall",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &file, &j_len,
                               &diff, &d_len,
                               &regex,
                               &from,
+                              &to,
                               &context_includes,
                               &context_excludes,
                               &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
@@ -3073,7 +3075,7 @@ PHP_FUNCTION(cfpr_hosts_with_filediffs)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_filediffs_hosts(fhostkey, ffile, diff, (bool) regex, (time_t)from, time(NULL), filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_filediffs_hosts(fhostkey, ffile, diff, (bool) regex, from, to, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
