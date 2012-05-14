@@ -120,7 +120,7 @@ int Nova2PHP_get_value_graph(char *hostkey, char *day, char *month, char *year, 
 int Nova2PHP_list_all_goals(char *buffer, int bufsize);
 
 JsonElement *Nova2PHP_get_knowledge_view(int pid, char *view);
-char *Nova_FormatDiff(char *s);
+void Nova_FormatDiff(const char *diffStr, char *returnval, int bufsize);
 JsonElement *Nova2PHP_network_speed(char *hostkey);
 void Nova2PHP_GetPromiseBody(char *name, char *type, char *returnval, int bufsize);
 int Nova2PHP_body_list(char *name, char *type, char *returnval, int bufsize);

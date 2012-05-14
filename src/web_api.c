@@ -2299,8 +2299,12 @@ int Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, bool regex
 
         EscapeJson(hd->path, jsonEscapedStr, sizeof(jsonEscapedStr));
 
+        char diff[CF_BUFSIZE] = {0};
+
+        Nova_FormatDiff(hd->diff, diff, sizeof(diff) - 1);
+
         snprintf(buffer, sizeof(buffer), "[\"%s\",\"%s\",%ld,%s],",
-                 hd->hh->hostname, jsonEscapedStr, hd->t, Nova_FormatDiff(hd->diff));
+                 hd->hh->hostname, jsonEscapedStr, hd->t, diff);
 
         margin = headerLen + noticeLen + strlen(buffer);
         if (!JoinMargin(returnval, buffer, NULL, bufsize, margin))
@@ -3971,35 +3975,37 @@ void Nova2PHP_ComplianceSummaryGraph(char *policy, char *buffer, int bufsize)
 
 /*****************************************************************************/
 
-char *Nova_FormatDiff(char *s)
+void Nova_FormatDiff(const char *diffStr, char *returnval, int bufsize)
 {
-    char *sp, work[CF_BUFSIZE], diff[CF_BUFSIZE], tline[CF_BUFSIZE];
-    static char returnval[CF_BUFSIZE];
-    char pm;
-    int line = 0;
-    char jsonEscapedStr[CF_BUFSIZE] = { 0 };
+    snprintf(returnval, bufsize, "[");
 
-    strcpy(returnval, "[");
+    const char *sp;
+    char tline[CF_BUFSIZE];
 
-    for (sp = s; *sp != '\0'; sp += strlen(tline) + 1)
+    for (sp = diffStr; *sp != '\0'; sp += strlen(tline) + 1)
     {
+        int line = 0;
+        char pm;
+
+        char work[CF_BUFSIZE],
+             diff[CF_BUFSIZE],
+             jsonEscapedStr[CF_BUFSIZE] = {0};
+
         sscanf(sp, "%c,%d,%2047[^\n]", &pm, &line, diff);
         sscanf(sp, "%2047[^\n]", tline);
 
         EscapeJson(diff, jsonEscapedStr, sizeof(jsonEscapedStr));
         snprintf(work, sizeof(work), "[\"%c\",%d,\"%s\"],", pm, line, jsonEscapedStr);
-        if (!Join(returnval, work, sizeof(returnval)))
+
+        if (!Join(returnval, work, bufsize))
         {
             break;
         }
     }
-    if (returnval[strlen(returnval) - 1] == ',')
-    {
-        returnval[strlen(returnval) - 1] = '\0';
-    }
+
+    ReplaceTrailingChar(returnval, ',', '\0');
 
     EndJoin(returnval, "]\n", sizeof(returnval));
-    return returnval;
 }
 
 /*****************************************************************************/

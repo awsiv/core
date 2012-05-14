@@ -11,7 +11,7 @@
 
 void Nova2Txt_getlicense(char *buffer, int bufsize);
 
-char *Nova_FormatDiff(char *s);
+void Nova_FormatDiff(const char *diffStr, char *returnval, int bufsize);
 char *Nova_LongState(char s);
 char *Nova_LongStateWarn(char s);
 int Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int outStrSz);
