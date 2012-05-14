@@ -1776,18 +1776,19 @@ PHP_FUNCTION(cfpr_report_filechanges)
     int user_len, hk_len, f_len;
     char buffer[CF_WEBBUFFER];
     zend_bool regex;
-    long from;
+    time_t from, to;
     PageInfo page = { 0 };
     char *sortColumnName;
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssblaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbllaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &file, &f_len,
                               &regex,
                               &from,
+                              &to,
                               &context_includes,
                               &context_excludes,
                               &sortColumnName, &sc_len, &sortDescending,
@@ -1812,7 +1813,7 @@ PHP_FUNCTION(cfpr_report_filechanges)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_filechanges_report(fhostkey, ffile, (bool) regex, (time_t)from, time(NULL), filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_filechanges_report(fhostkey, ffile, (bool) regex, from, to, filter, &page, buffer, sizeof(buffer));
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
     RETURN_STRING(buffer, 1);
@@ -1828,19 +1829,20 @@ PHP_FUNCTION(cfpr_report_filediffs)
     int user_len, hk_len, f_len, d_len;
     char buffer[CF_WEBBUFFER];
     zend_bool regex;
-    long from;
+    time_t from, to;
     PageInfo page = { 0 };
     char *sortColumnName;
     int sc_len;
     bool sortDescending;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssblaasbll",
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssbllaasbll",
                               &userName, &user_len,
                               &hostkey, &hk_len,
                               &file, &f_len,
                               &diff, &d_len,
                               &regex,
                               &from,
+                              &to,
                               &context_includes,
                               &context_excludes,
                               &sortColumnName, &sc_len, &sortDescending,
@@ -1866,7 +1868,7 @@ PHP_FUNCTION(cfpr_report_filediffs)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_filediffs_report(fhostkey, ffile, fdiff, (bool) regex, from, time(NULL), filter, &page, buffer, sizeof(buffer));
+    Nova2PHP_filediffs_report(fhostkey, ffile, fdiff, (bool) regex, from, to, filter, &page, buffer, sizeof(buffer));
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
