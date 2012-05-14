@@ -442,23 +442,25 @@ class report_model extends Cf_Model
      * @param type $username
      * @param type $hostkey
      * @param type $search
+     * @param type $from
+     * @param type $to
      * @param type $inclist
      * @param type $exlist
      * @param type $rows
      * @param type $page_number
      * @return type
      */
-    function getFileChangeLog($username, $hostkey, $search, $inclist, $exlist, $rows = 50, $page_number = 1, $hosts_only = false)
+    function getFileChangeLog($username, $hostkey, $search, $from, $to, $inclist, $exlist, $rows = 50, $page_number = 1, $hosts_only = false)
     {
         try
         {
             if ($hosts_only)
             {
-                $rawdata = cfpr_hosts_with_filechanges($username, NULL, $search, true, 0, $inclist, $exlist, $rows, $page_number);
+                $rawdata = cfpr_hosts_with_filechanges($username, NULL, $search, true, $from, $to, $inclist, $exlist, $rows, $page_number);
             }
             else
             {
-                $rawdata = cfpr_report_filechanges($username, $hostkey, $search, true, 0, $inclist, $exlist, "time", true, $rows, $page_number);
+                $rawdata = cfpr_report_filechanges($username, $hostkey, $search, true, $from, $to, $inclist, $exlist, "time", true, $rows, $page_number);
             }
 
             $data = $this->checkData($rawdata);
@@ -484,24 +486,25 @@ class report_model extends Cf_Model
      * @param type $hostkey
      * @param type $search
      * @param type $diff
-     * @param type $cal
+     * @param type $from
+     * @param type $to
      * @param type $inclist
      * @param type $exlist
      * @param type $rows
      * @param type $page_number
      * @return type array
      */
-    function getFileChangeDiff($username, $hostkey, $search, $diff, $cal, $inclist, $exlist, $rows = 50, $page_number = 1, $hosts_only = false)
+    function getFileChangeDiff($username, $hostkey, $search, $diff, $from, $to, $inclist, $exlist, $rows = 50, $page_number = 1, $hosts_only = false)
     {
         try
         {
             if ($hosts_only)
             {
-                $rawdata = cfpr_hosts_with_filediffs($username, NULL, $search, $diff, true, $cal, $inclist, $exlist, $rows, $page_number);
+                $rawdata = cfpr_hosts_with_filediffs($username, NULL, $search, $diff, true, $from, $to, $inclist, $exlist, $rows, $page_number);
             }
             else
             {
-                $rawdata = cfpr_report_filediffs($username, NULL, $search, $diff, true, $cal, $inclist, $exlist, "time", true, $rows, $page_number);
+                $rawdata = cfpr_report_filediffs($username, NULL, $search, $diff, true, $from, $to, $inclist, $exlist, "time", true, $rows, $page_number);
             }
 
             $data = $this->checkData($rawdata);

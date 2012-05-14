@@ -718,14 +718,14 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_filechange_log($username, $hostkey, $search, $inclist, $exlist, $rows = 0, $page_number = 0)
+    function rpt_filechange_log($username, $hostkey, $search, $from, $to, $inclist, $exlist, $rows = 0, $page_number = 0)
     {
         $cols = 3;
         $col_len = array(33, 34, 33);
         $header = array('Host', 'File', 'Time of Change');
         try
         {
-            $jsondata = $this->report_model->getFileChangeLog($username, $hostkey, $search, $inclist, $exlist, $rows, $page_number);
+            $jsondata = $this->report_model->getFileChangeLog($username, $hostkey, $search, $from, $to, $inclist, $exlist, $rows, $page_number);
             $this->checkForDataTruncation($jsondata);
 
             $data1 = $jsondata['data'];
@@ -1129,12 +1129,12 @@ class pdfreports extends Cf_Controller
         }
     }
 
-    function rpt_filediffs($username, $hostkey, $search, $diff, $cal, $inclist, $exlist, $rows, $page_number)
+    function rpt_filediffs($username, $hostkey, $search, $diff, $from, $to, $inclist, $exlist, $rows, $page_number)
     {
 
         try
         {
-            $result = $this->report_model->getFileChangeDiff($username, $hostkey, $search, $diff, $cal, $inclist, $exlist, $rows, $page_number);
+            $result = $this->report_model->getFileChangeDiff($username, $hostkey, $search, $diff, $from, $to, $inclist, $exlist, $rows, $page_number);
             $this->checkForDataTruncation($result);
             $newFormat = array();
             foreach ($result['data'] as $parentIndex => $data)
