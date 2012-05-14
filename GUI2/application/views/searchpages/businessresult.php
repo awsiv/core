@@ -5,7 +5,7 @@
         <table class="grid_12 reports_header" style="margin: 10px">
             <tr>
                 <td width="150" class="no_wrap">
-                    <span id="count_hosts">Report for <?php echo $hostcount ?> hosts</span> 
+                    <span id="count_hosts">Report for <?php echo $report_result['meta']['related']; if ($report_result['meta']['related'] == 1) echo " host "; else echo " hosts "; ?>(out of <?php echo $hostcount ?> from selected host context)</span> 
                     <a href="<?php echo site_url('widget/contextfinder') ?>" id="hclist" class="showqtip host_context_btn" title="<?php echo $this->lang->line('report_hostgp_help'); ?>"></a>
                 </td>
                 <td id="show_filter_form" class="showqtip" title="Click to toggle more filters" style="width: 89%">
