@@ -3313,7 +3313,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(mongo_connection *conn, char *keyHash, ch
 
         if(found)
         {
-            long totalKept = 0;
+            double totalHostCompliance = 0;
             long totalRelevantBundlesInHost = 0;
             bool blueOrBlackHost = true;
 
@@ -3331,26 +3331,24 @@ HubQuery *CFDB_QueryWeightedBundleSeen(mongo_connection *conn, char *keyHash, ch
                         continue;
                     }
 
-                    if(Num(hbTemp->bundlecomp) > 0.8)
-                    {
-                        totalKept++;
-                    }
-                    totalRelevantBundlesInHost++;
+                    totalHostCompliance += hbTemp->bundlecomp;
+                    totalRelevantBundlesInHost++;                    
                 }
 
                 /* calculate average bundle compliance for current host */
 
                 if(totalRelevantBundlesInHost)
                 {                    
-                    HostColour colour = HOST_COLOUR_RED;
-                    double avgCompliance = totalKept / totalRelevantBundlesInHost;
+                    double avgCompliance = totalHostCompliance / totalRelevantBundlesInHost;
 
                     if(avgCompliance > 0.8)
                     {
-                        colour = HOST_COLOUR_GREEN;
+                        hh->colour = HOST_COLOUR_GREEN;
                     }
-
-                    hh->colour = colour;
+                    else
+                    {
+                        hh->colour = HOST_COLOUR_RED;
+                    }
 
                     blueOrBlackHost = false;
                 }
