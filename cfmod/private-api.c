@@ -3421,9 +3421,14 @@ PHP_FUNCTION(cfpr_host_compliance_list_all)
     int user_len;
     char buffer[CF_WEBBUFFER];
     PageInfo page = { 0 };
+    zval *includes, *excludes;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sll",
-                              &userName, &user_len, &(page.resultsPerPage), &(page.pageNum)) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "saall",
+                              &userName, &user_len,
+                              &includes,
+                              &excludes,
+                              &(page.resultsPerPage),
+                              &(page.pageNum)) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -3436,6 +3441,7 @@ PHP_FUNCTION(cfpr_host_compliance_list_all)
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
     HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
+    HostClassFilterAddIncludeExcludeLists(filter, includes, excludes);
 
     mongo_connection conn;
 
