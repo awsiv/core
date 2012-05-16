@@ -144,10 +144,12 @@
 					}
 
 					// If nothing changed since last check...
-					if (!hasContainingSpaceChanged && previousContentWidth == contentWidth && pane.outerHeight() == contentHeight) {
-						elem.width(paneWidth);
-						return;
-					}
+                                        if (s.autoReinitialise == true) {
+                                            if (!hasContainingSpaceChanged && previousContentWidth == contentWidth && pane.outerHeight() == contentHeight) {
+                                                    elem.width(paneWidth);
+                                                    return;
+                                            }
+                                        }
 					previousContentWidth = contentWidth;
 					
 					pane.css('width', '');
