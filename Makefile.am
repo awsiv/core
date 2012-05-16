@@ -18,7 +18,7 @@ endif
 EXTRA_DIST = acconfig.h COPYING ChangeLog LICENSE
 
 docsdir = $(projdocdir)
-docseDATA = ChangeLog.Nova
+docs_DATA = ChangeLog.Nova
 
 #
 # Some basic clean ups
