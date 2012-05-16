@@ -131,7 +131,7 @@
             //self.menuhandler=$('<span id="handle" class="operation">Options</span>');
             //self.titlebar.append(self.menuhandler).delegate('#handle','click',function(){self.menu.slideToggle();});
            
-            self.searchbar=$('<span class="search"><form id="classfindersearch"><input type="text" name="search" value="Search by class (context)" title="Regx supported"/><a href="#" class="searchsubmit" role="button">&nbsp;</a></form></span>')
+            self.searchbar=$('<span class="search"><form id="classfindersearch"><input type="text" autocomplete="off" name="search" value="Search by class (context)" title="Regx supported"/><a href="#" class="searchsubmit" role="button">&nbsp;</a></form></span>')
             self.titlebar.append(self.ajaxloader);
             self.titlebar.append(self.searchbar).delegate('form', 'submit', {
                 ui: self
@@ -182,6 +182,7 @@
             };
             self.sendRequest(params);
 
+            self.menu.slideUp();
 
             self.searchbar.find('input[type="text"]').trigger('blur');
             self.resetSelectedLetter();
@@ -366,7 +367,7 @@
         {
             var self = this;
             var searchbox = event.target;
-            if (searchbox.value == $(searchbox).data('default') && event.type == 'focusin')
+            if ((searchbox.value == $(searchbox).data('default') || searchbox.value == '') && event.type == 'focusin')
             {
                 self.menu.slideDown();
                 searchbox.value = '';
@@ -406,6 +407,7 @@
                     }
                 };
                 self.sendRequest(params);
+                self.menu.slideUp();
             }
         },
 
