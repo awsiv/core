@@ -142,7 +142,8 @@ ReportInfo BASIC_REPORTS[] =
     {CFRID_CONTEXTS, "System", "Context classes", "Class profile", "User defined classes observed on the system"},
     {CFRID_NEIGHBORS, "System", "Last Saw Neighbours", "Last seen hosts",
      "When host neighbours were last seen online"},
-    {CFRID_VALUES, "System", "Variables", "Variables", "Table of variable values last observed"},
+    {CFRID_WEAKEST_HOSTS, "System", "Weakest Hosts", "Weakest Hosts", "Worst available hosts ranked by compliance level"},
+    {CFRID_VALUES, "System", "Variables", "Variables", "Table of variable values last observed"},    
 
     {CFRID_PATCHES_AVAILABLE, "Software", "Patches available", "Patches available",
      "A list of patches currently claimed to be available by the local package manager"},
