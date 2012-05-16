@@ -8,10 +8,17 @@ top_build_prefix = $(abs_top_builddir)/
 
 SUBDIRS = src docs GUI2 tests/unit
 
+if !HAVE_CONSTELLATION
+if MONGO
+SUBDIRS +=\
+     	  knowledge
+endif 
+endif
+
 EXTRA_DIST = acconfig.h COPYING ChangeLog LICENSE
 
 docsdir = $(projdocdir)
-docs_DATA = ChangeLog.Nova
+docseDATA = ChangeLog.Nova
 
 #
 # Some basic clean ups
