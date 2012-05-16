@@ -1479,6 +1479,7 @@ typedef struct
 #define CFRID_CONTEXTS "contexts"
 #define CFRID_NEIGHBORS "neighbors"
 #define CFRID_VALUES "values"
+#define CFRID_WEAKEST_HOSTS "weakest-hosts"
 
 #define CFRID_PATCHES_AVAILABLE "patches-available"
 #define CFRID_PATCHES_INSTALLED "patches-installed"
