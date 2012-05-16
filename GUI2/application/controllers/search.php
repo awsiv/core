@@ -448,19 +448,22 @@ class Search extends Cf_Controller
                     $name = isset($getparams['name']) ? urldecode($getparams['name']) : urldecode($this->input->post('name'));
                     $from = isset($getparams['from']) ? urldecode($getparams['from']) : $this->input->post('from');
                     $to   = isset($getparams['to'])   ? urldecode($getparams['to'])   : $this->input->post('to');
-
+                    
+                    $from_timestamp = strtotime($from);
+                    $to_timestamp   = strtotime($to);
+                    
                     $pdfurlParams = array('type' => $report_type,
                         'inclist' => $incList,
-                        'exlist' => $exList,
+                        'exlist'  => $exList,
                         'hostkey' => $hostkey,                        
-                        'from' => $from,
-                        'to' => $to,
-                        'search' => $name
+                        'from'    => $from_timestamp,
+                        'to'      => $to_timestamp,
+                        'search'  => $name
                     );
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                    $data['report_result'] = $this->report_model->getFileChangeLog($username, $hostkey, $name, $from, $to, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
+                    $data['report_result'] = $this->report_model->getFileChangeLog($username, $hostkey, $name, $from_timestamp, $to_timestamp, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                     break;
                 case "file-change-diffs":
@@ -474,18 +477,21 @@ class Search extends Cf_Controller
                     $from = isset($getparams['from']) ? urldecode($getparams['from']) : $this->input->post('from');
                     $to   = isset($getparams['to'])   ? urldecode($getparams['to'])   : $this->input->post('to');
 
+                    $from_timestamp = strtotime($from);
+                    $to_timestamp   = strtotime($to);
+                    
                     $pdfurlParams = array('type' => $report_type,
                         'inclist' => $incList,
-                        'exlist' => $exList,
-                        'diff' => $diff,
-                        'from' => $from,
-                        'to' => $to,
-                        'search' => $name
+                        'exlist'  => $exList,
+                        'diff'    => $diff,
+                        'from'    => $from_timestamp,
+                        'to'      => $to_timestamp,
+                        'search'  => $name
                     );
 
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
-                    $data['report_result'] = $this->report_model->getFileChangeDiff($username, $hostkey, $name, $diff, $from, $to, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
+                    $data['report_result'] = $this->report_model->getFileChangeDiff($username, $hostkey, $name, $diff, $from_timestamp, $to_timestamp, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
                     $this->template->load('template', 'searchpages/businessresult', $data);
                     break;
                 case "neighbors":
@@ -579,15 +585,15 @@ class Search extends Cf_Controller
                     $cause_rx = $cause_rx === false ? ".*" : $cause_rx;
                
                     $from_timestamp = strtotime($from);
-                    $to_timestamp = strtotime($to);
+                    $to_timestamp   = strtotime($to);
 
                     $pdfurlParams = array('type' => $report_type,
                         'inclist' => $incList,
-                        'exlist' => $exList,
-                        'search' => $name,
-                        'from' => $from_timestamp,
-                        'to' => $to_timestamp,
-                        'cause' => $cause_rx
+                        'exlist'  => $exList,
+                        'search'  => $name,
+                        'from'    => $from_timestamp,
+                        'to'      => $to_timestamp,
+                        'cause'   => $cause_rx
                     );
 
                     if ($report_type == "promises-repaired-log")
@@ -610,19 +616,19 @@ class Search extends Cf_Controller
                     $cause_rx = $cause_rx === false ? ".*" : $cause_rx;
 
                     $from_timestamp = strtotime($from);
-                    $to_timestamp = strtotime($to);
+                    $to_timestamp   = strtotime($to);
                     
                     if ($report_type == "promises-not-kept-summary")
                         $data['report_result'] = $this->report_model->getPromisesNotKeptSummary($username, $hostkey, $name, $cause_rx, $from_timestamp, $to_timestamp, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
                     if ($report_type == "promises-not-kept-log")
                         $data['report_result'] = $this->report_model->getPromisesNotKeptLog($username, $hostkey, $name, $cause_rx, $from_timestamp, $to_timestamp, explode(',', $incList), explode(',', $exList), $rows, $page_number, $hosts_only);
                     $pdfurlParams = array('type' => $report_type,
-                        'inclist' => $incList,
-                        'exlist' => $exList,
-                        'search' => $name,
-                        'from' => $from_timestamp,
-                        'to' => $to_timestamp,
-                        'cause' => $cause_rx
+                        'inclist'   => $incList,
+                        'exlist'    => $exList,
+                        'search'    => $name,
+                        'from'      => $from_timestamp,
+                        'to'        => $to_timestamp,
+                        'cause'     => $cause_rx
                     );
 
 
