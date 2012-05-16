@@ -22,6 +22,7 @@
             $self.element.append($self._menuContainer);
             $self._loadProfileList();
 
+            $self._scrollable_list  = $('<div id="scrollable_list">'); /*wrapper for jScrollPane */
 
             $self._containerWrapper = $('<div class="containerWrapper">');
 
@@ -34,7 +35,8 @@
             $self._listContainer.append($self._rootContainer);
             $self._containerWrapper.append($self._listContainer);
 
-            $self.element.append($self._containerWrapper);
+            $self._scrollable_list.append($self._containerWrapper);
+            $self.element.append($self._scrollable_list);
           },
 
         _init: function() {
@@ -557,7 +559,7 @@
                         $(container).append(hostItem);
                     });
 
-                    $self._listContainer.jScrollPane($self.options.scrollPaneOptions);
+                    $self._scrollable_list.jScrollPane($self.options.scrollPaneOptions);
                 }
 
                 $node.children('.busyIcon').hide();
