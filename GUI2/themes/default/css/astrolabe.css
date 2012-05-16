@@ -13,6 +13,7 @@
     list-style: none;
     padding-left: 10px;
     width:100%;
+    white-space: nowrap;
 }
 
 .astrolabe .node > .showqtip > .nodeIcon
@@ -178,7 +179,8 @@
 
 .astrolabe .listContainer
 {
-    height: 430px;
+    /*height: 430px; */
+    height: 100%;
 }
 
 .astrolabe .host > .blue
