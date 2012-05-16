@@ -155,6 +155,15 @@
                 }
             });
 
+            // change cursor on hover
+            $self._$graph.bind("plothover", function(event, pos, item) {
+                if(item) {
+                    document.body.style.cursor = 'pointer';
+                } else {
+                    document.body.style.cursor = 'default';
+                }
+            });
+            
             $self._$loader.hide();
         },
 
