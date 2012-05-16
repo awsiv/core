@@ -78,3 +78,8 @@
 #treeReportContentMenuFilter{
    padding-right: 10px;
 }
+
+.engineeringContainer #tab-1, 
+.engineeringContainer #tab-2 {
+    min-height: 442px;
+}

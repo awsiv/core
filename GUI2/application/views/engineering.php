@@ -3,18 +3,20 @@
         <div class="grid_4 alpha">
             <div class="engineeringNavigationContainer">
                 <div id="astrolabe"></div>
+                     <div class="clear"></div>
             </div>
+               
             <div class="clear"></div>
         </div>
         <div id="darktabs">
-        <div class="grid_8 omega" id="tabs-layout">
+            <div class="grid_8 omega" id="tabs-layout">
             <ul>
                 <li class="first"><a href="#tab-1">Status</a></li>
                 <li><a href="#tab-2">Reports</a></li>
             </ul>
             <div id="tab-1" class="engineeringStatusContainer">
                 <div class="astrolabeLocation"></div>
-
+                <div class="clear"></div>
                 <div id="hostsComplianceTimeseriesContainer" class="hostsComplianceTimeseriesContainer">
                     <span id="hostsComplianceTimeseriesLoader" class="loading"></span>
                     <div id="hostsComplianceTimeseries"></div>
@@ -44,10 +46,12 @@
                 </div>
             </div>
         </div>
-    </div>
+        </div>
         <div class="clear"></div>
     </div>
     <div class="clear"></div>
+    
+   
 </div>
 <div class="clear"></div>
 <script type="text/javascript">
@@ -107,23 +111,5 @@
                 $('#reportInfoContainer').reportUI('setContext',args.includes, []);
             }
         });
-
-        //calculate height for panesl
-
-        var tab1_outh = $('#tab-1').outerHeight(true);
-        var tab1_h = $('#tab-1').height();
-
-        var tab2_outh = $('#tab-2').outerHeight(true);
-        var tab2_h = $('#tab-2').height();
-
-        var astro_outh = $('#astrolabe .containerWrapper').outerHeight(true);
-        var astro_h = $('#astrolabe .containerWrapper').height();
-
-        var max = Math.max(tab1_outh, tab2_outh, astro_outh);
-
-        $('#tab-1').height( (tab1_h + (max-tab1_outh)) );
-        $('#tab-2').height( (tab2_h + (max-tab2_outh)) );
-
-        $('#astrolabe .containerWrapper').height( (astro_h + (max-astro_outh)) );
     });
 </script>
