@@ -9,6 +9,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 #include "probes.h"
+#include "files_lib.h"
 #include "files_names.h"
 #include "vars.h"
 
@@ -221,22 +222,22 @@ static void Nova_LoadSlots(void)
 
 static void Nova_DumpSlots(void)
 {
-    FILE *fout;
+#define MAX_KEY_FILE_SIZE 16384  /* usually around 4000, cannot grow much */
+
     char filename[CF_BUFSIZE];
     int i;
 
     snprintf(filename, CF_BUFSIZE - 1, "%s%cstate%cts_key", CFWORKDIR, FILE_SEPARATOR, FILE_SEPARATOR);
 
-    if ((fout = fopen(filename, "w")) == NULL)
-    {
-        return;
-    }
+    char file_contents_new[MAX_KEY_FILE_SIZE] = {0};
 
     for (i = 0; i < CF_OBSERVABLES; i++)
     {
+        char line[CF_MAXVARSIZE];
+
         if (NovaHasSlot(i))
         {
-            fprintf(fout, "%d,%s,%s,%s,%.3lf,%.3lf,%d\n",
+            snprintf(line, sizeof(line), "%d,%s,%s,%s,%.3lf,%.3lf,%d\n",
                     i,
                     NovaGetSlotName(i),
                     NovaGetSlotDescription(i),
@@ -245,11 +246,35 @@ static void Nova_DumpSlots(void)
         }
         else
         {
-            fprintf(fout, "%d,spare,unused\n", i);
+            snprintf(line, sizeof(line), "%d,spare,unused\n", i);
+        }
+
+        strlcat(file_contents_new, line, sizeof(file_contents_new));
+    }
+
+    char *file_contents_existing = NULL;
+    bool contents_changed = true;
+
+    if(FileReadMax(&file_contents_existing, filename, MAX_KEY_FILE_SIZE) > 0)
+    {
+        if(strcmp(file_contents_existing, file_contents_new) == 0)
+        {
+            contents_changed = false;
+        }
+
+        free(file_contents_existing);
+    }
+
+    if(contents_changed)
+    {
+        CfOut(cf_verbose, "", "Updating %s with new slot information", filename);
+
+        if(!FileWriteOver(filename, file_contents_new))
+        {
+            CfOut(cf_error, "FileWriteOver", "Nova_DumpSlots: Could not write file %s", filename);
         }
     }
 
-    fclose(fout);
     chmod(filename, 0600);
 }
 
