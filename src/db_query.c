@@ -18,6 +18,7 @@
 
 static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *filter);
 static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFilter *hostClassFilter);
+static void GetOldClientVersions(Rlist **rp);
 
 Rlist *PrependRlistAlienUnlocked(Rlist **start, void *item)
 {
@@ -3171,12 +3172,11 @@ HubQuery *CFDB_QueryValueGraph(mongo_connection *conn, char *keyHash, char *lday
 }
 /*****************************************************************************/
 
-static Rlist *GetOldClientVersions(Rlist *rp)
+static void GetOldClientVersions(Rlist **rp)
 {
-    AppendRScalar(&rp, (void *) "cfengine_3_2.*", CF_SCALAR);
-    AppendRScalar(&rp, (void *) "cfengine_3_1.*", CF_SCALAR);
-    AppendRScalar(&rp, (void *) "cfengine_3_0.*", CF_SCALAR);
-    return rp;
+    PrependRScalar(rp, (void *) "cfengine_3_2.*", CF_SCALAR);
+    PrependRScalar(rp, (void *) "cfengine_3_1.*", CF_SCALAR);
+    PrependRScalar(rp, (void *) "cfengine_3_0.*", CF_SCALAR);
 }
 /*****************************************************************************/
 
@@ -3209,9 +3209,10 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
      */
     {
         Rlist *old_client_versions = NULL;
+        GetOldClientVersions(&old_client_versions);
 
         bson_buffer *ignoreClassBuffer = bson_append_start_object(&bb, cfr_class_keys);
-        BsonAppendArrayRx(ignoreClassBuffer, "$nin", GetOldClientVersions(old_client_versions));
+        BsonAppendArrayRx(ignoreClassBuffer, "$nin", old_client_versions);
         bson_append_finish_object(ignoreClassBuffer);
 
         DeleteRlist(old_client_versions);
@@ -3307,9 +3308,9 @@ HubQuery *CFDB_QueryWeightedBundleSeen(mongo_connection *conn, char *keyHash, ch
      */
     {
         Rlist *old_client_versions = NULL;
-
+        GetOldClientVersions(&old_client_versions);
         bson_buffer *ignoreClassBuffer = bson_append_start_object(&bb, cfr_class_keys);
-        BsonAppendArrayRx(ignoreClassBuffer, "$nin", GetOldClientVersions(old_client_versions));
+        BsonAppendArrayRx(ignoreClassBuffer, "$nin", old_client_versions);
         bson_append_finish_object(ignoreClassBuffer);
 
         DeleteRlist(old_client_versions);
