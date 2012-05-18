@@ -3281,7 +3281,7 @@ void Nova2PHP_host_compliance_list_all(mongo_connection *conn, HostClassFilter *
     }
     ReplaceTrailingChar(buffer, ',', '\0');
 
-    snprintf(work, sizeof(work), "],\"meta\":{\"count\":%d}}", count+1);
+    snprintf(work, sizeof(work), "],\"meta\":{\"count\":%d, \"related\": %d}}", count+1, count + 1);
     EndJoin(buffer, work, bufsize);
 
     DeleteItemList(clist);
