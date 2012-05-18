@@ -3,7 +3,7 @@
 all: clean src highlight_syntax check_km_substrings scan_texinfo scan_examples highlighted non-highlighted
 
 clean:
-	rm -f scan*cf rm *.html
+	rm -f scan_SpecialTopic_* rm NovaEvaluationGuide.html NovaEvaluationGuideSupplement.html SpecialTopic_* UpgradingCfengineNova.html highlight_syntax check_km_substrings scan_examples scan_texinfo cf_Quickref3.html scan_Nova* scan_UpgradingCfengineNova.cf scan_cf3ref.cf scan_glossary.cf scan_quickref3.cf
 
 src:
 	$(MAKE) -C ../../core html

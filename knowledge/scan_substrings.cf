@@ -54,6 +54,7 @@ topics:
  any:: "library" association => a("seems to refer to","any::bad library","seems to be referred to in");
  any:: "servers" association => a("seems to refer to","any::binservers","seems to be referred to in");
  any:: "changes" association => a("seems to refer to","any::body changes detect_all_change","seems to be referred to in");
+ promise_theory:: "body constraint" association => a("seems to refer to","any::body constraints","seems to be referred to in");
  promise_theory:: "services" association => a("seems to refer to","any::boot services","seems to be referred to in");
  any:: "audit" association => a("seems to refer to","any::build, deploy, manage, audit","seems to be referred to in");
  any:: "build" association => a("seems to refer to","any::build, deploy, manage, audit","seems to be referred to in");
