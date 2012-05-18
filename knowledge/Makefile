@@ -122,6 +122,10 @@ novaevaluationguidesupplement.html: ../../core/docs/guides/novaevaluationguidesu
 	cp $< .
 	./highlight_syntax novaevaluationguidesupplement.html
 
+install:
+
+check:
+
 #update:
 #	scp -P222 *.html root@cf001lin.cfengine.com:/iu/eternity/cfsite/app/documents/cf-manuals/
 #	scp -P222 ontology.html root@cf001lin.cfengine.com:/iu/eternity/cfsite/app/documents/cf-manuals/cf-ontology.html
