@@ -39,11 +39,7 @@ libcfnova_la_SOURCES = \
         pscalar.c \
         reporting.c \
         syntax.c \
-        copernicus.c \
-        map.c map.h map_common.h \
-        string_map.c string_map.h \
-        array_map.c array_map_priv.h \
-        hash_map.c hash_map_priv.h
+        copernicus.c
 
 if NT
 libcfnova_la_SOURCES += \

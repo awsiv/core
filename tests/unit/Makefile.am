@@ -13,7 +13,6 @@ MOCKERY_SOURCES = $(CMOCKERY_DIR)/cmockery.c
 
 check_PROGRAMS = \
         logging_test \
-        map_test \
         license_test
 
 if MONGO
@@ -28,9 +27,6 @@ TESTS = $(check_PROGRAMS)
 
 logging_test_SOURCES = $(MOCKERY_SOURCES) logging_test.c
 logging_test_LDADD = $(top_builddir)/src/libpromises.la
-
-map_test_SOURCES = $(MOCKERY_SOURCES) map_test.c
-map_test_LDADD = $(top_builddir)/src/libpromises.la
 
 license_test_SOURCES = $(MOCKERY_SOURCES) license_test.c
 license_test_LDADD = $(top_builddir)/src/libpromises.la
