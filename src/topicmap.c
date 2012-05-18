@@ -1251,12 +1251,12 @@ int Nova_GetTribe(int *tribe_id, GraphNode *tribe_nodes, double tribe_adj[CF_TRI
                 }
             }
 
+            DeleteItemList(nn);
+
             if (tribe_counter >= CF_TRIBE_SIZE - 1)
             {
                 break;
             }
-
-            DeleteItemList(nn);
         }
     }
 
@@ -1307,12 +1307,12 @@ int Nova_GetTribe(int *tribe_id, GraphNode *tribe_nodes, double tribe_adj[CF_TRI
                     }
                 }
 
+                DeleteItemList(nn);
+
                 if (tribe_counter >= CF_TRIBE_SIZE - 1)
                 {
                     break;
                 }
-
-                DeleteItemList(nn);
             }
 
             if (tribe_counter >= CF_TRIBE_SIZE - 1)
