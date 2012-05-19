@@ -501,7 +501,7 @@ static int ScheduleRun(void)
     NewScope("sys");
     NewScope("match");
 
-    CfGetInterfaceInfo(cf_executor);
+    GetInterfacesInfo(cf_executor);
     Get3Environment();
     OSClasses();
     BuiltinClasses();

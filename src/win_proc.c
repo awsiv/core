@@ -61,7 +61,7 @@ int NovaWin_DoAllSignals(Item *siglist, Attributes a, Promise *pp)
 
             if (!DONTDO)
             {
-                if (!NovaWin_GracefulTerminate(pid))
+                if (!GracefulTerminate(pid))
                 {
                     cfPS(cf_verbose, CF_FAIL, "", pp, a, " !! Couldn't terminate process with pid %d\n", pid);
                     continue;
@@ -86,7 +86,7 @@ int NovaWin_DoAllSignals(Item *siglist, Attributes a, Promise *pp)
 
 /* Terminates the process identified by pid.
  * TODO: Try to send quit-message to process before terminating it ? */
-int NovaWin_GracefulTerminate(pid_t pid)
+int GracefulTerminate(pid_t pid)
 {
     int res;
     HANDLE procHandle;
@@ -134,7 +134,7 @@ int NovaWin_IsProcessRunning(pid_t pid)
 
 /* returns true if execution of 'cmd' returns zero
  * (waits for completion)  */
-int NovaWin_ShellCommandReturnsZero(char *comm, int useshell)
+int ShellCommandReturnsZero(char *comm, int useshell)
 {
     HANDLE procHandle;
     DWORD exitcode;
@@ -296,7 +296,7 @@ int NovaWin_GetCurrentProcessOwner(SID *sid, int sidSz)
 /*****************************************************************************/
 
 /* Get user name of owner of this process */
-int NovaWin_GetCurrentUserName(char *userName, int userNameLen)
+int GetCurrentUserName(char *userName, int userNameLen)
 {
     DWORD userNameMax = (DWORD) userNameLen;
 

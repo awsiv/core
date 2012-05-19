@@ -23,7 +23,7 @@
 /* _mkdir(3) */
 #include <direct.h>
 
-void NovaWin_CreateEmptyFile(char *name)
+void CreateEmptyFile(char *name)
 {
     HANDLE fileHandle;
 
@@ -76,7 +76,7 @@ FILE *NovaWin_FileHandleToStream(HANDLE fHandle, char *mode)
 }
 
 // TODO: Implement chek for executable bit?
-int NovaWin_IsExecutable(char *file)
+int IsExecutable(const char *file)
 {
     return NovaWin_FileExists(file);
 }
@@ -140,7 +140,7 @@ int NovaWin_IsDir(char *fileName)
 
 /*****************************************************************************/
 
-int NovaWin_VerifyOwner(char *file, Promise *pp, Attributes attr)
+int VerifyOwner(char *file, Promise *pp, Attributes attr, struct stat *sb)
 {
     SECURITY_DESCRIPTOR *secDesc;
     char procOwnerSid[CF_BUFSIZE];
@@ -149,7 +149,7 @@ int NovaWin_VerifyOwner(char *file, Promise *pp, Attributes attr)
     int sidMatch = false;
     DWORD getRes;
 
-    if (!BOOTSTRAP && !Nova_CheckLicenseWin("NovaWin_VerifyOwner"))
+    if (!BOOTSTRAP && !Nova_CheckLicenseWin("VerifyOwner"))
     {
         return false;
     }
@@ -301,7 +301,7 @@ int NovaWin_SetFileOwnership(char *path, SID *sid)
 /*****************************************************************************/
 
 /* Gets the name of the entity owning file object in 'path', and writes it to 'owner' */
-int NovaWin_GetOwnerName(char *path, char *owner, int ownerSz)
+int GetOwnerName(char *path, struct stat *lstatptr, char *owner, int ownerSz)
 {
     SECURITY_DESCRIPTOR *secDesc;
     SID *ownerSid;
@@ -333,11 +333,11 @@ int NovaWin_GetOwnerName(char *path, char *owner, int ownerSz)
 
 /*****************************************************************************/
 
-void NovaWin_VerifyFileAttributes(char *file, struct stat *dstat, Attributes attr, Promise *pp)
+void VerifyFileAttributes(char *file, struct stat *dstat, Attributes attr, Promise *pp)
 {
-    CfDebug("NovaWin_VerifyFileAttributes()\n");
+    CfDebug("VerifyFileAttributes()\n");
 
-    if (!BOOTSTRAP && !Nova_CheckLicenseWin("NovaWin_VerifyFileAttributes"))
+    if (!BOOTSTRAP && !Nova_CheckLicenseWin("VerifyFileAttributes"))
     {
         return;
     }
@@ -374,15 +374,15 @@ void NovaWin_VerifyFileAttributes(char *file, struct stat *dstat, Attributes att
         }
     }
 
-    CfDebug("NovaWin_VerifyFileAttributes(Done)\n");
+    CfDebug("VerifyFileAttributes(Done)\n");
 }
 
 /*****************************************************************************/
 
-void NovaWin_VerifyCopiedFileAttributes(char *file, struct stat *dstat, Attributes attr, Promise *pp)
+void VerifyCopiedFileAttributes(char *file, struct stat *dstat, Attributes attr, Promise *pp)
 {
     // TODO: Correct assumption?: if attr.owner.sid is invalid, it will not be changed - no need to backup like on Unix
-    NovaWin_VerifyFileAttributes(file, dstat, attr, pp);
+    VerifyFileAttributes(file, dstat, attr, pp);
 }
 
 /*****************************************************************************/

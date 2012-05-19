@@ -36,7 +36,7 @@ static void GetProcessUserName(HANDLE procHandle, int incDomain, char *nameStr, 
 
 /*****************************************************************************/
 
-int NovaWin_LoadProcessTable(Item **procdata)
+int LoadProcessTable(Item **procdata)
 /* Creates a list with current process table, and saves lists of SYSTEM
  * and non-SYSTEM processes to files.
  */
@@ -45,8 +45,14 @@ int NovaWin_LoadProcessTable(Item **procdata)
     Item *otherprocs = NULL;
     char buf[CF_BUFSIZE];
 
+    if (PROCESSTABLE)
+    {
+        CfOut(cf_verbose, "", " -> Reusing cached process state");
+        return true;
+    }
+
     // no licenses present yet when bootstrapping
-    if (!BOOTSTRAP && !Nova_CheckLicenseWin("NovaWin_LoadProcessTable"))
+    if (!BOOTSTRAP && !Nova_CheckLicenseWin("LoadProcessTable"))
     {
         return false;
     }
@@ -195,13 +201,13 @@ int NovaWin_GetProcessSnapshot(Item **procdata)
 
 /*****************************************************************************/
 
-int NovaWin_GatherProcessUsers(Item **userList, int *userListSz, int *numRootProcs, int *numOtherProcs)
+int GatherProcessUsers(Item **userList, int *userListSz, int *numRootProcs, int *numOtherProcs)
 {
     Item *procdata = NULL;
     Item *currItem;
     char user[CF_MAXVARSIZE];
 
-    if (!Nova_CheckLicenseWin("NovaWin_GatherProcessUsers"))
+    if (!Nova_CheckLicenseWin("GatherProcessUsers"))
     {
         return false;
     }

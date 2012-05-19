@@ -32,9 +32,9 @@ static int InitializePipes(HANDLE *childInWrite, HANDLE *childInRead, HANDLE *ch
 static int SaveDescriptorPair(FILE *pipe, HANDLE procHandle);
 static int PopDescriptorPair(FILE *pipe, HANDLE *procHandle);
 
-FILE *NovaWin_cf_popen(char *command, char *type)
+FILE *cf_popen(char *command, char *type)
 {
-    if (!Nova_CheckLicenseWin("NovaWin_cf_popen"))
+    if (!Nova_CheckLicenseWin("cf_popen"))
     {
         return NULL;
     }
@@ -42,10 +42,10 @@ FILE *NovaWin_cf_popen(char *command, char *type)
     return OpenProcessPipe(command, false, NULL, type, false);
 }
 
-FILE *NovaWin_cf_popen_sh(char *command, char *type)
+FILE *cf_popen_sh(char *command, char *type)
 {
 
-    if (!Nova_CheckLicenseWin("NovaWin_cf_popen_sh"))
+    if (!Nova_CheckLicenseWin("cf_popen_sh"))
     {
         return NULL;
     }
@@ -53,40 +53,40 @@ FILE *NovaWin_cf_popen_sh(char *command, char *type)
     return OpenProcessPipe(command, true, NULL, type, false);
 }
 
-FILE *NovaWin_cf_popensetuid(char *command, char *type, uid_t uid, gid_t gid, char *chdirv, char *chrootv,
+FILE *cf_popensetuid(char *command, char *type, uid_t uid, gid_t gid, char *chdirv, char *chrootv,
                              int background)
 {
 
     // no licenses present yet when bootstrapping
-    if (!BOOTSTRAP && !Nova_CheckLicenseWin("NovaWin_cf_popensetuid"))
+    if (!BOOTSTRAP && !Nova_CheckLicenseWin("cf_popensetuid"))
     {
         return false;
     }
 
     if (uid != CF_UNDEFINED)
     {
-        CfOut(cf_verbose, "", "NovaWin_cf_popensetuid: uid is ignored on Windows");
+        CfOut(cf_verbose, "", "cf_popensetuid: uid is ignored on Windows");
     }
 
     if (gid != CF_UNDEFINED)
     {
-        CfOut(cf_verbose, "", "NovaWin_cf_popensetuid: gid is ignored on Windows");
+        CfOut(cf_verbose, "", "cf_popensetuid: gid is ignored on Windows");
     }
 
     if (chrootv != NULL)
     {
-        CfOut(cf_verbose, "", "NovaWin_cf_popensetuid: chrootv is ignored on Windows");
+        CfOut(cf_verbose, "", "cf_popensetuid: chrootv is ignored on Windows");
     }
 
     return OpenProcessPipe(command, false, chdirv, type, background);
 }
 
-FILE *NovaWin_cf_popen_shsetuid(char *command, char *type, uid_t uid, gid_t gid, char *chdirv, char *chrootv,
+FILE *cf_popen_shsetuid(char *command, char *type, uid_t uid, gid_t gid, char *chdirv, char *chrootv,
                                 int background)
 {
 
     // no licenses present yet when bootstrapping
-    if (!BOOTSTRAP && !Nova_CheckLicenseWin("NovaWin_cf_popen_shsetuid"))
+    if (!BOOTSTRAP && !Nova_CheckLicenseWin("cf_popen_shsetuid"))
     {
         return false;
     }
@@ -104,7 +104,7 @@ FILE *NovaWin_cf_popen_shsetuid(char *command, char *type, uid_t uid, gid_t gid,
     }
 }
 
-int NovaWin_cf_pclose(FILE *pp)
+int cf_pclose(FILE *pp)
 {
     HANDLE procHandle;
     int closeRes;
@@ -130,7 +130,7 @@ int NovaWin_cf_pclose(FILE *pp)
     return closeRes;
 }
 
-int NovaWin_cf_pclose_def(FILE *pfp, Attributes a, Promise *pp)
+int cf_pclose_def(FILE *pfp, Attributes a, Promise *pp)
 {
     HANDLE procHandle;
     DWORD exitCode;

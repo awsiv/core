@@ -1543,7 +1543,7 @@ void HistoryUpdate(Averages newvals)
     NewScope("control_monitor");
     NewScope("control_common");
     GetNameInfo3();
-    CfGetInterfaceInfo(cf_monitor);
+    GetInterfacesInfo(cf_monitor);
     Get3Environment();
     BuiltinClasses();
     OSClasses();

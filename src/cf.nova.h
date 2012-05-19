@@ -1057,19 +1057,14 @@ int NovaWin_uname(struct utsname *buf);
 
 /* win_file.c */
 
-void NovaWin_CreateEmptyFile(char *name);
 FILE *NovaWin_FileHandleToStream(HANDLE fHandle, char *mode);
-int NovaWin_IsExecutable(char *file);
 int NovaWin_mkdir(const char *path, mode_t mode);
 int NovaWin_rename(const char *oldpath, const char *newpath);
 int NovaWin_FileExists(const char *fileName);
 int NovaWin_IsDir(char *fileName);
-int NovaWin_VerifyOwner(char *file, Promise *pp, Attributes attr);
 int NovaWin_TakeFileOwnership(char *path);
 int NovaWin_SetFileOwnership(char *path, SID *sid);
-int NovaWin_GetOwnerName(char *path, char *owner, int ownerSz);
-void NovaWin_VerifyFileAttributes(char *file, struct stat *dstat, Attributes attr, Promise *pp);
-void NovaWin_VerifyCopiedFileAttributes(char *file, struct stat *dstat, Attributes attr, Promise *pp);
+off_t NovaWin_GetDiskUsage(char *file, enum cfsizes type);
 int NovaWin_GetNumHardlinks(char *path, int *numHardLinks);
 
 /* win_log.c */
@@ -1085,36 +1080,20 @@ void GatherCPUData(double *CF_THIS);
 
 /* win_net.c */
 
-void NovaWin_GetInterfaceInfo(void);
 int TryConnect(AgentConnection *conn, struct timeval *tvp, struct sockaddr *cinp, int cinpSz);
-
-/* win_pipe.c */
-
-FILE *NovaWin_cf_popen(char *command, char *type);
-FILE *NovaWin_cf_popen_sh(char *command, char *type);
-FILE *NovaWin_cf_popensetuid(char *command, char *type, uid_t uid, gid_t gid, char *chdirv, char *chrootv,
-                             int background);
-FILE *NovaWin_cf_popen_shsetuid(char *command, char *type, uid_t uid, gid_t gid, char *chdirv, char *chrootv,
-                                int background);
-int NovaWin_cf_pclose(FILE *pp);
-int NovaWin_cf_pclose_def(FILE *pfp, Attributes a, Promise *pp);
 
 /* win_proc.c */
 
 int NovaWin_DoAllSignals(Item *siglist, Attributes a, Promise *pp);
-int NovaWin_GracefulTerminate(pid_t pid);
 int NovaWin_IsProcessRunning(pid_t pid);
-int NovaWin_ShellCommandReturnsZero(char *comm, int useshell);
 int NovaWin_RunCmd(char *comm, int useshell, int inheritHandles, char *startDir, STARTUPINFO *si, HANDLE *procHandle);
 int NovaWin_GetCurrentProcessOwner(SID *sid, int sidSz);
-int NovaWin_GetCurrentUserName(char *userName, int userNameLen);
 int NovaWin_SetTokenPrivilege(HANDLE token, char *privilegeName, int enablePriv);
 
 /* win_ps.c */
 
-int NovaWin_LoadProcessTable(Item **procdata);
 int NovaWin_GetProcessSnapshot(Item **procdata);
-int NovaWin_GatherProcessUsers(Item **userList, int *userListSz, int *numRootProcs, int *numOtherProcs);
+int GatherProcessUsers(Item **userList, int *userListSz, int *numRootProcs, int *numOtherProcs);
 
 /* win_service_exec.c */
 
