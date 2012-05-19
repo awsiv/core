@@ -19,9 +19,9 @@
 // TODO: Implement ? - we only support one signal: SIGKILL (9)
 /* Returns true if SIGKILL was one of the signals, false otherwise */
 
-int NovaWin_DoAllSignals(Item *siglist, Attributes a, Promise *pp)
+int DoAllSignals(Item *siglist, Attributes a, Promise *pp)
 {
-    if (!BOOTSTRAP && !Nova_CheckLicenseWin("NovaWin_DoAllSignals"))
+    if (!BOOTSTRAP && !Nova_CheckLicenseWin("DoAllSignals"))
     {
         return 0;
     }

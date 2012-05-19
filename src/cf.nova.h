@@ -1084,7 +1084,6 @@ int TryConnect(AgentConnection *conn, struct timeval *tvp, struct sockaddr *cinp
 
 /* win_proc.c */
 
-int NovaWin_DoAllSignals(Item *siglist, Attributes a, Promise *pp);
 int NovaWin_IsProcessRunning(pid_t pid);
 int NovaWin_RunCmd(char *comm, int useshell, int inheritHandles, char *startDir, STARTUPINFO *si, HANDLE *procHandle);
 int NovaWin_GetCurrentProcessOwner(SID *sid, int sidSz);
