@@ -394,7 +394,7 @@ void NovaWin_VerifyCopiedFileAttributes(char *file, struct stat *dstat, Attribut
  * are calling from if disk quotas are being used - may be fixed with
  * CreateFile() + DeviceIoControl(IOCTL_DISK_GET_LENGTH_INFO).*/
 
-off_t NovaWin_GetDiskUsage(char *file, enum cfsizes type)
+off_t GetDiskUsage(char *file, enum cfsizes type)
 {
     ULARGE_INTEGER bytesLenCaller, bytesFree, kbLenCaller, kbFree;
 
