@@ -561,6 +561,9 @@ static void Nova_UpdateMongoHostList(Item **list)
 
     CFDB_SaveLastseenCache(new_lastseen);
 
+    DeleteItemList(lastseen);
+    DeleteItemList(new_lastseen);
+
     if (deleted_hosts)
     {
         bool removed = true;
@@ -583,11 +586,6 @@ static void Nova_UpdateMongoHostList(Item **list)
         }
 
         DeleteItemList(deleted_hosts);
-    }
-
-    if (lastseen)
-    {
-        DeleteItemList(lastseen);
     }
 
     CfOut(cf_inform, "", "%d hosts added to the lastseen cache\n", count);
