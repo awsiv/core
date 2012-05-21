@@ -267,12 +267,12 @@ class host_model extends Cf_Model
      * @param type $page
      * @return type
      */
-    function getComplianceList($username, $rows = 15, $page = 1)
+    function getComplianceList($username, $includes = array('.*'), $excludes = array(), $rows = 15, $page = 1)
     {
         try
         {
 
-            $rawdata = cfpr_host_compliance_list_all($username, $rows, $page);
+            $rawdata = cfpr_host_compliance_list_all($username, $includes, $excludes, $rows, $page);
             $data = $this->checkData($rawdata);
             if ($data)
             {
@@ -357,8 +357,8 @@ class host_model extends Cf_Model
             throw $e;
         }
         
-    }
-
+    }   
+    
 }
 
 ?>
