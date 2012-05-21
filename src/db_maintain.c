@@ -498,6 +498,8 @@ static Item *GetUniquePromiseLogEntryKeys(mongo_connection *conn, char *promiseL
         }
     }
 
+    mongo_cursor_destroy(cursor);
+
     return uniquePromiseKeysList;
 }
 /*****************************************************************************/
@@ -588,6 +590,8 @@ static void PurgePromiseLogWithEmptyTimestamps(mongo_connection *conn, char *pro
             MongoCheckForError(conn, "PurgePromiseLogWithEmptyTimestamps", keyhash, NULL);
         }
     }
+
+    mongo_cursor_destroy(cursor);
 }
 
 /*****************************************************************************/
