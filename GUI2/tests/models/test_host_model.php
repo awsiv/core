@@ -9,6 +9,8 @@ class test_host_model extends CodeIgniterUnitTestCase {
 
     public function setUp() {
         $this->_ci->load->model('host_model');
+        $this->includes = array();
+        $this->excludes = array();
     }
 
     public function tearDown() {
@@ -41,12 +43,12 @@ class test_host_model extends CodeIgniterUnitTestCase {
     
      public function test_getNetWorkSpeed(){
         $val=$this->_ci->host_model->getNetworkSpeed($this->username,$this->hostkey);
-         $this->assertTrue(is_string($val));
+         $this->assertTrue(is_array($val));
         $this->dump($val);
     }
     
     public function test_getCompliacnelist(){
-        $val=$this->_ci->host_model->getComplianceList($this->username,15,1);
+        $val=$this->_ci->host_model->getComplianceList($this->username, $this->includes, $this->excludes, 15,1);
         $this->assertTrue(is_array($val),"should return a valid array");
         $this->assertNotEqual(count($val['data']),0,"should not be empty");
         $this->dump(count($val['data']));
@@ -54,37 +56,37 @@ class test_host_model extends CodeIgniterUnitTestCase {
     }
     
     public function test_getHostCount(){
-        $ret = $this->_ci->host_model->getHostCount($this->username);
+        $ret = $this->_ci->host_model->getHostCount($this->username, '', $this->includes, $this->excludes);
         $this->assertTrue(is_numeric($ret), 'Count of all host should be a number ');
         $this->dump($ret);
     }
     
     public function test_getRedHostCount(){
-        $ret = $this->_ci->host_model->getHostCount($this->username,'red');
+        $ret = $this->_ci->host_model->getHostCount($this->username,'red', $this->includes, $this->excludes);
         $this->assertTrue(is_numeric($ret), 'Count of red host should be a number ');
         $this->dump($ret);
     }
 
     public function test_getYellowHostCount(){
-        $ret = $this->_ci->host_model->getHostCount($this->username,'yellow');
+        $ret = $this->_ci->host_model->getHostCount($this->username,'yellow', $this->includes, $this->excludes);
         $this->assertTrue(is_numeric($ret), 'Count of red host should be a number ');
         $this->dump($ret);
     }
 
     public function test_getGreenHostCount(){
-        $ret = $this->_ci->host_model->getHostCount($this->username,'green');
+        $ret = $this->_ci->host_model->getHostCount($this->username,'green', $this->includes, $this->excludes);
         $this->assertTrue(is_numeric($ret), 'Count of red host should be a number ');
         $this->dump($ret);
     }
 
     public function test_getBlueHostCount(){
-        $ret = $this->_ci->host_model->getHostCount($this->username,'blue');
+        $ret = $this->_ci->host_model->getHostCount($this->username,'blue', $this->includes, $this->excludes);
         $this->assertTrue(is_numeric($ret), 'Count of red host should be a number ');
         $this->dump($ret);
     }
 
     public function test_getBlackHostCount(){
-        $ret = $this->_ci->host_model->getHostCount($this->username,'black');
+        $ret = $this->_ci->host_model->getHostCount($this->username,'black', $this->includes, $this->excludes);
         $this->assertTrue(is_numeric($ret), 'Count of red host should be a number ');
         $this->dump($ret);
     }
