@@ -13,7 +13,6 @@ void Nova2Txt_getlicense(char *buffer, int bufsize);
 
 void Nova_FormatDiff(const char *diffStr, char *returnval, int bufsize);
 char *Nova_LongState(char s);
-char *Nova_LongStateWarn(char s);
 int Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int outStrSz);
 
 int Nova2Txt_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int bufsize);

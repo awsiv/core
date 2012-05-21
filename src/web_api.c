@@ -3963,22 +3963,6 @@ char *Nova_LongState(char s)
 
 /*****************************************************************************/
 
-char *Nova_LongStateWarn(char s)
-{
-    switch (s)
-    {
-    case 'c':
-        return "Compliant";
-    case 'r':
-        return "Repaired";
-    case 'n':
-    default:
-        return "Not Compliant";
-    }
-}
-
-/*****************************************************************************/
-
 int Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int outStrSz)
 {
 
@@ -4209,13 +4193,13 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, PageInfo *page, char *b
                                                      sizeof(lastChangeStr));
 
                             snprintf(row, sizeof(row), "[\"%s\",\"%s\",%s,\"%s\",\"%s\",\"%s\",\"%s\",%d],",
-                                     hostKeyHash, host, attributes, lastChangeStr, Nova_LongStateWarn(*statusStr),
+                                     hostKeyHash, host, attributes, lastChangeStr, Nova_LongState(*statusStr),
                                      thenStr, urlReportName, timewarn);
                             break;
 
                         default:
                             snprintf(row, sizeof(row), "[\"%s\",\"%s\",%s,\"%s\",\"%s\",%d],",
-                                     hostKeyHash, host, attributes, Nova_LongStateWarn(*statusStr), thenStr, timewarn);
+                                     hostKeyHash, host, attributes, Nova_LongState(*statusStr), thenStr, timewarn);
                             break;
                         }
                         if (!*row)
