@@ -39,7 +39,8 @@ class Search extends Cf_Controller
             'setuid-programs' => 'uid_gid_root_programs',
             'software-installed' => 'software_installed',
             'values' => 'variables',
-            'virtual-bundles' => 'virtualbundles'
+            'virtual-bundles' => 'virtualbundles',
+            'weakest-hosts'   => 'weakest_hosts_filter'
         );
     }
 
@@ -70,16 +71,26 @@ class Search extends Cf_Controller
             $treeview_reports = array();
             foreach ($reports as $report)
             {
+                // key based on name, all characters except letters and numbers were deleted
+                // we need this for faster alphabet sorting
+                $report_key = strtolower(preg_replace('#\W#', '', $report['name']));
+                
                 if (key_exists($report['category'], $treeview_reports))
                 {
-                    array_push($treeview_reports[$report['category']], $report);
+                    $treeview_reports[$report['category']][$report_key] = $report;
                 }
                 else
                 {
                     $treeview_reports[$report['category']] = array();
-                    array_push($treeview_reports[$report['category']], $report);
+                    $treeview_reports[$report['category']][$report_key] = $report;
                 }
             }
+            
+            //this could be done with usort and closures .... if we support  php 5.3 +
+            foreach ($treeview_reports as $category => $name) {
+               ksort($treeview_reports[$category], SORT_STRING);
+            }
+              
             return $treeview_reports;
         }
         catch (Exception $e)
@@ -365,6 +376,7 @@ class Search extends Cf_Controller
                     {
                         $data['report_result'] = $this->report_model->getBusinessValueReport($username, $hostkey, $date, explode(',', $incList), explode(',', $exList), $rows, $page_number);
                     }
+                                        
                     $pdfurlParams = array('type' => $report_type,
                         'date' => $date,
                         'inclist' => $incList,
@@ -715,9 +727,43 @@ class Search extends Cf_Controller
                     $data['report_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams));
                     $data['email_link'] = site_url('/pdfreports/index/' . $this->assoc_to_uri($pdfurlParams) . '/pdfaction/email');
                     $this->template->load('template', 'searchpages/businessresult', $data);
+                    
+                    break;
+                
+                case "weakest-hosts":
+                    $requiredjs = array(
+                        array('jit/jit-yc.js'),
+                        array('graphs/host-meter.js'),
+                    );
+                    
+                    $this->carabiner->js('jquery.tablesorter.min.js');
+                    $this->carabiner->js('picnet.jquery.tablefilter.js');
+                    $this->carabiner->js('jquery.tablesorter.pager.js');
+                    $this->carabiner->js($requiredjs);
+                    $jsIE = array('jit/Extras/excanvas.js');
+                    $this->carabiner->group('iefix', array('js' => $jsIE));
+                   
+                    try {
+                        $this->load->model('summary_model');
+                        $ret = $this->host_model->getComplianceList($username, explode(',', $incList), explode(',', $exList), $rows, $page_number);
+                        
+                        if (is_array($ret)) {
+                            foreach ($ret['data'] as $index => $val) {
+                                $rawData = $this->host_model->getHostMeter($this->session->userdata('username'), $val['key']);
+                                $graphData = $this->summary_model->getConvertedSummaryComplianceGraphData($rawData);
+                                $ret['data'][$index] = array_merge($ret['data'][$index], $graphData);
+                            }
+                        }
+                    } catch (Exception $e) {
+                        show_error($e->getMessage(), 500);
+                    }
 
-
-
+                    $data['report_result']        = $ret;
+                    $data['resultView'] = 'weakest_hosts_result';
+                    
+                    $this->template->load('template', 'searchpages/businessresult', $data);
+                    break;
+                    
                 default:
                     $this->template->load('template', 'searchpages/nodata', $data);
             }
@@ -757,6 +803,5 @@ class Search extends Cf_Controller
         {
             show_error_custom("View not found", 400);
         }
-    }
-
+    }    
 }
