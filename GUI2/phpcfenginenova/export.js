@@ -58,7 +58,7 @@ db["onlineusers"].insert({
   "ip": "10.0.0.42",
   "user_id": "admin",
   "time": 1333561301,
-  "uri": "\/nova\/index.php\/welcome\/engg",
+  "uri": "\/index.php\/engineering",
   "bot": false
 });
 

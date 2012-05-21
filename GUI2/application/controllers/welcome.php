@@ -497,66 +497,6 @@ class Welcome extends Cf_Controller
         $this->template->load('template', 'host', $data);
     }
 
-    function weakest_host()
-    {
-
-        $requiredjs = array(
-            array('jit/jit-yc.js'),
-            array('graphs/host-meter.js'),
-        );
-        $this->carabiner->js('jquery.tablesorter.min.js');
-        $this->carabiner->js('picnet.jquery.tablefilter.js');
-        $this->carabiner->js('jquery.tablesorter.pager.js');
-        $this->carabiner->js($requiredjs);
-        $jsIE = array('jit/Extras/excanvas.js');
-        $this->carabiner->group('iefix', array('js' => $jsIE));
-
-        $getparams = $this->uri->uri_to_assoc(3);
-        $rows = isset($getparams['rows']) ? $getparams['rows'] : ($this->input->post('rows') ? $this->input->post('rows') : $this->setting_lib->get_no_of_rows());
-        if (is_numeric($rows))
-        {
-            $rows = (int) $rows;
-        }
-        else
-        {
-            $rows = 20;
-        }
-        $page_number = isset($getparams['page']) ? $getparams['page'] : 1;
-        $bc = array(
-            'title' => $this->lang->line('breadcrumb_weakest_host'),
-            'url' => 'welcome/weakest_host',
-            'isRoot' => false,
-        );
-        $this->breadcrumb->setBreadCrumb($bc);
-
-        try
-        {
-            $ret = $this->host_model->getComplianceList($this->session->userdata('username'), $rows, $page_number);
-            if (is_array($ret))
-            {
-                foreach ($ret['data'] as $index => $val)
-                {
-                    $rawData=$this->host_model->getHostMeter($this->session->userdata('username'), $val['key']);
-                    $graphData = $this->summary_model->getConvertedSummaryComplianceGraphData($rawData);
-                    $ret['data'][$index] = array_merge($ret['data'][$index], $graphData);
-                }
-            }
-        }
-        catch (Exception $e)
-        {
-            show_error($e->getMessage(), 500);
-        }
-
-        $data = array(
-            'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_weakest_host'),
-            'ret' => $ret,
-            'breadcrumbs' => $this->breadcrumblist->display(),
-            'current' => $page_number,
-            'number_of_rows' => $rows
-        );
-        $this->template->load('template', 'topN', $data);
-    }
-
     function services()
     {
         $bc = array(
