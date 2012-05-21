@@ -77,7 +77,7 @@ bool BsonIntGet(const bson *b, const char *key, int *out)
         return true;
     }
 
-    CfOut(cf_verbose, "", "BsonFindInt: No match for \"%s\"", key);
+    CfOut(cf_verbose, "", "BsonIntGet: No match for \"%s\"", key);
     return false;
 }
 
