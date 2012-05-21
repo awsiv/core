@@ -38,5 +38,6 @@ void BsonAppendSortField(bson_buffer *bb, char *sortField);
 long BsonLongGet(const bson *b, const char *key);
 const char *BsonGetArrayValue(const bson *b, const char *key);
 bool BsonIsKeyCorrupt(const char *key);
+bool BsonIsEmpty(const bson *object);
 
 #endif

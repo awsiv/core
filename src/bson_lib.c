@@ -699,3 +699,13 @@ bool BsonIsKeyCorrupt(const char *key)
 
     return false;
 }
+
+/*****************************************************************************/
+bool BsonIsEmpty(const bson *object)
+{
+    if (bson_size(object) > 5)
+    {
+        return false;
+    }
+    return true;
+}
