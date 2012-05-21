@@ -4033,7 +4033,7 @@ void Nova_FormatDiff(const char *diffStr, char *returnval, int bufsize)
 
     ReplaceTrailingChar(returnval, ',', '\0');
 
-    EndJoin(returnval, "]\n", sizeof(returnval));
+    EndJoin(returnval, "]\n", bufsize);
 }
 
 /*****************************************************************************/
