@@ -2730,7 +2730,7 @@ void NoteEfficiency(double e)
     Attributes a = { {0} };
     Promise p = { 0 };
 
-    NovaNamedEvent("Configuration model efficiency", e, a, &p);
+    NovaNamedEvent("configuration-model-efficiency", e, a, &p);
     CfOut(cf_verbose, "", " -> Configuration model efficiency for %s = %.2lf%%", VUQNAME, e);
 }
 
