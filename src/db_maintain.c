@@ -432,7 +432,7 @@ void CFDB_PurgePromiseLogs(mongo_connection *conn, time_t oldThreshold, time_t n
     bson cond;
 
     oldStamp = now - oldThreshold;
-
+    CfOut(cf_verbose, "", " -> Purge promise logs from old (deprecated) collections");
     bson_buffer_init(&bb);
 
     sub = bson_append_start_object(&bb,cfr_time);
@@ -605,6 +605,8 @@ void CFDB_PurgePromiseLogsFromMain(mongo_connection *conn, char *promiseLogRepor
     time_t oldStamp;
     bson cond;
     bson query;
+
+    CfOut(cf_verbose, "", " -> Purge promise logs from main collection ");
 
     Item *promiseLogComplexKeysList = GetUniquePromiseLogEntryKeys(conn, promiseLogReportKey);
 
