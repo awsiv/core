@@ -56,7 +56,11 @@
             <tbody>
                 <?php  foreach ((array) $report_result['data'] as $rows) { ?>
                 <tr>
-                    <td><?php echo anchor('search/index/' . $detail_result_url . "/host/".$rows['hostkey'], $rows['hostname'], ""); ?></td>
+                    <td><?php 
+                    // convert host name and add it as a search criteria to set context in contexfinder
+                    $tempvar = explode("=", $rows['hostkey']);
+                    $rows['hostkey'] = "inclist/PK_SHA_" . $tempvar[1];
+                    echo anchor('search/index/' . $detail_result_url . "/".$rows['hostkey'], $rows['hostname'], ""); ?></td>
                     <td class="actioncol"><?php echo anchor('welcome/host/' . $rows['hostkey'],' ', array('title' => 'Host information', 'class' => 'hostbtn showqtip')).anchor('search/index/report/promises-not-kept-summary/host/' . $rows['hostkey'], ' ', array('title' => 'promises not kept', 'class' => 'promisesnotkeptbtn showqtip'))
                  . anchor('visual/vital/' . $rows['hostkey'], ' ', array('title' => 'pulse and vitals', 'class' => 'vitalsbtn showqtip')); ?> </td>
                 </tr>
