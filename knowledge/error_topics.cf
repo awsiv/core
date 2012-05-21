@@ -105,399 +105,431 @@ things:
 error_messages::
 
 "cannot mix cidr notation with xxx-yyy range notation"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "iprange", "promise_types::access" },
            certainty => "possible";
 
 
 
 "not a valid address range - or not a fully qualified name"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "iprange", "promise_types::access" },
            certainty => "possible";
 
 
 "cannot handle ipv6 masks which are not 8 bit multiples"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "iprange", "promise_types::access" },
            certainty => "possible";
 
 
 "argument mismatch in body template"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "bodies", "body parts" },
            certainty => "possible";
 
 "type mismatch between logical/formal parameters"
-        is_caused_by => { "unknown" },
+        is_caused_by => {"bodies", "body parts" },
            certainty => "possible";
 
-"x is x whereas y is y in argument processing"
-        is_caused_by => { "unknown" },
+"x is x whereas y is y (in argument processing)"
+        is_caused_by => { "bodies", "body parts" },
            certainty => "possible";
 
 "arguments to function do not tally",
-        is_caused_by => { "unknown" },
+             comment => "There is a mismatch between the expected number of arguments and the number provided",
+        is_caused_by => { "functions", "special functions" },
            certainty => "possible";
 
 "files promise makes no intention about system state"
-        is_caused_by => { "unknown" },
+             comment => "A files promise does not promise to affect the file in any way, i.e. it is missing rename, delete, perms, link, edit_line, create, transformer, or acl_entries",
+        is_caused_by => { "promise_types::files" },
            certainty => "possible";
 
 "promise constraint conflicts - %s cannot be created and linked at the same time"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "promise_types::files" },
            certainty => "possible";
 
 "problem validating a mode string"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "promise_types::files", "perms" },
            certainty => "possible";
 
 "problem validating a bsd flag string"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "promise_types::files", "search_bsdflags" },
            certainty => "possible";
 
 "file_select body missing its file_result return value"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "promise_types::files", "file_select", "file_result" },
            certainty => "possible";
 
 "fips mode is enabled, and md5 is not an approved algorithm"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "fips_mode", "changes (compound body)", "body_attributes::changes" },
            certainty => "possible";
 
 "process_select body missing its process_result return value"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "process_result", "process_select (compound body)" },
            certainty => "possible";
 
 "unsupported database type"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "database_type", "promise_types::databases" },
            certainty => "possible";
 
 "unable to write policy server file!"
-        is_caused_by => { "unknown" },
+             comment => "Probably caused by an attempt to bootstrap with insufficient (root/administrator) privilege",
+        is_caused_by => {  "bootstrap", "Getting started with the Community Edition" },
            certainty => "possible";
 
 "unable to write failsafe file!"
-        is_caused_by => { "unknown" },
+             comment => "Probably caused by an attempt to bootstrap with insufficient (root/administrator) privilege",
+        is_caused_by => {  "bootstrap", "Getting started with the Community Edition" },
            certainty => "possible";
 
 "failed setting permissions on bootstrap policy (%s)"
-
-        is_caused_by => { "unknown" },
+             comment => "Probably caused by an attempt to bootstrap with insufficient (root/administrator) privilege",
+        is_caused_by => { "bootstrap", "Getting started with the Community Edition" },
            certainty => "possible";
 
 bootstrap:: "unable to write document root file! (%s)"
-        is_caused_by => { "unknown" },
+             comment => "Probably caused by an attempt to bootstrap with insufficient (root/administrator) privilege",
+        is_caused_by => { "bootstrap", "Getting started with the Community Edition" },
            certainty => "possible";
 
-agent:: "unexpected argument with no preceding option: %s\n"
-        is_caused_by => { "unknown" },
+agent:: "unexpected argument with no preceding option"
+             comment => "Often caused by forgetting -f in front of a file name on the command line",
+        is_caused_by => { "cf-agent - CFEngine's change agent", "cf-serverd - CFEngine's server agent",
+                          "cf-runagent - Run agent", "cf-execd - CFEngine's execution agent", "cf-know - CFEngine's knowledge agent", "cf-report - CFEngine's reporting agent" },
            certainty => "possible";
 
 any::
 
 "silly value for max_children in agent control promise"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "max_children" },
            certainty => "possible";
 
 policy:: "no bundlesequence in the common control body"
-        is_caused_by => { "unknown" },
+             comment => "There is no file in inputs with a body common control containing a bundlesequence",
+        is_caused_by => { "bundlesequence", "bundlesequence in common", "inputs", "common control promises" },
            certainty => "possible";
 
 any::
 
 "illegal item found in bundlesequence"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "bundlesequence", "bundlesequence in common", "common control promises" },
            certainty => "possible";
 
-"bundle \"%s\" listed in the bundlesequence was not found"
-        is_caused_by => { "unknown" },
+"bundle listed in the bundlesequence was not found"
+             comment => "A bundle was used but no definition was found in the inputs",
+        is_caused_by => { "bundlesequence", "bundlesequence in common", "common control promises", "inputs" },
            certainty => "possible";
 
-"file %s is not owned by an authorized user (security exception)",
-        is_caused_by => { "unknown" },
+"file is not owned by an authorized user (security exception)",
+             comment => "The file must not be writable by any user except a privileged user",
+        is_caused_by => { "inputs", "the work directory" },
            certainty => "possible";
 
-"file %s is not owned by uid %ju (security exception)"
-        is_caused_by => { "unknown" },
+"file is not owned by uid (security exception)"
+             comment => "The file must not be writable by any user except a privileged user",
+        is_caused_by => { "inputs", "the work directory" },
            certainty => "possible";
 
 "unable to read the process table - cannot keep process promises"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "cf-agent - CFEngine's change agent" },
            certainty => "possible";
 
 "bootstrapping failed, no policy server is specified"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "cf-agent - CFEngine's change agent" },
            certainty => "possible";
 
-"bootstrapping failed, no input file at %s after bootstrap"
-        is_caused_by => { "unknown" },
+"bootstrapping failed, no input file at after bootstrap"
+             comment => "Perhaps no policy server has been created, or is reachable",
+        is_caused_by => { "bootstrap" },
            certainty => "possible";
 
 "bootstrapping failed, cf-execd is not running"
-        is_caused_by => { "unknown" },
+             comment => "Something seems to be wrong with the installation",
+        is_caused_by => { "missing software", "insufficient permission" },
            certainty => "possible";
 
-"unexpected argument with no preceding option\n"
-        is_caused_by => { "unknown" },
-           certainty => "possible";
-
-"cfengine - autonomous configuration engine. this enterprise license is invalid."
-        is_caused_by => { "unknown" },
+"enterprise license is invalid."
+        is_caused_by => { "installation procedure" },
            certainty => "possible";
 
 "severe lock error when mailing in exec"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "cf-execd" },
            certainty => "possible";
 
 cf_key:: "unable to enumerate files in keys directory"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "cf-key", "insufficient permission" },
            certainty => "possible";
 
-cf_key:: "unable to remove keys for the host %s"
-        is_caused_by => { "unknown" },
+cf_key:: "unable to remove keys for the host"
+        is_caused_by => { "cf-key" },
            certainty => "possible";
 
-cf_key:: "no keys for host %s were found",
-        is_caused_by => { "unknown" },
+cf_key:: "no keys for host were found",
+        is_caused_by => { "cf-key", "removing keys" },
            certainty => "possible";
 
-cf_know:: "occurrence of text information \"%s\" does not promise any topics to represent",
-        is_caused_by => { "unknown" },
+cf_know:: "occurrence of text information does not promise any topics to represent",
+             comment => "An occurrences promise is missing an about_topics attribute",
+        is_caused_by => { "cf-know", "about_topics" },
            certainty => "possible";
 
-cf_know:: "a topic must have at least one associate in association %s"
-        is_caused_by => { "unknown" },
+cf_know:: "a topic must have at least one associate in association"
+             comment => "A topics promise with an association attribute body must have a non-empty list of topics",
+        is_caused_by => { "associations", "cf-know" },
            certainty => "possible";
 
 cf_know:: "null forward association name"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "associates", "cf-know" },
            certainty => "possible";
 
-"could not set the working directory to %s"
-        is_caused_by => { "unknown" },
+"could not set the working directory to"
+             comment => "Probably caused by insufficient privilege which generating reports",
+        is_caused_by => { "cf-report", "insufficient permission" },
            certainty => "possible";
 
 cf_runagent:: "you cannot specify background mode and interactive mode together"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "cf-runagent", "background_children", "background_children in runagent" },
            certainty => "possible";
 
 cf_runagent||cf_serverd||cf_agent::  "transaction failed"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "Remote access troubleshooting", "server connection" },
            certainty => "possible";
 
 cf_runagent:: "transmission rejected"
-        is_caused_by => { "unknown" },
+        is_caused_by => {  "Remote access troubleshooting", "server connection" },
            certainty => "possible";
 
-cf_serverd:: "not allowing connection from non-authorized ip %s"
-        is_caused_by => { "unknown" },
-           certainty => "possible";
-cf_serverd:: "denying connection from non-authorized ip %s"
-        is_caused_by => { "unknown" },
+cf_serverd:: "not allowing connection from non-authorized ip"
+        is_caused_by => {  "Remote access troubleshooting", "server connection", "allowconnects", "allowallconnects" },
            certainty => "possible";
 
-cf_serverd:: "denying repeated connection from \"%s\""
-        is_caused_by => { "unknown" },
+cf_serverd:: "denying connection from non-authorized ip"
+        is_caused_by => { "unknown", "denyconnects" },
+           certainty => "possible";
+
+cf_serverd:: "denying repeated connection from"
+        is_caused_by => { "allowallconnects" },
            certainty => "possible";
 
 cf_serverd:: "dns/service lookup failure"
-        is_caused_by => { "unknown" },
+             comment => "The server daemon did not find a DNS service to look up port/address information to bind the server socket",
+        is_caused_by => { "cf-serverd" },
            certainty => "possible";
 
 cf_serverd:: "socket options were not accepted"
-        is_caused_by => { "unknown" },
+             comment => "The server's listening socket could not be configuered for efficient operation",
+        is_caused_by => { "cf-serverd" },
            certainty => "possible";
 
 cf_serverd:: "could not bind server address"
-        is_caused_by => { "unknown" },
+             comment => "A server might already be running on the affected port",
+        is_caused_by => { "cf-serverd" },
            certainty => "possible";
 
 cf_serverd:: "couldn't open bind an open socket"
-        is_caused_by => { "unknown" },
+             comment => "A server might already be running on the affected port",
+        is_caused_by => { "cf-serverd" },
            certainty => "possible";
 
 cf_serverd:: "couldn't set socket options"
-        is_caused_by => { "unknown" },
+             comment => "The server's listening socket could not be configuered for efficient operation",
+        is_caused_by => { "cf-serverd" },
            certainty => "possible";
 
 cf_serverd:: "server seems to be paralyzed. dos attack? committing apoptosis..."
-        is_caused_by => { "unknown" },
+             comment => "Voluntary suicide of the server happens when its threads seem to be locked, perhaps due to too much incoming traffic",
+        is_caused_by => { "cf-serverd" },
            certainty => "possible";
 
-cf_serverd:: "too many threads (>=%d) -- increase server maxconnections?"
-        is_caused_by => { "unknown" },
+cf_serverd:: "too many threads -- increase server maxconnections"
+        is_caused_by => { "cf-serverd" },
            certainty => "possible";
 
-cf_serverd:: "bad decrypt (%d)"
-        is_caused_by => { "unknown" },
+cf_serverd|cf_agent|cf_runagent:: "bad decrypt"
+             comment => "This message comes from libcrypto routines and usually signals data corruption or mismatched encryption settings. It can occur when mixing CFEngine community edition and enterprise editions",
+        is_caused_by => { "cf-agent", "cf-serverd", "cf-runagent", "license problems", "build issues" },
            certainty => "possible";
 
 cf_serverd:: "couldn't get socket address"
-        is_caused_by => { "unknown" },
+             comment => "The TCP socket seems to be an imposter, and contains no retrievable origin address",
+        is_caused_by => { "cf-serverd" },
            certainty => "possible";
 
 cf_serverd:: "...requires encrypt connection...will not serve"
-        is_caused_by => { "ifencrypted" },
+        is_caused_by => { "ifencrypted", "cf-serverd" },
            certainty => "possible";
 
 cf_serverd:: "private decrypt failed"
-        is_caused_by => { "unknown" },
+             comment => "This message comes from libcrypto routines and usually signals data corruption or mismatched encryption settings. It can occur when mixing CFEngine community edition and enterprise editions.",
+        is_caused_by => { "cf-agent", "cf-serverd", "cf-runagent", "license problems", "build issues" },
            certainty => "possible";
 
 cf_serverd:: "overflow in context grab"
-        is_caused_by => { "unknown" },
+             comment => "An overflow occurred while retrieving remote classes",
+        is_caused_by => { "cf-serverd", "remoteclassesmatching" },
            certainty => "possible";
+
+
 
 any::
 
-"id-authentication for %s failed\n"
-        is_caused_by => { "unknown" },
+"id-authentication for failed"
+             comment => "Trouble connecting from cf-agent or cf-runagent to cf-serverd",
+        is_caused_by => { "copy_from", "cf-runagent", "remotescalar", "remoteclassesmatching" },
            certainty => "possible";
 
 "authentication dialogue with %s failed\n"
-        is_caused_by => { "unknown" },
+             comment => "Trouble connecting from cf-agent or cf-runagent to cf-serverd",
+        is_caused_by => { "copy_from", "cf-runagent", "remotescalar", "remoteclassesmatching" },
            certainty => "possible";
 
 "local disk write failed copying"
-        is_caused_by => { "unknown" },
-           certainty => "possible";
+        is_caused_by => { "copy_from" },
+           certainty => "certain";
 
 "could not set socket to non-blocking mode"
-        is_caused_by => { "unknown" },
+             comment => "Trouble connecting from cf-agent or cf-runagent to cf-serverd",
+        is_caused_by => { "copy_from", "cf-runagent", "remotescalar", "remoteclassesmatching" },
+           certainty => "certain";
+
+"type mismatch on rhs - expected type for boolean constraint"
+             comment => "A variable was assigned a value that was not true/false/yes/no",
+        is_caused_by => { "cf-promises" },
+    is_determined_by => { "values::boolean" },
            certainty => "possible";
 
-"type mismatch on rhs - expected type (%c) for boolean constraint \"%s\""
-        is_caused_by => { "unknown" },
-           certainty => "possible";
+"type mismatch on rhs - expected type for list constraint"
+             comment => "A variable was assigned a value that was not a list",
+        is_caused_by => { "cf-promises" },
+    is_determined_by => { "values::slist", "values::ilist", "values::rlist" },
+           certainty => "certain";
 
-"type mismatch on rhs - expected type for list constraint \"%s\""
-        is_caused_by => { "unknown" },
-           certainty => "possible";
 
-"duplicate promise handle -- previously used in file %s near line %d"
-        is_caused_by => { "unknown" },
+"duplicate promise handle -- previously used in file"
+             comment => "Might be caused by inputting a file twice or pasting a promise twice",
+        is_caused_by => { "handle", "inputs" },
            certainty => "possible";
 
 "un-commented promise found, but comments have been required by policy"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "require_comments", "require_comments in common" },
            certainty => "possible";
 
-"you cannot cancel a reserved hard class \"%s\" in post-condition classes"
-        is_caused_by => { "unknown" },
+"you cannot cancel a reserved hard class in post-condition classes"
+             comment => "A hard class was used in a class negation promise",
+        is_caused_by => { "cancel_kept", "cancel_repaired", "cancel_notkept" },
            certainty => "possible";
 
-"fips mode is enabled, and md5 is not an approved algorithm"
-        is_caused_by => { "unknown" },
-           certainty => "possible";
 
-"relative file name %s was marked for editing but has no invariant meaning"
-        is_caused_by => { "unknown" },
-           certainty => "possible";
+"relative file name was marked for editing but has no invariant meaning"
+             comment => "You must use an absolute path in file promises",
+        is_caused_by => { "promise_types::files", "relative filenames" },
+           certainty => "certain";
 
-"can no longer access file %s, which needed editing!"
-        is_caused_by => { "unknown" },
-           certainty => "possible";
+"can no longer access file which needed editing"
+        is_caused_by => { "promise_types::files" },
+           certainty => "certain";
 
 "no field_separator in promise to edit by column"
-        is_caused_by => { "unknown" },
-           certainty => "possible";
+        is_caused_by => { "edit_line", "field_edits" },
+           certainty => "certain";
 
-"the promised line insertion (%s) breaks its own promises"
-        is_caused_by => { "unknown" },
-           certainty => "possible";
+"the promised line insertion breaks its own promises"
+        is_caused_by => { "insert_lines" },
+           certainty => "certain";
 
-"because the regular expression \"%s\" still matches the replacement string"
-        is_caused_by => { "unknown" },
-           certainty => "possible";
+"because the regular expression still matches the replacement string"
+             comment => "You need to craft a more precise regular expression that will not match a substring",
+        is_caused_by => { "replace_patterns" },
+           certainty => "certain";
 
 "line split criterion matches a huge part of the line -- seems to be in error"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "field_edits", "edit_line" },
            certainty => "possible";
 
 "line insertion should not use whitespace policy with preserve_block"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "preserve_block", "whitespace_policy", "edit_lines", "insert_lines" },
            certainty => "possible";
 
 "recursive depth_searches are not compatible with general file editing"
-        is_caused_by => { "unknown" },
-           certainty => "possible";
+        is_caused_by => { "depth_search", "edit_lines" },
+           certainty => "certain";
 
-"promise constraint conflicts - %s cannot be deleted and exist at the same time"
-        is_caused_by => { "unknown" },
-           certainty => "possible";
+"promise constraint conflicts - cannot be deleted and exist at the same time"
+        is_caused_by => { "create", "delete", "promise_types::files" },
+           certainty => "certain";
 
 "auditing cannot be performed on backgrounded promises (this might change)"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "auditing", "auditing in agent", "body_constraints::background" },
            certainty => "possible";
 
 "windows does not support killing link"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "link_from", "when_no_source" },
            certainty => "possible";
 
 "darwin findertype does not match -- not fixing"
-        is_caused_by => { "unknown" },
-           certainty => "possible";
+        is_caused_by => { "promise_type::files", "MacOS" },
+           certainty => "certain";
 
-"transformer %s => %s returned error"
-        is_caused_by => { "unknown" },
-           certainty => "possible";
+"transformer returned error"
+        is_caused_by => { "body_constraints::transformer", "promise_types::files" },
+           certainty => "certain";
 
 "new setuid root program"
-        is_caused_by => { "unknown" },
+             comment => "While scanning a file system for another purpose, CFEngine found this setuid root file",
+        is_caused_by => { "depth_search" },
            certainty => "possible";
 
 "new setgid root program"
-        is_caused_by => { "unknown" },
+             comment => "While scanning a file system for another purpose, CFEngine found this setgid root file",
+        is_caused_by => { "depth_search" },
            certainty => "possible";
+
 
 "variable and bundle parameter collide in scope"
-        is_caused_by => { "unknown" },
-           certainty => "possible";
-
-"use a work-around to avoid pathological behaviour"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "bodies and bundles", "promise_types::vars", "containers" },
            certainty => "possible";
 
 "mixture of ipv6 and ipv4 addresses"
-        is_caused_by => { "unknown" },
-           certainty => "possible";
-
-"cannot mix cidr notation with xx-yy range notation"
-        is_caused_by => { "unknown" },
+             comment => "A malformed ip address was entered",
+        is_caused_by => { "iprange", "promise_types::access" },    
            certainty => "possible";
 
 "access to literal server data requires you to define a promise handle for reference"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "remotescalar", "body_constraints::handle" },
            certainty => "possible";
 
-"the promiser \"%s\" of a measurement was not an absolute path",
-        is_caused_by => { "unknown" },
-           certainty => "possible";
+"the promiser of a measurement was not an absolute path",
+             comment => "The stream to read from must be a filename or a binary executable",
+        is_caused_by => { "promise_types::measurements" },
+           certainty => "certain";
 
-"the promiser \"%s\" did not specify a data type"
-        is_caused_by => { "unknown" },
+"the promiser did not specify a data type"
+             comment => "To understand the semantics of the promise, CFEngine needs you to say what kind of data to expect",
+        is_caused_by => { "promise_types::measurements" },
            certainty => "possible";
 
 "can't create a package manager envelope"
-        is_caused_by => { "unknown" },
-           certainty => "possible";
+             comment => "CFEngine can't find a package manager defintion to handle this",
+        is_caused_by => { "promise_type::packages" },
+           certainty => "certain";
 
 "could not get list of installed packages"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "promise_type::packages", "package_method", "package_list_command" },
            certainty => "possible";
 
 "the proposed package command was not executable"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "promise_type::packages", "package_method", "package_list_command" },
            certainty => "possible";
 
-"bulk package schedule execution failed somewhere - unknown outcome for %s"
+"bulk package schedule execution failed somewhere - unknown outcome for"
         is_caused_by => { "unknown" },
            certainty => "possible";
 
 "cannot mark software cache as invalid"
-        is_caused_by => { "unknown" },
+        is_caused_by => { "promise_type::packages" },
            certainty => "possible";
 
-"printing of file %s was not possible"
-        is_caused_by => { "unknown" },
+"printing of file was not possible"
+        is_caused_by => { "promise_type::reports", "body_constraints::printfile" },
            certainty => "possible";
-
 
 
 occurrences:
