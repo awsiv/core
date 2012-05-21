@@ -344,3 +344,13 @@
     display:inline-block;
     line-height:16px;
 }
+
+/* added styles for jScrollPane */
+#scrollable_list
+{
+    width: 100%;
+    height: 459px; 
+    overflow: auto;
+    margin-top: 10px;
+    margin-bottom: 3px;
+}
