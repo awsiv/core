@@ -105,7 +105,7 @@
                 var url = '<?php echo site_url() ?>';
                 $(data.element).attr('href', url+'/notes/index/action/show/nid/' + data.nid);
             },
-            title:'Add note about this host',
+            title:'Add a note about this host',
             dontOverrideTitle:true});
 
         $('#findreport').reportfinder({allhost:false,incList:"<?php echo $hostclass; ?>",baseUrl: '<?php echo site_url() ?>'});
