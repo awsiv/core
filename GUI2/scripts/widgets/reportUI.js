@@ -29,15 +29,28 @@
       
         menuItemClicked:function(e) {
             var $self = this;
-            e.preventDefault();
+            e.preventDefault();        
             var $itemClicked = $(e.currentTarget);
-            if ($itemClicked.hasClass('savesearch-url')) {
+            if ($itemClicked.hasClass('savesearch-url')) {                
                 // check if savedsearch is clicked
                 // load the url in different tab
                 var url = $itemClicked.attr('href');
-                window.open(url, '_blank');
-                return;
+                $self.openNewWindow(url, '_blank');
             }
+            /* 
+              this is workaround for weakest hosts report. we don't have any 
+              filters except inc/exc, that's why we should show filter form - redirect to the report 
+              after settting context
+            */
+            if ($itemClicked.attr('id') == 'weakest-hosts') {
+                var url = $itemClicked.attr('href');
+                if ($self._context.includes.length > 0) {
+                    url  += '/inclist/' + $self._context.includes;
+                }
+                $self.openNewWindow(url, '_blank');
+            }
+            
+            
             //remove the previous selected items
             $self.menuPane.find('.selected').removeClass("selected");
             //hide submenu after clicked
@@ -114,6 +127,11 @@
 
         destroy: function() {
             $.Widget.prototype.destroy.call(this);
+        },
+        
+        openNewWindow: function(url, target) {
+            window.open(url, target);
+            return;
         }
 
     });
