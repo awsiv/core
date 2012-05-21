@@ -19,7 +19,11 @@
         <div class="clear"></div>
         <div id="modifySearchPanel">
             <div class="grid_7_omega reportForm">
-                <?php $this->load->view('searchpages/' . $filter_view); ?> 
+                <?php 
+                if ($filter_view != '') {
+                    $this->load->view('searchpages/' . $filter_view);
+                }
+                ?> 
             </div>
             <script type="text/javascript">
             $('#show_filter_form').click(function() {
@@ -58,7 +62,9 @@
                   $pg = paging($current, $number_of_rows, $report_result['meta']['count'], 5);
                   include 'paging_footer.php';
                   if(is_array($paramArray) && !isset($paramArray['hosts_only'])){?>
-                     <a href="<?php echo $report_link ?>" id="send_mail" class="showqtip" title="<?php echo $this->lang->line('tool_tip_download_report') ?>"><span><em class="download_ico">&nbsp;</em></span></a>
+                    <?php if (isset($report_link) && !empty($report_link)) { ?>
+                        <a href="<?php echo $report_link ?>" id="send_mail" class="showqtip" title="<?php echo $this->lang->line('tool_tip_download_report') ?>"><span><em class="download_ico">&nbsp;</em></span></a>
+                        <?php } ?>
                <?php } } ?>
             </div>
             <div class="clear"></div> 
@@ -71,7 +77,8 @@
     </div>
 </div>
 <div class="clear"></div>
-<div title="Report download" id="dialog" class="stylized" style="width:400px;display:none;">
+<?php if (isset($report_link) && !empty($report_link)) { ?>
+    <div title="Report download" id="dialog" class="stylized" style="width:400px;display:none;">
     <form>
         <fieldset class="ui-helper-reset">
             <label for="report_download">Download: </label>
@@ -114,6 +121,7 @@
                         <div id="tempdiv" style="display: none;" ></div>
 
                         </div>
+<?php } ?>
 <script type="text/javascript">
     $(document).ready(function() {
         // for save search 
