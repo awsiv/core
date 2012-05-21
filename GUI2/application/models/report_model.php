@@ -989,7 +989,30 @@ class report_model extends Cf_Model
             throw $e;
         }
     }
-
+        
+    function getWeakestHosts($username, $includes = array('.*'), $excludes = array(), $rows = 10, $page = 1)
+    {
+        try
+        {
+            $rawdata = cfpr_host_compliance_list_all($username, $includes, $excludes, $rows, $page);
+            
+            $data = $this->checkData($rawdata);
+            if (is_array($data) && $this->hasErrors() == 0)
+            {
+                return $data;
+            }
+            else
+            {
+                throw new Exception($this->getErrorsString());
+            }
+        }
+        catch (Exception $e)
+        {
+            log_message('error', $e->getMessage() . " " . $e->getFile() . " line:" . $e->getLine());
+            throw $e;
+        }
+    }
+    
 }
 
 ?>
