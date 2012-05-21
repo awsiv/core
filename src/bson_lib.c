@@ -130,21 +130,11 @@ bool BsonIsArrayNonExistentOrEmpty(const bson *b, const char *key)
 {
     const char *array = BsonGetArrayValue(b, key);
 
-    if (!array)
+    if(!array || BsonIsEmpty((const bson *) array))
     {
         return true;
     }
-
-    bson_iterator it;
-
-    bson_iterator_init(&it, array);
-
-    while (bson_iterator_next(&it))
-    {
-        return false;
-    }
-
-    return true;
+    return false;
 }
 /*****************************************************************************/
 
