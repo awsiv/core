@@ -61,7 +61,7 @@ body common control
 #                    "OrionCloud/python_env.cf"
                    };
 
-   version => "Promises.cf 2.1.0";
+   version => "Promises.cf 2.2.0";
 
   nova_edition|constellation_edition::
 
