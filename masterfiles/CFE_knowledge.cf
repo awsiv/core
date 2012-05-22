@@ -250,7 +250,7 @@ bundle agent cfengine_setup_knowledge
 
   init_mongo::
 
-   "$(sys.workdir)/bin/mongo phpcfengine $(sys.workdir)/share/GUI/phpcfenginenova/export.js"
+   "$(sys.workdir)/bin/mongo --quiet phpcfengine $(sys.workdir)/share/GUI/phpcfenginenova/export.js"
       contain => silent_in_dir("$(sys.workdir)"),
       comment => "Initialise mongo authentication to access Nova Mission Portal 2.1.0 ++",
        handle => "knowledge_commands_mongo_exportjs";
