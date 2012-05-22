@@ -2651,7 +2651,7 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
 HubQuery *CFDB_QueryPromiseLogSummary(mongo_connection *conn, const char *hostkey, PromiseLogState state, const char *handle,
                                       bool regex, const char *cause, time_t from, time_t to, bool sort, HostClassFilter *host_class_filter)
 {
-    HubQuery *hq = CFDB_QueryPromiseLog(conn, hostkey, state, handle, regex, cause, from, to, false, host_class_filter);
+    HubQuery *hq = CFDB_QueryPromiseLog(conn, hostkey, state, handle, regex, cause, from, to, false, host_class_filter, NULL);
 
     Map *log_counts = MapNew(HubPromiseLogHash, HubPromiseLogEqual, NULL, free);
     for (const Rlist *rp = hq->records; rp; rp = rp->next)
@@ -2695,18 +2695,23 @@ HubQuery *CFDB_QueryPromiseLogSummary(mongo_connection *conn, const char *hostke
 
 HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, PromiseLogState state,
                                const char *lhandle, bool regex, const char *lcause_rx, time_t from, time_t to, int sort,
-                               HostClassFilter *hostClassFilter)
+                               HostClassFilter *hostClassFilter, int *total_results_out)
 {
     Rlist *record_list = NULL;
     Rlist *host_list = NULL;
 
-    CFDB_QueryPromiseLogFromMain(conn, keyHash, state, lhandle, regex, lcause_rx, from, to, sort, hostClassFilter, &host_list, &record_list);
+    int new_data_count = CFDB_QueryPromiseLogFromMain(conn, keyHash, state, lhandle, regex, lcause_rx, from, to, sort, hostClassFilter, &host_list, &record_list);
 
-    int oldDataCount = CFDB_QueryPromiseLogFromOldColl(conn, keyHash, state, lhandle, regex, lcause_rx, from, to, sort, hostClassFilter, &host_list, &record_list);
+    int old_data_count = CFDB_QueryPromiseLogFromOldColl(conn, keyHash, state, lhandle, regex, lcause_rx, from, to, sort, hostClassFilter, &host_list, &record_list);
 
-    if(oldDataCount > 0)
+    if(old_data_count > 0)
     {
-        record_list = SortRlist(record_list,SortPromiseLog);
+        record_list = SortRlist(record_list, SortPromiseLog);
+    }
+
+    if (total_results_out)
+    {
+        *total_results_out = new_data_count + old_data_count;
     }
 
     return NewHubQuery(host_list, record_list);

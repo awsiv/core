@@ -20,7 +20,7 @@ HubQuery *CFDB_QueryValueReport(mongo_connection *conn, char *keyHash, char *lda
 HubQuery *CFDB_QueryValueGraph(mongo_connection *conn, char *keyHash, char *lday, char *lmonth, char *lyear, int sort,
                                char *classRegex);
 HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, PromiseLogState state, const char *lhandle,
-                               bool regex, const char *lcause, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter);
+                               bool regex, const char *lcause, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter, int *total_results_out);
 int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash, PromiseLogState state,
                                const char *lhandle, bool regex, const char *lcause, time_t from, time_t to, int sort,
                                HostClassFilter *hostClassFilter, Rlist **host_list, Rlist **record_list);

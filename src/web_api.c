@@ -1090,7 +1090,7 @@ int Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogSt
         return false;
     }
 
-    hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, causeRx, from, to, true, hostClassFilter);
+    hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, causeRx, from, to, true, hostClassFilter, NULL);
 
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubPromiseLog);
@@ -2841,7 +2841,7 @@ int Nova2PHP_promiselog_hosts(char *hostkey, char *handle, char *causeRx, Promis
         return false;
     }
 
-    HubQuery *hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, causeRx, from, to, false, hostClassFilter);
+    HubQuery *hq = CFDB_QueryPromiseLog(&dbconn, hostkey, state, handle, true, causeRx, from, to, false, hostClassFilter, NULL);
 
     CreateJsonHostOnlyReport(&(hq->hosts), page, returnval, bufsize);
 
