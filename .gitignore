@@ -49,3 +49,10 @@ nova.creator.user
 nova.files
 nova.includes
 
+#knowledge 
+
+knowledge/*.html
+knowledge/*.cf
+knowledge/check_km_substring
+knowledge/scan_examples
+knowledge/highlight_syntax

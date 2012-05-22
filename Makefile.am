@@ -6,7 +6,7 @@ top_srcdir = $(abs_top_srcdir)
 top_builddir = $(abs_top_builddir)
 top_build_prefix = $(abs_top_builddir)/
 
-SUBDIRS = src docs GUI2 tests/unit knowledge
+SUBDIRS = src docs GUI2 tests/unit
 
 if !HAVE_CONSTELLATION
 if MONGO
