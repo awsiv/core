@@ -158,15 +158,20 @@ void Nova_ShowTopic(char *qualified_topic)
     json = Nova2PHP_show_all_context_leads(topic_name);
     JsonElementPrint(writer, json, 1);
     JsonElementDestroy(json);
-    printf("\nAssociations: %s\n", StringWriterClose(writer));
+    printf("\nAssociations: %s\n", StringWriterData(writer));
+    WriterClose(writer);
 
-    writer = StringWriter();
     json = Nova_ScanOccurrences(id);
     if (json)
     {
+        writer = NULL;
+        writer = StringWriter();
+
         JsonElementPrint(writer, json, 1);
         JsonElementDestroy(json);
-        printf("\nOccurrences: %s\n\n", StringWriterClose(writer));
+        printf("\nOccurrences: %s\n\n", StringWriterData(writer));
+
+        WriterClose(writer);
     }
 
     char buffer[CF_BUFSIZE];
