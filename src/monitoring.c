@@ -1097,7 +1097,7 @@ static Item *NovaReSample(int slot, Attributes a, Promise *pp)
 static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes a, Promise *pp)
 {
     char value[CF_MAXVARSIZE];
-    int count = 1, found = false, match_count = 0;
+    int count = 1, found = false, match_count = 0, done = false;
     double real_val = 0;
     Item *ip, *match = NULL;
 
@@ -1115,7 +1115,6 @@ static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes 
             CfOut(cf_verbose, "", " ?? Look for %s regex %s\n", handle, a.measure.select_line_matching);
             found = true;
             match = ip;
-            match_count++;
 
             if (a.measure.extraction_regex)
             {
@@ -1129,10 +1128,30 @@ static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes 
                     if (strcmp(value, "CF_NOMATCH") == 0)
                     {
                         real_val = CF_NODOUBLE;
+                        CfOut(cf_verbose,""," ! Was not able to match a value with %s on %s",a.measure.extraction_regex, match->name);
                     }
                     else
                     {
-                        real_val += Str2Double(value);
+                        if (real_val != CF_NODOUBLE)
+                        {
+                            CfOut(cf_verbose,""," -> Found candidate match value of %s",value);
+                            
+                            if (a.measure.policy == cfm_sum || a.measure.policy == cfm_average)
+                            {
+                                real_val += Str2Double(value);
+                            }
+                            else
+                            {
+                                real_val = Str2Double(value);
+                            }
+                            
+                            match_count++;
+
+                            if (a.measure.policy == cfm_first)
+                            {
+                                done = true;
+                            }
+                        }
                     }
                     break;
 
@@ -1144,6 +1163,11 @@ static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes 
         }
 
         count++;
+        
+        if (done)
+        {
+            break;
+        }
     }
 
     if (!found)
@@ -1167,7 +1191,7 @@ static double NovaExtractValueFromStream(char *handle, Item *stream, Attributes 
                   match_count, a.measure.select_line_matching);
         }
 
-        if (match_count > 0)
+        if (match_count > 0 && a.measure.policy == cfm_average) // If not "average" then "sum"
         {
             real_val /= match_count;
         }
