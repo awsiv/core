@@ -68,7 +68,7 @@
 
 void HostClassFilterAddIncludeExcludeLists(HostClassFilter *filter, zval * includes, zval * excludes);
 
-JsonElement *PackageResult(JsonElement *data_array, size_t page, size_t count);
+JsonElement *PackageResult(JsonElement *data_array, size_t page, size_t total);
 JsonElement *JsonObjectWrapper(JsonElement *data, int total_result_count);
 
 
