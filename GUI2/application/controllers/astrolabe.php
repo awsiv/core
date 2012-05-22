@@ -17,7 +17,7 @@ class Astrolabe extends Cf_REST_Controller
     {
         echo cfpr_astrolabe_host_list($this->username,
                 $this->param_includes(), $this->param_excludes());
-        
+
     }
 
     function profile_get($id = NULL)
@@ -44,11 +44,18 @@ class Astrolabe extends Cf_REST_Controller
 
     function profile_put($id)
     {
+        $node_description_list = json_decode($this->_put_args, true);
 
-        $nodeDescriptionList = json_decode($this->_put_args, true);
-
-        $this->astrolabe_model->profile_delete($this->username, $id);
-        $result = $this->astrolabe_model->profile_insert($this->username, $id, $nodeDescriptionList);
+        if ($this->__is_valid_node_description_list($node_description_list))
+        {
+            $this->astrolabe_model->profile_delete($this->username, $id);
+            $this->astrolabe_model->profile_insert($this->username, $id, $node_description_list);
+            $this->respond_ok();
+        }
+        else
+        {
+            $this->respond_not_acceptable();
+        }
     }
 
     function profile_delete($id)
@@ -63,4 +70,46 @@ class Astrolabe extends Cf_REST_Controller
         }
     }
 
+    function __is_valid_node_description_list($node_description_list)
+    {
+        if (!is_array($node_description_list))
+        {
+            return false;
+        }
+
+        foreach ($node_description_list as $child)
+        {
+            if (!$this->__is_valid_node_description($child))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function __is_valid_node_description($node_description)
+    {
+        if (!array_key_exists('label', $node_description) ||
+            !$node_description['label'])
+        {
+            return false;
+        }
+
+        if (!array_key_exists('classRegex', $node_description) ||
+            !$node_description['classRegex'])
+        {
+            return false;
+        }
+
+        if (array_key_exists('children', $node_description))
+        {
+            if (!$this->__is_valid_node_description_list($node_description['children']))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
