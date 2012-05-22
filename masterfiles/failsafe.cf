@@ -17,7 +17,7 @@ body common control
 ### List of filenames to parse for promises.
 
  inputs => { "update.cf" };
- version => "Failsafe.cf 2.1.0";
+ version => "Failsafe.cf 2.2.0";
 
  nova_edition|constellation_edition::
 

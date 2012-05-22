@@ -264,6 +264,14 @@ bundle agent update
                         handle => "update_processes_kill_cf_hub_on_clients",
                     ifvarclass => "nova_edition|constellation_edition";
 
+  update_report.!windows::
+
+   "cf-monitord"       signals => { "term", "kill" },
+                 restart_class => "restart_monitor",
+                        handle => "update_processes_kill_cf_monitord",
+                       classes => u_if_repaired_then_cancel("update_report"),
+                    ifvarclass => "nova_edition|constellation_edition";
+
 #
 
  commands:
@@ -275,7 +283,7 @@ bundle agent update
       comment => "Start cf-serverd process",
        handle => "update_commands_start_cf_serverd";
 
-  start_monitor::
+  start_monitor|restart_monitor::
 
    "$(sys.cf_monitord)"
        action => u_ifwin_bg,
@@ -472,6 +480,13 @@ body depth_search u_recurse_basedir(d)
 body classes u_if_repaired(x)
 {
  promise_repaired => { "$(x)" };
+}
+
+#########################################################
+
+body classes u_if_repaired_then_cancel(y)
+{
+ cancel_repaired => { "$(y)" };
 }
 
 #########################################################
