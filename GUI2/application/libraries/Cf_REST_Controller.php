@@ -69,7 +69,7 @@ class Cf_REST_Controller extends CI_Controller
         {
             $this->respond(array('status' => false, 'error' => 'Unknown method.'), 404);
         }
-        
+
         try
         {
             call_user_func_array(array($this, $controller_method), $arguments);
@@ -93,7 +93,7 @@ class Cf_REST_Controller extends CI_Controller
         exit($data);
     }
 
-    public function respond_ok($data)
+    public function respond_ok($data = null)
     {
         if (is_null($data))
         {
@@ -123,6 +123,11 @@ class Cf_REST_Controller extends CI_Controller
     public function respond_internal_error($message)
     {
         return $this->respond(500, $message);
+    }
+
+    public function respond_not_acceptable($message = null)
+    {
+        return $this->respond(406, $message);
     }
 
     protected function _detect_method()
