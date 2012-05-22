@@ -74,16 +74,21 @@ JsonElement *Nova_DrawTribe(int *tribe_id, GraphNode *tribe_node, double tribe_a
 
         JsonElement *json_obj_data = JsonObjectCreate(6);
         JsonObjectAppendString(json_obj_data, "$color", colour);
-        JsonObjectAppendString(json_obj_data, "$dim", StringWriterClose(rad));
+        JsonObjectAppendString(json_obj_data, "$dim", StringWriterData(rad));
         JsonObjectAppendString(json_obj_data, "$type", "gradientCircle");
         JsonObjectAppendString(json_obj_data, "context", tribe_node[i].context);
         JsonObjectAppendString(json_obj_data, "fullname", tribe_node[i].fullname);
-        JsonObjectAppendString(json_obj_data, "link", StringWriterClose(url));
+        JsonObjectAppendString(json_obj_data, "link", StringWriterData(url));
+
+        WriterClose(rad);
+        WriterClose(url);
 
         JsonElement *json_obj = JsonObjectCreate(5);
-        JsonObjectAppendString(json_obj, "id", StringWriterClose(id));
+        JsonObjectAppendString(json_obj, "id", StringWriterData(id));
         JsonObjectAppendString(json_obj, "name", tribe_node[i].shortname);
         JsonObjectAppendObject(json_obj, "data", json_obj_data);
+
+        WriterClose(id);
 
         JsonElement *json_array_adjacencies = JsonArrayCreate(10);
         for (j = 0; j < tribe_size; j++)
@@ -94,8 +99,10 @@ JsonElement *Nova_DrawTribe(int *tribe_id, GraphNode *tribe_node, double tribe_a
                 WriterWriteF(tmp, "g%d", j);
 
                 JsonElement *json_obj_nodeto = JsonObjectCreate(10);
-                JsonObjectAppendString(json_obj_nodeto, "nodeTo", StringWriterClose(tmp));
+                JsonObjectAppendString(json_obj_nodeto, "nodeTo", StringWriterData(tmp));
                 JsonArrayAppendObject(json_array_adjacencies, json_obj_nodeto);
+
+                WriterClose(tmp);
             }
         }
         JsonObjectAppendArray(json_obj, "adjacencies", json_array_adjacencies);
