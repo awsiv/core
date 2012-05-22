@@ -256,17 +256,19 @@ typedef struct
 {
     HubHost *hh;
     char *path;
+    char *diff;
     time_t t;
-    char *handle;
-} HubFileChanges;
+} HubFileDiff;
 
 typedef struct
 {
     HubHost *hh;
     char *path;
-    char *diff;
     time_t t;
-} HubFileDiff;
+    char *handle;
+
+    HubFileDiff *diff_record;
+} HubFileChanges;
 
 typedef struct
 {

@@ -694,6 +694,8 @@ HubFileChanges *NewHubFileChanges(HubHost *hh, char *file, time_t t, char *handl
     hp->path = xstrdup(file);
     hp->t = t;
     hp->handle = xstrdup(handle);
+    hp->diff_record = NULL;
+
     return hp;
 }
 
