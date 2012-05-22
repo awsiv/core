@@ -38,23 +38,8 @@ void HostClassFilterAddIncludeExcludeLists(HostClassFilter *filter, zval * inclu
     DeleteRlist(excludeRlist);
 }
 
-JsonElement *PackageResult(JsonElement *data_array, size_t page, size_t count)
+JsonElement *PackageResult(JsonElement *data_array, size_t page, size_t total)
 {
-    size_t total = JsonElementLength(data_array);
-    if (total > 0)
-    {
-        size_t start = MAX(count * (page - 1), 0);
-        if (start > 0)
-        {
-            JsonArrayRemoveRange(data_array, 0, MIN(start, JsonElementLength(data_array)) - 1);
-        }
-
-        if (JsonElementLength(data_array) > count)
-        {
-            JsonArrayRemoveRange(data_array, count, JsonElementLength(data_array) - 1);
-        }
-    }
-
     JsonElement *meta = JsonObjectCreate(4);
     JsonObjectAppendInteger(meta, "total", total);
     JsonObjectAppendInteger(meta, "page", page);

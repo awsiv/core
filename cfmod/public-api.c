@@ -67,9 +67,8 @@ PHP_FUNCTION(cfmod_resource_host)
 {
     char *username = NULL, *hostname = NULL, *ip = NULL;
     long from = 0,
-         to = 0,
-         page = 0,
-         count = 0;
+         to = 0;
+    PageInfo page = { 0 };
     int len;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllll",
@@ -78,8 +77,8 @@ PHP_FUNCTION(cfmod_resource_host)
                               &ip, &len,
                               &from,
                               &to,
-                              &page,
-                              &count) == FAILURE)
+                              &page.pageNum,
+                              &page.resultsPerPage) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
     }
@@ -101,6 +100,9 @@ PHP_FUNCTION(cfmod_resource_host)
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
     }
 
+    int total = RlistLen(hostkeys);
+    PageRecords(&hostkeys, &page, free);
+
     JsonElement *output = JsonArrayCreate(1000);
 
     for (Rlist *rp = hostkeys; rp != NULL; rp = rp->next)
@@ -110,7 +112,7 @@ PHP_FUNCTION(cfmod_resource_host)
 
     DeleteRlist(hostkeys);
 
-    RETURN_JSON(PackageResult(output, page, count));
+    RETURN_JSON(PackageResult(output, page.pageNum, total));
 }
 
 /************************************************************************************/
@@ -192,9 +194,8 @@ PHP_FUNCTION(cfmod_resource_host_id_seen)
 {
     char *username = NULL, *hostkey = NULL;
     long from = 0,
-         to = 0,
-         page = 0,
-         count = 0;
+         to = 0;
+    PageInfo page = { 0 };
     int len = -1;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssllll",
@@ -202,15 +203,14 @@ PHP_FUNCTION(cfmod_resource_host_id_seen)
                               &hostkey, &len,
                               &from,
                               &to,
-                              &page,
-                              &count) == FAILURE)
+                              &page.pageNum,
+                              &page.resultsPerPage) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
     }
 
     HubQuery *result = NULL;
-
     {
         HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
@@ -219,19 +219,23 @@ PHP_FUNCTION(cfmod_resource_host_id_seen)
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
         mongo_connection conn;
+        DATABASE_OPEN(&conn);
 
-        DATABASE_OPEN(&conn) result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, 0, false, from, to, false, filter);
+        result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, 0, false, from, to, false, filter);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
         DATABASE_CLOSE(&conn);
     }
     assert(result);
 
+    int total = RlistLen(result->records);
+    PageRecords(&result->records, &page, DeleteHubLastSeen);
+
     JsonElement *output = HostsLastSeen(result->records, LAST_SEEN_DIRECTION_OUTGOING);
 
     DeleteHubQuery(result, DeleteHubLastSeen);
 
-    RETURN_JSON(PackageResult(output, page, count));
+    RETURN_JSON(PackageResult(output, page.pageNum, total));
 }
 
 PHP_FUNCTION(cfmod_resource_host_id_seenby)
@@ -255,7 +259,6 @@ PHP_FUNCTION(cfmod_resource_host_id_seenby)
     }
 
     HubQuery *result = NULL;
-
     {
         HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
         ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -266,7 +269,6 @@ PHP_FUNCTION(cfmod_resource_host_id_seenby)
         DATABASE_OPEN(&conn);
 
         result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, 0, false, from, to, false, filter);
-        PageRecords(&result->records, &page, DeleteHubLastSeen);
 
         DATABASE_CLOSE(&conn);
 
@@ -274,11 +276,14 @@ PHP_FUNCTION(cfmod_resource_host_id_seenby)
     }
     assert(result);
 
+    int total = RlistLen(result->records);
+    PageRecords(&result->records, &page, DeleteHubLastSeen);
+
     JsonElement *output = HostsLastSeen(result->records, LAST_SEEN_DIRECTION_INCOMING);
 
     DeleteHubQuery(result, DeleteHubLastSeen);
 
-    RETURN_JSON(output);
+    RETURN_JSON(PackageResult(output, page.pageNum, total));
 }
 
 /************************************************************************************/
@@ -328,9 +333,8 @@ PHP_FUNCTION(cfmod_resource_promise_compliance)
 {
     char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL, *state = NULL;
     long from = 0,
-         to = 0,
-         page = 0,
-         count = 0;
+         to = 0;
+    PageInfo page = { 0 };
     int len;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssllll",
@@ -341,8 +345,8 @@ PHP_FUNCTION(cfmod_resource_promise_compliance)
                               &state, &len,
                               &from,
                               &to,
-                              &page,
-                              &count) == FAILURE)
+                              &page.pageNum,
+                              &page.resultsPerPage) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -367,7 +371,10 @@ PHP_FUNCTION(cfmod_resource_promise_compliance)
     }
     assert(result);
 
-    JsonElement *output = JsonArrayCreate(100);
+    int total = RlistLen(result->records);
+    PageRecords(&result->records, &page, DeleteHubPromiseCompliance);
+
+    JsonElement *output = JsonArrayCreate(total);
 
     for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
     {
@@ -386,7 +393,7 @@ PHP_FUNCTION(cfmod_resource_promise_compliance)
 
     DeleteHubQuery(result, DeleteHubPromiseCompliance);
 
-    RETURN_JSON(PackageResult(output, page, count));
+    RETURN_JSON(PackageResult(output, page.pageNum, total));
 }
 
 /************************************************************************************/
@@ -406,9 +413,10 @@ static const char *PromiseLogStateToString(PromiseLogState state)
 
 static JsonElement *PromiseLogAsJson(mongo_connection *conn, PromiseLogState state, const char *handle, const char *cause_rx,
                                      const char *hostkey, const char *context, int from, int to,
-                                     HostClassFilter *filter)
+                                     HostClassFilter *filter, PageInfo *page, int *total_results_out)
 {
-    HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, cause_rx, from, to, true, filter);
+    HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, cause_rx, from, to, true, filter, total_results_out);
+    PageRecords(&(result->records), page, DeleteHubPromiseLog);
 
     JsonElement *output = JsonArrayCreate(100);
 
@@ -435,9 +443,8 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired)
 {
     char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL, *cause_rx = NULL;
     long from = 0,
-         to = 0,
-         page = 0,
-         count = 0;
+         to = 0;
+    PageInfo page;
     int len;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssllll",
@@ -448,15 +455,15 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired)
                               &context, &len,
                               &from,
                               &to,
-                              &page,
-                              &count) == FAILURE)
+                              &page.pageNum,
+                              &page.resultsPerPage) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
     }
 
     JsonElement *output = NULL;
-
+    int total = 0;
     {
         HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
         ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -467,7 +474,8 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired)
         mongo_connection conn;
         DATABASE_OPEN(&conn);
 
-        output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, cause_rx, hostkey, context, from, to, filter);
+        output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, cause_rx, hostkey, context, from, to,
+                                  filter, &page, &total);
 
         DATABASE_CLOSE(&conn);
 
@@ -475,18 +483,26 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired)
     }
     assert(output);
 
-    RETURN_JSON(PackageResult(output, page, count));
+    RETURN_JSON(PackageResult(output, page.pageNum, total));
 }
 
 /************************************************************************************/
 
 static JsonElement *PromiseLogSummaryAsJson(mongo_connection *conn, PromiseLogState state, const char *handle, const char *cause_rx,
                                             const char *hostkey, const char *context, int from, int to,
-                                            HostClassFilter *filter)
+                                            HostClassFilter *filter, PageInfo *page, int *total_results_out)
 {
-    HubQuery *result = CFDB_QueryPromiseLogSummary(conn, hostkey, state, handle, true, cause_rx, from, to, true, filter);
+    HubQuery *result = CFDB_QueryPromiseLogSummary(conn, hostkey, state, handle, true, cause_rx, from, to, true,
+                                                   filter);
 
-    JsonElement *output = JsonArrayCreate(100);
+    if (total_results_out)
+    {
+        *total_results_out = RlistLen(result->records);
+    }
+
+    PageRecords(&result->records, page, DeleteHubPromiseSum);
+
+    JsonElement *output = JsonArrayCreate(total_results_out ? *total_results_out : 100);
     for (const Rlist *rp = result->records; rp; rp = rp->next)
     {
         const HubPromiseSum *record = (const HubPromiseSum *)rp->item;
@@ -509,9 +525,8 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired_summary)
 {
     char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL, *cause_rx = NULL;
     long from = 0,
-         to = 0,
-         page = 0,
-         count = 0;
+         to = 0;
+    PageInfo page = { 0 };
     int len;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssllll",
@@ -522,15 +537,15 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired_summary)
                               &context, &len,
                               &from,
                               &to,
-                              &page,
-                              &count) == FAILURE)
+                              &page.pageNum,
+                              &page.resultsPerPage) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
     }
 
     JsonElement *output = NULL;
-
+    int total = 0;
     {
         HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
         ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -541,7 +556,8 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired_summary)
         mongo_connection conn;
         DATABASE_OPEN(&conn);
 
-        output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, cause_rx, hostkey, context, from, to, filter);
+        output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, cause_rx, hostkey, context, from, to,
+                                         filter, &page, &total);
 
         DATABASE_CLOSE(&conn);
 
@@ -549,7 +565,7 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired_summary)
     }
     assert(output);
 
-    RETURN_JSON(PackageResult(output, page, count));
+    RETURN_JSON(PackageResult(output, page.pageNum, total));
 }
 
 /************************************************************************************/
@@ -558,9 +574,8 @@ PHP_FUNCTION(cfmod_resource_promise_log_notkept)
 {
     char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL, *cause_rx = NULL;
     long from = 0,
-         to = 0,
-         page = 0,
-         count = 0;
+         to = 0;
+    PageInfo page = { 0 };
     int len;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssllll",
@@ -571,15 +586,15 @@ PHP_FUNCTION(cfmod_resource_promise_log_notkept)
                               &context, &len,
                               &from,
                               &to,
-                              &page,
-                              &count) == FAILURE)
+                              &page.pageNum,
+                              &page.resultsPerPage) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
     }
 
     JsonElement *output = NULL;
-
+    int total = 0;
     {
         HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
 
@@ -590,17 +605,17 @@ PHP_FUNCTION(cfmod_resource_promise_log_notkept)
         HostClassFilterAddClasses(filter, context, NULL);
 
         mongo_connection conn;
-
         DATABASE_OPEN(&conn);
 
-        output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, cause_rx, hostkey, context, from, to, filter);
+        output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, cause_rx, hostkey, context, from, to,
+                                  filter, &page, &total);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
         DATABASE_CLOSE(&conn);
     }
     assert(output);
 
-    RETURN_JSON(PackageResult(output, page, count));
+    RETURN_JSON(PackageResult(output, page.pageNum, total));
 }
 
 /************************************************************************************/
@@ -609,9 +624,8 @@ PHP_FUNCTION(cfmod_resource_promise_log_notkept_summary)
 {
     char *username = NULL, *handle = NULL, *hostkey = NULL, *context = NULL, *cause_rx = NULL;
     long from = 0,
-         to = 0,
-         page = 0,
-         count = 0;
+         to = 0;
+    PageInfo page = { 0 };
     int len;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssllll",
@@ -622,15 +636,15 @@ PHP_FUNCTION(cfmod_resource_promise_log_notkept_summary)
                               &context, &len,
                               &from,
                               &to,
-                              &page,
-                              &count) == FAILURE)
+                              &page.pageNum,
+                              &page.resultsPerPage) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
     }
 
     JsonElement *output = NULL;
-
+    int total = 0;
     {
         HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
         ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -641,7 +655,8 @@ PHP_FUNCTION(cfmod_resource_promise_log_notkept_summary)
         mongo_connection conn;
         DATABASE_OPEN(&conn);
 
-        output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, cause_rx, hostkey, context, from, to, filter);
+        output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, cause_rx, hostkey, context, from, to,
+                                         filter, &page, &total);
 
         DATABASE_CLOSE(&conn);
 
@@ -649,7 +664,7 @@ PHP_FUNCTION(cfmod_resource_promise_log_notkept_summary)
     }
     assert(output);
 
-    RETURN_JSON(PackageResult(output, page, count));
+    RETURN_JSON(PackageResult(output, page.pageNum, total));
 }
 
 /************************************************************************************/
@@ -738,9 +753,8 @@ PHP_FUNCTION(cfmod_resource_variable)
 {
     char *username = NULL, *hostkey = NULL, *scope = NULL, *name = NULL, *value = NULL, *type = NULL, *context = NULL;
     long from = 0,
-         to = 0,
-         page = 0,
-         count = 0;
+         to = 0;
+    PageInfo page = { 0 };
     int len;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssssllll",
@@ -753,15 +767,14 @@ PHP_FUNCTION(cfmod_resource_variable)
                               &context, &len,
                               &from,
                               &to,
-                              &page,
-                              &count) == FAILURE)
+                              &page.pageNum,
+                              &page.resultsPerPage) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
     }
 
     HubQuery *result = NULL;
-
     {
         HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
         ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -779,6 +792,9 @@ PHP_FUNCTION(cfmod_resource_variable)
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
     }
     assert(result);
+
+    int total = RlistLen(result->records);
+    PageRecords(&result->records, &page, DeleteHubVariable);
 
     JsonElement *output = JsonArrayCreate(100);
 
@@ -808,7 +824,7 @@ PHP_FUNCTION(cfmod_resource_variable)
 
     DeleteHubQuery(result, DeleteHubVariable);
 
-    RETURN_JSON(PackageResult(output, page, count));
+    RETURN_JSON(PackageResult(output, page.pageNum, total));
 }
 
 /************************************************************************************/
@@ -818,9 +834,8 @@ PHP_FUNCTION(cfmod_resource_context)
     char *username = NULL, *hostkey = NULL, *context = NULL;
     int len;
     long from = 0,
-         to = 0,
-         page = 0,
-         count = 0;
+         to = 0;
+    PageInfo page = { 0 };
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllll",
                               &username, &len,
@@ -828,8 +843,8 @@ PHP_FUNCTION(cfmod_resource_context)
                               &context, &len,
                               &from,
                               &to,
-                              &page,
-                              &count) == FAILURE)
+                              &page.pageNum,
+                              &page.resultsPerPage) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -854,6 +869,9 @@ PHP_FUNCTION(cfmod_resource_context)
     }
     assert(result);
 
+    int total = RlistLen(result->records);
+    PageRecords(&result->records, &page, DeleteHubClass);
+
     JsonElement *output = JsonArrayCreate(100);
 
     for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
@@ -872,7 +890,7 @@ PHP_FUNCTION(cfmod_resource_context)
 
     DeleteHubQuery(result, DeleteHubClass);
 
-    RETURN_JSON(PackageResult(output, page, count));
+    RETURN_JSON(PackageResult(output, page.pageNum, total));
 }
 
 /************************************************************************************/
@@ -914,8 +932,7 @@ PHP_FUNCTION(cfmod_resource_software)
 {
     char *username = NULL, *hostkey = NULL, *name = NULL, *version = NULL, *arch = NULL, *context = NULL;
     int len;
-    long page = 0,
-         count = 0;
+    PageInfo page = { 0 };
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssssll",
                               &username, &len,
@@ -924,8 +941,8 @@ PHP_FUNCTION(cfmod_resource_software)
                               &version, &len,
                               &arch, &len,
                               &context, &len,
-                              &page,
-                              &count) == FAILURE)
+                              &page.pageNum,
+                              &page.resultsPerPage) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -952,6 +969,9 @@ PHP_FUNCTION(cfmod_resource_software)
     }
     assert(result);
 
+    int total = RlistLen(result->records);
+    PageRecords(&result->records, &page, DeleteHubSoftware);
+
     JsonElement *output = JsonArrayCreate(100);
 
     for (Rlist *rp = result->records; rp != NULL; rp = rp->next)
@@ -974,7 +994,7 @@ PHP_FUNCTION(cfmod_resource_software)
 
     DeleteHubQuery(result, DeleteHubSoftware);
 
-    RETURN_JSON(PackageResult(output, page, count));
+    RETURN_JSON(PackageResult(output, page.pageNum, total));
 }
 
 /************************************************************************************/
@@ -1012,16 +1032,15 @@ PHP_FUNCTION(cfmod_resource_setuid)
 {
     char *username = NULL, *hostkey = NULL, *path = NULL, *context = NULL;
     int len;
-    long page = 0,
-         count = 0;
+    PageInfo page = { 0 };
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssll",
                               &username, &len,
                               &hostkey, &len,
                               &path, &len,
                               &context, &len,
-                              &page,
-                              &count) == FAILURE)
+                              &page.pageNum,
+                              &page.resultsPerPage) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -1036,13 +1055,17 @@ PHP_FUNCTION(cfmod_resource_setuid)
         HostClassFilterAddClasses(filter, context, NULL);
 
         mongo_connection conn;
-        DATABASE_OPEN(&conn) result = CFDB_QuerySetuid(&conn, hostkey, path, true, filter);
+        DATABASE_OPEN(&conn);
+
+        result = CFDB_QuerySetuid(&conn, hostkey, path, true, filter);
 
         DATABASE_CLOSE(&conn);
-
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
     }
     assert(result);
+
+    int total = RlistLen(result->records);
+    PageRecords(&result->records, &page, DeleteHubSetUid);
 
     JsonElement *output = JsonArrayCreate(100);
 
@@ -1066,12 +1089,12 @@ PHP_FUNCTION(cfmod_resource_setuid)
 
     DeleteHubQuery(result, DeleteHubSetUid);
 
-    RETURN_JSON(PackageResult(output, page, count));
+    RETURN_JSON(PackageResult(output, page.pageNum, total));
 }
 
 /************************************************************************************/
 
-bool FileRecordsEqual(HubFileChanges *change_record, HubFileDiff *diff_record)
+bool FileRecordsEqual(const HubFileChanges *change_record, const HubFileDiff *diff_record)
 {
     if (!change_record || !diff_record)
     {
@@ -1086,14 +1109,55 @@ bool FileRecordsEqual(HubFileChanges *change_record, HubFileDiff *diff_record)
     return (strcmp(change_record->path, diff_record->path) == 0) && (change_record->t == diff_record->t);
 }
 
+JsonElement *HubFileChangesToJson(const HubFileChanges *change_record)
+{
+    JsonElement *entry = JsonObjectCreate(4);
+
+    JsonObjectAppendString(entry, LABEL_HOSTKEY, change_record->hh->keyhash);
+    JsonObjectAppendString(entry, LABEL_PATH, change_record->path);
+    JsonObjectAppendInteger(entry, LABEL_TIMESTAMP, change_record->t);
+
+    if (change_record->diff_record)
+    {
+        char diff_buffer[CF_BUFSIZE];
+
+        diff_buffer[0] = '\0';
+        char diff_type = -1;
+        int line = -1;
+
+        sscanf(change_record->diff_record->diff, "%c,%d,%s", &diff_type, &line, diff_buffer);
+
+        JsonElement *diff_entry = JsonObjectCreate(3);
+
+        switch (diff_type)
+        {
+        case '+':
+            JsonObjectAppendString(diff_entry, LABEL_TYPE, LABEL_ADD);
+            break;
+        case '-':
+            JsonObjectAppendString(diff_entry, LABEL_TYPE, LABEL_REMOVE);
+            break;
+        default:
+            JsonObjectAppendString(diff_entry, LABEL_TYPE, LABEL_UNKNOWN);
+            break;
+        }
+
+        JsonObjectAppendInteger(diff_entry, LABEL_LINE_NUMBER, line);
+        JsonObjectAppendString(diff_entry, LABEL_VALUE, diff_buffer);
+
+        JsonObjectAppendObject(entry, LABEL_DIFF, diff_entry);
+    }
+
+    return entry;
+}
+
 PHP_FUNCTION(cfmod_resource_file)
 {
     char *username = NULL, *hostkey = NULL, *path = NULL, *context = NULL;
     int len;
     long from = 0,
-         to = 0,
-         page = 0,
-         count = 0;
+         to = 0;
+    PageInfo page = { 0 };
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssllll",
                               &username, &len,
@@ -1102,8 +1166,8 @@ PHP_FUNCTION(cfmod_resource_file)
                               &context, &len,
                               &from,
                               &to,
-                              &page,
-                              &count) == FAILURE)
+                              &page.pageNum,
+                              &page.resultsPerPage) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();
@@ -1111,7 +1175,6 @@ PHP_FUNCTION(cfmod_resource_file)
 
     HubQuery *change_result = NULL;
     HubQuery *diff_result = NULL;
-
     {
         HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(username);
         ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -1129,75 +1192,36 @@ PHP_FUNCTION(cfmod_resource_file)
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
     }
-
     assert(change_result);
     assert(diff_result);
 
-    JsonElement *output = JsonArrayCreate(1000);
+    int total = RlistLen(change_result->records);
+    PageRecords(&change_result->records, &page, DeleteHubFileChanges);
 
-    Rlist *changep = change_result->records;
-    Rlist *diffp = diff_result->records;
-
-    do
+    for (const Rlist *diffp = diff_result->records; diffp; diffp = diffp->next)
     {
-        HubFileDiff *diff_record = diffp ? (HubFileDiff *) diffp->item : NULL;
+        HubFileDiff *diff_record = (HubFileDiff *)diffp->item;
 
-        while (changep)
+        for (const Rlist *changep = change_result->records; changep; changep = changep->next)
         {
-            HubFileChanges *change_record = (HubFileChanges *) changep->item;
+            HubFileChanges *change_record = (HubFileChanges *)changep->item;
 
-            JsonElement *entry = JsonObjectCreate(4);
-
-            JsonObjectAppendString(entry, LABEL_HOSTKEY, change_record->hh->keyhash);
-            JsonObjectAppendString(entry, LABEL_PATH, change_record->path);
-            JsonObjectAppendInteger(entry, LABEL_TIMESTAMP, change_record->t);
-
-            JsonArrayAppendObject(output, entry);
             if (FileRecordsEqual(change_record, diff_record))
             {
-                char diff_buffer[CF_BUFSIZE];
-
-                diff_buffer[0] = '\0';
-                char diff_type = -1;
-                int line = -1;
-
-                sscanf(diff_record->diff, "%c,%d,%s", &diff_type, &line, diff_buffer);
-
-                JsonElement *diff_entry = JsonObjectCreate(3);
-
-                switch (diff_type)
-                {
-                case '+':
-                    JsonObjectAppendString(diff_entry, LABEL_TYPE, LABEL_ADD);
-                    break;
-                case '-':
-                    JsonObjectAppendString(diff_entry, LABEL_TYPE, LABEL_REMOVE);
-                    break;
-                default:
-                    JsonObjectAppendString(diff_entry, LABEL_TYPE, LABEL_UNKNOWN);
-                    break;
-                }
-
-                JsonObjectAppendInteger(diff_entry, LABEL_LINE_NUMBER, line);
-                JsonObjectAppendString(diff_entry, LABEL_VALUE, diff_buffer);
-
-                JsonObjectAppendObject(entry, LABEL_DIFF, diff_entry);
-                changep = changep->next;
+                change_record->diff_record = diff_record;
                 break;
             }
-            else
-            {
-                changep = changep->next;
-                continue;
-            }
         }
-
-        diffp = diffp ? diffp->next : NULL;
     }
-    while (diffp);
+
+    JsonElement *data = JsonArrayCreate(1000);
+    for (const Rlist *rp = change_result->records; rp; rp = rp->next)
+    {
+        JsonArrayAppendObject(data, HubFileChangesToJson((const HubFileChanges *)rp->item));
+    }
 
     DeleteHubQuery(change_result, DeleteHubFileChanges);
     DeleteHubQuery(diff_result, DeleteHubFileDiff);
 
-    RETURN_JSON(PackageResult(output, page, count));
+    RETURN_JSON(PackageResult(data, page.pageNum, total));
 }
