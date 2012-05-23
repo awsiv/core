@@ -412,8 +412,8 @@ static const char *PromiseLogStateToString(PromiseLogState state)
 }
 
 static JsonElement *PromiseLogAsJson(mongo_connection *conn, PromiseLogState state, const char *handle, const char *cause_rx,
-                                     const char *hostkey, const char *context, int from, int to,
-                                     HostClassFilter *filter, PageInfo *page, int *total_results_out)
+                                     const char *hostkey, int from, int to, HostClassFilter *filter, PageInfo *page,
+                                     int *total_results_out)
 {
     HubQuery *result = CFDB_QueryPromiseLog(conn, hostkey, state, handle, true, cause_rx, from, to, true, filter, total_results_out);
     PageRecords(&(result->records), page, DeleteHubPromiseLog);
@@ -474,7 +474,7 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired)
         mongo_connection conn;
         DATABASE_OPEN(&conn);
 
-        output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, cause_rx, hostkey, context, from, to,
+        output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, cause_rx, hostkey, from, to,
                                   filter, &page, &total);
 
         DATABASE_CLOSE(&conn);
@@ -489,8 +489,8 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired)
 /************************************************************************************/
 
 static JsonElement *PromiseLogSummaryAsJson(mongo_connection *conn, PromiseLogState state, const char *handle, const char *cause_rx,
-                                            const char *hostkey, const char *context, int from, int to,
-                                            HostClassFilter *filter, PageInfo *page, int *total_results_out)
+                                            const char *hostkey, int from, int to, HostClassFilter *filter, PageInfo *page,
+                                            int *total_results_out)
 {
     HubQuery *result = CFDB_QueryPromiseLogSummary(conn, hostkey, state, handle, true, cause_rx, from, to, true,
                                                    filter);
@@ -556,7 +556,7 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired_summary)
         mongo_connection conn;
         DATABASE_OPEN(&conn);
 
-        output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, cause_rx, hostkey, context, from, to,
+        output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, cause_rx, hostkey, from, to,
                                          filter, &page, &total);
 
         DATABASE_CLOSE(&conn);
@@ -601,13 +601,12 @@ PHP_FUNCTION(cfmod_resource_promise_log_notkept)
         ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
-
         HostClassFilterAddClasses(filter, context, NULL);
 
         mongo_connection conn;
         DATABASE_OPEN(&conn);
 
-        output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, cause_rx, hostkey, context, from, to,
+        output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, cause_rx, hostkey, from, to,
                                   filter, &page, &total);
 
         DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
@@ -655,7 +654,7 @@ PHP_FUNCTION(cfmod_resource_promise_log_notkept_summary)
         mongo_connection conn;
         DATABASE_OPEN(&conn);
 
-        output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, cause_rx, hostkey, context, from, to,
+        output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, cause_rx, hostkey, from, to,
                                          filter, &page, &total);
 
         DATABASE_CLOSE(&conn);
