@@ -61,7 +61,7 @@ occurrences:
        about_topics => { "when", "where" };
 
 
-    "/docs/cf3-reference.html#When-and-where-are-promises-made_003f"
+    "/docs/cf3-Reference.html#When-and-where-are-promises-made_003f"
          represents => { "reference - when and where are promises made?" },
        about_topics => { "when", "where" };
 
@@ -70,7 +70,7 @@ occurrences:
          represents => { "tutorial on policy decision flow" },
        about_topics => { "how" };
 
-    "/docs/cf3-reference.html#Decisions"
+    "/docs/cf3-Reference.html#Decisions"
          represents => { "reference manual on decision making" },
        about_topics => { "when", "where" };
 
@@ -539,7 +539,7 @@ occurrences:
    about_topics => {"fips"};
 
 
-  "/docs/cf3-reference.html#fips_005fmode-in-common"
+  "/docs/cf3-Reference.html#fips_005fmode-in-common"
      represents => { "reference manual entry for fips_mode" },
    about_topics => {"fips"};
 
@@ -550,7 +550,7 @@ occurrences:
 
 
 
-  "/docs/cf3-reference.html#ifencrypted-in-access"
+  "/docs/cf3-Reference.html#ifencrypted-in-access"
      represents => { "reference manual on ifencrypted" },
    about_topics => {"ifencrypted", "encryption", "...requires encrypt connection...will not serve" };
 

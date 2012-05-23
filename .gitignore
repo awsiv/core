@@ -57,3 +57,4 @@ knowledge/check_km_substrings
 knowledge/scan_examples
 knowledge/scan_texinfo
 knowledge/highlight_syntax
+knowledge/*.trans

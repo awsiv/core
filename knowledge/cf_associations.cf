@@ -263,7 +263,7 @@ occurrences:
     about_topics => { "business value", "business goals" };
 
 
-    "/docs/cf3-reference.html#cf_002dhub"
+    "/docs/cf3-Reference.html#cf_002dhub"
       represents => { "manual subsection" },
     about_topics => { "cf-hub" };
 

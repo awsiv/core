@@ -3,12 +3,12 @@
 all: clean src highlight_syntax check_km_substrings scan_texinfo scan_examples highlighted non-highlighted
 
 clean:
-	rm -f scan_SpecialTopic_* rm NovaEvaluationGuide.html NovaEvaluationGuideSupplement.html SpecialTopic_* UpgradingCfengineNova.html highlight_syntax check_km_substrings scan_examples scan_texinfo cf_Quickref3.html scan_Nova* scan_UpgradingCfengineNova.cf scan_cf3ref.cf scan_glossary.cf scan_quickref3.cf
+	rm -f scan_SpecialTopic_* rm NovaEvaluationGuide.html NovaEvaluationGuideSupplement.html SpecialTopic_* UpgradingCfengineNova.html highlight_syntax check_km_substrings scan_examples scan_texinfo cf_Quickref3.html scan_Nova* scan_UpgradingCfengineNova.cf scan_cf3ref.cf scan_glossary.cf scan_quickref3.cf *.trans
 
 src:
 	$(MAKE) -C ../../core html
 
-highlighted: scan_cf3ref.cf cf3-solutions.html scan_solutions.cf examples.cf cf3-tutorial.html scan_tutorial3.cf unit_peers.html cf3-bestpractice.html scan_bp3.cf cf3-conceptguide.html cf3-quickstart.html SpecialTopic_BDMA.html SpecialTopic_Monitoring.html SpecialTopic_Change.html SpecialTopic_OpenNebula.html SpecialTopic_Cloud.html SpecialTopic_Packages.html SpecialTopic_ContentDrivenPolicies.html SpecialTopic_RBAC.html SpecialTopic_DevOps.html SpecialTopic_Reporting.html SpecialTopic_DistributedScheduling.html  SpecialTopic_Rollback.html SpecialTopic_Editing.html SpecialTopic_Scalability.html SpecialTopic_Federation.html SpecialTopic_Scan.html SpecialTopic_FIPS.html SpecialTopic_Schedule.html SpecialTopic_Hierarchy.html SpecialTopic_Security.html NovaEvaluationGuide.html SpecialTopic_Iteration.html SpecialTopic_Teamwork.html NovaEvaluationGuideSupplement.html  SpecialTopic_ITIL.html SpecialTopic_Virtualization.html NovaOwnersManual.html SpecialTopic_Knowledge.html SpecialTopic_Windows.html SpecialTopic_Adoption.html SpecialTopic_MenuDrivenConfig.html UpgradingCfengineNova.html SpecialTopic_Agility.html SpecialTopic_MissionCritical.html SpecialTopic_ApplMgt.html SpecialTopic_Modules.html scan_SpecialTopic_BDMA.cf scan_SpecialTopic_Monitoring.cf scan_SpecialTopic_Change.cf scan_SpecialTopic_OpenNebula.cf scan_SpecialTopic_Cloud.cf scan_SpecialTopic_Packages.cf scan_SpecialTopic_ContentDrivenPolicies.cf scan_SpecialTopic_RBAC.cf scan_SpecialTopic_DevOps.cf scan_SpecialTopic_Reporting.cf scan_SpecialTopic_DistributedScheduling.cf scan_SpecialTopic_Rollback.cf scan_SpecialTopic_Editing.cf scan_SpecialTopic_Scalability.cf scan_SpecialTopic_Federation.cf scan_SpecialTopic_Scan.cf scan_SpecialTopic_FIPS.cf scan_SpecialTopic_Schedule.cf scan_SpecialTopic_Hierarchy.cf scan_SpecialTopic_Security.cf scan_NovaEvaluationGuide.cf scan_SpecialTopic_Iteration.cf scan_SpecialTopic_Teamwork.cf scan_NovaEvaluationGuideSupplement.cf scan_SpecialTopic_ITIL.cf scan_SpecialTopic_Virtualization.cf scan_NovaOwnersManual.cf scan_SpecialTopic_Knowledge.cf scan_SpecialTopic_Windows.cf scan_SpecialTopic_Adoption.cf scan_SpecialTopic_MenuDrivenConfig.cf scan_UpgradingCfengineNova.cf scan_SpecialTopic_Agility.cf scan_SpecialTopic_MissionCritical.cf scan_SpecialTopic_ApplMgt.cf scan_SpecialTopic_Modules.cf
+highlighted: scan_cf3ref.cf cf3-solutions.html scan_solutions.cf examples.cf cf3-tutorial.html scan_tutorial3.cf unit_peers.html cf3-bestpractice.html scan_bp3.cf cf3-conceptguide.html cf3-quickstart.html SpecialTopic_BDMA.html SpecialTopic_Monitoring.html SpecialTopic_Change.html SpecialTopic_OpenNebula.html SpecialTopic_Cloud.html SpecialTopic_Packages.html SpecialTopic_ContentDrivenPolicies.html SpecialTopic_RBAC.html SpecialTopic_DevOps.html SpecialTopic_Reporting.html SpecialTopic_DistributedScheduling.html  SpecialTopic_Rollback.html SpecialTopic_Editing.html SpecialTopic_Scalability.html SpecialTopic_Federation.html SpecialTopic_Scan.html SpecialTopic_FIPS.html SpecialTopic_Schedule.html SpecialTopic_Hierarchy.html SpecialTopic_Security.html NovaEvaluationGuide.html SpecialTopic_Iteration.html SpecialTopic_Teamwork.html NovaEvaluationGuideSupplement.html  SpecialTopic_ITIL.html SpecialTopic_Virtualization.html Enterprise-2-2-OwnersManual.html SpecialTopic_Knowledge.html SpecialTopic_Windows.html SpecialTopic_Adoption.html SpecialTopic_MenuDrivenConfig.html UpgradingCfengineNova.html SpecialTopic_Agility.html SpecialTopic_MissionCritical.html SpecialTopic_ApplMgt.html SpecialTopic_Modules.html scan_SpecialTopic_BDMA.cf scan_SpecialTopic_Monitoring.cf scan_SpecialTopic_Change.cf scan_SpecialTopic_OpenNebula.cf scan_SpecialTopic_Cloud.cf scan_SpecialTopic_Packages.cf scan_SpecialTopic_ContentDrivenPolicies.cf scan_SpecialTopic_RBAC.cf scan_SpecialTopic_DevOps.cf scan_SpecialTopic_Reporting.cf scan_SpecialTopic_DistributedScheduling.cf scan_SpecialTopic_Rollback.cf scan_SpecialTopic_Editing.cf scan_SpecialTopic_Scalability.cf scan_SpecialTopic_Federation.cf scan_SpecialTopic_Scan.cf scan_SpecialTopic_FIPS.cf scan_SpecialTopic_Schedule.cf scan_SpecialTopic_Hierarchy.cf scan_SpecialTopic_Security.cf scan_NovaEvaluationGuide.cf scan_SpecialTopic_Iteration.cf scan_SpecialTopic_Teamwork.cf scan_NovaEvaluationGuideSupplement.cf scan_SpecialTopic_ITIL.cf scan_SpecialTopic_Virtualization.cf scan_Enterprise-2-2-OwnersManual.cf scan_SpecialTopic_Knowledge.cf scan_SpecialTopic_Windows.cf scan_SpecialTopic_Adoption.cf scan_SpecialTopic_MenuDrivenConfig.cf scan_UpgradingCfengineNova.cf scan_SpecialTopic_Agility.cf scan_SpecialTopic_MissionCritical.cf scan_SpecialTopic_ApplMgt.cf scan_SpecialTopic_Modules.cf
 
 
 # Some manuals are not syntax highlighted because the formattingis not right.
@@ -21,6 +21,7 @@ non-highlighted: CfengineStdLibrary.html cf3-upgrade.html scan_upgrade.cf  cf_Qu
 %.html: ../../core/docs/guides/%.html
 	cp $< .
 	./highlight_syntax $@
+	mv $*.trans $@
 
 scan_%.cf: %.html
 	./scan_texinfo "special topic" $< > $@
@@ -93,12 +94,12 @@ cf3-solutions.html: ../../core/docs/guides/cf3-solutions.html
 scan_solutions.cf: cf3-solutions.html
 	./scan_texinfo "cf3 reference" cf3-solutions.html > scan_solutions.cf
 
-cf3-reference.html: ../../core/docs/reference/cf3-Reference.html
-	cp $< cf3-reference.html
-	./highlight_syntax cf3-reference.html
+cf3-Reference.html: ../../core/docs/reference/cf3-Reference.html
+	cp $< cf3-Reference.html
+	./highlight_syntax cf3-Reference.html
 
-scan_cf3ref.cf: cf3-reference.html
-	./scan_texinfo "cf3 reference" cf3-reference.html > scan_cf3ref.cf
+scan_cf3ref.cf: cf3-Reference.html
+	./scan_texinfo "cf3 reference" cf3-Reference.html > scan_cf3ref.cf
 
 unit_peers.html: examples.cf
 
@@ -110,9 +111,9 @@ cf_Quickref3.html:  ../../core/docs/guides/cf_Quickref3.html
 scan_quickref3.cf:  cf_Quickref3.html
 	./scan_texinfo "cf3 reference" cf_Quickref3.html > scan_quickref3.cf
 
-NovaOwnersManual.html: ../../core/docs/guides/NovaOwnersManual.html
+Enterprise-2-2-OwnersManual.html: ../../core/docs/guides/Enterprise-2-2-OwnersManual.html
 	cp $< .
-	./highlight_syntax NovaOwnersManual.html
+	./highlight_syntax Enterprise-2-2-OwnersManual.html
 
 novaevaluationguide.html: ../../core/docs/guides/novaevaluationguide.html
 	cp $< .

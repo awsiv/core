@@ -48,7 +48,7 @@ void HighlightManual(char *file)
 
     strcpy(name, file);
     *(strchr(name, '.')) = '\0';        // strip extension
-    strcat(name, ".html");
+    strcat(name, ".trans");
 
     ProcessFile(name, fin);
 
