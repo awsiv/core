@@ -19,4 +19,36 @@ class ContextTest extends RestBaseTest
         }
     }
 
+    public function testWithHostKey()
+    {
+
+        $hostKey = "SHA=33736d45041e2a9407be8cf449aeffa95114bef661c20deaca1bbcfbc2922856";
+        $jsonArray = $this->getResults('/context?hostkey=' . $hostKey);
+        $this->assertValidJson($jsonArray);
+        $this->assertEquals(50, sizeof($jsonArray));
+        foreach ((array) $jsonArray as $data)
+        {
+            if ($data['hostkey'] !== "$hostKey")
+            {
+                $this->fail("different host key found in data found :: " . $data['hostkey'] . " Expected :: " . $hostKey);
+            }
+        }
+    }
+
+    public function testWithInvalidKey()
+    {
+
+        $hostKey = "SHA=33736d45041e2a9407be8cf449a";
+        $jsonArray = $this->getResults('/context?hostkey=' . $hostKey);
+        $this->assertValidJson($jsonArray);
+        $this->assertEquals(0, sizeof($jsonArray));
+        foreach ((array) $jsonArray as $data)
+        {
+            if ($data['hostkey'] !== "$hostKey")
+            {
+                $this->fail("different host key found in data found :: " . $data['hostkey'] . " Expected :: " . $hostKey);
+            }
+        }
+    }
+
 }
