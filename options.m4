@@ -48,6 +48,11 @@ fi
 
 AM_CONDITIONAL(MONGO, test "x$ac_cv_lib_mongoc_mongo_connect" = xyes)
 
+if test "x$ac_cv_lib_mongoc_mongo_connect" = xyes; then
+   NOVA_DOC_SUBDIR=nova/knowledge
+fi
+AC_SUBST([NOVA_DOC_SUBDIR])
+
 AC_ARG_WITH([ldap],
     [AS_HELP_STRING([--with-ldap[[=PATH]]], [Enable LDAP functions])],
     [], [with_ldap=check])
