@@ -199,14 +199,23 @@
                         dataType:'json',
                         async: true,
                         success: function(data){
-                            $('#loading',$dialog).slideUp(); 
-                            $('#tempdiv',$dialog).show().removeClass('error');
-                            $('#tempdiv',$dialog).addClass('info');
-                            $('#tempdiv',$dialog).append(data.message); 
-                            $(":button:contains('Send')").hide();
-                            $('#tempdiv').find('a').live('click',function() {
-                                $dialog.dialog('close');
-                            }); 
+                            if (typeof(data) !== 'undefined' && data != null) {
+                                $('#loading',$dialog).slideUp();
+                                $('#tempdiv',$dialog).show().removeClass('error');
+                                $('#tempdiv',$dialog).addClass('info');
+                                $('#tempdiv',$dialog).append(data.message);
+                                $(":button:contains('Send')").hide();
+                                $('#tempdiv').find('a').live('click',function() {
+                                    $dialog.dialog('close');
+                                });
+                            } else {
+                                     // we are not getting anything from server, must probably an error case
+                                    var  error = "Something went wrong while generating this report.Please check the logs for more details.";
+                                    $('#loading',$dialog).slideUp();
+                                    $('#tempdiv',$dialog).removeClass('info');
+                                    $('#tempdiv',$dialog).addClass('error');
+                                    $('#tempdiv',$dialog).show().html(error);
+                            }
 
                         },
                         error: function(jqXHR, textStatus, errorThrown){
