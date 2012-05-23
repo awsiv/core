@@ -1700,7 +1700,7 @@ int Nova2PHP_vars_report(char *hostkey, char *scope, char *lval, char *rval, cha
     }
     else
     {
-        snprintf(returnval, bufsize, "{ \"meta\": { \"count\": 0 }}");
+        snprintf(returnval, bufsize, "{ \"meta\": { \"count\": 0, \"related\": 0 }}");
     }
 
     DeleteHubQuery(hq, DeleteHubVariable);
