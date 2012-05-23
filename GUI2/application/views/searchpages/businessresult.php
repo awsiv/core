@@ -139,7 +139,6 @@
         });
 
 
-        $('.loadsavedsearch').ajaxyDialog({title:'Saved Searches'});
 
 
 
@@ -161,14 +160,6 @@
     );
 
 
-        $('#findhost').hostfinder({
-            'defaultbehaviour':false,
-            'baseUrl':'<?php echo site_url() ?>',
-            'report':'<?php echo $hostfinderparams ?>',
-            complete:function(event,data){
-                location.replace('<?php echo site_url() ?>/search/index/host/'+data.selectedhost+'/'+data.report);
-            }
-        });
 
         var $dialog = $('#dialog');
 
@@ -255,18 +246,6 @@
 
 
 
-        $("#mainResultTable").on("click","a.note", function(event) {
-                                event.preventDefault();
-                                $(this).ajaxyDialog({
-                                title:'Notes',
-                                dontOverrideTitle:true,
-                                change:function(nid,element) {
-                                            // change the url
-                                        $(element).attr('href', '/notes/index/action/show/nid/' + nid);
-                                        }
-                                 });
-                                 $(this).ajaxyDialog("open");
-          });
           
             var $incList = $('#searchform input:hidden[name=inclist]');
             var $exList  = $('#searchform input:hidden[name=exlist]');
