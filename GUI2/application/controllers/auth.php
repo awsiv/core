@@ -916,11 +916,12 @@ class Auth extends Controller
             $user = $this->ion_auth->get_ldap_user_details_from_local_db($username);
 
             $assigned_roles = array();
-            if ($user !== NULL)
+            if ($user !== NULL && is_object($user) && property_exists($user,'roles'))
             {
                 $assigned_roles = $user->roles;
             }
-
+           
+           
             // create data for checkbox
             if (!empty($assigned_roles))
             {
