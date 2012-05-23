@@ -134,7 +134,7 @@ int NovaWin_IsProcessRunning(pid_t pid)
 
 /* returns true if execution of 'cmd' returns zero
  * (waits for completion)  */
-int ShellCommandReturnsZero(char *comm, int useshell)
+int ShellCommandReturnsZero(const char *comm, int useshell)
 {
     HANDLE procHandle;
     DWORD exitcode;
@@ -170,14 +170,14 @@ int ShellCommandReturnsZero(char *comm, int useshell)
  * CloseHandle(). The first parameter in comm is the executable, and it must be quoted if 
  * it contains spaces (e.g. ""C:\Program Files\Cfengine\bin\cf-promises.exe" -f file.cf").
  * Returns true on success, false otherwise. */
-int NovaWin_RunCmd(char *comm, int useshell, int inheritHandles, char *startDir, STARTUPINFO *si, HANDLE *procHandle)
+int NovaWin_RunCmd(const char *comm, int useshell, int inheritHandles, char *startDir, STARTUPINFO *si, HANDLE *procHandle)
 {
     STARTUPINFO emptySi;
     PROCESS_INFORMATION pi;
     char buf[CF_BUFSIZE];
     char cmdPath[CF_BUFSIZE];
     char *binary;
-    char *binaryParams;
+    const char *binaryParams;
 
     if (useshell)
     {

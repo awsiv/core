@@ -27,12 +27,12 @@ typedef struct
 WinPipe PIPES[MAX_PIPES];
 
 /* static prototypes */
-static FILE *OpenProcessPipe(char *comm, int useshell, char *startDir, char *type, int background);
+static FILE *OpenProcessPipe(const qchar *comm, int useshell, char *startDir, char *type, int background);
 static int InitializePipes(HANDLE *childInWrite, HANDLE *childInRead, HANDLE *childOutWrite, HANDLE *childOutRead);
 static int SaveDescriptorPair(FILE *pipe, HANDLE procHandle);
 static int PopDescriptorPair(FILE *pipe, HANDLE *procHandle);
 
-FILE *cf_popen(char *command, char *type)
+FILE *cf_popen(const char *command, char *type)
 {
     if (!Nova_CheckLicenseWin("cf_popen"))
     {
@@ -42,7 +42,7 @@ FILE *cf_popen(char *command, char *type)
     return OpenProcessPipe(command, false, NULL, type, false);
 }
 
-FILE *cf_popen_sh(char *command, char *type)
+FILE *cf_popen_sh(const char *command, char *type)
 {
 
     if (!Nova_CheckLicenseWin("cf_popen_sh"))
@@ -53,7 +53,7 @@ FILE *cf_popen_sh(char *command, char *type)
     return OpenProcessPipe(command, true, NULL, type, false);
 }
 
-FILE *cf_popensetuid(char *command, char *type, uid_t uid, gid_t gid, char *chdirv, char *chrootv,
+FILE *cf_popensetuid(const char *command, char *type, uid_t uid, gid_t gid, char *chdirv, char *chrootv,
                              int background)
 {
 
@@ -81,7 +81,7 @@ FILE *cf_popensetuid(char *command, char *type, uid_t uid, gid_t gid, char *chdi
     return OpenProcessPipe(command, false, chdirv, type, background);
 }
 
-FILE *cf_popen_shsetuid(char *command, char *type, uid_t uid, gid_t gid, char *chdirv, char *chrootv,
+FILE *cf_popen_shsetuid(const char *command, char *type, uid_t uid, gid_t gid, char *chdirv, char *chrootv,
                                 int background)
 {
 
@@ -168,7 +168,7 @@ int cf_pclose_def(FILE *pfp, Attributes a, Promise *pp)
  * that has the STDOUT and STDERR of the process. If type is "w", we
  * return a pipe to the process' STDIN.
  **/
-static FILE *OpenProcessPipe(char *comm, int useshell, char *startDir, char *type, int background)
+static FILE *OpenProcessPipe(const char *comm, int useshell, char *startDir, char *type, int background)
 {
     HANDLE childOutWrite;       // child's stdout & stderr writes to this
     HANDLE childOutRead;        // .. and appears here for parent to read
