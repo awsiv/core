@@ -27,7 +27,7 @@ typedef struct
 WinPipe PIPES[MAX_PIPES];
 
 /* static prototypes */
-static FILE *OpenProcessPipe(const qchar *comm, int useshell, char *startDir, char *type, int background);
+static FILE *OpenProcessPipe(const char *comm, int useshell, char *startDir, char *type, int background);
 static int InitializePipes(HANDLE *childInWrite, HANDLE *childInRead, HANDLE *childOutWrite, HANDLE *childOutRead);
 static int SaveDescriptorPair(FILE *pipe, HANDLE procHandle);
 static int PopDescriptorPair(FILE *pipe, HANDLE *procHandle);
