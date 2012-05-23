@@ -6,7 +6,7 @@ top_srcdir = $(abs_top_srcdir)
 top_builddir = $(abs_top_builddir)
 top_build_prefix = $(abs_top_builddir)/
 
-SUBDIRS = src docs GUI2 tests/unit
+SUBDIRS = src GUI2 tests/unit
 
 EXTRA_DIST = acconfig.h COPYING ChangeLog LICENSE
 
