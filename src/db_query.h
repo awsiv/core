@@ -115,7 +115,7 @@ int CFDB_CountHostsGeneric(mongo_connection *conn, bson *query);
 int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int hostNameSz);
 HubHost *CFDB_GetHostByKey(mongo_connection *conn, const char *hostkey);
 bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour *result);
-
+int CFDB_CountSkippedOldAgents(mongo_connection *conn, char *keyhash, HostClassFilter *host_class_filter);
 
 //*****************************************************************************
 // Utility Queries

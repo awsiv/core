@@ -3141,6 +3141,66 @@ static void GetOldClientVersions(Rlist **rp)
     PrependRScalar(rp, (void *) "cfengine_3_1.*", CF_SCALAR);
     PrependRScalar(rp, (void *) "cfengine_3_0.*", CF_SCALAR);
 }
+
+static void SkipOldClientVersionsFilter(bson_buffer *bb)
+/* NOTE: Ignore data from agent versions < 3.3.0 */
+{
+    if (bb == NULL)
+    {
+        return;
+    }
+
+    Rlist *old_client_versions = NULL;
+    GetOldClientVersions(&old_client_versions);
+
+    bson_buffer *ignore_class_buffer = bson_append_start_object(bb, cfr_class_keys);
+    BsonAppendArrayRx(ignore_class_buffer, "$nin", old_client_versions);
+    bson_append_finish_object(ignore_class_buffer);
+
+    DeleteRlist(old_client_versions);
+}
+
+/*****************************************************************************/
+
+int CFDB_CountSkippedOldAgents(mongo_connection *conn, char *keyhash,
+                               HostClassFilter *host_class_filter)
+/* NOTE: BundleSeen report is not compatible with agent versions < 3.3.0
+ * and they are ignored during report generation. This fucntion count this skipped
+ * hosts from the query.
+ */
+{
+    int result = -1;
+
+    bson_buffer bb;
+    bson_buffer_init(&bb);
+
+    if (!NULL_OR_EMPTY(keyhash))
+    {
+        bson_append_string(&bb, cfr_keyhash, keyhash);
+    }
+
+    BsonAppendHostClassFilter(&bb, host_class_filter);
+
+    /* Search only for old agents (< 3.3.0) */
+    Rlist *old_client_versions = NULL;
+    GetOldClientVersions(&old_client_versions);
+
+    bson_buffer *ignoreClassBuffer = bson_append_start_object(&bb, cfr_class_keys);
+    BsonAppendArrayRx(ignoreClassBuffer, "$in", old_client_versions);
+    bson_append_finish_object(ignoreClassBuffer);
+
+    DeleteRlist(old_client_versions);
+
+    bson query;
+    bson_from_buffer(&query, &bb);
+
+    result = mongo_count(conn, MONGO_BASE, MONGO_HOSTS_COLLECTION, &query);
+
+    bson_destroy(&query);
+
+    return result;
+}
+
 /*****************************************************************************/
 
 HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lname, bool regex,
@@ -3170,16 +3230,7 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
      *
      * NOTE: this check can be removed after all clients are upgraded to version >= 3.3.0
      */
-    {
-        Rlist *old_client_versions = NULL;
-        GetOldClientVersions(&old_client_versions);
-
-        bson_buffer *ignoreClassBuffer = bson_append_start_object(&bb, cfr_class_keys);
-        BsonAppendArrayRx(ignoreClassBuffer, "$nin", old_client_versions);
-        bson_append_finish_object(ignoreClassBuffer);
-
-        DeleteRlist(old_client_versions);
-    }
+    SkipOldClientVersionsFilter(&bb);
 
     bson query;
     bson_from_buffer(&query, &bb);
@@ -3269,15 +3320,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(mongo_connection *conn, char *keyHash, ch
      *
      * NOTE: this check can be removed after all clients are upgraded to version >= 3.3.0
      */
-    {
-        Rlist *old_client_versions = NULL;
-        GetOldClientVersions(&old_client_versions);
-        bson_buffer *ignoreClassBuffer = bson_append_start_object(&bb, cfr_class_keys);
-        BsonAppendArrayRx(ignoreClassBuffer, "$nin", old_client_versions);
-        bson_append_finish_object(ignoreClassBuffer);
-
-        DeleteRlist(old_client_versions);
-    }
+    SkipOldClientVersionsFilter(&bb);
 
     bson_from_buffer(&query, &bb);
 
