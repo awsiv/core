@@ -170,7 +170,7 @@ cfengine_components::cf-runagent
 cfengine_components::cf-serverd
 any::cf3-bestpractice
 any::cf3-glossary
-any::cf3-reference
+any::cf3-Reference
 any::cf3-solutions
 any::cf3-tutorial
 any::cf3-upgrade

@@ -751,12 +751,12 @@ occurrences:
 
   pattern_matching::
 
-     "/docs/cf3-reference#Pattern-matching-and-referencing"
+     "/docs/cf3-Reference#Pattern-matching-and-referencing"
           represents => { "cf" };
 
   regular_expressions::
 
-     "/docs/cf3-reference#Pattern-matching-and-referencing"
+     "/docs/cf3-Reference#Pattern-matching-and-referencing"
           represents => { "cf" };
 
 }
