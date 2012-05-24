@@ -9,6 +9,8 @@
 
 #include "cf3.defs.h"
 
+#define CF_DUNBAR_WORK 30
+
 #ifdef HAVE_LIBLDAP
 /* LDAP functionality uses several functions which are only provided if this macro is defined */
 # define LDAP_DEPRECATED 1
