@@ -10,11 +10,13 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#include "mod_files.h"
+
 /* FIXME: only for cf-report */
 
 static void Nova_ShowBundleTypes(void);
 static void Nova_ShowControlBodies(void);
-static void Nova_ShowPromiseTypesFor(char *s, SubTypeSyntax *commonMerge);
+static void Nova_ShowPromiseTypesFor(const char *s, const SubTypeSyntax *commonMerge);
 static void Nova_ShowBodyParts(const BodySyntax *bs, int i);
 static void Nova_ShowRange(char *s, enum cfdatatype type);
 static void Nova_ShowBuiltinFunctions(void);
@@ -43,8 +45,8 @@ void SyntaxTree2JavaScript(void)
 static void Nova_ShowBundleTypes(void)
 {
     int i;
-    SubTypeSyntax *st;
-    SubTypeSyntax *commonEditLine = NULL;
+    const SubTypeSyntax *st;
+    const SubTypeSyntax *commonEditLine = NULL;
     int closeBrack = false;
 
     printf("var edit_line_bundle_syntax = {\n");
@@ -138,10 +140,10 @@ static void Nova_ShowControlBodies(void)
 
 /*******************************************************************/
 
-static void Nova_ShowPromiseTypesFor(char *s, SubTypeSyntax *commonMerge)
+static void Nova_ShowPromiseTypesFor(const char *s, const SubTypeSyntax *commonMerge)
 {
     int i, j;
-    SubTypeSyntax *st;
+    const SubTypeSyntax *st;
     int closeBrack = false;
 
     for (i = 0; i < CF3_MODULES; i++)

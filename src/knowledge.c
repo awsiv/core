@@ -166,8 +166,8 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
 void SyntaxCompletion(char *s)
 {
     int i, j, k, l, m;
-    SubTypeSyntax *ss;
-    BodySyntax *bs, *bs2 = NULL;
+    const SubTypeSyntax *ss;
+    const BodySyntax *bs, *bs2 = NULL;
     const FnCallType *fn;
 
     if (EnterpriseExpiry())

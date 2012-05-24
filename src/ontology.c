@@ -10,6 +10,8 @@
 #include "parser.h"
 #include "files_names.h"
 
+#include "mod_files.h"
+
 /*****************************************************************************/
 
 static Item *NOVA_BUNDLEDEPENDENCE = NULL;
@@ -634,7 +636,7 @@ void Nova_ShowBundleDependence(FILE *fp)
 void ShowTopicRepresentation(FILE *fp)
 {
     int i, j, k, l;
-    SubTypeSyntax *ss;
+    const SubTypeSyntax *ss;
     const BodySyntax *bs, *bs2;
     static char *level[] = { "high", "low", "normal", NULL };
     static char *dev[] = { "dev1", "dev2", "microanomaly", "anomaly", NULL };
