@@ -42,7 +42,7 @@ static void StartHub(void);
 static void Nova_CollectReports(void);
 static int ScheduleRun(void);
 static void Nova_RemoveExcludedHosts(Item **list, Item *hosts_exclude);
-static void KeepPromises(GenericAgentConfig config);
+static void KeepPromises(Policy *policy, GenericAgentConfig config);
 
 static void Nova_Scan(Item *masterlist);
 static pid_t Nova_ScanList(Item *list);
@@ -101,9 +101,9 @@ int main(int argc, char *argv[])
 {
     GenericAgentConfig config = CheckOpts(argc, argv);
 
-    GenericInitialize("hub", config);
+    Policy *policy = GenericInitialize("hub", config);
     ThisAgentInit();
-    KeepPromises(config);
+    KeepPromises(policy, config);
     StartHub();
     return 0;
 }
@@ -244,12 +244,12 @@ static void ThisAgentInit(void)
 
 /*****************************************************************************/
 
-void KeepPromises(GenericAgentConfig config)
+void KeepPromises(Policy *policy, GenericAgentConfig config)
 {
     Constraint *cp;
     Rval retval;
 
-    for (cp = ControlBodyConstraints(cf_hub); cp != NULL; cp = cp->next)
+    for (cp = ControlBodyConstraints(policy, cf_hub); cp != NULL; cp = cp->next)
     {
         if (IsExcluded(cp->classes))
         {

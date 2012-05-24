@@ -291,7 +291,8 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
                 /* Bundlename is a conduit that is said to affect its formal
                    parameters, through the substituted values */
 
-                bp = GetBundle(bundlename, "agent");
+                const Policy *policy = PolicyFromPromise(pp);
+                bp = GetBundle(policy, bundlename, "agent");
 
                 for (rp = bp->args; rp != NULL; rp = rp->next)
                 {
@@ -1119,7 +1120,8 @@ void Nova_MapClassParameterAssociations(FILE *fp, Promise *pp, char *promise_id)
 /* So now we have the list of classes to scan for and we must undertake this
  expensive search */
 
-    for (bp = BUNDLES; bp != NULL; bp = bp->next)
+    const Policy *policy = PolicyFromPromise(pp);
+    for (bp = policy->bundles; bp != NULL; bp = bp->next)
     {
         for (sp = bp->subtypes; sp != NULL; sp = sp->next)
         {
