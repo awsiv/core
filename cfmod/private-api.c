@@ -2303,7 +2303,6 @@ PHP_FUNCTION(cfpr_hosts_with_software_in)
     int user_len, hk_len, n_len, v_len, a_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     zend_bool regex;
-    char buffer[512 * 1024];
     PageInfo page = {0};
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbaall",
@@ -2328,8 +2327,6 @@ PHP_FUNCTION(cfpr_hosts_with_software_in)
     fversion = (v_len == 0) ? NULL : version;
     farch = (a_len == 0) ? NULL : arch;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -2338,10 +2335,18 @@ PHP_FUNCTION(cfpr_hosts_with_software_in)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, (bool) regex, cfr_software, filter, &page, buffer, sizeof(buffer));
+    JsonElement *json_out = NULL;
+    json_out = Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, (bool) regex,
+                                       cfr_software, filter, &page);
+
+    if (!json_out)
+    {
+        json_out = JsonObjectCreate(0);
+    }
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(json_out);
 }
 
 /******************************************************************************/
@@ -2352,8 +2357,6 @@ PHP_FUNCTION(cfpr_hosts_with_value)
     char *fhostkey, *fmonth, *fday, *fyear;
     zval *context_includes = NULL, *context_excludes = NULL;
     int user_len, hk_len, d_len, m_len, y_len;
-    const int bufsize = 512 * 1024;
-    char buffer[bufsize];
     PageInfo page = { 0 };
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssaall",
@@ -2377,8 +2380,6 @@ PHP_FUNCTION(cfpr_hosts_with_value)
     fmonth = (m_len == 0) ? NULL : month;
     fyear = (y_len == 0) ? NULL : year;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -2387,10 +2388,17 @@ PHP_FUNCTION(cfpr_hosts_with_value)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_value_hosts(fhostkey, fday, fmonth, fyear, filter, &page, buffer, bufsize);
+    JsonElement *json_out = NULL;
+    json_out = Nova2PHP_value_hosts(fhostkey, fday, fmonth, fyear, filter, &page);
+
+    if (!json_out)
+    {
+        json_out = JsonObjectCreate(0);
+    }
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(json_out);
 }
 
 /******************************************************************************/
@@ -2401,7 +2409,6 @@ PHP_FUNCTION(cfpr_hosts_with_patch_in)
     int user_len, hk_len, n_len, v_len, a_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     zend_bool regex;
-    char buffer[512 * 1024];
     PageInfo page = { 0 };
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbaall",
@@ -2426,8 +2433,6 @@ PHP_FUNCTION(cfpr_hosts_with_patch_in)
     char *fversion = (v_len == 0) ? NULL : version;
     char *farch = (a_len == 0) ? NULL : arch;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -2436,10 +2441,18 @@ PHP_FUNCTION(cfpr_hosts_with_patch_in)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, (bool) regex, cfr_patch_installed, filter, &page, buffer, sizeof(buffer));
+    JsonElement *json_out = NULL;
+    json_out = Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, (bool) regex,
+                                       cfr_patch_installed, filter, &page);
+
+    if (!json_out)
+    {
+        json_out = JsonObjectCreate(0);
+    }
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(json_out);
 }
 
 /******************************************************************************/
@@ -2451,7 +2464,6 @@ PHP_FUNCTION(cfpr_hosts_with_patch_avail)
     int user_len, hk_len, n_len, v_len, a_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     zend_bool regex;
-    char buffer[512 * 1024];
     PageInfo page = { 0 };
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssbaall",
@@ -2476,8 +2488,6 @@ PHP_FUNCTION(cfpr_hosts_with_patch_avail)
     fversion = (v_len == 0) ? NULL : version;
     farch = (a_len == 0) ? NULL : arch;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -2486,10 +2496,18 @@ PHP_FUNCTION(cfpr_hosts_with_patch_avail)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, (bool) regex, cfr_patch_avail, filter, &page, buffer, sizeof(buffer));
+    JsonElement *json_out = NULL;
+    json_out = Nova2PHP_software_hosts(fhostkey, fname, fversion, farch, (bool) regex,
+                                       cfr_patch_avail, filter, &page);
+
+    if (!json_out)
+    {
+        json_out = JsonObjectCreate(0);
+    }
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(json_out);
 }
 
 /******************************************************************************/
@@ -2500,7 +2518,6 @@ PHP_FUNCTION(cfpr_hosts_with_classes)
     int user_len, hk_len, n_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     zend_bool regex;
-    char buffer[512 * 1024];
     PageInfo page = { 0 };
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssbaall",
@@ -2521,8 +2538,6 @@ PHP_FUNCTION(cfpr_hosts_with_classes)
     char *fhostkey = (hk_len == 0) ? NULL : hostkey;
     char *fname = (n_len == 0) ? NULL : name;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -2531,10 +2546,17 @@ PHP_FUNCTION(cfpr_hosts_with_classes)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_classes_hosts(fhostkey, fname, (bool) regex, filter, &page, buffer, sizeof(buffer));
+    JsonElement *json_out = NULL;
+    json_out = Nova2PHP_classes_hosts(fhostkey, fname, (bool) regex, filter, &page);
+
+    if (!json_out)
+    {
+        json_out = JsonObjectCreate(0);
+    }
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(json_out);
 }
 
 /******************************************************************************/
@@ -2544,7 +2566,6 @@ PHP_FUNCTION(cfpr_hosts_with_repaired)
 {
     char *userName, *hostkey, *handle, *cause_rx;
     int user_len, hk_len, h_len, c_len;
-    char buffer[512 * 1024];
     zval *context_includes = NULL, *context_excludes = NULL;
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
@@ -2570,8 +2591,6 @@ PHP_FUNCTION(cfpr_hosts_with_repaired)
     char *fhandle = (h_len == 0) ? NULL : handle;
     char *fcause_rx = (c_len == 0) ? NULL : cause_rx;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -2580,11 +2599,19 @@ PHP_FUNCTION(cfpr_hosts_with_repaired)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_promiselog_hosts(fhostkey, fhandle, fcause_rx, PROMISE_LOG_STATE_REPAIRED, from, to, filter, &page, buffer, sizeof(buffer));
+    JsonElement *json_out = NULL;
+    json_out = Nova2PHP_promiselog_hosts(fhostkey, fhandle, fcause_rx,
+                                         PROMISE_LOG_STATE_REPAIRED, from, to,
+                                         filter, &page);
+
+    if (!json_out)
+    {
+        json_out = JsonObjectCreate(0);
+    }
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(json_out);
 }
 
 /******************************************************************************/
@@ -2595,7 +2622,6 @@ PHP_FUNCTION(cfpr_hosts_with_notkept)
     int user_len, hk_len, h_len, c_len;
     zval *context_includes = NULL, *context_excludes = NULL;
 
-    char buffer[512 * 1024];
     time_t from = 0, to = 0;
     PageInfo page = { 0 };
 
@@ -2620,8 +2646,6 @@ PHP_FUNCTION(cfpr_hosts_with_notkept)
     char *fhandle = (h_len == 0) ? NULL : handle;
     char *fcause_rx = (c_len == 0) ? NULL : cause_rx;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -2630,10 +2654,19 @@ PHP_FUNCTION(cfpr_hosts_with_notkept)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_promiselog_hosts(fhostkey, fhandle, fcause_rx, PROMISE_LOG_STATE_NOTKEPT, from, to, filter, &page, buffer, sizeof(buffer));
+    JsonElement *json_out = NULL;
+    json_out = Nova2PHP_promiselog_hosts(fhostkey, fhandle, fcause_rx,
+                                         PROMISE_LOG_STATE_NOTKEPT, from, to,
+                                         filter, &page);
+
+    if (!json_out)
+    {
+        json_out = JsonObjectCreate(0);
+    }
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(json_out);
 }
 
 /******************************************************************************/
@@ -2645,7 +2678,6 @@ PHP_FUNCTION(cfpr_hosts_with_vars)
     int user_len, hk_len, s_len, l_len, r_len, t_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     zend_bool regex;
-    char buffer[512 * 1024];
     PageInfo page = { 0 };
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ssssssbaall",
@@ -2672,8 +2704,6 @@ PHP_FUNCTION(cfpr_hosts_with_vars)
     frval = (r_len == 0) ? NULL : rval;
     ftype = (t_len == 0) ? NULL : type;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -2682,10 +2712,18 @@ PHP_FUNCTION(cfpr_hosts_with_vars)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_vars_hosts(fhostkey, fscope, flval, frval, ftype, (bool) regex, filter, &page, buffer, sizeof(buffer));
+    JsonElement *json_out = NULL;
+    json_out = Nova2PHP_vars_hosts(fhostkey, fscope, flval, frval,
+                                   ftype, (bool) regex, filter, &page);
+
+    if (!json_out)
+    {
+        json_out = JsonObjectCreate(0);
+    }
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(json_out);
 }
 
 /******************************************************************************/
@@ -2696,7 +2734,6 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_summary)
     int user_len, hk_len, v_len;
     zval *context_includes = NULL, *context_excludes = NULL;
     long k, nk, r, t;
-    char buffer[512 * 1024];
     PageInfo page = { 0 };
 
     if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssllllaall",
@@ -2718,8 +2755,6 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_summary)
     char *fhostkey = (hk_len == 0) ? NULL : hostkey;
     char *fversion = (v_len == 0) ? NULL : version;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -2728,11 +2763,18 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_summary)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_compliance_hosts(fhostkey, fversion, (int) t, time(NULL), (int) k, (int) nk, (int) r, filter, &page, buffer, sizeof(buffer));
+    JsonElement *json_out = NULL;
+    json_out = Nova2PHP_compliance_hosts(fhostkey, fversion, (int) t, time(NULL),
+                                         (int) k, (int) nk, (int) r, filter, &page);
+
+    if (!json_out)
+    {
+        json_out = JsonObjectCreate(0);
+    }
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(json_out);
 }
 
 /******************************************************************************/
@@ -2743,7 +2785,6 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_promises)
     char *fhostkey, *fhandle, *fstatus;
     int user_len, hk_len, h_len, s_len;
     zval *context_includes = NULL, *context_excludes = NULL;
-    char buffer[512 * 1024];
     zend_bool regex;
     PageInfo page = { 0 };
 
@@ -2767,8 +2808,6 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_promises)
     fhandle = (h_len == 0) ? NULL : handle;
     fstatus = (s_len == 0) ? NULL : status;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -2777,10 +2816,18 @@ PHP_FUNCTION(cfpr_hosts_with_compliance_promises)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_promise_hosts(fhostkey, fhandle, fstatus, (bool) regex, filter, NULL, false, &page, buffer, sizeof(buffer));
+    JsonElement *json_out = NULL;
+    json_out = Nova2PHP_promise_hosts(fhostkey, fhandle, fstatus, (bool) regex,
+                                      filter, NULL, false, &page);
+
+    if (!json_out)
+    {
+        json_out = JsonObjectCreate(0);
+    }
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(json_out);
 }
 
 /******************************************************************************/
@@ -2790,7 +2837,6 @@ PHP_FUNCTION(cfpr_hosts_with_lastknown_compliance_promises)
     char *fhostkey, *fhandle, *fstatus;
     int user_len, hk_len, h_len, s_len, hc_len;
     zval *context_includes = NULL, *context_excludes = NULL;
-    char buffer[512 * 1024];
     zend_bool regex;
     PageInfo page = { 0 };
 
@@ -2815,8 +2861,6 @@ PHP_FUNCTION(cfpr_hosts_with_lastknown_compliance_promises)
     fhandle = (h_len == 0) ? NULL : handle;
     fstatus = (s_len == 0) ? NULL : status;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -2831,11 +2875,19 @@ PHP_FUNCTION(cfpr_hosts_with_lastknown_compliance_promises)
         hostColourFilter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HostColourFromString(hostcolour));
     }
 
-    Nova2PHP_promise_hosts(fhostkey, fhandle, fstatus, (bool) regex, filter, hostColourFilter, true, &page, buffer, sizeof(buffer));
+    JsonElement *json_out = NULL;
+    json_out = Nova2PHP_promise_hosts(fhostkey, fhandle, fstatus, (bool) regex,
+                                      filter, hostColourFilter, true, &page);
+
+    if (!json_out)
+    {
+        json_out = JsonObjectCreate(0);
+    }
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
     free(hostColourFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(json_out);
 }
 
 /******************************************************************************/
@@ -2846,7 +2898,6 @@ PHP_FUNCTION(cfpr_hosts_with_lastseen)
     char *fhostkey, *fhost, *faddress, *fhash;
     int user_len, hk_len, h_len, a_len, h2_len;
     zval *context_includes = NULL, *context_excludes = NULL;
-    char buffer[512 * 1024];
     long ago;
     zend_bool regex;
     PageInfo page = { 0 };
@@ -2874,8 +2925,6 @@ PHP_FUNCTION(cfpr_hosts_with_lastseen)
     fhost = (h_len == 0) ? NULL : host;
     faddress = (a_len == 0) ? NULL : address;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -2884,10 +2933,18 @@ PHP_FUNCTION(cfpr_hosts_with_lastseen)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_lastseen_hosts(fhostkey, fhash, fhost, faddress, ago, (bool) regex, filter, &page, buffer, sizeof(buffer));
+    JsonElement *json_out = NULL;
+    json_out = Nova2PHP_lastseen_hosts(fhostkey, fhash, fhost, faddress, ago,
+                                       (bool) regex, filter, &page);
+
+    if (!json_out)
+    {
+        json_out = JsonObjectCreate(0);
+    }
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(json_out);
 }
 
 /******************************************************************************/
@@ -2898,7 +2955,6 @@ PHP_FUNCTION(cfpr_hosts_with_performance)
     char *fhostkey, *fjob;
     int user_len, hk_len, j_len;
     zval *context_includes = NULL, *context_excludes = NULL;
-    char buffer[512 * 1024];
     zend_bool regex;
     PageInfo page = { 0 };
 
@@ -2920,8 +2976,6 @@ PHP_FUNCTION(cfpr_hosts_with_performance)
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fjob = (j_len == 0) ? NULL : job;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -2930,10 +2984,17 @@ PHP_FUNCTION(cfpr_hosts_with_performance)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_performance_hosts(fhostkey, fjob, (bool) regex, filter, &page, buffer, sizeof(buffer));
+    JsonElement *json_out = NULL;
+    json_out = Nova2PHP_performance_hosts(fhostkey, fjob, (bool) regex, filter, &page);
+
+    if (!json_out)
+    {
+        json_out = JsonObjectCreate(0);
+    }
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(json_out);
 }
 
 /******************************************************************************/
@@ -2944,7 +3005,6 @@ PHP_FUNCTION(cfpr_hosts_with_setuid)
     char *fhostkey, *ffile;
     int user_len, hk_len, j_len;
     zval *context_includes = NULL, *context_excludes = NULL;
-    char buffer[512 * 1024];
     zend_bool regex;
     PageInfo page = { 0 };
 
@@ -2966,8 +3026,6 @@ PHP_FUNCTION(cfpr_hosts_with_setuid)
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     ffile = (j_len == 0) ? NULL : file;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -2976,10 +3034,17 @@ PHP_FUNCTION(cfpr_hosts_with_setuid)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_setuid_hosts(fhostkey, ffile, (bool) regex, filter, &page, buffer, sizeof(buffer));
+    JsonElement *json_out = NULL;
+    json_out = Nova2PHP_setuid_hosts(fhostkey, ffile, (bool) regex, filter, &page);
+
+    if (!json_out)
+    {
+        json_out = JsonObjectCreate(0);
+    }
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(json_out);
 }
 
 /******************************************************************************/
@@ -2990,7 +3055,6 @@ PHP_FUNCTION(cfpr_hosts_with_filechanges)
     char *fhostkey, *ffile;
     int user_len, hk_len, j_len;
     zval *context_includes = NULL, *context_excludes = NULL;
-    char buffer[512 * 1024];
     zend_bool regex;
     time_t from, to;
     PageInfo page = { 0 };
@@ -3015,8 +3079,6 @@ PHP_FUNCTION(cfpr_hosts_with_filechanges)
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     ffile = (j_len == 0) ? NULL : file;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -3025,10 +3087,18 @@ PHP_FUNCTION(cfpr_hosts_with_filechanges)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_filechanges_hosts(fhostkey, ffile, (bool) regex, from, to, filter, &page, buffer, sizeof(buffer));
+    JsonElement *json_out = NULL;
+    json_out = Nova2PHP_filechanges_hosts(fhostkey, ffile, (bool) regex, from,
+                                          to, filter, &page);
+
+    if (!json_out)
+    {
+        json_out = JsonObjectCreate(0);
+    }
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(json_out);
 }
 
 /******************************************************************************/
@@ -3039,7 +3109,6 @@ PHP_FUNCTION(cfpr_hosts_with_filediffs)
     char *fhostkey, *ffile;
     int user_len, hk_len, j_len, d_len;
     zval *context_includes = NULL, *context_excludes = NULL;
-    char buffer[512 * 1024];
     zend_bool regex;
     time_t from, to;
     PageInfo page = { 0 };
@@ -3065,8 +3134,6 @@ PHP_FUNCTION(cfpr_hosts_with_filediffs)
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     ffile = (j_len == 0) ? NULL : file;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -3075,10 +3142,18 @@ PHP_FUNCTION(cfpr_hosts_with_filediffs)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_filediffs_hosts(fhostkey, ffile, diff, (bool) regex, from, to, filter, &page, buffer, sizeof(buffer));
+    JsonElement *json_out = NULL;
+    json_out = Nova2PHP_filediffs_hosts(fhostkey, ffile, diff, (bool) regex,
+                                        from, to, filter, &page);
+
+    if (!json_out)
+    {
+        json_out = JsonObjectCreate(0);
+    }
+
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(json_out);
 }
 
 /******************************************************************************/
@@ -3089,7 +3164,6 @@ PHP_FUNCTION(cfpr_hosts_with_bundlesseen)
     char *fhostkey, *fbundle;
     zval *context_includes = NULL, *context_excludes = NULL;
     int user_len, hk_len, j_len;
-    char buffer[512 * 1024];
     zend_bool regex;
     PageInfo page = { 0 };
 
@@ -3111,8 +3185,6 @@ PHP_FUNCTION(cfpr_hosts_with_bundlesseen)
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fbundle = (j_len == 0) ? NULL : bundle;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -3121,11 +3193,18 @@ PHP_FUNCTION(cfpr_hosts_with_bundlesseen)
 
     HostClassFilterAddIncludeExcludeLists(filter, context_includes, context_excludes);
 
-    Nova2PHP_bundle_hosts(fhostkey, fbundle, (bool) regex, filter, NULL, false, &page, buffer, sizeof(buffer));
+    JsonElement *json_out = NULL;
+    json_out = Nova2PHP_bundle_hosts(fhostkey, fbundle, (bool) regex, filter,
+                                     NULL, false, &page);
+
+    if (!json_out)
+    {
+        json_out = JsonObjectCreate(0);
+    }
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(json_out);
 }
 
 /******************************************************************************/
@@ -3136,7 +3215,6 @@ PHP_FUNCTION(cfpr_hosts_with_lastknown_bundlesseen)
     char *fhostkey, *fbundle;
     zval *context_includes = NULL, *context_excludes = NULL;
     int user_len, hk_len, j_len, hc_len;
-    char buffer[512 * 1024];
     zend_bool regex;
     PageInfo page = { 0 };
 
@@ -3159,8 +3237,6 @@ PHP_FUNCTION(cfpr_hosts_with_lastknown_bundlesseen)
     fhostkey = (hk_len == 0) ? NULL : hostkey;
     fbundle = (j_len == 0) ? NULL : bundle;
 
-    buffer[0] = '\0';
-
     HubQuery *hqHostClassFilter = CFDB_HostClassFilterFromUserRBAC(userName);
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
@@ -3173,15 +3249,23 @@ PHP_FUNCTION(cfpr_hosts_with_lastknown_bundlesseen)
 
     if (!NULL_OR_EMPTY(hostcolour))
     {
-        hostColourFilter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE, HostColourFromString(hostcolour));
+        hostColourFilter = NewHostColourFilter(HOST_RANK_METHOD_COMPLIANCE,
+                                               HostColourFromString(hostcolour));
     }
 
-    Nova2PHP_bundle_hosts(fhostkey, fbundle, (bool) regex, filter, hostColourFilter, true, &page, buffer, sizeof(buffer));
+    JsonElement *json_out = NULL;
+    json_out = Nova2PHP_bundle_hosts(fhostkey, fbundle, (bool) regex, filter,
+                                     hostColourFilter, true, &page);
+
+    if (!json_out)
+    {
+        json_out = JsonObjectCreate(0);
+    }
 
     DeleteHubQuery(hqHostClassFilter, DeleteHostClassFilter);
     free(hostColourFilter);
 
-    RETURN_STRING(buffer, 1);
+    RETURN_JSON(json_out);
 }
 
 /******************************************************************************/
