@@ -12,6 +12,7 @@
            
             $self.element.append($self.header);
             $self.ajaxloader.appendTo($self.header);
+            $self.ajaxloader.hide();
             $self._red = $self._createColourEntry('red', '> 20% not compliant',
                 'More than 20% of promises could not be kept at last measurement.');
             $self.element.append($self._red);
@@ -44,6 +45,8 @@
                     $self._setHostCount($self._red, data.red, '> 20% not compliant');
                     $self._setHostCount($self._yellow, data.yellow, '> 20% repaired, now compliant');
                     $self._setHostCount($self._green, data.green, '> 80% compliant');
+                    $self.ajaxloader.hide();
+             }).error(function(jqXHR,textStatus, errorThrown){
                     $self.ajaxloader.hide();
              });
 
