@@ -11,6 +11,7 @@
             
             $self.element.append($self.header);
             $self.ajaxloader.appendTo($self.header);
+            $self.ajaxloader.hide();
             
             $self._blue = $self._createColourEntry('blue', 'hosts unreachable',
                 'Hosts that have not been reached (their state is unknown)');
@@ -53,7 +54,9 @@
                     $self._setHostCount($self._blue, data.blue, 'hosts unreachable');
                     $self._setHostCount($self._black, data.black, 'hosts with scheduling deviation');
                     $self.ajaxloader.hide();
-                });
+                }).error(function(jqXHR,textStatus, errorThrown){
+                    $self.ajaxloader.hide();
+             });
             /*$.getJSON($self._requestUrls.hostCount($self, $self._context.includes, 'blue'),
                 function(count) {
                     $self._setHostCount($self._blue, count, 'hosts unreachable');
