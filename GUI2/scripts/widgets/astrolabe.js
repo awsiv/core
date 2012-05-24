@@ -567,6 +567,8 @@
                 if (selectAfterLoad === true) {
                     $self._onClickNodeLabel($self, $node, null);
                 }
+            }).error(function(jqXHR, textStatus, errorThrown){
+                  $self._displayFailure(jqXHR, textStatus, errorThrown);   
             });
         },
 
@@ -665,7 +667,7 @@
                        $self._setNodeExpanded($self._superNode, true);
                        $self._loadNode($self._superNode, true);
                    },
-                   error: function() {
+                   error: function(jqXHR, textStatus, errorThrown) {
                        $self._createSuperNode(null);
                        $self._setNodeExpanded($self._superNode, true);
                        $self._loadNode($self._superNode, true);
@@ -696,6 +698,8 @@
             $.getJSON($self._requestUrls.hostCount($self, includes, []), function(count) {
                 $node.attr('count', count);
                 $node.find('div.showqtip').first().find('div.nodeHeader').children('span.hostCountLabel').html('(' + count + ')');
+            }).error(function(jqXHR, textStatus, errorThrown){
+                     $self._displayFailure(jqXHR, textStatus, errorThrown);
             });
         },
 
@@ -743,7 +747,19 @@
                 return url;
             }
         },
-
+        
+        _displayFailure:function(jqXHR,textStatus, errorThrown){
+            
+            var serverMsg="",
+                $self=this;
+            if (jqXHR.status == 403) {
+                serverMsg = 'Access denied, Your role does not contain sufficient privilege. Please consult with Administrator';
+             }else if (jqXHR.status == 401) {
+                serverMsg = 'Access denied, Your role does not contain sufficient privilage. Please consult with Administrator';
+             } 
+           $self._scrollable_list.html("<div class='ui-state-error' style='padding: 1em;width:90%'><p><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span>" + ' ' + serverMsg + '</p></div>');
+        },
+        
         destroy: function() {
             $.Widget.prototype.destroy.call(this);
         }
