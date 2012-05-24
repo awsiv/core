@@ -36,6 +36,7 @@
                 // load the url in different tab
                 var url = $itemClicked.attr('href');
                 $self.openNewWindow(url, '_blank');
+                return;
             }
             /* 
               this is workaround for weakest hosts report. we don't have any 
@@ -48,6 +49,7 @@
                     url  += '/inclist/' + $self._context.includes;
                 }
                 $self.openNewWindow(url, '_blank');
+                return;
             }
             
             
