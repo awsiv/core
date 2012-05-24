@@ -2159,14 +2159,15 @@ int Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFil
         hq = CFDB_QueryBundleSeen(&dbconn, hostkey, bundle, regex, hostClassFilter, true);
     }
 
+    int skipped_host_cnt = CFDB_CountSkippedOldAgents(&dbconn, hostkey, hostClassFilter);
     int related_host_cnt = RlistLen(hq->hosts);
     PageRecords(&(hq->records), page, DeleteHubBundleSeen);
 
     char header[CF_BUFSIZE] = { 0 };
     snprintf(header, sizeof(header),
-             "\"meta\":{\"count\" : %d, \"related\" : %d, "
+             "\"meta\":{\"count\" : %d, \"related\" : %d, \"old_skipped\" : %d, "
              "\"header\": {\"Host\":0,\"Bundle\":1,\"Last Verified\":2,\"%% Compliance\":3,\"Avg %% Compliance\":4,\"+/- %%\":5}",
-             page->totalResultCount, related_host_cnt);
+             page->totalResultCount, related_host_cnt, skipped_host_cnt);
 
     int headerLen = strlen(header);
     int noticeLen = strlen(CF_NOTICE_TRUNCATED);
@@ -2775,6 +2776,10 @@ JsonElement *Nova2PHP_bundle_hosts(char *hostkey, char *bundle, bool regex,
     }
 
     JsonElement *json_out = CreateJsonHostOnlyReport(&(hq->hosts), page);
+
+    int skipped_cnt = CFDB_CountSkippedOldAgents(&dbconn, hostkey, hostClassFilter);
+    JsonElement *json_obj_meta = JsonObjectGetAsObject(json_out, "meta");
+    JsonObjectAppendInteger(json_obj_meta, "old_skipped", skipped_cnt);
 
     DeleteHubQuery(hq, DeleteHubBundleSeen);
 
