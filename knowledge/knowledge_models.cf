@@ -987,13 +987,13 @@ occurrences:
 
    functions::
 
-     "/docs/cf3-reference#Special-functions"
+     "/docs/cf3-Reference#Special-functions"
           represents => { "cf3" };
 
 
   hard_classes::
 
-   "/docs/cf3-reference#Hard-classes"
+   "/docs/cf3-Reference#Hard-classes"
           represents => { "manual" };
 
    "A classification of the basic environment that is immutable, e.g. about the system hardware"
@@ -1008,7 +1008,7 @@ occurrences:
 
   role_based_access_control::
 
-     "/docs/cf3-reference#roles-in-server-promises"
+     "/docs/cf3-Reference#roles-in-server-promises"
           represents => { "cf3" };
 
 
@@ -1050,7 +1050,7 @@ occurrences:
             represents => { "definitions" },
             representation => "literal";
 
-     "/docs/cf3-reference#Types-in-cfengine-3"
+     "/docs/cf3-Reference#Types-in-cfengine-3"
             represents => { "Cfengine reference" };
 
   rvalue::
@@ -1058,7 +1058,7 @@ occurrences:
             represents => { "definitions" },
             representation => "literal";
 
-     "/docs/cf3-reference#Types-in-cfengine-3"
+     "/docs/cf3-Reference#Types-in-cfengine-3"
             represents => { "Cfengine reference" };
 
   structural_relationships:: 
