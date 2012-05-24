@@ -752,10 +752,8 @@
             
             var serverMsg="",
                 $self=this;
-            if (jqXHR.status == 403) {
+            if (jqXHR.status == 403 ||jqXHR.status == 401) {
                 serverMsg = 'Access denied, Your role does not contain sufficient privilege. Please consult with Administrator';
-             }else if (jqXHR.status == 401) {
-                serverMsg = 'Access denied, Your role does not contain sufficient privilage. Please consult with Administrator';
              } 
            $self._scrollable_list.html("<div class='ui-state-error' style='padding: 1em;width:90%'><p><span style='float: left; margin-right: 0.3em;' class='ui-icon ui-icon-alert'></span>" + ' ' + serverMsg + '</p></div>');
         },
