@@ -21,13 +21,13 @@
 </div>
 
 <script type="text/javascript">
-    var horizon = 4 * 60 * 60 * 1000;
-    var to = new Date();
-    var from = new Date(to - horizon);
-    $( "input:text[name=from]" ).datetimepicker({
-dateFormat: 'yy-mm-dd'
-}).datetimepicker('setDate', from);
+
+$( "input:text[name=from]" ).datetimepicker({
+      dateFormat: 'yy-mm-dd'
+});
+
 $( "input:text[name=to]" ).datetimepicker({
-dateFormat: 'yy-mm-dd'
-}).datetimepicker('setDate', to);
+      dateFormat: 'yy-mm-dd'
+});
+
 </script>
