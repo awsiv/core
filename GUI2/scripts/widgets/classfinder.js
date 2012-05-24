@@ -199,8 +199,7 @@
                 self.selectedMenu = 'all classes';
             }
             var filter = self.selectedMenu.toLowerCase().split(' ')[0];
-
-            if ($(listpane)[0].scrollHeight - ($(listpane).scrollTop()) <= ($(listpane).outerHeight() + 50)) {
+            if ($(listpane)[0].scrollHeight - ($(listpane).scrollTop()) <= ($(listpane).outerHeight() + 400)) {
                 classfinder_animate = true;
 
 
