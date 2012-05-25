@@ -29,7 +29,7 @@
 #define LIC_DAY "25"
 #define LIC_MONTH "December"
 #define LIC_YEAR "2222"
-#define LIC_COMPANY "TRIAL LICENSE - NOT FOR PRODUCTION"
+#define LIC_COMPANY "FREE ENTERPRISE – http://cfengine.com/25free for terms"
 
 static time_t LAST_LICENSE_CHECK_TIMESTAMP;
 static bool RecentlyCheckedLicense(void);
