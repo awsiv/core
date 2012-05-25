@@ -82,7 +82,7 @@ void MakeLog(Item *mess, enum cfreport level)
 
     strMsg = Item2String(mess);
     insertStrings[1] = strMsg;
-    insertStrings[2] = THIS_AGENT;
+    insertStrings[2] = CF_AGENTTYPES[THIS_AGENT_TYPE];
 
     ReportEvent(logHandle, eventType, 0, eventId, NULL, 3, 0, (LPCSTR *) insertStrings, NULL);
 
@@ -341,7 +341,7 @@ void LogPromiseResult(char *promiser, char peeType, void *promisee, char status,
     insertStrings[1] = promiser;
     insertStrings[2] = strPromisee;
     insertStrings[3] = strMsg;
-    insertStrings[4] = THIS_AGENT;
+    insertStrings[4] = CF_AGENTTYPES[THIS_AGENT_TYPE];
 
     ReportEvent(logHandle, eventType, 0, eventId, NULL, 5, 0, (LPCSTR *) insertStrings, NULL);
 
