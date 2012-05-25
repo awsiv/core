@@ -132,7 +132,7 @@ static void Nova_DoFileDiff(char *file, char *destination, struct stat sb, struc
     pos = Nova_GetFirstChangePosition(file, destination);
 
     fprintf(fout, "%ld;File changed size from %jd to %jd, first difference at byte position %d/%jd of old\n",
-            (long) now, (intmax_t) sb.st_size, (intmax_t) dsb.st_size, pos, (intmax_t) dsb.st_size);
+            (long) now, (intmax_t) dsb.st_size, (intmax_t) sb.st_size, pos, (intmax_t) dsb.st_size);
 
     if (Nova_FileIsBinary(destination, dsb.st_size, NOVA_MAXDIFFSIZE))
     {
@@ -242,37 +242,18 @@ static int Nova_FileIsBinary(char *name, int size, int maxsize)
 
 /*****************************************************************************/
 
-static void Nova_ReportFileChange(FILE *fp, char *file, char *destination, int maxsize)
+static void RemoveDuplicateLines(FileLine **lines1, FileLine **lines2)
 {
-    FileLine *list1 = NULL, *list2 = NULL;
-    FileLine *it1 = NULL, *it2 = NULL;
-    FileLine *flp1, *flp2, *next1, *next2;
-    int len1, len2;
+    FileLine *it1 = *lines1;
+    FileLine *it2 = *lines2;
 
-    CfOut(cf_verbose, "", " -> Reporting on file changes to \"%s\"\n", file);
+    FileLine *next1, *next2;
 
-    if (!Nova_LoadFileHunks(file, destination, &list1, &list2, &len1, &len2, maxsize))
-    {
-        CfOut(cf_inform, "", " !! Unable to find reference files for diff of \"%s\"", file);
-        return;
-    }
-
-    if (len1 > len2)
-    {
-        it1 = list1;
-        it2 = list2;
-    }
-    else
-    {
-        it1 = list2;
-        it2 = list1;
-    }
-
-    for (flp1 = it1; flp1 != NULL; flp1 = next1)
+    for (FileLine *flp1 = it1; flp1 != NULL; flp1 = next1)
     {
         next1 = flp1->next;
 
-        for (flp2 = it2; flp2 != NULL; flp2 = next2)
+        for (FileLine *flp2 = it2; flp2 != NULL; flp2 = next2)
         {
             next2 = flp2->next;
 
@@ -285,7 +266,34 @@ static void Nova_ReportFileChange(FILE *fp, char *file, char *destination, int m
         }
     }
 
-    for (flp1 = it1; flp1 != NULL; flp1 = flp1->next)
+    *lines1 = it1;
+    *lines2 = it2;
+}
+
+static void Nova_ReportFileChange(FILE *fp, char *file, char *destination, int maxsize)
+{
+    FileLine *list1 = NULL, *list2 = NULL;
+    FileLine *flp1, *flp2;
+    int len1, len2;
+
+    CfOut(cf_verbose, "", " -> Reporting on file changes to \"%s\"\n", file);
+
+    if (!Nova_LoadFileHunks(file, destination, &list1, &list2, &len1, &len2, maxsize))
+    {
+        CfOut(cf_inform, "", " !! Unable to find reference files for diff of \"%s\"", file);
+        return;
+    }
+
+    if (len1 > len2)
+    {
+        RemoveDuplicateLines(&list1, &list2);
+    }
+    else
+    {
+        RemoveDuplicateLines(&list2, &list1);
+    }
+
+    for (flp1 = list1; flp1 != NULL; flp1 = flp1->next)
     {
         if (EmptyString(flp1->text))
         {
@@ -293,24 +301,24 @@ static void Nova_ReportFileChange(FILE *fp, char *file, char *destination, int m
         }
         else
         {
-            fprintf(fp, "-,%d,%s\n", flp1->counter, flp1->text);
+            fprintf(fp, "+,%d,%s\n", flp1->counter, flp1->text);
         }
     }
 
-    for (flp2 = it2; flp2 != NULL; flp2 = flp2->next)
+    for (flp2 = list2; flp2 != NULL; flp2 = flp2->next)
     {
         if (EmptyString(flp2->text))
         {
-            fprintf(fp, "+,%d,(blanks/space)\n", flp2->counter);
+            fprintf(fp, "-,%d,(blanks/space)\n", flp2->counter);
         }
         else
         {
-            fprintf(fp, "+,%d,%s\n", flp2->counter, flp2->text);
+            fprintf(fp, "-,%d,%s\n", flp2->counter, flp2->text);
         }
     }
 
-    DeleteAllFileLines(it1);
-    DeleteAllFileLines(it2);
+    DeleteAllFileLines(list1);
+    DeleteAllFileLines(list2);
 }
 
 /*****************************************************************************/
