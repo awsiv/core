@@ -7,6 +7,8 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+
+#include "promises.h"
 #include "files_lib.h"
 #include "files_names.h"
 

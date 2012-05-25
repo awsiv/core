@@ -14,6 +14,8 @@
 #include "cf3.extern.h"
 #include "cf3.server.h"
 #include "cf.nova.h"
+
+#include "promises.h"
 #include "crypto.h"
 #include "files_names.h"
 #include "vars.h"

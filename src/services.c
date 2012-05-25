@@ -15,6 +15,8 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#include "promises.h"
+
 /* !__MINGW32__ */
 void VerifyWindowsService(Attributes a, Promise *pp)
 {

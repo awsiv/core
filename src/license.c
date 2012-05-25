@@ -14,6 +14,8 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+
+#include "promises.h"
 #include "lastseen.h"
 #include "crypto.h"
 #include "files_names.h"
