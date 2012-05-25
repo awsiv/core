@@ -742,7 +742,6 @@ void Constellation_GenerateStoriesCmdLine(char *typed_topic,enum storytype type)
   char topic[CF_BUFSIZE],context[CF_BUFSIZE];
   Chapter *episode;
   StoryLine *allstories = NULL, *root = NULL;
-  bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
   bson_iterator it1;
@@ -762,10 +761,10 @@ if (!NULL_OR_EMPTY(typed_topic))
    {
    Nova_DeClassifyTopic(typed_topic,topic,context);
 
-   bson_buffer_init(&bb);
-   bson_append_regex(&bb,cfk_topicname,topic,"");
-   bson_append_regex(&bb,cfk_topiccontext,context,"");
-   bson_from_buffer(&query,&bb);
+   bson_init(&query);
+   bson_append_regex(&query,cfk_topicname,topic,"");
+   bson_append_regex(&query,cfk_topiccontext,context,"");
+   bson_finish(&query);
    }
 else
    {
@@ -774,15 +773,14 @@ else
 
 /* BEGIN RESULT DOCUMENT */
 
-bson_buffer_init(&bb);
-bson_append_int(&bb,cfk_topicname,1);
-bson_append_int(&bb,cfk_topicid,1);
-bson_append_int(&bb,cfk_topiccontext,1);
-bson_append_int(&bb,cfk_associations,1);
-bson_append_int(&bb,cfk_associd,1);
-bson_append_int(&bb,cfk_assoccontext,1);
-bson_append_int(&bb,cfk_assocname,1);
-bson_from_buffer(&field, &bb);
+BsonSelectReportFields(&field, 7,
+                       cfk_topicname,
+                       cfk_topicid,
+                       cfk_topiccontext,
+                       cfk_associations,
+                       cfk_associd,
+                       cfk_assoccontext,
+                       cfk_assocname);
 
 /* BEGIN SEARCH for matching topics */
 

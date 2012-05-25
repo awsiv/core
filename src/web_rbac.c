@@ -233,19 +233,18 @@ static cfapi_errid LDAPAuthenticate(EnterpriseDB *conn, const char *username, co
 
 static cfapi_errid IonAuthenticate(EnterpriseDB *conn, const char *username, const char *password, size_t password_len)
 {
-    bson_buffer buffer;
-    bson_buffer_init(&buffer);
-    bson_append_string(&buffer, dbkey_user_name, username);
-    bson_append_int(&buffer, dbkey_user_active, 1);
-
     bson query;
-    bson_from_buffer(&query, &buffer);
 
-    bson_buffer_init(&buffer);
-    bson_append_int(&buffer, dbkey_user_password, 1);
+    bson_init(&query);
+    bson_append_string(&query, dbkey_user_name, username);
+    bson_append_int(&query, dbkey_user_active, 1);
+    bson_finish(&query);
 
     bson field;
-    bson_from_buffer(&field, &buffer);
+
+    bson_init(&field);
+    bson_append_int(&field, dbkey_user_password, 1);
+    bson_finish(&field);
 
     bson record;
     bson_bool_t found = mongo_find_one(conn, GetUsersCollection(conn), &query, &field, &record);
@@ -257,6 +256,9 @@ static cfapi_errid IonAuthenticate(EnterpriseDB *conn, const char *username, con
     {
         const char *db_password = NULL;
         BsonStringGet(&record, dbkey_user_password, &db_password);
+
+        bson_destroy(&record);
+
         assert(db_password);
 
         if (db_password)
@@ -570,45 +572,45 @@ cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *descriptio
         return ERRID_ITEM_EXISTS;
     }
 
-    bson_buffer bb;
-
     bson query;
 
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, dbkey_role_name, roleName);
-    bson_from_buffer(&query, &bb);
+    bson_init(&query);
+    bson_append_string(&query, dbkey_role_name, roleName);
+    bson_finish(&query);
 
-    bson update;
+    bson set_op;
 
-    bson_buffer_init(&bb);
-    bson_buffer *set = bson_append_start_object(&bb, "$set");
-
-    bson_append_string(set, dbkey_role_description, description);
-
-    if (includeClassRx)
+    bson_init(&set_op);
     {
-        bson_append_string(set, dbkey_role_classrx_include, includeClassRx);
-    }
-    if (excludeClassRx)
-    {
-        bson_append_string(set, dbkey_role_classrx_exclude, excludeClassRx);
-    }
-    if (includeBundleRx)
-    {
-        bson_append_string(set, dbkey_role_bundlerx_include, includeBundleRx);
-    }
-    if (excludeBundleRx)
-    {
-        bson_append_string(set, dbkey_role_bundlerx_exclude, excludeBundleRx);
-    }
+        bson_append_start_object(&set_op, "$set");
 
-    bson_append_finish_object(set);
-    bson_from_buffer(&update, &bb);
+        bson_append_string(&set_op, dbkey_role_description, description);
 
-    mongo_update(&conn, MONGO_ROLES_COLLECTION, &query, &update, MONGO_UPDATE_UPSERT);
+        if (includeClassRx)
+        {
+            bson_append_string(&set_op, dbkey_role_classrx_include, includeClassRx);
+        }
+        if (excludeClassRx)
+        {
+            bson_append_string(&set_op, dbkey_role_classrx_exclude, excludeClassRx);
+        }
+        if (includeBundleRx)
+        {
+            bson_append_string(&set_op, dbkey_role_bundlerx_include, includeBundleRx);
+        }
+        if (excludeBundleRx)
+        {
+            bson_append_string(&set_op, dbkey_role_bundlerx_exclude, excludeBundleRx);
+        }
+
+        bson_append_finish_object(&set_op);
+    }
+    bson_finish(&set_op);
+
+    mongo_update(&conn, MONGO_ROLES_COLLECTION, &query, &set_op, MONGO_UPDATE_UPSERT);
 
     bson_destroy(&query);
-    bson_destroy(&update);
+    bson_destroy(&set_op);
 
     if (!MongoCheckForError(&conn, "CFDB_DeleteRole", NULL, false))
     {
@@ -645,12 +647,11 @@ cfapi_errid CFDB_DeleteRole(char *deletingUser, char *roleName, bool deassociate
         return ERRID_ITEM_NONEXISTING;
     }
 
-    bson_buffer bb;
     bson query;
 
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, dbkey_role_name, roleName);
-    bson_from_buffer(&query, &bb);
+    bson_init(&query);
+    bson_append_string(&query, dbkey_role_name, roleName);
+    bson_finish(&query);
 
     mongo_remove(&conn, MONGO_ROLES_COLLECTION, &query);
     bson_destroy(&query);
@@ -738,18 +739,19 @@ static void DeAssociateUsersFromRole(EnterpriseDB *conn, char *roleName)
 
     bson_empty(&query);
 
-    bson_buffer bb;
-    bson update;
+    bson pull_op;
 
-    bson_buffer_init(&bb);
-    bson_buffer *pull = bson_append_start_object(&bb, "$pull");
+    bson_init(&pull_op);
+    {
+        bson_append_start_object(&pull_op, "$pull");
 
-    bson_append_string(pull, dbkey_user_roles, roleName);
-    bson_append_finish_object(pull);
-    bson_from_buffer(&update, &bb);
+        bson_append_string(&pull_op, dbkey_user_roles, roleName);
+        bson_append_finish_object(&pull_op);
+    }
+    bson_finish(&pull_op);
 
-    mongo_update(conn, usersCollection, &query, &update, MONGO_UPDATE_MULTI);
-    bson_destroy(&update);
+    mongo_update(conn, usersCollection, &query, &pull_op, MONGO_UPDATE_MULTI);
+    bson_destroy(&pull_op);
 }
 
 /*****************************************************************************/
@@ -810,19 +812,17 @@ static bool IsRBACOn(EnterpriseDB *conn)
 
 static Item *CFDB_GetRolesForUser(EnterpriseDB *conn, char *userName)
 {
-    bson_buffer bb;
-
     bson query;
 
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, dbkey_user_name, userName);
-    bson_from_buffer(&query, &bb);
+    bson_init(&query);
+    bson_append_string(&query, dbkey_user_name, userName);
+    bson_finish(&query);
 
     bson field;
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, dbkey_user_roles, 1);
-    bson_from_buffer(&field, &bb);
+    bson_init(&field);
+    bson_append_int(&field, dbkey_user_roles, 1);
+    bson_finish(&field);
 
     const char *usersCollection = GetUsersCollection(conn);
 
@@ -869,13 +869,12 @@ HubQuery *CFDB_GetAllRolesAuth(char *userName)
 /*****************************************************************************/
 
 static HubQuery *CFDB_GetAllRoles(void)
-{
-    bson_buffer bb;
-    
-    bson query;    
-    bson_buffer_init(&bb);
-    BsonAppendSortField(&bb, dbkey_role_name);
-    bson_from_buffer(&query, &bb);
+{    
+    bson query;
+
+    bson_init(&query);
+    BsonAppendSortField(&query, dbkey_role_name);
+    bson_finish(&query);
     
     HubQuery *hq = CFDB_GetRoles(&query);
 
@@ -911,13 +910,11 @@ HubQuery *CFDB_GetRoleByNameAuth(char *userName, char *roleName)
 
 static HubQuery *CFDB_GetRoleByName(char *name)
 {
-    bson_buffer bb;
-
     bson query;
 
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, dbkey_role_name, name);
-    bson_from_buffer(&query, &bb);
+    bson_init(&query);
+    bson_append_string(&query, dbkey_role_name, name);
+    bson_finish(&query);
 
     HubQuery *hq = CFDB_GetRoles(&query);
 
@@ -935,29 +932,28 @@ HubQuery *CFDB_GetRolesByMultipleNames(Item *names)
         NewHubQueryErrid(NULL, NULL, ERRID_ARGUMENT_WRONG);
     }
 
-    bson_buffer bb;
-
     bson query;
 
-    bson_buffer_init(&bb);
-
-    bson_buffer *or = bson_append_start_array(&bb, "$or");
-
-    int i = 0;
-    char iStr[64];
-
-    for (Item *ip = names; ip != NULL; ip = ip->next, i++)
+    bson_init(&query);
     {
-        snprintf(iStr, sizeof(iStr), "%d", i);
-        bson_buffer *entry = bson_append_start_object(or, iStr);
+        bson_append_start_array(&query, "$or");
 
-        bson_append_string(entry, dbkey_role_name, ip->name);
-        bson_append_finish_object(entry);
+        int i = 0;
+        char iStr[64];
+
+        for (Item *ip = names; ip != NULL; ip = ip->next, i++)
+        {
+            snprintf(iStr, sizeof(iStr), "%d", i);
+            {
+                bson_append_start_object(&query, iStr);
+
+                bson_append_string(&query, dbkey_role_name, ip->name);
+                bson_append_finish_object(&query);
+            }
+        }
+        bson_append_finish_object(&query);
     }
-
-    bson_append_finish_object(or);
-
-    bson_from_buffer(&query, &bb);
+    bson_finish(&query);
 
     HubQuery *hq = CFDB_GetRoles(&query);
 
@@ -974,28 +970,28 @@ HubQuery *CFDB_GetRoles(bson *query)
     HubQuery *hq = NewHubQuery(NULL, recordList);
 
     EnterpriseDB conn;
-    bson_buffer bb;
-    bson field;
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, dbkey_role_name, 1);
-    bson_append_int(&bb, dbkey_role_description, 1);
-    bson_append_int(&bb, dbkey_role_classrx_include, 1);
-    bson_append_int(&bb, dbkey_role_classrx_exclude, 1);
-    bson_append_int(&bb, dbkey_role_bundlerx_include, 1);
-    bson_append_int(&bb, dbkey_role_bundlerx_exclude, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+
+    bson_init(&fields);
+    bson_append_int(&fields, dbkey_role_name, 1);
+    bson_append_int(&fields, dbkey_role_description, 1);
+    bson_append_int(&fields, dbkey_role_classrx_include, 1);
+    bson_append_int(&fields, dbkey_role_classrx_exclude, 1);
+    bson_append_int(&fields, dbkey_role_bundlerx_include, 1);
+    bson_append_int(&fields, dbkey_role_bundlerx_exclude, 1);
+    bson_finish(&fields);
 
     if (!CFDB_Open(&conn))
     {
         hq->errid = ERRID_DBCONNECT;
-        bson_destroy(&field);
+        bson_destroy(&fields);
         return hq;
     }
 
-    mongo_cursor *cursor = mongo_find(&conn, MONGO_ROLES_COLLECTION, query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_ROLES_COLLECTION, query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
     CFDB_Close(&conn);
 

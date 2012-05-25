@@ -55,12 +55,13 @@ int CFDB_Open(EnterpriseDB *conn)
 
 int CFDB_Close(EnterpriseDB *conn)
 {
-    if (mongo_destroy(conn) != 0)
+    mongo_destroy(conn);
+    /*
     {
         CfOut(cf_error, "mongo_destroy", "!! Could not disconnect from mongo server");
         return false;
     }
-
+*/
     return true;
 }
 
