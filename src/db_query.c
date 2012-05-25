@@ -1266,8 +1266,8 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, c
 
                                 switch (bson_iterator_type(&it4))
                                 {
-                                case bson_array:
-                                case bson_object:
+                                case BSON_ARRAY:
+                                case BSON_OBJECT:
                                     bson_iterator_init(&it5, bson_iterator_value(&it4));
                                     rtype = CF_LIST;
 
@@ -5746,13 +5746,13 @@ Rlist *CFDB_QueryNotes(EnterpriseDB *conn, char *keyhash, char *nid, Item *data)
         {
             switch (bson_iterator_type(&it1))
             {
-            case bson_oid:
+            case BSON_OID:
                 if (strcmp(bson_iterator_key(&it1), "_id") == 0)
                 {
                     bson_oid_to_string(bson_iterator_oid(&it1), noteId);
                 }
                 break;
-            case bson_string:
+            case BSON_STRING:
                 if (strcmp(bson_iterator_key(&it1), cfn_keyhash) == 0)
                 {
                     strncpy(kh, bson_iterator_string(&it1), CF_MAXVARSIZE - 1);
@@ -5763,15 +5763,15 @@ Rlist *CFDB_QueryNotes(EnterpriseDB *conn, char *keyhash, char *nid, Item *data)
                 }
                 break;
 
-            case bson_int:
+            case BSON_INT:
                 if (strcmp(bson_iterator_key(&it1), cfn_reporttype) == 0)
                 {
                     reportType = bson_iterator_int(&it1);
                 }
                 break;
 
-            case bson_object:
-            case bson_array:
+            case BSON_OBJECT:
+            case BSON_ARRAY:
                 bson_iterator_init(&it2, bson_iterator_value(&it1));
 
                 while (bson_iterator_next(&it2))
@@ -5786,7 +5786,7 @@ Rlist *CFDB_QueryNotes(EnterpriseDB *conn, char *keyhash, char *nid, Item *data)
                         }
                         switch (t)
                         {
-                        case bson_string:
+                        case BSON_STRING:
                             if (strcmp(bson_iterator_key(&it3), cfn_username) == 0)
                             {
                                 strncpy(username, bson_iterator_string(&it3), CF_MAXVARSIZE - 1);
@@ -5796,7 +5796,7 @@ Rlist *CFDB_QueryNotes(EnterpriseDB *conn, char *keyhash, char *nid, Item *data)
                                 strncpy(note, bson_iterator_string(&it3), CF_BUFSIZE - 1);
                             }
                             break;
-                        case bson_int:
+                        case BSON_INT:
                             if (strcmp(bson_iterator_key(&it3), cfn_datetime) == 0)
                             {
                                 datetime = (time_t) bson_iterator_int(&it3);
@@ -5906,10 +5906,10 @@ Rlist *CFDB_QueryNoteId(EnterpriseDB *conn, bson *query)
         {
             switch (bson_iterator_type(&it1))
             {
-            case bson_oid:
+            case BSON_OID:
                 bson_oid_to_string(bson_iterator_oid(&it1), noteId);
                 break;
-            case bson_string:
+            case BSON_STRING:
                 if (strcmp(bson_iterator_key(&it1), cfn_keyhash) == 0)
                 {
                     strncpy(keyhash, bson_iterator_string(&it1), CF_MAXVARSIZE - 1);
@@ -5989,7 +5989,7 @@ Item *CFDB_QueryDistinct(EnterpriseDB *conn, char *database, char *collection, c
         return false;
     }
 
-    if (bson_iterator_type(&it1) != bson_array)
+    if (bson_iterator_type(&it1) != BSON_ARRAY)
     {
         CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryDistinct()");
         bson_destroy(&result);

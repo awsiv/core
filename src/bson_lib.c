@@ -51,7 +51,7 @@ Rlist *BsonStringArrayAsRlist(const bson *b, const char *key)
 
     while (bson_iterator_next(&it))
     {
-        if (bson_iterator_type(&it) == bson_string)
+        if (bson_iterator_type(&it) == BSON_STRING)
         {
             // NOTE: preserve ordering (don't prepend)
             AppendRScalar(&values, (char *) bson_iterator_string(&it), CF_SCALAR);
@@ -72,7 +72,7 @@ bool BsonIntGet(const bson *b, const char *key, int *out)
 {
     bson_iterator it;
 
-    if (bson_find(&it, b, key) == bson_int)
+    if (bson_find(&it, b, key) == BSON_INT)
     {
         *out = bson_iterator_int(&it);
         return true;
@@ -100,7 +100,7 @@ bool BsonArrayGet(const bson *b, const char *key, const char **out)
 {
     bson_iterator it;
 
-    if (bson_find(&it, b, key) == bson_array)
+    if (bson_find(&it, b, key) == BSON_ARRAY)
     {
         *out = bson_iterator_value(&it);
         return true;
@@ -115,7 +115,7 @@ bool BsonObjectGet(const bson *b, const char *key, const char **out)
 {
     bson_iterator it;
 
-    if (bson_find(&it, b, key) == bson_object)
+    if (bson_find(&it, b, key) == BSON_OBJECT)
     {
         *out = bson_iterator_value(&it);
         return true;
@@ -153,7 +153,7 @@ long BsonLongGet(const bson *b, const char *key)
 {
     bson_iterator it;
 
-    if (bson_find(&it, b, key) == bson_long)
+    if (bson_find(&it, b, key) == BSON_LONG)
     {
         return bson_iterator_long(&it);
     }
@@ -169,7 +169,7 @@ bool BsonStringGet(const bson *b, const char *key, const char **out)
 {
     bson_iterator it;
 
-    if (bson_find(&it, b, key) == bson_string)
+    if (bson_find(&it, b, key) == BSON_STRING)
     {
         *out = bson_iterator_string(&it);
         return true;
@@ -185,7 +185,7 @@ bool BsonBoolGet(const bson *b, const char *key, bool *out)
 {
     bson_iterator it;
 
-    if (bson_find(&it, b, key) == bson_bool)
+    if (bson_find(&it, b, key) == BSON_BOOL)
     {
         *out = (int)bson_iterator_bool(&it);
         return true;
@@ -202,7 +202,7 @@ void BsonStringWrite(char *dest, int destSz, const bson *b, const char *key)
 {
     bson_iterator it;
 
-    if (bson_find(&it, b, key) == bson_string)
+    if (bson_find(&it, b, key) == BSON_STRING)
     {
         snprintf(dest, destSz, "%s", bson_iterator_string(&it));
     }
@@ -219,7 +219,7 @@ const char *BsonGetArrayValue(const bson *b, const char *key)
 {
     bson_iterator it;
 
-    if (bson_find(&it, b, key) == bson_array)
+    if (bson_find(&it, b, key) == BSON_ARRAY)
     {
         return bson_iterator_value(&it);
     }
@@ -468,42 +468,42 @@ void BsonToString(char *retBuf, int retBufSz, char *data)
 
         switch (t)
         {
-        case bson_int:
+        case BSON_INT:
             snprintf(buf, sizeof(buf), "%d", bson_iterator_int(&i));
             break;
 
-        case bson_double:
+        case BSON_DOUBLE:
             snprintf(buf, sizeof(buf), "%f", bson_iterator_double(&i));
             break;
 
-        case bson_bool:
+        case BSON_BOOL:
             snprintf(buf, sizeof(buf), "%s", bson_iterator_bool(&i) ? "true" : "false");
             break;
 
-        case bson_string:
+        case BSON_STRING:
             snprintf(buf, sizeof(buf), "%s", bson_iterator_string(&i));
             break;
 
-        case bson_regex:
+        case BSON_REGEX:
             snprintf(buf, sizeof(buf), "/%s/", bson_iterator_string(&i));
             break;
 
-        case bson_null:
+        case BSON_NULL:
             snprintf(buf, sizeof(buf), "null");
             break;
 
-        case bson_oid:
+        case BSON_OID:
             bson_oid_to_string(bson_iterator_oid(&i), oidhex);
             snprintf(buf, sizeof(buf), "%s", oidhex);
             break;
 
-        case bson_object:
+        case BSON_OBJECT:
             buf[0] = '{';
             BsonToString(buf + 1, sizeof(buf - 1), (char *) bson_iterator_value(&i));
             EndJoin(buf, "}", sizeof(buf));
             break;
 
-        case bson_array:
+        case BSON_ARRAY:
 
             buf[0] = '[';
             BsonToString(buf + 1, sizeof(buf - 1), (char *) bson_iterator_value(&i));

@@ -245,7 +245,7 @@ void CFDB_ScanHubHost(bson_iterator *it1, char *keyhash, char *ipaddr, char *hos
     int ipFound = false;
     int hostFound = false;
 
-    if (bson_iterator_type(it1) == bson_string && strcmp(bson_iterator_key(it1), cfr_keyhash) == 0)
+    if (bson_iterator_type(it1) == BSON_STRING && strcmp(bson_iterator_key(it1), cfr_keyhash) == 0)
     {
         strncpy(keyhash, bson_iterator_string(it1), CF_MAXVARSIZE - 1);
     }

@@ -1926,7 +1926,7 @@ int CFDB_AddNote(EnterpriseDB *conn, char *keyhash, int reportType, char *nid,
             {
                 switch (bson_iterator_type(&it1))
                 {
-                case bson_oid:
+                case BSON_OID:
                     if (strcmp(bson_iterator_key(&it1), "_id") == 0)
                     {
                         bson_oid_to_string(bson_iterator_oid(&it1), objectId);

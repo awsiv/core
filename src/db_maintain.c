@@ -821,7 +821,7 @@ void CFDB_PurgeScanStrTime(EnterpriseDB *conn, bson_iterator *itp, char *reportK
         {
             if (strcmp(bson_iterator_key(&it2), cfr_time) == 0)
             {
-                if (bson_iterator_type(&it2) != bson_string)
+                if (bson_iterator_type(&it2) != BSON_STRING)
                 {
                     CfOut(cf_error, "", "!! Date is not string type in purge");
                     continue;

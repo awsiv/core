@@ -606,7 +606,7 @@ static Rlist *Nova_GetTestMachines(void)
 
         while (bson_iterator_next(&it))
         {
-            if (bson_iterator_type(&it) == bson_string && strcmp(bson_iterator_key(&it), cfr_keyhash) == 0)
+            if (bson_iterator_type(&it) == BSON_STRING && strcmp(bson_iterator_key(&it), cfr_keyhash) == 0)
             {
                 CFDB_ScanHubHost(&it, keyhash, addresses, hostnames);
             }
@@ -708,7 +708,7 @@ void Nova_UpdateTestData(void)
 
         while (bson_iterator_next(&it))
         {
-            if (bson_iterator_type(&it) == bson_string && strcmp(bson_iterator_key(&it), cfr_keyhash) == 0)
+            if (bson_iterator_type(&it) == BSON_STRING && strcmp(bson_iterator_key(&it), cfr_keyhash) == 0)
             {
                 CFDB_ScanHubHost(&it, keyhash, addresses, hostnames);
             }
