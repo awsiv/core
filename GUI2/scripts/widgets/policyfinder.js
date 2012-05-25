@@ -110,7 +110,7 @@
             if (self.scrollingEnd == true || self.animate == true) return;
 
 
-            if ($listpane[0].scrollHeight - $listpane.scrollTop() <= ($listpane.outerHeight() + 50)) {
+            if ($listpane[0].scrollHeight - $listpane.scrollTop() <= ($listpane.outerHeight() + 400)) {
                 self.animate = true;
                 var url = self.submitUrl + '/' + self.page;
                 self.loadpagebody(url, self.selectedLetter, true);

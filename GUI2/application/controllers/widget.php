@@ -20,7 +20,7 @@ class Widget extends Cf_Controller
 
         try
         {
-            $result = $this->host_model->getHostByName($this->session->userdata('username'), '.*', 15, $page);
+            $result = $this->host_model->getHostByName($this->session->userdata('username'), '.*', 100, $page);
         }
         catch (Exception $e)
         {
@@ -92,7 +92,7 @@ class Widget extends Cf_Controller
         $hostname = $this->input->post('value') ? $this->input->post('value') : urldecode($hostname);
         try
         {
-            $data = $this->host_model->getHostByName($this->session->userdata('username'), $hostname, 15, $page);
+            $data = $this->host_model->getHostByName($this->session->userdata('username'), $hostname, 100, $page);
             echo $this->__format_to_html($data, 'hostname');
         }
         catch (Exception $e)
@@ -109,7 +109,7 @@ class Widget extends Cf_Controller
         $searchhost = '^[' . $hostname . '|' . strtolower($hostname) . ']';
         try
         {
-            $data = $this->host_model->getHostByName($this->session->userdata('username'), $searchhost, 15, $page);
+            $data = $this->host_model->getHostByName($this->session->userdata('username'), $searchhost, 100, $page);
             echo $this->__format_to_html($data, 'hostname');
         }
         catch (Exception $e)
@@ -153,7 +153,7 @@ class Widget extends Cf_Controller
         $ipaddress = $this->input->post('value') ? $this->input->post('value') : urldecode($ipregx);
         try
         {
-            $data = $this->host_model->getHostByIP($this->session->userdata('username'), $ipaddress, 15, $page);
+            $data = $this->host_model->getHostByIP($this->session->userdata('username'), $ipaddress, 100, $page);
             echo $this->__format_to_html($data, 'ipaddress');
         }
         catch (Exception $e)

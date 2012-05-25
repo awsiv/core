@@ -37,6 +37,8 @@
         _init: function() {
             var self = this;
             self.options.url = self.options.baseUrl + self.options.url;
+            self.cfui.scrollingEnd = false;
+            self.animate=false;
         },
         createhostfinder: function()
         {
@@ -128,7 +130,7 @@
             var listpane = event.currentTarget,
                  self = this,
                  url = self.options.url + '/' + self.cfui.page;
-
+            
             //do nothing if the false scroll event triggred due to click event of alpha sort
             if ($(listpane).scrollTop() == 0 || self.cfui.scrollingEnd || self.animate == true) {
                 return;
@@ -139,12 +141,14 @@
             }else if (self.cfui.searchedkey != null) {
                 url = self.options.baseUrl + '/widget/search_by_' + self.cfui.filtermethod.replace(/\s+/g, '').toLowerCase() + '/' + encodeURIComponent(self.cfui.searchedkey) + '/' + self.cfui.page;
             }
-            if ($(listpane)[0].scrollHeight - $(listpane).scrollTop() <= ($(listpane).outerHeight() + 50)) {
+            if ($(listpane)[0].scrollHeight - $(listpane).scrollTop() <= ($(listpane).outerHeight() + 400)) {
                    self.animate = true;
                    self.changeTitle('Loading');
                     $.get(url, function(data) {
                               if (data == '') {
                                   self.cfui.scrollingEnd = true;
+                                  self.revertTitle();
+                                  self.animate = false;
                                   return;
                               }
 
@@ -552,6 +556,7 @@
                 }
                 self.element.text(self.elementtext);
                 self.revertTitle();
+                self.animate = false;
         },
 
         destroy: function() {
