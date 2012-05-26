@@ -779,14 +779,3 @@ int Nova2Txt_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int buf
 
     return true;
 }
-
-/*****************************************************************************/
-/* Topic Map                                                                 */
-/*****************************************************************************/
-
-int Nova2Txt_docroot(char *buffer, int bufsize)
-{
-    Nova_WebTopicMap_Initialize();
-    snprintf(buffer, bufsize, "%s", DOCROOT);
-    return true;
-}

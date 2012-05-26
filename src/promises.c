@@ -275,25 +275,6 @@ static void Nova_DefineHubMaster(void)
 }
 
 /*****************************************************************************/
-void Nova_EnterpriseDiscovery()
-{
-    if (IsDefinedClass("redhat"))
-    {
-        SetDocRoot("/var/www/html");
-    }
-
-    if (IsDefinedClass("SuSE"))
-    {
-        SetDocRoot("/srv/www/htdocs");
-    }
-
-    if (IsDefinedClass("debian"))
-    {
-        SetDocRoot("/var/www");
-    }
-}
-
-/*****************************************************************************/
 
 void PreSanitizePromise(Promise *pp)
 {

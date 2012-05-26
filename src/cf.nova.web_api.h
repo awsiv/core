@@ -126,7 +126,6 @@ void Nova2PHP_GetPromiseBody(char *name, char *type, char *returnval, int bufsiz
 int Nova2PHP_body_list(char *name, char *type, char *returnval, int bufsize);
 char *Nova_LongState(char s);
 int Nova_TimeWarn(time_t now, time_t then, time_t threshold, char *outStr, int outStrSz);
-int Nova2PHP_docroot(char *buffer, int bufsize);
 void Nova_EnterpriseModuleTrick(void);
 void Nova2PHP_getlastupdate(char *hostkey, char *buffer, int bufsize);
 void Nova2PHP_get_host_colour(char *hostkey, char *buffer, int bufsize);

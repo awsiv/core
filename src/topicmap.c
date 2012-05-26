@@ -32,18 +32,6 @@ static Hit *HitExists(Hit *list, char *locator, enum representations rep_type, c
 static int MergeExistingContexts(Item **list, char *topic_name, char *topic_context, int merge);
 
 /*****************************************************************************/
-
-void Nova_WebTopicMap_Initialize()
-{
-    char retval[CF_MAXVARSIZE];
-
-    CFDB_GetValue("document_root", retval, CF_MAXVARSIZE, MONGO_SCRATCH);
-    strncpy(DOCROOT, retval, CF_MAXVARSIZE);
-
-    CfDebug("Loaded values: docroot=%s\n", DOCROOT);
-}
-
-/*****************************************************************************/
 /* The main panels                                                           */
 /*****************************************************************************/
 

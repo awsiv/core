@@ -72,14 +72,9 @@ void Nova2PHP_GetLibraryDocuments(char *path, char *buffer, int bufsize)
     Item *refs = NULL, *guides = NULL, *others = NULL, *pics = NULL, *ip;
     DIR *dirh;
 
-    if (path)
-    {
-        snprintf(namedir, CF_MAXVARSIZE, "%s", path);
-    }
-    else
-    {
-        snprintf(namedir, CF_MAXVARSIZE, "%s/docs", DOCROOT);
-    }
+    assert(path && "NULL path passed to Nova2PHP_GetLibraryDocuments");
+
+    snprintf(namedir, CF_MAXVARSIZE, "%s", path);
 
     if ((dirh = opendir(namedir)) == NULL)
     {
@@ -2921,8 +2916,6 @@ int Nova2PHP_bundle_agent_goals(PromiseFilter *filter, char *buffer, int bufsize
     mongo_connection dbconn;
     char work[CF_BUFSIZE];
 
-    Nova_WebTopicMap_Initialize();
-
     if (!CFDB_Open(&dbconn))
     {
         return false;
@@ -3055,17 +3048,6 @@ int Nova2PHP_bundle_list_by_bundle_usage(PromiseFilter *promiseFilter, char *bNa
         CfOut(cf_verbose, "", "!! Could not close connection to report database");
     }
 
-    return true;
-}
-
-/*****************************************************************************/
-/* Topic Map                                                                 */
-/*****************************************************************************/
-
-int Nova2PHP_docroot(char *buffer, int bufsize)
-{
-    Nova_WebTopicMap_Initialize();
-    snprintf(buffer, bufsize, "%s", DOCROOT);
     return true;
 }
 
