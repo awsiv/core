@@ -15,7 +15,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 #include "files_names.h"
-#include "promise.h"
+#include "promises.h"
 
 #ifdef MINGW
 
