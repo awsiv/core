@@ -23,7 +23,7 @@ static void Nova_ShowBuiltinFunctions(void);
 static void Nova_Indent(int i);
 
 
-void SyntaxTree2JavaScript(void)
+void SyntaxExport(void)
 {
 
     Nova_ShowBundleTypes();

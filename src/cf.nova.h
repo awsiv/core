@@ -993,10 +993,6 @@ void Nova_SignalTwin(void);
 void Nova_SignalOther(void);
 void Nova_ReviveOther(int argc, char **argv);
 
-/* syntax.c */
-
-void SyntaxTree2JavaScript(void);
-
 /* topicmap.c */
 
 #ifdef HAVE_LIBMONGOC
