@@ -16,9 +16,9 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
 
 <p id='admingrpsec'>
     <label for="admin_role">Administrative role<span class="required"></span></label>
-   <?php if(isset( $rolesacc)){
+   <?php if(isset($roles)){
     echo tooltip('tooltip_admin_grp','',true) ;// echo form_error('active_directory_domain'); 
-    echo form_dropdown('admin_role', $rolesacc, isset($admin_role)?$admin_role:'select');
+    echo form_dropdown('admin_role', $roles, isset($admin_role)?$admin_role:'select');
     }?>
     
    <?php if(isset($selected_role)){
@@ -153,7 +153,7 @@ echo form_open('settings/manage/'.$op, $attributes); ?>
         <?php 
         $elem = array(
                 'name'        => 'rbac',
-                'id'          => 'rbac_on',
+                'id'          => 'rbac_off',
                 'value'       => 'false',
                 'checked'     => (isset($rbac) && $rbac  == 'false' ? TRUE : '')
             );
