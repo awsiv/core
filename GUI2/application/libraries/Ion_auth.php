@@ -882,14 +882,18 @@ class Ion_auth
 
         public function delete_role($username, $name)
         {
-            if($this->ci->ion_auth_model_mongo->delete_role($username, $name))
-            {
-                $this->set_message('role_delete_successful');
-	        return TRUE;
-            }
-
-           $this->set_error('role_delete_unsuccessful');
-	   return FALSE;
+          try{
+                if($this->ci->ion_auth_model_mongo->delete_role($username, $name))
+                {
+                    $this->set_message('role_delete_successful');
+                    return TRUE;
+                }
+             $this->set_error('role_delete_unsuccessful');
+             return FALSE;
+          }catch(Exception $e){
+               $this->set_error('role_delete_unsuccessful');
+	       throw $e;
+          }  
         }
 
 
@@ -1084,7 +1088,7 @@ class Ion_auth
 
          public function get_roles_fromdb()
 	 {
-		 return $this->ci->ion_auth_model_mongo->get_roles();
+		 return $this->ci->ion_auth_model_mongo->get_roles($this->ci->session->userdata('username'));
 	 }
 
 	 /**
