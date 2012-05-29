@@ -857,7 +857,7 @@ class Ion_auth_model_mongo extends CI_Model
         }
         catch (Exception $e)
         {
-            log_message('error', $e->getMessage());
+            log_message('error', $e->getMessage()." " . $e->getFile() . " line:" . $e->getLine());
             throw $e;
         }
 
