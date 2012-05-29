@@ -33,7 +33,7 @@ if(db["appsettings"].findOne())
     db["appsettings"].update({},{$set:{
 	"bluehost_threshold_global": "3000000",
 	"external_admin_username": "",
-	"rbac" : false
+	"rbac" : "false"
     }}, false, true);
 }
 else
@@ -53,7 +53,7 @@ else
 	"login_attribute": "",
 	"member_attribute": "",
 	"mode": "database",
-	"rbac": false,
+	"rbac": "false",
 	"users_directory": ""
     });
 }
