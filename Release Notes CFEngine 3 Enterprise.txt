@@ -1,18 +1,18 @@
 CFENGINE 3 ENTERPRISE 2.2
 CFEngine has renamed CFEngine 3 Nova to CFEngine 3 Enterprise
-RELEASE DATE: May 29th, 2012
-SCOPE: Official release of CFEngine 3 Enterprise
+RELEASE DATE: May 30th, 2012
+SCOPE: Official release of CFEngine 3 Enterprise (successor to CFENgine Nova 2.1.3)
 
 PLATFORMS SUPPORTED:
-Hub:
+Hub/Policy-server:
 NAME		VERSION					ARCHITECTURE
 Debian 		6 					i686,x86-64
 Ubuntu 		8.04, 10.04, 12.04 			i686,x86-64
-RHEL 		5					i686,x86-64
+RHEL 		5, 6					i686,x86-64
 
 Clients:
 NAME:		VERSION					ARCHITECTURE		COMMENT
-AIX		5.3, 6.1 				power 			No libvirt
+AIX		5.3, 6.1 				power			No libvirt
 CentOS		5, 6 					i686,x86-64
 Debian 		5, 6 					i686,x86-64
 Fedora 		14, 15, 16 				i686,x86-64
@@ -27,8 +27,9 @@ SLES 		10, 11 					s390x
 SUSE Linux 	9.1, 9.2, 9.3, 10.0, 10.1 		i686,x86-64
 Solaris		8, 9, 10 				sparc	 		No libvirt
 Solaris 	10 					i86pc	 		No libvirt
-Ubuntu 		8.04, 8.10, 9.04, 9.10, 10.04, 10.10, 11.04, 11.10, 12.04 (i686,x86-64)
-Windows 	XP, Vista, 7, Server 2003, Server 2008 	x86,x64			No libvirt, OpenSSL is not FIPS-enabled
+Ubuntu		8.04, 8.10, 9.04, 9.10,			i686,x86-64
+Ubuntu		10.04, 10.10, 11.04, 11.10, 12.04 	i686,x86-64
+Windows 	Server 2003, Server 2008		x86,x64			No libvirt, OpenSSL is not FIPS-enabled
 
 Community version base: 3.3.3
 
@@ -66,6 +67,7 @@ CHANGE LOG FROM 2.1.3:
 * New function hostswithclass() that generates a list of hosts in a given class on the hub.
 * The bundled failsafe.cf policy now has trustkey=false to avoid IP spoofing attacks in default policy
 * Removal of notes from reports
+* Hub will manage up to 25 hosts without a license file (Free Enterprise)
 
 
 BUGFIXES SINCE 2.1.3:
@@ -83,8 +85,8 @@ CFEngine 3 Enterprise is provided in two packages, cfengine-nova_2.2.0 and cfeng
 The general installation steps are as follows:
 - Copy the CFEngine 3 Enterprise packages to the system.
 - Unpack the software
-- Send the hub's public key (/var/cfengine/ppkeys/localhost.pub) to CFEngine support to obtain a license
-- Copy the obtained license file to /var/cfengine/masterfiles/license.dat
+- Send the hub's public key (/var/cfengine/ppkeys/localhost.pub) to CFEngine support to obtain a license (Skip for Free 25 deployment)
+- Copy the obtained license file to /var/cfengine/masterfiles/license.dat (Skip for Free 25 deployment)
 - Bootstrap the machines to the hub (staring with bootstrapping the hub to itself): /var/cfengine/bin/cf-agent --bootstrap --policy-server <IP ADDRESS OF HUB>
 - CFEngine should now be up and running on your system. See Enterprise 2.2 Owner's Manual for more detailed installation instructions.
 
@@ -103,7 +105,7 @@ Start with the hub (policy server):
    $ cd /var/cfengine/share/NovaBase
    $ cp CFE_cfengine.cf CFE_knowledge.cf CFE_hub_specific.cf /var/cfengine/masterfiles
 * Modify a line in @file{/var/cfengine/masterfiles/update.cf} to run mongod as follows (line 242):
-   "/var/cfengine/bin/mongod --fork --logpath /var/log/mongod.log --dbpath $ (sys.workdir)/state --bind_ip 127.0.0.1 --nohttpinterface –nojournal --logappend > /dev/null < /dev/null 2>&1"
+   "/var/cfengine/bin/mongod --fork --logpath /var/log/mongod.log --dbpath $ (sys.workdir)/state --bind_ip 127.0.0.1 --nohttpinterface --nojournal --logappend > /dev/null < /dev/null 2>&1"
 * Tidy up $(sys.doc_root) directory (example for Debian/Ubuntu):   
    $ rm -rf /var/www/*
 * Restart CFEngine processes
@@ -173,14 +175,14 @@ CentOS 5:
 	(php-mcrypt, version 5.1.6-27)
 - A Concurrent Versioning system (subversion, version 1.6.11-7)
 
-DEBIAN 5:
-- The Apache Web Server Version 2.0 (apache2, version 2.2.9-10+lenny9)
-- PHP5 Core Files (php5, version 5.2.6.dfsg.1-1+lenny13)
+CentOS 6:
+- Apache HTTP Server (httpd, version 2.2.15-15.el6.centos.1)
+- PHP5 Core Files (php, version 5.3.3-3.el6_2.8)
 - PHP5 Extension Module
-	(php5-cli, version 5.2.6.dfsg.1-1+lenny13)
-	(php5-mcrypt, version 5.2.6.dfsg.1-1+lenny13)
-	(php-pear, version 5.2.6.dfsg.1-1+lenny13)
-- A Concurrent Versioning system (subversion, version 1.5.1dfsg1-7)
+	(php-bcmath, version 5.3.3-3.el6_2.8)
+	(php-pear, version 1.9.4-4.el6)
+	(php-mcrypt, version 5.3.3-3.el6_2.8)
+- A Concurrent Versioning system (subversion, version 1.6.11-2.el6_1.4)
 
 DEBIAN 6:
 - The Apache Web Server Version 2.0 (apache2, version 2.2.16-6+squeeze1)
@@ -209,12 +211,20 @@ UBUNTU 10:
 	(php-pear, version version 5.3.2-1ubuntu4.9)
 - A Concurrent Versioning system (subversion, version 1.6.6dfsg-2ubuntu1)
 
+UBUNTU 12:
+- The Apache Web Server Version 2.0 (apache2, version 2.2.22-1ubuntu1)
+- PHP5 Core Files (php5, version 5.3.10-1ubuntu3)
+- PHP5 Extension Module
+	(php5-cli, version 5.3.10-1ubuntu3)
+	(php5-mcrypt, version 5.3.10-1ubuntu3)
+	(php-pear, version version 5.3.10-1ubuntu3.1)
+- A Concurrent Versioning system (subversion, 1.6.17dfsg-3ubuntu3)
 
 KNOWN ISSUES:
 * Software and patches available/status reports containing maximum 5-minute old data: will only apply to clients that are upgraded to 2.2.0.
 * Compliance by bundle reports are incompatible with older clients (CFEngine Nova 2.1.4 and down). Data from these clients will not show in the reports.
 * Verbose output in command line interface (CLI) still indicates that you are using CFEngine 3 Nova (i.e. the CLI prefixes the verbose output with "nova> [MESSAGE]". See message for next release below.
-
+* Bulk of CFEngine testing effort done with license file installed (Free version without license file might have additional issues aside from this document)
 
 IMPORTANT NOTICE FOR NEXT RELEASE:
 CFEngine will change the behavior of the command line interface verbose output from "nova> [MESSAGE]" to "enterprise [MESSAGE]" for the next version of CFEngine 3 Enterprise. Please make necessary preparations for this as to not break functionality that depends on these messages (email filters, post-processing scripts, etc.).
