@@ -47,7 +47,6 @@ bool CFDB_CollectionHasData(EnterpriseDB *conn, const char *fullCollectionName)
 
     bool retVal = mongo_find_one(conn,fullCollectionName,&query,&field,NULL);
 
-    bson_destroy(&query);
     bson_destroy(&field);
 
     return retVal;
@@ -133,7 +132,6 @@ Item *CFDB_GetLastseenCache(void)
     cursor = mongo_find(&conn, MONGO_SCRATCH, bson_empty(&query), &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&field);
-    bson_destroy(&query);
 
     while (mongo_cursor_next(cursor))
     {
@@ -204,7 +202,6 @@ Item *CFDB_GetDeletedHosts(void)
     mongo_cursor *cursor = mongo_find(&conn, MONGO_SCRATCH, bson_empty(&query), &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&field);
-    bson_destroy(&query);
 
     while (mongo_cursor_next(cursor))
     {
@@ -2475,7 +2472,6 @@ static int QueryInsertHostInfo(EnterpriseDB *conn, Rlist *host_list)
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, bson_empty(&query), &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
-    bson_destroy(&query);
     bson_destroy(&fields);
 
     while (mongo_cursor_next(cursor))
@@ -4608,7 +4604,6 @@ int CFDB_QueryBundleCount(EnterpriseDB *conn)
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, bson_empty(&query), &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
-    bson_destroy(&query);
     bson_destroy(&fields);
 
     while (mongo_cursor_next(cursor))   // iterate over docs
@@ -5547,7 +5542,6 @@ HubQuery *CFDB_QueryCachedTotalCompliance(EnterpriseDB *conn, char *policy, time
     cursor = mongo_find(conn, MONGO_CACHE, &query, bson_empty(&field), 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
 
     if (mongo_cursor_next(cursor))      // loops over cache types (want just one)
     {

@@ -298,7 +298,6 @@ void Nova2PHP_summary_meter(char *buffer, int bufsize)
     bson_empty(query);
 
     Nova_Meter(query, MONGO_DATABASE, buffer, bufsize);
-    bson_destroy(query);
 }
 
 /*****************************************************************************/

@@ -41,7 +41,6 @@ int CFDB_PutValue(char *lval, char *rval, char *db_name)
     bson empty;
     mongo_update(&dbconn, db_name, bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT);
 
-    bson_destroy(&empty);
     bson_destroy(&setOp);    
     CFDB_Close(&dbconn);
 
@@ -97,7 +96,6 @@ int CFDB_SaveLastseenCache(Item *lastseen)
     bson empty;
     mongo_update(&dbconn, MONGO_SCRATCH, bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT);
 
-    bson_destroy(&empty);
     bson_destroy(&setOp);
     CFDB_Close(&dbconn);
 

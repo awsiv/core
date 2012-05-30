@@ -264,7 +264,6 @@ void CFDB_PurgeTimestampedReports(EnterpriseDB *conn)
 
     cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&field);
-    bson_destroy(&query);
 
     now = time(NULL);
 
@@ -369,7 +368,7 @@ void CFDB_PurgeTimestampedLongtermReports(EnterpriseDB *conn)
     bson_finish(&field);
 
     cursor = mongo_find(conn, MONGO_ARCHIVE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
-    bson_destroy(&query);
+
     bson_destroy(&field);
 
     now = time(NULL);
@@ -482,7 +481,6 @@ static Item *GetUniquePromiseLogEntryKeys(EnterpriseDB *conn, char *promiseLogKe
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, bson_empty(&empty), &field, 0, 0, CF_MONGO_SLAVE_OK);
 
-    bson_destroy(&empty);
     bson_destroy(&field);
 
     Item *uniquePromiseKeysList = NULL;
@@ -528,7 +526,6 @@ static void PurgePromiseLogWithEmptyTimestamps(EnterpriseDB *conn, char *promise
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, bson_empty(&empty), &field, 0, 0, CF_MONGO_SLAVE_OK);
 
-    bson_destroy(&empty);
     bson_destroy(&field);
 
     Item *promiseKeysList = NULL;
@@ -650,7 +647,6 @@ void CFDB_PurgePromiseLogsFromMain(EnterpriseDB *conn, char *promiseLogReportKey
 
     MongoCheckForError(conn, "Purge old entries in hosts collection", promiseLogReportKey, NULL);
     bson_destroy(&cond);
-    bson_destroy(&query);
 
     //now check for empty arrays and remove them
 
@@ -692,7 +688,6 @@ void CFDB_PurgeDropReports(EnterpriseDB *conn)
     MongoCheckForError(conn, "PurgeDropReports", NULL, NULL);
 
     bson_destroy(&op);
-    bson_destroy(&empty);
 }
 
 /*****************************************************************************/
@@ -946,7 +941,6 @@ void CFDB_PurgeDeprecatedVitals(EnterpriseDB *conn)
     mongo_update(conn, MONGO_DATABASE, bson_empty(&empty), &unsetOp, MONGO_UPDATE_MULTI);
 
     bson_destroy(&unsetOp);
-    bson_destroy(&empty);
 
     MongoCheckForError(conn, "purge deprecated monitoring data", NULL, NULL);    
 }
@@ -1002,7 +996,6 @@ int CFDB_PurgeDeletedHosts(void)
     mongo_update(&conn, MONGO_SCRATCH, bson_empty(&empty), &op, 0);
 
     bson_destroy(&op);
-    bson_destroy(&empty);
 
     if (!CFDB_Close(&conn))
     {
