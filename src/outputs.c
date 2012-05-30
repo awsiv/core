@@ -17,6 +17,8 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#include "constraints.h"
+
 Item *NOVA_HANDLE_OUTPUTS = NULL;
 Item *NOVA_BUNDLE_OUTPUTS = NULL;
 
@@ -135,11 +137,11 @@ void SetPromiseOutputs(Promise *pp)
         {
             if (ip && ip->classes)
             {
-                AppendConstraint(&(pp->conlist), "report_level", (Rval) {xstrdup(ip->classes), CF_SCALAR}, "any", false);
+                ConstraintAppendToPromise(pp, "report_level", (Rval) {xstrdup(ip->classes), CF_SCALAR}, "any", false);
             }
             else
             {
-                AppendConstraint(&(pp->conlist), "report_level", (Rval) {xstrdup("verbose"), CF_SCALAR}, "any", false);
+                ConstraintAppendToPromise(pp, "report_level", (Rval) {xstrdup("verbose"), CF_SCALAR}, "any", false);
             }
         }
     }

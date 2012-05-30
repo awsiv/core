@@ -9,6 +9,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#include "constraints.h"
 #include "promises.h"
 #include "probes.h"
 #include "files_lib.h"

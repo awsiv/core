@@ -8,6 +8,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#include "constraints.h"
 #include "promises.h"
 #include "parser.h"
 #include "files_names.h"
@@ -247,7 +248,7 @@ void Nova_MapPromiseToTopic(FILE *fp, Promise *pp, const char *version)
                 switch (cp->rval.rtype)
                 {
                 case CF_SCALAR:
-                    if (cp->isbody)
+                    if (cp->references_body)
                     {
                         bodyname = (char *) cp->rval.item;
                     }
