@@ -80,15 +80,15 @@ bundle agent cfengine_setup_knowledge
 
   !windows.am_policy_hub::
 
-   "kn_update"   or => { isnewerthan("$(config_src)","$(sys.doc_root)/db_stamp"), "Hr06.Min10_15" },
+   "kn_update"   or => { isnewerthan("$(config_src)","$(cfengine_hub_vars.docroot)/db_stamp"), "Hr06.Min10_15" },
             comment => "Define a class to update knowledge map database every time policy updated",
              handle => "knowledge_classes_kn_update"; 
 
-   "kn_init"    not => fileexists("$(sys.doc_root)/db_stamp"),
+   "kn_init"    not => fileexists("$(cfengine_hub_vars.docroot)/db_stamp"),
             comment => "Check for a db_stamp file",
              handle => "knowledge_classes_kn_init";
 
-   "mongo_init"     not => fileexists("$(sys.doc_root)/mongo_stamp"),
+   "mongo_init"     not => fileexists("$(cfengine_hub_vars.docroot)/mongo_stamp"),
                 comment => "Check for a mongo_stamp file",
                  handle => "knowledge_classes_mongo_init";
 
@@ -98,7 +98,7 @@ bundle agent cfengine_setup_knowledge
 
   mongo_init::
 
-   "$(sys.doc_root)/mongo_stamp"
+   "$(cfengine_hub_vars.docroot)/mongo_stamp"
        create => "true",
       classes => if_repaired("init_mongo"),
       comment => "Create a time stamp file for 1st time installation",
@@ -106,7 +106,7 @@ bundle agent cfengine_setup_knowledge
 
   kn_init::
 
-   "$(sys.doc_root)/db_stamp"
+   "$(cfengine_hub_vars.docroot)/db_stamp"
        create => "true",
       classes => if_repaired("init_knowledge"),
       comment => "Create a time stamp file for checking for the last update",
@@ -114,7 +114,7 @@ bundle agent cfengine_setup_knowledge
 
   kn_update::
 
-   "$(sys.doc_root)/db_stamp"
+   "$(cfengine_hub_vars.docroot)/db_stamp"
         touch => "true",
       comment => "Record the time of last update",
        handle => "knowledge_files_touch_db_stamp";
@@ -141,7 +141,7 @@ bundle agent cfengine_setup_knowledge
 #      link_from => ln_s("/var/run/mysqld/mysqld.sock");
 
    "/var"
-           comment => "Ensure permissions to $(sys.doc_root)",
+           comment => "Ensure permissions to $(cfengine_hub_vars.docroot)",
             handle => "knowledge_files_doc_root_debian",
        file_select => folder("www"),
       depth_search => recurse("1"),
@@ -161,7 +161,7 @@ bundle agent cfengine_setup_knowledge
 #      link_from => ln_s("/var/lib/mysql/mysql.sock");
 
    "/var"
-           comment => "Ensure permissions to $(sys.doc_root)",
+           comment => "Ensure permissions to $(cfengine_hub_vars.docroot)",
             handle => "knowledge_files_doc_root_redhat",
        file_select => folder("www"),
       depth_search => recurse("1"),
@@ -175,7 +175,7 @@ bundle agent cfengine_setup_knowledge
 	
   !windows.am_policy_hub::
 
-   "$(sys.doc_root)/docs"
+   "$(cfengine_hub_vars.docroot)/docs"
            comment => "Copy the basic knowledge base configuration from the installation to doc root",
             handle => "knowledge_files_doc_root_docs",
          copy_from => no_backup_cp("$(sys.workdir)/share/KnowledgeBase"),
@@ -183,54 +183,54 @@ bundle agent cfengine_setup_knowledge
              perms => mo("644","root"),
        file_select => knowledge_files;
 
-   "$(sys.doc_root)"
+   "$(cfengine_hub_vars.docroot)"
            comment => "Copy the basic knowledge base configuration from the installation to doc root",
             handle => "knowledge_files_doc_root_1",
          copy_from => no_backup_cp("$(sys.workdir)/share/GUI"),
       depth_search => recurse("inf");
 
-   "$(sys.doc_root)/hub/."
+   "$(cfengine_hub_vars.docroot)/hub/."
            comment => "Create a necessary folder for cf-hub",
             handle => "knowledge_files_doc_root_hub",
             create => "true",
       depth_search => recurse_basedir("inf"),
              perms => mog("755","$(owner[$(flavour)])","$(group[$(flavour)])");
 
-   "$(sys.doc_root)/scripts/."
-           comment => "Ensure permissions for $(sys.doc_root)/scripts",
+   "$(cfengine_hub_vars.docroot)/scripts/."
+           comment => "Ensure permissions for $(cfengine_hub_vars.docroot)/scripts",
             handle => "knowledge_files_doc_root_scripts",
             create => "true",
       depth_search => recurse_basedir("inf"),
              perms => mog("644","$(owner[$(flavour)])","$(group[$(flavour)])");
 
-   "$(sys.doc_root)/tmp/."
-           comment => "Ensure permissions for $(sys.doc_root)/tmp (temp files to email)",
+   "$(cfengine_hub_vars.docroot)/tmp/."
+           comment => "Ensure permissions for $(cfengine_hub_vars.docroot)/tmp (temp files to email)",
             handle => "knowledge_files_doc_root_tmp",
             create => "true",
       depth_search => recurse_basedir("inf"),
              perms => mog("644","$(owner[$(flavour)])","$(group[$(flavour)])");
 
-   "$(sys.doc_root)/application/logs/."
+   "$(cfengine_hub_vars.docroot)/application/logs/."
            comment => "Make sure font folder has right permision",
             handle => "knowledge_files_doc_root_application_logs",
       depth_search => recurse_basedir("inf"),
              perms => mog("644","$(owner[$(flavour)])","$(group[$(flavour)])");
 
-   "$(sys.doc_root)/docs/fonts"
+   "$(cfengine_hub_vars.docroot)/docs/fonts"
            comment => "Ensure we copy font folder",
             handle => "knowledge_files_workdir_fonts",
          copy_from => local_cp("$(sys.workdir)/share/KnowledgeBase/fonts"),
       depth_search => recurse("inf"),
              perms => mo("644","root");
 
-   "$(sys.doc_root)/rest"
+   "$(cfengine_hub_vars.docroot)/rest"
            comment => "Put REST api to webroot directory",
             handle => "knowledge_files_workdir_rest",
          copy_from => no_backup_cp("$(sys.workdir)/share/rest"),
       depth_search => recurse_basedir("inf"),
              perms => mo("644","root");
   
-   "$(sys.doc_root)/rest/.htaccess"
+   "$(cfengine_hub_vars.docroot)/rest/.htaccess"
             comment => "Create HTACCESS file for REST",
              handle => "knowledge_files_rest_htaccess",
              create => "true",
@@ -238,7 +238,7 @@ bundle agent cfengine_setup_knowledge
       edit_defaults => empty,
               perms => mog("644","root","root");
  
-   "$(sys.doc_root)"
+   "$(cfengine_hub_vars.docroot)"
            comment => "Make sure knowledge files are accessible to webserver",
             handle => "knowledge_files_doc_root_docs_2",
              perms => mo("644","root"),
@@ -262,7 +262,7 @@ bundle agent cfengine_setup_knowledge
       comment => "Generate config knowledge format after update",
        handle => "knowledge_commands_cf_promise_r";
 
-   "$(sys.cf_know) -f $(sys.doc_root)/docs/enterprise_build.cf -b"
+   "$(sys.cf_know) -f $(cfengine_hub_vars.docroot)/docs/enterprise_build.cf -b"
       comment => "Populate or update database with new knowledge",
        handle => "knowledge_commands_cf_know_b";
 

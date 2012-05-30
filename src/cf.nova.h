@@ -636,7 +636,6 @@ ACCESS_MODE Nova_ParsePermTypeNt(char *ace);
 /* cfnova.c */
 
 void Nova_Initialize(void);
-void Nova_SaveDocumentRoot(void);
 
 #if defined(__MINGW32__)
 bool BootstrapAllowed(void);
@@ -938,7 +937,6 @@ void CFDB_SaveUnExpandedPromises(Bundle *bundles, Body *bodies);
 const char *Nova_Version(void);
 const char *Nova_NameVersion(void);
 
-void Nova_EnterpriseDiscovery(void);
 int Nova_ClassesIntersect(Rlist *contexts1, Rlist *contexts2);
 
 /* pscalar.c */
@@ -1001,7 +999,6 @@ void Nova_FillInGoalComment(Item *ip);
 const char *Nova_GetBundleComment(char *bundle);
 void Nova_ShowTopic(char *qualified_topic);
 
-void Nova_WebTopicMap_Initialize(void);
 void Nova_LookupUniqueAssoc(int pid, char *buffer, int bufsize);
 JsonElement *Nova_ScanTheRest(int pid);
 Item *Nova_SearchTopicMap(char *typed_topic,int type,int merge);

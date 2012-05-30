@@ -38,35 +38,6 @@ void Nova_Initialize()
 #endif
 }
 
-/*****************************************************************************/
-
-void Nova_SaveDocumentRoot(void)
-{
-#if defined(HAVE_LIBMONGOC)
-
-    if (IsDefinedClass("redhat"))
-    {
-        CfOut(cf_verbose, "", " -> Recording default document root /var/www/html");
-        CFDB_PutValue("document_root", "/var/www/html", MONGO_SCRATCH);
-    }
-
-    if (IsDefinedClass("SuSE"))
-    {
-        CfOut(cf_verbose, "", " -> Recording default document root /srv/www/htdocs");
-        CFDB_PutValue("document_root", "/srv/www/htdocs", MONGO_SCRATCH);
-    }
-
-    if (IsDefinedClass("debian"))
-    {
-        CfOut(cf_verbose, "", " -> Recording default document root /var/www");
-        CFDB_PutValue("document_root", "/var/www", MONGO_SCRATCH);
-    }
-#endif
-
-}
-
-/*****************************************************************************/
-
 #if defined(__MINGW32__)
 
 bool BootstrapAllowed(void)

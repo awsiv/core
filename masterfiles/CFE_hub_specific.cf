@@ -14,6 +14,30 @@
 #
 ##################################################################
 
+bundle common cfengine_hub_vars
+{
+ vars:
+
+  redhat::
+
+   "docroot" string => "/var/www/html"
+            comment => "Root directory of Nova Web interface",
+             handle => "hub_vars_docroot_redhat";
+
+  debian::
+
+   "docroot" string => "/var/www"
+            comment => "Root directory of Nova Web interface",
+             handle => "hub_vars_docroot_debian";
+
+  SuSE::
+
+   "docroot" string => "/var/www/htocs"
+            comment => "Root directory of Nova Web interface",
+             handle => "hub_vars_docroot_suse";
+
+}
+
 bundle agent cfengine_update_folders
 {
  vars:
@@ -707,11 +731,11 @@ bundle agent cfengine_policysrv
          action => immediate;
 
    "/etc/apache2/conf.d/nova.conf"
-            comment => "Allow Override all and Encoded slashes to $(sys.doc_root)",
+            comment => "Allow Override all and Encoded slashes to $(cfengine_hub_vars.docroot)",
              handle => "cfengine_policysrv_files_apache_nova_conf_suse",
              create => "true",
       edit_defaults => empty,
-          edit_line => apache_nova_conf("$(sys.doc_root)"),
+          edit_line => apache_nova_conf("$(cfengine_hub_vars.docroot)"),
             classes => if_repaired("restart_apache2");
 
    "/etc/php5/apache2/php.ini"
@@ -722,11 +746,11 @@ bundle agent cfengine_policysrv
   redhat.am_policy_hub::
 
    "/etc/httpd/conf.d/nova.conf"
-            comment => "Allow Override all and Encoded slashes to $(sys.doc_root)",
+            comment => "Allow Override all and Encoded slashes to $(cfengine_hub_vars.docroot)",
              handle => "cfengine_policysrv_files_apache_nova_conf_redhat",
              create => "true",
       edit_defaults => empty,
-          edit_line => apache_nova_conf("$(sys.doc_root)"),
+          edit_line => apache_nova_conf("$(cfengine_hub_vars.docroot)"),
             classes => if_repaired("restart_httpd");
 
    "/etc/httpd/conf/httpd.conf"
@@ -1069,7 +1093,7 @@ bundle agent cfengine_editor
 
   !windows.am_policy_hub::
 
-   "$(sys.doc_root)/graphs/." -> "Cfengine Nova Knowledge Map",
+   "$(cfengine_hub_vars.docroot)/graphs/." -> "Cfengine Nova Knowledge Map",
        create => "true",
         perms => mog("755","$(web_owner)","$(web_group)"),
       comment => "Make sure web server has permission to create working directories for Knowledge Map",
@@ -1077,7 +1101,7 @@ bundle agent cfengine_editor
 
   !windows.am_policy_hub::
 
-   "$(sys.doc_root)/policies/." -> "Cfengine Nova Editor",
+   "$(cfengine_hub_vars.docroot)/policies/." -> "Cfengine Nova Editor",
        create => "true",
         perms => mog("700","$(web_owner)","$(web_group)"),
       comment => "Make sure web server has permission to create working directories for editor users",
@@ -1085,7 +1109,7 @@ bundle agent cfengine_editor
 
   !windows.am_policy_hub::
 
-   "$(sys.doc_root)/policies/." -> "Cfengine Nova Editor",
+   "$(cfengine_hub_vars.docroot)/policies/." -> "Cfengine Nova Editor",
             delete => tidy,
        file_select => days_old("1"),
       depth_search => recurse("inf"),
@@ -1094,7 +1118,7 @@ bundle agent cfengine_editor
 
   !windows.am_policy_hub::
 
-   "$(sys.doc_root)/tmp/." -> "Cfengine Nova Editor",
+   "$(cfengine_hub_vars.docroot)/tmp/." -> "Cfengine Nova Editor",
        create => "true",
         perms => mog("755","$(web_owner)","$(web_group)"),
       comment => "Make sure web server has permission to create tmp directories for apache internal use",

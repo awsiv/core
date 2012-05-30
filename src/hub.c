@@ -32,6 +32,7 @@ static Item *FEDERATION = NULL;
 static Item *EXCLUDE_HOSTS = NULL;
 
 static bool CFH_ZENOSS = false;
+static const char ZENOSS_PATH[CF_BUFSIZE];
 
 /*******************************************************************/
 
@@ -315,7 +316,22 @@ void KeepPromises(Policy *policy, GenericAgentConfig config)
 
         if (strcmp(cp->lval, CFH_CONTROLBODY[cfh_export_zenoss].lval) == 0)
         {
-            CFH_ZENOSS = GetBoolean((const char *) retval.item);
+            if (!strcmp((const char *)retval.item, "true") == 0
+                || !strcmp((const char*)retval.item, "false") == 0
+                || !strcmp((const char *)retval.item, "yes") == 0
+                || !strcmp((const char *)retval.item, "no") == 0
+                || !strcmp((const char *)retval.item, "on") == 0
+                || !strcmp((const char *)retval.item, "off") == 0)
+            {
+                CfOut(cf_error, "", "export_zenoss now requires a full path to summary.z file");
+                CFH_ZENOSS = false;
+            }
+            else
+            {
+                CFH_ZENOSS = true;
+                strlcpy(ZENOSS_PATH, (const char*)retval.item, CF_BUFSIZE);
+            }
+
             CfOut(cf_verbose, "", "SET export_zenoss = %d\n", CFH_ZENOSS);
             continue;
         }
@@ -703,7 +719,7 @@ static void Nova_CollectReports(void)
 
     if (CFH_ZENOSS && IsDefinedClass("Min00_05"))
     {
-        Nova_ZenossSummary(DOCROOT);
+        Nova_ZenossSummary(ZENOSS_PATH);
     }
 
     Nova_CountMonitoredClasses();
