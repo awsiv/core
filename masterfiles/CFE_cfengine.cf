@@ -153,11 +153,12 @@ bundle agent cfengine_correct_cftwin
   !windows::
 
    "/var/cfengine/lib-twin"
-           comment => "Correct lib-twin to be the same as lib, in case of dependency upgrade. This effect cf-twin's behaviour",
-            handle => "cfengine_correct_cftwin_files_libtwin",
-             perms => m("644"),
-         copy_from => local_cp("/var/cfengine/lib"),
-      depth_search => recurse("inf");
+                comment => "Correct lib-twin to be the same as lib, in case of dependency upgrade. This effect cf-twin's behaviour",
+                 handle => "cfengine_correct_cftwin_files_libtwin",
+                  perms => m("644"),
+      move_obstructions => "true",
+              copy_from => local_cp_libtwin("/var/cfengine/lib"),
+           depth_search => recurse("inf");
 
    "/var/cfengine/bin/cf-twin"
         comment => "Correct cf-twin to be the same as cf-agent, in case of dependency upgrade",
@@ -165,6 +166,14 @@ bundle agent cfengine_correct_cftwin
           perms => m("755"),
       copy_from => local_cp("/var/cfengine/bin/cf-agent");
 
+}
+
+#
+
+body copy_from local_cp_libtwin(from)
+{
+ source      => "$(from)";
+ purge       => "true";
 }
 
 ##################################################################
