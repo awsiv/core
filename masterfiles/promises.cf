@@ -65,7 +65,7 @@ body common control
 
   nova_edition|constellation_edition::
 
-   host_licenses_paid => "1";
+   host_licenses_paid => "25";
 
 #   goal_categories => { "goals", "targets", "milestones" };
 #   goal_patterns   => { "goal_.*", "target.*","milestone.*" };
