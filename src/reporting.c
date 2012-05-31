@@ -9,6 +9,8 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 #include "cf.nova.cmd_api.h"
+
+#include "env_context.h"
 #include "lastseen.h"
 #include "files_names.h"
 

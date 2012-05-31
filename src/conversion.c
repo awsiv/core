@@ -24,10 +24,12 @@
 
 #include "cf3.defs.h"
 #include "cf3.extern.h"
-#include <assert.h>
 
+#include "env_context.h"
 #include "db_common.h"
 #include "db_query.h"
+
+#include <assert.h>
 
 static Rlist *HubHostListToRlist(Rlist *hub_host_list, char *return_format);
 

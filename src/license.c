@@ -15,6 +15,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#include "env_context.h"
 #include "promises.h"
 #include "lastseen.h"
 #include "crypto.h"

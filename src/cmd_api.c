@@ -8,6 +8,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#include "env_context.h"
 #include "files_names.h"
 #include "scorecards.h"
 #include "db_query.h"

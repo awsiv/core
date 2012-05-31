@@ -1,5 +1,6 @@
 #include "private-api.h"
 
+#include "env_context.h"
 #include "common.h"
 #include "rlist.h"
 #include "cf.nova.web_api.h"

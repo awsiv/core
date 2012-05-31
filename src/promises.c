@@ -13,6 +13,8 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+
+#include "env_context.h"
 #include "vars.h"
 
 #ifdef HAVE_LIBMONGOC

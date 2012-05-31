@@ -7,6 +7,8 @@
 #include "cf.nova.h"
 #include "hub.h"
 #include "hub-maintenance.h"
+
+#include "env_context.h"
 #include "db_maintain.h"
 #include "db_save.h"
 #include "db_query.h"

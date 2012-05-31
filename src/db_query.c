@@ -6,6 +6,7 @@
 
 #include "db_query.h"
 
+#include "env_context.h"
 #include "bson_lib.h"
 #include "web_rbac.h"
 #include "db_save.h"
