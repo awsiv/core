@@ -90,7 +90,7 @@ if(db["users"].findOne())
 {
     /* groups renames to roles from Nova 2.2.0*/
     db["users"].update({},{$rename:{
-	"groups": "roles"
+	"group": "roles"
     }}, false, true);
 }
 else
