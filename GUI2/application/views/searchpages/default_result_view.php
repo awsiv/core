@@ -8,6 +8,18 @@ if (is_array($report_result) && key_exists('truncated', $report_result['meta']))
 }
 
 if ($report_result['meta']['count'] > 0) {
+    if (isset($report_result['meta']['old_skipped']) &&
+        $report_result['meta']['old_skipped'] > 0) {
+        echo "<div class='warning'> Warning: You are running an older version of CFEngine on ";
+        echo $report_result['meta']['old_skipped'];
+        echo " ";
+        if ($report_result['meta']['old_skipped'] == 1) {
+            echo "host";
+        } else {
+            echo "hosts";
+        }
+        echo " within selected context. Data from these clients is not compatible with this report and has therefore been excluded.</div>";
+    }
     echo '<div class="report_result">';
     echo $this->cf_table->generateReportTableModified($report_result, $report_title);
     echo '</div>';

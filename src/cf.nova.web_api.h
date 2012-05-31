@@ -165,31 +165,47 @@ int Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, bool regex
                               HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
 int Nova2PHP_summary_report(char *hostkey, char *handle, char *status, bool regex, char *classreg,
                             HostClassFilter *hostClassFilter, char *returnval, int bufsize);
-int Nova2PHP_software_hosts(char *hostkey, char *name, char *value, char *arch, bool regex, char *type,
-                            HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
-int Nova2PHP_classes_hosts(char *hostkey, char *name, bool regex, HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
-int Nova2PHP_vars_hosts(char *hostkey, char *scope, char *lval, char *rval, char *type, bool regex,
-                        HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
-int Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t from, time_t to, int k, int nk, int rep,
-                              HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
-int Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status, bool regex, HostClassFilter *hostClassFilter, HostColourFilter *hostColourFilter,
-                           bool lastRunOnly, PageInfo *page, char *returnval, int bufsize);
-int Nova2PHP_lastseen_hosts(char *hostkey, char *lhash, char *lhost, char *laddress, time_t lago, int lregex,
-                            HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
-int Nova2PHP_performance_hosts(char *hostkey, char *job, bool regex, HostClassFilter *hostClassFilter, PageInfo *page, char *returnval,
-                               int bufsize);
-int Nova2PHP_setuid_hosts(char *hostkey, char *file, bool regex, HostClassFilter *hostClassFilter, PageInfo *page, char *returnval,
-                          int bufsize);
-int Nova2PHP_bundle_hosts(char *hostkey, char *bundle, bool regex, HostClassFilter *hostClassFilter, HostColourFilter *hostColourFilter, bool lastRunOnly, PageInfo *page,
-                          char *returnval, int bufsize);
-int Nova2PHP_filechanges_hosts(char *hostkey, char *file, bool regex, time_t from, time_t to,
-                               HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
-int Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs, bool regex, time_t from, time_t to,
-                             HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
-int Nova2PHP_promiselog_hosts(char *hostkey, char *handle, char *cause, PromiseLogState state, time_t from, time_t to,
-                              HostClassFilter *hostClassFilter, PageInfo *page, char *returnval, int bufsize);
-int Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *year, HostClassFilter *hostClassFilter,
-                         PageInfo *page, char *returnval, int bufsize);
+
+/*
+ * Host only reports
+ */
+JsonElement *Nova2PHP_software_hosts(char *hostkey, char *name, char *value,
+                                     char *arch, bool regex, char *type,
+                                     HostClassFilter *hostClassFilter, PageInfo *page);
+JsonElement *Nova2PHP_classes_hosts(char *hostkey, char *name, bool regex,
+                                    HostClassFilter *hostClassFilter, PageInfo *page);
+JsonElement *Nova2PHP_vars_hosts(char *hostkey, char *scope, char *lval,
+                                 char *rval, char *type, bool regex,
+                                 HostClassFilter *hostClassFilter, PageInfo *page);
+JsonElement *Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t from,
+                                       time_t to, int k, int nk, int rep,
+                                       HostClassFilter *hostClassFilter, PageInfo *page);
+JsonElement *Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status,
+                                    bool regex, HostClassFilter *hostClassFilter,
+                                    HostColourFilter *hostColourFilter,
+                                    bool lastRunOnly, PageInfo *page);
+JsonElement *Nova2PHP_lastseen_hosts(char *hostkey, char *lhash, char *lhost,
+                                     char *laddress, time_t lago, int lregex,
+                                     HostClassFilter *hostClassFilter, PageInfo *page);
+JsonElement *Nova2PHP_performance_hosts(char *hostkey, char *job, bool regex,
+                                        HostClassFilter *hostClassFilter, PageInfo *page);
+JsonElement *Nova2PHP_setuid_hosts(char *hostkey, char *file, bool regex,
+                                   HostClassFilter *hostClassFilter, PageInfo *page);
+JsonElement *Nova2PHP_bundle_hosts(char *hostkey, char *bundle, bool regex,
+                                   HostClassFilter *hostClassFilter,
+                                   HostColourFilter *hostColourFilter,
+                                   bool lastRunOnly, PageInfo *page);
+JsonElement *Nova2PHP_filechanges_hosts(char *hostkey, char *file, bool regex,
+                                        time_t from, time_t to,
+                                        HostClassFilter *hostClassFilter, PageInfo *page);
+JsonElement *Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs,
+                                      bool regex, time_t from, time_t to,
+                                      HostClassFilter *hostClassFilter, PageInfo *page);
+JsonElement *Nova2PHP_promiselog_hosts(char *hostkey, char *handle, char *cause,
+                                       PromiseLogState state, time_t from, time_t to,
+                                       HostClassFilter *hostClassFilter, PageInfo *page);
+JsonElement *Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *year,
+                                  HostClassFilter *hostClassFilter, PageInfo *page);
 
 /*
  * Summary reports
