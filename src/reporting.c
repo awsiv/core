@@ -2184,7 +2184,7 @@ void Nova_SummarizeLicense(char *stylesheet, char *header, char *footer, char *w
 
 /*****************************************************************************/
 
-void Nova_ZenossSummary(char *docroot)
+void Nova_ZenossSummary(const char *docroot)
 {
     char name[CF_MAXVARSIZE];
     Item *clist = NULL, *ip = NULL;

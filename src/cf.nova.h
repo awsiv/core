@@ -957,7 +957,7 @@ void Nova_SummarizePromiseRepaired(int xml, int html, int csv, int embed, char *
 void Nova_NoteVarUsage(void);
 void Nova_SummarizeComms(void);
 void Nova_SummarizeLicense(char *stylesheet, char *banner, char *footer, char *webdriver);
-void Nova_ZenossSummary(char *docroot);
+void Nova_ZenossSummary(const char *docroot);
 void Nova_NoteVarUsageDB(void);
 
 void Nova_OpenCompilationReportFiles(const char *fname);
