@@ -46,4 +46,5 @@ bool Nova_ExecuteRunagent(AgentConnection *conn, const char *menu_str)
     }
 
     CFDB_Close(&dbconn);
+    return true;
 }
