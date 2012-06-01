@@ -1008,12 +1008,11 @@ void CFDB_RefreshLastHostComplianceShift(mongo_connection *conn, const char *hos
     }
 
     int kept = 0, repaired = 0, notkept = 0, num_samples = 0;
-    int shift_slot = GetShiftSlot(from);
 
     for (const Rlist *rp = result->records; rp; rp = rp->next)
     {
         const HubTotalCompliance *record = (const HubTotalCompliance *)rp->item;
-        assert(GetShiftSlot(record->t) == shift_slot);
+        assert(GetShiftSlot(record->t) == GetShiftSlot(from));
 
         kept += record->kept;
         repaired += record->repaired;
