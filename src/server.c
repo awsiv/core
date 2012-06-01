@@ -126,6 +126,7 @@ int ReturnLiteralData(char *handle, char *recv)
 
     if (Nova_GetPersistentScalar(handle, recv, CF_BUFSIZE - 1, CF_HUB_HORIZON))
     {
+        CfOut(cf_verbose,""," Found a persistent scalar with handle %s authorized for remote access: %s",handle,recv);
         return true;
     }
     else if (GetVariable("remote_access", handle, &retval) != cf_notype)
@@ -133,6 +134,7 @@ int ReturnLiteralData(char *handle, char *recv)
         if (retval.rtype == CF_SCALAR)
         {
             strncpy(recv, retval.item, CF_BUFSIZE - 1);
+            CfOut(cf_verbose,""," Found a literal string with handle %s authorized for remote access: %s",handle,recv);
             return true;
         }
         else
