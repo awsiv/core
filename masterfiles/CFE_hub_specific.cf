@@ -20,19 +20,19 @@ bundle common cfengine_hub_vars
 
   redhat::
 
-   "docroot" string => "/var/www/html"
+   "docroot" string => "/var/www/html",
             comment => "Root directory of Nova Web interface",
              handle => "hub_vars_docroot_redhat";
 
   debian::
 
-   "docroot" string => "/var/www"
+   "docroot" string => "/var/www",
             comment => "Root directory of Nova Web interface",
              handle => "hub_vars_docroot_debian";
 
   SuSE::
 
-   "docroot" string => "/var/www/htocs"
+   "docroot" string => "/var/www/htocs",
             comment => "Root directory of Nova Web interface",
              handle => "hub_vars_docroot_suse";
 

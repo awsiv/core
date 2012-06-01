@@ -8,6 +8,7 @@ body common control
 {
  bundlesequence => {
                     "def",
+                    "cfengine_hub_vars",
                     "environments",
                     "cfengine_management",   # See CFE_cfengine.cf
                     "service_catalogue",

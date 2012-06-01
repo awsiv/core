@@ -29,10 +29,6 @@ bundle agent cfengine_management
 #            handle => "cfengine_management_update_folders",
 #           comment => "Create empty directories for CFE self-upgrade";
 
-   "hub" usebundle => cfengine_hub_vars,
-            handle => "cfengine_management_hub_vars",
-           comment => "Prepare the hub-related variables used by several bundles";
-
    "hub" usebundle => cfengine_policysrv,
             handle => "cfengine_management_policysrv",
            comment => "Prepare the policy hub";
@@ -54,8 +50,8 @@ bundle agent cfengine_management
            comment => "Prepare CFE online editing tool";
 
    "hub" usebundle => cfengine_rotate_mongod_log,
-	          handle => "cfengine_management_rotate_mongod_log",
-						        comment => "Rotate the mongod log";
+            handle => "cfengine_management_rotate_mongod_log",
+           comment => "Rotate the mongod log";
   any::
 
    "any" usebundle => cfengine_correct_cftwin,
