@@ -34,7 +34,7 @@ static Item *FEDERATION = NULL;
 static Item *EXCLUDE_HOSTS = NULL;
 
 static bool CFH_ZENOSS = false;
-static const char ZENOSS_PATH[CF_BUFSIZE];
+static char ZENOSS_PATH[CF_BUFSIZE];
 
 /*******************************************************************/
 
