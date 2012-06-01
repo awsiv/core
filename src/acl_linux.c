@@ -361,7 +361,7 @@ int Nova_CheckDefaultEqualsAccessACL(char *file_path, Attributes a, Promise *pp)
 
     if ((acl_access = acl_get_file(file_path, ACL_TYPE_ACCESS)) == NULL)
     {
-        CfOut(cf_error, "", "acl_get_file", "Could not find an ACL for %s", file_path);
+        CfOut(cf_error, "acl_get_file", "Could not find an ACL for %s", file_path);
         return false;
     }
 
@@ -369,7 +369,7 @@ int Nova_CheckDefaultEqualsAccessACL(char *file_path, Attributes a, Promise *pp)
 
     if (acl_default == NULL)
     {
-        CfOut(cf_error, "", "acl_get_file", "Could not find default ACL for %s", file_path);
+        CfOut(cf_error, "acl_get_file", "Could not find default ACL for %s", file_path);
         acl_free(acl_access);
         return false;
     }
