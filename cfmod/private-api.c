@@ -3641,7 +3641,7 @@ PHP_FUNCTION(cfpr_host_compliance_timeseries)
         const HubTotalCompliance *record = (const HubTotalCompliance *)rp->item;
         size_t slot = (record->t - from) / resolution;
 
-        if (slot < 0 || slot >= num_slots)
+        if (slot >= num_slots)
         {
             // TODO: log shit
             continue;
