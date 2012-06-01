@@ -343,7 +343,7 @@ const char *Nova_NameVersion(void)
 
 /***************************************************************/
 
-void NotePromiseCompliance(Promise *pp, double val, PromiseState state, char *reason)
+void NotePromiseCompliance(const Promise *pp, double val, PromiseState state, char *reason)
 {
     CF_DB *dbp;
     FILE *fp;

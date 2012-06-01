@@ -531,11 +531,11 @@ char *NovaEscape(const char *s)
 
 /*****************************************************************************/
 
-const char *PromiseID(Promise *pp)
+const char *PromiseID(const Promise *pp)
 {
     char static id[CF_MAXVARSIZE];
     char vbuff[CF_MAXVARSIZE];
-    char *handle = GetConstraintValue("handle", pp, CF_SCALAR);
+    const char *handle = GetConstraintValue("handle", pp, CF_SCALAR);
 
     if (LICENSES == 0)
     {
@@ -585,7 +585,7 @@ char *Name2Id(char *s)
 
 /*****************************************************************************/
 
-void RegisterBundleDependence(char *name, Promise *pp)
+void RegisterBundleDependence(char *name, const Promise *pp)
 {
     char assertion[CF_BUFSIZE];
     char *handle;
