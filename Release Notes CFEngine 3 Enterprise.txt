@@ -225,6 +225,16 @@ KNOWN ISSUES:
 * Compliance by bundle reports are incompatible with older clients (CFEngine Nova 2.1.4 and down). Data from these clients will not show in the reports.
 * Verbose output in command line interface (CLI) still indicates that you are using CFEngine 3 Nova (i.e. the CLI prefixes the verbose output with "nova> [MESSAGE]". See message for next release below.
 * Bulk of CFEngine testing effort done with license file installed (Free version without license file might have additional issues aside from this document)
+* RBAC will not work out of the box after an upgrade from an earlier version, use following procedure as a workaround:
+  - Launch the mongo shell:
+      $ /var/cfengine/bin/mongo
+  - Drop roles and groups database:
+      > use phpcfengine
+      > db.roles.drop()
+      > db.groups.drop()
+  - Run the export.js script from terminal:
+      $ /var/cfengine/bin/mongo phpcfengine /var/cfengine/share/GUI/phpcfenginenova/export.js
+  - Please contact CFEngine support if you run into any problems.
 
 IMPORTANT NOTICE FOR NEXT RELEASE:
 CFEngine will change the behavior of the command line interface verbose output from "nova> [MESSAGE]" to "enterprise [MESSAGE]" for the next version of CFEngine 3 Enterprise. Please make necessary preparations for this as to not break functionality that depends on these messages (email filters, post-processing scripts, etc.).
