@@ -4,7 +4,7 @@
 #include <setjmp.h>
 #include <cmockery.h>
 
-int Nova_HashKey(char *filename, char *buffer, char *hash);
+int Nova_HashKey(char *filename, char *buffer, const char *hash);
 
 char *pubkey_filename;
 
