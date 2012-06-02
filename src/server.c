@@ -329,7 +329,7 @@ char *GetRemoteScalar(char *proto, char *handle, char *server, int encrypted, ch
     if (conn == NULL)
     {
         CfOut(cf_inform, "", " !! No suitable server responded to hail\n");
-        ServerDisconnection(conn);
+        DisconnectServer(conn);
         DeleteRlist(a.copy.servers);
         DeletePromise(pp);
         snprintf(recvbuffer, CF_BUFSIZE - 1, "BAD:");
@@ -359,7 +359,7 @@ char *GetRemoteScalar(char *proto, char *handle, char *server, int encrypted, ch
     if (SendTransaction(conn->sd, sendbuffer, tosend, CF_DONE) == -1)
     {
         cfPS(cf_error, CF_INTERPT, "send", pp, a, "Failed send");
-        ServerDisconnection(conn);
+        DisconnectServer(conn);
         DeleteRlist(a.copy.servers);
         DeletePromise(pp);
         snprintf(recvbuffer, CF_BUFSIZE - 1, "BAD:");
@@ -370,7 +370,7 @@ char *GetRemoteScalar(char *proto, char *handle, char *server, int encrypted, ch
     {
         cfPS(cf_error, CF_INTERPT, "recv", pp, a, "Failed send");
         CfOut(cf_verbose, "", "No answer from host\n");
-        ServerDisconnection(conn);
+        DisconnectServer(conn);
         DeleteRlist(a.copy.servers);
         DeletePromise(pp);
         snprintf(recvbuffer, CF_BUFSIZE - 1, "BAD:");

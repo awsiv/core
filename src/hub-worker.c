@@ -125,7 +125,7 @@ static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer)
 
     Nova_HubLog("Received %d bytes of reports from %s with %s menu", report_len, peer, menu);
 
-    ServerDisconnection(conn);
+    DisconnectServer(conn);
     DeleteRlist(aa.copy.servers);
     return true;
 }
