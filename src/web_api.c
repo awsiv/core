@@ -15,6 +15,7 @@ This file is (C) Cfengine AS. See LICENSE for details.
 #include "db_maintain.h"
 #include "web_rbac.h"
 #include "files_names.h"
+#include "item_lib.h"
 
 #include <assert.h>
 

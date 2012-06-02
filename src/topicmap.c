@@ -10,6 +10,7 @@
 
 #include "files_names.h"
 #include "db_query.h"
+#include "item_lib.h"
 
 #include <assert.h>
 

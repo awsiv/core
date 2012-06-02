@@ -13,6 +13,7 @@
 #include "env_context.h"
 #include "lastseen.h"
 #include "files_names.h"
+#include "item_lib.h"
 
 #ifdef HAVE_LIBMONGOC
 #include "db_save.h"

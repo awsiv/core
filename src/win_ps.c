@@ -17,6 +17,7 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+#include "item_lib.h"
 
 /* defines */
 #define MAXCMDSTR 512           // max length of process commmand line (e.g. "c:\program.exe --param")

@@ -19,6 +19,7 @@
 #include "crypto.h"
 #include "files_names.h"
 #include "vars.h"
+#include "item_lib.h"
 
 Rlist *SERVER_KEYRING = NULL;
 static int Nova_ParseHostname(char *name, char *hostname);

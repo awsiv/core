@@ -24,6 +24,7 @@
 #include "db_query.h"
 #include "files_names.h"
 #include "rlist.h"
+#include "item_lib.h"
 
 #include <assert.h>
 

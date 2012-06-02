@@ -15,6 +15,7 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+#include "item_lib.h"
 
 // TODO: Implement ? - we only support one signal: SIGKILL (9)
 /* Returns true if SIGKILL was one of the signals, false otherwise */

@@ -18,6 +18,7 @@
 #include "granules.h"
 #include "hub-maintenance.h"
 #include "hub-worker.h"
+#include "item_lib.h"
 
 /*******************************************************************/
 

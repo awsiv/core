@@ -16,9 +16,11 @@
 #include "cf3.defs.h"
 #include "cf3.extern.h"
 #include "cf.nova.h"
+
 #include "lastseen.h"
 #include "granules.h"
 #include "files_names.h"
+#include "item_lib.h"
 
 /* For sorting */
 typedef struct

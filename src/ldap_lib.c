@@ -11,6 +11,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 #include "files_names.h"
+#include "item_lib.h"
 
 #ifdef HAVE_LIBLDAP
 

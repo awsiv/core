@@ -14,6 +14,7 @@
 #include "map.h"
 #include "bson_hub_conversion.h"
 #include "files_names.h"
+#include "item_lib.h"
 
 #include <assert.h>
 

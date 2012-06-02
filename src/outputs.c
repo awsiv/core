@@ -18,6 +18,7 @@
 #include "cf.nova.h"
 
 #include "constraints.h"
+#include "item_lib.h"
 
 Item *NOVA_HANDLE_OUTPUTS = NULL;
 Item *NOVA_BUNDLE_OUTPUTS = NULL;

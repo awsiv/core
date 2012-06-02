@@ -16,6 +16,7 @@
 #include "db_save.h"
 #include "bson_lib.h"
 #include "granules.h"
+#include "item_lib.h"
 
 #include <assert.h>
 

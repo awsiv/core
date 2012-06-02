@@ -6,6 +6,7 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 
 #include "bson_lib.h"
 #include "files_names.h"
+#include "item_lib.h"
 
 Item *BsonGetStringArrayAsItemList(const bson *b, const char *key)
 // TODO: Deprecate in favour of BsonStringArrayAsRlist()

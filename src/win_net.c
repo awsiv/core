@@ -17,6 +17,7 @@
 #include "cf.nova.h"
 #include "files_names.h"
 #include "env_context.h"
+#include "item_lib.h"
 
 #define WORKING_BUFFER_SIZE 15000
 #define MAX_ALLOCTRIES 3
