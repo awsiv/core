@@ -9,6 +9,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#include "sysinfo.h"
 #include "env_context.h"
 #include "constraints.h"
 #include "promises.h"

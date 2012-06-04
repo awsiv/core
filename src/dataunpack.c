@@ -17,6 +17,7 @@
 #include "cf3.extern.h"
 #include "cf.nova.h"
 
+#include "sysinfo.h"
 #include "db_save.h"
 
 void Nova_UnPackPerformance(mongo_connection *dbconn, char *id, Item *data)
