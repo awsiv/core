@@ -1,4 +1,4 @@
-#include "cf.defs.h"
+#include "platform.h"
 #include "test.h"
 #include "scorecards.h"
 
