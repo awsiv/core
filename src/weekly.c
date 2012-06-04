@@ -14,6 +14,9 @@
 /*                                                                           */
 /*****************************************************************************/
 
+static double Q_MEAN;
+static double Q_SIGMA;
+
 #include "db_query.h"
 
 double Num(double x)
