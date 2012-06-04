@@ -74,8 +74,9 @@ if(!db["onlineusers"].findOne())
 /** roles records **/
 if(db["groups"].findOne())
 {
-    /* Groups collection is called roles from Nova 2.2.0*/
-    db["groups"].renameCollection("roles");
+    /* groups collection is called roles from Nova 2.2.0*/
+    db["groups"].find().forEach( function(x){db["roles"].insert(x)} );
+    db["groups"].drop();
 }
 else if(!db["roles"].findOne())
 {
