@@ -453,7 +453,21 @@ HubQuery *CFDB_QueryColour(mongo_connection *conn, const HostRankMethod method, 
             BsonStringGet(&cursor->current, cfr_keyhash, &hostkey);
             assert(hostkey);
 
-            host = NewHubHost(NULL, hostkey, ip_addresses->name, host_names->name);
+            {
+                const char *ip_address = NULL;
+                if (ip_addresses)
+                {
+                    ip_address = ip_addresses->name;
+                }
+
+                const char *host_name = NULL;
+                if (host_names)
+                {
+                    host_name = host_names->name;
+                }
+
+                host = NewHubHost(NULL, hostkey, ip_address, host_name);
+            }
 
             DeleteItemList(host_names);
             DeleteItemList(ip_addresses);
