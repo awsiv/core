@@ -139,6 +139,7 @@ int ReturnLiteralData(char *handle, char *recv)
         }
         else
         {
+            CfOut(cf_verbose,""," Found nothing with handle %s authorized for remote access",handle);
             return false;
         }
     }
