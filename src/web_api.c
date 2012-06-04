@@ -3860,7 +3860,7 @@ JsonElement *Nova2PHP_network_speed(char *hostkey)
 
     cfapi_errid errid = ERRID_SUCCESS;
 
-    if (mongo_cursor_next(cursor))      // not more than one record
+    if (mongo_cursor_next(cursor) == MONGO_OK)      // not more than one record
     {
         bson_iterator it1;
         bson_iterator_init(&it1, cursor->current.data);
@@ -4452,7 +4452,7 @@ bool Nova2PHP_host_list_by_environment(HostsList **out, const char *environment,
 
     CFDB_Close(&dbconn);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         bson_iterator i;
 
@@ -4502,12 +4502,8 @@ char *Nova2PHP_environment_by_hostkey(const char *hostkey)
     bson_finish(&fields);
 
     bson result;
-    bool res = mongo_find_one(&dbconn, MONGO_DATABASE, &query, &fields, &result);
 
-    bson_destroy(&query);
-    bson_destroy(&fields);
-
-    if (res)
+    if (mongo_find_one(&dbconn, MONGO_DATABASE, &query, &fields, &result) == MONGO_OK)
     {
         if (bson_find(&i, &result, cfr_environment))
         {
@@ -4515,6 +4511,9 @@ char *Nova2PHP_environment_by_hostkey(const char *hostkey)
         }
         bson_destroy(&result);
     }
+
+    bson_destroy(&query);
+    bson_destroy(&fields);
 
     CFDB_Close(&dbconn);
     return environment;

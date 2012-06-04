@@ -247,7 +247,12 @@ static cfapi_errid IonAuthenticate(EnterpriseDB *conn, const char *username, con
     bson_finish(&field);
 
     bson record;
-    bson_bool_t found = mongo_find_one(conn, GetUsersCollection(conn), &query, &field, &record);
+    bson_bool_t found = false;
+
+    if(mongo_find_one(conn, GetUsersCollection(conn), &query, &field, &record) == MONGO_OK)
+    {
+        found = true;
+    }
 
     bson_destroy(&query);
     bson_destroy(&field);
@@ -833,7 +838,7 @@ static Item *CFDB_GetRolesForUser(EnterpriseDB *conn, char *userName)
 
     Item *memberRoles = NULL;
 
-    if (mongo_cursor_next(cursor))
+    if (mongo_cursor_next(cursor) == MONGO_OK)
     {
         memberRoles = BsonGetStringArrayAsItemList(&(cursor->current), dbkey_user_roles);
     }
@@ -995,7 +1000,7 @@ HubQuery *CFDB_GetRoles(bson *query)
 
     CFDB_Close(&conn);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
 	char name[CF_MAXVARSIZE], desc[CF_MAXVARSIZE], clRxIncl[CF_MAXVARSIZE],
 	    clRxExcl[CF_MAXVARSIZE], bRxIncl[CF_MAXVARSIZE], bRxExcl[CF_MAXVARSIZE];

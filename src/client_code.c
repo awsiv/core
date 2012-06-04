@@ -365,7 +365,7 @@ static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now,
 // freeing query below
     bson_destroy(&field);
 
-    if (mongo_cursor_next(cursor))      // not more than one record
+    if (mongo_cursor_next(cursor) == MONGO_OK)      // not more than one record
     {
         bson_iterator it1;
 

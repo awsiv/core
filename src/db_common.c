@@ -42,7 +42,7 @@ int CFDB_Open(EnterpriseDB *conn)
 
 # endif
 
-    if (result != 0)
+    if (result != MONGO_OK)
     {
         mongo_destroy(conn);
         CfOut(cf_verbose, "mongo_connect", "!! Could not connect to mongo server (got %d)", result);

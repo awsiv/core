@@ -1999,7 +1999,7 @@ int CFDB_AddNote(EnterpriseDB *conn, char *keyhash, int reportType, char *nid,
         MongoCheckForError(conn, "GetNoteID", keyhash, NULL);
         bson_destroy(&field);
 
-        while (mongo_cursor_next(cursor) && !found)
+        while (mongo_cursor_next(cursor) == MONGO_OK && !found)
         {
             bson_iterator_init(&it1, cursor->current.data);
             objectId[0] = '\0';

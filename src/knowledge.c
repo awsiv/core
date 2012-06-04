@@ -606,7 +606,7 @@ static Rlist *Nova_GetTestMachines(void)
 
     cursor = mongo_find(&conn, MONGO_DATABASE, bson_empty(&query), 0, 0, 0, CF_MONGO_SLAVE_OK);
 
-    while (mongo_cursor_next(cursor))   // loops over documents  
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents  
     {
         bson_iterator_init(&it, cursor->current.data);
 
@@ -706,7 +706,7 @@ void Nova_UpdateTestData(void)
 
     cursor = mongo_find(&conn, MONGO_DATABASE, bson_empty(&query), 0, 0, 0, CF_MONGO_SLAVE_OK);
 
-    while (mongo_cursor_next(cursor))   // loops over documents   
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents   
     {
 
         bson_iterator_init(&it, cursor->current.data);

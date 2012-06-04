@@ -104,12 +104,12 @@ void CFDB_EnsureIndices(EnterpriseDB *conn)
     bson_append_int(&b, cfr_keyhash, 1);
     bson_finish(&b);
 
-    if (!mongo_create_index(conn, MONGO_DATABASE, &b, 0, NULL))
+    if (mongo_create_index(conn, MONGO_DATABASE, &b, 0, NULL) != MONGO_OK)
     {
         CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_DATABASE);
     }
 
-    if (!mongo_create_index(conn, MONGO_ARCHIVE, &b, 0, NULL))
+    if (mongo_create_index(conn, MONGO_ARCHIVE, &b, 0, NULL) != MONGO_OK)
     {
         CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_ARCHIVE);
     }
@@ -120,12 +120,12 @@ void CFDB_EnsureIndices(EnterpriseDB *conn)
     bson_append_int(&b, cfr_class_keys, 1);
     bson_finish(&b);
 
-    if (!mongo_create_index(conn, MONGO_DATABASE, &b, 0, NULL))
+    if (mongo_create_index(conn, MONGO_DATABASE, &b, 0, NULL) != MONGO_OK)
     {
         CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_DATABASE);
     }
 
-    if (!mongo_create_index(conn, MONGO_ARCHIVE, &b, 0, NULL))
+    if (mongo_create_index(conn, MONGO_ARCHIVE, &b, 0, NULL) != MONGO_OK)
     {
         CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_ARCHIVE);
     }
@@ -138,17 +138,17 @@ void CFDB_EnsureIndices(EnterpriseDB *conn)
     bson_append_int(&b, cfm_id, 1);
     bson_finish(&b);
 
-    if (!mongo_create_index(conn, MONGO_DATABASE_MON_MG, &b, 0, NULL))
+    if (mongo_create_index(conn, MONGO_DATABASE_MON_MG, &b, 0, NULL) != MONGO_OK)
     {
         CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_DATABASE_MON_MG);
     }
 
-    if (!mongo_create_index(conn, MONGO_DATABASE_MON_WK, &b, 0, NULL))
+    if (mongo_create_index(conn, MONGO_DATABASE_MON_WK, &b, 0, NULL) != MONGO_OK)
     {
         CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_DATABASE_MON_WK);
     }
 
-    if (!mongo_create_index(conn, MONGO_DATABASE_MON_YR, &b, 0, NULL))
+    if (mongo_create_index(conn, MONGO_DATABASE_MON_YR, &b, 0, NULL) != MONGO_OK)
     {
         CfOut(cf_error, "mongo_create_index", "!! Could not create index on %s", MONGO_DATABASE_MON_YR);
     }
@@ -184,7 +184,7 @@ static void CFDB_DropAllIndices(EnterpriseDB *conn)
 
         bson result;
 
-        if (!mongo_run_command(conn, MONGO_BASE, &dropAllCommand, bson_empty(&result)))
+        if (mongo_run_command(conn, MONGO_BASE, &dropAllCommand, bson_empty(&result)) != MONGO_OK)
         {
             CfOut(cf_error, "", "mongo_run_command: Could not drop index on collection %s", collection);
         }
@@ -267,7 +267,7 @@ void CFDB_PurgeTimestampedReports(EnterpriseDB *conn)
 
     now = time(NULL);
 
-    while (mongo_cursor_next(cursor))   // iterate over docs
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // iterate over docs
     {
         bson_iterator_init(&it1, cursor->current.data);
 
@@ -373,7 +373,7 @@ void CFDB_PurgeTimestampedLongtermReports(EnterpriseDB *conn)
 
     now = time(NULL);
 
-    while (mongo_cursor_next(cursor))   // iterate over docs
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // iterate over docs
     {
         bson_iterator_init(&it1, cursor->current.data);
 
@@ -486,7 +486,7 @@ static Item *GetUniquePromiseLogEntryKeys(EnterpriseDB *conn, char *promiseLogKe
     Item *uniquePromiseKeysList = NULL;
     char rhandle[CF_BUFSIZE] = {0};
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         bson_iterator itHostData;
         bson_iterator_init(&itHostData, cursor->current.data);
@@ -532,7 +532,7 @@ static void PurgePromiseLogWithEmptyTimestamps(EnterpriseDB *conn, char *promise
     char rhandle[CF_BUFSIZE] = {0};
     char keyhash[CF_BUFSIZE] = {0};
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         bson_iterator itHostData;
         bson_iterator_init(&itHostData, cursor->current.data);
