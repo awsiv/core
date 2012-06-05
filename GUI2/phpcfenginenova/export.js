@@ -1,31 +1,3 @@
-/** appsettings indexes **/
-db["appsettings"].ensureIndex({
-  "_id": 1
-},[
-  
-]);
-
-/** onlineusers indexes **/
-db["onlineusers"].ensureIndex({
-  "_id": 1
-},[
-  
-]);
-
-/** roles indexes **/
-db["roles"].ensureIndex({
-  "_id": 1
-},[
-  
-]);
-
-/** users indexes **/
-db["users"].ensureIndex({
-  "_id": 1
-},[
-  
-]);
-
 /** appsettings records **/
 if(db["appsettings"].findOne())
 {
