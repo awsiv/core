@@ -50,7 +50,6 @@
            
             self.resetPagination();
             self.dialogcontent.bind('scroll', $.proxy(self.classlistscrolled, self));
-
             self.setContext(self.options.includes,self.options.excludes);
           
         },
@@ -66,7 +65,10 @@
             $.ui.classfinder.instances.push(this.element);
         },
 
-
+       getContainer:function(){
+           var self=this;
+           return self.dialogId;
+       },
 
         _displayFailure: function(jqXHR,textStatus, errorThrown) {
             var serverMsg,
