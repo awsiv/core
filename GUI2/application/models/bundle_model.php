@@ -74,9 +74,17 @@ class bundle_model extends Cf_Model
         {
             $rawdata = cfpr_bundle_classes_used($username, $type, $bundle);
             $data = $this->checkData($rawdata);
-            if (is_array($data) && $this->hasErrors() == 0)
+            if ($this->hasErrors() == 0)
             {
-                return $data;
+                if (is_array($data))
+                {
+                    return $data;
+                }
+                else
+                {
+                    // if its a empty string we are getting, just return empty array
+                    return array();
+                }
             }
             else
             {
