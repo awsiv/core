@@ -17,7 +17,7 @@ bool BsonBoolGet(const bson *b, const char *key, bool *out);
 bool BsonIntGet(const bson *b, const char *key, int *out);
 bool BsonTimeGet(const bson *b, const char *key, time_t *out);
 bool BsonArrayGet(const bson *b, const char *key, const char **out);
-bool BsonObjectGet(const bson *b, const char *key, const char **out);
+bool BsonObjectGet(const bson *b, const char *key, bson **out);
 bool BsonIsArrayNonExistentOrEmpty(const bson *b, const char *key);
 void BsonStringWrite(char *dest, int destSz, const bson *b, const char *key);
 bool BsonAppendStringSafe(bson *b, char *key, char *value);
@@ -36,7 +36,7 @@ void BsonToString(char *retBuf, int retBufSz, char *data);
 void BsonAppendHostColourFilter(bson *query_buffer, HostColourFilter *filter);
 void BsonAppendSortField(bson *bb, char *sortField);
 long BsonLongGet(const bson *b, const char *key);
-const char *BsonGetArrayValue(const bson *b, const char *key);
+const bson *BsonGetArrayValue(const bson *b, const char *key);
 bool BsonIsKeyCorrupt(const char *key);
 bool BsonIsEmpty(const bson *object);
 

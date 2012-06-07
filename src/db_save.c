@@ -2001,7 +2001,7 @@ int CFDB_AddNote(EnterpriseDB *conn, char *keyhash, int reportType, char *nid,
 
         while (mongo_cursor_next(cursor) == MONGO_OK && !found)
         {
-            bson_iterator_init(&it1, cursor->current.data);
+            bson_iterator_init(&it1, mongo_cursor_bson(cursor));
             objectId[0] = '\0';
             while (bson_iterator_next(&it1))
             {

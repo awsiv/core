@@ -608,7 +608,7 @@ static Rlist *Nova_GetTestMachines(void)
 
     while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents  
     {
-        bson_iterator_init(&it, cursor->current.data);
+        bson_iterator_init(&it, mongo_cursor_bson(cursor));
 
         keyhash[0] = '\0';
         hostnames[0] = '\0';
@@ -709,7 +709,7 @@ void Nova_UpdateTestData(void)
     while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents   
     {
 
-        bson_iterator_init(&it, cursor->current.data);
+        bson_iterator_init(&it, mongo_cursor_bson(cursor));
 
         keyhash[0] = '\0';
         hostnames[0] = '\0';

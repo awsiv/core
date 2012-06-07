@@ -11,7 +11,7 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 Item *BsonGetStringArrayAsItemList(const bson *b, const char *key)
 // TODO: Deprecate in favour of BsonStringArrayAsRlist()
 {
-    const char *array = BsonGetArrayValue(b, key);
+    const bson *array = BsonGetArrayValue(b, key);
 
     if (!array)
     {
@@ -36,7 +36,7 @@ Item *BsonGetStringArrayAsItemList(const bson *b, const char *key)
 
 Rlist *BsonStringArrayAsRlist(const bson *b, const char *key)
 {
-    const char *array = BsonGetArrayValue(b, key);
+    const bson *array = BsonGetArrayValue(b, key);
 
     if (!array)
     {
@@ -111,13 +111,13 @@ bool BsonArrayGet(const bson *b, const char *key, const char **out)
     }
 }
 
-bool BsonObjectGet(const bson *b, const char *key, const char **out)
+bool BsonObjectGet(const bson *b, const char *key, bson **out)
 {
     bson_iterator it;
 
     if (bson_find(&it, b, key) == BSON_OBJECT)
     {
-        *out = bson_iterator_value(&it);
+        bson_iterator_subobject(&it, *out);
         return true;
     }
     else
@@ -129,7 +129,7 @@ bool BsonObjectGet(const bson *b, const char *key, const char **out)
 /*****************************************************************************/
 bool BsonIsArrayNonExistentOrEmpty(const bson *b, const char *key)
 {
-    const char *array = BsonGetArrayValue(b, key);
+    const bson *array = BsonGetArrayValue(b, key);
 
     if (!array)
     {
@@ -215,13 +215,15 @@ void BsonStringWrite(char *dest, int destSz, const bson *b, const char *key)
 
 /*****************************************************************************/
 
-const char *BsonGetArrayValue(const bson *b, const char *key)
+const bson *BsonGetArrayValue(const bson *b, const char *key)
 {
     bson_iterator it;
+    bson *sub;
 
     if (bson_find(&it, b, key) == BSON_ARRAY)
     {
-        return bson_iterator_value(&it);
+        bson_iterator_subobject(&it, sub);
+        return sub;
     }
 
     CfOut(cf_verbose, "", "BsonGetArrayValue: No match for \"%s\"", key);
@@ -440,7 +442,7 @@ void BsonAppendAgedQuery(bson *querybuf, int maxAgeInSeconds)
 
 /*****************************************************************************/
 
-void BsonToString(char *retBuf, int retBufSz, char *data)
+void BsonToString(char *retBuf, int retBufSz, bson *data)
 /* data = (bson *)b->data*/
 {
     bson_iterator i;
@@ -465,6 +467,8 @@ void BsonToString(char *retBuf, int retBufSz, char *data)
 
         snprintf(buf, sizeof(buf), "%s : ", key);
         Join(retBuf, buf, retBufSz);
+
+        bson sub;
 
         switch (t)
         {
@@ -499,14 +503,19 @@ void BsonToString(char *retBuf, int retBufSz, char *data)
 
         case BSON_OBJECT:
             buf[0] = '{';
-            BsonToString(buf + 1, sizeof(buf - 1), (char *) bson_iterator_value(&i));
+
+            bson_iterator_subobject(&i, &sub);
+
+            BsonToString(buf + 1, sizeof(buf - 1), &sub);
             EndJoin(buf, "}", sizeof(buf));
             break;
 
         case BSON_ARRAY:
 
             buf[0] = '[';
-            BsonToString(buf + 1, sizeof(buf - 1), (char *) bson_iterator_value(&i));
+            bson_iterator_subobject(&i, &sub);
+
+            BsonToString(buf + 1, sizeof(buf - 1), &sub);
             EndJoin(buf, "]", sizeof(buf));
             break;
 

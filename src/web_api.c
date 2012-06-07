@@ -3863,14 +3863,15 @@ JsonElement *Nova2PHP_network_speed(char *hostkey)
     if (mongo_cursor_next(cursor) == MONGO_OK)      // not more than one record
     {
         bson_iterator it1;
-        bson_iterator_init(&it1, cursor->current.data);
+
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
             if (StringSafeCompare(bson_iterator_key(&it1), cfr_netmeasure) == 0)
             {
                 bson_iterator it2;
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it2, &it1);
 
                 found = true;
                 while (bson_iterator_next(&it2))

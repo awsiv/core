@@ -269,7 +269,7 @@ void CFDB_PurgeTimestampedReports(EnterpriseDB *conn)
 
     while (mongo_cursor_next(cursor) == MONGO_OK)   // iterate over docs
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         memset(keyHash, 0, sizeof(keyHash));
 
@@ -375,7 +375,7 @@ void CFDB_PurgeTimestampedLongtermReports(EnterpriseDB *conn)
 
     while (mongo_cursor_next(cursor) == MONGO_OK)   // iterate over docs
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         memset(keyHash, 0, sizeof(keyHash));
 
@@ -489,7 +489,7 @@ static Item *GetUniquePromiseLogEntryKeys(EnterpriseDB *conn, char *promiseLogKe
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         bson_iterator itHostData;
-        bson_iterator_init(&itHostData, cursor->current.data);
+        bson_iterator_init(&itHostData, mongo_cursor_bson( cursor ) );
 
         rhandle[0] = '\0';
 
@@ -535,7 +535,7 @@ static void PurgePromiseLogWithEmptyTimestamps(EnterpriseDB *conn, char *promise
     while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         bson_iterator itHostData;
-        bson_iterator_init(&itHostData, cursor->current.data);
+        bson_iterator_init(&itHostData, mongo_cursor_bson( cursor ) );
 
         rhandle[0] = '\0';
         keyhash[0] = '\0';

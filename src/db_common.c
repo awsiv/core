@@ -84,7 +84,7 @@ bool MongoCheckForError(EnterpriseDB *conn, const char *operation, const char *e
 
     if (mongo_cmd_get_last_error(conn, MONGO_BASE, &b))
     {
-        BsonToString(dbErr, sizeof(dbErr), b.data);
+        BsonToString(dbErr, sizeof(dbErr), &b);
         CfOut(cf_error, "", "!! Database error on %s (%s): %s", operation, extra, dbErr);
         bson_destroy(&b);
         return false;

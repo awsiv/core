@@ -791,7 +791,7 @@ bson_destroy(&field);
 
 while (mongo_cursor_next(cursor))  // loops over documents
    {
-   bson_iterator_init(&it1,cursor->current.data);
+   bson_iterator_init(&it1, mongo_cursor_bson(cursor));
    
    topic_name[0] = '\0';
    topic_context[0] = '\0';
