@@ -528,11 +528,11 @@ Item *Nova_ScanLeadsAssociations(int search_id, char *assoc_mask)
         {
             if (strcmp(bson_iterator_key(&it1), cfk_associations) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
 
                     assoc_id = 0;
                     assoc_name[0] = '\0';
@@ -1516,11 +1516,11 @@ Item *Nova_NearestNeighbours(int search_id, char *assoc_mask)
         {
             if (strcmp(bson_iterator_key(&it1), cfk_associations) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
 
                     assoc_id = 0;
                     assoc_name[0] = '\0';

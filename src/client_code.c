@@ -376,7 +376,7 @@ static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now,
             if (StringSafeCompare(bson_iterator_key(&it1), cfr_netmeasure) == 0)
             {
                 bson_iterator it2;
-                bson_iterator_subiterator(&it2, &it1);
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {

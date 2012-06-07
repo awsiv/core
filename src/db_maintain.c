@@ -498,7 +498,7 @@ static Item *GetUniquePromiseLogEntryKeys(EnterpriseDB *conn, char *promiseLogKe
             if (strcmp(bson_iterator_key(&itHostData), promiseLogKey) == 0)
             {
                 bson_iterator iterPromiseLogElement;
-                bson_iterator_init(&iterPromiseLogElement, bson_iterator_value(&itHostData));
+                bson_iterator_subiterator(&iterPromiseLogElement, &itHostData);
 
                 while (bson_iterator_next(&iterPromiseLogElement))
                 {
@@ -549,7 +549,7 @@ static void PurgePromiseLogWithEmptyTimestamps(EnterpriseDB *conn, char *promise
             else if (strcmp(bson_iterator_key(&itHostData), promiseLogKey) == 0)
             {
                 bson_iterator iterPromiseComplexKey;
-                bson_iterator_init(&iterPromiseComplexKey, bson_iterator_value(&itHostData));
+                bson_iterator_subiterator(&itHostData, &iterPromiseComplexKey);
 
                 while (bson_iterator_next(&iterPromiseComplexKey))
                 {
@@ -716,11 +716,11 @@ void CFDB_PurgeScan(EnterpriseDB *conn, bson_iterator *itp, char *reportKey, tim
         deep = false;
     }
 
-    bson_iterator_init(&it1, bson_iterator_value(itp));
+    bson_iterator_subiterator(itp, &it1);
 
     while (bson_iterator_next(&it1))
     {
-        bson_iterator_init(&it2, bson_iterator_value(&it1));
+        bson_iterator_subiterator(&it1, &it2);
 
         emptyLev2 = true;
 
@@ -730,7 +730,7 @@ void CFDB_PurgeScan(EnterpriseDB *conn, bson_iterator *itp, char *reportKey, tim
 
             if (deep)           // one level extra
             {
-                bson_iterator_init(&it3, bson_iterator_value(&it2));
+                bson_iterator_subiterator(&it2, &it3);
 
                 snprintf(var, sizeof(var), "%s.%s.%s", reportKey, bson_iterator_key(&it1), bson_iterator_key(&it2));
                 snprintf(key, sizeof(key), "%s", (char *) bson_iterator_key(&it2));
@@ -826,11 +826,11 @@ void CFDB_PurgeScanStrTime(EnterpriseDB *conn, bson_iterator *itp, char *reportK
 
     TimeToDateStr(now - oldThreshold, earliest, sizeof(earliest));
 
-    bson_iterator_init(&it1, bson_iterator_value(itp));
+    bson_iterator_subiterator(itp, &it1);
 
     while (bson_iterator_next(&it1))
     {
-        bson_iterator_init(&it2, bson_iterator_value(&it1));
+        bson_iterator_subiterator(&it1, &it2);
 
         while (bson_iterator_next(&it2))
         {
@@ -949,8 +949,6 @@ void CFDB_PurgeDeprecatedVitals(EnterpriseDB *conn)
 
 void CFDB_RemoveTestData(char *db, char *keyhash)
 {
-    bson query;
-    bson_buffer bb;
     EnterpriseDB conn;
 
     if (!CFDB_Open(&conn))

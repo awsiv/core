@@ -143,18 +143,19 @@ Item *CFDB_GetLastseenCache(void)
         {
             if (strcmp(bson_iterator_key(&it1), cfr_lastseen_hosts) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
+
                     keyhash[0] = '\0';
                     ipAddr[0] = '\0';
                     while (bson_iterator_next(&it3))
                     {
                         if (strcmp(bson_iterator_key(&it3), cfr_keyhash) == 0)
                         {
-                            snprintf(keyhash, sizeof(keyhash), "%s", bson_iterator_string(&it3));
+                            snpintf(keyhash, sizeof(keyhash), "%s", bson_iterator_string(&it3));
                         }
                         else if (strcmp(bson_iterator_key(&it3), cfr_ipaddr) == 0)
                         {
@@ -213,7 +214,7 @@ Item *CFDB_GetDeletedHosts(void)
         {
             if (strcmp(bson_iterator_key(&it1), cfr_deleted_hosts) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
@@ -563,11 +564,11 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
 
             if (strcmp(bson_iterator_key(&it1), type) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
 
                     rname[0] = '\0';
                     rversion[0] = '\0';
@@ -725,11 +726,11 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, char *keyHash, char *lclass, boo
 
             if (strcmp(bson_iterator_key(&it1), cfr_class) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
                     strncpy(rclass, bson_iterator_key(&it2), CF_MAXVARSIZE - 1);
 
                     rex = 0;
@@ -991,11 +992,11 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash, cha
 
             if (strcmp(bson_iterator_key(&it1), cfr_total_compliance) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
 
                     rkept = -1;
                     rrepaired = -1;
@@ -1228,11 +1229,11 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, c
 
             if (strcmp(bson_iterator_key(&it1), cfr_vars) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
 
                     strncpy(rscope, bson_iterator_key(&it2), CF_MAXVARSIZE);                    
 
@@ -1251,7 +1252,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, c
                         dtype[0] = '\0';
                         time_t timestamp = 0;
 
-                        bson_iterator_init(&it4, bson_iterator_value(&it3));
+                        bson_iterator_subiterator(&it3, &it4);
 
                         strncpy(rlval, bson_iterator_key(&it3), CF_MAXVARSIZE - 1);
 
@@ -1264,7 +1265,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, c
                                 {
                                 case BSON_ARRAY:
                                 case BSON_OBJECT:
-                                    bson_iterator_init(&it5, bson_iterator_value(&it4));
+                                    bson_iterator_subiterator(&it4, &it5);
                                     rtype = CF_LIST;
 
                                     while (bson_iterator_next(&it5))
@@ -1726,11 +1727,11 @@ HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, cha
 
             if (strcmp(bson_iterator_key(&it1), cfr_lastseen) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
                     strncpy(rhash, bson_iterator_key(&it2), CF_MAXVARSIZE - 1);
 
                     ravg = 0;
@@ -1899,11 +1900,11 @@ HubQuery *CFDB_QueryMeter(EnterpriseDB *conn, bson *query, char *db)
 
             if (strcmp(bson_iterator_key(&it1), cfr_meter) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
                     strncpy(rcolumn, bson_iterator_key(&it2), CF_SMALLBUF - 1);
 
                     rkept = 0;
@@ -2009,11 +2010,11 @@ HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname, 
 
             if (strcmp(bson_iterator_key(&it1), cfr_performance) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
                     snprintf(rhandle, CF_MAXVARSIZE, "%s", bson_iterator_key(&it2));
 
                     snprintf(rname, sizeof(rname), "(unknown)");
@@ -2159,11 +2160,11 @@ HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname, bool 
 
             if (strcmp(bson_iterator_key(&it1), cfr_setuid) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
                     strncpy(rname, bson_iterator_string(&it2), CF_SMALLBUF - 1);
 
                     match_name = true;
@@ -2267,7 +2268,7 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname, 
             if (strcmp(bson_iterator_key(&it1), cfr_filechanges) == 0)
             {
                 bson_iterator it2;
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 rname[0] = '\0';
                 time_t timestamp = 0;
@@ -2275,7 +2276,7 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname, 
                 while (bson_iterator_next(&it2))
                 {
                     bson_iterator it3;
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
 
                     snprintf(handle, CF_MAXVARSIZE, "%s", bson_iterator_key(&it2));
 
@@ -2380,7 +2381,7 @@ HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname, cha
             if (strcmp(bson_iterator_key(&it1), cfr_filediffs) == 0)
             {
                 bson_iterator it2;
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 char rname[CF_MAXVARSIZE] = {0},
                      rdiff[CF_BUFSIZE] = {0};
@@ -2390,7 +2391,7 @@ HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname, cha
                 while (bson_iterator_next(&it2))
                 {
                     bson_iterator it3;
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
 
                     while (bson_iterator_next(&it3))
                     {
@@ -2576,13 +2577,13 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash, Promis
             if (strcmp(bson_iterator_key(&itHostData), promiseLogKey) == 0)    // new format
             {
                 bson_iterator iterPromiseLogElement;
-                bson_iterator_init(&iterPromiseLogElement, bson_iterator_value(&itHostData));
+                bson_iterator_subiterator(&itHostData, &iterPromiseLogElement);
 
                 while (bson_iterator_next(&iterPromiseLogElement))
                 {
                     bson_iterator iterPromiseLogData;
 
-                    bson_iterator_init(&iterPromiseLogData, bson_iterator_value(&iterPromiseLogElement));
+                    bson_iterator_subiterator(&iterPromiseLogElement, &iterPromiseLogData);
 
                     bson objPromiseLogData;
                     bson_iterator_subobject( &iterPromiseLogElement, &objPromiseLogData);
@@ -2916,12 +2917,12 @@ HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, c
 
             if (strcmp(bson_iterator_key(&it1), cfr_valuereport) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
                     snprintf(rhandle, CF_MAXVARSIZE, "%s", bson_iterator_key(&it2));
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
 
                     rday[0] = '\0';
                     rkept = 0;
@@ -3074,12 +3075,12 @@ HubQuery *CFDB_QueryValueGraph(EnterpriseDB *conn, char *keyHash, char *lday, ch
 
             if (strcmp(bson_iterator_key(&it1), cfr_valuereport) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
                     snprintf(rhandle, CF_MAXVARSIZE, "%s", bson_iterator_key(&it2));
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
 
                     rday[0] = '\0';
                     rkept = 0;
@@ -3687,7 +3688,7 @@ int CFDB_QueryMagView2(EnterpriseDB *conn, char *keyhash, char *monId, time_t st
                 continue;
             }
 
-            bson_iterator_init(&it2, bson_iterator_value(&it1));
+            bson_iterator_subiterator(&it1, &it2);
 
             for (i = 0; bson_iterator_next(&it2); i++)  // array elements
             {
@@ -3815,7 +3816,7 @@ int CFDB_QueryMonView(EnterpriseDB *conn, char *keyhash, char *monId, enum monit
                 continue;
             }
 
-            bson_iterator_init(&it2, bson_iterator_value(&it1));
+            bson_iterator_subiterator(&it1, &it2);
 
             for (i = 0; bson_iterator_next(&it2); i++)  // array elements
             {
@@ -3920,7 +3921,7 @@ int CFDB_QueryHostName(EnterpriseDB *conn, char *ipAddr, char *hostName, int hos
         {
             if (strcmp(bson_iterator_key(&it1), cfr_host_array) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 if (bson_iterator_next(&it2))
                 {
@@ -4041,7 +4042,7 @@ bool CFDB_QueryHistogram(EnterpriseDB *conn, char *keyhash, char *monId, double 
             if (strcmp(bson_iterator_key(&it1), cfr_histo) == 0)
             {
                 i = 0;
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
@@ -4152,7 +4153,7 @@ Item *CFDB_QueryExpandedPromiseAttr(EnterpriseDB *conn, char *handle, char *attr
                 // constraints are stored in an array
                 if (strcmp(attrKey, cfp_constraints_exp) == 0)
                 {
-                    bson_iterator_init(&it2, bson_iterator_value(&it1));
+                    bson_iterator_subiterator(&it1, &it2);
 
                     while (bson_iterator_next(&it2))
                     {
@@ -4675,11 +4676,11 @@ HubBody *CFDB_QueryBody(EnterpriseDB *conn, char *type, char *name)
         {
             if (strcmp(bson_iterator_key(&it1), cfb_bodyargs) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 memset(ba, 0, sizeof(ba));
 
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
@@ -4703,13 +4704,13 @@ HubBody *CFDB_QueryBody(EnterpriseDB *conn, char *type, char *name)
             }
             else if (strcmp(bson_iterator_key(&it1), cfb_classcontext) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
                     snprintf(cc, sizeof(cc), "%s", bson_iterator_key(&it2));
 
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
 
                     while (bson_iterator_next(&it3))
                     {
@@ -4863,7 +4864,7 @@ Item *CFDB_QueryCdpAcls(EnterpriseDB *conn, char *sep)
             }
             else if (strcmp(bson_iterator_key(&it1), cfp_constraints_exp) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
@@ -4958,7 +4959,7 @@ Item *CFDB_QueryCdpCommands(EnterpriseDB *conn, char *sep)
             }
             else if (strcmp(bson_iterator_key(&it1), cfp_constraints_exp) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
@@ -5046,7 +5047,7 @@ Item *CFDB_QueryCdpPromiser(EnterpriseDB *conn, char *sep, char *bundleName, cha
             }
             else if (strcmp(bson_iterator_key(&it1), cfp_constraints_exp) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
@@ -5109,12 +5110,12 @@ int CFDB_QueryLastFileChange(EnterpriseDB *conn, char *keyHash, char *reportType
         {
             if (strcmp(bson_iterator_key(&it1), reportType) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))        // loops over report rows
                 {
 
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
 
                     currFileName[0] = '\0';
                     currTime = 0;
@@ -5224,7 +5225,7 @@ Item *CFDB_QueryCdpRegistry(EnterpriseDB *conn, char *sep)
             }
             else if (strcmp(bson_iterator_key(&it1), cfp_constraints_exp) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
@@ -5316,7 +5317,7 @@ Item *CFDB_QueryCdpServices(EnterpriseDB *conn, char *sep)
             }
             else if (strcmp(bson_iterator_key(&it1), cfp_constraints_exp) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
@@ -5399,13 +5400,13 @@ Item *CFDB_QueryCdpCompliance(EnterpriseDB *conn, char *handle)
         {
             if (strcmp(bson_iterator_key(&it1), cfr_promisecompl) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
                     if (strcmp(bson_iterator_key(&it2), handle) == 0)
                     {
-                        bson_iterator_init(&it3, bson_iterator_value(&it2));
+                        bson_iterator_subiterator(&it2, &it3);
 
                         while (bson_iterator_next(&it3))
                         {
@@ -5424,7 +5425,7 @@ Item *CFDB_QueryCdpCompliance(EnterpriseDB *conn, char *handle)
             }
             else if (strcmp(bson_iterator_key(&it1), cfr_host_array) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 if (bson_iterator_next(&it2))   // just pick first hostname
                 {
@@ -5564,14 +5565,14 @@ HubQuery *CFDB_QueryCachedTotalCompliance(EnterpriseDB *conn, char *policy, time
                 continue;
             }
 
-            bson_iterator_init(&it2, bson_iterator_value(&it1));
+            bson_iterator_subiterator(&it1, &it2);
 
             while (bson_iterator_next(&it2))
             {
                 slot = -1;
                 sscanf(bson_iterator_key(&it2), "%d", &slot);
 
-                bson_iterator_init(&it3, bson_iterator_value(&it2));
+                bson_iterator_subiterator(&it2, &it3);
 
                 kept = 0;
                 repaired = 0;
@@ -5724,11 +5725,11 @@ Rlist *CFDB_QueryNotes(EnterpriseDB *conn, char *keyhash, char *nid, Item *data)
 
             case BSON_OBJECT:
             case BSON_ARRAY:
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
                     while (bson_iterator_next(&it3))
                     {
                         t = bson_iterator_type(&it3);
@@ -6122,13 +6123,13 @@ int CFDB_QueryReplStatus(EnterpriseDB *conn, char *buffer, int bufsize)
 
             if (bson_find(&it1, &result, "members"))
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 Join(buffer, "\"members\":[", bufsize);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
                     Join(buffer, "{", bufsize);
 
                     while (bson_iterator_next(&it3))

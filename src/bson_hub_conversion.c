@@ -131,7 +131,7 @@ bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle, bool 
         else if (strcmp(bson_iterator_key(it), cfr_promisecompl) == 0)
         {
             bson_iterator it2;
-            bson_iterator_init(&it2, bson_iterator_value(it));
+            bson_iterator_subiterator(it, &it2);
 
             while (bson_iterator_next(&it2))
             {
@@ -139,7 +139,7 @@ bool BsonIterGetPromiseComplianceDetails(bson_iterator *it, char *lhandle, bool 
                 strncpy(rhandle, bson_iterator_key(&it2), CF_MAXVARSIZE - 1);
 
                 bson_iterator it3;
-                bson_iterator_init(&it3, bson_iterator_value(&it2));
+                bson_iterator_subiterator(&it2, &it3);
                 HubPromiseCompliance *hp = BsonIteratorGetPromiseCompliance(&it3, hh, rhandle);
 
                 bool matched = true;
@@ -203,7 +203,7 @@ bool BsonIterGetBundleReportDetails(bson_iterator *it, char *lname, bool regex, 
         else if (strcmp(bson_iterator_key(it), cfr_bundles) == 0)
         {
             bson_iterator iterAllBundles;
-            bson_iterator_init(&iterAllBundles, bson_iterator_value(it));
+            bson_iterator_subiterator(it, &iterAllBundles);
 
             while (bson_iterator_next(&iterAllBundles))
             {
@@ -215,7 +215,7 @@ bool BsonIterGetBundleReportDetails(bson_iterator *it, char *lname, bool regex, 
                 }
 
                 bson_iterator iterBundleData;
-                bson_iterator_init(&iterBundleData, bson_iterator_value(&iterAllBundles));
+                bson_iterator_subiterator(&iterAllBundles, &iterBundleData);
 
                 HubBundleSeen *hb = BsonIteratorGetBundleSeen(&iterBundleData, hh, rname);
 
@@ -252,7 +252,7 @@ void CFDB_ScanHubHost(bson_iterator *it1, char *keyhash, char *ipaddr, char *hos
 
     if (strcmp(bson_iterator_key(it1), cfr_ip_array) == 0)
     {
-        bson_iterator_init(&it2, bson_iterator_value(it1));
+        bson_iterator_subiterator(it1, &it2);
 
         while (bson_iterator_next(&it2))
         {
@@ -264,7 +264,7 @@ void CFDB_ScanHubHost(bson_iterator *it1, char *keyhash, char *ipaddr, char *hos
 
     if (strcmp(bson_iterator_key(it1), cfr_host_array) == 0)
     {
-        bson_iterator_init(&it2, bson_iterator_value(it1));
+        bson_iterator_subiterator(it1, &it2);
 
         while (bson_iterator_next(&it2))
         {
