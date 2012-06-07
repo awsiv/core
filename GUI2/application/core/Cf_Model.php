@@ -21,7 +21,7 @@ class Cf_Model extends CI_Model {
     }
     
     function getErrorsString($level=self::ERROR){
-         return isset($this->errors[$level]) ? implode(',', $this->errors[$level]) : array();
+         return isset($this->errors[$level]) ? implode(',', $this->errors[$level]) : $this->lang->line('unknown_error');
     }
 
     /**

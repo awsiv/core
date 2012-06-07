@@ -278,6 +278,7 @@ $lang['rbac_exception']= "User not authorised to access this data";
 $lang['invalid_json']="Valid json data cannot be generated";
 $lang['invalid_report_id'] = "Invalid report type";
 $lang['promise_body_null'] = " No promise body found";
+$lang['unknown_error'] = "Unknown error - description out of bounds";
 
 /*
  * Exception messages
