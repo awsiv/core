@@ -12,7 +12,7 @@
                         $noteUrl = site_url('notes/index/action/add/hostkey') . '/' . $hostkey . '/';
                     }
                     ?>
-                    <li><a href="<?php echo $noteUrl ?>" class="note showqtip" id="add_cmt" title="Add note about this host"><?php echo $this->lang->line('host_notes'); ?></a></li>
+                    <li><a href="<?php echo $noteUrl ?>" class="note showqtip" id="add_cmt" title="Add a note about this host"><?php echo $this->lang->line('host_notes'); ?></a></li>
                     <li> <?php echo anchor('visual/vital/' . $hostkey, $this->lang->line('host_vitals'), array('id' => 'pulseNvitals', 'class' => 'pulseNvitals showqtip', 'title' => 'View probes regarding cpu, memory, network etc')) ?></li>
                     <li><a href="#" id="notkeptlnk" title="Promises not kept in the past week" class="problems showqtip"><?php echo $this->lang->line('host_problems'); ?></a></li>
                     <p class="clearleft"></p>
