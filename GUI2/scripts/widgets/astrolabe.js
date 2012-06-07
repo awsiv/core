@@ -361,8 +361,10 @@
                 $(parentNode).attr('label', nodeprop.label);
                 $(parentNode).attr('class-regex', nodeprop.classRegex);
                 $(parentNode).find('div.showqtip').first().attr('oldtitle', nodeprop.classRegex);
+                $(parentNode).find('div.nodeHeader').children('span.nodeLabel').html(nodeprop.label);
                 $self._saveProfile($self._currentProfile, parentNode);
-                $self._loadNode($self._superNode, false);
+                //$self._loadProfile($self._currentProfile);
+                $self._loadNode($self._superNode, true);
                 $self._recount();
                 $dialog.dialog('close');
                 $dialog.dialog('destroy');
@@ -371,6 +373,7 @@
 
            var btns = {};
            btns[operation] = function() {
+                           
                             if (operation == 'update') {
                                updateNode($(this));
                             }else {
@@ -404,9 +407,13 @@
 
             $dialog.keypress(function(event) {
                 if (event.keyCode == $.ui.keyCode.ENTER) {
-                    addNode($dialog);
                     event.preventDefault();
-                    return false;
+                     console.log(this);
+                    btns[operation]();
+                    $dialog.dialog('close');
+                    $dialog.dialog('destroy');
+                    $dialog.remove();
+                    //return false;
                 }
             });
 
@@ -605,7 +612,7 @@
 
         _profileUrl: function(profileId) {
             var self = this;
-            return self.options.baseUrl + '/astrolabe/profile/' + profileId;
+            return self.options.baseUrl + '/astrolabe/profile/' + profileId+'/'+Math.random();
         },
 
         _saveProfile: function(profileId, refreshNode) {
@@ -650,9 +657,9 @@
         _loadProfile: function(profileId) {
             var $self = this;
 
-            if ($self._currentProfile === profileId) {
+           /*if ($self._currentProfile === profileId) {
                 return;
-            }
+            }*/
 
             $self._currentProfile = profileId;
 
@@ -702,6 +709,7 @@
                      $self._displayFailure(jqXHR, textStatus, errorThrown);
             });
         },
+        
 
         _createSuperNode: function(nodeDescriptionList)
         {
