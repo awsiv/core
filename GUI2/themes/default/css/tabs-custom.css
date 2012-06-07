@@ -50,7 +50,7 @@
 
 #darktabs .ui-tabs {
     padding: 0;
-    margin-left: 12px; /*hack*/
+    margin-left: 11px; /*hack*/
 }
 #darktabs .ui-tabs .ui-tabs-hide{
     /* for jquery flot , 
