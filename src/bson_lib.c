@@ -233,16 +233,19 @@ const bson *BsonGetArrayValue(const bson *b, const char *key)
 
 /*****************************************************************************/
 
-bool BsonAppendStringSafe(bson_buffer *bb, char *key, char *value)
+bool BsonAppendStringSafe(bson *b, char *key, char *value)
 {
     if (value == NULL || value[0] == '\0')
     {
         return false;
     }
 
-    bson_append_string(bb, key, value);
+    if(bson_append_string(b, key, value) == BSON_OK)
+    {
+        return true;
+    }
 
-    return true;
+    return false;
 }
 
 /*****************************************************************************/
@@ -258,9 +261,12 @@ bool BsonAppendRegexSafe(bson *bb, char *key, char *rxValue)
 
     AnchorRegex(rxValue, anchoredRx, sizeof(anchoredRx));
 
-    bson_append_regex(bb, key, anchoredRx, "");
+    if (bson_append_regex(bb, key, anchoredRx, "") == BSON_OK)
+    {
+        return true;
+    }
 
-    return true;
+    return false;
 }
 
 /*****************************************************************************/
