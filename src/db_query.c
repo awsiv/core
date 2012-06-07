@@ -113,7 +113,6 @@ int CFDB_GetBlueHostThreshold(unsigned long *threshold)
 Item *CFDB_GetLastseenCache(void)
 {
     bson_iterator it1, it2, it3;
-    mongo_cursor *cursor;
     mongo conn;
     char keyhash[CF_BUFSIZE] = { 0 }, ipAddr[CF_MAXVARSIZE] = { 0 };
     time_t t = time(NULL);
@@ -131,7 +130,7 @@ Item *CFDB_GetLastseenCache(void)
 
     bson query;
 
-    cursor = mongo_find(&conn, MONGO_SCRATCH, bson_empty(&query), &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_SCRATCH, bson_empty(&query), &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&field);
 

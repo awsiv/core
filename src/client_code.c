@@ -360,7 +360,7 @@ static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now,
     bson_append_int(&field, cfr_netmeasure, 1);
     bson_finish(&field);
 
-    cursor = mongo_find(dbconnp, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(dbconnp, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
 // freeing query below
     bson_destroy(&field);
@@ -439,7 +439,6 @@ static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now,
         }
         bson_append_finish_object(&update);
     }
-
     bson_finish(&update);
 
     mongo_update(dbconnp, MONGO_DATABASE, &query, &update, MONGO_UPDATE_UPSERT);

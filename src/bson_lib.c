@@ -271,21 +271,24 @@ bool BsonAppendRegexSafe(bson *bb, char *key, char *rxValue)
 
 /*****************************************************************************/
 
-void BsonAppendStringArray(bson *bb, char *arrayName, Item *arrayValues)
-{
-    bson *arr = bson_append_start_array(bb, arrayName);
+void BsonAppendStringArray(bson *b, char *arrayName, Item *arrayValues)
+{    
     int i = 0;
     char iStr[32];
 
     Item *ip;
 
-    for (ip = arrayValues; ip != NULL; ip = ip->next, i++)
     {
-        snprintf(iStr, sizeof(iStr), "%d", i);
-        bson_append_string(bb, iStr, ip->name);
-    }
+        bson_append_start_array(b, arrayName);
 
-    bson_append_finish_object(arr);
+        for (ip = arrayValues; ip != NULL; ip = ip->next, i++)
+        {
+            snprintf(iStr, sizeof(iStr), "%d", i);
+            bson_append_string(b, iStr, ip->name);
+        }
+
+        bson_append_finish_object(b);
+    }
 }
 
 /*****************************************************************************/
@@ -325,103 +328,115 @@ bool BsonAppendIncludeList(bson *queryBuffer, char *includeKey, Rlist *includeVa
 /*****************************************************************************/
 
 void BsonAppendArrayRx(bson *buffer, const char *key, Rlist *rx_values)
-{
-    bson *array = bson_append_start_array(buffer, key);
-
+{    
     int i = 0;
-    for (Rlist *rp = rx_values; rp != NULL; rp = rp->next, i++)
+
     {
-        char anchoredRx[CF_BUFSIZE] = { 0 };
-        AnchorRegex(ScalarValue(rp), anchoredRx, sizeof(anchoredRx));
+        bson_append_start_array(buffer, key);
+        for (Rlist *rp = rx_values; rp != NULL; rp = rp->next, i++)
+        {
+            char anchoredRx[CF_BUFSIZE] = { 0 };
+            AnchorRegex(ScalarValue(rp), anchoredRx, sizeof(anchoredRx));
 
-        char index_str[32] = { 0 };
-        snprintf(index_str, sizeof(index_str), "%d", i);
-        bson_append_regex(array, index_str, anchoredRx, "");
+            char index_str[32] = { 0 };
+            snprintf(index_str, sizeof(index_str), "%d", i);
+            bson_append_regex(buffer, index_str, anchoredRx, "");
+        }
+
+        bson_append_finish_object(buffer);
     }
-
-    bson_append_finish_object(array);
 }
 
-bool BsonAppendIncludeRxList(bson *query_buffer, char *include_key, Rlist *include_rx_values)
+bool BsonAppendIncludeRxList(bson *query, char *include_key, Rlist *include_rx_values)
 {
     if (!include_rx_values)
     {
         return false;
     }
 
-    bson *include_class_query = bson_append_start_object(query_buffer, include_key);
-    BsonAppendArrayRx(include_class_query, "$all", include_rx_values);
-    bson_append_finish_object(include_class_query);
-
+    {
+        bson_append_start_object(query, include_key);
+        BsonAppendArrayRx(query, "$all", include_rx_values);
+        bson_append_finish_object(query);
+    }
     return true;
 }
 
-bool BsonAppendExcludeRxList(bson *query_buffer, char *exclude_key, Rlist *exclude_rx_values)
+bool BsonAppendExcludeRxList(bson *query, char *exclude_key, Rlist *exclude_rx_values)
 {
     if (!exclude_rx_values)
     {
         return false;
     }
 
-    bson *exclude_class_buffer = bson_append_start_object(query_buffer, exclude_key);
     {
-        bson *not_buffer = bson_append_start_object(exclude_class_buffer, "$not");
-        BsonAppendArrayRx(not_buffer, "$all", exclude_rx_values);
-        bson_append_finish_object(not_buffer);
-    }
-    bson_append_finish_object(exclude_class_buffer);
+        bson_append_start_object(query, exclude_key);
+        {
+            bson_append_start_object(query, "$not");
 
+            BsonAppendArrayRx(query, "$all", exclude_rx_values);
+
+            bson_append_finish_object(query);
+        }
+        bson_append_finish_object(query);
+    }
     return true;
 }
 
 /*****************************************************************************/
 
-bool BsonAppendExcludeList(bson *queryBuffer, char *excludeKey, Rlist *excludeValues)
+bool BsonAppendExcludeList(bson *query, char *excludeKey, Rlist *excludeValues)
 {
     if (!excludeValues)
     {
         return false;
     }
 
-    bson *excludeClassBuffer = bson_append_start_object(queryBuffer, excludeKey);
-    bson *excludeClassArray = bson_append_start_array(excludeClassBuffer, "$not");
-
-    for (Rlist *rp = excludeValues; rp != NULL; rp = rp->next)
     {
-        bson_append_string(excludeClassArray, excludeKey, ScalarValue(rp));
+        bson_append_start_object(query, excludeKey);
+        {
+            bson_append_start_array(query, "$not");
+
+            for (Rlist *rp = excludeValues; rp != NULL; rp = rp->next)
+            {
+                bson_append_string(query, excludeKey, ScalarValue(rp));
+            }
+
+            bson_append_finish_object(query);
+        }
+        bson_append_finish_object(query);
     }
-
-    bson_append_finish_object(excludeClassArray);
-    bson_append_finish_object(excludeClassBuffer);
-
     return true;
 }
 
 /*****************************************************************************/
 
-void BsonAppendAddToSetString(bson *bb, char *key, char *value)
+void BsonAppendAddToSetString(bson *b, char *key, char *value)
 {
-    bson_append_start_object(bb, "$addToSet");
-    bson_append_string(bb, key, value);
-    bson_append_finish_object(bb);
+    bson_append_start_object(b, "$addToSet");
+    bson_append_string(b, key, value);
+    bson_append_finish_object(b);
 }
 
 /*****************************************************************************/
 
-void BsonAppendRecentQuery(bson *querybuf, int maxAgeInSeconds)
+void BsonAppendRecentQuery(bson *query, int maxAgeInSeconds)
 {
     time_t currentTimeStamp = time(NULL);
     time_t minTimeStamp = currentTimeStamp - maxAgeInSeconds;
 
-    bson *sub = bson_append_start_object(querybuf, cfr_time);
+    {
+        bson_append_start_object(query, cfr_time);
 
-    bson_append_int(sub, "$gte", minTimeStamp);
-    bson_append_finish_object(sub);
+        bson_append_int(query, "$gte", minTimeStamp);
+
+        bson_append_finish_object(query);
+    }
 }
 
 /*****************************************************************************/
 
-void BsonAppendAgedQuery(bson *querybuf, int maxAgeInSeconds)
+void BsonAppendAgedQuery(bson *query, int maxAgeInSeconds)
 /*
  * timestamp not there or older than maxAgeInSeconds
  */
@@ -429,21 +444,25 @@ void BsonAppendAgedQuery(bson *querybuf, int maxAgeInSeconds)
     time_t currentTimeStamp = time(NULL);
     time_t minTimeStamp = currentTimeStamp - maxAgeInSeconds;
 
-    bson *or = bson_append_start_array(querybuf, "$or");
+    bson_append_start_array(query, "$or");
+    {
+        {
+            bson_append_start_object(query, "0");
+            bson_append_null(query, cfr_time);
+            bson_append_finish_object(query);
+        }
 
-    bson *sub1, *sub2;
-
-    sub1 = bson_append_start_object(or, "0");
-    bson_append_null(sub1, cfr_time);
-    bson_append_finish_object(sub1);
-
-    sub1 = bson_append_start_object(or, "1");
-    sub2 = bson_append_start_object(sub1, cfr_time);
-    bson_append_int(sub2, "$lt", minTimeStamp);
-    bson_append_finish_object(sub2);
-    bson_append_finish_object(sub1);
-
-    bson_append_finish_object(or);
+        {
+            bson_append_start_object(query, "1");
+            {
+                bson_append_start_object(query, cfr_time);
+                bson_append_int(query, "$lt", minTimeStamp);
+                bson_append_finish_object(query);
+            }
+            bson_append_finish_object(query);
+        }
+    }
+    bson_append_finish_object(query);
 }
 
 /*****************************************************************************/
@@ -618,60 +637,60 @@ void BsonAppendHostColourFilter(bson *query, HostColourFilter *filter)
 
     if (filter->colour == HOST_COLOUR_GREEN)
     {
-        bson_append_start_object(query_buffer, score_method);
-        bson_append_int(query_buffer, "$lt", CF_AMBER_THRESHOLD);
-        bson_append_finish_object(query_buffer);
+        bson_append_start_object(query, score_method);
+        bson_append_int(query, "$lt", CF_AMBER_THRESHOLD);
+        bson_append_finish_object(query);
 
-        bson_append_start_object (query_buffer, cfr_day);
-        bson_append_long(query_buffer, "$gte", filter->blue_time_horizon);
-        bson_append_finish_object(query_buffer);
+        bson_append_start_object (query, cfr_day);
+        bson_append_long(query, "$gte", filter->blue_time_horizon);
+        bson_append_finish_object(query);
 
-        bson_append_bool(query_buffer, cfr_is_black, false);
+        bson_append_bool(query, cfr_is_black, false);
     }
 
     if (filter->colour == HOST_COLOUR_YELLOW)
     {
-        bson_append_start_object(query_buffer, score_method);
-        bson_append_int(query_buffer, "$gte", CF_AMBER_THRESHOLD);
-        bson_append_int(query_buffer, "$lt", CF_RED_THRESHOLD);
-        bson_append_finish_object(query_buffer);
+        bson_append_start_object(query, score_method);
+        bson_append_int(query, "$gte", CF_AMBER_THRESHOLD);
+        bson_append_int(query, "$lt", CF_RED_THRESHOLD);
+        bson_append_finish_object(query);
 
-        bson_append_start_object (query_buffer, cfr_day);
-        bson_append_long(query_buffer, "$gte", filter->blue_time_horizon);
-        bson_append_finish_object(query_buffer);
+        bson_append_start_object (query, cfr_day);
+        bson_append_long(query, "$gte", filter->blue_time_horizon);
+        bson_append_finish_object(query);
 
-        bson_append_bool(query_buffer, cfr_is_black, false);
+        bson_append_bool(query, cfr_is_black, false);
     }
 
     if (filter->colour == HOST_COLOUR_RED)
     {
-        bson_append_start_object(query_buffer, score_method);
-        bson_append_int(query_buffer, "$gte", CF_RED_THRESHOLD);
-        bson_append_finish_object(query_buffer);
+        bson_append_start_object(query, score_method);
+        bson_append_int(query, "$gte", CF_RED_THRESHOLD);
+        bson_append_finish_object(query);
 
-        bson_append_start_object (query_buffer, cfr_day);
-        bson_append_long(query_buffer, "$gte", filter->blue_time_horizon);
-        bson_append_finish_object(query_buffer);
+        bson_append_start_object (query, cfr_day);
+        bson_append_long(query, "$gte", filter->blue_time_horizon);
+        bson_append_finish_object(query);
 
-        bson_append_bool(query_buffer, cfr_is_black, false);
+        bson_append_bool(query, cfr_is_black, false);
     }
 
     if (filter->colour == HOST_COLOUR_GREEN_YELLOW_RED) // !BLUE
     {
-        bson_append_start_object(query_buffer, cfr_day);
-        bson_append_long(query_buffer, "$gte", filter->blue_time_horizon);
-        bson_append_finish_object(query_buffer);
+        bson_append_start_object(query, cfr_day);
+        bson_append_long(query, "$gte", filter->blue_time_horizon);
+        bson_append_finish_object(query);
 
-        bson_append_bool(query_buffer, cfr_is_black, false);
+        bson_append_bool(query, cfr_is_black, false);
     }
 
     if (filter->colour == HOST_COLOUR_BLACK)
     {
-        bson_append_start_object (query_buffer, cfr_day);
-        bson_append_long(query_buffer, "$gte", filter->blue_time_horizon);
-        bson_append_finish_object(query_buffer);
+        bson_append_start_object (query, cfr_day);
+        bson_append_long(query, "$gte", filter->blue_time_horizon);
+        bson_append_finish_object(query);
 
-        bson_append_bool(query_buffer, cfr_is_black, true);
+        bson_append_bool(query, cfr_is_black, true);
     }
 
     free(score_method);
