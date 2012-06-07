@@ -9,6 +9,7 @@ class Visual extends Cf_Controller
         // inject the required js files
         $this->carabiner->js('flot/jquery.flot.js');
         $this->carabiner->js('flot/jquery.flot.magnifiedview.js');
+        $this->carabiner->js('flot/jquery.flot.resize.min.js');
         $jsIE = array('flot/excanvas.min.js');
         $this->carabiner->group('iefix', array('js' => $jsIE));
         $this->carabiner->css('tabs-custom.css');

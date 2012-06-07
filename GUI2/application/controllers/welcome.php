@@ -64,7 +64,7 @@ class Welcome extends Cf_Controller
     /**
      * Status Page related code
      */
-    
+
     function status()
     {
         $bc = array(
@@ -75,9 +75,10 @@ class Welcome extends Cf_Controller
 
 
         $requiredjs = array(
-            array('flot/jquery.flot.js'),
-            array('flot/jquery.flot.stack.js'),
-            array('flot/jquery.flot.pie.js'),
+            array('flot/jquery.flot.min.js'),
+            array('flot/jquery.flot.stack.min.js'),
+            array('flot/jquery.flot.pie.min.js'),
+            array('flot/jquery.flot.resize.min.js'),
             array('widgets/notes.js')
         );
 
@@ -127,8 +128,8 @@ class Welcome extends Cf_Controller
                 $graphData['compliance_summary'] = $this->summary_model->getConvertedSummaryComplianceGraphStatus($cdata);
                 $data = array_merge($data, $graphData);
             }
-            
-            
+
+
             $pieChartData = $this->summary_model->getBusinessPieChartData();
             $data = array_merge($data, $pieChartData);
 

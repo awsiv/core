@@ -15,6 +15,7 @@ class Engineering extends Cf_Controller
         $requiredjs = array(
             array('flot/jquery.flot.js'),
             array('flot/jquery.flot.stack.js'),
+            array('flot/jquery.flot.resize.min.js'),
             array('widgets/astrolabe.js'),
             array('widgets/astrolabeLocation.js'),
             array('widgets/combobox.js'),
