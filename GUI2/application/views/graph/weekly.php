@@ -77,17 +77,22 @@
             { data:lineSeries2,lines: {show: true, lineWidth: 1},color:"rgb(0, 204, 0)"}
         ]
         ,options);
+        drawDateLabel();
+        placeholder.resize(drawDateLabel);
 
+        function drawDateLabel() {
+              // add labels
 
-        // add labels
         var o;
+
 
         o = plot.pointOffset({ x: alignX, y: <?php echo $graphdatamax; ?>});
         // we just append it to the placeholder which Flot already uses
         // for positioning
         //var labelDate = d.toGMTString();
         var labelDate = common.time.format(common.unixTimeToJavascriptTime(actualDate));
-        placeholder.append('<div style="position:absolute;left:' + (o.left + 14) + 'px;top:' + (o.top+5) + 'px;color:#666;font-size:smaller">'+labelDate+'</div>');
+        placeholder.find('.current-datelabel').remove();
+        placeholder.append('<div class="current-datelabel" style="position:absolute;left:' + (o.left + 14) + 'px;top:' + (o.top+5) + 'px;color:#666;font-size:smaller">'+labelDate+'</div>');
         // draw a little arrow on top of the last label to demonstrate
         // canvas drawing
         var ctx = plot.getCanvas().getContext("2d");
@@ -100,11 +105,12 @@
         ctx.lineTo(o.left, ttop);
         ctx.fillStyle = "#000";
         ctx.fill();
+        }
 
 
 
 
-        $("#placeholder-weekly_<?php echo $observable; ?>").bind("plothover", function (event, pos, item) {
+        $(placeholder).bind("plothover", function (event, pos, item) {
             if (item) {
                 if (previousPoint != item.datapoint) {
                     previousPoint = item.datapoint;
