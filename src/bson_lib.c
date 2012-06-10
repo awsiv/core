@@ -11,16 +11,16 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 Item *BsonGetStringArrayAsItemList(const bson *b, const char *key)
 // TODO: Deprecate in favour of BsonStringArrayAsRlist()
 {
-    const bson *array = BsonGetArrayValue(b, key);
+    bson array;
 
-    if (!array)
+    if(!BsonGetArrayValue(b, key, &array))
     {
         return NULL;
     }
 
     bson_iterator it;
 
-    bson_iterator_init(&it, array);
+    bson_iterator_init(&it, &array);
 
     Item *values = NULL;
 
@@ -36,16 +36,16 @@ Item *BsonGetStringArrayAsItemList(const bson *b, const char *key)
 
 Rlist *BsonStringArrayAsRlist(const bson *b, const char *key)
 {
-    const bson *array = BsonGetArrayValue(b, key);
+    bson array;
 
-    if (!array)
+    if(!BsonGetArrayValue(b, key, &array))
     {
         return NULL;
     }
 
     bson_iterator it;
 
-    bson_iterator_init(&it, array);
+    bson_iterator_init(&it, &array);
 
     Rlist *values = NULL;
 
@@ -129,16 +129,16 @@ bool BsonObjectGet(const bson *b, const char *key, bson **out)
 /*****************************************************************************/
 bool BsonIsArrayNonExistentOrEmpty(const bson *b, const char *key)
 {
-    const bson *array = BsonGetArrayValue(b, key);
+    bson array;
 
-    if (!array)
+    if(!BsonGetArrayValue(b, key, &array))
     {
         return true;
     }
 
     bson_iterator it;
 
-    bson_iterator_init(&it, array);
+    bson_iterator_init(&it, &array);
 
     while (bson_iterator_next(&it))
     {
@@ -215,20 +215,19 @@ void BsonStringWrite(char *dest, int destSz, const bson *b, const char *key)
 
 /*****************************************************************************/
 
-const bson *BsonGetArrayValue(const bson *b, const char *key)
+bool BsonGetArrayValue(const bson *b, const char *key, bson *sub)
 {
     bson_iterator it;
-    bson *sub;
 
     if (bson_find(&it, b, key) == BSON_ARRAY)
     {
         bson_iterator_subobject(&it, sub);
-        return sub;
+        return true;
     }
 
     CfOut(cf_verbose, "", "BsonGetArrayValue: No match for \"%s\"", key);
 
-    return NULL;
+    return false;
 }
 
 /*****************************************************************************/

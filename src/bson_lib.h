@@ -36,7 +36,7 @@ void BsonToString(char *retBuf, int retBufSz, bson *data);
 void BsonAppendHostColourFilter(bson *query, HostColourFilter *filter);
 void BsonAppendSortField(bson *bb, char *sortField);
 long BsonLongGet(const bson *b, const char *key);
-const bson *BsonGetArrayValue(const bson *b, const char *key);
+bool BsonGetArrayValue(const bson *b, const char *key, bson *sub);
 bool BsonIsKeyCorrupt(const char *key);
 bool BsonIsEmpty(const bson *object);
 

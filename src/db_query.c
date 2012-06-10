@@ -2595,10 +2595,15 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash, Promis
                         continue;
                     }
 
-                    const bson *array = BsonGetArrayValue(&objPromiseLogData, cfr_time);
+                    bson array;
+
+                    if(!BsonGetArrayValue(&objPromiseLogData, cfr_time, &array))
+                    {
+                        continue;
+                    }
 
                     bson_iterator iterTimestamps;
-                    bson_iterator_init(&iterTimestamps, array);
+                    bson_iterator_init(&iterTimestamps, &array);
 
                     while (bson_iterator_next(&iterTimestamps))
                     {
