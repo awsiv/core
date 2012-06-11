@@ -1120,7 +1120,7 @@ Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *ho
         BsonStringGet(&cursor->current, cfr_keyhash, &hostkey);
         assert(hostkey);
 
-        const bson *compliance_shifts = NULL;
+        bson *compliance_shifts = NULL;
         BsonObjectGet(mongo_cursor_bson( cursor ), cfr_compliance_shifts, &compliance_shifts);
         if (compliance_shifts)
         {

@@ -232,7 +232,7 @@ bool BsonGetArrayValue(const bson *b, const char *key, bson *sub)
 
 /*****************************************************************************/
 
-bool BsonAppendStringSafe(bson *b, char *key, char *value)
+bool BsonAppendStringSafe(bson *b, const char *key, char *value)
 {
     if (value == NULL || value[0] == '\0')
     {
@@ -249,7 +249,7 @@ bool BsonAppendStringSafe(bson *b, char *key, char *value)
 
 /*****************************************************************************/
 
-bool BsonAppendRegexSafe(bson *bb, char *key, char *rxValue)
+bool BsonAppendRegexSafe(bson *bb, const char *key, char *rxValue)
 {
     if (rxValue == NULL || rxValue[0] == '\0')
     {
