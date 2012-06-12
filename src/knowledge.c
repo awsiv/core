@@ -206,7 +206,7 @@ void SyntaxCompletion(char *s)
 
         /* ss[j] is an array of promise types */
 
-        for (j = 0; ss[j].btype != NULL; j++)
+        for (j = 0; ss[j].bundle_type != NULL; j++)
         {
             bs = (BodySyntax *) ss[j].bs;
 
@@ -327,9 +327,9 @@ static void Nova_ListAgents()
 
     printf("Agent types are used as bundle types and control-body types:\n\n");
 
-    for (i = 0; CF_ALL_BODIES[i].btype != NULL; i++)
+    for (i = 0; CF_ALL_BODIES[i].bundle_type != NULL; i++)
     {
-        printf("   %s\n", CF_ALL_BODIES[i].btype);
+        printf("   %s\n", CF_ALL_BODIES[i].bundle_type);
     }
 }
 
@@ -412,7 +412,7 @@ static void Nova_ListPromiseTypes()
 
     for (i = 0; CF_COMMON_SUBTYPES[i].subtype != NULL; i++)
     {
-        printf("   %s  (%s)\n", CF_COMMON_SUBTYPES[i].subtype, CF_COMMON_SUBTYPES[i].btype);
+        printf("   %s  (%s)\n", CF_COMMON_SUBTYPES[i].subtype, CF_COMMON_SUBTYPES[i].bundle_type);
     }
 }
 

@@ -766,7 +766,7 @@ void ShowTopicRepresentation(FILE *fp)
             continue;
         }
 
-        for (j = 0; ss[j].btype != NULL; j++)
+        for (j = 0; ss[j].bundle_type != NULL; j++)
         {
             fprintf(fp,
                     "occurrences:  \"/docs/cf3-Reference.html#%s-in-agent-promises\" represents => { \"manual reference %s\" }, about_topics => { \"%s\"}; \n",

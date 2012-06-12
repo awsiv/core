@@ -53,9 +53,9 @@ static void Nova_ShowBundleTypes(void)
 
     st = CF_FILES_SUBTYPES;
 
-    for (i = 0; st[i].btype != NULL; i++)
+    for (i = 0; st[i].bundle_type != NULL; i++)
     {
-        if (strcmp("edit_line", st[i].btype) == 0)
+        if (strcmp("edit_line", st[i].bundle_type) == 0)
         {
             if (closeBrack)
             {
@@ -96,13 +96,13 @@ static void Nova_ShowBundleTypes(void)
 
     printf("  edit_line: edit_line_bundle_syntax,\n");
 
-    for (i = 0; CF_ALL_BODIES[i].btype != NULL; i++)
+    for (i = 0; CF_ALL_BODIES[i].bundle_type != NULL; i++)
     {
-        printf("  %s:\n", CF_ALL_BODIES[i].btype);
+        printf("  %s:\n", CF_ALL_BODIES[i].bundle_type);
         printf("   {\n");
-        Nova_ShowPromiseTypesFor(CF_ALL_BODIES[i].btype, NULL);
+        Nova_ShowPromiseTypesFor(CF_ALL_BODIES[i].bundle_type, NULL);
 
-        if (CF_ALL_BODIES[i + 1].btype != NULL)
+        if (CF_ALL_BODIES[i + 1].bundle_type != NULL)
         {
             printf("   },\n");
         }
@@ -121,14 +121,14 @@ static void Nova_ShowControlBodies(void)
 
     printf("var body_control_syntax = {\n");
 
-    for (i = 0; CF_ALL_BODIES[i].btype != NULL; i++)
+    for (i = 0; CF_ALL_BODIES[i].bundle_type != NULL; i++)
     {
         if (closeBrack)
         {
             printf("   },\n");
         }
 
-        printf("  %s:\n", CF_ALL_BODIES[i].btype);
+        printf("  %s:\n", CF_ALL_BODIES[i].bundle_type);
         printf("   {\n");
         Nova_ShowBodyParts(CF_ALL_BODIES[i].bs, 6);
 
@@ -150,9 +150,9 @@ static void Nova_ShowPromiseTypesFor(const char *s, const SubTypeSyntax *commonM
     {
         st = CF_ALL_SUBTYPES[i];
 
-        for (j = 0; st[j].btype != NULL; j++)
+        for (j = 0; st[j].bundle_type != NULL; j++)
         {
-            if (strcmp(s, st[j].btype) == 0 || strcmp("*", st[j].btype) == 0)
+            if (strcmp(s, st[j].bundle_type) == 0 || strcmp("*", st[j].bundle_type) == 0)
             {
                 if (closeBrack)
                 {
