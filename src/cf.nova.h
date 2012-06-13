@@ -1333,7 +1333,6 @@ typedef struct
 #define cfr_last_update_size "us"
 #define cfr_count "cn"
 
-#define cfr_netmeasure    "ne"
 #define cfr_lastseen_hosts "lastseen_hosts"
 #define cfr_deleted_hosts  "deleted_hosts"
 
