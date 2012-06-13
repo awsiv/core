@@ -546,13 +546,10 @@ static void PurgePromiseLogWithEmptyTimestamps(mongo_connection *conn, char *pro
                 {
                     snprintf(rhandle, CF_MAXVARSIZE, "%s", bson_iterator_key(&iterPromiseComplexKey));
 
-                    bson_iterator iterPromiseLogData;
-                    bson_iterator_init(&iterPromiseLogData, bson_iterator_value(&iterPromiseComplexKey));
-
                     bson objPromiseLogData;
                     bson_iterator_subobject( &iterPromiseComplexKey, &objPromiseLogData);
 
-                    if(BsonIsArrayNonExistentOrEmpty(&objPromiseLogData,cfr_time))
+                    if( BsonIsEmpty(&objPromiseLogData) || BsonIsArrayNonExistentOrEmpty(&objPromiseLogData, cfr_time))
                     {
                         PrependItem(&promiseKeysList,rhandle, NULL);
                     }
