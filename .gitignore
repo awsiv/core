@@ -48,6 +48,7 @@ nova.creator
 nova.creator.user
 nova.files
 nova.includes
+*.autosave
 
 # knowledge
 
