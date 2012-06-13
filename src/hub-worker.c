@@ -17,6 +17,8 @@
 static void Nova_CreateHostID(EnterpriseDB *dbconnp, char *hostID, char *ipaddr);
 static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer);
 
+/*******************************************************************/
+
 void Nova_SequentialScan(Item *masterlist)
 {
     EnterpriseDB dbconn;
@@ -34,6 +36,8 @@ void Nova_SequentialScan(Item *masterlist)
 
     CFDB_Close(&dbconn);
 }
+
+/*******************************************************************/
 
 static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer)
 {
@@ -129,6 +133,8 @@ static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer)
     DeleteRlist(aa.copy.servers);
     return true;
 }
+
+/*******************************************************************/
 
 /* Make sure an entry for the given keyhash,ip exists */
 

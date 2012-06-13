@@ -19,6 +19,8 @@ static pid_t MAINTAINER_CHILD_PID = -1;
 static void ScheduleRunMaintenanceJobs(void);
 static bool IsProcRunning(pid_t pid);
 
+/*******************************************************************/
+
 void Nova_Maintain(void)
 {
     if (MAINTAINER_CHILD_PID != -1)
@@ -63,6 +65,8 @@ void Nova_Maintain(void)
     }
 }
 
+/*******************************************************************/
+
 static void ScheduleRunMaintenanceJobs(void)
 {
     time_t now = time(NULL);
@@ -74,6 +78,8 @@ static void ScheduleRunMaintenanceJobs(void)
     Nova_HubLog("Last maintenance took %ld seconds", time(NULL) - now);
 }
 
+/*******************************************************************/
+
 static bool IsProcRunning(pid_t pid)
 {
     bool running = waitpid(pid, NULL, WNOHANG) == 0;
@@ -84,6 +90,7 @@ static bool IsProcRunning(pid_t pid)
     return running;
 }
 
+/*******************************************************************/
 
 void Nova_CacheTotalCompliance(bool allSlots)
 /*
@@ -155,6 +162,7 @@ void Nova_CacheTotalCompliance(bool allSlots)
     CFDB_Close(&dbconn);
 }
 
+/*******************************************************************/
 
 void Nova_CacheTotalComplianceEnv(EnterpriseDB *conn, char *envName, char *envClass, int slot,
                                   time_t start, time_t now)
