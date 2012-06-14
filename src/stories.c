@@ -12,6 +12,8 @@
 #include "constraints.h"
 #include "files_names.h"
 #include "item_lib.h"
+
+#include "bson_lib.h"
 #include "db_query.h"
 
 /***************************************************************************
@@ -615,7 +617,7 @@ void Constellation_GetWeatherReport(char *hostkey,Item **low, Item **high, Item 
 { HubClass *hc;
   HubQuery *hq;
   Rlist *rp;
-  mongo_connection dbconn;
+  EnterpriseDB dbconn;
 
 /* BEGIN query the current classes from this host */
  
@@ -682,7 +684,7 @@ void Constellation_GetLocations(const Policy *policy, char *hostkey, Rlist **loc
 { HubClass *hc;
   HubQuery *hq;
   Rlist *rp;
-  mongo_connection dbconn;
+  EnterpriseDB dbconn;
   Rval retval;
   Constraint *cp;
 
@@ -744,7 +746,7 @@ void Constellation_GenerateStoriesCmdLine(char *typed_topic,enum storytype type)
   bson query,field;
   mongo_cursor *cursor;
   bson_iterator it1;
-  mongo_connection conn;
+  EnterpriseDB conn;
   char topic_name[CF_BUFSIZE];
   char topic_context[CF_BUFSIZE];
   Item *ip,*list = NULL;
