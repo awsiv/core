@@ -66,6 +66,33 @@ if test "x$with_ldap" != xno; then
    ])
 fi
 
+
+AC_ARG_WITH([enterprise-api],
+    [AS_HELP_STRING([--with-enterprise-api[[=PATH]]], [enable Enterprise API using path to locate php-config])],
+    [], [with_enterprise_api=check])
+
+if test "x$with_enterprise_api" != xno; then
+   if test "x$with_enterprise_api" != xyes && test "x$with_enterprise_api" != xcheck; then
+      PHP_CONFIG=$with_enterprise_api
+   else
+      PHP_CONFIG=php-config
+   fi
+
+   if test x`which $PHP_CONFIG` != x ; then
+      CPPFLAGS="$CPPFLAGS `$PHP_CONFIG --includes`"
+   else
+      if test "x$with_enterprise_api" != xcheck; then
+         AC_MSG_ERROR([Unable to find php-dev])
+      fi
+      with_enterprise_api=no
+   fi
+
+   ENTERPRISE_API_SUBDIR=nova/api
+fi
+AC_SUBST([ENTERPRISE_API_SUBDIR])
+
+
+
 AC_ARG_WITH([cfmod],
     [AS_HELP_STRING([--with-cfmod[[=PATH]]], [enable cfmod using path to locate php-config])],
     [], [with_cfmod=check])

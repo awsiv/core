@@ -15,6 +15,12 @@ if test "x$NOVA_SUBDIR" != "x"; then
     AC_MSG_RESULT([ -> LDAP: disabled])
   fi
 
+  if test "x$with_enterprise_api" != xno; then
+    AC_MSG_RESULT([ -> Enterprise API: enabled, using $PHP_CONFIG])
+  else
+    AC_MSG_RESULT([ -> Enterprise API: disabled])
+  fi
+
   if test "x$with_cfmod" != xno; then
     AC_MSG_RESULT([ -> cfmod: enabled, using $PHP_CONFIG])
   else

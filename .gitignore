@@ -40,6 +40,7 @@ src/.dir-locals.el
 
 GUI2/nbproject
 rest/nbproject
+api/http/nbproject
 
 # qt-creator
 
