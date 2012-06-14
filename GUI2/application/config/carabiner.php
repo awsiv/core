@@ -168,9 +168,8 @@ $config['groups']['CFEngine'] = array(
         array('jquery-1.7.1.min.js', 'jquery-1.7.1.min.js', TRUE, FALSE),
         array('jquery-ui-1.8.18.custom.min.js', 'jquery-ui-1.8.18.custom.min.js', TRUE, FALSE),
         array('jquery.qtip.min.js', 'jquery.qtip.min.js', TRUE, FALSE),
-        array('jquery-ui-timepicker-addon.js','jquery-ui-timepicker-addon.js',TRUE, FALSE),
         array('dateformat.js', 'dateformat.js', TRUE, FALSE),
-        array('common.js', 'common.js', TRUE, FALSE)
+        array('common.js', 'common.js', TRUE, FALSE),
     )
 );
 

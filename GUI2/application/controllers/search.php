@@ -15,6 +15,7 @@ class Search extends Cf_Controller
         $this->carabiner->js('widgets/hostfinder.js');
         $this->carabiner->js('widgets/reportfinder.js');
         $this->carabiner->js('widgets/contextfinder.js');
+        $this->carabiner->js('jquery-ui-timepicker-addon.js');
         $this->carabiner->css('contextfinder.css');
         $this->carabiner->css('hostsCompliance.css');
         $this->carabiner->css('hostsConnectivity.css');
