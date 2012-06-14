@@ -7,7 +7,19 @@
 #ifndef CFENGINE_API_UTILS_H
 #define CFENGINE_API_UTILS_H
 
+#include "api-php.h"
 #include "json.h"
+
+#define LABEL_ERROR_ARGS "Incorrect argument count or types"
+#define LABEL_ERROR_ARGS_EMPTY "Missing argument contents"
+#define LABEL_ERROR_INVALID_JSON "Invalid JSON payload"
+
+#define ARGUMENT_CHECK_CONTENTS(cond) \
+ if(!(cond))                          \
+    {                                 \
+    zend_throw_exception(cfapi_exception_args, LABEL_ERROR_ARGS_EMPTY, 0 TSRMLS_CC); \
+    RETURN_NULL();                    \
+    }
 
 #define RETURN_JSON(json) \
 { \

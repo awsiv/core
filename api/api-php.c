@@ -17,6 +17,7 @@
 static zend_function_entry cfapi_functions[] =
 {
     PHP_FE(cfapi, NULL)
+    PHP_FE(cfapi_query, NULL)
 
     {NULL, NULL, NULL}          /* Must be the last line in cfapi_functions[] */
 };
@@ -43,7 +44,8 @@ ZEND_GET_MODULE(cfapi)
 
      zend_class_entry *cfapi_exception_db;
      zend_class_entry *cfapi_exception_args;
-     zend_class_entry *cfapi_exception_access;
+     zend_class_entry *cfapi_exception_forbidden;
+     zend_class_entry *cfapi_exception_bad_request;
      zend_class_entry *cfapi_exception;
 
 PHP_MINIT_FUNCTION(cfapi)
@@ -51,26 +53,26 @@ PHP_MINIT_FUNCTION(cfapi)
     zend_class_entry *exception_class_entry = zend_exception_get_default(TSRMLS_CC);
 
     zend_class_entry cfapi_exception_db_class_entry;
-
     INIT_CLASS_ENTRY(cfapi_exception_db_class_entry, "CFAPIExceptionDB", NULL);
-
     cfapi_exception_db = zend_register_internal_class_ex(&cfapi_exception_db_class_entry,
                                                          exception_class_entry, NULL TSRMLS_CC);
 
     zend_class_entry cfapi_exception_args_class_entry;
-
     INIT_CLASS_ENTRY(cfapi_exception_args_class_entry, "CFAPIExceptionArgs", NULL);
     cfapi_exception_args = zend_register_internal_class_ex(&cfapi_exception_args_class_entry,
                                                            exception_class_entry, NULL TSRMLS_CC);
 
-    zend_class_entry cfapi_exception_access_class_entry;
+    zend_class_entry cfapi_exception_forbidden_class_entry;
+    INIT_CLASS_ENTRY(cfapi_exception_forbidden_class_entry, "CFAPIExceptionForbidden", NULL);
+    cfapi_exception_forbidden = zend_register_internal_class_ex(&cfapi_exception_forbidden_class_entry,
+                                                             exception_class_entry, NULL TSRMLS_CC);
 
-    INIT_CLASS_ENTRY(cfapi_exception_access_class_entry, "CFAPIExceptionAccess", NULL);
-    cfapi_exception_access = zend_register_internal_class_ex(&cfapi_exception_access_class_entry,
-                                                           exception_class_entry, NULL TSRMLS_CC);
+    zend_class_entry cfapi_exception_bad_request_class_entry;
+    INIT_CLASS_ENTRY(cfapi_exception_bad_request_class_entry, "CFAPIExceptionBadRequest", NULL);
+    cfapi_exception_bad_request = zend_register_internal_class_ex(&cfapi_exception_bad_request_class_entry,
+                                                                  exception_class_entry, NULL TSRMLS_CC);
 
     zend_class_entry cfapi_exception_class_entry;
-
     INIT_CLASS_ENTRY(cfapi_exception_class_entry, "CFAPIException", NULL);
     cfapi_exception = zend_register_internal_class_ex(&cfapi_exception_class_entry,
                                                       exception_class_entry, NULL TSRMLS_CC);

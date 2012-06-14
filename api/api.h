@@ -4,5 +4,6 @@
 #include "api-php.h"
 
 PHP_FUNCTION(cfapi);
+PHP_FUNCTION(cfapi_query);
 
 #endif

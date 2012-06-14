@@ -27,7 +27,8 @@ extern zend_module_entry cfapi_module_entry;
 
 extern zend_class_entry *cfapi_exception_db;
 extern zend_class_entry *cfapi_exception_args;
-extern zend_class_entry *cfapi_exception_access;
+extern zend_class_entry *cfapi_exception_forbidden;
+extern zend_class_entry *cfapi_exception_bad_request;
 extern zend_class_entry *cfapi_exception;
 
 #ifdef PHP_WIN32

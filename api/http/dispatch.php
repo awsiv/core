@@ -6,6 +6,7 @@ require_once 'lib/DefaultParameters.php';
 
 // load resources
 require_once 'resource-v1/Status.php';
+require_once 'resource-v1/Query.php';
 
 
 $request = new Request(array(

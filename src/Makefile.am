@@ -38,6 +38,7 @@ libcfnova_la_SOURCES = \
         processes.c \
         pscalar.c \
         reporting.c \
+        reporting-engine.c reporting-engine.h \
         syntax.c \
         copernicus.c
 
