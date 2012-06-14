@@ -42,7 +42,7 @@ static const char *LABEL_UNKNOWN = "unknown";
 
 PHP_FUNCTION(cfmod_resource)
 {
-    mongo_connection conn;
+    EnterpriseDB conn;
     bool db_active = CFDB_Open(&conn);
 
     if (db_active)
@@ -90,7 +90,7 @@ PHP_FUNCTION(cfmod_resource_host)
 
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
-        mongo_connection conn;
+        EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
         hostkeys = CFDB_QueryHostKeys(&conn, hostname, ip, from, to, filter);
@@ -139,7 +139,7 @@ PHP_FUNCTION(cfmod_resource_host_id)
 
     HubHost *record = NULL;
     {
-        mongo_connection conn;
+        EnterpriseDB conn;
 
         DATABASE_OPEN(&conn);
 
@@ -218,7 +218,7 @@ PHP_FUNCTION(cfmod_resource_host_id_seen)
 
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
-        mongo_connection conn;
+        EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
         result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, 0, false, from, to, false, filter);
@@ -265,7 +265,7 @@ PHP_FUNCTION(cfmod_resource_host_id_seenby)
 
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
 
-        mongo_connection conn;
+        EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
         result = CFDB_QueryLastSeen(&conn, hostkey, NULL, NULL, NULL, 0, false, from, to, false, filter);
@@ -360,7 +360,7 @@ PHP_FUNCTION(cfmod_resource_promise_compliance)
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
         HostClassFilterAddClasses(filter, context, NULL);
 
-        mongo_connection conn;
+        EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
         result = CFDB_QueryPromiseCompliance(&conn, hostkey, handle, PromiseStateFromString(state),
@@ -411,7 +411,7 @@ static const char *PromiseLogStateToString(PromiseLogState state)
     }
 }
 
-static JsonElement *PromiseLogAsJson(mongo_connection *conn, PromiseLogState state, const char *handle, const char *cause_rx,
+static JsonElement *PromiseLogAsJson(EnterpriseDB *conn, PromiseLogState state, const char *handle, const char *cause_rx,
                                      const char *hostkey, int from, int to, HostClassFilter *filter, PageInfo *page,
                                      int *total_results_out)
 {
@@ -471,7 +471,7 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired)
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
         HostClassFilterAddClasses(filter, context, NULL);
 
-        mongo_connection conn;
+        EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
         output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, cause_rx, hostkey, from, to,
@@ -488,7 +488,7 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired)
 
 /************************************************************************************/
 
-static JsonElement *PromiseLogSummaryAsJson(mongo_connection *conn, PromiseLogState state, const char *handle, const char *cause_rx,
+static JsonElement *PromiseLogSummaryAsJson(EnterpriseDB *conn, PromiseLogState state, const char *handle, const char *cause_rx,
                                             const char *hostkey, int from, int to, HostClassFilter *filter, PageInfo *page,
                                             int *total_results_out)
 {
@@ -553,7 +553,7 @@ PHP_FUNCTION(cfmod_resource_promise_log_repaired_summary)
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
         HostClassFilterAddClasses(filter, context, NULL);
 
-        mongo_connection conn;
+        EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
         output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_REPAIRED, handle, cause_rx, hostkey, from, to,
@@ -603,7 +603,7 @@ PHP_FUNCTION(cfmod_resource_promise_log_notkept)
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
         HostClassFilterAddClasses(filter, context, NULL);
 
-        mongo_connection conn;
+        EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
         output = PromiseLogAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, cause_rx, hostkey, from, to,
@@ -651,7 +651,7 @@ PHP_FUNCTION(cfmod_resource_promise_log_notkept_summary)
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
         HostClassFilterAddClasses(filter, context, NULL);
 
-        mongo_connection conn;
+        EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
         output = PromiseLogSummaryAsJson(&conn, PROMISE_LOG_STATE_NOTKEPT, handle, cause_rx, hostkey, from, to,
@@ -781,7 +781,7 @@ PHP_FUNCTION(cfmod_resource_variable)
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
         HostClassFilterAddClasses(filter, context, NULL);
 
-        mongo_connection conn;
+        EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
         result = CFDB_QueryVariables(&conn, hostkey, scope, name, value, SerializeRvalType(type), true, from, to, filter);
@@ -857,7 +857,7 @@ PHP_FUNCTION(cfmod_resource_context)
         HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
         HostClassFilterAddClasses(filter, context, NULL);
 
-        mongo_connection conn;
+        EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
         result = CFDB_QueryClasses(&conn, hostkey, NULL, false, from, to, filter, false);
@@ -955,7 +955,7 @@ PHP_FUNCTION(cfmod_resource_software)
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
         HostClassFilterAddClasses(filter, context, NULL);
 
-        mongo_connection conn;
+        EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
         result = CFDB_QuerySoftware(&conn, hostkey, cfr_software, name, version,
@@ -1053,7 +1053,7 @@ PHP_FUNCTION(cfmod_resource_setuid)
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
         HostClassFilterAddClasses(filter, context, NULL);
 
-        mongo_connection conn;
+        EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
         result = CFDB_QuerySetuid(&conn, hostkey, path, true, filter);
@@ -1181,7 +1181,7 @@ PHP_FUNCTION(cfmod_resource_file)
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
         HostClassFilterAddClasses(filter, context, NULL);
 
-        mongo_connection conn;
+        EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
         change_result = CFDB_QueryFileChanges(&conn, hostkey, path, true, (time_t)from, (time_t)to, true, filter);

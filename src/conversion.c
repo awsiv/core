@@ -40,7 +40,7 @@ int Nova_GetReportedScalar(char *hostkey, char *scope, char *lval, char *returnv
     HubVariable *hv;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -93,7 +93,7 @@ int Nova_GetReportedList(char *hostkey, char *scope, char *lval, Rlist **list)
     HubVariable *hv;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -141,7 +141,7 @@ bool CFDB_HostsWithClass(Rlist **return_list, char *class_name, char *return_for
         return false;
     }
     
-    mongo_connection conn;
+    EnterpriseDB conn;
     
     if(!CFDB_Open(&conn))
     {

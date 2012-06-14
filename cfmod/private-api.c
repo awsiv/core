@@ -373,7 +373,7 @@ PHP_FUNCTION(cfpr_host_by_hostkey)
         RETURN_NULL();
     }
 
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     DATABASE_OPEN(&conn);
 
@@ -423,7 +423,7 @@ PHP_FUNCTION(cfpr_host_info)
         RETURN_NULL();
     }
 
-    mongo_connection conn;
+    EnterpriseDB conn;
     DATABASE_OPEN(&conn);
 
     HubHost *host = CFDB_GetHostByKey(&conn, hostkey);
@@ -1050,7 +1050,7 @@ PHP_FUNCTION(cfpr_class_list_distinct_by_name_rx)
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     DATABASE_OPEN(&conn);
 
@@ -1108,7 +1108,7 @@ PHP_FUNCTION(cfpr_class_list_time_distinct_by_name_rx)
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     DATABASE_OPEN(&conn);
 
@@ -1173,7 +1173,7 @@ PHP_FUNCTION(cfpr_class_list_soft_distinct_by_name_rx)
 
     ERRID_RBAC_CHECK(hqHostClassFilter, DeleteHostClassFilter);
 
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     DATABASE_OPEN(&conn);
 
@@ -3528,7 +3528,7 @@ PHP_FUNCTION(cfpr_host_compliance_list_all)
     HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
     HostClassFilterAddIncludeExcludeLists(filter, includes, excludes);
 
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     DATABASE_OPEN(&conn);
 
@@ -3565,7 +3565,7 @@ PHP_FUNCTION(cfpr_host_count)
     HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
     HostClassFilterAddIncludeExcludeLists(filter, includes, excludes);
 
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     DATABASE_OPEN(&conn);
 
@@ -3620,7 +3620,7 @@ PHP_FUNCTION(cfpr_host_compliance_timeseries)
         HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
         HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
 
-        mongo_connection conn;
+        EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
         result = CFDB_QueryTotalCompliance(&conn, NULL, NULL, from, to, -1, -1, -1, false, filter);
@@ -3719,7 +3719,7 @@ PHP_FUNCTION(cfpr_host_compliance_timeseries_shifts)
         HostClassFilter *filter = (HostClassFilter *)HubQueryGetFirstRecord(hqHostClassFilter);
         HostClassFilterAddIncludeExcludeLists(filter, contextIncludes, contextExcludes);
 
-        mongo_connection conn;
+        EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
         records = CFDB_QueryHostComplianceShifts(&conn, filter);
@@ -3851,7 +3851,7 @@ PHP_FUNCTION(cfpr_host_compliance_list)
 
     if (!NULL_OR_EMPTY(colour))
     {
-        mongo_connection conn;
+        EnterpriseDB conn;
 
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
         HostClassFilterAddIncludeExcludeLists(filter, includes, excludes);
@@ -4262,7 +4262,7 @@ PHP_FUNCTION(cfpr_bundle_by_promise_handle)
 
     PromiseFilterAddPromiseBody(filter, promiseHandle, NULL);
 
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     DATABASE_OPEN(&conn);
 
@@ -4354,7 +4354,7 @@ PHP_FUNCTION(cfpr_bundle_arguments)
     PromiseFilterAddBundleType(filter, bundleType);
     PromiseFilterAddBundles(filter, bundleName, NULL);
 
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     DATABASE_OPEN(&conn);
 
@@ -4402,7 +4402,7 @@ PHP_FUNCTION(cfpr_bundle_list_all)
 
     PromiseFilter *filter = HubQueryGetFirstRecord(hqPromiseFilter);
 
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     DATABASE_OPEN(&conn);
 
@@ -4486,7 +4486,7 @@ PHP_FUNCTION(cfpr_get_bundle_type)
 
     PromiseFilterAddBundles(filter, bundleName, NULL);
 
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     DATABASE_OPEN(&conn);
 
@@ -5360,7 +5360,7 @@ PHP_FUNCTION(cfpr_astrolabe_host_list)
         HostClassFilter *filter = (HostClassFilter *) HubQueryGetFirstRecord(hqHostClassFilter);
         HostClassFilterAddIncludeExcludeLists(filter, includes, excludes);
 
-        mongo_connection conn;
+        EnterpriseDB conn;
         DATABASE_OPEN(&conn);
 
         result = CFDB_QueryColour(&conn, HOST_RANK_METHOD_COMPLIANCE, filter);

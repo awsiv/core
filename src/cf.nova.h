@@ -65,6 +65,8 @@
 # define MONGO_ARCHIVE MONGO_BASE ".archive"
 # define CF_MONGO_SLAVE_OK 4
 # include <mongo.h>
+
+typedef mongo_connection EnterpriseDB;
 #endif
 
 #undef PACKAGE
@@ -643,8 +645,8 @@ bool BootstrapAllowed(void);
 
 /* client_code.c */
 #ifdef HAVE_LIBMONGOC
-int Nova_QueryClientForReports(mongo_connection *dbconn, AgentConnection *conn, const char *menu, time_t since);
-void UnpackReportBook(mongo_connection *dbconn, char *id, Item **reports);
+int Nova_QueryClientForReports(EnterpriseDB *dbconn, AgentConnection *conn, const char *menu, time_t since);
+void UnpackReportBook(EnterpriseDB *dbconn, char *id, Item **reports);
 
 int Nova_StoreIncomingReports(char *reply, Item **reports, int current_report);
 void NewReportBook(Item **reports);
@@ -698,40 +700,40 @@ char *Nova_ShortArch(char *arch);
 /* dataunpack.c */
 
 #ifdef HAVE_LIBMONGOC
-void Nova_UnPackPerformance(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackClasses(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackSetuid(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackFileChanges(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackDiffs(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackMonitorWeek(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackMonitorMag(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackMonitorHist(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackMonitorYear(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackMonitorMg(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackMonitorWk(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackMonitorYr(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackMonitorHg(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackCompliance(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackSoftware(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackAvailPatches(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackPatchStatus(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPack_promise_output_common(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackValueReport(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackVariables(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackVariables2(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackLastSeen(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackTotalCompliance(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackRepairLog(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackNotKeptLog(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackMeter(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackSoftwareDates(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackBundles(mongo_connection *dbconn, char *id, Item *data);
-void Nova_UnPackExecutionStatus(mongo_connection *dbconn, char *id, Item *data);
+void Nova_UnPackPerformance(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackClasses(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackSetuid(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackFileChanges(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackDiffs(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackMonitorWeek(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackMonitorMag(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackMonitorHist(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackMonitorYear(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackMonitorMg(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackMonitorWk(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackMonitorYr(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackMonitorHg(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackCompliance(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackSoftware(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackAvailPatches(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackPatchStatus(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPack_promise_output_common(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackValueReport(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackVariables(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackVariables2(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackLastSeen(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackTotalCompliance(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackRepairLog(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackNotKeptLog(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackMeter(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackSoftwareDates(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackBundles(EnterpriseDB *dbconn, char *id, Item *data);
+void Nova_UnPackExecutionStatus(EnterpriseDB *dbconn, char *id, Item *data);
 char *Nova_LongArch(char *arch);
 
 /* histogram.c */
 
-int Nova_ReadHistogram2(mongo_connection *conn, DataView *cfv, char *hostkey, char *monId);
+int Nova_ReadHistogram2(EnterpriseDB *conn, DataView *cfv, char *hostkey, char *monId);
 Item *Nova_MapHistogram(DataView *cfv, char *keyhash);
 void Nova_AnalyseHistogram(char *keyhash, enum observables obs, char *buffer, int bufsize);
 
@@ -891,7 +893,7 @@ char *Nova_LicenseOwner(void);
 /* magnify.c */
 
 #ifdef HAVE_LIBMONGOC
-bool Nova_ReadMagTimeSeries2(mongo_connection *conn, DataView *cfv, char *hostkey, char *vitalId);
+bool Nova_ReadMagTimeSeries2(EnterpriseDB *conn, DataView *cfv, char *hostkey, char *vitalId);
 #endif
 
 /* monitoring.c */
@@ -969,7 +971,7 @@ void Nova_CommandAPI(char *lsdata, char *name, char *handle, char *hostkey, char
 #ifdef HAVE_LIBMONGOC
 void Nova_ImportReports(const char *input_file);
 
-int Nova_ImportHostReportsFromStream(mongo_connection *dbconn, char *header, FILE *fin);
+int Nova_ImportHostReportsFromStream(EnterpriseDB *dbconn, char *header, FILE *fin);
 #endif
 
 void Nova_TrackExecution();
@@ -1034,7 +1036,7 @@ void Nova_DeClassifyTopic(char *typed_topic, char *topic, char *type);
 
 #ifdef HAVE_LIBMONGOC
 double Num(double x);
-bool Nova_ReadWeekTimeSeries2(mongo_connection *conn, DataView *cfv, char *keyhash, char *vitalId);
+bool Nova_ReadWeekTimeSeries2(EnterpriseDB *conn, DataView *cfv, char *keyhash, char *vitalId);
 #endif
 
 #ifdef MINGW
@@ -1136,7 +1138,7 @@ int NovaWin_WmiDeInitialize(void);
 /* yearly.c */
 
 #ifdef HAVE_LIBMONGOC
-int Nova_ReadYearTimeSeries(mongo_connection *conn, DataView *cfv, char *keyhash, char *monId);
+int Nova_ReadYearTimeSeries(EnterpriseDB *conn, DataView *cfv, char *keyhash, char *monId);
 void Nova_DrawLongHAxes(DataView *cfv, int col);
 void Nova_AnalyseLongHistory(char *keyname, enum observables obs, char *buffer, int bufsize);
 #endif

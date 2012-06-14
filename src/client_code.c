@@ -16,7 +16,7 @@
 #include "item_lib.h"
 
 static bool ReportBookHasData(Item **reports);
-static void Nova_RecordNetwork(mongo_connection *dbconnp, time_t now, double datarate, AgentConnection *conn);
+static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now, double datarate, AgentConnection *conn);
 
 /*****************************************************************************/
 
@@ -89,7 +89,7 @@ void *CF_CODEBOOK_HANDLER[CF_CODEBOOK_SIZE] =
 
 /*********************************************************************/
 
-int Nova_QueryClientForReports(mongo_connection *dbconn, AgentConnection *conn, const char *menu, time_t since)
+int Nova_QueryClientForReports(EnterpriseDB *dbconn, AgentConnection *conn, const char *menu, time_t since)
 /*
  * Returns the number of plaintext bytes received (0 on error).
  **/
@@ -281,7 +281,7 @@ static bool ReportBookHasData(Item **reports)
 
 /*********************************************************************/
 
-static void BlackStatusFlagRefresh(mongo_connection *dbconn, char *id)
+static void BlackStatusFlagRefresh(EnterpriseDB *dbconn, char *id)
 {
     long delta_schedule = CFDB_GetDeltaAgentExecution(dbconn, id);
     time_t agent_last_run_time = CFDB_GetLastAgentExecution(dbconn, id);
@@ -302,7 +302,7 @@ static void BlackStatusFlagRefresh(mongo_connection *dbconn, char *id)
     }
 }
 
-void UnpackReportBook(mongo_connection *dbconn, char *id, Item **reports)
+void UnpackReportBook(EnterpriseDB *dbconn, char *id, Item **reports)
 {
     int i;
 
@@ -340,7 +340,7 @@ void DeleteReportBook(Item **reports)
 
 /*********************************************************************/
 
-static void Nova_RecordNetwork(mongo_connection *dbconnp, time_t now, double datarate, AgentConnection *conn)
+static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now, double datarate, AgentConnection *conn)
 // NOTE: NOT Thread-safe (use of HashPrint())
 {
     mongo_cursor *cursor;

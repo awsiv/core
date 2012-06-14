@@ -11,7 +11,7 @@ void Nova_Maintain(void);
 
 void Nova_CacheTotalCompliance(bool allSlots);
 
-void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, char *envClass, int slot,
+void Nova_CacheTotalComplianceEnv(EnterpriseDB *conn, char *envName, char *envClass, int slot,
                                   time_t start, time_t now);
 
 #endif

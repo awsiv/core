@@ -39,7 +39,7 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
     Inference *ip;
     Item *itp;
     char packNumStr[CF_MAXVARSIZE];
-    mongo_connection dbconn = { 0 };
+    EnterpriseDB dbconn = { 0 };
     bson_buffer bbuf, *sub, *assocs;
     bson b;
     int slot, assoc_id = 0;
@@ -480,7 +480,7 @@ void Nova_GenerateTestData(int count)
     int countLen = 0;
     int hostCount = 0;
     int startFrom = 0, len = 0;
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     LICENSES = 1;
     snprintf(CFWORKDIR, sizeof(CFWORKDIR), "/var/cfengine");
@@ -529,7 +529,7 @@ void Nova_GenerateTestData(int count)
     }
     DeleteRlist(testmachines);
 
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -582,7 +582,7 @@ static Rlist *Nova_GetTestMachines(void)
     mongo_cursor *cursor;
     bson_iterator it;
     bson query;
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     char keyhash[CF_MAXVARSIZE], addresses[CF_MAXVARSIZE], hostnames[CF_MAXVARSIZE];
     char temp[CF_MAXVARSIZE];
@@ -683,7 +683,7 @@ void Nova_UpdateTestData(void)
     bson query, setOp;
     bson_buffer bb;
     bson_buffer *setObj;
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     char keyhash[CF_MAXVARSIZE], addresses[CF_MAXVARSIZE];
     char temp[CF_MAXVARSIZE], hostnames[CF_MAXVARSIZE], noDot[CF_BUFSIZE] = { 0 };

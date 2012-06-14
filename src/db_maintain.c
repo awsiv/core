@@ -20,14 +20,14 @@
 
 #include <assert.h>
 
-static void CFDB_DropAllIndices(mongo_connection *conn);
-static void PurgePromiseLogWithEmptyTimestamps(mongo_connection *conn, char *promiseLogKey);
-static Item *GetUniquePromiseLogEntryKeys(mongo_connection *conn, char *promiseLogKey);
+static void CFDB_DropAllIndices(EnterpriseDB *conn);
+static void PurgePromiseLogWithEmptyTimestamps(EnterpriseDB *conn, char *promiseLogKey);
+static Item *GetUniquePromiseLogEntryKeys(EnterpriseDB *conn, char *promiseLogKey);
 
 
 void CFDB_Maintenance(void)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -58,7 +58,7 @@ void CFDB_ReIndexAll(void)
  *           e.g. due to Nova upgrade.
  */
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -75,7 +75,7 @@ void CFDB_ReIndexAll(void)
 
 void CFDB_ConnectAndEnsureIndices(void)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -89,7 +89,7 @@ void CFDB_ConnectAndEnsureIndices(void)
 
 /*****************************************************************************/
 
-void CFDB_EnsureIndices(mongo_connection *conn)
+void CFDB_EnsureIndices(EnterpriseDB *conn)
 /**
  *  Makes sure certain keys have an index to optimize querying and updating.
  **/
@@ -159,7 +159,7 @@ void CFDB_EnsureIndices(mongo_connection *conn)
 
 /*****************************************************************************/
 
-static void CFDB_DropAllIndices(mongo_connection *conn)
+static void CFDB_DropAllIndices(EnterpriseDB *conn)
 {
     char *indexedCollections[] = { MONGO_HOSTS_COLLECTION,
         MONGO_LOGS_REPAIRED_COLL,
@@ -227,7 +227,7 @@ static void DeleteFromBsonArray(bson_buffer *bb, char *arrName, Item *elements)
 
 }
 
-void CFDB_PurgeTimestampedReports(mongo_connection *conn)
+void CFDB_PurgeTimestampedReports(EnterpriseDB *conn)
 /**
  * Remove old data from reports with timestamp Usually "old" means one week.
  * For each host: collect keys to delete in a list, and call update once.
@@ -334,7 +334,7 @@ void CFDB_PurgeTimestampedReports(mongo_connection *conn)
 
 /*****************************************************************************/
 
-void CFDB_PurgeTimestampedLongtermReports(mongo_connection *conn)
+void CFDB_PurgeTimestampedLongtermReports(EnterpriseDB *conn)
 /**
  * Remove old data from reports with timestamp Usually "old" means one week.
  * For each host: collect keys to delete in a list, and call update once.
@@ -423,7 +423,7 @@ void CFDB_PurgeTimestampedLongtermReports(mongo_connection *conn)
 }
 
 /*****************************************************************************/
-void CFDB_PurgePromiseLogs(mongo_connection *conn, time_t oldThreshold, time_t now)
+void CFDB_PurgePromiseLogs(EnterpriseDB *conn, time_t oldThreshold, time_t now)
 /**
  * Deletes old repair and not kept log entries.
  **/
@@ -458,7 +458,7 @@ void CFDB_PurgePromiseLogs(mongo_connection *conn, time_t oldThreshold, time_t n
 
 /*****************************************************************************/
 
-static Item *GetUniquePromiseLogEntryKeys(mongo_connection *conn, char *promiseLogKey)
+static Item *GetUniquePromiseLogEntryKeys(EnterpriseDB *conn, char *promiseLogKey)
 {
     bson empty;
     bson field;
@@ -504,7 +504,7 @@ static Item *GetUniquePromiseLogEntryKeys(mongo_connection *conn, char *promiseL
     return uniquePromiseKeysList;
 }
 /*****************************************************************************/
-static void PurgePromiseLogWithEmptyTimestamps(mongo_connection *conn, char *promiseLogKey)
+static void PurgePromiseLogWithEmptyTimestamps(EnterpriseDB *conn, char *promiseLogKey)
 {
     bson empty;
     bson field;
@@ -594,7 +594,7 @@ static void PurgePromiseLogWithEmptyTimestamps(mongo_connection *conn, char *pro
 
 /*****************************************************************************/
 
-void CFDB_PurgePromiseLogsFromMain(mongo_connection *conn, char *promiseLogReportKey, time_t oldThreshold, time_t now)
+void CFDB_PurgePromiseLogsFromMain(EnterpriseDB *conn, char *promiseLogReportKey, time_t oldThreshold, time_t now)
 /**
  * Deletes old repair and not kept log entries.
  **/
@@ -642,7 +642,7 @@ void CFDB_PurgePromiseLogsFromMain(mongo_connection *conn, char *promiseLogRepor
 
 /*****************************************************************************/
 
-void CFDB_PurgeDropReports(mongo_connection *conn)
+void CFDB_PurgeDropReports(EnterpriseDB *conn)
 /**
  *  Remove certain reports completely.
  *  UNUSED - currently overwritten on save.
@@ -677,7 +677,7 @@ void CFDB_PurgeDropReports(mongo_connection *conn)
 
 /*****************************************************************************/
 
-void CFDB_PurgeScan(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now,
+void CFDB_PurgeScan(EnterpriseDB *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now,
                     Item **purgeKeysPtr, Item **purgeNamesPtr)
 {
     bson_iterator it1, it2, it3;
@@ -793,7 +793,7 @@ int CFDB_CheckAge(char *var, char *key, bson_iterator *it, time_t now, time_t ol
 
 /*****************************************************************************/
 
-void CFDB_PurgeScanStrTime(mongo_connection *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now,
+void CFDB_PurgeScanStrTime(EnterpriseDB *conn, bson_iterator *itp, char *reportKey, time_t oldThreshold, time_t now,
                            Item **purgeKeysPtr)
 /**
  * Like PurgeScan but uses time in format "30 Sep 2010" instead of time_t.
@@ -843,7 +843,7 @@ void CFDB_PurgeScanStrTime(mongo_connection *conn, bson_iterator *itp, char *rep
 
 /*****************************************************************************/
 
-void CFDB_PurgeHost(mongo_connection *conn, char *keyHash)
+void CFDB_PurgeHost(EnterpriseDB *conn, char *keyHash)
 {
     bson_buffer bb;
     bson cond;
@@ -892,7 +892,7 @@ void CFDB_PurgeHost(mongo_connection *conn, char *keyHash)
 
 /*****************************************************************************/
 
-void CFDB_PurgeDeprecatedVitals(mongo_connection *conn)
+void CFDB_PurgeDeprecatedVitals(EnterpriseDB *conn)
 /*
  * Remove pre-Nova 2.1.0 vitals (cf-monitord) structures.
  * Can be taken out when everyone has upgraded to 2.1.0 or newer.
@@ -939,7 +939,7 @@ void CFDB_RemoveTestData(char *db, char *keyhash)
 {
     bson query;
     bson_buffer bb;
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     if (!CFDB_Open(&conn))
     {
@@ -964,7 +964,7 @@ int CFDB_PurgeDeletedHosts(void)
 {
     bson_buffer bb, *unset;
     bson op, empty;
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     if (!CFDB_Open(&conn))
     {
@@ -990,7 +990,7 @@ int CFDB_PurgeDeletedHosts(void)
     return true;
 }
 
-void CFDB_RefreshLastHostComplianceShift(mongo_connection *conn, const char *hostkey)
+void CFDB_RefreshLastHostComplianceShift(EnterpriseDB *conn, const char *hostkey)
 {
     assert(hostkey);
 

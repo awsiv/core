@@ -93,7 +93,7 @@ void Nova_CacheTotalCompliance(bool allSlots)
  */
 {
     time_t curr, now = time(NULL);
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     EnvironmentsList *env, *ep;
     int slot;
     char envName[CF_SMALLBUF];
@@ -156,7 +156,7 @@ void Nova_CacheTotalCompliance(bool allSlots)
 }
 
 
-void Nova_CacheTotalComplianceEnv(mongo_connection *conn, char *envName, char *envClass, int slot,
+void Nova_CacheTotalComplianceEnv(EnterpriseDB *conn, char *envName, char *envClass, int slot,
                                   time_t start, time_t now)
 {
     HubQuery *hq;

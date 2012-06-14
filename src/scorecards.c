@@ -99,7 +99,7 @@ void ComplianceSummaryGraph(char *hubKeyHash, char *policy, bool constellation, 
 // Constellation DB)
 {
     char work[CF_BUFSIZE];
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     HubCacheTotalCompliance *tc;
     HubQuery *hq;
     double kept, repaired, notkept, nodata;
@@ -204,7 +204,7 @@ void Nova_Meter(bson *query, char *db, char *buffer, int bufsize)
     double num_week = 0, num_day = 0, num_hour = 0, num_comms = 0, num_anom = 0, num_perf = 0, num_other = 0;
     HubMeter *hm;
     HubQuery *hq;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     Rlist *rp;
 
     strcpy(buffer, "[");

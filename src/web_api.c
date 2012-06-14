@@ -216,7 +216,7 @@ JsonElement *Nova2PHP_get_knowledge_view(int pid, char *view)
 void Nova2PHP_getlastupdate(char *hostkey, char *buffer, int bufsize)
 {
     time_t then;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
 /* BEGIN query document */
 
@@ -273,7 +273,7 @@ int Nova2PHP_summary_report(char *hostkey, char *handle, char *status, bool rege
     HubPromiseCompliance *hp;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     time_t now = time(NULL), from = now, to = now - SECONDS_PER_WEEK;
     int code_blue = 0, tot_hosts, code_black = 0;
     double n, r, k, n_av, k_av, r_av, tot_promises;
@@ -413,7 +413,7 @@ JsonElement *Nova2PHP_promise_compliance_summary (char *hostkey, char *handle, c
   Return current best-knowledge of average compliance for the class of hosts and promises selected
  */
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     char *current_host = "x";
 
     if (!CFDB_Open(&dbconn))
@@ -494,7 +494,7 @@ JsonElement *Nova2PHP_bundle_compliance_summary (char *hostkey, char *bundle, bo
   Return current best-knowledge of average compliance for the class of hosts and promises selected
  */
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     if (!CFDB_Open(&dbconn))
     {
         return false;
@@ -628,7 +628,7 @@ int Nova2PHP_LDAPGetSingleAttributeList(char *uri, char *user, char *basedn, cha
 
 bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     bool ret = false;
     char work[CF_MAXVARSIZE];
     time_t lastUpdate = 0;
@@ -677,7 +677,7 @@ bool Nova2PHP_vitals_list(char *keyHash, char *buffer, int bufsize)
 
 bool Nova2PHP_vitals_view_magnified(char *keyHash, char *vitalId, char *buffer, int bufsize)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     DataView cfv = { 0 };
     char work[CF_MAXVARSIZE];
     bool haveData = false;
@@ -713,7 +713,7 @@ bool Nova2PHP_vitals_view_magnified(char *keyHash, char *vitalId, char *buffer, 
 
 bool Nova2PHP_vitals_view_week(char *keyHash, char *vitalId, char *buffer, int bufsize)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     DataView cfv = { 0 };
     char work[CF_MAXVARSIZE];
     bool haveData = false;
@@ -749,7 +749,7 @@ bool Nova2PHP_vitals_view_week(char *keyHash, char *vitalId, char *buffer, int b
 
 bool Nova2PHP_vitals_view_year(char *keyHash, char *vitalId, char *buffer, int bufsize)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     DataView cfv = { 0 };
     char work[CF_MAXVARSIZE];
     bool haveData = false;
@@ -785,7 +785,7 @@ bool Nova2PHP_vitals_view_year(char *keyHash, char *vitalId, char *buffer, int b
 
 bool Nova2PHP_vitals_view_histogram(char *keyHash, char *vitalId, char *buffer, int bufsize)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     DataView cfv = { 0 };
     char work[CF_MAXVARSIZE];
     bool haveData = false;
@@ -821,7 +821,7 @@ bool Nova2PHP_vitals_view_histogram(char *keyHash, char *vitalId, char *buffer, 
 
 bool Nova2PHP_vitals_analyse_magnified(char *hostkey, char *vitalId, char *buffer, int bufsize)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     char work[CF_BUFSIZE];
     DataView cfv = { 0 };
 
@@ -873,7 +873,7 @@ bool Nova2PHP_vitals_analyse_week(char *hostkey, char *vitalId, char *buffer, in
     char work[CF_BUFSIZE];
     double x;
     DataView cfv = { 0 };
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     buffer[0] = '\0';
 
@@ -929,7 +929,7 @@ bool Nova2PHP_vitals_analyse_year(char *hostkey, char *vitalId, char *buffer, in
 {
     char work[CF_BUFSIZE];
     DataView cfv = { 0 };
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     buffer[0] = '\0';
 
@@ -973,7 +973,7 @@ bool Nova2PHP_vitals_analyse_histogram(char *hostkey, char *vitalId, char *buffe
     double sensitivity_factor = 1.2;
     DataView cfv = { 0 };
     Item *spectrum;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     buffer[0] = '\0';
 
@@ -1078,7 +1078,7 @@ int Nova2PHP_promiselog(char *hostkey, char *handle, char *causeRx, PromiseLogSt
     HubPromiseLog *hp;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     bool truncated = false;
 
     if (!CFDB_Open(&dbconn))
@@ -1149,7 +1149,7 @@ JsonElement *Nova2PHP_promiselog_summary(char *hostkey, char *handle, char *caus
     }
 # endif
 
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     if (!CFDB_Open(&dbconn))
     {
         return NULL;
@@ -1217,7 +1217,7 @@ int Nova2PHP_value_report(char *hostkey, char *day, char *month, char *year, Hos
     HubValue *hp;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     char buffer[CF_BUFSIZE] = { 0 }, header[CF_BUFSIZE] = { 0 };
     int margin = 0, headerLen = 0, noticeLen = 0;
     int truncated = false;
@@ -1284,7 +1284,7 @@ int Nova2PHP_get_value_graph(char *hostkey, char *day, char *month, char *year, 
     HubValue *hp;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     char buffer[CF_BUFSIZE] = { 0 };
 
 /* BEGIN query document */
@@ -1342,7 +1342,7 @@ int Nova2PHP_software_report(char *hostkey, char *name, char *value, char *arch,
     HubSoftware *hs;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -1434,7 +1434,7 @@ int Nova2PHP_classes_report(char *hostkey, char *name, bool regex, HostClassFilt
     HubClass *hc;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
 /* BEGIN query document */
 
@@ -1496,7 +1496,7 @@ int Nova2PHP_classes_summary(char **classes, char *buf, int bufsize)
     }
 # endif
 
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     HubQuery *hq;
     HubClassSum *hc;
     HubHost *hh;
@@ -1575,7 +1575,7 @@ int Nova2PHP_vars_report(char *hostkey, char *scope, char *lval, char *rval, cha
     HubVariable *hv;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     int first = true, countadded = false, found = false;
     int scope_record_count = 0, last_scope_record_count = 0, first_scope_record_count = 0;
     char header[CF_BUFSIZE] = { 0 };
@@ -1724,7 +1724,7 @@ int Nova2PHP_compliance_report(char *hostkey, char *version, time_t from, time_t
     HubTotalCompliance *ht;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     char header[CF_BUFSIZE] = { 0 };
     int margin = 0, headerLen = 0, noticeLen = 0;
     int truncated = false;
@@ -1798,7 +1798,7 @@ int Nova2PHP_compliance_promises(char *hostkey, char *handle, char *status, bool
     HubPromiseCompliance *hp;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     char header[CF_BUFSIZE] = { 0 };
     int margin = 0, headerLen = 0, noticeLen = 0;
     int truncated = false;
@@ -1884,7 +1884,7 @@ int Nova2PHP_lastseen_report(char *hostkey, char *lhash, char *lhost, char *ladd
     HubQuery *hq;
     Rlist *rp;
     int count = 0;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     char inout[CF_SMALLBUF];
     char header[CF_BUFSIZE] = { 0 };
     int margin = 0, headerLen = 0, noticeLen = 0;
@@ -1971,7 +1971,7 @@ int Nova2PHP_performance_report(char *hostkey, char *job, bool regex, HostClassF
     HubPerformance *hP;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     char header[CF_BUFSIZE] = { 0 };
     int margin = 0, headerLen = 0, noticeLen = 0;
     int truncated = false;
@@ -2048,7 +2048,7 @@ int Nova2PHP_setuid_report(char *hostkey, char *file, bool regex, HostClassFilte
     HubSetUid *hS;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     char header[CF_BUFSIZE] = { 0 };
     int margin = 0, headerLen = 0, noticeLen = 0;
     int truncated = false;
@@ -2138,7 +2138,7 @@ int Nova2PHP_bundle_report(char *hostkey, char *bundle, bool regex, HostClassFil
     }
 # endif
 
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -2225,7 +2225,7 @@ int Nova2PHP_filechanges_report(char *hostkey, char *file, bool regex, time_t fr
     HubFileChanges *hC;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     char header[CF_BUFSIZE] = { 0 };
     int margin = 0, headerLen = 0, noticeLen = 0;
     int truncated = false;
@@ -2292,7 +2292,7 @@ int Nova2PHP_filediffs_report(char *hostkey, char *file, char *diffs, bool regex
     HubFileDiff *hd;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     char header[CF_BUFSIZE] = { 0 };
     int margin = 0, headerLen = 0, noticeLen = 0;
     int truncated = false;
@@ -2419,7 +2419,7 @@ int Nova2PHP_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int buf
     HubQuery *hq;
     Rlist *rp;
     int count1 = 0, count2 = 0, tmpsize1, tmpsize2;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     bson query;
     bson_buffer bb;
 
@@ -2485,7 +2485,7 @@ int Nova2PHP_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int buf
 JsonElement *Nova2PHP_value_hosts(char *hostkey, char *day, char *month, char *year,
                                   HostClassFilter *hostClassFilter, PageInfo *page)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -2513,7 +2513,7 @@ JsonElement *Nova2PHP_software_hosts(char *hostkey, char *name, char *value,
                                      char *arch,  bool regex, char *type,
                                      HostClassFilter *hostClassFilter, PageInfo *page)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -2540,7 +2540,7 @@ JsonElement *Nova2PHP_software_hosts(char *hostkey, char *name, char *value,
 JsonElement *Nova2PHP_classes_hosts(char *hostkey, char *name, bool regex,
                                     HostClassFilter *hostClassFilter, PageInfo *page)
 {    
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -2570,7 +2570,7 @@ JsonElement *Nova2PHP_vars_hosts(char *hostkey, char *scope, char *lval, char *r
                                  char *type, bool regex, HostClassFilter *hostClassFilter,
                                  PageInfo *page)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -2598,7 +2598,7 @@ JsonElement *Nova2PHP_compliance_hosts(char *hostkey, char *version, time_t from
                                        time_t to, int k, int nk, int rep,
                                        HostClassFilter *hostClassFilter, PageInfo *page)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -2627,7 +2627,7 @@ JsonElement *Nova2PHP_promise_hosts(char *hostkey, char *handle, char *status,
                                     HostColourFilter *hostColourFilter,
                                     bool lastRunOnly, PageInfo *page)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -2671,7 +2671,7 @@ JsonElement *Nova2PHP_lastseen_hosts(char *hostkey, char *lhash, char *lhost,
                                      char *laddress, time_t lago, int lregex,
                                      HostClassFilter *hostClassFilter, PageInfo *page)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -2698,7 +2698,7 @@ JsonElement *Nova2PHP_lastseen_hosts(char *hostkey, char *lhash, char *lhost,
 JsonElement *Nova2PHP_performance_hosts(char *hostkey, char *job, bool regex,
                                         HostClassFilter *hostClassFilter, PageInfo *page)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -2725,7 +2725,7 @@ JsonElement *Nova2PHP_performance_hosts(char *hostkey, char *job, bool regex,
 JsonElement *Nova2PHP_setuid_hosts(char *hostkey, char *file, bool regex,
                                    HostClassFilter *hostClassFilter, PageInfo *page)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -2753,7 +2753,7 @@ JsonElement *Nova2PHP_bundle_hosts(char *hostkey, char *bundle, bool regex,
                                    HostColourFilter *hostColourFilter,
                                    bool lastRunOnly, PageInfo *page)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -2795,7 +2795,7 @@ JsonElement *Nova2PHP_filechanges_hosts(char *hostkey, char *file, bool regex,
                                         time_t from, time_t to,
                                         HostClassFilter *hostClassFilter, PageInfo *page)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -2820,7 +2820,7 @@ JsonElement *Nova2PHP_filediffs_hosts(char *hostkey, char *file, char *diffs,
                                       bool regex, time_t from, time_t to,
                                       HostClassFilter *hostClassFilter, PageInfo *page)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -2848,7 +2848,7 @@ JsonElement *Nova2PHP_promiselog_hosts(char *hostkey, char *handle, char *causeR
                                        PromiseLogState state, time_t from, time_t to,
                                        HostClassFilter *hostClassFilter, PageInfo *page)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -2875,7 +2875,7 @@ JsonElement *Nova2PHP_promiselog_hosts(char *hostkey, char *handle, char *causeR
 
 int Nova2PHP_bundle_classes_used(PromiseFilter *promiseFilter, char *buffer, int bufsize)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     Rlist *classList, *rp;
     Item *ip, *list = NULL;
     char work[CF_MAXVARSIZE], context[CF_MAXVARSIZE];
@@ -2937,7 +2937,7 @@ int Nova2PHP_bundle_classes_used(PromiseFilter *promiseFilter, char *buffer, int
 
 int Nova2PHP_bundle_agent_goals(PromiseFilter *filter, char *buffer, int bufsize)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     char work[CF_BUFSIZE];
 
     if (!CFDB_Open(&dbconn))
@@ -3035,7 +3035,7 @@ int Nova2PHP_list_all_goals(char *buffer, int bufsize)
 
 int Nova2PHP_bundle_list_by_bundle_usage(PromiseFilter *promiseFilter, char *bNameReferenced, char *buffer, int bufsize)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     char work[CF_MAXVARSIZE];
     Item *matched, *ip;
 
@@ -3231,7 +3231,7 @@ JsonElement *Nova2PHP_show_topic_category(int id)
 /* Hosts stats                                                               */
 /*****************************************************************************/
 
-void Nova2PHP_host_compliance_list_all(mongo_connection *conn, HostClassFilter *host_class_filter, PageInfo *page, char *buffer, int bufsize)
+void Nova2PHP_host_compliance_list_all(EnterpriseDB *conn, HostClassFilter *host_class_filter, PageInfo *page, char *buffer, int bufsize)
 {
     Item *clist = NULL;
     char work[CF_BUFSIZE] = { 0 };
@@ -3308,7 +3308,7 @@ int Nova2PHP_show_hosts(char *hostNameRegex, char *ipRegex, HostClassFilter *hos
     HubQuery *hq;
     HubHost *hh;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     char work[CF_MAXVARSIZE];
 
     if (!CFDB_Open(&dbconn))
@@ -3358,7 +3358,7 @@ int Nova2PHP_show_hosts(char *hostNameRegex, char *ipRegex, HostClassFilter *hos
 
 /*****************************************************************************/
 
-void Nova2PHP_host_compliance_list(mongo_connection *conn, char *colour, HostClassFilter *host_class_filter,
+void Nova2PHP_host_compliance_list(EnterpriseDB *conn, char *colour, HostClassFilter *host_class_filter,
                                    PageInfo *page, char *buffer, int bufsize)
 {
     Item *ip, *clist;
@@ -3458,7 +3458,7 @@ void Nova2PHP_get_host_colour(char *hostkey, char *buffer, int bufsize)
 char *Nova2PHP_GetPromiseComment(char *handle)
 {
     static char buffer[CF_BUFSIZE];
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -3483,7 +3483,7 @@ char *Nova2PHP_GetPromiseComment(char *handle)
 void Nova2PHP_GetPromiseBody(char *name, char *type, char *returnval, int bufsize)
 {
     char work[CF_BUFSIZE];
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     HubBody *hb;
 
     if (!CFDB_Open(&dbconn))
@@ -3539,7 +3539,7 @@ void Nova2PHP_GetPromiseBody(char *name, char *type, char *returnval, int bufsiz
 
 int Nova2PHP_body_list(char *name, char *type, char *returnval, int bufsize)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     char work[CF_MAXVARSIZE];
     Item *all_bodies, *ip;
 
@@ -3617,7 +3617,7 @@ static cfapi_errid FormatReportInfoAsJson(char *reportId, ReportInfo *reports, c
 
 int Nova2PHP_promise_details(PromiseFilter *filter, char *returnval, int bufsize)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     char promiseeText[CF_MAXVARSIZE];
     char commentText[CF_MAXVARSIZE];
     char work[CF_BUFSIZE], escaped[CF_BUFSIZE];
@@ -3733,7 +3733,7 @@ int Nova2PHP_promise_details(PromiseFilter *filter, char *returnval, int bufsize
 /*****************************************************************************/
 int Nova2PHP_list_promise_handles_with_comments(char *bundle, char *btype, char *returnval, int bufsize)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     char work[CF_BUFSIZE];
     Rlist *rp;
     HubQuery *hq;
@@ -3797,7 +3797,7 @@ JsonElement *JSONErrorFromId(cfapi_errid errid)
 
 JsonElement *Nova2PHP_network_speed(char *hostkey)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     mongo_cursor *cursor;
     bson_buffer bb;
     int found = false;
@@ -3891,7 +3891,7 @@ int Nova2PHP_countclasses(char *hostkey, char *name, bool regex, HostClassFilter
     Rlist *rp;
     Item *order_results = NULL, *ip;
     int count = 0;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     unsigned long bluehost_threshold;
 
     if (!CFDB_GetBlueHostThreshold(&bluehost_threshold))
@@ -4099,7 +4099,7 @@ int Nova2PHP_cdp_report(char *hostkey, char *reportName, PageInfo *page, char *b
 {
     Item *promises = { 0 }, *hosts = { 0 };
     Item *ip = { 0 }, *ip2 = { 0 };
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     char handle[CF_MAXVARSIZE] = { 0 };
     char host[CF_MAXVARSIZE] = { 0 };
     char hostKeyHash[CF_MAXVARSIZE] = { 0 };
@@ -4303,7 +4303,7 @@ int Nova2PHP_validate_policy(char *file, char *buffer, int bufsize)
 
 int Nova2PHP_delete_host(char *keyHash)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -4319,7 +4319,7 @@ int Nova2PHP_delete_host(char *keyHash)
 
 int Nova2PHP_replica_status(char *buffer, int bufsize)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -4338,7 +4338,7 @@ int Nova2PHP_replica_status(char *buffer, int bufsize)
 
 bool Nova2PHP_environment_list(EnvironmentsList **out, HostClassFilter *hostClassFilter)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     bson_buffer bb;
 
     *out = NULL;
@@ -4378,7 +4378,7 @@ bool Nova2PHP_environment_list(EnvironmentsList **out, HostClassFilter *hostClas
 
 bool Nova2PHP_host_list_by_environment(HostsList **out, const char *environment, HostClassFilter *hostClassFilter)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     mongo_cursor *cursor;
     bson_buffer bb;
     bson query, fields;
@@ -4434,7 +4434,7 @@ bool Nova2PHP_host_list_by_environment(HostsList **out, const char *environment,
 
 char *Nova2PHP_environment_by_hostkey(const char *hostkey)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     bson_buffer bb;
     bson query, fields;
     bson result;
@@ -4520,7 +4520,7 @@ int Nova2PHP_add_note(char *noteid, char *keyhash, char *username, time_t dateti
         is_new = true;
     }
 
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     if (!CFDB_Open(&dbconn))
     {
         return false;
@@ -4564,7 +4564,7 @@ int Nova2PHP_get_notes(char *keyhash, char *nid, char *username, char *filter_us
     Item *data = NULL;
     char msg[CF_BUFSIZE] = { 0 };
     char buffer[CF_BUFSIZE] = { 0 };
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     HubNoteInfo *hni;
     HubNote *hn;
     Rlist *result, *rp;
@@ -4657,7 +4657,7 @@ int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize)
 {
     char buffer[CF_BUFSIZE];
     Rlist *rp, *result;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     bson query;
     bson_buffer bb;
 
@@ -4762,7 +4762,7 @@ int Nova2PHP_promise_list(PromiseFilter *promiseFilter, char *returnval, int buf
     }
 # endif
 
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     char work[CF_MAXVARSIZE] = { 0 };
     char promiserJson[CF_MAXVARSIZE];
     Rlist *rp;

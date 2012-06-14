@@ -20,7 +20,7 @@ int CFDB_PutValue(char *lval, char *rval, char *db_name)
     bson_buffer bb;
     bson_buffer *setObj;
     bson setOp, empty;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!IsDefinedClass("am_policy_hub") && !AM_PHP_MODULE)
     {
@@ -53,7 +53,7 @@ int CFDB_SaveLastseenCache(Item *lastseen)
     bson_buffer bb;
     bson_buffer *setObj, *sub, *arr;
     bson setOp, empty;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     Item *ip;
     char arrIndex[CF_BUFSIZE] = { 0 };
     int i = 0;
@@ -106,7 +106,7 @@ void CFDB_SaveGoalsCache(char *goal_patterns)
     bson_buffer bb;
     bson_buffer *setObj;
     bson setOp, empty;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!IsDefinedClass("am_policy_hub"))
     {
@@ -132,7 +132,7 @@ void CFDB_SaveGoalsCache(char *goal_patterns)
 
 /*****************************************************************************/
 
-void CFDB_SaveHostID(mongo_connection *conn, char *database, char *keyField, char *keyhash, char *ipaddr,
+void CFDB_SaveHostID(EnterpriseDB *conn, char *database, char *keyField, char *keyhash, char *ipaddr,
                      char *hostname)
 /**
  *  hostname is optional, reverse lookup if not specified
@@ -191,7 +191,7 @@ void CFDB_SaveHostID(mongo_connection *conn, char *database, char *keyField, cha
 
 /*****************************************************************************/
 
-void CFDB_SaveSoftware(mongo_connection *conn, enum software_rep sw, char *keyhash, Item *data)
+void CFDB_SaveSoftware(EnterpriseDB *conn, enum software_rep sw, char *keyhash, Item *data)
 {
     bson_buffer bb;
     bson_buffer *setObj;
@@ -267,7 +267,7 @@ void CFDB_SaveSoftware(mongo_connection *conn, enum software_rep sw, char *keyha
 /* Monitor data                                                              */
 /*****************************************************************************/
 
-void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_rep rep_type, Item *data)
+void CFDB_SaveMonitorData2(EnterpriseDB *conn, char *keyHash, enum monitord_rep rep_type, Item *data)
 {
     bson_buffer bb;
     bson_buffer *setObj, *arr;
@@ -458,7 +458,7 @@ void CFDB_SaveMonitorData2(mongo_connection *conn, char *keyHash, enum monitord_
 
 /*****************************************************************************/
 
-void CFDB_SaveMonitorHistograms(mongo_connection *conn, char *keyhash, Item *data)
+void CFDB_SaveMonitorHistograms(EnterpriseDB *conn, char *keyhash, Item *data)
 {
     bson_buffer bb;
     bson_buffer *setObj;
@@ -531,7 +531,7 @@ void CFDB_SaveMonitorHistograms(mongo_connection *conn, char *keyhash, Item *dat
 
 /*****************************************************************************/
 
-static void CFDB_PutEnvironmentForHost(mongo_connection *conn, const char *keyhash, const char *environment)
+static void CFDB_PutEnvironmentForHost(EnterpriseDB *conn, const char *keyhash, const char *environment)
 {
     bson_buffer bb;
     bson host_key, op;
@@ -575,7 +575,7 @@ static void CFDB_PutEnvironmentForHost(mongo_connection *conn, const char *keyha
 # define ENV_NAME_PREFIX "environment_"
 # define ENV_NAME_LEN (sizeof(ENV_NAME_PREFIX) / sizeof(char) - 1)
 
-static void CFDB_SaveEnvironment(mongo_connection *conn, const char *keyhash, const Item *data)
+static void CFDB_SaveEnvironment(EnterpriseDB *conn, const char *keyhash, const Item *data)
 {
     const Item *i;
     char *environment = NULL;
@@ -604,7 +604,7 @@ static void CFDB_SaveEnvironment(mongo_connection *conn, const char *keyhash, co
 
 /*****************************************************************************/
 
-void CFDB_SaveClasses(mongo_connection *conn, char *keyhash, Item *data)
+void CFDB_SaveClasses(EnterpriseDB *conn, char *keyhash, Item *data)
 /*
  *  Replacing existing class entry, but not deleting "old" entries (purging)
  */
@@ -686,7 +686,7 @@ void CFDB_SaveClasses(mongo_connection *conn, char *keyhash, Item *data)
 
 /*****************************************************************************/
 
-void CFDB_SaveVariables(mongo_connection *conn, char *keyhash, Item *data)
+void CFDB_SaveVariables(EnterpriseDB *conn, char *keyhash, Item *data)
 /* Should be deprecated some time - was replaced after Nova 2.0.2 */
 {
     bson_buffer bb;
@@ -774,7 +774,7 @@ void CFDB_SaveVariables(mongo_connection *conn, char *keyhash, Item *data)
 
 /*****************************************************************************/
 
-void CFDB_SaveVariables2(mongo_connection *conn, char *keyhash, Item *data)
+void CFDB_SaveVariables2(EnterpriseDB *conn, char *keyhash, Item *data)
 {
     bson_buffer bb;
     bson_buffer *setObj, *arr;
@@ -857,7 +857,7 @@ void CFDB_SaveVariables2(mongo_connection *conn, char *keyhash, Item *data)
 
 /*****************************************************************************/
 
-void CFDB_SaveTotalCompliance(mongo_connection *conn, char *keyhash, Item *data)
+void CFDB_SaveTotalCompliance(EnterpriseDB *conn, char *keyhash, Item *data)
 {
     bson_buffer bb;
     bson_buffer *setObj;
@@ -935,7 +935,7 @@ static void CreateUniquePromiseLogDBKey(char *handle,char *cause, char *buffer, 
 }
 
 /*****************************************************************************/
-void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, PromiseLogState state, Item *data)
+void CFDB_SavePromiseLog(EnterpriseDB *conn, char *keyhash, PromiseLogState state, Item *data)
 {
     char *collName;
 
@@ -1048,7 +1048,7 @@ void CFDB_SavePromiseLog(mongo_connection *conn, char *keyhash, PromiseLogState 
 
 /*****************************************************************************/
 
-void CFDB_SaveLastSeen(mongo_connection *conn, char *keyhash, Item *data)
+void CFDB_SaveLastSeen(EnterpriseDB *conn, char *keyhash, Item *data)
 {
     bson_buffer bb;
     bson_buffer *setObj, *sub;
@@ -1098,7 +1098,7 @@ void CFDB_SaveLastSeen(mongo_connection *conn, char *keyhash, Item *data)
 
 /*****************************************************************************/
 
-void CFDB_SaveMeter(mongo_connection *conn, char *keyhash, Item *data)
+void CFDB_SaveMeter(EnterpriseDB *conn, char *keyhash, Item *data)
 {
     bson_buffer bb;
     bson_buffer *setObj;
@@ -1142,7 +1142,7 @@ void CFDB_SaveMeter(mongo_connection *conn, char *keyhash, Item *data)
 /*****************************************************************************/
 
 /* HostRankMethod can be passed as miltiple option merge opt|opt|opt */
-void CFDB_SaveScore(mongo_connection *conn, char *keyhash, Item *data, HostRankMethod method)
+void CFDB_SaveScore(EnterpriseDB *conn, char *keyhash, Item *data, HostRankMethod method)
 {
     bson_buffer bb;
     bson_buffer *setObj;
@@ -1253,7 +1253,7 @@ void CFDB_SaveScore(mongo_connection *conn, char *keyhash, Item *data, HostRankM
 
 /*****************************************************************************/
 
-void CFDB_SaveSoftwareDates(mongo_connection *conn, char *keyhash, Item *data)
+void CFDB_SaveSoftwareDates(EnterpriseDB *conn, char *keyhash, Item *data)
 {
     bson_buffer bb;
     bson_buffer *setObj;
@@ -1295,7 +1295,7 @@ void CFDB_SaveSoftwareDates(mongo_connection *conn, char *keyhash, Item *data)
 
 /*****************************************************************************/
 
-void CFDB_SavePerformance(mongo_connection *conn, char *keyhash, Item *data)
+void CFDB_SavePerformance(EnterpriseDB *conn, char *keyhash, Item *data)
 {
     bson_buffer bb;
     bson_buffer *setObj;
@@ -1347,7 +1347,7 @@ void CFDB_SavePerformance(mongo_connection *conn, char *keyhash, Item *data)
 
 /*****************************************************************************/
 
-void CFDB_SaveSetUid(mongo_connection *conn, char *keyhash, Item *data)
+void CFDB_SaveSetUid(EnterpriseDB *conn, char *keyhash, Item *data)
 {
     bson_buffer bb;
     bson_buffer *keyArr, *set;
@@ -1391,7 +1391,7 @@ void CFDB_SaveSetUid(mongo_connection *conn, char *keyhash, Item *data)
 
 /*****************************************************************************/
 
-void CFDB_SavePromiseCompliance(mongo_connection *conn, char *keyhash, Item *data)
+void CFDB_SavePromiseCompliance(EnterpriseDB *conn, char *keyhash, Item *data)
 {
     bson_buffer bb;
     bson_buffer *setObj;
@@ -1474,7 +1474,7 @@ void CFDB_SavePromiseCompliance(mongo_connection *conn, char *keyhash, Item *dat
 
 /*****************************************************************************/
 
-void CFDB_SaveFileChanges(mongo_connection *conn, char *keyhash, Item *data)
+void CFDB_SaveFileChanges(EnterpriseDB *conn, char *keyhash, Item *data)
 {
     bson_buffer bb;
     bson_buffer *setObj;
@@ -1524,7 +1524,7 @@ void CFDB_SaveFileChanges(mongo_connection *conn, char *keyhash, Item *data)
 
 /*****************************************************************************/
 
-void CFDB_SaveFileDiffs(mongo_connection *conn, char *keyhash, Item *data)
+void CFDB_SaveFileDiffs(EnterpriseDB *conn, char *keyhash, Item *data)
 {
     bson_buffer bb;
     bson_buffer *setObj;
@@ -1584,7 +1584,7 @@ void CFDB_SaveFileDiffs(mongo_connection *conn, char *keyhash, Item *data)
 
 /*****************************************************************************/
 
-void CFDB_SaveBundles(mongo_connection *conn, char *keyhash, Item *data)
+void CFDB_SaveBundles(EnterpriseDB *conn, char *keyhash, Item *data)
 {
     bson_buffer bb;
     bson_buffer *setObj, *sub;
@@ -1638,7 +1638,7 @@ void CFDB_SaveBundles(mongo_connection *conn, char *keyhash, Item *data)
 
 /*****************************************************************************/
 
-void CFDB_SaveValueReport(mongo_connection *conn, char *keyhash, Item *data)
+void CFDB_SaveValueReport(EnterpriseDB *conn, char *keyhash, Item *data)
 {
     bson_buffer bb;
     bson_buffer *set;
@@ -1686,7 +1686,7 @@ void CFDB_SaveValueReport(mongo_connection *conn, char *keyhash, Item *data)
 
 /*****************************************************************************/
 
-void CFDB_SaveHostComplianceShift(mongo_connection *conn, const char *hostkey, int kept, int repaired,
+void CFDB_SaveHostComplianceShift(EnterpriseDB *conn, const char *hostkey, int kept, int repaired,
                                   int notkept, int num_samples, time_t shift_start)
 {
     bson_buffer bb;
@@ -1724,7 +1724,7 @@ void CFDB_SaveHostComplianceShift(mongo_connection *conn, const char *hostkey, i
 }
 
 // TODO: deprecation candidate
-void CFDB_SaveCachedTotalCompliance(mongo_connection *conn, char *policy, int slot, double kept, double repaired,
+void CFDB_SaveCachedTotalCompliance(EnterpriseDB *conn, char *policy, int slot, double kept, double repaired,
                                     double notkept, int count, time_t genTime)
 {
     bson_buffer bb;
@@ -1765,14 +1765,14 @@ void CFDB_SaveCachedTotalCompliance(mongo_connection *conn, char *policy, int sl
 
 /*****************************************************************************/
 
-void CFDB_SaveLastHostUpdate(mongo_connection *conn, char *hostKey)
+void CFDB_SaveLastHostUpdate(EnterpriseDB *conn, char *hostKey)
 {
     CFDB_SaveLastUpdate(conn, MONGO_DATABASE, cfr_keyhash, hostKey);
 }
 
 /*****************************************************************************/
 
-void CFDB_SaveLastUpdate(mongo_connection *conn, char *database, char *keyField, char *keyhash)
+void CFDB_SaveLastUpdate(EnterpriseDB *conn, char *database, char *keyField, char *keyhash)
 {
     bson_buffer bb;
     bson_buffer *setObj;
@@ -1800,7 +1800,7 @@ void CFDB_SaveLastUpdate(mongo_connection *conn, char *database, char *keyField,
 
 /*****************************************************************************/
 
-void CFDB_SaveLastHostUpdateSize(mongo_connection *conn, char *hostkey, int update_size)
+void CFDB_SaveLastHostUpdateSize(EnterpriseDB *conn, char *hostkey, int update_size)
 /*
  * NOTE: it may be more useful to record averages and store in vitals,
  *       we could then show trends and graphs too (instead of just last sample)
@@ -1830,7 +1830,7 @@ void CFDB_SaveLastHostUpdateSize(mongo_connection *conn, char *hostkey, int upda
 
 /*****************************************************************************/
 
-int CFDB_AddNote(mongo_connection *conn, char *keyhash, int reportType, char *nid,
+int CFDB_AddNote(EnterpriseDB *conn, char *keyhash, int reportType, char *nid,
                  char *reportData, char *username, long datetime, char *msg)
 {
     bson_buffer bb;
@@ -1945,7 +1945,7 @@ int CFDB_AddNote(mongo_connection *conn, char *keyhash, int reportType, char *ni
 /*****************************************************************************/
 
 // WTF: the only db_save function name that does not start with Save. necessary?
-int CFDB_MarkAsDeleted(mongo_connection *dbconn, char *keyHash)
+int CFDB_MarkAsDeleted(EnterpriseDB *dbconn, char *keyHash)
 {
     bson_buffer bb;
     bson_buffer *setObj;
@@ -1979,7 +1979,7 @@ int CFDB_MarkAsDeleted(mongo_connection *dbconn, char *keyHash)
 
 /*****************************************************************************/
 
-void CFDB_SaveExecutionStatus(mongo_connection *conn, char *keyhash, bool is_black)
+void CFDB_SaveExecutionStatus(EnterpriseDB *conn, char *keyhash, bool is_black)
 {
     bson_buffer bb;
     bson host_key;  // host description
@@ -2006,7 +2006,7 @@ void CFDB_SaveExecutionStatus(mongo_connection *conn, char *keyhash, bool is_bla
 
 /*****************************************************************************/
 
-void CFDB_SaveLastAgentExecution(mongo_connection *conn, char *keyhash, long last_agent_exec)
+void CFDB_SaveLastAgentExecution(EnterpriseDB *conn, char *keyhash, long last_agent_exec)
 {
     bson_buffer bb;
     bson host_key;  // host description
@@ -2034,7 +2034,7 @@ void CFDB_SaveLastAgentExecution(mongo_connection *conn, char *keyhash, long las
 
 /*****************************************************************************/
 
-void CFDB_SaveDeltaAgentExecution(mongo_connection *conn, char *keyhash, long delta_schedule)
+void CFDB_SaveDeltaAgentExecution(EnterpriseDB *conn, char *keyhash, long delta_schedule)
 {
     bson_buffer bb;
     bson host_key;  // host description

@@ -17,7 +17,7 @@
 
 #include "db_query.h"
 
-int Nova_ReadHistogram2(mongo_connection *conn, DataView *cfv, char *hostkey, char *monId)
+int Nova_ReadHistogram2(EnterpriseDB *conn, DataView *cfv, char *hostkey, char *monId)
 {
     double ry;
     int i, have_data = false;

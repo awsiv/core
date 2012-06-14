@@ -20,7 +20,7 @@ int Nova_BenchmarkReportStorage(char *reportFilePath, int iterationsToRun)
  *       functions.
  **/
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {

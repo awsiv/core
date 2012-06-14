@@ -38,16 +38,16 @@ typedef enum
 static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles);
 static char *StringAppendRealloc2(char *start, char *append1, char *append2);
 static bool RoleExists(char *name);
-static void DeAssociateUsersFromRole(mongo_connection *conn, char *roleName);
-static Item *CFDB_GetRolesForUser(mongo_connection *conn, char *userName);
+static void DeAssociateUsersFromRole(EnterpriseDB *conn, char *roleName);
+static Item *CFDB_GetRolesForUser(EnterpriseDB *conn, char *userName);
 static HubQuery *CFDB_GetRolesByMultipleNames(Item *names);
 static HubQuery *CFDB_GetRoles(bson *query);
-static const char *GetUsersCollection(mongo_connection *conn);
-static AuthenticationMode GetAuthenticationMode(mongo_connection *conn);
-static bool IsRBACOn(mongo_connection *conn);
+static const char *GetUsersCollection(EnterpriseDB *conn);
+static AuthenticationMode GetAuthenticationMode(EnterpriseDB *conn);
+static bool IsRBACOn(EnterpriseDB *conn);
 static HubQuery *CFDB_GetAllRoles(void);
 static HubQuery *CFDB_GetRoleByName(char *name);
-static cfapi_errid UserIsRoleAdmin(mongo_connection *conn, char *userName);
+static cfapi_errid UserIsRoleAdmin(EnterpriseDB *conn, char *userName);
 
 /*****************************************************************************/
 
@@ -90,7 +90,7 @@ static bool VerifyPasswordIonAuth(const char *password, size_t password_len, con
 
 #ifdef HAVE_LIBLDAP
 
-static cfapi_errid LDAPAuthenticatePlain(mongo_connection *conn,
+static cfapi_errid LDAPAuthenticatePlain(EnterpriseDB *conn,
                                          const char *ldap_url,
                                          bool start_tls,
                                          const char *username,
@@ -142,7 +142,7 @@ static cfapi_errid LDAPAuthenticatePlain(mongo_connection *conn,
     return result;
 }
 
-static cfapi_errid LDAPAuthenticateAD(mongo_connection *conn,
+static cfapi_errid LDAPAuthenticateAD(EnterpriseDB *conn,
                                       const char *ldap_url,
                                       bool start_tls,
                                       const char *username,
@@ -180,7 +180,7 @@ static cfapi_errid LDAPAuthenticateAD(mongo_connection *conn,
     }
 }
 
-static cfapi_errid LDAPAuthenticate(mongo_connection *conn, const char *username, const char *password, size_t password_len,
+static cfapi_errid LDAPAuthenticate(EnterpriseDB *conn, const char *username, const char *password, size_t password_len,
                                     bool active_directory)
 {
     char encryption[1024] = { 0 };
@@ -222,7 +222,7 @@ static cfapi_errid LDAPAuthenticate(mongo_connection *conn, const char *username
     }
 }
 #else
-static cfapi_errid LDAPAuthenticate(mongo_connection *conn, const char *username, const char *password, size_t password_len,
+static cfapi_errid LDAPAuthenticate(EnterpriseDB *conn, const char *username, const char *password, size_t password_len,
                                     bool active_directory)
 {
     assert(false && "Tried to authenticate using LDAP on a non-LDAP build");
@@ -231,7 +231,7 @@ static cfapi_errid LDAPAuthenticate(mongo_connection *conn, const char *username
 
 #endif
 
-static cfapi_errid IonAuthenticate(mongo_connection *conn, const char *username, const char *password, size_t password_len)
+static cfapi_errid IonAuthenticate(EnterpriseDB *conn, const char *username, const char *password, size_t password_len)
 {
     bson_buffer buffer;
     bson_buffer_init(&buffer);
@@ -278,7 +278,7 @@ static cfapi_errid IonAuthenticate(mongo_connection *conn, const char *username,
 
 cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, size_t password_len)
 {
-    mongo_connection conn;
+    EnterpriseDB conn;
     if (!CFDB_Open(&conn))
     {
         return ERRID_DBCONNECT;
@@ -390,7 +390,7 @@ cfapi_errid CFDB_HasHostAccessFromUserRBAC(char *userName, char *hostKey)
 
     HostClassFilter *filter = HubQueryGetFirstRecord(hqFilter);
 
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     if (!CFDB_Open(&conn))
     {
@@ -425,7 +425,7 @@ HubQuery *CFDB_GetRBACForUser(char *userName)
  * the union of the RBAC permissions of these roles.
  */
 {
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     if (!CFDB_Open(&conn))
     {
@@ -549,7 +549,7 @@ static char *StringAppendRealloc2(char *start, char *append1, char *append2)
 cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *description,
                             char *includeClassRx, char *excludeClassRx, char *includeBundleRx, char *excludeBundleRx)
 {
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     if (!CFDB_Open(&conn))
     {
@@ -624,7 +624,7 @@ cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *descriptio
 
 cfapi_errid CFDB_DeleteRole(char *deletingUser, char *roleName, bool deassociateUsers)
 {
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     if (!CFDB_Open(&conn))
     {
@@ -690,7 +690,7 @@ cfapi_errid CFDB_UpdateRole(char *updatingUser, char *roleName, char *descriptio
 
 cfapi_errid CFDB_UserIsAdminWhenRBAC(char *username)
 {
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     if (!CFDB_Open(&conn))
     {
@@ -730,7 +730,7 @@ static bool RoleExists(char *name)
 
 /*****************************************************************************/
 
-static void DeAssociateUsersFromRole(mongo_connection *conn, char *roleName)
+static void DeAssociateUsersFromRole(EnterpriseDB *conn, char *roleName)
 {
     const char *usersCollection = GetUsersCollection(conn);
 
@@ -754,7 +754,7 @@ static void DeAssociateUsersFromRole(mongo_connection *conn, char *roleName)
 
 /*****************************************************************************/
 
-static const char *GetUsersCollection(mongo_connection *conn)
+static const char *GetUsersCollection(EnterpriseDB *conn)
 {
     switch (GetAuthenticationMode(conn))
     {
@@ -770,7 +770,7 @@ static const char *GetUsersCollection(mongo_connection *conn)
 
 /*****************************************************************************/
 
-static AuthenticationMode GetAuthenticationMode(mongo_connection *conn)
+static AuthenticationMode GetAuthenticationMode(EnterpriseDB *conn)
 {
     char result[32] = { 0 };
 
@@ -792,7 +792,7 @@ static AuthenticationMode GetAuthenticationMode(mongo_connection *conn)
 
 /*****************************************************************************/
 
-static bool IsRBACOn(mongo_connection *conn)
+static bool IsRBACOn(EnterpriseDB *conn)
 {
     char result[8] = { 0 };
 
@@ -808,7 +808,7 @@ static bool IsRBACOn(mongo_connection *conn)
 
 /*****************************************************************************/
 
-static Item *CFDB_GetRolesForUser(mongo_connection *conn, char *userName)
+static Item *CFDB_GetRolesForUser(EnterpriseDB *conn, char *userName)
 {
     bson_buffer bb;
 
@@ -847,7 +847,7 @@ static Item *CFDB_GetRolesForUser(mongo_connection *conn, char *userName)
 
 HubQuery *CFDB_GetAllRolesAuth(char *userName)
 {
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     if (!CFDB_Open(&conn))
     {
@@ -888,7 +888,7 @@ static HubQuery *CFDB_GetAllRoles(void)
 
 HubQuery *CFDB_GetRoleByNameAuth(char *userName, char *roleName)
 {
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     if (!CFDB_Open(&conn))
     {
@@ -973,7 +973,7 @@ HubQuery *CFDB_GetRoles(bson *query)
     Rlist *recordList = NULL;
     HubQuery *hq = NewHubQuery(NULL, recordList);
 
-    mongo_connection conn;
+    EnterpriseDB conn;
     bson_buffer bb;
     bson field;
 
@@ -1021,7 +1021,7 @@ HubQuery *CFDB_GetRoles(bson *query)
 
 /*****************************************************************************/
 
-static cfapi_errid UserIsRoleAdmin(mongo_connection *conn, char *userName)
+static cfapi_errid UserIsRoleAdmin(EnterpriseDB *conn, char *userName)
 {
 # define ROLE_NAME_ADMIN "admin"
 

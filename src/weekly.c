@@ -41,7 +41,7 @@ double Num(double x)
 
 /*******************************************************************/
 
-bool Nova_ReadWeekTimeSeries2(mongo_connection *conn, DataView *cfv, char *keyhash, char *vitalId)
+bool Nova_ReadWeekTimeSeries2(EnterpriseDB *conn, DataView *cfv, char *keyhash, char *vitalId)
 {
     double ry, rs, rq;
     int i, have_data = false;

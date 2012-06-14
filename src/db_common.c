@@ -24,7 +24,7 @@ static int MongoPort()
     }
 }
 
-int CFDB_Open(mongo_connection *conn)
+int CFDB_Open(EnterpriseDB *conn)
 {
     int result = 0;
 
@@ -53,7 +53,7 @@ int CFDB_Open(mongo_connection *conn)
 }
 
 
-int CFDB_Close(mongo_connection *conn)
+int CFDB_Close(EnterpriseDB *conn)
 {
     if (mongo_destroy(conn) != 0)
     {
@@ -65,7 +65,7 @@ int CFDB_Close(mongo_connection *conn)
 }
 
 
-bool MongoCheckForError(mongo_connection *conn, const char *operation, const char *extra, bool *checkUpdate)
+bool MongoCheckForError(EnterpriseDB *conn, const char *operation, const char *extra, bool *checkUpdate)
 /**
  * NOTE: This has performance penalties, and should not be widely used.
  *       It has the side-effect of guaranteeing that the previous operation finishes before returning.

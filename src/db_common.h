@@ -3,9 +3,9 @@
 
 #include <mongo.h>
 
-int CFDB_Open(mongo_connection *conn);
-int CFDB_Close(mongo_connection *conn);
+int CFDB_Open(EnterpriseDB *conn);
+int CFDB_Close(EnterpriseDB *conn);
 
-bool MongoCheckForError(mongo_connection *conn, const char *operation, const char *extra, bool *checkUpdate);
+bool MongoCheckForError(EnterpriseDB *conn, const char *operation, const char *extra, bool *checkUpdate);
 
 #endif

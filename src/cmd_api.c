@@ -31,7 +31,7 @@ int Nova2Txt_summary_report(char *hostkey, char *handle, char *status, bool rege
     HubPromiseCompliance *hp;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     time_t now = time(NULL), from = now, to = now - SECONDS_PER_WEEK;
     int code_blue = 0, tot_hosts, code_black = 0;
     double n, r, k, n_av, k_av, r_av, tot_promises;
@@ -195,7 +195,7 @@ int Nova2Txt_software_report(char *hostkey, char *name, char *value, char *arch,
     HubSoftware *hs;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -242,7 +242,7 @@ int Nova2Txt_vars_report(char *hostkey, char *scope, char *lval, char *rval, cha
     HubVariable *hv;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -325,7 +325,7 @@ int Nova2Txt_compliance_report(char *hostkey, char *version, time_t from, time_t
     HubTotalCompliance *ht;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -378,7 +378,7 @@ int Nova2Txt_compliance_promises(char *hostkey, char *handle, char *status, bool
     HubPromiseCompliance *hp;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -435,7 +435,7 @@ int Nova2Txt_lastseen_report(char *hostkey, char *lhash, char *lhost, char *ladd
     HubLastSeen *hl;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     char inout[CF_SMALLBUF];
 
 /* BEGIN query document */
@@ -499,7 +499,7 @@ int Nova2Txt_deadclient_report(char *hostkey, char *lhash, char *lhost, char *la
     HubLastSeen *hl;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     time_t then;
     time_t now = time(NULL);
 
@@ -567,7 +567,7 @@ int Nova2Txt_setuid_report(char *hostkey, char *file, bool regex, char *classreg
     HubSetUid *hS;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -616,7 +616,7 @@ int Nova2Txt_filechanges_report(char *hostkey, char *file, bool regex, time_t fr
     HubFileChanges *hC;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -660,7 +660,7 @@ int Nova2Txt_filediffs_report(char *hostkey, char *file, char *diffs, bool regex
     HubFileDiff *hd;
     HubQuery *hq;
     Rlist *rp;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {
@@ -723,7 +723,7 @@ int Nova2Txt_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int buf
     HubQuery *hq;
     Rlist *rp;
     int count1 = 0, count2 = 0, tmpsize1, tmpsize2;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     bson query;
     bson_buffer bb;
 

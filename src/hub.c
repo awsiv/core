@@ -900,7 +900,7 @@ static void Nova_CountMonitoredClasses(void)
     HubQuery *hq;
     Rlist *rp;
     Item *order_results = NULL, *ip;
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
 /* BEGIN query document */
 

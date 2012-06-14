@@ -2195,7 +2195,7 @@ void Nova_ZenossSummary(const char *docroot)
     MapName(name);
 
 #ifdef HAVE_LIBMONGOC
-    mongo_connection conn;
+    EnterpriseDB conn;
     if (!CFDB_Open(&conn))
     {
         return;
@@ -2486,13 +2486,13 @@ int Nova_ExportReports(char *reportName)
 
 #ifdef HAVE_LIBMONGOC
 
-static int Nova_ImportHostReports(mongo_connection *dbconnp, const char *filePath)
+static int Nova_ImportHostReports(EnterpriseDB *dbconnp, const char *filePath)
 /*
  * Import from text file to Mongo database.
  * NOTE: Should only be called on Nova hub.
  */
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     char header[CF_MAXVARSIZE];
     FILE *fin;
 
@@ -2526,7 +2526,7 @@ static int Nova_ImportHostReports(mongo_connection *dbconnp, const char *filePat
 
 /*********************************************************************/
 
-int Nova_ImportHostReportsFromStream(mongo_connection *dbconn, char *header, FILE *fin)
+int Nova_ImportHostReportsFromStream(EnterpriseDB *dbconn, char *header, FILE *fin)
 {
     char keyHash[CF_MAXVARSIZE] = { 0 }, ipAddr[CF_MAXVARSIZE] = { 0 }, hostName[CF_MAXVARSIZE] = { 0 };
     char buf[CF_BUFSIZE];
@@ -2694,7 +2694,7 @@ void Nova_ImportReports(const char *input_file)
 #ifdef HAVE_LIBMONGOC
     if (IsDefinedClass("am_policy_hub"))
     {
-        mongo_connection dbconn;
+        EnterpriseDB dbconn;
 
         if (!CFDB_Open(&dbconn))
         {

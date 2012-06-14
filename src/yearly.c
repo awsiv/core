@@ -17,7 +17,7 @@
 
 #include "db_query.h"
 
-int Nova_ReadYearTimeSeries(mongo_connection *conn, DataView *cfv, char *keyhash, char *monId)
+int Nova_ReadYearTimeSeries(EnterpriseDB *conn, DataView *cfv, char *keyhash, char *monId)
 {
     double ry, rq, rs;
     int i, have_data = false;

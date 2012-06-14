@@ -19,7 +19,7 @@
 #include <assert.h>
 
 static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *filter);
-static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFilter *hostClassFilter);
+static bool AppendHostKeys(EnterpriseDB *conn, bson_buffer *bb, HostClassFilter *hostClassFilter);
 static void GetOldClientVersions(Rlist **rp);
 
 Rlist *PrependRlistAlienUnlocked(Rlist **start, void *item)
@@ -35,7 +35,7 @@ Rlist *PrependRlistAlienUnlocked(Rlist **start, void *item)
 }
 
 /*****************************************************************************/
-bool CFDB_CollectionHasData(mongo_connection *conn, const char *fullCollectionName)
+bool CFDB_CollectionHasData(EnterpriseDB *conn, const char *fullCollectionName)
 {
     bson query;
     bson field;
@@ -56,7 +56,7 @@ bool CFDB_CollectionHasData(mongo_connection *conn, const char *fullCollectionNa
 /*****************************************************************************/
 int CFDB_GetValue(char *lval, char *rval, int size, char *db_name)
 {
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     // clients do not run mongo server -- will fail to connect
 
@@ -115,7 +115,7 @@ Item *CFDB_GetLastseenCache(void)
     bson query, field;
     bson_iterator it1, it2, it3;
     mongo_cursor *cursor;
-    mongo_connection conn;
+    EnterpriseDB conn;
     bson_buffer bb;
     char keyhash[CF_BUFSIZE] = { 0 }, ipAddr[CF_MAXVARSIZE] = { 0 };
     time_t t = time(NULL);
@@ -187,7 +187,7 @@ Item *CFDB_GetDeletedHosts(void)
     bson query, field;
     bson_iterator it1, it2;
     mongo_cursor *cursor;
-    mongo_connection conn;
+    EnterpriseDB conn;
     bson_buffer bb;
     Item *list = NULL;
 
@@ -230,7 +230,7 @@ Item *CFDB_GetDeletedHosts(void)
 
 /*****************************************************************************/
 
-bool CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *conn, char *db_name)
+bool CFDB_HandleGetValue(char *lval, char *rval, int size, EnterpriseDB *conn, char *db_name)
 {
     bson query;
     bson_iterator it1;
@@ -261,7 +261,7 @@ bool CFDB_HandleGetValue(char *lval, char *rval, int size, mongo_connection *con
 
 
 
-HubQuery *CFDB_QueryHosts(mongo_connection *conn, char *db, bson *query)
+HubQuery *CFDB_QueryHosts(EnterpriseDB *conn, char *db, bson *query)
 {
     bson_buffer bb;
     bson field;
@@ -313,7 +313,7 @@ HubQuery *CFDB_QueryHosts(mongo_connection *conn, char *db, bson *query)
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, char *ipRegex,
+HubQuery *CFDB_QueryHostsByAddress(EnterpriseDB *conn, char *hostNameRegex, char *ipRegex,
                                    HostClassFilter *hostClassFilter)
 {
     bson_buffer bb;
@@ -345,7 +345,7 @@ HubQuery *CFDB_QueryHostsByAddress(mongo_connection *conn, char *hostNameRegex, 
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryHostsByHostClassFilter(mongo_connection *conn, HostClassFilter *hostClassFilter)
+HubQuery *CFDB_QueryHostsByHostClassFilter(EnterpriseDB *conn, HostClassFilter *hostClassFilter)
 {
     bson_buffer bb;
     bson query;
@@ -364,7 +364,7 @@ HubQuery *CFDB_QueryHostsByHostClassFilter(mongo_connection *conn, HostClassFilt
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryHostByHostKey(mongo_connection *conn, char *hostKey)
+HubQuery *CFDB_QueryHostByHostKey(EnterpriseDB *conn, char *hostKey)
 {
     bson_buffer bb;
     bson query;
@@ -409,7 +409,7 @@ static const char *HostRankMethodToMongoCode(HostRankMethod method)
     }
 }
 
-HubQuery *CFDB_QueryColour(mongo_connection *conn, const HostRankMethod method, HostClassFilter *host_class_filter)
+HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method, HostClassFilter *host_class_filter)
 {
     unsigned long blue_horizon;
     if (!CFDB_GetBlueHostThreshold(&blue_horizon))
@@ -497,7 +497,7 @@ HubQuery *CFDB_QueryColour(mongo_connection *conn, const HostRankMethod method, 
     return NewHubQuery(host_list, NULL);
 }
 
-HubQuery *CFDB_QuerySoftware(mongo_connection *conn, char *keyHash, char *type, char *lname, char *lver, char *larch,
+HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char *lname, char *lver, char *larch,
                              bool regex, HostClassFilter *hostClassFilter, int sort)
 // NOTE: needs to return report from one host before next - not mixed (for Constellation)
 {
@@ -675,7 +675,7 @@ HubQuery *CFDB_QuerySoftware(mongo_connection *conn, char *keyHash, char *type, 
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass, bool regex, time_t from, time_t to,
+HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, char *keyHash, char *lclass, bool regex, time_t from, time_t to,
                             HostClassFilter *hostClassFilter, int sort)
 {
     bson_buffer bb;
@@ -821,7 +821,7 @@ HubQuery *CFDB_QueryClasses(mongo_connection *conn, char *keyHash, char *lclass,
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes)
+HubQuery *CFDB_QueryClassSum(EnterpriseDB *conn, char **classes)
 /**
  * classes is NULL or NULL-terminated array of strings
  *
@@ -939,7 +939,7 @@ HubQuery *CFDB_QueryClassSum(mongo_connection *conn, char **classes)
 }
 
 /*****************************************************************************/
-HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn, const char *keyHash, char *lversion, time_t from, time_t to, int lkept,
+HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash, char *lversion, time_t from, time_t to, int lkept,
                                     int lnotkept, int lrepaired, int sort, HostClassFilter *hostClassFilter)
 {
     bson_buffer bb;
@@ -1094,7 +1094,7 @@ HubQuery *CFDB_QueryTotalCompliance(mongo_connection *conn, const char *keyHash,
     return NewHubQuery(host_list, record_list);
 }
 
-Sequence *CFDB_QueryHostComplianceShifts(mongo_connection *conn, HostClassFilter *host_class_filter)
+Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *host_class_filter)
 {
     bson_buffer bb;
     bson_buffer_init(&bb);
@@ -1171,7 +1171,7 @@ Sequence *CFDB_QueryHostComplianceShifts(mongo_connection *conn, HostClassFilter
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscope, char *llval, char *lrval,
+HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, char *llval, char *lrval,
                               const char *ltype, bool regex, time_t from, time_t to, HostClassFilter *hostClassFilter)
 {
     bson_buffer bb;
@@ -1427,7 +1427,7 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
     return NewHubQuery(host_list, record_list);
 }
 
-HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, char *lhandle, PromiseState lstatus,
+HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *lhandle, PromiseState lstatus,
                                       bool regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter)
 // status = c (compliant), r (repaired) or n (not kept), x (any)
 {
@@ -1506,7 +1506,7 @@ HubQuery *CFDB_QueryPromiseCompliance(mongo_connection *conn, char *keyHash, cha
 }
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryWeightedPromiseCompliance(mongo_connection *conn, char *keyHash, char *lhandle, PromiseState lstatus,
+HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *lhandle, PromiseState lstatus,
                                       bool regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter, HostColourFilter *hostColourFilter)
 // status = c (compliant), r (repaired) or n (not kept), x (any)
 {
@@ -1668,7 +1668,7 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(mongo_connection *conn, char *keyH
 }
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash, char *lhost, char *laddr, time_t lago,
+HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, char *lhost, char *laddr, time_t lago,
                              bool regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter)
 {
     bson_buffer bb;
@@ -1859,7 +1859,7 @@ HubQuery *CFDB_QueryLastSeen(mongo_connection *conn, char *keyHash, char *lhash,
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryMeter(mongo_connection *conn, bson *query, char *db)
+HubQuery *CFDB_QueryMeter(EnterpriseDB *conn, bson *query, char *db)
 {
     bson_buffer bb;
     bson field;
@@ -1957,7 +1957,7 @@ HubQuery *CFDB_QueryMeter(mongo_connection *conn, bson *query, char *db)
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryPerformance(mongo_connection *conn, char *keyHash, char *lname, bool regex, int sort,
+HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname, bool regex, int sort,
                                 HostClassFilter *hostClassFilter)
 {
     bson_buffer bb;
@@ -2108,7 +2108,7 @@ HubQuery *CFDB_QueryPerformance(mongo_connection *conn, char *keyHash, char *lna
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QuerySetuid(mongo_connection *conn, char *keyHash, char *lname, bool regex,
+HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname, bool regex,
                            HostClassFilter *hostClassFilter)
 {
     bson_buffer bb;
@@ -2218,7 +2218,7 @@ HubQuery *CFDB_QuerySetuid(mongo_connection *conn, char *keyHash, char *lname, b
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lname, bool regex, time_t from, time_t to,
+HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname, bool regex, time_t from, time_t to,
                                 int sort, HostClassFilter *hostClassFilter)
 {
 /* BEGIN query document */
@@ -2339,7 +2339,7 @@ HubQuery *CFDB_QueryFileChanges(mongo_connection *conn, char *keyHash, char *lna
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname, char *ldiff, bool regex,
+HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname, char *ldiff, bool regex,
                              time_t from, time_t to, int sort, HostClassFilter *hostClassFilter)
 {
 /* BEGIN query document */
@@ -2460,7 +2460,7 @@ HubQuery *CFDB_QueryFileDiff(mongo_connection *conn, char *keyHash, char *lname,
 
 /*****************************************************************************/
 
-static int QueryInsertHostInfo(mongo_connection *conn, Rlist *host_list)
+static int QueryInsertHostInfo(EnterpriseDB *conn, Rlist *host_list)
 /**
  * Do a db lookup from keyhash to (hostname,ip) for all hosts in the list.
  **/
@@ -2526,7 +2526,7 @@ static int QueryInsertHostInfo(mongo_connection *conn, Rlist *host_list)
 }
 
 /*****************************************************************************/
-int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, PromiseLogState state,
+int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash, PromiseLogState state,
                                  const char *lhandle, bool regex, const char *lcause_rx, time_t from, time_t to, int sort,
                                  HostClassFilter *hostClassFilter, Rlist **host_list, Rlist **record_list)
 {
@@ -2661,7 +2661,7 @@ int CFDB_QueryPromiseLogFromMain(mongo_connection *conn, const char *keyHash, Pr
 }
 
 
-HubQuery *CFDB_QueryPromiseLogSummary(mongo_connection *conn, const char *hostkey, PromiseLogState state, const char *handle,
+HubQuery *CFDB_QueryPromiseLogSummary(EnterpriseDB *conn, const char *hostkey, PromiseLogState state, const char *handle,
                                       bool regex, const char *cause, time_t from, time_t to, bool sort, HostClassFilter *host_class_filter)
 {
     HubQuery *hq = CFDB_QueryPromiseLog(conn, hostkey, state, handle, regex, cause, from, to, false, host_class_filter, NULL);
@@ -2706,7 +2706,7 @@ HubQuery *CFDB_QueryPromiseLogSummary(mongo_connection *conn, const char *hostke
 }
 
 
-HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, PromiseLogState state,
+HubQuery *CFDB_QueryPromiseLog(EnterpriseDB *conn, const char *keyHash, PromiseLogState state,
                                const char *lhandle, bool regex, const char *lcause_rx, time_t from, time_t to, int sort,
                                HostClassFilter *hostClassFilter, int *total_results_out)
 {
@@ -2731,7 +2731,7 @@ HubQuery *CFDB_QueryPromiseLog(mongo_connection *conn, const char *keyHash, Prom
 }
 
 /*****************************************************************************/
-int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash, PromiseLogState state,
+int CFDB_QueryPromiseLogFromOldColl(EnterpriseDB *conn, const char *keyHash, PromiseLogState state,
                                     const char *lhandle, bool regex, const char *lcause_rx, time_t from, time_t to, int sort,
                                     HostClassFilter *hostClassFilter, Rlist **host_list, Rlist **record_list)
 {
@@ -2876,7 +2876,7 @@ int CFDB_QueryPromiseLogFromOldColl(mongo_connection *conn, const char *keyHash,
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryValueReport(mongo_connection *conn, char *keyHash, char *lday, char *lmonth, char *lyear, int sort,
+HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, char *lmonth, char *lyear, int sort,
                                 HostClassFilter *hostClassFilter)
 {
     bson_buffer bb;
@@ -3026,7 +3026,7 @@ HubQuery *CFDB_QueryValueReport(mongo_connection *conn, char *keyHash, char *lda
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryValueGraph(mongo_connection *conn, char *keyHash, char *lday, char *lmonth, char *lyear, int sort,
+HubQuery *CFDB_QueryValueGraph(EnterpriseDB *conn, char *keyHash, char *lday, char *lmonth, char *lyear, int sort,
                                char *classRegex)
 {
     bson_buffer bb;
@@ -3217,7 +3217,7 @@ static void SkipOldClientVersionsFilter(bson_buffer *bb)
 
 /*****************************************************************************/
 
-int CFDB_CountSkippedOldAgents(mongo_connection *conn, char *keyhash,
+int CFDB_CountSkippedOldAgents(EnterpriseDB *conn, char *keyhash,
                                HostClassFilter *host_class_filter)
 /* NOTE: BundleSeen report is not compatible with agent versions < 3.3.0
  * and they are ignored during report generation. This fucntion count this skipped
@@ -3258,7 +3258,7 @@ int CFDB_CountSkippedOldAgents(mongo_connection *conn, char *keyhash,
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lname, bool regex,
+HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, bool regex,
                                HostClassFilter *hostClassFilter, int sort)
 {
     unsigned long blue_horizon;
@@ -3345,7 +3345,7 @@ HubQuery *CFDB_QueryBundleSeen(mongo_connection *conn, char *keyHash, char *lnam
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryWeightedBundleSeen(mongo_connection *conn, char *keyHash, char *lname, bool regex,
+HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, bool regex,
                                HostClassFilter *hostClassFilter, HostColourFilter *hostColourFilter, int sort)
 {
     unsigned long blue_horizon;
@@ -3520,7 +3520,7 @@ HubQuery *CFDB_QueryWeightedBundleSeen(mongo_connection *conn, char *keyHash, ch
 
 /*****************************************************************************/
 
-Item *CFDB_QueryVitalIds(mongo_connection *conn, char *keyHash)
+Item *CFDB_QueryVitalIds(EnterpriseDB *conn, char *keyHash)
 /**
  * Return a list of mag probe ids, possibly restrict to one host.
  * Can be extended to query for only global probes, etc.
@@ -3552,7 +3552,7 @@ Item *CFDB_QueryVitalIds(mongo_connection *conn, char *keyHash)
 
 /*****************************************************************************/
 
-HubVital *CFDB_QueryVitalsMeta(mongo_connection *conn, char *keyHash)
+HubVital *CFDB_QueryVitalsMeta(EnterpriseDB *conn, char *keyHash)
 /**
  * Return a list of mag vital ids and meta-data, restricted to one host.
  */
@@ -3634,7 +3634,7 @@ static int Nova_MagViewOffset(int start_slot, int db_slot, int wrap)
     }
 }
 
-int CFDB_QueryMagView2(mongo_connection *conn, char *keyhash, char *monId, time_t start_time, double *qa, double *ea,
+int CFDB_QueryMagView2(EnterpriseDB *conn, char *keyhash, char *monId, time_t start_time, double *qa, double *ea,
                        double *da)
 {
     bson_buffer bb;
@@ -3748,7 +3748,7 @@ int CFDB_QueryMagView2(mongo_connection *conn, char *keyhash, char *monId, time_
 
 /*****************************************************************************/
 
-int CFDB_QueryMonView(mongo_connection *conn, char *keyhash, char *monId, enum monitord_rep rep_type, double *qa,
+int CFDB_QueryMonView(EnterpriseDB *conn, char *keyhash, char *monId, enum monitord_rep rep_type, double *qa,
                       double *ea, double *da)
 {
     bson_buffer bb;
@@ -3850,7 +3850,7 @@ int CFDB_QueryMonView(mongo_connection *conn, char *keyhash, char *monId, enum m
 
 /*****************************************************************************/
 
-int CFDB_CountHosts(mongo_connection *conn, HostClassFilter *host_class_filter, HostColourFilter *host_colour_filter)
+int CFDB_CountHosts(EnterpriseDB *conn, HostClassFilter *host_class_filter, HostColourFilter *host_colour_filter)
 {
     bson_buffer bb;
 
@@ -3872,7 +3872,7 @@ int CFDB_CountHosts(mongo_connection *conn, HostClassFilter *host_class_filter, 
 
 /*****************************************************************************/
 
-bool CFDB_HasMatchingHost(mongo_connection *conn, char *hostKey, HostClassFilter *hostClassFilter)
+bool CFDB_HasMatchingHost(EnterpriseDB *conn, char *hostKey, HostClassFilter *hostClassFilter)
 {
     assert(SafeStringLength(hostKey) > 0);
 
@@ -3898,7 +3898,7 @@ bool CFDB_HasMatchingHost(mongo_connection *conn, char *hostKey, HostClassFilter
 
 /*****************************************************************************/
 
-int CFDB_CountHostsGeneric(mongo_connection *conn, bson *query)
+int CFDB_CountHostsGeneric(EnterpriseDB *conn, bson *query)
 /**
  * Counts number of hosts matching the given query.
  **/
@@ -3908,7 +3908,7 @@ int CFDB_CountHostsGeneric(mongo_connection *conn, bson *query)
 
 /*****************************************************************************/
 
-int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int hostNameSz)
+int CFDB_QueryHostName(EnterpriseDB *conn, char *ipAddr, char *hostName, int hostNameSz)
 /*
  * Scan DB to try to find the hostname of the given IP.
  * Falls back to ip addres (parameter).
@@ -3970,7 +3970,7 @@ int CFDB_QueryHostName(mongo_connection *conn, char *ipAddr, char *hostName, int
 
 /*****************************************************************************/
 
-bool CFDB_QueryLastUpdate(mongo_connection *conn, char *db, char *dbkey, char *keyhash, time_t *date, int *size)
+bool CFDB_QueryLastUpdate(EnterpriseDB *conn, char *db, char *dbkey, char *keyhash, time_t *date, int *size)
 {
     bson_buffer b, bb;
     bson query, field;
@@ -4022,7 +4022,7 @@ bool CFDB_QueryLastUpdate(mongo_connection *conn, char *db, char *dbkey, char *k
 
  /*****************************************************************************/
 
-bool CFDB_QueryHistogram(mongo_connection *conn, char *keyhash, char *monId, double *histo)
+bool CFDB_QueryHistogram(EnterpriseDB *conn, char *keyhash, char *monId, double *histo)
 {
     bson_buffer bb;
     bson query, field;
@@ -4092,7 +4092,7 @@ bool CFDB_QueryHistogram(mongo_connection *conn, char *keyhash, char *monId, dou
 /* Promises collections                                                      */
 /*****************************************************************************/
 
-int CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, char *attrVal, int attrValSz)
+int CFDB_QueryPromiseAttr(EnterpriseDB *conn, char *handle, char *attrKey, char *attrVal, int attrValSz)
 /*
  * For the promise with the given handle, returns the given field
  * (e.g. comment, promisee, etc.)
@@ -4140,7 +4140,7 @@ int CFDB_QueryPromiseAttr(mongo_connection *conn, char *handle, char *attrKey, c
 
 /*****************************************************************************/
 
-Item *CFDB_QueryExpandedPromiseAttr(mongo_connection *conn, char *handle, char *attrKey)
+Item *CFDB_QueryExpandedPromiseAttr(EnterpriseDB *conn, char *handle, char *attrKey)
 /*
  * For the promise with the given (expanded) handle, returns a list of
  * the given field (e.g. cfp_comment_exp, cfp_promisee_exp, etc.) expanded.  
@@ -4203,7 +4203,7 @@ Item *CFDB_QueryExpandedPromiseAttr(mongo_connection *conn, char *handle, char *
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryHandlesForBundlesWithComments(mongo_connection *conn, char *bType, char *bName)
+HubQuery *CFDB_QueryHandlesForBundlesWithComments(EnterpriseDB *conn, char *bType, char *bName)
 {
     bson_buffer bb;
     bson_iterator it1;
@@ -4267,7 +4267,7 @@ HubQuery *CFDB_QueryHandlesForBundlesWithComments(mongo_connection *conn, char *
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char *promiserType, char *bType, char *bName,
+HubQuery *CFDB_QueryPromiseHandles(EnterpriseDB *conn, char *promiser, char *promiserType, char *bType, char *bName,
                                    bool regex, bool filter)
 /*
  * Returns a set of handles of promises matching given promiser regex
@@ -4374,7 +4374,7 @@ HubQuery *CFDB_QueryPromiseHandles(mongo_connection *conn, char *promiser, char 
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryPromises(mongo_connection *conn, PromiseFilter *filter)
+HubQuery *CFDB_QueryPromises(EnterpriseDB *conn, PromiseFilter *filter)
 /*
  * Using PromiseFilter, can over time replace the other promise query functions.
  * FIXME: If not found by handle: may want to do second lookup in expanded promise db
@@ -4450,7 +4450,7 @@ HubQuery *CFDB_QueryPromises(mongo_connection *conn, PromiseFilter *filter)
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryPromiseBundles(mongo_connection *conn, PromiseFilter *filter)
+HubQuery *CFDB_QueryPromiseBundles(EnterpriseDB *conn, PromiseFilter *filter)
 /**
  * Differs from CFDB_QueryPromises() in that it only returns distinct bundles.
  */
@@ -4506,7 +4506,7 @@ HubQuery *CFDB_QueryPromiseBundles(mongo_connection *conn, PromiseFilter *filter
 
 /*****************************************************************************/
 
-Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, PromiseFilter *filter)
+Rlist *CFDB_QueryBundleClasses(EnterpriseDB *conn, PromiseFilter *filter)
 /*
  * Returns the set of classes used in the given bundle.
  * MEMORY NOTE: Caller must free returned value with DeleteRlist()
@@ -4557,7 +4557,7 @@ Rlist *CFDB_QueryBundleClasses(mongo_connection *conn, PromiseFilter *filter)
 
 /*****************************************************************************/
 
-Item *CFDB_QueryBundlesUsing(mongo_connection *conn, PromiseFilter *promiseFilter, char *bNameReferenced)
+Item *CFDB_QueryBundlesUsing(EnterpriseDB *conn, PromiseFilter *promiseFilter, char *bNameReferenced)
 /*
  * Returns the set of bundle names using the given bundle though
  * methods:usebundle, NULL if none.
@@ -4610,7 +4610,7 @@ Item *CFDB_QueryBundlesUsing(mongo_connection *conn, PromiseFilter *promiseFilte
 
 /*****************************************************************************/
 
-int CFDB_QueryBundleCount(mongo_connection *conn)
+int CFDB_QueryBundleCount(EnterpriseDB *conn)
 /**
  * Returns the number of bundles (may appear multiple times in the
  * promises DB).
@@ -4658,7 +4658,7 @@ int CFDB_QueryBundleCount(mongo_connection *conn)
 
 /*****************************************************************************/
 
-int CFDB_QueryPromiseCount(mongo_connection *conn)
+int CFDB_QueryPromiseCount(EnterpriseDB *conn)
 {
     int promiseCount = 0;
 
@@ -4669,7 +4669,7 @@ int CFDB_QueryPromiseCount(mongo_connection *conn)
 
 /*****************************************************************************/
 
-HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name)
+HubBody *CFDB_QueryBody(EnterpriseDB *conn, char *type, char *name)
 /*
  * Returns all attribs of one body by its type and name.
  * MEMORY NOTE: Caller must use DeleteHubBody() on the reutrned val (!=NULL)
@@ -4759,7 +4759,7 @@ HubBody *CFDB_QueryBody(mongo_connection *conn, char *type, char *name)
 
 /*****************************************************************************/
 
-Item *CFDB_QueryAllBodies(mongo_connection *conn, char *bTypeRegex, char *bNameRegex)
+Item *CFDB_QueryAllBodies(EnterpriseDB *conn, char *bTypeRegex, char *bNameRegex)
 /*
  * Returns all attribs of one body by its type and name.
  * MEMORY NOTE: Caller must use DeleteHubBody() on the reutrned val (!=NULL)
@@ -4832,7 +4832,7 @@ Item *CFDB_QueryAllBodies(mongo_connection *conn, char *bTypeRegex, char *bNameR
 /*                     Content-Driven Policy queries                         */
 /*****************************************************************************/
 
-Item *CFDB_QueryCdpAcls(mongo_connection *conn, char *sep)
+Item *CFDB_QueryCdpAcls(EnterpriseDB *conn, char *sep)
 /*
  * Returns all CDP ACLs from expanded policy as
  * "handle sep path sep aces sep owner sep action sep ifvarclass".
@@ -4930,7 +4930,7 @@ Item *CFDB_QueryCdpAcls(mongo_connection *conn, char *sep)
 
 /*****************************************************************************/
 
-Item *CFDB_QueryCdpCommands(mongo_connection *conn, char *sep)
+Item *CFDB_QueryCdpCommands(EnterpriseDB *conn, char *sep)
 /*
  * Returns all CDP commands from expanded policy as
  * "handle sep command sep failclass sep action sep ifvarclass"
@@ -5022,7 +5022,7 @@ Item *CFDB_QueryCdpCommands(mongo_connection *conn, char *sep)
 
 /*****************************************************************************/
 
-Item *CFDB_QueryCdpPromiser(mongo_connection *conn, char *sep, char *bundleName, char *promiseType)
+Item *CFDB_QueryCdpPromiser(EnterpriseDB *conn, char *sep, char *bundleName, char *promiseType)
 /*
  * Returns all CDP promisers from expanded policy as
  * "handle sep promiser sep ifvarclass"
@@ -5102,7 +5102,7 @@ Item *CFDB_QueryCdpPromiser(mongo_connection *conn, char *sep, char *bundleName,
 
 /*****************************************************************************/
 
-int CFDB_QueryLastFileChange(mongo_connection *conn, char *keyHash, char *reportType, char *fileName, char *outBuf,
+int CFDB_QueryLastFileChange(EnterpriseDB *conn, char *keyHash, char *reportType, char *fileName, char *outBuf,
                              int outBufSz)
 /*
  * Queries a file change / file diff report for a given host and file,
@@ -5199,7 +5199,7 @@ int CFDB_QueryLastFileChange(mongo_connection *conn, char *keyHash, char *report
 
 /*****************************************************************************/
 
-Item *CFDB_QueryCdpRegistry(mongo_connection *conn, char *sep)
+Item *CFDB_QueryCdpRegistry(EnterpriseDB *conn, char *sep)
 /*
  * Returns all CDP registry from expanded policy as
  * "handle sep key sep value sep action sep ifvarclass"
@@ -5292,7 +5292,7 @@ Item *CFDB_QueryCdpRegistry(mongo_connection *conn, char *sep)
 
 /*****************************************************************************/
 
-Item *CFDB_QueryCdpServices(mongo_connection *conn, char *sep)
+Item *CFDB_QueryCdpServices(EnterpriseDB *conn, char *sep)
 /*
  * Returns all CDP Services from expanded policy as
  * "handle sep servicename sep servicepolicy sep action sep ifvarclass"
@@ -5384,7 +5384,7 @@ Item *CFDB_QueryCdpServices(mongo_connection *conn, char *sep)
 
 /*****************************************************************************/
 
-Item *CFDB_QueryCdpCompliance(mongo_connection *conn, char *handle)
+Item *CFDB_QueryCdpCompliance(EnterpriseDB *conn, char *handle)
 /*
  * Returns all CDP Compliance host entries as
  * "hostkeyhash;host;status;time_t"
@@ -5486,7 +5486,7 @@ Item *CFDB_QueryCdpCompliance(mongo_connection *conn, char *handle)
 /* Level                                                                     */
 /*****************************************************************************/
 
-static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFilter *hostClassFilter)
+static bool AppendHostKeys(EnterpriseDB *conn, bson_buffer *bb, HostClassFilter *hostClassFilter)
 /**
  * Appends to bb the keyhash of hosts matching the class filter.
  * Useful for "joins".
@@ -5560,7 +5560,7 @@ static bool AppendHostKeys(mongo_connection *conn, bson_buffer *bb, HostClassFil
 
 
 
-HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *policy, time_t minGenTime)
+HubQuery *CFDB_QueryCachedTotalCompliance(EnterpriseDB *conn, char *policy, time_t minGenTime)
 {
     bson_buffer bb;
     bson_iterator it1, it2, it3;
@@ -5655,7 +5655,7 @@ HubQuery *CFDB_QueryCachedTotalCompliance(mongo_connection *conn, char *policy, 
 
 /*****************************************************************************/
 
-Rlist *CFDB_QueryNotes(mongo_connection *conn, char *keyhash, char *nid, Item *data)
+Rlist *CFDB_QueryNotes(EnterpriseDB *conn, char *keyhash, char *nid, Item *data)
 {
     bson_buffer bb;
     bson query, field;
@@ -5857,7 +5857,7 @@ Rlist *CFDB_QueryNotes(mongo_connection *conn, char *keyhash, char *nid, Item *d
 
 /*****************************************************************************/
 
-Rlist *CFDB_QueryNoteId(mongo_connection *conn, bson *query)
+Rlist *CFDB_QueryNoteId(EnterpriseDB *conn, bson *query)
 {
     bson_buffer bb;
     bson field;
@@ -5920,7 +5920,7 @@ Rlist *CFDB_QueryNoteId(mongo_connection *conn, bson *query)
 
 /*****************************************************************************/
 
-Item *CFDB_QueryDistinctStr(mongo_connection *conn, char *database, char *collection, char *dKey, char *qKey,
+Item *CFDB_QueryDistinctStr(EnterpriseDB *conn, char *database, char *collection, char *dKey, char *qKey,
                             char *qVal)
 /**
  * Queries for distinct occurences of dKey in a query matching qKey = qVal
@@ -5943,7 +5943,7 @@ Item *CFDB_QueryDistinctStr(mongo_connection *conn, char *database, char *collec
 
 /******************************************************************/
 
-Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collection, char *dKey, bson *queryBson)
+Item *CFDB_QueryDistinct(EnterpriseDB *conn, char *database, char *collection, char *dKey, bson *queryBson)
 {
     bson_buffer bb;
     bson cmd, result;
@@ -6005,7 +6005,7 @@ Item *CFDB_QueryDistinct(mongo_connection *conn, char *database, char *collectio
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryClassesDistinctSorted(mongo_connection *conn, const char *class_rx,
+HubQuery *CFDB_QueryClassesDistinctSorted(EnterpriseDB *conn, const char *class_rx,
                                           HostClassFilter *hostClassFilter, PageInfo *page)
 {
     bson_buffer bb;
@@ -6046,7 +6046,7 @@ int CFDB_QueryIsMaster(void)
     bson cmd, result;
     bson_iterator it1;
     int ret = false;
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     if (!CFDB_Open(&conn))
     {
@@ -6095,7 +6095,7 @@ int CFDB_QueryMasterIP(char *buffer, int bufsize)
     bson cmd, result;
     bson_iterator it1;
     int ret = false;
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     if (!CFDB_Open(&conn))
     {
@@ -6130,7 +6130,7 @@ int CFDB_QueryMasterIP(char *buffer, int bufsize)
 
 /*************************************************/
 
-int CFDB_QueryReplStatus(mongo_connection *conn, char *buffer, int bufsize)
+int CFDB_QueryReplStatus(EnterpriseDB *conn, char *buffer, int bufsize)
 {
     bson_buffer bb;
     bson cmd, result;
@@ -6288,7 +6288,7 @@ static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *fil
 
 /*****************************************************************************/
 
-Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const char *ip, time_t from, time_t to,
+Rlist *CFDB_QueryHostKeys(EnterpriseDB *conn, const char *hostname, const char *ip, time_t from, time_t to,
                           HostClassFilter *hostClassFilter)
 {
     bson_buffer buffer;
@@ -6344,7 +6344,7 @@ Rlist *CFDB_QueryHostKeys(mongo_connection *conn, const char *hostname, const ch
 
 /*****************************************************************************/
 
-HubHost *CFDB_GetHostByKey(mongo_connection *conn, const char *hostkey)
+HubHost *CFDB_GetHostByKey(EnterpriseDB *conn, const char *hostkey)
 {
     bson_buffer buffer;
     bson query, field;
@@ -6390,7 +6390,7 @@ HubHost *CFDB_GetHostByKey(mongo_connection *conn, const char *hostkey)
 
 /* for blue host returned score is the score from last reachable recivied report */
 /* returns unsorted data */
-Item *CFDB_GetHostByColour(mongo_connection *conn, HostClassFilter *host_class_filter,
+Item *CFDB_GetHostByColour(EnterpriseDB *conn, HostClassFilter *host_class_filter,
                            HostColourFilter *host_colour_filter)
 {
     const HostRankMethod method = host_colour_filter ? HOST_RANK_METHOD_COMPLIANCE : host_colour_filter->method;
@@ -6464,7 +6464,7 @@ Item *CFDB_GetHostByColour(mongo_connection *conn, HostClassFilter *host_class_f
 
 /*****************************************************************************/
 
-long CFDB_GetLastAgentExecution(mongo_connection *conn, const char *hostkey)
+long CFDB_GetLastAgentExecution(EnterpriseDB *conn, const char *hostkey)
 {
     long agent_last_exec = 0;
     bson_buffer buffer;
@@ -6496,7 +6496,7 @@ long CFDB_GetLastAgentExecution(mongo_connection *conn, const char *hostkey)
 
 /*****************************************************************************/
 
-long CFDB_GetDeltaAgentExecution(mongo_connection *conn, const char *hostkey)
+long CFDB_GetDeltaAgentExecution(EnterpriseDB *conn, const char *hostkey)
 {
     long delta = 0;
     bson_buffer buffer;
@@ -6540,7 +6540,7 @@ bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour 
     }
     time_t now = time(NULL);
 
-    mongo_connection conn;
+    EnterpriseDB conn;
     if (!CFDB_Open(&conn))
     {
         return false;

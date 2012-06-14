@@ -14,12 +14,12 @@
 #include "db_save.h"
 
 
-static void Nova_CreateHostID(mongo_connection *dbconnp, char *hostID, char *ipaddr);
-static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer);
+static void Nova_CreateHostID(EnterpriseDB *dbconnp, char *hostID, char *ipaddr);
+static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer);
 
 void Nova_SequentialScan(Item *masterlist)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
     Item *ip;
 
     if (!CFDB_Open(&dbconn))
@@ -35,7 +35,7 @@ void Nova_SequentialScan(Item *masterlist)
     CFDB_Close(&dbconn);
 }
 
-static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer)
+static int Nova_HailPeer(EnterpriseDB *dbconn, char *hostID, char *peer)
 {
 #define MINUTES_PER_HOUR 60
 
@@ -132,7 +132,7 @@ static int Nova_HailPeer(mongo_connection *dbconn, char *hostID, char *peer)
 
 /* Make sure an entry for the given keyhash,ip exists */
 
-static void Nova_CreateHostID(mongo_connection *dbconn, char *hostID, char *ipaddr)
+static void Nova_CreateHostID(EnterpriseDB *dbconn, char *hostID, char *ipaddr)
 {
     CFDB_SaveHostID(dbconn, MONGO_DATABASE, cfr_keyhash, hostID, ipaddr, NULL);
     CFDB_SaveHostID(dbconn, MONGO_ARCHIVE, cfr_keyhash, hostID, ipaddr, NULL);

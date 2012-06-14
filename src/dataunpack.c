@@ -20,7 +20,7 @@
 #include "sysinfo.h"
 #include "db_save.h"
 
-void Nova_UnPackPerformance(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackPerformance(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     time_t t;
@@ -45,7 +45,7 @@ void Nova_UnPackPerformance(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackClasses(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackClasses(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char name[CF_MAXVARSIZE];
@@ -69,7 +69,7 @@ void Nova_UnPackClasses(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackSetuid(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackSetuid(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
 
@@ -88,7 +88,7 @@ void Nova_UnPackSetuid(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackFileChanges(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackFileChanges(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char name[CF_MAXVARSIZE];
@@ -113,7 +113,7 @@ void Nova_UnPackFileChanges(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackDiffs(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackDiffs(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char name[CF_MAXVARSIZE], change[CF_BUFSIZE];
@@ -147,7 +147,7 @@ void Nova_UnPackDiffs(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorWeek(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackMonitorWeek(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     int observable, slot;
@@ -186,7 +186,7 @@ void Nova_UnPackMonitorWeek(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorMag(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackMonitorMag(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     int observable, slot;
@@ -220,7 +220,7 @@ void Nova_UnPackMonitorMag(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorYear(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackMonitorYear(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     int observable, slot = 0;
@@ -254,7 +254,7 @@ void Nova_UnPackMonitorYear(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorHist(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackMonitorHist(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
 
@@ -276,7 +276,7 @@ void Nova_UnPackMonitorHist(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorHg(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackMonitorHg(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
 
@@ -295,7 +295,7 @@ void Nova_UnPackMonitorHg(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorMg(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackMonitorMg(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
 
@@ -314,7 +314,7 @@ void Nova_UnPackMonitorMg(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorWk(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackMonitorWk(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
 
@@ -334,7 +334,7 @@ void Nova_UnPackMonitorWk(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackMonitorYr(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackMonitorYr(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
 
@@ -353,7 +353,7 @@ void Nova_UnPackMonitorYr(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackCompliance(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackCompliance(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     time_t then;
@@ -392,7 +392,7 @@ void Nova_UnPackCompliance(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackSoftware(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackSoftware(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char name[CF_MAXVARSIZE], version[CF_MAXVARSIZE], arch;
@@ -416,7 +416,7 @@ void Nova_UnPackSoftware(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackAvailPatches(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackAvailPatches(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char arch, name[CF_MAXVARSIZE], version[CF_MAXVARSIZE];
@@ -440,7 +440,7 @@ void Nova_UnPackAvailPatches(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackPatchStatus(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackPatchStatus(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char arch, name[CF_MAXVARSIZE], version[CF_MAXVARSIZE];
@@ -464,7 +464,7 @@ void Nova_UnPackPatchStatus(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPack_promise_output_common(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPack_promise_output_common(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
 
@@ -478,7 +478,7 @@ void Nova_UnPack_promise_output_common(mongo_connection *dbconn, char *id, Item 
 
 /*****************************************************************************/
 
-void Nova_UnPackValueReport(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackValueReport(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     double kept, notkept, repaired;
@@ -501,7 +501,7 @@ void Nova_UnPackValueReport(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackVariables(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackVariables(EnterpriseDB *dbconn, char *id, Item *data)
 /* Should be deprecated some time - was replaced after Nova 2.0.4 */
 {
     Item *ip;
@@ -536,7 +536,7 @@ void Nova_UnPackVariables(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackVariables2(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackVariables2(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char type[CF_SMALLBUF], name[CF_MAXVARSIZE], value[CF_BUFSIZE], scope[CF_MAXVARSIZE];
@@ -568,7 +568,7 @@ void Nova_UnPackVariables2(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackLastSeen(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackLastSeen(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char inout, asserted[CF_MAXVARSIZE], dns[CF_MAXVARSIZE], hash[CF_MAXVARSIZE];
@@ -601,7 +601,7 @@ void Nova_UnPackLastSeen(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackTotalCompliance(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackTotalCompliance(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char version[CF_SMALLBUF];
@@ -645,7 +645,7 @@ void Nova_UnPackTotalCompliance(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackRepairLog(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackRepairLog(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char handle[CF_MAXVARSIZE];
@@ -670,7 +670,7 @@ void Nova_UnPackRepairLog(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackNotKeptLog(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackNotKeptLog(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char handle[CF_MAXVARSIZE];
@@ -695,7 +695,7 @@ void Nova_UnPackNotKeptLog(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackMeter(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackMeter(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char type;
@@ -742,7 +742,7 @@ void Nova_UnPackMeter(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackSoftwareDates(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackSoftwareDates(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char type;
@@ -771,7 +771,7 @@ void Nova_UnPackSoftwareDates(mongo_connection *dbconn, char *id, Item *data)
 
 /*****************************************************************************/
 
-void Nova_UnPackBundles(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackBundles(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     char bundle[CF_SMALLBUF];
@@ -857,7 +857,7 @@ char *Nova_LongArch(char *arch)
 
 /*****************************************************************************/
 
-void Nova_UnPackExecutionStatus(mongo_connection *dbconn, char *id, Item *data)
+void Nova_UnPackExecutionStatus(EnterpriseDB *dbconn, char *id, Item *data)
 {
     CfOut(cf_verbose, "", " -> Execution status...........................");
 

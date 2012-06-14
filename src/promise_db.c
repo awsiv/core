@@ -13,7 +13,7 @@
 #include "files_names.h"
 #include "db_common.h"
 
-static void CFDB_SaveBody(mongo_connection *dbconn, Body *body);
+static void CFDB_SaveBody(EnterpriseDB *dbconn, Body *body);
 
 /*****************************************************************************/
 
@@ -25,7 +25,7 @@ void CFDB_SaveExpandedPromise(Promise *pp)
     char jStr[32];
     const char *sp;
     char con[CF_MAXVARSIZE];
-    mongo_connection dbconn = { 0 };
+    EnterpriseDB dbconn = { 0 };
     bson_buffer bbuf, *cstr;
     bson b;
     int j;
@@ -131,7 +131,7 @@ void CFDB_SaveUnExpandedPromises(Bundle *bundles, Body *bodies)
     SubType *st;
     Promise *pp;
     Constraint *cp;
-    mongo_connection dbconn = { 0 };
+    EnterpriseDB dbconn = { 0 };
     bson_buffer bbuf;
     bson_buffer *args, *cstr;
     bson b;
@@ -251,7 +251,7 @@ void CFDB_SaveUnExpandedPromises(Bundle *bundles, Body *bodies)
 
 /*****************************************************************************/
 
-static void CFDB_SaveBody(mongo_connection *dbconn, Body *body)
+static void CFDB_SaveBody(EnterpriseDB *dbconn, Body *body)
 {
     Rlist *rp;
     Constraint *cp;

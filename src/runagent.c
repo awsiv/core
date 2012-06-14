@@ -13,7 +13,7 @@
 
 bool Nova_ExecuteRunagent(AgentConnection *conn, const char *menu_str)
 {
-    mongo_connection dbconn;
+    EnterpriseDB dbconn;
 
     if (!CFDB_Open(&dbconn))
     {

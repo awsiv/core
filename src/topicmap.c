@@ -42,7 +42,7 @@ void Nova_DumpTopics()
     bson query, field;
     mongo_cursor *cursor;
     bson_iterator it1;
-    mongo_connection conn;
+    EnterpriseDB conn;
     char topic_name[CF_BUFSIZE];
     char topic_context[CF_BUFSIZE];
     int topic_id;
@@ -179,7 +179,7 @@ int Nova_GetTopicIdForTopic(char *typed_topic)
     bson query, field;
     mongo_cursor *cursor;
     bson_iterator it1;
-    mongo_connection conn;
+    EnterpriseDB conn;
     int topic_id = 0;
 
     Nova_DeClassifyTopic(ToLowerStr(typed_topic), topic, type); // Linker trouble - copy this from core
@@ -243,7 +243,7 @@ int Nova_GetTopicByTopicId(int search_id, char *topic_name, char *topic_id, char
     bson query, field;
     mongo_cursor *cursor;
     bson_iterator it1;
-    mongo_connection conn;
+    EnterpriseDB conn;
     int topicid = 0;
 
     if (!CFDB_Open(&conn))
@@ -313,7 +313,7 @@ Item *Nova_SearchTopicMap(char *search_topic,int search_type,int merge)
     bson query, field;
     mongo_cursor *cursor;
     bson_iterator it1;
-    mongo_connection conn;
+    EnterpriseDB conn;
     char topic_name[CF_BUFSIZE];
     char topic_context[CF_BUFSIZE];
     int topic_id;
@@ -491,7 +491,7 @@ Item *Nova_ScanLeadsAssociations(int search_id, char *assoc_mask)
     bson query, field;
     mongo_cursor *cursor;
     bson_iterator it1, it2, it3;
-    mongo_connection conn;
+    EnterpriseDB conn;
     char assoc_name[CF_BUFSIZE];
     char afwd[CF_BUFSIZE];
     char assoc_context[CF_BUFSIZE];
@@ -599,7 +599,7 @@ JsonElement *Nova_ScanOccurrences(int this_id)
     bson query, field;
     mongo_cursor *cursor;
     bson_iterator it1;
-    mongo_connection conn;
+    EnterpriseDB conn;
     Hit *hits = NULL, *hp;
 
 // Do we want to prune using the topic context?
@@ -725,7 +725,7 @@ int Nova_GetReportDescription(int this_id, char *buffer, int bufsize)
     mongo_cursor *cursor;
     bson_buffer bb;
     bson_iterator it1;
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     if (!CFDB_Open(&conn))
     {
@@ -810,7 +810,7 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
     bson query, field;
     mongo_cursor *cursor;
     bson_iterator it1;
-    mongo_connection conn;
+    EnterpriseDB conn;
 
     char topic_name[CF_MAXVARSIZE] = { 0 };
     int topic_id;
@@ -931,7 +931,7 @@ void Nova_FillInGoalComment(Item *ip)
     bson query, field;
     mongo_cursor *cursor;
     bson_iterator it1;
-    mongo_connection conn;
+    EnterpriseDB conn;
     char canonified_goal[CF_BUFSIZE] = { 0 };
 
 // Get comment goals.* or targets.%s etc
@@ -998,7 +998,7 @@ const char *Nova_GetBundleComment(char *bundle)
     bson query, field;
     mongo_cursor *cursor;
     bson_iterator it1;
-    mongo_connection conn;
+    EnterpriseDB conn;
 
 // Get comment goals.* or targets.%s etc
 
@@ -1475,7 +1475,7 @@ Item *Nova_NearestNeighbours(int search_id, char *assoc_mask)
     bson query, field;
     mongo_cursor *cursor;
     bson_iterator it1, it2, it3;
-    mongo_connection conn;
+    EnterpriseDB conn;
     Item *list = NULL;
     int topic_id;
     char assoc_name[CF_BUFSIZE];
@@ -1588,7 +1588,7 @@ Item *Nova_GetTopicsInContext(char *context)
     bson query, field;
     mongo_cursor *cursor;
     bson_iterator it1;
-    mongo_connection conn;
+    EnterpriseDB conn;
     Item *list = NULL;
     char topic_name[CF_BUFSIZE];
     char topic_context[CF_BUFSIZE];
