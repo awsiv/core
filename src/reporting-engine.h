@@ -7,10 +7,11 @@
 #ifndef REPORTING_ENGINE_H
 #define REPORTING_ENGINE_H
 
+#include "cf.nova.h"
 #include "json.h"
 
 
-JsonElement *ReportingEngineQuery(JsonElement *query);
+JsonElement *ReportingEngineQuery(EnterpriseDB *db, JsonElement *query);
 
 
 #endif

@@ -41,7 +41,8 @@ PHP_FUNCTION(cfapi_query)
         RETURN_NULL();
     }
 
-    JsonElement *result = ReportingEngineQuery(query_parsed);
+    // TODO: get a DB factory
+    JsonElement *result = ReportingEngineQuery(NULL, query_parsed);
     JsonElementDestroy(query_parsed);
 
     assert(result);

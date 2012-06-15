@@ -67,6 +67,8 @@
 # include <mongo.h>
 
 typedef mongo_connection EnterpriseDB;
+#else
+typedef void EnterpriseDB;
 #endif
 
 #undef PACKAGE

@@ -13,7 +13,8 @@ MOCKERY_SOURCES = $(CMOCKERY_DIR)/cmockery.c
 
 check_PROGRAMS = \
         logging_test \
-        license_test
+        license_test \
+        reporting_engine_test
 
 if MONGO
 check_PROGRAMS += scorecards_test
@@ -30,3 +31,7 @@ logging_test_LDADD = $(top_builddir)/src/libpromises.la
 
 license_test_SOURCES = $(MOCKERY_SOURCES) license_test.c
 license_test_LDADD = $(top_builddir)/src/libpromises.la
+
+reporting_engine_test_SOURCES = $(MOCKERY_SOURCES) reporting_engine_test.c
+reporting_engine_test_LDADD = $(top_builddir)/src/libpromises.la
+
