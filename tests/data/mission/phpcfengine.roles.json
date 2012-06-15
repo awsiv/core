@@ -1,0 +1,10 @@
+{ "_id" : { "$oid" : "4df78a754a235ac761000000" }, "description" : "Administrator role", "name" : "admin" }
+{ "_id" : { "$oid" : "4f67cd1cc09952786cf5b5ab" }, "brxi" : "cfengine_editor", "crxi" : "10_0_0_151,10_0_0_29", "description" : "descr", "name" : "name" }
+{ "_id" : { "$oid" : "4fa8d859c09952786cf5f33b" }, "description" : "next role", "name" : "developer" }
+{ "_id" : { "$oid" : "4fa8db13c09952786cf5f33d" }, "description" : "dasd", "name" : "asdsa" }
+{ "_id" : { "$oid" : "4fa939dbc09952786cf5f344" }, "brxi" : "cfengine_php_mod,apache_nova_conf", "brxx" : "change_management,cfengine_limit_robot_agents", "crxi" : "64_bit,PK_SHA_bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df", "crxx" : "32_bit,PK_SHA_bd6dfcc28b1a7be234a68e3fe77e3c199e68fc28f400de0f94eadf697ca213df", "description" : "some test role", "name" : "my_role3" }
+{ "_id" : { "$oid" : "4fa93eb0c09952786cf5f348" }, "crxi" : "32_bit", "description" : "ffffff", "name" : "fffffff" }
+{ "_id" : { "$oid" : "4fa94d0bc09952786cf5f349" }, "brxi" : "append_if_no_line", "crxi" : "asaasdasdasdas,Lcycle_2", "description" : "kyky", "name" : "kyky" }
+{ "_id" : { "$oid" : "4fa95078c09952786cf5f34d" }, "brxi" : "append_if_no_line", "brxx" : "cfengine_editor", "crxi" : "10_0_0_29", "crxx" : "10_0_0_151", "description" : "asxcas", "name" : "asd" }
+{ "_id" : { "$oid" : "4faa2e7ac09952786cf5f34e" }, "brxi" : "append_groups_starting", "crxi" : "10_0_0_29,asaasdasdasdas", "description" : "ddddddddddddd", "name" : "asdasd" }
+{ "_id" : { "$oid" : "4fc4b5d3d2508cb8164fa4f3" }, "crxi" : "4_cpus", "description" : "sadasdasd", "name" : "jksdklasdl" }

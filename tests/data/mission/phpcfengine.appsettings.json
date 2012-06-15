@@ -1,18 +1,1 @@
-[
-    { "_id" : { "$oid" : "4e36aa774a235a3e49000003" },
-      "active_directory_domain" : "",
-      "admin_role" : "admin",
-      "appemail" : "admin@cfengine.com",
-      "base_dn" : "dc=cfengine,dc=com",
-      "bluehost_threshold_global" : "900",
-      "encryption" : "plain",
-      "fall_back_for" : "admin",
-      "host" : "10.0.0.152",
-      "login_attribute" : "uid",
-      "member_attribute" : "memberUid",
-      "mode" : "database",
-      "rbac" : "false",
-      "users_directory" : "ou=sales",
-      "experimental" : true,
-    }
-]
+{ "_id" : { "$oid" : "4e36aa774a235a3e49000003" }, "active_directory_domain" : "activedir.test.cfengine.com", "admin_role" : "admin", "appemail" : "admin@cfengine.com", "base_dn" : "dc=activedir,dc=test,dc=cfengine,dc=com", "bluehost_threshold_global" : "3000000", "encryption" : "plain", "experimental" : true, "external_admin_username" : "sudhir", "fall_back_for" : "admin", "host" : "10.0.0.140", "login_attribute" : "", "member_attribute" : "memberUid", "mode" : "database", "rbac" : "false", "users_directory" : "" }
