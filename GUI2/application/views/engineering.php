@@ -13,6 +13,7 @@
             <ul>
                 <li class="first"><a href="#tab-1">Status</a></li>
                 <li><a href="#tab-2">Reports</a></li>
+                <li><a href="#tab-3">Events</a></li>
             </ul>
             <div id="tab-1" class="engineeringStatusContainer">
                 <div class="astrolabeLocation"></div>
@@ -45,6 +46,11 @@
                     <div class="clear"></div>
                 </div>
             </div>
+             <div id="tab-3">
+                    <div id="event_viewer">
+                        
+                    </div>
+             </div>
         </div>
         </div>
         <div class="clear"></div>
@@ -76,6 +82,7 @@
         $('.astrolabeLocation').astrolabeLocation(genericOption);
         $('#hostsComplianceTimeseries').hostsComplianceTimeseries({baseUrl: '<?php echo site_url() ?>'});
         $('#reportInfoContainer').reportUI(genericOption);
+        $('#event_viewer').eventTrackerUI(genericOption);
 
         $('#astrolabe').astrolabe({
             baseUrl: '<?php echo site_url() ?>',
