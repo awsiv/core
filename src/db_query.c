@@ -1320,6 +1320,7 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
                                         }
                                         else
                                         {
+                                            match_rval = true;
                                             break;
                                         }
                                     }
@@ -1362,6 +1363,7 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
                                         }
                                         else
                                         {
+                                            match_rval = true;
                                             break;
                                         }
                                     }
