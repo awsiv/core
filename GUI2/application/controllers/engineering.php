@@ -34,7 +34,9 @@ class Engineering extends Cf_Controller
             array('widgets/notes.js'),
             array('widgets/classfinder.js'),
             array('widgets/contextfinder.js'),
-            array('widgets/reportUI.js')
+            array('widgets/reportUI.js'),
+            array('widgets/eventTrackerUI.js'),
+            array('jquery-ui-timepicker-addon.js')
         );
 
         $this->carabiner->css(
