@@ -3801,7 +3801,9 @@ JsonElement *Nova2PHP_network_speed(char *hostkey)
     mongo_cursor *cursor;
     bson_buffer bb;
     int found = false;
-    Event e;
+
+    double net_expected = 0;
+    double net_var = 0;
 
     if (!CFDB_Open(&dbconn))
     {        
@@ -3828,23 +3830,34 @@ JsonElement *Nova2PHP_network_speed(char *hostkey)
 
     if (mongo_cursor_next(cursor))      // not more than one record
     {
-        bson_iterator it;
+        bson_iterator it1;
+        bson_iterator_init(&it1, cursor->current.data);
 
-        bson_iterator_init(&it, cursor->current.data);
-
-        while (bson_iterator_next(&it))
+        while (bson_iterator_next(&it1))
         {
-            if (strcmp(bson_iterator_key(&it), cfr_netmeasure) == 0)
+            if (StringSafeCompare(bson_iterator_key(&it1), cfr_netmeasure) == 0)
             {
-                if (bson_iterator_bin_len(&it) == sizeof(e))
+                bson_iterator it2;
+                bson_iterator_init(&it2, bson_iterator_value(&it1));
+
+                found = true;
+                while (bson_iterator_next(&it2))
                 {
-                    memcpy(&e, bson_iterator_bin_data(&it), sizeof(e));
-                    found = true;
+                    if (StringSafeCompare(bson_iterator_key(&it2), cfr_netmeasure_expect) == 0)
+                    {
+                        net_expected = (double)bson_iterator_double(&it2);
+                    }
+
+                    if (StringSafeCompare(bson_iterator_key(&it2), cfr_netmeasure_var) == 0)
+                    {
+                        net_var = (double)bson_iterator_double((&it2));
+                    }
                 }
-                else
-                {
-                    CfOut(cf_verbose, "", "!! Existing network measurement incorrect - ignoring");
-                }
+
+            }
+            else
+            {
+                CfOut(cf_verbose, "", "!! Existing network measurement incorrect - ignoring");
             }
         }
     }
@@ -3865,8 +3878,8 @@ JsonElement *Nova2PHP_network_speed(char *hostkey)
     if (found)
     {
         JsonElement *jsonNetworkData = JsonObjectCreate(2);
-        JsonObjectAppendReal(jsonNetworkData, "speed", e.Q.expect);
-        JsonObjectAppendReal(jsonNetworkData, "delta", sqrt(e.Q.var));
+        JsonObjectAppendReal(jsonNetworkData, "speed", net_expected);
+        JsonObjectAppendReal(jsonNetworkData, "delta", sqrt(net_var));
         JsonObjectAppendObject(jsonNetworkSpeed, "data", jsonNetworkData);
 
         errid = ERRID_SUCCESS;

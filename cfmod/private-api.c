@@ -4676,7 +4676,9 @@ PHP_FUNCTION(cfpr_network_speed)
     char *userName, *hostKey;
     int user_len, hostkey_len;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss", &userName, &user_len, &hostKey, &hostkey_len) == FAILURE)
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
+                              &userName, &user_len,
+                              &hostKey, &hostkey_len) == FAILURE)
     {
         zend_throw_exception(cfmod_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
         RETURN_NULL();

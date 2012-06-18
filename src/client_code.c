@@ -340,16 +340,16 @@ void DeleteReportBook(Item **reports)
 
 /*********************************************************************/
 
-static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now, double datarate, AgentConnection *conn)
+static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now,
+                               double datarate, AgentConnection *conn)
 // NOTE: NOT Thread-safe (use of HashPrint())
 {
+    bson_buffer bb;
     mongo_cursor *cursor;
-    bson_buffer bb, *setObj;
     bson query, field, update;
     Event e = { 0 }, newe = { 0 };
 
-    newe.t = now;
-    newe.Q = QDefinite(0);
+    e.Q = QDefinite(0);
 
 // query
 
@@ -370,24 +370,49 @@ static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now, double datarat
 
     if (mongo_cursor_next(cursor))      // not more than one record
     {
-        bson_iterator it;
+        bson_iterator it1;
 
-        bson_iterator_init(&it, cursor->current.data);
+        bson_iterator_init(&it1, cursor->current.data);
 
-        while (bson_iterator_next(&it))
+        while (bson_iterator_next(&it1))
         {
-            if (strcmp(bson_iterator_key(&it), cfr_netmeasure) == 0)
+            if (StringSafeCompare(bson_iterator_key(&it1), cfr_netmeasure) == 0)
             {
-                if (bson_iterator_bin_len(&it) == sizeof(e))
+                bson_iterator it2;
+                bson_iterator_init(&it2, bson_iterator_value(&it1));
+
+                while (bson_iterator_next(&it2))
                 {
-                    memcpy(&e, bson_iterator_bin_data(&it), sizeof(e));
-                    newe.t = now;
-                    newe.Q = QAverage(e.Q, datarate, 0.5);
+                    if (StringSafeCompare(bson_iterator_key(&it2), cfr_time) == 0)
+                    {
+                        e.t = bson_iterator_int(&it2);
+                    }
+
+                    if (StringSafeCompare(bson_iterator_key(&it2), cfr_netmeasure_expect) == 0)
+                    {
+                        e.Q.expect = (double)bson_iterator_double(&it2);
+                    }
+
+                    if (StringSafeCompare(bson_iterator_key(&it2), cfr_netmeasure_var) == 0)
+                    {
+                        e.Q.var = (double)bson_iterator_double(&it2);
+                    }
+
+                    if (StringSafeCompare(bson_iterator_key(&it2), cfr_netmeasure_dq) == 0)
+                    {
+                        e.Q.dq = (double)bson_iterator_double(&it2);
+                    }
+
+                    if (StringSafeCompare(bson_iterator_key(&it2), cfr_netmeasure_q) == 0)
+                    {
+                        e.Q.q = (double)bson_iterator_double(&it2);
+                    }
                 }
-                else
-                {
-                    CfOut(cf_verbose, "", "!! Existing network measurement incorrect - overwriting");
-                }
+            }
+            else
+            {
+                CfOut(cf_verbose, "",
+                      "!! Existing network measurement incorrect - overwriting");
             }
         }
 
@@ -395,17 +420,30 @@ static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now, double datarat
 
     mongo_cursor_destroy(cursor);
 
-// update DB with new measurement
+    newe.Q = QDefinite(0);
+    newe.t = now;
+    newe.Q = QAverage(e.Q, datarate, 0.5);
+
+    // update DB with new measurement
+    bson_buffer *set_obj, *nest_obj;
     bson_buffer_init(&bb);
 
-    setObj = bson_append_start_object(&bb, "$set");
-    bson_append_binary(setObj, cfr_netmeasure, ' ', (char *) &newe, sizeof(newe));      // unused type
-    bson_append_finish_object(setObj);
+    set_obj = bson_append_start_object(&bb, "$set");
+
+    nest_obj = bson_append_start_object(set_obj, cfr_netmeasure);
+    bson_append_int(nest_obj, cfr_time, newe.t);
+    bson_append_double(nest_obj, cfr_netmeasure_expect, newe.Q.expect);
+    bson_append_double(nest_obj, cfr_netmeasure_var, newe.Q.var);
+    bson_append_double(nest_obj, cfr_netmeasure_dq, newe.Q.dq);
+    bson_append_double(nest_obj, cfr_netmeasure_q, newe.Q.q);
+    bson_append_finish_object(nest_obj);
+    bson_append_finish_object(set_obj);
 
     bson_from_buffer(&update, &bb);
 
     mongo_update(dbconnp, MONGO_DATABASE, &query, &update, MONGO_UPDATE_UPSERT);
-
+    CfOut(cf_verbose, "",
+          "!! NEW network measurement added");
     bson_destroy(&query);
     bson_destroy(&update);
 }

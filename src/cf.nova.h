@@ -1320,7 +1320,11 @@ typedef struct
 #define cfr_bundles       "B"
 #define cfr_day           "t"   // Substitute for time in value report
 #define cfr_valuereport   "va"
-#define cfr_netmeasure    "ne"
+#define cfr_netmeasure    "nee"
+#define cfr_netmeasure_expect "nx"
+#define cfr_netmeasure_var "nv"
+#define cfr_netmeasure_dq "ndq"
+#define cfr_netmeasure_q  "nq"
 #define cfr_environment   "env"
 #define cfr_score_comp    "scC"
 #define cfr_score_anom    "scA"
