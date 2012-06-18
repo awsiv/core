@@ -727,6 +727,8 @@ void CFDB_SaveVariables(EnterpriseDB *conn, char *keyhash, Item *data)
             continue;
         }
 
+        rval[0] = '\0';  // rval may be empty
+
         sscanf(ip->name, "%4[^,], %255[^,], %2040[^\n]", type, lval, rval);
 
         if (strchr(lval, '/'))
@@ -804,6 +806,8 @@ void CFDB_SaveVariables2(EnterpriseDB *conn, char *keyhash, Item *data)
             sscanf(ip->name + 2, "%254[^\n]", scope);
             continue;
         }
+
+        rval[0] = '\0';  // rval may be empty
 
         sscanf(ip->name, "%4[^,],%ld,%255[^,],%2040[^\n]", type, &tl, lval, rval);
 

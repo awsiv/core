@@ -559,6 +559,8 @@ void Nova_UnPackVariables2(EnterpriseDB *dbconn, char *id, Item *data)
             continue;
         }
 
+        value[0] = '\0';
+
         sscanf(ip->name, "%4[^,],%ld,%255[^,],%2040[^\n]", type, &t, name, value);
 
         CfDebug("var: (%s) at %s \"%s\"=\"%s\"\n", type, cf_ctime(&t), name, value);
