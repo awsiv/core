@@ -1322,6 +1322,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, c
                                         }
                                         else
                                         {
+                                            match_rval = true;
                                             break;
                                         }
                                     }
@@ -1364,6 +1365,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, c
                                         }
                                         else
                                         {
+                                            match_rval = true;
                                             break;
                                         }
                                     }
