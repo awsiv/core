@@ -13,6 +13,7 @@ defined('APPPATH') OR define('APPPATH', PROJECT_BASE.'application/');
 defined('VIEWPATH') OR define('VIEWPATH', PROJECT_BASE.'');
 define('EXT', '.php');
 define('HUB_MASTER', 'localhost');
+define('ENVIRONMENT', 'testing');
  $mongoPort = getenv('CFENGINE_TEST_OVERRIDE_MONGO_PORT');
 
 if (!$mongoPort) {

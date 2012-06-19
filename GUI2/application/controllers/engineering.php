@@ -36,6 +36,7 @@ class Engineering extends Cf_Controller
             array('widgets/contextfinder.js'),
             array('widgets/reportUI.js'),
             array('widgets/eventTrackerUI.js'),
+            array('widgets/vitalsigns.js'),
             array('jquery-ui-timepicker-addon.js')
         );
 
@@ -54,7 +55,8 @@ class Engineering extends Cf_Controller
                     array('jScrollPane.css'),
                     array('contextfinder.css'),
                     array('tabs-custom.css'),
-                    array('eventviewer.css')
+                    array('eventviewer.css'),
+                    array('vitalsigns.css')
                 )
         );
 

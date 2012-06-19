@@ -5,7 +5,7 @@
                 <div id="astrolabe"></div>
                      <div class="clear"></div>
             </div>
-               
+
             <div class="clear"></div>
         </div>
         <div id="darktabs">
@@ -14,6 +14,7 @@
                 <li class="first"><a href="#tab-1">Status</a></li>
                 <li><a href="#tab-2">Reports</a></li>
                 <li><a href="#tab-3">Events</a></li>
+                <li><a href="#tab-4">Vitals</a></li>
             </ul>
             <div id="tab-1" class="engineeringStatusContainer">
                 <div class="astrolabeLocation"></div>
@@ -46,28 +47,45 @@
                     <div class="clear"></div>
                 </div>
             </div>
-             <div id="tab-3">
+            <div id="tab-3">
                     <div class="astrolabeLocation"></div>
                     <div id="event_viewer">
-                        
+
                     </div>
              </div>
+              <div id="tab-4" style="padding-right: 0">
+                    <div class="astrolabeLocation"></div>
+                <div id="vitalsContainer" class="vitalsContainer">
+                </div>
+            </div>
         </div>
         </div>
         <div class="clear"></div>
     </div>
     <div class="clear"></div>
-    
-   
+
+
 </div>
 <div class="clear"></div>
 <script type="text/javascript">
 
 
     $(document).ready(function(){
-
+        var drawVitals = false;
         var $tabs=$("#tabs-layout");
-            $tabs.tabs({});
+
+        $tabs.tabs({});
+        $tabs.bind( "tabsselect", function(event, ui) {
+            if (ui.index === 2) {
+                // we are in vitals tab
+                drawVitals = true;
+                $('#vitalsContainer').vitalSigns('refresh');
+            } else {
+                drawVitals = false;
+            }
+
+
+        });
 
         var genericOption = {
             baseUrl: '<?php echo site_url() ?>'
@@ -84,6 +102,7 @@
         $('#hostsComplianceTimeseries').hostsComplianceTimeseries({baseUrl: '<?php echo site_url() ?>'});
         $('#reportInfoContainer').reportUI(genericOption);
         $('#event_viewer').eventTrackerUI(genericOption);
+        $('#vitalsContainer').vitalSigns(genericOption);
 
         $('#astrolabe').astrolabe({
             baseUrl: '<?php echo site_url() ?>',
@@ -101,6 +120,7 @@
                 $('.astrolabeLocation').astrolabeLocation('setHostName', args.hostName);
                 $('#reportInfoContainer').reportUI('setHostContext',args.hostKey);
                 $('#event_viewer').eventTrackerUI('setHostContext',args.hostKey);
+                $('#vitalsContainer').vitalSigns('setHostContext',args.hostKey,drawVitals);
             },
 
             nodeSelected: function(event, args) {
@@ -119,6 +139,9 @@
 
                 $('#reportInfoContainer').reportUI('setContext',args.includes, []);
                 $('#event_viewer').eventTrackerUI('setContext',args.includes,[]);
+                $('#vitalsContainer').vitalSigns('setContext',args.includes, [],drawVitals);
+
+
             }
         });
     });

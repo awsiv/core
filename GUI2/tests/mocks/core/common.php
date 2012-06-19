@@ -168,4 +168,13 @@ if ( ! function_exists('set_status_header'))
 	}
 }
 
+
+if ( ! function_exists('generate_errormessage'))
+{
+	function generate_errormessage($e)
+	{
+		throw new RuntimeException("CF Error".$e->getMessage());
+	}
+}
+
 // EOF
