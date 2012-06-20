@@ -14,6 +14,7 @@
 #include "db_query.h"
 #include "crypto.h"
 #include "item_lib.h"
+#include "bson_lib.h"
 
 static bool ReportBookHasData(Item **reports);
 static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now, double datarate, AgentConnection *conn);
@@ -356,9 +357,8 @@ static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now,
 
 // returned value
 
-    bson_init(&field);
-    bson_append_int(&field, cfr_netmeasure, 1);
-    bson_finish(&field);
+    bson field;
+    BsonSelectReportFields(&field, 1, cfr_netmeasure);
 
     mongo_cursor *cursor = mongo_find(dbconnp, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 

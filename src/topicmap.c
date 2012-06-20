@@ -10,6 +10,7 @@
 
 #include "files_names.h"
 #include "db_query.h"
+#include "bson_lib.h"
 #include "item_lib.h"
 
 #include <assert.h>
@@ -58,15 +59,14 @@ void Nova_DumpTopics()
 /* BEGIN RESULT DOCUMENT */
     bson fields;
 
-    bson_init(&fields);
-    bson_append_int(&fields, cfk_topicname, 1);
-    bson_append_int(&fields, cfk_topicid, 1);
-    bson_append_int(&fields, cfk_topiccontext, 1);
-    bson_append_int(&fields, cfk_associations, 1);
-    bson_append_int(&fields, cfk_associd, 1);
-    bson_append_int(&fields, cfk_assoccontext, 1);
-    bson_append_int(&fields, cfk_assocname, 1);
-    bson_finish(&fields);
+    BsonSelectReportFields(&fields, 7,
+                           cfk_topicname,
+                           cfk_topicid,
+                           cfk_topiccontext,
+                           cfk_associations,
+                           cfk_associd,
+                           cfk_assoccontext,
+                           cfk_assocname);
 
 /* BEGIN SEARCH */
 
@@ -201,11 +201,7 @@ int Nova_GetTopicIdForTopic(char *typed_topic)
 /* BEGIN RESULT DOCUMENT */
     bson fields;
 
-    bson_init(&fields);
-    bson_append_int(&fields, cfk_topicname, 1);
-    bson_append_int(&fields, cfk_topicid, 1);
-    bson_append_int(&fields, cfk_topiccontext, 1);
-    bson_finish(&fields);
+    BsonSelectReportFields(&fields, 3, cfk_topicname, cfk_topicid, cfk_topiccontext);
 
 /* BEGIN SEARCH */
 
@@ -255,12 +251,7 @@ int Nova_GetTopicByTopicId(int search_id, char *topic_name, char *topic_id, char
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
-
-    bson_init(&fields);
-    bson_append_int(&fields, cfk_topicname, 1);
-    bson_append_int(&fields, cfk_topicid, 1);
-    bson_append_int(&fields, cfk_topiccontext, 1);
-    bson_finish(&fields);
+    BsonSelectReportFields(&fields, 3, cfk_topicname, cfk_topicid, cfk_topiccontext);
 
 /* BEGIN SEARCH */
 
@@ -353,16 +344,14 @@ Item *Nova_SearchTopicMap(char *search_topic,int search_type,int merge)
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
-
-    bson_init(&fields);
-    bson_append_int(&fields, cfk_topicname, 1);
-    bson_append_int(&fields, cfk_topicid, 1);
-    bson_append_int(&fields, cfk_topiccontext, 1);
-    bson_append_int(&fields, cfk_associations, 1);
-    bson_append_int(&fields, cfk_associd, 1);
-    bson_append_int(&fields, cfk_assoccontext, 1);
-    bson_append_int(&fields, cfk_assocname, 1);
-    bson_finish(&fields);
+    BsonSelectReportFields(&fields, 7,
+                           cfk_topicname,
+                           cfk_topicid,
+                           cfk_topiccontext,
+                           cfk_associations,
+                           cfk_associd,
+                           cfk_assoccontext,
+                           cfk_assocname);
 
 /* BEGIN SEARCH */
 
@@ -505,13 +494,7 @@ Item *Nova_ScanLeadsAssociations(int search_id, char *assoc_mask)
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
-
-    bson_init(&fields);
-    bson_append_int(&fields, cfk_associations, 1);
-    bson_append_int(&fields, cfk_associd, 1);
-    bson_append_int(&fields, cfk_assoccontext, 1);
-    bson_append_int(&fields, cfk_assocname, 1);
-    bson_finish(&fields);
+    BsonSelectReportFields(&fields, 4, cfk_associations, cfk_associd, cfk_assoccontext, cfk_assocname);
 
 /* BEGIN SEARCH */
 
@@ -634,14 +617,12 @@ JsonElement *Nova_ScanOccurrences(int this_id)
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
-
-    bson_init(&fields);
-    bson_append_int(&fields, cfk_occurcontext, 1);
-    bson_append_int(&fields, cfk_occurlocator, 1);
-    bson_append_int(&fields, cfk_occurtype, 1);
-    bson_append_int(&fields, cfk_occurrep, 1);
-    bson_append_int(&fields, cfk_occurtopic, 1);
-    bson_finish(&fields);
+    BsonSelectReportFields(&fields, 5,
+                           cfk_occurcontext,
+                           cfk_occurlocator,
+                           cfk_occurtype,
+                           cfk_occurrep,
+                           cfk_occurtopic);
 
 /* BEGIN SEARCH */
 
@@ -743,10 +724,7 @@ int Nova_GetReportDescription(int this_id, char *buffer, int bufsize)
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
-
-    bson_init(&fields);
-    bson_append_int(&fields, cfk_occurlocator, 1);
-    bson_finish(&fields);
+    BsonSelectReportFields(&fields, 1, cfk_occurlocator);
 
 /* BEGIN SEARCH */
 
@@ -845,14 +823,12 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
-
-    bson_init(&fields);
-    bson_append_int(&fields, cfk_occurcontext, 1);
-    bson_append_int(&fields, cfk_occurlocator, 1);
-    bson_append_int(&fields, cfk_occurtype, 1);
-    bson_append_int(&fields, cfk_occurrep, 1);
-    bson_append_int(&fields, cfk_occurtopic, 1);
-    bson_finish(&fields);
+    BsonSelectReportFields(&fields, 5,
+                           cfk_occurcontext,
+                           cfk_occurlocator,
+                           cfk_occurtype,
+                           cfk_occurrep,
+                           cfk_occurtopic);
 
 /* BEGIN SEARCH */
 
@@ -946,14 +922,12 @@ void Nova_FillInGoalComment(Item *ip)
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
-
-    bson_init(&fields);
-    bson_append_int(&fields, cfk_occurcontext, 1);
-    bson_append_int(&fields, cfk_occurlocator, 1);
-    bson_append_int(&fields, cfk_occurtype, 1);
-    bson_append_int(&fields, cfk_occurtopic, 1);
-    bson_append_int(&fields, cfk_occurrep, 1);
-    bson_finish(&fields);
+    BsonSelectReportFields(&fields, 5,
+                           cfk_occurcontext,
+                           cfk_occurlocator,
+                           cfk_occurtype,
+                           cfk_occurtopic,
+                           cfk_occurrep);
 
 /* BEGIN SEARCH */
 
@@ -1007,10 +981,7 @@ const char *Nova_GetBundleComment(char *bundle)
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
-
-    bson_init(&fields);
-    bson_append_int(&fields, cfk_occurlocator, 1);
-    bson_finish(&fields);
+    BsonSelectReportFields(&fields, 1, cfk_occurlocator);
 
 /* BEGIN SEARCH */
 
@@ -1488,16 +1459,14 @@ Item *Nova_NearestNeighbours(int search_id, char *assoc_mask)
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
-
-    bson_init(&fields);
-    bson_append_int(&fields, cfk_topicname, 1);
-    bson_append_int(&fields, cfk_topicid, 1);
-    bson_append_int(&fields, cfk_topiccontext, 1);
-    bson_append_int(&fields, cfk_associations, 1);
-    bson_append_int(&fields, cfk_associd, 1);
-    bson_append_int(&fields, cfk_assoccontext, 1);
-    bson_append_int(&fields, cfk_assocname, 1);
-    bson_finish(&fields);
+    BsonSelectReportFields(&fields, 7,
+                           cfk_topicname,
+                           cfk_topicid,
+                           cfk_topiccontext,
+                           cfk_associations,
+                           cfk_associd,
+                           cfk_assoccontext,
+                           cfk_assocname);
 
 /* BEGIN SEARCH */
 
@@ -1598,12 +1567,7 @@ Item *Nova_GetTopicsInContext(char *context)
 
 /* BEGIN RESULT DOCUMENT */
     bson fields;
-
-    bson_init(&fields);
-    bson_append_int(&fields, cfk_topicname, 1);
-    bson_append_int(&fields, cfk_topicid, 1);
-    bson_append_int(&fields, cfk_topiccontext, 1);
-    bson_finish(&fields);
+    BsonSelectReportFields(&fields, 3, cfk_topicname, cfk_topicid, cfk_topiccontext);
 
 /* BEGIN SEARCH */
 

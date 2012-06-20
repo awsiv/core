@@ -20,8 +20,8 @@ bool BsonArrayGet(const bson *b, const char *key, const char **out);
 bool BsonObjectGet(const bson *b, const char *key, bson **out);
 bool BsonIsArrayNonExistentOrEmpty(const bson *b, const char *key);
 void BsonStringWrite(char *dest, int destSz, const bson *b, const char *key);
-bool BsonAppendStringSafe(bson *b, char *key, char *value);
-bool BsonAppendRegexSafe(bson *bb, char *key, char *rxValue);
+bool BsonAppendStringSafe(bson *b, const char *key, char *value);
+bool BsonAppendRegexSafe(bson *bb, const char *key, char *rxValue);
 void BsonAppendStringArray(bson *b, char *arrayName, Item *arrayValues);
 void BsonAppendArrayRx(bson *buffer, const char *key, Rlist *rx_values);
 bool BsonAppendHostClassFilter(bson *queryBuffer, HostClassFilter *filter);
@@ -39,5 +39,14 @@ long BsonLongGet(const bson *b, const char *key);
 bool BsonGetArrayValue(const bson *b, const char *key, bson *sub);
 bool BsonIsKeyCorrupt(const char *key);
 bool BsonIsEmpty(const bson *object);
+
+/*
+ * WARNING:
+ *   1. Allocates memory for the bson * passed to it which must be freed in the calling function
+ *   2. Only use this function to create new bson objects.
+        If the passed bson already contains some fields, they will be overwritten.
+ *   3. The fieldCount must match the number of parameters passed
+*/
+int BsonSelectReportFields( bson *fields, int fieldCount, ... );
 
 #endif

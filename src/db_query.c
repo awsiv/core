@@ -41,9 +41,7 @@ bool CFDB_CollectionHasData(EnterpriseDB *conn, const char *fullCollectionName)
     bson_empty(&query);
 
     bson field;
-    bson_init(&field);
-    bson_append_int(&field, "_id", 1);
-    bson_finish(&field);
+    BsonSelectReportFields(&field, 1, "_id");
 
     if(mongo_find_one(conn,fullCollectionName,&query,&field,NULL) == MONGO_OK)
     {
@@ -124,9 +122,8 @@ Item *CFDB_GetLastseenCache(void)
     }
 
     bson field;
-    bson_init(&field);
-    bson_append_int(&field, cfr_lastseen_hosts, 1);
-    bson_finish(&field);
+
+    BsonSelectReportFields(&field, 1, cfr_lastseen_hosts);
 
     bson query;
 
@@ -185,8 +182,8 @@ Item *CFDB_GetLastseenCache(void)
 Item *CFDB_GetDeletedHosts(void)
 {
     bson_iterator it1, it2;
-    mongo_cursor *cursor;
     EnterpriseDB conn;
+
     Item *list = NULL;
 
     if (!CFDB_Open(&conn))
@@ -195,9 +192,8 @@ Item *CFDB_GetDeletedHosts(void)
     }
 
     bson field;
-    bson_init(&field);
-    bson_append_int(&field, cfr_deleted_hosts, 1);
-    bson_finish(&field);
+
+    BsonSelectReportFields( &field, 1, cfr_deleted_hosts);
 
     bson query;
 
@@ -271,11 +267,8 @@ HubQuery *CFDB_QueryHosts(EnterpriseDB *conn, char *db, bson *query)
 /* BEGIN RESULT DOCUMENT */
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields( &fields, 3, cfr_keyhash, cfr_ip_array, cfr_host_array);
 
 /* BEGIN SEARCH */
 
@@ -417,14 +410,14 @@ HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method, Host
     bson_finish(&query);
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_append_int(&fields, cfr_day, 1);
-    bson_append_int(&fields, HostRankMethodToMongoCode(method), 1);
-    bson_append_int(&fields, cfr_is_black, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 6,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_day,
+                           HostRankMethodToMongoCode(method),
+                           cfr_is_black);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -521,14 +514,15 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
 /* BEGIN RESULT DOCUMENT */
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_append_int(&fields, type, 1);
-    bson_append_int(&fields, cfr_software_t, 1);
+
+    BsonSelectReportFields(&fields, 5,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           type,
+                           cfr_software_t);
+
 // TODO: Add support for time of NOVA_PATCHES_INSTALLED and NOVA_PATCHES_AVAIL?
-    bson_finish(&fields);
 
 /* BEGIN SEARCH */
 
@@ -691,12 +685,12 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, char *keyHash, char *lclass, boo
     bson_finish(&query);
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_append_int(&fields, cfr_class, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_class);
 
 /* BEGIN SEARCH */
 
@@ -854,13 +848,9 @@ HubQuery *CFDB_QueryClassSum(EnterpriseDB *conn, char **classes)
 
     bson_finish(&query);
 
-// returned attribute
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 3, cfr_keyhash, cfr_ip_array, cfr_host_array);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&fields);
@@ -960,12 +950,11 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash, cha
     bson_finish(&query);
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_append_int(&fields, cfr_total_compliance, 1);
-    bson_finish(&fields);
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_total_compliance);
 
     hostnames[0] = '\0';
     addresses[0] = '\0';
@@ -1100,10 +1089,8 @@ Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *ho
     bson_finish(&query);
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_compliance_shifts, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 2, cfr_keyhash, cfr_compliance_shifts);
 
     time_t to = GetShiftSlotStart(time(NULL));
     time_t from = to - (SHIFTS_PER_WEEK * SECONDS_PER_SHIFT);
@@ -1193,12 +1180,12 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, c
     bson_finish(&query);
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_append_int(&fields, cfr_vars, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_vars);
 
     hostnames[0] = '\0';
     addresses[0] = '\0';
@@ -1451,14 +1438,14 @@ HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *l
 /* BEGIN RESULT DOCUMENT */
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_append_int(&fields, cfr_promisecompl, 1);
-    bson_append_int(&fields, cfr_day, 1);
-    bson_append_int(&fields, cfr_is_black, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 6,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_promisecompl,
+                           cfr_day,
+                           cfr_is_black);
 
 /* BEGIN SEARCH */
 
@@ -1529,15 +1516,15 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
 /* BEGIN RESULT DOCUMENT */
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_append_int(&fields, cfr_promisecompl, 1);
-    bson_append_int(&fields, cfr_day, 1);
-    bson_append_int(&fields, cfr_score_comp, 1);
-    bson_append_int(&fields, cfr_is_black, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 7,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_promisecompl,
+                           cfr_day,
+                           cfr_score_comp,
+                           cfr_is_black);
 
 /* BEGIN SEARCH */
 
@@ -1690,12 +1677,11 @@ HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, cha
     bson_finish(&query);
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_append_int(&fields, cfr_lastseen, 1);
-    bson_finish(&fields);
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_lastseen);
 
 /* BEGIN SEARCH */
 
@@ -1867,12 +1853,12 @@ HubQuery *CFDB_QueryMeter(EnterpriseDB *conn, bson *query, char *db)
 /* BEGIN RESULT DOCUMENT */
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_append_int(&fields, cfr_meter, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_meter);
 
 /* BEGIN SEARCH */
 
@@ -1978,12 +1964,12 @@ HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname, 
     bson_finish(&query);
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_append_int(&fields, cfr_performance, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_performance);
 
     hostnames[0] = '\0';
     addresses[0] = '\0';
@@ -2126,12 +2112,12 @@ HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname, bool 
 /* BEGIN RESULT DOCUMENT */
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_append_int(&fields, cfr_setuid, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_setuid);
 
 /* BEGIN SEARCH */
 
@@ -2229,12 +2215,12 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname, 
 /* BEGIN RESULT DOCUMENT */
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_append_int(&fields, cfr_filechanges, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_filechanges);
 
 /* BEGIN SEARCH */
 
@@ -2346,12 +2332,12 @@ HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname, cha
     bson_finish(&query);
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_append_int(&fields, cfr_filediffs, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_filediffs);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_ARCHIVE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -2463,11 +2449,8 @@ static int QueryInsertHostInfo(EnterpriseDB *conn, Rlist *host_list)
     }
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 3, cfr_keyhash, cfr_ip_array, cfr_host_array);
 
     // use empty query for now - filter result manually
     bson query;
@@ -2540,12 +2523,12 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash, Promis
     bson_finish(&query);
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_append_int(&fields, promiseLogKey, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           promiseLogKey);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -2782,13 +2765,12 @@ int CFDB_QueryPromiseLogFromOldColl(EnterpriseDB *conn, const char *keyHash, Pro
     bson_finish(&query);
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields,cfr_keyhash,1);
-    bson_append_int(&fields,cfr_cause,1);
-    bson_append_int(&fields,cfr_promisehandle,1);
-    bson_append_int(&fields,cfr_time,1);
 
-    bson_finish(&fields);
+    BsonSelectReportFields(&fields,4,
+                           cfr_keyhash,
+                           cfr_cause,
+                           cfr_promisehandle,
+                           cfr_time);
 
     mongo_cursor *cursor = mongo_find(conn,collName,&query,&fields,0,0,CF_MONGO_SLAVE_OK);
 
@@ -2888,12 +2870,12 @@ HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, c
 /* BEGIN RESULT DOCUMENT */
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_append_int(&fields, cfr_valuereport, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_valuereport);
 
 /* BEGIN SEARCH */
 
@@ -3046,12 +3028,12 @@ HubQuery *CFDB_QueryValueGraph(EnterpriseDB *conn, char *keyHash, char *lday, ch
 /* BEGIN RESULT DOCUMENT */
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_append_int(&fields, cfr_valuereport, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_valuereport);
 
 /* BEGIN SEARCH */
 
@@ -3277,14 +3259,14 @@ HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, b
     /* BEGIN RESULT DOCUMENT */
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_append_int(&fields, cfr_bundles, 1);
-    bson_append_int(&fields, cfr_time, 1);
-    bson_append_int(&fields, cfr_is_black, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 6,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_bundles,
+                           cfr_time,
+                           cfr_is_black);
 
     /* BEGIN SEARCH */
 
@@ -3365,14 +3347,14 @@ HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *
     /* BEGIN RESULT DOCUMENT */
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_append_int(&fields, cfr_bundles, 1);
-    bson_append_int(&fields, cfr_time, 1);
-    bson_append_int(&fields, cfr_is_black, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 6,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_bundles,
+                           cfr_time,
+                           cfr_is_black);
 
     /* BEGIN SEARCH */
 
@@ -3554,11 +3536,8 @@ HubVital *CFDB_QueryVitalsMeta(EnterpriseDB *conn, char *keyHash)
 
     // field
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfm_id, 1);
-    bson_append_int(&fields, cfm_units, 1);
-    bson_append_int(&fields, cfm_description, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 3, cfm_id, cfm_units, cfm_description);
 
     // use mag collection since it is updated most frequently
     mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE_MON_MG, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
@@ -3631,12 +3610,12 @@ int CFDB_QueryMagView2(EnterpriseDB *conn, char *keyhash, char *monId, time_t st
 
     // result
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfm_q_arr, 1);
-    bson_append_int(&fields, cfm_expect_arr, 1);
-    bson_append_int(&fields, cfm_deviance_arr, 1);
-    bson_append_int(&bb, cfm_grad_arr, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 4,
+                           cfm_q_arr,
+                           cfm_expect_arr,
+                           cfm_deviance_arr,
+			   cfm_grad_arr);
 
 /* Check from wrap around */
 
@@ -3779,12 +3758,8 @@ int CFDB_QueryMonView(EnterpriseDB *conn, char *keyhash, char *monId, enum monit
     // result
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfm_q_arr, 1);
-    bson_append_int(&fields, cfm_expect_arr, 1);
-    bson_append_int(&fields, cfm_deviance_arr, 1);
-    bson_append_int(&bb, cfm_grad_arr, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 4, cfm_q_arr, cfm_expect_arr, cfm_deviance_arr, cfm_grad_arr);
 
     mongo_cursor *cursor = mongo_find(conn, db, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -3909,9 +3884,8 @@ int CFDB_QueryHostName(EnterpriseDB *conn, char *ipAddr, char *hostName, int hos
 
     // result
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 1, cfr_host_array);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&query);
@@ -3968,11 +3942,8 @@ bool CFDB_QueryLastUpdate(EnterpriseDB *conn, char *db, char *dbkey, char *keyha
 /* BEGIN RESULT DOCUMENT */
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, dbkey, 1);
-    bson_append_int(&fields, cfr_day, 1);
-    bson_append_int(&fields, cfr_last_update_size, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 3, dbkey, cfr_day, cfr_last_update_size);
 
     mongo_cursor *cursor = mongo_find(conn, db, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&query);
@@ -4025,9 +3996,8 @@ bool CFDB_QueryHistogram(EnterpriseDB *conn, char *keyhash, char *monId, double 
 /* BEGIN RESULT DOCUMENT */
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_histo, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 1, cfr_histo);
 
 /* BEGIN SEARCH */
 
@@ -4089,9 +4059,8 @@ int CFDB_QueryPromiseAttr(EnterpriseDB *conn, char *handle, char *attrKey, char 
 
     // returned attribute
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, attrKey, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 1, attrKey);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&query);
@@ -4137,9 +4106,8 @@ Item *CFDB_QueryExpandedPromiseAttr(EnterpriseDB *conn, char *handle, char *attr
 
 // returned attribute
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, attrKey, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 1, attrKey);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_EXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&query);
@@ -4201,10 +4169,8 @@ HubQuery *CFDB_QueryHandlesForBundlesWithComments(EnterpriseDB *conn, char *bTyp
 
 // returned attribute
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfp_handle, 1);
-    bson_append_int(&fields, cfp_comment, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 2, cfp_handle, cfp_comment);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -4327,9 +4293,8 @@ HubQuery *CFDB_QueryPromiseHandles(EnterpriseDB *conn, char *promiser, char *pro
     bson_finish(&query);
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfp_handle, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 1, cfp_handle);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -4374,20 +4339,19 @@ HubQuery *CFDB_QueryPromises(EnterpriseDB *conn, PromiseFilter *filter)
 
     bson fields;
 
-    bson_init(&fields);
-    bson_append_int(&fields, cfp_bundlename, 1);
-    bson_append_int(&fields, cfp_bundletype, 1);
-    bson_append_int(&fields, cfp_handle, 1);
-    bson_append_int(&fields, cfp_promiser, 1);
-    bson_append_int(&fields, cfp_promisee, 1);
-    bson_append_int(&fields, cfp_promisetype, 1);
-    bson_append_int(&fields, cfp_comment, 1);
-    bson_append_int(&fields, cfp_classcontext, 1);
-    bson_append_int(&fields, cfp_file, 1);
-    bson_append_int(&fields, cfp_lineno, 1);
-    bson_append_int(&fields, cfp_bundleargs, 1);
-    bson_append_int(&fields, cfp_constraints, 1);
-    bson_finish(&fields);
+    BsonSelectReportFields(&fields, 12,
+                           cfp_bundlename,
+                           cfp_bundletype,
+                           cfp_handle,
+                           cfp_promiser,
+                           cfp_promisee,
+                           cfp_promisetype,
+                           cfp_comment,
+                           cfp_classcontext,
+                           cfp_file,
+                           cfp_lineno,
+                           cfp_bundleargs,
+                           cfp_constraints);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -4445,11 +4409,7 @@ HubQuery *CFDB_QueryPromiseBundles(EnterpriseDB *conn, PromiseFilter *filter)
 
     bson fields;
 
-    bson_init(&fields);
-    bson_append_int(&fields, cfp_bundlename, 1);
-    bson_append_int(&fields, cfp_bundletype, 1);
-    bson_append_int(&fields, cfp_bundleargs, 1);
-    bson_finish(&fields);
+    BsonSelectReportFields(&fields, 3, cfp_bundlename, cfp_bundletype, cfp_bundleargs);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -4503,9 +4463,8 @@ Rlist *CFDB_QueryBundleClasses(EnterpriseDB *conn, PromiseFilter *filter)
 
     // returned attribute
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfp_classcontext, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 1, cfp_classcontext);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -4559,9 +4518,8 @@ Item *CFDB_QueryBundlesUsing(EnterpriseDB *conn, PromiseFilter *promiseFilter, c
 
     // returned attribute
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfp_bundlename, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 1, cfp_bundlename);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -4602,9 +4560,8 @@ int CFDB_QueryBundleCount(EnterpriseDB *conn)
 
     // returned attribute
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfp_bundlename, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 1, cfp_bundlename);
 
     bson query;
 
@@ -4763,10 +4720,8 @@ Item *CFDB_QueryAllBodies(EnterpriseDB *conn, char *bTypeRegex, char *bNameRegex
     bson_finish(&query);
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfb_bodytype, 1);
-    bson_append_int(&fields, cfb_bodyname, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 2, cfb_bodytype, cfb_bodyname);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_BODIES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -4833,11 +4788,8 @@ Item *CFDB_QueryCdpAcls(EnterpriseDB *conn, char *sep)
 
     // returned attribute
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfp_promiser_exp, 1);
-    bson_append_int(&fields, cfp_handle_exp, 1);
-    bson_append_int(&fields, cfp_constraints_exp, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 3, cfp_promiser_exp, cfp_handle_exp, cfp_constraints_exp);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_EXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -4929,11 +4881,8 @@ Item *CFDB_QueryCdpCommands(EnterpriseDB *conn, char *sep)
 
     // returned attribute
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfp_promiser_exp, 1);
-    bson_append_int(&fields, cfp_handle_exp, 1);
-    bson_append_int(&fields, cfp_constraints_exp, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 3, cfp_promiser_exp, cfp_handle_exp, cfp_constraints_exp);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_EXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -5019,11 +4968,8 @@ Item *CFDB_QueryCdpPromiser(EnterpriseDB *conn, char *sep, char *bundleName, cha
 
     // returned attribute
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfp_promiser_exp, 1);
-    bson_append_int(&fields, cfp_handle_exp, 1);
-    bson_append_int(&fields, cfp_constraints_exp, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 3, cfp_promiser_exp, cfp_handle_exp, cfp_constraints_exp);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_EXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -5097,9 +5043,8 @@ int CFDB_QueryLastFileChange(EnterpriseDB *conn, char *keyHash, char *reportType
 
     // returned attribute
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, reportType, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 1, reportType);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -5195,11 +5140,8 @@ Item *CFDB_QueryCdpRegistry(EnterpriseDB *conn, char *sep)
 
     // returned attribute
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfp_promiser_exp, 1);
-    bson_append_int(&fields, cfp_handle_exp, 1);
-    bson_append_int(&fields, cfp_constraints_exp, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 3, cfp_promiser_exp, cfp_handle_exp, cfp_constraints_exp);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_EXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -5287,11 +5229,8 @@ Item *CFDB_QueryCdpServices(EnterpriseDB *conn, char *sep)
 
     // returned attribute
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfp_promiser_exp, 1);
-    bson_append_int(&fields, cfp_handle_exp, 1);
-    bson_append_int(&fields, cfp_constraints_exp, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 3, cfp_promiser_exp, cfp_handle_exp, cfp_constraints_exp);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_EXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -5378,11 +5317,8 @@ Item *CFDB_QueryCdpCompliance(EnterpriseDB *conn, char *handle)
 
     // returned attribute
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_promisecompl, 1);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 3, cfr_promisecompl, cfr_keyhash, cfr_host_array);
 
     cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -5475,9 +5411,8 @@ static bool AppendHostKeys(EnterpriseDB *conn, bson *b, HostClassFilter *hostCla
     bson_finish(&query);
 
     bson field;
-    bson_init(&field);
-    bson_append_int(&field, cfr_keyhash, 1);
-    bson_finish(&field);
+
+    BsonSelectReportFields(&field, 1, cfr_keyhash);
 
     cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -5680,13 +5615,13 @@ Rlist *CFDB_QueryNotes(EnterpriseDB *conn, char *keyhash, char *nid, Item *data)
     bson_finish(&query);
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, "_id", 1);
-    bson_append_int(&fields, cfn_keyhash, 1);
-    bson_append_int(&fields, cfn_reportdata, 1);
-    bson_append_int(&fields, cfn_note, 1);
-    bson_append_int(&fields, cfn_reporttype, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 5,
+                           "_id",
+                           cfn_keyhash,
+                           cfn_reportdata,
+                           cfn_note,
+                           cfn_reporttype);
 
     cursor = mongo_find(conn, MONGO_NOTEBOOK, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&fields);
@@ -5836,10 +5771,8 @@ Rlist *CFDB_QueryNoteId(EnterpriseDB *conn, bson *query)
 /* BEGIN RESULT DOCUMENT */
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfn_keyhash, 1);
-    bson_append_int(&fields, "_id", 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 2, cfn_keyhash, "_id");
 
 /* BEGIN SEARCH */
 
@@ -6274,10 +6207,8 @@ Rlist *CFDB_QueryHostKeys(EnterpriseDB *conn, const char *hostname, const char *
 
     // projection
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_day, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 2, cfr_keyhash, cfr_day);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -6320,11 +6251,8 @@ HubHost *CFDB_GetHostByKey(EnterpriseDB *conn, const char *hostkey)
 
 // projection
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 3, cfr_keyhash, cfr_host_array, cfr_ip_array);
 
     bson out;
     HubHost *host = NULL;
@@ -6372,12 +6300,12 @@ Item *CFDB_GetHostByColour(EnterpriseDB *conn, HostClassFilter *host_class_filte
     bson_finish(&query);
 
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_keyhash, 1);
-    bson_append_int(&fields, cfr_ip_array, 1);
-    bson_append_int(&fields, cfr_host_array, 1);
-    bson_append_int(&fields, HostRankMethodToMongoCode(method), 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           HostRankMethodToMongoCode(method));
 
     mongo_cursor *cursor = NULL;
     cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
@@ -6441,9 +6369,8 @@ long CFDB_GetLastAgentExecution(EnterpriseDB *conn, const char *hostkey)
 
     // projection
     bson field;
-    bson_init(&field);
-    bson_append_int(&field, cfr_last_execution, 1);
-    bson_finish(&field);
+
+    BsonSelectReportFields(&field, 1, cfr_last_execution);
 
     bson out;
 
@@ -6473,9 +6400,8 @@ long CFDB_GetDeltaAgentExecution(EnterpriseDB *conn, const char *hostkey)
 
     // projection
     bson field;
-    bson_init(&field);
-    bson_append_int(&field, cfr_schedule, 1);
-    bson_finish(&field);
+
+    BsonSelectReportFields(&field, 1, cfr_schedule);
 
     bson out;
     if (mongo_find_one(conn, MONGO_DATABASE, &query, &field, &out) == MONGO_OK)
@@ -6518,11 +6444,11 @@ bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour 
 
    /* result document */
     bson fields;
-    bson_init(&fields);
-    bson_append_int(&fields, cfr_day, 1);
-    bson_append_int(&fields, HostRankMethodToMongoCode(method), 1);
-    bson_append_int(&fields, cfr_is_black, 1);
-    bson_finish(&fields);
+
+    BsonSelectReportFields(&fields, 3,
+                           cfr_day,
+                           HostRankMethodToMongoCode(method),
+                           cfr_is_black);
 
     bson out;
 

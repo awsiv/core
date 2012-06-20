@@ -99,10 +99,7 @@ void CFDB_EnsureIndices(EnterpriseDB *conn)
     // main host collection
 
     bson b;
-
-    bson_init(&b);
-    bson_append_int(&b, cfr_keyhash, 1);
-    bson_finish(&b);
+    BsonSelectReportFields(&b, 1, cfr_keyhash);
 
     if (mongo_create_index(conn, MONGO_DATABASE, &b, 0, NULL) != MONGO_OK)
     {
@@ -116,9 +113,7 @@ void CFDB_EnsureIndices(EnterpriseDB *conn)
 
     bson_destroy(&b);
 
-    bson_init(&b);
-    bson_append_int(&b, cfr_class_keys, 1);
-    bson_finish(&b);
+    BsonSelectReportFields(&b, 1, cfr_class_keys);
 
     if (mongo_create_index(conn, MONGO_DATABASE, &b, 0, NULL) != MONGO_OK)
     {
@@ -133,10 +128,8 @@ void CFDB_EnsureIndices(EnterpriseDB *conn)
     bson_destroy(&b);
 
     // monitoring collections
-    bson_init(&b);
-    bson_append_int(&b, cfr_keyhash, 1);
-    bson_append_int(&b, cfm_id, 1);
-    bson_finish(&b);
+
+    BsonSelectReportFields(&b, 2, cfr_keyhash, cfm_id);
 
     if (mongo_create_index(conn, MONGO_DATABASE_MON_MG, &b, 0, NULL) != MONGO_OK)
     {
@@ -249,18 +242,18 @@ void CFDB_PurgeTimestampedReports(EnterpriseDB *conn)
     bson_empty(&query);
 
     // only retrieve the purgable reports
-    bson_init(&field);
-    bson_append_int(&field, cfr_keyhash, 1);
-    bson_append_int(&field, cfr_class, 1);
-    bson_append_int(&field, cfr_vars, 1);
-    bson_append_int(&field, cfr_performance, 1);
-    bson_append_int(&field, cfr_filechanges, 1);
-    bson_append_int(&field, cfr_filediffs, 1);
-    bson_append_int(&field, cfr_promisecompl, 1);
-    bson_append_int(&field, cfr_lastseen, 1);
-    bson_append_int(&field, cfr_bundles, 1);
-    bson_append_int(&field, cfr_valuereport, 1);
-    bson_finish(&field);
+
+    BsonSelectReportFields(&field, 10,
+                           cfr_keyhash,
+                           cfr_class,
+                           cfr_vars,
+                           cfr_performance,
+                           cfr_filechanges,
+                           cfr_filediffs,
+                           cfr_promisecompl,
+                           cfr_lastseen,
+                           cfr_bundles,
+                           cfr_valuereport);
 
     cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&field);
@@ -361,11 +354,7 @@ void CFDB_PurgeTimestampedLongtermReports(EnterpriseDB *conn)
     bson_empty(&query);
 
     // only retrieve the purgable reports
-    bson_init(&field);
-    bson_append_int(&field, cfr_keyhash, 1);
-    bson_append_int(&field, cfr_filechanges, 1);
-    bson_append_int(&field, cfr_filediffs, 1);
-    bson_finish(&field);
+    BsonSelectReportFields(&field, 3, cfr_keyhash, cfr_filechanges, cfr_filediffs);
 
     cursor = mongo_find(conn, MONGO_ARCHIVE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -472,12 +461,10 @@ void CFDB_PurgePromiseLogs(EnterpriseDB *conn, time_t oldThreshold, time_t now)
 
 static Item *GetUniquePromiseLogEntryKeys(EnterpriseDB *conn, char *promiseLogKey)
 {
-    bson empty;
     bson field;
+    BsonSelectReportFields(&field, 1, promiseLogKey);
 
-    bson_init(&field);
-    bson_append_int(&field, promiseLogKey, 1);
-    bson_finish(&field);
+    bson empty;
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, bson_empty(&empty), &field, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -516,13 +503,10 @@ static Item *GetUniquePromiseLogEntryKeys(EnterpriseDB *conn, char *promiseLogKe
 /*****************************************************************************/
 static void PurgePromiseLogWithEmptyTimestamps(EnterpriseDB *conn, char *promiseLogKey)
 {
-    bson empty;
     bson field;
+    BsonSelectReportFields(&field, 2, cfr_keyhash, promiseLogKey);
 
-    bson_init(&field);
-    bson_append_int(&field, cfr_keyhash, 1);
-    bson_append_int(&field, promiseLogKey, 1);
-    bson_finish(&field);
+    bson empty;
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, bson_empty(&empty), &field, 0, 0, CF_MONGO_SLAVE_OK);
 

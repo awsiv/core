@@ -8,6 +8,8 @@ This file is (C) Cfengine AS. See COSL LICENSE for details.
 #include "files_names.h"
 #include "item_lib.h"
 
+#include <assert.h>
+
 Item *BsonGetStringArrayAsItemList(const bson *b, const char *key)
 // TODO: Deprecate in favour of BsonStringArrayAsRlist()
 {
@@ -755,3 +757,29 @@ bool BsonIsEmpty(const bson *object)
     }
     return true;
 }
+
+/*****************************************************************************/
+
+int BsonSelectReportFields( bson *fields, int fieldCount, ... )
+{
+    va_list arguments;
+
+    va_start ( arguments, fieldCount );
+
+    bson_init(fields);
+
+    int count = 0;
+    for ( count = 0; count < fieldCount; count++ )
+    {
+        char *key = va_arg( arguments, char *);
+        bson_append_int(fields, key, 1);
+    }
+
+    va_end ( arguments );
+    bson_finish(fields);
+
+    assert(count == fieldCount);
+
+    return count;
+}
+/*****************************************************************************/
