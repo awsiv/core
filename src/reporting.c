@@ -2288,7 +2288,7 @@ void Nova_NoteVarUsageDB(void)
     CF_DBC *dbcp;
     char key[CF_MAXVARSIZE], *keyDb;    // scope.varname
     void *val;
-    Variable var = { {0} }, *varDb;
+    Variable var = { {0} };
     int keyDbSize, valSize;
     time_t varExpireAge = SECONDS_PER_WEEK * 4; // remove vars from DB after about one month
     time_t now = time(NULL);
@@ -2349,9 +2349,11 @@ void Nova_NoteVarUsageDB(void)
     {
         if (val != NULL)
         {
-            varDb = (Variable *) val;
+            /* May not read from val directly due to unaligned access */
+            Variable varDb;
+            memcpy(&varDb, val, sizeof(Variable));
 
-            if (varDb->e.t < now - varExpireAge)
+            if (varDb.e.t < now - varExpireAge)
             {
                 CfDebug("Variable record %s expired\n", keyDb);
                 DBCursorDeleteEntry(dbcp);

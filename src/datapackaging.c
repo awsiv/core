@@ -1333,7 +1333,6 @@ void Nova_PackVariables2(Item **reply, char *header, time_t from, enum cfd_menu 
     char buf[CF_MAXTRANSSIZE];
     CF_DB *dbp;
     CF_DBC *dbcp;
-    Variable *var;
     char *key;                  // scope.lval
     void *val;
     int keySize, valSize;
@@ -1359,9 +1358,11 @@ void Nova_PackVariables2(Item **reply, char *header, time_t from, enum cfd_menu 
     {
         if (val != NULL)
         {
-            var = (Variable *) val;
+            Variable var;
+            /* Properly align */
+            memcpy(&var, val, sizeof(Variable));
 
-            if (var->e.t < from)
+            if (var.e.t < from)
             {
                 continue;
             }
@@ -1388,9 +1389,9 @@ void Nova_PackVariables2(Item **reply, char *header, time_t from, enum cfd_menu 
                 strcpy(prevScope, scope);
             }
 
-            dtypeStr = Dtype2Str(var->dtype);
+            dtypeStr = Dtype2Str(var.dtype);
 
-            snprintf(buf, sizeof(buf), "%s,%ld,%s,%s\n", dtypeStr, var->e.t, lval, var->rval);
+            snprintf(buf, sizeof(buf), "%s,%ld,%s,%s\n", dtypeStr, var.e.t, lval, var.rval);
             AppendItem(reply, buf, NULL);
         }
     }
