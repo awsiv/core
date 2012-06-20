@@ -2,5 +2,34 @@
     padding: 5px;
 }
 .vitalsContainer .graphHeader {
-    padding-left:30px;
+    padding:5px;
+    margin-bottom: 5px;
+}
+
+/* added styles for jScrollPane */
+.vitalsContainer
+{
+    width: 95%;
+    min-width: 600px;
+    height: 410px;
+    overflow: auto;
+    margin-top: 10px;
+    margin-bottom: 3px;
+}
+
+.vitalsContainer .graph-container {
+    float:left;
+    width:48%;
+    margin-bottom: 25px;
+}
+
+.vitalsContainer .graph-container-footer-menu {
+    text-align: right;
+    clear:both;
+}
+
+.vitalsContainer .graph-container-body .graph-title {
+    font-weight: bold;
+    overflow: hidden;
+    max-width: 250px;
 }
