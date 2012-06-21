@@ -1308,9 +1308,30 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
                                 match_lval = false;
                             }
 
-                            if (!NULL_OR_EMPTY(lrval) && !StringMatchFull(lrval, rrval))
+                            if (!NULL_OR_EMPTY(lrval))
                             {
-                                match_rval = false;
+                                if (rtype == CF_LIST)
+                                {
+                                    for (Rlist *it = rrval; it != NULL; it = it->next)
+                                    {
+                                        if (!StringMatchFull(lrval, (char*)it->item))
+                                        {
+                                            match_rval = false;
+                                        }
+                                        else
+                                        {
+                                            match_rval = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    if (!StringMatchFull(lrval, rrval))
+                                    {
+                                        match_rval = false;
+                                    }
+                                }
                             }
 
                             if (!NULL_OR_EMPTY(lscope) && !StringMatchFull(lscope, rscope))
@@ -1330,9 +1351,30 @@ HubQuery *CFDB_QueryVariables(mongo_connection *conn, char *keyHash, char *lscop
                                 match_lval = false;
                             }
 
-                            if (!NULL_OR_EMPTY(lrval) && strcmp(lrval, rrval) != 0)
+                            if (!NULL_OR_EMPTY(lrval))
                             {
-                                match_rval = false;
+                                if (rtype == CF_LIST)
+                                {
+                                    for (Rlist *it = rrval; it != NULL; it = it->next)
+                                    {
+                                        if (strcmp(lrval, (char*)it->item) != 0)
+                                        {
+                                            match_rval = false;
+                                        }
+                                        else
+                                        {
+                                            match_rval = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    if (strcmp(lrval, rrval) != 0)
+                                    {
+                                        match_rval = false;
+                                    }
+                                }
                             }
 
                             if (!NULL_OR_EMPTY(lscope) && strcmp(lscope, rscope) != 0)
