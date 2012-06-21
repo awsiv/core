@@ -1055,8 +1055,6 @@ bool Nova2PHP_vitals_analyse_histogram(char *hostkey, char *vitalId, char *buffe
         past_gradient = new_gradient;
     }
 
-    Join(buffer, work, bufsize);
-
     ReplaceTrailingChar(buffer, ',', '\0');
     Join(buffer, "]", bufsize);
     DeleteItemList(spectrum);
