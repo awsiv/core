@@ -1,6 +1,6 @@
-CFENGINE 3 ENTERPRISE 2.2
+CFENGINE 3 ENTERPRISE 2.2.1
 CFEngine has renamed CFEngine 3 Nova to CFEngine 3 Enterprise
-RELEASE DATE: May 29th, 2012
+RELEASE DATE: June 25th, 2012
 SCOPE: Official release of CFEngine 3 Enterprise
 
 PLATFORMS SUPPORTED:
@@ -30,16 +30,28 @@ Solaris 	10 					i86pc	 		No libvirt
 Ubuntu 		8.04, 8.10, 9.04, 9.10, 10.04, 10.10, 11.04, 11.10, 12.04 (i686,x86-64)
 Windows 	XP, Vista, 7, Server 2003, Server 2008 	x86,x64			No libvirt, OpenSSL is not FIPS-enabled
 
-Community version base: 3.3.3
+Community version base: 3.3.4
 
 
 COMPATIBILITY MATRIX: 
 HUB	CLIENT		TESTED		SUPPORTED	COMMENT
-2.2.0	2.2.0		Yes		Yes
-2.2.0	2.1.x		Yes		Yes		Bundle compliance report not compatible
-2.2.0	2.0.x		Yes		Yes		Vital signs not complete, Bundle compliance report not compatible
-2.1.x	2.2.0		Yes		No		Always use a same or newer version of hub than client
-2.0.x	2.2.0		Yes		No		Always use a same or newer version of hub than client
+2.2.x	2.2.x		Yes		Yes
+2.2.x	2.1.x		Yes		Yes		Bundle compliance report not compatible
+2.2.x	2.0.x		Yes		Yes		Vital signs not complete, Bundle compliance report not compatible
+2.1.x	2.2.x		Yes		No		Always use a same or newer version of hub than client
+2.0.x	2.2.x		Yes		No		Always use a same or newer version of hub than client
+
+BUGFIXES SINCE 2.2.0:
+* Navigation Tree usability fixes (renaming of nodes, reloading of tree)
+* Include reports older than the blue-host threshold when determining host's last-known state
+* Fix warnings from bson library during hub-maintenance cycle
+* Maintain roles data when upgrading hub from 2.1.x
+* Various fixes in the variable reports
+* Prevent JavaScript error when switching to production environment
+* Recognize users authenticated by ActiveDirectory
+* UI fixes for resized and small displays
+* Fix SEGBUS in agents running on Solaris with SPARC architecture
+* Various fixes for the vital signs
 
 
 CHANGE LOG FROM 2.1.3:
