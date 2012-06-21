@@ -26,16 +26,21 @@ int Nova_ReadHistogram2(EnterpriseDB *conn, DataView *cfv, char *hostkey, char *
     CFDB_QueryHistogram(conn, hostkey, monId, histo);
 
     cfv->max = 0;
-    cfv->min = 99999;
+    cfv->min = CF_MAX_LIMIT;
     cfv->error_scale = 0;
 
     for (i = 0; i < CF_GRAINS; i++)
     {
-        ry = histo[i];
+        ry = round (histo[i]);
 
-        if (ry > 1)
+        if (ry < 1)
         {
-            have_data = true;
+            continue;
+        }
+
+        if(ry > CF_MAX_LIMIT)
+        {
+            ry = CF_MAX_LIMIT;
         }
 
         if (ry > cfv->max)
@@ -49,16 +54,7 @@ int Nova_ReadHistogram2(EnterpriseDB *conn, DataView *cfv, char *hostkey, char *
         }
 
         cfv->data_E[i] = ry;
-    }
-
-    if (cfv->max == cfv->min)
-    {
-        have_data = false;
-    }
-
-    if (cfv->max > CF_MAX_LIMIT)
-    {
-        cfv->max = CF_MAX_LIMIT;
+        have_data = true;
     }
 
     return have_data;
