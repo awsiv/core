@@ -33,3 +33,8 @@
     overflow: hidden;
     max-width: 250px;
 }
+
+.vitalsContainer .graph-container-header-top-menu {
+    padding:5px;
+    border-bottom: 1px solid grey;
+}

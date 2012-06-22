@@ -31,11 +31,19 @@
             '<div class="graph-container-footer-menu"></div>'),
 
         vitalsSelect: $('<select id="vitalsSelect">'),
+        vitalsSortBySelect: $('<select id="vitalsSortBySelect">'),
         selectVitalsValues : {
             "loadavg":"load average",
             'diskfree':"Disk free"
         },
+        vitalsValuesSortBy : {
+            "last-measured":"Last Measured",
+            'average':"Average",
+            'slope':'Slope'
+        },
+
         selectedVital : 'loadavg',
+        selectedVitalSortBy : 'last-measured',
 
 
 >>>>>>> added support for vital selection for nodes.
@@ -91,6 +99,7 @@
 
         addNodeContexHeader: function() {
             var $self = this;
+            // build the vitals value drop down
             $.each($self.selectVitalsValues, function(key, value) {
                 $self.vitalsSelect
                 .append($("<option></option>")
@@ -104,7 +113,25 @@
                 $self.resetCounter();
                 $self.refreshForNodeView();
             });
+
+            //build the vitals sort by drop down
+            // build the vitals value drop down
+            $.each($self.vitalsValuesSortBy, function(key, value) {
+                $self.vitalsSortBySelect
+                .append($("<option></option>")
+                    .attr("value",key)
+                    .text(value));
+            });
+            $self.vitalsSortBySelect.change(function() {
+                $self.selectedVitalSortBy = ($(this).val());
+                $self.element.find('.graph-container-body').empty();
+                $self.element.find('.graph-container-footer-menu').empty();
+                $self.resetCounter();
+                $self.refreshForNodeView();
+            });
+
             $self.element.find('.graph-container-header-top-menu').append( $self.vitalsSelect);
+            $self.element.find('.graph-container-header-top-menu').append( $self.vitalsSortBySelect);
         },
 
         refreshForNodeView:function() {
@@ -112,7 +139,8 @@
             var params = {
                 'url':  self.options.baseUrl + self.options.vitalsurl,
                 'data': {
-                    'obs':self.selectedVital
+                    'obs':self.selectedVital,
+                    'sort':self.selectedVitalSortBy
                 },
                 'success': function (data) {
 <<<<<<< HEAD

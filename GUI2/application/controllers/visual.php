@@ -3,6 +3,11 @@
 class Visual extends Cf_Controller
 {
 
+    private static $sortTable = array(
+        'last-measured' => 'sortVitalsByLastMeasured',
+        'average' => 'sortVitalsByAverage'
+    );
+
     function Visual()
     {
         parent::__construct();
@@ -56,7 +61,7 @@ class Visual extends Cf_Controller
         }
     }
 
-    function sortVitals($data1, $data2)
+    function sortVitalsByLastMeasured($data1, $data2)
     {
 
         $lastPerformanceData1 = end($data1['perfdata']);
@@ -71,13 +76,29 @@ class Visual extends Cf_Controller
         return ($lastValue1 < $lastValue2) ? +1 : -1;
     }
 
+    function sortVitalsByAverage($data1, $data2)
+    {
+
+        $lastPerformanceData1 = end($data1['perfdata']);
+        $lastPerformanceData2 = end($data2['perfdata']);
+
+        $lastValue1 = !empty($lastPerformanceData1) ? $lastPerformanceData1[2] : 0;
+        $lastValue2 = !empty($lastPerformanceData2) ? $lastPerformanceData2[2] : 0;
+        if ($lastValue1 == $lastValue2)
+        {
+            return 0;
+        }
+        return ($lastValue1 < $lastValue2) ? +1 : -1;
+    }
+
     function getNodeVitals()
     {
         $username = $this->session->userdata('username');
         $incList = $this->input->post('includes') ? $this->input->post('includes') : array();
         $listOfHost = $this->host_model->getHostListByContext($username, $incList, array());
         $data = array();
-        $obs = $this->input->post('obs') ? $this->input->post('obs') :'loadavg';
+        $obs = $this->input->post('obs') ? $this->input->post('obs') : 'loadavg';
+        $sort = $this->input->post('sort') ? $this->input->post('sort') : 'last-measured';
         foreach ($listOfHost as $index => $host)
         {
             $key = $host['hostkey'];
@@ -91,7 +112,8 @@ class Visual extends Cf_Controller
                 $data[$index]['meta']['nodata'] = true;
             }
         }
-        usort($data, array($this, 'sortVitals'));
+        $sortFunction = isset(self::$sortTable[$sort]) ? self::$sortTable[$sort] : self::$sortTable['last-measured'];
+        usort($data, array($this, $sortFunction));
         echo json_encode($data);
     }
 
