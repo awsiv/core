@@ -143,6 +143,14 @@
         plotGraph: function($plotdiv,meta,perfdata) {
 
             var data = perfdata;
+            var length = data.length;
+            var lastDataSeries = [];
+            var averageSeries = [];
+            for (i=0;i<length;i++) {
+                lastDataSeries.push([i, data[i][1]]);
+                averageSeries.push([i, data[i][2]]);
+            }
+
             var options = {
                 grid:   {
                     hoverable: true,
@@ -173,12 +181,22 @@
                 [
                 {
                     label:"",
-                    data:data,
+                    data:lastDataSeries,
                     lines: {
                         show:true
                     },
                     color:"rgb(255, 153, 0)"
                 },
+
+                {
+                    label:"",
+                    data:averageSeries,
+                    lines: {
+                        show: true,
+                        lineWidth: 1
+                    },
+                    color:"rgb(0, 204, 0)"
+                }
                 ]
                 ,options);
 
