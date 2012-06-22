@@ -251,7 +251,7 @@ class Graph extends CF_Controller
               $lastUpdated = strtotime($lastUpdated) * 1000;
               $this->data['graphLastUpdated'] = $lastUpdated;
              */
-            $this->data['graphDetails'] = $this->vitals_model->getVitalsYearAnalysis($username, $hostKey, $observables);
+            $this->data['graphDetails'] = $this->vitals_model->getVitalsHistogramAnalysis($username, $hostKey, $observables);
             $this->data['graphdata'] = $graphData;
             $this->data['observable'] = $this->canonifyObservables($observables);
 
