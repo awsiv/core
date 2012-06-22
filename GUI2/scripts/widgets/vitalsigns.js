@@ -288,22 +288,16 @@
             var self = this;
             self.element.find('.graph-container-header-top-menu').hide();
             if (data.length !== 0) {
-                var self = this;
                 var meta ={
                     'hostname':data.hostname,
                     'lastUpdated':data.ls
                 };
-
-
-
-
-                // console.log(data.obs);
                 $.each(data.obs, function(key, value) {
                     var perfdata = (value.perfdata);
                     if (perfdata) {
                         // create div
 
-                        var $hostLabel = $('<div>').html(value.desc).addClass('graph-title');
+                        var $hostLabel = $('<div>').html(value.id+'<br />'+value.desc).addClass('graph-title');
                         var intRegex = /^\d+$/;
                         var lastUpdateDate = intRegex.test(meta.lastUpdated)   ? common.time.formatDate(common.unixTimeToJavascriptTime(meta.lastUpdated)) : 'unknown';
                         var $lastUpdated = $('<div class"graph-last-updated">').html('Last updated: '+ lastUpdateDate );

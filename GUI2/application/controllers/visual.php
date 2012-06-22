@@ -107,8 +107,8 @@ class Visual extends Cf_Controller
             $host = $listOfHost[0];
             $hostkey = $host['hostkey'];
             $vitalList = $this->vitals_model->getVitalsList($username, $hostkey);
+            krsort($vitalList['obs']);
             $data = array();
-
             foreach ($vitalList['obs'] as $index => $vitals)
             {
                 $vitalId = $vitals['id'];
