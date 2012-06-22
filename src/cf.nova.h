@@ -79,6 +79,7 @@ typedef void EnterpriseDB;
 
 //
 
+#define CF_INFSIZE 35
 #define CF_TIMESERIESDATA 168   /* (24*7) */
 #define CF_MAGDATA 48           /* (4*12) */
 #define CF_MAX_SLOTS 2016       /* (24*7*12) */
@@ -102,7 +103,54 @@ typedef void EnterpriseDB;
 #define CF_SEARCH_REGEX 1
 #define CF_SEARCH_EXACT 2
 
+/************************************************************************************/
+/* Storyboarding (is not a form of torture)                                         */
+/************************************************************************************/
+
+enum cf_direction
+   {
+   cfi_forwards,
+   cfi_backwards
+   };
+
+#define CF_MAX_STORY_DEPTH 20
+#define HOSTKEY_SIZE 100        // length of SHA=...
+
+#define CF_MAXTRANSSIZE (CF_BUFSIZE - CF_INBAND_OFFSET - 64)
+
+// A node in a storyboard is a stateful path node that contains its history, like
+// a BGP path route. Only the end nodes of a search tree are used, as these
+// contains a complete path-route from start to end.
+
+typedef struct StoryLine_ StoryLine;
+typedef struct Chapter_ Chapter;
+
+struct Chapter_
+   {
+   char *assoc;                                                 // How did we get here?
+
+   char *topic;                                 // Cache db results - where are we now?
+   char *context;
+   int topic_id;
+
+   Item *indirect_inferences;            // Used to make notes about confluences
+
+   int certainty;
+
+   Chapter *history[CF_MAX_STORY_DEPTH]; // chain of pointers, history BGP style
+   };
+
+
 /*****************************************************************************/
+
+// list of stories
+struct StoryLine_
+   {
+   Chapter *story;
+   long checksum;
+   int done;
+   StoryLine *next;
+   };
 
 /*****************************************************************************/
 
@@ -125,6 +173,7 @@ typedef struct
     char *title;
     char *docroot;
 } DataView;
+
 
 typedef struct
 {
@@ -994,6 +1043,35 @@ pid_t Nova_StartTwin(int argc, char **argv);
 void Nova_SignalTwin(void);
 void Nova_SignalOther(void);
 void Nova_ReviveOther(int argc, char **argv);
+
+
+/* stories.c */
+
+int PossibleInference(char *assoc,enum storytype type,enum cf_direction direction,Chapter *this,char *topic,char *context);
+void Constellation_GetWeatherReport(char *hostkey,Item **low, Item **high, Item **anomaly, Item **focused, Item **unfocused,Item **ldt);
+void Constellation_ListPossibleStoriesCmdLine(void);
+void Constellation_GenerateStoriesCmdLine(char *typed_topic,enum storytype type);
+int Constellation_GenerateStories_by_name_JSON(char *typed_topic,enum storytype type,char *buffer,int bufsize);
+int Constellation_GenerateStories_by_id_JSON(int topic_id,enum storytype type,char *buffer,int bufsize);
+void GenerateStoriesAbout(Chapter **story_topic,enum storytype type,StoryLine **finished,int depth,enum cf_direction direction);
+
+Chapter *AppendToStory(Chapter **last,char *topic,char *context,char *assoc,int topic_id);
+StoryLine *PrependStoryLine(StoryLine **start,Chapter *story);
+Chapter *NewChapter(char *topic,char *context,int topic_id);
+int SameStoryDifferentOutcome(Chapter *s1,Chapter *s2);
+void DeleteStoryLine(StoryLine *start);
+void DeleteStory(Chapter *start);
+void Constellation_ShowStoryLine(StoryLine *list,enum storytype x);
+void Constellation_ShowStoryLine_JSON(StoryLine *list,enum storytype type,char *buffer,int bufsize);
+
+void Constellation_ScanAccessRelationships(FILE *fp, Promise *pp,char *promise_id);
+char *Constellation_Relevant3Inference(char *prev,char *this,char *table[CF_INFSIZE][3]);
+char *Constellation_Relevant2Inference(char *this,char *table[CF_INFSIZE][2]);
+char *Constellation_Possible3Inference(char *this,char *table[CF_INFSIZE][3]);
+double Constellation_Inference(Chapter *path[CF_MAX_STORY_DEPTH],enum storytype x,enum cf_direction y,int quiet);
+void Constellation_HostStory(const Policy *policy,char *hostkey,char *buffer, int bufsize);
+int AlreadySaidThis(Chapter *history[CF_MAX_STORY_DEPTH],int topic_id);
+void Constellation_GetLocations(const Policy *policy,char *hostkey, Rlist **locations);
 
 /* topicmap.c */
 

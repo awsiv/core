@@ -57,10 +57,49 @@ static void WriteDouble2Str_MP(double x, char *buffer, int bufsize);
 JsonElement *JSONErrorFromId(cfapi_errid errid);
 
 /*****************************************************************************/
+
 #ifndef NDEBUG
 static bool IsEnvMissionPortalTesting(void);
 #endif
+
 /*****************************************************************************/
+
+void Con2PHP_get_story_by_id(int id,char *buffer,int bufsize)
+
+{ 
+buffer[0] = '\0';
+
+if (Constellation_GenerateStories_by_id_JSON(id,cfi_cause,buffer,bufsize))
+   {
+   }
+else
+   {
+   snprintf(buffer,bufsize,"No stories about this topic\n");
+   }
+}
+
+/*****************************************************************************/
+
+void Con2PHP_get_story_by_name(char *typed_topic,char *buffer,int bufsize)
+
+{ 
+buffer[0] = '\0';
+
+if (Constellation_GenerateStories_by_name_JSON(typed_topic,cfi_cause,buffer,bufsize))
+   {
+   }
+else
+   {
+   snprintf(buffer,bufsize,"No stories about %s\n",typed_topic);
+   }
+}
+
+/*****************************************************************************/
+
+void Con2PHP_ComplianceSummaryGraph(char *hubKeyHash, char *policy, char *buffer,int bufsize)
+{
+ComplianceSummaryGraph(hubKeyHash,policy,true,buffer,bufsize);
+}
 
 /*****************************************************************************/
 /* Helper functions                                                          */
@@ -1050,6 +1089,8 @@ bool Nova2PHP_vitals_analyse_histogram(char *hostkey, char *vitalId, char *buffe
 
         past_gradient = new_gradient;
     }
+
+    Join(buffer, work, bufsize);
 
     ReplaceTrailingChar(buffer, ',', '\0');
     Join(buffer, "]", bufsize);
