@@ -336,11 +336,9 @@
 
         drawGraphCanvasForHost: function (data) {
 
-            console.log('drawing host graphs..');
             var self = this;
             self.element.find('.graph-container-header-top-menu').hide();
             if (data.length !== 0) {
-                console.log(data);
                 var meta ={
                     'hostname':data.hostname,
                     'lastUpdated':data.ls,
