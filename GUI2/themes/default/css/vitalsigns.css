@@ -9,10 +9,6 @@
 /* added styles for jScrollPane */
 .vitalsContainer
 {
-    width: 95%;
-    min-width: 600px;
-    height: 410px;
-    overflow: auto;
     margin-top: 10px;
     margin-bottom: 3px;
 }
@@ -22,6 +18,15 @@
     width:48%;
     margin-bottom: 25px;
 }
+
+.vitalsContainer .graph-container-body {
+    overflow: auto;
+    width: 100%;
+    min-width: 550px;
+    height: 345px;
+}
+
+
 
 .vitalsContainer .graph-container-footer-menu {
     text-align: right;
