@@ -8,56 +8,126 @@ class EventTracker extends Cf_controller
         parent::__construct();
         $this->load->library(array('table', 'cf_table', 'pagination', 'form_validation'));
         $this->load->helper('form');
-        $this->load->model('tracker_model');
+        $this->load->model(array('tracker_model','report_model'));
     }
-    
-    function createView(){
-          $this->load->view('eventviewer/addTracker');
+
+    function createView()
+    {
+        $this->load->view('eventviewer/addTracker');
     }
-    
+
     function create()
     {
-        $this->form_validation->set_rules('trackerName', 'Tracker identifier', 'xss_clean|trim|required');
-        $this->form_validation->set_rules('resource', 'Unique resource', 'xss_clean|trim|required');
-        $this->form_validation->set_rules('time', 'Start time for tracking', 'xss_clean|trim|required');
-        $this->form_validation->set_rules('reportType', 'Report type', 'xss_clean|trim|required');
-        $this->form_validation->set_error_delimiters('<span>', '</span><br/>');
-        
-         if ($this->form_validation->run() == FALSE)
+        try
         {
-            $this->output->set_status_header('500', "Cannot create tracker bundle");
-            echo validation_errors();
-        }
-        else
-        {
-            $inputs=array(
-                    "userName" => $this->session->userdata('username'),
-                    "trackerName"=>$this->input->post('trackerName'),
-                    "reportType"=>$this->input->post('reportType'),
-                    "resource"=>$this->input->post('resource'),
-                    "datetimeStamp"=>$this->input->post('time'),
+            $inputs = array(
+                "userName" => trim($this->session->userdata('username')),
+                "trackerName" => trim($this->input->post('trackerName')),
+                "reportType" => trim($this->input->post('reportType')),
+                "resource" => trim($this->input->post('resource')),
+                "dateTimeStamp" => strtotime(trim($this->input->post('time'))),
             );
-            
-            try
+            $tracker = $this->tracker_model->insert($inputs);
+
+            if ($tracker !== FALSE)
             {
-                $tracker = $this->tracker_model->insert($inputs);
-                if ($tracker instanceof CF_tracker)
-                {
-                      echo '<p class="success">'.$tracker->getName() ." was sucessfully created"; 
-                }
-                else
-                {
-                    $this->output->set_status_header('500', "Cannot create tracker" . $inputs['trackerName']);
-                    log_message('error','Could not confirm the data was inserted');
-                }
-                
-            }catch(Exception $e){
+                echo '<p class="success">' . $tracker->getName() . " was sucessfully created";
+            }
+            else
+            {
                 $this->output->set_status_header('500', "Cannot create tracker" . $inputs['trackerName']);
-                log_message('error', "Exception was encounterd when performing database operation ".$e->getMessage()." ".$e->getLine());
+
+                $error_html = '<p class="error">';
+                foreach ($this->tracker_model->getErrors() as $error)
+                {
+                    $error_html.= '<span>' . $error . '</span><br/>';
+                };
+                $error_html.='<p>';
+                log_message('error', 'Could not confirm the data was inserted');
+                echo $error_html;
             }
         }
+        catch (Exception $e)
+        {
+            $this->output->set_status_header('500', "Cannot create tracker" . $inputs['trackerName']);
+            log_message('error', "Exception was encounterd when performing database operation " . $e->getMessage() . " " . $e->getLine());
+        }
+    }
+
+    function listTrackers()
+    {
+        try
+        {
+            $filter = array('userName' => $this->session->userdata('username'));
+            $data = array(
+                    'trackers'=>$this->tracker_model->get_all_tracker($filter)
+                    );
+            $this->load->view('eventviewer/listTrackers',$data);
+            //echo json_encode($data['trackers']);
+        }
+        catch (Exception $e)
+        {
+            $this->output->set_status_header('500', "Cannot retrive trackers");
+            log_message('error', "Exception was encounterd when performing database operation " . $e->getMessage() . " " . $e->getLine());
+        }
+    }
+    
+    function track(){
+      $username=$this->session->userdata('username');
+      $reportType= $this->input->post('report');
+      $resource=$this->input->post('resource');
+      $incList=$this->input->post('inclist');
+      $exList=$this->input->post('exlist');
+      $from =$this->input->post('startTime');
+      
+      $cause_rx='.*'; /* regx to include every thig */
+      $to=0; /* get current time stamp */
+      $rows=-1; /* un limited rows*/
+      $page_number=-1; /*unlimited pages */
+      
+      if($resource =='' || $reportType=="" || $from ==""){
+          $this->output->set_status_header('400', "Cannot retrive trackers");
+           echo 'Invalid Inputs';
+           return;
+      }
+      
+      try
+       {
+          $logData=array();
+          if($reportType =='not_kept'){
+              $logData=$this->report_model->getPromisesNotKeptLog($username, NULL,$resource, $cause_rx, $from, $to, explode(',',$incList), explode(',',$exList), $rows, $page_number);
+          }
+          
+          if($reportType =='repaired'){
+              $logData = $this->report_model->getPromisesRepairedLog($username, NULL, $resource, $cause_rx, $from, $to, explode(',',$incList), explode(',',$exList), $rows, $page_number);
+          }    
+          
+          $return_data=array();
+          $return_data['data']=array();
+          if(is_array($logData) && key_exists('data', $logData) && count($logData['data'])>0){
+             foreach ($logData['data'] as $records){
+                 if($records[3] >= $from){
+                       $unique_id = md5($records[0].$records[1].$records[2].$records[3]); //hashing the sha_key time stamp and promise_handle
+                       $records[] = $unique_id;
+                       $return_data['data'][$records[3]][]=$records;
+                 }
+             } 
+          }
+          
+          $return_data['meta']=array('update_time'=> now(),'hosts'=>$logData['meta']['related'],'events'=>$logData['meta']['count'],'type'=>$reportType);
+          
+          ksort($return_data['data']);
+          sleep(10);
+          echo json_encode($return_data);
+          
+       }catch(Exception $e)
+       {
+           $this->output->set_status_header('500', "Cannot retrive trackers");
+           echo json_encode(array('message'=>'Error retriving '.$reportType.' data from'. strtotime($from) .'for'. $resource));
+       }
         
     }
 
 }
+
 ?>
