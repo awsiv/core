@@ -33,7 +33,11 @@ class CF_tracker{
     }
     
     function getDateTime(){
-        return date('D F d h:i:s Y', $this->dateTimeStamp);
+        return date('Y-m-d H:i:s', $this->dateTimeStamp);
+    }
+    
+    function getDateTimeStamp(){
+        return $this->dateTimeStamp;
     }
     
     function getResource(){
