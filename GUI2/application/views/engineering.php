@@ -47,6 +47,7 @@
                 </div>
             </div>
              <div id="tab-3">
+                    <div class="astrolabeLocation"></div>
                     <div id="event_viewer">
                         
                     </div>
@@ -99,6 +100,7 @@
 
                 $('.astrolabeLocation').astrolabeLocation('setHostName', args.hostName);
                 $('#reportInfoContainer').reportUI('setHostContext',args.hostKey);
+                $('#event_viewer').eventTrackerUI('setHostContext',args.hostKey);
             },
 
             nodeSelected: function(event, args) {
@@ -116,6 +118,7 @@
                 $('.astrolabeLocation').astrolabeLocation('setContextPath', args.path, args.count);
 
                 $('#reportInfoContainer').reportUI('setContext',args.includes, []);
+                $('#event_viewer').eventTrackerUI('setContext',args.includes,[]);
             }
         });
     });
