@@ -3,8 +3,8 @@
         options: {
             contextWidgetElement:'hclist',
             baseUrl:'',
-            vitalsurl: '/visual/getNodeVitals',
-            vitalsurlForHost: '/visual/getHostVitals'
+            vitalsurl: '/vitals/node_vitals',
+            vitalsurlForHost: '/vitals/host_vitals'
 
         },
         _context: {
@@ -55,7 +55,7 @@
             $self._context.excludes = excludes;
             $self._modifyContext();
             $self._hostView = false;
-             // set auto refresh
+            // set auto refresh
             setInterval(function(){
                 $self._modifyContext()
             }, $self._autoRefresh);
@@ -143,6 +143,7 @@
             var self = this;
             var params = {
                 'url':  self.options.baseUrl + self.options.vitalsurl,
+                'type':'Get',
                 'data': {
                     'obs':self.selectedVital,
                     'sort':self.selectedVitalSortBy
@@ -163,6 +164,7 @@
             var self = this;
             var params = {
                 'url':  self.options.baseUrl + self.options.vitalsurlForHost,
+                'type':'Get',
                 'data': {
 
                 },
@@ -374,9 +376,18 @@
             $self.element.find($self.showMoreIcon).remove();
         },
 
+        _getContext:function() {
+            var self = this;
+            var context = [];
+            context['includes'] = encodeURIComponent(self._context.includes);
+            context['excludes'] = encodeURIComponent(self._context.excludes);
+            return context;
+        },
+
         sendRequest: function(params) {
             var self = this;
-            var senddata = $.extend(params.data, self._context);
+            console.log(self._getContext());
+            var senddata = $.extend(params.data, self._getContext());
             $.ajax({
                 type: params.type ? params.type : 'post' ,
                 url: params.url,
