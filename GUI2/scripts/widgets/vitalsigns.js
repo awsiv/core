@@ -11,12 +11,6 @@
             includes: [],
             excludes: []
         },
-<<<<<<< HEAD
-        $busyIcon: $('<span class="loadinggif" style="display:none">')
-        .html('&nbsp;'),
-        $errorDiv: $('<div>').addClass('error'),
-
-=======
         busyIcon: $('<span class="loadinggif" style="display:none">').html('&nbsp;'),
         showMoreIcon: $('<span class="showmore"  style="display:none">').html('<button>show more..</button>'),
         errorDiv: $('<div>').addClass('error'),
@@ -25,6 +19,7 @@
         _defaultNumberOfGraphs:10,
         _cachedData:[],
         _hostView: false,
+        _autoRefresh : 1000 * 60,
 
         vitalPanel: $('<div class="graph-container-header-top-menu"></div>'+
             '<div class="graph-container-body"></div>'+
@@ -34,7 +29,8 @@
         vitalsSortBySelect: $('<select id="vitalsSortBySelect">'),
         selectVitalsValues : {
             "loadavg":"load average",
-            'diskfree':"Disk free"
+            'diskfree':"Disk free",
+            'cpu':"CPU (all)"
         },
         vitalsValuesSortBy : {
             "last-measured":"Last Measured",
@@ -46,11 +42,11 @@
         selectedVitalSortBy : 'last-measured',
 
 
->>>>>>> added support for vital selection for nodes.
         _create: function() {
             var $self = this;
             $self.element.append($self.vitalPanel);
             $self.addNodeContexHeader();
+
         },
 
         setContext: function(includes, excludes) {
@@ -59,6 +55,12 @@
             $self._context.excludes = excludes;
             $self._modifyContext();
             $self._hostView = false;
+             // set auto refresh
+            setInterval(function(){
+                $self._modifyContext()
+            }, $self._autoRefresh);
+
+
         },
 
         setHostContext:function(hostkey) {
@@ -81,9 +83,6 @@
 
         clearCanvas:function() {
             var $self = this;
-<<<<<<< HEAD
-            $self.element.html('');
-=======
             $self.element.find('.graph-container-body').empty();
             $self.element.find('.graph-container-footer-menu').empty();
             $self.resetCounter();
@@ -94,7 +93,6 @@
             $self._startIndex = 0;
             $self._defaultNumberOfGraphs=10;
             $self._cachedData=[];
->>>>>>> added support for vital selection for nodes.
         },
 
         addNodeContexHeader: function() {
@@ -134,6 +132,13 @@
             $self.element.find('.graph-container-header-top-menu').append( $self.vitalsSortBySelect);
         },
 
+        showEmptyData: function() {
+            // cannot fetch any data
+            var self = this;
+            var $infoDiv = $('<p class=info>Cannot fetch any data right now.</p>');
+            self.element.find('.graph-container-body').append($infoDiv);
+        },
+
         refreshForNodeView:function() {
             var self = this;
             var params = {
@@ -143,12 +148,12 @@
                     'sort':self.selectedVitalSortBy
                 },
                 'success': function (data) {
-<<<<<<< HEAD
-                    self.drawGraphs(data);
-=======
+                    if (data.length === 0) {
+                        self.showEmptyData();
+                        return;
+                    }
                     self._cachedData = data;
                     self.drawGraphCanvas(self._cachedData);
->>>>>>> added support for vital selection for nodes.
                 }
             };
             self.sendRequest(params);
@@ -162,6 +167,10 @@
 
                 },
                 'success': function (data) {
+                    if (data.length === 0) {
+                        self.showEmptyData();
+                        return;
+                    }
                     self.drawGraphCanvasForHost(data);
                 }
             };
@@ -266,18 +275,14 @@
         },
 
         drawGraphCanvas: function (data) {
-            console.log('drawing node graphs..');
+            var time = new  Date();
+            console.log('drawing node graphs.. ' + time.getHours() + '::' + time.getMinutes());
 
             var self = this;
-<<<<<<< HEAD
-            //console.log(data);
-            $.each(data, function(key, value) {
-=======
             self.element.find('.graph-container-header-top-menu').show();
             var offset = self._startIndex * self._defaultNumberOfGraphs;
             var slicedData = data.slice(offset, offset+self._defaultNumberOfGraphs);
             $.each(slicedData, function(key, value) {
->>>>>>> added support for vital selection for nodes.
                 var perfdata = (value.perfdata);
                 var meta = value.meta;
 
@@ -298,8 +303,6 @@
 
                 self.plotGraph($plotdiv,meta,perfdata);
             });
-<<<<<<< HEAD
-=======
 
             if ((data.length > self._defaultNumberOfGraphs) && (self._startIndex * self. _defaultNumberOfGraphs +  self. _defaultNumberOfGraphs ) <  data.length ) {
                 // show load more button
@@ -369,7 +372,6 @@
             var $self = this;
             $self.showMoreIcon.hide();
             $self.element.find($self.showMoreIcon).remove();
->>>>>>> added support for vital selection for nodes.
         },
 
         sendRequest: function(params) {
