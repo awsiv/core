@@ -92,6 +92,24 @@ class test_tracker_model extends CI_TestCase
         $this->assertEquals($tracker, FALSE, "must fail as the tracker name already exist");
      }
      
+     public function test_insertInvalidTimeFormatMustFail(){
+        $username='unit-test';
+        $resource='handle';
+        $reportType='reportType';
+        $frequency=5;
+        
+        $data= array(
+               'userName'=>$username,
+               'resource'=>$resource,
+               'reportType'=>$reportType,
+               'dateTimeStamp'=>'2012-06-21 00: 00',
+               'frequency'=>$frequency,
+               'trackerName'=>'testTracker'
+        );
+        $tracker= $this->ci_obj->tracker_model->insert($data);
+        $this->assertEquals($tracker, FALSE, "must fail the timeStamp was not supplied");
+     }
+     
      public function test_get_all_trackers()
      {
          $filter= array('userName'=>'unit-test');
