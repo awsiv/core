@@ -4,8 +4,8 @@
             contextWidgetElement:'hclist',
             baseUrl:'',
             vitalsurl: '/vitals/node_vitals',
-            vitalsurlForHost: '/vitals/host_vitals'
-
+            vitalsurlForHost: '/vitals/host_vitals',
+            vitalsurlForConfiguration: '/vitals/config_vitals'
         },
         _context: {
             includes: [],
@@ -95,10 +95,9 @@
             $self._cachedData=[];
         },
 
-        addNodeContexHeader: function() {
+        _buildVitalsSelection:function(data) {
             var $self = this;
-            // build the vitals value drop down
-            $.each($self.selectVitalsValues, function(key, value) {
+            $.each(data, function(key, value) {
                 $self.vitalsSelect
                 .append($("<option></option>")
                     .attr("value",key)
@@ -111,9 +110,14 @@
                 $self.resetCounter();
                 $self.refreshForNodeView();
             });
-
-            //build the vitals sort by drop down
+            $self.element.find('.graph-container-header-top-menu').append( $self.vitalsSelect);
             // build the vitals value drop down
+            $self._buildVitalsSortSelection();
+        },
+
+        _buildVitalsSortSelection:function() {
+            //build the vitals sort by drop down
+            var $self = this;
             $.each($self.vitalsValuesSortBy, function(key, value) {
                 $self.vitalsSortBySelect
                 .append($("<option></option>")
@@ -127,9 +131,24 @@
                 $self.resetCounter();
                 $self.refreshForNodeView();
             });
-
-            $self.element.find('.graph-container-header-top-menu').append( $self.vitalsSelect);
             $self.element.find('.graph-container-header-top-menu').append( $self.vitalsSortBySelect);
+        },
+
+        addNodeContexHeader: function() {
+            var $self = this;
+            var params = {
+                'url':  $self.options.baseUrl + $self.options.vitalsurlForConfiguration,
+                'type':'get',
+                'success': function (data) {
+                    $self._buildVitalsSelection(data);
+                },
+                'error':function() {
+                    $self._buildVitalsSelection( $self.selectVitalsValues);
+                }
+            };
+            $self.sendRequest(params);
+
+
         },
 
         showEmptyData: function() {
@@ -386,7 +405,6 @@
 
         sendRequest: function(params) {
             var self = this;
-            console.log(self._getContext());
             var senddata = $.extend(params.data, self._getContext());
             $.ajax({
                 type: params.type ? params.type : 'post' ,

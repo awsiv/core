@@ -6,8 +6,8 @@ class Vitals extends Cf_REST_Controller
 {
 
     private static $sortTable = array(
-        'last-measured' => 'sortVitalsByLastMeasured',
-        'average' => 'sortVitalsByAverage'
+        'last-measured' => '_sortVitalsByLastMeasured',
+        'average' => '_sortVitalsByAverage'
     );
 
     function __construct()
@@ -94,6 +94,13 @@ class Vitals extends Cf_REST_Controller
             }
         }
         $this->respond(200, json_encode($vitalList));
+    }
+
+    function config_vitals_get()
+    {
+        $this->config->load('vitals');
+        $vitalsArray = $this->config->item('vitals');
+        $this->respond(200, json_encode($vitalsArray));
     }
 
 }

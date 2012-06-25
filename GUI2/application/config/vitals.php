@@ -1,16 +1,12 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-/*
-| -------------------------------------------------------------------------
-| Hooks
-| -------------------------------------------------------------------------
-| This file lets you define "hooks" to extend CI without hacking the core
-| files.  Please see the user guide for info:
-|
-|	http://codeigniter.com/user_guide/general/hooks.html
-|
-*/
+<?php
 
-
-
-/* End of file hooks.php */
-/* Location: ./system/application/config/hooks.php */
+if (!defined('BASEPATH'))
+    exit('No direct script access allowed');
+/**
+ * Predifined values for vital selection in vital tabs
+ */
+$config['vitals'] = array(
+    'loadavg' => "load average",
+    'diskfree' => "Disk free",
+    'cpu' => "CPU (all)"
+);
