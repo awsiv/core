@@ -22,7 +22,7 @@ class Visual extends Cf_Controller
         $this->load->model('host_model');
     }
 
-    function vital($hostkey = NULL)
+    function vital($hostkey = NULL,$obs=NULL)
     {
         $hostkey = isset($_POST['hostkey']) ? $_POST['hostkey'] : $hostkey;
         $username = $this->session->userdata('username');
@@ -37,7 +37,8 @@ class Visual extends Cf_Controller
         $data = array(
             'title' => $this->lang->line('mission_portal_title') . " - " . $this->lang->line('breadcrumb_vital') . " Signs",
             'breadcrumbs' => $this->breadcrumblist->display(),
-            'hostKey' => $hostkey
+            'hostKey' => $hostkey,
+            'obs' => $obs
         );
 
         if ($hostkey != 'none')
@@ -59,85 +60,6 @@ class Visual extends Cf_Controller
             $data['noDataMessage'] = "No host selected";
             $this->template->load('template', '/visualization/nohost', $data);
         }
-    }
-
-    function sortVitalsByLastMeasured($data1, $data2)
-    {
-
-        $lastPerformanceData1 = end($data1['perfdata']);
-        $lastPerformanceData2 = end($data2['perfdata']);
-
-        $lastValue1 = !empty($lastPerformanceData1) ? $lastPerformanceData1[1] : 0;
-        $lastValue2 = !empty($lastPerformanceData2) ? $lastPerformanceData2[1] : 0;
-        if ($lastValue1 == $lastValue2)
-        {
-            return 0;
-        }
-        return ($lastValue1 < $lastValue2) ? +1 : -1;
-    }
-
-    function sortVitalsByAverage($data1, $data2)
-    {
-
-        $lastPerformanceData1 = end($data1['perfdata']);
-        $lastPerformanceData2 = end($data2['perfdata']);
-
-        $lastValue1 = !empty($lastPerformanceData1) ? $lastPerformanceData1[2] : 0;
-        $lastValue2 = !empty($lastPerformanceData2) ? $lastPerformanceData2[2] : 0;
-        if ($lastValue1 == $lastValue2)
-        {
-            return 0;
-        }
-        return ($lastValue1 < $lastValue2) ? +1 : -1;
-    }
-
-    function getNodeVitals()
-    {
-        $username = $this->session->userdata('username');
-        $incList = $this->input->post('includes') ? $this->input->post('includes') : array();
-        $listOfHost = $this->host_model->getHostListByContext($username, $incList, array());
-        $data = array();
-        $obs = $this->input->post('obs') ? $this->input->post('obs') : 'loadavg';
-        $sort = $this->input->post('sort') ? $this->input->post('sort') : 'last-measured';
-        foreach ($listOfHost as $index => $host)
-        {
-            $key = $host['hostkey'];
-            $graphData = $this->vitals_model->getVitalsMagnifiedViewJson($username, $key, $obs);
-            $lastMeasuredArray = json_decode($graphData);
-            $data[$index]['meta'] = $host;
-            $data[$index]['meta']['lastUpdated'] = $this->vitals_model->getVitalsLastUpdate($username, $key);
-            $data[$index]['perfdata'] = $lastMeasuredArray;
-            if (empty($lastMeasuredArray))
-            {
-                $data[$index]['meta']['nodata'] = true;
-            }
-        }
-        $sortFunction = isset(self::$sortTable[$sort]) ? self::$sortTable[$sort] : self::$sortTable['last-measured'];
-        usort($data, array($this, $sortFunction));
-        echo json_encode($data);
-    }
-
-    function getHostVitals()
-    {
-        $username = $this->session->userdata('username');
-        $incList = $this->input->post('includes') ? $this->input->post('includes') : array();
-        $observables = '';
-        $listOfHost = $this->host_model->getHostListByContext($username, $incList, array());
-        $vitalList = array();
-        if (!empty($listOfHost))
-        {
-            $host = $listOfHost[0];
-            $hostkey = $host['hostkey'];
-            $vitalList = $this->vitals_model->getVitalsList($username, $hostkey);
-            krsort($vitalList['obs']);
-            $data = array();
-            foreach ($vitalList['obs'] as $index => $vitals)
-            {
-                $vitalId = $vitals['id'];
-                $vitalList['obs'][$index]['perfdata'] = json_decode($this->vitals_model->getVitalsMagnifiedViewJson($username, $hostkey, $vitalId));
-            }
-        }
-        echo json_encode($vitalList);
     }
 
 }

@@ -5,7 +5,8 @@
             baseUrl:'',
             vitalsurl: '/vitals/node_vitals',
             vitalsurlForHost: '/vitals/host_vitals',
-            vitalsurlForConfiguration: '/vitals/config_vitals'
+            vitalsurlForConfiguration: '/vitals/config_vitals',
+            vitalsMainLink : 'visual/vital/'
         },
         _context: {
             includes: [],
@@ -56,10 +57,11 @@
             $self._modifyContext();
             $self._hostView = false;
             // set auto refresh
+            /*
             setInterval(function(){
                 $self._modifyContext()
             }, $self._autoRefresh);
-
+            */
 
         },
 
@@ -296,9 +298,6 @@
         },
 
         drawGraphCanvas: function (data) {
-            var time = new  Date();
-            console.log('drawing node graphs.. ' + time.getHours() + '::' + time.getMinutes());
-
             var self = this;
             self.element.find('.graph-container-header-top-menu').show();
             var offset = self._startIndex * self._defaultNumberOfGraphs;
@@ -308,8 +307,9 @@
                 var meta = value.meta;
 
                 // create div
-
-                var $hostLabel = $('<div>').html(meta.hostname).addClass('graph-title');
+                var $url =  self.options.baseUrl + self.options.vitalsMainLink + meta.hostkey;
+                var $hostVitalLink = $('<a target="_blank">').html(meta.hostname).attr('href',$url)
+                var $hostLabel = $('<div>').addClass('graph-title').append($hostVitalLink);
                 var intRegex = /^\d+$/;
                 var lastUpdateDate = intRegex.test(meta.lastUpdated)   ? common.time.formatDate(common.unixTimeToJavascriptTime(meta.lastUpdated)) : 'unknown';
                 var $lastUpdated = $('<div>').html('Last updated: '+ lastUpdateDate );
@@ -340,16 +340,19 @@
             var self = this;
             self.element.find('.graph-container-header-top-menu').hide();
             if (data.length !== 0) {
+                console.log(data);
                 var meta ={
                     'hostname':data.hostname,
-                    'lastUpdated':data.ls
+                    'lastUpdated':data.ls,
+                    'hostkey':data.hostkey
                 };
                 $.each(data.obs, function(key, value) {
                     var perfdata = (value.perfdata);
                     if (perfdata) {
                         // create div
-
-                        var $hostLabel = $('<div>').html(value.id+'<br />'+value.desc).addClass('graph-title');
+                        var $url =  self.options.baseUrl + self.options.vitalsMainLink + meta.hostkey+'/'+value.id;
+                         var $hostVitalLink = $('<a target="_blank">').html(value.id+'<br />'+value.desc).attr('href',$url)
+                        var $hostLabel = $('<div>').addClass('graph-title').append($hostVitalLink);
                         var intRegex = /^\d+$/;
                         var lastUpdateDate = intRegex.test(meta.lastUpdated)   ? common.time.formatDate(common.unixTimeToJavascriptTime(meta.lastUpdated)) : 'unknown';
                         var $lastUpdated = $('<div class"graph-last-updated">').html('Last updated: '+ lastUpdateDate );
