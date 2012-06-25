@@ -47,6 +47,7 @@
             var $self = this;
             $self.element.append($self.vitalPanel);
             $self.addNodeContexHeader();
+            $self.element.prepend($self.busyIcon);
 
         },
 
@@ -56,8 +57,8 @@
             $self._context.excludes = excludes;
             $self._modifyContext();
             $self._hostView = false;
-            // set auto refresh
-            /*
+        // set auto refresh
+        /*
             setInterval(function(){
                 $self._modifyContext()
             }, $self._autoRefresh);
@@ -149,19 +150,19 @@
                 }
             };
             $self.sendRequest(params);
-
-
         },
 
         showEmptyData: function() {
             // cannot fetch any data
             var self = this;
+            self.busyIcon.hide();
             var $infoDiv = $('<p class=info>Cannot fetch any data right now.</p>');
             self.element.find('.graph-container-body').append($infoDiv);
         },
 
         refreshForNodeView:function() {
             var self = this;
+            self.busyIcon.show();
             var params = {
                 'url':  self.options.baseUrl + self.options.vitalsurl,
                 'type':'Get',
@@ -170,12 +171,13 @@
                     'sort':self.selectedVitalSortBy
                 },
                 'success': function (data) {
-                    if (data.length === 0) {
+                    if (data === null || data.length === 0) {
                         self.showEmptyData();
                         return;
                     }
                     self._cachedData = data;
                     self.drawGraphCanvas(self._cachedData);
+                    self.busyIcon.hide();
                 }
             };
             self.sendRequest(params);
@@ -183,6 +185,8 @@
 
         refreshForHostView:function() {
             var self = this;
+            self.element.find('.graph-container-header-top-menu').hide();
+            self.busyIcon.show();
             var params = {
                 'url':  self.options.baseUrl + self.options.vitalsurlForHost,
                 'type':'Get',
@@ -190,14 +194,16 @@
 
                 },
                 'success': function (data) {
-                    if (data.length === 0) {
+                    if (data === null || data.length === 0) {
                         self.showEmptyData();
                         return;
                     }
                     self.drawGraphCanvasForHost(data);
+                    self.busyIcon.hide();
                 }
             };
             self.sendRequest(params);
+
         },
 
         plotGraph: function($plotdiv,meta,perfdata) {
@@ -317,11 +323,9 @@
                 .append($lastUpdated);
                 var $graphDiv = $('<div>').addClass('graph-container').attr('id',meta.hostkey+'-container').append($graphHeader)
 
-                var $plotdiv = $('<div>').attr('id',meta.hostkey).width('250').height('150');
+                var $plotdiv = $('<div>').attr('id',meta.hostkey).width('250').height('150').html('loading...');
                 $graphDiv.append($plotdiv);
                 self.element.find('.graph-container-body').append($graphDiv);
-
-
                 self.plotGraph($plotdiv,meta,perfdata);
             });
 
@@ -337,7 +341,6 @@
         drawGraphCanvasForHost: function (data) {
 
             var self = this;
-            self.element.find('.graph-container-header-top-menu').hide();
             if (data.length !== 0) {
                 var meta ={
                     'hostname':data.hostname,
@@ -349,7 +352,7 @@
                     if (perfdata) {
                         // create div
                         var $url =  self.options.baseUrl + self.options.vitalsMainLink + meta.hostkey+'/'+value.id;
-                         var $hostVitalLink = $('<a target="_blank">').html(value.id+'<br />'+value.desc).attr('href',$url)
+                        var $hostVitalLink = $('<a target="_blank">').html(value.id+'<br />'+value.desc).attr('href',$url)
                         var $hostLabel = $('<div>').addClass('graph-title').append($hostVitalLink);
                         var intRegex = /^\d+$/;
                         var lastUpdateDate = intRegex.test(meta.lastUpdated)   ? common.time.formatDate(common.unixTimeToJavascriptTime(meta.lastUpdated)) : 'unknown';
@@ -375,8 +378,6 @@
                     self.hideLoadMoreButton();
                 }
             }
-
-
         },
 
         showLoadMoreButton:function() {
@@ -430,6 +431,7 @@
         _displayFailure: function(jqXHR,textStatus, errorThrown) {
             var serverMsg,
             self = this;
+            self.busyIcon.hide();
             if (jqXHR.status == 0) {
                 serverMsg = 'You are offline!!\n Please Check Your Network.';
             }else if (jqXHR.status == 404) {
