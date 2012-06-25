@@ -284,4 +284,5 @@ $lang['unknown_error'] = "Unknown error - description out of bounds";
  * Exception messages
  */
 $lang['cf_mod_expection_error']='Server Internal Error.';
+$lang['warning_only_suse'] = "This report is only supported for SUSE platforms";
 ?>
