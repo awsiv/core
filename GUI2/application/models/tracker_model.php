@@ -21,13 +21,13 @@ class Tracker_model extends CI_Model
             $valid = false;
             $this->setError('Provide a resource to track');
         }
-
-        if (trim($data['dateTimeStamp']) == '' && !is_integer($data['dateTimeStamp']))
+      
+        if (trim($data['dateTimeStamp']) == '' || !is_integer($data['dateTimeStamp']))
         {
             $valid = false;
-            $this->setError('Provide a start datetime  to track');
+            $this->setError('Provide a valid start datetime  to track');
         }
-
+        
         if (trim($data['reportType']) == '')
         {
             $valid = false;
