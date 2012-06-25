@@ -53,7 +53,8 @@ class Engineering extends Cf_Controller
                     array('hostInfo.css'),
                     array('jScrollPane.css'),
                     array('contextfinder.css'),
-                    array('tabs-custom.css')
+                    array('tabs-custom.css'),
+                    array('eventviewer.css')
                 )
         );
 
