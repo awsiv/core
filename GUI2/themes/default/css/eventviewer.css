@@ -1,0 +1,60 @@
+#event_viewer{
+   margin-top:10px;
+}
+
+.listPane ul li{
+    list-style: none !important;
+    padding:4px;
+}
+
+.listPane ul li .trackerStart:hover,.listPane ul li .trackerStop:hover{
+   text-decoration: underline;
+   cursor: pointer;
+}
+
+.listPane p{
+    margin-bottom: 2px;
+    font-size: 14px;
+}
+
+.listPane ul{
+  border:1px solid #AAAAAA;
+  border-radius: 4px 4px 4px 4px;  
+  background: #E6EEE3;
+  max-height: 135px;
+  overflow: auto;
+}
+
+.eventPane{
+    margin-top:15px;
+}
+
+.events{
+    border:2px solid gray;
+    height:200px;
+    overflow-y:scroll;
+}
+
+.event{
+    border-bottom: 1px solid silver; 
+    border-collapse: collapse; 
+    padding: 2px
+}
+
+.status .eventType{
+    float: left; 
+    font-size: 14px; 
+    padding: 4px
+}
+
+.status .hostandEvents{
+    float: right; 
+    padding: 4px
+}
+
+#event_viewer #infoMessage{
+    padding:0px;
+    margin-bottom: 15px;
+}
+
+
