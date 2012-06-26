@@ -39,7 +39,7 @@ int CFDB_PutValue(char *lval, char *rval, char *db_name)
     bson_finish(&setOp);
 
     bson empty;
-    mongo_update(&dbconn, db_name, bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(&dbconn, db_name, bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&setOp);    
     CFDB_Close(&dbconn);
@@ -94,7 +94,7 @@ int CFDB_SaveLastseenCache(Item *lastseen)
     bson_finish(&setOp);
 
     bson empty;
-    mongo_update(&dbconn, MONGO_SCRATCH, bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(&dbconn, MONGO_SCRATCH, bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&setOp);
     CFDB_Close(&dbconn);
@@ -129,7 +129,7 @@ void CFDB_SaveGoalsCache(char *goal_patterns)
     bson_finish(&set_op);
 
     bson empty;
-    mongo_update(&dbconn, MONGO_SCRATCH, bson_empty(&empty), &set_op, MONGO_UPDATE_UPSERT);
+    mongo_update(&dbconn, MONGO_SCRATCH, bson_empty(&empty), &set_op, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&set_op);
     CFDB_Close(&dbconn);
@@ -177,7 +177,7 @@ void CFDB_SaveHostID(EnterpriseDB *conn, char *database, char *keyField, char *k
     }
     bson_finish(&setOp);
 
-    mongo_update(conn, database, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, database, &host_key, &setOp, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&setOp);
 
@@ -197,7 +197,7 @@ void CFDB_SaveHostID(EnterpriseDB *conn, char *database, char *keyField, char *k
     }
     bson_finish(&setOp);
 
-    mongo_update(conn, database, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, database, &host_key, &setOp, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&setOp);
     bson_destroy(&host_key);
@@ -271,7 +271,7 @@ void CFDB_SaveSoftware(EnterpriseDB *conn, enum software_rep sw, char *keyhash, 
     }
     bson_finish(&setOp);
 
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT, NULL);
     MongoCheckForError(conn, dbOp, keyhash, NULL);
 
     bson_destroy(&setOp);
@@ -405,7 +405,7 @@ void CFDB_SaveMonitorData2(EnterpriseDB *conn, char *keyHash, enum monitord_rep 
         }
         bson_finish(&setOp);
 
-        mongo_update(conn, db, &keys, &setOp, 0);       // no upsert
+        mongo_update(conn, db, &keys, &setOp, 0, NULL);       // no upsert
 
         bson_destroy(&setOp);
 
@@ -461,7 +461,7 @@ void CFDB_SaveMonitorData2(EnterpriseDB *conn, char *keyHash, enum monitord_rep 
                 bson_finish(&insertOp);
 
                 // upsert instead of insert avoids duplicates (if race conditions occur)
-                mongo_update(conn, db, &keys, &insertOp, MONGO_UPDATE_UPSERT);
+                mongo_update(conn, db, &keys, &insertOp, MONGO_UPDATE_UPSERT, NULL);
 
                 bson_destroy(&insertOp);
 
@@ -547,7 +547,7 @@ void CFDB_SaveMonitorHistograms(EnterpriseDB *conn, char *keyhash, Item *data)
         }
         bson_finish(&setOp);
 
-        mongo_update(conn, MONGO_DATABASE_MON_MG, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+        mongo_update(conn, MONGO_DATABASE_MON_MG, &host_key, &setOp, MONGO_UPDATE_UPSERT, NULL);
 
         bson_destroy(&setOp);
         bson_destroy(&host_key);
@@ -586,7 +586,7 @@ static void CFDB_PutEnvironmentForHost(EnterpriseDB *conn, const char *keyhash, 
 
     bson_finish(&op);
 
-    mongo_update(conn, MONGO_DATABASE, &host_key, &op, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &op, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&op);
     bson_destroy(&host_key);
@@ -672,7 +672,7 @@ void CFDB_SaveClasses(EnterpriseDB *conn, char *keyhash, Item *data)
     bson_append_bson(&set_op, "$addToSet", &class_keys);
     bson_finish(&set_op);
 
-    mongo_update(conn, MONGO_ARCHIVE, &host_key, &set_op, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_ARCHIVE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
     bson_destroy(&set_op);
     // host_keys and class_keys freed after adding to classes report
 
@@ -705,7 +705,7 @@ void CFDB_SaveClasses(EnterpriseDB *conn, char *keyhash, Item *data)
 
     bson_finish(&set_op);
 
-    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
     MongoCheckForError(conn, "SaveClasses", keyhash, NULL);
 
@@ -745,7 +745,7 @@ void CFDB_SaveVariables(EnterpriseDB *conn, char *keyhash, Item *data)
     }
     bson_finish(&unsetOp);
 
-    mongo_update(conn, MONGO_DATABASE, &host_key, &unsetOp, 0);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &unsetOp, 0, NULL);
 
     bson_destroy(&unsetOp);
 
@@ -804,7 +804,7 @@ void CFDB_SaveVariables(EnterpriseDB *conn, char *keyhash, Item *data)
     }
     bson_finish(&setOp);
 
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT, NULL);
     MongoCheckForError(conn, "SaveVariables", keyhash, NULL);
 
     bson_destroy(&setOp);
@@ -891,7 +891,7 @@ void CFDB_SaveVariables2(EnterpriseDB *conn, char *keyhash, Item *data)
     }
     bson_finish(&setOp);
 
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT, NULL);
     MongoCheckForError(conn, "SaveVariables2", keyhash, NULL);
 
     bson_destroy(&setOp);
@@ -959,7 +959,7 @@ void CFDB_SaveTotalCompliance(mongo *conn, char *keyhash, Item *data)
     }
     bson_finish(&setOp);
 
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&setOp);
     bson_destroy(&host_key);
@@ -1088,7 +1088,7 @@ void CFDB_SavePromiseLog(EnterpriseDB *conn, char *keyhash, PromiseLogState stat
     bson_append_string(&host_key, cfr_keyhash, keyhash);
     bson_finish(&host_key);
 
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT, NULL);
     MongoCheckForError(conn, "Update failed for : ", keyhash, NULL);
 
     bson_destroy(&setOp);
@@ -1143,7 +1143,7 @@ void CFDB_SaveLastSeen(EnterpriseDB *conn, char *keyhash, Item *data)
     }
     bson_finish(&setOp);
 
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&setOp);
     bson_destroy(&host_key);
@@ -1190,7 +1190,7 @@ void CFDB_SaveMeter(EnterpriseDB *conn, char *keyhash, Item *data)
     }
     bson_finish(&setOp);
 
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&setOp);
     bson_destroy(&host_key);
@@ -1303,7 +1303,7 @@ void CFDB_SaveScore(EnterpriseDB *conn, char *keyhash, Item *data, HostRankMetho
     }
     bson_finish(&setOp);
 
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&setOp);
     bson_destroy(&host_key);
@@ -1346,7 +1346,7 @@ void CFDB_SaveSoftwareDates(EnterpriseDB *conn, char *keyhash, Item *data)
     }
     bson_finish(&setOp);
 
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&setOp);
     bson_destroy(&host_key);
@@ -1402,7 +1402,7 @@ void CFDB_SavePerformance(EnterpriseDB *conn, char *keyhash, Item *data)
     }
     bson_finish(&setOp);
 
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&setOp);
     bson_destroy(&host_key);
@@ -1447,7 +1447,7 @@ void CFDB_SaveSetUid(EnterpriseDB *conn, char *keyhash, Item *data)
     }
     bson_finish(&setOp);
 
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&setOp);
     bson_destroy(&host_key);
@@ -1535,7 +1535,7 @@ void CFDB_SavePromiseCompliance(EnterpriseDB *conn, char *keyhash, Item *data)
 
     DeleteItemList(keys);
 
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&setOp);
     bson_destroy(&host_key);
@@ -1587,7 +1587,7 @@ void CFDB_SaveFileChanges(EnterpriseDB *conn, char *keyhash, Item *data)
     }
     bson_finish(&setOp);
 
-    mongo_update(conn, MONGO_ARCHIVE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_ARCHIVE, &host_key, &setOp, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&setOp);
     bson_destroy(&host_key);
@@ -1647,7 +1647,7 @@ void CFDB_SaveFileDiffs(EnterpriseDB *conn, char *keyhash, Item *data)
     }
     bson_finish(&setOp);
 
-    mongo_update(conn, MONGO_ARCHIVE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_ARCHIVE, &host_key, &setOp, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&setOp);
     bson_destroy(&host_key);
@@ -1706,7 +1706,7 @@ void CFDB_SaveBundles(EnterpriseDB *conn, char *keyhash, Item *data)
     }
     bson_finish(&setOp);
 
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&setOp);
     bson_destroy(&host_key);
@@ -1755,7 +1755,7 @@ void CFDB_SaveValueReport(EnterpriseDB *conn, char *keyhash, Item *data)
     }
     bson_finish(&setOp);
 
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&setOp);
     bson_destroy(&host_key);
@@ -1796,7 +1796,7 @@ void CFDB_SaveHostComplianceShift(EnterpriseDB *conn, const char *hostkey, int k
     }
     bson_finish(&op);
 
-    mongo_update(conn, MONGO_DATABASE, &cond, &op, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &cond, &op, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&cond);
     bson_destroy(&op);
@@ -1837,7 +1837,7 @@ void CFDB_SaveCachedTotalCompliance(EnterpriseDB *conn, char *policy, int slot, 
     }
     bson_finish(&setOp);
 
-    mongo_update(conn, MONGO_CACHE, &cacheType, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_CACHE, &cacheType, &setOp, MONGO_UPDATE_UPSERT, NULL);
     MongoCheckForError(conn, "SaveCachedTotalCompliance", policy, NULL);
 
     bson_destroy(&setOp);
@@ -1872,7 +1872,7 @@ void CFDB_SaveLastUpdate(EnterpriseDB *conn, char *database, char *keyField, cha
     }
     bson_finish(&setOp);
 
-    mongo_update(conn, database, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, database, &host_key, &setOp, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&setOp);
     bson_destroy(&host_key);
@@ -1902,7 +1902,7 @@ void CFDB_SaveLastHostUpdateSize(EnterpriseDB *conn, char *hostkey, int update_s
     }
     bson_finish(&set_op);
 
-    mongo_update(conn, MONGO_DATABASE, &host_id, &set_op, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_id, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&set_op);
     bson_destroy(&host_id);
@@ -1981,7 +1981,7 @@ int CFDB_AddNote(EnterpriseDB *conn, char *keyhash, int reportType, char *nid,
     }
     bson_finish(&set_op);
 
-    mongo_update(conn, MONGO_NOTEBOOK, &host_key, &set_op, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_NOTEBOOK, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
     MongoCheckForError(conn, "AddNote", keyhash, NULL);
     bson_destroy(&set_op);
@@ -2056,7 +2056,7 @@ int CFDB_MarkAsDeleted(mongo *dbconn, char *keyHash)
 
         bson empty;
 
-        mongo_update(dbconn, MONGO_SCRATCH, bson_empty(&empty), &set_op, MONGO_UPDATE_UPSERT); // Note: Upsert Necessary?
+        mongo_update(dbconn, MONGO_SCRATCH, bson_empty(&empty), &set_op, MONGO_UPDATE_UPSERT, NULL); // Note: Upsert Necessary?
         MongoCheckForError(dbconn, "MarkHostAsDeleted", ScalarValue(rp), NULL);
         bson_destroy(&set_op);
     }
@@ -2086,7 +2086,7 @@ void CFDB_SaveExecutionStatus(EnterpriseDB *conn, char *keyhash, bool is_black)
         bson_append_finish_object(&set_op);
     }
     bson_finish(&set_op);
-    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&set_op);
     bson_destroy(&host_key);
@@ -2113,7 +2113,7 @@ void CFDB_SaveLastAgentExecution(EnterpriseDB *conn, char *keyhash, long last_ag
     }
     bson_finish(&set_op);
 
-    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&set_op);
     bson_destroy(&host_key);
@@ -2140,7 +2140,7 @@ void CFDB_SaveDeltaAgentExecution(EnterpriseDB *conn, char *keyhash, long delta_
     }
     bson_finish(&set_op);
 
-    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&set_op);
     bson_destroy(&host_key);

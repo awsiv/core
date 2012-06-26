@@ -310,7 +310,7 @@ void CFDB_PurgeTimestampedReports(EnterpriseDB *conn)
 
         bson_finish(&op);
 
-        mongo_update(conn, MONGO_DATABASE, &hostQuery, &op, 0);
+        mongo_update(conn, MONGO_DATABASE, &hostQuery, &op, 0, NULL); /*TODO: Use mongo write concern instead of MongoGetLastError*/
         MongoCheckForError(conn, "PurgeTimestampedReports", keyHash, NULL);
 
         DeleteItemList(purgeClassNames);
@@ -401,7 +401,7 @@ void CFDB_PurgeTimestampedLongtermReports(EnterpriseDB *conn)
 
         bson_finish(&op);
 
-        mongo_update(conn, MONGO_ARCHIVE, &hostQuery, &op, 0);
+        mongo_update(conn, MONGO_ARCHIVE, &hostQuery, &op, 0, NULL);
         MongoCheckForError(conn, "PurgeTimestampedLongtermReports", keyHash, NULL);
 
         DeleteItemList(purgeClassNames);
@@ -444,13 +444,13 @@ void CFDB_PurgePromiseLogs(EnterpriseDB *conn, time_t oldThreshold, time_t now)
 
     if(CFDB_CollectionHasData(conn, MONGO_LOGS_REPAIRED))
     {
-        mongo_remove(conn, MONGO_LOGS_REPAIRED, &cond);
+        mongo_remove(conn, MONGO_LOGS_REPAIRED, &cond, NULL);
         MongoCheckForError(conn,"timed delete host from repair logs collection",NULL,NULL);
     }
 
     if(CFDB_CollectionHasData(conn, MONGO_LOGS_NOTKEPT))
     {
-        mongo_remove(conn, MONGO_LOGS_NOTKEPT, &cond);
+        mongo_remove(conn, MONGO_LOGS_NOTKEPT, &cond, NULL);
         MongoCheckForError(conn,"timed delete host from not kept logs collection",NULL,NULL);
     }
 
@@ -575,7 +575,7 @@ static void PurgePromiseLogWithEmptyTimestamps(EnterpriseDB *conn, char *promise
             DeleteItemList(promiseKeysList);
             promiseKeysList = NULL;            
 
-            mongo_update(conn, MONGO_DATABASE, &hostQuery, &op, 0);
+            mongo_update(conn, MONGO_DATABASE, &hostQuery, &op, 0, NULL);
 
             bson_destroy(&op);
             bson_destroy(&hostQuery);
@@ -627,7 +627,7 @@ void CFDB_PurgePromiseLogsFromMain(EnterpriseDB *conn, char *promiseLogReportKey
     DeleteItemList(promiseLogComplexKeysList);
     promiseLogComplexKeysList = NULL;
 
-    mongo_update(conn, MONGO_DATABASE, bson_empty(&query), &cond, MONGO_UPDATE_MULTI);
+    mongo_update(conn, MONGO_DATABASE, bson_empty(&query), &cond, MONGO_UPDATE_MULTI, NULL);
 
     MongoCheckForError(conn, "Purge old entries in hosts collection", promiseLogReportKey, NULL);
     bson_destroy(&cond);
@@ -668,7 +668,7 @@ void CFDB_PurgeDropReports(EnterpriseDB *conn)
     bson_finish(&op);
 
     // run update
-    mongo_update(conn, MONGO_DATABASE, &empty, &op, MONGO_UPDATE_MULTI);
+    mongo_update(conn, MONGO_DATABASE, &empty, &op, MONGO_UPDATE_MULTI, NULL);
     MongoCheckForError(conn, "PurgeDropReports", NULL, NULL);
 
     bson_destroy(&op);
@@ -854,31 +854,31 @@ void CFDB_PurgeHost(EnterpriseDB *conn, char *keyHash)
         bson_append_string(&cond, cfr_keyhash, ScalarValue(rp));
         bson_finish(&cond);
 
-        mongo_remove(conn, MONGO_DATABASE, &cond);
+        mongo_remove(conn, MONGO_DATABASE, &cond, NULL);
 
         MongoCheckForError(conn, "delete host from main collection", ScalarValue(rp), NULL);
 
-        mongo_remove(conn, MONGO_ARCHIVE, &cond);
+        mongo_remove(conn, MONGO_ARCHIVE, &cond, NULL);
 
         MongoCheckForError(conn, "delete host from archive collection", ScalarValue(rp), NULL);
 
-        mongo_remove(conn, MONGO_DATABASE_MON_MG, &cond);
+        mongo_remove(conn, MONGO_DATABASE_MON_MG, &cond, NULL);
 
         MongoCheckForError(conn, "delete host from mag monitord collection", ScalarValue(rp), NULL);
 
-        mongo_remove(conn, MONGO_DATABASE_MON_WK, &cond);
+        mongo_remove(conn, MONGO_DATABASE_MON_WK, &cond, NULL);
 
         MongoCheckForError(conn, "delete host from week monitord collection", ScalarValue(rp), NULL);
 
-        mongo_remove(conn, MONGO_DATABASE_MON_YR, &cond);
+        mongo_remove(conn, MONGO_DATABASE_MON_YR, &cond, NULL);
 
         MongoCheckForError(conn, "delete host from year monitord collection", ScalarValue(rp), NULL);
 
-        mongo_remove(conn, MONGO_LOGS_REPAIRED, &cond);
+        mongo_remove(conn, MONGO_LOGS_REPAIRED, &cond, NULL);
 
         MongoCheckForError(conn, "delete host from repair logs collection", ScalarValue(rp), NULL);
 
-        mongo_remove(conn, MONGO_LOGS_NOTKEPT, &cond);
+        mongo_remove(conn, MONGO_LOGS_NOTKEPT, &cond, NULL);
 
         MongoCheckForError(conn, "delete host from not kept logs collection", ScalarValue(rp), NULL);
 
@@ -922,7 +922,7 @@ void CFDB_PurgeDeprecatedVitals(EnterpriseDB *conn)
     bson_finish(&unsetOp);
 
     bson empty;
-    mongo_update(conn, MONGO_DATABASE, bson_empty(&empty), &unsetOp, MONGO_UPDATE_MULTI);
+    mongo_update(conn, MONGO_DATABASE, bson_empty(&empty), &unsetOp, MONGO_UPDATE_MULTI, NULL);
 
     bson_destroy(&unsetOp);
 
@@ -946,7 +946,7 @@ void CFDB_RemoveTestData(char *db, char *keyhash)
     bson_append_string(&query, cfr_keyhash, keyhash);
     bson_finish(&query);
 
-    mongo_remove(&conn, db, &query);
+    mongo_remove(&conn, db, &query, NULL);
 
     bson_destroy(&query);
 
@@ -975,7 +975,7 @@ int CFDB_PurgeDeletedHosts(void)
     }
     bson_finish(&op);
 
-    mongo_update(&conn, MONGO_SCRATCH, bson_empty(&empty), &op, 0);
+    mongo_update(&conn, MONGO_SCRATCH, bson_empty(&empty), &op, 0, NULL);
 
     bson_destroy(&op);
 

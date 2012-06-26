@@ -612,7 +612,7 @@ cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *descriptio
     }
     bson_finish(&set_op);
 
-    mongo_update(&conn, MONGO_ROLES_COLLECTION, &query, &set_op, MONGO_UPDATE_UPSERT);
+    mongo_update(&conn, MONGO_ROLES_COLLECTION, &query, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&query);
     bson_destroy(&set_op);
@@ -658,7 +658,7 @@ cfapi_errid CFDB_DeleteRole(char *deletingUser, char *roleName, bool deassociate
     bson_append_string(&query, dbkey_role_name, roleName);
     bson_finish(&query);
 
-    mongo_remove(&conn, MONGO_ROLES_COLLECTION, &query);
+    mongo_remove(&conn, MONGO_ROLES_COLLECTION, &query, NULL);
     bson_destroy(&query);
 
     if (deassociateUsers)
@@ -755,7 +755,7 @@ static void DeAssociateUsersFromRole(EnterpriseDB *conn, char *roleName)
     }
     bson_finish(&pull_op);
 
-    mongo_update(conn, usersCollection, &query, &pull_op, MONGO_UPDATE_MULTI);
+    mongo_update(conn, usersCollection, &query, &pull_op, MONGO_UPDATE_MULTI, NULL);
     bson_destroy(&pull_op);
 }
 

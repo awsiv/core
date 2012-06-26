@@ -51,7 +51,7 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
 
     bson b;
 
-    mongo_remove(&dbconn, MONGO_KM_TOPICS, bson_empty(&b));
+    mongo_remove(&dbconn, MONGO_KM_TOPICS, bson_empty(&b), NULL);
 
     /* Class types and topics */
 
@@ -108,14 +108,14 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
             }
             bson_finish(&insert_op);
 
-            mongo_insert(&dbconn, MONGO_KM_TOPICS, &insert_op);
+            mongo_insert(&dbconn, MONGO_KM_TOPICS, &insert_op, NULL);
             bson_destroy(&insert_op);
         }
     }
 
 // Occurrences
 
-    mongo_remove(&dbconn, MONGO_KM_OCCURRENCES, bson_empty(&b));
+    mongo_remove(&dbconn, MONGO_KM_OCCURRENCES, bson_empty(&b), NULL);
 
     for (op = occurrences; op != NULL; op = op->next)
     {
@@ -139,7 +139,7 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
 
             bson_finish(&insert_op);
 
-            mongo_insert(&dbconn, MONGO_KM_OCCURRENCES, &insert_op);
+            mongo_insert(&dbconn, MONGO_KM_OCCURRENCES, &insert_op, NULL);
 
             bson_destroy(&insert_op);
             }
@@ -148,7 +148,7 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
 
 // Inferences
 
-    mongo_remove(&dbconn, MONGO_KM_INFERENCES, bson_empty(&b));
+    mongo_remove(&dbconn, MONGO_KM_INFERENCES, bson_empty(&b), NULL);
 
     for (ip = inferences; ip != NULL; ip = ip->next)
     {
@@ -164,7 +164,7 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
 
         bson_finish(&insert_op);
 
-        mongo_insert(&dbconn, MONGO_KM_INFERENCES, &insert_op);
+        mongo_insert(&dbconn, MONGO_KM_INFERENCES, &insert_op, NULL);
         bson_destroy(&insert_op);
     }
 
@@ -752,7 +752,7 @@ void Nova_UpdateTestData(void)
             }
             bson_finish(&set_op);
 
-            mongo_update(&conn, MONGO_DATABASE, &query, &set_op, MONGO_UPDATE_UPSERT);
+            mongo_update(&conn, MONGO_DATABASE, &query, &set_op, MONGO_UPDATE_UPSERT, NULL);
             MongoCheckForError(&conn, "UpdateTestData", keyhash, NULL);
 
             bson_destroy(&set_op);

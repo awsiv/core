@@ -40,7 +40,7 @@ void CFDB_SaveExpandedPromise(Promise *pp)
     {
         // clear existing data first
         bson b;
-        mongo_remove(&dbconn, MONGO_PROMISES_EXP, bson_empty(&b));
+        mongo_remove(&dbconn, MONGO_PROMISES_EXP, bson_empty(&b), NULL);
         firstCall = false;
     }
 
@@ -120,7 +120,7 @@ void CFDB_SaveExpandedPromise(Promise *pp)
 
     bson_finish(&insert_op);
 
-    mongo_insert(&dbconn, MONGO_PROMISES_EXP, &insert_op);
+    mongo_insert(&dbconn, MONGO_PROMISES_EXP, &insert_op, NULL);
     bson_destroy(&insert_op);
 
     CFDB_Close(&dbconn);
@@ -150,7 +150,7 @@ void CFDB_SaveUnExpandedPromises(Bundle *bundles, Body *bodies)
 
 // remove existing data first
     bson b;
-    mongo_remove(&dbconn, MONGO_PROMISES_UNEXP, bson_empty(&b));
+    mongo_remove(&dbconn, MONGO_PROMISES_UNEXP, bson_empty(&b), NULL);
 
     for (bp = bundles; bp != NULL; bp = bp->next)
     {
@@ -239,7 +239,7 @@ void CFDB_SaveUnExpandedPromises(Bundle *bundles, Body *bodies)
 
                 bson_finish(&insert_op);
 
-                mongo_insert(&dbconn, MONGO_PROMISES_UNEXP, &insert_op);
+                mongo_insert(&dbconn, MONGO_PROMISES_UNEXP, &insert_op, NULL);
                 bson_destroy(&insert_op);
             }
         }
@@ -248,7 +248,7 @@ void CFDB_SaveUnExpandedPromises(Bundle *bundles, Body *bodies)
     /* Now summarize all bodies */
     // clear existing bodies first
 
-    mongo_remove(&dbconn, MONGO_BODIES, bson_empty(&b));
+    mongo_remove(&dbconn, MONGO_BODIES, bson_empty(&b), NULL);
 
     for (bdp = bodies; bdp != NULL; bdp = bdp->next)
     {
@@ -293,7 +293,7 @@ static void CFDB_SaveBody(EnterpriseDB *dbconn, Body *body)
     }
     bson_finish(&insert_op);
 
-    mongo_insert(dbconn, MONGO_BODIES, &insert_op);
+    mongo_insert(dbconn, MONGO_BODIES, &insert_op, NULL);
     bson_destroy(&insert_op);
 
 // do update with the lval - rval attribs
@@ -334,7 +334,7 @@ static void CFDB_SaveBody(EnterpriseDB *dbconn, Body *body)
     }
     bson_finish(&set_op);
 
-    mongo_update(dbconn, MONGO_BODIES, &query, &set_op, MONGO_UPDATE_UPSERT);
+    mongo_update(dbconn, MONGO_BODIES, &query, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&query);
     bson_destroy(&set_op);
