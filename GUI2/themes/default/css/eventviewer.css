@@ -7,7 +7,15 @@
     padding:4px;
 }
 
-.listPane ul li .trackerStart:hover,.listPane ul li .trackerStop:hover{
+.listPane span{
+  padding:0 2px;
+}
+
+span.loadinggif{
+    padding:0 8px;
+}
+
+.listPane ul li .trackerStart:hover,.listPane ul li .trackerStop:hover, .trackerDelete:hover{
    text-decoration: underline;
    cursor: pointer;
 }
@@ -29,8 +37,27 @@
     margin-top:15px;
 }
 
+.eventPane fieldset{
+   border:solid 1px gray;
+   position: relative;
+}
+
+.eventPane legend{
+    background: none repeat scroll 0 0 #E6EEE3;
+    left: 50%;
+    margin-left: -5em;
+    padding: 0 5px;
+    position: absolute;
+    top: -5%;
+    border-radius:5px;
+    border:solid 1px gray;
+}
+
+ .largeMargin{
+    margin-top: 41px;
+  }
+
 .events{
-    border:2px solid gray;
     height:200px;
     overflow-y:scroll;
 }
@@ -39,6 +66,11 @@
     border-bottom: 1px solid silver; 
     border-collapse: collapse; 
     padding: 2px
+}
+
+.status{
+    border-bottom: solid 1px gray;
+    padding-top:6px;
 }
 
 .status .eventType{
