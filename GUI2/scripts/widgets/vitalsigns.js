@@ -43,14 +43,15 @@
         selectedVitalSortBy : 'last-measured',
 
         _timer : null,
+        _vitalConfig : null,
+
 
         _create: function() {
             var $self = this;
             $self.element.append($self.vitalPanel);
-            $self.addNodeContexHeader();
+            $self._fetchConfig();
             $self.element.prepend($self.busyIcon);
             $self._setTimer(this.options.interval);
-
         },
 
         setContext: function(includes,excludes,draw) {
@@ -132,7 +133,7 @@
                 $self.vitalsSelect
                 .append($("<option></option>")
                     .attr("value",key)
-                    .text(value));
+                    .text(value.text));
             });
             $self.vitalsSelect.change(function() {
                 $self.selectedVital = ($(this).val());
@@ -165,12 +166,13 @@
             $self.element.find('.graph-container-header-top-menu').append( $self.vitalsSortBySelect);
         },
 
-        addNodeContexHeader: function() {
+        _fetchConfig: function() {
             var $self = this;
             var params = {
                 'url':  $self.options.baseUrl + $self.options.vitalsurlForConfiguration,
                 'type':'get',
                 'success': function (data) {
+                    $self._vitalConfig = data;
                     $self._buildVitalsSelection(data);
                 },
                 'error':function() {
@@ -240,10 +242,24 @@
             var length = data.length;
             var lastDataSeries = [];
             var averageSeries = [];
+            var maxArrayValue = 0; // for scaling the y axis max value
             for (i=0;i<length;i++) {
+                if (data[i][1] > maxArrayValue) {
+                    maxArrayValue = data[i][1];
+                }
                 lastDataSeries.push([i, data[i][1]]);
                 averageSeries.push([i, data[i][2]]);
             }
+
+            var ymin = null;
+            var ymax = null;
+            if (('obs' in meta) && this._vitalConfig[meta.obs] !== undefined ) {
+                var configYmax = this._vitalConfig[meta.obs].max ? this._vitalConfig[meta.obs].max : null;
+                var configYmin = this._vitalConfig[meta.obs].min ? this._vitalConfig[meta.obs].min : null;
+                ymax = configYmax > maxArrayValue ? this._vitalConfig[meta.obs].max : null ;
+                ymin = configYmin;
+            }
+
 
             var options = {
                 grid:   {
@@ -251,6 +267,10 @@
                     clickable: true,
                     axisMargin: 15,
                     labelMargin: 15
+                },
+                yaxis: {
+                    min: ymin,
+                    max: ymax
                 },
                 xaxis: {
                     max:48,
@@ -339,6 +359,7 @@
             $.each(slicedData, function(key, value) {
                 var perfdata = (value.perfdata);
                 var meta = value.meta;
+                meta['obs']= self.selectedVital;
 
                 // create div
                 var $url =  self.options.baseUrl + self.options.vitalsMainLink + meta.hostkey;
