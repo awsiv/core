@@ -67,11 +67,10 @@ HubQuery *CFDB_QueryPromises(EnterpriseDB *conn, PromiseFilter *filter);
 
 Item *CFDB_QueryVitalIds(EnterpriseDB *conn, char *keyHash);
 HubVital *CFDB_QueryVitalsMeta(EnterpriseDB *conn, char *keyHash);
-int CFDB_QueryMagView2(EnterpriseDB *conn, char *keyhash, char *monId, time_t start_time, double *qa, double *ea,
-                       double *da);
-int CFDB_QueryMonView(EnterpriseDB *conn, char *keyhash, char *monId, enum monitord_rep rep_type, double *qa,
-                      double *ea, double *da);
-int CFDB_QueryWeekView(EnterpriseDB *conn, char *keyhash, enum observables obs, double *qa, double *ea, double *da);
+int CFDB_QueryMagView2(EnterpriseDB *conn, char *keyhash, char *monId, time_t start_time, double *qa, double *ea, double *da, double *ga);
+
+int CFDB_QueryMonView(EnterpriseDB *conn, char *keyhash, char *monId, enum monitord_rep rep_type, double *qa, double *ea, double *da, double *ga);
+
 bool CFDB_QueryHistogram(EnterpriseDB *conn, char *keyhash, char *monId, double *histo);
 bool CFDB_QueryLastUpdate(EnterpriseDB *conn, char *db, char *dbkey, char *keyhash, time_t *date, int *size);
 

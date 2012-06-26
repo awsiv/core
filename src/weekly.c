@@ -43,11 +43,11 @@ double Num(double x)
 
 bool Nova_ReadWeekTimeSeries2(EnterpriseDB *conn, DataView *cfv, char *keyhash, char *vitalId)
 {
-    double ry, rs, rq;
+ double ry, rs, rq, rg;
     int i, have_data = false;
-    double q[CF_TIMESERIESDATA], e[CF_TIMESERIESDATA], d[CF_TIMESERIESDATA];
+    double q[CF_TIMESERIESDATA], e[CF_TIMESERIESDATA], d[CF_TIMESERIESDATA], g[CF_TIMESERIESDATA];
 
-    CFDB_QueryMonView(conn, keyhash, vitalId, mon_rep_week, q, e, d);
+    CFDB_QueryMonView(conn, keyhash, vitalId, mon_rep_week, q, e, d, g);
 
     cfv->over = 0;
     cfv->under = 0;
@@ -67,6 +67,7 @@ bool Nova_ReadWeekTimeSeries2(EnterpriseDB *conn, DataView *cfv, char *keyhash, 
         ry = Num(e[i]);
         rs = Num(d[i]);
         rq = Num(q[i]);
+        rg = Num(g[i]);
 
         // Num() resets to zero negative numbers
         if (q[i] >= 0)
@@ -82,12 +83,14 @@ bool Nova_ReadWeekTimeSeries2(EnterpriseDB *conn, DataView *cfv, char *keyhash, 
             ry = Num(e[i]);
             rs = Num(d[i]);
             rq = Num(q[i]);
+            rg = Num(g[i]);
 
             cfv->error_scale = (cfv->error_scale + rs) / 2;
 
             cfv->data_E[i] = ry;
             cfv->bars[i] = rs;
             cfv->data_q[i] = rq;
+            cfv->data_dq[i] = rg;
 
             if (rq > cfv->max)
             {

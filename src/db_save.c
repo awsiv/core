@@ -283,7 +283,7 @@ void CFDB_SaveMonitorData2(EnterpriseDB *conn, char *keyHash, enum monitord_rep 
     int monGlobal;
     double monExpMin, monExpMax;
     int i, slot, numSlots, iterations;
-    double q, e, d;
+    double q, e, d, g;
 
     switch (rep_type)
     {
@@ -363,7 +363,7 @@ void CFDB_SaveMonitorData2(EnterpriseDB *conn, char *keyHash, enum monitord_rep 
 
         while (ip && (strncmp(ip->name, "M:", 2) != 0))
         {
-            sscanf(ip->name, "%d %lf %lf %lf", &slot, &q, &e, &d);
+        sscanf(ip->name, "%d %lf %lf %lf %lf", &slot, &q, &e, &d, &g);
 
             if (slot < 0 || slot >= numSlots)
             {
@@ -380,6 +380,9 @@ void CFDB_SaveMonitorData2(EnterpriseDB *conn, char *keyHash, enum monitord_rep 
 
             snprintf(varName, sizeof(varName), "%s.%d", cfm_deviance_arr, slot);
             bson_append_double(setObj, varName, d);
+
+            snprintf(varName, sizeof(varName), "%s.%d", cfm_grad_arr, slot);
+            bson_append_double(setObj, varName, g);
 
             ip = ip->next;
         }

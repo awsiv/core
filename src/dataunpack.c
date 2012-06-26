@@ -151,7 +151,7 @@ void Nova_UnPackMonitorWeek(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     int observable, slot;
-    double q, e, dev;
+    double q, e, dev, dq;
     char t[CF_TIME_SIZE];
 
     CfOut(cf_verbose, "", " -> Monitor weekly data.....................");
@@ -177,9 +177,9 @@ void Nova_UnPackMonitorWeek(EnterpriseDB *dbconn, char *id, Item *data)
 
         // Extract records
 
-        q = e = dev = 0;
-        sscanf(ip->name, "%d %lf %lf %lf\n", &observable, &q, &e, &dev);
-        CfDebug("Week-obs %d in slot %d: %.2lf,%.2lf,%.2lf\n", observable, slot, q, e, dev);
+        q = e = dev = dq = 0;
+        sscanf(ip->name, "%d %lf %lf %lf %lf\n", &observable, &q, &e, &dev, &dq);
+        CfDebug("Week-obs %d in slot %d: %.2lf,%.2lf,%.2lf,%.2lf\n", observable, slot, q, e, dev, dq);
     }
 
 }
@@ -190,7 +190,7 @@ void Nova_UnPackMonitorMag(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     int observable, slot;
-    double q, e, dev;
+    double q, e, dev, dq;
 
     CfOut(cf_verbose, "", " -> Monitor magnified data.....................");
     CfOut(cf_inform, "", "!! Deprecated monitor magnified format - response from Nova 2.0.4 or earlier -- skipped");
@@ -212,9 +212,9 @@ void Nova_UnPackMonitorMag(EnterpriseDB *dbconn, char *id, Item *data)
         }
 
         // Extract records
-        q = e = dev = 0;
-        sscanf(ip->name, "%d %lf %lf %lf", &observable, &q, &e, &dev);
-        CfDebug("Mag-obs %d: %.2lf,%.2lf,%.2lf measured for slot %d\n", observable, q, e, dev, slot);
+        q = e = dev = dq = 0;
+        sscanf(ip->name, "%d %lf %lf %lf %lf", &observable, &q, &e, &dev, &dq);
+        CfDebug("Mag-obs %d: %.2lf,%.2lf,%.2lf,%.2lf measured for slot %d\n", observable, q, e, dev, dq, slot);
     }
 }
 
@@ -224,7 +224,7 @@ void Nova_UnPackMonitorYear(EnterpriseDB *dbconn, char *id, Item *data)
 {
     Item *ip;
     int observable, slot = 0;
-    double q, e, dev;
+    double q, e, dev, dq;
 
     CfOut(cf_verbose, "", " -> Monitor year data.....................");
     CfOut(cf_inform, "", "!! Deprecated monitor year format - response from Nova 2.0.4 or earlier -- skipped");
@@ -246,9 +246,9 @@ void Nova_UnPackMonitorYear(EnterpriseDB *dbconn, char *id, Item *data)
         }
 
         // Extract records
-        q = e = dev = 0;
-        sscanf(ip->name, "%d %lf %lf %lf\n", &observable, &q, &e, &dev);
-        CfDebug("Year-obs %d: %.2lf,%.2lf,%.2lf measured at slot %d\n", observable, q, e, dev, slot);
+        q = e = dev = dq = 0;
+        sscanf(ip->name, "%d %lf %lf %lf %lf\n", &observable, &q, &e, &dev, &dq);
+        CfDebug("Year-obs %d: %.2lf,%.2lf,%.2lf,%.2lf measured at slot %d\n", observable, q, e, dev, dq, slot);
     }
 }
 

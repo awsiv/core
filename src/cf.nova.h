@@ -166,6 +166,7 @@ typedef struct
     int under_dev2;
     double data_E[CF_LHISTORYDATA];
     double data_q[CF_LHISTORYDATA];
+    double data_dq[CF_LHISTORYDATA];
     double bars[CF_LHISTORYDATA];
     double error_scale;
     double range;
@@ -1466,6 +1467,7 @@ typedef struct
 #define cfm_q_arr         "q"
 #define cfm_expect_arr    "e"
 #define cfm_deviance_arr  "d"
+#define cfm_grad_arr      "g"
 
 /*commenting*/
 #define cfn_keyhash "_kh"
