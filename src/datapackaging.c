@@ -565,9 +565,8 @@ void Nova_PackMonitorMg(Item **reply, char *header, time_t from, enum cfd_menu t
                 entry.Q[i].expect += det.Q[i].expect;
                 entry.Q[i].var += det.Q[i].var;
                 entry.Q[i].q += det.Q[i].q;
+                entry.Q[i].dq += det.Q[i].dq;
                 havedata += entry.Q[i].expect;
-                havedata += entry.Q[i].var;
-                havedata += entry.Q[i].q;
             }
         }
 
@@ -577,8 +576,8 @@ void Nova_PackMonitorMg(Item **reply, char *header, time_t from, enum cfd_menu t
             {
                 if (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0)
                 {
-                    snprintf(buffer, sizeof(buffer), "%d %.4lf %.4lf %.4lf", slot, entry.Q[i].q, entry.Q[i].expect,
-                             sqrt(entry.Q[i].var));
+                    snprintf(buffer, sizeof(buffer), "%d %.4lf %.4lf %.4lf %.4lf", slot, entry.Q[i].q, entry.Q[i].expect,
+                             sqrt(entry.Q[i].var), entry.Q[i].dq);
                     PrependItem(&data, buffer, NULL);
                     data->counter = i;  // OBS index - sorted on later
                 }
@@ -640,6 +639,7 @@ void Nova_PackMonitorWk(Item **reply, char *header, time_t from, enum cfd_menu t
                     entry.Q[i].expect += det.Q[i].expect / (double) its;
                     entry.Q[i].var += det.Q[i].var / (double) its;
                     entry.Q[i].q += det.Q[i].q / (double) its;
+                    entry.Q[i].dq += det.Q[i].dq / (double) its;
                 }
             }
 
@@ -679,8 +679,8 @@ void Nova_PackMonitorWk(Item **reply, char *header, time_t from, enum cfd_menu t
         {
             if (entry.Q[i].expect > 0 || entry.Q[i].var > 0 || entry.Q[i].q > 0)
             {
-                snprintf(buffer, sizeof(buffer), "%d %.4lf %.4lf %.4lf", slot, entry.Q[i].q, entry.Q[i].expect,
-                         sqrt(entry.Q[i].var));
+                snprintf(buffer, sizeof(buffer), "%d %.4lf %.4lf %.4lf %.4lf", slot, entry.Q[i].q, entry.Q[i].expect,
+                         sqrt(entry.Q[i].var), entry.Q[i].dq);
                 PrependItem(&data, buffer, NULL);
                 data->counter = i;      // OBS index - sorted on later
             }
@@ -733,6 +733,7 @@ void Nova_PackMonitorYr(Item **reply, char *header, time_t from, enum cfd_menu t
         double q[CF_OBSERVABLES] = { 0.0 };
         double var[CF_OBSERVABLES] = { 0.0 };
         double e[CF_OBSERVABLES] = { 0.0 };
+        double dq[CF_OBSERVABLES] = { 0.0 };
 
         for (j = 0; j < SHIFTS_PER_WEEK && w <= now; ++j, w = NextShift(w))
         {
@@ -747,6 +748,7 @@ void Nova_PackMonitorYr(Item **reply, char *header, time_t from, enum cfd_menu t
                     q[k] += BoundedValue(av.Q[k].q, 0);
                     var[k] += BoundedValue(av.Q[k].var, q[k] * q[k]);
                     e[k] += BoundedValue(av.Q[k].expect, q[k]);
+                    dq[k] += BoundedValue(av.Q[k].dq, dq[k]);
                 }
             }
         }
@@ -759,8 +761,8 @@ void Nova_PackMonitorYr(Item **reply, char *header, time_t from, enum cfd_menu t
             {
                 if (q[k] > 0 && var[k] > 0 && e[k] > 0)
                 {
-                    snprintf(buffer, sizeof(buffer), "%d %.4lf %.4lf %.4lf", i, q[k] / num[k], e[k] / num[k],
-                             sqrt(var[k] / num[k]));
+                    snprintf(buffer, sizeof(buffer), "%d %.4lf %.4lf %.4lf %.4lf", i, q[k] / num[k], e[k] / num[k],
+                             sqrt(var[k] / num[k]), dq[k] / num[k]);
                     PrependItem(&data, buffer, NULL);
                     data->counter = k;  // OBS index - sorted on later
                 }

@@ -1466,6 +1466,7 @@ typedef struct
 #define cfm_q_arr         "q"
 #define cfm_expect_arr    "e"
 #define cfm_deviance_arr  "d"
+#define cfm_grad_arr      "g"
 
 /*commenting*/
 #define cfn_keyhash "_kh"
