@@ -3,6 +3,7 @@
         options: {
             contextWidgetElement:'hclist',
             baseUrl:'',
+            interval: 0, // Interval in minutes to refresh the widget
             vitalsurl: '/vitals/node_vitals',
             vitalsurlForHost: '/vitals/host_vitals',
             vitalsurlForConfiguration: '/vitals/config_vitals',
@@ -20,7 +21,6 @@
         _defaultNumberOfGraphs:10,
         _cachedData:[],
         _hostView: false,
-        _autoRefresh : 1000 * 60,
 
         vitalPanel: $('<div class="graph-container-header-top-menu"></div>'+
             '<div class="graph-container-body"></div>'+
@@ -42,12 +42,14 @@
         selectedVital : 'loadavg',
         selectedVitalSortBy : 'last-measured',
 
+        _timer : null,
 
         _create: function() {
             var $self = this;
             $self.element.append($self.vitalPanel);
             $self.addNodeContexHeader();
             $self.element.prepend($self.busyIcon);
+            $self._setTimer(this.options.interval);
 
         },
 
@@ -58,14 +60,29 @@
             if (draw) {
                 $self.refresh();
             }
+        },
 
-        // set auto refresh
-        /*
-            setInterval(function(){
-                $self.refresh()
-            }, $self._autoRefresh);
-             */
+        _setTimer: function(value) {
+            this.options.interval = value;
+            // Clear the old timer
+            window.clearInterval(this._timer);
+            if (value > 0) {
+                // Set a new timer based on the new interval
+                this._timer = window.setInterval(
+                    $.proxy(this.refresh, this),
+                    this.options.interval * 60 * 1000
+                    );
+            }
+        },
 
+        _setOption: function(key, value){
+            if (this.options[key] === value) {
+                return this; // Do nothing, the value didn't change
+            }
+            if (key === 'interval') {
+                this._setTimer(value);
+            }
+            return this;
         },
 
         _modifyContext: function(includes,excludes) {

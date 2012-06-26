@@ -11,6 +11,7 @@
 {
     margin-top: 10px;
     margin-bottom: 3px;
+     height: 400px;
 }
 
 .vitalsContainer .graph-container {
@@ -23,7 +24,7 @@
     overflow: auto;
     width: 100%;
     min-width: 550px;
-    height: 345px;
+    height: 365px;
 }
 
 
