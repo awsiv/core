@@ -31,7 +31,13 @@ class EventTracker extends Cf_controller
 
             if ($tracker !== FALSE)
             {
-                echo '<p class="success">' . $tracker->getName() . " was sucessfully created";
+                //echo '<p class="success">' . $tracker->getName() . " was sucessfully created";
+               echo json_encode(array(
+                           'id'=>$tracker->getName(),
+                           'resource'=>$tracker->getResource(),
+                           'startTime'=>$tracker->getDateTime(),
+                           'type'=>$tracker->getReportType()
+                        ));
             }
             else
             {
@@ -59,11 +65,21 @@ class EventTracker extends Cf_controller
         try
         {
             $filter = array('userName' => $this->session->userdata('username'));
+            $trackers = $this->tracker_model->get_all_tracker($filter);
             $data = array(
                     'trackers'=>$this->tracker_model->get_all_tracker($filter)
                     );
-            $this->load->view('eventviewer/listTrackers',$data);
-            //echo json_encode($data['trackers']);
+            $return_data=array();
+            foreach($trackers as $tracker){
+                $return_data[]=array(
+                           'id'=>$tracker->getName(),
+                           'resource'=>$tracker->getResource(),
+                           'startTime'=>$tracker->getDateTime(),
+                           'type'=>$tracker->getReportType()
+                        );
+            }
+            //$this->load->view('eventviewer/listTrackers',$data);
+            echo json_encode($return_data);
         }
         catch (Exception $e)
         {
@@ -117,7 +133,7 @@ class EventTracker extends Cf_controller
           $return_data['meta']=array('update_time'=> now(),'hosts'=>$logData['meta']['related'],'events'=>$logData['meta']['count'],'type'=>$reportType);
           
           ksort($return_data['data']);
-          sleep(10);
+          sleep(5);
           echo json_encode($return_data);
           
        }catch(Exception $e)
@@ -126,6 +142,18 @@ class EventTracker extends Cf_controller
            echo json_encode(array('message'=>'Error retriving '.$reportType.' data from'. strtotime($from) .'for'. $resource));
        }
         
+    }
+    
+    function delete($id)
+    {
+        $filter=array('trackerName'=>$id,'userName'=>$this->session->userdata('username'));
+        try
+        {
+           $this->tracker_model->delete($filter); 
+           
+        }catch(Exception $e){
+           $this->output->set_status_header('500', "Cannot delete tracker"); 
+        }
     }
 
 }
