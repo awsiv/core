@@ -166,6 +166,7 @@ typedef struct
     int under_dev2;
     double data_E[CF_LHISTORYDATA];
     double data_q[CF_LHISTORYDATA];
+    double data_dq[CF_LHISTORYDATA];
     double bars[CF_LHISTORYDATA];
     double error_scale;
     double range;

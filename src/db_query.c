@@ -3636,8 +3636,7 @@ static int Nova_MagViewOffset(int start_slot, int db_slot, int wrap)
     }
 }
 
-int CFDB_QueryMagView2(EnterpriseDB *conn, char *keyhash, char *monId, time_t start_time, double *qa, double *ea,
-                       double *da)
+int CFDB_QueryMagView2(EnterpriseDB *conn, char *keyhash, char *monId, time_t start_time, double *qa, double *ea, double *da, double *ga)
 {
     bson_buffer bb;
     bson query, field;
@@ -3657,6 +3656,7 @@ int CFDB_QueryMagView2(EnterpriseDB *conn, char *keyhash, char *monId, time_t st
     bson_append_int(&bb, cfm_q_arr, 1);
     bson_append_int(&bb, cfm_expect_arr, 1);
     bson_append_int(&bb, cfm_deviance_arr, 1);
+    bson_append_int(&bb, cfm_grad_arr, 1);
     bson_from_buffer(&field, &bb);
 
 /* Check from wrap around */
@@ -3674,6 +3674,7 @@ int CFDB_QueryMagView2(EnterpriseDB *conn, char *keyhash, char *monId, time_t st
         qa[i] = -1;
         ea[i] = 0;
         da[i] = 0;
+        ga[i] = 0;
     }
 
 /* BEGIN SEARCH */
@@ -3700,6 +3701,10 @@ int CFDB_QueryMagView2(EnterpriseDB *conn, char *keyhash, char *monId, time_t st
             else if (strcmp(bson_iterator_key(&it1), cfm_deviance_arr) == 0)
             {
                 monArr = da;
+            }
+            else if (strcmp(bson_iterator_key(&it1), cfm_grad_arr) == 0)
+            {
+                monArr = ga;
             }
             else
             {
@@ -3750,8 +3755,7 @@ int CFDB_QueryMagView2(EnterpriseDB *conn, char *keyhash, char *monId, time_t st
 
 /*****************************************************************************/
 
-int CFDB_QueryMonView(EnterpriseDB *conn, char *keyhash, char *monId, enum monitord_rep rep_type, double *qa,
-                      double *ea, double *da)
+int CFDB_QueryMonView(EnterpriseDB *conn, char *keyhash, char *monId, enum monitord_rep rep_type, double *qa, double *ea, double *da, double *ga)
 {
     bson_buffer bb;
     bson query, field;
@@ -3785,6 +3789,7 @@ int CFDB_QueryMonView(EnterpriseDB *conn, char *keyhash, char *monId, enum monit
         qa[i] = -1;
         ea[i] = 0;
         da[i] = 0;
+        ga[i] = 0;
     }
 
     // query
@@ -3798,6 +3803,7 @@ int CFDB_QueryMonView(EnterpriseDB *conn, char *keyhash, char *monId, enum monit
     bson_append_int(&bb, cfm_q_arr, 1);
     bson_append_int(&bb, cfm_expect_arr, 1);
     bson_append_int(&bb, cfm_deviance_arr, 1);
+    bson_append_int(&bb, cfm_grad_arr, 1);
     bson_from_buffer(&field, &bb);
 
     cursor = mongo_find(conn, db, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
@@ -3822,6 +3828,10 @@ int CFDB_QueryMonView(EnterpriseDB *conn, char *keyhash, char *monId, enum monit
             else if (strcmp(bson_iterator_key(&it1), cfm_deviance_arr) == 0)
             {
                 monArr = da;
+            }
+            else if (strcmp(bson_iterator_key(&it1), cfm_grad_arr) == 0)
+            {
+                monArr = ga;
             }
             else
             {

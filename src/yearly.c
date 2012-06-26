@@ -19,11 +19,11 @@
 
 int Nova_ReadYearTimeSeries(EnterpriseDB *conn, DataView *cfv, char *keyhash, char *monId)
 {
-    double ry, rq, rs;
+    double ry, rq, rs, rg;
     int i, have_data = false;
-    double q[CF_YEAR_SLOTS] = { 0 }, e[CF_YEAR_SLOTS] = { 0 }, d[CF_YEAR_SLOTS] = { 0 };
+    double q[CF_YEAR_SLOTS] = { 0 }, e[CF_YEAR_SLOTS] = { 0 }, d[CF_YEAR_SLOTS] = { 0 }, g[CF_YEAR_SLOTS] = { 0 };
 
-    CFDB_QueryMonView(conn, keyhash, monId, mon_rep_yr, q, e, d);
+    CFDB_QueryMonView(conn, keyhash, monId, mon_rep_yr, q, e, d, g);
 
     cfv->max = 0;
     cfv->min = 99999;
@@ -34,6 +34,7 @@ int Nova_ReadYearTimeSeries(EnterpriseDB *conn, DataView *cfv, char *keyhash, ch
         ry = e[i];
         rq = q[i];
         rs = d[i];
+        rg = g[i];
 
         if (rq > 0)
         {
@@ -54,6 +55,7 @@ int Nova_ReadYearTimeSeries(EnterpriseDB *conn, DataView *cfv, char *keyhash, ch
         
         cfv->data_E[i] = ry;
         cfv->data_q[i] = rq;
+        cfv->data_dq[i] = rg;
         cfv->bars[i] = rs;
     }
 
