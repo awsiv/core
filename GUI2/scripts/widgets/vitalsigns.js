@@ -362,7 +362,7 @@
                 meta['obs']= self.selectedVital;
 
                 // create div
-                var $url =  self.options.baseUrl + self.options.vitalsMainLink + meta.hostkey;
+                var $url =  self.options.baseUrl + self.options.vitalsMainLink + meta.hostkey+'/'+ self.selectedVital;
                 var $hostVitalLink = $('<a target="_blank">').html(meta.hostname).attr('href',$url)
                 var $hostLabel = $('<div>').addClass('graph-title').append($hostVitalLink);
                 var intRegex = /^\d+$/;
