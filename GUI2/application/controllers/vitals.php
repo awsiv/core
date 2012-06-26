@@ -69,6 +69,8 @@ class Vitals extends Cf_REST_Controller
     function node_vitals_get()
     {
         $username = $this->session->userdata('username');
+        $this->config->load('vitals');
+        $vitalsMaxNode = $this->config->item('vitals_max_nodes');
         $incList = $this->param_includes();
         $listOfHost = $this->host_model->getHostListByContext($username, $incList, array());
         $data = array();
@@ -89,6 +91,7 @@ class Vitals extends Cf_REST_Controller
         }
         $sortFunction = isset(self::$sortTable[$sort]) ? self::$sortTable[$sort] : self::$sortTable['last-measured'];
         usort($data, array($this, $sortFunction));
+        $data = array_slice($data, 0,$vitalsMaxNode);
 
         $this->respond(200, json_encode($data));
     }

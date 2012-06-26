@@ -10,3 +10,5 @@ $config['vitals'] = array(
     'diskfree' => array("text" => "Disk free", 'max' => 100, 'min' => 0),
     'cpu' => array("text" => "CPU(ALL)", 'max' => 100)
 );
+
+$config['vitals_max_nodes'] = 200;
