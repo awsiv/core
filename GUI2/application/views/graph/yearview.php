@@ -82,7 +82,7 @@
                 top: y + 5,
                 left: x + 5,
                 border: '1px solid #fdd',
-                padding: '2px',
+                padding: '10px',
                 color: '#000',
                 'background-color': '#fee',
                 opacity: 0.80
