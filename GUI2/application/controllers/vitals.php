@@ -34,17 +34,36 @@ class Vitals extends Cf_REST_Controller
 
     function _sortVitalsByAverage($data1, $data2)
     {
+        $data1Count = count($data1['perfdata']);
+        $data2Count = count($data2['perfdata']);
+        $sumData1 = 0;
+        $sumData2 = 0;
+        $averageData1 = 0;
+        $averageData2 = 0;
 
-        $lastPerformanceData1 = end($data1['perfdata']);
-        $lastPerformanceData2 = end($data2['perfdata']);
+        if ($data1Count)
+        {
+            foreach ($data1['perfdata'] as $d1)
+            {
 
-        $lastValue1 = !empty($lastPerformanceData1) ? $lastPerformanceData1[2] : 0;
-        $lastValue2 = !empty($lastPerformanceData2) ? $lastPerformanceData2[2] : 0;
-        if ($lastValue1 == $lastValue2)
+                $sumData1 += $d1[1];
+            }
+            $averageData1 = $sumData1 / $data1Count;
+        }
+
+        if ($data2Count)
+        {
+            foreach ($data2['perfdata'] as $d2)
+            {
+                $sumData2 += $d2[1];
+            }
+            $averageData2 = $sumData2 / $data2Count;
+        }
+        if ($averageData1 == $averageData2)
         {
             return 0;
         }
-        return ($lastValue1 < $lastValue2) ? +1 : -1;
+        return ($averageData1 < $averageData2) ? +1 : -1;
     }
 
     function node_vitals_get()
@@ -70,6 +89,7 @@ class Vitals extends Cf_REST_Controller
         }
         $sortFunction = isset(self::$sortTable[$sort]) ? self::$sortTable[$sort] : self::$sortTable['last-measured'];
         usort($data, array($this, $sortFunction));
+
         $this->respond(200, json_encode($data));
     }
 

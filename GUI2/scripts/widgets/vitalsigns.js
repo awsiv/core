@@ -368,8 +368,10 @@
                 var intRegex = /^\d+$/;
                 var lastUpdateDate = intRegex.test(meta.lastUpdated)   ? common.time.formatDate(common.unixTimeToJavascriptTime(meta.lastUpdated)) : 'unknown';
                 var $lastUpdated = $('<div>').html('Last updated: '+ lastUpdateDate );
+                var lastMeasuredValue = (perfdata.length > 0 ) ? perfdata[perfdata.length-1][1] : 'not available';
+                var $lastMeasuredValueDiv = $('<div>').html('Last measured value: '+ lastMeasuredValue);
                 var $graphHeader = $('<div class="graphHeader">').append($hostLabel)
-                .append($lastUpdated);
+                .append($lastUpdated).append($lastMeasuredValueDiv);
                 var $graphDiv = $('<div>').addClass('graph-container').attr('id',meta.hostkey+'-container').append($graphHeader)
 
                 var $plotdiv = $('<div>').attr('id',meta.hostkey).width('250').height('150').html('loading...');
