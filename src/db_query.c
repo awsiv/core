@@ -151,7 +151,7 @@ Item *CFDB_GetLastseenCache(void)
                     {
                         if (strcmp(bson_iterator_key(&it3), cfr_keyhash) == 0)
                         {
-                            snpintf(keyhash, sizeof(keyhash), "%s", bson_iterator_string(&it3));
+                            snprintf(keyhash, sizeof(keyhash), "%s", bson_iterator_string(&it3));
                         }
                         else if (strcmp(bson_iterator_key(&it3), cfr_ipaddr) == 0)
                         {
