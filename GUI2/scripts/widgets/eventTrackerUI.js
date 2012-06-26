@@ -10,7 +10,7 @@
             includes: [],
             excludes: []
         },
-        timers:[],
+        timers:{},
         $busyIcon: $('<span class="loadinggif" style="display:none">').html('&nbsp;'),
         $errorDiv: $('<div>').addClass('error'),
         tempEventDivs:[], //can be changed according to requirement
@@ -57,8 +57,8 @@
                'id':tracker.attr('id'),
                'data':{
                    resource:tracker.attr('resource'),
-                   startTime:tracker.attr('timestamp'),
-                   report:tracker.attr('report'),
+                   startTime:self.getTimeStamp(tracker.attr('starttime')),
+                   report:tracker.attr('type'),
                    inclist:encodeURIComponent(self._context.includes),
                    exlist:encodeURIComponent(self._context.excludes)
                    },
@@ -68,7 +68,7 @@
                 'error':function(jqXHR,textStatus, errorThrown){
                   $(event.target).text('start');
                   self.hideLoading($(event.target));
-                  self.resetTimers();
+                  self.resetTimers(tracker.attr('id'));
                   self._displayFailure(jqXHR,textStatus, errorThrown);
                 }
             };
@@ -86,7 +86,7 @@
             {
                 $(event.target).text('start');
                 tracker.data('status','stopped');
-                self.resetTimers();
+                self.resetTimers(details.id);
                 self.resetEventViewerUI('eventPane_'+tracker.attr('id'));
             }
         },
@@ -94,10 +94,10 @@
         startButtonClicked:function(event){
             var self=this,
             btn=$(event.target),
-            divid = Math.round((new Date()).getTime() / 1000),
+            eventId = Math.round((new Date()).getTime() / 1000),
             form=btn.parent().parent().parent(),   
             details={
-                'id' : divid,
+                'id' : eventId,
                'data':{
                    resource:form.find('input[name=resource]').val(),
                    startTime:self.getTimeStamp(form.find('input[name=time]').val()),
@@ -108,13 +108,13 @@
                  'success':function(){
                     self.hideLoading(btn.parent());
                     self.showSaveTrackerStep();
-                    self.tempEventDivs.push(divid);
+                    self.tempEventDivs.push(eventId);
                     //self.updateMessage('<p class="info">Started Tracking</p>')
                  },
                'error':function(jqXHR,textStatus, errorThrown){
                   btn.text('Start'); 
                   self.hideLoading(btn.parent());
-                  self.resetTimers();
+                  self.resetTimers(eventId);
                   self._displayFailure(jqXHR,textStatus, errorThrown);
                 }
             };
@@ -129,7 +129,7 @@
             else if(btn.text().toLowerCase() == 'stop')
             {
                 btn.text('Start');
-                self.resetTimers();
+                self.resetTimers(self.tempEventDivs[0]);
                 $.each(self.tempEventDivs,function(index,value){
                     self.resetEventViewerUI('eventPane_'+value);
                 });
@@ -152,11 +152,28 @@
             self.showStartTrackerStep();
         },
         
+        deleteLinkClicked:function(event){
+            var self=this,
+                $tracker=$(event.target).parent(),
+                params={
+                'type':'GET',
+                'url':self.options.baseUrl+'/eventTracker/delete/'+$tracker.attr('id'),
+                'success':function(data){    
+                            if($tracker.data('status') =='started'){
+                               self.resetTimers($tracker.attr('id'));
+                               self.resetEventViewerUI('eventPane_'+$tracker.attr('id'));
+                               $tracker.remove();
+                            }
+                       }
+                 };
+              self.sendRequest(params);     
+         },
+         
         fetchEvents:function(details){
             var self=this,
             params={
                 'data':details.data,
-                'url':self.options.baseUrl+self.options.trackerUrl,
+                'url':self.options.baseUrl+'/'+self.options.trackerUrl,
                 'success':function(data){
                         if($.isFunction(details.success)){
                             $.call(details.success());
@@ -185,14 +202,24 @@
                 $('#eventPane_'+details.id).find('div.status').html(self.$busyIcon.show());
                 self.fetchEventsFromNow(details)
             },self.options.interval);
-            self.timers.push(timer);
+            self.timers[details.id]=timer;
         },
         
-        resetTimers:function(){
+        resetTimers:function(key){
             var self=this;
-            $.each(self.timers,function(index,value){
+            if(key==undefined){
+              $.each(self.timers,function(index,value){
                 clearInterval(value);
-            });  
+                delete self.timers[index];
+              });  
+            }
+            else{
+               //console.log(self.timers);
+               //console.log(self.timers[key]);
+               clearInterval(self.timers[key]);
+               delete self.timers[key];
+               //console.log(self.timers);
+            } 
         },
         
         resetTrackers:function(trackers){
@@ -221,13 +248,74 @@
             self.createPane.find('input[type=text]').each(function(index){
                 $(this).val('');
             });
+            self.createPane.find('#testBtn').find('span').text('Start');
+            self.showStartTrackerStep(); 
         },
         
-        refreshTrackersListUI:function(){
+        refreshTrackersListUI:function($tracker){
             var self = this,
-            viewUrl = self.options.baseUrl+'/eventTracker/listTrackers';
-            self.listPane.append(self.$busyIcon)
-            self.listPane.load(viewUrl);
+            params={
+                'url':self.options.baseUrl+'/eventTracker/listTrackers',
+                'success':function(data){
+                   if(data.length>0){
+                   self.listPane.append('<p>Saved Trackers</p>')
+                   var $list=$('<ul>');
+                       $.each(data,function(index,value){
+                           $list.prepend(self.createTracker(value));
+                       });
+                      self.listPane.append($list);
+                   }
+                }
+            };
+            
+           if($tracker == undefined){
+             self.sendRequest(params);  
+           }else{
+              $list=self.listPane.find('ul')
+              if($list.length==0){
+                self.listPane.append('<p>Saved Trackers</p><ul></ul>');
+              }
+              self.listPane.find('ul').append($tracker);
+           }    
+       },
+       
+       handleStartedTimerToSavedTracker:function($tracker){
+           var self=this,
+               tempEventId=self.tempEventDivs[0],
+               eventDiv=self.element.find('#eventPane_'+tempEventId),
+               eventTimerId=self.timers[tempEventId],
+               newID=$tracker.attr('id'),
+               details={
+               'id':$tracker.attr('id'),
+               'data':{
+                   resource:$tracker.attr('resource'),
+                   report:$tracker.attr('type'),
+                   inclist:encodeURIComponent(self._context.includes),
+                   exlist:encodeURIComponent(self._context.excludes)
+                   },
+                'error':function(jqXHR,textStatus, errorThrown){
+                  $tracker.find('span.trackerStart').text('start');
+                  self.resetTimers($tracker.attr('id'));
+                  self._displayFailure(jqXHR,textStatus, errorThrown);
+                }
+               };
+          eventDiv.find('legend').text(newID);
+          eventDiv.attr('id','eventPane_'+newID);
+          self.resetTimers(tempEventId);
+          self.loopTracker(details);
+          $tracker.find('span.trackerStart').text('stop');
+          $tracker.data('status','started');
+          
+       },
+        
+        createTracker:function(value){
+             var $tracker=$('<li>').attr(value);
+             $('<span>').text(value.id).appendTo($tracker);
+             $('<span>').text('start').addClass('trackerStart').appendTo($tracker);
+             $('<span>').addClass('loadinggif').css('display','none').html('&nbsp;').appendTo($tracker);
+             $('<span>').text('delete').addClass('trackerDelete').appendTo($tracker);
+             //$('<span>').text('edit').addClass('trackerEdit').appendTo($tracker);
+             return $tracker;
         },
         
         showSaveTrackerStep:function(){
@@ -247,12 +335,16 @@
            var eventViewer = self.element.find('#eventPane_'+id);
            if(eventViewer.length == 0){
              var eventPane=$('<div>').attr('id','eventPane_'+id).addClass('eventPane'); 
+             var container=$('<fieldset><legend>'+id+'</legend></fieldset>').appendTo(eventPane)
              var eventStatus=$('<div>').addClass('status');
              var eventList=$('<div>').addClass('events');
-             eventPane.append(eventStatus);
-             eventPane.append(eventList);
+             container.append(eventStatus);
+             container.append(eventList);
              self.element.append(eventPane);  
-              eventViewer=self.element.find('#eventPane_'+id);
+             eventViewer=self.element.find('#eventPane_'+id);
+             if( self.element.find('div.eventPane').length > 1){
+                 eventViewer.addClass('largeMargin')
+             }
            }
            
            var dt = new Date();
@@ -267,7 +359,7 @@
                    event.append('<b>Date:</b> ' + dte.format("H:i:s d/m/y") + ' <b>Host:</b> ' + eventLog[0] + ' <b><br />Handle:</b> ' + eventLog[1]
 			     + '<br /><b>Message:</b> ' + eventLog[2] );
                          
-                   if($('#'+eventId).length == 0){
+                   if(eventViewer.find('#'+eventId).length == 0){
                        eventViewer.find('div.events').prepend(event);
                    }
                })
@@ -291,6 +383,7 @@
             self.createPane.delegate('#testBtn','click',$.proxy(this.startButtonClicked,this))
             self.listPane.delegate('span.trackerStart','click',$.proxy(this.trackerClicked,this))
             self.createPane.delegate('#startViewhandle','click',$.proxy(this.startHandlerClicked,this))
+            self.listPane.delegate('span.trackerDelete','click',$.proxy(this.deleteLinkClicked,this));
         },
         
         getFormParams:function(form){
@@ -298,10 +391,11 @@
             params = {
                 'data':form.serialize(),
                 'url':form.attr( 'action'),
-                'dataType':'html',
                 'success': function (data) {
-                    self.updateMessage(data);
-                    self.refreshTrackersListUI();
+                    //self.updateMessage(data);
+                    var $tracker=self.createTracker(data);
+                    self.refreshTrackersListUI($tracker);
+                    self.handleStartedTimerToSavedTracker($tracker);
                     self.refreshTrackerCreateUI();
                 },
                 'error':function(request, status, error){
