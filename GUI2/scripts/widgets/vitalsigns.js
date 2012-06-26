@@ -51,30 +51,34 @@
 
         },
 
-        setContext: function(includes, excludes) {
+        setContext: function(includes,excludes,draw) {
             var $self = this;
             $self._context.includes = includes;
             $self._context.excludes = excludes;
-            $self._modifyContext();
+            if (draw) {
+                $self.refresh();
+            }
             $self._hostView = false;
         // set auto refresh
         /*
             setInterval(function(){
-                $self._modifyContext()
+                $self.refresh()
             }, $self._autoRefresh);
             */
 
         },
 
-        setHostContext:function(hostkey) {
-            var $self = this;
-            var includes = [common.canonify('PK_' + hostkey)];
-            var excludes = [];
+        setHostContext:function(hostkey,draw) {
+            var $self = this,
+            includes = [common.canonify('PK_' + hostkey)],
+            excludes = [];
             $self._hostView = true;
-            $self.setContext(includes,excludes);
+            $self.setContext(includes,excludes,draw);
         },
 
-        _modifyContext:function () {
+
+
+        refresh: function() {
             var $self = this;
             $self.clearCanvas();
             if ($self._hostView === false) {
@@ -84,21 +88,21 @@
             }
         },
 
-        clearCanvas:function() {
+        clearCanvas: function () {
             var $self = this;
             $self.element.find('.graph-container-body').empty();
             $self.element.find('.graph-container-footer-menu').empty();
             $self.resetCounter();
         },
 
-        resetCounter: function() {
+        resetCounter: function () {
             var $self = this;
             $self._startIndex = 0;
             $self._defaultNumberOfGraphs=10;
             $self._cachedData=[];
         },
 
-        _buildVitalsSelection:function(data) {
+        _buildVitalsSelection: function(data) {
             var $self = this;
             $.each(data, function(key, value) {
                 $self.vitalsSelect
@@ -118,7 +122,7 @@
             $self._buildVitalsSortSelection();
         },
 
-        _buildVitalsSortSelection:function() {
+        _buildVitalsSortSelection: function() {
             //build the vitals sort by drop down
             var $self = this;
             $.each($self.vitalsValuesSortBy, function(key, value) {
