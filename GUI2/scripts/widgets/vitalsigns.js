@@ -53,19 +53,25 @@
 
         setContext: function(includes,excludes,draw) {
             var $self = this;
-            $self._context.includes = includes;
-            $self._context.excludes = excludes;
+            $self._modifyContext(includes,excludes);
+            $self._hostView = false;
             if (draw) {
                 $self.refresh();
             }
-            $self._hostView = false;
+
         // set auto refresh
         /*
             setInterval(function(){
                 $self.refresh()
             }, $self._autoRefresh);
-            */
+             */
 
+        },
+
+        _modifyContext: function(includes,excludes) {
+            var $self = this;
+            $self._context.includes = includes;
+            $self._context.excludes = excludes;
         },
 
         setHostContext:function(hostkey,draw) {
@@ -73,10 +79,11 @@
             includes = [common.canonify('PK_' + hostkey)],
             excludes = [];
             $self._hostView = true;
-            $self.setContext(includes,excludes,draw);
+            $self._modifyContext(includes,excludes);
+            if (draw) {
+                $self.refresh();
+            }
         },
-
-
 
         refresh: function() {
             var $self = this;
