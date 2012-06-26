@@ -1047,7 +1047,7 @@ void Nova_ReviveOther(int argc, char **argv);
 
 
 /* stories.c */
-
+#ifdef HAVE_LIBMONGOC
 int PossibleInference(char *assoc,enum storytype type,enum cf_direction direction,Chapter *this,char *topic,char *context);
 void Constellation_GetWeatherReport(char *hostkey,Item **low, Item **high, Item **anomaly, Item **focused, Item **unfocused,Item **ldt);
 void Constellation_ListPossibleStoriesCmdLine(void);
@@ -1073,7 +1073,7 @@ double Constellation_Inference(Chapter *path[CF_MAX_STORY_DEPTH],enum storytype 
 void Constellation_HostStory(const Policy *policy,char *hostkey,char *buffer, int bufsize);
 int AlreadySaidThis(Chapter *history[CF_MAX_STORY_DEPTH],int topic_id);
 void Constellation_GetLocations(const Policy *policy,char *hostkey, Rlist **locations);
-
+#endif
 /* topicmap.c */
 
 #ifdef HAVE_LIBMONGOC

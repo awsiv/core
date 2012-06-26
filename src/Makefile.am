@@ -39,7 +39,6 @@ libcfnova_la_SOURCES = \
         pscalar.c \
         reporting.c \
         reporting-engine.c reporting-engine.h \
-        stories.c \
         syntax.c \
         copernicus.c
 
@@ -83,6 +82,7 @@ libcfnova_la_SOURCES += \
         promise_db.c \
         runagent.c \
         scorecards.c scorecards.h \
+        stories.c \
         topicmap.c \
         web_api.c \
         web_rbac.c \

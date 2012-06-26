@@ -12,10 +12,7 @@
 #include "constraints.h"
 #include "files_names.h"
 #include "item_lib.h"
-
-#ifdef HAVE_LIBMONGOC
 #include "db_query.h"
-#endif
 
 /***************************************************************************
 
