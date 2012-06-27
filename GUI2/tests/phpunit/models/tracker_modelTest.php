@@ -117,7 +117,7 @@ class test_tracker_model extends CI_TestCase
          $this->assertTrue(is_array($result),'Must be the array');
          $this->assertTrue(is_object($result[0]),'Must be object');
          $username = $result[0]->getUsername(); 
-         $this->assertEquals($username, 'unit-test','must be the object with property username valued unit-test');  
+         $this->assertEquals($username, 'unit-test','must be the object with property username valued unit-test'); 
      }
      
      public function test_get_all_trackers_with_no_filters()
@@ -139,7 +139,8 @@ class test_tracker_model extends CI_TestCase
      {
          $filter = array('userName'=>'unit-test', 'trackerName'=>'testTracker');
          $result=$this->ci_obj->tracker_model->update_tracker($filter,array('trackerName'=>'changedTracker'));
-         $this->assertEquals($result['updatedExisting'], TRUE);
+         $this->assertInstanceOf('CF_tracker', $result);
+        // $this->assertEquals($result['updatedExisting'], TRUE);
      }
      
      
