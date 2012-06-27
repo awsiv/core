@@ -123,7 +123,6 @@
         resetCounter: function () {
             var $self = this;
             $self._startIndex = 0;
-            $self._defaultNumberOfGraphs=10;
             $self._cachedData=[];
         },
 
