@@ -23,7 +23,7 @@
         _hostView: false,
 
         vitalPanel: $('<div class="graph-container-header-top-menu"></div>'+
-            '<div class="graph-container-body"></div>'+
+            '<div class="loading-div"></div><div class="graph-container-body"></div>'+
             '<div class="graph-container-footer-menu"></div>'),
 
         vitalsSelect: $('<select id="vitalsSelect">'),
@@ -50,7 +50,7 @@
             var $self = this;
             $self.element.append($self.vitalPanel);
             $self._fetchConfig();
-            $self.element.prepend($self.busyIcon);
+            $self.element.find('.loading-div').prepend($self.busyIcon);
             $self._setTimer(this.options.interval);
         },
 
@@ -339,7 +339,7 @@
                     top: y + 5,
                     left: x + 5,
                     border: '1px solid #fdd',
-                    padding: '2px',
+                    padding: '10px',
                     color: '#000',
                     'background-color': '#fee',
                     opacity: 0.80
