@@ -109,7 +109,12 @@ class Tracker_model extends CI_Model
      */
     function update_tracker($filter,$data){
         $result=$this->mongo_db->where($filter)->update($this->collectionName,$data);
-        return $result;
+        if($result['updatedExisting']){
+            $params=array_merge($filter,$data);
+            $obj = new CF_tracker($params);
+            return $obj;
+        }
+        return false;
     }
     
     /**
