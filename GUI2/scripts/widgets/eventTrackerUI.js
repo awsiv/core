@@ -14,7 +14,7 @@
         $busyIcon: $('<span class="loadinggif" style="display:none">').html('&nbsp;'),
         $errorDiv: $('<div>').addClass('error'),
         tempEventDivs:[], //can be changed according to requirement
-       
+        onEditTracker:{},
 
         _create: function () {
             var $element = this.element;
@@ -94,8 +94,9 @@
         startButtonClicked:function(event){
             var self=this,
             btn=$(event.target),
-            eventId = Math.round((new Date()).getTime() / 1000),
-            form=btn.parent().parent().parent(),   
+            form=btn.parent().parent().parent(),
+            id=self.createPane.find('input[name=trackerName]').val(),
+            eventId = id==''? Math.round((new Date()).getTime() / 1000) : id,
             details={
                 'id' : eventId,
                'data':{
@@ -107,8 +108,9 @@
                  },
                  'success':function(){
                     self.hideLoading(btn.parent());
-                    self.showSaveTrackerStep();
-                    self.tempEventDivs.push(eventId);
+                    self.showSaveTrackerStep(eventId);
+                    self.tempEventDivs[0]=eventId;
+                    //self.tempEventDivs.push(eventId);
                     //self.updateMessage('<p class="info">Started Tracking</p>')
                  },
                'error':function(jqXHR,textStatus, errorThrown){
@@ -137,12 +139,22 @@
             }
         },
         
-        createButtonClicked:function(event){
+        formSubmitted:function(event){
             event.preventDefault();
             var self=this,
-            form=$(event.target),
-            params =self.getFormParams(form);
+            form=$(event.target);
+            var params =self.getFormParams(form);
             self.sendRequest(params);
+        },
+        
+        resetButtonClicked:function(event){
+            var self=this;
+             self.refreshTrackerCreateUI();
+             self.resetTimers(self.tempEventDivs[0]);
+             $.each(self.tempEventDivs,function(index,value){
+                    self.resetEventViewerUI('eventPane_'+value);
+                });
+             self.resetTrackerInEdit('keep');
         },
         
         startHandlerClicked:function(event){
@@ -158,15 +170,41 @@
                 params={
                 'type':'GET',
                 'url':self.options.baseUrl+'/eventTracker/delete/'+$tracker.attr('id'),
-                'success':function(data){    
+                'success':function(data){
                             if($tracker.data('status') =='started'){
                                self.resetTimers($tracker.attr('id'));
                                self.resetEventViewerUI('eventPane_'+$tracker.attr('id'));
-                               $tracker.remove();
                             }
+                           $tracker.remove();
                        }
                  };
-              self.sendRequest(params);     
+              self.sendRequest(params); 
+         },
+         
+         editLinkClicked:function(event){
+             var self=this,
+                 $tracker=$(event.target).parent(),
+                 data={
+                      'name':$tracker.attr('id'),
+                      'resource':$tracker.attr('resource'),
+                      'startTime':$tracker.attr('starttime'),
+                      'type':$tracker.attr('type')
+                      };
+                self.fillformWithData(data); 
+                self.onEditTracker=$tracker;
+         },
+         
+         fillformWithData:function(data){
+             var self=this,
+                 form=self.createPane.find('form');
+            form.find('input[name=resource]').val(data.resource);
+            form.find('input[name=time]').val(data.startTime);
+            form.find('input[name=trackerName]').val(data.name);
+            form.find('select').val(data.type);
+            form.find('input[type=submit]').val('Update');
+            form.attr('action',self.options.baseUrl+'/eventTracker/update');
+            $('<input type="hidden">').attr('name','oldName').val(data.name).appendTo(form);
+            return form;
          },
          
         fetchEvents:function(details){
@@ -214,11 +252,11 @@
               });  
             }
             else{
-               //console.log(self.timers);
-               //console.log(self.timers[key]);
+               console.log(self.timers);
+               console.log(self.timers[key]);
                clearInterval(self.timers[key]);
                delete self.timers[key];
-               //console.log(self.timers);
+               console.log(self.timers);
             } 
         },
         
@@ -244,7 +282,11 @@
         },
         
         refreshTrackerCreateUI:function(){
-            var self = this;
+            var self = this,
+                form=self.createPane.find('form');
+            form.find('input[type=submit]').val('Save');
+            form.attr('action',self.options.baseUrl+'/eventTracker/create');
+            form.find('input[type=hidden]').remove();
             self.createPane.find('input[type=text]').each(function(index){
                 $(this).val('');
             });
@@ -266,7 +308,7 @@
                       self.listPane.append($list);
                    }
                 }
-            };
+           };
             
            if($tracker == undefined){
              self.sendRequest(params);  
@@ -283,7 +325,6 @@
            var self=this,
                tempEventId=self.tempEventDivs[0],
                eventDiv=self.element.find('#eventPane_'+tempEventId),
-               eventTimerId=self.timers[tempEventId],
                newID=$tracker.attr('id'),
                details={
                'id':$tracker.attr('id'),
@@ -299,6 +340,7 @@
                   self._displayFailure(jqXHR,textStatus, errorThrown);
                 }
                };
+         
           eventDiv.find('legend').text(newID);
           eventDiv.attr('id','eventPane_'+newID);
           self.resetTimers(tempEventId);
@@ -314,13 +356,16 @@
              $('<span>').text('start').addClass('trackerStart').appendTo($tracker);
              $('<span>').addClass('loadinggif').css('display','none').html('&nbsp;').appendTo($tracker);
              $('<span>').text('delete').addClass('trackerDelete').appendTo($tracker);
-             //$('<span>').text('edit').addClass('trackerEdit').appendTo($tracker);
+             $('<span>').text('edit').addClass('trackerEdit').appendTo($tracker);
              return $tracker;
         },
         
-        showSaveTrackerStep:function(){
+        showSaveTrackerStep:function(id){
             var self=this;
              self.createPane.find("#step1").hide();
+             if(id !=undefined){
+               self.createPane.find('input[name=trackerName]').val(id);   
+             }
              self.createPane.find("#step2").show();
         },
         
@@ -333,7 +378,7 @@
        refreshEventViewerUI:function(id,data){
            var self=this;
            var eventViewer = self.element.find('#eventPane_'+id);
-           if(eventViewer.length == 0){
+           if(eventViewer.length == 0 && self.timers.hasOwnProperty(id)){
              var eventPane=$('<div>').attr('id','eventPane_'+id).addClass('eventPane'); 
              var container=$('<fieldset><legend>'+id+'</legend></fieldset>').appendTo(eventPane)
              var eventStatus=$('<div>').addClass('status');
@@ -345,7 +390,7 @@
              if( self.element.find('div.eventPane').length > 1){
                  eventViewer.addClass('largeMargin')
              }
-           }
+          }
            
            var dt = new Date();
            var hostAndEventCount = 'No. of hosts seen: ' + data['meta']['hosts'] + ', No. of events: ' + data['meta']['events']+ ', Updated at: ' + dt.format("H:i:s d/m/y") ;
@@ -379,24 +424,37 @@
         
         bindEventForTrackerUI:function(){
             var self=this;
-            self.createPane.delegate('form','submit',$.proxy(this.createButtonClicked,this))
-            self.createPane.delegate('#testBtn','click',$.proxy(this.startButtonClicked,this))
-            self.listPane.delegate('span.trackerStart','click',$.proxy(this.trackerClicked,this))
-            self.createPane.delegate('#startViewhandle','click',$.proxy(this.startHandlerClicked,this))
+            self.createPane.delegate('form','submit',$.proxy(this.formSubmitted,this));
+            self.createPane.delegate('#testBtn','click',$.proxy(this.startButtonClicked,this));
+            self.listPane.delegate('span.trackerStart','click',$.proxy(this.trackerClicked,this));
+            self.createPane.delegate('#startViewhandle','click',$.proxy(this.startHandlerClicked,this));
             self.listPane.delegate('span.trackerDelete','click',$.proxy(this.deleteLinkClicked,this));
+            self.listPane.delegate('span.trackerEdit','click',$.proxy(this.editLinkClicked,this));
+            self.createPane.delegate('input[type=reset]','click',$.proxy(this.resetButtonClicked,this));
+        },
+        
+        resetTrackerInEdit:function(op){
+            var self=this;
+             if(self.onEditTracker.jquery && op =='remove'){
+                    self.onEditTracker.remove();
+                    self.onEditTracker={};
+                }else{
+                   self.onEditTracker={} 
+                }
         },
         
         getFormParams:function(form){
             var self =this,
             params = {
                 'data':form.serialize(),
-                'url':form.attr( 'action'),
+                'url':form.attr('action'),
                 'success': function (data) {
                     //self.updateMessage(data);
                     var $tracker=self.createTracker(data);
                     self.refreshTrackersListUI($tracker);
                     self.handleStartedTimerToSavedTracker($tracker);
                     self.refreshTrackerCreateUI();
+                    self.resetTrackerInEdit('remove');  
                 },
                 'error':function(request, status, error){
                     self.updateMessage(request.responseText);
