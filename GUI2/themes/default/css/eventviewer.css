@@ -15,7 +15,7 @@ span.loadinggif{
     padding:0 8px;
 }
 
-.listPane ul li .trackerStart:hover,.listPane ul li .trackerStop:hover, .trackerDelete:hover{
+.listPane ul li .trackerStart:hover,.listPane ul li .trackerStop:hover, .trackerDelete:hover, .trackerEdit:hover{
    text-decoration: underline;
    cursor: pointer;
 }
