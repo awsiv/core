@@ -11,4 +11,12 @@ $config['vitals'] = array(
     'cpu' => array("text" => "CPU(ALL)", 'max' => 100)
 );
 
+/**
+ * Predefined values to sort the nodes by
+ */
+$config['vitals-sort-by'] = array(
+    'last-measured' => "Last Measured",
+    'average' => "Average"
+);
+
 $config['vitals_max_nodes'] = 200;

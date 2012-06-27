@@ -19,6 +19,7 @@
 
         _startIndex:0,
         _defaultNumberOfGraphs:10,
+
         _cachedData:[],
         _hostView: false,
 
@@ -128,7 +129,7 @@
 
         _buildVitalsSelection: function(data) {
             var $self = this;
-            $.each(data, function(key, value) {
+            $.each(data.vitals, function(key, value) {
                 $self.vitalsSelect
                 .append($("<option></option>")
                     .attr("value",key)
@@ -136,20 +137,20 @@
             });
             $self.vitalsSelect.change(function() {
                 $self.selectedVital = ($(this).val());
-                $self.element.find('.graph-container-body').empty();
-                $self.element.find('.graph-container-footer-menu').empty();
-                $self.resetCounter();
+                $self.clearCanvas();
                 $self.refreshForNodeView();
             });
             $self.element.find('.graph-container-header-top-menu').append( $self.vitalsSelect);
             // build the vitals value drop down
-            $self._buildVitalsSortSelection();
+            $self._buildVitalsSortSelection(data['vitals-sort-by']);
         },
 
-        _buildVitalsSortSelection: function() {
+        _buildVitalsSortSelection: function(sortBy) {
             //build the vitals sort by drop down
+
             var $self = this;
-            $.each($self.vitalsValuesSortBy, function(key, value) {
+            var sortByValues = !$.isEmptyObject( sortBy ) ? sortBy : $self.vitalsValuesSortBy;
+            $.each(sortByValues, function(key, value) {
                 $self.vitalsSortBySelect
                 .append($("<option></option>")
                     .attr("value",key)
@@ -157,9 +158,8 @@
             });
             $self.vitalsSortBySelect.change(function() {
                 $self.selectedVitalSortBy = ($(this).val());
-                $self.element.find('.graph-container-body').empty();
-                $self.element.find('.graph-container-footer-menu').empty();
-                $self.resetCounter();
+                $self.clearCanvas();
+                $self.refreshForNodeView();
                 $self.refreshForNodeView();
             });
             $self.element.find('.graph-container-header-top-menu').append( $self.vitalsSortBySelect);
@@ -252,10 +252,10 @@
 
             var ymin = null;
             var ymax = null;
-            if (('obs' in meta) && this._vitalConfig[meta.obs] !== undefined ) {
-                var configYmax = this._vitalConfig[meta.obs].max ? this._vitalConfig[meta.obs].max : null;
-                var configYmin = this._vitalConfig[meta.obs].min ? this._vitalConfig[meta.obs].min : null;
-                ymax = configYmax > maxArrayValue ? this._vitalConfig[meta.obs].max : null ;
+            if (('obs' in meta) && this._vitalConfig.vitals[meta.obs] !== undefined ) {
+                var configYmax = this._vitalConfig.vitals[meta.obs].max ? this._vitalConfig.vitals[meta.obs].max : null;
+                var configYmin = this._vitalConfig.vitals[meta.obs].min ? this._vitalConfig.vitals[meta.obs].min : null;
+                ymax = configYmax > maxArrayValue ? this._vitalConfig.vitals[meta.obs].max : null ;
                 ymin = configYmin;
             }
 

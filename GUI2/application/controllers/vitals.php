@@ -91,7 +91,7 @@ class Vitals extends Cf_REST_Controller
         }
         $sortFunction = isset(self::$sortTable[$sort]) ? self::$sortTable[$sort] : self::$sortTable['last-measured'];
         usort($data, array($this, $sortFunction));
-        $data = array_slice($data, 0,$vitalsMaxNode);
+        $data = array_slice($data, 0, $vitalsMaxNode);
 
         $this->respond(200, json_encode($data));
     }
@@ -122,8 +122,10 @@ class Vitals extends Cf_REST_Controller
 
     function config_vitals_get()
     {
-        $this->config->load('vitals');
-        $vitalsArray = $this->config->item('vitals');
+        $this->config->load('vitals', TRUE);
+        $vitalsArray = array();
+        $vitalsArray['vitals'] = $this->config->item('vitals', 'vitals');
+        $vitalsArray['vitals-sort-by'] = $this->config->item('vitals-sort-by', 'vitals');
         $this->respond(200, json_encode($vitalsArray));
     }
 
