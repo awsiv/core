@@ -99,7 +99,9 @@ class EventTracker extends Cf_controller
       $cause_rx='.*'; /* regx to include every thig */
       $to=0; /* get current time stamp */
       $rows=-1; /* un limited rows*/
+      $rows=50;
       $page_number=-1; /*unlimited pages */
+      $page_number=1;
       
       if($resource =='' || $reportType=="" || $from ==""){
           $this->output->set_status_header('400', "Cannot retrive trackers");
@@ -133,7 +135,6 @@ class EventTracker extends Cf_controller
           $return_data['meta']=array('update_time'=> now(),'hosts'=>$logData['meta']['related'],'events'=>$logData['meta']['count'],'type'=>$reportType);
           
           ksort($return_data['data']);
-          sleep(5);
           echo json_encode($return_data);
           
        }catch(Exception $e)
@@ -153,6 +154,35 @@ class EventTracker extends Cf_controller
            
         }catch(Exception $e){
            $this->output->set_status_header('500', "Cannot delete tracker"); 
+        }
+    }
+    
+    function update(){
+        $inputs = array(
+                "userName" => trim($this->session->userdata('username')),
+                "trackerName" => trim($this->input->post('trackerName')),
+                "reportType" => trim($this->input->post('reportType')),
+                "resource" => trim($this->input->post('resource')),
+                "dateTimeStamp" => strtotime(trim($this->input->post('time'))),
+            );
+        
+        $filter = array(
+                    'trackerName'=>trim($this->input->post('oldName')),
+                    'userName' => trim($this->session->userdata('username')),
+                   );
+        try{
+        $result=$this->tracker_model->update_tracker($filter,$inputs);
+        if($result!==FALSE){
+            echo json_encode(array(
+                           'id'=>$result->getName(),
+                           'resource'=>$result->getResource(),
+                           'startTime'=>$result->getDateTime(),
+                           'type'=>$result->getReportType()
+                  ));
+           }
+           
+        }catch(Exception $e){
+            $this->output->set_status_header('500', "Cannot update the tracker"); 
         }
     }
 
