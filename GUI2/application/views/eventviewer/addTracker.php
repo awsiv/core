@@ -30,17 +30,22 @@ echo form_open('eventTracker/create');
     
 <div id ="step2" style="display:none">
     <p>
-        Save This Tracker: <a href="#" id="startViewhandle">Redefine tracker</a>
+        <a href="#" id="startViewhandle">Redefine tracker</a>
     </p>
     <p>
-        <label for="trackerName">Name<span class="required"></span></label> 
+        <label for="trackerName">Save <span class="required"></span></label> 
         <input id="trackerName" type="text" name="trackerName" value=""  />
     </p>
     <p id="btnholder">
         <label></label>
          <span class="green_btn">
-               <input class="green_btn" type="submit" value="Create">
+               <input class="green_btn" type="submit" value="Save" />
          </span>
+        
+        <span class="green_btn">
+            <input class="green_btn" type="reset" value="Create New"/>
+        </span>
+        
     </p>
 </div>
 <?
