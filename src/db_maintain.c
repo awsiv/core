@@ -906,25 +906,25 @@ void CFDB_PurgeDeprecatedVitals(EnterpriseDB *conn)
     }
 
     // remove all hisograms from main collection
-    bson unsetOp;
-    bson_init(&unsetOp);
+    bson unset_op;
+    bson_init(&unset_op);
     {
-        bson_append_start_object(&unsetOp, "$unset");
+        bson_append_start_object(&unset_op, "$unset");
 
         for (i = 0; i < CF_OBSERVABLES; i++)
         {
             snprintf(var, sizeof(var), "hs%d", i);
-            bson_append_int(&unsetOp, var, 1);
+            bson_append_int(&unset_op, var, 1);
         }
 
-        bson_append_finish_object(&unsetOp);
+        bson_append_finish_object(&unset_op);
     }
-    bson_finish(&unsetOp);
+    bson_finish(&unset_op);
 
     bson empty;
-    mongo_update(conn, MONGO_DATABASE, bson_empty(&empty), &unsetOp, MONGO_UPDATE_MULTI, NULL);
+    mongo_update(conn, MONGO_DATABASE, bson_empty(&empty), &unset_op, MONGO_UPDATE_MULTI, NULL);
 
-    bson_destroy(&unsetOp);
+    bson_destroy(&unset_op);
 
     MongoCheckForError(conn, "purge deprecated monitoring data", NULL, NULL);    
 }
