@@ -485,7 +485,7 @@ static Item *GetUniquePromiseLogEntryKeys(EnterpriseDB *conn, char *promiseLogKe
             if (strcmp(bson_iterator_key(&itHostData), promiseLogKey) == 0)
             {
                 bson_iterator iterPromiseLogElement;
-                bson_iterator_subiterator(&iterPromiseLogElement, &itHostData);
+                bson_iterator_subiterator(&itHostData, &iterPromiseLogElement);
 
                 while (bson_iterator_next(&iterPromiseLogElement))
                 {
