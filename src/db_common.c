@@ -3,14 +3,14 @@
 #include "db_common.h"
 #include "bson_lib.h"
 
-static const char *MongoHostname()
+const char *DBHostname()
 {
     const char *hostname = getenv("CFENGINE_TEST_OVERRIDE_MONGO_HOSTNAME");
 
     return hostname ? hostname : "127.0.0.1";
 }
 
-static int MongoPort()
+int DBPort()
 {
     const char *port = getenv("CFENGINE_TEST_OVERRIDE_MONGO_PORT");
 
@@ -31,14 +31,14 @@ int CFDB_Open(EnterpriseDB *conn)
 # ifdef MONGO_OLD_CONNECT
     mongo_connection_options connOpts;
 
-    snprintf(connOpts.host, sizeof(connOpts.host), "%s", MongoHostname());
+    snprintf(connOpts.host, sizeof(connOpts.host), "%s", DBHostname());
     connOpts.port = MongoPort();
 
     result = mongo_connect(conn, &connOpts);
 
 # else
 
-    result = mongo_connect(conn, MongoHostname(), MongoPort());
+    result = mongo_connect(conn, DBHostname(), DBPort());
 
 # endif
 

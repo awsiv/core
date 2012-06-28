@@ -28,6 +28,35 @@
 
 #include <assert.h>
 
+# define MONGO_ROLES_COLLECTION MONGO_MPBASE ".roles"
+# define MONGO_USERS_INTERNAL_COLLECTION MONGO_BASE ".users"
+# define MONGO_USERS_LDAP_COLLECTION MONGO_MPBASE ".ldap_users"
+# define MONGO_MPSETTINGS_COLLECTION MONGO_MPBASE ".appsettings"
+
+# define dbkey_mpsettings_rbac "rbac"
+# define dbkey_mpsettings_auth_mode "mode"
+# define dbkey_mpsettings_encryption "encryption"
+# define dbkey_mpsettings_login_attribute "login_attribute"
+# define dbkey_mpsettings_base_dn "base_dn"
+# define dbkey_mpsettings_users_directory "users_directory"
+# define dbkey_mpsettings_host "host"
+# define dbkey_mpsettings_ad_domain "ad_domain"
+
+# define dbkey_user_name "username"
+# define dbkey_user_password "password"
+# define dbkey_user_salt "salt"
+# define dbkey_user_active "active"
+# define dbkey_user_roles "roles"
+
+# define dbkey_role_name "name"
+# define dbkey_role_description "description"
+# define dbkey_role_classrx_include "crxi"
+# define dbkey_role_classrx_exclude "crxx"
+# define dbkey_role_bundlerx_include "brxi"
+# define dbkey_role_bundlerx_exclude "brxx"
+
+# define SALT_SIZE 10
+
 typedef enum
 {
     AUTHENTICATION_MODE_INTERNAL,
@@ -38,8 +67,9 @@ typedef enum
 static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles);
 static char *StringAppendRealloc2(char *start, char *append1, char *append2);
 static bool RoleExists(char *name);
+static bool UserExists(const char *username);
 static void DeAssociateUsersFromRole(EnterpriseDB *conn, char *roleName);
-static Item *CFDB_GetRolesForUser(EnterpriseDB *conn, char *userName);
+static Item *CFDB_GetRolesForUser(EnterpriseDB *conn, const char *userName);
 static HubQuery *CFDB_GetRolesByMultipleNames(Item *names);
 static HubQuery *CFDB_GetRoles(bson *query);
 static const char *GetUsersCollection(EnterpriseDB *conn);
@@ -47,7 +77,7 @@ static AuthenticationMode GetAuthenticationMode(EnterpriseDB *conn);
 static bool IsRBACOn(EnterpriseDB *conn);
 static HubQuery *CFDB_GetAllRoles(void);
 static HubQuery *CFDB_GetRoleByName(char *name);
-static cfapi_errid UserIsRoleAdmin(EnterpriseDB *conn, char *userName);
+static cfapi_errid UserIsRoleAdmin(EnterpriseDB *conn, const char *userName);
 
 /*****************************************************************************/
 
@@ -55,36 +85,46 @@ static char *SHA1Hash(const char *string, int len)
 {
     unsigned char digest[EVP_MAX_MD_SIZE + 1];
 
-    HashString(string, len, digest, cf_sha1);
+    HashString(string, len, digest, cf_sha256);
 
     char *buffer = xcalloc(EVP_MAX_MD_SIZE * 4, sizeof(char));
 
-    HashPrintSafe(cf_sha1, digest, buffer);
+    HashPrintSafe(cf_sha256, digest, buffer);
     return buffer;
+}
+
+static char *GenerateSalt()
+{
+    unsigned char buffer[10];
+
+    RAND_bytes(buffer, 10);
+    char *base64 = StringEncodeBase64(buffer);
+
+    char *salt = StringSubstring(base64, strlen(base64), 0, 10);
+
+    return salt;
+}
+
+static char *HashPassword(const char *clear_password, size_t clear_password_len, const char *db_salt)
+{
+    char *salt_password = StringConcatenate(db_salt, SALT_SIZE, clear_password, clear_password_len);
+    char *salt_password_hashed = SHA1Hash(salt_password, SALT_SIZE + clear_password_len);
+
+    free(salt_password);
+
+    return salt_password_hashed;
 }
 
 /*****************************************************************************/
 
-static bool VerifyPasswordIonAuth(const char *password, size_t password_len, const char *db_password)
+static bool VerifyPasswordInternal(const char *clear_password, size_t clear_password_len, const char *db_password, const char *db_salt)
 {
-    static const int SALT_LENGTH = 10;
-    static const size_t SHA1_LENGTH = 40;
+    char *salt_password_hashed = HashPassword(clear_password, clear_password_len, db_salt);
 
-    char *salt = StringSubstring(db_password, SHA1_LENGTH, 0, SALT_LENGTH);
-    char *salt_password = StringConcatenate(salt, SALT_LENGTH, password, password_len);
-    char *salt_password_hashed = SHA1Hash(salt_password, SALT_LENGTH + password_len);
-    char *salt_password_hashed_shifted = StringSubstring(salt_password_hashed + 4, SHA1_LENGTH, 0, -SALT_LENGTH);
+    bool authenticated = strcmp(db_password, salt_password_hashed) == 0;
 
-    char *db_hash = StringConcatenate(salt, SALT_LENGTH, salt_password_hashed_shifted, SHA1_LENGTH - SALT_LENGTH + 1);
-
-    free(salt);
-    free(salt_password);
     free(salt_password_hashed);
-    free(salt_password_hashed_shifted);
 
-    bool authenticated = strcmp(db_password, db_hash) == 0;
-
-    free(db_hash);
     return authenticated;
 }
 
@@ -231,19 +271,17 @@ static cfapi_errid LDAPAuthenticate(EnterpriseDB *conn, const char *username, co
 
 #endif
 
-static cfapi_errid IonAuthenticate(EnterpriseDB *conn, const char *username, const char *password, size_t password_len)
+static cfapi_errid InternalAuthenticate(EnterpriseDB *conn, const char *username, const char *password, size_t password_len)
 {
     bson query;
-
     bson_init(&query);
     bson_append_string(&query, dbkey_user_name, username);
-    bson_append_int(&query, dbkey_user_active, 1);
     bson_finish(&query);
 
     bson field;
-
     bson_init(&field);
     bson_append_int(&field, dbkey_user_password, 1);
+    bson_append_int(&field, dbkey_user_salt, 1);
     bson_finish(&field);
 
     bson record;
@@ -266,9 +304,13 @@ static cfapi_errid IonAuthenticate(EnterpriseDB *conn, const char *username, con
 
         assert(db_password);
 
+        const char *db_salt = NULL;
+        BsonStringGet(&record, dbkey_user_salt, &db_salt);
+        assert(db_salt);
+
         if (db_password)
         {
-            if (VerifyPasswordIonAuth(password, password_len, db_password))
+            if (VerifyPasswordInternal(password, password_len, db_password, db_salt))
             {
                 return ERRID_SUCCESS;
             }
@@ -280,7 +322,6 @@ static cfapi_errid IonAuthenticate(EnterpriseDB *conn, const char *username, con
     }
 
     return ERRID_RBAC_ACCESS_DENIED;
-
 }
 
 cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, size_t password_len)
@@ -304,7 +345,7 @@ cfapi_errid CFDB_UserAuthenticate(const char *username, const char *password, si
         break;
 
     case AUTHENTICATION_MODE_INTERNAL:
-        result = IonAuthenticate(&conn, username, password, password_len);
+        result = InternalAuthenticate(&conn, username, password, password_len);
         break;
     }
 
@@ -553,6 +594,143 @@ static char *StringAppendRealloc2(char *start, char *append1, char *append2)
 
 /*****************************************************************************/
 
+cfapi_errid CFDB_CreateUser(const char *creating_user, const char *username, const char *password)
+{
+    EnterpriseDB conn;
+    if (!CFDB_Open(&conn))
+    {
+        return ERRID_DBCONNECT;
+    }
+
+    cfapi_errid errid = UserIsRoleAdmin(&conn, creating_user);
+
+    if (errid != ERRID_SUCCESS)
+    {
+        CFDB_Close(&conn);
+        return errid;
+    }
+
+    if (UserExists(username))
+    {
+        CFDB_Close(&conn);
+        return ERRID_ITEM_EXISTS;
+    }
+
+    char *salt = GenerateSalt();
+    assert(salt);
+    char *hashed_password = HashPassword(password, strlen(password), salt);
+    assert(hashed_password);
+
+    bson doc;
+    bson_init(&doc);
+    bson_append_string(&doc, dbkey_user_name, username);
+    bson_append_string(&doc, dbkey_user_password, hashed_password);
+    bson_append_string(&doc, dbkey_user_salt, salt);
+    bson_append_int(&doc, cfr_time, time(NULL));
+    bson_finish(&doc);
+
+    mongo_insert(&conn, MONGO_USERS_INTERNAL_COLLECTION, &doc, NULL);
+
+    bson_destroy(&doc);
+
+    if (!MongoCheckForError(&conn, "CFDB_CreateUser", NULL, false))
+    {
+        errid = ERRID_DB_OPERATION;
+    }
+
+    CFDB_Close(&conn);
+
+    free(salt);
+    free(hashed_password);
+
+    return errid;
+}
+
+cfapi_errid CFDB_DeleteUser(const char *deleting_user, const char *username)
+{
+    EnterpriseDB conn;
+    if (!CFDB_Open(&conn))
+    {
+        return ERRID_DBCONNECT;
+    }
+
+    cfapi_errid errid = UserIsRoleAdmin(&conn, deleting_user);
+    if (errid != ERRID_SUCCESS)
+    {
+        CFDB_Close(&conn);
+        return errid;
+    }
+
+    if (!UserExists(username))
+    {
+        CFDB_Close(&conn);
+        return ERRID_ITEM_NONEXISTING;
+    }
+
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, dbkey_user_name, username);
+    bson_finish(&query);
+
+    mongo_remove(&conn, MONGO_USERS_INTERNAL_COLLECTION, &query, NULL);
+
+    bson_destroy(&query);
+
+    if (!MongoCheckForError(&conn, "CFDB_DeleteUser", NULL, false))
+    {
+        errid = ERRID_DB_OPERATION;
+    }
+
+    CFDB_Close(&conn);
+    return errid;
+}
+
+HubQuery *CFDB_ListUsers(const char *listing_user, const char *usernameRx)
+{
+    EnterpriseDB conn;
+    if (!CFDB_Open(&conn))
+    {
+        return NewHubQueryErrid(NULL, NULL, ERRID_DBCONNECT);
+    }
+
+    bson query;
+    bson_init(&query);
+    if (!NULL_OR_EMPTY(usernameRx))
+    {
+        bson_append_regex(&query, dbkey_user_name, usernameRx, "");
+    }
+    bson_finish(&query);
+
+    bson field;
+    bson_init(&field);
+    bson_append_int(&field, dbkey_user_name, 1);
+    bson_append_int(&field, dbkey_user_active, 1);
+    bson_finish(&field);
+
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_USERS_INTERNAL_COLLECTION, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+
+    bson_destroy(&query);
+    bson_destroy(&field);
+
+    HubQuery *hq = NewHubQuery(NULL, NULL);
+    while (mongo_cursor_next(cursor))
+    {
+        const char *username = NULL;
+        BsonStringGet(&cursor->current, dbkey_user_name, &username);
+        assert(username);
+
+        HubUserRBAC *user = NewHubUserRBAC(username, NULL, NULL, NULL, NULL);
+        PrependRlistAlien(&(hq->records), user);
+    }
+
+    CFDB_Close(&conn);
+    return hq;
+}
+
+
+
+//*****************************************************************************
+
 cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *description,
                             char *includeClassRx, char *excludeClassRx, char *includeBundleRx, char *excludeBundleRx)
 {
@@ -734,6 +912,16 @@ static bool RoleExists(char *name)
     return exists;
 }
 
+static bool UserExists(const char *username)
+{
+    HubQuery *hq = CFDB_ListUsers(NULL, username);
+    bool exists = (hq->records == NULL) ? false : true;
+
+    DeleteHubQuery(hq, DeleteHubUserRBAC);
+
+    return exists;
+}
+
 /*****************************************************************************/
 
 static void DeAssociateUsersFromRole(EnterpriseDB *conn, char *roleName)
@@ -815,7 +1003,7 @@ static bool IsRBACOn(EnterpriseDB *conn)
 
 /*****************************************************************************/
 
-static Item *CFDB_GetRolesForUser(EnterpriseDB *conn, char *userName)
+static Item *CFDB_GetRolesForUser(EnterpriseDB *conn, const char *userName)
 {
     bson query;
 
@@ -1022,7 +1210,7 @@ HubQuery *CFDB_GetRoles(bson *query)
 
 /*****************************************************************************/
 
-static cfapi_errid UserIsRoleAdmin(EnterpriseDB *conn, char *userName)
+static cfapi_errid UserIsRoleAdmin(EnterpriseDB *conn, const char *userName)
 {
 # define ROLE_NAME_ADMIN "admin"
 

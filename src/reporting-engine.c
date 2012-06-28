@@ -6,7 +6,7 @@
 
 #include "reporting-engine.h"
 
-JsonElement *ReportingEngineQuery(EnterpriseDB *db, JsonElement *query)
+JsonElement *ReportingEngineQuery(JsonElement *query)
 {
     JsonElement *result = JsonObjectCreate(5);
 

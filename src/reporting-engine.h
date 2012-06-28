@@ -11,7 +11,7 @@
 #include "json.h"
 
 
-JsonElement *ReportingEngineQuery(EnterpriseDB *db, JsonElement *query);
+JsonElement *ReportingEngineQuery(JsonElement *query);
 
 
 #endif
