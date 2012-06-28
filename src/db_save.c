@@ -17,10 +17,7 @@
 // WTF: manages its own connection
 int CFDB_PutValue(char *lval, char *rval, char *db_name)
 {
-    bson_buffer bb;
-    bson_buffer *setObj;
-    bson setOp, empty;
-    EnterpriseDB dbconn;
+    mongo dbconn;
 
     if (!IsDefinedClass("am_policy_hub") && !AM_PHP_MODULE)
     {
@@ -32,15 +29,19 @@ int CFDB_PutValue(char *lval, char *rval, char *db_name)
         return false;
     }
 
-    bson_buffer_init(&bb);
-    setObj = bson_append_start_object(&bb, "$set");
-    bson_append_string(setObj, lval, rval);
-    bson_append_finish_object(setObj);
+    bson set_op;
+    bson_init(&set_op);
+    {
+        bson_append_start_object(&set_op, "$set");
+        bson_append_string(&set_op, lval, rval);
+        bson_append_finish_object(&set_op);
+    }
+    bson_finish(&set_op);
 
-    bson_from_buffer(&setOp, &bb);
-    mongo_update(&dbconn, db_name, bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT);
+    bson empty;
+    mongo_update(&dbconn, db_name, bson_empty(&empty), &set_op, MONGO_UPDATE_UPSERT, NULL);
 
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);    
     CFDB_Close(&dbconn);
 
     return true;
@@ -50,10 +51,7 @@ int CFDB_PutValue(char *lval, char *rval, char *db_name)
 
 int CFDB_SaveLastseenCache(Item *lastseen)
 {
-    bson_buffer bb;
-    bson_buffer *setObj, *sub, *arr;
-    bson setOp, empty;
-    EnterpriseDB dbconn;
+    mongo dbconn;
     Item *ip;
     char arrIndex[CF_BUFSIZE] = { 0 };
     int i = 0;
@@ -69,31 +67,36 @@ int CFDB_SaveLastseenCache(Item *lastseen)
         return false;
     }
 
-    bson_buffer_init(&bb);
-
-    setObj = bson_append_start_object(&bb, "$set");
-    arr = bson_append_start_array(setObj, cfr_lastseen_hosts);
-
-    for (ip = lastseen, i = 0; ip != NULL; ip = ip->next, i++)
+    bson set_op;
+    bson_init(&set_op);
     {
-        snprintf(arrIndex, sizeof(arrIndex), "%d", i);
-        sub = bson_append_start_object(arr, arrIndex);
+        bson_append_start_object(&set_op, "$set");
+        {
+            bson_append_start_array(&set_op, cfr_lastseen_hosts);
 
-        bson_append_string(sub, cfr_keyhash, ip->name);
-        bson_append_string(sub, cfr_ipaddr, ip->classes);
-        bson_append_int(sub, cfr_time, ip->time);
+            for (ip = lastseen, i = 0; ip != NULL; ip = ip->next, i++)
+            {
+                snprintf(arrIndex, sizeof(arrIndex), "%d", i);
+                {
+                    bson_append_start_object(&set_op, arrIndex);
 
-        bson_append_finish_object(sub);
+                    bson_append_string(&set_op, cfr_keyhash, ip->name);
+                    bson_append_string(&set_op, cfr_ipaddr, ip->classes);
+                    bson_append_int(&set_op, cfr_time, ip->time);
+
+                    bson_append_finish_object(&set_op);
+                }
+            }
+            bson_append_finish_object(&set_op);
+        }
+        bson_append_finish_object(&set_op);
     }
+    bson_finish(&set_op);
 
-    bson_append_finish_object(arr);
-    bson_append_finish_object(setObj);
+    bson empty;
+    mongo_update(&dbconn, MONGO_SCRATCH, bson_empty(&empty), &set_op, MONGO_UPDATE_UPSERT, NULL);
 
-    bson_from_buffer(&setOp, &bb);
-
-    mongo_update(&dbconn, MONGO_SCRATCH, bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT);
-
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);
     CFDB_Close(&dbconn);
 
     return true;
@@ -103,10 +106,7 @@ int CFDB_SaveLastseenCache(Item *lastseen)
 
 void CFDB_SaveGoalsCache(char *goal_patterns)
 {
-    bson_buffer bb;
-    bson_buffer *setObj;
-    bson setOp, empty;
-    EnterpriseDB dbconn;
+    mongo dbconn;
 
     if (!IsDefinedClass("am_policy_hub"))
     {
@@ -119,14 +119,19 @@ void CFDB_SaveGoalsCache(char *goal_patterns)
         return;
     }
 
-    bson_buffer_init(&bb);
-    setObj = bson_append_start_object(&bb, "$set");
-    bson_append_string(setObj, "goal_patterns", goal_patterns);
-    bson_append_finish_object(setObj);
+    bson set_op;
+    bson_init(&set_op);
+    {
+        bson_append_start_object(&set_op, "$set");
+        bson_append_string(&set_op, "goal_patterns", goal_patterns);
+        bson_append_finish_object(&set_op);
+    }
+    bson_finish(&set_op);
 
-    bson_from_buffer(&setOp, &bb);
-    mongo_update(&dbconn, MONGO_SCRATCH, bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT);
-    bson_destroy(&setOp);
+    bson empty;
+    mongo_update(&dbconn, MONGO_SCRATCH, bson_empty(&empty), &set_op, MONGO_UPDATE_UPSERT, NULL);
+
+    bson_destroy(&set_op);
     CFDB_Close(&dbconn);
 }
 
@@ -138,10 +143,6 @@ void CFDB_SaveHostID(EnterpriseDB *conn, char *database, char *keyField, char *k
  *  hostname is optional, reverse lookup if not specified
  **/
 {
-    bson_buffer bb;
-    bson_buffer *setObj, *arr;
-    bson host_key;              // host description
-    bson setOp;
     char foundHostName[CF_MAXVARSIZE];
 
     if (!NULL_OR_EMPTY(hostname))
@@ -155,37 +156,50 @@ void CFDB_SaveHostID(EnterpriseDB *conn, char *database, char *keyField, char *k
 
 // locate right host key
 
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, keyField, keyhash);
-    bson_from_buffer(&host_key, &bb);
+    bson host_key;              // host description
+
+    bson_init(&host_key);
+    bson_append_string(&host_key, keyField, keyhash);
+    bson_finish(&host_key);
 
 // ip address - replace array with one el (more later - aging..)
+    bson set_op;
 
-    bson_buffer_init(&bb);
-    setObj = bson_append_start_object(&bb, "$set");
-    arr = bson_append_start_array(setObj, cfr_ip_array);
-    bson_append_string(setObj, "0", ipaddr);
-    bson_append_finish_object(arr);
-    bson_append_finish_object(setObj);
+    bson_init(&set_op);
+    {
+        bson_append_start_object(&set_op, "$set");
+        {
+            bson_append_start_array(&set_op, cfr_ip_array);
+            bson_append_string(&set_op, "0", ipaddr);
+            bson_append_finish_object(&set_op);
+        }
+        bson_append_finish_object(&set_op);
+    }
+    bson_finish(&set_op);
 
-    bson_from_buffer(&setOp, &bb);
-    mongo_update(conn, database, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, database, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);
 
-// host name
+    // host_key destroyed after updating host names
 
-    bson_buffer_init(&bb);
-    setObj = bson_append_start_object(&bb, "$set");
-    arr = bson_append_start_array(setObj, cfr_host_array);
-    bson_append_string(setObj, "0", foundHostName);
-    bson_append_finish_object(arr);
-    bson_append_finish_object(setObj);
+    // host name
 
-    bson_from_buffer(&setOp, &bb);
-    mongo_update(conn, database, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    bson_init(&set_op);
+    {
+        bson_append_start_object(&set_op, "$set");
+        {
+            bson_append_start_array(&set_op, cfr_host_array);
+            bson_append_string(&set_op, "0", foundHostName);
+            bson_append_finish_object(&set_op);
+        }
+        bson_append_finish_object(&set_op);
+    }
+    bson_finish(&set_op);
 
-    bson_destroy(&setOp);
+    mongo_update(conn, database, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
+
+    bson_destroy(&set_op);
     bson_destroy(&host_key);
 }
 
@@ -193,73 +207,74 @@ void CFDB_SaveHostID(EnterpriseDB *conn, char *database, char *keyField, char *k
 
 void CFDB_SaveSoftware(EnterpriseDB *conn, enum software_rep sw, char *keyhash, Item *data)
 {
-    bson_buffer bb;
-    bson_buffer *setObj;
-    bson_buffer *sub;
-    bson host_key;              // host description
-    bson setOp;
     int i;
-    bson_buffer *arr;
     Item *ip;
     char *dbOp = { 0 };
     char packNumStr[CF_MAXVARSIZE];
     char name[CF_MAXVARSIZE], version[CF_MAXVARSIZE], arch, archStr[CF_MAXVARSIZE];
 
 // find right host
+    bson host_key;              // host description
 
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&host_key, &bb);
+    bson_init(&host_key);
+    bson_append_string(&host_key, cfr_keyhash, keyhash);
+    bson_finish(&host_key);
 
-    bson_buffer_init(&bb);
+    bson set_op;
 
-    setObj = bson_append_start_object(&bb, "$set");
-
-    switch (sw)
+    bson_init(&set_op);
     {
-    case sw_rep_installed:
-        arr = bson_append_start_array(setObj, cfr_software);
-        dbOp = "update installed software";
-        break;
-    case sw_rep_patch_installed:
-        arr = bson_append_start_array(setObj, cfr_patch_installed);
-        dbOp = "update patch installed software";
-        break;
-    case sw_rep_patch_avail:
-        arr = bson_append_start_array(setObj, cfr_patch_avail);
-        dbOp = "update patch available software";
-        break;
+        bson_append_start_object(&set_op, "$set");
+        {
+            switch (sw)
+            {
+            case sw_rep_installed:
+                bson_append_start_array(&set_op, cfr_software);
+                dbOp = "update installed software";
+                break;
+            case sw_rep_patch_installed:
+                bson_append_start_array(&set_op, cfr_patch_installed);
+                dbOp = "update patch installed software";
+                break;
+            case sw_rep_patch_avail:
+                bson_append_start_array(&set_op, cfr_patch_avail);
+                dbOp = "update patch available software";
+                break;
 
-    default:
-        arr = bson_append_start_array(setObj, cfr_software);
-        dbOp = "update installed software";
-        break;
+            default:
+                bson_append_start_array(&set_op, cfr_software);
+                dbOp = "update installed software";
+                break;
+            }
+
+            /* Read and insert data */
+
+            for (ip = data, i = 0; ip != NULL; ip = ip->next, i++)
+            {
+                sscanf(ip->name, "%250[^,],%250[^,],%c", name, version, &arch);
+                snprintf(packNumStr, sizeof(packNumStr), "%d", i);
+                snprintf(archStr, sizeof(archStr), "%c", arch);
+                {
+                    bson_append_start_object(&set_op, packNumStr);
+
+                    bson_append_string(&set_op, cfr_name, name);
+                    bson_append_string(&set_op, cfr_version, version);
+                    bson_append_string(&set_op, cfr_arch, archStr);
+
+                    bson_append_finish_object(&set_op);
+                }
+            }
+
+            bson_append_finish_object(&set_op);
+        }
+        bson_append_finish_object(&set_op);
     }
+    bson_finish(&set_op);
 
-/* Read and insert data */
-
-    for (ip = data, i = 0; ip != NULL; ip = ip->next, i++)
-    {
-        sscanf(ip->name, "%250[^,],%250[^,],%c", name, version, &arch);
-        snprintf(packNumStr, sizeof(packNumStr), "%d", i);
-        snprintf(archStr, sizeof(archStr), "%c", arch);
-        sub = bson_append_start_object(arr, packNumStr);
-
-        bson_append_string(sub, cfr_name, name);
-        bson_append_string(sub, cfr_version, version);
-        bson_append_string(sub, cfr_arch, archStr);
-
-        bson_append_finish_object(sub);
-    }
-
-    bson_append_finish_object(arr);
-    bson_append_finish_object(setObj);
-
-    bson_from_buffer(&setOp, &bb);
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
     MongoCheckForError(conn, dbOp, keyhash, NULL);
 
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);
     bson_destroy(&host_key);
 }
 
@@ -269,11 +284,6 @@ void CFDB_SaveSoftware(EnterpriseDB *conn, enum software_rep sw, char *keyhash, 
 
 void CFDB_SaveMonitorData2(EnterpriseDB *conn, char *keyHash, enum monitord_rep rep_type, Item *data)
 {
-    bson_buffer bb;
-    bson_buffer *setObj, *arr;
-    bson keys;
-    bson setOp;
-    bson insertOp;
     char monId[CF_SMALLBUF] = { 0 }, monDesc[CF_MAXVARSIZE] = { 0 }, monUnits[CF_SMALLBUF] = { 0 };
     char varName[CF_SMALLBUF], iStr[CF_SMALLBUF];
     bool didUpdate, haveAllMeta = false;
@@ -341,58 +351,63 @@ void CFDB_SaveMonitorData2(EnterpriseDB *conn, char *keyHash, enum monitord_rep 
         }
 
         // key - identify the record object
-        bson_buffer_init(&bb);
-        bson_append_string(&bb, cfr_keyhash, keyHash);
-        bson_append_string(&bb, cfm_id, monId);
-        bson_from_buffer(&keys, &bb);
+        bson keys;
+
+        bson_init(&keys);
+        bson_append_string(&keys, cfr_keyhash, keyHash);
+        bson_append_string(&keys, cfm_id, monId);
+        bson_finish(&keys);
 
         // create object to insert
-        bson_buffer_init(&bb);
-        setObj = bson_append_start_object(&bb, "$set");
+        bson set_op;
 
-        if (haveAllMeta)        // full query only
+        bson_init(&set_op);
         {
-            bson_append_string(setObj, cfm_description, monDesc);
-            bson_append_string(setObj, cfm_units, monUnits);
-            bson_append_bool(setObj, cfm_global, monGlobal);
-            bson_append_double(setObj, cfm_expmin, monExpMin);
-            bson_append_double(setObj, cfm_expmax, monExpMax);
-        }
+            bson_append_start_object(&set_op, "$set");
 
-        slotStart = ip;
-
-        while (ip && (strncmp(ip->name, "M:", 2) != 0))
-        {
-        sscanf(ip->name, "%d %lf %lf %lf %lf", &slot, &q, &e, &d, &g);
-
-            if (slot < 0 || slot >= numSlots)
+            if (haveAllMeta)        // full query only
             {
-                CfOut(cf_error, "", "Slot %d out of range (max=%d) on %s - skipping", slot, numSlots, dbOp);
-                ip = ip->next;
-                continue;
+                bson_append_string(&set_op, cfm_description, monDesc);
+                bson_append_string(&set_op, cfm_units, monUnits);
+                bson_append_bool(&set_op, cfm_global, monGlobal);
+                bson_append_double(&set_op, cfm_expmin, monExpMin);
+                bson_append_double(&set_op, cfm_expmax, monExpMax);
             }
 
-            snprintf(varName, sizeof(varName), "%s.%d", cfm_q_arr, slot);
-            bson_append_double(setObj, varName, q);
+            slotStart = ip;
 
-            snprintf(varName, sizeof(varName), "%s.%d", cfm_expect_arr, slot);
-            bson_append_double(setObj, varName, e);
+            while (ip && (strncmp(ip->name, "M:", 2) != 0))
+            {
+   	        sscanf(ip->name, "%d %lf %lf %lf %lf", &slot, &q, &e, &d, &g);
+                
+                if (slot < 0 || slot >= numSlots)
+                {
+                    CfOut(cf_error, "", "Slot %d out of range (max=%d) on %s - skipping", slot, numSlots, dbOp);
+                    ip = ip->next;
+                    continue;
+                }
 
-            snprintf(varName, sizeof(varName), "%s.%d", cfm_deviance_arr, slot);
-            bson_append_double(setObj, varName, d);
+                snprintf(varName, sizeof(varName), "%s.%d", cfm_q_arr, slot);
+                bson_append_double(&set_op, varName, q);
 
-            snprintf(varName, sizeof(varName), "%s.%d", cfm_grad_arr, slot);
-            bson_append_double(setObj, varName, g);
+                snprintf(varName, sizeof(varName), "%s.%d", cfm_expect_arr, slot);
+                bson_append_double(&set_op, varName, e);
 
-            ip = ip->next;
+		snprintf(varName, sizeof(varName), "%s.%d", cfm_grad_arr, slot);
+		bson_append_double(&set_op, varName, g);
+
+                snprintf(varName, sizeof(varName), "%s.%d", cfm_deviance_arr, slot);
+                bson_append_double(&set_op, varName, d);
+
+                ip = ip->next;
+            }
+            bson_append_finish_object(&set_op);
         }
+        bson_finish(&set_op);
 
-        bson_append_finish_object(setObj);
+        mongo_update(conn, db, &keys, &set_op, 0, NULL);       // no upsert
 
-        bson_from_buffer(&setOp, &bb);
-        mongo_update(conn, db, &keys, &setOp, 0);       // no upsert
-
-        bson_destroy(&setOp);
+        bson_destroy(&set_op);
 
         if (!MongoCheckForError(conn, dbOp, keyHash, &didUpdate))
         {
@@ -408,66 +423,67 @@ void CFDB_SaveMonitorData2(EnterpriseDB *conn, char *keyHash, enum monitord_rep 
 
             CfOut(cf_verbose, "", " -> Inserting new monitoring object for %s,%s", keyHash, monId);
 
-            bson_buffer_init(&bb);
+            bson insert_op;
 
-            bson_append_string(&bb, cfr_keyhash, keyHash);
-            bson_append_string(&bb, cfm_id, monId);
-
-            arr = bson_append_start_array(&bb, cfm_q_arr);
-            for (i = 0; i < numSlots; i++)
+            bson_init(&insert_op);
             {
-                snprintf(iStr, sizeof(iStr), "%d", i);
-                bson_append_double(arr, iStr, 0.0);
-            }
-            bson_append_finish_object(arr);
+                bson_append_string(&insert_op, cfr_keyhash, keyHash);
+                bson_append_string(&insert_op, cfm_id, monId);
+                {
+                    bson_append_start_array(&insert_op, cfm_q_arr);
+                    for (i = 0; i < numSlots; i++)
+                    {
+                        snprintf(iStr, sizeof(iStr), "%d", i);
+                        bson_append_double(&insert_op, iStr, 0.0);
+                    }
+                    bson_append_finish_object(&insert_op);
+                }
 
-            arr = bson_append_start_array(&bb, cfm_expect_arr);
-            for (i = 0; i < numSlots; i++)
+                {
+                    bson_append_start_array(&insert_op, cfm_expect_arr);
+                    for (i = 0; i < numSlots; i++)
+                    {
+                        snprintf(iStr, sizeof(iStr), "%d", i);
+                        bson_append_double(&insert_op, iStr, 0.0);
+                    }
+                    bson_append_finish_object(&insert_op);
+                }
+
+                {
+                    bson_append_start_array(&insert_op, cfm_deviance_arr);
+                    for (i = 0; i < numSlots; i++)
+                    {
+                        snprintf(iStr, sizeof(iStr), "%d", i);
+                        bson_append_double(&insert_op, iStr, 0.0);
+                    }
+                    bson_append_finish_object(&insert_op);
+                }
+                bson_finish(&insert_op);
+
+                // upsert instead of insert avoids duplicates (if race conditions occur)
+                mongo_update(conn, db, &keys, &insert_op, MONGO_UPDATE_UPSERT, NULL);
+
+                bson_destroy(&insert_op);
+
+                ip = slotStart;     // go back to update into empty object
+            }
+
+            bson_destroy(&keys);
+
+            if (++iterations > 5000)
             {
-                snprintf(iStr, sizeof(iStr), "%d", i);
-                bson_append_double(arr, iStr, 0.0);
+                CfOut(cf_error, "",
+                      "!! Anomaly: More than 5000 iterations when saving monitor data (%s) - check DB consistency", dbOp);
+                break;
             }
-            bson_append_finish_object(arr);
-
-            arr = bson_append_start_array(&bb, cfm_deviance_arr);
-            for (i = 0; i < numSlots; i++)
-            {
-                snprintf(iStr, sizeof(iStr), "%d", i);
-                bson_append_double(arr, iStr, 0.0);
-            }
-            bson_append_finish_object(arr);
-
-            bson_from_buffer(&insertOp, &bb);
-
-            // upsert instead of insert avoids duplicates (if race conditions occur)
-            mongo_update(conn, db, &keys, &insertOp, MONGO_UPDATE_UPSERT);
-
-            bson_destroy(&insertOp);
-
-            ip = slotStart;     // go back to update into empty object
-        }
-
-        bson_destroy(&keys);
-
-        if (++iterations > 5000)
-        {
-            CfOut(cf_error, "",
-                  "!! Anomaly: More than 5000 iterations when saving monitor data (%s) - check DB consistency", dbOp);
-            break;
         }
     }
-
 }
 
 /*****************************************************************************/
 
 void CFDB_SaveMonitorHistograms(EnterpriseDB *conn, char *keyhash, Item *data)
 {
-    bson_buffer bb;
-    bson_buffer *setObj;
-    bson_buffer *arr;
-    bson host_key;              // host description
-    bson setOp;
     char monId[128], kStr[32];
     Item *ip;
     int k;
@@ -484,49 +500,56 @@ void CFDB_SaveMonitorHistograms(EnterpriseDB *conn, char *keyhash, Item *data)
         }
 
         // find right host and monitoring id
-        bson_buffer_init(&bb);
-        bson_append_string(&bb, cfr_keyhash, keyhash);
-        bson_append_string(&bb, cfm_id, monId);
-        bson_from_buffer(&host_key, &bb);
+        bson host_key;
 
-        bson_buffer_init(&bb);
-        setObj = bson_append_start_object(&bb, "$set");
+        bson_init(&host_key);
+        bson_append_string(&host_key, cfr_keyhash, keyhash);
+        bson_append_string(&host_key, cfm_id, monId);
+        bson_finish(&host_key);
 
-        sp = ip->name;
+        bson set_op;
 
-        while (*(++sp) != ',')
+        bson_init(&set_op);
         {
-        }
+            bson_append_start_object(&set_op, "$set");
 
-        sp++;
-
-        arr = bson_append_start_array(setObj, cfr_histo);
-
-        for (k = 0; k < CF_GRAINS; k++)
-        {
-            sscanf(sp, "%lf", &currHist);
+            sp = ip->name;
 
             while (*(++sp) != ',')
             {
             }
 
-            if (currHist < 0)
-            {
-                currHist = 1;
-            }
-
             sp++;
-            snprintf(kStr, sizeof(kStr), "%d", k);
-            bson_append_double(arr, kStr, currHist);
+            {
+                bson_append_start_array(&set_op, cfr_histo);
+
+                for (k = 0; k < CF_GRAINS; k++)
+                {
+                    sscanf(sp, "%lf", &currHist);
+
+                    while (*(++sp) != ',')
+                    {
+                    }
+
+                    if (currHist < 0)
+                    {
+                        currHist = 1;
+                    }
+
+                    sp++;
+                    snprintf(kStr, sizeof(kStr), "%d", k);
+                    bson_append_double(&set_op, kStr, currHist);
+                }
+
+                bson_append_finish_object(&set_op);
+            }
+            bson_append_finish_object(&set_op);
         }
+        bson_finish(&set_op);
 
-        bson_append_finish_object(arr);
-        bson_append_finish_object(setObj);
-        bson_from_buffer(&setOp, &bb);
+        mongo_update(conn, MONGO_DATABASE_MON_MG, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
-        mongo_update(conn, MONGO_DATABASE_MON_MG, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-
-        bson_destroy(&setOp);
+        bson_destroy(&set_op);
         bson_destroy(&host_key);
     }
 
@@ -536,38 +559,34 @@ void CFDB_SaveMonitorHistograms(EnterpriseDB *conn, char *keyhash, Item *data)
 
 static void CFDB_PutEnvironmentForHost(EnterpriseDB *conn, const char *keyhash, const char *environment)
 {
-    bson_buffer bb;
-    bson host_key, op;
-
     /* { kH: $keyhash } */
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&host_key, &bb);
+    bson host_key;
+
+    bson_init(&host_key);
+    bson_append_string(&host_key, cfr_keyhash, keyhash);
+    bson_finish(&host_key);
+
+    bson op;
+    bson_init(&op);
 
     if (environment)
     {
-        bson_buffer *env_sub;
-
         /* { $set: { env: $environment } } */
-        bson_buffer_init(&bb);
-        env_sub = bson_append_start_object(&bb, "$set");
-        bson_append_string(env_sub, cfr_environment, environment);
-        bson_append_finish_object(env_sub);
-        bson_from_buffer(&op, &bb);
+        bson_append_start_object(&op, "$set");
+        bson_append_string(&op, cfr_environment, environment);
+        bson_append_finish_object(&op);
     }
     else
-    {
-        bson_buffer *env_sub;
-
+    {        
         /* { $unset: { env: 1 } } */
-        bson_buffer_init(&bb);
-        env_sub = bson_append_start_object(&bb, "$unset");
-        bson_append_string(env_sub, cfr_environment, "1");
-        bson_append_finish_object(env_sub);
-        bson_from_buffer(&op, &bb);
+        bson_append_start_object(&op, "$unset");
+        bson_append_string(&op, cfr_environment, "1");
+        bson_append_finish_object(&op);
     }
 
-    mongo_update(conn, MONGO_DATABASE, &host_key, &op, MONGO_UPDATE_UPSERT);
+    bson_finish(&op);
+
+    mongo_update(conn, MONGO_DATABASE, &host_key, &op, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&op);
     bson_destroy(&host_key);
@@ -612,9 +631,6 @@ void CFDB_SaveClasses(EnterpriseDB *conn, char *keyhash, Item *data)
  *  Replacing existing class entry, but not deleting "old" entries (purging)
  */
 {
-    bson_buffer bb, *setObj, *clObj, *keyArr, *keyArrField;
-    bson host_key;              // host description
-    bson setOp;
     Item *ip;
     char name[CF_MAXVARSIZE], varName[CF_MAXVARSIZE];
     time_t t;
@@ -623,65 +639,77 @@ void CFDB_SaveClasses(EnterpriseDB *conn, char *keyhash, Item *data)
     int i;
 
 // find right host
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&host_key, &bb);
+    bson host_key;
 
-    bson classKeys;
+    bson_init(&host_key);
+    bson_append_string(&host_key, cfr_keyhash, keyhash);
+    bson_finish(&host_key);
 
-    bson_buffer bbClassKeys;
-    bson_buffer_init(&bbClassKeys);
-    keyArrField = bson_append_start_object(&bbClassKeys, cfr_class_keys);
-    keyArr = bson_append_start_array(keyArrField, "$each");
+    bson class_keys;
 
-    for (ip = data, i = 0; ip != NULL; ip = ip->next, i++)
+    bson_init(&class_keys);
     {
-        sscanf(ip->name, "%[^,],%ld,%lf,%lf\n", name, &t, &e, &dev);
-        snprintf(iStr, sizeof(iStr), "%d", i);
-        bson_append_string(keyArr, iStr, name);
-    }
+        bson_append_start_object(&class_keys, cfr_class_keys);
+        {
+            bson_append_start_array(&class_keys, "$each");
 
-    bson_append_finish_object(keyArr);
-    bson_append_finish_object(keyArrField);
-    bson_from_buffer(&classKeys, &bbClassKeys);
+            for (ip = data, i = 0; ip != NULL; ip = ip->next, i++)
+            {
+                sscanf(ip->name, "%[^,],%ld,%lf,%lf\n", name, &t, &e, &dev);
+                snprintf(iStr, sizeof(iStr), "%d", i);
+                bson_append_string(&class_keys, iStr, name);
+            }
+
+            bson_append_finish_object(&class_keys);
+        }
+        bson_append_finish_object(&class_keys);
+    }
+    bson_finish(&class_keys);
     
-    bson_buffer_init(&bb);
-    bson_append_bson(&bb, "$addToSet", &classKeys);
-    bson_from_buffer(&setOp, &bb);
+    bson set_op;
 
-    mongo_update(conn, MONGO_ARCHIVE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-    bson_destroy(&setOp);
+    bson_init(&set_op);
+    bson_append_bson(&set_op, "$addToSet", &class_keys);
+    bson_finish(&set_op);
 
-    bson_buffer_init(&bb);
+    mongo_update(conn, MONGO_ARCHIVE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
+    bson_destroy(&set_op);
+    // host_keys and class_keys freed after adding to classes report
 
-    setObj = bson_append_start_object(&bb, "$set");
-
-// insert objects
-
-    for (ip = data; ip != NULL; ip = ip->next)
+    bson_init(&set_op);
     {
-        sscanf(ip->name, "%[^,],%ld,%lf,%lf\n", name, (time_t *) &t, &e, &dev);
-        snprintf(varName, sizeof(varName), "%s.%s", cfr_class, name);
+        bson_append_start_object(&set_op, "$set");
 
-        clObj = bson_append_start_object(setObj, varName);
+        // insert objects
 
-        bson_append_double(clObj, cfr_obs_E, e);
-        bson_append_double(clObj, cfr_obs_sigma, dev);
-        bson_append_int(clObj, cfr_time, t);
-        bson_append_finish_object(clObj);
+        for (ip = data; ip != NULL; ip = ip->next)
+        {
+            sscanf(ip->name, "%[^,],%ld,%lf,%lf\n", name, (time_t *) &t, &e, &dev);
+            snprintf(varName, sizeof(varName), "%s.%s", cfr_class, name);
+
+            {
+                bson_append_start_object(&set_op, varName);
+
+                bson_append_double(&set_op, cfr_obs_E, e);
+                bson_append_double(&set_op, cfr_obs_sigma, dev);
+                bson_append_int(&set_op, cfr_time, t);
+
+                bson_append_finish_object(&set_op);
+            }
+        }
+        bson_append_finish_object(&set_op);
     }
-
-    bson_append_finish_object(setObj);
-
 // insert keys into numbered key array - needed for efficient regexes
-    bson_append_bson(&bb, "$addToSet", &classKeys);
-    bson_destroy(&classKeys);
+    bson_append_bson(&set_op, "$addToSet", &class_keys);
+    bson_destroy(&class_keys);
 
-    bson_from_buffer(&setOp, &bb);
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    bson_finish(&set_op);
+
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
+
     MongoCheckForError(conn, "SaveClasses", keyhash, NULL);
 
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);
     bson_destroy(&host_key);
 
     CFDB_SaveEnvironment(conn, keyhash, data);
@@ -692,10 +720,6 @@ void CFDB_SaveClasses(EnterpriseDB *conn, char *keyhash, Item *data)
 void CFDB_SaveVariables(EnterpriseDB *conn, char *keyhash, Item *data)
 /* Should be deprecated some time - was replaced after Nova 2.0.2 */
 {
-    bson_buffer bb;
-    bson_buffer *unset, *setObj, *arr;
-    bson host_key;              // host description
-    bson setOp, unsetOp;
     Item *ip;
     int i;
     char iStr[32];
@@ -703,77 +727,87 @@ void CFDB_SaveVariables(EnterpriseDB *conn, char *keyhash, Item *data)
     char type[CF_SMALLBUF], lval[CF_MAXVARSIZE], rval[CF_BUFSIZE], scope[CF_MAXVARSIZE], varName[CF_MAXVARSIZE];
 
 // find right host
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&host_key, &bb);
+    bson host_key;
 
-    bson_buffer_init(&bb);
+    bson_init(&host_key);
+    bson_append_string(&host_key, cfr_keyhash, keyhash);
+    bson_finish(&host_key);
 
-// delete any old report first
+    bson unset_op;
 
-    unset = bson_append_start_object(&bb, "$unset");
-    bson_append_int(unset, cfr_vars, 1);
-    bson_append_finish_object(unset);
-    bson_from_buffer(&unsetOp, &bb);
-    mongo_update(conn, MONGO_DATABASE, &host_key, &unsetOp, 0);
-    bson_destroy(&unsetOp);
-
-    bson_buffer_init(&bb);
-    setObj = bson_append_start_object(&bb, "$set");
-
-    for (ip = data; ip != NULL; ip = ip->next)
+    bson_init(&unset_op);
     {
-        if (strncmp(ip->name, "S: ", 3) == 0)
+        // delete any old report first
+
+        bson_append_start_object(&unset_op, "$unset");
+        bson_append_int(&unset_op, cfr_vars, 1);
+        bson_append_finish_object(&unset_op);
+    }
+    bson_finish(&unset_op);
+
+    mongo_update(conn, MONGO_DATABASE, &host_key, &unset_op, 0, NULL);
+
+    bson_destroy(&unset_op);
+
+    bson set_op;
+    bson_init(&set_op);
+    {
+        bson_append_start_object(&set_op, "$set");
+
+        for (ip = data; ip != NULL; ip = ip->next)
         {
-            scope[0] = '\0';
-            sscanf(ip->name + 3, "%254[^\n]", scope);
-            continue;
-        }
-
-        rval[0] = '\0';  // rval may be empty
-
-        sscanf(ip->name, "%4[^,], %255[^,], %2040[^\n]", type, lval, rval);
-
-        if (strchr(lval, '/'))
-        {
-            // Private data not meant to be seen
-            continue;
-        }
-
-        snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope, lval, cfr_type);
-        bson_append_string(setObj, varName, type);
-
-        snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope, lval, cfr_rval);
-
-        if (IsCfList(type))
-        {
-            arr = bson_append_start_array(setObj, varName);
-
-            list = ParseShownRlist(rval);
-
-            for (rp = list, i = 0; rp != NULL; rp = rp->next, i++)
+            if (strncmp(ip->name, "S: ", 3) == 0)
             {
-                snprintf(iStr, sizeof(iStr), "%d", i);
-                bson_append_string(arr, iStr, rp->item);
+                scope[0] = '\0';
+                sscanf(ip->name + 3, "%254[^\n]", scope);
+                continue;
             }
 
-            DeleteRlist(list);
+            rval[0] = '\0';  // rval may be empty
 
-            bson_append_finish_object(arr);
+            sscanf(ip->name, "%4[^,], %255[^,], %2040[^\n]", type, lval, rval);
+
+            if (strchr(lval, '/'))
+            {
+                // Private data not meant to be seen
+                continue;
+            }
+
+            snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope, lval, cfr_type);
+            bson_append_string(&set_op, varName, type);
+
+            snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope, lval, cfr_rval);
+
+            if (IsCfList(type))
+            {
+                bson_append_start_array(&set_op, varName);
+
+                list = ParseShownRlist(rval);
+
+                for (rp = list, i = 0; rp != NULL; rp = rp->next, i++)
+                {
+                    snprintf(iStr, sizeof(iStr), "%d", i);
+                    bson_append_string(&set_op, iStr, rp->item);
+                }
+
+                DeleteRlist(list);
+
+                bson_append_finish_object(&set_op);
+            }
+            else
+            {
+                bson_append_string(&set_op, varName, rval);
+            }
         }
-        else
-        {
-            bson_append_string(setObj, varName, rval);
-        }
+
+        bson_append_finish_object(&set_op);
     }
+    bson_finish(&set_op);
 
-    bson_append_finish_object(setObj);
-
-    bson_from_buffer(&setOp, &bb);
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
     MongoCheckForError(conn, "SaveVariables", keyhash, NULL);
 
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);
     bson_destroy(&host_key);
 }
 
@@ -781,10 +815,6 @@ void CFDB_SaveVariables(EnterpriseDB *conn, char *keyhash, Item *data)
 
 void CFDB_SaveVariables2(EnterpriseDB *conn, char *keyhash, Item *data)
 {
-    bson_buffer bb;
-    bson_buffer *setObj, *arr;
-    bson host_key;              // host description
-    bson setOp;
     Item *ip;
     int i;
     char iStr[32];
@@ -794,82 +824,84 @@ void CFDB_SaveVariables2(EnterpriseDB *conn, char *keyhash, Item *data)
     char type[CF_SMALLBUF], lval[CF_MAXVARSIZE], rval[CF_BUFSIZE], scope[CF_MAXVARSIZE], varName[CF_MAXVARSIZE];
 
 // find right host
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&host_key, &bb);
+    bson host_key;
 
-    bson_buffer_init(&bb);
-    setObj = bson_append_start_object(&bb, "$set");
+    bson_init(&host_key);
+    bson_append_string(&host_key, cfr_keyhash, keyhash);
+    bson_finish(&host_key);
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    bson set_op;
+    bson_init(&set_op);
     {
-        if (strncmp(ip->name, "S:", 2) == 0)
+        bson_append_start_object(&set_op, "$set");
+
+        for (ip = data; ip != NULL; ip = ip->next)
         {
-            scope[0] = '\0';
-            sscanf(ip->name + 2, "%254[^\n]", scope);
-            continue;
-        }
+            if (strncmp(ip->name, "S:", 2) == 0)
+            {
+                scope[0] = '\0';
+                sscanf(ip->name + 2, "%254[^\n]", scope);
+                continue;
+            }
 
         rval[0] = '\0';  // rval may be empty
 
         sscanf(ip->name, "%4[^,],%ld,%255[^,],%2040[^\n]", type, &tl, lval, rval);
+            sscanf(ip->name, "%4[^,],%ld,%255[^,],%2040[^\n]", type, &tl, lval, rval);
 
-        t = (time_t) tl;
+            t = (time_t) tl;
 
-        if (strchr(lval, '/'))
-        {
-            // Private data not meant to be seen
-            continue;
-        }
-
-        snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope, lval, cfr_type);
-        bson_append_string(setObj, varName, type);
-
-        snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope, lval, cfr_time);
-        bson_append_int(setObj, varName, t);
-
-        snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope, lval, cfr_rval);
-
-        if (IsCfList(type))
-        {
-            arr = bson_append_start_array(setObj, varName);
-
-            list = ParseShownRlist(rval);
-
-            for (rp = list, i = 0; rp != NULL; rp = rp->next, i++)
+            if (strchr(lval, '/'))
             {
-                snprintf(iStr, sizeof(iStr), "%d", i);
-                bson_append_string(arr, iStr, rp->item);
+                // Private data not meant to be seen
+                continue;
             }
 
-            DeleteRlist(list);
+            snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope, lval, cfr_type);
+            bson_append_string(&set_op, varName, type);
 
-            bson_append_finish_object(arr);
+            snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope, lval, cfr_time);
+            bson_append_int(&set_op, varName, t);
+
+            snprintf(varName, sizeof(varName), "%s.%s.%s.%s", cfr_vars, scope, lval, cfr_rval);
+
+            if (IsCfList(type))
+            {
+                bson_append_start_array(&set_op, varName);
+
+                list = ParseShownRlist(rval);
+
+                for (rp = list, i = 0; rp != NULL; rp = rp->next, i++)
+                {
+                    snprintf(iStr, sizeof(iStr), "%d", i);
+                    bson_append_string(&set_op, iStr, rp->item);
+                }
+
+                DeleteRlist(list);
+
+                bson_append_finish_object(&set_op);
+            }
+            else
+            {
+                bson_append_string(&set_op, varName, rval);
+            }
         }
-        else
-        {
-            bson_append_string(setObj, varName, rval);
-        }
+
+        bson_append_finish_object(&set_op);
     }
+    bson_finish(&set_op);
 
-    bson_append_finish_object(setObj);
-
-    bson_from_buffer(&setOp, &bb);
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
     MongoCheckForError(conn, "SaveVariables2", keyhash, NULL);
 
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);
     bson_destroy(&host_key);
 }
 
 /*****************************************************************************/
 
-void CFDB_SaveTotalCompliance(EnterpriseDB *conn, char *keyhash, Item *data)
-{
-    bson_buffer bb;
-    bson_buffer *setObj;
-    bson host_key;              // host description
-    bson setOp;
+void CFDB_SaveTotalCompliance(mongo *conn, char *keyhash, Item *data)
+{    
     Item *ip;
     char version[CF_MAXVARSIZE];
     Item *keys = NULL, *addedKey = NULL;
@@ -877,54 +909,59 @@ void CFDB_SaveTotalCompliance(EnterpriseDB *conn, char *keyhash, Item *data)
     char varName[CF_MAXVARSIZE];
     long t;
     time_t then;
-    bson_buffer *sub;
 
 // find right host
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&host_key, &bb);
+    bson host_key;
 
-    bson_buffer_init(&bb);
+    bson_init(&host_key);
+    bson_append_string(&host_key, cfr_keyhash, keyhash);
+    bson_finish(&host_key);
 
-    setObj = bson_append_start_object(&bb, "$set");
+    bson set_op;
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    bson_init(&set_op);
     {
-        sscanf(ip->name, "%ld,%127[^,],%d,%d,%d\n", &t, version, &kept, &repaired, &notrepaired);
-        then = (time_t) t;
+        bson_append_start_object(&set_op, "$set");
 
-        snprintf(varName, sizeof(varName), "%s.%s", cfr_total_compliance, GenTimeKey(then));
-
-        // check for duplicate keys
-        addedKey = ReturnItemIn(keys, varName);
-        if (addedKey)
+        for (ip = data; ip != NULL; ip = ip->next)
         {
-            CfDebug("!! Duplicate key \"%s\" in SaveTotalCompliance - ignoring second time=%s - stored=%s", varName,
-                    cf_ctime(&then), addedKey->classes);
-            continue;           // avoids DB update failure
-        }
-        else
-        {
-            PrependItem(&keys, varName, cf_ctime(&then));
+            sscanf(ip->name, "%ld,%127[^,],%d,%d,%d\n", &t, version, &kept, &repaired, &notrepaired);
+            then = (time_t) t;
+
+            snprintf(varName, sizeof(varName), "%s.%s", cfr_total_compliance, GenTimeKey(then));
+
+            // check for duplicate keys
+            addedKey = ReturnItemIn(keys, varName);
+            if (addedKey)
+            {
+                CfDebug("!! Duplicate key \"%s\" in SaveTotalCompliance - ignoring second time=%s - stored=%s", varName,
+                        cf_ctime(&then), addedKey->classes);
+                continue;           // avoids DB update failure
+            }
+            else
+            {
+                PrependItem(&keys, varName, cf_ctime(&then));
+            }
+            {
+                bson_append_start_object(&set_op, varName);
+                bson_append_int(&set_op, cfr_time, then);
+                bson_append_string(&set_op, cfr_version, version);
+                bson_append_int(&set_op, cfr_kept, kept);
+                bson_append_int(&set_op, cfr_repaired, repaired);
+                bson_append_int(&set_op, cfr_notkept, notrepaired);
+                bson_append_finish_object(&set_op);
+            }
         }
 
-        sub = bson_append_start_object(setObj, varName);
-        bson_append_int(sub, cfr_time, then);
-        bson_append_string(sub, cfr_version, version);
-        bson_append_int(sub, cfr_kept, kept);
-        bson_append_int(sub, cfr_repaired, repaired);
-        bson_append_int(sub, cfr_notkept, notrepaired);
-        bson_append_finish_object(sub);
+        DeleteItemList(keys);
+
+        bson_append_finish_object(&set_op);
     }
+    bson_finish(&set_op);
 
-    DeleteItemList(keys);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
-    bson_append_finish_object(setObj);
-
-    bson_from_buffer(&setOp, &bb);
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);
     bson_destroy(&host_key);
 }
 
@@ -959,42 +996,44 @@ void CFDB_SavePromiseLog(EnterpriseDB *conn, char *keyhash, PromiseLogState stat
         return;
     }
 
-    bson_buffer bb;
-    bson_buffer_init(&bb);
-
-    bson_buffer *setObj = bson_append_start_object(&bb, "$set");
-
     Item *uniquePromiseKeysList = NULL;
     Item *promiseKeysAndTimeList = NULL;
 
-    for (Item *ip = data; ip != NULL; ip = ip->next)
+    bson set_op;
+
+    bson_init(&set_op);
     {
-        long then;
-        char handle[CF_MAXVARSIZE], reason[CF_BUFSIZE];
+        bson_append_start_object(&set_op, "$set");
 
-        sscanf(ip->name, "%ld,%254[^,],%1024[^\n]", &then, handle, reason);
-        time_t tthen = (time_t) then;
-
-        char newKey[CF_BUFSIZE] = { 0 };
-        CreateUniquePromiseLogDBKey(handle,reason,newKey,sizeof(newKey));
-
-        if (!IsItemIn(uniquePromiseKeysList,newKey))
+        for (Item *ip = data; ip != NULL; ip = ip->next)
         {
-            PrependItem(&uniquePromiseKeysList, newKey, NULL);
+            long then;
+            char handle[CF_MAXVARSIZE], reason[CF_BUFSIZE];
 
-            char causeKey[CF_BUFSIZE] = { 0 };
-            snprintf(causeKey, sizeof(causeKey), "%s.%s.%s",collName,newKey,cfr_cause);
-            bson_append_string(setObj, causeKey,reason);
+            sscanf(ip->name, "%ld,%254[^,],%1024[^\n]", &then, handle, reason);
+            time_t tthen = (time_t) then;
 
-            char handleKey[CF_BUFSIZE] = { 0 };
-            snprintf(handleKey, sizeof(handleKey), "%s.%s.%s",collName,newKey,cfr_promisehandle);
-            bson_append_string(setObj, handleKey,handle);
+            char newKey[CF_BUFSIZE] = { 0 };
+            CreateUniquePromiseLogDBKey(handle,reason,newKey,sizeof(newKey));
+
+            if (!IsItemIn(uniquePromiseKeysList,newKey))
+            {
+                PrependItem(&uniquePromiseKeysList, newKey, NULL);
+
+                char causeKey[CF_BUFSIZE] = { 0 };
+                snprintf(causeKey, sizeof(causeKey), "%s.%s.%s",collName,newKey,cfr_cause);
+                bson_append_string(&set_op, causeKey,reason);
+
+                char handleKey[CF_BUFSIZE] = { 0 };
+                snprintf(handleKey, sizeof(handleKey), "%s.%s.%s",collName,newKey,cfr_promisehandle);
+                bson_append_string(&set_op, handleKey,handle);
+            }
+
+            PrependFullItem(&promiseKeysAndTimeList, newKey, NULL, 0, tthen);
         }
 
-        PrependFullItem(&promiseKeysAndTimeList, newKey, NULL, 0, tthen);
+        bson_append_finish_object(&set_op);
     }
-
-    bson_append_finish_object(setObj);
 
     // sort timestamp list
     Item *sortedList = NULL;
@@ -1004,51 +1043,55 @@ void CFDB_SavePromiseLog(EnterpriseDB *conn, char *keyhash, PromiseLogState stat
     {
         char timeKey[CF_BUFSIZE] = { 0 };
         snprintf(timeKey, sizeof(timeKey), "%s.%s.%s",collName,ip2->name,cfr_time);
-
-        bson_buffer *addToSetObj = bson_append_start_object(&bb, "$addToSet");
-        bson_buffer *timeArrayObj = bson_append_start_object(addToSetObj, timeKey);
-        bson_buffer *eachObj = bson_append_start_array(timeArrayObj, "$each");
-
-        int timestampArrayIdx = 0;
-        bool firstEntry = true;
-
-        for (Item *ip = sortedList; ip != NULL; ip = ip->next)
         {
-            if(strcmp(ip->name, ip2->name) == 0)
+            bson_append_start_object(&set_op, "$addToSet");
             {
-                char varName[CF_BUFSIZE] = { 0 };
-                snprintf(varName, sizeof(varName), "%d", timestampArrayIdx++);
-                bson_append_int(eachObj, varName, ip->time);
+                bson_append_start_object(&set_op, timeKey);
+                {
+                    bson_append_start_array(&set_op, "$each");
 
-                firstEntry = false;
+                    int timestampArrayIdx = 0;
+                    bool firstEntry = true;
+
+                    for (Item *ip = sortedList; ip != NULL; ip = ip->next)
+                    {
+                        if(strcmp(ip->name, ip2->name) == 0)
+                        {
+                            char varName[CF_BUFSIZE] = { 0 };
+                            snprintf(varName, sizeof(varName), "%d", timestampArrayIdx++);
+                            bson_append_int(&set_op, varName, ip->time);
+
+                            firstEntry = false;
+                        }
+                        else if(!firstEntry)
+                        {
+                            break;
+                        }
+                    }
+
+                    bson_append_finish_object(&set_op); // $each
+                }
+                bson_append_finish_object(&set_op); // timeKey
             }
-            else if(!firstEntry)
-            {
-                break;
-            }            
+            bson_append_finish_object(&set_op); // $addToSet
         }
-
-        bson_append_finish_object(eachObj);
-        bson_append_finish_object(timeArrayObj);
-        bson_append_finish_object(addToSetObj);       
     }
-
-    bson setOp;
-    bson_from_buffer(&setOp, &bb);
+    bson_finish(&set_op);
 
     DeleteItemList(uniquePromiseKeysList);
     DeleteItemList(sortedList);
 
     // find right host
     bson host_key;
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&host_key, &bb);
 
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    bson_init(&host_key);
+    bson_append_string(&host_key, cfr_keyhash, keyhash);
+    bson_finish(&host_key);
+
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
     MongoCheckForError(conn, "Update failed for : ", keyhash, NULL);
 
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);
     bson_destroy(&host_key);
 }
 
@@ -1057,10 +1100,6 @@ void CFDB_SavePromiseLog(EnterpriseDB *conn, char *keyhash, PromiseLogState stat
 
 void CFDB_SaveLastSeen(EnterpriseDB *conn, char *keyhash, Item *data)
 {
-    bson_buffer bb;
-    bson_buffer *setObj, *sub;
-    bson host_key;              // host description
-    bson setOp;
     Item *ip;
     char inout, ipaddr[CF_MAXVARSIZE];
     char hostkey[CF_MAXVARSIZE], varName[CF_MAXVARSIZE];
@@ -1069,37 +1108,44 @@ void CFDB_SaveLastSeen(EnterpriseDB *conn, char *keyhash, Item *data)
     time_t then = 0;
 
 // find right host
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&host_key, &bb);
+    bson host_key;
 
-    bson_buffer_init(&bb);
+    bson_init(&host_key);
+    bson_append_string(&host_key, cfr_keyhash, keyhash);
+    bson_finish(&host_key);
 
-    setObj = bson_append_start_object(&bb, "$set");
+    bson set_op;
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    bson_init(&set_op);
     {
-        sscanf(ip->name, "%c %625s %250s %ld %lf %lf %lf\n", &inout, hostkey, ipaddr, &fthen, &ago, &average, &dev);
+        bson_append_start_object(&set_op, "$set");
 
-        then = (time_t) fthen;
+        for (ip = data; ip != NULL; ip = ip->next)
+        {
+            sscanf(ip->name, "%c %625s %250s %ld %lf %lf %lf\n", &inout, hostkey, ipaddr, &fthen, &ago, &average, &dev);
 
-        snprintf(varName, sizeof(varName), "%s.%c%s", cfr_lastseen, inout, hostkey);
+            then = (time_t) fthen;
 
-        sub = bson_append_start_object(setObj, varName);
-        bson_append_string(sub, cfr_ipaddr, ipaddr);
-        bson_append_double(sub, cfr_hrsago, ago);
-        bson_append_double(sub, cfr_hrsavg, average);
-        bson_append_double(sub, cfr_hrsdev, dev);
-        bson_append_int(sub, cfr_time, then);
-        bson_append_finish_object(sub);
+            snprintf(varName, sizeof(varName), "%s.%c%s", cfr_lastseen, inout, hostkey);
+
+            {
+                bson_append_start_object(&set_op, varName);
+                bson_append_string(&set_op, cfr_ipaddr, ipaddr);
+                bson_append_double(&set_op, cfr_hrsago, ago);
+                bson_append_double(&set_op, cfr_hrsavg, average);
+                bson_append_double(&set_op, cfr_hrsdev, dev);
+                bson_append_int(&set_op, cfr_time, then);
+                bson_append_finish_object(&set_op);
+            }
+        }
+
+        bson_append_finish_object(&set_op); // $set
     }
+    bson_finish(&set_op);
 
-    bson_append_finish_object(setObj);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
-    bson_from_buffer(&setOp, &bb);
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);
     bson_destroy(&host_key);
 }
 
@@ -1107,42 +1153,46 @@ void CFDB_SaveLastSeen(EnterpriseDB *conn, char *keyhash, Item *data)
 
 void CFDB_SaveMeter(EnterpriseDB *conn, char *keyhash, Item *data)
 {
-    bson_buffer bb;
-    bson_buffer *setObj;
-    bson_buffer *sub;
-    bson host_key;              // host description
-    bson setOp;
     Item *ip;
     char varName[CF_MAXVARSIZE];
     char type;
     double kept, repaired;
 
 // find right host
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&host_key, &bb);
+    bson host_key;
 
-    bson_buffer_init(&bb);
+    bson_init(&host_key);
+    bson_append_string(&host_key, cfr_keyhash, keyhash);
+    bson_finish(&host_key);
 
-    setObj = bson_append_start_object(&bb, "$set");
+    bson set_op;
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    bson_init(&set_op);
     {
-        sscanf(ip->name, "%c: %lf %lf", &type, &kept, &repaired);
-        snprintf(varName, sizeof(varName), "%s.%c", cfr_meter, type);
+        bson_append_start_object(&set_op, "$set");
 
-        sub = bson_append_start_object(setObj, varName);
-        bson_append_double(sub, cfr_meterkept, kept);
-        bson_append_double(sub, cfr_meterrepaired, repaired);
-        bson_append_finish_object(sub);
+        for (ip = data; ip != NULL; ip = ip->next)
+        {
+            sscanf(ip->name, "%c: %lf %lf", &type, &kept, &repaired);
+            snprintf(varName, sizeof(varName), "%s.%c", cfr_meter, type);
+
+            {
+                bson_append_start_object(&set_op, varName);
+
+                bson_append_double(&set_op, cfr_meterkept, kept);
+                bson_append_double(&set_op, cfr_meterrepaired, repaired);
+
+                bson_append_finish_object(&set_op);
+            }
+        }
+
+        bson_append_finish_object(&set_op); // $set
     }
+    bson_finish(&set_op);
 
-    bson_append_finish_object(setObj);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
-    bson_from_buffer(&setOp, &bb);
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);
     bson_destroy(&host_key);
 }
 
@@ -1151,34 +1201,34 @@ void CFDB_SaveMeter(EnterpriseDB *conn, char *keyhash, Item *data)
 /* HostRankMethod can be passed as miltiple option merge opt|opt|opt */
 void CFDB_SaveScore(EnterpriseDB *conn, char *keyhash, Item *data, HostRankMethod method)
 {
-    bson_buffer bb;
-    bson_buffer *setObj;
-    bson host_key;  // host description
-    bson setOp;
-
     /* find right host */
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&host_key, &bb);
+    bson host_key;
+
+    bson_init(&host_key);
+    bson_append_string(&host_key, cfr_keyhash, keyhash);
+    bson_finish(&host_key);
 
     /* build score object */
-    bson_buffer_init(&bb);
-    setObj = bson_append_start_object(&bb, "$set");
+    bson set_op;
 
-    double kept_full[meter_endmark] = {0};
-    double repaired_full[meter_endmark] = {0};
-
-    /* gather meters for score calculetion from meter report */
-    for (Item *ip = data; ip != NULL; ip = ip->next)
+    bson_init(&set_op);
     {
-        char type;
-        double kept;
-        double repaired;
+        bson_append_start_object(&set_op, "$set");
 
-        sscanf(ip->name,"%c: %lf %lf",&type,&kept,&repaired);
+        double kept_full[meter_endmark] = {0};
+        double repaired_full[meter_endmark] = {0};
 
-        switch (type)
+        /* gather meters for score calculetion from meter report */
+        for (Item *ip = data; ip != NULL; ip = ip->next)
         {
+            char type;
+            double kept;
+            double repaired;
+
+            sscanf(ip->name,"%c: %lf %lf",&type,&kept,&repaired);
+
+            switch (type)
+            {
             case cfmeter_hour:
                 kept_full[meter_compliance_hour] = kept;
                 repaired_full[meter_compliance_hour] = repaired;
@@ -1213,48 +1263,49 @@ void CFDB_SaveScore(EnterpriseDB *conn, char *keyhash, Item *data, HostRankMetho
                 kept_full[meter_other_day] = kept;
                 repaired_full[meter_other_day] = repaired;
                 break;
+            }
         }
+
+        /* calculate scores and build score db object */
+        int score;
+
+        if (method & HOST_RANK_METHOD_COMPLIANCE)
+        {
+            score = Nova_GetComplianceScore(HOST_RANK_METHOD_COMPLIANCE, kept_full, repaired_full);
+            bson_append_int(&set_op, cfr_score_comp, score);
+        }
+
+        if (method & HOST_RANK_METHOD_ANOMALY)
+        {
+            score = Nova_GetComplianceScore(HOST_RANK_METHOD_ANOMALY, kept_full, repaired_full);
+            bson_append_int(&set_op, cfr_score_anom, score);
+        }
+
+        if (method & HOST_RANK_METHOD_PERFORMANCE)
+        {
+            score = Nova_GetComplianceScore(HOST_RANK_METHOD_PERFORMANCE, kept_full, repaired_full);
+            bson_append_int(&set_op, cfr_score_perf, score);
+        }
+
+        if (method & HOST_RANK_METHOD_LASTSEEN)
+        {
+            score = Nova_GetComplianceScore(HOST_RANK_METHOD_LASTSEEN, kept_full, repaired_full);
+            bson_append_int(&set_op, cfr_score_lastseen, score);
+        }
+
+        if (method & HOST_RANK_METHOD_MIXED)
+        {
+            score = Nova_GetComplianceScore(HOST_RANK_METHOD_MIXED, kept_full, repaired_full);
+            bson_append_int(&set_op, cfr_score_mixed, score);
+        }
+
+        bson_append_finish_object(&set_op); // $set
     }
+    bson_finish(&set_op);
 
-    /* calculate scores and build score db object */
-    int score;
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
-    if (method & HOST_RANK_METHOD_COMPLIANCE)
-    {
-        score = Nova_GetComplianceScore(HOST_RANK_METHOD_COMPLIANCE, kept_full, repaired_full);
-        bson_append_int(setObj, cfr_score_comp, score);
-    }
-
-    if (method & HOST_RANK_METHOD_ANOMALY)
-    {
-        score = Nova_GetComplianceScore(HOST_RANK_METHOD_ANOMALY, kept_full, repaired_full);
-        bson_append_int(setObj, cfr_score_anom, score);
-    }
-
-    if (method & HOST_RANK_METHOD_PERFORMANCE)
-    {
-        score = Nova_GetComplianceScore(HOST_RANK_METHOD_PERFORMANCE, kept_full, repaired_full);
-        bson_append_int(setObj, cfr_score_perf, score);
-    }
-
-    if (method & HOST_RANK_METHOD_LASTSEEN)
-    {
-        score = Nova_GetComplianceScore(HOST_RANK_METHOD_LASTSEEN, kept_full, repaired_full);
-        bson_append_int(setObj, cfr_score_lastseen, score);
-    }
-
-    if (method & HOST_RANK_METHOD_MIXED)
-    {
-        score = Nova_GetComplianceScore(HOST_RANK_METHOD_MIXED, kept_full, repaired_full);
-        bson_append_int(setObj, cfr_score_mixed, score);
-    }
-
-    bson_append_finish_object(setObj);
-
-    bson_from_buffer(&setOp, &bb);
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);
     bson_destroy(&host_key);
 }
 
@@ -1262,41 +1313,42 @@ void CFDB_SaveScore(EnterpriseDB *conn, char *keyhash, Item *data, HostRankMetho
 
 void CFDB_SaveSoftwareDates(EnterpriseDB *conn, char *keyhash, Item *data)
 {
-    bson_buffer bb;
-    bson_buffer *setObj;
-    bson host_key;              // host description
-    bson setOp;
     Item *ip;
     char type;
     time_t t;
 
 // find right host
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&host_key, &bb);
+    bson host_key;
 
-    bson_buffer_init(&bb);
+    bson_init(&host_key);
+    bson_append_string(&host_key, cfr_keyhash, keyhash);
+    bson_finish(&host_key);
 
-    setObj = bson_append_start_object(&bb, "$set");
+    bson set_op;
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    bson_init(&set_op);
     {
-        sscanf(ip->name, "%c:%ld", &type, &t);
+        bson_append_start_object(&set_op, "$set");
 
-        switch (type)
+        for (ip = data; ip != NULL; ip = ip->next)
         {
-        case 'S':
-            bson_append_int(setObj, cfr_software_t, t);
-            break;
+            sscanf(ip->name, "%c:%ld", &type, &t);
+
+            switch (type)
+            {
+            case 'S':
+                bson_append_int(&set_op, cfr_software_t, t);
+                break;
+            }
         }
+
+        bson_append_finish_object(&set_op); // $set
     }
+    bson_finish(&set_op);
 
-    bson_append_finish_object(setObj);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
-    bson_from_buffer(&setOp, &bb);
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);
     bson_destroy(&host_key);
 }
 
@@ -1304,11 +1356,6 @@ void CFDB_SaveSoftwareDates(EnterpriseDB *conn, char *keyhash, Item *data)
 
 void CFDB_SavePerformance(EnterpriseDB *conn, char *keyhash, Item *data)
 {
-    bson_buffer bb;
-    bson_buffer *setObj;
-    bson_buffer *sub;
-    bson host_key;              // host description
-    bson setOp;
     Item *ip;
     char varName[CF_MAXVARSIZE];
     long t;
@@ -1316,39 +1363,48 @@ void CFDB_SavePerformance(EnterpriseDB *conn, char *keyhash, Item *data)
     double measure = 0, average = 0, dev = 0;
 
 // find right host
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&host_key, &bb);
+    bson host_key;
 
-    bson_buffer_init(&bb);
+    bson_init(&host_key);
+    bson_append_string(&host_key, cfr_keyhash, keyhash);
+    bson_finish(&host_key);
 
-    setObj = bson_append_start_object(&bb, "$set");
+    bson set_op;
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    bson_init(&set_op);
     {
-        eventname[0] = '\0';
-        sscanf(ip->name, "%ld,%lf,%lf,%lf,%255[^\n]\n", &t, &measure, &average, &dev, eventname);
+        bson_append_start_object(&set_op, "$set");
 
-        // Need to canonify the dots, as dot is not allowed in a mongo key
-        ReplaceChar(eventname, eventnameKey, sizeof(eventnameKey), '.', '_');
+        for (ip = data; ip != NULL; ip = ip->next)
+        {
+            eventname[0] = '\0';
+            sscanf(ip->name, "%ld,%lf,%lf,%lf,%255[^\n]\n", &t, &measure, &average, &dev, eventname);
 
-        snprintf(varName, sizeof(varName), "%s.%s", cfr_performance, eventnameKey);
+            // Need to canonify the dots, as dot is not allowed in a mongo key
+            ReplaceChar(eventname, eventnameKey, sizeof(eventnameKey), '.', '_');
 
-        sub = bson_append_start_object(setObj, varName);
-        bson_append_string(sub, cfr_perf_event, eventname);
-        bson_append_double(sub, cfr_obs_q, measure);
-        bson_append_double(sub, cfr_obs_E, average);
-        bson_append_double(sub, cfr_obs_sigma, dev);
-        bson_append_int(sub, cfr_time, t);
-        bson_append_finish_object(sub);
+            snprintf(varName, sizeof(varName), "%s.%s", cfr_performance, eventnameKey);
+
+            {
+                bson_append_start_object(&set_op, varName);
+
+                bson_append_string(&set_op, cfr_perf_event, eventname);
+                bson_append_double(&set_op, cfr_obs_q, measure);
+                bson_append_double(&set_op, cfr_obs_E, average);
+                bson_append_double(&set_op, cfr_obs_sigma, dev);
+                bson_append_int(&set_op, cfr_time, t);
+
+                bson_append_finish_object(&set_op);
+            }
+        }
+
+        bson_append_finish_object(&set_op); //$set
     }
+    bson_finish(&set_op);
 
-    bson_append_finish_object(setObj);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
-    bson_from_buffer(&setOp, &bb);
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);
     bson_destroy(&host_key);
 }
 
@@ -1356,43 +1412,44 @@ void CFDB_SavePerformance(EnterpriseDB *conn, char *keyhash, Item *data)
 
 void CFDB_SaveSetUid(EnterpriseDB *conn, char *keyhash, Item *data)
 {
-    bson_buffer bb;
-    bson_buffer *keyArr, *set;
-    bson host_key;              // host description
-    bson setOp;
     Item *ip;
     char progName[CF_MAXVARSIZE];
     char iStr[32];
     int i;
 
 // find right host
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&host_key, &bb);
+    bson host_key;
 
-// old report is replaced
-
-    bson_buffer_init(&bb);
+    bson_init(&host_key);
+    bson_append_string(&host_key, cfr_keyhash, keyhash);
+    bson_finish(&host_key);
 
 // insert keys into key array
+// old report is replaced
+    bson set_op;
 
-    set = bson_append_start_object(&bb, "$set");
-    keyArr = bson_append_start_array(set, cfr_setuid);
-
-    for (ip = data, i = 0; ip != NULL; ip = ip->next, i++)
+    bson_init(&set_op);
     {
-        sscanf(ip->name, "%255[^\n]", progName);
-        snprintf(iStr, sizeof(iStr), "%d", i);
-        bson_append_string(keyArr, iStr, progName);
+        bson_append_start_object(&set_op, "$set");
+        {
+            bson_append_start_array(&set_op, cfr_setuid);
+
+            for (ip = data, i = 0; ip != NULL; ip = ip->next, i++)
+            {
+                sscanf(ip->name, "%255[^\n]", progName);
+                snprintf(iStr, sizeof(iStr), "%d", i);
+                bson_append_string(&set_op, iStr, progName);
+            }
+
+            bson_append_finish_object(&set_op); // cfr_setuid
+        }
+        bson_append_finish_object(&set_op); // $set
     }
+    bson_finish(&set_op);
 
-    bson_append_finish_object(keyArr);
-    bson_append_finish_object(set);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
-    bson_from_buffer(&setOp, &bb);
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);
     bson_destroy(&host_key);
 }
 
@@ -1400,13 +1457,7 @@ void CFDB_SaveSetUid(EnterpriseDB *conn, char *keyhash, Item *data)
 
 void CFDB_SavePromiseCompliance(EnterpriseDB *conn, char *keyhash, Item *data)
 {
-    bson_buffer bb;
-    bson_buffer *setObj;
-    bson_buffer *sub;
-    bson_buffer *keyArr, *keyAdd, *keyArrField;
-    Item *keys = NULL, *addedKey = NULL;
-    bson host_key;              // host description
-    bson setOp;
+    Item *keys = NULL, *addedKey = NULL;  
     Item *ip;
     char varName[CF_MAXVARSIZE];
     char handle[CF_MAXVARSIZE];
@@ -1417,65 +1468,76 @@ void CFDB_SavePromiseCompliance(EnterpriseDB *conn, char *keyhash, Item *data)
     char iStr[32];
 
 // find right host
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&host_key, &bb);
+    bson host_key;
 
-    bson_buffer_init(&bb);
+    bson_init(&host_key);
+    bson_append_string(&host_key, cfr_keyhash, keyhash);
+    bson_finish(&host_key);
 
-    setObj = bson_append_start_object(&bb, "$set");
+    bson set_op;
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    bson_init(&set_op);
     {
-        sscanf(ip->name, "%ld,%255[^,],%c,%lf,%lf\n", &then, handle, &status, &av, &dev);
+        bson_append_start_object(&set_op, "$set");
 
-        snprintf(varName, sizeof(varName), "%s.%s", cfr_promisecompl, handle);
-        snprintf(statusStr, sizeof(statusStr), "%c", status);
-
-        addedKey = ReturnItemIn(keys, handle);
-        if (addedKey)
+        for (ip = data; ip != NULL; ip = ip->next)
         {
-            CfDebug("!! Duplicate key \"%s\" in SavePromiseCompliance - ignoring second time=%s - stored=%s", varName,
-                    cf_ctime(&then), addedKey->classes);
-            continue;           // avoids DB update failure
-        }
-        else
-        {
-            PrependItem(&keys, handle, cf_ctime(&then));
-        }
+            sscanf(ip->name, "%ld,%255[^,],%c,%lf,%lf\n", &then, handle, &status, &av, &dev);
 
-        sub = bson_append_start_object(setObj, varName);
-        bson_append_string(sub, cfr_promisestatus, statusStr);
-        bson_append_double(sub, cfr_obs_E, av);
-        bson_append_double(sub, cfr_obs_sigma, dev);
-        bson_append_int(sub, cfr_time, then);
-        bson_append_finish_object(sub);
+            snprintf(varName, sizeof(varName), "%s.%s", cfr_promisecompl, handle);
+            snprintf(statusStr, sizeof(statusStr), "%c", status);
+
+            addedKey = ReturnItemIn(keys, handle);
+            if (addedKey)
+            {
+                CfDebug("!! Duplicate key \"%s\" in SavePromiseCompliance - ignoring second time=%s - stored=%s", varName,
+                        cf_ctime(&then), addedKey->classes);
+                continue;           // avoids DB update failure
+            }
+            else
+            {
+                PrependItem(&keys, handle, cf_ctime(&then));
+            }
+
+            {
+                bson_append_start_object(&set_op, varName);
+                bson_append_string(&set_op, cfr_promisestatus, statusStr);
+                bson_append_double(&set_op, cfr_obs_E, av);
+                bson_append_double(&set_op, cfr_obs_sigma, dev);
+                bson_append_int(&set_op, cfr_time, then);
+                bson_append_finish_object(&set_op);
+            }
+        }
+        bson_append_finish_object(&set_op); // $set
     }
 
-    bson_append_finish_object(setObj);
-
-// insert keys into numbered key array
-
-    keyAdd = bson_append_start_object(&bb, "$addToSet");
-    keyArrField = bson_append_start_object(keyAdd, cfr_promisecompl_keys);
-    keyArr = bson_append_start_array(keyAdd, "$each");
-
-    for (ip = keys, i = 0; ip != NULL; ip = ip->next, i++)
+    // insert keys into numbered key array
     {
-        snprintf(iStr, sizeof(iStr), "%d", i);
-        bson_append_string(keyArr, iStr, ip->name);
-    }
+        bson_append_start_object(&set_op, "$addToSet");
+        {
+            bson_append_start_object(&set_op, cfr_promisecompl_keys);
+            {
+                bson_append_start_array(&set_op, "$each");
 
-    bson_append_finish_object(keyArr);
-    bson_append_finish_object(keyArrField);
-    bson_append_finish_object(keyAdd);
+                for (ip = keys, i = 0; ip != NULL; ip = ip->next, i++)
+                {
+                    snprintf(iStr, sizeof(iStr), "%d", i);
+                    bson_append_string(&set_op, iStr, ip->name);
+                }
+
+                bson_append_finish_object(&set_op); // $each
+            }
+            bson_append_finish_object(&set_op); // cfr_promisecompl_keys
+        }
+        bson_append_finish_object(&set_op); // $addToSet
+    }
+    bson_finish(&set_op);
 
     DeleteItemList(keys);
 
-    bson_from_buffer(&setOp, &bb);
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);
     bson_destroy(&host_key);
 }
 
@@ -1483,49 +1545,51 @@ void CFDB_SavePromiseCompliance(EnterpriseDB *conn, char *keyhash, Item *data)
 
 void CFDB_SaveFileChanges(EnterpriseDB *conn, char *keyhash, Item *data)
 {
-    bson_buffer bb;
-    bson_buffer *setObj;
-    bson host_key;              // host description
-    bson setOp;
     Item *ip;
     char name[CF_MAXVARSIZE] = { 0 }, nameNoDot[CF_MAXVARSIZE] = { 0 };
     char varName[128] = { 0 };
-    bson_buffer *sub;
     time_t then;
     long date;
 
 // find right host
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&host_key, &bb);
+    bson host_key;
 
-    bson_buffer_init(&bb);
+    bson_init(&host_key);
+    bson_append_string(&host_key, cfr_keyhash, keyhash);
+    bson_finish(&host_key);
 
-    setObj = bson_append_start_object(&bb, "$set");
+    bson set_op;
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    bson_init(&set_op);
     {
-        sscanf(ip->name, "%ld,%255[^\n]", &date, name);
-        then = (time_t) date;
+        bson_append_start_object(&set_op, "$set");
 
-        char escapedname[CF_BUFSIZE] = { 0 };
-        EscapeJson(name, escapedname, sizeof(escapedname));
-        ReplaceChar(escapedname, nameNoDot, sizeof(nameNoDot), '.', '_');
+        for (ip = data; ip != NULL; ip = ip->next)
+        {
+            sscanf(ip->name, "%ld,%255[^\n]", &date, name);
+            then = (time_t) date;
 
-        snprintf(varName, sizeof(varName), "%s.%s@%ld", cfr_filechanges, nameNoDot, date);
-        sub = bson_append_start_object(setObj, varName);
-        bson_append_int(sub, cfr_time, then);
-        bson_append_string(sub, cfr_name, name);
-        bson_append_finish_object(sub);
+            char escapedname[CF_BUFSIZE] = { 0 };
+            EscapeJson(name, escapedname, sizeof(escapedname));
+            ReplaceChar(escapedname, nameNoDot, sizeof(nameNoDot), '.', '_');
+
+            snprintf(varName, sizeof(varName), "%s.%s@%ld", cfr_filechanges, nameNoDot, date);
+            {
+                bson_append_start_object(&set_op, varName);
+
+                bson_append_int(&set_op, cfr_time, then);
+                bson_append_string(&set_op, cfr_name, name);
+
+                bson_append_finish_object(&set_op); // varName
+            }
+        }
+        bson_append_finish_object(&set_op); // $set
     }
+    bson_finish(&set_op);
 
-    bson_append_finish_object(setObj);
+    mongo_update(conn, MONGO_ARCHIVE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
-    bson_from_buffer(&setOp, &bb);
-
-    mongo_update(conn, MONGO_ARCHIVE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);
     bson_destroy(&host_key);
 }
 
@@ -1533,59 +1597,59 @@ void CFDB_SaveFileChanges(EnterpriseDB *conn, char *keyhash, Item *data)
 
 void CFDB_SaveFileDiffs(EnterpriseDB *conn, char *keyhash, Item *data)
 {
-    bson_buffer bb;
-    bson_buffer *setObj;
-    bson host_key;              // host description
-    bson setOp;
     Item *ip;
     char name[CF_MAXVARSIZE], change[CF_BUFSIZE], nameNoDot[CF_MAXVARSIZE];
     char varName[128];
-    bson_buffer *sub;
     time_t then;
     long t;
     char *sp;
 
 // find right host
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&host_key, &bb);
+    bson host_key;
 
-    bson_buffer_init(&bb);
+    bson_init(&host_key);
+    bson_append_string(&host_key, cfr_keyhash, keyhash);
+    bson_finish(&host_key);
 
-    setObj = bson_append_start_object(&bb, "$set");
+    bson set_op;
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    bson_init(&set_op);
     {
-        change[0] = '\0';
-        sscanf(ip->name, "%ld|%255[^|]|%2047[^\n]", &t, name, change);
+        bson_append_start_object(&set_op, "$set");
 
-        for (sp = change; *sp != '\0'; sp++)
+        for (ip = data; ip != NULL; ip = ip->next)
         {
-            if (*sp == CF_N_CODE)
+            change[0] = '\0';
+            sscanf(ip->name, "%ld|%255[^|]|%2047[^\n]", &t, name, change);
+
+            for (sp = change; *sp != '\0'; sp++)
             {
-                *sp = '\n';
+                if (*sp == CF_N_CODE)
+                {
+                    *sp = '\n';
+                }
+            }
+
+            then = (time_t) t;
+
+            ReplaceChar(name, nameNoDot, sizeof(nameNoDot), '.', '_');
+            snprintf(varName, sizeof(varName), "%s.%s@%ld", cfr_filediffs, nameNoDot, then);
+
+            {
+                bson_append_start_object(&set_op, varName);
+                bson_append_int(&set_op, cfr_time, then);
+                bson_append_string(&set_op, cfr_name, name);
+                bson_append_string(&set_op, cfr_diff, change);
+                bson_append_finish_object(&set_op); // varName
             }
         }
-
-        then = (time_t) t;
-
-        ReplaceChar(name, nameNoDot, sizeof(nameNoDot), '.', '_');
-        snprintf(varName, sizeof(varName), "%s.%s@%ld", cfr_filediffs, nameNoDot, then);
-
-        sub = bson_append_start_object(setObj, varName);
-        bson_append_int(sub, cfr_time, then);
-        bson_append_string(sub, cfr_name, name);
-        bson_append_string(sub, cfr_diff, change);
-        bson_append_finish_object(sub);
+        bson_append_finish_object(&set_op); // $set
     }
+    bson_finish(&set_op);
 
-    bson_append_finish_object(setObj);
+    mongo_update(conn, MONGO_ARCHIVE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
-    bson_from_buffer(&setOp, &bb);
-
-    mongo_update(conn, MONGO_ARCHIVE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);
     bson_destroy(&host_key);
 }
 
@@ -1593,10 +1657,6 @@ void CFDB_SaveFileDiffs(EnterpriseDB *conn, char *keyhash, Item *data)
 
 void CFDB_SaveBundles(EnterpriseDB *conn, char *keyhash, Item *data)
 {
-    bson_buffer bb;
-    bson_buffer *setObj, *sub;
-    bson host_key;              // host description
-    bson setOp;
     Item *ip;
     char bundle[CF_MAXVARSIZE];
     char varName[CF_MAXVARSIZE];
@@ -1605,41 +1665,50 @@ void CFDB_SaveBundles(EnterpriseDB *conn, char *keyhash, Item *data)
     time_t then = 0;
 
 // find right host
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&host_key, &bb);
+    bson host_key;
 
-    bson_buffer_init(&bb);
+    bson_init(&host_key);
+    bson_append_string(&host_key, cfr_keyhash, keyhash);
+    bson_finish(&host_key);
 
-    setObj = bson_append_start_object(&bb, "$set");
+    bson set_op;
 
-    for (ip = data; ip != NULL; ip = ip->next)
+    bson_init(&set_op);
     {
-        sscanf(ip->name, "%250s %ld %lf %lf %lf\n", bundle, &fthen, &compliance, &average, &dev);
+        bson_append_start_object(&set_op, "$set");
 
-        then = (time_t) fthen;
-
-        // ignore values with corrupted timestamps
-        if(!cf_ctime(&then))
+        for (ip = data; ip != NULL; ip = ip->next)
         {
-            continue;
+            sscanf(ip->name, "%250s %ld %lf %lf %lf\n", bundle, &fthen, &compliance, &average, &dev);
+
+            then = (time_t) fthen;
+
+            // ignore values with corrupted timestamps
+            if(!cf_ctime(&then))
+            {
+                continue;
+            }
+
+            snprintf(varName, sizeof(varName), "%s.%s", cfr_bundles, bundle);
+
+            {
+                bson_append_start_object(&set_op, varName);
+
+                bson_append_double(&set_op, cfr_bundlecomp, compliance);
+                bson_append_double(&set_op, cfr_bundleavg, average);
+                bson_append_double(&set_op, cfr_bundledev, dev);
+                bson_append_int(&set_op, cfr_time, then);
+
+                bson_append_finish_object(&set_op); // varName
+            }
         }
-
-        snprintf(varName, sizeof(varName), "%s.%s", cfr_bundles, bundle);
-
-        sub = bson_append_start_object(setObj, varName);
-        bson_append_double(sub, cfr_bundlecomp, compliance);
-        bson_append_double(sub, cfr_bundleavg, average);
-        bson_append_double(sub, cfr_bundledev, dev);
-        bson_append_int(sub, cfr_time, then);
-        bson_append_finish_object(sub);
+        bson_append_finish_object(&set_op); // $set
     }
-    bson_append_finish_object(setObj);
+    bson_finish(&set_op);
 
-    bson_from_buffer(&setOp, &bb);
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);
     bson_destroy(&host_key);
 }
 
@@ -1647,47 +1716,48 @@ void CFDB_SaveBundles(EnterpriseDB *conn, char *keyhash, Item *data)
 
 void CFDB_SaveValueReport(EnterpriseDB *conn, char *keyhash, Item *data)
 {
-    bson_buffer bb;
-    bson_buffer *set;
-    bson host_key;              // host description
-    bson setOp;
     Item *ip;
-    bson_buffer *sub1, *sub2;
     char datestr[CF_SMALLBUF];
     double kept, notkept, repaired;
 
 // find right host
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&host_key, &bb);
+    bson host_key;
 
-    bson_buffer_init(&bb);
+    bson_init(&host_key);
+    bson_append_string(&host_key, cfr_keyhash, keyhash);
+    bson_finish(&host_key);
 
-    set = bson_append_start_object(&bb, "$set");
+    bson set_op;
 
-    sub1 = bson_append_start_object(set, cfr_valuereport);
-
-    for (ip = data; ip != NULL; ip = ip->next)
+    bson_init(&set_op);
     {
+        bson_append_start_object(&set_op, "$set");
+        {
+            bson_append_start_object(&set_op, cfr_valuereport);
 
-        sscanf(ip->name, "%100[^,],%lf,%lf,%lf\n", datestr, &kept, &repaired, &notkept);
+            for (ip = data; ip != NULL; ip = ip->next)
+            {
 
-        sub2 = bson_append_start_object(sub1, datestr);
-        bson_append_string(sub2, cfr_day, datestr);
-        bson_append_double(sub2, cfr_kept, kept);
-        bson_append_double(sub2, cfr_repaired, repaired);
-        bson_append_double(sub2, cfr_notkept, notkept);
+                sscanf(ip->name, "%100[^,],%lf,%lf,%lf\n", datestr, &kept, &repaired, &notkept);
+                {
+                    bson_append_start_object(&set_op, datestr);
+                    bson_append_string(&set_op, cfr_day, datestr);
+                    bson_append_double(&set_op, cfr_kept, kept);
+                    bson_append_double(&set_op, cfr_repaired, repaired);
+                    bson_append_double(&set_op, cfr_notkept, notkept);
 
-        bson_append_finish_object(sub2);
+                    bson_append_finish_object(&set_op);
+                }
+            }
+            bson_append_finish_object(&set_op); // cfr_valuereport
+        }
+        bson_append_finish_object(&set_op); // $set
     }
+    bson_finish(&set_op);
 
-    bson_append_finish_object(sub1);
-    bson_append_finish_object(set);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
-    bson_from_buffer(&setOp, &bb);
-    mongo_update(conn, MONGO_DATABASE, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);
     bson_destroy(&host_key);
 }
 
@@ -1696,35 +1766,37 @@ void CFDB_SaveValueReport(EnterpriseDB *conn, char *keyhash, Item *data)
 void CFDB_SaveHostComplianceShift(EnterpriseDB *conn, const char *hostkey, int kept, int repaired,
                                   int notkept, int num_samples, time_t shift_start)
 {
-    bson_buffer bb;
-
     bson cond;
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, hostkey);
-    bson_from_buffer(&cond, &bb);
+    bson_init(&cond);
+    bson_append_string(&cond, cfr_keyhash, hostkey);
+    bson_finish(&cond);
 
     bson op;
-    bson_buffer_init(&bb);
-    bson_buffer *set = bson_append_start_object(&bb, "$set");
+    bson_init(&op);
     {
+        bson_append_start_object(&op, "$set");
+
         char slot_key[CF_MAXVARSIZE] = { 0 };
         int shift_slot = GetShiftSlot(shift_start);
         snprintf(slot_key, sizeof(slot_key), "%s.%d", cfr_compliance_shifts, shift_slot);
 
-        bson_buffer *slot = bson_append_start_object(set, slot_key);
         {
-            bson_append_int(&bb, cfr_kept, kept);
-            bson_append_int(&bb, cfr_repaired, repaired);
-            bson_append_int(&bb, cfr_notkept, notkept);
-            bson_append_int(&bb, cfr_count, num_samples);
-            bson_append_int(&bb, cfr_time, shift_start);
-        }
-        bson_append_finish_object(slot);
-    }
-    bson_append_finish_object(set);
-    bson_from_buffer(&op, &bb);
+            bson_append_start_object(&op, slot_key);
 
-    mongo_update(conn, MONGO_DATABASE, &cond, &op, MONGO_UPDATE_UPSERT);
+            bson_append_int(&op, cfr_kept, kept);
+            bson_append_int(&op, cfr_repaired, repaired);
+            bson_append_int(&op, cfr_notkept, notkept);
+            bson_append_int(&op, cfr_count, num_samples);
+            bson_append_int(&op, cfr_time, shift_start);
+
+            bson_append_finish_object(&op); // slot_key
+        }
+
+        bson_append_finish_object(&op); // $set
+    }
+    bson_finish(&op);
+
+    mongo_update(conn, MONGO_DATABASE, &cond, &op, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&cond);
     bson_destroy(&op);
@@ -1734,39 +1806,41 @@ void CFDB_SaveHostComplianceShift(EnterpriseDB *conn, const char *hostkey, int k
 void CFDB_SaveCachedTotalCompliance(EnterpriseDB *conn, char *policy, int slot, double kept, double repaired,
                                     double notkept, int count, time_t genTime)
 {
-    bson_buffer bb;
-    bson_buffer *set;
-    bson cacheType, setOp;
-    bson_buffer *sub1;
     char varName[CF_SMALLBUF];
 
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfc_cachetype, cfc_cachecompliance);
-    bson_from_buffer(&cacheType, &bb);
+    bson cacheType;
 
-    bson_buffer_init(&bb);
+    bson_init(&cacheType);
+    bson_append_string(&cacheType, cfc_cachetype, cfc_cachecompliance);
+    bson_finish(&cacheType);
 
-    set = bson_append_start_object(&bb, "$set");
+    bson set_op;
 
-    snprintf(varName, sizeof(varName), "%s.%d", policy, slot);
+    bson_init(&set_op);
+    {
+        bson_append_start_object(&set_op, "$set");
 
-    sub1 = bson_append_start_object(set, varName);
+        snprintf(varName, sizeof(varName), "%s.%d", policy, slot);
 
-    bson_append_double(sub1, cfr_kept, kept);
-    bson_append_double(sub1, cfr_repaired, repaired);
-    bson_append_double(sub1, cfr_notkept, notkept);
-    bson_append_int(sub1, cfc_count, count);
-    bson_append_int(sub1, cfc_timegen, genTime);
+        {
+            bson_append_start_object(&set_op, varName);
 
-    bson_append_finish_object(sub1);
-    bson_append_finish_object(set);
+            bson_append_double(&set_op, cfr_kept, kept);
+            bson_append_double(&set_op, cfr_repaired, repaired);
+            bson_append_double(&set_op, cfr_notkept, notkept);
+            bson_append_int(&set_op, cfc_count, count);
+            bson_append_int(&set_op, cfc_timegen, genTime);
 
-    bson_from_buffer(&setOp, &bb);
+            bson_append_finish_object(&set_op); // varName
+        }
+        bson_append_finish_object(&set_op); // $set
+    }
+    bson_finish(&set_op);
 
-    mongo_update(conn, MONGO_CACHE, &cacheType, &setOp, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_CACHE, &cacheType, &set_op, MONGO_UPDATE_UPSERT, NULL);
     MongoCheckForError(conn, "SaveCachedTotalCompliance", policy, NULL);
 
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);
     bson_destroy(&cacheType);
 }
 
@@ -1781,27 +1855,26 @@ void CFDB_SaveLastHostUpdate(EnterpriseDB *conn, char *hostKey)
 
 void CFDB_SaveLastUpdate(EnterpriseDB *conn, char *database, char *keyField, char *keyhash)
 {
-    bson_buffer bb;
-    bson_buffer *setObj;
-    bson host_key;              // host description
-    bson setOp;
-
 // find right host
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, keyField, keyhash);
-    bson_from_buffer(&host_key, &bb);
+    bson host_key;
 
-    bson_buffer_init(&bb);
+    bson_init(&host_key);
+    bson_append_string(&host_key, keyField, keyhash);
+    bson_finish(&host_key);
 
-    setObj = bson_append_start_object(&bb, "$set");
+    bson set_op;
 
-    bson_append_int(setObj, cfr_day, (long) time(NULL));
+    bson_init(&set_op);
+    {
+        bson_append_start_object(&set_op, "$set");
+        bson_append_int(&set_op, cfr_day, (long) time(NULL));
+        bson_append_finish_object(&set_op);
+    }
+    bson_finish(&set_op);
 
-    bson_append_finish_object(setObj);
+    mongo_update(conn, database, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
-    bson_from_buffer(&setOp, &bb);
-    mongo_update(conn, database, &host_key, &setOp, MONGO_UPDATE_UPSERT);
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);
     bson_destroy(&host_key);
 }
 
@@ -1813,25 +1886,25 @@ void CFDB_SaveLastHostUpdateSize(EnterpriseDB *conn, char *hostkey, int update_s
  *       we could then show trends and graphs too (instead of just last sample)
  **/
 {
-    bson_buffer bb;
     bson host_id;
 
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, hostkey);
-    bson_from_buffer(&host_id, &bb);
+    bson_init(&host_id);
+    bson_append_string(&host_id, cfr_keyhash, hostkey);
+    bson_finish(&host_id);
 
-    bson_buffer_init(&bb);
+    bson set_op;
 
-    bson_buffer *set = bson_append_start_object(&bb, "$set");
-    bson_append_int(set, cfr_last_update_size, update_size);
-    bson_append_finish_object(set);
+    bson_init(&set_op);
+    {
+        bson_append_start_object(&set_op, "$set");
+        bson_append_int(&set_op, cfr_last_update_size, update_size);
+        bson_append_finish_object(&set_op);
+    }
+    bson_finish(&set_op);
 
-    bson set_operation;
-    bson_from_buffer(&set_operation, &bb);
+    mongo_update(conn, MONGO_DATABASE, &host_id, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
-    mongo_update(conn, MONGO_DATABASE, &host_id, &set_operation, MONGO_UPDATE_UPSERT);
-
-    bson_destroy(&set_operation);
+    bson_destroy(&set_op);
     bson_destroy(&host_id);
 }
 
@@ -1840,93 +1913,101 @@ void CFDB_SaveLastHostUpdateSize(EnterpriseDB *conn, char *hostkey, int update_s
 int CFDB_AddNote(EnterpriseDB *conn, char *keyhash, int reportType, char *nid,
                  char *reportData, char *username, long datetime, char *msg)
 {
-    bson_buffer bb;
-    bson host_key;
-    bson_buffer *setObj, *sub;
-    bson setOp;
-    bson b_key;
-    bson_buffer buf_key;
-
     int options = MONGO_INDEX_UNIQUE | MONGO_INDEX_DROP_DUPS;
 
     /* for getting object id */
-    mongo_cursor *cursor;
     bson_iterator it1;
-    bson field;
     char objectId[CF_MAXVARSIZE] = { 0 };
     bson_oid_t bsonid;
     int found = false, newnote = false, retval = true;
 
     // Add index, TODO: must do this while creating the database
 
-    bson_buffer_init(&buf_key);
-    bson_append_int(&buf_key, cfn_keyhash, 1);
-    bson_append_int(&buf_key, cfn_reportdata, 1);
-    bson_from_buffer(&b_key, &buf_key);
+    bson b_key;
+
+    bson_init(&b_key);
+    bson_append_int(&b_key, cfn_keyhash, 1);
+    bson_append_int(&b_key, cfn_reportdata, 1);
+    bson_finish(&b_key);
+
     mongo_create_index(conn, MONGO_NOTEBOOK, &b_key, options, NULL);
+
     bson_destroy(&b_key);
 
     // find right host
-    bson_buffer_init(&bb);
+    bson host_key;
+
+    bson_init(&host_key);
 
     if (!NULL_OR_EMPTY(nid))
     {
         bson_oid_from_string(&bsonid, nid);
-        bson_append_oid(&bb, "_id", &bsonid);
+        bson_append_oid(&host_key, "_id", &bsonid);
     }
     else
     {
         newnote = true;
-        bson_append_new_oid(&bb, "_id");
-        bson_append_string(&bb, cfn_keyhash, keyhash);
+        bson_append_new_oid(&host_key, "_id");
+        bson_append_string(&host_key, cfn_keyhash, keyhash);
 
         if (!NULL_OR_EMPTY(reportData))
         {
-            bson_append_string(&bb, cfn_reportdata, reportData);
+            bson_append_string(&host_key, cfn_reportdata, reportData);
         }
-        bson_append_int(&bb, cfn_reporttype, reportType);
+        bson_append_int(&host_key, cfn_reporttype, reportType);
     }
-    bson_from_buffer(&host_key, &bb);
+    bson_finish(&host_key);
 
     char msg_esc[CF_BUFSIZE] = { 0 };
     strncpy(msg_esc, msg, CF_BUFSIZE);
     EscapeChar(msg_esc, sizeof(msg_esc), '\\');
     EscapeChar(msg_esc, sizeof(msg_esc), '\"');
 
-    bson_buffer_init(&bb);
-    setObj = bson_append_start_object(&bb, "$addToSet");
-    sub = bson_append_start_object(setObj, cfn_note);
-    bson_append_string(sub, cfn_username, username);
-    bson_append_string(sub, cfn_message, msg_esc);
-    bson_append_int(sub, cfn_datetime, datetime);
-    bson_append_finish_object(sub);
-    bson_append_finish_object(setObj);
-    bson_from_buffer(&setOp, &bb);
+    bson set_op;
 
-    mongo_update(conn, MONGO_NOTEBOOK, &host_key, &setOp, MONGO_UPDATE_UPSERT);
+    bson_init(&set_op);
+    {
+        bson_append_start_object(&set_op, "$addToSet");
+        {
+            bson_append_start_object(&set_op, cfn_note);
+
+            bson_append_string(&set_op, cfn_username, username);
+            bson_append_string(&set_op, cfn_message, msg_esc);
+            bson_append_int(&set_op, cfn_datetime, datetime);
+
+            bson_append_finish_object(&set_op); // cfn_note
+        }
+        bson_append_finish_object(&set_op); // $addToSet
+    }
+    bson_finish(&set_op);
+
+    mongo_update(conn, MONGO_NOTEBOOK, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
+
     MongoCheckForError(conn, "AddNote", keyhash, NULL);
-    bson_destroy(&setOp);
+    bson_destroy(&set_op);
 
     if (newnote)
     {
         // get the objectid
-        bson_buffer_init(&bb);
-        bson_append_int(&bb, "_id", 1);
-        bson_from_buffer(&field, &bb);
+        bson field;
 
-        cursor = mongo_find(conn, MONGO_NOTEBOOK, &host_key, &field, 0, 0, CF_MONGO_SLAVE_OK);
+        bson_init(&field);
+        bson_append_int(&field, "_id", 1);
+        bson_finish(&field);
+
+        mongo_cursor *cursor = mongo_find(conn, MONGO_NOTEBOOK, &host_key, &field, 0, 0, CF_MONGO_SLAVE_OK);
         MongoCheckForError(conn, "GetNoteID", keyhash, NULL);
         bson_destroy(&field);
 
-        while (mongo_cursor_next(cursor) && !found)
+        while (mongo_cursor_next(cursor) == MONGO_OK && !found)
         {
-            bson_iterator_init(&it1, cursor->current.data);
+            bson_iterator_init(&it1, mongo_cursor_bson(cursor));
             objectId[0] = '\0';
             while (bson_iterator_next(&it1))
             {
                 switch (bson_iterator_type(&it1))
                 {
-                case bson_oid:
+                case BSON_OID:
                     if (strcmp(bson_iterator_key(&it1), "_id") == 0)
                     {
                         bson_oid_to_string(bson_iterator_oid(&it1), objectId);
@@ -1951,13 +2032,8 @@ int CFDB_AddNote(EnterpriseDB *conn, char *keyhash, int reportType, char *nid,
 
 /*****************************************************************************/
 
-// WTF: the only db_save function name that does not start with Save. necessary?
-int CFDB_MarkAsDeleted(EnterpriseDB *dbconn, char *keyHash)
-{
-    bson_buffer bb;
-    bson_buffer *setObj;
-    bson setOp, empty;
-
+int CFDB_MarkAsDeleted(mongo *dbconn, char *keyHash)
+{    
     if (!IsDefinedClass("am_policy_hub") && !AM_PHP_MODULE)
     {
         CfOut(cf_verbose, "", "Ignoring caching of deleted hosts - not called by php module");
@@ -1968,15 +2044,21 @@ int CFDB_MarkAsDeleted(EnterpriseDB *dbconn, char *keyHash)
 
     for (Rlist *rp = hostKeyList; rp != NULL; rp = rp->next)
     {
-        bson_buffer_init(&bb);
-        setObj = bson_append_start_object(&bb, "$addToSet");
-        bson_append_string(setObj, cfr_deleted_hosts, ScalarValue(rp));
-        bson_append_finish_object(setObj);
-        bson_from_buffer(&setOp, &bb);
+        bson set_op;
 
-        mongo_update(dbconn, MONGO_SCRATCH, bson_empty(&empty), &setOp, MONGO_UPDATE_UPSERT);
+        bson_init(&set_op);
+        {
+            bson_append_start_object(&set_op, "$addToSet");
+            bson_append_string(&set_op, cfr_deleted_hosts, ScalarValue(rp));
+            bson_append_finish_object(&set_op);
+        }
+        bson_finish(&set_op);
+
+        bson empty;
+
+        mongo_update(dbconn, MONGO_SCRATCH, bson_empty(&empty), &set_op, MONGO_UPDATE_UPSERT, NULL); // Note: Upsert Necessary?
         MongoCheckForError(dbconn, "MarkHostAsDeleted", ScalarValue(rp), NULL);
-        bson_destroy(&setOp);
+        bson_destroy(&set_op);
     }
 
     DeleteRlist(hostKeyList);
@@ -1988,24 +2070,23 @@ int CFDB_MarkAsDeleted(EnterpriseDB *dbconn, char *keyHash)
 
 void CFDB_SaveExecutionStatus(EnterpriseDB *conn, char *keyhash, bool is_black)
 {
-    bson_buffer bb;
-    bson host_key;  // host description
+    /* find right host */
+    bson host_key;
+
+    bson_init(&host_key);
+    bson_append_string(&host_key, cfr_keyhash, keyhash);
+    bson_finish(&host_key);
+
     bson set_op;
 
-    /* find right host */
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&host_key, &bb);
-
-    bson_buffer_init(&bb);
-    bson_append_start_object(&bb, "$set");
-
-    /* save report to mongo */
-    bson_append_bool(&bb, cfr_is_black, is_black);
-    bson_append_finish_object(&bb);
-
-    bson_from_buffer(&set_op, &bb);
-    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT);
+    bson_init(&set_op);
+    {
+        bson_append_start_object(&set_op, "$set");
+        bson_append_bool(&set_op, cfr_is_black, is_black);
+        bson_append_finish_object(&set_op);
+    }
+    bson_finish(&set_op);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&set_op);
     bson_destroy(&host_key);
@@ -2015,25 +2096,24 @@ void CFDB_SaveExecutionStatus(EnterpriseDB *conn, char *keyhash, bool is_black)
 
 void CFDB_SaveLastAgentExecution(EnterpriseDB *conn, char *keyhash, long last_agent_exec)
 {
-    bson_buffer bb;
+    /* find right host */
     bson host_key;  // host description
+
+    bson_init(&host_key);
+    bson_append_string(&host_key, cfr_keyhash, keyhash);
+    bson_finish(&host_key);
+
     bson set_op;
 
-    /* find right host */
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&host_key, &bb);
+    bson_init(&set_op);
+    {
+        bson_append_start_object(&set_op, "$set");
+        bson_append_long(&set_op, cfr_last_execution, last_agent_exec);
+        bson_append_finish_object(&set_op);
+    }
+    bson_finish(&set_op);
 
-    bson_buffer_init(&bb);
-    bson_append_start_object(&bb, "$set");
-
-    /* save report to mongo */
-    bson_append_long(&bb, cfr_last_execution, last_agent_exec);
-
-    bson_append_finish_object(&bb);
-
-    bson_from_buffer(&set_op, &bb);
-    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&set_op);
     bson_destroy(&host_key);
@@ -2043,24 +2123,24 @@ void CFDB_SaveLastAgentExecution(EnterpriseDB *conn, char *keyhash, long last_ag
 
 void CFDB_SaveDeltaAgentExecution(EnterpriseDB *conn, char *keyhash, long delta_schedule)
 {
-    bson_buffer bb;
-    bson host_key;  // host description
+    /* find right host */
+    bson host_key;
+
+    bson_init(&host_key);
+    bson_append_string(&host_key, cfr_keyhash, keyhash);
+    bson_finish(&host_key);
+
     bson set_op;
 
-    /* find right host */
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_from_buffer(&host_key, &bb);
+    bson_init(&set_op);
+    {
+        bson_append_start_object(&set_op, "$set");
+        bson_append_long(&set_op, cfr_schedule, delta_schedule);
+        bson_append_finish_object(&set_op);
+    }
+    bson_finish(&set_op);
 
-    bson_buffer_init(&bb);
-    bson_append_start_object(&bb, "$set");
-
-    /* save report to mongo */
-    bson_append_long(&bb, cfr_schedule, delta_schedule);
-    bson_append_finish_object(&bb);
-
-    bson_from_buffer(&set_op, &bb);
-    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT);
+    mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
     bson_destroy(&set_op);
     bson_destroy(&host_key);

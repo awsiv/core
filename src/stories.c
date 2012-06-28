@@ -12,6 +12,8 @@
 #include "constraints.h"
 #include "files_names.h"
 #include "item_lib.h"
+
+#include "bson_lib.h"
 #include "db_query.h"
 
 /***************************************************************************
@@ -615,7 +617,7 @@ void Constellation_GetWeatherReport(char *hostkey,Item **low, Item **high, Item 
 { HubClass *hc;
   HubQuery *hq;
   Rlist *rp;
-  mongo_connection dbconn;
+  EnterpriseDB dbconn;
 
 /* BEGIN query the current classes from this host */
  
@@ -682,7 +684,7 @@ void Constellation_GetLocations(const Policy *policy, char *hostkey, Rlist **loc
 { HubClass *hc;
   HubQuery *hq;
   Rlist *rp;
-  mongo_connection dbconn;
+  EnterpriseDB dbconn;
   Rval retval;
   Constraint *cp;
 
@@ -740,11 +742,10 @@ void Constellation_GenerateStoriesCmdLine(char *typed_topic,enum storytype type)
   char topic[CF_BUFSIZE],context[CF_BUFSIZE];
   Chapter *episode;
   StoryLine *allstories = NULL, *root = NULL;
-  bson_buffer bb;
   bson query,field;
   mongo_cursor *cursor;
   bson_iterator it1;
-  mongo_connection conn;
+  EnterpriseDB conn;
   char topic_name[CF_BUFSIZE];
   char topic_context[CF_BUFSIZE];
   Item *ip,*list = NULL;
@@ -760,10 +761,10 @@ if (!NULL_OR_EMPTY(typed_topic))
    {
    Nova_DeClassifyTopic(typed_topic,topic,context);
 
-   bson_buffer_init(&bb);
-   bson_append_regex(&bb,cfk_topicname,topic,"");
-   bson_append_regex(&bb,cfk_topiccontext,context,"");
-   bson_from_buffer(&query,&bb);
+   bson_init(&query);
+   bson_append_regex(&query,cfk_topicname,topic,"");
+   bson_append_regex(&query,cfk_topiccontext,context,"");
+   bson_finish(&query);
    }
 else
    {
@@ -772,15 +773,14 @@ else
 
 /* BEGIN RESULT DOCUMENT */
 
-bson_buffer_init(&bb);
-bson_append_int(&bb,cfk_topicname,1);
-bson_append_int(&bb,cfk_topicid,1);
-bson_append_int(&bb,cfk_topiccontext,1);
-bson_append_int(&bb,cfk_associations,1);
-bson_append_int(&bb,cfk_associd,1);
-bson_append_int(&bb,cfk_assoccontext,1);
-bson_append_int(&bb,cfk_assocname,1);
-bson_from_buffer(&field, &bb);
+BsonSelectReportFields(&field, 7,
+                       cfk_topicname,
+                       cfk_topicid,
+                       cfk_topiccontext,
+                       cfk_associations,
+                       cfk_associd,
+                       cfk_assoccontext,
+                       cfk_assocname);
 
 /* BEGIN SEARCH for matching topics */
 
@@ -791,7 +791,7 @@ bson_destroy(&field);
 
 while (mongo_cursor_next(cursor))  // loops over documents
    {
-   bson_iterator_init(&it1,cursor->current.data);
+   bson_iterator_init(&it1, mongo_cursor_bson(cursor));
    
    topic_name[0] = '\0';
    topic_context[0] = '\0';

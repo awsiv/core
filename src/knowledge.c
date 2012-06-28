@@ -40,8 +40,6 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
     Item *itp;
     char packNumStr[CF_MAXVARSIZE];
     EnterpriseDB dbconn = { 0 };
-    bson_buffer bbuf, *sub, *assocs;
-    bson b;
     int slot, assoc_id = 0;
 
     if (!CFDB_Open(&dbconn))
@@ -51,7 +49,9 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
 
 // remove existing data first
 
-    mongo_remove(&dbconn, MONGO_KM_TOPICS, bson_empty(&b));
+    bson b;
+
+    mongo_remove(&dbconn, MONGO_KM_TOPICS, bson_empty(&b), NULL);
 
     /* Class types and topics */
 
@@ -59,58 +59,63 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
     {
         for (tp = topichash[slot]; tp != NULL; tp = tp->next)
         {
-            bson_buffer_init(&bbuf);
-            bson_append_new_oid(&bbuf, "_id");
-            bson_append_string(&bbuf, cfk_topicname, tp->topic_name);
-            bson_append_string(&bbuf, cfk_topiccontext, tp->topic_context);
-            bson_append_string(&bbuf, cfk_topiccontext, tp->topic_context);
-            bson_append_int(&bbuf, cfk_topicid, tp->id);
+            bson insert_op;
+
+            bson_init(&insert_op);
+            bson_append_new_oid(&insert_op, "_id");
+            bson_append_string(&insert_op, cfk_topicname, tp->topic_name);
+            bson_append_string(&insert_op, cfk_topiccontext, tp->topic_context);
+            bson_append_string(&insert_op, cfk_topiccontext, tp->topic_context);
+            bson_append_int(&insert_op, cfk_topicid, tp->id);
 
             CfDebug("Add Topic(topic_name,topic_context,pid) values ('%s','%s','%d')\n", tp->topic_name,
                     tp->topic_context, tp->id);
 
             // Associations
 
-            assocs = bson_append_start_array(&bbuf, cfk_associations);
-
-            for (ta = tp->associations; ta != NULL; ta = ta->next)
             {
-                for (itp = ta->associates; itp != NULL; itp = itp->next)
+                bson_append_start_array(&insert_op, cfk_associations);
+
+                for (ta = tp->associations; ta != NULL; ta = ta->next)
                 {
-                    char to_context[CF_MAXVARSIZE], to_topic[CF_MAXVARSIZE];
-                    int to_id = GetTopicPid(itp->name);
+                    for (itp = ta->associates; itp != NULL; itp = itp->next)
+                    {
+                        char to_context[CF_MAXVARSIZE], to_topic[CF_MAXVARSIZE];
+                        int to_id = GetTopicPid(itp->name);
 
-                    DeClassifyTopic(itp->name, to_topic, to_context);
+                        DeClassifyTopic(itp->name, to_topic, to_context);
 
-                    CfDebug(" - Association: '%s::%s' (%d) %s '%s:%s' (%d)\n", tp->topic_context, tp->topic_name,
-                            tp->id, ta->fwd_name, to_context, to_topic, to_id);
-                    CfDebug(" - Hence  by implication : '%s::%s' (%d) %s '%s::%s' (%d)\n", to_context, to_topic, to_id,
-                            ta->bwd_name, tp->topic_context, tp->topic_name, tp->id);
+                        CfDebug(" - Association: '%s::%s' (%d) %s '%s:%s' (%d)\n", tp->topic_context, tp->topic_name,
+                                tp->id, ta->fwd_name, to_context, to_topic, to_id);
+                        CfDebug(" - Hence  by implication : '%s::%s' (%d) %s '%s::%s' (%d)\n", to_context, to_topic, to_id,
+                                ta->bwd_name, tp->topic_context, tp->topic_name, tp->id);
 
-                    // Append variable list item to assocs
+                        // Append variable list item to assocs
 
-                    snprintf(packNumStr, sizeof(packNumStr), "%d", assoc_id++);
-                    sub = bson_append_start_object(assocs, packNumStr);
-                    bson_append_string(sub, cfk_fwd, ta->fwd_name);
-                    bson_append_string(sub, cfk_bwd, ta->bwd_name);
-                    bson_append_string(sub, cfk_assocname, to_topic);
-                    bson_append_string(sub, cfk_assoccontext, to_context);
-                    bson_append_int(sub, cfk_associd, to_id);
-                    bson_append_finish_object(sub);
+                        snprintf(packNumStr, sizeof(packNumStr), "%d", assoc_id++);
+                        {
+                            bson_append_start_object(&insert_op, packNumStr);
+                            bson_append_string(&insert_op, cfk_fwd, ta->fwd_name);
+                            bson_append_string(&insert_op, cfk_bwd, ta->bwd_name);
+                            bson_append_string(&insert_op, cfk_assocname, to_topic);
+                            bson_append_string(&insert_op, cfk_assoccontext, to_context);
+                            bson_append_int(&insert_op, cfk_associd, to_id);
+                            bson_append_finish_object(&insert_op);
+                        }
+                    }
                 }
+                bson_append_finish_object(&insert_op);
             }
+            bson_finish(&insert_op);
 
-            bson_append_finish_object(assocs);
-
-            bson_from_buffer(&b, &bbuf);
-            mongo_insert(&dbconn, MONGO_KM_TOPICS, &b);
-            bson_destroy(&b);
+            mongo_insert(&dbconn, MONGO_KM_TOPICS, &insert_op, NULL);
+            bson_destroy(&insert_op);
         }
     }
 
 // Occurrences
 
-    mongo_remove(&dbconn, MONGO_KM_OCCURRENCES, bson_empty(&b));
+    mongo_remove(&dbconn, MONGO_KM_OCCURRENCES, bson_empty(&b), NULL);
 
     for (op = occurrences; op != NULL; op = op->next)
     {
@@ -123,39 +128,44 @@ void Nova_StoreKMDB(Topic **topichash, Occurrence *occurrences, Inference *infer
             CfDebug("Add occurrence (context,locator,locator_type,subtype) values ('%s','%s','%d','%s')\n",
                     op->occurrence_context, op->locator, op->rep_type, (const char *) rp1->item);
 
-            bson_buffer_init(&bbuf);
-            bson_append_new_oid(&bbuf, "_id");
-            bson_append_string(&bbuf, cfk_occurlocator, op->locator);
-            bson_append_string(&bbuf, cfk_occurcontext, op->occurrence_context);
-            bson_append_int(&bbuf, cfk_occurtype, op->rep_type);
-            bson_append_string(&bbuf, cfk_occurrep, rp1->item);
-            bson_append_string(&bbuf, cfk_occurtopic, rp2->item);
+            bson insert_op;
+            bson_init(&insert_op);
+            bson_append_new_oid(&insert_op, "_id");
+            bson_append_string(&insert_op, cfk_occurlocator, op->locator);
+            bson_append_string(&insert_op, cfk_occurcontext, op->occurrence_context);
+            bson_append_int(&insert_op, cfk_occurtype, op->rep_type);
+            bson_append_string(&insert_op, cfk_occurrep, rp1->item);
+            bson_append_string(&insert_op, cfk_occurtopic, rp2->item);
 
-            bson_from_buffer(&b, &bbuf);
-            mongo_insert(&dbconn, MONGO_KM_OCCURRENCES, &b);
-            bson_destroy(&b);
+            bson_finish(&insert_op);
+
+            mongo_insert(&dbconn, MONGO_KM_OCCURRENCES, &insert_op, NULL);
+
+            bson_destroy(&insert_op);
             }
         }
     }
 
 // Inferences
 
-    mongo_remove(&dbconn, MONGO_KM_INFERENCES, bson_empty(&b));
+    mongo_remove(&dbconn, MONGO_KM_INFERENCES, bson_empty(&b), NULL);
 
     for (ip = inferences; ip != NULL; ip = ip->next)
     {
         CfDebug("Add inferences (precedent,qualifier,inference) values ('%s','%s','%s')\n", ip->precedent,
                 ip->qualifier, ip->inference);
 
-        bson_buffer_init(&bbuf);
-        bson_append_new_oid(&bbuf, "_id");
-        bson_append_string(&bbuf, cfk_precedent, ip->precedent);
-        bson_append_string(&bbuf, cfk_qualifier, ip->qualifier);
-        bson_append_string(&bbuf, cfk_inference, ip->inference);
+        bson insert_op;
+        bson_init(&insert_op);
+        bson_append_new_oid(&insert_op, "_id");
+        bson_append_string(&insert_op, cfk_precedent, ip->precedent);
+        bson_append_string(&insert_op, cfk_qualifier, ip->qualifier);
+        bson_append_string(&insert_op, cfk_inference, ip->inference);
 
-        bson_from_buffer(&b, &bbuf);
-        mongo_insert(&dbconn, MONGO_KM_INFERENCES, &b);
-        bson_destroy(&b);
+        bson_finish(&insert_op);
+
+        mongo_insert(&dbconn, MONGO_KM_INFERENCES, &insert_op, NULL);
+        bson_destroy(&insert_op);
     }
 
     CFDB_Close(&dbconn);
@@ -596,9 +606,9 @@ static Rlist *Nova_GetTestMachines(void)
 
     cursor = mongo_find(&conn, MONGO_DATABASE, bson_empty(&query), 0, 0, 0, CF_MONGO_SLAVE_OK);
 
-    while (mongo_cursor_next(cursor))   // loops over documents  
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents  
     {
-        bson_iterator_init(&it, cursor->current.data);
+        bson_iterator_init(&it, mongo_cursor_bson(cursor));
 
         keyhash[0] = '\0';
         hostnames[0] = '\0';
@@ -606,7 +616,7 @@ static Rlist *Nova_GetTestMachines(void)
 
         while (bson_iterator_next(&it))
         {
-            if (bson_iterator_type(&it) == bson_string && strcmp(bson_iterator_key(&it), cfr_keyhash) == 0)
+            if (bson_iterator_type(&it) == BSON_STRING && strcmp(bson_iterator_key(&it), cfr_keyhash) == 0)
             {
                 CFDB_ScanHubHost(&it, keyhash, addresses, hostnames);
             }
@@ -680,9 +690,6 @@ void Nova_UpdateTestData(void)
 #ifdef HAVE_LIBMONGOC
     mongo_cursor *cursor;
     bson_iterator it;
-    bson query, setOp;
-    bson_buffer bb;
-    bson_buffer *setObj;
     EnterpriseDB conn;
 
     char keyhash[CF_MAXVARSIZE], addresses[CF_MAXVARSIZE];
@@ -695,12 +702,14 @@ void Nova_UpdateTestData(void)
         return;
     }
 
+    bson query;
+
     cursor = mongo_find(&conn, MONGO_DATABASE, bson_empty(&query), 0, 0, 0, CF_MONGO_SLAVE_OK);
 
-    while (mongo_cursor_next(cursor))   // loops over documents   
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents   
     {
 
-        bson_iterator_init(&it, cursor->current.data);
+        bson_iterator_init(&it, mongo_cursor_bson(cursor));
 
         keyhash[0] = '\0';
         hostnames[0] = '\0';
@@ -708,7 +717,7 @@ void Nova_UpdateTestData(void)
 
         while (bson_iterator_next(&it))
         {
-            if (bson_iterator_type(&it) == bson_string && strcmp(bson_iterator_key(&it), cfr_keyhash) == 0)
+            if (bson_iterator_type(&it) == BSON_STRING && strcmp(bson_iterator_key(&it), cfr_keyhash) == 0)
             {
                 CFDB_ScanHubHost(&it, keyhash, addresses, hostnames);
             }
@@ -728,21 +737,25 @@ void Nova_UpdateTestData(void)
         temp[strlen(CF_TEST_HOSTNAME)] = '\0';
 
         if (strcmp(temp, CF_TEST_HOSTNAME) == 0)
-        {
-            bson_buffer_init(&bb);
-            bson_append_string(&bb, cfr_keyhash, keyhash);
-            bson_from_buffer(&query, &bb);
+        {                        
+            bson_init(&query);
+            bson_append_string(&query, cfr_keyhash, keyhash);
+            bson_finish(&query);
 
-            bson_buffer_init(&bb);
-            setObj = bson_append_start_object(&bb, "$set");
-            bson_append_int(setObj, cfr_day, (long) time(NULL));
-            bson_append_finish_object(setObj);
+            bson set_op;
 
-            bson_from_buffer(&setOp, &bb);
-            mongo_update(&conn, MONGO_DATABASE, &query, &setOp, MONGO_UPDATE_UPSERT);
+            bson_init(&set_op);
+            {
+                bson_append_start_object(&set_op, "$set");
+                bson_append_int(&set_op, cfr_day, (long) time(NULL));
+                bson_append_finish_object(&set_op);
+            }
+            bson_finish(&set_op);
+
+            mongo_update(&conn, MONGO_DATABASE, &query, &set_op, MONGO_UPDATE_UPSERT, NULL);
             MongoCheckForError(&conn, "UpdateTestData", keyhash, NULL);
 
-            bson_destroy(&setOp);
+            bson_destroy(&set_op);
             bson_destroy(&query);
             i++;
         }

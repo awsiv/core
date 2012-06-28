@@ -725,7 +725,6 @@ int Nova2Txt_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int buf
     int count1 = 0, count2 = 0, tmpsize1, tmpsize2;
     EnterpriseDB dbconn;
     bson query;
-    bson_buffer bb;
 
     if (NULL_OR_EMPTY(hostkey))
     {
@@ -738,9 +737,9 @@ int Nova2Txt_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int buf
         return false;
     }
 
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, hostkey);
-    bson_from_buffer(&query, &bb);
+    bson_init(&query);
+    bson_append_string(&query, cfr_keyhash, hostkey);
+    bson_finish(&query);
 
     hq = CFDB_QueryHosts(&dbconn, MONGO_DATABASE, &query);
     bson_destroy(&query);

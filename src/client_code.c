@@ -14,6 +14,7 @@
 #include "db_query.h"
 #include "crypto.h"
 #include "item_lib.h"
+#include "bson_lib.h"
 
 static bool ReportBookHasData(Item **reports);
 static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now, double datarate, AgentConnection *conn);
@@ -344,42 +345,38 @@ static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now,
                                double datarate, AgentConnection *conn)
 // NOTE: NOT Thread-safe (use of HashPrint())
 {
-    bson_buffer bb;
-    mongo_cursor *cursor;
-    bson query, field, update;
     Event e = { 0 }, newe = { 0 };
-
     e.Q = QDefinite(0);
 
 // query
 
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, HashPrint(CF_DEFAULT_DIGEST, conn->digest));
-    bson_from_buffer(&query, &bb);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfr_keyhash, HashPrint(CF_DEFAULT_DIGEST, conn->digest));
+    bson_finish(&query);
 
 // returned value
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_netmeasure, 1);
-    bson_from_buffer(&field, &bb);
+    bson field;
+    BsonSelectReportFields(&field, 1, cfr_netmeasure);
 
-    cursor = mongo_find(dbconnp, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(dbconnp, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
 // freeing query below
     bson_destroy(&field);
 
-    if (mongo_cursor_next(cursor))      // not more than one record
+    if (mongo_cursor_next(cursor) == MONGO_OK)      // not more than one record
     {
         bson_iterator it1;
 
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson( cursor ) );
 
         while (bson_iterator_next(&it1))
         {
             if (StringSafeCompare(bson_iterator_key(&it1), cfr_netmeasure) == 0)
             {
                 bson_iterator it2;
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
@@ -425,25 +422,27 @@ static void Nova_RecordNetwork(EnterpriseDB *dbconnp, time_t now,
     newe.Q = QAverage(e.Q, datarate, 0.5);
 
     // update DB with new measurement
-    bson_buffer *set_obj, *nest_obj;
-    bson_buffer_init(&bb);
+    bson update;
+    bson_init(&update);
+    {
+        bson_append_start_object(&update, "$set");
+        {
+            bson_append_start_object(&update, cfr_netmeasure);
 
-    set_obj = bson_append_start_object(&bb, "$set");
+            bson_append_int(&update, cfr_time, newe.t);
+            bson_append_double(&update, cfr_netmeasure_expect, newe.Q.expect);
+            bson_append_double(&update, cfr_netmeasure_var, newe.Q.var);
+            bson_append_double(&update, cfr_netmeasure_dq, newe.Q.dq);
+            bson_append_double(&update, cfr_netmeasure_q, newe.Q.q);
 
-    nest_obj = bson_append_start_object(set_obj, cfr_netmeasure);
-    bson_append_int(nest_obj, cfr_time, newe.t);
-    bson_append_double(nest_obj, cfr_netmeasure_expect, newe.Q.expect);
-    bson_append_double(nest_obj, cfr_netmeasure_var, newe.Q.var);
-    bson_append_double(nest_obj, cfr_netmeasure_dq, newe.Q.dq);
-    bson_append_double(nest_obj, cfr_netmeasure_q, newe.Q.q);
-    bson_append_finish_object(nest_obj);
-    bson_append_finish_object(set_obj);
+            bson_append_finish_object(&update);
+        }
+        bson_append_finish_object(&update);
+    }
+    bson_finish(&update);
 
-    bson_from_buffer(&update, &bb);
-
-    mongo_update(dbconnp, MONGO_DATABASE, &query, &update, MONGO_UPDATE_UPSERT);
-    CfOut(cf_verbose, "",
-          "!! NEW network measurement added");
+    mongo_update(dbconnp, MONGO_DATABASE, &query, &update, MONGO_UPDATE_UPSERT, NULL);
+    CfOut(cf_verbose, "", "!! NEW network measurement added");
     bson_destroy(&query);
     bson_destroy(&update);
 }

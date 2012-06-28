@@ -66,7 +66,7 @@
 # define CF_MONGO_SLAVE_OK 4
 # include <mongo.h>
 
-typedef mongo_connection EnterpriseDB;
+typedef mongo EnterpriseDB;
 #else
 typedef void EnterpriseDB;
 #endif

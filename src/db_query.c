@@ -18,8 +18,8 @@
 
 #include <assert.h>
 
-static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *filter);
-static bool AppendHostKeys(EnterpriseDB *conn, bson_buffer *bb, HostClassFilter *hostClassFilter);
+static bool BsonAppendPromiseFilter(bson *query, PromiseFilter *filter);
+static bool AppendHostKeys(EnterpriseDB *conn, bson *b, HostClassFilter *hostClassFilter);
 static void GetOldClientVersions(Rlist **rp);
 
 Rlist *PrependRlistAlienUnlocked(Rlist **start, void *item)
@@ -38,20 +38,18 @@ Rlist *PrependRlistAlienUnlocked(Rlist **start, void *item)
 bool CFDB_CollectionHasData(EnterpriseDB *conn, const char *fullCollectionName)
 {
     bson query;
-    bson field;
-    bson_buffer bb;
     bson_empty(&query);
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, "_id", 1);
-    bson_from_buffer(&field, &bb);
+    bson field;
+    BsonSelectReportFields(&field, 1, "_id");
 
-    bool retVal = mongo_find_one(conn,fullCollectionName,&query,&field,NULL);
+    if(mongo_find_one(conn,fullCollectionName,&query,&field,NULL) == MONGO_OK)
+    {
+        bson_destroy(&field);
+        return true;
+    }
 
-    bson_destroy(&query);
-    bson_destroy(&field);
-
-    return retVal;
+    return false;
 }
 /*****************************************************************************/
 int CFDB_GetValue(char *lval, char *rval, int size, char *db_name)
@@ -112,11 +110,8 @@ int CFDB_GetBlueHostThreshold(unsigned long *threshold)
 
 Item *CFDB_GetLastseenCache(void)
 {
-    bson query, field;
     bson_iterator it1, it2, it3;
-    mongo_cursor *cursor;
-    EnterpriseDB conn;
-    bson_buffer bb;
+    mongo conn;
     char keyhash[CF_BUFSIZE] = { 0 }, ipAddr[CF_MAXVARSIZE] = { 0 };
     time_t t = time(NULL);
     Item *ip, *list = NULL;
@@ -126,28 +121,30 @@ Item *CFDB_GetLastseenCache(void)
         return false;
     }
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_lastseen_hosts, 1);
-    bson_from_buffer(&field, &bb);
+    bson field;
 
-    cursor = mongo_find(&conn, MONGO_SCRATCH, bson_empty(&query), &field, 0, 0, CF_MONGO_SLAVE_OK);
+    BsonSelectReportFields(&field, 1, cfr_lastseen_hosts);
+
+    bson query;
+
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_SCRATCH, bson_empty(&query), &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&field);
-    bson_destroy(&query);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
             if (strcmp(bson_iterator_key(&it1), cfr_lastseen_hosts) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
+
                     keyhash[0] = '\0';
                     ipAddr[0] = '\0';
                     while (bson_iterator_next(&it3))
@@ -184,11 +181,9 @@ Item *CFDB_GetLastseenCache(void)
 
 Item *CFDB_GetDeletedHosts(void)
 {
-    bson query, field;
     bson_iterator it1, it2;
-    mongo_cursor *cursor;
     EnterpriseDB conn;
-    bson_buffer bb;
+
     Item *list = NULL;
 
     if (!CFDB_Open(&conn))
@@ -196,24 +191,25 @@ Item *CFDB_GetDeletedHosts(void)
         return false;
     }
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_deleted_hosts, 1);
-    bson_from_buffer(&field, &bb);
+    bson field;
 
-    cursor = mongo_find(&conn, MONGO_SCRATCH, bson_empty(&query), &field, 0, 0, CF_MONGO_SLAVE_OK);
+    BsonSelectReportFields( &field, 1, cfr_deleted_hosts);
+
+    bson query;
+
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_SCRATCH, bson_empty(&query), &field, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&field);
-    bson_destroy(&query);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
             if (strcmp(bson_iterator_key(&it1), cfr_deleted_hosts) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
@@ -240,9 +236,9 @@ bool CFDB_HandleGetValue(char *lval, char *rval, int size, EnterpriseDB *conn, c
 
     cursor = mongo_find(conn, db_name, bson_empty(&query), 0, 0, 0, CF_MONGO_SLAVE_OK);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
@@ -263,9 +259,6 @@ bool CFDB_HandleGetValue(char *lval, char *rval, int size, EnterpriseDB *conn, c
 
 HubQuery *CFDB_QueryHosts(EnterpriseDB *conn, char *db, bson *query)
 {
-    bson_buffer bb;
-    bson field;
-    mongo_cursor *cursor;
     bson_iterator it1;
     HubHost *hh;
     Rlist *host_list = NULL;
@@ -273,22 +266,22 @@ HubQuery *CFDB_QueryHosts(EnterpriseDB *conn, char *db, bson *query)
 
 /* BEGIN RESULT DOCUMENT */
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+
+    BsonSelectReportFields( &fields, 3, cfr_keyhash, cfr_ip_array, cfr_host_array);
 
 /* BEGIN SEARCH */
 
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    cursor = mongo_find(conn, db, query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, db, query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
-    while (mongo_cursor_next(cursor))
+    bson_destroy(&fields);
+
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         keyhash[0] = '\0';
         hostnames[0] = '\0';
@@ -305,7 +298,6 @@ HubQuery *CFDB_QueryHosts(EnterpriseDB *conn, char *db, bson *query)
         PrependRlistAlienUnlocked(&host_list, hh);
     }
 
-    bson_destroy(&field);
     mongo_cursor_destroy(cursor);
     return NewHubQuery(host_list, NULL);
 }
@@ -316,25 +308,24 @@ HubQuery *CFDB_QueryHosts(EnterpriseDB *conn, char *db, bson *query)
 HubQuery *CFDB_QueryHostsByAddress(EnterpriseDB *conn, char *hostNameRegex, char *ipRegex,
                                    HostClassFilter *hostClassFilter)
 {
-    bson_buffer bb;
-    bson query;
     HubQuery *hq;
 
-    bson_buffer_init(&bb);
+    bson query;
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(hostNameRegex))
     {
-        bson_append_regex(&bb, cfr_host_array, hostNameRegex, "");
+        bson_append_regex(&query, cfr_host_array, hostNameRegex, "");
     }
 
     if (!NULL_OR_EMPTY(ipRegex))
     {
-        bson_append_regex(&bb, cfr_ip_array, ipRegex, "");
+        bson_append_regex(&query, cfr_ip_array, ipRegex, "");
     }
 
-    BsonAppendHostClassFilter(&bb, hostClassFilter);
+    BsonAppendHostClassFilter(&query, hostClassFilter);
 
-    bson_from_buffer(&query, &bb);
+    bson_finish(&query);
 
     hq = CFDB_QueryHosts(conn, MONGO_DATABASE, &query);
 
@@ -345,17 +336,15 @@ HubQuery *CFDB_QueryHostsByAddress(EnterpriseDB *conn, char *hostNameRegex, char
 
 /*****************************************************************************/
 
-HubQuery *CFDB_QueryHostsByHostClassFilter(EnterpriseDB *conn, HostClassFilter *hostClassFilter)
-{
-    bson_buffer bb;
+HubQuery *CFDB_QueryHostsByHostClassFilter(mongo *conn, HostClassFilter *hostClassFilter)
+{   
     bson query;
-    HubQuery *hq;
 
-    bson_buffer_init(&bb);
-    BsonAppendHostClassFilter(&bb, hostClassFilter);
-    bson_from_buffer(&query, &bb);
+    bson_init(&query);
+    BsonAppendHostClassFilter(&query, hostClassFilter);
+    bson_finish(&query);
 
-    hq = CFDB_QueryHosts(conn, MONGO_DATABASE, &query);
+    HubQuery *hq = CFDB_QueryHosts(conn, MONGO_DATABASE, &query);
 
     bson_destroy(&query);
 
@@ -366,17 +355,14 @@ HubQuery *CFDB_QueryHostsByHostClassFilter(EnterpriseDB *conn, HostClassFilter *
 
 HubQuery *CFDB_QueryHostByHostKey(EnterpriseDB *conn, char *hostKey)
 {
-    bson_buffer bb;
-    bson query;
-    HubQuery *hq;
-
     assert(SafeStringLength(hostKey) > 0);
 
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, hostKey);
-    bson_from_buffer(&query, &bb);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfr_keyhash, hostKey);
+    bson_finish(&query);
 
-    hq = CFDB_QueryHosts(conn, MONGO_DATABASE, &query);
+    HubQuery *hq = CFDB_QueryHosts(conn, MONGO_DATABASE, &query);
 
     bson_destroy(&query);
 
@@ -418,31 +404,30 @@ HubQuery *CFDB_QueryColour(EnterpriseDB *conn, const HostRankMethod method, Host
         blue_horizon = CF_BLUEHOST_THRESHOLD_DEFAULT;
     }
 
-    bson_buffer bb;
-    bson_buffer_init(&bb);
-    BsonAppendHostClassFilter(&bb, host_class_filter);
     bson query;
-    bson_from_buffer(&query, &bb);
+    bson_init(&query);
+    BsonAppendHostClassFilter(&query, host_class_filter);
+    bson_finish(&query);
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_append_int(&bb, cfr_day, 1);
-    bson_append_int(&bb, HostRankMethodToMongoCode(method), 1);
-    bson_append_int(&bb, cfr_is_black, 1);
-    bson field;
-    bson_from_buffer(&field, &bb);
+    bson fields;
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    BsonSelectReportFields(&fields, 6,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_day,
+                           HostRankMethodToMongoCode(method),
+                           cfr_is_black);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
     time_t now = time(NULL);
 
     Rlist *host_list = NULL;
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         HubHost *host = NULL;
         {
@@ -501,9 +486,6 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
                              bool regex, HostClassFilter *hostClassFilter, int sort)
 // NOTE: needs to return report from one host before next - not mixed (for Constellation)
 {
-    bson_buffer bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1, it2, it3;
     HubHost *hh = NULL;
     Rlist *record_list = NULL, *host_list = NULL;
@@ -516,44 +498,47 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
         snprintf(arch, 2, "%c", larch[0]);
     }
 /* BEGIN query document */
+    bson query;
 
-    bson_buffer_init(&bb);
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(keyHash))
     {
-        bson_append_string(&bb, cfr_keyhash, keyHash);
+        bson_append_string(&query, cfr_keyhash, keyHash);
     }
 
-    BsonAppendHostClassFilter(&bb, hostClassFilter);
+    BsonAppendHostClassFilter(&query, hostClassFilter);
 
-    bson_from_buffer(&query, &bb);
+    bson_finish(&query);
 
 /* BEGIN RESULT DOCUMENT */
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_append_int(&bb, type, 1);
-    bson_append_int(&bb, cfr_software_t, 1);
+    bson fields;
+
+    BsonSelectReportFields(&fields, 5,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           type,
+                           cfr_software_t);
+
 // TODO: Add support for time of NOVA_PATCHES_INSTALLED and NOVA_PATCHES_AVAIL?
-    bson_from_buffer(&field, &bb);
 
 /* BEGIN SEARCH */
 
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
     time_t lastSeen = 0;
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         keyhash[0] = '\0';
         hostnames[0] = '\0';
@@ -572,11 +557,11 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
 
             if (strcmp(bson_iterator_key(&it1), type) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
 
                     rname[0] = '\0';
                     rversion[0] = '\0';
@@ -678,8 +663,6 @@ HubQuery *CFDB_QuerySoftware(EnterpriseDB *conn, char *keyHash, char *type, char
 HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, char *keyHash, char *lclass, bool regex, time_t from, time_t to,
                             HostClassFilter *hostClassFilter, int sort)
 {
-    bson_buffer bb;
-    bson query, field;
     mongo_cursor *cursor;
     bson_iterator it1, it2, it3;
     HubHost *hh;
@@ -689,37 +672,39 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, char *keyHash, char *lclass, boo
     char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE];
     int match_class, found = false;
 
-    bson_buffer_init(&bb);
+    bson query;
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(keyHash))
     {
-        bson_append_string(&bb, cfr_keyhash, keyHash);
+        bson_append_string(&query, cfr_keyhash, keyHash);
     }
 
-    BsonAppendHostClassFilter(&bb, hostClassFilter);
+    BsonAppendHostClassFilter(&query, hostClassFilter);
 
-    bson_from_buffer(&query, &bb);
+    bson_finish(&query);
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_append_int(&bb, cfr_class, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_class);
 
 /* BEGIN SEARCH */
 
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         keyhash[0] = '\0';
         hostnames[0] = '\0';
@@ -734,11 +719,11 @@ HubQuery *CFDB_QueryClasses(EnterpriseDB *conn, char *keyHash, char *lclass, boo
 
             if (strcmp(bson_iterator_key(&it1), cfr_class) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
                     strncpy(rclass, bson_iterator_key(&it2), CF_MAXVARSIZE - 1);
 
                     rex = 0;
@@ -828,10 +813,7 @@ HubQuery *CFDB_QueryClassSum(EnterpriseDB *conn, char **classes)
  * NOTE: Can probably be made more efficient using group by class keys with a count
  **/
 {
-    bson_buffer bb, *arr1, *obj;
     bson_iterator it1;
-    bson query, field;
-    mongo_cursor *cursor;
     Rlist *hostList = NULL, *recordList = NULL;
     Item *classList = NULL, *ip;
     char keyhash[CF_MAXVARSIZE], hostnames[CF_MAXVARSIZE], addresses[CF_MAXVARSIZE];
@@ -842,41 +824,43 @@ HubQuery *CFDB_QueryClassSum(EnterpriseDB *conn, char **classes)
     CfDebug("CFDB_QueryClassSum()\n");
 
     // query
-    bson_buffer_init(&bb);
+    bson query;
+    bson_init(&query);
 
     if (classes && classes[0])
     {
-        obj = bson_append_start_object(&bb, cfr_class_keys);
-        arr1 = bson_append_start_array(&bb, "$all");
-
-        for (i = 0; classes[i] != NULL; i++)
         {
-            snprintf(iStr, sizeof(iStr), "%d", i);
-            bson_append_string(obj, iStr, classes[i]);
-        }
+            bson_append_start_object(&query, cfr_class_keys);
 
-        bson_append_finish_object(arr1);
-        bson_append_finish_object(obj);
+            {
+                bson_append_start_array(&query, "$all");
+                for (i = 0; classes[i] != NULL; i++)
+                {
+                    snprintf(iStr, sizeof(iStr), "%d", i);
+                    bson_append_string(&query, iStr, classes[i]);
+                }
+                bson_append_finish_object(&query);
+            }
+
+            bson_append_finish_object(&query);
+        }
     }
 
-    bson_from_buffer(&query, &bb);
+    bson_finish(&query);
 
-// returned attribute
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
 
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
-    bson_destroy(&field);
+    BsonSelectReportFields(&fields, 3, cfr_keyhash, cfr_ip_array, cfr_host_array);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    bson_destroy(&fields);
     // query freed below
 
     // 1: collect hosts matching new class
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         keyhash[0] = '\0';
         addresses[0] = '\0';
@@ -904,31 +888,35 @@ HubQuery *CFDB_QueryClassSum(EnterpriseDB *conn, char **classes)
     // 3: count occurences of each class in subset of hosts
     for (ip = classList; ip != NULL; ip = ip->next)
     {
-        bson_buffer_init(&bb);
-
-        obj = bson_append_start_object(&bb, cfr_class_keys);
-        arr1 = bson_append_start_array(&bb, "$all");
-
-        for (i = 0; classes && classes[i] != NULL; i++)
+        bson_init(&query);
         {
-            snprintf(iStr, sizeof(iStr), "%d", i);
-            bson_append_string(obj, iStr, classes[i]);
+            bson_append_start_object(&query, cfr_class_keys);
+            {
+                bson_append_start_array(&query, "$all");
+
+                for (i = 0; classes && classes[i] != NULL; i++)
+                {
+                    snprintf(iStr, sizeof(iStr), "%d", i);
+                    bson_append_string(&query, iStr, classes[i]);
+                }
+                snprintf(iStr, sizeof(iStr), "%d", i);
+                bson_append_string(&query, iStr, ip->name);
+
+                bson_append_finish_object(&query);
+            }
+
+            bson_append_finish_object(&query);
         }
-        snprintf(iStr, sizeof(iStr), "%d", i);
-        bson_append_string(obj, iStr, ip->name);
 
-        bson_append_finish_object(arr1);
-        bson_append_finish_object(obj);
-
-        bson_from_buffer(&query, &bb);
+        bson_finish(&query);
 
         classFrequency = (int) mongo_count(conn, MONGO_BASE, "hosts", &query);
+
+        bson_destroy(&query);
 
         CfDebug("class (%s,%d)\n", ip->name, classFrequency);
 
         PrependRlistAlienUnlocked(&recordList, NewHubClassSum(NULL, ip->name, classFrequency));
-
-        bson_destroy(&query);
     }
 
     DeleteItemList(classList);
@@ -942,9 +930,6 @@ HubQuery *CFDB_QueryClassSum(EnterpriseDB *conn, char **classes)
 HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash, char *lversion, time_t from, time_t to, int lkept,
                                     int lnotkept, int lrepaired, int sort, HostClassFilter *hostClassFilter)
 {
-    bson_buffer bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1, it2, it3;
     HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL;
@@ -952,35 +937,36 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash, cha
     int match_kept, match_notkept, match_repaired, match_version, match_t;
     char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rversion[CF_MAXVARSIZE];
 
-    bson_buffer_init(&bb);
+    bson query;
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(keyHash))
     {
-        bson_append_string(&bb, cfr_keyhash, keyHash);
+        bson_append_string(&query, cfr_keyhash, keyHash);
     }
 
-    BsonAppendHostClassFilter(&bb, hostClassFilter);
+    BsonAppendHostClassFilter(&query, hostClassFilter);
 
-    bson_from_buffer(&query, &bb);
+    bson_finish(&query);
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_append_int(&bb, cfr_total_compliance, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_total_compliance);
 
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         keyhash[0] = '\0';
         hostnames[0] = '\0';
@@ -994,11 +980,11 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash, cha
 
             if (strcmp(bson_iterator_key(&it1), cfr_total_compliance) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
 
                     rkept = -1;
                     rrepaired = -1;
@@ -1096,35 +1082,33 @@ HubQuery *CFDB_QueryTotalCompliance(EnterpriseDB *conn, const char *keyHash, cha
 
 Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *host_class_filter)
 {
-    bson_buffer bb;
-    bson_buffer_init(&bb);
-    BsonAppendHostClassFilter(&bb, host_class_filter);
-    bson query;
-    bson_from_buffer(&query, &bb);
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_compliance_shifts, 1);
-    bson field;
-    bson_from_buffer(&field, &bb);
+    bson query;
+    bson_init(&query);
+    BsonAppendHostClassFilter(&query, host_class_filter);
+    bson_finish(&query);
+
+    bson fields;
+
+    BsonSelectReportFields(&fields, 2, cfr_keyhash, cfr_compliance_shifts);
 
     time_t to = GetShiftSlotStart(time(NULL));
     time_t from = to - (SHIFTS_PER_WEEK * SECONDS_PER_SHIFT);
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
     Sequence *records = SequenceCreate(5000, DeleteHubHostComplianceShifts);
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         const char *hostkey = NULL;
         BsonStringGet(&cursor->current, cfr_keyhash, &hostkey);
         assert(hostkey);
 
-        const char *compliance_shifts = NULL;
-        BsonObjectGet(&cursor->current, cfr_compliance_shifts, &compliance_shifts);
+        bson *compliance_shifts = NULL;
+        BsonObjectGet(mongo_cursor_bson( cursor ), cfr_compliance_shifts, &compliance_shifts);
         if (compliance_shifts)
         {
             HubHostComplianceShifts *record = NewHubHostComplianceShifts(hostkey);
@@ -1174,9 +1158,6 @@ Sequence *CFDB_QueryHostComplianceShifts(EnterpriseDB *conn, HostClassFilter *ho
 HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, char *llval, char *lrval,
                               const char *ltype, bool regex, time_t from, time_t to, HostClassFilter *hostClassFilter)
 {
-    bson_buffer bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1, it2, it3, it4, it5;
     HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL, *newlist = NULL;
@@ -1186,35 +1167,37 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, c
     char rscope[CF_MAXVARSIZE], rlval[CF_MAXVARSIZE], dtype[CF_MAXVARSIZE], rtype;
     void *rrval;
 
-    bson_buffer_init(&bb);
+    bson query;
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(keyHash))
     {
-        bson_append_string(&bb, cfr_keyhash, keyHash);
+        bson_append_string(&query, cfr_keyhash, keyHash);
     }
 
-    BsonAppendHostClassFilter(&bb, hostClassFilter);
+    BsonAppendHostClassFilter(&query, hostClassFilter);
 
-    bson_from_buffer(&query, &bb);
+    bson_finish(&query);
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_append_int(&bb, cfr_vars, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_vars);
 
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         keyhash[0] = '\0';
         hostnames[0] = '\0';
@@ -1232,11 +1215,11 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, c
 
             if (strcmp(bson_iterator_key(&it1), cfr_vars) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
 
                     strncpy(rscope, bson_iterator_key(&it2), CF_MAXVARSIZE);                    
 
@@ -1255,7 +1238,7 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, c
                         dtype[0] = '\0';
                         time_t timestamp = 0;
 
-                        bson_iterator_init(&it4, bson_iterator_value(&it3));
+                        bson_iterator_subiterator(&it3, &it4);
 
                         strncpy(rlval, bson_iterator_key(&it3), CF_MAXVARSIZE - 1);
 
@@ -1266,9 +1249,9 @@ HubQuery *CFDB_QueryVariables(EnterpriseDB *conn, char *keyHash, char *lscope, c
 
                                 switch (bson_iterator_type(&it4))
                                 {
-                                case bson_array:
-                                case bson_object:
-                                    bson_iterator_init(&it5, bson_iterator_value(&it4));
+                                case BSON_ARRAY:
+                                case BSON_OBJECT:
+                                    bson_iterator_subiterator(&it4, &it5);
                                     rtype = CF_LIST;
 
                                     while (bson_iterator_next(&it5))
@@ -1440,47 +1423,46 @@ HubQuery *CFDB_QueryPromiseCompliance(EnterpriseDB *conn, char *keyHash, char *l
         blue_horizon = CF_BLUEHOST_THRESHOLD_DEFAULT;
     }
 
-    bson_buffer bb;
-    bson query, field;
-
-    bson_buffer_init(&bb);
+    bson query;
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(keyHash))
     {
-        bson_append_string(&bb, cfr_keyhash, keyHash);
+        bson_append_string(&query, cfr_keyhash, keyHash);
     }
 
-    BsonAppendHostClassFilter(&bb, hostClassFilter);
+    BsonAppendHostClassFilter(&query, hostClassFilter);
 
-    bson_from_buffer(&query, &bb);
+    bson_finish(&query);
 
 /* BEGIN RESULT DOCUMENT */
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_append_int(&bb, cfr_promisecompl, 1);
-    bson_append_int(&bb, cfr_day, 1);
-    bson_append_int(&bb, cfr_is_black, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+
+    BsonSelectReportFields(&fields, 6,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_promisecompl,
+                           cfr_day,
+                           cfr_is_black);
 
 /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
     Rlist *record_list = NULL,
           *host_list = NULL;
 
     time_t blueHorizonTime = time(NULL) - blue_horizon;
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         bson_iterator it;
-        bson_iterator_init(&it, cursor->current.data);
+        bson_iterator_init(&it, mongo_cursor_bson(cursor));
 
         HubHost *hh = CreateEmptyHubHost();
 
@@ -1519,48 +1501,47 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
         blue_horizon = CF_BLUEHOST_THRESHOLD_DEFAULT;
     }
 
-    bson_buffer bb;
-    bson query, field;
-
-    bson_buffer_init(&bb);
+    bson query;
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(keyHash))
     {
-        bson_append_string(&bb, cfr_keyhash, keyHash);
+        bson_append_string(&query, cfr_keyhash, keyHash);
     }
 
-    BsonAppendHostClassFilter(&bb, hostClassFilter);
+    BsonAppendHostClassFilter(&query, hostClassFilter);
 
-    bson_from_buffer(&query, &bb);
+    bson_finish(&query);
 
 /* BEGIN RESULT DOCUMENT */
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_append_int(&bb, cfr_promisecompl, 1);
-    bson_append_int(&bb, cfr_day, 1);
-    bson_append_int(&bb, cfr_score_comp, 1);
-    bson_append_int(&bb, cfr_is_black, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+
+    BsonSelectReportFields(&fields, 7,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_promisecompl,
+                           cfr_day,
+                           cfr_score_comp,
+                           cfr_is_black);
 
 /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
     Rlist *record_list = NULL,
             *host_list = NULL;
 
     time_t blueHorizonTime = time(NULL) - blue_horizon;
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         bson_iterator it;
-        bson_iterator_init(&it, cursor->current.data);
+        bson_iterator_init(&it, mongo_cursor_bson( cursor ));
 
         Rlist *record_list_single_host = NULL;
         HubHost *hh = CreateEmptyHubHost();
@@ -1673,8 +1654,6 @@ HubQuery *CFDB_QueryWeightedPromiseCompliance(EnterpriseDB *conn, char *keyHash,
 HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, char *lhost, char *laddr, time_t lago,
                              bool regex, time_t from, time_t to, int sort, HostClassFilter *hostClassFilter)
 {
-    bson_buffer bb;
-    bson query, field;
     mongo_cursor *cursor;
     bson_iterator it1, it2, it3;
     HubHost *hh;
@@ -1685,37 +1664,38 @@ HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, cha
     bool match_host, match_hash, match_addr, match_ago, match_timestamp, found = false;
 
 /* BEGIN query document */
-    bson_buffer_init(&bb);
+    bson query;
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(keyHash))
     {
-        bson_append_string(&bb, cfr_keyhash, keyHash);
+        bson_append_string(&query, cfr_keyhash, keyHash);
     }
 
-    BsonAppendHostClassFilter(&bb, hostClassFilter);
+    BsonAppendHostClassFilter(&query, hostClassFilter);
 
-    bson_from_buffer(&query, &bb);
+    bson_finish(&query);
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_append_int(&bb, cfr_lastseen, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_lastseen);
 
 /* BEGIN SEARCH */
 
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         keyhash[0] = '\0';
         hostnames[0] = '\0';
@@ -1732,11 +1712,11 @@ HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, cha
 
             if (strcmp(bson_iterator_key(&it1), cfr_lastseen) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
                     strncpy(rhash, bson_iterator_key(&it2), CF_MAXVARSIZE - 1);
 
                     ravg = 0;
@@ -1863,9 +1843,6 @@ HubQuery *CFDB_QueryLastSeen(EnterpriseDB *conn, char *keyHash, char *lhash, cha
 
 HubQuery *CFDB_QueryMeter(EnterpriseDB *conn, bson *query, char *db)
 {
-    bson_buffer bb;
-    bson field;
-    mongo_cursor *cursor;
     bson_iterator it1, it2, it3;
     HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL;
@@ -1875,25 +1852,26 @@ HubQuery *CFDB_QueryMeter(EnterpriseDB *conn, bson *query, char *db)
 
 /* BEGIN RESULT DOCUMENT */
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_append_int(&bb, cfr_meter, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_meter);
 
 /* BEGIN SEARCH */
 
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    cursor = mongo_find(conn, db, query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, db, query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         keyhash[0] = '\0';
         hostnames[0] = '\0';
@@ -1907,11 +1885,11 @@ HubQuery *CFDB_QueryMeter(EnterpriseDB *conn, bson *query, char *db)
 
             if (strcmp(bson_iterator_key(&it1), cfr_meter) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
                     strncpy(rcolumn, bson_iterator_key(&it2), CF_SMALLBUF - 1);
 
                     rkept = 0;
@@ -1962,9 +1940,6 @@ HubQuery *CFDB_QueryMeter(EnterpriseDB *conn, bson *query, char *db)
 HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname, bool regex, int sort,
                                 HostClassFilter *hostClassFilter)
 {
-    bson_buffer bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1, it2, it3;
     HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL;
@@ -1975,35 +1950,38 @@ HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname, 
     time_t rtime;
 /* BEGIN query document */
 
-    bson_buffer_init(&bb);
+    bson query;
+
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(keyHash))
     {
-        bson_append_string(&bb, cfr_keyhash, keyHash);
+        bson_append_string(&query, cfr_keyhash, keyHash);
     }
 
-    BsonAppendHostClassFilter(&bb, hostClassFilter);
+    BsonAppendHostClassFilter(&query, hostClassFilter);
 
-    bson_from_buffer(&query, &bb);
+    bson_finish(&query);
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_append_int(&bb, cfr_performance, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_performance);
 
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         keyhash[0] = '\0';
         hostnames[0] = '\0';
@@ -2017,11 +1995,11 @@ HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname, 
 
             if (strcmp(bson_iterator_key(&it1), cfr_performance) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
                     snprintf(rhandle, CF_MAXVARSIZE, "%s", bson_iterator_key(&it2));
 
                     snprintf(rname, sizeof(rname), "(unknown)");
@@ -2113,48 +2091,47 @@ HubQuery *CFDB_QueryPerformance(EnterpriseDB *conn, char *keyHash, char *lname, 
 HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname, bool regex,
                            HostClassFilter *hostClassFilter)
 {
-    bson_buffer bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1, it2, it3;
     HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL;
     char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rname[CF_MAXVARSIZE];
     int match_name, found = false;
 
-    bson_buffer_init(&bb);
+    bson query;
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(keyHash))
     {
-        bson_append_string(&bb, cfr_keyhash, keyHash);
+        bson_append_string(&query, cfr_keyhash, keyHash);
     }
 
-    BsonAppendHostClassFilter(&bb, hostClassFilter);
+    BsonAppendHostClassFilter(&query, hostClassFilter);
 
-    bson_from_buffer(&query, &bb);
+    bson_finish(&query);
 
 /* BEGIN RESULT DOCUMENT */
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_append_int(&bb, cfr_setuid, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_setuid);
 
 /* BEGIN SEARCH */
 
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         keyhash[0] = '\0';
         hostnames[0] = '\0';
@@ -2168,11 +2145,11 @@ HubQuery *CFDB_QuerySetuid(EnterpriseDB *conn, char *keyHash, char *lname, bool 
 
             if (strcmp(bson_iterator_key(&it1), cfr_setuid) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
                     strncpy(rname, bson_iterator_string(&it2), CF_SMALLBUF - 1);
 
                     match_name = true;
@@ -2224,40 +2201,38 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname, 
                                 int sort, HostClassFilter *hostClassFilter)
 {
 /* BEGIN query document */
-    bson_buffer bb;
-    bson_buffer_init(&bb);
+    bson query;
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(keyHash))
     {
-        bson_append_string(&bb, cfr_keyhash, keyHash);
+        bson_append_string(&query, cfr_keyhash, keyHash);
     }
 
-    BsonAppendHostClassFilter(&bb, hostClassFilter);
-    bson query;
-    bson_from_buffer(&query, &bb);
+    BsonAppendHostClassFilter(&query, hostClassFilter);
+    bson_finish(&query);
 
 /* BEGIN RESULT DOCUMENT */
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_append_int(&bb, cfr_filechanges, 1);
+    bson fields;
 
-    bson field;
-    bson_from_buffer(&field, &bb);
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_filechanges);
 
 /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_ARCHIVE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_ARCHIVE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
     Rlist *record_list = NULL,
           *host_list = NULL;
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {        
         char keyhash[CF_MAXVARSIZE] = {0},
              hostnames[CF_BUFSIZE] = {0},
@@ -2269,7 +2244,7 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname, 
         HubHost *hh = CreateEmptyHubHost();
 
         bson_iterator it1;
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
@@ -2278,7 +2253,7 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname, 
             if (strcmp(bson_iterator_key(&it1), cfr_filechanges) == 0)
             {
                 bson_iterator it2;
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 rname[0] = '\0';
                 time_t timestamp = 0;
@@ -2286,7 +2261,7 @@ HubQuery *CFDB_QueryFileChanges(EnterpriseDB *conn, char *keyHash, char *lname, 
                 while (bson_iterator_next(&it2))
                 {
                     bson_iterator it3;
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
 
                     snprintf(handle, CF_MAXVARSIZE, "%s", bson_iterator_key(&it2));
 
@@ -2345,37 +2320,34 @@ HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname, cha
                              time_t from, time_t to, int sort, HostClassFilter *hostClassFilter)
 {
 /* BEGIN query document */
-    bson_buffer bb;
-    bson_buffer_init(&bb);
+    bson query;
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(keyHash))
     {
-        bson_append_string(&bb, cfr_keyhash, keyHash);
+        bson_append_string(&query, cfr_keyhash, keyHash);
     }
 
-    BsonAppendHostClassFilter(&bb, hostClassFilter);
+    BsonAppendHostClassFilter(&query, hostClassFilter);
+    bson_finish(&query);
 
-    bson query;
-    bson_from_buffer(&query, &bb);
+    bson fields;
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_append_int(&bb, cfr_filediffs, 1);
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_filediffs);
 
-    bson field;
-    bson_from_buffer(&field, &bb);
-
-    mongo_cursor *cursor = mongo_find(conn, MONGO_ARCHIVE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_ARCHIVE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
     Rlist *record_list = NULL,
           *host_list = NULL;
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         char keyhash[CF_MAXVARSIZE] = {0},
              hostnames[CF_BUFSIZE] = {0},
@@ -2385,7 +2357,7 @@ HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname, cha
         bool found = false;
 
         bson_iterator it1;
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {                
@@ -2394,7 +2366,7 @@ HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname, cha
             if (strcmp(bson_iterator_key(&it1), cfr_filediffs) == 0)
             {
                 bson_iterator it2;
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 char rname[CF_MAXVARSIZE] = {0},
                      rdiff[CF_BUFSIZE] = {0};
@@ -2404,7 +2376,7 @@ HubQuery *CFDB_QueryFileDiff(EnterpriseDB *conn, char *keyHash, char *lname, cha
                 while (bson_iterator_next(&it2))
                 {
                     bson_iterator it3;
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
 
                     while (bson_iterator_next(&it3))
                     {
@@ -2467,10 +2439,7 @@ static int QueryInsertHostInfo(EnterpriseDB *conn, Rlist *host_list)
  * Do a db lookup from keyhash to (hostname,ip) for all hosts in the list.
  **/
 {
-    bson_buffer bb;
-    bson query, field;
     HubHost *hh;
-    mongo_cursor *cursor;
     bson_iterator it1;
     char keyHash[CF_MAXVARSIZE], hostNames[CF_MAXVARSIZE], ipAddrs[CF_MAXVARSIZE];
 
@@ -2479,27 +2448,24 @@ static int QueryInsertHostInfo(EnterpriseDB *conn, Rlist *host_list)
         return false;
     }
 
+    bson fields;
+
+    BsonSelectReportFields(&fields, 3, cfr_keyhash, cfr_ip_array, cfr_host_array);
+
     // use empty query for now - filter result manually
+    bson query;
 
-    bson_empty(&query);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, bson_empty(&query), &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_from_buffer(&field, &bb);
+    bson_destroy(&fields);
 
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
-
-    bson_destroy(&field);
-
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         keyHash[0] = '\0';
         ipAddrs[0] = '\0';
         hostNames[0] = '\0';
 
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
@@ -2545,40 +2511,36 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash, Promis
         break;
     }
 
-    bson_buffer bb;
-
-    bson_buffer_init(&bb);
+    bson query;
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(keyHash))
     {
-        bson_append_string(&bb, cfr_keyhash, keyHash);
+        bson_append_string(&query, cfr_keyhash, keyHash);
     }
 
-    BsonAppendHostClassFilter(&bb, hostClassFilter);
+    BsonAppendHostClassFilter(&query, hostClassFilter);
+    bson_finish(&query);
 
-    bson query;
-    bson_from_buffer(&query, &bb);
+    bson fields;
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_append_int(&bb, promiseLogKey, 1);
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           promiseLogKey);
 
-    bson field;
-    bson_from_buffer(&field, &bb);
-
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
     int count = 0;
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         bson_iterator itHostData;
-        bson_iterator_init(&itHostData, cursor->current.data);
+        bson_iterator_init(&itHostData, mongo_cursor_bson( cursor ));
 
         HubHost *hh = NULL;
         char keyhash[CF_MAXVARSIZE] = {0};
@@ -2597,13 +2559,13 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash, Promis
             if (strcmp(bson_iterator_key(&itHostData), promiseLogKey) == 0)    // new format
             {
                 bson_iterator iterPromiseLogElement;
-                bson_iterator_init(&iterPromiseLogElement, bson_iterator_value(&itHostData));
+                bson_iterator_subiterator(&itHostData, &iterPromiseLogElement);
 
                 while (bson_iterator_next(&iterPromiseLogElement))
                 {
                     bson_iterator iterPromiseLogData;
 
-                    bson_iterator_init(&iterPromiseLogData, bson_iterator_value(&iterPromiseLogElement));
+                    bson_iterator_subiterator(&iterPromiseLogElement, &iterPromiseLogData);
 
                     bson objPromiseLogData;
                     bson_iterator_subobject( &iterPromiseLogElement, &objPromiseLogData);
@@ -2613,14 +2575,18 @@ int CFDB_QueryPromiseLogFromMain(EnterpriseDB *conn, const char *keyHash, Promis
 
                     if(!CompareStringOrRegex(rhandle, lhandle, regex) || !CompareStringOrRegex(rcause, lcause_rx, regex))
                     {
-                        bson_destroy(&objPromiseLogData);
                         continue;
                     }
 
-                    const char *array = BsonGetArrayValue(&objPromiseLogData, cfr_time);
+                    bson array;
+
+                    if(!BsonGetArrayValue(&objPromiseLogData, cfr_time, &array))
+                    {
+                        continue;
+                    }
+
                     bson_iterator iterTimestamps;
-                    bson_iterator_init(&iterTimestamps, array);
-                    bson_destroy(&objPromiseLogData);
+                    bson_iterator_init(&iterTimestamps, &array);
 
                     while (bson_iterator_next(&iterTimestamps))
                     {
@@ -2756,12 +2722,12 @@ int CFDB_QueryPromiseLogFromOldColl(EnterpriseDB *conn, const char *keyHash, Pro
         return 0;
     }
 
-    bson_buffer bb;
-    bson_buffer_init(&bb);
+    bson query;
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(keyHash))
     {
-        bson_append_string(&bb,cfr_keyhash,keyHash);
+        bson_append_string(&query,cfr_keyhash,keyHash);
     }
 
 
@@ -2769,49 +2735,47 @@ int CFDB_QueryPromiseLogFromOldColl(EnterpriseDB *conn, const char *keyHash, Pro
     {
         if(regex)
         {
-            bson_append_regex(&bb,cfr_promisehandle,lhandle,"");
+            bson_append_regex(&query,cfr_promisehandle,lhandle,"");
         }
         else
         {
-            bson_append_string(&bb,cfr_promisehandle,lhandle);
+            bson_append_string(&query,cfr_promisehandle,lhandle);
         }
     }
 
     if(from || to)
-        {
-        bson_buffer *timeRange = bson_append_start_object(&bb, cfr_time);
+    {
+        bson_append_start_object(&query, cfr_time);
 
         if(from)
-           {
-           bson_append_int(timeRange, "$gte",from);
-           }
-
-        if(to)
-           {
-           bson_append_int(timeRange, "$lte",to);
-           }
-
-        bson_append_finish_object(timeRange);
+        {
+            bson_append_int(&query, "$gte",from);
         }
 
-    AppendHostKeys(conn, &bb, hostClassFilter);
+        if(to)
+        {
+            bson_append_int(&query, "$lte",to);
+        }
 
-    bson query;
-    bson_from_buffer(&query, &bb);
+        bson_append_finish_object(&query);
+    }
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb,cfr_keyhash,1);
-    bson_append_int(&bb,cfr_cause,1);
-    bson_append_int(&bb,cfr_promisehandle,1);
-    bson_append_int(&bb,cfr_time,1);
+    AppendHostKeys(conn, &query, hostClassFilter);
 
-    bson field;
-    bson_from_buffer(&field,&bb);
+    bson_finish(&query);
 
-    mongo_cursor *cursor = mongo_find(conn,collName,&query,&field,0,0,CF_MONGO_SLAVE_OK);
+    bson fields;
+
+    BsonSelectReportFields(&fields,4,
+                           cfr_keyhash,
+                           cfr_cause,
+                           cfr_promisehandle,
+                           cfr_time);
+
+    mongo_cursor *cursor = mongo_find(conn,collName,&query,&fields,0,0,CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
     int count = 0;
     HubHost *hh = NULL;
@@ -2820,10 +2784,10 @@ int CFDB_QueryPromiseLogFromOldColl(EnterpriseDB *conn, const char *keyHash, Pro
     char rcause[CF_BUFSIZE] = {0};
     char keyhash[CF_MAXVARSIZE] = {0};
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         bson_iterator it1;
-        bson_iterator_init(&it1,cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson( cursor ) );
 
         keyhash[0] = '\0';
         rhandle[0] = '\0';
@@ -2881,9 +2845,6 @@ int CFDB_QueryPromiseLogFromOldColl(EnterpriseDB *conn, const char *keyHash, Pro
 HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, char *lmonth, char *lyear, int sort,
                                 HostClassFilter *hostClassFilter)
 {
-    bson_buffer bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1, it2, it3;
     HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL;
@@ -2892,41 +2853,43 @@ HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, c
     char keyhash[CF_MAXVARSIZE], hostnames[CF_BUFSIZE], addresses[CF_BUFSIZE], rhandle[CF_MAXVARSIZE];
     int match_day, match_month, match_year, found = false;
 
-    bson_buffer_init(&bb);
+    bson query;
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(keyHash))
     {
-        bson_append_string(&bb, cfr_keyhash, keyHash);
+        bson_append_string(&query, cfr_keyhash, keyHash);
     }
 
-    BsonAppendHostClassFilter(&bb, hostClassFilter);
+    BsonAppendHostClassFilter(&query, hostClassFilter);
 
-    bson_from_buffer(&query, &bb);
+    bson_finish(&query);
 
     // Turn start_time into Day Month Year
 
 /* BEGIN RESULT DOCUMENT */
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_append_int(&bb, cfr_valuereport, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_valuereport);
 
 /* BEGIN SEARCH */
 
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         keyhash[0] = '\0';
         hostnames[0] = '\0';
@@ -2940,12 +2903,12 @@ HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, c
 
             if (strcmp(bson_iterator_key(&it1), cfr_valuereport) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
                     snprintf(rhandle, CF_MAXVARSIZE, "%s", bson_iterator_key(&it2));
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
 
                     rday[0] = '\0';
                     rkept = 0;
@@ -3031,9 +2994,6 @@ HubQuery *CFDB_QueryValueReport(EnterpriseDB *conn, char *keyHash, char *lday, c
 HubQuery *CFDB_QueryValueGraph(EnterpriseDB *conn, char *keyHash, char *lday, char *lmonth, char *lyear, int sort,
                                char *classRegex)
 {
-    bson_buffer bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1, it2, it3;
     HubHost *hh;
     Rlist *record_list = NULL, *host_list = NULL;
@@ -3046,45 +3006,48 @@ HubQuery *CFDB_QueryValueGraph(EnterpriseDB *conn, char *keyHash, char *lday, ch
     time_t epoch;
 
 /* BEGIN query document */
-    bson_buffer_init(&bb);
+
+    bson query;
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(keyHash))
     {
-        bson_append_string(&bb, cfr_keyhash, keyHash);
+        bson_append_string(&query, cfr_keyhash, keyHash);
     }
 
     if (!NULL_OR_EMPTY(classRegex))
     {
         AnchorRegex(classRegex, classRegexAnch, sizeof(classRegexAnch));
-        bson_append_regex(&bb, cfr_class_keys, classRegexAnch, "");
+        bson_append_regex(&query, cfr_class_keys, classRegexAnch, "");
     }
 
-    bson_from_buffer(&query, &bb);
+    bson_finish(&query);
 
     // Turn start_time into Day Month Year
 
 /* BEGIN RESULT DOCUMENT */
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_append_int(&bb, cfr_valuereport, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_valuereport);
 
 /* BEGIN SEARCH */
 
     hostnames[0] = '\0';
     addresses[0] = '\0';
 
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         keyhash[0] = '\0';
         hostnames[0] = '\0';
@@ -3098,12 +3061,12 @@ HubQuery *CFDB_QueryValueGraph(EnterpriseDB *conn, char *keyHash, char *lday, ch
 
             if (strcmp(bson_iterator_key(&it1), cfr_valuereport) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
                     snprintf(rhandle, CF_MAXVARSIZE, "%s", bson_iterator_key(&it2));
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
 
                     rday[0] = '\0';
                     rkept = 0;
@@ -3199,10 +3162,10 @@ static void GetOldClientVersions(Rlist **rp)
     PrependRScalar(rp, (void *) "cfengine_3_0.*", CF_SCALAR);
 }
 
-static void SkipOldClientVersionsFilter(bson_buffer *bb)
+static void SkipOldClientVersionsFilter(bson *b)
 /* NOTE: Ignore data from agent versions < 3.3.0 */
 {
-    if (bb == NULL)
+    if (b == NULL)
     {
         return;
     }
@@ -3210,9 +3173,11 @@ static void SkipOldClientVersionsFilter(bson_buffer *bb)
     Rlist *old_client_versions = NULL;
     GetOldClientVersions(&old_client_versions);
 
-    bson_buffer *ignore_class_buffer = bson_append_start_object(bb, cfr_class_keys);
-    BsonAppendArrayRx(ignore_class_buffer, "$nin", old_client_versions);
-    bson_append_finish_object(ignore_class_buffer);
+    {
+        bson_append_start_object(b, cfr_class_keys);
+        BsonAppendArrayRx(b, "$nin", old_client_versions);
+        bson_append_finish_object(b);
+    }
 
     DeleteRlist(old_client_versions);
 }
@@ -3228,28 +3193,27 @@ int CFDB_CountSkippedOldAgents(EnterpriseDB *conn, char *keyhash,
 {
     int result = -1;
 
-    bson_buffer bb;
-    bson_buffer_init(&bb);
+    bson query;
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(keyhash))
     {
-        bson_append_string(&bb, cfr_keyhash, keyhash);
+        bson_append_string(&query, cfr_keyhash, keyhash);
     }
 
-    BsonAppendHostClassFilter(&bb, host_class_filter);
+    BsonAppendHostClassFilter(&query, host_class_filter);
 
     /* Search only for old agents (< 3.3.0) */
     Rlist *old_client_versions = NULL;
     GetOldClientVersions(&old_client_versions);
 
-    bson_buffer *ignoreClassBuffer = bson_append_start_object(&bb, cfr_class_keys);
-    BsonAppendArrayRx(ignoreClassBuffer, "$in", old_client_versions);
-    bson_append_finish_object(ignoreClassBuffer);
+    bson_append_start_object(&query, cfr_class_keys);
+    BsonAppendArrayRx(&query, "$in", old_client_versions);
+    bson_append_finish_object(&query);
 
     DeleteRlist(old_client_versions);
 
-    bson query;
-    bson_from_buffer(&query, &bb);
+    bson_finish(&query);
 
     result = mongo_count(conn, MONGO_BASE, MONGO_HOSTS_COLLECTION, &query);
 
@@ -3271,15 +3235,15 @@ HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, b
     }
 
     /* BEGIN query document */
-    bson_buffer bb;    
-    bson_buffer_init(&bb);
+    bson query;
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(keyHash))
     {
-        bson_append_string(&bb, cfr_keyhash, keyHash);
+        bson_append_string(&query, cfr_keyhash, keyHash);
     }
 
-    BsonAppendHostClassFilter(&bb, hostClassFilter);
+    BsonAppendHostClassFilter(&query, hostClassFilter);
 
     /* Ignore data from client versions < 3.3.0
      * Old clients reported time (hours ago),
@@ -3287,39 +3251,39 @@ HubQuery *CFDB_QueryBundleSeen(EnterpriseDB *conn, char *keyHash, char *lname, b
      *
      * NOTE: this check can be removed after all clients are upgraded to version >= 3.3.0
      */
-    SkipOldClientVersionsFilter(&bb);
 
-    bson query;
-    bson_from_buffer(&query, &bb);
+    SkipOldClientVersionsFilter(&query);
+
+    bson_finish(&query);
 
     /* BEGIN RESULT DOCUMENT */
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_append_int(&bb, cfr_bundles, 1);
-    bson_append_int(&bb, cfr_time, 1);
-    bson_append_int(&bb, cfr_is_black, 1);
-    bson field;
-    bson_from_buffer(&field, &bb);
+    bson fields;
+
+    BsonSelectReportFields(&fields, 6,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_bundles,
+                           cfr_time,
+                           cfr_is_black);
 
     /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
     Rlist *record_list = NULL,
             *host_list = NULL;
 
     time_t blueHorizonTimestamp = time(NULL) - blue_horizon;
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {        
         bson_iterator it1;
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         HubHost *hh = CreateEmptyHubHost();
         bool found = BsonIterGetBundleReportDetails(&it1, lname, regex, blueHorizonTimestamp, hh, &record_list );
@@ -3357,19 +3321,17 @@ HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *
         blue_horizon = CF_BLUEHOST_THRESHOLD_DEFAULT;
     }
 
-    bson_buffer bb;
-    bson query, field;
-
 /* BEGIN query document */
 
-    bson_buffer_init(&bb);
+    bson query;
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(keyHash))
     {
-        bson_append_string(&bb, cfr_keyhash, keyHash);
+        bson_append_string(&query, cfr_keyhash, keyHash);
     }
 
-    BsonAppendHostClassFilter(&bb, hostClassFilter);
+    BsonAppendHostClassFilter(&query, hostClassFilter);
 
     /* Ignore data from client versions < 3.3.0
      * Old clients reported time (hours ago),
@@ -3377,37 +3339,39 @@ HubQuery *CFDB_QueryWeightedBundleSeen(EnterpriseDB *conn, char *keyHash, char *
      *
      * NOTE: this check can be removed after all clients are upgraded to version >= 3.3.0
      */
-    SkipOldClientVersionsFilter(&bb);
 
-    bson_from_buffer(&query, &bb);
+    SkipOldClientVersionsFilter(&query);
+
+    bson_finish(&query);
 
     /* BEGIN RESULT DOCUMENT */
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_append_int(&bb, cfr_bundles, 1);
-    bson_append_int(&bb, cfr_time, 1);
-    bson_append_int(&bb, cfr_is_black, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+
+    BsonSelectReportFields(&fields, 6,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           cfr_bundles,
+                           cfr_time,
+                           cfr_is_black);
 
     /* BEGIN SEARCH */
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
     Rlist *record_list = NULL,
             *host_list = NULL;
 
     time_t blueHorizonTime = time(NULL) - blue_horizon;
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         bson_iterator it1;
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         Rlist *record_list_single_host = NULL;
 
@@ -3529,15 +3493,14 @@ Item *CFDB_QueryVitalIds(EnterpriseDB *conn, char *keyHash)
  */
 {
     Item *retVal;
-    bson_buffer bb;
-    bson query;
 
-    bson_buffer_init(&bb);
+    bson query;
+    bson_init(&query);
 
     if (keyHash != NULL)
     {
-        bson_append_string(&bb, cfr_keyhash, keyHash);
-        bson_from_buffer(&query, &bb);
+        bson_append_string(&query, cfr_keyhash, keyHash);
+        bson_finish(&query);
     }
     else
     {
@@ -3559,9 +3522,6 @@ HubVital *CFDB_QueryVitalsMeta(EnterpriseDB *conn, char *keyHash)
  * Return a list of mag vital ids and meta-data, restricted to one host.
  */
 {
-    bson_buffer bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1;
     HubVital *hv = NULL;
     char id[CF_MAXVARSIZE];
@@ -3569,26 +3529,25 @@ HubVital *CFDB_QueryVitalsMeta(EnterpriseDB *conn, char *keyHash)
     char description[CF_MAXVARSIZE];
 
     // query
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyHash);
-    bson_from_buffer(&query, &bb);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfr_keyhash, keyHash);
+    bson_finish(&query);
 
     // field
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfm_id, 1);
-    bson_append_int(&bb, cfm_units, 1);
-    bson_append_int(&bb, cfm_description, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+
+    BsonSelectReportFields(&fields, 3, cfm_id, cfm_units, cfm_description);
 
     // use mag collection since it is updated most frequently
-    cursor = mongo_find(conn, MONGO_DATABASE_MON_MG, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE_MON_MG, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         id[0] = '\0';
         units[0] = '\0';
@@ -3638,26 +3597,25 @@ static int Nova_MagViewOffset(int start_slot, int db_slot, int wrap)
 
 int CFDB_QueryMagView2(EnterpriseDB *conn, char *keyhash, char *monId, time_t start_time, double *qa, double *ea, double *da, double *ga)
 {
-    bson_buffer bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1, it2;
     int ok = false, i, start_slot, wrap_around, windowSlot;
     double *monArr = NULL;
 
     // query
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_append_string(&bb, cfm_id, monId);
-    bson_from_buffer(&query, &bb);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfr_keyhash, keyhash);
+    bson_append_string(&query, cfm_id, monId);
+    bson_finish(&query);
 
     // result
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfm_q_arr, 1);
-    bson_append_int(&bb, cfm_expect_arr, 1);
-    bson_append_int(&bb, cfm_deviance_arr, 1);
-    bson_append_int(&bb, cfm_grad_arr, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+
+    BsonSelectReportFields(&fields, 4,
+                           cfm_q_arr,
+                           cfm_expect_arr,
+                           cfm_deviance_arr,
+			   cfm_grad_arr);
 
 /* Check from wrap around */
 
@@ -3679,13 +3637,14 @@ int CFDB_QueryMagView2(EnterpriseDB *conn, char *keyhash, char *monId, time_t st
 
 /* BEGIN SEARCH */
 
-    cursor = mongo_find(conn, MONGO_DATABASE_MON_MG, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
-    bson_destroy(&query);
-    bson_destroy(&field);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE_MON_MG, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
-    if (mongo_cursor_next(cursor))      // max one document
+    bson_destroy(&query);
+    bson_destroy(&fields);
+
+    if (mongo_cursor_next(cursor) == MONGO_OK)      // max one document
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))        // q, e, or d array
         {
@@ -3712,7 +3671,7 @@ int CFDB_QueryMagView2(EnterpriseDB *conn, char *keyhash, char *monId, time_t st
                 continue;
             }
 
-            bson_iterator_init(&it2, bson_iterator_value(&it1));
+            bson_iterator_subiterator(&it1, &it2);
 
             for (i = 0; bson_iterator_next(&it2); i++)  // array elements
             {
@@ -3757,9 +3716,6 @@ int CFDB_QueryMagView2(EnterpriseDB *conn, char *keyhash, char *monId, time_t st
 
 int CFDB_QueryMonView(EnterpriseDB *conn, char *keyhash, char *monId, enum monitord_rep rep_type, double *qa, double *ea, double *da, double *ga)
 {
-    bson_buffer bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1, it2;
     double *monArr = NULL;
     int ok = false;
@@ -3793,26 +3749,26 @@ int CFDB_QueryMonView(EnterpriseDB *conn, char *keyhash, char *monId, enum monit
     }
 
     // query
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_append_string(&bb, cfm_id, monId);
-    bson_from_buffer(&query, &bb);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfr_keyhash, keyhash);
+    bson_append_string(&query, cfm_id, monId);
+    bson_finish(&query);
 
     // result
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfm_q_arr, 1);
-    bson_append_int(&bb, cfm_expect_arr, 1);
-    bson_append_int(&bb, cfm_deviance_arr, 1);
-    bson_append_int(&bb, cfm_grad_arr, 1);
-    bson_from_buffer(&field, &bb);
 
-    cursor = mongo_find(conn, db, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    bson fields;
+
+    BsonSelectReportFields(&fields, 4, cfm_q_arr, cfm_expect_arr, cfm_deviance_arr, cfm_grad_arr);
+
+    mongo_cursor *cursor = mongo_find(conn, db, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    if (mongo_cursor_next(cursor))      // only one document
+    if (mongo_cursor_next(cursor) == MONGO_OK)      // only one document
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))        // q, e, or d array
         {
@@ -3839,7 +3795,7 @@ int CFDB_QueryMonView(EnterpriseDB *conn, char *keyhash, char *monId, enum monit
                 continue;
             }
 
-            bson_iterator_init(&it2, bson_iterator_value(&it1));
+            bson_iterator_subiterator(&it1, &it2);
 
             for (i = 0; bson_iterator_next(&it2); i++)  // array elements
             {
@@ -3864,16 +3820,12 @@ int CFDB_QueryMonView(EnterpriseDB *conn, char *keyhash, char *monId, enum monit
 
 int CFDB_CountHosts(EnterpriseDB *conn, HostClassFilter *host_class_filter, HostColourFilter *host_colour_filter)
 {
-    bson_buffer bb;
-
-    bson_buffer_init(&bb);
-
-    BsonAppendHostClassFilter(&bb, host_class_filter);
-    BsonAppendHostColourFilter(&bb, host_colour_filter);
-
     bson query;
+    bson_init(&query);
 
-    bson_from_buffer(&query, &bb);
+    BsonAppendHostClassFilter(&query, host_class_filter);
+    BsonAppendHostColourFilter(&query, host_colour_filter);
+    bson_finish(&query);
 
     int count = CFDB_CountHostsGeneric(conn, &query);
 
@@ -3888,16 +3840,11 @@ bool CFDB_HasMatchingHost(EnterpriseDB *conn, char *hostKey, HostClassFilter *ho
 {
     assert(SafeStringLength(hostKey) > 0);
 
-    bson_buffer bb;
-
-    bson_buffer_init(&bb);
-
-    bson_append_string(&bb, cfr_keyhash, hostKey);
-    BsonAppendHostClassFilter(&bb, hostClassFilter);
-
     bson query;
-
-    bson_from_buffer(&query, &bb);
+    bson_init(&query);
+    bson_append_string(&query, cfr_keyhash, hostKey);
+    BsonAppendHostClassFilter(&query, hostClassFilter);
+    bson_finish(&query);
 
     int count = CFDB_CountHostsGeneric(conn, &query);
 
@@ -3926,35 +3873,33 @@ int CFDB_QueryHostName(EnterpriseDB *conn, char *ipAddr, char *hostName, int hos
  * Falls back to ip addres (parameter).
  */
 {
-    bson_buffer bb;
-    bson query, field;
     bson_iterator it1, it2;
-    mongo_cursor *cursor;
     int ret = false;
 
     // query
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_ip_array, ipAddr);
-    bson_from_buffer(&query, &bb);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfr_ip_array, ipAddr);
+    bson_finish(&query);
 
     // result
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
 
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    BsonSelectReportFields(&fields, 1, cfr_host_array);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    if (mongo_cursor_next(cursor))      // take first match
+    if (mongo_cursor_next(cursor) == MONGO_OK)      // take first match
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
             if (strcmp(bson_iterator_key(&it1), cfr_host_array) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 if (bson_iterator_next(&it2))
                 {
@@ -3984,33 +3929,29 @@ int CFDB_QueryHostName(EnterpriseDB *conn, char *ipAddr, char *hostName, int hos
 
 bool CFDB_QueryLastUpdate(EnterpriseDB *conn, char *db, char *dbkey, char *keyhash, time_t *date, int *size)
 {
-    bson_buffer b, bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1;
     bool ok = false;
 
 /* BEGIN query document */
 
-    bson_buffer_init(&b);
-    bson_append_string(&b, dbkey, keyhash);
-    bson_from_buffer(&query, &b);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, dbkey, keyhash);
+    bson_finish(&query);
 
 /* BEGIN RESULT DOCUMENT */
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, dbkey, 1);
-    bson_append_int(&bb, cfr_day, 1);
-    bson_append_int(&bb, cfr_last_update_size, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
 
-    cursor = mongo_find(conn, db, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    BsonSelectReportFields(&fields, 3, dbkey, cfr_day, cfr_last_update_size);
+
+    mongo_cursor *cursor = mongo_find(conn, db, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
@@ -4036,9 +3977,6 @@ bool CFDB_QueryLastUpdate(EnterpriseDB *conn, char *db, char *dbkey, char *keyha
 
 bool CFDB_QueryHistogram(EnterpriseDB *conn, char *keyhash, char *monId, double *histo)
 {
-    bson_buffer bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1, it2;
     bool found = false;
     int i;
@@ -4049,27 +3987,27 @@ bool CFDB_QueryHistogram(EnterpriseDB *conn, char *keyhash, char *monId, double 
     }
 
 /* BEGIN query document */
-
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, keyhash);
-    bson_append_string(&bb, cfm_id, monId);
-    bson_from_buffer(&query, &bb);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfr_keyhash, keyhash);
+    bson_append_string(&query, cfm_id, monId);
+    bson_finish(&query);
 
 /* BEGIN RESULT DOCUMENT */
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_histo, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+
+    BsonSelectReportFields(&fields, 1, cfr_histo);
 
 /* BEGIN SEARCH */
 
-    cursor = mongo_find(conn, MONGO_DATABASE_MON_MG, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE_MON_MG, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    if (mongo_cursor_next(cursor))      // only one doc
+    if (mongo_cursor_next(cursor) == MONGO_OK)      // only one doc
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
@@ -4078,7 +4016,7 @@ bool CFDB_QueryHistogram(EnterpriseDB *conn, char *keyhash, char *monId, double 
             if (strcmp(bson_iterator_key(&it1), cfr_histo) == 0)
             {
                 i = 0;
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
@@ -4110,29 +4048,27 @@ int CFDB_QueryPromiseAttr(EnterpriseDB *conn, char *handle, char *attrKey, char 
  * (e.g. comment, promisee, etc.)
  */
 {
-    bson_buffer b;
     bson_iterator it1;
-    bson query, field;
-    mongo_cursor *cursor;
     int found = false;
 
     // query
-    bson_buffer_init(&b);
-    bson_append_string(&b, cfp_handle, handle);
-    bson_from_buffer(&query, &b);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfp_handle, handle);
+    bson_finish(&query);
 
     // returned attribute
-    bson_buffer_init(&b);
-    bson_append_int(&b, attrKey, 1);
-    bson_from_buffer(&field, &b);
+    bson fields;
 
-    cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    BsonSelectReportFields(&fields, 1, attrKey);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    if (mongo_cursor_next(cursor))      // take first doc should be (unique)
+    if (mongo_cursor_next(cursor) == MONGO_OK)      // take first doc should be (unique)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
@@ -4159,29 +4095,27 @@ Item *CFDB_QueryExpandedPromiseAttr(EnterpriseDB *conn, char *handle, char *attr
  * MEMORY NOTE: Caller must free returned val (!=NULL) with DeleteItemList()
  */
 {
-    bson_buffer b;
     bson_iterator it1, it2;
-    bson query, field;
-    mongo_cursor *cursor;
     Item *matched = { 0 };
 
     // query
-    bson_buffer_init(&b);
-    bson_append_string(&b, cfp_handle_exp, handle);
-    bson_from_buffer(&query, &b);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfp_handle_exp, handle);
+    bson_finish(&query);
 
 // returned attribute
-    bson_buffer_init(&b);
-    bson_append_int(&b, attrKey, 1);
-    bson_from_buffer(&field, &b);
+    bson fields;
 
-    cursor = mongo_find(conn, MONGO_PROMISES_EXP, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    BsonSelectReportFields(&fields, 1, attrKey);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_EXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
@@ -4191,7 +4125,7 @@ Item *CFDB_QueryExpandedPromiseAttr(EnterpriseDB *conn, char *handle, char *attr
                 // constraints are stored in an array
                 if (strcmp(attrKey, cfp_constraints_exp) == 0)
                 {
-                    bson_iterator_init(&it2, bson_iterator_value(&it1));
+                    bson_iterator_subiterator(&it1, &it2);
 
                     while (bson_iterator_next(&it2))
                     {
@@ -4217,38 +4151,35 @@ Item *CFDB_QueryExpandedPromiseAttr(EnterpriseDB *conn, char *handle, char *attr
 
 HubQuery *CFDB_QueryHandlesForBundlesWithComments(EnterpriseDB *conn, char *bType, char *bName)
 {
-    bson_buffer bb;
     bson_iterator it1;
-    bson query, field;
-    mongo_cursor *cursor;
     Rlist *recordList = NULL;
     char handle[CF_MAXVARSIZE] = { 0 }, comment[CF_BUFSIZE] = { 0 };
 
     // query
-    bson_buffer_init(&bb);
+    bson query;
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(bType))
     {
-        bson_append_string(&bb, cfp_bundletype, bType);
-        bson_append_string(&bb, cfp_bundlename, bName);
+        bson_append_string(&query, cfp_bundletype, bType);
+        bson_append_string(&query, cfp_bundlename, bName);
     }
 
-    bson_from_buffer(&query, &bb);
+    bson_finish(&query);
 
 // returned attribute
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfp_handle, 1);
-    bson_append_int(&bb, cfp_comment, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
 
-    cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    BsonSelectReportFields(&fields, 2, cfp_handle, cfp_comment);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         handle[0] = '\0';
         comment[0] = '\0';
@@ -4289,84 +4220,90 @@ HubQuery *CFDB_QueryPromiseHandles(EnterpriseDB *conn, char *promiser, char *pro
  * mess in Knowledge Management. 
  */
 {
-    bson_buffer bb, *obj, *arr;
     bson_iterator it1;
-    bson query, field;
-    mongo_cursor *cursor;
     Rlist *recordList = NULL;
 
-    bson_buffer_init(&bb);
+    bson query;
+    bson_init(&query);
 
     if (regex)
     {
         if (!NULL_OR_EMPTY(promiser))
         {
-            bson_append_regex(&bb, cfp_promiser, promiser, "");
+            bson_append_regex(&query, cfp_promiser, promiser, "");
         }
         else if (!NULL_OR_EMPTY(promiserType))
         {
-            bson_append_regex(&bb, cfp_promisetype, promiserType, "");
+            bson_append_regex(&query, cfp_promisetype, promiserType, "");
         }
         else if (!NULL_OR_EMPTY(bType))
         {
-            bson_append_regex(&bb, cfp_bundletype, bType, "");
-            bson_append_regex(&bb, cfp_bundlename, bName, "");
+            bson_append_regex(&query, cfp_bundletype, bType, "");
+            bson_append_regex(&query, cfp_bundlename, bName, "");
         }
     }
     else
     {
         if (!NULL_OR_EMPTY(promiser))
         {
-            bson_append_string(&bb, cfp_promiser, promiser);
+            bson_append_string(&query, cfp_promiser, promiser);
         }
         else if (!NULL_OR_EMPTY(promiserType))
         {
-            bson_append_string(&bb, cfp_promisetype, promiserType);
+            bson_append_string(&query, cfp_promisetype, promiserType);
         }
         else if (!NULL_OR_EMPTY(bType))
         {
-            bson_append_string(&bb, cfp_bundletype, bType);
-            bson_append_string(&bb, cfp_bundlename, bName);
+            bson_append_string(&query, cfp_bundletype, bType);
+            bson_append_string(&query, cfp_bundlename, bName);
         }
     }
 
     if (filter)
     {
         // filter promises of type vars and classes
-        obj = bson_append_start_object(&bb, cfp_promisetype);
-        arr = bson_append_start_array(obj, "$nin");
+        {
+            bson_append_start_object(&query, cfp_promisetype);
+            {
+                bson_append_start_array(&query, "$nin");
 
-        bson_append_string(arr, "0", "vars");
-        bson_append_string(arr, "1", "classes");
+                bson_append_string(&query, "0", "vars");
+                bson_append_string(&query, "1", "classes");
 
-        bson_append_finish_object(arr);
-        bson_append_finish_object(obj);
+                bson_append_finish_object(&query);
+            }
+            bson_append_finish_object(&query);
+        }
 
         // filter promises in edit_line and server bundles
-        obj = bson_append_start_object(&bb, cfp_bundletype);
-        arr = bson_append_start_array(obj, "$nin");
+        {
+            bson_append_start_object(&query, cfp_bundletype);
+            {
+                bson_append_start_array(&query, "$nin");
 
-        bson_append_string(arr, "0", "edit_line");
-        bson_append_string(arr, "1", "server");
+                bson_append_string(&query, "0", "edit_line");
+                bson_append_string(&query, "1", "server");
 
-        bson_append_finish_object(arr);
-        bson_append_finish_object(obj);
+                bson_append_finish_object(&query);
+            }
+            bson_append_finish_object(&query);
+        }
     }
 
-    bson_from_buffer(&query, &bb);
+    bson_finish(&query);
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfp_handle, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
 
-    cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    BsonSelectReportFields(&fields, 1, cfp_handle);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
@@ -4394,30 +4331,27 @@ HubQuery *CFDB_QueryPromises(EnterpriseDB *conn, PromiseFilter *filter)
  *        - see previous CFDB_QueryPromise() (VCS history)
  */
 {
-    bson_buffer bb;
-
     bson query;
 
-    bson_buffer_init(&bb);
-    BsonAppendPromiseFilter(&bb, filter);
-    bson_from_buffer(&query, &bb);
+    bson_init(&query);
+    BsonAppendPromiseFilter(&query, filter);
+    bson_finish(&query);
 
     bson fields;
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfp_bundlename, 1);
-    bson_append_int(&bb, cfp_bundletype, 1);
-    bson_append_int(&bb, cfp_handle, 1);
-    bson_append_int(&bb, cfp_promiser, 1);
-    bson_append_int(&bb, cfp_promisee, 1);
-    bson_append_int(&bb, cfp_promisetype, 1);
-    bson_append_int(&bb, cfp_comment, 1);
-    bson_append_int(&bb, cfp_classcontext, 1);
-    bson_append_int(&bb, cfp_file, 1);
-    bson_append_int(&bb, cfp_lineno, 1);
-    bson_append_int(&bb, cfp_bundleargs, 1);
-    bson_append_int(&bb, cfp_constraints, 1);
-    bson_from_buffer(&fields, &bb);
+    BsonSelectReportFields(&fields, 12,
+                           cfp_bundlename,
+                           cfp_bundletype,
+                           cfp_handle,
+                           cfp_promiser,
+                           cfp_promisee,
+                           cfp_promisetype,
+                           cfp_comment,
+                           cfp_classcontext,
+                           cfp_file,
+                           cfp_lineno,
+                           cfp_bundleargs,
+                           cfp_constraints);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -4426,7 +4360,7 @@ HubQuery *CFDB_QueryPromises(EnterpriseDB *conn, PromiseFilter *filter)
 
     Rlist *recordList = NULL;
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         char bundleName[CF_MAXVARSIZE], bundleType[CF_MAXVARSIZE];
         char promiseHandle[CF_MAXVARSIZE], promiser[CF_MAXVARSIZE], promisee[CF_MAXVARSIZE];
@@ -4467,21 +4401,15 @@ HubQuery *CFDB_QueryPromiseBundles(EnterpriseDB *conn, PromiseFilter *filter)
  * Differs from CFDB_QueryPromises() in that it only returns distinct bundles.
  */
 {
-    bson_buffer bb;
-
     bson query;
 
-    bson_buffer_init(&bb);
-    BsonAppendPromiseFilter(&bb, filter);
-    bson_from_buffer(&query, &bb);
+    bson_init(&query);
+    BsonAppendPromiseFilter(&query, filter);
+    bson_finish(&query);
 
     bson fields;
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfp_bundlename, 1);
-    bson_append_int(&bb, cfp_bundletype, 1);
-    bson_append_int(&bb, cfp_bundleargs, 1);
-    bson_from_buffer(&fields, &bb);
+    BsonSelectReportFields(&fields, 3, cfp_bundlename, cfp_bundletype, cfp_bundleargs);
 
     mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -4491,7 +4419,7 @@ HubQuery *CFDB_QueryPromiseBundles(EnterpriseDB *conn, PromiseFilter *filter)
     Rlist *recordList = NULL;
     Item *bundlesFound = NULL;
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         char bundleName[CF_MAXVARSIZE], bundleType[CF_MAXVARSIZE];
 
@@ -4524,30 +4452,28 @@ Rlist *CFDB_QueryBundleClasses(EnterpriseDB *conn, PromiseFilter *filter)
  * MEMORY NOTE: Caller must free returned value with DeleteRlist()
  */
 {
-    bson_buffer bbuf;
     bson_iterator it1;
-    bson query, field;
-    mongo_cursor *cursor;
     Rlist *classList = { 0 }, *tmpList = { 0 };
 
     // query
-    bson_buffer_init(&bbuf);
-    BsonAppendPromiseFilter(&bbuf, filter);
-    bson_from_buffer(&query, &bbuf);
+    bson query;
+    bson_init(&query);
+    BsonAppendPromiseFilter(&query, filter);
+    bson_finish(&query);
 
     // returned attribute
-    bson_buffer_init(&bbuf);
-    bson_append_int(&bbuf, cfp_classcontext, 1);
-    bson_from_buffer(&field, &bbuf);
+    bson fields;
 
-    cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    BsonSelectReportFields(&fields, 1, cfp_classcontext);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
@@ -4577,34 +4503,32 @@ Item *CFDB_QueryBundlesUsing(EnterpriseDB *conn, PromiseFilter *promiseFilter, c
  * MEMORY NOTE: Caller must free returned value (!= NULL) with DeleteItemList()
  */
 {
-    bson_buffer bbuf;
     bson_iterator it1;
-    bson query, field;
-    mongo_cursor *cursor;
     Item *bNameReferees = { 0 };
     char queryConstr[CF_MAXVARSIZE];
 
     snprintf(queryConstr, sizeof(queryConstr), "usebundle => %s", bNameReferenced);
 
     // query
-    bson_buffer_init(&bbuf);
-    bson_append_string(&bbuf, cfp_constraints, queryConstr);
-    BsonAppendPromiseFilter(&bbuf, promiseFilter);
-    bson_from_buffer(&query, &bbuf);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfp_constraints, queryConstr);
+    BsonAppendPromiseFilter(&query, promiseFilter);
+    bson_finish(&query);
 
     // returned attribute
-    bson_buffer_init(&bbuf);
-    bson_append_int(&bbuf, cfp_bundlename, 1);
-    bson_from_buffer(&field, &bbuf);
+    bson fields;
 
-    cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    BsonSelectReportFields(&fields, 1, cfp_bundlename);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
@@ -4628,27 +4552,26 @@ int CFDB_QueryBundleCount(EnterpriseDB *conn)
  * promises DB).
  **/
 {
-    bson_buffer bbuf;
     bson_iterator it1;
-    bson query, field;
-    mongo_cursor *cursor;
     Item *bundleNames = { 0 };
     int bundleCount = 0;
 
     // query all
 
     // returned attribute
-    bson_buffer_init(&bbuf);
-    bson_append_int(&bbuf, cfp_bundlename, 1);
-    bson_from_buffer(&field, &bbuf);
+    bson fields;
 
-    cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, bson_empty(&query), &field, 0, 0, CF_MONGO_SLAVE_OK);
+    BsonSelectReportFields(&fields, 1, cfp_bundlename);
 
-    bson_destroy(&field);
+    bson query;
 
-    while (mongo_cursor_next(cursor))   // iterate over docs
+    mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_UNEXP, bson_empty(&query), &fields, 0, 0, CF_MONGO_SLAVE_OK);
+
+    bson_destroy(&fields);
+
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // iterate over docs
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
@@ -4687,9 +4610,6 @@ HubBody *CFDB_QueryBody(EnterpriseDB *conn, char *type, char *name)
  * MEMORY NOTE: Caller must use DeleteHubBody() on the reutrned val (!=NULL)
  */
 {
-    bson_buffer b;
-    bson query;
-    mongo_cursor *cursor;
     bson_iterator it1, it2, it3;
     char ba[CF_MAXVARSIZE] = { 0 }, cc[CF_MAXVARSIZE] = { 0 };
     char lval[CF_MAXVARSIZE] = { 0 }, rval[CF_MAXVARSIZE] = { 0 };
@@ -4697,18 +4617,19 @@ HubBody *CFDB_QueryBody(EnterpriseDB *conn, char *type, char *name)
 
     /* BEGIN query document */
 
-    bson_buffer_init(&b);
-    bson_append_string(&b, cfb_bodytype, type);
-    bson_append_string(&b, cfb_bodyname, name);
-    bson_from_buffer(&query, &b);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfb_bodytype, type);
+    bson_append_string(&query, cfb_bodyname, name);
+    bson_finish(&query);
 
 /* BEGIN SEARCH */
-    cursor = mongo_find(conn, MONGO_BODIES, &query, NULL, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_BODIES, &query, NULL, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&query);
 
-    if (mongo_cursor_next(cursor))
+    if (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         hb = NewHubBody(type, name, NULL);
 
@@ -4716,11 +4637,11 @@ HubBody *CFDB_QueryBody(EnterpriseDB *conn, char *type, char *name)
         {
             if (strcmp(bson_iterator_key(&it1), cfb_bodyargs) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 memset(ba, 0, sizeof(ba));
 
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
@@ -4744,13 +4665,13 @@ HubBody *CFDB_QueryBody(EnterpriseDB *conn, char *type, char *name)
             }
             else if (strcmp(bson_iterator_key(&it1), cfb_classcontext) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
                     snprintf(cc, sizeof(cc), "%s", bson_iterator_key(&it2));
 
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
 
                     while (bson_iterator_next(&it3))
                     {
@@ -4777,42 +4698,39 @@ Item *CFDB_QueryAllBodies(EnterpriseDB *conn, char *bTypeRegex, char *bNameRegex
  * MEMORY NOTE: Caller must use DeleteHubBody() on the reutrned val (!=NULL)
  */
 {
-    bson_buffer bbuf;
-    bson query, field;
     int found;
-    mongo_cursor *cursor;
     bson_iterator it1;
     char type[CF_MAXVARSIZE] = { 0 };
     char name[CF_MAXVARSIZE] = { 0 };
     Item *record_list = NULL;
 
-    bson_buffer_init(&bbuf);
+    bson query;
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(bTypeRegex))
     {
-        bson_append_regex(&bbuf, cfb_bodytype, bTypeRegex, "");
+        bson_append_regex(&query, cfb_bodytype, bTypeRegex, "");
     }
 
     if (!NULL_OR_EMPTY(bNameRegex))
     {
-        bson_append_regex(&bbuf, cfb_bodyname, bNameRegex, "");
+        bson_append_regex(&query, cfb_bodyname, bNameRegex, "");
     }
 
-    bson_from_buffer(&query, &bbuf);
+    bson_finish(&query);
 
-    bson_buffer_init(&bbuf);
-    bson_append_int(&bbuf, cfb_bodytype, 1);
-    bson_append_int(&bbuf, cfb_bodyname, 1);
-    bson_from_buffer(&field, &bbuf);
+    bson fields;
 
-    cursor = mongo_find(conn, MONGO_BODIES, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    BsonSelectReportFields(&fields, 2, cfb_bodytype, cfb_bodyname);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_BODIES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
         found = false;
 
         while (bson_iterator_next(&it1))
@@ -4851,10 +4769,7 @@ Item *CFDB_QueryCdpAcls(EnterpriseDB *conn, char *sep)
  * MEMORY NOTE: Caller must free returned value with DeleteItemList()
  */
 {
-    bson_buffer bbuf;
     bson_iterator it1, it2;
-    bson query, field;
-    mongo_cursor *cursor;
     Item *retList = { 0 };
     char path[CF_SMALLBUF] = { 0 };
     char aces[CF_SMALLBUF] = { 0 };
@@ -4865,26 +4780,25 @@ Item *CFDB_QueryCdpAcls(EnterpriseDB *conn, char *sep)
     char buf[CF_MAXVARSIZE] = { 0 };
 
     // query
-    bson_buffer_init(&bbuf);
-    bson_append_string(&bbuf, cfp_bundlename, cfp_cdp_bundle_acls);
-    bson_append_string(&bbuf, cfp_promisetype, "files");
-    bson_from_buffer(&query, &bbuf);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfp_bundlename, cfp_cdp_bundle_acls);
+    bson_append_string(&query, cfp_promisetype, "files");
+    bson_finish(&query);
 
     // returned attribute
-    bson_buffer_init(&bbuf);
-    bson_append_int(&bbuf, cfp_promiser_exp, 1);
-    bson_append_int(&bbuf, cfp_handle_exp, 1);
-    bson_append_int(&bbuf, cfp_constraints_exp, 1);
-    bson_from_buffer(&field, &bbuf);
+    bson fields;
 
-    cursor = mongo_find(conn, MONGO_PROMISES_EXP, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    BsonSelectReportFields(&fields, 3, cfp_promiser_exp, cfp_handle_exp, cfp_constraints_exp);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_EXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))   // iterate over docs
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // iterate over docs
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         // make sure everything gets defined
         snprintf(handle, sizeof(handle), "(unknown)");
@@ -4906,7 +4820,7 @@ Item *CFDB_QueryCdpAcls(EnterpriseDB *conn, char *sep)
             }
             else if (strcmp(bson_iterator_key(&it1), cfp_constraints_exp) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
@@ -4949,10 +4863,7 @@ Item *CFDB_QueryCdpCommands(EnterpriseDB *conn, char *sep)
  * MEMORY NOTE: Caller must free returned value with DeleteItemList()
  */
 {
-    bson_buffer bbuf;
     bson_iterator it1, it2;
-    bson query, field;
-    mongo_cursor *cursor;
     Item *retList = { 0 };
     char handle[CF_SMALLBUF] = { 0 };
     char command[CF_MAXVARSIZE] = { 0 };
@@ -4962,26 +4873,25 @@ Item *CFDB_QueryCdpCommands(EnterpriseDB *conn, char *sep)
     char buf[CF_MAXVARSIZE] = { 0 };
 
     // query
-    bson_buffer_init(&bbuf);
-    bson_append_string(&bbuf, cfp_bundlename, cfp_cdp_bundle_commands);
-    bson_append_string(&bbuf, cfp_promisetype, "commands");
-    bson_from_buffer(&query, &bbuf);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfp_bundlename, cfp_cdp_bundle_commands);
+    bson_append_string(&query, cfp_promisetype, "commands");
+    bson_finish(&query);
 
     // returned attribute
-    bson_buffer_init(&bbuf);
-    bson_append_int(&bbuf, cfp_promiser_exp, 1);
-    bson_append_int(&bbuf, cfp_handle_exp, 1);
-    bson_append_int(&bbuf, cfp_constraints_exp, 1);
-    bson_from_buffer(&field, &bbuf);
+    bson fields;
 
-    cursor = mongo_find(conn, MONGO_PROMISES_EXP, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    BsonSelectReportFields(&fields, 3, cfp_promiser_exp, cfp_handle_exp, cfp_constraints_exp);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_EXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))   // iterate over docs
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // iterate over docs
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         // make sure everything gets defined
         snprintf(handle, sizeof(handle), "(unknown)");
@@ -5002,7 +4912,7 @@ Item *CFDB_QueryCdpCommands(EnterpriseDB *conn, char *sep)
             }
             else if (strcmp(bson_iterator_key(&it1), cfp_constraints_exp) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
@@ -5041,10 +4951,7 @@ Item *CFDB_QueryCdpPromiser(EnterpriseDB *conn, char *sep, char *bundleName, cha
  * MEMORY NOTE: Caller must free returned value with DeleteItemList()
  */
 {
-    bson_buffer bbuf;
     bson_iterator it1, it2;
-    bson query, field;
-    mongo_cursor *cursor;
     Item *retList = { 0 };
     char handle[CF_SMALLBUF] = { 0 };
     char path[CF_SMALLBUF] = { 0 };
@@ -5052,27 +4959,26 @@ Item *CFDB_QueryCdpPromiser(EnterpriseDB *conn, char *sep, char *bundleName, cha
     char buf[CF_MAXVARSIZE] = { 0 };
 
     // query
-    bson_buffer_init(&bbuf);
-    bson_append_string(&bbuf, cfp_bundlename, bundleName);
-    bson_append_string(&bbuf, cfp_promisetype, promiseType);
-    bson_append_regex(&bbuf, cfp_handle_exp, "^cdp_.*", "");
-    bson_from_buffer(&query, &bbuf);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfp_bundlename, bundleName);
+    bson_append_string(&query, cfp_promisetype, promiseType);
+    bson_append_regex(&query, cfp_handle_exp, "^cdp_.*", "");
+    bson_finish(&query);
 
     // returned attribute
-    bson_buffer_init(&bbuf);
-    bson_append_int(&bbuf, cfp_promiser_exp, 1);
-    bson_append_int(&bbuf, cfp_handle_exp, 1);
-    bson_append_int(&bbuf, cfp_constraints_exp, 1);
-    bson_from_buffer(&field, &bbuf);
+    bson fields;
 
-    cursor = mongo_find(conn, MONGO_PROMISES_EXP, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    BsonSelectReportFields(&fields, 3, cfp_promiser_exp, cfp_handle_exp, cfp_constraints_exp);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_EXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))   // iterate over docs
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // iterate over docs
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         // make sure everything gets defined
         snprintf(handle, sizeof(handle), "(unknown)");
@@ -5091,7 +4997,7 @@ Item *CFDB_QueryCdpPromiser(EnterpriseDB *conn, char *sep, char *bundleName, cha
             }
             else if (strcmp(bson_iterator_key(&it1), cfp_constraints_exp) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
@@ -5124,43 +5030,41 @@ int CFDB_QueryLastFileChange(EnterpriseDB *conn, char *keyHash, char *reportType
  * Returns true if a date is found, false otherwise.
  */
 {
-    bson_buffer bbuf;
     bson_iterator it1, it2, it3;
-    bson query, field;
-    mongo_cursor *cursor;
     char currFileName[CF_MAXVARSIZE];
     time_t currTime;
     time_t lastChange = 0;
 
     // query
-    bson_buffer_init(&bbuf);
-    bson_append_string(&bbuf, cfr_keyhash, keyHash);
-    bson_from_buffer(&query, &bbuf);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfr_keyhash, keyHash);
+    bson_finish(&query);
 
     // returned attribute
-    bson_buffer_init(&bbuf);
-    bson_append_int(&bbuf, reportType, 1);
-    bson_from_buffer(&field, &bbuf);
+    bson fields;
 
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    BsonSelectReportFields(&fields, 1, reportType);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    if (mongo_cursor_next(cursor))      // should be only one document
+    if (mongo_cursor_next(cursor) == MONGO_OK)      // should be only one document
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
             if (strcmp(bson_iterator_key(&it1), reportType) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))        // loops over report rows
                 {
 
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
 
                     currFileName[0] = '\0';
                     currTime = 0;
@@ -5218,10 +5122,7 @@ Item *CFDB_QueryCdpRegistry(EnterpriseDB *conn, char *sep)
  * MEMORY NOTE: Caller must free returned value with DeleteItemList()
  */
 {
-    bson_buffer bbuf;
     bson_iterator it1, it2;
-    bson query, field;
-    mongo_cursor *cursor;
     Item *retList = { 0 };
     char handle[CF_SMALLBUF] = { 0 };
     char key[CF_SMALLBUF] = { 0 };
@@ -5231,26 +5132,25 @@ Item *CFDB_QueryCdpRegistry(EnterpriseDB *conn, char *sep)
     char buf[CF_MAXVARSIZE] = { 0 };
 
     // query
-    bson_buffer_init(&bbuf);
-    bson_append_string(&bbuf, cfp_bundlename, cfp_cdp_bundle_registry);
-    bson_append_string(&bbuf, cfp_promisetype, "databases");
-    bson_from_buffer(&query, &bbuf);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfp_bundlename, cfp_cdp_bundle_registry);
+    bson_append_string(&query, cfp_promisetype, "databases");
+    bson_finish(&query);
 
     // returned attribute
-    bson_buffer_init(&bbuf);
-    bson_append_int(&bbuf, cfp_promiser_exp, 1);
-    bson_append_int(&bbuf, cfp_handle_exp, 1);
-    bson_append_int(&bbuf, cfp_constraints_exp, 1);
-    bson_from_buffer(&field, &bbuf);
+    bson fields;
 
-    cursor = mongo_find(conn, MONGO_PROMISES_EXP, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    BsonSelectReportFields(&fields, 3, cfp_promiser_exp, cfp_handle_exp, cfp_constraints_exp);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_EXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))   // iterate over docs
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // iterate over docs
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         // make sure everything gets defined
         snprintf(handle, sizeof(handle), "(unknown)");
@@ -5271,7 +5171,7 @@ Item *CFDB_QueryCdpRegistry(EnterpriseDB *conn, char *sep)
             }
             else if (strcmp(bson_iterator_key(&it1), cfp_constraints_exp) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
@@ -5311,10 +5211,7 @@ Item *CFDB_QueryCdpServices(EnterpriseDB *conn, char *sep)
  * MEMORY NOTE: Caller must free returned value with DeleteItemList()
  */
 {
-    bson_buffer bbuf;
     bson_iterator it1, it2;
-    bson query, field;
-    mongo_cursor *cursor;
     Item *retList = { 0 };
     char handle[CF_SMALLBUF] = { 0 };
     char serviceName[CF_SMALLBUF] = { 0 };
@@ -5324,26 +5221,25 @@ Item *CFDB_QueryCdpServices(EnterpriseDB *conn, char *sep)
     char buf[CF_MAXVARSIZE] = { 0 };
 
     // query
-    bson_buffer_init(&bbuf);
-    bson_append_string(&bbuf, cfp_bundlename, cfp_cdp_bundle_services);
-    bson_append_string(&bbuf, cfp_promisetype, "services");
-    bson_from_buffer(&query, &bbuf);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfp_bundlename, cfp_cdp_bundle_services);
+    bson_append_string(&query, cfp_promisetype, "services");
+    bson_finish(&query);
 
     // returned attribute
-    bson_buffer_init(&bbuf);
-    bson_append_int(&bbuf, cfp_promiser_exp, 1);
-    bson_append_int(&bbuf, cfp_handle_exp, 1);
-    bson_append_int(&bbuf, cfp_constraints_exp, 1);
-    bson_from_buffer(&field, &bbuf);
+    bson fields;
 
-    cursor = mongo_find(conn, MONGO_PROMISES_EXP, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    BsonSelectReportFields(&fields, 3, cfp_promiser_exp, cfp_handle_exp, cfp_constraints_exp);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_PROMISES_EXP, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))   // iterate over docs
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // iterate over docs
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         // make sure everything gets defined
         snprintf(handle, sizeof(handle), "(unknown)");
@@ -5364,7 +5260,7 @@ Item *CFDB_QueryCdpServices(EnterpriseDB *conn, char *sep)
             }
             else if (strcmp(bson_iterator_key(&it1), cfp_constraints_exp) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
@@ -5403,9 +5299,7 @@ Item *CFDB_QueryCdpCompliance(EnterpriseDB *conn, char *handle)
  * MEMORY NOTE: Caller must free returned value with DeleteItemList()
  */
 {
-    bson_buffer bbuf;
     bson_iterator it1, it2, it3;
-    bson query, field;
     mongo_cursor *cursor;
     Item *retList = { 0 };
     time_t t;
@@ -5416,25 +5310,24 @@ Item *CFDB_QueryCdpCompliance(EnterpriseDB *conn, char *handle)
     char buf[CF_MAXVARSIZE] = { 0 };
 
     // query
-    bson_buffer_init(&bbuf);
-    bson_append_string(&bbuf, cfr_promisecompl_keys, handle);
-    bson_from_buffer(&query, &bbuf);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfr_promisecompl_keys, handle);
+    bson_finish(&query);
 
     // returned attribute
-    bson_buffer_init(&bbuf);
-    bson_append_int(&bbuf, cfr_promisecompl, 1);
-    bson_append_int(&bbuf, cfr_keyhash, 1);
-    bson_append_int(&bbuf, cfr_host_array, 1);
-    bson_from_buffer(&field, &bbuf);
+    bson fields;
 
-    cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    BsonSelectReportFields(&fields, 3, cfr_promisecompl, cfr_keyhash, cfr_host_array);
+
+    cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))   // iterate over docs
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // iterate over docs
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         // make sure everything gets defined
         snprintf(host, sizeof(host), "(unknown)");
@@ -5447,13 +5340,13 @@ Item *CFDB_QueryCdpCompliance(EnterpriseDB *conn, char *handle)
         {
             if (strcmp(bson_iterator_key(&it1), cfr_promisecompl) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
                     if (strcmp(bson_iterator_key(&it2), handle) == 0)
                     {
-                        bson_iterator_init(&it3, bson_iterator_value(&it2));
+                        bson_iterator_subiterator(&it2, &it3);
 
                         while (bson_iterator_next(&it3))
                         {
@@ -5472,7 +5365,7 @@ Item *CFDB_QueryCdpCompliance(EnterpriseDB *conn, char *handle)
             }
             else if (strcmp(bson_iterator_key(&it1), cfr_host_array) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 if (bson_iterator_next(&it2))   // just pick first hostname
                 {
@@ -5498,31 +5391,28 @@ Item *CFDB_QueryCdpCompliance(EnterpriseDB *conn, char *handle)
 /* Level                                                                     */
 /*****************************************************************************/
 
-static bool AppendHostKeys(EnterpriseDB *conn, bson_buffer *bb, HostClassFilter *hostClassFilter)
+static bool AppendHostKeys(EnterpriseDB *conn, bson *b, HostClassFilter *hostClassFilter)
 /**
- * Appends to bb the keyhash of hosts matching the class filter.
+ * Appends to b the keyhash of hosts matching the class filter.
  * Useful for "joins".
- * Returns true if bb is modified, false otherwise.
+ * Returns true if b is modified, false otherwise.
  **/
 {
     bson_iterator it1;
-    bson_buffer bbuf;
-    bson query, field;
     mongo_cursor *cursor;
-    bson_buffer *sub1 = NULL;
-    bson_buffer *sub2;
 
-    bson_buffer_init(&bbuf);
-    if (!BsonAppendHostClassFilter(&bbuf, hostClassFilter))
+    bson query;
+    bson_init(&query);
+    if (!BsonAppendHostClassFilter(&query, hostClassFilter))
     {
-        bson_buffer_destroy(&bbuf);
+        bson_destroy(&query);
         return false;
     }
-    bson_from_buffer(&query, &bbuf);
+    bson_finish(&query);
 
-    bson_buffer_init(&bbuf);
-    bson_append_int(&bbuf, cfr_keyhash, 1);
-    bson_from_buffer(&field, &bbuf);
+    bson field;
+
+    BsonSelectReportFields(&field, 1, cfr_keyhash);
 
     cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -5531,38 +5421,41 @@ static bool AppendHostKeys(EnterpriseDB *conn, bson_buffer *bb, HostClassFilter 
 
     int i = 0;
     char iStr[64] = { 0 };
+    bool bsonArrayStarted = false;
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
             if (strcmp(bson_iterator_key(&it1), cfr_keyhash) == 0)
             {
-                if (sub1 == NULL)
+                if (!bsonArrayStarted)
                 {
-                    sub1 = bson_append_start_array(bb, "$or");
+                    bson_append_start_array(b, "$or");
+                    bsonArrayStarted = true;
                 }
 
                 snprintf(iStr, sizeof(iStr), "%d", i);
 
-                sub2 = bson_append_start_object(sub1, iStr);
-                bson_append_string(sub2, cfr_keyhash, bson_iterator_string(&it1));
-                bson_append_finish_object(sub2);
-
+                {
+                    bson_append_start_object(b, iStr);
+                    bson_append_string(b, cfr_keyhash, bson_iterator_string(&it1));
+                    bson_append_finish_object(b);
+                }
                 i++;
             }
         }
     }
 
-    if (sub1 != NULL)
+    if (bsonArrayStarted)
     {
-        bson_append_finish_object(sub1);
+        bson_append_finish_object(b);
     }
     else
     {
-        bson_append_string(bb, cfr_keyhash, "");        // no match, indicate to caller
+        bson_append_string(b, cfr_keyhash, "");        // no match, indicate to caller
     }
 
     mongo_cursor_destroy(cursor);
@@ -5574,7 +5467,6 @@ static bool AppendHostKeys(EnterpriseDB *conn, bson_buffer *bb, HostClassFilter 
 
 HubQuery *CFDB_QueryCachedTotalCompliance(EnterpriseDB *conn, char *policy, time_t minGenTime)
 {
-    bson_buffer bb;
     bson_iterator it1, it2, it3;
     mongo_cursor *cursor;
     Rlist *record_list = NULL;
@@ -5584,22 +5476,22 @@ HubQuery *CFDB_QueryCachedTotalCompliance(EnterpriseDB *conn, char *policy, time
     int slot, count;
     time_t genTime;
 
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfc_cachetype, cfc_cachecompliance);
-    bson_from_buffer(&query, &bb);
+    bson_init(&query);
+    bson_append_string(&query, cfc_cachetype, cfc_cachecompliance);
+    bson_finish(&query);
 
     cursor = mongo_find(conn, MONGO_CACHE, &query, bson_empty(&field), 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
 
-    if (mongo_cursor_next(cursor))      // loops over cache types (want just one)
+    if (mongo_cursor_next(cursor) == MONGO_OK)      // loops over cache types (want just one)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
 
-            if (bson_iterator_type(&it1) != bson_object)
+            if (bson_iterator_type(&it1) != BSON_OBJECT)
             {
                 continue;
             }
@@ -5612,14 +5504,14 @@ HubQuery *CFDB_QueryCachedTotalCompliance(EnterpriseDB *conn, char *policy, time
                 continue;
             }
 
-            bson_iterator_init(&it2, bson_iterator_value(&it1));
+            bson_iterator_subiterator(&it1, &it2);
 
             while (bson_iterator_next(&it2))
             {
                 slot = -1;
                 sscanf(bson_iterator_key(&it2), "%d", &slot);
 
-                bson_iterator_init(&it3, bson_iterator_value(&it2));
+                bson_iterator_subiterator(&it2, &it3);
 
                 kept = 0;
                 repaired = 0;
@@ -5669,8 +5561,6 @@ HubQuery *CFDB_QueryCachedTotalCompliance(EnterpriseDB *conn, char *policy, time
 
 Rlist *CFDB_QueryNotes(EnterpriseDB *conn, char *keyhash, char *nid, Item *data)
 {
-    bson_buffer bb;
-    bson query, field;
     mongo_cursor *cursor;
     bson_iterator it1, it2, it3;
     HubNoteInfo *hci = NULL;
@@ -5695,23 +5585,24 @@ Rlist *CFDB_QueryNotes(EnterpriseDB *conn, char *keyhash, char *nid, Item *data)
         sscanf(data->name, "%255[^','],%ld,%ld\n", fusername, &from, &to);
     }
 
-    bson_buffer_init(&bb);
+    bson query;
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(nid))
     {
         bson_oid_from_string(&bsonid, nid);
-        bson_append_oid(&bb, "_id", &bsonid);
+        bson_append_oid(&query, "_id", &bsonid);
     }
     else
     {
         if (!NULL_OR_EMPTY(keyhash))
         {
-            bson_append_string(&bb, cfn_keyhash, keyhash);
+            bson_append_string(&query, cfn_keyhash, keyhash);
         }
 
         if (!NULL_OR_EMPTY(fusername))
         {
-            bson_append_string(&bb, "n.u", fusername);
+            bson_append_string(&query, "n.u", fusername);
             specificQuery = true;
         }
 
@@ -5721,23 +5612,24 @@ Rlist *CFDB_QueryNotes(EnterpriseDB *conn, char *keyhash, char *nid, Item *data)
         }
     }
 
-    bson_from_buffer(&query, &bb);
+    bson_finish(&query);
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, "_id", 1);
-    bson_append_int(&bb, cfn_keyhash, 1);
-    bson_append_int(&bb, cfn_reportdata, 1);
-    bson_append_int(&bb, cfn_note, 1);
-    bson_append_int(&bb, cfn_reporttype, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
 
-    cursor = mongo_find(conn, MONGO_NOTEBOOK, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
-    bson_destroy(&field);
+    BsonSelectReportFields(&fields, 5,
+                           "_id",
+                           cfn_keyhash,
+                           cfn_reportdata,
+                           cfn_note,
+                           cfn_reporttype);
+
+    cursor = mongo_find(conn, MONGO_NOTEBOOK, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    bson_destroy(&fields);
     bson_destroy(&query);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
         kh[0] = '\0';
         username[0] = '\0';
         note[0] = '\0';
@@ -5746,13 +5638,13 @@ Rlist *CFDB_QueryNotes(EnterpriseDB *conn, char *keyhash, char *nid, Item *data)
         {
             switch (bson_iterator_type(&it1))
             {
-            case bson_oid:
+            case BSON_OID:
                 if (strcmp(bson_iterator_key(&it1), "_id") == 0)
                 {
                     bson_oid_to_string(bson_iterator_oid(&it1), noteId);
                 }
                 break;
-            case bson_string:
+            case BSON_STRING:
                 if (strcmp(bson_iterator_key(&it1), cfn_keyhash) == 0)
                 {
                     strncpy(kh, bson_iterator_string(&it1), CF_MAXVARSIZE - 1);
@@ -5763,20 +5655,20 @@ Rlist *CFDB_QueryNotes(EnterpriseDB *conn, char *keyhash, char *nid, Item *data)
                 }
                 break;
 
-            case bson_int:
+            case BSON_INT:
                 if (strcmp(bson_iterator_key(&it1), cfn_reporttype) == 0)
                 {
                     reportType = bson_iterator_int(&it1);
                 }
                 break;
 
-            case bson_object:
-            case bson_array:
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+            case BSON_OBJECT:
+            case BSON_ARRAY:
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
                     while (bson_iterator_next(&it3))
                     {
                         t = bson_iterator_type(&it3);
@@ -5786,7 +5678,7 @@ Rlist *CFDB_QueryNotes(EnterpriseDB *conn, char *keyhash, char *nid, Item *data)
                         }
                         switch (t)
                         {
-                        case bson_string:
+                        case BSON_STRING:
                             if (strcmp(bson_iterator_key(&it3), cfn_username) == 0)
                             {
                                 strncpy(username, bson_iterator_string(&it3), CF_MAXVARSIZE - 1);
@@ -5796,7 +5688,7 @@ Rlist *CFDB_QueryNotes(EnterpriseDB *conn, char *keyhash, char *nid, Item *data)
                                 strncpy(note, bson_iterator_string(&it3), CF_BUFSIZE - 1);
                             }
                             break;
-                        case bson_int:
+                        case BSON_INT:
                             if (strcmp(bson_iterator_key(&it3), cfn_datetime) == 0)
                             {
                                 datetime = (time_t) bson_iterator_int(&it3);
@@ -5871,9 +5763,6 @@ Rlist *CFDB_QueryNotes(EnterpriseDB *conn, char *keyhash, char *nid, Item *data)
 
 Rlist *CFDB_QueryNoteId(EnterpriseDB *conn, bson *query)
 {
-    bson_buffer bb;
-    bson field;
-    mongo_cursor *cursor;
     bson_iterator it1;
     Rlist *host_list = NULL;
     char noteId[CF_MAXVARSIZE] = { 0 };
@@ -5881,23 +5770,23 @@ Rlist *CFDB_QueryNoteId(EnterpriseDB *conn, bson *query)
 
 /* BEGIN RESULT DOCUMENT */
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfn_keyhash, 1);
-    bson_append_int(&bb, "_id", 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+
+    BsonSelectReportFields(&fields, 2, cfn_keyhash, "_id");
 
 /* BEGIN SEARCH */
 
-    cursor = mongo_find(conn, MONGO_NOTEBOOK, query, &field, 0, 0, CF_MONGO_SLAVE_OK);
-    bson_destroy(&field);
+    mongo_cursor *cursor = mongo_find(conn, MONGO_NOTEBOOK, query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+
+    bson_destroy(&fields);
 
     if (!cursor)
     {
         return NULL;
     }
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         keyhash[0] = '\0';
         noteId[0] = '\0';
@@ -5906,10 +5795,10 @@ Rlist *CFDB_QueryNoteId(EnterpriseDB *conn, bson *query)
         {
             switch (bson_iterator_type(&it1))
             {
-            case bson_oid:
+            case BSON_OID:
                 bson_oid_to_string(bson_iterator_oid(&it1), noteId);
                 break;
-            case bson_string:
+            case BSON_STRING:
                 if (strcmp(bson_iterator_key(&it1), cfn_keyhash) == 0)
                 {
                     strncpy(keyhash, bson_iterator_string(&it1), CF_MAXVARSIZE - 1);
@@ -5939,12 +5828,11 @@ Item *CFDB_QueryDistinctStr(EnterpriseDB *conn, char *database, char *collection
  */
 {
     Item *retVal;
-    bson_buffer bb;
-    bson query;
 
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, qKey, qVal);
-    bson_from_buffer(&query, &bb);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, qKey, qVal);
+    bson_finish(&query);
 
     retVal = CFDB_QueryDistinct(conn, database, collection, dKey, &query);
 
@@ -5957,23 +5845,23 @@ Item *CFDB_QueryDistinctStr(EnterpriseDB *conn, char *database, char *collection
 
 Item *CFDB_QueryDistinct(EnterpriseDB *conn, char *database, char *collection, char *dKey, bson *queryBson)
 {
-    bson_buffer bb;
-    bson cmd, result;
     bson_iterator it1, values;
     Item *ret = NULL;
 
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, "distinct", collection);
-    bson_append_string(&bb, "key", dKey);
+    bson cmd;
+    bson_init(&cmd);
+    bson_append_string(&cmd, "distinct", collection);
+    bson_append_string(&cmd, "key", dKey);
 
     if (queryBson)
     {
-        bson_append_bson(&bb, "query", queryBson);
+        bson_append_bson(&cmd, "query", queryBson);
     }
+    bson_finish(&cmd);
 
-    bson_from_buffer(&cmd, &bb);
+    bson result;
 
-    if (!mongo_run_command(conn, database, &cmd, &result))
+    if (mongo_run_command(conn, database, &cmd, &result) != MONGO_OK)
     {
         MongoCheckForError(conn, "CFDB_QueryDistinct()", "", NULL);
         bson_destroy(&cmd);
@@ -5989,7 +5877,7 @@ Item *CFDB_QueryDistinct(EnterpriseDB *conn, char *database, char *collection, c
         return false;
     }
 
-    if (bson_iterator_type(&it1) != bson_array)
+    if (bson_iterator_type(&it1) != BSON_ARRAY)
     {
         CfOut(cf_verbose, "", " Malformed query result in CFDB_QueryDistinct()");
         bson_destroy(&result);
@@ -6020,13 +5908,10 @@ Item *CFDB_QueryDistinct(EnterpriseDB *conn, char *database, char *collection, c
 HubQuery *CFDB_QueryClassesDistinctSorted(EnterpriseDB *conn, const char *class_rx,
                                           HostClassFilter *hostClassFilter, PageInfo *page)
 {
-    bson_buffer bb;
-
     bson query;
-
-    bson_buffer_init(&bb);
-    BsonAppendHostClassFilter(&bb, hostClassFilter);
-    bson_from_buffer(&query, &bb);
+    bson_init(&query);
+    BsonAppendHostClassFilter(&query, hostClassFilter);
+    bson_finish(&query);
 
     Item *classList = CFDB_QueryDistinct(conn, MONGO_BASE, MONGO_HOSTS_COLLECTION, cfr_class_keys, &query);
 
@@ -6054,8 +5939,6 @@ HubQuery *CFDB_QueryClassesDistinctSorted(EnterpriseDB *conn, const char *class_
 
 int CFDB_QueryIsMaster(void)
 {
-    bson_buffer bb;
-    bson cmd, result;
     bson_iterator it1;
     int ret = false;
     EnterpriseDB conn;
@@ -6065,11 +5948,14 @@ int CFDB_QueryIsMaster(void)
         return false;
     }
 
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, "isMaster", MONGO_HOSTS_COLLECTION);
-    bson_from_buffer(&cmd, &bb);
+    bson cmd;
+    bson_init(&cmd);
+    bson_append_string(&cmd, "isMaster", MONGO_HOSTS_COLLECTION);
+    bson_finish(&cmd);
 
-    if (mongo_run_command(&conn, MONGO_BASE, &cmd, &result))
+    bson result;
+
+    if (mongo_run_command(&conn, MONGO_BASE, &cmd, &result) == MONGO_OK)
     {
         if (bson_find(&it1, &result, "ismaster"))
         {
@@ -6103,8 +5989,6 @@ int CFDB_QueryIsMaster(void)
 
 int CFDB_QueryMasterIP(char *buffer, int bufsize)
 {
-    bson_buffer bb;
-    bson cmd, result;
     bson_iterator it1;
     int ret = false;
     EnterpriseDB conn;
@@ -6114,11 +5998,14 @@ int CFDB_QueryMasterIP(char *buffer, int bufsize)
         return false;
     }
 
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, "isMaster", MONGO_HOSTS_COLLECTION);
-    bson_from_buffer(&cmd, &bb);
+    bson cmd;
+    bson_init(&cmd);
+    bson_append_string(&cmd, "isMaster", MONGO_HOSTS_COLLECTION);
+    bson_finish(&cmd);
 
-    if (mongo_run_command(&conn, MONGO_BASE, &cmd, &result))
+    bson result;
+
+    if (mongo_run_command(&conn, MONGO_BASE, &cmd, &result) == MONGO_OK)
     {
         if (bson_find(&it1, &result, "primary"))
         {
@@ -6144,8 +6031,6 @@ int CFDB_QueryMasterIP(char *buffer, int bufsize)
 
 int CFDB_QueryReplStatus(EnterpriseDB *conn, char *buffer, int bufsize)
 {
-    bson_buffer bb;
-    bson cmd, result;
     bson_iterator it1, it2, it3;
     int ret = false;
     char work[CF_MAXVARSIZE] = { 0 };
@@ -6153,14 +6038,17 @@ int CFDB_QueryReplStatus(EnterpriseDB *conn, char *buffer, int bufsize)
 
     StartJoin(buffer, "{", bufsize);
 
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, "replSetGetStatus", MONGO_HOSTS_COLLECTION);
-    bson_from_buffer(&cmd, &bb);
+    bson cmd;
+    bson_init(&cmd);
+    bson_append_string(&cmd, "replSetGetStatus", MONGO_HOSTS_COLLECTION);
+    bson_finish(&cmd);
 
-    if (mongo_run_command(conn, "admin", &cmd, &result))
+    bson result;
+
+    if (mongo_run_command(conn, "admin", &cmd, &result) == MONGO_OK)
     {
 
-        bson_iterator_init(&it1, result.data);
+        bson_iterator_init(&it1, &result);
 
         if (bson_find(&it1, &result, "ok") && bson_iterator_int(&it1) == 1)
         {
@@ -6172,13 +6060,13 @@ int CFDB_QueryReplStatus(EnterpriseDB *conn, char *buffer, int bufsize)
 
             if (bson_find(&it1, &result, "members"))
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 Join(buffer, "\"members\":[", bufsize);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
                     Join(buffer, "{", bufsize);
 
                     while (bson_iterator_next(&it3))
@@ -6269,7 +6157,7 @@ int CFDB_QueryReplStatus(EnterpriseDB *conn, char *buffer, int bufsize)
 
 /*****************************************************************************/
 
-static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *filter)
+static bool BsonAppendPromiseFilter(bson *query, PromiseFilter *filter)
 {
     if (filter == NULL)
     {
@@ -6278,22 +6166,22 @@ static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *fil
 
     bool modified = false;
 
-    modified |= BsonAppendStringSafe(queryBuffer, cfp_handle, filter->handleInclude);
-    modified |= BsonAppendRegexSafe(queryBuffer, cfp_handle, filter->handleRxInclude);
+    modified |= BsonAppendStringSafe(query, cfp_handle, filter->handleInclude);
+    modified |= BsonAppendRegexSafe(query, cfp_handle, filter->handleRxInclude);
 
-    modified |= BsonAppendStringSafe(queryBuffer, cfp_promiser, filter->promiserInclude);
-    modified |= BsonAppendRegexSafe(queryBuffer, cfp_promiser, filter->promiserRxInclude);
+    modified |= BsonAppendStringSafe(query, cfp_promiser, filter->promiserInclude);
+    modified |= BsonAppendRegexSafe(query, cfp_promiser, filter->promiserRxInclude);
 
-    modified |= BsonAppendStringSafe(queryBuffer, cfp_promisetype, filter->promiseTypeInclude);
+    modified |= BsonAppendStringSafe(query, cfp_promisetype, filter->promiseTypeInclude);
 
-    modified |= BsonAppendStringSafe(queryBuffer, cfp_bundletype, filter->bundleTypeInclude);
-    modified |= BsonAppendRegexSafe(queryBuffer, cfp_bundletype, filter->bundleTypeRxInclude);
+    modified |= BsonAppendStringSafe(query, cfp_bundletype, filter->bundleTypeInclude);
+    modified |= BsonAppendRegexSafe(query, cfp_bundletype, filter->bundleTypeRxInclude);
 
-    modified |= BsonAppendIncludeList(queryBuffer, cfp_bundlename, filter->bundleIncludes);
-    modified |= BsonAppendIncludeRxList(queryBuffer, cfp_bundlename, filter->bundleRxIncludes);
+    modified |= BsonAppendIncludeList(query, cfp_bundlename, filter->bundleIncludes);
+    modified |= BsonAppendIncludeRxList(query, cfp_bundlename, filter->bundleRxIncludes);
 
-    modified |= BsonAppendExcludeList(queryBuffer, cfp_bundlename, filter->bundleExcludes);
-    modified |= BsonAppendExcludeRxList(queryBuffer, cfp_bundlename, filter->bundleRxExcludes);
+    modified |= BsonAppendExcludeList(query, cfp_bundlename, filter->bundleExcludes);
+    modified |= BsonAppendExcludeRxList(query, cfp_bundlename, filter->bundleRxExcludes);
 
     return modified;
 }
@@ -6303,36 +6191,33 @@ static bool BsonAppendPromiseFilter(bson_buffer *queryBuffer, PromiseFilter *fil
 Rlist *CFDB_QueryHostKeys(EnterpriseDB *conn, const char *hostname, const char *ip, time_t from, time_t to,
                           HostClassFilter *hostClassFilter)
 {
-    bson_buffer buffer;
-    bson query, field;
-
     // query
-    bson_buffer_init(&buffer);
+    bson query;
+    bson_init(&query);
     if (hostname)
     {
-        bson_append_regex(&buffer, cfr_host_array, hostname, "");
+        bson_append_regex(&query, cfr_host_array, hostname, "");
     }
     if (ip)
     {
-        bson_append_regex(&buffer, cfr_ip_array, ip, "");
+        bson_append_regex(&query, cfr_ip_array, ip, "");
     }
-    BsonAppendHostClassFilter(&buffer, hostClassFilter);
-    bson_from_buffer(&query, &buffer);
+    BsonAppendHostClassFilter(&query, hostClassFilter);
+    bson_finish(&query);
 
     // projection
-    bson_buffer_init(&buffer);
-    bson_append_int(&buffer, cfr_keyhash, 1);
-    bson_append_int(&buffer, cfr_day, 1);
-    bson_from_buffer(&field, &buffer);
+    bson fields;
 
-    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    BsonSelectReportFields(&fields, 2, cfr_keyhash, cfr_day);
+
+    mongo_cursor *cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
     Rlist *hostkeys = NULL;
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         const char *hostkey = NULL;
         BsonStringGet(&cursor->current, cfr_keyhash, &hostkey);
@@ -6358,25 +6243,21 @@ Rlist *CFDB_QueryHostKeys(EnterpriseDB *conn, const char *hostname, const char *
 
 HubHost *CFDB_GetHostByKey(EnterpriseDB *conn, const char *hostkey)
 {
-    bson_buffer buffer;
-    bson query, field;
-
 // query
-    bson_buffer_init(&buffer);
-    bson_append_string(&buffer, cfr_keyhash, hostkey);
-    bson_from_buffer(&query, &buffer);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfr_keyhash, hostkey);
+    bson_finish(&query);
 
 // projection
-    bson_buffer_init(&buffer);
-    bson_append_int(&buffer, cfr_keyhash, 1);
-    bson_append_int(&buffer, cfr_host_array, 1);
-    bson_append_int(&buffer, cfr_ip_array, 1);
-    bson_from_buffer(&field, &buffer);
+    bson fields;
+
+    BsonSelectReportFields(&fields, 3, cfr_keyhash, cfr_host_array, cfr_ip_array);
 
     bson out;
     HubHost *host = NULL;
 
-    if (mongo_find_one(conn, MONGO_DATABASE, &query, &field, &out))
+    if (mongo_find_one(conn, MONGO_DATABASE, &query, &fields, &out) == MONGO_OK)
     {
         Item *host_names = BsonGetStringArrayAsItemList(&out, cfr_host_array);
         Item *ip_addresses = BsonGetStringArrayAsItemList(&out, cfr_ip_array);
@@ -6393,7 +6274,7 @@ HubHost *CFDB_GetHostByKey(EnterpriseDB *conn, const char *hostkey)
     }
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
     return host;
 }
@@ -6407,24 +6288,24 @@ Item *CFDB_GetHostByColour(EnterpriseDB *conn, HostClassFilter *host_class_filte
 {
     const HostRankMethod method = host_colour_filter ? HOST_RANK_METHOD_COMPLIANCE : host_colour_filter->method;
 
-    bson_buffer bb;
-
-    bson_buffer_init(&bb);
-    bson_buffer * query_buffer = bson_append_start_object( &bb, "$query");
-    BsonAppendHostClassFilter(&bb, host_class_filter);
-    BsonAppendHostColourFilter(&bb, host_colour_filter);
-    bson_append_finish_object(query_buffer);
-
     bson query;
-    bson_from_buffer(&query, &bb);
+    bson_init(&query);
+    {
+        bson_append_start_object( &query, "$query");
+        BsonAppendHostClassFilter(&query, host_class_filter);
+        BsonAppendHostColourFilter(&query, host_colour_filter);
+        bson_append_finish_object(&query);
+    }
+
+    bson_finish(&query);
 
     bson fields;
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_append_int(&bb, cfr_ip_array, 1);
-    bson_append_int(&bb, cfr_host_array, 1);
-    bson_append_int(&bb, HostRankMethodToMongoCode(method), 1);
-    bson_from_buffer(&fields, &bb);
+
+    BsonSelectReportFields(&fields, 4,
+                           cfr_keyhash,
+                           cfr_ip_array,
+                           cfr_host_array,
+                           HostRankMethodToMongoCode(method));
 
     mongo_cursor *cursor = NULL;
     cursor = mongo_find(conn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
@@ -6445,9 +6326,9 @@ Item *CFDB_GetHostByColour(EnterpriseDB *conn, HostClassFilter *host_class_filte
     Item *list = NULL;
     bson_iterator it1;
 
-    while (mongo_cursor_next(cursor)) // loops over documents
+    while (mongo_cursor_next(cursor) == MONGO_OK) // loops over documents
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         keyhash[0] = '\0';
         hostnames[0] = '\0';
@@ -6479,25 +6360,24 @@ Item *CFDB_GetHostByColour(EnterpriseDB *conn, HostClassFilter *host_class_filte
 long CFDB_GetLastAgentExecution(EnterpriseDB *conn, const char *hostkey)
 {
     long agent_last_exec = 0;
-    bson_buffer buffer;
-    bson query, field;
 
     // query
-    bson_buffer_init(&buffer);
-    bson_append_string(&buffer, cfr_keyhash, hostkey);
-    bson_from_buffer(&query, &buffer);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfr_keyhash, hostkey);
+    bson_finish(&query);
 
     // projection
-    bson_buffer_init(&buffer);
-    bson_append_int(&buffer, cfr_last_execution, 1);
-    bson_from_buffer(&field, &buffer);
+    bson field;
+
+    BsonSelectReportFields(&field, 1, cfr_last_execution);
 
     bson out;
-    bson_bool_t found = mongo_find_one(conn, MONGO_DATABASE, &query, &field, &out);
 
-    if (found)
+    if (mongo_find_one(conn, MONGO_DATABASE, &query, &field, &out) == MONGO_OK)
     {
         agent_last_exec = BsonLongGet(&out, cfr_last_execution);
+        bson_destroy(&out);
     }
 
     bson_destroy(&query);
@@ -6511,25 +6391,23 @@ long CFDB_GetLastAgentExecution(EnterpriseDB *conn, const char *hostkey)
 long CFDB_GetDeltaAgentExecution(EnterpriseDB *conn, const char *hostkey)
 {
     long delta = 0;
-    bson_buffer buffer;
-    bson query, field;
 
     // query
-    bson_buffer_init(&buffer);
-    bson_append_string(&buffer, cfr_keyhash, hostkey);
-    bson_from_buffer(&query, &buffer);
+    bson query;
+    bson_init(&query);
+    bson_append_string(&query, cfr_keyhash, hostkey);
+    bson_finish(&query);
 
     // projection
-    bson_buffer_init(&buffer);
-    bson_append_int(&buffer, cfr_schedule, 1);
-    bson_from_buffer(&field, &buffer);
+    bson field;
+
+    BsonSelectReportFields(&field, 1, cfr_schedule);
 
     bson out;
-    bson_bool_t found = mongo_find_one(conn, MONGO_DATABASE, &query, &field, &out);
-
-    if (found)
+    if (mongo_find_one(conn, MONGO_DATABASE, &query, &field, &out) == MONGO_OK)
     {
         delta = BsonLongGet(&out, cfr_schedule);
+        bson_destroy(&out);
     }
 
     bson_destroy(&query);
@@ -6559,28 +6437,23 @@ bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour 
     }
 
     /* query */
-    bson_buffer bb;
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, lkeyhash);
     bson query;
-    bson_from_buffer(&query, &bb);
+    bson_init(&query);
+    bson_append_string(&query, cfr_keyhash, lkeyhash);
+    bson_finish(&query);
 
    /* result document */
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_day, 1);
-    bson_append_int(&bb, HostRankMethodToMongoCode(method), 1);
-    bson_append_int(&bb, cfr_is_black, 1);
-    bson field;
-    bson_from_buffer(&field, &bb);
+    bson fields;
+
+    BsonSelectReportFields(&fields, 3,
+                           cfr_day,
+                           HostRankMethodToMongoCode(method),
+                           cfr_is_black);
 
     bson out;
-    bson_bool_t found = mongo_find_one(&conn, MONGO_DATABASE, &query, &field, &out);
-
-    bson_destroy(&query);
-    bson_destroy(&field);
 
     /* if no records are found it's seen are host with unknown state (blue) */
-    if (!found)
+    if (mongo_find_one(&conn, MONGO_DATABASE, &query, &fields, &out) != MONGO_OK)
     {
         *result = HOST_COLOUR_BLUE;
     }
@@ -6606,10 +6479,10 @@ bool CFDB_GetHostColour(char *lkeyhash, const HostRankMethod method, HostColour 
         bson_destroy(&out);
     }
 
-    if (!CFDB_Close(&conn))
-    {
-        CfOut(cf_verbose, "", "!! Could not close connection to report database");
-    }
+    bson_destroy(&query);
+    bson_destroy(&fields);
+
+    CFDB_Close(&conn);
 
     return 0;
 }

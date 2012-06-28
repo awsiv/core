@@ -298,7 +298,6 @@ void Nova2PHP_summary_meter(char *buffer, int bufsize)
     bson_empty(query);
 
     Nova_Meter(query, MONGO_DATABASE, buffer, bufsize);
-    bson_destroy(query);
 }
 
 /*****************************************************************************/
@@ -604,17 +603,16 @@ JsonElement *Nova2PHP_bundle_compliance_summary (char *hostkey, char *bundle, bo
 
 void Nova2PHP_meter(char *hostkey, char *buffer, int bufsize)
 {
-    bson_buffer bb;
     bson query;
 
-    bson_buffer_init(&bb);
+    bson_init(&query);
 
     if (!NULL_OR_EMPTY(hostkey))
     {
-        bson_append_string(&bb, cfr_keyhash, hostkey);
+        bson_append_string(&query, cfr_keyhash, hostkey);
     }
 
-    bson_from_buffer(&query, &bb);
+    bson_finish(&query);
 
     Nova_Meter(&query, MONGO_DATABASE, buffer, bufsize);
 
@@ -2457,16 +2455,15 @@ int Nova2PHP_hostinfo(char *hostkey, char *hostnameOut, char *ipaddrOut, int buf
     Rlist *rp;
     int count1 = 0, count2 = 0, tmpsize1, tmpsize2;
     EnterpriseDB dbconn;
-    bson query;
-    bson_buffer bb;
 
 /* BEGIN query document */
+    bson query;
 
     if (hostkey && strlen(hostkey) != 0)
     {
-        bson_buffer_init(&bb);
-        bson_append_string(&bb, cfr_keyhash, hostkey);
-        bson_from_buffer(&query, &bb);
+        bson_init(&query);
+        bson_append_string(&query, cfr_keyhash, hostkey);
+        bson_finish(&query);
     }
     else
     {
@@ -3835,8 +3832,6 @@ JsonElement *JSONErrorFromId(cfapi_errid errid)
 JsonElement *Nova2PHP_network_speed(char *hostkey)
 {
     EnterpriseDB dbconn;
-    mongo_cursor *cursor;
-    bson_buffer bb;
     int found = false;
 
     double net_expected = 0;
@@ -3849,33 +3844,34 @@ JsonElement *Nova2PHP_network_speed(char *hostkey)
 
     bson query;
 
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, hostkey);
-    bson_from_buffer(&query, &bb);
+    bson_init(&query);
+    bson_append_string(&query, cfr_keyhash, hostkey);
+    bson_finish(&query);
 
     bson field;
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_netmeasure, 1);
-    bson_from_buffer(&field, &bb);
+    bson_init(&field);
+    bson_append_int(&field, cfr_netmeasure, 1);
+    bson_finish(&field);
 
-    cursor = mongo_find(&dbconn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(&dbconn, MONGO_DATABASE, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
     bson_destroy(&query);
     bson_destroy(&field);
 
     cfapi_errid errid = ERRID_SUCCESS;
 
-    if (mongo_cursor_next(cursor))      // not more than one record
+    if (mongo_cursor_next(cursor) == MONGO_OK)      // not more than one record
     {
         bson_iterator it1;
-        bson_iterator_init(&it1, cursor->current.data);
+
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
             if (StringSafeCompare(bson_iterator_key(&it1), cfr_netmeasure) == 0)
             {
                 bson_iterator it2;
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 found = true;
                 while (bson_iterator_next(&it2))
@@ -4389,7 +4385,6 @@ int Nova2PHP_replica_status(char *buffer, int bufsize)
 bool Nova2PHP_environment_list(EnvironmentsList **out, HostClassFilter *hostClassFilter)
 {
     EnterpriseDB dbconn;
-    bson_buffer bb;
 
     *out = NULL;
 
@@ -4400,9 +4395,9 @@ bool Nova2PHP_environment_list(EnvironmentsList **out, HostClassFilter *hostClas
 
     bson query;
 
-    bson_buffer_init(&bb);
-    BsonAppendHostClassFilter(&bb, hostClassFilter);
-    bson_from_buffer(&query, &bb);
+    bson_init(&query);
+    BsonAppendHostClassFilter(&query, hostClassFilter);
+    bson_finish(&query);
 
     Item *item_envs = CFDB_QueryDistinct(&dbconn, MONGO_BASE, MONGO_HOSTS_COLLECTION, cfr_environment, &query);
 
@@ -4429,9 +4424,6 @@ bool Nova2PHP_environment_list(EnvironmentsList **out, HostClassFilter *hostClas
 bool Nova2PHP_host_list_by_environment(HostsList **out, const char *environment, HostClassFilter *hostClassFilter)
 {
     EnterpriseDB dbconn;
-    mongo_cursor *cursor;
-    bson_buffer bb;
-    bson query, fields;
 
     *out = NULL;
 
@@ -4441,24 +4433,27 @@ bool Nova2PHP_host_list_by_environment(HostsList **out, const char *environment,
     }
 
 /* { env: $environment } */
-    bson_buffer_init(&bb);
-    BsonAppendHostClassFilter(&bb, hostClassFilter);
-    bson_append_string(&bb, cfr_environment, environment);
-    bson_from_buffer(&query, &bb);
+    bson query;
+
+    bson_init(&query);
+    BsonAppendHostClassFilter(&query, hostClassFilter);
+    bson_append_string(&query, cfr_environment, environment);
+    bson_finish(&query);
 
 /* { kH: 1 } */
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_keyhash, 1);
-    bson_from_buffer(&fields, &bb);
+    bson fields;
+    bson_init(&fields);
+    bson_append_int(&fields, cfr_keyhash, 1);
+    bson_finish(&fields);
 
-    cursor = mongo_find(&dbconn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(&dbconn, MONGO_DATABASE, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
     bson_destroy(&fields);
 
     CFDB_Close(&dbconn);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         bson_iterator i;
 
@@ -4485,10 +4480,6 @@ bool Nova2PHP_host_list_by_environment(HostsList **out, const char *environment,
 char *Nova2PHP_environment_by_hostkey(const char *hostkey)
 {
     EnterpriseDB dbconn;
-    bson_buffer bb;
-    bson query, fields;
-    bson result;
-    bool res;
     bson_iterator i;
     char *environment = NULL;
 
@@ -4498,21 +4489,22 @@ char *Nova2PHP_environment_by_hostkey(const char *hostkey)
     }
 
 /* { kH: $hostkey } */
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfr_keyhash, hostkey);
-    bson_from_buffer(&query, &bb);
+    bson query;
+
+    bson_init(&query);
+    bson_append_string(&query, cfr_keyhash, hostkey);
+    bson_finish(&query);
 
 /* { env: 1 } */
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfr_environment, 1);
-    bson_from_buffer(&fields, &bb);
+    bson fields;
 
-    res = mongo_find_one(&dbconn, MONGO_DATABASE, &query, &fields, &result);
+    bson_init(&fields);
+    bson_append_int(&fields, cfr_environment, 1);
+    bson_finish(&fields);
 
-    bson_destroy(&query);
-    bson_destroy(&fields);
+    bson result;
 
-    if (res)
+    if (mongo_find_one(&dbconn, MONGO_DATABASE, &query, &fields, &result) == MONGO_OK)
     {
         if (bson_find(&i, &result, cfr_environment))
         {
@@ -4520,6 +4512,9 @@ char *Nova2PHP_environment_by_hostkey(const char *hostkey)
         }
         bson_destroy(&result);
     }
+
+    bson_destroy(&query);
+    bson_destroy(&fields);
 
     CFDB_Close(&dbconn);
     return environment;
@@ -4708,18 +4703,18 @@ int Nova2PHP_get_host_noteid(char *hostkey, char *returnval, int bufsize)
     char buffer[CF_BUFSIZE];
     Rlist *rp, *result;
     EnterpriseDB dbconn;
-    bson query;
-    bson_buffer bb;
 
     if (NULL_OR_EMPTY(hostkey))
     {
         return false;
     }
 
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfn_keyhash, hostkey);
-    bson_append_int(&bb, cfn_reporttype, CFREPORT_HOSTS);
-    bson_from_buffer(&query, &bb);
+    bson query;
+
+    bson_init(&query);
+    bson_append_string(&query, cfn_keyhash, hostkey);
+    bson_append_int(&query, cfn_reporttype, CFREPORT_HOSTS);
+    bson_finish(&query);
 
     if (!CFDB_Open(&dbconn))
     {

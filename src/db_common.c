@@ -42,7 +42,7 @@ int CFDB_Open(EnterpriseDB *conn)
 
 # endif
 
-    if (result != 0)
+    if (result != MONGO_OK)
     {
         mongo_destroy(conn);
         CfOut(cf_verbose, "mongo_connect", "!! Could not connect to mongo server (got %d)", result);
@@ -55,12 +55,13 @@ int CFDB_Open(EnterpriseDB *conn)
 
 int CFDB_Close(EnterpriseDB *conn)
 {
-    if (mongo_destroy(conn) != 0)
+    mongo_destroy(conn);
+    /*
     {
         CfOut(cf_error, "mongo_destroy", "!! Could not disconnect from mongo server");
         return false;
     }
-
+*/
     return true;
 }
 
@@ -83,7 +84,7 @@ bool MongoCheckForError(EnterpriseDB *conn, const char *operation, const char *e
 
     if (mongo_cmd_get_last_error(conn, MONGO_BASE, &b))
     {
-        BsonToString(dbErr, sizeof(dbErr), b.data);
+        BsonToString(dbErr, sizeof(dbErr), &b);
         CfOut(cf_error, "", "!! Database error on %s (%s): %s", operation, extra, dbErr);
         bson_destroy(&b);
         return false;

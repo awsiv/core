@@ -10,6 +10,7 @@
 
 #include "files_names.h"
 #include "db_query.h"
+#include "bson_lib.h"
 #include "item_lib.h"
 
 #include <assert.h>
@@ -38,9 +39,6 @@ static int MergeExistingContexts(Item **list, char *topic_name, char *topic_cont
 
 void Nova_DumpTopics()
 {
-    bson_buffer bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1;
     EnterpriseDB conn;
     char topic_name[CF_BUFSIZE];
@@ -54,29 +52,30 @@ void Nova_DumpTopics()
     }
 
 /* BEGIN query document */
+    bson query;
 
     bson_empty(&query);
 
 /* BEGIN RESULT DOCUMENT */
+    bson fields;
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfk_topicname, 1);
-    bson_append_int(&bb, cfk_topicid, 1);
-    bson_append_int(&bb, cfk_topiccontext, 1);
-    bson_append_int(&bb, cfk_associations, 1);
-    bson_append_int(&bb, cfk_associd, 1);
-    bson_append_int(&bb, cfk_assoccontext, 1);
-    bson_append_int(&bb, cfk_assocname, 1);
-    bson_from_buffer(&field, &bb);
+    BsonSelectReportFields(&fields, 7,
+                           cfk_topicname,
+                           cfk_topicid,
+                           cfk_topiccontext,
+                           cfk_associations,
+                           cfk_associd,
+                           cfk_assoccontext,
+                           cfk_assocname);
 
 /* BEGIN SEARCH */
 
-    cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
-    bson_destroy(&field);
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))   // loops over documents
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         topic_name[0] = '\0';
         topic_context[0] = '\0';
@@ -175,9 +174,6 @@ void Nova_ShowTopic(char *qualified_topic)
 int Nova_GetTopicIdForTopic(char *typed_topic)
 {
     char topic[CF_BUFSIZE], type[CF_BUFSIZE];
-    bson_buffer bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1;
     EnterpriseDB conn;
     int topic_id = 0;
@@ -190,35 +186,33 @@ int Nova_GetTopicIdForTopic(char *typed_topic)
     }
 
 /* BEGIN query document */
+    bson query;
 
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfk_topicname, topic);
+    bson_init(&query);
+    bson_append_string(&query, cfk_topicname, topic);
 
     if (strlen(type) > 0 && strcmp(type, "any") != 0)
     {
-        bson_append_string(&bb, cfk_topiccontext, type);
+        bson_append_string(&query, cfk_topiccontext, type);
     }
 
-    bson_from_buffer(&query, &bb);
+    bson_finish(&query);
 
 /* BEGIN RESULT DOCUMENT */
+    bson fields;
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfk_topicname, 1);
-    bson_append_int(&bb, cfk_topicid, 1);
-    bson_append_int(&bb, cfk_topiccontext, 1);
-    bson_from_buffer(&field, &bb);
+    BsonSelectReportFields(&fields, 3, cfk_topicname, cfk_topicid, cfk_topiccontext);
 
 /* BEGIN SEARCH */
 
-    cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))   // loops over documents
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
@@ -239,9 +233,6 @@ int Nova_GetTopicIdForTopic(char *typed_topic)
 
 int Nova_GetTopicByTopicId(int search_id, char *topic_name, char *topic_id, char *topic_context)
 {
-    bson_buffer bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1;
     EnterpriseDB conn;
     int topicid = 0;
@@ -252,29 +243,26 @@ int Nova_GetTopicByTopicId(int search_id, char *topic_name, char *topic_id, char
     }
 
 /* BEGIN query document */
+    bson query;
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfk_topicid, search_id);
-    bson_from_buffer(&query, &bb);
+    bson_init(&query);
+    bson_append_int(&query, cfk_topicid, search_id);
+    bson_finish(&query);
 
 /* BEGIN RESULT DOCUMENT */
-
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfk_topicname, 1);
-    bson_append_int(&bb, cfk_topicid, 1);
-    bson_append_int(&bb, cfk_topiccontext, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+    BsonSelectReportFields(&fields, 3, cfk_topicname, cfk_topicid, cfk_topiccontext);
 
 /* BEGIN SEARCH */
 
-    cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))   // loops over documents
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         topic_name[0] = '\0';
         topic_context[0] = '\0';
@@ -309,9 +297,6 @@ int Nova_GetTopicByTopicId(int search_id, char *topic_name, char *topic_id, char
 
 Item *Nova_SearchTopicMap(char *search_topic,int search_type,int merge)
 {
-    bson_buffer bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1;
     EnterpriseDB conn;
     char topic_name[CF_BUFSIZE];
@@ -325,8 +310,9 @@ Item *Nova_SearchTopicMap(char *search_topic,int search_type,int merge)
     }
 
 /* BEGIN query document */
+    bson query;
 
-    bson_buffer_init(&bb);
+    bson_init(&query);
 
     Nova_DeClassifyTopic(search_topic, topic_name, topic_context);
 
@@ -334,11 +320,11 @@ Item *Nova_SearchTopicMap(char *search_topic,int search_type,int merge)
        {
        if (!NULL_OR_EMPTY(search_topic))
           {          
-          bson_append_regex(&bb, cfk_topicname, topic_name, "");
+          bson_append_regex(&query, cfk_topicname, topic_name, "");
 
           if (strcmp(topic_context,"any") != 0)
              {
-             bson_append_regex(&bb, cfk_topiccontext, topic_context, "");
+             bson_append_regex(&query, cfk_topiccontext, topic_context, "");
              }
           }
        }
@@ -346,38 +332,37 @@ Item *Nova_SearchTopicMap(char *search_topic,int search_type,int merge)
        {
        if (!NULL_OR_EMPTY(search_topic))
           {          
-          bson_append_string(&bb, cfk_topicname, topic_name);
+          bson_append_string(&query, cfk_topicname, topic_name);
           if (strcmp(topic_context,"any") != 0)
              {
-             bson_append_string(&bb, cfk_topiccontext, topic_context);
+             bson_append_string(&query, cfk_topiccontext, topic_context);
              }
           }       
        }
     
-    bson_from_buffer(&query, &bb);
+    bson_finish(&query);
 
 /* BEGIN RESULT DOCUMENT */
-
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfk_topicname, 1);
-    bson_append_int(&bb, cfk_topicid, 1);
-    bson_append_int(&bb, cfk_topiccontext, 1);
-    bson_append_int(&bb, cfk_associations, 1);
-    bson_append_int(&bb, cfk_associd, 1);
-    bson_append_int(&bb, cfk_assoccontext, 1);
-    bson_append_int(&bb, cfk_assocname, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+    BsonSelectReportFields(&fields, 7,
+                           cfk_topicname,
+                           cfk_topicid,
+                           cfk_topiccontext,
+                           cfk_associations,
+                           cfk_associd,
+                           cfk_assoccontext,
+                           cfk_assocname);
 
 /* BEGIN SEARCH */
 
-    cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))   // loops over documents
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         topic_name[0] = '\0';
         topic_context[0] = '\0';
@@ -487,9 +472,6 @@ Item *Nova_ScanLeadsAssociations(int search_id, char *assoc_mask)
 
 */
 {
-    bson_buffer bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1, it2, it3;
     EnterpriseDB conn;
     char assoc_name[CF_BUFSIZE];
@@ -504,40 +486,36 @@ Item *Nova_ScanLeadsAssociations(int search_id, char *assoc_mask)
     }
 
 /* BEGIN query document */
+    bson query;
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfk_topicid, search_id);
-    bson_from_buffer(&query, &bb);
+    bson_init(&query);
+    bson_append_int(&query, cfk_topicid, search_id);
+    bson_finish(&query);
 
 /* BEGIN RESULT DOCUMENT */
-
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfk_associations, 1);
-    bson_append_int(&bb, cfk_associd, 1);
-    bson_append_int(&bb, cfk_assoccontext, 1);
-    bson_append_int(&bb, cfk_assocname, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+    BsonSelectReportFields(&fields, 4, cfk_associations, cfk_associd, cfk_assoccontext, cfk_assocname);
 
 /* BEGIN SEARCH */
 
-    cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))   // loops over documents
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
             if (strcmp(bson_iterator_key(&it1), cfk_associations) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
 
                     assoc_id = 0;
                     assoc_name[0] = '\0';
@@ -595,9 +573,6 @@ JsonElement *Nova_ScanOccurrences(int this_id)
          topic_id[CF_BUFSIZE] = { 0 },
          topic_context[CF_BUFSIZE] = { 0 };
     char locator[CF_BUFSIZE], context[CF_BUFSIZE], represents[CF_BUFSIZE], topic[CF_BUFSIZE], text[CF_BUFSIZE];
-    bson_buffer bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1;
     EnterpriseDB conn;
     Hit *hits = NULL, *hp;
@@ -623,13 +598,14 @@ JsonElement *Nova_ScanOccurrences(int this_id)
         }
     
     // Using a regex here is greedy, but it helps to brainstorm
-    
-    bson_buffer_init(&bb);
+    bson query;
+
+    bson_init(&query);
 
     // The following search is greedy, but probably best, else we could try for a distinct word
     // snprintf(searchstr,CF_BUFSIZE,"^%s$|\\s+%s\\s+",topic_name,topic_name);
 
-    bson_append_regex(&bb, cfk_occurtopic, topic_name, "");
+    bson_append_regex(&query, cfk_occurtopic, topic_name, "");
 
     if (strcmp("any", topic_context) != 0)
        {
@@ -637,28 +613,27 @@ JsonElement *Nova_ScanOccurrences(int this_id)
        // bson_append_string(&bb, cfk_occurtopic, topic_context);
        }
     
-    bson_from_buffer(&query, &bb);
+    bson_finish(&query);
 
 /* BEGIN RESULT DOCUMENT */
-
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfk_occurcontext, 1);
-    bson_append_int(&bb, cfk_occurlocator, 1);
-    bson_append_int(&bb, cfk_occurtype, 1);
-    bson_append_int(&bb, cfk_occurrep, 1);
-    bson_append_int(&bb, cfk_occurtopic, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+    BsonSelectReportFields(&fields, 5,
+                           cfk_occurcontext,
+                           cfk_occurlocator,
+                           cfk_occurtype,
+                           cfk_occurrep,
+                           cfk_occurtopic);
 
 /* BEGIN SEARCH */
 
-    cursor = mongo_find(&conn, MONGO_KM_OCCURRENCES, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_OCCURRENCES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))   // loops over documents
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         locator[0] = '\0';
         topic[0] = '\0';
@@ -721,9 +696,6 @@ int Nova_GetReportDescription(int this_id, char *buffer, int bufsize)
 {
     char topic_name[CF_BUFSIZE], topic_id[CF_BUFSIZE], topic_context[CF_BUFSIZE];
     char searchstring[CF_BUFSIZE];
-    bson query, field;
-    mongo_cursor *cursor;
-    bson_buffer bb;
     bson_iterator it1;
     EnterpriseDB conn;
 
@@ -744,26 +716,26 @@ int Nova_GetReportDescription(int this_id, char *buffer, int bufsize)
         return false;
     }
 
-    bson_buffer_init(&bb);
-    bson_append_regex(&bb, cfk_occurcontext, searchstring, "");
-    bson_from_buffer(&query, &bb);
+    bson query;
+
+    bson_init(&query);
+    bson_append_regex(&query, cfk_occurcontext, searchstring, "");
+    bson_finish(&query);
 
 /* BEGIN RESULT DOCUMENT */
-
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfk_occurlocator, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+    BsonSelectReportFields(&fields, 1, cfk_occurlocator);
 
 /* BEGIN SEARCH */
 
-    cursor = mongo_find(&conn, MONGO_KM_OCCURRENCES, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_OCCURRENCES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
@@ -806,9 +778,6 @@ Item *Nova_GetBusinessGoals(char *handle)
 int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
 {
     Rlist *rp;
-    bson_buffer bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1;
     EnterpriseDB conn;
 
@@ -846,32 +815,33 @@ int Nova_GetUniqueBusinessGoals(char *buffer, int bufsize)
     }
 
 /* BEGIN query document */
-    
-    bson_buffer_init(&bb);
-    bson_append_regex(&bb, cfk_occurtopic, searchstring, "");
-    bson_from_buffer(&query, &bb);
+    bson query;
+
+    bson_init(&query);
+    bson_append_regex(&query, cfk_occurtopic, searchstring, "");
+    bson_finish(&query);
 
 /* BEGIN RESULT DOCUMENT */
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfk_occurcontext, 1);
-    bson_append_int(&bb, cfk_occurlocator, 1);
-    bson_append_int(&bb, cfk_occurtype, 1);
-    bson_append_int(&bb, cfk_occurrep, 1);
-    bson_append_int(&bb, cfk_occurtopic, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+    BsonSelectReportFields(&fields, 5,
+                           cfk_occurcontext,
+                           cfk_occurlocator,
+                           cfk_occurtype,
+                           cfk_occurrep,
+                           cfk_occurtopic);
 
 /* BEGIN SEARCH */
 
-    cursor = mongo_find(&conn, MONGO_KM_OCCURRENCES, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_OCCURRENCES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
     strcpy(buffer, "[");
 
-    while (mongo_cursor_next(cursor))   // loops over documents
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
         while (bson_iterator_next(&it1))
         {
             /* Query specific search/marshalling */
@@ -927,9 +897,6 @@ char *Nova_URL(char *s, char *rep)
 void Nova_FillInGoalComment(Item *ip)
 {
     char searchstring[CF_MAXVARSIZE];
-    bson_buffer bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1;
     EnterpriseDB conn;
     char canonified_goal[CF_BUFSIZE] = { 0 };
@@ -946,31 +913,32 @@ void Nova_FillInGoalComment(Item *ip)
         return;
     }
 
-    bson_buffer_init(&bb);
-    bson_append_regex(&bb, cfk_occurcontext, searchstring, "");
-    bson_append_regex(&bb, cfk_occurtopic, searchstring, "");
-    bson_from_buffer(&query, &bb);
+    bson query;
+
+    bson_init(&query);
+    bson_append_regex(&query, cfk_occurcontext, searchstring, "");
+    bson_append_regex(&query, cfk_occurtopic, searchstring, "");
+    bson_finish(&query);
 
 /* BEGIN RESULT DOCUMENT */
-
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfk_occurcontext, 1);
-    bson_append_int(&bb, cfk_occurlocator, 1);
-    bson_append_int(&bb, cfk_occurtype, 1);
-    bson_append_int(&bb, cfk_occurtopic, 1);
-    bson_append_int(&bb, cfk_occurrep, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+    BsonSelectReportFields(&fields, 5,
+                           cfk_occurcontext,
+                           cfk_occurlocator,
+                           cfk_occurtype,
+                           cfk_occurtopic,
+                           cfk_occurrep);
 
 /* BEGIN SEARCH */
 
-    cursor = mongo_find(&conn, MONGO_KM_OCCURRENCES, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_OCCURRENCES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))   // loops over documents
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
@@ -994,9 +962,6 @@ void Nova_FillInGoalComment(Item *ip)
 const char *Nova_GetBundleComment(char *bundle)
 {
     static char buf[CF_BUFSIZE];
-    bson_buffer bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1;
     EnterpriseDB conn;
 
@@ -1007,29 +972,29 @@ const char *Nova_GetBundleComment(char *bundle)
         return NULL;
     }
 
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfk_occurrep, "description");
-    bson_append_string(&bb, cfk_occurcontext, bundle);
-    bson_from_buffer(&query, &bb);
+    bson query;
+
+    bson_init(&query);
+    bson_append_string(&query, cfk_occurrep, "description");
+    bson_append_string(&query, cfk_occurcontext, bundle);
+    bson_finish(&query);
 
 /* BEGIN RESULT DOCUMENT */
-
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfk_occurlocator, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+    BsonSelectReportFields(&fields, 1, cfk_occurlocator);
 
 /* BEGIN SEARCH */
 
-    cursor = mongo_find(&conn, MONGO_KM_OCCURRENCES, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_OCCURRENCES, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
     CFDB_Close(&conn);
 
-    while (mongo_cursor_next(cursor))   // loops over documents
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         while (bson_iterator_next(&it1))
         {
@@ -1471,9 +1436,6 @@ Item *Nova_NearestNeighbours(int search_id, char *assoc_mask)
 /* This function is like ScanLeads, except different output */
 
 {
-    bson_buffer bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1, it2, it3;
     EnterpriseDB conn;
     Item *list = NULL;
@@ -1489,33 +1451,33 @@ Item *Nova_NearestNeighbours(int search_id, char *assoc_mask)
     }
 
 /* BEGIN query document */
+    bson query;
 
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfk_topicid, search_id);
-    bson_from_buffer(&query, &bb);
+    bson_init(&query);
+    bson_append_int(&query, cfk_topicid, search_id);
+    bson_finish(&query);
 
 /* BEGIN RESULT DOCUMENT */
-
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfk_topicname, 1);
-    bson_append_int(&bb, cfk_topicid, 1);
-    bson_append_int(&bb, cfk_topiccontext, 1);
-    bson_append_int(&bb, cfk_associations, 1);
-    bson_append_int(&bb, cfk_associd, 1);
-    bson_append_int(&bb, cfk_assoccontext, 1);
-    bson_append_int(&bb, cfk_assocname, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+    BsonSelectReportFields(&fields, 7,
+                           cfk_topicname,
+                           cfk_topicid,
+                           cfk_topiccontext,
+                           cfk_associations,
+                           cfk_associd,
+                           cfk_assoccontext,
+                           cfk_assocname);
 
 /* BEGIN SEARCH */
 
-    cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
     bson_destroy(&query);
-    bson_destroy(&field);
+    bson_destroy(&fields);
 
-    while (mongo_cursor_next(cursor))   // loops over documents
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         topic_id = 0;
 
@@ -1523,11 +1485,11 @@ Item *Nova_NearestNeighbours(int search_id, char *assoc_mask)
         {
             if (strcmp(bson_iterator_key(&it1), cfk_associations) == 0)
             {
-                bson_iterator_init(&it2, bson_iterator_value(&it1));
+                bson_iterator_subiterator(&it1, &it2);
 
                 while (bson_iterator_next(&it2))
                 {
-                    bson_iterator_init(&it3, bson_iterator_value(&it2));
+                    bson_iterator_subiterator(&it2, &it3);
 
                     assoc_id = 0;
                     assoc_name[0] = '\0';
@@ -1584,9 +1546,6 @@ Item *Nova_NearestNeighbours(int search_id, char *assoc_mask)
 
 Item *Nova_GetTopicsInContext(char *context)
 {
-    bson_buffer bb;
-    bson query, field;
-    mongo_cursor *cursor;
     bson_iterator it1;
     EnterpriseDB conn;
     Item *list = NULL;
@@ -1600,28 +1559,26 @@ Item *Nova_GetTopicsInContext(char *context)
     }
 
 /* BEGIN query document */
+    bson query;
 
-    bson_buffer_init(&bb);
-    bson_append_string(&bb, cfk_topiccontext, context);
-    bson_from_buffer(&query, &bb);
+    bson_init(&query);
+    bson_append_string(&query, cfk_topiccontext, context);
+    bson_finish(&query);
 
 /* BEGIN RESULT DOCUMENT */
-
-    bson_buffer_init(&bb);
-    bson_append_int(&bb, cfk_topicname, 1);
-    bson_append_int(&bb, cfk_topicid, 1);
-    bson_append_int(&bb, cfk_topiccontext, 1);
-    bson_from_buffer(&field, &bb);
+    bson fields;
+    BsonSelectReportFields(&fields, 3, cfk_topicname, cfk_topicid, cfk_topiccontext);
 
 /* BEGIN SEARCH */
 
-    cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
-    bson_destroy(&query);
-    bson_destroy(&field);
+    mongo_cursor *cursor = mongo_find(&conn, MONGO_KM_TOPICS, &query, &fields, 0, 0, CF_MONGO_SLAVE_OK);
 
-    while (mongo_cursor_next(cursor))   // loops over documents
+    bson_destroy(&query);
+    bson_destroy(&fields);
+
+    while (mongo_cursor_next(cursor) == MONGO_OK)   // loops over documents
     {
-        bson_iterator_init(&it1, cursor->current.data);
+        bson_iterator_init(&it1, mongo_cursor_bson(cursor));
 
         topic_name[0] = '\0';
         topic_context[0] = '\0';
