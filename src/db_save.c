@@ -272,10 +272,11 @@ void CFDB_SaveSoftware(EnterpriseDB *conn, enum software_rep sw, char *keyhash, 
     bson_finish(&set_op);
 
     mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
-    MongoCheckForError(conn, dbOp, keyhash, NULL);
 
     bson_destroy(&set_op);
     bson_destroy(&host_key);
+
+    MongoCheckForError(conn, dbOp, keyhash, NULL);
 }
 
 /*****************************************************************************/
@@ -707,10 +708,10 @@ void CFDB_SaveClasses(EnterpriseDB *conn, char *keyhash, Item *data)
 
     mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
-    MongoCheckForError(conn, "SaveClasses", keyhash, NULL);
-
     bson_destroy(&set_op);
     bson_destroy(&host_key);
+
+    MongoCheckForError(conn, "SaveClasses", keyhash, NULL);
 
     CFDB_SaveEnvironment(conn, keyhash, data);
 }
@@ -805,10 +806,11 @@ void CFDB_SaveVariables(EnterpriseDB *conn, char *keyhash, Item *data)
     bson_finish(&set_op);
 
     mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
-    MongoCheckForError(conn, "SaveVariables", keyhash, NULL);
 
     bson_destroy(&set_op);
     bson_destroy(&host_key);
+
+    MongoCheckForError(conn, "SaveVariables", keyhash, NULL);
 }
 
 /*****************************************************************************/
@@ -892,10 +894,11 @@ void CFDB_SaveVariables2(EnterpriseDB *conn, char *keyhash, Item *data)
     bson_finish(&set_op);
 
     mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
-    MongoCheckForError(conn, "SaveVariables2", keyhash, NULL);
 
     bson_destroy(&set_op);
     bson_destroy(&host_key);
+
+    MongoCheckForError(conn, "SaveVariables2", keyhash, NULL);
 }
 
 /*****************************************************************************/
@@ -1089,10 +1092,11 @@ void CFDB_SavePromiseLog(EnterpriseDB *conn, char *keyhash, PromiseLogState stat
     bson_finish(&host_key);
 
     mongo_update(conn, MONGO_DATABASE, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
-    MongoCheckForError(conn, "Update failed for : ", keyhash, NULL);
 
     bson_destroy(&set_op);
     bson_destroy(&host_key);
+
+    MongoCheckForError(conn, "Update failed for : ", keyhash, NULL);
 }
 
 
@@ -1838,10 +1842,11 @@ void CFDB_SaveCachedTotalCompliance(EnterpriseDB *conn, char *policy, int slot, 
     bson_finish(&set_op);
 
     mongo_update(conn, MONGO_CACHE, &cacheType, &set_op, MONGO_UPDATE_UPSERT, NULL);
-    MongoCheckForError(conn, "SaveCachedTotalCompliance", policy, NULL);
 
     bson_destroy(&set_op);
     bson_destroy(&cacheType);
+
+    MongoCheckForError(conn, "SaveCachedTotalCompliance", policy, NULL);
 }
 
 /*****************************************************************************/
@@ -1983,8 +1988,9 @@ int CFDB_AddNote(EnterpriseDB *conn, char *keyhash, int reportType, char *nid,
 
     mongo_update(conn, MONGO_NOTEBOOK, &host_key, &set_op, MONGO_UPDATE_UPSERT, NULL);
 
-    MongoCheckForError(conn, "AddNote", keyhash, NULL);
     bson_destroy(&set_op);
+
+    MongoCheckForError(conn, "AddNote", keyhash, NULL);    
 
     if (newnote)
     {
@@ -1996,8 +2002,10 @@ int CFDB_AddNote(EnterpriseDB *conn, char *keyhash, int reportType, char *nid,
         bson_finish(&field);
 
         mongo_cursor *cursor = mongo_find(conn, MONGO_NOTEBOOK, &host_key, &field, 0, 0, CF_MONGO_SLAVE_OK);
-        MongoCheckForError(conn, "GetNoteID", keyhash, NULL);
+
         bson_destroy(&field);
+
+        MongoCheckForError(conn, "GetNoteID", keyhash, NULL);
 
         while (mongo_cursor_next(cursor) == MONGO_OK && !found)
         {
@@ -2057,8 +2065,10 @@ int CFDB_MarkAsDeleted(mongo *dbconn, char *keyHash)
         bson empty;
 
         mongo_update(dbconn, MONGO_SCRATCH, bson_empty(&empty), &set_op, MONGO_UPDATE_UPSERT, NULL); // Note: Upsert Necessary?
-        MongoCheckForError(dbconn, "MarkHostAsDeleted", ScalarValue(rp), NULL);
+
         bson_destroy(&set_op);
+
+        MongoCheckForError(dbconn, "MarkHostAsDeleted", ScalarValue(rp), NULL);
     }
 
     DeleteRlist(hostKeyList);
