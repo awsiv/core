@@ -280,18 +280,12 @@ static cfapi_errid InternalAuthenticate(EnterpriseDB *conn, const char *username
     bson_finish(&query);
 
     bson field;
-    bson_init(&field);
-    bson_append_int(&field, dbkey_user_password, 1);
-    bson_append_int(&field, dbkey_user_salt, 1);
-    bson_finish(&field);
+    BsonSelectReportFields(&field, 2,
+                           dbkey_user_password,
+                           dbkey_user_salt);
 
     bson record;
-    bson_bool_t found = false;
-
-    if(mongo_find_one(conn, GetUsersCollection(conn), &query, &field, &record) == MONGO_OK)
-    {
-        found = true;
-    }
+    bson_bool_t found = mongo_find_one(conn, GetUsersCollection(conn), &query, &field, &record) == MONGO_OK;
 
     bson_destroy(&query);
     bson_destroy(&field);
@@ -300,14 +294,13 @@ static cfapi_errid InternalAuthenticate(EnterpriseDB *conn, const char *username
     {
         const char *db_password = NULL;
         BsonStringGet(&record, dbkey_user_password, &db_password);
-
-        bson_destroy(&record);
-
         assert(db_password);
 
         const char *db_salt = NULL;
         BsonStringGet(&record, dbkey_user_salt, &db_salt);
         assert(db_salt);
+
+        bson_destroy(&record);
 
         if (db_password)
         {
@@ -703,10 +696,7 @@ HubQuery *CFDB_ListUsers(const char *listing_user, const char *usernameRx)
     bson_finish(&query);
 
     bson field;
-    bson_init(&field);
-    bson_append_int(&field, dbkey_user_name, 1);
-    bson_append_int(&field, dbkey_user_active, 1);
-    bson_finish(&field);
+    BsonSelectReportFields(&field, 1, dbkey_user_name);
 
     mongo_cursor *cursor = mongo_find(&conn, MONGO_USERS_INTERNAL_COLLECTION, &query, &field, 0, 0, CF_MONGO_SLAVE_OK);
 
@@ -714,7 +704,7 @@ HubQuery *CFDB_ListUsers(const char *listing_user, const char *usernameRx)
     bson_destroy(&field);
 
     HubQuery *hq = NewHubQuery(NULL, NULL);
-    while (mongo_cursor_next(cursor))
+    while (mongo_cursor_next(cursor) == MONGO_OK)
     {
         const char *username = NULL;
         BsonStringGet(&cursor->current, dbkey_user_name, &username);
