@@ -95,12 +95,13 @@ static char *SHA1Hash(const char *string, int len)
 
 static char *GenerateSalt()
 {
-    unsigned char buffer[10];
+    unsigned char buffer[SALT_SIZE];
 
-    RAND_bytes(buffer, 10);
-    char *base64 = StringEncodeBase64(buffer);
+    RAND_bytes(buffer, SALT_SIZE * sizeof(char));
+    char *base64 = StringEncodeBase64(buffer, SALT_SIZE);
 
-    char *salt = StringSubstring(base64, strlen(base64), 0, 10);
+    // base64 encoded version will have length at least SALT_SIZE
+    char *salt = StringSubstring(base64, strlen(base64), 0, SALT_SIZE);
 
     return salt;
 }
