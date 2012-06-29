@@ -36,6 +36,7 @@ abstract class APIBaseTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->baseUrl = "http://localhost:8888/api";
+        $this->pest = null;
         $this->pest = new PestNova($this->baseUrl);
         $this->pest->setupAuth("admin", "admin");
     }

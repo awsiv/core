@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @uri /user/:username
+ * @uri /user/:username 0
  */
 class User extends Resource
 {
@@ -23,8 +23,14 @@ class User extends Resource
         $data = json_decode($request->data);
 
         $response = new Response($request);
-        $response->body = cfapi_user_put($user, $username, $data['password']);
-        $response->code = Response::OK;
+        if (cfapi_user_put($user, $username, $data->password))
+        {
+            $response->code = Response::CREATED;
+        }
+        else
+        {
+            $response->code = Response::INTERNALSERVERERROR;
+        }
 
         return $response;
     }
@@ -37,12 +43,29 @@ class User extends Resource
 
         if (cfapi_user_delete($user, $username))
         {
-            $response->code = Response::OK;
+            $response->code = Response::NOCONTENT;
         }
         else
         {
             $response->code = Response::INTERNALSERVERERROR;
         }
+
+        return $response;
+    }
+}
+
+/**
+ * @uri /user 1
+ */
+class UserList extends Resource
+{
+    function get($request)
+    {
+        $user = $_SERVER['PHP_AUTH_USER'];
+
+        $response = new Response($request);
+        $response->body = cfapi_user_list($user);
+        $response->code = Response::OK;
 
         return $response;
     }
