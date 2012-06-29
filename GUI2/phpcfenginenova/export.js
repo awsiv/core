@@ -1,3 +1,5 @@
+/* Usage: /var/cfengine/bin/mongo phpcfengine export.js*/
+
 /** appsettings records **/
 if(db["appsettings"].findOne())
 {
