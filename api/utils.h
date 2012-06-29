@@ -41,4 +41,6 @@
    RETURN_STRING(__return_json_output_php, 0); \
 }
 
+JsonElement *PackageResult(JsonElement *data_array, size_t page, size_t total);
+
 #endif

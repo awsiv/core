@@ -5,7 +5,7 @@
 #include "utils.h"
 
 static const char *API_NAME = "CFEngine Enterprise API";
-static const char *API_VERSION = "v2";
+static const char *API_VERSION = "v1";
 
 //******************************************************************************
 
@@ -21,7 +21,7 @@ PHP_FUNCTION(cfapi)
     JsonElement *output = JsonArrayCreate(1);
     JsonArrayAppendObject(output, info);
 
-    RETURN_JSON(output);
+    RETURN_JSON(PackageResult(output, 1, 1));
 }
 
 //******************************************************************************
@@ -90,7 +90,7 @@ PHP_FUNCTION(cfapi_user_list)
     }
     DeleteHubQuery(result, DeleteHubUserRBAC);
 
-    RETURN_JSON(data);
+    RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
 }
 
 PHP_FUNCTION(cfapi_user_get)
@@ -121,7 +121,7 @@ PHP_FUNCTION(cfapi_user_get)
     JsonElement *user_json = HubUserRBACToJson((HubUserRBAC *)result->records->item);
     DeleteHubQuery(result, DeleteHubUserRBAC);
 
-    RETURN_JSON(user_json);
+    RETURN_JSON(PackageResult(user_json, 1, 1));
 }
 
 PHP_FUNCTION(cfapi_user_put)
@@ -217,10 +217,10 @@ PHP_FUNCTION(cfapi_query_post)
         RETURN_NULL();
     }
 
-    JsonElement *result = ReportingEngineQuery(query_parsed);
+    JsonElement *data = ReportingEngineQuery(query_parsed);
     JsonElementDestroy(query_parsed);
 
     assert(result);
 
-    RETURN_JSON(result);
+    RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
 }

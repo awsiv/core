@@ -1,0 +1,7 @@
+[
+    { 
+	"_id" : { "$oid" : "4df78a754a235ac761000000" }, 
+	"description" : "Administrator role", 
+	"name" : "admin"
+    }
+]

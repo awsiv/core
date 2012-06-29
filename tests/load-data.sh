@@ -29,5 +29,7 @@ load_data cfreport hosts
 load_data cfreport logs_rep
 load_data cfreport logs_nk
 load_data cfreport archive
+load_data cfreport users
+load_data cfreport roles
 
 echo "Importing data complete"
