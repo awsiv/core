@@ -1044,8 +1044,9 @@ void DeleteHubVital(HubVital *hv)
 
 /*****************************************************************************/
 
-HubUserRBAC *NewHubUserRBAC(char *userName, char *classRxInclude, char *classRxExclude, char *bundleRxInclude,
-                            char *bundleRxExclude)
+HubUserRBAC *NewHubUserRBAC(const char *userName, const char *classRxInclude,
+                            const char *classRxExclude, const char *bundleRxInclude,
+                            const char *bundleRxExclude)
 {
     HubUserRBAC *rbac = xmalloc(sizeof(HubUserRBAC));
 

@@ -3,7 +3,45 @@
 
 #include "api-php.h"
 
+/*
+  NAMING CONVENTION FOR CFAPI FUNCTIONS.
+
+  Each function corresponds to a REST call as intercepted by the HTTP server.
+  URL paths separated by '/' have a corresponding '_' in CFAPI function names,
+  ending with the HTTP verb for the request.
+
+  Example:
+
+  The resource /api/user lets you manage users.
+
+  GET /api/user => cfapi_user_list (List all the users)
+  GET /api/user/:username => cfapi_user_get (Get user details)
+  PUT /api/user/:username => cfapi_user_put (Add/overwrite a user)
+  DELETE /api/user/:username => cfapi_user_delete (Delete a user)
+
+  etc.
+*/
+
 PHP_FUNCTION(cfapi);
-PHP_FUNCTION(cfapi_query);
+
+/**
+  Authenticates any request and as such is not bound to a resource
+  */
+PHP_FUNCTION(cfapi_auth);
+
+/**
+  User management
+  */
+PHP_FUNCTION(cfapi_user_list);
+PHP_FUNCTION(cfapi_user_get);
+PHP_FUNCTION(cfapi_user_put);
+PHP_FUNCTION(cfapi_user_delete);
+
+/**
+  Reporting engine
+  */
+PHP_FUNCTION(cfapi_query_post);
+
+
 
 #endif

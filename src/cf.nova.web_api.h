@@ -23,6 +23,7 @@
 /* Corresponding description is in web_api.c:ERRID_DESCRIPTION */
 typedef enum cfapi_errid
 {
+    ERRID_UNKNOWN = 0,
     ERRID_SUCCESS,
     ERRID_DBCONNECT,
     ERRID_DBCLOSE,

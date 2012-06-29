@@ -17,7 +17,14 @@
 static zend_function_entry cfapi_functions[] =
 {
     PHP_FE(cfapi, NULL)
-    PHP_FE(cfapi_query, NULL)
+    PHP_FE(cfapi_auth, NULL)
+
+    PHP_FE(cfapi_user_list, NULL)
+    PHP_FE(cfapi_user_get, NULL)
+    PHP_FE(cfapi_user_put, NULL)
+    PHP_FE(cfapi_user_delete, NULL)
+
+    PHP_FE(cfapi_query_post, NULL)
 
     {NULL, NULL, NULL}          /* Must be the last line in cfapi_functions[] */
 };
