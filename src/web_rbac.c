@@ -83,11 +83,11 @@ static cfapi_errid UserIsRoleAdmin(EnterpriseDB *conn, const char *userName);
 
 static char *SHA1Hash(const char *string, int len)
 {
-    unsigned char digest[EVP_MAX_MD_SIZE + 1];
+    unsigned char digest[EVP_MAX_MD_SIZE + 1] = { 0 };
 
     HashString(string, len, digest, cf_sha256);
 
-    char *buffer = xcalloc(EVP_MAX_MD_SIZE * 4, sizeof(char));
+    char *buffer = xcalloc(EVP_MAX_MD_SIZE * 4, sizeof(unsigned char));
 
     HashPrintSafe(cf_sha256, digest, buffer);
     return buffer;
@@ -95,7 +95,7 @@ static char *SHA1Hash(const char *string, int len)
 
 static char *GenerateSalt()
 {
-    unsigned char buffer[SALT_SIZE];
+    unsigned char buffer[SALT_SIZE] = { 0 };
 
     RAND_bytes(buffer, SALT_SIZE * sizeof(char));
     char *base64 = StringEncodeBase64(buffer, SALT_SIZE);
@@ -103,6 +103,7 @@ static char *GenerateSalt()
     // base64 encoded version will have length at least SALT_SIZE
     char *salt = StringSubstring(base64, strlen(base64), 0, SALT_SIZE);
 
+    free(base64);
     return salt;
 }
 
