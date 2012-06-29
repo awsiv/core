@@ -31,6 +31,7 @@ static const char *CDP_REPORTS[][2] =
 
 static const char *ERRID_DESCRIPTION[] =
 {
+    [ERRID_UNKNOWN] = "Unknown error",
     [ERRID_SUCCESS] = "Success",
     [ERRID_DBCONNECT] = "Could not open connection to reporting database",
     [ERRID_DBCLOSE] = "Could not close a connection to reporting database",

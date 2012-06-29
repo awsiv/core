@@ -5,8 +5,10 @@ require_once 'lib/Utils.php';
 require_once 'lib/DefaultParameters.php';
 
 // load resources
-require_once 'resource-v1/Status.php';
 require_once 'resource-v1/Query.php';
+require_once 'resource-v1/Status.php';
+require_once 'resource-v1/User.php';
+
 
 
 $request = new Request(array(
@@ -34,14 +36,11 @@ try
                     Response::NOTACCEPTABLE);
     }
 
-    // TODO: add authentication
-    /*
     if (!isset($_SERVER['PHP_AUTH_USER']) || !isset($_SERVER['PHP_AUTH_PW']) ||
-        !cfpr_user_authenticate($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']))
+        !cfapi_auth($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']))
     {
         throw new ResponseException("Not authenticated", Response::UNAUTHORIZED);
     }
-     */
 
     DefaultParameters::check();
 
