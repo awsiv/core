@@ -91,6 +91,58 @@ void *CF_CODEBOOK_HANDLER[CF_CODEBOOK_SIZE] =
 
 /*********************************************************************/
 
+int Nova_PlaceCollectCall(EnterpriseDB *dbconn, AgentConnection *conn)
+{
+    int tosend, cipherlen = 0;
+    char in[CF_BUFSIZE], out[CF_BUFSIZE], workbuf[CF_BUFSIZE] = { 0 };
+    time_t now = time(NULL);
+
+    workbuf[0] = '\0';
+
+    snprintf(in, CF_BUFSIZE - CF_PROTO_OFFSET, "CALL_ME_BACK collect_calls");
+    cipherlen = EncryptString(conn->encryption_type, in, out, conn->session_key, strlen(in) + 1);
+    snprintf(workbuf, CF_BUFSIZE, "SCALLBACK %4d\0", cipherlen);
+    memcpy(workbuf + CF_PROTO_OFFSET, out, cipherlen);
+    tosend = cipherlen + CF_PROTO_OFFSET;
+
+    /* Remote client formulates the query to send to the receiver */
+
+    CfOut(cf_verbose, "", " >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+    CfOut(cf_verbose, "", " -> Sending collect call at %s", cf_ctime(&now));
+    CfOut(cf_verbose, "", " >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+
+    if (SendTransaction(conn->sd, workbuf, tosend, CF_DONE) == -1)
+    {
+        CfOut(cf_error, "send", "Couldn't send data");
+        return 0;
+    }
+
+    int total_plaintext_len = 0;
+
+    if ((cipherlen = ReceiveTransaction(conn->sd, in, false)) == -1)
+    {
+        CfOut(cf_error, "recv", " !! Failed to collect data");
+        return 0;
+    }
+
+    if (strncmp(in, "BAD:", 4) == 0)
+    {
+        CfOut(cf_error, "", " !! Abort transmission: got \"%s\" from %s", in + 4, conn->remoteip);
+        return 0;
+    }
+
+    int plaintext_len = DecryptString(conn->encryption_type, in, out, conn->session_key, cipherlen);
+
+    // Check the header for timing of response - we can eventually use this to
+    // measure the network performance
+
+    CfOut(cf_verbose, "", "Received %d bytes of report data: %s", plaintext_len, out);
+
+    return total_plaintext_len;
+}
+
+/*********************************************************************/
+
 int Nova_QueryClientForReports(EnterpriseDB *dbconn, AgentConnection *conn, const char *menu, time_t since)
 /*
  * Returns the number of plaintext bytes received (0 on error).

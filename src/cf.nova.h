@@ -711,6 +711,7 @@ int Nova_StoreIncomingReports(char *reply, Item **reports, int current_report);
 void NewReportBook(Item **reports);
 void DeleteReportBook(Item **reports);
 #endif
+int Nova_PlaceCollectCall(EnterpriseDB *dbconn, AgentConnection *conn);
 
 /* copernicus.c */
 
@@ -960,7 +961,7 @@ pid_t Nova_StartTwin(int argc, char **argv);
 void Nova_SignalTwin(void);
 void Nova_SignalOther(void);
 void Nova_ReviveOther(int argc, char **argv);
-
+void Nova_DoTryCollectCall(void);
 
 /* stories.c */
 #ifdef HAVE_LIBMONGOC
