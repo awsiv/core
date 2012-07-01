@@ -711,7 +711,7 @@ int Nova_StoreIncomingReports(char *reply, Item **reports, int current_report);
 void NewReportBook(Item **reports);
 void DeleteReportBook(Item **reports);
 #endif
-int Nova_PlaceCollectCall(EnterpriseDB *dbconn, AgentConnection *conn);
+int Nova_PlaceCollectCall(AgentConnection *conn);
 
 /* copernicus.c */
 

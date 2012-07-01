@@ -249,22 +249,14 @@ int Nova_AcceptCollectCall(ServerConnectionState *conn)
     
     snprintf(lock_id, sizeof(lock_id), "%s%s", LOCK_HAIL_PREFIX, CanonifyName(conn->ipaddr));
 
- if (LICENSES <= 0)
+    if (LICENSES <= 0)
     {
         return false;
     }
- 
- if (AcquireLockByID(lock_id, 6 * MINUTES_PER_HOUR))
-    {
-    long_time_no_see = true;
-    }
 
-        
-// Call the query back to caller from runagent
-
-    if (!CFDB_Open(&dbconn))
+    if (AcquireLockByID(lock_id, 6 * MINUTES_PER_HOUR))
     {
-        return false;
+        long_time_no_see = true;
     }
 
     CfOut(cf_verbose, "", " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
@@ -274,37 +266,39 @@ int Nova_AcceptCollectCall(ServerConnectionState *conn)
        return false;
     }
     
+    if (!CFDB_Open(&dbconn))
+    {
+        return false;
+    }
+
     if (long_time_no_see)
-       {
-       time_t last_week = time(0) - (time_t) SECONDS_PER_WEEK;
+    {
+        time_t last_week = time(0) - (time_t) SECONDS_PER_WEEK;
        
         CfOut(cf_verbose, "", " -> Requesting FULL sensor sweep of %s", HashPrint(CF_DEFAULT_DIGEST, conn->digest));
         report_len = Nova_QueryClientForReports(&dbconn, aconn, "full", last_week);
         
         if (report_len <= 0)
-           {
-           CfOut(cf_verbose, "", "Invalidating full query timelock since no data was received this time");
+        {
+            CfOut(cf_verbose, "", "Invalidating full query timelock since no data was received this time");
            
-           if (!InvalidateLockTime(lock_id))
-              {
-              CfOut(cf_error, "", "!! Could not remove full query lock %s", lock_id);
-              }
-           }
-       }
+            if (!InvalidateLockTime(lock_id))
+            {
+                CfOut(cf_error, "", "!! Could not remove full query lock %s", lock_id);
+            }
+        }
+    }
     else
-       {
-       CfOut(cf_verbose, "", " -> Requesting differential sensor sweep of %s", HashPrint(CF_DEFAULT_DIGEST, conn->digest));
-       report_len = Nova_QueryClientForReports(&dbconn, aconn, "delta", time(NULL) - SECONDS_PER_MINUTE * 10);
-       }
+    {
+        CfOut(cf_verbose, "", " -> Hub Requesting differential sensor sweep of satellite %s", HashPrint(CF_DEFAULT_DIGEST, conn->digest));
+        report_len = Nova_QueryClientForReports(&dbconn, aconn, "delta", time(NULL) - SECONDS_PER_MINUTE * 10);
+    }
 
-    printf(" Report length returned %d\n", report_len);
-    
-    DeleteAgentConn(aconn);
-    
     CfOut(cf_verbose, "", " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     
     CFDB_Close(&dbconn);
     
+    DeleteAgentConn(aconn); // Because ExtractCallBackChannel allocates new memory
     return true;
 }
 
@@ -536,26 +530,26 @@ int RetrieveUnreliableValue(char *caller, char *handle, char *buffer)
 
 void Nova_DoTryCollectCall(void)
 {
- Promise *pp = MakeCollectCallPromise();
- Attributes a = { {0} };
+    Promise *pp = MakeCollectCallPromise();
+    Attributes a = { {0} };
  
- a.copy.trustkey = false;
- a.copy.encrypt = true;
- a.copy.force_ipv4 = false;
- a.copy.portnumber = SHORT_CFENGINEPORT;
+    a.copy.trustkey = false;
+    a.copy.encrypt = true;
+    a.copy.force_ipv4 = false;
+    a.copy.portnumber = SHORT_CFENGINEPORT;
 
- CfOut(cf_verbose,""," -> Going to attempt a collect call to the hub \"%s\" to see if it wants my reports",POLICY_SERVER);
+    CfOut(cf_verbose,""," -> Going to attempt a collect call to the hub \"%s\" to see if it wants my reports",POLICY_SERVER);
 
- if (HailPeerCollect(POLICY_SERVER, a, pp))
+    if (HailPeerCollect(POLICY_SERVER, a, pp))
     {
-    CfOut(cf_verbose,""," -> Collect call succeeded in making contact");
+        CfOut(cf_verbose,""," -> Collect call with hub finished, and I closed the channel");
     }
- else
+    else
     {
-    CfOut(cf_verbose,""," -> Collect call did not succeed in making contact");
+        CfOut(cf_verbose,""," -> Collect call did not succeed in making contact");
     }
 
- DeletePromise(pp);
+    DeletePromise(pp);
 }
 
 
@@ -574,7 +568,7 @@ static int HailPeerCollect(char *host, Attributes a, Promise *pp)
     GetCurrentUserName(user, CF_SMALLBUF);
 
     CfOut(cf_inform, "", "...........................................................................\n");
-    CfOut(cf_inform, "", " * Peer collect call %s : %u \n", peer, a.copy.portnumber);
+    CfOut(cf_inform, "", " * Peer collect call back to hub %s : %u \n", peer, a.copy.portnumber);
     CfOut(cf_inform, "", "...........................................................................\n");
 
     a.copy.servers = SplitStringAsRList(peer, '*');
@@ -600,23 +594,25 @@ static int HailPeerCollect(char *host, Attributes a, Promise *pp)
 
     // We are on the satellite host and calling the hub
     
-    if (!Nova_ExecuteRunagent(conn, "collect_call"))
+    if (!Nova_PlaceCollectCall(conn))
     {
         DisconnectServer(conn);
         DeleteRlist(a.copy.servers);
         return false;
     }
 
+    // We are on the satellite, handling a callback (if it comes)
+    // The socket is still open and can just sit back and wait for
+    // a possible report query now
 
-    // We are on the satellite hub, handling a callback
-
-    
-    //Need authentication dialogue
-    
     ServerEntryPoint(conn->sd, conn->remoteip, SV);
-    
-    //DisconnectServer(conn);
 
+    // We don't want to formally wait, blocking, or we can be DDOSed
+    // If the hub doesn't ask for reports in < 10s, it is probably not going to
+    
+    sleep(10);
+    
+    DisconnectServer(conn);
     DeleteRlist(a.copy.servers);
 
     return true;
@@ -652,36 +648,35 @@ AgentConnection *ExtractCallBackChannel(ServerConnectionState *conn)
 
     ap->sd = conn->sd_reply;
     ap->trust = true;
-    ap->authenticated = conn->id_verified;
+    ap->authenticated = false;
     ap->protoversion = 0;
     strncpy(ap->username,conn->username,CF_SMALLBUF-1);
     //ap->localip[CF_MAX_IP_LEN];
     strncpy(ap->remoteip, conn->ipaddr,CF_MAX_IP_LEN);
     memcpy(ap->digest,conn->digest,EVP_MAX_MD_SIZE + 1);
-    ap->session_key = conn->session_key;
-    ap->encryption_type = conn->encryption_type;
-
+    ap->session_key = NULL;
+    ap->encryption_type = 'N';
     ap->family = SocketFamily(conn->sd_reply);
-    
-    CfDebug("Remote IP set to %s\n", ap->remoteip);
 
     if (!IdentifyAgent(ap->sd, ap->localip, ap->family))
        {
        CfOut(cf_error, "", " !! Id-authentication for %s failed\n", VFQNAME);
        errno = EPERM;
+       DeletePromise(pp);
        return NULL;
        }
-    
+
     if (!AuthenticateAgent(ap, attr, pp))
        {
        CfOut(cf_error, "", " !! Authentication dialogue on callback failed\n");
        errno = EPERM;
+       DeletePromise(pp);
        return NULL;
        }
-    
+
     ap->authenticated = true;
     DeletePromise(pp);
-    
+
     return ap;
 }
 

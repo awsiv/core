@@ -91,7 +91,7 @@ void *CF_CODEBOOK_HANDLER[CF_CODEBOOK_SIZE] =
 
 /*********************************************************************/
 
-int Nova_PlaceCollectCall(EnterpriseDB *dbconn, AgentConnection *conn)
+int Nova_PlaceCollectCall(AgentConnection *conn)
 {
     int tosend, cipherlen = 0;
     char in[CF_BUFSIZE], out[CF_BUFSIZE], workbuf[CF_BUFSIZE] = { 0 };
@@ -108,37 +108,17 @@ int Nova_PlaceCollectCall(EnterpriseDB *dbconn, AgentConnection *conn)
     /* Remote client formulates the query to send to the receiver */
 
     CfOut(cf_verbose, "", " >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-    CfOut(cf_verbose, "", " -> Sending collect call at %s", cf_ctime(&now));
+    CfOut(cf_verbose, "", " -> Collect calling hub at %s", cf_ctime(&now));
     CfOut(cf_verbose, "", " >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 
     if (SendTransaction(conn->sd, workbuf, tosend, CF_DONE) == -1)
     {
         CfOut(cf_error, "send", "Couldn't send data");
-        return 0;
+        return false;
     }
 
-    int total_plaintext_len = 0;
-
-    if ((cipherlen = ReceiveTransaction(conn->sd, in, false)) == -1)
-    {
-        CfOut(cf_error, "recv", " !! Failed to collect data");
-        return 0;
-    }
-
-    if (strncmp(in, "BAD:", 4) == 0)
-    {
-        CfOut(cf_error, "", " !! Abort transmission: got \"%s\" from %s", in + 4, conn->remoteip);
-        return 0;
-    }
-
-    int plaintext_len = DecryptString(conn->encryption_type, in, out, conn->session_key, cipherlen);
-
-    // Check the header for timing of response - we can eventually use this to
-    // measure the network performance
-
-    CfOut(cf_verbose, "", "Received %d bytes of report data: %s", plaintext_len, out);
-
-    return total_plaintext_len;
+    // We don't wait for any reply here from the hub, as this just makes the interaction more fragile
+    return true;
 }
 
 /*********************************************************************/
@@ -180,7 +160,7 @@ int Nova_QueryClientForReports(EnterpriseDB *dbconn, AgentConnection *conn, cons
         CfOut(cf_error, "send", "Couldn't send data");
         return 0;
     }
-    
+
     int total_plaintext_len = 0;
 
     while (more)
@@ -355,6 +335,8 @@ static void BlackStatusFlagRefresh(EnterpriseDB *dbconn, char *id)
                 (is_blackhost)? "true" : "false", agent_last_run_time);
     }
 }
+
+/*********************************************************************/
 
 void UnpackReportBook(EnterpriseDB *dbconn, char *id, Item **reports)
 {
