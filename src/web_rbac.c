@@ -140,19 +140,16 @@ static cfapi_errid LDAPAuthenticatePlain(EnterpriseDB *conn,
                                          size_t password_len)
 {
     char login_attribute[1024] = { 0 };
-    if (!CFDB_HandleGetValue(dbkey_mpsettings_login_attribute, login_attribute, sizeof(login_attribute), conn, MONGO_MPSETTINGS_COLLECTION))
-    {
-        strcpy(login_attribute, "uid");
-    }
+    CFDB_HandleGetValue(dbkey_mpsettings_login_attribute, login_attribute, sizeof(login_attribute), "uid", conn, MONGO_MPSETTINGS_COLLECTION);
 
     char base_dn[1024] = { 0 };
-    if (!CFDB_HandleGetValue(dbkey_mpsettings_base_dn, base_dn, sizeof(login_attribute), conn, MONGO_MPSETTINGS_COLLECTION))
+    if (!CFDB_HandleGetValue(dbkey_mpsettings_base_dn, base_dn, sizeof(login_attribute), NULL, conn, MONGO_MPSETTINGS_COLLECTION))
     {
         return ERRID_RBAC_ACCESS_DENIED;
     }
 
     char user_directories[1024] = { 0 };
-    if (!CFDB_HandleGetValue(dbkey_mpsettings_users_directory, user_directories, sizeof(user_directories), conn, MONGO_MPSETTINGS_COLLECTION))
+    if (!CFDB_HandleGetValue(dbkey_mpsettings_users_directory, user_directories, sizeof(user_directories), NULL, conn, MONGO_MPSETTINGS_COLLECTION))
     {
         return ERRID_DATA_UNAVAILABLE;
     }
@@ -192,7 +189,7 @@ static cfapi_errid LDAPAuthenticateAD(EnterpriseDB *conn,
                                       size_t password_len)
 {
     char ad_domain[1024] = { 0 };
-    if (!CFDB_HandleGetValue(dbkey_mpsettings_ad_domain, ad_domain, sizeof(ad_domain), conn, MONGO_MPSETTINGS_COLLECTION))
+    if (!CFDB_HandleGetValue(dbkey_mpsettings_ad_domain, ad_domain, sizeof(ad_domain), NULL, conn, MONGO_MPSETTINGS_COLLECTION))
     {
         return ERRID_RBAC_ACCESS_DENIED;
     }
@@ -226,13 +223,10 @@ static cfapi_errid LDAPAuthenticate(EnterpriseDB *conn, const char *username, co
                                     bool active_directory)
 {
     char encryption[1024] = { 0 };
-    if (!CFDB_HandleGetValue(dbkey_mpsettings_encryption, encryption, sizeof(encryption), conn, MONGO_MPSETTINGS_COLLECTION))
-    {
-        strcpy(encryption, "plain");
-    }
+    CFDB_HandleGetValue(dbkey_mpsettings_encryption, encryption, sizeof(encryption), "plain", conn, MONGO_MPSETTINGS_COLLECTION);
 
     char ldap_server[1024] = { 0 };
-    if (!CFDB_HandleGetValue(dbkey_mpsettings_host, ldap_server, sizeof(ldap_server), conn, MONGO_MPSETTINGS_COLLECTION))
+    if (!CFDB_HandleGetValue(dbkey_mpsettings_host, ldap_server, sizeof(ldap_server), NULL, conn, MONGO_MPSETTINGS_COLLECTION))
     {
         return ERRID_HOST_NOT_FOUND;
     }
@@ -963,7 +957,7 @@ static AuthenticationMode GetAuthenticationMode(EnterpriseDB *conn)
 {
     char result[32] = { 0 };
 
-    CFDB_HandleGetValue(dbkey_mpsettings_auth_mode, result, sizeof(result), conn, MONGO_MPSETTINGS_COLLECTION);
+    CFDB_HandleGetValue(dbkey_mpsettings_auth_mode, result, sizeof(result), "internal", conn, MONGO_MPSETTINGS_COLLECTION);
 
     if (StringSafeEqual(result, "ldap"))
     {
@@ -985,7 +979,7 @@ static bool IsRBACOn(EnterpriseDB *conn)
 {
     char result[8] = { 0 };
 
-    CFDB_HandleGetValue(dbkey_mpsettings_rbac, result, sizeof(result), conn, MONGO_MPSETTINGS_COLLECTION);
+    CFDB_HandleGetValue(dbkey_mpsettings_rbac, result, sizeof(result), "true", conn, MONGO_MPSETTINGS_COLLECTION);
 
     if (strcmp(result, "false") == 0)
     {

@@ -69,7 +69,8 @@ int CFDB_GetValue(char *lval, char *rval, int size, char *db_name)
         return false;
     }
 
-    CFDB_HandleGetValue(lval, rval, size, &conn, db_name);
+    // TODO: why is this function not returning this result?
+    CFDB_HandleGetValue(lval, rval, size, NULL, &conn, db_name);
 
     CFDB_Close(&conn);
     return true;
@@ -233,7 +234,7 @@ Item *CFDB_GetDeletedHosts(void)
 
 /*****************************************************************************/
 
-bool CFDB_HandleGetValue(const char *lval, char *rval, int size, EnterpriseDB *conn, const char *db_name)
+bool CFDB_HandleGetValue(const char *lval, char *rval, int size, const char *default_rval, EnterpriseDB *conn, const char *db_name)
 {
     bson query;
     bson_iterator it1;
@@ -259,7 +260,18 @@ bool CFDB_HandleGetValue(const char *lval, char *rval, int size, EnterpriseDB *c
 
     mongo_cursor_destroy(cursor);
 
-    return rval[0] != '\0';
+    if (rval[0] != '\0')
+    {
+        return true;
+    }
+    else
+    {
+        if (default_rval)
+        {
+            strcpy(rval, default_rval);
+        }
+        return false;
+    }
 }
 
 

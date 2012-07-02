@@ -122,7 +122,7 @@ int CFDB_CountSkippedOldAgents(EnterpriseDB *conn, char *keyhash, HostClassFilte
 long CFDB_GetLastAgentExecution(EnterpriseDB *conn, const char *hostkey);
 long CFDB_GetDeltaAgentExecution(EnterpriseDB *conn, const char *hostkey);
 int CFDB_GetBlueHostThreshold(unsigned long *threshold);
-bool CFDB_HandleGetValue(const char *lval, char *rval, int size, EnterpriseDB *conn, const char *db_name);
+bool CFDB_HandleGetValue(const char *lval, char *rval, int size, const char *default_rval, EnterpriseDB *conn, const char *db_name);
 int CFDB_QueryIsMaster(void);
 int CFDB_QueryMasterIP(char *buffer, int bufsize);
 int CFDB_QueryReplStatus(EnterpriseDB *conn, char *buffer, int bufsize);
