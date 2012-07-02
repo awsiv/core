@@ -84,6 +84,39 @@ PHP_FUNCTION(cfapi_role_list)
     RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
 }
 
+PHP_FUNCTION(cfapi_role_get)
+{
+    const char *username = NULL; int username_len = 0;
+    const char *role = NULL; int role_len = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
+                              &username, &username_len,
+                              &role, &role_len) == FAILURE)
+    {
+        zend_throw_exception(cfapi_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(username_len && role);
+
+    HubQuery *result = CFDB_GetRoleByNameAuth(username, role);
+    if (result->errid != ERRID_SUCCESS)
+    {
+        THROW_GENERIC(result->errid, "Error looking up role");
+    }
+    if (RlistLen(result->records) < 1)
+    {
+        RETURN_NULL();
+    }
+
+    JsonElement *data = JsonArrayCreate(1);
+    JsonArrayAppendObject(data, HubRoleToJson((HubRole *)result->records->item));
+
+    DeleteHubQuery(result, DeleteHubRole);
+
+    RETURN_JSON(PackageResult(data, 1, 1));
+}
+
 //******************************************************************************
 
 PHP_FUNCTION(cfapi_user_list)

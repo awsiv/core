@@ -30,6 +30,6 @@ cfapi_errid CFDB_UpdateRole(char *updatingUser, char *roleName, char *descriptio
 HubQuery *CFDB_ListRoles(const char *listing_user);
 
 cfapi_errid CFDB_UserIsAdminWhenRBAC(char *username);
-HubQuery *CFDB_GetRoleByNameAuth(char *userName, char *roleName);
+HubQuery *CFDB_GetRoleByNameAuth(const char *user_name, const char *role_name);
 
 #endif
