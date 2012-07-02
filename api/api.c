@@ -3,6 +3,7 @@
 #include "reporting-engine.h"
 #include "web_rbac.h"
 #include "utils.h"
+#include "db-serialize.h"
 
 static const char *API_NAME = "CFEngine Enterprise API";
 static const char *API_VERSION = "v1";
@@ -54,15 +55,36 @@ PHP_FUNCTION(cfapi_auth)
 
 //******************************************************************************
 
-static JsonElement *HubUserRBACToJson(const HubUserRBAC *user)
+PHP_FUNCTION(cfapi_role_list)
 {
-    assert(user);
+    const char *username = NULL; int username_len = 0;
 
-    JsonElement *obj = JsonObjectCreate(5);
-    JsonObjectAppendString(obj, "username", user->userName);
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s",
+                              &username, &username_len) == FAILURE)
+    {
+        zend_throw_exception(cfapi_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
 
-    return obj;
+    ARGUMENT_CHECK_CONTENTS(username_len);
+
+    HubQuery *result = CFDB_ListRoles(username);
+    if (result->errid != ERRID_SUCCESS)
+    {
+        THROW_GENERIC(result->errid, "Error listing roles");
+    }
+
+    JsonElement *data = JsonArrayCreate(500);
+    for (const Rlist *rp = result->records; rp; rp = rp->next)
+    {
+        JsonArrayAppendObject(data, HubRoleToJson((HubRole *)rp->item));
+    }
+    DeleteHubQuery(result, DeleteHubRole);
+
+    RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
 }
+
+//******************************************************************************
 
 PHP_FUNCTION(cfapi_user_list)
 {
