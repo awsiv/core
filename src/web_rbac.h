@@ -27,8 +27,9 @@ cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *descriptio
 cfapi_errid CFDB_DeleteRole(char *deletingUser, char *roleName, bool deassociateUsers);
 cfapi_errid CFDB_UpdateRole(char *updatingUser, char *roleName, char *description,
                             char *includeClassRx, char *excludeClassRx, char *includeBundleRx, char *excludeBundleRx);
+HubQuery *CFDB_ListRoles(const char *listing_user);
+
 cfapi_errid CFDB_UserIsAdminWhenRBAC(char *username);
-HubQuery *CFDB_GetAllRolesAuth(char *userName);
 HubQuery *CFDB_GetRoleByNameAuth(char *userName, char *roleName);
 
 #endif

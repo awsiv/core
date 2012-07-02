@@ -1030,7 +1030,7 @@ static Item *CFDB_GetRolesForUser(EnterpriseDB *conn, const char *userName)
 
 /*****************************************************************************/
 
-HubQuery *CFDB_GetAllRolesAuth(char *userName)
+HubQuery *CFDB_ListRoles(const char *listing_user)
 {
     EnterpriseDB conn;
 
@@ -1039,7 +1039,7 @@ HubQuery *CFDB_GetAllRolesAuth(char *userName)
         return NewHubQueryErrid(NULL, NULL, ERRID_DBCONNECT);
     }
 
-    cfapi_errid errid = UserIsRoleAdmin(&conn, userName);
+    cfapi_errid errid = UserIsRoleAdmin(&conn, listing_user);
 
     CFDB_Close(&conn);
 
