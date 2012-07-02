@@ -5242,7 +5242,7 @@ PHP_FUNCTION(cfpr_role_list_all)
 
     ARGUMENT_CHECK_CONTENTS(userNameLen);
 
-    HubQuery *hq = CFDB_GetAllRolesAuth(userName);
+    HubQuery *hq = CFDB_ListRoles(userName);
 
     if (hq->errid != ERRID_SUCCESS)
     {

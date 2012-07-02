@@ -28,7 +28,7 @@
 
 #include <assert.h>
 
-# define MONGO_ROLES_COLLECTION MONGO_MPBASE ".roles"
+# define MONGO_ROLES_COLLECTION MONGO_BASE ".roles"
 # define MONGO_USERS_INTERNAL_COLLECTION MONGO_BASE ".users"
 # define MONGO_USERS_LDAP_COLLECTION MONGO_MPBASE ".ldap_users"
 # define MONGO_MPSETTINGS_COLLECTION MONGO_MPBASE ".appsettings"
@@ -66,9 +66,9 @@ typedef enum
 
 static HubQuery *CombineAccessOfRoles(char *userName, HubQuery *hqRoles);
 static char *StringAppendRealloc2(char *start, char *append1, char *append2);
-static bool RoleExists(char *name);
+static bool RoleExists(const char *name);
 static bool UserExists(const char *username);
-static void DeAssociateUsersFromRole(EnterpriseDB *conn, char *roleName);
+static void DeAssociateUsersFromRole(EnterpriseDB *conn, const char *roleName);
 static Item *CFDB_GetRolesForUser(EnterpriseDB *conn, const char *userName);
 static HubQuery *CFDB_GetRolesByMultipleNames(Item *names);
 static HubQuery *CFDB_GetRoles(bson *query);
@@ -76,7 +76,7 @@ static const char *GetUsersCollection(EnterpriseDB *conn);
 static AuthenticationMode GetAuthenticationMode(EnterpriseDB *conn);
 static bool IsRBACOn(EnterpriseDB *conn);
 static HubQuery *CFDB_GetAllRoles(void);
-static HubQuery *CFDB_GetRoleByName(char *name);
+static HubQuery *CFDB_GetRoleByName(const char *name);
 static cfapi_errid UserIsRoleAdmin(EnterpriseDB *conn, const char *userName);
 
 /*****************************************************************************/
@@ -723,8 +723,9 @@ HubQuery *CFDB_ListUsers(const char *listing_user, const char *usernameRx)
 
 //*****************************************************************************
 
-cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *description,
-                            char *includeClassRx, char *excludeClassRx, char *includeBundleRx, char *excludeBundleRx)
+cfapi_errid CFDB_CreateRole(const char *creatingUser, const char *roleName, const char *description,
+                            const char *includeClassRx, const char *excludeClassRx,
+                            const char *includeBundleRx, const char *excludeBundleRx)
 {
     EnterpriseDB conn;
 
@@ -799,7 +800,7 @@ cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *descriptio
 
 /*****************************************************************************/
 
-cfapi_errid CFDB_DeleteRole(char *deletingUser, char *roleName, bool deassociateUsers)
+cfapi_errid CFDB_DeleteRole(const char *deletingUser, const char *roleName, bool deassociateUsers)
 {
     EnterpriseDB conn;
 
@@ -894,7 +895,7 @@ cfapi_errid CFDB_UserIsAdminWhenRBAC(char *username)
 
 /*****************************************************************************/
 
-static bool RoleExists(char *name)
+static bool RoleExists(const char *name)
 {
     HubQuery *hq = CFDB_GetRoleByName(name);
     bool exists = (hq->records == NULL) ? false : true;
@@ -916,7 +917,7 @@ static bool UserExists(const char *username)
 
 /*****************************************************************************/
 
-static void DeAssociateUsersFromRole(EnterpriseDB *conn, char *roleName)
+static void DeAssociateUsersFromRole(EnterpriseDB *conn, const char *roleName)
 {
     const char *usersCollection = GetUsersCollection(conn);
 
@@ -1030,7 +1031,7 @@ static Item *CFDB_GetRolesForUser(EnterpriseDB *conn, const char *userName)
 
 /*****************************************************************************/
 
-HubQuery *CFDB_GetAllRolesAuth(char *userName)
+HubQuery *CFDB_ListRoles(const char *listing_user)
 {
     EnterpriseDB conn;
 
@@ -1039,7 +1040,7 @@ HubQuery *CFDB_GetAllRolesAuth(char *userName)
         return NewHubQueryErrid(NULL, NULL, ERRID_DBCONNECT);
     }
 
-    cfapi_errid errid = UserIsRoleAdmin(&conn, userName);
+    cfapi_errid errid = UserIsRoleAdmin(&conn, listing_user);
 
     CFDB_Close(&conn);
 
@@ -1070,7 +1071,7 @@ static HubQuery *CFDB_GetAllRoles(void)
 
 /*****************************************************************************/
 
-HubQuery *CFDB_GetRoleByNameAuth(char *userName, char *roleName)
+HubQuery *CFDB_GetRoleByNameAuth(const char *user_name, const char *role_name)
 {
     EnterpriseDB conn;
 
@@ -1079,7 +1080,7 @@ HubQuery *CFDB_GetRoleByNameAuth(char *userName, char *roleName)
         return NewHubQueryErrid(NULL, NULL, ERRID_DBCONNECT);
     }
 
-    cfapi_errid errid = UserIsRoleAdmin(&conn, userName);
+    cfapi_errid errid = UserIsRoleAdmin(&conn, user_name);
 
     CFDB_Close(&conn);
 
@@ -1088,12 +1089,12 @@ HubQuery *CFDB_GetRoleByNameAuth(char *userName, char *roleName)
         return NewHubQueryErrid(NULL, NULL, errid);
     }
 
-    return CFDB_GetRoleByName(roleName);
+    return CFDB_GetRoleByName(role_name);
 }
 
 /*****************************************************************************/
 
-static HubQuery *CFDB_GetRoleByName(char *name)
+static HubQuery *CFDB_GetRoleByName(const char *name)
 {
     bson query;
 

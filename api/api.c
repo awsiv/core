@@ -3,6 +3,7 @@
 #include "reporting-engine.h"
 #include "web_rbac.h"
 #include "utils.h"
+#include "db-serialize.h"
 
 static const char *API_NAME = "CFEngine Enterprise API";
 static const char *API_VERSION = "v1";
@@ -54,15 +55,147 @@ PHP_FUNCTION(cfapi_auth)
 
 //******************************************************************************
 
-static JsonElement *HubUserRBACToJson(const HubUserRBAC *user)
+PHP_FUNCTION(cfapi_role_list)
 {
-    assert(user);
+    const char *username = NULL; int username_len = 0;
 
-    JsonElement *obj = JsonObjectCreate(5);
-    JsonObjectAppendString(obj, "username", user->userName);
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "s",
+                              &username, &username_len) == FAILURE)
+    {
+        zend_throw_exception(cfapi_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
 
-    return obj;
+    ARGUMENT_CHECK_CONTENTS(username_len);
+
+    HubQuery *result = CFDB_ListRoles(username);
+    if (result->errid != ERRID_SUCCESS)
+    {
+        THROW_GENERIC(result->errid, "Error listing roles");
+    }
+
+    JsonElement *data = JsonArrayCreate(500);
+    for (const Rlist *rp = result->records; rp; rp = rp->next)
+    {
+        JsonArrayAppendObject(data, HubRoleToJson((HubRole *)rp->item));
+    }
+    DeleteHubQuery(result, DeleteHubRole);
+
+    RETURN_JSON(PackageResult(data, 1, JsonElementLength(data)));
 }
+
+PHP_FUNCTION(cfapi_role_get)
+{
+    const char *username = NULL; int username_len = 0;
+    const char *role = NULL; int role_len = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
+                              &username, &username_len,
+                              &role, &role_len) == FAILURE)
+    {
+        zend_throw_exception(cfapi_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(username_len && role);
+
+    HubQuery *result = CFDB_GetRoleByNameAuth(username, role);
+    if (result->errid != ERRID_SUCCESS)
+    {
+        THROW_GENERIC(result->errid, "Error looking up role");
+    }
+    if (RlistLen(result->records) < 1)
+    {
+        RETURN_NULL();
+    }
+
+    JsonElement *data = JsonArrayCreate(1);
+    JsonArrayAppendObject(data, HubRoleToJson((HubRole *)result->records->item));
+
+    DeleteHubQuery(result, DeleteHubRole);
+
+    RETURN_JSON(PackageResult(data, 1, 1));
+}
+
+PHP_FUNCTION(cfapi_role_put)
+{
+    const char *username = NULL; int username_len = 0;
+    const char *name = NULL; int name_len = 0;
+    const char *description = NULL; int description_len = 0;
+    const char *include_context_rx = NULL; int include_context_rx_len = 0;
+    const char *exclude_context_rx = NULL; int exclude_context_rx_len = 0;
+    const char *include_bundle_rx = NULL; int include_bundle_rx_len = 0;
+    const char *exclude_bundle_rx = NULL; int exclude_bundle_rx_len = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "sssssss",
+                              &username, &username_len,
+                              &name, &name_len,
+                              &description, &description_len,
+                              &include_context_rx, &include_context_rx_len,
+                              &exclude_context_rx, &exclude_context_rx_len,
+                              &include_bundle_rx, &include_bundle_rx_len,
+                              &exclude_bundle_rx, &exclude_bundle_rx_len) == FAILURE)
+    {
+        zend_throw_exception(cfapi_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(username_len && name_len);
+
+    {
+        HubQuery *roles = CFDB_GetRoleByNameAuth(username, name);
+        if (roles->errid != ERRID_SUCCESS)
+        {
+            THROW_GENERIC(roles->errid, "Unable to lookup role");
+        }
+        if (RlistLen(roles->records) >= 1)
+        {
+            cfapi_errid err = ERRID_UNKNOWN;
+            if ((err = CFDB_DeleteRole(username, name, true)) != ERRID_SUCCESS)
+            {
+                THROW_GENERIC(err, "Unable to delete existing role");
+            }
+        }
+
+        DeleteHubQuery(roles, DeleteHubRole);
+    }
+
+    cfapi_errid err = ERRID_UNKNOWN;
+    if ((err = CFDB_CreateRole(username, name, description,
+                               include_context_rx, exclude_context_rx,
+                               include_bundle_rx, exclude_bundle_rx)) != ERRID_SUCCESS)
+    {
+        THROW_GENERIC(err, "Unable to create role");
+    }
+
+    RETURN_BOOL(true);
+}
+
+PHP_FUNCTION(cfapi_role_delete)
+{
+    const char *username = NULL; int username_len = 0;
+    const char *name = NULL; int name_len = 0;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS()TSRMLS_CC, "ss",
+                              &username, &username_len,
+                              &name, &name_len) == FAILURE)
+    {
+        zend_throw_exception(cfapi_exception_args, LABEL_ERROR_ARGS, 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+
+    ARGUMENT_CHECK_CONTENTS(username_len && name_len);
+
+    cfapi_errid err = CFDB_DeleteRole(username, name, true);
+    if (err != ERRID_SUCCESS)
+    {
+        THROW_GENERIC(err, "Unable to delete role");
+    }
+
+    RETURN_BOOL(true);
+}
+
+//******************************************************************************
 
 PHP_FUNCTION(cfapi_user_list)
 {

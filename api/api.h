@@ -32,6 +32,10 @@ PHP_FUNCTION(cfapi_auth);
 /**
   User management
   */
+PHP_FUNCTION(cfapi_role_list);
+PHP_FUNCTION(cfapi_role_get);
+PHP_FUNCTION(cfapi_role_put);
+PHP_FUNCTION(cfapi_role_delete);
 PHP_FUNCTION(cfapi_user_list);
 PHP_FUNCTION(cfapi_user_get);
 PHP_FUNCTION(cfapi_user_put);
