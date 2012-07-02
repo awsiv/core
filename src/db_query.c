@@ -233,7 +233,7 @@ Item *CFDB_GetDeletedHosts(void)
 
 /*****************************************************************************/
 
-bool CFDB_HandleGetValue(char *lval, char *rval, int size, EnterpriseDB *conn, char *db_name)
+bool CFDB_HandleGetValue(const char *lval, char *rval, int size, EnterpriseDB *conn, const char *db_name)
 {
     bson query;
     bson_iterator it1;
