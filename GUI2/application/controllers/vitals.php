@@ -90,9 +90,11 @@ class Vitals extends Cf_REST_Controller
             }
         }
         $sortFunction = isset(self::$sortTable[$sort]) ? self::$sortTable[$sort] : self::$sortTable['last-measured'];
-        usort($data, array($this, $sortFunction));
-        $data = array_slice($data, 0, $vitalsMaxNode);
-
+        if (is_array($data) && !empty($data))
+        {
+            usort($data, array($this, $sortFunction));
+            $data = array_slice($data, 0, $vitalsMaxNode);
+        }
         $this->respond(200, json_encode($data));
     }
 
@@ -100,7 +102,6 @@ class Vitals extends Cf_REST_Controller
     {
         $username = $this->session->userdata('username');
         $incList = $this->param_includes();
-        $observables = '';
         $listOfHost = $this->host_model->getHostListByContext($username, $incList, array());
         $vitalList = array();
         if (!empty($listOfHost))

@@ -7,7 +7,7 @@
             vitalsurl: '/vitals/node_vitals',
             vitalsurlForHost: '/vitals/host_vitals',
             vitalsurlForConfiguration: '/vitals/config_vitals',
-            vitalsMainLink : 'visual/vital/'
+            vitalsMainLink : '/visual/vital/'
         },
         _context: {
             includes: [],
