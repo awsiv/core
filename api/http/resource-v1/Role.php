@@ -16,6 +16,44 @@ class Role extends Resource
         return $response;
     }
 
+    function put($request, $rolename)
+    {
+        $user = $_SERVER['PHP_AUTH_USER'];
+
+        $data = json_decode($request->data);
+
+        $response = new Response($request);
+        if (cfapi_role_put($user, $rolename, $data->description,
+                $data->includeContext, $data->excludeContext,
+                $data->includeBundles, $data->excludeBundles))
+        {
+            $response->code = Response::CREATED;
+        }
+        else
+        {
+            $response->code = Response::INTERNALSERVERERROR;
+        }
+
+        return $response;
+    }
+
+    function delete($request, $rolename)
+    {
+        $user = $_SERVER['PHP_AUTH_USER'];
+
+        $response = new Response($request);
+
+        if (cfapi_role_delete($user, $rolename))
+        {
+            $response->code = Response::NOCONTENT;
+        }
+        else
+        {
+            $response->code = Response::INTERNALSERVERERROR;
+        }
+
+        return $response;
+    }
 }
 
 /**

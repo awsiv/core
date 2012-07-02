@@ -22,9 +22,9 @@ cfapi_errid CFDB_CreateUser(const char *creating_user, const char *username, con
 cfapi_errid CFDB_DeleteUser(const char *deleting_user, const char *username);
 HubQuery *CFDB_ListUsers(const char *listing_user, const char *usernameRx);
 
-cfapi_errid CFDB_CreateRole(char *creatingUser, char *roleName, char *description,
-                            char *includeClassRx, char *excludeClassRx, char *includeBundleRx, char *excludeBundleRx);
-cfapi_errid CFDB_DeleteRole(char *deletingUser, char *roleName, bool deassociateUsers);
+cfapi_errid CFDB_CreateRole(const char *creatingUser, const char *roleName, const char *description,
+                            const char *includeClassRx, const char *excludeClassRx, const char *includeBundleRx, const char *excludeBundleRx);
+cfapi_errid CFDB_DeleteRole(const char *deletingUser, const char *roleName, bool deassociateUsers);
 cfapi_errid CFDB_UpdateRole(char *updatingUser, char *roleName, char *description,
                             char *includeClassRx, char *excludeClassRx, char *includeBundleRx, char *excludeBundleRx);
 HubQuery *CFDB_ListRoles(const char *listing_user);
