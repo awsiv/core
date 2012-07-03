@@ -126,9 +126,9 @@ bundle agent update_bins
                     comment => "Update Nova package to a newer version",
                      handle => "update_bins_packages_nova_update_all",
              package_policy => "update",
-             package_select => ">=",                 # picks the newest Nova available
+             package_select => ">=",            # picks the newest Nova available
       package_architectures => { "$(pkgarch)" },
-            package_version => "1.0.0",              # at least Nova version 1.0.0
+            package_version => "9.9.9",         # Install new Nova anyway
              package_method => u_generic( "$(local_software_dir)" ),
                  ifvarclass => "nova_edition",
                     classes => u_if_else("bin_update_success", "bin_update_fail");
